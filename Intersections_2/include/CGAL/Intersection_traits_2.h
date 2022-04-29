@@ -14,6 +14,7 @@
 #define CGAL_INTERSECTION_TRAITS_2_H
 
 #include <CGAL/Intersection_traits.h>
+#include <CGAL/Bbox_2.h>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>

@@ -21,7 +21,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -30,10 +30,10 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/utility.h>
 
-#include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/ref.hpp>
 
+#include <unordered_set>
 #include <functional>
 namespace CGAL {
 
@@ -141,11 +141,14 @@ namespace internal{
 
 /**
  * \ingroup PMP_orientation_grp
- * tests whether a closed triangle mesh has a positive orientation.
+ *
+ * \brief tests whether a closed triangle mesh has a positive orientation.
+ *
  * A closed triangle mesh is considered to have a positive orientation if the normal vectors
  * to all its faces point outside the domain bounded by the triangle mesh.
  * The normal vector to each face is chosen pointing on the side of the face
  * where its sequence of vertices is seen counterclockwise.
+ *
  * @pre `CGAL::is_closed(tm)`
  * @pre `CGAL::is_triangle_mesh(tm)`
  * @pre If `tm` contains several connected components, they are oriented consistently.
@@ -181,9 +184,10 @@ namespace internal{
  *
  * \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
  */
-template<typename TriangleMesh, typename NamedParameters>
+template<typename TriangleMesh,
+         typename NamedParameters = parameters::Default_named_parameters>
 bool is_outward_oriented(const TriangleMesh& tm,
-                         const NamedParameters& np)
+                         const NamedParameters& np = parameters::default_values())
 {
   CGAL_warning(CGAL::is_closed(tm));
   CGAL_warning(CGAL::is_triangle_mesh(tm));
@@ -230,17 +234,6 @@ bool is_outward_oriented(const TriangleMesh& tm,
   return internal::is_outward_oriented(v_max, tm, np);
 }
 
-///\cond SKIP_IN_MANUAL
-
-template<typename TriangleMesh>
-bool is_outward_oriented(const TriangleMesh& tm)
-{
-  return is_outward_oriented(tm,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-/// \endcond
-
 template<typename PolygonMesh>
 void reverse_orientation(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor first, PolygonMesh& pmesh)
 {
@@ -270,9 +263,12 @@ void reverse_orientation(typename boost::graph_traits<PolygonMesh>::halfedge_des
 
 /**
 * \ingroup PMP_orientation_grp
+*
 * reverses for each face the order of the vertices along the face boundary.
 *
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+*
+* @sa `is_outward_oriented()`
 */
 template<typename PolygonMesh>
 void reverse_face_orientations(PolygonMesh& pmesh)
@@ -311,7 +307,7 @@ void reverse_face_orientations_of_mesh_with_polylines(PolygonMesh& pmesh)
     reverse_orientation(halfedge(fd,pmesh),pmesh);
 
   //extract all border cycles
-  boost::unordered_set<halfedge_descriptor> already_seen;
+  std::unordered_set<halfedge_descriptor> already_seen;
   std::vector<halfedge_descriptor> border_cycles;
   for(halfedge_descriptor h : halfedges(pmesh))
     if ( is_border(h,pmesh) && already_seen.insert(h).second )
@@ -328,13 +324,16 @@ void reverse_face_orientations_of_mesh_with_polylines(PolygonMesh& pmesh)
 
 /**
 * \ingroup PMP_orientation_grp
+*
 * reverses for each face in `face_range` the order of the vertices along the face boundary.
-* The function does not perform any control and if the orientation change of the faces
+* The function does not perform any control and if the change of orientation of the faces
 * makes the polygon mesh invalid, the behavior is undefined.
 *
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam FaceRange range of face descriptors, model of `Range`.
 *         Its iterator type is `InputIterator`.
+*
+* @sa `is_outward_oriented()`
 */
 template<typename PolygonMesh, typename FaceRange>
 void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
@@ -365,10 +364,10 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 
 /**
 * \ingroup PMP_orientation_grp
-* makes each connected component of a closed triangulated surface mesh
-* inward or outward oriented.
 *
-* @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
+* makes each connected component of a closed triangulated surface mesh inward or outward oriented.
+*
+* @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters
 *
 * @param tm a closed triangulated surface mesh
@@ -405,9 +404,10 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
-template<class TriangleMesh, class NamedParameters>
+template<class TriangleMesh,
+         class NamedParameters = parameters::Default_named_parameters>
 void orient(TriangleMesh& tm,
-            const NamedParameters& np)
+            const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<TriangleMesh>                                        Graph_traits;
   typedef typename Graph_traits::vertex_descriptor                                 vertex_descriptor;
@@ -470,12 +470,6 @@ void orient(TriangleMesh& tm,
       reverse_face_orientations(ccs[id], tm);
     }
   }
-}
-
-template<class TriangleMesh>
-void orient(TriangleMesh& tm)
-{
-  orient(tm, parameters::all_default());
 }
 
 /*!
@@ -652,6 +646,7 @@ void set_cc_intersecting_pairs(
 
 /*!
  * \ingroup PMP_orientation_grp
+ *
  * assigns to each face of `tm` an id corresponding to the volume connected component
  * it contributes to.
  *
@@ -811,11 +806,11 @@ void set_cc_intersecting_pairs(
  *
  * \return the number of volume components defined by `tm`
  */
-template <class TriangleMesh, class VolumeFaceIndexMap, class NamedParameters>
+template <class TriangleMesh, class VolumeFaceIndexMap, class NamedParameters = parameters::Default_named_parameters>
 std::size_t
 volume_connected_components(const TriangleMesh& tm,
                                   VolumeFaceIndexMap volume_id_map,
-                            const NamedParameters& np)
+                            const NamedParameters& np = parameters::default_values())
 {
   CGAL_precondition(is_triangle_mesh(tm));
   CGAL_precondition(is_closed(tm));
@@ -1232,7 +1227,7 @@ volume_connected_components(const TriangleMesh& tm,
  * indicates if `tm` bounds a volume.
  * See \ref coref_def_subsec for details.
  *
- * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm a closed triangulated surface mesh
@@ -1269,8 +1264,8 @@ volume_connected_components(const TriangleMesh& tm,
  *
  * \see `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
  */
-template <class TriangleMesh, class NamedParameters>
-bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
+template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
+bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
@@ -1287,27 +1282,13 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   return res!=0;
 }
 
-/// \cond SKIP_IN_MANUAL
-template <class TriangleMesh>
-bool does_bound_a_volume(const TriangleMesh& tm)
-{
-  return does_bound_a_volume(tm, parameters::all_default());
-}
-
-template <class TriangleMesh, class VolumeFaceIndexMap>
-std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexMap volume_id_map)
-{
-  return volume_connected_components(tm, volume_id_map, parameters::all_default());
-}
-/// \endcond
-
-
-/** \ingroup PMP_orientation_grp
+/*!
+ * \ingroup PMP_orientation_grp
  *
  * orients the connected components of `tm` to make it bound a volume.
  * See \ref coref_def_subsec for a precise definition.
  *
- * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param tm a closed triangulated surface mesh
@@ -1349,9 +1330,9 @@ std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexM
  *
  * \see `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
  */
-template <class TriangleMesh, class NamedParameters>
+template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
 void orient_to_bound_a_volume(TriangleMesh& tm,
-                              const NamedParameters& np)
+                              const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<TriangleMesh>                                        Graph_traits;
   typedef typename Graph_traits::face_descriptor                                   face_descriptor;
@@ -1415,19 +1396,14 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   reverse_face_orientations(faces_to_reverse, tm);
 }
 
-template <class TriangleMesh>
-void orient_to_bound_a_volume(TriangleMesh& tm)
-{
-  orient_to_bound_a_volume(tm, parameters::all_default());
-}
-
 /*!
  * \ingroup PMP_orientation_grp
+ *
  * reverses the connected components of `tm` having compatible boundary cycles
  * that could be merged if their orientation were made compatible, and stitches them.
  * Connected components are examined by increasing number of faces.
  *
- * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param pm a surface mesh
@@ -1460,9 +1436,10 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
-template <class PolygonMesh, class NamedParameters>
+template <class PolygonMesh,
+          class NamedParameters = parameters::Default_named_parameters>
 void merge_reversible_connected_components(PolygonMesh& pm,
-                                           const NamedParameters& np)
+                                           const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<PolygonMesh> GrT;
   typedef typename GrT::face_descriptor face_descriptor;
@@ -1627,11 +1604,239 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   }
 }
 
-template <class PolygonMesh>
-void merge_reversible_connected_components(PolygonMesh& pm)
+
+/*!
+ * \ingroup PMP_orientation_grp
+ *
+ * identifies faces whose orientation must be reversed in order to enable stitching of connected components.
+ * Each face is assigned a bit (`false` or `true`)
+ * such that two faces have compatible orientations iff they are assigned the same bits.
+ *
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`, `FaceGraph`.
+ * @tparam FaceBitMap a model of `WritablePropertyMap` with `face_descriptor` as key and `bool` as value_type
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
+ *
+ * @param pm a surface mesh
+ * @param fbm face bit map indicating if a face orientation should be reversed to be stitchable
+ *        (see `CGAL::Polygon_mesh_processing::stitch_borders()`) with another face. If `false` is
+ *        returned, the map will not be filled.
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * @return `true` if `pm` can be reoriented and `false` otherwise.
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `pm`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \sa reverse_face_orientations()
+ * \sa stitch_borders()
+ *
+ */
+template <class PolygonMesh, class FaceBitMap, class NamedParameters = parameters::Default_named_parameters>
+bool compatible_orientations(const PolygonMesh& pm,
+                             FaceBitMap fbm,
+                             const NamedParameters& np = parameters::default_values())
 {
-  merge_reversible_connected_components(pm, parameters::all_default());
+  typedef boost::graph_traits<PolygonMesh> GrT;
+  typedef typename GrT::face_descriptor face_descriptor;
+  typedef typename GrT::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
+
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                         get_const_property_map(vertex_point, pm));
+
+  typedef std::size_t F_cc_id; // Face cc-id
+  typedef std::size_t E_id; // Edge id
+
+  typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::const_type   Face_cc_map;
+  Face_cc_map f_cc_ids  = get(Face_property_tag(), pm);
+  F_cc_id nb_cc = connected_components(pm, f_cc_ids);
+
+  std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
+  for (face_descriptor f : faces(pm))
+    nb_faces_per_cc[ get(f_cc_ids, f) ]+=1;
+
+  // collect border halfedges
+  std::vector<halfedge_descriptor> border_hedges;
+  for (halfedge_descriptor h : halfedges(pm))
+    if ( is_border(h, pm) )
+      border_hedges.push_back(h);
+  std::size_t nb_bh=border_hedges.size();
+
+  // compute the edge id of all border halfedges
+  typedef std::map< std::pair<Point_3, Point_3>, E_id> E_id_map;
+  E_id_map e_id_map;
+  E_id e_id = 0;
+
+  std::vector<E_id> eids;
+  eids.reserve(nb_bh);
+  for (halfedge_descriptor h : border_hedges)
+  {
+    std::pair< typename E_id_map::iterator, bool > insert_res =
+        e_id_map.insert(
+          std::make_pair(
+            make_sorted_pair(get(vpm, source(h, pm)),
+                             get(vpm, target(h,pm))), e_id) );
+    if (insert_res.second)
+      ++e_id;
+    eids.push_back(insert_res.first->second);
+  }
+
+  // fill incidence per edge
+  std::vector< std::vector<halfedge_descriptor> > incident_ccs_per_edge(e_id);
+  for (std::size_t i=0; i<nb_bh; ++i)
+    incident_ccs_per_edge[ eids[i] ].push_back(border_hedges[i]);
+
+  std::vector< std::vector<F_cc_id> > compatible_patches(nb_cc);
+  std::vector< std::vector<F_cc_id> > incompatible_patches(nb_cc);
+
+  for (std::vector<halfedge_descriptor>& v : incident_ccs_per_edge)
+  {
+    // ignore non-manifold edges
+    if (v.size()!=2) continue;
+    F_cc_id front_id=get(f_cc_ids, face(opposite(v.front(), pm), pm));
+    F_cc_id back_id=get(f_cc_ids, face(opposite(v.back(), pm), pm));
+
+    if (front_id==back_id) continue;
+
+    if (get(vpm, source(v.front(), pm))==get(vpm, target(v.back(), pm)))
+    {
+      compatible_patches[front_id].push_back(back_id);
+      compatible_patches[back_id].push_back(front_id);
+    }
+    else
+    {
+      incompatible_patches[front_id].push_back(back_id);
+      incompatible_patches[back_id].push_back(front_id);
+    }
+  }
+
+  for(F_cc_id cc_id=0; cc_id<nb_cc; ++cc_id)
+  {
+    std::sort(compatible_patches[cc_id].begin(), compatible_patches[cc_id].end());
+    std::sort(incompatible_patches[cc_id].begin(), incompatible_patches[cc_id].end());
+  }
+
+  // sort the connected components with potential matches using their number
+  // of faces (sorted by decreasing number of faces)
+  std::vector<bool> cc_bits(nb_cc, false);
+  std::vector<bool> cc_handled(nb_cc, false);
+
+  std::set< F_cc_id, std::function<bool(F_cc_id,F_cc_id)> > sorted_ids(
+    [&nb_faces_per_cc](F_cc_id i, F_cc_id j)
+    {return nb_faces_per_cc[i]==nb_faces_per_cc[j] ? i<j : nb_faces_per_cc[i]>nb_faces_per_cc[j];}
+  );
+  for(F_cc_id cc_id=0; cc_id<nb_cc; ++cc_id)
+    sorted_ids.insert(cc_id);
+
+  // consider largest CC first, default and set its bit to 0
+  for(F_cc_id cc_id : sorted_ids)
+  {
+    if (cc_handled[cc_id]) continue;
+
+    // extract compatible components
+    std::set<F_cc_id> bit_0_cc_set;
+    std::set<F_cc_id> bit_1_cc_set;
+    bit_0_cc_set.insert(cc_id);
+    std::vector<F_cc_id> stack_0=compatible_patches[cc_id];
+    std::vector<F_cc_id> stack_1=incompatible_patches[cc_id];
+
+    while( !stack_0.empty() || !stack_1.empty())
+    {
+      // increase the set of patches for bit 0 using compatible_patches
+      while( !stack_0.empty() )
+      {
+        F_cc_id back=stack_0.back();
+        stack_0.pop_back();
+        if (!bit_0_cc_set.insert(back).second) continue;
+        stack_0.insert(stack_0.end(), compatible_patches[back].begin(), compatible_patches[back].end());
+      }
+
+      // extract incompatible components
+      for (F_cc_id cid : bit_0_cc_set)
+        stack_1.insert(stack_1.end(), incompatible_patches[cid].begin(), incompatible_patches[cid].end());
+      // increase the set of patches for bit 1 using compatible_patches
+      while( !stack_1.empty() )
+      {
+        F_cc_id back=stack_1.back();
+        stack_1.pop_back();
+        if (!bit_1_cc_set.insert(back).second) continue;
+        stack_1.insert(stack_1.end(), compatible_patches[back].begin(), compatible_patches[back].end());
+      }
+      for (F_cc_id cid1 : bit_1_cc_set)
+        for (F_cc_id cid0 : incompatible_patches[cid1])
+          if( bit_0_cc_set.count(cid0)==0 )
+            stack_0.push_back(cid0);
+    }
+
+    // set intersection should be empty
+    std::vector<F_cc_id> inter;
+    std::set_intersection( bit_0_cc_set.begin(), bit_0_cc_set.end(),
+                           bit_1_cc_set.begin(), bit_1_cc_set.end(),
+                           std::back_inserter(inter));
+    if (!inter.empty())
+    {
+#ifdef CGAL_PMP_DEBUG_ORIENTATION
+      std::cout << "DEBUG: Set intersection is not empty\n";
+#endif
+      return false;
+    }
+
+    // set bit of compatible patches
+    for (F_cc_id id : bit_0_cc_set)
+    {
+      if (cc_handled[id])
+      {
+        if(cc_bits[id] == true)
+        {
+#ifdef CGAL_PMP_DEBUG_ORIENTATION
+          std::cout << "DEBUG: orientation bit already set to 1, incompatible with 0\n";
+#endif
+          return false;
+        }
+        else
+          continue;
+      }
+      cc_handled[id]=true;
+    }
+
+    // set bit of incompatible patches
+    for (F_cc_id id : bit_1_cc_set)
+    {
+      if (cc_handled[id])
+      {
+        if(cc_bits[id] == false)
+        {
+#ifdef CGAL_PMP_DEBUG_ORIENTATION
+          std::cout << "DEBUG: orientation bit already set to 0, incompatible with 1\n";
+#endif
+          return false;
+        }
+        else
+          continue;
+      }
+      cc_handled[id]=true;
+      cc_bits[id]=true;
+    }
+  }
+
+  // set the bit per face
+  for (face_descriptor f : faces(pm))
+    put(fbm, f, cc_bits[get(f_cc_ids,f)]);
+
+  return true;
 }
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H

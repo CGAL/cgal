@@ -9,9 +9,10 @@
 
 #include <CGAL/IO/polygon_soup_io.h>
 
-#include <vector>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          K;
 typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3>      Polyhedron;

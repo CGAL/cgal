@@ -34,7 +34,13 @@ public:
   /// \name Functor Types
   /// @{
 
+  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
+  typedef unspecified_type Compare_x_on_boundary_2;
+
+  /// @}
+
   /// \name Accessing Functor Objects
   /// @{
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const;
   /// @}
 }

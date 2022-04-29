@@ -63,7 +63,7 @@ bbox_line_do_intersect_aux(const LFT px, const LFT py, const LFT pz,
   }
 
   //if px is not in the x-slab
-  if(dmin == FT(0) && (tmin > FT(0) || tmax < FT(0)))
+  if(is_zero(dmin) && (is_positive(tmin) || is_negative(tmax)))
     return false;
 
   FT dmax = dmin;

@@ -40,7 +40,7 @@ namespace CommonKernelFunctors {
 
 
   template <typename K>
-  class Non_zero_dimension_3
+  class Non_zero_coordinate_index_3
   {
     typedef typename K::Vector_3 Vector_3;
 
@@ -49,19 +49,19 @@ namespace CommonKernelFunctors {
 
     result_type operator()(const Vector_3& vec) const
     {
-      if(certainly_not(is_zero(vec.x()))){
+      if(certainly_not(is_zero(vec.hx()))){
         return 0;
-      } else if(certainly_not(is_zero(vec.y()))){
+      } else if(certainly_not(is_zero(vec.hy()))){
         return 1;
-      }else if(certainly_not(is_zero(vec.z()))){
+      }else if(certainly_not(is_zero(vec.hz()))){
         return 2;
       }
 
-      if(! is_zero(vec.x())){
+      if(! is_zero(vec.hx())){
         return 0;
-      } else if(! is_zero(vec.y())){
+      } else if(! is_zero(vec.hy())){
         return 1;
-      } else if(! is_zero(vec.z())){
+      } else if(! is_zero(vec.hz())){
         return 2;
       }
 
@@ -1811,7 +1811,8 @@ namespace CommonKernelFunctors {
     {
       CGAL_kernel_precondition(! K().collinear_3_object()(p,q,r) );
       Vector_3 res = CGAL::cross_product(q-p, r-p);
-      return res; }
+      return res;
+    }
   };
 
   template <typename K>
@@ -2045,6 +2046,10 @@ namespace CommonKernelFunctors {
     Rep // Plane_3
     operator()(Return_base_tag, const Point_3& p, const Vector_3& v) const
     { return Rep(p, v); }
+
+    Rep // Plane_3
+    operator()(Return_base_tag, Origin o, const Vector_3& v) const
+    { return Rep(o, v); }
 
     Rep // Plane_3
     operator()(Return_base_tag, const Line_3& l, const Point_3& p) const
@@ -2578,7 +2583,7 @@ namespace CommonKernelFunctors {
       Vector_3 res = CGAL::cross_product(q-p, r-p);
       res = res / CGAL::sqrt(res.squared_length());
       return res;
-        }
+    }
   };
 
   template <typename K>

@@ -37,6 +37,7 @@ class File_scanner_OFF
   std::vector<double> entries;
   std::size_t color_entries;
   std::size_t first_color_index;
+  std::string line;
   std::istream& m_in;
   bool normals_read;
 
@@ -78,7 +79,7 @@ public:
     else
     {
       skip_comment();
-      std::string line;
+      line.clear();
       std::getline(m_in, line);
       // First remove the comment if there is one
       std::size_t pos = line.find('#');
@@ -692,7 +693,7 @@ public:
     else
     {
       skip_comment();
-      std::string line;
+      line.clear();
       std::getline(m_in, line);
       // First remove the comment if there is one
       std::size_t pos = line.find('#');
@@ -710,6 +711,7 @@ public:
       if(entries.empty())
       {
         m_in.clear(std::ios::badbit);
+        size = 0;
         return;
       }
       size = static_cast<std::size_t>(entries[0]);
@@ -742,6 +744,7 @@ public:
         m_in.clear(std::ios::badbit);
         if(verbose())
           std::cerr<<"error while reading facet. Missing index."<<std::endl;
+        index=0;
         return;
       }
       index = static_cast<std::size_t>(entries[current_entry]);
@@ -757,7 +760,7 @@ public:
                      "cannot read OFF file beyond facet "
                   << current_facet << "." << std::endl;
       }
-
+      index=0;
       set_off_header(false);
       return;
     }
@@ -777,7 +780,7 @@ public:
                   << index + index_offset() << ": is out of range."
                   << std::endl;
       }
-
+      index = 0;
       set_off_header(false);
       return;
     }

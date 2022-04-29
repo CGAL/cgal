@@ -305,7 +305,7 @@ public:
                           VertexParameterizedMap vpmap)
   {
     // Fill containers
-    boost::unordered_set<vertex_descriptor> vertices;
+    std::unordered_set<vertex_descriptor> vertices;
     internal::Containers_filler<Triangle_mesh> fc(mesh, vertices);
     Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),

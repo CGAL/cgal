@@ -11,7 +11,7 @@
 using namespace CGAL::Three;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 class Polyhedron_demo_corefinement_sm_plugin :
   public QObject,

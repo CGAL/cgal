@@ -117,12 +117,12 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementBasicTopologyTraits`
 - `ArrangementBasicTraits_2`
 - `ArrangementConstructXMonotoneCurveTraits_2`
+- `ArrangementConstructCurveTraits_2`
 - `ArrangementLandmarkTraits_2`
 - `ArrangementXMonotoneTraits_2`
 - `ArrangementTraits_2`
 - `ArrangementHorizontalSideTraits_2`
 - `ArrangementVerticalSideTraits_2`
-- `ArrangementClosedIdentifiedVerticalTraits_2`
 - `ArrangementIdentifiedVerticalTraits_2`
 - `ArrangementIdentifiedHorizontalTraits_2`
 - `ArrangementOpenBoundaryTraits_2`
@@ -176,6 +176,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::CompareYOnBoundary_2`
 - `ArrTraits::CompareXNearBoundary_2`
 - `ArrTraits::CompareYNearBoundary_2`
+- `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`
 - `ArrTraits::Intersect_2`
 - `ArrTraits::Split_2`
 - `ArrTraits::AreMergeable_2`
@@ -183,6 +184,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::MakeXMonotone_2`
 - `ArrTraits::Approximate_2`
 - `ArrTraits::ConstructXMonotoneCurve_2`
+- `ArrTraits::ConstructCurve_2`
 
 \cgalCRPSection{Classes}
 

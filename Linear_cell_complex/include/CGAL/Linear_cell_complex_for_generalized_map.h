@@ -95,6 +95,9 @@ namespace CGAL {
       Linear_cell_complex_for_generalized_map(const Self & alcc) : Base(alcc)
       {}
 
+      Linear_cell_complex_for_generalized_map(Self && alcc) : Base(alcc)
+      {}
+
       template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
@@ -144,6 +147,18 @@ namespace CGAL {
       {
         Base::operator=(alcc);
         return *this;
+      }
+
+      friend std::ostream& operator<< (std::ostream& os, const Self& amap)
+      {
+        save_generalized_map(amap, os);
+        return os;
+      }
+
+      friend std::ifstream& operator>> (std::ifstream& is, Self& amap)
+      {
+        load_generalized_map(is, amap);
+        return is;
       }
     };
 

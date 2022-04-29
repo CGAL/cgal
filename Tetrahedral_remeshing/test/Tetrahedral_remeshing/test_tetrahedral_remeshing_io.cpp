@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 

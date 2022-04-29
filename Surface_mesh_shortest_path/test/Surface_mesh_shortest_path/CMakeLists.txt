@@ -1,9 +1,7 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Surface_mesh_shortest_path_Tests)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
-
-include(${CGAL_USE_FILE})
 
 find_package(LEDA QUIET)
 

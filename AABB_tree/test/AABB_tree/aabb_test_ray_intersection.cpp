@@ -138,9 +138,8 @@ int main()
   for(std::vector<Ray>::iterator it = rays.begin(); it != rays.end(); ++it) {
     primitives2.push_back(tree.first_intersection(*it));
   }
-  CGAL_assertion_msg(primitives1.size() == primitives2.size(), "Different amount of primitives intersected.");
-  CGAL_assertion_msg(std::equal(primitives1.begin(), primitives1.end(), primitives2.begin()),
-                     "Primitives mismatch.");
+  assert(primitives1.size() == primitives2.size()); //  Different amount of primitives intersected
+  assert(std::equal(primitives1.begin(), primitives1.end(), primitives2.begin())); //  Primitives mismatch
   std::size_t c = primitives1.size() - std::count(primitives1.begin(), primitives1.end(), boost::none);
   std::cout << "Intersected " << c << " primitives with " << NB_RAYS << " rays" << std::endl;
   std::cout << "Primitive method had to sort " << accum/NB_RAYS

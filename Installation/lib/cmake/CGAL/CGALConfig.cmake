@@ -83,15 +83,22 @@ if (NOT CGAL_DATA_DIR)
       if (EXISTS "${CGAL_ROOT}/data")
         set(CGAL_DATA_DIR "${CGAL_ROOT}/data")
       else()
-        message("CGAL_ROOT = ${CGAL_ROOT}")
-        message(WARNING "CGAL_DATA_DIR cannot be deduced, set the variable CGAL_DATA_DIR to set the default value of CGAL::data_file_path()")
+        if (EXISTS "${CMAKE_SOURCE_DIR}/../data")
+          set(CGAL_DATA_DIR "${CMAKE_SOURCE_DIR}/../data")
+        else()
+          if (EXISTS "${CMAKE_SOURCE_DIR}/../../data")
+              set(CGAL_DATA_DIR "${CMAKE_SOURCE_DIR}/../../data")
+          else()
+            message(WARNING "CGAL_DATA_DIR cannot be deduced, set the variable CGAL_DATA_DIR to set the default value of CGAL::data_file_path()")
+          endif()
+        endif()
       endif()
     endif()
   endif()
 endif()
 
 if(NOT TARGET CGAL::Data)
-  add_library(CGAL::Data INTERFACE IMPORTED)
+  add_library(CGAL::Data INTERFACE IMPORTED GLOBAL)
   if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
     set_target_properties(CGAL::Data PROPERTIES
       INTERFACE_COMPILE_DEFINITIONS "CGAL_DATA_DIR=\"${CGAL_DATA_DIR}\"")
@@ -163,6 +170,16 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
     CGAL_setup_target_dependencies(${cgal_lib})
   endif()
 endforeach()
+
+#
+# Define a specific target for basic viewer
+#
+if (NOT TARGET CGAL::CGAL_Basic_viewer)
+  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+endif()
 
 include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 

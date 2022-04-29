@@ -21,9 +21,10 @@
 
 #include <CGAL/Point_set_3/IO.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/demangle.h>
+#include <CGAL/assertions.h>
 
 #include <algorithm>
 #include <iterator>
@@ -165,7 +166,10 @@ public:
   public:
     typedef CGAL::Property_map_to_unary_function<Property_map<Type> > Unary_function;
     typedef boost::transform_iterator<Unary_function,
+                                      typename Point_set::iterator> iterator; // for NP helper
+    typedef boost::transform_iterator<Unary_function,
                                       typename Point_set::const_iterator> const_iterator;
+
   private:
     const_iterator m_begin;
     const_iterator m_end;
@@ -475,7 +479,7 @@ public:
   iterator insert (const Point& p, const Vector& n)
   {
     iterator out = insert (p);
-    assert (has_normal_map());
+    CGAL_assertion(has_normal_map());
     m_normals[size()-1] = n;
     return out;
   }
@@ -1294,36 +1298,68 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
   return ps;
 }
 
-
-
 /// \cond SKIP_IN_MANUAL
-namespace Point_set_processing_3
+// specialization for default named parameters
+template <typename Point, typename Vector, typename NamedParameters, typename NP_TAG>
+struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters, NP_TAG>
 {
-  template<typename Point, typename Vector>
-  class GetFT<CGAL::Point_set_3<Point, Vector> >
-  {
-  public:
-    typedef typename Kernel_traits<Point>::Kernel::FT type;
-  };
+  typedef typename std::iterator_traits<typename Point_set_3<Point, Vector>::iterator>::value_type Value_type;
 
-  namespace parameters
+  typedef typename Kernel_traits<Point>::Kernel Default_geom_traits;
+  typedef typename Point_set_3<Point, Vector>::template Property_map<Vector> DefaultNMap;
+  typedef typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultPMap;
+  typedef const typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultConstPMap;
+
+  typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+    NamedParameters,DefaultPMap> ::type  Point_map; // public
+  typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+    NamedParameters,DefaultConstPMap> ::type  Const_point_map; // public
+
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::geom_traits_t,
+      NamedParameters,
+      Default_geom_traits
+    > ::type  Geom_traits; // public
+
+  typedef typename Geom_traits::FT FT; // public
+
+  typedef typename internal_np::Lookup_named_param_def<
+    internal_np::normal_t,
+    NamedParameters,
+    DefaultNMap
+    > ::type  Normal_map; // public
+
+  static Point_map get_point_map(Point_set_3<Point, Vector>& ps, const NamedParameters& np)
   {
-    template <typename Point, typename Vector>
-    Named_function_parameters
-    <typename Kernel_traits<Point>::Kernel,
-     internal_np::geom_traits_t,
-     Named_function_parameters
-     <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
-      internal_np::normal_t,
-      Named_function_parameters
-      <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
-       internal_np::point_t> > >
-    inline all_default(const CGAL::Point_set_3<Point, Vector>& ps)
-    {
-      return ps.parameters();
-    }
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), ps.point_map());
   }
-}
+
+  static Const_point_map get_const_point_map(const Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), ps.point_map());
+  }
+
+  static const Normal_map get_normal_map(const Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), ps.normal_map());
+  }
+
+  static Normal_map get_normal_map(Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), ps.normal_map());
+  }
+
+  static Geom_traits get_geom_traits(const Point_set_3<Point, Vector>&, const NamedParameters& np)
+  {
+    return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
+  }
+
+  static constexpr bool has_normal_map()
+  {
+    return true;
+  }
+
+};
 /// \endcond
 
 } // namespace CGAL

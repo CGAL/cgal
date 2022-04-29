@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -40,11 +41,10 @@
 #include <boost/bimap/set_of.hpp>
 #include <boost/range.hpp>
 #include <boost/range/join.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <memory>
 #include <boost/container/flat_set.hpp>
 #include <boost/optional.hpp>
+#include <boost/property_map/function_property_map.hpp>
 
 #include <map>
 #include <list>
@@ -52,6 +52,8 @@
 #include <iterator>
 #include <fstream>
 #include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -66,13 +68,10 @@
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
 #define CGAL_PMP_REMESHING_VERBOSE
+#define CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE
 #endif
 
-
 namespace CGAL {
-
-namespace PMP = Polygon_mesh_processing;
-
 namespace Polygon_mesh_processing {
 namespace internal {
 
@@ -114,8 +113,7 @@ namespace internal {
       , pmesh_ptr_(&pmesh)
     {
       std::vector<halfedge_descriptor> border;
-      PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border)
-        , PMP::parameters::face_index_map(fimap));
+      border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border), parameters::face_index_map(fimap));
 
       for(halfedge_descriptor h : border)
         border_edges_ptr->insert(edge(h, *pmesh_ptr_));
@@ -193,22 +191,19 @@ namespace internal {
         if ( same_range(face_range, (faces(pmesh))) )
         {
           // applied on the whole mesh
-          nb_cc
-            = PMP::connected_components(pmesh,
-                                        patch_ids_map,
-                                        PMP::parameters::edge_is_constrained_map(ecmap)
-                                       .face_index_map(fimap));
+          nb_cc = connected_components(pmesh, patch_ids_map,
+                                       parameters::edge_is_constrained_map(ecmap)
+                                                  .face_index_map(fimap));
         }
         else
         {
           // applied on a subset of the mesh
-          nb_cc
-            = PMP::connected_components(pmesh,
-                                        patch_ids_map,
-                                        PMP::parameters::edge_is_constrained_map(
-                                          make_OR_property_map(ecmap
-                                          , internal::Border_constraint_pmap<PM, FIMap>(pmesh, face_range, fimap) ) )
-                                       .face_index_map(fimap));
+          nb_cc = connected_components(
+                    pmesh, patch_ids_map,
+                    parameters::edge_is_constrained_map(
+                                  make_OR_property_map(ecmap,
+                                                       internal::Border_constraint_pmap<PM, FIMap>(pmesh, face_range, fimap)))
+                               .face_index_map(fimap));
         }
       }
       else
@@ -812,9 +807,7 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
       debug_self_intersections();
-      CGAL_assertion(PMP::remove_degenerate_faces(mesh_,
-                            parameters::vertex_point_map(vpmap_)
-                           .geom_traits(gt_)));
+      CGAL_assertion(remove_degenerate_faces(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(gt_)));
 #endif
     }
 
@@ -850,18 +843,19 @@ namespace internal {
         if (!is_flip_allowed(e))
           continue;
         //add geometric test to avoid axe cuts
-        if (!PMP::internal::should_flip(e, mesh_, vpmap_, gt_))
+        if (!internal::should_flip(e, mesh_, vpmap_, gt_))
           continue;
 
         halfedge_descriptor he = halfedge(e, mesh_);
 
-        std::array<halfedge_descriptor, 2> r1 = PMP::internal::is_badly_shaped(
+        std::array<halfedge_descriptor, 2> r1 = internal::is_badly_shaped(
             face(he, mesh_),
             mesh_, vpmap_, vcmap_, ecmap_, gt_,
             cap_threshold, // bound on the angle: above 160 deg => cap
             4, // bound on shortest/longest edge above 4 => needle
             0);// collapse length threshold : not needed here
-        std::array<halfedge_descriptor, 2> r2 = PMP::internal::is_badly_shaped(
+
+        std::array<halfedge_descriptor, 2> r2 = internal::is_badly_shaped(
             face(opposite(he, mesh_), mesh_),
             mesh_, vpmap_, vcmap_, ecmap_, gt_, cap_threshold, 4, 0);
 
@@ -976,9 +970,7 @@ namespace internal {
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
-      CGAL_assertion(PMP::remove_degenerate_faces(mesh_,
-                             PMP::parameters::vertex_point_map(vpmap_)
-                            .geom_traits(gt_)));
+      CGAL_assertion(remove_degenerate_faces(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(gt_)));
       debug_self_intersections();
 #endif
 
@@ -991,109 +983,50 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
-    void tangential_relaxation(const bool relax_constraints/*1d smoothing*/
-                             , const unsigned int nb_iterations)
+    void tangential_relaxation_impl(const bool relax_constraints/*1d smoothing*/
+                                   , const unsigned int nb_iterations)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Tangential relaxation (" << nb_iterations << " iter.)...";
       std::cout << std::endl;
 #endif
-      for (unsigned int nit = 0; nit < nb_iterations; ++nit)
+
+      // property map of constrained edges for relaxation
+      auto edge_constraint = [&](const edge_descriptor e)
       {
-#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
-        std::cout << "\r\t(iteration " << (nit + 1) << " / ";
-        std::cout << nb_iterations << ") ";
-        std::cout.flush();
-#endif
-        typedef std::tuple<vertex_descriptor, Vector_3, Point> VNP;
-        std::vector< VNP > barycenters;
-        // at each vertex, compute vertex normal
-        // at each vertex, compute barycenter of neighbors
-        for(vertex_descriptor v : vertices(mesh_))
+        return this->is_constrained(e);
+      };
+      auto constrained_edges_pmap
+        = boost::make_function_property_map<edge_descriptor>(edge_constraint);
+
+      // property map of constrained vertices for relaxation
+      auto vertex_constraint = [&](const vertex_descriptor v)
+      {
+        for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
         {
-          if (is_constrained(v) || is_isolated(v))
-            continue;
-
-          else if (is_on_patch(v))
-          {
-            Vector_3 vn = PMP::compute_vertex_normal(v, mesh_,
-                                                     parameters::vertex_point_map(vpmap_)
-                                                                .geom_traits(gt_));
-            Vector_3 move = CGAL::NULL_VECTOR;
-            unsigned int star_size = 0;
-            for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
-            {
-              move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
-              ++star_size;
-            }
-            CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
-            move = (1. / (double)star_size) * move;
-
-            barycenters.push_back( VNP(v, vn, get(vpmap_, v) + move) );
-          }
-          else if (relax_constraints
-                && !protect_constraints_
-                && is_on_patch_border(v)
-                && !is_corner(v))
-          {
-            Vector_3 vn(NULL_VECTOR);
-
-            std::vector<halfedge_descriptor> border_halfedges;
-            for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
-            {
-              if (is_on_patch_border(h) || is_on_patch_border(opposite(h, mesh_)))
-                border_halfedges.push_back(h);
-            }
-            if (border_halfedges.size() == 2)//others are corner cases
-            {
-              vertex_descriptor ph0 = source(border_halfedges[0], mesh_);
-              vertex_descriptor ph1 = source(border_halfedges[1], mesh_);
-              double dot = to_double(Vector_3(get(vpmap_, v), get(vpmap_, ph0))
-                                     * Vector_3(get(vpmap_, v), get(vpmap_, ph1)));
-              //check squared cosine is < 0.25 (~120 degrees)
-              if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
-                barycenters.push_back( VNP(v, vn, CGAL::midpoint(midpoint(border_halfedges[0]),
-                                                                 midpoint(border_halfedges[1]))) );
-            }
-          }
+          Halfedge_status s = status(h);
+          if ( s == PATCH
+            || s == PATCH_BORDER
+            || status(opposite(h, mesh_)) == PATCH_BORDER)
+            return false;
         }
+        return true;
+      };
+      auto constrained_vertices_pmap
+        = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-        // compute moves
-        typedef std::pair<vertex_descriptor, Point> VP_pair;
-        std::vector< std::pair<vertex_descriptor, Point> > new_locations;
-        new_locations.reserve(barycenters.size());
-        for(const VNP& vnp : barycenters)
-        {
-          vertex_descriptor v = std::get<0>(vnp);
-          Point pv = get(vpmap_, v);
-          const Vector_3& nv = std::get<1>(vnp);
-          const Point& qv = std::get<2>(vnp); //barycenter at v
+      tangential_relaxation(
+        vertices(mesh_),
+        mesh_,
+        CGAL::parameters::number_of_iterations(nb_iterations)
+                         .vertex_point_map(vpmap_)
+                         .geom_traits(gt_)
+                         .edge_is_constrained_map(constrained_edges_pmap)
+                         .vertex_is_constrained_map(constrained_vertices_pmap)
+                         .relax_constraints(relax_constraints)
+      );
 
-          new_locations.push_back( std::make_pair(v, qv + (nv * Vector_3(qv, pv)) * nv) );
-        }
-
-        // perform moves
-        for(const VP_pair& vp : new_locations)
-        {
-          const Point initial_pos = get(vpmap_, vp.first);
-          const Vector_3 move(initial_pos, vp.second);
-
-          put(vpmap_, vp.first, vp.second);
-
-          //check that no inversion happened
-          double frac = 1.;
-          while (frac > 0.03 //5 attempts maximum
-             && !check_normals(vp.first)) //if a face has been inverted
-          {
-            frac = 0.5 * frac;
-            put(vpmap_, vp.first, initial_pos + frac * move);//shorten the move by 2
-          }
-          if (frac <= 0.02)
-            put(vpmap_, vp.first, initial_pos);//cancel move
-        }
-
-        CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
-      }//end for loop (nit == nb_iterations)
+      CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
@@ -1547,8 +1480,7 @@ private:
       if (f == boost::graph_traits<PM>::null_face())
         return CGAL::NULL_VECTOR;
 
-      return PMP::compute_face_normal(f, mesh_, parameters::vertex_point_map(vpmap_)
-                                                           .geom_traits(gt_));
+      return compute_face_normal(f, mesh_, parameters::vertex_point_map(vpmap_).geom_traits(gt_));
     }
 
     template<typename FaceRange>
@@ -1698,7 +1630,7 @@ private:
     {
       CGAL_assertion_code(std::size_t nb_done = 0);
 
-      boost::unordered_set<halfedge_descriptor> degenerate_faces;
+      std::unordered_set<halfedge_descriptor> degenerate_faces;
       for(halfedge_descriptor h :
           halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
@@ -1959,10 +1891,8 @@ private:
     {
       std::cout << "Test self intersections...";
       std::vector<std::pair<face_descriptor, face_descriptor> > facets;
-      PMP::self_intersections(mesh_,
-                              std::back_inserter(facets),
-                              PMP::parameters::vertex_point_map(vpmap_)
-                                              .geom_traits(gt_));
+      self_intersections(mesh_, std::back_inserter(facets),
+                         parameters::vertex_point_map(vpmap_).geom_traits(gt_));
       //CGAL_assertion(facets.empty());
       std::cout << "done ("<< facets.size() <<" facets)." << std::endl;
     }
@@ -1971,11 +1901,8 @@ private:
     {
       std::cout << "Test self intersections...";
       std::vector<std::pair<face_descriptor, face_descriptor> > facets;
-      PMP::self_intersections(faces_around_target(halfedge(v, mesh_), mesh_),
-                              mesh_,
-                              std::back_inserter(facets),
-                              PMP::parameters::vertex_point_map(vpmap_)
-                                              .geom_traits(gt_));
+      self_intersections(faces_around_target(halfedge(v, mesh_), mesh_), mesh_, std::back_inserter(facets),
+                         parameters::vertex_point_map(vpmap_).geom_traits(gt_));
       //CGAL_assertion(facets.empty());
       std::cout << "done ("<< facets.size() <<" facets)." << std::endl;
     }

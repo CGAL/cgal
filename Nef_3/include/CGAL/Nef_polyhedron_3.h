@@ -117,7 +117,7 @@ class Nef_polyhedron_3_rep
   SNC_point_locator* pl_;
 
  public:
-  Nef_polyhedron_3_rep() : snc_(), pl_() {}
+  Nef_polyhedron_3_rep() : snc_(), pl_(nullptr) {}
   ~Nef_polyhedron_3_rep() {
     CGAL_NEF_TRACEN( "Nef_polyhedron_3_rep: destroying SNC structure "<<&snc_<<
             ", point locator "<<pl_);
@@ -355,6 +355,16 @@ protected:
     delegate(mbv, /*compute_external*/ false, /*simplify*/ false);
   }
 
+  void reserve_for_vertices(Size_type n) {
+    snc().reserve_sm_boundary_items(n);
+  }
+
+  struct Private_tag {};
+  Nef_polyhedron_3(Private_tag) {
+    pl() = new SNC_point_locator_default;
+    set_snc(snc());
+  }
+
  public:
   /*{\Mcreation 3}*/
 
@@ -529,14 +539,14 @@ protected:
  };
 
  template <typename InputIterator>
- Nef_polyhedron_3(InputIterator begin, InputIterator end, Polylines_tag) {
+ Nef_polyhedron_3(InputIterator begin, InputIterator end, Polylines_tag)
+  : Nef_polyhedron_3(Private_tag{})
+ {
    typedef typename std::iterator_traits<InputIterator>::value_type
      point_iterator_pair;
    typedef typename point_iterator_pair::first_type
      point_iterator;
 
-   empty_rep();
-   set_snc(snc());
    initialize_infibox_vertices(EMPTY);
 
    point_iterator pbegin, pend, pnext, pprev;
@@ -556,9 +566,9 @@ protected:
  }
 
  explicit
- Nef_polyhedron_3(const Segment_3& s) {
-   empty_rep();
-   set_snc(snc());
+ Nef_polyhedron_3(const Segment_3& s)
+  : Nef_polyhedron_3(Private_tag{})
+ {
    initialize_infibox_vertices(EMPTY);
 
    Sphere_map_creator<Items, SNC_structure> smc;
@@ -573,9 +583,9 @@ protected:
  }
 
  template <typename InputIterator>
- Nef_polyhedron_3(InputIterator begin, InputIterator end, Points_tag) {
-   empty_rep();
-   set_snc(snc());
+ Nef_polyhedron_3(InputIterator begin, InputIterator end, Points_tag)
+   : Nef_polyhedron_3(Private_tag{})
+ {
    initialize_infibox_vertices(EMPTY);
 
    for(InputIterator it=begin; it!=end;++it)
@@ -589,9 +599,9 @@ protected:
  }
 
  explicit
- Nef_polyhedron_3(const Point_3& p) {
-   empty_rep();
-   set_snc(snc());
+ Nef_polyhedron_3(const Point_3& p)
+   : Nef_polyhedron_3(Private_tag{})
+ {
    initialize_infibox_vertices(EMPTY);
 
    Vertex_handle v(snc().new_vertex(p, true));
@@ -605,30 +615,30 @@ protected:
  template <class T1, class T2,
            template <class T31, class T32, class T33>
            class T3, class T4 >
- Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P) {
+ Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P)
+   : Nef_polyhedron_3(Private_tag{})
+ {
     CGAL_NEF_TRACEN("construction from Polyhedron_3");
-    SNC_structure rsnc;
-    *this = Nef_polyhedron_3(rsnc, new SNC_point_locator_default, false);
+    reserve_for_vertices(P.size_of_vertices());
     initialize_infibox_vertices(EMPTY);
     polyhedron_3_to_nef_3
       <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
     build_external_structure();
     mark_bounded_volumes();
     simplify();
-    set_snc(snc());
   }
 
  template <class PolygonMesh>
- explicit Nef_polyhedron_3(const PolygonMesh& pm) {
+ explicit Nef_polyhedron_3(const PolygonMesh& pm)
+   : Nef_polyhedron_3(Private_tag{})
+ {
     CGAL_NEF_TRACEN("construction from PolygonMesh with internal index maps");
-    SNC_structure rsnc;
-    *this = Nef_polyhedron_3(rsnc, new SNC_point_locator_default, false);
+    reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
     polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
     build_external_structure();
     mark_bounded_volumes();
     simplify();
-    set_snc(snc());
   }
 
  template <class PolygonMesh, class HalfedgeIndexMap, class FaceIndexMap>
@@ -638,30 +648,26 @@ protected:
                            typename boost::disable_if <
                               boost::is_same<FaceIndexMap, bool>
                            >::type* = nullptr // disambiguate with another constructor
-  )
+  ) : Nef_polyhedron_3(Private_tag{})
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");
-    SNC_structure rsnc;
-    *this = Nef_polyhedron_3(rsnc, new SNC_point_locator_default, false);
+    reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
     polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
     build_external_structure();
     mark_bounded_volumes();
     simplify();
-    set_snc(snc());
   }
 
  Nef_polyhedron_3(const Nef_polyhedron& N,
                   SFace_const_iterator sf)
+   : Nef_polyhedron_3(Private_tag{})
  {
-   SNC_structure rsnc;
-   *this = Nef_polyhedron_3(rsnc, new SNC_point_locator_default, false);
    initialize_infibox_vertices(EMPTY);
    shell_to_nef_3(N, sf, snc());
    build_external_structure();
    mark_bounded_volumes();
    simplify();
-   set_snc(snc());
  }
 
 
@@ -1421,8 +1427,7 @@ protected:
     if (is_space()) return N1;
     if (N1.is_space()) return *this;
     AND _and;
-    SNC_structure rsnc;
-    Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items, Mark> res(Private_tag{});
     Binary_operation bo( res.snc());
     bo(res.pl(), snc(), pl(), N1.snc(), N1.pl(), _and);
     return res;
@@ -1432,8 +1437,7 @@ protected:
    intersection(const Plane_3& plane,
                 Intersection_mode im) const {
     AND _and;
-    SNC_structure rsnc;
-    Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items, Mark> res(Private_tag{});
     Combine_with_halfspace cwh(res.snc(), res.pl());
     cwh.combine_with_halfspace(snc(), plane, _and,
                                                            static_cast<typename Combine_with_halfspace::Intersection_mode>(im));
@@ -1450,8 +1454,7 @@ protected:
     if (N1.is_space()) return N1;
     OR _or;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, OR> tests_impl;
-    SNC_structure rsnc;
-    Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items, Mark> res(Private_tag{});
     Binary_operation bo(res.snc());
     bo(res.pl(), snc(), pl(), N1.snc(), N1.pl(), _or);
     return res;
@@ -1467,8 +1470,7 @@ protected:
     if (N1.is_space()) return Nef_polyhedron_3(EMPTY);
     DIFF _diff;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, DIFF> tests_impl;
-    SNC_structure rsnc;
-    Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items, Mark> res(Private_tag{});
     Binary_operation bo(res.snc());
     bo(res.pl(), snc(), pl(), N1.snc(), N1.pl(), _diff);
     return res;
@@ -1485,8 +1487,7 @@ protected:
     if (N1.is_space()) return Nef_polyhedron_3(EMPTY);
     XOR _xor;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, XOR> tests_impl;
-    SNC_structure rsnc;
-    Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items, Mark> res(Private_tag{});
     Binary_operation bo(res.snc());
     bo(res.pl(), snc(), pl(), N1.snc(), N1.pl(), _xor);
     return res;
@@ -1556,7 +1557,7 @@ protected:
   { return !N1.difference(*this).is_empty() && difference(N1).is_empty(); }
 
   bool operator>(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { return difference(*this).is_empty() && !difference(N1).is_empty(); }
+  { return N1.difference(*this).is_empty() && !difference(N1).is_empty(); }
 
   bool operator<=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   { return difference(N1).is_empty(); }
@@ -2003,10 +2004,10 @@ protected:
 
 template <typename Kernel, typename Items, typename Mark>
 Nef_polyhedron_3<Kernel,Items, Mark>::
-Nef_polyhedron_3( Content space) {
+Nef_polyhedron_3( Content space)
+  : Nef_polyhedron_3(Private_tag{})
+{
   CGAL_NEF_TRACEN("construction from empty or space.");
-  empty_rep();
-  set_snc(snc());
   if(Infi_box::extended_kernel()) {
     initialize_infibox_vertices(space);
     build_external_structure();
@@ -2018,10 +2019,10 @@ Nef_polyhedron_3( Content space) {
 
 template <typename Kernel, typename Items, typename Mark>
 Nef_polyhedron_3<Kernel,Items, Mark>::
-Nef_polyhedron_3(const Plane_3& h, Boundary b) {
+Nef_polyhedron_3(const Plane_3& h, Boundary b)
+  : Nef_polyhedron_3(Private_tag{})
+{
   CGAL_NEF_TRACEN("construction from plane "<<h);
-  empty_rep();
-  set_snc(snc());
   SNC_constructor C(snc());
   Infi_box::create_vertices_of_box_with_plane(C,h,(b==INCLUDED));
   build_external_structure();

@@ -499,112 +499,111 @@ private:
 
     if(Infi_box::standard_kernel()) {
       Nef_polyhedron N = load_nef3("star.nef3.SH");
-      SNC_intersection is(*N.sncp());
 
       Point_3 p;
 
-      assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+      assert(!SNC_intersection::does_contain_internally(
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(0,0,0)));
-      assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+      assert(!SNC_intersection::does_contain_internally(
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(2,0,0)));
-      assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+      assert(!SNC_intersection::does_contain_internally(
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(3,0,0)));
-      assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+      assert(!SNC_intersection::does_contain_internally(
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(-1,0,0)));
-      assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+      assert(!SNC_intersection::does_contain_internally(
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(1,1,0)));
-      assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+      assert(!SNC_intersection::does_contain_internally(
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(7,25,11)));
-      assert(is.does_contain_internally(
-                           Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+      assert(SNC_intersection::does_contain_internally(
+                           Point_3(0,0,0), Point_3(2,0,0),
                            Point_3(1,0,0)));
 
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(0,0,0), Point_3(-1,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(1,0,0), Point_3(0,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,1)),
                                   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(0,2,0), Point_3(0,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(0,3,0), Point_3(0,1,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(0,4,0), Point_3(0,2,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(1,5,0), Point_3(1,7,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(1,7,0), Point_3(1,5,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
                                   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
                                   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
                                   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
                                   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
                                   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      assert(!is.does_intersect_internally(
+      assert(!SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
                                   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      assert(is.does_intersect_internally(
+      assert(SNC_intersection::does_intersect_internally(
                            Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
                                   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
       assert(p == Point_3(0,0,0));
 
       Halffacet_const_iterator hf;
 
-      assert(!is.does_contain_internally(
+      assert(!SNC_intersection::does_contain_internally(
                             N.halffacets_begin(), Point_3(0,0,0)));
       CGAL_forall_halffacets(hf, N)
-        assert(!is.does_intersect_internally(
+        assert(!SNC_intersection::does_intersect_internally(
                             Segment_3(Point_3(-31,15,0),Point_3(-31,15,1)),hf,p));
       CGAL_forall_halffacets(hf, N)
-        assert(!is.does_intersect_internally(
+        assert(!SNC_intersection::does_intersect_internally(
                             Segment_3(Point_3(-31,15,-1),Point_3(-31,15,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
-        assert(!is.does_intersect_internally(
+        assert(!SNC_intersection::does_intersect_internally(
                             Segment_3(Point_3(-31,15,0),Point_3(-30,15,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
-        assert(!is.does_intersect_internally(
+        assert(!SNC_intersection::does_intersect_internally(
                             Segment_3(Point_3(-32,15,-1),Point_3(-32,15,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
-        assert(!is.does_intersect_internally(
+        assert(!SNC_intersection::does_intersect_internally(
                             Segment_3(Point_3(-16,8,-1),Point_3(-16,8,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
-        assert(!is.does_intersect_internally(
+        assert(!SNC_intersection::does_intersect_internally(
                             Segment_3(Point_3(0,0,-1),Point_3(0,0,1)),hf,p));
 
       int i=0;
       CGAL_forall_halffacets(hf, N) {
         bool b = (i == 13 || i == 15);
-        assert( b == is.does_intersect_internally(
+        assert( b == SNC_intersection::does_intersect_internally(
                                   Segment_3(Point_3(-31,15,-1),Point_3(-31,15,1)),
                                   hf, p));
         if(b) assert(p == Point_3(-31,15,0));
@@ -614,7 +613,7 @@ private:
       i=0;
       CGAL_forall_halffacets(hf, N) {
         bool b = (i == 14 || i == 16);
-        assert( b == is.does_intersect_internally(
+        assert( b == SNC_intersection::does_intersect_internally(
                                    Segment_3(Point_3(-15,7,-1), Point_3(-15,7,1)),
                                    hf, p));
         if(b) assert(p == Point_3(-15,7,0));

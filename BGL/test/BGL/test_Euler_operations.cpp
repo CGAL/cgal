@@ -14,7 +14,7 @@ test_copy_face_graph_nm_umbrella()
   CGAL_GRAPH_TRAITS_MEMBERS(T);
 
   T g;
-  Kernel::Point_3 p;
+  Kernel::Point_3 p(0,0,0);
 
   CGAL::make_tetrahedron(p, p, p, p, g);
   CGAL::make_tetrahedron(p, p, p, p, g);
@@ -39,8 +39,7 @@ template <typename T>
 void
 test_copy_face_graph_isolated_vertices()
 {
-  typedef Kernel::Point_3 Point_3;
-
+  Kernel::Point_3 p(0,0,0);
   {
     T s, t;
     add_vertex(s);
@@ -55,7 +54,7 @@ test_copy_face_graph_isolated_vertices()
 
   {
     T s, t;
-    CGAL::make_triangle(Point_3(), Point_3(), Point_3(), s);
+    CGAL::make_triangle(p, p, p, s);
     add_vertex(s);
     t=s;
     CGAL::copy_face_graph(s, t);
@@ -63,7 +62,7 @@ test_copy_face_graph_isolated_vertices()
 
   {
     T s, t;
-    CGAL::make_triangle(Point_3(), Point_3(), Point_3(), s);
+    CGAL::make_triangle(p, p, p, s);
     add_vertex(s);
     add_vertex(t);
     CGAL::copy_face_graph(s, t);
@@ -71,7 +70,7 @@ test_copy_face_graph_isolated_vertices()
 
   {
     T s, t;
-    CGAL::make_tetrahedron(Point_3(), Point_3(), Point_3(), Point_3(), s);
+    CGAL::make_tetrahedron(p, p, p, p, s);
     add_vertex(s);
     t=s;
     CGAL::copy_face_graph(s, t);
@@ -79,7 +78,7 @@ test_copy_face_graph_isolated_vertices()
 
   {
     T s, t;
-    CGAL::make_tetrahedron(Point_3(), Point_3(), Point_3(), Point_3(), s);
+    CGAL::make_tetrahedron(p, p, p, p, s);
     add_vertex(s);
     add_vertex(t);
     CGAL::copy_face_graph(s, t);
@@ -480,7 +479,7 @@ test_swap_edges()
       halfedge_descriptor h1 = *std::next(boost::begin(halfedges(g)), i);
       halfedge_descriptor h2 = *std::next(boost::begin(halfedges(g)), j);
       CGAL::internal::swap_edges(h1, h2, g);
-      CGAL_assertion(CGAL::is_valid_polygon_mesh(g));
+      assert(CGAL::is_valid_polygon_mesh(g));
     }
   }
 }

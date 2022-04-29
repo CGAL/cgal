@@ -72,7 +72,7 @@ public:
     typedef Triangulation_data_structure::Vertex_circulator Vertex_circulator;
   /// @}
 
-  /// \name
+  /// \name Enums
   /// The enumeration `Locate_type` is defined to specify which case occurs when locating a
   /// point in the triangulation.
   /// @{

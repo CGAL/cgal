@@ -1,13 +1,11 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Polygon_mesh_processing_Tests)
 
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS Core)
-
-include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package(Boost REQUIRED)
@@ -109,6 +107,7 @@ create_single_source_cgal_program("test_remove_caps_needles.cpp")
 create_single_source_cgal_program("test_simplify_polylines_pmp.cpp")
 create_single_source_cgal_program("triangulate_hole_with_cdt_2_test.cpp")
 create_single_source_cgal_program("test_pmp_polyhedral_envelope.cpp")
+create_single_source_cgal_program("test_pmp_np_function.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 find_package(METIS)

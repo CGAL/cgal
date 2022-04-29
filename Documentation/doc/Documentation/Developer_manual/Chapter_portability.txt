@@ -296,9 +296,9 @@ up-to-date version of this list.
 
 <DT><B><TT>CGAL_CFG_NO_TMPL_IN_TMPL_PARAM</TT></B><DD>
 
-    Nested templates in template parameter, such as `template <
-    template <class T> class A>` are not supported by any compiler.
-    This flag is set if they are not supported.
+  Nested templates in template parameter, such as `template <
+  template <class T> class A>` are not supported by any compiler.
+  This flag is set if they are not supported.
 </DL>
 
 \subsection secworkaround_macros Macros connected to workarounds/compilers

@@ -102,6 +102,7 @@ The function `Surface_mesh_deformation::preprocess()` returns `true` if the fact
 Rank deficiency is the main reason for failure. Typical failure cases are:
   - All the vertices are in the ROI and no control vertices are set
   - The weighting scheme used to fill the sparse matrix (model of `SurfaceMeshDeformationWeights`) features too many zeros and breaks the connectivity information
+.
 
 \cgalAdvancedBegin
 The choice of the weighting scheme provides a mean to adjust the way the control vertices

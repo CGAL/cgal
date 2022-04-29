@@ -8,14 +8,16 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
+#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include "Scene.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"
 
 #include "ui_Smoothing_plugin.h"
+#include "ui_Smoothing_tangential_relaxation.h"
 
 #include <QElapsedTimer>
 #include <QAction>
@@ -69,11 +71,15 @@ public:
 
     connect(ui_widget.mesh_smoothing_button,  SIGNAL(clicked()), this, SLOT(on_mesh_smoothing_clicked()));
     connect(ui_widget.shape_smoothing_button,  SIGNAL(clicked()), this, SLOT(on_shape_smoothing_clicked()));
+
+    actionRelax_ = new QAction(tr("Tangential Relaxation"), mw);
+    actionRelax_->setProperty("subMenuName", "Polygon Mesh Processing");
+    connect(actionRelax_, SIGNAL(triggered()), this, SLOT(tangential_relaxation_action()));
   }
 
   QList<QAction*> actions() const
   {
-    return QList<QAction*>() << actionSmoothing_;
+    return QList<QAction*>() << actionSmoothing_ << actionRelax_;
   }
 
   bool applicable(QAction*) const
@@ -127,6 +133,23 @@ public:
     }
   }
 
+  Ui::Tangential_relaxation_dialog
+  relaxation_dialog(QDialog* dialog)
+  {
+    Ui::Tangential_relaxation_dialog ui;
+    ui.setupUi(dialog);
+    connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
+    connect(ui.buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
+
+    ui.nbIterations_spinbox->setSingleStep(1);
+    ui.nbIterations_spinbox->setRange(1/*min*/, 1000/*max*/);
+    ui.nbIterations_spinbox->setValue(1);
+
+    ui.smooth1D_checkbox->setChecked(true);
+
+    return ui;
+  }
+
 public Q_SLOTS:
   void smoothing_action()
   {
@@ -143,6 +166,85 @@ public Q_SLOTS:
     {
       init_ui();
     }
+  }
+
+  void tangential_relaxation_action()
+  {
+    const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+    Scene_facegraph_item* poly_item =
+      qobject_cast<Scene_facegraph_item*>(scene->item(index));
+    Scene_polyhedron_selection_item* selection_item =
+      qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+    if (poly_item || selection_item)
+    {
+      if (selection_item && selection_item->selected_facets.empty())
+      {
+        QMessageBox::warning(mw, "Empty Facets", "There are no selected facets. Aborting.");
+        return;
+      }
+      // Create dialog box
+      QDialog dialog(mw);
+      Ui::Tangential_relaxation_dialog ui = relaxation_dialog(&dialog);
+
+      // Get values
+      int i = dialog.exec();
+      if (i == QDialog::Rejected)
+      {
+        std::cout << "Tangential relaxation aborted" << std::endl;
+        return;
+      }
+
+      unsigned int nb_iter = ui.nbIterations_spinbox->value();
+      bool smooth_features = ui.smooth1D_checkbox->isChecked();
+
+      // wait cursor
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      QElapsedTimer time;
+      time.start();
+
+      FaceGraph& pmesh = (poly_item != nullptr)
+        ? *poly_item->polyhedron()
+        : *selection_item->polyhedron();
+
+      if (selection_item)
+      {
+        boost::unordered_set<vertex_descriptor> vset;
+        for (face_descriptor f : selection_item->selected_facets)
+        {
+          for(vertex_descriptor fv : CGAL::vertices_around_face(halfedge(f, pmesh), pmesh))
+            vset.insert(fv);
+        }
+
+        CGAL::Polygon_mesh_processing::tangential_relaxation(
+          vset,
+          pmesh,
+          CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+          .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+          .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+          .relax_constraints(smooth_features));
+        selection_item->polyhedron_item()->invalidateOpenGLBuffers();
+        Q_EMIT selection_item->polyhedron_item()->itemChanged();
+        selection_item->invalidateOpenGLBuffers();
+        selection_item->setKeepSelectionValid(Scene_polyhedron_selection_item::None);
+      }
+      else if (poly_item)
+      {
+        CGAL::Polygon_mesh_processing::tangential_relaxation(
+          vertices(pmesh),
+          pmesh,
+          CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+
+        poly_item->invalidateOpenGLBuffers();
+        Q_EMIT poly_item->itemChanged();
+      }
+
+      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+    }
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
   }
 
   void on_mesh_smoothing_clicked()
@@ -175,7 +277,7 @@ public Q_SLOTS:
 
     if(poly_item)
     {
-      smooth_mesh(pmesh, parameters::do_project(projection)
+      angle_and_area_smoothing(pmesh, parameters::do_project(projection)
                                     .number_of_iterations(nb_iter)
                                     .vertex_is_constrained_map(vcmap)
                                     .use_safety_constraints(use_safety_measures)
@@ -193,7 +295,7 @@ public Q_SLOTS:
       // No faces selected --> use all faces
       if(std::begin(selection_item->selected_facets) == std::end(selection_item->selected_facets))
       {
-        smooth_mesh(pmesh, parameters::do_project(projection)
+        angle_and_area_smoothing(pmesh, parameters::do_project(projection)
                                       .number_of_iterations(nb_iter)
                                       .vertex_is_constrained_map(vcmap)
                                       .edge_is_constrained_map(selection_item->constrained_edges_pmap())
@@ -204,7 +306,7 @@ public Q_SLOTS:
       }
       else // some faces exist in the selection
       {
-        smooth_mesh(selection_item->selected_facets, pmesh, parameters::do_project(projection)
+        angle_and_area_smoothing(selection_item->selected_facets, pmesh, parameters::do_project(projection)
                                                                        .number_of_iterations(nb_iter)
                                                                        .vertex_is_constrained_map(vcmap)
                                                                        .edge_is_constrained_map(selection_item->constrained_edges_pmap())
@@ -284,6 +386,7 @@ public Q_SLOTS:
 
 private:
   QAction* actionSmoothing_;
+  QAction* actionRelax_;
   QDockWidget* dock_widget;
   Ui::Smoothing ui_widget;
 };

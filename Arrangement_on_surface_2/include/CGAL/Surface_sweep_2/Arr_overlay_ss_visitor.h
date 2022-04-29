@@ -24,8 +24,9 @@
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/variant/apply_visitor.hpp>
+
+#include <unordered_map>
 
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_ss_visitor.h>
@@ -114,7 +115,7 @@ protected:
                                                         Halfedge_map;
 
   typedef std::pair<Cell_handle_red, Cell_handle_blue>  Handle_info;
-  typedef boost::unordered_map<Vertex_handle, Handle_info, Handle_hash_function>
+  typedef std::unordered_map<Vertex_handle, Handle_info, Handle_hash_function>
                                                         Vertex_map;
 
   // Side categoties:

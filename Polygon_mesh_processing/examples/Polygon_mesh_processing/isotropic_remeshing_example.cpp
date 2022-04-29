@@ -6,9 +6,9 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 
-#include <fstream>
-#include <vector>
+#include <iostream>
 #include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   PMP::isotropic_remeshing(faces(mesh), target_edge_length, mesh,
-                           PMP::parameters::number_of_iterations(nb_iter)
-                           .protect_constraints(true)); //i.e. protect border, here
+                           CGAL::parameters::number_of_iterations(nb_iter)
+                                            .protect_constraints(true)); //i.e. protect border, here
 
   std::cout << "Remeshing done." << std::endl;
 

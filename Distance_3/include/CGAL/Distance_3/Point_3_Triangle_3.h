@@ -93,30 +93,75 @@ squared_distance_to_triangle_RT(const typename K::Point_3& pt,
     return;
   }
 
-  const bool b01 = on_left_of_triangle_edge(pt, normal, t0, t1, k);
-  if(!b01)
+  if(!on_left_of_triangle_edge(pt, normal, t0, t1, k))
   {
-    squared_distance_RT(pt, segment(t0, t1), num, den, k);
-    return;
-  }
+    if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
+    {
+      // can't be to the right of all three segments
+      squared_distance_RT(pt, segment(t0, t1), num, den, k);
 
-  const bool b12 = on_left_of_triangle_edge(pt, normal, t1, t2, k);
-  if(!b12)
+      typename K::RT num2, den2;
+      squared_distance_RT(pt, segment(t1, t2), num2, den2, k);
+      if(compare_quotients(num2,den2, num,den) == SMALLER)
+      {
+        num = num2;
+        den = den2;
+      }
+    }
+    else // on_left_of_triangle_edge(pt, normal, t1, t2, k)
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        squared_distance_RT(pt, segment(t0, t1), num, den, k);
+
+        typename K::RT num2, den2;
+        squared_distance_RT(pt, segment(t2, t0), num2, den2, k);
+        if(compare_quotients(num2,den2, num,den) == SMALLER)
+        {
+          num = num2;
+          den = den2;
+        }
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        return squared_distance_RT(pt, segment(t0, t1), num, den, k);
+      }
+    }
+  }
+  else // on_left_of_triangle_edge(pt, normal, t0, t1, k)
   {
-    squared_distance_RT(pt, segment(t1, t2), num, den, k);
-    return;
-  }
+    if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        squared_distance_RT(pt, segment(t1, t2), num, den, k);
 
-  const bool b20 = on_left_of_triangle_edge(pt, normal, t2, t0, k);
-  if(!b20)
-  {
-    squared_distance_RT(pt, segment(t2, t0), num, den, k);
-    return;
+        typename K::RT num2, den2;
+        squared_distance_RT(pt, segment(t2, t0), num2, den2, k);
+        if(compare_quotients(num2,den2, num,den) == SMALLER)
+        {
+          num = num2;
+          den = den2;
+        }
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        return squared_distance_RT(pt, segment(t1, t2), num, den, k);
+      }
+    }
+    else // on_left_of_triangle_edge(pt, normal, t1, t2, k)
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        return squared_distance_RT(pt, segment(t2, t0), num, den, k);
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        inside = true;
+        return squared_distance_to_plane_RT(normal, vector(t0, pt), num, den, k);
+      }
+    }
   }
-
-  // The projection of pt is inside the triangle
-  inside = true;
-  squared_distance_to_plane_RT(normal, vector(t0, pt), num, den, k);
 }
 
 template <class K>
@@ -174,21 +219,51 @@ squared_distance_to_triangle(const typename K::Point_3& pt,
     return (std::min)((std::min)(d1, d2), d3);
   }
 
-  const bool b01 = on_left_of_triangle_edge(pt, normal, t0, t1, k);
-  if(!b01)
-    return sq_dist(pt, segment(t0, t1));
-
-  const bool b12 = on_left_of_triangle_edge(pt, normal, t1, t2, k);
-  if(!b12)
-    return sq_dist(pt, segment(t1, t2));
-
-  const bool b20 = on_left_of_triangle_edge(pt, normal, t2, t0, k);
-  if(!b20)
-    return sq_dist(pt, segment(t2, t0));
-
-  // The projection of pt is inside the triangle
-  inside = true;
-  return squared_distance_to_plane(normal, vector(t0, pt), k);
+  if(!on_left_of_triangle_edge(pt, normal, t0, t1, k))
+  {
+    if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
+    {
+      // can't be to the right of all three segments
+      return (std::min)(sq_dist(pt, segment(t0, t1)), sq_dist(pt, segment(t1, t2)));
+    }
+    else // on_left_of_triangle_edge(pt, normal, t1, t2, k)
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        return (std::min)(sq_dist(pt, segment(t0, t1)), sq_dist(pt, segment(t2, t0)));
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        return sq_dist(pt, segment(t0, t1));
+      }
+    }
+  }
+  else // on_left_of_triangle_edge(pt, normal, t0, t1, k)
+  {
+    if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        return (std::min)(sq_dist(pt, segment(t1, t2)), sq_dist(pt, segment(t2, t0)));
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        return sq_dist(pt, segment(t1, t2));
+      }
+    }
+    else // on_left_of_triangle_edge(pt, normal, t1, t2, k)
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        return sq_dist(pt, segment(t2, t0));
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        inside = true;
+        return squared_distance_to_plane(normal, vector(t0, pt), k);
+      }
+    }
+  }
 }
 
 template <class K>

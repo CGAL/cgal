@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Polygon_mesh_processing_Examples)
 
 # CGAL and its components
@@ -54,6 +54,7 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Eigen3_support)
 endif()
 
+create_single_source_cgal_program( "extrude.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope_of_triangle_soup.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope_mesh_containment.cpp" )
@@ -73,6 +74,7 @@ create_single_source_cgal_program( "mesh_slicer_example.cpp")
 create_single_source_cgal_program("isotropic_remeshing_example.cpp")
 create_single_source_cgal_program("isotropic_remeshing_of_patch_example.cpp")
 create_single_source_cgal_program("delaunay_remeshing_example.cpp")
+create_single_source_cgal_program("tangential_relaxation_example.cpp")
 create_single_source_cgal_program("surface_mesh_intersection.cpp")
 create_single_source_cgal_program("corefinement_SM.cpp")
 create_single_source_cgal_program("corefinement_consecutive_bool_op.cpp")
@@ -93,6 +95,7 @@ create_single_source_cgal_program("orientation_pipeline_example.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
 create_single_source_cgal_program("match_faces.cpp")
+create_single_source_cgal_program("cc_compatible_orientations.cpp")
 
 if(OpenMesh_FOUND)
 
