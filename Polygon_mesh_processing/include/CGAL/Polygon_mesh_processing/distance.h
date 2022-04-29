@@ -144,12 +144,13 @@ struct Distance_computation
 #endif
 
 template <class Concurrency_tag,
-          class Kernel,
           class PointRange,
-          class AABBTree>
-double approximate_Hausdorff_distance_impl(const PointRange& sample_points,
-                                           const AABBTree& tree,
-                                           typename Kernel::Point_3 hint)
+          class AABBTree,
+          class Kernel>
+double max_distance_to_mesh_impl(const PointRange& sample_points,
+                                 const AABBTree& tree,
+                                 typename Kernel::Point_3 hint, // intentional copy
+                                 const Kernel& k)
 {
   using FT = typename Kernel::FT;
 
@@ -167,7 +168,7 @@ double approximate_Hausdorff_distance_impl(const PointRange& sample_points,
 #endif
   {
     FT sq_hdist = 0;
-    typename Kernel::Compute_squared_distance_3 squared_distance;
+    typename Kernel::Compute_squared_distance_3 squared_distance = k.compute_squared_distance_3_object();
 
     for(const typename Kernel::Point_3& pt : sample_points)
     {
@@ -1045,52 +1046,80 @@ sample_triangle_soup(const PointRange& points,
   return performer.out;
 }
 
-template <class Concurrency_tag,
-          class Kernel,
-          class PointRange,
+/**
+ * \ingroup PMP_distance_grp
+ *
+ * returns the distance to `tm` of the point from `points` that is the furthest from `tm`.
+ *
+ * @tparam PointRange a range of `Point_3`, model of `Range`. Its iterator type is `RandomAccessIterator`.
+ * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param points the range of points of interest
+ * @param tm the triangle mesh to compute the distance to
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPDistanceTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @pre `tm` is a non-empty triangle mesh and `points` is not empty.
+ */
+template< class Concurrency_tag,
           class TriangleMesh,
-          class VertexPointMap>
-double approximate_Hausdorff_distance(const PointRange& original_sample_points,
-                                      const TriangleMesh& tm,
-                                      VertexPointMap vpm)
+          class PointRange,
+          class NamedParameters = parameters::Default_named_parameters>
+double max_distance_to_triangle_mesh(const PointRange& points,
+                                     const TriangleMesh& tm,
+                                     const NamedParameters& np = parameters::default_values())
 {
   CGAL_assertion(is_triangle_mesh(tm));
 
-  typedef typename Kernel::Point_3 Point_3;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  std::vector<Point_3> sample_points(std::begin(original_sample_points), std::end(original_sample_points));
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
+  typedef typename GeomTraits::Point_3                                            Point_3;
+
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type  VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(vertex_point, tm));
+
 #ifdef CGAL_HAUSDORFF_DEBUG
-  std::cout << "Nb sample points " << sample_points.size() << "\n";
+  std::cout << "Nb sample points " << points.size() << "\n";
 #endif
 
-  spatial_sort(sample_points.begin(), sample_points.end());
+  std::vector<Point_3> points_cpy(std::begin(points), std::end(points));
+  spatial_sort(points_cpy.begin(), points_cpy.end());
 
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
-  typedef AABB_tree< AABB_traits<Kernel, Primitive> > Tree;
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
+  typedef AABB_traits<GeomTraits, Primitive> Tree_traits;
+  typedef AABB_tree<Tree_traits> Tree;
 
-  Tree tree(faces(tm).first, faces(tm).second, tm);
-  tree.build();
+  Tree_traits tgt/*(gt)*/;
+  Tree tree(tgt);
+  tree.insert(faces(tm).first, faces(tm).second, tm, vpm);
 
-  Point_3 hint = get(vpm, *vertices(tm).first);
+  const Point_3& hint = get(vpm, *vertices(tm).first);
 
-  return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>(sample_points, tree, hint);
+  return internal::max_distance_to_mesh_impl<Concurrency_tag>(points_cpy, tree, hint, gt);
 }
-
-template <class Concurrency_tag, class Kernel, class TriangleMesh,
-          class NamedParameters,
-          class VertexPointMap>
-double approximate_Hausdorff_distance(const TriangleMesh& tm1,
-                                      const TriangleMesh& tm2,
-                                      const NamedParameters& np,
-                                      VertexPointMap vpm_2)
-{
-  std::vector<typename Kernel::Point_3> sample_points;
-  sample_triangle_mesh(tm1, std::back_inserter(sample_points), np);
-
-  return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, tm2, vpm_2);
-}
-
-// documented functions
 
 /**
  * \ingroup PMP_distance_grp
@@ -1141,11 +1170,15 @@ double approximate_Hausdorff_distance(const TriangleMesh& tm1,
                                       const NamedParameters2& np2 = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
+  typedef typename GeomTraits::Point_3 Point_3;
 
-  return approximate_Hausdorff_distance<Concurrency_tag, GeomTraits>(
-        tm1, tm2, np1,
-        parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
-                                     get_const_property_map(vertex_point, tm2)));
+  CGAL_precondition(!is_empty(tm1) && is_triangle_mesh(tm1));
+  CGAL_precondition(!is_empty(tm2) && is_triangle_mesh(tm2));
+
+  std::vector<Point_3> sample_points;
+  sample_triangle_mesh(tm1, std::back_inserter(sample_points), np1);
+
+  return max_distance_to_triangle_mesh<Concurrency_tag>(sample_points, tm2, np2);
 }
 
 /**
@@ -1167,54 +1200,9 @@ double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
                     approximate_Hausdorff_distance<Concurrency_tag>(tm2,tm1,np2,np1));
 }
 
-/**
- * \ingroup PMP_distance_grp
- * returns the distance to `tm` of the point from `points` that is the furthest from `tm`.
- *
- * @tparam PointRange a range of `Point_3`, model of `Range`. Its iterator type is `RandomAccessIterator`.
- * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
- *
- * @param points the range of points of interest
- * @param tm the triangle mesh to compute the distance to
- * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
- *
- * \cgalNamedParamsBegin
- *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
- *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
- *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `TriangleMesh`.}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{geom_traits}
- *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{a class model of `PMPDistanceTraits`}
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- *   \cgalParamNEnd
- * \cgalNamedParamsEnd
- */
-template< class Concurrency_tag,
-          class TriangleMesh,
-          class PointRange,
-          class NamedParameters = parameters::Default_named_parameters>
-double max_distance_to_triangle_mesh(const PointRange& points,
-                                     const TriangleMesh& tm,
-                                     const NamedParameters& np = parameters::default_values())
-{
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
-
-  return approximate_Hausdorff_distance<Concurrency_tag, GeomTraits>(
-           points, tm,
-           parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                        get_const_property_map(vertex_point, tm)));
-}
-
 /*!
  *\ingroup PMP_distance_grp
+ *
  * returns an approximation of the distance between `points` and the point lying on `tm` that is the farthest from `points`.
  *
  * @tparam PointRange a range of `Point_3`, model of `Range`
