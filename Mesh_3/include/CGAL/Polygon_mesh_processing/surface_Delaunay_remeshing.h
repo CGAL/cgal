@@ -77,6 +77,7 @@ namespace Polygon_mesh_processing {
 *          or from the geometric traits class deduced from the point property map
 *         of `TriangleMesh`.}
 *     \cgalParamDefault{`60`}
+*     \cgalParamExtra{Border edges are protected, along with detected sharp edges.}
 *     \cgalParamExtra{If the given value is `180`, only the border edges are protected.}
 *   \cgalParamNEnd
 *
@@ -161,7 +162,7 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \pre `tmesh` must be free of self-intersections
+* \pre `tmesh` must be free of self-intersections.
 *
 * @note Only one of the named parameters defining constrained edges is taken into account
 * for meshing, in the following priority order : `edge_is_constrained_map`,
