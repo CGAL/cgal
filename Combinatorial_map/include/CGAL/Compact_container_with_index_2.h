@@ -12,7 +12,7 @@
 #ifndef CGAL_COMPACT_CONTAINER_WITH_INDEX_2_H
 #define CGAL_COMPACT_CONTAINER_WITH_INDEX_2_H
 
-#include <CGAL/Compact_container_with_index.h>
+#include <CGAL/Compact_container.h>
 
 // An STL like container with the following properties :
 // - to achieve compactness, it requires access to a pointer stored in T,
@@ -62,6 +62,45 @@
 //   things (e.g. freeing empty blocks automatically) ?
 
 namespace CGAL {
+
+template<unsigned int k>
+struct Multiply_by_two_policy_for_cc_with_size
+{
+  static const unsigned int first_block_size = k;
+
+  template<typename Compact_container>
+  static void increase_size(Compact_container& cc)
+  { cc.block_size=cc.capacity_; }
+};
+
+template<unsigned int k>
+struct Constant_size_policy_for_cc_with_size
+{
+  static const unsigned int first_block_size = k;
+
+  template<typename Compact_container>
+  static void increase_size(Compact_container& /*cc*/)
+  {}
+};
+
+// The traits class describes the way to access the size_type.
+// It can be specialized.
+  template < class T, class size_type >
+struct Compact_container_with_index_traits {
+  static size_type size_t(const T &t)
+  { return t.for_compact_container(); }
+  static void set_size_t(T &t, size_type v)
+  { t.for_compact_container(v); }
+};
+
+namespace internal {
+  template < class DSC, bool Const>
+  class CC_iterator_with_index;
+
+  template < class T, class ST >
+  class MyIndex;
+}
+
 
 template<class Index_type>
 class Index_for_cc_with_index
@@ -593,6 +632,195 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
   // Increase the block_size for the next time.
   Increment_policy::increase_size(*this);
 }
+
+namespace internal {
+
+  // **********************************************************************
+  // specialization if we use index: in this case, an iterator use one more
+  // data member of type size_type: memory footprint is more important than
+  // iterator without index. However such iterator is not supposed to be used
+  // in function parameters, to store handles through elements...
+  // We must use indices for that.
+  template < class DSC, bool Const >
+  class CC_iterator_with_index
+  {
+    typedef typename DSC::iterator                    iterator;
+    typedef CC_iterator_with_index<DSC, Const>        Self;
+
+    friend class CC_iterator_with_index<DSC, true>;
+    friend class CC_iterator_with_index<DSC, false>;
+
+  public:
+    typedef typename DSC::value_type                  value_type;
+    typedef typename DSC::size_type                   size_type;
+    typedef typename DSC::difference_type             difference_type;
+    typedef typename boost::mpl::if_c< Const, const value_type*,
+                                       value_type*>::type pointer;
+    typedef typename boost::mpl::if_c< Const, const value_type&,
+                                       value_type&>::type reference;
+    typedef std::bidirectional_iterator_tag           iterator_category;
+
+    typedef typename boost::mpl::if_c< Const, const DSC*, DSC*>::type
+    cc_pointer;
+
+    // the initialization with NULL is required by our Handle concept.
+    CC_iterator_with_index() : m_ptr_to_cc(NULL),
+      m_index(0)
+    {}
+
+    // Either a harmless copy-ctor,
+    // or a conversion from iterator to const_iterator.
+    CC_iterator_with_index (const iterator &it) : m_ptr_to_cc(it.m_ptr_to_cc),
+      m_index(it.m_index)
+    {}
+
+    // Same for assignment operator (otherwise MipsPro warns)
+    CC_iterator_with_index & operator= (const iterator &it)
+    {
+      m_ptr_to_cc = it.m_ptr_to_cc;
+      m_index = it.m_index;
+      return *this;
+    }
+
+    // Construction from NULL
+    CC_iterator_with_index (Nullptr_t CGAL_assertion_code(n)) :
+      m_ptr_to_cc(NULL),
+      m_index(0)
+    { CGAL_assertion (n == NULL); }
+
+    operator size_type() const
+    { return m_index; }
+
+    size_type get_current() const
+    { return m_index; }
+
+  protected:
+    void set_current(size_type dh)
+    { m_index =  dh; }
+
+  protected:
+
+    // Only Compact_container should access these constructors.
+    //template<class,class,class>
+    friend class Compact_container_with_index_2<value_type, typename DSC::Al,
+                                                typename DSC::Incr_policy, typename DSC::size_type>;
+    cc_pointer m_ptr_to_cc;
+    size_type m_index;
+
+    // For begin()
+    CC_iterator_with_index(cc_pointer ptr, int, int) : m_ptr_to_cc(ptr),
+      m_index(0)
+    {
+      if(!m_ptr_to_cc->is_used(m_index))
+      { increment(); }
+    }
+
+    // Construction from raw pointer and for end().
+    CC_iterator_with_index(cc_pointer ptr, size_type index) : m_ptr_to_cc(ptr),
+      m_index(index)
+    {}
+
+    // NB : in case empty container, begin == end == NULL.
+    void increment()
+    {
+      // It's either pointing to end(), or valid.
+      CGAL_assertion_msg(m_ptr_to_cc != NULL,
+         "Incrementing a singular iterator or an empty container iterator ?");
+      CGAL_assertion_msg(m_index < m_ptr_to_cc->capacity_,
+         "Incrementing end() ?");
+
+      // If it's not end(), then it's valid, we can do ++.
+      do
+      {
+        ++m_index;
+      }
+      while ( m_index < m_ptr_to_cc->capacity_ &&
+              (!m_ptr_to_cc->is_used(m_index)) );
+    }
+
+    void decrement()
+    {
+      // It's either pointing to end(), or valid.
+      CGAL_assertion_msg(m_ptr_to_cc != NULL,
+         "Decrementing a singular iterator or an empty container iterator ?");
+      CGAL_assertion_msg(m_index>0, "Decrementing begin() ?");
+
+      // If it's not begin(), then it's valid, we can do --.
+      do
+      {
+        --m_index;
+      }
+      while ( !m_ptr_to_cc->is_used(m_index));
+    }
+
+  public:
+
+    Self & operator++()
+    { increment(); return *this; }
+
+    Self & operator--()
+    { decrement(); return *this; }
+
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+    reference operator*() const { return ((*m_ptr_to_cc)[m_index]); }
+
+    pointer   operator->() const { return &((*m_ptr_to_cc)[m_index]); }
+
+    // Can itself be used for bit-squatting.
+    size_type for_compact_container() const
+    { return m_index; }
+    void for_compact_container(size_type v)
+    { m_index=v; }
+
+    template<class ADSC,bool AC1,bool AC2>
+    friend bool operator==(const CC_iterator_with_index<ADSC,AC1>&,
+                           const CC_iterator_with_index<ADSC,AC2>&);
+
+    template<class ADSC,bool AC1,bool AC2>
+    friend bool operator!=(const CC_iterator_with_index<ADSC,AC1>&,
+                           const CC_iterator_with_index<ADSC,AC2>&);
+  };
+
+  template < class DSC, bool Const1, bool Const2 >
+  inline
+  bool operator==(const CC_iterator_with_index<DSC, Const1> &rhs,
+                  const CC_iterator_with_index<DSC, Const2> &lhs)
+  {
+    return rhs.m_ptr_to_cc == lhs.m_ptr_to_cc &&
+      rhs.m_index == lhs.m_index;
+  }
+
+  template < class DSC, bool Const1, bool Const2 >
+  inline
+  bool operator!=(const CC_iterator_with_index<DSC, Const1> &rhs,
+                  const CC_iterator_with_index<DSC, Const2> &lhs)
+  {
+    return rhs.m_ptr_to_cc != lhs.m_ptr_to_cc ||
+      rhs.m_index != lhs.m_index;
+  }
+
+  // Comparisons with NULL are part of CGAL's Handle concept...
+  /*  template < class DSC, bool Const >
+  inline
+  bool operator==(const CC_iterator_with_index<DSC, Const> &rhs,
+                  Nullptr_t CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return rhs.m_index == 0;
+  }
+
+  template < class DSC, bool Const >
+  inline
+  bool operator!=(const CC_iterator_with_index<DSC, Const> &rhs,
+  Nullptr_t CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return rhs.m_index != 0;
+    }*/
+
+} // namespace internal
 
 } //namespace CGAL
 

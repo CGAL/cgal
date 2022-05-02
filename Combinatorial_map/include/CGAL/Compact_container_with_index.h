@@ -94,9 +94,6 @@ struct Compact_container_with_index_traits {
   { t.for_compact_container(v); }
 };
 
-template <class, class, class, class>
-class Compact_container_with_index_2;
-
 namespace internal {
   template < class DSC, bool Const>
   class CC_iterator_with_index;
@@ -937,7 +934,7 @@ namespace internal {
 
     /// Constructor. Default construction creates a kind of "NULL" index.
     /// max/2 because the most significant bit must be equal to 0 (used).
-    MyIndex(size_type idx=(std::numeric_limits<size_type>::max)()/2)
+    MyIndex(size_type idx=(std::numeric_limits<size_type>::max)()) // TODO /2)
       : m_idx(idx)
     {}
 
@@ -947,11 +944,11 @@ namespace internal {
 
     /// reset index to be NULL
     void reset()
-    { m_idx = (std::numeric_limits<size_type>::max)()/2; }
+    { m_idx = (std::numeric_limits<size_type>::max)(); } // TODO /2; }
 
     /// return whether the handle is valid
     bool is_valid() const
-    { return m_idx != (std::numeric_limits<size_type>::max)()/2; }
+    { return m_idx != (std::numeric_limits<size_type>::max)(); } // TODO /2; }
 
     // /// are two indices equal?
     // bool operator==(const Self& rhs) const
