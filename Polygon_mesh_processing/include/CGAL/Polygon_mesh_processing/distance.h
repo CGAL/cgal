@@ -1095,7 +1095,6 @@ double max_distance_to_triangle_mesh(const PointRange& points,
                                      const NamedParameters& np = parameters::default_values())
 {
   CGAL_precondition(!is_empty(tm) && is_triangle_mesh(tm));
-  CGAL_precondition(!is_empty(tm));
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
