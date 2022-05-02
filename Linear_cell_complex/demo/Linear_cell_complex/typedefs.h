@@ -36,7 +36,7 @@
 #include <vector>
 #include <list>
 
-// #define CMAP_WITH_INDEX 1
+#define CMAP_WITH_INDEX 1
 
 // Global random
 extern CGAL::Random myrandom;

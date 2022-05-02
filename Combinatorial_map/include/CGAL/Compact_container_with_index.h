@@ -814,7 +814,7 @@ namespace internal {
     CC_iterator_with_index(cc_pointer ptr, int, int) : m_ptr_to_cc(ptr),
       m_index(0)
     {
-      if(m_ptr_to_cc->type(m_index) != DSC::USED)
+      if(!m_ptr_to_cc->is_used(m_index))
       { increment(); }
     }
 
@@ -838,7 +838,7 @@ namespace internal {
         ++m_index;
       }
       while ( m_index < m_ptr_to_cc->capacity_ &&
-              (m_ptr_to_cc->type(m_index) != DSC::USED) );
+              (!m_ptr_to_cc->is_used(m_index)) );
     }
 
     void decrement()
@@ -853,7 +853,7 @@ namespace internal {
       {
         --m_index;
       }
-      while ( m_ptr_to_cc->type(m_index) != DSC::USED);
+      while ( !m_ptr_to_cc->is_used(m_index));
     }
 
   public:

@@ -15,7 +15,8 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Compact_container.h>
-#include <CGAL/Compact_container_with_index_2.h>
+//#include <CGAL/Compact_container_with_index_2.h>
+#include <CGAL/Compact_container_with_index_3.h>
 #include <queue>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
