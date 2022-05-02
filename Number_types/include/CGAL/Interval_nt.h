@@ -110,6 +110,8 @@ public:
     bool exact = ((unsigned long long)d == i) || (i <= safe);
     if (!CGAL_CST_TRUE(exact))
 #endif
+      // This requires a suitable rounding mode, which we always set for
+      // arithmetic, but not always for a conversion...
       *this += smallest();
   }
 
@@ -146,12 +148,21 @@ public:
   explicit Interval_nt(__m128d v) : val(v) {}
 #endif
 
-  Interval_nt(double i, double s)
+  // Unchecked version for Lazy_rep in Lazy.h.
+  struct no_check_t {};
+  Interval_nt(double i, double s, no_check_t)
 #ifdef CGAL_USE_SSE2
     : val(_mm_setr_pd(-i, s))
 #else
     : _inf(-i), _sup(s)
 #endif
+  {
+#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
+    CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.
+#endif
+  }
+
+  Interval_nt(double i, double s) : Interval_nt(i, s, no_check_t())
   {
     // Previously it was:
     //    CGAL_assertion_msg(!(i>s);
@@ -159,9 +170,6 @@ public:
     // /fp:strict. If 'i' or 's' is a NaN, that makes a difference.
     CGAL_assertion_msg( (!is_valid(i)) || (!is_valid(s)) || (!(i>s)),
               " Variable used before being initialized (or CGAL bug)");
-#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
-    CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.
-#endif
   }
 
   Interval_nt(const Pair & p)

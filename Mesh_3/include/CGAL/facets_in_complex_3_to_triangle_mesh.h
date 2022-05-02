@@ -18,16 +18,18 @@
 
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Time_stamper.h>
 
-#include <boost/unordered_map.hpp>
 #include <boost/tuple/tuple.hpp>
 
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include <unordered_map>
 #include <vector>
 
 namespace CGAL {
@@ -61,22 +63,24 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 
   typedef typename C3T3::Triangulation                                   Tr;
 
-  typedef typename Tr::Vertex_handle                                     Vertex_handle;
   typedef typename Tr::Cell_handle                                       Cell_handle;
   typedef typename Tr::Weighted_point                                    Weighted_point;
 
   typedef typename C3T3::Facets_in_complex_iterator                      Ficit;
 
-  typedef CGAL::Hash_handles_with_or_without_timestamps                  Hash_fct;
-  typedef boost::unordered_map<Vertex_handle, std::size_t, Hash_fct>     VHmap;
+  typedef std::unordered_map<Point_3, std::size_t>                       PIM;
 
   typedef typename C3T3::size_type                                       size_type;
+
+  // triangulation point to range point
+  CGAL::Cartesian_converter<typename CGAL::Kernel_traits<typename Tr::Geom_traits::Point_3>::type,
+                            typename CGAL::Kernel_traits<Point_3>::type> t2r;
 
   size_type nf = c3t3.number_of_facets_in_complex();
   faces.reserve(faces.size() + nf);
   points.reserve(points.size() + nf/2); // approximating Euler
 
-  VHmap vh_to_ids;
+  PIM p_to_ids;
   std::size_t inum = 0;
 
   for(Ficit fit = c3t3.facets_in_complex_begin(),
@@ -95,23 +99,21 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 
     for(std::size_t i=1; i<4; ++i)
     {
-      typename VHmap::iterator map_entry;
-      bool is_new;
-      Vertex_handle v = c->vertex((s+i)&3);
+      CGAL_assertion_code(typedef typename Tr::Vertex_handle Vertex_handle;)
+      CGAL_assertion_code(Vertex_handle v = c->vertex((s+i)&3);)
       CGAL_assertion(v != Vertex_handle() && !c3t3.triangulation().is_infinite(v));
 
-      boost::tie(map_entry, is_new) = vh_to_ids.insert(std::make_pair(v, inum));
-      if(is_new)
+      const Weighted_point& wp = c3t3.triangulation().point(c, (s+i)&3);
+      const Point_3& bp = t2r(c3t3.triangulation().geom_traits().construct_point_3_object()(wp));
+
+      auto insertion_res = p_to_ids.emplace(bp, inum);
+      if(insertion_res.second) // new point
       {
-        const Weighted_point& p = c3t3.triangulation().point(c, (s+i)&3);
-        const Point_3 bp = Point_3(CGAL::to_double(p.x()),
-                                   CGAL::to_double(p.y()),
-                                   CGAL::to_double(p.z()));
         points.push_back(bp);
         ++inum;
       }
 
-      f[i-1] = map_entry->second;
+      f[i-1] = insertion_res.first->second;
     }
 
     if(export_all_facets)
@@ -166,7 +168,7 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type  VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type              Point_3;
 
-  typedef std::array<std::size_t, 3>                                       Face;
+  typedef std::array<std::size_t, 3>                                               Face;
 
   std::vector<Face> faces;
   std::vector<Point_3> points;

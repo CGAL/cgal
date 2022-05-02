@@ -25,7 +25,7 @@ Release date: June 2022
 
 ### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
 
--   Added the member function `write_graphviz()` to the class The Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
+-   Added the member function `write_graphviz()` to the class `Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
 
 ### [3D Convex Hulls](https://doc.cgal.org/5.5/Manual/packages.html#PkgConvexHull3)
 
