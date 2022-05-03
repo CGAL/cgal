@@ -863,9 +863,17 @@ private:
   {
     m_edge_weight.clear();
     m_edge_weight.reserve(2 * num_edges(m_tmesh));
+
     for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
       m_edge_weight.push_back(m_weight_calculator(hd, m_tmesh, m_tmesh_point_pmap));
+    }
+
+    for(halfedge_descriptor hd : halfedges(m_tmesh)){
+      assert(get(m_hedge_id_pmap, hd) < m_edge_weight.size());
+    }
+    for(edge_descriptor ed : edges(m_tmesh)){
+      assert(get(m_hedge_id_pmap, halfedge(ed, m_tmesh)) < m_edge_weight.size());
     }
   }
 
