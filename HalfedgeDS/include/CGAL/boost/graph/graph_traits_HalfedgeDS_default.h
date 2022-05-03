@@ -82,7 +82,7 @@ out_degree(typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::verte
 template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::degree_size_type
 in_degree(typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertex_descriptor v
-          , const HalfedgeDS_default<T,I,A>&)
+          , const HalfedgeDS_default<T,I,A>& hds)
 {
   return degree(v,hds);
 }
