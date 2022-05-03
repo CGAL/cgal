@@ -177,9 +177,7 @@ inline Iterator_range<typename boost::graph_traits< HalfedgeDS_default<T,I,A> co
 adjacent_vertices( typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertex_descriptor u
                    , const HalfedgeDS_default<T,I,A>& p)
 {
-  typedef typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::out_edge_iterator OutEdgeIter;
-  typedef typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::adjacency_iterator Iter;
-  return make_range(Iter(OutEdgeIter(halfedge(u,p),p),&p), Iter(OutEdgeIter(halfedge(u,p),p,1), &p));
+  return CGAL::vertices_around_target(u,p);
 }
 
 //

@@ -30,7 +30,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/assertions.h>
 
-#include <boost/graph/adjacency_iterator.hpp>
 
 namespace boost {
 
@@ -85,7 +84,7 @@ public:
 
   typedef CGAL::Out_edge_iterator<SM> out_edge_iterator;
 
-  typedef typename boost::adjacency_iterator_generator<SM, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
+  typedef CGAL::Vertex_around_target_iterator<SM> adjacency_iterator;
 
   // nulls
   static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
@@ -228,10 +227,7 @@ Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::adjacency_i
 adjacent_vertices(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v,
                   const CGAL::Surface_mesh<P>& sm)
 {
-  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::out_edge_iterator OutEdgeIter;
-  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::adjacency_iterator Iter;
-  return make_range(Iter(OutEdgeIter(halfedge(v,sm),sm), &sm),
-                    Iter(OutEdgeIter(halfedge(v,sm),sm,1), &sm));
+  return CGAL::vertices_around_target(v,sm);
 }
 
 template<typename P>

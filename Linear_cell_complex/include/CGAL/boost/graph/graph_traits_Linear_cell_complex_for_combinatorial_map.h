@@ -208,7 +208,7 @@ public :
   typedef CGAL::In_edge_iterator<CMap>  in_edge_iterator;
   typedef CGAL::Out_edge_iterator<CMap> out_edge_iterator;
 
-  typedef typename boost::adjacency_iterator_generator<CMap, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
+  typedef CGAL::Vertex_around_target_iterator<CMap> adjacency_iterator;
 
   // nulls
   static vertex_descriptor   null_vertex()   { return nullptr; }
@@ -400,9 +400,7 @@ CGAL::Iterator_range<typename boost::graph_traits<CGAL_LCC_TYPE>::adjacency_iter
 adjacent_vertices(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v,
                   const CGAL_LCC_TYPE& lcc)
 {
-  typedef typename boost::graph_traits<CGAL_LCC_TYPE>::out_edge_iterator OutEdgeIter;
-  typedef typename boost::graph_traits<CGAL_LCC_TYPE>::adjacency_iterator Iter;
-  return make_range(Iter(OutEdgeIter(halfedge(v, lcc), lcc), &lcc), Iter(OutEdgeIter(halfedge(v, lcc), lcc, 1), &lcc));
+  return CGAL::vertices_around_target(v,lcc);
 }
 
 //

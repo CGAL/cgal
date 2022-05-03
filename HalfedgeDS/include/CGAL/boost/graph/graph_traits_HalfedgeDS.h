@@ -20,7 +20,6 @@
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/graph/adjacency_iterator.hpp>
 #include <boost/type_traits/remove_const.hpp>
 
 #include <boost/graph/graph_traits.hpp>
@@ -181,7 +180,7 @@ public:
 
   typedef In_edge_iterator<HDS> in_edge_iterator;
 
-  typedef typename boost::adjacency_iterator_generator<HDS, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
+  typedef Vertex_around_target_iterator<HDS> adjacency_iterator;
 
   typedef boost::undirected_tag             directed_category;
   typedef boost::disallow_parallel_edge_tag edge_parallel_category;

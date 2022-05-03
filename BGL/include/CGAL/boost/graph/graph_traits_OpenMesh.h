@@ -16,7 +16,6 @@
 #include <boost/graph/properties.hpp>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/graph/adjacency_iterator.hpp>
 
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -126,7 +125,7 @@ public:
 
   typedef CGAL::Out_edge_iterator<SM> out_edge_iterator;
 
-  typedef typename boost::adjacency_iterator_generator<SM, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
+  typedef CGAL::Vertex_around_target_iterator<SM> adjacency_iterator;
 
   // nulls
   static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
@@ -270,12 +269,10 @@ out_edges(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
 
 template <typename K>
 CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::adjacency_iterator>
-adjacnt_vertices(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
+adjaecnt_vertices(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
                  const OPEN_MESH_CLASS& sm)
 {
-  typedef typename boost::graph_traits<OPEN_MESH_CLASS >::out_edge_iterator OutEdgeIter;
-  typedef typename boost::graph_traits<OPEN_MESH_CLASS >::adjacency_iterator Iter;
-  return CGAL::make_range(Iter(OutEdgeIter(halfedge(v,sm),sm), &sm), Iter(OutEdgeIter(halfedge(v,sm),sm,1), &sm));
+  return CGAL::vertices_around_target(v,sm);
 }
 
 
