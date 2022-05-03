@@ -83,18 +83,18 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
                               j * vy + ty,
                               k * vz + tz };
 
-        using Cube = internal::Cube;
+        using Cube = std::array<Word_type, 8>;
         const Cube cube = {
-          static_evaluate<unsigned char>(image.image(), i  , j  , k),
-          static_evaluate<unsigned char>(image.image(), i + 1, j  , k),
-          static_evaluate<unsigned char>(image.image(), i  , j + 1, k),
-          static_evaluate<unsigned char>(image.image(), i + 1, j + 1, k),
-          static_evaluate<unsigned char>(image.image(), i  , j  , k + 1),
-          static_evaluate<unsigned char>(image.image(), i + 1, j  , k + 1),
-          static_evaluate<unsigned char>(image.image(), i  , j + 1, k + 1),
-          static_evaluate<unsigned char>(image.image(), i + 1, j + 1, k + 1),
+          static_evaluate<Word_type>(image.image(), i  , j  , k),
+          static_evaluate<Word_type>(image.image(), i + 1, j  , k),
+          static_evaluate<Word_type>(image.image(), i  , j + 1, k),
+          static_evaluate<Word_type>(image.image(), i + 1, j + 1, k),
+          static_evaluate<Word_type>(image.image(), i  , j  , k + 1),
+          static_evaluate<Word_type>(image.image(), i + 1, j  , k + 1),
+          static_evaluate<Word_type>(image.image(), i  , j + 1, k + 1),
+          static_evaluate<Word_type>(image.image(), i + 1, j + 1, k + 1),
         }; /// TODO: optimize the access to the image data
-        bool monocolor = cube[0] == cube[1];
+        bool monocolor = (cube[0] == cube[1]);
         for (int i = 2; i < 8; ++i) monocolor = monocolor && (cube[0] == cube[i]);
         if (monocolor) continue;
 
@@ -115,18 +115,18 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
           continue;
         }
         Cube reference_cube = {
-          (unsigned char)(color_transformation[cube[0]]),
-          (unsigned char)(color_transformation[cube[1]]),
-          (unsigned char)(color_transformation[cube[2]]),
-          (unsigned char)(color_transformation[cube[3]]),
-          (unsigned char)(color_transformation[cube[4]]),
-          (unsigned char)(color_transformation[cube[5]]),
-          (unsigned char)(color_transformation[cube[6]]),
-          (unsigned char)(color_transformation[cube[7]]),
+          (Word_type)(color_transformation[cube[0]]),
+          (Word_type)(color_transformation[cube[1]]),
+          (Word_type)(color_transformation[cube[2]]),
+          (Word_type)(color_transformation[cube[3]]),
+          (Word_type)(color_transformation[cube[4]]),
+          (Word_type)(color_transformation[cube[5]]),
+          (Word_type)(color_transformation[cube[6]]),
+          (Word_type)(color_transformation[cube[7]]),
         };
-        auto case_it = find_case(cases, reference_cube);
+        auto case_it = internal::find_case(internal::cases, reference_cube);
         using std::end;
-        const bool case_found = (case_it != end(cases));
+        const bool case_found = (case_it != end(internal::cases));
         if (case_found) reference_cube = internal::combinations[(*case_it)[8]];
         else {
           //std::cerr << "Warning: case not found: " << reference_cube << '\n';

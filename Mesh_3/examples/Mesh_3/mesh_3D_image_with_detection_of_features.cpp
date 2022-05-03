@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
 
   /// Declare 1D-features, see above [Call detect_triple_lines]
-  if(!CGAL::Mesh_3::detect_triple_lines(image, domain)) {
+  if(!CGAL::Mesh_3::detect_triple_lines<Word_type>(image, domain)) {
     return EXIT_FAILURE;
   }
   /// [Call add_1D_features]

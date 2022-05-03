@@ -28,10 +28,8 @@ namespace Mesh_3
 {
 namespace internal
 {
-
-  typedef std::array<unsigned char, 8> Cube;
-
-  const Cube combinations[] = { 0,0,0,0,0,0,0,0,
+  const std::array<unsigned char, 8> combinations[]
+                            = { 0,0,0,0,0,0,0,0,
                                 0,0,0,0,0,0,0,1,
                                 0,0,0,0,0,0,1,1,
                                 0,0,0,0,0,0,1,2,

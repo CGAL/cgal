@@ -1,10 +1,24 @@
-﻿#ifndef CGAL_MESH_3_TRIPLE_LINES_H
+﻿// Copyright (c) 2022 GeometryFactory (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Sébastien Loriot
+//
+//******************************************************************************
+//
+//******************************************************************************
+
+
+#ifndef CGAL_MESH_3_TRIPLE_LINES_H
 #define CGAL_MESH_3_TRIPLE_LINES_H
 
 #include <CGAL/license/Mesh_3.h>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_3.h>
 
 #include <CGAL/Mesh_3/triple_lines_extraction/cube.h>
 
@@ -18,11 +32,7 @@ namespace CGAL
 namespace Mesh_3
 {
 
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using P = CGAL::Point_3<K>;
-using Polylines = std::vector<std::vector<P> >;
-
-template <typename Functor>
+template<typename P, typename Functor>
 std::vector<P> create_polyline(const double start,
     const double end,
     P starting_point,
@@ -57,7 +67,7 @@ std::vector<P> create_polyline(const double start,
     return poly;
 }
 
-template <typename Functor>
+template <typename P, typename Functor>
 std::vector<P> create_polyline(const double start,
     const double end,
     P starting_point,
@@ -67,13 +77,13 @@ std::vector<P> create_polyline(const double start,
     return create_polyline(start, end, starting_point, f(end), f, prec);
 }
 
-template <typename Functor>
+template <typename P, typename Functor>
 std::vector<P> create_polyline(const double start,
     const double end,
     Functor f,
     const int prec)
 {
-    return create_polyline(start, end, f(start), f(end), f, prec);
+    return create_polyline<P>(start, end, f(start), f(end), f, prec);
 }
 
 
@@ -111,7 +121,8 @@ std::vector<P> create_polyline(const double start,
   //   curve_2  : x=[0,1/2], y=1/2, z=2/3
   //   curve_2' : x=[1/2,1], y=1/2, z=2/3
   //   curve_3  : x=1/2, y=1/2, z=[2/3,1]
-Polylines poly00001221(const int /* no sampling for segments */)
+template<typename P>
+std::vector<std::vector<P>> poly00001221(const int /* no sampling for segments */)
 {
     P corner{ 1. / 2, 1. / 2, 2. / 3 };
     P      a{ 1. / 2,    0, 2. / 3 };
@@ -137,7 +148,8 @@ Polylines poly00001221(const int /* no sampling for segments */)
 //   ADDED   curve_2' : x=1/(3*z),y=1/2,z=[1/3,2/3]
 //   curve_3  : x=(2*z−1)/z,y=1/2, z=[1/2,2/3]
 //   REMOVED curve_3' : x=(2*z−1)/z,y=1/2, z=[2/3,1]
-Polylines poly00111202(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00111202(const int prec = 10)
 {
     P      a{ 1. / 2, 0.  , 2. / 3 };
     P corner{ 1. / 2, 1. / 2, 2. / 3 };
@@ -165,7 +177,8 @@ Polylines poly00111202(const int prec = 10)
 //   curve_2' : x=1/2, y=[1/2,1], z=1/2
 //   curve_3  : x=[0,1/2], y=1/2, z=1/2
 //   curve_3' : x=[1/2,1], y=1/2, z=1/2
-Polylines poly01101001(const int /* no sampling for segments */)
+template<typename P>
+std::vector<std::vector<P>> poly01101001(const int /* no sampling for segments */)
 {
     P corner{ 1. / 2, 1. / 2, 1. / 2 };
     P      a{ 1. / 2, 1. / 2,    0 };
@@ -189,7 +202,8 @@ Polylines poly01101001(const int /* no sampling for segments */)
 //
 // Two curves
 //
-Polylines poly00011022(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011022(const int prec = 10)
 {
     // x = (3*z^2-2*z)/(3*z^2-1), y = 1/(3*z), z = [1/3,1/2]
     // x = (3*z^2-2*z)/(3*z^2-1), y = 1/(3*z), z = [2/3,1]
@@ -197,8 +211,8 @@ Polylines poly00011022(const int prec = 10)
         1 / (3 * z),
         z); };
     return {
-      create_polyline(1. / 3, 1. / 2, f, prec),
-      create_polyline(2. / 3, 1.  , f, prec),
+      create_polyline<P>(1. / 3, 1. / 2, f, prec),
+      create_polyline<P>(2. / 3, 1.  , f, prec),
     };
 }
 
@@ -207,7 +221,8 @@ Polylines poly00011022(const int prec = 10)
 //   point limit x = 1/2, y = 0, z = 2/3
 //   curve_2 : x = ]0,1/3], y = (3 * x * x + sqrt(9 * x * x * x * x - 30 * x * x * x + 45 * x * x - 24 * x + 4) + 3 * x - 2)/(6 * x * (2 * x - 1)), z = 1./(3*x+3*y-6*x*y)
 //   point limit x = 0, y = 1/2, z = 2/3
-Polylines poly00011221(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011221(const int prec = 10)
 {
     auto sq_exp = [](double x) {
         return sqrt(9 * x * x * x * x - 30 * x * x * x + 45 * x * x - 24 * x + 4);
@@ -233,7 +248,8 @@ Polylines poly00011221(const int prec = 10)
 //   point limit x = 1, y = 1/2, z=1/3
 //   curve_2 : x = ]0,1/2], y = (3 * x * x + sqrt(9 * x * x * x * x - 18 * x * x * x + 25 *x * x - 16 * x + 4) + x - 2)/(6 * (x - 1) * x), z = 1./(3*x+3*y-3*x*y)
 //   point limit x = 0, y=1/2, z=2/3
-Polylines poly00011222(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011222(const int prec = 10)
 {
     auto sq_exp = [](double x) {
         return sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4);
@@ -257,14 +273,15 @@ Polylines poly00011222(const int prec = 10)
 // 00121200
 //   curve_1  : x = 1/2, y = (3*z-2)/(6*z-3), z = [0,1/3]
 //   curve_1' : x = 1/2, y = (3*z-2)/(6*z-3), z = [2/3,1]
-Polylines poly00121200(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00121200(const int prec = 10)
 {
     auto y = [](double z) { return (3 * z - 2) / (6 * z - 3); };
     return {
-      create_polyline(0, 1. / 3,
+      create_polyline<P>(0, 1. / 3,
                       [y](double z) { return P(1. / 2, y(z), z); },
                       prec),
-      create_polyline(2. / 3, 1,
+      create_polyline<P>(2. / 3, 1,
                       [y](double z) { return P(1. / 2, y(z), z); },
                       prec)
     };
@@ -273,15 +290,16 @@ Polylines poly00121200(const int prec = 10)
 // 00121221
 //   curve_1 : x = 1/2, y = (3*z-2)/(3*z-3), z = [0,2/3]
 //   curve_2 : x = 1/2, y = z/(3*z-1), z = [1/2,1]
-Polylines poly00121221(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00121221(const int prec = 10)
 {
     auto y1 = [](double z) { return (3 * z - 2) / (3 * z - 3); };
     auto y2 = [](double z) { return z / (3 * z - 1); };
     return {
-      create_polyline(0, 2. / 3,
+      create_polyline<P>(0, 2. / 3,
                       [y1](double z) { return P(1. / 2, y1(z), z); },
                       prec),
-      create_polyline(1. / 2, 1,
+      create_polyline<P>(1. / 2, 1,
                       [y2](double z) { return P(1. / 2, y2(z), z); },
                       prec)
     };
@@ -290,14 +308,15 @@ Polylines poly00121221(const int prec = 10)
 // 00122100
 //   curve_1  : x = 1/2, y = (3*z-2)/(6*z-3), z = [0,1/3]
 //   curve_1' : x = 1/2, y = (3*z-2)/(6*z-3), z = [2/3,1]
-Polylines poly00122100(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00122100(const int prec = 10)
 {
     auto y = [](double z) { return (3 * z - 2) / (6 * z - 3); };
     return {
-      create_polyline(0, 1. / 3,
+      create_polyline<P>(0, 1. / 3,
                       [y](double z) { return P(1. / 2, y(z), z); },
                       prec),
-      create_polyline(2. / 3, 1,
+      create_polyline<P>(2. / 3, 1,
                       [y](double z) { return P(1. / 2, y(z), z); },
                       prec)
     };
@@ -309,7 +328,8 @@ Polylines poly00122100(const int prec = 10)
 //   curve_2 : x = [1./2,1[ ,  y = ( sqrt(24 x^3 - 35 x^2 + 18 x - 3) - 5 x + 3)/(6 (x - 1)^2),
 //                             z = ( sqrt(24 x^3 - 35 x^2 + 18 x - 3) - 7 x + 3)/(6 (x^2 - 3 x + 1))
 //   point limit of curve_2 when x -> 1 x = 1, y = 1/2, z = 1/3
-Polylines poly00122101(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00122101(const int prec = 10)
 {
     auto sq_exp = [](double x) {
         return sqrt(24 * x * x * x - 35 * x * x + 18 * x - 3);
@@ -320,10 +340,10 @@ Polylines poly00122101(const int prec = 10)
     auto z2 = [sq_exp](double x) { return (sq_exp(x) - 7 * x + 3) / (6 * (x * x - 3 * x + 1)); };
     P corner{ 1., .5, 1. / 3 };
     return {
-      create_polyline(1. / 3, 1. / 2,
+      create_polyline<P>(1. / 3, 1. / 2,
                       [y1, z1](double x) { return P(x, y1(x), z1(x)); },
                       prec),
-      create_polyline(1., 1. / 2, corner,
+      create_polyline<P>(1., 1. / 2, corner,
                       [y2, z2](double x) { return P(x, y2(x), z2(x)); },
                       prec),
     };
@@ -332,46 +352,51 @@ Polylines poly00122101(const int prec = 10)
 //
 // One curve
 //
-Polylines poly00000012(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00000012(const int prec = 10)
 {
     // curve : x = 1/2, y = 2/(3*z), z = [2/3,1]
-    return { create_polyline(2. / 3, 1.,
+    return { create_polyline<P>(2. / 3, 1.,
                              [](double z) { return P(0.5, 2. / (3. * z), z); },
                              prec) };
 }
 
 // 00000112
 //   x =[1/2,1], y = x/(3 * x - 1), z = (3 * x - 1)/(3 * x * x)
-Polylines poly00000112(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00000112(const int prec = 10)
 {
-    return { create_polyline(1. / 2, 1,
+    return { create_polyline<P>(1. / 2, 1,
                              [](double x) { return P(x, x / (3 * x - 1), (3 * x - 1) / (3 * x * x)); },
                              prec) };
 }
 
 // 00000121
 //   curve : x = 1/(3*z), y = 1/(3*z-1), z = [2/3,1]
-Polylines poly00000121(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00000121(const int prec = 10)
 {
-    return { create_polyline(2. / 3, 1,
+    return { create_polyline<P>(2. / 3, 1,
                              [](double z) { return P(1 / (3 * z), 1 / (3 * z - 1), z); },
                              prec) };
 }
 
 // 00001112
 //   curve : x = 1/(2*y), y = [1/2, 1],z = 2/3
-Polylines poly00001112(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00001112(const int prec = 10)
 {
-    return { create_polyline(1. / 2, 1,
+    return { create_polyline<P>(1. / 2, 1,
                              [](double y) { return P(1 / (2 * y), y, 2. / 3); },
                              prec) };
 }
 
 // 00001122
 //   curve : x = [0,1], y = 1/2, z = 2/3
-Polylines poly00001122(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00001122(const int prec = 10)
 {
-    return { create_polyline(0, 1,
+    return { create_polyline<P>(0, 1,
                              [](double x) { return P(x, 1. / 2, 2. / 3); },
                              prec) };
 }
@@ -379,88 +404,98 @@ Polylines poly00001122(const int prec = 10)
 // 00010121
 //   curve : x =y * z / (z+y), y = ((3 * z * z - 1) - sqrt(CGAL::square(1 - 3 * z * z) - 12 * (z - 1) * z * z))/(6 * (z - 1) * z), z=[1,1/2[
 //   point limit =  (1/3, 1/2, 1)
-Polylines poly00010121(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00010121(const int prec = 10)
 {
     auto y = [](double z) { return ((3 * z * z - 1) - sqrt(CGAL::square(1 - 3 * z * z) - 12 * (z - 1) * z * z)) / (6 * (z - 1) * z); };
     auto x = [](double y, double z) { return y * z / (z + y); };
     P corner(1. / 3, 1. / 2, 1);
-    return { create_polyline(1, 1. / 2, corner,
+    return { create_polyline<P>(1, 1. / 2, corner,
                              [x, y](double z) { return P(x(y(z), z), y(z), z); },
                              prec) };
 }
 
 // 00010122
 //   curve : x = z/(3*z^2-2*z+1), y = 1/(3*z), z = [1/3,1]
-Polylines poly00010122(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00010122(const int prec = 10)
 {
-    return { create_polyline(1. / 3, 1,
+    return { create_polyline<P>(1. / 3, 1,
                              [](double z) { return P(z / (3 * z * z - 2 * z + 1), 1. / (3 * z), z); },
                              prec) };
 }
 // 00011002
 //   curve : x = (y+1)/(4*y-1), y = [2/3,1], z = 1/2
-Polylines poly00011002(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011002(const int prec = 10)
 {
-    return { create_polyline(2. / 3, 1,
+    return { create_polyline<P>(2. / 3, 1,
                              [](double y) { return P((y + 1) / (4 * y - 1), y, 1. / 2); },
                              prec) };
 }
 // 00011012
 //   curve : x = (3*z^2-2*z+1)/(3*z^2), y = z/(3*z^2-2*z+1), z = [1/2, 1]
-Polylines poly00011012(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011012(const int prec = 10)
 {
-    return { create_polyline(1. / 2, 1,
+    return { create_polyline<P>(1. / 2, 1,
                              [](double z) { return P((3 * z * z - 2 * z + 1) / (3 * z * z), z / (3 * z * z - 2 * z + 1), z); },
                              prec) };
 }
 // 00011110
 //   curve : x = 1/(2*y), y = [1/2,1], z = 1/2
-Polylines poly00011110(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011110(const int prec = 10)
 {
-    return { create_polyline(1. / 2, 1,
+    return { create_polyline<P>(1. / 2, 1,
                              [](double y) { return P(1. / (2 * y), y, 1. / 2); },
                              prec) };
 }
 // 00011120
 //   curve : x = (3*z^2-2*z)/(3*z^2-1), y = (3*z^2-1)/(6*z^2-3*z), z = [2/3,1]
-Polylines poly00011120(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011120(const int prec = 10)
 {
-    return { create_polyline(2. / 3, 1,
+    return { create_polyline<P>(2. / 3, 1,
                              [](double z) { return P((3 * z * z - 2 * z) / (3 * z * z - 1), (3 * z * z - 1) / (6 * z * z - 3 * z), z); },
                              prec) };
 }
 // 00011121
 //   curve : x = (3*z^2-2*z)/(3*z^2-z-1), y = (3*z^2-z-1)/(3*z^2-3*z), z =[1/2,2./3]
-Polylines poly00011121(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011121(const int prec = 10)
 {
-    return { create_polyline(1. / 2, 2. / 3,
+    return { create_polyline<P>(1. / 2, 2. / 3,
                              [](double z) { return P((3 * z * z - 2 * z) / (3 * z * z - z - 1), (3 * z * z - z - 1) / (3 * z * z - 3 * z), z); },
                              prec) };
 }
 // 00011122
 //   curve : x = (3*z*z-2*z)/(z-1),y = 1/(3*z),z = [1/3, 2/3]
 //
-Polylines poly00011122(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011122(const int prec = 10)
 {
-    return { create_polyline(1. / 3,2. / 3,
+    return { create_polyline<P>(1. / 3,2. / 3,
                              [](double z) { return P((3 * z * z - 2 * z) / (z - 1), 1 / (3 * z), z); },
                              prec) };
 }
 
 // 00011220
 //   curve : x=[0,1/2], y = (2 * x - 1)/(3 * x - 2), z = (2 * (x^2 - 2 * x + 1))/(5 * x^2 - 7 * x + 3)
-Polylines poly00011220(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00011220(const int prec = 10)
 {
-    return { create_polyline(0, 1. / 2,
+    return { create_polyline<P>(0, 1. / 2,
                              [](double x) { return P(x, (2 * x - 1) / (3 * x - 2), (2 * (x * x - 2 * x + 1)) / (5 * x * x - 7 * x + 3)); },
                              prec) };
 }
 // 00012002
 //   curve_1 : x = [2/3,1], y = (3 * x*x + sqrt(9 * x*x*x*x - 24 * x*x*x + 30 * x*x - 12 * x + 1) - 1)/(6 * x * (2 * x - 1)), z = 1 - 1./(3*x*y)
-Polylines poly00012002(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012002(const int prec = 10)
 {
     auto y = [](double x) { return (3 * x * x + sqrt(9 * x * x * x * x - 24 * x * x * x + 30 * x * x - 12 * x + 1) - 1) / (6 * x * (2 * x - 1)); };
-    return { create_polyline(2. / 3, 1,
+    return { create_polyline<P>(2. / 3, 1,
                              [y](double x) { return P(x, y(x), 1 - 1. / (3 * x * y(x))); },
                              prec) };
 }
@@ -470,25 +505,27 @@ Polylines poly00012002(const int prec = 10)
 //  point limit x = 1, y = 2/3, z = 1/2
 //  point limit x = 1/2, y= 2./3, z = 2./3);
 //
-Polylines poly00012012(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012012(const int prec = 10)
 {
     auto y = [](double x, double z) { return 1. / (-6 * x * z + 3 * x + 3 * z); };
     auto z = [](double x) { return (3 * x * x + sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4) - 7 * x + 2) / (6 * (x - 1) * (2 * x - 1)); };
     P corner1(1. / 2, 2. / 3, 2. / 3);
     P corner2(1, 2. / 3, 1. / 2);
-    return { create_polyline(1. / 2, 0, corner1,
+    return { create_polyline<P>(1. / 2, 0, corner1,
                              [y, z](double x) { return P(x, y(x, z(x)), z(x)); },
                              prec),
-             create_polyline(1. / 2, 1, corner1, corner2,
+             create_polyline<P>(1. / 2, 1, corner1, corner2,
                                       [y, z](double x) { return P(x, y(x, z(x)), z(x)); },
                                       prec)
     };
 }
 // 00012021
 //   curve : x = (3*z-1)/(3*z), y = z/(3*z-1), z = [1/2,1]
-Polylines poly00012021(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012021(const int prec = 10)
 {
-    return { create_polyline(1. / 2, 1,
+    return { create_polyline<P>(1. / 2, 1,
                              [](double z) { return P((3 * z - 1) / (3 * z), z / (3 * z - 1), z); },
                              prec) };
 }
@@ -496,12 +533,13 @@ Polylines poly00012021(const int prec = 10)
 //   curve : x=]0,1/2], y = (3 * x * x + sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4) + x - 2)/(6 * (x - 1) * x), z = (3*x*y-1)/(9*x*y-3*x-3*y)
 //   point limit : x = 0, y = 1/2, z = 2/3
 //
-Polylines poly00012110(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012110(const int prec = 10)
 {
     auto y = [](double x) { return (3 * x * x + sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4) + x - 2) / (6 * (x - 1) * x); };
     auto z = [](double x, double y) { return (3 * x * y - 1) / (9 * x * y - 3 * x - 3 * y); };
     P corner(0, 1. / 2, 2. / 3);
-    return { create_polyline(0, 1. / 2, corner,
+    return { create_polyline<P>(0, 1. / 2, corner,
                              [y, z](double x) { return P(x, y(x), z(x, y(x))); },
                              prec) };
 }
@@ -510,74 +548,82 @@ Polylines poly00012110(const int prec = 10)
 //   point limit x = 0, y = 1/2, z = 2/3
 //   point limit x = 1/2, y = 0, z = 2/3
 //
-Polylines poly00012112(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012112(const int prec = 10)
 {
     auto y = [](double x) { return (3 * x * x + sqrt(9 * x * x * x * x - 36 * x * x * x + 40 * x * x - 20 * x + 4) + 2 * x - 2) / (6 * x * (2 * x - 1)); };
     auto z = [](double x, double y) { return (3 * x * y - 1) / (9 * x * y - 3 * x - 3 * y); };
     P corner1(0, 1. / 2, 2. / 3);
     P corner2(1. / 2, 0, 2. / 3);
-    return { create_polyline(0, 1. / 2, corner1, corner2,
+    return { create_polyline<P>(0, 1. / 2, corner1, corner2,
                              [y, z](double x) { return P(x, y(x), z(x, y(x))); },
                              prec) };
 }
 
 // 00012120
 //   curve : x = (3*z-1)/(3*z), y = (3*z^2-2*z)/(6*z^2-5*z+1), z = [2/3,1]
-Polylines poly00012120(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012120(const int prec = 10)
 {
-    return { create_polyline(2. / 3, 1,
+    return { create_polyline<P>(2. / 3, 1,
                              [](double z) { return P((3 * z - 1) / (3 * z), (3 * z * z - 2 * z) / (6 * z * z - 5 * z + 1), z); },
                              prec) };
 }
 //
 // 00012121
 //  curve : x = (3*z-1)/(3*z), y = (3*z^2-2*z)/(3*z^2-4*z+1), z = [1/2,2/3]
-Polylines poly00012121(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012121(const int prec = 10)
 {
-    return { create_polyline(1. / 2, 2. / 3,
+    return { create_polyline<P>(1. / 2, 2. / 3,
                              [](double z) { return P((3 * z - 1) / (3 * z), (3 * z * z - 2 * z) / (3 * z * z - 4 * z + 1), z); },
                              prec) };
 }
 // 00012122
 //  curve : x = (6*z^2-6*z+1)/(3*z^2-3*z), y = (3*z^2-2*z)/(6*z^2-6*z+1), z = [1/3,2/3]
-Polylines poly00012122(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012122(const int prec = 10)
 {
     auto x = [](double z) { return (6 * z * z - 6 * z + 1) / (3 * z * z - 3 * z); };
     auto y = [](double z) { return (3 * z * z - 2 * z) / (6 * z * z - 6 * z + 1); };
-    return { create_polyline(1. / 3, 2. / 3,
+    return { create_polyline<P>(1. / 3, 2. / 3,
                              [x,y](double z) { return P(x(z), y(z), z); },
                              prec) };
 }
 // 00012221
 //   curve : x = 1/(3*y),y = [1/3,1],z = 1/2
-Polylines poly00012221(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00012221(const int prec = 10)
 {
-    return { create_polyline(1. / 3, 1,
+    return { create_polyline<P>(1. / 3, 1,
                              [](double y) { return P(1. / (3 * y),y , 1. / 2); },
                              prec) };
 }
 
 // 00111100
 //   curve : x = [0,1], y = 1/2, z = 1/2
-Polylines poly00111100(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00111100(const int prec = 10)
 {
-    return { create_polyline(0, 1,
+    return { create_polyline<P>(0, 1,
                              [](double x) { return P(x , 1. / 2, 1. / 2); },
                              prec) };
 }
 
 // 00111102
 //   curve : x = (2*z-1)/(3*z^2-z), y = (3*z-1)/(6*z-3), z = [2/3,1]
-Polylines poly00111102(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00111102(const int prec = 10)
 {
-    return { create_polyline(2. / 3, 1,
+    return { create_polyline<P>(2. / 3, 1,
                              [](double z) { return P((2 * z - 1) / (3 * z * z - z), (3 * z - 1) / (6 * z - 3), z); },
                              prec) };
 }
 
 // 00111220
 //   segment 1/2 0 2/3 1/2 1 2/3
-Polylines poly00111220(const int /*not needed for a segment*/)
+template<typename P>
+std::vector<std::vector<P>> poly00111220(const int /*not needed for a segment*/)
 {
     return { { P(1. / 2, 0, 2. / 3), P(1. / 2, 1, 2. / 3) } };
 }
@@ -586,7 +632,8 @@ Polylines poly00111220(const int /*not needed for a segment*/)
 //   curve_1 : x =[1/2, 2/3], y = (-sqrt(-24 * x^3 + 37 * x^2 - 20 * x + 4) + 5 * x - 2)/(6 * x^2), z = ( sqrt(-24 * x^3 + 37 * x^2 - 20 * x + 4) + 5 * x - 2)/(6 * x^2)
 //   curve_2 : x =[1/2, 2/3], y = ( sqrt(-24 * x^3 + 37 * x^2 - 20 * x + 4) + 5 * x - 2)/(6 * x^2), z = (-sqrt(-24 * x^3 + 37 * x^2 - 20 * x + 4) + 5 * x - 2)/(6 * x^2)
 //   point 0 1/2 1/2
-Polylines poly00121201(const int prec = 10)
+template<typename P>
+std::vector<std::vector<P>> poly00121201(const int prec = 10)
 {
     auto sq_exp = [](double x) {
         return sqrt(-24 * x * x * x + 37 * x * x - 20 * x + 4);
@@ -595,10 +642,10 @@ Polylines poly00121201(const int prec = 10)
     auto z = [sq_exp](double x) { return (sq_exp(x) + 5 * x - 2) / (6 * x * x); };
     P corner{ 2. / 3, y(2. / 3), z(2. / 3) };
     return {
-      create_polyline(2. / 3, 1. / 2, corner,
+      create_polyline<P>(2. / 3, 1. / 2, corner,
                       [y, z](double x) { return P(x, y(x), z(x)); },
                       prec),
-      create_polyline(2. / 3, 1. / 2, corner,
+      create_polyline<P>(2. / 3, 1. / 2, corner,
                       [y, z](double x) { return P(x, z(x), y(x)); },
                       prec),
                       // { P(0., .5, .5), P(0., .5, .5) }

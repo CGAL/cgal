@@ -1,5 +1,21 @@
-#ifndef CASES_TABLES_H
-#define CASES_TABLES_H
+// Copyright (c) 2022 GeometryFactory (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Sébastien Loriot
+//
+//******************************************************************************
+//
+//******************************************************************************
+
+#ifndef CGAL_MESH_3_TRIPLE_LINES_CASES_TABLES_H
+#define CGAL_MESH_3_TRIPLE_LINES_CASES_TABLES_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -9,8 +25,15 @@
 #include <vector>
 #include <algorithm>
 
-typedef std::array<unsigned char, 8> Combination;
-typedef boost::hash<Combination> Hash_combination;
+namespace CGAL
+{
+namespace Mesh_3
+{
+namespace internal
+{
+
+using Combination = std::array<unsigned char, 8>;
+using Hash_combination = boost::hash<Combination>;
 
 using Cases = std::array<unsigned char, 10>[6561];
 
@@ -6595,4 +6618,8 @@ const Cases cases = {
 { {2,2,2,2,2,2,2,2, 0, 0} },
 };
 
-#endif // CASES_TABLE_H
+}//end namespace internal
+}//end namespace Mesh_3
+}//end namespace CGAL
+
+#endif // CGAL_MESH_3_TRIPLE_LINES_CASES_TABLES_H
