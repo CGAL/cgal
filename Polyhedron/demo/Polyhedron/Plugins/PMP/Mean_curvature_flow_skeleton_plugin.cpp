@@ -28,7 +28,7 @@
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include </CGAL/Polyhedron_items_with_id_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
