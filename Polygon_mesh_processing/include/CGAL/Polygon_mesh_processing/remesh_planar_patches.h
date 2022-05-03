@@ -292,7 +292,7 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
   typedef Triangulation_face_base_with_info_2<FaceInfo2,P_traits>     Fbb;
   typedef Constrained_triangulation_face_base_2<P_traits,Fbb>          Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>                       TDS;
-  typedef No_constraint_intersection_tag                              Itag;
+  typedef No_constraint_intersection_requiring_constructions_tag     Itag;
   typedef Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>   CDT;
   typedef typename Kernel::Point_3 Point_3;
 
@@ -315,6 +315,9 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
   CDT cdt(p_traits);
   cdt.insert(points.begin(), points.end());
 
+  if (cdt.number_of_vertices() != points.size())
+    return false;
+
   // note that nbv might be different from points.size() in case of hole
   // tangent to the principal CCB
   CGAL_assertion_code(std::size_t nbv=cdt.number_of_vertices();)
@@ -331,7 +334,10 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
   local_csts.reserve(csts.size());
   try{
     for(const Id_pair& p : csts)
+    {
+      CGAL_assertion(vertex_map.count(p.first)!=0 && vertex_map.count(p.second)!=0);
       cdt.insert_constraint(vertex_map[p.first], vertex_map[p.second]);
+    }
   }catch(typename CDT::Intersection_of_constraints_exception&)
   {
     // intersection of constraints probably due to the projection
