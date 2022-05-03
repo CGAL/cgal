@@ -14,15 +14,16 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_ADD_TRIPLE_LINE_FEATURES_H
-#define CGAL_MESH_3_ADD_TRIPLE_LINE_FEATURES_H
+#ifndef CGAL_MESH_3_DETECT_TRIPLE_LINES_H
+#define CGAL_MESH_3_DETECT_TRIPLE_LINES_H
 
+#include <CGAL/Mesh_3/triple_lines_extraction/coordinates.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/combinations.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/cases_table.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/triple_lines.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/cube_isometries.h>
 
-#include <CGAL/Mesh_3/polylines_to_protect.h> // undocumented header
+#include <CGAL/Mesh_3/polylines_to_protect.h>
 
 #include <vector>
 #include <array>
@@ -35,35 +36,6 @@ namespace CGAL
 {
 namespace Mesh_3
 {
-//namespace internal
-//{
-  using Coordinates = std::array<int, 3>;
-  constexpr Coordinates coordinates[8] = { 0, 0, 0,
-                                           1, 0, 0,
-                                           0, 1, 0,
-                                           1, 1, 0,
-                                           0, 0, 1,
-                                           1, 0, 1,
-                                           0, 1, 1,
-                                           1, 1, 1 };
-
-  Coordinates operator-(Coordinates b, Coordinates a) {
-    return { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
-  }
-
-  Coordinates cross(Coordinates a, Coordinates b) {
-    return { a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0] };
-  }
-
-  Coordinates square(Coordinates c) {
-    return { c[0] * c[0], c[1] * c[1], c[2] * c[2] };
-  }
-
-  int dist(Coordinates a, Coordinates b) {
-    auto s = square(b - a);
-    return s[0] + s[1] + s[2];
-  }
-//}//
 
 // Protect the intersection of the object with the box of the image,
 // by declaring 1D-features. Note that `CGAL::polylines_to_protect` is
@@ -173,10 +145,13 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
           Polylines cube_features = (fct_it->second)(10);
           if (case_found) {
             const Permutation& transformation = cube_isometries[(*case_it)[9]];
-            Coordinates a1 = coordinates[transformation[0]];
-            Coordinates u = coordinates[transformation[1]] - a1;
-            Coordinates v = coordinates[transformation[2]] - a1;
-            Coordinates w = coordinates[transformation[4]] - a1;
+
+            using Coord = internal::Coordinates;
+            Coord a1 = internal::coordinates[transformation[0]];
+            Coord u = internal::minus(internal::coordinates[transformation[1]], a1);
+            Coord v = internal::minus(internal::coordinates[transformation[2]], a1);
+            Coord w = internal::minus(internal::coordinates[transformation[4]], a1);
+
             const Point_3  pa{ a1[0], a1[1], a1[2] };
             const Vector_3 vu{ u[0], u[1], u[2] };
             const Vector_3 vv{ v[0], v[1], v[2] };
@@ -250,4 +225,4 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
 }//end namespace CGAL
 
 
-#endif //CGAL_MESH_3_ADD_TRIPLE_LINE_FEATURES_H
+#endif //CGAL_MESH_3_DETECT_TRIPLE_LINES_H
