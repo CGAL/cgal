@@ -16,6 +16,7 @@
 #include <boost/graph/properties.hpp>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <boost/graph/adjacency_iterator.hpp>
 
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -81,7 +82,8 @@ private:
 
   struct SM_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                        public virtual boost::vertex_list_graph_tag,
-                                       public virtual boost::edge_list_graph_tag
+                                       public virtual boost::edge_list_graph_tag,
+                                       public virtual boost::adjacency_graph_tag
   {};
 
 public:
@@ -124,10 +126,12 @@ public:
 
   typedef CGAL::Out_edge_iterator<SM> out_edge_iterator;
 
+  typedef typename boost::adjacency_iterator_generator<SM, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
+
   // nulls
   static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
   static face_descriptor     null_face()   { return face_descriptor(); }
-  static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
+  static halfedge_descriptor null_halfedge()   { return halfedge_descriptor(); }
 };
 
 template<typename K>
@@ -262,6 +266,19 @@ out_edges(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
   typedef typename boost::graph_traits<OPEN_MESH_CLASS >::out_edge_iterator Iter;
   return CGAL::make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
+
+
+template <typename K>
+CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::adjacency_iterator>
+adjacnt_vertices(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
+                 const OPEN_MESH_CLASS& sm)
+{
+  typedef typename boost::graph_traits<OPEN_MESH_CLASS >::out_edge_iterator OutEdgeIter;
+  typedef typename boost::graph_traits<OPEN_MESH_CLASS >::adjacency_iterator Iter;
+  return CGAL::make_range(Iter(OutEdgeIter(halfedge(v,sm),sm), &sm), Iter(OutEdgeIter(halfedge(v,sm),sm,1), &sm));
+}
+
+
 
 
 template<typename K>
