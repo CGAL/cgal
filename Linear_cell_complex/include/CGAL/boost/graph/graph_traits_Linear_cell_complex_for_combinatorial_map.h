@@ -18,7 +18,6 @@
 #include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/graph/adjacency_iterator.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
