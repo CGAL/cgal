@@ -48,7 +48,7 @@ class Expr;
 
 namespace CGAL { namespace internal {
 
-// Two classes which tell the prefered "exact number types" corresponding to a type.
+// Two classes which tell the preferred "exact number types" corresponding to a type.
 
 // The default template chooses mpq_class, Gmpq, leda_rational, or Quotient<MP_Float>.
 // It should support the built-in types.

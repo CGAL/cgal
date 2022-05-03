@@ -14,6 +14,9 @@
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schönherr
 
+#ifndef CGAL_ASSERTIONS_IMPL_H
+#define CGAL_ASSERTIONS_IMPL_H
+
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
 #else
@@ -280,3 +283,5 @@ set_warning_behaviour(Failure_behaviour eb)
 }
 
 } //namespace CGAL
+
+#endif //CGAL_ASSERTIONS_IMPL_H

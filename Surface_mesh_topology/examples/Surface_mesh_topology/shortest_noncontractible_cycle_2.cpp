@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 {
   std::cout<<"Program shortest_noncontractible_cycle_through_a_vertex started."
            <<std::endl;
-  std::string filename("data/3torus.off");
+  std::string filename(CGAL::data_file_path("meshes/3torus.off"));
   bool draw=false;
   bool dist=false;
   bool time=false;

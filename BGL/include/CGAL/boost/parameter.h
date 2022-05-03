@@ -110,6 +110,7 @@ BOOST_PARAMETER_NAME( (pointer_to_stop_atomic_boolean, tag ) pointer_to_stop_ato
 BOOST_PARAMETER_NAME( (function, tag ) function_)
 BOOST_PARAMETER_NAME( (bounding_object, tag ) bounding_object_)
 BOOST_PARAMETER_NAME( (relative_error_bound, tag ) relative_error_bound_)
+BOOST_PARAMETER_NAME( (weights, tag) weights_)
 BOOST_PARAMETER_NAME( (p_rng, tag ) p_rng_)
 BOOST_PARAMETER_NAME( (null_subdomain_index, tag ) null_subdomain_index_)
 BOOST_PARAMETER_NAME( (construct_surface_patch_index, tag ) construct_surface_patch_index_)

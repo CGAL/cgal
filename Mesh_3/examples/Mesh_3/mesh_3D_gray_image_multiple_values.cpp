@@ -42,7 +42,7 @@ struct Image_to_multiple_iso_level_sets {
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/skull_2.9.inr";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/skull_2.9.inr");
   // Load image
   CGAL::Image_3 image;
   if(!image.read(fname)){
@@ -52,8 +52,10 @@ int main(int argc, char*argv[])
 
   typedef boost::container::flat_set<float> Flat_set;
   Flat_set iso_values;
-  if(argc < 3) {
+  if(argc < 2) {
+    iso_values.insert(1.5f);
     iso_values.insert(2.9f);
+    iso_values.insert(3.5f);
   } else {
     for(int i = 2; i < argc; ++i) {
       iso_values.insert(static_cast<float>(std::atof(argv[i])));

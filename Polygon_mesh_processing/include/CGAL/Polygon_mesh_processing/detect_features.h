@@ -86,7 +86,7 @@ template<typename PatchIdMap,
          typename ValueType = typename boost::property_traits<PatchIdMap>::value_type>
 struct PatchIdMapWrapper
 {
-  typedef typename boost::property_traits<PatchIdMap>::category category;
+  typedef typename boost::read_write_property_map_tag category;
   typedef ValueType value_type;
   typedef typename boost::property_traits<PatchIdMap>::reference reference;
   typedef typename boost::property_traits<PatchIdMap>::key_type key_type;
@@ -118,7 +118,7 @@ void put(PatchIdMapWrapper<PatchIdMap, Int>& map, Handle_type h,
 template<typename PatchIdMap, typename Int>
 struct PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >
 {
-  typedef typename boost::property_traits<PatchIdMap>::category category;
+  typedef typename boost::read_write_property_map_tag category;
   typedef Int value_type;
   typedef typename boost::property_traits<PatchIdMap>::reference reference;
   typedef typename boost::property_traits<PatchIdMap>::key_type key_type;

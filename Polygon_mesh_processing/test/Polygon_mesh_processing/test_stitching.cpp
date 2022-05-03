@@ -25,7 +25,7 @@ namespace params = CGAL::parameters;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename Mesh>
-void test_stitch_boundary_cycles(const char* fname,
+void test_stitch_boundary_cycles(const std::string fname,
                                  const std::size_t expected_n)
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
@@ -97,7 +97,7 @@ typename boost::graph_traits<Mesh>::halfedge_descriptor get_border_halfedge(cons
 }
 
 template <typename Mesh>
-void test_stitch_borders(const char* fname,
+void test_stitch_borders(const std::string fname,
                          const std::size_t expected_n,
                          const bool per_cc = false,
                          std::set<int> unconstrained_edge_ids = { }, // constrained edges must appear in the output
@@ -171,7 +171,7 @@ void test_stitch_borders()
   test_stitch_borders<Mesh>("data_stitching/pinched.off", 2, false, {130, 94}, {94});
   test_stitch_borders<Mesh>("data_stitching/pinched.off", 0, false, {}, {140}); // outer border, nothing to stitch
   test_stitch_borders<Mesh>("data_stitching/full_border.off", 4);
-  test_stitch_borders<Mesh>("data_stitching/full_border_quads.off", 4);
+  test_stitch_borders<Mesh>(CGAL::data_file_path("meshes/quads_to_stitch.off"), 4);
   test_stitch_borders<Mesh>("data_stitching/half_border.off", 2, false, {23, 15});
   test_stitch_borders<Mesh>("data_stitching/incidence_3.off", 3);
   test_stitch_borders<Mesh>("data_stitching/incoherent_patch_orientation.off", 1);

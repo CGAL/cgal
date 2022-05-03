@@ -15,10 +15,6 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-if(CGAL_Qt5_FOUND)
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
-
 # create a target per cppfile
 file(
   GLOB cppfiles
@@ -29,7 +25,7 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 if(CGAL_Qt5_FOUND)
-  target_link_libraries(draw_triangulation_2 PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(draw_triangulation_2 PUBLIC CGAL::CGAL_Basic_viewer)
 else()
   message(
     STATUS

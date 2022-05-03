@@ -4380,6 +4380,8 @@ namespace CartesianKernelFunctors {
     typedef typename K::Circle_2       Circle_2;
     typedef typename K::Line_2         Line_2;
     typedef typename K::Triangle_2     Triangle_2;
+    typedef typename K::Segment_2      Segment_2;
+    typedef typename K::FT             FT;
   public:
     typedef typename K::Oriented_side  result_type;
 
@@ -4415,6 +4417,30 @@ namespace CartesianKernelFunctors {
          && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
         ? result_type(ON_ORIENTED_BOUNDARY)
         : opposite(ot);
+    }
+
+    result_type
+    operator()(const Segment_2& s, const Triangle_2& t) const
+    {
+      typename K::Construct_source_2 source;
+      typename K::Construct_target_2 target;
+      const Point_2& a = source(s);
+      const Point_2& b = target(s);
+      CGAL_assertion(a != b);
+
+      typename K::Construct_vertex_2 vertex;
+      const Point_2& p0 = vertex(t, 0);
+      const Point_2& p1 = vertex(t, 1);
+      const Point_2& p2 = vertex(t, 2);
+      CGAL_assertion(p0 != p1 && p1 != p2 && p2 != p0);
+
+      return circumcenter_oriented_side_of_oriented_segmentC2(
+                  a.x(), a.y(),
+                  b.x(), b.y(),
+                  p0.x(), p0.y(),
+                  p1.x(), p1.y(),
+                  p2.x(), p2.y()
+      );
     }
   };
 

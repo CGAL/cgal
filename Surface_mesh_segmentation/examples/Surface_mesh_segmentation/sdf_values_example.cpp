@@ -15,7 +15,7 @@ int main()
 {
   // create and read Polyhedron
   Polyhedron mesh;
-  std::ifstream input("data/cactus.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cactus.off"));
   if ( !input || !(input >> mesh) || mesh.empty() || ( !CGAL::is_triangle_mesh(mesh)) )
   {
     std::cerr << "Input is not a triangle mesh" << std::endl;

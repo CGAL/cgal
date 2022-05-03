@@ -39,7 +39,7 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in_mesh((argc>1)?argv[1]:"data/lion.off");
+  std::ifstream in_mesh((argc>1)?argv[1]:CGAL::data_file_path("meshes/lion.off"));
   if(!in_mesh) {
     std::cerr << "Error: problem loading the input data" << std::endl;
     return EXIT_FAILURE;

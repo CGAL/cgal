@@ -53,6 +53,7 @@ struct Mesh_parameters
   bool detect_connected_components;
   int manifold;
   const CGAL::Image_3* image_3_ptr;
+  const CGAL::Image_3* weights_ptr;
   bool use_sizing_field_with_aabb_tree;
 
   inline QStringList log() const;
