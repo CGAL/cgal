@@ -67,7 +67,7 @@ namespace CGAL {
 
 template < class T, class Allocator_, class Increment_policy, class IndexType>
 class Compact_container_with_index_2;
-  
+
 template<unsigned int k>
 struct Multiply_by_two_policy_for_cc_with_size
 {
@@ -523,7 +523,7 @@ public:
       { allocate_new_block(); }
       ret=size_;
       ++last_index;
-    }    
+    }
 
     T& e = operator[](ret);
     used[ret]=true;
@@ -759,7 +759,7 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
   all_items=nullptr;
   used.clear();
   free_list.clear();
-  
+
   init();
 }
 
@@ -769,7 +769,7 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
   size_type oldcapacity=capacity_;
   capacity_ += block_size;
   used.resize(capacity_, false);
-  
+
   pointer all_items2=
       std::allocator_traits<allocator_type>::allocate(alloc, capacity_);
   for (size_type index=0; index<oldcapacity; ++index)
