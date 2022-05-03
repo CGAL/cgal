@@ -63,17 +63,20 @@ num_edges(const HalfedgeDS_default<T,I,A>& p)
 template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::degree_size_type
 degree(typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertex_descriptor v
-       , const HalfedgeDS_default<T,I,A>&)
+       , const HalfedgeDS_default<T,I,A>& hds)
 {
-  return v->vertex_degree();
+  if(halfedge(v,hds) == boost::graph_traits<HalfedgeDS_default<T,I,A> const>::null_halfedge()){
+    return 0;
+  }
+  return halfedges_around_target(v,hds).size();
 }
 
 template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::degree_size_type
 out_degree(typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertex_descriptor v
-           , const HalfedgeDS_default<T,I,A>&)
+           , const HalfedgeDS_default<T,I,A>& hds)
 {
-  return v->vertex_degree();
+    return degree(v, hds);
 }
 
 template<class T, class I, class A>
@@ -81,7 +84,7 @@ typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::degree_size_type
 in_degree(typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertex_descriptor v
           , const HalfedgeDS_default<T,I,A>&)
 {
-  return v->vertex_degree();
+  return degree(v,hds);
 }
 
 template<class T, class I, class A>
