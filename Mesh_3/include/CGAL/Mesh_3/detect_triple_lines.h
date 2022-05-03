@@ -84,6 +84,8 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
         Vector_3 translation{ i * vx + tx,
                               j * vy + ty,
                               k * vz + tz };
+
+        using Cube = internal::Cube;
         const Cube cube = {
           static_evaluate<unsigned char>(image.image(), i  , j  , k),
           static_evaluate<unsigned char>(image.image(), i + 1, j  , k),
@@ -127,7 +129,7 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
         auto case_it = find_case(cases, reference_cube);
         using std::end;
         const bool case_found = (case_it != end(cases));
-        if (case_found) reference_cube = combinations[(*case_it)[8]];
+        if (case_found) reference_cube = internal::combinations[(*case_it)[8]];
         else {
           //std::cerr << "Warning: case not found: " << reference_cube << '\n';
           CGAL_error();
