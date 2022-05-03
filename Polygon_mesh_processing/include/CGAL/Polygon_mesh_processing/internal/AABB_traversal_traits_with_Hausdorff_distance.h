@@ -431,9 +431,9 @@ namespace CGAL {
 
       // Compute its center.
       const Point_3 center = Point_3(
-        (bbox.min(0) + bbox.max(0)) / FT(2),
-        (bbox.min(1) + bbox.max(1)) / FT(2),
-        (bbox.min(2) + bbox.max(2)) / FT(2));
+        (bbox.xmin() + bbox.xmax()) / FT(2),
+        (bbox.ymin() + bbox.ymax()) / FT(2),
+        (bbox.zmin() + bbox.zmax()) / FT(2));
 
       // Find the point from TM2 closest to the center.
       const Point_3 closest = m_tm2_tree.closest_point(center);

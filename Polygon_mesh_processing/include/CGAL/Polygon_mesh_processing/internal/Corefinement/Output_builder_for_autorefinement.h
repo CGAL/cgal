@@ -35,7 +35,6 @@ namespace Polygon_mesh_processing {
 namespace Corefinement {
 
 namespace PMP=Polygon_mesh_processing;
-namespace params=PMP::parameters;
 
 template <class TriangleMesh,
           class VertexPointMap,
@@ -353,9 +352,8 @@ public:
     std::size_t nb_patches =
       PMP::connected_components(tm,
                                 bind_property_maps(fids,make_property_map(patch_ids)),
-                                params::edge_is_constrained_map(
-                                    is_intersection)
-                                .face_index_map(fids));
+                                parameters::edge_is_constrained_map(is_intersection)
+                                           .face_index_map(fids));
 
     // (2-a) Use the orientation around an edge to classify a patch
     boost::dynamic_bitset<> patches_to_keep(nb_patches);
@@ -1181,7 +1179,7 @@ public:
     //remove the extra patch
     remove_patches(tm, ~patches_to_keep,patches, ecm);
 
-    PMP::stitch_borders(tm, hedge_pairs_to_stitch, params::vertex_point_map(vpm));
+    PMP::stitch_borders(tm, hedge_pairs_to_stitch, parameters::vertex_point_map(vpm));
   }
 };
 

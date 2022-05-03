@@ -35,6 +35,22 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  const double sharp_edges_angle,
                                  const int manifold,
                                  const bool surface_only);
+
+Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
+                                 const QList<std::pair<int, int> >& incident_subdomains,
+                                 QString filename,
+                                 const double facet_angle,
+                                 const double facet_sizing,
+                                 const double facet_approx,
+                                 const double tet_sizing,
+                                 const double edge_size,
+                                 const double tet_shape,
+                                 bool protect_features,
+                                 bool protect_border,
+                                 const double sharp_edges_angle,
+                                 const int manifold,
+                                 const bool surface_only);
+
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_angle,

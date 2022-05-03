@@ -39,6 +39,8 @@
 #include <CGAL/Surface_mesher/Profile_counter.h>
 #include <CGAL/Surface_mesher/Profile_timer.h>
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
   namespace Surface_mesher {
@@ -298,6 +300,7 @@ namespace CGAL {
 
           for(bool exit = false; ; exit = true)
           {
+            CGAL_USE(exit);
             // this for loop is a trick to pass in the following "if" once
             // with center="surface center", and once with
             // center="circumcenter"

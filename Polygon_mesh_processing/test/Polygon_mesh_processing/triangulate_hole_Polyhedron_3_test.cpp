@@ -163,7 +163,7 @@ void test_triangulate_hole_should_be_no_output(const std::string file_name, bool
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-      CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false)
+      CGAL::parameters::use_delaunay_triangulation(false)
         .use_2d_constrained_delaunay_triangulation(use_cdt));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
@@ -171,7 +171,7 @@ void test_triangulate_hole_should_be_no_output(const std::string file_name, bool
     }
 
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-      CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(true));
+      CGAL::parameters::use_delaunay_triangulation(true));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
       assert(false);
@@ -327,7 +327,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-  CGAL::Polygon_mesh_processing::parameters::
+  CGAL::parameters::
     weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()).
     sparse_linear_solver(Default_solver()).
     use_2d_constrained_delaunay_triangulation(false));
@@ -336,7 +336,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-    CGAL::Polygon_mesh_processing::parameters::
+    CGAL::parameters::
       weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()));
 
   // default solver and weight

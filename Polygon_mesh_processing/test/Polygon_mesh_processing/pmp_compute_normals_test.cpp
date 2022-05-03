@@ -42,28 +42,28 @@ void test(const Mesh& mesh,
   const face_descriptor first_face = *(faces(mesh).begin());
 
   PMP::compute_face_normals(mesh, fnormals);
-  PMP::compute_face_normals(mesh, fnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_face_normals(mesh, fnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_face_normals(mesh, fnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                              .geom_traits(K()));
 
   Vector f0n = PMP::compute_face_normal(first_face, mesh);
   assert(f0n == get(fnormals, first_face));
-  PMP::compute_face_normal(first_face, mesh, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_face_normal(first_face, mesh, CGAL::parameters::vertex_point_map(vpmap));
 
   PMP::compute_vertex_normals(mesh, vnormals);
-  PMP::compute_vertex_normals(mesh, vnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_vertex_normals(mesh, vnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_vertex_normals(mesh, vnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                                .geom_traits(K()));
 
   Vector v0n = PMP::compute_vertex_normal(first_vertex, mesh);
   assert(v0n == get(vnormals, first_vertex));
-  v0n = PMP::compute_vertex_normal(first_vertex, mesh, PMP::parameters::vertex_point_map(vpmap)
-                                                                       .face_normal_map(fnormals));
+  v0n = PMP::compute_vertex_normal(first_vertex, mesh, CGAL::parameters::vertex_point_map(vpmap)
+                                                                        .face_normal_map(fnormals));
   std::cout.precision(17);
   assert(v0n == get(vnormals, first_vertex));
 
   PMP::compute_normals(mesh, vnormals, fnormals);
-  PMP::compute_normals(mesh, vnormals, fnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_normals(mesh, vnormals, fnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_normals(mesh, vnormals, fnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                                   .geom_traits(K()));
 

@@ -36,10 +36,10 @@ namespace IO {
 
 //not for now : some readers will return "ok" despite not managing to read anything
 /*
-template <class Graph, typename NamedParameters>
+template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(std::istream& is,
                        Graph& g,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   bool ok = false;
   ok = read_OFF(is, g, np, false);
@@ -70,12 +70,6 @@ bool read_polygon_mesh(std::istream& is,
   return ok;
 }
 
-template <class Graph>
-bool read_polygon_mesh(std::istream& is,
-                       Graph& g)
-{
-  return read_polygon_mesh(is, g, parameters::all_default());
-}
 */
 
 /*!
@@ -125,10 +119,10 @@ bool read_polygon_mesh(std::istream& is,
  *
  * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink if the data is not 2-manifold
 */
-template <class Graph, typename NamedParameters>
+template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(const std::string& fname,
                        Graph& g,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
@@ -163,16 +157,6 @@ bool read_polygon_mesh(const std::string& fname,
 
   return false;
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <class Graph>
-bool read_polygon_mesh(const std::string& fname, Graph& g)
-{
-  return read_polygon_mesh(fname, g, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,10 +212,10 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  *
  * \return `true` if writing was successful, `false` otherwise.
  */
-template <class Graph, typename NamedParameters>
+template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool write_polygon_mesh(const std::string& fname,
                         Graph& g,
-                        const NamedParameters& np)
+                        const NamedParameters& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
@@ -266,16 +250,6 @@ bool write_polygon_mesh(const std::string& fname,
 
   return false;
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <class Graph>
-bool write_polygon_mesh(const std::string& fname, Graph& g)
-{
-  return write_polygon_mesh(fname, g, parameters::all_default());
-}
-
-/// \endcond
 
 }} // namespace CGAL::IO
 

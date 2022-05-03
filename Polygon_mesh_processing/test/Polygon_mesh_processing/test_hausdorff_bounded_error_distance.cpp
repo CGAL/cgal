@@ -45,13 +45,13 @@ struct Approximate_hd_wrapper {
   Approximate_hd_wrapper(const double num_samples) : m_num_samples(num_samples) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::approximate_Hausdorff_distance<TAG>(tm1, tm2,
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples),
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples));
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples),
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples));
   }
   double symmetric(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::approximate_symmetric_Hausdorff_distance<TAG>(tm1, tm2,
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples),
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples));
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples),
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples));
   }
 };
 
@@ -128,7 +128,7 @@ void remeshing_tetrahedon_example(
   const double target_edge_length = 0.05;
   PMP::isotropic_remeshing(
     mesh2.faces(), target_edge_length, mesh2,
-    PMP::parameters::edge_is_constrained_map(is_constrained_map));
+    CGAL::parameters::edge_is_constrained_map(is_constrained_map));
 
   if (save) save_mesh(mesh1, "mesh1");
   if (save) save_mesh(mesh2, "mesh2");
@@ -1132,7 +1132,7 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.0 = 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0, 0.0001));
   timer.stop();
   const double timea = timer.time();
 
@@ -1142,25 +1142,25 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.5 < 1.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 1.0));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 1.0, 0.0001));
   timer.stop();
   const double timeb = timer.time();
   std::cout << " ---- distance 0.5 < 0.6 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.6));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.6, 0.0001));
   timer.stop();
   const double timec = timer.time();
   std::cout << " ---- distance 0.5 > 0.4 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.4));
+  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.4, 0.0001));
   timer.stop();
   const double timed = timer.time();
   std::cout << " ---- distance 0.5 > 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0));
+  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0, 0.0001));
   timer.stop();
   const double timee = timer.time();
 

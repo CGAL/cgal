@@ -13,7 +13,7 @@
 #include <vector>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef K::Point_3                                              Point_3;
@@ -259,7 +259,7 @@ void test_merge_duplicate_polygons(const bool /*verbose*/ = false)
   // Keep one for each duplicate
   std::vector<CGAL_polygon> polygons_copy(polygons);
   res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
-                                                      params::all_default());
+                                                      params::default_values());
   assert(res == 3 && polygons_copy.size() == 3);
 
   // Remove all duplicates

@@ -57,14 +57,7 @@
 #endif
 
 #include <boost/format.hpp>
-#ifdef CGAL_MESH_3_USE_RELAXED_HEAP
-#  error This option CGAL_MESH_3_USE_RELAXED_HEAP is no longer supported
-// The reason is that the Boost relaxed heap does not ensure a strict order
-// of the priority queue.
-#include <boost/pending/relaxed_heap.hpp>
-#else
 #include <CGAL/Modifiable_priority_queue.h>
-#endif //CGAL_MESH_3_USE_RELAXED_HEAP
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -507,11 +500,8 @@ private:
   };
 
   typedef std::less<PVertex> less_PVertex;
-  #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
-  typedef boost::relaxed_heap<PVertex, less_PVertex, PVertex_id> PQueue;
-  #else
-  typedef ::CGAL::internal::mutable_queue_with_remove<PVertex,std::vector<PVertex>, less_PVertex, PVertex_id> PQueue;
-  #endif //CGAL_MESH_3_USE_RELAXED_HEAP
+  typedef Modifiable_priority_queue<PVertex, less_PVertex, PVertex_id> PQueue;
+
 
 public:
   /**
@@ -942,10 +932,9 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
   {
     this->create_task_group();
 
-    while (pqueue.size() > 0)
+    while (!pqueue.empty())
     {
-      PVertex pv = pqueue.top();
-      pqueue.pop();
+      PVertex pv = pqueue.top_and_pop();
       enqueue_task(pv, sliver_bound,
                    visitor, bad_vertices);
     }
@@ -977,8 +966,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
     while ( !is_time_limit_reached() && !pqueue.empty() )
     {
       // Get pqueue head
-      PVertex pv = pqueue.top();
-      pqueue.pop();
+      PVertex pv = pqueue.top_and_pop();
       --pqueue_size;
 
       CGAL_assertion(pv.is_perturbable());
@@ -1245,7 +1233,7 @@ update_priority_queue(const PVertex& pv, PQueue& pqueue) const
     }
     else
     {
-      pqueue.remove(pv);
+      pqueue.erase(pv);
       return -1;
     }
   }

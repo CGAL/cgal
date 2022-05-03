@@ -25,7 +25,7 @@ void test_halfedge_around_vertex_iterator(const  Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   boost::unordered_map<g_face_descriptor, std::size_t> map(num_faces(g));
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
 
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
   typename boost::graph_traits<Adapter >::vertex_iterator vit, vend;
@@ -52,7 +52,7 @@ void test_halfedge_around_face_iterator(const Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   face_iterator fit, fend;
@@ -73,7 +73,7 @@ void test_edge_iterators(const Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   // do we iterate as many as that?
@@ -99,7 +99,7 @@ void test_vertex_iterators(Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
   vertex_iterator vb, ve;
   std::size_t count = 0;
@@ -129,7 +129,7 @@ void test_out_edges(const Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   vertex_iterator vb, ve;
@@ -158,7 +158,7 @@ void test_in_edges(const Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   vertex_iterator vb, ve;
@@ -185,7 +185,7 @@ void test_in_out_edges(const Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   // check that the sets of in out edges are the same
@@ -227,7 +227,7 @@ void test_edge_find(const Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
   typedef std::pair<edge_descriptor, bool>   ret;
 
@@ -251,7 +251,7 @@ void test_faces(const Graph& g)
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   unsigned int count = 0;
@@ -278,7 +278,7 @@ void test_index_property_maps(const Graph& g)
 
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::default_values());
   Adapter fg(g, -1, boost::make_assoc_property_map(map));
   assert(is_empty(fg));
 
@@ -325,7 +325,7 @@ void test_read(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
 
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
+  PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
   assert(fg.is_selection_valid());
   assert(CGAL::is_valid_polygon_mesh(fg));
@@ -484,8 +484,8 @@ void test_invalid_selections()
   face_range.push_back(SM::Face_index(2));
   face_range.push_back(SM::Face_index(3));
 
-  CGAL::Face_filtered_graph<SM> bad_fg(mesh, face_range);
-  assert(!bad_fg.is_selection_valid());
+  CGAL::Face_filtered_graph<SM> pinched_fg(mesh, face_range);
+  assert(pinched_fg.is_selection_valid());
 
   // this creates a non-manifold vertex (multiple umbrellas)
   clear(mesh);
@@ -495,8 +495,8 @@ void test_invalid_selections()
   face_range.clear();
   merge_vertices(SM::Vertex_index(1337), SM::Vertex_index(87), face_range, mesh);
 
-  CGAL::Face_filtered_graph<SM> bad_fg_2(mesh, face_range);
-  assert(!bad_fg_2.is_selection_valid());
+  CGAL::Face_filtered_graph<SM> many_umbrellas_fg(mesh, face_range);
+  assert(!many_umbrellas_fg.is_selection_valid());
 }
 
 int main()

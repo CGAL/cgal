@@ -1144,7 +1144,6 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       sm->collect_garbage();
       Input_facets_AABB_tree* tree =
           new Input_facets_AABB_tree();
-      int index =0;
       for(face_descriptor f : faces(*sm))
       {
         //if face is degenerate, skip it
@@ -1155,7 +1154,6 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
         {
           EPICK::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, *sm);
-          index +=3;
           Q_FOREACH(EPICK::Triangle_3 triangle, triangulate_primitive(f,normal))
           {
             Primitive primitive(triangle, f);
@@ -1551,7 +1549,7 @@ Scene_surface_mesh_item::save(std::ostream& out) const
   }
   else
   {
-    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::all_default());
+    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::default_values());
   }
   QApplication::restoreOverrideCursor();
   return (bool) out;
@@ -1573,6 +1571,8 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
     {
       CGAL::Polygon_mesh_processing::repair_polygon_soup(points, faces);
       CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
+
+      clear(*(d->smesh_));
       CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, *(d->smesh_));
     }
   }
@@ -1935,8 +1935,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
         //compute new position and orientation
         EPICK::Vector_3 face_normal = CGAL::Polygon_mesh_processing::
             compute_face_normal(selected_fh,
-                                *d->smesh_,
-                                CGAL::Polygon_mesh_processing::parameters::all_default());
+                                *d->smesh_);
 
 
         double x(0), y(0), z(0),
