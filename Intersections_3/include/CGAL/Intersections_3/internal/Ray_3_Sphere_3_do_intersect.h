@@ -14,7 +14,7 @@
 #define CGAL_INTERNAL_INTERSECTIONS_RAY_3_SPHERE_3_DO_INTERSECT_H
 
 #include <CGAL/Rational_traits.h>
-#include <CGAL/squared_distance_3_2.h>
+#include <CGAL/Distance_3/Point_3_Ray_3.h>
 
 namespace CGAL {
 namespace Intersections {

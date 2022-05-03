@@ -33,6 +33,7 @@ No_intersection_surface_sweep_2<Vis>::
 No_intersection_surface_sweep_2(Visitor* visitor) :
   m_traits(new Traits_adaptor_2()),
   m_traitsOwner(true),
+  m_currentEvent(nullptr),
   m_statusLineCurveLess(m_traits, &m_currentEvent),
   m_queueEventLess(m_traits),
   m_queue(new Event_queue(m_queueEventLess)),
@@ -54,6 +55,7 @@ No_intersection_surface_sweep_2<Vis>::
 No_intersection_surface_sweep_2(const Gt2* traits, Visitor* visitor) :
   m_traits(static_cast<const Traits_adaptor_2*>(traits)),
   m_traitsOwner(false),
+  m_currentEvent(nullptr),
   m_statusLineCurveLess(m_traits, &m_currentEvent),
   m_queueEventLess(m_traits),
   m_queue(new Event_queue(m_queueEventLess)),

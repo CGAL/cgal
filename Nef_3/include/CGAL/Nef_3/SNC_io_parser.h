@@ -1088,7 +1088,10 @@ public:
 
 template <typename EW>
 SNC_io_parser<EW>::SNC_io_parser(std::istream& is, SNC_structure& W) :
-  Base(W), in(is), out(std::cout) {
+  Base(W), in(is), out(std::cout),
+  reduce(false), sorted(false), addInfiBox(false),
+  i(0), vn(0), en(0), fn(0), cn(0), sen(0), sln(0), sfn(0)
+{
   W.clear();
   CGAL_assertion(W.is_empty());
   verbose = false;
@@ -1099,11 +1102,13 @@ template <typename EW>
 SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
                                  bool sort, bool reduce_) :
   Base(W), in(std::cin), out(os),
+  addInfiBox(false),
   FI(W.halffacets_begin(),W.halffacets_end(),'F'),
   CI(W.volumes_begin(),W.volumes_end(),'C'),
   SEI(W.shalfedges_begin(),W.shalfedges_end(),'e'),
   SLI(W.shalfloops_begin(),W.shalfloops_end(),'l'),
   SFI(W.sfaces_begin(),W.sfaces_end(),'f'),
+  i(0),
   vn(W.number_of_vertices()),
   en(W.number_of_halfedges()),
   fn(W.number_of_halffacets()),

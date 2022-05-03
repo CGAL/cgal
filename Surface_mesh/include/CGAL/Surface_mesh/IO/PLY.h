@@ -21,8 +21,6 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-
 #include <CGAL/IO/PLY.h>
 
 #ifdef DOXYGEN_RUNNING
@@ -717,7 +715,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 
 /// \ingroup PkgSurfaceMeshIOFuncPLY
 ///
-/// \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+/// \attention To read a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 ///
 /// \brief extracts the surface mesh from an input stream in the \ref IOStreamPLY
 ///        and appends it to the surface mesh `sm`.
@@ -890,7 +888,9 @@ namespace IO {
 /// simple types are inserted in the stream. The halfedges follow
 /// the same behavior.
 ///
-/// \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+///  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+///             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+///             of the stream must be set to `BINARY`.
 ///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.
@@ -1157,7 +1157,5 @@ CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm)
 #endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
-
-#endif // !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 
 #endif // CGAL_SURFACE_MESH_IO_PLY_H

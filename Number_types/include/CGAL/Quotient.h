@@ -565,7 +565,7 @@ namespace INTERN_QUOTIENT {
         public:
           NT operator()( const NT& x ) const {
             CGAL_precondition(x > 0);
-            return NT(CGAL_NTS sqrt(x.numerator()*x.denominator()),
+            return NT(CGAL_NTS sqrt(typename NT::NT(x.numerator()*x.denominator())),
                       x.denominator());
           }
       };

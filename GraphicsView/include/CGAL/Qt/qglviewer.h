@@ -833,8 +833,26 @@ public:
 
 public Q_SLOTS:
   void setShortcut(qglviewer::KeyboardAction action, unsigned int key);
+  void setShortcut(qglviewer::KeyboardAction action, ::Qt::Modifier modifier, ::Qt::Key key)
+  {
+    setShortcut(action,
+                static_cast<unsigned int>(modifier)+
+                static_cast<unsigned int>(key));
+  }
 
   void setKeyDescription(unsigned int key, QString description);
+  void setKeyDescription(::Qt::KeyboardModifier modifier, ::Qt::Key key, QString description)
+  {
+    setKeyDescription(static_cast<unsigned int>(modifier) +
+                      static_cast<unsigned int>(key),
+                      description);
+  }
+  void setKeyDescription(::Qt::Modifier modifier, ::Qt::Key key, QString description)
+  {
+    setKeyDescription(static_cast<unsigned int>(modifier) +
+                      static_cast<unsigned int>(key),
+                      description);
+  }
   void clearShortcuts();
 
 // Key Frames shortcut keys

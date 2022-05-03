@@ -5,8 +5,7 @@
 The concept `SearchGeomTraits_3` defines the requirements for the template
 parameter of the search traits classes.
 
-\cgalHasModel `Simple_cartesian<double>`
-\cgalHasModel `Simple_cartesian<Gmpq>`
+\cgalHasModel All models of the concept `Kernel`
 
 */
 

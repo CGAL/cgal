@@ -17,11 +17,7 @@
 #include <CGAL/Bbox_3.h>
 
 #include <atomic>
-#if TBB_IMPLEMENT_CPP0X
-# include <tbb/compat/thread>
-#else
-# include <thread>
-#endif
+#include <thread>
 #include <tbb/enumerable_thread_specific.h>
 
 #include <algorithm>

@@ -38,7 +38,7 @@
 #include <CGAL/use.h>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
-#include <CGAL/Filtered_kernel/internal/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING

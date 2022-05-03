@@ -23,6 +23,8 @@
 #include <CGAL/constructions/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 #include <CGAL/Cartesian/solve_3.h>
+#include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
 
 namespace CGAL {
 
@@ -457,6 +459,103 @@ namespace CartesianKernelFunctors {
     }
   };
 
+  namespace internal {
+
+  template <class K>
+  typename K::Comparison_result
+  compare_distance_pssC3(const typename K::Point_3 &pt,
+                         const typename K::Segment_3 &seg1,
+                         const typename K::Segment_3 &seg2,
+                         const K& k)
+  {
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+
+    typename K::Construct_vector_3 construct_vector;
+
+    FT d1=FT(0), d2=FT(0);
+    RT e1 = RT(1), e2 = RT(1);
+    // assert that the segment is valid (non zero length).
+    {
+      Vector_3 diff = construct_vector(seg1.source(), pt);
+      Vector_3 segvec = construct_vector(seg1.source(), seg1.target());
+      RT d = CGAL::internal::wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d1 = (FT(diff*diff));
+      }else{
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
+        if (d > e){
+          d1 = CGAL::internal::squared_distance(pt, seg1.target(), k);
+        } else{
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
+          d1 = FT(wcr*wcr);
+          e1 = e;
+        }
+      }
+    }
+
+    {
+      Vector_3 diff = construct_vector(seg2.source(), pt);
+      Vector_3 segvec = construct_vector(seg2.source(), seg2.target());
+      RT d = CGAL::internal::wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d2 = (FT(diff*diff));
+      }else{
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
+        if (d > e){
+          d2 = CGAL::internal::squared_distance(pt, seg2.target(), k);
+        } else{
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
+          d2 = FT(wcr*wcr);
+          e2 = e;
+        }
+      }
+    }
+
+    return CGAL::compare(d1*e2, d2*e1);
+  }
+
+  template <class K>
+  typename K::Comparison_result
+  compare_distance_ppsC3(const typename K::Point_3 &pt,
+                         const typename K::Point_3 &pt2,
+                         const typename K::Segment_3 &seg,
+                         const K& k)
+  {
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+
+    typename K::Construct_vector_3 construct_vector;
+
+    RT e2 = RT(1);
+    // assert that the segment is valid (non zero length).
+    FT d1 = CGAL::internal::squared_distance(pt, pt2, k);
+    FT d2 = FT(0);
+    {
+      Vector_3 diff = construct_vector(seg.source(), pt);
+      Vector_3 segvec = construct_vector(seg.source(), seg.target());
+      RT d = CGAL::internal::wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d2 = (FT(diff*diff));
+      }else{
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
+        if (d > e){
+          d2 = CGAL::internal::squared_distance(pt, seg.target(), k);
+        } else{
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
+          d2 = FT(wcr*wcr);
+          e2 = e;
+        }
+      }
+    }
+
+    return CGAL::compare(d1*e2, d2);
+  }
+
+  } // namespace internal
+
   template <typename K>
   class Compare_distance_3
   {
@@ -476,19 +575,19 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Point_3& p1, const Segment_3& s1, const Segment_3& s2) const
     {
-      return CGAL::internal::compare_distance_pssC3(p1,s1,s2, K());
+      return internal::compare_distance_pssC3(p1,s1,s2, K());
     }
 
     result_type
     operator()(const Point_3& p1, const Point_3& p2, const Segment_3& s2) const
     {
-      return CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K());
+      return internal::compare_distance_ppsC3(p1,p2,s2, K());
     }
 
     result_type
     operator()(const Point_3& p1, const Segment_3& s2, const Point_3& p2) const
     {
-      return opposite(CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K()));
+      return opposite(internal::compare_distance_ppsC3(p1,p2,s2, K()));
     }
 
     template <class T1, class T2, class T3>
@@ -3242,8 +3341,17 @@ namespace CartesianKernelFunctors {
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Ray_3      Ray_3;
     typedef typename K::FT         FT;
+
   public:
-    typedef Point_3                result_type;
+    template<typename>
+    struct result {
+      typedef const Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Point_3, Point_3)> {
+      typedef const Point_3& type;
+    };
 
     Point_3
     operator()( const Line_3& l, const Point_3& p ) const
@@ -3270,15 +3378,19 @@ namespace CartesianKernelFunctors {
 
     Point_3
     operator()( const Triangle_3& t, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(t,p,K()); }
 
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(s,p,K()); }
 
     Point_3
     operator()( const Ray_3& r, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(r,p,K()); }
+
+    const Point_3&
+    operator()( const Point_3& p, const Point_3& q) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,q,K()); }
   };
 
   template <class K>

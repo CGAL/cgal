@@ -18,7 +18,6 @@
 
 // Internal includes.
 #include <CGAL/Weights/internal/utils.h>
-#include <CGAL/Weights/internal/polygon_utils_2.h>
 
 namespace CGAL {
 namespace Weights {

@@ -68,7 +68,7 @@
 #endif
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
-#include <CGAL/Filtered_kernel/internal/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -446,7 +446,8 @@ private:
     const Self *t;
 
   public:
-    Infinite_tester() {}
+    Infinite_tester()
+      : t(nullptr) {}
 
     Infinite_tester(const Self *tr)
       : t(tr) {}
@@ -574,7 +575,7 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  typename boost::result_of<Construct_point_3(P)>::type
+  typename boost::result_of<const Construct_point_3(const P&)>::type
   construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
