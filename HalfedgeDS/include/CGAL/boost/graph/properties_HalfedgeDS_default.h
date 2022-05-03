@@ -79,7 +79,7 @@ private:
 };
 
   template<typename Handle, typename FT>
-struct Wrap_squared
+struct HDS_wrap_squared
 {
   typedef FT value_type;
   typedef FT reference;
@@ -93,7 +93,7 @@ struct Wrap_squared
   }
 
   friend inline
-  value_type get(const Wrap_squared& m, const key_type k)
+  value_type get(const HDS_wrap_squared& m, const key_type k)
   {
     return m[k];
   }
@@ -208,7 +208,7 @@ struct HDS_property_map<boost::edge_weight_t>
   {
     typedef typename CGAL::HalfedgeDS_default<Gt,I,A>::Traits::FT FT;
     typedef typename boost::graph_traits<CGAL::HalfedgeDS_default<Gt,I,A> >::edge_descriptor edge_descriptor;
-    typedef internal::Wrap_squared<edge_descriptor,FT> type;
+    typedef internal::HDS_wrap_squared<edge_descriptor,FT> type;
     typedef type const_type;
   };
 };
