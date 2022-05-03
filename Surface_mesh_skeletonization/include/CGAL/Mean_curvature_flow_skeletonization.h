@@ -19,9 +19,8 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <boost/graph/graph_traits.hpp>
@@ -76,30 +75,6 @@
 #endif
 
 namespace CGAL {
-
-namespace internal{
-
-template < class Refs, class Point, class ID, class vertex_descriptor>
-struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID>
-{
-  typedef HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID> Base;
-  Skel_HDS_vertex_type() : Base (), pole(ORIGIN), is_fixed(false)  {}
-  Skel_HDS_vertex_type( Point const& p) : Base(p), pole(ORIGIN), is_fixed(false) {}
-  std::vector<vertex_descriptor> vertices;
-  Point pole;
-  bool is_fixed;
-};
-
-template <class vertex_descriptor>
-struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
-    template < class Refs, class Traits>
-    struct Vertex_wrapper {
-        typedef typename Traits::Point_3 Point;
-      typedef Skel_HDS_vertex_type< Refs, Point, std::size_t, vertex_descriptor> Vertex;
-    };
-};
-
-} //end of namespace internal
 
 
 /// \ingroup PkgSurfaceMeshSkeletonizationRef
@@ -192,7 +167,7 @@ public:
   typedef typename Traits::Vector_3                                             Vector;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  Input_vertex_descriptor;
-  typedef CGAL::Polyhedron_3<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
+  typedef Surface_mesh<Point> mTriangleMesh;
   typedef typename boost::property_map<mTriangleMesh, CGAL::vertex_point_t>::type mVertexPointMap;
   typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
   typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
@@ -225,10 +200,13 @@ public:
   // Get weight from the weight interface.
   typedef CGAL::Weights::Cotangent_weight<mTriangleMesh>                       Weight_calculator;
 
+  typedef typename mTriangleMesh:: template Property_map<vertex_descriptor, std::vector<Input_vertex_descriptor> > mVertexVerticesMap;
+
   typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
                                    HalfedgeIndexMap,
-                                   mVertexPointMap>                            Curve_skeleton;
+                                   mVertexPointMap,
+                                   mVertexVerticesMap>                         Curve_skeleton;
 
   // Repeat Triangulation types
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    Exact_kernel;
@@ -247,6 +225,9 @@ private:
 
   /** The meso-skeleton */
   mTriangleMesh m_tmesh;
+  mTriangleMesh::Property_map<vertex_descriptor, std::vector<Input_vertex_descriptor> > v2vertices;
+  mTriangleMesh::Property_map<vertex_descriptor, Point> v2pole;
+  mTriangleMesh::Property_map<vertex_descriptor, bool> v2is_fixed;
 
   /** Storing indices of all vertices. */
   VertexIndexMap m_vertex_id_pmap;
@@ -527,7 +508,7 @@ public:
     fixed_points.clear();
     for(vertex_descriptor vd : vertices(m_tmesh))
     {
-      if (vd->is_fixed)
+      if (get(v2is_fixed, vd))
         fixed_points.push_back(get(m_tmesh_point_pmap, vd));
     }
   }
@@ -543,7 +524,7 @@ public:
     non_fixed_points.clear();
     for(vertex_descriptor vd : vertices(m_tmesh))
     {
-      if (!vd->is_fixed)
+      if (! get(v2is_fixed, vd))
         non_fixed_points.push_back(get(m_tmesh_point_pmap, vd));
     }
   }
@@ -560,7 +541,7 @@ public:
     int cnt = 0;
     for(vertex_descriptor v : vertices(m_tmesh))
     {
-      max_poles[cnt++] = v->pole;
+      max_poles[cnt++] = get(v2pole, v);
     }
   }
 
@@ -785,7 +766,7 @@ public:
   void convert_to_skeleton(Skeleton& skeleton)
   {
     skeleton.clear();
-    Curve_skeleton skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap);
+    Curve_skeleton skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap, v2vertices);
     skeletonization.extract_skeleton(skeleton);
   }
 
@@ -838,22 +819,20 @@ private:
     copy_face_graph(tmesh, m_tmesh,
                     CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
 
-    // copy input vertices to keep correspondence
-    for(const Vertex_pair& vp : v2v)
-      vp.second->vertices.push_back(vp.first);
 
-    //init indices
-    typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::graph_traits<mTriangleMesh>::halfedge_descriptor halfedge_descriptor;
-    std::size_t i=0;
-    for(vertex_descriptor vd : vertices(m_tmesh) )
-      vd->id()=i++;
-    i=0;
-    for(halfedge_descriptor hd : halfedges(m_tmesh) )
-      hd->id()=i++;
+    v2pole = m_tmesh.add_property_map<vertex_descriptor, Point>("v:pole", ORIGIN).first;
+    v2vertices = m_tmesh.add_property_map<vertex_descriptor, std::vector<Input_vertex_descriptor> >("v:vertices").first;
+    v2is_fixed = m_tmesh.add_property_map<vertex_descriptor, bool>("v:is_fixed", false).first;
+    // copy input vertices to keep correspondence
+    for(const Vertex_pair& vp : v2v){
+      std::vector<Input_vertex_descriptor>& vertices = get(v2vertices, vp.second);
+      vertices.push_back(vp.first);
+    }
+
+    m_tmesh_point_pmap = get(boost::vertex_point, m_tmesh);
     m_hedge_id_pmap = get(boost::halfedge_index, m_tmesh);
     m_vertex_id_pmap = get(boost::vertex_index, m_tmesh);
-      //, m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
+
     m_are_poles_computed = false;
 
     m_original_area = CGAL::Polygon_mesh_processing::area(m_tmesh,
@@ -905,7 +884,7 @@ private:
 
       int i = m_new_id[id];
       // if the vertex is fixed
-      if (vd->is_fixed)
+      if (get(v2is_fixed, vd))
       {
         A.set_coef(i + nver, i, 1.0 / m_zero_TH, true);
       }
@@ -916,7 +895,7 @@ private:
         {
           if (id < m_max_id)
           {
-            if (test_inside(vd->pole) == CGAL::ON_BOUNDED_SIDE)
+            if (test_inside(get(v2pole, vd)) == CGAL::ON_BOUNDED_SIDE)
             {
               A.set_coef(i + nver * 2, i, m_omega_P, true);
             }
@@ -931,7 +910,7 @@ private:
       int i = m_new_id[id];
       double L = 1.0;
       // if the vertex is fixed
-      if (vd->is_fixed)
+      if (get(v2is_fixed, vd))
       {
         L = 0;
       }
@@ -975,7 +954,7 @@ private:
       int i = m_new_id[id];
 
       double oh, op = 0.0;
-      if (vd->is_fixed)
+      if (get(v2is_fixed, vd))
       {
         oh = 1.0 / m_zero_TH;
       }
@@ -986,7 +965,7 @@ private:
         {
           if (id < m_max_id)
           {
-            if (test_inside(vd->pole) == CGAL::ON_BOUNDED_SIDE)
+            if (test_inside(get(v2pole, vd)) == CGAL::ON_BOUNDED_SIDE)
             {
               op = m_omega_P;
             }
@@ -998,9 +977,9 @@ private:
       Bz[i + nver] = get_z(get(m_tmesh_point_pmap, vd)) * oh;
       if (m_is_medially_centered)
       {
-        double x = get_x(vd->pole);
-        double y = get_y(vd->pole);
-        double z = get_z(vd->pole);
+        double x = get_x(get(v2pole, vd));
+        double y = get_y(get(v2pole, vd));
+        double z = get_z(get(v2pole, vd));
         Bx[i + nver * 2] = x * op;
         By[i + nver * 2] = y * op;
         Bz[i + nver * 2] = z * op;
@@ -1032,14 +1011,14 @@ private:
   {
     if (m_is_medially_centered)
     {
-      const Point& pole0 = v0->pole;
-      const Point& pole1 = vkept->pole;
+      const Point& pole0 = get(v2pole, v0);
+      const Point& pole1 = get(v2pole, vkept);
 
       Point p1 = get(m_tmesh_point_pmap, vkept);
       double dis_to_pole0 = m_traits.compute_squared_distance_3_object()(pole0, p1);
       double dis_to_pole1 = m_traits.compute_squared_distance_3_object()(pole1, p1);
       if (dis_to_pole0 < dis_to_pole1)
-        vkept->pole = v0->pole;
+        put(v2pole, vkept, get(v2pole, v0));
     }
   }
 
@@ -1051,7 +1030,7 @@ private:
     vertex_descriptor vj = target(h, m_tmesh);
 
     // an edge cannot be collapsed if both vertices are degenerate.
-    if (vi->is_fixed && vj->is_fixed) return false;
+    if (get(v2is_fixed, vi) && get(v2is_fixed, vj)) return false;
 
     double sq_edge_length = m_traits.compute_squared_distance_3_object()(
                               get(m_tmesh_point_pmap, vi),
@@ -1069,12 +1048,6 @@ private:
     m_halfedge_angle.clear();
     int ne = 2 * static_cast<int>(num_edges(m_tmesh));
     m_halfedge_angle.resize(ne, 0);
-
-    int idx = 0;
-    for(halfedge_descriptor hd : halfedges(m_tmesh))
-    {
-      put(m_hedge_id_pmap, hd, idx++);
-    }
 
     for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
@@ -1140,14 +1113,13 @@ private:
     // project the pole
     if (m_is_medially_centered)
     {
-      const Point& pole_s = vs->pole;
-      const Point& pole_t = vt->pole;
+      const Point& pole_s = get(v2pole, vs);
+      const Point& pole_t = get(v2pole, vt);
       Vector pole_st = m_traits.construct_vector_3_object()(pole_s, pole_t );
       normalize(pole_st);
-      vnew->pole =  m_traits.construct_translated_point_3_object()(
+      put(v2pole, vnew, m_traits.construct_translated_point_3_object()(
                         pole_s,
-                        m_traits.construct_scaled_vector_3_object()(pole_st, t)
-                     );
+                        m_traits.construct_scaled_vector_3_object()(pole_st, t)));
     }
     return pn;
   }
@@ -1193,7 +1165,7 @@ private:
       vertex_descriptor vk = target(ek, m_tmesh);
 
       // split the edge
-      halfedge_descriptor en = m_tmesh.split_edge(ei);
+      halfedge_descriptor en = Euler::split_edge(ei, m_tmesh);
       // split the incident faces
       Euler::split_face(en, next(ei,m_tmesh), m_tmesh);
       if (! is_border(ej,m_tmesh))
@@ -1201,12 +1173,11 @@ private:
         Euler::split_face(ej, next(next(ej,m_tmesh),m_tmesh), m_tmesh);
       }
 
-      // set id for new vertex
-      put(m_vertex_id_pmap, target(en,m_tmesh), m_vertex_id_count++);
       Point pn = project_vertex(vs, vt, vk, target(en, m_tmesh));
       // set point of new vertex
       put(m_tmesh_point_pmap, target(en,m_tmesh), pn);
-      target(en,m_tmesh)->vertices.clear(); // do no copy the info
+      get(v2vertices, target(en,m_tmesh)).clear(); // do no copy the info
+      // was: target(en,m_tmesh)->vertices.clear(); // do no copy the info
       ++cnt;
     }
     return cnt;
@@ -1223,13 +1194,13 @@ private:
     std::size_t num_fixed = 0;
     for(vertex_descriptor v : vertices(m_tmesh))
     {
-      if (!v->is_fixed)
+      if (! get(v2is_fixed,v))
       {
         bool willbefixed = internal::is_vertex_degenerate(m_tmesh, m_tmesh_point_pmap,
                                                           v, m_min_edge_length, m_traits);
         if (willbefixed)
         {
-          v->is_fixed=true;
+          put(v2is_fixed, v, true);
           ++num_fixed;
         }
       }
@@ -1317,7 +1288,7 @@ private:
       // max_neg_i is -1 only when duplicated the point is duplicated
       // (null edge or non-manifold issue resolved with duplication)
       if (max_neg_i!=-1)
-        p.second->pole = cell_dual[max_neg_i];
+        put(v2pole, p.second, cell_dual[max_neg_i]);
       else
         duplicated_points.push_back(p);
     }
@@ -1328,7 +1299,7 @@ private:
       int li, lj;
       typename Delaunay::Cell_handle cell = T.locate (p.first, lt, li, lj);
       CGAL_assertion(lt==Delaunay::VERTEX);
-      p.second->pole = cell->vertex(li)->info()->pole; // copy the pole of the point present in the DT3
+      put(v2pole, p.second, get(v2pole, cell->vertex(li)->info())); // copy the pole of the point present in the DT3
     }
 
     m_are_poles_computed = true;
@@ -1430,10 +1401,10 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
 
       // the mesh is closed, the target of h is always the one kept
       put(m_tmesh_point_pmap, vj, p);
-      std::vector<Input_vertex_descriptor>& vec_kept = vj->vertices;
-      std::vector<Input_vertex_descriptor>& vec_removed = vi->vertices;
+      std::vector<Input_vertex_descriptor>& vec_kept = get(v2vertices, vj);
+      std::vector<Input_vertex_descriptor>& vec_removed = get(v2vertices, vi);
       vec_kept.insert(vec_kept.end(), vec_removed.begin(), vec_removed.end());
-      if (vi->is_fixed) vj->is_fixed=true;
+      if (get(v2is_fixed, vi)) put(v2is_fixed, vj, true);
       update_pole(vi, vj);
 
       vertex_descriptor v = Euler::collapse_edge(ed, m_tmesh);

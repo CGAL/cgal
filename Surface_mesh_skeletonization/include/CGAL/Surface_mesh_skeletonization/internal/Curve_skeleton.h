@@ -36,16 +36,16 @@ namespace CGAL {
 namespace internal {
 
 template <class TriangleMesh, class VertexIndexMap,
-          class HalfedgeIndexMap, class TriangleMeshPointPMap>
+          class HalfedgeIndexMap, class TriangleMeshPointPMap, class TriangleMeshVerticesMap>
 class Curve_skeleton
 {
 // Public types
 public:
 
   // Geometric types
-  typedef typename TriangleMesh::Traits      Kernel;
+  typedef typename TriangleMesh::Point      Point;
+  typedef typename Kernel_traits<Point>::type Kernel;
   typedef typename Kernel::Vector_3           Vector;
-  typedef typename Kernel::Point_3            Point;
 
   // Repeat TriangleMesh types
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
@@ -74,6 +74,7 @@ private:
   VertexIndexMap vertex_id_pmap;
   HalfedgeIndexMap hedge_id_pmap;
   TriangleMeshPointPMap hg_point_pmap;
+  TriangleMeshVerticesMap vertex_vertices_map;
 
   std::vector<double> edge_squared_lengths;
 
@@ -103,11 +104,13 @@ public:
   Curve_skeleton(TriangleMesh& hg,
                  VertexIndexMap vertex_id_pmap,
                  HalfedgeIndexMap hedge_id_pmap,
-                 TriangleMeshPointPMap hg_point_pmap)
+                 TriangleMeshPointPMap hg_point_pmap,
+                 TriangleMeshVerticesMap vertex_vertices_map)
     : hg(hg)
     , vertex_id_pmap(vertex_id_pmap)
     , hedge_id_pmap(hedge_id_pmap)
     , hg_point_pmap(hg_point_pmap)
+    , vertex_vertices_map(vertex_vertices_map)
   {}
 
   // Extracting the skeleton to a boost::graph data structure.
@@ -158,8 +161,8 @@ public:
         vertex_descriptor ovd = id_to_descriptor[vid];
         curve[vd].vertices.insert(
           curve[vd].vertices.end(),
-          ovd->vertices.begin(),
-          ovd->vertices.end()
+          get(vertex_vertices_map, ovd).begin(),
+          get(vertex_vertices_map, ovd).end()
         );
       }
     }
@@ -214,16 +217,16 @@ private:
     MCFSKEL_DEBUG( std::cerr <<"init" << std::endl; )
 
     int nb_edges = static_cast<int>(num_edges(hg));
-    int num_faces = static_cast<int>(hg.size_of_facets());
+    int nb_faces = static_cast<int>(num_faces(hg));
     int nb_vertices = static_cast<int>(num_vertices(hg));
     edge_to_face.resize(nb_edges);
     edge_to_vertex.resize(nb_edges);
     vertex_to_edge.resize(nb_vertices);
-    face_to_edge.resize(num_faces);
+    face_to_edge.resize(nb_faces);
 
     is_vertex_deleted.resize(nb_vertices, false);
     is_edge_deleted.resize(nb_edges, false);
-    is_face_deleted.resize(num_faces, false);
+    is_face_deleted.resize(nb_faces, false);
 
     record.resize(nb_vertices);
     for (size_t i = 0; i < record.size(); ++i)
@@ -240,7 +243,7 @@ private:
     for(vertex_descriptor vd : vertices(hg))
     {
       surface_vertex_id[idx] = static_cast<int>(get(vertex_id_pmap, vd));
-      put(vertex_id_pmap, vd, idx++);
+      //AF put(vertex_id_pmap, vd, idx++);
     }
 
     // assign edge id
@@ -249,9 +252,9 @@ private:
     for(edge_descriptor ed : edges(hg))
     {
       halfedge_descriptor hd = halfedge(ed, hg);
-      put(hedge_id_pmap, hd, idx);
+      //AF put(hedge_id_pmap, hd, idx);
       halfedge_descriptor hd_opposite = opposite(hd,hg);
-      put(hedge_id_pmap, hd_opposite, idx);
+      //AF put(hedge_id_pmap, hd_opposite, idx);
 
       // also cache the length of the edge
       vertex_descriptor v1 = target(hd,hg);
