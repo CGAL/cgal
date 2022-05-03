@@ -172,6 +172,16 @@ out_edges( typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::verte
   return make_range(Iter(halfedge(u,p),p), Iter(halfedge(u,p),p,1));
 }
 
+template<class T, class I, class A>
+inline Iterator_range<typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::adjacency_iterator>
+adjacent_vertices( typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertex_descriptor u
+                   , const HalfedgeDS_default<T,I,A>& p)
+{
+  typedef typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::out_edge_iterator OutEdgeIter;
+  typedef typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::adjacency_iterator Iter;
+  return make_range(Iter(OutEdgeIter(halfedge(u,p),p),&p), Iter(OutEdgeIter(halfedge(u,p),p,1), &p));
+}
+
 //
 // MutableHalfedgeGraph
 //

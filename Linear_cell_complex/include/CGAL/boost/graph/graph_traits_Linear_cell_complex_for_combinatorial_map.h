@@ -18,6 +18,7 @@
 #include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/adjacency_iterator.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
@@ -178,7 +179,8 @@ struct CMap_Base_graph_traits
 public :
   struct CMap_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                          public virtual boost::vertex_list_graph_tag,
-                                         public virtual boost::edge_list_graph_tag
+                                         public virtual boost::edge_list_graph_tag,
+                                         public virtual boost::adjacency_graph_tag
   {};
 
   // Expose types required by the boost::Graph concept.
@@ -205,6 +207,8 @@ public :
 
   typedef CGAL::In_edge_iterator<CMap>  in_edge_iterator;
   typedef CGAL::Out_edge_iterator<CMap> out_edge_iterator;
+
+  typedef typename boost::adjacency_iterator_generator<CMap, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
 
   // nulls
   static vertex_descriptor   null_vertex()   { return nullptr; }
@@ -389,6 +393,16 @@ out_edges(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v,
 {
   typedef typename boost::graph_traits<CGAL_LCC_TYPE>::out_edge_iterator Iter;
   return make_range(Iter(halfedge(v, lcc), lcc), Iter(halfedge(v, lcc), lcc, 1));
+}
+
+CGAL_LCC_TEMPLATE_ARGS
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_LCC_TYPE>::adjacency_iterator>
+adjacent_vertices(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v,
+                  const CGAL_LCC_TYPE& lcc)
+{
+  typedef typename boost::graph_traits<CGAL_LCC_TYPE>::out_edge_iterator OutEdgeIter;
+  typedef typename boost::graph_traits<CGAL_LCC_TYPE>::adjacency_iterator Iter;
+  return make_range(Iter(OutEdgeIter(halfedge(v, lcc), lcc), &lcc), Iter(OutEdgeIter(halfedge(v, lcc), lcc, 1), &lcc));
 }
 
 //

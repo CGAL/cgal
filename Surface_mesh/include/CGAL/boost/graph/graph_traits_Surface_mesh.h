@@ -30,6 +30,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/assertions.h>
 
+#include <boost/graph/adjacency_iterator.hpp>
 
 namespace boost {
 
@@ -41,7 +42,8 @@ private:
 
   struct SM_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                        public virtual boost::vertex_list_graph_tag,
-                                       public virtual boost::edge_list_graph_tag
+                                       public virtual boost::edge_list_graph_tag,
+                                       public virtual boost::adjacency_graph_tag
   {};
 
 public:
@@ -77,14 +79,18 @@ public:
   typedef typename SM::size_type              degree_size_type;
 
 
+
+
   typedef CGAL::In_edge_iterator<SM> in_edge_iterator;
 
   typedef CGAL::Out_edge_iterator<SM> out_edge_iterator;
 
+  typedef typename boost::adjacency_iterator_generator<SM, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
+
   // nulls
   static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
   static face_descriptor     null_face()   { return face_descriptor(); }
-  static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
+  static halfedge_descriptor null_halfedge()   { return halfedge_descriptor(); }
 };
 
 template<typename P>
@@ -217,6 +223,16 @@ out_edges(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descripto
   return make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
 
+template <typename P>
+Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::adjacency_iterator>
+adjacent_vertices(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v,
+                  const CGAL::Surface_mesh<P>& sm)
+{
+  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::out_edge_iterator OutEdgeIter;
+  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::adjacency_iterator Iter;
+  return make_range(Iter(OutEdgeIter(halfedge(v,sm),sm), &sm),
+                    Iter(OutEdgeIter(halfedge(v,sm),sm,1), &sm));
+}
 
 template<typename P>
 std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_descriptor,
