@@ -489,6 +489,7 @@
 - `Kernel::LessY_2`
 - `Kernel::LessY_3`
 - `Kernel::LessZ_3`
+- `Kernel::NonZeroCoordinateIndex_3`
 - `Kernel::Orientation_2`
 - `Kernel::Orientation_3`
 - `Kernel::OrientedSide_2`

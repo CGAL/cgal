@@ -3,12 +3,11 @@
 # that dependency so as to test all the number types not depending on CORE
 # when it is not installed
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Number_types_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
 include(CGAL_VersionUtils)
 
 include_directories(BEFORE include)

@@ -54,7 +54,7 @@ public:
     m_writer.write_header(m_os, points.size(), 0, polygons.size());
     for(std::size_t i=0, end=points.size(); i<end; ++i)
     {
-      const typename boost::property_traits<PointMap>::reference p = get(point_map, points[i]);
+      const typename boost::property_traits<PointMap>::value_type& p = get(point_map, points[i]);
       m_writer.write_vertex(p.x(), p.y(), p.z());
     }
 
