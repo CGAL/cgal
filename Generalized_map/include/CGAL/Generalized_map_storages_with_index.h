@@ -12,7 +12,12 @@
 #ifndef CGAL_GENERALIZED_MAP_STORAGES_WITH_INDEX_H
 #define CGAL_GENERALIZED_MAP_STORAGES_WITH_INDEX_H 1
 
+#ifdef CC_INDEX3
+#include <CGAL/Compact_container_with_index_3.h>
+#else
 #include <CGAL/Compact_container_with_index_2.h>
+#endif
+
 #include <CGAL/Dart.h>
 #include <bitset>
 
@@ -429,7 +434,12 @@ namespace CGAL {
   /// null_handle
   template<unsigned int d_, class Items_, class Alloc_>
   typename Generalized_map_storage_2<d_, Items_, Alloc_>::Null_handle_type
-      Generalized_map_storage_2<d_, Items_, Alloc_>::null_handle((std::numeric_limits<Index_type>::max)()/2);
+      Generalized_map_storage_2<d_, Items_, Alloc_>::
+  null_handle((std::numeric_limits<Index_type>::max)()
+#ifndef CC_INDEX3
+              /2
+#endif
+              );
 
 } // namespace CGAL
 
