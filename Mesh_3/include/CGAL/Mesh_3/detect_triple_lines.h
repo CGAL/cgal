@@ -40,11 +40,9 @@ namespace Mesh_3
 // Protect the intersection of the object with the box of the image,
 // by declaring 1D-features. Note that `CGAL::polylines_to_protect` is
 // not documented.
-template<typename Mesh_domain>
+template<typename Word_type, typename Mesh_domain>
 bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
 {
-  typedef unsigned char Word_type;
-
   using Gt = typename Mesh_domain::R;
   using Point_3 = typename Gt::Point_3;
   using Vector_3 = typename Gt::Vector_3;
