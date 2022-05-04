@@ -26,87 +26,6 @@ namespace predicates_impl
 {
 // vec.h
 //----------------------------
-template< typename NT >
-struct Vec2
-{
-    typedef Vec2<NT>    Self;
-    typedef NT          NumberType;
-
-#define vecset(x,y) data_[0]=(x); data_[1]=(y);
-    Vec2() { vecset(NT(0), NT(0)) }
-    Vec2(const Self & s) { vecset(s.x(), s.y()) }
-    explicit Vec2(const NT & x) { vecset(x,x) }
-    Vec2(const NT & x, const NT & y) { vecset(x,y) }
-    inline void set(const NT & x, const NT & y) {
-      vecset(x,y)
-    }
-#undef vecset
-
-    inline NT operator()(const int i) const { assert(2 > i && 0 <= i); return data_[i]; }
-    inline NT operator[](const int i) const { return data_[i]; }
-    inline NT x() const { return data_[0]; }
-    inline NT y() const { return data_[1]; }
-    inline NT & operator()(const int i) { assert(2 > i && 0 <= i); return data_[i]; }
-    inline NT & x() { return data_[0]; }
-    inline NT & y() { return data_[1]; }
-    const NT * data() const { return data_; }
-
-    inline NT squaredLength() const { return x()*x()+y()*y(); }
-
-    inline Self operator-(const Self & rhs) const { return Self(x()-rhs.x(), y()-rhs.y()); }
-    inline Self operator+(const Self & rhs) const { return Self(x()+rhs.x(), y()+rhs.y()); }
-    inline NT operator|(const Self & rhs) const { return x()*rhs.x() + y()*rhs.y(); }
-    inline void negate() { data_[0] = - data_[0]; data_[1] = - data_[1]; }
-    inline void rotate() { NT temp(data_[0]); data_[0] = - data_[1]; data_[1] = temp; }
-
-    NT data_[2];
-};
-
-template< typename NT >
-Vec2<NT> operator*(const NT & lhs, const Vec2<NT> & rhs)
-{
-    return Vec2<NT>(lhs*rhs.x(), lhs*rhs.y());
-}
-
-template< typename NT >
-Vec2<NT> vecmin(const Vec2<NT> & lhs, const Vec2<NT> & rhs)
-{
-    return Vec2<NT>(std::min(lhs.x(), rhs.x()), std::min(lhs.y(), rhs.y()));
-}
-
-template< typename NT >
-Vec2<NT> vecmax(const Vec2<NT> & lhs, const Vec2<NT> & rhs)
-{
-    return Vec2<NT>(std::max(lhs.x(), rhs.x()), std::max(lhs.y(), rhs.y()));
-}
-
-template< typename NT >
-bool operator==(const Vec2<NT> & lhs, const Vec2<NT> & rhs)
-{
-    return ( lhs.x() == rhs.x() ) && ( lhs.y() == rhs.y() );
-}
-
-template< typename NT >
-bool operator!=(const Vec2<NT> & lhs, const Vec2<NT> & rhs)
-{
-    return ! ( lhs == rhs );
-}
-
-template< typename Out, typename NT >
-Out & operator<<(Out & out, const Vec2<NT> & v)
-{
-    out << v.x() << ' ' << v.y();
-    return out;
-}
-
-template< typename NT >
-bool leftTurn(const Vec2<NT> & a, const Vec2<NT> & b, const Vec2<NT> & c)
-{
-    Vec2<NT> p(a.y()-b.y(), b.x()-a.x());
-    return (p | (c-a)) >= NT(0);
-}
-
-extern const Vec2<float> vec2_zero;
 
 /*
  *
@@ -123,7 +42,6 @@ struct Vec3
 #define vecset(x,y,z) data_[0]=(x); data_[1]=(y); data_[2]=(z);
     Vec3() { vecset(NT(0), NT(0), NT(0)) }
     Vec3(const Self & s) { vecset(s.x(), s.y(), s.z()) }
-    Vec3(const Vec2<NT> & v2, const NT & z) { vecset(v2.x(),v2.y(),z) }
     Vec3(const NT & x, const NT & y, const NT & z) { vecset(x,y,z) }
     inline void set(const NT & x, const NT & y, const NT & z) {
       vecset(x,y,z)
@@ -181,38 +99,9 @@ Vec3<NT> operator*(const NT & lhs, const Vec3<NT> & rhs)
 }
 
 template< typename NT >
-Vec3<NT> vecmin(const Vec3<NT> & lhs, const Vec3<NT> & rhs)
-{
-    return Vec3<NT>(std::min(lhs.x(), rhs.x()), std::min(lhs.y(), rhs.y()), std::min(lhs.z(), rhs.z()));
-}
-
-template< typename NT >
-Vec3<NT> vecmax(const Vec3<NT> & lhs, const Vec3<NT> & rhs)
-{
-    return Vec3<NT>(std::max(lhs.x(), rhs.x()), std::max(lhs.y(), rhs.y()), std::max(lhs.z(), rhs.z()));
-}
-
-template< typename Out, typename NT >
-Out & operator<<(Out & out, const Vec3<NT> & v)
-{
-    out << v.x() << ' ' << v.y() << ' ' << v.z();
-    return out;
-}
-
-template< typename NT >
 bool operator==(const Vec3<NT> & lhs, const Vec3<NT> & rhs)
 {
     return ( lhs.x() == rhs.x() ) && ( lhs.y() == rhs.y() ) && ( lhs.z() == rhs.z() );
-}
-
-template< typename NT >
-Vec3<NT> orthonormalVector(const Vec3<NT> & v) {
-  Vec3<NT> r = ( v.x() * v.x() + v.y() * v.y() > 1e-4 ) ?
-    Vec3<NT>(v.y(), -v.x(), NT(0))
-    :
-    Vec3<NT>(NT(0), v.z(), -v.y());
-  r.normalize();
-  return r;
 }
 
 /*
@@ -282,41 +171,12 @@ Vec4<NT> operator*(const NT & lhs, const Vec4<NT> & rhs)
     return Vec4<NT>(lhs*rhs.x(), lhs*rhs.y(), lhs*rhs.z(), lhs*rhs.w());
 }
 
-template< typename NT >
-Vec4<NT> vecmin(const Vec4<NT> & lhs, const Vec4<NT> & rhs)
-{
-    return Vec4<NT>(std::min(lhs.x(), rhs.x()),
-                    std::min(lhs.y(), rhs.y()),
-                    std::min(lhs.z(), rhs.z()),
-                    std::min(lhs.w(), rhs.w()));
-}
-
-template< typename NT >
-Vec4<NT> vecmax(const Vec4<NT> & lhs, const Vec4<NT> & rhs)
-{
-    return Vec4<NT>(std::max(lhs.x(), rhs.x()),
-                    std::max(lhs.y(), rhs.y()),
-                    std::max(lhs.z(), rhs.z()),
-                    std::max(lhs.w(), rhs.w()));
-}
-
-template< typename Out, typename NT >
-Out & operator<<(Out & out, const Vec4<NT> & v)
-{
-    out << v.x() << ' ' << v.y() << ' ' << v.z() << ' ' << v.w();
-    return out;
-}
-
 /*
  *
  *  Common vector types
  *
  */
 
-typedef Vec2<double>         Vec2d;
-typedef Vec2<float>          Vec2f;
-typedef Vec2<int>            Vec2i;
-typedef Vec2<unsigned int>   Vec2ui;
 typedef Vec3<double>         Vec3d;
 typedef Vec3<float>          Vec3f;
 typedef Vec3<int>            Vec3i;
@@ -366,22 +226,6 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
                   return avg;
                 } break;
     }
-  }
-
-  void set_to_quad(const Vec4f * planes) {
-    clear();
-    emplace_back(planes[0].toVec3(), Vec4f::crossAs3(planes[0], planes[2]).normalized());
-    emplace_back(planes[2].toVec3(), Vec4f::crossAs3(planes[2], planes[1]).normalized());
-    emplace_back(planes[1].toVec3(), Vec4f::crossAs3(planes[1], planes[3]).normalized());
-    emplace_back(planes[3].toVec3(), Vec4f::crossAs3(planes[3], planes[0]).normalized());
-  }
-
-  void set_to_opp_quad(const Vec4f * planes) {
-    clear();
-    emplace_back(-planes[0].toVec3(), Vec4f::crossAs3(planes[0], planes[3]).normalized());
-    emplace_back(-planes[3].toVec3(), Vec4f::crossAs3(planes[3], planes[1]).normalized());
-    emplace_back(-planes[1].toVec3(), Vec4f::crossAs3(planes[1], planes[2]).normalized());
-    emplace_back(-planes[2].toVec3(), Vec4f::crossAs3(planes[2], planes[0]).normalized());
   }
 
   void clip(const Vec3f & OrigVertex, SphericalPolygon & result, bool doClean=true) const {

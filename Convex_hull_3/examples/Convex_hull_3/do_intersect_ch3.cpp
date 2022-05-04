@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   //print the number of extreme vertices
   std::cout << "There are " << extreme_vertices1.size() << " and "
                             << extreme_vertices2.size()
-                            << " extreme vertices in this mesh.\n";
+                            << " extreme vertices in the input meshes.\n";
 
   bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
                                                CGAL::parameters::point_map(sm1.points()),
