@@ -1038,11 +1038,11 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   for (PolylineInputIterator poly_it = existing_polylines_begin;
        poly_it != existing_polylines_end; ++poly_it)
   {
-    Polyline polyline = *poly_it;
+    const Polyline& polyline = *poly_it;
     if (polyline.size() < 2)
       continue;
 
-    typename Polyline::iterator pit = polyline.begin();
+    typename Polyline::const_iterator pit = polyline.begin();
     while (boost::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);

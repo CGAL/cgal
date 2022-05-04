@@ -13,6 +13,10 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_DELAUNAY_REMESHING_H
 #define CGAL_POLYGON_MESH_PROCESSING_DELAUNAY_REMESHING_H
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+#define CGAL_MESH_3_VERBOSE 1
+#endif
+
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -29,10 +33,6 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <limits>
-
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-#define CGAL_MESH_3_VERBOSE 1
-#endif
 
 namespace CGAL {
 
@@ -233,7 +233,6 @@ TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
           std::vector<Point_3> ev(2);
           ev[0] = get(vpmap, source(halfedge(e, tmesh), tmesh));
           ev[1] = get(vpmap, target(halfedge(e, tmesh), tmesh));
-          if (ev[1] > ev[0]) std::swap(ev[0], ev[1]);
           sharp_edges.push_back(ev);
         }
       }
@@ -250,9 +249,10 @@ TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
         NamedParameters,
         std::vector<std::vector<Point_3> > // default
       >::reference;
-      const Polylines polylines
+      std::vector<std::vector<Point_3> > default_vector{};
+      Polylines polylines
         = choose_parameter(get_parameter_reference(np, internal_np::polyline_constraints),
-          std::vector<std::vector<Point_3> >());
+          default_vector);
 
       if (!polylines.empty())
       {
