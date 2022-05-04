@@ -15,6 +15,16 @@
 
 // This will push/pop a VC15 warning
 #include <CGAL/Named_function_parameters.h>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4172) // Address warning inside boost named parameters
+#endif
+
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATHS_H
