@@ -157,6 +157,7 @@ struct Vec3
     }
 
     inline Self operator-(const Self & rhs) const { return Self(x()-rhs.x(), y()-rhs.y(), z()-rhs.z()); }
+    inline Self operator-() const { return Self(-data_[0], data_[1], -data_[2]); }
     inline Self operator+(const Self & rhs) const { return Self(x()+rhs.x(), y()+rhs.y(), z()+rhs.z()); }
     inline NT operator|(const Self & rhs) const { return x()*rhs.x() + y()*rhs.y() + z()*rhs.z(); }
     inline void negate() { data_[0] = - data_[0]; data_[1] = - data_[1]; data_[2] = - data_[2]; }
@@ -266,6 +267,12 @@ struct alignas(16) Vec4
     inline NT operator()(const V3 & rhs) const { return x()*rhs.x() + y()*rhs.y() + z()*rhs.z() + w(); }
     inline void negate() { data_[0] = - data_[0]; data_[1] = - data_[1]; data_[2] = - data_[2]; data_[3] = - data_[3]; }
 
+    inline static V3 crossAs3(const Self & lhs, const Self & rhs) {
+          return V3(lhs.y() * rhs.z() - lhs.z() * rhs.y(),
+              lhs.z() * rhs.x() - lhs.x() * rhs.z(),
+              lhs.x() * rhs.y() - lhs.y() * rhs.x());
+        }
+
     NT data_[4];
 };
 
@@ -325,17 +332,16 @@ typedef Vec4<unsigned short> Vec4us;
 
 // spherical.h
 //----------------------------
+
 struct SphericalPolygonElement {
-  Vec3f vertex_;
-  Vec3f north_;
-  Vec3f silVertex_;
+  Vec3f vertex_; // A vertex of the spherical polygon
+  Vec3f north_; // The north pole of the equatorial arc/edge leading OUT OF that vertex_ (arcs are oriented west-to-east, or CCW in a right-handed frame.
+  // In the spherical polygon (v0, n0), (v1, n1), (v2, n2), ... we have
+  // v1 = cross(n0, n1),  more generally: v_{i+1} = cross(n_i, n_{i+1})  and
+  // n1 = cross(v1, v2),  more generally: n_i     = cross(v_i, v_{i+1}).
   SphericalPolygonElement(){}
-  SphericalPolygonElement(const Vec3f & sil)
-    : north_(sil.normalized()), silVertex_(sil) {}
-  //SphericalPolygonElement(const Vec3f & v, const Vec3f & n)
-  //  : vertex_(v), north_(n), silVertex_(n)  {}
-  SphericalPolygonElement(const Vec3f & v, const Vec3f & n, const Vec3f & sil)
-    : vertex_(v), north_(n), silVertex_(sil) {}
+  SphericalPolygonElement(const Vec3f & n) : north_(n.normalized()) {}
+  SphericalPolygonElement(const Vec3f & v, const Vec3f & n) : vertex_(v), north_(n) {}
 };
 
 struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
@@ -362,23 +368,32 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
     }
   }
 
-  void set_to_triangle(const Vec3f pts[3]) {
+  void set_to_quad(const Vec4f * planes) {
     clear();
-    emplace_back(Vec3f::cross(pts[0], pts[1]).LInfNormalized(), pts[1].LInfNormalized(), pts[1]);
-    emplace_back(Vec3f::cross(pts[1], pts[2]).LInfNormalized(), pts[2].LInfNormalized(), pts[2]);
-    emplace_back(Vec3f::cross(pts[2], pts[0]).LInfNormalized(), pts[0].LInfNormalized(), pts[0]);
+    emplace_back(planes[0].toVec3(), Vec4f::crossAs3(planes[0], planes[2]).normalized());
+    emplace_back(planes[2].toVec3(), Vec4f::crossAs3(planes[2], planes[1]).normalized());
+    emplace_back(planes[1].toVec3(), Vec4f::crossAs3(planes[1], planes[3]).normalized());
+    emplace_back(planes[3].toVec3(), Vec4f::crossAs3(planes[3], planes[0]).normalized());
   }
 
-  void clip(const Vec3f & OrigVertex, const Vec3f & silVertex, SphericalPolygon & result, bool doClean=true) const {
+  void set_to_opp_quad(const Vec4f * planes) {
+    clear();
+    emplace_back(-planes[0].toVec3(), Vec4f::crossAs3(planes[0], planes[3]).normalized());
+    emplace_back(-planes[3].toVec3(), Vec4f::crossAs3(planes[3], planes[1]).normalized());
+    emplace_back(-planes[1].toVec3(), Vec4f::crossAs3(planes[1], planes[2]).normalized());
+    emplace_back(-planes[2].toVec3(), Vec4f::crossAs3(planes[2], planes[0]).normalized());
+  }
+
+  void clip(const Vec3f & OrigVertex, SphericalPolygon & result, bool doClean=true) const {
     // PRECONDITION : clipNorth, and all northes are normalized.
 #define _ray_spherical_eps 1e-6f
     const int n = size();
     result.clear();
     switch( n ) {
-      case 0 : break;
+      case 0 : break; // 0 means empty, so nothing to do
       case 1 : {
                  result = (*this);
-                 Vec3f clipNorth = silVertex.normalized();
+                 Vec3f clipNorth = OrigVertex.normalized();
                  float dot = begin()->north_ | clipNorth;
                  if( dot < -0.99984769515 ) { // about one degree
                    // intersection of two almost opposite hemispheres ==> empty
@@ -389,12 +404,12 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
                  }
                  Vec3f v(Vec3f::cross(clipNorth, begin()->north_).LInfNormalized());
                  result.begin()->vertex_ = v;
-                 result.emplace_back(v.negated(), clipNorth, OrigVertex);
+                 result.emplace_back(v.negated(), clipNorth);
                  break;
                }
       case 2 : {
                  result = (*this);
-                 Vec3f clipNorth = silVertex.LInfNormalized();
+                 Vec3f clipNorth = OrigVertex.LInfNormalized();
                  iterator next = result.begin();
                  iterator cur = next++;
                  float vDot = begin()->vertex_ | clipNorth;
@@ -402,12 +417,12 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
                    // we'll get a triangle
                    next->vertex_ = Vec3f::cross(clipNorth, next->north_).LInfNormalized();
                    Vec3f v(Vec3f::cross(cur->north_, clipNorth).LInfNormalized());
-                   result.emplace(next, v, clipNorth, OrigVertex);
+                   result.emplace(next, v, clipNorth);
                  } else if( vDot <= - _ray_spherical_eps ) {
                    // we'll get a triangle
                    cur->vertex_ = Vec3f::cross(clipNorth, cur->north_).LInfNormalized();
                    Vec3f v(Vec3f::cross(next->north_, clipNorth).LInfNormalized());
-                   result.emplace_back(v, clipNorth, OrigVertex);
+                   result.emplace_back(v, clipNorth);
                  } else {
                    // we keep a moon crescent
                    float curTest(clipNorth | Vec3f::cross(cur->north_, cur->vertex_));
@@ -415,7 +430,6 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
                    if( curTest > 0.0f ) {
                      if( (clipNorth | nextTest) <= 0.0f ) {
                        next->north_ = clipNorth;
-                       next->silVertex_ = OrigVertex;
                        cur->vertex_ = Vec3f::cross(next->north_, cur->north_);
                        cur->vertex_.LInfNormalize();
                        next->vertex_ = cur->vertex_;
@@ -427,7 +441,6 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
                    } else {
                      if( (clipNorth | nextTest) > 0.0f ) {
                        cur->north_ = clipNorth;
-                       cur->silVertex_ = OrigVertex;
                        next->vertex_ = Vec3f::cross(cur->north_, next->north_);
                        next->vertex_.LInfNormalize();
                        cur->vertex_ = next->vertex_;
@@ -443,7 +456,7 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
       default : { // n >= 3
                   int nbKept(0);
                   const_iterator cur = begin();
-                  Vec3f clipNorth = silVertex.LInfNormalized();
+                  Vec3f clipNorth = OrigVertex.LInfNormalized();
                   float nextDot, curDot = clipNorth | cur->vertex_;
                   while( cur != end() ) {
                     if( cur+1 == end() )
@@ -454,17 +467,17 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
                       ++nbKept;
                       result.push_back(*cur);
                       if( nextDot <= -_ray_spherical_eps ) { // next is "OUT"
-                        result.emplace_back(Vec3f::cross(cur->north_, clipNorth).LInfNormalized(), clipNorth, OrigVertex);
+                        result.emplace_back(Vec3f::cross(cur->north_, clipNorth).LInfNormalized(), clipNorth);
                       }
                     } else if( curDot > -_ray_spherical_eps ) { // cur is "ON" the clipping plane
                       ++nbKept;
                       if ( nextDot <= -_ray_spherical_eps ) // next is "OUT"
-                        result.emplace_back(cur->vertex_, clipNorth, OrigVertex);
+                        result.emplace_back(cur->vertex_, clipNorth);
                       else
                         result.push_back(*cur);
                     } else { // cur is "OUT"
                       if ( nextDot >= _ray_spherical_eps ) { // next is "IN"
-                        result.emplace_back(Vec3f::cross(clipNorth, cur->north_).LInfNormalized(), cur->north_, cur->silVertex_);
+                        result.emplace_back(Vec3f::cross(clipNorth, cur->north_).LInfNormalized(), cur->north_);
                       }
                     }
                     curDot = nextDot;
@@ -479,9 +492,6 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement> {
                   break;
                 }
     }
-  }
-  void clip(const Vec3f & silVertex, SphericalPolygon & result, bool doClean=true) const {
-    clip(silVertex, silVertex, result, doClean);
   }
 };
 
