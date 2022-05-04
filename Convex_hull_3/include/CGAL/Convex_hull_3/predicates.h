@@ -14,6 +14,8 @@
 #ifndef CGAL_CONVEX_HULL_3_PREDICATES_H
 #define CGAL_CONVEX_HULL_3_PREDICATES_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
 namespace CGAL {
 
 namespace Convex_hull_3 {
