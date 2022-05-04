@@ -44,7 +44,7 @@ struct Vec3
 
 #define vecset(x,y,z) data_[0]=(x); data_[1]=(y); data_[2]=(z);
     Vec3() { vecset(NT(0), NT(0), NT(0)) }
-    Vec3(const Self & s) { vecset(s.x(), s.y(), s.z()) }
+    Vec3(const Self & s) = default;
     Vec3(const NT & x, const NT & y, const NT & z) { vecset(x,y,z) }
     inline void set(const NT & x, const NT & y, const NT & z) {
       vecset(x,y,z)
