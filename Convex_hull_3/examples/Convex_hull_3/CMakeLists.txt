@@ -56,6 +56,8 @@ create_single_source_cgal_program("extreme_points_3_sm.cpp")
 
 create_single_source_cgal_program("extreme_indices_3.cpp")
 
+create_single_source_cgal_program("do_intersect_ch3.cpp")
+
 if(OpenMesh_FOUND)
   create_single_source_cgal_program("quickhull_OM_3.cpp")
   create_single_source_cgal_program("dynamic_hull_OM_3.cpp")
