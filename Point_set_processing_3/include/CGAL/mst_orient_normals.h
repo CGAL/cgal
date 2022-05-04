@@ -32,10 +32,23 @@
 #include <climits>
 #include <math.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4172) // Address warning inside boost named parameters
+#endif
+
 #include <CGAL/property_map.h>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h> // work around a bug in boost 1.54
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h> // work around a
+                                                      // bug in boost
+                                                      // 1.54
+
+
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 namespace CGAL {
 
