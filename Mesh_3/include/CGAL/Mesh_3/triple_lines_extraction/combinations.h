@@ -28,7 +28,7 @@ namespace Mesh_3
 {
 namespace internal
 {
-  const std::array<unsigned char, 8> combinations[]
+  const std::array<std::uint8_t, 8> combinations[]
                             = { 0,0,0,0,0,0,0,0,
                                 0,0,0,0,0,0,0,1,
                                 0,0,0,0,0,0,1,1,

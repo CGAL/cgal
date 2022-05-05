@@ -22,6 +22,7 @@
 #include <CGAL/Mesh_3/triple_lines_extraction/cases_table.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/triple_lines.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/cube_isometries.h>
+#include <CGAL/Mesh_3/triple_lines_extraction/triple_lines_extraction_helpers.h>
 
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 
@@ -63,9 +64,9 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
   const std::size_t ydim = image.ydim();
   const std::size_t zdim = image.zdim();
 
-  const double tx = image.tx();
-  const double ty = image.ty();
-  const double tz = image.tz();
+  const float tx = image.tx();
+  const float ty = image.ty();
+  const float tz = image.tz();
 
   using CGAL::IMAGEIO::static_evaluate;
 
@@ -75,6 +76,16 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
   Del triangulation;
   Cell_handle start_cell;
 
+  using Word //use unsigned integral Word type to use it as an index
+    = typename CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, sizeof(Word_type)>::type;
+
+  using Color_transform = internal::Color_transformation_helper<Word_type>;
+  typename Color_transform::type color_transformation;
+  std::array<Word, 8>            inv_color_transformation;
+
+  using Permutation = internal::Permutation;
+  using Coord = internal::Coordinates;
+
   for (std::size_t k = 0, end_k = zdim - 1; k < end_k; ++k)
     for (std::size_t j = 0, end_j = ydim - 1; j < end_j; ++j)
       for (std::size_t i = 0, end_i = xdim - 1; i < end_i; ++i)
@@ -83,28 +94,26 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
                               j * vy + ty,
                               k * vz + tz };
 
-        using Cube = std::array<Word_type, 8>;
-        const Cube cube = {
-          static_evaluate<Word_type>(image.image(), i  , j  , k),
-          static_evaluate<Word_type>(image.image(), i + 1, j  , k),
-          static_evaluate<Word_type>(image.image(), i  , j + 1, k),
-          static_evaluate<Word_type>(image.image(), i + 1, j + 1, k),
-          static_evaluate<Word_type>(image.image(), i  , j  , k + 1),
-          static_evaluate<Word_type>(image.image(), i + 1, j  , k + 1),
-          static_evaluate<Word_type>(image.image(), i  , j + 1, k + 1),
-          static_evaluate<Word_type>(image.image(), i + 1, j + 1, k + 1),
+        const std::array<Word, 8> cube = {
+          static_evaluate<Word>(image.image(), i  , j  , k),
+          static_evaluate<Word>(image.image(), i + 1, j  , k),
+          static_evaluate<Word>(image.image(), i  , j + 1, k),
+          static_evaluate<Word>(image.image(), i + 1, j + 1, k),
+          static_evaluate<Word>(image.image(), i  , j  , k + 1),
+          static_evaluate<Word>(image.image(), i + 1, j  , k + 1),
+          static_evaluate<Word>(image.image(), i  , j + 1, k + 1),
+          static_evaluate<Word>(image.image(), i + 1, j + 1, k + 1),
         }; /// TODO: optimize the access to the image data
         bool monocolor = (cube[0] == cube[1]);
         for (int i = 2; i < 8; ++i) monocolor = monocolor && (cube[0] == cube[i]);
         if (monocolor) continue;
 
-        std::array<int, 8> inv_color_transformation{ INT_MIN, INT_MIN, INT_MIN, INT_MIN,
-                                                     INT_MIN, INT_MIN, INT_MIN, INT_MIN };
-        std::array<int, 256> color_transformation;
-        std::fill(color_transformation.begin(), color_transformation.end(), INT_MIN);
+        Color_transform::reset(color_transformation);
+
         int nb_color = 0;
         for (int i = 0; i < 8; ++i) {
-          if (color_transformation[cube[i]] == INT_MIN) {
+          if (!Color_transform::is_valid(color_transformation, cube[i]))
+          {
             color_transformation[cube[i]] = nb_color;
             inv_color_transformation[nb_color] = cube[i];
             ++nb_color;
@@ -114,39 +123,41 @@ bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
           CGAL_warning_msg(nb_color > 3, "voxel with more than 3 colors");
           continue;
         }
-        Cube reference_cube = {
-          (Word_type)(color_transformation[cube[0]]),
-          (Word_type)(color_transformation[cube[1]]),
-          (Word_type)(color_transformation[cube[2]]),
-          (Word_type)(color_transformation[cube[3]]),
-          (Word_type)(color_transformation[cube[4]]),
-          (Word_type)(color_transformation[cube[5]]),
-          (Word_type)(color_transformation[cube[6]]),
-          (Word_type)(color_transformation[cube[7]]),
+        std::array<std::uint8_t, 8> reference_cube = {
+            color_transformation[cube[0]],
+            color_transformation[cube[1]],
+            color_transformation[cube[2]],
+            color_transformation[cube[3]],
+            color_transformation[cube[4]],
+            color_transformation[cube[5]],
+            color_transformation[cube[6]],
+            color_transformation[cube[7]]
         };
         auto case_it = internal::find_case(internal::cases, reference_cube);
-        using std::end;
-        const bool case_found = (case_it != end(internal::cases));
+        const bool case_found = (case_it != std::end(internal::cases));
         if (case_found) reference_cube = internal::combinations[(*case_it)[8]];
         else {
           //std::cerr << "Warning: case not found: " << reference_cube << '\n';
           CGAL_error();
         };
 #ifdef CGAL_DEBUG_TRIPLE_LINES
-        std::cerr << "Cube " << cube << std::endl;
-        std::cerr << "reference cube " << reference_cube << std::endl;
-        std::cerr << "  with transformation " << cube_isometries[(*case_it)[9]] << "\n";
+        internal::debug_cerr("Cube", cube);
+        internal::debug_cerr("reference cube", reference_cube);
+        internal::debug_cerr("with transformation", internal::cube_isometries[(*case_it)[9]]);
 #endif // CGAL_DEBUG_TRIPLE_LINES
-        auto fct_it = lines.create_polylines_fcts.find(reference_cube);
-        if (fct_it != lines.create_polylines_fcts.end()) {
-#ifdef CGAL_DEBUG_TRIPLE_LINES
-          std::cerr << "Using the function of " << Cube(fct_it->first) << "\n";
-#endif // CGAL_DEBUG_TRIPLE_LINES
-          Polylines cube_features = (fct_it->second)(10);
-          if (case_found) {
-            const Permutation& transformation = cube_isometries[(*case_it)[9]];
 
-            using Coord = internal::Coordinates;
+        auto fct_it = lines.create_polylines_fcts.find(reference_cube);
+        if (fct_it != lines.create_polylines_fcts.end())
+        {
+#ifdef CGAL_DEBUG_TRIPLE_LINES
+          internal::debug_cerr("Using the function of", Cube(fct_it->first));
+#endif // CGAL_DEBUG_TRIPLE_LINES
+
+          Polylines cube_features = (fct_it->second)(10);
+          if (case_found)
+          {
+            const Permutation& transformation = internal::cube_isometries[(*case_it)[9]];
+
             Coord a1 = internal::coordinates[transformation[0]];
             Coord u = internal::minus(internal::coordinates[transformation[1]], a1);
             Coord v = internal::minus(internal::coordinates[transformation[2]], a1);

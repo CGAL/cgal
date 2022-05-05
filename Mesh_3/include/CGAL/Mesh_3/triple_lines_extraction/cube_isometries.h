@@ -25,7 +25,9 @@ namespace CGAL
 {
 namespace Mesh_3
 {
-  using Permutation = std::array<unsigned char, 8>;
+namespace internal
+{
+  using Permutation = std::array<std::uint8_t, 8>;
 
   Permutation cube_isometries[] = {
       0,1,2,3,4,5,6,7,
@@ -80,6 +82,7 @@ namespace Mesh_3
 
 constexpr int num_isometries = 48;
 
+}//end namespace internal
 }//end namespace Mesh_3
 }//end namespace CGAL
 

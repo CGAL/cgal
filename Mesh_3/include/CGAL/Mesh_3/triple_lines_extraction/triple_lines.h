@@ -20,8 +20,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-#include <CGAL/Mesh_3/triple_lines_extraction/cube.h>
-
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -651,6 +649,37 @@ std::vector<std::vector<P>> poly00121201(const int prec = 10)
                       // { P(0., .5, .5), P(0., .5, .5) }
     };
 }
+
+// Cube (begin definition)
+using Cube = std::array<std::uint8_t, 8>;
+
+inline constexpr Cube convert_to_cube(unsigned int n) {
+  assert(n < (1 << 24));
+  return {
+    (std::uint8_t)((n & 070000000) >> 21), (std::uint8_t)((n & 007000000) >> 18),
+    (std::uint8_t)((n & 000700000) >> 15), (std::uint8_t)((n & 000070000) >> 12),
+    (std::uint8_t)((n & 000007000) >> 9), (std::uint8_t)((n & 000000700) >> 6),
+    (std::uint8_t)((n & 000000070) >> 3), (std::uint8_t)((n & 000000007) >> 0),
+  };
+}
+
+// User-defined literal operator.  Given an integer in octal notation, like
+// 01234567, gives the cube with the same colors. For example, `01234567_c`
+// is `Cube{0, 1, 2, 3, 4, 5, 6, 7}`.
+inline constexpr Cube operator"" _c(unsigned long long n)
+{
+  assert(n < (1 << 24));
+  return convert_to_cube(unsigned(n));
+}
+
+inline std::string config_name(const Cube cube) {
+  std::stringstream filename_prefix_ss;
+  for (int j = 0; j < 8; ++j) {
+    filename_prefix_ss << int(cube[j]);
+  }
+  return filename_prefix_ss.str();
+}
+// Cube (end)
 
 
 template<typename Point>
