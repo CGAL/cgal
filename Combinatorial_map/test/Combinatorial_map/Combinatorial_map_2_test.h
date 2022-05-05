@@ -32,10 +32,10 @@ void drawAllPoints( Map&amap )
 template<class Map>
 bool test2D()
 {
-  typedef typename Map::Dart_handle Dart_handle;
+  typedef typename Map::Dart_descriptor Dart_descriptor;
 
     Map map;
-    Dart_handle dh, dh2, d1, d2, d3;
+    Dart_descriptor dh, dh2, d1, d2, d3;
     typename Map::size_type mark;
     unsigned int nbc, nb2;
 
@@ -414,7 +414,7 @@ bool test2D()
     map.insert_cell_0_in_cell_2 ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    std::vector<Dart_handle> V;
+    std::vector<Dart_descriptor> V;
     {
       for ( typename Map::template Dart_of_cell_range<0, Map::dimension>::iterator it =
               map.template darts_of_cell<0>( d1 ).begin();
@@ -423,7 +423,7 @@ bool test2D()
     }
 
     {
-        typedef typename std::vector<Dart_handle>::iterator vector_iterator;
+        typedef typename std::vector<Dart_descriptor>::iterator vector_iterator;
         for ( vector_iterator it = V.begin(); it != V.end(); ++it )
         {
             cout << "remove edge15: " << flush;

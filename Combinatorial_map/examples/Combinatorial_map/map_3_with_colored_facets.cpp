@@ -32,22 +32,22 @@ struct Myitem
 };
 
 typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
-typedef CMap_3::Dart_handle               Dart_handle;
+typedef CMap_3::Dart_descriptor               Dart_descriptor;
 
 int main()
 {
   CMap_3 cm;
 
   // Create 2 hexahedra.
-  Dart_handle dh1 = cm.make_combinatorial_hexahedron();
-  Dart_handle dh2 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor dh1 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor dh2 = cm.make_combinatorial_hexahedron();
 
   // 1) Create all 2-attributes and associated them to darts.
   for (CMap_3::Dart_range::iterator
        it=cm.darts().begin(), itend=cm.darts().end();
        it!=itend; ++it)
   {
-    if ( cm.attribute<2>(it)==CMap_3::null_handle )
+    if ( cm.attribute<2>(it)==CMap_3::null_descriptor )
       cm.set_attribute<2>(it, cm.create_attribute<2>());
   }
 

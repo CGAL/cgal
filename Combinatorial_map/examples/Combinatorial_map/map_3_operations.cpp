@@ -4,14 +4,14 @@
 #include <cassert>
 
 typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef CMap_3::Dart_handle        Dart_handle;
+typedef CMap_3::Dart_descriptor        Dart_descriptor;
 
 int main()
 {
   CMap_3 cm;
 
   // Create one combinatorial hexahedron.
-  Dart_handle dh1 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor dh1 = cm.make_combinatorial_hexahedron();
 
   // Add two edges along two opposite facets.
   assert( cm.is_insertable_cell_1_in_cell_2
@@ -20,7 +20,7 @@ int main()
   cm.insert_cell_1_in_cell_2(cm.beta(dh1,1), cm.beta(dh1,0));
   assert( cm.is_valid() );
 
-  Dart_handle dh2=cm.beta(dh1,2,1,1,2);
+  Dart_descriptor dh2=cm.beta(dh1,2,1,1,2);
 
   assert( cm.is_insertable_cell_1_in_cell_2
           (dh2,cm.beta(dh2,1,1)) );
@@ -30,7 +30,7 @@ int main()
 
   // Insert a facet along these two new edges plus two initial edges
   // of the hexahedron.
-  std::vector<Dart_handle> path;
+  std::vector<Dart_descriptor> path;
   path.push_back(cm.beta(dh1,1));
   path.push_back(cm.beta(dh1,0,2,1));
   path.push_back(cm.beta(dh2,0));
@@ -39,7 +39,7 @@ int main()
   assert( (cm.is_insertable_cell_2_in_cell_3
                                (path.begin(),path.end())) );
 
-  Dart_handle dh3=cm.insert_cell_2_in_cell_3(path.begin(),path.end());
+  Dart_descriptor dh3=cm.insert_cell_2_in_cell_3(path.begin(),path.end());
   assert( cm.is_valid() );
 
   // Display the combinatorial map characteristics.

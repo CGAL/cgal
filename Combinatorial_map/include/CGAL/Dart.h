@@ -112,20 +112,20 @@ namespace CGAL {
     friend struct internal::Init_id;
 
     typedef Dart_without_info<d,Refs, WithId> Self;
-    typedef typename Refs::Dart_handle        Dart_handle;
+    typedef typename Refs::Dart_descriptor        Dart_descriptor;
     typedef typename Refs::size_type          size_type;
-    typedef typename Refs::Dart_const_handle  Dart_const_handle;
+    typedef typename Refs::Dart_const_descriptor  Dart_const_descriptor;
     typedef typename Refs::Helper             Helper;
     typedef WithId                            Has_id;
     using Type_for_compact_container=typename Refs::Type_for_compact_container;
 
     /// Typedef for attributes
     template<int i>
-    struct Attribute_handle: public Refs::template Attribute_handle<i>
+    struct Attribute_descriptor: public Refs::template Attribute_descriptor<i>
     {};
     template<int i>
-    struct Attribute_const_handle:
-      public Refs::template Attribute_const_handle<i>
+    struct Attribute_const_descriptor:
+      public Refs::template Attribute_const_descriptor<i>
     {};
 
     /// The number of used marks.
@@ -139,7 +139,7 @@ namespace CGAL {
     void for_compact_container(Type_for_compact_container p)
     { mf[0].for_compact_container(p); }
 
-    Dart_handle get_f(unsigned int i) const
+    Dart_descriptor get_f(unsigned int i) const
     {
       assert(i<=dimension);
       return mf[i];
@@ -156,7 +156,7 @@ namespace CGAL {
      * @param adart a dart.
      */
     Dart_without_info(const Dart_without_info& adart) : mmarks(adart.mmarks),
-    mattribute_handles(adart.mattribute_handles)
+    mattribute_descriptors(adart.mattribute_descriptors)
     {
       for (unsigned int i = 0; i <= dimension; ++i)
         mf[i] = adart.mf[i];
@@ -204,31 +204,31 @@ namespace CGAL {
 
     /// @return a handle on the i-attribute
     template<int i>
-    typename Attribute_handle<i>::type attribute()
+    typename Attribute_descriptor<i>::type attribute()
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles);
+        (mattribute_descriptors);
     }
     template<int i>
-    typename Attribute_const_handle<i>::type attribute() const
+    typename Attribute_const_descriptor<i>::type attribute() const
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles);
+        (mattribute_descriptors);
     }
 
   protected:
     /// Neighboors for each dimension +1 (from 0 to dimension).
-    Dart_handle mf[dimension+1];
+    Dart_descriptor mf[dimension+1];
 
     /// Values of Boolean marks.
     mutable std::bitset<NB_MARKS> mmarks;
 
     /// Attributes enabled
-    typename Helper::Attribute_handles mattribute_handles;
+    typename Helper::Attribute_descriptors mattribute_descriptors;
   };
 
   // Dart definition with an info;

@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef CMap_3::Dart_handle Dart_handle;
+typedef CMap_3::Dart_descriptor Dart_descriptor;
 typedef CMap_3::size_type size_type;
 
 int main()
@@ -23,8 +23,8 @@ int main()
   }
 
   // 2) Create two tetrahedra.
-  Dart_handle dh1 = cm.make_combinatorial_tetrahedron();
-  Dart_handle dh2 = cm.make_combinatorial_tetrahedron();
+  Dart_descriptor dh1 = cm.make_combinatorial_tetrahedron();
+  Dart_descriptor dh2 = cm.make_combinatorial_tetrahedron();
 
   // 3) 3-sew them.
   cm.sew<3>(dh1, dh2);

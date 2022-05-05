@@ -16,10 +16,10 @@ public:
 
 /*!
 The null dart handle constant.
-A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_handle`.
-Note that `*null_dart_handle`\f$ \notin\f$`darts()`.
+A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_descriptor`.
+Note that `*null_dart_descriptor`\f$ \notin\f$`darts()`.
 */
-Dart_handle null_dart_handle;
+Dart_descriptor null_dart_descriptor;
 
 /// \name Access Member Functions
 /// @{
@@ -35,7 +35,7 @@ and `beta(dh,1,2,3,0)`=\f$ \beta_0\f$(\f$ \beta_3\f$(\f$ \beta_2\f$(\f$ \beta_1\
   0 \f$ \leq\f$ <I>j</I> \f$ \leq\f$ \link GenericMap::dimension `dimension`\endlink
   and `*dh`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink.
 */
-Dart_handle beta(Dart_handle dh, int i, int j);
+Dart_descriptor beta(Dart_descriptor dh, int i, int j);
 
 /*!
 Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
@@ -45,7 +45,7 @@ Overloads of this member function are defined that take from one to nine integer
      and `*dh`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink.
 
 */
-Dart_const_handle beta(Dart_const_handle dh, int i, int j) const;
+Dart_const_descriptor beta(Dart_const_descriptor dh, int i, int j) const;
 
 /*!
 Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
@@ -59,7 +59,7 @@ and `beta<1,2,3,0>(dh)`=\f$ \beta_0\f$(\f$ \beta_3\f$(\f$ \beta_2\f$(\f$ \beta_1
   and `*dh`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink.
 */
 template<int i, int j>
-Dart_handle beta(Dart_handle dh);
+Dart_descriptor beta(Dart_descriptor dh);
 
 /*!
 Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
@@ -70,17 +70,17 @@ Overloads of this member function are defined that take from one to nine integer
 
 */
 template<int i, int j>
-Dart_const_handle beta(Dart_const_handle dh) const;
+Dart_const_descriptor beta(Dart_const_descriptor dh) const;
 
 /*!
 Returns a handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex. `nullptr` if such a dart does not exist.
 */
-Dart_handle opposite(Dart_handle dh);
+Dart_descriptor opposite(Dart_descriptor dh);
 
 /*!
 Returns a const handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex, when the dart is const. `nullptr` if such a dart does not exist.
 */
-Dart_const_handle opposite(Dart_const_handle dh) const;
+Dart_const_descriptor opposite(Dart_const_descriptor dh) const;
 
 /*!
 Returns true iff the combinatorial map is valid.
@@ -114,7 +114,7 @@ If both darts have an attribute, the attribute of `*dh1` is associated to `*dh2`
 \pre 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link GenericMap::dimension `dimension`\endlink,
     `*dh1`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink, `*dh2`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`).
 */
-template <unsigned int i> void link_beta(Dart_handle dh1, Dart_handle dh2);
+template <unsigned int i> void link_beta(Dart_descriptor dh1, Dart_descriptor dh2);
 
 /*!
 Unlinks `*dh` and \f$ \beta_i\f$(`*dh`) by \f$ \beta_i\f$.
@@ -123,7 +123,7 @@ Attributes of `*dh` and \f$ \beta_i\f$(`*dh`) are not modified.
 \pre 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link GenericMap::dimension `dimension`\endlink,
      `*dh`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink, and `*dh` is not <I>i</I>-free.
 */
-template <unsigned int i> void unlink_beta(Dart_handle dh);
+template <unsigned int i> void unlink_beta(Dart_descriptor dh);
 
 /// @}
 
@@ -139,7 +139,7 @@ This is true if there is a bijection <I>f</I> between all the darts of the orbit
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink,
   `*dh1`\f$ \in \f$ `darts()`, and `*dh2`\f$ \in \f$ `darts()`.
 */
-template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;
+template <unsigned int i> bool is_sewable(Dart_const_descriptor dh1, Dart_const_descriptor dh2) const;
 
 /*!
   <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the generic map valid.
@@ -154,7 +154,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \cgalAdvancedEnd
 
 */
-template <unsigned int i> void sew(Dart_handle dh1,Dart_handle dh2);
+template <unsigned int i> void sew(Dart_descriptor dh1,Dart_descriptor dh2);
 
 /*!
   <I>i</I>-unsew darts `*dh` and `*opposite<i>(*dh)`, by keeping the generic map valid.
@@ -168,7 +168,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 */
-template <unsigned int i> void unsew(Dart_handle dh);
+template <unsigned int i> void unsew(Dart_descriptor dh);
 
 /*!
   Reverse the orientation (swap \f$ \beta_0\f$ and \f$ \beta_1\f$ links) of the entire map.
@@ -178,7 +178,7 @@ void reverse_orientation();
 /*!
     Reverse the orientation (swap \f$ \beta_0\f$ and \f$ \beta_1\f$ links) of the connected component containing the given dart.
 */
-void reverse_orientation_connected_component(Dart_handle adart);
+void reverse_orientation_connected_component(Dart_descriptor adart);
 
 /// @}
 

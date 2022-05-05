@@ -33,12 +33,12 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 {
   static typename Get_traits<Mesh>::Vector
   get_face_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
-                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
+                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor dh)
   {
     typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
     const typename Get_traits<Mesh>::Point*
         curr=&Get_traits<Mesh>::get_point(mesh.get_fg(), dh);
-    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle adart=dh;
+    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor adart=dh;
     unsigned int nb=0;
 
     do
@@ -59,7 +59,7 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
   }
   static typename Local_kernel::Vector_3
   get_vertex_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
-                    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
+                    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor dh)
   {
     typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
     unsigned int nb = 0;
@@ -90,7 +90,7 @@ class Face_graph_with_path_viewer : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt                         Base;
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
-  typedef typename LCC::Dart_const_handle         Dart_const_handle;
+  typedef typename LCC::Dart_const_descriptor         Dart_const_descriptor;
   typedef typename LCC::size_type                 size_type;
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
@@ -135,7 +135,7 @@ public:
 
 protected:
 
-  const Point& get_point(Dart_const_handle dh) const
+  const Point& get_point(Dart_const_descriptor dh) const
   { return CGAL::Get_traits<Mesh>::get_point(mesh, dh); }
 
   void compute_elements()
@@ -148,7 +148,7 @@ protected:
 
     if (m_current_dart!=lcc.darts().end())
     { // We want to draw only one dart
-      Dart_const_handle selected_dart=m_current_dart; //lcc.dart_handle(m_current_dart);
+      Dart_const_descriptor selected_dart=m_current_dart; //lcc.dart_descriptor(m_current_dart);
       compute_edge(selected_dart, CGAL::IO::Color(255,0,0));
       lcc.template mark_cell<1>(selected_dart, markedges);
       compute_vertex(selected_dart);
@@ -205,11 +205,11 @@ protected:
     lcc.free_mark(markvertices);
   }
 
-  void compute_face(Dart_const_handle dh)
+  void compute_face(Dart_const_descriptor dh)
   {
     // We fill only closed faces.
-    Dart_const_handle cur=dh;
-    Dart_const_handle min=dh;
+    Dart_const_descriptor cur=dh;
+    Dart_const_descriptor min=dh;
     do
     {
       if (!lcc.is_next_exist(cur)) return; // open face=>not filled
@@ -234,11 +234,11 @@ protected:
     face_end();
   }
 
-  void compute_edge(Dart_const_handle dh)
+  void compute_edge(Dart_const_descriptor dh)
   {
     Point p1 = get_point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=LCC::null_handle)
+    Dart_const_descriptor d2 = lcc.other_extremity(dh);
+    if (d2!=LCC::null_descriptor)
     {
       if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
           (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.opposite2(dh), m_amark)))
@@ -248,15 +248,15 @@ protected:
     }
   }
 
-  void compute_edge(Dart_const_handle dh, const CGAL::IO::Color& color)
+  void compute_edge(Dart_const_descriptor dh, const CGAL::IO::Color& color)
   {
     Point p1 = get_point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=LCC::null_handle)
+    Dart_const_descriptor d2 = lcc.other_extremity(dh);
+    if (d2!=LCC::null_descriptor)
     { add_segment(p1, get_point(d2), color); }
   }
 
-  void compute_vertex(Dart_const_handle dh)
+  void compute_vertex(Dart_const_descriptor dh)
   { add_point(get_point(dh)); }
 
   virtual void init()

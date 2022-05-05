@@ -12,7 +12,7 @@ The class `Cell_attribute_with_id` represents an attribute containing (or not) a
 
 \tparam Info_ the type of the information contained in the attribute. Equal to `void` by default.
 
-\tparam Tag is `::Tag_true` to enable the storage of a `Dart_handle` of the associated cell, `::Tag_false` otherwise. Equal to `::Tag_true` by default.
+\tparam Tag is `::Tag_true` to enable the storage of a `Dart_descriptor` of the associated cell, `::Tag_false` otherwise. Equal to `::Tag_true` by default.
 
 \tparam OnMerge the type of the functor called before two attributes are merged. Equal to `Null_functor` by default.
 

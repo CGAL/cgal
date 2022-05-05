@@ -200,7 +200,7 @@ struct CreateAttributes
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
-      if ( map.template attribute<i>(it)==map.null_handle )
+      if ( map.template attribute<i>(it)==map.null_descriptor )
       {
         map.template set_attribute<i>
           (it, map.template create_attribute<i>
@@ -328,9 +328,9 @@ void create3Dmap(Map& map)
 
   for ( int i=0; i<20; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<3>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
   }
@@ -348,18 +348,18 @@ void create4Dmap(Map& map)
 
   for ( int i=0; i<40; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<3>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
   }
 
   for ( int i=0; i<20; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<4>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<4>(d1, d2) ) ++d2;
     map.template sew<4>(d1,d2);
   }

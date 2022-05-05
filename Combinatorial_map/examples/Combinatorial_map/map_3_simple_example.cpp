@@ -3,15 +3,15 @@
 #include <cstdlib>
 
 typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef CMap_3::Dart_const_handle Dart_const_handle;
+typedef CMap_3::Dart_const_descriptor Dart_const_descriptor;
 
 int main()
 {
   CMap_3 cm;
 
   // Create two tetrahedra.
-  Dart_const_handle dh1 = cm.make_combinatorial_tetrahedron();
-  Dart_const_handle dh2 = cm.make_combinatorial_tetrahedron();
+  Dart_const_descriptor dh1 = cm.make_combinatorial_tetrahedron();
+  Dart_const_descriptor dh2 = cm.make_combinatorial_tetrahedron();
 
   // Display the combinatorial map characteristics.
   cm.display_characteristics(std::cout);

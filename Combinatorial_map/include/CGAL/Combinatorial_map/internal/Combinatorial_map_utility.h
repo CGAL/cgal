@@ -443,7 +443,7 @@ namespace CGAL
         // TODO? case when there is no Use_index typedef in CMap
          typedef typename boost::mpl::if_
         < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
-          typename CMap::Dart_handle, iterator_type >::type type;
+          typename CMap::Dart_descriptor, iterator_type >::type type;
       };
 
       // defines as type Compact_container<T>::const_iterator
@@ -456,7 +456,7 @@ namespace CGAL
 
         typedef typename boost::mpl::if_
              < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
-               typename CMap::Dart_const_handle, iterator_type >::type type;
+               typename CMap::Dart_const_descriptor, iterator_type >::type type;
       };
 
       // All the attributes (with CGAL::Void)
@@ -502,8 +502,8 @@ namespace CGAL
       Attribute_const_iterators;
 
       typedef Attribute_containers      Attribute_ranges;
-      typedef Attribute_iterators       Attribute_handles;
-      typedef Attribute_const_iterators Attribute_const_handles;
+      typedef Attribute_iterators       Attribute_descriptors;
+      typedef Attribute_const_iterators Attribute_const_descriptors;
 
       typedef typename Tuple_converter< Define_cell_attribute_binary_functor,
                                         Enabled_attributes >::type
@@ -526,30 +526,30 @@ namespace CGAL
       // Helper class allowing to retreive the d-cell-handle attribute
       template<int d, class Type=typename Attribute_type<d>::type,
                typename WithIndex=typename CMap::Use_index>
-      struct Attribute_handle
+      struct Attribute_descriptor
       {
          typedef typename std::tuple_element
-               <Dimension_index<d>::value,Attribute_handles>::type type;
+               <Dimension_index<d>::value,Attribute_descriptors>::type type;
       };
 
       template<int d>
-      struct Attribute_handle<d, CGAL::Void, CGAL::Tag_false>
+      struct Attribute_descriptor<d, CGAL::Void, CGAL::Tag_false>
       { typedef CGAL::Void* type; };
 
       template<int d>
-      struct Attribute_handle<d, CGAL::Void, CGAL::Tag_true>
+      struct Attribute_descriptor<d, CGAL::Void, CGAL::Tag_true>
       { typedef typename CMap::Dart_index type; };
 
                // Helper class allowing to retreive the d-cell-const handle attribute
       template<int d, class Type=typename Attribute_type<d>::type>
-      struct Attribute_const_handle
+      struct Attribute_const_descriptor
       {
         typedef typename std::tuple_element
-          <Dimension_index<d>::value, Attribute_const_handles>::type type;
+          <Dimension_index<d>::value, Attribute_const_descriptors>::type type;
       };
 
       template<int d>
-      struct Attribute_const_handle<d, CGAL::Void>
+      struct Attribute_const_descriptor<d, CGAL::Void>
       { typedef CGAL::Void* type; };
 
       // Helper class allowing to retreive the d-cell-iterator attribute

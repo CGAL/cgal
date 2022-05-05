@@ -28,8 +28,8 @@ template<typename CMap, unsigned int i, unsigned int dim=CMap::dimension>
 struct Is_sewable_functor
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     CGAL_assertion( 1<=i && i<=CMap::dimension );
     CGAL_assertion( 3<dim );
@@ -44,8 +44,8 @@ struct Is_sewable_functor
     }
 
     // hash map to build the isomorphism between the two i-cells.
-    CGAL::Unique_hash_map<typename CMap::Dart_const_handle,
-        typename CMap::Dart_const_handle,
+    CGAL::Unique_hash_map<typename CMap::Dart_const_descriptor,
+        typename CMap::Dart_const_descriptor,
         typename CMap::Hash_function> bijection;
 
     typename CMap::size_type m1 = amap->get_new_mark();
@@ -137,8 +137,8 @@ template<typename CMap, unsigned int dim>
 struct Is_sewable_functor<CMap, 0, dim>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   { return Is_sewable_functor<CMap,1, dim>::run(amap, adart2, adart1); }
 };
 
@@ -147,8 +147,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 1>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<0>(adart1) ||
          !amap->template is_free<1>(adart2) )
@@ -161,8 +161,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 1>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<1>(adart1) ||
          !amap->template is_free<0>(adart2) )
@@ -176,8 +176,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 2>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<0>(adart1) ||
          !amap->template is_free<1>(adart2) )
@@ -190,8 +190,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 2>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<1>(adart1) ||
          !amap->template is_free<0>(adart2) )
@@ -204,8 +204,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 2, 2>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<2>(adart1) ||
          !amap->template is_free<2>(adart2) || adart1==adart2 )
@@ -219,8 +219,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 3>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<0>(adart1) ||
          !amap->template is_free<1>(adart2) )
@@ -245,8 +245,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 3>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<1>(adart1) ||
          !amap->template is_free<0>(adart2) )
@@ -271,8 +271,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 2, 3>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<2>(adart1) ||
          !amap->template is_free<2>(adart2) || adart1==adart2 )
@@ -285,8 +285,8 @@ template<typename CMap>
 struct Is_sewable_functor<CMap, 3, 3>
 {
   static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+                   typename CMap::Dart_const_descriptor adart1,
+                   typename CMap::Dart_const_descriptor adart2 )
   {
     if ( !amap->template is_free<3>(adart1) ||
          !amap->template is_free<3>(adart2) )

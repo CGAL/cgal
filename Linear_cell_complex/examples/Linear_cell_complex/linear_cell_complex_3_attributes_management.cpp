@@ -5,7 +5,7 @@
 #include <fstream>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3;
-typedef LCC_3::Dart_handle             Dart_handle;
+typedef LCC_3::Dart_descriptor             Dart_descriptor;
 typedef LCC_3::Point                   Point;
 typedef LCC_3::FT                      FT;
 
@@ -17,7 +17,7 @@ void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
   {
     CGAL::load_off(lcc, ifile);
     CGAL::Timer timer;
-    Dart_handle dh;
+    Dart_descriptor dh;
     std::size_t nb=(lcc.number_of_darts()*percent)/200;
     timer.start();
 

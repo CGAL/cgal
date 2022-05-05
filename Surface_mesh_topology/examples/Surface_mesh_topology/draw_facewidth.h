@@ -15,36 +15,36 @@ struct Facewidth_draw_functor : public CGAL::DefaultDrawingFunctorLCC
   {}
 
   template<typename LCC>
-  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_handle dh) const
+  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_descriptor dh) const
   { return alcc.is_marked(dh, m_vertex_mark); }
 
   template<typename LCC>
   CGAL::IO::Color vertex_color(const LCC& /* alcc */,
-                           typename LCC::Dart_const_handle /* dh */) const
+                           typename LCC::Dart_const_descriptor /* dh */) const
   { return CGAL::IO::Color(0, 255, 0); }
 
   template<typename LCC>
-  bool colored_edge(const LCC& /*alcc*/, typename LCC::Dart_const_handle /*dh*/) const
+  bool colored_edge(const LCC& /*alcc*/, typename LCC::Dart_const_descriptor /*dh*/) const
   { return false; }
 
   template<typename LCC>
   CGAL::IO::Color edge_color(const LCC& /* alcc*/,
-                         typename LCC::Dart_const_handle /* dh */) const
+                         typename LCC::Dart_const_descriptor /* dh */) const
   { return CGAL::IO::Color(0, 0, 255); }
 
   template<typename LCC>
   bool colored_face(const LCC& /* alcc */,
-                    typename LCC::Dart_const_handle /* dh */) const
+                    typename LCC::Dart_const_descriptor /* dh */) const
   {return true;}
 
   template<typename LCC>
-  CGAL::IO::Color face_color(const LCC& alcc, typename LCC::Dart_const_handle dh) const
+  CGAL::IO::Color face_color(const LCC& alcc, typename LCC::Dart_const_descriptor dh) const
   { return alcc.is_marked(dh, m_face_mark)?CGAL::IO::Color(255, 0, 0)
                                           :CGAL::IO::Color(211, 211, 211); }
 
   template<typename LCC>
   bool colored_volume(const LCC& /* alcc */,
-                      typename LCC::Dart_const_handle /* dh */) const
+                      typename LCC::Dart_const_descriptor /* dh */) const
   { return false; }
 
   typename ALCC::size_type m_vertex_mark, m_face_mark;
@@ -52,7 +52,7 @@ struct Facewidth_draw_functor : public CGAL::DefaultDrawingFunctorLCC
 
 template<typename LCC>
 void draw_facewidth(const LCC& lcc,
-                    const std::vector<typename LCC::Dart_const_handle>& cycle)
+                    const std::vector<typename LCC::Dart_const_descriptor>& cycle)
 {
   int nbv=0, nbf=0;
   typename LCC::size_type vertex_mark = lcc.get_new_mark();
@@ -78,7 +78,7 @@ void draw_facewidth(const LCC& lcc,
 
 template<typename LCC>
 void draw_facewidth(const LCC&,
-                    const std::vector<typename LCC::Dart_const_handle>&)
+                    const std::vector<typename LCC::Dart_const_descriptor>&)
 {
   std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
 }

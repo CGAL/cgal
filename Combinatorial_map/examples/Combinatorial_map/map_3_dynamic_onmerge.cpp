@@ -16,7 +16,7 @@ struct Myitem
 
 // Definition of my combinatorial map.
 typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
-typedef CMap_3::Dart_handle               Dart_handle;
+typedef CMap_3::Dart_descriptor               Dart_descriptor;
 typedef CMap_3::Attribute_type<2>::type   Face_attribute;
 
 // Functor called when two faces are merged.
@@ -71,8 +71,8 @@ int main()
   CMap_3 cm;
 
   // 0) Create 2 hexahedra.
-  Dart_handle dh1 = cm.make_combinatorial_hexahedron();
-  Dart_handle dh2 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor dh1 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor dh2 = cm.make_combinatorial_hexahedron();
 
   // 1) Create and initialize 2-attributes.
   for (CMap_3::One_dart_per_cell_range<2>::iterator
@@ -92,7 +92,7 @@ int main()
 
   // 5) Insert a vertex in the face between the two hexahedra.
   //    This calls 3 onsplit.
-  Dart_handle resdart=cm.insert_cell_0_in_cell_2(dh2);
+  Dart_descriptor resdart=cm.insert_cell_0_in_cell_2(dh2);
 
   // 6) Display all the values of 2-attributes.
   display_map_and_2attributes(cm);

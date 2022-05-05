@@ -10,6 +10,6 @@ Imports `atr` (a `Triangulation_3`) into `lcc`, a model of the `LinearCellComple
 \sa `CGAL::import_from_polyhedron_3<LCC,Polyhedron>`
 */
 template <class LCC,class Triangulation_>
-typename LCC::Dart_handle import_from_triangulation_3(LCC& lcc,
+typename LCC::Dart_descriptor import_from_triangulation_3(LCC& lcc,
 const Triangulation_&atr);
 }

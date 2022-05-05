@@ -51,8 +51,8 @@ namespace CGAL {
       static const unsigned int ambient_dimension = Base::ambient_dimension;
       static const unsigned int dimension = Base::dimension;
 
-      typedef typename Base::Dart_handle       Dart_handle;
-      typedef typename Base::Dart_const_handle Dart_const_handle;
+      typedef typename Base::Dart_descriptor       Dart_descriptor;
+      typedef typename Base::Dart_const_descriptor Dart_const_descriptor;
       typedef typename Base::Helper            Helper;
 
       typedef typename Base::Point  Point;
@@ -62,10 +62,10 @@ namespace CGAL {
       typedef typename Base::Dart_range Dart_range;
 
       typedef typename Base::template Attribute_type<0>::type Vertex_attribute;
-      typedef typename Base::template Attribute_handle<0>::type
-      Vertex_attribute_handle;
-      typedef typename Base::template Attribute_const_handle<0>::type
-      Vertex_attribute_const_handle;
+      typedef typename Base::template Attribute_descriptor<0>::type
+      Vertex_attribute_descriptor;
+      typedef typename Base::template Attribute_const_descriptor<0>::type
+      Vertex_attribute_const_descriptor;
 
       typedef typename Base::template Attribute_range<0>::type
       Vertex_attribute_range;

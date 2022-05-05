@@ -162,7 +162,7 @@ public:
 };
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Mytraits,Myitems> LCC;
-typedef LCC::Dart_handle      Dart_handle;
+typedef LCC::Dart_descriptor      Dart_descriptor;
 typedef LCC::Vertex_attribute Vertex;
 
 typedef LCC::Point    Point_3;
@@ -172,7 +172,7 @@ typedef CGAL::Timer Timer;
 
 struct Vertex_info
 {
-  Dart_handle dh;
+  Dart_descriptor dh;
   Vector_3 v;
 };
 

@@ -34,12 +34,12 @@ public: //------------------------------------------------------ topology types
 
     /// Base class for all topology types (internally it is basically an index)
     /// \sa Vertex, Halfedge, Edge, Face
-    class Base_handle
+    class Base_descriptor
     {
     public:
 
         /// constructor
-        explicit Base_handle(int _idx=-1) : idx_(_idx) {}
+        explicit Base_descriptor(int _idx=-1) : idx_(_idx) {}
 
         /// Get the underlying index of this handle
         int idx() const { return idx_; }
@@ -51,17 +51,17 @@ public: //------------------------------------------------------ topology types
         bool is_valid() const { return idx_ != -1; }
 
         /// are two handles equal?
-        bool operator==(const Base_handle& _rhs) const {
+        bool operator==(const Base_descriptor& _rhs) const {
             return idx_ == _rhs.idx_;
         }
 
         /// are two handles different?
-        bool operator!=(const Base_handle& _rhs) const {
+        bool operator!=(const Base_descriptor& _rhs) const {
             return idx_ != _rhs.idx_;
         }
 
         /// compare operator useful for sorting handles
-        bool operator<(const Base_handle& _rhs) const {
+        bool operator<(const Base_descriptor& _rhs) const {
             return idx_ < _rhs.idx_;
         }
 
@@ -77,38 +77,38 @@ public: //------------------------------------------------------ topology types
 
     /// this type represents a vertex (internally it is basically an index)
     ///  \sa Halfedge, Edge, Face
-    struct Vertex : public Base_handle
+    struct Vertex : public Base_descriptor
     {
         /// default constructor (with invalid index)
-        explicit Vertex(int _idx=-1) : Base_handle(_idx) {}
+        explicit Vertex(int _idx=-1) : Base_descriptor(_idx) {}
         std::ostream& operator<<(std::ostream& os) const { return os << 'v' << idx(); }
     };
 
 
     /// this type represents a halfedge (internally it is basically an index)
     /// \sa Vertex, Edge, Face
-    struct Halfedge : public Base_handle
+    struct Halfedge : public Base_descriptor
     {
         /// default constructor (with invalid index)
-        explicit Halfedge(int _idx=-1) : Base_handle(_idx) {}
+        explicit Halfedge(int _idx=-1) : Base_descriptor(_idx) {}
     };
 
 
     /// this type represents an edge (internally it is basically an index)
     /// \sa Vertex, Halfedge, Face
-    struct Edge : public Base_handle
+    struct Edge : public Base_descriptor
     {
         /// default constructor (with invalid index)
-        explicit Edge(int _idx=-1) : Base_handle(_idx) {}
+        explicit Edge(int _idx=-1) : Base_descriptor(_idx) {}
     };
 
 
     /// this type represents a face (internally it is basically an index)
     /// \sa Vertex, Halfedge, Edge
-    struct Face : public Base_handle
+    struct Face : public Base_descriptor
     {
         /// default constructor (with invalid index)
-        explicit Face(int _idx=-1) : Base_handle(_idx) {}
+        explicit Face(int _idx=-1) : Base_descriptor(_idx) {}
     };
 
 

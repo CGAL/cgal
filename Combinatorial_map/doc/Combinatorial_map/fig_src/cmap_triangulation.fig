@@ -600,8 +600,8 @@ Single
 -6
 -6
 -6
-4 0 0 50 -1 0 18 0.0000 4 270 7350 4247 3944 Vector<Dart_handle>v1 = {Dart_of_cell_range<0,2>(dh3)}\001
-4 0 0 50 -1 0 18 0.0000 4 270 7350 4353 4232 Vector<Dart_handle>v2 = {Dart_of_cell_range<0,2>(dh4)}\001
+4 0 0 50 -1 0 18 0.0000 4 270 7350 4247 3944 Vector<Dart_descriptor>v1 = {Dart_of_cell_range<0,2>(dh3)}\001
+4 0 0 50 -1 0 18 0.0000 4 270 7350 4353 4232 Vector<Dart_descriptor>v2 = {Dart_of_cell_range<0,2>(dh4)}\001
 4 0 0 50 -1 -1 18 0.0000 4 270 4455 4790 4526 a in v1 U v2: cm.remove_cell<1>(a)\001
 4 0 0 50 -1 32 21 0.0000 4 225 240 4565 4540 "\001
 4 0 0 50 -1 0 18 0.0000 4 270 4605 4161 175 dh4=cm.insert_cell_0_in_cell_2(dh2)\001

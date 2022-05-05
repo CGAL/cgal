@@ -26,14 +26,14 @@ For example `alpha(dh,1)`=\f$ \alpha_1\f$(`*dh`),
 and `alpha(dh,1,2,3,0)`=\f$ \alpha_0\f$(\f$ \alpha_3\f$(\f$ \alpha_2\f$(\f$ \alpha_1\f$(`*dh`)))).
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, 0 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink.
 */
-Dart_handle alpha(Dart_handle dh, int i, int j);
+Dart_descriptor alpha(Dart_descriptor dh, int i, int j);
 
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as arguments.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, 0 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink.
 
 */
-Dart_const_handle alpha(Dart_const_handle dh, int i, int j) const;
+Dart_const_descriptor alpha(Dart_const_descriptor dh, int i, int j) const;
 
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as template arguments. For each function, alphas are applied in the same order as their indices are given as template arguments.
@@ -41,7 +41,7 @@ Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member functi
 For example `alpha<1>(dh)`=\f$ \alpha_1\f$(`*dh`), and `alpha<1,2,3,0>(dh)`=\f$ \alpha_0\f$(\f$ \alpha_3\f$(\f$ \alpha_2\f$(\f$ \alpha_1\f$(`*dh`)))). \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, 0 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink.
 */
 template<int i, int j>
-Dart_handle alpha(Dart_handle dh);
+Dart_descriptor alpha(Dart_descriptor dh);
 
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as template arguments.
@@ -49,7 +49,7 @@ Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member functi
 
 */
 template<int i, int j>
-Dart_const_handle alpha(Dart_const_handle dh) const;
+Dart_const_descriptor alpha(Dart_const_descriptor dh) const;
 
 /*!
 Returns true iff the current generalized map is orientable.
@@ -81,13 +81,13 @@ bool is_valid() const;
 Links `*dh1` and `*dh2` by \f$ \alpha_i\f$. The generalized map can be no longer valid after this operation. If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, non void attributes of `*dh1` and `*dh2` are updated: if one dart has an attribute and the second dart not, the non null attribute is associated to the dart having a null attribute. If both darts have an attribute, the attribute of `*dh1` is associated to `*dh2`.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, `*dh1`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink, `*dh2`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`).
 */
-template <unsigned int i> void link_alpha(Dart_handle dh1, Dart_handle dh2);
+template <unsigned int i> void link_alpha(Dart_descriptor dh1, Dart_descriptor dh2);
 
 /*!
 Unlinks `*dh` and \f$ \alpha_i\f$(`*dh`) by \f$ \alpha_i\f$. The generalized map can be no longer valid after this operation. Attributes of `*dh` and \f$ \alpha_i\f$(`*dh`) are not modified.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, `*dh`\f$ \in\f$ \link GenericMap::darts `darts()`\endlink, and `*dh` is not <I>i</I>-free.
 */
-template <unsigned int i> void unlink_alpha(Dart_handle dh);
+template <unsigned int i> void unlink_alpha(Dart_descriptor dh);
 
 /// @}
 
@@ -103,7 +103,7 @@ This is true if there is a bijection <I>f</I> between all the darts of the orbit
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink,
   `*dh1`\f$ \in \f$ `darts()`, and `*dh2`\f$ \in \f$ `darts()`.
 */
-template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;
+template <unsigned int i> bool is_sewable(Dart_const_descriptor dh1, Dart_const_descriptor dh2) const;
 
 /*!
   <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the generic map valid.
@@ -118,7 +118,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \cgalAdvancedEnd
 
 */
-template <unsigned int i> void sew(Dart_handle dh1,Dart_handle dh2);
+template <unsigned int i> void sew(Dart_descriptor dh1,Dart_descriptor dh2);
 
 /*!
   <I>i</I>-unsew darts `*dh` and `*opposite<i>(*dh)`, by keeping the generic map valid.
@@ -132,7 +132,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated thus the generic map can be no more valid after this operation.
 \cgalAdvancedEnd
 */
-template <unsigned int i> void unsew(Dart_handle dh);
+template <unsigned int i> void unsew(Dart_descriptor dh);
 
 /// @}
 

@@ -76,9 +76,9 @@ typedef CGAL::Linear_cell_complex_for_index<3,3,CGAL::Linear_cell_complex_traits
 
 #endif
 
-typedef LCC_3::Dart_handle                 Dart_handle;
-typedef LCC_3::Vertex_attribute_handle   Vertex_handle;
-typedef LCC_3::Attribute_handle<3>::type Volume_handle;
+typedef LCC_3::Dart_descriptor                 Dart_descriptor;
+typedef LCC_3::Vertex_attribute_descriptor   Vertex_descriptor;
+typedef LCC_3::Attribute_descriptor<3>::type Volume_descriptor;
 typedef LCC_3::Point                         Point;
 typedef LCC_3::Vector                         Vector;
 typedef LCC_3::FT                         FT;
@@ -92,7 +92,7 @@ class LCC_performance_3 : public Performance_test_3
 private:
 
   LCC_3 lcc;
-  CGAL::Unique_hash_map<Vertex_handle, std::vector<Vertex_handle>,
+  CGAL::Unique_hash_map<Vertex_descriptor, std::vector<Vertex_descriptor>,
                         typename LCC_3::Hash_function  > adjacent_vertices;
 
 private:
@@ -112,7 +112,7 @@ private:
     for (LCC_3::Vertex_attribute_range::iterator vit = lcc.vertex_attributes().begin(),
            vend = lcc.vertex_attributes().end(); vit != vend; ++vit)
     {
-      std::vector<Vertex_handle> adj;
+      std::vector<Vertex_descriptor> adj;
       for(LCC_3::One_dart_per_incident_cell_range<1,0>::iterator
             it = lcc.one_dart_per_incident_cell<1,0>(vit->dart()).begin(),
             itend = lcc.one_dart_per_incident_cell<1,0>(vit->dart()).end();
@@ -138,14 +138,14 @@ private:
     std::cout << "\t" << std::endl;
   }
 
-  void collapse(Dart_handle dart)
+  void collapse(Dart_descriptor dart)
   {
-    std::vector<Dart_handle> tet_ring;
+    std::vector<Dart_descriptor> tet_ring;
 
     // Get ring of tets
     // incident to the current edge
 
-    Dart_handle iter = dart;
+    Dart_descriptor iter = dart;
     do
     {
       tet_ring.push_back(iter);
@@ -156,8 +156,8 @@ private:
     while(iter != dart);
 
     // Get top vertex
-    Dart_handle topVertex = dart;
-    Dart_handle botVertex = lcc.beta<1>(dart);
+    Dart_descriptor topVertex = dart;
+    Dart_descriptor botVertex = lcc.beta<1>(dart);
 
     // Get barycenter of current edge
     Point bc = lcc.barycenter<1>(dart);
@@ -178,27 +178,27 @@ private:
       lcc.info<0>(topVertex).m = 0;
 
     // Delete tets in ring
-    for(std::vector<Dart_handle>::const_iterator cr_it = tet_ring.begin(),
+    for(std::vector<Dart_descriptor>::const_iterator cr_it = tet_ring.begin(),
           cr_end = tet_ring.end();
         cr_it != cr_end;
         ++cr_it)
     {
-      Dart_handle top = lcc.beta<1,2,3>(*cr_it);
-      Dart_handle bottom = lcc.beta<0,2,3>(*cr_it);
+      Dart_descriptor top = lcc.beta<1,2,3>(*cr_it);
+      Dart_descriptor bottom = lcc.beta<0,2,3>(*cr_it);
       CGAL::remove_cell<LCC_3, 3>(lcc, *cr_it);
       lcc.sew<3>(top,bottom);
     }
   }
 
-  Dart_handle create_face(Dart_handle old1,
-                          Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
-                          Volume_handle vol)
+  Dart_descriptor create_face(Dart_descriptor old1,
+                          Vertex_descriptor v1, Vertex_descriptor v2, Vertex_descriptor v3,
+                          Volume_descriptor vol)
   {
-    Dart_handle old2 = lcc.beta<2>(old1);
+    Dart_descriptor old2 = lcc.beta<2>(old1);
 
-    Dart_handle d1=lcc.create_dart(v1);
-    Dart_handle d2=lcc.create_dart(v2);
-    Dart_handle d3=lcc.create_dart(v3);
+    Dart_descriptor d1=lcc.create_dart(v1);
+    Dart_descriptor d2=lcc.create_dart(v2);
+    Dart_descriptor d3=lcc.create_dart(v3);
     lcc.set_dart_attribute<3>(d1,vol);
     lcc.set_dart_attribute<3>(d2,vol);
     lcc.set_dart_attribute<3>(d3,vol);
@@ -207,9 +207,9 @@ private:
     lcc.basic_link_beta_1(d2,d3);
     lcc.basic_link_beta_1(d3,d1);
 
-    Dart_handle dd1=lcc.create_dart(v2);
-    Dart_handle dd2=lcc.create_dart(v1);
-    Dart_handle dd3=lcc.create_dart(v3);
+    Dart_descriptor dd1=lcc.create_dart(v2);
+    Dart_descriptor dd2=lcc.create_dart(v1);
+    Dart_descriptor dd3=lcc.create_dart(v3);
     lcc.set_dart_attribute<3>(dd1,vol);
     lcc.set_dart_attribute<3>(dd2,vol);
     lcc.set_dart_attribute<3>(dd3,vol);
@@ -228,27 +228,27 @@ private:
     return lcc.beta<1>(d1);
   }
 
-  Dart_handle tet_split(Dart_handle d1)
+  Dart_descriptor tet_split(Dart_descriptor d1)
   {
     Point_3 c = LCC_3::Traits::Construct_translated_point()
       (CGAL::ORIGIN, barycenter_3(d1));
 
-    Dart_handle d2=lcc.beta<1,2>(d1);
-    Dart_handle d3=lcc.beta<2>(d1);
-    Dart_handle d4=lcc.beta<1,2>(d3);
+    Dart_descriptor d2=lcc.beta<1,2>(d1);
+    Dart_descriptor d3=lcc.beta<2>(d1);
+    Dart_descriptor d4=lcc.beta<1,2>(d3);
 
-    Vertex_handle v0 = lcc.create_vertex_attribute(c);
-    Vertex_handle v1 = lcc.vertex_attribute(d1);
-    Vertex_handle v2 = lcc.vertex_attribute(d2);
-    Vertex_handle v3 = lcc.vertex_attribute(d3);
-    Vertex_handle v4 = lcc.vertex_attribute(d4);
+    Vertex_descriptor v0 = lcc.create_vertex_attribute(c);
+    Vertex_descriptor v1 = lcc.vertex_attribute(d1);
+    Vertex_descriptor v2 = lcc.vertex_attribute(d2);
+    Vertex_descriptor v3 = lcc.vertex_attribute(d3);
+    Vertex_descriptor v4 = lcc.vertex_attribute(d4);
 
-    Dart_handle n1 = create_face(d1, v3, v1, v0, lcc.attribute<3>(d1));
-    Dart_handle n2 = create_face(d2, v3, v2, v0, lcc.attribute<3>(d1));
-    Dart_handle n3 = create_face(lcc.beta<0>(d1), v1, v2, v0, lcc.attribute<3>(d1));
-    Dart_handle n4 = create_face(lcc.beta<0>(d2), v4, v2, v0, lcc.attribute<3>(d1));
-    Dart_handle n5 = create_face(d4, v1, v4, v0, lcc.attribute<3>(d1));
-    Dart_handle n6 = create_face(lcc.beta<1>(d2), v4, v3, v0, lcc.attribute<3>(d1));
+    Dart_descriptor n1 = create_face(d1, v3, v1, v0, lcc.attribute<3>(d1));
+    Dart_descriptor n2 = create_face(d2, v3, v2, v0, lcc.attribute<3>(d1));
+    Dart_descriptor n3 = create_face(lcc.beta<0>(d1), v1, v2, v0, lcc.attribute<3>(d1));
+    Dart_descriptor n4 = create_face(lcc.beta<0>(d2), v4, v2, v0, lcc.attribute<3>(d1));
+    Dart_descriptor n5 = create_face(d4, v1, v4, v0, lcc.attribute<3>(d1));
+    Dart_descriptor n6 = create_face(lcc.beta<1>(d2), v4, v3, v0, lcc.attribute<3>(d1));
 
     lcc.basic_link_beta_for_involution<2>(n1,           lcc.beta<1>(n3));
     lcc.basic_link_beta_for_involution<2>(lcc.beta<1>(n1),lcc.beta<1,3>(n2));
@@ -275,7 +275,7 @@ private:
     return d1;
   }
 
-  bool isBoundary(const Dart_handle& _dart)
+  bool isBoundary(const Dart_descriptor& _dart)
   {
     // 0=not known; 1=boundary; 2=no boundary
     if ( lcc.info<0>(_dart).m==1 ||
@@ -317,10 +317,10 @@ private:
     return false;
   }
 
-  Dart_handle getShortestEdge()
+  Dart_descriptor getShortestEdge()
   {
     double weight = (std::numeric_limits<double>::max)();
-    Dart_handle dart = lcc.null_dart_handle;
+    Dart_descriptor dart = lcc.null_dart_descriptor;
 
     int m=lcc.get_new_mark();
     for (typename LCC_3::Dart_range::iterator e_it=lcc.darts().begin(), e_end=lcc.darts().end();
@@ -409,7 +409,7 @@ private:
       std::getline(sStream, line);
       sStream.clear();
 
-      Dart_handle dart=
+      Dart_descriptor dart=
         lcc.make_tetrahedron(points[v0-1], points[v1-1], points[v2-1], points[v3-1]);
       lcc.set_attribute<3>(dart, lcc.create_attribute<3>());
     }
@@ -598,7 +598,7 @@ private:
       Vector_3 v(0.0, 0.0, 0.0);
       int valence = 0;
 
-      for (std::vector<Vertex_handle>::iterator it= adjacent_vertices[vit].begin(),
+      for (std::vector<Vertex_descriptor>::iterator it= adjacent_vertices[vit].begin(),
              itend=adjacent_vertices[vit].end(); it!=itend; ++it )
       {
         v = v + (lcc.point_of_vertex_attribute(*it) - CGAL::ORIGIN);
@@ -625,7 +625,7 @@ private:
     --vend;
     while ( vit!=vend )
     {
-      Dart_handle d = vit->dart();
+      Dart_descriptor d = vit->dart();
       ++vit;
       tet_split(d);
     }
@@ -636,9 +636,9 @@ private:
   {
     for(unsigned int i = 0; i < n; ++i)
     {
-      Dart_handle dart = getShortestEdge();
+      Dart_descriptor dart = getShortestEdge();
 
-      if(dart == lcc.null_dart_handle)
+      if(dart == lcc.null_dart_descriptor)
       {
         std::cerr << "No valid edge anymore, aborting at step "<<i << std::endl;
         return;
@@ -659,7 +659,7 @@ private:
 
   }
 
-  Vector_3 barycenter_3(Dart_handle d)
+  Vector_3 barycenter_3(Dart_descriptor d)
   {
     int m = lcc.get_new_mark();
 

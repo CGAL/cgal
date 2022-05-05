@@ -53,8 +53,8 @@ namespace CGAL {
       static const unsigned int ambient_dimension = Base::ambient_dimension;
       static const unsigned int dimension = Base::dimension;
 
-      typedef typename Base::Dart_handle       Dart_handle;
-      typedef typename Base::Dart_const_handle Dart_const_handle;
+      typedef typename Base::Dart_descriptor       Dart_descriptor;
+      typedef typename Base::Dart_const_descriptor Dart_const_descriptor;
       typedef typename Base::Helper            Helper;
 
       typedef typename Base::Point  Point;
@@ -64,10 +64,10 @@ namespace CGAL {
       typedef typename Base::Dart_range Dart_range;
 
       typedef typename Base::template Attribute_type<0>::type Vertex_attribute;
-      typedef typename Base::template Attribute_handle<0>::type
-      Vertex_attribute_handle;
-      typedef typename Base::template Attribute_const_handle<0>::type
-      Vertex_attribute_const_handle;
+      typedef typename Base::template Attribute_descriptor<0>::type
+      Vertex_attribute_descriptor;
+      typedef typename Base::template Attribute_const_descriptor<0>::type
+      Vertex_attribute_const_descriptor;
 
       typedef typename Base::template Attribute_range<0>::type
       Vertex_attribute_range;
@@ -163,16 +163,16 @@ namespace CGAL {
                                       const PointConverter& pointconverter,
                                       std::unordered_map
                                       <typename boost::graph_traits<HEG>::halfedge_descriptor,
-                                      Dart_handle>* origin_to_copy=NULL,
+                                      Dart_descriptor>* origin_to_copy=NULL,
                                       std::unordered_map
-                                      <Dart_handle,
+                                      <Dart_descriptor,
                                       typename boost::graph_traits<HEG>::halfedge_descriptor>*
                                       copy_to_origin=NULL)
 
       {
         std::unordered_map
             <typename boost::graph_traits<HEG>::halfedge_descriptor,
-            Dart_handle> local_dartmap;
+            Dart_descriptor> local_dartmap;
         if (origin_to_copy==NULL) // Used local_dartmap if user does not provides its own unordered_map
         { origin_to_copy=&local_dartmap; }
 
@@ -184,7 +184,7 @@ namespace CGAL {
 
         typename std::unordered_map
           <typename boost::graph_traits<HEG>::halfedge_descriptor,
-           Dart_handle>::iterator dartmap_iter, dartmap_iter_end=origin_to_copy->end();
+           Dart_descriptor>::iterator dartmap_iter, dartmap_iter_end=origin_to_copy->end();
         for (dartmap_iter=origin_to_copy->begin(); dartmap_iter!=dartmap_iter_end;
              ++dartmap_iter)
         {
@@ -203,9 +203,9 @@ namespace CGAL {
       void import_from_halfedge_graph(const HEG& heg,
                                       std::unordered_map
                                       <typename boost::graph_traits<HEG>::halfedge_descriptor,
-                                      Dart_handle>* origin_to_copy=NULL,
+                                      Dart_descriptor>* origin_to_copy=NULL,
                                       std::unordered_map
-                                      <Dart_handle,
+                                      <Dart_descriptor,
                                       typename boost::graph_traits<HEG>::halfedge_descriptor>*
                                       copy_to_origin=NULL)
       {

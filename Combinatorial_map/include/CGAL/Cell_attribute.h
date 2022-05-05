@@ -137,8 +137,8 @@ struct Init_id;
   public:
     typedef Tag_false                            Supports_cell_dart;
 
-    typedef typename Refs::Dart_handle           Dart_handle;
-    typedef typename Refs::Dart_const_handle     Dart_const_handle;
+    typedef typename Refs::Dart_descriptor           Dart_descriptor;
+    typedef typename Refs::Dart_const_descriptor     Dart_const_descriptor;
     typedef typename Refs::Alloc                 Alloc;
 
     typedef OnMerge On_merge;
@@ -156,13 +156,13 @@ struct Init_id;
     }
 
     /// Get the dart associated with the cell.
-    Dart_handle dart() { return Refs::null_handle; }
+    Dart_descriptor dart() { return Refs::null_descriptor; }
 
     /// Get the dart associated with the cell.
-    Dart_const_handle dart() const { return Refs::null_handle; }
+    Dart_const_descriptor dart() const { return Refs::null_descriptor; }
 
     /// Set the dart associated with the cell.
-    void set_dart(Dart_handle) {}
+    void set_dart(Dart_descriptor) {}
 
     /// Test if the cell is valid.
     /// For cell without dart, return always true.
@@ -177,7 +177,7 @@ struct Init_id;
 
   protected:
     /// Contructor without parameter.
-    Cell_attribute_without_info(): mrefcounting(0), m_for_cc(Refs::null_handle)
+    Cell_attribute_without_info(): mrefcounting(0), m_for_cc(Refs::null_descriptor)
     {}
 
     /// Copy contructor.
@@ -262,8 +262,8 @@ struct Init_id;
   public:
     typedef Tag_true                             Supports_cell_dart;
 
-    typedef typename Refs::Dart_handle           Dart_handle;
-    typedef typename Refs::Dart_const_handle     Dart_const_handle;
+    typedef typename Refs::Dart_descriptor           Dart_descriptor;
+    typedef typename Refs::Dart_const_descriptor     Dart_const_descriptor;
     typedef typename Refs::Alloc                 Alloc;
 
     typedef OnMerge On_merge;
@@ -281,18 +281,18 @@ struct Init_id;
     }
 
     /// Get the dart associated with the cell.
-    Dart_handle dart() { return mdart; }
+    Dart_descriptor dart() { return mdart; }
 
     /// Get the dart associated with the cell.
-    Dart_const_handle dart() const { return mdart; }
+    Dart_const_descriptor dart() const { return mdart; }
 
     /// Set the dart associated with the cell.
-    void set_dart(Dart_handle adart) { mdart = adart; }
+    void set_dart(Dart_descriptor adart) { mdart = adart; }
 
     /// Test if the cell is valid.
-    /// A cell is valid if its dart is not null_handle.
+    /// A cell is valid if its dart is not null_descriptor.
     bool is_valid() const
-    { return mdart!=Refs::null_handle; }
+    { return mdart!=Refs::null_descriptor; }
 
     bool operator==(const Cell_attribute_without_info&) const
     { return true; }
@@ -302,7 +302,7 @@ struct Init_id;
 
   protected:
     /// Contructor without parameter.
-    Cell_attribute_without_info() : mdart(Refs::null_handle),
+    Cell_attribute_without_info() : mdart(Refs::null_descriptor),
                                     mrefcounting(0)
     {}
 
@@ -336,7 +336,7 @@ struct Init_id;
 
   private:
     /// The dart handle associated with the cell.
-    Dart_handle mdart;
+    Dart_descriptor mdart;
 
     /// Reference counting: the number of darts linked to this cell.
     std::size_t mrefcounting;
@@ -390,8 +390,8 @@ struct Init_id;
 
   public:
     typedef Tag_                             Supports_cell_dart;
-    typedef typename Refs::Dart_handle       Dart_handle;
-    typedef typename Refs::Dart_const_handle Dart_const_handle;
+    typedef typename Refs::Dart_descriptor       Dart_descriptor;
+    typedef typename Refs::Dart_const_descriptor Dart_const_descriptor;
     typedef typename Refs::Alloc             Alloc;
     typedef OnMerge                          On_merge;
     typedef OnSplit                          On_split;
@@ -447,8 +447,8 @@ struct Init_id;
     typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit, WithID> Self;
 
     typedef Tag_                             Supports_cell_dart;
-    typedef typename Refs::Dart_handle       Dart_handle;
-    typedef typename Refs::Dart_const_handle Dart_const_handle;
+    typedef typename Refs::Dart_descriptor       Dart_descriptor;
+    typedef typename Refs::Dart_const_descriptor Dart_const_descriptor;
     typedef typename Refs::Alloc             Alloc;
     typedef OnMerge                          On_merge;
     typedef OnSplit                          On_split;

@@ -7,7 +7,7 @@
 #include <cassert>
 
 typedef CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<> PS;
-typedef typename PS::Dart_handle  Dart_handle;
+typedef typename PS::Dart_descriptor  Dart_descriptor;
 
 using namespace CGAL::Surface_mesh_topology;
 

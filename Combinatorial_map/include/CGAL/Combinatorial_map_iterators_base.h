@@ -85,9 +85,9 @@ namespace CGAL {
     // typedef internal::CC_iterator<typename Map_::Dart_container,Const> Base;
 
     typedef typename boost::mpl::if_c< Const,
-                                       typename Map_::Dart_const_handle,
-                                       typename Map_::Dart_handle>::type
-                                     Dart_handle;
+                                       typename Map_::Dart_const_descriptor,
+                                       typename Map_::Dart_descriptor>::type
+                                     Dart_descriptor;
     typedef typename boost::mpl::if_c< Const, const Map_, Map_>::type Map;
 
     typedef std::input_iterator_tag iterator_category;
@@ -103,7 +103,7 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    CMap_dart_iterator(Map& amap, Dart_handle adart):
+    CMap_dart_iterator(Map& amap, Dart_descriptor adart):
       Base(adart),
       mmap(&amap),
       mfirst_dart(adart),
@@ -113,7 +113,7 @@ namespace CGAL {
     /// == operator.
     bool operator==(const Self& aiterator) const
     {
-      return ( ((*this==mmap->null_handle) && (aiterator==mmap->null_handle)) ||
+      return ( ((*this==mmap->null_descriptor) && (aiterator==mmap->null_descriptor)) ||
                (mfirst_dart == aiterator.mfirst_dart &&
                 static_cast<const Base&>(*this)==
                 static_cast<const Base&>(aiterator)) );
@@ -124,7 +124,7 @@ namespace CGAL {
     { return !operator==(aiterator); }
 
     /// Accessor to the initial dart of the iterator.
-    Dart_handle get_first_dart() const { return mfirst_dart; }
+    Dart_descriptor get_first_dart() const { return mfirst_dart; }
 
     /// Accessor to the combinatorial map.
     Map* get_combinatorial_map() const { return mmap; }
@@ -135,14 +135,14 @@ namespace CGAL {
 
     /// Test if the iterator is at its end.
     bool cont() const
-    { return static_cast<const Base&>(*this)!=mmap->null_handle; }
+    { return static_cast<const Base&>(*this)!=mmap->null_descriptor; }
 
     /// Get the previous operation used for the last ++.
     OperationState prev_operation()  const { return mprev_op; }
 
   protected:
     /// Set the current dart to a given dart
-    void set_current_dart(Dart_handle adart)
+    void set_current_dart(Dart_descriptor adart)
     { Base::operator=(adart); }
 
   private:
@@ -155,17 +155,17 @@ namespace CGAL {
 
   protected:
     /// test if adart->beta(ai) exists and is not marked for amark
-    bool is_unmarked(Dart_handle adart, unsigned int ai, size_type amark) const
+    bool is_unmarked(Dart_descriptor adart, unsigned int ai, size_type amark) const
     { return
         !mmap->is_marked(mmap->beta(adart,ai), amark);
     }
 
     /// test if adart->beta(ai)->beta(aj) exists
-    bool exist_betaij(Dart_handle adart, unsigned int ai, unsigned int aj) const
+    bool exist_betaij(Dart_descriptor adart, unsigned int ai, unsigned int aj) const
     { return !mmap->is_free(adart, ai) && !mmap->is_free(mmap->beta(adart, ai), aj); }
 
     /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
-    bool is_unmarked2(Dart_handle adart, unsigned int ai, unsigned int aj,
+    bool is_unmarked2(Dart_descriptor adart, unsigned int ai, unsigned int aj,
                       typename Map::size_type amark) const
     { return
         !mmap->is_marked(mmap->beta(adart, ai, aj), amark);
@@ -175,7 +175,7 @@ namespace CGAL {
     Map* mmap;
 
     /// The initial dart of the iterator.
-    Dart_handle mfirst_dart;
+    Dart_descriptor mfirst_dart;
 
     /// The last operation used for the ++ operator.
     OperationState mprev_op;
@@ -197,9 +197,9 @@ namespace CGAL {
     typedef internal::CC_iterator_with_index<typename Map_::Dart_container,Const> Base;
 
     typedef typename boost::mpl::if_c< Const,
-                                       typename Map_::Dart_const_handle,
-                                       typename Map_::Dart_handle>::type
-                                     Dart_handle;
+                                       typename Map_::Dart_const_descriptor,
+                                       typename Map_::Dart_descriptor>::type
+                                     Dart_descriptor;
     typedef typename boost::mpl::if_c< Const, const Map_,
                                        Map_>::type Map;
 
@@ -214,7 +214,7 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    CMap_dart_iterator(Map& amap, Dart_handle adart):
+    CMap_dart_iterator(Map& amap, Dart_descriptor adart):
       Base(&amap.mdarts, adart),
       mmap(&amap),
       mfirst_dart(adart),
@@ -224,7 +224,7 @@ namespace CGAL {
     /// == operator.
     bool operator==(const Self& aiterator) const
     {
-      return ((*this==mmap->null_handle) && (aiterator==mmap->null_handle)) ||
+      return ((*this==mmap->null_descriptor) && (aiterator==mmap->null_descriptor)) ||
         (mfirst_dart == aiterator.mfirst_dart &&
          static_cast<const Base&>(*this)==
          static_cast<const Base&>(aiterator));
@@ -235,7 +235,7 @@ namespace CGAL {
     { return !operator==(aiterator); }
 
     /// Accessor to the initial dart of the iterator.
-    Dart_handle get_first_dart() const { return mfirst_dart; }
+    Dart_descriptor get_first_dart() const { return mfirst_dart; }
 
     /// Accessor to the combinatorial map.
     Map* get_combinatorial_map() const { return mmap; }
@@ -246,14 +246,14 @@ namespace CGAL {
 
     /// Test if the iterator is at its end.
     bool cont() const
-    { return this->get_current()!=mmap->null_handle; }
+    { return this->get_current()!=mmap->null_descriptor; }
 
     /// Get the previous operation used for the last ++.
     OperationState prev_operation()  const { return mprev_op; }
 
   protected:
     /// Set the current dart to a given dart
-    void set_current_dart(Dart_handle adart)
+    void set_current_dart(Dart_descriptor adart)
     { this->set_current(adart); }
 
   private:
@@ -266,15 +266,15 @@ namespace CGAL {
 
   protected:
     /// test if adart->beta(ai) exists and is not marked for amark
-    bool is_unmarked(Dart_handle adart, unsigned int ai, unsigned amark) const
+    bool is_unmarked(Dart_descriptor adart, unsigned int ai, unsigned amark) const
     { return !mmap->is_marked(mmap->beta(adart,ai), amark); }
 
     /// test if adart->beta(ai)->beta(aj) exists
-    bool exist_betaij(Dart_handle adart, unsigned int ai, unsigned int aj) const
+    bool exist_betaij(Dart_descriptor adart, unsigned int ai, unsigned int aj) const
     { return !mmap->is_free(adart, ai) && !mmap->is_free(mmap->beta(adart, ai), aj); }
 
     /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
-    bool is_unmarked2(Dart_handle adart, unsigned int ai, unsigned int aj,
+    bool is_unmarked2(Dart_descriptor adart, unsigned int ai, unsigned int aj,
                       unsigned amark) const
     { return !mmap->is_marked(mmap->beta(adart, ai, aj), amark); }
 
@@ -283,7 +283,7 @@ namespace CGAL {
     Map* mmap;
 
     /// The initial dart of the iterator.
-    Dart_handle mfirst_dart;
+    Dart_descriptor mfirst_dart;
 
     /// The last operation used for the ++ operator.
     OperationState mprev_op;
@@ -301,7 +301,7 @@ namespace CGAL {
     typedef CMap_extend_iterator<Map_,Ite,Bi, Ite_has_stack> Self;
     typedef Ite Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
 
     typedef Tag_true Use_mark;
@@ -313,12 +313,12 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    CMap_extend_iterator(Map& amap, Dart_handle adart, size_type amark):
+    CMap_extend_iterator(Map& amap, Dart_descriptor adart, size_type amark):
       Base(amap, adart),
       mmark_number(amark),
       minitial_dart(adart)
     {
-      if ( minitial_dart!=amap.null_handle )
+      if ( minitial_dart!=amap.null_descriptor )
       {
         this->mmap->mark_null_dart(mmark_number);
         this->mmap->mark(minitial_dart, mmark_number);
@@ -335,7 +335,7 @@ namespace CGAL {
     {
       CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::operator= ( Base(*this->mmap,minitial_dart) );
-      mto_treat = std::queue<Dart_handle>();
+      mto_treat = std::queue<Dart_descriptor>();
       this->mmap->mark(minitial_dart, mmark_number);
       this->mmap->mark_null_dart(mmark_number);
       if (!this->mmap->is_free(minitial_dart, Bi) &&
@@ -400,13 +400,13 @@ namespace CGAL {
 
   protected:
     /// Queue of darts to process.
-    std::queue<Dart_handle> mto_treat;
+    std::queue<Dart_descriptor> mto_treat;
 
     /// Index of the used mark.
     size_type mmark_number;
 
     /// Initial dart
-    Dart_handle minitial_dart;
+    Dart_descriptor minitial_dart;
   };
   //****************************************************************************
   /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by
@@ -420,7 +420,7 @@ namespace CGAL {
     typedef CMap_extend_iterator<Map_,Ite,Bi,Tag_true> Self;
     typedef Ite Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
 
     typedef Tag_true Use_mark;
@@ -428,10 +428,10 @@ namespace CGAL {
     typedef typename Map::size_type size_type;
 
     /// Main constructor.
-    CMap_extend_iterator(Map& amap, Dart_handle adart, size_type amark):
+    CMap_extend_iterator(Map& amap, Dart_descriptor adart, size_type amark):
       Base(amap, adart, amark)
     {
-      if ( this->minitial_dart!=amap.null_handle &&
+      if ( this->minitial_dart!=amap.null_descriptor &&
            !this->mmap->is_free(this->minitial_dart, Bi) &&
            this->mmap->beta(this->minitial_dart, Bi)!=this->minitial_dart )
       {
@@ -489,7 +489,7 @@ namespace CGAL {
     typedef Base_ Base;
 
     typedef typename Base::Map Map;
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
 
     /// True iff this iterator is basic
     typedef Tag_false Basic_iterator;
@@ -500,7 +500,7 @@ namespace CGAL {
                             Tag_true>::value) );
 
     /// Main constructor.
-    CMap_non_basic_iterator(Map& amap, Dart_handle adart1):
+    CMap_non_basic_iterator(Map& amap, Dart_descriptor adart1):
       Base(amap, adart1, amap.get_new_mark())
     {}
 
@@ -577,7 +577,7 @@ namespace CGAL {
     typedef Base_ Base;
 
     typedef typename Base::Map Map;
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
 
     /// True iff this iterator is basic
     typedef Tag_false Basic_iterator;
@@ -586,7 +586,7 @@ namespace CGAL {
                             Tag_true>::value) );
 
     /// Main constructor.
-    CMap_non_basic_iterator(Map& amap, Dart_handle adart):
+    CMap_non_basic_iterator(Map& amap, Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -597,13 +597,13 @@ namespace CGAL {
   {
     typedef It iterator;
     typedef Const_it const_iterator;
-    CMap_range(Map_ &amap, typename Map_::Dart_handle adart) :
+    CMap_range(Map_ &amap, typename Map_::Dart_descriptor adart) :
       mmap(amap), mdart(adart), msize(0)
     {}
     iterator begin()             { return iterator(mmap,mdart); }
-    iterator end()               { return iterator(mmap,mmap.null_handle); }
+    iterator end()               { return iterator(mmap,mmap.null_descriptor); }
     const_iterator begin() const { return const_iterator(mmap,mdart); }
-    const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
+    const_iterator end() const   { return const_iterator(mmap,mmap.null_descriptor); }
     typename Map_::size_type size() const
     {
       if (msize==0)
@@ -615,7 +615,7 @@ namespace CGAL {
     { return mmap.is_empty(); }
   private:
     Map_ & mmap;
-    typename Map_::Dart_handle mdart;
+    typename Map_::Dart_descriptor mdart;
     mutable typename Map_::size_type msize;
   };
   //****************************************************************************
@@ -628,13 +628,13 @@ namespace CGAL {
 
     typedef typename Map_::size_type size_type;
 
-    CMap_range(Map_ &amap, typename Map_::Dart_handle adart, size_type amark=Map_::INVALID_MARK):
+    CMap_range(Map_ &amap, typename Map_::Dart_descriptor adart, size_type amark=Map_::INVALID_MARK):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     iterator begin()             { return iterator(mmap,mdart,mmark); }
-    iterator end()               { return iterator(mmap,mmap.null_handle,mmark); }
+    iterator end()               { return iterator(mmap,mmap.null_descriptor,mmark); }
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
-    const_iterator end() const   { return const_iterator(mmap,mmap.null_handle,mmark); }
+    const_iterator end() const   { return const_iterator(mmap,mmap.null_descriptor,mmark); }
     typename Map_::size_type size() const
     {
       if (msize==0)
@@ -647,7 +647,7 @@ namespace CGAL {
     { return mmap.is_empty(); }
   private:
     Map_ & mmap;
-    typename Map_::Dart_handle mdart;
+    typename Map_::Dart_descriptor mdart;
     mutable typename Map_::size_type msize;
     size_type mmark;
   };
@@ -657,11 +657,11 @@ namespace CGAL {
   struct CMap_const_range
   {
     typedef Const_it const_iterator;
-    CMap_const_range(const Map_ &amap, typename Map_::Dart_const_handle adart):
+    CMap_const_range(const Map_ &amap, typename Map_::Dart_const_descriptor adart):
       mmap(amap), mdart(adart), msize(0)
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart); }
-    const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
+    const_iterator end() const   { return const_iterator(mmap,mmap.null_descriptor); }
     typename Map_::size_type size() const
     {
       if (msize==0)
@@ -673,7 +673,7 @@ namespace CGAL {
     { return mmap.is_empty(); }
   private:
     const Map_ & mmap;
-    typename Map_::Dart_const_handle mdart;
+    typename Map_::Dart_const_descriptor mdart;
     mutable typename Map_::size_type msize;
   };
   //****************************************************************************
@@ -682,12 +682,12 @@ namespace CGAL {
   {
     typedef Const_it const_iterator;
     typedef typename Map_::size_type size_type;
-    CMap_const_range(const Map_ &amap, typename Map_::Dart_const_handle adart,
+    CMap_const_range(const Map_ &amap, typename Map_::Dart_const_descriptor adart,
                      size_type amark=Map_::INVALID_MARK):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
-    const_iterator end() const   { return const_iterator(mmap,mmap.null_handle,mmark); }
+    const_iterator end() const   { return const_iterator(mmap,mmap.null_descriptor,mmark); }
     typename Map_::size_type size() const
     {
       if (msize==0)
@@ -700,7 +700,7 @@ namespace CGAL {
     { return mmap.is_empty(); }
   private:
     const Map_ & mmap;
-    typename Map_::Dart_const_handle mdart;
+    typename Map_::Dart_const_descriptor mdart;
     mutable typename Map_::size_type msize;
     size_type mmark;
   };

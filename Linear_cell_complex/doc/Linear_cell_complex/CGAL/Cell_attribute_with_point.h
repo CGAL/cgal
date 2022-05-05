@@ -10,7 +10,7 @@ The class `Cell_attribute_with_point` represents an attribute containing a point
 
 \tparam LCC a model of the `LinearCellComplex` concept.
 \tparam Info_ the type of the information contained in the attribute, `void` for no information. Equal to `void` by default.
-\tparam Tag is `::Tag_true` to enable the storage of a \link Cell_attribute::Dart_handle `Dart_handle`\endlink of the associated cell, `::Tag_false` otherwise. Equal to `::Tag_true` by default.
+\tparam Tag is `::Tag_true` to enable the storage of a \link Cell_attribute::Dart_descriptor `Dart_descriptor`\endlink of the associated cell, `::Tag_false` otherwise. Equal to `::Tag_true` by default.
 \tparam OnMerge a functor called when two attributes are merged. Equal to `Null_functor` by default.
 \tparam OnSplit a functor called when one attribute is split in two. Equal to `Null_functor` by default.
 

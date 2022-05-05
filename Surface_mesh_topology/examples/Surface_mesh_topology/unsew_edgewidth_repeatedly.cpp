@@ -11,9 +11,9 @@
 #include <unordered_map>
 
 using LCC_3            =CGAL::Linear_cell_complex_for_generalized_map<2, 3>;
-using Dart_handle      =LCC_3::Dart_handle;
-using Dart_const_handle=LCC_3::Dart_const_handle;
-using Dart_container   =std::vector<Dart_handle>;
+using Dart_descriptor      =LCC_3::Dart_descriptor;
+using Dart_const_descriptor=LCC_3::Dart_const_descriptor;
+using Dart_container   =std::vector<Dart_descriptor>;
 using Point            =LCC_3::Point;
 using Path_on_surface  =CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
 using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
@@ -22,7 +22,7 @@ struct Weight_functor
 {
   Weight_functor(const LCC_3& lcc) : m_lcc(lcc) {}
   using Weight_t=double;
-  Weight_t operator()(Dart_const_handle dh) const
+  Weight_t operator()(Dart_const_descriptor dh) const
   {
     const Point& x=m_lcc.point(dh);
     const Point& y=m_lcc.point(m_lcc.template alpha<0>(dh));
@@ -41,35 +41,35 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   {}
 
   template<typename LCC>
-  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_handle dh) const
+  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_descriptor dh) const
   { return alcc.is_marked(dh, is_root); }
 
   template<typename LCC>
   CGAL::IO::Color vertex_color(const LCC& /* alcc */,
-                           typename LCC::Dart_const_handle /* dh */) const
+                           typename LCC::Dart_const_descriptor /* dh */) const
   { return CGAL::IO::Color(0,255,0); }
 
   template<typename LCC>
-  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_handle dh) const
+  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_descriptor dh) const
   { return alcc.is_marked(dh, belong_to_cycle); }
 
   template<typename LCC>
   CGAL::IO::Color edge_color(const LCC& /* alcc*/,
-                         typename LCC::Dart_const_handle /* dh */) const
+                         typename LCC::Dart_const_descriptor /* dh */) const
   { return CGAL::IO::Color(0, 0, 255); }
 
   template<typename LCC>
   bool colored_face(const LCC& /* alcc */,
-                    typename LCC::Dart_const_handle /* dh */) const {return true;}
+                    typename LCC::Dart_const_descriptor /* dh */) const {return true;}
 
   template<typename LCC>
   CGAL::IO::Color face_color(const LCC& /* alcc */,
-                         typename LCC::Dart_const_handle /* dh */) const
+                         typename LCC::Dart_const_descriptor /* dh */) const
   {return CGAL::IO::Color(211, 211, 211);}
 
   template<typename LCC>
   bool colored_volume(const LCC& /* alcc */,
-                      typename LCC::Dart_const_handle /* dh */) const { return false; }
+                      typename LCC::Dart_const_descriptor /* dh */) const { return false; }
 
   LCC_3::size_type is_root;
   LCC_3::size_type belong_to_cycle;
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
   CGAL::load_off(lccoriginal, inp);
   std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
 
-  std::unordered_map<Dart_handle, Dart_handle> origin_to_copy;
+  std::unordered_map<Dart_descriptor, Dart_descriptor> origin_to_copy;
   lcccopy.copy(lccoriginal, &origin_to_copy, nullptr);
 
   LCC_3::size_type is_root=lccoriginal.get_new_mark();

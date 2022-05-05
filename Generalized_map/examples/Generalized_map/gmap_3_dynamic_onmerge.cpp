@@ -16,7 +16,7 @@ struct Myitem
 
 // Definition of my generalized map.
 typedef CGAL::Generalized_map<3,Myitem> GMap_3;
-typedef GMap_3::Dart_handle             Dart_handle;
+typedef GMap_3::Dart_descriptor             Dart_descriptor;
 typedef GMap_3::Attribute_type<2>::type Face_attribute;
 
 // Functor called when two faces are merged.
@@ -71,8 +71,8 @@ int main()
   GMap_3 gm;
 
   // 0) Create 2 hexahedra.
-  Dart_handle dh1 = gm.make_combinatorial_hexahedron();
-  Dart_handle dh2 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor dh1 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor dh2 = gm.make_combinatorial_hexahedron();
 
   // 1) Create and initialize 2-attributes.
   for (GMap_3::One_dart_per_cell_range<2>::iterator
@@ -94,7 +94,7 @@ int main()
 
   // 5) Insert a vertex in the face between the two hexahedra.
   //    This calls 3 onsplit.
-  Dart_handle resdart=gm.insert_cell_0_in_cell_2(dh2);
+  Dart_descriptor resdart=gm.insert_cell_0_in_cell_2(dh2);
 
   // 6) Display all the values of 2-attributes.
   display_map_and_2attributes(gm);

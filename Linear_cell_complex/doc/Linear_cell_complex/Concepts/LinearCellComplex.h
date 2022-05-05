@@ -64,15 +64,15 @@ typedef unspecified_type Vertex_attribute;
 
 /*!
 %Handle through 0-attributes
-(a shortcut for \link GenericMap::Attribute_handle `Attribute_handle<0>::type` \endlink).
+(a shortcut for \link GenericMap::Attribute_descriptor `Attribute_descriptor<0>::type` \endlink).
 */
-typedef unspecified_type Vertex_attribute_handle;
+typedef unspecified_type Vertex_attribute_descriptor;
 
 /*!
 Const handle through 0-attributes
-(a shortcut for \link GenericMap::Attribute_const_handle `Attribute_const_handle<0>::type` \endlink).
+(a shortcut for \link GenericMap::Attribute_const_descriptor `Attribute_const_descriptor<0>::type` \endlink).
 */
-typedef unspecified_type Vertex_attribute_const_handle;
+typedef unspecified_type Vertex_attribute_const_descriptor;
 
 /*!
 %Range of all the 0-attributes, a model of the `Range` concept
@@ -126,32 +126,32 @@ size_type number_of_vertex_attributes() const;
 /*!
 Returns the 0-attribute associated with `dh`.
 */
-Vertex_attribute_handle vertex_attribute(Dart_handle dh);
+Vertex_attribute_descriptor vertex_attribute(Dart_descriptor dh);
 
 /*!
 Returns the 0-attribute associated with `dh`, when `dh` is const.
 */
-Vertex_attribute_const_handle vertex_attribute(Dart_const_handle dh);
+Vertex_attribute_const_descriptor vertex_attribute(Dart_const_descriptor dh);
 
 /*!
 Returns the point in the 0-attribute `vh`.
 */
-Point& point_of_vertex_attribute(Vertex_attribute_handle vh);
+Point& point_of_vertex_attribute(Vertex_attribute_descriptor vh);
 
 /*!
 Returns the point in the 0-attribute `vh`, when `vh` is const.
 */
-const Point& point_of_vertex_attribute(Vertex_attribute_const_handle vh) const;
+const Point& point_of_vertex_attribute(Vertex_attribute_const_descriptor vh) const;
 
 /*!
 Returns the point in the 0-attribute associated with `dh`.
 */
-Point& point(Dart_handle dh);
+Point& point(Dart_descriptor dh);
 
 /*!
 Returns the point in the 0-attribute associated with `dh`, when `dh` is const.
 */
-const Point& point(Dart_const_handle dh) const;
+const Point& point(Dart_const_descriptor dh) const;
 
 /// @}
 
@@ -162,17 +162,17 @@ const Point& point(Dart_const_handle dh) const;
 Creates a new dart in this linear cell complex, sets its associated 0-attribute to `vh` and returns the corresponding handle.
 \pre `*vh` \f$ \in \f$ `vertex_attributes()`.
 */
-Dart_handle create_dart(Vertex_attribute_handle vh);
+Dart_descriptor create_dart(Vertex_attribute_descriptor vh);
 
 /*!
 Creates a new dart in this linear cell complex, creates a new 0-attribute initialized with `apoint`, sets the associated 0-attribute of the new dart to this new 0-attribute, and returns the corresponding handle.
 */
-Dart_handle create_dart(const Point& apoint);
+Dart_descriptor create_dart(const Point& apoint);
 
 /*!
 Creates a new 0-attribute in this linear cell complex, and returns the corresponding handle (a shortcut for \link GenericMap::create_attribute `create_attribute<0>(t1)`\endlink). Calls the constructor of \link LinearCellComplex::Vertex_attribute `Vertex_attribute`\endlink having `T1` as parameter. Overloads of this member function are defined that take from zero to nine arguments. With zero argument, `create_vertex_attribute()` creates a new 0-attribute by using the default constructor.
 */
-template<typename T1> Vertex_attribute_handle
+template<typename T1> Vertex_attribute_descriptor
 create_vertex_attribute(T1 t1);
 
 /*!
@@ -180,14 +180,14 @@ Removes the 0-attribute pointed to by `vh` from this linear cell complex (a shor
 \pre `*vh` \f$ \in \f$ `vertex_attributes()`.
 
 */
-void erase_vertex_attribute(Vertex_attribute_handle vh);
+void erase_vertex_attribute(Vertex_attribute_descriptor vh);
 
 /*!
 Associates the 0-attribute of all the darts of the 0-cell containing `dh` to `vh` (a shortcut for \link GenericMap::set_attribute `set_attribute<0>(dh,vh)`\endlink).
 \pre `*dh` \f$ \in \f$ \link GenericMap::darts `darts()`\endlink and `*vh` \f$ \in \f$ `vertex_attributes()`.
 
 */
-void set_vertex_attribute(Dart_handle dh, Vertex_attribute_handle vh);
+void set_vertex_attribute(Dart_descriptor dh, Vertex_attribute_descriptor vh);
 
 /// @}
 
@@ -210,7 +210,7 @@ Returns the barycenter of the <I>i</I>-cell containing `dh`.
 \pre 1 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink and `*dh` \f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
 
 */
-template<unsigned int i> Point barycenter(Dart_const_handle dh) const;
+template<unsigned int i> Point barycenter(Dart_const_descriptor dh) const;
 
 /*!
 Inserts a point, copy of `p`, in the <I>i</I>-cell containing `dh`.
@@ -224,7 +224,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \cgalAdvancedEnd
 
 */
-template <unsigned int i> Dart_handle insert_point_in_cell(Dart_handle dh, Point p);
+template <unsigned int i> Dart_descriptor insert_point_in_cell(Dart_descriptor dh, Point p);
 
 /*!
 Inserts a point in the barycenter of the <I>i</I>-cell containing `dh`.
@@ -238,7 +238,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \cgalAdvancedEnd
 
 */
-template <unsigned int i> Dart_handle insert_barycenter_in_cell(Dart_handle dh);
+template <unsigned int i> Dart_descriptor insert_barycenter_in_cell(Dart_descriptor dh);
 
 /*!
 Inserts a 1-cell in the 2-cell containing `dh`, the 1-cell being attached only by one of its vertex to the 0-cell containing `dh`. The second vertex is associated with a new 0-attribute containing a copy of `p` as point. Returns a handle on one dart belonging to the new 0-cell.
@@ -249,7 +249,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \cgalAdvancedEnd
 
 */
-Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh, Point p);
+Dart_descriptor insert_dangling_cell_1_in_cell_2(Dart_descriptor dh, Point p);
 
 /// @}
 
@@ -264,7 +264,7 @@ Returns a handle on the dart associated with `p0`.
 \image html lcc_make_segment.svg "Example of r=lcc.make_segment(p0,p1), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 \image latex lcc_make_segment.svg "Example of r=lcc.make_segment(p0,p1), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
-Dart_handle make_segment(const Point& p0, const Point& p1);
+Dart_descriptor make_segment(const Point& p0, const Point& p1);
 
 /*!
 Creates an isolated triangle in this linear cell complex having `p0`, `p1`, `p2` as points.
@@ -274,7 +274,7 @@ Returns a handle on the dart associated with `p0` and with edge [`p0`,`p1`].
 \image html lcc_make_triangle.svg "Example of r=lcc.make_triangle(p0,p1,p2), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 \image latex lcc_make_triangle.svg "Example of r=lcc.make_triangle(p0,p1,p2), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
-Dart_handle make_triangle(const Point& p0, const Point& p1, const Point& p2);
+Dart_descriptor make_triangle(const Point& p0, const Point& p1, const Point& p2);
 
 /*!
 Creates an isolated quadrangle in this linear cell complex having `p0`, `p1`, `p2`, `p3` as points.
@@ -284,7 +284,7 @@ Returns a handle on the dart associated with `p0` and with edge [`p0`,`p1`].
 \image html lcc_make_quadrilateral.svg "Example of r=lcc.make_quadrangle(p0,p1,p2,p3), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 \image latex lcc_make_quadrilateral.svg "Example of r=lcc.make_quadrangle(p0,p1,p2,p3), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
-Dart_handle make_quadrangle(const Point& p0,const Point& p1,const Point& p2,const Point& p3);
+Dart_descriptor make_quadrangle(const Point& p0,const Point& p1,const Point& p2,const Point& p3);
 
 /*!
 Creates an isolated tetrahedron in this linear cell complex having `p0`, `p1`,`p2`,`p3` as points.
@@ -294,7 +294,7 @@ Returns a handle on the dart associated with `p0`, with edge [`p0`,`p1`] and bel
 \image html lcc_make_tetrahedron.svg "Example of r=lcc.make_tetrahedron(p0,p1,p2,p3), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 \image latex lcc_make_tetrahedron.svg "Example of r=lcc.make_tetrahedron(p0,p1,p2,p3), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
-Dart_handle make_tetrahedron(const Point& p0,const Point& p1,const Point& p2,const Point& p3);
+Dart_descriptor make_tetrahedron(const Point& p0,const Point& p1,const Point& p2,const Point& p3);
 
 /*!
 Creates an isolated hexahedron in this linear cell complex having `p0`, `p1`, `p2`, `p3`, `p4`, `p5`, `p6`, `p7` as points.
@@ -304,7 +304,7 @@ Returns a handle on the dart associated with `p0`, with edge [`p0`,`p5`] and bel
 \image html lcc_make_hexahedron.svg "Example of r=lcc.make_hexahedron(p0,p1,p2,p3,p4,p5,p6,p7), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 \image latex lcc_make_hexahedron.svg "Example of r=lcc.make_hexahedron(p0,p1,p2,p3,p4,p5,p6,p7), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
-Dart_handle make_hexahedron(const Point& p0,const Point& p1,const Point& p2,
+Dart_descriptor make_hexahedron(const Point& p0,const Point& p1,const Point& p2,
                             const Point& p3,const Point& p4,const Point& p5,
                             const Point& p6,const Point& p7);
 /// @}

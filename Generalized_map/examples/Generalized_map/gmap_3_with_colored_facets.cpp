@@ -32,15 +32,15 @@ struct Myitem
 };
 
 typedef CGAL::Generalized_map<3,Myitem> GMap_3;
-typedef GMap_3::Dart_handle             Dart_handle;
+typedef GMap_3::Dart_descriptor             Dart_descriptor;
 
 int main()
 {
   GMap_3 gm;
 
   // Create 2 hexahedra.
-  Dart_handle dh1 = gm.make_combinatorial_hexahedron();
-  Dart_handle dh2 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor dh1 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor dh2 = gm.make_combinatorial_hexahedron();
 
   // 1) Create all 2-attributes and associated them to darts.
   for (GMap_3::Dart_range::iterator

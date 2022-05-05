@@ -26,9 +26,9 @@ public:
   {
   }
 
-  std::pair<Point_3, Dart_handle> operator  () (Vertex & v) const
+  std::pair<Point_3, Dart_descriptor> operator  () (Vertex & v) const
   {
-    Dart_handle d = v.dart ();
+    Dart_descriptor d = v.dart ();
 
     // Old points aren't concerned.
     if (mlcc.is_marked(d, old))
@@ -78,7 +78,7 @@ public:
     barycenterV = LCC::Traits::Construct_scaled_vector()
                   ( barycenterV, (1.0f/2.0f) );
 
-    std::pair<Point_3, Dart_handle> res=std::make_pair
+    std::pair<Point_3, Dart_descriptor> res=std::make_pair
       (LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, barycenterV), d);
 
     return res;
@@ -101,9 +101,9 @@ public:
   {
   }
 
-  std::pair<Point_3, Dart_handle> operator  () (Vertex & v) const
+  std::pair<Point_3, Dart_descriptor> operator  () (Vertex & v) const
   {
-    Dart_handle d = v.dart ();
+    Dart_descriptor d = v.dart ();
 
     // Just old points are concerned.
     if (!mlcc.is_marked(d, old))
@@ -187,7 +187,7 @@ public:
     newPosition = LCC::Traits::Construct_sum_of_vectors()
                         ( newPosition, pointV);
 
-    std::pair<Point_3, Dart_handle> res=std::make_pair
+    std::pair<Point_3, Dart_descriptor> res=std::make_pair
       (LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, newPosition), d);
 
     return res;
@@ -226,8 +226,8 @@ subdivide_lcc_pqq (LCC & m)
   }
 
   // 2) We create a barycenter point for each facets.
-  Dart_handle dc;
-  std::vector<Dart_handle> remove;
+  Dart_descriptor dc;
+  std::vector<Dart_descriptor> remove;
   remove.resize(0);
 
   m.negate_mark (treated);  // All the darts are marked in O(1).
@@ -255,7 +255,7 @@ subdivide_lcc_pqq (LCC & m)
       }
 
       // Remove edges.
-      for (std::vector <Dart_handle>::iterator dit = remove.begin ();
+      for (std::vector <Dart_descriptor>::iterator dit = remove.begin ();
           dit != remove.end (); ++dit)
       {
         CGAL_assertion( (m.is_removable<1>(*dit)) );
@@ -271,7 +271,7 @@ subdivide_lcc_pqq (LCC & m)
   m.free_mark (treated);
 
   // 3) Smooth old points.
-  std::vector<std::pair<Point_3, Dart_handle> > old_vertices; // smooth the old vertices.
+  std::vector<std::pair<Point_3, Dart_descriptor> > old_vertices; // smooth the old vertices.
   old_vertices.reserve (m.number_of_attributes<0> ()); // get intermediate space.
   std::transform (m.vertex_attributes().begin(),
                   m.vertex_attributes().end(),
@@ -279,14 +279,14 @@ subdivide_lcc_pqq (LCC & m)
                   Smooth_vertex_pqq(m, old));
 
   // Update.
-  for (std::vector<std::pair<Point_3, Dart_handle> >::iterator
+  for (std::vector<std::pair<Point_3, Dart_descriptor> >::iterator
          vit=old_vertices.begin(); vit!=old_vertices.end(); ++vit)
   {
     m.point(vit->second)=vit->first;
   }
 
   // 4) Smooth new edges points.
-  std::vector<std::pair<Point_3, Dart_handle> > vertices; // smooth the old vertices.
+  std::vector<std::pair<Point_3, Dart_descriptor> > vertices; // smooth the old vertices.
   vertices.reserve(m.number_of_attributes<0>()); // get intermediate space.
   std::transform (m.vertex_attributes().begin(),
                   m.vertex_attributes().end(),
@@ -294,7 +294,7 @@ subdivide_lcc_pqq (LCC & m)
                   Smooth_edge_pqq(m, old));
 
   // Update.
-  for (std::vector<std::pair<Point_3, Dart_handle> >::iterator
+  for (std::vector<std::pair<Point_3, Dart_descriptor> >::iterator
          vit=vertices.begin(); vit!=vertices.end(); ++vit)
   {
     m.point(vit->second)=vit->first;

@@ -11,7 +11,7 @@ Returns the normal vector of the 0-cell containing `dh`, i.e.\ the average of al
 */
 template <class LCC>
 typename LCC::Vector compute_normal_of_cell_0(const LCC& lcc,
-typename LCC::Dart_const_handle dh);
+typename LCC::Dart_const_descriptor dh);
 
 /*!
 \ingroup PkgLinearCellComplexOperations
@@ -23,7 +23,7 @@ Returns the normal vector of the 2-cell containing `dh`.
 */
 template <class LCC>
 typename LCC::Vector compute_normal_of_cell_2(const LCC& lcc,
-typename LCC::Dart_const_handle dh);
+typename LCC::Dart_const_descriptor dh);
 
 } /* namespace CGAL */
 

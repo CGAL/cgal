@@ -9,13 +9,13 @@ template<typename LCC,
          typename Map=typename LCC::Combinatorial_data_structure>
 struct Alpha1
 {
-  static typename LCC::Dart_handle run(LCC&, typename LCC::Dart_handle dh)
+  static typename LCC::Dart_descriptor run(LCC&, typename LCC::Dart_descriptor dh)
   { return dh; }
 };
 template<typename LCC>
 struct Alpha1<LCC, CGAL::Generalized_map_tag>
 {
-  static typename LCC::Dart_handle run(LCC& lcc, typename LCC::Dart_handle dh)
+  static typename LCC::Dart_descriptor run(LCC& lcc, typename LCC::Dart_descriptor dh)
   { return lcc.template alpha<1>(dh); }
 };
 
@@ -23,21 +23,21 @@ template<typename LCC>
 void run_test()
 {
   typedef typename LCC::Point Point;
-  typedef typename LCC::Dart_handle Dart_handle;
+  typedef typename LCC::Dart_descriptor Dart_descriptor;
 
   LCC lcc;
 
-  Dart_handle dh1 = lcc.
+  Dart_descriptor dh1 = lcc.
     make_hexahedron(Point(0,0,0),Point(1,0,0),
                     Point(1,2,0),Point(0,2,0),
                     Point(0,3,4),Point(0,0,4),
                     Point(6,0,4),Point(6,3,4));
-  Dart_handle dh2 = lcc.
+  Dart_descriptor dh2 = lcc.
     make_hexahedron(Point(0,-5,0),Point(2,-5,0),
                     Point(2,-2,0),Point(0,-2,0),
                     Point(1,-1,5),Point(1,-2,5),
                     Point(5,-2,5),Point(5,-2,5));
-  Dart_handle dh3 = lcc.
+  Dart_descriptor dh3 = lcc.
     make_hexahedron(Point(1,0,5),Point(0,0,6),
                     Point(0,2,5),Point(1,2,6),
                     Point(1,3,8),Point(0,0,8),
@@ -56,7 +56,7 @@ void run_test()
   lcc.insert_cell_1_in_cell_2(dh2, Alpha1<LCC>::run
                               (lcc, lcc.next(lcc.next(dh2))));
 
-  std::vector<Dart_handle> path;
+  std::vector<Dart_descriptor> path;
   path.push_back(lcc.next(dh1));
   path.push_back(lcc.next(lcc.template opposite<2>(lcc.previous(dh1))));
   path.push_back(lcc.previous(dh2));

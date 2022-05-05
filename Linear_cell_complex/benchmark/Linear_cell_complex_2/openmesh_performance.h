@@ -99,12 +99,12 @@ private:
 
     for (fit=mesh.faces_begin(); fit!=fend; ++fit)
     {
-      Mesh::HalfedgeHandle h = mesh.halfedge_handle(fit);
-      Mesh::Point p0 = mesh.point(mesh.to_vertex_handle(h));
-      h = mesh.next_halfedge_handle(h);
-      Mesh::Point p1 = mesh.point(mesh.to_vertex_handle(h));
-      h = mesh.next_halfedge_handle(h);
-      Mesh::Point p2 = mesh.point(mesh.to_vertex_handle(h));
+      Mesh::HalfedgeHandle h = mesh.halfedge_descriptor(fit);
+      Mesh::Point p0 = mesh.point(mesh.to_vertex_descriptor(h));
+      h = mesh.next_halfedge_descriptor(h);
+      Mesh::Point p1 = mesh.point(mesh.to_vertex_descriptor(h));
+      h = mesh.next_halfedge_descriptor(h);
+      Mesh::Point p2 = mesh.point(mesh.to_vertex_descriptor(h));
       mesh.set_normal(fit, ((p2-=p1)%(p0-=p1)).normalize());
     }
 
@@ -216,7 +216,7 @@ private:
     // collapse new edges
     vit = vend; vend=mesh.vertices_end();
     for (; vit!=vend; ++vit)
-      mesh.collapse(mesh.halfedge_handle(vit));
+      mesh.collapse(mesh.halfedge_descriptor(vit));
 
     // remove deleted items
     mesh.garbage_collection();

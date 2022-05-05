@@ -4,7 +4,7 @@
 #include <cassert>
 
 typedef CGAL::Generalized_map<3> GMap_3;
-typedef GMap_3::Dart_handle Dart_handle;
+typedef GMap_3::Dart_descriptor Dart_descriptor;
 typedef GMap_3::size_type size_type;
 
 int main()
@@ -24,8 +24,8 @@ int main()
   }
 
   // 2) Create two tetrahedra.
-  Dart_handle dh1 = gm.make_combinatorial_tetrahedron();
-  Dart_handle dh2 = gm.make_combinatorial_tetrahedron();
+  Dart_descriptor dh1 = gm.make_combinatorial_tetrahedron();
+  Dart_descriptor dh2 = gm.make_combinatorial_tetrahedron();
 
   assert( gm.is_valid() );
   assert( gm.is_volume_combinatorial_tetrahedron(dh1) );

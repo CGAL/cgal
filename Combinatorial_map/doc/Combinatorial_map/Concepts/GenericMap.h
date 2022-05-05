@@ -40,14 +40,14 @@ GenericMap(const Map& bmap);
 typedef unspecified_type Dart;
 
 /*!
-%Dart handle type. For each `Dart_handle dh`, the type of `*dh` must be `Dart`.
+%Dart handle type. For each `Dart_descriptor dh`, the type of `*dh` must be `Dart`.
 */
-typedef unspecified_type Dart_handle;
+typedef unspecified_type Dart_descriptor;
 
 /*!
-%Dart const handle type. For each `Dart_const_handle dh`, the type of `*dh` must be `const Dart`.
+%Dart const handle type. For each `Dart_const_descriptor dh`, the type of `*dh` must be `const Dart`.
 */
-typedef unspecified_type Dart_const_handle;
+typedef unspecified_type Dart_const_descriptor;
 
 /*!
 Information associated to each dart.
@@ -97,10 +97,10 @@ typedef unspecified_type Attributes;
 
   /*!
     `Attribute_type<i>::%type` is the type of <I>i</I>-attributes, a model of `CellAttribute` concept.
-    \link CellAttribute::Dart_handle `Attribute_type<i>::type::Dart_handle`\endlink is equal to
-    \link GenericMap::Dart_handle `Dart_handle`\endlink, and
-    \link CellAttribute::Dart_const_handle `Attribute_type<i>::type::Dart_const_handle`\endlink is equal to
-    \link GenericMap::Dart_const_handle `Dart_const_handle`\endlink.
+    \link CellAttribute::Dart_descriptor `Attribute_type<i>::type::Dart_descriptor`\endlink is equal to
+    \link GenericMap::Dart_descriptor `Dart_descriptor`\endlink, and
+    \link CellAttribute::Dart_const_descriptor `Attribute_type<i>::type::Dart_const_descriptor`\endlink is equal to
+    \link GenericMap::Dart_const_descriptor `Dart_const_descriptor`\endlink.
     \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink and
     <I>i</I>-attributes are non `void`.
     \note It can be implemented using a nested template class.
@@ -109,22 +109,22 @@ typedef unspecified_type Attributes;
   using Attribute_type = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes. For each `Attribute_handle<i>::%type ah`, the type of `*ah` must be `Attribute_type<i>::%type`.
+  `Attribute_descriptor<i>::%type` is a handle to <I>i</I>-attributes. For each `Attribute_descriptor<i>::%type ah`, the type of `*ah` must be `Attribute_type<i>::%type`.
   \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink
        and <I>i</I>-attributes are non void.
   \note It can be implemented using a nested template class.
   */
   template <unsigned int i>
-  using Attribute_handle = unspecified_type;
+  using Attribute_descriptor = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes. For each `Attribute_const_handle<i>::%type ah`, the type of `*ah` must be `const Attribute_type<i>::%type`.
+  `Attribute_descriptor<i>::%type` is a const handle to <I>i</I>-attributes. For each `Attribute_const_descriptor<i>::%type ah`, the type of `*ah` must be `const Attribute_type<i>::%type`.
   \pre 0\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink
        and <I>i</I>-attributes are non void.
   \note It can be implemented using a nested template class.
   */
   template <unsigned int i>
-  using Attribute_const_handle = unspecified_type;
+  using Attribute_const_descriptor = unspecified_type;
 
 /// @}
 
@@ -294,69 +294,69 @@ size_type number_of_attributes() const;
 
 /*! Returns true if dh points to a used dart (i.e.\ valid).
  */
-bool is_dart_used(Dart_const_handle dh) const;
+bool is_dart_used(Dart_const_descriptor dh) const;
 
 /*!
 Returns true iff dart `*dh` is <I>i</I>-free.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
-bool is_free(Dart_const_handle dh, unsigned int i) const;
+bool is_free(Dart_const_descriptor dh, unsigned int i) const;
 
 /*!
 Returns true iff dart `*dh` is <I>i</I>-free.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
 template<unsigned int i>
-bool is_free(Dart_const_handle dh) const;
+bool is_free(Dart_const_descriptor dh) const;
 
 /*!
 Returns the highest dimension <I>i</I> such that dart `*dh` is not <I>i</I>-free. -1 if `dh` is free for any dimension.
 */
-int highest_nonfree_dimension(Dart_const_handle dh) const;
+int highest_nonfree_dimension(Dart_const_descriptor dh) const;
 
 /*!
 Returns a handle to a dart belonging to the other vertex of the edge containing dart `*dh` (but not necessarily to the same edge). `nullptr` if such a dart does not exist.
 */
-Dart_handle other_extremity(Dart_handle dh);
+Dart_descriptor other_extremity(Dart_descriptor dh);
 
 /*!
 Returns a const handle to a dart belonging to the other vertex of the edge containing dart `*dh`, when the dart is const (but not necessarily to the same edge). `nullptr` if such a dart does not exist.
 */
-Dart_const_handle other_extremity(Dart_const_handle dh) const;
+Dart_const_descriptor other_extremity(Dart_const_descriptor dh) const;
 
 /*!
 Returns a handle to a dart belonging to the next edge after `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
-Dart_handle next(Dart_handle dh);
+Dart_descriptor next(Dart_descriptor dh);
 
 /*!
 Returns a const handle to a dart belonging to the next edge after `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
-Dart_const_handle next(Dart_const_handle dh) const;
+Dart_const_descriptor next(Dart_const_descriptor dh) const;
 
 /*!
 Returns a handle to a dart belonging to the previous edge begore `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
-Dart_handle previous(Dart_handle dh);
+Dart_descriptor previous(Dart_descriptor dh);
 
 /*!
 Returns a const handle to a dart belonging to the previous edge begore `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
-Dart_const_handle previous(Dart_const_handle dh) const;
+Dart_const_descriptor previous(Dart_const_descriptor dh) const;
 
 /*!
 Returns a handle to a dart belonging to the opposite <I>i</I>-cell than `*dh`. This dart does not belong to the same <I>0</I>-cell than `*dh`, nor to the same <I>i</I>-cell, but belongs to the same <I>i</I>-cell than `*dh`for each <I>j</I>, 2\f$ \leq \f$ <I>j</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>j</I> \f$ \neq \f$ <I>i</I>.
 \pre 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
 template<unsigned int i>
-Dart_handle opposite(Dart_handle dh);
+Dart_descriptor opposite(Dart_descriptor dh);
 
 /*!
 Returns a const handle to a dart belonging to the opposite <I>i</I>-cell than `*dh`. This dart does not belong to the same <I>0</I>-cell than `*dh`, nor to the same <I>i</I>-cell, but belongs to the same <I>i</I>-cell than `*dh`for each <I>j</I>, 2\f$ \leq \f$ <I>j</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>j</I> \f$ \neq \f$ <I>i</I>.
 \pre 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
 template<unsigned int i>
-Dart_const_handle opposite(Dart_const_handle dh) const;
+Dart_const_descriptor opposite(Dart_const_descriptor dh) const;
 
 /*!
 Displays on `os` the number of elements of the generic map.
@@ -381,25 +381,25 @@ std::ostream& display_characteristics(std::ostream & os) const;
 Returns the information associated to dart `*dh`.
 \pre `Dart_info` is not `void`.
 */
-Dart_info& info(Dart_handle dh);
+Dart_info& info(Dart_descriptor dh);
 /*!
 Returns the information associated to dart `*dh`, when the dart is const.
 \pre `Dart_info` is not `void`.
 */
-const Dart_info& info(Dart_const_handle dh) const;
+const Dart_info& info(Dart_const_descriptor dh) const;
 
 /*!
 Returns a handle to the <I>i</I>-attribute associated to dart `*dh`.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non `void`.
 */
-template <unsigned int i> Attribute_handle<i>::type attribute(Dart_handle dh);
+template <unsigned int i> Attribute_descriptor<i>::type attribute(Dart_descriptor dh);
 
 /*!
 Returns a const handle to the <I>i</I>-attribute associated to dart `*dh`, when the dart is const.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non `void`.
 */
 template <unsigned int i>
-Attribute_const_handle<i>::type attribute(Dart_const_handle dh) const;
+Attribute_const_descriptor<i>::type attribute(Dart_const_descriptor dh) const;
 
 /*!
 Returns one dart of the cell associated to the <I>i</I>-attribute `*ah`.
@@ -407,7 +407,7 @@ Returns one dart of the cell associated to the <I>i</I>-attribute `*ah`.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>i</I>-attributes are non `void` and `ah`!=nullptr.
 */
 template<unsigned int i>
-Dart_handle dart_of_attribute(typename Attribute_handle<i>::type ah);
+Dart_descriptor dart_of_attribute(typename Attribute_descriptor<i>::type ah);
 
 /*!
 Returns one dart of the cell associated to the const <I>i</I>-attribute `*ah`.
@@ -415,7 +415,7 @@ Returns one dart of the cell associated to the const <I>i</I>-attribute `*ah`.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>i</I>-attributes are non `void` and `ah`!=nullptr.
 */
 template<unsigned int i>
-Dart_const_handle dart_of_attribute(typename Attribute_const_handle<i>::type ah) const;
+Dart_const_descriptor dart_of_attribute(typename Attribute_const_descriptor<i>::type ah) const;
 
 /*!
 Returns the information of the <I>i</I>-attribute `*ah`.
@@ -423,7 +423,7 @@ Defined only if \link CellAttribute::Info `Info`\endlink of <I>i</I>-attributes 
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>i</I>-attributes are non `void` and `ah`!=nullptr.
 */
 template <unsigned int i>
-Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_handle<i>::type ah);
+Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_descriptor<i>::type ah);
 
 /*!
 Returns the information of the const <I>i</I>-attribute `*ah`.
@@ -431,41 +431,41 @@ Defined only if \link CellAttribute::Info `Info`\endlink of <I>i</I>-attributes 
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>i</I>-attributes are non `void` and `ah`!=nullptr.
 */
 template <unsigned int i>
-const Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_const_handle<i>::type ah) const;
+const Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_const_descriptor<i>::type ah) const;
 
 /*!
 A shorcut for \link GenericMap::info_of_attribute `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
 \pre \link GenericMap::attribute `attribute<i>`\endlink`(adart)!=nullptr`.
 */
 template<unsigned int i>
-typename Attribute_type<i>::type::Info & info(Dart_handle adart);
+typename Attribute_type<i>::type::Info & info(Dart_descriptor adart);
 
 /*!
-A shorcut for \link GenericMap::info_of_attribute(typename Attribute_const_handle<i>::type)const `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_handle)const `attribute<i>`\endlink`(adart))` for const handle.
-\pre \link GenericMap::attribute(Dart_const_handle)const `attribute<i>`\endlink`(adart)!=nullptr`.
+A shorcut for \link GenericMap::info_of_attribute(typename Attribute_const_descriptor<i>::type)const `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const handle.
+\pre \link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart)!=nullptr`.
 */
 template<unsigned int i>
-const typename Attribute_type<i>::type::Info & info(Dart_const_handle adart) const;
+const typename Attribute_type<i>::type::Info & info(Dart_const_descriptor adart) const;
 
 /*!
 A shorcut for \link GenericMap::dart_of_attribute `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
 \pre `attribute<i>(adart)!=nullptr`.
 */
 template<unsigned int i>
-Dart_handle & dart(Dart_handle adart);
+Dart_descriptor & dart(Dart_descriptor adart);
 
 /*!
-A shorcut for \link GenericMap::dart_of_attribute(typename Attribute_const_handle<i>::type)const `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_handle)const `attribute<i>`\endlink`(adart))` for const handle.
+A shorcut for \link GenericMap::dart_of_attribute(typename Attribute_const_descriptor<i>::type)const `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const handle.
 \pre `attribute<i>(adart)!=nullptr`.
 */
 template<unsigned int i>
-Dart_const_handle dart(Dart_const_handle adart) const;
+Dart_const_descriptor dart(Dart_const_descriptor adart) const;
 
 /*! Returns true if ah points to a used i-attribute (i.e.\ valid).
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non `void`.
  */
 template<unsigned int i>
-bool is_attribute_used(typename Attribute_const_handle<i>::type ah) const;
+bool is_attribute_used(typename Attribute_const_descriptor<i>::type ah) const;
 
 /// @}
 
@@ -476,13 +476,13 @@ bool is_attribute_used(typename Attribute_const_handle<i>::type ah) const;
 Returns the dart handle of `d`.
 \pre `d`\f$ \in \f$ `darts()`.
 */
-Dart_handle dart_handle(Dart& d);
+Dart_descriptor dart_descriptor(Dart& d);
 
 /*!
 Returns the dart const handle of `d`.
 \pre `d`\f$ \in \f$ `darts()`.
 */
-Dart_const_handle dart_handle(const Dart& d) const;
+Dart_const_descriptor dart_descriptor(const Dart& d) const;
 
 /// @}
 
@@ -519,14 +519,14 @@ The first element in the range points onto `*dh`.
 \pre `*dh`\f$ \in \f$ `darts()` and `I...` is a sequence of integers \f$ i_1\f$,\f$ \ldots\f$,\f$ i_k\f$,
     such that 0\f$ \leq \f$\f$ i_1\f$\f$ < \f$\f$ i_2\f$\f$ < \f$\f$ \ldots\f$\f$ < \f$\f$ i_k\f$\f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
-template<unsigned int ... I> Dart_of_orbit_range darts_of_orbit(Dart_handle dh);
+template<unsigned int ... I> Dart_of_orbit_range darts_of_orbit(Dart_descriptor dh);
 
 /*!
 Returns a const range of all the darts of the orbit `<I...>(*dh)`.
 The first element in the range points onto `*dh`.
 \pre Same as for the non const version.
 */
-template<unsigned int ... I> Dart_of_orbit_const_range darts_of_orbit(Dart_const_handle dh) const;
+template<unsigned int ... I> Dart_of_orbit_const_range darts_of_orbit(Dart_const_descriptor dh) const;
 
 /*!
 Returns a range of all the darts of the <I>i</I>-cell containing `*dh`.
@@ -536,7 +536,7 @@ range of all the darts of the connected component containing `dh`.
 \pre `*dh`\f$ \in \f$ `darts()`, 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dim+1</I> and
     0\f$ \leq \f$ <I>dim</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
-template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_range darts_of_cell(Dart_handle dh);
+template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_range darts_of_cell(Dart_descriptor dh);
 
 /*!
 Returns a const range of all the darts of the <I>i</I>-cell containing `*dh`.
@@ -545,7 +545,7 @@ The first element in the range points onto `*dh`.
 const range of all the darts of the connected component containing `*dh`.
 \pre Same as for the non const version.
 */
-template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_const_range darts_of_cell(Dart_const_handle dh) const;
+template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_const_range darts_of_cell(Dart_const_descriptor dh) const;
 
 /*!
 Returns a range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `*dh`.
@@ -557,7 +557,7 @@ consider the connected component containing `*dh` instead of the <I>j</I>-cell.
       0\f$ \leq \f$ <I>j</I> \f$ \leq \f$ <I>dim+1</I> and
       0\f$ \leq \f$ <I>dim</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
-template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_range one_dart_per_incident_cell(Dart_handle dh);
+template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_range one_dart_per_incident_cell(Dart_descriptor dh);
 
 /*!
 Returns a const range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `*dh`.
@@ -567,7 +567,7 @@ consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1<
 consider the connected component containing `*dh` instead of the <I>j</I>-cell.
 \pre Same as for the non const version.
 */
-template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_const_range one_dart_per_incident_cell(Dart_const_handle dh) const;
+template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_const_range one_dart_per_incident_cell(Dart_const_descriptor dh) const;
 
 /*!
 Returns a range of one dart of each <I>i</I>-cell in the generic map.
@@ -601,14 +601,14 @@ With zero argument, `%create_dart()` creates a new dart by using the default con
 
 */
 template<typename T1>
-Dart_handle create_dart(T1 t1);
+Dart_descriptor create_dart(T1 t1);
 
 /*!
 Removes `*dh` from the generic map.
 \pre `*dh`\f$ \in \f$ `darts()`.
 
 */
-void erase_dart(Dart_handle dh);
+void erase_dart(Dart_descriptor dh);
 
 /*!
 Creates a new <I>i</I>-attribute in the generic map, and returns the corresponding handle.
@@ -618,7 +618,7 @@ With zero argument, `create_attribute<i>()` creates a new <I>i</I>-attribute by 
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink,
     and <I>i</I>-attributes are non void.
 */
-template<unsigned int i,typename T1> Attribute_handle<i>::type create_attribute(T1 t1);
+template<unsigned int i,typename T1> Attribute_descriptor<i>::type create_attribute(T1 t1);
 
 /*!
 Removes the <I>i</I>-attribute `*ah` from the generic map.
@@ -626,14 +626,14 @@ Removes the <I>i</I>-attribute `*ah` from the generic map.
 <I>i</I>-attributes are non void, and
 `*ah`\f$ \in \f$ \link GenericMap::attributes() `attributes<i>()`\endlink.
 */
-template <unsigned int i> void erase_attribute(Attribute_handle<i>::type ah);
+template <unsigned int i> void erase_attribute(Attribute_descriptor<i>::type ah);
 
 /*!
 Associates the <I>i</I>-attribute of all the darts of the <I>i</I>-cell containing `*dh` to `*ah`.
 \pre `*dh`\f$ \in \f$ `darts()`, 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink,
 <I>i</I>-attributes are non void, and `*ah`\f$ \in \f$ \link GenericMap::attributes() `attributes<i>()`\endlink.
 */
-template <unsigned int i> void set_attribute(Dart_handle dh, Attribute_handle<i>::type ah);
+template <unsigned int i> void set_attribute(Dart_descriptor dh, Attribute_descriptor<i>::type ah);
 
 /*!
 Deletes all the darts and all the attributes of the generic map.
@@ -749,19 +749,19 @@ bool is_reserved(size_type m) const;
 Returns true iff `*dh` is marked for `m`.
 \pre \link GenericMap::is_reserved `is_reserved(m)`\endlink and `*dh`\f$ \in \f$ `darts()`.
 */
-bool is_marked(Dart_const_handle dh, size_type m) const;
+bool is_marked(Dart_const_descriptor dh, size_type m) const;
 
 /*!
 Marks `*dh` for `m`.
 \pre \link GenericMap::is_reserved `is_reserved(m)`\endlink and `*dh`\f$ \in \f$ `darts()`.
 */
-void mark(Dart_const_handle dh, size_type m) const;
+void mark(Dart_const_descriptor dh, size_type m) const;
 
 /*!
 Unmarks `*dh` for the mark `m`.
 \pre \link GenericMap::is_reserved `is_reserved(m)`\endlink and `*dh`\f$ \in \f$ `darts()`.
 */
-void unmark(Dart_const_handle dh, size_type m) const;
+void unmark(Dart_const_descriptor dh, size_type m) const;
 
 /*!
 Inverse the mark `m` for all the darts of the generic map.
@@ -809,7 +809,7 @@ Creates a combinatorial hexahedron (six combinatorial quadrangles 2-sewn togethe
 \sa `make_combinatorial_tetrahedron`
 
 */
-Dart_handle make_combinatorial_hexahedron();
+Dart_descriptor make_combinatorial_hexahedron();
 
 /*!
 Creates a combinatorial polygon of length `lg` (a cycle of `lg` darts 1-sewn together), and adds it in the generic map. Returns a handle on one dart of this combinatorial polygon.
@@ -819,7 +819,7 @@ Creates a combinatorial polygon of length `lg` (a cycle of `lg` darts 1-sewn tog
 \sa `make_combinatorial_tetrahedron`
 \sa `make_combinatorial_hexahedron`
 */
-Dart_handle make_combinatorial_polygon(unsigned int lg);
+Dart_descriptor make_combinatorial_polygon(unsigned int lg);
 
 /*!
 Creates a combinatorial tetrahedron (four combinatorial triangles 2-sewn together), and adds it in the generic map. Returns a handle on one dart of this combinatorial tetrahedron.
@@ -829,7 +829,7 @@ Creates a combinatorial tetrahedron (four combinatorial triangles 2-sewn togethe
 \sa `make_combinatorial_polygon`
 \sa `make_combinatorial_hexahedron`
 */
-Dart_handle make_combinatorial_tetrahedron();
+Dart_descriptor make_combinatorial_tetrahedron();
 
 /*!
 Creates an isolated edge (two darts sewn to represent one edge and two vertices) and adds it in the generic map. Returns a handle on one dart of this edge.
@@ -839,7 +839,7 @@ Creates an isolated edge (two darts sewn to represent one edge and two vertices)
 \sa `make_combinatorial_tetrahedron`
 \sa `make_combinatorial_hexahedron`
 */
-Dart_handle make_edge();
+Dart_descriptor make_edge();
 
 /// @}
 
@@ -864,7 +864,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `remove_cell<i>`
 */
-Dart_handle insert_cell_0_in_cell_1(Dart_handle dh);
+Dart_descriptor insert_cell_0_in_cell_1(Dart_descriptor dh);
 
 /*!
 Inserts a 0-cell in the 2-cell containing `dh`. The 2-cell is split in triangles, one for each initial edge of the facet. Returns a handle on one dart belonging to the new 0-cell.
@@ -884,7 +884,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `remove_cell<i>`
 */
-Dart_handle insert_cell_0_in_cell_2(Dart_handle dh);
+Dart_descriptor insert_cell_0_in_cell_2(Dart_descriptor dh);
 
 /*!
 Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`. Returns `previous(dh1)`, a handle on one dart belonging to the new 1-cell.
@@ -905,7 +905,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `remove_cell<i>`
 */
-Dart_handle insert_cell_1_in_cell_2(Dart_handle dh1, Dart_handle dh2);
+Dart_descriptor insert_cell_1_in_cell_2(Dart_descriptor dh1, Dart_descriptor dh2);
 
 /*!
 Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns `opposite<2>(*afirst)`, a handle on one dart belonging to the new 2-cell.
@@ -927,7 +927,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `remove_cell<i>`
 */
 template <class InputIterator>
-Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
+Dart_descriptor insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
 
 /*!
 Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns `previous(dh)`, a handle on the dart belonging to the new 1-cell and to the new 0-cell.
@@ -946,7 +946,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `remove_cell<i>`
 
 */
-Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh);
+Dart_descriptor insert_dangling_cell_1_in_cell_2(Dart_descriptor dh);
 
 /*!
 Returns true iff it is possible to insert a 1-cell in the generic map between `dh1` and `dh2`.
@@ -958,7 +958,7 @@ This is possible if `dh1`\f$ \neq \f$ `dh2` and `dh1` can be reached from `dh2` 
 \sa `is_insertable_cell_2_in_cell_3<InputIterator>`
 
 */
-bool is_insertable_cell_1_in_cell_2(Dart_const_handle dh1, Dart_const_handle dh2);
+bool is_insertable_cell_1_in_cell_2(Dart_const_descriptor dh1, Dart_const_descriptor dh2);
 
 /*!
 Returns true iff it is possible to insert a 2-cell in the generic map along the path of darts given by the range `[afirst,alast)`. The 2-cell can be inserted iff the ordered list of darts form a closed path of edges inside a same volume.
@@ -980,7 +980,7 @@ An <I>i</I>-cell can be removed if `i`==\link GenericMap::dimension `dimension`\
 \sa `remove_cell<i>`
 */
 template <unsigned int i>
-bool is_removable(Dart_const_handle dh);
+bool is_removable(Dart_const_descriptor dh);
 
 /*!
 Removes the <I>i</I>-cell containing `dh`. Returns the number of darts removed from the generic map.
@@ -1004,7 +1004,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 */
 template <unsigned int i>
-size_type remove_cell(Dart_handle dh);
+size_type remove_cell(Dart_descriptor dh);
 
 /// @}
 

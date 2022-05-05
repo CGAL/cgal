@@ -3,15 +3,15 @@
 #include <cstdlib>
 
 typedef CGAL::Generalized_map<3> GMap_3;
-typedef GMap_3::Dart_handle Dart_const_handle;
+typedef GMap_3::Dart_descriptor Dart_const_descriptor;
 
 int main()
 {
   GMap_3 gm;
 
   // Create two tetrahedra.
-  Dart_const_handle dh1 = gm.make_combinatorial_tetrahedron();
-  Dart_const_handle dh2 = gm.make_combinatorial_tetrahedron();
+  Dart_const_descriptor dh1 = gm.make_combinatorial_tetrahedron();
+  Dart_const_descriptor dh2 = gm.make_combinatorial_tetrahedron();
 
   // Display the generalized map characteristics.
   gm.display_characteristics(std::cout);
