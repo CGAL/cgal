@@ -16,6 +16,7 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Concurrent_compact_container.h>
 #include <iostream>
+#include <cstdint>
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/function.hpp>
@@ -78,7 +79,7 @@ namespace CGAL
     template<typename T, typename I=typename T::Use_index,
              bool typedefined=Has_index_type<T>::value >
     struct Get_index_type
-    { typedef unsigned int type; }; // By default use unsigned int for index type
+    { typedef std::uint32_t type; }; // By default use uint32_t for index type
     template<typename T>
     struct Get_index_type<T, CGAL::Tag_true, true>
     { typedef typename T::Index_type type; };

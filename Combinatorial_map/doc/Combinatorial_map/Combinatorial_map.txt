@@ -234,15 +234,16 @@ typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
 \cgalModifBegin
 
-\subsection ssecIndicesHandles Indices or Handles
+\subsection ssecCMapIndicesHandles Indices or Handles
 
-By default, descriptors used to access darts and attributes are handles, and the darts and attributes are stored in a `Compact_container`. 
+By default, descriptors used to access darts and attributes are handles, and the darts and attributes are stored in a `Compact_container`. To use the index version, you should define the type `Use_index` equal to `CGAL::Tag_true` in the item class like in the code below. You can also define the type `Index_type` used to store indices (std::uint32_t by default when this type is not defined).
 
 \code{.cpp}
 
 struct Items_with_indices
 {
   typedef CGAL::Tag_true Use_index;
+  typedef std::uint16_t Index_type; // Optional
   template <class CMap>
   struct Dart_wrapper
   {
@@ -252,7 +253,9 @@ struct Items_with_indices
 };
 typedef CGAL::Combinatorial_map<3, Items_with_indices> Cmap3_with_index;
 
-TODO
+\endcode
+
+The two main interests of the index version comparing to the handle ones are: (1)~it has a lower memory footprint than a 64-bit pointer based version; (2)~indices are contiguous, they can be used as index into vectors which store properties. The main interest of the handle version is the fact that handles can be dereferenced, which can simplify some code.
 
 \cgalModifEnd
 
