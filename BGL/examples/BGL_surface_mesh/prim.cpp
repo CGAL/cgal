@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/graph/prim_minimum_spanning_tree.hpp>
+#include <CGAL/boost/graph/prim_minimum_spanning_tree.h>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;

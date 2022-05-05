@@ -1,4 +1,4 @@
-// Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
+// Copyright (c) 2021  GeometryFactory (France).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -9,9 +9,8 @@
 //
 // Author(s)     : Sebastien Loriot
 
-
-#ifndef CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATHS_H
-#define CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATHS_H
+#ifndef CGAL_BOOST_GRAPH_BREADTH_FIRST_SEARCH_H
+#define CGAL_BOOST_GRAPH_BREADTH_FIRST_SEARCH_H
 
 // This will push/pop a VC++ warning
 #include <CGAL/Named_function_parameters.h>
@@ -21,10 +20,10 @@
 #  pragma warning(disable:4172) // Address warning inside boost named parameters
 #endif
 
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
 
-#endif // CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATHS_H
+#endif // CGAL_BOOST_GRAPH_BREADTH_FIRST_SEARCH_H

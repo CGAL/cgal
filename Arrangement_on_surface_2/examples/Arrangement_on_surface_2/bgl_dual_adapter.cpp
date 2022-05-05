@@ -3,7 +3,15 @@
 
 #include <CGAL/config.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4172) // Address warning inside boost named parameters
+#endif
 #include <boost/graph/breadth_first_search.hpp>
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #include <boost/graph/visitors.hpp>
 
 #include <CGAL/Arr_extended_dcel.h>
