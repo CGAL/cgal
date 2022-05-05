@@ -20,6 +20,8 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/number_utils.h>
+
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
 
