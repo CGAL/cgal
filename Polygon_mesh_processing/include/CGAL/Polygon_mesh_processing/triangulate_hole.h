@@ -138,8 +138,8 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
 
     \cgalParamNBegin{visitor}
-      \cgalParamDescription{a visitor used to track the progress made
-      in the algorithm}
+      \cgalParamDescription{a visitor used to track when entering a given phase of the algorithm}
+      \cgalParamType{A model of PMPHolefillingVisitor}
       \cgalParamType{Hole_filling::Default_visitor}
     \cgalParamNEnd
 
@@ -301,6 +301,12 @@ namespace Polygon_mesh_processing {
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
     \cgalParamNEnd
+
+    \cgalParamNBegin{visitor}
+      \cgalParamDescription{a visitor used to track when entering a given phase of the algorithm}
+      \cgalParamType{A model of PMPHolefillingVisitor}
+      \cgalParamType{Hole_filling::Default_visitor}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return pair of `face_out` and `vertex_out`
@@ -427,6 +433,12 @@ namespace Polygon_mesh_processing {
                         is provided as default value:\n
                         `CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::%EigenType, Eigen::COLAMDOrdering<int> > >`}
     \cgalParamNEnd
+
+    \cgalParamNBegin{visitor}
+      \cgalParamDescription{a visitor used to track when entering a given phase of the algorithm}
+      \cgalParamType{A model of PMPHolefillingVisitor}
+      \cgalParamType{Hole_filling::Default_visitor}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return tuple of
@@ -543,6 +555,12 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{one quarter of the height of the bounding box of the hole}
       \cgalParamExtra{This parameter is used only in conjunction with
                       the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{visitor}
+      \cgalParamDescription{a visitor used to track when entering a given phase of the algorithm}
+      \cgalParamType{A model of PMPHolefillingVisitor}
+      \cgalParamType{Hole_filling::Default_visitor}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
