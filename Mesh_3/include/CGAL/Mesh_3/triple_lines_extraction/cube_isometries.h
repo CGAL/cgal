@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sébastien Loriot
+// Author(s)     : Sebastien Loriot
 //
 //******************************************************************************
 //
