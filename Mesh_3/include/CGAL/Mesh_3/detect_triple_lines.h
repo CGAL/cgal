@@ -17,6 +17,8 @@
 #ifndef CGAL_MESH_3_DETECT_TRIPLE_LINES_H
 #define CGAL_MESH_3_DETECT_TRIPLE_LINES_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/Mesh_3/triple_lines_extraction/coordinates.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/combinations.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/cases_table.h>
