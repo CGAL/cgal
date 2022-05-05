@@ -390,8 +390,6 @@ if(MSVC)
                      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
   uniquely_add_flags(CGAL_CXX_FLAGS "/fp:strict")
   uniquely_add_flags(CGAL_CXX_FLAGS "/fp:except-")
-  uniquely_add_flags(CGAL_CXX_FLAGS "/wd4503"
-  )# Suppress warnings C4503 about "decorated name length exceeded"
   uniquely_add_flags(CGAL_CXX_FLAGS "/bigobj") # Use /bigobj by default
 
   if(RUNNING_CGAL_AUTO_TEST)

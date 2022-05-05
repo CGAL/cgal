@@ -121,9 +121,13 @@ function(CGAL_setup_CGAL_dependencies target)
     target_compile_options(${target} INTERFACE
       $<$<COMPILE_LANGUAGE:CXX>:/fp:strict>
       $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
-      $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
       $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
       )
+    if(MSVC_TOOLSET_VERSION VERSION_LESS_EQUAL 140) # for MSVC 2015
+      target_compile_options(${target} INTERFACE
+        $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
+        )
+    endif()
   elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0.3)
       message(STATUS "Apple Clang version ${CMAKE_CXX_COMPILER_VERSION} compiler detected")
