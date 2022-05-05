@@ -71,8 +71,8 @@ int main()
   GMap_3 gm;
 
   // 0) Create 2 hexahedra.
-  Dart_descriptor dh1 = gm.make_combinatorial_hexahedron();
-  Dart_descriptor dh2 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor d1 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor d2 = gm.make_combinatorial_hexahedron();
 
   // 1) Create and initialize 2-attributes.
   for (GMap_3::One_dart_per_cell_range<2>::iterator
@@ -87,14 +87,14 @@ int main()
   gm.onmerge_functor<2>()=Merge_functor();
 
   // 3) 3-Sew the two hexahedra along one face. This calls 1 onmerge.
-  gm.sew<3>(dh1, dh2);
+  gm.sew<3>(d1, d2);
 
   // 4) Display all the values of 2-attributes.
   display_map_and_2attributes(gm);
 
   // 5) Insert a vertex in the face between the two hexahedra.
   //    This calls 3 onsplit.
-  Dart_descriptor resdart=gm.insert_cell_0_in_cell_2(dh2);
+  Dart_descriptor resdart=gm.insert_cell_0_in_cell_2(d2);
 
   // 6) Display all the values of 2-attributes.
   display_map_and_2attributes(gm);

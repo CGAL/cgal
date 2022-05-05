@@ -130,7 +130,7 @@ int main(int narg, char** argv)
   std::map<Triangulation::Face_handle,
            LCC_2::Dart_descriptor > face_to_dart;
 
-  Dart_descriptor dh=CGAL::import_from_triangulation_2<LCC_2, Triangulation>
+  Dart_descriptor d=CGAL::import_from_triangulation_2<LCC_2, Triangulation>
     (lcc, T, &face_to_dart);
   assert(lcc.is_without_boundary());
 
@@ -140,7 +140,7 @@ int main(int narg, char** argv)
 
   // 3) Compute the dual lcc.
   LCC_2 dual_lcc;
-  Dart_descriptor ddh=lcc.dual(dual_lcc, dh);
+  Dart_descriptor dd=lcc.dual(dual_lcc, d);
   // Here, dual_lcc is the 2D Voronoi diagram.
   assert(dual_lcc.is_without_boundary());
 
@@ -156,7 +156,7 @@ int main(int narg, char** argv)
                                               << dual_lcc.is_valid()
                                               << std::endl;
 
-  display_voronoi(dual_lcc, ddh);
+  display_voronoi(dual_lcc, dd);
 
   return EXIT_SUCCESS;
 }

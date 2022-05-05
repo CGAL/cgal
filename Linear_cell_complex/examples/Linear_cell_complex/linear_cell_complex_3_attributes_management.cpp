@@ -17,7 +17,7 @@ void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
   {
     CGAL::load_off(lcc, ifile);
     CGAL::Timer timer;
-    Dart_descriptor dh;
+    Dart_descriptor d;
     std::size_t nb=(lcc.number_of_darts()*percent)/200;
     timer.start();
 
@@ -25,9 +25,9 @@ void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
     for (LCC_3::Dart_range::iterator it=lcc.darts().begin(),
            itend=lcc.darts().end(); it!=itend && nb>0; )
     {
-      dh=it++;
-      if ( it!=itend && it==lcc.beta<2>(dh) ) ++it;
-      lcc.remove_cell<1>(dh);
+      d=it++;
+      if ( it!=itend && it==lcc.beta<2>(d) ) ++it;
+      lcc.remove_cell<1>(d);
       --nb;
     }
     if ( !updateattribs ) lcc.set_automatic_attributes_management(true);

@@ -39,8 +39,8 @@ int main()
   CMap_3 cm;
 
   // Create 2 hexahedra.
-  Dart_descriptor dh1 = cm.make_combinatorial_hexahedron();
-  Dart_descriptor dh2 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor d1 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor d2 = cm.make_combinatorial_hexahedron();
 
   // 1) Create all 2-attributes and associated them to darts.
   for (CMap_3::Dart_range::iterator
@@ -53,18 +53,18 @@ int main()
 
   // 2) Set the color of all facets of the first hexahedron to 7.
   for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator
-       it=cm.one_dart_per_incident_cell<2,3>(dh1).begin(),
-       itend=cm.one_dart_per_incident_cell<2,3>(dh1).end(); it!=itend; ++it)
+       it=cm.one_dart_per_incident_cell<2,3>(d1).begin(),
+       itend=cm.one_dart_per_incident_cell<2,3>(d1).end(); it!=itend; ++it)
   { cm.info<2>(it)=7; }
 
   // 3) Set the color of all facets of the second hexahedron to 13.
   for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
-       cm.one_dart_per_incident_cell<2,3>(dh2).begin(),
-       itend=cm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
+       cm.one_dart_per_incident_cell<2,3>(d2).begin(),
+       itend=cm.one_dart_per_incident_cell<2,3>(d2).end(); it!=itend; ++it)
   { cm.info<2>(it)=13; }
 
   // 4) 3-Sew the two hexahedra along one facet.
-  cm.sew<3>(dh1, dh2);
+  cm.sew<3>(d1, d2);
 
   // 5) Display all the values of 2-attributes.
   for (CMap_3::Attribute_range<2>::type::iterator
@@ -76,7 +76,7 @@ int main()
   std::cout<<std::endl;
 
   // 6) Insert a vertex in the facet between the two hexahedra.
-  cm.insert_cell_0_in_cell_2(dh2);
+  cm.insert_cell_0_in_cell_2(d2);
 
   // 7) Display all the values of 2-attributes.
   for (CMap_3::Attribute_range<2>::type::iterator
