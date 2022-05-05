@@ -168,7 +168,11 @@ Considering these different advantages and drawbacks, you can choose to use gene
 
 The diagram in \cgalFigureRef{fig_cmap_diagramme_class} shows the different classes of the package. `Combinatorial_map` is the main class (see Section \ref sseccombinatorialmap "Combinatorial Maps"). It allows to manage darts and attributes (see Section \ref ssecattributes "Cell Attributes"). Users can customize a combinatorial map thanks to an items class (see Section \ref ssecitem "Combinatorial Map Items"), which defines the information associated with darts and the attribute types. These types may be different for different dimensions, and they may also be void (note that the main concepts of `GenericMap`, `GenericMapItems` and `CellAttribute` are shared between combinatorial maps and generalized maps).
 
-The darts and attributes are accessed through <I>handles</I>. A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `boost::unordered_map`.
+\cgalModifBegin
+
+The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `boost::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to std::size_t. As the indices are contiguous, they can be used as index into vectors which store properties.
+
+\cgalModifEnd
 
 \cgalFigureBegin{fig_cmap_diagramme_class,cmap_diagramme_class.svg}
 UML diagram of the main classes of the package. k is the number of non void attributes.
@@ -178,9 +182,9 @@ UML diagram of the main classes of the package. k is the number of non void attr
 
 The class `Combinatorial_map<d,Items,Alloc>` is a model of the `CombinatorialMap` concept which refines the generic concept of `GenericMap`. It has three template parameters standing for the dimension of the combinatorial map (an  `unsigned int`), an items class (a model of the  `GenericMapItems` concept), and an allocator which must be a model of the allocator concept of the \stl. %Default classes are provided for the items and the allocator classes.
 
-The main role of the class `Combinatorial_map` is the storage and the management of darts. It allows to create or remove an isolated dart from the combinatorial map. The \link GenericMap::Dart_descriptor `Dart_descriptor`\endlink type defines a handle to the type of used darts (given in the items class). `Combinatorial_map` provides several <I>ranges</I> which allow to iterate over specific subsets of darts of the combinatorial map (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). It also defines several methods to link and to unlink darts by \f$ \beta_i\f$s (see Section \ref sseclinkdarts "Sewing Orbits and Linking Darts"). We said that a dart <I>d0</I> is <I>i</I>-free  if \f$ \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. The \f$ \varnothing\f$ constant is represented in the class `Combinatorial_map` through a `Dart_descriptor` called \link CombinatorialMap::null_dart_descriptor `null_dart_descriptor`\endlink. Finally, some high level operations are defined as global functions taking a `Combinatorial_map` as argument (see Section \ref ssecoperations "Removal and Insertion Operations")
+The main role of the class `Combinatorial_map` is the storage and the management of darts. It allows to create or remove an isolated dart from the combinatorial map. The \link GenericMap::Dart_descriptor `Dart_descriptor`\endlink type defines a descriptor to the type of used darts (given in the items class). `Combinatorial_map` provides several <I>ranges</I> which allow to iterate over specific subsets of darts of the combinatorial map (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). It also defines several methods to link and to unlink darts by \f$ \beta_i\f$s (see Section \ref sseclinkdarts "Sewing Orbits and Linking Darts"). We said that a dart <I>d0</I> is <I>i</I>-free  if \f$ \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. The \f$ \varnothing\f$ constant is represented in the class `Combinatorial_map` through a `Dart_descriptor` called \link CombinatorialMap::null_dart_descriptor `null_dart_descriptor`\endlink. Finally, some high level operations are defined as global functions taking a `Combinatorial_map` as argument (see Section \ref ssecoperations "Removal and Insertion Operations")
 
-The second role of the class `Combinatorial_map` is the storage and the management of attributes. It allows to create or remove an attribute, and provides methods to associate attributes and cells. A range is defined for each <I>i</I>-attribute allowing to iterate over all the <I>i</I>-attributes of the combinatorial map. Finally, `Combinatorial_map` defines several types allowing to manage the attributes. We can use \link GenericMap::Attribute_descriptor `Combinatorial_map::Attribute_descriptor<i>::type`\endlink for a handle to the <I>i</I>-attributes (and the const version \link GenericMap::Attribute_const_descriptor `Combinatorial_map::Attribute_const_descriptor<i>::type` \endlink) and \link GenericMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the <I>i</I>-attributes.
+The second role of the class `Combinatorial_map` is the storage and the management of attributes. It allows to create or remove an attribute, and provides methods to associate attributes and cells. A range is defined for each <I>i</I>-attribute allowing to iterate over all the <I>i</I>-attributes of the combinatorial map. Finally, `Combinatorial_map` defines several types allowing to manage the attributes. We can use \link GenericMap::Attribute_descriptor `Combinatorial_map::Attribute_descriptor<i>::type`\endlink for a descriptor to the <I>i</I>-attributes (and the const version \link GenericMap::Attribute_const_descriptor `Combinatorial_map::Attribute_const_descriptor<i>::type` \endlink) and \link GenericMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the <I>i</I>-attributes.
 
 All information associated to darts (information, \f$ \beta\f$ links and attributes) are accessed through member functions in `CombinatorialMap`.
 
@@ -196,7 +200,7 @@ The class `Generic_map_min_items` is a model of the `GenericMapItems` concept wh
 
 \subsection ssecattributes Cell Attributes
 
-The class `Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`, a model of the `CellAttribute` concept, represents an attribute associated with a cell of a combinatorial map. The  template parameter `Map` must be a model of the `GenericMap` concept. The attribute stores a handle to one dart of its associated cell when the template parameter `Tag` is \link CGAL::Tag_true `Tag_true`\endlink. `Info_` is the type of information stored in the attribute. It may be `void`. `OnMerge` and `OnSplit` must be either `Null_functor`, or models of the `Binary Function` concept having two references to a model of `CellAttribute` as type of both parameters and `void` as return type. There are two default parameters for `OnMerge` and `OnSplit`, which are `Null_functor`, a default parameter for `Tag` which is `Tag_true`, and a default parameter for `Info_` which is `void`.
+The class `Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`, a model of the `CellAttribute` concept, represents an attribute associated with a cell of a combinatorial map. The  template parameter `Map` must be a model of the `GenericMap` concept. The attribute stores a descriptor to one dart of its associated cell when the template parameter `Tag` is \link CGAL::Tag_true `Tag_true`\endlink. `Info_` is the type of information stored in the attribute. It may be `void`. `OnMerge` and `OnSplit` must be either `Null_functor`, or models of the `Binary Function` concept having two references to a model of `CellAttribute` as type of both parameters and `void` as return type. There are two default parameters for `OnMerge` and `OnSplit`, which are `Null_functor`, a default parameter for `Tag` which is `Tag_true`, and a default parameter for `Info_` which is `void`.
 
 If `Info_` is different from `void`, the class `Cell_attribute` contains two methods `info()` returning the information contained in the attribute (const and non const version). The information is returned by reference, thus the non const version allows the modification of the information.
 
@@ -228,9 +232,33 @@ typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
 \endcode
 
+\cgalModifBegin
+
+\subsection ssecIndicesHandles Indices or Handles
+
+By default, descriptors used to access darts and attributes are handles, and the darts and attributes are stored in a `Compact_container`. 
+
+\code{.cpp}
+
+struct Items_with_indices
+{
+  typedef CGAL::Tag_true Use_index;
+  template <class CMap>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
+    typedef std::tuple<void,Edge_attrib> Attributes;
+  };
+};
+typedef CGAL::Combinatorial_map<3, Items_with_indices> Cmap3_with_index;
+
+TODO
+
+\cgalModifEnd
+
 \section Combinatorial_mapIteration Iteration and Creation Operations
 
-An important operation in combinatorial maps consists in iterating over specific subsets of darts or over attributes. For that, several <I>ranges</I> are offered (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). A range is a model of the `Range` concept, thus supporting the two methods `begin()` and `end()` allowing to iterate over all the elements in the range. Several functions allow to create specific configurations of darts into a combinatorial map (see Section \ref ssecconstruction "Construction Operations"). Darts can be marked during operations, for example when performing a breadth-first search traversal, thanks to Boolean marks (see Sections \ref ssecadvmarks "Boolean Marks"). In the following, we denote by `dh0`, `dh1`, `dh2` the dart handles for the darts `d0`, `d1`, `d2`, respectively. That is `d0 == *dh0`.
+An important operation in combinatorial maps consists in iterating over specific subsets of darts or over attributes. For that, several <I>ranges</I> are offered (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). A range is a model of the `Range` concept, thus supporting the two methods `begin()` and `end()` allowing to iterate over all the elements in the range. Several functions allow to create specific configurations of darts into a combinatorial map (see Section \ref ssecconstruction "Construction Operations"). Darts can be marked during operations, for example when performing a breadth-first search traversal, thanks to Boolean marks (see Sections \ref ssecadvmarks "Boolean Marks"). \tred{In the following, we denote by `d0`, `d1`, `d2` for three dart descriptors.}
 
 \subsection ssecrange Iterating over Orbits, Cells, and Attributes
 
