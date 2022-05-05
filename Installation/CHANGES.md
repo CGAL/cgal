@@ -1,6 +1,14 @@
 Release History
 ===============
 
+[Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
+-----------
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh following the
+CGAL tetrahedral Delaunay refinement algorithm.
+
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
