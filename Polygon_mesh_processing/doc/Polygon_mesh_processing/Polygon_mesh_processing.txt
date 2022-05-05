@@ -457,6 +457,10 @@ class and a few others are part of the code base.
  Holes in the fork model are filled with triangle patches.
  \cgalFigureEnd
 
+An additional parameter, named `visitor` can be used to track which phase of the algorithm is being run.
+This can allow a user to stop the algorithm if a timeout needs to be implemented. For an example, see
+\ref Polygon_mesh_processing/hole_filling_visitor_example.cpp .
+
 \subsection HFPerformance Performance
 
 The hole filling algorithm has a complexity which depends on the
