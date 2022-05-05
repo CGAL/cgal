@@ -17,7 +17,7 @@
 #include <CGAL/license/Convex_hull_3.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
 
