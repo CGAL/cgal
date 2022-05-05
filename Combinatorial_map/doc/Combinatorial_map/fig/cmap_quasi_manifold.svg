@@ -1,331 +1,118 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: fig2dev Version 3.2.6 -->
-<!-- CreationDate: Mon Nov 21 08:43:35 2016 -->
-<!-- Magnification: 1.050 -->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: fig2dev Version 3.2.8 -->
+<!-- CreationDate: 2022-05-05 19:05:07 -->
+<!-- Magnification: 1.05 -->
 <svg	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
-	width="7.2in" height="3.0in"
-	viewBox="-5231 485 8628 3616">
-<g style="stroke-width:.025in; fill:none">
+	width="518pt" height="218pt"
+	viewBox="-4983 462 8219 3445">
+<g fill="none">
 <!-- Line -->
-<polyline points="-5008,2681
--3927,1764
--3781,2078
--5008,2681
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -4771,2554 -3741,1681 -3602,1980 -4771,2554" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3381,510
--3511,1751
--2277,2531
--1872,1380
--3381,510
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -3221,486 -3345,1668 -2169,2411 -1784,1315 -3221,486" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3511,1751
--3287,2058
--2277,2531
--3511,1751
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -3345,1668 -3131,1961 -2169,2411 -3345,1668" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3511,1751
--3287,2058
--3381,510
--3511,1751
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -3345,1668 -3131,1961 -3221,486 -3345,1668" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="2030,2329
-3384,2502
-1844,2023
-2030,2329
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 1934,2219 3224,2384 1757,1927 1934,2219" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-2277,2531
--3287,2058
--1872,1380
--2277,2531
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -2169,2411 -3131,1961 -1784,1315 -2169,2411" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="1844,2023
-2030,2329
-1481,687
-1844,2023
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 1757,1927 1934,2219 1411,655 1757,1927" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="1481,687
-2030,2329
-1844,2023
-1481,687
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" 1411,655 1934,2219 1757,1927 1411,655" fill="#b8b8b8"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="1481,687
-1844,2023
-3384,2502
-3362,1122
-1481,687
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 1411,655 1757,1927 3224,2384 3203,1069 1411,655" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3213,2448
--2178,2888
--1736,1770
--3213,2448
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -3061,2332 -2075,2751 -1654,1686 -3061,2332" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3927,1764
--3880,508
--5208,1450
--5008,2681
--3927,1764
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -3741,1681 -3696,484 -4961,1382 -4771,2554 -3741,1681" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3624,4078
--5001,3074
--3724,2474
--3624,4078
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -3452,3885 -4764,2928 -3548,2357 -3452,3885" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3880,508
--3781,2078
--3927,1764
--3880,508
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -3696,484 -3602,1980 -3741,1681 -3696,484" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="3384,2502
-3362,1122
-2030,2329
-3384,2502
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 3224,2384 3203,1069 1934,2219 3224,2384" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="3362,1122
-3384,2502
-2030,2329
-3362,1122
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" 3203,1069 3224,2384 1934,2219 3203,1069" fill="#b8b8b8"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3118,4029
--3213,2448
--2178,2888
--3118,4029
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -2970,3838 -3061,2332 -2075,2751 -2970,3838" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-1872,1380
--3381,510
--3287,2058
--1872,1380
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -1784,1315 -3221,486 -3131,1961 -1784,1315" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="2030,2329
-283,2106
-937,3320
-2030,2329
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 1934,2219 270,2006 893,3163 1934,2219" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3724,2474
--3624,4078
--3481,3064
--3724,2474
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -3548,2357 -3452,3885 -3316,2919 -3548,2357" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="3362,1122
-1481,687
-2030,2329
-3362,1122
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 3203,1069 1411,655 1934,2219 3203,1069" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-5208,1450
--5008,2681
--3781,2078
--5208,1450
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -4961,1382 -4771,2554 -3602,1980 -4961,1382" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="1481,687
-2030,2329
-283,2106
-1481,687
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" 1411,655 1934,2219 270,2006 1411,655" fill="#b8b8b8"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-2178,2888
--3118,4029
--2847,3022
--1736,1770
--2178,2888
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -2075,2751 -2970,3838 -2712,2879 -1654,1686 -2075,2751" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3781,2078
--5208,1450
--3880,508
--3781,2078
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -3602,1980 -4961,1382 -3696,484 -3602,1980" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="3384,2502
-2594,4015
-2333,2828
-3362,1122
-3384,2502
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" 3224,2384 2471,3825 2223,2694 3203,1069 3224,2384" fill="#b8b8b8"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-5001,3074
--5207,1884
--3724,2474
--5001,3074
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -4764,2928 -4960,1795 -3548,2357 -4764,2928" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="2030,2329
-2594,4015
-937,3320
-2030,2329
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 1934,2219 2471,3825 893,3163 1934,2219" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="283,2106
-2333,2828
-2594,4015
-937,3320
-283,2106
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 270,2006 2223,2694 2471,3825 893,3163 270,2006" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="2333,2828
-3362,1122
-2030,2329
-2333,2828
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" 2223,2694 3203,1069 1934,2219 2223,2694" fill="#b8b8b8"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3213,2448
--2847,3022
--3118,4029
--3213,2448
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -3061,2332 -2712,2879 -2970,3838 -3061,2332" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3213,2448
--2847,3022
--1736,1770
--3213,2448
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#b8b8b8;
-"/>
+<polyline points=" -3061,2332 -2712,2879 -1654,1686 -3061,2332" fill="#b8b8b8"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="2333,2828
-2030,2329
-283,2106
-2333,2828
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" 2223,2694 1934,2219 270,2006 2223,2694" fill="#878787"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3481,3064
--3724,2474
--5207,1884
--3481,3064
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -3316,2919 -3548,2357 -4960,1795 -3316,2919" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-5207,1884
--3481,3064
--3624,4078
--5001,3074
--5207,1884
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#878787;
-"/>
+<polyline points=" -4960,1795 -3316,2919 -3452,3885 -4764,2928 -4960,1795" fill="#878787"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Circle -->
-<circle cx="2006" cy="2306" r="67"
- style="fill:#000000;stroke:#000000;stroke-width:8;"/>
+<circle cx="1911" cy="2197" r="64" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Text -->
-<text xml:space="preserve" x="1714" y="2179" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="278" text-anchor="start">p</text>
+<text xml:space="preserve" x="1633" y="2076" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="264" text-anchor="start">p</text>
 </g>
 </svg>
