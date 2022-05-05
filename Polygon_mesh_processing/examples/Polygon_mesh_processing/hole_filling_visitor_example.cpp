@@ -54,74 +54,75 @@ struct Stop : std::exception
     {}
 };
 
-struct Progress {
+struct Progress :
+    public PMP::Hole_filling::Default_visitor
+{
+  Progress(double time_limit)
+      : time_limit(time_limit)
+  {}
 
-    Progress(double time_limit)
-        : time_limit(time_limit)
-    {}
+  Progress(const Progress&) = delete;
 
-    Progress(const Progress&) = delete;
+  void start_planar_phase() const
+  {
+    std::cout << "Start planar phase"<< std::endl;
+  }
 
-    void start_planar_phase() const
-    {
-      std::cout << "Start planar phase"<< std::endl;
+  void end_planar_phase(bool success) const
+  {
+    std::cout << "End planar phase " << (success? "(success)" : "(failed)") << std::endl;
+  }
+
+  void start_quadratic_phase(int n)
+  {
+    timer.start();
+    quadratic_i = 0;
+    quadratic_n = n;
+    quadratic_report = n / 10;
+    std::cout << "Start Quadratic phase with estimated " << n << " steps" << std::endl;
+  }
+
+  void quadratic_step()
+  {
+    if (quadratic_i++ == quadratic_report) {
+      std::cout << double(quadratic_i) / double(quadratic_n) * 100 << "%" << std::endl;
+      quadratic_report += quadratic_n / 10;
     }
+  }
 
-    void end_planar_phase(bool success) const
-    {
-      std::cout << "End planar phase " << (success? "(success)" : "(failed)") << std::endl;
+  void end_quadratic_phase(bool success) const
+  {
+    timer.stop();
+    std::cout << "End Quadratic phase " << timer.time() << " sec. " << (success ? "(success)" : "(failed)") << std::endl;
+    timer.reset();
+  }
+
+
+  void start_cubic_phase( int n)
+  {
+    timer.start();
+      cubic_n = n;
+      cubic_report = n / 10;
+      std::cout << "Start Cubic phase with " << n << " steps" << std::endl;
+  }
+
+
+  void cubic_step()
+  {
+    if (timer.time() > time_limit) {
+        std::cout << "Let's stop here" << std::endl;
+        throw Stop();
     }
-
-    void start_quadratic_phase(int n)
-      {
-        timer.start();
-        quadratic_i = 0;
-        quadratic_n = n;
-        quadratic_report = n / 10;
-        std::cout << "Start Quadratic phase with estimated " << n << " steps" << std::endl;
-      }
-
-      void quadratic_step()
-      {
-        if (quadratic_i++ == quadratic_report) {
-          std::cout << double(quadratic_i) / double(quadratic_n) * 100 << "%" << std::endl;
-          quadratic_report += quadratic_n / 10;
-        }
-      }
-
-      void end_quadratic_phase(bool success) const
-      {
-        timer.stop();
-        std::cout << "End Quadratic phase " << timer.time() << " sec. " << (success ? "(success)" : "(failed)") << std::endl;
-        timer.reset();
-      }
-
-
-    void start_cubic_phase( int n)
-    {
-      timer.start();
-        cubic_n = n;
-        cubic_report = n / 10;
-        std::cout << "Start Cubic phase with " << n << " steps" << std::endl;
+    if (cubic_i++ == cubic_report) {
+      std::cout << double(cubic_i) / double(cubic_n) * 100 << "%" << std::endl;
+      cubic_report += cubic_n / 10;
     }
+  }
 
-
-    void cubic_step()
-    {
-        if (timer.time() > time_limit) {
-            std::cout << "Let's stop here" << std::endl;
-            throw Stop();
-        }
-        if (cubic_i++ == cubic_report) {
-          std::cout << double(cubic_i) / double(cubic_n) * 100 << "%" << std::endl;
-          cubic_report += cubic_n / 10;
-        }
-    }
-
-    void end_cubic_phase() const
-    {
-        std::cout << "End Cubic phase " << timer.time() << " sec. "  << std::endl;
-    }
+  void end_cubic_phase() const
+  {
+    std::cout << "End Cubic phase " << timer.time() << " sec. "  << std::endl;
+  }
 
   mutable Timer timer;
   double time_limit;

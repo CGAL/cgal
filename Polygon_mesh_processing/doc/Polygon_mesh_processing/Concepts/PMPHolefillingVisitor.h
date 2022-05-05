@@ -44,5 +44,20 @@ public:
   /// called when the algorithm with cubic running time ends.
   void end_cubic_phase() const;
 
+  /// called before refining the triangulation of the hole
+  ///(`triangulate_and_refine_hole()` and `triangulate_refine_and_fair_hole()` only)
+  void start_refine_phase();
+
+  /// called after having refined the triangulation of the hole
+  ///(`triangulate_and_refine_hole()` and `triangulate_refine_and_fair_hole()` only)
+  void end_refine_phase();
+
+  /// called before fairing the triangulation of the hole
+  ///(`triangulate_refine_and_fair_hole()` only)
+  void start_fair_phase();
+
+  /// called after having faired the triangulation of the hole
+  ///(`triangulate_refine_and_fair_hole()` only)
+  void end_fair_phase();
 
 };

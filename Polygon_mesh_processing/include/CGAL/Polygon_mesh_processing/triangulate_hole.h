@@ -52,6 +52,10 @@ namespace Polygon_mesh_processing {
       void start_cubic_phase(int /* N*/) const {}
       void cubic_step() const {}
       void end_cubic_phase() const {}
+      void start_refine_phase() const {}
+      void end_refine_phase() const {}
+      void start_fair_phase() const {}
+      void end_fair_phase() const {}
     #endif
     };
   } // namespace Hole_filling
@@ -317,11 +321,23 @@ namespace Polygon_mesh_processing {
       VertexOutputIterator vertex_out,
       const NamedParameters& np = parameters::default_values())
   {
+    using parameters::choose_parameter;
+    using parameters::get_parameter_reference;
+
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
 
-    return refine(pmesh, patch, face_out, vertex_out, np);
+    Hole_filling::Default_visitor default_visitor;
+    typedef typename internal_np::Lookup_named_param_def<internal_np::visitor_t,
+                                                         NamedParameters,
+                                                         Hole_filling::Default_visitor>::reference Visitor;
+
+    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+    visitor.start_refine_phase();
+    std::pair<FaceOutputIterator, VertexOutputIterator> res = refine(pmesh, patch, face_out, vertex_out, np);
+    visitor.end_refine_phase();
+    return res;
   }
 
   /*!
@@ -437,13 +453,24 @@ namespace Polygon_mesh_processing {
   {
     CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
+    using parameters::choose_parameter;
+    using parameters::get_parameter_reference;
+
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
     face_out = triangulate_and_refine_hole
       (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
 
     CGAL_postcondition(CGAL::is_triangle_mesh(pmesh));
 
+    Hole_filling::Default_visitor default_visitor;
+    typedef typename internal_np::Lookup_named_param_def<internal_np::visitor_t,
+                                                         NamedParameters,
+                                                         Hole_filling::Default_visitor>::reference Visitor;
+
+    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+    visitor.start_fair_phase();
     bool fair_success = fair(pmesh, patch, np);
+    visitor.end_fair_phase();
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return std::make_tuple(fair_success, face_out, vertex_out);
