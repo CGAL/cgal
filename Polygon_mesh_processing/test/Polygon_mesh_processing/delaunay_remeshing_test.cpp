@@ -50,7 +50,6 @@ int main(int argc, char* argv[])
       auto ps = get(vpmap, source(halfedge(e, mesh), mesh));
       auto pt = get(vpmap, target(halfedge(e, mesh), mesh));
       std::vector<Point> s = { ps, pt };
-      if (s[1] > s[0]) std::swap(s[0], s[1]);
       segments.push_back(s);
     }
   }

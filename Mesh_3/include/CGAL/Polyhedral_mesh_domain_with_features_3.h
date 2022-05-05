@@ -438,7 +438,9 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);
   Mesh_3::internal::Angle_tester<GT_> angle_tester;
-  split_graph_into_polylines(g_copy, visitor, angle_tester);
+  split_graph_into_polylines(
+      g_copy, visitor, angle_tester,
+      [&](auto v1, auto v2) { return g_copy[v1] < g_copy[v2]; });
 
   this->add_features_with_context(polylines.begin(),
                                   polylines.end());
@@ -485,22 +487,26 @@ add_featured_edges_to_graph(const Polyhedron& p,
 
   typedef typename boost::property_map<Polyhedron,vertex_point_t>::const_type Vpm;
   Vpm vpm = get(vertex_point, p);
-  for(Graph_vertex_descriptor v : make_range(vertices(graph))){
-    vertex_descriptor vc;
-    typename P2vmap::iterator it = p2vmap.find(get(vpm,v));
+
+  auto get_vertex = [&](auto point) {
+    typename P2vmap::iterator it = p2vmap.find(point);
+    vertex_descriptor v;
     if(it == p2vmap.end()) {
-      vc = add_vertex(g_copy);
-      g_copy[vc] = get(vpm, v);
-      p2vmap[get(vpm,v)] = vc;
+      v = add_vertex(g_copy);
+      g_copy[v] = point;
+      p2vmap[point] = v;
+    } else {
+      v = it->second;
     }
-  }
+    return v;
+  };
 
   typedef typename boost::property_map<Polyhedron,face_patch_id_t<Tag_> >::type Face_patch_id_pmap;
   Face_patch_id_pmap fpm = get(face_patch_id_t<Tag_>(),p);
 
   for(Graph_edge_descriptor e : make_range(edges(graph))){
-    vertex_descriptor vs = p2vmap[get(vpm,source(e,graph))];
-    vertex_descriptor vt = p2vmap[get(vpm,target(e,graph))];
+    vertex_descriptor vs = get_vertex(get(vpm,source(e,graph)));
+    vertex_descriptor vt = get_vertex(get(vpm,target(e,graph)));
     CGAL_warning_msg(vs != vt, "ignore self loop");
     if(vs != vt) {
       const std::pair<edge_descriptor, bool> pair = add_edge(vs,vt,g_copy);
