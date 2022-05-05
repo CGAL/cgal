@@ -34,41 +34,25 @@
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
-/** \ingroup PMP_hole_filling_grp
- *  Default hole filling visitor model of `PMPHolefillingVisitor`.
- *  All of its functions have an empty body. This class can be used as a
- *  base class if only some of the functions of the concept require to be
- *  overridden.
- */
+
   namespace Hole_filling {
-
+    /*! \ingroup PMP_hole_filling_grp
+     *  %Default hole filling visitor model of `PMPHolefillingVisitor`.
+     *  All of its functions have an empty body. This class can be used as a
+     *  base class if only some of the functions of the concept require to be
+     *  overridden.
+     */
     struct Default_visitor{
-
-      void start_planar_phase() const
-      {}
-
-      void end_planar_phase(bool) const
-      {}
-
-      void start_quadratic_phase(int /* N*/) const
-      {}
-
-      void quadratic_step() const
-      {}
-
-      void end_quadratic_phase(bool) const
-      {}
-
-      void start_cubic_phase(int /* N*/) const
-      {}
-
-      void cubic_step() const
-      {}
-
-      void end_cubic_phase() const
-      {}
-
-
+    #ifndef DOXYGEN_RUNNING
+      void start_planar_phase() const {}
+      void end_planar_phase(bool) const {}
+      void start_quadratic_phase(int /* N*/) const {}
+      void quadratic_step() const {}
+      void end_quadratic_phase(bool) const {}
+      void start_cubic_phase(int /* N*/) const {}
+      void cubic_step() const {}
+      void end_cubic_phase() const {}
+    #endif
     };
   } // namespace Hole_filling
 
