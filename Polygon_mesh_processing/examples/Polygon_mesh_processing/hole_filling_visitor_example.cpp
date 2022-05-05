@@ -4,6 +4,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Real_timer.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -12,7 +13,9 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <stdexcept>
 
+typedef CGAL::Real_timer                                    Timer;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
 typedef CGAL::Surface_mesh<Point>                           Mesh;
@@ -44,6 +47,87 @@ bool is_small_hole(halfedge_descriptor h, Mesh & mesh,
 
   return true;
 }
+
+struct Stop : std::exception
+{
+    Stop()
+    {}
+};
+
+struct Progress {
+
+    Progress(double time_limit)
+        : time_limit(time_limit)
+    {}
+
+    Progress(const Progress&) = delete;
+
+    void start_planar_phase() const
+    {
+      std::cout << "Start planar phase"<< std::endl;
+    }
+
+    void end_planar_phase(bool success) const
+    {
+      std::cout << "End planar phase " << (success? "(success)" : "(failed)") << std::endl;
+    }
+
+    void start_quadratic_phase(int n)
+      {
+        timer.start();
+        quadratic_i = 0;
+        quadratic_n = n;
+        quadratic_report = n / 10;
+        std::cout << "Start Quadratic phase with estimated " << n << " steps" << std::endl;
+      }
+
+      void quadratic_step()
+      {
+        if (quadratic_i++ == quadratic_report) {
+          std::cout << double(quadratic_i) / double(quadratic_n) * 100 << "%" << std::endl;
+          quadratic_report += quadratic_n / 10;
+        }
+      }
+
+      void end_quadratic_phase(bool success) const
+      {
+        timer.stop();
+        std::cout << "End Quadratic phase " << timer.time() << " sec. " << (success ? "(success)" : "(failed)") << std::endl;
+        timer.reset();
+      }
+
+
+    void start_cubic_phase( int n)
+    {
+      timer.start();
+        cubic_n = n;
+        cubic_report = n / 10;
+        std::cout << "Start Cubic phase with " << n << " steps" << std::endl;
+    }
+
+
+    void cubic_step()
+    {
+        if (timer.time() > time_limit) {
+            std::cout << "Let's stop here" << std::endl;
+            throw Stop();
+        }
+        if (cubic_i++ == cubic_report) {
+          std::cout << double(cubic_i) / double(cubic_n) * 100 << "%" << std::endl;
+          cubic_report += cubic_n / 10;
+        }
+    }
+
+    void end_cubic_phase() const
+    {
+        std::cout << "End Cubic phase " << timer.time() << " sec. "  << std::endl;
+    }
+
+  mutable Timer timer;
+  double time_limit;
+  int quadratic_n = 0, quadratic_i = 0, quadratic_report = 0;
+  int cubic_n = 0, cubic_i = 0, cubic_report = 0;
+};
 
 // Incrementally fill the holes that are no larger than given diameter
 // and with no more than a given number of edges (if specified).
@@ -77,11 +161,19 @@ int main(int argc, char* argv[])
 
     std::vector<face_descriptor>  patch_facets;
     std::vector<vertex_descriptor> patch_vertices;
-    bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
-                                                                     h,
-                                                                     std::back_inserter(patch_facets),
-                                                                     std::back_inserter(patch_vertices)));
+    Progress progress(10.0);
+    bool success = false;
 
+    try {
+        success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
+            h,
+            std::back_inserter(patch_facets),
+            std::back_inserter(patch_vertices),
+            PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(true)));
+    }
+    catch (const Stop&) {
+        std::cout << "We stopped with a timeout" << std::endl;
+    }
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
     std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
     std::cout << "  Is fairing successful: " << success << std::endl;
