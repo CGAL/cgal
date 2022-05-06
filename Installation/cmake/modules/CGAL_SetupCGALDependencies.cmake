@@ -23,7 +23,7 @@
 #    If set, the `LEDA` library will be searched and used to provide
 #    the exact number types used by CGAL kernels.
 #
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.11...3.23)
 if(CGAL_SetupCGALDependencies_included)
   return()
 endif()
