@@ -14,7 +14,7 @@ public:
 /// @{
 
   /*!
-    A handle to `Dart` for combinatorial/generalized maps, or a halfedge descriptor for models of the `FaceGraph` concept.
+    A descriptor to `Dart` for combinatorial/generalized maps, or a halfedge descriptor for models of the `FaceGraph` concept.
   */
   typedef unspecified_type halfedge_descriptor;
 

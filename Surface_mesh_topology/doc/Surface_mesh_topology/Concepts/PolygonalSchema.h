@@ -39,26 +39,26 @@ public:
   /// adds directly one facet giving the sequence of labels `s` of all its edges (labels are separated by spaces).
   void add_facet(const std::string& s);
 
-  /// returns the label of dart `dh`.
-  std::string get_label(Dart_descriptor dh) const;
+  /// returns the label of dart `d`.
+  std::string get_label(Dart_descriptor d) const;
 
   /// returns dart with label `s`, NULL if this label is not used.
   Dart_descriptor get_dart_labeled(const std::string & s) const;
 
-  /// returns true iff the facet containing `dh` is perforated.
-  bool is_perforated(Dart_const_descriptor dh) const;
+  /// returns true iff the facet containing `d` is perforated.
+  bool is_perforated(Dart_const_descriptor d) const;
 
   /// Shortcut for `is_perforated(get_dart_labeled(s))`.
   bool is_perforated(const std::string & s) const;
 
-  /// perforates the facet containing `dh`. Returns the number of darts of the face; 0 if the facet was already perforated.
-  size_type perforate_facet(Dart_descriptor dh);
+  /// perforates the facet containing `d`. Returns the number of darts of the face; 0 if the facet was already perforated.
+  size_type perforate_facet(Dart_descriptor d);
 
   /// Shortcut for perforate_facet(get_dart_labeled(s)).
   size_type perforate_facet(const std::string & s);
 
-  /// fills the facet containing `dh`. Returns the number of darts of the face; 0 if the facet was already filled.
-  size_type fill_facet(Dart_descriptor dh);
+  /// fills the facet containing `d`. Returns the number of darts of the face; 0 if the facet was already filled.
+  size_type fill_facet(Dart_descriptor d);
 
   /// Shortcut for `fill_facet(get_dart_labeled(s))`.
   size_type fill_facet(const std::string & s);

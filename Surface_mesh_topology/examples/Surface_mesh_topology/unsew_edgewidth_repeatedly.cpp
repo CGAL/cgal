@@ -22,10 +22,10 @@ struct Weight_functor
 {
   Weight_functor(const LCC_3& lcc) : m_lcc(lcc) {}
   using Weight_t=double;
-  Weight_t operator()(Dart_const_descriptor dh) const
+  Weight_t operator()(Dart_const_descriptor d) const
   {
-    const Point& x=m_lcc.point(dh);
-    const Point& y=m_lcc.point(m_lcc.template alpha<0>(dh));
+    const Point& x=m_lcc.point(d);
+    const Point& y=m_lcc.point(m_lcc.template alpha<0>(d));
     return CGAL::sqrt(CGAL::squared_distance(x, y));
   }
 private:
@@ -41,35 +41,35 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   {}
 
   template<typename LCC>
-  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_descriptor dh) const
-  { return alcc.is_marked(dh, is_root); }
+  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_descriptor d) const
+  { return alcc.is_marked(d, is_root); }
 
   template<typename LCC>
   CGAL::IO::Color vertex_color(const LCC& /* alcc */,
-                           typename LCC::Dart_const_descriptor /* dh */) const
+                           typename LCC::Dart_const_descriptor /* d */) const
   { return CGAL::IO::Color(0,255,0); }
 
   template<typename LCC>
-  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_descriptor dh) const
-  { return alcc.is_marked(dh, belong_to_cycle); }
+  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_descriptor d) const
+  { return alcc.is_marked(d, belong_to_cycle); }
 
   template<typename LCC>
   CGAL::IO::Color edge_color(const LCC& /* alcc*/,
-                         typename LCC::Dart_const_descriptor /* dh */) const
+                         typename LCC::Dart_const_descriptor /* d */) const
   { return CGAL::IO::Color(0, 0, 255); }
 
   template<typename LCC>
   bool colored_face(const LCC& /* alcc */,
-                    typename LCC::Dart_const_descriptor /* dh */) const {return true;}
+                    typename LCC::Dart_const_descriptor /* d */) const {return true;}
 
   template<typename LCC>
   CGAL::IO::Color face_color(const LCC& /* alcc */,
-                         typename LCC::Dart_const_descriptor /* dh */) const
+                         typename LCC::Dart_const_descriptor /* d */) const
   {return CGAL::IO::Color(211, 211, 211);}
 
   template<typename LCC>
   bool colored_volume(const LCC& /* alcc */,
-                      typename LCC::Dart_const_descriptor /* dh */) const { return false; }
+                      typename LCC::Dart_const_descriptor /* d */) const { return false; }
 
   LCC_3::size_type is_root;
   LCC_3::size_type belong_to_cycle;
@@ -130,18 +130,18 @@ int main(int argc, char* argv[])
         { lcccopy.mark_cell<1>(cycle[i], belong_to_cycle_copy); }
       }
 
-      for (auto dh=lccoriginal.darts().begin(), dhend=lccoriginal.darts().end();
-           dh!=dhend; ++dh)
+      for (auto d=lccoriginal.darts().begin(), dend=lccoriginal.darts().end();
+           d!=dend; ++d)
       {
-        if (lcccopy.is_marked(origin_to_copy[dh], is_root_copy) &&
-            !lccoriginal.is_marked(dh, is_root))
-        { lccoriginal.mark(dh, is_root); }
-        if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) &&
-            !lccoriginal.is_marked(dh, belong_to_cycle))
-        { lccoriginal.mark(dh, belong_to_cycle); }
-        if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) &&
-            !lcccopy.is_free<2>(origin_to_copy[dh]))
-        { lcccopy.unsew<2>(origin_to_copy[dh]); }
+        if (lcccopy.is_marked(origin_to_copy[d], is_root_copy) &&
+            !lccoriginal.is_marked(d, is_root))
+        { lccoriginal.mark(d, is_root); }
+        if (lcccopy.is_marked(origin_to_copy[d], belong_to_cycle_copy) &&
+            !lccoriginal.is_marked(d, belong_to_cycle))
+        { lccoriginal.mark(d, belong_to_cycle); }
+        if (lcccopy.is_marked(origin_to_copy[d], belong_to_cycle_copy) &&
+            !lcccopy.is_free<2>(origin_to_copy[d]))
+        { lcccopy.unsew<2>(origin_to_copy[d]); }
       }
       lcccopy.close<2>();
 
