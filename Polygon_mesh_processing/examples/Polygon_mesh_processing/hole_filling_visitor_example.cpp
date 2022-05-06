@@ -79,7 +79,7 @@ struct Progress :
     quadratic_i = 0;
     quadratic_n = n;
     quadratic_report = n / 10;
-    std::cout << "Start Quadratic phase with estimated " << n << " steps" << std::endl;
+    std::cout << "Start quadratic phase with estimated " << n << " steps" << std::endl;
   }
 
   void quadratic_step()
@@ -93,7 +93,7 @@ struct Progress :
   void end_quadratic_phase(bool success) const
   {
     timer.stop();
-    std::cout << "End Quadratic phase " << timer.time() << " sec. " << (success ? "(success)" : "(failed)") << std::endl;
+    std::cout << "End quadratic phase " << timer.time() << " sec. " << (success ? "(success)" : "(failed)") << std::endl;
     timer.reset();
   }
 
@@ -103,7 +103,7 @@ struct Progress :
     timer.start();
       cubic_n = n;
       cubic_report = n / 10;
-      std::cout << "Start Cubic phase with " << n << " steps" << std::endl;
+      std::cout << "Start cubic phase with " << n << " steps" << std::endl;
   }
 
 
@@ -121,7 +121,7 @@ struct Progress :
 
   void end_cubic_phase() const
   {
-    std::cout << "End Cubic phase " << timer.time() << " sec. "  << std::endl;
+    std::cout << "End cubic phase " << timer.time() << " sec. "  << std::endl;
   }
 
   mutable Timer timer;

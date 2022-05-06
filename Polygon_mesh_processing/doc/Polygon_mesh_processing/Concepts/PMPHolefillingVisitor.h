@@ -5,8 +5,8 @@
 /// used in \link PMP_hole_filling_grp hole-filling-related functions \endlink.
 /// The hole filling may use a 2D constrained triangulation
 /// for almost planar holes (*planar phase*).  If that is not appropriate or fails it
-/// may use an algorithm with a quadratoc running time relying on the 3D Delaunay triangulation (*quadratic phase*).
-/// If that fails, it uses an algorithm with cubic running time (*cube phase*).
+/// may use an algorithm with a quadratic running time relying on the 3D Delaunay triangulation (*quadratic phase*).
+/// If that fails, it uses an algorithm with cubic running time (*cubic phase*).
 ///
 /// \cgalRefines `CopyConstructible`
 /// \cgalHasModel `CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor`.

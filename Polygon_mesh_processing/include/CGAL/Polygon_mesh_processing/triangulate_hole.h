@@ -46,10 +46,10 @@ namespace Polygon_mesh_processing {
     #ifndef DOXYGEN_RUNNING
       void start_planar_phase() const {}
       void end_planar_phase(bool) const {}
-      void start_quadratic_phase(int /* N*/) const {}
+      void start_quadratic_phase(int /* n */) const {}
       void quadratic_step() const {}
       void end_quadratic_phase(bool) const {}
-      void start_cubic_phase(int /* N*/) const {}
+      void start_cubic_phase(int /* n */) const {}
       void cubic_step() const {}
       void end_cubic_phase() const {}
       void start_refine_phase() const {}
