@@ -3,9 +3,9 @@
 #include <algorithm>
 
 typedef CGAL::Linear_cell_complex_for_generalized_map<3> LCC_3;
-typedef LCC_3::Dart_descriptor                Dart_descriptor;
-typedef LCC_3::Point                      Point;
-typedef LCC_3::FT                         FT;
+typedef LCC_3::Dart_descriptor Dart_descriptor;
+typedef LCC_3::Point           Point;
+typedef LCC_3::FT              FT;
 
 // Functor used to display all the vertices of a given volume.
 template<class LCC>

@@ -25,9 +25,9 @@ struct Myitem
 typedef CGAL::Linear_cell_complex_traits
 <3, CGAL::Exact_predicates_inexact_constructions_kernel> Traits;
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Traits,Myitem> LCC_3;
-typedef LCC_3::Dart_descriptor                               Dart_descriptor;
-typedef LCC_3::Point                                     Point;
-typedef LCC_3::FT                                        FT;
+typedef LCC_3::Dart_descriptor Dart_descriptor;
+typedef LCC_3::Point           Point;
+typedef LCC_3::FT              FT;
 
 Dart_descriptor make_iso_cuboid(LCC_3& lcc, const Point& basepoint, FT lg)
 {

@@ -3,7 +3,7 @@
 #include <vector>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC_3_cmap;
-typedef CGAL::Linear_cell_complex_for_generalized_map<3> LCC_3_gmap;
+typedef CGAL::Linear_cell_complex_for_generalized_map<3>   LCC_3_gmap;
 
 template<typename LCC,
          typename Map=typename LCC::Combinatorial_data_structure>

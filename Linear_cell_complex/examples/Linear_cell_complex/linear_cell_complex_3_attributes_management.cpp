@@ -5,9 +5,9 @@
 #include <fstream>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3;
-typedef LCC_3::Dart_descriptor             Dart_descriptor;
-typedef LCC_3::Point                   Point;
-typedef LCC_3::FT                      FT;
+typedef LCC_3::Dart_descriptor Dart_descriptor;
+typedef LCC_3::Point           Point;
+typedef LCC_3::FT              FT;
 
 void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
                            bool updateattribs, int percent)

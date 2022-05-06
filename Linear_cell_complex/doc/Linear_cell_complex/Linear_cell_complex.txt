@@ -70,7 +70,7 @@ The class `Linear_cell_complex_traits<d,K>` is a model of `LinearCellComplexTrai
 \subsection Linear_cell_complexLinearCellComplexItems Linear Cell Complex Items
 \anchor sseclccitem
 
-The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept.
+The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept. \cgalModifBegin Like for combinatorial and generalized maps, it is possible to use indices instead of handles as descriptors, by defining CGAL::Tag_true for Use_index type in the item class. \cgalModifEnd
 
 The class `Linear_cell_complex_min_items<d>` is a model of `LinearCellComplexItems`. It defines `void` as information associated to darts, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.
 

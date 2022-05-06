@@ -11,8 +11,8 @@
 // This example works both with cmap and gmap as combinatorial data structure.
 //typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC_2;
 typedef CGAL::Linear_cell_complex_for_generalized_map<2> LCC_2;
-typedef LCC_2::Dart_descriptor           Dart_descriptor;
-typedef LCC_2::Point                 Point;
+typedef LCC_2::Dart_descriptor Dart_descriptor;
+typedef LCC_2::Point           Point;
 
 typedef CGAL::Delaunay_triangulation_2<LCC_2::Traits> Triangulation;
 

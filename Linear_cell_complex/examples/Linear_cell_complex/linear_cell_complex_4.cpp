@@ -4,10 +4,10 @@
 #include <cassert>
 
 typedef CGAL::Linear_cell_complex_for_generalized_map<4,5> LCC_4;
-typedef LCC_4::Dart_descriptor                                 Dart_descriptor;
-typedef LCC_4::Point                                       Point;
-typedef LCC_4::Vector                                      Vector;
-typedef LCC_4::FT                                          FT;
+typedef LCC_4::Dart_descriptor Dart_descriptor;
+typedef LCC_4::Point           Point;
+typedef LCC_4::Vector          Vector;
+typedef LCC_4::FT              FT;
 
 int main()
 {

@@ -3,7 +3,7 @@
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC;
 typedef LCC::Dart_descriptor Dart_descriptor;
-typedef LCC::Point Point;
+typedef LCC::Point           Point;
 
 int main()
 {
