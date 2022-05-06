@@ -6,7 +6,9 @@ namespace CGAL {
 
 The class `Combinatorial_map` represents a <I>d</I>D combinatorial map.
 
-Two versions exist: one where Darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator, and use Handle as descriptors; a second one where Darts and non void attributes are stored in memory using `Compact_container_with_index`, using `Alloc` as allocator, and use Index as descriptors.
+\cgalModifBegin
+Two versions exist: one where Darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator, and use handles as descriptors; a second one where Darts and non void attributes are stored in an internal std::vector like data-structure, and use indices as descriptors. The choice between the two versions is done through the item class.
+\cgalModifEnd
 
 \cgalModels `CombinatorialMap`
 
