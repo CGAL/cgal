@@ -168,7 +168,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
        scene->addItem(group);
       for(FaceGraph& poly : new_polyhedra)
       {
-        Scene_facegraph_item* new_item=new Scene_facegraph_item(poly);
+        Scene_facegraph_item* new_item=new Scene_facegraph_item(std::move(poly));
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
         new_item->setColor(color_map[cc]);
         ++cc;

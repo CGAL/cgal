@@ -368,6 +368,7 @@ namespace Barycentric_coordinates {
 
       // Compute the last = third coordinate, using the partition of unity property.
       *output = FT(1) - b_first - b_second;
+      ++output;
 
       // Output all coordinates.
       return boost::optional<OutputIterator>(output);

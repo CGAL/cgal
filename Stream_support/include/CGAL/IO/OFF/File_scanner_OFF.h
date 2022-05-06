@@ -28,6 +28,7 @@
 #include <cstddef>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 namespace CGAL {
 
