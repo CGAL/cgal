@@ -56,8 +56,8 @@ void polar_eigen(const Mat& A, Mat& R, bool& SVD)
   {
     // The computation of the eigenvalues might have diverged.
     // Fallback to an accurate SVD based decomposiiton method.
-    Eigen::JacobiSVD<Mat> svd;
-    svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
+    Eigen::JacobiSVD<Mat, Eigen::ComputeFullU | Eigen::ComputeFullV> svd;
+    svd.compute(A);
     const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV(); const Vec& w = svd.singularValues();
     R = u*v.transpose();
     SVD = true;
