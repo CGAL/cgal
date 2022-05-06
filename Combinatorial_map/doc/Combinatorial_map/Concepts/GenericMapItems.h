@@ -23,7 +23,7 @@ The following examples show two possible models of the `GenericMapItems` concept
   struct Exemple_Item_2
   {
     typedef CGAL::Tag_true Use_index; // CGAL::Tag_false by default
-    typedef std::uint16_t Index_type; // std::uint32_t by default    
+    typedef std::uint16_t Index_type; // std::uint32_t by default
     template < class GMap >
     struct Dart_wrapper
     {
@@ -42,14 +42,14 @@ public:
     \cgalModifEnd
   */
   typedef unspecified_type Use_index;
-  
+
   /*!
     \cgalModifBegin
     Number type used for indices when Use_index is CGAL::Tag_true. By default, use std::uint32_t.
     \cgalModifEnd
   */
   typedef unspecified_type Index_type;
-  
+
   /*!
     Wrapper class defining type of information associated with darts and types of attributes. The class `%Dart_wrapper<Map>` must provide:
 
