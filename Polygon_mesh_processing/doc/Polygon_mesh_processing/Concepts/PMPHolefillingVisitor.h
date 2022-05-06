@@ -23,7 +23,7 @@ public:
 
   /// called when the algorithm with quadratic running time starts.
   /// @param n the upperbound on the number of steps
-  void start_quadratic_phase(int n) const;
+  void start_quadratic_phase(std::size_t n) const;
 
     /// called at each step. There may be less than `n` calls as this
     /// is an upperbound.
@@ -36,7 +36,7 @@ public:
 
   /// called when the algorithm with cubic running time starts.
     /// @param n the upperbound on the number of steps
-  void start_cubic_phase(int n) const;
+  void start_cubic_phase(std::size_t n) const;
 
   /// called at each step. This will be called `n` times.
   void cubic_step() const;

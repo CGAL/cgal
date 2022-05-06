@@ -73,7 +73,7 @@ struct Progress :
     std::cout << "End planar phase " << (success? "(success)" : "(failed)") << std::endl;
   }
 
-  void start_quadratic_phase(int n)
+  void start_quadratic_phase(std::size_t n)
   {
     timer.start();
     quadratic_i = 0;
@@ -98,7 +98,7 @@ struct Progress :
   }
 
 
-  void start_cubic_phase( int n)
+  void start_cubic_phase(std::size_t n)
   {
     timer.start();
       cubic_n = n;
