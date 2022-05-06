@@ -334,10 +334,14 @@ std::vector<std::vector<P>> poly00122101(const int prec = 10)
     auto sq_exp = [](double x) {
         return sqrt(24 * x * x * x - 35 * x * x + 18 * x - 3);
     };
-    auto y1 = [sq_exp](double x) { return (-sq_exp(x) - 5 * x + 3) / (6 * CGAL::square(x - 1)); };
-    auto z1 = [sq_exp](double x) { return (-sq_exp(x) - 7 * x + 3) / (6 * (x * x - 3 * x + 1)); };
-    auto y2 = [sq_exp](double x) { return (sq_exp(x) - 5 * x + 3) / (6 * CGAL::square(x - 1)); };
-    auto z2 = [sq_exp](double x) { return (sq_exp(x) - 7 * x + 3) / (6 * (x * x - 3 * x + 1)); };
+    auto y1 = [sq_exp](double x)
+      { return (-sq_exp(x) - 5 * x + 3) / (6 * (x - 1) * (x - 1)); };
+    auto z1 = [sq_exp](double x)
+      { return (-sq_exp(x) - 7 * x + 3) / (6 * (x * x - 3 * x + 1)); };
+    auto y2 = [sq_exp](double x)
+      { return (sq_exp(x) - 5 * x + 3) / (6 * (x - 1) * (x - 1)); };
+    auto z2 = [sq_exp](double x)
+      { return (sq_exp(x) - 7 * x + 3) / (6 * (x * x - 3 * x + 1)); };
     P corner{ 1., .5, 1. / 3 };
     return {
       create_polyline<P>(1. / 3, 1. / 2,
