@@ -665,7 +665,7 @@ mst_orient_normals(
     //   or vertex j is in the k-neighborhood of vertex i.
     Riemannian_graph riemannian_graph;
 
-    if (is_default_parameter<NamedParameters, internal_np::point_is_constrained_t>())
+    if (is_default_parameter<NamedParameters, internal_np::point_is_constrained_t>::value)
       riemannian_graph = create_riemannian_graph(points,
                                                  point_map, normal_map, index_map,
                                                  Default_constrained_map<typename PointRange::iterator>
