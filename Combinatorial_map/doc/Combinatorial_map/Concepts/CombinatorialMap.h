@@ -157,7 +157,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 template <unsigned int i> void sew(Dart_descriptor d1,Dart_descriptor d2);
 
 /*!
-  <I>i</I>-unsew darts `d` and `*opposite<i>(d)`, by keeping the generic map valid.
+  <I>i</I>-unsew darts `d` and `opposite<i>(d)`, by keeping the generic map valid.
 
 Unlinks by \f$ \beta_i\f$ all the darts in the orbit \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`d`).
 

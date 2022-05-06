@@ -556,7 +556,8 @@ private:
 
 template < class T, class Allocator, class Increment_policy, class IndexType >
 const typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type
-Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::bottom =  (std::numeric_limits<typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2;
+Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::bottom=
+  (std::numeric_limits<typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2;
 
 /*template < class T, class Allocator, class Increment_policy, class IndexType >
 void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::merge(Self &d)
