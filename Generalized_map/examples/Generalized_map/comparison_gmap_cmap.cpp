@@ -5,7 +5,7 @@
 
 typedef CGAL::Generalized_map<3>   GMap_3;
 typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef GMap_3::Dart_descriptor        Dart_const_descriptor;
+typedef GMap_3::Dart_descriptor    Dart_const_descriptor;
 
 template<typename Map>
 void test(Map& m)
