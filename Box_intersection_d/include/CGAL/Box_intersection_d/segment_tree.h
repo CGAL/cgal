@@ -325,9 +325,12 @@ public:
   static const bool value = (sizeof(f<T>(0)) == sizeof(char));
 };
 
+template <class T>
+CGAL_CPP17_INLINE constexpr bool Has_member_report_v = Has_member_report<T>::value;
+
 template <typename Callback>
 inline
-std::enable_if_t<Has_member_report<Callback>::value, bool>
+std::enable_if_t<Has_member_report_v<Callback>, bool>
 report_impl(Callback callback, int dim)
 {
   return callback.report(dim);
@@ -335,7 +338,7 @@ report_impl(Callback callback, int dim)
 
 template <typename Callback>
 inline
-std::enable_if_t<!Has_member_report<Callback>::value, bool>
+std::enable_if_t<!Has_member_report_v<Callback>, bool>
 report_impl(const Callback&, int)
 {
   return false;
@@ -343,7 +346,7 @@ report_impl(const Callback&, int)
 
 template <typename Callback>
 inline
-std::enable_if_t<Has_member_report<Callback>::value, void>
+std::enable_if_t<Has_member_report_v<Callback>, void>
 progress_impl(Callback callback, double d)
 {
   callback.progress(d);
@@ -351,7 +354,7 @@ progress_impl(Callback callback, double d)
 
 template <typename Callback>
 inline
-std::enable_if_t<!Has_member_report<Callback>::value, void>
+std::enable_if_t<!Has_member_report_v<Callback>, void>
 progress_impl(const Callback&, double)
 {}
 
