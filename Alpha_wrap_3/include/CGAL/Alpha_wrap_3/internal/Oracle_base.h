@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : TBA
+// Author(s)     : Mael Rouxel-Labbé
 //
 #ifndef CGAL_ALPHA_WRAP_3_INTERNAL_ORACLE_BASE_H
 #define CGAL_ALPHA_WRAP_3_INTERNAL_ORACLE_BASE_H
