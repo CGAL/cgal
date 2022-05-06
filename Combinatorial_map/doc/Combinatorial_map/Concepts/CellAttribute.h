@@ -69,19 +69,19 @@ Cell_attribute(const Info& info);
 /// @{
 
 /*!
-Returns one dart of the cell associated to this attribute. `nullptr` if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_false `Tag_false`\endlink.
+Returns one dart of the cell associated to this attribute, if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_true `Tag_true`\endlink.
 */
 Dart_descriptor dart();
 
 /*!
-Returns one dart of the cell associated to this attribute, when it is const. `nullptr` if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_false `Tag_false`\endlink.
+Returns one dart of the cell associated to this attribute, when it is const, if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_true `Tag_true`\endlink.
 */
 Dart_const_descriptor dart() const;
 
 /*!
-Sets the dart of the cell associated to this attribute to `ah`, if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_true `Tag_true`\endlink. Otherwise, this method does nothing. \pre `ah` belongs to the cell associated to this attribute.
+Sets the dart of the cell associated to this attribute to `ah`, if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_true `Tag_true`\endlink. Otherwise, this method does nothing. \pre `d` belongs to the cell associated to this attribute.
 */
-void set_dart(Dart_descriptor ah);
+void set_dart(Dart_descriptor d);
 
 /*!
 Returns the information of this attribute. Defined only if \link Info `Info`\endlink is different from `void`.

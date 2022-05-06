@@ -242,8 +242,8 @@ By default, descriptors used to access darts and attributes are handles, and the
 
 struct Items_with_indices
 {
-  typedef CGAL::Tag_true Use_index;
-  typedef std::uint16_t Index_type; // Optional
+  typedef CGAL::Tag_true Use_index; // CGAL::Tag_false by default
+  typedef std::uint16_t Index_type; // std::uint32_t by default
   template <class CMap>
   struct Dart_wrapper
   {
