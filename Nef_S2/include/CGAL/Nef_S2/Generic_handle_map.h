@@ -20,6 +20,10 @@
 
 namespace CGAL {
 
+/* Since Void_handle_hash_function should work
+   when the pointee is multiple different handle
+   types the greatest common divisor is the size
+   of a pointer i.e. sizeof(void*) */
 struct Void_handle_hash_function {
     std::size_t operator() (void* h) const {
         return std::size_t(h)/sizeof(void*);
