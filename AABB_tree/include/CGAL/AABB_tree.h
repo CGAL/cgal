@@ -964,7 +964,7 @@ public:
 
   template <typename Tr>
   template <typename Query>
-  boost::optional< typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type >
+  boost::optional< typename AABB_tree<Tr>::Intersection_and_primitive_id<Query>::Type >
     AABB_tree<Tr>::any_intersection(const Query& query) const
   {
     using namespace CGAL::internal::AABB_tree;
