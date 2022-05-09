@@ -44,6 +44,8 @@ namespace Polygon_mesh_processing {
 * algorithm described in the \ref PkgMesh3 package.
 *
 * @tparam TriangleMesh model of `FaceListGraph`
+* @tparam TriangleMeshOut model of `FaceListGraph`, model of `DefaultConstructible`,
+*   with an internal property map for `CGAL::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tmesh a triangle surface mesh
@@ -58,7 +60,7 @@ namespace Polygon_mesh_processing {
 *     \cgalParamType{a class model of `Kernel`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*     \cgalParamExtra{Exact constructions kernels are not supported by this function.}
+*     \cgalParamExtra{Exact construction kernels are not supported by this function.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_point_map}
@@ -171,9 +173,10 @@ namespace Polygon_mesh_processing {
 *
 */
 template<typename TriangleMesh
-       , typename NamedParameters>
+       , typename TriangleMeshOut = TriangleMesh
+       , typename NamedParameters = parameters::Default_named_parameters>
 TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
-                                      , const NamedParameters& np)
+                                      , const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -289,22 +292,14 @@ TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
                                       CGAL::parameters::no_perturb(),
                                       CGAL::parameters::no_exude());
 
-  TriangleMesh out;
+  TriangleMeshOut out;
   CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out);
   return std::move(out);
 }
-
-template<typename TriangleMesh>
-TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh)
-{
-  return surface_Delaunay_remeshing(tmesh, parameters::all_default());
-}
-
-
 
 } //end namespace Polygon_mesh_processing
 } //end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_DELAUNAY_REMESHING_H
+#endif //CGAL_POLYGON_MESH_PROCESSIlNG_DELAUNAY_REMESHING_H
