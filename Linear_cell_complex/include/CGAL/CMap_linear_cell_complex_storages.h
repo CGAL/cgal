@@ -117,6 +117,19 @@ namespace CGAL {
     typedef typename Attribute_const_range<0>::type
     Vertex_attribute_const_range;
 
+    /// Deprecated types, keep for now for backward compatibility
+    using Dart_handle=Dart_descriptor;
+    using Dart_const_handle=Dart_const_descriptor;
+
+    template<int i>
+    using Attribute_handle=Attribute_descriptor<i>;
+    template<int i>
+    using Attribute_const_handle=Attribute_const_descriptor<i>;
+    using Vertex_attribute_handle=Vertex_attribute_descriptor;
+    using Vertex_attribute_const_handle=Vertex_attribute_const_descriptor;
+
+    static const Null_descriptor_type null_handle;
+
     /// Number of marks
     static const size_type NB_MARKS = 32;
 
@@ -136,7 +149,8 @@ namespace CGAL {
     {
       // emplace null_dart; initialized in Combinatorial_map class
       null_dart_descriptor = mnull_dart_container.emplace();
-    }
+      null_dart_handle=null_dart_descriptor;
+   }
 
     void clear_storage()
     {
@@ -468,6 +482,7 @@ namespace CGAL {
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_descriptor.
     Dart_descriptor null_dart_descriptor; // Todo Dart_const_descriptor ??
+    Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
 
   protected:
     /// Dart container.
@@ -487,6 +502,13 @@ namespace CGAL {
                                          Items_, Alloc_>::Null_descriptor_type
   CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
                                 Items_, Alloc_>::null_descriptor = nullptr;
+
+  template<unsigned int d_, unsigned int ambient_dim,
+           class Traits_, class Items_, class Alloc_>
+  const typename CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                         Items_, Alloc_>::Null_descriptor_type
+  CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                Items_, Alloc_>::null_handle = nullptr;
 
 } // namespace CGAL
 

@@ -65,7 +65,6 @@ namespace CGAL {
 
     typedef typename Dart_container::Index Dart_index;
 
-    // Definition of old types, for backward compatibility.
     typedef Dart_index Dart_descriptor;
     typedef Dart_index Dart_const_descriptor;
     typedef typename Dart_container::size_type size_type;
@@ -104,6 +103,15 @@ namespace CGAL {
     struct Attribute_const_range:
       public Helper::template Attribute_const_range<i>
     {};
+
+    /// Deprecated types, keep for now for backward compatibility
+    using Dart_handle=Dart_descriptor;
+    using Dart_const_handle=Dart_const_descriptor;
+
+    template<int i>
+    using Attribute_handle=Attribute_descriptor<i>;
+    template<int i>
+    using Attribute_const_handle=Attribute_const_descriptor<i>;
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
@@ -423,6 +431,7 @@ namespace CGAL {
 
   protected:
     Dart_descriptor null_dart_descriptor; // To be compatible with combinatorial map
+    Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
 
     /// Dart container.
     Dart_container mdarts;
@@ -436,6 +445,15 @@ namespace CGAL {
   typename Generalized_map_storage_2<d_, Items_, Alloc_>::Null_descriptor_type
       Generalized_map_storage_2<d_, Items_, Alloc_>::
   null_descriptor((std::numeric_limits<Index_type>::max)()
+#ifndef CC_INDEX3
+              /2
+#endif
+              );
+
+  template<unsigned int d_, class Items_, class Alloc_>
+  typename Generalized_map_storage_2<d_, Items_, Alloc_>::Null_descriptor_type
+      Generalized_map_storage_2<d_, Items_, Alloc_>::
+  null_handle((std::numeric_limits<Index_type>::max)()
 #ifndef CC_INDEX3
               /2
 #endif

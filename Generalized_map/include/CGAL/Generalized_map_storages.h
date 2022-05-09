@@ -98,6 +98,17 @@ namespace CGAL {
       public Helper::template Attribute_const_range<i>
     {};
 
+    /// Deprecated types, keep for now for backward compatibility
+    using Dart_handle=Dart_descriptor;
+    using Dart_const_handle=Dart_const_descriptor;
+
+    template<int i>
+    using Attribute_handle=Attribute_descriptor<i>;
+    template<int i>
+    using Attribute_const_handle=Attribute_const_descriptor<i>;
+
+    static const Null_descriptor_type null_handle;
+
     /// Number of marks
     static const size_type NB_MARKS = 32;
 
@@ -114,7 +125,10 @@ namespace CGAL {
 
     // Init
     void init_storage()
-    { null_dart_descriptor=nullptr; }
+    {
+      null_dart_descriptor=nullptr;
+      null_dart_handle=null_dart_descriptor;
+    }
 
     void clear_storage()
     {}
@@ -427,6 +441,7 @@ namespace CGAL {
 
   protected:
     Dart_descriptor null_dart_descriptor; // To be compatible with combinatorial map
+    Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
 
     /// Dart container.
     Dart_container mdarts;

@@ -75,7 +75,6 @@ namespace CGAL {
 
     typedef typename Dart_container::Index Dart_index;
 
-    // Definition of old types, for backward compatibility.
     typedef Dart_index Dart_descriptor;
     typedef Dart_index Dart_const_descriptor;
     typedef typename Dart_container::size_type size_type;
@@ -123,6 +122,19 @@ namespace CGAL {
     typedef typename Attribute_range<0>::type Vertex_attribute_range;
     typedef typename Attribute_const_range<0>::type
     Vertex_attribute_const_range;
+
+    /// Deprecated types, keep for now for backward compatibility
+    using Dart_handle=Dart_descriptor;
+    using Dart_const_handle=Dart_const_descriptor;
+
+    template<int i>
+    using Attribute_handle=Attribute_descriptor<i>;
+    template<int i>
+    using Attribute_const_handle=Attribute_const_descriptor<i>;
+    using Vertex_attribute_handle=Vertex_attribute_descriptor;
+    using Vertex_attribute_const_handle=Vertex_attribute_const_descriptor;
+
+    static Null_descriptor_type null_handle;
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
@@ -499,6 +511,7 @@ namespace CGAL {
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_descriptor.
     static Dart_index null_dart_descriptor; //=0;
+    static Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
 
   protected:
     /// Dart container.
@@ -526,6 +539,23 @@ namespace CGAL {
   Null_descriptor_type CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
                                                       Items_, Alloc_>::
   null_descriptor((std::numeric_limits<Index_type>::max)()
+#ifndef CC_INDEX3
+              /2
+#endif
+              );
+
+  template<unsigned int d_,  unsigned int ambient_dim, class Traits_,
+           class Items_, class Alloc_>
+  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
+  Dart_index CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
+  null_dart_handle(0);
+
+  template<unsigned int d_, unsigned int ambient_dim, class Traits_,
+           class Items_, class Alloc_>
+  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
+  Null_descriptor_type CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+                                                      Items_, Alloc_>::
+  null_handle((std::numeric_limits<Index_type>::max)()
 #ifndef CC_INDEX3
               /2
 #endif
