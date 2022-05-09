@@ -43,7 +43,7 @@ namespace Polygon_mesh_processing {
 * @brief remeshes a surface triangle mesh following the Delaunay refinement
 * algorithm described in the \ref PkgMesh3 package.
 *
-* @tparam TriangleMesh model of `FaceListGraph` and of `MutableFaceGraph`
+* @tparam TriangleMesh model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tmesh a triangle surface mesh
