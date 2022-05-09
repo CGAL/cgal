@@ -175,7 +175,7 @@ namespace Polygon_mesh_processing {
 template<typename TriangleMesh
        , typename TriangleMeshOut = TriangleMesh
        , typename NamedParameters = parameters::Default_named_parameters>
-TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
+TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
                                       , const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
