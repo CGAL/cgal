@@ -1,3 +1,5 @@
+#define CGAL_DEBUG_TRIPLE_LINES
+
 #include <vector>
 #include <iostream>
 
@@ -12,7 +14,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
-#include <CGAL/Mesh_3/detect_triple_lines.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
@@ -48,14 +49,10 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  // Domain
-  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
-
-  /// Declare 1D-features, see above [Call detect_triple_lines]
-  if(!CGAL::Mesh_3::detect_triple_lines<Word_type>(image, domain)) {
-    return EXIT_FAILURE;
-  }
-  /// [Call add_1D_features]
+  /// [Domain creation]
+  Mesh_domain domain
+    = Mesh_domain::create_labeled_image_mesh_domain_with_features(image);
+  /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();
   double diag = CGAL::sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));

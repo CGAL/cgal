@@ -263,6 +263,23 @@ static
 Labeled_mesh_domain_3
 create_labeled_image_mesh_domain(A_i&...);
 
+/*
+ \brief Construction from a 3D labeled image with detected triple lines.
+
+This static method is a <em>named constructor</em>.
+
+\cgalHeading{Example}
+
+From the example (\ref Mesh_3/mesh_3D_image_with_detection_of_features.cpp):
+
+\snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
+
+*/
+template <typename ... A_i>
+static
+CGAL::Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
+create_labeled_image_mesh_domain_with_features(A_i&...);
+
 /// \name Deprecated constructors
 ///
 /// Those three constructors have been deprecated since CGAL-4.13, and

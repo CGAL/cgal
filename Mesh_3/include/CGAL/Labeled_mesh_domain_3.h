@@ -44,6 +44,10 @@
 // support for implicit functions
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
+// domain with features
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
+#include <CGAL/Mesh_3/detect_triple_lines.h>
+
 #include <CGAL/boost/parameter.h>
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/parameter/name.hpp>
@@ -469,6 +473,37 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
         p::construct_surface_patch_index =
         create_construct_surface_patch_index(construct_surface_patch_index_));
     }
+  }
+
+  BOOST_PARAMETER_MEMBER_FUNCTION(
+                                  (CGAL::Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>),
+                                  static create_labeled_image_mesh_domain_with_features,
+                                  parameters::tag,
+                                  (required
+                                    (image_, (const CGAL::Image_3&))
+                                  )
+                                  (optional
+                                    (relative_error_bound_, (const FT&), FT(1e-3))
+                                    (value_outside_, *, 0)
+                                    (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
+                                    (image_values_to_subdomain_indices_, *, Null_functor())
+                                    (null_subdomain_index_, *, Null_functor())
+                                    (construct_surface_patch_index_, *, Null_functor())
+                                  )
+  )
+  {
+    namespace p = CGAL::parameters;
+    CGAL::Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3> domain
+      = create_labeled_image_mesh_domain(image_,
+          p::relative_error_bound = relative_error_bound_,
+          p::p_rng = p_rng_,
+          p::image_values_to_subdomain_indices = image_values_to_subdomain_indices_,
+          p::null_subdomain_index = null_subdomain_index_,
+          p::construct_surface_patch_index = construct_surface_patch_index_);
+
+    CGAL::Mesh_3::detect_triple_lines(image_, domain);
+
+    return domain;
   }
 
   BOOST_PARAMETER_MEMBER_FUNCTION(
