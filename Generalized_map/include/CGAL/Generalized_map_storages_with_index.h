@@ -113,6 +113,8 @@ namespace CGAL {
     template<int i>
     using Attribute_const_handle=Attribute_const_descriptor<i>;
 
+    static Null_descriptor_type null_handle;
+
     /// Number of marks
     static const size_type NB_MARKS = 32;
 
