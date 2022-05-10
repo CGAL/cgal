@@ -146,16 +146,16 @@ bool detect_triple_lines_with_know_word_type(const CGAL::Image_3& image,
           CGAL_error();
         };
 #ifdef CGAL_DEBUG_TRIPLE_LINES
-        internal::debug_cerr("Cube", cube);
-        internal::debug_cerr("reference cube", reference_cube);
-        internal::debug_cerr("with transformation", internal::cube_isometries[(*case_it)[9]]);
+        CGAL::Mesh_3::internal::debug_cerr("Cube", cube);
+        CGAL::Mesh_3::internal::debug_cerr("reference cube", reference_cube);
+        CGAL::Mesh_3::internal::debug_cerr("with transformation", internal::cube_isometries[(*case_it)[9]]);
 #endif // CGAL_DEBUG_TRIPLE_LINES
 
         auto fct_it = lines.create_polylines_fcts.find(reference_cube);
         if (fct_it != lines.create_polylines_fcts.end())
         {
 #ifdef CGAL_DEBUG_TRIPLE_LINES
-          internal::debug_cerr("Using the function of", Cube(fct_it->first));
+          CGAL::Mesh_3::internal::debug_cerr("Using the function of", Cube(fct_it->first));
 #endif // CGAL_DEBUG_TRIPLE_LINES
 
           Polylines cube_features = (fct_it->second)(10);

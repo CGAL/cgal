@@ -20,6 +20,8 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <string>
+
 namespace CGAL
 {
 namespace Mesh_3
@@ -54,12 +56,12 @@ namespace internal
     }
   };
 
-  template<typename T, int N>
-  void debug_cerr(const char* title, const std::array<T, N>& tab)
+  template<typename Array>
+  void debug_cerr(const char* title, const Array& tab)
   {
     std::cerr << title << " [";
-    for (const T& t : tab)
-      std::cout << (int)(t) << " ";
+    for (const auto t : tab)
+      std::cout << std::to_string(t) << " ";
     std::cout << "]" << std::endl;
   }
 
