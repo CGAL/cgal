@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Polygon_mesh_processing/surface_Delaunay_remeshing.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -11,6 +12,7 @@
 using K     = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point = K::Point_3;
 using Mesh  = CGAL::Surface_mesh<Point>;
+using Polyhedron = CGAL::Polyhedron_3<K>;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -93,7 +95,7 @@ int main(int argc, char* argv[])
 
   std::cout << "***********************" << std::endl;
   std::cout << "Remeshing with features_angle_bound..." << std::endl;
-  Mesh outmesh3 = PMP::surface_Delaunay_remeshing(mesh,
+  Polyhedron outmesh3 = PMP::surface_Delaunay_remeshing<Mesh, Polyhedron>(mesh,
     PMP::parameters::protect_constraints(true)
     .mesh_edge_size(target_edge_length)
     .mesh_facet_size(target_edge_length)
@@ -102,8 +104,8 @@ int main(int argc, char* argv[])
 
   std::cout << "Remeshing with features_angle_bound done." << std::endl;
 
-  const std::size_t nbv3 = std::distance(outmesh3.vertices().begin(), outmesh3.vertices().end());
-  const std::size_t nbf3 = std::distance(outmesh3.faces().begin(), outmesh3.faces().end());
+  const std::size_t nbv3 = std::distance(std::begin(vertices(outmesh3)), std::end(vertices(outmesh3)));
+  const std::size_t nbf3 = std::distance(std::begin(faces(outmesh3)), std::end(faces(outmesh3)));
   assert(nbv2 == nbv3);
   assert(nbf2 == nbf3);
 
