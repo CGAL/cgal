@@ -29,7 +29,7 @@ namespace internal
 {
   using Permutation = std::array<std::uint8_t, 8>;
 
-  Permutation cube_isometries[] = {
+  constexpr Permutation cube_isometries[] = {
       {0,1,2,3,4,5,6,7},
       {1,0,3,2,5,4,7,6},
       {4,5,0,1,6,7,2,3},
@@ -80,7 +80,7 @@ namespace internal
       {4,6,0,2,5,7,1,3}
       };
 
-constexpr int num_isometries = 48;
+  constexpr int num_isometries = 48;
 
 }//end namespace internal
 }//end namespace Mesh_3

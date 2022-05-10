@@ -37,7 +37,7 @@ using Hash_combination = boost::hash<Combination>;
 
 using Cases = std::array<std::uint8_t, 10>[6561];
 
-auto find_case(const Cases& cases, Combination comb) {
+inline auto find_case(const Cases& cases, Combination comb) {
   using std::begin;
   using std::end;
   return std::lower_bound(begin(cases), end(cases),
