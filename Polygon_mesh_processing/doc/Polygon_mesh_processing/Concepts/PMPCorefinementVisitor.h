@@ -10,12 +10,12 @@
 
 class PMPCorefinementVisitor{
 public:
-/// Mesh type
-typedef unspecified_type Triangle_mesh;
-/// Face descriptor type
-typedef unspecified_type face_descriptor;
-/// Halfedge descriptor type
-typedef unspecified_type halfedge_descriptor;
+  /// Mesh type
+  typedef unspecified_type Triangle_mesh;
+  /// Face descriptor type
+  typedef unspecified_type face_descriptor;
+  /// Halfedge descriptor type
+  typedef unspecified_type halfedge_descriptor;
 
 /// @name Functions used by corefine() when faces are split
 /// @{
@@ -116,5 +116,61 @@ typedef unspecified_type halfedge_descriptor;
   /// The point has already been put in the vertex point map.
   void after_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src,
                          vertex_descriptor v_tgt, const Triangle_mesh& tm_tgt);
+/// @}
+
+/// @name Functions used by corefine() for progress tracking
+/// @{
+  /// called before starting to detect intersections between faces from a mesh and edges of the other
+  void start_filter_intersections();
+  /// called during detection of intersections between faces from a mesh and edges of the other.
+  /// `d` is a double value in `[0,1]` that is increasing with the number of calls. The closer
+  /// to `1` you are the closer the intersection detection is complete.
+  void progress_filter_intersection(double d);
+  /// called after detection of intersections between faces from a mesh and edges of the other
+  void end_filter_intersections();
+
+  /// called before processing intersections between the `n` pairs of coplanar faces
+  void start_handling_intersection_of_coplanar_faces(std::size_t n);
+  /// called each time a pair of coplanar face is processed
+  void coplanar_faces_step() const;
+  /// called after processing all intersections between coplanar faces
+  void end_handling_intersection_of_coplanar_faces() const;
+
+  /// called before processing intersections between edges and faces of two meshes (called twice).
+  /// `n` is the number of edges possibilly intersecting faces that should be processed.
+  void start_handling_edge_face_intersections(std::size_t n);
+  /// called each time an edge is processed
+  void intersection_points_step();
+  /// called after having processed edge-face intersection between two meshes
+  void end_handling_edge_face_intersections();
+
+  /// called before triangulating the `n` splitted faces
+  void start_triangulation(std::size_t n);
+  /// called when triangulating `i`'th face
+  void face_triangulation(std::size_t i);
+  /// called after the triangulation of the splitted faces
+  void end_triangulation();
+/// @}
+
+/// @name Functions used by Boolean operations functions using corefinement for progress tracking.
+/// These functions are not needed if you only call `corefine()`.
+  /// called before computing Boolean operations output after corefinement
+  void start_build_output();
+  /// called when output of Boolean operations are computed
+  void end_build_output();
+  /// called before filtering intersection edges between interior to a set of coplanar faces
+  void filter_coplanar_edges() const {}
+  /// called before segmenting input meshes in patches defined by connected components seperated by intersection edges
+  void detect_patches() const {}
+  /// called before classifying which patches contributes to each Boolean operation
+  void classify_patches() const {}
+  /// called before classifying patches of `tm` that are free from intersection with the other mesh
+  void classify_intersection_free_patches(const TriangleMesh& tm) const {}
+  /// called before creating a new mesh for a Boolean operation of type `t`.
+  void out_of_place_operation(Boolean_operation_type t) const {}
+  /// called before updating an input mesh to store the Boolean operation of type `t`.
+  void in_place_operation(Boolean_operation_type t) const {}
+  /// called before updating both input meshes to store the Boolean operations of type `t1` and `t2`.
+  void in_place_operations(Boolean_operation_type t1,Boolean_operation_type t2) const {}
 /// @}
 };

@@ -570,9 +570,9 @@ public:
   }
 
 
-  void start_intersection_points(std::size_t i) const
+  void start_handling_edge_face_intersections(std::size_t i) const
   {
-    user_visitor.start_intersection_points(i);
+    user_visitor.start_handling_edge_face_intersections(i);
   }
 
   void intersection_points_step() const
@@ -580,14 +580,14 @@ public:
     user_visitor.intersection_points_step();
   }
 
-  void end_intersection_points() const
+  void end_handling_edge_face_intersections() const
   {
-    user_visitor.end_intersection_points();
+    user_visitor.end_handling_edge_face_intersections();
   }
 
-  void start_coplanar_faces(std::size_t i) const
+  void start_handling_intersection_of_coplanar_faces(std::size_t i) const
   {
-    user_visitor.start_coplanar_faces(i);
+    user_visitor.start_handling_intersection_of_coplanar_faces(i);
   }
 
   void coplanar_faces_step() const
@@ -595,9 +595,9 @@ public:
     user_visitor.coplanar_faces_step();
   }
 
-  void end_coplanar_faces() const
+  void end_handling_intersection_of_coplanar_faces() const
   {
-    user_visitor.end_coplanar_faces();
+    user_visitor.end_handling_intersection_of_coplanar_faces();
   }
 
   void start_build_output() const
@@ -1208,7 +1208,7 @@ public:
     for (typename On_face_map::iterator it=on_face_map.begin();
           it!=on_face_map.end();++it)
     {
-      user_visitor.progress_triangulation(i++);
+      user_visitor.face_triangulation(i++);
       face_descriptor f = it->first; //the face to be triangulated
       Node_ids& node_ids  = it->second; // ids of nodes in the interior of f
       typename Face_boundaries::iterator it_fb=face_boundaries.find(f);
@@ -1566,7 +1566,7 @@ public:
                                                   : on_face.find(tm1_ptr)->second.size() +
                                                     on_face.find(tm2_ptr)->second.size();
 
-    user_visitor.start_triangulation(total_size);
+    user_visitor.start_face_triangulations(total_size);
 
     for (typename std::map<TriangleMesh*,On_face_map>::iterator
            it=on_face.begin(); it!=on_face.end(); ++it)
@@ -1577,7 +1577,7 @@ public:
         triangulate_intersected_faces(it, vpm2, nodes, mesh_to_face_boundaries);
     }
 
-    user_visitor.end_triangulation();
+    user_visitor.end_face_triangulations();
 
     nodes.finalize(mesh_to_node_id_to_vertex);
     user_visitor.start_build_output();

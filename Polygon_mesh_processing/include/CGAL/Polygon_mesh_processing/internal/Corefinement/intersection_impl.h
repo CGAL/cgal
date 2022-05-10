@@ -126,20 +126,19 @@ struct Default_surface_intersection_visitor{
   void progress_filter_intersection(double) const{}
   void end_filter_intersections() const {}
 
-  void start_triangulation(std::size_t) const {}
-  void progress_triangulation(std::size_t) const {}
-  void end_triangulation() const {}
+  void start_face_triangulations(std::size_t) const {}
+  void face_triangulation(std::size_t) const {}
+  void end_face_triangulations() const {}
 
-  void start_coplanar_faces(std::size_t) const {}
+  void start_handling_intersection_of_coplanar_faces(std::size_t) const {}
   void coplanar_faces_step() const {}
-  void end_coplanar_faces() const {}
+  void end_handling_intersection_of_coplanar_faces() const {}
 
-  void start_intersection_points(std::size_t) const {}
+  void start_handling_edge_face_intersections(std::size_t) const {}
   void intersection_points_step() const {}
-  void end_intersection_points() const {}
+  void end_handling_edge_face_intersections() const {}
 
   void start_build_output() const {}
-  void build_output_step() const {}
   void end_build_output() const {}
 };
 
@@ -723,7 +722,7 @@ class Intersection_of_triangle_meshes
     typedef std::map<Key,Node_id> Coplanar_node_map;
     Coplanar_node_map coplanar_node_map;
 
-    visitor.start_coplanar_faces(coplanar_faces.size());
+    visitor.start_handling_intersection_of_coplanar_faces(coplanar_faces.size());
     for(const Face_pair& face_pair : coplanar_faces)
     {
       visitor.coplanar_faces_step();
@@ -830,7 +829,7 @@ class Intersection_of_triangle_meshes
         }
       }
     }
-    visitor.end_coplanar_faces();
+    visitor.end_handling_intersection_of_coplanar_faces();
   }
 
   //add a new node in the final graph.
@@ -868,7 +867,7 @@ class Intersection_of_triangle_meshes
   {
     typedef std::tuple<Intersection_type, halfedge_descriptor, bool,bool>  Inter_type;
 
-    visitor.start_intersection_points(tm1_edge_to_tm2_faces.size());
+    visitor.start_handling_edge_face_intersections(tm1_edge_to_tm2_faces.size());
 
     for(typename Edge_to_faces::iterator it=tm1_edge_to_tm2_faces.begin();
                                          it!=tm1_edge_to_tm2_faces.end();++it)
@@ -1092,7 +1091,7 @@ class Intersection_of_triangle_meshes
       } // end loop on all faces that intersect the edge
     } // end loop on all entries (edges) in 'edge_to_face'
     CGAL_assertion(nodes.size()==unsigned(current_node+1));
-    visitor.end_intersection_points();
+    visitor.end_handling_edge_face_intersections();
   }
 
   struct Graph_node{

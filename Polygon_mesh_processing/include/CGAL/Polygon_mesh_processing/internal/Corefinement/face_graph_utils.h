@@ -469,17 +469,17 @@ struct Default_visitor{
   void progress_filter_intersection(double ) const {}
   void end_filter_intersections() const {}
 
-  void start_triangulation(std::size_t) const {}
-  void progress_triangulation(std::size_t) const {}
-  void end_triangulation() const {}
+  void start_face_triangulations(std::size_t) const {}
+  void face_triangulation(std::size_t) const {}
+  void end_face_triangulations() const {}
 
-  void start_coplanar_faces(std::size_t) const {}
+  void start_handling_intersection_of_coplanar_faces(std::size_t) const {}
   void coplanar_faces_step() const {}
-  void end_coplanar_faces() const {}
+  void end_handling_intersection_of_coplanar_faces() const {}
 
-  void start_intersection_points(std::size_t) const {}
+  void start_handling_edge_face_intersections(std::size_t) const {}
   void intersection_points_step() const {}
-  void end_intersection_points() const {}
+  void end_handling_edge_face_intersections() const {}
 
   void start_build_output() const {}
   void end_build_output() const {}

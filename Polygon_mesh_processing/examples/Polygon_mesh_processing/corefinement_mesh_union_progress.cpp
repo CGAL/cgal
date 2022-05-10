@@ -29,13 +29,13 @@ struct Visitor_rep{
     }
   }
 
-  void start_triangulation(std::size_t tf)
+  void start_face_triangulations(std::size_t tf)
   {
     tfaces = tf;
     bound_faces = tf/10;
   }
 
-  void progress_triangulation(std::size_t i)
+  void face_triangulation(std::size_t i)
   {
     if(i> bound_faces){
       std::cout << double(i)/double(tfaces) * 100  << " %" << std::endl;
@@ -124,20 +124,20 @@ struct Visitor :
     std::cout << "Visitor::end_filter_intersections() at " << sptr->time() << " sec."  << std::endl;
   }
 
-  void start_triangulation(std::size_t tf)const
+  void start_face_triangulations(std::size_t tf)const
   {
     std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->time() << " sec."  << std::endl;
-    sptr->start_triangulation(tf);
+    sptr->start_face_triangulations(tf);
   }
 
-  void progress_triangulation(std::size_t i) const
+  void face_triangulation(std::size_t i) const
   {
-    sptr->progress_triangulation(i);
+    sptr->face_triangulation(i);
   }
 
-  void end_triangulation()const
+  void end_face_triangulations()const
   {
-    std::cout << "Visitor::end_triangulation() at " << sptr->time() << " sec."  << std::endl;
+    std::cout << "Visitor::end_face_triangulations() at " << sptr->time() << " sec."  << std::endl;
   }
 
   void start_coplanar_faces(std::size_t i) const
