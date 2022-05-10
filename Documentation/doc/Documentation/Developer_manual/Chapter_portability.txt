@@ -304,7 +304,7 @@ up-to-date version of this list.
 \subsection secworkaround_macros Macros connected to workarounds/compilers
 
 Some macros are defined according to certain workaround flags. This is
-done to avoid some `#ifdef`s in our actual code.
+done to avoid some `ifdef`s in our actual code.
 
 <DL>
 <DT><B><TT>CGAL_LITTLE_ENDIAN</TT></B><DD> set, iff
