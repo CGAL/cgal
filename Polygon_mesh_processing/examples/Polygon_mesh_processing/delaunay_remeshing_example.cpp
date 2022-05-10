@@ -14,9 +14,7 @@ typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
 
 typedef CGAL::Mesh_constant_domain_field_3<K, int> Sizing_field;
 
-
 namespace PMP = CGAL::Polygon_mesh_processing;
-
 
 int main(int argc, char* argv[])
 {
