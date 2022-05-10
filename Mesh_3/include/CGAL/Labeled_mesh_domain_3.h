@@ -46,7 +46,6 @@
 
 // domain with features
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include <CGAL/Mesh_3/detect_triple_lines.h>
 
 #include <CGAL/boost/parameter.h>
 #include <boost/parameter/preprocessor.hpp>
@@ -55,6 +54,15 @@
 #  include <boost/format.hpp>
 #endif
 #include <boost/optional.hpp>
+
+namespace CGAL {
+  struct Null_subdomain_index {
+    template <typename T>
+    bool operator()(const T& x) const { return 0 == x; }
+  };
+}
+
+#include <CGAL/Mesh_3/detect_triple_lines.h> //needs Null_subdomain_index
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -127,11 +135,6 @@ namespace internal {
 
 } // end namespace CGAL::Mesh_3::internal
 } // end namespace CGAL::Mesh_3
-
-struct Null_subdomain_index {
-  template <typename T>
-  bool operator()(const T& x) const { return 0 == x; }
-};
 
 template <typename Subdomain_index>
 struct Construct_pair_from_subdomain_indices {
