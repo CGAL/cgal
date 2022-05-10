@@ -209,9 +209,9 @@ bool detect_triple_lines_with_know_word_type(const CGAL::Image_3& image,
   // call the split_graph_into_polylines, to create long polylines from the
   // short polylines that were generated per voxel.
   Polylines new_polylines_inside;
-  CGAL::polylines_to_protect<Point_3>(new_polylines_inside,
-    features_inside.begin(),
-    features_inside.end());
+  CGAL::polylines_to_protect(new_polylines_inside,
+                             features_inside.begin(),
+                             features_inside.end());
 
   std::vector<std::vector<Point_3> > polylines_on_bbox;
   CGAL::polylines_to_protect<Point_3, Word_type>(image, polylines_on_bbox,
