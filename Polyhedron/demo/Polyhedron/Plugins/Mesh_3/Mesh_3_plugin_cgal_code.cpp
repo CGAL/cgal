@@ -359,35 +359,36 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     }
     else
 #endif
-    {
-      p_domain = new Image_mesh_domain
-      (Image_mesh_domain::create_labeled_image_mesh_domain
-       (p::image = *pImage,
-        p::relative_error_bound = 1e-6,
-        p::construct_surface_patch_index =
-          [](int i, int j) { return (i * 1000 + j); }
-        )
-       );
-    }
+      if (protect_features)
+      {
+        if (polylines.empty())
+        {
+          p_domain = new Image_mesh_domain
+          (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
+          (p::image = *pImage,
+            p::relative_error_bound = 1e-6,
+            p::construct_surface_patch_index =
+            [](int i, int j) { return (i * 1000 + j); }
+          )
+          );
+        }
+        else
+        {
+          p_domain = new Image_mesh_domain
+          (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
+          (p::image = *pImage,
+            p::relative_error_bound = 1e-6,
+            p::construct_surface_patch_index =
+            [](int i, int j) { return (i * 1000 + j); }
+          )
+          );
 
-    if(protect_features && polylines.empty()){
-      std::vector<std::vector<Bare_point> > polylines_on_bbox;
+          // Insert edges in domain
+          p_domain->add_features(polylines.begin(), polylines.end());
+        }
+      }
 
-      CGAL_IMAGE_IO_CASE(pImage->image(),
-                         {
-                           typedef Word Image_word_type;
-                           (CGAL::polylines_to_protect<
-                              Bare_point,
-                              Image_word_type>(*pImage, polylines_on_bbox));
-                           p_domain->add_features(polylines_on_bbox.begin(),
-                                                  polylines_on_bbox.end());
-                         }
-                         );
-    }
-    if(! polylines.empty()){
-      // Insert edge in domain
-      p_domain->add_features(polylines.begin(), polylines.end());
-    }
+
     typedef ::Mesh_function<Image_mesh_domain,
                             Mesh_fnt::Labeled_image_domain_tag> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
