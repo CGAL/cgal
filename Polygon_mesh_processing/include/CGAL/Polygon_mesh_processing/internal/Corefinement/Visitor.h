@@ -553,20 +553,20 @@ public:
   {}
 
 
-  void start_filter_intersections() const
+  void start_filtering_intersections() const
   {
-    user_visitor.start_filter_intersections();
+    user_visitor.start_filtering_intersections();
   }
 
 
-  void progress_filter_intersection(double d) const
+  void progress_filtering_intersection(double d) const
   {
-    user_visitor.progress_filter_intersection(d);
+    user_visitor.progress_filtering_intersection(d);
   }
 
-  void end_filter_intersections() const
+  void end_filtering_intersections() const
   {
-    user_visitor.end_filter_intersections();
+    user_visitor.end_filtering_intersections();
   }
 
 
@@ -575,9 +575,9 @@ public:
     user_visitor.start_handling_edge_face_intersections(i);
   }
 
-  void intersection_points_step() const
+  void edge_face_intersections_step() const
   {
-    user_visitor.intersection_points_step();
+    user_visitor.edge_face_intersections_step();
   }
 
   void end_handling_edge_face_intersections() const
@@ -590,9 +590,9 @@ public:
     user_visitor.start_handling_intersection_of_coplanar_faces(i);
   }
 
-  void coplanar_faces_step() const
+  void intersection_of_coplanar_faces_step() const
   {
-    user_visitor.coplanar_faces_step();
+    user_visitor.intersection_of_coplanar_faces_step();
   }
 
   void end_handling_intersection_of_coplanar_faces() const
@@ -600,9 +600,9 @@ public:
     user_visitor.end_handling_intersection_of_coplanar_faces();
   }
 
-  void start_build_output() const
+  void start_building_output() const
   {
-    user_visitor.start_build_output();
+    user_visitor.start_building_output();
   }
 
   void build_output_step() const
@@ -610,9 +610,9 @@ public:
     user_visitor.build_output_step();
   }
 
-  void end_build_output() const
+  void end_building_output() const
   {
-    user_visitor.end_build_output();
+    user_visitor.end_building_output();
   }
 
   void
@@ -1204,11 +1204,10 @@ public:
 
     const Node_id nb_nodes = nodes.size();
 
-    std::size_t i = 0;
     for (typename On_face_map::iterator it=on_face_map.begin();
           it!=on_face_map.end();++it)
     {
-      user_visitor.face_triangulation(i++);
+      user_visitor.triangulating_faces_step();
       face_descriptor f = it->first; //the face to be triangulated
       Node_ids& node_ids  = it->second; // ids of nodes in the interior of f
       typename Face_boundaries::iterator it_fb=face_boundaries.find(f);
@@ -1566,7 +1565,7 @@ public:
                                                   : on_face.find(tm1_ptr)->second.size() +
                                                     on_face.find(tm2_ptr)->second.size();
 
-    user_visitor.start_face_triangulations(total_size);
+    user_visitor.start_triangulating_faces(total_size);
 
     for (typename std::map<TriangleMesh*,On_face_map>::iterator
            it=on_face.begin(); it!=on_face.end(); ++it)
@@ -1577,17 +1576,17 @@ public:
         triangulate_intersected_faces(it, vpm2, nodes, mesh_to_face_boundaries);
     }
 
-    user_visitor.end_face_triangulations();
+    user_visitor.end_triangulating_faces();
 
     nodes.finalize(mesh_to_node_id_to_vertex);
-    user_visitor.start_build_output();
+    user_visitor.start_building_output();
     // additional operations
     output_builder(nodes,
                    input_with_coplanar_faces,
                    is_node_of_degree_one,
                    mesh_to_node_id_to_vertex);
 
-    user_visitor.end_build_output();
+    user_visitor.end_building_output();
   }
 };
 

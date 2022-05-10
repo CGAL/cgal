@@ -122,24 +122,24 @@ struct Default_surface_intersection_visitor{
   {}
 
   // needed for progress tracking
-  void start_filter_intersections() const {}
-  void progress_filter_intersection(double) const{}
-  void end_filter_intersections() const {}
+  void start_filtering_intersections() const {}
+  void progress_filtering_intersection(double) const{}
+  void end_filtering_intersections() const {}
 
-  void start_face_triangulations(std::size_t) const {}
-  void face_triangulation(std::size_t) const {}
-  void end_face_triangulations() const {}
+  void start_triangulating_faces(std::size_t) const {}
+  void triangulating_faces_step(std::size_t) const {}
+  void end_triangulating_faces() const {}
 
   void start_handling_intersection_of_coplanar_faces(std::size_t) const {}
-  void coplanar_faces_step() const {}
+  void intersection_of_coplanar_faces_step() const {}
   void end_handling_intersection_of_coplanar_faces() const {}
 
   void start_handling_edge_face_intersections(std::size_t) const {}
-  void intersection_points_step() const {}
+  void edge_face_intersections_step() const {}
   void end_handling_edge_face_intersections() const {}
 
-  void start_build_output() const {}
-  void end_build_output() const {}
+  void start_building_output() const {}
+  void end_building_output() const {}
 };
 
 struct Node_id_set {
@@ -725,7 +725,7 @@ class Intersection_of_triangle_meshes
     visitor.start_handling_intersection_of_coplanar_faces(coplanar_faces.size());
     for(const Face_pair& face_pair : coplanar_faces)
     {
-      visitor.coplanar_faces_step();
+      visitor.intersection_of_coplanar_faces_step();
       face_descriptor f1=face_pair.first;
       face_descriptor f2=face_pair.second;
 
@@ -872,7 +872,7 @@ class Intersection_of_triangle_meshes
     for(typename Edge_to_faces::iterator it=tm1_edge_to_tm2_faces.begin();
                                          it!=tm1_edge_to_tm2_faces.end();++it)
     {
-      visitor.intersection_points_step();
+      visitor.edge_face_intersections_step();
       edge_descriptor e_1=it->first;
 
       halfedge_descriptor h_1=halfedge(e_1,tm1);
@@ -1652,10 +1652,10 @@ public:
     std::set<face_descriptor> tm1_faces;
     std::set<face_descriptor> tm2_faces;
 
-    visitor.start_filter_intersections();
+    visitor.start_filtering_intersections();
     filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, false);
     filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, true);
-    visitor.end_filter_intersections();
+    visitor.end_filtering_intersections();
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);

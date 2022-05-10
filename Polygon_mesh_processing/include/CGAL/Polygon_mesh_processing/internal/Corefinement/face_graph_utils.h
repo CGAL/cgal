@@ -465,24 +465,24 @@ struct Default_visitor{
                          vertex_descriptor /* v_tgt */, TriangleMesh& /*tm_tgt*/){}
 
   // progress tracking
-  void start_filter_intersections() const {}
-  void progress_filter_intersection(double ) const {}
-  void end_filter_intersections() const {}
+  void start_filtering_intersections() const {}
+  void progress_filtering_intersection(double ) const {}
+  void end_filtering_intersections() const {}
 
-  void start_face_triangulations(std::size_t) const {}
-  void face_triangulation(std::size_t) const {}
-  void end_face_triangulations() const {}
+  void start_triangulating_faces(std::size_t) const {}
+  void triangulating_faces_step() const {}
+  void end_triangulating_faces() const {}
 
   void start_handling_intersection_of_coplanar_faces(std::size_t) const {}
-  void coplanar_faces_step() const {}
+  void intersection_of_coplanar_faces_step() const {}
   void end_handling_intersection_of_coplanar_faces() const {}
 
   void start_handling_edge_face_intersections(std::size_t) const {}
-  void intersection_points_step() const {}
+  void edge_face_intersections_step() const {}
   void end_handling_edge_face_intersections() const {}
 
-  void start_build_output() const {}
-  void end_build_output() const {}
+  void start_building_output() const {}
+  void end_building_output() const {}
 
 // Required by Face_graph_output_builder
   void filter_coplanar_edges() const {}

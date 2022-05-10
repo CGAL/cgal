@@ -163,7 +163,7 @@ public:
 
   void progress(double d)
   {
-    visitor.progress_filter_intersection(d);
+    visitor.progress_filtering_intersection(d);
   }
 
 };
