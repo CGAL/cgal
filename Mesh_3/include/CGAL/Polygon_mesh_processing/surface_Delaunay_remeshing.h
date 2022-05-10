@@ -195,7 +195,7 @@ TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
 
   if (!CGAL::is_triangle_mesh(tmesh)) {
     std::cerr << "Input geometry is not triangulated." << std::endl;
-    return TriangleMesh();
+    return TriangleMeshOut();
   }
 
   // Create a vector with only one element: the pointer to the polyhedron.
