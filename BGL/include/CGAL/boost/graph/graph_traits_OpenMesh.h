@@ -269,7 +269,7 @@ out_edges(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
 
 template <typename K>
 CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::adjacency_iterator>
-adjaecnt_vertices(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
+adjacent_vertices(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
                  const OPEN_MESH_CLASS& sm)
 {
   return CGAL::vertices_around_target(v,sm);
