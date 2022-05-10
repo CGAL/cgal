@@ -29,14 +29,14 @@ namespace Mesh_3
 namespace internal
 {
   using Coordinates = std::array<int, 3>;
-  constexpr Coordinates coordinates[8] = { 0, 0, 0,
-                                           1, 0, 0,
-                                           0, 1, 0,
-                                           1, 1, 0,
-                                           0, 0, 1,
-                                           1, 0, 1,
-                                           0, 1, 1,
-                                           1, 1, 1 };
+  constexpr Coordinates coordinates[8] = { {0, 0, 0},
+                                           {1, 0, 0},
+                                           {0, 1, 0},
+                                           {1, 1, 0},
+                                           {0, 0, 1},
+                                           {1, 0, 1},
+                                           {0, 1, 1},
+                                           {1, 1, 1} };
 
   Coordinates minus(const Coordinates& b, const Coordinates& a) {
     return { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
