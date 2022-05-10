@@ -29,6 +29,9 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+enum Boolean_operation_type {UNION = 0, INTERSECTION,
+                             TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
+
 template <typename G>
 struct No_mark
 {
@@ -479,9 +482,16 @@ struct Default_visitor{
   void end_intersection_points() const {}
 
   void start_build_output() const {}
-  void build_output_step() const {}
   void end_build_output() const {}
 
+// Required by Face_graph_output_builder
+  void filter_coplanar_edges() const {}
+  void detect_patches() const {}
+  void classify_patches() const {}
+  void classify_intersection_free_patches(const TriangleMesh&) const {}
+  void out_of_place_operation(Boolean_operation_type) const {}
+  void in_place_operation(Boolean_operation_type) const {}
+  void in_place_operations(Boolean_operation_type,Boolean_operation_type) const {}
 
   // calls commented in the code and probably incomplete due to the migration
   // see NODE_VISITOR_TAG
@@ -1118,8 +1128,6 @@ void append_patches_to_triangle_mesh(
     ids_of_patches_to_append.push_back(i);
   }
 
-  user_visitor.build_output_step();
-
   std::vector<halfedge_descriptor> interior_vertex_halfedges;
   for (std::size_t i : ids_of_patches_to_append)
   {
@@ -1179,8 +1187,6 @@ void append_patches_to_triangle_mesh(
     }
   }
 
-  user_visitor.build_output_step();
-
   for (std::size_t i : ids_of_patches_to_append)
   {
     Patch_description<TriangleMesh>& patch = patches[i];
@@ -1203,8 +1209,6 @@ void append_patches_to_triangle_mesh(
       }
     }
   }
-
-    user_visitor.build_output_step();
 
   // handle interior edges that are on the border of the mesh:
   // they do not have a prev/next pointer set since only the pointers
@@ -1250,8 +1254,6 @@ void append_patches_to_triangle_mesh(
       }
   }
 
-  user_visitor.build_output_step();
-
   // now the step (ii) we look for the candidate halfedge by turning around
   // the vertex in the direction of the interior of the patch
   for(halfedge_descriptor h_out : border_halfedges_target_to_link)
@@ -1266,8 +1268,6 @@ void append_patches_to_triangle_mesh(
     set_next(h_out, candidate, output);
   }
 
-  user_visitor.build_output_step();
-
   for(halfedge_descriptor h_out : border_halfedges_source_to_link)
   {
     halfedge_descriptor candidate =
@@ -1276,8 +1276,6 @@ void append_patches_to_triangle_mesh(
       candidate = opposite(next(candidate, output), output);
     set_next(candidate, h_out, output);
   }
-
-  user_visitor.build_output_step();
 
   // For all interior vertices, update the vertex pointer
   // of all but the vertex halfedge
@@ -1291,8 +1289,6 @@ void append_patches_to_triangle_mesh(
       set_target(next_around_vertex, v, output);
     }while(h_out != next_around_vertex);
   }
-
-  user_visitor.build_output_step();
 
   for (std::size_t i : ids_of_patches_to_append)
   {

@@ -175,11 +175,6 @@ struct Visitor :
     std::cout << "Visitor::start_build_output() at " << sptr->time()  << " sec."<< std::endl;
   }
 
-  void build_output_step() const
-  {
-    std::cout << "Visitor::build_output_step() at " << sptr->time() << " sec." << std::endl;
-  }
-
   void end_build_output() const
   {
     std::cout << "Visitor::end_build_output() at " << sptr->time() << " sec." << std::endl;
