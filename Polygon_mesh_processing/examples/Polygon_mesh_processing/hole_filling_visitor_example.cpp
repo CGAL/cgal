@@ -126,8 +126,8 @@ struct Progress :
 
   mutable Timer timer;
   double time_limit;
-  int quadratic_n = 0, quadratic_i = 0, quadratic_report = 0;
-  int cubic_n = 0, cubic_i = 0, cubic_report = 0;
+  std::size_t quadratic_n = 0, quadratic_i = 0, quadratic_report = 0;
+  std::size_t cubic_n = 0, cubic_i = 0, cubic_report = 0;
 };
 
 // Incrementally fill the holes that are no larger than given diameter
