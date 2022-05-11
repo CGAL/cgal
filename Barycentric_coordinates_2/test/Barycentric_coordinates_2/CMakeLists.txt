@@ -7,7 +7,6 @@ cmake_minimum_required(VERSION 3.1...3.22)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-create_single_source_cgal_program("test_deprecated_macro.cpp")
 create_single_source_cgal_program("test_almost_degenerate_segment.cpp")
 create_single_source_cgal_program("test_segment_coordinates.cpp")
 create_single_source_cgal_program("test_segment_coordinates_with_offset.cpp")

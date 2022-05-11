@@ -197,9 +197,6 @@ namespace Barycentric_coordinates {
   */
   template<class Traits>
   class
-  #ifndef DOXYGEN_RUNNING
-  CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
-  #endif
   Triangle_coordinates_2
   {
 
@@ -230,6 +227,10 @@ namespace Barycentric_coordinates {
     /// Creates the class `Triangle_coordinates_2` that implements triangle coordinates with respect to an arbitrary non-degenerate triangle in the plane.
     /// The triangle is given by its three vertices.
     /// \pre Triangle is not degenerate.
+
+    #ifndef DOXYGEN_RUNNING
+      CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+    #endif
     Triangle_coordinates_2(
       const Point_2 &first_vertex,
       const Point_2 &second_vertex,
