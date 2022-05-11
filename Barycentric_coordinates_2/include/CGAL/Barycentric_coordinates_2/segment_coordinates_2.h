@@ -368,15 +368,12 @@ namespace Barycentric_coordinates {
     typename Traits::Compute_scalar_product_2 scalar_product_2 = barycentric_traits.compute_scalar_product_2_object();
     typename Traits::Compute_squared_distance_2 squared_distance_2 = barycentric_traits.compute_squared_distance_2_object();
 
-    // Number type.
-    typedef typename Traits::FT FT;
-
     // Project point on the segment and compute the first coordinate.
-    const FT opposite_scalar_product = scalar_product_2(query_point - second_vertex, first_vertex - second_vertex);
-    const FT b_first = opposite_scalar_product / squared_distance_2(first_vertex, second_vertex);
+    const typename Traits::FT opposite_scalar_product = scalar_product_2(query_point - second_vertex, first_vertex - second_vertex);
+    const typename Traits::FT b_first = opposite_scalar_product / squared_distance_2(first_vertex, second_vertex);
 
     // Return the std::array<FT,2> type of coordinates.
-    return CGAL::make_array(b_first, FT(1) - b_first);
+    return CGAL::make_array(b_first, typename Traits::FT(1) - b_first);
   }
 
 #endif // CGAL_NO_DEPRECATED_CODE
