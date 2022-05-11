@@ -19,7 +19,7 @@ struct Visitor_rep{
     t.start();
   }
 
-  void progress_filtering_intersection(double d)
+  void progress_filtering_intersections(double d)
    {
     d /= normalize;
     total += d;
@@ -110,9 +110,9 @@ struct Visitor :
     : sptr(std::make_shared<Visitor_rep>())
   {}
 
-  void progress_filtering_intersection(double d)
+  void progress_filtering_intersections(double d)
   {
-    sptr->progress_filtering_intersection(d);
+    sptr->progress_filtering_intersections(d);
   }
 
   void start_filtering_intersections() const

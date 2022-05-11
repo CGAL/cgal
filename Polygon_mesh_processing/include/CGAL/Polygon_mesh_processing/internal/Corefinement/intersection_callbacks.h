@@ -155,15 +155,9 @@ public:
     operator()(*face_box_ptr, *edge_box_ptr);
   }
 
-   bool report(int dim)
-  {
-    return (dim == Box::dimension() - 1);
-  }
-
-
   void progress(double d)
   {
-    visitor.progress_filtering_intersection(d);
+    visitor.progress_filtering_intersections(d);
   }
 
 };

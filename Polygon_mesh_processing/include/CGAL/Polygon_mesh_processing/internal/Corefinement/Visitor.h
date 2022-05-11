@@ -559,9 +559,9 @@ public:
   }
 
 
-  void progress_filtering_intersection(double d) const
+  void progress_filtering_intersections(double d) const
   {
-    user_visitor.progress_filtering_intersection(d);
+    user_visitor.progress_filtering_intersections(d);
   }
 
   void end_filtering_intersections() const

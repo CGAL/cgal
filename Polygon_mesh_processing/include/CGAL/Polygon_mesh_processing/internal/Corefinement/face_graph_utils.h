@@ -466,7 +466,7 @@ struct Default_visitor{
 
   // progress tracking
   void start_filtering_intersections() const {}
-  void progress_filtering_intersection(double ) const {}
+  void progress_filtering_intersections(double ) const {}
   void end_filtering_intersections() const {}
 
   void start_triangulating_faces(std::size_t) const {}

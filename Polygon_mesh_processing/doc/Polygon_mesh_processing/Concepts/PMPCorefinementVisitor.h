@@ -83,7 +83,7 @@ public:
 /// @}
 
 /// @name Functions used by Boolean operations functions using corefinement.
-/// These functions are not needed if you only call `corefine()`.
+/// These functions are not needed if only call `corefine()` is called.
 /// @{
   /// called before importing the face `f_src` of `tm_src` in `tm_tgt`
   void before_face_copy(face_descriptor f_src, const Triangle_mesh& tm_src, const Triangle_mesh& tm_tgt);
@@ -124,8 +124,8 @@ public:
   void start_filtering_intersections();
   /// called during detection of intersections between faces from a mesh and edges of the other.
   /// `d` is a double value in `[0,1]` that is increasing with the number of calls. The closer
-  /// to `1` you are the closer the intersection detection is complete.
-  void progress_filtering_intersection(double d);
+  /// to `1` is `d`, the closer the intersection detection is complete.
+  void progress_filtering_intersections(double d);
   /// called after detection of intersections between faces from a mesh and edges of the other
   void end_filtering_intersections();
 
@@ -137,7 +137,7 @@ public:
   void end_handling_intersection_of_coplanar_faces() const;
 
   /// called before processing intersections between edges and faces of two meshes (called twice).
-  /// `n` is the number of edges possibilly intersecting faces that should be processed.
+  /// `n` is the number of edges possibly intersecting faces that will be processed.
   void start_handling_edge_face_intersections(std::size_t n);
   /// called each time an edge is processed
   void edge_face_intersections_step();
@@ -153,16 +153,16 @@ public:
 /// @}
 
 /// @name Functions used by Boolean operations functions using corefinement for progress tracking.
-/// These functions are not needed if you only call `corefine()`.
-  /// called before computing Boolean operations output after corefinement
+/// These functions are not needed if only call `corefine()` is called.
+  /// called before computing the output of the Boolean operations after corefinement
   void start_building_output();
-  /// called when output of Boolean operations are computed
+  /// called when the outputs of the Boolean operations is computed
   void end_building_output();
-  /// called before filtering intersection edges between interior to a set of coplanar faces
+  /// called before filtering intersection edges in the interior of a set of coplanar faces
   void filter_coplanar_edges() const {}
   /// called before segmenting input meshes in patches defined by connected components seperated by intersection edges
   void detect_patches() const {}
-  /// called before classifying which patches contributes to each Boolean operation
+  /// called before classifying which patches contribute to each Boolean operation
   void classify_patches() const {}
   /// called before classifying patches of `tm` that are free from intersection with the other mesh
   void classify_intersection_free_patches(const TriangleMesh& tm) const {}
