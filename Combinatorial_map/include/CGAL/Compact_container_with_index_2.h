@@ -15,23 +15,9 @@
 #include <CGAL/Compact_container.h>
 
 // An STL like container with the following properties :
-// - to achieve compactness, it requires access to a pointer stored in T,
-//   specified by a traits.  This pointer is supposed to be 4 bytes aligned
-//   when the object is alive, otherwise, the container uses the 2 least
-//   significant bits to store information in the pointer.
-// - Ts are allocated in arrays of increasing size, which are linked together
-//   by their first and last element.
-// - the iterator looks at the famous 2 bits to know if it has to deal with
-//   a free/used/boundary element.
-
-// TODO :
-// - Add .resize() (and proper copy of capacity_).
-// - Add preconditions in input that real pointers need to have clean bits.
-//   Also for the allocated memory alignment, and sizeof().
-// - Do a benchmark before/after.
-// - Check the end result with Valgrind.
-// - The bit squatting mechanism will be reused for the conflict flag, maybe
-//   it could be put out of the class.
+// - to achieve compactness, it requires access to a index stored in T,
+//   specified by a traits.  The container uses the most significant bit to
+//   store information in the index (bool if the index is used/unudes).
 
 // TODO low priority :
 // - rebind<> the allocator
@@ -41,25 +27,7 @@
 //   time amortized (it's not true here, maybe it could be with some work...)
 // - all this is expected especially when there are not so many free objects
 //   compared to the allocated elements.
-// - Should block_size be selectable/hintable by .reserve() ?
-// - would be nice to have a temporary_free_list (still active elements, but
-//   which are going to be freed soon).  Probably it prevents compactness.
-// - eventually something to copy this data structure, providing a way to
-//   update the pointers (give access to a hash_map, at least a function that
-//   converts an old pointer to the new one ?).  Actually it doesn't have to
-//   be stuck to a particular DS, because for a list it's useful too...
-// - Currently, end() can be invalidated on insert() if a new block is added.
-//   It would be nice to fix this.  We could insert the new block at the
-//   beginning instead ?  That would drop the property that iterator order
-//   is preserved.  Maybe it's not a problem if end() is not preserved, after
-//   all nothing is going to dereference it, it's just for comparing with
-//   end() that it can be a problem.
-//   Another way would be to have end() point to the end of an always
-//   empty block (containing no usable element), and insert new blocks just
-//   before this one.
-//   Instead of having the blocks linked between them, the start/end pointers
-//   could point back to the container, so that we can do more interesting
-//   things (e.g. freeing empty blocks automatically) ?
+// - Currently, end() can be invalidated on insert() if the array is extended.
 
 namespace CGAL {
 
@@ -110,7 +78,7 @@ public:
   using size_type=Index_type;
 
   /// Constructor. Default construction creates a kind of "NULL" index.
-  /// max/2 because the most significant bit must be equal to 0 (used).
+  /// max/2 because the most significant bit must be equal to 0 (used/unused flag).
   Index_for_cc_with_index(size_type idx=(std::numeric_limits<size_type>::max)()/2)
     : m_idx(idx)
   {}
@@ -260,13 +228,13 @@ public:
 
   const T& operator[] (size_type i) const
   {
-    CGAL_assertion(all_items!=NULL && i<capacity_);
+    CGAL_assertion(all_items!=nullptr && i<capacity_);
     return all_items[i];
   }
 
   T& operator[] (size_type i)
   {
-    CGAL_assertion(all_items!=NULL && i<capacity_);
+    CGAL_assertion(all_items!=nullptr && i<capacity_);
     return all_items[i];
   }
 
@@ -543,7 +511,7 @@ private:
     capacity_  = 0;
     size_      = 0;
     free_list  = bottom;
-    all_items  = NULL;
+    all_items  = nullptr;
   }
 
   allocator_type   alloc;
@@ -665,7 +633,7 @@ namespace internal {
     cc_pointer;
 
     // the initialization with NULL is required by our Handle concept.
-    CC_iterator_with_index() : m_ptr_to_cc(NULL),
+    CC_iterator_with_index() : m_ptr_to_cc(nullptr),
       m_index(0)
     {}
 
@@ -685,9 +653,9 @@ namespace internal {
 
     // Construction from NULL
     CC_iterator_with_index (Nullptr_t CGAL_assertion_code(n)) :
-      m_ptr_to_cc(NULL),
+      m_ptr_to_cc(nullptr),
       m_index(0)
-    { CGAL_assertion (n == NULL); }
+    { CGAL_assertion (n == nullptr); }
 
     operator size_type() const
     { return m_index; }
@@ -725,7 +693,7 @@ namespace internal {
     void increment()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr_to_cc != NULL,
+      CGAL_assertion_msg(m_ptr_to_cc != nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(m_index < m_ptr_to_cc->capacity_,
          "Incrementing end() ?");
@@ -742,7 +710,7 @@ namespace internal {
     void decrement()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr_to_cc != NULL,
+      CGAL_assertion_msg(m_ptr_to_cc != nullptr,
          "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(m_index>0, "Decrementing begin() ?");
 
@@ -808,7 +776,7 @@ namespace internal {
   bool operator==(const CC_iterator_with_index<DSC, Const> &rhs,
                   Nullptr_t CGAL_assertion_code(n))
   {
-    CGAL_assertion( n == NULL);
+    CGAL_assertion( n == nullptr);
     return rhs.m_index == 0;
   }
 
@@ -817,7 +785,7 @@ namespace internal {
   bool operator!=(const CC_iterator_with_index<DSC, Const> &rhs,
   Nullptr_t CGAL_assertion_code(n))
   {
-    CGAL_assertion( n == NULL);
+    CGAL_assertion( n == nullptr);
     return rhs.m_index != 0;
     }*/
 
