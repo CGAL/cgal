@@ -151,9 +151,12 @@ void simplify_range(HalfedgeRange& halfedge_range,
             new_tolerance += CGAL::approximate_sqrt(CGAL::squared_distance(new_p, pt));
         }
 
+        // check that the collapse does not create a new degenerate face
         bool call_continue = false;
         for (halfedge_descriptor he : halfedges_around_target(h, tm))
-          if (he!=h && get(vpm, source(he, tm))==new_p)
+          if ( he!=h &&
+               !is_border(he, tm) &&
+               collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
           {
             call_continue = true;
             break;
@@ -161,7 +164,9 @@ void simplify_range(HalfedgeRange& halfedge_range,
         if (call_continue)
           continue;
         for (halfedge_descriptor he : halfedges_around_target(opposite(h,tm), tm))
-          if (he!=opposite(h,tm) && get(vpm,source(he, tm))==new_p)
+          if (he!=opposite(h,tm) &&
+              !is_border(he, tm) &&
+              collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
           {
             call_continue = true;
             break;
