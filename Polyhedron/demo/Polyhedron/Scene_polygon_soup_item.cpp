@@ -468,13 +468,13 @@ Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
       nm_vertices.insert(v);
     }
 
-    void non_manifold_vertex(std::size_t vid, std::size_t nb_link_ccs)
+    void non_manifold_vertex(std::size_t, std::size_t nb_link_ccs)
     {
       if (!vcolors.empty())
         vcolors.resize(vcolors.size()+nb_link_ccs-1);
     }
 
-    void vertex_id_in_polygon_replaced(std::size_t pid, std::size_t input_id, std::size_t new_id)
+    void vertex_id_in_polygon_replaced(std::size_t, std::size_t input_id, std::size_t new_id)
     {
       if (!vcolors.empty())
         vcolors[new_id]=vcolors[input_id];
