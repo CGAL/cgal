@@ -366,7 +366,7 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 * \ingroup PMP_orientation_grp
 * makes each closed connected component of a triangulated surface mesh
 * inward or outward oriented. If a connected component is not closed,
-* the fact that its orientation is changed or not is not guaranteed.
+* the orientation may or may not be changed or not is not guaranteed.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters
