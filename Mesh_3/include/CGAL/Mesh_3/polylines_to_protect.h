@@ -28,6 +28,8 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include <CGAL/number_utils.h>
+#include <CGAL/squared_distance_3.h>
+
 #include <boost/utility.hpp> // for boost::prior
 #include <boost/optional.hpp>
 
