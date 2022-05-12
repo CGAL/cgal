@@ -154,7 +154,8 @@ public:
 
 /// @name Functions used by Boolean operations functions using corefinement for progress tracking.
 /// These functions are not needed if only `corefine()` is called.
-  /// called before computing the output of the Boolean operations after corefinement
+/// called before computing the output of the Boolean operations after corefinement
+/// @{
   void start_building_output();
   /// called when the outputs of the Boolean operations is computed
   void end_building_output();
