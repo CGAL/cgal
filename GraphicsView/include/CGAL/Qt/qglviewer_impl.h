@@ -807,7 +807,7 @@ void CGAL::QGLViewer::setCamera(qglviewer::Camera *const camera) {
 
   camera->setSceneRadius(sceneRadius());
   camera->setSceneCenter(sceneCenter());
-  camera->setScreenWidthAndHeight(width(), height());
+  camera->setScreenWidthAndHeight(width(), height(), devicePixelRatio());
 
   // Disconnect current camera from this viewer.
   disconnect(this->camera()->frame(), SIGNAL(manipulated()), this,
@@ -2369,7 +2369,7 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::resizeGL(int width, int height) {
   QOpenGLWidget::resizeGL(width, height);
   glViewport(0, 0, GLint(width), GLint(height));
-  camera()->setScreenWidthAndHeight(this->width(), this->height());
+  camera()->setScreenWidthAndHeight(this->width(), this->height(), this->devicePixelRatio());
 }
 
 //////////////////////////////////////////////////////////////////////////

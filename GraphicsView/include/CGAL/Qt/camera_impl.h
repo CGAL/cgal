@@ -160,10 +160,11 @@ frustrum coherence.
 If your Camera is used without a CGAL::QGLViewer (offscreen rendering, shadow maps),
 use setAspectRatio() instead to define the projection matrix. */
 CGAL_INLINE_FUNCTION
-void Camera::setScreenWidthAndHeight(int width, int height) {
+void Camera::setScreenWidthAndHeight(int width, int height, qreal devicePixelRatio) {
   // Prevent negative and zero dimensions that would cause divisions by zero.
   screenWidth_ = width > 0 ? width : 1;
   screenHeight_ = height > 0 ? height : 1;
+  devicePixelRatio_ = devicePixelRatio;
   projectionMatrixIsUpToDate_ = false;
 }
 

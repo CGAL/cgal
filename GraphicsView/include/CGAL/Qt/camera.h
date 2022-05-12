@@ -199,6 +199,7 @@ public:
   CGAL::QGLViewer's window dimensions when the Camera is attached to a CGAL::QGLViewer. See
   also QOpenGLWidget::height() */
   int screenHeight() const { return screenHeight_; }
+  qreal devicePixelRatio() const { return devicePixelRatio_; }
   void getViewport(GLint viewport[4]) const;
   qreal pixelGLRatio(const Vec &position) const;
 
@@ -279,7 +280,7 @@ public Q_SLOTS:
     setScreenWidthAndHeight(int(100.0 * aspect), 100);
   }
 
-  void setScreenWidthAndHeight(int width, int height);
+  void setScreenWidthAndHeight(int width, int height, qreal devicePixelRatio = 1.0);
   /*! Sets the zNearCoefficient() value. */
   void setZNearCoefficient(qreal coef) {
     zNearCoef_ = coef;
@@ -444,6 +445,7 @@ private:
 
   // C a m e r a   p a r a m e t e r s
   int screenWidth_, screenHeight_; // size of the window, in pixels
+  qreal devicePixelRatio_;
   qreal fieldOfView_;              // in radians
   Vec sceneCenter_;
   qreal sceneRadius_; // OpenGL units
