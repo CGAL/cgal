@@ -83,12 +83,12 @@ public:
 /// @}
 
 /// @name Functions used by Boolean operations functions using corefinement.
-/// These functions are not needed if only call `corefine()` is called.
+/// These functions are not needed if only `corefine()` is called.
 /// @{
   /// called before importing the face `f_src` of `tm_src` in `tm_tgt`
   void before_face_copy(face_descriptor f_src, const Triangle_mesh& tm_src, const Triangle_mesh& tm_tgt);
   /// called after importing the face `f_src` of `tm_src` in `tm_tgt`. The new face is `f_tgt`.
-  /// Note that the call is placed just after a call of `add_face()` so the halfedge pointer is not set yet.
+  /// Note that the call is placed just after a call to `add_face()` so the halfedge pointer is not set yet.
   void after_face_copy(face_descriptor  f_src, const Triangle_mesh& tm_src,
                        face_descriptor  f_tgt, const Triangle_mesh& tm_tgt);
   /// called before importing the edge of `h_src` of `tm_src` in `tm_tgt`. There is one call per edge.
@@ -120,18 +120,18 @@ public:
 
 /// @name Functions used by corefine() for progress tracking
 /// @{
-  /// called before starting to detect intersections between faces from a mesh and edges of the other
+  /// called before starting to detect intersections between faces of one mesh and edges of the other
   void start_filtering_intersections();
-  /// called during detection of intersections between faces from a mesh and edges of the other.
+  /// called during detection of intersections between faces of one mesh and edges of the other.
   /// `d` is a double value in `[0,1]` that is increasing with the number of calls. The closer
   /// `d`is to `1`, the closer the intersection detection is to completion.
   void progress_filtering_intersections(double d);
-  /// called after detection of intersections between faces from a mesh and edges of the other
+  /// called after detection of intersections between faces of one mesh and edges of the other
   void end_filtering_intersections();
 
   /// called before processing intersections between the `n` pairs of coplanar faces
   void start_handling_intersection_of_coplanar_faces(std::size_t n);
-  /// called each time a pair of coplanar face is processed
+  /// called each time a pair of coplanar faces is processed
   void intersection_of_coplanar_faces_step() const;
   /// called after processing all intersections between coplanar faces
   void end_handling_intersection_of_coplanar_faces() const;
