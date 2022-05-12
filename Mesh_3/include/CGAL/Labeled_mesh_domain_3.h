@@ -55,14 +55,6 @@
 #endif
 #include <boost/optional.hpp>
 
-namespace CGAL {
-  struct Null_subdomain_index {
-    template <typename T>
-    bool operator()(const T& x) const { return 0 == x; }
-  };
-}
-
-#include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Mesh_3/detect_triple_lines.h> //needs Null_subdomain_index
 
 namespace CGAL {
