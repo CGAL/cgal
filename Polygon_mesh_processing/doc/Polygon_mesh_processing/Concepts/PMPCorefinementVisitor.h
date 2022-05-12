@@ -88,7 +88,7 @@ public:
   /// called before importing the face `f_src` of `tm_src` in `tm_tgt`
   void before_face_copy(face_descriptor f_src, const Triangle_mesh& tm_src, const Triangle_mesh& tm_tgt);
   /// called after importing the face `f_src` of `tm_src` in `tm_tgt`. The new face is `f_tgt`.
-  /// Note that the call is placed just after a call to `add_face()` so the halfedge pointer is not set yet.
+  /// Note that the call is placed just after a call of `add_face()` so the halfedge pointer is not set yet.
   void after_face_copy(face_descriptor  f_src, const Triangle_mesh& tm_src,
                        face_descriptor  f_tgt, const Triangle_mesh& tm_tgt);
   /// called before importing the edge of `h_src` of `tm_src` in `tm_tgt`. There is one call per edge.
@@ -124,7 +124,7 @@ public:
   void start_filtering_intersections();
   /// called during detection of intersections between faces from a mesh and edges of the other.
   /// `d` is a double value in `[0,1]` that is increasing with the number of calls. The closer
-  /// to `1` is `d`, the closer the intersection detection is complete.
+  /// `d`is to `1`, the closer the intersection detection is to completion.
   void progress_filtering_intersections(double d);
   /// called after detection of intersections between faces from a mesh and edges of the other
   void end_filtering_intersections();
@@ -141,19 +141,19 @@ public:
   void start_handling_edge_face_intersections(std::size_t n);
   /// called each time an edge is processed
   void edge_face_intersections_step();
-  /// called after having processed edge-face intersection between two meshes
+  /// called after having processed edge-face intersections between two meshes
   void end_handling_edge_face_intersections();
 
-  /// called before triangulating the `n` splitted faces
+  /// called before triangulating the `n` split faces
   void start_triangulating_faces(std::size_t n);
-  /// called when triangulating one splitted face
+  /// called when triangulating one split face
   void triangulating_faces_step();
-  /// called after the triangulation of the splitted faces
+  /// called after the triangulation of the split faces
   void end_triangulating_faces();
 /// @}
 
 /// @name Functions used by Boolean operations functions using corefinement for progress tracking.
-/// These functions are not needed if only call `corefine()` is called.
+/// These functions are not needed if only `corefine()` is called.
   /// called before computing the output of the Boolean operations after corefinement
   void start_building_output();
   /// called when the outputs of the Boolean operations is computed
