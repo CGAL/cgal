@@ -62,6 +62,7 @@ namespace CGAL {
   };
 }
 
+#include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Mesh_3/detect_triple_lines.h> //needs Null_subdomain_index
 
 namespace CGAL {
