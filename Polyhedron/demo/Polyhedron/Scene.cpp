@@ -564,7 +564,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
 
           //    read depth buffer at pick location;
           float depth = 1.0;
-          viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+          depth = read_depth_under_pixel(picked_pixel, viewer, viewer->camera());
           if (depth != 1.0)
           {
             //add object to list of picked objects;
@@ -634,7 +634,7 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
 
          //    read depth buffer at pick location;
          float depth = 1.0;
-         viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+         depth = read_depth_under_pixel(picked_pixel, viewer, viewer->camera());
          if (depth != 1.0)
          {
            //add object to list of picked objects;
@@ -676,7 +676,7 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
       if(item.renderingMode() == Points && with_names) {
         //    read depth buffer at pick location;
         float depth = 1.0;
-        viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+        depth = read_depth_under_pixel(picked_pixel, viewer, viewer->camera());
         if (depth != 1.0)
         {
           //add object to list of picked objects;

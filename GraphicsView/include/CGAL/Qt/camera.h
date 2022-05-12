@@ -18,6 +18,7 @@
 #include <CGAL/Qt/quaternion.h>
 #include <CGAL/export/Qt.h>
 #include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 
 namespace CGAL{
 class QGLViewer;
@@ -468,6 +469,16 @@ private:
   QMap<unsigned int, KeyFrameInterpolator *> kfi_;
   KeyFrameInterpolator *interpolationKfi_;
 };
+
+inline float read_depth_under_pixel(const QPoint &pixel, QOpenGLFunctions *p,
+                       const Camera *camera) {
+  float depth = 2.0f;
+  const auto pixel_ratio = camera->devicePixelRatio();
+  p->glReadPixels(pixel.x() * pixel_ratio,
+                  (camera->screenHeight() - 1 - pixel.y()) * pixel_ratio, 1, 1,
+                  GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+  return depth;
+}
 
 } // namespace qglviewer
 } //CGAL

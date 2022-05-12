@@ -885,8 +885,7 @@ Vec Camera::pointUnderPixel(const QPoint &pixel, bool &found) const {
   // Qt uses upper corner for its origin while GL uses the lower corner.
   if(auto p = dynamic_cast<QOpenGLFunctions*>(parent()))
   {
-    p->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
-                    GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    depth = read_depth_under_pixel(pixel, p, this);
   }
   found = depth < 1.0;
   Vec point(pixel.x(), pixel.y(), depth);
