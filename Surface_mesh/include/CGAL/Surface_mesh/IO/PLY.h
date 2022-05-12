@@ -590,6 +590,17 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
   typedef typename SMesh::template Property_map<Simplex, boost::uint64_t> Uint64_map;
   typedef typename SMesh::template Property_map<Simplex, float>           Float_map;
   typedef typename SMesh::template Property_map<Simplex, double>          Double_map;
+  // vector types for "property list"s
+  typedef typename SMesh::template Property_map<Simplex, std::vector<boost::int8_t>>   vector_Int8_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<boost::uint8_t>>  vector_Uint8_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<boost::int16_t>>  vector_Int16_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<boost::uint16_t>> vector_Uint16_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<boost::int32_t>>  vector_Int32_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<boost::uint32_t>> vector_Uint32_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<boost::int64_t>>  vector_Int64_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<boost::uint64_t>> vector_Uint64_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<float>>           vector_Float_map;
+  typedef typename SMesh::template Property_map<Simplex, std::vector<double>>          vector_Double_map;
 
   std::vector<std::string> prop = sm.template properties<Simplex>();
 
@@ -699,6 +710,106 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
       {
         os << "property double " << name << std::endl;
         printers.push_back(new internal::Simple_property_printer<Simplex,Double_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Int8_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<boost::int8_t>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar char " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Int8_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Uint8_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<boost::uint8_t>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar uchar " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Uint8_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Int16_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<boost::int16_t>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar short " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Int16_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Uint16_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<boost::uint16_t>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar ushort " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Uint16_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Int32_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<boost::int32_t>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar int " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Int32_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Uint32_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<boost::uint32_t>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar uint " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Uint32_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Int64_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<boost::int64_t>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar int " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Int64_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Uint64_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<boost::uint64_t>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar uint " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Uint64_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Float_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<float>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar float " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Float_map>(pmap));
+        continue;
+      }
+    }
+    {
+      vector_Double_map pmap;
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<double>>(prop[i]);
+      if(okay)
+      {
+        os << "property list uchar double " << name << std::endl;
+        printers.push_back(new internal::Simple_property_vector_printer<Simplex,vector_Double_map>(pmap));
         continue;
       }
     }

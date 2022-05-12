@@ -298,6 +298,42 @@ public:
   }
 };
 
+
+template <typename Index,
+          typename PropertyMap,
+          typename VectorType = typename boost::property_traits<PropertyMap>::value_type,
+          typename ElementType = typename VectorType::value_type>
+class Simple_property_vector_printer
+  : public Abstract_property_printer<Index>
+{
+  PropertyMap m_pmap;
+public:
+  Simple_property_vector_printer(const PropertyMap& pmap) : m_pmap(pmap) { }
+
+  virtual void print(std::ostream& stream, const Index& index)
+  {
+    const VectorType& vec = get(m_pmap, index);
+    if(get_mode(stream) == CGAL::IO::ASCII)
+    {
+      stream << vec.size();
+      for(const ElementType& v : vec)
+      {
+        stream << " " << v;
+      }
+    }
+    else
+    {
+      unsigned char size = (unsigned char)(vec.size());
+      stream.write(reinterpret_cast<char*>(&size), sizeof(size));
+      for(const ElementType& v : vec)
+      {
+        ElementType t = ElementType(v);
+        stream.write(reinterpret_cast<char*>(&t), sizeof(t));
+      }
+    }
+  }
+};
+
 } // namespace internal
 } // namespace IO
 } // namespace CGAL
