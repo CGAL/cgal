@@ -398,22 +398,19 @@ namespace Barycentric_coordinates {
     // Some predefined functions.
     typename Traits::Compute_area_2 area_2 = barycentric_traits.compute_area_2_object();
 
-    // Number type.
-    typedef typename Traits::FT FT;
-
     // Compute some related sub-areas.
-    const FT area_second = area_2(second_vertex, third_vertex, query_point);
-    const FT area_third  = area_2(third_vertex , first_vertex, query_point);
+    const typename Traits::FT area_second = area_2(second_vertex, third_vertex, query_point);
+    const typename Traits::FT area_third  = area_2(third_vertex , first_vertex, query_point);
 
     // Compute the total inverted area of the triangle.
-    const FT inverted_total_area = FT(1) / area_2(first_vertex, second_vertex, third_vertex);
+    const typename Traits::FT inverted_total_area = typename Traits::FT(1) / area_2(first_vertex, second_vertex, third_vertex);
 
     // Compute the first and second coordinate functions.
-    const FT b_first  = area_second * inverted_total_area;
-    const FT b_second = area_third  * inverted_total_area;
+    const typename Traits::FT b_first  = area_second * inverted_total_area;
+    const typename Traits::FT b_second = area_third  * inverted_total_area;
 
     // Return the std::array<FT,3> type of coordinates.
-    return CGAL::make_array(b_first, b_second, FT(1) - b_first - b_second);
+    return CGAL::make_array(b_first, b_second, typename Traits::FT(1) - b_first - b_second);
   }
 
 #endif // CGAL_NO_DEPRECATED_CODE
