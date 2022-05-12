@@ -470,13 +470,33 @@ private:
   KeyFrameInterpolator *interpolationKfi_;
 };
 
-inline float read_depth_under_pixel(const QPoint &pixel, QOpenGLFunctions *p,
-                       const Camera *camera) {
-  float depth = 2.0f;
+inline void read_pixel(const QPoint &pixel, QOpenGLFunctions *p,
+                        const Camera *camera, GLenum format, GLenum type,
+                        GLvoid *pixel_data) {
   const auto pixel_ratio = camera->devicePixelRatio();
   p->glReadPixels(pixel.x() * pixel_ratio,
                   (camera->screenHeight() - 1 - pixel.y()) * pixel_ratio, 1, 1,
-                  GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+                  format, type, pixel_data);
+}
+
+inline auto read_pixel_as_float_rgb(const QPoint &pixel, QOpenGLFunctions *p,
+                                    const Camera *camera) {
+  std::array<float, 3> res;
+  read_pixel(pixel, p, camera, GL_RGB, GL_FLOAT, res.data());
+  return res;
+}
+
+inline auto read_pixel_as_ubyte_rgba(const QPoint &pixel, QOpenGLFunctions *p,
+                                    const Camera *camera) {
+  std::array<GLubyte, 4> res;
+  read_pixel(pixel, p, camera, GL_RGBA, GL_UNSIGNED_BYTE, res.data());
+  return res;
+}
+
+inline float read_depth_under_pixel(const QPoint &pixel, QOpenGLFunctions *p,
+                                    const Camera *camera) {
+  float depth = 2.0f;
+  read_pixel(pixel, p, camera, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
   return depth;
 }
 
