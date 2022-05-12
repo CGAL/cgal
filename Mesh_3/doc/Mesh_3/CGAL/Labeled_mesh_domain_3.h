@@ -266,7 +266,32 @@ create_labeled_image_mesh_domain(A_i&...);
 /*
  \brief Construction from a 3D labeled image with detected triple lines.
 
-This static method is a <em>named constructor</em>.
+This static method is a <em>named constructor</em>. It constructs a domain
+described by a 3D labeled image, with automatically detected polyline features.
+A 3D labeled image is a grid of voxels, where each voxel is associated
+with an index (a subdomain index) characterizing the subdomain in which
+the voxel lies. The domain to be discretized is the union of voxels
+that have non-zero values.
+The detected polyline features are a discretization of the 1D-curves that lie
+at the intersection of 3 subdomains (including the outside).
+
+This constructor uses named parameters (from the <em>Boost Parameter
+Library</em>). They can be specified in any order.
+
+\cgalHeading{Named Parameters}
+The parameters are optional unless otherwise specified.
+<ul>
+
+<li> <b>`parameters::image` (mandatory)</b> the input 3D image. Must
+be a `CGAL::Image_3` object.
+
+<li><b>`parameters::value_outside`</b> the value attached to voxels
+ outside of the domain to be meshed. Its default value is `0`.
+
+<li><b>`parameters::relative_error_bound`</b> is the relative error
+  bound, relative to the diameter of the box of the image. Its default
+  value is `FT(1e-3)`.</ul>
+
 
 \cgalHeading{Example}
 
