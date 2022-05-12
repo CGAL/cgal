@@ -1559,11 +1559,12 @@ public:
 
     //2)triangulation of the triangle faces containing intersection point in their interior
     //  and also those with intersection points only on the boundary.
-
-
-    std::size_t total_size = doing_autorefinement ? on_face.find(tm1_ptr)->second.size()
-                                                  : on_face.find(tm1_ptr)->second.size() +
-                                                    on_face.find(tm2_ptr)->second.size();
+    std::size_t total_size = 0;
+    for (typename std::map<TriangleMesh*,On_face_map>::iterator
+           it=on_face.begin(); it!=on_face.end(); ++it)
+    {
+      total_size += it->second.size();
+    }
 
     user_visitor.start_triangulating_faces(total_size);
 
