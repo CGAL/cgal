@@ -127,13 +127,13 @@ namespace Point_set {
     Least_squares_cylinder_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
+      const Point_map point_map,
+      const Normal_map normal_map,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
-    m_point_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::point_map), PointMap())),
-    m_normal_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::normal_map), NormalMap())),
+    m_point_map(point_map),
+    m_normal_map(normal_map),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::geom_traits), GeomTraits())) {
 

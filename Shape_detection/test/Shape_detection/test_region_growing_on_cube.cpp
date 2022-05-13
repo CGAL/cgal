@@ -94,7 +94,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
-    SD::internal::region_growing_planes(
+    SD::internal::region_growing_planes_polygon_mesh(
       polyhedron, std::back_inserter(regions),
       CGAL::parameters::
       maximum_distance(distance_threshold).

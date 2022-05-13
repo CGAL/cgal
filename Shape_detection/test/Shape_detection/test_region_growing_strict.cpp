@@ -11,6 +11,11 @@
 #include <CGAL/assertions.h>
 #include <CGAL/property_map.h>
 
+#include <CGAL/Point_set_3.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_vector.h>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -45,7 +50,10 @@ bool test_lines_points_with_normals() {
   assert(points_with_normals.size() == 9);
   std::vector< std::vector<std::size_t> > regions;
   CGAL::Shape_detection::internal::region_growing_lines(
-    points_with_normals, std::back_inserter(regions));
+    points_with_normals,
+    CGAL::First_of_pair_property_map<std::pair<Point_2, Vector_2> >(),
+    CGAL::Second_of_pair_property_map<std::pair<Point_2, Vector_2> >(),
+    std::back_inserter(regions));
   assert(regions.size() == 3);
   assert(regions[0].size() == 3);
   assert(regions[1].size() == 3);
@@ -201,7 +209,7 @@ bool test_lines_segment_set_3() {
 
   assert(surface_mesh.number_of_faces() == 7320);
   std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::internal::region_growing_planes(
+  CGAL::Shape_detection::internal::region_growing_planes_polygon_mesh(
     surface_mesh, std::back_inserter(regions));
   assert(regions.size() == 9);
 
@@ -259,7 +267,10 @@ bool test_planes_points_with_normals() {
   assert(points_with_normals.size() == 9);
   std::vector< std::vector<std::size_t> > regions;
   CGAL::Shape_detection::internal::region_growing_planes(
-    points_with_normals, std::back_inserter(regions));
+    points_with_normals,
+    CGAL::First_of_pair_property_map<std::pair<Point_3, Vector_3> >(),
+    CGAL::Second_of_pair_property_map<std::pair<Point_3, Vector_3> >(),
+    std::back_inserter(regions));
   assert(regions.size() == 1);
   assert(regions[0].size() == 9);
   return true;
@@ -295,7 +306,10 @@ bool test_planes_point_set() {
 
   std::vector< std::vector<std::size_t> > regions;
   CGAL::Shape_detection::internal::region_growing_planes(
-    point_set, std::back_inserter(regions));
+    point_set,
+    point_set.point_map(),
+    point_set.normal_map(),
+    std::back_inserter(regions));
   assert(regions.size() == 1);
   assert(regions[0].size() == 9);
   return true;
@@ -318,7 +332,7 @@ bool test_planes_polyhedron() {
 
   assert(polyhedron.size_of_facets() == 4);
   std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::internal::region_growing_planes(
+  CGAL::Shape_detection::internal::region_growing_planes_polygon_mesh(
     polyhedron, std::back_inserter(regions));
   assert(regions.size() == polyhedron.size_of_facets());
   return true;
@@ -340,7 +354,7 @@ bool test_planes_surface_mesh() {
 
   assert(surface_mesh.number_of_faces() == 7320);
   std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::internal::region_growing_planes(
+  CGAL::Shape_detection::internal::region_growing_planes_polygon_mesh(
     surface_mesh, std::back_inserter(regions));
   assert(regions.size() == 9);
   return true;
