@@ -3323,8 +3323,8 @@ namespace CommonKernelFunctors {
       return c.rep().has_on_bounded_side(p);
     }
 
-    bool operator()(const Sphere_3& s1, const Sphere_3& s2,
-                    const Point_3& a, const Point_3& b) const
+    result_type operator()(const Sphere_3& s1, const Sphere_3& s2,
+                           const Point_3& a, const Point_3& b) const
     {
       typedef typename K::Circle_3  Circle_3;
       typedef typename K::Point_3   Point_3;
