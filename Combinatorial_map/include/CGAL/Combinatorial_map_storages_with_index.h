@@ -12,12 +12,7 @@
 #ifndef CGAL_COMBINATORIAL_MAP_STORAGES_WITH_INDEX_H
 #define CGAL_COMBINATORIAL_MAP_STORAGES_WITH_INDEX_H 1
 
-#ifdef CC_INDEX3
-#include <CGAL/Compact_container_with_index_3.h>
-#else
-#include <CGAL/Compact_container_with_index_2.h>
-#endif
-
+#include <CGAL/Compact_container_with_index.h>
 #include <CGAL/Dart.h>
 #include <bitset>
 
@@ -59,7 +54,7 @@ namespace CGAL {
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
 
-    typedef Compact_container_with_index_2<Dart,Dart_allocator,
+    typedef Compact_container_with_index<Dart,Dart_allocator,
     Multiply_by_two_policy_for_cc_with_size<64>, Index_type>
     Dart_container;
 
@@ -78,7 +73,7 @@ namespace CGAL {
     typedef Alloc_ Alloc;
     template <typename T>
     struct Container_for_attributes : public
-        Compact_container_with_index_2<T,
+        Compact_container_with_index<T,
         typename Alloc_::template rebind<T>::other,
         Multiply_by_two_policy_for_cc_with_size<64>, size_type >
     {};

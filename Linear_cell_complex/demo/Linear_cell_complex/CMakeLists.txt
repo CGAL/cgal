@@ -35,7 +35,6 @@ set(CMAKE_AUTOMOC ON)
 add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 add_definitions(-DCMAP_WITH_INDEX) # to use cc with index (handle otherwise)
-# add_definitions(-DCC_INDEX3) # to use version 3 of cc with index (version 2 otherwise)
 
 ##################
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)

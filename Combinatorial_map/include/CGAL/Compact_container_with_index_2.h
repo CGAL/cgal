@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2022 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -9,15 +9,16 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_COMPACT_CONTAINER_WITH_INDEX_2_H
-#define CGAL_COMPACT_CONTAINER_WITH_INDEX_2_H
+#ifndef CGAL_COMPACT_CONTAINER_WITH_INDEX_H
+#define CGAL_COMPACT_CONTAINER_WITH_INDEX_H
 
 #include <CGAL/Compact_container.h>
 
-// An STL like container with the following properties :
-// - to achieve compactness, it requires access to a index stored in T,
-//   specified by a traits.  The container uses the most significant bit to
-//   store information in the index (bool if the index is used/unudes).
+// An STL like container, similar to Compact_container, but uses indices
+// instead of handles.
+// - free list can be stored in a std::deque or in a data member stored in T
+// - Boolean used to mark used/free elements can be stored in a std::bitset
+//   or in the most significant bit of the data member.
 
 // TODO low priority :
 // - rebind<> the allocator
@@ -31,6 +32,8 @@
 
 namespace CGAL {
 
+// default policy: each time the array of element is increased, the size
+// is multiply by 2 (like for std::vector).
 template<unsigned int k>
 struct Multiply_by_two_policy_for_cc_with_size
 {
@@ -41,6 +44,8 @@ struct Multiply_by_two_policy_for_cc_with_size
   { cc.block_size=cc.capacity_; }
 };
 
+// constant size policy: the size of the array is always extended by the same
+// number of elements.
 template<unsigned int k>
 struct Constant_size_policy_for_cc_with_size
 {
@@ -53,7 +58,7 @@ struct Constant_size_policy_for_cc_with_size
 
 // The traits class describes the way to access the size_type.
 // It can be specialized.
-  template < class T, class size_type >
+template < class T, class size_type >
 struct Compact_container_with_index_traits {
   static size_type size_t(const T &t)
   { return t.for_compact_container(); }
@@ -69,7 +74,219 @@ namespace internal {
   class MyIndex;
 }
 
+// Free list management: three versions:
+// * free elements stored in a std::deque and used Booleans in a std::vector
+// * free elements stored in a data member of T and used Booleans in a std::vector
+// * free elements stored in a data member of T, and used Booleans in its most significant bit
+// Note that version deque and data member does not exist (no interest?)
+// By default, use a deque and a vector.
+template<typename size_type, class T, class Use_deque, class Use_vector>
+class Free_list_management
+{};
 
+// Case with a deque for the freelist and a vector for Booleans.
+template<typename size_type, class T>
+class Free_list_management<size_type, T, CGAL::Tag_true, CGAL::Tag_true>
+{
+  using Self=Free_list_management<size_type, T, CGAL::Tag_true, CGAL::Tag_true>;
+  static size_type max_index=std::numeric_limits<size_type>::max();
+
+public:
+  bool is_used(const T& /*e*/, size_type i) const
+  {
+    CGAL_assertion(i<max_index);
+    return m_used[i];
+  }
+
+  bool is_empty_free_list() const
+  { return m_free_list.empty(); }
+
+  void put_on_free_list(T& /*e*/, size_type x)
+  {
+    m_used[x]=false;
+    if(x+1==m_first_free_index)
+    { --m_first_free_index; }
+    else
+    { m_free_list.push_back(x); }
+  }
+
+  size_type top_of_free_list() const
+  {
+    if(!is_empty_free_list())
+    { return m_free_list.front(); }
+    return m_first_free_index;
+  }
+
+  // e should be the element on top of the free list. It must be given as
+  // parameter for the case with Boolean stored in a data member of T.
+  size_type remove_from_free_list(T& /*e*/)
+  {
+    CGAL_assertion(!is_empty_free_list() || m_first_free_index<max_index);
+    size_type res=max_index;
+    if(!is_empty_free_list())
+    {
+      res=m_free_list.front();
+      m_free_list.pop_front();
+      m_used[res]=true;
+    }
+    else
+    { // TODO: do we want to test if m_first_free_index<max_index in non debug mode?
+      res=m_first_free_index;
+      m_used[res]=true;
+      ++m_first_free_index;
+    }
+    return res;
+  }
+
+  void clear()
+  {
+    m_free_list.clear();
+    m_used.clear();
+    m_first_free_index=0;
+  }
+
+  void swap(Self& other)
+  {
+    m_free_list.swap(other.m_free_list);
+    m_used.swap(other.m_used);
+    std::swap(m_first_free_index, other.m_first_free_index);
+  }
+
+  void resize(std::size_t nb)
+  { m_used.resize(nb, false); }
+
+protected:
+  std::deque<size_type> m_free_list;
+  std::vector<bool>     m_used;
+  size_type             m_first_free_index=0;
+};
+
+// Case with the "in place" free list, and a vector for Booleans.
+template<typename size_type, class T>
+class Free_list_management<size_type, T, CGAL::Tag_false, CGAL::Tag_true>
+{
+  using Self=Free_list_management<size_type, T, CGAL::Tag_false, CGAL::Tag_true>;
+  static size_type max_index=std::numeric_limits<size_type>::max();
+  using Traits=Compact_container_with_index_traits <T, size_type>;
+
+public:
+  bool is_used(const T& /*e*/, size_type i) const
+  {
+    CGAL_assertion(i<max_index);
+    return m_used[i];
+  }
+
+  bool is_empty_free_list() const
+  { return m_free_list==max_index; }
+
+  void put_on_free_list(T& e, size_type x)
+  {
+    CGAL_assertion(x<max_index);
+    m_used[x]=false;
+    Traits::size_t(e)=m_free_list;
+    m_free_list=x;
+  }
+
+  size_type top_of_free_list() const
+  { return m_free_list; }
+
+  // e should be the element on top of the free list. It must be given as
+  // parameter because this class do not have access to elements.
+  size_type remove_from_free_list(T& e)
+  {
+    CGAL_assertion(!is_empty_free_list());
+    size_type res=m_free_list;
+    m_free_list=Traits::size_t(e);
+    return res;
+  }
+
+  void clear()
+  {
+    m_free_list=max_index;
+    m_used.clear();
+  }
+
+  void swap(Self& other)
+  {
+    std::swap(m_free_list, other.m_free_list);
+    m_used.swap(other.m_used);
+  }
+
+  void resize(std::size_t nb)
+  { m_used.resize(nb, false); }
+
+protected:
+  size_type         m_free_list=max_index;
+  std::vector<bool> m_used;
+};
+
+// Case with the "in place" free list, and "in place" Booleans.
+template<typename size_type, class T>
+class Free_list_management<size_type, T, CGAL::Tag_false, CGAL::Tag_false>
+{
+  using Self=Free_list_management<size_type, T, CGAL::Tag_false, CGAL::Tag_false>;
+  static size_type max_index=std::numeric_limits<size_type>::max();
+  using Traits=Compact_container_with_index_traits <T, size_type>;
+
+public:
+  bool is_used(const T& e, size_type /*i*/) const
+  { return static_type(e)==USED; }
+
+  bool is_empty_free_list() const
+  { return m_free_list==max_index; }
+
+  void put_on_free_list(T& e, size_type x)
+  {
+    CGAL_assertion(x<max_index);
+    static_set_val(e, m_free_list, FREE);
+    m_free_list=x;
+  }
+
+  size_type top_of_free_list() const
+  { return m_free_list; }
+
+  // e should be the element on top of the free list. It must be given as
+  // parameter because this class does not have access to elements.
+  size_type remove_from_free_list(T& e)
+  {
+    CGAL_assertion(!is_empty_free_list());
+    size_type res=m_free_list;
+    static_set_type(e, USED);
+    m_free_list=Traits::size_t(e);
+    return res;
+  }
+
+protected:
+  // Definition of the bit squatting :
+  // =================================
+  // e is composed of a size_t and the big 1 bit.
+  // value of the last bit as "Type" : 0  == reserved element; 1==free element.
+  // When an element is free, the other bits represent the index of the
+  // next free element.
+
+  enum Type { USED = 0, FREE = 1 };
+
+  static const int nbbits_size_type_m1 = sizeof(size_type)*8 - 1;
+  static const size_type mask_type = ((size_type)-1)-(((size_type)-1)/2);
+
+  // Get the type of the pointee.
+  static Type static_type(const T& e)
+  // TODO check if this is ok for little and big endian
+  { return (Type) ((Traits::size_t(e) & mask_type)>>(nbbits_size_type_m1)); }
+
+  // get the value of the element (removing the two bits)
+  static size_type static_get_val(const T& e)
+  { return (Traits::size_t(e) & ~mask_type); }
+
+  // set the value of the element and its type
+  static void static_set_val(T& e, size_type v, Type t)
+  { Traits::set_size_t(e, v | ( ((size_type)t) <<(nbbits_size_type_m1))); }
+
+protected:
+  size_type m_free_list=max_index;
+};
+
+// Index class
 template<class Index_type>
 class Index_for_cc_with_index
 {
@@ -136,13 +353,12 @@ struct Index_hash_function {
 
 template < class T, class Allocator_, class Increment_policy,
            class IndexType = std::size_t >
-class Compact_container_with_index_2
+class Compact_container_with_index
 {
   typedef Allocator_                                Al;
   typedef Increment_policy                          Incr_policy;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  typedef Compact_container_with_index_2 <T, Al, Increment_policy, IndexType> Self;
-  typedef Compact_container_with_index_traits <T, IndexType>   Traits;
+  typedef Compact_container_with_index<T, Al, Increment_policy, IndexType> Self;
 public:
   typedef T                                         value_type;
   typedef IndexType                                 size_type;
@@ -157,8 +373,6 @@ public:
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
-  static const size_type bottom;
-
   using Index=Index_for_cc_with_index<IndexType>;
   friend class internal::CC_iterator_with_index<Self, false>;
   friend class internal::CC_iterator_with_index<Self, true>;
@@ -169,14 +383,14 @@ public:
   template<unsigned int k>
   friend struct Multiply_by_two_policy_for_cc_with_size;
 
-  explicit Compact_container_with_index_2(const Allocator &a = Allocator())
+  explicit Compact_container_with_index(const Allocator &a = Allocator())
   : alloc(a)
   {
     init();
   }
 
   template < class InputIterator >
-  Compact_container_with_index_2(InputIterator first, InputIterator last,
+  Compact_container_with_index(InputIterator first, InputIterator last,
                                const Allocator & a = Allocator())
   : alloc(a)
   {
@@ -185,7 +399,7 @@ public:
   }
 
   // The copy constructor and assignment operator preserve the iterator order
-  Compact_container_with_index_2(const Compact_container_with_index_2 &c)
+  Compact_container_with_index(const Compact_container_with_index &c)
   : alloc(c.get_allocator())
   {
     init();
@@ -193,14 +407,14 @@ public:
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
-  Compact_container_with_index_2(Compact_container_with_index_2&& c) noexcept
+  Compact_container_with_index(Compact_container_with_index&& c) noexcept
   : alloc(c.get_allocator())
   {
     c.swap(*this);
   }
 
-  Compact_container_with_index_2 &
-  operator=(const Compact_container_with_index_2 &c)
+  Compact_container_with_index &
+  operator=(const Compact_container_with_index &c)
   {
     if (&c != this) {
       Self tmp(c);
@@ -209,21 +423,21 @@ public:
     return *this;
   }
 
-  Compact_container_with_index_2 & operator=(Compact_container_with_index_2&& c) noexcept
+  Compact_container_with_index & operator=(Compact_container_with_index&& c) noexcept
   {
     Self tmp(std::move(c));
     tmp.swap(*this);
     return *this;
   }
 
-  ~Compact_container_with_index_2()
+  ~Compact_container_with_index()
   {
     clear();
   }
 
   bool is_used(size_type i) const
   {
-    return (type(i)==USED);
+    return used_booleans.is_used(operator[](i), i);
   }
 
   const T& operator[] (size_type i) const
@@ -244,7 +458,6 @@ public:
     std::swap(capacity_, c.capacity_);
     std::swap(size_, c.size_);
     std::swap(block_size, c.block_size);
-    std::swap(free_list, c.free_list);
     std::swap(all_items, c.all_items);
   }
 
@@ -404,11 +617,8 @@ public:
         return true;
 
     const_pointer c = &*cit;
-
     if (c >=all_items && c < (all_items+capacity_))
-    {
-        return type(cit) == USED;
-    }
+    { return is_used(cit); }
     return false;
   }
 
@@ -454,63 +664,11 @@ private:
 
   void allocate_new_block();
 
-  // Definition of the bit squatting :
-  // =================================
-  // e is composed of a size_t and the big 1 bit.
-  // Here is the meaning of each of the 4 cases.
-  //
-  // value of the last bit as "Type" : 0  == reserved element; 1==free element.
-  // When an element is free, the other bits represent the index of the
-  // next free element.
-
-  enum Type { USED = 0, FREE = 1 };
-
-  static const int nbbits_size_type_m1 = sizeof(size_type)*8 - 1;
-  static const size_type mask_type = ((size_type)-1)-(((size_type)-1)/2);
-
-  // Get the type of the pointee.
-  static Type static_type(const T& e)
-  // TODO check if this is ok for little and big endian
-  { return (Type) ((Traits::size_t(e) & mask_type)>>(nbbits_size_type_m1)); }
-
-  Type type(size_type e) const
-  { return static_type(operator[](e)); }
-
-  // get the value of the element (removing the two bits)
-  static size_type static_get_val(const T& e)
-  { return (Traits::size_t(e) & ~mask_type); }
-
-  size_type get_val(size_type e) const
-  { return static_get_val(operator[](e)); }
-
-  // set the value of the element and its type
-  static void static_set_val(T& e, size_type v, Type t)
-  { Traits::set_size_t(e, v | ( ((size_type)t) <<(nbbits_size_type_m1))); }
-
-  // Sets the pointer part and the type of the pointee.
-  static void static_set_type(T& e, Type t)
-  {
-    // This out of range compare is always true and causes lots of
-    // unnecessary warnings.
-    // CGAL_precondition(0 <= t && t < 2);
-    static_set_val(e, Traits::size_t(e)&~mask_type, t);
-  }
-
-  void set_val(size_type e, size_type v, Type t)
-  { static_set_val(operator[](e), v, t); }
-
-  void put_on_free_list(size_type x)
-  {
-    set_val(x, free_list, FREE);
-    free_list = x;
-  }
-
   void init()
   {
     block_size = Incr_policy::first_block_size;
     capacity_  = 0;
     size_      = 0;
-    free_list  = bottom;
     all_items  = nullptr;
   }
 
@@ -518,14 +676,16 @@ private:
   size_type        capacity_;
   size_type        size_;
   size_type        block_size;
-  size_type        free_list;
   pointer          all_items;
+
+  Free_list_management<size_type, T, CGAL::Tag_true> free_list;
+  Used_boolean_management<size_type, T, CGAL::Tag_true> used_booleans;
 };
 
 template < class T, class Allocator, class Increment_policy, class IndexType >
-const typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type
-Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::bottom=
-  (std::numeric_limits<typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2;
+const typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type
+Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::bottom=
+  (std::numeric_limits<typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2;
 
 /*template < class T, class Allocator, class Increment_policy, class IndexType >
 void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::merge(Self &d)
@@ -555,7 +715,7 @@ void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::me
 }*/
 
 template < class T, class Allocator, class Increment_policy, class IndexType >
-void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::clear()
+void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::clear()
 {
   for (size_type i=0; i<capacity_; ++i)
   {
@@ -569,7 +729,7 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
 }
 
 template < class T, class Allocator, class Increment_policy, class IndexType >
-void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::allocate_new_block()
+void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::allocate_new_block()
 {
   size_type oldcapacity=capacity_;
   capacity_ += block_size;
@@ -671,8 +831,9 @@ namespace internal {
 
     // Only Compact_container should access these constructors.
     //template<class,class,class>
-    friend class Compact_container_with_index_2<value_type, typename DSC::Al,
-                                                typename DSC::Incr_policy, typename DSC::size_type>;
+    friend class Compact_container_with_index<value_type, typename DSC::Al,
+        typename DSC::Incr_policy,
+        typename DSC::size_type>;
     cc_pointer m_ptr_to_cc;
     size_type m_index;
 
@@ -770,25 +931,6 @@ namespace internal {
       rhs.m_index != lhs.m_index;
   }
 
-  // Comparisons with NULL are part of CGAL's Handle concept...
-  /*  template < class DSC, bool Const >
-  inline
-  bool operator==(const CC_iterator_with_index<DSC, Const> &rhs,
-                  Nullptr_t CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == nullptr);
-    return rhs.m_index == 0;
-  }
-
-  template < class DSC, bool Const >
-  inline
-  bool operator!=(const CC_iterator_with_index<DSC, Const> &rhs,
-  Nullptr_t CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == nullptr);
-    return rhs.m_index != 0;
-    }*/
-
 } // namespace internal
 
 } //namespace CGAL
@@ -806,4 +948,4 @@ struct hash<CGAL::Index_for_cc_with_index<Index_type>>:
 
 } // namespace std
 
-#endif // CGAL_COMPACT_CONTAINER_WITH_INDEX_2_H
+#endif // CGAL_COMPACT_CONTAINER_WITH_INDEX_H

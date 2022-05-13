@@ -711,8 +711,6 @@ private:
   size_type        size_;
   size_type        last_index;
   size_type        block_size;
-  std::deque<size_type> free_list;
-  std::vector<bool> used;
   pointer          all_items;
 };
 
