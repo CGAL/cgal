@@ -130,7 +130,7 @@ For example, you can add the path to the \boost `.dll` to the
 
 | Variable              | Description                                                           | Type        |
 | :-                    | :-                    | :-             |
-| `BOOST_ROOT`\cgalFootnote{The environment variable can be spelled either `BOOST_ROOT` or `BOOSTROOT`} | Root directory of your \boost installation | Either CMake or Environment |
+| `BOOST_ROOT`\cgalFootnote{The environment variable can be spelled either \cgalFootnoteCode{BOOST_ROOT} or \cgalFootnoteCode{BOOSTROOT}} | Root directory of your \boost installation | Either CMake or Environment |
 | `Boost_INCLUDE_DIR`   | Directory containing the `boost/version.hpp` file  | CMake |
 | `BOOST_INCLUDEDIR`    | Idem | Environment |
 | `Boost_LIBRARY_DIRS`  | Directory containing the compiled \boost libraries  | CMake |
