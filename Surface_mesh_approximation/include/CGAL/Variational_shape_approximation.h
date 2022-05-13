@@ -31,7 +31,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <boost/graph/subgraph.hpp>
 #include <boost/optional.hpp>
 

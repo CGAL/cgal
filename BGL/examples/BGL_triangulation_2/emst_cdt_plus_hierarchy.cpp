@@ -9,7 +9,7 @@
 #include <CGAL/boost/graph/graph_traits_Constrained_triangulation_plus_2.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_hierarchy_2.h>
 
-#include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include <CGAL/boost/graph/kruskal_min_spanning_tree.h>
 
 #include <fstream>
 #include <iostream>

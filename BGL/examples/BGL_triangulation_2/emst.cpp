@@ -3,7 +3,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
 
-#include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include <CGAL/boost/graph/kruskal_min_spanning_tree.h>
 
 #include <fstream>
 #include <iostream>
