@@ -13,6 +13,9 @@
 #define CGAL_COMPACT_CONTAINER_WITH_INDEX_H
 
 #include <CGAL/Compact_container.h>
+#include <CGAL/tags.h>
+#include <limits>
+#include <algorithm>
 
 // An STL like container, similar to Compact_container, but uses indices
 // instead of handles.
@@ -295,8 +298,7 @@ public:
   using size_type=Index_type;
 
   /// Constructor. Default construction creates a kind of "NULL" index.
-  /// max/2 because the most significant bit must be equal to 0 (used/unused flag).
-  Index_for_cc_with_index(size_type idx=(std::numeric_limits<size_type>::max)()/2)
+  Index_for_cc_with_index(size_type idx=(std::numeric_limits<size_type>::max)())
     : m_idx(idx)
   {}
 
@@ -311,7 +313,7 @@ public:
 
   /// return whether the handle is valid
   bool is_valid() const
-  { return m_idx != (std::numeric_limits<size_type>::max)()/2; }
+  { return m_idx != (std::numeric_limits<size_type>::max)(); }
 
   /// Increment the internal index. This operations does not
   /// guarantee that the index is valid or undeleted after the
@@ -437,7 +439,7 @@ public:
 
   bool is_used(size_type i) const
   {
-    return used_booleans.is_used(operator[](i), i);
+    return free_list.is_used(operator[](i), i);
   }
 
   const T& operator[] (size_type i) const
@@ -677,15 +679,8 @@ private:
   size_type        size_;
   size_type        block_size;
   pointer          all_items;
-
-  Free_list_management<size_type, T, CGAL::Tag_true> free_list;
-  Used_boolean_management<size_type, T, CGAL::Tag_true> used_booleans;
+  Free_list_management<size_type, T, CGAL::Tag_true, CGAL::Tag_true> free_list;
 };
-
-template < class T, class Allocator, class Increment_policy, class IndexType >
-const typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type
-Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::bottom=
-  (std::numeric_limits<typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2;
 
 /*template < class T, class Allocator, class Increment_policy, class IndexType >
 void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::merge(Self &d)
