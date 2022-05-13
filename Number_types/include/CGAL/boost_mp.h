@@ -150,18 +150,27 @@ namespace Boost_MP_internal {
     CGAL_assertion(intv.first > 0.0);
     CGAL_assertion(intv.second > 0.0);
 
+#ifdef CGAL_LITTLE_ENDIAN
     CGAL_assertion_code(
     union {
-#ifdef CGAL_LITTLE_ENDIAN
       struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
-#else /* CGAL_BIG_ENDIAN */
-      //WARNING: untested!
-      struct { uint64_t sig:1; uint64_t exp:11; uint64_t man:52; } s;
-#endif
       double d;
     } conv;
+
     conv.d = intv.first;
     )
+#else
+    //WARNING: untested!
+    CGAL_assertion_code(
+    union {
+
+      struct { uint64_t sig:1; uint64_t exp:11; uint64_t man:52; } s;
+      double d;
+    } conv;
+
+    conv.d = intv.first;
+    )
+#endif
     // Check that the exponent of intv.inf is 52, which corresponds to a 53 bit integer
     CGAL_assertion(conv.s.exp - ((1 << (11 - 1)) - 1) == std::numeric_limits<double>::digits - 1);
 

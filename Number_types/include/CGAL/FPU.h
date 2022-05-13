@@ -278,7 +278,7 @@ inline __m128d swap_m128d(__m128d x){
 # ifdef __llvm__
   return __builtin_shufflevector(x, x, 1, 0);
 # elif defined __GNUC__ && !defined __INTEL_COMPILER
-  return __builtin_shuffle(x, (__m128i){ 1, 0 });
+  return __extension__ __builtin_shuffle(x, (__m128i){ 1, 0 });
 # else
   return _mm_shuffle_pd(x, x, 1);
 # endif

@@ -85,7 +85,7 @@ bool check_edge_length(const TriangleMesh& output_mesh,
   }
 
   return true;
-};
+}
 
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh, typename FT,

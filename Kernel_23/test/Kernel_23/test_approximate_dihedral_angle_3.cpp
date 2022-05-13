@@ -33,4 +33,4 @@ int main() {
     std::cout << approx << "  -- " << expected << '\n';
     assert( std::abs(approx - expected) < 0.1 );
   }
-};
+}
