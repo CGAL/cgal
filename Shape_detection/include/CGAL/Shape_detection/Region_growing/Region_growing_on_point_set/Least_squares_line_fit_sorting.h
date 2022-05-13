@@ -112,18 +112,16 @@ namespace Point_set {
 
       \pre `input_range.size() > 0`
     */
-    template<typename Dummy, typename CGAL_NP_TEMPLATE_PARAMETERS>
+    template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const Point_map point_map,
-      const Dummy,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-    m_input_range(input_range),
-    m_neighbor_query(neighbor_query),
-    m_point_map(point_map),
-    m_traits(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::geom_traits), GeomTraits())) {
+      m_input_range(input_range),
+      m_neighbor_query(neighbor_query),
+      m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS>::get_const_point_map(input_range, np)),
+      m_traits(parameters::choose_parameter(parameters::get_parameter(
+        np, internal_np::geom_traits), GeomTraits())) {
 
       CGAL_precondition(input_range.size() > 0);
       m_order.resize(m_input_range.size());

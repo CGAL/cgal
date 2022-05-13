@@ -51,9 +51,9 @@ bool test_lines_points_with_normals() {
   std::vector< std::vector<std::size_t> > regions;
   CGAL::Shape_detection::internal::region_growing_lines(
     points_with_normals,
-    CGAL::First_of_pair_property_map<std::pair<Point_2, Vector_2> >(),
-    CGAL::Second_of_pair_property_map<std::pair<Point_2, Vector_2> >(),
-    std::back_inserter(regions));
+    std::back_inserter(regions),
+    CGAL::parameters::point_map(CGAL::First_of_pair_property_map<std::pair<Point_2, Vector_2> >()).
+    normal_map(CGAL::Second_of_pair_property_map<std::pair<Point_2, Vector_2> >()));
   assert(regions.size() == 3);
   assert(regions[0].size() == 3);
   assert(regions[1].size() == 3);
@@ -268,9 +268,9 @@ bool test_planes_points_with_normals() {
   std::vector< std::vector<std::size_t> > regions;
   CGAL::Shape_detection::internal::region_growing_planes(
     points_with_normals,
-    CGAL::First_of_pair_property_map<std::pair<Point_3, Vector_3> >(),
-    CGAL::Second_of_pair_property_map<std::pair<Point_3, Vector_3> >(),
-    std::back_inserter(regions));
+    std::back_inserter(regions),
+    CGAL::parameters::point_map(CGAL::First_of_pair_property_map<std::pair<Point_3, Vector_3> >()).
+    normal_map(CGAL::Second_of_pair_property_map<std::pair<Point_3, Vector_3> >()));
   assert(regions.size() == 1);
   assert(regions[0].size() == 9);
   return true;
@@ -306,10 +306,7 @@ bool test_planes_point_set() {
 
   std::vector< std::vector<std::size_t> > regions;
   CGAL::Shape_detection::internal::region_growing_planes(
-    point_set,
-    point_set.point_map(),
-    point_set.normal_map(),
-    std::back_inserter(regions));
+    point_set, std::back_inserter(regions));
   assert(regions.size() == 1);
   assert(regions[0].size() == 9);
   return true;

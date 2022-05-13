@@ -32,22 +32,25 @@ namespace internal {
 
 template<
 typename InputRange,
-typename PointMap,
-typename NormalMap,
 typename OutputIterator,
 typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator region_growing_lines(
-  const InputRange& points, PointMap point_map, NormalMap normal_map, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
+  const InputRange& points, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
 
-  using Kernel = typename Kernel_traits<boost::property_traits<PointMap>::value_type>::Kernel;
+  // basic geometric types
+  typedef Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
+  typedef typename NP_helper::Geom_traits Kernel;
+
   using Neighbor_query = Point_set::K_neighbor_query<Kernel, InputRange, PointMap>;
   using Region_type = Point_set::Least_squares_line_fit_region<Kernel, InputRange, PointMap, NormalMap>;
   using Sorting = Point_set::Least_squares_line_fit_sorting<Kernel, InputRange, Neighbor_query, PointMap>;
   using Region_growing = Region_growing<InputRange, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
-  Neighbor_query neighbor_query(points, point_map, np);
-  Region_type region_type(points, point_map, normal_map, np);
-  Sorting sorting(points, neighbor_query, point_map, np);
+  Neighbor_query neighbor_query(points, np);
+  Region_type region_type(points, np);
+  Sorting sorting(points, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(
@@ -58,22 +61,25 @@ OutputIterator region_growing_lines(
 
 template<
 typename InputRange,
-typename PointMap,
-typename NormalMap,
 typename OutputIterator,
 typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator region_growing_planes(
-  InputRange& points, PointMap point_map, NormalMap normal_map, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
+  const InputRange& points, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
 
-  using Kernel = typename Kernel_traits<boost::property_traits<PointMap>::value_type>::Kernel;
+  // basic geometric types
+  typedef Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
+  typedef typename NP_helper::Geom_traits Kernel;
+
   using Neighbor_query = Point_set::K_neighbor_query<Kernel, InputRange, PointMap>;
   using Region_type = Point_set::Least_squares_plane_fit_region<Kernel, InputRange, PointMap, NormalMap>;
   using Sorting = Point_set::Least_squares_plane_fit_sorting<Kernel, InputRange, Neighbor_query, PointMap>;
   using Region_growing = Region_growing<InputRange, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
-  Neighbor_query neighbor_query(points, point_map, np);
-  Region_type region_type(points, point_map, normal_map, np);
-  Sorting sorting(points, neighbor_query, point_map, np);
+  Neighbor_query neighbor_query(points, np);
+  Region_type region_type(points, np);
+  Sorting sorting(points, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(

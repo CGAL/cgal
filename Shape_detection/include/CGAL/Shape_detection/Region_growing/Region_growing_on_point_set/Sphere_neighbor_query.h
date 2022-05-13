@@ -131,10 +131,9 @@ namespace Point_set {
     template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Sphere_neighbor_query(
       const InputRange& input_range,
-      const Point_map point_map,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
-    m_point_map(point_map),
+    m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS>::get_const_point_map(input_range, np)),
     m_index_to_point_map(m_input_range, m_point_map),
     m_tree(
       boost::counting_iterator<std::size_t>(0),

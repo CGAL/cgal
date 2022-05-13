@@ -61,17 +61,22 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, Point_map(), CGAL::parameters::k_neighbors(k));
+    input_range,
+    CGAL::parameters::k_neighbors(k).
+    point_map(Point_map()));
   Region_type region_type(
-    input_range, Point_map(), Normal_map(),
+    input_range,
     CGAL::parameters::
     maximum_distance(max_distance).
     maximum_angle(max_angle).
-    minimum_region_size(min_region_size));
+    minimum_region_size(min_region_size).
+    point_map(Point_map()).
+    normal_map(Normal_map()));
 
   // Sort indices.
   Sorting sorting(
-    input_range, neighbor_query, Point_map(), Normal_map());
+    input_range, neighbor_query,
+    CGAL::parameters::point_map(Point_map()));
   sorting.sort();
 
   // Run region growing.
@@ -89,12 +94,13 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
     SD::internal::region_growing_lines(
-      input_range, Point_map(), Normal_map(),
-      std::back_inserter(regions),
+      input_range, std::back_inserter(regions),
       CGAL::parameters::
       maximum_distance(max_distance).
       maximum_angle(max_angle).
-      minimum_region_size(min_region_size));
+      minimum_region_size(min_region_size).
+      point_map(Point_map()).
+      normal_map(Normal_map()));
     assert(regions.size() == 62);
   }
 
