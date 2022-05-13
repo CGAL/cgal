@@ -339,7 +339,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
   CGAL::IO::write_polygon_mesh("results/last_patch_replacement.off", pmesh, CGAL::parameters::stream_precision(17));
 #endif
 
-  CGAL_postcondition(is_valid_polygon_mesh(pmesh, true));
+  CGAL_postcondition(is_valid_polygon_mesh(pmesh));
 
   return out;
 }
