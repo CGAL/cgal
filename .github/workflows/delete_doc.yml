@@ -13,8 +13,8 @@ jobs:
     - name: delete directory
       run: |
          set -x
-         git config --global user.email "maxime.gimeno@geometryfactory.com"
-         git config --global user.name "Maxime Gimeno"
+         git config --global user.email "cgal@geometryfactory.com"
+         git config --global user.name "cgaltest"
          git clone https://maxGimeno:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
          PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
          cd cgal.github.io/
