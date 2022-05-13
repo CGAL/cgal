@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
             h,
             std::back_inserter(patch_facets),
             std::back_inserter(patch_vertices),
-            PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(true)));
+            CGAL::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(true)));
     }
     catch (const Stop&) {
         std::cout << "We stopped with a timeout" << std::endl;
