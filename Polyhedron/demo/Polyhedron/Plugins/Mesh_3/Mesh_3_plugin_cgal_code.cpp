@@ -375,7 +375,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
         else
         {
           p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
+          (Image_mesh_domain::create_labeled_image_mesh_domain
           (p::image = *pImage,
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
@@ -386,6 +386,17 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
           // Insert edges in domain
           p_domain->add_features(polylines.begin(), polylines.end());
         }
+      }
+      else
+      {
+        p_domain = new Image_mesh_domain
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+          (p::image = *pImage,
+           p::relative_error_bound = 1e-6,
+           p::construct_surface_patch_index =
+             [](int i, int j) { return (i * 1000 + j); }
+          )
+        );
       }
 
 

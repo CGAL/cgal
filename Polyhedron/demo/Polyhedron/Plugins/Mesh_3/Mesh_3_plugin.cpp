@@ -277,12 +277,16 @@ void Mesh_3_plugin::mesh_3_volume()
   mesh_3(Mesh_type::VOLUME);
 }
 
-boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const {
+boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
+{
   using boost::get;
   items = {};
   features_protection_available = false;
   item = nullptr;
-  for (int ind : scene->selectionIndices()) {
+  Scene_polylines_item* polylines_item = nullptr;
+
+  for (int ind : scene->selectionIndices())
+  {
     try {
       if (auto sm_item =
               qobject_cast<Scene_surface_mesh_item*>(scene->item(ind))) {
@@ -313,9 +317,11 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
           return tr("An image items cannot be mixed with other items type");
       }
 #  endif
-      else if (auto polylines_item =
-                   qobject_cast<Scene_polylines_item*>(scene->item(ind))) {
-        if (!items) items = Polyhedral_mesh_items{};
+      else if (polylines_item =
+                qobject_cast<Scene_polylines_item*>(scene->item(ind)))
+      {
+        if (!items)
+          continue;
         auto poly_items_ptr = get<Polyhedral_mesh_items>(&*items);
         if(poly_items_ptr) {
           if (poly_items_ptr->polylines_item) {
@@ -323,12 +329,16 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
           } else {
             poly_items_ptr->polylines_item = polylines_item;
           }
-        } else {
-          auto image_items = get<Image_mesh_items>(*items);
-          if (image_items.polylines_item) {
-            return tr("Only one polyline item is accepted");
-          } else {
-            image_items.polylines_item = polylines_item;
+        }
+        else {
+          if(auto image_items_ptr = get<Image_mesh_items>(&*items))
+          {
+            if (image_items_ptr->polylines_item) {
+              return tr("Only one polyline item is accepted");
+            }
+            else {
+              image_items_ptr->polylines_item = polylines_item;
+            }
           }
         }
       }
@@ -341,6 +351,20 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
       }
     } catch (const boost::bad_get&) { return tr("Wrong selection of items"); }
   } // end for loop on selected items
+
+  //attach polylines_item to one or the other item
+  //if it could not be done in the for loop
+  //because of selection order
+  if (polylines_item != nullptr && items != boost::none)
+  {
+    auto poly_items_ptr = get<Polyhedral_mesh_items>(&*items);
+    auto image_items_ptr = get<Image_mesh_items>(&*items);
+    if(poly_items_ptr && poly_items_ptr == nullptr)
+      poly_items_ptr->polylines_item = polylines_item;
+    else if(image_items_ptr && image_items_ptr == nullptr)
+      image_items_ptr->polylines_item = polylines_item;
+  }
+
   if (!items) { return tr("Selected objects can't be meshed"); }
   item = nullptr;
   features_protection_available = false;
@@ -769,6 +793,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   case IMAGE_MESH_ITEMS: {
     const Image* pImage = image_item->image();
+    auto& image_items = get<Image_mesh_items>(*items);
+    const auto img_polylines_item = image_items.polylines_item;
+
     if (nullptr == pImage) {
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
@@ -790,7 +817,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
 
     thread = cgal_code_mesh_3(
         pImage,
-        (polylines_item == nullptr) ? plc : polylines_item->polylines,
+        (img_polylines_item == nullptr) ? plc : img_polylines_item->polylines,
         angle,
         facets_sizing,
         approx,
