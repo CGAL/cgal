@@ -14,8 +14,6 @@
 // File Description :
 //******************************************************************************
 
-#define CGAL_DEBUG_TRIPLE_LINES
-
 #include "test_meshing_utilities.h"
 #include <CGAL/Image_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
@@ -39,8 +37,6 @@ public:
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-    typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
-    typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
 
     //-------------------------------------------------------
     // Data generation
@@ -50,15 +46,20 @@ public:
 
     std::cout << "\tSeed is\t"
       << CGAL::get_default_random().get_seed() << std::endl;
+
+    namespace p = CGAL::parameters;
     Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain_with_features
-      (image,
-       1e-9,
+      (p::image = image,
+       p::relative_error_bound = 1e-9,
        CGAL::parameters::p_rng = &CGAL::get_default_random());
 
     // Set mesh criteria
-    Facet_criteria facet_criteria(25, 20*image.vx(), 5*image.vx());
-    Cell_criteria cell_criteria(4, 25*image.vx());
-    Mesh_criteria criteria(facet_criteria, cell_criteria);
+    Mesh_criteria criteria(p::edge_size = 2 * image.vx(),
+                           p::facet_angle = 30,
+                           p::facet_size = 20 * image.vx(),
+                           p::facet_distance = 5 * image.vx(),
+                           p::cell_radius_edge_ratio = 3.,
+                           p::cell_size = 25 * image.vx());
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
