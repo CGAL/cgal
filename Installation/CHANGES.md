@@ -35,6 +35,7 @@ Release date: June 2022
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygonMeshProcessing)
 -   Added the function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup()`, which enables re-orienting the faces of a triangle soup based on the orientation of the nearest face in a reference triangle soup.
+-   Added the named parameter `visitor`to the function `triangulate_hole()`, which enables to track progress with callbacks.
 
 ### [2D Polygons](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygon2)
 
