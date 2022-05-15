@@ -231,44 +231,86 @@ namespace Shape_detection {
       const bool is_well_created = m_region_type.update(region);
       if (!is_well_created) return false;
 
-      Indices neighbors;
-      while (
-        !running_queue[depth_index].empty() ||
-        !running_queue[!depth_index].empty()) {
+      bool grown = true;
+      std::vector<std::pair<std::size_t, std::size_t> > rejected;
+      while (grown) {
+        grown = false;
 
-        // Call the next item index of the queue and remove it from the queue.
-        const std::size_t item_index = running_queue[depth_index].front();
-        running_queue[depth_index].pop();
+        Indices neighbors;
+        while (
+          !running_queue[depth_index].empty() ||
+          !running_queue[!depth_index].empty()) {
 
-        // Get neighbors of the current item.
-        neighbors.clear();
-        m_neighbor_query(item_index, neighbors);
+          //How to do the growing? Maybe use the visited flag to avoid many redundant entries in the rejected list?
+          //  -> entries in rejected that switched to visited false before finishing the primitive
 
-        // Visit all found neighbors.
-        for (const std::size_t neighbor_index : neighbors) {
+          while (!running_queue[depth_index].empty()) {
 
-          // Skip items that user does not want to use.
-          if (neighbor_index == std::size_t(-1))
-            continue;
+            // Call the next item index of the queue and remove it from the queue.
+            const std::size_t item_index = running_queue[depth_index].front();
+            running_queue[depth_index].pop();
 
-          CGAL_precondition(
-            neighbor_index < m_input_range.size());
+            // Get neighbors of the current item.
+            neighbors.clear();
+            m_neighbor_query(item_index, neighbors);
 
-          if (!m_visited[neighbor_index] &&
-            m_region_type.is_part_of_region(item_index, neighbor_index, region)) {
+            // Visit all found neighbors.
+            for (const std::size_t neighbor_index : neighbors) {
 
-            // Add this neighbor to the other queue so that we can visit it later.
-            m_visited[neighbor_index] = true;
-            running_queue[!depth_index].push(neighbor_index);
-            region.push_back(neighbor_index);
+              // Skip items that user does not want to use.
+              if (neighbor_index == std::size_t(-1))
+                continue;
+
+              CGAL_precondition(
+                neighbor_index < m_input_range.size());
+
+              if (!m_visited[neighbor_index] &&
+                m_region_type.is_part_of_region(item_index, neighbor_index, region)) {
+
+                // Add this neighbor to the other queue so that we can visit it later.
+                m_visited[neighbor_index] = true;
+                running_queue[!depth_index].push(neighbor_index);
+                region.push_back(neighbor_index);
+                grown = true;
+              }
+              else rejected.push_back(std::pair<std::size_t, std::size_t>(item_index, neighbor_index));
+            }
           }
+          depth_index = !depth_index;
         }
 
         // Update internal properties of the region.
-        if (running_queue[depth_index].empty()) {
-
+        // The region expanded with the current primitive to its largest extent.
+        // After refitting the growing may continue, but it is only continued if the refitted primitive still fits all elements of the region.
+        if (grown) {
           m_region_type.update(region);
-          depth_index = !depth_index;
+
+          // Verify that associated elements are still within the tolerance.
+          bool fits = true;
+          std::size_t former = region.front();
+          for (const std::size_t i : region) {
+            if (!m_region_type.is_part_of_region(former, i, region)) {
+              fits = false;
+              break;
+            }
+            former = i;
+          }
+          
+          // The refitted primitive does not fit all elements of the region, so the growing stops here.
+          if (!fits)
+            return true;
+
+          // Try to continue growing the region by considering formerly rejected elements.
+          for (const std::pair<std::size_t, std::size_t>& p : rejected) {
+            if (!m_visited[p.second] &&
+              m_region_type.is_part_of_region(p.first, p.second, region)) {
+
+              // Add this neighbor to the other queue so that we can visit it later.
+              m_visited[p.second] = true;
+              running_queue[depth_index].push(p.second);
+              region.push_back(p.second);
+            }
+          }
         }
       }
       return true;
