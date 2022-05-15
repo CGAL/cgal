@@ -125,19 +125,30 @@ namespace Polygon_mesh {
       \pre `edges(pmesh).size() > 0`
     */
     template<typename FaceToRegionMap,
+             typename OutputIterator,
              typename NamedParameters = parameters::Default_named_parameters>
     Polyline_graph(
       const PolygonMesh& pmesh,
       FaceToRegionMap face_to_region_map,
+      std::size_t nb_regions,
+      OutputIterator trivial_edges_out,
       const NamedParameters& np = parameters::default_values())
       :  m_vpm(parameters::choose_parameter(parameters::get_parameter(
           np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh)))
-      ,  m_segment_map(&pmesh, m_vpm)
+      ,  m_segment_map(&pmesh, m_vpm), m_min_triangle_region_size(parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::minimum_region_size), 0))
     {
       clear();
 
       typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_edge_property_t<std::size_t> >::const_type EdgeIndexMap;
       EdgeIndexMap eimap  = get(CGAL::dynamic_edge_property_t<std::size_t>(), pmesh);
+
+      std::vector<int> nb_faces_per_patch(nb_regions,0);
+      for(face_descriptor f : faces(pmesh))
+      {
+        std::size_t pid = get(face_to_region_map, f);
+        nb_faces_per_patch[pid]+=1;
+      }
 
       // collect edges either on the boundary or having two different incident regions
       for (const auto& edge : edges(pmesh))
@@ -158,7 +169,15 @@ namespace Polygon_mesh {
         if (r1 == r2)
           put(eimap, edge, std::size_t(-1));
         else
-          add_graph_edge(edge, r1, r2, eimap);
+        {
+          if (r1!=std::size_t(-1) && r2!=std::size_t(-1) && (nb_faces_per_patch[r1] <= m_min_triangle_region_size || nb_faces_per_patch[r2] <= m_min_triangle_region_size))
+          {
+            *trivial_edges_out++=edge;
+            put(eimap, edge, std::size_t(-1));
+          }
+          else
+            add_graph_edge(edge, r1, r2, eimap);
+        }
       }
 
       // build adjacency between edges
@@ -292,6 +311,7 @@ namespace Polygon_mesh {
 
     const Segment_map m_segment_map;
     std::vector<PEdge> m_pedges;
+    std::size_t m_min_triangle_region_size;
 
     template <class EdgeIndexMap>
     void add_graph_edge(
