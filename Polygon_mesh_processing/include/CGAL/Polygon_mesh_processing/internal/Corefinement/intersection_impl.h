@@ -240,6 +240,43 @@ class Intersection_of_triangle_meshes
                             std::set<face_descriptor>& tm_e_faces,
                             bool run_check)
   {
+      // when tm_e is the non-intersecting clip triangle nothing is to do
+      if (faces(tm_e).size() == 1) {
+          return;
+    }
+      if (faces(tm_f).size() == 1) {
+          face_descriptor fd = *faces(tm_f).begin();
+          halfedge_descriptor hd = halfedge(fd, tm_f);
+          auto fp0 = get(vpm_f, source(hd, tm_f));
+          auto fp1 = get(vpm_f, target(hd, tm_f));
+          auto fp2 = get(vpm_f, target(next(hd, tm_f), tm_f));
+          std::vector<CGAL::Oriented_side> vertex_os(num_vertices(tm_e));
+          bool all_in = true;
+          bool all_out = true;
+          for (vertex_descriptor v : vertices(tm_e))
+          {
+            vertex_os[v] = orientation(fp0, fp1, fp2, get(vpm_e, v));
+            if (vertex_os[v] != CGAL::ON_POSITIVE_SIDE) all_in = false;
+            if (vertex_os[v] != CGAL::ON_NEGATIVE_SIDE) all_out = false;
+          }
+
+          Edge_to_faces& edge_to_faces = &tm_e < &tm_f
+              ? stm_edge_to_ltm_faces
+              : ltm_edge_to_stm_faces;
+          typedef Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
+              TriangleMesh, VPMF, VPME, Edge_to_faces, Coplanar_face_set>
+              Callback;
+          Callback  callback(tm_f, tm_e, vpm_f, vpm_e, edge_to_faces, coplanar_faces);
+
+          for (edge_descriptor e : edges(tm_e))
+          {
+              vertex_descriptor src = source(e, tm_e), tgt = target(e, tm_e);
+              if (vertex_os[src] == CGAL::ON_ORIENTED_BOUNDARY || vertex_os[tgt] == CGAL::ON_ORIENTED_BOUNDARY || vertex_os[src] != vertex_os[tgt]) {
+                  callback(halfedge(fd, tm_f), halfedge(e, tm_e));
+              }
+          }
+          return;
+    }
     std::vector<Box> face_boxes, edge_boxes;
     std::vector<Box*> face_boxes_ptr, edge_boxes_ptr;
 
