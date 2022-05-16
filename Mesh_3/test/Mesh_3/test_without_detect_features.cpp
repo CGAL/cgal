@@ -22,7 +22,7 @@ struct Tester {
   // Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-  int operator()(const std::string fname, const std::string out_fname)
+  int operator()(const std::string fname, const std::string /*out_fname*/)
   {
     std::ifstream input(fname);
     using namespace CGAL::parameters;
