@@ -1147,7 +1147,9 @@ void CGAL::QGLViewer::beginSelection(const QPoint &point)
 {
   makeCurrent();
   glEnable(GL_SCISSOR_TEST);
-  glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
+  glScissor(point.x() * devicePixelRatio(),
+            (camera()->screenHeight() - point.y()) * devicePixelRatio() - 1, 1,
+            1);
 }
 
 /*! This method is called by select() after scene elements were drawn by
@@ -3187,10 +3189,11 @@ void CGAL::QGLViewer::drawVisualHints() {
     mvpMatrix.ortho(-1,1,-1,1,-1,1);
     size=30*devicePixelRatio();
     rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-    glViewport(GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
-               GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
-    glScissor (GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
-               GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
+    const auto point_2d = camera()->projectedCoordinatesOf(camera()->pivotPoint());
+    glViewport(GLint(point_2d.x*devicePixelRatio()-size/2),
+               GLint((height() - point_2d.y)*devicePixelRatio()-size/2), size, size);
+    glScissor (GLint(point_2d.x*devicePixelRatio()-size/2),
+               GLint((height() - point_2d.y)*devicePixelRatio()-size/2), size, size);
     rendering_program.setUniformValue("color", QColor(::Qt::black));
     glDisable(GL_DEPTH_TEST);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
