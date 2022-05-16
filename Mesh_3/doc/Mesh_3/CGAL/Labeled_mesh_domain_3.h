@@ -263,17 +263,24 @@ static
 Labeled_mesh_domain_3
 create_labeled_image_mesh_domain(A_i&...);
 
-/*
+/*!
  \brief Construction from a 3D labeled image with detected triple lines.
 
 This static method is a <em>named constructor</em>. It constructs a domain
 described by a 3D labeled image, with automatically detected polyline features.
+
 A 3D labeled image is a grid of voxels, where each voxel is associated
 with an index (a subdomain index) characterizing the subdomain in which
 the voxel lies. The domain to be discretized is the union of voxels
 that have non-zero values.
+
 The detected polyline features are a discretization of the 1D-curves that lie
-at the intersection of 3 subdomains (including the outside).
+at the intersection of 3 subdomains (including the outside), each represented by a
+different label in the input image.
+This includes:
+- internal polylines at the intersection of three subdomains,
+- polylines at the intersection between two subdomains and the bounding box of the image,
+- the bouding box edges when they are incident to "inner" voxels.
 
 This constructor uses named parameters (from the <em>Boost Parameter
 Library</em>). They can be specified in any order.
