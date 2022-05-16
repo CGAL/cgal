@@ -15,6 +15,10 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshess, and makes the data structure independent from the tetrahedral mesh generation package.
 
+### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
+
+- Added a mesh domain named constructor `CGAL::create_labeled_image_mesh_domain_with_features()` for automatic detection and protection
+of triple lines extracted from labeled images for tetrahedral mesh generation.
 
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
