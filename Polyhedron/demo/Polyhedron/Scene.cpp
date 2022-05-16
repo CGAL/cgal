@@ -563,9 +563,8 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
         if(with_names) {
 
           //    read depth buffer at pick location;
-          float depth = 1.0;
-          depth = read_depth_under_pixel(picked_pixel, viewer, viewer->camera());
-          if (depth != 1.0)
+          float depth = read_depth_under_pixel(picked_pixel, viewer, viewer->camera());
+          if (depth < 2.0)
           {
             //add object to list of picked objects;
             picked_item_IDs[depth] = index;

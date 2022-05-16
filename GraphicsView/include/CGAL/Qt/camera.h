@@ -475,7 +475,7 @@ inline void read_pixel(const QPoint &pixel, QOpenGLFunctions *p,
                         GLvoid *pixel_data) {
   const auto pixel_ratio = camera->devicePixelRatio();
   p->glReadPixels(pixel.x() * pixel_ratio,
-                  (camera->screenHeight() - 1 - pixel.y()) * pixel_ratio, 1, 1,
+                  (camera->screenHeight() - pixel.y()) * pixel_ratio - 1, 1, 1,
                   format, type, pixel_data);
 }
 
