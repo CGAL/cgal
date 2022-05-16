@@ -24,8 +24,10 @@ This class has a constructor taking a labeling function. It has also three
 static template member functions that act as named constructors:
 <ul>
 <li>`create_gray_image_mesh_domain()`, to create a domain from a 3D gray image,
+<li>`create_implicit_mesh_domain()`, to create a domain from an implicit function,
 <li>`create_labeled_image_mesh_domain()`, to create a domain from a 3D labeled image, and
-<li>`create_implicit_mesh_domain()`, to create a domain from an implicit function.
+<li>`create_labeled_image_mesh_domain_with_features()`, to create a domain from a 3D labeled image
+with automatically detected triple lines.
 </ul>
 
 \tparam BGT is a geometric traits class that provides
@@ -305,7 +307,6 @@ be a `CGAL::Image_3` object.
 From the example (\ref Mesh_3/mesh_3D_image_with_detection_of_features.cpp):
 
 \snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
-
 */
 template <typename ... A_i>
 static
