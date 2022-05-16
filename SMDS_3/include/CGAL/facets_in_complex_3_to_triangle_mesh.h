@@ -69,8 +69,6 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
   typedef typename Tr::Weighted_point                                    Weighted_point;
   typedef typename Tr::Facet                                             Facet;
 
-  typedef typename C3T3::Facets_in_complex_iterator                      Ficit;
-
   typedef std::unordered_map<Point_3, std::size_t>                       PIM;
 
   typedef typename C3T3::size_type                                       size_type;
