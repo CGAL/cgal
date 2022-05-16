@@ -6,7 +6,7 @@
 #include <CGAL/Simplicial_mesh_vertex_base_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
-#include <CGAL/Tetrahedral_remeshing.h>
+#include <CGAL/tetrahedral_remeshing.h>
 
 #include <CGAL/tags.h>
 

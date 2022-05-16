@@ -28,7 +28,7 @@ using Tr = CGAL::Triangulation_3<K, Tds>;
 
 using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
-int main (int argc, char** argv)
+int main ()
 {
   Tr triangulation;
   auto rng = CGAL::Random_points_on_sphere_3<K::Point_3>(1.);
