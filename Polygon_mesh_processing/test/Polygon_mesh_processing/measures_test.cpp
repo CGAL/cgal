@@ -104,7 +104,7 @@ void test_pmesh(const Mesh& pmesh)
   assert(mesh_area_np > 0);
 
   edge_descriptor edge = PMP::longest_edge(pmesh);
-  if (edge == boost::graph_traits<Mesh>::null_edge())
+  if (edge == edge_descriptor())
   {
       std::cout << "mesh has no edges" << std::endl;
   }

@@ -262,7 +262,7 @@ typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
 
     // if mesh has no edges
     if (edge_range.begin() == edge_range.end())
-        return boost::graph_traits<PolygonMesh>::null_edge();
+        return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
 
     auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, pmesh](auto l, auto r) {
         auto res = gt.compare_squared_distance_3_object()(
@@ -275,7 +275,7 @@ typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
 
     // if edge_reference is not derefrenceble
     if (edge_reference == edge_range.end())
-        return boost::graph_traits<PolygonMesh>::null_edge();
+        return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
 
     return *edge_reference;
 }
