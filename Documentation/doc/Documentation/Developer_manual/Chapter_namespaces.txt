@@ -67,9 +67,10 @@ According to the resolutions of the following issues in the forthcoming
     <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#226">226</a> and
     <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#229">229</a>
 ):
-\"<TT style="display:inline">Unless otherwise specified, no global or non-member function in the standard library
+<blockquote>Unless otherwise specified, no global or non-member function in the standard library
 shall use a function from another namespace which is found through argument-dependent
-name lookup</TT>\", the namespace `CGAL::NTS` does not need to be used anymore
+name lookup</blockquote>
+the namespace `CGAL::NTS` does not need to be used anymore
 (currently `CGAL_NTS` macro boils down to `CGAL::`).
 
 \section Developer_manualRequirementsandrecommendations_1 Requirements and recommendations
