@@ -160,6 +160,20 @@ void draw(const CGAL_T2_TYPE& at2)
 
 } // End namespace CGAL
 
+#else
+
+namespace CGAL {
+// Specialization of draw function.
+#define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
+
+template<class Gt, class Tds, class Itag, class InDomainPmap>
+void draw(const CGAL_T2_TYPE& at2,
+          InDomainPmap ipm)
+{}
+#undef CGAL_T2_TYPE
+
+} // End namespace CGAL
+
 #endif // CGAL_USE_BASIC_VIEWER
 
 #endif // CGAL_DRAW_CT2_H
