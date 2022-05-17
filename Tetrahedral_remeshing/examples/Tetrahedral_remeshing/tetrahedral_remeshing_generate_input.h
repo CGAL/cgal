@@ -32,14 +32,17 @@ namespace Tetrahedral_remeshing
     while (tr.number_of_vertices() < nbv)
       tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
 
+    using P = typename Tr::Geom_traits::Point_3;
     const typename Tr::Geom_traits::Plane_3
-      plane(Point(0, 0, 0), Point(0, 1, 0), Point(0, 0, 1));
+      plane(P(0, 0, 0), P(0, 1, 0), P(0, 0, 1));
 
     for (Cell_handle c : tr.finite_cell_handles())
     {
       if (plane.has_on_positive_side(
-        CGAL::centroid(c->vertex(0)->point(), c->vertex(1)->point(),
-                       c->vertex(2)->point(), c->vertex(3)->point())))
+        CGAL::centroid(P(c->vertex(0)->point()),
+                       P(c->vertex(1)->point()),
+                       P(c->vertex(2)->point()),
+                       P(c->vertex(3)->point()))))
         c->set_subdomain_index(1);
       else
         c->set_subdomain_index(2);
