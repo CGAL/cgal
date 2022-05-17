@@ -64,6 +64,7 @@ public:
     , index_()
     , dimension_(-1)
     , cache_validity(false)
+    , time_stamp_(std::size_t(-1))
   {}
 
   // Default copy constructor and assignment operator are ok

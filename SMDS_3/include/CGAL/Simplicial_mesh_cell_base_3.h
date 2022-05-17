@@ -56,6 +56,7 @@ public:
 public:
   // Constructors
   Simplicial_mesh_cell_3()
+    : time_stamp_(std::size_t(-1))
   {}
 
   Simplicial_mesh_cell_3(const Simplicial_mesh_cell_3& rhs)
