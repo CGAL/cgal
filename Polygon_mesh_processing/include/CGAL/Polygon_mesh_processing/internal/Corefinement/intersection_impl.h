@@ -263,11 +263,16 @@ class Intersection_of_triangle_meshes
           Edge_to_faces& edge_to_faces = &tm_e < &tm_f
               ? stm_edge_to_ltm_faces
               : ltm_edge_to_stm_faces;
+#ifdef DO_NOT_HANDLE_COPLANAR_FACES
+           typedef Collect_face_bbox_per_edge_bbox<TriangleMesh, Edge_to_faces> Callback;
+           Callback callback(tm_f, tm_e, edge_to_faces);
+#else
+
           typedef Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
               TriangleMesh, VPMF, VPME, Edge_to_faces, Coplanar_face_set>
               Callback;
           Callback  callback(tm_f, tm_e, vpm_f, vpm_e, edge_to_faces, coplanar_faces);
-
+#endif
           for (edge_descriptor e : edges(tm_e))
           {
               vertex_descriptor src = source(e, tm_e), tgt = target(e, tm_e);
