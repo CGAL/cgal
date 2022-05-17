@@ -376,7 +376,7 @@ bool assign_neighbors(Tr& tr,
     }
     else if(allow_non_manifold)// if (adjacent_cells.size() == 4)
     {
-      const auto& v = icit->first;
+      CGAL_assertion_code(const auto& v = icit->first);
       CGAL_assertion(has_infinite_vertex(v, tr));
       success = false;
     }
