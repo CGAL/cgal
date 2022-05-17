@@ -180,7 +180,7 @@ public:
 /// bad means badly shaped or too big).
 /// @return the number of vertices inserted.
 ///
-/// *Preconditions:*
+/// \pre
 /// - Tr must use a geometric traits with robust circumcenter computation.
 /// - convergence is guaranteed if radius_edge_ratio_bound >= 1.0.
 ///

@@ -1448,8 +1448,8 @@ public:
 
     /// Erases the small connected components and the isolated vertices.
     ///
-    /// *Preconditions:*
-    /// supports vertices, halfedges, and removal operation.
+    ///
+    /// \pre supports vertices, halfedges, and removal operation.
     ///
     /// *Parameters*
     /// @param nb_components_to_keep the number of large connected components to keep.
