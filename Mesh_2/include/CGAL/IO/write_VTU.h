@@ -400,7 +400,7 @@ void write_VTU(std::ostream& os,
   internal::write_VTU_with_attributes(os, tr, ipm, dummy_atts, mode);
 }
 
-template <class CDT, class InDomainPmap>
+template <class CDT>
 void write_VTU(std::ostream& os,
                const CDT& tr,
                Mode mode = BINARY)
