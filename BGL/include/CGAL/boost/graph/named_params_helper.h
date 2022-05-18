@@ -16,6 +16,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Default.h>
 
 #include <CGAL/property_map.h>
 
@@ -298,16 +299,16 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     typedef typename CGAL::Identity_property_map<const Dummy_point> const_type;
   };
 
-  template <class PointRange, class NamedParameters, typename NP_TAG = internal_np::point_t>
+  template <class PointRange, class NamedParameters, class PointMap = Default, class NormalMap = Default>
   struct Point_set_processing_3_np_helper
   {
     typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Value_type;
-    typedef CGAL::Identity_property_map<Value_type> DefaultPMap;
-    typedef CGAL::Identity_property_map<const Value_type> DefaultConstPMap;
+    typedef typename Default::Get<PointMap, CGAL::Identity_property_map<Value_type>>::type DefaultPMap;
+    typedef typename Default::Get<PointMap, CGAL::Identity_property_map<const Value_type>>::type DefaultConstPMap;
 
-    typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+    typedef typename internal_np::Lookup_named_param_def<internal_np::point_t,
       NamedParameters,DefaultPMap> ::type  Point_map; // public
-    typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+    typedef typename internal_np::Lookup_named_param_def<internal_np::point_t,
       NamedParameters,DefaultConstPMap> ::type  Const_point_map; // public
 
     typedef typename boost::property_traits<Point_map>::value_type Point;
@@ -322,11 +323,12 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     typedef typename Geom_traits::FT FT; // public
 
     typedef Constant_property_map<Value_type, typename Geom_traits::Vector_3> DummyNormalMap;
+    typedef typename Default::Get<NormalMap, DummyNormalMap>::type DefaultNMap;
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::normal_t,
       NamedParameters,
-      DummyNormalMap
+      DefaultNMap
       > ::type  Normal_map; // public
 
     static Point_map get_point_map(PointRange&, const NamedParameters& np)

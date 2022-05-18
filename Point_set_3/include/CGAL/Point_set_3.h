@@ -1296,8 +1296,8 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
 
 /// \cond SKIP_IN_MANUAL
 // specialization for default named parameters
-template <typename Point, typename Vector, typename NamedParameters, typename NP_TAG>
-struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters, NP_TAG>
+template <typename Point, typename Vector, typename NamedParameters>
+struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters>
 {
   typedef typename std::iterator_traits<typename Point_set_3<Point, Vector>::iterator>::value_type Value_type;
 
@@ -1306,9 +1306,9 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
   typedef typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultPMap;
   typedef const typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultConstPMap;
 
-  typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::point_t,
     NamedParameters,DefaultPMap> ::type  Point_map; // public
-  typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::point_t,
     NamedParameters,DefaultConstPMap> ::type  Const_point_map; // public
 
   typedef typename internal_np::Lookup_named_param_def <
