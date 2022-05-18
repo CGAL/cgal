@@ -15,11 +15,12 @@
 #include <CGAL/license/Triangulation_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
+#include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Triangulation_2/internal/In_domain.h>
+
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Constrained_triangulation_2.h>
-#include <CGAL/Triangulation_2/internal/In_domain.h>
 
 namespace CGAL
 {

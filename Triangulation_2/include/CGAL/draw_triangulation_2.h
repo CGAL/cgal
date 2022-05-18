@@ -17,10 +17,11 @@
 
 #include <CGAL/draw_constrained_triangulation_2.h>
 
+#include <CGAL/Triangulation_2.h>
+
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
