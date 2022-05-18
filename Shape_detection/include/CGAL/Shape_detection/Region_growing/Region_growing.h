@@ -232,7 +232,7 @@ namespace Shape_detection {
       if (!is_well_created) return false;
 
       bool grown = true;
-      std::vector<std::pair<std::size_t, std::size_t> > rejected;
+      std::vector<std::pair<std::size_t, std::size_t> > rejected, rejected_swap;
       while (grown) {
         grown = false;
 
@@ -240,9 +240,6 @@ namespace Shape_detection {
         while (
           !running_queue[depth_index].empty() ||
           !running_queue[!depth_index].empty()) {
-
-          //How to do the growing? Maybe use the visited flag to avoid many redundant entries in the rejected list?
-          //  -> entries in rejected that switched to visited false before finishing the primitive
 
           while (!running_queue[depth_index].empty()) {
 
@@ -264,16 +261,21 @@ namespace Shape_detection {
               CGAL_precondition(
                 neighbor_index < m_input_range.size());
 
-              if (!m_visited[neighbor_index] &&
-                m_region_type.is_part_of_region(item_index, neighbor_index, region)) {
+              if (!m_visited[neighbor_index]) {
+                if (m_region_type.is_part_of_region(item_index, neighbor_index, region)) {
 
-                // Add this neighbor to the other queue so that we can visit it later.
-                m_visited[neighbor_index] = true;
-                running_queue[!depth_index].push(neighbor_index);
-                region.push_back(neighbor_index);
-                grown = true;
+                  // Add this neighbor to the other queue so that we can visit it later.
+                  m_visited[neighbor_index] = true;
+                  running_queue[!depth_index].push(neighbor_index);
+                  region.push_back(neighbor_index);
+                  grown = true;
+                }
+                else {
+                  // Add this neighbor to the rejected queue so I won't be checked again before refitting the primitive.
+                  m_visited[neighbor_index] = true;
+                  rejected.push_back(std::pair<std::size_t, std::size_t>(item_index, neighbor_index));
+                }
               }
-              else rejected.push_back(std::pair<std::size_t, std::size_t>(item_index, neighbor_index));
             }
           }
           depth_index = !depth_index;
@@ -295,24 +297,35 @@ namespace Shape_detection {
             }
             former = i;
           }
-          
+
           // The refitted primitive does not fit all elements of the region, so the growing stops here.
-          if (!fits)
+          if (!fits) {
+            // Reset visited flags for items that were rejected
+            for (const std::pair<std::size_t, std::size_t>& p : rejected)
+              m_visited[p.second] = false;
             return true;
+          }
 
           // Try to continue growing the region by considering formerly rejected elements.
           for (const std::pair<std::size_t, std::size_t>& p : rejected) {
-            if (!m_visited[p.second] &&
-              m_region_type.is_part_of_region(p.first, p.second, region)) {
+            if (m_region_type.is_part_of_region(p.first, p.second, region)) {
 
               // Add this neighbor to the other queue so that we can visit it later.
               m_visited[p.second] = true;
               running_queue[depth_index].push(p.second);
               region.push_back(p.second);
             }
+            else rejected_swap.push_back(p);
           }
+          rejected.clear();
+          rejected.swap(rejected_swap);
         }
       }
+
+      // Reset visited flags for items that were rejected
+      for (const std::pair<std::size_t, std::size_t>& p : rejected)
+        m_visited[p.second] = false;
+
       return true;
     }
 
