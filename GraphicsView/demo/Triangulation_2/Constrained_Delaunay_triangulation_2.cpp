@@ -838,9 +838,9 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   timer.start();
 
   CGAL::refine_Delaunay_mesh_2(cdt,
-      m_seeds.begin(), m_seeds.end(),
-      Criteria(shape, edge_len),
-      false);//mesh the subdomains including NO seed
+                               CGAL::parameters::seeds(m_seeds)
+                               .criteria(Criteria(shape, edge_len))
+                               .seeds_are_in_domain(false));//mesh the subdomains including NO seed
 
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
