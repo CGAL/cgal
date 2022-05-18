@@ -164,8 +164,8 @@ namespace Point_set {
       const InputRange& input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
-    m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS>::get_const_point_map(input_range, np)),
-    m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS>::get_normal_map(input_range, np)),
+    m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS,PointMap,NormalMap>::get_const_point_map(input_range, np)),
+    m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS,PointMap,NormalMap>::get_normal_map(input_range, np)),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::geom_traits), GeomTraits())),
     m_sqrt(Get_sqrt::sqrt_object(m_traits)),

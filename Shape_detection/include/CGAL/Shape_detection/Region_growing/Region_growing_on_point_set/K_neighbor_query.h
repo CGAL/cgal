@@ -136,7 +136,7 @@ namespace Point_set {
       const InputRange& input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
-    m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS>::get_const_point_map(input_range, np)),
+    m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
     m_index_to_point_map(m_input_range, m_point_map),
     m_distance(m_index_to_point_map),
     m_tree(

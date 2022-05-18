@@ -65,7 +65,7 @@ namespace Point_set {
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
-    using Point_type = typename Point_map::value_type;
+    using Point_type = typename boost::property_traits<Point_map>::value_type;
     /// \endcond
 
     /// Number type.
@@ -133,7 +133,7 @@ namespace Point_set {
       const InputRange& input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
-    m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS>::get_const_point_map(input_range, np)),
+    m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
     m_index_to_point_map(m_input_range, m_point_map),
     m_tree(
       boost::counting_iterator<std::size_t>(0),
