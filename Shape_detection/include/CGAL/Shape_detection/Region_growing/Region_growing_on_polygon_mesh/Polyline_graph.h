@@ -134,7 +134,7 @@ namespace Polygon_mesh {
       FaceToRegionMap face_to_region_map,
       const NamedParameters& np = parameters::default_values())
       : Polyline_graph(pmesh, edges(pmesh), face_to_region_map, np) {}
-    
+
     /*!
       \brief initializes all internal data structures.
       \tparam FaceToRegionMap
