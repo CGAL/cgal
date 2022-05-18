@@ -27,10 +27,19 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4172) // Address boost_1_67_0\boost\graph\named_function_params.hpp(240): warning C4172: returning address of local variable or temporary
+#endif
+
 #include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 
-#include <vector>
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
+#include <vector>
 
 
 

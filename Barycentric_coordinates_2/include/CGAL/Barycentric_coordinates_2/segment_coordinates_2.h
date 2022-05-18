@@ -186,9 +186,6 @@ namespace Barycentric_coordinates {
   */
   template<class Traits>
   class
-  #ifndef DOXYGEN_RUNNING
-  CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
-  #endif
   Segment_coordinates_2
   {
 
@@ -219,6 +216,10 @@ namespace Barycentric_coordinates {
     /// Creates the class `Segment_coordinates_2` that implements segment coordinates with respect to an arbitrary non-degenerate segment along an arbitrary line in the plane.
     /// The segment is given by its two vertices.
     /// \pre Segment is not degenerate.
+
+    #ifndef DOXYGEN_RUNNING
+      CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+    #endif
     Segment_coordinates_2(
       const Point_2 &first_vertex,
       const Point_2 &second_vertex,
@@ -337,6 +338,7 @@ namespace Barycentric_coordinates {
       *output = b_first;
       ++output;
       *output = FT(1) - b_first;
+      ++output;
 
       // Output both coordinates.
       return boost::optional<OutputIterator>(output);
@@ -344,7 +346,6 @@ namespace Barycentric_coordinates {
   };
 
   /*!
-    \anchor seg_coord_global
   * \relates Segment_coordinates_2
   * This is a global function that takes both vertices of a segment and computes segment coordinates at a given query point with respect to these vertices.
 
@@ -367,15 +368,12 @@ namespace Barycentric_coordinates {
     typename Traits::Compute_scalar_product_2 scalar_product_2 = barycentric_traits.compute_scalar_product_2_object();
     typename Traits::Compute_squared_distance_2 squared_distance_2 = barycentric_traits.compute_squared_distance_2_object();
 
-    // Number type.
-    typedef typename Traits::FT FT;
-
     // Project point on the segment and compute the first coordinate.
-    const FT opposite_scalar_product = scalar_product_2(query_point - second_vertex, first_vertex - second_vertex);
-    const FT b_first = opposite_scalar_product / squared_distance_2(first_vertex, second_vertex);
+    const typename Traits::FT opposite_scalar_product = scalar_product_2(query_point - second_vertex, first_vertex - second_vertex);
+    const typename Traits::FT b_first = opposite_scalar_product / squared_distance_2(first_vertex, second_vertex);
 
     // Return the std::array<FT,2> type of coordinates.
-    return CGAL::make_array(b_first, FT(1) - b_first);
+    return CGAL::make_array(b_first, typename Traits::FT(1) - b_first);
   }
 
 #endif // CGAL_NO_DEPRECATED_CODE

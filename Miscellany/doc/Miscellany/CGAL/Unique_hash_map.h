@@ -120,6 +120,12 @@ been inserted explicitly. Their variables are initialized to
 */
 bool is_defined( const Key& key) const;
 
+
+/*!
+sets the table size.
+ */
+void reserve(std::size_t table_size);
+
 /*!
 
 resets `*this` to the injective function from `Key` to the

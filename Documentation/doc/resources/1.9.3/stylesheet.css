@@ -107,6 +107,10 @@ span.legend {
         text-align: center;
 }
 
+span.obfuscator {
+  display: none;
+}
+
 h3.version {
         font-size: 90%;
         text-align: center;

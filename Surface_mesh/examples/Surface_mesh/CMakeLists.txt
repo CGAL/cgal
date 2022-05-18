@@ -6,7 +6,7 @@
 # Used in /CGAL/Documentation/doc/Documentation/Developer_manual/create_and_use_a_cmakelist.txt.
 # Careful when modifying
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Surface_mesh_Examples)
 
 #CGAL_Qt5 is needed for the drawing.

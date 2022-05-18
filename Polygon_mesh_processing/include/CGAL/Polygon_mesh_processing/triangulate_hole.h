@@ -35,8 +35,34 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
+  namespace Hole_filling {
+    /*! \ingroup PMP_hole_filling_grp
+     *  %Default hole filling visitor model of `PMPHolefillingVisitor`.
+     *  All of its functions have an empty body. This class can be used as a
+     *  base class if only some of the functions of the concept require to be
+     *  overridden.
+     */
+    struct Default_visitor{
+    #ifndef DOXYGEN_RUNNING
+      void start_planar_phase() const {}
+      void end_planar_phase(bool) const {}
+      void start_quadratic_phase(std::size_t /* n */) const {}
+      void quadratic_step() const {}
+      void end_quadratic_phase(bool) const {}
+      void start_cubic_phase(int /* n */) const {}
+      void cubic_step() const {}
+      void end_cubic_phase() const {}
+      void start_refine_phase() const {}
+      void end_refine_phase() const {}
+      void start_fair_phase() const {}
+      void end_fair_phase() const {}
+    #endif
+    };
+  } // namespace Hole_filling
+
   /*!
-  \ingroup hole_filling_grp
+  \ingroup PMP_hole_filling_grp
+
   triangulates a hole in a polygon mesh.
 
   Depending on the choice of the underlying algorithm different preconditions apply.
@@ -111,6 +137,12 @@ namespace Polygon_mesh_processing {
                       otherwise nothing will be done.}
     \cgalParamNEnd
 
+    \cgalParamNBegin{visitor}
+      \cgalParamDescription{a visitor used to track when entering a given phase of the algorithm}
+      \cgalParamType{A model of PMPHolefillingVisitor}
+      \cgalParamType{Hole_filling::Default_visitor}
+    \cgalParamNEnd
+
   \cgalNamedParamsEnd
 
   @return `out`
@@ -134,6 +166,7 @@ namespace Polygon_mesh_processing {
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::get_parameter_reference;
 
     typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type         GeomTraits;
 
@@ -175,6 +208,8 @@ namespace Polygon_mesh_processing {
       CGAL_assertion(max_squared_distance >= typename GeomTraits::FT(0));
     }
 
+    Hole_filling::Default_visitor default_visitor;
+
     return internal::triangulate_hole_polygon_mesh(
       pmesh,
       border_halfedge,
@@ -184,11 +219,12 @@ namespace Polygon_mesh_processing {
       choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
       use_cdt,
       choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
+      choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
       max_squared_distance).first;
   }
 
   /*!
-  \ingroup  hole_filling_grp
+  \ingroup PMP_hole_filling_grp
   @brief triangulates and refines a hole in a polygon mesh.
 
   @tparam PolygonMesh must be model of `MutableFaceGraph`
@@ -265,6 +301,12 @@ namespace Polygon_mesh_processing {
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
     \cgalParamNEnd
+
+    \cgalParamNBegin{visitor}
+      \cgalParamDescription{a visitor used to track when entering a given phase of the algorithm}
+      \cgalParamType{A model of PMPHolefillingVisitor}
+      \cgalParamType{Hole_filling::Default_visitor}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return pair of `face_out` and `vertex_out`
@@ -285,15 +327,27 @@ namespace Polygon_mesh_processing {
       VertexOutputIterator vertex_out,
       const NamedParameters& np = parameters::default_values())
   {
+    using parameters::choose_parameter;
+    using parameters::get_parameter_reference;
+
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
 
-    return refine(pmesh, patch, face_out, vertex_out, np);
+    Hole_filling::Default_visitor default_visitor;
+    typedef typename internal_np::Lookup_named_param_def<internal_np::visitor_t,
+                                                         NamedParameters,
+                                                         Hole_filling::Default_visitor>::reference Visitor;
+
+    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+    visitor.start_refine_phase();
+    std::pair<FaceOutputIterator, VertexOutputIterator> res = refine(pmesh, patch, face_out, vertex_out, np);
+    visitor.end_refine_phase();
+    return res;
   }
 
   /*!
-  \ingroup  hole_filling_grp
+  \ingroup PMP_hole_filling_grp
   @brief triangulates, refines and fairs a hole in a polygon mesh.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
@@ -379,6 +433,12 @@ namespace Polygon_mesh_processing {
                         is provided as default value:\n
                         `CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::%EigenType, Eigen::COLAMDOrdering<int> > >`}
     \cgalParamNEnd
+
+    \cgalParamNBegin{visitor}
+      \cgalParamDescription{a visitor used to track when entering a given phase of the algorithm}
+      \cgalParamType{A model of PMPHolefillingVisitor}
+      \cgalParamType{Hole_filling::Default_visitor}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return tuple of
@@ -405,20 +465,31 @@ namespace Polygon_mesh_processing {
   {
     CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
+    using parameters::choose_parameter;
+    using parameters::get_parameter_reference;
+
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
     face_out = triangulate_and_refine_hole
       (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
 
     CGAL_postcondition(CGAL::is_triangle_mesh(pmesh));
 
+    Hole_filling::Default_visitor default_visitor;
+    typedef typename internal_np::Lookup_named_param_def<internal_np::visitor_t,
+                                                         NamedParameters,
+                                                         Hole_filling::Default_visitor>::reference Visitor;
+
+    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+    visitor.start_fair_phase();
     bool fair_success = fair(pmesh, patch, np);
+    visitor.end_fair_phase();
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return std::make_tuple(fair_success, face_out, vertex_out);
   }
 
   /*!
-  \ingroup  hole_filling_grp
+  \ingroup PMP_hole_filling_grp
   creates triangles to fill the hole defined by points in the range `points`.
   Triangles are recorded into `out` using the indices of the input points in the range `points`.
   Note that no degenerate triangles will be produced.
@@ -485,6 +556,12 @@ namespace Polygon_mesh_processing {
       \cgalParamExtra{This parameter is used only in conjunction with
                       the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{visitor}
+      \cgalParamDescription{a visitor used to track when entering a given phase of the algorithm}
+      \cgalParamType{A model of PMPHolefillingVisitor}
+      \cgalParamType{Hole_filling::Default_visitor}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \todo handle islands
@@ -503,6 +580,7 @@ namespace Polygon_mesh_processing {
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::get_parameter_reference;
 
     bool use_cdt =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
@@ -532,6 +610,9 @@ bool use_dt3 =
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+
+    Hole_filling::Default_visitor default_visitor;
+
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
     if (use_cdt)
     {
@@ -555,6 +636,7 @@ bool use_dt3 =
       if (triangulate_hole_polyline_with_cdt(
            points,
            tracer,
+           choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
            is_valid,
            choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
            max_squared_distance))
@@ -565,6 +647,7 @@ bool use_dt3 =
     }
 #endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
+                              choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
                               use_dt3,
                               choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
@@ -574,7 +657,7 @@ bool use_dt3 =
   }
 
   /*!
-  \ingroup  hole_filling_grp
+  \ingroup PMP_hole_filling_grp
   Same as above but the range of third points is omitted. They are not
   taken into account in the cost computation that leads the hole filling.
 */

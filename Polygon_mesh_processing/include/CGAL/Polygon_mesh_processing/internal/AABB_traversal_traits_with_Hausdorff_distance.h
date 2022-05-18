@@ -25,12 +25,6 @@
 #include <utility>
 #include <vector>
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
- #ifndef CGAL_HAUSDORFF_DEBUG
-  #define CGAL_HAUSDORFF_DEBUG
- #endif
-#endif
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
@@ -188,10 +182,13 @@ public:
     if(m_early_exit)
       return;
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
     std::cout << "Intersection with TM2's " << primitive.id() << std::endl;
     std::cout << "Initial local bounds " << m_local_bounds.lower << " " << m_local_bounds.upper << std::endl;
 #endif
+
+    CGAL_assertion(m_local_bounds.lower >= FT(0));
+    CGAL_assertion(m_local_bounds.upper >= FT(0));
 
     /* Have reached a single triangle, process it.
     / Determine the upper distance according to
@@ -210,7 +207,7 @@ public:
     CGAL_assertion(primitive.id() != Face_handle_2());
     const Triangle_3 triangle = get(m_face_to_triangle_map, primitive.id());
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
     std::cout << "Geometry: " << triangle << std::endl;
 #endif
 
@@ -238,7 +235,7 @@ public:
     // h_lower_i(query, TM2) := max_{v in query} min_{1<=j<=i} d(v, primitive_j)
     const FT distance_lower = (CGAL::max)((CGAL::max)(m_v0_lower, m_v1_lower), m_v2_lower);
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
     std::cout << "Distance from vertices of t1 to t2: " << v0_dist << " " << v1_dist << " " << v2_dist << std::endl;
 #endif
 
@@ -247,10 +244,9 @@ public:
 
     // With each new TM2 face, the min value m_v{k}_lower can become smaller,
     // and thus also the value max_{v in query} min_{1<=j<=i} d(v, primitive_j)
-    CGAL_assertion(m_local_bounds.lower >= FT(0));
     if(distance_lower < m_local_bounds.lower)
     {
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
       std::cout << "new best lower (" << distance_lower << ") with TM2 face: " << triangle << std::endl;
 #endif
       m_local_bounds.lower = distance_lower;
@@ -259,20 +255,21 @@ public:
 
     // This is the 'min_{1<=j<=i}' part in:
     //   h_upper_i(query, TM2) = min_{1<=j<=i} max_{v in query} (v, primitive_j), Equation (10)
-    CGAL_assertion(m_local_bounds.upper >= FT(0));
     if(distance_upper < m_local_bounds.upper)
     {
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
       std::cout << "new best upper (" << distance_upper << ") with TM2 face: " << triangle << std::endl;
 #endif
       m_local_bounds.upper = distance_upper;
       m_local_bounds.tm2_uface = primitive.id();
     }
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
     std::cout << "Distance from vertices of t1 to t2: " << v0_dist << " " << v1_dist << " " << v2_dist << std::endl;
     std::cout << "Current local bounds " << m_local_bounds.lower << " " << m_local_bounds.upper << std::endl;
 #endif
+
+    CGAL_assertion(m_local_bounds.lower >= FT(0));
     CGAL_assertion(m_local_bounds.lower <= m_local_bounds.upper);
 
 // #define CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
@@ -281,8 +278,8 @@ public:
     // whereas the rhs can only go up with every additional TM1 face
     if(m_local_bounds.upper < m_global_bounds.lower) // Section 4.1, first §
     {
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
-      std::cout << "Quitting early (TM2 traversal): " << m_global_bounds.lower << std::endl;
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
+      std::cout << "Quitting early (TM2 traversal), global lower " << m_global_bounds.lower << " greater than local upper " << m_local_bounds.upper << std::endl;
 #endif
       m_early_exit = true;
     }
@@ -298,7 +295,7 @@ public:
     if(m_early_exit)
       return std::make_pair(false, FT(0));
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
     std::cout << "Do_intersect TM2 node with bbox: " << node.bbox() << std::endl;
 #endif
 
@@ -333,8 +330,8 @@ public:
     // between the query and the TM2 primitives that are children of this node.
     // If this lower bound is greater than the current upper bound for this query,
     // then none of these primitives will reduce the Hausdorff distance between the query and TM2.
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
-    std::cout << "Culling TM1? dist vs local bound upper " << sq_dist << " " << m_local_bounds.upper << std::endl;
+#ifdef CGAL_HAUSDORFF_DEBUG_TM2_TRAVERSAL
+    std::cout << "Culling TM2? dist vs local bound upper " << sq_dist << " " << m_local_bounds.upper << std::endl;
 #endif
     CGAL_assertion(m_local_bounds.upper >= FT(0));
     if(sq_dist > m_local_bounds.upper)
@@ -408,7 +405,6 @@ private:
   const TM1_face_to_triangle_map m_face_to_triangle_map;
 
   // Internal bounds and values.
-  const FT m_sq_error_bound;
   const FT m_sq_initial_bound;
   const FT m_sq_distance_bound;
   const FT m_infinity_value;
@@ -424,7 +420,6 @@ public:
                                  const TriangleMesh2& tm2,
                                  const VPM1 vpm1,
                                  const VPM2 vpm2,
-                                 const FT sq_error_bound,
                                  const FT infinity_value,
                                  const FT sq_initial_bound,
                                  const FT sq_distance_bound)
@@ -432,20 +427,17 @@ public:
       m_vpm1(vpm1), m_vpm2(vpm2),
       m_tm2_tree(tree),
       m_face_to_triangle_map(&m_tm1, m_vpm1),
-      m_sq_error_bound(sq_error_bound),
       m_sq_initial_bound(sq_initial_bound),
       m_sq_distance_bound(sq_distance_bound),
       m_infinity_value(infinity_value),
       m_global_bounds(m_infinity_value),
       m_early_exit(false)
   {
-    CGAL_precondition(m_sq_error_bound >= FT(0));
     CGAL_precondition(m_infinity_value >= FT(0));
-    CGAL_precondition(m_sq_initial_bound >= m_sq_error_bound);
 
     // Bounds grow with every face of TM1 (Equation (6)).
     // If we initialize to zero here, then we are very slow even for big input error bounds!
-    // Instead, we can use m_sq_error_bound as our initial guess to filter out all pairs
+    // Instead, we can use the error bound as our initial guess to filter out all pairs
     // which are already within this bound. It makes the code faster for close meshes.
     m_global_bounds.lower = m_sq_initial_bound;
     m_global_bounds.upper = m_sq_initial_bound;
@@ -544,7 +536,7 @@ public:
     if(m_early_exit)
       return;
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM1_TRAVERSAL
     std::cout << "Intersection with TM1's " << primitive.id() << std::endl;
     std::cout << "Initial global bounds " << m_global_bounds.lower << " " << m_global_bounds.upper << std::endl;
 #endif
@@ -554,7 +546,7 @@ public:
     const Face_handle_1 tm1_face = primitive.id();
     const Triangle_3 triangle = get(m_face_to_triangle_map, tm1_face);
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM1_TRAVERSAL
     std::cout << "Geometry: " << triangle << std::endl;
 #endif
 
@@ -566,12 +558,14 @@ public:
 
     // Post traversal, we have computed h_lower(query, TM2) and h_upper(query, TM2)
     const auto& local_bounds = traversal_traits_tm2.get_local_bounds();
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM1_TRAVERSAL
     std::cout << "Bounds for TM1 primitive: " << local_bounds.lower << " " << local_bounds.upper << std::endl;
 #endif
 
     CGAL_assertion(local_bounds.lower >= FT(0));
     CGAL_assertion(local_bounds.upper >= local_bounds.lower);
+    CGAL_assertion(local_bounds.tm2_lface != boost::graph_traits<TriangleMesh2>::null_face());
+    CGAL_assertion(local_bounds.tm2_uface != boost::graph_traits<TriangleMesh2>::null_face());
 
     // Update global Hausdorff bounds according to the obtained local bounds.
     // h_lower(TM1, TM2) = max_{query in TM1} h_lower(query, TM2)
@@ -617,7 +611,7 @@ public:
     if(m_early_exit)
       return std::make_pair(false, FT(0));
 
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM1_TRAVERSAL
     std::cout << "Do_intersect TM1 node with bbox " << node.bbox() << std::endl;
 #endif
 
@@ -640,7 +634,7 @@ public:
     // If the upper bound is smaller than the current global lower bound,
     // it is pointless to visit this node (and its children) because a larger distance
     // has been found somewhere else.
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
+#ifdef CGAL_HAUSDORFF_DEBUG_TM1_TRAVERSAL
     std::cout << "Culling TM1? dist & global lower bound: " << sq_dist << " " << m_global_bounds.lower << std::endl;
 #endif
     CGAL_assertion(m_global_bounds.lower >= FT(0));

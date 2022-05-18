@@ -355,6 +355,7 @@ public:
    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
    *                    as key type and `double` as value type}
    *     \cgalParamDefault{Use `epsilon` for all faces}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
@@ -403,7 +404,7 @@ public:
       else
         deg_faces.insert(f);
     }
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
       init(epsilon);
     else
     {
@@ -512,7 +513,7 @@ public:
         deg_faces.insert(f);
     }
 
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
       init(epsilon);
     else
     {
@@ -556,6 +557,7 @@ public:
     *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is `Point_3` and whose key
     *                    is the value type of `PointRange::const_iterator`}
     *     \cgalParamDefault{`CGAL::Identity_property_map`}
+    *   \cgalParamNEnd
     *   \cgalParamNBegin{face_epsilon_map}
     *     \cgalParamDescription{a property map associating to each triangle an epsilon value}
     *     \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `double` as value type}
@@ -595,8 +597,10 @@ public:
       env_faces.emplace_back(face);
     }
 
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
+    {
       init(epsilon);
+    }
     else
     {
       std::vector<double> epsilon_values;

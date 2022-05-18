@@ -306,7 +306,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       number_of_intersection_candidates=0;
 #endif
 
-    Unique_hash_map<Vertex_const_handle, bool> ignore(false);
+    Unique_hash_map<Vertex_const_handle, bool> ignore(false, snc1.number_of_vertices());
     Vertex_const_iterator v0;
 
     //    CGAL_NEF_SETDTHREAD(19*43*131);
@@ -319,6 +319,9 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     CGAL_NEF_TRACEN("=> for all v0 in snc1, qualify v0 with respect snc2");
     //    int i=2;
     Association A;
+    A.reserve(snc1.number_of_shalfedges() + snc1.number_of_shalfloops() +
+              snc2.number_of_shalfedges() + snc2.number_of_shalfloops());
+
     SHalfedge_const_iterator sei;
     CGAL_forall_shalfedges(sei, snc1)
       A.initialize_hash(sei);

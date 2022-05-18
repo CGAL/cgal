@@ -12,7 +12,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
-
+#include <tuple>
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
@@ -265,12 +265,12 @@ private:
   typename boost::property_traits<Vertex_point_map>::reference
   get_point(const vertex_descriptor v) const { return get(m_vpm, v); }
 
-  boost::tuple<vertex_descriptor, vertex_descriptor> get_vertices(const halfedge_descriptor h) const
+  std::tuple<vertex_descriptor, vertex_descriptor> get_vertices(const halfedge_descriptor h) const
   {
     vertex_descriptor p, q;
     p = source(h, m_tm);
     q = target(h, m_tm);
-    return boost::make_tuple(p, q);
+    return std::make_tuple(p, q);
   }
 
   std::string vertex_to_string(const vertex_descriptor v) const
@@ -282,7 +282,7 @@ private:
   std::string edge_to_string(const halfedge_descriptor h) const
   {
     vertex_descriptor p, q;
-    boost::tie(p,q) = get_vertices(h);
+    std::tie(p,q) = get_vertices(h);
     return boost::str(boost::format("{E%1% %2%->%3%}%4%") % get_edge_id(h) % vertex_to_string(p) % vertex_to_string(q) % (is_border(h, m_tm) ? " (BORDER)" : (is_border(opposite(h, m_tm), m_tm) ? " (~BORDER)": "")));
   }
 

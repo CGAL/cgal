@@ -2,6 +2,7 @@
 #include <CGAL/Polyhedral_envelope.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <iostream>
 #include <fstream>
 
 int main(int argc, char* argv[])

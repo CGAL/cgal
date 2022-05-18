@@ -144,8 +144,10 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   }//end namespace internal
 
   /*!
-  \ingroup PkgPolygonMeshProcessingRef
-  * collects the border halfedges of a surface patch defined as a face range.
+  * \ingroup PkgPolygonMeshProcessingRef
+  *
+  * \brief collects the border halfedges of a surface patch defined as a face range.
+  *
   * For each returned halfedge `h`, `opposite(h, pmesh)` belongs to a face of the patch,
   * but `face(h, pmesh)` does not belong to the patch.
   *
@@ -173,6 +175,8 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   * \cgalNamedParamsEnd
   *
   * @returns `out`
+  *
+  * @see `extract_boundary_cycles()`
   */
   template<typename PolygonMesh
          , typename FaceRange
@@ -233,6 +237,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   }
 
   /// @ingroup PkgPolygonMeshProcessingRef
+  ///
   /// extracts boundary cycles as a list of halfedges, with one halfedge per border.
   ///
   /// @tparam PolygonMesh a model of `HalfedgeListGraph`
@@ -241,6 +246,8 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   ///
   /// @param pm a polygon mesh
   /// @param out an output iterator where the border halfedges will be put
+  ///
+  /// @see `border_halfedges()`
   ///
   /// @todo It could make sense to also return the length of each cycle.
   /// @todo It should probably go into BGL package (like the rest of this file).

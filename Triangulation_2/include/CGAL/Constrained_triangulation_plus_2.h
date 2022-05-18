@@ -633,7 +633,7 @@ public:
   file_output(std::ostream& os) const
   {
     os << static_cast<const Tr&>(*this);
-    Unique_hash_map<Vertex_handle,int> V;
+    Unique_hash_map<Vertex_handle,int> V(0, number_of_vertices());
     int inum = 0;
     for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
       if(! is_infinite(vit)){

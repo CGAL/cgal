@@ -261,8 +261,7 @@ class Vertex_base {
           fend = sfaces_end();
         while (fit != fend) {
           SFace_iterator fdel = fit++;
-          /* TO VERIFY: next statement needs access to a private attribute */
-          sncp()->reset_sm_object_list(fdel->boundary_entry_objects_);
+          sncp()->reset_sm_object_list(fdel->boundary_entry_objects());
           sncp()->delete_sface_only(fdel);
         }
         sfaces_begin_ = sfaces_last_ = sncp()->sfaces_end();

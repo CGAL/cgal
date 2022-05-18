@@ -222,6 +222,29 @@ bool read_STL(const std::string& fname,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
+namespace internal {
+
+template <typename K>
+typename K::Vector_3 construct_normal_of_STL_face(const typename K::Point_3& p,
+                                                  const typename K::Point_3& q,
+                                                  const typename K::Point_3& r,
+                                                  const K& k)
+{
+  typedef typename K::FT FT;
+  typedef typename K::Vector_3 Vector;
+
+  if(k.collinear_3_object()(p, q, r))
+    return k.construct_vector_3_object()(1, 0, 0);
+
+  Vector res = k.construct_orthogonal_vector_3_object()(p, q, r);
+  const FT sql = k.compute_squared_length_3_object()(res);
+  res = k.construct_divided_vector_3_object()(res, CGAL::approximate_sqrt(sql));
+
+  return res;
+}
+
+} // namespace internal
+
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
  *
@@ -275,6 +298,8 @@ bool write_STL(std::ostream& os,
   typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
   typedef typename K::Vector_3                                              Vector_3;
 
+  K k = choose_parameter<K>(get_parameter(np, internal_np::geom_traits));
+
   if(!os.good())
     return false;
 
@@ -313,7 +338,7 @@ bool write_STL(std::ostream& os,
       const Point& q = get(point_map, points[face[1]]);
       const Point& r = get(point_map, points[face[2]]);
 
-      const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
+      const Vector_3 n = internal::construct_normal_of_STL_face(p, q, r, k);
       os << "facet normal " << n << "\nouter loop\n";
       os << "vertex " << p << "\n";
       os << "vertex " << q << "\n";

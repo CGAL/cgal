@@ -50,7 +50,7 @@ set_package_properties(
   DESCRIPTION "A library for image processing."
   PURPOSE "Can be used for I/O (DICOM, VTU, VTP.")
 
-polyhedron_demo_plugin(triangulation_3_io_plugin triangulation_3_io_plugin KEYWORDS IO)
+polyhedron_demo_plugin(triangulation_3_io_plugin triangulation_3_io_plugin KEYWORDS Viewer)
 target_link_libraries(triangulation_3_io_plugin PUBLIC scene_triangulation_3_item)
 
 if(VTK_FOUND)

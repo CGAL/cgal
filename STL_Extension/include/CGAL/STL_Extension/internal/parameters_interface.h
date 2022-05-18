@@ -90,6 +90,7 @@ CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounde
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
 CGAL_add_named_parameter(apply_per_connected_component_t, apply_per_connected_component, apply_per_connected_component)
 CGAL_add_named_parameter(projection_functor_t, projection_functor, projection_functor)
+CGAL_add_named_parameter(allow_move_functor_t, allow_move_functor, allow_move_functor)
 CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersection, throw_on_self_intersection)
 CGAL_add_named_parameter(clip_volume_t, clip_volume, clip_volume)
 CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
@@ -207,6 +208,10 @@ CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundari
 CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_is_selected_map)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
+
+// List of named parameters used in Alpha_wrap_3
+CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
+CGAL_add_named_parameter(seed_points_t, seed_points, seed_points)
 
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)

@@ -290,6 +290,7 @@ private:
 
         CGAL_precondition( r[n-1] != FT(0) );
         *output = (t[n-2] + t[n-1]) / r[n-1];
+        ++output;
 
         // Return weights.
         return boost::optional<OutputIterator>(output);
@@ -364,6 +365,7 @@ private:
             ++output;
         }
         *output = weight[n-1] * inverted_mv_denominator;
+        ++output;
 
         // Return coordinates.
         return boost::optional<OutputIterator>(output);
@@ -432,6 +434,7 @@ private:
             ++output;
         }
         *output = weight[n-1] * inverted_mv_denominator;
+        ++output;
 
         // Return coordinates.
         return boost::optional<OutputIterator>(output);
