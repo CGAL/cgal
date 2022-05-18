@@ -62,21 +62,17 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
   // Create parameter classes.
   Neighbor_query neighbor_query(
     input_range,
-    CGAL::parameters::k_neighbors(k).
-    point_map(Point_map()));
+    CGAL::parameters::k_neighbors(k));
   Region_type region_type(
     input_range,
     CGAL::parameters::
     maximum_distance(max_distance).
     maximum_angle(max_angle).
-    minimum_region_size(min_region_size).
-    point_map(Point_map()).
-    normal_map(Normal_map()));
+    minimum_region_size(min_region_size));
 
   // Sort indices.
   Sorting sorting(
-    input_range, neighbor_query,
-    CGAL::parameters::point_map(Point_map()));
+    input_range, neighbor_query);
   sorting.sort();
 
   // Run region growing.
