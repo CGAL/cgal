@@ -349,9 +349,7 @@ void
 refine_Delaunay_mesh_2(Tr& t,
                        const Criteria& criteria = Criteria(), bool domain_specified=false)
 {
-  typedef Delaunay_mesher_2<Tr, Criteria> Mesher;
-
-  Mesher mesher(t, criteria);
+  Delaunay_mesher_2<Tr, Criteria> mesher(t, criteria);
   mesher.init(domain_specified);
   mesher.refine_mesh();
 }
@@ -364,9 +362,7 @@ refine_Delaunay_mesh_2(Tr& t,
                        const Criteria& criteria = Criteria(),
                        bool mark = false)
 {
-  typedef Delaunay_mesher_2<Tr, Criteria> Mesher;
-
-  Mesher mesher(t, criteria);
+  Delaunay_mesher_2<Tr, Criteria> mesher(t, criteria);
   mesher.set_seeds(b, e, mark);
   mesher.refine_mesh();
 }
