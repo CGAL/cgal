@@ -628,31 +628,31 @@ public:
 
       // Compute the x- and y-coordinates of intersection points of the base
       // conic and the k'th auxiliary conic.
-      n_xs = _compute_resultant_roots(nt_traits,
-                                      base_coeffs[0], base_coeffs[1],
-                                      base_coeffs[2],
-                                      base_coeffs[3], base_coeffs[4],
-                                      base_coeffs[5],
-                                      deg_base,
-                                      aux_coeffs[0], aux_coeffs[1],
-                                      aux_coeffs[2],
-                                      aux_coeffs[3], aux_coeffs[4],
-                                      aux_coeffs[5],
-                                      deg_aux,
-                                      xs);
+      n_xs = compute_resultant_roots(nt_traits,
+                                     base_coeffs[0], base_coeffs[1],
+                                     base_coeffs[2],
+                                     base_coeffs[3], base_coeffs[4],
+                                     base_coeffs[5],
+                                     deg_base,
+                                     aux_coeffs[0], aux_coeffs[1],
+                                     aux_coeffs[2],
+                                     aux_coeffs[3], aux_coeffs[4],
+                                     aux_coeffs[5],
+                                     deg_aux,
+                                     xs);
 
-      n_ys = _compute_resultant_roots(nt_traits,
-                                      base_coeffs[1], base_coeffs[0],
-                                      base_coeffs[2],
-                                      base_coeffs[4], base_coeffs[3],
-                                      base_coeffs[5],
-                                      deg_base,
-                                      aux_coeffs[1], aux_coeffs[0],
-                                      aux_coeffs[2],
-                                      aux_coeffs[4], aux_coeffs[3],
-                                      aux_coeffs[5],
-                                      deg_aux,
-                                      ys);
+      n_ys = compute_resultant_roots(nt_traits,
+                                     base_coeffs[1], base_coeffs[0],
+                                     base_coeffs[2],
+                                     base_coeffs[4], base_coeffs[3],
+                                     base_coeffs[5],
+                                     deg_base,
+                                     aux_coeffs[1], aux_coeffs[0],
+                                     aux_coeffs[2],
+                                     aux_coeffs[4], aux_coeffs[3],
+                                     aux_coeffs[5],
+                                     deg_aux,
+                                     ys);
 
       // Find the intersection point which is nearest the given approximation
       // and set it as the endpoint.
@@ -667,8 +667,7 @@ public:
                 nt_traits.convert(base_coeffs[4]) * ys[j] +
                 nt_traits.convert(base_coeffs[5]);
 
-          if (CGAL::sign(val) != ZERO)
-            continue;
+          if (CGAL::sign(val) != ZERO) continue;
 
           val = nt_traits.convert(aux_coeffs[0]) * xs[i]*xs[i] +
                 nt_traits.convert(aux_coeffs[1]) * ys[j]*ys[j] +
@@ -749,7 +748,7 @@ public:
 
     // Duplicate the extra data, if necessary.
     m_extra_data = (arc.m_extra_data != nullptr) ?
-      new Extra_data(*(arc.m_extra_data)) ? nullptr;
+      new Extra_data(*(arc.m_extra_data)) : nullptr;
 
     return (*this);
   }
@@ -764,12 +763,12 @@ public:
 
   /*! Get the coefficients of the underlying conic.
    */
-  const Integer& r() const {return (m_r);}
-  const Integer& s() const {return (m_s);}
-  const Integer& t() const {return (m_t);}
-  const Integer& u() const {return (m_u);}
-  const Integer& v() const {return (m_v);}
-  const Integer& w() const {return (m_w);}
+  const Integer& r() const { return (m_r); }
+  const Integer& s() const { return (m_s); }
+  const Integer& t() const { return (m_t); }
+  const Integer& u() const { return (m_u); }
+  const Integer& v() const { return (m_v); }
+  const Integer& w() const { return (m_w); }
 
   /*! Check whether the arc is x-monotone.
    */
