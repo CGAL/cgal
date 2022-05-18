@@ -177,11 +177,14 @@ namespace Polygon_mesh {
               np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh)))
     ,  m_segment_map(&pmesh, m_vpm)
     {
-
       clear();
 
       typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_edge_property_t<std::size_t> >::const_type EdgeIndexMap;
       EdgeIndexMap eimap = get(CGAL::dynamic_edge_property_t<std::size_t>(), pmesh);
+
+      // init map
+      for(edge_descriptor e : edges(pmesh))
+        put(eimap, e, std::size_t(-1));
 
       // collect edges either on the boundary or having two different incident regions
       for (const auto& edge : edge_range)
@@ -199,9 +202,7 @@ namespace Polygon_mesh {
         if (f2 != boost::graph_traits<PolygonMesh>::null_face())
           r2 = get(face_to_region_map, f2);
 
-        if (r1 == r2)
-          put(eimap, edge, std::size_t(-1));
-        else
+        if (r1 != r2)
           add_graph_edge(edge, r1, r2, eimap);
       }
 
