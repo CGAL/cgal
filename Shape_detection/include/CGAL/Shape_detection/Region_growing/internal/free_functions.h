@@ -97,7 +97,7 @@ OutputIterator region_growing_planes_polygon_mesh(
 
   using Kernel = typename Kernel_traits<typename PolygonMesh::Point>::Kernel;
   using Face_iterator = typename boost::graph_traits<PolygonMesh>::face_iterator;
-  using Face_range = Iterator_range<typename Face_iterator>;
+  using Face_range = Iterator_range<Face_iterator>;
 
   using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<PolygonMesh>;
   using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Kernel, PolygonMesh, Face_range>;
