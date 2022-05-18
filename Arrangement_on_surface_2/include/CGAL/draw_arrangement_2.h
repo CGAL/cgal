@@ -1,6 +1,8 @@
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
+#include <map>
+
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Arrangement_2.h>
@@ -10,9 +12,10 @@ namespace CGAL {
 // Viewer class for Polygon_2
 template <typename Arrangement_2>
 class Arr_2_viewer_qt : public Basic_viewer_qt {
-  typedef Basic_viewer_qt       Base;
-  typedef Arrangement_2         Arr;
-  typedef typename Arr::Point_2 Point;
+  typedef Basic_viewer_qt                       Base;
+  typedef Arrangement_2                         Arr;
+  typedef typename Arr::Point_2                 Point;
+  typedef typename Arr::Face_const_handle       Face_const_handle;
 
 public:
   /// Construct the viewer.
@@ -26,44 +29,51 @@ public:
   { add_elements(); }
 
 protected:
-  void add_ccb(typename Arr::Ccb_halfedge_const_circulator circ) {
+  //!
+  void add_ccb(typename Arr::Ccb_halfedge_const_circulator circ, bool has_area = true) {
     typename Arr::Ccb_halfedge_const_circulator curr = circ;
     do {
       typename Arr::Halfedge_const_handle e = curr;
       add_segment(e->source()->point(), e->target()->point());
       add_point(e->source()->point());
-      add_point_in_face(e->source()->point());
+      if (has_area) add_point_in_face(e->source()->point());
     } while (++curr != circ);
   }
 
-  void add_face(typename Arr::Face_const_handle f, CGAL::IO::Color c) {
-    if (! f->is_unbounded()) {
+  //!
+  void add_face(Face_const_handle face, CGAL::IO::Color c) {
+    if (! face->is_unbounded()) {
       face_begin(c);
-      add_ccb(f->outer_ccb());
-      for (auto iv = f->isolated_vertices_begin();
-           iv != f->isolated_vertices_end(); ++iv)
+      add_ccb(face->outer_ccb());
+      for (auto iv = face->isolated_vertices_begin();
+           iv != face->isolated_vertices_end(); ++iv)
         add_point(iv->point());
       face_end();
     }
 
-    for (auto it = f->inner_ccbs_begin(); it != f->inner_ccbs_end(); ++it) {
-      face_begin(c);
-      add_ccb(*it);
-      for (auto iv = f->isolated_vertices_begin();
-           iv != f->isolated_vertices_end(); ++iv)
-        add_point(iv->point());
-      face_end();
+    std::map<Face_const_handle, bool> visited;
+    for (auto it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it) {
+      auto new_face = (*it)->twin()->face();
+      if (new_face == face) {
+        add_ccb(*it, false);
+        continue;
+      }
+      if (visited.find(new_face) != visited.end()) continue;
+      visited[new_face] = true;
+      add_face(new_face, c);
     }
   }
 
+  //!
   void add_elements() {
     clear();
     if (m_arr.is_empty()) return;
     CGAL::IO::Color c(75,160,255);
-    for (auto fit = m_arr.faces_begin(); fit != m_arr.faces_end(); ++fit)
-      add_face(fit, c);
+    for (auto it = m_arr.unbounded_faces_begin(); it != m_arr.unbounded_faces_end(); ++it)
+      add_face(it, c);
   }
 
+  //!
   virtual void keyPressEvent(QKeyEvent* e) {
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
