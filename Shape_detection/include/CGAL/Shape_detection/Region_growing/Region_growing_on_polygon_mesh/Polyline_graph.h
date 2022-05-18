@@ -125,11 +125,11 @@ namespace Polygon_mesh {
       \pre `edges(pmesh).size() > 0`
     */
     template<typename FaceToRegionMap,
-             typename NamedParameters = parameters::Default_named_parameters>
+             typename CGAL_NP_TEMPLATE_PARAMETERS>
     Polyline_graph(
       const PolygonMesh& pmesh,
       FaceToRegionMap face_to_region_map,
-      const NamedParameters& np = parameters::default_values())
+      const CGAL_NP_CLASS& np = parameters::default_values())
       : Polyline_graph(pmesh, edges(pmesh), face_to_region_map, np)
     {}
 
