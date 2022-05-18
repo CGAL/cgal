@@ -173,6 +173,9 @@ namespace Polygon_mesh {
       const EdgeRange& edge_range,
       FaceToRegionMap face_to_region_map,
       const NamedParameters& np = parameters::default_values())
+    :  m_vpm(parameters::choose_parameter(parameters::get_parameter(
+              np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh)))
+    ,  m_segment_map(&pmesh, m_vpm)
     {
 
       clear();
