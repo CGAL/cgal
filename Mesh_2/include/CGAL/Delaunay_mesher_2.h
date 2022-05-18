@@ -390,7 +390,7 @@ refine_Delaunay_mesh_2(Tr& t, const CGAL_NP_CLASS& np)
 
   if (!choose_parameter(get_parameter(np, internal_np::domain_is_initialized), false))
   {
-    if (is_default_parameter<CGAL_NP_CLASS, internal_np::seeds_t>()) // no seeds provided
+    if (is_default_parameter<CGAL_NP_CLASS, internal_np::seeds_t>::value) // no seeds provided
     {
       mesher.init(false);
     }
