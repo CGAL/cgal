@@ -51,6 +51,9 @@ namespace Polygon_mesh {
     using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
+    using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
+    using Edge_range = Iterator_range<typename edge_iterator>;
+
     struct PEdge {
       std::size_t index = std::size_t(-1);
       edge_descriptor ed;
@@ -125,39 +128,64 @@ namespace Polygon_mesh {
       \pre `edges(pmesh).size() > 0`
     */
     template<typename FaceToRegionMap,
-             typename OutputIterator,
              typename NamedParameters = parameters::Default_named_parameters>
     Polyline_graph(
       const PolygonMesh& pmesh,
       FaceToRegionMap face_to_region_map,
-      std::size_t nb_regions,
-      OutputIterator trivial_edges_out,
       const NamedParameters& np = parameters::default_values())
-      :  m_vpm(parameters::choose_parameter(parameters::get_parameter(
-          np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh)))
-      ,  m_segment_map(&pmesh, m_vpm), m_min_triangle_region_size(parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::minimum_region_size), 0))
-    {
+      : Polyline_graph(pmesh, edges(pmesh), face_to_region_map, np) {}
+    
+    /*!
+      \brief initializes all internal data structures.
+      \tparam FaceToRegionMap
+      a model of `ReadablePropertyMap` whose key type is `face_descriptor` of the `PolygonMesh`
+      and value type is `std::size_t`
+
+      \tparam NamedParameters
+      a sequence of optional \ref bgl_namedparameters "Named Parameters"
+
+      \param pmesh a polygon mesh
+
+      \param edge_range contains all edges in `pmesh` to be considered in the graph
+
+      \param face_to_region_map maps each face of `pmesh` to
+             a corresponding planar region id
+
+      \param np a sequence of \ref bgl_namedparameters "Named Parameters"
+        among the ones listed below
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{vertex_point_map}
+          \cgalParamDescription{an instance of `VertexPointMap` that maps a polygon mesh
+          vertex to `Kernel::Point_3`}
+          \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
+      \pre `faces(pmesh).size() > 0`
+      \pre `edges(pmesh).size() > 0`
+    */
+    template<typename FaceToRegionMap,
+      typename NamedParameters = parameters::Default_named_parameters>
+      Polyline_graph(
+        const PolygonMesh& pmesh,
+        const Edge_range edge_range,
+        FaceToRegionMap face_to_region_map,
+        const NamedParameters& np = parameters::default_values()) {
+
       clear();
 
       typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_edge_property_t<std::size_t> >::const_type EdgeIndexMap;
-      EdgeIndexMap eimap  = get(CGAL::dynamic_edge_property_t<std::size_t>(), pmesh);
-
-      std::vector<int> nb_faces_per_patch(nb_regions,0);
-      for(face_descriptor f : faces(pmesh))
-      {
-        std::size_t pid = get(face_to_region_map, f);
-        nb_faces_per_patch[pid]+=1;
-      }
+      EdgeIndexMap eimap = get(CGAL::dynamic_edge_property_t<std::size_t>(), pmesh);
 
       // collect edges either on the boundary or having two different incident regions
-      for (const auto& edge : edges(pmesh))
+      for (const auto& edge : edge_range)
       {
         halfedge_descriptor h1 = halfedge(edge, pmesh),
-                            h2 = opposite(h1, pmesh);
+          h2 = opposite(h1, pmesh);
 
-        face_descriptor f1  = face(h1, pmesh),
-                        f2  = face(h2, pmesh);
+        face_descriptor f1 = face(h1, pmesh),
+          f2 = face(h2, pmesh);
 
         std::size_t r1 = -1, r2 = -1;
 
@@ -169,20 +197,12 @@ namespace Polygon_mesh {
         if (r1 == r2)
           put(eimap, edge, std::size_t(-1));
         else
-        {
-          if (r1!=std::size_t(-1) && r2!=std::size_t(-1) && (nb_faces_per_patch[r1] <= m_min_triangle_region_size || nb_faces_per_patch[r2] <= m_min_triangle_region_size))
-          {
-            *trivial_edges_out++=edge;
-            put(eimap, edge, std::size_t(-1));
-          }
-          else
-            add_graph_edge(edge, r1, r2, eimap);
-        }
+          add_graph_edge(edge, r1, r2, eimap);
       }
 
       // build adjacency between edges
       typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<bool> >::const_type VisitedVertexMap;
-      VisitedVertexMap visited_vertices  = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh);
+      VisitedVertexMap visited_vertices = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh);
       for (std::size_t i = 0; i < m_pedges.size(); ++i)
       {
         put(visited_vertices, source(m_pedges[i].ed, pmesh), false);
@@ -197,7 +217,7 @@ namespace Polygon_mesh {
 
         std::array<vertex_descriptor, 2> vrts = { source(pedge.ed, pmesh), target(pedge.ed, pmesh) };
 
-        for (int k=0; k<2; ++k)
+        for (int k = 0; k < 2; ++k)
         {
           if (!get(visited_vertices, vrts[k]))
           {
@@ -207,7 +227,6 @@ namespace Polygon_mesh {
         }
       }
     }
-
     /// @}
 
     /// \name Access
@@ -311,7 +330,6 @@ namespace Polygon_mesh {
 
     const Segment_map m_segment_map;
     std::vector<PEdge> m_pedges;
-    std::size_t m_min_triangle_region_size;
 
     template <class EdgeIndexMap>
     void add_graph_edge(
