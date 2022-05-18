@@ -51,9 +51,6 @@ namespace Polygon_mesh {
     using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
-    using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
-    using Edge_range = Iterator_range<typename edge_iterator>;
-
     struct PEdge {
       std::size_t index = std::size_t(-1);
       edge_descriptor ed;
@@ -133,7 +130,8 @@ namespace Polygon_mesh {
       const PolygonMesh& pmesh,
       FaceToRegionMap face_to_region_map,
       const NamedParameters& np = parameters::default_values())
-      : Polyline_graph(pmesh, edges(pmesh), face_to_region_map, np) {}
+      : Polyline_graph(pmesh, edges(pmesh), face_to_region_map, np)
+    {}
 
     /*!
       \brief initializes all internal data structures.
@@ -143,6 +141,8 @@ namespace Polygon_mesh {
 
       \tparam NamedParameters
       a sequence of optional \ref bgl_namedparameters "Named Parameters"
+
+      \tparam EdgeRange a model of `ConstRange` with `edge_descriptor` as iterator value type.
 
       \param pmesh a polygon mesh
 
@@ -166,12 +166,14 @@ namespace Polygon_mesh {
       \pre `edges(pmesh).size() > 0`
     */
     template<typename FaceToRegionMap,
-      typename NamedParameters = parameters::Default_named_parameters>
-      Polyline_graph(
-        const PolygonMesh& pmesh,
-        const Edge_range edge_range,
-        FaceToRegionMap face_to_region_map,
-        const NamedParameters& np = parameters::default_values()) {
+             typename EdgeRange,
+             typename NamedParameters = parameters::Default_named_parameters>
+    Polyline_graph(
+      const PolygonMesh& pmesh,
+      const EdgeRange& edge_range,
+      FaceToRegionMap face_to_region_map,
+      const NamedParameters& np = parameters::default_values())
+    {
 
       clear();
 
