@@ -37,13 +37,23 @@ protected:
   }
 
   void add_face(typename Arr::Face_const_handle f, CGAL::IO::Color c) {
-    if (f->is_unbounded()) return;
-    face_begin(c);
-    add_ccb(f->outer_ccb());
-    for (auto iv = f->isolated_vertices_begin();
-         iv != f->isolated_vertices_end(); ++iv)
-      add_point(iv->point());
-    face_end();
+    if (! f->is_unbounded()) {
+      face_begin(c);
+      add_ccb(f->outer_ccb());
+      for (auto iv = f->isolated_vertices_begin();
+           iv != f->isolated_vertices_end(); ++iv)
+        add_point(iv->point());
+      face_end();
+    }
+
+    for (auto it = f->inner_ccbs_begin(); it != f->inner_ccbs_end(); ++it) {
+      face_begin(c);
+      add_ccb(*it);
+      for (auto iv = f->isolated_vertices_begin();
+           iv != f->isolated_vertices_end(); ++iv)
+        add_point(iv->point());
+      face_end();
+    }
   }
 
   void add_elements() {
