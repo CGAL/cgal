@@ -557,8 +557,8 @@ public:
   Comparison_result compare_to_right(const Self& arc, const Conic_point_2& p)
     const
   {
-    CGAL_precondition((this->m_old_info & IS_VERTICAL_SEGMENT) == 0 &&
-                      (arc.m_old_info & IS_VERTICAL_SEGMENT) == 0);
+    CGAL_precondition(! this->m_new_info.test(IS_VERTICAL_SEGMENT_) &&
+                      ! arc.m_new_info.test(IS_VERTICAL_SEGMENT_));
 
     // In case one arc is facing upwards and another facing downwards, it is
     // clear that the one facing upward is above the one facing downwards.
@@ -733,31 +733,29 @@ public:
       // \todo Handle higher-order derivatives:
       CGAL_assertion(slope_res != EQUAL);
 
-      return (slope_res);
+      return slope_res;
     }
     else if (! is_vertical_slope2) {
       // The first arc has a vertical slope at p: check whether it is
       // facing upwards or downwards and decide accordingly.
       CGAL_assertion((this->m_old_info & FACING_MASK) != 0);
 
-      if ((this->m_old_info & FACING_UP) != 0) return LARGER;
-      return SMALLER;
+      return (this->m_new_info.test(FACING_UP_)) ? LARGER : SMALLER;
     }
     else if (! is_vertical_slope1) {
       // The second arc has a vertical slope at p_int: check whether it is
       // facing upwards or downwards and decide accordingly.
       CGAL_assertion((arc.m_old_info & FACING_MASK) != 0);
 
-      if ((arc.m_old_info & FACING_UP) != 0) return SMALLER;
-      return LARGER;
+      return (arc.m_new_info.test(FACING_UP_)) ? SMALLER : LARGER;
     }
 
     // The two arcs have vertical slopes at p_int:
     // First check whether one is facing up and one down. In this case the
     // comparison result is trivial.
-    if ((this->m_old_info & FACING_UP) != 0 && (arc.m_old_info & FACING_DOWN) != 0)
+    if (this->m_new_info.test(FACING_UP_) && arc.m_new_info.test(FACING_DOWN_))
       return LARGER;
-    else if ((this->m_old_info & FACING_DOWN) != 0 && (arc.m_old_info & FACING_UP) != 0)
+    else if (this->m_new_info.test(FACING_DOWN_) && arc.m_new_info.test(FACING_UP_))
       return SMALLER;
 
     // Compute the second-order derivative by y and act according to it.
@@ -1048,23 +1046,23 @@ public:
 
     if (ker.equal_2_object() (right(), arc.left())) {
       // Extend the arc to the right.
-      if ((this->m_old_info & IS_DIRECTED_RIGHT) != 0) this->m_target = arc.right();
+      if (this->m_new_info.test(IS_DIRECTED_RIGHT_)) this->m_target = arc.right();
       else this->m_source = arc.right();
     }
     else {
       CGAL_precondition(ker.equal_2_object() (left(), arc.right()));
 
       // Extend the arc to the left.
-      if ((this->m_old_info & IS_DIRECTED_RIGHT) != 0)
+      if (this->m_new_info.test(IS_DIRECTED_RIGHT_))
         this->m_source = arc.left();
       else
         this->m_target = arc.left();
     }
   }
 
-  bool is_upper() const { return ((this->m_old_info & FACING_UP) != 0); }
+  bool is_upper() const { return this->m_new_info.test(FACING_UP_); }
 
-  bool is_lower() const { return ((this->m_old_info & FACING_DOWN) != 0); }
+  bool is_lower() const { return this->m_new_info.test(FACING_DOWN_); }
   //@}
 
 private:
