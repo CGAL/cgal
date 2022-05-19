@@ -614,29 +614,27 @@ public:
 
       return slope_res;
     }
-    else if ( !is_vertical_slope2) {
+    else if (! is_vertical_slope2) {
       // The first arc has a vertical slope at p: check whether it is
       // facing upwards or downwards and decide accordingly.
       CGAL_assertion ((this->m_old_info & FACING_MASK) != 0);
 
-      if ((this->m_old_info & FACING_UP) != 0) return LARGER;
-      return SMALLER;
+      return (this->m_new_info.test(FACING_UP_)) ? LARGER : SMALLER;
     }
     else if (! is_vertical_slope1) {
       // The second arc has a vertical slope at p_int: check whether it is
       // facing upwards or downwards and decide accordingly.
       CGAL_assertion ((arc.m_old_info & FACING_MASK) != 0);
 
-      if ((arc.m_old_info & FACING_UP) != 0) return SMALLER;
-      return LARGER;
+      return (arc.m_new_info.test(FACING_UP_)) ? SMALLER : LARGER;
     }
 
     // The two arcs have vertical slopes at p_int:
     // First check whether one is facing up and one down. In this case the
     // comparison result is trivial.
-    if ((this->m_old_info & FACING_UP) != 0 && (arc.m_old_info & FACING_DOWN) != 0)
-      return (LARGER);
-    else if ((this->m_old_info & FACING_DOWN) != 0 && (arc.m_old_info & FACING_UP) != 0)
+    if (this->m_new_info.test(FACING_UP_) && arc.m_new_info.test(FACING_DOWN_))
+      return LARGER;
+    else if (this->m_new_info.test(FACING_DOWN_) && arc.m_new_info.test(FACING_UP_))
       return SMALLER;
 
     // Compute the second-order derivative by y and act according to it.
@@ -659,7 +657,7 @@ public:
     // \todo Handle higher-order derivatives:
     CGAL_assertion(slope_res != EQUAL);
 
-    if ((this->m_old_info & FACING_UP) != 0 && (arc.m_old_info & FACING_UP) != 0) {
+    if (this->m_new_info.test(FACING_UP_) && arc.m_new_info.test(FACING_UP_)) {
       // Both are facing up.
       return ((slope_res == LARGER) ? SMALLER : LARGER);
     }
@@ -682,10 +680,9 @@ public:
     // In case one arc is facing upwards and another facing downwards, it is
     // clear that the one facing upward is above the one facing downwards.
     if (has_same_supporting_conic (arc)) {
-      if ((this->m_old_info & FACING_UP) != 0 && (arc.m_old_info & FACING_DOWN) != 0)
+      if (this->m_new_info.test(FACING_UP_) && arc.m_new_info.test(FACING_DOWN_))
         return LARGER;
-      else if ((this->m_old_info & FACING_DOWN) != 0 && (arc.m_old_info & FACING_UP) !=
-               0)
+      else if (this->m_new_info.test(FACING_DOWN_) && arc.m_new_info.test(FACING_UP_))
         return SMALLER;
 
       // In this case the two arcs overlap.
@@ -778,10 +775,10 @@ public:
     // \todo Handle higher-order derivatives:
     CGAL_assertion(slope_res != EQUAL);
 
-    if ((this->m_old_info & FACING_UP) != 0 && (arc.m_old_info & FACING_UP) != 0) {
-      // Both are facing up.
+    // Check whether both are facing up.
+    if (this->m_new_info.test(FACING_UP_) && arc.m_new_info.test(FACING_UP_))
       return ((slope_res == LARGER) ? SMALLER : LARGER);
-    }
+
     // Both are facing down.
     return slope_res;
   }
@@ -896,7 +893,7 @@ public:
     c2 = *this;
 
     // Assign the endpoints of the arc.
-    if ((this->m_old_info & IS_DIRECTED_RIGHT) != 0) {
+    if (this->m_new_info.test(IS_DIRECTED_RIGHT_)) {
       // The arc is directed from left to right, so p becomes c1's target
       // and c2's source.
       c1.m_target = p;
@@ -957,10 +954,10 @@ public:
     Self arc = *this;
     Alg_kernel ker;
 
-    if (! ((((this->m_old_info & IS_DIRECTED_RIGHT) != 0) &&
-            ker.compare_xy_2_object()(ps, pt) == SMALLER) ||
-           (((this->m_old_info & IS_DIRECTED_RIGHT) == 0) &&
-            ker.compare_xy_2_object()(ps, pt) == LARGER)))
+    if (! ((this->m_new_info.test(IS_DIRECTED_RIGHT_) &&
+            (ker.compare_xy_2_object()(ps, pt) == SMALLER)) ||
+           (this->m_new_info.test(IS_DIRECTED_RIGHT_) &&
+            (ker.compare_xy_2_object()(ps, pt) == LARGER))))
     {
       // We are allowed to change the direction only in case of a segment.
       CGAL_assertion(this->m_orient == COLLINEAR);
