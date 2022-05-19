@@ -995,10 +995,10 @@ output_to_medit(std::ostream& os,
  * \cgalNamedParamsEnd
  * \see \ref IOStreamMedit
  */
-template<typename T3, typename NamedParameters>
+template<typename T3, typename NamedParameters = parameters::Default_named_parameters>
 void write_MEDIT(std::ostream& os,
                  const T3& t3,
-                 const NamedParameters& np)
+                 const NamedParameters& np = parameters::default_values())
 {
   CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int> c3t3;
   c3t3.triangulation() = t3;
@@ -1013,13 +1013,6 @@ void write_MEDIT(std::ostream& os,
   bool all_v = all_c || choose_parameter(get_parameter(np, internal_np::all_vertices), true);
 
   output_to_medit(os, c3t3, rebind, show_patches, all_v, all_c);
-}
-
-template<typename T3>
-void write_MEDIT(std::ostream& os,
-                 const T3& t3)
-{
-  write_MEDIT(os, t3, parameters::all_default());
 }
 
 /**
@@ -1082,21 +1075,12 @@ void write_MEDIT(std::ostream& os,
 template<typename T3,
          typename CornerIndex,
          typename CurveIndex,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void write_MEDIT(std::ostream& os,
   const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   return write_MEDIT(os, c3t3.triangulation(), np);
-}
-
-template<typename T3,
-         typename CornerIndex,
-         typename CurveIndex>
-void write_MEDIT(std::ostream& os,
-    const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3)
-{
-  return write_MEDIT(os, c3t3, parameters::all_default());
 }
 
 /**

@@ -199,10 +199,10 @@ void set_face_patches(const Index2FaceMap& i2f,
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template<class C3T3, class TriangleMesh, typename NamedParameters>
+  template<class C3T3, class TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
   void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3,
     TriangleMesh& graph,
-    const NamedParameters& np)
+    const NamedParameters& np = parameters::default_values())
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -231,12 +231,6 @@ void set_face_patches(const Index2FaceMap& i2f,
     SMDS_3::internal::set_face_patches(i2f,
                                       patches,
                                       get_parameter(np, internal_np::face_patch));
-  }
-
-  template<class C3T3, class TriangleMesh>
-  void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& tm)
-  {
-    facets_in_complex_3_to_triangle_mesh(c3t3, tm, parameters::all_default());
   }
 
 } // namespace CGAL

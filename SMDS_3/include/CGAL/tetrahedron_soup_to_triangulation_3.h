@@ -167,10 +167,10 @@ namespace CGAL {
   template<typename Triangulation,
            typename PointRange,
            typename TetrahedronRange,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   Triangulation tetrahedron_soup_to_triangulation_3(const PointRange& points,
                                                     const TetrahedronRange& tets,
-                                                    const NamedParameters& np)
+                                                    const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -208,16 +208,6 @@ namespace CGAL {
     CGAL_assertion(CGAL::SMDS_3::internal::is_convex(tr));
 
     return tr;
-  }
-
-  template<typename Triangulation,
-           typename PointRange,
-           typename TetrahedronRange>
-  Triangulation tetrahedron_soup_to_triangulation_3(const PointRange& points,
-                                                    const TetrahedronRange& tets)
-  {
-    return tetrahedron_soup_to_triangulation_3<Triangulation>(
-              points, tets, parameters::all_default());
   }
 
 } //namespace CGAL
