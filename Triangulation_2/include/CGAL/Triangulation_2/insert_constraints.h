@@ -19,6 +19,7 @@
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
+#include <unordered_set>
 #include <vector>
 #include <iterator>
 
@@ -66,12 +67,23 @@ namespace CGAL {
       hint=vertices[*it_pti]->face();
     }
 
+    typedef std::unordered_set< std::pair<Vertex_handle,Vertex_handle>, boost::hash<std::pair<Vertex_handle,Vertex_handle> > >  Inserted;
+    Inserted inserted;
     for(IndicesIterator it_cst=indices_first, end=indices_beyond;
         it_cst!=end; ++it_cst)
     {
       Vertex_handle v1 = vertices[it_cst->first];
       Vertex_handle v2 = vertices[it_cst->second];
-      if(v1 != v2) t.insert_constraint(v1, v2);
+      if(v1 != v2){
+        std::pair<Vertex_handle,Vertex_handle> p = (v1 < v2)? std::make_pair(v1,v2): std::make_pair(v2,v1);
+        bool not_in_triangulation = inserted.insert(p).second;
+
+        if(not_in_triangulation){
+          t.insert_constraint(v1, v2);
+        }else{
+          std::cout << "already inserted" << std::endl;
+        }
+      }
     }
 
     return t.number_of_vertices() - n;
