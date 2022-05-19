@@ -359,18 +359,20 @@ public:
   std::size_t insert_constraints(PointIterator points_first,
                                  PointIterator points_beyond,
                                  IndicesIterator indices_first,
-                                 IndicesIterator indices_beyond)
+                                 IndicesIterator indices_beyond,
+                                 bool check_duplicates = false)
   {
     std::vector<Point> points(points_first, points_beyond);
-    return internal::insert_constraints(*this,points, indices_first, indices_beyond);
+    return internal::insert_constraints(*this,points, indices_first, indices_beyond, check_duplicates);
   }
 
 
  template <class ConstraintIterator>
   std::size_t insert_constraints(ConstraintIterator first,
-                                 ConstraintIterator beyond)
+                                 ConstraintIterator beyond,
+                                 bool check_duplicates = false)
   {
-    return internal::insert_constraints(*this,first,beyond);
+    return internal::insert_constraints(*this,first,beyond, check_duplicates);
   }
 
 

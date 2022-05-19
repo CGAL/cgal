@@ -213,12 +213,15 @@ is used to improve efficiency.
 More precisely, all endpoints are inserted prior to the segments and according to the order provided by the spatial sort.
 Once endpoints have been inserted, the segments are inserted in the order of the input iterator,
 using the vertex handles of its endpoints.
+As inserting the same constraint several times may cause problems in
+case of intersecting segments and non-exact constructions the function
+can optionally check for duplicates.
 
 \return the number of inserted points.
 \tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
 */
 template <class ConstraintIterator>
-std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
+std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last, bool check_duplicates = false);
 
 /*!
 Same as above except that each constraints is given as a pair of indices of the points
