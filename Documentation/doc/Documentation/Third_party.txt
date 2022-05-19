@@ -12,7 +12,7 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 | Operating System | Compiler |
 | :----------      | :--------------- |
 | Linux            | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">\cgalFootnoteCode{http://gcc.gnu.org/}</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">\cgalFootnoteCode{http://clang.llvm.org/}</A>} compiler version 13.0.0 |
+|                  | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">\cgalFootnoteCode{http://clang.llvm.org/}</A>} compiler version 13.0.1 |
 | \ms Windows      | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">\cgalFootnoteCode{http://gcc.gnu.org/}</A>} |
 |                  | \ms Visual `C++` 14.0, 15.9, 16.10, 17.0 (\visualstudio 2015, 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
 | MacOS X          | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">\cgalFootnoteCode{http://gcc.gnu.org/}</A>} |
@@ -117,7 +117,7 @@ The exhaustive list of \qt5 components used in demos is:
 `qcollectiongenerator` (with `sqlite` driver plugin), and `Xml`.
 
 \subsection thirdpartyEigen Eigen
-<b>Version 3.1 or later</b>
+<b>Version 3.3.4 or later</b>
 
 \eigen is a `C++` template library for linear algebra. \eigen supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
