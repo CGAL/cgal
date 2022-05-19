@@ -22,6 +22,7 @@
 #include <unordered_set>
 #include <vector>
 #include <iterator>
+#include <boost/functional/hash.hpp>
 
 namespace CGAL {
   namespace internal {
