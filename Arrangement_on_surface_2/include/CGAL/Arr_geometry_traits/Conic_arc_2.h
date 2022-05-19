@@ -19,7 +19,6 @@
  * Header file for the _Conic_arc_2<Int_kernel, Alg_kernel, Nt_traits> class.
  */
 
-#include <bitset>
 #include <ostream>
 
 #include <CGAL/Arr_geometry_traits/Conic_point_2.h>
@@ -74,16 +73,12 @@ protected:
 
   // Bit masks for the m_info field.
   enum {
-    IS_VALID = 1,
-    IS_FULL_CONIC = 2,
-
-    IS_VALID_ = 0,
-    IS_FULL_CONIC_,
+    IS_VALID = 0,
+    IS_FULL_CONIC,
     LAST_INFO,
   };
 
-  int m_old_info;                   // does the arc represent a full conic curve.
-  std::bitset<16> m_new_info;      // does the arc represent a full conic curve.
+  int m_info;                   // does the arc represent a full conic curve.
   Conic_point_2 m_source;       // the source of the arc (if not a full curve).
   Conic_point_2 m_target;       // the target of the arc (if not a full curve).
 
@@ -105,6 +100,27 @@ protected:
   Extra_data* m_extra_data;     // The extra data stored with the arc
                                 // (may be nullptr).
 
+  /// \name Flag manipulation functions.
+  //@{
+  template <typename T>
+  constexpr size_t flag_mask(const T flag) const { return 0x1 << flag; }
+
+  void reset_flags() { m_info = 0; }
+
+  template <typename T>
+  void set_flag(const T flag) { m_info |= flag_mask(flag); }
+
+  template <typename T>
+  void reset_flag(const T flag) { m_info &= ~flag_mask(flag); }
+
+  template <typename T>
+  void flip_flag(const T flag) { m_info ^= flag_mask(flag);}
+
+  template <typename T>
+  bool test_flag(const T flag) const
+  { return (m_info & flag_mask(flag)); }
+  //@}
+
 public:
   /// \name Construction and destruction functions.
   //@{
@@ -115,8 +131,7 @@ public:
   _Conic_arc_2() :
     m_r(0), m_s(0), m_t(0), m_u(0), m_v(0), m_w(0),
     m_orient(COLLINEAR),
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_extra_data(nullptr)
   {}
 
@@ -127,8 +142,7 @@ public:
     m_r(arc.m_r), m_s(arc.m_s), m_t(arc.m_t),
     m_u(arc.m_u), m_v(arc.m_v), m_w(arc.m_w),
     m_orient(arc.m_orient),
-    m_old_info(arc.m_old_info),
-    m_new_info(arc.m_new_info),
+    m_info(arc.m_info),
     m_source(arc.m_source),
     m_target(arc.m_target)
   {
@@ -142,8 +156,7 @@ public:
    */
   _Conic_arc_2(const Rational& r, const Rational& s, const Rational& t,
                const Rational& u, const Rational& v, const Rational& w) :
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_extra_data(nullptr)
   {
     // Make sure the given curve is an ellipse (4rs - t^2 should be positive).
@@ -175,8 +188,7 @@ public:
                const Orientation& orient,
                const Point_2& source, const Point_2& target) :
     m_orient(orient),
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_source(source),
     m_target(target),
     m_extra_data(nullptr)
@@ -203,8 +215,7 @@ public:
    */
   _Conic_arc_2(const Point_2& source, const Point_2& target) :
     m_orient(COLLINEAR),
-    m_old_info(static_cast<int>(IS_VALID)),
-    m_new_info(0),
+    m_info(flag_mask(IS_VALID)),
     m_source(source),
     m_target(target),
     m_extra_data(nullptr)
@@ -212,7 +223,7 @@ public:
     CGAL_precondition(Alg_kernel().compare_xy_2_object()(m_source, m_target) !=
                       EQUAL);
 
-    m_new_info.set(IS_VALID_);
+    set_flag(IS_VALID);
 
     // Compose the equation of the underlying line.
     const Algebraic x1 = source.x();
@@ -235,8 +246,7 @@ public:
    */
   _Conic_arc_2(const Rat_segment_2& seg) :
     m_orient(COLLINEAR),
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_extra_data (nullptr)
   {
     // Set the source and target.
@@ -291,8 +301,7 @@ public:
    */
   _Conic_arc_2(const Rat_circle_2& circ) :
     m_orient(CLOCKWISE),
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_extra_data(nullptr)
   {
     // Get the circle properties.
@@ -335,8 +344,7 @@ public:
                const Orientation& orient,
                const Point_2& source, const Point_2& target) :
     m_orient(orient),
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_source(source),
     m_target(target),
     m_extra_data(nullptr)
@@ -397,8 +405,7 @@ public:
    */
   _Conic_arc_2(const Rat_point_2& p1, const Rat_point_2& p2,
                const Rat_point_2& p3):
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_extra_data(nullptr)
   {
     // Set the source and target.
@@ -440,8 +447,7 @@ public:
     const bool points_collinear = (CGAL::sign(D) == ZERO);
 
     if (points_collinear) {
-      m_old_info = 0;           // inavlid arc.
-      m_new_info.reset();      // inavlid arc
+      reset_flags();            // inavlid arc
       return;
     }
 
@@ -482,8 +488,7 @@ public:
   _Conic_arc_2(const Rat_point_2& p1, const Rat_point_2& p2,
                const Rat_point_2& p3, const Rat_point_2& p4,
                const Rat_point_2& p5) :
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_extra_data(nullptr)
   {
     // Make sure that no three points are collinear.
@@ -502,8 +507,7 @@ public:
        orient_f(p3, p4, p5) == COLLINEAR);
 
     if (point_collinear) {
-      m_old_info = 0;           // Inavlid arc.
-      m_new_info.reset();      // inavlid arc
+      reset_flags();            // inavlid arc
       return;
     }
 
@@ -561,8 +565,7 @@ public:
         ! is_strictly_between_endpoints(mp3) ||
         ! is_strictly_between_endpoints(mp4))
     {
-      m_old_info = 0;               // Inalvid arc.
-      m_new_info.reset();          // inavlid arc
+      reset_flags();            // inavlid arc
     }
   }
 
@@ -586,8 +589,7 @@ public:
                const Rational& r_2, const Rational& s_2, const Rational& t_2,
                const Rational& u_2, const Rational& v_2, const Rational& w_2):
     m_orient(orient),
-    m_old_info(0),
-    m_new_info(0),
+    m_info(0),
     m_extra_data(nullptr)
   {
     // Create the integer coefficients of the base conic.
@@ -725,16 +727,14 @@ public:
       }
 
       if (! found) {
-        m_old_info = 0;           // Invalid arc.
-        m_new_info.reset();      // inavlid arc
+        reset_flags();          // inavlid arc
         return;
       }
     }
 
     // Make sure that the source and the target are not the same.
     if (Alg_kernel().compare_xy_2_object()(m_source, m_target) == EQUAL) {
-      m_old_info = 0;      // Invalid arc.
-      m_new_info.reset();          // inavlid arc
+      reset_flags();            // inavlid arc
       return;
     }
 
@@ -764,8 +764,7 @@ public:
     m_w = arc.m_w;
 
     m_orient = arc.m_orient;
-    m_old_info = arc.m_old_info;
-    m_new_info = arc.m_new_info;
+    m_info = arc.m_info;
     m_source = arc.m_source;
     m_target = arc.m_target;
 
@@ -782,7 +781,7 @@ public:
 
   /*! Check wheather the arc is valid.
    */
-  bool is_valid() const { return m_new_info.test(IS_VALID_); }
+  bool is_valid() const { return test_flag(IS_VALID); }
 
   /*! Get the coefficients of the underlying conic.
    */
@@ -811,9 +810,7 @@ public:
 
   /*! Check whether the arc represents a full conic curve.
    */
-  bool is_full_conic() const {
-    return m_new_info.test(IS_FULL_CONIC_);
-  }
+  bool is_full_conic() const { return test_flag(IS_FULL_CONIC); }
 
   /*! Get the arc's source.
    * \return The source point.
@@ -1076,8 +1073,7 @@ private:
    *                   of x^2, y^2, xy, x, y and the free coefficient resp.
    */
   void set(const Rational* rat_coeffs) {
-    m_old_info = IS_VALID;
-    m_new_info.set(IS_VALID_);
+    set_flag(IS_VALID);
 
     // Convert the coefficients vector to an equivalent vector of integer
     // coefficients.
@@ -1113,8 +1109,7 @@ private:
     if (! is_on_supporting_conic(m_source) ||
         ! is_on_supporting_conic(m_target))
     {
-      m_old_info = 0;          // Invalid arc.
-      m_new_info.reset();          // inavlid arc
+      reset_flags();            // inavlid arc
       return;
     }
 
@@ -1154,8 +1149,7 @@ private:
                         nt_traits.convert(m_v)) * p_mid.y() +
                        nt_traits.convert(m_w)) != ZERO)
         {
-          m_old_info = 0;          // Invalid arc.
-          m_new_info.reset();      // inavlid arc
+          reset_flags();        // inavlid arc
           return;
         }
       }
@@ -1180,17 +1174,16 @@ private:
           bool finite_at_y = (points_at_y(p_mid, ps) > 0);
 
           if (! finite_at_x && ! finite_at_y) {
-            m_old_info = 0;          // Invalid arc.
-            m_new_info.reset();    // inavlid arc
+            reset_flags();              // inavlid arc
             return;
           }
         }
       }
     }
 
-    // Mark that this arc valid and is not a full conic curve.
-    m_old_info = IS_VALID;
-    m_new_info.set(IS_VALID_);
+
+    set_flag(IS_VALID);         // mark that this arc valid
+    reset_flag(IS_FULL_CONIC);  // mark that this arc is not a full conic
   }
 
   /*! Set the properties of a conic arc that is really a full curve
@@ -1243,14 +1236,10 @@ private:
 
     // Mark that this arc is a full conic curve.
     if (is_ellipse) {
-      m_old_info = IS_VALID | IS_FULL_CONIC;
-      m_new_info.set(IS_VALID_);
-      m_new_info.set(IS_FULL_CONIC_);
+      set_flag(IS_VALID);
+      set_flag(IS_FULL_CONIC);
     }
-    else {
-      m_old_info = 0;
-      m_new_info.reset();          // inavlid arc
-    }
+    else reset_flags();            // inavlid arc
   }
 
   /*! Build the data for hyperbolic arc, contaning the characterization of the
