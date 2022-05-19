@@ -16,6 +16,7 @@
 #include <CGAL/tags.h>
 #include <limits>
 #include <algorithm>
+#include <deque>
 
 // An STL like container, similar to Compact_container, but uses indices
 // instead of handles.
@@ -83,28 +84,32 @@ namespace internal {
 // * free elements stored in a data member of T, and used Booleans in its most significant bit
 // Note that version deque and data member does not exist (no interest?)
 // By default, use a deque and a vector.
-template<typename size_type, class T, class Use_deque, class Use_vector>
+template<typename CC_with_index, class Use_deque, class Use_vector>
 class Free_list_management
 {};
 
 // Case with a deque for the freelist and a vector for Booleans.
-template<typename size_type, class T>
-class Free_list_management<size_type, T, CGAL::Tag_true, CGAL::Tag_true>
+template<typename CC_with_index>
+class Free_list_management<CC_with_index, CGAL::Tag_true, CGAL::Tag_true>
 {
-  using Self=Free_list_management<size_type, T, CGAL::Tag_true, CGAL::Tag_true>;
-  static size_type max_index=std::numeric_limits<size_type>::max();
+  using Self=Free_list_management<CC_with_index, CGAL::Tag_true, CGAL::Tag_true>;
+  using T=typename CC_with_index::value_type;
+  using size_type=typename CC_with_index::size_type;
 
 public:
-  bool is_used(const T& /*e*/, size_type i) const
+  Free_list_management(CC_with_index& cc_with_index): m_cc_with_index(cc_with_index)
+  {}
+  
+  bool is_used(size_type i) const
   {
-    CGAL_assertion(i<max_index);
+    CGAL_assertion(i<m_cc_with_index.capacity());
     return m_used[i];
   }
 
-  bool is_empty_free_list() const
-  { return m_free_list.empty(); }
+  bool is_empty() const
+  { return m_free_list.empty() && m_first_free_index==m_cc_with_index.capacity(); }
 
-  void put_on_free_list(T& /*e*/, size_type x)
+  void put_on_free_list(size_type x)
   {
     m_used[x]=false;
     if(x+1==m_first_free_index)
@@ -115,25 +120,24 @@ public:
 
   size_type top_of_free_list() const
   {
-    if(!is_empty_free_list())
+    CGAL_assertion(!is_empty());
+    if(!m_free_list.empty())
     { return m_free_list.front(); }
     return m_first_free_index;
   }
 
-  // e should be the element on top of the free list. It must be given as
-  // parameter for the case with Boolean stored in a data member of T.
-  size_type remove_from_free_list(T& /*e*/)
+  size_type remove_from_free_list()
   {
-    CGAL_assertion(!is_empty_free_list() || m_first_free_index<max_index);
-    size_type res=max_index;
-    if(!is_empty_free_list())
+    CGAL_assertion(!is_empty());
+    size_type res=m_cc_with_index.capacity();
+    if(!m_free_list.empty())
     {
       res=m_free_list.front();
       m_free_list.pop_front();
       m_used[res]=true;
     }
     else
-    { // TODO: do we want to test if m_first_free_index<max_index in non debug mode?
+    { // TODO: do we want to test if m_first_free_index<capacity in non debug mode?
       res=m_first_free_index;
       m_used[res]=true;
       ++m_first_free_index;
@@ -150,6 +154,7 @@ public:
 
   void swap(Self& other)
   {
+    std::swap(m_cc_with_index, other.m_cc_with_index);
     m_free_list.swap(other.m_free_list);
     m_used.swap(other.m_used);
     std::swap(m_first_free_index, other.m_first_free_index);
@@ -159,58 +164,62 @@ public:
   { m_used.resize(nb, false); }
 
 protected:
+  CC_with_index&        m_cc_with_index;
   std::deque<size_type> m_free_list;
   std::vector<bool>     m_used;
   size_type             m_first_free_index=0;
 };
 
 // Case with the "in place" free list, and a vector for Booleans.
-template<typename size_type, class T>
-class Free_list_management<size_type, T, CGAL::Tag_false, CGAL::Tag_true>
+template<typename CC_with_index>
+class Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_true>
 {
-  using Self=Free_list_management<size_type, T, CGAL::Tag_false, CGAL::Tag_true>;
-  static size_type max_index=std::numeric_limits<size_type>::max();
+  using Self=Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_true>;
+  using T=typename CC_with_index::value_type;
+  using size_type=typename CC_with_index::size_type;
   using Traits=Compact_container_with_index_traits <T, size_type>;
 
 public:
-  bool is_used(const T& /*e*/, size_type i) const
+  Free_list_management(CC_with_index& cc_with_index): m_cc_with_index(cc_with_index)
+  {}
+
+  bool is_used(size_type i) const
   {
-    CGAL_assertion(i<max_index);
+    CGAL_assertion(i<m_cc_with_index.capacity());
     return m_used[i];
   }
 
-  bool is_empty_free_list() const
-  { return m_free_list==max_index; }
+  bool is_empty() const
+  { return m_free_list==m_cc_with_index.capacity(); }
 
-  void put_on_free_list(T& e, size_type x)
+  void put_on_free_list(size_type i)
   {
-    CGAL_assertion(x<max_index);
-    m_used[x]=false;
-    Traits::size_t(e)=m_free_list;
-    m_free_list=x;
+    CGAL_assertion(i<m_cc_with_index.capacity());
+    m_used[i]=false;
+    Traits::size_t(m_cc_with_index[i])=m_free_list;
+    m_free_list=i;
   }
 
   size_type top_of_free_list() const
   { return m_free_list; }
 
-  // e should be the element on top of the free list. It must be given as
-  // parameter because this class do not have access to elements.
-  size_type remove_from_free_list(T& e)
+  size_type remove_from_free_list()
   {
-    CGAL_assertion(!is_empty_free_list());
+    CGAL_assertion(!is_empty());
     size_type res=m_free_list;
-    m_free_list=Traits::size_t(e);
+    m_free_list=Traits::size_t(m_cc_with_index[res]);
     return res;
   }
 
   void clear()
   {
-    m_free_list=max_index;
+    m_free_list=m_cc_with_index.capacity();
     m_used.clear();
   }
 
   void swap(Self& other)
   {
+    std::swap(m_cc_with_index, other.m_cc_with_index);
     std::swap(m_free_list, other.m_free_list);
     m_used.swap(other.m_used);
   }
@@ -219,44 +228,53 @@ public:
   { m_used.resize(nb, false); }
 
 protected:
-  size_type         m_free_list=max_index;
+  CC_with_index&    m_cc_with_index;
+  size_type         m_free_list=0;
   std::vector<bool> m_used;
 };
 
 // Case with the "in place" free list, and "in place" Booleans.
-template<typename size_type, class T>
-class Free_list_management<size_type, T, CGAL::Tag_false, CGAL::Tag_false>
+template<typename CC_with_index>
+class Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_false>
 {
-  using Self=Free_list_management<size_type, T, CGAL::Tag_false, CGAL::Tag_false>;
-  static size_type max_index=std::numeric_limits<size_type>::max();
+  using Self=Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_false>;
+  using T=typename CC_with_index::value_type;
+  using size_type=typename CC_with_index::size_type;
   using Traits=Compact_container_with_index_traits <T, size_type>;
 
 public:
-  bool is_used(const T& e, size_type /*i*/) const
-  { return static_type(e)==USED; }
+  Free_list_management(CC_with_index& cc_with_index): m_cc_with_index(cc_with_index)
+  {}
 
-  bool is_empty_free_list() const
-  { return m_free_list==max_index; }
+  bool is_used(size_type i) const
+  { return static_type(m_cc_with_index[i])==USED; }
 
-  void put_on_free_list(T& e, size_type x)
+  bool is_empty() const
+  { return m_free_list==m_cc_with_index.capacity(); }
+
+  void put_on_free_list(size_type i)
   {
-    CGAL_assertion(x<max_index);
-    static_set_val(e, m_free_list, FREE);
-    m_free_list=x;
+    CGAL_assertion(i<m_cc_with_index.capacity());
+    static_set_val(m_cc_with_index[i], m_free_list, FREE);
+    m_free_list=i;
   }
 
   size_type top_of_free_list() const
   { return m_free_list; }
 
-  // e should be the element on top of the free list. It must be given as
-  // parameter because this class does not have access to elements.
-  size_type remove_from_free_list(T& e)
+  size_type remove_from_free_list()
   {
-    CGAL_assertion(!is_empty_free_list());
+    CGAL_assertion(!is_empty());
     size_type res=m_free_list;
-    static_set_type(e, USED);
-    m_free_list=Traits::size_t(e);
+    static_set_type(m_cc_with_index[res], USED);
+    m_free_list=Traits::size_t(m_cc_with_index[res]);
     return res;
+  }
+
+  void swap(Self& other)
+  {
+    std::swap(m_cc_with_index, other.m_cc_with_index);
+    std::swap(m_free_list, other.m_free_list);
   }
 
 protected:
@@ -286,7 +304,8 @@ protected:
   { Traits::set_size_t(e, v | ( ((size_type)t) <<(nbbits_size_type_m1))); }
 
 protected:
-  size_type m_free_list=max_index;
+  CC_with_index& m_cc_with_index;
+  size_type      m_free_list;
 };
 
 // Index class
@@ -386,7 +405,8 @@ public:
   friend struct Multiply_by_two_policy_for_cc_with_size;
 
   explicit Compact_container_with_index(const Allocator &a = Allocator())
-  : alloc(a)
+    : alloc(a),
+      free_list(*this)
   {
     init();
   }
@@ -394,7 +414,8 @@ public:
   template < class InputIterator >
   Compact_container_with_index(InputIterator first, InputIterator last,
                                const Allocator & a = Allocator())
-  : alloc(a)
+  : alloc(a),
+    free_list(*this)
   {
     init();
     std::copy(first, last, CGAL::inserter(*this));
@@ -402,7 +423,8 @@ public:
 
   // The copy constructor and assignment operator preserve the iterator order
   Compact_container_with_index(const Compact_container_with_index &c)
-  : alloc(c.get_allocator())
+  : alloc(c.get_allocator()),
+    free_list(*this)
   {
     init();
     block_size = c.block_size;
@@ -410,7 +432,8 @@ public:
   }
 
   Compact_container_with_index(Compact_container_with_index&& c) noexcept
-  : alloc(c.get_allocator())
+    : alloc(c.get_allocator()),
+      free_list(*this)
   {
     c.swap(*this);
   }
@@ -433,14 +456,10 @@ public:
   }
 
   ~Compact_container_with_index()
-  {
-    clear();
-  }
+  { clear(); }
 
   bool is_used(size_type i) const
-  {
-    return free_list.is_used(operator[](i), i);
-  }
+  { return free_list.is_used(i); }
 
   const T& operator[] (size_type i) const
   {
@@ -461,6 +480,7 @@ public:
     std::swap(size_, c.size_);
     std::swap(block_size, c.block_size);
     std::swap(all_items, c.all_items);
+    free_list.swap(c.free_list);
   }
 
   iterator begin() { if(empty()) return end(); return iterator(this, 0, 0); }
@@ -508,13 +528,11 @@ public:
   template < typename... Args >
   Index emplace(const Args&... args)
   {
-    if (free_list == bottom)
-      allocate_new_block();
+    if (free_list.is_empty())
+    { allocate_new_block(); }
 
-    Index ret = free_list;
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
+    Index ret=free_list.remove_from_free_list();
+    T& e=operator[](ret);
     //std::allocator_traits<allocator_type>::construct(alloc, &e, args...);
     new (&e) value_type(args...);
     ++size_;
@@ -523,13 +541,11 @@ public:
 
   Index insert(const T &t)
   {
-    if (free_list == bottom)
-      allocate_new_block();
+    if (free_list.is_empty())
+    { allocate_new_block(); }
 
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
+    Index ret=free_list.remove_from_free_list();
+    T& e=operator[](ret);
     //std::allocator_traits<allocator_type>::construct(alloc, &e, t);
     new (&e) value_type(t);
     ++size_;
@@ -550,16 +566,16 @@ public:
     insert(first, last);
   }
 
-  void erase(Index x)
+  void erase(Index i)
   {
-    CGAL_precondition(type(x) == USED);
-    T& e = operator[](x);
+    CGAL_precondition(is_used(i));
+    T& e=operator[](i);
     std::allocator_traits<allocator_type>::destroy(alloc, &e);
     //e.~T();
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&e, 0, sizeof(T));
 #endif
-    put_on_free_list(x);
+    put_on_free_list(i);
     --size_;
   }
 
@@ -582,21 +598,15 @@ public:
   }
 
   size_type max_size() const
-  {
-    return std::allocator_traits<allocator_type>::max_size(alloc);
-  }
+  { return std::allocator_traits<allocator_type>::max_size(alloc); }
 
   size_type capacity() const
-  {
-    return capacity_;
-  }
+  { return capacity_; }
 
   // void resize(size_type sz, T c = T()); // TODO  makes sense ???
 
   bool empty() const
-  {
-    return size_ == 0;
-  }
+  { return size_ == 0; }
 
   allocator_type get_allocator() const
   {
@@ -679,7 +689,7 @@ private:
   size_type        size_;
   size_type        block_size;
   pointer          all_items;
-  Free_list_management<size_type, T, CGAL::Tag_true, CGAL::Tag_true> free_list;
+  Free_list_management<Self, CGAL::Tag_true, CGAL::Tag_true> free_list;
 };
 
 /*template < class T, class Allocator, class Increment_policy, class IndexType >

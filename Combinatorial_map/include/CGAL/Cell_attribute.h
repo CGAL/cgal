@@ -26,7 +26,7 @@ template <class, class>
 class Concurrent_compact_container;
 
 template <class, class, class, class>
-class Compact_container_with_index_2;
+class Compact_container_with_index;
 
 template<unsigned int, class, class>
 class Combinatorial_map_storage_1;
@@ -105,7 +105,7 @@ struct Init_id;
     friend class Concurrent_compact_container;
 
     template <class, class, class, class>
-    friend class Compact_container_with_index_2;
+    friend class Compact_container_with_index;
 
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
@@ -230,7 +230,7 @@ struct Init_id;
     friend class Concurrent_compact_container;
 
     template <class, class, class, class>
-    friend class Compact_container_with_index_2;
+    friend class Compact_container_with_index;
 
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
@@ -362,7 +362,7 @@ struct Init_id;
     friend class Concurrent_compact_container;
 
     template <class, class, class, class>
-    friend class Compact_container_with_index_2;
+    friend class Compact_container_with_index;
 
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
@@ -417,7 +417,7 @@ struct Init_id;
     friend class Concurrent_compact_container;
 
     template <class, class, class, class>
-    friend class Compact_container_with_index_2;
+    friend class Compact_container_with_index;
 
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
