@@ -50,7 +50,7 @@ get_in_domain_impl(FH fh)
 template <typename F, typename FH>
 inline
 std::enable_if_t<!Has_member_is_in_domain<F>::value, bool>
-get_in_domain_impl(FH fh)
+get_in_domain_impl(FH )
 {
   return false;
 }

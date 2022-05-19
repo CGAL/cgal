@@ -168,8 +168,8 @@ namespace CGAL {
 #define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
 
 template<class Gt, class Tds, class Itag, class InDomainPmap>
-void draw(const CGAL_T2_TYPE& at2,
-          InDomainPmap ipm)
+void draw(const CGAL_T2_TYPE& ,
+          InDomainPmap )
 {}
 #undef CGAL_T2_TYPE
 
