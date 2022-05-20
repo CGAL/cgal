@@ -575,7 +575,7 @@ public:
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&e, 0, sizeof(T));
 #endif
-    put_on_free_list(i);
+    free_list.put_on_free_list(i);
     --size_;
   }
 
@@ -760,8 +760,8 @@ void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::al
   // We mark them free in reverse order, so that the insertion order
   // will correspond to the iterator order...
   for (size_type index = capacity_-1; index>oldcapacity; --index)
-  { put_on_free_list(index); }
-  put_on_free_list(oldcapacity);
+  { free_list.put_on_free_list(index); }
+  free_list.put_on_free_list(oldcapacity);
 
   // Increase the block_size for the next time.
   Increment_policy::increase_size(*this);

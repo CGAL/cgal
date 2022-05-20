@@ -15,11 +15,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Compact_container.h>
-#ifdef CC_INDEX3
-#include <CGAL/Compact_container_with_index_3.h>
-#else
-#include <CGAL/Compact_container_with_index_2.h>
-#endif
+#include <CGAL/Compact_container_with_index.h>
 
 #include <queue>
 #include <boost/mpl/if.hpp>
