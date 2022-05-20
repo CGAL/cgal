@@ -12,12 +12,7 @@
 #ifndef CGAL_GMAP_LINEAR_CELL_COMPLEX_STORAGES_WITH_INDEX_H
 #define CGAL_GMAP_LINEAR_CELL_COMPLEX_STORAGES_WITH_INDEX_H 1
 
-#ifdef CC_INDEX3
-#include <CGAL/Compact_container_with_index_3.h>
-#else
-#include <CGAL/Compact_container_with_index_2.h>
-#endif
-
+#include <CGAL/Compact_container_with_index.h>
 #include <CGAL/Dart.h>
 #include <bitset>
 
@@ -470,11 +465,7 @@ namespace CGAL {
   typename GMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
   Null_descriptor_type GMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
                                              Items_, Alloc_>::
-  null_descriptor((std::numeric_limits<Index_type>::max)()
- #ifndef CC_INDEX3
-              /2
-#endif
-              );
+  null_descriptor((std::numeric_limits<Index_type>::max)());
 
 } // namespace CGAL
 

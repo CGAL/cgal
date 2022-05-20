@@ -494,11 +494,7 @@ namespace CGAL {
   template<unsigned int d_, class Items_, class Alloc_>
   typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Null_descriptor_type
       Combinatorial_map_storage_2<d_, Items_, Alloc_>::
-  null_descriptor((std::numeric_limits<Index_type>::max)()
-#ifndef CC_INDEX3
-              /2
-#endif
-              );
+  null_descriptor((std::numeric_limits<Index_type>::max)());
 
   template<unsigned int d_, class Items_, class Alloc_>
   typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Dart_index
@@ -507,11 +503,7 @@ namespace CGAL {
   template<unsigned int d_, class Items_, class Alloc_>
   typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Null_descriptor_type
       Combinatorial_map_storage_2<d_, Items_, Alloc_>::
-  null_handle((std::numeric_limits<Index_type>::max)()
-#ifndef CC_INDEX3
-              /2
-#endif
-              );
+  null_handle((std::numeric_limits<Index_type>::max)());
 
 } // namespace CGAL
 
