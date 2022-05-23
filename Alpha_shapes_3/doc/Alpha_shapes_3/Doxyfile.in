@@ -2,5 +2,4 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Alpha Shapes"
 
-EXAMPLE_PATH =  ${CGAL_Alpha_shapes_2_EXAMPLE_DIR} \
-                ${CGAL_Alpha_shapes_3_EXAMPLE_DIR}
+EXAMPLE_PATH +=  ${CGAL_Alpha_shapes_2_EXAMPLE_DIR}

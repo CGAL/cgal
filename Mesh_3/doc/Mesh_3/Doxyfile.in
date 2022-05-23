@@ -23,4 +23,4 @@ HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_3.jpg 
                               ${CGAL_PACKAGE_DOC_DIR}/fig/protection-complex.png \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/no-protection-complex.png
 
-EXAMPLE_PATH += ${CGAL_PACKAGE_INCLUDE_DIR}
+EXAMPLE_PATH += ${CGAL_PACKAGE_INCLUDE_DIR} # non-documented headers are advertised
