@@ -1097,8 +1097,24 @@ intersect(Face_handle f, int i,
   Itag itag = Itag();
   bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
 
+  auto intersection_not_in_the_two_triangle = [&]() {
+    if(orientation(pc,pd,pi) == RIGHT_TURN) {
+      const Point& p0 = f->vertex(i)->point();
+      if(orientation(p0, pc, pi) == LEFT_TURN || orientation(pd, p0, pi) == LEFT_TURN) {
+        return true;
+      }
+    } else {
+      const auto edge = mirror_edge({f, i});
+      const Point& p1 = edge.first->vertex(edge.second)->point();
+      if(orientation(pc, p1, pi) == LEFT_TURN || orientation(p1, pd, pi) == LEFT_TURN) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   Vertex_handle vi;
-  if ( !ok) {  //intersection detected but not computed
+  if ( !ok || intersection_not_in_the_two_triangle() ) {  //intersection detected but not computed
     int int_index = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
     switch(int_index){
     case 0 : vi = vaa; break;
