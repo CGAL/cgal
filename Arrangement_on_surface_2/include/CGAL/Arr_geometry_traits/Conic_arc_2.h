@@ -61,27 +61,6 @@ public:
   typedef typename Alg_kernel::Point_2                     Point_2;
   typedef _Conic_point_2<Alg_kernel>                       Conic_point_2;
 
-protected:
-  Integer m_r;          //
-  Integer m_s;          // The coefficients of the supporting conic curve:
-  Integer m_t;          //
-  Integer m_u;          //
-  Integer m_v;          //   r*x^2 + s*y^2 + t*xy + u*x + v*y +w = 0 .
-  Integer m_w;          //
-
-  Orientation m_orient; // The orientation of the conic.
-
-  // Bit masks for the m_info field.
-  enum {
-    IS_VALID = 0,
-    IS_FULL_CONIC,
-    LAST_INFO,
-  };
-
-  int m_info;                   // does the arc represent a full conic curve.
-  Conic_point_2 m_source;       // the source of the arc (if not a full curve).
-  Conic_point_2 m_target;       // the target of the arc (if not a full curve).
-
   /*! \struct
    * For arcs whose base is a hyperbola we store the axis (a*x + b*y + c = 0)
    * which separates the two bracnes of the hyperbola. We also store the side
@@ -97,9 +76,29 @@ protected:
     Sign side;
   };
 
+  // Bit masks for the m_info field.
+  enum {
+    IS_VALID = 0,
+    IS_FULL_CONIC,
+    LAST_INFO,
+  };
+
+protected:
+  Integer m_r;          //
+  Integer m_s;          // The coefficients of the supporting conic curve:
+  Integer m_t;          //
+  Integer m_u;          //
+  Integer m_v;          //   r*x^2 + s*y^2 + t*xy + u*x + v*y +w = 0 .
+  Integer m_w;          //
+
+  Orientation m_orient;         // The orientation of the conic.
+  int m_info;                   // does the arc represent a full conic curve.
+  Conic_point_2 m_source;       // the source of the arc (if not a full curve).
+  Conic_point_2 m_target;       // the target of the arc (if not a full curve).
   Extra_data* m_extra_data;     // The extra data stored with the arc
                                 // (may be nullptr).
 
+public:
   /// \name Flag manipulation functions.
   //@{
   template <typename T>
@@ -864,7 +863,7 @@ public:
 
   /*! Obtain the extra data.
    */
-  const Extra_data* extra_data() const { return m_extra_data(); }
+  const Extra_data* extra_data() const { return m_extra_data; }
 
   /*! Obtain a bounding box for the conic arc.
    * \return The bounding box.
@@ -952,37 +951,13 @@ public:
 
   /*! Set the source point of the conic arc.
    * \param ps The new source point.
-   * \pre The arc is not a full conic curve.
-   *      ps must lie on the supporting conic curve.
    */
-  void set_source(const Point_2& ps)
-  {
-    CGAL_precondition(! is_full_conic());
-    CGAL_precondition(is_on_supporting_conic(ps));
-    CGAL_precondition(Alg_kernel().orientation_2_object()
-                      (m_source, ps, m_target) == m_orient ||
-                      Alg_kernel().orientation_2_object()
-                      (ps, m_source, m_target) == m_orient);
-
-    m_source = ps;
-  }
+  void set_source(const Point_2& ps) { m_source = ps; }
 
   /*! Set the target point of the conic arc.
    * \param pt The new source point.
-   * \pre The arc is not a full conic curve.
-   *      pt must lie on the supporting conic curve.
    */
-  void set_target(const Point_2& pt)
-  {
-    CGAL_precondition(! is_full_conic());
-    CGAL_precondition(is_on_supporting_conic(pt));
-    CGAL_precondition(Alg_kernel().orientation_2_object()
-                      (m_source, pt, m_target) == m_orient ||
-                      Alg_kernel().orientation_2_object()
-                      (m_source, m_target, pt) == m_orient);
-
-    m_target = pt;
-  }
+  void set_target(const Point_2& pt) { m_target = pt; }
 
   //@}
 
@@ -1369,7 +1344,7 @@ private:
   }
   //@}
 
-protected:
+public:
   /// \name Auxiliary functions.
   //@{
 
@@ -1381,15 +1356,12 @@ protected:
    */
   Sign sign_of_extra_data(const Algebraic& px, const Algebraic& py) const {
     CGAL_assertion(m_extra_data != nullptr);
-
     if (m_extra_data == nullptr) return ZERO;
-
-    Algebraic val = (m_extra_data->a*px + m_extra_data->b*py +
-                     m_extra_data->c);
-
+    Algebraic val = m_extra_data->a*px + m_extra_data->b*py + m_extra_data->c;
     return CGAL::sign(val);
   }
 
+protected:
   /*! Check whether the given point lies on the supporting conic of the arc.
    * \param p The query point.
    * \return true if p lies on the supporting conic; (false) otherwise.
