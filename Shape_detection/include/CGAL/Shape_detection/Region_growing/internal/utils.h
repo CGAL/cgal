@@ -561,7 +561,7 @@ namespace internal {
     if (eigenvectors[4] == IFT(0)) {
       return std::make_pair(
         std::make_pair(FT(-1), Point_3()),
-        static_cast<FT>((std::numeric_limits<double>::max)()));
+        -static_cast<FT>((std::numeric_limits<double>::max)()));
     }
     CGAL_assertion(eigenvectors[4] != IFT(0));
 
@@ -590,7 +590,7 @@ namespace internal {
         CGAL_precondition(item_index < input_range.size());
         const auto& key = *(input_range.begin() + item_index);
         const auto& point = get(point_map, key);
-        score += CGAL::abs(sqrt(squared_distance_3(point, fitted_center)) - fitted_radius);
+        score -= CGAL::abs(sqrt(squared_distance_3(point, fitted_center)) - fitted_radius);
       }
     }
 
