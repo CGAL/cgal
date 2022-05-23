@@ -74,7 +74,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type             size_type;
 
     typedef std::nullptr_t Null_descriptor_type;
-    static const Null_descriptor_type null_descriptor;
+    static constexpr Null_descriptor_type null_descriptor=nullptr;
 
     using Type_for_compact_container=void*;
 
@@ -468,13 +468,6 @@ namespace CGAL {
     typename Helper::Attribute_containers mattribute_containers;
   };
 
-  /// null_descriptor
-  template <unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_>
-  const typename GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                         Items_, Alloc_>::Null_descriptor_type
-  GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                Items_, Alloc_>::null_descriptor = nullptr;
 } // namespace CGAL
 
 #if defined(BOOST_GCC)

@@ -468,14 +468,13 @@ namespace CGAL {
       mdarts[adart].mf[i] = null_dart_descriptor;
     }
 
-  public:
+  protected:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_descriptor.
-    static const Index_type null_dart_descriptor=0;
+    Index_type null_dart_descriptor=0;
 
     // Deprecated: kept for backward compatibility
-    static const Index_type null_dart_handle=null_dart_descriptor;
+    Index_type null_dart_handle=null_dart_descriptor;
 
-  protected:
     /// Dart container.
     Dart_container mdarts;
     Dart_range mdarts_range;

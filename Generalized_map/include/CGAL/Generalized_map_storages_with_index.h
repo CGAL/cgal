@@ -54,7 +54,7 @@ namespace CGAL {
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
 
-    typedef Compact_container_with_index_2<Dart,Dart_allocator,
+    typedef Compact_container_with_index<Dart,Dart_allocator,
     Multiply_by_two_policy_for_cc_with_size<64>, Index_type>
     Dart_container;
 
@@ -65,7 +65,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type size_type;
 
     typedef Dart_index Null_descriptor_type;
-    static Null_descriptor_type null_descriptor;
+    static const Index_type null_descriptor=Dart_container::null_descriptor;
 
     using Type_for_compact_container=Index_type;
 
@@ -73,7 +73,7 @@ namespace CGAL {
     typedef Alloc_ Alloc;
     template <typename T>
     struct Container_for_attributes : public
-        Compact_container_with_index_2<T,
+        Compact_container_with_index<T,
         typename Alloc_::template rebind<T>::other,
         Multiply_by_two_policy_for_cc_with_size<64>, size_type >
     {};
@@ -108,7 +108,7 @@ namespace CGAL {
     template<int i>
     using Attribute_const_handle=Attribute_const_descriptor<i>;
 
-    static Null_descriptor_type null_handle;
+    static const Index_type null_handle=null_descriptor;
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
@@ -427,8 +427,10 @@ namespace CGAL {
     }
 
   protected:
-    Dart_descriptor null_dart_descriptor; // To be compatible with combinatorial map
-    Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
+    Index_type null_dart_descriptor=0; // To be compatible with combinatorial map
+
+    // Deprecated: kept for backward compatibility
+    Index_type null_dart_handle=null_dart_descriptor; // To be compatible with combinatorial map
 
     /// Dart container.
     Dart_container mdarts;
@@ -436,17 +438,6 @@ namespace CGAL {
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
-
-  /// null_descriptor
-  template<unsigned int d_, class Items_, class Alloc_>
-  typename Generalized_map_storage_with_index<d_, Items_, Alloc_>::Null_descriptor_type
-      Generalized_map_storage_with_index<d_, Items_, Alloc_>::
-  null_descriptor((std::numeric_limits<Index_type>::max)());
-
-  template<unsigned int d_, class Items_, class Alloc_>
-  typename Generalized_map_storage_with_index<d_, Items_, Alloc_>::Null_descriptor_type
-      Generalized_map_storage_with_index<d_, Items_, Alloc_>::
-  null_handle((std::numeric_limits<Index_type>::max)());
 
 } // namespace CGAL
 

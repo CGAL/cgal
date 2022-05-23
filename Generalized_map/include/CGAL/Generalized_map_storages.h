@@ -64,7 +64,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type            size_type;
 
     typedef std::nullptr_t Null_descriptor_type;
-    static const Null_descriptor_type null_descriptor;
+    static constexpr Null_descriptor_type null_descriptor=nullptr;
 
     using Type_for_compact_container=void*;
 
@@ -107,7 +107,7 @@ namespace CGAL {
     template<int i>
     using Attribute_const_handle=Attribute_const_descriptor<i>;
 
-    static const Null_descriptor_type null_handle;
+    static constexpr Null_descriptor_type null_handle=null_descriptor;
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
@@ -449,11 +449,6 @@ namespace CGAL {
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
-
-  /// null_descriptor
-  template < unsigned int d_, class Items_, class Alloc_>
-  const typename Generalized_map_storage_1<d_, Items_, Alloc_>::Null_descriptor_type
-  Generalized_map_storage_1<d_, Items_, Alloc_>::null_descriptor = nullptr;
 
 } // namespace CGAL
 
