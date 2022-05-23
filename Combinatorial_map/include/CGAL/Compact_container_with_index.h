@@ -102,7 +102,7 @@ public:
   Free_list_management(CC_with_index& cc_with_index):
     m_cc_with_index(cc_with_index)
   {}
-  
+
   void init()
   {
     m_free_list=std::stack<size_type>();
