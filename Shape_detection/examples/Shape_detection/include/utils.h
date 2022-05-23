@@ -289,16 +289,13 @@ void save_polygon_mesh_regions(
   const std::string fullpath) {
 
   using Color      = CGAL::IO::Color;
-  using Face_index = typename Polygon_mesh::Face_index;
+  using Face_index = typename boost::graph_traits<Polygon_mesh>::face_descriptor;
   using size_type  = typename Polygon_mesh::size_type;
   srand(static_cast<unsigned int>(time(NULL)));
 
-  bool created;
-  typename Polygon_mesh::template Property_map<Face_index, Color> face_color;
-  boost::tie(face_color, created) =
-    polygon_mesh.template add_property_map<Face_index, Color>(
-      "f:color", Color(0, 0, 0));
-  if (!created) return;
+  using Face_property_color = CGAL::dynamic_face_property_t<Color>;
+  using Face_color_map = boost::property_map<Polygon_mesh, Face_property_color>::type;
+  Face_color_map face_color = get(Face_property_color(), polygon_mesh);
 
   // Iterate through all regions.
   std::ofstream out(fullpath);
@@ -312,10 +309,10 @@ void save_polygon_mesh_regions(
 
     // Iterate through all region items.
     for (const std::size_t index : region) {
-      face_color[Face_index(static_cast<size_type>(index))] = color;
+      put(face_color, *(faces(polygon_mesh).begin() + index), color);
     }
   }
-  CGAL::IO::write_PLY(out, polygon_mesh);
+  CGAL::IO::write_PLY(out, polygon_mesh, CGAL::parameters::face_color_map(face_color));
 }
 
 } // namespace utils

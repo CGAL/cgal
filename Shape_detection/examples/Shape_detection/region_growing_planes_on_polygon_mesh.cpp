@@ -15,7 +15,7 @@ using FT      = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 
 // Choose the type of a container for a polygon mesh.
-#define USE_SURFACE_MESH
+//#define USE_SURFACE_MESH
 #if defined(USE_SURFACE_MESH)
     using Polygon_mesh   = CGAL::Surface_mesh<Point_3>;
     using Face_range     = typename Polygon_mesh::Face_range;
@@ -78,10 +78,9 @@ int main(int argc, char *argv[]) {
   std::cout << "* number of found planes: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 326);
 
-  // Save regions to a file only if it is stored in CGAL::Surface_mesh.
-  #if defined(USE_SURFACE_MESH)
-    const std::string fullpath = (argc > 2 ? argv[2] : "planes_polygon_mesh.ply");
-    utils::save_polygon_mesh_regions(polygon_mesh, regions, fullpath);
-  #endif
+  // Save regions to a file.
+  const std::string fullpath = (argc > 2 ? argv[2] : "planes_polygon_mesh.ply");
+  utils::save_polygon_mesh_regions(polygon_mesh, regions, fullpath);
+
   return EXIT_SUCCESS;
 }
