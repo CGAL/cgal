@@ -33,16 +33,16 @@ namespace CGAL {
   }
 
   // Storage of darts with compact container, alpha using index
-  // Copy of Combinatorial_map_storage_2 and add new types related
+  // Copy of Combinatorial_map_storage_with_index and add new types related
   // to geometry (not possible to inherith because we use Self type
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type).
   template<unsigned int d_, unsigned int ambient_dim, class Traits_,
            class Items_, class Alloc_>
-  class CMap_linear_cell_complex_storage_2
+  class CMap_linear_cell_complex_storage_with_index
   {
   public:
-    using Self=CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+    using Self=CMap_linear_cell_complex_storage_with_index<d_, ambient_dim, Traits_,
                                           Items_, Alloc_>;
     using Use_index=CGAL::Tag_true;
     using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
@@ -75,7 +75,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type size_type;
 
     typedef Dart_index Null_descriptor_type;
-    static Null_descriptor_type null_descriptor;
+    static const Index_type null_descriptor=Dart_container::null_descriptor;
 
     using Type_for_compact_container=Index_type;
 
@@ -129,7 +129,7 @@ namespace CGAL {
     using Vertex_attribute_handle=Vertex_attribute_descriptor;
     using Vertex_attribute_const_handle=Vertex_attribute_const_descriptor;
 
-    static Null_descriptor_type null_handle;
+    static const Index_type null_handle=null_descriptor;
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
@@ -175,7 +175,7 @@ namespace CGAL {
     Dart_const_range& darts() const { return mdarts_range; }
     //**************************************************************************
 
-    CMap_linear_cell_complex_storage_2() : mdarts_range(*this)
+    CMap_linear_cell_complex_storage_with_index() : mdarts_range(*this)
     {}
 
     void init_storage()
@@ -185,7 +185,7 @@ namespace CGAL {
       Dart_index local_null_dart_descriptor = mdarts.emplace();
       if(local_null_dart_descriptor!=0)
       {
-        std::cerr<<"[ERROR] fatal in CMap_linear_cell_complex_storage_2::init_storage"
+        std::cerr<<"[ERROR] fatal in CMap_linear_cell_complex_storage_with_index::init_storage"
                  <<std::endl;
         CGAL_assertion(false);
       }
@@ -505,8 +505,10 @@ namespace CGAL {
 
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_descriptor.
-    static Dart_index null_dart_descriptor; //=0;
-    static Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
+    static const Index_type null_dart_descriptor=0;
+
+    // Deprecated: kept for backward compatibility
+    static const Index_type null_dart_handle=null_dart_descriptor;
 
   protected:
     /// Dart container.
@@ -519,34 +521,6 @@ namespace CGAL {
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
-
-  /// null_dart_descriptor
-  template<unsigned int d_,  unsigned int ambient_dim, class Traits_,
-           class Items_, class Alloc_>
-  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  Dart_index CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  null_dart_descriptor(0);
-
-  /// null_descriptor
-  template<unsigned int d_, unsigned int ambient_dim, class Traits_,
-           class Items_, class Alloc_>
-  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  Null_descriptor_type CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                                      Items_, Alloc_>::
-  null_descriptor((std::numeric_limits<Index_type>::max)());
-
-  template<unsigned int d_,  unsigned int ambient_dim, class Traits_,
-           class Items_, class Alloc_>
-  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  Dart_index CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  null_dart_handle(0);
-
-  template<unsigned int d_, unsigned int ambient_dim, class Traits_,
-           class Items_, class Alloc_>
-  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  Null_descriptor_type CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                                      Items_, Alloc_>::
-  null_handle((std::numeric_limits<Index_type>::max)());
 
 } // namespace CGAL
 

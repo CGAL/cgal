@@ -34,10 +34,10 @@ namespace CGAL {
 
   // Storage of darts with compact container, alpha with indices
   template<unsigned int d_, class Items_, class Alloc_>
-  class Generalized_map_storage_2
+  class Generalized_map_storage_with_index
   {
   public:
-    using Self=Generalized_map_storage_2<d_, Items_, Alloc_>;
+    using Self=Generalized_map_storage_with_index<d_, Items_, Alloc_>;
     using Use_index=CGAL::Tag_true;
     using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
 
@@ -439,13 +439,13 @@ namespace CGAL {
 
   /// null_descriptor
   template<unsigned int d_, class Items_, class Alloc_>
-  typename Generalized_map_storage_2<d_, Items_, Alloc_>::Null_descriptor_type
-      Generalized_map_storage_2<d_, Items_, Alloc_>::
+  typename Generalized_map_storage_with_index<d_, Items_, Alloc_>::Null_descriptor_type
+      Generalized_map_storage_with_index<d_, Items_, Alloc_>::
   null_descriptor((std::numeric_limits<Index_type>::max)());
 
   template<unsigned int d_, class Items_, class Alloc_>
-  typename Generalized_map_storage_2<d_, Items_, Alloc_>::Null_descriptor_type
-      Generalized_map_storage_2<d_, Items_, Alloc_>::
+  typename Generalized_map_storage_with_index<d_, Items_, Alloc_>::Null_descriptor_type
+      Generalized_map_storage_with_index<d_, Items_, Alloc_>::
   null_handle((std::numeric_limits<Index_type>::max)());
 
 } // namespace CGAL

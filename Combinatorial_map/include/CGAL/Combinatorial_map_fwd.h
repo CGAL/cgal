@@ -24,7 +24,7 @@ template<unsigned int d_, class Items_, class Alloc_>
 class Combinatorial_map_storage_1;
 
 template<unsigned int d_, class Items_, class Alloc_>
-class Combinatorial_map_storage_2;
+class Combinatorial_map_storage_with_index;
 
 namespace internal
 {
@@ -38,7 +38,7 @@ template<>
 struct Default_storage_for_cmap_when_tag<CGAL::Tag_true>
 {
   template<unsigned int d_, class Items_, class Alloc_>
-  using type=Combinatorial_map_storage_2<d_, Items_, Alloc_>;
+  using type=Combinatorial_map_storage_with_index<d_, Items_, Alloc_>;
 };
 
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_use_index_tag_cmap,Use_index,false)

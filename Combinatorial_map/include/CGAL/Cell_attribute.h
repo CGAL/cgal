@@ -32,25 +32,25 @@ template<unsigned int, class, class>
 class Combinatorial_map_storage_1;
 
 template<unsigned int, class, class>
-class Combinatorial_map_storage_2;
+class Combinatorial_map_storage_with_index;
 
 template<unsigned int, class, class>
 class Generalized_map_storage_1;
 
 template<unsigned int, class, class>
-class Generalized_map_storage_2;
+class Generalized_map_storage_with_index;
 
 template<unsigned int, unsigned int, class, class, class>
 class CMap_linear_cell_complex_storage_1;
 
 template<unsigned int, unsigned int, class, class, class>
-class CMap_linear_cell_complex_storage_2;
+class CMap_linear_cell_complex_storage_with_index;
 
 template<unsigned int, unsigned int, class, class, class>
 class GMap_linear_cell_complex_storage_1;
 
 template<unsigned int, unsigned int, class, class, class>
-class GMap_linear_cell_complex_storage_2;
+class GMap_linear_cell_complex_storage_with_index;
 
 namespace internal {
 
@@ -111,25 +111,25 @@ struct Init_id;
     friend class Combinatorial_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Combinatorial_map_storage_2;
+    friend class Combinatorial_map_storage_with_index;
 
     template<unsigned int, class, class>
     friend class Generalized_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Generalized_map_storage_2;
+    friend class Generalized_map_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class CMap_linear_cell_complex_storage_2;
+    friend class CMap_linear_cell_complex_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class GMap_linear_cell_complex_storage_2;
+    friend class GMap_linear_cell_complex_storage_with_index;
 
     template<class, class>
     friend struct internal::Init_id;
@@ -236,25 +236,25 @@ struct Init_id;
     friend class Combinatorial_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Combinatorial_map_storage_2;
+    friend class Combinatorial_map_storage_with_index;
 
     template<unsigned int, class, class>
     friend class Generalized_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Generalized_map_storage_2;
+    friend class Generalized_map_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class CMap_linear_cell_complex_storage_2;
+    friend class CMap_linear_cell_complex_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class GMap_linear_cell_complex_storage_2;
+    friend class GMap_linear_cell_complex_storage_with_index;
 
     template<class, class>
     friend struct internal::Init_id;
@@ -368,25 +368,25 @@ struct Init_id;
     friend class Combinatorial_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Combinatorial_map_storage_2;
+    friend class Combinatorial_map_storage_with_index;
 
     template<unsigned int, class, class>
     friend class Generalized_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Generalized_map_storage_2;
+    friend class Generalized_map_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class CMap_linear_cell_complex_storage_2;
+    friend class CMap_linear_cell_complex_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class GMap_linear_cell_complex_storage_2;
+    friend class GMap_linear_cell_complex_storage_with_index;
 
   public:
     typedef Tag_                             Supports_cell_dart;
@@ -423,25 +423,25 @@ struct Init_id;
     friend class Combinatorial_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Combinatorial_map_storage_2;
+    friend class Combinatorial_map_storage_with_index;
 
     template<unsigned int, class, class>
     friend class Generalized_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Generalized_map_storage_2;
+    friend class Generalized_map_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class CMap_linear_cell_complex_storage_2;
+    friend class CMap_linear_cell_complex_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class GMap_linear_cell_complex_storage_2;
+    friend class GMap_linear_cell_complex_storage_with_index;
 
   public:
     typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit, WithID> Self;

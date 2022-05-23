@@ -34,10 +34,10 @@ namespace CGAL {
 
   // Storage with combinatorial maps using index
   template<unsigned int d_, class Items_, class Alloc_>
-  class Combinatorial_map_storage_2
+  class Combinatorial_map_storage_with_index
   {
   public:
-    using Self=Combinatorial_map_storage_2<d_, Items_, Alloc_>;
+    using Self=Combinatorial_map_storage_with_index<d_, Items_, Alloc_>;
     using Use_index=CGAL::Tag_true;
     using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
 
@@ -65,7 +65,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type size_type;
 
     typedef Dart_index Null_descriptor_type;
-    static Null_descriptor_type null_descriptor;
+    static const Index_type null_descriptor=Dart_container::null_descriptor;
 
     using Type_for_compact_container=Index_type;
 
@@ -108,7 +108,7 @@ namespace CGAL {
     template<int i>
     using Attribute_const_handle=Attribute_const_descriptor<i>;
 
-    static Null_descriptor_type null_handle;
+    static const Index_type null_handle=null_descriptor;
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
@@ -154,7 +154,7 @@ namespace CGAL {
     Dart_const_range& darts() const { return mdarts_range; }
     //**************************************************************************
 
-    Combinatorial_map_storage_2() : mdarts_range(*this)
+    Combinatorial_map_storage_with_index() : mdarts_range(*this)
     {}
 
     void init_storage()
@@ -164,7 +164,7 @@ namespace CGAL {
       Dart_index local_null_dart_descriptor = mdarts.emplace();
       if(local_null_dart_descriptor!=0)
       {
-        std::cerr<<"[ERROR] fatal in Combinatorial_map_storage_2::init_storage"
+        std::cerr<<"[ERROR] fatal in Combinatorial_map_storage_with_index::init_storage"
                  <<std::endl;
         CGAL_assertion(false);
       }
@@ -470,8 +470,10 @@ namespace CGAL {
 
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_descriptor.
-    static Dart_index null_dart_descriptor; //=0;
-    static Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
+    static const Index_type null_dart_descriptor=0;
+
+    // Deprecated: kept for backward compatibility
+    static const Index_type null_dart_handle=null_dart_descriptor;
 
   protected:
     /// Dart container.
@@ -484,26 +486,6 @@ namespace CGAL {
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
-
-  /// null_dart_descriptor
-  template<unsigned int d_, class Items_, class Alloc_>
-  typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Dart_index
-  Combinatorial_map_storage_2<d_, Items_, Alloc_>::null_dart_descriptor(0);
-
-  /// null_descriptor
-  template<unsigned int d_, class Items_, class Alloc_>
-  typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Null_descriptor_type
-      Combinatorial_map_storage_2<d_, Items_, Alloc_>::
-  null_descriptor((std::numeric_limits<Index_type>::max)());
-
-  template<unsigned int d_, class Items_, class Alloc_>
-  typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Dart_index
-  Combinatorial_map_storage_2<d_, Items_, Alloc_>::null_dart_handle(0);
-
-  template<unsigned int d_, class Items_, class Alloc_>
-  typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Null_descriptor_type
-      Combinatorial_map_storage_2<d_, Items_, Alloc_>::
-  null_handle((std::numeric_limits<Index_type>::max)());
 
 } // namespace CGAL
 

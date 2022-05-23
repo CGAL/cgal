@@ -33,16 +33,16 @@ namespace CGAL {
   }
 
   // Storage of darts with compact container, alpha using index
-  // Copy of Generalized_map_storage_2 and add new types related
+  // Copy of Generalized_map_storage_with_index and add new types related
   // to geometry (not possible to inherith because we use Self type
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type).
   template<unsigned int d_, unsigned int ambient_dim, class Traits_,
            class Items_, class Alloc_>
-  class GMap_linear_cell_complex_storage_2
+  class GMap_linear_cell_complex_storage_with_index
   {
   public:
-    using Self=GMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+    using Self=GMap_linear_cell_complex_storage_with_index<d_, ambient_dim, Traits_,
                                           Items_, Alloc_>;
     using Use_index=CGAL::Tag_true;
     using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
@@ -462,8 +462,8 @@ namespace CGAL {
   /// null_descriptor
   template<unsigned int d_, unsigned int ambient_dim, class Traits_,
            class Items_, class Alloc_>
-  typename GMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  Null_descriptor_type GMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+  typename GMap_linear_cell_complex_storage_with_index<d_, ambient_dim, Traits_, Items_, Alloc_>::
+  Null_descriptor_type GMap_linear_cell_complex_storage_with_index<d_, ambient_dim, Traits_,
                                              Items_, Alloc_>::
   null_descriptor((std::numeric_limits<Index_type>::max)());
 

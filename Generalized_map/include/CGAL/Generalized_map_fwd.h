@@ -22,7 +22,7 @@ template<unsigned int d_, class Items_, class Alloc_>
 class Generalized_map_storage_1;
 
 template<unsigned int d_, class Items_, class Alloc_>
-class Generalized_map_storage_2;
+class Generalized_map_storage_with_index;
 
 struct Generic_map_min_items;
 
@@ -38,7 +38,7 @@ template<>
 struct Default_storage_for_gmap_when_tag<CGAL::Tag_true>
 {
   template<unsigned int d_, class Items_, class Alloc_>
-  using type=Generalized_map_storage_2<d_, Items_, Alloc_>;
+  using type=Generalized_map_storage_with_index<d_, Items_, Alloc_>;
 };
 
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_use_index_tag_gmap,Use_index,false)

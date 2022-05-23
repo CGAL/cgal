@@ -97,6 +97,8 @@ class Free_list_management<CC_with_index, CGAL::Tag_true, CGAL::Tag_true>
   using size_type=typename CC_with_index::size_type;
 
 public:
+  static const size_type null_descriptor=std::numeric_limits<size_type>::max();
+
   Free_list_management(CC_with_index& cc_with_index):
     m_cc_with_index(cc_with_index)
   {}
@@ -191,6 +193,8 @@ class Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_true>
   using Traits=Compact_container_with_index_traits <T, size_type>;
 
 public:
+  static const size_type null_descriptor=std::numeric_limits<size_type>::max();
+
   Free_list_management(CC_with_index& cc_with_index):
     m_cc_with_index(cc_with_index)
   {}
@@ -200,7 +204,7 @@ public:
     m_used.assign(m_cc_with_index.capacity(), false);
     m_free_list=0;
     for(size_type i=0; i<static_cast<size_type>(m_cc_with_index.capacity()); ++i)
-    { Traits::size_t(m_cc_with_index[i])=i+1; }
+    { Traits::set_size_t(m_cc_with_index[i], i+1); }
     // Next of the last element is capacity() which is the "nullptr".
   }
 
@@ -210,7 +214,7 @@ public:
     CGAL_assertion(m_free_list==old_size); // Previous container was full
     m_used.resize(m_cc_with_index.capacity(), false);
     for(size_type i=0; i<static_cast<size_type>(m_cc_with_index.capacity()); ++i)
-    { Traits::size_t(m_cc_with_index[i])=i+1; }
+    { Traits::set_size_t(m_cc_with_index[i], i+1); }
     // Nothing to do with m_free_list, because it was equal to old_size.
   }
 
@@ -234,7 +238,7 @@ public:
   {
     CGAL_assertion(i<m_cc_with_index.capacity());
     m_used[i]=false;
-    Traits::size_t(m_cc_with_index[i])=m_free_list;
+    Traits::set_size_t(m_cc_with_index[i], m_free_list);
     m_free_list=i;
   }
 
@@ -249,11 +253,12 @@ public:
     CGAL_assertion(!is_empty());
     size_type res=m_free_list;
     m_free_list=Traits::size_t(m_cc_with_index[res]);
+    m_used[res]=true;
     return res;
   }
 
   void copy_special_data(const T& src, T& dest)
-  { Traits::size_t(dest)=Traits::size_t(src); }
+  { Traits::set_size_t(dest, Traits::size_t(src)); }
 
 protected:
   CC_with_index&    m_cc_with_index;
@@ -271,6 +276,8 @@ class Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_false>
   using Traits=Compact_container_with_index_traits <T, size_type>;
 
 public:
+  static const size_type null_descriptor=std::numeric_limits<size_type>::max()/2;
+
   Free_list_management(CC_with_index& cc_with_index):
     m_cc_with_index(cc_with_index)
   {}
@@ -327,7 +334,7 @@ public:
   }
 
   void copy_special_data(const T& src, T& dest)
-  { Traits::size_t(dest)=Traits::size_t(src); }
+  { Traits::set_size_t(dest, Traits::size_t(src)); }
 
 protected:
   // Definition of the bit squatting :
@@ -352,6 +359,11 @@ protected:
   { return (Traits::size_t(e) & ~mask_type); }
 
   // set the value of the element and its type
+  static void static_set_type(T& e, Type t)
+  { Traits::set_size_t(e, static_get_val(e) |
+                       ( ((size_type)t) <<(nbbits_size_type_m1))); }
+
+  // set the value of the element and its type
   static void static_set_val(T& e, size_type v, Type t)
   { Traits::set_size_t(e, v | ( ((size_type)t) <<(nbbits_size_type_m1))); }
 
@@ -368,7 +380,7 @@ public:
   using Self=Index_for_cc_with_index<Index_type>;
   using size_type=Index_type;
 
-  /// Constructor. Default construction creates a kind of "NULL" index.
+  /// Constructor.
   Index_for_cc_with_index(size_type idx=(std::numeric_limits<size_type>::max)())
     : m_idx(idx)
   {}
@@ -382,9 +394,11 @@ public:
   Index_for_cc_with_index(const Index2& idx): m_idx(static_cast<size_t>(idx))
   {}
 
-  /// return whether the handle is valid
-  bool is_valid() const
-  { return m_idx != (std::numeric_limits<size_type>::max)(); }
+  bool operator==(const Self& n) const
+  { return m_idx==n.m_idx; }
+
+  bool operator==(size_type n) const
+  { return m_idx==n; }
 
   /// Increment the internal index. This operations does not
   /// guarantee that the index is valid or undeleted after the
@@ -447,6 +461,11 @@ public:
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
   using Index=Index_for_cc_with_index<IndexType>;
+  using TFree_list_management=Free_list_management
+                             <Self, CGAL::Tag_false, CGAL::Tag_true>;
+
+  static const size_type null_descriptor=TFree_list_management::null_descriptor;
+
   friend class internal::CC_iterator_with_index<Self, false>;
   friend class internal::CC_iterator_with_index<Self, true>;
 
@@ -728,12 +747,12 @@ private:
     free_list.init();
   }
 
-  allocator_type   alloc;
-  size_type        capacity_;
-  size_type        size_;
-  size_type        block_size;
-  pointer          all_items;
-  Free_list_management<Self, CGAL::Tag_true, CGAL::Tag_true> free_list;
+  allocator_type        alloc;
+  size_type             capacity_;
+  size_type             size_;
+  size_type             block_size;
+  pointer               all_items;
+  TFree_list_management free_list;
 };
 
 /*template < class T, class Allocator, class Increment_policy, class IndexType >

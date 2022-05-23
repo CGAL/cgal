@@ -27,11 +27,11 @@ class GMap_linear_cell_complex_storage_1;
 
 template<unsigned int d_, unsigned int ambient_dim,
          class Traits_, class Items_, class Alloc_>
-class CMap_linear_cell_complex_storage_2;
+class CMap_linear_cell_complex_storage_with_index;
 
 template<unsigned int d_, unsigned int ambient_dim,
          class Traits_, class Items_, class Alloc_>
-class GMap_linear_cell_complex_storage_2;
+class GMap_linear_cell_complex_storage_with_index;
 
 template <unsigned int d>
 struct LCC_default_kernel;
@@ -57,7 +57,7 @@ struct Default_storage_for_lcc_cmap_when_tag<CGAL::Tag_true>
 {
   template<unsigned int d_, unsigned int ambient_dim,
            class Traits_, class Items_, class Alloc_>
-  using type=CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+  using type=CMap_linear_cell_complex_storage_with_index<d_, ambient_dim, Traits_,
   Items_, Alloc_>;
 };
 
@@ -92,7 +92,7 @@ struct Default_storage_for_lcc_gmap_when_tag<CGAL::Tag_true>
 {
   template<unsigned int d_, unsigned int ambient_dim,
            class Traits_, class Items_, class Alloc_>
-  using type=GMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+  using type=GMap_linear_cell_complex_storage_with_index<d_, ambient_dim, Traits_,
   Items_, Alloc_>;
 };
 

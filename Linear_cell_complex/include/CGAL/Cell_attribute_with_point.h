@@ -69,25 +69,25 @@ namespace CGAL {
     friend class Combinatorial_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Combinatorial_map_storage_2;
+    friend class Combinatorial_map_storage_with_index;
 
     template<unsigned int, class, class>
     friend class Generalized_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Generalized_map_storage_2;
+    friend class Generalized_map_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class CMap_linear_cell_complex_storage_2;
+    friend class CMap_linear_cell_complex_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class GMap_linear_cell_complex_storage_2;
+    friend class GMap_linear_cell_complex_storage_with_index;
 
   public:
     typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
@@ -157,25 +157,25 @@ namespace CGAL {
     friend class Combinatorial_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Combinatorial_map_storage_2;
+    friend class Combinatorial_map_storage_with_index;
 
     template<unsigned int, class, class>
     friend class Generalized_map_storage_1;
 
     template<unsigned int, class, class>
-    friend class Generalized_map_storage_2;
+    friend class Generalized_map_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class CMap_linear_cell_complex_storage_2;
+    friend class CMap_linear_cell_complex_storage_with_index;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class GMap_linear_cell_complex_storage_2;
+    friend class GMap_linear_cell_complex_storage_with_index;
 
   public:
     typedef Cell_attribute<LCC, void, Tag,
