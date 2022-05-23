@@ -1296,8 +1296,8 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
 
 /// \cond SKIP_IN_MANUAL
 // specialization for default named parameters
-template <typename Point, typename Vector, typename NamedParameters>
-struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters>
+template <typename Point, typename Vector, typename NamedParameters, typename DPM, typename DVM>
+struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters, DPM, DVM>
 {
   typedef typename std::iterator_traits<typename Point_set_3<Point, Vector>::iterator>::value_type Value_type;
 
