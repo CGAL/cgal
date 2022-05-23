@@ -121,6 +121,33 @@ protected:
   { return (m_info & flag_mask(flag)); }
   //@}
 
+  /// \name Setters; only friends have the priviledge to use.
+  //@{
+
+  void set_coefficients(Integer r, Integer s, Integer t,
+                        Integer u, Integer v, Integer w) {
+
+    m_r = r;
+    s = m_s;
+    t = m_t;
+    m_u = u;
+    m_v = v;
+    m_w = w;
+  }
+
+  void set_orientation(Orientation orient) { m_orient = orient; }
+
+  void set_endpoints(const Conic_point_2& source, const Conic_point_2& target) {
+    m_source = source;
+    m_target = target;
+  }
+
+  void set_extra_data(Extra_data* extra_data) {
+    m_extra_data = extra_data;
+  }
+
+  //@}
+
 public:
   /// \name Construction and destruction functions.
   //@{
@@ -404,7 +431,7 @@ public:
    * \pre The three points must not be collinear.
    */
   _Conic_arc_2(const Rat_point_2& p1, const Rat_point_2& p2,
-               const Rat_point_2& p3):
+               const Rat_point_2& p3) :
     m_info(0),
     m_extra_data(nullptr)
   {
@@ -587,7 +614,7 @@ public:
                const Rational& u_1, const Rational& v_1, const Rational& w_1,
                const Point_2& app_target,
                const Rational& r_2, const Rational& s_2, const Rational& t_2,
-               const Rational& u_2, const Rational& v_2, const Rational& w_2):
+               const Rational& u_2, const Rational& v_2, const Rational& w_2) :
     m_orient(orient),
     m_info(0),
     m_extra_data(nullptr)
@@ -812,7 +839,7 @@ public:
    */
   bool is_full_conic() const { return test_flag(IS_FULL_CONIC); }
 
-  /*! Get the arc's source.
+  /*! Obtain the arc's source.
    * \return The source point.
    * \pre The arc does not represent a full conic curve.
    */
@@ -821,7 +848,7 @@ public:
     return m_source;
   }
 
-  /*! Get the arc's target.
+  /*! Obtain the arc's target.
    * \return The target point.
    * \pre The arc does not represent a full conic curve.
    */
@@ -830,12 +857,16 @@ public:
     return m_target;
   }
 
-  /*! Get the orientation of the arc.
+  /*! Obtain the orientation of the arc.
    * \return The orientation.
    */
   Orientation orientation() const { return m_orient; }
 
-  /*! Get a bounding box for the conic arc.
+  /*! Obtain the extra data.
+   */
+  const Extra_data* extra_data() const { return m_extra_data(); }
+
+  /*! Obtain a bounding box for the conic arc.
    * \return The bounding box.
    */
   Bbox_2 bbox() const {
