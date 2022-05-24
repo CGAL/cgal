@@ -28,7 +28,6 @@
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
@@ -39,13 +38,6 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-namespace CGAL {
-
-template<>
-void set_halfedgeds_items_id (Scene_face_graph_item::Face_graph&)
-{}
-
-} // namespace CGAL
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
@@ -364,8 +356,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   QElapsedTimer time;
   time.start();
 
-    // init the polyhedron simplex indices
-  CGAL::set_halfedgeds_items_id(*item->input_triangle_mesh);
   boost::property_map<Face_graph, boost::vertex_index_t>::type
     vimap = get(boost::vertex_index, *item->input_triangle_mesh);
 
