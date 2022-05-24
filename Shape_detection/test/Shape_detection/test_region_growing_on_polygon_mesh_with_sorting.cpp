@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
-  assert(regions.size() == 326);
+  assert(regions.size() == 355);
 
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
       maximum_angle(angle_threshold).
       minimum_region_size(min_region_size).
       vertex_point_map(vertex_to_point_map));
-    assert(regions.size() == 326);
+    assert(regions.size() == 355);
   }
 
   std::cout << "rg_sortfaces3, epeck_test_success: " << true << std::endl;

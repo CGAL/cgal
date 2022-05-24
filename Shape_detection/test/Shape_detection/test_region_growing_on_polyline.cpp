@@ -76,7 +76,7 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing_3.detect(std::back_inserter(regions));
-  assert(regions.size() == 12);
+  assert(regions.size() == 17);
   for (const auto& region : regions)
     assert(region_type_3.is_valid_region(region));
 
@@ -113,7 +113,7 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
 
   regions.clear();
   region_growing_2.detect(std::back_inserter(regions));
-  assert(regions.size() == 4);
+  assert(regions.size() == 5);
   for (const auto& region : regions)
     assert(region_type_2.is_valid_region(region));
 

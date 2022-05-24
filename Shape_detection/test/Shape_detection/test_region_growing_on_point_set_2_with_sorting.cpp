@@ -97,7 +97,7 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
       minimum_region_size(min_region_size).
       point_map(Point_map()).
       normal_map(Normal_map()));
-    assert(regions.size() == 62);
+    assert(regions.size() == 65);
   }
 
   const bool success = true;

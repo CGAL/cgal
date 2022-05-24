@@ -81,13 +81,11 @@ int main(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing_3.detect(std::back_inserter(regions));
-  assert(regions.size() == 15);
-  for (const auto& region : regions)
-    assert(region_type_3.is_valid_region(region));
+  assert(regions.size() == 16);
 
   std::vector<std::size_t> unassigned_points;
   region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
-  assert(unassigned_points.size() == 0);
+  assert(unassigned_points.size() == 1);
 
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
@@ -97,7 +95,7 @@ int main(int argc, char *argv[]) {
       CGAL::parameters::
       maximum_distance(distance_threshold).
       maximum_angle(angle_threshold));
-    assert(regions.size() == 15);
+    assert(regions.size() == 16);
   }
 
   // Create 2D polyline.

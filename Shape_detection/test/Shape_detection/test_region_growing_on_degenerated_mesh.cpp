@@ -68,13 +68,13 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  assert(regions.size() == 262);
+  assert(regions.size() == 296);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
-  assert(unassigned_faces.size() == 503);
+  assert(unassigned_faces.size() == 509);
   return true;
 }
 

@@ -73,13 +73,13 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  assert(regions.size() == 65);
+  assert(regions.size() == 72);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
-  assert(unassigned_points.size() == 87);
+  assert(unassigned_points.size() == 86);
   return true;
 }
 
