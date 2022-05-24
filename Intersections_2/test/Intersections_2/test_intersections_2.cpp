@@ -874,46 +874,45 @@ struct Test
   void run()
   {
     std::cout << "2D Intersection tests with Kernel: " << typeid(K).name() << std::endl;
+    // B_C();
+    // B_L();
+    // B_P();
+    // B_R();
 
-    B_C();
-    B_L();
-    B_P();
-    B_R();
+    // C_C();
+    // C_Rec();
+    // C_L();
+    // C_P();
+    // C_S();
+    // C_R();
+    // C_T();
 
-    C_C();
-    C_Rec();
-    C_L();
-    C_P();
-    C_S();
-    C_R();
-    C_T();
+    // Rec_Rec();
+    // Rec_L();
+    // Rec_P();
+    // Rec_R();
+    // Rec_S();
+    // Rec_T();
 
-    Rec_Rec();
-    Rec_L();
-    Rec_P();
-    Rec_R();
-    Rec_S();
-    Rec_T();
+    // L_L();
+    // L_P();
+    // L_R();
+    // L_S();
+    // L_T();
 
-    L_L();
-    L_P();
-    L_R();
-    L_S();
-    L_T();
+    // P_P();
+    // P_R();
+    // P_S();
+    // P_T();
 
-    P_P();
-    P_R();
-    P_S();
-    P_T();
-
-    R_R();
-    R_S();
-    R_T();
+    // R_R();
+    // R_S();
+    // R_T();
 
     S_S();
-    S_T();
+    // S_T();
 
-    T_T();
+    // T_T();
   }
 
 private:
