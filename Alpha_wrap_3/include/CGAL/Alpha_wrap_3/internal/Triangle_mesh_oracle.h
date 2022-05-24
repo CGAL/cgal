@@ -34,41 +34,36 @@ namespace Alpha_wraps_3 {
 namespace internal {
 
 // Just some typedefs for readability in the main oracle class
-template <typename TriangleMesh, typename GT_>
+template <typename GT_>
 struct TM_oracle_traits
 {
-  using Default_GT = typename GetGeomTraits<TriangleMesh>::type;
+  using Geom_traits = Alpha_wrap_AABB_traits<GT_>; // Wrap the kernel to add Ball_3 + custom Do_intersect_3
 
-  using Base_GT = typename Default::Get<GT_, Default_GT>::type; // = Kernel, usually
-  using Geom_traits = Alpha_wrap_AABB_traits<Base_GT>; // Wrap the kernel to add Ball_3 + custom Do_intersect_3
   using Point_3 = typename Geom_traits::Point_3;
   using AABB_traits = typename AABB_tree_splitter_traits<Point_3, Geom_traits>::AABB_traits;
   using AABB_tree = typename AABB_tree_splitter_traits<Point_3, Geom_traits>::AABB_tree;
 };
 
 // @speed could do a partial specialization 'subdivide = false' with simpler code for speed?
-template <typename TriangleMesh,
-          typename GT_ = CGAL::Default,
+template <typename GT_,
           typename BaseOracle = int,
           bool subdivide = true>
 class Triangle_mesh_oracle
   : // this is the base that handles calls to the AABB tree
-    public AABB_tree_oracle<typename TM_oracle_traits<TriangleMesh, GT_>::Geom_traits,
-                            typename TM_oracle_traits<TriangleMesh, GT_>::AABB_tree,
+    public AABB_tree_oracle<typename TM_oracle_traits<GT_>::Geom_traits,
+                            typename TM_oracle_traits<GT_>::AABB_tree,
                             typename std::conditional<
                                       /*condition*/subdivide,
-                                      /*true*/Splitter_traversal_traits<typename TM_oracle_traits<TriangleMesh, GT_>::AABB_traits>,
-                                      /*false*/Default_traversal_traits<typename TM_oracle_traits<TriangleMesh, GT_>::AABB_traits> >::type,
+                                      /*true*/Splitter_traversal_traits<typename TM_oracle_traits<GT_>::AABB_traits>,
+                                      /*false*/Default_traversal_traits<typename TM_oracle_traits<GT_>::AABB_traits> >::type,
                             BaseOracle>,
     // this is the base that handles splitting input faces and inserting them into the AABB tree
     public AABB_tree_oracle_splitter<subdivide,
-                                     typename TM_oracle_traits<TriangleMesh, GT_>::Point_3,
-                                     typename TM_oracle_traits<TriangleMesh, GT_>::Geom_traits>
+                                     typename TM_oracle_traits<GT_>::Point_3,
+                                     typename TM_oracle_traits<GT_>::Geom_traits>
 {
-  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-
-  using TMOT = TM_oracle_traits<TriangleMesh, GT_>;
-  using Base_GT = typename TMOT::Base_GT;
+  using TMOT = TM_oracle_traits<GT_>;
+  using Base_GT = GT_;
 
 public:
   using Geom_traits = typename TMOT::Geom_traits;
@@ -122,12 +117,15 @@ public:
  { }
 
 public:
-  template <typename NamedParameters = parameters::Default_named_parameters>
+  template <typename TriangleMesh,
+            typename CGAL_NP_TEMPLATE_PARAMETERS>
   void add_triangle_mesh(const TriangleMesh& tmesh,
-                         const NamedParameters& np = CGAL::parameters::default_values())
+                         const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;
+
+    using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
 
     using VPM = typename GetVertexPointMap<TriangleMesh>::const_type;
     using Point_ref = typename boost::property_traits<VPM>::reference;
