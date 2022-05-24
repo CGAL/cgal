@@ -577,7 +577,7 @@ operator!=(const Polygon_2<Traits_P,Container1_P> &p1,
            const Polygon_2<Traits_P,Container2_P> &p2);
 
 /// Returns the image of the polygon \c p under the transformation \c t.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Transformation, class Traits_P, class Container_P>
 Polygon_2<Traits_P,Container_P>
 transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
@@ -591,13 +591,13 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
 
 /// Reads a polygon from stream `is` and assigns it to `p`.
 /// \pre The extract operator must be defined for `Point_2`.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Traits_P, class Container_P>
 std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p);
 
 /// Inserts the polygon `p` into the stream `os`.
 /// \pre The insert operator must be defined for `Point_2`.
-/// \memberof Polygon_2
+/// \relates Polygon_2
 template <class Traits_P, class Container_P>
 std::ostream &operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
 

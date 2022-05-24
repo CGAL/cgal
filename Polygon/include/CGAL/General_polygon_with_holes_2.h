@@ -127,10 +127,10 @@ protected:
 //                          operator<<
 //-----------------------------------------------------------------------//
 /*!
-This operator exports a General_polygon_with_holes_2 to the output stream `out`.
+This operator exports a `General_polygon_with_holes_2` to the output stream `os`.
 
 An \ascii and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `set_ascii_mode(0` and `set_binary_mode()`
+the \cgal modifiers for streams, `set_ascii_mode()` and `set_binary_mode()`,
 respectively. The modifier `set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is \ascii without comments.
@@ -178,9 +178,9 @@ operator<<(std::ostream& os, const General_polygon_with_holes_2<Polygon_>& p) {
 //-----------------------------------------------------------------------//
 
 /*!
-This operator imports a General_polygon_with_holes_2 from the input stream `in`.
+This operator imports a `General_polygon_with_holes_2` from the input stream `is`.
 
-Both ASCII and binary formats are supported, and the format is automatically detected.
+Both \ascii and binary formats are supported, and the format is automatically detected.
 
 The format consists of the number of curves of the outer boundary
 followed by the curves themselves, followed
