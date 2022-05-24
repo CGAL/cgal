@@ -1099,12 +1099,15 @@ intersect(Face_handle f, int i,
 
   auto intersection_not_in_the_two_triangle = [&]() {
     if(orientation(pc,pd,pi) == RIGHT_TURN) {
+      // check if `pi` is in the trangle (pc, pd, p0)
       const Point& p0 = f->vertex(i)->point();
       if(orientation(p0, pc, pi) == LEFT_TURN || orientation(pd, p0, pi) == LEFT_TURN) {
         return true;
       }
     } else {
+      // orientation(pd, pc, pi) != LEFT_TURN
       const auto edge = mirror_edge({f, i});
+      // check if `pi` is in the trangle (pd, pc, p1)
       const Point& p1 = edge.first->vertex(edge.second)->point();
       if(orientation(pc, p1, pi) == LEFT_TURN || orientation(p1, pd, pi) == LEFT_TURN) {
         return true;
