@@ -31,6 +31,8 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+  std::cout << points.size() << " points" << std::endl;
+
   // Compute the alpha and offset values
   const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 10.;
   const double relative_offset = (argc > 3) ? std::stod(argv[3]) : 300.;
@@ -41,6 +43,7 @@ int main(int argc, char** argv)
                                        CGAL::square(bbox.zmax() - bbox.zmin()));
   const double alpha = diag_length / relative_alpha;
   const double offset = diag_length / relative_offset;
+  std::cout << "absolute alpha = " << alpha << " absolute offset = " << offset << std::endl;
 
   // Construct the wrap
   CGAL::Real_timer t;

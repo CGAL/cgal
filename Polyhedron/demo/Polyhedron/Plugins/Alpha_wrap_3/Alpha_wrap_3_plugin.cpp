@@ -293,6 +293,13 @@ public Q_SLOTS:
       oracle.add_segment_soup(segments);
     oracle.add_point_set(points);
 
+    if(!oracle.do_call())
+    {
+      print_message("Warning: empty input - nothing to wrap");
+      QApplication::restoreOverrideCursor();
+      return;
+    }
+
     // Oracles set up, time to wrap
 
     CGAL::Bbox_3 bbox = oracle.bbox();
