@@ -177,7 +177,7 @@ namespace Point_set {
         neighbors.push_back(i);
         m_scores[i] = internal::create_circle_2(
           m_input_range, m_point_map, neighbors, m_traits, true).second;
-        CGAL_assertion(m_scores[i] >= FT(0));
+        CGAL_assertion(m_scores[i] <= FT(0));
       }
     }
   };

@@ -435,7 +435,7 @@ namespace internal {
     if (eigenvectors[3] == IFT(0)) {
       return std::make_pair(
         std::make_pair(FT(-1), Point_2()),
-        static_cast<FT>(((std::numeric_limits<double>::max))()));
+        -static_cast<FT>(((std::numeric_limits<double>::max))()));
     }
     CGAL_assertion(eigenvectors[3] != IFT(0));
 
@@ -463,7 +463,7 @@ namespace internal {
         CGAL_precondition(item_index < input_range.size());
         const auto& key = *(input_range.begin() + item_index);
         const auto& point = get(point_map, key);
-        score += CGAL::abs(sqrt(squared_distance_2(point, fitted_center)) - fitted_radius);
+        score -= CGAL::abs(sqrt(squared_distance_2(point, fitted_center)) - fitted_radius);
       }
     }
 
@@ -671,7 +671,7 @@ namespace internal {
     if (nb == 0) {
       return std::make_pair(
         std::make_pair(FT(-1), Line_3()),
-        static_cast<FT>((std::numeric_limits<double>::max)()));
+        -static_cast<FT>((std::numeric_limits<double>::max)()));
     }
 
     mean_axis = mean_axis / sqrt(mean_axis * mean_axis);
@@ -694,7 +694,7 @@ namespace internal {
         CGAL_precondition(item_index < input_range.size());
         const auto& key = *(input_range.begin() + item_index);
         const auto& point = get(point_map, key);
-        score += CGAL::abs(sqrt(squared_distance_3(point, fitted_axis)) - fitted_radius);
+        score -= CGAL::abs(sqrt(squared_distance_3(point, fitted_axis)) - fitted_radius);
       }
     }
 
