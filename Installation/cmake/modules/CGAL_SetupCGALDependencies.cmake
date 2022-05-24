@@ -92,7 +92,7 @@ function(CGAL_setup_CGAL_dependencies target)
 
   # CGAL now requires C++14. `decltype(auto)` is used as a marker of
   # C++14.
-  target_compile_features(${target} INTERFACE cxx_decltype_auto)
+  target_compile_features(${target} INTERFACE cxx_decltype_auto cxx_std_20)
 
   use_CGAL_Boost_support(${target} INTERFACE)
 

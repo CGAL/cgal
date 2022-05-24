@@ -27,6 +27,9 @@
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Interval_nt.h>
+#include <CGAL/Cartesian_converter.h>
 
 namespace CGAL {
 
@@ -424,32 +427,58 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     // Let's take the cross product of equation [1] with AB:
     //   0 = BD × AB - alpha_s2 × ( CD × AB )
     // and this:
-    //   alpha_s2 = det(BD, AB) / det(CD, AB) = det(BD, BA) / det(CD, BA)
-    /*
+    //   alpha_s2 = det(BD, AB) / det(CD, AB)
+    //            = det(BD, BA) / det(CD, BA)
+    //            = - det(BD, BA) / det(BA, CD)
     typename K::FT s1_dx = pts[0].x() - pts[1].x(),  // BA
                    s1_dy = pts[0].y() - pts[1].y(),
                    s2_dx = pts[3].x() - pts[2].x(),  // CD
                    s2_dy = pts[3].y() - pts[2].y(),
                    lx    = pts[3].x() - pts[1].x(),  // BD
                    ly    = pts[3].y() - pts[1].y();
-    */
-    auto det = [](const auto& v1, const auto& v2) {
+
+    auto det = [](const auto v1, const auto v2) -> typename decltype(v2)::R::FT {
       return v1.x() * v2.y() - v1.y() * v2.x();
     };
+    if constexpr (std::is_same_v<typename K::FT, double>) {
+      using Approximate_kernel = CGAL::Simple_cartesian<CGAL::Interval_nt_advanced>;
+      using Approx_point = CGAL::Point_2<Approximate_kernel>;
+      CGAL::Protect_FPU_rounding<true> rounding_mode_protection;
+      CGAL::Cartesian_converter<K, Approximate_kernel> convert;
+      CGAL::Cartesian_converter<Approximate_kernel, K> convert_back;
+      const auto a = convert(pts[0]);
+      const auto b = convert(pts[1]);
+      const auto c = convert(pts[2]);
+      const auto d = convert(pts[3]);
+      const auto vector_ba = a - b;
+      const auto vector_cd = d - c;
+      const auto vector_bd = d - b;
+      const auto det_bd_cd = det(vector_bd, vector_cd);
+      const auto det_ba_cd = det(vector_ba, vector_cd);
+      const auto det_bd_ba = det(vector_bd, vector_ba);
+      const auto alpha_s1 = det_bd_cd / det_ba_cd;
+      const auto alpha_s2 = - det_bd_ba / det_ba_cd;
+      const auto i1 = barycenter(a, alpha_s1, b);
+      const auto i2 = barycenter(c, alpha_s2, d);
+      const CGAL::Interval_nt_advanced i_x{
+          (std::max)(i1.x().inf(), i2.x().inf()),
+          (std::min)(i1.x().sup(), i2.x().sup())};
+      const CGAL::Interval_nt_advanced i_y{
+          (std::max)(i1.y().inf(), i2.y().inf()),
+          (std::min)(i1.y().sup(), i2.y().sup())};
+      _intersection_point = { std::midpoint(i_x.inf(), i_x.sup()),
+                              std::midpoint(i_y.inf(), i_y.sup()) };
+      CGAL_assertion(is_valid(_intersection_point.x()));
+      CGAL_assertion(is_valid(_intersection_point.y()));
+      return _result;
+    }
     const auto vector_ba = pts[0] - pts[1];
     const auto vector_cd = pts[3] - pts[2];
     const auto vector_bd = pts[3] - pts[1];
     const auto det_bd_cd = det(vector_bd, vector_cd);
     const auto det_ba_cd = det(vector_ba, vector_cd);
-
-    // typename K::FT alpha =  (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
-    typename K::FT alpha_s1 = det_bd_cd / det_ba_cd;
-    if constexpr (std::is_same_v<typename K::FT, double>) {
-      const auto det_bd_ba = det(vector_bd, vector_ba);
-      // WIP
-    }
+    const auto alpha_s1 = det_bd_cd / det_ba_cd;
     _intersection_point = K().construct_barycenter_2_object()(pts[0], alpha_s1, pts[1]);
-
     return _result;
 }
 
