@@ -163,6 +163,7 @@ class Polygon_2 {
     Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
       : d_container(polygon.d_container), traits(polygon.traits) {}
 
+    /// Move constructor
     Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon)
       : d_container(std::move(polygon.d_container)), traits(polygon.traits) {}
 

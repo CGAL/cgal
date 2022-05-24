@@ -914,6 +914,7 @@ public:
     /// Copy constructor: copies `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh(const Surface_mesh& rhs) { *this = rhs; }
 
+    /// Move constructor.
     Surface_mesh(Surface_mesh&& sm)
       : vprops_(std::move(sm.vprops_))
       , hprops_(std::move(sm.hprops_))
@@ -940,7 +941,7 @@ public:
     /// assigns `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh& operator=(const Surface_mesh& rhs);
 
-
+    /// move assignment
     Surface_mesh& operator=(Surface_mesh&& sm)
     {
       vprops_ = std::move(sm.vprops_);

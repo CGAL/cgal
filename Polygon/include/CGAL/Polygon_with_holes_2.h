@@ -63,6 +63,7 @@ public:
     Base (pgn_boundary)
   {}
 
+  /*! Move constructor */
   explicit Polygon_with_holes_2 (Polygon_2&& pgn_boundary) :
     Base (std::move(pgn_boundary))
   {}
@@ -75,6 +76,10 @@ public:
     Base (pgn_boundary, h_begin, h_end)
   {}
 
+  /*! Move constructor.
+   * \note In order to move the hole polygons a
+   * `std::move_iterator` can be used.
+   */
   template <class HolesInputIterator>
   Polygon_with_holes_2 (Polygon_2&& pgn_boundary,
                         HolesInputIterator h_begin,
