@@ -63,12 +63,23 @@ public:
     Base (pgn_boundary)
   {}
 
+  explicit Polygon_with_holes_2 (Polygon_2&& pgn_boundary) :
+    Base (std::move(pgn_boundary))
+  {}
+
   /*! Constructor from a polygon (outer boundary) and hole polygons. */
   template <class HolesInputIterator>
   Polygon_with_holes_2 (const Polygon_2& pgn_boundary,
                         HolesInputIterator h_begin,
                         HolesInputIterator h_end) :
     Base (pgn_boundary, h_begin, h_end)
+  {}
+
+  template <class HolesInputIterator>
+  Polygon_with_holes_2 (Polygon_2&& pgn_boundary,
+                        HolesInputIterator h_begin,
+                        HolesInputIterator h_end) :
+    Base (std::move(pgn_boundary), h_begin, h_end)
   {}
 
   /*! Obtain the bounding box of the polygon with holes */
@@ -170,7 +181,7 @@ std::istream &operator>>(std::istream &is,
      {
        Polygon_2 hole;
        is >> hole;
-       p.add_hole(hole);
+       p.add_hole(std::move(hole));
      }
   }
 

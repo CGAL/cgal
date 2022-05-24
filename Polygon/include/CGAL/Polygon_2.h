@@ -163,6 +163,9 @@ class Polygon_2 {
     Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
       : d_container(polygon.d_container), traits(polygon.traits) {}
 
+    Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon)
+      : d_container(std::move(polygon.d_container)), traits(polygon.traits) {}
+
     /// Creates a polygon with vertices from the sequence
     /// defined by the range \c [first,last).
     /// The value type of \c InputIterator must be \c Point_2.
@@ -174,6 +177,10 @@ class Polygon_2 {
 
 #ifndef DOXYGEN_RUNNING
   Polygon_2& operator=(const Polygon_2&)=default;
+  Polygon_2& operator=(Polygon_2&& p)
+  {
+    d_container = std::move(p.d_container);
+  }
 #endif
 
     /// @}

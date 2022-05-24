@@ -63,11 +63,23 @@ public:
     m_pgn(pgn_boundary)
   {}
 
+  explicit General_polygon_with_holes_2(Polygon_2&& pgn_boundary) :
+    m_pgn(std::move(pgn_boundary))
+  {}
+
   template <typename HolesInputIterator>
   General_polygon_with_holes_2(const Polygon_2& pgn_boundary,
                                HolesInputIterator h_begin,
                                HolesInputIterator h_end) :
     m_pgn(pgn_boundary),
+    m_holes(h_begin, h_end)
+  {}
+
+  template <typename HolesInputIterator>
+  General_polygon_with_holes_2(Polygon_2&& pgn_boundary,
+                               HolesInputIterator h_begin,
+                               HolesInputIterator h_end) :
+    m_pgn(std::move(pgn_boundary)),
     m_holes(h_begin, h_end)
   {}
 
@@ -90,6 +102,8 @@ public:
   const Polygon_2& outer_boundary() const { return m_pgn; }
 
   void add_hole(const Polygon_2& pgn_hole) { m_holes.push_back(pgn_hole); }
+
+  void add_hole(Polygon_2&& pgn_hole) { m_holes.emplace_back(std::move(pgn_hole)); }
 
   void erase_hole(Hole_iterator hit) { m_holes.erase(hit); }
 
@@ -187,7 +201,7 @@ operator>>(std::istream& is, General_polygon_with_holes_2<Polygon_>& p) {
     Polygon_ pgn_hole;
     for (unsigned int i=0; i<n_holes; ++i) {
       is >> pgn_hole;
-      p.add_hole(pgn_hole);
+      p.add_hole(std::move(pgn_hole));
     }
   }
 
