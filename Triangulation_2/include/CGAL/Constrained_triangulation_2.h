@@ -1117,7 +1117,7 @@ intersect(Face_handle f, int i,
   };
 
   Vertex_handle vi;
-  if ( !ok || intersection_not_in_the_two_triangle() ) {  //intersection detected but not computed
+  if ( !ok /* || intersection_not_in_the_two_triangle() */ ) {  //intersection detected but not computed
     int int_index = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
     switch(int_index){
     case 0 : vi = vaa; break;
