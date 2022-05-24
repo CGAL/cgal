@@ -99,28 +99,28 @@ class Free_list_management<CC_with_index, CGAL::Tag_true, CGAL::Tag_true>
 public:
   static const size_type null_descriptor=std::numeric_limits<size_type>::max();
 
-  Free_list_management(CC_with_index& cc_with_index):
+  Free_list_management(CC_with_index* cc_with_index):
     m_cc_with_index(cc_with_index)
   {}
 
   void init()
   {
     m_free_list=std::stack<size_type>();
-    m_used.assign(m_cc_with_index.capacity(), false);
+    m_used.assign(m_cc_with_index->capacity(), false);
     m_first_free_index=0;
   }
 
   void increase_to(size_type old_size)
   {
     CGAL_USE(old_size);
-    CGAL_assertion(m_cc_with_index.capacity()>old_size);
-    m_used.resize(m_cc_with_index.capacity(), false);
+    CGAL_assertion(m_cc_with_index->capacity()>old_size);
+    m_used.resize(m_cc_with_index->capacity(), false);
     // m_first_free_index does not change, thus nothing more to do.
   }
 
   void swap(Self& other)
   {
-    std::swap(m_cc_with_index, other.m_cc_with_index);
+    // We should not swap m_cc_with_index, but only the content of the free list
     m_free_list.swap(other.m_free_list);
     m_used.swap(other.m_used);
     std::swap(m_first_free_index, other.m_first_free_index);
@@ -128,11 +128,11 @@ public:
 
   bool is_empty() const
   { return m_free_list.empty() &&
-        m_first_free_index==m_cc_with_index.capacity(); }
+        m_first_free_index==m_cc_with_index->capacity(); }
 
   bool is_used(size_type i) const
   {
-    CGAL_assertion(i<m_cc_with_index.capacity());
+    CGAL_assertion(i<m_cc_with_index->capacity());
     return m_used[i];
   }
 
@@ -148,7 +148,7 @@ public:
   size_type top() const
   {
     CGAL_assertion(!is_empty());
-    if(m_first_free_index!=m_cc_with_index.capacity())
+    if(m_first_free_index!=m_cc_with_index->capacity())
     { return m_first_free_index; }
     return m_free_list.front();
   }
@@ -156,8 +156,8 @@ public:
   size_type pop()
   {
     CGAL_assertion(!is_empty());
-    size_type res=m_cc_with_index.capacity();
-    if(m_first_free_index!=m_cc_with_index.capacity())
+    size_type res=m_cc_with_index->capacity();
+    if(m_first_free_index!=m_cc_with_index->capacity())
     {
       res=m_first_free_index;
       ++m_first_free_index;
@@ -177,7 +177,7 @@ public:
   {}
 
 protected:
-  CC_with_index&        m_cc_with_index;
+  CC_with_index*        m_cc_with_index;
   std::stack<size_type> m_free_list;
   std::vector<bool>     m_used;
   size_type             m_first_free_index;
@@ -195,48 +195,48 @@ class Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_true>
 public:
   static const size_type null_descriptor=std::numeric_limits<size_type>::max();
 
-  Free_list_management(CC_with_index& cc_with_index):
+  Free_list_management(CC_with_index* cc_with_index):
     m_cc_with_index(cc_with_index)
   {}
 
   void init()
   {
-    m_used.assign(m_cc_with_index.capacity(), false);
+    m_used.assign(m_cc_with_index->capacity(), false);
     m_free_list=0;
-    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index.capacity()); ++i)
+    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
     { Traits::set_size_t(m_cc_with_index[i], i+1); }
     // Next of the last element is capacity() which is the "nullptr".
   }
 
   void increase_to(size_type old_size)
   {
-    CGAL_assertion(m_cc_with_index.capacity()>old_size);
+    CGAL_assertion(m_cc_with_index->capacity()>old_size);
     CGAL_assertion(m_free_list==old_size); // Previous container was full
-    m_used.resize(m_cc_with_index.capacity(), false);
-    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index.capacity()); ++i)
+    m_used.resize(m_cc_with_index->capacity(), false);
+    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
     { Traits::set_size_t(m_cc_with_index[i], i+1); }
     // Nothing to do with m_free_list, because it was equal to old_size.
   }
 
   void swap(Self& other)
   {
-    std::swap(m_cc_with_index, other.m_cc_with_index);
+    // We should not swap m_cc_with_index, but only the content of the free list
     std::swap(m_free_list, other.m_free_list);
     m_used.swap(other.m_used);
   }
 
   bool is_empty() const
-  { return m_free_list==m_cc_with_index.capacity(); }
+  { return m_free_list==m_cc_with_index->capacity(); }
 
   bool is_used(size_type i) const
   {
-    CGAL_assertion(i<m_cc_with_index.capacity());
+    CGAL_assertion(i<m_cc_with_index->capacity());
     return m_used[i];
   }
 
   void push(size_type i)
   {
-    CGAL_assertion(i<m_cc_with_index.capacity());
+    CGAL_assertion(i<m_cc_with_index->capacity());
     m_used[i]=false;
     Traits::set_size_t(m_cc_with_index[i], m_free_list);
     m_free_list=i;
@@ -261,7 +261,7 @@ public:
   { Traits::set_size_t(dest, Traits::size_t(src)); }
 
 protected:
-  CC_with_index&    m_cc_with_index;
+  CC_with_index*    m_cc_with_index;
   size_type         m_free_list; // First free element, capacity if no free
   std::vector<bool> m_used;
 };
@@ -278,42 +278,42 @@ class Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_false>
 public:
   static const size_type null_descriptor=std::numeric_limits<size_type>::max()/2;
 
-  Free_list_management(CC_with_index& cc_with_index):
+  Free_list_management(CC_with_index* cc_with_index):
     m_cc_with_index(cc_with_index)
   {}
 
   void init()
   {
     m_free_list=0;
-    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index.capacity()); ++i)
+    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
     { static_set_val(m_cc_with_index[i], i+1, FREE); }
     // Next of the last element is capacity() which is the "nullptr".
   }
 
   void increase_to(size_type old_size)
   {
-    CGAL_assertion(m_cc_with_index.capacity()>old_size);
+    CGAL_assertion(m_cc_with_index->capacity()>old_size);
     CGAL_assertion(m_free_list==old_size); // Previous container was full
-    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index.capacity()); ++i)
+    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
     { static_set_val(m_cc_with_index[i], i+1, FREE); }
     // Nothing to do with m_free_list, because it was equal to old_size.
   }
 
   void swap(Self& other)
   {
-    std::swap(m_cc_with_index, other.m_cc_with_index);
+    // We should not swap m_cc_with_index, but only the content of the free list
     std::swap(m_free_list, other.m_free_list);
   }
 
   bool is_empty() const
-  { return m_free_list==m_cc_with_index.capacity(); }
+  { return m_free_list==m_cc_with_index->capacity(); }
 
   bool is_used(size_type i) const
   { return static_type(m_cc_with_index[i])==USED; }
 
   void push(size_type i)
   {
-    CGAL_assertion(i<m_cc_with_index.capacity());
+    CGAL_assertion(i<m_cc_with_index->capacity());
     static_set_val(m_cc_with_index[i], m_free_list, FREE);
     m_free_list=i;
   }
@@ -368,7 +368,7 @@ protected:
   { Traits::set_size_t(e, v | ( ((size_type)t) <<(nbbits_size_type_m1))); }
 
 protected:
-  CC_with_index& m_cc_with_index;
+  CC_with_index* m_cc_with_index;
   size_type      m_free_list;
 };
 
@@ -462,7 +462,7 @@ public:
 
   using Index=Index_for_cc_with_index<IndexType>;
   using TFree_list_management=Free_list_management
-                             <Self, CGAL::Tag_false, CGAL::Tag_true>;
+                             <Self, CGAL::Tag_true, CGAL::Tag_true>;
 
   static const size_type null_descriptor=TFree_list_management::null_descriptor;
 
@@ -477,14 +477,14 @@ public:
 
   explicit Compact_container_with_index(const Allocator &a = Allocator())
     : alloc(a),
-      free_list(*this)
+      free_list(this)
   { init(); }
 
   template < class InputIterator >
   Compact_container_with_index(InputIterator first, InputIterator last,
                                const Allocator & a = Allocator())
   : alloc(a),
-    free_list(*this)
+    free_list(this)
   {
     init();
     std::copy(first, last, CGAL::inserter(*this));
@@ -493,7 +493,7 @@ public:
   // The copy constructor and assignment operator preserve the iterator order
   Compact_container_with_index(const Compact_container_with_index &c)
   : alloc(c.get_allocator()),
-    free_list(*this)
+    free_list(this)
   {
     init();
     block_size = c.block_size;
