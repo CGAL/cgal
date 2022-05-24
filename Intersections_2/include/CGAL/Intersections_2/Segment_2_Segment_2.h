@@ -400,15 +400,55 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
                                            : CGAL::make_array( _seg2->point(s2s2_id[c][2]), _seg2->point(s2s2_id[c][3]),
                                                                _seg1->point(s2s2_id[c][0]), _seg1->point(s2s2_id[c][1]) );
 
-    typename K::FT s1_dx = pts[0].x() - pts[1].x(),
+    // Let's call s1=[a, B] and s2=[C, D].
+    // Then the intersection point I is such that:
+    //   I = alpha_s1 × A + (1 - alpha_s1) × B
+    //   I = alpha_s2 × C + (1 - alpha_s2) × D
+    // or, if `AI` is the notation for the vector `Vector_2(A, I)`:
+    //  AI = ( 1 - alpha_s1 ) × AB
+    //  CI = ( 1 - alpha_s2 ) × CD
+    // If "AB×CD" is the cross product of the two vectors, then
+    //
+    // Now, let's solve the equations...
+    //   AI = AB + BD + DI = AB + BD + (CI - CD)
+    // thus
+    //   ( 1 - alpha_s1 ) × AB = AB + BD + (1 - alpha_s2)× CD - CD
+    //       - alpha_s1   × AB =      BD      - alpha_s2 × CD
+    //                                  (that is the equation [1])
+    //
+    // Let's take the cross product with CD:
+    //   -alpha_s1 × ( AB×CD ) = BD × CD
+    // and thus:
+    //   alpha_s1 = - det(BD, CD) / det(AB, CD) = det(BD, CD) / det(BA, CD)
+    //
+    // Let's take the cross product of equation [1] with AB:
+    //   0 = BD × AB - alpha_s2 × ( CD × AB )
+    // and this:
+    //   alpha_s2 = det(BD, AB) / det(CD, AB) = det(BD, BA) / det(CD, BA)
+    /*
+    typename K::FT s1_dx = pts[0].x() - pts[1].x(),  // BA
                    s1_dy = pts[0].y() - pts[1].y(),
-                   s2_dx = pts[3].x() - pts[2].x(),
+                   s2_dx = pts[3].x() - pts[2].x(),  // CD
                    s2_dy = pts[3].y() - pts[2].y(),
-                   lx    = pts[3].x() - pts[1].x(),
+                   lx    = pts[3].x() - pts[1].x(),  // BD
                    ly    = pts[3].y() - pts[1].y();
+    */
+    auto det = [](const auto& v1, const auto& v2) {
+      return v1.x() * v2.y() - v1.y() * v2.x();
+    };
+    const auto vector_ba = pts[0] - pts[1];
+    const auto vector_cd = pts[3] - pts[2];
+    const auto vector_bd = pts[3] - pts[1];
+    const auto det_bd_cd = det(vector_bd, vector_cd);
+    const auto det_ba_cd = det(vector_ba, vector_cd);
 
-    typename K::FT alpha =  (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
-    _intersection_point = K().construct_barycenter_2_object()(pts[0], alpha, pts[1]);
+    // typename K::FT alpha =  (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
+    typename K::FT alpha_s1 = det_bd_cd / det_ba_cd;
+    if constexpr (std::is_same_v<typename K::FT, double>) {
+      const auto det_bd_ba = det(vector_bd, vector_ba);
+      // WIP
+    }
+    _intersection_point = K().construct_barycenter_2_object()(pts[0], alpha_s1, pts[1]);
 
     return _result;
 }

@@ -14,3 +14,4 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
+target_compile_features(test_intersections_2 PRIVATE cxx_std_20)
