@@ -21,10 +21,10 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set.h>
+#include <CGAL/Shape_detection/Region_growing/Point_set.h>
+#include <CGAL/Shape_detection/Region_growing/Triangle_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Polyline.h>
+#include <CGAL/Shape_detection/Region_growing/Segment_set.h>
 #include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
@@ -184,11 +184,11 @@ bool test_lines_segment_set_3() {
   using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 
   using Plane_region = CGAL::Shape_detection::
-    Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
+    Triangle_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
   using Face_to_region_map = typename Plane_region::Face_to_region_map;
 
   using Polyline_graph = CGAL::Shape_detection::
-    Polygon_mesh::Polyline_graph<Surface_mesh>;
+    Triangle_mesh::Polyline_graph<Surface_mesh>;
   using Segment_range = typename Polyline_graph::Segment_range;
   using Segment_map = typename Polyline_graph::Segment_map;
 
@@ -209,7 +209,7 @@ bool test_lines_segment_set_3() {
 
   assert(surface_mesh.number_of_faces() == 7320);
   std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::internal::region_growing_planes_polygon_mesh(
+  CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
     surface_mesh, std::back_inserter(regions));
   assert(regions.size() == 9);
 
@@ -329,7 +329,7 @@ bool test_planes_polyhedron() {
 
   assert(polyhedron.size_of_facets() == 4);
   std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::internal::region_growing_planes_polygon_mesh(
+  CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
     polyhedron, std::back_inserter(regions));
   assert(regions.size() == polyhedron.size_of_facets());
   return true;
@@ -351,7 +351,7 @@ bool test_planes_surface_mesh() {
 
   assert(surface_mesh.number_of_faces() == 7320);
   std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::internal::region_growing_planes_polygon_mesh(
+  CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
     surface_mesh, std::back_inserter(regions));
   assert(regions.size() == 9);
   return true;

@@ -15,21 +15,21 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Triangle_mesh.h>
 
 namespace SD = CGAL::Shape_detection;
 
 template<class Kernel>
-bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
+bool test_region_growing_on_triangle_mesh(int argc, char *argv[]) {
 
   using FT      = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
 
-  using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
-  using Face_range   = typename Polygon_mesh::Face_range;
+  using Triangle_mesh = CGAL::Surface_mesh<Point_3>;
+  using Face_range   = typename Triangle_mesh::Face_range;
 
-  using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
-  using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
+  using Neighbor_query = SD::Triangle_mesh::One_ring_neighbor_query<Triangle_mesh>;
+  using Region_type    = SD::Triangle_mesh::Least_squares_plane_fit_region<Kernel, Triangle_mesh>;
   using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
 
   // Default parameter values.
@@ -42,20 +42,20 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   CGAL::IO::set_ascii_mode(in);
   assert(in);
 
-  Polygon_mesh polygon_mesh;
-  in >> polygon_mesh;
+  Triangle_mesh mesh;
+  in >> mesh;
   in.close();
-  const Face_range face_range = faces(polygon_mesh);
+  const Face_range face_range = faces(mesh);
   assert(face_range.size() == 32245);
 
   using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
   const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, polygon_mesh));
+    get(CGAL::vertex_point, mesh));
 
   // Create parameter classes.
-  Neighbor_query neighbor_query(polygon_mesh);
+  Neighbor_query neighbor_query(mesh);
   Region_type region_type(
-    polygon_mesh,
+    mesh,
     CGAL::parameters::
     maximum_distance(distance_threshold).
     maximum_angle(angle_threshold).
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
   // ------>
 
   bool sc_test_success = true;
-  if (!test_region_growing_on_polygon_mesh<SC>(argc, argv))
+  if (!test_region_growing_on_triangle_mesh<SC>(argc, argv))
     sc_test_success = false;
   std::cout << "rg_pmesh, sc_test_success: " << sc_test_success << std::endl;
   assert(sc_test_success);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
   // ------>
 
   bool epick_test_success = true;
-  if (!test_region_growing_on_polygon_mesh<EPICK>(argc, argv))
+  if (!test_region_growing_on_triangle_mesh<EPICK>(argc, argv))
     epick_test_success = false;
   std::cout << "rg_pmesh, epick_test_success: " << epick_test_success << std::endl;
   assert(epick_test_success);
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
   // ------>
 
   bool epeck_test_success = true;
-  if (!test_region_growing_on_polygon_mesh<EPECK>(argc, argv))
+  if (!test_region_growing_on_triangle_mesh<EPECK>(argc, argv))
     epeck_test_success = false;
   std::cout << "rg_pmesh, epeck_test_success: " << epeck_test_success << std::endl;
   assert(epeck_test_success);

@@ -185,11 +185,11 @@ private:
     using Face_range = typename SMesh::Face_range;
 
     using Neighbor_query =
-    CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<SMesh>;
+    CGAL::Shape_detection::Triangle_mesh::One_ring_neighbor_query<SMesh>;
     using Region_type =
-    CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, SMesh>;
+    CGAL::Shape_detection::Triangle_mesh::Least_squares_plane_fit_region<Kernel, SMesh>;
     using Sorting =
-    CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, SMesh, Neighbor_query>;
+    CGAL::Shape_detection::Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, SMesh, Neighbor_query>;
     using Region_growing = CGAL::Shape_detection::Region_growing<
       Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 

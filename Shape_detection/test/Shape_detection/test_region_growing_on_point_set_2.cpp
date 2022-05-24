@@ -16,7 +16,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing/Point_set.h>
 
 namespace SD = CGAL::Shape_detection;
 

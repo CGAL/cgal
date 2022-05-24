@@ -14,7 +14,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Triangle_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
@@ -26,9 +26,9 @@ using Point_3 = typename Kernel::Point_3;
 using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
 using Face_range   = typename Polygon_mesh::Face_range;
 
-using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
-using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
-using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
+using Neighbor_query = SD::Triangle_mesh::One_ring_neighbor_query<Polygon_mesh>;
+using Region_type    = SD::Triangle_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
+using Sorting        = SD::Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
 using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
 int main(int argc, char *argv[]) {
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
-    SD::internal::region_growing_planes_polygon_mesh(
+    SD::internal::region_growing_planes_triangle_mesh(
       polygon_mesh, std::back_inserter(regions),
       CGAL::parameters::
       maximum_distance(distance_threshold).

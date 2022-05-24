@@ -11,8 +11,8 @@
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_ONE_RING_NEIGHBOR_QUERY_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_ONE_RING_NEIGHBOR_QUERY_H
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_ONE_RING_NEIGHBOR_QUERY_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_ONE_RING_NEIGHBOR_QUERY_H
 
 #include <CGAL/license/Shape_detection.h>
 
@@ -21,37 +21,37 @@
 
 namespace CGAL {
 namespace Shape_detection {
-namespace Polygon_mesh {
+namespace Triangle_mesh {
 
   /*!
     \ingroup PkgShapeDetectionRGOnMesh
 
-    \brief Edge-adjacent faces connectivity in a polygon mesh.
+    \brief Edge-adjacent faces connectivity in a triangle mesh.
 
     This class returns all faces, which are edge-adjacent to a query face in a
-    polygon mesh being a `PolygonMesh`.
+    triangle mesh being a `TriangleMesh`.
 
-    \tparam PolygonMesh
+    \tparam TriangleMesh
     a model of `FaceListGraph`
 
     \tparam FaceRange
     a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a polygon mesh
+    value type is the face type of a triangle mesh
 
     \cgalModels `NeighborQuery`
   */
-  template<typename PolygonMesh
+  template<typename TriangleMesh
 #ifndef CGAL_NO_DEPRECATED_CODE
   , typename FaceRange = void
 #endif
   >
   class One_ring_neighbor_query
   {
-    using Face_to_index_map = typename boost::property_map<PolygonMesh, CGAL::dynamic_face_property_t<std::size_t> >::const_type;
+    using Face_to_index_map = typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t> >::const_type;
   public:
     /// \cond SKIP_IN_MANUAL
-    using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
-    using Face_graph = PolygonMesh;
+    using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+    using Face_graph = TriangleMesh;
     /// \endcond
 
     /// \name Initialization
@@ -61,17 +61,17 @@ namespace Polygon_mesh {
       \brief initializes all internal data structures.
 
       \param pmesh
-      an instance of a `PolygonMesh` that represents a polygon mesh
+      an instance of a `TriangleMesh` that represents a triangle mesh
 
       \pre `faces(pmesh).size() > 0`
     */
     One_ring_neighbor_query(
-      const PolygonMesh& pmesh) :
-    m_face_graph(pmesh),
-    m_face_to_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), pmesh))
+      const TriangleMesh& tmesh) :
+    m_face_graph(tmesh),
+    m_face_to_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tmesh))
     {
-      m_face_range.reserve(num_faces(pmesh)); // a bit larger if has garbage
-      for (face_descriptor f : faces(pmesh))
+      m_face_range.reserve(num_faces(tmesh)); // a bit larger if has garbage
+      for (face_descriptor f : faces(tmesh))
       {
         put(m_face_to_index_map, f, m_face_range.size());
         m_face_range.push_back(f);
@@ -97,7 +97,7 @@ namespace Polygon_mesh {
       \param neighbors
       indices of faces, which are neighbors of the query face
 
-      \pre `query_index < faces(pmesh).size()`
+      \pre `query_index < faces(tmesh).size()`
     */
     void operator()(
       const std::size_t query_index,
@@ -110,7 +110,7 @@ namespace Polygon_mesh {
 
       for (face_descriptor face : faces_around_face(query_hedge, m_face_graph))
       {
-        if (face != boost::graph_traits<PolygonMesh>::null_face())
+        if (face != boost::graph_traits<TriangleMesh>::null_face())
         {
           const std::size_t face_index = get(m_face_to_index_map, face);
           neighbors.push_back(face_index);
@@ -133,8 +133,8 @@ namespace Polygon_mesh {
     Face_to_index_map m_face_to_index_map;
   };
 
-} // namespace Polygon_mesh
+} // namespace Triangle_mesh
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_ONE_RING_NEIGHBOR_QUERY_H
+#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_ONE_RING_NEIGHBOR_QUERY_H

@@ -17,7 +17,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Triangle_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
@@ -30,9 +30,9 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   using Polyhedron = CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
   using Face_range = typename CGAL::Iterator_range<typename boost::graph_traits<Polyhedron>::face_iterator>;
 
-  using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polyhedron>;
-  using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polyhedron, Face_range>;
-  using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query, Face_range>;
+  using Neighbor_query = SD::Triangle_mesh::One_ring_neighbor_query<Polyhedron>;
+  using Region_type    = SD::Triangle_mesh::Least_squares_plane_fit_region<Kernel, Polyhedron, Face_range>;
+  using Sorting        = SD::Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query, Face_range>;
   using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Default parameter values.
@@ -94,7 +94,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
-    SD::internal::region_growing_planes_polygon_mesh(
+    SD::internal::region_growing_planes_triangle_mesh(
       polyhedron, std::back_inserter(regions),
       CGAL::parameters::
       maximum_distance(distance_threshold).

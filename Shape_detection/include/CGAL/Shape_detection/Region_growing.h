@@ -25,9 +25,9 @@
 */
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline.h>
+#include <CGAL/Shape_detection/Region_growing/Point_set.h>
+#include <CGAL/Shape_detection/Region_growing/Segment_set.h>
+#include <CGAL/Shape_detection/Region_growing/Triangle_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Polyline.h>
 
 #endif // CGAL_SHAPE_DETECTION_REGION_GROWING_HEADERS_H

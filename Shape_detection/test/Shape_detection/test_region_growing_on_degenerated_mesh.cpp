@@ -15,7 +15,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Triangle_mesh.h>
 
 namespace SD = CGAL::Shape_detection;
 
@@ -28,8 +28,8 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
   using Surface_mesh = CGAL::Surface_mesh<Point_3>;
   using Face_range   = typename Surface_mesh::Face_range;
 
-  using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Surface_mesh>;
-  using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
+  using Neighbor_query = SD::Triangle_mesh::One_ring_neighbor_query<Surface_mesh>;
+  using Region_type    = SD::Triangle_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
   using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
 
   // Default parameter values.

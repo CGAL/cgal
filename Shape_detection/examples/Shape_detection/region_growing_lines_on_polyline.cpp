@@ -1,7 +1,7 @@
 #include "include/utils.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline.h>
+#include <CGAL/Shape_detection/Region_growing/Polyline.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;

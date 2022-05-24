@@ -1,8 +1,8 @@
 #include <CGAL/IO/PLY.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Segment_set.h>
+#include <CGAL/Shape_detection/Region_growing/Triangle_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include "include/utils.h"
@@ -15,12 +15,12 @@ using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using Face_range   = typename Surface_mesh::Face_range;
 using Edge_range   = typename Surface_mesh::Edge_range;
 
-using One_ring_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Surface_mesh>;
-using Plane_region   = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
+using One_ring_query = CGAL::Shape_detection::Triangle_mesh::One_ring_neighbor_query<Surface_mesh>;
+using Plane_region   = CGAL::Shape_detection::Triangle_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
 using RG_planes      = CGAL::Shape_detection::Region_growing<Face_range, One_ring_query, Plane_region>;
 
 using Face_to_region_map = typename Plane_region::Face_to_region_map;
-using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<Surface_mesh>;
+using Polyline_graph     = CGAL::Shape_detection::Triangle_mesh::Polyline_graph<Surface_mesh>;
 using Segment_range      = typename Polyline_graph::Segment_range;
 using Segment_map        = typename Polyline_graph::Segment_map;
 

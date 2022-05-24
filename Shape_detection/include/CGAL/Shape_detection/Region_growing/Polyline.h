@@ -24,8 +24,8 @@
 * A convenience header that includes all classes related to the region growing algorithm on a polyline.
 */
 
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline/One_ring_neighbor_query.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline/Least_squares_line_fit_region.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline/Least_squares_line_fit_sorting.h>
+#include <CGAL/Shape_detection/Region_growing/Polyline/One_ring_neighbor_query.h>
+#include <CGAL/Shape_detection/Region_growing/Polyline/Least_squares_line_fit_region.h>
+#include <CGAL/Shape_detection/Region_growing/Polyline/Least_squares_line_fit_sorting.h>
 
 #endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYLINE_H
