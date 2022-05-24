@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found lines: " << regions.size() << std::endl;
-  assert(is_default_input && regions.size() == 65);
+  assert(is_default_input && regions.size() == 72);
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "lines_point_set_2.ply");

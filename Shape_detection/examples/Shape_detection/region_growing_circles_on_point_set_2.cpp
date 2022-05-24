@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
   }
 
   // Default parameter values for the data file circles.ply.
-  const std::size_t k               = 12;
+  const std::size_t k               = 16;
   const FT          max_distance    = FT(1) / FT(100);
   const FT          max_angle       = FT(10);
   const std::size_t min_region_size = 20;
@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
     )
   );
   std::cout << "* number of found circles: " << num_circles << std::endl;
-  assert(is_default_input && num_circles == 12);
+  assert(is_default_input && num_circles == 10);
 
   // Save regions to a file.
   std::ofstream out("circles_point_set_2.ply");

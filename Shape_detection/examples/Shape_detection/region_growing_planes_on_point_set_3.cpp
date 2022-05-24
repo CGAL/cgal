@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
   std::vector<std::size_t> unassigned_items;
   region_growing.unassigned_items(std::back_inserter(unassigned_items));
   std::cout << "* number of unassigned points: " << unassigned_items.size() << std::endl;
-  assert(is_default_input && unassigned_items.size() == 538);
+  assert(is_default_input && unassigned_items.size() == 535);
 
   // Store all unassigned points.
   std::vector<Point_3> unassigned_points;

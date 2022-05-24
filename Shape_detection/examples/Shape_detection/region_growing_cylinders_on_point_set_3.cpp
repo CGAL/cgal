@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     )
   );
   std::cout << "* number of found cylinders: " << num_cylinders << std::endl;
-  assert(is_default_input && num_cylinders == 44);
+  assert(is_default_input && num_cylinders == 62);
 
   // Save regions to a file.
   std::ofstream out("cylinders_point_set_3.ply");

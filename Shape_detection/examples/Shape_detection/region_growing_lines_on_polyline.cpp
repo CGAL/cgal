@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing_3.detect(std::back_inserter(regions));
   std::cout << "* number of found 3D regions: " << regions.size() << std::endl;
-  assert(is_default_input && regions.size() == 12);
+  assert(is_default_input && regions.size() == 17);
 
   // Save 3D regions to a file.
   std::string fullpath = (argc > 2 ? argv[2] : "regions_polyline_3.ply");
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
   regions.clear();
   region_growing_2.detect(std::back_inserter(regions));
   std::cout << "* number of found 2D regions: " << regions.size() << std::endl;
-  assert(is_default_input && regions.size() == 4);
+  assert(is_default_input && regions.size() == 5);
 
   // Save 2D regions to a file.
   polyline_3.clear();
