@@ -42,11 +42,11 @@
 namespace CGAL {
 
 /// \ingroup PkgPolygon2Ref
-/// The class Polygon_2 implements polygons. The Polygon_2 is
+/// The class `Polygon_2` implements polygons. The `Polygon_2` is
 /// parameterized by a traits class and a container class.  The latter
 /// can be any class that fulfills the requirements for an STL
-/// container, and has a function `resize()` that takes an std::size_t as argument
-///  . It defaults to the std::vector class.
+/// container, and has a function `resize()` that takes an `std::size_t` as argument.
+/// It defaults to the `std::vector` class.
 ///
 /// \cgalHeading{Implementation}
 ///
@@ -165,7 +165,10 @@ class Polygon_2 {
 
     /// Move constructor
     Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon)
-      : d_container(std::move(polygon.d_container)), traits(polygon.traits) {}
+      : d_container(std::move(polygon.d_container)), traits(polygon.traits)
+    {
+        CGAL_assertion(polygon.is_empty());
+    }
 
     /// Creates a polygon with vertices from the sequence
     /// defined by the range \c [first,last).

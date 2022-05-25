@@ -78,7 +78,7 @@ public:
 
   /*! Move constructor.
    * \note In order to move the hole polygons a
-   * `std::move_iterator` can be used.
+   * `std::move_iterator` may be used.
    */
   template <class HolesInputIterator>
   Polygon_with_holes_2 (Polygon_2&& pgn_boundary,
