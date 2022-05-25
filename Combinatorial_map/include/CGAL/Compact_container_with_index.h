@@ -240,16 +240,13 @@ public:
   void increase_to(size_type old_size)
   {
     CGAL_assertion(m_cc_with_index->capacity()>old_size);
-    CGAL_assertion(m_free_list==null_descriptor); // Previous container was full
     m_used.resize(m_cc_with_index->capacity(), false);
-    size_type i=0;
-    if(old_size>0)
-    { i=old_size-1; }
-    for(; i<static_cast<size_type>(m_cc_with_index->capacity()-1); ++i)
+    for(size_type i=old_size;
+        i<static_cast<size_type>(m_cc_with_index->capacity()-1); ++i)
     { Traits::set_size_t((*m_cc_with_index)[i], i+1); }
     // Next of the last element is null_descriptor.
     Traits::set_size_t((*m_cc_with_index)[m_cc_with_index->capacity()-1],
-        null_descriptor);
+        m_free_list);
     m_free_list=old_size;
   }
 
@@ -571,6 +568,7 @@ public:
     std::swap(size_, c.size_);
     std::swap(block_size, c.block_size);
     std::swap(all_items, c.all_items);
+    //all_items.swap(c.all_items);
     free_list.swap(c.free_list);
   }
 
@@ -828,7 +826,6 @@ clear()
 {
   for (size_type i=0; i<capacity_; ++i)
   { if ( is_used(i) ) alloc.destroy(&operator[](i)); }
-
   std::allocator_traits<allocator_type>::deallocate(alloc, all_items, capacity_);
   all_items=nullptr;
 
@@ -848,9 +845,9 @@ increase_size()
   {
     if(is_used(index))
     {
-      /*std::allocator_traits<allocator_type>::construct
-          (alloc, &(all_items2[index]), std::move(all_items[index]));*/
-      new (&all_items2[index]) value_type(all_items[index]);
+      std::allocator_traits<allocator_type>::construct
+          (alloc, &(all_items2[index]), std::move(all_items[index]));
+      //new (&all_items2[index]) value_type(all_items[index]);
       // TEMPO TO DEBUG
       CGAL_assertion(all_items[index]==all_items2[index]);
       alloc.destroy(&(all_items[index]));

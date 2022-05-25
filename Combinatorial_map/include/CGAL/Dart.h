@@ -145,6 +145,16 @@ namespace CGAL {
       return mf[i];
     }
 
+    bool operator==(const Self& other) const
+    {
+      if(mmarks!=other.mmarks ||
+         mattribute_descriptors!=other.mattribute_descriptors)
+      { return false; }
+      for(unsigned int i=0; i<=dimension; ++i)
+      { if(mf[i]!=other.mf[i]) { return false; }}
+      return true;
+    }
+
   protected:
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial map class.
@@ -170,16 +180,6 @@ namespace CGAL {
       for (unsigned int i=0; i<=dimension; ++i)
       { mf[i]=other.mf[i]; }
       return *this;
-    }
-
-    friend bool operator==(const Self& d1, const Self& d2)
-    {
-      if(d1.mmarks!=d2.mmarks ||
-         d1.mattribute_descriptors!=d2.mattribute_descriptors)
-      { return false; }
-      for(unsigned int i=0; i<=dimension; ++i)
-      { if(d1.mf[i]!=d2.mf[i]) { return false; }}
-      return true;
     }
 
     /** Return the mark value of a given mark number.
@@ -296,6 +296,9 @@ namespace CGAL {
     typedef Dart<d, Refs, Info_, WithID> Self;
     typedef Info_                        Info;
 
+    bool operator==(const Self& other) const
+    { return Base::operator==(other) && minfo==other.minfo; }
+
   protected:
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial or generalized map class.
@@ -306,13 +309,11 @@ namespace CGAL {
     Dart(const Info_& info) : minfo(info)
     {}
 
+  protected:
     Info_& info()
     { return minfo; }
     const Info_& info() const
     { return minfo; }
-
-    friend bool operator==(const Self& d1, const Self& d2)
-    { return Base(d1)==Base(d2) && d1.minfo==d2.minfo; }
 
   protected:
     Info minfo;

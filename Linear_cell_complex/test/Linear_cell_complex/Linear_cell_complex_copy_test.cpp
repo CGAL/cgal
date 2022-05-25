@@ -498,10 +498,12 @@ template<typename Map>
 void create2Dmap(Map& map)
 {
   for ( int i=0; i<15; ++i )
+  {
     map.make_tetrahedron(typename Map::Point(i, 0, 0),
                          typename Map::Point(i, 2, 0),
                          typename Map::Point(i+1, 0, 0),
                          typename Map::Point(i+1, 1, 2));
+  }
   InitDartInfo<Map>::run(map);
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
