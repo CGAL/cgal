@@ -181,6 +181,7 @@ class Polygon_2 {
   Polygon_2& operator=(Polygon_2&& p)
   {
     d_container = std::move(p.d_container);
+    return *this;
   }
 #endif
 
