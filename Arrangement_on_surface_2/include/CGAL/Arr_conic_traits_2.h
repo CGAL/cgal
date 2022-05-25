@@ -27,6 +27,8 @@
 #include <memory>
 #include <cmath>
 
+#include <boost/math/special_functions/ellint_2.hpp>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
@@ -642,6 +644,10 @@ public:
         *oi++ = Approximate_point_2(xt, yt);
         return oi;
       }
+      if (arc.orientation() == CLOCKWISE) {
+        std::swap(xs, xt);
+        std::swap(ys, yt);
+      }
       auto r = CGAL::to_double(arc.r());
       auto s = CGAL::to_double(arc.s());
       auto t = CGAL::to_double(arc.t());
@@ -649,6 +655,9 @@ public:
       auto v = CGAL::to_double(arc.v());
       auto w = CGAL::to_double(arc.w());
       std::cout << r << "," << s << "," << t << "," << u << "," << v << "," << w
+                << std::endl;
+      std::cout << "curve: (" << xs << "," << ys
+                << ") => (" << xt << "," << yt << ")"
                 << std::endl;
       {
         // Compute the cos and sin of the rotation angle
@@ -695,15 +704,30 @@ public:
         auto xds = xs - cx;
         auto yds = ys - cy;
         auto ts = std::atan2(a*(cost*yds - sint*xds),b*(sint*yds + cost*xds));
+        if (ts < 0) ts += 2*M_PI;
         auto xdt = xt - cx;
         auto ydt = yt - cy;
         auto tt = std::atan2(a*(cost*ydt - sint*xdt),b*(sint*ydt + cost*xdt));
+        std::cout << "xdt, ydt, tt: " << xdt << "," << ydt << ", " << tt << std::endl;
+        if (tt < 0) tt += 2*M_PI;
+        std::cout << "ts,tt: " << ts << "," << tt << std::endl;
 
-        auto delta = std::abs(tt - ts) / (size-1);
-        double t((arc.orientation() == COUNTERCLOCKWISE) ? ts : tt);
+        namespace bm = boost::math;
+        auto ratio = b/a;
+        auto k = 1 - (ratio*ratio);
+        auto ps = std::atan2(b*std::tan(ts), a);
+        if (ps < 0) ps += 2*M_PI;
+        auto ds = a*bm::ellint_2(k, ps);
+        auto pt = std::atan2(b*std::tan(tt), a);
+        if (pt < 0) pt += 2*M_PI;
+        auto dt = a*bm::ellint_2(k, pt);
+        std::cout << "ps,pt: " << ps << ", " << pt << std::endl;
+        std::cout << "ds,dt: " << ds << ", " << dt << std::endl;
 
-        *oi++ = (arc.orientation() == COUNTERCLOCKWISE) ?
-          Approximate_point_2(xs, ys) : Approximate_point_2(xt, yt);
+        if (tt < ts) tt += 2*M_PI;
+        auto delta = (tt - ts) / (size-1);
+        auto t(ts);
+        *oi++ = Approximate_point_2(xs, ys);
         t += delta;
         for (size_t i = 1; i < size-1; ++i) {
           auto x = a*std::cos(t)*cost - b*std::sin(t)*sint + cx;
@@ -713,8 +737,7 @@ public:
           *oi++ = Approximate_point_2(x, y);
           t += delta;
         }
-        *oi++ = (arc.orientation() == COUNTERCLOCKWISE) ?
-          Approximate_point_2(xt, yt) : Approximate_point_2(xs, ys);
+        *oi++ = Approximate_point_2(xt, yt);
       }
       return oi;
     }

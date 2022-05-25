@@ -1,7 +1,7 @@
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
-#include <map>
+#include <unordered_map>
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Qt/init_ogl_context.h>
@@ -42,8 +42,12 @@ public:
     for (auto it = m_arr.unbounded_faces_begin();
          it != m_arr.unbounded_faces_end(); ++it)
       add_face(it, c);
+
+    // Add edges that do not separe faces.
     for (auto it = m_arr.edges_begin(); it != m_arr.edges_end(); ++it)
-      add_edge(it);
+      if (it->face() == it->twin()->face()) add_edge(it);
+
+    // Add all points
     for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it)
       add_vertex(it);
   }
@@ -51,10 +55,11 @@ public:
 protected:
   //!
   virtual void add_ccb(Ccb_halfedge_const_circulator circ) {
-    std::cout << "1 add_ccb\n";
-    typename Arr::Ccb_halfedge_const_circulator curr = circ;
-    do this->add_point_in_face(curr->source()->point());
-    while (++curr != circ);
+    auto curr = circ;
+    do {
+      this->add_point_in_face(curr->source()->point());
+      add_edge(curr);
+    } while (++curr != circ);
   }
 
   //!
@@ -78,7 +83,7 @@ protected:
 
     for (auto it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it)
     {
-      std::map<Face_const_handle, bool> visited;
+      std::unordered_map<Face_const_handle, bool> visited;
       auto curr = *it;
       do {
         auto new_face = curr->twin()->face();
@@ -163,12 +168,55 @@ public:
   virtual void add_ccb(Ccb_halfedge_const_circulator circ) {
     const auto* traits = this->m_arr.geometry_traits();
     auto approx = traits->approximate_2_object();
-    typename Arr::Ccb_halfedge_const_circulator curr = circ;
+    auto cmp_xy = traits->compare_xy_2_object();
+    auto cmp_y = traits->compare_y_at_x_right_2_object();
+
+    // Find the first halfedge directed from left to right
+    auto curr = circ;
+    do if (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT) break;
+    while (++curr != circ);
+    Halfedge_const_handle ext = curr;
+
+    // Find the halfedge incident to the lexicographically smallest vertex,
+    //  such that there is no other halfedge underneath.
     do {
+      // Discard edges not directed from left to right:
+      if (curr->direction() != CGAL::ARR_LEFT_TO_RIGHT) continue;
+
+
+      auto res = cmp_xy(curr->source()->point(), ext->source()->point());
+
+      // Discard the edges inciden to a point strictly larger than the point
+      // incident to the stored extreme halfedge:
+      if (res == LARGER) continue;
+
+      // Store the edge inciden to a point strictly smaller:
+      if (res == SMALLER) {
+        ext = curr;
+        continue;
+      }
+
+      // The incident points are equal; compare the halfedges themselves:
+      if (cmp_y(curr->curve(), ext->curve(), curr->source()->point()) ==
+          SMALLER)
+        ext = curr;
+    } while (++curr != circ);
+
+    // Iterate, starting from the lexicographically smallest vertex
+    curr = ext;
+    do {
+      while (curr->face() == curr->twin()->face())
+        curr = curr->twin()->next();
       std::vector<typename Gt::Approximate_point_2> polyline;
       approx(curr->curve(), 10, std::back_inserter(polyline));
-      for (const auto& p : polyline) this->add_point_in_face(p);
-    } while (++curr != circ);
+      auto it = polyline.begin();
+      auto prev = it++;
+      for (; it != polyline.end(); prev = it++) {
+        this->add_segment(*prev, *it);
+        this->add_point_in_face(*prev);
+      }
+      curr = curr->next();
+    } while (curr != ext);
   }
 
   //!
@@ -180,8 +228,7 @@ public:
 
     auto it = polyline.begin();
     auto prev = it++;
-    for (; it != polyline.end(); prev = it++)
-      this->add_segment(*prev, *it);
+    for (; it != polyline.end(); prev = it++) this->add_segment(*prev, *it);
   }
 };
 
