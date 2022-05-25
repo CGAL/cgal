@@ -18,6 +18,8 @@ int main() {
   CGAL::insert(arr, ctr_xcv(Point(1,-1), Point(1,1)));
   CGAL::insert(arr, ctr_xcv(Point(1,1), Point(-1,1)));
   CGAL::insert(arr, ctr_xcv(Point(-1,1), Point(-1,-1)));
+  CGAL::insert(arr, ctr_xcv(Point(-2,-1), Point(-1,-1)));
+  CGAL::insert(arr, ctr_xcv(Point(2,-1), Point(1,-1)));
 
   CGAL::draw(arr);
 
