@@ -1033,6 +1033,12 @@ public:
   bool is_upper() const { return test_flag(FACING_UP); }
 
   bool is_lower() const { return test_flag(FACING_DOWN); }
+
+  /*! Check whether the arc is a special segment connecting two algebraic
+   * endpoints (and has no undelying integer conic coefficients).
+   */
+  bool is_special_segment() const { return test_flag(IS_SPECIAL_SEGMENT); }
+
   //@}
 
 private:
@@ -1146,12 +1152,6 @@ private:
     // If the arc is below the connecting segment, so it is facing downwards.
     else if (res == SMALLER) set_flag(FACING_DOWN);
   }
-
-  /*! Check if the arc is a special segment connecting two algebraic endpoints
-   * (and has no undelying integer conic coefficients).
-   */
-  bool is_special_segment() const
-  { return test_flag(IS_SPECIAL_SEGMENT); }
 
   /*! Check whether the given point lies on the supporting conic of the arc.
    * \param px The x-coordinate of query point.
@@ -1461,7 +1461,6 @@ private:
    * \return Whether we found an overlap.
    */
   bool compute_overlap(const Self& arc, Self& overlap) const {
-    std::cout << "compute_overlap()\n";
     // Check if the two arcs are identical.
     if (equals(arc)) {
       overlap = arc;
