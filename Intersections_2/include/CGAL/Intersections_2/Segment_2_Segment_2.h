@@ -440,8 +440,18 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     auto det = [](const auto v1, const auto v2) -> typename decltype(v2)::R::FT {
       return v1.x() * v2.y() - v1.y() * v2.x();
     };
-    if constexpr (std::is_same_v<typename K::FT, double>) {
-      using Approximate_kernel = CGAL::Simple_cartesian<CGAL::Interval_nt_advanced>;
+#if CGAL_DISABLE_IMPROVEMENT_OF_INTERSECT_SEG_SEG
+#  undef CGAL_DISABLE_IMPROVEMENT_OF_INTERSECT_SEG_SEG
+#  define CGAL_DISABLE_IMPROVEMENT_OF_INTERSECT_SEG_SEG true
+#else
+#  undef CGAL_DISABLE_IMPROVEMENT_OF_INTERSECT_SEG_SEG
+#  define CGAL_DISABLE_IMPROVEMENT_OF_INTERSECT_SEG_SEG false
+#endif
+    if constexpr (!CGAL_DISABLE_IMPROVEMENT_OF_INTERSECT_SEG_SEG &&
+                  std::is_same_v<typename K::FT, double>)
+    {
+      using Approximate_kernel =
+          CGAL::Simple_cartesian<CGAL::Interval_nt_advanced>;
       using Approx_point = CGAL::Point_2<Approximate_kernel>;
       CGAL::Protect_FPU_rounding<true> rounding_mode_protection;
       CGAL::Cartesian_converter<K, Approximate_kernel> convert;
