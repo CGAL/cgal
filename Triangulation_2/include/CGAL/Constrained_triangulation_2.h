@@ -28,6 +28,8 @@
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/iterator/filter_iterator.hpp>
@@ -1097,7 +1099,7 @@ intersect(Face_handle f, int i,
   Itag itag = Itag();
   bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
 
-  auto intersection_not_in_the_two_triangle = [&]() {
+  auto intersection_not_in_the_two_triangle = [&](const Point& pi) {
     if(orientation(pc,pd,pi) == RIGHT_TURN) {
       // check if `pi` is in the triangle (pc, pd, p0)
       const Point& p0 = f->vertex(i)->point();
@@ -1117,7 +1119,7 @@ intersect(Face_handle f, int i,
   };
 
   Vertex_handle vi;
-  if ( !ok /* || intersection_not_in_the_two_triangle() */ ) {  //intersection detected but not computed
+  if ( !ok ) {  //intersection detected but not computed
     int int_index = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
     switch(int_index){
     case 0 : vi = vaa; break;
@@ -1130,8 +1132,38 @@ intersect(Face_handle f, int i,
     }
   }
   else{ //intersection computed
-    remove_constrained_edge(f, i);
-    vi = virtual_insert(pi, f);
+    if(intersection_not_in_the_two_triangle(pi)) {
+      // now compute the exact intersection point
+      using EK = Simple_cartesian<Exact_rational>;
+      using EK_Line_2  = EK::Line_2;
+      using EK_Point_2 = EK::Point_2;
+      Cartesian_converter<Gt, EK> to_exact;
+      Cartesian_converter<EK, Gt> from_exact;
+      EK::Intersect_2 exact_intersect;
+      auto exact_intersection =
+          exact_intersect(EK_Line_2{to_exact(pa), to_exact(pb)},
+                          EK_Line_2{to_exact(pc), to_exact(pd)});
+      CGAL_assertion(exact_intersection.has_value());
+      using boost::get;
+      if (const auto *p = get<EK_Point_2>(&*exact_intersection)) {
+        pi = from_exact(*p);
+      } else {
+        CGAL_error();
+      }
+      if(intersection_not_in_the_two_triangle(pi)) {
+        // If the most-exact intersection point is not in the union of the two
+        // triangles, then snap to `pc` or `pd`...
+        if(compare_distance(pi, pc, pd) == SMALLER) {
+          vi = vcc;
+        } else {
+          vi = vdd;
+        }
+      }
+    }
+    if(vi != vcc && vi != vdd) {
+      remove_constrained_edge(f, i);
+      vi = virtual_insert(pi, f);
+    }
   }
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
