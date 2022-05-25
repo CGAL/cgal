@@ -25,7 +25,9 @@
 #include <fstream>
 #include <atomic>
 #include <memory>
+#include <cmath>
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Conic_arc_2.h>
@@ -601,11 +603,13 @@ public:
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  typedef double                          Approximate_number_type;
+  using Approximate_number_type = double;
+  using Approximate_kernel = CGAL::Cartesian<Approximate_number_type>;
+  using Approximate_point_2 = Approximate_kernel::Point_2;
 
   class Approximate_2 {
   public:
-    /*! Return an approximation of a point coordinate.
+    /*! Obtain an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre i is either 0 or 1.
@@ -613,16 +617,111 @@ public:
      *         approximation of p's y-coordinate (if i == 1).
      */
     Approximate_number_type operator()(const Point_2& p, int i) const {
-      CGAL_precondition(i == 0 || i == 1);
+      CGAL_precondition((i == 0) || (i == 1));
 
       if (i == 0) return CGAL::to_double(p.x());
       else return CGAL::to_double(p.y());
     }
+
+    /*! Obtain an approximation of a point.
+     */
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return std::make_pair(operator()(p, 0), operator()(p, 1)); }
+
+    /*! Obtain an approximation of an x-monotone curve.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& arc, size_t size,
+                              OutputIterator oi) const {
+      auto xs = CGAL::to_double(arc.source().x());
+      auto ys = CGAL::to_double(arc.source().y());
+      auto xt = CGAL::to_double(arc.target().x());
+      auto yt = CGAL::to_double(arc.target().y());
+      if (arc.orientation() == COLLINEAR) {
+        *oi++ = Approximate_point_2(xs, ys);
+        *oi++ = Approximate_point_2(xt, yt);
+        return oi;
+      }
+      auto r = CGAL::to_double(arc.r());
+      auto s = CGAL::to_double(arc.s());
+      auto t = CGAL::to_double(arc.t());
+      auto u = CGAL::to_double(arc.u());
+      auto v = CGAL::to_double(arc.v());
+      auto w = CGAL::to_double(arc.w());
+      std::cout << r << "," << s << "," << t << "," << u << "," << v << "," << w
+                << std::endl;
+      {
+        // Compute the cos and sin of the rotation angle
+        // In case of a circle, cost == 1 and sint = 0
+        double cost(1), sint(0);
+
+        if (r != s) {
+          auto tan_2t = t / (r - s);
+          auto cos_2t = std::sqrt(1 / (tan_2t*tan_2t + 1));
+          cost = std::sqrt((1 + cos_2t) / 2);
+          sint = std::sqrt((1 - cos_2t) / 2);
+        }
+        std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+
+        // Compute the coefficients of the unrotated ellipse
+        auto r_m = r * cost*cost + t*cost*sint + s*sint*sint;
+        auto t_m = 0;
+        auto s_m = r * sint*sint - t*cost*sint + s*cost*cost;
+        auto u_m = u*cost + v*sint;
+        auto v_m = - u*sint + v*cost;
+        auto w_m = w;
+
+        std::cout << r_m << "," << s_m << "," << t_m << ","
+                  << u_m << "," << v_m << "," << w_m << std::endl;
+
+        // Compute the center of the inversly rotated ellipse:
+        auto cx_m = -u_m / (2*r_m);
+        auto cy_m = -v_m / (2*s_m);
+
+        // Compute the radi of the ellipse:
+        auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
+        auto a = std::sqrt(numerator / (4*r_m*r_m*s_m));
+        auto b = std::sqrt(numerator / (4*r_m*s_m*s_m));
+        std::cout << "a, b: " << a << "," << b << std::endl;
+
+        // Compute the center (cx,cy) of the ellipse, rotating back:
+        auto cx = cx_m*cost - cy_m*sint;
+        auto cy = cx_m*sint + cy_m*cost;
+        std::cout << "center: " << cx << "," << cy << std::endl;
+
+        // Compute the parameters ts and tt such that
+        // source == (x(ts),y(ts)), and
+        // target == (x(tt),y(tt))
+        auto xds = xs - cx;
+        auto yds = ys - cy;
+        auto ts = std::atan2(a*(cost*yds - sint*xds),b*(sint*yds + cost*xds));
+        auto xdt = xt - cx;
+        auto ydt = yt - cy;
+        auto tt = std::atan2(a*(cost*ydt - sint*xdt),b*(sint*ydt + cost*xdt));
+
+        auto delta = std::abs(tt - ts) / (size-1);
+        double t((arc.orientation() == COUNTERCLOCKWISE) ? ts : tt);
+
+        *oi++ = (arc.orientation() == COUNTERCLOCKWISE) ?
+          Approximate_point_2(xs, ys) : Approximate_point_2(xt, yt);
+        t += delta;
+        for (size_t i = 1; i < size-1; ++i) {
+          auto x = a*std::cos(t)*cost - b*std::sin(t)*sint + cx;
+          auto y = a*std::cos(t)*sint + b*std::sin(t)*cost + cy;
+          std::cout << "t, (x, y): " << t << ", (" << x << "," << y << ")"
+                    << std::endl;
+          *oi++ = Approximate_point_2(x, y);
+          t += delta;
+        }
+        *oi++ = (arc.orientation() == COUNTERCLOCKWISE) ?
+          Approximate_point_2(xt, yt) : Approximate_point_2(xs, ys);
+      }
+      return oi;
+    }
   };
 
   /*! Obtain an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object () const
-  { return Approximate_2(); }
+  Approximate_2 approximate_2_object() const { return Approximate_2(); }
 
   //! Functor
   class Construct_x_monotone_curve_2 {
