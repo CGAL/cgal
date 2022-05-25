@@ -57,6 +57,9 @@ public:
     m_status( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED )
   {}
 
+  friend bool operator==(const Volume_info& v1, const Volume_info& v2)
+  { return v1.m_color==v2.m_color && v1.m_status==v2.m_status; }
+
   CGAL::IO::Color& color()
   { return m_color; }
   const CGAL::IO::Color& color() const

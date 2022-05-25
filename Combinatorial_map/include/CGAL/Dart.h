@@ -155,11 +155,31 @@ namespace CGAL {
     /** Copy constructor:
      * @param adart a dart.
      */
-    Dart_without_info(const Dart_without_info& adart) : mmarks(adart.mmarks),
-    mattribute_descriptors(adart.mattribute_descriptors)
+    Dart_without_info(const Dart_without_info& other) :
+      mmarks(other.mmarks),
+      mattribute_descriptors(other.mattribute_descriptors)
     {
-      for (unsigned int i = 0; i <= dimension; ++i)
-        mf[i] = adart.mf[i];
+      for (unsigned int i=0; i<=dimension; ++i)
+      { mf[i]=other.mf[i]; }
+    }
+
+    Self& operator=(const Self& other)
+    {
+      mmarks=other.mmarks;
+      mattribute_descriptors=other.mattribute_descriptors;
+      for (unsigned int i=0; i<=dimension; ++i)
+      { mf[i]=other.mf[i]; }
+      return *this;
+    }
+
+    friend bool operator==(const Self& d1, const Self& d2)
+    {
+      if(d1.mmarks!=d2.mmarks ||
+         d1.mattribute_descriptors!=d2.mattribute_descriptors)
+      { return false; }
+      for(unsigned int i=0; i<=dimension; ++i)
+      { if(d1.mf[i]!=d2.mf[i]) { return false; }}
+      return true;
     }
 
     /** Return the mark value of a given mark number.
@@ -238,6 +258,8 @@ namespace CGAL {
   struct Dart : public Dart_without_info<d, Refs, WithID>
   {
   public:
+    using Base=Dart_without_info<d, Refs, WithID>;
+
     template <class, class, class, class>
     friend class Compact_container;
 
@@ -289,6 +311,9 @@ namespace CGAL {
     const Info_& info() const
     { return minfo; }
 
+    friend bool operator==(const Self& d1, const Self& d2)
+    { return Base(d1)==Base(d2) && d1.minfo==d2.minfo; }
+
   protected:
     Info minfo;
   };
@@ -296,6 +321,14 @@ namespace CGAL {
   // Specialization of Dart class when info==void
   template <unsigned int d, typename Refs, class WithID>
   struct Dart<d, Refs, void, WithID> : public Dart_without_info<d, Refs, WithID>
+  {
+  public:
+    typedef CGAL::Void Info;
+  };
+
+  // Specialization of Dart class when info==CGAL::Void
+  template <unsigned int d, typename Refs, class WithID>
+  struct Dart<d, Refs, CGAL::Void, WithID> : public Dart_without_info<d, Refs, WithID>
   {
   public:
     typedef CGAL::Void Info;

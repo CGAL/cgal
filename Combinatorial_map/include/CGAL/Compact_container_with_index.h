@@ -106,16 +106,31 @@ public:
   void init()
   {
     m_free_list=std::stack<size_type>();
-    m_used.assign(m_cc_with_index->capacity(), false);
+    if(m_cc_with_index->capacity()>0)
+    { m_used.assign(m_cc_with_index->capacity(), false); }
     m_first_free_index=0;
+
+    // TEMPO FOR DEBUG
+    /* if(m_cc_with_index->capacity()>0)
+    {
+      for(size_type i=static_cast<size_type>(m_cc_with_index->capacity())-1; i>0; --i)
+      { m_free_list.push(i); }
+      m_free_list.push(0);
+    } */
   }
 
   void increase_to(size_type old_size)
   {
     CGAL_USE(old_size);
     CGAL_assertion(m_cc_with_index->capacity()>old_size);
+    CGAL_assertion(m_first_free_index==old_size);
     m_used.resize(m_cc_with_index->capacity(), false);
     // m_first_free_index does not change, thus nothing more to do.
+
+    // TEMPO FOR DEBUG
+    /* for(size_type i=static_cast<size_type>(m_cc_with_index->capacity())-1; i>old_size; --i)
+    { m_free_list.push(i); }
+    m_free_list.push(old_size); */
   }
 
   void swap(Self& other)
@@ -132,16 +147,19 @@ public:
 
   bool is_used(size_type i) const
   {
-    CGAL_assertion(i<m_cc_with_index->capacity());
+    CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
     return m_used[i];
   }
 
+  // Push the ith element on the free list: it becomes free
   void push(size_type i)
   {
+    CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
+    CGAL_assertion(is_used(i));
     m_used[i]=false;
-    if(i+1==m_first_free_index)
+    /*if(i+1==m_first_free_index)
     { --m_first_free_index; }
-    else
+    else*/
     { m_free_list.push(i); }
   }
 
@@ -150,12 +168,14 @@ public:
     CGAL_assertion(!is_empty());
     if(m_first_free_index!=m_cc_with_index->capacity())
     { return m_first_free_index; }
-    return m_free_list.front();
+    return m_free_list.top();
   }
 
+  // Pop one element from the free list (the top): it becomes used
   size_type pop()
   {
     CGAL_assertion(!is_empty());
+    CGAL_assertion(!is_used(top()));
     size_type res=m_cc_with_index->capacity();
     if(m_first_free_index!=m_cc_with_index->capacity())
     {
@@ -164,8 +184,6 @@ public:
     }
     else
     {
-      // TODO: do we want to test if !m_free_list.empty()
-      // in non debug mode?
       res=m_free_list.top();
       m_free_list.pop();
     }
@@ -177,7 +195,7 @@ public:
   {}
 
 protected:
-  CC_with_index*        m_cc_with_index;
+  CC_with_index* const  m_cc_with_index;
   std::stack<size_type> m_free_list;
   std::vector<bool>     m_used;
   size_type             m_first_free_index;
@@ -201,21 +219,38 @@ public:
 
   void init()
   {
-    m_used.assign(m_cc_with_index->capacity(), false);
-    m_free_list=0;
-    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
-    { Traits::set_size_t(m_cc_with_index[i], i+1); }
-    // Next of the last element is capacity() which is the "nullptr".
+    if(m_cc_with_index->capacity()>0)
+    {
+      m_used.assign(m_cc_with_index->capacity(), false);
+      m_free_list=0;
+      for(size_type i=0;
+          i<static_cast<size_type>(m_cc_with_index->capacity()-1); ++i)
+      { Traits::set_size_t((*m_cc_with_index)[i], i+1); }
+      // Next of the last element is null_descriptor.
+      Traits::set_size_t((*m_cc_with_index)[m_cc_with_index->capacity()-1],
+          null_descriptor);
+    }
+    else
+    {
+      m_free_list=null_descriptor;
+      m_used.clear();
+    }
   }
 
   void increase_to(size_type old_size)
   {
     CGAL_assertion(m_cc_with_index->capacity()>old_size);
-    CGAL_assertion(m_free_list==old_size); // Previous container was full
+    CGAL_assertion(m_free_list==null_descriptor); // Previous container was full
     m_used.resize(m_cc_with_index->capacity(), false);
-    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
-    { Traits::set_size_t(m_cc_with_index[i], i+1); }
-    // Nothing to do with m_free_list, because it was equal to old_size.
+    size_type i=0;
+    if(old_size>0)
+    { i=old_size-1; }
+    for(; i<static_cast<size_type>(m_cc_with_index->capacity()-1); ++i)
+    { Traits::set_size_t((*m_cc_with_index)[i], i+1); }
+    // Next of the last element is null_descriptor.
+    Traits::set_size_t((*m_cc_with_index)[m_cc_with_index->capacity()-1],
+        null_descriptor);
+    m_free_list=old_size;
   }
 
   void swap(Self& other)
@@ -226,19 +261,21 @@ public:
   }
 
   bool is_empty() const
-  { return m_free_list==m_cc_with_index->capacity(); }
+  { return m_free_list==null_descriptor; }
 
   bool is_used(size_type i) const
   {
-    CGAL_assertion(i<m_cc_with_index->capacity());
+    CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
     return m_used[i];
   }
 
+  // Push the ith element on the free list: it becomes free
   void push(size_type i)
   {
-    CGAL_assertion(i<m_cc_with_index->capacity());
+    CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
+    CGAL_assertion(is_used(i));
     m_used[i]=false;
-    Traits::set_size_t(m_cc_with_index[i], m_free_list);
+    Traits::set_size_t((*m_cc_with_index)[i], m_free_list);
     m_free_list=i;
   }
 
@@ -248,11 +285,13 @@ public:
     return m_free_list;
   }
 
+  // Pop one element from the free list (the top): it becomes used
   size_type pop()
   {
     CGAL_assertion(!is_empty());
+    CGAL_assertion(!is_used(top()));
     size_type res=m_free_list;
-    m_free_list=Traits::size_t(m_cc_with_index[res]);
+    m_free_list=Traits::size_t((*m_cc_with_index)[res]);
     m_used[res]=true;
     return res;
   }
@@ -261,9 +300,9 @@ public:
   { Traits::set_size_t(dest, Traits::size_t(src)); }
 
 protected:
-  CC_with_index*    m_cc_with_index;
-  size_type         m_free_list; // First free element, capacity if no free
-  std::vector<bool> m_used;
+  CC_with_index* const m_cc_with_index;
+  size_type            m_free_list; // First free element, capacity if no free
+  std::vector<bool>    m_used;
 };
 
 // (3) Case with the "in place" free list, and "in place" Booleans.
@@ -287,14 +326,14 @@ public:
     m_free_list=0;
     for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
     { static_set_val(m_cc_with_index[i], i+1, FREE); }
-    // Next of the last element is capacity() which is the "nullptr".
+    // Next of the last element is capacity() which is the "nullptr". TODO WRONG
   }
 
   void increase_to(size_type old_size)
   {
     CGAL_assertion(m_cc_with_index->capacity()>old_size);
     CGAL_assertion(m_free_list==old_size); // Previous container was full
-    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
+    for(size_type i=old_size; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
     { static_set_val(m_cc_with_index[i], i+1, FREE); }
     // Nothing to do with m_free_list, because it was equal to old_size.
   }
@@ -462,7 +501,7 @@ public:
 
   using Index=Index_for_cc_with_index<IndexType>;
   using TFree_list_management=Free_list_management
-                             <Self, CGAL::Tag_true, CGAL::Tag_true>;
+                             <Self, CGAL::Tag_false, CGAL::Tag_true>;
 
   static const size_type null_descriptor=TFree_list_management::null_descriptor;
 
@@ -741,6 +780,7 @@ private:
   void init()
   {
     block_size=Incr_policy::first_block_size;
+    //block_size=10000000;
     capacity_ =0;
     size_     =0;
     all_items =nullptr;
@@ -783,7 +823,8 @@ void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::me
 }*/
 
 template < class T, class Allocator, class Increment_policy, class IndexType >
-void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::clear()
+void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::
+clear()
 {
   for (size_type i=0; i<capacity_; ++i)
   { if ( is_used(i) ) alloc.destroy(&operator[](i)); }
@@ -807,8 +848,11 @@ increase_size()
   {
     if(is_used(index))
     {
-      std::allocator_traits<allocator_type>::construct
-          (alloc, &(all_items2[index]), std::move(all_items[index]));
+      /*std::allocator_traits<allocator_type>::construct
+          (alloc, &(all_items2[index]), std::move(all_items[index]));*/
+      new (&all_items2[index]) value_type(all_items[index]);
+      // TEMPO TO DEBUG
+      CGAL_assertion(all_items[index]==all_items2[index]);
       alloc.destroy(&(all_items[index]));
     }
     else
