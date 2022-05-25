@@ -177,7 +177,7 @@ public:
   template <typename TriangleRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
   void add_triangle_soup(const TriangleRange& triangles,
-                         const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
+                         const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
     typename Geom_traits::Is_degenerate_3 is_degenerate = this->geom_traits().is_degenerate_3_object();
 
