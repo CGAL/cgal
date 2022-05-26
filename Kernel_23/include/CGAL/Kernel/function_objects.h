@@ -3543,7 +3543,7 @@ namespace CommonKernelFunctors {
 
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    decltype(auto)
+    typename CGAL::Intersection_traits<K,T1,T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K()); }
   };
@@ -3556,11 +3556,11 @@ namespace CommonKernelFunctors {
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
-    decltype(auto)
+    typename CGAL::Intersection_traits<K,T1,T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    decltype(auto)
+    boost::optional<boost::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };
