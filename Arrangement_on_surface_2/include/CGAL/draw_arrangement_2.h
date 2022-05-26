@@ -2,6 +2,7 @@
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
 #include <unordered_map>
+#include <cstdlib>
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Qt/init_ogl_context.h>
@@ -17,6 +18,7 @@ class Arr_2_basic_viewer_qt : public Basic_viewer_qt {
   typedef CGAL::Arrangement_2<Gt, Dcel>         Arr;
   typedef Basic_viewer_qt                       Base;
   typedef typename Arr::Point_2                 Point;
+  typedef typename Arr::X_monotone_curve_2      X_monotone_curve;
   typedef typename Arr::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arr::Halfedge_const_handle   Halfedge_const_handle;
   typedef typename Arr::Face_const_handle       Face_const_handle;
@@ -38,136 +40,25 @@ public:
   void add_elements() {
     clear();
     if (m_arr.is_empty()) return;
-    CGAL::IO::Color c(75,160,255);
     for (auto it = m_arr.unbounded_faces_begin();
          it != m_arr.unbounded_faces_end(); ++it)
-      add_face(it, c);
+      add_face(it, Face_const_handle());
 
     // Add edges that do not separe faces.
     for (auto it = m_arr.edges_begin(); it != m_arr.edges_end(); ++it)
-      if (it->face() == it->twin()->face()) add_edge(it);
+      if (it->face() == it->twin()->face()) draw_curve(it->curve());
 
     // Add all points
     for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it)
-      add_vertex(it);
+      draw_point(it->point());
   }
 
 protected:
-  //!
-  virtual void add_ccb(Ccb_halfedge_const_circulator circ) {
-    auto curr = circ;
-    do {
-      this->add_point_in_face(curr->source()->point());
-      add_edge(curr);
-    } while (++curr != circ);
-  }
-
-  //!
-  virtual void add_edge(Halfedge_const_handle e)
-  { this->add_segment(e->source()->point(), e->target()->point()); }
-
-  //!
-  virtual void add_vertex(Vertex_const_handle v)
-  { this->add_point(v->point()); }
-
-  //!
-  void add_face(Face_const_handle face, CGAL::IO::Color color) {
-    if (! face->is_unbounded()) {
-      face_begin(color);
-      add_ccb(face->outer_ccb());
-      for (auto iv = face->isolated_vertices_begin();
-           iv != face->isolated_vertices_end(); ++iv)
-        add_point(iv->point());
-      face_end();
-    }
-
-    for (auto it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it)
-    {
-      std::unordered_map<Face_const_handle, bool> visited;
-      auto curr = *it;
-      do {
-        auto new_face = curr->twin()->face();
-        if (new_face == face) continue;
-        if (visited.find(new_face) == visited.end()) {
-          visited[new_face] = true;
-          add_face(new_face, color);
-        }
-      } while (++curr != *it);
-    }
-  }
-
-  //!
-  virtual void keyPressEvent(QKeyEvent* e) {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-
-    // Call: * add_elements() if the model changed, followed by
-    //       * redraw() if some viewing parameters changed that implies some
-    //                  modifications of the buffers
-    //                  (eg. type of normal, color/mono)
-    //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    Base::keyPressEvent(e);
-  }
-
-protected:
-  //! The arrangement to draw
-  const Arr& m_arr;
-};
-
-//! Basic viewer of a 2D arrangement.
-template <typename GeometryTraits_2, typename Dcel>
-class Arr_2_viewer_qt : public Arr_2_basic_viewer_qt<GeometryTraits_2, Dcel> {
-public:
-  typedef GeometryTraits_2                      Gt;
-  typedef CGAL::Arrangement_2<Gt, Dcel>         Arr;
-  typedef Arr_2_basic_viewer_qt<Gt, Dcel>       Base;
-  typedef typename Arr::Point_2                 Point;
-  typedef typename Arr::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arr::Face_const_handle       Face_const_handle;
-  typedef typename Arr::Ccb_halfedge_const_circulator
-                                                Ccb_halfedge_const_circulator;
-
-  /// Construct the viewer.
-  /// @param arr the arrangement to view
-  /// @param title the title of the window
-  Arr_2_viewer_qt(QWidget* parent, const Arr& arr,
-                  const char* title = "2D Arrangement Basic Viewer") :
-    Base(parent, arr, title)
-  {}
-};
-
-//!
-template <typename RatKernel, typename AlgKernel, typename NtTraits,
-          typename Dcel>
-class Arr_2_viewer_qt<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>,
-                      Dcel> :
-    public Arr_2_basic_viewer_qt<Arr_conic_traits_2<RatKernel, AlgKernel,
-                                                    NtTraits>, Dcel> {
-public:
-  typedef Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>    Gt;
-  typedef CGAL::Arrangement_2<Gt, Dcel>                         Arr;
-  typedef Arr_2_basic_viewer_qt<Gt, Dcel>                       Base;
-  typedef typename Arr::Point_2                 Point;
-  typedef typename Arr::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arr::Face_const_handle       Face_const_handle;
-  typedef typename Arr::Ccb_halfedge_const_circulator
-                                                Ccb_halfedge_const_circulator;
-
-  /// Construct the viewer.
-  /// @param arr the arrangement to view
-  /// @param title the title of the window
-  Arr_2_viewer_qt(QWidget* parent, const Arr& arr,
-                  const char* title = "2D Arrangement Basic Viewer") :
-    Base(parent, arr, title)
-  {}
-
-  //!
-  virtual void add_ccb(Ccb_halfedge_const_circulator circ) {
+  /*! Find the halfedge incident to the lexicographically smallest vertex
+   * along the CCB, such that there is no other halfedge underneath.
+   */
+  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ) {
     const auto* traits = this->m_arr.geometry_traits();
-    auto approx = traits->approximate_2_object();
     auto cmp_xy = traits->compare_xy_2_object();
     auto cmp_y = traits->compare_y_at_x_right_2_object();
 
@@ -202,11 +93,154 @@ public:
         ext = curr;
     } while (++curr != circ);
 
-    // Iterate, starting from the lexicographically smallest vertex
-    curr = ext;
+    return ext;
+  }
+
+  //!
+  virtual void draw_region(Ccb_halfedge_const_circulator circ) {
+    CGAL::IO::Color color(std::rand()%256, std::rand()%256, std::rand()%256);
+    this->face_begin(color);
+
+    auto ext = find_smallest(circ);
+    auto curr = ext;
     do {
+      // Skip halfedges that are "antenas":
       while (curr->face() == curr->twin()->face())
         curr = curr->twin()->next();
+
+      this->add_point_in_face(curr->source()->point());
+      draw_curve(curr->curve());
+      curr = curr->next();
+    } while (curr != ext);
+
+    this->face_end();
+  }
+
+  //!
+  virtual void draw_curve(const X_monotone_curve& curve) {
+    const auto* traits = this->m_arr.geometry_traits();
+    auto ctr_min = traits->construct_min_vertex_2_object();
+    auto ctr_max = traits->construct_max_vertex_2_object();
+    this->add_segment(ctr_min(curve), ctr_max(curve));
+  }
+
+  //!
+  virtual void draw_point(const Point& p) { this->add_point(p); }
+
+  //!
+  void add_ccb(Ccb_halfedge_const_circulator circ, Face_const_handle parent) {
+    std::unordered_map<Face_const_handle, bool> visited;
+    auto face = circ->face();
+    auto curr = circ;
+    do {
+      auto new_face = curr->twin()->face();
+      if ((new_face == face) || (new_face == parent)) continue;
+      if (visited.find(new_face) != visited.end()) continue;
+      visited[new_face] = true;
+      add_face(new_face, face);
+    } while (++curr != circ);
+  }
+
+  //!
+  void add_face(Face_const_handle face, Face_const_handle parent) {
+    for (auto it = face->outer_ccbs_begin(); it != face->outer_ccbs_end(); ++it)
+    {
+      draw_region(*it);
+      add_ccb(*it, parent);
+    }
+
+    for (auto it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it)
+      add_ccb(*it, parent);
+  }
+
+  //!
+  virtual void keyPressEvent(QKeyEvent* e) {
+    // Test key pressed:
+    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
+
+    // Call: * add_elements() if the model changed, followed by
+    //       * redraw() if some viewing parameters changed that implies some
+    //                  modifications of the buffers
+    //                  (eg. type of normal, color/mono)
+    //       * update() just to update the drawing
+
+    // Call the base method to process others/classicals key
+    Base::keyPressEvent(e);
+  }
+
+protected:
+  //! The arrangement to draw
+  const Arr& m_arr;
+};
+
+//! Basic viewer of a 2D arrangement.
+template <typename GeometryTraits_2, typename Dcel>
+class Arr_2_viewer_qt : public Arr_2_basic_viewer_qt<GeometryTraits_2, Dcel> {
+public:
+  typedef GeometryTraits_2                      Gt;
+  typedef CGAL::Arrangement_2<Gt, Dcel>         Arr;
+  typedef Arr_2_basic_viewer_qt<Gt, Dcel>       Base;
+  typedef typename Arr::Point_2                 Point;
+  typedef typename Arr::X_monotone_curve_2      X_monotone_curve;
+  typedef typename Arr::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Arr::Face_const_handle       Face_const_handle;
+  typedef typename Arr::Ccb_halfedge_const_circulator
+                                                Ccb_halfedge_const_circulator;
+
+  /// Construct the viewer.
+  /// @param arr the arrangement to view
+  /// @param title the title of the window
+  Arr_2_viewer_qt(QWidget* parent, const Arr& arr,
+                  const char* title = "2D Arrangement Basic Viewer") :
+    Base(parent, arr, title)
+  {}
+};
+
+//!
+template <typename RatKernel, typename AlgKernel, typename NtTraits,
+          typename Dcel>
+class Arr_2_viewer_qt<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>,
+                      Dcel> :
+    public Arr_2_basic_viewer_qt<Arr_conic_traits_2<RatKernel, AlgKernel,
+                                                    NtTraits>, Dcel> {
+public:
+  typedef Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>    Gt;
+  typedef CGAL::Arrangement_2<Gt, Dcel>                         Arr;
+  typedef Arr_2_basic_viewer_qt<Gt, Dcel>                       Base;
+  typedef typename Arr::Point_2                 Point;
+  typedef typename Arr::X_monotone_curve_2      X_monotone_curve;
+  typedef typename Arr::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Arr::Face_const_handle       Face_const_handle;
+  typedef typename Arr::Ccb_halfedge_const_circulator
+                                                Ccb_halfedge_const_circulator;
+
+  /// Construct the viewer.
+  /// @param arr the arrangement to view
+  /// @param title the title of the window
+  Arr_2_viewer_qt(QWidget* parent, const Arr& arr,
+                  const char* title = "2D Arrangement Basic Viewer") :
+    Base(parent, arr, title)
+  {}
+
+  //!
+  virtual void draw_region(Ccb_halfedge_const_circulator circ) {
+    CGAL::IO::Color color(std::rand()%256, std::rand()%256, std::rand()%256);
+    this->face_begin(color);
+
+    const auto* traits = this->m_arr.geometry_traits();
+    auto approx = traits->approximate_2_object();
+
+    // Find the lexicographically smallest halfedge:
+    auto ext = this->find_smallest(circ);
+
+    // Iterate, starting from the lexicographically smallest vertex:
+    auto curr = ext;
+    do {
+      // Skip halfedges that are "antenas":
+      while (curr->face() == curr->twin()->face())
+        curr = curr->twin()->next();
+
       std::vector<typename Gt::Approximate_point_2> polyline;
       approx(curr->curve(), 10, std::back_inserter(polyline));
       auto it = polyline.begin();
@@ -217,14 +251,16 @@ public:
       }
       curr = curr->next();
     } while (curr != ext);
+
+    this->face_end();
   }
 
   //!
-  virtual void add_edge(Halfedge_const_handle e) {
+  virtual void draw_curve(const X_monotone_curve& curve) {
     const auto* traits = this->m_arr.geometry_traits();
     auto approx = traits->approximate_2_object();
     std::vector<typename Gt::Approximate_point_2> polyline;
-    approx(e->curve(), 10, std::back_inserter(polyline));
+    approx(curve, 10, std::back_inserter(polyline));
 
     auto it = polyline.begin();
     auto prev = it++;
