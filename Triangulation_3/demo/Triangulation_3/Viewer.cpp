@@ -1696,9 +1696,9 @@ void Viewer::drawWithNames()
     rendering_program.release();
 
     //read depth and store in map
-    GLfloat depth = 1.0f;
-    glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-    if (depth != 1.0)
+    GLfloat depth = 2.0f;
+    depth = read_depth_under_pixel(picking_pos, this, this->camera());
+    if (depth < 2.0f)
     {
       picked_IDs[depth] = i;
     }
@@ -1740,9 +1740,9 @@ void Viewer::drawWithNames()
         rendering_program.release();
 
         //read depth and store in map
-        GLfloat depth = 1.0f;
-        glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-        if (depth != 1.0)
+        GLfloat depth = 2.0f;
+        depth = read_depth_under_pixel(picking_pos, this, this->camera());
+        if (depth < 2.0f)
         {
           picked_IDs[depth] = -1;
         }
