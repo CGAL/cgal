@@ -14,12 +14,20 @@ int main() {
   Arrangement_2 arr(&traits);
   auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
 
+  CGAL::insert(arr, ctr_xcv(Point(-2,-2), Point(2,-2)));
+  CGAL::insert(arr, ctr_xcv(Point(2,-2), Point(2,2)));
+  CGAL::insert(arr, ctr_xcv(Point(2,2), Point(-2,2)));
+  CGAL::insert(arr, ctr_xcv(Point(-2,2), Point(-2,-2)));
+
   CGAL::insert(arr, ctr_xcv(Point(-1,-1), Point(1,-1)));
   CGAL::insert(arr, ctr_xcv(Point(1,-1), Point(1,1)));
   CGAL::insert(arr, ctr_xcv(Point(1,1), Point(-1,1)));
   CGAL::insert(arr, ctr_xcv(Point(-1,1), Point(-1,-1)));
-  CGAL::insert(arr, ctr_xcv(Point(-2,-1), Point(-1,-1)));
-  CGAL::insert(arr, ctr_xcv(Point(2,-1), Point(1,-1)));
+
+  CGAL::insert(arr, ctr_xcv(Point(-2,-2), Point(-2,-4)));
+  CGAL::insert(arr, ctr_xcv(Point(2,-2), Point(4,-2)));
+
+  CGAL::insert(arr, ctr_xcv(Point(0,0), Point(0,-3)));
 
   CGAL::draw(arr);
 
