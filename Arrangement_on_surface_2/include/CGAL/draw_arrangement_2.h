@@ -143,14 +143,14 @@ protected:
 
   //!
   void add_face(Face_const_handle face, Face_const_handle parent) {
-    for (auto it = face->outer_ccbs_begin(); it != face->outer_ccbs_end(); ++it)
-    {
-      draw_region(*it);
-      add_ccb(*it, parent);
-    }
-
     for (auto it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it)
       add_ccb(*it, parent);
+
+    for (auto it = face->outer_ccbs_begin(); it != face->outer_ccbs_end(); ++it)
+    {
+      add_ccb(*it, parent);
+      draw_region(*it);
+    }
   }
 
   //!
@@ -242,7 +242,7 @@ public:
         curr = curr->twin()->next();
 
       std::vector<typename Gt::Approximate_point_2> polyline;
-      approx(curr->curve(), 10, std::back_inserter(polyline));
+      approx(curr->curve(), std::back_inserter(polyline), 10);
       auto it = polyline.begin();
       auto prev = it++;
       for (; it != polyline.end(); prev = it++) {
@@ -260,7 +260,7 @@ public:
     const auto* traits = this->m_arr.geometry_traits();
     auto approx = traits->approximate_2_object();
     std::vector<typename Gt::Approximate_point_2> polyline;
-    approx(curve, 10, std::back_inserter(polyline));
+    approx(curve, std::back_inserter(polyline), 10);
 
     auto it = polyline.begin();
     auto prev = it++;
