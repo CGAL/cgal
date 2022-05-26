@@ -53,9 +53,8 @@ public:
  * The two property maps which are template parameters of the class enable to get the datum and the reference point of
  * the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.
  *
- * \cgalModels `AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`,
- *    and `AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`.
- *
+ * \cgalModels `AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`.
+ * \cgalModels `AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`.
  *
  * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap` with `Id` as
  *           `key_type`. It must be a model of `CopyConstructible`, `DefaultConstructible`, and `CopyAssignable`.
@@ -70,7 +69,6 @@ public:
  *           it is constructed on the fly to reduce the memory footprint.
  *           The default is `CGAL::Tag_false` (datum is not stored).
  *
- * \sa `AABBPrimitive`
  * \sa `AABB_segment_primitive<Iterator,CacheDatum>`
  * \sa `AABB_triangle_primitive<Iterator,CacheDatum>`
  * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`

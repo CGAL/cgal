@@ -31,6 +31,8 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+  std::cout << points.size() << " points" << std::endl;
+
   // Compute the alpha and offset values
   const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 10.;
   const double relative_offset = (argc > 3) ? std::stod(argv[3]) : 300.;
@@ -41,6 +43,7 @@ int main(int argc, char** argv)
                                        CGAL::square(bbox.zmax() - bbox.zmin()));
   const double alpha = diag_length / relative_alpha;
   const double offset = diag_length / relative_offset;
+  std::cout << "absolute alpha = " << alpha << " absolute offset = " << offset << std::endl;
 
   // Construct the wrap
   CGAL::Real_timer t;
@@ -59,6 +62,7 @@ int main(int argc, char** argv)
   input_name = input_name.substr(0, input_name.find_last_of("."));
   std::string output_name = input_name + "_" + std::to_string(static_cast<int>(relative_alpha))
                             + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
