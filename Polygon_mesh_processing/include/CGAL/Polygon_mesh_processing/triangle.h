@@ -34,6 +34,7 @@ namespace CGAL {
    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    *
    * @param tmesh the triangulated surface mesh
+   * @param fd the descripor of the face to construct the triangle from
    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
