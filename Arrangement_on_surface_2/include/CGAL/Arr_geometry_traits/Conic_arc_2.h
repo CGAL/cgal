@@ -127,8 +127,8 @@ public:
                         Integer u, Integer v, Integer w) {
 
     m_r = r;
-    s = m_s;
-    t = m_t;
+    m_s = s;
+    m_t = t;
     m_u = u;
     m_v = v;
     m_w = w;
@@ -975,7 +975,7 @@ public:
 
     // Calculate the vertical tangency points of the supporting conic.
     Point_2 ps[2];
-    int n = conic_vertical_tangency_points(ps);
+    auto n = conic_vertical_tangency_points(ps);
 
     // Return only the points that are contained in the arc interior.
     int m = 0;
@@ -1511,22 +1511,21 @@ protected:
     }
 
     // Pair the x and y coordinates and obtain the vertical tangency points.
-    int n = 0;
-    int i, j;
+    int n(0);
 
-    for (i = 0; i < n_xs; ++i) {
+    for (int i = 0; i < n_xs; ++i) {
       if (n_ys == 1) {
         ps[n] = Point_2(xs[i], ys[0]);
-        n++;
+        ++n;
       }
       else {
-        for (j = 0; j < n_ys; j++) {
+        for (int j = 0; j < n_ys; j++) {
           if (CGAL::compare(nt_traits.convert(two*m_s) * ys[j],
                             -(nt_traits.convert(m_t) * xs[i] +
                               nt_traits.convert(m_v))) == EQUAL)
           {
             ps[n] = Point_2(xs[i], ys[j]);
-            n++;
+            ++n;
             break;
           }
         }
