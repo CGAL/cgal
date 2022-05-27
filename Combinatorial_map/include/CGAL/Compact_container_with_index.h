@@ -108,6 +108,7 @@ public:
     m_free_list=std::stack<size_type>();
     if(m_cc_with_index->capacity()>0)
     { m_used.assign(m_cc_with_index->capacity(), false); }
+    else { m_used.clear(); }
     m_first_free_index=0;
 
     // TEMPO FOR DEBUG
@@ -498,7 +499,7 @@ public:
 
   using Index=Index_for_cc_with_index<IndexType>;
   using TFree_list_management=Free_list_management
-                             <Self, CGAL::Tag_false, CGAL::Tag_true>;
+                             <Self, CGAL::Tag_true, CGAL::Tag_true>;
 
   static const size_type null_descriptor=TFree_list_management::null_descriptor;
 
