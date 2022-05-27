@@ -438,7 +438,7 @@ protected:
 
     const FT sq_radius = tr.min_squared_distance(p1, ball_center);
 
-    if ( sq_radius > B_ )
+    if (!is_lower_bound() && sq_radius > B_ )
     {
 #ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
       std::cerr << "Bad facet (uniform size): sq_radius[" << sq_radius

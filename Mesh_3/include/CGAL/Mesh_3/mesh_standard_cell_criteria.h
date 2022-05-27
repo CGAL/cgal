@@ -190,7 +190,7 @@ protected:
 
     const FT size = sq_radius(p, q, r, s);
 
-    if ( size > sq_radius_bound_ )
+    if (!is_lower_bound() && size > sq_radius_bound_ )
     {
 #ifdef CGAL_MESH_3_DEBUG_CELL_CRITERIA
       std::cerr << "bad cell " << (void*)(ch.operator->()) << " (radius bound): size[" << size
@@ -542,7 +542,7 @@ private:
   bool do_spheres_intersect_;
   FT ratio_;
   FT size_ratio_;
-};  // end class Cell_criterion_visitor
+};  // end class Cell_criteria_visitor_with_features
 
 
 
