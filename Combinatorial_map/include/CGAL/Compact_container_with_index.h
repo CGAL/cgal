@@ -157,9 +157,9 @@ public:
     CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
     CGAL_assertion(is_used(i));
     m_used[i]=false;
-    /*if(i+1==m_first_free_index)
+    if(i+1==m_first_free_index)
     { --m_first_free_index; }
-    else*/
+    else
     { m_free_list.push(i); }
   }
 
@@ -849,7 +849,7 @@ increase_size()
           (alloc, &(all_items2[index]), std::move(all_items[index]));
       //new (&all_items2[index]) value_type(all_items[index]);
       // TEMPO TO DEBUG
-      CGAL_assertion(all_items[index]==all_items2[index]);
+      // CGAL_assertion(all_items[index]==all_items2[index]);
       alloc.destroy(&(all_items[index]));
     }
     else

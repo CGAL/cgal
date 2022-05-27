@@ -20,7 +20,7 @@ namespace CGAL {
   {
   public:
     /// Contructor without parameter.
-    Info_for_cell_attribute()
+    Info_for_cell_attribute(): minfo({}) //  value initialization => zero-initializing built-in types
     {}
 
     /// Contructor with an info in parameter.
