@@ -635,13 +635,6 @@ class Facet_criterion_visitor_with_features
   typedef Mesh_3::Criterion_visitor<Tr, typename Tr::Facet> Base;
   typedef Facet_criterion_visitor_with_features<Tr> Self;
 
-  typedef Mesh_3::Abstract_criterion<Tr, Self>                Criterion;
-  typedef Mesh_3::Curvature_size_criterion<Tr, Self>          Curvature_size_criterion;
-  typedef Mesh_3::Aspect_ratio_criterion<Tr, Self>            Aspect_ratio_criterion;
-  typedef Mesh_3::Facet_on_surface_criterion<Tr, Self>        Facet_on_surface_criterion;
-  typedef Mesh_3::Facet_size_criterion<Tr, Self>              Facet_size_criterion;
-  typedef Mesh_3::Facet_on_same_surface_criterion<Tr, Self>   Facet_on_same_surface_criterion;
-
   typedef typename Tr::Geom_traits  Gt;
   typedef typename Gt::FT           FT;
 
@@ -740,7 +733,8 @@ public:
   ~Facet_criterion_visitor_with_features() {}
 
   // visit functions
-  void visit(const Criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
   {
     if ( 3 == wp_nb_ && do_spheres_intersect_ )
     {
@@ -751,7 +745,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  void visit(const Curvature_size_criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Curvature_size_criterion<T, V>& criterion)
   {
     if (   ratio_ < approx_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_ ) )
@@ -763,7 +758,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  void visit(const Aspect_ratio_criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Aspect_ratio_criterion<T, V>& criterion)
   {
     if (   ratio_ < angle_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_) )
@@ -775,7 +771,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  void visit(const Facet_size_criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Facet_size_criterion<T, V>& criterion)
   {
     if (   ratio_ < size_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_) )

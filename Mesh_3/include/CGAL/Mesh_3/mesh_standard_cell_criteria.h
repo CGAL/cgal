@@ -378,11 +378,6 @@ class Cell_criteria_visitor_with_features
   typedef Criterion_visitor<Tr, typename Tr::Cell_handle> Base;
   typedef Cell_criteria_visitor_with_features<Tr> Self;
 
-
-  typedef Abstract_criterion<Tr, Self>                  Criterion;
-  typedef Mesh_3::Cell_size_criterion<Tr, Self>         Cell_size_criterion;
-  typedef Mesh_3::Cell_radius_edge_criterion<Tr, Self>  Cell_radius_edge_criterion;
-
   typedef typename Tr::Geom_traits    Gt;
   typedef typename Gt::FT             FT;
   typedef typename Tr::Weighted_point Weighted_point;
@@ -501,7 +496,8 @@ public:
   ~Cell_criteria_visitor_with_features() {}
 
   // visit functions
-  void visit(const Cell_size_criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Cell_size_criterion<T,V>& criterion)
   {
     if (   ratio_ < size_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_) )
@@ -513,7 +509,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  void visit(const Cell_radius_edge_criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Mesh_3::Cell_radius_edge_criterion<T,V>& criterion)
   {
     if (   (wp_nb_ >= 2 && do_spheres_intersect_)
         || 1 == wp_nb_ )
@@ -525,7 +522,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  void visit(const Criterion& criterion)
+  template<typename T, typename V>
+  void visit(const Abstract_criterion<T,V>& criterion)
   {
     Base::do_visit(criterion);
   }
