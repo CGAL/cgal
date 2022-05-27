@@ -142,11 +142,19 @@ class Cell_uniform_size_criterion
 
 public:
   // Constructor
-  Cell_uniform_size_criterion(const FT& radius_bound)
-    : sq_radius_bound_(radius_bound*radius_bound)   {}
+  Cell_uniform_size_criterion(const FT& radius_bound,
+                              const bool bound_is_lower_bound = false)
+    : sq_radius_bound_(radius_bound*radius_bound)
+    , bound_is_lower_bound_(bound_is_lower_bound)
+  {}
 
   // Destructor
   ~Cell_uniform_size_criterion() {}
+
+  const bool is_lower_bound() const
+  {
+    return bound_is_lower_bound_;
+  }
 
 protected:
   virtual void do_accept(Visitor_& v) const
@@ -196,6 +204,7 @@ protected:
 
 private:
   FT sq_radius_bound_;
+  const bool bound_is_lower_bound_;
 
 };  // end class Cell_uniform_size_criterion
 

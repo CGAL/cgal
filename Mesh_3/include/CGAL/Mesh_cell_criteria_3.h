@@ -53,7 +53,8 @@ public:
    * @param radius_bound the radius bound (tet sizing)
    */
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
-                       const FT& radius_bound)
+                       const FT& radius_bound,
+                       const FT& min_size_bound = 0.)
   {
     if ( FT(0) != radius_bound )
       init_radius(radius_bound);
