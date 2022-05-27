@@ -54,8 +54,11 @@ public:
    */
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const FT& radius_bound,
-                       const FT& min_size_bound = 0.)
+                       const FT& min_radius_bound = 0.)
   {
+    if (FT(0) != min_radius_bound)
+      init_min_radius(min_radius_bound);
+
     if ( FT(0) != radius_bound )
       init_radius(radius_bound);
 
@@ -68,12 +71,15 @@ public:
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
-                       const FT& min_size_bound = 0.,
+                       const FT& min_radius_bound = 0.,
                        typename std::enable_if<
                          Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
                        >::type* = 0
                        )
   {
+    if (FT(0) != min_radius_bound)
+      init_min_radius(min_radius_bound);
+
     init_radius(radius_bound);
 
     if ( FT(0) != radius_edge_bound )
@@ -119,6 +125,13 @@ private:
 
     criteria_.add(new Radius_criterion(radius_bound));
   }
+
+  void init_min_radius(const FT& min_radius_bound)
+  {
+    typedef Mesh_3::Cell_uniform_size_criterion<Tr, Visitor> Radius_criterion;
+    criteria_.add(new Radius_criterion(min_radius_bound, true/*lower bound*/));
+  }
+
 
 private:
   Criteria criteria_;

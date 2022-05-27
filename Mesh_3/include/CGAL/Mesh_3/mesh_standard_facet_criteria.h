@@ -399,14 +399,14 @@ public:
   // Nb: the default bound of the criterion is such that the criterion
   // is always fulfilled
   Uniform_size_criterion(const FT b = 1e20,
-                         const bool bound_is_lower_bound = false)
+                         const bool is_lower_bound = false)
    : B_(b * b)
-   , bound_is_lower_bound_(bound_is_lower_bound)
+   , is_lower_bound_(is_lower_bound)
    {}
 
   const bool is_lower_bound() const
   {
-    return bound_is_lower_bound_;
+    return is_lower_bound_;
   }
 
 protected:
@@ -452,7 +452,7 @@ protected:
 
 private:
   FT B_;
-  const bool bound_is_lower_bound_;
+  const bool is_lower_bound_;
 
 };  // end Uniform_size_criterion
 
