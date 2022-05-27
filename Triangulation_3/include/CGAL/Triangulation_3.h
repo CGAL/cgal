@@ -3862,7 +3862,7 @@ Triangulation_3<GT,Tds,Lds>::
 insert(const Point& p, Cell_handle start)
 {
   Locate_type lt;
-  int li, lj;
+  int li = 0, lj = 0;
   Cell_handle c = locate(p, lt, li, lj, start);
   return insert(p, lt, c, li, lj);
 }

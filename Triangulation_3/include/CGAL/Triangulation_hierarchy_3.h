@@ -538,7 +538,7 @@ insert(const Point &p, Cell_handle start)
 {
   int vertex_level = random_level();
   Locate_type lt;
-  int i, j;
+  int i = 0, j = 0;
   // locate using hierarchy
   locs positions[maxlevel];
   locate(p, lt, i, j, positions, start);
@@ -578,7 +578,7 @@ insert_and_give_new_cells(const Point &p, OutputItCells fit, Cell_handle start)
   Locate_type lt;
   int i, j;
   // locate using hierarchy
-  locs positions[maxlevel];
+  locs positions[maxlevel] = {0};
   locate(p, lt, i, j, positions, start);
   // insert at level 0
   Vertex_handle vertex = hierarchy[0]->insert_and_give_new_cells(p,

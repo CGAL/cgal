@@ -1076,7 +1076,7 @@ Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert(const Point& p, Cell_handle start, bool *could_lock_zone)
 {
   Locate_type lt;
-  int li, lj;
+  int li = 0, lj = 0;
 
   // Parallel
   if(could_lock_zone)
