@@ -45,12 +45,14 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
   BOOST_PARAMETER_NAME( (facet_angle, tag) facet_angle_ )
   BOOST_PARAMETER_NAME( (facet_size, tag) facet_size_ )
   BOOST_PARAMETER_NAME( (facet_sizing_field, tag) facet_sizing_field_ )
+  BOOST_PARAMETER_NAME( (facet_minimal_size, tag) facet_minimal_size_)
   BOOST_PARAMETER_NAME( (facet_distance, tag) facet_distance_ )
   BOOST_PARAMETER_NAME( (facet_topology, tag) facet_topology_ )
   BOOST_PARAMETER_NAME( (cell_radius_edge, tag) cell_radius_edge_ )
   BOOST_PARAMETER_NAME( (cell_radius_edge_ratio, tag) cell_radius_edge_ratio_ )
   BOOST_PARAMETER_NAME( (cell_size, tag) cell_size_ )
   BOOST_PARAMETER_NAME( (cell_sizing_field, tag) cell_sizing_field_ )
+  BOOST_PARAMETER_NAME( (cell_minimal_size, tag) cell_minimal_size_)
   BOOST_PARAMETER_NAME( (sizing_field, tag) sizing_field_ )
 
 CGAL_PRAGMA_DIAG_POP
@@ -103,12 +105,14 @@ public:
                            | args[parameters::facet_sizing_field
                                   | args[parameters::sizing_field | FT(0)] ] ],
                       args[parameters::facet_distance | FT(0)],
-                      args[parameters::facet_topology | CGAL::FACET_VERTICES_ON_SURFACE])
+                      args[parameters::facet_topology | CGAL::FACET_VERTICES_ON_SURFACE],
+                      args[parameters::facet_minimal_size | FT(0)])
     , cell_criteria_(args[parameters::cell_radius_edge_ratio
                           | args[parameters::cell_radius_edge | FT(0)] ],
                      args[parameters::cell_size
                           | args[parameters::cell_sizing_field
-                                 | args[parameters::sizing_field | FT(0)] ] ])
+                                 | args[parameters::sizing_field | FT(0)] ] ],
+                     args[parameters::cell_minimal_size | FT(0)])
   { }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -193,11 +197,13 @@ public:
                                         (facet_angle_,*)
                                         (facet_size_,*)
                                         (facet_sizing_field_,*)
+                                        (facet_minimal_size_,*)
                                         (facet_distance_,*)
                                         (facet_topology_,*)
                                         (cell_radius_edge_,*)
                                         (cell_size_,*)
                                         (cell_sizing_field_,*)
+                                        (cell_minimal_size_,*)
                                         (sizing_field_,*)
                               ))
 

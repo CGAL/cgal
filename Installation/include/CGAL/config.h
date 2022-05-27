@@ -121,7 +121,7 @@
 // Boost Parameter as well.
 // That is why that is important to define that macro as early as possible,
 // in <CGAL/config.h>
-#define BOOST_PARAMETER_MAX_ARITY 12
+#define BOOST_PARAMETER_MAX_ARITY 14
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION
 #include <boost/config.hpp>

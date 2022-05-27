@@ -67,6 +67,7 @@ public:
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
+                       const FT& min_size_bound = 0.,
                        typename std::enable_if<
                          Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
                        >::type* = 0

@@ -55,8 +55,8 @@ public:
   Mesh_facet_criteria_3(const FT& angle_bound,
                         const Sizing_field & radius_bound,
                         const Sizing_field2& distance_bound,
-                        const Mesh_facet_topology topology =
-                          FACET_VERTICES_ON_SURFACE)
+                        const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
+                        const FT& min_size_bound = 0.)
   {
     if ( FT(0) != angle_bound )
       init_aspect(angle_bound);
