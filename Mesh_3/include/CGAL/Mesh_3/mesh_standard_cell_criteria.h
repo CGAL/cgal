@@ -545,6 +545,74 @@ private:
 };  // end class Cell_criteria_visitor_with_features
 
 
+template<typename Tr>
+class Cell_criterion_visitor_with_radius_lower_bound
+  : public Cell_criteria_visitor_with_features<Tr>
+{
+  typedef Cell_criteria_visitor_with_features<Tr> Base;
+  typedef Cell_criterion_visitor_with_radius_lower_bound<Tr> Self;
+
+  typedef typename Tr::Geom_traits    Gt;
+  typedef typename Gt::FT             FT;
+
+public:
+  typedef typename Base::Quality  Cell_quality;
+  typedef typename Base::Is_bad   Is_cell_bad;
+  typedef typename Base::Handle   Handle;
+  typedef Handle                  Cell_handle;
+
+  // Constructor
+  Cell_criterion_visitor_with_radius_lower_bound(const Tr& tr,
+                                                const Cell_handle& ch)
+    : Base(tr, ch)
+    , dont_go_further_(false)
+  {}
+
+//  Is_cell_bad is_bad() const
+//  {
+////    if (dont_go_further_)
+////      return Is_cell_bad();
+////    else
+//      return Base::is_bad();
+//  }
+//
+//  bool go_further() const
+//  {
+////    if (dont_go_further_)
+////      return false;
+////    else
+//      return Base::go_further();
+//  }
+
+//  // visit functions
+//  template<typename Criterion>
+//  void visit(const Criterion& criterion)
+//  {
+//    Base::visit(criterion);
+//  }
+
+//  template<typename T, typename V>
+//  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
+//  {
+//    Base::visit(criterion);
+//  }
+
+//  template<typename T, typename V>
+//  void visit(const Mesh_3::Cell_uniform_size_criterion<T, V>& criterion)
+//  {
+//    Base::visit(criterion);
+//
+//    if (criterion.is_lower_bound() && Base::is_bad())
+//    {
+//      dont_go_further_ = true;
+//      dont_go_further_cells++;
+//    }
+//  }
+
+private:
+  bool dont_go_further_;
+
+};// end class Cell_criterion_visitor_with_radius_lower_bound
 
 }  // end namespace Mesh_3
 

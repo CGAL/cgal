@@ -446,6 +446,8 @@ protected:
 #endif
       return Is_bad(Quality(B_/sq_radius));
     }
+    else if(is_lower_bound() && sq_radius < B_)
+      return Is_bad(Quality(B_ / sq_radius));
     else
       return Is_bad();
   }
@@ -739,9 +741,6 @@ public:
     }
   }
 
-  // Destructor
-  ~Facet_criterion_visitor_with_features() {}
-
   // visit functions
   template<typename T, typename V>
   void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
@@ -803,6 +802,77 @@ private:
   FT size_ratio_;
 
 };  // end class Facet_criterion_visitor
+
+
+template <typename Tr>
+class Facet_criterion_visitor_with_radius_lower_bound
+  : public Facet_criterion_visitor_with_features<Tr>
+{
+  typedef Facet_criterion_visitor_with_features<Tr> Base;
+  typedef Facet_criterion_visitor_with_radius_lower_bound<Tr> Self;
+
+  typedef typename Tr::Geom_traits  Gt;
+  typedef typename Gt::FT           FT;
+
+public:
+  typedef typename Base::Quality  Facet_quality;
+  typedef typename Base::Is_bad   Is_facet_bad;
+  typedef typename Base::Handle   Handle;
+  typedef Handle                  Facet;
+
+  // Constructor
+  Facet_criterion_visitor_with_radius_lower_bound(const Tr& tr, const Facet& fh)
+    : Base(tr, fh)
+    , dont_go_further_(false)
+  {}
+
+//  Is_facet_bad is_bad() const
+//  {
+////    if (dont_go_further_)
+////      return Is_facet_bad();
+////    else
+//      return Base::is_bad();
+//  }
+//
+//  bool go_further() const
+//  {
+////    if (dont_go_further_)
+////      return false;
+////    else
+//      return Base::go_further();
+//  }
+//
+//  // visit functions
+//  template<typename Criterion>
+//  void visit(const Criterion& criterion)
+//  {
+//    Base::visit(criterion);
+//  }
+
+//  template<typename T, typename V>
+//  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
+//  {
+//    Base::visit(criterion);
+//  }
+
+//  template<typename T, typename V>
+//  void visit(const Mesh_3::Uniform_size_criterion<T, V>& criterion)
+//  {
+//    Base::visit(criterion);
+//
+//    if (criterion.is_lower_bound() && Base::is_bad())
+//    {
+//      dont_go_further_ = true;
+//      dont_go_further_facets++;
+//    }
+//  }
+
+private:
+  bool dont_go_further_;
+
+
+};// end class Facet_criterion_visitor_with_radius_lower_bound
+
 
 
 }  // end namespace Mesh_3

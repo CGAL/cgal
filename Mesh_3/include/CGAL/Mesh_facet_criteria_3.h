@@ -28,7 +28,7 @@
 namespace CGAL {
 
 template<typename Tr,
-         typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_features<Tr> >
+         typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_radius_lower_bound<Tr> >
 class Mesh_facet_criteria_3
 {
 public:
