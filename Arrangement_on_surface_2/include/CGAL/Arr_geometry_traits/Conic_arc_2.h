@@ -88,7 +88,7 @@ protected:
   Integer m_s;          // The coefficients of the supporting conic curve:
   Integer m_t;          //
   Integer m_u;          //
-  Integer m_v;          //   r*x^2 + s*y^2 + t*xy + u*x + v*y +w = 0 .
+  Integer m_v;          //   r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
   Integer m_w;          //
 
   Orientation m_orient;         // The orientation of the conic.
@@ -99,60 +99,10 @@ protected:
                                 // (may be nullptr).
 
 public:
-  /// \name Flag manipulation functions.
-  //@{
-  template <typename T>
-  constexpr size_t flag_mask(const T flag) const { return 0x1 << flag; }
-
-  void reset_flags() { m_info = 0; }
-
-  template <typename T>
-  void set_flag(const T flag) { m_info |= flag_mask(flag); }
-
-  template <typename T>
-  void reset_flag(const T flag) { m_info &= ~flag_mask(flag); }
-
-  template <typename T>
-  void flip_flag(const T flag) { m_info ^= flag_mask(flag);}
-
-  template <typename T>
-  bool test_flag(const T flag) const
-  { return (m_info & flag_mask(flag)); }
-  //@}
-
-  /// \name Setters; only friends have the priviledge to use.
-  //@{
-
-  void set_coefficients(Integer r, Integer s, Integer t,
-                        Integer u, Integer v, Integer w) {
-
-    m_r = r;
-    m_s = s;
-    m_t = t;
-    m_u = u;
-    m_v = v;
-    m_w = w;
-  }
-
-  void set_orientation(Orientation orient) { m_orient = orient; }
-
-  void set_endpoints(const Conic_point_2& source, const Conic_point_2& target) {
-    m_source = source;
-    m_target = target;
-  }
-
-  void set_extra_data(Extra_data* extra_data) {
-    m_extra_data = extra_data;
-  }
-
-  //@}
-
-public:
   /// \name Construction and destruction functions.
   //@{
 
-  /*!
-   * Default constructor.
+  /*! Default constructor.
    */
   _Conic_arc_2() :
     m_r(0), m_s(0), m_t(0), m_u(0), m_v(0), m_w(0),
@@ -174,598 +124,6 @@ public:
   {
     m_extra_data = (arc.m_extra_data != nullptr) ?
       new Extra_data(*(arc.m_extra_data)) : nullptr;
-  }
-
-  /*! Construct a conic arc which is the full conic:
-   *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
-   * \pre The conic C must be an ellipse (so 4rs - t^2 > 0).
-   */
-  _Conic_arc_2(const Rational& r, const Rational& s, const Rational& t,
-               const Rational& u, const Rational& v, const Rational& w) :
-    m_info(0),
-    m_extra_data(nullptr)
-  {
-    // Make sure the given curve is an ellipse (4rs - t^2 should be positive).
-    CGAL_precondition(CGAL::sign(4*r*s - t*t) == POSITIVE);
-
-    // Set the arc to be the full conic (and compute the orientation).
-    Rational rat_coeffs[6];
-
-    rat_coeffs[0] = r;
-    rat_coeffs[1] = s;
-    rat_coeffs[2] = t;
-    rat_coeffs[3] = u;
-    rat_coeffs[4] = v;
-    rat_coeffs[5] = w;
-
-    set_full(rat_coeffs, true);
-  }
-
-  /*! Construct a conic arc which lies on the conic:
-   *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
-   * \param orient The orientation of the arc (clockwise or counterclockwise).
-   * \param source The source point.
-   * \param target The target point.
-   * \pre The source and the target must be on the conic boundary and must
-   * not be the same.
-   */
-  _Conic_arc_2(const Rational& r, const Rational& s, const Rational& t,
-               const Rational& u, const Rational& v, const Rational& w,
-               const Orientation& orient,
-               const Point_2& source, const Point_2& target) :
-    m_orient(orient),
-    m_info(0),
-    m_source(source),
-    m_target(target),
-    m_extra_data(nullptr)
-  {
-    // Make sure that the source and the taget are not the same.
-    CGAL_precondition(Alg_kernel().compare_xy_2_object()(source, target) !=
-                      EQUAL);
-
-    // Set the arc properties (no need to compute the orientation).
-    Rational rat_coeffs[6];
-
-    rat_coeffs[0] = r;
-    rat_coeffs[1] = s;
-    rat_coeffs[2] = t;
-    rat_coeffs[3] = u;
-    rat_coeffs[4] = v;
-    rat_coeffs[5] = w;
-
-    set(rat_coeffs);
-  }
-
-  /*! Construct a segment conic arc from two endpoints.
-   * \param source the source point with rational coordinates.
-   */
-  _Conic_arc_2(const Point_2& source, const Point_2& target) :
-    m_orient(COLLINEAR),
-    m_info(flag_mask(IS_VALID)),
-    m_source(source),
-    m_target(target),
-    m_extra_data(nullptr)
-  {
-    CGAL_precondition(Alg_kernel().compare_xy_2_object()(m_source, m_target) !=
-                      EQUAL);
-
-    set_flag(IS_VALID);
-
-    // Compose the equation of the underlying line.
-    const Algebraic x1 = source.x();
-    const Algebraic y1 = source.y();
-    const Algebraic x2 = target.x();
-    const Algebraic y2 = target.y();
-
-    // The supporting line is A*x + B*y + C = 0, where:
-    //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
-    // We use the extra data field to store the equation of this line.
-    m_extra_data = new Extra_data;
-    m_extra_data->a = y2 - y1;
-    m_extra_data->b = x1 - x2;
-    m_extra_data->c = x2*y1 - x1*y2;
-    m_extra_data->side = ZERO;
-  }
-
-  /*! Construct a conic arc from a given line segment.
-   * \param seg The line segment with rational endpoints.
-   */
-  _Conic_arc_2(const Rat_segment_2& seg) :
-    m_orient(COLLINEAR),
-    m_info(0),
-    m_extra_data (nullptr)
-  {
-    // Set the source and target.
-    Rat_kernel ker;
-    Rat_point_2 source = ker.construct_vertex_2_object()(seg, 0);
-    Rat_point_2 target = ker.construct_vertex_2_object()(seg, 1);
-    Rational x1 = source.x();
-    Rational y1 = source.y();
-    Rational x2 = target.x();
-    Rational y2 = target.y();
-    Nt_traits nt_traits;
-
-    m_source = Point_2(nt_traits.convert(x1), nt_traits.convert(y1));
-    m_target = Point_2(nt_traits.convert(x2), nt_traits.convert(y2));
-
-    // Make sure that the source and the taget are not the same.
-    CGAL_precondition(Alg_kernel().compare_xy_2_object()(m_source, m_target) !=
-                      EQUAL);
-
-    // The supporting conic is r=s=t=0, and u*x + v*y + w = 0 should hold
-    // for both the source (x1,y1) and the target (x2, y2).
-    const Rational zero(0);
-    const Rational one(1);
-    Rational rat_coeffs[6];
-
-    rat_coeffs[0] = zero;
-    rat_coeffs[1] = zero;
-    rat_coeffs[2] = zero;
-
-    if (CGAL::compare(x1, x2) == EQUAL) {
-      // The supporting conic is a vertical line, of the form x = CONST.
-      rat_coeffs[3] = one;
-      rat_coeffs[4] = zero;
-      rat_coeffs[5] = -x1;
-    }
-    else {
-      // The supporting line is A*x + B*y + C = 0, where:
-      //
-      //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
-      //
-      rat_coeffs[3] = y2 - y1;
-      rat_coeffs[4] = x1 - x2;
-      rat_coeffs[5] = x2*y1 - x1*y2;
-    }
-
-    // Set the arc properties (no need to compute the orientation).
-    set(rat_coeffs);
-  }
-
-  /*! Construct a conic arc that is a full circle.
-   * \param circ The circle (with rational center and rational squared radius).
-   */
-  _Conic_arc_2(const Rat_circle_2& circ) :
-    m_orient(CLOCKWISE),
-    m_info(0),
-    m_extra_data(nullptr)
-  {
-    // Get the circle properties.
-    Rat_kernel ker;
-    Rat_point_2 center = ker.construct_center_2_object()(circ);
-    Rational x0 = center.x();
-    Rational y0 = center.y();
-    Rational R_sqr = ker.compute_squared_radius_2_object()(circ);
-
-    // Produce the correponding conic: if the circle center is (x0,y0)
-    // and its squared radius is R^2, that its equation is:
-    //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
-    // Note that this equation describes a curve with a negative (clockwise)
-    // orientation.
-    const Rational zero(0);
-    const Rational one(1);
-    const Rational minus_two(-2);
-    Rational rat_coeffs[6];
-
-    rat_coeffs[0] = one;
-    rat_coeffs[1] = one;
-    rat_coeffs[2] = zero;
-    rat_coeffs[3] = minus_two*x0;
-    rat_coeffs[4] = minus_two*y0;
-    rat_coeffs[5] = x0*x0 + y0*y0 - R_sqr;
-
-    // Set the arc to be the full conic (no need to compute the orientation).
-    set_full(rat_coeffs, false);
-  }
-
-  /*! Construct a conic arc that lies on a given circle:
-   *   C: (x - x0)^2 + (y - y0)^2 = R^2
-   * \param orient The orientation of the circle.
-   * \param source The source point.
-   * \param target The target point.
-   * \pre The source and the target must be on the conic boundary and must
-   *      not be the same.
-   */
-  _Conic_arc_2(const Rat_circle_2& circ,
-               const Orientation& orient,
-               const Point_2& source, const Point_2& target) :
-    m_orient(orient),
-    m_info(0),
-    m_source(source),
-    m_target(target),
-    m_extra_data(nullptr)
-  {
-    // Make sure that the source and the taget are not the same.
-    CGAL_precondition(Alg_kernel().compare_xy_2_object()(source, target) !=
-                      EQUAL);
-    CGAL_precondition(orient != COLLINEAR);
-
-    // Get the circle properties.
-    Rat_kernel ker;
-    Rat_point_2 center = ker.construct_center_2_object()(circ);
-    Rational x0 = center.x();
-    Rational y0 = center.y();
-    Rational R_sqr = ker.compute_squared_radius_2_object()(circ);
-
-    // Produce the correponding conic: if the circle center is (x0,y0)
-    // and it squared radius is R^2, that its equation is:
-    //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
-    // Since this equation describes a curve with a negative (clockwise)
-    // orientation, we multiply it by -1 if nece_Conic_arc_2 ssary to obtain a
-    // positive (counterclockwise) orientation.
-    const Rational zero(0);
-    Rational rat_coeffs[6];
-
-    if (m_orient == COUNTERCLOCKWISE) {
-      const Rational _minus_one(-1);
-      const Rational two(2);
-
-      rat_coeffs[0] = _minus_one;
-      rat_coeffs[1] = _minus_one;
-      rat_coeffs[2] = zero;
-      rat_coeffs[3] = two*x0;
-      rat_coeffs[4] = two*y0;
-      rat_coeffs[5] = R_sqr - x0*x0 - y0*y0;
-    }
-    else {
-      const Rational one(1);
-      const Rational minus_two(-2);
-
-      rat_coeffs[0] = one;
-      rat_coeffs[1] = one;
-      rat_coeffs[2] = zero;
-      rat_coeffs[3] = minus_two*x0;
-      rat_coeffs[4] = minus_two*y0;
-      rat_coeffs[5] = x0*x0 + y0*y0 - R_sqr;
-    }
-
-    // Set the arc properties (no need to compute the orientation).
-    set(rat_coeffs);
-  }
-
-  /*! Construct a conic arc that is a circular arc from given three points.
-   * \param p1 The arc source.
-   * \param p2 A point in the interior of the arc.
-   * \param p3 The arc target.
-   * \pre The three points must not be collinear.
-   */
-  _Conic_arc_2(const Rat_point_2& p1, const Rat_point_2& p2,
-               const Rat_point_2& p3) :
-    m_info(0),
-    m_extra_data(nullptr)
-  {
-    // Set the source and target.
-    Rational x1 = p1.x();
-    Rational y1 = p1.y();
-    Rational x2 = p2.x();
-    Rational y2 = p2.y();
-    Rational x3 = p3.x();
-    Rational y3 = p3.y();
-    Nt_traits nt_traits;
-
-    m_source = Point_2(nt_traits.convert (x1), nt_traits.convert(y1));
-    m_target = Point_2(nt_traits.convert (x3), nt_traits.convert(y3));
-
-    // Make sure that the source and the taget are not the same.
-    CGAL_precondition(Alg_kernel().compare_xy_2_object()(m_source, m_target) !=
-                      EQUAL);
-
-    // Compute the lines: A1*x + B1*y + C1 = 0,
-    //               and: A2*x + B2*y + C2 = 0,
-    // where:
-    const Rational two  = 2;
-
-    const Rational A1 = two*(x1 - x2);
-    const Rational B1 = two*(y1 - y2);
-    const Rational C1 = y2*y2 - y1*y1 + x2*x2 - x1*x1;
-
-    const Rational A2 = two*(x2 - x3);
-    const Rational B2 = two*(y2 - y3);
-    const Rational C2 = y3*y3 - y2*y2 + x3*x3 - x2*x2;
-
-    // Compute the coordinates of the intersection point between the
-    // two lines, given by (Nx / D, Ny / D), where:
-    const Rational Nx = B1*C2 - B2*C1;
-    const Rational Ny = A2*C1 - A1*C2;
-    const Rational D = A1*B2 - A2*B1;
-
-    // Make sure the three points are not collinear.
-    const bool points_collinear = (CGAL::sign(D) == ZERO);
-
-    if (points_collinear) {
-      reset_flags();            // inavlid arc
-      return;
-    }
-
-    // The equation of the underlying circle is given by:
-    Rational rat_coeffs[6];
-
-    rat_coeffs[0] = D*D;
-    rat_coeffs[1] = D*D;
-    rat_coeffs[2] = 0;
-    rat_coeffs[3] = -two*D*Nx;
-    rat_coeffs[4] = -two*D*Ny;
-    rat_coeffs[5] =
-      Nx*Nx + Ny*Ny - ((D*x2 - Nx)*(D*x2 - Nx) + (D*y2 - Ny)*(D*y2 - Ny));
-
-    // Determine the orientation: If the mid-point forms a left-turn with
-    // the source and the target points, the orientation is positive (going
-    // counterclockwise).
-    // Otherwise, it is negative (going clockwise).
-    Alg_kernel ker;
-    typename Alg_kernel::Orientation_2 orient_f = ker.orientation_2_object();
-
-    Point_2 p_mid = Point_2(nt_traits.convert(x2), nt_traits.convert(y2));
-
-    m_orient = (orient_f(m_source, p_mid, m_target) == LEFT_TURN) ?
-      COUNTERCLOCKWISE : CLOCKWISE;
-
-    // Set the arc properties (no need to compute the orientation).
-    set(rat_coeffs);
-  }
-
-  /*! Construct a conic arc from given five points, specified by the
-   * points p1, p2, p3, p4 and p5.
-   * \param p1 The source point of the given arc.
-   * \param p2,p3,p4 Points lying on the conic arc, between p1 and p5.
-   * \param p5 The target point of the given arc.
-   * \pre No three points are collinear.
-   */
-  _Conic_arc_2(const Rat_point_2& p1, const Rat_point_2& p2,
-               const Rat_point_2& p3, const Rat_point_2& p4,
-               const Rat_point_2& p5) :
-    m_info(0),
-    m_extra_data(nullptr)
-  {
-    // Make sure that no three points are collinear.
-    Rat_kernel ker;
-    typename Rat_kernel::Orientation_2 orient_f = ker.orientation_2_object();
-    const bool point_collinear =
-      (orient_f(p1, p2, p3) == COLLINEAR ||
-       orient_f(p1, p2, p4) == COLLINEAR ||
-       orient_f(p1, p2, p5) == COLLINEAR ||
-       orient_f(p1, p3, p4) == COLLINEAR ||
-       orient_f(p1, p3, p5) == COLLINEAR ||
-       orient_f(p1, p4, p5) == COLLINEAR ||
-       orient_f(p2, p3, p4) == COLLINEAR ||
-       orient_f(p2, p3, p5) == COLLINEAR ||
-       orient_f(p2, p4, p5) == COLLINEAR ||
-       orient_f(p3, p4, p5) == COLLINEAR);
-
-    if (point_collinear) {
-      reset_flags();            // inavlid arc
-      return;
-    }
-
-    // Set the source and target.
-    Rational x1 = p1.x();
-    Rational y1 = p1.y();
-    Rational x5 = p5.x();
-    Rational y5 = p5.y();
-    Nt_traits nt_traits;
-
-    m_source = Point_2(nt_traits.convert(x1), nt_traits.convert(y1));
-    m_target = Point_2(nt_traits.convert(x5), nt_traits.convert(y5));
-
-    // Set a conic curve that passes through the five given point.
-    typename Rat_kernel::Conic_2 temp_conic;
-    Rational rat_coeffs[6];
-
-    temp_conic.set(p1, p2, p3, p4, p5);
-
-    // Get the conic coefficients.
-    rat_coeffs[0] = temp_conic.r();
-    rat_coeffs[1] = temp_conic.s();
-    rat_coeffs[2] = temp_conic.t();
-    rat_coeffs[3] = temp_conic.u();
-    rat_coeffs[4] = temp_conic.v();
-    rat_coeffs[5] = temp_conic.w();
-
-    // Determine the orientation: If one of the midpoints forms a left-turn
-    // with the source and the target points, the orientation is positive
-    // (going counterclockwise).
-    // Otherwise, it is negative (going clockwise).
-    const Orientation turn = orient_f(p1, p2, p5);
-
-    if (turn == LEFT_TURN) {
-      m_orient = COUNTERCLOCKWISE;
-      CGAL_precondition(orient_f(p1, p3, p5) == LEFT_TURN &&
-                        orient_f(p1, p4, p5) == LEFT_TURN);
-    }
-    else {
-      m_orient = CLOCKWISE;
-      CGAL_precondition(orient_f(p1, p3, p5) != LEFT_TURN &&
-                        orient_f(p1, p4, p5) != LEFT_TURN);
-    }
-
-    // Set the arc properties (no need to compute the orientation).
-    set(rat_coeffs);
-
-    // Make sure that all midpoints are strictly between the
-    // source and the target.
-    Point_2 mp2 = Point_2(nt_traits.convert(p2.x()), nt_traits.convert(p2.y()));
-    Point_2 mp3 = Point_2(nt_traits.convert(p3.x()), nt_traits.convert(p3.y()));
-    Point_2 mp4 = Point_2(nt_traits.convert(p4.x()), nt_traits.convert(p4.y()));
-
-    if (! is_strictly_between_endpoints(mp2) ||
-        ! is_strictly_between_endpoints(mp3) ||
-        ! is_strictly_between_endpoints(mp4))
-    {
-      reset_flags();            // inavlid arc
-    }
-  }
-
-  /*! Construct a conic arc that lies on a conic given by its coefficients:
-   *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
-   * The source and the target are specified by the intersection of the
-   * conic with:
-   *   C_1: r_1*x^2 + s_1*y^2 + t_1*xy + u_1*x + v_1*y + w_1 = 0
-   *   C_2: r_2*x^2 + s_2*y^2 + t_2*xy + u_2*x + v_2*y + w_2 = 0
-   * The user must also specify the source and the target with approximated
-   * coordinates. The actual intersection points that best fits the source
-   * (or the target) will be selected.
-   */
-  _Conic_arc_2(const Rational& r, const Rational& s, const Rational& t,
-               const Rational& u, const Rational& v, const Rational& w,
-               const Orientation& orient,
-               const Point_2& app_source,
-               const Rational& r_1, const Rational& s_1, const Rational& t_1,
-               const Rational& u_1, const Rational& v_1, const Rational& w_1,
-               const Point_2& app_target,
-               const Rational& r_2, const Rational& s_2, const Rational& t_2,
-               const Rational& u_2, const Rational& v_2, const Rational& w_2) :
-    m_orient(orient),
-    m_info(0),
-    m_extra_data(nullptr)
-  {
-    // Create the integer coefficients of the base conic.
-    Rational rat_coeffs [6];
-    Nt_traits nt_traits;
-    Integer base_coeffs[6];
-    int deg_base;
-
-    rat_coeffs[0] = r;
-    rat_coeffs[1] = s;
-    rat_coeffs[2] = t;
-    rat_coeffs[3] = u;
-    rat_coeffs[4] = v;
-    rat_coeffs[5] = w;
-
-    nt_traits.convert_coefficients(rat_coeffs, rat_coeffs + 6, base_coeffs);
-
-    if (CGAL::sign(base_coeffs[0]) == ZERO &&
-        CGAL::sign(base_coeffs[1]) == ZERO &&
-        CGAL::sign(base_coeffs[2]) == ZERO)
-    {
-      deg_base = 1;
-    }
-    else {
-      deg_base = 2;
-    }
-
-    // Compute the endpoints.
-    Rational aux_rat_coeffs [6];
-    Integer aux_coeffs[6];
-    int deg_aux;
-    Algebraic xs[4];
-    int n_xs;
-    Algebraic ys[4];
-    int n_ys;
-    int i, j;
-    Algebraic val;
-    bool found;
-    double dx, dy;
-    double curr_dist;
-    double min_dist = -1;
-    int k;
-
-    for (k = 1; k <= 2; ++k) {
-      // Get the integer coefficients of the k'th auxiliary conic curve.
-      aux_rat_coeffs[0] = (k == 1) ? r_1 : r_2;
-      aux_rat_coeffs[1] = (k == 1) ? s_1 : s_2;
-      aux_rat_coeffs[2] = (k == 1) ? t_1 : t_2;
-      aux_rat_coeffs[3] = (k == 1) ? u_1 : u_2;
-      aux_rat_coeffs[4] = (k == 1) ? v_1 : v_2;
-      aux_rat_coeffs[5] = (k == 1) ? w_1 : w_2;
-
-      nt_traits.convert_coefficients(aux_rat_coeffs, aux_rat_coeffs + 6,
-                                     aux_coeffs);
-
-      deg_aux = ((CGAL::sign(aux_coeffs[0]) == ZERO) &&
-                 (CGAL::sign(aux_coeffs[1]) == ZERO) &&
-                 (CGAL::sign(aux_coeffs[2]) == ZERO)) ? 1 : 2;
-
-      // Compute the x- and y-coordinates of intersection points of the base
-      // conic and the k'th auxiliary conic.
-      n_xs = compute_resultant_roots(nt_traits,
-                                     base_coeffs[0], base_coeffs[1],
-                                     base_coeffs[2],
-                                     base_coeffs[3], base_coeffs[4],
-                                     base_coeffs[5],
-                                     deg_base,
-                                     aux_coeffs[0], aux_coeffs[1],
-                                     aux_coeffs[2],
-                                     aux_coeffs[3], aux_coeffs[4],
-                                     aux_coeffs[5],
-                                     deg_aux,
-                                     xs);
-
-      n_ys = compute_resultant_roots(nt_traits,
-                                     base_coeffs[1], base_coeffs[0],
-                                     base_coeffs[2],
-                                     base_coeffs[4], base_coeffs[3],
-                                     base_coeffs[5],
-                                     deg_base,
-                                     aux_coeffs[1], aux_coeffs[0],
-                                     aux_coeffs[2],
-                                     aux_coeffs[4], aux_coeffs[3],
-                                     aux_coeffs[5],
-                                     deg_aux,
-                                     ys);
-
-      // Find the intersection point which is nearest the given approximation
-      // and set it as the endpoint.
-      found = false;
-      for (i = 0; i < n_xs; ++i) {
-        for (j = 0; j < n_ys; ++j) {
-          // Check if the point (xs[i], ys[j]) lies on both conics.
-          val = nt_traits.convert(base_coeffs[0]) * xs[i]*xs[i] +
-                nt_traits.convert(base_coeffs[1]) * ys[j]*ys[j] +
-                nt_traits.convert(base_coeffs[2]) * xs[i]*ys[j] +
-                nt_traits.convert(base_coeffs[3]) * xs[i] +
-                nt_traits.convert(base_coeffs[4]) * ys[j] +
-                nt_traits.convert(base_coeffs[5]);
-
-          if (CGAL::sign(val) != ZERO) continue;
-
-          val = nt_traits.convert(aux_coeffs[0]) * xs[i]*xs[i] +
-                nt_traits.convert(aux_coeffs[1]) * ys[j]*ys[j] +
-                nt_traits.convert(aux_coeffs[2]) * xs[i]*ys[j] +
-                nt_traits.convert(aux_coeffs[3]) * xs[i] +
-                nt_traits.convert(aux_coeffs[4]) * ys[j] +
-                nt_traits.convert(aux_coeffs[5]);
-
-          if (CGAL::sign(val) == ZERO) {
-            // Compute the distance of (xs[i], ys[j]) from the approximated
-            // endpoint.
-            if (k == 1) {
-              dx = CGAL::to_double (xs[i] - app_source.x());
-              dy = CGAL::to_double (ys[j] - app_source.y());
-            }
-            else {
-              dx = CGAL::to_double (xs[i] - app_target.x());
-              dy = CGAL::to_double (ys[j] - app_target.y());
-            }
-
-            curr_dist = dx*dx + dy*dy;
-
-            // Update the endpoint if (xs[i], ys[j]) is the nearest pair so
-            // far.
-            if (! found || curr_dist < min_dist) {
-              if (k == 1) m_source = Point_2 (xs[i], ys[j]);
-              else m_target = Point_2 (xs[i], ys[j]);
-
-              min_dist = curr_dist;
-              found = true;
-            }
-          }
-        }
-      }
-
-      if (! found) {
-        reset_flags();          // inavlid arc
-        return;
-      }
-    }
-
-    // Make sure that the source and the target are not the same.
-    if (Alg_kernel().compare_xy_2_object()(m_source, m_target) == EQUAL) {
-      reset_flags();            // inavlid arc
-      return;
-    }
-
-    // Set the arc properties (no need to compute the orientation).
-    set(rat_coeffs);
   }
 
   /*! Destructor.
@@ -809,6 +167,10 @@ public:
    */
   bool is_valid() const { return test_flag(IS_VALID); }
 
+  /*! Check whether the arc represents a full conic curve.
+   */
+  bool is_full_conic() const { return test_flag(IS_FULL_CONIC); }
+
   /*! Get the coefficients of the underlying conic.
    */
   const Integer& r() const { return (m_r); }
@@ -833,10 +195,6 @@ public:
     Point_2 htan_ps[2];
     return (horizontal_tangency_points(htan_ps) == 0);
   }
-
-  /*! Check whether the arc represents a full conic curve.
-   */
-  bool is_full_conic() const { return test_flag(IS_FULL_CONIC); }
 
   /*! Obtain the arc's source.
    * \return The source point.
@@ -944,9 +302,34 @@ public:
     // Return the resulting bounding box.
     return Bbox_2(x_min, y_min, x_max, y_max);
   }
+
   //@}
 
-  /// \name Modifying functions.
+public:
+  /// \name Flag manipulation functions.
+  //@{
+  template <typename T>
+  constexpr size_t flag_mask(const T flag) const { return 0x1 << flag; }
+
+  void reset_flags() { m_info = 0; }
+
+  template <typename T>
+  void set_flag(const T flag) { m_info |= flag_mask(flag); }
+
+  template <typename T>
+  void reset_flag(const T flag) { m_info &= ~flag_mask(flag); }
+
+  template <typename T>
+  void flip_flag(const T flag) { m_info ^= flag_mask(flag);}
+
+  template <typename T>
+  bool test_flag(const T flag) const
+  { return (m_info & flag_mask(flag)); }
+  //@}
+
+public:
+  /// \name Modifying functions (setters);
+  // only friends have the priviledge to use.
   //@{
 
   /*! Set the source point of the conic arc.
@@ -958,6 +341,34 @@ public:
    * \param pt The new source point.
    */
   void set_target(const Point_2& pt) { m_target = pt; }
+
+  /*! Set the coefficients.
+   */
+  void set_coefficients(Integer r, Integer s, Integer t,
+                        Integer u, Integer v, Integer w) {
+
+    m_r = r;
+    m_s = s;
+    m_t = t;
+    m_u = u;
+    m_v = v;
+    m_w = w;
+  }
+
+  /*! Set the orientation.
+   */
+  void set_orientation(Orientation orient) { m_orient = orient; }
+
+  /*! Set the endpoints.
+   */
+  void set_endpoints(const Conic_point_2& source, const Conic_point_2& target) {
+    m_source = source;
+    m_target = target;
+  }
+
+  /*! Set the extra data field.
+   */
+  void set_extra_data(Extra_data* extra_data) { m_extra_data = extra_data; }
 
   //@}
 

@@ -15,28 +15,28 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
  * Header file for the _Conic_point_2<Alg_kernel> class.
  */
 
 #include <list>
+
 #include <CGAL/assertions.h>
 
 namespace CGAL {
 
-/*!
- * \class A class that stores additional information with the point's
+/*! \class
+ * A class that stores additional information with the point's
  * coordinates, namely the conic IDs of the generating curves.
  */
-template <typename Alg_kernel_>
-class _Conic_point_2 : public Alg_kernel_::Point_2 {
+template <typename AlgKernel>
+class _Conic_point_2 : public AlgKernel::Point_2 {
 public:
-  typedef Alg_kernel_                       Alg_kernel;
-  typedef typename Alg_kernel::Point_2      Base;
-  typedef _Conic_point_2<Alg_kernel>        Self;
+  typedef AlgKernel                     Alg_kernel;
+  typedef typename Alg_kernel::Point_2  Base;
+  typedef _Conic_point_2<Alg_kernel>    Self;
 
-  typedef typename Alg_kernel::FT           Algebraic;
+  typedef typename Alg_kernel::FT       Algebraic;
 
   /*! \class
    * Representation of an ID of a conic arc.
@@ -78,9 +78,9 @@ private:
   typedef std::list<Conic_id>                          Ids_container;
   typedef typename std::list<Conic_id>::const_iterator Ids_iterator;
 
-  Ids_container conic_ids;       // The IDs of the generating conics.
+  Ids_container conic_ids;       // the IDs of the generating conics.
 
- public:
+public:
   /// \name Constructors.
   //@{
 
@@ -88,21 +88,17 @@ private:
   _Conic_point_2() : Base() {}
 
   /*! Constrcutor from the base class. */
-  _Conic_point_2(const Base& p) :
-    Base(p)
-  {}
+  _Conic_point_2(const Base& p) : Base(p) {}
 
   /*! Constructor with homegeneous coordinates. */
   _Conic_point_2(const Algebraic& hx,
                  const Algebraic& hy,
                  const Algebraic& hz) :
-    Base (hx, hy, hz)
+    Base(hx, hy, hz)
   {}
 
   /*! Constructor with Cartesian coordinates. */
-  _Conic_point_2(const Algebraic& x, const Algebraic& y) :
-    Base(x, y)
-  {}
+  _Conic_point_2(const Algebraic& x, const Algebraic& y) : Base(x, y) {}
   //@}
 
   /// \name Maintaining the generating conic IDs.
@@ -115,13 +111,8 @@ private:
   /*! Check if the given conic generates the point. */
   bool is_generating_conic(const Conic_id& id) const {
     if (! id.is_valid()) return false;
-
-    Ids_iterator it;
-
-    for (it = conic_ids.begin(); it != conic_ids.end(); ++it) {
+    for (auto it = conic_ids.begin(); it != conic_ids.end(); ++it)
       if (*it == id) return true;
-    }
-
     return false;
   }
   //@}
