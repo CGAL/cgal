@@ -354,37 +354,23 @@ protected:
 };
 
 
-// code generated using Herbie https://herbie.uwplse.org/
 inline
 double s2s2_alpha(double x0, double y0,
                   double x1, double y1,
                   double x2, double y2,
                   double x3, double y3)
 {
-  double tmp;
-  if (x1 <= -9.794158788366665e-11) {
-    tmp = -(x1 / (x0 - x1));
-  } else {
-    double t_0 = (y1 - y3) / (y1 - y0);
-    double tmp_1;
-    if (x1 <= -1.7579125018815487e-296) {
-      tmp_1 = t_0;
-    } else if (x1 <= 1.7250761038378636e-206) {
-      tmp_1 = x2 / ((std::fma(x2, y0, std::fma(y3, x0, (x1 * y2))) - std::fma(x2, y1, std::fma(y3, x1, (x0 * y2)))) / (y3 - y1));
-    } else if (x1 <= 3.6888389969707494e-205) {
-      tmp_1 = t_0;
-    } else if (x1 <= 1.4339509931401463e-80) {
-      tmp_1 = (std::fma(x1, y2, std::fma(y1, x3, (y3 * x2))) - std::fma(x2, y1, std::fma(x1, y3, (y2 * x3)))) / std::fma((x3 - x2), (y1 - y0), ((x0 - x1) * (y3 - y2)));
-    } else if (x1 <= 1.72960576050945e+52) {
-      tmp_1 = (y1 - y2) / (y1 - y0);
-    } else if (x1 <= 2.145089573601479e+104) {
-      tmp_1 = (x1 - x3) / (x1 - x0);
-    } else {
-      tmp_1 = (x1 - x2) / (x1 - x0);
-    }
-    tmp = tmp_1;
-  }
-  return tmp;
+  const double s1_dx = x0 - x1,
+               s1_dy = y0 - y1,
+               s2_dx = x3 - x2,
+               s2_dy = y3 - y2,
+               lx    = x3 - x1,
+               ly    = y3 - y1;
+  double val = std::fma(lx,s2_dy,-ly*s2_dx)/std::fma(s1_dx,s2_dy,-s1_dy*s2_dx);
+  if (val!=val) return 0.5;
+  if (val<0) return 0;
+  if (val>1) return 1;
+  return val;
 }
 
 template <class FT>
@@ -401,6 +387,7 @@ FT s2s2_alpha(const FT& x0, const FT& y0,
      ly    = y3 - y1;
   return (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
 }
+
 
 template <class K>
 typename Segment_2_Segment_2_pair<K>::Intersection_results
