@@ -1050,7 +1050,7 @@ private:
         CGAL_assertion(CGAL::abs(CGAL::approximate_sqrt(m_oracle.squared_distance(steiner_point)) - m_offset) <= 1e-2 * m_offset);
 
         // locate cells that are going to be destroyed and remove their facet from the queue
-        int li, lj = 0;
+        int li = 0, lj = 0;
         Locate_type lt;
         const Cell_handle conflict_cell = m_dt.locate(steiner_point, lt, li, lj, neighbor);
         CGAL_assertion(lt != Dt::VERTEX);
