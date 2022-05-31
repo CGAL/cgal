@@ -27,6 +27,8 @@
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Exact_kernel_selector_fwd.h>
 
 namespace CGAL {
 
@@ -456,6 +458,33 @@ intersection(const typename K::Segment_2 &seg1,
     }
 }
 
+template <class K>
+boost::optional<typename K::Point_2>
+exact_intersection_point(const typename K::Point_2& pa,
+                         const typename K::Point_2& pb,
+                         const typename K::Point_2& pc,
+                         const typename K::Point_2& pd,
+                         const K&)
+{
+  using EK = typename Exact_kernel_selector<K>::Exact_kernel;
+  using EK_Line_2 = typename EK::Line_2;
+  using EK_Point_2 = typename EK::Point_2;
+  Cartesian_converter<K, EK> to_exact;
+  Cartesian_converter<EK, K> from_exact;
+  typename EK::Intersect_2 exact_intersect;
+  const auto exact_intersection =
+      exact_intersect(EK_Line_2{to_exact(pa), to_exact(pb)},
+                      EK_Line_2{to_exact(pc), to_exact(pd)});
+  if(!exact_intersection.has_value()) return {};
+  using boost::get;
+  if (const auto *p = get<EK_Point_2>(&*exact_intersection)) {
+    return { from_exact(*p) };
+  } else {
+    return {};
+  }
+
+}
+
 } // namespace internal
 } // namespace Intersections
 
@@ -463,5 +492,7 @@ CGAL_INTERSECTION_FUNCTION_SELF(Segment_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_2, 2)
 
 } //namespace CGAL
+
+#include <CGAL/Exact_kernel_selector.h>
 
 #endif

@@ -61,6 +61,8 @@ struct Filtered_kernel_base
     enum { Has_filtered_predicates = true };
     typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
 
+    typedef Tag_true Can_construct_exact_intersection_point_2;
+
     template < typename Kernel2 >
     struct Base {
         typedef typename CK::template Base<Kernel2> CK2;

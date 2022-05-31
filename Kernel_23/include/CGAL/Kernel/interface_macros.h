@@ -302,6 +302,8 @@ CGAL_Kernel_cons(Construct_circumcenter_3,
                  construct_circumcenter_3_object)
 CGAL_Kernel_cons(Construct_weighted_circumcenter_3,
                  construct_weighted_circumcenter_3_object)
+CGAL_Kernel_cons(Construct_exact_intersection_point_2,
+                 construct_exact_intersection_point_2_object)
 CGAL_Kernel_cons(Compute_power_product_2,
                  compute_power_product_2_object)
 CGAL_Kernel_cons(Compute_power_product_3,
