@@ -93,7 +93,7 @@ public:
 
 struct MonInfo
 {
-  MonInfo(long long int i=0) : mnb(i==0?rand():i),
+  MonInfo(long long int i=0) : mnb(i==0?CGAL::get_default_random().get_int(0,RAND_MAX):i),
                                ptr(reinterpret_cast<char*>(this))
   {}
   long long int mnb;
