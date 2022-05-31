@@ -362,7 +362,7 @@ namespace CGAL {
     // the computed ellipsoid's axes. The d lengths are floating-point
     // approximations to the exact axes-lengths of the computed ellipsoid; no
     // guarantee is given w.r.t. the involved relative error. (See also method
-    // axes_direction_cartesian_begin().)  The elements of the iterator are
+    // `axis_direction_cartesian_begin()`.)  The elements of the iterator are
     // sorted descending.
     //
     // Precondition: !is_degenerate() && (d==2 || d==3)

@@ -337,7 +337,7 @@ sorted lengths of the computed ellipsoid's axes. The \f$ d\f$ returned
 numbers are floating-point approximations to the exact
 axes-lengths of the computed ellipsoid; no guarantee is given
 w.r.t.\ the involved relative error. (See also method
-`axes_direction_cartesian_begin()`.) \pre `ame.is_full_dimensional() == true`, and \f$ d\in\{2,3\}\f$.
+`axis_direction_cartesian_begin()`.) \pre `ame.is_full_dimensional() == true`, and \f$ d\in\{2,3\}\f$.
 */
 Axes_lengths_iterator axes_lengths_begin();
 
