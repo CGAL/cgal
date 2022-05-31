@@ -13,7 +13,7 @@ typedef K::Point_2 Point;
 
 
 typedef CGAL::Polygon_2<K> Polygon_2;
-typedef CGAL::General_polygon_with_holes_2<Polygon_2> Polygon_with_holes_2;
+typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes_2;
 
 int main()
 {
@@ -30,7 +30,6 @@ int main()
 
   Polygon_with_holes_2 pwh(std::move(pouter), std::move_iterator<std::vector<Polygon_2>::iterator>(holes.begin()), std::move_iterator<std::vector<Polygon_2>::iterator>(holes.end()));
 
-  std::cout << pwh << std::endl;
   assert(pouter.is_empty());
   assert(holes[0].is_empty());
   assert(holes[1].is_empty());
