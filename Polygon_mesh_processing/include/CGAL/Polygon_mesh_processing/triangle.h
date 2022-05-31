@@ -28,13 +28,13 @@ namespace CGAL {
   /*!
    * \ingroup PkgPolygonMeshProcessingRef
    *
-   * computes a triangle for a face descripor of a triangle mesh.
+   * computes a triangle for a face descriptor of a triangle mesh.
    *
    * @tparam TriangleMesh a model of `FaceGraph`
    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    *
    * @param tmesh the triangulated surface mesh
-   * @param fd the descripor of the face to construct the triangle from
+   * @param fd the descriptor of the face to construct the triangle from
    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
