@@ -2695,11 +2695,115 @@ public:
 
       return res_xcv;
     }
-
   };
 
   /*! Obtain a Trim_2 functor object. */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
+  //@}
+
+  /// \name Extra functor definitions.
+  //@{
+
+  class Construct_bbox_2 {
+  protected:
+    using Traits = Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits.
+     */
+    Construct_bbox_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+
+  public:
+    /*! Obtain a bounding box for the conic arc.
+     * \return The bounding box.
+     */
+    Bbox_2 operator()(const X_monotone_curve_2& xcv) const {
+      CGAL_precondition(xcv.is_valid());
+
+      double x_min(0), y_min(0), x_max(0), y_max(0);
+
+      if (xcv.is_full_conic()) {
+        // In case of a full conic (an ellipse or a circle), compute the
+        // horizontal and vertical tangency points and use them to bound the arc.
+        Alg_point_2 tan_ps[2];
+        CGAL_assertion_code(int n_tan_ps);
+
+        CGAL_assertion_code(n_tan_ps = vertical_tangency_points(xcv, tan_ps));
+        CGAL_assertion(n_tan_ps == 2);
+
+        if (CGAL::to_double(tan_ps[0].x()) < CGAL::to_double(tan_ps[1].x())) {
+          x_min = CGAL::to_double(tan_ps[0].x());
+          x_max = CGAL::to_double(tan_ps[1].x());
+        }
+        else {
+          x_min = CGAL::to_double(tan_ps[1].x());
+          x_max = CGAL::to_double(tan_ps[0].x());
+        }
+
+        CGAL_assertion_code(n_tan_ps = xcv.horizontal_tangency_points(tan_ps));
+        CGAL_assertion(n_tan_ps == 2);
+
+        if (CGAL::to_double(tan_ps[0].y()) < CGAL::to_double(tan_ps[1].y())) {
+          y_min = CGAL::to_double(tan_ps[0].y());
+          y_max = CGAL::to_double(tan_ps[1].y());
+        }
+        else {
+          y_min = CGAL::to_double(tan_ps[1].y());
+          y_max = CGAL::to_double(tan_ps[0].y());
+        }
+      }
+      else {
+        // Use the source and target to initialize the exterme points.
+        bool source_left =
+          CGAL::to_double(xcv.source().x()) < CGAL::to_double(xcv.target().x());
+        x_min = (source_left) ?
+          CGAL::to_double(xcv.source().x()) :
+          CGAL::to_double(xcv.target().x());
+        x_max = source_left ?
+          CGAL::to_double(xcv.target().x()) :
+          CGAL::to_double(xcv.source().x());
+
+        bool source_down =
+          CGAL::to_double(xcv.source().y()) < CGAL::to_double(xcv.target().y());
+        y_min = source_down ?
+          CGAL::to_double(xcv.source().y()) :
+          CGAL::to_double(xcv.target().y());
+        y_max = source_down ?
+          CGAL::to_double(xcv.target().y()) :
+          CGAL::to_double(xcv.source().y());
+
+        // Go over the vertical tangency points and try to update the x-points.
+        Alg_point_2 tan_ps[2];
+        auto n_tan_ps = vertical_tangency_points(xcv, tan_ps);
+        for (int i = 0; i < n_tan_ps; ++i) {
+          if (CGAL::to_double(tan_ps[i].x()) < x_min)
+            x_min = CGAL::to_double(tan_ps[i].x());
+          if (CGAL::to_double(tan_ps[i].x()) > x_max)
+            x_max = CGAL::to_double(tan_ps[i].x());
+        }
+
+        // Go over the horizontal tangency points and try to update the y-points.
+        n_tan_ps = xcv.horizontal_tangency_points(tan_ps);
+        for (int i = 0; i < n_tan_ps; ++i) {
+          if (CGAL::to_double(tan_ps[i].y()) < y_min)
+            y_min = CGAL::to_double(tan_ps[i].y());
+          if (CGAL::to_double(tan_ps[i].y()) > y_max)
+            y_max = CGAL::to_double(tan_ps[i].y());
+        }
+      }
+
+      // Return the resulting bounding box.
+      return Bbox_2(x_min, y_min, x_max, y_max);
+    }
+  };
+
+  /*! Obtain a Bbox_2 functor object. */
+  Construct_bbox_2 bbox_2_object() const { return Construct_bbox_2(*this); }
   //@}
 
   /*! Set the properties of a conic arc (for the usage of the constructors).
@@ -3392,20 +3496,95 @@ public:
     return is_between_endpoints(xcv, p);
   }
 
+  /*! Find the vertical tangency points of the undelying conic.
+   * \param ps The output points of vertical tangency.
+   *           This area must be allocated at the size of 2.
+   * \return The number of vertical tangency points.
+   */
+  int conic_vertical_tangency_points(const Curve_2& cv, Alg_point_2* ps) const {
+    // In case the base conic is of degree 1 (and not 2), the arc has no
+    // vertical tangency points.
+    if (CGAL::sign(cv.s()) == ZERO) return 0;
+
+    // We are interested in the x coordinates where the quadratic equation:
+    //  s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0
+    // has a single solution (obviously if s = 0, there are no such points).
+    // We therefore demand that the discriminant of this equation is zero:
+    //  (t*x + v)^2 - 4*s*(r*x^2 + u*x + w) = 0
+    const Integer two(2);
+    const Integer four(4);
+    Algebraic xs[2];
+    Nt_traits nt_traits;
+
+    auto r = cv.r();
+    auto s = cv.s();
+    auto t = cv.t();
+    auto u = cv.u();
+    auto v = cv.v();
+    auto w = cv.w();
+    Algebraic* xs_end = m_nt_traits->solve_quadratic_equation(t*t - four*r*s,
+                                                              two*t*v - four*s*u,
+                                                              v*v - four*s*w,
+                                                              xs);
+    auto n_xs = static_cast<int>(xs_end - xs);
+
+    // Find the y-coordinates of the vertical tangency points.
+    Algebraic ys[2];
+    Algebraic* ys_end;
+    int n_ys;
+
+    if (CGAL::sign(cv.t()) == ZERO) {
+      // The two vertical tangency points have the same y coordinate:
+      ys[0] = m_nt_traits->convert(-v) / m_nt_traits->convert(two*s);
+      n_ys = 1;
+    }
+    else {
+      ys_end = m_nt_traits->solve_quadratic_equation(four*r*s*s - s*t*t,
+                                                     four*r*s*v - two*s*t*u,
+                                                     r*v*v - t*u*v +
+                                                     t*t*w,
+                                                     ys);
+      n_ys = static_cast<int>(ys_end - ys);
+    }
+
+    // Pair the x and y coordinates and obtain the vertical tangency points.
+    int n(0);
+
+    for (int i = 0; i < n_xs; ++i) {
+      if (n_ys == 1) {
+        ps[n++] = Point_2(xs[i], ys[0]);
+      }
+      else {
+        for (int j = 0; j < n_ys; ++j) {
+          if (CGAL::compare(m_nt_traits->convert(two*s) * ys[j],
+                            -(m_nt_traits->convert(t) * xs[i] +
+                              m_nt_traits->convert(v))) == EQUAL)
+          {
+            ps[n++] = Point_2(xs[i], ys[j]);
+            break;
+          }
+        }
+      }
+    }
+
+    CGAL_assertion(n <= 2);
+    return n;
+  }
+
   /*! Calculate the vertical tangency points of the arc.
    * \param vpts The vertical tangency points.
    * \pre The vpts vector should be allocated at the size of 2.
    * \return The number of vertical tangency points.
    */
-  int vertical_tangency_points(const Curve_2& cv, Alg_point_2* vpts) const {
+  size_t vertical_tangency_points(const Curve_2& cv, Alg_point_2* vpts) const {
     // No vertical tangency points for line segments:
     if (cv.orientation() == COLLINEAR) return 0;
 
     // Calculate the vertical tangency points of the supporting conic.
     Alg_point_2 ps[2];
-    auto n = cv.conic_vertical_tangency_points(ps);
+    auto n = conic_vertical_tangency_points(cv, ps);
     // Return only the points that are contained in the arc interior.
-    int m(0);
+    size_t m(0);
     for (int i = 0; i < n; ++i) {
       std::cout << ps[i] << std::endl;
       if (cv.is_full_conic() || is_strictly_between_endpoints(cv, ps[i]))
@@ -3415,6 +3594,53 @@ public:
     // Return the number of vertical tangency points found.
     CGAL_assertion(m <= 2);
     return m;
+  }
+
+  /*! Find the horizontal tangency points of the undelying conic.
+   * \param ps The output points of horizontal tangency.
+   *           This area must be allocated at the size of 2.
+   * \return The number of horizontal tangency points.
+   */
+  size_t conic_horizontal_tangency_points(const Curve_2& cv, Alg_point_2* ps)
+    const {
+    const Integer zero(0);
+
+    // In case the base conic is of degree 1 (and not 2), the arc has no
+    // vertical tangency points.
+    if (CGAL::sign(cv.r()) == ZERO) return 0;
+
+    // We are interested in the y coordinates were the quadratic equation:
+    //  r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0
+    // has a single solution (obviously if r = 0, there are no such points).
+    // We therefore demand that the discriminant of this equation is zero:
+    //  (t*y + u)^2 - 4*r*(s*y^2 + v*y + w) = 0
+    const Integer two(2);
+    const Integer four(4);
+    Algebraic ys[2];
+
+    auto r = cv.r();
+    auto s = cv.s();
+    auto t = cv.t();
+    auto u = cv.u();
+    auto v = cv.v();
+    auto w = cv.w();
+    Algebraic* ys_end = m_nt_traits->solve_quadratic_equation(t*t - four*r*s,
+                                                              two*t*u - four*r*v,
+                                                              u*u - four*r*w,
+                                                              ys);
+    auto n = static_cast<int>(ys_end - ys);
+
+    // Compute the x coordinates and construct the horizontal tangency points.
+    for (int i = 0; i < n; ++i) {
+      // Having computed y, x is the single solution to the quadratic equation
+      // above, and since its discriminant is 0, x is simply given by:
+      Algebraic x = -(m_nt_traits->convert(t)*ys[i] + m_nt_traits->convert(u)) /
+        m_nt_traits->convert(two*r);
+      ps[i] = Point_2(x, ys[i]);
+    }
+
+    CGAL_assertion(n <= 2);
+    return n;
   }
 
   /*! Calculate the horizontal tangency points of the arc.
@@ -3428,7 +3654,7 @@ public:
 
     // Calculate the horizontal tangency points of the conic.
     Alg_point_2 ps[2];
-    int n = cv.conic_horizontal_tangency_points(ps);
+    int n = conic_horizontal_tangency_points(cv, ps);
 
     // Return only the points that are contained in the arc interior.
     int m = 0;
