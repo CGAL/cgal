@@ -565,6 +565,8 @@ public:
      * @param first the first primitive to insert
      * @param beyond the last primitive to insert
      * @param range the number of primitive of the range
+     * @param compute_bbox a functor
+     * @param split_primitives a functor
      *
      * [first,beyond[ is the range of primitives to be added to the tree.
      */
