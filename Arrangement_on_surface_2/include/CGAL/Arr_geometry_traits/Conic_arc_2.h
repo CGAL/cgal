@@ -163,15 +163,15 @@ public:
   /// \name Get the arc properties.
   //@{
 
-  /*! Check wheather the arc is valid.
+  /*! Determine wheather the arc is valid.
    */
   bool is_valid() const { return test_flag(IS_VALID); }
 
-  /*! Check whether the arc represents a full conic curve.
+  /*! Determine whether the arc represents a full conic curve.
    */
   bool is_full_conic() const { return test_flag(IS_FULL_CONIC); }
 
-  /*! Get the coefficients of the underlying conic.
+  /*! Obtain the coefficients of the underlying conic.
    */
   const Integer& r() const { return (m_r); }
   const Integer& s() const { return (m_s); }
@@ -179,22 +179,6 @@ public:
   const Integer& u() const { return (m_u); }
   const Integer& v() const { return (m_v); }
   const Integer& w() const { return (m_w); }
-
-  /*! Check whether the arc is x-monotone.
-   */
-  bool is_x_monotone() const {
-    // Check if the arc contains no vertical tangency points.
-    Point_2 vtan_ps[2];
-    return (vertical_tangency_points(vtan_ps) == 0);
-  }
-
-  /*! Check whether the arc is y-monotone.
-   */
-  bool is_y_monotone() const {
-    // Check if the arc contains no horizontal tangency points.
-    Point_2 htan_ps[2];
-    return (horizontal_tangency_points(htan_ps) == 0);
-  }
 
   /*! Obtain the arc's source.
    * \return The source point.
@@ -305,11 +289,13 @@ public:
 
   //@}
 
-public:
+protected:
+  template <typename, typename, typename> friend class Arr_conic_traits_2;
+
   /// \name Flag manipulation functions.
   //@{
   template <typename T>
-  constexpr size_t flag_mask(const T flag) const { return 0x1 << flag; }
+  static constexpr size_t flag_mask(const T flag) { return 0x1 << flag; }
 
   void reset_flags() { m_info = 0; }
 
@@ -369,390 +355,6 @@ public:
   /*! Set the extra data field.
    */
   void set_extra_data(Extra_data* extra_data) { m_extra_data = extra_data; }
-
-  //@}
-
-  /// \name Compute points on the arc.
-  //@{
-
-  /*! Calculate the vertical tangency points of the arc.
-   * \param vpts The vertical tangency points.
-   * \pre The vpts vector should be allocated at the size of 2.
-   * \return The number of vertical tangency points.
-   */
-  int vertical_tangency_points(Point_2* vpts) const {
-    // No vertical tangency points for line segments:
-    if (m_orient == COLLINEAR) return 0;
-
-    // Calculate the vertical tangency points of the supporting conic.
-    Point_2 ps[2];
-    auto n = conic_vertical_tangency_points(ps);
-
-    // Return only the points that are contained in the arc interior.
-    int m = 0;
-
-    for (int i = 0; i < n; ++i) {
-      if (is_full_conic() || is_strictly_between_endpoints(ps[i])) {
-        vpts[m] = ps[i];
-        ++m;
-      }
-    }
-
-    // Return the number of vertical tangency points found.
-    CGAL_assertion(m <= 2);
-    return m;
-  }
-
-  /*! Calculate the horizontal tangency points of the arc.
-   * \param hpts The horizontal tangency points.
-   * \pre The hpts vector should be allocated at the size of 2.
-   * \return The number of horizontal tangency points.
-   */
-  int horizontal_tangency_points(Point_2* hpts) const {
-    // No horizontal tangency points for line segments:
-    if (m_orient == COLLINEAR) return 0;
-
-    // Calculate the horizontal tangency points of the conic.
-    Point_2 ps[2];
-    int n = conic_horizontal_tangency_points(ps);
-
-    // Return only the points that are contained in the arc interior.
-    int m = 0;
-
-    for (int i = 0; i < n; ++i) {
-      if (is_full_conic() || is_strictly_between_endpoints(ps[i])) {
-        hpts[m] = ps[i];
-        ++m;
-      }
-    }
-
-    // Return the number of horizontal tangency points found.
-    CGAL_assertion(m <= 2);
-    return m;
-  }
-
-  /*! Find all points on the arc with a given x-coordinate.
-   * \param p A placeholder for the x-coordinate.
-   * \param ps The point on the arc at x(p).
-   * \pre The vector ps should be allocated at the size of 2.
-   * \return The number of points found.
-   */
-  int points_at_x(const Point_2& p, Point_2* ps) const {
-    // Get the y coordinates of the points on the conic.
-    Algebraic ys[2];
-    int n = conic_get_y_coordinates(p.x(), ys);
-
-    // Find all the points that are contained in the arc.
-    int m = 0;
-
-    for (int i = 0; i < n; ++i) {
-      ps[m] = Point_2(p.x(), ys[i]);
-
-      if (is_full_conic() || is_between_endpoints(ps[m])) ++m;
-    }
-
-    // Return the number of points on the arc.
-    CGAL_assertion(m <= 2);
-    return m;
-  }
-
-  /*! Find all points on the arc with a given y-coordinate.
-   * \param p A placeholder for the y-coordinate.
-   * \param ps The point on the arc at x(p).
-   * \pre The vector ps should be allocated at the size of 2.
-   * \return The number of points found.
-   */
-  int points_at_y(const Point_2& p, Point_2* ps) const {
-    // Get the y coordinates of the points on the conic.
-    Algebraic xs[2];
-    int n = conic_get_x_coordinates(p.y(), xs);
-
-    // Find all the points that are contained in the arc.
-    int m = 0;
-
-    for (int i = 0; i < n; ++i) {
-      ps[m] = Point_2(xs[i], p.y());
-      if (is_full_conic() || is_between_endpoints(ps[m])) ++m;
-    }
-
-    // Return the number of points on the arc.
-    CGAL_assertion(m <= 2);
-    return m;
-  }
-  //@}
-
-private:
-  /// \name Auxiliary construction functions.
-  //@{
-
-  /*! Set the properties of a conic arc (for the usage of the constructors).
-   * \param rat_coeffs A vector of size 6, storing the rational coefficients
-   *                   of x^2, y^2, xy, x, y and the free coefficient resp.
-   */
-  void set(const Rational* rat_coeffs) {
-    set_flag(IS_VALID);
-
-    // Convert the coefficients vector to an equivalent vector of integer
-    // coefficients.
-    Nt_traits nt_traits;
-    Integer int_coeffs[6];
-
-    nt_traits.convert_coefficients(rat_coeffs, rat_coeffs + 6, int_coeffs);
-
-    // Check the orientation of conic curve, and negate the conic coefficients
-    // if its given orientation.
-    typename Rat_kernel::Conic_2 temp_conic(rat_coeffs[0], rat_coeffs[1],
-                                            rat_coeffs[2], rat_coeffs[3],
-                                            rat_coeffs[4], rat_coeffs[5]);
-
-    if (m_orient == temp_conic.orientation()) {
-      m_r = int_coeffs[0];
-      m_s = int_coeffs[1];
-      m_t = int_coeffs[2];
-      m_u = int_coeffs[3];
-      m_v = int_coeffs[4];
-      m_w = int_coeffs[5];
-    }
-    else {
-      m_r = -int_coeffs[0];
-      m_s = -int_coeffs[1];
-      m_t = -int_coeffs[2];
-      m_u = -int_coeffs[3];
-      m_v = -int_coeffs[4];
-      m_w = -int_coeffs[5];
-    }
-
-    // Make sure both endpoint lie on the supporting conic.
-    if (! is_on_supporting_conic(m_source) ||
-        ! is_on_supporting_conic(m_target))
-    {
-      reset_flags();            // inavlid arc
-      return;
-    }
-
-    m_extra_data = nullptr;
-
-    // Check whether we have a degree 2 curve.
-    if ((CGAL::sign(m_r) != ZERO) || (CGAL::sign(m_s) != ZERO) ||
-        (CGAL::sign(m_t) != ZERO))
-    {
-      if (m_orient == COLLINEAR) {
-        // We have a segment of a line pair with rational coefficients.
-        // Compose the equation of the underlying line
-        // (with algebraic coefficients).
-        const Algebraic x1 = m_source.x(), y1 = m_source.y();
-        const Algebraic x2 = m_target.x(), y2 = m_target.y();
-
-        // The supporting line is A*x + B*y + C = 0, where:
-        //
-        //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
-        //
-        // We use the extra dat field to store the equation of this line.
-        m_extra_data = new Extra_data;
-        m_extra_data->a = y2 - y1;
-        m_extra_data->b = x1 - x2;
-        m_extra_data->c = x2*y1 - x1*y2;
-        m_extra_data->side = ZERO;
-
-        // Make sure the midpoint is on the line pair (thus making sure that
-        // the two points are not taken from different lines).
-        Alg_kernel ker;
-        Point_2 p_mid = ker.construct_midpoint_2_object()(m_source, m_target);
-
-        if (CGAL::sign((nt_traits.convert(m_r)*p_mid.x() +
-                        nt_traits.convert(m_t)*p_mid.y() +
-                        nt_traits.convert(m_u)) * p_mid.x() +
-                       (nt_traits.convert(m_s)*p_mid.y() +
-                        nt_traits.convert(m_v)) * p_mid.y() +
-                       nt_traits.convert(m_w)) != ZERO)
-        {
-          reset_flags();        // inavlid arc
-          return;
-        }
-      }
-      else {
-        // The sign of (4rs - t^2) detetmines the conic type:
-        // - if it is possitive, the conic is an ellipse,
-        // - if it is negative, the conic is a hyperbola,
-        // - if it is zero, the conic is a parabola.
-        CGAL::Sign sign_conic = CGAL::sign(4*m_r*m_s - m_t*m_t);
-
-        // Build the extra hyperbolic data if necessary
-        if (sign_conic == NEGATIVE) build_hyperbolic_arc_data();
-
-        if (sign_conic != POSITIVE) {
-          // In case of a non-degenerate parabola or a hyperbola, make sure
-          // the arc is not infinite.
-          Alg_kernel ker;
-          Point_2 p_mid = ker.construct_midpoint_2_object()(m_source, m_target);
-          Point_2 ps[2];
-
-          bool finite_at_x = (points_at_x(p_mid, ps) > 0);
-          bool finite_at_y = (points_at_y(p_mid, ps) > 0);
-
-          if (! finite_at_x && ! finite_at_y) {
-            reset_flags();              // inavlid arc
-            return;
-          }
-        }
-      }
-    }
-
-
-    set_flag(IS_VALID);         // mark that this arc valid
-    reset_flag(IS_FULL_CONIC);  // mark that this arc is not a full conic
-  }
-
-  /*! Set the properties of a conic arc that is really a full curve
-   * (that is, an ellipse).
-   * \param rat_coeffs A vector of size 6, storing the rational coefficients
-   *                   of x^2, y^2, xy, x, y and the free coefficient resp.
-   * \param comp_orient Should we compute the orientation of the given curve.
-   */
-  void set_full(const Rational* rat_coeffs, const bool& comp_orient) {
-    // Convert the coefficients vector to an equivalent vector of integer
-    // coefficients.
-    Nt_traits nt_traits;
-    Integer int_coeffs[6];
-
-    nt_traits.convert_coefficients(rat_coeffs, rat_coeffs + 6, int_coeffs);
-
-    // Check the orientation of conic curve, and negate the conic coefficients
-    // if its given orientation.
-    typename Rat_kernel::Conic_2 temp_conic(rat_coeffs[0], rat_coeffs[1],
-                                            rat_coeffs[2], rat_coeffs[3],
-                                            rat_coeffs[4], rat_coeffs[5]);
-    const Orientation temp_orient = temp_conic.orientation();
-
-    if (comp_orient) m_orient = temp_orient;
-
-    if (m_orient == temp_orient) {
-      m_r = int_coeffs[0];
-      m_s = int_coeffs[1];
-      m_t = int_coeffs[2];
-      m_u = int_coeffs[3];
-      m_v = int_coeffs[4];
-      m_w = int_coeffs[5];
-    }
-    else {
-      m_r = -int_coeffs[0];
-      m_s = -int_coeffs[1];
-      m_t = -int_coeffs[2];
-      m_u = -int_coeffs[3];
-      m_v = -int_coeffs[4];
-      m_w = -int_coeffs[5];
-    }
-
-    // Make sure the conic is a non-degenerate ellipse:
-    // The coefficients should satisfy (4rs - t^2) > 0.
-    const bool is_ellipse = (CGAL::sign(4*m_r*m_s - m_t*m_t) == POSITIVE);
-    CGAL_assertion(is_ellipse);
-
-    // We do not have to store any extra data with the arc.
-    m_extra_data = nullptr;
-
-    // Mark that this arc is a full conic curve.
-    if (is_ellipse) {
-      set_flag(IS_VALID);
-      set_flag(IS_FULL_CONIC);
-    }
-    else reset_flags();            // inavlid arc
-  }
-
-  /*! Build the data for hyperbolic arc, contaning the characterization of the
-   * hyperbolic branch the arc is placed on.
-   */
-  void build_hyperbolic_arc_data() {
-    // Let phi be the rotation angle of the conic from its canonic form.
-    // We can write:
-    //
-    //                          t
-    //  sin(2*phi) = -----------------------
-    //                sqrt((r - s)^2 + t^2)
-    //
-    //                        r - s
-    //  cos(2*phi) = -----------------------
-    //                sqrt((r - s)^2 + t^2)
-    //
-    Nt_traits nt_traits;
-    const int or_fact = (m_orient == CLOCKWISE) ? -1 : 1;
-    const Algebraic r = nt_traits.convert(or_fact * m_r);
-    const Algebraic s = nt_traits.convert(or_fact * m_s);
-    const Algebraic t = nt_traits.convert(or_fact * m_t);
-    const Algebraic cos_2phi = (r - s) / nt_traits.sqrt((r-s)*(r-s) + t*t);
-    const Algebraic zero = 0;
-    const Algebraic one = 1;
-    const Algebraic two = 2;
-    Algebraic sin_phi;
-    Algebraic cos_phi;
-
-    // Calculate sin(phi) and cos(phi) according to the half-angle formulae:
-    //
-    //  sin(phi)^2 = 0.5 * (1 - cos(2*phi))
-    //  cos(phi)^2 = 0.5 * (1 + cos(2*phi))
-    Sign sign_t = CGAL::sign(t);
-
-    if (sign_t == ZERO) {
-      // sin(2*phi) == 0, so phi = 0 or phi = PI/2
-      if (CGAL::sign(cos_2phi) == POSITIVE) {
-        // phi = 0.
-        sin_phi = zero;
-        cos_phi = one;
-      }
-      else {
-        // phi = PI/2.
-        sin_phi = one;
-        cos_phi = zero;
-      }
-    }
-    else if (sign_t == POSITIVE) {
-      // sin(2*phi) > 0 so 0 < phi < PI/2.
-      sin_phi = nt_traits.sqrt((one + cos_2phi) / two);
-      cos_phi = nt_traits.sqrt((one - cos_2phi) / two);
-    }
-    else {
-      // sin(2*phi) < 0 so PI/2 < phi < PI.
-      sin_phi = nt_traits.sqrt((one + cos_2phi) / two);
-      cos_phi = -nt_traits.sqrt((one - cos_2phi) / two);
-    }
-
-    // Calculate the center (x0, y0) of the conic, given by the formulae:
-    //
-    //        t*v - 2*s*u                t*u - 2*r*v
-    //  x0 = -------------   ,     y0 = -------------
-    //        4*r*s - t^2                4*r*s - t^2
-    //
-    // The denominator (4*r*s - t^2) must be negative for hyperbolas.
-    const Algebraic u = nt_traits.convert(or_fact * m_u);
-    const Algebraic v = nt_traits.convert(or_fact * m_v);
-    const Algebraic det = 4*r*s - t*t;
-    Algebraic x0, y0;
-
-    CGAL_assertion(CGAL::sign(det) == NEGATIVE);
-
-    x0 = (t*v - two*s*u) / det;
-    y0 = (t*u - two*r*v) / det;
-
-    // The axis separating the two branches of the hyperbola is now given by:
-    //
-    //  cos(phi)*x + sin(phi)*y - (cos(phi)*x0 + sin(phi)*y0) = 0
-    //
-    // We store the equation of this line in the extra data structure and also
-    // the sign (side of half-plane) our arc occupies with respect to the line.
-    m_extra_data = new Extra_data;
-
-    m_extra_data->a = cos_phi;
-    m_extra_data->b = sin_phi;
-    m_extra_data->c = - (cos_phi*x0 + sin_phi*y0);
-
-    // Make sure that the two endpoints are located on the same branch
-    // of the hyperbola.
-    m_extra_data->side = sign_of_extra_data(m_source.x(), m_source.y());
-
-    CGAL_assertion(m_extra_data->side != ZERO);
-    CGAL_assertion(m_extra_data->side ==
-                   sign_of_extra_data(m_target.x(), m_target.y()));
-  }
   //@}
 
 public:
@@ -788,90 +390,6 @@ protected:
       nt_traits.convert(m_w);
 
     return (CGAL::sign(val) == ZERO);
-  }
-
-  /*! Check whether the given point is between the source and the target.
-   * The point is assumed to be on the conic's boundary.
-   * \param p The query point.
-   * \return true if the point is between the two endpoints,
-   *         (false) if it is not.
-   */
-  bool is_between_endpoints(const Point_2& p) const {
-    CGAL_precondition(! is_full_conic());
-
-    // Check if p is one of the endpoints.
-    Alg_kernel ker;
-
-    if (ker.equal_2_object()(p, m_source) || ker.equal_2_object()(p, m_target))
-      return true;
-    else return (is_strictly_between_endpoints(p));
-  }
-
-  /*! Check whether the given point is strictly between the source and the
-   * target (but not any of them).
-   * The point is assumed to be on the conic's boundary.
-   * \param p The query point.
-   * \return true if the point is strictly between the two endpoints,
-   *         (false) if it is not.
-   */
-  bool is_strictly_between_endpoints(const Point_2& p) const {
-    // In case this is a full conic, any point on its boundary is between
-    // its end points.
-    if (is_full_conic()) return true;
-
-    // Check if we have extra data available.
-    if (m_extra_data != nullptr) {
-      if (m_extra_data->side != ZERO) {
-        // In case of a hyperbolic arc, make sure the point is located on the
-        // same branch as the arc.
-        if (sign_of_extra_data(p.x(), p.y()) != m_extra_data->side)
-          return false;
-      }
-      else {
-        // In case we have a segment of a line pair, make sure that p really
-        // satisfies the equation of the line.
-        if (sign_of_extra_data(p.x(), p.y()) != ZERO) return false;
-      }
-    }
-
-    // Act according to the conic degree.
-    Alg_kernel ker;
-
-    if (m_orient == COLLINEAR) {
-      Comparison_result res1;
-      Comparison_result res2;
-
-      if (ker.compare_x_2_object()(m_source, m_target) == EQUAL) {
-        // In case of a vertical segment - just check whether the y coordinate
-        // of p is between those of the source's and of the target's.
-        res1 = ker.compare_y_2_object()(p, m_source);
-        res2 = ker.compare_y_2_object()(p, m_target);
-      }
-      else {
-        // Otherwise, since the segment is x-monotone, just check whether the
-        // x coordinate of p is between those of the source's and of the
-        // target's.
-        res1 = ker.compare_x_2_object()(p, m_source);
-        res2 = ker.compare_x_2_object()(p, m_target);
-      }
-
-      // If p is not in the (open) x-range (or y-range) of the segment, it
-      // cannot be contained in the segment.
-      if ((res1 == EQUAL) || (res2 == EQUAL) || (res1 == res2)) return false;
-
-      // Perform an orientation test: This is crucial for segment of line
-      // pairs, as we want to make sure that p lies on the same line as the
-      // source and the target.
-      return (ker.orientation_2_object()(m_source, p, m_target) == COLLINEAR);
-    }
-    else {
-      // In case of a conic of degree 2, make a decision based on the conic's
-      // orientation and whether (source,p,target) is a right or a left turn.
-      if (m_orient == COUNTERCLOCKWISE)
-        return (ker.orientation_2_object()(m_source, p, m_target) == LEFT_TURN);
-      else
-        return (ker.orientation_2_object()(m_source, p, m_target) == RIGHT_TURN);
-    }
   }
 
   /*! Find the vertical tangency points of the undelying conic.
@@ -930,7 +448,7 @@ protected:
         ++n;
       }
       else {
-        for (int j = 0; j < n_ys; j++) {
+        for (int j = 0; j < n_ys; ++j) {
           if (CGAL::compare(nt_traits.convert(two*m_s) * ys[j],
                             -(nt_traits.convert(m_t) * xs[i] +
                               nt_traits.convert(m_v))) == EQUAL)
@@ -953,7 +471,7 @@ protected:
    * \return The number of horizontal tangency points.
    */
   int conic_horizontal_tangency_points(Point_2* ps) const {
-    const Integer zero = 0;
+    const Integer zero(0);
 
     // In case the base conic is of degree 1 (and not 2), the arc has no
     // vertical tangency points.
@@ -968,7 +486,7 @@ protected:
     const Integer four = 4;
     int n;
     Algebraic ys[2];
-    Algebraic *ys_end;
+    Algebraic* ys_end;
     Nt_traits nt_traits;
 
     ys_end = nt_traits.solve_quadratic_equation(m_t*m_t - four*m_r*m_s,
@@ -988,42 +506,6 @@ protected:
 
     CGAL_assertion(n <= 2);
     return n;
-  }
-
-  /*! Find the y coordinates of the underlying conic at a given x coordinate.
-   * \param x The x coordinate.
-   * \param ys The output y coordinates.
-   * \pre The vector ys must be allocated at the size of 2.
-   * \return The number of y coordinates computed (either 0, 1 or 2).
-   */
-  int conic_get_y_coordinates(const Algebraic& x, Algebraic* ys) const {
-    // Solve the quadratic equation for a given x and find the y values:
-    //  s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0
-    Nt_traits nt_traits;
-    Algebraic A = nt_traits.convert(m_s);
-    Algebraic B = nt_traits.convert(m_t)*x + nt_traits.convert(m_v);
-    Algebraic C = (nt_traits.convert(m_r)*x + nt_traits.convert(m_u))*x +
-      nt_traits.convert(m_w);
-
-    return (solve_quadratic_equation(A, B, C, ys[0], ys[1]));
-  }
-
-  /*! Find the x coordinates of the underlying conic at a given y coordinate.
-   * \param y The y coordinate.
-   * \param xs The output x coordinates.
-   * \pre The vector xs must be allocated at the size of 2.
-   * \return The number of x coordinates computed (either 0, 1 or 2).
-   */
-  int conic_get_x_coordinates(const Algebraic& y, Algebraic* xs) const {
-    // Solve the quadratic equation for a given y and find the x values:
-    //  r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0
-    Nt_traits nt_traits;
-    Algebraic A = nt_traits.convert(m_r);
-    Algebraic B = nt_traits.convert(m_t)*y + nt_traits.convert(m_u);
-    Algebraic C = (nt_traits.convert(m_s)*y + nt_traits.convert(m_v))*y +
-      nt_traits.convert(m_w);
-
-    return (solve_quadratic_equation(A, B, C, xs[0], xs[1]));
   }
 
   /*! Solve the given quadratic equation: Ax^2 + B*x + C = 0.
@@ -1064,7 +546,6 @@ protected:
     return 2;
   }
   //@}
-
 };
 
 /*! Exporter for conic arcs.
