@@ -1137,9 +1137,8 @@ intersect(Face_handle f, int i,
        intersection_not_in_the_two_triangle(pi))
     {
       // now compute the exact intersection point
-      const bool result =
-          almost_exact_intersection(geom_traits(), pa, pb, pc, pd, pi, itag);
-      if (!result || intersection_not_in_the_two_triangle(pi)) {
+      pi = almost_exact_intersection(geom_traits(), pa, pb, pc, pd, itag);
+      if (intersection_not_in_the_two_triangle(pi)) {
         // If the most-exact intersection point is not in the union of the two
         // triangles, then snap to `pc` or `pd`...
         if(compare_distance(pi, pc, pd) == SMALLER) {
@@ -1865,57 +1864,54 @@ constexpr bool can_construct_almost_exact_intersection(const Gt&, Tag) {
 }
 
 template <typename Gt, typename Tag>
-bool almost_exact_intersection(const Gt&,
-                               const typename Gt::Point_2&,
-                               const typename Gt::Point_2&,
-                               const typename Gt::Point_2&,
-                               const typename Gt::Point_2&,
-                               typename Gt::Point_2&,
-                               Tag)
+typename Gt::Point_2
+almost_exact_intersection(const Gt&,
+                          const typename Gt::Point_2&,
+                          const typename Gt::Point_2&,
+                          const typename Gt::Point_2&,
+                          const typename Gt::Point_2&,
+                          Tag)
 {
   CGAL_error_msg("this function should be call only with Exact_predicates_tag");
 }
 
 template <typename Gt>
-bool almost_exact_intersection(const Gt& gt,
-                               const typename Gt::Point_2& pa,
-                               const typename Gt::Point_2& pb,
-                               const typename Gt::Point_2& pc,
-                               const typename Gt::Point_2& pd,
-                               typename Gt::Point_2& pi,
-                               Exact_predicates_tag)
+typename Gt::Point_2
+almost_exact_intersection(const Gt& gt,
+                          const typename Gt::Point_2& pa,
+                          const typename Gt::Point_2& pb,
+                          const typename Gt::Point_2& pc,
+                          const typename Gt::Point_2& pd,
+                          Exact_predicates_tag)
 {
   Boolean_tag<Can_construct_almost_exact_intersection<Gt>::value> tag;
-  return almost_exact_intersection(gt, pa, pb, pc, pd, pi, tag);
+  return almost_exact_intersection(gt, pa, pb, pc, pd, tag);
 }
 
 template <typename Gt>
-bool almost_exact_intersection(const Gt&,
-                               const typename Gt::Point_2&,
-                               const typename Gt::Point_2&,
-                               const typename Gt::Point_2&,
-                               const typename Gt::Point_2&,
-                               typename Gt::Point_2&,
-                               Tag_false)
+typename Gt::Point_2
+almost_exact_intersection(const Gt&,
+                          const typename Gt::Point_2&,
+                          const typename Gt::Point_2&,
+                          const typename Gt::Point_2&,
+                          const typename Gt::Point_2&,
+                          Tag_false)
 {
   CGAL_error_msg("this function should be call only with Exact_predicates_tag"
                  " and with an appropriate traits class");
 }
 
 template <typename Gt>
-bool almost_exact_intersection(const Gt& gt,
-                               const typename Gt::Point_2& pa,
-                               const typename Gt::Point_2& pb,
-                               const typename Gt::Point_2& pc,
-                               const typename Gt::Point_2& pd,
-                               typename Gt::Point_2& pi,
-                               Tag_true /* gt has Construct_exact_intersection_point_2 */)
+typename Gt::Point_2
+almost_exact_intersection(const Gt& gt,
+                          const typename Gt::Point_2& pa,
+                          const typename Gt::Point_2& pb,
+                          const typename Gt::Point_2& pc,
+                          const typename Gt::Point_2& pd,
+                          Tag_true /* gt has Construct_exact_intersection_point_2 */)
 {
   auto exact_intersect = gt.construct_exact_intersection_point_2_object();
-  const auto exact_intersection = exact_intersect(pa, pb, pc, pd);
-  if(!exact_intersection.has_value()) return false;
-  pi = *exact_intersection;
-  return true;
+  return exact_intersect(pa, pb, pc, pd);
 }
 
 } //namespace CGAL
