@@ -293,8 +293,7 @@ bool read_general_conic(InputStream_& is, typename Traits::Curve_2& cv,
 /*! */
 template <typename InputStream_, typename Traits>
 bool read_general_curve(InputStream_& is, typename Traits::Curve_2& cv,
-                        const Traits& traits)
-{
+                        const Traits& traits) {
   Rational r, s, t, u, v, w;                // The conic coefficients.
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   is >> r >> s >> t >> u >> v >> w;
@@ -313,8 +312,7 @@ bool read_general_curve(InputStream_& is, typename Traits::Curve_2& cv,
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
-                                                 X_monotone_curve_2& xcv)
-{
+                                                 X_monotone_curve_2& xcv) {
   // since we are dealing with polycurve, we will make more than 1 conic curves
   // (polycurve compatible) and return the x-monotone-constructed polycurve.
 
@@ -329,26 +327,24 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   is >> type;
 
   //get number of x-monotone conic-arcs.
-  unsigned int number_of_curves;
+  size_t number_of_curves;
   is >> number_of_curves;
 
-  ctr_xcv = m_geom_traits.construct_x_monotone_curve_2_object();
+  const auto& sub_traits = *(m_geom_traits.subcurve_traits_2());
+  auto ctr_xcv = sub_traits.construct_x_monotone_curve_2_object();
 
   for (unsigned int i=0; i<number_of_curves; ++i) {
     if ((type == 'a') || (type == 'A')) {
-      if (! read_general_curve(is, tmp_cv, m_geom_traits)) return false;
-      X_monotone_subcurve_2 tmp_xcv = ctr_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back(tmp_xcv);
+      if (! read_general_curve(is, tmp_cv, sub_traits)) return false;
+      conic_x_monotone_segments.push_back(ctr_xcv(tmp_cv));
     }
     else if ((type == 'c') || (type == 'C')) {
-      if (! read_general_conic(is, tmp_cv, m_geom_traits)) return false;
-      X_monotone_subcurve_2 tmp_xcv = ctr_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back(tmp_xcv);
+      if (! read_general_conic(is, tmp_cv, sub_traits)) return false;
+      conic_x_monotone_segments.push_back(ctr_xcv(tmp_cv));
     }
     else if ((type == 'i') || (type == 'I')) {
-      if (! read_general_arc(is, tmp_cv, m_geom_traits)) return false;
-      X_monotone_subcurve_2 tmp_xcv = ctr_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back(tmp_xcv);
+      if (! read_general_arc(is, tmp_cv, sub_traits)) return false;
+      conic_x_monotone_segments.push_back(ctr_xcv(tmp_cv));
     }
     else {
       std::cerr << "Illegal conic type specification: " << type << "."
@@ -368,8 +364,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
 /*! Read a conic poly-curve */
 template <>
 template <typename InputStream_>
-bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
-{
+bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv) {
   // since we are dealing with polycurve, we will make more than 1 conic curves
   // (polycurve compatible) and return the constructed polycurve.
 
@@ -383,20 +378,21 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   is >> type;
 
   //get number of xmonotone-conic arcs.
-  unsigned int number_of_curves;
+  size_t number_of_curves;
   is >> number_of_curves;
 
+  const auto& sub_traits = *(m_geom_traits.subcurve_traits_2());
   for (unsigned int i = 0; i < number_of_curves; ++i) {
     if ((type == 'a') || (type == 'A')) {
-      if (! read_general_curve(is, tmp_cv, m_geom_traits)) return false;
+      if (! read_general_curve(is, tmp_cv, sub_traits)) return false;
       conic_segments.push_back(tmp_cv);
     }
     else if ((type == 'c') || (type == 'C')) {
-      if (! read_general_conic(is, tmp_cv, m_geom_traits)) return false;
+      if (! read_general_conic(is, tmp_cv, sub_traits)) return false;
       conic_segments.push_back(tmp_cv);
     }
     else if ((type == 'i') || (type == 'I')) {
-      if (! read_general_arc(is, tmp_cv, m_geom_traits)) return false;
+      if (! read_general_arc(is, tmp_cv, sub_traits)) return false;
       conic_segments.push_back(tmp_cv);
     }
 
@@ -429,12 +425,11 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
                                                   Subcurve_2& seg)
 {
-  Subcurve_2 tmp_seg;
   char type;
   is >> type;
-  if (!read_general_curve(is, tmp_seg)) return false;
-  seg = tmp_seg;
-   return true;
+  const auto& sub_traits = *(m_geom_traits.subcurve_traits_2());
+  if (! read_general_curve(is, seg, sub_traits)) return false;
+  return true;
 }
 
 template <>
@@ -445,8 +440,10 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   char type;
   is >> type;
   Subcurve_2 tmp_seg;
-  if (!read_general_curve(is, tmp_seg)) return false;
-  xseg = X_monotone_subcurve_2(tmp_seg);
+  const auto& sub_traits = *(m_geom_traits.subcurve_traits_2());
+  if (! read_general_curve(is, tmp_seg, sub_traits)) return false;
+  auto ctr_xcv = sub_traits.construct_x_monotone_curve_2_object();
+  xseg = ctr_xcv(tmp_seg);
   return true;
 }
 

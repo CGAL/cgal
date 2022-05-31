@@ -2239,8 +2239,8 @@ public:
       //check if the orientation conforms to the src and tgt.
       if( (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER) ||
           (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER) )
-        return (trim(xcv, tgt, src));
-      else return (trim(xcv, src, tgt));
+        return trim(xcv, tgt, src);
+      else return trim(xcv, src, tgt);
     }
 
   private:
@@ -2258,34 +2258,35 @@ public:
       CGAL_precondition(xcv.contains_point(ps) && xcv.contains_point(pt));
 
       // Make sure that the endpoints conform with the direction of the arc.
+      X_monotone_curve_2 res_xcv = xcv;
       auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
       if (! ((xcv.test_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT) &&
-              (cmp_xy()(ps, pt) == SMALLER)) ||
+              (cmp_xy(ps, pt) == SMALLER)) ||
              (xcv.test_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT) &&
               (cmp_xy(ps, pt) == LARGER))))
       {
         // We are allowed to change the direction only in case of a segment.
         CGAL_assertion(xcv.orientation() == COLLINEAR);
-        xcv.flip_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
+        res_xcv.flip_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
       }
 
       // Make a copy of the current arc and assign its endpoints.
-      auto eq = m_traits.m_alg_kernel->equal_2_object()();
+      auto eq = m_traits.m_alg_kernel->equal_2_object();
       if (! eq(ps, xcv.source())) {
-        xcv.set_source(ps);
+        res_xcv.set_source(ps);
 
         if (! ps.is_generating_conic(xcv.id()))
-          xcv.m_source.set_generating_conic(xcv.id());
+          res_xcv.source().set_generating_conic(xcv.id());
       }
 
       if (! eq(pt, xcv.target())) {
-        xcv.set_target(pt);
+        res_xcv.set_target(pt);
 
         if (! pt.is_generating_conic(xcv.id()))
-          xcv.m_target.set_generating_conic(xcv.id());
+          res_xcv.target().set_generating_conic(xcv.id());
       }
 
-      return xcv;
+      return res_xcv;
     }
 
   };
