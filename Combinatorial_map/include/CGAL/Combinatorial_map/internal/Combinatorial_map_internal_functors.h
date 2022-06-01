@@ -246,7 +246,9 @@ struct Test_is_valid_attribute_functor
         amap.template display_attribute<i>(a);
         std::cout<<" != first:";
         amap.template display_attribute<i>(amap.template attribute<i>(it));
-        std::cout<<" for dart ";
+        std::cout<<" for darts ";
+        amap.display_dart(adart);
+        std::cout<<" and ";
         amap.display_dart(it);
         std::cout<<std::endl;
         valid=false;
@@ -320,8 +322,8 @@ struct Correct_invalid_attributes_functor
     unsigned int nb=0;
     bool found_dart = false;
 
-    for ( typename CMap::template Dart_of_cell_basic_range<i>::iterator
-            it(amap, adart, amark); it.cont(); ++it, ++nb )
+    for ( typename CMap::template Dart_of_cell_range<i>::iterator
+            it(amap, adart); it.cont(); ++it, ++nb )
     {
       if ( a!=amap.template attribute<i>(it) )
       {
