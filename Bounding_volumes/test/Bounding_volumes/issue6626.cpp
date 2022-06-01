@@ -73,4 +73,18 @@ int main() {
         Ellipsoid ellipsoid(0.01, points.begin(), points.end(), Traits());
         // Assert that ellipsoid enclosing non-zero volume cube has non-zero volume.
         assert(ellipsoid.is_full_dimensional());
+        // Access center.
+        for(auto it = ellipsoid.center_cartesian_begin(); it != ellipsoid.center_cartesian_end(); ++it){
+          std::cout << *it << " ";
+        }
+        std::cout << std::endl;
+
+        // Access axes.
+        ellipsoid.axes_lengths_begin();
+        for(auto it = ellipsoid.axes_lengths_begin(); it != ellipsoid.axes_lengths_end(); ++it){
+          std::cout << *it << " ";
+        }
+        std::cout << std::endl;
+
+        return 0;
 }

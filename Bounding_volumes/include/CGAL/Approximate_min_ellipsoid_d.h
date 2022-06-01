@@ -297,7 +297,7 @@ namespace CGAL {
       const double eps = std::sqrt(tmp)-1.0;
       FPU_set_cw(old);                                   // restore
 
-      CGAL_APPEL_ASSERT(eps >= 0.0);
+      //CGAL_APPEL_ASSERT(eps >= 0.0);
       return eps;
     }
 
