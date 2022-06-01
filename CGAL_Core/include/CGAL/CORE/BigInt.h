@@ -449,7 +449,7 @@ inline void negate(BigInt& a) {
 /// cmpabs
 inline int cmpabs(const BigInt& a, const BigInt& b) {
   assert(false);
-  // return mpz_cmpabs(a.get_mp(), b.get_mp());   AF: todo
+   return cmp(abs(a), abs(b));
   return 0;
 }
 
