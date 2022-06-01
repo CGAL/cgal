@@ -54,6 +54,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
+#include <iostream>
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -414,6 +415,10 @@ namespace internal {
         double sqlen = eit->first;
         long_edges.right.erase(eit);
 
+        //collect patch_ids
+        Patch_id patch_id = get_patch_id(face(he, mesh_));
+        Patch_id patch_id_opp = get_patch_id(face(opposite(he, mesh_), mesh_));
+
         //split edge
         Point refinement_point = this->midpoint(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
@@ -444,6 +449,8 @@ namespace internal {
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
         }
 
         //do it again on the other side if we're not on boundary
@@ -453,6 +460,8 @@ namespace internal {
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+          set_patch_id(face(hnew2, mesh_), patch_id_opp);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id_opp);
         }
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
