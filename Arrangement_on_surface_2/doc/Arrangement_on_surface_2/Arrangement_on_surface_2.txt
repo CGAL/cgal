@@ -6241,7 +6241,7 @@ face, respectively, \f$v_b\f$, \f$e_b\f$, and \f$f_b\f$ denote input
 <span style="color:blue;">blue</span> features, and \f$v\f$, \f$e\f$,
 and \f$f\f$ denote output features.
 
-<OL compact>
+<OL>
 
 <LI> A new vertex \f$v\f$ is induced by coinciding vertices
 \f$v_r\f$ and \f$v_b\f$.</LI>

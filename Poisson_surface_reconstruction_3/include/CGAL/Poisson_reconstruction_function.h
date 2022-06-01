@@ -763,8 +763,7 @@ private:
   /// Poisson reconstruction.
   /// Returns false on error.
   ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  /// @tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   template <class SparseLinearAlgebraTraits_d>
   bool solve_poisson(
     SparseLinearAlgebraTraits_d solver, ///< sparse linear solver
@@ -1203,8 +1202,7 @@ private:
 
   /// Assemble vi's row of the linear system A*X=B
   ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  /// @tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   template <class SparseLinearAlgebraTraits_d>
   void assemble_poisson_row(typename SparseLinearAlgebraTraits_d::Matrix& A,
                             Vertex_handle vi,

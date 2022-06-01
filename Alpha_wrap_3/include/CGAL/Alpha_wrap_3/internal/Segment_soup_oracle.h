@@ -24,26 +24,25 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
 
-#include <boost/range/value_type.hpp>
-
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <functional>
+#include <vector>
 
 namespace CGAL {
 namespace Alpha_wraps_3 {
 namespace internal {
 
 // Just some typedefs for readability
-template <typename SegmentRange, typename GT_>
+template <typename GT_>
 struct SS_oracle_traits
 {
-  using Segment = typename boost::range_value<SegmentRange>::type;
-  using Default_GT = typename Kernel_traits<Segment>::Kernel;
-  using Base_GT = typename Default::Get<GT_, Default_GT>::type; // = Kernel, usually
-  using Geom_traits = Alpha_wrap_AABB_traits<Base_GT>; // Wrap the kernel to add Ball_3 + custom Do_intersect_3
+  using Geom_traits = Alpha_wrap_AABB_traits<GT_>; // Wrap the kernel to add Ball_3 + custom Do_intersect_3
 
-  using SR_iterator = typename SegmentRange::const_iterator;
+  using Segments = std::vector<typename GT_::Segment_3>;
+  using SR_iterator = typename Segments::const_iterator;
+
   using Primitive = AABB_primitive<SR_iterator,
                                    Input_iterator_property_map<SR_iterator>, // DPM
                                    CGAL::internal::Source_of_segment_3_iterator_property_map<Geom_traits, SR_iterator>, // RPM
@@ -54,24 +53,27 @@ struct SS_oracle_traits
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 };
 
-template <typename SegmentRange,
-          typename GT_ = CGAL::Default,
+template <typename GT_,
           typename BaseOracle = int>
 class Segment_soup_oracle
-  : public AABB_tree_oracle<typename SS_oracle_traits<SegmentRange, GT_>::Geom_traits,
-                            typename SS_oracle_traits<SegmentRange, GT_>::AABB_tree,
+  : public AABB_tree_oracle<typename SS_oracle_traits<GT_>::Geom_traits,
+                            typename SS_oracle_traits<GT_>::AABB_tree,
                             CGAL::Default, // Default_traversal_traits<AABB_traits>
                             BaseOracle>
 {
-  using SSOT = SS_oracle_traits<SegmentRange, GT_>;
-  using Base_GT = typename SSOT::Base_GT;
+  using SSOT = SS_oracle_traits<GT_>;
+  using Base_GT = GT_;
 
 public:
   using Geom_traits = typename SSOT::Geom_traits;
 
 private:
+  using Segments = typename SSOT::Segments;
   using AABB_tree = typename SSOT::AABB_tree;
   using Oracle_base = AABB_tree_oracle<Geom_traits, AABB_tree, CGAL::Default, BaseOracle>;
+
+private:
+  Segments m_segments;
 
 public:
   // Constructors
@@ -90,9 +92,10 @@ public:
   { }
 
 public:
-  template <typename NamedParameters = parameters::Default_named_parameters>
+  template <typename SegmentRange,
+            typename CGAL_NP_TEMPLATE_PARAMETERS>
   void add_segment_soup(const SegmentRange& segments,
-                        const NamedParameters& /*np*/ = CGAL::parameters::default_values())
+                        const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
     if(segments.empty())
     {
@@ -102,12 +105,15 @@ public:
       return;
     }
 
+    const std::size_t old_size = m_segments.size();
+    m_segments.insert(std::cend(m_segments), std::cbegin(segments), std::cend(segments));
+
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Insert into AABB tree (segments)..." << std::endl;
 #endif
-    this->tree().insert(segments.begin(), segments.end());
+    this->tree().insert(std::next(std::cbegin(m_segments), old_size), std::cend(m_segments));
 
-    CGAL_postcondition(this->tree().size() == segments.size());
+    CGAL_postcondition(this->tree().size() == m_segments.size());
   }
 };
 
