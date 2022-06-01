@@ -54,7 +54,6 @@
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
-#include <iostream>
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
