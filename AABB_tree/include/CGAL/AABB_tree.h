@@ -562,6 +562,7 @@ public:
 
     /**
      * @brief Builds the tree by recursive expansion.
+     * @param node the root node of the subtree to generate
      * @param first the first primitive to insert
      * @param beyond the last primitive to insert
      * @param range the number of primitive of the range
