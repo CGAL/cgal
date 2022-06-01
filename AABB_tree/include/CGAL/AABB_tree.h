@@ -577,8 +577,7 @@ public:
                 ConstPrimitiveIterator beyond,
                 const std::size_t range,
                 const ComputeBbox& compute_bbox,
-                const SplitPrimitives& split_primitives,
-                const AABBTraits&);
+                const SplitPrimitives& split_primitives);
 
   public:
     // returns a point which must be on one primitive
@@ -794,8 +793,7 @@ public:
                         ConstPrimitiveIterator beyond,
                         const std::size_t range,
                         const ComputeBbox& compute_bbox,
-                        const SplitPrimitives& split_primitives,
-                        const Tr& traits)
+                        const SplitPrimitives& split_primitives)
   {
     node.set_bbox(compute_bbox(first, beyond));
 
@@ -809,13 +807,13 @@ public:
       break;
     case 3:
       node.set_children(*first, new_node());
-      expand(node.right_child(), first+1, beyond, 2, compute_bbox, split_primitives, traits);
+      expand(node.right_child(), first+1, beyond, 2, compute_bbox, split_primitives);
       break;
     default:
       const std::size_t new_range = range/2;
       node.set_children(new_node(), new_node());
-      expand(node.left_child(), first, first + new_range, new_range, compute_bbox, split_primitives, traits);
-      expand(node.right_child(), first + new_range, beyond, range - new_range, compute_bbox, split_primitives, traits);
+      expand(node.left_child(), first, first + new_range, new_range, compute_bbox, split_primitives);
+      expand(node.right_child(), first + new_range, beyond, range - new_range, compute_bbox, split_primitives);
     }
   }
 
@@ -847,8 +845,7 @@ public:
              m_primitives.begin(), m_primitives.end(),
              m_primitives.size(),
              compute_bbox,
-             split_primitives,
-             m_traits);
+             split_primitives);
     }
 #ifdef CGAL_HAS_THREADS
     m_atomic_need_build.store(false, std::memory_order_release); // in case build() is triggered by a call to root_node()
