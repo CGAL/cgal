@@ -190,7 +190,6 @@ namespace Point_set {
         neighbors.push_back(i);
         m_scores[i] = internal::create_cylinder(
           m_input_range, m_point_map, m_normal_map, neighbors, m_traits, true).second;
-        CGAL_assertion(m_scores[i] <= FT(0));
       }
     }
   };

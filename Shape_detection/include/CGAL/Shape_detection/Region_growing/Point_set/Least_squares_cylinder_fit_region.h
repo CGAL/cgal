@@ -313,21 +313,22 @@ namespace Point_set {
       \pre `region.size() > 0`
     */
     bool update(const std::vector<std::size_t>& region) {
-
-      // Shuffle to avoid always picking 2 close points.
-      std::vector<std::size_t>& aregion =
-        const_cast<std::vector<std::size_t>&>(region);
-      cpp98::random_shuffle(aregion.begin(), aregion.end());
+      if (region.size() < 6)
+        return true;
 
       // Fit a cylinder.
-      CGAL_precondition(region.size() > 0);
+      CGAL_precondition(region.size() >= 6);
       FT radius; Line_3 axis;
       std::tie(radius, axis) = internal::create_cylinder(
-        m_input_range, m_point_map, m_normal_map, region, m_traits, false).first;
+        m_input_range, m_point_map, m_normal_map, region,
+        m_traits, false).first;
+
       if (radius >= FT(0)) {
         m_radius = radius;
         m_axis = axis;
       }
+      else return false;
+
       return true;
     }
 
@@ -337,7 +338,8 @@ namespace Point_set {
     std::pair<FT, Line_3> get_cylinder(
       const std::vector<std::size_t>& region) const {
       return internal::create_cylinder(
-        m_input_range, m_point_map, m_normal_map, region, m_traits, false).first;
+        m_input_range, m_point_map, m_normal_map, region,
+        m_traits, false).first;
     }
     /// \endcond
 

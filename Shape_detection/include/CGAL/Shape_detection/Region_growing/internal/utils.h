@@ -15,6 +15,7 @@
 #define CGAL_SHAPE_DETECTION_REGION_GROWING_INTERNAL_UTILS_H
 
 #include <CGAL/license/Shape_detection.h>
+#include <CGAL/Shape_detection/Region_growing/internal/cylinder_fitting.h>
 
 // STL includes.
 #include <set>
@@ -44,6 +45,15 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Iterator_range.h>
+
+#include <CGAL/Surface_mesh.h>
+
+
+//DELETEME
+#include <CGAL/Eigen_matrix.h>
+#include <CGAL/Eigen_vector.h>
+#include <CGAL/Eigen_svd.h>
+#include <CGAL/Timer.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -344,10 +354,12 @@ namespace internal {
   typename Traits,
   typename InputRange,
   typename PointMap>
-  std::pair<std::pair<typename Traits::FT, typename Traits::Point_2>, typename Traits::FT>
+  std::pair<std::pair<typename Traits::FT, typename Traits::Point_2>,
+    typename Traits::FT>
   create_circle_2(
     const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region, const Traits&, const bool compute_score) {
+    const std::vector<std::size_t>& region, const Traits&,
+    const bool compute_score) {
 
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
@@ -463,7 +475,8 @@ namespace internal {
         CGAL_precondition(item_index < input_range.size());
         const auto& key = *(input_range.begin() + item_index);
         const auto& point = get(point_map, key);
-        score -= CGAL::abs(sqrt(squared_distance_2(point, fitted_center)) - fitted_radius);
+        score -= CGAL::abs(sqrt(squared_distance_2(point, fitted_center))
+                           - fitted_radius);
       }
     }
 
@@ -475,10 +488,12 @@ namespace internal {
   typename Traits,
   typename InputRange,
   typename PointMap>
-  std::pair<std::pair<typename Traits::FT, typename Traits::Point_3>, typename Traits::FT>
+  std::pair<std::pair<typename Traits::FT, typename Traits::Point_3>,
+            typename Traits::FT>
   create_sphere(
     const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region, const Traits&, const bool compute_score) {
+    const std::vector<std::size_t>& region, const Traits&,
+    const bool compute_score) {
 
     using FT = typename Traits::FT;
     using Point_3 = typename Traits::Point_3;
@@ -590,7 +605,8 @@ namespace internal {
         CGAL_precondition(item_index < input_range.size());
         const auto& key = *(input_range.begin() + item_index);
         const auto& point = get(point_map, key);
-        score -= CGAL::abs(sqrt(squared_distance_3(point, fitted_center)) - fitted_radius);
+        score -= CGAL::abs(sqrt(squared_distance_3(point, fitted_center))
+                           - fitted_radius);
       }
     }
 
@@ -599,107 +615,45 @@ namespace internal {
   }
 
   template<
-  typename Traits,
-  typename InputRange,
-  typename PointMap,
-  typename NormalMap>
-  std::pair<std::pair<typename Traits::FT, typename Traits::Line_3>, typename Traits::FT>
-  create_cylinder(
-    const InputRange& input_range, const PointMap point_map, const NormalMap normal_map,
-    const std::vector<std::size_t>& region, const Traits&, const bool compute_score) {
+    typename Traits,
+    typename InputRange,
+    typename PointMap,
+    typename NormalMap>
+  std::pair<std::pair<typename Traits::FT, typename Traits::Line_3>,
+            typename Traits::FT>
+    create_cylinder(
+      const InputRange& input_range, const PointMap point_map,
+      const NormalMap normal_map, const std::vector<std::size_t>& region,
+      const Traits&, const bool compute_score) {
+
+    if (region.size() < 6)
+      return std::make_pair(
+        std::make_pair<typename Traits::FT, typename Traits::Line_3>
+        (-1.0, typename Traits::Line_3()),
+        (std::numeric_limits<double>::max)());
 
     using FT = typename Traits::FT;
     using Point_3 = typename Traits::Point_3;
     using Vector_3 = typename Traits::Vector_3;
     using Line_3 = typename Traits::Line_3;
 
-    typename Get_sqrt<Traits>::Sqrt sqrt;
-    typename Traits::Compute_squared_distance_3 squared_distance_3;
+    Line_3 fitted_axis;
+    FT squared_radius;
 
-    std::size_t nb = 0;
-    Vector_3 mean_axis = CGAL::NULL_VECTOR;
-    Point_3 point_on_axis = CGAL::ORIGIN;
-    const auto& ref_key = *(input_range.begin() + region[0]);
-    const auto& ref = get(point_map, ref_key);
+    FT error = fit_cylinder<Traits, InputRange, PointMap, NormalMap>
+      (input_range, point_map, normal_map, region, fitted_axis,
+        squared_radius);
 
-    for (std::size_t i = 0; i < region.size() - 1; ++i) {
-      CGAL_assertion(region[i] < input_range.size());
-      CGAL_assertion(region[i + 1] < input_range.size());
-      const auto& key0 = *(input_range.begin() + region[i]);
-      const auto& key1 = *(input_range.begin() + region[i + 1]);
-
-      Vector_3 v0 = get(normal_map, key0);
-      v0 = v0 / sqrt(v0 * v0);
-      Vector_3 v1 = get(normal_map, key1);
-      v1 = v1 / sqrt(v1 * v1);
-      Vector_3 axis = CGAL::cross_product(v0, v1);
-      if (sqrt(axis.squared_length()) < FT(1) / FT(100)) {
-        continue;
-      }
-      axis = axis / sqrt(axis * axis);
-
-      const Point_3& p0 = get(point_map, key0);
-      const Point_3& p1 = get(point_map, key1);
-
-      Vector_3 xdir = v0 - axis * (v0 * axis);
-      xdir = xdir / sqrt(xdir * xdir);
-
-      Vector_3 ydir = CGAL::cross_product(axis, xdir);
-      ydir = ydir / sqrt(ydir * ydir);
-
-      const FT v1x =  v1 * ydir;
-      const FT v1y = -v1 * xdir;
-
-      const Vector_3 d(p0, p1);
-      const FT ox = xdir * d;
-      const FT oy = ydir * d;
-      const FT ldist = v1x * ox + v1y * oy;
-
-      const FT r = ldist / v1x;
-      Point_3 point = p0 + xdir * r;
-      const Line_3 line(point, axis);
-      point = line.projection(ref);
-      point_on_axis = barycenter(point_on_axis, static_cast<FT>(nb), point, FT(1));
-
-      if (nb != 0 && (axis * mean_axis < 0)) {
-        axis = -axis;
-      }
-      mean_axis = mean_axis + axis;
-      ++nb;
-    }
-
-    if (nb == 0) {
+    // A negative squared_radius is returned if the cylinder fitting failed.
+    // This can be the case if the normals are very close to each other.
+    if (squared_radius < 0)
       return std::make_pair(
-        std::make_pair(FT(-1), Line_3()),
-        -static_cast<FT>((std::numeric_limits<double>::max)()));
-    }
-
-    mean_axis = mean_axis / sqrt(mean_axis * mean_axis);
-    const Line_3 fitted_axis = Line_3(point_on_axis, mean_axis);
-
-    FT fitted_radius = FT(0);
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
-      fitted_radius += sqrt(squared_distance_3(point, fitted_axis));
-    }
-    fitted_radius /= static_cast<FT>(region.size());
-
-    // Compute score.
-    FT score = FT(-1);
-    if (compute_score) {
-      score = FT(0);
-      for (const std::size_t item_index : region) {
-        CGAL_precondition(item_index < input_range.size());
-        const auto& key = *(input_range.begin() + item_index);
-        const auto& point = get(point_map, key);
-        score -= CGAL::abs(sqrt(squared_distance_3(point, fitted_axis)) - fitted_radius);
-      }
-    }
+        std::make_pair<typename Traits::FT, typename Traits::Line_3>
+        (-1.0, typename Traits::Line_3()),
+        (std::numeric_limits<double>::max)());
 
     return std::make_pair(
-      std::make_pair(fitted_radius, fitted_axis), score);
+      std::make_pair(sqrt(squared_radius), fitted_axis), error);
   }
 
 } // namespace internal
