@@ -83,7 +83,7 @@ namespace internal {
 // * free elements stored in a data member of T and used Booleans in a std::vector
 // * free elements stored in a data member of T, and used Booleans in its most significant bit
 // Note that version deque and data member does not exist (no interest?)
-// By default, use a deque and a vector.
+// (1) By default, use a deque and a vector.
 template<typename CC_with_index, class Use_deque, class Use_vector>
 class Free_list_management
 {};
@@ -100,12 +100,14 @@ public:
   static const size_type null_descriptor=std::numeric_limits<size_type>::max();
 
   Free_list_management(CC_with_index* cc_with_index):
-    m_cc_with_index(cc_with_index)
+    m_cc_with_index(cc_with_index),
+    m_first_free_index(0)
   {}
 
   void init()
   {
     m_free_list=std::stack<size_type>();
+    assert(m_free_list.empty());
     if(m_cc_with_index->capacity()>0)
     { m_used.assign(m_cc_with_index->capacity(), false); }
     else { m_used.clear(); }
@@ -124,14 +126,18 @@ public:
   {
     CGAL_USE(old_size);
     CGAL_assertion(m_cc_with_index->capacity()>old_size);
-    CGAL_assertion(m_first_free_index==old_size);
     m_used.resize(m_cc_with_index->capacity(), false);
     // m_first_free_index does not change, thus nothing more to do.
 
     // TEMPO FOR DEBUG
-    /* for(size_type i=static_cast<size_type>(m_cc_with_index->capacity())-1; i>old_size; --i)
+    /*
+    CGAL_assertion(m_first_free_index==old_size);
+    std::cout<<"increase_to "<<old_size<<" -> "<<m_cc_with_index->capacity()
+            <<"    (m_first_free_index="<<m_first_free_index<<")"<<std::endl;
+    for(size_type i=static_cast<size_type>(m_cc_with_index->capacity())-1; i>old_size; --i)
     { m_free_list.push(i); }
-    m_free_list.push(old_size); */
+    m_free_list.push(old_size);
+    m_first_free_index=m_cc_with_index->capacity(); */
   }
 
   void swap(Self& other)
@@ -144,7 +150,7 @@ public:
 
   bool is_empty() const
   { return m_free_list.empty() &&
-        m_first_free_index==m_cc_with_index->capacity(); }
+        m_first_free_index>=m_cc_with_index->capacity(); }
 
   bool is_used(size_type i) const
   {
@@ -167,7 +173,7 @@ public:
   size_type top() const
   {
     CGAL_assertion(!is_empty());
-    if(m_first_free_index!=m_cc_with_index->capacity())
+    if(m_first_free_index<m_cc_with_index->capacity())
     { return m_first_free_index; }
     return m_free_list.top();
   }
@@ -178,7 +184,7 @@ public:
     CGAL_assertion(!is_empty());
     CGAL_assertion(!is_used(top()));
     size_type res=m_cc_with_index->capacity();
-    if(m_first_free_index!=m_cc_with_index->capacity())
+    if(m_first_free_index<m_cc_with_index->capacity())
     {
       res=m_first_free_index;
       ++m_first_free_index;
@@ -188,6 +194,10 @@ public:
       res=m_free_list.top();
       m_free_list.pop();
     }
+
+    assert(res<m_cc_with_index->capacity());
+    assert(m_used[res]==false);
+
     m_used[res]=true;
     return res;
   }
@@ -569,7 +579,6 @@ public:
     std::swap(size_, c.size_);
     std::swap(block_size, c.block_size);
     std::swap(all_items, c.all_items);
-    //all_items.swap(c.all_items);
     free_list.swap(c.free_list);
   }
 
@@ -779,7 +788,7 @@ private:
   void init()
   {
     block_size=Incr_policy::first_block_size;
-    //block_size=10000000;
+    // block_size=10000000;
     capacity_ =0;
     size_     =0;
     all_items =nullptr;
