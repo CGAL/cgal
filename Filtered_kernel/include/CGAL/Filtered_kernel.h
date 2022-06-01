@@ -61,8 +61,6 @@ struct Filtered_kernel_base
     enum { Has_filtered_predicates = true };
     typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
 
-    typedef Tag_true Can_construct_exact_intersection_point_2;
-
     template < typename Kernel2 >
     struct Base {
         typedef typename CK::template Base<Kernel2> CK2;
@@ -78,6 +76,9 @@ struct Filtered_kernel_base
     struct Feature_dimension {
         typedef typename T::Feature_dimension type; // maybe not the right way...
     };
+
+    Exact_kernel exact_kernel() const { return {}; }
+    Approximate_kernel approximate_kernel() const { return {}; }
 
     // We change the predicates.
 #define CGAL_Kernel_pred(P, Pf) \

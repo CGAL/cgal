@@ -20,6 +20,7 @@
 
 #include <set>
 #include <exception>
+#include <type_traits>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_2.h>
@@ -29,15 +30,12 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/tags.h>
-
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
 #include <boost/mpl/if.hpp>
-#include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
-
-#include <boost/utility/result_of.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
@@ -346,7 +344,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     // if the segment (or a subpart of the segment) that we are trying to constraint is already
     // present in the triangulation and is already marked as constrained,
     // then this is an intersection
-    if(boost::is_same<Itag, No_constraint_intersection_tag>::value) {
+    if(std::is_same<Itag, No_constraint_intersection_tag>::value) {
       if(dimension() == 1) {
         if(fr->is_constrained(2))
           throw Intersection_of_constraints_exception();
@@ -719,7 +717,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   }
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(boost::is_same<Itag, No_constraint_intersection_tag>::value)
+    if(std::is_same<Itag, No_constraint_intersection_tag>::value)
       throw Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
@@ -829,7 +827,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       // if the segment (or a subpart of the segment) that we are trying to constraint is already
       // present in the triangulation and is already marked as constrained,
       // then this is an intersection
-      if(boost::is_same<Itag, No_constraint_intersection_tag>::value) {
+      if(std::is_same<Itag, No_constraint_intersection_tag>::value) {
         if(dimension() == 1) {
           if(fr->is_constrained(2))
             throw Intersection_of_constraints_exception();
@@ -1081,6 +1079,37 @@ intersect(Face_handle f, int i,
   return vi;
 }
 
+
+namespace internal {
+
+  template <typename Type>
+  class Has_barycenter_2
+  {
+    typedef char Yes;
+    typedef struct { char a[2]; } No;
+
+    template <typename U>
+    static auto check(int) -> decltype(std::declval<U>().construct_barycenter_2_object(), Yes());
+
+    template <typename U>
+    static No check(...);
+
+  public:
+    static const bool value = (sizeof(Yes) == sizeof(check<Type>(0)));
+  };
+
+  template <typename Gt>
+  static constexpr bool can_construct_almost_exact_intersection_v =
+      internal::Has_barycenter_2<Gt>::value &&
+      internal::Has_filtered_predicates<Gt>::value;
+
+  template <typename Gt>
+  constexpr bool can_construct_almost_exact_intersection(const Gt&) {
+    return can_construct_almost_exact_intersection_v<Gt>;
+  }
+} // namespace internal
+
+
 template <class Gt, class Tds, class Itag >
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
@@ -1131,7 +1160,7 @@ insert_intersection(Face_handle f, int i,
     }
   }
   else{ //intersection computed
-    if(can_construct_almost_exact_intersection(geom_traits()) &&
+    if(internal::can_construct_almost_exact_intersection(geom_traits()) &&
        intersection_not_in_the_two_triangles(pi))
     {
       // now compute the exact intersection point
@@ -1739,7 +1768,7 @@ intersection(const Gt& gt,
 #endif
   typedef typename Gt::Construct_bbox_2 Construct_bbox_2;
   Construct_bbox_2 bbox = gt.construct_bbox_2_object();
-  typename boost::result_of<const Construct_bbox_2(const typename Gt::Point_2&)>::type bb(bbox(pi));
+  auto bb(bbox(pi));
   bb.dilate(dist);
   if(do_overlap(bb, bbox(pa))) pi = pa;
   if(do_overlap(bb, bbox(pb))) pi = pb;
@@ -1768,7 +1797,7 @@ intersection(const Gt& gt,
   typedef typename Gt::FT FT;
   return intersection(gt,pa,pb,pc,pd,pi,
                       exact_predicates_tag,
-                      Boolean_tag<boost::is_floating_point<FT>::value>());
+                      Boolean_tag<std::is_floating_point<FT>::value>());
 }
 
 
@@ -1786,10 +1815,8 @@ compute_intersection(const Gt& gt,
   typename Gt::Intersect_2 compute_intersec = gt.intersect_2_object();
   typename Gt::Construct_segment_2 construct_segment = gt.construct_segment_2_object();
 
-  auto // CGAL::cpp11::result_of<typename Gt::Intersect_2(Segment_2, Segment_2)>::type
-    result = compute_intersec(construct_segment(pa,pb),
-                              construct_segment(pc,pd));
-
+  auto result =
+      compute_intersec(construct_segment(pa, pb), construct_segment(pc, pd));
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   typedef typename Gt::Segment_2 Segment_2;
@@ -1836,23 +1863,6 @@ limit_intersection(const Gt& gt,
   return i;
 }
 
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Can_construct_exact_intersection_point_2)
-
-template <typename Gt,
-          bool = has_Can_construct_exact_intersection_point_2<Gt>::value>
-struct Can_construct_almost_exact_intersection
-    : public CGAL::Boolean_tag<
-          Gt::Can_construct_exact_intersection_point_2::value> {};
-
-template <typename Gt>
-struct Can_construct_almost_exact_intersection<Gt, false>
-    : public CGAL::Tag_false {};
-
-template <typename Gt>
-constexpr bool can_construct_almost_exact_intersection(const Gt&) {
-  return Can_construct_almost_exact_intersection<Gt>::value;
-}
-
 template <typename Gt>
 typename Gt::Point_2
 almost_exact_intersection(const Gt& gt,
@@ -1861,7 +1871,7 @@ almost_exact_intersection(const Gt& gt,
                           const typename Gt::Point_2& pc,
                           const typename Gt::Point_2& pd)
 {
-  Boolean_tag<Can_construct_almost_exact_intersection<Gt>::value> tag;
+  Boolean_tag<internal::can_construct_almost_exact_intersection_v<Gt>> tag;
   return almost_exact_intersection(gt, pa, pb, pc, pd, tag);
 }
 
@@ -1878,7 +1888,36 @@ almost_exact_intersection(const Gt&,
                  " and with an appropriate traits class");
 }
 
-template <typename Gt>
+template <class Gt>
+typename Gt::Point_2
+exact_intersection_point_for_cdt_2(const typename Gt::Point_2& pa,
+                                   const typename Gt::Point_2& pb,
+                                   const typename Gt::Point_2& pc,
+                                   const typename Gt::Point_2& pd,
+                                   const Gt& gt)
+{
+  using Exact_kernel = Simple_cartesian<CGAL::Exact_rational>;
+  using Exact_FT = typename Exact_kernel::FT;
+  Cartesian_converter<Gt, Exact_kernel> to_exact;
+  Cartesian_converter<Exact_kernel, Gt> from_exact;
+
+  const auto ea = to_exact(pa);
+  const auto eb = to_exact(pb);
+  const auto ec = to_exact(pc);
+  const auto ed = to_exact(pd);
+
+  auto det = [](const auto& v1, const auto& v2) -> Exact_FT {
+    return v1.x() * v2.y() - v1.y() * v2.x();
+  };
+
+  const Exact_FT det_bd_cd = det(ed - eb, ed - ec);
+  const Exact_FT det_ba_cd = det(ea - eb, ec - ed);
+  const Exact_FT alpha = det_bd_cd / det_ba_cd;
+
+  return from_exact(gt.exact_kernel().construct_barycenter_2_object()(ea, alpha, eb));
+}
+
+template <typename Gt>                
 typename Gt::Point_2
 almost_exact_intersection(const Gt& gt,
                           const typename Gt::Point_2& pa,
@@ -1887,8 +1926,7 @@ almost_exact_intersection(const Gt& gt,
                           const typename Gt::Point_2& pd,
                           Tag_true /* gt has Construct_exact_intersection_point_2 */)
 {
-  auto exact_intersect = gt.construct_exact_intersection_point_2_object();
-  return exact_intersect(pa, pb, pc, pd);
+  return exact_intersection_point_for_cdt_2(pa, pb, pc, pd, gt);
 }
 
 } //namespace CGAL

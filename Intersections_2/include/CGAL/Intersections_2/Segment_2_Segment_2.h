@@ -27,8 +27,6 @@
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Intersection_traits_2.h>
-#include <CGAL/NT_converter.h>
-#include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 namespace CGAL {
 
@@ -486,33 +484,6 @@ intersection(const typename K::Segment_2 &seg1,
     case is_t::SEGMENT:
         return intersection_return<typename K::Intersect_2, typename K::Segment_2, typename K::Segment_2>(ispair.intersection_segment());
     }
-}
-
-template <class K>
-typename K::Point_2
-exact_intersection_point(const typename K::Point_2& pa,
-                         const typename K::Point_2& pb,
-                         const typename K::Point_2& pc,
-                         const typename K::Point_2& pd,
-                         const K&)
-{
-  using FT = typename K::FT;
-  using Exact_FT = typename CGAL::internal::Exact_field_selector<FT>::Type;
-  NT_converter<FT, Exact_FT> to_exact;
-  NT_converter<Exact_FT, FT> from_exact;
-
-  Exact_FT s1_dx = to_exact(pa.x()) - to_exact(pb.x());
-  Exact_FT s1_dy = to_exact(pa.y()) - to_exact(pb.y());
-  Exact_FT s2_dx = to_exact(pd.x()) - to_exact(pc.x());
-  Exact_FT s2_dy = to_exact(pd.y()) - to_exact(pc.y());
-  Exact_FT lx =    to_exact(pd.x()) - to_exact(pb.x());
-  Exact_FT ly =    to_exact(pd.y()) - to_exact(pb.y());
-
-  Exact_FT alpha = (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
-  Exact_FT one_minus_alpha = Exact_FT(1) - alpha;
-  Exact_FT x = alpha * to_exact(pa.x()) + one_minus_alpha * to_exact(pb.x());
-  Exact_FT y = alpha * to_exact(pa.y()) + one_minus_alpha * to_exact(pb.y());
-  return { from_exact(x), from_exact(y) };
 }
 
 } // namespace internal

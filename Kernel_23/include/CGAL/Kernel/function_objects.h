@@ -3554,17 +3554,6 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_exact_intersection_point_2
-  {
-  public:
-
-    template <class... T>
-    decltype(auto)
-    operator()(const T&... t) const
-    { return Intersections::internal::exact_intersection_point(t..., K()); }
-  };
-
-  template <typename K>
   class Intersect_3
   {
     typedef typename K::Plane_3     Plane_3;
