@@ -1100,7 +1100,7 @@ intersect(Face_handle f, int i,
   Itag itag = Itag();
   bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
 
-  auto intersection_not_in_the_two_triangle = [&](const Point& pi) {
+  auto intersection_not_in_the_two_triangles = [&](const Point& pi) {
     if(orientation(pc,pd,pi) == RIGHT_TURN) {
       // check if `pi` is in the triangle (pc, pd, p0)
       const Point& p0 = f->vertex(i)->point();
@@ -1134,11 +1134,11 @@ intersect(Face_handle f, int i,
   }
   else{ //intersection computed
     if(can_construct_almost_exact_intersection(geom_traits(), itag) &&
-       intersection_not_in_the_two_triangle(pi))
+       intersection_not_in_the_two_triangles(pi))
     {
       // now compute the exact intersection point
       pi = almost_exact_intersection(geom_traits(), pa, pb, pc, pd, itag);
-      if (intersection_not_in_the_two_triangle(pi)) {
+      if (intersection_not_in_the_two_triangles(pi)) {
         // If the most-exact intersection point is not in the union of the two
         // triangles, then snap to `pc` or `pd`...
         if(compare_distance(pi, pc, pd) == SMALLER) {
@@ -1778,7 +1778,6 @@ compute_intersection(const Gt& gt,
   }
   return false;
 }
-
 
 template<class Gt>
 int
