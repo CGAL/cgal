@@ -507,6 +507,17 @@ protected:
                           Vertex_handle vaa,
                           Vertex_handle vbb,
                           Exact_predicates_tag);
+
+  Vertex_handle insert_intersection(Face_handle f, int i,
+                                    Vertex_handle vaa,
+                                    Vertex_handle vbb,
+                                    Vertex_handle vcc,
+                                    Vertex_handle vdd,
+                                    const Point& pa,
+                                    const Point& pb,
+                                    const Point& pc,
+                                    const Point& pd,
+                                    Exact_predicates_tag);
 private:
   //made private to avoid using the Triangulation_2 version
   Vertex_handle move(Vertex_handle v, const Point &)
@@ -1073,30 +1084,19 @@ intersect(Face_handle f, int i,
 template <class Gt, class Tds, class Itag >
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle f, int i,
-          Vertex_handle vaa,
-          Vertex_handle vbb,
-          Exact_predicates_tag itag)
+insert_intersection(Face_handle f, int i,
+                    Vertex_handle vaa,
+                    Vertex_handle vbb,
+                    Vertex_handle vcc,
+                    Vertex_handle vdd,
+                    const Point& pa,
+                    const Point& pb,
+                    const Point& pc,
+                    const Point& pd,
+                    Exact_predicates_tag itag)
 {
-  Vertex_handle  vcc, vdd;
-  vcc = f->vertex(cw(i));
-  vdd = f->vertex(ccw(i));
-
-  const Point& pa = vaa->point();
-  const Point& pb = vbb->point();
-  const Point& pc = vcc->point();
-  const Point& pd = vdd->point();
-
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-  std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::intersect segment ( #" << vaa->time_stamp() << "= " << vaa->point()
-            << " , #" << vbb->time_stamp() << "= " << vbb->point()
-            << " ) with edge ( #"<< vcc->time_stamp() << "= " << vcc->point()
-            << " , #" << vdd->time_stamp() << "= " << vdd->point()
-            << " )\n";
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Point pi; //creator for point is required here
-  bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
+  bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag);
 
   auto intersection_not_in_the_two_triangles = [&](const Point& pi) {
     if(orientation(pc,pd,pi) == RIGHT_TURN) {
@@ -1151,6 +1151,40 @@ intersect(Face_handle f, int i,
       vi = virtual_insert(pi, f);
     }
   }
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::insert_intersection, `vi` is ( #" << vi->time_stamp() << "= " << vi->point()
+            << " )\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+  return vi;
+}
+
+template <class Gt, class Tds, class Itag >
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
+Constrained_triangulation_2<Gt,Tds,Itag>::
+intersect(Face_handle f, int i,
+          Vertex_handle vaa,
+          Vertex_handle vbb,
+          Exact_predicates_tag itag)
+{
+  Vertex_handle  vcc, vdd;
+  vcc = f->vertex(cw(i));
+  vdd = f->vertex(ccw(i));
+
+  const Point& pa = vaa->point();
+  const Point& pb = vbb->point();
+  const Point& pc = vcc->point();
+  const Point& pd = vdd->point();
+
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::intersect segment ( #" << vaa->time_stamp() << "= " << vaa->point()
+            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << " ) with edge ( #"<< vcc->time_stamp() << "= " << vcc->point()
+            << " , #" << vdd->time_stamp() << "= " << vdd->point()
+            << " )\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+  Vertex_handle vi = insert_intersection(f, i, vaa, vbb, vcc, vdd, pa, pb, pc, pd, itag);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "CT_2::intersect, `vi` is ( #" << vi->time_stamp() << "= " << vi->point()

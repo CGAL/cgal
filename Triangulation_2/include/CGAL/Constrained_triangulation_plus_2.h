@@ -1227,31 +1227,8 @@ intersect(Face_handle f, int i,
             << " , Exact_predicates_tag)\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
-  Point pi; //creator for point is required here
-  bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
-
-  Vertex_handle vi;
-  if ( !ok) {  //intersection detected but not computed
-    int i = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
-    switch(i){
-    case 0 : vi = vaa; break;
-    case 1 : vi = vbb; break;
-    case 2 : vi = vcc; break;
-    case 3 : vi = vdd; break;
-    }
-    if(vi == vaa || vi == vbb) {
-      Triangulation::remove_constrained_edge(f, i);
-    }
-  }
-  else{ //computed
-    Triangulation::remove_constrained_edge(f, i);
-    vi = insert(pi, f);
-  }
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-  std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_plus_2::intersect, `vi` is ( #" << vi->time_stamp() << "= " << vi->point()
-            << " )\n";
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+  Vertex_handle vi = Triangulation::insert_intersection(
+      f, i, vaa, vbb, vcc, vdd, pa, pb, pc, pd, itag);
 
   // vi == vc or vi == vd may happen even if intersection==true
   // due to approximate construction of the intersection
