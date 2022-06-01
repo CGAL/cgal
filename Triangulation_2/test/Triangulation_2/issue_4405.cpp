@@ -49,10 +49,11 @@ typedef CGAL::Triangulation_vertex_base_2<TriangulationTraits, Vb2> VertexBase;
 typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2, Kernel> FaceBaseWithInfo;
 typedef CGAL::Constrained_triangulation_face_base_2<TriangulationTraits, FaceBaseWithInfo> FaceBase;
 typedef CGAL::Triangulation_data_structure_2<VertexBase, FaceBase> TriangulationData;
-typedef CGAL::Constrained_Delaunay_triangulation_2<TriangulationTraits, TriangulationData, CGAL::Exact_predicates_tag> ConstrainedTriangulation;
-    typedef CGAL::Constrained_triangulation_plus_2<ConstrainedTriangulation> CDT;
+typedef CGAL::Constrained_Delaunay_triangulation_2<TriangulationTraits, TriangulationData, CGAL::Exact_predicates_tag> CDT;
+typedef CGAL::Constrained_triangulation_plus_2<CDT> CDT_plus_2;
 
-int main()
+template <typename CDT>
+void test()
 {
   CDT cdt;
   const Point3 A(539.5294108288881, 332.45151278002265, 109.660400390625);
@@ -65,5 +66,11 @@ int main()
   cdt.insert_constraint(C, A);
   cdt.insert_constraint(D, B);
   cdt.insert_constraint(C, E);
+}
+
+int main()
+{
+  test<CDT>();
+  test<CDT_plus_2>();
   return 0;
 }
