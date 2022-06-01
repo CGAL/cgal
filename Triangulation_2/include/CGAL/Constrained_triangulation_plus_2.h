@@ -1208,7 +1208,7 @@ Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i,
           Vertex_handle vaa,
           Vertex_handle vbb,
-          Exact_predicates_tag)
+          Exact_predicates_tag itag)
 {
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));
@@ -1228,7 +1228,6 @@ intersect(Face_handle f, int i,
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
   Point pi; //creator for point is required here
-  Intersection_tag itag = Intersection_tag();
   bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
 
   Vertex_handle vi;
