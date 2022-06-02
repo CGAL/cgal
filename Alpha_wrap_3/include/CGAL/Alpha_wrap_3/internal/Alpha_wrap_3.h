@@ -7,7 +7,11 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : TBA
+// Author(s)     : Pierre Alliez
+//                 Cedric Portaneri,
+//                 Mael Rouxel-Labbé
+//                 Andreas Fabri
+//                 Michael Hemmer
 //
 #ifndef CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_3_H
 #define CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_3_H
@@ -15,6 +19,11 @@
 #ifdef CGAL_AW3_DEBUG_PP
  #ifndef CGAL_AW3_DEBUG
   #define CGAL_AW3_DEBUG
+  #define CGAL_AW3_DEBUG_INITIALIZATION
+  #define CGAL_AW3_DEBUG_STEINER_COMPUTATION
+  #define CGAL_AW3_DEBUG_QUEUE
+  #define CGAL_AW3_DEBUG_FACET_STATUS
+  #define CGAL_AW3_DEBUG_MANIFOLDNESS
  #endif
 #endif
 
@@ -302,7 +311,7 @@ public:
     std::cout << "Alpha wrap faces:     " << faces(output_mesh).size() << std::endl;
 
  #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-    IO::write_polygon_mesh("final.off", alpha_wrap, CGAL::parameters::stream_precision(17));
+    IO::write_polygon_mesh("final.off", output_mesh, CGAL::parameters::stream_precision(17));
     dump_triangulation_faces("final_dt3.off", false /*only_boundary_faces*/);
  #endif
 #endif
@@ -784,9 +793,9 @@ private:
     const bool is_neighbor_cc_in_offset = m_oracle.do_intersect(neighbor_cc_offset_ball);
 
 #ifdef CGAL_AW3_DEBUG_STEINER_COMPUTATION
-    const Point_3& chc = circumcenter(ch);
+    std::cout << "Compute_steiner_point(" << &*ch << ", " << &*neighbor << ")" << std::endl;
 
-    std::cout << "Compute_steiner_point()" << std::endl;
+    const Point_3& chc = circumcenter(ch);
     std::cout << "CH" << std::endl;
     std::cout << "\t" << ch->vertex(0)->point() << std::endl;
     std::cout << "\t" << ch->vertex(1)->point() << std::endl;
@@ -1008,7 +1017,7 @@ private:
       std::cout << m_dt.number_of_vertices() << " DT vertices" << std::endl;
       std::cout << m_queue.size() << " facets in the queue" << std::endl;
       std::cout << "Face " << fid++ << "\n"
-                << "c = " << &*ch << " (" << m_dt.is_infinite(ch) << "), n =" << &*neighbor << " (" << m_dt.is_infinite(neighbor) << ")" << "\n"
+                << "c = " << &*ch << " (" << m_dt.is_infinite(ch) << "), n = " << &*neighbor << " (" << m_dt.is_infinite(neighbor) << ")" << "\n"
                 << m_dt.point(ch, (id+1)&3) << "\n" << m_dt.point(ch, (id+2)&3) << "\n" << m_dt.point(ch, (id+3)&3) << std::endl;
       std::cout << "Priority: " << gate.priority() << std::endl;
 #endif

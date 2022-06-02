@@ -349,7 +349,7 @@ assert( p == q );
 In order to obtain the point corresponding to a vector \f$ v\f$ you simply
 have to add \f$ v\f$ to `ORIGIN`. If you want to determine
 the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can
-write\cgalFootnote{you might call `midpoint(p_1,p_2)` instead}
+write\cgalFootnote{you might call  \cgalFootnoteCode{midpoint(p_1,p_2)} instead}
 
 \code{.cpp}
 q = p_1 + (p_2 - p_1) / 2.0;

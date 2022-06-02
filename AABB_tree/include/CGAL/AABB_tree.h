@@ -563,10 +563,10 @@ public:
     /**
      * @brief Builds the tree by recursive expansion.
      * @param first the first primitive to insert
-     * @param last the last primitive to insert
+     * @param beyond the last primitive to insert
      * @param range the number of primitive of the range
      *
-     * [first,last[ is the range of primitives to be added to the tree.
+     * [first,beyond[ is the range of primitives to be added to the tree.
      */
     template<typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
     void expand(Node& node,

@@ -29,6 +29,9 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+enum Boolean_operation_type {UNION = 0, INTERSECTION,
+                             TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
+
 template <typename G>
 struct No_mark
 {
@@ -460,9 +463,39 @@ struct Default_visitor{
   void before_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/, TriangleMesh& /*tm_tgt*/){}
   void after_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/,
                          vertex_descriptor /* v_tgt */, TriangleMesh& /*tm_tgt*/){}
-// calls commented in the code and probably incomplete due to the migration
-// see NODE_VISITOR_TAG
-/*
+
+  // progress tracking
+  void start_filtering_intersections() const {}
+  void progress_filtering_intersections(double ) const {}
+  void end_filtering_intersections() const {}
+
+  void start_triangulating_faces(std::size_t) const {}
+  void triangulating_faces_step() const {}
+  void end_triangulating_faces() const {}
+
+  void start_handling_intersection_of_coplanar_faces(std::size_t) const {}
+  void intersection_of_coplanar_faces_step() const {}
+  void end_handling_intersection_of_coplanar_faces() const {}
+
+  void start_handling_edge_face_intersections(std::size_t) const {}
+  void edge_face_intersections_step() const {}
+  void end_handling_edge_face_intersections() const {}
+
+  void start_building_output() const {}
+  void end_building_output() const {}
+
+// Required by Face_graph_output_builder
+  void filter_coplanar_edges() const {}
+  void detect_patches() const {}
+  void classify_patches() const {}
+  void classify_intersection_free_patches(const TriangleMesh&) const {}
+  void out_of_place_operation(Boolean_operation_type) const {}
+  void in_place_operation(Boolean_operation_type) const {}
+  void in_place_operations(Boolean_operation_type,Boolean_operation_type) const {}
+
+  // calls commented in the code and probably incomplete due to the migration
+  // see NODE_VISITOR_TAG
+  /*
   // autorefinement only
   void new_node_added_triple_face(std::size_t node_id,
                                   face_descriptor f1,
@@ -470,7 +503,7 @@ struct Default_visitor{
                                   face_descriptor f3,
                                   const TriangleMesh& tm)
   {}
-*/
+  */
 };
 
 template < class TriangleMesh,
@@ -1234,6 +1267,7 @@ void append_patches_to_triangle_mesh(
     }
     set_next(h_out, candidate, output);
   }
+
   for(halfedge_descriptor h_out : border_halfedges_source_to_link)
   {
     halfedge_descriptor candidate =

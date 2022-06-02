@@ -38,6 +38,8 @@ class ID_support_handler {
  public:
   ID_support_handler() {}
 
+  void reserve(std::size_t) {}
+
   int get_hash(int) { return 0; }
   template<typename Handle> void initialize_hash(Handle /*h*/) {}
   void initialize_hash(int /*i*/) {}

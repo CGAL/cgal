@@ -116,11 +116,7 @@ private:
   boost::optional<DoubleConverter> fc;
   Viewer_interface* viewer;
   void getPixel(const QPoint& e) {
-    float data[3];
-    int vp[4];
-    viewer->glGetIntegerv(GL_VIEWPORT, vp);
-    viewer->glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
-
+    const auto data = read_pixel_as_float_rgb(e, viewer, viewer->camera());
     if(fc) {
       Q_EMIT x(QString::number((*fc)(data[0]), 'f', 6 ));
     } else if(ic) {

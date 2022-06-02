@@ -1739,7 +1739,7 @@ expected to either coincide with an existing vertex or lie inside a
 face.  It is possible to invoke one of the specialized insertion
 functions (see Section \ref aos_ssec-basic-arr_class), based on the
 query results, and insert \f$c\f$ at its proper
-location.\cgalFootnote{The `CGAL::insert_non_intersecting_curve<>()`
+location.\cgalFootnote{The \cgalFootnoteCode{CGAL::insert_non_intersecting_curve<>()}
 function template, as all other functions reviewed in this section, is
 parameterized by an arrangement type and a point-location type (The
 latter must be substituted with a model of the
@@ -1832,7 +1832,7 @@ consider vertical line-segments to be weakly \f$x\f$-monotone).
 
 Consider an arrangement of circles. A circle is obviously not
 \f$x\f$-monotone, so `CGAL::insert<>()` cannot be used in this
-case.\cgalFootnote{A key operation performed by `CGAL::insert<>()` is
+case.\cgalFootnote{A key operation performed by \cgalFootnoteCode{CGAL::insert<>()} is
 to locate the left endpoint of the curve in the arrangement. A circle,
 however, does not have any endpoints!} , it is necessary to subdivide
 each circle into two \f$x\f$-monotone circular arcs, namely, its upper
@@ -4142,7 +4142,7 @@ class template and the `Arr_segment_traits_2<Kernel>` class template
 are both parameterized by a geometric kernel and model the concepts
 `ArrangementTraits_2` and `ArrangementLandmarkTraits_2`.
 \cgalFootnote{They also model the refined concept
-`ArrangementDirectionalXMonotoneTraits_2`, which enables Boolean set
+\cgalFootnoteCode{ArrangementDirectionalXMonotoneTraits_2}, which enables Boolean set
 operations; see Package \ref PkgBooleanSetOperations2Ref.} The class
 template `Arr_non_caching_segment_traits_2<Kernel>` derives from the
 instance `Arr_non_caching_segment_basic_traits_2<Kernel>`, which
@@ -4940,9 +4940,9 @@ template parameter is defined as the `Coefficient` type. This type
 cannot be algebraic. Moreover, it is recommended that this type is not
 made rational either, since using rational (as opposed to integral)
 coefficients does not extend the range of the rational arcs and is
-typically less efficient.\cgalFootnote{The `Algebraic_kernel_d_1`
+typically less efficient.\cgalFootnote{The \cgalFootnoteCode{Algebraic_kernel_d_1}
 class template uses the types provided by the \ref PkgPolynomial
-package to define its nested `Polynomial_1` type and conveniently
+package to define its nested \cgalFootnoteCode{Polynomial_1} type and conveniently
 expose it to the user.} The `Bound` type, however, can be algebraic. A
 point of type \link Arr_rational_function_traits_2::Point_2
 `Point_2`\endlink nested in the `Arr_rational_function_traits_2` class
@@ -6241,7 +6241,7 @@ face, respectively, \f$v_b\f$, \f$e_b\f$, and \f$f_b\f$ denote input
 <span style="color:blue;">blue</span> features, and \f$v\f$, \f$e\f$,
 and \f$f\f$ denote output features.
 
-<OL compact>
+<OL>
 
 <LI> A new vertex \f$v\f$ is induced by coinciding vertices
 \f$v_r\f$ and \f$v_b\f$.</LI>
@@ -6749,7 +6749,7 @@ and defines a simple textual input/output format.
 <!-- ========================================================================= -->
 
 \boost\cgalFootnote{See also \boost's homepage at:
-<TT>www.boost.org</TT>.}  is a collection of portable \cpp libraries
+\cgalFootnoteCode{www.boost.org}.}  is a collection of portable \cpp libraries
 that extend the \cpp Standard Library. The \boost Graph Library
 (\bgl), which one of the libraries in the collection, offers an
 extensive set of generic graph algorithms parameterized through

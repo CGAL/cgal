@@ -29,7 +29,7 @@ namespace std {
   struct iterator_traits<Toto::Descriptor> {
 
   };
-};
+}
 
 
 namespace Nested {

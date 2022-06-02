@@ -3,7 +3,7 @@
 # that dependency so as to test all the number types not depending on CORE
 # when it is not installed
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Number_types_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -88,3 +88,8 @@ endif()#NOT CGAL_DISABLE_GMP
 # all the programs below will be linked against MPFI in case it is present
 create_single_source_cgal_program("Quotient_new.cpp")
 create_single_source_cgal_program("test_nt_Coercion_traits.cpp")
+
+find_package(Boost)
+if(Boost_FOUND)
+create_single_source_cgal_program("to_interval_test_boost.cpp")
+endif()

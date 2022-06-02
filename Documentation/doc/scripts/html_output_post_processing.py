@@ -254,6 +254,11 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     resources_absdir=args.resources
     os.chdir(args.output)
 
+    #workaround issue with operator<< in pyquery
+    all_pages=glob.glob('*/*.html')
+    for f in all_pages:
+      re_replace_in_file("operator<<\(\)", "operator&lt;&lt;()", f)
+
     # number figure
     automagically_number_figures()
 
