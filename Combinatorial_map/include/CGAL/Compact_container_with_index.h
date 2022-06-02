@@ -949,8 +949,8 @@ namespace internal {
       // If it's not begin(), then it's valid, we can do --.
       do
       {
-       CGAL_assertion(m_index>0);
-	--m_index;
+        CGAL_assertion(m_index>0);
+        --m_index;
       }
       while(!m_ptr_to_cc->is_used(m_index));
     }
