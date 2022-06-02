@@ -132,7 +132,7 @@ public:
   template <class Mesh_to_map_node>
   void finalize(const Mesh_to_map_node&) {}
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
   }
@@ -310,7 +310,7 @@ public:
     }
   }
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(enodes.size() == std::set<typename Exact_kernel::Point_3>(enodes.begin(), enodes.end()).size());
   }
@@ -434,7 +434,7 @@ public:
   {}
 
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
   }

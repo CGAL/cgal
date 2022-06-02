@@ -117,6 +117,9 @@ public:
     Point a = get(vpmap_tmf, source(fh, tm_faces));
     Point b = get(vpmap_tmf, target(fh, tm_faces));
     Point c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
+
+    if (collinear(a,b,c)) return;
+
     /// SHOULD_USE_TRAITS_TAG
     const Orientation abcp = orientation(a,b,c, get(vpmap_tme, target(eh, tm_edges)));
     const Orientation abcq = orientation(a,b,c, get(vpmap_tme, source(eh, tm_edges)));

@@ -1242,6 +1242,9 @@ public:
         edge_to_hedge[std::make_pair( f_indices[1],f_indices[2] )] = h2;
       }
 
+      if (collinear( get(vpm,f_vertices[0]), get(vpm,f_vertices[1]), get(vpm,f_vertices[2]) ) )
+        continue;
+
       typename EK::Point_3 p = nodes.to_exact(get(vpm,f_vertices[0])),
                            q = nodes.to_exact(get(vpm,f_vertices[1])),
                            r = nodes.to_exact(get(vpm,f_vertices[2]));
@@ -1441,6 +1444,12 @@ public:
         }
       }
     }
+  }
+
+  void check_no_duplicates(const INodes& nodes) const
+  {
+    if (const_mesh_ptr == nullptr) // actually only needed for clip
+      nodes.check_no_duplicates();
   }
 
   void finalize(INodes& nodes,

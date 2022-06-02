@@ -101,6 +101,8 @@ struct Default_surface_intersection_visitor{
   void start_new_polyline(std::size_t,std::size_t){}
   void add_node_to_polyline(std::size_t){}
   void input_have_coplanar_faces(){}
+  template<class T>
+  void check_no_duplicates(const T&){}
   template<class T,class VPM1,class VPM2>
   void finalize(T&,
                 const TriangleMesh&, const TriangleMesh&,
@@ -1684,7 +1686,7 @@ public:
     compute_intersection_points(tm1_edge_to_tm2_faces, tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, current_node);
     compute_intersection_points(tm2_edge_to_tm1_faces, tm2, tm1, vpm2, vpm1, non_manifold_feature_map_2, non_manifold_feature_map_1, current_node);
 
-    nodes.check_no_duplicates();
+    visitor.check_no_duplicates(nodes);
 
     if (!build_polylines){
       visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);
