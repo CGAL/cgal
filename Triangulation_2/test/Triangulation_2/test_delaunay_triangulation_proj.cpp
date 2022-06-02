@@ -21,6 +21,13 @@ typedef CGAL::Triangulation_data_structure_2 <
                        CGAL::Constrained_triangulation_face_base_2<Gt_xy> > CDT_TDS;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Gt_xy,CDT_TDS,CGAL::Exact_predicates_tag> CDT;
 
+static_assert(CGAL::internal::can_construct_almost_exact_intersection_v<Kernel>,
+              "Static assert failure. See internal::can_construct_almost_exact_intersections"
+              " in <CGAL/Constrained_triangulation_2.h> ");
+static_assert(CGAL::internal::can_construct_almost_exact_intersection_v<Gt_xy>,
+              "Static assert failure. See internal::can_construct_almost_exact_intersections"
+              " in <CGAL/Constrained_triangulation_2.h> ");
+
 int main(){
   DT_xy t_xy;
   DT_yz t_yz;

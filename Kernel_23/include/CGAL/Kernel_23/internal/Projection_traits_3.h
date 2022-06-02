@@ -19,6 +19,7 @@
 #include <CGAL/Triangle_3.h>
 
 #include <CGAL/Kernel/global_functions_2.h>
+#include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
 namespace CGAL {
 
@@ -868,11 +869,28 @@ public:
   }
 };
 
+template <class R, int dim>
+class Projection_traits_3;
+
+template <class R, int dim, bool has_filtered_predicates>
+struct Projection_traits_base_3 {};
+
+template <class R, int dim>
+struct Projection_traits_base_3< R, dim, true> {
+  typedef Projection_traits_3<typename R::Exact_kernel, dim>  Exact_kernel;
+  Exact_kernel exact_kernel() const { return {}; }
+};
+
 // This is for projection traits along a specific canonical plane (xy, yz, xz)
 // The generic class for an arbitrary normal is CGAL::Projection_traits_3<K> (not in `internal`)
-template < class R, int dim >
-class Projection_traits_3 {
+template <class R, int dim>
+class Projection_traits_3
+    : public Projection_traits_base_3<
+          R, dim, internal::Has_filtered_predicates<R>::value> {
 public:
+  enum { Has_filtered_predicates = internal::Has_filtered_predicates<R>::value };
+  typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
+
   typedef Projection_traits_3<R,dim>   Traits;
   typedef R                                                   Rp;
   typedef typename R::FT                                      FT;
@@ -920,6 +938,7 @@ public:
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
   typedef typename Rp::Construct_translated_point_3           Construct_translated_point_2;
   typedef typename Rp::Construct_midpoint_3                   Construct_midpoint_2;
+  typedef typename Rp::Construct_barycenter_3                 Construct_barycenter_2;
   typedef typename Rp::Construct_vector_3                     Construct_vector_2;
   typedef typename Rp::Construct_scaled_vector_3              Construct_scaled_vector_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
@@ -1100,6 +1119,9 @@ public:
 
   Construct_midpoint_2  construct_midpoint_2_object() const
     {return Construct_midpoint_2();}
+
+  Construct_barycenter_2  construct_barycenter_2_object() const
+    {return Construct_barycenter_2();}
 
   Construct_vector_2  construct_vector_2_object() const
     {return Construct_vector_2();}

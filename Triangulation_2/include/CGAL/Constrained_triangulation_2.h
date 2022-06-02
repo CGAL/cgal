@@ -1888,6 +1888,18 @@ almost_exact_intersection(const Gt&,
                  " and with an appropriate traits class");
 }
 
+template <typename K2_Point_2, typename K1>
+auto convert(const CGAL::Point_2<K1> &p) {
+  NT_converter<typename K1::FT, typename Kernel_traits<K2_Point_2>::Kernel::FT> c;
+  return K2_Point_2(c(p.x()), c(p.y()));
+}
+
+template <typename K2_Point_3, typename K1>
+auto convert(const CGAL::Point_3<K1> &p) {
+  NT_converter<typename K1::FT, typename Kernel_traits<K2_Point_3>::Kernel::FT> c;
+  return K2_Point_3(c(p.x()), c(p.y()), c(p.z()));
+}
+
 template <class Gt>
 typename Gt::Point_2
 exact_intersection_point_for_cdt_2(const typename Gt::Point_2& pa,
@@ -1896,15 +1908,15 @@ exact_intersection_point_for_cdt_2(const typename Gt::Point_2& pa,
                                    const typename Gt::Point_2& pd,
                                    const Gt& gt)
 {
-  using Exact_kernel = Simple_cartesian<CGAL::Exact_rational>;
+  using Exact_kernel = typename Gt::Exact_kernel;
+  using Exact_point = typename Exact_kernel::Point_2;
   using Exact_FT = typename Exact_kernel::FT;
-  Cartesian_converter<Gt, Exact_kernel> to_exact;
-  Cartesian_converter<Exact_kernel, Gt> from_exact;
+  using Point = typename Gt::Point_2;
 
-  const auto ea = to_exact(pa);
-  const auto eb = to_exact(pb);
-  const auto ec = to_exact(pc);
-  const auto ed = to_exact(pd);
+  const auto ea = convert<Exact_point>(pa);
+  const auto eb = convert<Exact_point>(pb);
+  const auto ec = convert<Exact_point>(pc);
+  const auto ed = convert<Exact_point>(pd);
 
   auto det = [](const auto& v1, const auto& v2) -> Exact_FT {
     return v1.x() * v2.y() - v1.y() * v2.x();
@@ -1914,10 +1926,10 @@ exact_intersection_point_for_cdt_2(const typename Gt::Point_2& pa,
   const Exact_FT det_ba_cd = det(ea - eb, ec - ed);
   const Exact_FT alpha = det_bd_cd / det_ba_cd;
 
-  return from_exact(gt.exact_kernel().construct_barycenter_2_object()(ea, alpha, eb));
+  return convert<Point>(gt.exact_kernel().construct_barycenter_2_object()(ea, alpha, eb));
 }
 
-template <typename Gt>                
+template <typename Gt>
 typename Gt::Point_2
 almost_exact_intersection(const Gt& gt,
                           const typename Gt::Point_2& pa,

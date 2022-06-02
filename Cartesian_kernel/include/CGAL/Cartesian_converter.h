@@ -96,52 +96,40 @@ public:
 
     using Base::operator();
 
-    template <typename Arg>
-    decltype(auto)
-    operator()(Arg&& arg) const {
-      return convert(K1(), std::forward<Arg>(arg));
-    }
-
-    template <typename K>
     Origin
-    convert(K, Origin o) const
+    operator()(Origin o) const
     {
         return o;
     }
 
-    template <typename K>
     Null_vector
-    convert(K, Null_vector n) const
+    operator()(Null_vector n) const
     {
         return n;
     }
 
-    template <typename K>
     const Bbox_2&
-    convert(K, const Bbox_2& b) const
+    operator()(const Bbox_2& b) const
     {
         return b;
     }
 
-    template <typename K>
     const Bbox_3&
-    convert(K, const Bbox_3& b) const
+    operator()(const Bbox_3& b) const
     {
         return b;
     }
 
-    template <typename K>
     typename K2::FT
-    convert(K, const typename K::FT &a,
-            typename std::enable_if<!std::is_fundamental<typename K::FT>::value>::type* = nullptr) const
+    operator()(const typename K1::FT &a) const
     {
         return c(a);
     }
 
-    template <typename K, typename T>
+    template <typename T>
     T
-    convert(K, const T t,
-            typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr) const
+    operator()(const T t,
+               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr) const
     {
         return t;
     }
@@ -150,11 +138,11 @@ public:
     // from the sequence, transform with the type mapper and throw the
     // new list into a variant
     // visit to get the type, and copy construct inside the return type
-    template<typename K, BOOST_VARIANT_ENUM_PARAMS(typename U)>
+    template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
     typename
     Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
                  K1, K2 >::type
-    convert(K, const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+    operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
       typedef typename
         Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
                      K1, K2 >::type result_type;
@@ -170,11 +158,11 @@ public:
       return res;
     }
 
-    template <typename K, BOOST_VARIANT_ENUM_PARAMS(typename U)>
+    template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
     typename
     Type_mapper< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >,
                  K1, K2 >::type
-    convert(K, const boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > & o) const {
+    operator()(const boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > & o) const {
       typedef typename
         Type_mapper< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >,
                      K1, K2 >::type result_type;
@@ -185,22 +173,21 @@ public:
       return res;
     }
 
-    template <typename K>
     typename K2::Object_2
-    convert(K k, const typename K::Object_2 &obj) const
+    operator()(const typename K1::Object_2 &obj) const
     {
 #define CGAL_Kernel_obj(X) \
-      if (const typename K::X * ptr = object_cast<typename K::X>(&obj)) \
-        return make_object(convert(k, *ptr));
+      if (const typename K1::X * ptr = object_cast<typename K1::X>(&obj)) \
+        return make_object(operator()(*ptr));
 
 #include <CGAL/Kernel/interface_macros.h>
 
 #define CGAL_Kernel_obj(X) \
-      if (const std::vector<typename K::X> * ptr = object_cast<std::vector<typename K::X> >(&obj)) { \
+      if (const std::vector<typename K1::X> * ptr = object_cast<std::vector<typename K1::X> >(&obj)) { \
         std::vector<typename K2::X> res; \
         res.reserve((*ptr).size()); \
         for(unsigned int i=0; i < (*ptr).size(); i++){ \
-          res.push_back(convert(k, (*ptr)[i])); \
+          res.push_back(operator()((*ptr)[i])); \
         } \
         return make_object(res); \
       }
@@ -214,226 +201,200 @@ public:
 
     }
 
-    template <typename K>
     std::vector<Object>
-    convert(K k, const std::vector<Object>& v) const
+    operator()(const std::vector<Object>& v) const
     {
       std::vector<Object> res;
       res.reserve(v.size());
       for(unsigned int i = 0; i < v.size(); i++) {
-        res.push_back(convert(k, v[i]));
+        res.push_back(operator()(v[i]));
       }
       return res;
     }
 
 
-    template <typename K>
     typename K2::Point_2
-    convert(K, const typename K::Point_2 &a) const
+    operator()(const typename K1::Point_2 &a) const
     {
         typedef typename K2::Point_2 Point_2;
         return Point_2(c(a.x()), c(a.y()));
     }
 
-    template <typename K>
     typename K2::Weighted_point_2
-    convert(K k, const typename K::Weighted_point_2 &a) const
+    operator()(const typename K1::Weighted_point_2 &a) const
     {
         typedef typename K2::Weighted_point_2 Weighted_point_2;
-        return Weighted_point_2(convert(k, a.point()), convert(k, a.weight()));
+        return Weighted_point_2(operator()(a.point()), operator()(a.weight()));
     }
 
-    template <typename K>
     typename K2::Vector_2
-    convert(K, const typename K::Vector_2 &a) const
+    operator()(const typename K1::Vector_2 &a) const
     {
         typedef typename K2::Vector_2  Vector_2;
         return Vector_2(c(a.x()), c(a.y()));
     }
 
-    template <typename K>
     typename K2::Direction_2
-    convert(K, const typename K::Direction_2 &a) const
+    operator()(const typename K1::Direction_2 &a) const
     {
         typedef typename K2::Direction_2  Direction_2;
         return Direction_2(c(a.dx()), c(a.dy()));
     }
 
-    template <typename K>
     typename K2::Segment_2
-    convert(K k, const typename K::Segment_2 &a) const
+    operator()(const typename K1::Segment_2 &a) const
     {
         typedef typename K2::Segment_2  Segment_2;
-        return Segment_2(convert(k, a.source()), convert(k, a.target()));
+        return Segment_2(operator()(a.source()), operator()(a.target()));
     }
 
-    template <typename K>
     typename K2::Line_2
-    convert(K, const typename K::Line_2 &a) const
+    operator()(const typename K1::Line_2 &a) const
     {
         typedef typename K2::Line_2 Line_2;
         return Line_2(c(a.a()), c(a.b()), c(a.c()));
     }
 
-    template <typename K>
     typename K2::Ray_2
-    convert(K k, const typename K::Ray_2 &a) const
+    operator()(const typename K1::Ray_2 &a) const
     {
         typedef typename K2::Ray_2  Ray_2;
-        return Ray_2(convert(k, a.source()), convert(k, a.second_point()));
+        return Ray_2(operator()(a.source()), operator()(a.second_point()));
     }
 
-    template <typename K>
     typename K2::Circle_2
-    convert(K k, const typename K::Circle_2 &a) const
+    operator()(const typename K1::Circle_2 &a) const
     {
         typedef typename K2::Circle_2  Circle_2;
-        return Circle_2(convert(k, a.center()),
+        return Circle_2(operator()(a.center()),
                         c(a.squared_radius()),
                         K1().orientation_2_object()(a));
     }
 
-    template <typename K>
     typename K2::Triangle_2
-    convert(K k, const typename K::Triangle_2 &a) const
+    operator()(const typename K1::Triangle_2 &a) const
     {
         typedef typename K2::Triangle_2  Triangle_2;
-        return Triangle_2(convert(k, a.vertex(0)),
-                          convert(k, a.vertex(1)),
-                          convert(k, a.vertex(2)));
+        return Triangle_2(operator()(a.vertex(0)),
+                          operator()(a.vertex(1)),
+                          operator()(a.vertex(2)));
     }
 
-    template <typename K>
     typename K2::Iso_rectangle_2
-    convert(K k, const typename K::Iso_rectangle_2 &a) const
+    operator()(const typename K1::Iso_rectangle_2 &a) const
     {
         typedef typename K2::Iso_rectangle_2  Iso_rectangle_2;
-        return Iso_rectangle_2(convert(k, (a.min)()), convert(k, (a.max)()), 0);
+        return Iso_rectangle_2(operator()((a.min)()), operator()((a.max)()), 0);
     }
 
 
-    template <typename K>
     typename K2::Point_3
-    convert(K, const typename K::Point_3 &a) const
+    operator()(const typename K1::Point_3 &a) const
     {
         typedef typename K2::Point_3 Point_3;
         return Point_3(c(a.x()), c(a.y()), c(a.z()));
     }
 
-    template <typename K>
     typename K2::Weighted_point_3
-    convert(K k, const typename K::Weighted_point_3 &a) const
+    operator()(const typename K1::Weighted_point_3 &a) const
     {
         typedef typename K2::Weighted_point_3 Weighted_point_3;
-        return Weighted_point_3(convert(k, a.point()), c(a.weight()));
+        return Weighted_point_3((*this)(a.point()), c(a.weight()));
     }
 
-    template <typename K>
     typename K2::Vector_3
-    convert(K, const typename K::Vector_3 &a) const
+    operator()(const typename K1::Vector_3 &a) const
     {
         typedef typename K2::Vector_3  Vector_3;
         return Vector_3(c(a.x()), c(a.y()), c(a.z()));
     }
 
-    template <typename K>
     typename K2::Direction_3
-    convert(K, const typename K::Direction_3 &a) const
+    operator()(const typename K1::Direction_3 &a) const
     {
         typedef typename K2::Direction_3  Direction_3;
         return Direction_3(c(a.dx()), c(a.dy()), c(a.dz()));
     }
 
-    template <typename K>
     typename K2::Segment_3
-    convert(K k, const typename K::Segment_3 &a) const
+    operator()(const typename K1::Segment_3 &a) const
     {
         typedef typename K2::Segment_3  Segment_3;
-        return Segment_3(convert(k, a.source()), convert(k, a.target()));
+        return Segment_3(operator()(a.source()), operator()(a.target()));
     }
 
-    template <typename K>
     typename K2::Line_3
-    convert(K k, const typename K::Line_3 &a) const
+    operator()(const typename K1::Line_3 &a) const
     {
         typedef typename K2::Line_3  Line_3;
-        return Line_3(convert(k, a.point()), convert(k, a.to_vector()));
+        return Line_3(operator()(a.point()), operator()(a.to_vector()));
     }
 
-    template <typename K>
     typename K2::Ray_3
-    convert(K k, const typename K::Ray_3 &a) const
+    operator()(const typename K1::Ray_3 &a) const
     {
         typedef typename K2::Ray_3 Ray_3;
-        return Ray_3(convert(k, a.source()), convert(k, a.second_point()));
+        return Ray_3(operator()(a.source()), operator()(a.second_point()));
     }
 
-    template <typename K>
     typename K2::Sphere_3
-    convert(K k, const typename K::Sphere_3 &a) const
+    operator()(const typename K1::Sphere_3 &a) const
     {
         typedef typename K2::Sphere_3  Sphere_3;
-        return Sphere_3(convert(k, a.center()),
+        return Sphere_3(operator()(a.center()),
                         c(a.squared_radius()),
                         K1().orientation_3_object()(a));
     }
 
-    template <typename K>
     typename K2::Circle_3
-    convert(K k, const typename K::Circle_3 &a) const
+    operator()(const typename K1::Circle_3 &a) const
     {
         typedef typename K2::Circle_3  Circle_3;
-        return Circle_3(convert(k, a.diametral_sphere()),
-                        convert(k, a.supporting_plane()),1);
+        return Circle_3(operator()(a.diametral_sphere()),
+                        operator()(a.supporting_plane()),1);
     }
 
-    template <typename K>
     typename K2::Triangle_3
-    convert(K k, const typename K::Triangle_3 &a) const
+    operator()(const typename K1::Triangle_3 &a) const
     {
         typedef typename K2::Triangle_3  Triangle_3;
-        return Triangle_3(convert(k, a.vertex(0)),
-                          convert(k, a.vertex(1)),
-                          convert(k, a.vertex(2)));
+        return Triangle_3(operator()(a.vertex(0)),
+                          operator()(a.vertex(1)),
+                          operator()(a.vertex(2)));
     }
 
-    template <typename K>
     typename K2::Tetrahedron_3
-    convert(K k, const typename K::Tetrahedron_3 &a) const
+    operator()(const typename K1::Tetrahedron_3 &a) const
     {
         typedef typename K2::Tetrahedron_3  Tetrahedron_3;
-        return Tetrahedron_3(convert(k, a.vertex(0)),
-                             convert(k, a.vertex(1)),
-                             convert(k, a.vertex(2)),
-                             convert(k, a.vertex(3)));
+        return Tetrahedron_3(operator()(a.vertex(0)),
+                             operator()(a.vertex(1)),
+                             operator()(a.vertex(2)),
+                             operator()(a.vertex(3)));
     }
 
-    template <typename K>
     typename K2::Plane_3
-    convert(K, const typename K::Plane_3 &a) const
+    operator()(const typename K1::Plane_3 &a) const
     {
         typedef typename K2::Plane_3  Plane_3;
         return Plane_3(c(a.a()), c(a.b()), c(a.c()), c(a.d()));
     }
 
-    template <typename K>
     typename K2::Iso_cuboid_3
-    convert(K k, const typename K::Iso_cuboid_3 &a) const
+    operator()(const typename K1::Iso_cuboid_3 &a) const
     {
         typedef typename K2::Iso_cuboid_3 Iso_cuboid_3;
-        return Iso_cuboid_3(convert(k, (a.min)()), convert(k, (a.max)()), 0);
+        return Iso_cuboid_3(operator()((a.min)()), operator()((a.max)()), 0);
     }
 
-    template <typename K>
     std::pair<typename K2::Point_2, typename K2::Point_2>
-    convert(K, const std::pair<typename K::Point_2, typename K::Point_2>& pp) const
+    operator() (const std::pair<typename K1::Point_2, typename K1::Point_2>& pp) const
     {
-      return std::make_pair(convert(k, pp.first), convert(k, pp.second));
+      return std::make_pair(operator()(pp.first), operator()(pp.second));
     }
 
-    template <typename K>
     typename K2::Aff_transformation_2
-    convert(K, const typename K::Aff_transformation_2& a) const
+    operator()(const typename K1::Aff_transformation_2& a) const
     {
       typedef typename K2::Aff_transformation_2 Aff_transformation_2;
       return Aff_transformation_2(c(a.m(0,0)), c(a.m(0,1)), c(a.m(0,2)),
@@ -441,9 +402,8 @@ public:
                                   c(a.m(2,2)));
     }
 
-    template <typename K>
     typename K2::Aff_transformation_3
-    convert(K, const typename K::Aff_transformation_3& a) const
+    operator()(const typename K1::Aff_transformation_3& a) const
     {
       typedef typename K2::Aff_transformation_3 Aff_transformation_3;
       return Aff_transformation_3(c(a.m(0,0)), c(a.m(0,1)), c(a.m(0,2)), c(a.m(0,3)),
