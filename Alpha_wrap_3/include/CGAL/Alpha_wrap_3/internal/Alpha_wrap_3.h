@@ -99,6 +99,17 @@ public:
   };
 };
 
+struct Wrapping_default_visitor
+{
+  Wrapping_default_visitor() { }
+
+  template <typename Wrapper, typename Point>
+  void before_Steiner_point_insertion(const Wrapper&, const Point&) { }
+
+  template <typename Wrapper, typename VertexHandle>
+  void after_Steiner_point_insertion(const Wrapper&, VertexHandle) { }
+};
+
 template <typename Oracle>
 class Alpha_wrap_3
 {
@@ -172,6 +183,8 @@ public:
 
 public:
   const Geom_traits& geom_traits() const { return m_dt.geom_traits(); }
+  Dt& triangulation() { return m_dt; }
+  const Dt& triangulation() const { return m_dt; }
 
   double default_alpha() const
   {
@@ -216,6 +229,15 @@ public:
     OVPM ovpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_property_map(vertex_point, output_mesh));
 
+    typedef typename internal_np::Lookup_named_param_def <
+      internal_np::visitor_t,
+      NamedParameters,
+      Wrapping_default_visitor // default
+    >::reference                                                                 Visitor;
+
+    Wrapping_default_visitor default_visitor;
+    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+
     std::vector<Point_3> no_seeds;
     using Seeds = typename internal_np::Lookup_named_param_def<
                     internal_np::seed_points_t, NamedParameters, std::vector<Point_3> >::reference;
@@ -237,7 +259,7 @@ public:
                                  CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
 #endif
 
-    alpha_flood_fill();
+    alpha_flood_fill(visitor);
 
 #ifdef CGAL_AW3_TIMER
     t.stop();
@@ -607,11 +629,12 @@ private:
     return true;
   }
 
+public:
   // Manifoldness is tolerated while debugging and extracting at intermediate states
   // Not the preferred way because it uses 3*nv storage
   template <typename OutputMesh, typename OVPM>
   void extract_possibly_non_manifold_surface(OutputMesh& output_mesh,
-                                             OVPM ovpm)
+                                             OVPM ovpm) const
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -696,7 +719,7 @@ private:
 
   template <typename OutputMesh, typename OVPM>
   void extract_manifold_surface(OutputMesh& output_mesh,
-                                OVPM ovpm)
+                                OVPM ovpm) const
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -748,7 +771,12 @@ private:
     if(faces.empty())
       return;
 
-    CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(faces));
+    if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
+    {
+      CGAL_warning_msg(false, "Could NOT extract mesh...");
+      return;
+    }
+
     PMP::polygon_soup_to_polygon_mesh(points, faces, output_mesh,
                                       CGAL::parameters::default_values(),
                                       CGAL::parameters::vertex_point_map(ovpm));
@@ -763,7 +791,7 @@ private:
   template <typename OutputMesh, typename OVPM>
   void extract_surface(OutputMesh& output_mesh,
                        OVPM ovpm,
-                       const bool tolerate_non_manifoldness = false)
+                       const bool tolerate_non_manifoldness = false) const
   {
     if(tolerate_non_manifoldness)
       extract_possibly_non_manifold_surface(output_mesh, ovpm);
@@ -990,7 +1018,8 @@ private:
       return initialize_with_cavities(seeds);
   }
 
-  void alpha_flood_fill()
+  template <typename Visitor>
+  void alpha_flood_fill(Visitor& visitor)
   {
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Flood fill..." << std::endl;
@@ -1082,9 +1111,13 @@ private:
             m_queue.erase(Gate(mf));
         }
 
+        visitor.before_Steiner_point_insertion(*this, steiner_point);
+
         // Actual insertion of the Steiner point
         Vertex_handle vh = m_dt.insert(steiner_point, lt, conflict_cell, li, lj);
         vh->info() = DEFAULT;
+
+        visitor.after_Steiner_point_insertion(*this, vh);
 
         std::vector<Cell_handle> new_cells;
         new_cells.reserve(32);

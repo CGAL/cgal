@@ -29,6 +29,94 @@
 
 #include "ui_alpha_wrap_3_dialog.h"
 
+template <typename MainWindow, typename Scene>
+struct AW3_visu_visitor
+{
+  AW3_visu_visitor(MainWindow* mw,
+                   Scene* scene,
+                   Scene_surface_mesh_item* wrap_item)
+    : m_mw(mw),
+      m_scene(scene),
+      m_wrap_item(wrap_item)
+  { }
+
+  void set_fcolors(MainWindow mw,
+                   SMesh* smesh,
+                   std::vector<CGAL::IO::Color> colors)
+  {
+    typedef SMesh SMesh;
+    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+
+    SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
+      smesh->property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
+
+    bool created;
+    std::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::IO::Color>("f:color",
+                                                                                            CGAL::IO::Color(0,0,0));
+    assert(colors.size() == smesh->number_of_faces());
+
+    int color_id = 0;
+    for(face_descriptor fd : faces(*smesh))
+        fcolors[fd] = colors[color_id++];
+  }
+
+public:
+  template <typename Wrapper, typename Point>
+  void before_Steiner_point_insertion(const Wrapper& wrapper,
+                                      const Point& p)
+  {
+    if(wrapper.triangulation().number_of_vertices() % 10 != 0)
+      return;
+
+    if(!m_wrap_item)
+      return;
+
+    std::cout << "on_Steiner_point_insert (" << wrapper.triangulation().number_of_vertices() << ")" << std::endl;
+
+    SMesh* wrap_ptr = m_wrap_item->polyhedron();
+    auto vpm = get(CGAL::vertex_point, *wrap_ptr);
+    wrapper.extract_surface(*wrap_ptr, vpm, true /*tolerate non manifoldness*/);
+
+    m_wrap_item->invalidateOpenGLBuffers();
+    m_wrap_item->redraw();
+    m_wrap_item->itemChanged();
+
+//    SMesh wrap;
+//    auto vpm = get(CGAL::vertex_point, wrap);
+//    wrapper.extract_surface(wrap, vpm, true /*tolerate non manifoldness*/);
+
+//    Scene_surface_mesh_item* new_wrap_item = new Scene_surface_mesh_item(wrap);
+//    new_wrap_item->setName(QString("Wrap"));
+//    new_wrap_item->setColor(Qt::gray);
+
+//    new_wrap_item->setName(m_wrap_item->name());
+//    new_wrap_item->setColor(m_wrap_item->color());
+//    new_wrap_item->setRenderingMode(m_wrap_item->renderingMode());
+//    new_wrap_item->setVisible(m_wrap_item->visible());
+//    Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_wrap_item);
+//    m_scene->replaceItem(m_scene->item_id(m_wrap_item), new_wrap_item, true);
+//    if(property_item)
+//      property_item->copyProperties(m_wrap_item);
+//    new_wrap_item->invalidateOpenGLBuffers();
+//    m_wrap_item->deleteLater();
+
+    QApplication::processEvents();
+  }
+
+  template <typename Wrapper, typename VertexHandle>
+  void after_Steiner_point_insertion(const Wrapper& wrapper,
+                                     const VertexHandle vh)
+  {
+
+  }
+
+
+private:
+  MainWindow* m_mw;
+  Scene* m_scene;
+  Scene_surface_mesh_item* m_wrap_item;
+};
+
 class Polyhedron_demo_alpha_wrap_3_plugin
   : public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_helper
@@ -136,7 +224,7 @@ public Q_SLOTS:
     if(alpha <= 0. || offset <= 0.)
       return;
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+//    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     TS_Oracle ts_oracle;
     SS_Oracle ss_oracle(ts_oracle);
@@ -287,6 +375,11 @@ public Q_SLOTS:
       }
     }
 
+    std::cout << triangles.size() << " triangles" << std::endl;
+    std::cout << segments.size() << " edges" << std::endl;
+    std::cout << points.size() << " points" << std::endl;
+    std::cout << "wrap s/tr: " << wrap_segments << " " << wrap_triangles << std::endl;
+
     if(wrap_triangles)
       oracle.add_triangle_soup(triangles);
     if(wrap_segments)
@@ -296,7 +389,7 @@ public Q_SLOTS:
     if(!oracle.do_call())
     {
       print_message("Warning: empty input - nothing to wrap");
-      QApplication::restoreOverrideCursor();
+//      QApplication::restoreOverrideCursor();
       return;
     }
 
@@ -315,15 +408,20 @@ public Q_SLOTS:
     CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
 
     SMesh wrap;
-    aw3(alpha, offset, wrap,
-        CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness));
 
     Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(wrap);
     wrap_item->setName(tr("Wrap alpha %2 offset %3").arg(alpha).arg(offset));
-    wrap_item->setColor(Qt::cyan);
+    wrap_item->setColor(Qt::gray);
     scene->addItem(wrap_item);
 
-    QApplication::restoreOverrideCursor();
+    AW3_visu_visitor<std::remove_reference<decltype(*(this->mw))>::type,
+                     std::remove_reference<decltype(*(this->scene))>::type> visitor(mw, scene, wrap_item);
+
+    aw3(alpha, offset, wrap,
+        CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
+                         .visitor(visitor));
+
+//    QApplication::restoreOverrideCursor();
   }
 
 private:
