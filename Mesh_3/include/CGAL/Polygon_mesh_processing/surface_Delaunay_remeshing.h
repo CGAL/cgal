@@ -182,8 +182,9 @@ TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
   using parameters::choose_parameter;
   using parameters::get_parameter_reference;
 
+  using NP   = NamedParameters;
   using TM   = TriangleMesh;
-  using GT   = typename GetGeomTraits<TM, NamedParameters>::type;
+  using GT   = typename GetGeomTraits<TM, NP>::type;
   using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<GT, TM>;
   using Tr   = typename CGAL::Mesh_triangulation_3<Mesh_domain>::type;
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr,
@@ -208,7 +209,7 @@ TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
   Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
 
   // Vertex point map
-  using VPMap = typename GetVertexPointMap<TM, NamedParameters>::type;
+  using VPMap = typename GetVertexPointMap<TM, NP>::type;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_const_property_map(vertex_point, tmesh));
 
@@ -217,12 +218,12 @@ TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
   if (protect)
   {
     // Features provided by user as a pmap on input edges
-    if (!parameters::is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>())
+    if (!parameters::is_default_parameter<NP, internal_np::edge_is_constrained_t>::value)
     {
       using edge_descriptor = typename boost::graph_traits<TM>::edge_descriptor;
       using ECMap = typename internal_np::Lookup_named_param_def <
         internal_np::edge_is_constrained_t,
-        NamedParameters,
+        NP,
         Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
       >::type;
       ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
@@ -244,12 +245,12 @@ TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
       CGAL::polylines_to_protect(features, sharp_edges.begin(), sharp_edges.end());
       domain.add_features(features.begin(), features.end());
     }
-    else if (!parameters::is_default_parameter<NamedParameters, internal_np::polyline_constraints_t>())
+    else if (!parameters::is_default_parameter<NP, internal_np::polyline_constraints_t>::value)
     {
       // Features - provided by user as a set of polylines
       using Polylines = typename internal_np::Lookup_named_param_def <
         internal_np::polyline_constraints_t,
-        NamedParameters,
+        NP,
         std::vector<std::vector<Point_3> > // default
       >::reference;
       std::vector<std::vector<Point_3> > default_vector{};
