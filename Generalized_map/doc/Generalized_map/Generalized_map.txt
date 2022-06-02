@@ -254,7 +254,7 @@ typedef CGAL::Generalized_map<3, Items_with_indices> Gmap3_with_index;
 
 \endcode
 
-The two main interests of the index version comparing to the handle ones are: (1)~it has a lower memory footprint than a 64-bit pointer based version; (2)~indices are contiguous, they can be used as index into vectors which store properties. The main interest of the handle version is the fact that handles can be dereferenced, which can simplify some code.
+The two main interests of the index version comparing to the handle ones are: (1) it has a lower memory footprint than a 64-bit pointer based version; (2) indices are contiguous, they can be used as index into vectors which store properties. The main interest of the handle version is the fact that handles can be dereferenced, which can simplify some code.
 
 \cgalModifEnd
 
