@@ -57,7 +57,7 @@ public:
 
   BigIntRep(const char* s, int base=0)
     : mp(s)
-    {}
+    { assert(base == 0); }
 
   BigIntRep(const std::string& s, int base=0)
     : mp(s)
@@ -412,7 +412,6 @@ inline void negate(BigInt& a) {
 
 /// cmpabs
 inline int cmpabs(const BigInt& a, const BigInt& b) {
-  assert(false);
    return cmp(abs(a), abs(b));
   return 0;
 }
@@ -502,6 +501,7 @@ inline void divexact(BigInt& z, const BigInt& x, const BigInt& y) {
   z.makeCopy();
   BigInt r;
   divide_qr(x.get_mp(), y.get_mp(), z.get_mp(), r.get_mp() );  // was void mpz_divexact (mpz_t q, const mpz_t n, const mpz_t d)   Is this faster?
+  assert(r.get_mp().is_zero());
 }
 
 // Chee (1/12/2004)   The definition of div_exact(x,y) next
