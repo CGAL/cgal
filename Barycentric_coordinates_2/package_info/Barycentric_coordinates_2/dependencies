@@ -1,6 +1,8 @@
 Algebraic_foundations
-Barycentric_coordinates_2
+Arithmetic_kernel
 BGL
+Barycentric_coordinates_2
+Cartesian_kernel
 Circulator
 Distance_2
 Distance_3
@@ -19,8 +21,8 @@ Polygon
 Profiling_tools
 Property_map
 Random_numbers
-Spatial_sorting
 STL_Extension
+Spatial_sorting
 Stream_support
 TDS_2
 Triangulation_2
