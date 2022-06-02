@@ -950,7 +950,7 @@ namespace internal {
       do
       {
        CGAL_assertion(m_index>0);
-	--m_index; 
+	--m_index;
       }
       while(!m_ptr_to_cc->is_used(m_index));
     }
