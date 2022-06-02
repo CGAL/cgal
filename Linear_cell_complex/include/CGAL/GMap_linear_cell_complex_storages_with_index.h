@@ -70,7 +70,6 @@ namespace CGAL {
 
     typedef typename Dart_container::Index Dart_index;
 
-    // Definition of old types, for backward compatibility.
     typedef Dart_index Dart_descriptor;
     typedef Dart_index Dart_const_descriptor;
     typedef typename Dart_container::size_type size_type;
