@@ -133,7 +133,10 @@ namespace CGAL {
 
     // Init
     void init_storage()
-    { null_dart_descriptor=nullptr; }
+    {
+      null_dart_descriptor=nullptr;
+      null_dart_handle=null_dart_descriptor;
+    }
 
     void clear_storage()
     {}
@@ -458,9 +461,11 @@ namespace CGAL {
       adart->mf[i] = adart;
     }
 
-  protected:
+  public:
     Dart_descriptor null_dart_descriptor; // To be compatible with combinatorial map
+    Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
 
+  protected:
     /// Dart container.
     Dart_container mdarts;
 

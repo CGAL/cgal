@@ -439,10 +439,11 @@ namespace CGAL {
       adart->mf[i] = adart;
     }
 
-  protected:
+  public:
     Dart_descriptor null_dart_descriptor; // To be compatible with combinatorial map
     Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
 
+  protected:
     /// Dart container.
     Dart_container mdarts;
 

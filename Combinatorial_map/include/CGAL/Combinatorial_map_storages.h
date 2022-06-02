@@ -444,11 +444,12 @@ namespace CGAL {
       adart->mf[i] = null_dart_descriptor;
     }
 
-  protected:
+  public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_descriptor.
     Dart_descriptor null_dart_descriptor; // Todo Dart_const_descriptor ??
     Dart_descriptor null_dart_handle; // Deprecated: kept for backward compatibility
 
+  protected:
     /// Dart container.
     Dart_container mdarts;
 
