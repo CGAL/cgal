@@ -43,17 +43,17 @@ typename Sorting,
 typename Lambda_region,
 typename Lambda_assertion>
 bool test(
-  int argc, char** argv, const std::string name,
+  int argc, char** argv, const std::string &name, const std::string &inputfile,
   const Lambda_region& lambda_region,
   const Lambda_assertion& lambda_assertion) {
 
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Default parameter values.
-  const std::size_t k = 12;
+  const std::size_t k = 16;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/building.xyz"));
+  std::ifstream in(argc > 1 ? argv[1] : inputfile);
   CGAL::IO::set_ascii_mode(in);
   assert(in);
 
@@ -61,7 +61,6 @@ bool test(
   Input_range input_range(with_normal_map);
   in >> input_range;
   in.close();
-  assert(input_range.size() == 8075);
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
@@ -84,33 +83,16 @@ bool test(
   const bool result = lambda_assertion(regions);
   assert(result);
 
-  // Default parameter values.
-  const FT          max_distance    = FT(2);
-  const FT          max_angle       = FT(20);
-  const std::size_t min_region_size = 50;
+  std::cout << "rg_" + name + "_sortpoints3, epick_test_success: " << result << std::endl;
 
-  // Test free functions and stability.
-  for (std::size_t k = 0; k < 3; ++k) {
-    regions.clear();
-    SD::internal::region_growing_planes(
-      input_range, std::back_inserter(regions),
-      CGAL::parameters::
-      maximum_distance(max_distance).
-      maximum_angle(max_angle).
-      minimum_region_size(min_region_size));
-    assert(regions.size() == 7);
-  }
-
-  const bool success = true;
-  std::cout << "rg_" + name + "_sortpoints3, epick_test_success: " << success << std::endl;
-  return success;
+  return result;
 }
 
 int main(int argc, char *argv[]) {
   bool success = true;
 
   // Test planes.
-  success = test<Plane_region, Plane_sorting>(argc, argv, "planes",
+  success = test<Plane_region, Plane_sorting>(argc, argv, "planes", CGAL::data_file_path("points_3/building.xyz"),
     [](const auto& input_range) -> Plane_region {
 
        const FT          max_distance    = FT(2);
@@ -123,7 +105,7 @@ int main(int argc, char *argv[]) {
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions planes: " << region.size() << std::endl;
-      return (region.size() >= 6 && region.size() <= 8);
+      return (region.size() == 7);
     }
   );
 
@@ -132,7 +114,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Test spheres.
-  success = test<Sphere_region, Sphere_sorting>(argc, argv, "spheres",
+  success = test<Sphere_region, Sphere_sorting>(argc, argv, "spheres", CGAL::data_file_path("points_3/spheres.ply"),
     [](const auto& input_range) -> Sphere_region {
 
        const FT          max_distance    = FT(1) / FT(100);
@@ -145,7 +127,7 @@ int main(int argc, char *argv[]) {
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions spheres: " << region.size() << std::endl;
-      return (region.size() >= 6 && region.size() <= 7);
+      return (region.size() == 10);
     }
   );
 
@@ -154,7 +136,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Test cylinders.
-  success = test<Cylinder_region, Cylinder_sorting>(argc, argv, "cylinders",
+  success = test<Cylinder_region, Cylinder_sorting>(argc, argv, "cylinders", CGAL::data_file_path("points_3/cylinder_no_noise.ply"),
     [](const auto& input_range) -> Cylinder_region {
 
        const FT          max_distance    = FT(1) / FT(20);
@@ -167,7 +149,7 @@ int main(int argc, char *argv[]) {
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions cylinders: " << region.size() << std::endl;
-      return (region.size() >= 13 && region.size() <= 16);
+      return (region.size() == 1);
     }
   );
 
