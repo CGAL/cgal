@@ -29,53 +29,117 @@
 
 #include "ui_alpha_wrap_3_dialog.h"
 
-template <typename MainWindow, typename Scene>
+template <typename Scene, typename WrapItem>
 struct AW3_visu_visitor
 {
-  AW3_visu_visitor(MainWindow* mw,
-                   Scene* scene,
-                   Scene_surface_mesh_item* wrap_item)
-    : m_mw(mw),
-      m_scene(scene),
+  AW3_visu_visitor(Scene* scene,
+                   WrapItem* wrap_item)
+    : m_scene(scene),
       m_wrap_item(wrap_item)
   { }
 
-  void set_fcolors(MainWindow mw,
-                   SMesh* smesh,
-                   std::vector<CGAL::IO::Color> colors)
-  {
-    typedef SMesh SMesh;
-    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-
-    SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
-      smesh->property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
-
-    bool created;
-    std::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::IO::Color>("f:color",
-                                                                                            CGAL::IO::Color(0,0,0));
-    assert(colors.size() == smesh->number_of_faces());
-
-    int color_id = 0;
-    for(face_descriptor fd : faces(*smesh))
-        fcolors[fd] = colors[color_id++];
-  }
-
 public:
-  template <typename Wrapper, typename Point>
-  void before_Steiner_point_insertion(const Wrapper& wrapper,
+  template <typename AlphaWrapper, typename Point>
+  void before_Steiner_point_insertion(const AlphaWrapper& wrapper,
                                       const Point& p)
   {
-    if(wrapper.triangulation().number_of_vertices() % 10 != 0)
-      return;
+    // @todo something nicer & smarter
+    if(wrapper.triangulation().number_of_vertices() < 500)
+    {
+      // Do all iterations
+    }
+    else if(wrapper.triangulation().number_of_vertices() < 5000)
+    {
+      if(wrapper.triangulation().number_of_vertices() % 10 != 0)
+        return;
+    }
+    else if(wrapper.triangulation().number_of_vertices() < 10000)
+    {
+      if(wrapper.triangulation().number_of_vertices() % 100 != 0)
+        return;
+    }
+    else if(wrapper.triangulation().number_of_vertices() < 1000000)
+    {
+      if(wrapper.triangulation().number_of_vertices() % 1000 != 0)
+        return;
+    }
 
     if(!m_wrap_item)
       return;
 
+//    for(auto cit=wrapper.triangulation().finite_cells_begin(), cend=wrapper.triangulation().finite_cells_end(); cit!=cend; ++cit)
+//      std::cout << cit->time_stamp() << std::endl;
+
     std::cout << "on_Steiner_point_insert (" << wrapper.triangulation().number_of_vertices() << ")" << std::endl;
 
-    SMesh* wrap_ptr = m_wrap_item->polyhedron();
-    auto vpm = get(CGAL::vertex_point, *wrap_ptr);
-    wrapper.extract_surface(*wrap_ptr, vpm, true /*tolerate non manifoldness*/);
+    // EXTRACT ---
+
+    using Dt = typename std::decay<decltype(wrapper.triangulation())>::type;
+    using Vertex_handle = typename Dt::Vertex_handle;
+    using Facet = typename Dt::Facet;
+    using Cell_handle = typename Dt::Cell_handle;
+
+    std::vector<Kernel::Point_3> points;
+    std::vector<std::vector<std::size_t> > faces;
+
+    std::unordered_map<Vertex_handle, std::size_t> vertex_to_id;
+    std::size_t nv = 0;
+
+    std::size_t min_time_stamp = -1, max_time_stamp = 0;
+    for(auto cit=wrapper.triangulation().finite_cells_begin(), cend=wrapper.triangulation().finite_cells_end(); cit!=cend; ++cit)
+    {
+      if(cit->time_stamp() > max_time_stamp)
+        max_time_stamp = cit->time_stamp();
+      if(cit->time_stamp() < min_time_stamp)
+        min_time_stamp = cit->time_stamp();
+    }
+
+    std::vector<CGAL::IO::Color> vcolors;
+    std::vector<CGAL::IO::Color> fcolors;
+
+    std::size_t vi = 0, fi = 0;
+    for(auto fit=wrapper.triangulation().finite_facets_begin(), fend=wrapper.triangulation().finite_facets_end(); fit!=fend; ++fit)
+    {
+      Facet f = *fit;
+      if(!f.first->info().is_outside)
+        f = wrapper.triangulation().mirror_facet(f);
+
+      const Cell_handle c = f.first;
+      const int s = f.second;
+      const Cell_handle nh = c->neighbor(s);
+      if(c->info().is_outside == nh->info().is_outside)
+        continue;
+
+      std::array<std::size_t, 3> ids;
+      for(int pos=0; pos<3; ++pos)
+      {
+        Vertex_handle vh = c->vertex(Dt::vertex_triple_index(s, pos));
+        auto insertion_res = vertex_to_id.emplace(vh, nv);
+        if(insertion_res.second) // successful insertion, never-seen-before vertex
+        {
+          points.push_back(wrapper.triangulation().point(vh));
+          vcolors.push_back(CGAL::IO::Color(0, 0, 0));
+          ++nv;
+        }
+
+        ids[pos] = insertion_res.first->second;
+      }
+
+      faces.emplace_back(std::vector<std::size_t>{ids[0], ids[1], ids[2]});
+      double color_val = double(c->time_stamp() - min_time_stamp) / double(max_time_stamp - min_time_stamp);
+      color_val = int(256. * color_val);
+      // fcolors.push_back(CGAL::IO::Color(color_val, 10, 150)); // young is red, old is blue
+      // fcolors.push_back(CGAL::IO::Color(256 - color_val, 256 - color_val, 256 - color_val)); // young is light, old is dark
+      fcolors.push_back(CGAL::IO::Color(100, 100, 100)); // darkish gray
+    }
+
+//    std::cout << "DT NV " << wrapper.triangulation().number_of_vertices() << " vs " << nv << " vs " << points.size() << std::endl;
+//    std::cout << "DT NF " << wrapper.triangulation().number_of_finite_facets() << " vs " << fi << " vs " << faces.size() << std::endl;
+
+    // --- EXTRACT
+
+    m_wrap_item->load(points, faces, fcolors, vcolors);
+    m_wrap_item->setAlpha(255 / 2);
 
     m_wrap_item->invalidateOpenGLBuffers();
     m_wrap_item->redraw();
@@ -103,18 +167,25 @@ public:
     QApplication::processEvents();
   }
 
-  template <typename Wrapper, typename VertexHandle>
-  void after_Steiner_point_insertion(const Wrapper& wrapper,
+  template <typename AlphaWrapper, typename VertexHandle>
+  void after_Steiner_point_insertion(const AlphaWrapper& wrapper,
                                      const VertexHandle vh)
   {
 
   }
 
+  void after_alpha_wrapping()
+  {
+    m_wrap_item->setAlpha(255);
+    m_wrap_item->invalidateOpenGLBuffers();
+    m_wrap_item->redraw();
+    m_wrap_item->itemChanged();
+    QApplication::processEvents();
+  }
 
 private:
-  MainWindow* m_mw;
   Scene* m_scene;
-  Scene_surface_mesh_item* m_wrap_item;
+  WrapItem* m_wrap_item;
 };
 
 class Polyhedron_demo_alpha_wrap_3_plugin
@@ -258,6 +329,8 @@ public Q_SLOTS:
                                  get(vpm, source(h, *pMesh)));
         }
 
+        sm_item->setRenderingMode(Flat);
+
         continue;
       }
 
@@ -279,6 +352,8 @@ public Q_SLOTS:
                                  soup_item->points()[p[1]],
                                  soup_item->points()[p[2]]);
         }
+
+        soup_item->setRenderingMode(Flat);
 
         continue;
       }
@@ -407,19 +482,22 @@ public Q_SLOTS:
 
     CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
 
+    Scene_polygon_soup_item* iterative_wrap_item = new Scene_polygon_soup_item();
+    iterative_wrap_item->setName(tr("Iterative wrap").arg(alpha).arg(offset));
+    scene->addItem(iterative_wrap_item);
+
+    AW3_visu_visitor<std::remove_reference<decltype(*(this->scene))>::type,
+                     Scene_polygon_soup_item> visitor(scene, iterative_wrap_item);
+
     SMesh wrap;
-
-    Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(wrap);
-    wrap_item->setName(tr("Wrap alpha %2 offset %3").arg(alpha).arg(offset));
-    wrap_item->setColor(Qt::gray);
-    scene->addItem(wrap_item);
-
-    AW3_visu_visitor<std::remove_reference<decltype(*(this->mw))>::type,
-                     std::remove_reference<decltype(*(this->scene))>::type> visitor(mw, scene, wrap_item);
-
     aw3(alpha, offset, wrap,
         CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
                          .visitor(visitor));
+
+//    Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(wrap);
+//    wrap_item->setName(tr("Wrap alpha %2 offset %3").arg(alpha).arg(offset));
+//    wrap_item->setColor(Qt::gray);
+//    scene->addItem(wrap_item);
 
 //    QApplication::restoreOverrideCursor();
   }

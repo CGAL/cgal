@@ -108,6 +108,8 @@ struct Wrapping_default_visitor
 
   template <typename Wrapper, typename VertexHandle>
   void after_Steiner_point_insertion(const Wrapper&, VertexHandle) { }
+
+  void after_alpha_wrapping() { }
 };
 
 template <typename Oracle>
@@ -337,6 +339,8 @@ public:
     dump_triangulation_faces("final_dt3.off", false /*only_boundary_faces*/);
  #endif
 #endif
+
+    visitor.after_alpha_wrapping();
   }
 
   // Convenience overloads
