@@ -46,49 +46,13 @@ public:
     : mp()
     {}
 
-
   // Note : should the copy-ctor be allowed at all ? [Sylvain Pion]
-    BigIntRep(const BigIntRep& z) : RCRepImpl<BigIntRep >(), mp(z.mp)
+  BigIntRep(const BigIntRep& z) : RCRepImpl<BigIntRep >(), mp(z.mp)
     {}
 
-  BigIntRep(signed char c)
+  template <class T>
+  BigIntRep(T c)
     : mp(c)
-    {}
-
-  BigIntRep(unsigned char c)
-    : mp(c)
-    {}
-
-  BigIntRep(signed int i)
-    : mp(i)
-    {}
-
-  BigIntRep(unsigned int i)
-    : mp(i)
-    {}
-
-
-  BigIntRep(signed short int s)
-    : mp(s)
-    {}
-  BigIntRep(unsigned short int s)
-    : mp(s)
-    {}
-
-  BigIntRep(signed long int l)
-    : mp(l)
-    {}
-
-  BigIntRep(unsigned long int l)
-    : mp(l)
-    {}
-
-  BigIntRep(float f)
-    : mp(f)
-    {}
-
-  BigIntRep(double d)
-    : mp(d)
     {}
 
   BigIntRep(const char* s, int base=0)
