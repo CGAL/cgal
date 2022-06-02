@@ -369,7 +369,7 @@ struct Cleanup_useless_attributes
 
     for (typename CMap::template Attribute_range<i>::type::iterator
          it=amap.template attributes<i>().begin();
-         it!=amap.template attributes<i>().end(); ++it )
+         it!=amap.template attributes<i>().end(); ++it)
     {
       if ( amap.template get_attribute<i>(it).get_nb_refs()==0 )
       {

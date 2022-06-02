@@ -969,6 +969,8 @@ namespace internal {
 
     pointer   operator->() const { return &((*m_ptr_to_cc)[m_index]); }
 
+    bool is_end() const { return m_index>=m_ptr_to_cc->upper_bound(); }
+
     // Can itself be used for bit-squatting.
     size_type for_compact_container() const
     { return m_index; }
@@ -989,8 +991,9 @@ namespace internal {
   bool operator==(const CC_iterator_with_index<DSC, Const1> &rhs,
                   const CC_iterator_with_index<DSC, Const2> &lhs)
   {
-    return rhs.m_ptr_to_cc == lhs.m_ptr_to_cc &&
-      rhs.m_index == lhs.m_index;
+    return rhs.m_ptr_to_cc==lhs.m_ptr_to_cc &&
+      (rhs.m_index==lhs.m_index ||
+       (rhs.is_end() && lhs.is_end()));
   }
 
   template < class DSC, bool Const1, bool Const2 >
@@ -998,8 +1001,9 @@ namespace internal {
   bool operator!=(const CC_iterator_with_index<DSC, Const1> &rhs,
                   const CC_iterator_with_index<DSC, Const2> &lhs)
   {
-    return rhs.m_ptr_to_cc != lhs.m_ptr_to_cc ||
-      rhs.m_index != lhs.m_index;
+    return rhs.m_ptr_to_cc!=lhs.m_ptr_to_cc ||
+                            (rhs.m_index!=lhs.m_index &&
+                                          (!rhs.is_end() || !lhs.is_end()));
   }
 
 } // namespace internal
@@ -1008,6 +1012,9 @@ namespace internal {
 
 namespace std
 {
+
+#ifndef CGAL_CFG_NO_STD_HASH
+
 template <class Index_type, Index_type null_descriptor>
 struct hash<CGAL::Index_for_cc_with_index<Index_type, null_descriptor>>:
     public CGAL::cpp98::unary_function<CGAL::Index_for_cc_with_index<Index_type, null_descriptor>,
@@ -1016,6 +1023,7 @@ struct hash<CGAL::Index_for_cc_with_index<Index_type, null_descriptor>>:
   std::size_t operator()(const CGAL::Index_for_cc_with_index<Index_type, null_descriptor>& idx) const
   { return CGAL::internal::Index_hash_function()(idx); }
 };
+#endif // CGAL_CFG_NO_STD_HASH
 
 } // namespace std
 
