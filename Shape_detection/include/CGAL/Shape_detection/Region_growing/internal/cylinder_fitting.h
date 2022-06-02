@@ -86,7 +86,7 @@ namespace CGAL
       prod.setZero();
 
       for (std::size_t i = 0; i < indices.size(); i++) {
-        Kernel::Vector_3 p = get(point_map, indices[i])
+        typename Kernel::Vector_3 p = get(point_map, indices[i])
                              - average - CGAL::ORIGIN;
         prod(i, 0) = p.x() * p.x();
         prod(i, 1) = p.x() * p.y();
@@ -121,7 +121,7 @@ namespace CGAL
         f0(1, 2) += prod(i, 4);
         f0(2, 2) += prod(i, 5);
 
-        Kernel::Vector_3 tmp = get(point_map, indices[i])
+        typename Kernel::Vector_3 tmp = get(point_map, indices[i])
                                - average - CGAL::ORIGIN;
         Eigen::Vector3d v(tmp[0], tmp[1], tmp[2]);
 
@@ -251,7 +251,7 @@ namespace CGAL
 
     mean_axis = mean_axis / sqrt(mean_axis * mean_axis);
 
-    Kernel::Vector_3 average;
+    typename Kernel::Vector_3 average;
 
     Eigen::VectorXd mu(6);
     mu.setZero();
