@@ -70,9 +70,7 @@ int main(int argc, char** argv) {
     CGAL::parameters::
     maximum_distance(max_distance).
     maximum_angle(max_angle).
-    minimum_region_size(min_region_size).
-    point_map(point_set_2.point_map()).
-    normal_map(point_set_2.normal_map()));
+    minimum_region_size(min_region_size));
 
   // Sort indices.
   Sorting sorting(
@@ -94,13 +92,13 @@ int main(int argc, char** argv) {
   std::size_t num_circles = 0;
   region_growing.detect(
     boost::make_function_output_iterator(
-      [&](const std::vector<std::size_t>& region) {
+      [&](const std::pair< Region_type::Primitive, std::vector< std::size_t> >& region) {
 
         // Assign a random color to each region.
         const unsigned char r = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char g = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char b = static_cast<unsigned char>(random.get_int(64, 192));
-        for (const std::size_t idx : region) {
+        for (const std::size_t idx : region.second) {
           red[idx]   = r;
           green[idx] = g;
           blue[idx]  = b;

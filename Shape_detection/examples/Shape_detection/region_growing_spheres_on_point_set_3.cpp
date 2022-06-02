@@ -47,16 +47,14 @@ int main(int argc, char** argv) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    point_set, CGAL::parameters::k_neighbors(k).point_map(point_set.point_map()));
+    point_set, CGAL::parameters::k_neighbors(k));
 
   Region_type region_type(
     point_set,
     CGAL::parameters::
     maximum_distance(max_distance).
     maximum_angle(max_angle).
-    minimum_region_size(min_region_size).
-    point_map(point_set.point_map()).
-    normal_map(point_set.normal_map()));
+    minimum_region_size(min_region_size));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
@@ -73,13 +71,13 @@ int main(int argc, char** argv) {
   std::size_t num_spheres = 0;
   region_growing.detect(
     boost::make_function_output_iterator(
-      [&](const std::vector<std::size_t>& region) {
+      [&](const std::pair< Region_type::Primitive, std::vector<std::size_t> >& region) {
 
         // Assign a random color to each region.
         const unsigned char r = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char g = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char b = static_cast<unsigned char>(random.get_int(64, 192));
-        for (const std::size_t idx : region) {
+        for (const std::size_t idx : region.second) {
           red[idx]   = r;
           green[idx] = g;
           blue[idx]  = b;

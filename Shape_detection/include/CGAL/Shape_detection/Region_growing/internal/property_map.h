@@ -153,7 +153,7 @@ namespace internal {
 
       long region_index = 0;
       for (const auto& region : regions) {
-        for (const auto index : region) {
+        for (const auto index : region.second) {
           CGAL_precondition(index < m_indices.size());
           m_indices[index] = region_index;
         }

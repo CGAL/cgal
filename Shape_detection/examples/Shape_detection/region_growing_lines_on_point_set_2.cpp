@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
     point_set_2, neighbor_query, region_type);
 
   // Run the algorithm.
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Kernel::Line_2, std::vector<std::size_t> > > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found lines: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 72);

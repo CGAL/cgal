@@ -52,6 +52,12 @@ namespace Segment_set {
   typename SegmentMap>
   class Least_squares_line_fit_region {
 
+  private:
+    using Segment_set_traits = typename std::conditional<
+      std::is_same<typename GeomTraits::Segment_2, typename SegmentMap::value_type>::value,
+      internal::Region_growing_traits_2<GeomTraits>,
+      internal::Region_growing_traits_3<GeomTraits> >::type;
+
   public:
     /// \name Types
     /// @{
@@ -66,14 +72,12 @@ namespace Segment_set {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Primitive
+    using Primitive = typename Segment_set_traits::Line;
+
     /// @}
 
   private:
-    using Segment_set_traits = typename std::conditional<
-      std::is_same<typename Traits::Segment_2, Segment_type>::value,
-      internal::Region_growing_traits_2<Traits>,
-      internal::Region_growing_traits_3<Traits> >::type;
-
     using Point = typename Segment_set_traits::Point;
     using Segment = typename Segment_set_traits::Segment;
     using Vector = typename Segment_set_traits::Vector;
@@ -180,6 +184,20 @@ namespace Segment_set {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief implements `RegionType::primitive()`.
+
+      This function provides the last primitive that has been fitted with the region.
+
+      \return Primitive parameters that fits the region
+
+      \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
+    */
+
+    Primitive primitive() const {
+      return m_line_of_best_fit;
+    }
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.

@@ -19,7 +19,7 @@ using Normal_map   = typename Input_range::Vector_map;
 using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
 using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Input_range, Neighbor_query, Region_type>;
-using Point_inserter = utils::Insert_point_colored_by_region_index<Input_range, Output_range, Point_map>;
+using Point_inserter = utils::Insert_point_colored_by_region_index<Input_range, Output_range, Point_map, Kernel::Plane_3>;
 
 int main(int argc, char *argv[]) {
 
@@ -49,17 +49,14 @@ int main(int argc, char *argv[]) {
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
     input_range, CGAL::parameters::
-    k_neighbors(k).
-    point_map(input_range.point_map()));
+    k_neighbors(k));
 
   Region_type region_type(
     input_range,
     CGAL::parameters::
     maximum_distance(max_distance).
     maximum_angle(max_angle).
-    minimum_region_size(min_region_size).
-    point_map(input_range.point_map()).
-    normal_map(input_range.normal_map()));
+    minimum_region_size(min_region_size));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(

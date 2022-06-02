@@ -71,6 +71,9 @@ namespace Point_set {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Primitive
+    using Primitive = typename Traits::Line_2;
+
     /// @}
 
   private:
@@ -184,6 +187,20 @@ namespace Point_set {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief implements `RegionType::primitive()`.
+
+      This function provides the last primitive that has been fitted with the region.
+
+      \return Primitive parameters that fits the region
+
+      \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
+    */
+
+    Primitive primitive() const {
+      return m_line_of_best_fit;
+    }
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.

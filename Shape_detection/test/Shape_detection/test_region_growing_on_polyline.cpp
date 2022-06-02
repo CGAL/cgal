@@ -74,11 +74,11 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
   Region_growing_3 region_growing_3(
     polyline_3, neighbor_query_3, region_type_3);
 
-  std::vector< std::vector<std::size_t> > regions;
-  region_growing_3.detect(std::back_inserter(regions));
-  assert(regions.size() == 17);
-  for (const auto& region : regions)
-    assert(region_type_3.is_valid_region(region));
+  std::vector< std::pair< Region_type_3::Primitive, std::vector<std::size_t> > > regions_3;
+  region_growing_3.detect(std::back_inserter(regions_3));
+  assert(regions_3.size() == 17);
+  for (const auto& region : regions_3)
+    assert(region_type_3.is_valid_region(region.second));
 
   std::vector<std::size_t> unassigned_points;
   region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
@@ -111,11 +111,11 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
   Region_growing_2 region_growing_2(
     polyline_2, neighbor_query_2, region_type_2);
 
-  regions.clear();
-  region_growing_2.detect(std::back_inserter(regions));
-  assert(regions.size() == 5);
-  for (const auto& region : regions)
-    assert(region_type_2.is_valid_region(region));
+  std::vector< std::pair< Region_type_2::Primitive, std::vector<std::size_t> > > regions_2;
+  region_growing_2.detect(std::back_inserter(regions_2));
+  assert(regions_2.size() == 5);
+  for (const auto& region : regions_2)
+    assert(region_type_2.is_valid_region(region.second));
 
   unassigned_points.clear();
   region_growing_2.unassigned_items(std::back_inserter(unassigned_points));

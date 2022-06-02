@@ -50,7 +50,7 @@ bool test(
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Default parameter values.
-  const std::size_t k = 16;
+  const std::size_t k = 12;
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : inputfile);
@@ -77,7 +77,7 @@ bool test(
   Region_growing region_growing(
     input_range, neighbor_query, region_type, sorting.seed_map());
 
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
   const bool result = lambda_assertion(regions);

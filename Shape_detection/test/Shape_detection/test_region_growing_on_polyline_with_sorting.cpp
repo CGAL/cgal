@@ -79,9 +79,9 @@ int main(int argc, char *argv[]) {
   Region_growing_3 region_growing_3(
     polyline_3, neighbor_query_3, region_type_3, sorting_3.seed_map());
 
-  std::vector< std::vector<std::size_t> > regions;
-  region_growing_3.detect(std::back_inserter(regions));
-  assert(regions.size() == 16);
+  std::vector< std::pair< Region_type_3::Primitive, std::vector<std::size_t> > > regions3;
+  region_growing_3.detect(std::back_inserter(regions3));
+  assert(regions3.size() == 16);
 
   std::vector<std::size_t> unassigned_points;
   region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
@@ -89,13 +89,13 @@ int main(int argc, char *argv[]) {
 
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
-    regions.clear();
+    regions3.clear();
     SD::internal::region_growing_polylines(
-      polyline_3, std::back_inserter(regions),
+      polyline_3, std::back_inserter(regions3),
       CGAL::parameters::
       maximum_distance(distance_threshold).
       maximum_angle(angle_threshold));
-    assert(regions.size() == 16);
+    assert(regions3.size() == 16);
   }
 
   // Create 2D polyline.
@@ -129,11 +129,11 @@ int main(int argc, char *argv[]) {
   Region_growing_2 region_growing_2(
     polyline_2, neighbor_query_2, region_type_2, sorting_2.seed_map());
 
-  regions.clear();
-  region_growing_2.detect(std::back_inserter(regions));
-  assert(regions.size() == 5);
-  for (const auto& region : regions)
-    assert(region_type_2.is_valid_region(region));
+  std::vector< std::pair< Region_type_2::Primitive, std::vector<std::size_t> > > regions2;
+  region_growing_2.detect(std::back_inserter(regions2));
+  assert(regions2.size() == 5);
+  for (const auto& region : regions2)
+    assert(region_type_2.is_valid_region(region.second));
 
   unassigned_points.clear();
   region_growing_2.unassigned_items(std::back_inserter(unassigned_points));
@@ -141,13 +141,13 @@ int main(int argc, char *argv[]) {
 
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
-    regions.clear();
+    regions2.clear();
     SD::internal::region_growing_polylines(
-      polyline_2, std::back_inserter(regions),
+      polyline_2, std::back_inserter(regions2),
       CGAL::parameters::
       maximum_distance(distance_threshold).
       maximum_angle(angle_threshold));
-    assert(regions.size() == 5);
+    assert(regions2.size() == 5);
   }
 
   std::cout << "rg_sortpoly, sc_test_success: " << true << std::endl;

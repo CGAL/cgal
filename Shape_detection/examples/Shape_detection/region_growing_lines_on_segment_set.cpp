@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   Plane_region plane_region(surface_mesh);
   RG_planes rg_planes(face_range, one_ring_query, plane_region);
 
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Kernel::Plane_3, std::vector<std::size_t> > > regions;
   rg_planes.detect(std::back_inserter(regions));
   std::cout << "* number of found planar regions: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 9);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
   RG_lines rg_lines(
     segment_range, pgraph, line_region, line_sorting.seed_map());
 
-  std::vector< std::vector<std::size_t> > subregions;
+  std::vector< std::pair< Kernel::Line_3, std::vector<std::size_t> > > subregions;
   rg_lines.detect(std::back_inserter(subregions));
   std::cout << "* number of found linear regions: " << subregions.size() << std::endl;
   assert(is_default_input && subregions.size() == 21);

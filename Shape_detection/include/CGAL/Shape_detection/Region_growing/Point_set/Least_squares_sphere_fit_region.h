@@ -71,11 +71,15 @@ namespace Point_set {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Primitive
+    using Primitive = typename Traits::Sphere_3;
+
     /// @}
 
   private:
     using Point_3 = typename Traits::Point_3;
     using Vector_3 = typename Traits::Vector_3;
+    using Sphere_3 = typename Traits::Sphere_3;
 
     using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
     using Get_sqrt = internal::Get_sqrt<Traits>;
@@ -205,6 +209,20 @@ namespace Point_set {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief implements `RegionType::primitive()`.
+
+      This function provides the last primitive that has been fitted with the region.
+
+      \return Primitive parameters that fits the region
+
+      \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
+    */
+
+    Primitive primitive() const {
+      return Sphere_3(m_center, m_radius * m_radius);
+    }
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.

@@ -53,6 +53,12 @@ namespace Polyline {
   typename PointMap>
   class Least_squares_line_fit_region {
 
+  private:
+    using Polyline_traits = typename std::conditional<
+      std::is_same<typename GeomTraits::Point_2, typename PointMap::value_type>::value,
+      internal::Region_growing_traits_2<GeomTraits>,
+      internal::Region_growing_traits_3<GeomTraits> >::type;
+
   public:
     /// \name Types
     /// @{
@@ -67,14 +73,12 @@ namespace Polyline {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Primitive
+    using Primitive = typename Polyline_traits::Line;
+
     /// @}
 
   private:
-    using Polyline_traits = typename std::conditional<
-      std::is_same<typename Traits::Point_2, Point_type>::value,
-      internal::Region_growing_traits_2<Traits>,
-      internal::Region_growing_traits_3<Traits> >::type;
-
     using Point = typename Polyline_traits::Point;
     using Vector = typename Polyline_traits::Vector;
     using Line = typename Polyline_traits::Line;
@@ -180,6 +184,20 @@ namespace Polyline {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief implements `RegionType::primitive()`.
+
+      This function provides the last primitive that has been fitted with the region.
+
+      \return Primitive parameters that fits the region
+
+      \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
+    */
+
+    Primitive primitive() const {
+      return m_line_of_best_fit;
+    }
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.

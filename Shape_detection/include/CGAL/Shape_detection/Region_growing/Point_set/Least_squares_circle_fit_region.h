@@ -72,6 +72,13 @@ namespace Point_set {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Primitive
+    using Primitive = struct P {
+      P(const typename Traits::Point_2& c, typename Traits::FT r) : center(c), radius(r) {}
+      typename Traits::Point_2 center;
+      typename Traits::FT radius;
+    };
+
     /// @}
 
   private:
@@ -206,6 +213,20 @@ namespace Point_set {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief implements `RegionType::primitive()`.
+
+      This function provides the last primitive that has been fitted with the region.
+
+      \return Primitive parameters that fits the region
+
+      \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
+    */
+
+    Primitive primitive() const {
+      return Primitive(m_center, m_radius);
+    }
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.

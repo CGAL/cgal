@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
   Region_growing region_growing(
     face_range, neighbor_query, region_type, sorting.seed_map());
 
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Kernel::Plane_3, std::vector<std::size_t> > > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
   assert(regions.size() == 355);

@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 3634);
 
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
   region_growing.detect(std::back_inserter(regions));
   const std::size_t num_regions = regions.size();
   assert(num_regions != 0);

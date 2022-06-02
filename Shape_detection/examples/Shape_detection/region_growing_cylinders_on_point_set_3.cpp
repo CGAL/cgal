@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 
   // Load ply data either from a local folder or a user-provided file.
   const bool is_default_input = argc > 1 ? false : true;
-  std::ifstream in(is_default_input ? CGAL::data_file_path("points_3/cube.pwn") : argv[1]);
+  std::ifstream in(is_default_input ? CGAL::data_file_path("points_3/cylinders.ply") : argv[1]);
 
   CGAL::IO::set_ascii_mode(in);
   if (!in) {
@@ -36,27 +36,25 @@ int main(int argc, char** argv) {
   in >> point_set;
   in.close();
   std::cout << "* number of input points: " << point_set.size() << std::endl;
-  assert(is_default_input && point_set.size() == 50000);
+  assert(is_default_input && point_set.size() == 1813);
   assert(point_set.has_normal_map()); // input should have normals
 
   // Default parameter values for the data file cuble.pwn.
-  const std::size_t k               = 24;
-  const FT          max_distance    = FT(1) / FT(20);
-  const FT          max_angle       = FT(5);
-  const std::size_t min_region_size = 200;
+  const std::size_t k               = 20;
+  const FT          max_distance    = FT(1) / FT(10);
+  const FT          max_angle       = FT(25);
+  const std::size_t min_region_size = 20;
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    point_set, CGAL::parameters::k_neighbors(k).point_map(point_set.point_map()));
+    point_set, CGAL::parameters::k_neighbors(k));
 
   Region_type region_type(
     point_set,
     CGAL::parameters::
     maximum_distance(max_distance).
     maximum_angle(max_angle).
-    minimum_region_size(min_region_size).
-    point_map(point_set.point_map()).
-    normal_map(point_set.normal_map()));
+    minimum_region_size(min_region_size));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
@@ -73,13 +71,14 @@ int main(int argc, char** argv) {
   std::size_t num_cylinders = 0;
   region_growing.detect(
     boost::make_function_output_iterator(
-      [&](const std::vector<std::size_t>& region) {
+      [&](const std::pair< Region_type::Primitive, std::vector<std::size_t> >& region) {
 
         // Assign a random color to each region.
         const unsigned char r = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char g = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char b = static_cast<unsigned char>(random.get_int(64, 192));
-        for (const std::size_t idx : region) {
+
+        for (const std::size_t idx : region.second) {
           red[idx]   = r;
           green[idx] = g;
           blue[idx]  = b;
@@ -89,7 +88,7 @@ int main(int argc, char** argv) {
     )
   );
   std::cout << "* number of found cylinders: " << num_cylinders << std::endl;
-  assert(is_default_input && num_cylinders == 62);
+  assert(is_default_input && num_cylinders == 2);
 
   // Save regions to a file.
   std::ofstream out("cylinders_point_set_3.ply");

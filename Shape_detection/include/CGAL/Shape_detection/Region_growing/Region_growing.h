@@ -130,7 +130,6 @@ namespace Shape_detection {
     */
     template<typename OutputIterator>
     OutputIterator detect(OutputIterator regions) {
-
       clear();
       Indices region;
 
@@ -153,7 +152,7 @@ namespace Shape_detection {
           if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
           } else {
-            *(regions++) = region;
+            *(regions++) = std::pair<typename RegionType::Primitive, std::vector<std::size_t> >(m_region_type.primitive(), region);
           }
         }
       }

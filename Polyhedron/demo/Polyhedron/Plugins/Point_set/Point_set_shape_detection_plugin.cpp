@@ -220,7 +220,7 @@ private:
     Region_growing region_growing(
       face_range, neighbor_query, region_type, sorting.seed_map());
 
-    std::vector< std::vector<std::size_t> > regions;
+    std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
     region_growing.detect(std::back_inserter(regions));
     std::cerr << "* " << regions.size() << " regions have been found" << std::endl;
 
@@ -238,7 +238,7 @@ private:
     color_vector.clear();
 
     for (std::size_t i = 0; i < regions.size(); ++i) {
-      for (const std::size_t idx : regions[i]) {
+      for (const std::size_t idx : regions[i].second) {
         const auto fit = fr.begin() + idx;
         fg.property_map<face_descriptor, int>("f:patch_id").first[*fit] =
         static_cast<int>(i);
@@ -342,18 +342,14 @@ private:
     // Region growing set up.
     Neighbor_query neighbor_query(
       *points, CGAL::parameters::
-      sphere_radius(search_sphere_radius).
-      point_map(points->point_map()));
+      sphere_radius(search_sphere_radius));
     Region_type region_type(
       *points, CGAL::parameters::
       maximum_distance(max_distance_to_plane).
       maximum_angle(max_accepted_angle).
-      minimum_region_size(min_region_size).
-      point_map(points->point_map()).
-      normal_map(points->normal_map()));
+      minimum_region_size(min_region_size));
     Sorting sorting(
-      *points, neighbor_query,
-      CGAL::parameters::point_map(points->point_map()));
+      *points, neighbor_query);
     sorting.sort();
     Region_growing region_growing(
       *points, neighbor_query, region_type, sorting.seed_map());
@@ -368,7 +364,7 @@ private:
     // The actual shape detection.
     CGAL::Real_timer t;
     t.start();
-    std::vector< std::vector<std::size_t> > regions;
+    std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
     region_growing.detect(std::back_inserter(regions));
     t.stop();
 
@@ -378,7 +374,7 @@ private:
     std::vector<Plane_3> planes;
     planes.reserve(regions.size());
     for (const auto& region : regions) {
-      planes.push_back(region_type.get_plane_and_normal(region).first);
+      planes.push_back(region.first);
     }
     CGAL_precondition(planes.size() == regions.size());
 
@@ -420,7 +416,7 @@ private:
       Scene_points_with_normal_item *point_item =
       new Scene_points_with_normal_item;
 
-      for (const std::size_t idx : regions[index]) {
+      for (const std::size_t idx : regions[index].second) {
         point_item->point_set()->insert(points->point(*(points->begin() + idx)));
         if (dialog.add_property())
           shape_id[*(points->begin() + idx)] = index;
@@ -434,7 +430,7 @@ private:
 
       std::size_t nb_colored_pts = 0;
       if (dialog.generate_colored_point_set()) {
-        for(std::size_t idx : regions[index]) {
+        for(std::size_t idx : regions[index].second) {
           auto it = colored_item->point_set()->insert(
             points->point(*(points->begin() + idx)));
           ++nb_colored_pts;
@@ -488,7 +484,7 @@ private:
         if (sm_item){
           sm_item->setColor(point_item->color ());
           sm_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
-          .arg(QString::number(regions[index].size())));
+          .arg(QString::number(regions[index].second.size())));
           sm_item->setRenderingMode(Flat);
           sm_item->invalidateOpenGLBuffers();
           scene->addItem(sm_item);
@@ -497,7 +493,7 @@ private:
           scene->changeGroup(sm_item, groups[0]);
         }
       }
-      ss << regions[index].size();
+      ss << regions[index].second.size();
 
       point_item->setName(QString::fromStdString(ss.str()));
       point_item->setRenderingMode(item->renderingMode());

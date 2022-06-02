@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
     face_range, neighbor_query, region_type, sorting.seed_map());
 
   // Run the algorithm.
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found planes: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 355);

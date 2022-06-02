@@ -79,7 +79,7 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
   Region_growing region_growing(
     input_range, neighbor_query, region_type, sorting.seed_map());
 
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
 
@@ -88,7 +88,7 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
 
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
-    regions.clear();
+    std::vector< std::pair< Kernel::Line_2, std::vector<std::size_t> > > regions;
     SD::internal::region_growing_lines(
       input_range, std::back_inserter(regions),
       CGAL::parameters::

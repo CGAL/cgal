@@ -39,10 +39,10 @@ namespace CGAL {
 
 namespace utils {
 
-template<typename Kernel, typename Input_range, typename Point_map>
+template<typename Kernel, typename Input_range, typename Point_map, typename Primitive>
 void save_point_regions_2(
   const Input_range& input_range,
-  const std::vector< std::vector<std::size_t> >& regions,
+  const std::vector< std::pair< Primitive, std::vector<std::size_t> > >& regions,
   const std::string fullpath,
   const Point_map point_map = Point_map()) {
 
@@ -66,7 +66,7 @@ void save_point_regions_2(
         static_cast<unsigned char>(rand() % 256));
 
     // Iterate through all region items.
-    for (const auto index : region) {
+    for (const auto index : region.second) {
       const auto& key = *(input_range.begin() + index);
       const auto& point = get(point_map, key);
       pwc.push_back(std::make_pair(Point_3(point.x(), point.y(), 0), color));
@@ -86,10 +86,10 @@ void save_point_regions_2(
   out.close();
 }
 
-template<typename Kernel, typename Input_range, typename Point_map>
+template<typename Kernel, typename Input_range, typename Point_map, typename Primitive>
 void save_point_regions_3(
   const Input_range& input_range,
-  const std::vector< std::vector<std::size_t> >& regions,
+  const std::vector< std::pair< Primitive, std::vector<std::size_t> > >& regions,
   const std::string fullpath,
   const Point_map point_map = Point_map()) {
 
@@ -113,7 +113,7 @@ void save_point_regions_3(
         static_cast<unsigned char>(rand() % 256));
 
     // Iterate through all region items.
-    for (const auto index : region) {
+    for (const auto index : region.second) {
       const auto& key = *(input_range.begin() + index);
       const auto& point = get(point_map, key);
       pwc.push_back(std::make_pair(point, color));
@@ -133,10 +133,10 @@ void save_point_regions_3(
   out.close();
 }
 
-template<typename Kernel, typename Input_range, typename Segment_map>
+template<typename Kernel, typename Input_range, typename Segment_map, typename Primitive>
 void save_segment_regions_2(
   const Input_range& input_range,
-  const std::vector< std::vector<std::size_t> >& regions,
+  const std::vector< std::pair< Primitive, std::vector<std::size_t> > >& regions,
   const std::string fullpath,
   const Segment_map segment_map = Segment_map()) {
 
@@ -160,7 +160,7 @@ void save_segment_regions_2(
         static_cast<unsigned char>(rand() % 256));
 
     // Iterate through all region items.
-    for (const auto index : region) {
+    for (const auto index : region.second) {
       const auto& key = *(input_range.begin() + index);
       const auto& segment = get(segment_map, key);
       const auto& s = segment.source();
@@ -183,10 +183,10 @@ void save_segment_regions_2(
   out.close();
 }
 
-template<typename Kernel, typename Input_range, typename Segment_map>
+template<typename Kernel, typename Input_range, typename Segment_map, typename Primitive>
 void save_segment_regions_3(
   const Input_range& input_range,
-  const std::vector< std::vector<std::size_t> >& regions,
+  const std::vector< std::pair< Primitive, std::vector<std::size_t> > >& regions,
   const std::string fullpath,
   const Segment_map segment_map = Segment_map()) {
 
@@ -210,7 +210,7 @@ void save_segment_regions_3(
         static_cast<unsigned char>(rand() % 256));
 
     // Iterate through all region items.
-    for (const auto index : region) {
+    for (const auto index : region.second) {
       const auto& key = *(input_range.begin() + index);
       const auto& segment = get(segment_map, key);
       pwc.push_back(std::make_pair(segment.source(), color));
@@ -235,9 +235,10 @@ void save_segment_regions_3(
 template<
 typename Input_range,
 typename Output_range,
-typename Point_map>
+typename Point_map,
+typename Primitive>
 struct Insert_point_colored_by_region_index {
-  using argument_type = std::vector<std::size_t>;
+  using argument_type = std::pair< Primitive, std::vector<std::size_t> >;
   using result_type   = void;
   using Color_map     =
     typename Output_range:: template Property_map<unsigned char>;
@@ -269,7 +270,7 @@ struct Insert_point_colored_by_region_index {
     const unsigned char g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
     const unsigned char b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
 
-    for (const std::size_t index : region) {
+    for (const std::size_t index : region.second) {
       const auto& key = *(m_input_range.begin() + index);
       const auto& point = get(m_point_map, key);
       const auto it = m_output_range.insert(point);
@@ -282,10 +283,10 @@ struct Insert_point_colored_by_region_index {
   }
 };
 
-template<typename Polygon_mesh>
+template<typename Polygon_mesh, typename Primitive>
 void save_polygon_mesh_regions(
   Polygon_mesh& polygon_mesh,
-  const std::vector< std::vector<std::size_t> >& regions,
+  const std::vector< std::pair< Primitive, std::vector<std::size_t> > >& regions,
   const std::string fullpath) {
 
   using Color      = CGAL::IO::Color;
@@ -308,7 +309,7 @@ void save_polygon_mesh_regions(
       static_cast<unsigned char>(rand() % 256));
 
     // Iterate through all region items.
-    for (const std::size_t index : region) {
+    for (const std::size_t index : region.second) {
       put(face_color, *(faces(polygon_mesh).begin() + index), color);
     }
   }

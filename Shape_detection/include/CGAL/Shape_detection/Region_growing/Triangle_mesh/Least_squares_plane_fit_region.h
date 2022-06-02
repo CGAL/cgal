@@ -82,6 +82,9 @@ namespace Triangle_mesh {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Primitive
+    using Primitive = typename Traits::Plane_3;
+
     #ifdef DOXYGEN_NS
       /*!
         a model of `ReadablePropertyMap` whose key type is `face_descriptor`
@@ -201,6 +204,20 @@ namespace Triangle_mesh {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief implements `RegionType::primitive()`.
+
+      This function provides the last primitive that has been fitted with the region.
+
+      \return Primitive parameters that fits the region
+
+      \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
+    */
+
+    Primitive primitive() const {
+      return m_plane_of_best_fit;
+    }
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.

@@ -48,16 +48,16 @@ bool test_lines_points_with_normals() {
   };
 
   assert(points_with_normals.size() == 9);
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< typename Kernel::Line_2, std::vector<std::size_t> > > regions;
   CGAL::Shape_detection::internal::region_growing_lines(
     points_with_normals,
     std::back_inserter(regions),
     CGAL::parameters::point_map(CGAL::First_of_pair_property_map<std::pair<Point_2, Vector_2> >()).
     normal_map(CGAL::Second_of_pair_property_map<std::pair<Point_2, Vector_2> >()));
   assert(regions.size() == 3);
-  assert(regions[0].size() == 3);
-  assert(regions[1].size() == 3);
-  assert(regions[2].size() == 3);
+  assert(regions[0].second.size() == 3);
+  assert(regions[1].second.size() == 3);
+  assert(regions[2].second.size() == 3);
   return true;
 }
 
@@ -73,12 +73,12 @@ bool test_lines_polylines_2() {
   };
 
   assert(polyline_2.size() == 12);
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< typename Kernel::Line_2, std::vector<std::size_t> > > regions;
   CGAL::Shape_detection::internal::region_growing_polylines(
     polyline_2, std::back_inserter(regions));
   assert(regions.size() == 2);
-  assert(regions[0].size() == 6);
-  assert(regions[1].size() == 6);
+  assert(regions[0].second.size() == 6);
+  assert(regions[1].second.size() == 6);
   return true;
 }
 
@@ -92,11 +92,11 @@ bool test_lines_polylines_3() {
   };
 
   assert(polyline_3.size() == 6);
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< typename Kernel::Line_3, std::vector<std::size_t> > > regions;
   CGAL::Shape_detection::internal::region_growing_polylines(
     polyline_3, std::back_inserter(regions));
   assert(regions.size() == 1);
-  assert(regions[0].size() == 6);
+  assert(regions[0].second.size() == 6);
   return true;
 }
 
@@ -112,15 +112,15 @@ bool test_polylines_equal_points() {
   };
 
   assert(polyline_2.size() == 16);
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< typename Kernel::Line_2, std::vector<std::size_t> > > regions;
   CGAL::Shape_detection::internal::region_growing_polylines(
     polyline_2, std::back_inserter(regions), CGAL::parameters::maximum_distance(0.01));
   assert(regions.size() == 4);
 
-  assert(regions[0].size() == 4);
-  assert(regions[1].size() == 4);
-  assert(regions[2].size() == 4);
-  assert(regions[3].size() == 4);
+  assert(regions[0].second.size() == 4);
+  assert(regions[1].second.size() == 4);
+  assert(regions[2].second.size() == 4);
+  assert(regions[3].second.size() == 4);
   return true;
 }
 
@@ -167,13 +167,13 @@ bool test_lines_segment_set_2() {
   Neighbor_query neighbor_query;
   Region_type region_type(segments);
 
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
   Region_growing region_growing(
     segments, neighbor_query, region_type);
   region_growing.detect(std::back_inserter(regions));
   assert(regions.size() == 2);
-  assert(regions[0].size() == 2);
-  assert(regions[1].size() == 2);
+  assert(regions[0].second.size() == 2);
+  assert(regions[1].second.size() == 2);
   return true;
 }
 
@@ -208,9 +208,9 @@ bool test_lines_segment_set_3() {
   in.close();
 
   assert(surface_mesh.number_of_faces() == 7320);
-  std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
-    surface_mesh, std::back_inserter(regions));
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
+   CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
+     surface_mesh, std::back_inserter(regions));
   assert(regions.size() == 9);
 
   const auto face_range = faces(surface_mesh);
@@ -226,16 +226,17 @@ bool test_lines_segment_set_3() {
     segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
   sorting.sort();
 
-  regions.clear();
+  std::vector< std::pair< typename Kernel::Line_3, std::vector<std::size_t> > > regions2;
   Region_growing region_growing(
     segment_range, pgraph, region_type, sorting.seed_map());
-  region_growing.detect(std::back_inserter(regions));
-  assert(regions.size() == 21);
+  region_growing.detect(std::back_inserter(regions2));
+  assert(regions2.size() == 21);
   return true;
 }
 
 template<class Kernel>
 bool test_region_growing_lines() {
+
 
   assert(test_lines_points_with_normals<Kernel>());
   assert(test_lines_polylines_2<Kernel>());
@@ -265,14 +266,14 @@ bool test_planes_points_with_normals() {
   };
 
   assert(points_with_normals.size() == 9);
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
   CGAL::Shape_detection::internal::region_growing_planes(
     points_with_normals,
     std::back_inserter(regions),
     CGAL::parameters::point_map(CGAL::First_of_pair_property_map<std::pair<Point_3, Vector_3> >()).
     normal_map(CGAL::Second_of_pair_property_map<std::pair<Point_3, Vector_3> >()));
   assert(regions.size() == 1);
-  assert(regions[0].size() == 9);
+  assert(regions[0].second.size() == 9);
   return true;
 }
 
@@ -304,11 +305,11 @@ bool test_planes_point_set() {
   points_with_normals.clear();
   assert(points_with_normals.size() == 0);
 
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
   CGAL::Shape_detection::internal::region_growing_planes(
     point_set, std::back_inserter(regions));
   assert(regions.size() == 1);
-  assert(regions[0].size() == 9);
+  assert(regions[0].second.size() == 9);
   return true;
 }
 
@@ -328,7 +329,7 @@ bool test_planes_polyhedron() {
   assert(polyhedron.is_tetrahedron(handle));
 
   assert(polyhedron.size_of_facets() == 4);
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
   CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
     polyhedron, std::back_inserter(regions));
   assert(regions.size() == polyhedron.size_of_facets());
@@ -350,7 +351,7 @@ bool test_planes_surface_mesh() {
   in.close();
 
   assert(surface_mesh.number_of_faces() == 7320);
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
   CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
     surface_mesh, std::back_inserter(regions));
   assert(regions.size() == 9);

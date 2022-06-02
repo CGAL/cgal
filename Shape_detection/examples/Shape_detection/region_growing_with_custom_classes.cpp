@@ -55,6 +55,8 @@ namespace Custom {
   public:
     Region_type() { }
 
+    using Primitive = std::size_t;
+
     bool is_part_of_region(
       const std::size_t,
       const std::size_t query_index,
@@ -69,6 +71,10 @@ namespace Custom {
 
     inline bool is_valid_region(const std::vector<std::size_t>&) const {
       return m_is_valid;
+    }
+
+    Primitive primitive() {
+      return Primitive();
     }
 
     bool update(const std::vector<std::size_t>&) {
@@ -160,7 +166,7 @@ int main() {
     objects, neighbor_query, region_type, seed_map);
 
   // Run the algorithm.
-  std::vector< std::vector<std::size_t> > regions;
+  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
   assert(regions.size() == 2);
