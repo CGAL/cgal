@@ -21,6 +21,9 @@ set(CMAKE_AUTOMOC ON)
 ## To add expensive tests
 # add_definitions("-DCGAL_CHECK_EXPENSIVE")
 # add_definitions("-Wall -Wextra")
+# add_definitions(-fsanitize=address)
+# add_link_options(-fsanitize=address)
+# add_definitions("-D_GLIBCXX_DEBUG")
 
 ## For profilling with gprof
 # add_definitions("-pg")

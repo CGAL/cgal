@@ -2810,8 +2810,7 @@ namespace CGAL {
     {
       unsigned int res = 0, i = 0;
       Dart_descriptor d;
-      for ( typename Dart_range::iterator it(darts().begin()),
-             itend(darts().end()); it!=itend; )
+      for(typename Dart_range::iterator it=darts().begin(); it!=darts().end();)
       {
         d = it++;
         if (is_marked(d, amark))

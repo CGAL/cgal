@@ -32,7 +32,7 @@
 //   time amortized (it's not true here, maybe it could be with some work...)
 // - all this is expected especially when there are not so many free objects
 //   compared to the allocated elements.
-// - Currently, end() can be invalidated on insert() if the array is extended.
+// - Currently, end() can be invalidated on erase() if the upper bound has changed.
 
 namespace CGAL {
 
@@ -41,11 +41,11 @@ namespace CGAL {
 template<unsigned int k>
 struct Multiply_by_two_policy_for_cc_with_size
 {
-  static const unsigned int first_block_size = k;
+  static const unsigned int first_block_size=k;
 
   template<typename Compact_container>
   static void increase_size(Compact_container& cc)
-  { cc.block_size=cc.capacity_; }
+  { cc.next_delta=cc.capacity_; }
 };
 
 // constant size policy: the size of the array is always extended by the same
@@ -53,7 +53,7 @@ struct Multiply_by_two_policy_for_cc_with_size
 template<unsigned int k>
 struct Constant_size_policy_for_cc_with_size
 {
-  static const unsigned int first_block_size = k;
+  static const unsigned int first_block_size=k;
 
   template<typename Compact_container>
   static void increase_size(Compact_container& /*cc*/)
@@ -100,8 +100,7 @@ public:
   static const size_type null_descriptor=std::numeric_limits<size_type>::max();
 
   Free_list_management(CC_with_index* cc_with_index):
-    m_cc_with_index(cc_with_index),
-    m_first_free_index(0)
+    m_cc_with_index(cc_with_index)
   {}
 
   void init()
@@ -111,15 +110,7 @@ public:
     if(m_cc_with_index->capacity()>0)
     { m_used.assign(m_cc_with_index->capacity(), false); }
     else { m_used.clear(); }
-    m_first_free_index=0;
-
-    // TEMPO FOR DEBUG
-    /* if(m_cc_with_index->capacity()>0)
-    {
-      for(size_type i=static_cast<size_type>(m_cc_with_index->capacity())-1; i>0; --i)
-      { m_free_list.push(i); }
-      m_free_list.push(0);
-    } */
+    m_cc_with_index->upper_bound_=0;
   }
 
   void increase_to(size_type old_size)
@@ -127,17 +118,7 @@ public:
     CGAL_USE(old_size);
     CGAL_assertion(m_cc_with_index->capacity()>old_size);
     m_used.resize(m_cc_with_index->capacity(), false);
-    // m_first_free_index does not change, thus nothing more to do.
-
-    // TEMPO FOR DEBUG
-    /*
-    CGAL_assertion(m_first_free_index==old_size);
-    std::cout<<"increase_to "<<old_size<<" -> "<<m_cc_with_index->capacity()
-            <<"    (m_first_free_index="<<m_first_free_index<<")"<<std::endl;
-    for(size_type i=static_cast<size_type>(m_cc_with_index->capacity())-1; i>old_size; --i)
-    { m_free_list.push(i); }
-    m_free_list.push(old_size);
-    m_first_free_index=m_cc_with_index->capacity(); */
+    // m_cc_with_index->upper_bound_ does not change.
   }
 
   void swap(Self& other)
@@ -145,12 +126,11 @@ public:
     // We should not swap m_cc_with_index, but only the content of the free list
     m_free_list.swap(other.m_free_list);
     m_used.swap(other.m_used);
-    std::swap(m_first_free_index, other.m_first_free_index);
   }
 
   bool is_empty() const
   { return m_free_list.empty() &&
-        m_first_free_index>=m_cc_with_index->capacity(); }
+        m_cc_with_index->upper_bound()>=m_cc_with_index->capacity(); }
 
   bool is_used(size_type i) const
   {
@@ -164,8 +144,8 @@ public:
     CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
     CGAL_assertion(is_used(i));
     m_used[i]=false;
-    if(i+1==m_first_free_index)
-    { --m_first_free_index; }
+    if(i+1==m_cc_with_index->upper_bound())
+    { --m_cc_with_index->upper_bound_; }
     else
     { m_free_list.push(i); }
   }
@@ -173,8 +153,8 @@ public:
   size_type top() const
   {
     CGAL_assertion(!is_empty());
-    if(m_first_free_index<m_cc_with_index->capacity())
-    { return m_first_free_index; }
+    if(m_cc_with_index->upper_bound()<m_cc_with_index->capacity())
+    { return m_cc_with_index->upper_bound(); }
     return m_free_list.top();
   }
 
@@ -183,21 +163,20 @@ public:
   {
     CGAL_assertion(!is_empty());
     CGAL_assertion(!is_used(top()));
-    size_type res=m_cc_with_index->capacity();
-    if(m_first_free_index<m_cc_with_index->capacity())
+    size_type res=m_cc_with_index->upper_bound();
+    if(m_cc_with_index->upper_bound()<m_cc_with_index->capacity())
     {
-      res=m_first_free_index;
-      ++m_first_free_index;
+      res=m_cc_with_index->upper_bound();
+      ++m_cc_with_index->upper_bound_;
     }
     else
     {
       res=m_free_list.top();
       m_free_list.pop();
     }
-
-    assert(res<m_cc_with_index->capacity());
-    assert(m_used[res]==false);
-
+    CGAL_assertion(res<m_cc_with_index->upper_bound());
+    CGAL_assertion(res!=null_descriptor);
+    CGAL_assertion(!is_used(res));
     m_used[res]=true;
     return res;
   }
@@ -209,7 +188,6 @@ protected:
   CC_with_index* const  m_cc_with_index;
   std::stack<size_type> m_free_list;
   std::vector<bool>     m_used;
-  size_type             m_first_free_index;
 };
 
 // (2) Case with the "in place" free list, and a vector for Booleans.
@@ -246,6 +224,7 @@ public:
       m_free_list=null_descriptor;
       m_used.clear();
     }
+    m_cc_with_index->upper_bound_=0;
   }
 
   void increase_to(size_type old_size)
@@ -259,6 +238,7 @@ public:
     Traits::set_size_t((*m_cc_with_index)[m_cc_with_index->capacity()-1],
         m_free_list);
     m_free_list=old_size;
+    // m_cc_with_index->upper_bound_ does not change.
   }
 
   void swap(Self& other)
@@ -283,6 +263,8 @@ public:
     CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
     CGAL_assertion(is_used(i));
     m_used[i]=false;
+    if(i+1==m_cc_with_index->upper_bound())
+    { --m_cc_with_index->upper_bound_; }
     Traits::set_size_t((*m_cc_with_index)[i], m_free_list);
     m_free_list=i;
   }
@@ -299,6 +281,11 @@ public:
     CGAL_assertion(!is_empty());
     CGAL_assertion(!is_used(top()));
     size_type res=m_free_list;
+    if(res>=m_cc_with_index->upper_bound())
+    { m_cc_with_index->upper_bound_=res+1; }
+    CGAL_assertion(res<m_cc_with_index->upper_bound());
+    CGAL_assertion(res!=null_descriptor);
+    CGAL_assertion(!is_used(res));
     m_free_list=Traits::size_t((*m_cc_with_index)[res]);
     m_used[res]=true;
     return res;
@@ -309,7 +296,7 @@ public:
 
 protected:
   CC_with_index* const m_cc_with_index;
-  size_type            m_free_list; // First free element, capacity if no free
+  size_type            m_free_list; // First free element, null_descriptor if no free
   std::vector<bool>    m_used;
 };
 
@@ -331,19 +318,33 @@ public:
 
   void init()
   {
-    m_free_list=0;
-    for(size_type i=0; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
-    { static_set_val(m_cc_with_index[i], i+1, FREE); }
-    // Next of the last element is capacity() which is the "nullptr". TODO WRONG
+    if(m_cc_with_index->capacity()>0)
+    {
+      m_free_list=0;
+      for(size_type i=0;
+          i<static_cast<size_type>(m_cc_with_index->capacity()-1); ++i)
+      { static_set_val((*m_cc_with_index)[i], i+1, FREE); }
+      // Next of the last element is null_descriptor.
+      static_set_val((*m_cc_with_index)[m_cc_with_index->capacity()-1],
+          null_descriptor, FREE);
+    }
+    else
+    {
+      m_free_list=null_descriptor;
+    }
+    m_cc_with_index->upper_bound_=0;
   }
 
   void increase_to(size_type old_size)
   {
     CGAL_assertion(m_cc_with_index->capacity()>old_size);
-    CGAL_assertion(m_free_list==old_size); // Previous container was full
-    for(size_type i=old_size; i<static_cast<size_type>(m_cc_with_index->capacity()); ++i)
-    { static_set_val(m_cc_with_index[i], i+1, FREE); }
-    // Nothing to do with m_free_list, because it was equal to old_size.
+    for(size_type i=old_size;
+        i<static_cast<size_type>(m_cc_with_index->capacity()-1); ++i)
+    { static_set_val((*m_cc_with_index)[i], i+1, FREE); }
+    static_set_val((*m_cc_with_index)[m_cc_with_index->capacity()-1],
+        m_free_list, FREE);
+    m_free_list=old_size;
+    // m_cc_with_index->upper_bound_ does not change.
   }
 
   void swap(Self& other)
@@ -353,15 +354,20 @@ public:
   }
 
   bool is_empty() const
-  { return m_free_list==m_cc_with_index->capacity(); }
+  { return m_free_list==null_descriptor; }
 
   bool is_used(size_type i) const
-  { return static_type(m_cc_with_index[i])==USED; }
+  {
+    CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
+    return static_type((*m_cc_with_index)[i])==USED;
+  }
 
+  // Push the ith element on the free list: it becomes free
   void push(size_type i)
   {
-    CGAL_assertion(i<m_cc_with_index->capacity());
-    static_set_val(m_cc_with_index[i], m_free_list, FREE);
+    CGAL_assertion(i<m_cc_with_index->capacity() && i!=null_descriptor);
+    CGAL_assertion(is_used(i));
+    static_set_val((*m_cc_with_index)[i], m_free_list, FREE);
     m_free_list=i;
   }
 
@@ -371,12 +377,19 @@ public:
     return m_free_list;
   }
 
+  // Pop one element from the free list (the top): it becomes used
   size_type pop()
   {
     CGAL_assertion(!is_empty());
+    CGAL_assertion(!is_used(top()));
     size_type res=m_free_list;
-    static_set_type(m_cc_with_index[res], USED);
-    m_free_list=Traits::size_t(m_cc_with_index[res]);
+    if(res>=m_cc_with_index->upper_bound())
+    { m_cc_with_index->upper_bound_=res+1; }
+    CGAL_assertion(res<m_cc_with_index->upper_bound());
+    CGAL_assertion(res!=null_descriptor);
+    CGAL_assertion(!is_used(res));
+    static_set_type((*m_cc_with_index)[res], USED);
+    m_free_list=static_get_val((*m_cc_with_index)[res]);
     return res;
   }
 
@@ -401,7 +414,7 @@ protected:
   // TODO check if this is ok for little and big endian
   { return (Type) ((Traits::size_t(e) & mask_type)>>(nbbits_size_type_m1)); }
 
-  // get the value of the element (removing the two bits)
+  // get the value of the element (removing the used bit)
   static size_type static_get_val(const T& e)
   { return (Traits::size_t(e) & ~mask_type); }
 
@@ -441,11 +454,12 @@ public:
   Index_for_cc_with_index(const Index2& idx): m_idx(static_cast<size_t>(idx))
   {}
 
+  /* TODO Do we need these two operators?
   bool operator==(const Self& n) const
   { return m_idx==n.m_idx; }
 
   bool operator==(size_type n) const
-  { return m_idx==n; }
+  { return m_idx==n; } */
 
   /// Increment the internal index. This operations does not
   /// guarantee that the index is valid or undeleted after the
@@ -509,12 +523,13 @@ public:
 
   using Index=Index_for_cc_with_index<IndexType>;
   using TFree_list_management=Free_list_management
-                             <Self, CGAL::Tag_true, CGAL::Tag_true>;
+                             <Self, CGAL::Tag_false, CGAL::Tag_false>;
 
   static const size_type null_descriptor=TFree_list_management::null_descriptor;
 
   friend class internal::CC_iterator_with_index<Self, false>;
   friend class internal::CC_iterator_with_index<Self, true>;
+  friend TFree_list_management;
 
   template<unsigned int first_block_size_, unsigned int block_size_increment>
   friend struct Addition_size_policy;
@@ -543,7 +558,7 @@ public:
     free_list(this)
   {
     init();
-    block_size = c.block_size;
+    next_delta=c.next_delta;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
@@ -576,8 +591,9 @@ public:
   {
     std::swap(alloc, c.alloc);
     std::swap(capacity_, c.capacity_);
+    std::swap(upper_bound_, c.upper_bound_);
     std::swap(size_, c.size_);
-    std::swap(block_size, c.block_size);
+    std::swap(next_delta, c.next_delta);
     std::swap(all_items, c.all_items);
     free_list.swap(c.free_list);
   }
@@ -597,12 +613,11 @@ public:
     return all_items[i];
   }
 
-  iterator begin() { if(empty()) return end(); return iterator(this, 0, 0); }
-  iterator end()   { return iterator(this, capacity_); }
+  iterator begin() { return iterator(this, 0, 0); }
+  iterator end()   { return iterator(this, upper_bound()); }
 
-  const_iterator begin() const { if(empty()) return end();
-    else return const_iterator(this, 0, 0); }
-  const_iterator end()   const { return const_iterator(this, capacity_); }
+  const_iterator begin() const { return const_iterator(this, 0, 0); }
+  const_iterator end()   const { return const_iterator(this, upper_bound()); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
   reverse_iterator rend()   { return reverse_iterator(begin()); }
@@ -700,9 +715,8 @@ public:
 
   void clear();
 
-  // Merge the content of d into *this.  d gets cleared.
-  // The complexity is O(size(free list = capacity-size)).
-  void merge(Self &d);
+  // Merge the content of d into *this. d gets cleared.
+  // TODO? void merge(Self &d);
 
   size_type size() const
   {
@@ -716,6 +730,9 @@ public:
 
   size_type capacity() const
   { return capacity_; }
+
+  size_type upper_bound() const
+  { return upper_bound_; }
 
   // void resize(size_type sz, T c = T()); // TODO  makes sense ???
 
@@ -753,32 +770,9 @@ public:
    */
   void reserve(size_type n)
   {
-    if ( capacity_>=n ) return;
-// TODO
- /*   size_type lastblock = all_items.size();
-
-    while ( capacity_<n )
-    {
-      pointer new_block = alloc.allocate(block_size);
-      all_items.push_back(std::make_pair(new_block, block_size));
-      capacity_ += block_size;
-      // Increase the block_size for the next time.
-      Increment_policy::increase_size(*this);
-    }
-
-    // Now we put all the new elements on freelist, starting from the last block
-    // inserted and mark them free in reverse order, so that the insertion order
-    // will correspond to the iterator order...
-    // We don't touch the first and the last one.
-    size_type curblock=all_items.size();
-    size_type index = capacity_-1;
-    do
-    {
-      --curblock; // We are sure we have at least create a new block
-      for (size_type i = all_items[curblock].second-1; i >= 0; --i, --index)
-        push_back(index);
-    }
-    while ( curblock>lastblock );*/
+    if(capacity_>=n) return;
+    capacity_=n;
+    increase_size();
   }
 
 private:
@@ -787,48 +781,22 @@ private:
 
   void init()
   {
-    block_size=Incr_policy::first_block_size;
-    // block_size=10000000;
-    capacity_ =0;
-    size_     =0;
-    all_items =nullptr;
+    next_delta  =Incr_policy::first_block_size;
+    capacity_   =0;
+    upper_bound_=0;
+    size_       =0;
+    all_items   =nullptr;
     free_list.init();
   }
 
-  allocator_type        alloc;
-  size_type             capacity_;
-  size_type             size_;
-  size_type             block_size;
-  pointer               all_items;
-  TFree_list_management free_list;
+  allocator_type        alloc;        // allocator
+  size_type             capacity_;    // capacity of the block
+  size_type             upper_bound_; // <=capacity_ all indices >=upper_bound are unused
+  size_type             size_;        // Number of elements allocated (used)
+  size_type             next_delta;   // Size of the delta for the block size
+  pointer               all_items;    // pointer to the block
+  TFree_list_management free_list;    // free list management
 };
-
-/*template < class T, class Allocator, class Increment_policy, class IndexType >
-void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::merge(Self &d)
-{
-  CGAL_precondition(&d != this);
-
-  // Allocators must be "compatible" :
-  CGAL_precondition(get_allocator() == d.get_allocator());
-
-  // Concatenate the free_lists.
-  if (free_list == bottom) {
-    free_list = d.free_list;
-  } else if (d.free_list != 0) {
-    size_type e = free_list;
-    while (get_val(e) != 0)
-      e = get_val(e);
-    set_val(e, d.free_list, FREE);
-  }
-  // Add the sizes.
-  size_ += d.size_;
-  // Add the capacities.
-  capacity_ += d.capacity_;
-  // It seems reasonnable to take the max of the block sizes.
-  block_size = (std::max)(block_size, d.block_size);
-  // Clear d.
-  d.init();
-}*/
 
 template < class T, class Allocator, class Increment_policy, class IndexType >
 void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::
@@ -847,7 +815,7 @@ void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::
 increase_size()
 {
   size_type oldcapacity=capacity_;
-  capacity_+=block_size;
+  capacity_+=next_delta;
 
   pointer all_items2=
       std::allocator_traits<allocator_type>::allocate(alloc, capacity_);
@@ -858,8 +826,6 @@ increase_size()
       std::allocator_traits<allocator_type>::construct
           (alloc, &(all_items2[index]), std::move(all_items[index]));
       //new (&all_items2[index]) value_type(all_items[index]);
-      // TEMPO TO DEBUG
-      // CGAL_assertion(all_items[index]==all_items2[index]);
       alloc.destroy(&(all_items[index]));
     }
     else
@@ -877,7 +843,7 @@ increase_size()
 namespace internal {
 
   // **********************************************************************
-  // specialization if we use index: in this case, an iterator use one more
+  // Iterator if we use index: in this case, an iterator use one more
   // data member of type size_type: memory footprint is more important than
   // iterator without index. However such iterator is not supposed to be used
   // in function parameters, to store handles through elements...
@@ -904,21 +870,23 @@ namespace internal {
     typedef typename boost::mpl::if_c< Const, const DSC*, DSC*>::type
     cc_pointer;
 
-    CC_iterator_with_index() : m_ptr_to_cc(nullptr),
+    CC_iterator_with_index(): m_ptr_to_cc(nullptr),
       m_index(0)
     {}
 
     // Either a harmless copy-ctor,
     // or a conversion from iterator to const_iterator.
-    CC_iterator_with_index (const iterator &it) : m_ptr_to_cc(it.m_ptr_to_cc),
+    CC_iterator_with_index(const iterator &it): m_ptr_to_cc(it.m_ptr_to_cc),
       m_index(it.m_index)
-    {}
-
-    // Same for assignment operator (otherwise MipsPro warns)
-    CC_iterator_with_index & operator= (const iterator &it)
     {
-      m_ptr_to_cc = it.m_ptr_to_cc;
-      m_index = it.m_index;
+      CGAL_assertion(m_index<=m_ptr_to_cc->upper_bound());
+    }
+
+    // Same for assignment operator
+    CC_iterator_with_index& operator=(const iterator &it)
+    {
+      m_ptr_to_cc=it.m_ptr_to_cc;
+      m_index=it.m_index;
       return *this;
     }
 
@@ -930,7 +898,7 @@ namespace internal {
 
   protected:
     void set_current(size_type dh)
-    { m_index =  dh; }
+    { m_index=dh; }
 
   protected:
 
@@ -943,7 +911,7 @@ namespace internal {
     size_type m_index;
 
     // For begin()
-    CC_iterator_with_index(cc_pointer ptr, int, int) : m_ptr_to_cc(ptr),
+    CC_iterator_with_index(cc_pointer ptr, int, int): m_ptr_to_cc(ptr),
       m_index(0)
     {
       if(!m_ptr_to_cc->is_used(m_index))
@@ -951,41 +919,40 @@ namespace internal {
     }
 
     // Construction from raw pointer and for end().
-    CC_iterator_with_index(cc_pointer ptr, size_type index) : m_ptr_to_cc(ptr),
+    CC_iterator_with_index(cc_pointer ptr, size_type index): m_ptr_to_cc(ptr),
       m_index(index)
     {}
 
-    // NB : in case empty container, begin == end == NULL.
+    // NB: in case empty container, begin==end==upper_bound.
     void increment()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr_to_cc != nullptr,
+      CGAL_assertion_msg(m_ptr_to_cc!=nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(m_index < m_ptr_to_cc->capacity_,
+      CGAL_assertion_msg(m_index<m_ptr_to_cc->upper_bound(),
          "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do
-      {
-        ++m_index;
-      }
-      while ( m_index < m_ptr_to_cc->capacity_ &&
-              (!m_ptr_to_cc->is_used(m_index)) );
+      { ++m_index; }
+      while(m_index<m_ptr_to_cc->upper_bound() &&
+            (!m_ptr_to_cc->is_used(m_index)));
     }
 
     void decrement()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr_to_cc != nullptr,
+      CGAL_assertion_msg(m_ptr_to_cc!=nullptr,
          "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(m_index>0, "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do
       {
-        --m_index;
+       CGAL_assertion(m_index>0);
+	--m_index; 
       }
-      while ( !m_ptr_to_cc->is_used(m_index));
+      while(!m_ptr_to_cc->is_used(m_index));
     }
 
   public:
