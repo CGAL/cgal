@@ -74,6 +74,7 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
+\cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgBib{cgal:ovja-pssd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
