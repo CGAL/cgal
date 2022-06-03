@@ -207,7 +207,7 @@ public:
 
         return result;
 
-    };      // end of operator()
+    }   // end of operator()
 };      // end of functor specialization: Compute_cone_..._2
 
 }  // namespace CGAL

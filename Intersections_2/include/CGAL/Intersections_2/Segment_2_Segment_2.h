@@ -353,6 +353,42 @@ protected:
     mutable typename K::Point_2            _intersection_point, _other_point;
 };
 
+
+inline
+double s2s2_alpha(double x0, double y0,
+                  double x1, double y1,
+                  double x2, double y2,
+                  double x3, double y3)
+{
+  const double s1_dx = x0 - x1,
+               s1_dy = y0 - y1,
+               s2_dx = x3 - x2,
+               s2_dy = y3 - y2,
+               lx    = x3 - x1,
+               ly    = y3 - y1;
+  double val = std::fma(lx,s2_dy,-ly*s2_dx)/std::fma(s1_dx,s2_dy,-s1_dy*s2_dx);
+  if (val!=val) return 0.5;
+  if (val<0) return 0;
+  if (val>1) return 1;
+  return val;
+}
+
+template <class FT>
+FT s2s2_alpha(const FT& x0, const FT& y0,
+              const FT& x1, const FT& y1,
+              const FT& x2, const FT& y2,
+              const FT& x3, const FT& y3)
+{
+  FT s1_dx = x0 - x1,
+     s1_dy = y0 - y1,
+     s2_dx = x3 - x2,
+     s2_dy = y3 - y2,
+     lx    = x3 - x1,
+     ly    = y3 - y1;
+  return (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
+}
+
+
 template <class K>
 typename Segment_2_Segment_2_pair<K>::Intersection_results
 Segment_2_Segment_2_pair<K>::intersection_type() const
@@ -400,14 +436,8 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
                                            : CGAL::make_array( _seg2->point(s2s2_id[c][2]), _seg2->point(s2s2_id[c][3]),
                                                                _seg1->point(s2s2_id[c][0]), _seg1->point(s2s2_id[c][1]) );
 
-    typename K::FT s1_dx = pts[0].x() - pts[1].x(),
-                   s1_dy = pts[0].y() - pts[1].y(),
-                   s2_dx = pts[3].x() - pts[2].x(),
-                   s2_dy = pts[3].y() - pts[2].y(),
-                   lx    = pts[3].x() - pts[1].x(),
-                   ly    = pts[3].y() - pts[1].y();
+    typename K::FT alpha =  s2s2_alpha(pts[0].x(), pts[0].y(), pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
 
-    typename K::FT alpha =  (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
     _intersection_point = K().construct_barycenter_2_object()(pts[0], alpha, pts[1]);
 
     return _result;

@@ -1,5 +1,5 @@
 # This is the CMake script for compiling a CGAL application.
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Ridges_3_Examples)
 
 find_package(CGAL REQUIRED)
@@ -19,6 +19,7 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(Ridges_Umbilics_SM PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program(Ridges_Umbilics_LCC.cpp)
     target_link_libraries(Ridges_Umbilics_LCC PUBLIC CGAL::Eigen3_support)
+    add_definitions("-DCGAL_USE_BOOST_PROGRAM_OPTIONS")
     if(TARGET Boost::program_options)
       target_link_libraries(Compute_Ridges_Umbilics PRIVATE Boost::program_options)
       target_link_libraries(Ridges_Umbilics_SM PRIVATE Boost::program_options)

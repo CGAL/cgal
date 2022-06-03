@@ -27,6 +27,7 @@
 #include <CGAL/Named_function_parameters.h>
 
 #include <boost/graph/graph_concepts.hpp>
+#include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -75,7 +76,8 @@ private:
     public virtual boost::bidirectional_graph_tag,   // This tag refines the
                                                      // incidence_graph_tag.
     public virtual boost::vertex_list_graph_tag,  // Can iterate over vertices.
-    public virtual boost::edge_list_graph_tag     // Can iterate over edges.
+    public virtual boost::edge_list_graph_tag,     // Can iterate over edges.
+    public virtual boost::adjacency_graph_tag
   {};
 
   /*! \class
@@ -232,7 +234,7 @@ public:
   typedef typename Arrangement_on_surface_2::Size       edges_size_type;
 
   // Types not required by any of these concepts:
-  typedef void                                          adjacency_iterator;
+  typedef  CGAL::Vertex_around_target_iterator<Arrangement_on_surface_2> adjacency_iterator;
 
   /*! Constructor. */
   graph_traits (const Arrangement_on_surface_2& arr) :
@@ -409,6 +411,20 @@ out_edges (typename
     gt_arr (arr);
 
   return std::make_pair (gt_arr.out_edges_begin (v), gt_arr.out_edges_end (v));
+}
+
+template <class GeomTraits, class TopTraits>
+Iterator_range< typename
+          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                             TopTraits> >::
+                                                         adjacency_iterator>
+adjacent_vertices(typename
+           boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                              TopTraits> >::
+                                                          vertex_descriptor v,
+           const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  return CGAL::vertices_around_target(v,arr);
 }
 
 /*!

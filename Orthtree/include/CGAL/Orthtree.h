@@ -855,19 +855,19 @@ private: // functions :
   }
 
   /*!
-    \brief finds the `k` points within a specific radius that are nearest to `query`.
+    \brief finds the `k` points within a specific radius that are
+    nearest to the center of `query_sphere`.
 
     This function guarantees that there are no closer points than the ones returned,
     but it does not guarantee that it will return at least `k` points.
     For a query where the search radius encloses `k` or fewer points, all enclosed points will be returned.
-    If the search radius passed is too small, no points may be returned.
+    If the search radius is too small, no points may be returned.
     This function is useful when the user already knows how sparse the points are,
     or if they do not care about points that are too far away.
     Setting a small radius may have performance benefits.
 
     \tparam OutputIterator must be a model of `OutputIterator` that accepts points
-    \param search_point the location to find points near
-    \param search_radius_squared the size of the region to search within
+    \param query_sphere the region to search within
     \param k the number of points to find
     \param output the output iterator to add the found points to (in order of increasing distance)
    */

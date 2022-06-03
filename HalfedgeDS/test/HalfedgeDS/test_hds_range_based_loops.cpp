@@ -24,7 +24,6 @@ void test_vertex_handles(
   assert(hds_list.vertex_handles().size() == 1);
   for (auto vh : hds_list.vertex_handles()) {
     assert(vh == lit);
-    assert(vh->point() == lit->point());
     assert(vh->halfedge() == lit->halfedge());
     ++lit;
   }
@@ -34,7 +33,6 @@ void test_vertex_handles(
   assert(hds_vector.vertex_handles().size() == 1);
   for (auto vh : hds_vector.vertex_handles()) {
     assert(vh == vit);
-    assert(vh->point() == vit->point());
     assert(vh->halfedge() == vit->halfedge());
     ++vit;
   }
@@ -49,7 +47,6 @@ void test_const_vertex_handles(
   assert(hds_list.vertex_handles().size() == 1);
   for (const auto& vh : hds_list.vertex_handles()) {
     assert(vh == lit);
-    assert(vh->point() == lit->point());
     assert(vh->halfedge() == lit->halfedge());
     ++lit;
   }
@@ -59,7 +56,6 @@ void test_const_vertex_handles(
   assert(hds_vector.vertex_handles().size() == 1);
   for (const auto& vh : hds_vector.vertex_handles()) {
     assert(vh == vit);
-    assert(vh->point() == vit->point());
     assert(vh->halfedge() == vit->halfedge());
     ++vit;
   }
@@ -74,7 +70,6 @@ void test_face_handles(
   assert(hds_list.face_handles().size() == 2);
   for (auto fh : hds_list.face_handles()) {
     assert(fh == lit);
-    assert(fh->plane() == lit->plane());
     assert(fh->halfedge() == lit->halfedge());
     ++lit;
   }
@@ -84,7 +79,6 @@ void test_face_handles(
   assert(hds_vector.face_handles().size() == 2);
   for (auto fh : hds_vector.face_handles()) {
     assert(fh == vit);
-    assert(fh->plane() == vit->plane());
     assert(fh->halfedge() == vit->halfedge());
     ++vit;
   }
@@ -99,7 +93,6 @@ void test_const_face_handles(
   assert(hds_list.face_handles().size() == 2);
   for (const auto& fh : hds_list.face_handles()) {
     assert(fh == lit);
-    assert(fh->plane() == lit->plane());
     assert(fh->halfedge() == lit->halfedge());
     ++lit;
   }
@@ -109,7 +102,6 @@ void test_const_face_handles(
   assert(hds_vector.face_handles().size() == 2);
   for (const auto& fh : hds_vector.face_handles()) {
     assert(fh == vit);
-    assert(fh->plane() == vit->plane());
     assert(fh->halfedge() == vit->halfedge());
     ++vit;
   }

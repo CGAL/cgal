@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 
 project( Installation_Tests )
 
@@ -92,17 +92,11 @@ if(LEDA_FOUND)
   target_link_libraries(test_LEDA_IO ${LEDA_LIBRARIES})
 endif()
 
-if("$ENV{CMAKE_GENERATOR}" STREQUAL "")
-    set(GENERATOR )
-  else()
-    set(GENERATOR $ENV{CMAKE_GENERATOR})
-  endif()
-
-  if("$ENV{INIT_FILE}" STREQUAL "")
+if("$ENV{INIT_FILE}" STREQUAL "")
   set(INIT_FILE )
-  else()
+else()
   set(INIT_FILE -C$ENV{INIT_FILE})
-  endif()
+endif()
 
 function(CGAL_installation_test_find_package_version mode)
   set(EXACT)
@@ -131,7 +125,7 @@ function(CGAL_installation_test_find_package_version mode)
   configure_file(test_find_package.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}/CMakeLists.txt)
 
   add_test(NAME test_find_package_version_${mode}
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}
+    COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}
     )
   cgal_setup_test_properties(test_find_package_version_${mode})
   set_property(TEST test_find_package_version_${mode}
@@ -215,7 +209,7 @@ add_test(NAME install_non_standard_cgal
 #test CGAL_DIR=non standard place without cgal_qt5
 get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
 add_test(NAME test_config_file_3
-COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
+COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
 "${CMAKE_BINARY_DIR}/test_config_file"
 WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_3")
 list(APPEND test_config_lst "test_config_file_3")
@@ -223,7 +217,7 @@ list(APPEND test_config_lst "test_config_file_3")
 if(CGAL_Qt5_FOUND)
   #configure cgal for a non standard install with qt5
   add_test(NAME config_non_standard_cgal_qt5
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib
+    COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib
     "${CGAL_SOURCE_DIR}"
     WORKING_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt5")
   #install cgal in the non standard place
@@ -233,7 +227,7 @@ if(CGAL_Qt5_FOUND)
   #test CGAL_DIR=non standard place with cgal_qt5
   get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
   add_test(NAME test_config_file_4
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
+    COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
     "${CMAKE_BINARY_DIR}/test_config_file_qt5"
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_4")
   list(APPEND test_config_lst "test_config_file_4")
@@ -242,7 +236,7 @@ endif()#CGAL_Qt5_FOUND
 #test CGAL_DIR=non standard build
 get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build/CGALConfig.cmake" DIRECTORY)
 add_test(NAME test_config_file_5
-COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
+COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
  "${CMAKE_BINARY_DIR}/test_config_file"
  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_5")
 list(APPEND test_config_lst "test_config_file_5")

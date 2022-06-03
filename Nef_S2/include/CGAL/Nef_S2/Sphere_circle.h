@@ -173,11 +173,9 @@ Sphere_point<R> intersection(const Sphere_circle<R>& c1,
 |c1| and |c2|. \precond |c1 != c2| as sets.}*/
 {
   CGAL_assertion(!equal_as_sets(c1,c2));
-  typename R::Line_3 lres;
   CGAL_NEF_TRACEN("circle_intersection "<<c1<<" "<<c2);
-  CGAL::Object o = CGAL::intersection(c1.plane(),c2.plane());
-  if ( !CGAL::assign(lres,o) ) CGAL_error();
-  return CGAL::ORIGIN + lres.direction().vector();
+  return R().construct_cross_product_vector_3_object()(
+         c1.orthogonal_vector(), c2.orthogonal_vector());
 }
 
 

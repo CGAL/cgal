@@ -3,7 +3,8 @@
 
 #include <CGAL/config.h>
 
-#include <boost/graph/breadth_first_search.hpp>
+#include <CGAL/boost/graph/breadth_first_search.h>
+
 #include <boost/graph/visitors.hpp>
 
 #include <CGAL/Arr_extended_dcel.h>
