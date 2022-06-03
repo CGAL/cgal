@@ -1,1 +1,2 @@
 GPL (v3 or later)
+GPL (v3 or later) AND BSL-1.0
