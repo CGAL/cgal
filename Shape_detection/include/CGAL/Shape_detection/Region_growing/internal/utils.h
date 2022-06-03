@@ -46,15 +46,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Iterator_range.h>
 
-#include <CGAL/Surface_mesh.h>
-
-
-//DELETEME
-#include <CGAL/Eigen_matrix.h>
-#include <CGAL/Eigen_vector.h>
-#include <CGAL/Eigen_svd.h>
-#include <CGAL/Timer.h>
-
 namespace CGAL {
 namespace Shape_detection {
 namespace internal {
