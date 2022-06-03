@@ -38,6 +38,11 @@ struct MD_homogeneous_types {
   {
     return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+i),Cb(i+RTcb_3+(i)[4]))";
   }
+
+  static Index index_from_curve_index (const Curve_index &curve_index)
+  {
+    return curve_index;
+  }
 };
 
 // One with heterogeneous index types
@@ -65,8 +70,38 @@ struct MD_heterogeneous_types {
   {
     return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+boost::variant<enum,std::pair<i,i>,i,d>),Cb(enum+RTcb_3+(std::pair<i,i>)[4]))";
   }
+  static Index index_from_curve_index (const Curve_index &curve_index)
+  {
+    return curve_index;
+  }
 };
 
+struct MD_curve_pair {
+  typedef CGAL::Tag_false Has_features;
+  typedef int Subdomain_index;
+  typedef int Surface_patch_index;
+  typedef std::pair<int, int> Curve_index;
+  typedef int Corner_index;
+  typedef int Index;
+
+  static Subdomain_index get_sub_domain_index_1() { return 1; }
+  static Subdomain_index get_sub_domain_index_2() { return 2; }
+  static Surface_patch_index get_surface_patch_index_1() { return 3; }
+  static Surface_patch_index get_surface_patch_index_2() { return 4; }
+  static Curve_index get_curve_index_1() { return std::make_pair(5,6); }
+  static Curve_index get_curve_index_2() { return std::make_pair(6,7); }
+  static Corner_index get_corner_index_1() { return 7; }
+  static Corner_index get_corner_index_2() { return 8; }
+
+  static std::string reference_format_string()
+  {
+    return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+i),Cb(i+RTcb_3+(i)[4]))";
+  }
+  static Index index_from_curve_index (const Curve_index &curve_index)
+  {
+    return curve_index.first;
+  }
+};
 //
 // Define I/O for MD_heterogeneous_types::Subdomain_index (then enum)
 //
@@ -446,18 +481,136 @@ struct Test_c3t3_io {
     v2->set_dimension(0);
     v2->set_index(Mesh_domain::get_corner_index_2());
     v3->set_dimension(1);
-    v3->set_index(Mesh_domain::get_curve_index_1());
+    v3->set_index(Mesh_domain::index_from_curve_index(Mesh_domain::get_curve_index_1()));
     v4->set_dimension(1);
-    v4->set_index(Mesh_domain::get_curve_index_2());
+    v4->set_index(Mesh_domain::index_from_curve_index(Mesh_domain::get_curve_index_2()));
     v5->set_dimension(2);
     v5->set_index(Mesh_domain::get_surface_patch_index_1());
     v6->set_dimension(3);
     v6->set_index(Mesh_domain::get_sub_domain_index_1());
 
     // then test I/O
-    return test_io(c3t3, prefix, false) && test_io(c3t3, prefix, true);
+    bool res = test_io(c3t3, prefix, false);
+    res &= test_io(c3t3, prefix, true);
+    return res;
   }
 };
+
+bool test_data_type()
+{
+
+  //
+  struct MD_1 {
+    typedef CGAL::Tag_false Has_features;
+    typedef int Subdomain_index;
+    typedef int Surface_patch_index;
+    typedef unsigned int Curve_index;
+    typedef int Corner_index;
+    typedef int Index;
+
+    static Subdomain_index get_sub_domain_index_1() { return 1; }
+    static Subdomain_index get_sub_domain_index_2() { return 2; }
+    static Surface_patch_index get_surface_patch_index_1() { return 3; }
+    static Surface_patch_index get_surface_patch_index_2() { return 4; }
+    static Curve_index get_curve_index_1() { return 5; }
+    static Curve_index get_curve_index_2() { return 6; }
+    static Corner_index get_corner_index_1() { return 7; }
+    static Corner_index get_corner_index_2() { return 8; }
+
+    static std::string reference_format_string()
+    {
+      return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+i),Cb(i+RTcb_3+(i)[4]))";
+    }
+  };
+
+  typedef CGAL::Mesh_triangulation_3<MD_1, K>::Type Tr_1;
+  typedef MD_homogeneous_types MD_2;
+  typedef MD_1::Curve_index Curve_index_1;
+  typedef MD_1::Corner_index Corner_index_1;
+  typedef  Tr_1::Point Point;
+  typedef  Tr_1::Vertex_handle Vertex_handle;
+  typedef  Tr_1::Edge Edge;
+  typedef  Tr_1::Facet Facet;
+  typedef  Tr_1::Cell_handle Cell_handle;
+
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<
+    Tr_1,
+    Corner_index_1,
+    Curve_index_1
+    > C3t3_1;
+
+  typedef MD_2::Curve_index Curve_index_2;
+  typedef MD_2::Corner_index Corner_index_2;
+
+  typedef CGAL::Mesh_triangulation_3<MD_2, K>::Type Tr_2;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<
+    Tr_2,
+    Corner_index_2,
+    Curve_index_2
+    > C3t3_2;
+
+
+  C3t3_1 c3t3;
+  C3t3_2 c3t3_2;
+  Tr_1& tr = c3t3.triangulation();
+  Vertex_handle v1 = tr.insert(Point(10,11,12));
+  Vertex_handle v2 = tr.insert(Point(11,13,10));
+  Vertex_handle v3 = tr.insert(Point(7,4,6));
+  Vertex_handle v4 = tr.insert(Point(5,2,14));
+  Vertex_handle v5 = tr.insert(Point(1,2,3));
+  Vertex_handle v6 = tr.insert(Point(3,9,13));
+
+  Edge e1 = *(c3t3.triangulation().finite_edges_begin());
+  Edge e2 = *(++c3t3.triangulation().finite_edges_begin());
+
+  Facet f1 = *(c3t3.triangulation().finite_facets_begin());
+  Facet f2 = *(++c3t3.triangulation().finite_facets_begin());
+
+  Cell_handle c1 = c3t3.triangulation().finite_cells_begin();
+  Cell_handle c2 = ++c3t3.triangulation().finite_cells_begin();
+
+  c3t3.add_to_complex(c2, MD_1::get_sub_domain_index_2());
+  c3t3.add_to_complex(c1, MD_1::get_sub_domain_index_1());
+  c3t3.add_to_complex(f1, MD_1::get_surface_patch_index_1());
+  c3t3.add_to_complex(f2, MD_1::get_surface_patch_index_2());
+  c3t3.add_to_complex(e1, MD_1::get_curve_index_1());
+  c3t3.add_to_complex(e2, MD_1::get_curve_index_2());
+  c3t3.add_to_complex(v1, MD_1::get_corner_index_1());
+  c3t3.add_to_complex(v2, MD_1::get_corner_index_2());
+
+  // Fill indices in various faces (with different dimensions)
+  v1->set_dimension(0);
+  v1->set_index(MD_1::get_corner_index_1());
+  v2->set_dimension(0);
+  v2->set_index(MD_1::get_corner_index_2());
+  v3->set_dimension(1);
+  v3->set_index(MD_1::get_curve_index_1());
+  v4->set_dimension(1);
+  v4->set_index(MD_1::get_curve_index_2());
+  v5->set_dimension(2);
+  v5->set_index(MD_1::get_surface_patch_index_1());
+  v6->set_dimension(3);
+  v6->set_index(MD_1::get_sub_domain_index_1());
+
+  std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out;
+  std::stringstream stream(mode);
+  CGAL::Mesh_3::save_binary_file(stream, c3t3, false);
+  assert(stream);
+  CGAL::Mesh_3::load_binary_file(stream, c3t3_2);
+  assert(stream);
+  std::ostringstream c3t3_1_oss;
+  c3t3_1_oss << "*****begin*****\n"
+         << c3t3
+         << "\n******end******" << std::endl;
+  std::ostringstream c3t3_2_oss;
+  c3t3_2_oss << "*****begin*****\n"
+         << c3t3_2
+         << "\n******end******" << std::endl;
+  assert(0 == c3t3_1_oss.str().compare(c3t3_2_oss.str()));
+
+  assert(stream);
+  return true;
+}
 
 int main()
 {
@@ -469,6 +622,19 @@ int main()
   }
   std::cout << "Then test I/O when all indices are different types" << std::endl;
   ok = Test_c3t3_io<MD_heterogeneous_types>()("data/c3t3_io-hetero");
+  if(!ok) {
+    std::cerr << "Error\n";
+    return -1;
+  }
+  std::cout << "Then test I/O when curve_index are pair of integers." << std::endl;
+  ok = Test_c3t3_io<MD_curve_pair>()("data/c3t3_io-pairs");
+  if(!ok) {
+    std::cerr << "Error\n";
+    return -1;
+  }
+
+  std::cout << "Then test I/O with different curve_indices" << std::endl;
+  ok = test_data_type();
   if(!ok) {
     std::cerr << "Error\n";
     return -1;

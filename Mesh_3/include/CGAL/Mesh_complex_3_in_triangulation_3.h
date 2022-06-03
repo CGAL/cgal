@@ -605,7 +605,87 @@ public:
                                  Vertex_iterator_not_in_complex(*this));
   }
 
+  std::ostream& write_edges_in_complex(std::ostream& os,
+                                      const Unique_hash_map<Vertex_handle, std::size_t >& vertex_index_map) const
+  {
+    if(is_ascii(os))
+    {
+      os << number_of_edges_in_complex()<<std::endl;
+      for(auto it = edges_.begin(); it != edges_.end(); ++it)
+      {
+        os<<vertex_index_map[it->left]<<" "<<vertex_index_map[it->right]<< " "<< CGAL::oformat(it->info)<<std::endl;
+      }
+    }
+    else
+    {
+      write(os, number_of_edges_in_complex());
+      for(auto it = edges_.begin(); it != edges_.end(); ++it)
+      {
+        write(os, vertex_index_map[it->left]);
+        write(os, vertex_index_map[it->right]);
+        write(os, it->info);
+      }
+    }
+    return os;
+  }
 
+  std::istream& read_edges_in_complex(std::istream& is,
+                                      const std::vector<Vertex_handle >& index_vertex_map)
+  {
+    std::size_t n;
+    if(is_ascii(is))
+    {
+      is >> n;
+    }
+    else
+    {
+      CGAL::read(is, n);
+    }
+    if(!is)
+      return is;
+
+    if(is_ascii(is))
+    {
+      for(std::size_t i=0; i < n; ++i)
+      {
+        //read edge and curve index
+        std::size_t l,r;
+        Curve_index c;
+        is >> CGAL::iformat(l);
+        is >> CGAL::iformat(r);
+        is >> CGAL::iformat(c);
+        if(!is)
+          return is;
+        add_to_complex(index_vertex_map[l],index_vertex_map[r], c);
+      }
+    }
+    else
+    {
+      for(std::size_t i=0; i < n; ++i)
+      {
+        //read edge and curve index
+        std::size_t l,r;
+        Curve_index c;
+        CGAL::read(is,l);
+        CGAL::read(is,r);
+        CGAL::read(is,c);
+        if(!is)
+          return is;
+        add_to_complex(index_vertex_map[l],index_vertex_map[r], c);
+      }
+    }
+    return is;
+  }
+
+  std::istream& load_without_edges(std::istream& is)
+  {
+    is >> static_cast<
+      Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(*this);
+
+    rescan_after_load_of_triangulation();
+    return is;
+
+  }
 private:
   /**
    * Creates an Internal_edge object (i.e a pair of ordered Vertex_handle)
@@ -830,10 +910,28 @@ std::ostream &
 operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
-  // TODO: implement edge saving
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
-  return os << static_cast<
+  os << static_cast<
     const Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
+  if(os.good() && c3t3.triangulation().dimension() > 0)
+  {
+    Unique_hash_map<typename Tr::Vertex_handle, std::size_t > vertex_index_map;
+
+
+    typename Tr::size_type i = 0;
+    vertex_index_map[c3t3.triangulation().infinite_vertex()] = 0;
+    auto vit = c3t3.triangulation().vertices_begin();
+    //skip infinite vertex
+    ++vit;
+    for(; vit != c3t3.triangulation().vertices_end(); ++vit)
+    {
+      vertex_index_map[vit] = ++i;
+    }
+    CGAL_triangulation_assertion(i == c3t3.triangulation().number_of_vertices());
+    CGAL_triangulation_assertion(c3t3.triangulation().is_infinite(c3t3.triangulation().vertices_begin()));
+    c3t3.write_edges_in_complex(os, vertex_index_map);
+  }
+  return os;
 }
 
 
@@ -842,11 +940,23 @@ std::istream &
 operator>> (std::istream& is,
             Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
-  // TODO: implement edge loading
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   is >> static_cast<
     Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
+
   c3t3.rescan_after_load_of_triangulation();
+  //rebuild index_vertex_map
+  std::vector< typename Tr::Vertex_handle > V(c3t3.triangulation().number_of_vertices()+1);
+  //V[0] = c3t3.triangulation().infinite_vertex(); // the infinite vertex is numbered 0
+  std::size_t i = 0;
+  auto vit = c3t3.triangulation().vertices_begin();
+  for(vit; vit != c3t3.triangulation().vertices_end(); ++vit)
+  {
+    V[i++] = vit;
+  }
+
+  //load edges_in_complex
+  c3t3.read_edges_in_complex(is, V);
   return is;
 }
 

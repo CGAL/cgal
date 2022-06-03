@@ -56,6 +56,5 @@ int main()
   typedef CGAL::Homogeneous<Rtype>      Gt6;
   typedef CGAL::Triangulation_2<Gt6>    Cls6;
   _test_cls_triangulation_2( Cls6() );
-
   return 0;
 }

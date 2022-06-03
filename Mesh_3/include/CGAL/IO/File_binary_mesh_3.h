@@ -33,7 +33,7 @@ save_binary_file(std::ostream& os,
 {
   typedef typename C3T3::Triangulation::Geom_traits::FT FT;
   if(binary) os << "binary ";
-  os << "CGAL c3t3 " << CGAL::Get_io_signature<C3T3>()() << "\n";
+  os << "CGAL c3t3 " << CGAL::Get_io_signature<C3T3>()() <<"+C3t3_data<"<<Get_io_signature<typename C3T3::Curve_index>()()<<">\n";
   if(binary) {
     CGAL::IO::set_binary_mode(os);
   } else {
@@ -59,20 +59,50 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
   {
     return false;
   }
+  bool has_curve_index_type = false;
   std::getline(is, s);
   if(!s.empty()) {
     if(s[s.size()-1] == '\r') { // deal with Windows EOL
       s.resize(s.size() - 1);
     }
-    if(s != std::string(" ") + CGAL::Get_io_signature<C3T3>()()) {
-      std::cerr << "load_binary_file:"
-                << "\n  expected format: " << CGAL::Get_io_signature<C3T3>()()
-                << "\n       got format:" << s << std::endl;
-      return false;
+    if(s.find("+C3t3_data") !=std::string::npos)
+    {
+      std::size_t splitter = s.find("+C3t3_data");
+      std::string first_part = s.substr(0, splitter);
+      std::string second_part = s.substr(splitter);
+
+      if(first_part != std::string(" ") + CGAL::Get_io_signature<C3T3>()()) {
+        std::cerr << "load_binary_file:"
+                  << "\n  expected format: " << CGAL::Get_io_signature<C3T3>()()
+                  << "\n       got format:" << s << std::endl;
+        return false;
+      }
+      if(second_part !=  std::string("+C3t3_data<")+Get_io_signature<typename C3T3::Curve_index>()()+">"){
+        std::cout<< "load_binary_file warning:"
+                 << "\n  expected format: " << CGAL::Get_io_signature<C3T3>()()<<"+C3t3_data<"<<CGAL::Get_io_signature<typename C3T3::Curve_index>()()<<">"
+                 << "\n       got format:" << s << std::endl
+                 << "\n       not loading edges in complex."<<std::endl;
+        has_curve_index_type = false;
+      }
+      else
+        has_curve_index_type = true;
+    }
+    else
+    {
+      if(s != std::string(" ") + CGAL::Get_io_signature<C3T3>()()) {
+        std::cerr << "load_binary_file:"
+                  << "\n  expected format: " << CGAL::Get_io_signature<C3T3>()()
+                  << "\n       got format:" << s << std::endl;
+        return false;
+      }
+      has_curve_index_type = false;
     }
   }
   if(binary) CGAL::IO::set_binary_mode(is);
-  is >> c3t3;
+  if(has_curve_index_type)
+    is >> c3t3;
+  else
+    c3t3.load_without_edges(is);
   return !!is;
   // call operator!() twice, because operator bool() is C++11
 }

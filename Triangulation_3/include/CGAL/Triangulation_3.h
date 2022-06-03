@@ -573,6 +573,7 @@ protected:
   GT  _gt;
   Vertex_handle infinite; // infinite vertex
 
+
 public:
   template<typename P> // Point or Point_3
   typename boost::result_of<const Construct_point_3(const P&)>::type
@@ -2351,6 +2352,23 @@ public:
     CGAL_triangulation_assertion( is_valid(false) );
     return is;
   }
+
+  size_type fill_map(const size_type& num_vertices, Unique_hash_map<Vertex_handle, std::size_t >& vertex_index_map) const
+  {
+    size_type i = 0;
+    vertex_index_map[infinite_vertex()] = 0;
+    auto vit = vertices_begin();
+    //skip infinite vertex
+    ++vit;
+    for(; vit != vertices_end(); ++vit)
+    {
+      vertex_index_map[vit] = ++i;
+    }
+    CGAL_triangulation_assertion(i == num_vertices);
+    CGAL_triangulation_assertion(is_infinite(vertices_begin()));
+    return i;
+  }
+
 };
 
 
@@ -2412,10 +2430,10 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   for(std::size_t j=0 ; j < m; j++)
     if(!(is >> *(C[j])))
       return is;
-
   CGAL_triangulation_assertion(tr.is_valid(false));
   return is;
 }
+
 
 template < class GT, class Tds, class Lds >
 std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
@@ -2433,7 +2451,6 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   typedef Triangulation_3<GT, Tds>                 Triangulation;
   typedef typename Triangulation::size_type        size_type;
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
-  typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
   typedef typename Triangulation::Cell_iterator    Cell_iterator;
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
   typedef typename Triangulation::Facet_iterator   Facet_iterator;
@@ -2452,29 +2469,22 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
 
   if(n == 0)
     return os;
-
-  std::vector<Vertex_handle> TV(n+1);
-  size_type i = 0;
-
   // write the vertices
-  for(Vertex_iterator it = tr.vertices_begin(), end = tr.vertices_end(); it != end; ++it)
-    TV[i++] = it;
-
-  CGAL_triangulation_assertion(i == n+1);
-  CGAL_triangulation_assertion(tr.is_infinite(TV[0]));
-
-  Unique_hash_map<Vertex_handle, std::size_t > V;
-  V[tr.infinite_vertex()] = 0;
-  for(i=1; i <= n; i++)
+  auto vit = tr.vertices_begin();
+  ++vit;
+  for(; vit != tr.vertices_end(); ++vit)
   {
-    os << *TV[i];
-    V[TV[i]] = i;
+    os << *vit;
     if(IO::is_ascii(os))
-      os << std::endl;
+      os<<std::endl;
   }
 
+  Unique_hash_map<Vertex_handle, std::size_t > vertex_index_map;
+  tr.fill_map(n, vertex_index_map);
+
+
   // Asks the tds for the combinatorial information
-  tr.tds().print_cells(os, V);
+  tr.tds().print_cells(os, vertex_index_map);
 
   // Write the non combinatorial information on the cells
   // using the << operator of Cell.
