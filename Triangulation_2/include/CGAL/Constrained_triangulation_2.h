@@ -35,6 +35,7 @@
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
 namespace CGAL {
@@ -1082,6 +1083,8 @@ intersect(Face_handle f, int i,
 
 namespace internal {
 
+  BOOST_MPL_HAS_XXX_TRAIT_DEF(Exact_kernel)
+
   template <typename Type>
   class Has_barycenter_2
   {
@@ -1089,7 +1092,13 @@ namespace internal {
     typedef struct { char a[2]; } No;
 
     template <typename U>
-    static auto check(int) -> decltype(std::declval<U>().construct_barycenter_2_object(), Yes());
+    static auto check(int)
+        -> decltype(std::declval<typename U::Point_2>() =
+                        std::declval<U>().construct_barycenter_2_object()(
+                            std::declval<typename U::Point_2>(),
+                            std::declval<typename U::FT>(),
+                            std::declval<typename U::Point_2>()),
+                    Yes());
 
     template <typename U>
     static No check(...);
@@ -1098,10 +1107,20 @@ namespace internal {
     static const bool value = (sizeof(Yes) == sizeof(check<Type>(0)));
   };
 
+  template <typename Gt, bool = has_Exact_kernel<Gt>::value >
+  struct Can_construct_almost_exact_intersection {
+    enum { value =
+      internal::Has_barycenter_2<typename Gt::Exact_kernel>::value &&
+      internal::Has_filtered_predicates<Gt>::value };
+  };
+
+  template <typename Gt>
+  struct Can_construct_almost_exact_intersection<Gt, false>
+      : public CGAL::Tag_false {};
+
   template <typename Gt>
   static constexpr bool can_construct_almost_exact_intersection_v =
-      internal::Has_barycenter_2<Gt>::value &&
-      internal::Has_filtered_predicates<Gt>::value;
+      Can_construct_almost_exact_intersection<Gt>::value;
 
   template <typename Gt>
   constexpr bool can_construct_almost_exact_intersection(const Gt&) {
@@ -1889,13 +1908,13 @@ almost_exact_intersection(const Gt&,
 }
 
 template <typename K2_Point_2, typename K1>
-auto convert(const CGAL::Point_2<K1> &p) {
+auto convert_point_type(const CGAL::Point_2<K1> &p) {
   NT_converter<typename K1::FT, typename Kernel_traits<K2_Point_2>::Kernel::FT> c;
   return K2_Point_2(c(p.x()), c(p.y()));
 }
 
 template <typename K2_Point_3, typename K1>
-auto convert(const CGAL::Point_3<K1> &p) {
+auto convert_point_type(const CGAL::Point_3<K1> &p) {
   NT_converter<typename K1::FT, typename Kernel_traits<K2_Point_3>::Kernel::FT> c;
   return K2_Point_3(c(p.x()), c(p.y()), c(p.z()));
 }
@@ -1913,10 +1932,10 @@ exact_intersection_point_for_cdt_2(const typename Gt::Point_2& pa,
   using Exact_FT = typename Exact_kernel::FT;
   using Point = typename Gt::Point_2;
 
-  const auto ea = convert<Exact_point>(pa);
-  const auto eb = convert<Exact_point>(pb);
-  const auto ec = convert<Exact_point>(pc);
-  const auto ed = convert<Exact_point>(pd);
+  const auto ea = convert_point_type<Exact_point>(pa);
+  const auto eb = convert_point_type<Exact_point>(pb);
+  const auto ec = convert_point_type<Exact_point>(pc);
+  const auto ed = convert_point_type<Exact_point>(pd);
 
   auto det = [](const auto& v1, const auto& v2) -> Exact_FT {
     return v1.x() * v2.y() - v1.y() * v2.x();
@@ -1926,7 +1945,8 @@ exact_intersection_point_for_cdt_2(const typename Gt::Point_2& pa,
   const Exact_FT det_ba_cd = det(ea - eb, ec - ed);
   const Exact_FT alpha = det_bd_cd / det_ba_cd;
 
-  return convert<Point>(gt.exact_kernel().construct_barycenter_2_object()(ea, alpha, eb));
+  return convert_point_type<Point>(
+      gt.exact_kernel().construct_barycenter_2_object()(ea, alpha, eb));
 }
 
 template <typename Gt>

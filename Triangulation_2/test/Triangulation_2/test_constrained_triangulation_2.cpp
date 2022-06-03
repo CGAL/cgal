@@ -30,6 +30,11 @@
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/_test_cls_constrained_triangulation_2.h>
 
+static_assert(!CGAL::internal::can_construct_almost_exact_intersection_v<EK>,
+              "Static assert failure. See internal::can_construct_almost_exact_intersections"
+              " in <CGAL/Constrained_triangulation_2.h> ");
+
+
 // Explicit instantiation of the whole class :
 template class CGAL::Constrained_triangulation_2<TestK>;
 
