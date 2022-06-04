@@ -1,3 +1,4 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Conforming Triangulations and Meshes"
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/lloyd_optimize_mesh_2.h
