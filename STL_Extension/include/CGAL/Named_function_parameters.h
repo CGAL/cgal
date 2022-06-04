@@ -319,6 +319,14 @@ struct Boost_parameter_compatibility_wrapper
 {
   template <typename K>
   Named_function_parameters<K, Tag>
+  operator()(const K& p) const
+  {
+    typedef Named_function_parameters<K, Tag> Params;
+    return Params(p);
+  }
+
+  template <typename K>
+  Named_function_parameters<K, Tag>
   operator=(const K& p) const
   {
     typedef Named_function_parameters<K, Tag> Params;
