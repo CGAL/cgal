@@ -326,7 +326,7 @@ private:
       ltime.restart();
       std::cout << " Running lloyd_optimize_mesh_2..." << std::flush;
       CGAL::lloyd_optimize_mesh_2(cdt,
-        CGAL::parameters::max_iteration_number = nb_iter);
+        CGAL::parameters::number_of_iterations(nb_iter));
       std::cout << " done (" << ltime.elapsed() << " ms)" << std::endl;
     }
 

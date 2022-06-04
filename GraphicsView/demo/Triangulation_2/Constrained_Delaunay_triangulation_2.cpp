@@ -961,9 +961,7 @@ MainWindow::on_actionLloyd_optimization_triggered()
   }
 
   CGAL::lloyd_optimize_mesh_2(cdt,
-      max_iteration_number = nb,
-      seeds_begin = m_seeds.begin(),
-      seeds_end = m_seeds.end());
+      CGAL::parameters::number_of_iterations(nb).seeds(m_seeds));
 
   // default cursor
   QApplication::restoreOverrideCursor();
