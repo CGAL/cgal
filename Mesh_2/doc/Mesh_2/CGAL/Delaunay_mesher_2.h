@@ -281,7 +281,7 @@ bool step_by_step_refine_mesh();
  *                           the bounded connected components including at least
  *                           one seed. If `seeds_are_in_domain==false`, the domain is the
  *                           union of the bounded components including no seed.}
- *     \cgalParamType{a class model of `ConstRange` with iterator being a model of `InputIterator` with `%Point_2` as value type.}
+ *     \cgalParamType{a class model of `ConstRange` with iterator being a model of `InputIterator` with `CDT::Point_2` as value type.}
  *     \cgalParamDefault{No seed.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{criteria}
