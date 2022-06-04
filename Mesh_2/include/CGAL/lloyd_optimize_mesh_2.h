@@ -22,19 +22,10 @@
 #include <CGAL/Mesh_2/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/iterator.h>
-#include <CGAL/boost/parameter.h>
-#include <boost/parameter/preprocessor.hpp>
 
 #include <CGAL/Named_function_parameters.h>
 
 #include <fstream>
-
-#ifndef DOXYGEN_RUNNING
-// see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/boost/parameter.h>
-CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
-#endif
 
 namespace CGAL
 {
@@ -98,7 +89,7 @@ namespace CGAL
  *     \cgalParamDefault{0}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{freeze_bound}
+ *   \cgalParamNBegin{vertex_freeze_bound}
  *     \cgalParamDescription{designed to reduce running time of each optimization iteration.
  *                           Any vertex that has a displacement less than a given fraction of the length
  *                           of its shortest incident edge, is frozen (i.e.\ is not relocated).
@@ -132,6 +123,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
+  using parameters::is_default_parameter;
 
   int max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
   const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), 0.001);
@@ -148,47 +140,40 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
   // }
   const bool mark =  choose_parameter(get_parameter(np, internal_np::seeds_are_in_domain), false);
 
-  return lloyd_optimize_mesh_2_impl(cdt,
-                                    max_iterations,
-                                    convergence_ratio,
-                                    freeze_bound,
-                                    time_limit,
-                                    seeds.begin(),
-                                    seeds.end(),
-                                    mark);
+  if (is_default_parameter<CGAL_NP_CLASS,internal_np::i_seed_begin_iterator_t>::value ||
+      is_default_parameter<CGAL_NP_CLASS,internal_np::i_seed_end_iterator_t>::value)
+  {
+    return lloyd_optimize_mesh_2_impl(cdt,
+                                      max_iterations,
+                                      convergence_ratio,
+                                      freeze_bound,
+                                      time_limit,
+                                      seeds.begin(),
+                                      seeds.end(),
+                                      mark);
+  }
+  else
+  {
+    return lloyd_optimize_mesh_2_impl(cdt,
+                                      max_iterations,
+                                      convergence_ratio,
+                                      freeze_bound,
+                                      time_limit,
+                                      choose_parameter(get_parameter(np, internal_np::i_seed_begin_iterator), CGAL::Emptyset_iterator()),
+                                      choose_parameter(get_parameter(np, internal_np::i_seed_end_iterator), CGAL::Emptyset_iterator()),
+                                      mark);
+  }
 }
 
 #ifndef DOXYGEN_RUNNING
 #ifndef CGAL_NO_DEPRECATED_CODE
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4003) // not enough actual parameters for macro
-#endif
-  // TODO: check how to use CGAL_DEPRECATED here
-  BOOST_PARAMETER_FUNCTION(
-  (Mesh_optimization_return_code),
-  lloyd_optimize_mesh_2,
-  parameters::tag,
-  (required (in_out(cdt),*))
-  (optional
-    (max_iteration_number_, *, 0 )
-    (convergence_, *, 0.001 )
-    (time_limit_, *, 0. )
-    (freeze_bound_, *, 0.001 )
-    (seeds_begin_, *, CGAL::Emptyset_iterator())//see comments below
-    (seeds_end_, *, CGAL::Emptyset_iterator())//see comments below
-    (mark_, *, false) //if "false", seeds indicate "outside" regions
-  )
-  )
+
+  template<typename CDT, typename ... NP_PACK>
+  CGAL_DEPRECATED
+  Mesh_optimization_return_code
+  lloyd_optimize_mesh_2(CDT& cdt, const NP_PACK& ... nps)
   {
-    return lloyd_optimize_mesh_2_impl(cdt,
-                                      max_iteration_number_,
-                                      convergence_,
-                                      freeze_bound_,
-                                      time_limit_,
-                                      seeds_begin_,
-                                      seeds_end_,
-                                      mark_);
+    return lloyd_optimize_mesh_2(cdt, internal_np::combine_named_parameters(nps ...));
   }
 
 #if defined(BOOST_MSVC)
@@ -266,9 +251,6 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
     return rc;
   }
 
-CGAL_PRAGMA_DIAG_POP
-
-#include <CGAL/enable_warnings.h>
 #else
 
 namespace CGAL {

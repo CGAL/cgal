@@ -245,4 +245,6 @@ CGAL_add_named_parameter(domain_is_initialized_t, domain_is_initialized, domain_
 CGAL_add_named_parameter(seeds_are_in_domain_t, seeds_are_in_domain, seeds_are_in_domain)
 CGAL_add_named_parameter(criteria_t, criteria, criteria)
 CGAL_add_named_parameter(convergence_ratio_t, convergence_ratio, convergence_ratio)
-// CGAL_add_named_parameter(freeze_bound_t, freeze_bound, freeze_bound)
+CGAL_add_named_parameter(vertex_freeze_bound_t, vertex_freeze_bound, vertex_freeze_bound)
+CGAL_add_named_parameter(i_seed_begin_iterator_t, i_seed_begin_iterator, i_seed_begin_iterator)
+CGAL_add_named_parameter(i_seed_end_iterator_t, i_seed_end_iterator, i_seed_end_iterator)

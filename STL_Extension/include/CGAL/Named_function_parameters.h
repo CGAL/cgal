@@ -258,6 +258,20 @@ struct Named_function_parameters
   }
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
+
+  template <typename OT, typename OTag>
+  Named_function_parameters<OT, OTag, self>
+  combine(const Named_function_parameters<OT,OTag>& np) const
+  {
+    return Named_function_parameters<OT, OTag, self>(np.v,*this);
+  }
+
+  template <typename OT, typename OTag, typename ... NPS>
+  auto
+  combine(const Named_function_parameters<OT,OTag>& np, const NPS& ... nps) const
+  {
+    return Named_function_parameters<OT, OTag, self>(np.v,*this).combine(nps...);
+  }
 };
 
 namespace parameters {
@@ -295,8 +309,32 @@ inline no_parameters(Named_function_parameters<T,Tag,Base>)
     typedef Named_function_parameters<K, internal_np::X> Params;\
     return Params(p);                          \
   }
+
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <class Tag>
+struct Boost_parameter_compatibility_wrapper
+{
+  template <typename K>
+  Named_function_parameters<K, Tag>
+  operator=(const K& p) const
+  {
+    typedef Named_function_parameters<K, Tag> Params;
+    return Params(p);
+  }
+};
+
+// TODO: need to make sure this works when using several compilation units
+const Boost_parameter_compatibility_wrapper<internal_np::number_of_iterations_t> max_iteration_number;
+const Boost_parameter_compatibility_wrapper<internal_np::convergence_ratio_t> convergence;
+const Boost_parameter_compatibility_wrapper<internal_np::vertex_freeze_bound_t> freeze_bound;
+const Boost_parameter_compatibility_wrapper<internal_np::maximum_running_time_t> time_limit;
+const Boost_parameter_compatibility_wrapper<internal_np::i_seed_begin_iterator_t> seeds_begin;
+const Boost_parameter_compatibility_wrapper<internal_np::i_seed_end_iterator_t> seeds_end;
+const Boost_parameter_compatibility_wrapper<internal_np::seeds_are_in_domain_t> mark_;
+#endif
 
 // function to extract a parameter
 template <typename T, typename Tag, typename Base, typename Query_tag>
@@ -372,6 +410,17 @@ struct is_default_parameter
 };
 
 } // end of parameters namespace
+
+namespace internal_np {
+
+template <typename Tag, typename K, typename ... NPS>
+auto
+combine_named_parameters(const Named_function_parameters<K, Tag>& np, const NPS& ... nps)
+{
+  return np.combine(nps ...);
+}
+
+} // end of internal_np namespace
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 namespace Polygon_mesh_processing {
