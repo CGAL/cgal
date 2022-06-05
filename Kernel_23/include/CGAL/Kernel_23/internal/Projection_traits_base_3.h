@@ -462,6 +462,7 @@ public:
   typedef typename K::Construct_translated_point_3  Construct_translated_point_2;
   typedef typename K::Construct_midpoint_3          Construct_midpoint_2;
   typedef typename K::Construct_circumcenter_3      Construct_circumcenter_2;
+  typedef typename K::Construct_barycenter_3        Construct_barycenter_2;
 
   typedef typename K::Compute_area_3                Compute_area_2;
   typedef typename K::Construct_bbox_3              Construct_bbox_2;
@@ -543,6 +544,9 @@ public:
 
   Construct_circumcenter_2  construct_circumcenter_2_object() const
     {return Construct_circumcenter_2();}
+
+  Construct_barycenter_2  construct_barycenter_2_object() const
+    {return Construct_barycenter_2();}
 
   Construct_translated_point_2  construct_translated_point_2_object() const
     {return Construct_translated_point_2();}
