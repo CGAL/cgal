@@ -477,7 +477,6 @@ add_featured_edges_to_graph(const Polyhedron& p,
   Featured_edges_graph orig_graph(p, pred);
 
   typedef Featured_edges_graph Graph;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
   typedef Featured_edges_copy_graph G_copy;
   typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
