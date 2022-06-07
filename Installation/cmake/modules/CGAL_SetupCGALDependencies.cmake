@@ -114,6 +114,10 @@ function(CGAL_setup_CGAL_dependencies target)
     target_link_libraries(${target} INTERFACE Threads::Threads)
   endif()
 
+  if(CGAL_USE_ASAN OR ENV{CGAL_USE_ASAN})
+    target_compile_options(${target} INTERFACE -fsanitize=address)
+    target_link_options(${target} INTERFACE -fsanitize=address)
+  endif()
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} INTERFACE
