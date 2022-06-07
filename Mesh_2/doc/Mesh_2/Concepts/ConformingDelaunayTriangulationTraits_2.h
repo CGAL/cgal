@@ -95,8 +95,8 @@ typedef unspecified_type Angle_2;
 /*!
 Predicate object. Must provide the operator
 `CGAL::Oriented_side operator()(Segment_2 s, Triangle_2 t)` that
-returns \ref ON_ORIENTED_BOUNDARY, \ref ON_NEGATIVE_SIDE,
-or \ref ON_POSITIVE_SIDE,
+returns \ref CGAL::ON_ORIENTED_BOUNDARY, \ref CGAL::ON_NEGATIVE_SIDE,
+or \ref CGAL::ON_POSITIVE_SIDE,
 depending on the position of the circumcenter of `t` relative
 to the oriented supporting line of `s`. The orientation of the
 supporting line is the same as the orientation of `s`.
