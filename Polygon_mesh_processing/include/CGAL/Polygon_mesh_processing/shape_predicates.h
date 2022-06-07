@@ -503,7 +503,7 @@ struct Is_cap_angle_over_threshold<K, true>
 /// \ingroup PMP_predicates_grp
 ///
 /// checks whether a triangle face is a cap.
-/// A triangle is said to be a <i>cap</i> if one of the its angles is close to `180` degrees.
+/// A triangle is said to be a <i>cap</i> if one of its angles is close to `180` degrees.
 ///
 /// @tparam TriangleMesh a model of `FaceGraph`
 /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

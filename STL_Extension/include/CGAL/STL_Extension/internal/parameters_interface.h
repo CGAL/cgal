@@ -130,6 +130,7 @@ CGAL_add_named_parameter(match_faces_t, match_faces, match_faces)
 CGAL_add_named_parameter(face_epsilon_map_t, face_epsilon_map, face_epsilon_map)
 CGAL_add_named_parameter(maximum_number_t, maximum_number, maximum_number)
 CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use_one_sided_hausdorff)
+CGAL_add_named_parameter(flip_triangle_height_threshold_t, flip_triangle_height_threshold, flip_triangle_height_threshold)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
