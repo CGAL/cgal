@@ -129,7 +129,7 @@ std::vector<std::vector<P>> poly00001221(const int /* no sampling for segments *
     P      b{ 1. / 2,    1, 2. / 3 };
     P      c{ 0,    1. / 2, 2. / 3 };
     P      d{ 1,    1. / 2, 2. / 3 };
-    P      e{ 1,    1. / 2, 1 };
+    P      e{ 1. / 2,    1. / 2, 1 };
 
     return
     {
