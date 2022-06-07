@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <cstdlib>
+#include <random>
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Qt/init_ogl_context.h>
@@ -39,10 +40,16 @@ public:
   //!
   void add_elements() {
     clear();
+    m_visited.clear();
+
+    std::random_device rd;
+    m_rng.seed(rd());
+    m_uni = std::uniform_int_distribution<size_t>(0, 255);
+
     if (m_arr.is_empty()) return;
     for (auto it = m_arr.unbounded_faces_begin();
          it != m_arr.unbounded_faces_end(); ++it)
-      add_face(it, Face_const_handle());
+      add_face(it);
 
     // Add edges that do not separe faces.
     for (auto it = m_arr.edges_begin(); it != m_arr.edges_end(); ++it)
@@ -51,6 +58,8 @@ public:
     // Add all points
     for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it)
       draw_point(it->point());
+
+    m_visited.clear();
   }
 
 protected:
@@ -98,7 +107,7 @@ protected:
 
   //!
   virtual void draw_region(Ccb_halfedge_const_circulator circ) {
-    CGAL::IO::Color color(std::rand()%256, std::rand()%256, std::rand()%256);
+    CGAL::IO::Color color(m_uni(m_rng), m_uni(m_rng), m_uni(m_rng));
     this->face_begin(color);
 
     auto ext = find_smallest(circ);
@@ -128,27 +137,25 @@ protected:
   virtual void draw_point(const Point& p) { this->add_point(p); }
 
   //!
-  void add_ccb(Ccb_halfedge_const_circulator circ, Face_const_handle parent) {
-    std::unordered_map<Face_const_handle, bool> visited;
+  void add_ccb(Ccb_halfedge_const_circulator circ) {
     auto face = circ->face();
     auto curr = circ;
     do {
       auto new_face = curr->twin()->face();
-      if ((new_face == face) || (new_face == parent)) continue;
-      if (visited.find(new_face) != visited.end()) continue;
-      visited[new_face] = true;
-      add_face(new_face, face);
+      if (m_visited.find(new_face) != m_visited.end()) continue;
+      m_visited[new_face] = true;
+      add_face(new_face);
     } while (++curr != circ);
   }
 
   //!
-  void add_face(Face_const_handle face, Face_const_handle parent) {
+  void add_face(Face_const_handle face) {
     for (auto it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it)
-      add_ccb(*it, parent);
+      add_ccb(*it);
 
     for (auto it = face->outer_ccbs_begin(); it != face->outer_ccbs_end(); ++it)
     {
-      add_ccb(*it, parent);
+      add_ccb(*it);
       draw_region(*it);
     }
   }
@@ -172,6 +179,12 @@ protected:
 protected:
   //! The arrangement to draw
   const Arr& m_arr;
+
+  std::unordered_map<Face_const_handle, bool> m_visited;
+
+  std::mt19937 m_rng;
+  std::uniform_int_distribution<size_t> m_uni;  // guaranteed unbiased
+
 };
 
 //! Basic viewer of a 2D arrangement.
@@ -225,7 +238,9 @@ public:
 
   //!
   virtual void draw_region(Ccb_halfedge_const_circulator circ) {
-    CGAL::IO::Color color(std::rand()%256, std::rand()%256, std::rand()%256);
+    auto& uni = this->m_uni;
+    auto& rng = this->m_rng;
+    CGAL::IO::Color color(uni(rng), uni(rng), uni(rng));
     this->face_begin(color);
 
     const auto* traits = this->m_arr.geometry_traits();
@@ -242,7 +257,9 @@ public:
         curr = curr->twin()->next();
 
       std::vector<typename Gt::Approximate_point_2> polyline;
-      approx(curr->curve(), std::back_inserter(polyline), 10);
+      double density(10);
+      bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
+      approx(std::back_inserter(polyline), density, curr->curve(), l2r);
       auto it = polyline.begin();
       auto prev = it++;
       for (; it != polyline.end(); prev = it++) {
@@ -260,8 +277,8 @@ public:
     const auto* traits = this->m_arr.geometry_traits();
     auto approx = traits->approximate_2_object();
     std::vector<typename Gt::Approximate_point_2> polyline;
-    approx(curve, std::back_inserter(polyline), 10);
-
+    double density(10);
+    approx(std::back_inserter(polyline), density, curve);
     auto it = polyline.begin();
     auto prev = it++;
     for (; it != polyline.end(); prev = it++) this->add_segment(*prev, *it);
