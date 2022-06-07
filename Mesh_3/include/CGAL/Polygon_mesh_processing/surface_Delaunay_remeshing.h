@@ -295,7 +295,7 @@ TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
 
   TriangleMeshOut out;
   CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out);
-  return std::move(out);
+  return out;
 }
 
 } //end namespace Polygon_mesh_processing
