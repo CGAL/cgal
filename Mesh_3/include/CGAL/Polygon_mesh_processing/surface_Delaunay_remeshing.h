@@ -301,6 +301,4 @@ TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
 } //end namespace Polygon_mesh_processing
 } //end namespace CGAL
 
-#include <CGAL/enable_warnings.h>
-
 #endif //CGAL_POLYGON_MESH_PROCESSIlNG_DELAUNAY_REMESHING_H
