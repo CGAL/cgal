@@ -22,6 +22,9 @@ class RegionType {
 
 public:
 
+  /// The parameters of the primitive covering the region.
+  typedef unspecified_type Primitive;
+
   /*!
     checks if the item with the index `index_to`, which is a neighbor of the item
     with the index `index_from`, can be added to the region represented by `indices`.
@@ -48,6 +51,14 @@ public:
   bool is_valid_region(
     const std::vector<std::size_t>& indices) {
 
+  }
+
+  /*!
+    provides the last primitive that has been fitted with the region.
+  */
+
+  Primitive primitive() const {
+    return Primitive(m_axis, m_radius);
   }
 
   /*!
