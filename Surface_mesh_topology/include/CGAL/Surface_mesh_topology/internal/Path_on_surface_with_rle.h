@@ -185,7 +185,7 @@ public:
                                 (positive_flat?(static_cast<int>(apath.length()-1)):
                                  -(static_cast<int>(apath.length()-1)))));
           m_length=apath.length();
-          CGAL_assertion(is_valid());
+          CGAL_expensive_assertion(is_valid());
           return;
         }
       }
@@ -201,7 +201,7 @@ public:
     }
     while(i<apath.length() && i!=starti);
 
-    CGAL_assertion(is_valid(true));
+    CGAL_expensive_assertion(is_valid(true));
   }
 
   void swap(Self& p2)
@@ -1487,7 +1487,7 @@ public:
   /// Canonize the path
   void canonize()
   {
-    CGAL_assertion(is_valid());
+    CGAL_expensive_assertion(is_valid());
 
     if (is_empty()) { return; }
 
@@ -1507,7 +1507,7 @@ public:
 
      CGAL_assertion(remove_brackets()==false);
      CGAL_assertion(remove_spurs()==false);
-     CGAL_assertion(is_valid());
+     CGAL_expensive_assertion(is_valid());
   }
 
   void display_positive_turns()

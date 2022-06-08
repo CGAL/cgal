@@ -1244,7 +1244,7 @@ bool is_planar_2(
   const Squared_distance_3 squared_distance_3 =
     traits.compute_squared_distance_3_object();
 
-  const std::size_t n = points.size() - 1; // the first equals to the last
+  const double n = static_cast<double>(points.size() - 1); // the first equals to the last
   if (n < 3) {
     return false; // cant be a plane!
   }
@@ -1256,8 +1256,8 @@ bool is_planar_2(
   // Compute covariance matrix.
   FT xx = FT(0), yy = FT(0), zz = FT(0);
   FT xy = FT(0), xz = FT(0), yz = FT(0);
-  for (std::size_t i = 0; i < n; ++i) {
-    const Point_3& p = points[i];
+  for (const Point_3& p : points)
+  {
     const FT dx = p.x() - centroid.x();
     const FT dy = p.y() - centroid.y();
     const FT dz = p.z() - centroid.z();
@@ -1281,12 +1281,12 @@ bool is_planar_2(
   CGAL_assertion(avg_normal != typename Traits::Vector_3());
   const Plane_3 plane = Plane_3(centroid, avg_normal);
   FT avg_squared_distance = FT(0);
-  for (std::size_t i = 0; i < n; ++i) {
-    const Point_3& p = points[i];
+  for (const Point_3& p : points)
+  {
     const Point_3  q = projection_3(plane, p);
     avg_squared_distance += CGAL::abs(squared_distance_3(p, q));
   }
-  avg_squared_distance /= static_cast<FT>(n);
+  avg_squared_distance /= FT(n);
   // std::cout << "avg squared distance: " << avg_squared_distance << std::endl;
 
   CGAL_assertion(max_squared_distance >= FT(0));
@@ -1327,7 +1327,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
 
   FT x = FT(0), y = FT(0), z = FT(0);
-  std::size_t num_normals = 0;
+  int num_normals = 0;
   const Point_3& ref_point = P[0];
   const std::size_t size = P.size() - 1;
   for (std::size_t i = 1; i < size - 1; ++i) {
@@ -1362,9 +1362,10 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
 
   // Setting the final normal.
-  x /= static_cast<FT>(num_normals);
-  y /= static_cast<FT>(num_normals);
-  z /= static_cast<FT>(num_normals);
+  FT ft_nn(num_normals);
+  x /= ft_nn;
+  y /= ft_nn;
+  z /= ft_nn;
   const Vector_3 avg_normal = Vector_3(x, y, z);
   // std::cout << "avg normal: " << avg_normal << std::endl;
 
@@ -1492,11 +1493,11 @@ triangulate_hole_polyline(const PointRange1& points,
 
   typedef Kernel        K;
   typedef typename K::Point_3    Point_3;
-  #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
   typedef CGAL::internal::Triangulate_hole_polyline_DT<K, Tracer, WeightCalculator> Fill_DT;
-  #else
+#else
   CGAL_USE(use_delaunay_triangulation);
-  #endif
+#endif
   typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator>    Fill;
 
   std::vector<Point_3> P(boost::begin(points), boost::end(points));
@@ -1510,20 +1511,19 @@ triangulate_hole_polyline(const PointRange1& points,
   }
 
   typename WeightCalculator::Weight w =
-  #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
     use_delaunay_triangulation ? Fill_DT().operator()(P,Q,tracer,WC) :
-  #endif
+#endif
     Fill().operator()(P,Q,tracer,WC);
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-  if (use_delaunay_triangulation
-      && w == WeightCalculator::Weight::NOT_VALID())
+  if(use_delaunay_triangulation && w == WeightCalculator::Weight::NOT_VALID())
     w = Fill().operator()(P, Q, tracer, WC);
 #endif
 
-  #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
+#ifdef CGAL_PMP_HOLE_FILLING_DEBUG
   std::cerr << w << std::endl;
-  #endif
+#endif
   return w;
 }
 

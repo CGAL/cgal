@@ -22,6 +22,7 @@
 
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -498,13 +499,13 @@ reduce_face_selection(
     \cgalParamNEnd
   \cgalNamedParamsEnd
 */
-template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters>
+template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters = parameters::Default_named_parameters>
 void
 regularize_face_selection_borders(
   TriangleMesh& mesh,
   IsSelectedMap is_selected,
   double weight,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -545,20 +546,6 @@ regularize_face_selection_borders(
   for (mesh_face_descriptor fd : faces(mesh))
     put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default np
-template <typename TriangleMesh, typename IsSelectedMap>
-void
-regularize_face_selection_borders(
-  TriangleMesh& fg,
-  IsSelectedMap is_selected,
-  double weight)
-{
-  regularize_face_selection_borders (fg, is_selected, weight,
-                                     CGAL::parameters::all_default());
-}
-/// \endcond
 
 /// \cond SKIP_IN_MANUAL
 
@@ -1126,7 +1113,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
 
       for(halfedge_descriptor f_hd : faces_traversed)
       {
-        assert(target(f_hd, tm) == vd);
+        CGAL_assertion(target(f_hd, tm) == vd);
         put(is_selected, face(f_hd, tm), true);
         vertices_queue.insert( target( next(f_hd, tm), tm) );
         vertices_queue.insert( source(f_hd, tm) );

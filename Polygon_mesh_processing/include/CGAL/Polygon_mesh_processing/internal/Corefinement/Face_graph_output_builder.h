@@ -55,9 +55,6 @@ namespace Corefinement {
 enum Boolean_operation_type {UNION = 0, INTERSECTION,
                              TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
 
-namespace PMP=Polygon_mesh_processing;
-namespace params=PMP::parameters;
-
 // extra functions for handling non-documented functions for user visitors
 // with no extra functions
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_extra_functions,
@@ -428,8 +425,8 @@ public:
     , requested_output(requested_output)
     , is_tm1_closed( is_closed(tm1))
     , is_tm2_closed( is_closed(tm2))
-    , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1, parameters::vertex_point_map(vpm1)) )
-    , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
+    , is_tm1_inside_out( is_tm1_closed && !is_outward_oriented(tm1, parameters::vertex_point_map(vpm1)) )
+    , is_tm2_inside_out( is_tm2_closed && !is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
     , NID((std::numeric_limits<Node_id>::max)())
     , mesh_to_intersection_edges(tm1, tm2)
     , used_to_clip_a_surface(false)
@@ -707,10 +704,10 @@ public:
     std::vector<std::size_t> tm1_patch_ids( num_faces(tm1),NID );
     Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
     std::size_t nb_patches_tm1 =
-      PMP::connected_components(tm1,
-                                bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
-                                params::edge_is_constrained_map(is_marked_1)
-                                       .face_index_map(fids1));
+      connected_components(tm1,
+                           bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
+                           parameters::edge_is_constrained_map(is_marked_1)
+                                      .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)
@@ -720,10 +717,10 @@ public:
     std::vector<std::size_t> tm2_patch_ids( num_faces(tm2),NID );
     Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
     std::size_t nb_patches_tm2 =
-      PMP::connected_components(tm2,
-                                bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
-                                params::edge_is_constrained_map(is_marked_2)
-                                       .face_index_map(fids2));
+      connected_components(tm2,
+                           bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
+                           parameters::edge_is_constrained_map(is_marked_2)
+                                      .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
     for(Node_id i : tm2_patch_ids)

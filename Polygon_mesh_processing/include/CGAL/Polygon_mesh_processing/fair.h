@@ -18,7 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Weights/cotangent_weights.h>
 
@@ -124,10 +124,10 @@ namespace internal {
   */
   template<typename TriangleMesh,
            typename VertexRange,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   bool fair(TriangleMesh& tmesh,
             const VertexRange& vertices,
-            const NamedParameters& np)
+            const NamedParameters& np = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;
@@ -173,13 +173,6 @@ namespace internal {
       choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_weight_calculator(tmesh, vpmap_)),
       choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
       vpmap_);
-  }
-
-  template<typename TriangleMesh, typename VertexRange>
-  bool fair(TriangleMesh& tmesh, const VertexRange& vertices)
-  {
-    return fair(tmesh, vertices,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
 } //end namespace Polygon_mesh_processing

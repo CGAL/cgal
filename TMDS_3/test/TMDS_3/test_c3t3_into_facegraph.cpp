@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 int main (int argc, char** argv){
   typedef CGAL::Exact_predicates_inexact_constructions_kernel                 K;
@@ -49,7 +50,7 @@ int main (int argc, char** argv){
          cit != c3t3.triangulation().finite_cells_end();
          ++cit)
     {
-      CGAL_assertion(cit->subdomain_index() >= 0);
+      assert(cit->subdomain_index() >= 0);
       c3t3.add_to_complex(cit, cit->subdomain_index());
       for(int i=0; i < 4; ++i)
       {
@@ -90,6 +91,6 @@ int main (int argc, char** argv){
   out << poly;
   out.close();
 
-  CGAL_assertion(is_valid(poly));
+  assert(is_valid(poly));
   return EXIT_SUCCESS;
 }

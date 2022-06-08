@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/algorithm.h>
@@ -427,9 +427,9 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
 /// \cgalNamedParamsEnd
 ///
 /// \return the number of vertices created.
-template <typename PolygonMesh, typename NamedParameters>
+template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
-                                            const NamedParameters& np)
+                                            const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -458,12 +458,6 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
   }
 
   return nb_new_vertices;
-}
-
-template <class PolygonMesh>
-std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm)
-{
-  return duplicate_non_manifold_vertices(pm, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing

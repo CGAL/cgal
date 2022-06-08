@@ -19,7 +19,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -105,7 +105,7 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{protect_constraints}
 *     \cgalParamDescription{If `true`, the edges set as constrained in `edge_is_constrained_map`
-*                           (or by default the boundary edges) are not split nor collapsed during remeshing.}
+*                           (or by default the boundary edges) are neither split nor collapsed during remeshing.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`false`}
 *     \cgalParamExtra{Note that around constrained edges that have their length higher than
@@ -192,11 +192,11 @@ namespace Polygon_mesh_processing {
 */
 template<typename PolygonMesh
        , typename FaceRange
-       , typename NamedParameters>
+       , typename NamedParameters = parameters::Default_named_parameters>
 void isotropic_remeshing(const FaceRange& faces
                        , const double& target_edge_length
                        , PolygonMesh& pmesh
-                       , const NamedParameters& np)
+                       , const NamedParameters& np = parameters::default_values())
 {
   if (boost::begin(faces)==boost::end(faces))
     return;
@@ -217,7 +217,7 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 
   static const bool need_aabb_tree =
-    parameters::is_default_parameter(get_parameter(np, internal_np::projection_functor));
+    parameters::is_default_parameter<NamedParameters, internal_np::projection_functor_t>();
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -254,7 +254,7 @@ void isotropic_remeshing(const FaceRange& faces
   FPMap fpmap = choose_parameter(
     get_parameter(np, internal_np::face_patch),
     internal::Connected_components_pmap<PM, FIMap>(faces, pmesh, ecmap, fimap,
-      parameters::is_default_parameter(get_parameter(np, internal_np::face_patch)) && (need_aabb_tree
+      parameters::is_default_parameter<NamedParameters, internal_np::face_patch_t>() && (need_aabb_tree
 #if !defined(CGAL_NO_PRECONDITIONS)
       || protect // face patch map is used to identify patch border edges to check protected edges are short enough
 #endif
@@ -337,20 +337,6 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 }
 
-template<typename PolygonMesh
-       , typename FaceRange>
-void isotropic_remeshing(
-    const FaceRange& faces
-  , const double& target_edge_length
-  , PolygonMesh& pmesh)
-{
-  isotropic_remeshing(
-    faces,
-    target_edge_length,
-    pmesh,
-    parameters::all_default());
-}
-
 /*!
 * \ingroup PMP_meshing_grp
 * @brief splits the edges listed in `edges` into sub-edges
@@ -404,11 +390,11 @@ void isotropic_remeshing(
 */
 template<typename PolygonMesh
        , typename EdgeRange
-       , typename NamedParameters>
+       , typename NamedParameters = parameters::Default_named_parameters>
 void split_long_edges(const EdgeRange& edges
                     , const double& max_length
                     , PolygonMesh& pmesh
-                    , const NamedParameters& np)
+                    , const NamedParameters& np = parameters::default_values())
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
@@ -446,17 +432,6 @@ void split_long_edges(const EdgeRange& edges
              false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length);
-}
-
-template<typename PolygonMesh, typename EdgeRange>
-void split_long_edges(const EdgeRange& edges
-                    , const double& max_length
-                    , PolygonMesh& pmesh)
-{
-  split_long_edges(edges,
-    max_length,
-    pmesh,
-    parameters::all_default());
 }
 
 } //end namespace Polygon_mesh_processing

@@ -20,7 +20,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
@@ -320,21 +320,12 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   Other properties are not copied.
 */
 template <typename SourceMesh, typename TargetMesh,
-          #ifndef DOXYGEN_RUNNING
-          typename T1, typename Tag1, typename Base1,
-          typename T2, typename Tag2, typename Base2
-          #else
-          typename NamedParameters1, typename NamedParameters2
-          #endif
+          typename NamedParameters1 = parameters::Default_named_parameters,
+          typename NamedParameters2 = parameters::Default_named_parameters
           >
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     #ifndef DOXYGEN_RUNNING
-                     const CGAL::Named_function_parameters<T1,Tag1,Base1>& np1,
-                     const CGAL::Named_function_parameters<T2,Tag2,Base2>& np2
-                     #else
-                     const NamedParameters1& np1,
-                     const NamedParameters2& np2
-                     #endif
+                     const NamedParameters1& np1 =  parameters::default_values(),
+                     const NamedParameters2& np2 = parameters::default_values()
                      )
 {
   using parameters::choose_parameter;
@@ -352,55 +343,6 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                             choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                              get(vertex_point, tm)));
 }
-
-template <typename SourceMesh, typename TargetMesh>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
-{
-  copy_face_graph(sm, tm, parameters::all_default(), parameters::all_default());
-}
-
-template <typename SourceMesh, typename TargetMesh,
-          typename T, typename Tag, typename Base >
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     const CGAL::Named_function_parameters<T,Tag,Base>& np)
-{
-  copy_face_graph(sm, tm, np, parameters::all_default());
-}
-
-#if !defined(DOXYGEN_RUNNING) && !defined(CGAL_NO_DEPRECATED_CODE)
-template <typename SourceMesh, typename TargetMesh,
-          typename V2V, typename H2H, typename F2F,
-          typename Src_vpm, typename Tgt_vpm>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     V2V v2v, H2H h2h, F2F f2f,
-                     Src_vpm sm_vpm, Tgt_vpm tm_vpm )
-{
-  internal::copy_face_graph_impl(sm, tm,
-                                 v2v, h2h, f2f,
-                                 sm_vpm, tm_vpm);
-}
-
-
-template <typename SourceMesh, typename TargetMesh, typename V2V>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v)
-{ copy_face_graph(sm, tm, v2v, Emptyset_iterator(), Emptyset_iterator(),
-                  get(vertex_point, sm), get(vertex_point, tm)); }
-
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h)
-{ copy_face_graph(sm, tm, v2v, h2h, Emptyset_iterator(),
-                  get(vertex_point, sm), get(vertex_point, tm)); }
-
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, F2F f2f)
-{ copy_face_graph(sm, tm, v2v, h2h, f2f,
-                  get(vertex_point, sm), get(vertex_point, tm)); }
-
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F, typename Src_vpm>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, F2F f2f, Src_vpm sm_vpm)
-{ copy_face_graph(sm, tm, v2v, h2h, f2f,
-                  sm_vpm, get(vertex_point, tm)); }
-#endif
 
 } // namespace CGAL
 

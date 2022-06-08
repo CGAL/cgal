@@ -1,6 +1,30 @@
 Release History
 ===============
 
+
+[Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
+-----------
+
+Release date: June 2022
+
+### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
+
+-   Added the member function `write_graphviz()` to the class The Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.5/Manual/packages.html#PkgConvexHull3)
+
+-   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
+
+### Combinatorial Maps
+
+- Removed old code deprecated in CGAL 4.9 and 4.10 (global fonctions, and information associated with darts).
+
+### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.5/Manual/packages.html#PkgMesh3)
+
+-   Added the function
+    [`remove_isolated_vertices()`](https://doc.cgal.org/5.5/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
+    as a post-processing step for the tetrahedral mesh generation.
+
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 

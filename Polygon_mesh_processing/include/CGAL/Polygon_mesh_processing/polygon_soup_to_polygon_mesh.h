@@ -297,12 +297,12 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 */
 template<typename PolygonMesh,
          typename PointRange, typename PolygonRange,
-         typename NamedParameters_PS, typename NamedParameters_PM>
+         typename NamedParameters_PS = parameters::Default_named_parameters, typename NamedParameters_PM = parameters::Default_named_parameters>
 void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const PolygonRange& polygons,
                                   PolygonMesh& out,
-                                  const NamedParameters_PS& np_ps,
-                                  const NamedParameters_PM& np_pm)
+                                  const NamedParameters_PS& np_ps = parameters::default_values(),
+                                  const NamedParameters_PM& np_pm = parameters::default_values())
 {
   CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                         "Input soup needs to define a valid polygon mesh! See is_polygon_soup_a_polygon_mesh() for further information.");
@@ -324,29 +324,6 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
     choose_parameter(get_parameter(np_ps, internal_np::polygon_to_face_output_iterator),
                      impl::make_functor(get_parameter(np_ps, internal_np::face_to_face_map))));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template<typename PolygonMesh,
-         typename PointRange, typename PolygonRange,
-         typename NamedParameters_PS>
-void polygon_soup_to_polygon_mesh(const PointRange& points,
-                                  const PolygonRange& polygons,
-                                  PolygonMesh& out,
-                                  const NamedParameters_PS& np_ps)
-{
-  return polygon_soup_to_polygon_mesh(points, polygons, out, np_ps, parameters::all_default());
-}
-
-template<typename PolygonMesh, typename PointRange, typename PolygonRange>
-void polygon_soup_to_polygon_mesh(const PointRange& points,
-                                  const PolygonRange& polygons,
-                                  PolygonMesh& out)
-{
-  return polygon_soup_to_polygon_mesh(points, polygons, out, parameters::all_default(), parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

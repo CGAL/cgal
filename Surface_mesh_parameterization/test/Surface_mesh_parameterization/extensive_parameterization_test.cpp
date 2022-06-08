@@ -460,7 +460,7 @@ int main(int, char**)
 
     // a halfedge on the (possibly virtual) border
     // only used in output (will also be used to handle multiple connected components in the future)
-    SM_SE_halfedge_descriptor hd = PMP::longest_border(mesh, PMP::parameters::all_default()).first;
+    SM_SE_halfedge_descriptor hd = PMP::longest_border(mesh).first;
 
     SMP::Error_code status = parameterizer.parameterize(mesh, hd, cmap, uvmap, vimap);
 

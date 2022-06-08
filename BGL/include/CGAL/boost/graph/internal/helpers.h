@@ -16,7 +16,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {

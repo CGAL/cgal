@@ -68,11 +68,7 @@
 #define CGAL_PMP_REMESHING_VERBOSE
 #endif
 
-
 namespace CGAL {
-
-namespace PMP = Polygon_mesh_processing;
-
 namespace Polygon_mesh_processing {
 namespace internal {
 
@@ -114,8 +110,7 @@ namespace internal {
       , pmesh_ptr_(&pmesh)
     {
       std::vector<halfedge_descriptor> border;
-      PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border)
-        , PMP::parameters::face_index_map(fimap));
+      border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border), parameters::face_index_map(fimap));
 
       for(halfedge_descriptor h : border)
         border_edges_ptr->insert(edge(h, *pmesh_ptr_));
@@ -193,22 +188,19 @@ namespace internal {
         if ( same_range(face_range, (faces(pmesh))) )
         {
           // applied on the whole mesh
-          nb_cc
-            = PMP::connected_components(pmesh,
-                                        patch_ids_map,
-                                        PMP::parameters::edge_is_constrained_map(ecmap)
-                                       .face_index_map(fimap));
+          nb_cc = connected_components(pmesh, patch_ids_map,
+                                       parameters::edge_is_constrained_map(ecmap)
+                                                  .face_index_map(fimap));
         }
         else
         {
           // applied on a subset of the mesh
-          nb_cc
-            = PMP::connected_components(pmesh,
-                                        patch_ids_map,
-                                        PMP::parameters::edge_is_constrained_map(
-                                          make_OR_property_map(ecmap
-                                          , internal::Border_constraint_pmap<PM, FIMap>(pmesh, face_range, fimap) ) )
-                                       .face_index_map(fimap));
+          nb_cc = connected_components(
+                    pmesh, patch_ids_map,
+                    parameters::edge_is_constrained_map(
+                                  make_OR_property_map(ecmap,
+                                                       internal::Border_constraint_pmap<PM, FIMap>(pmesh, face_range, fimap)))
+                               .face_index_map(fimap));
         }
       }
       else
@@ -812,9 +804,7 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
       debug_self_intersections();
-      CGAL_assertion(PMP::remove_degenerate_faces(mesh_,
-                            parameters::vertex_point_map(vpmap_)
-                           .geom_traits(gt_)));
+      CGAL_assertion(remove_degenerate_faces(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(gt_)));
 #endif
     }
 
@@ -850,18 +840,19 @@ namespace internal {
         if (!is_flip_allowed(e))
           continue;
         //add geometric test to avoid axe cuts
-        if (!PMP::internal::should_flip(e, mesh_, vpmap_, gt_))
+        if (!internal::should_flip(e, mesh_, vpmap_, gt_))
           continue;
 
         halfedge_descriptor he = halfedge(e, mesh_);
 
-        std::array<halfedge_descriptor, 2> r1 = PMP::internal::is_badly_shaped(
+        std::array<halfedge_descriptor, 2> r1 = internal::is_badly_shaped(
             face(he, mesh_),
             mesh_, vpmap_, vcmap_, ecmap_, gt_,
             cap_threshold, // bound on the angle: above 160 deg => cap
             4, // bound on shortest/longest edge above 4 => needle
             0);// collapse length threshold : not needed here
-        std::array<halfedge_descriptor, 2> r2 = PMP::internal::is_badly_shaped(
+
+        std::array<halfedge_descriptor, 2> r2 = internal::is_badly_shaped(
             face(opposite(he, mesh_), mesh_),
             mesh_, vpmap_, vcmap_, ecmap_, gt_, cap_threshold, 4, 0);
 
@@ -976,9 +967,7 @@ namespace internal {
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
-      CGAL_assertion(PMP::remove_degenerate_faces(mesh_,
-                             PMP::parameters::vertex_point_map(vpmap_)
-                            .geom_traits(gt_)));
+      CGAL_assertion(remove_degenerate_faces(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(gt_)));
       debug_self_intersections();
 #endif
 
@@ -1016,9 +1005,7 @@ namespace internal {
 
           else if (is_on_patch(v))
           {
-            Vector_3 vn = PMP::compute_vertex_normal(v, mesh_,
-                                                     parameters::vertex_point_map(vpmap_)
-                                                                .geom_traits(gt_));
+            Vector_3 vn = compute_vertex_normal(v, mesh_, parameters::vertex_point_map(vpmap_).geom_traits(gt_));
             Vector_3 move = CGAL::NULL_VECTOR;
             unsigned int star_size = 0;
             for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
@@ -1547,8 +1534,7 @@ private:
       if (f == boost::graph_traits<PM>::null_face())
         return CGAL::NULL_VECTOR;
 
-      return PMP::compute_face_normal(f, mesh_, parameters::vertex_point_map(vpmap_)
-                                                           .geom_traits(gt_));
+      return compute_face_normal(f, mesh_, parameters::vertex_point_map(vpmap_).geom_traits(gt_));
     }
 
     template<typename FaceRange>
@@ -1959,10 +1945,8 @@ private:
     {
       std::cout << "Test self intersections...";
       std::vector<std::pair<face_descriptor, face_descriptor> > facets;
-      PMP::self_intersections(mesh_,
-                              std::back_inserter(facets),
-                              PMP::parameters::vertex_point_map(vpmap_)
-                                              .geom_traits(gt_));
+      self_intersections(mesh_, std::back_inserter(facets),
+                         parameters::vertex_point_map(vpmap_).geom_traits(gt_));
       //CGAL_assertion(facets.empty());
       std::cout << "done ("<< facets.size() <<" facets)." << std::endl;
     }
@@ -1971,11 +1955,8 @@ private:
     {
       std::cout << "Test self intersections...";
       std::vector<std::pair<face_descriptor, face_descriptor> > facets;
-      PMP::self_intersections(faces_around_target(halfedge(v, mesh_), mesh_),
-                              mesh_,
-                              std::back_inserter(facets),
-                              PMP::parameters::vertex_point_map(vpmap_)
-                                              .geom_traits(gt_));
+      self_intersections(faces_around_target(halfedge(v, mesh_), mesh_), mesh_, std::back_inserter(facets),
+                         parameters::vertex_point_map(vpmap_).geom_traits(gt_));
       //CGAL_assertion(facets.empty());
       std::cout << "done ("<< facets.size() <<" facets)." << std::endl;
     }

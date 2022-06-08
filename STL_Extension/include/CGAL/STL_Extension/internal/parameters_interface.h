@@ -135,6 +135,7 @@ CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
 CGAL_add_named_parameter(filter_t, filter, filter)
+CGAL_add_named_parameter(use_relaxed_order_t, use_relaxed_order, use_relaxed_order)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
@@ -182,6 +183,7 @@ CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatche
 CGAL_add_named_parameter(adjacencies_t, adjacencies, adjacencies)
 CGAL_add_named_parameter(scan_angle_t, scan_angle_map, scan_angle_map)
 CGAL_add_named_parameter(scanline_id_t, scanline_id_map, scanline_id_map)
+CGAL_add_named_parameter(min_points_per_cell_t, min_points_per_cell, min_points_per_cell)
 CGAL_add_named_parameter(scalar_t, scalar_map, scalar_map)
 
 // List of named parameters used in Surface_mesh_approximation package

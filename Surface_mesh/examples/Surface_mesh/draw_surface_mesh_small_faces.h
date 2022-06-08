@@ -20,6 +20,8 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Random.h>
 
+#include <cassert>
+
 template<class SM>
 class SimpleSurfaceMeshWithSmallFacesViewerQt : public CGAL::Basic_viewer_qt
 {
@@ -54,7 +56,7 @@ public:
       bool exist;
       typename SM::template Property_map<face_descriptor, FT> faces_size;
       boost::tie(faces_size, exist)=sm.template property_map<face_descriptor, FT>("f:size");
-      CGAL_assertion(exist);
+      assert(exist);
 
       m_min_size=faces_size[*(sm.faces().begin())];
       m_max_size=m_min_size;
@@ -84,7 +86,7 @@ protected:
     bool exist;
     typename SM::template Property_map<face_descriptor, FT> faces_size;
     boost::tie(faces_size, exist)=sm.template property_map<face_descriptor, FT>("f:size");
-    CGAL_assertion(exist);
+    assert(exist);
 
     // It it is smaller, color the face in red.
     if (get(faces_size, fh)<m_min_size+((m_max_size-m_min_size)/(100-m_threshold)))

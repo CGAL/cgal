@@ -6,6 +6,7 @@
 #include <vector>
 #include <sstream>
 #include <tuple>
+#include <cassert>
 
 #include "Creation_of_test_cases_for_paths.h"
 
@@ -120,7 +121,7 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
 #endif // CGAL_USE_BASIC_VIEWER
 
   path.swap(prevp);
-  CGAL_assertion(path.is_valid(true));
+  assert(path.is_valid(true));
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
