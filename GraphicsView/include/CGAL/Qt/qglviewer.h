@@ -563,6 +563,21 @@ public:
    */
   void saveSnapshot();
 
+  /*!
+   * Takes a snapshot without any dialog
+   */
+  void saveSnapshot(const QString& fileName,
+                    const qreal finalWidth,
+                    const qreal finalHeight,
+                    const bool expand = false,
+                    const double oversampling = 1.,
+                    qglviewer::SnapShotBackground background_color = qglviewer::CURRENT_BACKGROUND);
+
+  void saveSnapshot(const QString& fileName)
+  {
+    return saveSnapshot(fileName, this->width(), this->height());
+  }
+
 public:
 Q_SIGNALS:
   /*! Signal emitted by the default init() method.
