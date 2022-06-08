@@ -1168,9 +1168,20 @@ double Scene_c3t3_item_priv::complex_diag() const {
 void Scene_c3t3_item::export_facets_in_complex()
 {
   SMesh outmesh;
-  CGAL::facets_in_complex_3_to_triangle_mesh(c3t3(), outmesh);
-  Scene_surface_mesh_item* item = new Scene_surface_mesh_item(std::move(outmesh));
+  Scene_surface_mesh_item* item = new Scene_surface_mesh_item(outmesh);
+  item->setItemIsMulticolor(true);
+
+  boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type
+    fpmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
+
+  CGAL::facets_in_complex_3_to_triangle_mesh(c3t3(),
+    *item->face_graph(),
+    CGAL::parameters::face_patch_map(fpmap));
+
+  item->computeItemColorVectorAutomatically(true);
+  item->invalidateOpenGLBuffers();
   item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
+
   scene->addItem(item);
   this->setVisible(false);
 }

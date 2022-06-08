@@ -25,7 +25,6 @@
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -212,36 +211,6 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 }
 
 } // end of namespace internal
-namespace impl
-{
-template<typename PMAP>
-struct Output_iterator_functor
-{
-  typedef typename boost::property_traits<PMAP>::key_type input_t;
-  typedef typename boost::property_traits<PMAP>::value_type output_t;
-  PMAP map;
-  Output_iterator_functor(PMAP map)
-    :map(map)
-  {
-  }
-  void operator()(const typename std::pair<input_t, output_t>& pair)
-  {
-    put(map, pair.first, pair.second);
-  }
-
-};
-
-template<typename PMAP>
-boost::function_output_iterator<Output_iterator_functor<PMAP> > make_functor(PMAP map)
-{
-  return boost::make_function_output_iterator(Output_iterator_functor<PMAP>(map));
-}
-
-inline Emptyset_iterator make_functor(const internal_np::Param_not_found&)
-{
-  return Emptyset_iterator();
-}
-}//end of impl
 
 /*!
   \ingroup PkgBGLHelperFct

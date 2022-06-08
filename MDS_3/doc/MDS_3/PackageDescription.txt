@@ -1,0 +1,78 @@
+/// \defgroup PkgMDS3Ref 3D Mesh Data Structures Reference
+
+/// \defgroup PkgMDS3Concepts Concepts
+/// \ingroup PkgMDS3Ref
+/// The main concepts of this package.
+
+/// \defgroup PkgMDS3Classes Classes
+/// \ingroup PkgMDS3Ref
+/// The classes in this group are the main classes involved .
+
+/// \defgroup PkgMDS3Functions Functions
+/// \ingroup PkgMDS3Ref
+/// The functions to work with the 3D mesh data structures.
+
+/// \defgroup PkgMDS3ExportFunctions Export Functions
+/// \ingroup PkgMDS3Ref
+/// The free functions that can be used to export meshes to given output file formats.
+
+/// \defgroup PkgMDS3IOFunctions Input/Output Functions
+/// \ingroup PkgMDS3Ref
+/// The free functions that can be used to read and write meshes.
+
+/*!
+\addtogroup PkgMDS3Ref
+\todo check generated documentation
+\cgalPkgDescriptionBegin{3D Mesh Data Structures,PkgMDS3}
+\cgalPkgPicture{knot_small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
+\cgalPkgDesc{This package is devoted to the description of 3D Mesh Data Structures.
+  It provides an interface API for 3D meshes generated with CGAL or not,
+  to be processed with CGAL 3D mesh generation and remeshing algorithms,
+  along with iterators, IO functions and more helper functions.
+  }
+\cgalPkgManuals{Chapter_3D_Mesh_Data_Structures,PkgMDS3Ref}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.4}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgBib{cgal:ajrtty-mds3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+Here are the main concepts of this package:
+
+- `MeshComplex_3InTriangulation_3`
+- `MeshComplexWithFeatures_3InTriangulation_3`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+
+\cgalCRPSection{Function Templates}
+
+- `CGAL::facets_in_complex_3_to_triangle_mesh()`
+- `CGAL::tetrahedron_soup_to_triangulation_3()`
+
+\cgalCRPSection{Export Functions}
+
+- `CGAL::output_to_medit()`
+- `CGAL::output_to_vtu()`
+- `CGAL::output_to_tetgen()`
+- `CGAL::output_to_avizo()`
+
+\cgalCRPSection{Input/Output Functions}
+
+- `CGAL::write_MEDIT()`
+- `CGAL::read_MEDIT()`
+*/
+

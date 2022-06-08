@@ -1,0 +1,97 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_3D_Mesh_Data_Structures
+\anchor userchaptermds3
+\authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
+\cgalAutoToc
+
+\cgalFigureBegin{figure_tetmesh_knot,knot_full.png}
+A multi-domain 3D tetrahedral mesh generated from a polyhedral surface with multiple surface patches.
+The complete triangulation is displayed, including cells that belong or do not
+belong to the mesh complex, surface patches and feature edges.
+\cgalFigureEnd
+
+\section MDS_3_section_intro Introduction
+
+This package is devoted to the representation of 3-Dimensional Mesh Data Structures.
+
+A 3D mesh is a discretization of a given bounded subset of the 3D space,
+that holds all geometric and combinatorial data to construct a valid
+and consistent discretization.
+In this chapter, we describe higher-level data structures available
+for the description of such meshes.
+
+\section MDS_3_section_c3t3 Mesh Complex
+
+A 3D simplicial complex is composed of points, line segments, polygons,
+polyhedral, and the combinatorial description of their n-dimension counterparts
+(namely vertices, edges, faces and cells).
+CGAL provides 3D triangulations, that describe
+both the geometry and connectivity of a 3D simplicial complex made
+of triangles, implemented in the
+the \ref PkgTriangulation3 and \ref PkgTDS3 packages.
+
+We introduce the concept of \em mesh \em complex, that encodes extra information
+on top of a 3D triangulation to represent a complete simplicial
+complex. A mesh complex describes four sub-complexes
+of simplices
+of the support 3D triangulation, per dimension from 0 to 3 :
+- corner vertices in 0D,
+- feature edges in 1D,
+- surface facets in 2D,
+- domain cells in 3D (see Figure \cgalFigureRef{figure_c3t3_cells}).
+
+The concept `MeshComplex_3InTriangulation_3` is a data structure devised to
+represent these three dimensional complexes embedded in a `Triangulation_3`.
+
+\cgalFigureBegin{figure_c3t3_cells,c3t3_cells.png}
+(Left and Middle) A multi-domain 3D mesh is represented by its tetrahedral cells,
+with subdomain indices, and surface indices (depicted with different colors here).
+(Right) The underlying `Triangulation_3` triangulates the whole convex hull of its vertices.
+The cells that lie outside the meshing domain are drawn in wire frame.
+\cgalFigureEnd
+
+
+\section MDS_3_section_examples Examples
+
+\subsection TetSoupExample From Tetrahedron Soup to `Triangulation_3`
+
+In the example first example of this section, we build a random
+`Delaunay_triangulation_3` and use it to build a consistent though
+connectivity-free tetrahedron soup.
+The tetrahedron soup is then put back together in a
+`CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3` before
+being set as the reference triangulation of a `Mesh_complex_3_in_triangulation_3`.
+
+\cgalExample{MDS_3/tetrahedron_soup_to_c3t3_example.cpp}
+
+
+\subsection IOExample Input/Output Example
+
+The example below illustrates how to use the IO functions
+for reading and writing a triangulation with the `Medit` file format.
+
+\cgalExample{MDS_3/c3t3_example.cpp}
+
+
+\subsection MoreExamples More Examples in other packages
+
+The `Mesh_complex_3_in_triangulation_3` is widely used in the \ref PkgMesh3 package.
+Numerous more usage examples can be found in its \ref Mesh_3_section_examples section.
+
+The package \ref PkgTetrahedralRemeshing also makes use of the
+`Mesh_complex_3_in_triangulation_3`, since it serves as a post-processing for
+tetrahedral mesh generation. Some examples can be found in the \ref secTetRemeshingExamples
+section.
+
+
+\section MDS_3History Implementation History
+
+The code of the `MeshComplex_3InTriangulation_3` and its variants was initially part of the package `Mesh_3`.
+With the meshing and remeshing processes becoming more versatile, it was moved to its own package in the
+release 5.4 of \cgal.
+
+*/
+} /* namespace CGAL */

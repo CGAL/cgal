@@ -10,7 +10,7 @@
 //                 Jane Tournois
 //
 
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 #include <QtCore/qglobal.h>
 
 #include "Scene_surface_mesh_item.h"
@@ -37,7 +37,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/MDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/IO/output_to_vtu.h>
 #include <CGAL/boost/graph/io.h>
 
@@ -420,9 +420,9 @@ public:
           std::swap(finite_cells[i][1], finite_cells[i][3]);
         }
       }
-      std::vector<typename Tr::Vertex_handle> new_vertices;
-      CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(),
-        points, finite_cells, border_facets, new_vertices);
+
+      CGAL::MDS_3::build_triangulation(c3t3_item->c3t3().triangulation(),
+        points, finite_cells, border_facets);
 
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();

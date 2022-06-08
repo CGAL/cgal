@@ -29,6 +29,18 @@ Release date: December 2021
 -   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
 
 
+[Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
+-----------
+
+Release date:
+
+### [Mesh Data Structure 3](https://doc.cgal.org/5.4/Manual/packages.html#PkgMDS3) (new package)
+
+- This new package wraps all the existing code that deals with a
+` MeshComplex_3InTriangulation_3`, and makes the data structure independant
+from the tetrahedral mesh generation package.
+
+
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
 
