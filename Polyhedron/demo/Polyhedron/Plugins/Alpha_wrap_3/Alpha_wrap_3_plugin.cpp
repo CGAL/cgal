@@ -12,13 +12,15 @@
 #include <CGAL/alpha_wrap_3.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 
-#include <QElapsedTimer>
 #include <QAction>
-#include <QMainWindow>
 #include <QApplication>
-#include <QString>
 #include <QDialog>
+#include <QElapsedTimer>
+#include <QMainWindow>
 #include <QMessageBox>
+#include <QTextStream>
+#include <QString>
+#include <QTranslator>
 #include <QtPlugin>
 
 #include <vector>
@@ -29,50 +31,57 @@
 
 #include "ui_alpha_wrap_3_dialog.h"
 
-template <typename Scene, typename WrapItem>
-struct AW3_visu_visitor
+struct Iterative_AW3_visualization_visitor
 {
-  AW3_visu_visitor(Scene* scene,
-                   WrapItem* wrap_item)
-    : m_scene(scene),
-      m_wrap_item(wrap_item)
-  { }
+private:
+  bool m_do_snapshot;
+  Scene_polygon_soup_item* m_iterative_wrap_item = nullptr;
+  int sid = 0;
 
 public:
+  template <typename Scene>
+  Iterative_AW3_visualization_visitor(Scene* scene,
+                                      const bool visualize_iterations,
+                                      const bool do_snapshot)
+    : m_do_snapshot(do_snapshot)
+  {
+    if(!visualize_iterations)
+      return;
+
+    m_iterative_wrap_item = new Scene_polygon_soup_item();
+    m_iterative_wrap_item->setName(QString("Iterative wrap"));
+    scene->addItem(m_iterative_wrap_item);
+  }
+
+public:
+  template <typename AlphaWrapper>
+  void on_alpha_wrapping_begin(const AlphaWrapper&) { }
+
+  template <typename AlphaWrapper>
+  void on_flood_fill_begin(const AlphaWrapper&) { }
+
+  template <typename AlphaWrapper, typename Facet>
+  void before_facet_treatment(const AlphaWrapper&,
+                              const Facet&) { }
+
   template <typename AlphaWrapper, typename Point>
   void before_Steiner_point_insertion(const AlphaWrapper& wrapper,
                                       const Point& p)
   {
-    // @todo something nicer & smarter
-    if(wrapper.triangulation().number_of_vertices() < 500)
-    {
-      // Do all iterations
-    }
-    else if(wrapper.triangulation().number_of_vertices() < 5000)
-    {
-      if(wrapper.triangulation().number_of_vertices() % 10 != 0)
-        return;
-    }
-    else if(wrapper.triangulation().number_of_vertices() < 10000)
-    {
-      if(wrapper.triangulation().number_of_vertices() % 100 != 0)
-        return;
-    }
-    else if(wrapper.triangulation().number_of_vertices() < 1000000)
-    {
-      if(wrapper.triangulation().number_of_vertices() % 1000 != 0)
-        return;
-    }
-
-    if(!m_wrap_item)
+    if(m_iterative_wrap_item == nullptr)
       return;
 
-//    for(auto cit=wrapper.triangulation().finite_cells_begin(), cend=wrapper.triangulation().finite_cells_end(); cit!=cend; ++cit)
-//      std::cout << cit->time_stamp() << std::endl;
+    // If the next top of the queue has vertices on the bbox, don't draw (as to avoid producing
+    // spikes in the visualization)
+//    const auto& gate = wrapper.queue().top();
+//    if(wrapper.triangulation().number_of_vertices() > 500 && gate.is_artificial_facet())
+//      return;
 
-    std::cout << "on_Steiner_point_insert (" << wrapper.triangulation().number_of_vertices() << ")" << std::endl;
+    // Skip some...
+    if(wrapper.triangulation().number_of_vertices() % 50 != 0)
+      return;
 
-    // EXTRACT ---
+    // Extract the wrap as a triangle soup
 
     using Dt = typename std::decay<decltype(wrapper.triangulation())>::type;
     using Vertex_handle = typename Dt::Vertex_handle;
@@ -85,6 +94,8 @@ public:
     std::unordered_map<Vertex_handle, std::size_t> vertex_to_id;
     std::size_t nv = 0;
 
+    // This is used to compute colors depending on what is old and what is new.
+    // It is not currently used (a uniform gray color is used), but leaving it as it might be useful.
     std::size_t min_time_stamp = -1, max_time_stamp = 0;
     for(auto cit=wrapper.triangulation().finite_cells_begin(), cend=wrapper.triangulation().finite_cells_end(); cit!=cend; ++cit)
     {
@@ -128,64 +139,74 @@ public:
       faces.emplace_back(std::vector<std::size_t>{ids[0], ids[1], ids[2]});
       double color_val = double(c->time_stamp() - min_time_stamp) / double(max_time_stamp - min_time_stamp);
       color_val = int(256. * color_val);
+
       // fcolors.push_back(CGAL::IO::Color(color_val, 10, 150)); // young is red, old is blue
       // fcolors.push_back(CGAL::IO::Color(256 - color_val, 256 - color_val, 256 - color_val)); // young is light, old is dark
-      fcolors.push_back(CGAL::IO::Color(100, 100, 100)); // darkish gray
+      fcolors.push_back(CGAL::IO::Color(100, 100, 100)); // uniform darkish gray
     }
 
-//    std::cout << "DT NV " << wrapper.triangulation().number_of_vertices() << " vs " << nv << " vs " << points.size() << std::endl;
-//    std::cout << "DT NF " << wrapper.triangulation().number_of_finite_facets() << " vs " << fi << " vs " << faces.size() << std::endl;
+    // Update the wrap item's visualization
+    m_iterative_wrap_item->load(points, faces, fcolors, vcolors);
+    m_iterative_wrap_item->setName(QString("Iterative wrap #%1").arg(sid));
+    m_iterative_wrap_item->setAlpha(255 / 2);
 
-    // --- EXTRACT
+    m_iterative_wrap_item->invalidateOpenGLBuffers();
+    m_iterative_wrap_item->redraw();
+    m_iterative_wrap_item->itemChanged();
 
-    m_wrap_item->load(points, faces, fcolors, vcolors);
-    m_wrap_item->setAlpha(255 / 2);
-
-    m_wrap_item->invalidateOpenGLBuffers();
-    m_wrap_item->redraw();
-    m_wrap_item->itemChanged();
-
-//    SMesh wrap;
-//    auto vpm = get(CGAL::vertex_point, wrap);
-//    wrapper.extract_surface(wrap, vpm, true /*tolerate non manifoldness*/);
-
-//    Scene_surface_mesh_item* new_wrap_item = new Scene_surface_mesh_item(wrap);
-//    new_wrap_item->setName(QString("Wrap"));
-//    new_wrap_item->setColor(Qt::gray);
-
-//    new_wrap_item->setName(m_wrap_item->name());
-//    new_wrap_item->setColor(m_wrap_item->color());
-//    new_wrap_item->setRenderingMode(m_wrap_item->renderingMode());
-//    new_wrap_item->setVisible(m_wrap_item->visible());
-//    Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_wrap_item);
-//    m_scene->replaceItem(m_scene->item_id(m_wrap_item), new_wrap_item, true);
-//    if(property_item)
-//      property_item->copyProperties(m_wrap_item);
-//    new_wrap_item->invalidateOpenGLBuffers();
-//    m_wrap_item->deleteLater();
-
+    // Refresh the view
     QApplication::processEvents();
+
+    if(m_do_snapshot)
+    {
+      std::stringstream oss;
+      oss << "Wrap_iteration-" << sid << ".png" << std::ends;
+      QString filename = QString::fromStdString(oss.str().c_str());
+
+      CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
+      viewer->saveSnapshot(filename, 1920, 1080, true /*expand*/, 2.0 /*oversampling*/);
+    }
+
+    ++sid;
   }
 
   template <typename AlphaWrapper, typename VertexHandle>
-  void after_Steiner_point_insertion(const AlphaWrapper& wrapper,
-                                     const VertexHandle vh)
-  {
+  void after_Steiner_point_insertion(const AlphaWrapper&,
+                                     const VertexHandle) { }
 
-  }
+  template <typename AlphaWrapper>
+  void on_flood_fill_end(const AlphaWrapper&) { }
 
-  void after_alpha_wrapping()
+  template <typename AlphaWrapper>
+  void on_alpha_wrapping_end(const AlphaWrapper&)
   {
-    m_wrap_item->setAlpha(255);
-    m_wrap_item->invalidateOpenGLBuffers();
-    m_wrap_item->redraw();
-    m_wrap_item->itemChanged();
+    if(m_iterative_wrap_item == nullptr)
+      return;
+
+    m_iterative_wrap_item->setName(QString("Iterative wrap #%1").arg(sid));
+
+    m_iterative_wrap_item->setAlpha(255);
+    m_iterative_wrap_item->invalidateOpenGLBuffers();
+    m_iterative_wrap_item->redraw();
+    m_iterative_wrap_item->itemChanged();
+
+    QApplication::processEvents();
+
+    if(m_do_snapshot)
+    {
+      std::stringstream oss;
+      oss << "Wrap_iteration-" << sid << ".png" << std::ends;
+      QString filename = QString::fromStdString(oss.str().c_str());
+
+      CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
+      viewer->saveSnapshot(filename);
+    }
+
+    m_iterative_wrap_item->setVisible(false);
+
+    // Refresh the view
     QApplication::processEvents();
   }
-
-private:
-  Scene* m_scene;
-  WrapItem* m_wrap_item;
 };
 
 class Polyhedron_demo_alpha_wrap_3_plugin
@@ -249,6 +270,9 @@ private:
     connect(ui.wrapEdges, SIGNAL(clicked(bool)), this, SLOT(toggle_wrap_faces()));
     connect(ui.wrapFaces, SIGNAL(clicked(bool)), this, SLOT(toggle_wrap_edges()));
 
+    connect(ui.visualizeIterations, SIGNAL(clicked(bool)),
+            this, SLOT(update_iteration_snapshot_checkbox()));
+
     connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
     connect(ui.buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
 
@@ -266,6 +290,11 @@ public Q_SLOTS:
   {
     if(ui.wrapFaces->isChecked()) // if faces are enabled, so are edges
       ui.wrapEdges->setChecked(true);
+  }
+
+  void update_iteration_snapshot_checkbox()
+  {
+    ui.snapshotIterations->setCheckable(ui.visualizeIterations->isChecked());
   }
 
   void on_actionAlpha_wrap_3_triggered()
@@ -291,11 +320,13 @@ public Q_SLOTS:
     const bool enforce_manifoldness = ui.runManifoldness->isChecked();
     double alpha = ui.alphaValue->value();
     double offset = ui.offsetValue->value();
+    const bool visualize_iterations = ui.visualizeIterations->isChecked();
+    const bool do_snapshot_iterations = ui.snapshotIterations->isChecked();
 
     if(alpha <= 0. || offset <= 0.)
       return;
 
-//    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     TS_Oracle ts_oracle;
     SS_Oracle ss_oracle(ts_oracle);
@@ -453,7 +484,7 @@ public Q_SLOTS:
     std::cout << triangles.size() << " triangles" << std::endl;
     std::cout << segments.size() << " edges" << std::endl;
     std::cout << points.size() << " points" << std::endl;
-    std::cout << "wrap s/tr: " << wrap_segments << " " << wrap_triangles << std::endl;
+    std::cout << "do wrap edges/faces: " << wrap_segments << " " << wrap_triangles << std::endl;
 
     if(wrap_triangles)
       oracle.add_triangle_soup(triangles);
@@ -464,7 +495,7 @@ public Q_SLOTS:
     if(!oracle.do_call())
     {
       print_message("Warning: empty input - nothing to wrap");
-//      QApplication::restoreOverrideCursor();
+      QApplication::restoreOverrideCursor();
       return;
     }
 
@@ -482,24 +513,21 @@ public Q_SLOTS:
 
     CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
 
-    Scene_polygon_soup_item* iterative_wrap_item = new Scene_polygon_soup_item();
-    iterative_wrap_item->setName(tr("Iterative wrap").arg(alpha).arg(offset));
-    scene->addItem(iterative_wrap_item);
-
-    AW3_visu_visitor<std::remove_reference<decltype(*(this->scene))>::type,
-                     Scene_polygon_soup_item> visitor(scene, iterative_wrap_item);
+    Iterative_AW3_visualization_visitor visitor(scene,
+                                                visualize_iterations,
+                                                do_snapshot_iterations);
 
     SMesh wrap;
     aw3(alpha, offset, wrap,
         CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
                          .visitor(visitor));
 
-//    Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(wrap);
-//    wrap_item->setName(tr("Wrap alpha %2 offset %3").arg(alpha).arg(offset));
-//    wrap_item->setColor(Qt::gray);
-//    scene->addItem(wrap_item);
+    Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(wrap);
+    wrap_item->setName(tr("Wrap with alpha %2 offset %3").arg(alpha).arg(offset));
+    wrap_item->setColor(Qt::gray);
+    scene->addItem(wrap_item);
 
-//    QApplication::restoreOverrideCursor();
+    QApplication::restoreOverrideCursor();
   }
 
 private:
