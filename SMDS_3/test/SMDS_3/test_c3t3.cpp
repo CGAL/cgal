@@ -250,7 +250,7 @@ struct Tester
     //-------------------------------------------------------
     std::cout << "Insert 6 points from domain in c3t3_bis, add 1 cell to c3t3_bis\n";
     Polyhedron polyhedron;
-    std::ifstream input("data/sphere.off");
+    std::ifstream input(CGAL::data_file_path("meshes/sphere.off"));
     input >> polyhedron;
     input.close();
     Mesh_domain domain(polyhedron);
