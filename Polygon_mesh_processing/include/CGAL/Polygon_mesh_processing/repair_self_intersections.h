@@ -550,7 +550,11 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
                                                     local_mesh,
                                                     CP::edge_is_constrained_map(eif)
                                                     .number_of_iterations(100)
-                                                    .use_safety_constraints(false));
+                                                    .use_safety_constraints(false)
+#ifndef CGAL_PMP_USE_CERES_SOLVER
+                                                    .use_area_smoothing(false)
+#endif
+                                                    );
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
   CGAL::IO::write_polygon_mesh("results/post_smoothing_local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
