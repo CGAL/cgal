@@ -10,7 +10,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/MDS_3/tet_soup_to_c3t3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 

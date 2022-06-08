@@ -29,16 +29,12 @@ if ( CGAL_FOUND )
   endif()
 
   create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
-  create_single_source_cgal_program( "test_c3t3.cpp" )
   create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )
   create_single_source_cgal_program( "test_implicit_multi_domain_to_labeling_function_wrapper.cpp" )
-  create_single_source_cgal_program( "test_c3t3_io.cpp" )
-  create_single_source_cgal_program( "test_c3t3_with_features.cpp" )
   create_single_source_cgal_program( "test_criteria.cpp" )
   create_single_source_cgal_program( "test_domain_with_polyline_features.cpp" )
   create_single_source_cgal_program( "test_labeled_mesh_domain_3.cpp" )
   create_single_source_cgal_program( "test_mesh_criteria_creation.cpp" )
-  create_single_source_cgal_program( "test_c3t3_into_facegraph.cpp" )
   create_single_source_cgal_program( "test_without_detect_features.cpp" )
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program( "test_meshing_3D_image.cpp" )
@@ -58,7 +54,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_meshing_unit_tetrahedron.cpp" )
   create_single_source_cgal_program( "test_meshing_with_default_edge_size.cpp" )
   create_single_source_cgal_program( "test_meshing_determinism.cpp" )
-  create_single_source_cgal_program( "test_c3t3_extract_subdomains_boundaries.cpp" )
   create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
   create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
   create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
@@ -66,16 +61,12 @@ if ( CGAL_FOUND )
 
   foreach(target
       test_boost_has_xxx
-      test_c3t3
       test_mesh_capsule_var_distance_bound
       test_implicit_multi_domain_to_labeling_function_wrapper
-      test_c3t3_io
-      test_c3t3_with_features
       test_criteria
       test_domain_with_polyline_features
       test_labeled_mesh_domain_3
       test_mesh_criteria_creation
-      test_c3t3_into_facegraph
       test_without_detect_features
       test_meshing_3D_image
       test_meshing_3D_image_deprecated
@@ -91,7 +82,6 @@ if ( CGAL_FOUND )
       test_meshing_unit_tetrahedron
       test_meshing_with_default_edge_size
       test_meshing_determinism
-      test_c3t3_extract_subdomains_boundaries
       test_mesh_3_issue_1554
       test_mesh_polyhedral_domain_with_features_deprecated
       test_mesh_cell_base_3

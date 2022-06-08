@@ -21,7 +21,7 @@
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Mesh_3/C3T3_helpers.h>
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/MDS_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/Time_stamper.h>
