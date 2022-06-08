@@ -15,14 +15,14 @@
 // File Description :
 //******************************************************************************
 
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 #include "test_meshing_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <boost/type_traits/is_same.hpp>
 
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/MDS_3/Dump_c3t3.h>
 
 #include <CGAL/disable_warnings.h>
 

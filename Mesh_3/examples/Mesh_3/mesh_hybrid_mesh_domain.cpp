@@ -13,7 +13,7 @@
 #include <CGAL/make_mesh_3.h>
 
 // Ouput
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/MDS_3/Dump_c3t3.h>
 
 // Read 1D features from input file
 #include "read_polylines.h"
