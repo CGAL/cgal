@@ -7,7 +7,7 @@ namespace CGAL {
 \authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
 \cgalAutoToc
 
-\cgalFigureBegin{figure_tetmesh_knot,knot_full.png}
+\cgalFigureBegin{figure_tetmesh_knot,knot_full.jpg}
 A multi-domain tetrahedral mesh generated from a polyhedral surface with multiple surface patches.
 The complete triangulation is displayed, including cells that belong or do not
 belong to the mesh complex, surface patches, and feature edges.
@@ -39,7 +39,7 @@ of the support 3D triangulation, per dimension from 0 to 3:
 The concept `MeshComplex_3InTriangulation_3` is a data structure devised to
 represent these three-dimensional complexes embedded in a `Triangulation_3`.
 
-\cgalFigureBegin{figure_c3t3_cells,c3t3_cells.png}
+\cgalFigureBegin{figure_c3t3_cells,c3t3_cells.jpg}
 (Left and Middle) A multi-domain 3D mesh is represented by its tetrahedral cells,
 with subdomain indices, and surface indices (depicted with different colors here).
 (Right) The underlying `Triangulation_3` triangulates the whole convex hull of its vertices.
