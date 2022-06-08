@@ -103,13 +103,26 @@ struct Wrapping_default_visitor
 {
   Wrapping_default_visitor() { }
 
+  template <typename AlphaWrapper>
+  void on_alpha_wrapping_begin(const AlphaWrapper&) { }
+
+  template <typename AlphaWrapper>
+  void on_flood_fill_begin(const AlphaWrapper&) { }
+
+  template <typename AlphaWrapper, typename Gate>
+  void before_facet_treatment(const AlphaWrapper&, const Gate&) { }
+
   template <typename Wrapper, typename Point>
   void before_Steiner_point_insertion(const Wrapper&, const Point&) { }
 
   template <typename Wrapper, typename VertexHandle>
   void after_Steiner_point_insertion(const Wrapper&, VertexHandle) { }
 
-  void after_alpha_wrapping() { }
+  template <typename AlphaWrapper>
+  void on_flood_fill_end(const AlphaWrapper&) { }
+
+  template <typename AlphaWrapper>
+  void on_alpha_wrapping_end(const AlphaWrapper&) { };
 };
 
 template <typename Oracle>
@@ -187,6 +200,7 @@ public:
   const Geom_traits& geom_traits() const { return m_dt.geom_traits(); }
   Dt& triangulation() { return m_dt; }
   const Dt& triangulation() const { return m_dt; }
+  const Alpha_PQ& queue() const { return m_queue; }
 
   double default_alpha() const
   {
@@ -251,6 +265,8 @@ public:
     CGAL::Real_timer t;
     t.start();
 #endif
+
+    visitor.on_alpha_wrapping_begin(*this);
 
     if(!initialize(alpha, offset, seeds))
       return;
@@ -340,7 +356,7 @@ public:
  #endif
 #endif
 
-    visitor.after_alpha_wrapping();
+    visitor.on_alpha_wrapping_end(*this);
   }
 
   // Convenience overloads
@@ -1029,6 +1045,8 @@ private:
     std::cout << "> Flood fill..." << std::endl;
 #endif
 
+    visitor.on_flood_fill_begin(*this);
+
     // Explore all finite cells that are reachable from one of the initial outside cells.
     while(!m_queue.empty())
     {
@@ -1054,6 +1072,8 @@ private:
                 << m_dt.point(ch, (id+1)&3) << "\n" << m_dt.point(ch, (id+2)&3) << "\n" << m_dt.point(ch, (id+3)&3) << std::endl;
       std::cout << "Priority: " << gate.priority() << std::endl;
 #endif
+
+      visitor.before_facet_treatment(*this, gate);
 
       m_queue.pop();
 
@@ -1169,6 +1189,8 @@ private:
         }
       }
     } // while(!queue.empty())
+
+    visitor.on_flood_fill_end(*this);
 
     // Check that no useful facet has been ignored
     CGAL_postcondition_code(for(auto fit=m_dt.finite_facets_begin(), fend=m_dt.finite_facets_end(); fit!=fend; ++fit) {)
