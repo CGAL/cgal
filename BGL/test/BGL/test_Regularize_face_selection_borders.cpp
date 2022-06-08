@@ -17,7 +17,7 @@ typedef boost::graph_traits<SM>::face_descriptor face_descriptor;
 int main()
 {
   SM sm;
-  std::ifstream input("data/head.off");
+  std::ifstream input(CGAL::data_file_path("meshes/head.off"));
   input >> sm;
 
 // define my selection of faces to remove

@@ -88,7 +88,7 @@ void read_handle_difs_and_deform(DeformMesh& deform_mesh, InputIterator begin, I
 int main()
 {
   Polyhedron mesh_1;
-  read_to_polyhedron("data/cactus.off", mesh_1);
+  read_to_polyhedron(CGAL::data_file_path("meshes/cactus.off"), mesh_1);
   Polyhedron mesh_2 = mesh_1;
 
   init_indices(mesh_1);

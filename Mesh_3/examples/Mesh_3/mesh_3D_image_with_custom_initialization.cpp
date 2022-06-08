@@ -53,7 +53,7 @@ int main()
                                               domain,
                                               image,
                                               criteria,
-                                              (unsigned char)0);
+                                              static_cast<unsigned char>(0));
   CGAL::refine_mesh_3(c3t3, domain, criteria);
   /// [Meshing]
 

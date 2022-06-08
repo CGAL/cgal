@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -31,7 +31,7 @@ using namespace CGAL::parameters;
 int main()
 {
   // Create domain
-  Mesh_domain domain("data/cube.off");
+  Mesh_domain domain(CGAL::data_file_path("meshes/cube.off"));
 
   // Get sharp features
   domain.detect_features();

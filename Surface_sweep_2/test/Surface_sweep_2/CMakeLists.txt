@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Surface_sweep_2_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -15,14 +15,14 @@ set(TRAP 1) # Trapezoidal decomposition
 set(NAIVE 2)
 set(WALK 3)
 
-include(${CGAL_USE_FILE})
-
 function(compile name source_file point_location traits)
   #    message(compile ${source_file})
   add_executable(${name} ${source_file})
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${name})
   if(TARGET CGAL::CGAL_Core)
     target_link_libraries(${name} CGAL::CGAL CGAL::CGAL_Core)
+  else()
+    target_link_libraries(${name} CGAL::CGAL)
   endif()
   target_compile_definitions(
     ${name} PRIVATE -DCGAL_ARR_TEST_POINT_LOCATION=${point_location}

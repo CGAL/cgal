@@ -130,7 +130,7 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
   operations (e.g. for symbolic computation with an infimaximal \e x ),
   and various algebraic operations (gcd, resultant).
 
-  \c CGAL:Polynomial offers a full set of algebraic operators, i.e.
+  \c CGAL::Polynomial offers a full set of algebraic operators, i.e.
   binary +, -, *, / as well as +=, -=, *=, /=; not only for polynomials
   but also for a polynomial and a number of the coefficient type.
   (The / operator must only be used for integral divisions, i.e.

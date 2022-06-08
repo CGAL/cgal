@@ -5,8 +5,10 @@ Convex_hull_2
 Triangulation_2
 Mesh_2
 Number_types
+Barycentric_coordinates_2
 Algebraic_foundations
 Circular_kernel_2
 Circular_kernel_3
 STL_Extension
 Polyhedron
+Weights

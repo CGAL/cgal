@@ -33,7 +33,7 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -41,7 +41,7 @@
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>

@@ -46,14 +46,13 @@ bool write_OFF_PSP(std::ostream& os,
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
+  using CGAL::parameters::is_default_parameter;
 
   // basic geometric types
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type                         PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type      NormalMap;
 
-  bool has_normals = !(std::is_same<NormalMap,
-                                    typename Point_set_processing_3::GetNormalMap<
-                                      PointRange, CGAL_BGL_NP_CLASS>::NoMap>::value);
+  const bool has_normals = !(is_default_parameter(get_parameter(np, internal_np::normal_map)));
 
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
@@ -69,7 +68,10 @@ bool write_OFF_PSP(std::ostream& os,
   set_stream_precision_from_NP(os, np);
 
   // Write header
-  os << "NOFF" << std::endl;
+  if (has_normals)
+    os << "NOFF" << std::endl;
+  else
+    os << "OFF" << std::endl;
   os << points.size() << " 0 0" << std::endl;
 
   // Write positions + normals

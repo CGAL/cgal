@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 
   typedef CGAL::Polyhedral_envelope<Kernel> Envelope;
 
-  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
+  std::ifstream in((argc>1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   double eps = (argc>2) ? std::stod(std::string(argv[2])) : 0.2;
 
 

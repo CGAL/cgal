@@ -115,7 +115,7 @@ void Scene::bench_memory()
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
         std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
         unsigned int nb_splits =
-          static_cast<unsigned int>(0.2 * std::pow(10.0,(double)digits - 1.0));
+          static_cast<unsigned int>(0.2 * std::pow(10.0,static_cast<double>(digits) - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree and measure memory before then after
@@ -126,8 +126,8 @@ void Scene::bench_memory()
 
         size_type after = CGAL::Memory_sizer().virtual_size();
         size_type bytes = after - before; // in Bytes
-        double mbytes = (double)bytes / (double)1048576; //  in MBytes
-        double bpp = (double)bytes / (double)m_pPolyhedron->size_of_facets();
+        double mbytes = static_cast<double>(bytes) / static_cast<double>(1048576); //  in MBytes
+        double bpp = static_cast<double>(bytes) / static_cast<double>(m_pPolyhedron->size_of_facets());
         std::cout << m_pPolyhedron->size_of_facets() << ", "
             << bytes << ", "
             << mbytes << ", "
@@ -152,7 +152,7 @@ void Scene::bench_construction()
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
         std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
         unsigned int nb_splits =
-          static_cast<unsigned int>(0.2 * std::pow(10.0,(double)digits - 1.0));
+          static_cast<unsigned int>(0.2 * std::pow(10.0,static_cast<double>(digits) - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree
@@ -197,7 +197,7 @@ void Scene::bench_intersections_vs_nbt()
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
         std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
         unsigned int nb_splits =
-          static_cast<unsigned int>(0.2 * std::pow(10.0,(double)digits - 1.0));
+          static_cast<unsigned int>(0.2 * std::pow(10.0,static_cast<double>(digits) - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree (out of timing)
@@ -210,7 +210,7 @@ void Scene::bench_intersections_vs_nbt()
         for(int i=0;i<nb_queries;i++)
             tree.all_intersections(queries[i],std::back_inserter(intersections));
         double duration = timer.time();
-        int speed = (int)((double)nb_queries / (double)duration);
+        int speed = static_cast<int>(static_cast<double>(nb_queries) / duration);
 
         std::cout << m_pPolyhedron->size_of_facets() << ", " << speed << std::endl;
     }
@@ -241,7 +241,7 @@ void Scene::bench_distances_vs_nbt()
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
         std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
         unsigned int nb_splits =
-          static_cast<unsigned int>(0.2 * std::pow(10.0,(double)digits - 1.0));
+          static_cast<unsigned int>(0.2 * std::pow(10.0,static_cast<double>(digits) - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree (out of timing)
@@ -253,7 +253,7 @@ void Scene::bench_distances_vs_nbt()
         for(int i=0;i<nb_queries;i++)
             tree.closest_point(queries[i]);
         double duration = timer.time();
-        int speed = (int)((double)nb_queries / (double)duration);
+        int speed = static_cast<int>(static_cast<double>(nb_queries) / duration);
 
         std::cout << m_pPolyhedron->size_of_facets() << ", " << speed << std::endl;
     }
@@ -298,7 +298,7 @@ void Scene::bench_intersection(Facet_tree& tree,
         nb++;
     }
 
-    double speed = (double)nb / (double)timer.time();
+    double speed = static_cast<double>(nb) / timer.time();
     std::cout << speed << " queries/s with " << query_name << std::endl;
 }
 
@@ -340,7 +340,7 @@ void Scene::bench_distance(Facet_tree& tree,
         nb++;
     }
 
-    double speed = (double)nb / (double)timer.time();
+    double speed = static_cast<double>(nb) / timer.time();
     std::cout << speed << " queries/s" << std::endl;
 }
 

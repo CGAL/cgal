@@ -24,8 +24,8 @@ void test()
   // test with a clipper mesh
   {
     TriangleMesh tm1, tm2;
-    std::ifstream("data-coref/elephant.off") >> tm1;
-    std::ifstream("data-coref/sphere.off") >> tm2;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> tm2;
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
     CGAL::BGL::internal::initialize_face_index_map(custom_face_index_map_1, tm1);
@@ -40,8 +40,8 @@ void test()
 
   {
     TriangleMesh tm1, tm2;
-    std::ifstream("data-coref/elephant.off") >> tm1;
-    std::ifstream("data-coref/sphere.off") >> tm2;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> tm2;
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
     CGAL::BGL::internal::initialize_face_index_map(custom_face_index_map_1, tm1);
@@ -74,7 +74,7 @@ void test()
   // test with a iso-cuboid
   {
     TriangleMesh tm1;
-    std::ifstream("data-coref/elephant.off") >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
     K::Iso_cuboid_3 iso_cuboid(K::Point_3(0,0,0), K::Point_3(0.4, 0.6, 0.4));
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
@@ -497,14 +497,72 @@ void test()
     PMP::clip(tm1, K::Plane_3(0,-1,0,0));
     assert(vertices(tm1).size() == 7);
   }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(false));
+    assert(vertices(tm1).size()==753);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    std::size_t nbv = vertices(tm1).size();
+    PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(true));
+    assert(vertices(tm1).size()==nbv+2); // because of the plane diagonal
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(false).allow_self_intersections(true));
+    assert(vertices(tm1).size()==753);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    std::size_t nbv = vertices(tm1).size();
+    PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
+    assert(vertices(tm1).size()==nbv+2); // because of the plane diagonal
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(false));
+    assert(vertices(tm1).size()==0);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true));
+    assert(vertices(tm1).size()==176);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(false).allow_self_intersections(true));
+    assert(vertices(tm1).size()==0);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
+    assert(vertices(tm1).size()==176);
+  }
 }
 
 template <class Mesh>
 void test_split_plane()
 {
-  // test with a clipper mesh
+//test with a splitter mesh
   Mesh tm1;
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm1;
 
   if(!input)
@@ -529,7 +587,45 @@ void test_split_plane()
   CGAL::clear(tm1);
   meshes.clear();
 
-  //test with SI
+//test with a non-closed splitter mesh (border edges in the plane)
+  input.open("data-coref/open_large_cube.off");
+  input >> tm1;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    assert(false);
+    return ;
+  }
+  input.close();
+
+  PMP::split(tm1,K::Plane_3(0,0,1,-1));
+  PMP::split_connected_components(tm1, meshes, params::all_default());
+  assert(meshes.size() == 281);
+
+  CGAL::clear(tm1);
+  meshes.clear();
+
+//test with a non-closed splitter mesh (border edges in the plane)
+  input.open("data-coref/open_large_cube.off");
+  input >> tm1;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    assert(false);
+    return ;
+  }
+  input.close();
+
+  PMP::split(tm1,K::Plane_3(0,-1,0,0.3));
+  PMP::split_connected_components(tm1, meshes, params::all_default());
+  assert(meshes.size() == 2);
+
+  CGAL::clear(tm1);
+  meshes.clear();
+
+//test with SI
   std::ifstream("data-clip/tet_si_to_split.off") >> tm1;
   if(num_vertices(tm1) == 0)
   {
@@ -558,7 +654,7 @@ void test_split()
   // test with a clipper mesh
   TriangleMesh tm1, tm2;
   //closed intersection curves
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm1;
 
   if(!input)
@@ -570,7 +666,7 @@ void test_split()
 
   input.close();
 
-  input.open("data-coref/sphere.off");
+  input.open(CGAL::data_file_path("meshes/sphere.off"));
   input >> tm2;
 
   if(!input)
@@ -683,7 +779,7 @@ void test_isocuboid()
 {
   TriangleMesh tm;
   //closed intersection curves
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm;
 
   if(!input)
@@ -735,12 +831,15 @@ void test_isocuboid()
              .allow_self_intersections(true));
   PMP::split_connected_components(tm, meshes, params::all_default());
   assert(meshes.size() == 4);
-  //if the order is not deterministc, put the num_vertices in a list and check
-  //if the list does contain all those numbers.
-  assert(vertices(meshes[0]).size() == 22);
-  assert(vertices(meshes[1]).size() == 23);
-  assert(vertices(meshes[2]).size() == 7);
-  assert(vertices(meshes[3]).size() == 4);
+
+  std::set<std::size_t> sizes;
+  for (int i=0; i<4; ++i)
+    sizes.insert(vertices(meshes[i]).size());
+
+  assert(sizes.count(22)==1);
+  assert(sizes.count(23)==1);
+  assert(sizes.count(7)==1);
+  assert(sizes.count(4)==1);
 
   CGAL::clear(tm);
   meshes.clear();

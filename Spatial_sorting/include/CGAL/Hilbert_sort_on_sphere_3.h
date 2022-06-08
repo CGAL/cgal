@@ -14,7 +14,7 @@
 #define CGAL_HILBERT_SORT_ON_SPHERE_3_H
 
 #include <CGAL/Hilbert_sort_2.h>
-#include <CGAL/internal/Transform_coordinates_traits_3.h>
+#include <CGAL/Spatial_sorting/internal/Transform_coordinates_traits_3.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/double.h>
 #include <algorithm>

@@ -21,7 +21,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/facets_in_complex_3_to_triangle_mesh.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 #endif
 
 #endif // CGAL_IO_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H

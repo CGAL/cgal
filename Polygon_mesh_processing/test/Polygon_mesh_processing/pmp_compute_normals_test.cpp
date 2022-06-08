@@ -123,7 +123,7 @@ void test(const Mesh& mesh,
 }
 
 template<typename K>
-void test_SM(const char* file_name)
+void test_SM(const std::string file_name)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                         SM;
   typedef typename boost::graph_traits<SM>::vertex_descriptor             vertex_descriptor;
@@ -150,7 +150,7 @@ void test_SM(const char* file_name)
 }
 
 template<typename K>
-void test_Polyhedron(const char* file_name)
+void test_Polyhedron(const std::string file_name)
 {
   typedef CGAL::Polyhedron_3<K>                                           Polyhedron;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor     vertex_descriptor;
@@ -187,7 +187,7 @@ void test_Polyhedron(const char* file_name)
   test<K>(mesh, vnormals, fnormals);
 }
 
-void test(const char* filename)
+void test(const std::string filename)
 {
   std::cout << "test " << filename << "..." << std::endl;
 
@@ -205,10 +205,10 @@ int main()
 
   CGAL::Set_ieee_double_precision pfr;
 
-  test("data/elephant.off");
+  test(CGAL::data_file_path("meshes/elephant.off"));
   test("data/folded_star.off");
   test("data/joint_refined.off");
-  test("data/mannequin-devil.off");
+  test(CGAL::data_file_path("meshes/mannequin-devil.off"));
   test("data/U.off");
 
   test("data_degeneracies/deg_on_border.off");

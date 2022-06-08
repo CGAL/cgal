@@ -657,10 +657,10 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
   setShortcut(qglviewer::DRAW_AXIS, ::Qt::Key_A);
   setShortcut(qglviewer::DRAW_GRID, ::Qt::Key_G);
   setShortcut(qglviewer::DISPLAY_FPS, ::Qt::Key_F);
-  setShortcut(qglviewer::ENABLE_TEXT, ::Qt::SHIFT + ::Qt::Key_Question);
+  setShortcut(qglviewer::ENABLE_TEXT, ::Qt::SHIFT, ::Qt::Key_Question);
   setShortcut(qglviewer::EXIT_VIEWER, ::Qt::Key_Escape);
   setShortcut(qglviewer::CAMERA_MODE, ::Qt::Key_Space);
-  setShortcut(qglviewer::FULL_SCREEN, ::Qt::ALT + ::Qt::Key_Return);
+  setShortcut(qglviewer::FULL_SCREEN, ::Qt::ALT, ::Qt::Key_Return);
   setShortcut(qglviewer::ANIMATION, ::Qt::Key_Return);
   setShortcut(qglviewer::HELP, ::Qt::Key_H);
   setShortcut(qglviewer::MOVE_CAMERA_LEFT, ::Qt::Key_Left);

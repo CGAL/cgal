@@ -262,14 +262,14 @@ protected:
   {
     Base::init();
     setKeyDescription(::Qt::Key_D, "Increase current dart drawing");
-    setKeyDescription(::Qt::Key_D+::Qt::ControlModifier, "Decrease current dart drawing");
-    setKeyDescription(::Qt::Key_D+::Qt::ShiftModifier, "Draw all darts");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_D, "Decrease current dart drawing");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Draw all darts");
 
     setKeyDescription(::Qt::Key_X, "Toggles marked darts display");
 
     setKeyDescription(::Qt::Key_P, "Increase current path drawing");
-    setKeyDescription(::Qt::Key_P+::Qt::ControlModifier, "Decrease current path drawing");
-    setKeyDescription(::Qt::Key_P+::Qt::ShiftModifier, "Draw all paths");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_P, "Decrease current path drawing");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_P, "Draw all paths");
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -412,7 +412,7 @@ void draw(const Mesh& alcc,
   {
     CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"lccviewer","\0"};
+    const char* argv[1]={"lccviewer"};
     QApplication app(argc,const_cast<char**>(argv));
     Face_graph_with_path_viewer<Mesh, DrawingFunctor> mainwindow(app.activeWindow(),
                                                                  alcc, &paths, amark,

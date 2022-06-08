@@ -21,7 +21,7 @@ typedef CGAL::Simple_cartesian<exact_type> EK;
 
 int main()
 {
-  std::ifstream ifs_algo("./data/algo.dat");
+  std::ifstream ifs_algo("data/algo.dat");
   assert( ifs_algo );
 
   std::cout << "testing the Apollonius graph class" << " with filtered traits..." << std::flush;

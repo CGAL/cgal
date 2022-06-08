@@ -9,6 +9,7 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/internal/graph_traits_2D_triangulation_helper.h>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
 #include <CGAL/boost/graph/properties.h>
 
@@ -20,19 +21,13 @@
   #error CGAL_2D_TRIANGULATION is not defined
 #endif
 
-// note only the properties below are protected by the macro,
+// note that only the properties below are protected by the macro,
 // the rest of the file is the shared implementation of properties for all 2D triangulations
 #ifndef CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
 #define CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
 
 namespace CGAL {
 namespace internal {
-
-template <class Tr>
-struct T2_halfedge_descriptor;
-
-template <class Tr>
-struct T2_edge_descriptor;
 
 template <typename Tr>
 class T2_vertex_point_map
@@ -59,8 +54,6 @@ public:
 
 template <typename Tr>
 class T2_edge_weight_map
-  : public boost::put_get_helper<typename Tr::Geom_traits::FT,
-                                 T2_edge_weight_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                        category;
@@ -72,13 +65,14 @@ public:
 
   value_type operator[](key_type e) const { return approximate_sqrt(tr.segment(e).squared_length()); }
 
+  friend inline value_type get(const T2_edge_weight_map& m, key_type k) { return m[k]; }
+
 private:
   const Tr& tr;
 };
 
 template <typename Tr>
 class T2_vertex_id_map
-  : public boost::put_get_helper<int, T2_vertex_id_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -93,12 +87,13 @@ public:
     return v->id();
   }
 
+  friend inline value_type get(const T2_vertex_id_map& m, key_type k) { return m[k]; }
+
   const Tr& tr;
 };
 
 template <typename Tr>
 class T2_halfedge_id_map
-  : public boost::put_get_helper<int, T2_halfedge_id_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -128,13 +123,14 @@ public:
       return 2*(f1->edge_id(h.second)) + 1;
   }
 
+  friend inline value_type get(const T2_halfedge_id_map& m, key_type k) { return m[k]; }
+
 private:
   const Tr& tr;
 };
 
 template <typename Tr>
 class T2_edge_id_map
-  : public boost::put_get_helper<int, T2_edge_id_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -157,13 +153,14 @@ public:
       return f1->edge_id(e.second);
   }
 
+  friend inline value_type get(const T2_edge_id_map& m, key_type k) { return m[k]; }
+
 private:
   const Tr& tr;
 };
 
 template <typename Tr>
 class T2_face_id_map
-  : public boost::put_get_helper<int, T2_face_id_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -177,6 +174,8 @@ public:
     CGAL_precondition(!tr.is_infinite(f));
     return f->id();
   }
+
+  friend inline value_type get(const T2_face_id_map& m, key_type k) { return m[k]; }
 
 private:
   const Tr& tr;

@@ -22,7 +22,7 @@
 #include <map>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/internal/TDS_2/Edge_hash_function.h>
+#include <CGAL/TDS_2/internal/Edge_hash_function.h>
 
 
 namespace CGAL {

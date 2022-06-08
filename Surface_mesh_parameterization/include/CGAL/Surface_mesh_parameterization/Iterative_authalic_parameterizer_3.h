@@ -21,7 +21,6 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-#include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
@@ -34,7 +33,9 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polygon_mesh_processing/Weights.h>
+// #include <CGAL/Weights/authalic_weights.h>
+#include <CGAL/Weights/cotangent_weights.h>
+#include <CGAL/Weights/tangent_weights.h>
 #include <CGAL/number_type_config.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -629,7 +630,7 @@ private:
 
   /// computes `w_ij`, coefficient of matrix `A` for `j` neighbor vertex of `i`.
   ///
-  /// \param mesh a triangulated surface.
+  /// \param tmesh a triangulated surface.
   /// \param main_vertex_v_i the vertex of `mesh` with index `i`
   /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
   NT compute_w_ij(const Triangle_mesh& tmesh,
@@ -637,36 +638,28 @@ private:
                   Vertex_around_target_circulator<Triangle_mesh> neighbor_vertex_v_j) const
   {
     const PPM ppmap = get(vertex_point, tmesh);
-
     const PPM_ref position_v_i = get(ppmap, main_vertex_v_i);
     const PPM_ref position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    // Compute the square norm of v_j -> v_i vector
-    Vector_3 edge = position_v_i - position_v_j;
-    NT square_len = edge*edge;
+    const Vector_3 edge = position_v_i - position_v_j;
+    const NT squared_length = edge * edge;
 
-    // Compute cotangent of (v_k,v_j,v_i) corner (i.e. cotan of v_j corner)
-    // if v_k is the vertex before v_j when circulating around v_i
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     --previous_vertex_v_k;
     const PPM_ref position_v_k = get(ppmap, *previous_vertex_v_k);
-//    NT cotg_psi_ij = internal::cotangent<Kernel>(position_v_k, position_v_j, position_v_i);
-    NT cotg_beta_ij = internal::cotangent<Kernel>(position_v_i, position_v_k, position_v_j);
 
-    // Compute cotangent of (v_i,v_j,v_l) corner (i.e. cotan of v_j corner)
-    // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     ++next_vertex_v_l;
+    const PPM_ref position_v_l = get(ppmap, *next_vertex_v_l);
 
-    const Point_3 position_v_l = get(ppmap, *next_vertex_v_l);
-//    NT cotg_theta_ij = internal::cotangent<Kernel>(position_v_i, position_v_j, position_v_l);
-    NT cotg_alpha_ij = internal::cotangent<Kernel>(position_v_j, position_v_l, position_v_i);
-
-    NT weight = 0;
-    CGAL_assertion(square_len > NT(0)); // two points are identical!
-    if(square_len != NT(0))
-      weight = cotg_beta_ij + cotg_alpha_ij;
-
+    NT weight = NT(0);
+    CGAL_assertion(squared_length > NT(0)); // two points are identical!
+    if(squared_length != NT(0)) {
+      // This version was commented out to be an alternative weight
+      // in the original code by authors.
+      // weight = CGAL::Weights::authalic_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
+      weight = CGAL::Weights::cotangent_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
+    }
     return weight;
   }
 
@@ -730,7 +723,7 @@ private:
                                               VertexIndexMap& vimap) const
   {
     auto vpm = get_const_property_map(CGAL::vertex_point, tmesh);
-    CGAL::internal::Mean_value_weight<Triangle_mesh, decltype(vpm)> compute_mvc(tmesh, vpm);
+    const CGAL::Weights::Edge_tangent_weight<Triangle_mesh, decltype(vpm)> compute_mvc(tmesh, vpm);
 
     const int i = get(vimap, v);
 

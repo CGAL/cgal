@@ -179,7 +179,7 @@ int main()
    po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
-      ("input-file,f", po::value<std::string>(&if_name)->default_value("data/poly2x^2+y^2-0.062500.off"),
+      ("input-file,f", po::value<std::string>(&if_name)->default_value(CGAL::data_file_path("meshes/poly2x^2+y^2-0.062500.off")),
        "name of the input off file")
       ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(3),
        "degree of the jet,  3 <= degre-jet <= 4")
@@ -216,7 +216,7 @@ int main()
     }
 #else
     std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
-    if_name = "data/poly2x^2+y^2-0.062500.off";
+    if_name = CGAL::data_file_path("meshes/poly2x^2+y^2-0.062500.off");
     d_fitting = 3;
     d_monge = 3;
     nb_rings = 0;
@@ -272,7 +272,7 @@ int main()
   std::ifstream stream(if_name.c_str());
   stream >> P;
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
-          (int)num_vertices(P), (int)num_faces(P));
+          static_cast<int>(num_vertices(P)), static_cast<int>(num_faces(P)));
   if(verbose)
     out_verb << "Polysurf with " << num_vertices(P)
              << " vertices and " << num_faces(P)

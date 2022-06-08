@@ -30,9 +30,7 @@
 #include <CGAL/leda_real.h>
 #endif // CGAL_USE_LEDA
 
-#ifdef CGAL_USE_LONG_LONG
-#  include <CGAL/long_long.h>
-#endif
+#include <CGAL/long_long.h>
 
 #include <CGAL/Number_type_checker.h>
 #include <cassert>
@@ -77,10 +75,8 @@ int main()
   // test_it<unsigned int>("unsigned int");
   // test_it<unsigned long int>("unsigned long int");
   // test_it<unsigned short int>("unsigned short int");
-#ifdef CGAL_USE_LONG_LONG
   test_it<long long>("long long");
   // test_it<unsigned long long>("unsigned long long");
-#endif
   test_it<float>("float");
   test_it<double>("double");
   test_it<long double>("long double");

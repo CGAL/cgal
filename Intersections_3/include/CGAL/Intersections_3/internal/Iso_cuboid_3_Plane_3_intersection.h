@@ -14,9 +14,12 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_PLANE_3_INTERSECTION_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_PLANE_3_INTERSECTION_H
 
+#include <CGAL/enum.h>
 #include <CGAL/kernel_basic.h>
 #include <CGAL/intersections.h>
 #include <CGAL/utility.h>
+
+#include <boost/none.hpp>
 
 #include <vector>
 #include <array>
@@ -28,8 +31,7 @@ namespace internal {
 //Iso_cuboid_3 Plane_3
 template <class K>
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>::result_type
-intersection(
-             const typename K::Iso_cuboid_3& cub,
+intersection(const typename K::Iso_cuboid_3& cub,
              const typename K::Plane_3& plane,
              const K& k)
 {
@@ -80,13 +82,12 @@ intersection(
   edge_ipt_id.fill(-1);
 
   auto inter_pt_index =
-    [&plane, &corners, &edge_ipt_id](int i, int j, int edge_id)
+    [&k, &plane, &corners, &edge_ipt_id](int i, int j, int edge_id)
   {
     if (edge_ipt_id[edge_id]==-1)
     {
       edge_ipt_id[edge_id] = static_cast<int> (corners.size());
-      corners.push_back(typename K::Construct_plane_line_intersection_point_3()
-                      (plane, corners[i], corners[j]));
+      corners.push_back(k.construct_plane_line_intersection_point_3_object()(plane, corners[i], corners[j]));
     }
 
     return edge_ipt_id[edge_id];
@@ -95,7 +96,7 @@ intersection(
   bool all_in = true;
   bool all_out = true;
 
-  std::vector<std::array<int,2>> neighbor_ids(14, {-1,-1});
+  std::vector<std::array<int,2> > neighbor_ids(14, {-1,-1});
 
   auto add_neighbor = [&neighbor_ids](int i, int j)
   {
@@ -132,8 +133,7 @@ intersection(
           // check for intersection of the edge
           if (orientations[next_id] == ON_POSITIVE_SIDE)
           {
-            ids.push_back(
-                          inter_pt_index(current_id, next_id, edge_id));
+            ids.push_back(inter_pt_index(current_id, next_id, edge_id));
           }
           break;
         }
@@ -179,24 +179,27 @@ intersection(
     }
   }
 
-  if (all_in || all_out) return boost::none;
-  if (start_id == -1) return { result_type(corners[solo_id]) };
+  if (all_in || all_out)
+    return boost::none;
+  if (start_id == -1)
+    return { result_type(corners[solo_id]) };
 
   int prv_id = -1;
   int cur_id = start_id;
   std::vector<Point_3> res;
   res.reserve(6);
-  do {
+
+  for (;;) {
     res.push_back(corners[cur_id]);
     int nxt_id = neighbor_ids[cur_id][0] == prv_id
                ? neighbor_ids[cur_id][1]
                : neighbor_ids[cur_id][0];
-    if (nxt_id == -1 || nxt_id == start_id){
-      if(res.size() == 2){
+    if (nxt_id == -1 || nxt_id == start_id) {
+      if(res.size() == 2) {
         typename K::Segment_3 seg(res[0], res[1]);
         return result_type(seg);
       }
-      if(res.size() == 3){
+      if(res.size() == 3) {
         typename K::Triangle_3 tr(res[0], res[1], res[2]);
         return result_type(tr);
       }
@@ -204,19 +207,20 @@ intersection(
     }
     prv_id = cur_id;
     cur_id = nxt_id;
-  } while (true);
+  }
 }
 
 template <class K>
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>::result_type
-intersection(
-    const typename K::Plane_3 &pl,
-    const typename K::Iso_cuboid_3 &cub,
-    const K& k)
+intersection(const typename K::Plane_3& pl,
+             const typename K::Iso_cuboid_3& cub,
+             const K& k)
 {
   return intersection(cub, pl, k);
 }
 
-}}}
+} // namespace internal
+} // namespace Intersections
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_PLANE_3_INTERSECTION_H

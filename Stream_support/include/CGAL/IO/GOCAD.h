@@ -156,6 +156,7 @@ bool read_GOCAD(std::istream& is,
     is.clear(std::ios::goodbit);
   return end_read && nb_gocad == nb_end && !is.bad();
 }
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD

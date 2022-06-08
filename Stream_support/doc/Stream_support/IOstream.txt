@@ -176,7 +176,8 @@ int main()
 
 \subsubsection IOstreamUsingOutputFormatting Using Output Formatting
 
-To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used.
+To ensure that non-\cgal types are formatted correctly (i.e., respecting \link PkgStreamSupportEnumRef `IO::Mode` \endlink),
+`oformat()` can be used.
 For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
 will be called by `oformat()`. Otherwise, the stream output operator will be called.
 
@@ -197,7 +198,8 @@ refer to the documentation of the respective type.
 In some situations, you want to control the output formatting for a
 type `T`. For external types (third party libraries etc.),
 there might be problems if their stream output operator does not
-respect `IO::Mode`. The purpose of `Output_rep` is to provide a way to
+respect \link PkgStreamSupportEnumRef `IO::Mode` \endlink.
+The purpose of `Output_rep` is to provide a way to
 control output formatting that works independently of the object's
 stream output operator.
 
@@ -252,10 +254,10 @@ for drawing operations in many \cgal output streams.
 
 Each color is defined by a triple of integers `(r,g,b)` with
 0 \f$ \le \f$ r,g,b \f$ \le \f$ 255, the so-called <I>rgb-value</I> of the color.
-There are a 11 predefined `Color` constants available:
-`BLACK`, `WHITE`, `GRAY`, `RED`, `GREEN`,
-`DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
-and `YELLOW`.
+There are a 11 predefined `Color` functions available:
+`black()`, `white()`, `gray()`, `red()`, `green()`,
+`deep_blue()`, `blue()`, `purple()`, `violet()`, `orange()`,
+and `yellow()`.
 
 \subsection IOstreamStream Stream Support
 

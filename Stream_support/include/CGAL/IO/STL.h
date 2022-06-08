@@ -49,7 +49,7 @@ namespace IO {
  *
  * \attention The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+ * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose value type is the point type
@@ -89,7 +89,7 @@ bool read_STL(std::istream& is,
   if(!is.good())
   {
     if(verbose)
-      std::cerr<<"File doesn't exist."<<std::endl;
+      std::cerr << "File doesn't exist." << std::endl;
     return false;
   }
 
@@ -269,7 +269,9 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *
  * \brief writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
  *
- * \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+ * \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+ *            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+ *            of the stream must be set to `BINARY`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
@@ -312,7 +314,6 @@ bool write_STL(std::ostream& os,
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   typedef typename boost::property_traits<PointMap>::value_type             Point;
-  typedef typename boost::property_traits<PointMap>::reference              Point_ref;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
   typedef typename K::Vector_3                                              Vector_3;
 
@@ -329,9 +330,9 @@ bool write_STL(std::ostream& os,
 
     for(const Triangle& face : facets)
     {
-      const Point_ref p = get(point_map, points[face[0]]);
-      const Point_ref q = get(point_map, points[face[1]]);
-      const Point_ref r = get(point_map, points[face[2]]);
+      const Point& p = get(point_map, points[face[0]]);
+      const Point& q = get(point_map, points[face[1]]);
+      const Point& r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
 
@@ -350,9 +351,9 @@ bool write_STL(std::ostream& os,
     os << "solid\n";
     for(const Triangle& face : facets)
     {
-      const Point_ref p = get(point_map, points[face[0]]);
-      const Point_ref q = get(point_map, points[face[1]]);
-      const Point_ref r = get(point_map, points[face[2]]);
+      const Point& p = get(point_map, points[face[0]]);
+      const Point& q = get(point_map, points[face[1]]);
+      const Point& r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
       os << "facet normal " << n << "\nouter loop\n";

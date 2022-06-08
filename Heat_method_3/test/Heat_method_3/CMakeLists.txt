@@ -1,14 +1,11 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Heat_method_3_Tests)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
-
-# include helper file
-include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package(Boost REQUIRED)
@@ -38,8 +35,6 @@ include_directories(BEFORE include)
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include(CGAL_CreateSingleSourceCGALProgram)
 
 create_single_source_cgal_program("heat_method_concept.cpp")
 target_link_libraries(heat_method_concept PUBLIC CGAL::Eigen3_support)

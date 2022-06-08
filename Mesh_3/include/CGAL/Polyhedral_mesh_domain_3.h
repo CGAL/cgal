@@ -61,7 +61,7 @@
 // default)
 #include <CGAL/internal/TMDS_3/Handle_IO_for_pair_of_int.h>
 
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/Mesh_3/internal/indices_management.h>
 
 namespace CGAL {
 

@@ -25,37 +25,40 @@
 
 namespace CGAL {
 
+//!
 template <class Polygon>
 struct Gps_default_traits
 {};
 
-
+//!
 template <class Kernel, class Container>
 struct Gps_default_traits<CGAL::Polygon_2<Kernel, Container> >
 {
-  typedef Gps_segment_traits_2<Kernel,
-                               Container,
-                               Arr_segment_traits_2<Kernel> >    Traits;
+  typedef Arr_segment_traits_2<Kernel>                          Arr_traits;
+  typedef Gps_segment_traits_2<Kernel, Container, Arr_traits>   Traits;
 };
 
+//!
 template <class Kernel, class Container>
 struct Gps_default_traits<CGAL::Polygon_with_holes_2<Kernel, Container> >
 {
-  typedef Gps_segment_traits_2<Kernel,
-                               Container,
-                               Arr_segment_traits_2<Kernel> >    Traits;
+  typedef Polygon_2<Kernel, Container>                          Polygon;
+  typedef typename Gps_default_traits<Polygon>::Arr_traits      Arr_traits;
+  typedef typename Gps_default_traits<Polygon>::Traits          Traits;
 };
 
-template <class Polygon>
-struct Gps_default_traits<CGAL::General_polygon_with_holes_2<Polygon> >
-{
-  typedef typename Gps_default_traits<Polygon>::Traits Traits;
-};
-
+//!
 template <class Arr_traits>
 struct Gps_default_traits<CGAL::General_polygon_2<Arr_traits> >
 {
   typedef Gps_traits_2<Arr_traits>    Traits;
+};
+
+//!
+template <class Polygon>
+struct Gps_default_traits<CGAL::General_polygon_with_holes_2<Polygon> >
+{
+  typedef typename Gps_default_traits<Polygon>::Traits Traits;
 };
 
 } //namespace CGAL

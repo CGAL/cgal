@@ -33,7 +33,7 @@ git fetch $USER_REPO
 git checkout $BRANCH_NAME
 git reset --hard $USER_REPO/$BRANCH_NAME
 #setup the list_test_packages
-TMP_LIST=$(git diff --name-only cgal/$BASE_NAME...HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+TMP_LIST=$(git diff --name-only cgal/$BASE_NAME...HEAD |egrep -v /doc |egrep "\.h"\|"\.cpp" |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
 
 LIST_OF_PKGS=""
 for PKG in $(ls) ; do
@@ -63,6 +63,9 @@ cd ${CGAL_ROOT}
 
 if [ -L CGAL-I ]; then rm CGAL-I; fi
 ln -s $PWD/CGAL-TEST/$DEST CGAL-I
+if [ -d CGAL-I/cmake/platforms ]; then
+  rm -rf CGAL-I/cmake/platforms/*
+fi
 echo "starting testsuite..."
 
 ./autotest_cgal -c 

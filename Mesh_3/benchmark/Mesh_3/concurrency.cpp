@@ -105,14 +105,7 @@ const int     TET_SHAPE                = 3;
 # define CGAL_CONCURRENT_MESH_3_PROFILING
 //# define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
 
-  // ==========================================================================
-  // TBB
-  // ==========================================================================
-# if TBB_IMPLEMENT_CPP0X
-#   include <tbb/compat/thread>
-# else
-#   include <thread>
-# endif
+#include  <thread>
 
 // ==========================================================================
 // SEQUENTIAL

@@ -20,7 +20,7 @@
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/polynomial_utils.h>
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 #include <boost/spirit/include/qi.hpp>
 
 #include "AlgebraicCurveParser.h"

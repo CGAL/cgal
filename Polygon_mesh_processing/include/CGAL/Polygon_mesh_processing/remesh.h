@@ -132,6 +132,24 @@ namespace Polygon_mesh_processing {
 *     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{do_split}
+*     \cgalParamDescription{whether edges that are too long with respect to the given sizing are split}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_collapse}
+*     \cgalParamDescription{whether edges that are too short with respect to the given sizing are collapsed}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_flip}
+*     \cgalParamDescription{whether edge flips are performed to improve shape and valence}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{number_of_relaxation_steps}
 *     \cgalParamDescription{the number of iterations of tangential relaxation that are performed
 *                           at each iteration of the remeshing process}

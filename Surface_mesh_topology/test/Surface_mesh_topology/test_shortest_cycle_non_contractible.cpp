@@ -189,7 +189,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
 /// Compute edge width for the given mesh (loaded in filename), and test if
 /// the size of the cycle is nbedges for unit weight and the length of the cycle
 /// is smaller than length for Euclidean length weight.
-bool test(const char* filename, std::size_t nbedges, double length, std::size_t nbfaces)
+bool test(const std::string filename, std::size_t nbedges, double length, std::size_t nbfaces)
 {
   bool res=true;
 

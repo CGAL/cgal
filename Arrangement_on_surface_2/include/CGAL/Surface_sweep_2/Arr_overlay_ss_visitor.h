@@ -185,11 +185,11 @@ public:
                     Arr_curve_end cv_end,
                     bool is_new);
 
-   void update_event(Event* /* e */,
-                     const X_monotone_curve_2& /* cv */,
-                     Arr_curve_end /* cv_end */,
-                     bool /* is_new */)
-   {}
+  void update_event(Event* /* e */,
+                    const X_monotone_curve_2& /* cv */,
+                    Arr_curve_end /* cv_end */,
+                    bool /* is_new */)
+  {}
 
   /*! Update an event that corresponds to an intersection between curves. */
   void update_event(Event* /* e */,
@@ -401,7 +401,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

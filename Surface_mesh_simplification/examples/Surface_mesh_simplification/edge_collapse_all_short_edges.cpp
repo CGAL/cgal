@@ -20,7 +20,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/cube-meshed.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {
