@@ -1,6 +1,6 @@
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 #include "Scene_c3t3_item.h"
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/MDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/IO/File_avizo.h>
@@ -127,7 +127,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
-      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation(), true))
+      if(CGAL::MDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(), true))
       {
         item->c3t3().rescan_after_load_of_triangulation();
         for( C3t3::Triangulation::Finite_cells_iterator

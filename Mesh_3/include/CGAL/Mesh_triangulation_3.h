@@ -28,7 +28,7 @@
 
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Compact_mesh_cell_base_3.h>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 
 namespace CGAL {
 
