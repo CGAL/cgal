@@ -650,7 +650,7 @@ OutputIterator difference(const General_polygon_with_holes_2<Polygon>& pgn1,
 // CGAL/Boolean_set_operations_2/do_intersect.h
 namespace CGAL {
 
-/*! \addtogroup boolean_do_intersect Intersection Testing Functions
+/*! \addtogroup boolean_do_intersect Polygon Intersection Testing Functions
  * \ingroup PkgBooleanSetOperations2Ref
  * \anchor ref_bso_do_intersect
  *
@@ -1160,7 +1160,7 @@ bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
 // CGAL/Boolean_set_operations_2/intersection.h
 namespace CGAL {
 
-/*! \addtogroup boolean_intersection Intersection Functions
+/*! \addtogroup boolean_intersection Polygon Intersection Functions
  * \ingroup PkgBooleanSetOperations2Ref
  * \anchor ref_bso_intersection
  *

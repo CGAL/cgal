@@ -22,7 +22,7 @@
 #include <CGAL/property_map.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include "Color_map.h"
 
 typedef Scene_surface_mesh_item Scene_facegraph_item;

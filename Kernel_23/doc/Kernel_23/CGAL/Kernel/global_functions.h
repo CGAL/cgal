@@ -1800,7 +1800,7 @@ const CGAL::Vector_3<Kernel>& w);
 // This is there to keep the global functions in alphabetical order
 // instead of processing order.
 
-/// \defgroup do_intersect_grp CGAL::do_intersect()
+/// \defgroup do_intersect_grp Intersection Testing Functions - CGAL::do_intersect()
 /// \ingroup kernel_global_function
 /// \defgroup do_intersect_linear_grp CGAL::do_intersect() (2D/3D Linear Kernel)
 /// \ingroup do_intersect_grp
@@ -2056,7 +2056,7 @@ const CGAL::Point_3<Kernel>& t);
 
 // Same reason as in defgroup do_intersect.
 
-/// \defgroup intersection_grp CGAL::intersection()
+/// \defgroup intersection_grp Intersection Computation Functions - CGAL::intersection()
 /// \ingroup kernel_global_function
 /// \defgroup intersection_linear_grp CGAL::intersection() (2D/3D Linear Kernel)
 /// \ingroup intersection_grp

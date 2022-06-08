@@ -3,9 +3,9 @@
 #include <CGAL/use.h>
 
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 
-typedef boost::unordered_set<std::size_t>                        id_map;
+typedef std::unordered_set<std::size_t>                        id_map;
 
 template <typename Graph>
 void test_isolated_vertex()

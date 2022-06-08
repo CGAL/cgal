@@ -606,6 +606,31 @@ void set_halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::face_descriptor f
 
 } // namespace CGAL
 
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash
+#endif
+
+#ifndef CGAL_CFG_NO_STD_HASH
+
+template <class Dart_handle>
+struct hash<CGAL::internal::EdgeHandle<Dart_handle>>
+{
+  std::size_t operator()(const CGAL::internal::EdgeHandle<Dart_handle>& edge) const
+  {
+    return hash_value(edge);
+  }
+};
+#endif // CGAL_CFG_NO_STD_HASH
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+} // std namespace
+
 #undef CGAL_LCC_TEMPLATE_ARGS
 #undef CGAL_LCC_TYPE
 

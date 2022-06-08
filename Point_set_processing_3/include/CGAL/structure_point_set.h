@@ -1525,6 +1525,7 @@ private:
                               to the index of plane (`-1` if the point is not assigned to a plane)}
         \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
         \cgalParamDefault{There is no default, this parameters is mandatory.}
+      \cgalParamNEnd
 
       \cgalParamNBegin{plane_map}
         \cgalParamDescription{a property map containing the planes associated to the elements of the plane range `planes`}

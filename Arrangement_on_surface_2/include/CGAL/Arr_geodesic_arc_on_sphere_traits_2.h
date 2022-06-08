@@ -1194,11 +1194,10 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
-                                 const Point_2&
-                                 CGAL_precondition_code(p)) const
+                                 const Point_2& p) const
     {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
+      CGAL_precondition(! xc1.is_degenerate());
+      CGAL_precondition(! xc2.is_degenerate());
       CGAL_precondition(p == xc1.right());
       CGAL_precondition(p == xc2.right());
 
@@ -1212,6 +1211,7 @@ public:
       // Compare the y-coord. at the x-coord of the most right left-endpoint.
       const Point_2& l1 = xc1.left();
       const Point_2& l2 = xc2.left();
+
       if (!l1.is_no_boundary()) {
         // use l2 and xc1:
         Oriented_side os = m_traits.oriented_side(xc1.normal(), l2);
@@ -1220,7 +1220,32 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      if (!l2.is_no_boundary()) {
+
+      // if p and r1 are antipodal, compare the plane normals
+      const Kernel& kernel = m_traits;
+      auto opposite_3 = kernel.construct_opposite_direction_3_object();
+      Direction_3 opposite_p = opposite_3(p);
+      if (kernel.equal_3_object()(opposite_p, Direction_3(l1)) ||
+          kernel.equal_3_object()(opposite_p, Direction_3(l2)))
+      {
+        Sign xsign = Traits::x_sign(p);
+        Sign ysign = Traits::y_sign(p);
+        Project project = (xsign == ZERO) ?
+          ((ysign == POSITIVE) ? Traits::project_minus_xz : Traits::project_xz) :
+          ((xsign == POSITIVE) ? Traits::project_yz : Traits::project_minus_yz);
+
+        Direction_2 n1 = project(xc1.normal());
+        Direction_2 n2 = project(xc2.normal());
+        auto opposite_2 = kernel.construct_opposite_direction_2_object();
+        if (! xc1.is_directed_right()) n1 = opposite_2(n1);
+        if (! xc2.is_directed_right()) n2 = opposite_2(n2);
+        if (kernel.equal_2_object()(n1, n2)) return EQUAL;
+        const Direction_2 d(1, 0);
+        return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ?
+          LARGER: SMALLER;
+      }
+
+      if (! l2.is_no_boundary()) {
         // use l1 and xc2:
         Oriented_side os = m_traits.oriented_side(xc2.normal(), l1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -1229,7 +1254,8 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
 
-      if (m_traits.compare_xy(l1, l2) == SMALLER) {
+      Comparison_result res = m_traits.compare_xy(l1, l2);
+      if (res == SMALLER) {
         // use l2 and xc1:
         Oriented_side os = m_traits.oriented_side(xc1.normal(), l2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -1237,12 +1263,16 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      // use l1 and xc2:
-      Oriented_side os = m_traits.oriented_side(xc2.normal(), l1);
-      return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-        (xc2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
-        ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      if (res == LARGER) {
+        // use l1 and xc2:
+        Oriented_side os = m_traits.oriented_side(xc2.normal(), l1);
+        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
+          (xc2.is_directed_right()) ?
+          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      }
+      // res == equal
+      return EQUAL;
     }
   };
 
@@ -1283,8 +1313,8 @@ public:
                                  const X_monotone_curve_2& xc2,
                                  const Point_2& p) const
     {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
+      CGAL_precondition(! xc1.is_degenerate());
+      CGAL_precondition(! xc2.is_degenerate());
 
       // CGAL_precondition(p == xc1.left());
       // CGAL_precondition(p == xc2.left());
@@ -1296,10 +1326,35 @@ public:
 
       // Non of the arcs is verticel. Thus, non of the endpoints coincide with
       // a pole.
-      // Compare the y-coord. at the x-coord of the most left right-endpoint.
       const Point_2& r1 = xc1.right();
       const Point_2& r2 = xc2.right();
-      if (!r1.is_no_boundary()) {
+
+      // if p and r1 are antipodal, compare the plane normals
+      const Kernel& kernel = m_traits;
+      auto opposite_3 = kernel.construct_opposite_direction_3_object();
+      Direction_3 opposite_p = opposite_3(p);
+      if (kernel.equal_3_object()(opposite_p, Direction_3(r1)) ||
+          kernel.equal_3_object()(opposite_p, Direction_3(r2)))
+      {
+        Sign xsign = Traits::x_sign(p);
+        Sign ysign = Traits::y_sign(p);
+        Project project = (xsign == ZERO) ?
+          ((ysign == POSITIVE) ? Traits::project_minus_xz : Traits::project_xz) :
+          ((xsign == POSITIVE) ? Traits::project_yz : Traits::project_minus_yz);
+
+        Direction_2 n1 = project(xc1.normal());
+        Direction_2 n2 = project(xc2.normal());
+        auto opposite_2 = kernel.construct_opposite_direction_2_object();
+        if (! xc1.is_directed_right()) n1 = opposite_2(n1);
+        if (! xc2.is_directed_right()) n2 = opposite_2(n2);
+        if (kernel.equal_2_object()(n1, n2)) return EQUAL;
+        const Direction_2 d(1, 0);
+        return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ?
+          SMALLER : LARGER;
+      }
+
+      // Compare the y-coord. at the x-coord of the most left right-endpoint.
+      if (! r1.is_no_boundary()) {
         // use r2 and xc1:
         Oriented_side os = m_traits.oriented_side(xc1.normal(), r2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -1307,7 +1362,7 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      if (!r2.is_no_boundary()) {
+      if (! r2.is_no_boundary()) {
         // use r1 and xc2:
         Oriented_side os = m_traits.oriented_side(xc2.normal(), r1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -1333,32 +1388,7 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
       // res == equal
-      // if p and r1 are antipodal, compare the plane normals
-      const Kernel& kernel = m_traits;
-      typename Kernel::Construct_opposite_direction_3 opposite_3 =
-        kernel.construct_opposite_direction_3_object();
-      // VC 10 does not like the following:
-      // if (!kernel.equal_3_object()(opposite_3(p), r1)) return EQUAL;
-      Direction_3 tmp1 = opposite_3(p);     // pacify msvc 10
-      if (!kernel.equal_3_object()(tmp1, Direction_3(r1)))
-        return EQUAL;
-
-      Sign xsign = Traits::x_sign(p);
-      Sign ysign = Traits::y_sign(p);
-      Project project = (xsign == ZERO) ?
-        ((ysign == POSITIVE) ? Traits::project_minus_xz : Traits::project_xz) :
-        ((xsign == POSITIVE) ? Traits::project_yz : Traits::project_minus_yz);
-
-      Direction_2 n1 = project(xc1.normal());
-      Direction_2 n2 = project(xc2.normal());
-      typename Kernel::Construct_opposite_direction_2 opposite_2 =
-        kernel.construct_opposite_direction_2_object();
-      if (!xc1.is_directed_right()) n1 = opposite_2(n1);
-      if (!xc2.is_directed_right()) n2 = opposite_2(n2);
-      if (kernel.equal_2_object()(n1, n2)) return EQUAL;
-      const Direction_2 d(1, 0);
-      return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ?
-        SMALLER : LARGER;
+      return EQUAL;
     }
   };
 
@@ -1397,8 +1427,7 @@ public:
       typename Kernel::Equal_3 equal_3 = kernel.equal_3_object();
       if (xc1.is_full() || xc2.is_full()) {
         if (!xc1.is_full() || !xc2.is_full()) return false;
-        typename Kernel::Construct_opposite_direction_3 opposite_3 =
-          kernel.construct_opposite_direction_3_object();
+        auto opposite_3 = kernel.construct_opposite_direction_3_object();
         return (equal_3(xc1.normal(), xc2.normal()) ||
                 equal_3(opposite_3(xc1.normal()), xc2.normal()));
       }
@@ -1764,113 +1793,118 @@ public:
      * \param ce the arc end indicator.
      * \return the second comparison result.
      * \pre the ce ends of the arcs xcv1 and xcv2 lie either on the left
-     *      boundary or on the right boundary of the parameter space (implying
-     *      that they cannot be vertical).
+     *      boundary or on the right boundary of the parameter space.
+     * \pre the curves cannot reach a pole
      * There is no horizontal identification curve!
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
-      CGAL_precondition(!xcv1.is_degenerate());
-      CGAL_precondition(!xcv2.is_degenerate());
+      CGAL_precondition(! xcv1.is_degenerate());
+      CGAL_precondition(! xcv2.is_degenerate());
 
+      CGAL_precondition((ce != ARR_MIN_END) ||
+                        (xcv1.left().is_mid_boundary() &&
+                         xcv2.left().is_mid_boundary()));
+      CGAL_precondition((ce != ARR_MAX_END) ||
+                        (xcv1.right().is_mid_boundary() &&
+                         xcv2.right().is_mid_boundary()));
+
+      // If the curves lie on the same plane return EQUAL.
+      const Kernel& kernel = m_traits;
+      const Direction_3& n1 = xcv1.normal();
+      const Direction_3& n2 = xcv2.normal();
+      if (xcv1.is_directed_right() == xcv2.is_directed_right()) {
+        if (kernel.equal_3_object()(n1, n2)) return EQUAL;
+      }
+      else {
+        auto opposite_3 = kernel.construct_opposite_direction_3_object();
+        auto opposite_n2 = opposite_3(n2);
+        if (kernel.equal_3_object()(n1, opposite_n2)) return EQUAL;
+      }
+
+      // The curves do not lie on the same plane!
       const Point_2& l1 = xcv1.left();
-      const Point_2& r1 = xcv1.right();
       const Point_2& l2 = xcv2.left();
+      const Point_2& r1 = xcv1.right();
       const Point_2& r2 = xcv2.right();
 
-      // If xcv1 is vertical, xcv1 coincides with the discontinuity arc:
-      if (xcv1.is_vertical()) {
-        CGAL_precondition(!l1.is_no_boundary());
-        CGAL_precondition(!r1.is_no_boundary());
-      }
-
-      // If xcv2 is vertical, xcv2 coincides with the discontinuity arc:
-      if (xcv2.is_vertical()) {
-        CGAL_precondition(!l2.is_no_boundary());
-        CGAL_precondition(!r2.is_no_boundary());
-      }
-
       if (ce == ARR_MIN_END) {
-        // Handle the south pole. It has the smallest y coords:
-        if (l1.is_min_boundary())
-          return (l2.is_min_boundary()) ? EQUAL : SMALLER;
-        if (l2.is_min_boundary()) return LARGER;
-
         // None of xcv1 and xcv2 endpoints coincide with a pole:
         Comparison_result cr = m_traits.compare_y(l1, l2);
         if (cr != EQUAL) return cr;
 
         // If Both arcs are vertical, they overlap:
-        if (xcv1.is_vertical() && xcv2.is_vertical()) return EQUAL;
         if (xcv1.is_vertical()) return LARGER;
         if (xcv2.is_vertical()) return SMALLER;
 
-        // Non of the arcs is verticel. Thus, non of the endpoints coincide
-        // with a pole.
-        // Compare the y-coord. at the x-coord of the most left right-endpoint.
-        CGAL_assertion(r1.is_no_boundary());
-        CGAL_assertion(r2.is_no_boundary());
+        // There are 4 cases based on the sign of the z component of the normals
+        // Compute the sign of the x-component of the normal cross product.
+        // There is no point computing the intermediate cross product:
+        // auto cross_prod = kernel.construct_cross_product_vector_3_object();
+        // Vector_3 v = cross_prod(n1.vector(), n2.vector());
+        // CGAL::Sign xsign = CGAL::sign(v.x());
+        // This predicate is not yet supported; thus, compute directly:
+        CGAL::Sign xsign = CGAL::sign(n1.dy() * n2.dz() - n1.dz() * n2.dy());
 
-        if (m_traits.compare_xy(r1, r2) == LARGER) {
-          // use r2 and xcv1:
-          Oriented_side os =
-            m_traits.oriented_side(xcv1.normal(), r2);
-          return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-            (xcv1.is_directed_right()) ?
-            ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
-            ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
+        // std::cout << "sign(n1.z): " << CGAL::sign(n1.dz()) << std::endl;
+        // std::cout << "sign(n2.z): " << CGAL::sign(n2.dz()) << std::endl;
+        // std::cout << "x sign: " << xsign << std::endl;
+
+        if (CGAL::sign(n1.dz()) == POSITIVE) {
+          if (CGAL::sign(n2.dz()) == POSITIVE) {
+            // pos pos
+            return (xsign == POSITIVE) ? LARGER : SMALLER;
+          }
+          // pos neg
+          return (xsign == POSITIVE) ? SMALLER : LARGER;
         }
-        // use r1 and xcv2:
-        Oriented_side os = m_traits.oriented_side(xcv2.normal(), r1);
-        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-          (xcv2.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+        if (CGAL::sign(n2.dz()) == POSITIVE) {
+          // neg pos
+          return (xsign == POSITIVE) ? SMALLER : LARGER;
+        }
+        // neg neg
+        return (xsign == POSITIVE) ? LARGER : SMALLER;
       }
 
       // ce == ARR_MAX_END
 
-      // Handle the north pole. It has the largest y coords:
-      if (r1.is_max_boundary()) return (r2.is_max_boundary()) ? EQUAL : LARGER;
-      if (r2.is_max_boundary()) return SMALLER;
-
       // None of xcv1 and xcv2 endpoints coincide with a pole:
-      Direction_2 r1_xy = Traits::project_xy(r1);
       Comparison_result cr = m_traits.compare_y(r1, r2);
       if (cr != EQUAL) return cr;
 
       // If Both arcs are vertical, they overlap:
-      if (xcv1.is_vertical() && xcv2.is_vertical()) return EQUAL;
       if (xcv1.is_vertical()) return LARGER;
       if (xcv2.is_vertical()) return SMALLER;
 
-      // Compare to the left:
-      Direction_2 p_r1 = Traits::project_xy(r1);
-      cr = m_traits.compare_y(r1, r2);
-      if (cr != EQUAL) return cr;
+      // There are 4 cases based on the sign of the z component of the normals
+      // Compute the sign of the x-component of the normal cross product.
+      // There is no point computing the intermediate cross product:
+      // auto cross_prod = kernel.construct_cross_product_vector_3_object();
+      // Vector_3 v = cross_prod(n1.vector(), n2.vector());
+      // CGAL::Sign xsign = CGAL::sign(v.x());
+      // This predicate is not yet supported; thus, compute directly:
+      CGAL::Sign xsign = CGAL::sign(n1.dy() * n2.dz() - n1.dz() * n2.dy());
 
-      // Non of the arcs is verticel. Thus, non of the endpoints coincide with
-      // a pole.
-      // Compare the y-coord. at the x-coord of the most right left-endpoint.
-      CGAL_assertion(l1.is_no_boundary());
-      CGAL_assertion(l2.is_no_boundary());
+      // std::cout << "sign(n1.z): " << CGAL::sign(n1.dz()) << std::endl;
+      // std::cout << "sign(n2.z): " << CGAL::sign(n2.dz()) << std::endl;
+      // std::cout << "x sign: " << xsign << std::endl;
 
-      if (m_traits.compare_xy(l1, l2) == SMALLER) {
-        // use l2 and xcv1:
-        Oriented_side os = m_traits.oriented_side(xcv1.normal(), l2);
-        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-          (xcv1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
+      if (CGAL::sign(n1.dz()) == POSITIVE) {
+        if (CGAL::sign(n2.dz()) == POSITIVE) {
+          // pos pos
+          return (xsign == POSITIVE) ? SMALLER : LARGER;
+        }
+        // pos neg
+        return (xsign == POSITIVE) ? LARGER: SMALLER;
       }
-      // use l1 and xcv2:
-      Oriented_side os = m_traits.oriented_side(xcv2.normal(), l1);
-      return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-        (xcv2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
-        ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      if (CGAL::sign(n2.dz()) == POSITIVE) {
+        // neg pos
+        return (xsign == POSITIVE) ? LARGER : SMALLER;
+      }
+      // neg neg
+      return (xsign == POSITIVE) ? SMALLER : LARGER;
     }
   };
 
@@ -2318,31 +2352,22 @@ public:
       if (equal(l1, r2)) {
         // 1. l1 = r2 < r1 < l2 < l1 | One intersection
         // 2. l1 = r2 < r1 = l2 < l1 | Two intersections
-        // 3. l1 = r2 < l2 < r1 < l1 | One intersection and one overlap
+        // 3. l1 = r2 < l2 < r1 < l1 | One overlap
         // 4. l1 = r2 < l2 < r1 = l1 | One overlap (handled above)
+        // 5. l1 = r2 < r1 < l2 = l1 | One overlap (handled above)
         if (in_between(r1, r2, l2)) {
-          // If the intersection point lies on the identification curve, this
-          // intersection point should be ignored (see below). However, it
-          // cannot occur.
+          // Case 1.
           *oi++ = Intersection_result(Intersection_point(l1_3, 1));
           return oi;
         }
         if (equal(r1, l2)) {
-          // Case 2. This can happen only if one of the intersection points
-          // lies on the identification curve, and this points should be
-          // ignored.
-          if (! m_traits.is_on_y_identification_2_object()(l1_3)) {
-            *oi++ = Intersection_result(Intersection_point(l1_3, 1));
-            return oi;
-          }
-          CGAL_assertion(! m_traits.is_on_y_identification_2_object()(l2_3));
+          // Case 2.
+          *oi++ = Intersection_result(Intersection_point(l1_3, 1));
           *oi++ = Intersection_result(Intersection_point(l2_3, 1));
           return oi;
         }
         CGAL_assertion(in_between(r1, l2, r2));
-        // Case 3. This can happen only the intersection point lies on the
-        // identification curve; in this case this point should be ignored.
-        CGAL_assertion(m_traits.is_on_y_identification_2_object()(l1_3));
+        // Case 3.
         X_monotone_curve_2 xc(l2_3, r1_3, normal, vertical, true);
         *oi++ = Intersection_result(xc);
         return oi;
@@ -2352,19 +2377,15 @@ public:
       if (equal(r1, l2)) {
         // 1. l1 < r1 = l2 < r2 < l1 | One intersection
         // 2. l1 < r1 = l2 < r2 = l1 | Two intersections (handled above)
-        // 3. l1 < r2 < r1 = l2 < l1 | One intersection and one overlap
+        // 3. l1 < r2 < r1 = l2 < l1 | One overlap
         // 4. l1 < r2 = r1 = l2 < l1 | One overlap (handled above)
+        // 5. l1 < l1 = r1 = l2 < r2 | One overlap (handled above)
         if (in_between(r2, r1, l1)) {
-          // If the intersection point lies on the identification curve, this
-          // intersection point should be ignored (see below). However, it
-          // cannot occur.
+          // Case 1.
           *oi++ = Intersection_result(Intersection_point(l2_3, 1));
           return oi;
         }
-        // Case 3. This can happen only the intersection point lies on the
-        // identification curve; in this case this point should be ignored.
-        CGAL_assertion(in_between(r2, l1, r1));
-        CGAL_assertion(m_traits.is_on_y_identification_2_object()(l2_3));
+        // Case 3.
         X_monotone_curve_2 xc(l1_3, r2_3, normal, vertical, true);
         *oi++ = Intersection_result(xc);
         return oi;
@@ -2552,10 +2573,8 @@ public:
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
-        Counterclockwise_in_between_2 ccib =
-          kernel.counterclockwise_in_between_2_object();
-        typename Traits::Clockwise_in_between_2 cib =
-          m_traits.clockwise_in_between_2_object();
+        Counterclockwise_in_between_2 ccib = kernel.counterclockwise_in_between_2_object();
+        auto cib = m_traits.clockwise_in_between_2_object();
 
         if (xc1.is_vertical()) {
           // Both arcs are vertical
@@ -2620,23 +2639,19 @@ public:
                                     normal, false, ccib, Traits::project_xy, oi);
       }
 
-      Vector_3 v =
-        kernel.construct_cross_product_vector_3_object()(xc1.normal().vector(),
-                                                         xc2.normal().vector());
+      auto cross_prod = kernel.construct_cross_product_vector_3_object();
+      Vector_3 v = cross_prod(xc1.normal().vector(), xc2.normal().vector());
 
-      // Determine which one of the two directions:
+      // Observe that xc1 and xc2 may share two endpoints.
       Point_2 ed = m_traits.construct_point_2_object()(v.direction());
-      if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) {
+      if (is_in_between(ed, xc1) && is_in_between(ed, xc2))
         *oi++ = Intersection_result(Intersection_point(ed, 1));
-        return oi;
-      }
 
       Vector_3 vo(kernel.construct_opposite_vector_3_object()(v));
       Point_2 edo = m_traits.construct_point_2_object()(vo.direction());
-      if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) {
+      if (is_in_between(edo, xc1) && is_in_between(edo, xc2))
         *oi++ = Intersection_result(Intersection_point(edo, 1));
-        return oi;
-      }
+
       return oi;
     }
   };

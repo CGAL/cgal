@@ -104,7 +104,7 @@ private:
 
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
   //help to accelerate aabb_tree queries in m_ptree
-  std::shared_ptr<Kd_tree> m_kd_tree;
+  mutable std::shared_ptr<Kd_tree> m_kd_tree;
 
   Facet_patch_id_map m_facet_patch_id_map;
   const Patches_ids_map& patches_ids_map;
@@ -387,7 +387,7 @@ private:
   }
 
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-  void kd_tree()
+  void kd_tree() const
   {
     typedef typename MeshDomain::Polyhedron Polyhedron;
     if(m_kd_tree.get() == 0) {

@@ -27,6 +27,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PMP_meshing_grp
+
   @brief refines a region of a triangle mesh.
 
   @tparam TriangleMesh model of `MutableFaceGraph`
@@ -83,7 +84,7 @@ namespace Polygon_mesh_processing {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    CGAL_precondition(is_triangle_mesh(tmesh) );
+    CGAL_precondition(is_triangle_mesh(tmesh));
 
     typedef typename GetVertexPointMap<TriangleMesh,NamedParameters>::type VPmap;
     VPmap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),

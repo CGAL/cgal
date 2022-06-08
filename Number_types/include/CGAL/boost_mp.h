@@ -438,7 +438,7 @@ struct Fraction_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>
 
 // Coercions
 
-namespace internal { namespace boost_mp { BOOST_MPL_HAS_XXX_TRAIT_DEF(type); } }
+namespace internal { namespace boost_mp { BOOST_MPL_HAS_XXX_TRAIT_DEF(type) } }
 
 template <class B1, boost::multiprecision::expression_template_option E1, class B2, boost::multiprecision::expression_template_option E2>
 struct Coercion_traits<boost::multiprecision::number<B1, E1>, boost::multiprecision::number<B2, E2> >

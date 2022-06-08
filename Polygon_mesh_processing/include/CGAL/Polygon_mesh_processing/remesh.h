@@ -32,6 +32,7 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
+*
 * @brief remeshes a triangulated region of a polygon mesh.
 * This operation sequentially performs edge splits, edge collapses,
 * edge flips, tangential relaxation and projection to the initial surface
@@ -52,7 +53,7 @@ namespace Polygon_mesh_processing {
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * @pre if constraints protection is activated, the constrained edges must
-* not be longer than 4/3*`target_edge_length`
+* not be longer than 4/3*`target_edge_length`.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -159,7 +160,7 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{relax_constraints}
 *     \cgalParamDescription{If `true`, the end vertices of the edges set as constrained
-*                           in `edge_is_constrained_map` and boundary edges move along the}
+*                           in `edge_is_constrained_map` and boundary edges move along the
 *                           constrained polylines they belong to.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`false`}
@@ -321,7 +322,7 @@ void isotropic_remeshing(const FaceRange& faces
     }
     if(do_flip)
       remesher.flip_edges_for_valence_and_shape();
-    remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
+    remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian);
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));
 #ifdef CGAL_PMP_REMESHING_VERBOSE

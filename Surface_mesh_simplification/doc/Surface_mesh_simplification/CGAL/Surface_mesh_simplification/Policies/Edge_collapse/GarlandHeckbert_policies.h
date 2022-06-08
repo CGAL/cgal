@@ -4,12 +4,16 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
+\deprecated This class is deprecated since \cgal 5.5 and the introduction of variations
+of Garland-Heckbert policies (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
+The class `GarlandHeckbert_plane_policies` is the modern equivalent to this class.
+
 The class `GarlandHeckbert_policies` regroups the cost and placement policies
 based on the Garland-Heckbert strategy (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy),
 both oracles must indeed be used together as they internally use and share information
 associating quadrics to vertices.
 
-Note however, that they may still be wrapped with slight behavior modifying classes
+Note however, that they may still be wrapped with behavior modifying classes
 such as `Constrained_placement` or `Bounded_normal_change_placement`.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model
@@ -36,7 +40,7 @@ public:
   /*!
   Initializes the Garland-Heckbert policies.
   */
-  GarlandHeckbert_policies(Triangle_mesh& tmesh);
+  GarlandHeckbert_policies(TriangleMesh& tmesh);
 
   /// @}
 

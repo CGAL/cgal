@@ -51,7 +51,7 @@ public:
   /// models the concept `ArrTraits::ParameterSpaceInX_2`.
   typedef unspecified_type Parameter_space_in_x_2;
 
-  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
+  /// models the concept `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`.
   typedef unspecified_type Compare_x_on_boundary_2;
 
   /// models the concept `ArrTraits::CompareXNearBoundary_2`.

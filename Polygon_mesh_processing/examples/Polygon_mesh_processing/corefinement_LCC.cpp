@@ -5,6 +5,8 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <fstream>
+#include <iostream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
 typedef Kernel::Point_3                                       Point;

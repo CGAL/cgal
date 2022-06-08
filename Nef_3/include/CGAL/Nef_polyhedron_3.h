@@ -355,6 +355,10 @@ protected:
     delegate(mbv, /*compute_external*/ false, /*simplify*/ false);
   }
 
+  void reserve_for_vertices(Size_type n) {
+    snc().reserve_sm_boundary_items(n);
+  }
+
   struct Private_tag {};
   Nef_polyhedron_3(Private_tag) {
     pl() = new SNC_point_locator_default;
@@ -615,6 +619,7 @@ protected:
    : Nef_polyhedron_3(Private_tag{})
  {
     CGAL_NEF_TRACEN("construction from Polyhedron_3");
+    reserve_for_vertices(P.size_of_vertices());
     initialize_infibox_vertices(EMPTY);
     polyhedron_3_to_nef_3
       <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
@@ -628,6 +633,7 @@ protected:
    : Nef_polyhedron_3(Private_tag{})
  {
     CGAL_NEF_TRACEN("construction from PolygonMesh with internal index maps");
+    reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
     polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
     build_external_structure();
@@ -645,6 +651,7 @@ protected:
   ) : Nef_polyhedron_3(Private_tag{})
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");
+    reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
     polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
     build_external_structure();

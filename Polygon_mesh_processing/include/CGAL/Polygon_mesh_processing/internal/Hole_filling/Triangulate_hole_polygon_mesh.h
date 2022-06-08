@@ -103,6 +103,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             bool use_delaunay_triangulation,
             const Kernel& k,
             const bool use_cdt,
+            const bool skip_cubic_algorithm,
             const typename Kernel::FT max_squared_distance)
 {
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
@@ -190,7 +191,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
 #endif
   CGAL::internal::Weight_min_max_dihedral_and_area weight =
 #ifndef CGAL_USE_WEIGHT_INCOMPLETE
-  triangulate_hole_polyline(P, Q, tracer, WC(is_valid), use_delaunay_triangulation, k);
+  triangulate_hole_polyline(P, Q, tracer, WC(is_valid), use_delaunay_triangulation, skip_cubic_algorithm, k);
 #else
   // get actual weight in Weight_incomplete
   triangulate_hole_polyline(P, Q, tracer, WC(is_valid), use_delaunay_triangulation, k).weight;

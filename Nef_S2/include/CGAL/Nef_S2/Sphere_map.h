@@ -495,10 +495,10 @@ template <typename K, typename I, typename M>
 void Sphere_map<K, I, M>::
 pointer_update(const Sphere_map<K, I, M>& D)
 {
-  CGAL::Unique_hash_map<SVertex_const_handle,SVertex_handle>     VM;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> EM;
-  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> LM;
-  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         FM;
+  CGAL::Unique_hash_map<SVertex_const_handle,SVertex_handle>     VM(SVertex_handle(), D.number_of_svertices());
+  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> EM(SHalfedge_handle(), D.number_of_shalfedges());
+  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> LM(SHalfloop_handle(), D.number_of_shalfloops());
+  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         FM(SFace_handle(), D.number_of_sfaces());
 
   SVertex_const_iterator vc = D.svertices_begin();
   SVertex_iterator v = svertices_begin();

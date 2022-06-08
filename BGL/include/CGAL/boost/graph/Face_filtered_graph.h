@@ -26,8 +26,8 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/range/has_range_iterator.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <bitset>
 #include <utility>
 #include <vector>
@@ -437,7 +437,7 @@ struct Face_filtered_graph
       initialize_halfedge_indices();
   }
 
-  /// changes the set of selected faces using a patch id
+  /// changes the set of selected faces using a patch id.
   template<class FacePatchIndexMap>
   void set_selected_faces(typename boost::property_traits<FacePatchIndexMap>::value_type face_patch_id,
                           FacePatchIndexMap face_patch_index_map)
@@ -486,8 +486,8 @@ struct Face_filtered_graph
     selected_halfedges.reset();
 
     typedef typename boost::property_traits<FacePatchIndexMap>::value_type Patch_index;
-    boost::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
-                                           boost::end(selected_face_patch_indices));
+    std::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
+                                         boost::end(selected_face_patch_indices));
 
     for(face_descriptor fd : faces(_graph) )
     {
@@ -506,7 +506,7 @@ struct Face_filtered_graph
     reset_indices();
   }
 
-  /// changes the set of selected faces using a range of face descriptors
+  /// changes the set of selected faces using a range of face descriptors.
   template<class FaceRange>
   void set_selected_faces(const FaceRange& selection)
   {
@@ -570,7 +570,7 @@ struct Face_filtered_graph
     return selected_halfedges[get(himap, halfedge(e,_graph))];
   }
 
-  /// returns the number of selected faces
+  /// returns the number of selected faces.
   size_type number_of_faces() const
   {
     return selected_faces.count();
@@ -625,8 +625,8 @@ struct Face_filtered_graph
     // In that case, we will find a non-visited halfedge that has for target a vertex
     // that is already visited.
 
-    boost::unordered_set<vertex_descriptor> vertices_visited;
-    boost::unordered_set<halfedge_descriptor> halfedges_handled;
+    std::unordered_set<vertex_descriptor> vertices_visited;
+    std::unordered_set<halfedge_descriptor> halfedges_handled;
 
     for(halfedge_descriptor hd : halfedges(*this))
     {
@@ -659,6 +659,27 @@ struct Face_filtered_graph
     }
 
     return true;
+  }
+
+  /// inverts the selected status of faces.
+  void invert_selection()
+  {
+    selected_faces=~selected_faces;
+    selected_halfedges.reset();
+    selected_vertices.reset();
+
+    for(face_descriptor fd : faces(_graph))
+    {
+      if (!selected_faces.test(get(fimap, fd))) continue;
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
+      {
+        selected_halfedges.set(get(himap, hd));
+        selected_halfedges.set(get(himap, opposite(hd, _graph)));
+        selected_vertices.set(get(vimap, target(hd, _graph)));
+      }
+    }
+
+    reset_indices();
   }
 
 private:

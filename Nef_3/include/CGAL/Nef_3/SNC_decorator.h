@@ -280,6 +280,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     SFace_map linked;
     Shell_volume_setter(const SNCD_& Di)
       : D(Di), linked(false) {}
+    void reserve(Size_type n) { linked.reserve(n); }
     void visit(SFace_handle h) {
       CGAL_NEF_TRACEN(h->center_vertex()->point());
       D.set_volume(h, c);

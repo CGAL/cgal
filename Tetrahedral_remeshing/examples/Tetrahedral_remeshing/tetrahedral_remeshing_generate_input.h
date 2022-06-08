@@ -12,7 +12,8 @@
 
 #include <CGAL/Random.h>
 
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
+#include <boost/functional/hash.hpp>
 #include <utility>
 #include <cassert>
 
@@ -74,8 +75,10 @@ namespace Tetrahedral_remeshing
   void add_edge(typename Tr::Vertex_handle v1,
     typename Tr::Vertex_handle v2,
     const Tr& tr,
-    boost::unordered_set<std::pair<typename Tr::Vertex_handle,
-                                   typename Tr::Vertex_handle> >& constraints)
+    std::unordered_set<std::pair<typename Tr::Vertex_handle,
+                                 typename Tr::Vertex_handle>,
+                       boost::hash<std::pair<typename Tr::Vertex_handle,
+                                 typename Tr::Vertex_handle>>>& constraints)
   {
     typename Tr::Cell_handle c;
     int i, j;
@@ -86,8 +89,11 @@ namespace Tetrahedral_remeshing
   template<typename Tr>
   void make_constraints_from_cube_edges(
     Tr& tr,
-    boost::unordered_set<std::pair<typename Tr::Vertex_handle,
-                                   typename Tr::Vertex_handle> >& constraints)
+    std::unordered_set<std::pair<typename Tr::Vertex_handle,
+                                 typename Tr::Vertex_handle>,
+                       boost::hash<std::pair<typename Tr::Vertex_handle,
+                                             typename Tr::Vertex_handle>>
+  >& constraints)
   {
     typedef typename Tr::Point Point;
     typedef typename Tr::Vertex_handle Vertex_handle;
@@ -144,8 +150,10 @@ namespace Tetrahedral_remeshing
   template<typename Tr>
   void generate_input_cube(const std::size_t& n,
     Tr& tr,
-    boost::unordered_set<std::pair<typename Tr::Vertex_handle,
-                                   typename Tr::Vertex_handle> >& constraints)
+    std::unordered_set<std::pair<typename Tr::Vertex_handle,
+                                 typename Tr::Vertex_handle>,
+                       boost::hash<std::pair<typename Tr::Vertex_handle,
+                                             typename Tr::Vertex_handle>>   >& constraints)
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Point Point;

@@ -3393,7 +3393,7 @@ namespace CGAL {
       CGAL_assertion( is_without_boundary(dimension) );
 
       CGAL::Unique_hash_map< Dart_handle, Dart_handle,
-        typename Self::Hash_function > dual;
+                             typename Self::Hash_function > dual(Dart_handle(), darts().size());
       Dart_handle d, d2, res = amap.null_handle;
 
       // We clear amap. TODO return a new amap ?

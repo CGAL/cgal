@@ -89,19 +89,19 @@ namespace internal {
 } // namespace internal
 
 /*!
- * \ingroup keep_connected_components_grp
- *  discovers all the faces in the same connected component as `seed_face` and records them in `out`.
+ * \ingroup PMP_keep_connected_components_grp
+ *
+ * discovers all the faces in the same connected component as `seed_face` and records them in `out`.
  * `seed_face` will also be added in `out`.
  *
- *  \tparam PolygonMesh a model of `FaceGraph`
- *  \tparam FaceOutputIterator a model of `OutputIterator` with value type `boost::graph_traits<PolygonMesh>::%face_descriptor`.
- *  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ * \tparam PolygonMesh a model of `FaceGraph`
+ * \tparam FaceOutputIterator a model of `OutputIterator` with value type `boost::graph_traits<PolygonMesh>::%face_descriptor`.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- *  \param seed_face a face of `pmesh` from which exploration starts to detect the connected component
-           that contains it
- *  \param pmesh the polygon mesh
- *  \param out the output iterator that collects faces from the same connected component as `seed_face`
- *  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param seed_face a face of `pmesh` from which exploration starts to detect the connected component that contains it
+ * \param pmesh the polygon mesh
+ * \param out the output iterator that collects faces from the same connected component as `seed_face`
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -114,6 +114,7 @@ namespace internal {
  *
  * \returns the output iterator.
  *
+ * \see `connected_components()`
  */
 template <typename PolygonMesh
           , typename FaceOutputIterator
@@ -161,15 +162,16 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 }
 
 /*!
- * \ingroup keep_connected_components_grp
- *  computes for each face the index of the corresponding connected component.
+ * \ingroup PMP_keep_connected_components_grp
  *
- *  \tparam PolygonMesh a model of `FaceListGraph`
- *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
-        `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-        `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
- *  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
+ * computes for each face the index of the corresponding connected component.
+ *
+ * \tparam PolygonMesh a model of `FaceListGraph`
+ * \tparam FaceComponentMap a model of `WritablePropertyMap` with
+ *       `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+ *       `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
  * \param pmesh the polygon mesh
  * \param fcm the property map with indices of components associated to faces in `pmesh`
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -181,7 +183,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *                    as key type and `bool` as value type}
  *     \cgalParamDefault{a constant property map returning `false` for any edge}
  *   \cgalParamNEnd
-
+ *
  *   \cgalParamNBegin{face_index_map}
  *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
@@ -191,8 +193,9 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  * \cgalNamedParamsEnd
  *
  * \returns the number of connected components.
+ *
+ * \see `connected_component()`
  */
-
 template <typename PolygonMesh
         , typename FaceComponentMap
         , typename NamedParameters = parameters::Default_named_parameters
@@ -266,17 +269,18 @@ void keep_connected_components(PolygonMesh& pmesh
 namespace internal {
 
 //  /*!
-//  * \ingroup keep_connected_components_grp
-//  *  returns the number of connected components in the mesh.
+//  * \ingroup PMP_keep_connected_components_grp
 //  *
-//  *  A property map for `CGAL::face_index_t` must be either available as an internal property map
-//  *  to `pmesh` or provided as one of the \ref bgl_namedparameters "Named Parameters".
+//  * returns the number of connected components in the mesh.
 //  *
-//  *  \tparam PolygonMesh a model of `FaceGraph`
-//  *  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+//  * A property map for `CGAL::face_index_t` must be either available as an internal property map
+//  * to `pmesh` or provided as one of the \ref bgl_namedparameters "Named Parameters".
 //  *
-//  *  \param pmesh the polygon mesh
-//  *  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+//  * \tparam PolygonMesh a model of `FaceGraph`
+//  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+//  *
+//  * \param pmesh the polygon mesh
+//  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //  *
 //  * \cgalNamedParamsBegin
 //  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -296,6 +300,7 @@ namespace internal {
 //  *
 //  * \returns the output iterator.
 //  *
+//  * \see `connected_components()`
 //  */
 template <typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -314,9 +319,10 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh,
 } // end namespace internal
 
 /*!
- * \ingroup keep_connected_components_grp
+ * \ingroup PMP_keep_connected_components_grp
  *
- * removes the small connected components and all isolated vertices.
+ * \brief removes the small connected components and all isolated vertices.
+ *
  * Keep the `nb_components_to_keep` largest connected components, where the size of a connected
  * component is computed as the sum of the individual sizes of all the faces of the connected component.
  * By default, the size of a face is `1` (and thus the size of a connected component is the number
@@ -375,6 +381,8 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh,
  * \cgalNamedParamsEnd
  *
  * \return the number of connected components removed (ignoring isolated vertices).
+ *
+ * \see `keep_large_connected_components()`
  */
 template <typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
@@ -458,15 +466,19 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 }
 
 /*!
- * \ingroup keep_connected_components_grp
- * removes connected components whose size is (strictly) smaller than a given threshold value,
+ * \ingroup PMP_keep_connected_components_grp
+ *
+ * \brief removes connected components whose size is (strictly) smaller than a given threshold value,
  * where the size of a connected component is computed as the sum of the individual sizes
- * of all the faces of the connected component. By default, the size of a face is `1` (and thus
- * the size of a connected component is the number of faces it contains), but it is also possible
- * to pass custom sizes, such as the area of the face.
+ * of all the faces of the connected component.
+ *
+ * By default, the size of a face is `1` (and thus the size of a connected component is the number
+ * of faces it contains), but it is also possible to pass custom sizes, such as the area of the face.
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * \tparam ThresholdValueType the type of the threshold value
+ * \tparam ThresholdValueType the type of the threshold value. If a face size property map is passed
+ *         by the user, `ThresholdValueType` must be the same type as the value type of the property map.
+ *         Otherwise, `ThresholdValueType` must be `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
@@ -517,10 +529,9 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \pre If a face size property map is passed by the user, `ThresholdValueType` must be the same
- *      type as the value type of the property map. Otherwise, `ThresholdValueType` must be `std::size_t`.
- *
  * \return the number of connected components removed (ignoring isolated vertices).
+ *
+ * \see `keep_largest_connected_components()`
  */
 template <typename PolygonMesh,
           typename ThresholdValueType,
@@ -740,7 +751,8 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 }
 
 /*!
-* \ingroup keep_connected_components_grp
+* \ingroup PMP_keep_connected_components_grp
+*
 * keeps the connected components designated by theirs ids in `components_to_keep`,
 * and removes the other connected components as well as all isolated vertices.
 * The connected component id of a face is given by `fcm`.
@@ -770,6 +782,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \see `remove_connected_components()`
 */
 template <typename PolygonMesh
         , typename ComponentRange
@@ -784,7 +797,8 @@ void keep_connected_components(PolygonMesh& pmesh
 }
 
 /*!
-* \ingroup keep_connected_components_grp
+* \ingroup PMP_keep_connected_components_grp
+*
 * removes in `pmesh` the connected components designated by theirs ids
 * in `components_to_remove` as well as all isolated vertices.
 * The connected component id of a face is given by `fcm`.
@@ -814,6 +828,7 @@ void keep_connected_components(PolygonMesh& pmesh
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \see `keep_connected_components()`
 */
 template <typename PolygonMesh
         , typename ComponentRange
@@ -829,9 +844,10 @@ void remove_connected_components(PolygonMesh& pmesh
 }
 
 /*!
-* \ingroup keep_connected_components_grp
-*  keeps the connected components not designated by the faces in `components_to_remove`,
-*  and removes the other connected components and all isolated vertices.
+* \ingroup PMP_keep_connected_components_grp
+*
+* keeps the connected components not designated by the faces in `components_to_remove`,
+* and removes the other connected components and all isolated vertices.
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
@@ -868,6 +884,7 @@ void remove_connected_components(PolygonMesh& pmesh
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \see `keep_connected_components()`
 */
 template <typename PolygonMesh
         , typename FaceRange
@@ -899,9 +916,10 @@ void remove_connected_components(PolygonMesh& pmesh
 }
 
 /*!
-* \ingroup keep_connected_components_grp
-*  keeps the connected components designated by the faces in `components_to_keep`,
-*  and removes the other connected components and all isolated vertices.
+* \ingroup PMP_keep_connected_components_grp
+*
+* keeps the connected components designated by the faces in `components_to_keep`,
+* and removes the other connected components and all isolated vertices.
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
@@ -938,6 +956,7 @@ void remove_connected_components(PolygonMesh& pmesh
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \see `remove_connected_components()`
 */
 template <typename PolygonMesh
         , typename FaceRange
@@ -1027,16 +1046,18 @@ void split_connected_components_impl(FIMap fim,
 }//internal
 
 /*!
- * \ingroup keep_connected_components_grp
- * identifies the connected components of `pmesh` and pushes back a new `PolygonMesh` for each connected component in `cc_meshes`.
+ * \ingroup PMP_keep_connected_components_grp
  *
- *  \tparam PolygonMesh a model of `FaceListGraph`
- *  \tparam PolygonMeshRange a model of `SequenceContainer` with `PolygonMesh` as value type.
+ * identifies the connected components of `pmesh` and pushes back a new `PolygonMesh`
+ * for each connected component in `cc_meshes`.
  *
- *  \tparam NamedParameters a sequence of Named Parameters
+ * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+ * \tparam PolygonMeshRange a model of `SequenceContainer` with `PolygonMesh` as value type
+ *
+ * \tparam NamedParameters a sequence of Named Parameters
  *
  * \param pmesh the polygon mesh
- * \param cc_meshes container that is filled with the extracted connected components.
+ * \param cc_meshes container that is filled with the extracted connected components
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin

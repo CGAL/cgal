@@ -7,13 +7,37 @@ Release History
 
 Release date: June 2022
 
+### 3D Alpha Wrapping (new package)
+
+-   This component takes a 3D triangle mesh, soup, or point set as input, and generates a valid
+    (watertight, intersection-free, and combinatorially 2-manifold) surface triangle mesh
+    that contains the input.
+    The algorithm proceeds by shrink-wrapping and refining a 3D Delaunay triangulation,
+    starting from a loose bounding box of the input.
+    Two user-defined parameters, alpha and offset, offer control over the maximum size of cavities
+    where the shrink-wrapping process can enter, and the tightness of the final surface mesh
+    to the input, respectively. Once combined, these parameters provide a means to trade fidelity
+    to the input for complexity of the output.
+
+### [Point Set Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPointSetProcessing3)
+
+-   A new optional named parameter, `min_points_per_cell` has been added to [`grid_simplify_point_set()`](https://doc.cgal.org/5.5/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#ga7757ef9b3900e42fde26f5a0ac56e20f). By adding a minimal number of points in a cell such that a point is retained, one can also filter out low density areas and outliers: in the case of densely sampled point clouds, this yields better results than using grid simplification and then outlier removal, while being very vast. The default value is `1` to keep the previous behavior as default.
+
 ### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
 
--   Added the member function `write_graphviz()` to the class The Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
+-   Added the member function `write_graphviz()` to the class `Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
 
 ### [3D Convex Hulls](https://doc.cgal.org/5.5/Manual/packages.html#PkgConvexHull3)
 
 -   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
+
+### Surface Mesh Simplification
+-   Introduced four variations of the Garland-Heckbert simplification algorithm based on the probabilistic approach of Trettner and Kobbelt (Fast and Robust QEF Minimization using Probabilistic Quadrics): `GarlandHeckbert_plane_policies`, `GarlandHeckbert_probabilistic_plane_policies`, `GarlandHeckbert_triangle_policies`, and `GarlandHeckbert_probabilistic_triangle_policies`
+-   The class `GarlandHeckbert_policies` has been deprecated, `GarlandHeckbert_plane_policies` replaces it.
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.5/Manual/packages.html#PkgBGL)
+
+-   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html), which toggles the selected status of a graph: selected faces are deselected, and unselected faces are selected.
 
 ### Combinatorial Maps
 
@@ -30,6 +54,23 @@ Release date: June 2022
 - This new package wraps all the existing code that deals with a ` MeshComplex_3InTriangulation_3`
    to describe 3D simplicial meshess, and makes the data structure independant
    from the tetrahedral mesh generation package.    
+
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygonMeshProcessing)
+-   Added the function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup()`, which enables re-orienting the faces of a triangle soup based on the orientation of the nearest face in a reference triangle soup.
+-   Added the function `CGAL::Polygon_mesh_processing::compatible_orientations()`, which enables to retrieve the (in)compatibility of orientations of faces from different connected components.
+-   Added the function `CGAL::Polygon_mesh_processing::tangential_relaxation()`, which applies an area-based tangential mesh smoothing to the vertices of a surface triangle mesh.
+
+### [2D Polygons](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygon2)
+
+-   Add vertex, edge, and hole ranges.
+-   The concept `GeneralPolygonWithHoles_2` now requires the nested type `Polygon_2` instead of `General_polygon_2`.
+
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.5/Manual/packages.html#PkgBooleanSetOperations2)
+-   The concept `GeneralPolygonSetTraits_2` now requires the nested type `Construct_polygon_with_holes_2` instead of `Construct_general_polygon_with_holes_2`.
+
+### [2D Arrangements](https://doc.cgal.org/5.5/Manual/packages.html#PkgArrangementOnSurface2)
+-   Fixed the intersect_2, compare_y_at_x_right, and compare_y_at_x_left function objects of the traits class template that handles geodesic arcs on sphere and applied a small syntactical fix to the tracing traits.
 
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)

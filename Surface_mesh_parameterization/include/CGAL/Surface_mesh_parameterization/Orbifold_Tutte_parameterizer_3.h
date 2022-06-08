@@ -42,9 +42,9 @@
 #include <boost/array.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -152,7 +152,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputItera
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator   TM_vertex_iterator;
 
-  boost::unordered_map<TM_vertex_descriptor, int> m;
+  std::unordered_map<TM_vertex_descriptor, int> m;
   int counter = 0;
 
   TM_vertex_iterator vit, end;

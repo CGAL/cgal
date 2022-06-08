@@ -18,11 +18,12 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
+#include <unordered_map>
 #include <functional>
 #include <utility>
 
@@ -68,8 +69,8 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   }
   CGAL_assertion(dimension > 0);
 
-  boost::unordered_map<Facet, Subdomain_index> cells_info;
-  boost::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index> > facets_info;
+  std::unordered_map<Facet, Subdomain_index, boost::hash<Facet>> cells_info;
+  std::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index>, boost::hash<Facet>> facets_info;
 
   // check orientation and collect incident cells to avoid circulating twice
   boost::container::small_vector<Cell_handle, 30> inc_cells;

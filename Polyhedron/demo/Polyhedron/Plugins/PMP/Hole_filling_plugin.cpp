@@ -44,7 +44,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include "Kernel_type.h"
 
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <QMap>
@@ -240,7 +240,7 @@ private:
 
     Face_graph& poly = *poly_item->polyhedron();
 
-    boost::unordered_set<fg_halfedge_descriptor> visited;
+    std::unordered_set<fg_halfedge_descriptor> visited;
     boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
 
     for(fg_halfedge_descriptor hd : halfedges(poly)){
@@ -800,7 +800,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   normalize_border(*poly);
 
   // fill hole
-  boost::unordered_set<fg_halfedge_descriptor> buffer;
+  std::unordered_set<fg_halfedge_descriptor> buffer;
   //check if all selected edges are boder
   //to do check that the seection is closed
   for(fg_edge_descriptor ed : edge_selection->selected_edges)

@@ -306,7 +306,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       number_of_intersection_candidates=0;
 #endif
 
-    Unique_hash_map<Vertex_const_handle, bool> ignore(false);
+    Unique_hash_map<Vertex_const_handle, bool> ignore(false, snc1.number_of_vertices());
     Vertex_const_iterator v0;
 
     //    CGAL_NEF_SETDTHREAD(19*43*131);

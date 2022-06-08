@@ -66,9 +66,9 @@ class Generic_clip_output_builder
                                std::pair<bool,std::size_t> > >
                                               An_edge_per_polyline_map;
 
-  typedef boost::unordered_map<vertex_descriptor, Node_id> Node_id_map;
-  typedef boost::unordered_map<edge_descriptor,
-                               edge_descriptor>               Edge_map;
+  typedef std::unordered_map<vertex_descriptor, Node_id>   Node_id_map;
+  typedef std::unordered_map<edge_descriptor,
+                             edge_descriptor>                 Edge_map;
 //Data members
   TriangleMesh &tm1, &tm2;
   // property maps of input meshes

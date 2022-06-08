@@ -35,7 +35,9 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
-* smooths the overall shape of the mesh by using the mean curvature flow.
+*
+* @brief smooths the overall shape of the mesh by using the mean curvature flow.
+*
 * The effect depends on the curvature of each area and on a time step which
 * represents the amount by which vertices are allowed to move.
 * The result conformally maps the initial surface to a sphere.
@@ -93,7 +95,9 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-*  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
+* @warning This function involves linear algebra, that is computed using non-exact, floating-point arithmetic.
+*
+* @see `smooth_mesh()`
 */
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void smooth_shape(const FaceRange& faces,

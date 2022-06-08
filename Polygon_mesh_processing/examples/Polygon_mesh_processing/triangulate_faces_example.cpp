@@ -6,8 +6,8 @@
 
 #include <CGAL/boost/graph/helpers.h>
 
-#include <fstream>
 #include <iostream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;

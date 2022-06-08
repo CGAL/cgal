@@ -32,7 +32,7 @@ namespace internal {
         int axe;
         bool orient;
         double value;
-        Fixed_hilbert_cmp_d (int a, bool o, double v, const K &_k = K())
+        Fixed_hilbert_cmp_d (int a, bool o, double v, const K &_k)
           :  k(_k), axe(a), orient(o), value(v) {}
         bool operator() (const Point &p) const
         {
@@ -64,7 +64,7 @@ private:
         : internal::Fixed_hilbert_cmp_d<Kernel> (a,dir,v,k) {} };
 
 public:
-    Hilbert_sort_middle_d (const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
+    Hilbert_sort_middle_d (const Kernel &k, std::ptrdiff_t limit = 1)
         : _k(k), _limit (limit)
     {}
 
