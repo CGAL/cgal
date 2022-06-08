@@ -433,11 +433,13 @@ protected:
 };
 
 // Index class
-template<class Index_type, Index_type null_descriptor>
+// templated by a compact container with index, to differentiate the different class
+// (for example to allow two methods with same name and two different Index as parameter)
+template<class CCWI, class Index_type, Index_type null_descriptor>
 class Index_for_cc_with_index
 {
 public:
-  using Self=Index_for_cc_with_index<Index_type, null_descriptor>;
+  using Self=Index_for_cc_with_index<CCWI, Index_type, null_descriptor>;
   using size_type=Index_type;
 
   /// Constructor.
@@ -524,7 +526,7 @@ public:
   using TFree_list_management=Free_list_management
                              <Self, CGAL::Tag_false, CGAL::Tag_false>;
   static const size_type null_descriptor=TFree_list_management::null_descriptor;
-  using Index=Index_for_cc_with_index<IndexType, null_descriptor>;
+  using Index=Index_for_cc_with_index<Self, IndexType, null_descriptor>;
 
   friend class internal::CC_iterator_with_index<Self, false>;
   friend class internal::CC_iterator_with_index<Self, true>;
@@ -1015,12 +1017,12 @@ namespace std
 
 #ifndef CGAL_CFG_NO_STD_HASH
 
-template <class Index_type, Index_type null_descriptor>
-struct hash<CGAL::Index_for_cc_with_index<Index_type, null_descriptor>>:
-    public CGAL::cpp98::unary_function<CGAL::Index_for_cc_with_index<Index_type, null_descriptor>,
+template <class CCWI, class Index_type, Index_type null_descriptor>
+struct hash<CGAL::Index_for_cc_with_index<CCWI, Index_type, null_descriptor>>:
+    public CGAL::cpp98::unary_function<CGAL::Index_for_cc_with_index<CCWI, Index_type, null_descriptor>,
     std::size_t>
 {
-  std::size_t operator()(const CGAL::Index_for_cc_with_index<Index_type, null_descriptor>& idx) const
+  std::size_t operator()(const CGAL::Index_for_cc_with_index<CCWI, Index_type, null_descriptor>& idx) const
   { return CGAL::internal::Index_hash_function()(idx); }
 };
 #endif // CGAL_CFG_NO_STD_HASH
