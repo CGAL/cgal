@@ -439,7 +439,7 @@ protected:
 
   struct locs {
       Cell_handle pos;
-      int li, lj;
+      int li = -1, lj = -1;
       Locate_type lt;
   };
 
@@ -578,7 +578,7 @@ insert_and_give_new_cells(const Point &p, OutputItCells fit, Cell_handle start)
   Locate_type lt;
   int i, j;
   // locate using hierarchy
-  locs positions[maxlevel] = {-1};
+  locs positions[maxlevel];
   locate(p, lt, i, j, positions, start);
   // insert at level 0
   Vertex_handle vertex = hierarchy[0]->insert_and_give_new_cells(p,
