@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   Mesh outmesh = PMP::surface_Delaunay_remeshing(mesh,
-                                  PMP::parameters::protect_constraints(true)
+                                  CGAL::parameters::protect_constraints(true)
                                  .mesh_edge_size(size)
                                  .mesh_facet_distance(fdist)
                                  .edge_is_constrained_map(eif));

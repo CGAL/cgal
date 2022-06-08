@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   std::cout << "Remeshing with edge_is_constrained_map..." << std::endl;
 
   Mesh outmesh1 = PMP::surface_Delaunay_remeshing(mesh,
-    PMP::parameters::protect_constraints(true)
+    CGAL::parameters::protect_constraints(true)
     .mesh_edge_size(target_edge_length)
     .mesh_facet_size(target_edge_length)
     .mesh_facet_distance(fdist)
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
   std::cout << "Remeshing with polyline_constraints..." << std::endl;
 
   Mesh outmesh2 = PMP::surface_Delaunay_remeshing(mesh,
-    PMP::parameters::protect_constraints(true)
+    CGAL::parameters::protect_constraints(true)
     .mesh_edge_size(target_edge_length)
     .mesh_facet_size(target_edge_length)
     .mesh_facet_distance(fdist)
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
   std::cout << "***********************" << std::endl;
   std::cout << "Remeshing with features_angle_bound..." << std::endl;
   Polyhedron outmesh3 = PMP::surface_Delaunay_remeshing<Mesh, Polyhedron>(mesh,
-    PMP::parameters::protect_constraints(true)
+    CGAL::parameters::protect_constraints(true)
     .mesh_edge_size(target_edge_length)
     .mesh_facet_size(target_edge_length)
     .mesh_facet_distance(fdist)
