@@ -34,7 +34,8 @@ public:
                         const char* title = "2D Arrangement Basic Viewer") :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
     Base(parent, title, true, true, true, false, false),
-    m_arr(arr)
+    m_arr(arr),
+    m_uni(0, 255)
   {}
 
   //!
@@ -44,7 +45,6 @@ public:
 
     std::random_device rd;
     m_rng.seed(rd());
-    m_uni = std::uniform_int_distribution<size_t>(0, 255);
 
     if (m_arr.is_empty()) return;
     for (auto it = m_arr.unbounded_faces_begin();

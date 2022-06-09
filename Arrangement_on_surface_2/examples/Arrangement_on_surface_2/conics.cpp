@@ -14,39 +14,28 @@ int main() {
   Arrangement arr(&traits);
   auto ctr_cv = traits.construct_curve_2_object();
 
-#if 0
   // Insert a hyperbolic arc (C1), supported by the hyperbola y = 1/x
   // (or: xy - 1 = 0) with the endpoints (1/4, 4) and (2, 1/2).
   // The arc is counterclockwise oriented.
   insert(arr, ctr_cv(0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE,
                      Point(Rational(1,4), 4), Point(2, Rational(1,2))));
-#endif
 
-#if 0
   // Insert a full ellipse (C2), which is (x/4)^2 + (y/2)^2 = 0 rotated by
   // phi = 36.87 degrees (such that sin(phi) = 0.6, cos(phi) = 0.8),
   // yielding: 58x^2 + 72y^2 - 48xy - 360 = 0.
   insert(arr, ctr_cv(58, 72, -48, 0, 0, -360));
-#endif
 
-#if 0
   // Insert the segment (C3) (1, 1) -- (0, -3).
   insert(arr, ctr_cv(Rat_segment(Rat_point(1, 1), Rat_point(0, -3))));
-#endif
 
-#if 0
   // Insert a circular arc (C4) supported by the circle x^2 + y^2 = 5^2,
   // with (-3, 4) and (4, 3) as its endpoints. We want the arc to be
   // clockwise-oriented, so it passes through (0, 5) as well.
   insert(arr, ctr_cv(Rat_point(-3, 4), Rat_point(0, 5), Rat_point(4, 3)));
-#endif
 
-#if 0
   // Insert a full unit circle (C5) that is centered at (0, 4).
   insert(arr, ctr_cv(Rat_circle(Rat_point(0,4), 1)));
-#endif
 
-#if 1
   // Insert a parabolic arc (C6) supported by the parabola y = -x^2 with
   // endpoints (-sqrt(3),-3) (~(-1.73,-3)) and (sqrt(2),-2) (~(1.41,-2)).
   // Since the x-coordinates of the endpoints cannot be acccurately represented,
@@ -60,14 +49,11 @@ int main() {
            0, 0, 0, 0, 1, 2);                 // the line: y = -2.
 
   insert(arr, c6);
-#endif
 
-#if 0
   // Insert the right half of the circle centered at (4, 2.5) whose radius
   // is 1/2 (therefore its squared radius is 1/4) (C7).
   Rat_circle circ7(Rat_point(4, Rational(5,2)), Rational(1,4));
   insert(arr, ctr_cv(circ7, CGAL::CLOCKWISE, Point(4, 3), Point(4, 2)));
-#endif
 
   print_arrangement_size(arr);
 
