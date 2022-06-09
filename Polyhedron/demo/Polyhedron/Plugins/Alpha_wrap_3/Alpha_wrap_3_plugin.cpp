@@ -66,7 +66,7 @@ public:
 
   template <typename AlphaWrapper, typename Point>
   void before_Steiner_point_insertion(const AlphaWrapper& wrapper,
-                                      const Point& p)
+                                      const Point& /* p */)
   {
     if(m_iterative_wrap_item == nullptr)
       return;
@@ -108,7 +108,6 @@ public:
     std::vector<CGAL::IO::Color> vcolors;
     std::vector<CGAL::IO::Color> fcolors;
 
-    std::size_t vi = 0, fi = 0;
     for(auto fit=wrapper.triangulation().finite_facets_begin(), fend=wrapper.triangulation().finite_facets_end(); fit!=fend; ++fit)
     {
       Facet f = *fit;
