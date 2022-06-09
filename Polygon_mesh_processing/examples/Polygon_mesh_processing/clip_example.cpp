@@ -23,14 +23,14 @@ int main(int argc, char* argv[])
     const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
     const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
     Surface_mesh tet, tri;
-    
+
     if (!PMP::IO::read_polygon_mesh(filename1, tet) || !PMP::IO::read_polygon_mesh(filename2, tri))
     {
         std::cerr << "Invalid input." << std::endl;
         return 1;
     }
 
-  
+
 
  // CGAL::make_tetrahedron(Point_3(0,0,0), Point_3(10,0,0), Point_3(0, 10,0), Point_3(0,0,10), tet);
 
