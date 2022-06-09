@@ -299,8 +299,8 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
       exude_time_limit = exude.time_limit();
 
     exude_mesh_3(c3t3,
-                 parameters::time_limit = exude_time_limit,
-                 parameters::sliver_bound = exude.bound());
+                 CGAL::parameters::time_limit_new = exude_time_limit,
+                 CGAL::parameters::sliver_bound_new = exude.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }

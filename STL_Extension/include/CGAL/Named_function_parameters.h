@@ -335,13 +335,15 @@ struct Boost_parameter_compatibility_wrapper
 };
 
 // TODO: need to make sure this works when using several compilation units
-const Boost_parameter_compatibility_wrapper<internal_np::number_of_iterations_t> max_iteration_number;
-const Boost_parameter_compatibility_wrapper<internal_np::convergence_ratio_t> convergence;
-const Boost_parameter_compatibility_wrapper<internal_np::vertex_freeze_bound_t> freeze_bound;
-const Boost_parameter_compatibility_wrapper<internal_np::maximum_running_time_t> time_limit;
-const Boost_parameter_compatibility_wrapper<internal_np::i_seed_begin_iterator_t> seeds_begin;
-const Boost_parameter_compatibility_wrapper<internal_np::i_seed_end_iterator_t> seeds_end;
-const Boost_parameter_compatibility_wrapper<internal_np::seeds_are_in_domain_t> mark_;
+const Boost_parameter_compatibility_wrapper<internal_np::number_of_iterations_t> max_iteration_number_new;
+const Boost_parameter_compatibility_wrapper<internal_np::convergence_ratio_t> convergence_new;
+const Boost_parameter_compatibility_wrapper<internal_np::vertex_freeze_bound_t> freeze_bound_new;
+const Boost_parameter_compatibility_wrapper<internal_np::maximum_running_time_t> time_limit_new;
+const Boost_parameter_compatibility_wrapper<internal_np::i_seed_begin_iterator_t> seeds_begin_new;
+const Boost_parameter_compatibility_wrapper<internal_np::i_seed_end_iterator_t> seeds_end_new;
+const Boost_parameter_compatibility_wrapper<internal_np::seeds_are_in_domain_t> mark_new;
+//Compatibility wrappers for exude_mesh_3.h
+const Boost_parameter_compatibility_wrapper<internal_np::lower_sliver_bound_t> sliver_bound_new;
 #endif
 
 // function to extract a parameter

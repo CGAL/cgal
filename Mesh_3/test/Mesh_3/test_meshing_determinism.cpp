@@ -120,7 +120,7 @@ void test()
     oss.clear();
 
     //EXUDE (4)
-    CGAL::exude_mesh_3(c3t3, sliver_bound=exude_bound);
+    CGAL::exude_mesh_3(c3t3, CGAL::parameters::sliver_bound_new=exude_bound);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+4]
     oss.clear();

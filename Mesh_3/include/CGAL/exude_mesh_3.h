@@ -25,68 +25,201 @@
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
-#include <CGAL/boost/parameter.h>
-
-#include <boost/parameter/preprocessor.hpp>
+#include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
+/*!
+@ingroup PkgMesh3Functions
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4003) // not enough actual parameters for macro
-#endif
+The function `exude_mesh_3()` performs a sliver exudation process on a Delaunay mesh.
 
-// see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/boost/parameter.h>
-CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+The sliver exudation process consists in optimizing the weights of vertices
+of the weighted Delaunay triangulation in such a way that slivers disappear and
+the quality of the mesh improves.
 
-BOOST_PARAMETER_FUNCTION(
-  (Mesh_optimization_return_code),
-  exude_mesh_3,
-  parameters::tag,
-  (required (in_out(c3t3),*) )
-  (optional
-    (time_limit_, *, 0 )
-    (sliver_bound_, *, parameters::default_values_for_mesh_3::exude_sliver_bound )
-  )
-)
+@warning This optimizer modifies the weight of vertices of the triangulation and,
+if called, must be the last optimizer to be called. If the mesh is refined after
+this optimization has been performed, all improvements will be lost.
+
+@pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `sliver_bound` \f$ \leq\f$ 180
+
+@tparam  C3T3 is required to be a model of the concept
+`MeshComplex_3InTriangulation_3`.
+The argument `c3t3`, passed by
+reference, provides the initial mesh
+and is modified by the algorithm
+to represent the final optimized mesh.
+@tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+ @param c3t3 the initial mesh that will be modified by the algorithm to represent the final optimized mesh.
+ @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+
+\cgalNamedParamsBegin
+ \cgalParamNBegin{parameters::time_limit_new}
+  \cgalParamDescription{is used to set up, in seconds, a CPU time limit after which the optimization process
+                        is stopped. This time is measured using the Real_timer class. The default value is
+                        0 and means that there is no time limit.}
+  \cgalParamNBegin{parameters::parameters::sliver_bound_new}
+   \cgalParamDescription{is designed to give, in degrees, a targeted lower bound on dihedral angles of mesh cells.
+                         The exudation process considers in turn all the mesh cells that have a smallest dihedral
+                         angle less than sliver_bound and tries to make them disappear by weighting their vertices.
+                         The optimization process stops when every cell in the mesh achieves this quality. The
+                         default value is 0 and means that there is no targeted bound: the exuder then runs as long
+                         as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}
+\cgalNamedParamsEnd
+\return
+The function `exude_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code`
+which is:
+<UL>
+<LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached.
+<LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached.
+<LI>`CGAL::CANT_IMPROVE_ANYMORE` when exudation process stops because it can no longer improve
+the smallest dihedral angle of the set of cells incident to some vertex in the mesh.
+</UL>
+
+\cgalHeading{Example}
+
+\code{.cpp}
+// Exude without sliver_bound, using at most 10s CPU time
+exude_mesh_3(c3t3,
+             parameters::time_limit=10);
+\endcode
+
+\sa `CGAL::Mesh_optimization_return_code`
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::refine_mesh_3()`
+\sa `CGAL::perturb_mesh_3()`
+\sa `CGAL::lloyd_optimize_mesh_3()`
+\sa `CGAL::odt_optimize_mesh_3()`
+
+*/
+template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
+Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3,const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return exude_mesh_3_impl(c3t3, time_limit_, sliver_bound_);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    int time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+    double sliver_bound= choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),parameters::default_values_for_mesh_3::exude_sliver_bound);
+    return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
+
 }
-CGAL_PRAGMA_DIAG_POP
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#ifndef DOXYGEN_RUNNING
+  #ifndef CGAL_NO_DEPRECATED_CODE
+    template<typename C3T3, typename ... NP_PACK>
+    Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, const NP_PACK& ...nps)
+    {
+        return exude_mesh_3(c3t3,internal_np::combine_named_parameters(nps...));
+    }
+  #endif //CGAL_NO_DEPRECATED_CODE
 
 
-
-template <typename C3T3>
-Mesh_optimization_return_code
-exude_mesh_3_impl(C3T3& c3t3,
+  template <typename C3T3>
+  Mesh_optimization_return_code
+  exude_mesh_3_impl(C3T3& c3t3,
                   const double time_limit,
                   const double sliver_bound)
-{
-  typedef typename C3T3::Triangulation Tr;
-  typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
-  //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
-  typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
+  {
+     typedef typename C3T3::Triangulation Tr;
+     typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
+     //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
+     typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
 
-  // Create exuder
-  Sc criterion(sliver_bound, c3t3.triangulation());
-  Exuder exuder(c3t3, criterion);
+     // Create exuder
+     Sc criterion(sliver_bound, c3t3.triangulation());
+     Exuder exuder(c3t3, criterion);
 
-  // Set time_limit
-  exuder.set_time_limit(time_limit);
+     // Set time_limit
+     exuder.set_time_limit(time_limit);
 
-  // Launch exudation
-  return exuder();
-}
+     // Launch exudation
+     return exuder();
+  }
+#else
+namespace CGAL {
 
+/*!
+\ingroup PkgMesh3Functions
+
+The function `exude_mesh_3()` performs a sliver exudation process on a Delaunay mesh.
+
+The sliver exudation process consists in optimizing the weights of vertices
+of the weighted Delaunay triangulation in such a way that slivers disappear and
+the quality of the mesh improves.
+
+\warning This optimizer modifies the weight of vertices of the triangulation and,
+if called, must be the last optimizer to be called. If the mesh is refined after
+this optimization has been performed, all improvements will be lost.
+
+\pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `sliver_bound` \f$ \leq\f$ 180
+
+\tparam  C3T3 is required to be a model of the concept
+`MeshComplex_3InTriangulation_3`.
+The argument `c3t3`, passed by
+reference, provides the initial mesh
+and is modified by the algorithm
+to represent the final optimized mesh.
+
+The function has two optional parameters which are named parameters (we use the Boost.Parameter library).
+Therefore, when calling the function, the parameters can be provided in any order
+provided that the names of the parameters are used
+(see example at the bottom of this page).
+
+\cgalHeading{Named Parameters}
+- <b>`parameters::time_limit`</b> is used to set up, in seconds,
+a CPU time limit after which the optimization process is stopped. This time is
+measured using the `Real_timer` class.
+The default value is 0 and means that there is no time limit.
+
+- <b>`parameters::sliver_bound`</b> is designed to give, in degrees, a targeted
+lower bound on dihedral angles of mesh cells.
+The exudation process considers in turn all the mesh cells
+that have a smallest dihedral angle less than `sliver_bound`
+and tries to make them disappear by weighting their vertices.
+The optimization process
+stops when every cell in the mesh achieves this quality.
+The default value is 0 and means that there is no targeted bound:
+the exuder then runs as long as
+it can improve the smallest dihedral angles of the set of cells
+incident to some vertices.
+
+\return
+The function `exude_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code`
+which is:
+<UL>
+<LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached.
+<LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached.
+<LI>`CGAL::CANT_IMPROVE_ANYMORE` when exudation process stops because it can no longer improve
+the smallest dihedral angle of the set of cells incident to some vertex in the mesh.
+</UL>
+
+\cgalHeading{Example}
+
+\code{.cpp}
+// Exude without sliver_bound, using at most 10s CPU time
+exude_mesh_3(c3t3,
+             parameters::time_limit=10);
+\endcode
+
+\sa `CGAL::Mesh_optimization_return_code`
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::refine_mesh_3()`
+\sa `CGAL::perturb_mesh_3()`
+\sa `CGAL::lloyd_optimize_mesh_3()`
+\sa `CGAL::odt_optimize_mesh_3()`
+
+*/
+
+template<typename C3T3>
+Mesh_optimization_return_code
+exude_mesh_3(C3T3& c3t3,
+             double parameters::time_limit=0,
+             double parameters::sliver_bound=0);
+
+} /* namespace CGAL */
+
+#endif //DOXYGEN_RUNNING
 
 } //namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_EXUDE_MESH_3_H

@@ -55,7 +55,7 @@ int main(int argc, char*argv[])
                                           no_perturb(), no_exude());
 
   CGAL::lloyd_optimize_mesh_3(c3t3_bis, domain, time_limit=30);
-  CGAL::exude_mesh_3(c3t3_bis, sliver_bound=10, time_limit=10);
+  CGAL::exude_mesh_3(c3t3_bis, CGAL::parameters::sliver_bound_new=10, CGAL::parameters::time_limit_new=10);
 
   // Output
   std::ofstream medit_file("out.mesh");
