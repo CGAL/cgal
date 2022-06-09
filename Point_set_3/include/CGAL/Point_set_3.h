@@ -52,7 +52,7 @@ namespace internal {
     typedef CGAL::Point_set_3<Point, Vector> Point_set_3;
 
   private:
-    friend class Point_set_3;
+    friend class CGAL::Point_set_3<Point, Vector>;
     friend class Properties::Property_container<Point_set_3, Point_set_3_index>;
     template <class> friend class Properties::Property_array;
     template <class> friend struct Property_map;
