@@ -504,7 +504,7 @@ bool write_3MF(const std::string& fname,
 
 template<typename PointRange, typename TriangleRange>
 bool write_3MF(const std::string& fname, const PointRange& points, const TriangleRange& triangles,
-               std::enable_if_t<internal::is_Range<PointRange>::value >* = nullptr)
+               std::enable_if_t<internal::is_Range_v<PointRange>>* = nullptr)
 {
   return write_triangle_soup_to_3mf(fname, points, triangles, "anonymous");
 }

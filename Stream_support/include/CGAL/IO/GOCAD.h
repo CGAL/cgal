@@ -195,7 +195,7 @@ bool read_GOCAD(std::istream& is,
                 PolygonRange& polygons,
                 const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , std::enable_if_t<internal::is_Range<PolygonRange>::value >* = nullptr
+                , std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr
 #endif
                 )
 {
@@ -240,7 +240,7 @@ bool read_GOCAD(const std::string& fname,
                 PolygonRange& polygons,
                 const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , std::enable_if_t<internal::is_Range<PolygonRange>::value >* = nullptr
+                , std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr
 #endif
                 )
 {
@@ -348,7 +348,7 @@ bool write_GOCAD(std::ostream& os,
                  const PolygonRange& polygons,
                  const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                 , std::enable_if_t<internal::is_Range<PolygonRange>::value >* = nullptr
+                 , std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr
 #endif
                  )
 {
@@ -390,7 +390,7 @@ bool write_GOCAD(const std::string& fname,
                  const PolygonRange& polygons,
                  const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                 , std::enable_if_t<internal::is_Range<PolygonRange>::value >* = nullptr
+                 , std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr
 #endif
                  )
 {
