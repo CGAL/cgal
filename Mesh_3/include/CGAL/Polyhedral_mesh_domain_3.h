@@ -41,7 +41,6 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/format.hpp>
 #include <boost/variant.hpp>
 #include <boost/math/special_functions/round.hpp>

@@ -21,8 +21,6 @@
 #include <CGAL/Bbox_2.h>
 #include <cassert>
 
-#include <boost/type_traits/is_same.hpp>
-
 template <class K>
 void _test_construct_radical_line(const K &k) {
   typedef typename K::FT                               FT;

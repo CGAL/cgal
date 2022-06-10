@@ -19,7 +19,6 @@
 #include <CGAL/property_map.h>
 
 #include <memory>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 
 #include <unordered_map>

@@ -21,7 +21,6 @@
 #include <CGAL/license/Triangulation_3.h>
 
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/variant/apply_visitor.hpp>

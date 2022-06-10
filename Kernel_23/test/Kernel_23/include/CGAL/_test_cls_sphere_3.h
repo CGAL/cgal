@@ -20,7 +20,6 @@
 
 #include <CGAL/Bbox_3.h>
 #include <cassert>
-#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool

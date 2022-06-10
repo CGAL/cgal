@@ -22,7 +22,6 @@
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
 
 #include <iomanip>

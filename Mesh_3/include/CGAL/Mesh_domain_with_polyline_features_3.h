@@ -39,7 +39,6 @@
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <memory>
 
 namespace CGAL {

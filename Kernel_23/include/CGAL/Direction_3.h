@@ -18,7 +18,6 @@
 #define CGAL_DIRECTION_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>

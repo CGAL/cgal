@@ -25,7 +25,6 @@
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <algorithm>

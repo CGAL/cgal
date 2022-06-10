@@ -21,7 +21,6 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <cassert>
 #include <iostream>
 

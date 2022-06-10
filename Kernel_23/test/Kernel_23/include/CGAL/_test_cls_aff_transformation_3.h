@@ -19,7 +19,6 @@
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_3_H
 
 #include <CGAL/use.h>
-#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool

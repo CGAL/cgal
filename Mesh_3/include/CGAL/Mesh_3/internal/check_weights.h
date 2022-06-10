@@ -23,7 +23,6 @@
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Has_features.h>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 namespace Mesh_3 {

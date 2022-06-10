@@ -18,8 +18,6 @@
 #ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 #define CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 
-#include <boost/type_traits/is_same.hpp>
-
 template <class R>
 bool
 _test_fct_points_implicit_sphere(const R&)

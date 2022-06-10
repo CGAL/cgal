@@ -41,7 +41,6 @@
 #include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/unordered_set.hpp>
 
