@@ -433,18 +433,29 @@ namespace CGAL
         typedef typename CMap::template Container_for_attributes<T> type;
       };
 
+      template<class Container, class UseIndex>
+      struct Iterator_type
+      {
+        using type=typename Container::iterator;
+        using const_type=typename Container::const_iterator;
+      };
+
+      template<class Container>
+      struct Iterator_type<Container, CGAL::Tag_true>
+      {
+        using type=typename Container::Index;
+        using const_type=typename Container::Index;
+      };
+
       // defines as type Compact_container<T>::iterator
       template <class T>
       struct Add_compact_container_iterator{
         typedef std::allocator_traits<typename CMap::Alloc> Allocator_traits;
         typedef typename Allocator_traits::template rebind_alloc<T> Attr_allocator;
-        typedef typename CMap::template Container_for_attributes<T>::iterator
-        iterator_type;
 
         // TODO? case when there is no Use_index typedef in CMap
-         typedef typename boost::mpl::if_
-        < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
-          typename CMap::Dart_descriptor, iterator_type >::type type;
+        using type=typename Iterator_type<typename CMap::template
+        Container_for_attributes<T>, typename CMap::Use_index>::type;
       };
 
       // defines as type Compact_container<T>::const_iterator
@@ -452,12 +463,9 @@ namespace CGAL
       struct Add_compact_container_const_iterator{
         typedef std::allocator_traits<typename CMap::Alloc> Allocator_traits;
         typedef typename Allocator_traits::template rebind_alloc<T> Attr_allocator;
-        typedef typename CMap::template Container_for_attributes<T>::
-        const_iterator iterator_type;
 
-        typedef typename boost::mpl::if_
-             < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
-               typename CMap::Dart_const_descriptor, iterator_type >::type type;
+        using type=typename Iterator_type<typename CMap::template
+        Container_for_attributes<T>, typename CMap::Use_index>::const_type;
       };
 
       // All the attributes (with CGAL::Void)
@@ -541,7 +549,7 @@ namespace CGAL
       struct Attribute_descriptor<d, CGAL::Void, CGAL::Tag_true>
       { typedef typename CMap::Dart_index type; };
 
-               // Helper class allowing to retreive the d-cell-const handle attribute
+      // Helper class allowing to retreive the d-cell-const handle attribute
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_const_descriptor
       {
