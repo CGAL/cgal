@@ -144,6 +144,8 @@ namespace CGAL {
       { return idx; }
       size_type index(const_iterator cit) const
       { return cit; }
+      bool is_used(size_type i) const
+      { return mmap.mdarts.is_used(i); }
     private:
       Self & mmap;
     };
