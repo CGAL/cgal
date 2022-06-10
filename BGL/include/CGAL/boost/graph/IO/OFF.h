@@ -153,7 +153,7 @@ bool read_OFF(std::istream& is,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value >* = nullptr
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator_v<Graph>>* = nullptr
 #endif
               )
 {
@@ -237,7 +237,7 @@ bool read_OFF(const std::string& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value >* = nullptr
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator_v<Graph>>* = nullptr
 #endif
               )
 {
@@ -363,7 +363,7 @@ bool write_OFF(std::ostream& os,
                const Graph& g,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value >* = nullptr
+               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator_v<Graph>>* = nullptr
 #endif
                )
 {
@@ -437,7 +437,7 @@ bool write_OFF(const std::string& fname,
                const Graph& g,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value >* = nullptr
+               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator_v<Graph>>* = nullptr
 #endif
                )
 {
