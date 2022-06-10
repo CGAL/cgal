@@ -93,9 +93,9 @@ public:
 template <class T>
 class Rational_traits
     : public internal::Rational_traits_base<T,
-::boost::is_same<typename Fraction_traits<T>::Is_fraction,Tag_true>::value
+::std::is_same<typename Fraction_traits<T>::Is_fraction,Tag_true>::value
 &&
-::boost::is_same<
+::std::is_same<
 typename Fraction_traits<T>::Numerator_type,
 typename Fraction_traits<T>::Denominator_type
 >::value >

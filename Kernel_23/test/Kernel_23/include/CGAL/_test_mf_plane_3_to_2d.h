@@ -31,7 +31,7 @@ _test_mf_plane_3_to_2d(const R& )
  typedef CGAL::Point_3< R>   Point_3;
  typedef CGAL::Point_2< R>   Point_2;
 
- const bool nonexact = boost::is_same<RT, double>::value;
+ const bool nonexact = std::is_same<RT, double>::value;
 
  RT  n0 =  0;
  RT  n1 =  7;

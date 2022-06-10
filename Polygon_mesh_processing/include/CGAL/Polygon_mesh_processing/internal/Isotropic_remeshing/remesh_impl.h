@@ -1525,7 +1525,7 @@ private:
       }
 
       // update status using constrained edge map
-      if (!boost::is_same<EdgeIsConstrainedMap,
+      if (!std::is_same<EdgeIsConstrainedMap,
                           Static_boolean_property_map<edge_descriptor, false> >::value)
       {
         for(edge_descriptor e : edges(mesh_))

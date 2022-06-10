@@ -39,7 +39,7 @@
 
 #define CGAL_CHECK_GMP_EXPR                                             \
     CGAL_static_assertion(                                                \
-            (::boost::is_same< ::__gmp_expr< T , T >,Type>::value ));
+            (::std::is_same< ::__gmp_expr< T , T >,Type>::value ));
 
 namespace CGAL {
 

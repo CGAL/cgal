@@ -30,7 +30,7 @@ _test_cls_aff_transformation_2(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- const bool nonexact = boost::is_same<FT, double>::value;
+ const bool nonexact = std::is_same<FT, double>::value;
 
  typename R::Aff_transformation_2 ia;
  CGAL::Aff_transformation_2<R> a1(ia);

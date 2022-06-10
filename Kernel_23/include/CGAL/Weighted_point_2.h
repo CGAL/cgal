@@ -35,7 +35,7 @@ class Weighted_point_2 : public R_::Kernel_base::Weighted_point_2
   typedef typename R_::FT                             RT;
 
   typedef Weighted_point_2<R_>                        Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Weighted_point_2>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Weighted_point_2>::value));
 
 public:
   typedef Dimension_tag<2>                            Ambient_dimension;

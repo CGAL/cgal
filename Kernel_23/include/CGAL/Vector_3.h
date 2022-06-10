@@ -43,7 +43,7 @@ class Vector_3 : public R_::Kernel_base::Vector_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Vector_3                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Vector_3>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Vector_3>::value));
 
 public:
 

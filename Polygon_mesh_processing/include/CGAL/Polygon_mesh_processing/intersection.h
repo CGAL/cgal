@@ -426,7 +426,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
   VertexPointMap2 vpmap2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm2));
   CGAL_static_assertion(
-      (boost::is_same<
+      (std::is_same<
        typename boost::property_traits<VertexPointMap1>::value_type,
        typename boost::property_traits<VertexPointMap2>::value_type
        >::value) );
@@ -544,7 +544,7 @@ compute_face_polyline_intersection(const FaceRange& face_range,
                                           get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
   CGAL_static_assertion(
-        (boost::is_same<Point,
+        (std::is_same<Point,
         typename boost::range_value<Polyline>::type>::value));
 
   std::vector<face_descriptor> faces;
@@ -681,7 +681,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                           get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
   typedef typename boost::range_value<PolylineRange>::type Polyline;
-  CGAL_static_assertion((boost::is_same<Point, typename boost::range_value<Polyline>::type>::value));
+  CGAL_static_assertion((std::is_same<Point, typename boost::range_value<Polyline>::type>::value));
 
   std::vector<face_descriptor> faces;
   faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
@@ -1429,7 +1429,7 @@ bool do_intersect(const TriangleMesh& tm,
 #ifndef DOXYGEN_RUNNING
                 , const std::enable_if_t<
                     ! boost::mpl::or_<
-                      typename boost::is_same<TriangleMesh, Polyline>::type, // Added to please MSVC 2015
+                      typename std::is_same<TriangleMesh, Polyline>::type, // Added to please MSVC 2015
                       typename boost::mpl::not_<typename boost::has_range_iterator<Polyline>::type>::type, // not a range
                       typename boost::has_range_iterator<
                         typename boost::mpl::eval_if<

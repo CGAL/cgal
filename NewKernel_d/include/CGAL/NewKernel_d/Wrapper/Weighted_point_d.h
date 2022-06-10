@@ -16,7 +16,6 @@
 #include <ostream>
 #include <CGAL/IO/io.h>
 #include <CGAL/representation_tags.h>
-#include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>

@@ -386,7 +386,7 @@ struct TweakedGetVertexPointMap
 {
   typedef typename GetVertexPointMap<PolygonMesh,
                                      NamedParameters>::type Default_map;
-  typedef typename boost::is_same<Point_3,
+  typedef typename std::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
   typedef typename boost::mpl::if_<

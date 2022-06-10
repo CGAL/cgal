@@ -40,7 +40,7 @@ namespace CGAL {
 
     template <class K,class PM,class Base,class Point>
     struct Is_from_point_from_adapter_traits<Search_traits_adapter<K,PM,Base>,Point>{
-      typedef typename boost::is_same<Point,typename Base::Point_d> type;
+      typedef typename std::is_same<Point,typename Base::Point_d> type;
     };
   } //namespace internal
 

@@ -80,7 +80,7 @@ template<class TriangleMesh,
                        AABB_traits<Traits,
                          AABB_halfedge_graph_segment_primitive<TriangleMesh,
                                                                 typename boost::mpl::if_<
-                                                                  typename boost::is_same<
+                                                                  typename std::is_same<
                                                                     VertexPointMap,
                                                                     typename boost::property_map< TriangleMesh, vertex_point_t>::type >::type,
                                                                   Default,

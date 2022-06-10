@@ -128,7 +128,7 @@ struct Dynamic_with_index
 {
   typedef Key key_type;
   typedef Value value_type;
-  typedef typename boost::mpl::if_<  boost::is_same<bool, Value>,
+  typedef typename boost::mpl::if_<  std::is_same<bool, Value>,
                                      value_type,
                                      value_type&>::type  reference;
   typedef boost::read_write_property_map_tag category;

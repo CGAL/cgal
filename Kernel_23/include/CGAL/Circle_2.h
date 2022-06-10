@@ -36,7 +36,7 @@ class Circle_2 : public R_::Kernel_base::Circle_2
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
   typedef Circle_2                           Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Circle_2>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Circle_2>::value));
 
 public:
 

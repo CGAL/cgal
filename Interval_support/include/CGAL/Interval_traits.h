@@ -204,7 +204,7 @@ intersection(Interval interval1, Interval interval2, std::enable_if_t<
 template<typename Interval> inline
 typename Interval_traits<Interval>::Hull::result_type
 hull(Interval interval1, Interval interval2, std::enable_if_t<
-                                                       boost::is_same<
+                                                       std::is_same<
                                                           typename Interval_traits<Interval>::Is_interval,
                                                           Tag_true >::value >* = nullptr)
 {

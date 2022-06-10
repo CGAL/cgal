@@ -509,7 +509,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 operator()(const bool refine)
 {
   // This class is only meant to be used with non-periodic triangulations
-  CGAL_assertion(!(boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+  CGAL_assertion(!(std::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
 
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Inserting protection balls..." << std::endl

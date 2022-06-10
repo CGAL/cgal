@@ -191,7 +191,7 @@ public:
                                 Default,
                                 Ins_fctor_AABB_tree>      Inside_functor;
   typedef typename Inside_functor::AABB_tree              AABB_tree_;
-  BOOST_STATIC_ASSERT((boost::is_same<AABB_tree_, Ins_fctor_AABB_tree>::value));
+  BOOST_STATIC_ASSERT((std::is_same<AABB_tree_, Ins_fctor_AABB_tree>::value));
   typedef typename AABB_tree_::AABB_traits                AABB_traits;
   typedef typename AABB_tree_::Primitive                  AABB_primitive;
   typedef typename AABB_tree_::Primitive_id               AABB_primitive_id;

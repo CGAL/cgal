@@ -400,7 +400,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::false_type) const
+                             std::false_type) const
     { return Base::Construct_curve_2::operator()(begin, end); }
 
     /*! Construction of a polyline from a range of points.
@@ -413,7 +413,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::true_type) const
+                             std::true_type) const
     {
       // The range must not contain a single point.
       CGAL_precondition_msg(std::distance(begin, end) != 1,
@@ -525,7 +525,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
-                                        boost::false_type) const
+                                        std::false_type) const
     { return Base::Construct_x_monotone_curve_2::operator()(begin, end); }
 
     /*! Construction of an x-monotone polyline from a range of points.
@@ -540,7 +540,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
-                                        boost::true_type) const
+                                        std::true_type) const
     {
       // The range must not contain a single point.
       CGAL_precondition_msg(std::distance(begin, end) != 1,

@@ -179,8 +179,8 @@ public:
   template <class NTX>
   explicit Sqrt_extension(const NTX& a, const NTX& b, const NTX& c, const bool is_smaller,
     std::enable_if_t< boost::mpl::and_<
-      boost::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
-      boost::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
+      std::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
+      std::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
     >::value >* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
@@ -229,7 +229,7 @@ public:
     //! Access operator for is_extended_, \c const
     inline const bool& is_extended() const { return is_extended_; }
     inline bool is_rational() const {
-      CGAL_precondition( (boost::is_same<NT,ROOT>::value) || !"NT and ROOT should be identical and rational");
+      CGAL_precondition( (std::is_same<NT,ROOT>::value) || !"NT and ROOT should be identical and rational");
       return !is_extended_;} //for backward compatibility
 
     //!check if the number is an extension (test the values) and update the internal flag

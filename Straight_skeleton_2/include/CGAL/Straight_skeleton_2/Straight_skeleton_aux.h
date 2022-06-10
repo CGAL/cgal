@@ -34,8 +34,8 @@ template<class K> struct Has_inexact_constructions
 {
   typedef typename K::FT FT ;
 
-  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
-                                                   , boost::is_same<FT,Interval_nt_advanced>
+  typedef typename boost::mpl::if_< boost::mpl::or_< std::is_same<FT,double>
+                                                   , std::is_same<FT,Interval_nt_advanced>
                                                    >
                                   , Tag_true
                                   , Tag_false

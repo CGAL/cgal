@@ -44,7 +44,7 @@ template <class R_>
   typedef typename R_::Direction_3           Direction_3;
 
   typedef Circle_3                           Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Circle_3>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Circle_3>::value));
 
 public:
 

@@ -644,7 +644,7 @@ protected:
                            const HalfedgeIndexMap& him,
                            const FaceIndexMap& fim,
                            typename std::enable_if <
-                              !boost::is_same<FaceIndexMap, bool>::value
+                              !std::is_same<FaceIndexMap, bool>::value
                            >* = nullptr // disambiguate with another constructor
   ) : Nef_polyhedron_3(Private_tag{})
   {

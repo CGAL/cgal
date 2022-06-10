@@ -429,6 +429,7 @@ struct Arr_sane_identified_tagging {
    * otherwise bool_<false>
    */
   typedef boost::mpl::and_<LR_ok, BT_ok>                result;
+  static constexpr bool value = result::value;
 };
 
 /*! Checks whether one of two boundary sides are identified

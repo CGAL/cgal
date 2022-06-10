@@ -182,7 +182,7 @@ struct Is_cartesian_kernel< Convex_hull_traits_3<Kernel, PolygonMesh, Tag_true> 
 {
   // Rational here is that Tag_true can only be passed by us since it is not documented
   // so we can assume that Kernel is a CGAL Kernel
-  typedef typename boost::is_same<typename Kernel::Kernel_tag, Cartesian_tag>::type type;
+  typedef typename std::is_same<typename Kernel::Kernel_tag, Cartesian_tag>::type type;
 };
 
 // Predicate internally used as a wrapper around has_on_positive_side

@@ -188,7 +188,7 @@ no_topological_change(Tr& tr,
   //
   // Note that the function was nevertheless adapted to work with periodic triangulation
   // so this hack can be disabled if one day 'side_of_power_sphere()' is improved.
-  if(boost::is_same<typename Tr::Periodic_tag, Tag_true>::value)
+  if(std::is_same<typename Tr::Periodic_tag, Tag_true>::value)
     return false;
 
   typename Gt::Construct_opposite_vector_3 cov =

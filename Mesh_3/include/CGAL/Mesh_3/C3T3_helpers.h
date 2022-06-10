@@ -2668,7 +2668,7 @@ update_mesh(const Vertex_handle& old_vertex,
 
   // Fill modified vertices
   if ( fill_vertices
-        && !(boost::is_same<OutputIterator,CGAL::Emptyset_iterator>::value))
+        && !(std::is_same<OutputIterator,CGAL::Emptyset_iterator>::value))
   {
     fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
                            new_vertex, modified_vertices);
@@ -3284,7 +3284,7 @@ move_point_topo_change_conflict_zone_known(
   std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
 
   // Fill deleted_cells
-  if(! boost::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
+  if(! std::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
     std::copy(conflict_zone.begin(), conflict_zone.end(), deleted_cells);
 
   return new_vertex;

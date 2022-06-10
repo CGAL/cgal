@@ -25,8 +25,6 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
-#include <boost/static_assert.hpp>
-
 namespace CGAL{
 
 using ::get;

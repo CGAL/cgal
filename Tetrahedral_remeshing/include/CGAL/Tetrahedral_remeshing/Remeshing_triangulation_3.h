@@ -25,7 +25,6 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/tags.h>
 
-#include <boost/static_assert.hpp>
 #include <type_traits>
 
 namespace CGAL

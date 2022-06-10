@@ -95,7 +95,7 @@ _test_further_fct_point_2(const R& )
  using CGAL::testsuite::approx_equal;
  using CGAL::testsuite::Direction_2_tag;
 
- const bool nonexact = boost::is_same<FT, double>::value;
+ const bool nonexact = std::is_same<FT, double>::value;
 
  assert( approx_equal((p5 - CGAL::ORIGIN).direction(), dir5, Direction_2_tag()) );
 
