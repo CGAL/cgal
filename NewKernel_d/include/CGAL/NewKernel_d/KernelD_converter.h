@@ -21,7 +21,7 @@
 #include <CGAL/NT_converter.h>
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 #include <boost/mpl/if.hpp>
 #include <CGAL/NewKernel_d/store_kernel.h>

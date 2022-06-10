@@ -16,7 +16,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/Return_base_tag.h>

@@ -13,7 +13,7 @@
 #define CGAL_CARTESIAN_LA_FUNCTORS_H
 
 #include <CGAL/NewKernel_d/utils.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/argument_swaps.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/transforming_iterator.h>

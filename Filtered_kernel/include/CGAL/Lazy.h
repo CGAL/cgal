@@ -27,7 +27,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/tss.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 
 #include <boost/optional.hpp>

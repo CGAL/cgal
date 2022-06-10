@@ -20,7 +20,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/global_functions.h>
 
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <boost/utility.hpp>
 
 #include <iterator>

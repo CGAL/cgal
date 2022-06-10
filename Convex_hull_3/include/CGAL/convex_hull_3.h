@@ -40,7 +40,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>

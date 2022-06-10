@@ -13,7 +13,7 @@
 
 #include <CGAL/Container_helper.h>
 #include <CGAL/IO/io.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 

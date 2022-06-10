@@ -13,7 +13,7 @@
 #define CGAL_KERNEL_D_CARTESIAN_WRAP_H
 
 #include <CGAL/basic.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)

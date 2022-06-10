@@ -16,7 +16,7 @@
 
 #include <CGAL/Interpolation/internal/helpers.h>
 
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/iterator.h>
 #include <CGAL/utility.h>
 #include <CGAL/function_objects.h>

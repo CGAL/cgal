@@ -16,7 +16,7 @@
 #include <CGAL/Container_helper.h>
 #include <CGAL/Has_member.h>
 #include <CGAL/Point_3.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <boost/mpl/logical.hpp>
 #include <boost/mpl/has_xxx.hpp>

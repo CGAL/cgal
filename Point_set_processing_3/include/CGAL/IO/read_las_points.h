@@ -23,7 +23,7 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>

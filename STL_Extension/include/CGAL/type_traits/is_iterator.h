@@ -14,8 +14,8 @@
 // Author(s)     : Marc Glisse
 
 
-#ifndef CGAL_IS_ITERATOR_H
-#define CGAL_IS_ITERATOR_H
+#ifndef CGAL_TYPE_TRAITS_IS_ITERATOR_H
+#define CGAL_TYPE_TRAITS_IS_ITERATOR_H
 
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_pointer.hpp>
