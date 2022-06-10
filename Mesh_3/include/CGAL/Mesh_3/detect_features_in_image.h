@@ -21,12 +21,12 @@
 
 #include <CGAL/ImageIO.h>
 
-#include <CGAL/Mesh_3/triple_lines_extraction/coordinates.h>
-#include <CGAL/Mesh_3/triple_lines_extraction/combinations.h>
-#include <CGAL/Mesh_3/triple_lines_extraction/cases_table.h>
-#include <CGAL/Mesh_3/triple_lines_extraction/triple_lines.h>
-#include <CGAL/Mesh_3/triple_lines_extraction/cube_isometries.h>
-#include <CGAL/Mesh_3/triple_lines_extraction/triple_lines_extraction_helpers.h>
+#include <CGAL/Mesh_3/features_detection/coordinates.h>
+#include <CGAL/Mesh_3/features_detection/combinations.h>
+#include <CGAL/Mesh_3/features_detection/cases_table.h>
+#include <CGAL/Mesh_3/features_detection/features_detection.h>
+#include <CGAL/Mesh_3/features_detection/cube_isometries.h>
+#include <CGAL/Mesh_3/features_detection/features_detection_helpers.h>
 
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 
@@ -46,8 +46,8 @@ namespace Mesh_3
 // by declaring 1D-features. Note that `CGAL::polylines_to_protect` is
 // not documented.
 template<typename Word_type, typename Mesh_domain>
-bool detect_triple_lines_with_know_word_type(const CGAL::Image_3& image,
-                                             Mesh_domain& domain)
+bool detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
+                                                  Mesh_domain& domain)
 {
   using Gt = typename Mesh_domain::R;
   using Point_3 = typename Gt::Point_3;
@@ -238,10 +238,10 @@ bool detect_triple_lines_with_know_word_type(const CGAL::Image_3& image,
 }
 
 template<typename Mesh_domain>
-bool detect_triple_lines(const CGAL::Image_3& image, Mesh_domain& domain)
+bool detect_features_in_image(const CGAL::Image_3& image, Mesh_domain& domain)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
-    return detect_triple_lines_with_know_word_type<Word>(image, domain)
+    return detect_features_in_image_with_know_word_type<Word>(image, domain)
   );
   CGAL_error_msg("This place should never be reached, because it would mean "
                  "the image word type is a type that is not handled by "

@@ -37,6 +37,7 @@
 #include <CGAL/SMDS_3/internal/indices_management.h>
 
 // support for `CGAL::Image_3`
+// support for `CGAL::Image_3`
 #include <CGAL/Image_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 #include <CGAL/Mesh_3/Image_plus_weights_to_labeled_function_wrapper.h>
@@ -55,7 +56,7 @@
 #endif
 #include <boost/optional.hpp>
 
-#include <CGAL/Mesh_3/detect_triple_lines.h> //needs Null_subdomain_index
+#include <CGAL/Mesh_3/detect_features_in_image.h> //needs Null_subdomain_index
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -497,7 +498,7 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
           p::null_subdomain_index = null_subdomain_index_,
           p::construct_surface_patch_index = construct_surface_patch_index_);
 
-    CGAL::Mesh_3::detect_triple_lines(image_, domain);
+    CGAL::Mesh_3::detect_features_in_image(image_, domain);
 
     return domain;
   }
