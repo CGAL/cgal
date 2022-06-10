@@ -154,21 +154,16 @@ class Polygon_2 {
     /// @{
 
     /// Creates an empty polygon.
-    Polygon_2() : traits() {}
+    Polygon_2() = default;
 
     /// Creates an empty polygon.
     Polygon_2(const Traits & p_traits) : traits(p_traits) {}
 
     /// Copy constructor.
-    Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
-      : d_container(polygon.d_container), traits(polygon.traits) {}
+    Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon) = default;
 
     /// Move constructor
-    Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon)
-      : d_container(std::move(polygon.d_container)), traits(polygon.traits)
-    {
-        CGAL_assertion(polygon.is_empty());
-    }
+    Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon) = default;
 
     /// Creates a polygon with vertices from the sequence
     /// defined by the range \c [first,last).
@@ -180,12 +175,8 @@ class Polygon_2 {
     {}
 
 #ifndef DOXYGEN_RUNNING
-  Polygon_2& operator=(const Polygon_2&)=default;
-  Polygon_2& operator=(Polygon_2&& p)
-  {
-    d_container = std::move(p.d_container);
-    return *this;
-  }
+  Polygon_2& operator=(const Polygon_2&) = default;
+  Polygon_2& operator=(Polygon_2&& p) = default;
 #endif
 
     /// @}
