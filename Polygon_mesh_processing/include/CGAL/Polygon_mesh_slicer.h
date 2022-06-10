@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <set>
+#include <type_traits>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Traversal_traits.h>
@@ -30,7 +31,6 @@
 
 #include <boost/variant.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>

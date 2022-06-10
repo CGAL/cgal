@@ -3,10 +3,10 @@
 #endif
 #include <CGAL/tags.h>
 #include <boost/mpl/assert.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <cassert>
+#include <type_traits>
 
-using boost::is_same;
+using std::is_same;
 using CGAL::Tag_true;
 using CGAL::Tag_false;
 

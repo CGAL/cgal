@@ -35,7 +35,7 @@ class Weighted_point_d : public Get_type<typename R_::Kernel_base, Weighted_poin
   typedef typename Get_functor<Kbase, Point_weight_tag>::type                        PWBase;
 
   typedef Weighted_point_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Weighted_point_tag>::type>::value));
+  BOOST_STATIC_ASSERT((std::is_same<Self, typename Get_type<R_, Weighted_point_tag>::type>::value));
 
 public:
 

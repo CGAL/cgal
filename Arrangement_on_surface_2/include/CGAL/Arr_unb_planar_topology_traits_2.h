@@ -89,26 +89,26 @@ public:
 
   BOOST_MPL_ASSERT(
       (boost::mpl::or_<
-       boost::is_same< Left_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Left_side_category, Arr_open_side_tag > >
+       std::is_same< Left_side_category, Arr_oblivious_side_tag >,
+       std::is_same< Left_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
       (boost::mpl::or_<
-       boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Bottom_side_category, Arr_open_side_tag > >
+       std::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
+       std::is_same< Bottom_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
       (boost::mpl::or_<
-       boost::is_same< Top_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Top_side_category, Arr_open_side_tag > >
+       std::is_same< Top_side_category, Arr_oblivious_side_tag >,
+       std::is_same< Top_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
       (boost::mpl::or_<
-       boost::is_same< Right_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Right_side_category, Arr_open_side_tag > >
+       std::is_same< Right_side_category, Arr_oblivious_side_tag >,
+       std::is_same< Right_side_category, Arr_open_side_tag > >
       )
   );
   //@}

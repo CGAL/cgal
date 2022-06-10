@@ -33,7 +33,6 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Sqrt_extension_fwd.h>
 #include <boost/optional.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/NT_converter.h>
 
 #include <type_traits>

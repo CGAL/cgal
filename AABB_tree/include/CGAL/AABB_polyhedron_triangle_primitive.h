@@ -22,7 +22,6 @@
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_face_graph_triangle_primitive.h>"
 #include <CGAL/Installation/internal/deprecation_warning.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <type_traits>
 
 namespace CGAL {

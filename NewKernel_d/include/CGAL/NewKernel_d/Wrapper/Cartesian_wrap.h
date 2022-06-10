@@ -189,8 +189,8 @@ struct Cartesian_refcount : public Base_
             //typedef typename map_functor_type<T>::type f_t;
             typedef typename map_result_tag<T>::type r_t;
             enum {
-                    is_nul = boost::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value,
-                    ret_rcobj = boost::is_same<r_t,Point_tag>::value || boost::is_same<r_t,Vector_tag>::value
+                    is_nul = std::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value,
+                    ret_rcobj = std::is_same<r_t,Point_tag>::value || std::is_same<r_t,Vector_tag>::value
             };
     };
 

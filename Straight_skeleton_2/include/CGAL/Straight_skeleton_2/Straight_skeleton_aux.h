@@ -21,9 +21,9 @@
 #include <boost/mpl/or.hpp>
 #include <boost/none.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <iostream>
+#include <type_traits>
 
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 namespace CGAL {

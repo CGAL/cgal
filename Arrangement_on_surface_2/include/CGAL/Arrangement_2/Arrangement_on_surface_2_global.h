@@ -73,7 +73,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::Curve_2& c,
             const PointLocation& pl, ZoneVisitor &visitor,
-            boost::is_same<int, double>::type)
+            std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -145,7 +145,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::X_monotone_curve_2& c,
             const PointLocation& pl, ZoneVisitor &visitor,
-            boost::is_same<int, int>::type)
+            std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -184,7 +184,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 {
   typedef GeometryTraits_2                              Gt2;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
+  typedef typename std::is_same<Curve, X_monotone_curve_2>::type
                                                         Is_x_monotone;
 
   insert(arr, c, pl, visitor, Is_x_monotone());
@@ -271,7 +271,7 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep:
@@ -326,7 +326,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep.
@@ -379,7 +379,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -417,7 +417,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             InputIterator begin, InputIterator end,
-            boost::is_same<int, double>::type)
+            std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -471,7 +471,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             InputIterator begin, InputIterator end,
-            boost::is_same<int, int>::type)
+            std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -513,7 +513,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>& arr,
   typedef typename std::iterator_traits<InputIterator>::value_type
                                                         Iterator_value_type;
 
-  typedef typename boost::is_same<Iterator_value_type,X_monotone_curve_2>::type
+  typedef typename std::is_same<Iterator_value_type,X_monotone_curve_2>::type
                                                         Is_x_monotone;
 
   return insert(arr, begin, end, Is_x_monotone());
@@ -979,7 +979,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -1533,7 +1533,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 bool
 do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
              const typename GeometryTraits_2::X_monotone_curve_2& c,
-             const PointLocation& pl, boost::is_same<int, int>::type)
+             const PointLocation& pl, std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -1571,7 +1571,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 bool
 do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
              const typename GeometryTraits_2::X_monotone_curve_2& c,
-             const PointLocation& pl, boost::is_same<int, double>::type)
+             const PointLocation& pl, std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -1628,7 +1628,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
-  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
+  typedef typename std::is_same<Curve, X_monotone_curve_2>::type
                                                         Is_x_monotone;
 
   return do_intersect(arr, c, pl, Is_x_monotone());

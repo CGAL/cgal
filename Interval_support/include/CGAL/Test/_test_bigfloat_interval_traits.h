@@ -17,13 +17,14 @@
 
 #include <cstddef>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 
 #include <cassert>
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
 
 #include <CGAL/Bigfloat_interval_traits.h>
+
+#include <type_traits>
 
 #ifndef CGAL_TEST_BIGFLOAT_INTERVAL_TRAITS_H
 #define CGAL_TEST_BIGFLOAT_INTERVAL_TRAITS_H

@@ -44,9 +44,10 @@
 
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/graph/graph_traits.hpp>
+
+#include <type_traits>
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_3.h>

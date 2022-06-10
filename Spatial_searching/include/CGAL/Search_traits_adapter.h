@@ -23,8 +23,9 @@
 #include <CGAL/assertions.h>
 
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+
+#include <boost/static_assert.hpp>
 
 namespace CGAL{
 

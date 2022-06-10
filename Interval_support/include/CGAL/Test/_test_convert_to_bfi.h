@@ -17,7 +17,6 @@
 
 #include <cstddef>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 
 #include <cassert>
 #include <CGAL/tags.h>
@@ -25,6 +24,8 @@
 
 #include <CGAL/convert_to_bfi.h>
 #include <CGAL/Sqrt_extension.h>
+
+#include <type_traits>
 
 #ifndef CGAL_TEST_CONVERT_TO_BFI_H
 #define CGAL_TEST_CONVERT_TO_BFI_H

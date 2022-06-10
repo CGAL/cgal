@@ -425,7 +425,7 @@ CGAL_KD_DEFAULT_FUNCTOR(Linear_base_tag,(CartesianDKernelFunctors::Linear_base<K
 
 #if 0
 namespace CartesianDKernelFunctors {
-template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
+template<class R_,bool=std::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Orientation)
         typedef R_ R;
         typedef typename Get_type<R, Vector_tag>::type Vector;

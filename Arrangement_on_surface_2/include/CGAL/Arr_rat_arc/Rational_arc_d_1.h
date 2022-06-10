@@ -20,6 +20,7 @@
 #include <vector>
 #include <list>
 #include <ostream>
+#include <type_traits>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
@@ -34,7 +35,6 @@
 #include <CGAL/Arr_rat_arc/Rational_function.h>
 #include <CGAL/Arr_rat_arc/Rational_function_pair.h>
 
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 namespace Arr_rational_arc {
@@ -100,8 +100,8 @@ public:
 
   typedef Algebraic_point_2                                 Point_2;
 
-  CGAL_static_assertion((boost::is_same<Integer, Coefficient>::value));
-  CGAL_static_assertion((boost::is_same<Polynomial_1,
+  CGAL_static_assertion((std::is_same<Integer, Coefficient>::value));
+  CGAL_static_assertion((std::is_same<Polynomial_1,
                        typename FT_poly_rat_1::Numerator_type>::value));
 
 public:

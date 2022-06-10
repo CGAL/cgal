@@ -23,7 +23,6 @@
 #include <CGAL/Search_traits_adapter.h>
 
 #include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 

@@ -18,8 +18,9 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/variant.hpp>
+
+#include <type_traits>
 
 #define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2)                \
   template<typename K>     \

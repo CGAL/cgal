@@ -23,9 +23,9 @@
 #define CGAL_COERCION_TRAITS_H 1
 
 #include <iterator>
+#include <type_traits>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/tags.h>
 

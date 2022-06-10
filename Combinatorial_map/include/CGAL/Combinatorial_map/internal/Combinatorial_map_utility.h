@@ -16,8 +16,8 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Concurrent_compact_container.h>
 #include <iostream>
+#include <type_traits>
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/function.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
@@ -152,8 +152,8 @@ namespace CGAL
         <Type,k,std::tuple<T...>,dim>::pos - 1;
 
       static const int value =
-        ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? 0:-dim-1 )
-        :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 1:0 )
+        ( pos==k  ) ?  ( std::is_same<T1,Type>::value ? 0:-dim-1 )
+        :  ( ( pos<k ) ? ( ( std::is_same<T1,Type>::value ? 1:0 )
                            + Nb_type_in_tuple_up_to_k
                            <Type,k,std::tuple
                            <T...>,dim >::value)
@@ -166,7 +166,7 @@ namespace CGAL
     {
       static const int pos=dim;
       static const int value=(pos==k?
-                              (boost::is_same<T1,Type>::value?0:-dim-1) :
+                              (std::is_same<T1,Type>::value?0:-dim-1) :
                               0);
     };
 
@@ -185,8 +185,8 @@ namespace CGAL
         <Type,k,std::tuple<T...>,dim >::pos - 1;
 
       static const int value =
-        ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? -dim-1 : 0 )
-        :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 0:1 )
+        ( pos==k  ) ?  ( std::is_same<T1,Type>::value ? -dim-1 : 0 )
+        :  ( ( pos<k ) ? ( ( std::is_same<T1,Type>::value ? 0:1 )
                            + Nb_type_different_in_tuple_up_to_k
                            <Type,k,std::tuple<T...>,dim >::value)
              :0
@@ -199,7 +199,7 @@ namespace CGAL
     {
       static const int pos=dim;
       static const int value=(pos==k?
-                              (boost::is_same<T1,Type>::value?-dim-1:0) :
+                              (std::is_same<T1,Type>::value?-dim-1:0) :
                               0);
     };
 
@@ -423,7 +423,7 @@ namespace CGAL
 
         // TODO case when there is no Use_index typedef in CMap
         typedef typename boost::mpl::if_
-        < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
+        < typename std::is_same<typename CMap::Use_index,Tag_true>::type,
           typename CMap::Dart_handle, iterator_type >::type type;
       };
 
@@ -436,7 +436,7 @@ namespace CGAL
         const_iterator iterator_type;
 
         typedef typename boost::mpl::if_
-             < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
+             < typename std::is_same<typename CMap::Use_index,Tag_true>::type,
                typename CMap::Dart_handle, iterator_type >::type type;
       };
 

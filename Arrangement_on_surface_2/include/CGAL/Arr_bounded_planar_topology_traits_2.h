@@ -91,13 +91,13 @@ public:
   typedef typename Gt_adaptor_2::Right_side_category  Right_side_category;
 
   BOOST_MPL_ASSERT
-  ((boost::is_same< Left_side_category, Arr_oblivious_side_tag >));
+  ((std::is_same< Left_side_category, Arr_oblivious_side_tag >));
   BOOST_MPL_ASSERT
-  ((boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >));
+  ((std::is_same< Bottom_side_category, Arr_oblivious_side_tag >));
   BOOST_MPL_ASSERT
-  ((boost::is_same< Top_side_category, Arr_oblivious_side_tag >));
+  ((std::is_same< Top_side_category, Arr_oblivious_side_tag >));
   BOOST_MPL_ASSERT
-  ((boost::is_same< Right_side_category, Arr_oblivious_side_tag >));
+  ((std::is_same< Right_side_category, Arr_oblivious_side_tag >));
   //@}
 
   /*! \struct

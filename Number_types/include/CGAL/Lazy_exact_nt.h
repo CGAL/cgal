@@ -18,7 +18,6 @@
 
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <boost/operators.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 
 #include <boost/mpl/if.hpp>
