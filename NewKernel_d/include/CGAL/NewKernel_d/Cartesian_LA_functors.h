@@ -72,13 +72,13 @@ template<class R_,class Zero_> struct Construct_LA_vector
                 return Apply_to_last_then_rest()(typename Constructor::Values_divide(),std::forward<U>(u)...);
         }
         template<class Iter> inline
-          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type_v<Iter,std::forward_iterator_tag>,result_type> operator()
                 (Iter f,Iter g,Cartesian_tag t)const
         {
                 return this->operator()((int)std::distance(f,g),f,g,t);
         }
         template<class Iter> inline
-          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type_v<Iter,std::forward_iterator_tag>,result_type> operator()
                 (int d,Iter f,Iter g,Cartesian_tag)const
         {
                 CGAL_assertion(d==std::distance(f,g));
@@ -86,28 +86,28 @@ template<class R_,class Zero_> struct Construct_LA_vector
                 return typename Constructor::Iterator()(d,f,g);
         }
         template<class Iter> inline
-          std::enable_if_t<is_iterator_type<Iter,std::bidirectional_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type_v<Iter,std::bidirectional_iterator_tag>,result_type> operator()
                 (Iter f,Iter g,Homogeneous_tag)const
         {
                 --g;
                 return this->operator()((int)std::distance(f,g),f,g,*g);
         }
         template<class Iter> inline
-          std::enable_if_t<is_iterator_type<Iter,std::bidirectional_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type_v<Iter,std::bidirectional_iterator_tag>,result_type> operator()
                 (int d,Iter f,Iter g,Homogeneous_tag)const
         {
                 --g;
                 return this->operator()(d,f,g,*g);
         }
         template<class Iter> inline
-          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type_v<Iter,std::forward_iterator_tag>,result_type> operator()
                 (Iter f,Iter g)const
         {
           // Shouldn't it try comparing dist(f,g) to the dimension if it is known?
                 return this->operator()(f,g,typename R::Rep_tag());
         }
         template<class Iter> inline
-          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type_v<Iter,std::forward_iterator_tag>,result_type> operator()
                 (int d,Iter f,Iter g)const
         {
                 return this->operator()(d,f,g,typename R::Rep_tag());
@@ -115,7 +115,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 
         // Last homogeneous coordinate given separately
         template<class Iter,class NT> inline
-          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type_v<Iter,std::forward_iterator_tag>,result_type> operator()
                 (int d,Iter f,Iter g,NT const&l)const
         {
                 CGAL_assertion(d==std::distance(f,g));
@@ -124,7 +124,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
                 return typename Constructor::Iterator()(d,CGAL::make_transforming_iterator(f,Divide<FT,NT>(l)),CGAL::make_transforming_iterator(g,Divide<FT,NT>(l)));
         }
         template<class Iter,class NT> inline
-          std::enable_if_t<is_iterator_type<Iter,std::forward_iterator_tag>::value,result_type> operator()
+          std::enable_if_t<is_iterator_type_v<Iter,std::forward_iterator_tag>,result_type> operator()
                 (Iter f,Iter g,NT const&l)const
         {
                 return this->operator()((int)std::distance(f,g),f,g,l);

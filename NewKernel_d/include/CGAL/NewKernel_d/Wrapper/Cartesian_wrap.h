@@ -47,7 +47,7 @@ template<class T> struct Is_wrapper<T,true> {
         enum { value=type::value };
 };
 
-template<class T,bool=is_iterator_type<T,std::input_iterator_tag>::value> struct Is_wrapper_iterator {
+template<class T,bool=is_iterator_type_v<T,std::input_iterator_tag>> struct Is_wrapper_iterator {
         enum { value=false };
         typedef Tag_false type;
 };

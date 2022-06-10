@@ -52,7 +52,7 @@ bool read_PLY(std::istream& is,
               ColorOutputIterator vc_out,
               HUVOutputIterator huvs_out,
               const bool verbose = false,
-              std::enable_if_t<CGAL::is_iterator<ColorOutputIterator>::value>* = nullptr)
+              std::enable_if_t<CGAL::is_iterator_v<ColorOutputIterator>>* = nullptr)
 {
   typedef typename boost::range_value<PointRange>::type     Point_3;
   typedef CGAL::IO::Color                                   Color_rgb;

@@ -476,7 +476,7 @@ bool read_LAS(std::istream& is,
 
 template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
+              std::enable_if_t<CGAL::is_iterator_v<OutputIterator>>* = nullptr)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }

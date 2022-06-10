@@ -114,11 +114,11 @@ template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> approx(T){r
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, int> depth(T){return -1;}
 
 // For an iterator, exact/approx applies to the objects it points to
-template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
+template <class T, class=std::enable_if_t<is_iterator_type_v<T,std::input_iterator_tag>>>
 auto exact(T const& t) {return make_transforming_iterator(t,[](auto const&u)->decltype(auto){return CGAL::exact(u);});}
-template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
+template <class T, class=std::enable_if_t<is_iterator_type_v<T,std::input_iterator_tag>>>
 auto approx(T const& t) {return make_transforming_iterator(t,[](auto const&u)->decltype(auto){return CGAL::approx(u);});}
-template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
+template <class T, class=std::enable_if_t<is_iterator_type_v<T,std::input_iterator_tag>>>
 int depth(T const&) {return 1;} // FIXME: depth(*t) would be better when t is valid, but not for end iterators, and the true answer would iterate on the range, but we can't do that with only one iterator... We need to replace iterators with ranges to solve that.
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG

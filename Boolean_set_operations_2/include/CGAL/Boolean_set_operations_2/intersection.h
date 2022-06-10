@@ -286,8 +286,7 @@ inline OutputIterator
 intersection(InputIterator begin, InputIterator end,
              OutputIterator oi, unsigned int k=5,
              // workaround to avoid ambiguous calls with kernel functions
-             typename boost::enable_if
-               <typename CGAL::is_iterator<InputIterator>>::type* = 0,
+             std::enable_if_t<CGAL::is_iterator_v<InputIterator>>* = 0,
              Disable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
   typename Iterator_to_gps_traits<InputIterator>::Traits traits;

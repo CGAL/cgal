@@ -463,12 +463,12 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
         //when Point and Vector are distinct types, the dispatch should be made
         //in a way that doesn't instantiate a conversion from Point to Vector
         template<class Iter>
-        std::enable_if_t<is_iterator_to<Iter,Point>::value,result_type>
+        std::enable_if_t<is_iterator_to_v<Iter,Point>,result_type>
         operator()(Iter const&f, Iter const& e)const{
                 return OP(this->kernel())(f,e);
         }
         template<class Iter>
-        std::enable_if_t<is_iterator_to<Iter,Vector>::value,result_type>
+        std::enable_if_t<is_iterator_to_v<Iter,Vector>,result_type>
         operator()(Iter const&f, Iter const& e)const{
                 return OV(this->kernel())(f,e);
         }

@@ -244,7 +244,7 @@ bool read_PLY(std::istream& is,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
+              , std::enable_if_t<CGAL::is_iterator_v<PointOutputIterator>>* = nullptr
 #endif
               )
 {
@@ -326,7 +326,7 @@ bool read_PLY(const std::string& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
+              , std::enable_if_t<CGAL::is_iterator_v<PointOutputIterator>>* = nullptr
 #endif
               )
 {
@@ -350,14 +350,14 @@ bool read_PLY(const std::string& fname,
 // variants with default output iterator value type
 template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
+              std::enable_if_t<CGAL::is_iterator_v<OutputIterator>>* = nullptr)
 {
   return read_PLY<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
+              std::enable_if_t<CGAL::is_iterator_v<OutputIterator>>* = nullptr)
 {
   return read_PLY<typename value_type_traits<OutputIterator>::type>(fname, output, np);
 }
