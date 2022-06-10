@@ -20,7 +20,6 @@
 #include <boost/operators.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/logical.hpp>
@@ -36,6 +35,8 @@
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/tss.h>
 #include <CGAL/type_traits.h>
+
+#include<type_traits>
 
 #include <CGAL/IO/io.h>
 
@@ -382,9 +383,9 @@ public :
 
   // Also check that ET and AT are constructible from T?
   template<class T>
-  Lazy_exact_nt (T i, typename boost::enable_if<boost::mpl::and_<
+  Lazy_exact_nt (T i, std::enable_if_t<boost::mpl::and_<
       boost::mpl::or_<boost::is_arithmetic<T>, std::is_enum<T> >,
-      boost::mpl::not_<boost::is_same<T,ET> > >,void*>::type=0)
+      boost::mpl::not_<boost::is_same<T,ET> > >::value,void*> = 0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
   Lazy_exact_nt (const ET & e)
@@ -394,12 +395,12 @@ public :
 
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
-      typename boost::enable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
+      std::enable_if_t<is_implicit_convertible<ET1,ET>::value,int> = 0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
 
   template <class ET1>
   explicit Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
-  typename boost::disable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
+  typename boost::enable_if_t<!is_implicit_convertible<ET1,ET>::value,int> = 0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
 
   friend void swap(Lazy_exact_nt& a, Lazy_exact_nt& b) noexcept

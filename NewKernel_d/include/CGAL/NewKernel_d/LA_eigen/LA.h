@@ -16,7 +16,6 @@
 #error Requires Eigen
 #endif
 #include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <CGAL/Dimension.h>
 #include <Eigen/Dense>
 #include <CGAL/NewKernel_d/LA_eigen/constructors.h>

@@ -54,7 +54,7 @@ public:
     return CGAL::get_pointee_or_identity(data);
   }
 
-  template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Ref_count_obj> >::value>::type> explicit Ref_count_obj(U&&...u)
+  template<class...U,class=std::enable_if_t<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Ref_count_obj> >::value>> explicit Ref_count_obj(U&&...u)
           : data(Eval_functor(),CBase(),std::forward<U>(u)...){}
 
   template<class F,class...U> explicit Ref_count_obj(Eval_functor&&,F&&f,U&&...u)

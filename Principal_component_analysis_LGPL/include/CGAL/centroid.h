@@ -25,6 +25,7 @@
 
 #include <iterator>
 #include <list>
+#include <type_traits>
 
 // Functions to compute the centroid of N points.
 // Works in 2D and 3D.
@@ -822,7 +823,7 @@ struct Dispatch_centroid_3
 
 template < typename InputIterator, typename K>
 typename internal::Dispatch_centroid_3<
-  typename boost::enable_if<is_iterator<InputIterator>,InputIterator>::type,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   K,Dynamic_dimension_tag>::result_type
 centroid(InputIterator begin, InputIterator end, const K& k, Dynamic_dimension_tag tag)
 {
@@ -831,7 +832,7 @@ centroid(InputIterator begin, InputIterator end, const K& k, Dynamic_dimension_t
 
 template < typename InputIterator, typename K, int d >
 typename internal::Dispatch_centroid_3<
-  typename boost::enable_if<is_iterator<InputIterator>,InputIterator>::type,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   K,Dimension_tag<d> >::result_type
 centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<d> tag)
 {
@@ -896,7 +897,7 @@ struct Dispatch_centroid <InputIterator, Dynamic_dimension_tag>
 template < typename InputIterator, typename Kernel_or_dim >
 inline
 typename internal::Dispatch_centroid<
-  typename boost::enable_if<is_iterator<InputIterator>,InputIterator>::type,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   Kernel_or_dim>::result_type
 centroid(InputIterator begin, InputIterator end, const Kernel_or_dim& k_or_d)
 {

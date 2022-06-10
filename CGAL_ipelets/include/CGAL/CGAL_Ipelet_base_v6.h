@@ -338,12 +338,12 @@ public:
     draw_polyline_in_ipe(const iterator first, const iterator last,
                          bool setclose=false,bool deselect_all=false,
                          bool blackfill=false,
-                         typename boost::enable_if<
+                         std::enable_if_t<
                                     boost::is_same<
                                       typename std::iterator_traits<iterator>::value_type,
                                       Point_2
-                                    >
-                                  >::type* =nullptr) const
+                                    >::value
+                                  >* =nullptr) const
     {
       IpeSegmentSubPath* SSP_ipe=create_polyline(first,last,setclose);
       if (SSP_ipe!=nullptr){
@@ -636,13 +636,13 @@ public:
     template<class iterator>
     void
     draw_in_ipe(const iterator begin,const iterator end,const Iso_rectangle_2& bbox,bool make_grp=true,bool deselect_all=false,
-     typename boost::enable_if<  boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Point_2> ,
-                                 boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Segment_2> ,
-                                 boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circle_2> ,
-                                 boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
-                                                  boost::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
-                                                > > > >
-                    >::type* = nullptr) const
+     std::enable_if_t<  boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Point_2> ,
+                        boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Segment_2> ,
+                        boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circle_2> ,
+                        boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
+                                         boost::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
+                                      > > > >::value
+                    >* = nullptr) const
     {
       for (iterator it=begin;it!=end;++it)
         draw_in_ipe(*it,bbox);

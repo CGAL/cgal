@@ -36,6 +36,8 @@
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/NT_converter.h>
 
+#include <type_traits>
+
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
 namespace CGAL {
@@ -177,10 +179,10 @@ public:
      */
   template <class NTX>
   explicit Sqrt_extension(const NTX& a, const NTX& b, const NTX& c, const bool is_smaller,
-    typename boost::enable_if< boost::mpl::and_<
+    std::enable_if_t< boost::mpl::and_<
       boost::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
       boost::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
-    > >::type* = 0  )
+    >::value >* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
     typename Fraction_traits<ROOT>::Compose compose_root;

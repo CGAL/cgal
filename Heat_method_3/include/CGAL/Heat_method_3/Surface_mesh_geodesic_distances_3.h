@@ -968,9 +968,9 @@ estimate_geodesic_distances(const TriangleMesh& tm,
                             const VertexConstRange& sources,
                             Mode
 #ifndef DOXYGEN_RUNNING
-                            , typename boost::enable_if<
-                              typename boost::has_range_const_iterator<VertexConstRange>
-                                     >::type* = 0
+                            , std::enable_if_t<
+                                boost::has_range_const_iterator<VertexConstRange>::value
+                                     >* = 0
 #endif
 )
 {
@@ -985,9 +985,9 @@ void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
                             const VertexConstRange& sources,
-                            typename boost::enable_if<
-                              typename boost::has_range_const_iterator<VertexConstRange>
-                                     >::type* = 0)
+                            std::enable_if_t<
+                              boost::has_range_const_iterator<VertexConstRange>::value
+                                     >* = 0)
 {
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Intrinsic_Delaunay> hm(tm);
   hm.add_sources(sources);

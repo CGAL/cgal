@@ -704,9 +704,9 @@ bool read_PLY_faces(std::istream& in,
                     PolygonRange& polygons,
                     ColorOutputIterator fc_out,
                     const char* vertex_indices_tag,
-                    typename std::enable_if<
+                    std::enable_if_t<
                       CGAL::is_iterator<ColorOutputIterator>::value
-                    >::type* = nullptr)
+                    >* = nullptr)
 {
   typedef CGAL::IO::Color                                 Color_rgb;
 
@@ -775,9 +775,9 @@ bool read_PLY_faces(std::istream& in,
                     PolygonRange& polygons,
                     ColorRange& fcolors,
                     const char* vertex_indices_tag,
-                    typename boost::enable_if<
-                      typename boost::has_range_const_iterator<ColorRange>::type
-                    >::type* = nullptr)
+                    std::enable_if_t<
+                      boost::has_range_const_iterator<ColorRange>::value
+                    >* = nullptr)
 {
   return read_PLY_faces<Integer>(in, element, polygons, std::back_inserter(fcolors), vertex_indices_tag);
 }

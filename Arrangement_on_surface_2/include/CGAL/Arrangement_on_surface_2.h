@@ -2855,7 +2855,7 @@ protected:
 // In some compilers there is a template deduction disambiguity between this
 // function and the following function receiving two InputIterator.
 // For now the solution is to add a dummy variable at the end (referring
-// to point-location). Maybe the proper solution is to use boost::enable_if
+// to point-location). Maybe the proper solution is to use std::enable_if
 // together with appropriate tag.
 /*!
  * Insert a curve or x-monotone curve into the arrangement (incremental

@@ -21,7 +21,8 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/is_convertible.h>
-#include <boost/utility/enable_if.hpp>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -79,11 +80,11 @@ public:
     { return make_rational(x.first, x.second); }
 
     template<class N,class D>
-    Rational make_rational(const N& n, const D& d,typename boost::enable_if_c<is_implicit_convertible<N,RT>::value&&is_implicit_convertible<D,RT>::value,int>::type=0) const
+    Rational make_rational(const N& n, const D& d,std::enable_if_t<is_implicit_convertible<N,RT>::value&&is_implicit_convertible<D,RT>::value,int> = 0) const
     { return Compose()(n,d); }
 
     template<class N,class D>
-    Rational make_rational(const N& n, const D& d,typename boost::enable_if_c<!is_implicit_convertible<N,RT>::value||!is_implicit_convertible<D,RT>::value,int>::type=0) const
+    Rational make_rational(const N& n, const D& d,std::enable_if_t<!is_implicit_convertible<N,RT>::value||!is_implicit_convertible<D,RT>::value,int> = 0) const
     { return n/d; } // Assume that n or d is already a fraction
 };
 }// namespace internal

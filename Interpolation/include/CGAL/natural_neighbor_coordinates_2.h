@@ -23,8 +23,6 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/utility.h>
 
-#include <boost/utility/enable_if.hpp>
-
 #include <iterator>
 #include <list>
 #include <map>
@@ -255,9 +253,9 @@ natural_neighbor_coordinates_2(const Dt& dt,
                                OutputIterator out,
                                OutputFunctor fct,
                                typename Dt::Face_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle(),
-                               typename boost::disable_if_c<
-                                          is_iterator<OutputFunctor>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                                          !is_iterator<OutputFunctor>::value
+                                        >* = 0)
 {
   CGAL_precondition(dt.dimension() == 2);
 

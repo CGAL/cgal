@@ -38,7 +38,6 @@
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/or.hpp>
@@ -52,6 +51,7 @@
 #include <sstream>
 #include <string>
 #include <utility>
+#include <type_traits>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/enumerable_thread_specific.h>
@@ -382,9 +382,9 @@ public:
       : r_domain_(domain) {}
 
     template <typename Query>
-    typename boost::enable_if<typename boost::mpl::contains<Allowed_query_types,
-                                                            Query>::type,
-                              Surface_patch>::type
+    typename std::enable_if_t<boost::mpl::contains<Allowed_query_types,
+                                                   Query>::value,
+                              Surface_patch>
     operator()(const Query& q) const
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -423,9 +423,9 @@ public:
       : r_domain_(domain) {}
 
     template <typename Query>
-    typename boost::enable_if<typename boost::mpl::contains<Allowed_query_types,
-                                                            Query>::type,
-                              Intersection>::type
+    typename std::enable_if_t<boost::mpl::contains<Allowed_query_types,
+                                                   Query>::value,
+                              Intersection>
     operator()(const Query& q) const
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));

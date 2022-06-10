@@ -30,13 +30,13 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/if.hpp>
 
 #include <exception>
 #include <iterator>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 namespace Polygon_mesh_processing{
@@ -1143,14 +1143,14 @@ template <class PolylineRange>
 bool do_intersect(const PolylineRange& polylines1,
                   const PolylineRange& polylines2
 #ifndef DOXYGEN_RUNNING
-                  , const typename boost::enable_if<
-                    typename boost::has_range_iterator<
+                  , const std::enable_if_t<
+                      boost::has_range_iterator<
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<PolylineRange>,
                         boost::range_value<PolylineRange>,
                         boost::false_type >::type
-                    >::type
-                   >::type* = 0//end enable_if
+                    >::value
+                   >* = 0//end enable_if
 #endif
     )
 {
@@ -1187,18 +1187,18 @@ template <class Polyline>
 bool do_intersect(const Polyline& polyline1,
                   const Polyline& polyline2
 #ifndef DOXYGEN_RUNNING
-                , const typename boost::enable_if<
-                    typename boost::has_range_const_iterator<Polyline>::type
-                  >::type* = 0,
-                  const typename boost::disable_if<
-                    typename boost::has_range_iterator<
+                , const std::enable_if_t<
+                    boost::has_range_const_iterator<Polyline>::value
+                  >* = 0,
+                  const std::enable_if_t<
+                    !boost::has_range_iterator<
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<Polyline>,
                         boost::range_value<Polyline>,
                         boost::false_type
                       >::type
-                    >::type
-                  >::type* = 0//end enable_if
+                    >::value
+                  >* = 0//end enable_if
 #endif
                  )
 {
@@ -1275,9 +1275,9 @@ bool do_intersect(const TriangleMesh& tm1,
                   const CGAL_NP_CLASS_1& np1 = parameters::default_values(),
                   const CGAL_NP_CLASS_2& np2 = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                  , const typename boost::disable_if<
-                                    typename boost::has_range_const_iterator<TriangleMesh>::type
-                  >::type* = 0
+                  , const std::enable_if_t<
+                            !boost::has_range_const_iterator<TriangleMesh>::value
+                  >* = 0
 #endif
                   )
 {
@@ -1361,15 +1361,15 @@ bool do_intersect(const TriangleMesh& tm,
                   const PolylineRange& polylines,
                   const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , const typename boost::enable_if<
-                    typename boost::has_range_iterator<
+                , const std::enable_if_t<
+                    boost::has_range_iterator<
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<PolylineRange>,
                         boost::range_value<PolylineRange>,
                         boost::false_type
                       >::type
-                    >::type
-                  >::type* = 0//end enable_if
+                    >::value
+                  >* = 0//end enable_if
 #endif
                  )
 {
@@ -1428,8 +1428,8 @@ bool do_intersect(const TriangleMesh& tm,
                   const Polyline& polyline,
                   const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , const typename boost::disable_if<
-                    typename boost::mpl::or_<
+                , const std::enable_if_t<
+                    ! boost::mpl::or_<
                       typename boost::is_same<TriangleMesh, Polyline>::type, // Added to please MSVC 2015
                       typename boost::mpl::not_<typename boost::has_range_iterator<Polyline>::type>::type, // not a range
                       typename boost::has_range_iterator<
@@ -1439,8 +1439,8 @@ bool do_intersect(const TriangleMesh& tm,
                           boost::false_type
                         >::type
                       >::type // not a range of a range
-                    >::type
-                  >::type* = 0
+                    >::value
+                  >* = 0
 #endif
                  )
 {

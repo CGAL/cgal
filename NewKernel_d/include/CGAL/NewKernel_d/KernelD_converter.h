@@ -15,6 +15,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/tuple.h>
 #include <CGAL/typeset.h>
+#include <type_traits>
 #include <CGAL/Object.h>
 #include <CGAL/Origin.h>
 #include <CGAL/NT_converter.h>
@@ -22,7 +23,6 @@
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/if.hpp>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/NewKernel_d/Kernel_object_converter.h>
@@ -160,7 +160,7 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
         { return o; } // Both kernels should have the same, returning a reference should warn if not.
 
         template<class It>
-        transforming_iterator<Final_,typename boost::enable_if<is_iterator<It>,It>::type>
+        transforming_iterator<Final_,std::enable_if_t<is_iterator<It>::value,It>>
         operator()(It const& it) const {
                 return make_transforming_iterator(it,*this);
         }

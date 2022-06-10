@@ -193,7 +193,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // In some compilers there is a template deduction disambiguity between this
 // function and the function receiving two InputIterator.
 // For now the solution is to add a dummy variable at the end (referring
-// to point-location). Maybe the proper solution is to use boost::enable_if
+// to point-location). Maybe the proper solution is to use std::enable_if
 // together with appropriate tag.
 template <typename GeometryTraits_2, typename TopologyTraits, typename Curve,
           typename PointLocation>

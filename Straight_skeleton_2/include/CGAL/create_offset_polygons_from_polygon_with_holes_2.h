@@ -44,8 +44,8 @@ create_interior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const PolygonWithHoles& aPoly,
                                                const OfK& ofk,
                                                const SsK& ssk,
-                                               typename std::enable_if<
-                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>::type* = nullptr)
+                                               std::enable_if_t<
+                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>* = nullptr)
 {
   return create_interior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(),
                                                         aPoly.holes_begin(), aPoly.holes_end(),
@@ -108,8 +108,8 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const PolygonWithHoles& aPoly,
                                                const OfK& ofk,
                                                const SsK& ssk,
-                                               typename std::enable_if<
-                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>::type* = nullptr)
+                                               std::enable_if_t<
+                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>* = nullptr)
 {
   return create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(), ofk, ssk);
 }

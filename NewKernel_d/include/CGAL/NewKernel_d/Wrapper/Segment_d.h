@@ -57,7 +57,7 @@ public:
 
   typedef          R_                       R;
 
-  template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment_d> >::value>::type> explicit Segment_d(U&&...u)
+  template<class...U,class=std::enable_if_t<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment_d> >::value>> explicit Segment_d(U&&...u)
           : Rep(CSBase()(std::forward<U>(u)...)){}
 
 //  // called from Construct_point_d

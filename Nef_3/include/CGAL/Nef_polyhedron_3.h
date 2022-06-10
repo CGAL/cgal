@@ -63,7 +63,6 @@
 #include <list>
 
 #include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 
 // RO: includes for "vertex cycle to Nef" constructor
 #include <CGAL/Nef_3/vertex_cycle_to_nef_3.h>
@@ -645,9 +644,9 @@ protected:
  explicit Nef_polyhedron_3(const PolygonMesh& pm,
                            const HalfedgeIndexMap& him,
                            const FaceIndexMap& fim,
-                           typename boost::disable_if <
-                              boost::is_same<FaceIndexMap, bool>
-                           >::type* = nullptr // disambiguate with another constructor
+                           typename std::enable_if <
+                              !boost::is_same<FaceIndexMap, bool>::value
+                           >* = nullptr // disambiguate with another constructor
   ) : Nef_polyhedron_3(Private_tag{})
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");

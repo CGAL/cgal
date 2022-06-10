@@ -35,11 +35,11 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <memory>
 
 namespace CGAL {

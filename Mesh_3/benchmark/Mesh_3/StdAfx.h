@@ -144,7 +144,6 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/utility.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/variant.hpp>
 #include <boost/version.hpp>
 

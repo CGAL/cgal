@@ -59,18 +59,18 @@ struct Forward_rep {
 //@mglisse shall we update that code?
 //TODO: make a good C++0X version with perfect forwarding
 //#ifdef CGAL_CXX11
-//template <class T,class=typename std::enable_if<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
+//template <class T,class=std::enable_if_t<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>>
 //T&& operator()(typename std::remove_reference<T>::type&& t) const {return static_cast<T&&>(t);};
-//template <class T,class=typename std::enable_if<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
+//template <class T,class=std::enable_if_t<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>>
 //T&& operator()(typename std::remove_reference<T>::type& t) const {return static_cast<T&&>(t);};
 //
-//template <class T,class=typename std::enable_if<Is_wrapper<typename std::decay<T>::type>::value>::type>
+//template <class T,class=std::enable_if_t<Is_wrapper<typename std::decay<T>::type>::value>>
 //typename Type_copy_cvref<T,typename std::decay<T>::type::Rep>::type&&
 //operator()(T&& t) const {
 //        return static_cast<typename Type_copy_cvref<T,typename std::decay<T>::type::Rep>::type&&>(t.rep());
 //};
 //
-//template <class T,class=typename std::enable_if<Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
+//template <class T,class=std::enable_if_t<Is_wrapper_iterator<typename std::decay<T>::type>::value>>
 //transforming_iterator<Forward_rep,typename std::decay<T>::type>
 //operator()(T&& t) const {
 //        return make_transforming_iterator(std::forward<T>(t),Forward_rep());
@@ -83,12 +83,12 @@ template <class T> struct result_<T,false,true>{typedef transforming_iterator<Fo
 template<class> struct result;
 template<class T> struct result<Forward_rep(T)> : result_<T> {};
 
-template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type const& operator()(T const& t) const {return t;}
-template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type& operator()(T& t) const {return t;}
+template <class T> std::enable_if_t<!boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >::value,T> const& operator()(T const& t) const {return t;}
+template <class T> std::enable_if_t<!boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >::value,T>& operator()(T& t) const {return t;}
 
-template <class T> typename T::Rep const& operator()(T const& t, typename boost::enable_if<Is_wrapper<T> >::type* = 0) const {return t.rep();}
+template <class T> typename T::Rep const& operator()(T const& t, std::enable_if_t<Is_wrapper<T>::value >* = 0) const {return t.rep();}
 
-template <class T> transforming_iterator<Forward_rep,typename boost::enable_if<Is_wrapper_iterator<T>,T>::type> operator()(T const& t) const {return make_transforming_iterator(t,Forward_rep());}
+template <class T> transforming_iterator<Forward_rep,std::enable_if_t<Is_wrapper_iterator<T>::value,T>> operator()(T const& t) const {return make_transforming_iterator(t,Forward_rep());}
 //#endif
 };
 }

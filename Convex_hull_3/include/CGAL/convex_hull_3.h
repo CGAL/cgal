@@ -1052,7 +1052,7 @@ template <class InputIterator, class PolygonMesh>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    PolygonMesh& polyhedron,
                    // workaround to avoid ambiguity with next overload.
-                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0)
+                   std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
   typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point_3, PolygonMesh>::type Traits;
@@ -1083,9 +1083,9 @@ template <class InputIterator, class PointRange, class TriangleRange>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    PointRange& vertices,
                    TriangleRange& faces,
-                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0,
-                   typename std::enable_if<boost::has_range_iterator<PointRange>::value>::type* = 0,
-                   typename std::enable_if<boost::has_range_iterator<TriangleRange>::value>::type* = 0)
+                   std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
+                   std::enable_if_t<boost::has_range_iterator<PointRange>::value>* = 0,
+                   std::enable_if_t<boost::has_range_iterator<TriangleRange>::value>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::type Traits;
@@ -1100,9 +1100,9 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
                    PointRange& vertices,
                    TriangleRange& faces,
                    const Traits& traits,
-                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0,
-                   typename std::enable_if<boost::has_range_iterator<PointRange>::value>::type* = 0,
-                   typename std::enable_if<boost::has_range_iterator<TriangleRange>::value>::type* = 0)
+                   std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
+                   std::enable_if_t<boost::has_range_iterator<PointRange>::value>* = 0,
+                   std::enable_if_t<boost::has_range_iterator<TriangleRange>::value>* = 0)
 {
   Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
   convex_hull_3(first, beyond, its, traits);

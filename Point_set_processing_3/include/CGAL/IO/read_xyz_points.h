@@ -237,7 +237,7 @@ bool read_XYZ(const std::string& fname,
 // variants with default output iterator value type
 template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_XYZ(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
+              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }

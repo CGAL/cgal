@@ -631,12 +631,12 @@ public:
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 template < class InputIterator >
 std::ptrdiff_t insert(InputIterator first, InputIterator last,
-         typename boost::enable_if<
-         boost::is_convertible<
-         typename std::iterator_traits<InputIterator>::value_type,
-         Point
-         >
-         >::type* = nullptr)
+         std::enable_if_t<
+           boost::is_convertible<
+             typename std::iterator_traits<InputIterator>::value_type,
+             Point
+           >::value
+         >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -696,11 +696,11 @@ public:
   std::ptrdiff_t
   insert(InputIterator first,
          InputIterator last,
-         typename boost::enable_if<
+         std::enable_if_t<
            boost::is_convertible<
              typename std::iterator_traits<InputIterator>::value_type,
              std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
-           > >::type* = NULL)
+           >::value >* = NULL)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
@@ -709,12 +709,12 @@ public:
   std::ptrdiff_t
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-         typename boost::enable_if<
+         std::enable_if_t<
            boost::mpl::and_<
              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-           >
-         >::type* = NULL)
+           >::value
+         >* = NULL)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
