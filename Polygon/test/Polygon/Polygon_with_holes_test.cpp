@@ -33,5 +33,13 @@ int main()
   assert(pouter.is_empty());
   assert(holes[0].is_empty());
   assert(holes[1].is_empty());
+
+  Polygon_with_holes_2 pwh_copy(pwh);
+  assert(pwh_copy == pwh);
+  Polygon_with_holes_2 pwh_move_cstructed(std::move(pwh));
+  assert(pwh.holes().empty());
+  assert(pwh.outer_boundary().is_empty());
+  Polygon_with_holes_2 pwh_move_assigned;
+  pwh_move_assigned = std::move(pwh_copy);
   return 0;
 }
