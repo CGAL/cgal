@@ -1668,16 +1668,33 @@ public:
       auto cx_m = -u_m / (2*r_m);
       auto cy_m = -v_m / (2*s_m);
 
+      // Compute the radi of the ellipse:
+      auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
+      auto a_sqr = numerator / (4*r_m*r_m*s_m);
+      auto b_sqr = numerator / (4*r_m*s_m*s_m);
+      if (a_sqr < 0) {
+        // Shift phase:
+        auto tmp(cost);
+        cost = sint;
+        sint = -tmp;
+
+        // Recompute:
+        inverse_conic(arc, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
+        cx_m = -u_m / (2*r_m);
+        cy_m = -v_m / (2*s_m);
+        numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
+        a_sqr = numerator / (4*r_m*r_m*s_m);
+        b_sqr = -numerator / (4*r_m*s_m*s_m);
+      }
+
+      auto a = std::sqrt(a_sqr);
+      auto b = std::sqrt(b_sqr);
+      // std::cout << "a, b: " << a << "," << b << std::endl;
+
       // Compute the center (cx,cy) of the ellipse, rotating back:
       auto cx = cx_m*cost - cy_m*sint;
       auto cy = cx_m*sint + cy_m*cost;
       // std::cout << "center: " << cx << "," << cy << std::endl;
-
-      // Compute the radi of the ellipse:
-      auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
-      auto a = std::sqrt(numerator / (4*r_m*r_m*s_m));
-      auto b = std::sqrt(numerator / (4*r_m*s_m*s_m));
-      // std::cout << "a, b: " << a << "," << b << std::endl;
 
       // Compute the parameters ts and tt such that
       // source == (x(ts),y(ts)), and
@@ -1768,9 +1785,6 @@ public:
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
       canonical_conic(arc, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
-      // std::cout << r_m << "," << s_m << "," << t_m << ","
-      //           << u_m << "," << v_m << "," << w_m << std::endl;
-      // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
 
       /* If the axis of the parabola is the 𝑌-axis, shift
        * the parabola by 90, essentially, converting the
@@ -1789,10 +1803,16 @@ public:
         // Recompute:
         inverse_conic(arc, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
       }
+      // std::cout << r_m << "," << s_m << "," << t_m << ","
+      //           << u_m << "," << v_m << "," << w_m << std::endl;
+      // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
 
       // Compute the center of the inversly rotated parabola:
-      double cx_m = -u_m / (2*r_m);
-      double cy_m = (u_m*u_m - 4*r_m*w_m) / (4*r_m*v_m);
+      // double cx_m = -u_m / (2*r_m);
+      // double cy_m = (u_m*u_m - 4*r_m*w_m) / (4*r_m*v_m);
+      double cx_m = (v_m*v_m - 4*s_m*w_m) / (4*s_m*u_m);
+      double cy_m = -v_m / (2*s_m);
+      // std::cout << "cx_m, cy_m: " << cx_m << "," << cy_m <<  std::endl;
 
       // Transform the source and target
       auto xs_t = xs*cost + ys*sint - cx_m;
@@ -1800,16 +1820,16 @@ public:
       auto xt_t = xt*cost + yt*sint - cx_m;
       auto yt_t = -xt*sint + yt*cost - cy_m;
 
-      auto a = -v_m/(4.0*r_m);
-      auto ts = xs_t/(2.0*a);
-      auto tt = xt_t/(2.0*a);
+      auto a = -u_m/(4.0*s_m);
+      auto ts = ys_t/(2.0*a);
+      auto tt = yt_t/(2.0*a);
       // std::cout << "xs' = " << xs_t << "," << ys_t << std::endl;
       // std::cout << "xt' = " << xt_t << "," << yt_t << std::endl;
       // std::cout << "ts,tt = " << ts << "," << tt << std::endl;
 
-      auto ds = parabolic_arc_length(ys_t, 2.0*std::abs(xs_t));
-      auto dt = parabolic_arc_length(yt_t, 2.0*std::abs(xt_t));
-      auto d = (CGAL::sign(xs_t) == CGAL::sign(xt_t)) ?
+      auto ds = parabolic_arc_length(xs_t, 2.0*std::abs(ys_t));
+      auto dt = parabolic_arc_length(xt_t, 2.0*std::abs(yt_t));
+      auto d = (CGAL::sign(ys_t) == CGAL::sign(yt_t)) ?
         std::abs(ds - dt)/2.0 : (ds + dt)/2.0;
       // std::cout << "d, ds, dt = " << d << ", " << ds << "," << dt << std::endl;
 
@@ -1846,8 +1866,8 @@ public:
     OutputIterator add_parabolic_point(OutputIterator oi, double t, double a,
                                        double cost, double sint,
                                        double cx, double cy) const {
-      auto xt = 2.0*a*t;
-      auto yt = a*t*t;
+      auto xt = a*t*t;
+      auto yt = 2.0*a*t;
       auto x = xt*cost - yt*sint + cx;
       auto y = xt*sint + yt*cost + cy;
       // std::cout << "t,(x,y): " << t << ",(" << x << "," << y << ")"
@@ -1902,6 +1922,8 @@ public:
      *
      */
     double parabolic_arc_length(double a, double b) const {
+      if (a == 0) return b;
+      if (b == 0) return a;
       auto b_sqr = b*b;
       auto tmp = std::sqrt(b_sqr+16.0*a*a);
       return tmp/2.0 + b_sqr*std::log((4.0*a + tmp)/b)/(8.0*a);
@@ -1935,16 +1957,6 @@ public:
       // std::cout << r_m << "," << s_m << "," << t_m << ","
       //           << u_m << "," << v_m << "," << w_m << std::endl;
 
-      // Compute the center of the inversly rotated ellipse:
-      auto cx_m = -u_m / (2*r_m);
-      auto cy_m = -v_m / (2*s_m);
-
-      // Transform the source and target
-      auto xs_t = xs*cost + ys*sint - cx_m;
-      auto ys_t = -xs*sint + ys*cost - cy_m;
-      auto xt_t = xt*cost + yt*sint - cx_m;
-      auto yt_t = -xt*sint + yt*cost - cy_m;
-
       auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
       auto a_sqr = numerator / (4*r_m*r_m*s_m);
       auto b_sqr = -numerator / (4*r_m*s_m*s_m);
@@ -1954,7 +1966,7 @@ public:
        * hyperbula to one the conjugate axis of which is the 𝑋-axis, as the
        * remaining code assume that the conjugate axis is the 𝑋-axis.
        * This is somehow inefficient, because we repeat the computation of
-       * cost, sint, r_m,...,w_m, cx_m, ...a_sqr, and b_sqr. An alternative, is
+       * cost, sint, r_m,...,w_m, a_sqr, and b_sqr. An alternative, is
        * to add code that directly handles the case where the conjugate axis
        * is the 𝑌-axis. Here,
        * 1. a_sqr = -a_sqr, b_sqr = -b_sqr, and
@@ -1968,17 +1980,21 @@ public:
 
         // Recompute:
         inverse_conic(arc, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
-        cx_m = -u_m / (2*r_m);
-        cy_m = -v_m / (2*s_m);
-        xs_t = xs*cost + ys*sint - cx_m;
-        ys_t = -xs*sint + ys*cost - cy_m;
-        xt_t = xt*cost + yt*sint - cx_m;
-        yt_t = -xt*sint + yt*cost - cy_m;
         numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
         a_sqr = numerator / (4*r_m*r_m*s_m);
         b_sqr = -numerator / (4*r_m*s_m*s_m);
       }
       // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+
+      // Compute the center of the inversly rotated ellipse:
+      auto cx_m = -u_m / (2*r_m);
+      auto cy_m = -v_m / (2*s_m);
+
+      // Transform the source and target
+      auto xs_t = xs*cost + ys*sint - cx_m;
+      auto ys_t = -xs*sint + ys*cost - cy_m;
+      auto xt_t = xt*cost + yt*sint - cx_m;
+      auto yt_t = -xt*sint + yt*cost - cy_m;
       // std::cout << "xs_t,ys_t: " << xs_t << "," << ys_t << std::endl;
       // std::cout << "xt_t,yt_t: " << xt_t << "," << yt_t << std::endl;
 
