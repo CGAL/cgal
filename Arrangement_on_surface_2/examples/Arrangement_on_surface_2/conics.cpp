@@ -47,7 +47,6 @@ int main() {
            0, 0, 0, 0, 1, 3,                  // the line: y = -3.
            Point(1.41, -2),                   // approximation of the target.
            0, 0, 0, 0, 1, 2);                 // the line: y = -2.
-
   insert(arr, c6);
 
   // Insert the right half of the circle centered at (4, 2.5) whose radius
