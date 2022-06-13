@@ -18,6 +18,7 @@
 
 #include <CGAL/memory.h>
 #include <iostream>
+#include <limits>
 
 namespace CGAL {
 

@@ -540,7 +540,6 @@ private:
   {
     return get(ecm, ed);
   }
-
 // visitor public functions
 public:
   Surface_intersection_visitor_for_corefinement(
@@ -552,6 +551,69 @@ public:
     , input_with_coplanar_faces(false)
     , const_mesh_ptr(const_mesh_ptr)
   {}
+
+
+  void start_filtering_intersections() const
+  {
+    user_visitor.start_filtering_intersections();
+  }
+
+
+  void progress_filtering_intersections(double d) const
+  {
+    user_visitor.progress_filtering_intersections(d);
+  }
+
+  void end_filtering_intersections() const
+  {
+    user_visitor.end_filtering_intersections();
+  }
+
+
+  void start_handling_edge_face_intersections(std::size_t i) const
+  {
+    user_visitor.start_handling_edge_face_intersections(i);
+  }
+
+  void edge_face_intersections_step() const
+  {
+    user_visitor.edge_face_intersections_step();
+  }
+
+  void end_handling_edge_face_intersections() const
+  {
+    user_visitor.end_handling_edge_face_intersections();
+  }
+
+  void start_handling_intersection_of_coplanar_faces(std::size_t i) const
+  {
+    user_visitor.start_handling_intersection_of_coplanar_faces(i);
+  }
+
+  void intersection_of_coplanar_faces_step() const
+  {
+    user_visitor.intersection_of_coplanar_faces_step();
+  }
+
+  void end_handling_intersection_of_coplanar_faces() const
+  {
+    user_visitor.end_handling_intersection_of_coplanar_faces();
+  }
+
+  void start_building_output() const
+  {
+    user_visitor.start_building_output();
+  }
+
+  void build_output_step() const
+  {
+    user_visitor.build_output_step();
+  }
+
+  void end_building_output() const
+  {
+    user_visitor.end_building_output();
+  }
 
   void
   set_non_manifold_feature_map(
@@ -1145,6 +1207,7 @@ public:
     for (typename On_face_map::iterator it=on_face_map.begin();
           it!=on_face_map.end();++it)
     {
+      user_visitor.triangulating_faces_step();
       face_descriptor f = it->first; //the face to be triangulated
       Node_ids& node_ids  = it->second; // ids of nodes in the interior of f
       typename Face_boundaries::iterator it_fb=face_boundaries.find(f);
@@ -1496,8 +1559,17 @@ public:
 
     //2)triangulation of the triangle faces containing intersection point in their interior
     //  and also those with intersection points only on the boundary.
+    std::size_t total_size = 0;
     for (typename std::map<TriangleMesh*,On_face_map>::iterator
-      it=on_face.begin(); it!=on_face.end(); ++it)
+           it=on_face.begin(); it!=on_face.end(); ++it)
+    {
+      total_size += it->second.size();
+    }
+
+    user_visitor.start_triangulating_faces(total_size);
+
+    for (typename std::map<TriangleMesh*,On_face_map>::iterator
+           it=on_face.begin(); it!=on_face.end(); ++it)
     {
       if(it->first == tm1_ptr)
         triangulate_intersected_faces(it, vpm1, nodes, mesh_to_face_boundaries);
@@ -1505,13 +1577,17 @@ public:
         triangulate_intersected_faces(it, vpm2, nodes, mesh_to_face_boundaries);
     }
 
-    nodes.finalize(mesh_to_node_id_to_vertex);
+    user_visitor.end_triangulating_faces();
 
+    nodes.finalize(mesh_to_node_id_to_vertex);
+    user_visitor.start_building_output();
     // additional operations
     output_builder(nodes,
                    input_with_coplanar_faces,
                    is_node_of_degree_one,
                    mesh_to_node_id_to_vertex);
+
+    user_visitor.end_building_output();
   }
 };
 

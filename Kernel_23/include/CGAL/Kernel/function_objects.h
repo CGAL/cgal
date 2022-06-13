@@ -3328,8 +3328,8 @@ namespace CommonKernelFunctors {
       return c.rep().has_on_bounded_side(p);
     }
 
-    bool operator()(const Sphere_3& s1, const Sphere_3& s2,
-                    const Point_3& a, const Point_3& b) const
+    result_type operator()(const Sphere_3& s1, const Sphere_3& s2,
+                           const Point_3& a, const Point_3& b) const
     {
       typedef typename K::Circle_3  Circle_3;
       typedef typename K::Point_3   Point_3;
@@ -3548,7 +3548,7 @@ namespace CommonKernelFunctors {
 
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    decltype(auto)
+    typename CGAL::Intersection_traits<K,T1,T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K()); }
   };
@@ -3561,11 +3561,11 @@ namespace CommonKernelFunctors {
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
-    decltype(auto)
+    typename CGAL::Intersection_traits<K,T1,T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    decltype(auto)
+    boost::optional<boost::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };

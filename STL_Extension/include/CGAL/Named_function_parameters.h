@@ -16,8 +16,11 @@
 #include <CGAL/basic.h>
 #endif
 
+#include <CGAL/tags.h>
+
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
+
 #include <type_traits>
 #include <utility>
 
@@ -356,12 +359,17 @@ const T& choose_parameter(const T& t)
   return t;
 }
 
-template <class NP, class TAG>
-constexpr bool is_default_parameter()
+template <class NamedParameters, class Parameter>
+struct is_default_parameter
 {
-  return std::is_same< typename internal_np::Get_param<typename NP::base, TAG>::type,
-                       internal_np::Param_not_found> ::value;
-}
+  typedef typename internal_np::Lookup_named_param_def<Parameter,
+                                                       NamedParameters,
+                                                       internal_np::Param_not_found>::type NP_type;
+
+  static const bool value = boost::is_same<NP_type, internal_np::Param_not_found>::value;
+
+  typedef CGAL::Boolean_tag<value> type;
+};
 
 } // end of parameters namespace
 

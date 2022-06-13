@@ -23,6 +23,7 @@
 #    If set, the `LEDA` library will be searched and used to provide
 #    the exact number types used by CGAL kernels.
 #
+cmake_minimum_required(VERSION 3.11...3.23)
 if(CGAL_SetupCGALDependencies_included)
   return()
 endif()
@@ -74,6 +75,13 @@ endif()
 #   keyword.
 #
 function(CGAL_setup_CGAL_dependencies target)
+  foreach(dir ${CGAL_INCLUDE_DIRS})
+    target_include_directories(${target} INTERFACE
+      $<BUILD_INTERFACE:${dir}>)
+  endforeach()
+  target_include_directories(${target} INTERFACE
+    $<INSTALL_INTERFACE:include>)
+
   if(CGAL_DISABLE_GMP)
     target_compile_definitions(${target} INTERFACE CGAL_DISABLE_GMP=1)
   else()
@@ -95,13 +103,6 @@ function(CGAL_setup_CGAL_dependencies target)
 
   use_CGAL_Boost_support(${target} INTERFACE)
 
-  foreach(dir ${CGAL_INCLUDE_DIRS})
-    target_include_directories(${target} INTERFACE
-      $<BUILD_INTERFACE:${dir}>)
-  endforeach()
-  target_include_directories(${target} INTERFACE
-    $<INSTALL_INTERFACE:include>)
-
   # Make CGAL depend on threads-support (for Epeck and Epeck_d)
   if(CGAL_HAS_NO_THREADS)
     target_compile_definitions(${target} INTERFACE CGAL_HAS_NO_THREADS)
@@ -117,20 +118,14 @@ function(CGAL_setup_CGAL_dependencies target)
   if(MSVC)
     target_compile_options(${target} INTERFACE
       "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
-    if(CMAKE_VERSION VERSION_LESS 3.11)
+    target_compile_options(${target} INTERFACE
+      $<$<COMPILE_LANGUAGE:CXX>:/fp:strict>
+      $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
+      $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
+      )
+    if(MSVC_TOOLSET_VERSION VERSION_LESS_EQUAL 140) # for MSVC 2015
       target_compile_options(${target} INTERFACE
-        /fp:strict
-        /fp:except-
-        /wd4503  # Suppress warnings C4503 about "decorated name length exceeded"
-        /bigobj  # Use /bigobj by default
-        )
-    else()
-      # The MSVC generator supports `$<COMPILE_LANGUAGE: >` since CMake 3.11.
-      target_compile_options(${target} INTERFACE
-        $<$<COMPILE_LANGUAGE:CXX>:/fp:strict>
-        $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
         $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
-        $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
         )
     endif()
   elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
@@ -157,11 +152,7 @@ function(CGAL_setup_CGAL_dependencies target)
     endif()
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3)
       message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
-      if(CMAKE_VERSION VERSION_LESS 3.3)
-        target_compile_options(${target} INTERFACE "-frounding-math")
-      else()
-        target_compile_options(${target} INTERFACE "$<$<COMPILE_LANGUAGE:CXX>:-frounding-math>")
-      endif()
+      target_compile_options(${target} INTERFACE "$<$<COMPILE_LANGUAGE:CXX>:-frounding-math>")
     endif()
     if ( "${GCC_VERSION}" MATCHES "^4.2" )
       message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )

@@ -2388,9 +2388,13 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   if(!is)
     return is;
 
+  std::vector< Vertex_handle > V;
+  if(d > 3 || d < -2 || (n+1) > V.max_size()) {
+    is.setstate(std::ios_base::failbit);
+    return is;
+  }
   tr._tds.set_dimension(d);
-
-  std::vector< Vertex_handle > V(n+1);
+  V.resize(n+1);
   V[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
 
   for(std::size_t i=1; i <= n; i++)

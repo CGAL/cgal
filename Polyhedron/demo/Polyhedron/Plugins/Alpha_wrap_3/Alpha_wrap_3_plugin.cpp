@@ -5,6 +5,9 @@
 
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
+#include "Scene_polyhedron_selection_item.h"
+#include "Scene_polylines_item.h"
+#include "Scene_points_with_normal_item.h"
 
 #include <CGAL/alpha_wrap_3.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
@@ -34,6 +37,9 @@ class Polyhedron_demo_alpha_wrap_3_plugin
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
+private:
+  Ui::alpha_wrap_3_dialog ui;
+
 public:
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
@@ -49,12 +55,17 @@ public:
 
   bool applicable(QAction*) const
   {
-    // Ok if there's at least one mesh
     Q_FOREACH(int index, scene->selectionIndices())
     {
+      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
+        return true;
       if(qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
         return true;
-      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
+      if(qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index)))
+        return true;
+      if(qobject_cast<Scene_polylines_item*>(scene->item(index)))
+        return true;
+      if(qobject_cast<Scene_points_with_normal_item*>(scene->item(index)))
         return true;
     }
 
@@ -67,10 +78,18 @@ public:
   }
 
 private:
+  void print_message(QString message) const
+  {
+    CGAL::Three::Three::information(message);
+  }
+
   Ui::alpha_wrap_3_dialog create_dialog(QDialog* dialog)
   {
-    Ui::alpha_wrap_3_dialog ui;
     ui.setupUi(dialog);
+
+    connect(ui.wrapEdges, SIGNAL(clicked(bool)), this, SLOT(toggle_wrap_faces()));
+    connect(ui.wrapFaces, SIGNAL(clicked(bool)), this, SLOT(toggle_wrap_edges()));
+
     connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
     connect(ui.buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
 
@@ -78,14 +97,30 @@ private:
   }
 
 public Q_SLOTS:
+  void toggle_wrap_faces()
+  {
+    if(!ui.wrapEdges->isChecked()) // if edges are disabled, so are faces
+      ui.wrapFaces->setChecked(false);
+  }
+
+  void toggle_wrap_edges()
+  {
+    if(ui.wrapFaces->isChecked()) // if faces are enabled, so are edges
+      ui.wrapEdges->setChecked(true);
+  }
+
   void on_actionAlpha_wrap_3_triggered()
   {
-    using Points = typename Scene_polygon_soup_item::Points;
-    using Polygons = typename Scene_polygon_soup_item::Polygons;
-    using Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Points, Polygons>;
+    using Triangles = std::vector<Kernel::Triangle_3>;
+    using Segments = std::vector<Kernel::Segment_3>;
+    using Points = std::vector<Kernel::Point_3>;
+
+    using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Kernel>;
+    using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<Kernel, TS_Oracle>;
+    using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<Kernel, SS_Oracle>;
 
     QDialog dialog(mw);
-    Ui::alpha_wrap_3_dialog ui = create_dialog(&dialog);
+    ui = create_dialog(&dialog);
     dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
 
     int i = dialog.exec();
@@ -103,42 +138,169 @@ public Q_SLOTS:
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    Oracle oracle;
+    TS_Oracle ts_oracle;
+    SS_Oracle ss_oracle(ts_oracle);
+    Oracle oracle(ss_oracle);
+
+    Triangles triangles;
+    Segments segments;
+    Points points;
+
     Q_FOREACH(int index, scene->selectionIndices())
     {
+      // ---
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
       if(sm_item != nullptr)
       {
-        if(!is_triangle_mesh(*(sm_item->polyhedron())))
-          continue;
+        SMesh* pMesh = sm_item->polyhedron();
+        auto vpm = get(CGAL::vertex_point, *pMesh);
 
-        Points points;
-        Polygons polygons;
-        CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(*(sm_item->polyhedron()),
-                                                                    points, polygons);
-
-        oracle.add_triangle_soup(points, polygons);
-      }
-      else
-      {
-        Scene_polygon_soup_item* soup_item = qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
-        if(soup_item != nullptr)
+        triangles.reserve(triangles.size() + num_faces(*pMesh));
+        for(boost::graph_traits<SMesh>::face_descriptor f : faces(*pMesh))
         {
-          bool is_triangle_soup = true;
-          for(auto p : soup_item->polygons())
+          boost::graph_traits<SMesh>::halfedge_descriptor h = halfedge(f, *pMesh);
+          if(!is_triangle(h, *pMesh))
           {
-            if(p.size() != 3)
-            {
-              is_triangle_soup = false;
-              break;
-            }
+            print_message("Warning: non-triangular face in input");
+            continue;
           }
 
-          if(is_triangle_soup)
-            oracle.add_triangle_soup(soup_item->points(), soup_item->polygons());
+          triangles.emplace_back(get(vpm, target(h, *pMesh)),
+                                 get(vpm, target(next(h, *pMesh), *pMesh)),
+                                 get(vpm, source(h, *pMesh)));
         }
+
+        continue;
+      }
+
+      // ---
+      Scene_polygon_soup_item* soup_item = qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+      if(soup_item != nullptr)
+      {
+        triangles.reserve(triangles.size() + soup_item->polygons().size());
+
+        for(const auto& p : soup_item->polygons())
+        {
+          if(p.size() != 3)
+          {
+            print_message("Warning: non-triangular face in input");
+            continue;
+          }
+
+          triangles.emplace_back(soup_item->points()[p[0]],
+                                 soup_item->points()[p[1]],
+                                 soup_item->points()[p[2]]);
+        }
+
+        continue;
+      }
+
+      // ---
+      Scene_polyhedron_selection_item* selection_item =
+          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+      if(selection_item != nullptr)
+      {
+        SMesh* pMesh = selection_item->polyhedron();
+        auto vpm = get(CGAL::vertex_point, *pMesh);
+
+        triangles.reserve(triangles.size() + selection_item->selected_facets.size());
+        for(const auto& f : selection_item->selected_facets)
+        {
+          boost::graph_traits<SMesh>::halfedge_descriptor h = halfedge(f, *pMesh);
+          if(!is_triangle(h, *pMesh))
+          {
+            print_message("Warning: non-triangular face in input");
+            continue;
+          }
+
+          triangles.emplace_back(get(vpm, target(h, *pMesh)),
+                                 get(vpm, target(next(h, *pMesh), *pMesh)),
+                                 get(vpm, source(h, *pMesh)));
+        }
+
+        segments.reserve(segments.size() + selection_item->selected_edges.size());
+        for(const auto& e : selection_item->selected_edges)
+        {
+          segments.emplace_back(get(vpm, target(halfedge(e, *pMesh), *pMesh)),
+                                get(vpm, target(opposite(halfedge(e, *pMesh), *pMesh), *pMesh)));
+        }
+
+        points.reserve(points.size() + selection_item->selected_vertices.size());
+        for(const auto& v : selection_item->selected_vertices)
+        {
+          points.push_back(get(vpm, v));
+        }
+
+        continue;
+      }
+
+      // ---
+      Scene_polylines_item* lines_item = qobject_cast<Scene_polylines_item*>(scene->item(index));
+      if(lines_item != nullptr)
+      {
+        for(auto& polyline : lines_item->polylines)
+        {
+          for(auto it=std::begin(polyline), end=std::end(polyline); it!=end; ++it)
+          {
+            auto nit = std::next(it);
+            if(nit != end)
+              segments.emplace_back(*it, *nit);
+          }
+        }
+
+        continue;
+      }
+
+      // ---
+      Scene_points_with_normal_item* pts_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+      if(pts_item != nullptr)
+      {
+        points.insert(std::cend(points),
+                      std::cbegin(pts_item->point_set()->points()),
+                      std::cend(pts_item->point_set()->points()));
+
+        continue;
       }
     }
+
+    const bool wrap_triangles = ui.wrapFaces->isChecked();
+    const bool wrap_segments = ui.wrapEdges->isChecked();
+
+    if(!wrap_triangles)
+    {
+      segments.reserve(segments.size() + 3 * triangles.size());
+      for(const auto& tr : triangles)
+      {
+        segments.emplace_back(tr[0], tr[1]);
+        segments.emplace_back(tr[1], tr[2]);
+        segments.emplace_back(tr[2], tr[0]);
+      }
+    }
+
+    if(!wrap_segments)
+    {
+      points.reserve(points.size() + 2 * segments.size());
+      for(const auto& s : segments)
+      {
+        points.push_back(s[0]);
+        points.push_back(s[1]);
+      }
+    }
+
+    if(wrap_triangles)
+      oracle.add_triangle_soup(triangles);
+    if(wrap_segments)
+      oracle.add_segment_soup(segments);
+    oracle.add_point_set(points);
+
+    if(!oracle.do_call())
+    {
+      print_message("Warning: empty input - nothing to wrap");
+      QApplication::restoreOverrideCursor();
+      return;
+    }
+
+    // Oracles set up, time to wrap
 
     CGAL::Bbox_3 bbox = oracle.bbox();
     const double diag_length = std::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +

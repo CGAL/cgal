@@ -49,7 +49,7 @@
 // gcc's __builtin_constant_p does not like arguments with side effects. Be
 // careful not to use this macro for something that the compiler will have
 // trouble eliminating as dead code.
-# define CGAL_CST_TRUE(X) ({ bool _ugly_ = (X); __builtin_constant_p(_ugly_) && _ugly_; })
+# define CGAL_CST_TRUE(X) __extension__ ({ bool _ugly_ = (X); __builtin_constant_p(_ugly_) && _ugly_; })
 #else
 # define CGAL_CST_TRUE(X) false
 #endif

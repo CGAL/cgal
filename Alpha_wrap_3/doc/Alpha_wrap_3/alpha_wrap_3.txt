@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_3D_Alpha_wrapping
 \cgalAutoToc
 
-\authors TBA
+\authors Pierre Alliez, David Cohen-Steiner, Michael Hemmer, Cédric Portaneri, Mael Rouxel-Labbé
 
 <center>
 <img src="aw3_bike_lod.jpg" style="max-width:70%;"/>
@@ -362,8 +362,6 @@ and offset set to 1/30 of alpha (i.e., 1/600 of the bounding box diagonal edge l
 Here is an example with a point cloud.
 
 \cgalExample{Alpha_wrap_3/point_set_wrap.cpp}
-
-\section aw3_history Design and Implementation History
 
 */
 

@@ -2,8 +2,6 @@
 
 EXTRACT_PRIVATE = NO
 
-EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples
-
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Hyperbolic Delaunay Triangulations"
 
 HTML_EXTRA_STYLESHEET = ${CGAL_PACKAGE_DOC_DIR}/css/customstyle.css

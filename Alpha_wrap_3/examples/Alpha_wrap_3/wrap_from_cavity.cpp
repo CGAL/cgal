@@ -47,7 +47,7 @@ int main(int argc, char** argv)
   const double offset = diag_length / relative_offset;
 
   // Construct the wrap
-  using Oracle = CGAL::Alpha_wraps_3::internal::Triangle_mesh_oracle<Mesh>;
+  using Oracle = CGAL::Alpha_wraps_3::internal::Triangle_mesh_oracle<K>;
   Oracle oracle;
   oracle.add_triangle_mesh(input);
 
@@ -78,6 +78,7 @@ int main(int argc, char** argv)
   input_name = input_name.substr(0, input_name.find_last_of("."));
   std::string output_name = input_name + "_cavity_" + std::to_string(static_cast<int>(relative_alpha))
                             + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;

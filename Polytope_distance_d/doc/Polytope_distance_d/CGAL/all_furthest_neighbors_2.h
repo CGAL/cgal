@@ -6,8 +6,8 @@ namespace CGAL {
 \brief computes all furthest neighbors for the vertices of the convex
 polygon described by the range [`points_begin`, `points_end`), writes
 their indices (relative to `points_begin`) to `o`\cgalFootnote{the
-furthest neighbor of `points_begin[i]` is `points_begin[i-th number
-written to o]`} and returns the past-the-end iterator of this
+furthest neighbor of \cgalFootnoteCode{points_begin[i]} is \cgalFootnoteCode{points_begin[i-th number
+written to o]}} and returns the past-the-end iterator of this
 sequence.
 
 The function `all_furthest_neighbors_2()` computes all furthest

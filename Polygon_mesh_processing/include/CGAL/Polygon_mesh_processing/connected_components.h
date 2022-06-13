@@ -731,7 +731,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   for(vertex_descriptor v: vertices(pmesh))
     if (!keep_vertex[v])
       vertices_to_remove.push_back(v);
-  if ( is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_is_constrained_t>() )
+  if ( is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_is_constrained_t>::value )
     for (vertex_descriptor v : vertices_to_remove)
       remove_vertex(v, pmesh);
   else
@@ -1014,7 +1014,7 @@ void split_connected_components_impl(FIMap fim,
                                 get(CGAL::dynamic_face_property_t<faces_size_type>(), tm));
 
   faces_size_type nb_patches = 0;
-  if(is_default_parameter<NamedParameters, internal_np::face_patch_t>())
+  if(is_default_parameter<NamedParameters, internal_np::face_patch_t>::value)
   {
     nb_patches = CGAL::Polygon_mesh_processing::connected_components(
           tm, pidmap, CGAL::parameters::face_index_map(fim)

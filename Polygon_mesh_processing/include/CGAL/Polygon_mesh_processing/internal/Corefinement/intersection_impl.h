@@ -120,6 +120,26 @@ struct Default_surface_intersection_visitor{
     const TriangleMesh&,
     const Non_manifold_feature_map<TriangleMesh>&)
   {}
+
+  // needed for progress tracking
+  void start_filtering_intersections() const {}
+  void progress_filtering_intersections(double) const{}
+  void end_filtering_intersections() const {}
+
+  void start_triangulating_faces(std::size_t) const {}
+  void triangulating_faces_step(std::size_t) const {}
+  void end_triangulating_faces() const {}
+
+  void start_handling_intersection_of_coplanar_faces(std::size_t) const {}
+  void intersection_of_coplanar_faces_step() const {}
+  void end_handling_intersection_of_coplanar_faces() const {}
+
+  void start_handling_edge_face_intersections(std::size_t) const {}
+  void edge_face_intersections_step() const {}
+  void end_handling_edge_face_intersections() const {}
+
+  void start_building_output() const {}
+  void end_building_output() const {}
 };
 
 struct Node_id_set {
@@ -305,9 +325,9 @@ class Intersection_of_triangle_meshes
     Callback callback(tm_f, tm_e, edge_to_faces);
     #else
     typedef Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
-      TriangleMesh, VPMF, VPME, Edge_to_faces, Coplanar_face_set>
+      TriangleMesh, VPMF, VPME, Edge_to_faces, Coplanar_face_set, Node_visitor>
      Callback;
-    Callback  callback(tm_f, tm_e, vpm_f, vpm_e, edge_to_faces, coplanar_faces);
+    Callback  callback(tm_f, tm_e, vpm_f, vpm_e, edge_to_faces, coplanar_faces, visitor);
     #endif
     //using pointers in box_intersection_d is about 10% faster
     if (throw_on_self_intersection){
@@ -702,8 +722,10 @@ class Intersection_of_triangle_meshes
     typedef std::map<Key,Node_id> Coplanar_node_map;
     Coplanar_node_map coplanar_node_map;
 
+    visitor.start_handling_intersection_of_coplanar_faces(coplanar_faces.size());
     for(const Face_pair& face_pair : coplanar_faces)
     {
+      visitor.intersection_of_coplanar_faces_step();
       face_descriptor f1=face_pair.first;
       face_descriptor f2=face_pair.second;
 
@@ -807,6 +829,7 @@ class Intersection_of_triangle_meshes
         }
       }
     }
+    visitor.end_handling_intersection_of_coplanar_faces();
   }
 
   //add a new node in the final graph.
@@ -844,10 +867,12 @@ class Intersection_of_triangle_meshes
   {
     typedef std::tuple<Intersection_type, halfedge_descriptor, bool,bool>  Inter_type;
 
+    visitor.start_handling_edge_face_intersections(tm1_edge_to_tm2_faces.size());
 
     for(typename Edge_to_faces::iterator it=tm1_edge_to_tm2_faces.begin();
                                          it!=tm1_edge_to_tm2_faces.end();++it)
     {
+      visitor.edge_face_intersections_step();
       edge_descriptor e_1=it->first;
 
       halfedge_descriptor h_1=halfedge(e_1,tm1);
@@ -1066,6 +1091,7 @@ class Intersection_of_triangle_meshes
       } // end loop on all faces that intersect the edge
     } // end loop on all entries (edges) in 'edge_to_face'
     CGAL_assertion(nodes.size()==unsigned(current_node+1));
+    visitor.end_handling_edge_face_intersections();
   }
 
   struct Graph_node{
@@ -1625,8 +1651,11 @@ public:
     // used only if throw_on_self_intersection == true
     std::set<face_descriptor> tm1_faces;
     std::set<face_descriptor> tm2_faces;
+
+    visitor.start_filtering_intersections();
     filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, false);
     filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, true);
+    visitor.end_filtering_intersections();
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);
