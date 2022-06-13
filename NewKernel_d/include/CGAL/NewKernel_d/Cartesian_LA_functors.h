@@ -63,7 +63,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
         operator()(U&&...u)const{
                 return typename Constructor::Values()(std::forward<U>(u)...);
         }
-        //template<class...U,class=std::enable_if_t<Constructible_from_each<RT,U...>::value>::type,class=typename std::enable_if_t<(sizeof...(U)==static_dim+1)>,class=void>
+        //template<class...U,class=std::enable_if_t<Constructible_from_each<RT,U...>::value>,class=typename std::enable_if_t<(sizeof...(U)==static_dim+1)>,class=void>
         template<class...U>
         std::enable_if_t<Constructible_from_each<RT,U...>::value &&
                 std::is_same<Dimension_tag<int(sizeof...(U)-1)>, Dimension>::value,
