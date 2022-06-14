@@ -193,9 +193,10 @@ void set_face_patches(const Index2FaceMap& i2f,
    *   \cgalParamNBegin{face_patch_map}
   *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces(graph)`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
-  *                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable` as value type.}
+  *                    as key type and the desired property, model of `CopyConstructible`
+  *                    and `LessThanComparable`,
+  *                    and compatible with the `Surface_patch_index` type of `C3T3` as value type.}
   *     \cgalParamDefault{If not provided, faces patch ids are ignored.}
-  *     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */

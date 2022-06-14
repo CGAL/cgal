@@ -361,6 +361,7 @@ void output_to_vtu_with_attributes(std::ostream& os,
 //! \param c3t3 the mesh complex
 //! \param mode decides if the data should be written in binary (`IO::BINARY`)
 //!   or in ASCII (`IO::ASCII`).
+//!  If the mode is binary, then the stream `os` must be opened in binary mode.
 //! \see \ref IOStreamVTK
 //!
 template <class C3T3>
