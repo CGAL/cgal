@@ -59,13 +59,17 @@ to represent the final optimized mesh.
   \cgalParamDescription{is used to set up, in seconds, a CPU time limit after which the optimization process
                         is stopped. This time is measured using the Real_timer class. The default value is
                         0 and means that there is no time limit.}
-  \cgalParamNBegin{sliver_bound_new}
+  \cgalParamType{'double'}
+  \cgalParamDefault{0}
+ \cgalParamNBegin{sliver_bound_new}
    \cgalParamDescription{is designed to give, in degrees, a targeted lower bound on dihedral angles of mesh cells.
                          The exudation process considers in turn all the mesh cells that have a smallest dihedral
                          angle less than sliver_bound and tries to make them disappear by weighting their vertices.
                          The optimization process stops when every cell in the mesh achieves this quality. The
                          default value is 0 and means that there is no targeted bound: the exuder then runs as long
                          as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}
+   \cgalParamType{'double'}
+   \cgalParamDefault{0}
 \cgalNamedParamsEnd
 \return
 The function `exude_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code`
@@ -140,9 +144,9 @@ namespace CGAL {
 
 /*!
 \ingroup PkgMesh3Functions
+\deprecated This function is deprecated since \cgal 5.5, the overload using `NamedParameters` must be used instead.
 
-The function `exude_mesh_3()` performs a sliver exudation process on a Delaunay mesh.
-
+ The function `exude_mesh_3()` performs a sliver exudation process on a Delaunay mesh.
 The sliver exudation process consists in optimizing the weights of vertices
 of the weighted Delaunay triangulation in such a way that slivers disappear and
 the quality of the mesh improves.
