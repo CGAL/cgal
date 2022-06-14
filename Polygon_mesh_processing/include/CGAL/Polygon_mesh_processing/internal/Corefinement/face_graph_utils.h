@@ -399,7 +399,7 @@ struct TweakedGetVertexPointMap
 
 template <class PT, class NP, class PM>
 boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
+get_vpm(const NP& np, boost::optional<PM*> opm, std::true_type)
 {
   if (boost::none == opm) return boost::none;
   return parameters::choose_parameter(
@@ -409,7 +409,7 @@ get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
 
 template <class PT, class NP, class PM>
 boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP&, boost::optional<PM*> opm, boost::false_type)
+get_vpm(const NP&, boost::optional<PM*> opm, std::false_type)
 {
   if (boost::none == opm) return boost::none;
   return typename TweakedGetVertexPointMap<PT, NP, PM>::type();

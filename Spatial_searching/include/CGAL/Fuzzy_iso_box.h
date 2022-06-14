@@ -34,13 +34,15 @@ namespace CGAL {
   namespace internal{
     template <class SearchTraits,class Point>
     struct Is_from_point_from_adapter_traits{
-      typedef boost::false_type type;
+      typedef std::false_type type;
+      static const bool value = false;
     };
 
 
     template <class K,class PM,class Base,class Point>
     struct Is_from_point_from_adapter_traits<Search_traits_adapter<K,PM,Base>,Point>{
       typedef typename std::is_same<Point,typename Base::Point_d> type;
+      static const bool value = type::value;
     };
   } //namespace internal
 

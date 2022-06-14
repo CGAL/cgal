@@ -21,8 +21,8 @@ struct checked_NT {
   checked_NT():x1(),x2(){verify();}
   checked_NT(checked_NT const&t):x1(t.x1),x2(t.x2){verify();}
   checked_NT& operator=(checked_NT const&t){x1=t.x1;x2=t.x2;verify();return *this;}
-  template<class T> checked_NT(T const&t,std::enable_if_t<is_implicit_convertible<T,NT1>::value,int>=0):x1(t),x2(t){verify();}
-  template<class T> explicit checked_NT(T const&t,std::enable_if_t<!is_implicit_convertible<T,NT1>::value,int>=0):x1(t),x2(t){verify();}
+  template<class T> checked_NT(T const&t,std::enable_if_t<is_implicit_convertible<T,NT1>::value,int> = 0):x1(t),x2(t){verify();}
+  template<class T> explicit checked_NT(T const&t,std::enable_if_t<!is_implicit_convertible<T,NT1>::value,int> = 0):x1(t),x2(t){verify();}
   /*TODO: enable_if to restrict the types*/
   template<class T> checked_NT& operator=(T const&t){x1=t;x2=t;verify();return *this;}
   checked_NT operator-()const{return checked_NT(pieces(),-x1,-x2);}

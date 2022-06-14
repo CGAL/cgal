@@ -329,7 +329,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                typename Rt::Face_handle start,
                                std::enable_if_t<
                                           !is_iterator_v<OutputFunctor>
-                                        >::type* = 0)
+                                        >* = 0)
 {
   return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(), start);
 }
@@ -342,7 +342,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
                                OutputIterator out,
                                OutputFunctor fct,
-                               std::enable_if_c<
+                               std::enable_if_t<
                                  !boost::is_convertible<OutputFunctor,
                                                        typename Rt::Face_handle>::value
                                >* = 0)
@@ -424,7 +424,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                EdgeIterator hole_end,
                                VertexIterator hidden_vertices_begin,
                                VertexIterator hidden_vertices_end,
-                               std::enable_if_t!<
+                               std::enable_if_t<
                                           !is_iterator_v<OutputFunctor>
                                         >* = 0)
 {
