@@ -83,7 +83,7 @@ namespace CGAL
  *
  *   \cgalParamNBegin{maximum_running_time}
  *     \cgalParamDescription{to set up, in seconds, a CPU time limit after which the optimization process is stopped.
- *                           This time is measured using `CGAL::Timer`. 0 means that there is no time limit.}
+ *                           This time is measured using `CGAL::Real_timer`. 0 means that there is no time limit.}
  *     \cgalParamType{`double`}
  *     \cgalParamExtra{\pre `maximum_running_time` \f$ \geq\f$ 0}
  *     \cgalParamDefault{0}
@@ -294,7 +294,7 @@ provided that the names of the parameters are used
 - <b>`parameters::time_limit`</b>
 is used to set up, in seconds,
 a CPU time limit after which the optimization process is stopped. This time is
-measured using `CGAL::Timer`.
+measured using `CGAL::Real_timer`.
 The default value is 0 and means that there is no time limit.
 \pre `time_limit` \f$ \geq\f$ 0
 
