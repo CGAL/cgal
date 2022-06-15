@@ -53,8 +53,7 @@ std::vector<Point> cube() {
         }
         distances_avg /= points.size();
         // Assert that cube has non-zero volume.
-        // assert(distances_avg == 86.602540378443877);
-        std::cout.precision(17); std::cout << distances_avg << std::endl;
+        assert( (distances_avg > 86.60) && (distances_avg < 86.61) );
         double distances_err = 0;
         for (size_t i = 0; i < points.size(); ++i) {
                 distances_err = pow(distances[i] - distances_avg, 2);
@@ -62,8 +61,7 @@ std::vector<Point> cube() {
         distances_err /= points.size();
         distances_err = sqrt(distances_err);
         // Assert that points describe cube.
-        // assert(distances_err == 5.0242958677880805e-15);
-        std::cout << distances_err << std::endl;
+        assert(distances_err <= 0.00001);
         return points;
 }
 
