@@ -254,10 +254,10 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   if(odt)
   {
     odt_optimize_mesh_3(c3t3, domain,
-                        parameters::time_limit = odt.time_limit(),
-                        parameters::max_iteration_number = odt.max_iteration_number(),
-                        parameters::convergence = odt.convergence(),
-                        parameters::freeze_bound = odt.bound());
+                        parameters::time_limit_new = odt.time_limit(),
+                        parameters::max_iteration_number_new = odt.max_iteration_number(),
+                        parameters::convergence_new = odt.convergence(),
+                        parameters::freeze_bound_new = odt.bound());
   }
 
   // Lloyd

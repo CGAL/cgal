@@ -98,7 +98,7 @@ void test()
     oss.clear();
 
     //ODT (2)
-    CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_odt);
+    CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number_new = nb_odt);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+2]
     oss.clear();
@@ -120,7 +120,7 @@ void test()
     oss.clear();
 
     //EXUDE (4)
-    CGAL::exude_mesh_3(c3t3, CGAL::parameters::sliver_bound_new=exude_bound);
+    CGAL::exude_mesh_3(c3t3, sliver_bound_new=exude_bound);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+4]
     oss.clear();

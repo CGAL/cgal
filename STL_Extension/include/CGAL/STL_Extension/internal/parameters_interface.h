@@ -251,3 +251,4 @@ CGAL_add_named_parameter(i_seed_end_iterator_t, i_seed_end_iterator, i_seed_end_
 
 //List of named parameters used in exude_mesh_3.h
 CGAL_add_named_parameter(lower_sliver_bound_t,lower_sliver_bound,lower_sliver_bound)
+CGAL_add_named_parameter(freeze_t,freeze,freeze)

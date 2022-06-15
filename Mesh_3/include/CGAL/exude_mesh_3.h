@@ -59,7 +59,7 @@ to represent the final optimized mesh.
   \cgalParamDescription{is used to set up, in seconds, a CPU time limit after which the optimization process
                         is stopped. This time is measured using the Real_timer class. The default value is
                         0 and means that there is no time limit.}
-  \cgalParamType{'double'}
+  \cgalParamType{`double`}
   \cgalParamDefault{0}
  \cgalParamNBegin{sliver_bound_new}
    \cgalParamDescription{is designed to give, in degrees, a targeted lower bound on dihedral angles of mesh cells.
@@ -68,7 +68,7 @@ to represent the final optimized mesh.
                          The optimization process stops when every cell in the mesh achieves this quality. The
                          default value is 0 and means that there is no targeted bound: the exuder then runs as long
                          as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}
-   \cgalParamType{'double'}
+   \cgalParamType{`double`}
    \cgalParamDefault{0}
 \cgalNamedParamsEnd
 \return
