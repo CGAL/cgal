@@ -115,6 +115,7 @@ function(CGAL_setup_CGAL_dependencies target)
   endif()
 
   if(CGAL_USE_ASAN OR ENV{CGAL_USE_ASAN})
+    set(CMAKE_DISABLE_FIND_PACKAGE_TBB TRUE CACHE BOOL "CGAL_USE_ASAN (AddressSanitizer) and TBB are incompatible")
     target_compile_options(${target} INTERFACE -fsanitize=address)
     target_link_options(${target} INTERFACE -fsanitize=address)
   endif()
