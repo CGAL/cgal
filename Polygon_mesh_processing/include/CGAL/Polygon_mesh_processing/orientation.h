@@ -1240,6 +1240,8 @@ volume_connected_components(const TriangleMesh& tm,
  *
  * @pre `CGAL::is_closed(tm)`
  *
+ * @attention if `tm` is self-intersecting the behavior of this function is undefined.
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
