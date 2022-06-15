@@ -57,7 +57,7 @@ to represent the final optimized mesh.
 \cgalNamedParamsBegin
  \cgalParamNBegin{time_limit_new}
   \cgalParamDescription{is used to set up, in seconds, a CPU time limit after which the optimization process
-                        is stopped. This time is measured using the Real_timer class. The default value is
+                        is stopped. This time is measured using the `Real_timer` class. The default value is
                         0 and means that there is no time limit.}
   \cgalParamType{`double`}
   \cgalParamDefault{0}
