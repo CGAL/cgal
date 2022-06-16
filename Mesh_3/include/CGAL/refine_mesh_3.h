@@ -578,10 +578,10 @@ void refine_mesh_3_impl(C3T3& c3t3,
   {
     lloyd_optimize_mesh_3(c3t3,
                           domain,
-                          parameters::time_limit = lloyd.time_limit(),
-                          parameters::max_iteration_number = lloyd.max_iteration_number(),
-                          parameters::convergence = lloyd.convergence(),
-                          parameters::freeze_bound = lloyd.bound());
+                          parameters::time_limit_new = lloyd.time_limit(),
+                          parameters::max_iteration_number_new = lloyd.max_iteration_number(),
+                          parameters::convergence_new = lloyd.convergence(),
+                          parameters::freeze_bound_new = lloyd.bound());
   }
 
   if( odt || lloyd) {

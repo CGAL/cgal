@@ -87,7 +87,7 @@ void test()
     oss.clear();
 
     //LLOYD (1)
-    CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_lloyd);
+    CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number_new = nb_lloyd);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+1]
     oss.clear();

@@ -184,8 +184,8 @@ struct Tester
     // Vertex number should not change (obvious)
     C3t3 lloyd_c3t3(c3t3);
     std::cerr << "Lloyd...\n";
-    CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit=5,
-                                CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
+    CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit_new=5,
+                                CGAL::parameters::convergence_new=0.001, CGAL::parameters::freeze_bound_new=0.0005);
     verify_c3t3(lloyd_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(lloyd_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(lloyd_c3t3, domain, domain_type, hdist);
