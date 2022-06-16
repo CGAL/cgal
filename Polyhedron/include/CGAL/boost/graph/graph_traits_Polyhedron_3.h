@@ -494,5 +494,7 @@ namespace boost {
 #undef CGAL_HDS_PARAM_
 
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3_time_stamp.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3_features.h>
 
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYHEDRON_3_H
