@@ -108,7 +108,7 @@ struct HDS_property_map {};
 } // namespace CGAL
 
 namespace CGAL {
-    /*
+
 // generalized 2-ary get functions
 template<class Gt, class I,  class A, class PropertyTag>
 typename boost::property_map<CGAL::HalfedgeDS_default<Gt,I,A>, PropertyTag >::const_type
@@ -119,7 +119,7 @@ template<class Gt, class I,  class A, class PropertyTag>
 typename boost::property_map<CGAL::HalfedgeDS_default<Gt,I,A>, PropertyTag >::type
 get(PropertyTag,CGAL::HalfedgeDS_default<Gt,I,A>&)
 { return typename boost::property_map<CGAL::HalfedgeDS_default<Gt,I,A>, PropertyTag >::type(); }
-*/
+
 // generalized 3-ary get functions
 template<class Gt, class I,  class A, class PropertyTag, class Key>
 typename boost::property_traits< typename boost::property_map<CGAL::HalfedgeDS_default<Gt,I,A>, PropertyTag >::type >::reference
@@ -212,8 +212,7 @@ struct HDS_property_map<boost::edge_weight_t>
     typedef type const_type;
   };
 };
-/*
-// already defined in line 448 ??    why not the same for Polyhedron?
+
 template <>
 struct HDS_property_map<vertex_point_t>
 {
@@ -233,7 +232,7 @@ struct HDS_property_map<vertex_point_t>
       typename Gt::Point_3, const typename Gt::Point_3&> const_type;
   };
 };
-*/
+
 //
 // external indices
 //

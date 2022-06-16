@@ -443,29 +443,6 @@ num_faces(const HalfedgeDS_default<T,I,A>& p)
   return p.size_of_faces();
 }
 
-template <class T>
-struct HDS_property_map;
-
-template <>
-struct HDS_property_map<vertex_point_t>
-{
-  template<class T, class I, class A>
-  struct bind_
-  {
-    typedef internal::Point_accessor<
-      typename boost::graph_traits<
-        HalfedgeDS_default<T, I, A>
-        >::vertex_descriptor,
-      typename T::Point_3, typename T::Point_3&> type;
-
-    typedef internal::Point_accessor<
-      typename boost::graph_traits<
-        HalfedgeDS_default<T, I, A>
-        >::vertex_descriptor,
-      typename T::Point_3, const typename T::Point_3&> const_type;
-  };
-};
-
 template<class T, class I, class A>
 void reserve(HalfedgeDS_default<T,I,A>& p,
              typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertices_size_type nv,
@@ -476,37 +453,7 @@ void reserve(HalfedgeDS_default<T,I,A>& p,
 }
 
 }// namespace CGAL
-namespace boost {
 
-#define CGAL_PM_SPECIALIZATION(TAG) \
-template<class T, class I, class A> \
-struct property_map<CGAL::HalfedgeDS_default<T,I,A>, TAG> \
-{\
-  typedef typename CGAL::HDS_property_map<TAG>:: \
-      template bind_<T,I,A> map_gen; \
-  typedef typename map_gen::type       type; \
-  typedef typename map_gen::const_type const_type; \
-};
+#include <CGAL/boost/graph/properties_HalfedgeDS_default.h>
 
-CGAL_PM_SPECIALIZATION(vertex_point_t)
-
-#undef CGAL_PM_SPECIALIZATION
-
-} // namespace boost
-
-namespace CGAL {
-
-// generalized 2-ary get functions
-template<class Gt, class I, class A, class PropertyTag>
-typename boost::property_map< CGAL::HalfedgeDS_default<Gt,I,A>, PropertyTag >::const_type
-get(PropertyTag, CGAL::HalfedgeDS_default<Gt,I,A> const&)
-{ return typename boost::property_map< CGAL::HalfedgeDS_default<Gt,I,A>, PropertyTag >::const_type(); }
-
-template<class Gt, class I, class A, class PropertyTag>
-typename boost::property_map< CGAL::HalfedgeDS_default<Gt,I,A>, PropertyTag >::type
-get(PropertyTag, CGAL::HalfedgeDS_default<Gt,I,A>&)
-{ return typename boost::property_map< CGAL::HalfedgeDS_default<Gt,I,A>, PropertyTag >::type(); }
-
-
-} // namespace CGAL
 #endif
