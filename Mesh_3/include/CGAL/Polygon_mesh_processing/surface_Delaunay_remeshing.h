@@ -45,7 +45,8 @@ namespace Polygon_mesh_processing {
 *
 * @tparam TriangleMesh model of `FaceListGraph`
 * @tparam TriangleMeshOut model of `FaceListGraph`, model of `DefaultConstructible`,
-*   with an internal property map for `CGAL::vertex_point_t`
+*   with an internal property map for `CGAL::vertex_point_t` with `geom_traits::Point_3`
+*   as value type.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tmesh a triangle surface mesh
@@ -175,8 +176,9 @@ namespace Polygon_mesh_processing {
 template<typename TriangleMesh
        , typename TriangleMeshOut = TriangleMesh
        , typename NamedParameters = parameters::Default_named_parameters>
-TriangleMeshOut surface_Delaunay_remeshing(const TriangleMesh& tmesh
-                                      , const NamedParameters& np = parameters::default_values())
+TriangleMeshOut
+surface_Delaunay_remeshing(const TriangleMesh& tmesh,
+                           const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
