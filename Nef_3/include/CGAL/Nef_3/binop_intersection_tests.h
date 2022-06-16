@@ -71,7 +71,7 @@ struct binop_intersection_test_segment_tree {
         return;
       Point_3 ip;
       if( SNC_intersection::does_intersect_internally( Const_decorator::segment(e0), f1, ip )) {
-        cb(e0,make_object(f1),ip);
+        cb(e0,f1,ip);
       }
     }
   };
@@ -97,7 +97,7 @@ struct binop_intersection_test_segment_tree {
       Point_3 ip;
       if( SNC_intersection::does_intersect_internally( Const_decorator::segment( e1 ),
                                                        f0, ip ) )
-        cb(e1,make_object(f0),ip);
+        cb(e1,f0,ip);
     }
   };
 
@@ -119,7 +119,7 @@ struct binop_intersection_test_segment_tree {
       Point_3 ip;
       if( SNC_intersection::does_intersect_internally( Const_decorator::segment( e0 ),
                                                        Const_decorator::segment( e1 ), ip ))
-        cb(e0,make_object(e1),ip);
+        cb(e0,e1,ip);
     }
   };
 

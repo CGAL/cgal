@@ -75,6 +75,13 @@ endif()
 #   keyword.
 #
 function(CGAL_setup_CGAL_dependencies target)
+  foreach(dir ${CGAL_INCLUDE_DIRS})
+    target_include_directories(${target} INTERFACE
+      $<BUILD_INTERFACE:${dir}>)
+  endforeach()
+  target_include_directories(${target} INTERFACE
+    $<INSTALL_INTERFACE:include>)
+
   if(CGAL_DISABLE_GMP)
     target_compile_definitions(${target} INTERFACE CGAL_DISABLE_GMP=1)
   else()
@@ -95,13 +102,6 @@ function(CGAL_setup_CGAL_dependencies target)
   target_compile_features(${target} INTERFACE cxx_decltype_auto)
 
   use_CGAL_Boost_support(${target} INTERFACE)
-
-  foreach(dir ${CGAL_INCLUDE_DIRS})
-    target_include_directories(${target} INTERFACE
-      $<BUILD_INTERFACE:${dir}>)
-  endforeach()
-  target_include_directories(${target} INTERFACE
-    $<INSTALL_INTERFACE:include>)
 
   # Make CGAL depend on threads-support (for Epeck and Epeck_d)
   if(CGAL_HAS_NO_THREADS)
