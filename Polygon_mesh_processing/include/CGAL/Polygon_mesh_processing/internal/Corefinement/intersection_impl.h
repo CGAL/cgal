@@ -38,14 +38,6 @@ namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-struct Self_intersection_exception :
-  public std::runtime_error
-{
-  Self_intersection_exception()
-    : std::runtime_error("Self-intersection detected in input mesh")
-  {}
-};
-
 struct Triple_intersection_exception :
   public std::runtime_error
 {
@@ -247,6 +239,7 @@ class Intersection_of_triangle_meshes
   std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
   Non_manifold_feature_map<TriangleMesh> non_manifold_feature_map_1,
                                          non_manifold_feature_map_2;
+  const TriangleMesh* const_mesh_ptr;
   static const constexpr std::size_t NM_NID = (std::numeric_limits<std::size_t>::max)();
   CGAL_assertion_code(bool doing_autorefinement;)
 
@@ -334,16 +327,44 @@ class Intersection_of_triangle_meshes
     //using pointers in box_intersection_d is about 10% faster
     if (throw_on_self_intersection){
         Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si(callback, tm_f_faces, tm_e_faces);
-        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                  edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                  callback_si, cutoff );
+        CGAL::box_intersection_d(face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                 edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                 callback_si, cutoff);
         if (run_check && callback_si.self_intersections_found())
          throw Self_intersection_exception();
     }
     else {
-      CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                callback, cutoff );
+      if (const_mesh_ptr==&tm_e)
+      {
+        // tm_f might feature degenerate faces
+        auto filtered_callback = [&callback](const Box* fb, const Box* eb)
+        {
+          if (!callback.is_face_degenerated(fb->info()))
+            callback(fb, eb);
+        };
+        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                  edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                  filtered_callback, cutoff );
+      }
+      else
+      {
+        if (const_mesh_ptr==&tm_f)
+        {
+          // tm_e might feature degenerate edges
+          auto filtered_callback = [&callback,&tm_e, &vpm_e](const Box* fb, const Box* eb)
+          {
+            if (get(vpm_e, source(eb->info(), tm_e)) != get(vpm_e, target(eb->info(), tm_e)))
+              callback(fb, eb);
+          };
+          CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                    filtered_callback, cutoff );
+        }
+        else
+          CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                    callback, cutoff );
+      }
     }
   }
 
@@ -1604,9 +1625,11 @@ public:
                                   const TriangleMesh& tm2,
                                   const VertexPointMap1& vpm1,
                                   const VertexPointMap2& vpm2,
-                                  const Node_visitor& v=Node_visitor())
+                                  const Node_visitor& v=Node_visitor(),
+                                  const TriangleMesh* const_mesh_ptr=nullptr)
   : nodes(tm1, tm2, vpm1, vpm2)
   , visitor(v)
+  , const_mesh_ptr(const_mesh_ptr)
   {
     CGAL_precondition(is_triangle_mesh(tm1));
     CGAL_precondition(is_triangle_mesh(tm2));
