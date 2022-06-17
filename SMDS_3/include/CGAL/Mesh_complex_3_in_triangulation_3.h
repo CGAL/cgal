@@ -441,7 +441,7 @@ public:
   }
 
   /**
-   * removes vertex \p v from complex
+   * removes vertex \p v from the complex
    */
   void remove_from_complex(const Vertex_handle& v)
   {
