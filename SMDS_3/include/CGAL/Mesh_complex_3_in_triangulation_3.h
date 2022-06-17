@@ -476,7 +476,7 @@ public:
   {
     cell->set_subdomain_index(index);
   }
-  /** sets dimension of vertex \p vertex to \p dimension
+  /** sets the dimension of vertex \p vertex to \p dimension
   */
   void set_dimension(const Vertex_handle& vertex, int dimension) const
   {
