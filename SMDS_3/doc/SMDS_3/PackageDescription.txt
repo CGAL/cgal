@@ -51,8 +51,8 @@
 
 - `MeshComplex_3InTriangulation_3`
 - `MeshComplexWithFeatures_3InTriangulation_3`
+- `SimplicialMeshCellBase_3`
 - `SimplicialMeshVertexBase_3`
-- `SimplicialCellVertexBase_3`
 
 \cgalCRPSection{Classes}
 
