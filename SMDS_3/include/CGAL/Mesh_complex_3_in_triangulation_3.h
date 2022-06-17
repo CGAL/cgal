@@ -136,7 +136,7 @@ namespace CGAL {
 /*!
   \ingroup PkgSMDS3Classes
 
-  \brief A data-structure to represent and maintain a 3D complex embedded
+  \brief A data structure to represent and maintain a 3D complex embedded
   in a 3D triangulation.
 
   The class `Mesh_complex_3_in_triangulation_3` implements a data structure
