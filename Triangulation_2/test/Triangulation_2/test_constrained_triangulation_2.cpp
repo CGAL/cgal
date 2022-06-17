@@ -26,6 +26,7 @@
 #define CGAL_NO_CDT_2_WARNING
 
 #include <CGAL/_test_types.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/_test_cls_constrained_triangulation_2.h>
@@ -68,12 +69,24 @@ int main()
 
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_intersections_tag : " << std::endl;
-  typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;
-  typedef CGAL::Constrained_triangulation_face_base_2<EK>         Fbb;
-  typedef CGAL::Triangulation_data_structure_2<Vbb,Fbb>         TDSS;
-  typedef CGAL::Exact_intersections_tag                         EItag;
-  typedef CGAL::Constrained_triangulation_2<EK,TDSS,EItag>      Ctwei;
-  _test_cls_constrained_triangulation(Ctwei());
+  {
+    typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;
+    typedef CGAL::Constrained_triangulation_face_base_2<EK>       Fbb;
+    typedef CGAL::Triangulation_data_structure_2<Vbb,Fbb>         TDSS;
+    typedef CGAL::Exact_intersections_tag                         EItag;
+    typedef CGAL::Constrained_triangulation_2<EK,TDSS,EItag>      Ctwei;
+    _test_cls_constrained_triangulation(Ctwei());
+  }
+  std::cout << "Testing with Epeck\n:";
+  {
+    typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
+    typedef CGAL::Triangulation_vertex_base_2<EK>             Vbb;
+    typedef CGAL::Constrained_triangulation_face_base_2<EK>   Fbb;
+    typedef CGAL::Triangulation_data_structure_2<Vbb,Fbb>     TDSS;
+    typedef CGAL::Exact_intersections_tag                     EItag;
+    typedef CGAL::Constrained_triangulation_2<EK,TDSS,EItag>  Ctwei;
+    _test_cls_constrained_triangulation(Ctwei());
+  }
 
   return 0;
 }
