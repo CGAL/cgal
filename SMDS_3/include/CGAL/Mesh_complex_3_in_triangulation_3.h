@@ -284,7 +284,7 @@ public:
 /// @{
    /**
    * @brief Constructor
-   * Builds an empty 3D complex.
+   * builds an empty 3D complex.
    */
   Mesh_complex_3_in_triangulation_3();
   /**
@@ -307,7 +307,7 @@ public:
   }
 
   /**
-   * Swaps `this` and `rhs`
+   * swaps `this` and `rhs`
    */
   void swap(Self& rhs)
   {
@@ -325,13 +325,13 @@ public:
 
 /// \name Access Functions
 /// @{
-  /// Returns a const reference to the triangulation
+  /// returns a const reference to the triangulation
   const Triangulation& triangulation() const { return tr_; }
 /// @}
 
 /// \name Non const access
 /// @{
-    /// Returns the reference to the triangulation
+    /// returns the reference to the triangulation
   Triangulation& triangulation() { return tr_; }
 /// @}
 
@@ -339,7 +339,7 @@ public:
 /// \name Modifiers
 /// @{
   /**
-   * Clears data of c3t3
+   * clears data of the complex
    */
   void clear()
   {
@@ -352,7 +352,7 @@ public:
     far_vertices_.clear();
   }
 
-  /** Adds cell \p cell to the 3D complex, with subdomain index \p index
+  /** adds cell \p cell to the 3D complex, with subdomain index \p index
   */
   void add_to_complex(const Cell_handle& cell, const Subdomain_index& index)
   {
@@ -364,19 +364,19 @@ public:
       ++number_of_cells_;
     }
   }
-  /** Adds facet \p facet to the 2D complex, with surface index \p index
+  /** adds facet \p facet to the 2D complex, with surface index \p index
   */
   void add_to_complex(const Facet& facet, const Surface_patch_index& index)
   {
     add_to_complex(facet.first, facet.second, index);
   }
-  /** Adds facet(\p cell, \p i) to the 2D complex, with surface index \p index
+  /** adds facet(\p cell, \p i) to the 2D complex, with surface index \p index
   */
   void add_to_complex(const Cell_handle& cell,
                       const int i,
                       const Surface_patch_index& index);
 
-  /** Adds edge \p e to complex, with curve index \p index
+  /** adds edge \p e to complex, with curve index \p index
    */
   void add_to_complex(const Edge& e,
                       const Curve_index& index)
@@ -387,7 +387,7 @@ public:
   }
 
   /**
-   * Adds edge (v1,v2) to complex, with Curve_index index
+   * adds edge (v1,v2) to complex, with Curve_index index
    */
   void add_to_complex(const Vertex_handle& v1,
                       const Vertex_handle& v2,
@@ -397,7 +397,7 @@ public:
   }
 
   /**
-   * Mark vertex \p v as a corner of the complex
+   * marks vertex \p v as a corner of the complex
    */
   void add_to_complex(const Vertex_handle& v, const Corner_index& index)
   {
@@ -405,7 +405,7 @@ public:
     corners_.insert(std::make_pair(v,index));
   }
 
-  /** Removes cell \p cell from the 3D complex
+  /** removes cell \p cell from the 3D complex
   */
   void remove_from_complex(const Cell_handle& cell)
   {
@@ -415,17 +415,17 @@ public:
       --number_of_cells_;
     }
   }
-  /** Removes facet \p facet from 2D complex
+  /** removes facet \p facet from 2D complex
   */
   void remove_from_complex(const Facet& facet);
 
-  /** Removes facet(\p cell, \p i) from 2D complex
+  /** removes facet(\p cell, \p i) from 2D complex
   */
   void remove_from_complex(const Cell_handle& c, const int i) {
     remove_from_complex(Facet(c, i));
   }
   /**
-   * Remove edge \p e from complex
+   * removes edge \p e from complex
    */
   void remove_from_complex(const Edge& e)
   {
@@ -433,7 +433,7 @@ public:
   }
 
   /**
-   * Remove edge (v1,v2) from complex
+   * removes edge (v1,v2) from complex
    */
   void remove_from_complex(const Vertex_handle& v1, const Vertex_handle& v2)
   {
@@ -441,7 +441,7 @@ public:
   }
 
   /**
-   * Remove vertex \p v from complex
+   * removes vertex \p v from complex
    */
   void remove_from_complex(const Vertex_handle& v)
   {
@@ -449,19 +449,19 @@ public:
     v->set_dimension(-1);
   }
 
-  /** Sets index of vertex \p vertex to \p index
+  /** sets index of vertex \p vertex to \p index
   */
   void set_index(const Vertex_handle& vertex, const Index& index) const
   {
     vertex->set_index(index);
   }
-  /** Sets surface index of facet \p facet to \p index
+  /** sets surface index of facet \p facet to \p index
   */
   void set_surface_patch_index(const Facet& f, const Surface_patch_index& index)
   {
     set_surface_patch_index(f.first, f.second, index);
   }
-  /** Sets surface index of facet(\p cell, \p i) to \p index
+  /** sets surface index of facet(\p cell, \p i) to \p index
   */
   void set_surface_patch_index(const Cell_handle& cell,
     const int i,
@@ -469,14 +469,14 @@ public:
   {
     cell->set_surface_patch_index(i, index);
   }
-  /** Sets subdomain index of cell \p cell to \p index
+  /** sets subdomain index of cell \p cell to \p index
   */
   void set_subdomain_index(const Cell_handle& cell,
     const Subdomain_index& index) const
   {
     cell->set_subdomain_index(index);
   }
-  /** Sets dimension of vertex \p vertex to \p dimension
+  /** sets dimension of vertex \p vertex to \p dimension
   */
   void set_dimension(const Vertex_handle& vertex, int dimension) const
   {
@@ -486,37 +486,37 @@ public:
 
 /// \name Queries on the identifier of the face complex including triangulation cells, facets and vertices.
 /// @{
-  /** Returns the index of vertex \p v
+  /** returns the index of vertex \p v
   */
   Index index(const Vertex_handle& v) const { return v->index(); }
 
-  /** Returns the subdomain index of cell \p cell
+  /** returns the subdomain index of cell \p cell
   */
   Subdomain_index subdomain_index(const Cell_handle& cell) const
   {
     return cell->subdomain_index();
   }
-  /** Returns surface index of facet \p f
+  /** returns surface index of facet \p f
   */
   Surface_patch_index surface_patch_index(const Facet& f) const
   {
     return surface_patch_index(f.first, f.second);
   }
 
-  /** Returns surface index of facet(\p cell, \p i)
+  /** returns surface index of facet(\p cell, \p i)
   */
   Surface_patch_index surface_patch_index(const Cell_handle& cell,
                                           const int i) const
   {
     return cell->surface_patch_index(i);
   }
-  /** Returns the dimension of the lowest dimensional face of the input 3D
+  /** returns the dimension of the lowest dimensional face of the input 3D
   * complex that contains the vertex
   */
   int in_dimension(const Vertex_handle& v) const { return v->in_dimension(); }
 
   /**
-  * Returns Curve_index of edge \p e
+  * returns curve index of edge \p e
   */
   Curve_index curve_index(const Edge& e) const
   {
@@ -525,7 +525,7 @@ public:
   }
 
   /**
-  * Returns Curve_index of the edge formed by \p v1 and \p v2
+  * returns Curve_index of the edge formed by \p v1 and \p v2
   */
   Curve_index curve_index(const Vertex_handle& v1,
                           const Vertex_handle& v2) const
@@ -534,7 +534,7 @@ public:
   }
 
   /**
-   * Returns Corner_index of vertex \p v
+   * returns Corner_index of vertex \p v
    */
   Corner_index corner_index(const Vertex_handle& v) const
   {
@@ -692,77 +692,77 @@ public:
 /// \name Queries on the faces of the embedded complex
 /// @{
   /**
-  * Returns the number of cells which belongs to the 3D complex
+  * returns the number of cells which belong to the 3D complex
   */
   size_type number_of_cells_in_complex() const { return number_of_cells_; }
   /**
-  * Returns the number of cells which belongs to the 3D complex
+  * returns the number of cells which belongs to the 3D complex
   */
   size_type number_of_cells() const
   {
     return number_of_cells_in_complex();
   }
   /**
-  * Returns the number of surface facets of c3t3
+  * returns the number of surface facets of the complex
   */
   size_type number_of_facets_in_complex() const { return number_of_facets_; }
   /**
-  * Returns the number of surface facets of c3t3
+  * returns the number of surface facets of the complex
   */
   size_type number_of_facets() const
   {
     return number_of_facets_in_complex();
   }
   /**
-   * Returns the number of edges of c3t3
+   * returns the number of edges of the complex
    */
   size_type number_of_edges_in_complex() const
   {
     return edges_.size();
   }
   /**
-   * Returns the number of edges of c3t3
+   * returns the number of edges of the complex
    */
   size_type number_of_edges() const
   {
     return edges_.size();
   }
   /**
-   * Returns the number of corners of c3t3
+   * returns the number of corners of the complex
    */
   size_type number_of_vertices_in_complex() const
   {
     return corners_.size();
   }
   /**
-   * Returns the number of corners of c3t3
+   * returns the number of corners of the complex
    */
   size_type number_of_corners() const
   {
     return corners_.size();
   }
   /**
-  * Returns \c true if cell \p cell belongs to the 3D complex
+  * returns \c true if cell \p cell belongs to the 3D complex
   */
   bool is_in_complex(const Cell_handle& cell) const
   {
     return !(subdomain_index(cell) == Subdomain_index());
   }
-  /** Returns true if facet \p facet is in complex
+  /** returns true if facet \p facet is in complex
   */
   bool is_in_complex(const Facet& facet) const
   {
     return is_in_complex(facet.first, facet.second);
   }
 
-  /** Returns true if facet (\p cell, \p i) is in 2D complex
+  /** returns true if facet (\p cell, \p i) is in 2D complex
   */
   bool is_in_complex(const Cell_handle& cell, const int i) const
   {
     return (cell->is_facet_on_surface(i));
   }
   /**
-   * Returns true if edge \p e is in complex
+   * returns true if edge \p e is in complex
    */
   bool is_in_complex(const Edge& e) const
   {
@@ -770,7 +770,7 @@ public:
   }
 
   /**
-   * Returns true if edge (v1,v2) is in C3T3
+   * returns true if edge (v1,v2) is in the complex
    */
   bool is_in_complex(const Vertex_handle& v1, const Vertex_handle& v2) const
   {
@@ -778,7 +778,7 @@ public:
   }
 
   /**
-   * Returns true if \p v is a 0-dimensionnal feature in the c3t3
+   * returns true if \p v is a 0-dimensionnal feature in the complex
    */
   bool is_in_complex(const Vertex_handle& v) const
   {
@@ -790,7 +790,7 @@ public:
   /// \name I/O Functions
   /// @{
   /**
-   * Outputs the outer boundary of the entire domain with facets oriented outward.
+   * outputs the outer boundary of the entire domain with facets oriented outward.
    */
   std::ostream& output_boundary_to_off(std::ostream& out) const
   {
@@ -799,7 +799,7 @@ public:
   }
 
   /**
-   * Outputs the outer boundary of the selected subdomain with facets oriented outward.
+   * outputs the outer boundary of the selected subdomain with facets oriented outward.
    */
   std::ostream& output_boundary_to_off(std::ostream& out, Subdomain_index subdomain) const
   {
@@ -808,7 +808,7 @@ public:
   }
 
   /**
-   * Outputs the surface facets with a consistent orientation at the interface of two subdomains.
+   * outputs the surface facets with a consistent orientation at the interface of two subdomains.
    */
   std::ostream& output_facets_in_complex_to_off(std::ostream& out) const
   {
@@ -817,7 +817,7 @@ public:
   }
 
   /*!
-  Outputs the mesh to `os`
+  outputs the mesh to `os`
   in Medit format.
   */
 #ifdef DOXYGEN_RUNNING
@@ -837,7 +837,7 @@ public:
 
   /*!
   * @cond SKIP_IN_MANUAL
-  * Outputs the mesh to `os` in Maya format.
+  * outputs the mesh to `os` in Maya format.
   * @endcond
   */
   void output_to_maya(std::ostream& os, bool surfaceOnly = true) const
@@ -849,7 +849,7 @@ public:
   /// @}
 
   /**
-   * Fills \p out with incident edges (1-dimensional features of \p v.
+   * fills \p out with incident edges (1-dimensional features of \p v).
    * OutputIterator value type is std::pair<Vertex_handle,Curve_index>
    * \pre v->in_dimension() < 2
    */
@@ -1064,7 +1064,7 @@ public:
 /// \name Iterators
 /// @{
 
-  /// Returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
+  /// returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
   Cells_in_complex_iterator cells_in_complex_begin() const
   {
     return CGAL::filter_iterator(tr_.finite_cells_end(),
@@ -1072,7 +1072,7 @@ public:
                                  tr_.finite_cells_begin());
   }
 
-  /// Returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
+  /// returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
   Cells_in_complex_iterator cells_in_complex_begin(const Subdomain_index& index) const
   {
     return CGAL::filter_iterator(tr_.finite_cells_end(),
@@ -1080,14 +1080,14 @@ public:
                                  tr_.finite_cells_begin());
   }
 
-  /// Returns the past-the-end iterator for the cells of the 3D complex
+  /// returns the past-the-end iterator for the cells of the 3D complex
   Cells_in_complex_iterator cells_in_complex_end() const
   {
     return CGAL::filter_iterator(tr_.finite_cells_end(),
                                  Cell_not_in_complex(*this));
   }
 
-  /// Returns a `Facets_in_complex_iterator` to the first facet of the 2D complex
+  /// returns a `Facets_in_complex_iterator` to the first facet of the 2D complex
   Facets_in_complex_iterator facets_in_complex_begin() const
   {
     return CGAL::filter_iterator(tr_.finite_facets_end(),
@@ -1095,7 +1095,7 @@ public:
                                  tr_.finite_facets_begin());
   }
 
-  /// Returns a `Facets_in_complex_iterator` to the first facet of the 2D complex
+  /// returns a `Facets_in_complex_iterator` to the first facet of the 2D complex
   Facets_in_complex_iterator
     facets_in_complex_begin(const Surface_patch_index& index) const
   {
@@ -1104,14 +1104,14 @@ public:
       tr_.finite_facets_begin());
   }
 
-  /// Returns past-the-end iterator on facet of the 2D complex
+  /// returns past-the-end iterator on facet of the 2D complex
   Facets_in_complex_iterator facets_in_complex_end(const Surface_patch_index = Surface_patch_index()) const
   {
     return CGAL::filter_iterator(tr_.finite_facets_end(),
       Facet_iterator_not_in_complex(*this));
   }
 
-  /// Returns a `Edges_in_complex_iterator` to the first edge of the 1D complex
+  /// returns a `Edges_in_complex_iterator` to the first edge of the 1D complex
   Edges_in_complex_iterator edges_in_complex_begin() const
   {
     return CGAL::filter_iterator(this->triangulation().finite_edges_end(),
@@ -1119,7 +1119,7 @@ public:
                                  this->triangulation().finite_edges_begin());
   }
 
-  /// Returns a `Edges_in_complex_iterator` to the first edge of the 1D complex
+  /// returns a `Edges_in_complex_iterator` to the first edge of the 1D complex
   Edges_in_complex_iterator
   edges_in_complex_begin(const Curve_index& index) const
   {
@@ -1128,14 +1128,14 @@ public:
                                  this->triangulation().finite_edges_begin());
   }
 
-  /// Returns past-the-end iterator on edges of the 1D complex
+  /// returns past-the-end iterator on edges of the 1D complex
   Edges_in_complex_iterator edges_in_complex_end(const Curve_index& = Curve_index()) const
   {
     return CGAL::filter_iterator(this->triangulation().finite_edges_end(),
                                  Edge_iterator_not_in_complex(*this));
   }
 
-  /// Returns a `Vertices_in_complex_iterator` to the first vertex of the 0D complex
+  /// returns a `Vertices_in_complex_iterator` to the first vertex of the 0D complex
   Vertices_in_complex_iterator vertices_in_complex_begin() const
   {
     return CGAL::filter_iterator(corners_.end(),
@@ -1143,7 +1143,7 @@ public:
                                  corners_.begin());
   }
 
-  /// Returns a `Vertices_in_complex_iterator` to the first vertex of the 0D complex
+  /// returns a `Vertices_in_complex_iterator` to the first vertex of the 0D complex
   Vertices_in_complex_iterator
   vertices_in_complex_begin(const Corner_index& index) const
   {
@@ -1152,7 +1152,7 @@ public:
                                  corners_.begin());
   }
 
-  /// Returns past-the-end iterator on vertices of the 0D complex
+  /// returns past-the-end iterator on vertices of the 0D complex
   Vertices_in_complex_iterator vertices_in_complex_end() const
   {
     return CGAL::filter_iterator(corners_.end(),
@@ -1214,7 +1214,7 @@ public:
 
   /**
    * @cond SKIP_IN_MANUAL
-   * Creates an Internal_edge object (i.e a pair of ordered Vertex_handle)
+   * creates an Internal_edge object (i.e a pair of ordered Vertex_handle)
    * @endcond
    */
   Internal_edge make_internal_edge(const Vertex_handle& v1,
@@ -1226,7 +1226,7 @@ public:
 
   /**
    * @cond SKIP_IN_MANUAL
-   * Returns true if \p edge is in C3T3
+   * returns true if \p edge is in the complex
    * @endcond
    */
   bool is_in_complex(const Internal_edge& edge) const
@@ -1236,7 +1236,7 @@ public:
 
   /**
    * @cond SKIP_IN_MANUAL
-   * Add edge \p edge to complex, with `Curve_index` `index`
+   * adds edge \p edge to complex, with `Curve_index` `index`
    * @endcond
    */
   void add_to_complex(const Internal_edge& edge, const Curve_index& index)
@@ -1253,8 +1253,8 @@ public:
 
   /**
    * @cond SKIP_IN_MANUAL
-   * Remove edge \p edge from complex
-   * @endcond
+   * removes edge \p edge from complex
+   * @endcosnd
    */
   void remove_from_complex(const Internal_edge& edge)
   {
@@ -1263,7 +1263,7 @@ public:
 
   /**
   * @cond SKIP_IN_MANUAL
-  * Returns Curve_index of edge \p edge
+  * returns curve index of edge \p edge
   * @endcond
   */
   Curve_index curve_index(const Internal_edge& edge) const
@@ -1375,7 +1375,7 @@ public:
 
  /**
   * @cond SKIP_IN_MANUAL
-  * @brief insert \p [first,last[ in the triangulation (with dimension 2)
+  * @brief inserts \p [first,last[ in the triangulation (with dimension 2)
   * @param first the iterator on the first point to insert
   * @param last the iterator past the last point to insert
   *
@@ -1399,7 +1399,7 @@ public:
 
   /**
   * @cond SKIP_IN_MANUAL
-  * @brief insert \p [first,last[ in the triangulation (with dimension 2 and
+  * @brief inserts \p [first,last[ in the triangulation (with dimension 2 and
   * index \p default_index)
   * @param first the iterator on the first point to insert
   * @param last the iterator past the last point to insert
