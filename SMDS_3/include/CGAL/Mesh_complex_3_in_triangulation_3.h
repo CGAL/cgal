@@ -484,7 +484,7 @@ public:
   }
 /// @}
 
-/// \name Queries on the identifier of the face complex including triangulation cells, facets and vertices.
+/// \name Queries on the identifier of the face complex including triangulation cells, facets, and vertices.
 /// @{
   /** returns the index of vertex \p v
   */
