@@ -425,7 +425,7 @@ public:
     remove_from_complex(Facet(c, i));
   }
   /**
-   * removes edge \p e from complex
+   * removes edge \p e from the 1D complex
    */
   void remove_from_complex(const Edge& e)
   {
