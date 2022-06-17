@@ -419,7 +419,7 @@ public:
   */
   void remove_from_complex(const Facet& facet);
 
-  /** removes facet(\p cell, \p i) from 2D complex
+  /** removes facet(\p cell, \p i) from the 2D complex
   */
   void remove_from_complex(const Cell_handle& c, const int i) {
     remove_from_complex(Facet(c, i));
