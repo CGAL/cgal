@@ -1260,7 +1260,7 @@ public:
 
   /**
   * @cond SKIP_IN_MANUAL
-  * returns curve index of edge \p edge
+  * returns the curve index of edge \p edge
   * @endcond
   */
   Curve_index curve_index(const Internal_edge& edge) const
