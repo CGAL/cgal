@@ -387,7 +387,7 @@ public:
   }
 
   /**
-   * adds edge (v1,v2) to complex, with Curve_index index
+   * adds edge (\p v1, \p v2) to the 1D complex, with `Curve_index` \p index
    */
   void add_to_complex(const Vertex_handle& v1,
                       const Vertex_handle& v2,
