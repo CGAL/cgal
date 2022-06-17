@@ -51,8 +51,7 @@ typedef unspecified_type Surface_patch_index;
 /// @{
 
 /*!
-Returns the index of the input subdomain that contains the cell `cell`
-of the triangulation.
+returns the index of the input subdomain that contains the cell.
 */
 Subdomain_index subdomain_index();
 
