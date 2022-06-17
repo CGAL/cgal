@@ -180,17 +180,17 @@ public:
 /// bad means badly shaped or too big).
 /// @return the number of vertices inserted.
 ///
-/// @commentheading Preconditions:
+/// \pre
 /// - Tr must use a geometric traits with robust circumcenter computation.
 /// - convergence is guaranteed if radius_edge_ratio_bound >= 1.0.
 ///
-/// @commentheading Template Parameters:
-/// @param Tr 3D Delaunay triangulation.
-/// @param Surface Sphere_3 or Iso_cuboid_3.
-/// @param Sizing_field A sizing field functor type
-/// @param Second_sizing_field A sizing field functor type
+/// *Template Parameters*
+/// @tparam Tr 3D Delaunay triangulation.
+/// @tparam Surface Sphere_3 or Iso_cuboid_3.
+/// @tparam Sizing_field A sizing field functor type
+/// @tparam Second_sizing_field A sizing field functor type
 ///
-/// @commentheading Sizing fields
+/// *Sizing fields*
 /// - The first sizing field is the real sizing field that is targeted by
 /// the refinement process. It may be costly to use.
 /// - The second sizing field is supposed to be a sizing field that is less

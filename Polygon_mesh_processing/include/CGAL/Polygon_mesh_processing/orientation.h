@@ -364,8 +364,9 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 
 /**
 * \ingroup PMP_orientation_grp
-*
-* makes each connected component of a closed triangulated surface mesh inward or outward oriented.
+* makes each closed connected component of a triangulated surface mesh
+* inward or outward oriented. If a connected component is not closed,
+* the orientation may or may not be changed or not is not guaranteed.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters
@@ -418,7 +419,6 @@ void orient(TriangleMesh& tm,
 
   CGAL_precondition(is_triangle_mesh(tm));
   CGAL_precondition(is_valid_polygon_mesh(tm));
-  CGAL_precondition(is_closed(tm));
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -464,8 +464,17 @@ void orient(TriangleMesh& tm,
   //orient ccs outward
   for(std::size_t id=0; id<nb_cc; ++id)
   {
-    if(internal::is_outward_oriented(xtrm_vertices[id], tm, np)
-        != orient_outward)
+    // skip it if the vertex is on the boundary
+    bool v_is_border = false;
+    for(halfedge_descriptor h : halfedges_around_target(xtrm_vertices[id], tm))
+      if (is_border(h, tm))
+      {
+        v_is_border = true;
+        break;
+      }
+
+    if(!v_is_border && (internal::is_outward_oriented(xtrm_vertices[id], tm, np)
+                        != orient_outward))
     {
       reverse_face_orientations(ccs[id], tm);
     }
