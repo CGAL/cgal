@@ -837,11 +837,6 @@ public:
       all_vertices, all_cells);
   }
 
-  /*!
-  * @cond SKIP_IN_MANUAL
-  * outputs the mesh to `os` in Maya format.
-  * @endcond
-  */
   void output_to_maya(std::ostream& os, bool surfaceOnly = true) const
   {
     // Call global function
