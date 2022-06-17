@@ -469,7 +469,7 @@ public:
   {
     cell->set_surface_patch_index(i, index);
   }
-  /** sets subdomain index of cell \p cell to \p index
+  /** sets the subdomain index of cell \p cell to \p index
   */
   void set_subdomain_index(const Cell_handle& cell,
     const Subdomain_index& index) const
