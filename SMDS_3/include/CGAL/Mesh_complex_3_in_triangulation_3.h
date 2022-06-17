@@ -415,7 +415,7 @@ public:
       --number_of_cells_;
     }
   }
-  /** removes facet \p facet from 2D complex
+  /** removes facet \p facet from the 2D complex
   */
   void remove_from_complex(const Facet& facet);
 
