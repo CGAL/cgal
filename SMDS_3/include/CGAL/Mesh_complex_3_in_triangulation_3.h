@@ -503,7 +503,7 @@ public:
     return surface_patch_index(f.first, f.second);
   }
 
-  /** returns surface index of facet(\p cell, \p i)
+  /** returns the surface index of facet(\p cell, \p i)
   */
   Surface_patch_index surface_patch_index(const Cell_handle& cell,
                                           const int i) const
