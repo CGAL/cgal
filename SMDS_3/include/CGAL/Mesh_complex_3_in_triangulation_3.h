@@ -168,7 +168,7 @@ namespace CGAL {
 
   Those two last template parameters default to `int`, so that they can be ignored
   if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
-  is a model of the concept `MeshDomain_3`).
+  is only a model of the concept `MeshDomain_3`).
 
   \cgalModels `MeshComplexWithFeatures_3InTriangulation_3`
 
