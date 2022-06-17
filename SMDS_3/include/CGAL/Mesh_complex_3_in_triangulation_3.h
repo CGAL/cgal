@@ -516,7 +516,7 @@ public:
   int in_dimension(const Vertex_handle& v) const { return v->in_dimension(); }
 
   /**
-  * returns curve index of edge \p e
+  * returns the curve index of edge \p e
   */
   Curve_index curve_index(const Edge& e) const
   {
