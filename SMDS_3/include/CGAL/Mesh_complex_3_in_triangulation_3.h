@@ -1233,7 +1233,7 @@ public:
 
   /**
    * @cond SKIP_IN_MANUAL
-   * adds edge \p edge to complex, with `Curve_index` `index`
+   * adds edge \p edge to the 1D complex, with curve index `index`
    * @endcond
    */
   void add_to_complex(const Internal_edge& edge, const Curve_index& index)
