@@ -1331,7 +1331,7 @@ public:
 
   /// @cond SKIP_IN_MANUAL
   /// This function should be called only when incident edges
-  /// are known to be REGULAR OR BOUNDARY
+  /// are known to be `REGULAR` or `BOUNDARY`
   /// @endcond
   bool is_regular_or_boundary_for_vertices(Vertex_handle v) const {
     return union_find_of_incident_facets(v) == 1;
