@@ -698,7 +698,7 @@ public:
   */
   size_type number_of_cells_in_complex() const { return number_of_cells_; }
   /**
-  * returns the number of cells which belongs to the 3D complex
+  * returns the number of cells which belong to the 3D complex
   */
   size_type number_of_cells() const
   {
