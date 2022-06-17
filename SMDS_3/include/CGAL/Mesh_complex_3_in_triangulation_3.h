@@ -455,7 +455,7 @@ public:
   {
     vertex->set_index(index);
   }
-  /** sets surface index of facet \p facet to \p index
+  /** sets the surface index of facet \p facet to \p index
   */
   void set_surface_patch_index(const Facet& f, const Surface_patch_index& index)
   {
