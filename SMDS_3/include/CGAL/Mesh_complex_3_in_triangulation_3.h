@@ -625,8 +625,10 @@ public:
   }
 
   /*!
-    The tetrahedral mesh generation algorithm implemented in `CGAL::make_mesh_3()`
-    and `CGAL::refine_mesh_3()` does not guarantee that all the points inserted
+    The tetrahedral mesh generation algorithm implemented in
+    \link make_mesh_3() `CGAL::make_mesh_3()`\endlink
+    and \link refine_mesh_3() `CGAL::refine_mesh_3()`\endlink
+    does not guarantee that all the points inserted
     by the algorithm are actually present in the final mesh.
 
     In most cases, all points are used, but if the geometry of the object
