@@ -496,7 +496,7 @@ public:
   {
     return cell->subdomain_index();
   }
-  /** returns surface index of facet \p f
+  /** returns the surface index of facet \p f
   */
   Surface_patch_index surface_patch_index(const Facet& f) const
   {
