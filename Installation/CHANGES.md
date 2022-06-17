@@ -9,7 +9,7 @@ Release date: Dec 2022
 
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
-- This new package wraps all the existing code that deals with a ` MeshComplex_3InTriangulation_3`
+- This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3`
    to describe 3D simplicial meshess, and makes the data structure independant
    from the tetrahedral mesh generation package.    
 
