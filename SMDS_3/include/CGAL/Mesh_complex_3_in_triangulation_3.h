@@ -525,7 +525,7 @@ public:
   }
 
   /**
-  * returns Curve_index of the edge formed by \p v1 and \p v2
+  * returns the curve index of the edge formed by \p v1 and \p v2
   */
   Curve_index curve_index(const Vertex_handle& v1,
                           const Vertex_handle& v2) const
@@ -534,7 +534,7 @@ public:
   }
 
   /**
-   * returns Corner_index of vertex \p v
+   * returns the corner index of vertex \p v
    */
   Corner_index corner_index(const Vertex_handle& v) const
   {
@@ -632,7 +632,7 @@ public:
     by the algorithm are actually present in the final mesh.
 
     In most cases, all points are used, but if the geometry of the object
-    has small features, compared to the size of the simplices (triangles and tetrahedra),
+    has small features compared to the size of the simplices (triangles and tetrahedra),
     it might be that the Delaunay facets that are selected in the restricted Delaunay
     triangulation miss some vertices of the triangulation.
     The concurrent version of the tetrahedral mesh generation algorithm
@@ -750,21 +750,21 @@ public:
   {
     return !(subdomain_index(cell) == Subdomain_index());
   }
-  /** returns true if facet \p facet is in complex
+  /** returns true if facet \p facet belongs to the 2D complex
   */
   bool is_in_complex(const Facet& facet) const
   {
     return is_in_complex(facet.first, facet.second);
   }
 
-  /** returns true if facet (\p cell, \p i) is in 2D complex
+  /** returns true if facet (\p cell, \p i) belongs to the 2D complex
   */
   bool is_in_complex(const Cell_handle& cell, const int i) const
   {
     return (cell->is_facet_on_surface(i));
   }
   /**
-   * returns true if edge \p e is in complex
+   * returns true if edge \p e belongs to the 1D complex
    */
   bool is_in_complex(const Edge& e) const
   {
@@ -772,7 +772,7 @@ public:
   }
 
   /**
-   * returns true if edge (v1,v2) is in the complex
+   * returns true if edge (v1,v2) belongs to the 1D complex
    */
   bool is_in_complex(const Vertex_handle& v1, const Vertex_handle& v2) const
   {
@@ -792,7 +792,7 @@ public:
   /// \name I/O Functions
   /// @{
   /**
-   * outputs the outer boundary of the entire domain with facets oriented outward.
+   * outputs the outer boundary of the entire domain, with facets oriented outward.
    */
   std::ostream& output_boundary_to_off(std::ostream& out) const
   {
@@ -801,7 +801,7 @@ public:
   }
 
   /**
-   * outputs the outer boundary of the selected subdomain with facets oriented outward.
+   * outputs the outer boundary of the selected subdomain, with facets oriented outward.
    */
   std::ostream& output_boundary_to_off(std::ostream& out, Subdomain_index subdomain) const
   {
@@ -810,7 +810,7 @@ public:
   }
 
   /**
-   * outputs the surface facets with a consistent orientation at the interface of two subdomains.
+   * outputs the surface facets, with a consistent orientation at the interface of two subdomains.
    */
   std::ostream& output_facets_in_complex_to_off(std::ostream& out) const
   {
@@ -1023,7 +1023,7 @@ public:
 
   /**
  * @class Cells_in_complex_iterator
- * @brief Iterator type to visit the cells of triangulation belonging
+ * @brief Iterator type to visit the cells of the triangulation that belong
  * to the 3D complex
  *
  * This class is useful to ensure that Cells_in_complex_iterator is convertible
@@ -1211,7 +1211,7 @@ public:
 
   /**
    * @cond SKIP_IN_MANUAL
-   * creates an Internal_edge object (i.e a pair of ordered Vertex_handle)
+   * creates an `Internal_edge` object (i.e a pair of ordered `Vertex_handle`)
    * @endcond
    */
   Internal_edge make_internal_edge(const Vertex_handle& v1,
@@ -1223,7 +1223,7 @@ public:
 
   /**
    * @cond SKIP_IN_MANUAL
-   * returns true if \p edge is in the complex
+   * returns true if \p edge is in the 1D complex
    * @endcond
    */
   bool is_in_complex(const Internal_edge& edge) const
