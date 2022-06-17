@@ -59,7 +59,7 @@ int main()
   medit_file.close();
 
   // Perturbation (5s, 12degree)
-  CGAL::perturb_mesh_3(c3t3, domain, time_limit=5, sliver_bound=12);
+  CGAL::perturb_mesh_3(c3t3, domain, time_limit_new=5, sliver_bound_new=12);
 
   // Exudation
   CGAL::exude_mesh_3(c3t3);

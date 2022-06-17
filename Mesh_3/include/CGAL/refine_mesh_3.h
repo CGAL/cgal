@@ -598,8 +598,8 @@ void refine_mesh_3_impl(C3T3& c3t3,
 
     perturb_mesh_3(c3t3,
                    domain,
-                   parameters::time_limit = perturb_time_limit,
-                   parameters::sliver_bound = perturb.bound());
+                   parameters::time_limit_new = perturb_time_limit,
+                   parameters::sliver_bound_new = perturb.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }

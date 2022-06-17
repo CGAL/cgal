@@ -164,7 +164,7 @@ struct Tester
     // Quality should increase
     C3t3 perturb_c3t3(c3t3);
     std::cerr << "Perturb...\n";
-    CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit=5);
+    CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit_new =5);
     verify_c3t3(perturb_c3t3,domain,domain_type,v,v);
     verify_c3t3_quality(c3t3,perturb_c3t3);
     verify_c3t3_volume(perturb_c3t3, volume*0.95, volume*1.05);

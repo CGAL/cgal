@@ -343,6 +343,8 @@ const Boost_parameter_compatibility_wrapper<internal_np::i_seed_begin_iterator_t
 const Boost_parameter_compatibility_wrapper<internal_np::i_seed_end_iterator_t> seeds_end_new;
 const Boost_parameter_compatibility_wrapper<internal_np::seeds_are_in_domain_t> mark_new;
 const Boost_parameter_compatibility_wrapper<internal_np::freeze_t> do_freeze_new;
+const Boost_parameter_compatibility_wrapper<internal_np::sliver_criteria_t> sliver_criterion_new;
+const Boost_parameter_compatibility_wrapper<internal_np::perturb_vector_t> perturbation_vector_new;
 //Compatibility wrappers for exude_mesh_3.h
 const Boost_parameter_compatibility_wrapper<internal_np::lower_sliver_bound_t> sliver_bound_new;
 #endif

@@ -60,10 +60,10 @@ int main()
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
 
   // Perturbation (maximum cpu time: 10s, targeted dihedral angle: default)
-  CGAL::perturb_mesh_3(c3t3, domain, time_limit = 10);
+  CGAL::perturb_mesh_3(c3t3, domain, time_limit_new = 10);
 
   // Exudation
-  CGAL::exude_mesh_3(c3t3,CGAL::parameters::time_limit_new=12);
+  CGAL::exude_mesh_3(c3t3, time_limit_new=12);
 
   // Output
   std::ofstream medit_file("out.mesh");

@@ -109,7 +109,7 @@ void test()
     oss.clear();
 
     //PERTURB (3)
-    CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=perturb_bound);
+    CGAL::perturb_mesh_3(c3t3, domain, sliver_bound_new=perturb_bound);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+3]
     oss.clear();
