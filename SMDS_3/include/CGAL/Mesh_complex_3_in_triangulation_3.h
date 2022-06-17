@@ -433,7 +433,7 @@ public:
   }
 
   /**
-   * removes edge (v1,v2) from complex
+   * removes edge (v1,v2) from the 1D complex
    */
   void remove_from_complex(const Vertex_handle& v1, const Vertex_handle& v2)
   {
