@@ -449,7 +449,7 @@ public:
     v->set_dimension(-1);
   }
 
-  /** sets index of vertex \p vertex to \p index
+  /** sets the index of vertex \p vertex to \p index
   */
   void set_index(const Vertex_handle& vertex, const Index& index) const
   {
