@@ -1083,8 +1083,6 @@ intersect(Face_handle f, int i,
 
 namespace internal {
 
-  BOOST_MPL_HAS_XXX_TRAIT_DEF(Exact_kernel)
-
   template <typename Type>
   class Has_barycenter_2
   {
@@ -1107,7 +1105,26 @@ namespace internal {
     static const bool value = (sizeof(Yes) == sizeof(check<Type>(0)));
   };
 
-  template <typename Gt, bool = has_Exact_kernel<Gt>::value >
+  template <typename Type>
+  class Has_exact_kernel
+  {
+    typedef char Yes;
+    typedef struct { char a[2]; } No;
+
+    template <typename U>
+    static auto check(int)
+        -> decltype(std::declval<typename U::Exact_kernel>() =
+                        std::declval<U>().exact_kernel(),
+                    Yes());
+
+    template <typename U>
+    static No check(...);
+
+  public:
+    static const bool value = (sizeof(Yes) == sizeof(check<Type>(0)));
+  };
+
+  template <typename Gt, bool = Has_exact_kernel<Gt>::value >
   struct Can_construct_almost_exact_intersection {
     enum { value =
       internal::Has_barycenter_2<typename Gt::Exact_kernel>::value &&
