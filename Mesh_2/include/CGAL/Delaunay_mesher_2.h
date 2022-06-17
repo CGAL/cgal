@@ -382,7 +382,9 @@ refine_Delaunay_mesh_2(Tr& t, const CGAL_NP_CLASS& np)
   using parameters::get_parameter_reference;
   using parameters::is_default_parameter;
 
-  Delaunay_mesher_2<Tr, Criteria> mesher(t, choose_parameter<Default_criteria>(get_parameter_reference(np, internal_np::criteria)));
+  Delaunay_mesher_2<Tr, Criteria> mesher(
+      t, choose_parameter<Default_criteria>(
+             get_parameter_reference(np, internal_np::criteria)));
 
   if (!choose_parameter(get_parameter(np, internal_np::domain_is_initialized), false))
   {

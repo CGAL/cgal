@@ -75,13 +75,13 @@ write_cells_tag_2(std::ostream& os,
             fit = tr.finite_faces_begin(),
             end = tr.finite_faces_end();
           fit != end; ++fit)
+    {
+      if(get(in_domain, fit))
       {
-        if(get(in_domain, fit))
-          {
-            os << V[fit->vertex(0)] << " ";
-            os << V[fit->vertex(2)] << " ";
-            os << V[fit->vertex(1)] << " ";
-          }
+        os << V[fit->vertex(0)] << " ";
+        os << V[fit->vertex(2)] << " ";
+        os << V[fit->vertex(1)] << " ";
+      }
     }
     for(typename CDT::Constrained_edges_iterator
           cei = tr.constrained_edges_begin(),
