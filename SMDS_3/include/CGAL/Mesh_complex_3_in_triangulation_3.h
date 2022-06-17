@@ -331,7 +331,7 @@ public:
 
 /// \name Non const access
 /// @{
-    /// returns the reference to the triangulation
+    /// returns a reference to the triangulation
   Triangulation& triangulation() { return tr_; }
 /// @}
 
