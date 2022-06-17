@@ -313,7 +313,7 @@ refine_Delaunay_mesh_2(CDT& t, const CGAL_NP_CLASS& np);
 /*!
 \ingroup PkgMesh2Functions
 
-\deprecated This function is deprecated since \cgal 5.5
+\deprecated This function is deprecated since \cgal 5.6
 
 refines the default domain defined by a constrained Delaunay
 triangulation without seeds into a mesh satisfying the criteria
@@ -336,7 +336,7 @@ void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria());
 
 \ingroup PkgMesh2Functions
 
-\deprecated This function is deprecated since \cgal 5.5
+\deprecated This function is deprecated since \cgal 5.6
 
 refines the default domain defined by a constrained
 Delaunay triangulation into a mesh
