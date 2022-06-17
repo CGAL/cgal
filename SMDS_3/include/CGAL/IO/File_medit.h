@@ -961,7 +961,7 @@ output_to_medit(std::ostream& os,
  * \cgalNamedParamsBegin
  * \cgalParamNBegin{all_cells}
  *   \cgalParamDescription{If `true`, all the cells in `t3` are written in `os`,
- *        however they belong to the complex or not.
+ *        whether they belong to the complex or not.
  *        Otherwise, only the cells `c` for which
  *        `c->subdomain_index() != Subdomain_index()` are written.}
  *   \cgalParamType{Boolean}
@@ -1033,7 +1033,7 @@ void write_MEDIT(std::ostream& os,
  * \cgalNamedParamsBegin
  * \cgalParamNBegin{all_cells}
  *   \cgalParamDescription{If `true`, all the cells in `t3` are written in `os`,
- *        however they belong to the complex or not.
+ *        whether they belong to the complex or not.
  *        Otherwise, only the cells `c` for which
  *        `c->subdomain_index() != Subdomain_index()` are written.}
  *   \cgalParamType{Boolean}
