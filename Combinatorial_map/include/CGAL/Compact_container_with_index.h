@@ -456,13 +456,6 @@ public:
   Index_for_cc_with_index(const Index2& idx): m_idx(static_cast<size_t>(idx))
   {}
 
-  /* TODO Do we need these two operators?
-  bool operator==(const Self& n) const
-  { return m_idx==n.m_idx; }
-
-  bool operator==(size_type n) const
-  { return m_idx==n; } */
-
   /// Increment the internal index. This operations does not
   /// guarantee that the index is valid or undeleted after the
   /// increment.
@@ -614,10 +607,10 @@ public:
     return all_items[i];
   }
 
-  iterator begin() { return iterator(this, 0, 0); }
+  iterator begin() { return empty()?end():iterator(this, 0, 0); }
   iterator end()   { return iterator(this, upper_bound()); }
 
-  const_iterator begin() const { return const_iterator(this, 0, 0); }
+  const_iterator begin() const { return empty()?end():const_iterator(this, 0, 0); }
   const_iterator end()   const { return const_iterator(this, upper_bound()); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -745,9 +738,6 @@ public:
 
   size_type index(const_iterator cit) const
   { return static_cast<size_type>(cit); }
-
-  /* size_type index(Index idx) const
-     { return static_cast<size_type>(idx); } */
 
   // Returns whether the iterator "cit" is in the range [begin(), end()].
   // This function is mostly useful for purposes of efficient debugging at
