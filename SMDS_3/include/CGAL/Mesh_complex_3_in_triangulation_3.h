@@ -461,7 +461,7 @@ public:
   {
     set_surface_patch_index(f.first, f.second, index);
   }
-  /** sets surface index of facet(\p cell, \p i) to \p index
+  /** sets the surface index of facet(\p cell, \p i) to \p index
   */
   void set_surface_patch_index(const Cell_handle& cell,
     const int i,
