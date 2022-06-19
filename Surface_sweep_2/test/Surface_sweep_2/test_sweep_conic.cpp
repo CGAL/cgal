@@ -47,7 +47,8 @@ private:
   Traits_2 m_traits;
 
 public:
-  int read_data(const char* filename, CurveList& curves, CGAL::Bbox_2& bbox) {
+  int read_data(const char* filename, CurveList& curves, CGAL::Bbox_2& bbox,
+                const Traits& traits) {
     Curve_2 cv;
     char dummy[256];
 
@@ -62,7 +63,7 @@ public:
     for (int i = 0; i < count; ++i) {
       read_curve(inp, cv);
       curves.push_back(cv);
-      CGAL::Bbox_2 curve_bbox = cv.bbox();
+      CGAL::Bbox_2 curve_bbox = traits.construct_bbox_2_object()(cv);
       if (i == 0) bbox = curve_bbox;
       else bbox = bbox + curve_bbox;
     }
@@ -177,11 +178,12 @@ int main(int argc, char* argv[]) {
     exit(1);
   }
 
+  Traits_2 traits;
   CGAL::Bbox_2 bbox;
   CurveList curves;
 
   Conic_reader<Traits_2> reader;
-  reader.read_data(argv[1], curves, bbox);
+  reader.read_data(argv[1], curves, bbox, traits);
 
   // run the sweep
   std::list<X_monotone_curve_2> mylist;

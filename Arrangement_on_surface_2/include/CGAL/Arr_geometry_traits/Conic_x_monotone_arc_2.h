@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Ron Wein <wein@post.tau.ac.il>
+// Author(s): Ron Wein  <wein@post.tau.ac.il>
+//            Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_CONIC_X_MONOTONE_ARC_2_H
 #define CGAL_CONIC_X_MONOTONE_ARC_2_H
@@ -15,36 +16,30 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
- * Header file for the _Conic_x_monotone_arc_2<Conic_arc_2> class.
+ * Header file for the Conic_x_monotone_arc_2<Conic_arc_2> class.
  */
 
-#include <map>
 #include <ostream>
-
-#include <boost/variant.hpp>
-
-#include <CGAL/Arr_geometry_traits/Conic_intersections_2.h>
 
 namespace CGAL {
 
 /*! Representation of an x-monotone conic arc.
  * The class is templated by a representation of a general bounded conic arc.
  */
-
 template <typename ConicArc>
-class _Conic_x_monotone_arc_2 : public ConicArc {
+class Conic_x_monotone_arc_2 : public ConicArc {
 public:
-  typedef ConicArc                                Conic_arc_2;
-  typedef _Conic_x_monotone_arc_2<Conic_arc_2>    Self;
+  typedef ConicArc                              Conic_arc_2;
+  typedef Conic_x_monotone_arc_2<Conic_arc_2>   Self;
 
-  typedef typename Conic_arc_2::Alg_kernel        Alg_kernel;
-  typedef typename Conic_arc_2::Algebraic         Algebraic;
+  typedef typename Conic_arc_2::Alg_kernel      Alg_kernel;
+  typedef typename Conic_arc_2::Algebraic       Algebraic;
 
-  typedef typename Conic_arc_2::Point_2           Point_2;
-  typedef typename Conic_arc_2::Conic_point_2     Conic_point_2;
+  typedef typename Conic_arc_2::Alg_point_2     Alg_point_2;
+  typedef typename Conic_arc_2::Point_2         Point_2;
 
   // Type definition for the intersection points mapping.
-  typedef typename Conic_point_2::Conic_id        Conic_id;
+  typedef typename Point_2::Conic_id            Conic_id;
 
   using Conic_arc_2::sign_of_extra_data;
 
@@ -62,8 +57,6 @@ private:
   typedef Conic_arc_2                             Base;
 
   typedef typename Conic_arc_2::Integer           Integer;
-  typedef typename Conic_arc_2::Nt_traits         Nt_traits;
-  typedef typename Conic_arc_2::Rat_kernel        Rat_kernel;
 
   Algebraic m_alg_r;    // The coefficients of the supporting conic curve:
   Algebraic m_alg_s;    //
@@ -91,20 +84,237 @@ public:
     FACING_MASK = (0x1 << FACING_UP) | (0x1 << FACING_DOWN)
   };
 
+  /// \name Deprecated Constructions.
+  //@{
+
+  // /*! Construct an x-monotone arc from a conic arc.
+  //  * \param arc The given (base) arc.
+  //  * \param id The ID of the base arc.
+  //  */
+  // CGAL_DEPRECATED Conic_x_monotone_arc_2(const Base& arc, const Conic_id& id) :
+  //   Base(arc),
+  //   m_id(id)
+  // {
+  //   CGAL_precondition(arc.is_valid() && id.is_valid());
+  //   _set();
+  // }
+
+  /*! Construct an x-monotone sub-arc from a conic arc.
+   * \param arc The given (base) arc.
+   * \param source The source point.
+   * \param target The target point.
+   * \param id The ID of the base arc.
+   */
+  CGAL_DEPRECATED Conic_x_monotone_arc_2(const Base& arc,
+                                         const Point_2& source,
+                                         const Point_2& target,
+                                         const Conic_id& id) :
+    Base(arc),
+    m_id(id)
+  {
+    CGAL_precondition(arc.is_valid() && id.is_valid());
+    set_endpoints(source, target);
+    _set();
+  }
+
+  /*! Construct a special segment connecting to given endpoints (for the usage
+   * of the landmarks point-location strategy).
+   * \param source The source point.
+   * \param target The target point.
+   */
+  CGAL_DEPRECATED
+  Conic_x_monotone_arc_2(const Point_2& source, const Point_2& target) :
+    Base(source, target)
+  {
+    set_flag(DEGREE_1);
+
+    Alg_kernel ker;
+    auto cmp_xy = ker.compare_xy_2_object();
+    Comparison_result dir_res = cmp_xy(this->m_source, this->m_target);
+    if (dir_res == SMALLER) set_flag(IS_DIRECTED_RIGHT);
+
+    // Check if the segment is vertical.
+    if (CGAL::sign(this->extra_data->b) == ZERO) set_flag(IS_SPECIAL_SEGMENT);
+
+    // Mark that this is a special segment.
+    set_flag(IS_SPECIAL_SEGMENT);
+  }
+
+  /*! Construct a special segment of a given line connecting to given
+   * endpoints.
+   * \param a, b, c The coefficients of the supporting line (ax + by + c = 0).
+   * \param source The source point.
+   * \param target The target point.
+   */
+  CGAL_DEPRECATED
+  Conic_x_monotone_arc_2(const Algebraic& a, const Algebraic& b,
+                         const Algebraic& c,
+                         const Point_2& source, const Point_2& target) :
+    Base()
+  {
+    // Make sure the two endpoints lie on the supporting line.
+    CGAL_precondition(CGAL::sign(a * source.x() + b * source.y() + c) ==
+                      CGAL::ZERO);
+
+    CGAL_precondition(CGAL::sign(a * target.x() + b * target.y() + c) ==
+                      CGAL::ZERO);
+
+    // Set the basic properties and clear the _info bits.
+    this->m_source = source;
+    this->m_target = target;
+    this->m_orient = COLLINEAR;
+    reset_flags();                // inavlid arc
+
+    // Check if the arc is directed right (the target is lexicographically
+    // greater than the source point), or to the left.
+    Alg_kernel ker;
+    Comparison_result res =
+      ker.compare_x_2_object()(this->source(), this->target());
+
+    set_flag(Base::IS_VALID);
+    set_flag(DEGREE_1);
+    if (res == EQUAL) {
+      // Mark that the segment is vertical.
+      set_flag(IS_VERTICAL_SEGMENT);
+
+      // Compare the endpoints lexicographically.
+      res = ker.compare_y_2_object()(this->source(), this->target());
+
+      CGAL_precondition(res != EQUAL);
+      if (res == EQUAL) {
+        reset_flags();  // inavlid arc
+        return;
+      }
+    }
+
+    if (res == SMALLER) set_flag(IS_DIRECTED_RIGHT);
+
+    // Store the coefficients of the line.
+    this->m_extra_data = new typename Base::Extra_data;
+    this->m_extra_data->a = a;
+    this->m_extra_data->b = b;
+    this->m_extra_data->c = c;
+    this->m_extra_data->side = ZERO;
+
+    // Mark that this is a special segment.
+    set_flag(IS_SPECIAL_SEGMENT);
+  }
+  //@}
+
+private:
+  /*! Set the properties of the x-monotone conic arc (for the usage of the
+   * constructors).
+   */
+  CGAL_DEPRECATED void _set() {
+    // Convert the coefficients of the supporting conic to algebraic numbers.
+    typename Base::Nt_traits nt_traits;
+
+    m_alg_r = nt_traits.convert(this->r());
+    m_alg_s = nt_traits.convert(this->s());
+    m_alg_t = nt_traits.convert(this->t());
+    m_alg_u = nt_traits.convert(this->u());
+    m_alg_v = nt_traits.convert(this->v());
+    m_alg_w = nt_traits.convert(this->w());
+
+    // Set the generating conic ID for the source and target points.
+    this->m_source.set_generating_conic(m_id);
+    this->m_target.set_generating_conic(m_id);
+
+    // Clear the _info bits.
+    set_flag(Base::IS_VALID);
+    reset_flag(Base::IS_FULL_CONIC);
+
+    // Check if the arc is directed right (the target is lexicographically
+    // greater than the source point), or to the left.
+    Alg_kernel ker;
+    Comparison_result dir_res =
+      ker.compare_xy_2_object()(this->source(), this->target());
+
+    CGAL_assertion(dir_res != EQUAL);
+
+    if (dir_res == SMALLER) set_flag(IS_DIRECTED_RIGHT);
+
+    // Compute the degree of the underlying conic.
+    if (CGAL::sign(this->r()) != ZERO ||
+        CGAL::sign(this->s()) != ZERO ||
+        CGAL::sign(this->t()) != ZERO)
+    {
+      set_flag(DEGREE_2);
+
+      if (this->m_orient == COLLINEAR) {
+        set_flag(IS_SPECIAL_SEGMENT);
+
+        // The arc is a vertical segment:
+        if (ker.compare_x_2_object()(this->source(), this->target()) == EQUAL)
+          set_flag(IS_VERTICAL_SEGMENT);
+        return;
+      }
+    }
+    else {
+      CGAL_assertion(CGAL::sign(this->m_u) != ZERO ||
+                     CGAL::sign(this->m_v) != ZERO);
+      // The supporting curve is of the form: _u*x + _w = 0
+      if (CGAL::sign(this->m_v) == ZERO) set_flag(IS_VERTICAL_SEGMENT);
+      set_flag(DEGREE_1);
+      return;
+    }
+
+    if (this->m_orient == COLLINEAR) return;
+
+    // Compute a midpoint between the source and the target and get the y-value
+    // of the arc at its x-coordiante.
+    Point_2 p_mid =
+      ker.construct_midpoint_2_object()(this->source(), this->target());
+    Algebraic ys[2];
+    CGAL_assertion_code(int n_ys = )
+      this->_conic_get_y_coordinates(p_mid.x(), ys);
+
+    CGAL_assertion(n_ys != 0);
+
+    // Check which solution lies on the x-monotone arc.
+    Point_2 p_arc_mid(p_mid.x(), ys[0]);
+
+    if (this->_is_strictly_between_endpoints(p_arc_mid)) {
+      // Mark that we should use the -sqrt(disc) root for points on this
+      // x-monotone arc.
+      reset_flag(PLUS_SQRT_DISC_ROOT);
+    }
+    else {
+      CGAL_assertion(n_ys == 2);
+      p_arc_mid = Point_2(p_mid.x(), ys[1]);
+
+      CGAL_assertion(this->_is_strictly_between_endpoints(p_arc_mid));
+
+      // Mark that we should use the +sqrt(disc) root for points on this
+      // x-monotone arc.
+      set_flag(PLUS_SQRT_DISC_ROOT);
+    }
+
+    // Check whether the conic is facing up or facing down:
+    // Check whether the arc (which is x-monotone of degree 2) lies above or
+    // below the segement that contects its two end-points (x1,y1) and (x2,y2).
+    // To do that, we find the y coordinate of a point on the arc whose x
+    // coordinate is (x1+x2)/2 and compare it to (y1+y2)/2.
+    Comparison_result res = ker.compare_y_2_object()(p_arc_mid, p_mid);
+
+    // The arc is above the connecting segment, so it is facing upwards.
+    if (res == LARGER) set_flag(FACING_UP);
+    // The arc is below the connecting segment, so it is facing downwards.
+    else if (res == SMALLER) set_flag(FACING_DOWN);
+  }
+
+public:
   /// \name Public constrcutors, assignment operators, and destructors.
   //@{
 
   /*! Default constructor.
    */
-  _Conic_x_monotone_arc_2() :
-    Base(),
-    m_id()
-  {}
+  Conic_x_monotone_arc_2() : Base(), m_id() {}
 
   /*! Copy constructor.
    * \param arc The copied arc.
    */
-  _Conic_x_monotone_arc_2(const Self& arc) :
+  Conic_x_monotone_arc_2(const Self& arc) :
     Base(arc),
     m_alg_r(arc.m_alg_r),
     m_alg_s(arc.m_alg_s),
@@ -150,59 +360,24 @@ private:
    * \param arc The given (base) arc.
    * \pre The given arc is x-monotone.
    */
-  _Conic_x_monotone_arc_2(const Base& arc) : Base(arc), m_id() {}
+  Conic_x_monotone_arc_2(const Base& arc) : Base(arc), m_id() {}
 
   /*! Construct an x-monotone arc from a conic arc.
    * \param arc The given (base) arc.
    * \param id The ID of the base arc.
    */
-  _Conic_x_monotone_arc_2(const Base& arc, const Conic_id& id) :
+  Conic_x_monotone_arc_2(const Base& arc, const Conic_id& id) :
     Base(arc),
     m_id(id)
   {}
 
-  /*! Construct an x-monotone sub-arc from a conic arc.
-   * \param arc The given (base) arc.
-   * \param source The source point.
-   * \param target The target point.
-   * \param id The ID of the base arc.
+  /*! Obtain the non const reference to the curve source point.
    */
-  _Conic_x_monotone_arc_2(const Base& arc,
-                          const Point_2& source, const Point_2& target,
-                          const Conic_id& id) :
-    Base(arc),
-    m_id(id)
-  {}
-
-  /*! Construct a special segment connecting to given endpoints (for the usage
-   * of the landmarks point-location strategy).
-   * \param source The source point.
-   * \param target The target point.
-   */
-  _Conic_x_monotone_arc_2(const Point_2& source, const Point_2& target) :
-    Base(source, target)
-  {}
-
-  /*! Construct a special segment of a given line connecting to given
-   * endpoints.
-   * \param a, b, c The coefficients of the supporting line (ax + by + c = 0).
-   * \param source The source point.
-   * \param target The target point.
-   */
-  _Conic_x_monotone_arc_2(const Algebraic& a,
-                          const Algebraic& b,
-                          const Algebraic& c,
-                          const Point_2& source, const Point_2& target) :
-    Base()
-  {}
+  Point_2& source() { return (this->m_source); }
 
   /*! Obtain the non const reference to the curve source point.
    */
-  Conic_point_2& source() { return (this->m_source); }
-
-  /*! Obtain the non const reference to the curve source point.
-   */
-  Conic_point_2& target() { return this->m_target; }
+  Point_2& target() { return this->m_target; }
   //@}
 
 public:
@@ -229,12 +404,12 @@ public:
   /*! Obtain the arc's source.
    * \return The source point.
    */
-  const Conic_point_2& source() const { return (this->m_source); }
+  const Point_2& source() const { return (this->m_source); }
 
   /*! Obtain the arc's target.
    * \return The target point.
    */
-  const Conic_point_2& target() const { return this->m_target; }
+  const Point_2& target() const { return this->m_target; }
 
   /*! Obtain the orientation of the arc.
    * \return The orientation.
@@ -243,14 +418,14 @@ public:
 
   /*! Obtain the left endpoint of the arc.
    */
-  const Conic_point_2& left() const {
+  const Point_2& left() const {
     if (test_flag(IS_DIRECTED_RIGHT)) return this->m_source;
     else return this->m_target;
   }
 
   /*! Obtain the right endpoint of the arc.
    */
-  const Conic_point_2& right() const {
+  const Point_2& right() const {
     if (test_flag(IS_DIRECTED_RIGHT)) return this->m_target;
     else return this->m_source;
   }
@@ -300,7 +475,7 @@ public:
   /*! Obtain a bounding box for the conic arc.
    * \return The bounding box.
    */
-  Bbox_2 bbox() const { return Base::bbox(); }
+  CGAL_DEPRECATED Bbox_2 bbox() const { return Base::bbox(); }
   //@}
 
   // Setters
@@ -432,20 +607,14 @@ private:
    * \return (true) if p lies on the supporting conic; (false) otherwise.
    */
   bool is_on_supporting_conic(const Algebraic& px, const Algebraic& py) const {
-    CGAL::Sign _sign;
-
-    if (! is_special_segment()) {
+    CGAL::Sign _sign = (! is_special_segment()) ?
       // Check whether p satisfies the conic equation.
       // The point must satisfy: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0.
-      _sign = CGAL::sign((m_alg_r*px + m_alg_t*py + m_alg_u) * px +
-                         (m_alg_s*py + m_alg_v) * py + m_alg_w);
-    }
-    else {
+      CGAL::sign((m_alg_r*px + m_alg_t*py + m_alg_u) * px +
+                 (m_alg_s*py + m_alg_v) * py + m_alg_w) :
       // Check whether p satisfies the equation of the line stored with the
       // extra data.
-      _sign = sign_of_extra_data(px, py);
-    }
-
+      sign_of_extra_data(px, py);
     return (_sign == ZERO);
   }
 
@@ -457,7 +626,7 @@ public:
    * \param slope_denom The denominator of the slope.
    * \todo Allow higher order derivatives.
    */
-  void derive_by_x_at(const Point_2& p, const unsigned int& i,
+  void derive_by_x_at(const Alg_point_2& p, const unsigned int& i,
                       Algebraic& slope_numer, Algebraic& slope_denom) const {
     if (is_special_segment()) {
       // Special treatment for special segments, given by (a*x + b*y + c = 0),
@@ -566,7 +735,7 @@ public:
    * \param slope_denom The denominator of the slope.
    * \todo Allow higher order derivatives.
    */
-  void derive_by_y_at(const Point_2& p, const int& i,
+  void derive_by_y_at(const Alg_point_2& p, const int& i,
                       Algebraic& slope_numer, Algebraic& slope_denom) const {
     if (is_special_segment()) {
       // Special treatment for special segments, given by (a*x + b*y + c = 0),
@@ -675,7 +844,7 @@ private:
    * \return The multiplicity of the intersection point.
    */
   unsigned int multiplicity_of_intersection_point(const Self& xcv,
-                                                  const Point_2& p) const {
+                                                  const Alg_point_2& p) const {
     CGAL_assertion(! is_special_segment() || ! xcv.is_special_segment());
 
     // Compare the slopes of the two arcs at p, using their first-order
@@ -724,7 +893,7 @@ private:
  */
 template <typename Conic_arc_2>
 std::ostream& operator<<(std::ostream& os,
-                         const _Conic_x_monotone_arc_2<Conic_arc_2>& xcv)
+                         const Conic_x_monotone_arc_2<Conic_arc_2>& xcv)
 {
   // Output the supporting conic curve.
   os << "{" << CGAL::to_double(xcv.r()) << "*x^2 + "

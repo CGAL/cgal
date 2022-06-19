@@ -8,7 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+// Author(s): Ron Wein <wein@post.tau.ac.il>
+//            Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_CONIC_POINT_2_H
 #define CGAL_CONIC_POINT_2_H
@@ -16,7 +17,7 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
- * Header file for the _Conic_point_2<Alg_kernel> class.
+ * Header file for the Conic_point_2<Alg_kernel> class.
  */
 
 #include <list>
@@ -30,11 +31,11 @@ namespace CGAL {
  * coordinates, namely the conic IDs of the generating curves.
  */
 template <typename AlgKernel>
-class _Conic_point_2 : public AlgKernel::Point_2 {
+class Conic_point_2 : public AlgKernel::Point_2 {
 public:
   typedef AlgKernel                     Alg_kernel;
   typedef typename Alg_kernel::Point_2  Base;
-  typedef _Conic_point_2<Alg_kernel>    Self;
+  typedef Conic_point_2<Alg_kernel>     Self;
 
   typedef typename Alg_kernel::FT       Algebraic;
 
@@ -43,35 +44,29 @@ public:
    */
   class Conic_id {
   private:
-    unsigned int index;         // the index of the conic arc
+    size_t index;       // the index of the conic arc
 
   public:
     /*! Default constructor. */
     Conic_id() : index(0) {}
 
     /*! Constructor. */
-    Conic_id(unsigned int ind) :
-      index (ind)
-    { CGAL_precondition(ind != 0); }
+    Conic_id(size_t ind) : index(ind) { CGAL_precondition(ind != 0); }
 
     /*! Check if the ID is valid. */
     bool is_valid() const { return (index != 0); }
 
     /*! Equality operator. */
-    bool operator==(const Conic_id& id) const
-    { return (index == id.index); }
+    bool operator==(const Conic_id& id) const { return (index == id.index); }
 
     /*! Inequality operator. */
-    bool operator!=(const Conic_id& id) const
-    { return (index != id.index); }
+    bool operator!=(const Conic_id& id) const { return (index != id.index); }
 
     /*! Less-than operator. */
-    bool operator< (const Conic_id& id) const
-    { return (index < id.index); }
+    bool operator<(const Conic_id& id) const { return (index < id.index); }
 
     /*! Greater-than operator. */
-    bool operator>(const Conic_id& id) const
-    { return (index > id.index); }
+    bool operator>(const Conic_id& id) const { return (index > id.index); }
   };
 
 private:
@@ -85,20 +80,18 @@ public:
   //@{
 
   /*! Default constructors. */
-  _Conic_point_2() : Base() {}
+  Conic_point_2() : Base() {}
 
   /*! Constrcutor from the base class. */
-  _Conic_point_2(const Base& p) : Base(p) {}
+  Conic_point_2(const Base& p) : Base(p) {}
 
   /*! Constructor with homegeneous coordinates. */
-  _Conic_point_2(const Algebraic& hx,
-                 const Algebraic& hy,
-                 const Algebraic& hz) :
+  Conic_point_2(const Algebraic& hx, const Algebraic& hy, const Algebraic& hz) :
     Base(hx, hy, hz)
   {}
 
   /*! Constructor with Cartesian coordinates. */
-  _Conic_point_2(const Algebraic& x, const Algebraic& y) : Base(x, y) {}
+  Conic_point_2(const Algebraic& x, const Algebraic& y) : Base(x, y) {}
   //@}
 
   /// \name Maintaining the generating conic IDs.

@@ -2,9 +2,10 @@
 // Constructing an arrangement of various conic arcs.
 
 #include <CGAL/config.h>
-#include <CGAL/draw_arrangement_2.h>
 
 #ifdef CGAL_USE_CORE
+
+#include <CGAL/draw_arrangement_2.h>
 
 #include "arr_conics.h"
 #include "arr_print.h"
