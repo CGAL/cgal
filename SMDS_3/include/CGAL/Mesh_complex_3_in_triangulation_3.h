@@ -1251,7 +1251,7 @@ public:
   /**
    * @cond SKIP_IN_MANUAL
    * removes edge \p edge from the 1D complex
-   * @endcosnd
+   * @endcond
    */
   void remove_from_complex(const Internal_edge& edge)
   {
