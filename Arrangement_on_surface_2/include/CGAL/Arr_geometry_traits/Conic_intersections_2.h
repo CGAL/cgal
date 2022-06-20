@@ -35,7 +35,7 @@ namespace CGAL {
  * \return The number of distinct roots found.
  */
 template <typename Nt_traits>
-int compute_resultant_roots(Nt_traits& nt_traits,
+int compute_resultant_roots(const Nt_traits& nt_traits,
                             const typename Nt_traits::Integer& r1,
                             const typename Nt_traits::Integer& s1,
                             const typename Nt_traits::Integer& t1,
@@ -150,10 +150,9 @@ int compute_resultant_roots(Nt_traits& nt_traits,
 
   // Compute the roots of the resultant polynomial.
   typename Nt_traits::Polynomial poly =
-                                    nt_traits.construct_polynomial (c, degree);
+    nt_traits.construct_polynomial(c, degree);
 
-  xs_end = nt_traits.compute_polynomial_roots (poly,
-                                               xs);
+  xs_end = nt_traits.compute_polynomial_roots(poly, xs);
   return static_cast<int>(xs_end - xs);
 }
 
@@ -167,7 +166,7 @@ int compute_resultant_roots(Nt_traits& nt_traits,
  * \return The number of distinct roots found.
  */
 template <typename Nt_traits>
-int compute_resultant_roots(Nt_traits& nt_traits,
+int compute_resultant_roots(const Nt_traits& nt_traits,
                             const typename Nt_traits::Algebraic& r,
                             const typename Nt_traits::Algebraic& s,
                             const typename Nt_traits::Algebraic& t,

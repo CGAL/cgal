@@ -268,7 +268,7 @@ public:
 
   public:
     /*! Return the location of the given point with respect to the input curve.
-     * \param cv The curve.
+     * \param xcv The curve.
      * \param p The point.
      * \pre p is in the x-range of cv.
      * \return SMALLER if y(p) < cv(x(p)), i.e. the point is below the curve;
@@ -380,7 +380,7 @@ public:
 
           // We take either the root involving -sqrt(disc) or +sqrt(disc)
           // based on the information flags.
-          auto nt_traits = m_traits.m_nt_traits;
+          const auto nt_traits = m_traits.m_nt_traits;
           y = (xcv.test_flag(X_monotone_curve_2::PLUS_SQRT_DISC_ROOT)) ?
           (nt_traits->sqrt(disc) - B) / (2*A) :
           -(B + nt_traits->sqrt(disc)) / (2*A);
@@ -1192,9 +1192,11 @@ public:
         return;
       }
 
-      const int deg1 = (xcv1.degree_mask() == X_monotone_curve_2::degree_1_mask()) ? 1 : 2;
-      const int deg2 = (xcv2.degree_mask() == X_monotone_curve_2::degree_1_mask()) ? 1 : 2;
-      Nt_traits nt_traits;
+      const int deg1 =
+        (xcv1.degree_mask() == X_monotone_curve_2::degree_1_mask()) ? 1 : 2;
+      const int deg2 =
+        (xcv2.degree_mask() == X_monotone_curve_2::degree_1_mask()) ? 1 : 2;
+      const auto nt_traits = m_traits.m_nt_traits;
       Algebraic xs[4];
       int n_xs = 0;
       Algebraic ys[4];
@@ -1223,7 +1225,7 @@ public:
           const auto* extra_data2 = xcv2.extra_data();
 
           // Compute the x-coordinates of the intersection points.
-          n_xs = compute_resultant_roots(nt_traits,
+          n_xs = compute_resultant_roots(*nt_traits,
                                          xcv1.alg_r(), xcv1.alg_s(),
                                          xcv1.alg_t(), xcv1.alg_u(),
                                          xcv1.alg_v(), xcv1.alg_w(),
@@ -1235,7 +1237,7 @@ public:
           CGAL_assertion(n_xs <= 2);
 
           // Compute the y-coordinates of the intersection points.
-          n_ys = compute_resultant_roots(nt_traits,
+          n_ys = compute_resultant_roots(*nt_traits,
                                          xcv1.alg_s(), xcv1.alg_r(),
                                          xcv1.alg_t(), xcv1.alg_v(),
                                          xcv1.alg_u(), xcv1.alg_w(),
@@ -1249,7 +1251,7 @@ public:
       }
       else {
         // Compute the x-coordinates of the intersection points.
-        n_xs = compute_resultant_roots(nt_traits,
+        n_xs = compute_resultant_roots(*nt_traits,
                                        xcv1.r(), xcv1.s(), xcv1.t(),
                                        xcv1.u(), xcv1.v(), xcv1.w(),
                                        deg1,
@@ -1260,7 +1262,7 @@ public:
         CGAL_assertion(n_xs <= 4);
 
         // Compute the y-coordinates of the intersection points.
-        n_ys = compute_resultant_roots(nt_traits,
+        n_ys = compute_resultant_roots(*nt_traits,
                                        xcv1.s(), xcv1.r(), xcv1.t(),
                                        xcv1.v(), xcv1.u(), xcv1.w(),
                                        deg1,
@@ -1751,7 +1753,7 @@ public:
       auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
       auto a_sqr = numerator / (4*r_m*r_m*s_m);
       auto b_sqr = numerator / (4*r_m*s_m*s_m);
-      if (a_sqr < 0) {
+      if (a_sqr < b_sqr) {
         // Shift phase:
         auto tmp(cost);
         cost = sint;
@@ -1763,7 +1765,7 @@ public:
         cy_m = -v_m / (2*s_m);
         numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
         a_sqr = numerator / (4*r_m*r_m*s_m);
-        b_sqr = -numerator / (4*r_m*s_m*s_m);
+        b_sqr = numerator / (4*r_m*s_m*s_m);
       }
 
       auto a = std::sqrt(a_sqr);
@@ -2274,36 +2276,24 @@ public:
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target)
       const
     {
-      auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
-      Comparison_result res = cmp_xy(source, target);
-      CGAL_precondition(res != EQUAL);
-
       X_monotone_curve_2 xcv;
-      // Set the properties.
+
+      // Set the basic properties.
       xcv.set_endpoints(source, target);
       xcv.set_orientation(COLLINEAR);
       xcv.set_flag(Curve_2::IS_VALID);
+
+      // Set the other properties.
       xcv.set_flag(X_monotone_curve_2::DEGREE_1);
       xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
+      xcv.update_extra_data();
 
+      auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
+      Comparison_result res = cmp_xy(source, target);
+      CGAL_precondition(res != EQUAL);
       if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
 
-      const Algebraic x1 = source.x();
-      const Algebraic y1 = source.y();
-      const Algebraic x2 = target.x();
-      const Algebraic y2 = target.y();
-
-      // The supporting line is A*x + B*y + C = 0, where:
-      //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
-      // We use the extra data field to store the equation of this line.
-      auto extra_data = new typename Curve_2::Extra_data;
-      extra_data->a = y2 - y1;
-      extra_data->b = x1 - x2;
-      extra_data->c = x2*y1 - x1*y2;
-      extra_data->side = ZERO;
-      xcv.set_extra_data(extra_data);
-
-      // Check if the segment is vertical.
+      // Check whether the segment is vertical.
       if (CGAL::sign(xcv.extra_data()->b) == ZERO)
         xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
 
@@ -2321,45 +2311,30 @@ public:
                                   const Point_2& source, const Point_2& target)
       const
     {
-      CGAL_precondition_code(auto cmp_xy =
-                               m_traits.m_alg_kernel->compare_xy_2_object());
-      CGAL_precondition(cmp_xy(source, target) != EQUAL);
+      auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
+      Comparison_result res = cmp_xy(source, target);
+      CGAL_precondition(res != EQUAL);
 
       X_monotone_curve_2 xcv;
       // Make sure the two endpoints lie on the supporting line.
       CGAL_precondition(CGAL::sign(a*source.x()+b*source.y()+c) == CGAL::ZERO);
       CGAL_precondition(CGAL::sign(a*target.x()+b*target.y()+c) == CGAL::ZERO);
 
-      // Set the properties.
+      // Set the basic properties.
       xcv.set_endpoints(source, target);
       xcv.set_orientation(COLLINEAR);
       xcv.set_flag(Curve_2::IS_VALID);
-      xcv.set_flag(X_monotone_curve_2::DEGREE_1);
-      xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
 
-      // Check if the arc is directed right (the target is lexicographically
-      // greater than the source point), or to the left.
-      auto cmp_x = m_traits.m_alg_kernel->compare_x_2_object();
-      Comparison_result res = cmp_x(source, target);
+      // Set the other properties.
       if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
 
+      xcv.set_flag(X_monotone_curve_2::DEGREE_1);
+      xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
+      xcv.set_extra_data(a, b, c, ZERO);
+
       // Check whether the segment is vertical.
-      else if (res == EQUAL) {
+      if (CGAL::sign(xcv.extra_data()->b) == ZERO)
         xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
-
-        // Compare the endpoints lexicographically.
-        auto cmp_y = m_traits.m_alg_kernel->compare_y_2_object();
-        res = cmp_y(source, target);
-        if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
-      }
-
-      // Store the coefficients of the line.
-      auto extra_data = new typename Curve_2::Extra_data;
-      extra_data->a = a;
-      extra_data->b = b;
-      extra_data->c = c;
-      extra_data->side = ZERO;
-      xcv.set_extra_data(extra_data);
 
       return xcv;
     }
@@ -2478,18 +2453,18 @@ public:
 
       const auto nt_traits = m_traits.m_nt_traits;
       const auto alg_kernel = m_traits.m_alg_kernel;
-      auto source = Point_2(nt_traits->convert(x1), nt_traits->convert(y1));
-      auto target = Point_2(nt_traits->convert(x3), nt_traits->convert(y3));
+      Point_2 source(nt_traits->convert(x1), nt_traits->convert(y1));
+      Point_2 target(nt_traits->convert(x3), nt_traits->convert(y3));
       arc.set_endpoints(source, target);
 
       // Make sure that the source and the taget are not the same.
-      CGAL_precondition(alg_kernel->compare_xy_2_object()(source, target) !=
-                        EQUAL);
+      CGAL_precondition_code(auto cmp_xy = alg_kernel->compare_xy_2_object());
+      CGAL_precondition(cmp_xy(source, target) != EQUAL);
 
       // Compute the lines: A1*x + B1*y + C1 = 0,
       //               and: A2*x + B2*y + C2 = 0,
       // where:
-      const Rational two  = 2;
+      const Rational two(2);
 
       const Rational A1 = two*(x1 - x2);
       const Rational B1 = two*(y1 - y2);
@@ -2528,7 +2503,7 @@ public:
       // counterclockwise).
       // Otherwise, it is negative (going clockwise).
       auto orient_f = alg_kernel->orientation_2_object();
-      Point_2 p_mid = Point_2(nt_traits->convert(x2), nt_traits->convert(y2));
+      Point_2 p_mid(nt_traits->convert(x2), nt_traits->convert(y2));
 
       auto orient = (orient_f(source, p_mid, target) == LEFT_TURN) ?
         COUNTERCLOCKWISE : CLOCKWISE;
@@ -2577,8 +2552,8 @@ public:
       const Rational& y5 = p5.y();
 
       const auto nt_traits = m_traits.m_nt_traits;
-      auto source = Point_2(nt_traits->convert(x1), nt_traits->convert(y1));
-      auto target = Point_2(nt_traits->convert(x5), nt_traits->convert(y5));
+      Point_2 source(nt_traits->convert(x1), nt_traits->convert(y1));
+      Point_2 target(nt_traits->convert(x5), nt_traits->convert(y5));
       arc.set_endpoints(source, target);
 
       // Set a conic curve that passes through the five given point.
@@ -2616,12 +2591,9 @@ public:
 
       // Make sure that all midpoints are strictly between the
       // source and the target.
-      Point_2 mp2 =
-        Point_2(nt_traits->convert(p2.x()), nt_traits->convert(p2.y()));
-      Point_2 mp3 =
-        Point_2(nt_traits->convert(p3.x()), m_nt_traits->convert(p3.y()));
-      Point_2 mp4 =
-        Point_2(nt_traits->convert(p4.x()), nt_traits->convert(p4.y()));
+      Point_2 mp2(nt_traits->convert(p2.x()), nt_traits->convert(p2.y()));
+      Point_2 mp3(nt_traits->convert(p3.x()), m_nt_traits->convert(p3.y()));
+      Point_2 mp4(nt_traits->convert(p4.x()), nt_traits->convert(p4.y()));
 
       if (! m_traits.is_strictly_between_endpoints(arc, mp2) ||
           ! m_traits.is_strictly_between_endpoints(arc, mp3) ||
@@ -2795,45 +2767,31 @@ public:
     }
 
     /*! Return a curve connecting the two given endpoints.
-     * \param p The first point.
-     * \param q The second point.
+     * \param source The source point.
+     * \param target The target point.
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
      */
-    Curve_2 operator()(const Point_2& p, const Point_2& q) const {
+    Curve_2 operator()(const Point_2& source, const Point_2& target) const {
       const auto alg_kernel = m_traits.m_alg_kernel;
-      CGAL_precondition(alg_kernel->compare_xy_2_object()(p, q) != EQUAL);
+      CGAL_precondition_code(auto cmp_xy = alg_kernel->compare_xy_2_object());
+      CGAL_precondition(cmp_xy(source, target) != EQUAL);
 
-      Curve_2 arc;
-      set_orientation(Curve_2::COLLINEAR);
-      arc.set_flag(Curve_2::IS_VALID);
-      arc.set_source(p);
-      arc.set_target(q);
-
-      // Compose the equation of the underlying line.
-      const Algebraic& x1 = p.x();
-      const Algebraic& y1 = p.y();
-      const Algebraic& x2 = q.x();
-      const Algebraic& y2 = q.y();
-
-      // The supporting line is A*x + B*y + C = 0, where:
-      //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
-      // We use the extra data field to store the equation of this line.
-      auto* extra_data = new typename Curve_2::Extra_data;
-      extra_data->a = y2 - y1;
-      extra_data->b = x1 - x2;
-      extra_data->c = x2*y1 - x1*y2;
-      extra_data->side = ZERO;
-      arc.set_extra_data(extra_data);
-      return arc;
+      Curve_2 cv;
+      cv.set_coefficients(0, 0, 0, 0, 0, 0);
+      cv.set_orientation(COLLINEAR);
+      cv.set_flag(Curve_2::IS_VALID);
+      cv.set_endpoints(source, target);
+      cv.update_extra_data();
+      return cv;
     }
 
     /*! Construct a conic arc from a given line segment.
      * \param seg The line segment with rational endpoints.
      */
     Curve_2 operator()(const Rat_segment_2& seg) const {
-      Curve_2 arc;
-      arc.set_orientation(COLLINEAR);
+      Curve_2 cv;
+      cv.set_orientation(COLLINEAR);
 
       // Set the source and target.
       const auto rat_kernel = m_traits.m_rat_kernel;
@@ -2845,12 +2803,12 @@ public:
       const Rational& y2 = target.y();
 
       const auto nt_traits = m_traits.m_nt_traits;
-      arc.set_source(Point_2(nt_traits->convert(x1), nt_traits->convert(y1)));
-      arc.set_target(Point_2(nt_traits->convert(x2), nt_traits->convert(y2)));
+      cv.set_source(Point_2(nt_traits->convert(x1), nt_traits->convert(y1)));
+      cv.set_target(Point_2(nt_traits->convert(x2), nt_traits->convert(y2)));
 
       // Make sure that the source and the taget are not the same.
-      CGAL_precondition(rat_kernel->compare_xy_2_object()(source, target) !=
-                        EQUAL);
+      CGAL_precondition_code(auto cmp_xy = rat_kernel->compare_xy_2_object());
+      CGAL_precondition(cmp_xy(source, target) != EQUAL);
 
       // The supporting conic is r=s=t=0, and u*x + v*y + w = 0 should hold
       // for both the source (x1,y1) and the target (x2, y2).
@@ -2879,16 +2837,16 @@ public:
       }
 
       // Set the arc properties (no need to compute the orientation).
-      m_traits.set(arc, rat_coeffs);
-      return arc;
+      m_traits.set(cv, rat_coeffs);
+      return cv;
     }
 
     /*! Construct a conic arc that is a full circle.
      * \param circ The circle with rational center and rational squared radius.
      */
     Curve_2 operator()(const Rat_circle_2& circ) const {
-      Curve_2 arc;
-      arc.set_orientation(CLOCKWISE);
+      Curve_2 cv;
+      cv.set_orientation(CLOCKWISE);
 
       // Get the circle properties.
       const auto rat_kernel = m_traits.m_rat_kernel;
@@ -2914,8 +2872,8 @@ public:
       rat_coeffs[5] = x0*x0 + y0*y0 - r_sqr;
 
       // Set the arc to be the full conic (no need to compute the orientation).
-      m_traits.set_full(arc, rat_coeffs, false);
-      return arc;
+      m_traits.set_full(cv, rat_coeffs, false);
+      return cv;
     }
 
     /*! Construct a conic arc that lies on a given circle:
@@ -2928,14 +2886,16 @@ public:
      */
     Curve_2 operator()(const Rat_circle_2& circ, const Orientation& orient,
                        const Point_2& source, const Point_2& target) const {
+
       // Make sure that the source and the taget are not the same.
-      CGAL_precondition_code(auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object());
+      CGAL_precondition_code(auto cmp_xy =
+                               m_traits.m_alg_kernel->compare_xy_2_object());
       CGAL_precondition(cmp_xy(source, target) != EQUAL);
       CGAL_precondition(orient != COLLINEAR);
 
-      Curve_2 arc;
-      arc.set_endpoints(source, target);
-      arc.set_orientation(orient);
+      Curve_2 cv;
+      cv.set_endpoints(source, target);
+      cv.set_orientation(orient);
 
       // Get the circle properties.
       const auto rat_kernel = m_traits.m_rat_kernel;
@@ -2953,7 +2913,7 @@ public:
       const Rational zero(0);
       Rational rat_coeffs[6];
 
-      if (arc.orientation() == COUNTERCLOCKWISE) {
+      if (cv.orientation() == COUNTERCLOCKWISE) {
         const Rational minus_one(-1);
         const Rational two(2);
 
@@ -2977,8 +2937,8 @@ public:
       }
 
       // Set the arc properties (no need to compute the orientation).
-      m_traits.set(arc, rat_coeffs);
-      return arc;
+      m_traits.set(cv, rat_coeffs);
+      return cv;
     }
   };
 
@@ -2998,10 +2958,8 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv) const {
-      if (cv.is_directed_right()) return SMALLER;
-      else return LARGER;
-    }
+    Comparison_result operator()(const X_monotone_curve_2& cv) const
+    { return (cv.is_directed_right()) ? SMALLER : LARGER; }
   };
 
   /*! Obtain a Compare_endpoints_xy_2 functor object. */
@@ -3038,7 +2996,7 @@ public:
 
   public:
     /*!\brief
-     * Returns a trimmed version of an arc
+     * Returns a trimmed version of an cv
      *
      * \param xcv The arc
      * \param src the new first endpoint
@@ -3063,10 +3021,9 @@ public:
       CGAL_precondition(! equal_2(src, tgt));
 
       //check if the orientation conforms to the src and tgt.
-      if( (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER) ||
-          (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER) )
-        return trim(xcv, tgt, src);
-      else return trim(xcv, src, tgt);
+      return ((xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER) ||
+              (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER)) ?
+        trim(xcv, tgt, src) : trim(xcv, src, tgt);
     }
 
   private:
@@ -3236,8 +3193,8 @@ public:
    * \param rat_coeffs A vector of size 6, storing the rational coefficients
    *                   of x^2, y^2, xy, x, y and the free coefficient resp.
    */
-  void set(Curve_2& arc, const Rational* rat_coeffs) const {
-    arc.set_flag(Curve_2::IS_VALID);
+  void set(Curve_2& cv, const Rational* rat_coeffs) const {
+    cv.set_flag(Curve_2::IS_VALID);
 
     // Convert the coefficients vector to an equivalent vector of integer
     // coefficients.
@@ -3252,7 +3209,7 @@ public:
 
 
     Integer r, s, t, u, v, w;
-    if (arc.orientation() == temp_conic.orientation()) {
+    if (cv.orientation() == temp_conic.orientation()) {
       r = int_coeffs[0];
       s = int_coeffs[1];
       t = int_coeffs[2];
@@ -3268,15 +3225,15 @@ public:
       v = -int_coeffs[4];
       w = -int_coeffs[5];
     }
-    arc.set_coefficients(r, s, t, u, v, w);
+    cv.set_coefficients(r, s, t, u, v, w);
 
-    const auto& source = arc.source();
-    const auto& target = arc.target();
+    const auto& source = cv.source();
+    const auto& target = cv.target();
     // Make sure both endpoint lie on the supporting conic.
-    if (! is_on_supporting_conic(arc, source) ||
-        ! is_on_supporting_conic(arc, target))
+    if (! is_on_supporting_conic(cv, source) ||
+        ! is_on_supporting_conic(cv, target))
     {
-      arc.reset_flags();            // inavlid arc
+      cv.reset_flags();            // inavlid arc
       return;
     }
 
@@ -3284,7 +3241,7 @@ public:
     if ((CGAL::sign(r) != ZERO) || (CGAL::sign(s) != ZERO) ||
         (CGAL::sign(t) != ZERO))
     {
-      if (arc.orientation() == COLLINEAR) {
+      if (cv.orientation() == COLLINEAR) {
         // Make sure the midpoint is on the line pair (thus making sure that
         // the two points are not taken from different lines).
         auto ctr_mid_point = m_alg_kernel->construct_midpoint_2_object();
@@ -3297,29 +3254,14 @@ public:
                         m_nt_traits->convert(v)) * p_mid.y() +
                        m_nt_traits->convert(w)) != ZERO)
         {
-          arc.reset_flags();    // inavlid arc
+          cv.reset_flags();    // inavlid arc
           return;
         }
 
         // We have a segment of a line pair with rational coefficients.
         // Compose the equation of the underlying line
         // (with algebraic coefficients).
-        const Algebraic& x1 = source.x();
-        const Algebraic& y1 = source.y();
-        const Algebraic& x2 = target.x();
-        const Algebraic& y2 = target.y();
-
-        // The supporting line is A*x + B*y + C = 0, where:
-        //
-        //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
-        //
-        // We use the extra dat field to store the equation of this line.
-        auto* extra_data = new typename Curve_2::Extra_data;
-        extra_data->a = y2 - y1;
-        extra_data->b = x1 - x2;
-        extra_data->c = x2*y1 - x1*y2;
-        extra_data->side = ZERO;
-        arc.set_extra_data(extra_data);
+        cv.update_extra_data();
       }
       else {
         // The sign of (4rs - t^2) detetmines the conic type:
@@ -3329,7 +3271,7 @@ public:
         CGAL::Sign sign_conic = CGAL::sign(4*r*s - t*t);
 
         // Build the extra hyperbolic data if necessary
-        if (sign_conic == NEGATIVE) build_hyperbolic_arc_data(arc);
+        if (sign_conic == NEGATIVE) build_hyperbolic_arc_data(cv);
 
         if (sign_conic != POSITIVE) {
           // In case of a non-degenerate parabola or a hyperbola, make sure
@@ -3337,12 +3279,10 @@ public:
           Point_2 p_mid =
             m_alg_kernel->construct_midpoint_2_object()(source, target);
           Point_2 ps[2];
-
-          bool finite_at_x = (points_at_x(arc, p_mid, ps) > 0);
-          bool finite_at_y = (points_at_y(arc, p_mid, ps) > 0);
-
+          bool finite_at_x = (points_at_x(cv, p_mid, ps) > 0);
+          bool finite_at_y = (points_at_y(cv, p_mid, ps) > 0);
           if (! finite_at_x && ! finite_at_y) {
-            arc.reset_flags();              // inavlid arc
+            cv.reset_flags();              // inavlid arc
             return;
           }
         }
@@ -3350,8 +3290,8 @@ public:
     }
 
 
-    arc.set_flag(Curve_2::IS_VALID);            // arc is valid
-    arc.reset_flag(Curve_2::IS_FULL_CONIC);     // not a full conic
+    cv.set_flag(Curve_2::IS_VALID);            // arc is valid
+    cv.reset_flag(Curve_2::IS_FULL_CONIC);     // not a full conic
   }
 
   /*! Set the properties of a conic arc that is really a full curve
@@ -3360,7 +3300,7 @@ public:
    *                   of x^2, y^2, xy, x, y and the free coefficient resp.
    * \param comp_orient Should we compute the orientation of the given curve.
    */
-  void set_full(Curve_2& arc, const Rational* rat_coeffs,
+  void set_full(Curve_2& cv, const Rational* rat_coeffs,
                 const bool& comp_orient) const {
     // Convert the coefficients vector to an equivalent vector of integer
     // coefficients.
@@ -3374,10 +3314,10 @@ public:
                                             rat_coeffs[4], rat_coeffs[5]);
     const Orientation temp_orient = temp_conic.orientation();
 
-    if (comp_orient) arc.set_orientation(temp_orient);
+    if (comp_orient) cv.set_orientation(temp_orient);
 
     Integer r, s, t, u, v, w;
-    if (arc.orientation() == temp_orient) {
+    if (cv.orientation() == temp_orient) {
       r = int_coeffs[0];
       s = int_coeffs[1];
       t = int_coeffs[2];
@@ -3393,7 +3333,7 @@ public:
       v = -int_coeffs[4];
       w = -int_coeffs[5];
     }
-    arc.set_coefficients(r, s, t, u, v, w);
+    cv.set_coefficients(r, s, t, u, v, w);
 
     // Make sure the conic is a non-degenerate ellipse:
     // The coefficients should satisfy (4rs - t^2) > 0.
@@ -3404,24 +3344,24 @@ public:
 
     // Mark that this arc is a full conic curve.
     if (is_ellipse) {
-      arc.set_flag(Curve_2::IS_VALID);
-      arc.set_flag(Curve_2::IS_FULL_CONIC);
+      cv.set_flag(Curve_2::IS_VALID);
+      cv.set_flag(Curve_2::IS_FULL_CONIC);
     }
-    else arc.reset_flags();            // inavlid arc
+    else cv.reset_flags();            // inavlid arc
   }
 
   /*! Check whether the given point lies on the supporting conic of the arc.
    * \param p The query point.
    * \return true if p lies on the supporting conic; (false) otherwise.
    */
-  bool is_on_supporting_conic(Curve_2& arc, const Point_2& p) const {
+  bool is_on_supporting_conic(Curve_2& cv, const Point_2& p) const {
     // Check whether p satisfies the conic equation.
-    const Algebraic r = m_nt_traits->convert(arc.r());
-    const Algebraic t = m_nt_traits->convert(arc.t());
-    const Algebraic u = m_nt_traits->convert(arc.u());
-    const Algebraic s = m_nt_traits->convert(arc.s());
-    const Algebraic v = m_nt_traits->convert(arc.v());
-    const Algebraic w = m_nt_traits->convert(arc.w());
+    const Algebraic r = m_nt_traits->convert(cv.r());
+    const Algebraic t = m_nt_traits->convert(cv.t());
+    const Algebraic u = m_nt_traits->convert(cv.u());
+    const Algebraic s = m_nt_traits->convert(cv.s());
+    const Algebraic v = m_nt_traits->convert(cv.v());
+    const Algebraic w = m_nt_traits->convert(cv.w());
 
     // The point must satisfy: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0.
     const Algebraic val =
@@ -3594,22 +3534,18 @@ public:
     //
     // We store the equation of this line in the extra data structure and also
     // the sign (side of half-plane) our arc occupies with respect to the line.
-    auto* extra_data = new typename Curve_2::Extra_data;
-
-    extra_data->a = cos_phi;
-    extra_data->b = sin_phi;
-    extra_data->c = - (cos_phi*x0 + sin_phi*y0);
-
-    // Make sure that the two endpoints are located on the same branch
-    // of the hyperbola.
+    // We use it to make sure that the two endpoints are located on the same
+    // branch of the hyperbola.
+    auto a = cos_phi;
+    auto b = sin_phi;
+    auto c = - (cos_phi*x0 + sin_phi*y0);
     const auto& source = cv.source();
+    auto val = a * source.x() + b * source.y() + c;
+    auto side = CGAL::sign(val);
+    CGAL_assertion(side != ZERO);
+    cv.set_extra_data(a, b, c, side);
     const auto& target = cv.target();
-    cv.set_extra_data(extra_data);
-    extra_data->side = cv.sign_of_extra_data(source.x(), source.y());
-
-    CGAL_assertion(extra_data->side != ZERO);
-    CGAL_assertion(extra_data->side ==
-                   cv.sign_of_extra_data(target.x(), target.y()));
+    CGAL_assertion(side == cv.sign_of_extra_data(target.x(), target.y()));
   }
 
   /*! Find the x coordinates of the underlying conic at a given y coordinate.
@@ -3623,8 +3559,7 @@ public:
     // Solve the quadratic equation for a given y and find the x values:
     //  r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0
     Algebraic A = m_nt_traits->convert(cv.r());
-    Algebraic B =
-      m_nt_traits->convert(cv.t())*y + m_nt_traits->convert(cv.u());
+    Algebraic B = m_nt_traits->convert(cv.t())*y + m_nt_traits->convert(cv.u());
     Algebraic C =
       (m_nt_traits->convert(cv.s())*y + m_nt_traits->convert(cv.v()))*y +
       m_nt_traits->convert(cv.w());
@@ -3643,8 +3578,7 @@ public:
     // Solve the quadratic equation for a given x and find the y values:
     //  s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0
     Algebraic A = m_nt_traits->convert(cv.s());
-    Algebraic B =
-      m_nt_traits->convert(cv.t())*x + m_nt_traits->convert(cv.v());
+    Algebraic B = m_nt_traits->convert(cv.t())*x + m_nt_traits->convert(cv.v());
     Algebraic C =
       (m_nt_traits->convert(cv.r())*x + m_nt_traits->convert(cv.u()))*x +
       m_nt_traits->convert(cv.w());
@@ -3682,7 +3616,6 @@ public:
 
     // Compute the two distinct solutions:
     Algebraic _2A = 2*A;
-    Nt_traits nt_traits;
     Algebraic sqrt_disc = m_nt_traits->sqrt(disc);
 
     x_minus = -(B + sqrt_disc) / _2A;
@@ -3758,42 +3691,42 @@ public:
     xcv.set_flag(Curve_2::IS_VALID);
     xcv.reset_flag(Curve_2::IS_FULL_CONIC);
 
-    // Check if the arc is directed right (the target is lexicographically
-    // greater than the source point), or to the left.
-    Comparison_result dir_res =
-      m_alg_kernel->compare_xy_2_object()(xcv.source(), xcv.target());
-    CGAL_assertion(dir_res != EQUAL);
-    if (dir_res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
+    // Check (i) whether the arc is a vertical segment, and (ii) whether it is
+    // directed right.
+    auto cmp_x = m_alg_kernel->compare_x_2_object();
+    Comparison_result resx = cmp_x(xcv.source(), xcv.target());
+    if (resx == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
+    else if (resx == EQUAL) {
+      xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
 
-    // Compute the degree of the underlying conic.
-    if ((CGAL::sign(xcv.r()) != ZERO) ||
-        (CGAL::sign(xcv.s()) != ZERO) ||
-        (CGAL::sign(xcv.t()) != ZERO))
-    {
-      xcv.set_flag(X_monotone_curve_2::DEGREE_2);
-
-      if (xcv.orientation() == COLLINEAR) {
-        xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
-
-        // Check whether the arc is a vertical segment:
-        auto cmp_x = m_alg_kernel->compare_x_2_object();
-        if (cmp_x(xcv.source(), xcv.target()) == EQUAL)
-          xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
-        return;
-      }
+      auto cmp_y = m_alg_kernel->compare_y_2_object();
+      Comparison_result resy =  cmp_y(xcv.source(), xcv.target());
+      CGAL_assertion(resy != EQUAL);
+      if (resy == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
     }
-    else {
-      CGAL_assertion((CGAL::sign(xcv.u()) != ZERO) ||
-                     (CGAL::sign(xcv.v()) != ZERO));
 
-      // The supporting curve is of the form: u*x + w = 0
-      if (CGAL::sign(xcv.v()) == ZERO)
-        xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
-      xcv.set_flag(X_monotone_curve_2::DEGREE_1);
+    if (xcv.orientation() == COLLINEAR) {
+      // Compute the degree of the underlying conic.
+      if ((CGAL::sign(xcv.r()) != ZERO) ||
+          (CGAL::sign(xcv.s()) != ZERO) ||
+          (CGAL::sign(xcv.t()) != ZERO))
+      {
+        xcv.set_flag(X_monotone_curve_2::DEGREE_2);
+        xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
+      }
+      else {
+        xcv.set_flag(X_monotone_curve_2::DEGREE_1);
+
+        // Check whether this is a special segment
+        if ((CGAL::sign(xcv.u()) == ZERO) && (CGAL::sign(xcv.v()) == ZERO)) {
+          xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
+          xcv.update_extra_data();
+        }
+      }
       return;
     }
 
-    if (xcv.orientation() == COLLINEAR) return;
+    xcv.set_flag(X_monotone_curve_2::DEGREE_2);
 
     // Compute a midpoint between the source and the target and get the y-value
     // of the arc at its x-coordiante.
@@ -3825,7 +3758,7 @@ public:
 
     // Check whether the conic is facing up or facing down:
     // Check whether the arc (which is x-monotone of degree 2) lies above or
-    // below the segement that contects its two end-points (x1,y1) and (x2,y2).
+    // below the segement that connects its two end-points (x1,y1) and (x2,y2).
     // To do that, we find the y coordinate of a point on the arc whose x
     // coordinate is (x1+x2)/2 and compare it to (y1+y2)/2.
     auto cmp_y = m_alg_kernel->compare_y_2_object();
@@ -3940,7 +3873,6 @@ public:
     const Integer two(2);
     const Integer four(4);
     Algebraic xs[2];
-    Nt_traits nt_traits;
 
     auto r = cv.r();
     auto s = cv.s();

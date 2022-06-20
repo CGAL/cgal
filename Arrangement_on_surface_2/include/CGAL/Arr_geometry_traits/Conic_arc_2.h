@@ -1489,7 +1489,6 @@ public:
    */
   void set_coefficients(Integer r, Integer s, Integer t,
                         Integer u, Integer v, Integer w) {
-
     m_r = r;
     m_s = s;
     m_t = t;
@@ -1512,6 +1511,36 @@ public:
   /*! Set the extra data field.
    */
   void set_extra_data(Extra_data* extra_data) { m_extra_data = extra_data; }
+
+  /*! Set the extra data field.
+   */
+  void set_extra_data(const Algebraic& a, const Algebraic& b,
+                      const Algebraic& c, Sign side)
+  {
+    m_extra_data = new Extra_data;
+    m_extra_data->a = a;
+    m_extra_data->b = b;
+    m_extra_data->c = c;
+    m_extra_data->side = side;
+  }
+
+  /*! Update the extra data field.
+   */
+  void update_extra_data() {
+    const Algebraic x1 = source().x();
+    const Algebraic y1 = source().y();
+    const Algebraic x2 = target().x();
+    const Algebraic y2 = target().y();
+
+    // The supporting line is A*x + B*y + C = 0, where:
+    //  A = y2 - y1, B = x1 - x2, C = x2*y1 - x1*y2
+    // We use the extra data field to store the equation of this line.
+    m_extra_data = new Extra_data;
+    m_extra_data->a = y2 - y1;
+    m_extra_data->b = x1 - x2;
+    m_extra_data->c = x2*y1 - x1*y2;
+    m_extra_data->side = ZERO;
+  }
   //@}
 
 public:
