@@ -2271,22 +2271,42 @@ public:
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
      */
-    X_monotone_curve_2 operator()(const Point_2& source,
-                                  const Point_2& target) const {
-      X_monotone_curve_2 xcv;
-      xcv->set_endpoints(source, target);
-      xcv.set_flag(X_monotone_curve_2::DEGREE_1);
+    X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target)
+      const
+    {
       auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
-      Comparison_result dir_res = cmp_xy(source, target);
-      if (dir_res == SMALLER)
-        xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
+      Comparison_result res = cmp_xy(source, target);
+      CGAL_precondition(res != EQUAL);
+
+      X_monotone_curve_2 xcv;
+      // Set the properties.
+      xcv.set_endpoints(source, target);
+      xcv.set_orientation(COLLINEAR);
+      xcv.set_flag(Curve_2::IS_VALID);
+      xcv.set_flag(X_monotone_curve_2::DEGREE_1);
+      xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
+
+      if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
+
+      const Algebraic x1 = source.x();
+      const Algebraic y1 = source.y();
+      const Algebraic x2 = target.x();
+      const Algebraic y2 = target.y();
+
+      // The supporting line is A*x + B*y + C = 0, where:
+      //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
+      // We use the extra data field to store the equation of this line.
+      auto extra_data = new typename Curve_2::Extra_data;
+      extra_data->a = y2 - y1;
+      extra_data->b = x1 - x2;
+      extra_data->c = x2*y1 - x1*y2;
+      extra_data->side = ZERO;
+      xcv.set_extra_data(extra_data);
 
       // Check if the segment is vertical.
       if (CGAL::sign(xcv.extra_data()->b) == ZERO)
         xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
 
-      // Mark that this is a special segment.
-      xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
       return xcv;
     }
 
@@ -2296,48 +2316,42 @@ public:
      * \param source The source point.
      * \param target The target point.
      */
-    X_monotone_curve_2 operator()(const Algebraic& a,
-                                  const Algebraic& b,
+    X_monotone_curve_2 operator()(const Algebraic& a, const Algebraic& b,
                                   const Algebraic& c,
-                                  const Point_2& source,
-                                  const Point_2& target) const {
-      X_monotone_curve_2 xcv();
+                                  const Point_2& source, const Point_2& target)
+      const
+    {
+      CGAL_precondition_code(auto cmp_xy =
+                               m_traits.m_alg_kernel->compare_xy_2_object());
+      CGAL_precondition(cmp_xy(source, target) != EQUAL);
+
+      X_monotone_curve_2 xcv;
       // Make sure the two endpoints lie on the supporting line.
-      CGAL_precondition
-        (CGAL::sign(a*source.x() + b*source.y() + c) == CGAL::ZERO);
+      CGAL_precondition(CGAL::sign(a*source.x()+b*source.y()+c) == CGAL::ZERO);
+      CGAL_precondition(CGAL::sign(a*target.x()+b*target.y()+c) == CGAL::ZERO);
 
-      CGAL_precondition
-        (CGAL::sign(a*target.x() + b*target.y() + c) == CGAL::ZERO);
-
-      // Set the basic properties and clear the m_info bits.
-      xcv.set_source(source);
-      xcv.set_target(target);
+      // Set the properties.
+      xcv.set_endpoints(source, target);
       xcv.set_orientation(COLLINEAR);
-      xcv.reset_flags();                // inavlid arc
+      xcv.set_flag(Curve_2::IS_VALID);
+      xcv.set_flag(X_monotone_curve_2::DEGREE_1);
+      xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
 
       // Check if the arc is directed right (the target is lexicographically
       // greater than the source point), or to the left.
       auto cmp_x = m_traits.m_alg_kernel->compare_x_2_object();
       Comparison_result res = cmp_x(source, target);
+      if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
 
-      xcv.set_flag(Curve_2::IS_VALID);
-      xcv.set_flag(X_monotone_curve_2::DEGREE_1);
-      if (res == EQUAL) {
-        // Mark that the segment is vertical.
+      // Check whether the segment is vertical.
+      else if (res == EQUAL) {
         xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
 
         // Compare the endpoints lexicographically.
         auto cmp_y = m_traits.m_alg_kernel->compare_y_2_object();
         res = cmp_y(source, target);
-
-        CGAL_precondition(res != EQUAL);
-        if (res == EQUAL) {
-          xcv.reset_flags();            // inavlid arc
-          return xcv;
-        }
+        if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
       }
-
-      if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
 
       // Store the coefficients of the line.
       auto extra_data = new typename Curve_2::Extra_data;
@@ -2347,8 +2361,6 @@ public:
       extra_data->side = ZERO;
       xcv.set_extra_data(extra_data);
 
-      // Mark that this is a special segment.
-      xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
       return xcv;
     }
 

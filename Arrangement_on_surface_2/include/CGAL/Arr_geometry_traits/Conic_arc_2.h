@@ -1413,6 +1413,13 @@ public:
     return m_source;
   }
 
+  /*! Obtain the non const reference to the curve source point.
+   */
+  Point_2& source() {
+    CGAL_precondition(! is_full_conic());
+    return (this->m_source);
+  }
+
   /*! Obtain the arc's target.
    * \return The target point.
    * \pre The arc does not represent a full conic curve.
@@ -1420,6 +1427,13 @@ public:
   const Point_2& target() const {
     CGAL_precondition(! is_full_conic());
     return m_target;
+  }
+
+  /*! Obtain the non const reference to the curve source point.
+   */
+  Point_2& target() {
+    CGAL_precondition(! is_full_conic());
+    return this->m_target;
   }
 
   /*! Obtain the orientation of the arc.
