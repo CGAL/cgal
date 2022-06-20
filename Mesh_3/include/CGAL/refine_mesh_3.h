@@ -238,110 +238,153 @@ struct Mesh_3_options {
 
 } // end namespace internal
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4003) // not enough actual parameters for macro
-#endif
-
-// see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/boost/parameter.h>
-CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
-
 
 // -----------------------------------
 // Perturb
 // -----------------------------------
-BOOST_PARAMETER_FUNCTION((internal::Perturb_options), perturb, tag,
-                         (optional (time_limit_, *, internal::undef_parameter )
-                                   (sliver_bound_, *, default_values_for_mesh_3::perturb_sliver_bound )))
+
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+internal::Perturb_options perturb(const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  internal::Perturb_options options(true);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    double time_limit = choose_parameter(get_parameter(np,internal_np::maximum_running_time),internal::undef_parameter);
+    double sliver_bound = choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),default_values_for_mesh_3::perturb_sliver_bound);
 
-  if ( internal::undef_parameter != time_limit_ )
-    options.set_time_limit(time_limit_);
+    internal::Perturb_options options(true);
 
-  options.set_bound(sliver_bound_);
+    if ( internal::undef_parameter != time_limit)
+        options.set_time_limit(time_limit);
 
-  return options;
+    options.set_bound(sliver_bound);
+
+    return options;
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename... NP_Pack>
+internal::Perturb_options perturb(const NP_Pack& ...nps)
+{
+    return perturb(internal_np::combine_named_parameters(nps...));
+}
+#endif
+
 
 inline internal::Perturb_options no_perturb() { return internal::Perturb_options(false); }
 
 // -----------------------------------
 // Exude
 // -----------------------------------
-BOOST_PARAMETER_FUNCTION((internal::Exude_options), exude, tag,
-                         (optional (time_limit_, *, internal::undef_parameter )
-                                   (sliver_bound_, *, default_values_for_mesh_3::exude_sliver_bound )))
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+internal::Exude_options exude(const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  internal::Exude_options options(true);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    double time_limit = choose_parameter(get_parameter(np,internal_np::maximum_running_time),internal::undef_parameter);
+    double sliver_bound = choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),default_values_for_mesh_3::perturb_sliver_bound);
 
-  if ( internal::undef_parameter != time_limit_ )
-    options.set_time_limit(time_limit_);
+    internal::Exude_options options(true);
 
-  options.set_bound(sliver_bound_);
+    if ( internal::undef_parameter != time_limit)
+        options.set_time_limit(time_limit);
 
-  return options;
+    options.set_bound(sliver_bound);
+
+    return options;
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename... NP_Pack>
+internal::Exude_options exude(const NP_Pack& ...nps)
+{
+    return perturb(internal_np::combine_named_parameters(nps...));
+}
+#endif
 inline internal::Exude_options no_exude() { return internal::Exude_options(false); }
 
 // -----------------------------------
 // Odt
 // -----------------------------------
-BOOST_PARAMETER_FUNCTION((internal::Odt_options), odt, tag,
-                         (optional (time_limit_, *, 0 )
-                                   (max_iteration_number_, *, 0 )
-                                   (convergence_, *, default_values_for_mesh_3::odt_convergence_ratio )
-                                   (freeze_bound_, *, default_values_for_mesh_3::odt_freeze_ratio )))
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+internal::Odt_options odt(const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  internal::Odt_options options(true);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    double time_limit = choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+    double freeze_bound = choose_parameter(get_parameter(np,internal_np::vertex_freeze_bound),default_values_for_mesh_3::odt_freeze_ratio);
+    double convergence = choose_parameter(get_parameter(np,internal_np::convergence_ratio), default_values_for_mesh_3::odt_convergence_ratio);
+    int max_iteration_number = choose_parameter(get_parameter(np,internal_np::number_of_iterations), 0);
+    internal::Odt_options options(true);
 
-  options.set_time_limit(time_limit_);
-  options.set_bound(freeze_bound_);
-  options.set_convergence(convergence_);
-  options.set_max_iteration_number(max_iteration_number_);
+    options.set_time_limit(time_limit);
+    options.set_bound(freeze_bound);
+    options.set_convergence(convergence);
+    options.set_max_iteration_number(max_iteration_number);
 
-  return options;
+    return options;
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename... NP_Pack>
+internal::Odt_options Odt(const NP_Pack& ...nps)
+{
+    return Odt(internal_np::combine_named_parameters(nps...));
+}
+#endif
 inline internal::Odt_options no_odt() { return internal::Odt_options(false); }
 
 // -----------------------------------
 // Lloyd
 // -----------------------------------
-BOOST_PARAMETER_FUNCTION((internal::Lloyd_options), lloyd, tag,
-                         (optional (time_limit_, *, 0 )
-                                   (max_iteration_number_, *, 0 )
-                                   (convergence_, *, default_values_for_mesh_3::lloyd_convergence_ratio )
-                                   (freeze_bound_, *, default_values_for_mesh_3::lloyd_freeze_ratio )))
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+internal::Lloyd_options lloyd(const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  internal::Lloyd_options options(true);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    double time_limit = choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+    double freeze_bound = choose_parameter(get_parameter(np,internal_np::vertex_freeze_bound),default_values_for_mesh_3::lloyd_freeze_ratio);
+    double convergence = choose_parameter(get_parameter(np,internal_np::convergence_ratio), default_values_for_mesh_3::lloyd_convergence_ratio);
+    int max_iteration_number = choose_parameter(get_parameter(np,internal_np::number_of_iterations), 0);
+    internal::Lloyd_options options(true);
 
-  options.set_time_limit(time_limit_);
-  options.set_bound(freeze_bound_);
-  options.set_convergence(convergence_);
-  options.set_max_iteration_number(max_iteration_number_);
+    options.set_time_limit(time_limit);
+    options.set_bound(freeze_bound);
+    options.set_convergence(convergence);
+    options.set_max_iteration_number(max_iteration_number);
 
-  return options;
+    return options;
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename... NP_Pack>
+internal::Lloyd_options lloyd(const NP_Pack& ...nps)
+{
+    return lloyd(internal_np::combine_named_parameters(nps...));
+}
+#endif
 inline internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
 
 // -----------------------------------
 // Manifold options ------------------
 // -----------------------------------
-BOOST_PARAMETER_FUNCTION((internal::Manifold_options), manifold_options, tag,
-                         (optional
-                          (mesh_topology_, (int), -1)
-                         )
-                        )
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+internal::Manifold_options manifold_options(const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  internal::Manifold_options options;
-  options.mesh_topology = mesh_topology_;
-  return options;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    int mesh_topology = choose_parameter(get_parameter(np, internal_np::mesh_topology_number), -1);
+    internal::Manifold_options options;
+    options.mesh_topology = mesh_topology;
+    return options;
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename... NP_Pack>
+internal::Manifold_options manifold_options(const NP_Pack& ...nps)
+{
+    return manifold_options(internal_np::combine_named_parameters(nps...));
+}
+#endif
 
 inline internal::Manifold_options manifold()
 {
@@ -366,41 +409,37 @@ inline internal::Manifold_options non_manifold()
 // Undocumented Boost parameter for refine_mesh_3 and make_mesh_3.
 // Allows to dump the mesh at given stage of the mesh generation
 // algorithm.
-BOOST_PARAMETER_FUNCTION((internal::Mesh_3_options), mesh_3_options, tag,
-                         (optional
-                          (dump_after_init_prefix_, (std::string), "" )
-                          (dump_after_refine_surface_prefix_, (std::string), "" )
-                          (dump_after_refine_prefix_, (std::string), "" )
-                          (dump_after_glob_opt_prefix_, (std::string), "" )
-                          (dump_after_perturb_prefix_, (std::string), "" )
-                          (dump_after_exude_prefix_, (std::string), "" )
-                          (number_of_initial_points_, (int), -1)
-                          (maximal_number_of_vertices_, (std::size_t), 0)
-                          (nonlinear_growth_of_balls_, (bool), false)
-                          (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
-                          (pointer_to_stop_atomic_boolean_, (internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t), ((internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t)0))
-                          )
-                         )
+
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+internal::Mesh_3_options mesh_3_options(const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  internal::Mesh_3_options options;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    internal::Mesh_3_options options;
 
-  options.dump_after_init_prefix=dump_after_init_prefix_;
-  options.dump_after_refine_surface_prefix=dump_after_refine_surface_prefix_;
-  options.dump_after_refine_prefix=dump_after_refine_prefix_;
-  options.dump_after_glob_opt_prefix=dump_after_glob_opt_prefix_;
-  options.dump_after_perturb_prefix=dump_after_perturb_prefix_;
-  options.dump_after_exude_prefix=dump_after_exude_prefix_;
-  options.number_of_initial_points=number_of_initial_points_;
-  options.nonlinear_growth_of_balls = nonlinear_growth_of_balls_;
-  options.maximal_number_of_vertices=maximal_number_of_vertices_;
-  options.pointer_to_error_code=pointer_to_error_code_;
+    options.dump_after_init_prefix=choose_parameter(get_parameter(np, internal_np::dump_after_init_prefix_param), "");
+    options.dump_after_refine_surface_prefix=choose_parameter(get_parameter(np, internal_np::dump_after_refine_surface_prefix_param), "");
+    options.dump_after_refine_prefix=choose_parameter(get_parameter(np, internal_np::dump_after_refine_prefix_param), "");
+    options.dump_after_glob_opt_prefix=choose_parameter(get_parameter(np, internal_np::dump_after_glob_opt_prefix_param), "");
+    options.dump_after_perturb_prefix=choose_parameter(get_parameter(np, internal_np::dump_after_perturb_prefix_param), "");
+    options.dump_after_exude_prefix=choose_parameter(get_parameter(np, internal_np::dump_after_refine_surface_prefix_param), "");
+    options.number_of_initial_points=choose_parameter(get_parameter(np, internal_np::number_of_initial_points_param), -1);
+    options.nonlinear_growth_of_balls = choose_parameter(get_parameter(np, internal_np::nonlinear_growth_of_balls_param), false);
+    options.maximal_number_of_vertices=choose_parameter(get_parameter(np, internal_np::maximal_number_of_vertices_param), 0);
+    options.pointer_to_error_code=choose_parameter(get_parameter(np, internal_np::pointer_to_error_code_param), ((Mesh_error_code*)0));
 #ifndef CGAL_NO_ATOMIC
-  options.pointer_to_stop_atomic_boolean=pointer_to_stop_atomic_boolean_;
+    options.pointer_to_stop_atomic_boolean=choose_parameter(get_parameter(np, internal_np::pointer_to_stop_atomic_boolean_param),
+                                                            ((internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t)0));
 #endif
-
-  return options;
+    return options;
 }
-
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename... NP_Pack>
+internal::Mesh_3_options manifold_options(const NP_Pack& ...nps)
+{
+    return mesh_3_options(internal_np::combine_named_parameters(nps...));
+}
+#endif
 // Undocumented Boost parameter for refine_mesh_3 and make_mesh_3.
 // Default Mesh_3_options: dump at every stage of the mesh generation.
 inline internal::Mesh_3_options mesh_3_dump()
@@ -417,87 +456,227 @@ inline internal::Mesh_3_options mesh_3_dump()
   return options;
 }
 
-CGAL_PRAGMA_DIAG_POP
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
 // -----------------------------------
 // Reset_c3t3 (undocumented)
 // -----------------------------------
   CGAL_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
   // CGAL_BOOLEAN_PARAMETER defined in <CGAL/boost/parameter.h>
 
-
 // see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
+        CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/boost/parameter.h>
-CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+        CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 // -----------------------------------
 // Parameters
 // -----------------------------------
-BOOST_PARAMETER_NAME( exude_param )
-BOOST_PARAMETER_NAME( perturb_param )
-BOOST_PARAMETER_NAME( odt_param )
-BOOST_PARAMETER_NAME( lloyd_param )
-BOOST_PARAMETER_NAME( reset_param )
-BOOST_PARAMETER_NAME( mesh_options_param )
-BOOST_PARAMETER_NAME( manifold_options_param )
+        BOOST_PARAMETER_NAME( exude_param )
+        BOOST_PARAMETER_NAME( perturb_param )
+        BOOST_PARAMETER_NAME( odt_param )
+        BOOST_PARAMETER_NAME( lloyd_param )
+        BOOST_PARAMETER_NAME( reset_param )
+        BOOST_PARAMETER_NAME( mesh_options_param )
+        BOOST_PARAMETER_NAME( manifold_options_param )
 
-CGAL_PRAGMA_DIAG_POP
+        CGAL_PRAGMA_DIAG_POP
 
 } // end namespace parameters
 
+/*!
+\ingroup PkgMesh3Functions
+
+The function `refine_mesh_3()` is a 3D
+mesh generator. It produces simplicial meshes which discretize
+3D domains.
+
+The mesh generation algorithm is a Delaunay refinement process
+followed by an optimization phase.
+The criteria driving the Delaunay refinement
+process may be tuned to achieve the user needs with respect to
+the size of mesh elements, the accuracy of boundaries approximation,
+etc.
+
+The optimization phase is a sequence of optimization processes,
+amongst the following available optimizers: an ODT-smoothing,
+a Lloyd smoothing, a sliver perturber, and a sliver exuder.
+Each optimization process
+can be activated or not,
+according to the user requirements
+and available time.
+By default, only the perturber and the exuder are activated.
+Note that the benefits of the exuder will be lost if the mesh
+is further refined afterward.
+
+\attention The function template `refine_mesh_3()` may be used to refine a previously
+computed mesh, e.g.:
+\code{.cpp}
+C3T3 c3t3 = CGAL::make_mesh_3<C3T3>(domain,criteria);
+
+CGAL::refine_mesh_3(c3t3, domain, new_criteria);
+\endcode
+
+Please note that we guarantee the result if and only if the domain does
+not change from one refinement to the next one.
 
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4003) // not enough actual parameters for macro
-#endif
+\tparam  C3T3 is required to be a model of
+the concept
+`MeshComplex_3InTriangulation_3`.
+The argument `c3t3` is passed by
+reference as this object is modified by the refinement process. As the
+refinement process only adds points to the triangulation, all
+vertices of the triangulation of `c3t3` remain in the
+mesh during the refinement process. Object `c3t3` can be used to insert
+specific points in the domain to ensure that they will be contained in the
+final triangulation.
+The type `C3T3` is in particular required to provide a nested type
+`C3T3::Triangulation` for the 3D triangulation
+embedding the mesh. The vertex and cell base classes of the
+triangulation `C3T3::Triangulation` are required to be models of the
+concepts `MeshVertexBase_3` and `MeshCellBase_3`
+respectively.
 
-// see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/boost/parameter.h>
-CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+\tparam MD is required to be a model of
+the concept `MeshDomain_3` or of the refined concept
+`MeshDomainWithFeatures_3` if 0 and 1-dimensional features
+of the input complex have to be accurately represented in the mesh.
+The argument `domain`
+is the sole link through which the domain
+to be discretized is known by the mesh generation algorithm.
 
-BOOST_PARAMETER_FUNCTION(
-  (void),
-  refine_mesh_3,
-  parameters::tag,
-  (required (in_out(c3t3),*) (domain,*) (criteria,*) ) // nondeduced
-  (deduced
-    (optional
-      (exude_param, (parameters::internal::Exude_options), parameters::exude())
-      (perturb_param, (parameters::internal::Perturb_options), parameters::perturb())
-      (odt_param, (parameters::internal::Odt_options), parameters::no_odt())
-      (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
-      (reset_param, (parameters::Reset), parameters::reset_c3t3())
-      (mesh_options_param, (parameters::internal::Mesh_3_options),
-                           parameters::internal::Mesh_3_options())
-      (manifold_options_param, (parameters::internal::Manifold_options),
-                           parameters::internal::Manifold_options())
-    )
-  )
-)
+\tparam MC is required to be a model of the concept
+`MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3`
+if the domain has exposed features. The argument `criteria` of
+type `MC` specifies the
+size and shape requirements for mesh tetrahedra
+and surface facets. These criteria
+form the rules which drive the refinement process. All mesh elements
+satisfy those criteria at the end of the refinement process.
+In addition, if the domain has features, the argument
+`criteria` provides a sizing field to guide the discretization
+of 1-dimensional exposed features.
+
+The four additional parameters are optimization parameters.
+They control which optimization processes are performed
+and allow the user to tune the parameters of the optimization processes.
+Individual optimization parameters are not described here as they are
+internal types (see instead the documentation page of each optimizer).
+For each optimization algorithm, there exist two global functions
+that allow to enable or disable the optimizer:
+
+\cgalNamedParamsBegin
+   \cgalParamNBegin{manifold_options_param_new}
+     \cgalParamDescription{allows the user to drive the meshing algorithm,
+                          and ensure that the output mesh surface follows the given manifold criterion.
+                          It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
+                          and `parameters::non_manifold()`. Note that the meshing algorithm cannot generate a manifold
+                          surface if the input surface is not manifold.}
+      \cgalParamType{`parameters::manifold()` OR `parameters::manifold_with_boundary()` OR `parameters::non_manifold()`}
+      \cgalParamDefault{`parameters::non_manifold()`}
+
+    \cgalParamNBegin{lloyd_param_new}
+     \cgalParamDescription{`parameters::lloyd()` and `parameters::no_lloyd()` are designed to
+                            trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the
+                            parameters of this optimizer. If one parameter is not set, the default value of
+                            `lloyd_optimize_mesh_3()` is used for this parameter.}
+      \cgalParamType{`parameters::lloyd()` OR `parameters::no_lloyd()`}
+      \cgalParamDefault{'parameters::no_lloyd()'}
+
+    \cgalParamNBegin{odt_param_new}
+     \cgalParamDescription{`parameters::odt()` and `parameters::no_odt()` are designed to
+                            trigger or not a call to `odt_optimize_mesh_3()` function and
+                            to set the parameters of this optimizer.
+                            If one parameter is not set, the default value of
+                           `odt_optimize_mesh_3()` is used for this parameter.}
+      \cgalParamType{`parameters::odt()` OR `parameters::no_odt()`}
+      \cgalParamDefault{`parameters::no_odt()`}
+
+    \cgalParamNBegin{perturb_param_new}
+     \cgalParamDescription{`parameters::perturb()` and `parameters::no_perturb()` are designed to
+                            trigger or not a call to `perturb_mesh_3()` function and
+                            to set the parameters of this optimizer. If one parameter is not set, the default value of
+                            `perturb_mesh_3()` is used for this parameter, except for the time bound which is set to be
+                             equal to the refinement CPU time.}
+      \cgalParamType{`parameters::perturb()` and `parameters::no_perturb()`}
+      \cgalParamDefault{'parameters::no_perturb`}
+
+    \cgalParamNBegin{exude_param_new}
+     \cgalParamDescription{parameters::exude()` and `parameters::no_exude()` are designed to
+                           trigger or not a call to `exude_mesh_3()` function and to override to set the
+                           parameters of this optimizer. If one parameter is not set, the default value of
+                          `exude_mesh_3()` is used for this parameter, except for the time bound which is set to be
+                           equal to the refinement CPU time.}
+      \cgalParamType{`parameters::exude()` and `parameters::no_exude()`}
+      \cgalParamDefault{'parameters::no_exude`}
+
+\cgalNamedParamsEnd
+
+The optimization parameters can be passed in arbitrary order. If one parameter
+is not passed, its default value is used. The default values are
+`no_lloyd()`, `no_odt()`, `perturb()` and `exude()`.
+Note that whatever may be the optimization processes activated,
+they are always launched in the order that is a suborder
+of the following (see user manual for further
+details): *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
+
+Beware that optimization of the mesh is obtained
+by perturbing mesh vertices and modifying the mesh connectivity
+and that this has an impact
+on the strict compliance to the refinement criteria.
+Though a strict compliance to mesh criteria
+is guaranteed at the end of the Delaunay refinement, this may no longer be true after
+some optimization processes. Also beware that the default behavior does involve some
+optimization processes.
+
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::parameters::manifold`
+\sa `CGAL::parameters::manifold_with_boundary`
+\sa `CGAL::parameters::non_manifold`
+\sa `CGAL::exude_mesh_3()`
+\sa `CGAL::perturb_mesh_3()`
+\sa `CGAL::lloyd_optimize_mesh_3()`
+\sa `CGAL::odt_optimize_mesh_3()`
+\sa `CGAL::parameters::exude`
+\sa `CGAL::parameters::no_exude`
+\sa `CGAL::parameters::perturb`
+\sa `CGAL::parameters::no_perturb`
+\sa `CGAL::parameters::lloyd`
+\sa `CGAL::parameters::no_lloyd`
+\sa `CGAL::parameters::odt`
+\sa `CGAL::parameters::no_odt`
+ */
+
+template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
+void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return refine_mesh_3_impl(c3t3,
-                            domain,
-                            criteria,
-                            exude_param,
-                            perturb_param,
-                            odt_param,
-                            lloyd_param,
-                            reset_param(),
-                            mesh_options_param,
-                            manifold_options_param);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude());
+    parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb());
+    parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt());
+    parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd());
+    parameters::Reset reset_param = choose_parameter(get_parameter(np, internal_np::reset_options_param), parameters::reset_c3t3());
+    parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
+    parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
+
+    return refine_mesh_3_impl(c3t3,
+                              domain,
+                              criteria,
+                              exude_param,
+                              perturb_param,
+                              odt_param,
+                              lloyd_param,
+                              reset_param(),
+                              mesh_options_param,
+                              manifold_options_param);
 }
-
-CGAL_PRAGMA_DIAG_POP
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
+#ifndef DOXYGEN_RUNNING
+#ifndef CGAL_NO_DEPRECATED_CODE
+    template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename... NP_Pack>
+    void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const NP_Pack& ...nps)
+    {
+        return refine_mesh_3(c3t3, domain, criteria, internal_np::combine_named_parameters(nps...));
+    }
 #endif
 
 /**
@@ -619,9 +798,170 @@ void refine_mesh_3_impl(C3T3& c3t3,
     dump_c3t3(c3t3, mesh_options.dump_after_exude_prefix);
   }
 }
+#else
+namespace CGAL {
 
+/*!
+\ingroup PkgMesh3Functions
+\deprecated This function is deprecated since \cgal 5.5, the overload using `NamedParameters` must be used instead.
+
+The function `refine_mesh_3()` is a 3D
+mesh generator. It produces simplicial meshes which discretize
+3D domains.
+
+The mesh generation algorithm is a Delaunay refinement process
+followed by an optimization phase.
+The criteria driving the Delaunay refinement
+process may be tuned to achieve the user needs with respect to
+the size of mesh elements, the accuracy of boundaries approximation,
+etc.
+
+The optimization phase is a sequence of optimization processes,
+amongst the following available optimizers: an ODT-smoothing,
+a Lloyd smoothing, a sliver perturber, and a sliver exuder.
+Each optimization process
+can be activated or not,
+according to the user requirements
+and available time.
+By default, only the perturber and the exuder are activated.
+Note that the benefits of the exuder will be lost if the mesh
+is further refined afterward.
+
+\attention The function template `refine_mesh_3()` may be used to refine a previously
+computed mesh, e.g.:
+\code{.cpp}
+C3T3 c3t3 = CGAL::make_mesh_3<C3T3>(domain,criteria);
+
+CGAL::refine_mesh_3(c3t3, domain, new_criteria);
+\endcode
+
+Please note that we guarantee the result if and only if the domain does
+not change from one refinement to the next one.
+
+
+\tparam  C3T3 is required to be a model of
+the concept
+`MeshComplex_3InTriangulation_3`.
+The argument `c3t3` is passed by
+reference as this object is modified by the refinement process. As the
+refinement process only adds points to the triangulation, all
+vertices of the triangulation of `c3t3` remain in the
+mesh during the refinement process. Object `c3t3` can be used to insert
+specific points in the domain to ensure that they will be contained in the
+final triangulation.
+The type `C3T3` is in particular required to provide a nested type
+`C3T3::Triangulation` for the 3D triangulation
+embedding the mesh. The vertex and cell base classes of the
+triangulation `C3T3::Triangulation` are required to be models of the
+concepts `MeshVertexBase_3` and `MeshCellBase_3`
+respectively.
+
+\tparam MD is required to be a model of
+the concept `MeshDomain_3` or of the refined concept
+`MeshDomainWithFeatures_3` if 0 and 1-dimensional features
+of the input complex have to be accurately represented in the mesh.
+The argument `domain`
+is the sole link through which the domain
+to be discretized is known by the mesh generation algorithm.
+
+\tparam MC is required to be a model of the concept
+`MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3`
+if the domain has exposed features. The argument `criteria` of
+type `MC` specifies the
+size and shape requirements for mesh tetrahedra
+and surface facets. These criteria
+form the rules which drive the refinement process. All mesh elements
+satisfy those criteria at the end of the refinement process.
+In addition, if the domain has features, the argument
+`criteria` provides a sizing field to guide the discretization
+of 1-dimensional exposed features.
+
+The four additional parameters are optimization parameters.
+They control which optimization processes are performed
+and allow the user to tune the parameters of the optimization processes.
+Individual optimization parameters are not described here as they are
+internal types (see instead the documentation page of each optimizer).
+For each optimization algorithm, there exist two global functions
+that allow to enable or disable the optimizer:
+
+\cgalHeading{Named Parameters}
+- <b>`manifold`</b> allows the user to drive the meshing algorithm,
+and ensure that the output mesh surface follows the given manifold criterion.
+It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
+and `parameters::non_manifold()`. Note that the meshing algorithm cannot generate a manifold
+surface if the input surface is not manifold.
+
+- <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to
+trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the
+parameters of this optimizer. If one parameter is not set, the default value of
+`lloyd_optimize_mesh_3()` is used for this parameter.
+
+- <b>`ODT`</b> `parameters::odt()` and `parameters::no_odt()` are designed to
+trigger or not a call to `odt_optimize_mesh_3()` function and
+to set the parameters of this optimizer.
+If one parameter is not set, the default value of
+`odt_optimize_mesh_3()` is used for this parameter.
+
+- <b>`perturb`</b> `parameters::perturb()` and `parameters::no_perturb()` are designed to
+trigger or not a call to `perturb_mesh_3()` function and
+to set the parameters of this optimizer. If one parameter is not set, the default value of
+`perturb_mesh_3()` is used for this parameter, except for the time bound which is set to be
+equal to the refinement CPU time.
+
+- <b>`exude`</b> `parameters::exude()` and `parameters::no_exude()` are designed to
+trigger or not a call to `exude_mesh_3()` function and to override to set the
+parameters of this optimizer. If one parameter is not set, the default value of
+`exude_mesh_3()` is used for this parameter, except for the time bound which is set to be
+equal to the refinement CPU time.
+
+The optimization parameters can be passed in arbitrary order. If one parameter
+is not passed, its default value is used. The default values are
+`no_lloyd()`, `no_odt()`, `perturb()` and `exude()`.
+Note that whatever may be the optimization processes activated,
+they are always launched in the order that is a suborder
+of the following (see user manual for further
+details): *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
+
+Beware that optimization of the mesh is obtained
+by perturbing mesh vertices and modifying the mesh connectivity
+and that this has an impact
+on the strict compliance to the refinement criteria.
+Though a strict compliance to mesh criteria
+is guaranteed at the end of the Delaunay refinement, this may no longer be true after
+some optimization processes. Also beware that the default behavior does involve some
+optimization processes.
+
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::parameters::manifold`
+\sa `CGAL::parameters::manifold_with_boundary`
+\sa `CGAL::parameters::non_manifold`
+\sa `CGAL::exude_mesh_3()`
+\sa `CGAL::perturb_mesh_3()`
+\sa `CGAL::lloyd_optimize_mesh_3()`
+\sa `CGAL::odt_optimize_mesh_3()`
+\sa `CGAL::parameters::exude`
+\sa `CGAL::parameters::no_exude`
+\sa `CGAL::parameters::perturb`
+\sa `CGAL::parameters::no_perturb`
+\sa `CGAL::parameters::lloyd`
+\sa `CGAL::parameters::no_lloyd`
+\sa `CGAL::parameters::odt`
+\sa `CGAL::parameters::no_odt`
+
+*/
+
+template <class C3T3, class MD, class MC>
+void refine_mesh_3(C3T3& c3t3,
+                   const MD& mesh_domain,
+                   const MC& mesh_criteria,
+                   parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                   parameters::internal::Odt_options odt = parameters::no_odt(),
+                   parameters::internal::Perturb_options perturb = parameters::perturb(),
+                   parameters::internal::Exude_options exude = parameters::exude(),
+                   parameters::internal::Manifold_options manifold = parameters::non_manifold());
+}
+#endif // DOXYGEN_RUNNING
 } // end namespace CGAL
 
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_REFINE_MESH_3_H

@@ -68,7 +68,7 @@ int main(int argc, char*argv[])
   Mesh_criteria new_criteria(cell_radius_edge_ratio=3, cell_size=0.03);
 
   // Mesh refinement (and make the output manifold)
-  CGAL::refine_mesh_3(c3t3, domain, new_criteria, manifold());
+  CGAL::refine_mesh_3(c3t3, domain, new_criteria, CGAL::parameters::manifold_options_param_new = manifold());
 
   // Output
   medit_file.open("out_2.mesh");
