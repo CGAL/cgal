@@ -52,7 +52,7 @@ Functor that provides
 \link LinearCellComplexTraits::Point `Point`\endlink `operator() (const` \link Point `Point`\endlink`& p, const` \link LinearCellComplexTraits::Vector `Vector`\endlink`& v)`,
 which constructs the translation of point `p` by vector `v`, and
 \link LinearCellComplexTraits::Point `Point`\endlink `operator() (const CGAL::Origin&, const` \link LinearCellComplexTraits::Vector `Vector`\endlink`& v)`,
-which constructs the translation of a point at the origin by vector `v` (used in \link CGAL::barycenter `barycenter`\endlink).
+which constructs the translation of a point at the origin by vector `v` (used in \link LinearCellComplex::barycenter `barycenter()`\endlink).
 */
 typedef unspecified_type Construct_translated_point;
 
