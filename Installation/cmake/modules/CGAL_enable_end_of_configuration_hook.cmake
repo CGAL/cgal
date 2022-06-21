@@ -155,7 +155,7 @@ function(CGAL_run_at_the_end_of_configuration variable access value current_list
 endfunction()
 
 function(CGAL_install_hooks)
-  if(CMAKE_VERSION VERSION_LESS 3.18)
+  if(CMAKE_VERSION VERSION_LESS 3.19)
     variable_watch("CMAKE_CURRENT_LIST_DIR" CGAL_run_at_the_end_of_configuration)
   else()
     cmake_language(DEFER CALL CGAL_hooks_at_end_of_all_directories)
