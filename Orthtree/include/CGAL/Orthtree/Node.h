@@ -45,7 +45,7 @@ struct Node_access
   template <typename Node>
   static void split(Node node) { return node.split(); }
 
-  template <int D, typename Node>
+  template <typename Node>
   static void free(Node node)
   {
     std::queue<Node> nodes;
@@ -55,7 +55,7 @@ struct Node_access
       Node node = nodes.front();
       nodes.pop();
       if (!node.is_leaf())
-        for (std::size_t i = 0; i < D; ++ i)
+        for (std::size_t i = 0; i < Node::Dimension::value; ++ i)
           nodes.push (node[i]);
       node.free();
     }
