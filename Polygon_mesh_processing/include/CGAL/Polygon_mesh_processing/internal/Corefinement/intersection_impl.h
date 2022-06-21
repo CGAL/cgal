@@ -754,6 +754,32 @@ class Intersection_of_triangle_meshes
 
       CGAL_assertion(&tm1!=&tm2 || f1!=f2);
 
+      //skip degenerate faces
+      if (const_mesh_ptr)
+      {
+        if (const_mesh_ptr == &tm2)
+        {
+          halfedge_descriptor h1 = halfedge(f1,tm1);
+          if (collinear(get(vpm1, source(h1, tm1)),
+                        get(vpm1, target(h1, tm1)),
+                        get(vpm1, target(next(h1, tm1), tm1))))
+          {
+            continue;
+          }
+        }
+        else
+        {
+          CGAL_assertion(const_mesh_ptr == &tm1);
+          halfedge_descriptor h2 = halfedge(f2,tm2);
+          if (collinear(get(vpm2, source(h2, tm2)),
+                        get(vpm2, target(h2, tm2)),
+                        get(vpm2, target(next(h2, tm2), tm2))))
+          {
+            continue;
+          }
+        }
+      }
+
       typedef typename Node_vector::Exact_kernel EK;
       typedef Coplanar_intersection<TriangleMesh, EK> Cpl_inter_pt;
       std::list<Cpl_inter_pt> inter_pts;
