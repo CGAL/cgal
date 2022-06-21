@@ -21,15 +21,13 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/boost/parameter.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Sliver_perturber.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
 #include <CGAL/Mesh_3/internal/check_weights.h>
 #include <CGAL/use.h>
-
-#include <boost/parameter/preprocessor.hpp>
+#include <CGAL/Named_function_parameters.h>
 
 #include <vector>
 

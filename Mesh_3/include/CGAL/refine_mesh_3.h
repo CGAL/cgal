@@ -29,7 +29,7 @@
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
 
-#include <boost/parameter/preprocessor.hpp>
+#include <CGAL/Named_function_parameters.h>
 
 #include <atomic>
 

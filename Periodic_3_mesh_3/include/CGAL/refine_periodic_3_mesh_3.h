@@ -264,10 +264,10 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   if(lloyd)
   {
     lloyd_optimize_mesh_3(c3t3, domain,
-                          parameters::time_limit = lloyd.time_limit(),
-                          parameters::max_iteration_number = lloyd.max_iteration_number(),
-                          parameters::convergence = lloyd.convergence(),
-                          parameters::freeze_bound = lloyd.bound());
+                          parameters::time_limit_new = lloyd.time_limit(),
+                          parameters::max_iteration_number_new = lloyd.max_iteration_number(),
+                          parameters::convergence_new = lloyd.convergence(),
+                          parameters::freeze_bound_new = lloyd.bound());
   }
 
   if(odt || lloyd)
@@ -299,8 +299,8 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
       exude_time_limit = exude.time_limit();
 
     exude_mesh_3(c3t3,
-                 CGAL::parameters::time_limit_new = exude_time_limit,
-                 CGAL::parameters::sliver_bound_new = exude.bound());
+                 parameters::time_limit_new = exude_time_limit,
+                 parameters::sliver_bound_new = exude.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }

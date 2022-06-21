@@ -19,106 +19,96 @@
 #define CGAL_OPTIMIZE_PERIODIC_3_MESH_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
-
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/optimize_mesh_3.h>
 
 namespace CGAL {
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4003) // not enough actual parameters for macro
-#endif
-
-// see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/boost/parameter.h>
-CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
-
 // ---------------------------------- pertuber ---------------------------------
-
-BOOST_PARAMETER_FUNCTION(
-  (Mesh_optimization_return_code),
-  perturb_periodic_3_mesh_3,
-  parameters::tag,
-  (required (in_out(c3t3),*) (domain,*))
-  (optional
-    (time_limit_, *, 0)
-    (sliver_bound_, *, parameters::default_values_for_mesh_3::perturb_sliver_bound)
-    (sliver_criterion_, *, parameters::default_values_for_mesh_3::default_sliver_criterion(c3t3, sliver_bound_))
-    (perturbation_vector_, *, default_perturbation_vector(c3t3,domain,sliver_criterion_))
-  )
-)
+template<typename C3T3, typename MeshDomain, typename CGAL_NP_TEMPLATE_PARAMETERS>
+Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  CGAL_USE(sliver_bound_);
-  return perturb_mesh_3_impl(c3t3, domain, time_limit_, sliver_criterion_,
-                             perturbation_vector_);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    double time_limit = choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+    auto sliver_bound = choose_parameter(get_parameter(np,internal_np::lower_sliver_bound), parameters::default_values_for_mesh_3::perturb_sliver_bound);
+    auto sliver_criterion = choose_parameter(get_parameter(np, internal_np::sliver_criteria), parameters::default_values_for_mesh_3::default_sliver_criterion(c3t3,sliver_bound));
+    auto perturbation_vector = choose_parameter(get_parameter(np,internal_np::perturb_vector), default_perturbation_vector(c3t3,domain,sliver_criterion));
+    return perturb_mesh_3_impl(c3t3, domain, time_limit, sliver_criterion, perturbation_vector);
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename C3T3, typename MeshDomain, typename ... NP_PACK>
+Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const NP_PACK& ... nps)
+{
+    return perturb_periodic_3_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
+}
+#endif //CGAL_NO_DEPRECATED_CODE
 // ---------------------------------- exuder -----------------------------------
 
-BOOST_PARAMETER_FUNCTION(
-  (Mesh_optimization_return_code),
-  exude_periodic_3_mesh_3,
-  parameters::tag,
-  (required (in_out(c3t3),*))
-  (optional
-    (time_limit_, *, 0)
-    (sliver_bound_, *, parameters::default_values_for_mesh_3::exude_sliver_bound)
-  )
-)
+template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
+Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3,const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return exude_mesh_3_impl(c3t3, time_limit_, sliver_bound_);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    int time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+    double sliver_bound= choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),parameters::default_values_for_mesh_3::exude_sliver_bound);
+    return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
+
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename C3T3, typename ... NP_PACK>
+Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3, const NP_PACK& ...nps)
+{
+    return exude_periodic_3_mesh_3(c3t3,internal_np::combine_named_parameters(nps...));
+}
+#endif //CGAL_NO_DEPRECATED_CODE
 
 // ------------------------------ odt optimizer --------------------------------
 
-BOOST_PARAMETER_FUNCTION(
-  (Mesh_optimization_return_code),
-  odt_optimize_periodic_3_mesh_3,
-  parameters::tag,
-  (required (in_out(c3t3),*) (domain,*))
-  (optional
-    (time_limit_, *, 0)
-    (max_iteration_number_, *, 0)
-    (convergence_, *, parameters::default_values_for_mesh_3::odt_convergence_ratio)
-    (freeze_bound_, *, parameters::default_values_for_mesh_3::odt_freeze_ratio)
-    (do_freeze_, *, parameters::default_values_for_mesh_3::do_freeze)
-   )
-)
+template<typename C3T3,typename MeshDomain,typename CGAL_NP_TEMPLATE_PARAMETERS>
+Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return odt_optimize_mesh_3_impl(c3t3, domain,
-                                  time_limit_, max_iteration_number_,
-                                  convergence_, freeze_bound_, do_freeze_);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    double time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+    std::size_t max_iteration_number=choose_parameter(get_parameter(np,internal_np::number_of_iterations),0);
+    double convergence=choose_parameter(get_parameter(np,internal_np::convergence_ratio),0.02);
+    double freeze_bound=choose_parameter(get_parameter(np,internal_np::vertex_freeze_bound),0.01);
+    bool do_freeze=choose_parameter(get_parameter(np,internal_np::freeze),true);
+    return odt_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iteration_number, convergence, freeze_bound, do_freeze);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename C3T3, typename MeshDomain, typename... NP_Pack>
+Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const NP_Pack& ...nps)
+{
+    return odt_optimize_periodic_3_mesh_3(c3t3, domain, internal_np::combine_named_parameters(nps...));
+}
+#endif //CGAL_NO_DEPRECATED_CODE
 
 
 // ------------------------------- lloyd optimizer -----------------------------
-
-BOOST_PARAMETER_FUNCTION(
-  (Mesh_optimization_return_code),
-  lloyd_optimize_periodic_3_mesh_3,
-  parameters::tag,
-  (required (in_out(c3t3),*) (domain,*))
-  (optional
-    (time_limit_, *, 0)
-    (max_iteration_number_, *, 0)
-    (convergence_, *, parameters::default_values_for_mesh_3::lloyd_convergence_ratio)
-    (freeze_bound_, *, parameters::default_values_for_mesh_3::lloyd_freeze_ratio)
-    (do_freeze_, *, parameters::default_values_for_mesh_3::do_freeze)
-   )
-)
+template<typename C3T3, typename MeshDomain, typename CGAL_NP_TEMPLATE_PARAMETERS>
+Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain,const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return lloyd_optimize_mesh_3_impl(c3t3, domain,
-                                    time_limit_, max_iteration_number_,
-                                    convergence_, freeze_bound_, do_freeze_);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    int max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
+    const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), 0.001);
+    const double freeze_bound = choose_parameter(get_parameter(np, internal_np::vertex_freeze_bound), 0.001);
+    const double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
+    bool do_freeze = choose_parameter(get_parameter(np,internal_np::freeze),true);
+    return lloyd_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iterations, convergence_ratio, freeze_bound, do_freeze);
 }
 
-CGAL_PRAGMA_DIAG_POP
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename C3T3, typename MeshDomain,typename ... NP_PACK>
+Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,MeshDomain& domain, const NP_PACK& ...nps)
+{
+    return lloyd_optimize_periodic_3_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
+}
+#endif //CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 
