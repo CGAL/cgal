@@ -117,6 +117,17 @@ namespace CGAL {
     typedef typename Attribute_const_range<0>::type
     Vertex_attribute_const_range;
 
+    /// Deprecated types, keep for now for backward compatibility
+    using Dart_handle=Dart_descriptor;
+    using Dart_const_handle=Dart_const_descriptor;
+
+    template<int i>
+    using Attribute_handle=Attribute_descriptor<i>;
+    template<int i>
+    using Attribute_const_handle=Attribute_const_descriptor<i>;
+
+    static constexpr Null_descriptor_type null_handle=null_descriptor;
+
     /// Number of marks
     static const size_type NB_MARKS = 32;
 
@@ -150,6 +161,9 @@ namespace CGAL {
      /// @return the number of darts.
     size_type number_of_darts() const
     { return mdarts.size(); }
+
+    size_type upper_bound_dart_ids() const
+    { return 0; }
 
    /** Return if this dart is free for adimension.
      * @param dh a dart handle
@@ -415,6 +429,10 @@ namespace CGAL {
     void display_attribute(typename Attribute_const_descriptor<i>::type ah) const
     { std::cout<< std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).index(ah); }
+
+    template <unsigned int i>
+    size_type upper_bound_attribute_ids() const
+    { return 0; }
 
   protected:
     // Set the handle on the i th attribute

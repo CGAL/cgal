@@ -179,11 +179,14 @@ namespace CGAL {
      *  @return true iff the map is empty.
      */
     bool is_empty() const
-    { return  darts().empty(); }
+    { return darts().empty(); }
 
     /// @return the number of darts.
     size_type number_of_darts() const
     { return darts().size(); }
+
+    size_type upper_bound_dart_ids() const
+    { return mdarts.upper_bound(); }
 
     /** Return if this dart is free for adimension.
      * @param dh a dart handle
@@ -425,7 +428,14 @@ namespace CGAL {
     void display_attribute(typename Attribute_const_descriptor<i>::type ah) const
     { std::cout<<ah; }
 
-  protected:
+    template <unsigned int i>
+    size_type upper_bound_attribute_ids() const
+    {
+      return std::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).upper_bound();
+    }
+
+    protected:
     // Set the handle on the i th attribute
     template<unsigned int i>
     void basic_set_dart_attribute(Dart_descriptor dh,

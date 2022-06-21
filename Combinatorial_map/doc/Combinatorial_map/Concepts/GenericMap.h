@@ -301,6 +301,17 @@ Returns the number of <I>i</I>-attributes in the generic map.
 template <unsigned int i>
 size_type number_of_attributes() const;
 
+/*!
+Returns an upper bound of the id of dart descriptors if indices are used or 0 otherwise.
+*/
+size_type upper_bound_dart_ids() const;
+
+/*!
+Returns an upper bound of the id of <I>i</I>-attributes descriptors if indices are used or 0 otherwise.
+*/
+template <unsigned int i>
+size_type upper_bound_attribute_ids() const;
+
 /*! Returns true if `d` is a descriptor of a used dart (i.e.\ valid).
  */
 bool is_dart_used(Dart_const_descriptor d) const;

@@ -141,6 +141,9 @@ namespace CGAL {
     size_type number_of_darts() const
     { return mdarts.size(); }
 
+    size_type upper_bound_dart_ids() const
+    { return mdarts.upper_bound(); }
+
     /** Return if this dart is free for adimension.
      * @param dh a dart handle
      * @param i the dimension.
@@ -380,6 +383,13 @@ namespace CGAL {
     template<unsigned int i>
     void display_attribute(typename Attribute_const_descriptor<i>::type ah) const
     { std::cout<<ah; }
+
+    template <unsigned int i>
+    size_type upper_bound_attribute_ids() const
+    {
+      return std::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).upper_bound();
+    }
 
   protected:
     // Set the handle on the i th attribute
