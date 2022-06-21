@@ -54,6 +54,7 @@
 #include <vector>
 #include <thread>
 #include <Eigen/Dense>
+#include <CGAL/Origin.h>
 #include <CGAL/license/Shape_detection.h>
 
 // The algorithm for least-squares fitting of a point set by a cylinder is
@@ -205,12 +206,16 @@ namespace CGAL
   typename Kernel::FT fit_cylinder(
     const Region& region, const PointMap point_map,
     const NormalMap normal_map,
-    typename Kernel::Line_3& line, typename Kernel::FT& squared_radius) {
+    typename Kernel::Line_3& line,
+    typename Kernel::FT& squared_radius,
+    const Kernel &traits) {
 
     using FT = typename Kernel::FT;
     using Point_3 = typename Kernel::Point_3;
     using Vector_3 = typename Kernel::Vector_3;
     using Line_3 = typename Kernel::Line_3;
+    typename Kernel::Construct_cross_product_vector_3 cross_product =
+      traits.construct_cross_product_vector_3_object();
 
     squared_radius = -1.0;
 
@@ -225,7 +230,7 @@ namespace CGAL
       v0 = v0 / sqrt(v0 * v0);
       Vector_3 v1 = get(normal_map, *region[i + 1]);
       v1 = v1 / sqrt(v1 * v1);
-      Vector_3 axis = CGAL::cross_product(v0, v1);
+      Vector_3 axis = cross_product(v0, v1);
       if (sqrt(axis.squared_length()) < FT(1) / FT(100)) {
         continue;
       }
@@ -263,4 +268,4 @@ namespace CGAL
   }
 }
 
-#endif CGAL_SHAPE_DETECTION_INTERNAL_CYLINDER_FITTING_H
+#endif

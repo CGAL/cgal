@@ -606,7 +606,7 @@ namespace internal {
     create_cylinder(
       const Region& region, const PointMap point_map,
       const NormalMap normal_map,
-      const Traits&, const bool compute_score) {
+      const Traits& traits, const bool compute_score) {
 
     if (region.size() < 6)
       return std::make_pair(
@@ -624,7 +624,7 @@ namespace internal {
 
     FT error = fit_cylinder<Traits, Region, PointMap, NormalMap>
       (region, point_map, normal_map, fitted_axis,
-        squared_radius);
+        squared_radius, traits);
 
     // A negative squared_radius is returned if the cylinder fitting failed.
     // This can be the case if the normals are very close to each other.
