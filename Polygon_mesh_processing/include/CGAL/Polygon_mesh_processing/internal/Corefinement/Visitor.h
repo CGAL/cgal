@@ -1272,6 +1272,7 @@ public:
           {
             for(Node_id id_n :neighbors)
             {
+              if (id_n<id) continue;
               if (std::binary_search(face_vertex_nids.begin(), face_vertex_nids.end(), id_n))
               {
                 vertex_descriptor vi = node_id_to_vertex.get_vertex(id),
