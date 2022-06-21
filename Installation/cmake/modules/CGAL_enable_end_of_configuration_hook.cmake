@@ -6,6 +6,7 @@
 # the configuration.
 #
 # See https://stackoverflow.com/a/43300621/1728537 for the starting point.
+cmake_minimum_required(VERSION 3.3...3.24)
 
 if(CGAL_SKIP_CMAKE_HOOKS)
   return()
@@ -102,9 +103,25 @@ disable this ${type}.\n\
   endif()
 endfunction()
 
+function(CGAL_hook_fix_ctest_depending_on_Qt5)
+  get_property(_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
+  foreach(_target ${_targets})
+    if(NOT TEST compilation_of__${_target})
+      continue()
+    endif()
+    get_property(_target_links TARGET ${_target} PROPERTY LINK_LIBRARIES)
+    if("CGAL_Qt5" IN_LIST _target_links OR "CGAL::CGAL_Qt5" IN_LIST _target_links)
+      set_property(TEST compilation_of__${_target} APPEND PROPERTY FIXTURES_REQUIRED CGAL_Qt5_moc_and_resources_Fixture)
+    endif()
+    endforeach()
+endfunction()
+
 function(CGAL_hooks_at_end_of_all_directories)
   CGAL_hook_check_targets()
   CGAL_hook_check_unused_cpp_files()
+  if(BUILD_TESTING)
+    CGAL_hook_fix_ctest_depending_on_Qt5()
+  endif()
 endfunction()
 
 function(CGAL_run_at_the_end_of_configuration variable access value current_list_file stack)
