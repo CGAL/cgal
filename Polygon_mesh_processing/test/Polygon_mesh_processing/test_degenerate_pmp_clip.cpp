@@ -5,9 +5,9 @@
 
 #define CGAL_DEBUG_PMP_CLIP
 
-//test coref
-// test throw coref and clip
-// check split
+// TODO: test coref
+// TODO: test throw coref and clip
+// TODO: check split
 
 
 
@@ -57,6 +57,7 @@ void test()
   run_a_test("data_degeneracies/degtri_nullface.off",1, 1.67292e-19, -2.22045e-16, -0.618478);
   // tests failing
   // run_a_test("data_degeneracies/degtri_nullface.off",1, 0, 0, -1);
+  // TODO subdivide several times the central face
 }
 
 int main()
