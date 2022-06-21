@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Generalized_map` represents a <I>d</I>D generalized map.
 
 \cgalModifBegin
-Two versions exist: one where Darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator, and use handles as descriptors; a second one where Darts and non void attributes are stored in an internal std::vector like data-structure, and use indices as descriptors. The choice between the two versions is done through the item class.
+Two versions exist: one where darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator, and use handles as descriptors; a second one where darts and non void attributes are stored in an internal `std::vector` like data-structure, and use indices as descriptors. The choice between the two versions is done through the item class.
 \cgalModifEnd
 
 \cgalModels `GeneralizedMap`
