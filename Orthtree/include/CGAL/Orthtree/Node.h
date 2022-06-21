@@ -45,7 +45,7 @@ struct Node_access
   template <typename Node>
   static void split(Node node) { return node.split(); }
 
-  template <typename Node, int D>
+  template <int D, typename Node>
   static void free(Node node)
   {
     std::queue<Node> nodes;
