@@ -41,10 +41,10 @@ template<
   typename PropertyMap>
 class Dereference_property_map_adaptor : public boost::put_get_helper<typename PropertyMap::reference, Dereference_property_map_adaptor< T, PropertyMap> > {
 public:
-  typedef typename T key_type;
-  typedef typename PropertyMap::value_type value_type;
-  typedef typename PropertyMap::reference reference;
-  typedef boost::readable_property_map_tag category;
+  using key_type = T ;
+  using value_type = typename PropertyMap::value_type;
+  using reference = typename PropertyMap::reference;
+  using category = boost::readable_property_map_tag;
 
   template <class U>
   reference operator[](U i) const {

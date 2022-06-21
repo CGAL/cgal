@@ -341,7 +341,7 @@ namespace Triangle_mesh {
       // based on faces, which belong to that region.
       // Approach: each face gets one vote to keep or flip the current plane normal.
       long votes_to_keep_normal = 0;
-      for (const Region::value_type face : region) {
+      for (const auto &face : region) {
         const Vector_3 face_normal = get_face_normal(face);
         const bool agrees =
           m_scalar_product_3(face_normal, unoriented_normal_of_best_fit) > FT(0);

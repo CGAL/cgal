@@ -30,6 +30,29 @@
 namespace CGAL {
 namespace Shape_detection {
 
+namespace internal {
+template<typename Item, typename InputIterator, bool>
+struct conditional_deref {
+  Item operator()(InputIterator it) {
+    assert(false);
+  }
+};
+
+template<typename Item, typename InputIterator>
+struct conditional_deref<Item, InputIterator, true> {
+  Item operator()(InputIterator it) {
+    return it;
+  }
+};
+
+template<typename Item, typename InputIterator>
+struct conditional_deref<Item, InputIterator, false> {
+  Item operator()(InputIterator it) {
+    return *it;
+  }
+};
+}
+
   /*!
     \ingroup PkgShapeDetectionRG
 
@@ -117,7 +140,7 @@ namespace Shape_detection {
       //fillSeedMap<std::is_same<typename Input_range::const_iterator, Item>::value>();
       std::size_t idx = 0;
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
-        m_seed_range[idx++] = conditional_deref<std::is_same<typename Input_range::const_iterator, Item>::value>(it);
+        m_seed_range[idx++] = internal::conditional_deref<Item, typename Input_range::const_iterator, std::is_same<typename Input_range::const_iterator, Item>::value>()(it);
 
       clear();
     }
@@ -208,7 +231,7 @@ namespace Shape_detection {
     template<typename OutputIterator>
     OutputIterator unassigned_items(OutputIterator output) const {
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
-        Item i = conditional_deref<std::is_same<typename Input_range::const_iterator, Item>::value>(it);
+        Item i = internal::conditional_deref<Item, typename Input_range::const_iterator, std::is_same<typename Input_range::const_iterator, Item>::value>()(it);
         if (!get(m_visited, i))
           *(output++) = i;
       }
@@ -220,7 +243,7 @@ namespace Shape_detection {
     /// \cond SKIP_IN_MANUAL
     void clear() {
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
-        put(m_visited, conditional_deref<std::is_same<typename Input_range::const_iterator, Item>::value>(it), false);
+        put(m_visited, internal::conditional_deref<Item, typename Input_range::const_iterator, std::is_same<typename Input_range::const_iterator, Item>::value>()(it), false);
     }
     /// \endcond
 
@@ -250,19 +273,6 @@ namespace Shape_detection {
     using VisitedMap = boost::unordered_map<typename Region_type::Item, bool, hash_item<typename Region_type::Item> >;
     VisitedMap m_visited_map;
     boost::associative_property_map<VisitedMap> m_visited;
-
-    template<bool>
-    Item conditional_deref(InputIterator it) const {
-      assert(false);
-    }
-    template<>
-    Item conditional_deref<true>(InputIterator it) const {
-      return it;
-    }
-    template<>
-    Item conditional_deref<false>(InputIterator it) const {
-      return *it;
-    }
 
     bool propagate(const Item &seed, Region& region) {
       region.clear();
