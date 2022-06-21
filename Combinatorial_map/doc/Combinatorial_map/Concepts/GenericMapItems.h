@@ -38,7 +38,7 @@ class GenericMapItems {
 public:
   /*!
     \cgalModifBegin
-    If Use_index is equal to CGAL::Tag_true, use indices as descriptors. Otherwise (if this type is not defined or different than CGAL::Tag_true), use handles.
+    If `Use_index` is  `CGAL::Tag_true`, uses indices as descriptors. Otherwise (if this type is not defined or different from `CGAL::Tag_true`), use handles.
     \cgalModifEnd
   */
   typedef unspecified_type Use_index;
