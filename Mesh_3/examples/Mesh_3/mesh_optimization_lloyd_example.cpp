@@ -46,13 +46,13 @@ int main(int argc, char*argv[])
 
   // Mesh generation and optimization in one call
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      lloyd(time_limit=30),
-                                      no_perturb(),
-                                      exude(time_limit=10, sliver_bound=10));
+                                      lloyd_param_new = lloyd(time_limit=30),
+                                      perturb_param_new = no_perturb(),
+                                      exude_param_new = exude(time_limit=10, sliver_bound=10));
 
   // Mesh generation and optimization in several call
   C3t3 c3t3_bis = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                          no_perturb(), no_exude());
+                                          perturb_param_new = no_perturb(), exude_param_new = no_exude());
 
   CGAL::lloyd_optimize_mesh_3(c3t3_bis, domain, time_limit_new=30);
   CGAL::exude_mesh_3(c3t3_bis, sliver_bound_new=10, time_limit_new=10);

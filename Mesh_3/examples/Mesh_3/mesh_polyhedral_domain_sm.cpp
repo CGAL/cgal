@@ -57,7 +57,7 @@ int main(int argc, char*argv[])
                          cell_radius_edge_ratio=3);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param_new = no_perturb(), exude_param_new = no_exude());
 
   // Output
   std::ofstream medit_file("out_1.mesh");

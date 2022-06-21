@@ -74,10 +74,10 @@ public:
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        no_perturb(),
-                                        no_exude(),
-      mesh_3_options(number_of_initial_points_new = 30),
-      non_manifold()
+                                        perturb_param_new = no_perturb(),
+                                        exude_param_new = no_exude(),
+      mesh_options_param_new = mesh_3_options(number_of_initial_points_new = 30),
+      manifold_options_param_new = non_manifold()
       );
 
     // Verify

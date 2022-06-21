@@ -240,7 +240,7 @@ int main()
 
   // Mesh generation (without optimization)
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      no_perturb(), no_exude());
+                                      perturb_param_new = no_perturb(), exude_param_new = no_exude());
 
   // Output
   dump_c3t3(c3t3, "out");

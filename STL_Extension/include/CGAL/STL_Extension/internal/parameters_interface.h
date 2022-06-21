@@ -277,3 +277,4 @@ CGAL_add_named_parameter(lloyd_options_param_t, lloyd_options_param, lloyd_optio
 CGAL_add_named_parameter(reset_options_param_t, reset_options_param, reset_options_param)
 CGAL_add_named_parameter(mesh_param_t, mesh_param, mesh_param)
 CGAL_add_named_parameter(manifold_param_t, manifold_param, manifold_param)
+CGAL_add_named_parameter(features_option_param_t,features_options_param,features_options_param)

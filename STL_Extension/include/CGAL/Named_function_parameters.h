@@ -366,6 +366,7 @@ const Boost_parameter_compatibility_wrapper<internal_np::lloyd_options_param_t> 
 const Boost_parameter_compatibility_wrapper<internal_np::reset_options_param_t> reset_param_new;
 const Boost_parameter_compatibility_wrapper<internal_np::mesh_param_t> mesh_options_param_new;
 const Boost_parameter_compatibility_wrapper<internal_np::manifold_param_t> manifold_options_param_new;
+const Boost_parameter_compatibility_wrapper<internal_np::features_option_param_t> features_param_new;
 #endif
 
 // function to extract a parameter

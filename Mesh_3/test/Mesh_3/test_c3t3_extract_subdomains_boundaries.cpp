@@ -76,7 +76,7 @@ int main()
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, exude_param_new = no_exude(), perturb_param_new = no_perturb());
 
   // Output
   std::stringstream off_file;

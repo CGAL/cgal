@@ -58,8 +58,8 @@ public:
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        CGAL::parameters::no_exude(),
-                                        CGAL::parameters::no_perturb());
+                                        CGAL::parameters::exude_param_new = CGAL::parameters::no_exude(),
+                                        CGAL::parameters::perturb_param_new = CGAL::parameters::no_perturb());
 
     c3t3.remove_isolated_vertices();
 

@@ -73,8 +73,8 @@ void test()
   {
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        no_perturb(),
-                                        no_exude());
+                                        perturb_param_new = no_perturb(),
+                                        exude_param_new = no_exude());
     std::ostringstream oss;
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str()); //[5*i]

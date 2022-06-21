@@ -531,22 +531,22 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
 # ifdef CGAL_MESH_3_BENCHMARK_LLOYD
-                                     , lloyd(time_limit=timelimit)
+                                     , lloyd_param_new = lloyd(time_limit=timelimit)
 # else
-                                     , no_lloyd()
+                                     , lloyd_param_new = no_lloyd()
 # endif
-                                     , no_odt()
+                                     , odt_param_new = no_odt()
 # ifdef CGAL_MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit = timelimit,
+                                     , perturb_param_new = perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
-                                     , no_perturb()
+                                     , perturb_param_new = no_perturb()
 #endif
 #ifdef CGAL_MESH_3_BENCHMARK_EXUDE
-                                     , exude(time_limit = timelimit,
+                                     , exude_param_new = exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
-                                     , no_exude()
+                                     , exude_param_new = no_exude()
 #endif
                                      );
 
@@ -637,22 +637,22 @@ bool make_mesh_3D_images(const std::string &input_filename,
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
 # ifdef CGAL_MESH_3_BENCHMARK_LLOYD
-                                     , lloyd(time_limit=timelimit)
+                                     , lloyd_param_new = lloyd(time_limit=timelimit)
 # else
-                                     , no_lloyd()
+                                     , lloyd_param_new = no_lloyd()
 # endif
-                                     , no_odt()
+                                     , odt_param_new = no_odt()
 # ifdef CGAL_MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit = timelimit,
+                                     , perturb_param_new = perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
-                                     , no_perturb()
+                                     , perturb_param_new = no_perturb()
 #endif
 #ifdef CGAL_MESH_3_BENCHMARK_EXUDE
-                                     , exude(time_limit = timelimit,
+                                     , exude_param_new = exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
-                                     , no_exude()
+                                     , exude_param_new = no_exude()
 #endif
                                      );
 
@@ -774,22 +774,22 @@ bool make_mesh_implicit(double facet_approx,
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
 # ifdef CGAL_MESH_3_BENCHMARK_LLOYD
-                                     , lloyd(time_limit=timelimit)
+                                     , lloyd_param_new = lloyd(time_limit=timelimit)
 # else
-                                     , no_lloyd()
+                                     , lloyd_param_new = no_lloyd()
 # endif
-                                     , no_odt()
+                                     , odt_param_new = no_odt()
 # ifdef CGAL_MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit = timelimit,
+                                     , perturb_param_new = perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
-                                     , no_perturb()
+                                     , perturb_param_new = no_perturb()
 #endif
 #ifdef CGAL_MESH_3_BENCHMARK_EXUDE
-                                     , exude(time_limit = timelimit,
+                                     , exude_param_new = exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
-                                     , no_exude()
+                                     , exude_param_new = no_exude()
 #endif
                                      );
 

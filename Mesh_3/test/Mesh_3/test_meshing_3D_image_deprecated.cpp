@@ -42,8 +42,8 @@ public:
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        CGAL::parameters::no_exude(),
-                                        CGAL::parameters::no_perturb());
+                                        CGAL::parameters::exude_param_new = CGAL::parameters::no_exude(),
+                                        CGAL::parameters::perturb_param_new = CGAL::parameters::no_perturb());
 
     // Verify
     this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
