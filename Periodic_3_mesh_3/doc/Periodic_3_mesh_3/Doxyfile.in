@@ -1,5 +1,7 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
+INPUT += \
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/make_periodic_3_mesh_3.h
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Periodic Mesh Generation"
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
