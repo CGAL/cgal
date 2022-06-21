@@ -61,7 +61,7 @@ namespace Segment_set {
     using Neighbor_query = NeighborQuery;
     using Segment_map = SegmentMap;
     using Segment_type = typename Segment_map::value_type;
-    
+
     using Item = typename InputRange::const_iterator;
     using Region = std::vector<Item>;
     using Seed_range = std::vector<Item>;
