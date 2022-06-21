@@ -54,6 +54,7 @@
 #include <vector>
 #include <thread>
 #include <Eigen/Dense>
+#include <CGAL/license/Shape_detection.h>
 
 // The algorithm for least-squares fitting of a point set by a cylinder is
 // described in
