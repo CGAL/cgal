@@ -191,7 +191,7 @@ private:
     using Sorting =
     CGAL::Shape_detection::Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, SMesh, Neighbor_query>;
     using Region_growing = CGAL::Shape_detection::Region_growing<
-      Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+      Face_range, Neighbor_query, Region_type>;
 
     CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
     const SMesh& mesh = *(sm_item->polyhedron());
@@ -218,9 +218,9 @@ private:
       mesh, neighbor_query, CGAL::parameters::vertex_point_map(vertex_to_point_map));
     sorting.sort();
     Region_growing region_growing(
-      face_range, neighbor_query, region_type, sorting.seed_map());
+      face_range, neighbor_query, region_type, sorting.ordered());
 
-    std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+    Region_growing::Result_type regions;
     region_growing.detect(std::back_inserter(regions));
     std::cerr << "* " << regions.size() << " regions have been found" << std::endl;
 
@@ -272,15 +272,16 @@ private:
 
     using Point_map = typename Point_set::Point_map;
     using Normal_map = typename Point_set::Vector_map;
+    using RefInput_range = std::vector<typename Point_set::const_iterator>;
 
     using Neighbor_query =
-    CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set, Point_map>;
+    CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set, RefInput_range, Point_map>;
     using Region_type =
     CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Point_map, Normal_map>;
     using Sorting =
     CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Point_set, Neighbor_query, Point_map>;
     using Region_growing =
-    CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+    CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>;
 
     using Point_to_index_map =
     CGAL::Shape_detection::internal::Item_to_index_property_map<Point_set::Index>;
@@ -339,9 +340,14 @@ private:
     }
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
+    RefInput_range ref(points->size());
+    std::size_t i = 0;
+    for (auto it = points->begin(); it != points->end(); it++)
+      ref[i++] = it;
+
     // Region growing set up.
     Neighbor_query neighbor_query(
-      *points, CGAL::parameters::
+      *points, ref, CGAL::parameters::
       sphere_radius(search_sphere_radius));
     Region_type region_type(
       *points, CGAL::parameters::
@@ -352,7 +358,7 @@ private:
       *points, neighbor_query);
     sorting.sort();
     Region_growing region_growing(
-      *points, neighbor_query, region_type, sorting.seed_map());
+      *points, neighbor_query, region_type, sorting.ordered());
 
     std::vector<Scene_group_item *> groups;
     groups.resize(1);
@@ -364,7 +370,7 @@ private:
     // The actual shape detection.
     CGAL::Real_timer t;
     t.start();
-    std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+    Region_growing::Result_type regions;
     region_growing.detect(std::back_inserter(regions));
     t.stop();
 
@@ -416,10 +422,10 @@ private:
       Scene_points_with_normal_item *point_item =
       new Scene_points_with_normal_item;
 
-      for (const std::size_t idx : regions[index].second) {
-        point_item->point_set()->insert(points->point(*(points->begin() + idx)));
+      for (auto &item : regions[index].second) {
+        point_item->point_set()->insert(points->point(*item));
         if (dialog.add_property())
-          shape_id[*(points->begin() + idx)] = index;
+          shape_id[*item] = index;
       }
 
       unsigned char r, g, b;
@@ -430,9 +436,9 @@ private:
 
       std::size_t nb_colored_pts = 0;
       if (dialog.generate_colored_point_set()) {
-        for(std::size_t idx : regions[index].second) {
+        for(const auto item : regions[index].second) {
           auto it = colored_item->point_set()->insert(
-            points->point(*(points->begin() + idx)));
+            points->point(*item));
           ++nb_colored_pts;
           colored_item->point_set()->set_color(*it, r, g, b);
         }

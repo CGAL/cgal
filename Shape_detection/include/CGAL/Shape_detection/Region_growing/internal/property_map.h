@@ -152,7 +152,7 @@ public:
     long region_index = 0;
     for (const auto& region : regions) {
       for (const auto item : region.second) {
-        m_indices[item] = region_index;
+        m_indices[*item] = region_index;
       }
       ++region_index;
     }
