@@ -26,7 +26,7 @@ using Segment_map        = typename Polyline_graph::Segment_map;
 
 using Line_region  = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
 using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Polyline_graph, Segment_map>;
-using RG_lines     = CGAL::Shape_detection::Region_growing<Segment_range, Polyline_graph, Line_region, typename Line_sorting::Seed_map>;
+using RG_lines     = CGAL::Shape_detection::Region_growing<Segment_range, Polyline_graph, Line_region>;
 
 int main(int argc, char *argv[]) {
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   Plane_region plane_region(surface_mesh);
   RG_planes rg_planes(face_range, one_ring_query, plane_region);
 
-  std::vector< std::pair< Kernel::Plane_3, std::vector<std::size_t> > > regions;
+  RG_planes::Result_type regions;
   rg_planes.detect(std::back_inserter(regions));
   std::cout << "* number of found planar regions: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 9);
@@ -72,16 +72,16 @@ int main(int argc, char *argv[]) {
   line_sorting.sort();
 
   RG_lines rg_lines(
-    segment_range, pgraph, line_region, line_sorting.seed_map());
+    segment_range, pgraph, line_region, line_sorting.ordered());
 
-  std::vector< std::pair< Kernel::Line_3, std::vector<std::size_t> > > subregions;
+  RG_lines::Result_type subregions;
   rg_lines.detect(std::back_inserter(subregions));
   std::cout << "* number of found linear regions: " << subregions.size() << std::endl;
   assert(is_default_input && subregions.size() == 21);
 
   fullpath = (argc > 2 ? argv[2] : "subregions_sm.ply");
-  utils::save_segment_regions_3<Kernel, Segment_range, Segment_map>(
-    segment_range, subregions, fullpath, pgraph.segment_map());
+  utils::save_segment_regions_3<Kernel, RG_lines::Result_type, Segment_map>(
+    subregions, fullpath, pgraph.segment_map());
 
   return EXIT_SUCCESS;
 }

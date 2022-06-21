@@ -20,6 +20,8 @@
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
 namespace CGAL {
+  using boost::hash_value;
+
 namespace Shape_detection {
 namespace Point_set {
 
@@ -66,14 +68,19 @@ namespace Point_set {
     using Input_range = InputRange;
     using Point_map = PointMap;
     using Normal_map = NormalMap;
+
     /// \endcond
 
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Item type.
+    using Item = typename InputRange::const_iterator;
+    using Region = std::vector<Item>;
+
     /// Primitive
     using Primitive = typename Traits::Plane_3;
-
+    using Result_type = std::vector<std::pair<Primitive, Region> >;
     /// @}
 
   private:
@@ -220,14 +227,12 @@ namespace Point_set {
       \pre `query_index < input_range.size()`
     */
     bool is_part_of_region(
-      const std::size_t,
-      const std::size_t query_index,
-      const std::vector<std::size_t>&) const {
+      const Item,
+      const Item query,
+      const Region&) const {
 
-      CGAL_precondition(query_index < m_input_range.size());
-      const auto& key = *(m_input_range.begin() + query_index);
-      const Point_3& query_point = get(m_point_map, key);
-      const Vector_3& query_normal = get(m_normal_map, key);
+      const Point_3& query_point = get(m_point_map, *query);
+      const Vector_3& query_normal = get(m_normal_map, *query);
 
       const FT a = CGAL::abs(m_plane_of_best_fit.a());
       const FT b = CGAL::abs(m_plane_of_best_fit.b());
@@ -265,7 +270,7 @@ namespace Point_set {
 
       \return Boolean `true` or `false`
     */
-    inline bool is_valid_region(const std::vector<std::size_t>& region) const {
+    inline bool is_valid_region(const Region& region) const {
       return (region.size() >= m_min_region_size);
     }
 
@@ -281,18 +286,16 @@ namespace Point_set {
 
       \pre `region.size() > 0`
     */
-    bool update(const std::vector<std::size_t>& region) {
+    bool update(const Region& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference plane and normal
-        const std::size_t point_index = region[0];
-        CGAL_precondition(point_index < m_input_range.size());
+        const Item item = region[0];
 
         // The best fit plane will be a plane through this point with
         // its normal being the point's normal.
-        const auto& key = *(m_input_range.begin() + point_index);
-        const Point_3& point = get(m_point_map, key);
-        const Vector_3& normal = get(m_normal_map, key);
+        const Point_3& point = get(m_point_map, *item);
+        const Vector_3& normal = get(m_normal_map, *item);
         if (normal == CGAL::NULL_VECTOR) return false;
 
         CGAL_precondition(normal != CGAL::NULL_VECTOR);
@@ -312,23 +315,21 @@ namespace Point_set {
 
     /// \cond SKIP_IN_MANUAL
     std::pair<Plane_3, Vector_3> get_plane_and_normal(
-      const std::vector<std::size_t>& region) const {
+      const Region& region) const {
 
       // The best fit plane will be a plane fitted to all region points with
       // its normal being perpendicular to the plane.
       CGAL_precondition(region.size() > 0);
       const Plane_3 unoriented_plane_of_best_fit =
         internal::create_plane(
-          m_input_range, m_point_map, region, m_traits).first;
+          region, m_point_map, m_traits).first;
       const Vector_3 unoriented_normal_of_best_fit =
         unoriented_plane_of_best_fit.orthogonal_vector();
 
       // Flip the plane's normal to agree with all input normals.
       long votes_to_keep_normal = 0;
-      for (const std::size_t normal_index : region) {
-        CGAL_precondition(normal_index < m_input_range.size());
-        const auto& key = *(m_input_range.begin() + normal_index);
-        const Vector_3& normal = get(m_normal_map, key);
+      for (const Item item : region) {
+        const Vector_3& normal = get(m_normal_map, *item);
         const bool agrees =
           m_scalar_product_3(normal, unoriented_normal_of_best_fit) > FT(0);
         votes_to_keep_normal += (agrees ? 1 : -1);

@@ -29,7 +29,7 @@ using Face_range   = typename Polygon_mesh::Face_range;
 using Neighbor_query = SD::Triangle_mesh::One_ring_neighbor_query<Polygon_mesh>;
 using Region_type    = SD::Triangle_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
 using Sorting        = SD::Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
-using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
 
@@ -71,9 +71,9 @@ int main(int argc, char *argv[]) {
 
   // Run region growing.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type, sorting.seed_map());
+    face_range, neighbor_query, region_type, sorting.ordered());
 
-  std::vector< std::pair< Kernel::Plane_3, std::vector<std::size_t> > > regions;
+  Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
   assert(regions.size() == 355);

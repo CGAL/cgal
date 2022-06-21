@@ -82,8 +82,13 @@ namespace Triangle_mesh {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Item type.
+    using Item = face_descriptor;
+    using Region = std::vector<Item>;
+
     /// Primitive
     using Primitive = typename Traits::Plane_3;
+    using Result_type = std::vector<std::pair<Primitive, Region> >;
 
     #ifdef DOXYGEN_NS
       /*!
@@ -237,12 +242,9 @@ namespace Triangle_mesh {
       \pre `query_index < faces(pmesh).size()`
     */
     bool is_part_of_region(
-      const std::size_t,
-      const std::size_t query_index,
-      const std::vector<std::size_t>&) const {
-
-      CGAL_precondition(query_index < m_face_range.size());
-      const auto face = *(m_face_range.begin() + query_index);
+      const Item,
+      const Item face,
+      const Region&) const {
 
       const FT squared_distance_to_fitted_plane = get_max_squared_distance(face);
       if (squared_distance_to_fitted_plane < FT(0)) return false;
@@ -273,7 +275,7 @@ namespace Triangle_mesh {
 
       \return Boolean `true` or `false`
     */
-    inline bool is_valid_region(const std::vector<std::size_t>& region) const {
+    inline bool is_valid_region(const Region& region) const {
       return (region.size() >= m_min_region_size);
     }
 
@@ -290,16 +292,14 @@ namespace Triangle_mesh {
 
       \pre `region.size() > 0`
     */
-    bool update(const std::vector<std::size_t>& region) {
+    bool update(const Region& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference plane and normal
-        const std::size_t face_index = region[0];
-        CGAL_precondition(face_index < m_face_range.size());
+        const Item face = region[0];
 
         // The best fit plane will be a plane through this face centroid with
         // its normal being the face's normal.
-        const auto face = *(m_face_range.begin() + face_index);
         const Point_3 face_centroid = get_face_centroid(face);
         const Vector_3 face_normal = get_face_normal(face);
         if (face_normal == CGAL::NULL_VECTOR) return false;
@@ -320,7 +320,7 @@ namespace Triangle_mesh {
 
     /// \cond SKIP_IN_MANUAL
     std::pair<Plane_3, Vector_3> get_plane_and_normal(
-      const std::vector<std::size_t>& region) const {
+      const Region& region) const {
 
       // The best fit plane will be a plane fitted to all vertices of all
       // region faces with its normal being perpendicular to the plane.
@@ -333,7 +333,7 @@ namespace Triangle_mesh {
       // https://github.com/CGAL/cgal/pull/4563
       const Plane_3 unoriented_plane_of_best_fit =
         internal::create_plane_from_faces(
-          m_face_graph, m_face_range, m_vertex_to_point_map, region, m_traits).first;
+          m_face_graph, region, m_vertex_to_point_map, m_traits).first;
       const Vector_3 unoriented_normal_of_best_fit =
         unoriented_plane_of_best_fit.orthogonal_vector();
 
@@ -341,8 +341,7 @@ namespace Triangle_mesh {
       // based on faces, which belong to that region.
       // Approach: each face gets one vote to keep or flip the current plane normal.
       long votes_to_keep_normal = 0;
-      for (const std::size_t face_index : region) {
-        const auto face = *(m_face_range.begin() + face_index);
+      for (const Region::value_type face : region) {
         const Vector_3 face_normal = get_face_normal(face);
         const bool agrees =
           m_scalar_product_3(face_normal, unoriented_normal_of_best_fit) > FT(0);

@@ -67,12 +67,11 @@ namespace internal {
       return m_traits.compute_scalar_product_2_object();
     }
 
-    template<typename InputRange, typename ItemMap>
+    template<typename Region, typename ItemMap>
     decltype(auto) create_line(
-      const InputRange& input_range, const ItemMap item_map,
-      const std::vector<std::size_t>& region) const {
+      const Region& region, const ItemMap item_map) const {
       return internal::create_line_2(
-        input_range, item_map, region, m_traits);
+        region, item_map, m_traits);
     }
   };
 
@@ -102,12 +101,11 @@ namespace internal {
       return m_traits.compute_scalar_product_3_object();
     }
 
-    template<typename InputRange, typename ItemMap>
+    template<typename Region, typename ItemMap>
     decltype(auto) create_line(
-      const InputRange& input_range, const ItemMap item_map,
-      const std::vector<std::size_t>& region) const {
+      const Region& region, const ItemMap item_map) const {
       return internal::create_line_3(
-        input_range, item_map, region, m_traits);
+        region, item_map, m_traits);
     }
   };
 

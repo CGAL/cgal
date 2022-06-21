@@ -66,6 +66,10 @@ namespace Point_set {
     using Input_range = InputRange;
     using Point_map = PointMap;
     using Normal_map = NormalMap;
+
+    using Item = typename InputRange::const_iterator;
+    using ItemType = typename std::iterator_traits<Item>::value_type;
+    using Region = std::vector<Item>;
     /// \endcond
 
     /// Number type.
@@ -249,15 +253,13 @@ namespace Point_set {
       \pre `query_index < input_range.size()`
     */
     bool is_part_of_region(
-      const std::size_t,
-      const std::size_t query_index,
-      const std::vector<std::size_t>& indices) const {
-
-      CGAL_precondition(query_index < m_input_range.size());
+      const Item,
+      const Item query,
+      const Region& region) const {
 
       // First, we need to integrate at least 6 points so that the
       // computed cylinder means something.
-      if (indices.size() < 6) {
+      if (region.size() < 6) {
         return true;
       }
 
@@ -271,9 +273,8 @@ namespace Point_set {
         return false;
       }
 
-      const auto& key = *(m_input_range.begin() + query_index);
-      const Point_3& query_point = get(m_point_map, key);
-      Vector_3 normal = get(m_normal_map, key);
+      const Point_3& query_point = get(m_point_map, *query);
+      Vector_3 normal = get(m_normal_map, *query);
 
       // TODO: Why do we have m_axis = 0 here sometimes?
       // Should it ever happen?
@@ -314,7 +315,7 @@ namespace Point_set {
 
       \return Boolean `true` or `false`
     */
-    inline bool is_valid_region(const std::vector<std::size_t>& region) const {
+    inline bool is_valid_region(const Region& region) const {
       return (
         (m_min_radius <= m_radius && m_radius <= m_max_radius) &&
         (region.size() >= m_min_region_size)
@@ -333,7 +334,7 @@ namespace Point_set {
 
       \pre `region.size() > 0`
     */
-    bool update(const std::vector<std::size_t>& region) {
+    bool update(const Region& region) {
       if (region.size() < 6)
         return true;
 
@@ -341,7 +342,7 @@ namespace Point_set {
       CGAL_precondition(region.size() >= 6);
       FT radius; Line_3 axis;
       std::tie(radius, axis) = internal::create_cylinder(
-        m_input_range, m_point_map, m_normal_map, region,
+        region, m_point_map, m_normal_map,
         m_traits, false).first;
 
       if (radius >= FT(0)) {
@@ -357,9 +358,9 @@ namespace Point_set {
 
     /// \cond SKIP_IN_MANUAL
     std::pair<FT, Line_3> get_cylinder(
-      const std::vector<std::size_t>& region) const {
+      const Region& region) const {
       return internal::create_cylinder(
-        m_input_range, m_point_map, m_normal_map, region,
+        region, m_point_map, m_normal_map,
         m_traits, false).first;
     }
     /// \endcond

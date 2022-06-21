@@ -28,7 +28,8 @@ using Point_3 = typename Kernel::Point_3;
 using Input_range = CGAL::Point_set_3<Point_3>;
 using Point_map   = typename Input_range::Point_map;
 using Normal_map  = typename Input_range::Vector_map;
-using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
+using RefInput_range = std::vector<typename Input_range::const_iterator>;
+using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range, RefInput_range, Point_map>;
 
 using Plane_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Plane_sorting = SD::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
@@ -47,7 +48,7 @@ bool test(
   const Lambda_region& lambda_region,
   const Lambda_assertion& lambda_assertion) {
 
-  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
   // Default parameter values.
   const std::size_t k = 12;
@@ -62,9 +63,14 @@ bool test(
   in >> input_range;
   in.close();
 
+  RefInput_range ref(input_range.size());
+  std::size_t i = 0;
+  for (auto it = input_range.begin(); it != input_range.end(); it++)
+    ref[i++] = it;
+
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, CGAL::parameters::
+    input_range, ref, CGAL::parameters::
     k_neighbors(k));
 
   // Sort indices.
@@ -75,9 +81,9 @@ bool test(
   // Run region growing.
   Region_type region_type = lambda_region(input_range);
   Region_growing region_growing(
-    input_range, neighbor_query, region_type, sorting.seed_map());
+    input_range, neighbor_query, region_type, sorting.ordered());
 
-  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+  Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
   const bool result = lambda_assertion(regions);

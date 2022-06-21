@@ -53,6 +53,7 @@ namespace Point_set {
   template<
   typename GeomTraits,
   typename InputRange,
+  typename RefInputRange,
   typename PointMap>
   class K_neighbor_query {
 
@@ -62,11 +63,16 @@ namespace Point_set {
     using Input_range = InputRange;
     using Point_map = PointMap;
     using Point_type = typename Point_map::value_type;
+
+    using Item = typename InputRange::const_iterator;
+    using Region = std::vector<Item>;
     /// \endcond
 
   private:
     using Index_to_point_map =
     internal::Item_property_map<Input_range, Point_map>;
+
+    using Dereference_pmap = internal::Dereference_property_map_adaptor<Item, PointMap>;
 
     using Search_base = typename std::conditional<
       std::is_same<typename Traits::Point_2, Point_type>::value,
@@ -74,29 +80,40 @@ namespace Point_set {
       CGAL::Search_traits_3<Traits> >::type;
 
     using Search_traits =
-    CGAL::Search_traits_adapter<std::size_t, Index_to_point_map, Search_base>;
+      CGAL::Search_traits_adapter<Item, Dereference_pmap, Search_base>;
 
     using Distance =
-    CGAL::Distance_adapter<
-      std::size_t,
-      Index_to_point_map,
+      CGAL::Distance_adapter<
+      Item,
+      Dereference_pmap,
       CGAL::Euclidean_distance<Search_base> >;
 
     using Splitter =
-    CGAL::Sliding_midpoint<Search_traits>;
+      CGAL::Sliding_midpoint<Search_traits>;
 
     using Search_tree =
       CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
 
     using Neighbor_search =
-    CGAL::Orthogonal_k_neighbor_search<
+      CGAL::Orthogonal_k_neighbor_search<
       Search_traits,
       Distance,
       Splitter,
       Search_tree>;
 
     using Tree =
-    typename Neighbor_search::Tree;
+      typename Neighbor_search::Tree;
+
+    template<class T>
+    struct identity{
+      using result_type = T;
+      const T operator()(const T& t) const {
+        return t;
+      }
+    };
+
+    template<class T>
+    static T id(const T& t) { return t; }
 
   public:
     /// \name Initialization
@@ -134,16 +151,18 @@ namespace Point_set {
     template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     K_neighbor_query(
       const InputRange& input_range,
+      const RefInputRange& ref_input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
     m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
     m_index_to_point_map(m_input_range, m_point_map),
-    m_distance(m_index_to_point_map),
+    m_deref_pmap(m_point_map),
+    m_distance(m_deref_pmap),
     m_tree(
-      boost::counting_iterator<std::size_t>(0),
-      boost::counting_iterator<std::size_t>(m_input_range.size()),
+      ref_input_range.begin(),
+      ref_input_range.end(),
       Splitter(),
-      Search_traits(m_index_to_point_map)) {
+      Search_traits(m_deref_pmap)) {
 
       CGAL_precondition(input_range.size() > 0);
       const std::size_t K = parameters::choose_parameter(
@@ -173,14 +192,13 @@ namespace Point_set {
       \pre `query_index < input_range.size()`
     */
     void operator()(
-      const std::size_t query_index,
-      std::vector<std::size_t>& neighbors) const {
+      const Item query,
+      std::vector<Item>& neighbors) const {
 
       neighbors.clear();
-      CGAL_precondition(query_index < m_input_range.size());
       Neighbor_search neighbor_search(
         m_tree,
-        get(m_index_to_point_map, query_index),
+        get(m_point_map, *query),
         static_cast<unsigned int>(m_number_of_neighbors),
         0, true, m_distance);
       for (auto it = neighbor_search.begin(); it != neighbor_search.end(); ++it)
@@ -199,25 +217,14 @@ namespace Point_set {
     void set_k(const std::size_t k) {
       m_number_of_neighbors = k;
     }
-
-    void operator()(
-      const Point_type& query,
-      std::vector<std::size_t>& neighbors) const {
-
-      neighbors.clear();
-      Neighbor_search neighbor_search(
-        m_tree, query,
-        static_cast<unsigned int>(m_number_of_neighbors),
-        0, true, m_distance);
-      for (auto it = neighbor_search.begin(); it != neighbor_search.end(); ++it)
-        neighbors.push_back(it->first);
-    }
     /// \endcond
 
   private:
     const Input_range& m_input_range;
+    std::vector<Item> m_referenced_input_range;
     const Point_map m_point_map;
     const Index_to_point_map m_index_to_point_map;
+    const Dereference_pmap m_deref_pmap;
 
     std::size_t m_number_of_neighbors;
     Distance m_distance;

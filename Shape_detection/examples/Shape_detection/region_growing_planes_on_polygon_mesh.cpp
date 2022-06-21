@@ -29,7 +29,7 @@ using Point_3 = typename Kernel::Point_3;
     using Region_type    = CGAL::Shape_detection::Triangle_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh, Face_range>;
     using Sorting        = CGAL::Shape_detection::Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query, Face_range>;
 #endif
-using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
 
@@ -70,10 +70,10 @@ int main(int argc, char *argv[]) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type, sorting.seed_map());
+    face_range, neighbor_query, region_type, sorting.ordered());
 
   // Run the algorithm.
-  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+  Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found planes: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 355);

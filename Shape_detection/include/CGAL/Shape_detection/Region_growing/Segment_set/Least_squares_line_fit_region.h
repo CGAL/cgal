@@ -72,9 +72,13 @@ namespace Segment_set {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Item type.
+    using Item = typename InputRange::const_iterator;
+    using Region = std::vector<Item>;
+
     /// Primitive
     using Primitive = typename Segment_set_traits::Line;
-
+    using Result_type = std::vector<std::pair<Primitive, Region> >;
     /// @}
 
   private:
@@ -217,13 +221,11 @@ namespace Segment_set {
       \pre `query_index < input_range.size()`
     */
     bool is_part_of_region(
-      const std::size_t,
-      const std::size_t query_index,
-      const std::vector<std::size_t>&) const {
+      const Item,
+      const Item query,
+      const Region&) const {
 
-      CGAL_precondition(query_index < m_input_range.size());
-      const auto& key = *(m_input_range.begin() + query_index);
-      const Segment& query_segment = get(m_segment_map, key);
+      const Segment& query_segment = get(m_segment_map, *query);
       const Point& query_source = query_segment.source();
       const Point& query_target = query_segment.target();
       const Vector query_direction(query_source, query_target);
@@ -257,7 +259,7 @@ namespace Segment_set {
 
       \return Boolean `true` or `false`
     */
-    inline bool is_valid_region(const std::vector<std::size_t>& region) const {
+    inline bool is_valid_region(const Region& region) const {
       return (region.size() >= m_min_region_size);
     }
 
@@ -273,17 +275,15 @@ namespace Segment_set {
 
       \pre `region.size() > 0`
     */
-    bool update(const std::vector<std::size_t>& region) {
+    bool update(const Region& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference line and direction
-        const std::size_t segment_index = region[0];
-        CGAL_precondition(segment_index < m_input_range.size());
+        const Item item = region[0];
 
         // The best fit line will be a line obtained from this segment
         // with the same direction.
-        const auto& key = *(m_input_range.begin() + segment_index);
-        const Segment& segment = get(m_segment_map, key);
+        const Segment& segment = get(m_segment_map, *item);
         const Point& source = segment.source();
         const Point& target = segment.target();
         if (source == target) return false;
@@ -304,14 +304,14 @@ namespace Segment_set {
 
     /// \cond SKIP_IN_MANUAL
     std::pair<Line, Vector> get_line_and_direction(
-      const std::vector<std::size_t>& region) const {
+      const Region& region) const {
 
       // The best fit line will be a line fitted to all region segments with
       // its direction being the line's direction.
       CGAL_precondition(region.size() > 0);
       const Line line_of_best_fit =
         m_segment_set_traits.create_line(
-          m_input_range, m_segment_map, region).first;
+          region, m_segment_map).first;
       const Vector direction_of_best_fit =
         line_of_best_fit.to_vector();
 

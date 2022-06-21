@@ -60,7 +60,10 @@ namespace Point_set {
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Point_map = PointMap;
-    using Seed_map = internal::Seed_property_map;
+
+    using Item = typename InputRange::const_iterator;
+    using Region = std::vector<Item>;
+    using Seed_range = std::vector<Item>;
     /// \endcond
 
     #ifdef DOXYGEN_NS
@@ -124,8 +127,13 @@ namespace Point_set {
         np, internal_np::geom_traits), GeomTraits())) {
 
       CGAL_precondition(input_range.size() > 0);
-      m_order.resize(m_input_range.size());
-      std::iota(m_order.begin(), m_order.end(), 0);
+
+      m_ordered.resize(m_input_range.size());
+
+      std::size_t index = 0;
+      for (Item& i = m_input_range.begin(); i != m_input_range.end(); i++)
+        m_ordered[index++] = i;
+
       m_scores.resize(m_input_range.size());
     }
 
@@ -142,7 +150,15 @@ namespace Point_set {
       compute_scores();
       CGAL_precondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
-      std::sort(m_order.begin(), m_order.end(), cmp);
+
+      std::vector<std::size_t> order(m_input_range.size());
+      std::iota(order.begin(), order.end(), 0);
+      std::sort(order.begin(), order.end(), cmp);
+      std::vector<Item> tmp(m_input_range.size());
+      for (std::size_t i = 0; i < m_input_range.size(); i++)
+        tmp[i] = m_ordered[order[i]];
+
+      m_ordered.swap(tmp);
     }
 
     /// @}
@@ -151,11 +167,10 @@ namespace Point_set {
     /// @{
 
     /*!
-      \brief returns an instance of `Seed_map` to access the ordered indices
-      of input points.
+      \brief returns an instance of `Seed_range` with ordered iterators of the input_range.
     */
-    Seed_map seed_map() {
-      return Seed_map(m_order);
+    const Seed_range &ordered() {
+      return m_ordered;
     }
 
     /// @}
@@ -165,18 +180,21 @@ namespace Point_set {
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
     const Traits m_traits;
-    std::vector<std::size_t> m_order;
+
+    Seed_range m_ordered;
     std::vector<FT> m_scores;
 
     void compute_scores() {
 
-      std::vector<std::size_t> neighbors;
-      for (std::size_t i = 0; i < m_input_range.size(); ++i) {
+      std::vector<Item> neighbors;
+      std::size_t idx = 0;
+      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
         neighbors.clear();
-        m_neighbor_query(i, neighbors);
-        neighbors.push_back(i);
-        m_scores[i] = internal::create_plane(
-          m_input_range, m_point_map, neighbors, m_traits).second;
+        m_neighbor_query(it, neighbors);
+        neighbors.push_back(it);
+
+        m_scores[idx++] = internal::create_plane(
+          neighbors, m_point_map, m_traits).second;
       }
     }
   };

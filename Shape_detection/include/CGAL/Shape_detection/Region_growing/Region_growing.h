@@ -22,7 +22,10 @@
 
 // CGAL includes.
 #include <CGAL/assertions.h>
+#include <CGAL/is_iterator.h>
 #include <CGAL/property_map.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Dynamic_property_map.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -54,8 +57,7 @@ namespace Shape_detection {
   template<
   typename InputRange,
   typename NeighborQuery,
-  typename RegionType,
-  typename SeedMap = CGAL::Identity_property_map<std::size_t> >
+  typename RegionType >
   class Region_growing {
 
   public:
@@ -63,13 +65,17 @@ namespace Shape_detection {
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Region_type = RegionType;
-    using Seed_map = SeedMap;
+
+    using Item = typename RegionType::Item;
+    using InputIterator = typename Input_range::const_iterator;
+    using Region = std::vector<Item>;
+
+    using Result_type = std::vector<std::pair<typename Region_type::Primitive, std::vector<Item> > >;
+    using Unassigned_type = std::vector<Item>;
     /// \endcond
 
   private:
-    using Visited_items = std::vector<bool>;
-    using Running_queue = std::queue<std::size_t>;
-    using Indices = std::vector<std::size_t>;
+    using Running_queue = std::queue<Item>;
 
   public:
     /// \name Initialization
@@ -99,14 +105,43 @@ namespace Shape_detection {
     Region_growing(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      RegionType& region_type,
-      const SeedMap seed_map = SeedMap()) :
-    m_input_range(input_range),
-    m_neighbor_query(neighbor_query),
-    m_region_type(region_type),
-    m_seed_map(seed_map) {
+      RegionType& region_type) :
+      m_input_range(input_range),
+      m_neighbor_query(neighbor_query),
+      m_region_type(region_type),
+      m_visited(m_visited_map) {
 
       CGAL_precondition(input_range.size() > 0);
+      m_seed_range.resize(m_input_range.size());
+
+      //fillSeedMap<std::is_same<typename Input_range::const_iterator, Item>::value>();
+      std::size_t idx = 0;
+      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
+        m_seed_range[idx++] = conditional_deref<std::is_same<typename Input_range::const_iterator, Item>::value>(it);
+
+      clear();
+    }
+
+    template<class SeedRange>
+    Region_growing(
+      const InputRange& input_range,
+      NeighborQuery& neighbor_query,
+      RegionType& region_type,
+      SeedRange& seed_range) :
+      m_input_range(input_range),
+      m_neighbor_query(neighbor_query),
+      m_region_type(region_type),
+      m_visited(m_visited_map) {
+
+      CGAL_precondition(input_range.size() > 0);
+      CGAL_precondition(seed_range.size() > 0);
+
+      m_seed_range.resize(seed_range.size());
+
+      std::size_t idx = 0;
+      for (auto it = seed_range.begin(); it != seed_range.end(); it++)
+        m_seed_range[idx++] = *it;
+
       clear();
     }
 
@@ -131,28 +166,22 @@ namespace Shape_detection {
     template<typename OutputIterator>
     OutputIterator detect(OutputIterator regions) {
       clear();
-      Indices region;
+
+      Region region;
 
       // Grow regions.
-      for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        const std::size_t seed_index = get(m_seed_map, i);
-
-        // Skip items that user does not want to use.
-        if (seed_index == std::size_t(-1))
-          continue;
-
-        CGAL_precondition(
-          seed_index < m_input_range.size());
+      for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
+        const Item seed = *it;
 
         // Try to grow a new region from the index of the seed item.
-        if (!m_visited[seed_index]) {
-          const bool is_success = propagate(seed_index, region);
+        if (!get(m_visited, seed)) {
+          const bool is_success = propagate(seed, region);
 
           // Check global conditions.
           if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
           } else {
-            *(regions++) = std::pair<typename RegionType::Primitive, std::vector<std::size_t> >(m_region_type.primitive(), region);
+            *(regions++) = std::pair<typename RegionType::Primitive, Region>(m_region_type.primitive(), region);
           }
         }
       }
@@ -165,7 +194,7 @@ namespace Shape_detection {
     /// @{
 
     /*!
-      \brief fills an output iterator with indices of all unassigned items.
+      \brief fills an output iterator with all unassigned items.
 
       \tparam OutputIterator
       a model of output iterator whose value type is `std::size_t`
@@ -178,20 +207,10 @@ namespace Shape_detection {
     */
     template<typename OutputIterator>
     OutputIterator unassigned_items(OutputIterator output) const {
-
-      // Return indices of all unassigned items.
-      for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        const std::size_t seed_index = get(m_seed_map, i);
-
-        // Skip items that user does not want to use.
-        if (seed_index == std::size_t(-1))
-          continue;
-
-        CGAL_precondition(
-          seed_index < m_input_range.size());
-
-        if (!m_visited[seed_index])
-          *(output++) = seed_index;
+      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
+        Item i = conditional_deref<std::is_same<typename Input_range::const_iterator, Item>::value>(it);
+        if (!get(m_visited, i))
+          *(output++) = i;
       }
       return output;
     }
@@ -200,8 +219,8 @@ namespace Shape_detection {
 
     /// \cond SKIP_IN_MANUAL
     void clear() {
-      m_visited.clear();
-      m_visited.resize(m_input_range.size(), false);
+      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
+        put(m_visited, conditional_deref<std::is_same<typename Input_range::const_iterator, Item>::value>(it), false);
     }
     /// \endcond
 
@@ -209,10 +228,43 @@ namespace Shape_detection {
     const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     Region_type& m_region_type;
-    const Seed_map m_seed_map;
-    Visited_items m_visited;
+    std::vector<Item> m_seed_range;
 
-    bool propagate(const std::size_t seed_index, Indices& region) {
+    template<class T, bool = CGAL::is_iterator<T>::value>
+    struct hash_item {};
+
+    template<class T>
+    struct hash_item<T, false> {
+      std::size_t operator()(T i) const {
+        return hash_value(i);
+      }
+    };
+
+    template<class T>
+    struct hash_item<T, true> {
+      std::size_t operator()(T i) const {
+        return hash_value(i.operator->());
+      }
+    };
+
+    using VisitedMap = boost::unordered_map<typename Region_type::Item, bool, hash_item<typename Region_type::Item> >;
+    VisitedMap m_visited_map;
+    boost::associative_property_map<VisitedMap> m_visited;
+
+    template<bool>
+    Item conditional_deref(InputIterator it) const {
+      assert(false);
+    }
+    template<>
+    Item conditional_deref<true>(InputIterator it) const {
+      return it;
+    }
+    template<>
+    Item conditional_deref<false>(InputIterator it) const {
+      return *it;
+    }
+
+    bool propagate(const Item &seed, Region& region) {
       region.clear();
 
       // Use two queues, while running on this queue, push to the other queue;
@@ -222,20 +274,20 @@ namespace Shape_detection {
       bool depth_index = 0;
 
       // Once the index of an item is pushed to the queue, it is pushed to the region too.
-      m_visited[seed_index] = true;
-      running_queue[depth_index].push(seed_index);
-      region.push_back(seed_index);
+      put(m_visited, seed, true);
+      running_queue[depth_index].push(seed);
+      region.push_back(seed);
 
       // Update internal properties of the region.
       const bool is_well_created = m_region_type.update(region);
       if (!is_well_created) return false;
 
       bool grown = true;
-      std::vector<std::pair<std::size_t, std::size_t> > rejected, rejected_swap;
+      std::vector<std::pair<const Item, const Item> > rejected, rejected_swap;
       while (grown) {
         grown = false;
 
-        Indices neighbors;
+        Region neighbors;
         while (
           !running_queue[depth_index].empty() ||
           !running_queue[!depth_index].empty()) {
@@ -243,36 +295,29 @@ namespace Shape_detection {
           while (!running_queue[depth_index].empty()) {
 
             // Call the next item index of the queue and remove it from the queue.
-            const std::size_t item_index = running_queue[depth_index].front();
+            const Item item = running_queue[depth_index].front();
             running_queue[depth_index].pop();
 
             // Get neighbors of the current item.
             neighbors.clear();
-            m_neighbor_query(item_index, neighbors);
+            m_neighbor_query(item, neighbors);
 
             // Visit all found neighbors.
-            for (const std::size_t neighbor_index : neighbors) {
+            for (const Item neighbor : neighbors) {
 
-              // Skip items that user does not want to use.
-              if (neighbor_index == std::size_t(-1))
-                continue;
-
-              CGAL_precondition(
-                neighbor_index < m_input_range.size());
-
-              if (!m_visited[neighbor_index]) {
-                if (m_region_type.is_part_of_region(item_index, neighbor_index, region)) {
+              if (!get(m_visited, neighbor)) {
+                if (m_region_type.is_part_of_region(item, neighbor, region)) {
 
                   // Add this neighbor to the other queue so that we can visit it later.
-                  m_visited[neighbor_index] = true;
-                  running_queue[!depth_index].push(neighbor_index);
-                  region.push_back(neighbor_index);
+                  put(m_visited, neighbor, true);
+                  running_queue[!depth_index].push(neighbor);
+                  region.push_back(neighbor);
                   grown = true;
                 }
                 else {
                   // Add this neighbor to the rejected queue so I won't be checked again before refitting the primitive.
-                  m_visited[neighbor_index] = true;
-                  rejected.push_back(std::pair<std::size_t, std::size_t>(item_index, neighbor_index));
+                  put(m_visited, neighbor, true);
+                  rejected.push_back(std::pair<const Item, const Item>(item, neighbor));
                 }
               }
             }
@@ -288,29 +333,29 @@ namespace Shape_detection {
 
           // Verify that associated elements are still within the tolerance.
           bool fits = true;
-          std::size_t former = region.front();
-          for (const std::size_t i : region) {
-            if (!m_region_type.is_part_of_region(former, i, region)) {
+          Item former = region.front();
+          for (const Item item : region) {
+            if (!m_region_type.is_part_of_region(former, item, region)) {
               fits = false;
               break;
             }
-            former = i;
+            former = item;
           }
 
           // The refitted primitive does not fit all elements of the region, so the growing stops here.
           if (!fits) {
             // Reset visited flags for items that were rejected
-            for (const std::pair<std::size_t, std::size_t>& p : rejected)
-              m_visited[p.second] = false;
+            for (const std::pair<const Item, const Item>& p : rejected)
+              put(m_visited, p.second, false);
             return true;
           }
 
           // Try to continue growing the region by considering formerly rejected elements.
-          for (const std::pair<std::size_t, std::size_t>& p : rejected) {
+          for (const std::pair<const Item, const Item>& p : rejected) {
             if (m_region_type.is_part_of_region(p.first, p.second, region)) {
 
               // Add this neighbor to the other queue so that we can visit it later.
-              m_visited[p.second] = true;
+              put(m_visited, p.second, true);
               running_queue[depth_index].push(p.second);
               region.push_back(p.second);
             }
@@ -322,15 +367,15 @@ namespace Shape_detection {
       }
 
       // Reset visited flags for items that were rejected
-      for (const std::pair<std::size_t, std::size_t>& p : rejected)
-        m_visited[p.second] = false;
+      for (const std::pair<const Item, const Item>& p : rejected)
+        put(m_visited, p.second, false);
 
       return true;
     }
 
-    void revert(const Indices& region) {
-      for (const std::size_t item_index : region)
-        m_visited[item_index] = false;
+    void revert(const Region& region) {
+      for (const Item item : region)
+        put(m_visited, item, false);
     }
   };
 

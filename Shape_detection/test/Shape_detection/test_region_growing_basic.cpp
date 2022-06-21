@@ -23,10 +23,11 @@ using Vector_2 = typename Kernel::Vector_2;
 
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Input_range       = std::vector<Point_with_normal>;
+using RefInput_range    = std::vector<typename Input_range::const_iterator>;
 using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
 using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
+using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, RefInput_range, Point_map>;
 using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
@@ -44,19 +45,24 @@ int main(int argc, char *argv[]) {
   in.close();
   assert(input_range.size() == 3634);
 
+  RefInput_range ref(input_range.size());
+  std::size_t i = 0;
+  for (auto it = input_range.begin(); it != input_range.end(); it++)
+    ref[i++] = it;
+
   // Create parameter classes.
-  Neighbor_query neighbor_query(input_range);
+  Neighbor_query neighbor_query(input_range, ref);
   Region_type region_type(input_range);
 
   // Run region growing.
   Region_growing region_growing(
     input_range, neighbor_query, region_type);
 
-  std::vector<std::size_t> unassigned_points;
+  Region_growing::Unassigned_type unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 3634);
 
-  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+  Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   const std::size_t num_regions = regions.size();
   assert(num_regions != 0);

@@ -70,12 +70,16 @@ namespace Polyline {
     using Point_type = typename Point_map::value_type;
     /// \endcond
 
+    /// Item type.
+    using Item = typename InputRange::const_iterator;
+    using Region = std::vector<Item>;
+
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
     /// Primitive
     using Primitive = typename Polyline_traits::Line;
-
+    using Result_type = std::vector<std::pair<Primitive, Region> >;
     /// @}
 
   private:
@@ -223,17 +227,11 @@ namespace Polyline {
       \pre `index2 < input_range.size()`
     */
     bool is_part_of_region(
-      const std::size_t index1, const std::size_t index2,
-      const std::vector<std::size_t>& region) {
+      const Item item1, const Item item2,
+      const Region&) {
 
-      CGAL_USE(region);
-      CGAL_precondition(region.size() > 0);
-      CGAL_precondition(index1 < m_input_range.size());
-      CGAL_precondition(index2 < m_input_range.size());
-      const auto& key1 = *(m_input_range.begin() + index1);
-      const auto& key2 = *(m_input_range.begin() + index2);
-      const Point& input_point = get(m_point_map, key1);
-      const Point& query_point = get(m_point_map, key2);
+      const Point& input_point = get(m_point_map, *item1);
+      const Point& query_point = get(m_point_map, *item2);
 
       // Update new reference line and direction.
       if (m_direction_of_best_fit == CGAL::NULL_VECTOR) {
@@ -280,7 +278,7 @@ namespace Polyline {
 
       \return Boolean `true` or `false`
     */
-    inline bool is_valid_region(const std::vector<std::size_t>& region) const {
+    inline bool is_valid_region(const Region& region) const {
       if (m_direction_of_best_fit == CGAL::NULL_VECTOR)
         return false; // all points are equal
       return (region.size() >= m_min_region_size);
@@ -298,7 +296,7 @@ namespace Polyline {
 
       \pre `region.size() > 0`
     */
-    bool update(const std::vector<std::size_t>& region) {
+    bool update(const Region& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference line and direction
@@ -317,14 +315,14 @@ namespace Polyline {
 
     /// \cond SKIP_IN_MANUAL
     std::pair<Line, Vector> get_line_and_direction(
-      const std::vector<std::size_t>& region) const {
+      const Region& region) const {
 
       // The best fit line will be a line fitted to all region points with
       // its direction being the line's direction.
       CGAL_precondition(region.size() > 0);
       const Line line_of_best_fit =
         m_polyline_traits.create_line(
-          m_input_range, m_point_map, region).first;
+          region, m_point_map).first;
       const Vector direction_of_best_fit =
         line_of_best_fit.to_vector();
 

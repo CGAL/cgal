@@ -34,6 +34,7 @@ bool test_lines_points_with_normals() {
 
   using Point_2  = typename Kernel::Point_2;
   using Vector_2 = typename Kernel::Vector_2;
+  using Item = std::vector< std::pair<Point_2, Vector_2> >::const_iterator;
 
   const std::vector< std::pair<Point_2, Vector_2> > points_with_normals = {
     std::make_pair(Point_2(0.1, 0.0), Vector_2(0.0, 1.0)),
@@ -48,7 +49,7 @@ bool test_lines_points_with_normals() {
   };
 
   assert(points_with_normals.size() == 9);
-  std::vector< std::pair< typename Kernel::Line_2, std::vector<std::size_t> > > regions;
+  std::vector< std::pair< typename Kernel::Line_2, std::vector<Item> > > regions;
   CGAL::Shape_detection::internal::region_growing_lines(
     points_with_normals,
     std::back_inserter(regions),
@@ -65,6 +66,7 @@ template<class Kernel>
 bool test_lines_polylines_2() {
 
   using Point_2 = typename Kernel::Point_2;
+  using Item = std::vector<Point_2>::const_iterator;
   const std::vector<Point_2> polyline_2 = {
     Point_2(0.10, 0.00), Point_2(0.50, 0.00), Point_2(0.90, 0.00),
     Point_2(0.13, 0.00), Point_2(0.17, 0.00), Point_2(0.21, 0.00),
@@ -73,12 +75,13 @@ bool test_lines_polylines_2() {
   };
 
   assert(polyline_2.size() == 12);
-  std::vector< std::pair< typename Kernel::Line_2, std::vector<std::size_t> > > regions;
+  std::vector< std::pair< typename Kernel::Line_2, std::vector<Item> > > regions;
   CGAL::Shape_detection::internal::region_growing_polylines(
     polyline_2, std::back_inserter(regions));
   assert(regions.size() == 2);
   assert(regions[0].second.size() == 6);
   assert(regions[1].second.size() == 6);
+
   return true;
 }
 
@@ -86,13 +89,14 @@ template<class Kernel>
 bool test_lines_polylines_3() {
 
   using Point_3 = typename Kernel::Point_3;
+  using Item = std::vector<Point_3>::const_iterator;
   const std::vector<Point_3> polyline_3 = {
     Point_3(0.10, 0.0, 1.0), Point_3(0.50, 0.0, 1.0), Point_3(0.90, 0.0, 1.0),
     Point_3(0.13, 0.0, 1.0), Point_3(0.17, 0.0, 1.0), Point_3(0.21, 0.0, 1.0)
   };
 
   assert(polyline_3.size() == 6);
-  std::vector< std::pair< typename Kernel::Line_3, std::vector<std::size_t> > > regions;
+  std::vector< std::pair< typename Kernel::Line_3, std::vector<Item> > > regions;
   CGAL::Shape_detection::internal::region_growing_polylines(
     polyline_3, std::back_inserter(regions));
   assert(regions.size() == 1);
@@ -104,6 +108,7 @@ template<class Kernel>
 bool test_polylines_equal_points() {
 
   using Point_2 = typename Kernel::Point_2;
+  using Item = std::vector<Point_2>::const_iterator;
   const std::vector<Point_2> polyline_2 = {
     Point_2(0, 0), Point_2(1, 0), Point_2(2, 0), Point_2(3, 0),
     Point_2(7, 1), Point_2(8, 1), Point_2(9, 1), Point_2(10, 1),
@@ -112,7 +117,7 @@ bool test_polylines_equal_points() {
   };
 
   assert(polyline_2.size() == 16);
-  std::vector< std::pair< typename Kernel::Line_2, std::vector<std::size_t> > > regions;
+  std::vector< std::pair< typename Kernel::Line_2, std::vector<Item> > > regions;
   CGAL::Shape_detection::internal::region_growing_polylines(
     polyline_2, std::back_inserter(regions), CGAL::parameters::maximum_distance(0.01));
   assert(regions.size() == 4);
@@ -127,34 +132,16 @@ bool test_polylines_equal_points() {
 template<class Kernel>
 bool test_lines_segment_set_2() {
 
-  using Point_2   = typename Kernel::Point_2;
+  using Point_2 = typename Kernel::Point_2;
   using Segment_2 = typename Kernel::Segment_2;
 
   using Segment_range = std::vector<Segment_2>;
-  using Segment_map   = CGAL::Identity_property_map<Segment_2>;
-
-  struct Neighbor_query {
-
-    std::map<std::size_t, std::vector<std::size_t> > m_neighbors;
-    Neighbor_query() {
-      m_neighbors[0] = { 1 };
-      m_neighbors[1] = {0, 2};
-      m_neighbors[2] = {1, 3};
-      m_neighbors[3] = { 2 };
-    }
-
-    void operator()(
-      const std::size_t query_index, std::vector<std::size_t>& neighbors) const {
-      neighbors.clear();
-      const auto& data = m_neighbors.at(query_index);
-      std::copy(data.begin(), data.end(), std::back_inserter(neighbors));
-    }
-  };
+  using Segment_map = CGAL::Identity_property_map<Segment_2>;
 
   using Region_type = CGAL::Shape_detection::
     Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
-  using Region_growing = CGAL::Shape_detection::
-    Region_growing<Segment_range, Neighbor_query, Region_type>;
+
+  using Item = Region_type::Item;
 
   const Segment_range segments = {
     Segment_2(Point_2(0.1, 0.0), Point_2(0.5, 0.0)),
@@ -164,12 +151,95 @@ bool test_lines_segment_set_2() {
   };
   assert(segments.size() == 4);
 
-  Neighbor_query neighbor_query;
+  struct Neighbor_query {
+
+    std::map<Item, std::vector<Item> > m_neighbors;
+    Neighbor_query(const Segment_range& segments) {
+      m_neighbors[segments.begin()] = { segments.begin() + 1 };
+      m_neighbors[segments.begin() + 1] = { segments.begin(), segments.begin() + 2 };
+      m_neighbors[segments.begin() + 2] = { segments.begin() + 1, segments.begin() + 3 };
+      m_neighbors[segments.begin() + 3] = { segments.begin() + 2 };
+    }
+
+    void operator()(
+      const Item query, std::vector<Item>& neighbors) const {
+      neighbors.clear();
+      const auto& data = m_neighbors.at(query);
+      std::copy(data.begin(), data.end(), std::back_inserter(neighbors));
+    }
+  };
+  using Region_growing = CGAL::Shape_detection::
+    Region_growing<Segment_range, Neighbor_query, Region_type>;
+
+  Neighbor_query neighbor_query(segments);
   Region_type region_type(segments);
 
-  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+  std::vector< std::pair< Region_type::Primitive, std::vector<Item> > > regions;
   Region_growing region_growing(
     segments, neighbor_query, region_type);
+  region_growing.detect(std::back_inserter(regions));
+  assert(regions.size() == 2);
+  assert(regions[0].second.size() == 2);
+  assert(regions[1].second.size() == 2);
+  return true;
+}
+
+template<class Kernel>
+bool test_lines_segment_set_2_sorting() {
+
+  using Point_2 = typename Kernel::Point_2;
+  using Segment_2 = typename Kernel::Segment_2;
+
+  using Segment_range = std::vector<Segment_2>;
+  using Segment_map = CGAL::Identity_property_map<Segment_2>;
+
+  using Region_type = CGAL::Shape_detection::
+    Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
+
+  using Item = Region_type::Item;
+
+  const Segment_range segments = {
+    Segment_2(Point_2(0.1, 0.0), Point_2(0.5, 0.0)),
+    Segment_2(Point_2(0.5, 0.0), Point_2(0.9, 0.0)),
+    Segment_2(Point_2(0.9, 0.0), Point_2(0.9, 0.5)),
+    Segment_2(Point_2(0.9, 0.5), Point_2(0.9, 0.9))
+  };
+  assert(segments.size() == 4);
+
+  struct Neighbor_query {
+
+    std::map<Item, std::vector<Item> > m_neighbors;
+    Neighbor_query(const Segment_range& segments) {
+      m_neighbors[segments.begin()] = { segments.begin() + 1 };
+      m_neighbors[segments.begin() + 1] = { segments.begin(), segments.begin() + 2 };
+      m_neighbors[segments.begin() + 2] = { segments.begin() + 1, segments.begin() + 3 };
+      m_neighbors[segments.begin() + 3] = { segments.begin() + 2 };
+    }
+
+    void operator()(
+      const Item query, std::vector<Item>& neighbors) const {
+      neighbors.clear();
+      const auto& data = m_neighbors.at(query);
+      std::copy(data.begin(), data.end(), std::back_inserter(neighbors));
+    }
+  };
+
+  using Region_growing = CGAL::Shape_detection::
+    Region_growing<Segment_range, Neighbor_query, Region_type>;
+
+  using Sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Neighbor_query, Segment_map>;
+
+  Neighbor_query neighbor_query(segments);
+
+  Sorting sorting(
+    segments, neighbor_query);
+  sorting.sort();
+
+  Region_type region_type(segments);
+
+  std::vector< std::pair< Region_type::Primitive, std::vector<Item> > > regions;
+  Region_growing region_growing(
+    segments, neighbor_query, region_type, sorting.ordered());
   region_growing.detect(std::back_inserter(regions));
   assert(regions.size() == 2);
   assert(regions[0].second.size() == 2);
@@ -197,7 +267,7 @@ bool test_lines_segment_set_3() {
   using Sorting = CGAL::Shape_detection::
     Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Polyline_graph, Segment_map>;
   using Region_growing = CGAL::Shape_detection::
-    Region_growing<Segment_range, Polyline_graph, Region_type, typename Sorting::Seed_map>;
+    Region_growing<Segment_range, Polyline_graph, Region_type>;
 
   std::ifstream in(CGAL::data_file_path("meshes/am.off"));
   CGAL::IO::set_ascii_mode(in);
@@ -208,7 +278,7 @@ bool test_lines_segment_set_3() {
   in.close();
 
   assert(surface_mesh.number_of_faces() == 7320);
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
+  std::vector<std::pair<Kernel::Plane_3, std::vector<typename Surface_mesh::Face_index> > > regions;
    CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
      surface_mesh, std::back_inserter(regions));
   assert(regions.size() == 9);
@@ -226,9 +296,9 @@ bool test_lines_segment_set_3() {
     segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
   sorting.sort();
 
-  std::vector< std::pair< typename Kernel::Line_3, std::vector<std::size_t> > > regions2;
+  Region_growing::Result_type regions2;
   Region_growing region_growing(
-    segment_range, pgraph, region_type, sorting.seed_map());
+    segment_range, pgraph, region_type, sorting.ordered());
   region_growing.detect(std::back_inserter(regions2));
   assert(regions2.size() == 21);
   return true;
@@ -236,14 +306,14 @@ bool test_lines_segment_set_3() {
 
 template<class Kernel>
 bool test_region_growing_lines() {
-
-
   assert(test_lines_points_with_normals<Kernel>());
   assert(test_lines_polylines_2<Kernel>());
   assert(test_lines_polylines_3<Kernel>());
   assert(test_polylines_equal_points<Kernel>());
   assert(test_lines_segment_set_2<Kernel>());
+  assert(test_lines_segment_set_2_sorting<Kernel>());
   assert(test_lines_segment_set_3<Kernel>());
+
   return true;
 }
 
@@ -266,7 +336,10 @@ bool test_planes_points_with_normals() {
   };
 
   assert(points_with_normals.size() == 9);
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
+  std::vector<
+    std::pair< typename Kernel::Plane_3, std::vector<std::vector<std::pair<Point_3, Vector_3> >::const_iterator> >
+  > regions;
+
   CGAL::Shape_detection::internal::region_growing_planes(
     points_with_normals,
     std::back_inserter(regions),
@@ -305,7 +378,7 @@ bool test_planes_point_set() {
   points_with_normals.clear();
   assert(points_with_normals.size() == 0);
 
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<Point_set::const_iterator> > > regions;
   CGAL::Shape_detection::internal::region_growing_planes(
     point_set, std::back_inserter(regions));
   assert(regions.size() == 1);
@@ -329,7 +402,7 @@ bool test_planes_polyhedron() {
   assert(polyhedron.is_tetrahedron(handle));
 
   assert(polyhedron.size_of_facets() == 4);
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<typename boost::graph_traits<Polyhedron>::face_descriptor > > > regions;
   CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
     polyhedron, std::back_inserter(regions));
   assert(regions.size() == polyhedron.size_of_facets());
@@ -351,7 +424,7 @@ bool test_planes_surface_mesh() {
   in.close();
 
   assert(surface_mesh.number_of_faces() == 7320);
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<std::size_t> > > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<typename Surface_mesh::Face_index> > > regions;
   CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
     surface_mesh, std::back_inserter(regions));
   assert(regions.size() == 9);
@@ -360,7 +433,6 @@ bool test_planes_surface_mesh() {
 
 template<class Kernel>
 bool test_region_growing_planes() {
-
   assert(test_planes_points_with_normals<Kernel>());
   assert(test_planes_point_set<Kernel>());
   assert(test_planes_polyhedron<Kernel>());
@@ -377,7 +449,6 @@ bool test_region_growing_strict() {
 }
 
 int main() {
-
   using SC = CGAL::Simple_cartesian<double>;
   using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
   using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;

@@ -32,12 +32,12 @@ using Point_map_3 = CGAL::Identity_property_map<Point_3>;
 using Neighbor_query_2 = SD::Polyline::One_ring_neighbor_query<Kernel, Polyline_2>;
 using Region_type_2    = SD::Polyline::Least_squares_line_fit_region<Kernel, Polyline_2, Point_map_2>;
 using Sorting_2        = SD::Polyline::Least_squares_line_fit_sorting<Kernel, Polyline_2, Neighbor_query_2, Point_map_2>;
-using Region_growing_2 = SD::Region_growing<Polyline_2, Neighbor_query_2, Region_type_2, typename Sorting_2::Seed_map>;
+using Region_growing_2 = SD::Region_growing<Polyline_2, Neighbor_query_2, Region_type_2>;
 
 using Neighbor_query_3 = SD::Polyline::One_ring_neighbor_query<Kernel, Polyline_3>;
 using Region_type_3    = SD::Polyline::Least_squares_line_fit_region<Kernel, Polyline_3, Point_map_3>;
 using Sorting_3        = SD::Polyline::Least_squares_line_fit_sorting<Kernel, Polyline_3, Neighbor_query_3, Point_map_3>;
-using Region_growing_3 = SD::Region_growing<Polyline_3, Neighbor_query_3, Region_type_3, typename Sorting_3::Seed_map>;
+using Region_growing_3 = SD::Region_growing<Polyline_3, Neighbor_query_3, Region_type_3>;
 
 int main(int argc, char *argv[]) {
 
@@ -77,13 +77,13 @@ int main(int argc, char *argv[]) {
 
   // Run 3D region growing.
   Region_growing_3 region_growing_3(
-    polyline_3, neighbor_query_3, region_type_3, sorting_3.seed_map());
+    polyline_3, neighbor_query_3, region_type_3, sorting_3.ordered());
 
-  std::vector< std::pair< Region_type_3::Primitive, std::vector<std::size_t> > > regions3;
+  Region_growing_3::Result_type regions3;
   region_growing_3.detect(std::back_inserter(regions3));
   assert(regions3.size() == 16);
 
-  std::vector<std::size_t> unassigned_points;
+  Region_growing_3::Unassigned_type unassigned_points;
   region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 1);
 
@@ -127,17 +127,17 @@ int main(int argc, char *argv[]) {
 
   // Run 2D region growing.
   Region_growing_2 region_growing_2(
-    polyline_2, neighbor_query_2, region_type_2, sorting_2.seed_map());
+    polyline_2, neighbor_query_2, region_type_2, sorting_2.ordered());
 
-  std::vector< std::pair< Region_type_2::Primitive, std::vector<std::size_t> > > regions2;
+  typename Region_growing_2::Result_type regions2;
   region_growing_2.detect(std::back_inserter(regions2));
   assert(regions2.size() == 5);
   for (const auto& region : regions2)
     assert(region_type_2.is_valid_region(region.second));
 
-  unassigned_points.clear();
-  region_growing_2.unassigned_items(std::back_inserter(unassigned_points));
-  assert(unassigned_points.size() == 0);
+  Region_growing_2::Unassigned_type unassigned2;
+  region_growing_2.unassigned_items(std::back_inserter(unassigned2));
+  assert(unassigned2.size() == 0);
 
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {

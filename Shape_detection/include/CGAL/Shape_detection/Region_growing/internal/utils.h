@@ -119,12 +119,11 @@ namespace internal {
 
   template<
   typename Traits,
-  typename InputRange,
+  typename Region,
   typename ItemMap>
   std::pair<typename Traits::Line_2, typename Traits::FT>
   create_line_2(
-    const InputRange& input_range, const ItemMap item_map,
-    const std::vector<std::size_t>& region, const Traits&) {
+    const Region& region, const ItemMap item_map, const Traits&) {
 
     using FT = typename Traits::FT;
     using Line_2 = typename Traits::Line_2;
@@ -141,23 +140,21 @@ namespace internal {
       std::is_same<typename Traits::Point_2, Input_type>::value,
       typename ITraits::Point_2, typename ITraits::Segment_2 >::type;
 
-    std::vector<Item> items;
+    std::vector<Item> elements;
     CGAL_precondition(region.size() > 0);
-    items.reserve(region.size());
+    elements.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& item = get(item_map, key);
-      items.push_back(iconverter(item));
+    for (auto item : region) {
+      const auto& element = get(item_map, *item);
+      elements.push_back(iconverter(element));
     }
-    CGAL_precondition(items.size() == region.size());
+    CGAL_precondition(elements.size() == region.size());
 
     ILine_2 fitted_line;
     IPoint_2 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_2(
-      items.begin(), items.end(),
+      elements.begin(), elements.end(),
       fitted_line, fitted_centroid,
       CGAL::Dimension_tag<0>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 2>());
@@ -166,17 +163,17 @@ namespace internal {
       static_cast<FT>(fitted_line.a()),
       static_cast<FT>(fitted_line.b()),
       static_cast<FT>(fitted_line.c()));
+
     return std::make_pair(line, static_cast<FT>(score));
   }
 
   template<
   typename Traits,
-  typename InputRange,
+  typename Region,
   typename ItemMap>
   std::pair<typename Traits::Line_3, typename Traits::FT>
   create_line_3(
-    const InputRange& input_range, const ItemMap item_map,
-    const std::vector<std::size_t>& region, const Traits&) {
+    const Region& region, const ItemMap item_map, const Traits&) {
 
     using FT = typename Traits::FT;
     using Line_3 = typename Traits::Line_3;
@@ -195,23 +192,21 @@ namespace internal {
       std::is_same<typename Traits::Point_3, Input_type>::value,
       typename ITraits::Point_3, typename ITraits::Segment_3 >::type;
 
-    std::vector<Item> items;
+    std::vector<Item> elements;
     CGAL_precondition(region.size() > 0);
-    items.reserve(region.size());
+    elements.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& item = get(item_map, key);
-      items.push_back(iconverter(item));
+    for (auto item : region) {
+      const auto& element = get(item_map, *item);
+      elements.push_back(iconverter(element));
     }
-    CGAL_precondition(items.size() == region.size());
+    CGAL_precondition(elements.size() == region.size());
 
     ILine_3 fitted_line;
     IPoint_3 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_3(
-      items.begin(), items.end(),
+      elements.begin(), elements.end(),
       fitted_line, fitted_centroid,
       CGAL::Dimension_tag<0>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 3>());
@@ -227,17 +222,17 @@ namespace internal {
       static_cast<FT>(d.dy()),
       static_cast<FT>(d.dz()));
     const Line_3 line(init, direction);
+
     return std::make_pair(line, static_cast<FT>(score));
   }
 
   template<
   typename Traits,
-  typename InputRange,
+  typename Region,
   typename ItemMap>
   std::pair<typename Traits::Plane_3, typename Traits::FT>
   create_plane(
-    const InputRange& input_range, const ItemMap item_map,
-    const std::vector<std::size_t>& region, const Traits&) {
+    const Region& region, const ItemMap item_map, const Traits&) {
 
     using FT = typename Traits::FT;
     using Plane_3 = typename Traits::Plane_3;
@@ -250,27 +245,25 @@ namespace internal {
     using IPlane_3 = typename ITraits::Plane_3;
 
     using Input_type = typename ItemMap::value_type;
-    using Item = typename std::conditional<
+    using Element = typename std::conditional<
       std::is_same<typename Traits::Point_3, Input_type>::value,
       typename ITraits::Point_3, typename ITraits::Segment_3 >::type;
 
-    std::vector<Item> items;
+    std::vector<Element> elements;
     CGAL_precondition(region.size() > 0);
-    items.reserve(region.size());
+    elements.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& item = get(item_map, key);
-      items.push_back(iconverter(item));
+    for (auto item : region) {
+      const auto& element = get(item_map, *item);
+      elements.push_back(iconverter(element));
     }
-    CGAL_precondition(items.size() == region.size());
+    CGAL_precondition(elements.size() == region.size());
 
     IPlane_3 fitted_plane;
     IPoint_3 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_3(
-      items.begin(), items.end(),
+      elements.begin(), elements.end(),
       fitted_plane, fitted_centroid,
       CGAL::Dimension_tag<0>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 3>());
@@ -280,20 +273,39 @@ namespace internal {
       static_cast<FT>(fitted_plane.b()),
       static_cast<FT>(fitted_plane.c()),
       static_cast<FT>(fitted_plane.d()));
+
     return std::make_pair(plane, static_cast<FT>(score));
+  }
+
+
+  template<
+    typename Traits,
+    typename InputRange,
+    typename Region,
+    typename ItemMap>
+  std::pair<typename Traits::Plane_3, typename Traits::FT>
+    create_plane(
+      const InputRange &input_range,
+      const ItemMap item_map, const Region& region, const Traits& traits) {
+    std::vector<typename InputRange::const_iterator> tmp;
+    tmp.resize(region.size());
+
+    for (std::size_t idx : region)
+      tmp[idx] = input_range.begin() + idx;
+
+    return create_plane(tmp, item_map, traits);
   }
 
   template<
   typename Traits,
   typename FaceGraph,
-  typename FaceRange,
+  typename Region,
   typename VertexToPointMap>
   std::pair<typename Traits::Plane_3, typename Traits::FT>
   create_plane_from_faces(
     const FaceGraph& face_graph,
-    const FaceRange& face_range,
-    const VertexToPointMap vertex_to_point_map,
-    const std::vector<std::size_t>& region, const Traits&) {
+    const Region& region,
+    const VertexToPointMap vertex_to_point_map, const Traits&) {
 
     using FT = typename Traits::FT;
     using Plane_3 = typename Traits::Plane_3;
@@ -310,10 +322,7 @@ namespace internal {
     points.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (const std::size_t face_index : region) {
-      CGAL_precondition(face_index < face_range.size());
-      const auto face = *(face_range.begin() + face_index);
-
+    for (const typename Region::value_type face : region) {
       const auto hedge = halfedge(face, face_graph);
       const auto vertices = vertices_around_face(hedge, face_graph);
       CGAL_precondition(vertices.size() > 0);
@@ -343,14 +352,13 @@ namespace internal {
 
   template<
   typename Traits,
-  typename InputRange,
+  typename Region,
   typename PointMap>
   std::pair<std::pair<typename Traits::FT, typename Traits::Point_2>,
     typename Traits::FT>
   create_circle_2(
-    const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region, const Traits&,
-    const bool compute_score) {
+    const Region &region, const PointMap point_map,
+    const Traits&, const bool compute_score) {
 
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
@@ -371,10 +379,8 @@ namespace internal {
     // avoid loss of precision when inverting large coordinates.
     FT xmin = +FT(1000000000000);
     FT ymin = +FT(1000000000000);
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
+    for (auto item : region) {
+      const auto& point = get(point_map, *item);
       xmin = (CGAL::min)(xmin, point.x());
       ymin = (CGAL::min)(ymin, point.y());
     }
@@ -402,10 +408,8 @@ namespace internal {
     };
 
     A[0] = static_cast<IFT>(region.size());
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
+    for (auto &item : region) {
+      const auto& point = get(point_map, *item);
 
       const IFT x = static_cast<IFT>(CGAL::to_double(point.x() - xmin));
       const IFT y = static_cast<IFT>(CGAL::to_double(point.y() - ymin));
@@ -450,10 +454,8 @@ namespace internal {
     );
 
     FT fitted_radius = FT(0);
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
+    for (auto &item : region) {
+      const auto& point = get(point_map, *item);
       fitted_radius += sqrt(squared_distance_2(point, fitted_center));
     }
     fitted_radius /= static_cast<FT>(region.size());
@@ -462,10 +464,8 @@ namespace internal {
     FT score = FT(-1);
     if (compute_score) {
       score = FT(0);
-      for (const std::size_t item_index : region) {
-        CGAL_precondition(item_index < input_range.size());
-        const auto& key = *(input_range.begin() + item_index);
-        const auto& point = get(point_map, key);
+      for (auto &item : region) {
+        const auto& point = get(point_map, *item);
         score -= CGAL::abs(sqrt(squared_distance_2(point, fitted_center))
                            - fitted_radius);
       }
@@ -477,14 +477,13 @@ namespace internal {
 
   template<
   typename Traits,
-  typename InputRange,
+  typename Region,
   typename PointMap>
   std::pair<std::pair<typename Traits::FT, typename Traits::Point_3>,
             typename Traits::FT>
   create_sphere(
-    const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region, const Traits&,
-    const bool compute_score) {
+    const Region &region, const PointMap point_map,
+    const Traits&, const bool compute_score) {
 
     using FT = typename Traits::FT;
     using Point_3 = typename Traits::Point_3;
@@ -506,10 +505,8 @@ namespace internal {
     FT xmin = +FT(1000000000000);
     FT ymin = +FT(1000000000000);
     FT zmin = +FT(1000000000000);
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
+    for (auto item : region) {
+      const auto& point = get(point_map, *item);
       xmin = (CGAL::min)(xmin, point.x());
       ymin = (CGAL::min)(ymin, point.y());
       zmin = (CGAL::min)(zmin, point.z());
@@ -524,10 +521,8 @@ namespace internal {
     };
 
     A[0] = static_cast<IFT>(region.size());
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
+    for (auto item : region) {
+      const auto& point = get(point_map, *item);
 
       const IFT x = static_cast<IFT>(CGAL::to_double(point.x() - xmin));
       const IFT y = static_cast<IFT>(CGAL::to_double(point.y() - ymin));
@@ -580,10 +575,8 @@ namespace internal {
     );
 
     FT fitted_radius = FT(0);
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
+    for (auto item : region) {
+      const auto& point = get(point_map, *item);
       fitted_radius += sqrt(squared_distance_3(point, fitted_center));
     }
     fitted_radius /= static_cast<FT>(region.size());
@@ -592,10 +585,8 @@ namespace internal {
     FT score = FT(-1);
     if (compute_score) {
       score = FT(0);
-      for (const std::size_t item_index : region) {
-        CGAL_precondition(item_index < input_range.size());
-        const auto& key = *(input_range.begin() + item_index);
-        const auto& point = get(point_map, key);
+      for (auto item : region) {
+        const auto& point = get(point_map, *item);
         score -= CGAL::abs(sqrt(squared_distance_3(point, fitted_center))
                            - fitted_radius);
       }
@@ -606,15 +597,15 @@ namespace internal {
   }
 
   template<
-    typename Traits,
-    typename InputRange,
-    typename PointMap,
-    typename NormalMap>
+  typename Traits,
+  typename Region,
+  typename PointMap,
+  typename NormalMap>
   std::pair<std::pair<typename Traits::FT, typename Traits::Line_3>,
             typename Traits::FT>
     create_cylinder(
-      const InputRange& input_range, const PointMap point_map,
-      const NormalMap normal_map, const std::vector<std::size_t>& region,
+      const Region& region, const PointMap point_map,
+      const NormalMap normal_map,
       const Traits&, const bool compute_score) {
 
     if (region.size() < 6)
@@ -631,8 +622,8 @@ namespace internal {
     Line_3 fitted_axis;
     FT squared_radius;
 
-    FT error = fit_cylinder<Traits, InputRange, PointMap, NormalMap>
-      (input_range, point_map, normal_map, region, fitted_axis,
+    FT error = fit_cylinder<Traits, Region, PointMap, NormalMap>
+      (region, point_map, normal_map, fitted_axis,
         squared_radius);
 
     // A negative squared_radius is returned if the cylinder fitting failed.

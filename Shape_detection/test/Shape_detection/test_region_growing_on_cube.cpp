@@ -33,7 +33,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   using Neighbor_query = SD::Triangle_mesh::One_ring_neighbor_query<Polyhedron>;
   using Region_type    = SD::Triangle_mesh::Least_squares_plane_fit_region<Kernel, Polyhedron, Face_range>;
   using Sorting        = SD::Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query, Face_range>;
-  using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+  using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
 
   // Default parameter values.
   const FT          distance_threshold = FT(1) / FT(10);
@@ -79,15 +79,15 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
 
   // Run region growing.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type, sorting.seed_map());
+    face_range, neighbor_query, region_type, sorting.ordered());
 
-  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+  Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   assert(regions.size() == face_range.size());
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region.second));
 
-  std::vector<std::size_t> unassigned_faces;
+  Region_growing::Unassigned_type unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
   assert(unassigned_faces.size() == 0);
 

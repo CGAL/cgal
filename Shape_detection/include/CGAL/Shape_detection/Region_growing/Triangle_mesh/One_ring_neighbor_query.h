@@ -52,6 +52,9 @@ namespace Triangle_mesh {
     /// \cond SKIP_IN_MANUAL
     using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
     using Face_graph = TriangleMesh;
+
+    using Item = face_descriptor;
+    using Region = std::vector<Item>;
     /// \endcond
 
     /// \name Initialization
@@ -100,20 +103,17 @@ namespace Triangle_mesh {
       \pre `query_index < faces(tmesh).size()`
     */
     void operator()(
-      const std::size_t query_index,
-      std::vector<std::size_t>& neighbors) const {
+      const Item query,
+      std::vector<Item>& neighbors) const {
 
       neighbors.clear();
-      CGAL_precondition(query_index < m_face_range.size());
-      face_descriptor query_face = m_face_range[query_index];
-      const auto query_hedge = halfedge(query_face, m_face_graph);
+      const auto query_hedge = halfedge(query, m_face_graph);
 
       for (face_descriptor face : faces_around_face(query_hedge, m_face_graph))
       {
         if (face != boost::graph_traits<TriangleMesh>::null_face())
         {
-          const std::size_t face_index = get(m_face_to_index_map, face);
-          neighbors.push_back(face_index);
+          neighbors.push_back(face);
         }
       }
     }

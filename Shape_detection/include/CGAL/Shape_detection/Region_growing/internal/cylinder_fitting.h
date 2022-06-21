@@ -63,11 +63,10 @@ namespace CGAL
 {
   namespace internal {
     template <class Kernel,
-      typename InputRange,
+      typename Region,
       typename PointMap>
-    void preprocess(const InputRange& input_range,
+    void preprocess(const Region& indices,
       const PointMap point_map,
-      const std::vector<std::size_t>& indices,
       typename Kernel::Vector_3& average,
       Eigen::VectorXd& mu,
       Eigen::MatrixXd& f0,
@@ -76,8 +75,8 @@ namespace CGAL
 
       average = Kernel::Vector_3(0, 0, 0);
 
-      for (std::size_t i : indices) {
-        average += get(point_map, +i) - CGAL::ORIGIN;
+      for (auto it : indices) {
+        average += get(point_map, *it) - CGAL::ORIGIN;
       }
 
       average = average / indices.size();
@@ -86,7 +85,7 @@ namespace CGAL
       prod.setZero();
 
       for (std::size_t i = 0; i < indices.size(); i++) {
-        typename Kernel::Vector_3 p = get(point_map, indices[i])
+        typename Kernel::Vector_3 p = get(point_map, *indices[i])
                              - average - CGAL::ORIGIN;
         prod(i, 0) = p.x() * p.x();
         prod(i, 1) = p.x() * p.y();
@@ -104,8 +103,7 @@ namespace CGAL
 
       mu /= indices.size();
 
-      for (size_t i = 0; i < indices.size(); i++)
-      {
+      for (size_t i = 0; i < indices.size(); i++) {
         Eigen::VectorXd delta(6);
         delta[0] = prod(i, 0) - mu[0];
         delta[1] = 2.0 * prod(i, 1) - mu[1];
@@ -121,7 +119,7 @@ namespace CGAL
         f0(1, 2) += prod(i, 4);
         f0(2, 2) += prod(i, 5);
 
-        typename Kernel::Vector_3 tmp = get(point_map, indices[i])
+        typename Kernel::Vector_3 tmp = get(point_map, *indices[i])
                                - average - CGAL::ORIGIN;
         Eigen::Vector3d v(tmp[0], tmp[1], tmp[2]);
 
@@ -200,12 +198,12 @@ namespace CGAL
 
   template<
     typename Kernel,
-    typename InputRange,
+    typename Region,
     typename PointMap,
     typename NormalMap>
   typename Kernel::FT fit_cylinder(
-    const InputRange& input_range, const PointMap point_map,
-    const NormalMap normal_map, const std::vector<std::size_t>& region,
+    const Region& region, const PointMap point_map,
+    const NormalMap normal_map,
     typename Kernel::Line_3& line, typename Kernel::FT& squared_radius) {
 
     using FT = typename Kernel::FT;
@@ -218,19 +216,13 @@ namespace CGAL
     std::size_t nb = 0;
     Vector_3 mean_axis = CGAL::NULL_VECTOR;
     Point_3 point_on_axis = CGAL::ORIGIN;
-    const auto& ref_key = *(input_range.begin() + region[0]);
-    const auto& ref = get(point_map, ref_key);
+    const auto& ref = get(point_map, *region[0]);
 
     // Axis direction estimation from sample normals by averaging.
     for (std::size_t i = 0; i < region.size() - 1; ++i) {
-      CGAL_assertion(region[i] < input_range.size());
-      CGAL_assertion(region[i + 1] < input_range.size());
-      const auto& key0 = *(input_range.begin() + region[i]);
-      const auto& key1 = *(input_range.begin() + region[i + 1]);
-
-      Vector_3 v0 = get(normal_map, key0);
+      Vector_3 v0 = get(normal_map, *region[i]);
       v0 = v0 / sqrt(v0 * v0);
-      Vector_3 v1 = get(normal_map, key1);
+      Vector_3 v1 = get(normal_map, *region[i + 1]);
       v1 = v1 / sqrt(v1 * v1);
       Vector_3 axis = CGAL::cross_product(v0, v1);
       if (sqrt(axis.squared_length()) < FT(1) / FT(100)) {
@@ -262,8 +254,8 @@ namespace CGAL
     Eigen::MatrixXd f2(6, 6);
     f2.setZero();
 
-    internal::preprocess<Kernel, InputRange, PointMap>
-      (input_range, point_map, region, average, mu, f0, f1, f2);
+    internal::preprocess<Kernel, Region, PointMap>
+      (region, point_map, average, mu, f0, f1, f2);
 
     return internal::fit_cylinder<Kernel>
       (line, squared_radius, mean_axis, average, mu, f0, f1, f2);

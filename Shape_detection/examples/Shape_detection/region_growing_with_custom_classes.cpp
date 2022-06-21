@@ -8,6 +8,8 @@
 #include <cassert>
 
 // CGAL includes.
+#include "include/utils.h"
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 
 // Custom Neighbor_query, Region_type, and Seed_map classes for region growing.
@@ -15,7 +17,7 @@ namespace Custom {
 
   // An object that stores indices of all its neighbors.
   struct Object {
-    std::vector<std::size_t> neighbors;
+    std::vector<std::vector<Object>::const_iterator> neighbors;
   };
 
   // A range of objects.
@@ -26,20 +28,23 @@ namespace Custom {
   class Neighbor_query {
     const Objects& m_objects;
 
+    using Item = typename Objects::const_iterator;
+    using Region = std::vector<Item>;
+
   public:
     Neighbor_query(const Objects& objects) :
     m_objects(objects)
     { }
 
     void operator()(
-      const std::size_t query_index,
-      std::vector<std::size_t>& neighbors) const {
+      const Item &query,
+      std::vector<Item>& neighbors) const {
 
-      std::size_t i = 0;
-      for (const auto& object : m_objects) {
-        if (i == query_index) {
-          neighbors = object.neighbors; return;
-        } ++i;
+      for (auto it = m_objects.begin(); it != m_objects.end(); it++) {
+        if (it == query) {
+          neighbors = query->neighbors;
+          return;
+        }
       }
     }
   };
@@ -51,25 +56,31 @@ namespace Custom {
   // These are the only functions that have to be defined.
   class Region_type {
     bool m_is_valid = false;
+    const std::vector<Object> &m_input;
 
   public:
-    Region_type() { }
+    Region_type(const std::vector<Object> &input) : m_input(input) { }
 
     using Primitive = std::size_t;
+    using Item = std::vector<Object>::const_iterator;
+    using Region = std::vector<Item>;
 
     bool is_part_of_region(
-      const std::size_t,
-      const std::size_t query_index,
-      const std::vector<std::size_t>& region) const {
+      const Item,
+      const Item query,
+      const Region& region) const {
 
       if (region.size() == 0) return false;
-      const std::size_t index = region[0];
-      if (index == 0 && query_index == 1) return true;
-      if (query_index == 0 && index == 1) return true;
+
+      auto it = m_input.begin();
+
+      if (query == it || query == (it + 1))
+        return true;
+
       return false;
     }
 
-    inline bool is_valid_region(const std::vector<std::size_t>&) const {
+    inline bool is_valid_region(const Region&) const {
       return m_is_valid;
     }
 
@@ -77,39 +88,10 @@ namespace Custom {
       return Primitive();
     }
 
-    bool update(const std::vector<std::size_t>&) {
+    bool update(const Region&) {
       m_is_valid = true;
       return m_is_valid;
     }
-  };
-
-  // The SeedMap class that uses the m_objects_map to define
-  // the seeding order of objects.
-  class Seed_map {
-
-  public:
-    using key_type   = std::size_t;
-    using value_type = std::size_t;
-    using reference  = std::size_t;
-    using category   = boost::readable_property_map_tag;
-
-    Seed_map(const std::map<std::size_t, std::size_t>& objects_map)
-      : m_objects_map(objects_map)
-    { }
-
-    value_type operator[](const key_type& key) const
-    {
-      return m_objects_map.find(key)->second;
-    }
-
-    friend value_type get(const Seed_map& seed_map,
-                          const key_type& key)
-    {
-      return seed_map[key];
-    }
-
-  private:
-    const std::map<std::size_t, std::size_t>& m_objects_map;
   };
 
 } // namespace Custom
@@ -119,8 +101,7 @@ using Object         = Custom::Object;
 using Objects        = Custom::Objects;
 using Neighbor_query = Custom::Neighbor_query;
 using Region_type    = Custom::Region_type;
-using Seed_map       = Custom::Seed_map;
-using Region_growing = CGAL::Shape_detection::Region_growing<Objects, Neighbor_query, Region_type, Seed_map>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Objects, Neighbor_query, Region_type>;
 
 int main() {
 
@@ -128,45 +109,28 @@ int main() {
   // the first region, while the third object forms the second region.
   // Note that Objects is a random access container here, however the
   // same algorithm/example can work with other containers, e.g. std::list.
-  Objects objects;
+  Objects objects(3);
+  auto it = objects.begin();
 
   // Region 1.
-  Object object1;
-  object1.neighbors.resize(1, 1);
-  objects.push_back(object1);
+  objects[0].neighbors.push_back(it+1);
+  objects[1].neighbors.push_back(it);
 
-  Object object2;
-  object2.neighbors.resize(1, 0);
-  objects.push_back(object2);
+  // The single third object constitutes the second region.
 
-  // Region 2.
-  Object object3;
-  objects.push_back(object3);
-
-  // Extra object to skip.
-  Object object4;
-  objects.push_back(object4);
   std::cout << "* number of input objects: " << objects.size() << std::endl;
-  assert(objects.size() == 4);
+  assert(objects.size() == 3);
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query = Neighbor_query(objects);
-  Region_type    region_type    = Region_type();
-
-  // Create a seed map.
-  std::map<std::size_t, std::size_t> objects_map;
-  objects_map[0] = 1; // the order is swapped with the next object
-  objects_map[1] = 0;
-  objects_map[2] = 2; // the default order
-  objects_map[3] = std::size_t(-1); // skip this object
-  const Seed_map seed_map(objects_map);
+  Region_type    region_type    = Region_type(objects);
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    objects, neighbor_query, region_type, seed_map);
+    objects, neighbor_query, region_type);
 
   // Run the algorithm.
-  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+  Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
   assert(regions.size() == 2);

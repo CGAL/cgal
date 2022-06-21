@@ -72,12 +72,17 @@ namespace Point_set {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
+    /// Item type.
+    using Item = typename InputRange::const_iterator;
+    using Region = std::vector<Item>;
+
     /// Primitive
     using Primitive = struct P {
       P(const typename Traits::Point_2& c, typename Traits::FT r) : center(c), radius(r) {}
       typename Traits::Point_2 center;
       typename Traits::FT radius;
     };
+    using Result_type = std::vector<std::pair<Primitive, Region> >;
 
     /// @}
 
@@ -249,15 +254,13 @@ namespace Point_set {
       \pre `query_index < input_range.size()`
     */
     bool is_part_of_region(
-      const std::size_t,
-      const std::size_t query_index,
-      const std::vector<std::size_t>& indices) const {
-
-      CGAL_precondition(query_index < m_input_range.size());
+      const Item,
+      const Item query,
+      const Region& region) const {
 
       // First, we need to integrate at least 6 points so that the
       // computed circle means something.
-      if (indices.size() < 6) {
+      if (region.size() < 6) {
         return true;
       }
 
@@ -271,9 +274,8 @@ namespace Point_set {
         return false;
       }
 
-      const auto& key = *(m_input_range.begin() + query_index);
-      const Point_2& query_point = get(m_point_map, key);
-      Vector_2 normal = get(m_normal_map, key);
+      const Point_2& query_point = get(m_point_map, *query);
+      Vector_2 normal = get(m_normal_map, *query);
 
       const FT sq_dist = m_squared_distance_2(query_point, m_center);
       if (std::isnan(CGAL::to_double(sq_dist))) return false;
@@ -310,7 +312,7 @@ namespace Point_set {
 
       \return Boolean `true` or `false`
     */
-    inline bool is_valid_region(const std::vector<std::size_t>& region) const {
+    inline bool is_valid_region(const Region& region) const {
       return (
         (m_min_radius <= m_radius && m_radius <= m_max_radius) &&
         (region.size() >= m_min_region_size)
@@ -329,13 +331,13 @@ namespace Point_set {
 
       \pre `region.size() > 0`
     */
-    bool update(const std::vector<std::size_t>& region) {
+    bool update(const Region& region) {
 
       // Fit a circle.
       CGAL_precondition(region.size() > 0);
       FT radius; Point_2 center;
       std::tie(radius, center) = internal::create_circle_2(
-        m_input_range, m_point_map, region, m_traits, false).first;
+        region, m_point_map, m_traits, false).first;
       if (radius >= FT(0)) {
         m_radius = radius;
         m_center = center;
@@ -347,9 +349,9 @@ namespace Point_set {
 
     /// \cond SKIP_IN_MANUAL
     std::pair<FT, Point_2> get_circle(
-      const std::vector<std::size_t>& region) const {
+      const Region& region) const {
       return internal::create_circle_2(
-        m_input_range, m_point_map, region, m_traits, false).first;
+        region, m_point_map, m_traits, false).first;
     }
     /// \endcond
 

@@ -31,8 +31,9 @@ using Pwn = std::pair<Point_3, Vector_3>;
 using Point_set = std::vector<Pwn>;
 using Point_map = CGAL::First_of_pair_property_map<Pwn>;
 using Normal_map = CGAL::Second_of_pair_property_map<Pwn>;
+using RefInput_range = std::vector<typename Point_set::const_iterator>;
 
-using RG_query = SD::Point_set::Sphere_neighbor_query<Kernel, Point_set, Point_map>;
+using RG_query = SD::Point_set::Sphere_neighbor_query<Kernel, Point_set, RefInput_range, Point_map>;
 using RG_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Point_map, Normal_map>;
 using Region_growing = SD::Region_growing<Point_set, RG_query, RG_region>;
 
@@ -100,7 +101,13 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   bbox = CGAL::bbox_3
     (CGAL::make_transform_iterator_from_property_map (points.begin(), Point_map()),
-     CGAL::make_transform_iterator_from_property_map (points.end(), Point_map()));
+    CGAL::make_transform_iterator_from_property_map(points.end(), Point_map()));
+
+  RefInput_range ref(points.size());
+
+  std::size_t i = 0;
+  for (auto it = points.begin(); it != points.end(); it++)
+    ref[i++] = it;
 
   typename RANSAC::Parameters parameters;
   parameters.probability = 0.01;
@@ -113,6 +120,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
   t.start();
   RG_query rg_query (
     points,
+    ref,
     CGAL::parameters::sphere_radius(parameters.cluster_epsilon));
   RG_region rg_region (
     points,

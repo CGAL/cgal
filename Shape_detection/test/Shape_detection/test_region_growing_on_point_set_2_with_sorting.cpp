@@ -26,10 +26,11 @@ using Vector_2 = typename Kernel::Vector_2;
 
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Input_range       = std::vector<Point_with_normal>;
+using RefInput_range    = std::vector<typename Input_range::const_iterator>;
 using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
 using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
+using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, RefInput_range, Point_map>;
 using Line_region    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Line_sorting   = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
 using Circle_region  = SD::Point_set::Least_squares_circle_fit_region<Kernel, Input_range, Point_map, Normal_map>;
@@ -37,7 +38,7 @@ using Circle_sorting = SD::Point_set::Least_squares_circle_fit_sorting<Kernel, I
 
 template<typename Region_type, typename Sorting>
 bool test(int argc, char** argv, const std::string name, const std::size_t minr, const std::size_t maxr) {
-  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
   // Default parameter values.
   const std::size_t k               = 12;
@@ -59,9 +60,14 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
   in.close();
   assert(input_range.size() == 3634);
 
+  RefInput_range ref(input_range.size());
+  std::size_t i = 0;
+  for (auto it = input_range.begin(); it != input_range.end(); it++)
+    ref[i++] = it;
+
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range,
+    input_range, ref,
     CGAL::parameters::k_neighbors(k));
   Region_type region_type(
     input_range,
@@ -77,28 +83,14 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
 
   // Run region growing.
   Region_growing region_growing(
-    input_range, neighbor_query, region_type, sorting.seed_map());
+    input_range, neighbor_query, region_type, sorting.ordered());
 
-  std::vector< std::pair< Region_type::Primitive, std::vector<std::size_t> > > regions;
+  Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
 
   std::cout << "- num regions " + name + ": " << regions.size() << std::endl;
   assert(regions.size() >= minr && regions.size() <= maxr);
-
-  // Test free functions and stability.
-  for (std::size_t k = 0; k < 3; ++k) {
-    std::vector< std::pair< Kernel::Line_2, std::vector<std::size_t> > > regions;
-    SD::internal::region_growing_lines(
-      input_range, std::back_inserter(regions),
-      CGAL::parameters::
-      maximum_distance(max_distance).
-      maximum_angle(max_angle).
-      minimum_region_size(min_region_size).
-      point_map(Point_map()).
-      normal_map(Normal_map()));
-    assert(regions.size() == 65);
-  }
 
   const bool success = true;
   std::cout << "rg_" + name + "_sortpoints2, sc_test_success: " << success << std::endl;

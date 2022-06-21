@@ -13,10 +13,11 @@ using Point_3  = Kernel::Point_3;
 using Vector_3 = Kernel::Vector_3;
 
 using Point_set  = CGAL::Point_set_3<Point_3>;
+using RefInput_range = std::vector<Point_set::const_iterator>;
 using Point_map  = typename Point_set::Point_map;
 using Normal_map = typename Point_set::Vector_map;
 
-using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Point_set, Point_map>;
+using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Point_set, RefInput_range, Point_map>;
 using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region<Kernel, Point_set, Point_map, Normal_map>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>;
 
@@ -45,9 +46,14 @@ int main(int argc, char** argv) {
   const FT          max_angle       = FT(10);
   const std::size_t min_region_size = 50;
 
+  RefInput_range ref(point_set.size());
+  std::size_t i = 0;
+  for (auto it = point_set.begin(); it != point_set.end(); it++)
+    ref[i++] = it;
+
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    point_set, CGAL::parameters::k_neighbors(k));
+    point_set, ref, CGAL::parameters::k_neighbors(k));
 
   Region_type region_type(
     point_set,
@@ -71,16 +77,16 @@ int main(int argc, char** argv) {
   std::size_t num_spheres = 0;
   region_growing.detect(
     boost::make_function_output_iterator(
-      [&](const std::pair< Region_type::Primitive, std::vector<std::size_t> >& region) {
+      [&](const std::pair< Region_type::Primitive, typename Region_growing::Region>& region) {
 
         // Assign a random color to each region.
         const unsigned char r = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char g = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char b = static_cast<unsigned char>(random.get_int(64, 192));
-        for (const std::size_t idx : region.second) {
-          red[idx]   = r;
-          green[idx] = g;
-          blue[idx]  = b;
+        for (auto item : region.second) {
+          red[*item]   = r;
+          green[*item] = g;
+          blue[*item]  = b;
         }
         ++num_spheres;
       }

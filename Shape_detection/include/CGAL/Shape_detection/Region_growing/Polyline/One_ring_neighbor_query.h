@@ -51,6 +51,9 @@ namespace Polyline {
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
+
+    using Item = typename InputRange::const_iterator;
+    using Region = std::vector<Item>;
     /// \endcond
 
     /// \name Initialization
@@ -92,16 +95,23 @@ namespace Polyline {
       \pre `query_index < input_range.size()`
     */
     void operator()(
-      const std::size_t query_index,
-      std::vector<std::size_t>& neighbors) const {
+      const Item query,
+      std::vector<Item>& neighbors) const {
 
       neighbors.clear();
-      CGAL_precondition(query_index < m_input_range.size());
-      const std::size_t n = m_input_range.size();
-      const std::size_t im = (query_index + n - 1) % n;
-      const std::size_t ip = (query_index + 1) % n;
-      neighbors.push_back(ip);
-      neighbors.push_back(im);
+
+      Item before;
+      if (query == m_input_range.begin())
+        before = m_input_range.end() - 1;
+      else
+        before = query - 1;
+
+      Item after = query + 1;
+      if (after == m_input_range.end())
+        after = m_input_range.begin();
+
+      neighbors.push_back(before);
+      neighbors.push_back(after);
     }
 
     /// @}
