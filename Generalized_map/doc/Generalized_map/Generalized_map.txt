@@ -169,7 +169,7 @@ The diagram in \cgalFigureRef{fig_gmap_diagramme_class} shows the different clas
 
 \cgalModifBegin
 
-The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `boost::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to std::size_t. As the indices are contiguous, they can be used as index into vectors which store properties.
+The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `std::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to `std::size_t`. As the indices are contiguous, they can be used as index into vectors which store properties.
 
 \cgalModifEnd
 
