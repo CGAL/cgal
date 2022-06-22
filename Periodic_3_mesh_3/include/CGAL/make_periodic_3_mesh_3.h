@@ -391,9 +391,9 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
 
   // Build mesher and launch refinement process
   refine_periodic_3_mesh_3(c3t3, domain, criteria,
-                           exude, perturb, odt, lloyd,
-                           parameters::no_reset_c3t3(), // do not reset c3t3 as we just created it
-                           mesh_options, manifold_options);
+                           parameters::exude_param_new = exude, parameters::perturb_param_new = perturb, parameters::odt_param_new = odt,
+                           parameters::lloyd_param_new = lloyd, parameters::reset_param_new = parameters::no_reset_c3t3(), // do not reset c3t3 as we just created it
+                           parameters::mesh_options_param_new = mesh_options, parameters::manifold_options_param_new = manifold_options);
 }
 #else
 namespace CGAL {
