@@ -297,7 +297,10 @@ namespace CGAL {
       const double eps = std::sqrt(tmp)-1.0;
       FPU_set_cw(old);                                   // restore
 
-      //CGAL_APPEL_ASSERT(eps >= 0.0);
+      if (CGAL::is_negative(eps)) {
+        CGAL_APPEL_LOG("appel", "Clamp negative approximate eps to zero" << "\n");
+        eps = 0;
+      }
       return eps;
     }
 

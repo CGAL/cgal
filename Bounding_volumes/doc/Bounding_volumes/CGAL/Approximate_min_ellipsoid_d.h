@@ -262,7 +262,7 @@ returns a number
 arithmetic) guaranteed to be an \f$ (1+\epsilon')\f$-approximation to
 \f$ (P)\f$.
 \pre `ame.is_full_dimensional() == true`.
-\post \f$ \epsilon'>0\f$.
+\post \f$ \epsilon'>=0\f$.
 */
 double achieved_epsilon() const;
 
