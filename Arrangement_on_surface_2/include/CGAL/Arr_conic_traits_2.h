@@ -35,6 +35,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_geometry_traits/Conic_arc_2.h>
 #include <CGAL/Arr_geometry_traits/Conic_x_monotone_arc_2.h>
 #include <CGAL/Arr_geometry_traits/Conic_point_2.h>
@@ -1411,6 +1412,16 @@ public:
           *oi++ = Intersection_result(ip);
         }
 
+        if (eq(xcv1.left(), xcv2.right())) {
+          Intersection_point ip(xcv1.left(), 0);
+          *oi++ = Intersection_result(ip);
+        }
+
+        if (eq(xcv1.right(), xcv2.left())) {
+          Intersection_point ip(xcv1.right(), 0);
+          *oi++ = Intersection_result(ip);
+        }
+
         return oi;
       }
 
@@ -1866,6 +1877,9 @@ public:
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
       canonical_conic(arc, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
+      // std::cout << r_m << "," << s_m << "," << t_m << ","
+      //           << u_m << "," << v_m << "," << w_m << std::endl;
+      // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
 
       /* If the axis of the parabola is the 𝑌-axis, shift
        * the parabola by 90, essentially, converting the
@@ -1874,8 +1888,13 @@ public:
        * This is somehow inefficient, because we repeat the computation of
        * cost, sint, r_m,..., and w_m. An alternative, is to add code that
        * directly handles the case where the conjugate axis is the 𝑌-axis.
+       *
+       * We need to test whether s_m vanished; however, because of limited
+       * precision, s_m can become very small. Therefore, instead for comparing
+       * s_m with zero we compare its absolute value with the absolute value of
+       * r_m, which is expected to be larger.
        */
-      if (s_m == 0) {
+      if (std::abs(s_m) < std::abs(r_m)) {
         // Shift phase:
         auto tmp(cost);
         cost = sint;
@@ -2168,19 +2187,21 @@ public:
 
       // Compute the cos and sin of the rotation angle
       // This eliminates the t coefficinet (which multiplies x·y).
-      cost = 1.0;
-      sint = 0.0;
 
-      double cos_2t;
       if (r != s) {
-        auto tan_2t = t / (r - s);
-        cos_2t = std::sqrt(1 / (tan_2t*tan_2t + 1));
+        auto theta = atan2(t, r-s) * 0.5;
+        cost = std::cos(theta);
+        sint = std::sin(theta);
       }
-      else if (r != 0) cos_2t = 1;
-      else cos_2t = 0;
-
-      cost = std::sqrt((1 + cos_2t) / 2);
-      sint = std::sqrt((1 - cos_2t) / 2);
+      else if (r != 0) {
+        double cos_2t = 1;
+        cost = 1.0;
+        sint = 0.0;
+      } else {
+        double cos_2t = 0;
+        cost = std::sqrt(1 / 2);
+        sint = cost;
+      }
 
       inverse_conic(arc, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
     }
