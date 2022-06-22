@@ -65,12 +65,6 @@ private:
   Exact_kernel ek;
   Exact_to_double exact_to_double;
 
-  typename Exact_kernel::Point_3
-  to_exact(const typename Input_kernel::Point_3& p) const
-  {
-    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
-  }
-
 public:
   const TriangleMesh &tm1, &tm2;
   const VertexPointMap1& vpm1;
@@ -85,6 +79,12 @@ public:
   , vpm1(vpm1_)
   , vpm2(vpm2_)
   {}
+
+  static typename Exact_kernel::Point_3
+  to_exact(const typename Input_kernel::Point_3& p)
+  {
+    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
+  }
 
   const Point_3& operator[](std::size_t i) const {
     return nodes[i];
@@ -202,8 +202,9 @@ public:
     return enodes[i];
   }
 
+  static
   Exact_kernel::Point_3
-  to_exact(const Point_3& p) const
+  to_exact(const Point_3& p)
   {
     return Exact_kernel::Point_3(p.x(), p.y(), p.z());
   }
@@ -419,7 +420,7 @@ public:
     nodes.push_back(p);
   }
 
-  const Point_3& to_exact(const Point_3& p) const { return p; }
+  static const Point_3& to_exact(const Point_3& p) { return p; }
 
   template <class VPM> // VertexPointMap1 or VertexPointMap2
   void call_put(const VPM& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
