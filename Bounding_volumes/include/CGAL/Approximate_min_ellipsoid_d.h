@@ -294,7 +294,7 @@ namespace CGAL {
       double tmp = sum;
       for (int i=0; i<d; ++i)
         tmp *= sum;
-      const double eps = std::sqrt(tmp)-1.0;
+      double eps = std::sqrt(tmp)-1.0;
       FPU_set_cw(old);                                   // restore
 
       if (CGAL::is_negative(eps)) {
