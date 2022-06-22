@@ -1590,6 +1590,98 @@ public:
   using Approximate_kernel = CGAL::Cartesian<Approximate_number_type>;
   using Approximate_point_2 = Approximate_kernel::Point_2;
 
+  class Approximate_curve_length_2 {
+  protected:
+    using Traits = Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits.
+     */
+    Approximate_curve_length_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+
+  public:
+    /*! Obtain an approximation of the length of a curve.
+     * \param xcv The curve.
+     * \return An approximation of the length of `xcv`.
+     */
+    Approximate_number_type operator()(const X_monotone_curve_2& xcv) const {
+      if (xcv.orientation() == COLLINEAR) return segment_length(xcv);
+      CGAL::Sign sign_conic = CGAL::sign(4*xcv.r()*xcv.s() - xcv.t()*xcv.t());
+      if (sign_conic == POSITIVE) return ellipse_length(xcv);
+      if (sign_conic == NEGATIVE) return hyperbola_length(xcv);
+      return parabola_length(xcv);
+    }
+
+  private:
+    /*! Obtain the segment length.
+     */
+    double segment_length(const X_monotone_curve_2& xcv) {
+      auto min_vertex = m_traits.construct_min_vertex_2_object();
+      auto max_vertex = m_traits.construct_max_vertex_2_object();
+      const auto& minv = min_vertex(xcv);
+      const auto& maxv = max_vertex(xcv);
+      auto x1 = CGAL::to_double(minv.x());
+      auto y1 = CGAL::to_double(minv.y());
+      auto x2 = CGAL::to_double(maxv.x());
+      auto y2 = CGAL::to_double(maxv.y());
+      auto dx = x2 - x1;
+      auto dy = y2 - y1;
+      double l = std::sqrt(x2*x2 + y2*y2);
+      return l;
+    }
+
+    /*! Obtain the parabolic arc length.
+     */
+    double parabola_length(const X_monotone_curve_2& xcv) {
+      double r_m, t_m, s_m, u_m, v_m, w_m;
+      double cost, sint;
+      double xs_t, ys_t, xt_t, yt_t;
+      double a;
+      double ts, tt;
+      double cx, cy;
+      m_traits.approximate_parabola(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+                                    xs_t, ys_t, xt_t, yt_t, a, ts, tt, cx, cy,
+                                    xcv);
+
+      auto ds = m_traits.parabolic_arc_length(xs_t, 2.0*std::abs(ys_t));
+      auto dt = m_traits.parabolic_arc_length(xt_t, 2.0*std::abs(yt_t));
+      auto d = (CGAL::sign(ys_t) == CGAL::sign(yt_t)) ?
+        std::abs(ds - dt)/2.0 : (ds + dt)/2.0;
+      // std::cout << "d, ds, dt = " << d << ", " << ds << "," << dt
+      //           << std::endl;
+      return d;
+    }
+
+    double ellipse_length(const X_monotone_curve_2& xcv) {
+      double r_m, t_m, s_m, u_m, v_m, w_m;
+      double cost, sint;
+      double a, b;
+      double cx, cy;
+      double ts, tt;
+      m_traits.approximate_ellipse(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+                                   ts, tt, a, b, cx, cy, xcv);
+
+      namespace bm = boost::math;
+      auto ratio = b/a;
+      auto k = std::sqrt(1 - (ratio*ratio));
+      auto ds = a*bm::ellint_2(k, ts);
+      auto dt = a*bm::ellint_2(k, tt);
+      auto d = std::abs(dt - ds);
+      // std::cout << "d,ds,dt: " << d << "," << ds << ", " << dt << std::endl;
+      return d;
+    }
+
+    double hyperbola_length(const X_monotone_curve_2& xcv) {
+      double l;
+      return l;
+    }
+  };
+
   class Approximate_2 {
   protected:
     using Traits = Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
@@ -1628,16 +1720,16 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator operator()(OutputIterator oi, double density,
-                              const X_monotone_curve_2& arc,
+                              const X_monotone_curve_2& xcv,
                               bool l2r = true) const {
-      if (arc.orientation() == COLLINEAR)
-        return approximate_segment(oi, density, arc, l2r);
-      CGAL::Sign sign_conic = CGAL::sign(4*arc.r()*arc.s() - arc.t()*arc.t());
+      if (xcv.orientation() == COLLINEAR)
+        return approximate_segment(oi, density, xcv, l2r);
+      CGAL::Sign sign_conic = CGAL::sign(4*xcv.r()*xcv.s() - xcv.t()*xcv.t());
       if (sign_conic == POSITIVE)
-        return approximate_ellipse(oi, density, arc, l2r);
+        return approximate_ellipse(oi, density, xcv, l2r);
       if (sign_conic == NEGATIVE)
-        return approximate_hyperbola(oi, density, arc, l2r);
-      return approximate_parabola(oi, density, arc, l2r);
+        return approximate_hyperbola(oi, density, xcv, l2r);
+      return approximate_parabola(oi, density, xcv, l2r);
     }
 
   private:
@@ -1645,15 +1737,13 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator approximate_segment(OutputIterator oi, double density,
-                                       const X_monotone_curve_2& arc,
+                                       const X_monotone_curve_2& xcv,
                                        bool l2r) const {
       // std::cout << "SEGMENT\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
-      const auto& src = (l2r) ?
-        min_vertex(arc) : max_vertex(arc);
-      const auto& trg = (l2r) ?
-        max_vertex(arc) : min_vertex(arc);
+      const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+      const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
       auto xs = CGAL::to_double(src.x());
       auto ys = CGAL::to_double(src.y());
       auto xt = CGAL::to_double(trg.x());
@@ -1732,15 +1822,13 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator approximate_ellipse(OutputIterator oi, double density,
-                                       const X_monotone_curve_2& arc,
+                                       const X_monotone_curve_2& xcv,
                                        bool l2r) const {
       // std::cout << "ELLIPSE\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
-      const auto& src = (l2r) ?
-        min_vertex(arc) : max_vertex(arc);
-      const auto& trg = (l2r) ?
-        max_vertex(arc) : min_vertex(arc);
+      const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+      const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
       auto xs = CGAL::to_double(src.x());
       auto ys = CGAL::to_double(src.y());
       auto xt = CGAL::to_double(trg.x());
@@ -1751,63 +1839,11 @@ public:
 
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
-      canonical_conic(arc, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
-      // std::cout << r_m << "," << s_m << "," << t_m << ","
-      //           << u_m << "," << v_m << "," << w_m << std::endl;
-      // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
-
-      // Compute the center of the inversly rotated ellipse:
-      auto cx_m = -u_m / (2*r_m);
-      auto cy_m = -v_m / (2*s_m);
-
-      // Compute the radi of the ellipse:
-      auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
-      auto a_sqr = numerator / (4*r_m*r_m*s_m);
-      auto b_sqr = numerator / (4*r_m*s_m*s_m);
-      if (a_sqr < b_sqr) {
-        // Shift phase:
-        auto tmp(cost);
-        cost = sint;
-        sint = -tmp;
-
-        // Recompute:
-        inverse_conic(arc, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
-        cx_m = -u_m / (2*r_m);
-        cy_m = -v_m / (2*s_m);
-        numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
-        a_sqr = numerator / (4*r_m*r_m*s_m);
-        b_sqr = numerator / (4*r_m*s_m*s_m);
-      }
-
-      auto a = std::sqrt(a_sqr);
-      auto b = std::sqrt(b_sqr);
-      // std::cout << "a, b: " << a << "," << b << std::endl;
-
-      // Compute the center (cx,cy) of the ellipse, rotating back:
-      auto cx = cx_m*cost - cy_m*sint;
-      auto cy = cx_m*sint + cy_m*cost;
-      // std::cout << "center: " << cx << "," << cy << std::endl;
-
-      // Compute the parameters ts and tt such that
-      // source == (x(ts),y(ts)), and
-      // target == (x(tt),y(tt))
-      auto xds = xs - cx;
-      auto yds = ys - cy;
-      auto ts = std::atan2(a*(cost*yds - sint*xds),b*(sint*yds + cost*xds));
-      if (ts < 0) ts += 2*M_PI;
-      auto xdt = xt - cx;
-      auto ydt = yt - cy;
-      auto tt = std::atan2(a*(cost*ydt - sint*xdt),b*(sint*ydt + cost*xdt));
-      if (tt < 0) tt += 2*M_PI;
-      auto orient(arc.orientation());
-      if (arc.source() != src) orient = CGAL::opposite(orient);
-      if (orient == COUNTERCLOCKWISE) {
-        if (tt < ts) tt += 2*M_PI;
-      }
-      else {
-        if (ts < tt) ts += 2*M_PI;
-      }
-      // std::cout << "ts,tt: " << ts << "," << tt << std::endl;
+      double a, b;
+      double cx, cy;
+      double ts, tt;
+      m_traits.approximate_ellipse(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+                                   ts, tt, a, b, cx, cy, xcv, l2r);
 
       namespace bm = boost::math;
       auto ratio = b/a;
@@ -1815,7 +1851,8 @@ public:
       auto ds = a*bm::ellint_2(k, ts);
       auto dt = a*bm::ellint_2(k, tt);
       auto d = std::abs(dt - ds);
-      // std::cout << "d,ds,dt: " << d << "," << ds << ", " << dt << std::endl;
+      // std::cout << "d, ds, dt: " << d << "," << ds << ", " << dt
+      //           << std::endl;
       auto size = static_cast<size_t>(d*density);
       if (size == 0) size = 1;
       auto delta_t = (tt - ts) / size;
@@ -1857,15 +1894,13 @@ public:
      */
     template <typename OutputIterator>
     OutputIterator approximate_parabola(OutputIterator oi, double density,
-                                        const X_monotone_curve_2& arc,
-                                        bool l2r) const {
+                                        const X_monotone_curve_2& xcv, bool l2r)
+      const {
       // std::cout << "PARABOLA\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
-      const auto& src = (l2r) ?
-        min_vertex(arc) : max_vertex(arc);
-      const auto& trg = (l2r) ?
-        max_vertex(arc) : min_vertex(arc);
+      const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+      const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
       auto xs = CGAL::to_double(src.x());
       auto ys = CGAL::to_double(src.y());
       auto xt = CGAL::to_double(trg.x());
@@ -1876,67 +1911,20 @@ public:
 
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
-      canonical_conic(arc, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
-      // std::cout << r_m << "," << s_m << "," << t_m << ","
-      //           << u_m << "," << v_m << "," << w_m << std::endl;
-      // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+      double xs_t, ys_t, xt_t, yt_t;
+      double a;
+      double ts, tt;
+      double cx, cy;
+      m_traits.approximate_parabola(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+                                    xs_t, ys_t, xt_t, yt_t, a, ts, tt, cx, cy,
+                                    xcv, l2r);
 
-      /* If the axis of the parabola is the 𝑌-axis, shift
-       * the parabola by 90, essentially, converting the
-       * parabola to one the axis of which is the 𝑋-axis, as the
-       * remaining code assume that the 𝑋-axis is the parabola axis.
-       * This is somehow inefficient, because we repeat the computation of
-       * cost, sint, r_m,..., and w_m. An alternative, is to add code that
-       * directly handles the case where the conjugate axis is the 𝑌-axis.
-       *
-       * We need to test whether s_m vanished; however, because of limited
-       * precision, s_m can become very small. Therefore, instead for comparing
-       * s_m with zero we compare its absolute value with the absolute value of
-       * r_m, which is expected to be larger.
-       */
-      if (std::abs(s_m) < std::abs(r_m)) {
-        // Shift phase:
-        auto tmp(cost);
-        cost = sint;
-        sint = -tmp;
-
-        // Recompute:
-        inverse_conic(arc, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
-      }
-      // std::cout << r_m << "," << s_m << "," << t_m << ","
-      //           << u_m << "," << v_m << "," << w_m << std::endl;
-      // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
-
-      // Compute the center of the inversly rotated parabola:
-      // double cx_m = -u_m / (2*r_m);
-      // double cy_m = (u_m*u_m - 4*r_m*w_m) / (4*r_m*v_m);
-      double cx_m = (v_m*v_m - 4*s_m*w_m) / (4*s_m*u_m);
-      double cy_m = -v_m / (2*s_m);
-      // std::cout << "cx_m, cy_m: " << cx_m << "," << cy_m <<  std::endl;
-
-      // Transform the source and target
-      auto xs_t = xs*cost + ys*sint - cx_m;
-      auto ys_t = -xs*sint + ys*cost - cy_m;
-      auto xt_t = xt*cost + yt*sint - cx_m;
-      auto yt_t = -xt*sint + yt*cost - cy_m;
-
-      auto a = -u_m/(4.0*s_m);
-      auto ts = ys_t/(2.0*a);
-      auto tt = yt_t/(2.0*a);
-      // std::cout << "xs' = " << xs_t << "," << ys_t << std::endl;
-      // std::cout << "xt' = " << xt_t << "," << yt_t << std::endl;
-      // std::cout << "ts,tt = " << ts << "," << tt << std::endl;
-
-      auto ds = parabolic_arc_length(xs_t, 2.0*std::abs(ys_t));
-      auto dt = parabolic_arc_length(xt_t, 2.0*std::abs(yt_t));
+      auto ds = m_traits.parabolic_arc_length(xs_t, 2.0*std::abs(ys_t));
+      auto dt = m_traits.parabolic_arc_length(xt_t, 2.0*std::abs(yt_t));
       auto d = (CGAL::sign(ys_t) == CGAL::sign(yt_t)) ?
         std::abs(ds - dt)/2.0 : (ds + dt)/2.0;
-      // std::cout << "d, ds, dt = " << d << ", " << ds << "," << dt << std::endl;
-
-      // Compute the center (cx,cy) of the ellipse, rotating back:
-      auto cx = cx_m*cost - cy_m*sint;
-      auto cy = cx_m*sint + cy_m*cost;
-      // std::cout << "center: " << cx << "," << cy << std::endl;
+      // std::cout << "d, ds, dt = " << d << ", " << ds << "," << dt
+      //           << std::endl;
 
       auto t(ts);
       auto size = static_cast<size_t>(d*density);
@@ -1983,7 +1971,7 @@ public:
 #else
       auto xt_prev = 2.0*a*t;
       auto yt_prev = a*t*t;
-      auto dt_prev = parabolic_arc_length(yt_prev, 2.0*std::abs(xt_prev));
+      auto dt_prev = m_traits.parabolic_arc_length(yt_prev, 2.0*std::abs(xt_prev));
 
       double d_t(delta_t);
       double d;
@@ -1994,7 +1982,7 @@ public:
 
         auto xt = 2.0*a*t;
         auto yt = a*t*t;
-        auto dt = parabolic_arc_length(yt, 2.0*std::abs(xt));
+        auto dt = m_traits.parabolic_arc_length(yt, 2.0*std::abs(xt));
         d = (CGAL::sign(xt_prev) == CGAL::sign(xt)) ?
           std::abs(dt - dt_prev)/2.0 : (dt + dt_prev)/2.0;
 
@@ -2006,120 +1994,29 @@ public:
 #endif
     }
 
-    /*! The formula for the arc length of a parabola is:
-     * L = 1/2 * √(b^2+16⋅a^2) + b^2/(8*a) * ln((4*a+√(b^2+16⋅a^2))/b)
-     * where:
-     * L is the length of the parabola arc.
-     * a is the length along the parabola axis.
-     * b is the length perpendicular to the axis making a chord.
-     *
-     *      ---
-     *     / | \
-     *    /  |a \
-     *   /   |   \
-     *  /---------\
-     * /    b      \
-     *
-     */
-    double parabolic_arc_length(double a, double b) const {
-      if (a == 0) return b;
-      if (b == 0) return a;
-      auto b_sqr = b*b;
-      auto tmp = std::sqrt(b_sqr+16.0*a*a);
-      return tmp/2.0 + b_sqr*std::log((4.0*a + tmp)/b)/(8.0*a);
-    }
-
     /*! Handle hyperbolas.
      */
     template <typename OutputIterator>
     OutputIterator approximate_hyperbola(OutputIterator oi, double density,
-                                         const X_monotone_curve_2& arc,
+                                         const X_monotone_curve_2& xcv,
                                          bool l2r) const {
       // std::cout << "HYPERBOLA\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
-      const auto& src = (l2r) ?
-        min_vertex(arc) : max_vertex(arc);
-      const auto& trg = (l2r) ?
-        max_vertex(arc) : min_vertex(arc);
+      const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+      const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
       auto xs = CGAL::to_double(src.x());
       auto ys = CGAL::to_double(src.y());
       auto xt = CGAL::to_double(trg.x());
       auto yt = CGAL::to_double(trg.y());
-      // std::cout << "curve: (" << xs << "," << ys
-      //           << ") => (" << xt << "," << yt << ")"
-      //           << std::endl;
 
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
-      // If the hyperbola conjugate axis is the Y-axis, add
-      canonical_conic(arc, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
-      // std::cout << r_m << "," << s_m << "," << t_m << ","
-      //           << u_m << "," << v_m << "," << w_m << std::endl;
-
-      auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
-      auto a_sqr = numerator / (4*r_m*r_m*s_m);
-      auto b_sqr = -numerator / (4*r_m*s_m*s_m);
-
-      /* If the conjugate axis of the canonical hyperbula is the 𝑌-axis, shift
-       * the canonical hyperbula by 90, essentially, converting the canonical
-       * hyperbula to one the conjugate axis of which is the 𝑋-axis, as the
-       * remaining code assume that the conjugate axis is the 𝑋-axis.
-       * This is somehow inefficient, because we repeat the computation of
-       * cost, sint, r_m,...,w_m, a_sqr, and b_sqr. An alternative, is
-       * to add code that directly handles the case where the conjugate axis
-       * is the 𝑌-axis. Here,
-       * 1. a_sqr = -a_sqr, b_sqr = -b_sqr, and
-       * 2. x(t),y(t) = a*sinh(t), b*cosh(t)
-       */
-      if (a_sqr < 0) {
-        // Shift phase:
-        auto tmp(cost);
-        cost = sint;
-        sint = -tmp;
-
-        // Recompute:
-        inverse_conic(arc, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
-        numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
-        a_sqr = numerator / (4*r_m*r_m*s_m);
-        b_sqr = -numerator / (4*r_m*s_m*s_m);
-      }
-      // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
-
-      // Compute the center of the inversly rotated ellipse:
-      auto cx_m = -u_m / (2*r_m);
-      auto cy_m = -v_m / (2*s_m);
-
-      // Transform the source and target
-      auto xs_t = xs*cost + ys*sint - cx_m;
-      auto ys_t = -xs*sint + ys*cost - cy_m;
-      auto xt_t = xt*cost + yt*sint - cx_m;
-      auto yt_t = -xt*sint + yt*cost - cy_m;
-      // std::cout << "xs_t,ys_t: " << xs_t << "," << ys_t << std::endl;
-      // std::cout << "xt_t,yt_t: " << xt_t << "," << yt_t << std::endl;
-
-      // Compute the center (cx,cy) of the hyperbola, rotating back:
-      auto cx = cx_m*cost - cy_m*sint;
-      auto cy = cx_m*sint + cy_m*cost;
-      // std::cout << "center: " << cx << "," << cy << std::endl;
-
-      auto a = std::sqrt(a_sqr);
-      auto b = std::sqrt(b_sqr);
-
-      // We use the parametric representation x(t),y(t) = a*cosh(t), b*sinh(t)
-      // cosh(t) = (e^t + e^(-t))/2
-      // sinh(t) = (e^t - e^(-t))/2
-      // Compute the parameters ts and tt such that
-      // source == (x(ts),y(ts)), and
-      // target == (x(tt),y(tt))
-      // Compute the radi of the hyperbola:
-      auto ts = std::asinh(ys_t/b);
-      auto tt = std::asinh(yt_t/b);
-      assert(std::signbit(xs_t) == std::signbit(xt_t));
-      // std::cout << "a, b: " << a << "," << b << std::endl;
-      // std::cout << "ts, tt: " << ts << "," << tt << std::endl;
-
-      if (std::signbit(xs_t)) a = -a;
+      double a, b;
+      double cx, cy;
+      double ts, tt;
+      m_traits.approximate_hyperbola(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+                                     ts, tt, a, b, cx, cy, xcv, l2r);
 
       auto t(ts);
       auto size = static_cast<size_t>(density);
@@ -2158,74 +2055,6 @@ public:
       //           << std::endl;
       *oi++ = Approximate_point_2(x, y);
       return oi;
-    }
-
-    /*! Obtain (i) the rotation that yields the given conic arc when applied
-     * to the canonical arc, and (ii) the canonical arc.
-     * \param[in] arc the given arc
-     * \param[out] r_m the coefficients of the canonical conic.
-     * \param[out] s_m
-     * \param[out] t_m
-     * \param[out] u_m
-     * \param[out] v_m
-     * \param[out] w_m
-     * \param[out] cost the cosine of the rotation angle.
-     * \param[out] sint the sine of the rotation angle.
-     */
-    void canonical_conic(const X_monotone_curve_2& arc,
-                         double& r_m, double& s_m, double& t_m,
-                         double& u_m, double& v_m, double& w_m,
-                         double& cost, double& sint) const {
-      auto r = CGAL::to_double(arc.r());
-      auto s = CGAL::to_double(arc.s());
-      auto t = CGAL::to_double(arc.t());
-      auto u = CGAL::to_double(arc.u());
-      auto v = CGAL::to_double(arc.v());
-      auto w = CGAL::to_double(arc.w());
-      // std::cout << r << "," << s << "," << t << ","
-      //           << u << "," << v << "," << w << std::endl;
-
-      // Compute the cos and sin of the rotation angle
-      // This eliminates the t coefficinet (which multiplies x·y).
-
-      if (r != s) {
-        auto theta = atan2(t, r-s) * 0.5;
-        cost = std::cos(theta);
-        sint = std::sin(theta);
-      }
-      else if (r != 0) {
-        double cos_2t = 1;
-        cost = 1.0;
-        sint = 0.0;
-      } else {
-        double cos_2t = 0;
-        cost = std::sqrt(1 / 2);
-        sint = cost;
-      }
-
-      inverse_conic(arc, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
-    }
-
-    /*! Apply the inverse of the rotation given by the sin and cosine of the
-     * rotation angle to the given conic arc.
-     */
-    void inverse_conic(const X_monotone_curve_2& arc,
-                       double cost, double sint,
-                       double& r_m, double& s_m, double& t_m,
-                       double& u_m, double& v_m, double& w_m) const {
-      auto r = CGAL::to_double(arc.r());
-      auto s = CGAL::to_double(arc.s());
-      auto t = CGAL::to_double(arc.t());
-      auto u = CGAL::to_double(arc.u());
-      auto v = CGAL::to_double(arc.v());
-      auto w = CGAL::to_double(arc.w());
-
-      r_m = r * cost*cost + t*cost*sint + s*sint*sint;
-      t_m = 0;
-      s_m = r * sint*sint - t*cost*sint + s*cost*cost;
-      u_m = u*cost + v*sint;
-      v_m = - u*sint + v*cost;
-      w_m = w;
     }
   };
 
@@ -2270,7 +2099,7 @@ public:
     }
 
     /*! Construct an x-monotone sub-arc from a conic arc.
-     * \param arc The given (base) arc.
+     * \param cv The given (base) arc.
      * \param source The source point.
      * \param target The target point.
      * \param id The ID of the base arc.
@@ -4045,6 +3874,336 @@ public:
     // Return the number of horizontal tangency points found.
     CGAL_assertion(m <= 2);
     return m;
+  }
+
+  /*! Apply the inverse of the rotation given by the sin and cosine of the
+   * rotation angle to the given conic arc.
+   */
+  void inverse_conic(const X_monotone_curve_2& xcv,
+                     double cost, double sint,
+                     double& r_m, double& s_m, double& t_m,
+                     double& u_m, double& v_m, double& w_m) const {
+    auto r = CGAL::to_double(xcv.r());
+    auto s = CGAL::to_double(xcv.s());
+    auto t = CGAL::to_double(xcv.t());
+    auto u = CGAL::to_double(xcv.u());
+    auto v = CGAL::to_double(xcv.v());
+    auto w = CGAL::to_double(xcv.w());
+
+    r_m = r * cost*cost + t*cost*sint + s*sint*sint;
+    t_m = 0;
+    s_m = r * sint*sint - t*cost*sint + s*cost*cost;
+    u_m = u*cost + v*sint;
+    v_m = - u*sint + v*cost;
+    w_m = w;
+  }
+
+  /*! Obtain (i) the rotation that yields the given conic arc when applied
+   * to the canonical arc, and (ii) the canonical arc.
+   * \param[in] arc the given arc
+   * \param[out] r_m the coefficients of the canonical conic.
+   * \param[out] s_m
+   * \param[out] t_m
+   * \param[out] u_m
+   * \param[out] v_m
+   * \param[out] w_m
+   * \param[out] cost the cosine of the rotation angle.
+   * \param[out] sint the sine of the rotation angle.
+   */
+  void canonical_conic(const X_monotone_curve_2& xcv,
+                       double& r_m, double& s_m, double& t_m,
+                       double& u_m, double& v_m, double& w_m,
+                       double& cost, double& sint) const {
+    auto r = CGAL::to_double(xcv.r());
+    auto s = CGAL::to_double(xcv.s());
+    auto t = CGAL::to_double(xcv.t());
+    auto u = CGAL::to_double(xcv.u());
+    auto v = CGAL::to_double(xcv.v());
+    auto w = CGAL::to_double(xcv.w());
+    // std::cout << r << "," << s << "," << t << ","
+    //           << u << "," << v << "," << w << std::endl;
+
+    // Compute the cos and sin of the rotation angle
+    // This eliminates the t coefficinet (which multiplies x·y).
+
+    if (r != s) {
+      auto theta = atan2(t, r-s) * 0.5;
+      cost = std::cos(theta);
+      sint = std::sin(theta);
+    }
+    else if (r != 0) {
+      cost = 1.0;
+      sint = 0.0;
+    }
+    else {
+      cost = std::sqrt(0.5);
+      sint = cost;
+    }
+
+    inverse_conic(xcv, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
+  }
+
+  /*! Handle parabolas.
+   * The arc-length closed form can be found here:
+   * https://www.vcalc.com/wiki/vCalc/Parabola+-+arc+length
+   */
+  void approximate_parabola(double& r_m, double& t_m, double& s_m,
+                            double& u_m, double& v_m, double& w_m,
+                            double& cost, double& sint,
+                            double& xs_t, double& ys_t,
+                            double& xt_t, double& yt_t,
+                            double& a, double& ts, double& tt,
+                            double& cx, double& cy,
+                            const X_monotone_curve_2& xcv, bool l2r = true)
+    const {
+    auto min_vertex = construct_min_vertex_2_object();
+    auto max_vertex = construct_max_vertex_2_object();
+    const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+    const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
+    auto xs = CGAL::to_double(src.x());
+    auto ys = CGAL::to_double(src.y());
+    auto xt = CGAL::to_double(trg.x());
+    auto yt = CGAL::to_double(trg.y());
+
+    canonical_conic(xcv, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
+    // std::cout << r_m << "," << s_m << "," << t_m << ","
+    //           << u_m << "," << v_m << "," << w_m << std::endl;
+    // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+
+    /* If the axis of the parabola is the 𝑌-axis, shift
+     * the parabola by 90, essentially, converting the
+     * parabola to one the axis of which is the 𝑋-axis, as the
+     * remaining code assume that the 𝑋-axis is the parabola axis.
+     *
+     * We need to test whether s_m vanished; however, because of limited
+     * precision, s_m can become very small. Therefore, instead for comparing
+     * s_m with zero we compare its absolute value with the absolute value of
+     * r_m, which is expected to be larger.
+     */
+    if (std::abs(s_m) < std::abs(r_m)) {
+      // Shift phase:
+      auto tmp(cost);
+      cost = sint;
+      sint = -tmp;
+
+      // Recompute:
+      inverse_conic(xcv, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
+    }
+    // std::cout << r_m << "," << s_m << "," << t_m << ","
+    //           << u_m << "," << v_m << "," << w_m << std::endl;
+    // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+
+    // Compute the center of the inversly rotated parabola:
+    // double cx_m = -u_m / (2*r_m);
+    // double cy_m = (u_m*u_m - 4*r_m*w_m) / (4*r_m*v_m);
+    auto cx_m = (v_m*v_m - 4*s_m*w_m) / (4*s_m*u_m);
+    auto cy_m = -v_m / (2*s_m);
+    // std::cout << "cx_m, cy_m: " << cx_m << "," << cy_m <<  std::endl;
+
+    // Transform the source and target
+    xs_t = xs*cost + ys*sint - cx_m;
+    ys_t = -xs*sint + ys*cost - cy_m;
+    xt_t = xt*cost + yt*sint - cx_m;
+    yt_t = -xt*sint + yt*cost - cy_m;
+
+    a = -u_m / (4.0*s_m);
+    ts = ys_t / (2.0*a);
+    tt = yt_t / (2.0*a);
+    // std::cout << "xs' = " << xs_t << "," << ys_t << std::endl;
+    // std::cout << "xt' = " << xt_t << "," << yt_t << std::endl;
+    // std::cout << "ts,tt = " << ts << "," << tt << std::endl;
+
+    // Compute the center (cx,cy) of the ellipse, rotating back:
+    cx = cx_m*cost - cy_m*sint;
+    cy = cx_m*sint + cy_m*cost;
+    // std::cout << "center: " << cx << "," << cy << std::endl;
+  }
+
+  /*! The formula for the arc length of a parabola is:
+   * L = 1/2 * √(b^2+16⋅a^2) + b^2/(8*a) * ln((4*a+√(b^2+16⋅a^2))/b)
+   * where:
+   * L is the length of the parabola arc.
+   * a is the length along the parabola axis.
+   * b is the length of the chord perpendicular to the axis.
+   *
+   *      ---
+   *     / | \
+   *    /  |a \
+   *   /   |   \
+   *  /---------\
+   * /    b      \
+   *
+   */
+  double parabolic_arc_length(double a, double b) const {
+    if (a == 0) return b;
+    if (b == 0) return a;
+    auto b_sqr = b*b;
+    auto tmp = std::sqrt(b_sqr+16.0*a*a);
+    return tmp/2.0 + b_sqr*std::log((4.0*a + tmp)/b)/(8.0*a);
+  }
+
+  /*! Handle ellipses.
+   */
+  void approximate_ellipse(double& r_m, double& t_m, double& s_m,
+                           double& u_m, double& v_m, double& w_m,
+                           double& cost, double& sint, double& ts, double& tt,
+                           double& a, double& b, double& cx, double& cy,
+                           const X_monotone_curve_2& xcv, bool l2r = true)
+    const {
+    auto min_vertex = construct_min_vertex_2_object();
+    auto max_vertex = construct_max_vertex_2_object();
+    const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+    const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
+    auto xs = CGAL::to_double(src.x());
+    auto ys = CGAL::to_double(src.y());
+    auto xt = CGAL::to_double(trg.x());
+    auto yt = CGAL::to_double(trg.y());
+
+    canonical_conic(xcv, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
+    // std::cout << r_m << "," << s_m << "," << t_m << ","
+    //           << u_m << "," << v_m << "," << w_m << std::endl;
+    // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+
+    // Compute the radi of the ellipse:
+    auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
+    auto a_sqr = numerator / (4*r_m*r_m*s_m);
+    auto b_sqr = numerator / (4*r_m*s_m*s_m);
+    if (a_sqr < b_sqr) {
+      // Shift phase:
+      auto tmp(cost);
+      cost = sint;
+      sint = -tmp;
+
+      // Recompute:
+      inverse_conic(xcv, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
+      numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
+      a_sqr = numerator / (4*r_m*r_m*s_m);
+      b_sqr = numerator / (4*r_m*s_m*s_m);
+    }
+
+    a = std::sqrt(a_sqr);
+    b = std::sqrt(b_sqr);
+    // std::cout << "a, b: " << a << "," << b << std::endl;
+
+    // Compute the center of the inversly rotated ellipse:
+    auto cx_m = -u_m / (2*r_m);
+    auto cy_m = -v_m / (2*s_m);
+
+    // Compute the center (cx,cy) of the ellipse, rotating back:
+    cx = cx_m*cost - cy_m*sint;
+    cy = cx_m*sint + cy_m*cost;
+    // std::cout << "center: " << cx << "," << cy << std::endl;
+
+    // Compute the parameters ts and tt such that
+    // source == (x(ts),y(ts)), and
+    // target == (x(tt),y(tt))
+    auto xds = xs - cx;
+    auto yds = ys - cy;
+    ts = std::atan2(a*(cost*yds - sint*xds),b*(sint*yds + cost*xds));
+    if (ts < 0) ts += 2*M_PI;
+    auto xdt = xt - cx;
+    auto ydt = yt - cy;
+    tt = std::atan2(a*(cost*ydt - sint*xdt),b*(sint*ydt + cost*xdt));
+    if (tt < 0) tt += 2*M_PI;
+    auto orient(xcv.orientation());
+    if (xcv.source() != src) orient = CGAL::opposite(orient);
+    if (orient == COUNTERCLOCKWISE) {
+      if (tt < ts) tt += 2*M_PI;
+    }
+    else {
+      if (ts < tt) ts += 2*M_PI;
+    }
+    // std::cout << "ts,tt: " << ts << "," << tt << std::endl;
+  }
+
+  /*! Handle hyperbolas.
+   */
+  /*! Handle ellipses.
+   */
+  void approximate_hyperbola(double& r_m, double& t_m, double& s_m,
+                             double& u_m, double& v_m, double& w_m,
+                             double& cost, double& sint, double& ts, double& tt,
+                             double& a, double& b, double& cx, double& cy,
+                             const X_monotone_curve_2& xcv, bool l2r = true)
+    const {
+    auto min_vertex = construct_min_vertex_2_object();
+    auto max_vertex = construct_max_vertex_2_object();
+    const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+    const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
+    auto xs = CGAL::to_double(src.x());
+    auto ys = CGAL::to_double(src.y());
+    auto xt = CGAL::to_double(trg.x());
+    auto yt = CGAL::to_double(trg.y());
+    // std::cout << "curve: (" << xs << "," << ys
+    //           << ") => (" << xt << "," << yt << ")"
+    //           << std::endl;
+
+    // If the hyperbola conjugate axis is the Y-axis, add
+    canonical_conic(xcv, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
+    // std::cout << r_m << "," << s_m << "," << t_m << ","
+    //           << u_m << "," << v_m << "," << w_m << std::endl;
+    // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+
+    auto numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
+    auto a_sqr = numerator / (4*r_m*r_m*s_m);
+    auto b_sqr = -numerator / (4*r_m*s_m*s_m);
+
+    /* If the conjugate axis of the canonical hyperbula is the 𝑌-axis, shift
+     * the canonical hyperbula by 90, essentially, converting the canonical
+     * hyperbula to one the conjugate axis of which is the 𝑋-axis, as the
+     * remaining code assume that the conjugate axis is the 𝑋-axis.
+     * Here,
+     * 1. a_sqr = -a_sqr, b_sqr = -b_sqr, and
+     * 2. x(t),y(t) = a*sinh(t), b*cosh(t)
+     */
+    if (a_sqr < 0) {
+      // Shift phase:
+      auto tmp(cost);
+      cost = sint;
+      sint = -tmp;
+
+      // Recompute:
+      inverse_conic(xcv, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
+      numerator = -4*w_m*r_m*s_m + s_m*u_m*u_m + r_m*v_m*v_m;
+      a_sqr = numerator / (4*r_m*r_m*s_m);
+      b_sqr = -numerator / (4*r_m*s_m*s_m);
+    }
+    // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+
+    // Compute the center of the inversly rotated ellipse:
+    auto cx_m = -u_m / (2*r_m);
+    auto cy_m = -v_m / (2*s_m);
+
+    // Transform the source and target
+    auto xs_t = xs*cost + ys*sint - cx_m;
+    auto ys_t = -xs*sint + ys*cost - cy_m;
+    auto xt_t = xt*cost + yt*sint - cx_m;
+    auto yt_t = -xt*sint + yt*cost - cy_m;
+    // std::cout << "xs_t,ys_t: " << xs_t << "," << ys_t << std::endl;
+    // std::cout << "xt_t,yt_t: " << xt_t << "," << yt_t << std::endl;
+
+    // Compute the center (cx,cy) of the hyperbola, rotating back:
+    cx = cx_m*cost - cy_m*sint;
+    cy = cx_m*sint + cy_m*cost;
+    // std::cout << "center: " << cx << "," << cy << std::endl;
+
+    a = std::sqrt(a_sqr);
+    b = std::sqrt(b_sqr);
+
+    // We use the parametric representation x(t),y(t) = a*cosh(t), b*sinh(t)
+    // cosh(t) = (e^t + e^(-t))/2
+    // sinh(t) = (e^t - e^(-t))/2
+    // Compute the parameters ts and tt such that
+    // source == (x(ts),y(ts)), and
+    // target == (x(tt),y(tt))
+    // Compute the radi of the hyperbola:
+    ts = std::asinh(ys_t/b);
+    tt = std::asinh(yt_t/b);
+    assert(std::signbit(xs_t) == std::signbit(xt_t));
+    // std::cout << "a, b: " << a << "," << b << std::endl;
+    // std::cout << "ts, tt: " << ts << "," << tt << std::endl;
+
+    if (std::signbit(xs_t)) a = -a;
   }
 };
 
