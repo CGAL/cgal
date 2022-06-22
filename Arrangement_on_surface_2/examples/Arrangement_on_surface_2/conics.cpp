@@ -5,8 +5,6 @@
 
 #ifdef CGAL_USE_CORE
 
-#include <CGAL/draw_arrangement_2.h>
-
 #include "arr_conics.h"
 #include "arr_print.h"
 
@@ -56,8 +54,6 @@ int main() {
   insert(arr, ctr_cv(circ7, CGAL::CLOCKWISE, Point(4, 3), Point(4, 2)));
 
   print_arrangement_size(arr);
-
-  CGAL::draw(arr);
 
   return 0;
 }
