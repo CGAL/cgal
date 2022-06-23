@@ -20,8 +20,8 @@ int main() {
   // Insert a hyperbolic arc (C1), supported by the hyperbola y = 1/x
   // (or: xy - 1 = 0) with the endpoints (1/4, 4) and (2, 1/2).
   // The arc is counterclockwise oriented.
-  insert(arr, ctr_cv(0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE,
-                     Point(Rational(1,4), 4), Point(2, Rational(1,2))));
+  CGAL::insert(arr, ctr_cv(0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE,
+                           Point(Rational(1,4), 4), Point(2, Rational(1,2))));
 
   print_arrangement_size(arr);
 

@@ -18,25 +18,25 @@ int main() {
   auto ctr_cv = traits.construct_curve_2_object();
 
   // Insert a full x-major ellipse
-  insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
-                     Point(4,0), Point(0,2)));
-  insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
-                     Point(0,2), Point(-4,0)));
-  insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
-                     Point(-4,0), Point(0,-2)));
-  insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
-                     Point(0,-2), Point(4,0)));
+  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
+                           Point(4,0), Point(0,2)));
+  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
+                           Point(0,2), Point(-4,0)));
+  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
+                           Point(-4,0), Point(0,-2)));
+  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
+                           Point(0,-2), Point(4,0)));
 
   // Insert a full y-major ellipse
-  insert(arr, ctr_cv(4, 1, 0, 0, 0, -16));
+  CGAL::insert(arr, ctr_cv(4, 1, 0, 0, 0, -16));
 
   // Insert the full ellipse (x/4)^2 + (y/2)^2 = 1 clockwise rotated by
   // phi = 36.87 degrees (such that sin(phi) = 0.6, cos(phi) = 0.8),
-  insert(arr, ctr_cv(52, 73, 72, 0, 0, -400));
+  CGAL::insert(arr, ctr_cv(52, 73, 72, 0, 0, -400));
 
   // Insert the full ellipse (x/4)^2 + (y/2)^2 = 1 counter clockwise rotated by
   // phi = 36.87 degrees (such that sin(phi) = 0.6, cos(phi) = 0.8),
-  insert(arr, ctr_cv(52, 73, -72, 0, 0, -400));
+  CGAL::insert(arr, ctr_cv(52, 73, -72, 0, 0, -400));
 
   print_arrangement_size(arr);
 

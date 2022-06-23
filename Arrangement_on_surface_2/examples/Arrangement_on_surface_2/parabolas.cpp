@@ -17,59 +17,61 @@ int main() {
 
   auto ctr_cv = traits.construct_curve_2_object();
   Point p0(0, 0);
+  CGAL::insert(arr, ctr_cv(Point(-2.4,-1.4), Point(-2.4,2.4)));
+  CGAL::insert(arr, ctr_cv(Point(2.4,-1.4), Point(2.4,2.4)));
 
   // x-major
   // insert the parabola y = x^2; (-1,1)--(1,1)
-  insert(arr, ctr_cv(1, 0, 0, 0, -1, 0, CGAL::COUNTERCLOCKWISE,
-                     Point(-1, 1), Point(1, 1)));
+  CGAL::insert(arr, ctr_cv(1, 0, 0, 0, -1, 0, CGAL::COUNTERCLOCKWISE,
+                           Point(-1, 1), Point(1, 1)));
 
   // translated
   // Insert the parabola y = x^2 - 2x + 2; (1,1)--(2,2)
-  insert(arr, ctr_cv(1, 0, 0, -2, -1, 2, CGAL::COUNTERCLOCKWISE,
-                     Point(1, 1), Point(2, 2)));
-  insert(arr, ctr_cv(1, 0, 0, 2, -1, 2, CGAL::COUNTERCLOCKWISE,
-                     Point(-2, 2), Point(-1, 1)));
+  CGAL::insert(arr, ctr_cv(1, 0, 0, -2, -1, 2, CGAL::COUNTERCLOCKWISE,
+                           Point(1, 1), Point(2, 2)));
+  CGAL::insert(arr, ctr_cv(1, 0, 0, 2, -1, 2, CGAL::COUNTERCLOCKWISE,
+                           Point(-2, 2), Point(-1, 1)));
 
   // rotated
   // Insert the parabola y = x^2 rotated clockwise about theta, such that
   // sin(theta) = 0.6, cos(theta) = 0.8
-  insert(arr, ctr_cv(16, 9, -24, -15, -20, 0, CGAL::COUNTERCLOCKWISE,
-                     Point(Rational(-2,10), Rational(14,10)),
-                     Point(Rational(14,10), Rational(2,10))));
-  insert(arr, ctr_cv(16, 9, 24, 15, -20, 0, CGAL::CLOCKWISE,
-                     Point(Rational(2,10), Rational(14,10)),
-                     Point(Rational(-14,10), Rational(2,10))));
-  insert(arr, ctr_cv(16, 9, 24, -15, 20, 0, CGAL::COUNTERCLOCKWISE,
-                     Point(Rational(14,10), Rational(-2,10)),
-                     Point(Rational(-2,10), Rational(-14,10))));
-  insert(arr, ctr_cv(16, 9, -24, 15, 20, 0, CGAL::COUNTERCLOCKWISE,
-                     Point(Rational(2,10), Rational(-14,10)),
-                     Point(Rational(-14,10), Rational(-2,10))));
+  CGAL::insert(arr, ctr_cv(16, 9, -24, -15, -20, 0, CGAL::COUNTERCLOCKWISE,
+                           Point(Rational(-2,10), Rational(14,10)),
+                           Point(Rational(14,10), Rational(2,10))));
+  CGAL::insert(arr, ctr_cv(16, 9, 24, 15, -20, 0, CGAL::CLOCKWISE,
+                           Point(Rational(2,10), Rational(14,10)),
+                           Point(Rational(-14,10), Rational(2,10))));
+  CGAL::insert(arr, ctr_cv(16, 9, 24, -15, 20, 0, CGAL::COUNTERCLOCKWISE,
+                           Point(Rational(14,10), Rational(-2,10)),
+                           Point(Rational(-2,10), Rational(-14,10))));
+  CGAL::insert(arr, ctr_cv(16, 9, -24, 15, 20, 0, CGAL::COUNTERCLOCKWISE,
+                           Point(Rational(2,10), Rational(-14,10)),
+                           Point(Rational(-14,10), Rational(-2,10))));
 
   // 16*x*x+9*y*y-24*x*y-15*x-20*y
 
-  insert(arr, ctr_cv(9, 16, -24, -20, -15, 0, CGAL::COUNTERCLOCKWISE,
-                     Point(Rational(2,10), Rational(14,10)),
-                     Point(Rational(14,10), Rational(-2,10))));
-  insert(arr, ctr_cv(9, 16, 24, -20, 15, 0, CGAL::CLOCKWISE,
-                     Point(Rational(2,10), Rational(-14,10)),
-                     Point(Rational(14,10), Rational(2,10))));
-  insert(arr, ctr_cv(9, 16, 24, 20, -15, 0, CGAL::COUNTERCLOCKWISE,
-                     Point(Rational(-14,10), Rational(-2,10)),
-                     Point(Rational(-2,10), Rational(14,10))));
-  insert(arr, ctr_cv(9, 16, -24, 20, 15, 0, CGAL::COUNTERCLOCKWISE,
-                     Point(Rational(-2,10), Rational(-14,10)),
-                     Point(Rational(-14,10), Rational(2,10))));
+  CGAL::insert(arr, ctr_cv(9, 16, -24, -20, -15, 0, CGAL::COUNTERCLOCKWISE,
+                           Point(Rational(2,10), Rational(14,10)),
+                           Point(Rational(14,10), Rational(-2,10))));
+  CGAL::insert(arr, ctr_cv(9, 16, 24, -20, 15, 0, CGAL::CLOCKWISE,
+                           Point(Rational(2,10), Rational(-14,10)),
+                           Point(Rational(14,10), Rational(2,10))));
+  CGAL::insert(arr, ctr_cv(9, 16, 24, 20, -15, 0, CGAL::COUNTERCLOCKWISE,
+                           Point(Rational(-14,10), Rational(-2,10)),
+                           Point(Rational(-2,10), Rational(14,10))));
+  CGAL::insert(arr, ctr_cv(9, 16, -24, 20, 15, 0, CGAL::COUNTERCLOCKWISE,
+                           Point(Rational(-2,10), Rational(-14,10)),
+                           Point(Rational(-14,10), Rational(2,10))));
 
   // 9*x*x+16*y*y-24*x*y+20*x+15*y
 
   // rotated & translated
-  insert(arr, ctr_cv(16, 9, -24, -23, -14, 36, CGAL::COUNTERCLOCKWISE,
-                     Point(Rational(8,10), Rational(24,10)),
-                     Point(Rational(24,10), Rational(12,10))));
-  insert(arr, ctr_cv(16, 9, 24, 23, -14, 36, CGAL::CLOCKWISE,
-                     Point(Rational(-8,10), Rational(24,10)),
-                     Point(Rational(-24,10), Rational(12,10))));
+  CGAL::insert(arr, ctr_cv(16, 9, -24, -23, -14, 36, CGAL::COUNTERCLOCKWISE,
+                           Point(Rational(8,10), Rational(24,10)),
+                           Point(Rational(24,10), Rational(12,10))));
+  CGAL::insert(arr, ctr_cv(16, 9, 24, 23, -14, 36, CGAL::CLOCKWISE,
+                           Point(Rational(-8,10), Rational(24,10)),
+                           Point(Rational(-24,10), Rational(12,10))));
 
   // 16*x*x+9*y*y-24*x*y-23*x-14*y+36
 

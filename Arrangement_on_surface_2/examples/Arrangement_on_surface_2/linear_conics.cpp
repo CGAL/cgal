@@ -21,6 +21,8 @@ int main() {
   Point p2(0, -1);
   Point p3(0, 1);
   Point p4(1, 0);
+  Point p5(Rational(1,2),Rational(1,2));
+  Point p6(Rational(-1,2),Rational(1,2));
   Rat_point rp0(0, 0);
   Rat_point rp1(1, 0);
   Rat_point rp2(0, 1);
@@ -28,30 +30,30 @@ int main() {
 
   // horizontal
   // insert the segment (0, 0)--(1, 0).
-  insert(arr, ctr_cv(Rat_segment(rp0, rp1)));
+  CGAL::insert(arr, ctr_cv(Rat_segment(rp0, rp1)));
   // insert the segment (0, 0)--(-1, 0).
-  insert(arr, ctr_cv(0, 0, 0, 0, 1, 0, CGAL::COLLINEAR, p0, p1));
+  CGAL::insert(arr, ctr_cv(0, 0, 0, 0, 1, 0, CGAL::COLLINEAR, p0, p1));
 
   // vertical
   // insert the segment (0, -1)--(0, 0).
-  insert(arr, ctr_cv(Rat_segment(rp3, rp0)));
+  CGAL::insert(arr, ctr_cv(Rat_segment(rp3, rp0)));
 
   // translated
   // insert the segment (0, -1)--(1, 0).
-  insert(arr, ctr_cv(Rat_segment(rp3, rp1)));
+  CGAL::insert(arr, ctr_cv(Rat_segment(rp3, rp1)));
   // insert the segment (0, -1)--(-1, 0).
-  insert(arr, ctr_cv(0, 0, 0, -1, -1, -1, CGAL::COLLINEAR, p2, p1));
+  CGAL::insert(arr, ctr_cv(0, 0, 0, -1, -1, -1, CGAL::COLLINEAR, p2, p1));
 
   // Special segments
   // horizontal special segment
-  insert(arr, ctr_cv(Point(Rational(1,2),Rational(1,2)), Point(Rational(-1,2),Rational(1,2))));
+  CGAL::insert(arr, ctr_cv(p5, p6));
 
   // vertical special segment
-  insert(arr, ctr_cv(p0, p3));
+  CGAL::insert(arr, ctr_cv(p0, p3));
 
   // special translated
-  insert(arr, ctr_cv(p1, p3));
-  insert(arr, ctr_cv(p3, p4));
+  CGAL::insert(arr, ctr_cv(p1, p3));
+  CGAL::insert(arr, ctr_cv(p3, p4));
 
   print_arrangement_size(arr);
 
