@@ -389,7 +389,25 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
            ofk);
 }
 
-// Overloads common to both polygons with and without holes, a simple polygon is returned in any case
+/*! create_interior_skeleton_and_offset_polygons_2 with a polygon with holes */
+
+// overload where PolygonWithHoles actually is a type of Polygon that supports holes
+template<class FT, class PolygonWithHoles, class OfK, class SsK,
+         class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<PolygonWithHoles, OfK>::type>
+std::vector<boost::shared_ptr<OutPolygon> >
+inline
+create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
+                                               const PolygonWithHoles& aPoly,
+                                               const OfK& ofk,
+                                               const SsK& ssk,
+                                               typename std::enable_if<
+                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>::type* = nullptr)
+{
+  return create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(), ofk, ssk);
+}
+
+
+// Overloads common to both polygons with and without holes, a simple polygons are returned in any case
 template<class FT, class APolygon, class OfK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
 std::vector< boost::shared_ptr<OutPolygon> >
