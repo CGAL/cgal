@@ -22,7 +22,6 @@
 
 #include <type_traits>
 #include <utility>
-#include <boost/utility/enable_if.hpp>
 #include <boost/preprocessor/repetition.hpp>
 #include <CGAL/Rational_traits.h>
 #include <CGAL/tuple.h>
@@ -39,7 +38,7 @@ template <class T, class No, bool=internal::has_type<T>::value /*false*/>
 struct Has_type_different_from : boost::false_type {};
 template <class T, class No>
 struct Has_type_different_from <T, No, true>
-: boost::mpl::not_<boost::is_same<typename T::type, No> > {};
+: boost::mpl::not_<std::is_same<typename T::type, No> > {};
 
 
         template <class T> struct Wrap_type { typedef T type; };

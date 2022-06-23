@@ -30,9 +30,6 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
-#include <boost/type_traits/is_same.hpp>
-
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 #endif
@@ -490,7 +487,7 @@ public:
   template<typename GT_>
   const Point_3& weighted_circumcenter(const GT_& gt) const
   {
-    CGAL_static_assertion((boost::is_same<Point_3,
+    CGAL_static_assertion((std::is_same<Point_3,
       typename GT_::Construct_weighted_circumcenter_3::result_type>::value));
     if (internal_tbb::is_null(weighted_circumcenter_)) {
       this->try_to_set_circumcenter(

@@ -145,8 +145,8 @@ std::size_t cluster_point_set (PointRange& points,
   typedef typename NP_helper::Geom_traits Kernel;
   typedef typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::type Adjacencies;
 
-  CGAL_static_assertion_msg(!(boost::is_same<typename GetSvdTraits<NamedParameters>::type,
-                                             typename GetSvdTraits<NamedParameters>::NoTraits>::value),
+  CGAL_static_assertion_msg(!(std::is_same<typename GetSvdTraits<NamedParameters>::type,
+                                           typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
   PointMap point_map = NP_helper::get_point_map(points, np);

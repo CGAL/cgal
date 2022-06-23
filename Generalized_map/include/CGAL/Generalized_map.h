@@ -35,10 +35,10 @@
 #include <deque>
 #include <tuple>
 #include <unordered_map>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/config.h>
 
 #include <unordered_map>
+#include <type_traits>
 
 #if defined( __INTEL_COMPILER )
 // Workarounf for warning in function basic_link_beta_0
@@ -1305,7 +1305,7 @@ namespace CGAL {
     template < class Ite >
     std::ostream& display_orbits(std::ostream & aos) const
     {
-      CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
+      CGAL_static_assertion( (std::is_same<typename Ite::Basic_iterator,
                               Tag_true>::value) );
       unsigned int nb = 0;
       size_type amark = get_new_mark();

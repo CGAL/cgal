@@ -26,9 +26,8 @@
 
 #include <boost/array.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <iterator>
+#include <type_traits>
 
 #include <CGAL/assertions.h>
 #include <CGAL/AABB_tree.h>

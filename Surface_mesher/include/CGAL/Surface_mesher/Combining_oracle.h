@@ -51,7 +51,7 @@ namespace CGAL {
 
     typedef typename Oracle_a::Intersection_point Intersection_point;
 
-    CGAL_static_assertion((::boost::is_same<
+    CGAL_static_assertion((::std::is_same<
                          Intersection_point,
                          typename Oracle_b::Intersection_point>::value));
 

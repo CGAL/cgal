@@ -22,7 +22,6 @@
 #include <CGAL/iterator.h>
 
 #include <boost/range/value_type.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -31,6 +30,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -52,7 +52,7 @@ bool read_PLY(std::istream& is,
               ColorOutputIterator vc_out,
               HUVOutputIterator huvs_out,
               const bool verbose = false,
-              typename std::enable_if<CGAL::is_iterator<ColorOutputIterator>::value>::type* = nullptr)
+              std::enable_if_t<CGAL::is_iterator_v<ColorOutputIterator>>* = nullptr)
 {
   typedef typename boost::range_value<PointRange>::type     Point_3;
   typedef CGAL::IO::Color                                   Color_rgb;
@@ -233,7 +233,7 @@ bool read_PLY(std::istream& is,
               ColorRange& vcolors,
               HUVRange& huvs,
               const bool verbose = false,
-              typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
+              std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr)
 {
   return internal::read_PLY(is, points, polygons,
                             std::back_inserter(hedges),
@@ -309,7 +309,7 @@ bool read_PLY(std::istream& is,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+              , std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr
 #endif
               )
 {
@@ -369,7 +369,7 @@ bool read_PLY(const std::string& fname,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+              , std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr
 #endif
               )
 {
@@ -432,7 +432,7 @@ bool write_PLY(std::ostream& out,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr
 #endif
                )
 {
@@ -511,7 +511,7 @@ bool write_PLY(const std::string& fname,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range_v<PolygonRange>>* = nullptr
 #endif
                )
 {

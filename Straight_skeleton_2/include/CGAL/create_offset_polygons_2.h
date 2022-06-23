@@ -325,8 +325,8 @@ create_interior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const APolygon& aPoly,
                                                const OfK& ofk,
                                                const SsK& ssk,
-                                               typename std::enable_if<
-                                                 ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>::type* = nullptr)
+                                               std::enable_if_t<
+                                                 ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>* = nullptr)
 {
   std::vector<APolygon> no_holes;
   return create_interior_skeleton_and_offset_polygons_2(aOffset, aPoly,
@@ -375,8 +375,8 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const APolygon& aPoly,
                                                const OfK& ofk,
                                                const SsK& ssk,
-                                               typename std::enable_if<
-                                                 ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>::type* = nullptr)
+                                               std::enable_if_t<
+                                                 ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>* = nullptr)
 {
   return create_offset_polygons_2<OutPolygon>(
            aOffset,

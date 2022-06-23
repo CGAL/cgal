@@ -742,13 +742,13 @@ namespace internal {
 
 template<typename FaceGraph>
 inline
-typename boost::enable_if<Has_member_clear<FaceGraph>, void>::type
+std::enable_if_t<Has_member_clear_v<FaceGraph>, void>
 clear_impl(FaceGraph& g)
 { g.clear(); }
 
 template<typename FaceGraph>
 inline
-typename boost::disable_if<Has_member_clear<FaceGraph>, void>::type
+std::enable_if_t<!Has_member_clear_v<FaceGraph>, void>
 clear_impl(FaceGraph& g)
 {
   while(boost::begin(edges(g))!=boost::end(edges(g)))

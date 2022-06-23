@@ -25,8 +25,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/tags.h>
 
-#include <boost/static_assert.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL
 {

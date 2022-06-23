@@ -66,10 +66,10 @@ template<class T,class U>struct analyze_args<T,U,typelist<>> {
   typedef U reader;
 };
 template<class...T,class...U,class V,class...W>
-struct analyze_args<typelist<T...>,typelist<U...>,typelist<V,W...>,std::enable_if_t<!is_iterator_type<V,std::input_iterator_tag>::value>> :
+struct analyze_args<typelist<T...>,typelist<U...>,typelist<V,W...>,std::enable_if_t<!is_iterator_type_v<V,std::input_iterator_tag>>> :
 analyze_args<typelist<T...,arg_i<sizeof...(U)>>,typelist<U...,arg_i<sizeof...(T)>>,typelist<W...>> {};
 template<class...T,class...U,class It,class...W>
-struct analyze_args<typelist<T...>,typelist<U...>,typelist<It,It,W...>,std::enable_if_t<is_iterator_type<It,std::input_iterator_tag>::value>> :
+struct analyze_args<typelist<T...>,typelist<U...>,typelist<It,It,W...>,std::enable_if_t<is_iterator_type_v<It,std::input_iterator_tag>>> :
 analyze_args<typelist<T...,arg_i_ip1_range<sizeof...(U)>>,typelist<U...,arg_i_begin<sizeof...(T)>,arg_i_end<sizeof...(T)>>,typelist<W...>> {};
 template<class...T> using analyze_args_for_lazy = analyze_args<typelist<>,typelist<>,typelist<T...>>;
 template<class,class>struct extract1;

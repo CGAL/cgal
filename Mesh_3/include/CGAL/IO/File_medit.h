@@ -22,9 +22,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <iomanip>
 #include <iostream>
@@ -32,6 +30,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 

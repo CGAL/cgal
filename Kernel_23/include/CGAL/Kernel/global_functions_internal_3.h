@@ -22,9 +22,9 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Dimension.h>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/integral_c.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -379,12 +379,11 @@ compare_dihedral_angle(const typename K::Vector_3& ab1,
 
 template <class K, class T1, class T2, class T3>
 inline
-typename boost::enable_if<
+std::enable_if_t<
   boost::mpl::equal_to<boost::mpl::integral_c<int,
                                               Ambient_dimension<T1>::type::value>,
-                       boost::mpl::integral_c<int, 3> >,
+                       boost::mpl::integral_c<int, 3> >::value,
   typename K::Comparison_result>
-::type
   // boost::mpl::equal_to<typename Ambient_dimension<T1>::type,
   //                      boost::mpl::int_<3> >,
   // typename K::Comparison_result>::type
@@ -397,12 +396,11 @@ compare_distance(const T1 &o1,
 
 template <class K, class T1, class T2, class T3, class T4>
 inline
-typename boost::enable_if<
+std::enable_if_t<
   boost::mpl::equal_to<boost::mpl::integral_c<int,
                                               Ambient_dimension<T1>::type::value>,
-                       boost::mpl::integral_c<int, 3> >,
+                       boost::mpl::integral_c<int, 3> >::value,
   typename K::Comparison_result>
-::type
   // boost::mpl::equal_to<typename Ambient_dimension<T1>::type,
   //                      boost::mpl::int_<3> >,
   // typename K::Comparison_result>::type

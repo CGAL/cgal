@@ -421,7 +421,7 @@ bool fill_simplex_specific_header(std::ostream& os,
 
   if(prop == "v:point")
   {
-    if(boost::is_same<FT, float>::value)
+    if(std::is_same<FT, float>::value)
     {
       os << "property float x" << std::endl
          << "property float y" << std::endl
@@ -444,7 +444,7 @@ bool fill_simplex_specific_header(std::ostream& os,
     boost::tie(pmap, okay) = sm.template property_map<VIndex, Vector>(prop);
     if(okay)
     {
-      if(boost::is_same<FT, float>::value)
+      if(std::is_same<FT, float>::value)
       {
         os << "property float nx" << std::endl
            << "property float ny" << std::endl

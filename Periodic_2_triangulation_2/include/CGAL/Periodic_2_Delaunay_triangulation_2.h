@@ -207,11 +207,11 @@ public:
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
          bool is_large_point_set = true,
-         typename boost::enable_if <
+         std::enable_if_t <
          boost::is_convertible <
          typename std::iterator_traits<InputIterator>::value_type,
          Point
-         > >::type* = nullptr)
+         >::value >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -419,11 +419,11 @@ public:
   insert( InputIterator first,
           InputIterator last,
           bool is_large_point_set = true,
-          typename boost::enable_if <
+          std::enable_if_t <
           boost::is_convertible <
           typename std::iterator_traits<InputIterator>::value_type,
           std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type>
-          > >::type* = nullptr
+          >::value >* = nullptr
         )
   {
     return insert_with_info< std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
@@ -434,11 +434,11 @@ public:
   insert( boost::zip_iterator< boost::tuple<InputIterator_1, InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1, InputIterator_2> > last,
           bool is_large_point_set = true,
-          typename boost::enable_if <
+          std::enable_if_t <
           boost::mpl::and_ <
           boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
           boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-          > >::type* = nullptr)
+          >::value >* = nullptr)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
   }

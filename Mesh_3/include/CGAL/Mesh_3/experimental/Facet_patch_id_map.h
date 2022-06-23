@@ -18,7 +18,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 namespace CGAL { namespace Mesh_3 {
 
@@ -26,7 +26,7 @@ namespace CGAL { namespace Mesh_3 {
 /// retrieve the patch_id() of the facet.
 template <typename MeshDomain,
           typename Primitive,
-          bool id_is_iterator = CGAL::is_iterator<typename Primitive::Id>::value >
+          bool id_is_iterator = CGAL::is_iterator_v<typename Primitive::Id> >
 struct Facet_patch_id_map;
 
 // Primitive::Id is an iterator type

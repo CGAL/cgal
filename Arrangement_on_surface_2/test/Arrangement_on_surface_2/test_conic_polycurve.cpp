@@ -13,8 +13,7 @@ int main()
 
 #include <vector>
 #include <list>
-
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>

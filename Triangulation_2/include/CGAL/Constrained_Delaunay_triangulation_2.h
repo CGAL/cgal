@@ -23,7 +23,7 @@
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/STL_Extension/internal/info_check.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <boost/container/flat_set.hpp>
 #include <boost/iterator/zip_iterator.hpp>
@@ -33,7 +33,7 @@ namespace CGAL {
 
 namespace internal{
 
-template <class T,bool has_info=is_iterator<T>::value>
+template <class T,bool has_info=is_iterator_v<T>>
 struct Get_iterator_value_type{
  struct type{};
 };
@@ -313,12 +313,12 @@ public:
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
-          typename boost::enable_if<
+          std::enable_if_t<
             boost::is_convertible<
                 typename internal::Get_iterator_value_type< InputIterator >::type,
                 Point
-            >
-          >::type* = nullptr
+            >::value
+          >* = nullptr
   )
 #else
 #if defined(_MSC_VER)
@@ -395,12 +395,12 @@ public:
   std::ptrdiff_t
   insert( InputIterator first,
           InputIterator last,
-          typename boost::enable_if<
+          std::enable_if_t<
             boost::is_convertible<
               typename internal::Get_iterator_value_type< InputIterator >::type,
               std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
-            >
-          >::type* =nullptr
+            >::value
+          >* =nullptr
   )
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
@@ -410,12 +410,12 @@ public:
   std::ptrdiff_t
   insert( boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-          typename boost::enable_if<
+          std::enable_if_t<
             boost::mpl::and_<
               boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
               boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-            >
-          >::type* =nullptr
+            >::value
+          >* =nullptr
   )
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
