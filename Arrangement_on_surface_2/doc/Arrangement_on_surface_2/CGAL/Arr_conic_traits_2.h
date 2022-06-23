@@ -34,21 +34,21 @@ namespace CGAL {
  * p_t\f$ (the source and target points, respectively). The orientation \f$ o\f$
  * indicates whether we proceed from \f$ p_s\f$ to \f$ p_t\f$ in a clockwise or
  * in a counterclockwise direction. Note that \f$ C\f$ may also correspond to a
- * line or to pair of lines - in this case \f$ o\f$ may specify a `COLLINEAR`
+ * line or to pair of lines---in this case \f$ o\f$ may specify a `COLLINEAR`
  * orientation.
  *
  * </UL>
  *
  * A very useful subset of the set of conic arcs are line segments and circular
  * arcs, as arrangements of circular arcs and line segments have some
- * interesting applications (e.g. offsetting polygons, motion planning for a
- * disc robot, etc.). Circular arcs and line segment are simpler objects and can
- * be dealt with more efficiently than arbitrary arcs. For these reasons, it is
- * possible to construct conic arcs from segments and from circles. Using these
- * constructors is highly recommended: It is more straightforward and also
- * speeds up the arrangement construction. However, in case the set of input
- * curves contain only circular arcs and line segments, it is recommended to use
- * the `Arr_circle_segment_2` class to achieve faster running times.
+ * interesting applications (e.g., offsetting polygons and motion planning for a
+ * disc robot). Circular arcs and line segment are simpler objects and can be
+ * dealt with more efficiently than arbitrary arcs. Indeed, it is possible to
+ * construct conic arcs from segments and from circles. Using these constructors
+ * is highly recommended: It is more straightforward and also expedites the
+ * arrangement construction. However, in case the set of input curves contain
+ * only circular arcs and line segments, it is recommended using the
+ * `Arr_circle_segment_2` class to achieve better running times.
  *
  * In our representation, all conic coefficients (namely \f$ r, s, t, u, v,
  * w\f$) must be rational numbers. This guarantees that the coordinates of all
@@ -58,13 +58,13 @@ namespace CGAL {
  * <I>integer</I> coefficient of degree \f$ d\f$ such that \f$ p(\alpha) =
  * 0\f$).  We therefore require separate representations of the curve
  * coefficients and the point coordinates. The `NtTraits` should be instantiated
- * with a class that defines nested `Integer`, `Rational` and `Algebraic` number
+ * with a class that defines nested `Integer`, `Rational`, and `Algebraic` number
  * types and supports various operations on them, yielding certified computation
  * results (for example, it can convert rational numbers to algebraic numbers
  * and can compute roots of polynomials with integer coefficients).  The other
  * template parameters, `RatKernel` and `AlgKernel` should be geometric kernels
- * templated with the `NtTraits::Rational` and `NtTraits::Algebraic` number
- * types, respectively.  It is recommended to instantiate the
+ * instantiated with the `NtTraits::Rational` and `NtTraits::Algebraic` number
+ * types, respectively.  It is recommended instantiating the
  * `CORE_algebraic_number_traits` class as the `NtTraits` parameter, with
  * `Cartesian<NtTraits::Rational>` and `Cartesian<NtTraits::Algebraic>`
  * instantiating the two kernel types, respectively.  The number types in this
@@ -115,110 +115,9 @@ public:
     /// \name Creation
     /// @{
 
-    /*! constructs an arc corresponding to the line segment `seg`.
+    /*! constructs an empty (invalid) arc.
      */
-    Curve_2(const typename RatKernel::Segment_2& seg);
-
-    /*! constructs an arc corresponding to the full circle `circ`
-     * (note that this circle has a center point with rational coordinates
-     * and rational squared radius).
-     */
-    Curve_2(const typename RatKernel::Circle_2& circ);
-
-    /*! constructs a circular arc supported by the circle `circ`, going
-     * in the given orientation `o` from the source point `ps` to its target
-     * point `pt`.
-     *
-     * \pre `ps` and `pt` both lie on the circle `circ`.
-     *
-     * \pre `o` is not `COLLINEAR`.
-     */
-    Curve_2(const typename RatKernel::Circle_2& circ, Orientation o,
-            const Point_2& ps, const Point_2& pt);
-
-    /*! constructs a circular arc going from `p1` (its source point)
-     * through `p2` to `p3` (its target point). Note that all three points have
-     * rational coordinates. The orientation of the arc is determined
-     * automatically.
-     *
-     * \pre The three points are not collinear.
-     */
-    Curve_2(const typename RatKernel::Point_2& p1,
-            const typename RatKernel::Point_2& p2,
-            const typename RatKernel::Point_2& p3);
-
-    /*! constructs a conic arc that corresponds to the full conic curve
-     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$.
-     *
-     * \pre As a conic arc must be bounded, the given curve must be an ellipse,
-     * that is \f$ 4 r s - t^2 > 0\f$.
-     */
-    Curve_2(const Rational& r, const Rational& s,
-            const Rational& t, const Rational& u,
-            const Rational& v, const Rational& w);
-
-    /*! constructs a conic arc supported by the conic curve
-     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going in the given
-     * orientation `o` from the source point `ps` to its target point `pt`.  * *
-     *
-     * \pre `ps` and `pt` both satisfy the equation of the supporting conic
-     * curve and define a bounded segment of this curve (e.g. in case of a
-     * hyperbolic arc, both point should be located on the same branch of the
-     * hyperbola).
-     *
-     * \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must
-     * be `COLLINEAR` if it is not curved (a line or a line-pair).
-     */
-    Curve_2(const Rational& r, const Rational& s,
-            const Rational& t, const Rational& u,
-            const Rational& v, const Rational& w,
-            Orientation o,
-            const Point_2& ps, const Point_2& pt);
-
-    /*! constructs a conic arc going from `p1` (its source point)
-     * through `p2`, `p3` and `p4` (in this order) to `p5` (its target
-     * point). Note that all five points have rational coordinates.  The
-     * orientation of the arc is determined automatically.
-     *
-     * \pre No three points of the five are not collinear.
-     *
-     * \pre The five points define a valid arc, in their given order.
-     */
-    Curve_2(const typename RatKernel::Point_2& p1,
-            const typename RatKernel::Point_2& p2,
-            const typename RatKernel::Point_2& p3,
-            const typename RatKernel::Point_2& p4,
-            const typename RatKernel::Point_2& p5);
-
-    /*! constructs a conic arc supported by the conic curve
-     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going in the given
-     * orientation `o` from its source point to its target Point. In this case
-     * only some approximations of the endpoints (`app_ps` and `app_pt`,
-     * respectively) is available, and their exact locations are given
-     * implicitly, specified by the intersections of the supporting conic curve
-     * with \f$ r_1 x^2 + s_1 y^2 + t_1 x y + u_1 x + v_1 y + w_1 = 0\f$ and \f$
-     * r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0\f$, respectively.
-     *
-     * \pre The two auxiliary curves specifying the endpoints really intersect
-     * with the supporting conic curve, such that the arc endpoints define a
-     * bounded segment of the supporting curve (e.g. in case of a hyperbolic
-     * arc, both point should be located on the same branch of the hyperbola).
-     *
-     * \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must
-     * be `COLLINEAR` if it is not curved (a line or a line-pair).
-     */
-    Curve_2(const Rational& r, const Rational& s,
-            const Rational& t, const Rational& u,
-            const Rational& v, const Rational& w,
-            Orientation o,
-            const Point_2& app_ps,
-            const Rational& r1, const Rational& s1,
-            const Rational& t1, const Rational& u1,
-            const Rational& v1, const Rational& w1,
-            const Point_2& app_pt,
-            const Rational& r2, const Rational& s2,
-            const Rational& t2, const Rational& u2,
-            const Rational& v2, const Rational& w2);
+    Curve_2();
 
     /// @}
 
@@ -299,10 +198,6 @@ public:
      */
     Orientation orientation() const;
 
-    /*! return a bounding box of the arc `a`.
-     */
-    Bbox_2 bbox() const;
-
     /// @}
 
     /// \name Operations
@@ -338,10 +233,9 @@ public:
     /// \name Creation
     /// @{
 
-    /*! converts the given arc to an \f$ x\f$-monotone arc.
-     * \pre `arc` is \f$ x\f$-monotone.
+    /*! constructs an empty (invalid) arc.
      */
-    X_monotone_curve_2(const Curve_2& arc);
+    X_monotone_curve_2();
 
     /// @}
 
@@ -387,21 +281,183 @@ public:
     /// @}
   };
 
+  /*! \class
+   * A functor that constructs a conic arc.
+   */
+  class Construct_curve_2 {
+    /*! constructs an arc corresponding to the line segment `seg`.
+     */
+    Curve_2 operator()(const typename RatKernel::Segment_2& seg) const;
+
+    /*! constructs an arc corresponding to the full circle `circ`
+     * (note that this circle has a center point with rational coordinates
+     * and rational squared radius).
+     */
+    Curve_2 operator()(const typename RatKernel::Circle_2& circ) const;
+
+    /*! constructs a circular arc supported by the circle `circ`, going
+     * in the given orientation `o` from the source point `ps` to its target
+     * point `pt`.
+     *
+     * \pre `ps` and `pt` both lie on the circle `circ`.
+     *
+     * \pre `o` is not `COLLINEAR`.
+     */
+    Curve_2 operator()(const typename RatKernel::Circle_2& circ, Orientation o,
+                       const Point_2& ps, const Point_2& pt) const;
+
+    /*! constructs a circular arc going from `p1` (its source point)
+     * through `p2` to `p3` (its target point). Note that all three points have
+     * rational coordinates. The orientation of the arc is determined
+     * automatically.
+     *
+     * \pre The three points are not collinear.
+     */
+    Curve_2 operator()(const typename RatKernel::Point_2& p1,
+                       const typename RatKernel::Point_2& p2,
+                       const typename RatKernel::Point_2& p3) const;
+
+    /*! constructs a conic arc that corresponds to the full conic curve
+     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$.
+     *
+     * \pre As a conic arc must be bounded, the given curve must be an ellipse,
+     * that is \f$ 4 r s - t^2 > 0\f$.
+     */
+    Curve_2 operator()(const Rational& r, const Rational& s,
+                       const Rational& t, const Rational& u,
+                       const Rational& v, const Rational& w) const;
+
+    /*! constructs a conic arc supported by the conic curve
+     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going in the given
+     * orientation `o` from the source point `ps` to its target point `pt`.  * *
+     *
+     * \pre `ps` and `pt` both satisfy the equation of the supporting conic
+     * curve and define a bounded segment of this curve (e.g. in case of a
+     * hyperbolic arc, both point should be located on the same branch of the
+     * hyperbola).
+     *
+     * \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must
+     * be `COLLINEAR` if it is not curved (a line or a line-pair).
+     */
+    Curve_2 operator()(const Rational& r, const Rational& s,
+                       const Rational& t, const Rational& u,
+                       const Rational& v, const Rational& w,
+                       Orientation o,
+                       const Point_2& ps, const Point_2& pt) const;
+
+    /*! constructs a conic arc going from `p1` (its source point)
+     * through `p2`, `p3` and `p4` (in this order) to `p5` (its target
+     * point). Note that all five points have rational coordinates.  The
+     * orientation of the arc is determined automatically.
+     *
+     * \pre No three points of the five are not collinear.
+     *
+     * \pre The five points define a valid arc, in their given order.
+     */
+    Curve_2 operator()(const typename RatKernel::Point_2& p1,
+                       const typename RatKernel::Point_2& p2,
+                       const typename RatKernel::Point_2& p3,
+                       const typename RatKernel::Point_2& p4,
+                       const typename RatKernel::Point_2& p5) const;
+
+    /*! constructs a conic arc supported by the conic curve
+     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going in the given
+     * orientation `o` from its source point to its target Point. In this case
+     * only some approximations of the endpoints (`app_ps` and `app_pt`,
+     * respectively) is available, and their exact locations are given
+     * implicitly, specified by the intersections of the supporting conic curve
+     * with \f$ r_1 x^2 + s_1 y^2 + t_1 x y + u_1 x + v_1 y + w_1 = 0\f$ and \f$
+     * r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0\f$, respectively.
+     *
+     * \pre The two auxiliary curves specifying the endpoints really intersect
+     * with the supporting conic curve, such that the arc endpoints define a
+     * bounded segment of the supporting curve (e.g. in case of a hyperbolic
+     * arc, both point should be located on the same branch of the hyperbola).
+     *
+     * \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must
+     * be `COLLINEAR` if it is not curved (a line or a line-pair).
+     */
+    Curve_2 operator()(const Rational& r, const Rational& s,
+                       const Rational& t, const Rational& u,
+                       const Rational& v, const Rational& w,
+                       Orientation o,
+                       const Point_2& app_ps,
+                       const Rational& r1, const Rational& s1,
+                       const Rational& t1, const Rational& u1,
+                       const Rational& v1, const Rational& w1,
+                       const Point_2& app_pt,
+                       const Rational& r2, const Rational& s2,
+                       const Rational& t2, const Rational& u2,
+                       const Rational& v2, const Rational& w2) const;
+  };
+
+  /*! \class
+   * A functor that constructs an \f$X\f$-monotone conic arc.
+   */
+  class Construct_x_monotone_curve_2 {
+    /*! converts the given arc to an \f$ x\f$-monotone arc.
+     * \pre `arc` is \f$ x\f$-monotone.
+     */
+    X_monotone_curve_2 operator()(const Curve_2& arc) const;
+
+    /*! Constructs an x-monotone curve connecting the two given endpoints.
+     * \param p The first point.
+     * \param q The second point.
+     * \pre p and q must not be the same.
+     * \return A segment connecting p and q.
+     */
+    X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target) const;
+
+    /*! Constructs a special segment of a given line connecting to given
+     * endpoints.
+     * \param a, b, c The coefficients of the supporting line (ax + by + c = 0).
+     * \param source The source point.
+     * \param target The target point.
+     */
+    X_monotone_curve_2 operator()(const Algebraic& a, const Algebraic& b,
+                                  const Algebraic& c,
+                                  const Point_2& source, const Point_2& target) const;
+  };
+
+  /*! \class
+   * A functor that constructs a bounding box of a conic arc.
+   */
+  class Construct_bbox_2 {
+    /*! return a bounding box of the arc `a`.
+     */
+    Bbox_2 operator()() const;
+  };
+
+  /*! \class
+   * A functor that trims a conic arc.
+   */
   class Trim_2 {
   public:
-    /// \name Creation
-    /// @{
-
-    /*! Trims the given x-monotone curve to an from src to tgt.
-     * \ pre `src` and `tgt` lies on the curve
+    /*! Trims the given x-monotone curve to an from source to target.
+     * \ pre `source` and `target` lies on the curve
      */
-    X_monotone_curve_2(const X_monotone_curve_2& xcv,
-                       const Point_2& src,
-                       const Point_2& tgt) const;
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
+                                  const Point_2& source,
+                                  const Point_2& target) const;
 
-    /// @}
-  }/* end Arr_conic_traits_2::Trim_2 */
+  };
 
+  /// \name Accessing Functor Objects
+  /// @{
+
+  /*! Obtain a `Construct_curve_2` functor. */
+  Construct_curve_2 construct_curve_2_object() const;
+
+  /*! Obtain a `Construct_x_monotone_curve_2` functor. */
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
+
+  /*! Obtain a `Bbox_2` functor. */
+  Construct_bbox_2 construct_bbox_2_object() const;
+
+  /*! Obtain a `Trim_2` functor. */
+  Trim_2 trim_2_object() const;
+
+  /// @}
 
 }; /* end Arr_conic_traits_2 */
 } /* end namespace CGAL */
