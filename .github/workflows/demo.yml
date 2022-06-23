@@ -2,6 +2,9 @@ name: Test Polyhedron Demo
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   batch_1:
     runs-on: ubuntu-latest
