@@ -604,22 +604,31 @@ Polygon construct_canonical_polygon_with_markers(const Polygon& polygon,
                                                  const bool reversed)
 {
   const std::size_t polygon_size = polygon.size();
+
   Polygon canonical_polygon;
+  CGAL::internal::resize(canonical_polygon, polygon_size);
 
   if(reversed)
   {
-    std::size_t rfirst = polygon_size - 1 - first;
-    canonical_polygon.insert(canonical_polygon.end(), polygon.rbegin() + rfirst, polygon.rend());
-    canonical_polygon.insert(canonical_polygon.end(), polygon.rbegin(), polygon.rbegin() + rfirst);
+    std::size_t rfirst = first + 1;
+    std::size_t pos = 0;
+    for(std::size_t i=rfirst; i --> 0 ;) // first to 0
+      canonical_polygon[pos++] = polygon[i];
+    for(std::size_t i=polygon_size; i --> rfirst ;) // polygon_size-1 to first+1
+      canonical_polygon[pos++] = polygon[i];
   }
   else
   {
-    canonical_polygon.insert(canonical_polygon.end(), polygon.begin() + first, polygon.end());
-    canonical_polygon.insert(canonical_polygon.end(), polygon.begin(), polygon.begin() + first);
+    std::size_t pos = 0;
+    for(std::size_t i=first; i<polygon_size; ++i)
+      canonical_polygon[pos++] = polygon[i];
+    for(std::size_t i=0; i<first; ++i)
+      canonical_polygon[pos++] = polygon[i];
   }
 
   CGAL_postcondition(canonical_polygon[0] == polygon[first]);
   CGAL_postcondition(canonical_polygon.size() == polygon_size);
+
   return canonical_polygon;
 }
 
