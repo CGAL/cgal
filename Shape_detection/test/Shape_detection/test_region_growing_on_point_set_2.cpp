@@ -77,13 +77,13 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
   Region_growing region_growing(
     input_range, neighbor_query, region_type);
 
-  Region_growing::Result_type regions;
+  typename Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   assert(regions.size() == 72);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region.second));
 
-  Region_growing::Unassigned_type unassigned_points;
+  typename Region_growing::Unassigned_type unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 86);
   return true;

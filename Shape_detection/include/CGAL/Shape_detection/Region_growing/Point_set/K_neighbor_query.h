@@ -69,9 +69,6 @@ namespace Point_set {
     /// \endcond
 
   private:
-    using Index_to_point_map =
-    internal::Item_property_map<Input_range, Point_map>;
-
     using Dereference_pmap = internal::Dereference_property_map_adaptor<Item, PointMap>;
 
     using Search_base = typename std::conditional<
@@ -155,7 +152,6 @@ namespace Point_set {
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
     m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
-    m_index_to_point_map(m_input_range, m_point_map),
     m_deref_pmap(m_point_map),
     m_distance(m_deref_pmap),
     m_tree(
@@ -208,12 +204,6 @@ namespace Point_set {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
-    // A property map that can be used to access points when
-    // iterating over the indices counting items in the input range.
-    const Index_to_point_map& index_to_point_map() const {
-      return m_index_to_point_map;
-    }
-
     void set_k(const std::size_t k) {
       m_number_of_neighbors = k;
     }
@@ -223,7 +213,6 @@ namespace Point_set {
     const Input_range& m_input_range;
     std::vector<Item> m_referenced_input_range;
     const Point_map m_point_map;
-    const Index_to_point_map m_index_to_point_map;
     const Dereference_pmap m_deref_pmap;
 
     std::size_t m_number_of_neighbors;

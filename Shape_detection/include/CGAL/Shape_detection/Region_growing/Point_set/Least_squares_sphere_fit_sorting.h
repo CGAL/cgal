@@ -129,6 +129,11 @@ namespace Point_set {
       CGAL_precondition(input_range.size() > 0);
 
       m_ordered.resize(m_input_range.size());
+
+      std::size_t index = 0;
+      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
+        m_ordered[index++] = it;
+
       m_scores.resize(m_input_range.size());
     }
 

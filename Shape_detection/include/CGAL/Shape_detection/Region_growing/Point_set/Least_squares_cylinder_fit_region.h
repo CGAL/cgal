@@ -66,14 +66,14 @@ namespace Point_set {
     using Input_range = InputRange;
     using Point_map = PointMap;
     using Normal_map = NormalMap;
-
-    using Item = typename InputRange::const_iterator;
-    using ItemType = typename std::iterator_traits<Item>::value_type;
-    using Region = std::vector<Item>;
     /// \endcond
 
     /// Number type.
     typedef typename GeomTraits::FT FT;
+
+    /// Item type.
+    using Item = typename InputRange::const_iterator;
+    using Region = std::vector<Item>;
 
     /// Primitive
     using Primitive = struct P {
@@ -81,6 +81,10 @@ namespace Point_set {
       typename Traits::Line_3 axis;
       typename Traits::FT radius;
     };
+
+    /// Region map
+    using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
+    using Region_index_map = boost::associative_property_map<Region_unordered_map>;
 
     /// @}
 
@@ -217,6 +221,16 @@ namespace Point_set {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief implements `RegionType::region_index_map()`.
+
+      This function creates an empty property map that maps iterators on the input range to std::size_t
+    */
+
+    Region_index_map region_index_map() {
+      return Region_index_map(m_region_map);
+    }
 
     /*!
       \brief implements `RegionType::primitive()`.
@@ -370,6 +384,7 @@ namespace Point_set {
     const Point_map m_point_map;
     const Normal_map m_normal_map;
     const Traits m_traits;
+    Region_unordered_map m_region_map;
 
     FT m_distance_threshold;
     FT m_cos_value_threshold;

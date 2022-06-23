@@ -80,6 +80,10 @@ namespace Polyline {
     /// Primitive
     using Primitive = typename Polyline_traits::Line;
     using Result_type = std::vector<std::pair<Primitive, Region> >;
+
+    /// Region map
+    using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
+    using Region_index_map = boost::associative_property_map<Region_unordered_map>;
     /// @}
 
   private:
@@ -188,6 +192,16 @@ namespace Polyline {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief implements `RegionType::region_index_map()`.
+
+      This function creates an empty property map that maps iterators on the input range to std::size_t
+    */
+
+    Region_index_map region_index_map() {
+      return Region_index_map(m_region_map);
+    }
 
     /*!
       \brief implements `RegionType::primitive()`.
@@ -335,6 +349,7 @@ namespace Polyline {
     const Point_map m_point_map;
     const Traits m_traits;
     const Polyline_traits m_polyline_traits;
+    Region_unordered_map m_region_map;
 
     FT m_distance_threshold;
     FT m_cos_value_threshold;

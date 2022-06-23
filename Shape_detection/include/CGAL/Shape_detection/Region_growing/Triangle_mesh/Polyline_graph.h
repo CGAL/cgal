@@ -48,7 +48,6 @@ namespace Triangle_mesh {
 
     using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
     using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
-    using edge_iterator = typename boost::graph_traits<TriangleMesh>::edge_iterator;
     using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
     using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
@@ -64,14 +63,6 @@ namespace Triangle_mesh {
       std::pair<std::size_t, std::size_t> regions;
     };
 
-    struct Transform_pedge {
-      const edge_descriptor operator()(const PEdge& pedge) const {
-        return pedge.ed;
-      }
-    };
-
-    using Pedge_iterator = typename std::vector<PEdge>::const_iterator;
-    using Transform_iterator = boost::transform_iterator<Transform_pedge, Pedge_iterator>;
     using EdgeIndexMap = typename boost::property_map<TriangleMesh, CGAL::dynamic_edge_property_t<std::size_t> >::const_type;
 
   public:
@@ -183,8 +174,8 @@ namespace Triangle_mesh {
       FaceToRegionMap face_to_region_map,
       const NamedParameters& np = parameters::default_values())
     :  m_vpm(parameters::choose_parameter(parameters::get_parameter(
-              np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh)))
-    ,  m_segment_map(&tmesh, m_vpm), m_tmesh(tmesh)
+              np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh))),
+       m_tmesh(tmesh), m_segment_map(&tmesh, m_vpm)
     {
       clear();
 
@@ -195,7 +186,7 @@ namespace Triangle_mesh {
         put(m_eimap, e, std::size_t(-1));
 
       // collect edges either on the boundary or having two different incident regions
-      for (auto& edge = edge_range.begin(); edge != edge_range.end(); edge++) {
+      for (auto edge = edge_range.begin(); edge != edge_range.end(); edge++) {
         halfedge_descriptor h1 = halfedge(*edge, tmesh),
           h2 = opposite(h1, tmesh);
 
@@ -211,7 +202,6 @@ namespace Triangle_mesh {
 
         if (r1 != r2) {
           m_segments.push_back(*edge);
-          auto s = get(m_segment_map, m_segments[m_segments.size() - 1]);
           add_graph_edge(m_segments.begin() + (m_segments.size() - 1), r1, r2);
         }
       }

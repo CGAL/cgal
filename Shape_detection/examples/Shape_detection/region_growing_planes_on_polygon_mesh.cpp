@@ -15,7 +15,7 @@ using FT      = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 
 // Choose the type of a container for a polygon mesh.
-//#define USE_SURFACE_MESH
+#define USE_SURFACE_MESH
 #if defined(USE_SURFACE_MESH)
     using Polygon_mesh   = CGAL::Surface_mesh<Point_3>;
     using Face_range     = typename Polygon_mesh::Face_range;
@@ -77,6 +77,24 @@ int main(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found planes: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 355);
+
+  const Region_growing::Region_map& map = region_growing.region_map();
+
+  for (std::size_t i = 0; i < regions.size(); i++)
+    for (auto& item : regions[i].second) {
+      if (i != get(map, CGAL::Shape_detection::internal::conditional_deref<Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+        std::cout << "Region map incorrect" << std::endl;
+      }
+    }
+
+  Region_growing::Unassigned_type unassigned;
+  region_growing.unassigned_items(std::back_inserter(unassigned));
+
+  for (auto& item : unassigned) {
+    if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+      std::cout << "Region map for unassigned incorrect" << std::endl;
+    }
+  }
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "planes_polygon_mesh.ply");

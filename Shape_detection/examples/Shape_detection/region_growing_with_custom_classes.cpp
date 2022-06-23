@@ -18,6 +18,9 @@ namespace Custom {
   // An object that stores indices of all its neighbors.
   struct Object {
     std::vector<std::vector<Object>::const_iterator> neighbors;
+    bool operator==(const Object& obj) const {
+      return neighbors == obj.neighbors;
+    }
   };
 
   // A range of objects.
@@ -56,14 +59,23 @@ namespace Custom {
   // These are the only functions that have to be defined.
   class Region_type {
     bool m_is_valid = false;
-    const std::vector<Object> &m_input;
+    const std::vector<Object>& m_input;
 
   public:
     Region_type(const std::vector<Object> &input) : m_input(input) { }
 
     using Primitive = std::size_t;
+
     using Item = std::vector<Object>::const_iterator;
     using Region = std::vector<Item>;
+
+    using Region_unordered_map = boost::unordered_map<Item, std::size_t, CGAL::Shape_detection::internal::hash_item<Item> >;
+    using Region_index_map = boost::associative_property_map<Region_unordered_map>;
+
+    Region_index_map region_index_map() {
+      Region_index_map index_map(m_region_map);
+      return index_map;
+    }
 
     bool is_part_of_region(
       const Item,
@@ -92,6 +104,9 @@ namespace Custom {
       m_is_valid = true;
       return m_is_valid;
     }
+
+  private:
+    Region_unordered_map m_region_map;
   };
 
 } // namespace Custom

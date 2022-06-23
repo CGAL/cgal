@@ -85,14 +85,34 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
   Region_growing region_growing(
     input_range, neighbor_query, region_type, sorting.ordered());
 
-  Region_growing::Result_type regions;
+  typename Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
-  region_growing.clear();
 
   std::cout << "- num regions " + name + ": " << regions.size() << std::endl;
   assert(regions.size() >= minr && regions.size() <= maxr);
 
-  const bool success = true;
+  bool success = true;
+
+  const typename Region_growing::Region_map &map = region_growing.region_map();
+
+  for (std::size_t i = 0; i < regions.size(); i++)
+    for (auto& item : regions[i].second) {
+      if (i != get(map, CGAL::Shape_detection::internal::conditional_deref<typename Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+        std::cout << "Region map incorrect" << std::endl;
+        assert(success = false);
+      }
+    }
+
+  typename Region_growing::Unassigned_type unassigned;
+  region_growing.unassigned_items(std::back_inserter(unassigned));
+
+  for (auto& item : unassigned) {
+    if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<typename Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+      std::cout << "Region map for unassigned incorrect" << std::endl;
+      assert(success = false);
+    }
+  }
+
   std::cout << "rg_" + name + "_sortpoints2, sc_test_success: " << success << std::endl;
   return success;
 }

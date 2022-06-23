@@ -25,6 +25,9 @@ public:
   /// The parameters of the primitive covering the region.
   typedef unspecified_type Primitive;
 
+  /// The reference type to the elements of the input range.
+  typedef unspecified_type Item;
+
   /*!
     checks if the item with the index `index_to`, which is a neighbor of the item
     with the index `index_from`, can be added to the region represented by `indices`.

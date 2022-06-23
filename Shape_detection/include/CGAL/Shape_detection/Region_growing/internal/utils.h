@@ -50,6 +50,44 @@ namespace CGAL {
 namespace Shape_detection {
 namespace internal {
 
+  template<typename Input, typename Result, bool = std::is_same<Input, Result>::value >
+  struct conditional_deref {
+    Result operator()(Input it) {
+      assert(false);
+    }
+  };
+
+  template<typename Input, typename Result>
+  struct conditional_deref<Input, Result, true> {
+    Result operator()(Input it) {
+      return it;
+    }
+  };
+
+  template<typename Input, typename Result>
+  struct conditional_deref<Input, Result, false> {
+    Result operator()(Input it) {
+      return *it;
+    }
+  };
+
+  template<class T, bool = CGAL::is_iterator<T>::value>
+  struct hash_item {};
+
+  template<class T>
+  struct hash_item<T, false> {
+    std::size_t operator()(T i) const {
+      return hash_value(i);
+    }
+  };
+
+  template<class T>
+  struct hash_item<T, true> {
+    std::size_t operator()(T i) const {
+      return hash_value(i.operator->());
+    }
+  };
+
   template<typename GeomTraits>
   class Default_sqrt {
 
@@ -615,8 +653,6 @@ namespace internal {
         (std::numeric_limits<double>::max)());
 
     using FT = typename Traits::FT;
-    using Point_3 = typename Traits::Point_3;
-    using Vector_3 = typename Traits::Vector_3;
     using Line_3 = typename Traits::Line_3;
 
     Line_3 fitted_axis;

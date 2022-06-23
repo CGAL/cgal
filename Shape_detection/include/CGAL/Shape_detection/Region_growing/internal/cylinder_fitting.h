@@ -75,7 +75,7 @@ namespace CGAL
       Eigen::MatrixXd& f1,
       Eigen::MatrixXd& f2) {
 
-      average = Kernel::Vector_3(0, 0, 0);
+      average = typename Kernel::Vector_3(0, 0, 0);
 
       for (auto it : indices) {
         average += get(point_map, *it) - CGAL::ORIGIN;
@@ -189,7 +189,7 @@ namespace CGAL
       double t1 = 4.0 * a.transpose() * b;
       double t2 = 4.0 * b.transpose() * f0 * b;
 
-      line = Kernel::Line_3(Kernel::Point_3(b[0] + average[0],
+      line = typename Kernel::Line_3(typename Kernel::Point_3(b[0] + average[0],
         b[1] + average[1], b[2] + average[2]), direction);
 
       squared_radius = (p.transpose() * mu) + double(b.transpose() * b);
@@ -211,9 +211,7 @@ namespace CGAL
     const Kernel &traits) {
 
     using FT = typename Kernel::FT;
-    using Point_3 = typename Kernel::Point_3;
     using Vector_3 = typename Kernel::Vector_3;
-    using Line_3 = typename Kernel::Line_3;
     typename Kernel::Construct_cross_product_vector_3 cross_product =
       traits.construct_cross_product_vector_3_object();
 
@@ -221,8 +219,6 @@ namespace CGAL
 
     std::size_t nb = 0;
     Vector_3 mean_axis = CGAL::NULL_VECTOR;
-    Point_3 point_on_axis = CGAL::ORIGIN;
-    const auto& ref = get(point_map, *region[0]);
 
     // Axis direction estimation from sample normals by averaging.
     for (std::size_t i = 0; i < region.size() - 1; ++i) {

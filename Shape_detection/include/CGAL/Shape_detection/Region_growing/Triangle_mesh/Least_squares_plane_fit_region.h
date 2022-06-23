@@ -68,15 +68,6 @@ namespace Triangle_mesh {
     using Vertex_to_point_map = VertexToPointMap;
 
     using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-    using Face_to_index_map = internal::Item_to_index_property_map<face_descriptor>;
-    using Face_to_region_index_map = internal::Item_to_region_index_map<Face_to_index_map>;
-
-    struct Face_to_region_map : public Face_to_region_index_map {
-      template<typename Regions>
-      Face_to_region_map(const Face_range& face_range, const Regions& regions) :
-      Face_to_region_index_map(face_range, Face_to_index_map(face_range), regions)
-      { }
-    };
     /// \endcond
 
     /// Number type.
@@ -89,6 +80,9 @@ namespace Triangle_mesh {
     /// Primitive
     using Primitive = typename Traits::Plane_3;
     using Result_type = std::vector<std::pair<Primitive, Region> >;
+
+    /// Region map
+    using Region_index_map = typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<std::size_t> >::const_type;
 
     #ifdef DOXYGEN_NS
       /*!
@@ -211,11 +205,21 @@ namespace Triangle_mesh {
     /// @{
 
     /*!
+      \brief implements `RegionType::region_index_map()`.
+
+      This function creates an empty property map that maps each face to a std::size_t
+    */
+
+    Region_index_map region_index_map() {
+      return get(CGAL::dynamic_face_property_t<std::size_t>(), m_face_graph);
+    }
+
+    /*!
       \brief implements `RegionType::primitive()`.
 
       This function provides the last primitive that has been fitted with the region.
 
-      \return Primitive parameters that fits the region
+      \return Primitive parameters that fits the region.
 
       \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
     */

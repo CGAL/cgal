@@ -131,8 +131,8 @@ namespace Point_set {
       m_ordered.resize(m_input_range.size());
 
       std::size_t index = 0;
-      for (Item& i = m_input_range.begin(); i != m_input_range.end(); i++)
-        m_ordered[index++] = i;
+      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
+        m_ordered[index++] = it;
 
       m_scores.resize(m_input_range.size());
     }

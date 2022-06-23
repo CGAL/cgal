@@ -283,12 +283,10 @@ void save_polygon_mesh_regions(
   const std::string fullpath) {
 
   using Color      = CGAL::IO::Color;
-  using Face_index = typename boost::graph_traits<Polygon_mesh>::face_descriptor;
-  using size_type  = typename Polygon_mesh::size_type;
   srand(static_cast<unsigned int>(time(NULL)));
 
   using Face_property_color = CGAL::dynamic_face_property_t<Color>;
-  using Face_color_map = boost::property_map<Polygon_mesh, Face_property_color>::type;
+  using Face_color_map = typename boost::property_map<Polygon_mesh, Face_property_color>::type;
   Face_color_map face_color = get(Face_property_color(), polygon_mesh);
 
   // Iterate through all regions.

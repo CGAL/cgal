@@ -34,7 +34,7 @@ bool test_lines_points_with_normals() {
 
   using Point_2  = typename Kernel::Point_2;
   using Vector_2 = typename Kernel::Vector_2;
-  using Item = std::vector< std::pair<Point_2, Vector_2> >::const_iterator;
+  using Item = typename std::vector< std::pair<Point_2, Vector_2> >::const_iterator;
 
   const std::vector< std::pair<Point_2, Vector_2> > points_with_normals = {
     std::make_pair(Point_2(0.1, 0.0), Vector_2(0.0, 1.0)),
@@ -66,7 +66,7 @@ template<class Kernel>
 bool test_lines_polylines_2() {
 
   using Point_2 = typename Kernel::Point_2;
-  using Item = std::vector<Point_2>::const_iterator;
+  using Item = typename std::vector<Point_2>::const_iterator;
   const std::vector<Point_2> polyline_2 = {
     Point_2(0.10, 0.00), Point_2(0.50, 0.00), Point_2(0.90, 0.00),
     Point_2(0.13, 0.00), Point_2(0.17, 0.00), Point_2(0.21, 0.00),
@@ -89,7 +89,7 @@ template<class Kernel>
 bool test_lines_polylines_3() {
 
   using Point_3 = typename Kernel::Point_3;
-  using Item = std::vector<Point_3>::const_iterator;
+  using Item = typename std::vector<Point_3>::const_iterator;
   const std::vector<Point_3> polyline_3 = {
     Point_3(0.10, 0.0, 1.0), Point_3(0.50, 0.0, 1.0), Point_3(0.90, 0.0, 1.0),
     Point_3(0.13, 0.0, 1.0), Point_3(0.17, 0.0, 1.0), Point_3(0.21, 0.0, 1.0)
@@ -108,7 +108,7 @@ template<class Kernel>
 bool test_polylines_equal_points() {
 
   using Point_2 = typename Kernel::Point_2;
-  using Item = std::vector<Point_2>::const_iterator;
+  using Item = typename std::vector<Point_2>::const_iterator;
   const std::vector<Point_2> polyline_2 = {
     Point_2(0, 0), Point_2(1, 0), Point_2(2, 0), Point_2(3, 0),
     Point_2(7, 1), Point_2(8, 1), Point_2(9, 1), Point_2(10, 1),
@@ -141,7 +141,7 @@ bool test_lines_segment_set_2() {
   using Region_type = CGAL::Shape_detection::
     Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
 
-  using Item = Region_type::Item;
+  using Item = typename Region_type::Item;
 
   const Segment_range segments = {
     Segment_2(Point_2(0.1, 0.0), Point_2(0.5, 0.0)),
@@ -174,7 +174,7 @@ bool test_lines_segment_set_2() {
   Neighbor_query neighbor_query(segments);
   Region_type region_type(segments);
 
-  std::vector< std::pair< Region_type::Primitive, std::vector<Item> > > regions;
+  std::vector< std::pair< typename Region_type::Primitive, std::vector<Item> > > regions;
   Region_growing region_growing(
     segments, neighbor_query, region_type);
   region_growing.detect(std::back_inserter(regions));
@@ -196,7 +196,7 @@ bool test_lines_segment_set_2_sorting() {
   using Region_type = CGAL::Shape_detection::
     Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
 
-  using Item = Region_type::Item;
+  using Item = typename Region_type::Item;
 
   const Segment_range segments = {
     Segment_2(Point_2(0.1, 0.0), Point_2(0.5, 0.0)),
@@ -237,7 +237,7 @@ bool test_lines_segment_set_2_sorting() {
 
   Region_type region_type(segments);
 
-  std::vector< std::pair< Region_type::Primitive, std::vector<Item> > > regions;
+  typename Region_type::Result_type regions;
   Region_growing region_growing(
     segments, neighbor_query, region_type, sorting.ordered());
   region_growing.detect(std::back_inserter(regions));
@@ -252,10 +252,17 @@ bool test_lines_segment_set_3() {
 
   using Point_3      = typename Kernel::Point_3;
   using Surface_mesh = CGAL::Surface_mesh<Point_3>;
+  using Face_range = typename Surface_mesh::Face_range;
 
   using Plane_region = CGAL::Shape_detection::
     Triangle_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
-  using Face_to_region_map = typename Plane_region::Face_to_region_map;
+
+  using One_ring_query = CGAL::Shape_detection::Triangle_mesh::One_ring_neighbor_query<Surface_mesh>;
+
+  using Plane_sorting = CGAL::Shape_detection::Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, Surface_mesh, One_ring_query>;
+
+  using RG_planes = CGAL::Shape_detection::
+    Region_growing<Face_range, One_ring_query, Plane_region>;
 
   using Polyline_graph = CGAL::Shape_detection::
     Triangle_mesh::Polyline_graph<Surface_mesh>;
@@ -266,7 +273,7 @@ bool test_lines_segment_set_3() {
     Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
   using Sorting = CGAL::Shape_detection::
     Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Polyline_graph, Segment_map>;
-  using Region_growing = CGAL::Shape_detection::
+  using RG_lines = CGAL::Shape_detection::
     Region_growing<Segment_range, Polyline_graph, Region_type>;
 
   std::ifstream in(CGAL::data_file_path("meshes/am.off"));
@@ -277,17 +284,30 @@ bool test_lines_segment_set_3() {
   in >> surface_mesh;
   in.close();
 
+  const auto face_range = faces(surface_mesh);
+
+  One_ring_query one_ring_query(surface_mesh);
+
+  Plane_region plane_type(
+    surface_mesh);
+
+  // Sort face indices.
+  Plane_sorting plane_sorting(
+    surface_mesh, one_ring_query);
+  plane_sorting.sort();
+
+  // Create an instance of the region growing class.
+  RG_planes rg_planes(
+    face_range, one_ring_query, plane_type, plane_sorting.ordered());
+
   assert(surface_mesh.number_of_faces() == 7320);
-  std::vector<std::pair<Kernel::Plane_3, std::vector<typename Surface_mesh::Face_index> > > regions;
-   CGAL::Shape_detection::internal::region_growing_planes_triangle_mesh(
-     surface_mesh, std::back_inserter(regions));
+  typename RG_planes::Result_type regions;
+  rg_planes.detect(std::back_inserter(regions));
   assert(regions.size() == 9);
 
-  const auto face_range = faces(surface_mesh);
   assert(face_range.size() == 7320);
 
-  const Face_to_region_map face_to_region_map(face_range, regions);
-  Polyline_graph pgraph(surface_mesh, face_to_region_map);
+  Polyline_graph pgraph(surface_mesh, rg_planes.region_map());
   const auto& segment_range = pgraph.segment_range();
 
   Region_type region_type(
@@ -296,8 +316,8 @@ bool test_lines_segment_set_3() {
     segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
   sorting.sort();
 
-  Region_growing::Result_type regions2;
-  Region_growing region_growing(
+  typename RG_lines::Result_type regions2;
+  RG_lines region_growing(
     segment_range, pgraph, region_type, sorting.ordered());
   region_growing.detect(std::back_inserter(regions2));
   assert(regions2.size() == 21);
@@ -337,7 +357,7 @@ bool test_planes_points_with_normals() {
 
   assert(points_with_normals.size() == 9);
   std::vector<
-    std::pair< typename Kernel::Plane_3, std::vector<std::vector<std::pair<Point_3, Vector_3> >::const_iterator> >
+    std::pair< typename Kernel::Plane_3, std::vector<typename std::vector<std::pair<Point_3, Vector_3> >::const_iterator> >
   > regions;
 
   CGAL::Shape_detection::internal::region_growing_planes(
@@ -378,7 +398,7 @@ bool test_planes_point_set() {
   points_with_normals.clear();
   assert(points_with_normals.size() == 0);
 
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<Point_set::const_iterator> > > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<typename Point_set::const_iterator> > > regions;
   CGAL::Shape_detection::internal::region_growing_planes(
     point_set, std::back_inserter(regions));
   assert(regions.size() == 1);

@@ -78,9 +78,6 @@ public:
   /// @}
 
 private:
-  using Index_to_point_map =
-    internal::Item_property_map<Input_range, Point_map>;
-
   using Dereference_pmap = internal::Dereference_property_map_adaptor<Item, PointMap>;
 
   using Search_base = typename std::conditional<
@@ -142,7 +139,6 @@ public:
   m_input_range(input_range),
   m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
   m_deref_pmap(m_point_map),
-  m_index_to_point_map(m_input_range, m_point_map),
   m_tree(
     ref_input_range.begin(),
     ref_input_range.end(),
@@ -189,12 +185,6 @@ public:
   /// @}
 
   /// \cond SKIP_IN_MANUAL
-  // A property map that can be used to access points when
-  // iterating over the indices counting items in the input range.
-  const Index_to_point_map& index_to_point_map() const {
-    return m_index_to_point_map;
-  }
-
   void set_sphere_radius(const FT sphere_radius) {
     m_sphere_radius = sphere_radius;
   }
@@ -213,7 +203,6 @@ public:
 private:
   const Input_range& m_input_range;
   const Point_map m_point_map;
-  const Index_to_point_map m_index_to_point_map;
   const Dereference_pmap m_deref_pmap;
 
   FT m_sphere_radius;

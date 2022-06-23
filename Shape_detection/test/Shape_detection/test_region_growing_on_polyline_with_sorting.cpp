@@ -135,6 +135,26 @@ int main(int argc, char *argv[]) {
   for (const auto& region : regions2)
     assert(region_type_2.is_valid_region(region.second));
 
+  Region_growing_2::Region_map map = region_growing_2.region_map();
+
+  for (std::size_t i = 0; i < regions2.size(); i++)
+    for (auto& item : regions2[i].second) {
+      if (i != get(map, CGAL::Shape_detection::internal::conditional_deref<Region_growing_2::Item, typename Region_growing_2::Region_map::key_type>()(item))) {
+        std::cout << "Region map incorrect" << std::endl;
+        assert(false);
+      }
+    }
+
+  Region_growing_2::Unassigned_type unassigned;
+  region_growing_2.unassigned_items(std::back_inserter(unassigned));
+
+  for (auto& item : unassigned) {
+    if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<Region_growing_2::Item, typename Region_growing_2::Region_map::key_type>()(item))) {
+      std::cout << "Region map for unassigned incorrect" << std::endl;
+      assert(false);
+    }
+  }
+
   Region_growing_2::Unassigned_type unassigned2;
   region_growing_2.unassigned_items(std::back_inserter(unassigned2));
   assert(unassigned2.size() == 0);

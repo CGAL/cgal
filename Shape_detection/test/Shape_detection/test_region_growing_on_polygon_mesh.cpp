@@ -66,13 +66,13 @@ bool test_region_growing_on_triangle_mesh(int argc, char *argv[]) {
   Region_growing region_growing(
     face_range, neighbor_query, region_type);
 
-  Region_growing::Result_type regions;
+  typename Region_growing::Result_type regions;
   region_growing.detect(std::back_inserter(regions));
   assert(regions.size() == 414);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region.second));
 
-  Region_growing::Unassigned_type unassigned_faces;
+  typename Region_growing::Unassigned_type unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
   assert(unassigned_faces.size() == 992);
   return true;

@@ -25,33 +25,10 @@
 #include <CGAL/is_iterator.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
 namespace CGAL {
 namespace Shape_detection {
-
-namespace internal {
-template<typename Item, typename InputIterator, bool>
-struct conditional_deref {
-  Item operator()(InputIterator it) {
-    assert(false);
-  }
-};
-
-template<typename Item, typename InputIterator>
-struct conditional_deref<Item, InputIterator, true> {
-  Item operator()(InputIterator it) {
-    return it;
-  }
-};
-
-template<typename Item, typename InputIterator>
-struct conditional_deref<Item, InputIterator, false> {
-  Item operator()(InputIterator it) {
-    return *it;
-  }
-};
-}
 
   /*!
     \ingroup PkgShapeDetectionRG
@@ -94,6 +71,7 @@ struct conditional_deref<Item, InputIterator, false> {
     using Region = std::vector<Item>;
 
     using Result_type = std::vector<std::pair<typename Region_type::Primitive, std::vector<Item> > >;
+    using Region_map = typename Region_type::Region_index_map;
     using Unassigned_type = std::vector<Item>;
     /// \endcond
 
@@ -132,15 +110,15 @@ struct conditional_deref<Item, InputIterator, false> {
       m_input_range(input_range),
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
+      m_region_map(region_type.region_index_map()),
       m_visited(m_visited_map) {
 
       CGAL_precondition(input_range.size() > 0);
       m_seed_range.resize(m_input_range.size());
 
-      //fillSeedMap<std::is_same<typename Input_range::const_iterator, Item>::value>();
       std::size_t idx = 0;
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
-        m_seed_range[idx++] = internal::conditional_deref<Item, typename Input_range::const_iterator, std::is_same<typename Input_range::const_iterator, Item>::value>()(it);
+        m_seed_range[idx++] = internal::conditional_deref<typename Input_range::const_iterator, Item>()(it);
 
       clear();
     }
@@ -154,6 +132,7 @@ struct conditional_deref<Item, InputIterator, false> {
       m_input_range(input_range),
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
+      m_region_map(region_type.region_index_map()),
       m_visited(m_visited_map) {
 
       CGAL_precondition(input_range.size() > 0);
@@ -191,6 +170,7 @@ struct conditional_deref<Item, InputIterator, false> {
       clear();
 
       Region region;
+      std::size_t idx = 0;
 
       // Grow regions.
       for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
@@ -205,10 +185,22 @@ struct conditional_deref<Item, InputIterator, false> {
             revert(region);
           } else {
             *(regions++) = std::pair<typename RegionType::Primitive, Region>(m_region_type.primitive(), region);
+            fill_region_map(idx++, region);
           }
         }
       }
+
       return regions;
+    }
+
+    /*!
+      \brief provides a property map that provides the region index (or std::size_t(-1)) for each input element.
+
+      \return Property map that maps each iterator of the input range to a region index.
+    */
+
+    const Region_map &region_map() {
+      return m_region_map;
     }
 
     /// @}
@@ -231,7 +223,7 @@ struct conditional_deref<Item, InputIterator, false> {
     template<typename OutputIterator>
     OutputIterator unassigned_items(OutputIterator output) const {
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
-        Item i = internal::conditional_deref<Item, typename Input_range::const_iterator, std::is_same<typename Input_range::const_iterator, Item>::value>()(it);
+        Item i = internal::conditional_deref<typename Input_range::const_iterator, Item>()(it);
         if (!get(m_visited, i))
           *(output++) = i;
       }
@@ -242,8 +234,10 @@ struct conditional_deref<Item, InputIterator, false> {
 
     /// \cond SKIP_IN_MANUAL
     void clear() {
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
-        put(m_visited, internal::conditional_deref<Item, typename Input_range::const_iterator, std::is_same<typename Input_range::const_iterator, Item>::value>()(it), false);
+      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
+        put(m_region_map, internal::conditional_deref<typename Input_range::const_iterator, typename Region_map::key_type>()(it), std::size_t(-1));
+        put(m_visited, internal::conditional_deref<typename Input_range::const_iterator, Item>()(it), false);
+      }
     }
     /// \endcond
 
@@ -251,28 +245,18 @@ struct conditional_deref<Item, InputIterator, false> {
     const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     Region_type& m_region_type;
+    Region_map m_region_map;
     std::vector<Item> m_seed_range;
 
-    template<class T, bool = CGAL::is_iterator<T>::value>
-    struct hash_item {};
-
-    template<class T>
-    struct hash_item<T, false> {
-      std::size_t operator()(T i) const {
-        return hash_value(i);
-      }
-    };
-
-    template<class T>
-    struct hash_item<T, true> {
-      std::size_t operator()(T i) const {
-        return hash_value(i.operator->());
-      }
-    };
-
-    using VisitedMap = boost::unordered_map<typename Region_type::Item, bool, hash_item<typename Region_type::Item> >;
+    using VisitedMap = boost::unordered_map<typename Region_type::Item, bool, internal::hash_item<typename Region_type::Item> >;
     VisitedMap m_visited_map;
     boost::associative_property_map<VisitedMap> m_visited;
+
+    void fill_region_map(std::size_t idx, const Region& region) {
+      for (auto item : region) {
+        put(m_region_map, internal::conditional_deref<Item, typename Region_map::key_type>()(item), idx);
+      }
+    }
 
     bool propagate(const Item &seed, Region& region) {
       region.clear();
