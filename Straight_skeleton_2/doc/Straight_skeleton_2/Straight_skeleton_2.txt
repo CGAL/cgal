@@ -441,7 +441,7 @@ On the other hand, only reflex vertices (whose internal angle \f$ > \pi\f$)
 are the source of deviations of the bisectors from its center
 location. Therefore, for convex polygons, the straight skeleton, the
 medial axis and the Voronoi diagram are exactly equivalent,
-and, if a non-convex polygon contains only vertices of lowfor f in *.txt ; do echo $f ; aspell list < $f | sort | uniq -c ; done
+and, if a non-convex polygon contains only vertices of low
 reflexivity, the straight skeleton bisectors will be placed nearly
 equidistant to their defining edges, producing a straight skeleton
 pretty much alike a proper medial axis.
