@@ -403,7 +403,21 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                typename std::enable_if<
                                                  CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>::type* = nullptr)
 {
-  return create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(), ofk, ssk);
+  std::vector<boost::shared_ptr<OutPolygon> > polygons =
+    create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(), ofk, ssk);
+
+  for (typename PolygonWithHoles::Hole_const_iterator hit=aPoly.holes_begin(); hit!=aPoly.holes_end(); ++hit)
+  {
+    typename PolygonWithHoles::Polygon_2 hole = *hit;
+    hole.reverse_orientation();
+    std::vector<boost::shared_ptr<OutPolygon> > hole_polygons =
+        create_interior_skeleton_and_offset_polygons_2(aOffset,
+                                                       hole,
+                                                       ofk,ssk);
+    polygons.insert(polygons.end(), hole_polygons.begin(), hole_polygons.end());
+  }
+
+  return polygons;
 }
 
 
