@@ -399,7 +399,7 @@ public :
 
   template <class ET1>
   explicit Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
-  typename boost::enable_if_t<!is_implicit_convertible<ET1,ET>::value,int> = 0)
+  typename std::enable_if_t<!is_implicit_convertible<ET1,ET>::value,int> = 0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
 
   friend void swap(Lazy_exact_nt& a, Lazy_exact_nt& b) noexcept
