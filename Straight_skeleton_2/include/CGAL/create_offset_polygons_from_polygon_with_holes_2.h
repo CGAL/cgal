@@ -90,8 +90,30 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                           const OfK& ofk,
                                                           const SsK& ssk)
 {
-  return arrange_offset_polygons_2<OutPolygonWithHoles>(
-           create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly, ofk, ssk));
+  typedef typename CGAL_SS_i::Default_return_polygon_type<Polygon, OfK>::type Polygon_;
+  std::vector<boost::shared_ptr<Polygon_> > raw_output =
+    create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly, ofk, ssk);
+
+  // filter offset of the outer frame
+  typename OfK::Point_2 xtrm_pt = *(raw_output[0]->begin());
+  std::size_t outer_id=0;
+  for(std::size_t i=0; i<raw_output.size(); ++i)
+    if (raw_output[i]->orientation() == COUNTERCLOCKWISE)
+    {
+      for (const typename OfK::Point_2& p : raw_output[i]->container())
+        if (p < xtrm_pt)
+        {
+          xtrm_pt=p;
+          outer_id=i;
+        }
+    }
+  if (outer_id != (raw_output.size()-1))
+    std::swap(raw_output[outer_id], raw_output.back());
+  raw_output.pop_back();
+  for (boost::shared_ptr<Polygon_> ptr : raw_output)
+    ptr->reverse_orientation();
+
+  return arrange_offset_polygons_2<OutPolygonWithHoles>(raw_output);
 }
 
 template<class FT, class Polygon, class OfK,
