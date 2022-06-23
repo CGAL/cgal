@@ -17,6 +17,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <CGAL/Container_helper.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 
@@ -990,6 +991,66 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
   return removed_polygons_n;
 }
 
+template <typename PointRange, typename PolygonRange,
+          typename Polygon = typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3>
+struct Polygon_soup_fixer
+{
+  template <typename NamedParameters>
+  void operator()(PointRange& points,
+                  PolygonRange& polygons,
+                  const NamedParameters& np) const
+  {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+
+    typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+
+  #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+    std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
+  #endif
+
+    merge_duplicate_points_in_polygon_soup(points, polygons, np);
+    internal::simplify_polygons_in_polygon_soup(points, polygons, traits);
+    internal::split_pinched_polygons_in_polygon_soup(points, polygons, traits);
+    internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
+    merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
+    remove_isolated_points_in_polygon_soup(points, polygons);
+  }
+};
+
+// Specialization if the polygon soup is an array
+// Disable repair functions that are meaningless for arrays
+template <typename PointRange, typename PolygonRange, typename PID, std::size_t N>
+struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
+{
+  template <typename NamedParameters>
+  void operator()(PointRange& points,
+                  PolygonRange& polygons,
+                  const NamedParameters& np) const
+  {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+
+    typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+
+  #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+    std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
+  #endif
+
+    merge_duplicate_points_in_polygon_soup(points, polygons, np);
+
+//    internal::simplify_polygons_in_polygon_soup(points, polygons, traits);
+//    internal::split_pinched_polygons_in_polygon_soup(points, polygons, traits);
+
+    internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
+    merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
+    remove_isolated_points_in_polygon_soup(points, polygons);
+  }
+};
+
+
 /// \ingroup PMP_repairing_grp
 ///
 /// \brief cleans a given polygon soup through various repairing operations.
@@ -1053,22 +1114,8 @@ void repair_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
                          const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
-
-#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
-  std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
-#endif
-
-  merge_duplicate_points_in_polygon_soup(points, polygons, np);
-  internal::simplify_polygons_in_polygon_soup(points, polygons, traits);
-  internal::split_pinched_polygons_in_polygon_soup(points, polygons, traits);
-  internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
-  merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
-  remove_isolated_points_in_polygon_soup(points, polygons);
+  Polygon_soup_fixer<PointRange, PolygonRange> fixer;
+  fixer(points, polygons, np);
 }
 
 } // end namespace Polygon_mesh_processing
