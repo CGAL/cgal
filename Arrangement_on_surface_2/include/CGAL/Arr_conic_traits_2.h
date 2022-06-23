@@ -74,8 +74,6 @@ public:
 
   typedef typename Nt_traits::Integer     Integer;
 
-  typedef Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>  Self;
-
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
@@ -95,8 +93,8 @@ public:
 
 private:
   // Type definition for the intersection points mapping.
-  typedef typename Point_2::Conic_id                      Conic_id;
-  typedef std::pair<Conic_id, Conic_id>                   Conic_pair;
+  using Conic_id = typename Point_2::Conic_id;
+  using Conic_pair = std::pair<Conic_id, Conic_id>;
 
   /*! \struct Less functor for Conic_pair.
    */
