@@ -806,6 +806,44 @@ void test_offset_polygon_exterior()
 }
 
 template <typename K>
+void test_offset_polygon_with_holes_exterior()
+{
+  std::cout << " --- Test Polygon exterior, kernel: " << typeid(K).name() << std::endl;
+
+  typedef typename K::Point_2                                        Point;
+
+  typedef CGAL::Polygon_2<K>                                         Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
+  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
+  typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
+
+  Polygon_2 outer ;
+    outer.push_back( Point( 10.0, 10.0) ) ;
+    outer.push_back( Point(-10.0, 10.0) ) ;
+    outer.push_back( Point(-10.0, -10.0) ) ;
+    outer.push_back( Point(10.0, -10.0) ) ;
+
+  Polygon_2 hole ;
+    hole.push_back( Point(5.0,5.0) ) ;
+    hole.push_back( Point(5.0,-5.0) ) ;
+    hole.push_back( Point(-5.0,-5.0) ) ;
+    hole.push_back( Point(-5.0,5.0) ) ;
+
+  Polygon_with_holes_2 pwh(outer) ;
+  pwh.add_hole( hole ) ;
+
+  Polygon_with_holes_2_ptr_container offset_poly_with_holes_1 =
+    CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2(1., pwh, K(), EPICK());
+  assert(offset_poly_with_holes_1.size()==1);
+  assert(offset_poly_with_holes_1[0]->number_of_holes()==1);
+
+  Polygon_with_holes_2_ptr_container offset_poly_with_holes_2 =
+    CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2(5., pwh, K(), EPICK());
+  assert(offset_poly_with_holes_2.size()==1);
+  assert(offset_poly_with_holes_2[0]->number_of_holes()==0);
+}
+
+template <typename K>
 void test_offset(const char* filename)
 {
   std::cout << "Construct inner offset of input: " << filename
@@ -937,6 +975,7 @@ void test_kernel()
   test_offset_non_manifold<K>();
   test_offset_non_manifold_2<K>();
   test_offset_polygon_exterior<K>();
+  test_offset_polygon_with_holes_exterior<K>();
   test_offset_multiple_CCs<K>();
 
   // Real data
