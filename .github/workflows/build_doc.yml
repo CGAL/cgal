@@ -9,7 +9,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v6
         id: get_round
         with:
          result-encoding: string
@@ -31,7 +31,7 @@ jobs:
              }
            }
            return 'stop'
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v6
         if: steps.get_round.outputs.result != 'stop'
         id: get_pr_number
         with:
@@ -115,7 +115,7 @@ jobs:
           fi
 
       - name: Post address
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         if: ${{ success() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
@@ -131,7 +131,7 @@ jobs:
             });
 
       - name: Post error
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         if: ${{ failure() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
