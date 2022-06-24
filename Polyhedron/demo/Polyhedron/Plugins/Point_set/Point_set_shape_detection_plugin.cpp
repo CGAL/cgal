@@ -272,21 +272,15 @@ private:
 
     using Point_map = typename Point_set::Point_map;
     using Normal_map = typename Point_set::Vector_map;
-    using RefInput_range = std::vector<typename Point_set::const_iterator>;
 
     using Neighbor_query =
-    CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set, RefInput_range, Point_map>;
+    CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set, Point_map>;
     using Region_type =
     CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Point_map, Normal_map>;
     using Sorting =
     CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Point_set, Neighbor_query, Point_map>;
     using Region_growing =
     CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>;
-
-    using Point_to_index_map =
-    CGAL::Shape_detection::internal::Item_to_index_property_map<Point_set::Index>;
-    using Point_to_region_index_map =
-    CGAL::Shape_detection::internal::Item_to_region_index_map<Point_to_index_map>;
 
     // Set parameters.
     const double search_sphere_radius = dialog.cluster_epsilon();
@@ -340,14 +334,9 @@ private:
     }
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    RefInput_range ref(points->size());
-    std::size_t i = 0;
-    for (auto it = points->begin(); it != points->end(); it++)
-      ref[i++] = it;
-
     // Region growing set up.
     Neighbor_query neighbor_query(
-      *points, ref, CGAL::parameters::
+      *points, CGAL::parameters::
       sphere_radius(search_sphere_radius));
     Region_type region_type(
       *points, CGAL::parameters::
@@ -384,10 +373,11 @@ private:
     }
     CGAL_precondition(planes.size() == regions.size());
 
-    const Point_to_index_map point_to_index_map(*points);
-    const Point_to_region_index_map point_to_region_map(
-      *points, point_to_index_map, regions);
     const CGAL::Identity_property_map<Plane_3> plane_identity_map;
+    CGAL::internal::Dynamic_property_map<Point_set::Index, std::size_t> plane_index_map;
+
+    for (auto& it = points->begin(); it != points->end(); it++)
+      put(plane_index_map, *it, get(region_growing.region_map(), it));
 
     if (dialog.regularize()) {
 
@@ -398,7 +388,7 @@ private:
         *points,
         points->point_map(),
         CGAL::parameters::
-        plane_index_map(point_to_region_map).
+        plane_index_map(plane_index_map).
         regularize_parallelism(true).
         regularize_orthogonality(true).
         regularize_coplanarity(true).
@@ -541,7 +531,7 @@ private:
         search_sphere_radius,
         points->parameters().
         plane_map(plane_identity_map).
-        plane_index_map(point_to_region_map));
+        plane_index_map(plane_index_map));
 
       if (pts_full->point_set()->empty())
         delete pts_full;
