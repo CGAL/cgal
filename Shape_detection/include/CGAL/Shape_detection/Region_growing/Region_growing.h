@@ -20,6 +20,9 @@
 #include <queue>
 #include <vector>
 
+// Boost includes.
+#include <boost/unordered_map.hpp>
+
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/is_iterator.h>
