@@ -31,9 +31,8 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
   using Input_range = CGAL::Point_set_3<Point_3>;
   using Point_map   = typename Input_range::Point_map;
   using Normal_map = typename Input_range::Vector_map;
-  using RefInput_range = std::vector<typename Input_range::const_iterator>;
 
-  using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, RefInput_range, Point_map>;
+  using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
   using Region_type    = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
@@ -54,14 +53,9 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
   in.close();
   assert(input_range.size() == 8075);
 
-  RefInput_range ref(input_range.size());
-  std::size_t i = 0;
-  for (auto it = input_range.begin(); it != input_range.end(); it++)
-    ref[i++] = it;
-
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, ref, CGAL::parameters::
+    input_range, CGAL::parameters::
     sphere_radius(sphere_radius));
 
   Region_type region_type(

@@ -27,6 +27,7 @@
 #include <typeinfo>
 
 // Boost headers.
+#include <boost/iterator/function_input_iterator.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -49,6 +50,16 @@
 namespace CGAL {
 namespace Shape_detection {
 namespace internal {
+
+  template<class T>
+  struct reference_iterator_generator {
+    using result_type = T;
+    reference_iterator_generator(T iterator) : it(iterator) {  }
+    result_type operator() () const {
+      return it++;
+    }
+    mutable T it;
+  };
 
   template<typename Input, typename Result, bool = std::is_same<Input, Result>::value >
   struct conditional_deref {

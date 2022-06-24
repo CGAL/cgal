@@ -54,6 +54,7 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(surface_mesh);
+
   Region_type region_type(
     surface_mesh,
     CGAL::parameters::

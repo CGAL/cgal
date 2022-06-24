@@ -16,12 +16,11 @@ using Vector_3 = Kernel::Vector_3;
 
 using Point_set_2 = CGAL::Point_set_3<Point_2, Vector_2>;
 using Point_set_3 = CGAL::Point_set_3<Point_3, Vector_3>;
-using RefInput_range_2 = std::vector<Point_set_2::const_iterator>;
 
 using Point_map  = Point_set_2::Point_map;
 using Normal_map = Point_set_2::Vector_map;
 
-using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Point_set_2, RefInput_range_2, Point_map>;
+using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Point_set_2, Point_map>;
 using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region<Kernel, Point_set_2, Point_map, Normal_map>;
 using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting<Kernel, Point_set_2, Neighbor_query, Point_map>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Point_set_2, Neighbor_query, Region_type>;
@@ -62,14 +61,9 @@ int main(int argc, char** argv) {
   const FT          max_angle       = FT(10);
   const std::size_t min_region_size = 20;
 
-  RefInput_range_2 ref(point_set_2.size());
-  std::size_t i = 0;
-  for (auto it = point_set_2.begin(); it != point_set_2.end(); it++)
-    ref[i++] = it;
-
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    point_set_2, ref, CGAL::parameters::k_neighbors(k).point_map(point_set_2.point_map()));
+    point_set_2, CGAL::parameters::k_neighbors(k).point_map(point_set_2.point_map()));
 
   Region_type region_type(
     point_set_2,

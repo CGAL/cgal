@@ -14,13 +14,12 @@ using FT       = typename Kernel::FT;
 using Point_3  = typename Kernel::Point_3;
 
 using Input_range  = CGAL::Point_set_3<Point_3>;
-using RefInput_range = std::vector<Input_range::iterator>;
 using Output_range = CGAL::Point_set_3<Point_3>;
 using Point_map    = typename Input_range::Point_map;
 using Normal_map   = typename Input_range::Vector_map;
 
 using Region_type = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Input_range, RefInput_range, Point_map>;
+using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
 using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Input_range, Neighbor_query, Region_type>;
 using Point_inserter = utils::Insert_point_colored_by_region_index<Input_range, Output_range, Point_map, Kernel::Plane_3>;
@@ -43,11 +42,6 @@ int main(int argc, char *argv[]) {
   std::cout << "* number of input points: " << input_range.size() << std::endl;
   assert(is_default_input && input_range.size() == 8075);
 
-  RefInput_range ref(input_range.size());
-  std::size_t i = 0;
-  for (auto it = input_range.begin(); it != input_range.end(); it++)
-    ref[i++] = it;
-
   // Default parameter values for the data file building.xyz.
   const std::size_t k               = 12;
   const FT          max_distance    = FT(2);
@@ -56,7 +50,7 @@ int main(int argc, char *argv[]) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    input_range, ref, CGAL::parameters::
+    input_range, CGAL::parameters::
     k_neighbors(k));
 
   Sorting sorting(input_range, neighbor_query);

@@ -26,6 +26,7 @@
 
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
+#include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -53,7 +54,6 @@ namespace Point_set {
   template<
   typename GeomTraits,
   typename InputRange,
-  typename RefInputRange,
   typename PointMap>
   class K_neighbor_query {
 
@@ -148,15 +148,15 @@ namespace Point_set {
     template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     K_neighbor_query(
       const InputRange& input_range,
-      const RefInputRange& ref_input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
+    m_ref_gen(input_range.begin()),
     m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
     m_deref_pmap(m_point_map),
     m_distance(m_deref_pmap),
     m_tree(
-      ref_input_range.begin(),
-      ref_input_range.end(),
+      boost::make_function_input_iterator(m_ref_gen, std::size_t(0)),
+      boost::make_function_input_iterator(m_ref_gen, input_range.size()),
       Splitter(),
       Search_traits(m_deref_pmap)) {
 
@@ -211,6 +211,7 @@ namespace Point_set {
 
   private:
     const Input_range& m_input_range;
+    internal::reference_iterator_generator<typename Input_range::const_iterator> m_ref_gen;
     std::vector<Item> m_referenced_input_range;
     const Point_map m_point_map;
     const Dereference_pmap m_deref_pmap;

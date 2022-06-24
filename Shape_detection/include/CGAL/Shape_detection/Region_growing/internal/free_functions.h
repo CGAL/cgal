@@ -39,19 +39,12 @@ OutputIterator region_growing_lines(
   typedef typename NP_helper::Normal_map NormalMap;
   typedef typename NP_helper::Geom_traits Kernel;
 
-  using RefInput_range = std::vector<typename InputRange::const_iterator>;
-  using Neighbor_query = Point_set::K_neighbor_query<Kernel, InputRange, RefInput_range, PointMap>;
+  using Neighbor_query = Point_set::K_neighbor_query<Kernel, InputRange, PointMap>;
   using Region_type = Point_set::Least_squares_line_fit_region<Kernel, InputRange, PointMap, NormalMap>;
   using Sorting = Point_set::Least_squares_line_fit_sorting<Kernel, InputRange, Neighbor_query, PointMap>;
   using Region_growing = Region_growing<InputRange, Neighbor_query, Region_type>;
 
-  RefInput_range ref(points.size());
-
-  std::size_t i = 0;
-  for (auto it = points.begin(); it != points.end(); it++)
-    ref[i++] = it;
-
-  Neighbor_query neighbor_query(points, ref, np);
+  Neighbor_query neighbor_query(points, np);
   Region_type region_type(points, np);
   Sorting sorting(points, neighbor_query, np);
   sorting.sort();
@@ -76,19 +69,12 @@ OutputIterator region_growing_planes(
   typedef typename NP_helper::Normal_map NormalMap;
   typedef typename NP_helper::Geom_traits Kernel;
 
-  using RefInput_range = std::vector<typename InputRange::const_iterator>;
-  using Neighbor_query = Point_set::K_neighbor_query<Kernel, InputRange, RefInput_range, PointMap>;
+  using Neighbor_query = Point_set::K_neighbor_query<Kernel, InputRange, PointMap>;
   using Region_type = Point_set::Least_squares_plane_fit_region<Kernel, InputRange, PointMap, NormalMap>;
   using Sorting = Point_set::Least_squares_plane_fit_sorting<Kernel, InputRange, Neighbor_query, PointMap>;
   using Region_growing = Region_growing<InputRange, Neighbor_query, Region_type>;
 
-  RefInput_range ref(points.size());
-
-  std::size_t i = 0;
-  for (auto it = points.begin(); it != points.end(); it++)
-    ref[i++] = it;
-
-  Neighbor_query neighbor_query(points, ref, np);
+  Neighbor_query neighbor_query(points, np);
   Region_type region_type(points, np);
   Sorting sorting(points, neighbor_query, np);
   sorting.sort();

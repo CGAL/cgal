@@ -28,8 +28,7 @@ using Point_3 = typename Kernel::Point_3;
 using Input_range = CGAL::Point_set_3<Point_3>;
 using Point_map   = typename Input_range::Point_map;
 using Normal_map  = typename Input_range::Vector_map;
-using RefInput_range = std::vector<typename Input_range::const_iterator>;
-using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range, RefInput_range, Point_map>;
+using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
 
 using Plane_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Plane_sorting = SD::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
@@ -63,14 +62,9 @@ bool test(
   in >> input_range;
   in.close();
 
-  RefInput_range ref(input_range.size());
-  std::size_t i = 0;
-  for (auto it = input_range.begin(); it != input_range.end(); it++)
-    ref[i++] = it;
-
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, ref, CGAL::parameters::
+    input_range, CGAL::parameters::
     k_neighbors(k));
 
   // Sort indices.

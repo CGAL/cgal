@@ -26,11 +26,10 @@ using Vector_2 = typename Kernel::Vector_2;
 
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Input_range       = std::vector<Point_with_normal>;
-using RefInput_range    = std::vector<typename Input_range::const_iterator>;
 using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
 using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, RefInput_range, Point_map>;
+using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
 using Line_region    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Line_sorting   = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
 using Circle_region  = SD::Point_set::Least_squares_circle_fit_region<Kernel, Input_range, Point_map, Normal_map>;
@@ -60,15 +59,11 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
   in.close();
   assert(input_range.size() == 3634);
 
-  RefInput_range ref(input_range.size());
-  std::size_t i = 0;
-  for (auto it = input_range.begin(); it != input_range.end(); it++)
-    ref[i++] = it;
-
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, ref,
+    input_range,
     CGAL::parameters::k_neighbors(k));
+
   Region_type region_type(
     input_range,
     CGAL::parameters::

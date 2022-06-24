@@ -16,8 +16,7 @@ using Point_set  = CGAL::Point_set_3<Point_3>;
 using Point_map  = typename Point_set::Point_map;
 using Normal_map = typename Point_set::Vector_map;
 
-using RefInput_range = std::vector<typename Point_set::const_iterator>;
-using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Point_set, RefInput_range, Point_map>;
+using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Point_set, Point_map>;
 using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<Kernel, Point_set, Point_map, Normal_map>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>;
 
@@ -46,15 +45,9 @@ int main(int argc, char** argv) {
   const FT          max_angle       = FT(25);
   const std::size_t min_region_size = 20;
 
-  RefInput_range ref(point_set.size());
-
-  std::size_t i = 0;
-  for (auto it = point_set.begin(); it != point_set.end(); it++)
-    ref[i++] = it;
-
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    point_set, ref, CGAL::parameters::k_neighbors(k));
+    point_set, CGAL::parameters::k_neighbors(k));
 
   Region_type region_type(
     point_set,
