@@ -705,7 +705,11 @@ bool read_PLY_faces(std::istream& in,
                     ColorOutputIterator fc_out,
                     const char* vertex_indices_tag,
                     std::enable_if_t<
+#if defined(MSC_VER_) && (MSC_VER > 1900)
                       CGAL::is_iterator_v<ColorOutputIterator>
+#else
+                      CGAL::is_iterator<ColorOutputIterator>::value
+#endif
                     >* = nullptr)
 {
   typedef CGAL::IO::Color                                 Color_rgb;
