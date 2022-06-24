@@ -530,8 +530,8 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Graph_traits::edge_descriptor edge_descriptor;
 
-  bool flip(halfedge_descriptor){ return true; }
-  bool collapse(edge_descriptor){ return true; }
+  constexpr bool flip(halfedge_descriptor){ return true; }
+  constexpr bool collapse(edge_descriptor){ return true; }
 };
 
 } // namespace internal

@@ -76,7 +76,7 @@ public:
     set_of_indices.insert(index);
   }
 
-  bool go_further() const { return true; }
+  constexpr bool go_further() const { return true; }
 
   void intersection(const Point_3& query, const Primitive& primitive)
   {

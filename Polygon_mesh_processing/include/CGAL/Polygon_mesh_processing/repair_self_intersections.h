@@ -2160,9 +2160,9 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #else
     struct Return_true
     {
-      bool is_empty() const { return true; }
-      bool operator()(const std::vector<std::vector<typename GeomTraits::Point_3> >&) const { return true; }
-      bool operator()(const TriangleMesh&) const { return true; }
+      constexpr bool is_empty() const { return true; }
+      constexpr bool operator()(const std::vector<std::vector<typename GeomTraits::Point_3> >&) const { return true; }
+      constexpr bool operator()(const TriangleMesh&) const { return true; }
     };
 
     Return_true cc_envelope;
@@ -2331,7 +2331,7 @@ namespace experimental {
 template <class TriangleMesh>
 struct Remove_self_intersection_default_visitor
 {
-  bool stop() const { return false; }
+  constexpr bool stop() const { return false; }
   template <class FaceContainer>
   void status_update(const FaceContainer&) {}
   void start_main_loop() {}
@@ -2391,7 +2391,7 @@ bool remove_self_intersections(const FaceRange& face_range,
 
   struct Return_false
   {
-    bool operator()(std::pair<face_descriptor, face_descriptor>) const { return false; }
+    constexpr bool operator()(std::pair<face_descriptor, face_descriptor>) const { return false; }
   };
 
   typedef typename internal_np::Lookup_named_param_def <

@@ -46,14 +46,14 @@ struct Static_boolean_property_map
   typedef bool reference;
   typedef boost::read_write_property_map_tag category;
 
-  inline friend
+  inline friend constexpr
   value_type
   get(Static_boolean_property_map, const key_type&)
   {
     return default_value;
   }
 
-  inline friend
+  inline friend constexpr
   void
   put(Static_boolean_property_map, const key_type&, value_type)
   {}

@@ -59,7 +59,7 @@ namespace internal {
     // A property map
     template <typename G>
     struct No_constraint {
-      friend bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
+      friend constexpr bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
       {
         return false;
       }
