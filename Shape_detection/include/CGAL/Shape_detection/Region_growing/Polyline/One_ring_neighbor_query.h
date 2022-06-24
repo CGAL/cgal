@@ -51,10 +51,11 @@ namespace Polyline {
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
+    /// \endcond
 
+    /// Item type.
     using Item = typename InputRange::const_iterator;
     using Region = std::vector<Item>;
-    /// \endcond
 
     /// \name Initialization
     /// @{
@@ -82,15 +83,15 @@ namespace Polyline {
     /*!
       \brief implements `NeighborQuery::operator()()`.
 
-      This operator retrieves indices of the previous and next vertex in a polyline
-      with respect to the vertex with the index `query_index`.
-      These indices are returned in `neighbors`.
+      This operator retrieves the previous and next vertex in a polyline
+      with respect to the vertex `query`.
+      The `Items` are returned in `neighbors`.
 
-      \param query_index
-      index of the query vertex
+      \param query
+      `Item` of the query point
 
       \param neighbors
-      indices of vertices, which are direct neighbors of the query vertex
+      `Items` of vertices, which are direct neighbors of the query point
 
       \pre `query_index < input_range.size()`
     */

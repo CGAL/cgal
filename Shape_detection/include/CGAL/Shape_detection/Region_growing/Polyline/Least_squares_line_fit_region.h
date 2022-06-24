@@ -16,6 +16,9 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+// Boost includes.
+#include <boost/unordered_map.hpp>
+
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/region_growing_traits.h>
 #include <CGAL/use.h>
@@ -196,9 +199,8 @@ namespace Polyline {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps iterators on the input range to std::size_t
+      This function creates an empty property map that maps iterators on the input range `Item` to std::size_t
     */
-
     Region_index_map region_index_map() {
       return Region_index_map(m_region_map);
     }
@@ -212,7 +214,6 @@ namespace Polyline {
 
       \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
     */
-
     Primitive primitive() const {
       return m_line_of_best_fit;
     }
@@ -220,32 +221,32 @@ namespace Polyline {
     /*!
       \brief implements `RegionType::is_part_of_region()`.
 
-      This function controls if a vertex with the index `query_index` is within
+      This function controls if a vertex with the item `query` is within
       the `maximum_distance` from the corresponding line and if the angle between the
       direction of the inward edge and the line's direction is within the `maximum_angle`.
       If both conditions are satisfied, it returns `true`, otherwise `false`.
 
-      \param index1
-      index of the previous vertex
+      \param previous
+      `Item` of the previous vertex
 
-      \param index2
-      index of the query vertex
+      \param query
+      `Item` of the query vertex
 
       \param region
-      indices of vertices included in the region
+      Vertices of the region represented as `Items`.
 
       \return Boolean `true` or `false`
 
       \pre `region.size() > 0`
-      \pre `index1 < input_range.size()`
-      \pre `index2 < input_range.size()`
+      \pre `previous` is a valid const_iterator of the input_range.
+      \pre `query` is a valid const_iterator of the input_range.
     */
     bool is_part_of_region(
-      const Item item1, const Item item2,
+      const Item previous, const Item query,
       const Region&) {
 
-      const Point& input_point = get(m_point_map, *item1);
-      const Point& query_point = get(m_point_map, *item2);
+      const Point& input_point = get(m_point_map, *previous);
+      const Point& query_point = get(m_point_map, *query);
 
       // Update new reference line and direction.
       if (m_direction_of_best_fit == CGAL::NULL_VECTOR) {
@@ -288,7 +289,7 @@ namespace Polyline {
       This function controls if the `region` contains at least `minimum_region_size` vertices.
 
       \param region
-      indices of vertices included in the region
+      Vertices of the region represented as `Items`.
 
       \return Boolean `true` or `false`
     */
@@ -304,7 +305,7 @@ namespace Polyline {
       This function fits the least squares line to all vertices from the `region`.
 
       \param region
-      indices of vertices included in the region
+      Vertices of the region represented as `Items`.
 
       \return Boolean `true` if the line fitting succeeded and `false` otherwise
 

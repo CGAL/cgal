@@ -63,10 +63,11 @@ namespace Point_set {
     using Input_range = InputRange;
     using Point_map = PointMap;
     using Point_type = typename Point_map::value_type;
+    /// \endcond
 
+    /// Item type. Needs to be compatible to Region_type::Item.
     using Item = typename InputRange::const_iterator;
     using Region = std::vector<Item>;
-    /// \endcond
 
   private:
     using Dereference_pmap = internal::Dereference_property_map_adaptor<Item, PointMap>;
@@ -176,16 +177,16 @@ namespace Point_set {
     /*!
       \brief implements `NeighborQuery::operator()()`.
 
-      This operator finds indices of the `K` closest points to the point with
-      the index `query_index` using a Kd-tree. These indices are returned in `neighbors`.
+      This operator finds the `K` closest points to the point around the query point `query`
+      using a Kd-tree. These references to the points are returned in `neighbors`.
 
-      \param query_index
-      index of the query point
+      \param query
+      `Item` of the query point
 
       \param neighbors
-      indices of points, which are neighbors of the query point
+      `Items` of points, which are neighbors of the query point
 
-      \pre `query_index < input_range.size()`
+      \pre `query` is a valid const_iterator of InputRange
     */
     void operator()(
       const Item query,

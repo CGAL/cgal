@@ -66,11 +66,13 @@ namespace Triangle_mesh {
     using Neighbor_query = NeighborQuery;
     using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
-
-    using Item = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-    using Region = std::vector<Item>;
-    using Seed_range = std::vector<Item>;
     /// \endcond
+
+    /// Item type.
+    using Item = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+
+    /// Seed range.
+    using Seed_range = std::vector<Item>;
 
     #ifdef DOXYGEN_NS
       /*!
@@ -150,7 +152,7 @@ namespace Triangle_mesh {
     /// @{
 
     /*!
-      \brief sorts indices of input faces.
+      \brief sorts `Items` of input faces.
     */
     void sort() {
       compute_scores();
@@ -167,20 +169,18 @@ namespace Triangle_mesh {
 
       m_ordered.swap(tmp);
     }
-
     /// @}
 
     /// \name Access
     /// @{
 
     /*!
-      \brief returns an instance of `Seed_map` to access the ordered indices
+      \brief returns an instance of `Seed_map` to access the ordered `Items`
       of input faces.
     */
     const Seed_range &ordered() {
       return m_ordered;
     }
-
     /// @}
 
   private:

@@ -25,7 +25,65 @@
 namespace CGAL {
 namespace Shape_detection {
 namespace internal {
+/*!
+  \ingroup PkgPolygonMeshProcessingRef
+  helper function to facilitate region growing for line detection on point sets.
 
+  @tparam InputRange
+    a model of `ConstRange`
+  @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Line_2, std::vector<InputRange::const_iterator> >` or `std::pair<Kernel::Line_3, std::vector<InputRange::const_iterator> >`.
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  @param
+      a range of input items for region growing.
+  @param iterator of type OutputIterator.
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+        \cgalParamNBegin{k_neighbors}
+          \cgalParamDescription{the number of returned neighbors per each query point }
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{12}
+        \cgalParamNEnd
+        \cgalParamNBegin{maximum_distance}
+          \cgalParamDescription{the maximum distance from a point to a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{maximum_angle}
+          \cgalParamDescription{the maximum angle in degrees between
+          the normal of a point and the normal of a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cosine_value}
+          \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
+          this parameter can be used instead of the `maximum_angle`}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{minimum_region_size}
+          \cgalParamDescription{the minimum number of 2D points a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{2}
+        \cgalParamNEnd
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_2`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{normal_map}
+          \cgalParamDescription{an instance of `NormalMap` that maps an item from `input_range`
+          to `Kernel::Vector_2`}
+          \cgalParamDefault{`NormalMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
+ */
 template<
 typename InputRange,
 typename OutputIterator,
@@ -56,6 +114,65 @@ OutputIterator region_growing_lines(
   return regions;
 }
 
+/*!
+  \ingroup PkgPolygonMeshProcessingRef
+  helper function to facilitate region growing for plane detection on point sets.
+
+  @tparam InputRange
+    a model of `ConstRange`
+  @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Plane_3, std::vector<InputRange::const_iterator> >`.
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  @param
+      a range of input items for region growing.
+  @param iterator of type OutputIterator.
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+        \cgalParamNBegin{k_neighbors}
+          \cgalParamDescription{the number of returned neighbors per each query point }
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{12}
+        \cgalParamNEnd
+        \cgalParamNBegin{maximum_distance}
+          \cgalParamDescription{the maximum distance from a point to a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{maximum_angle}
+          \cgalParamDescription{the maximum angle in degrees between
+          the normal of a point and the normal of a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cosine_value}
+          \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
+          this parameter can be used instead of the `maximum_angle`}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{minimum_region_size}
+          \cgalParamDescription{the minimum number of 2D points a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{2}
+        \cgalParamNEnd
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_2`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{normal_map}
+          \cgalParamDescription{an instance of `NormalMap` that maps an item from `input_range`
+          to `Kernel::Vector_2`}
+          \cgalParamDefault{`NormalMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
+ */
 template<
 typename InputRange,
 typename OutputIterator,
@@ -86,6 +203,55 @@ OutputIterator region_growing_planes(
   return regions;
 }
 
+/*!
+  \ingroup PkgPolygonMeshProcessingRef
+  helper function to facilitate region growing for plane detection on surface meshes.
+
+  @tparam TriangleMesh
+    a model of `FaceListGraph`
+  @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Plane_3, std::vector<boost::graph_traits<TriangleMesh>::face_iterator> >`.
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  @param
+      a range of input items for region growing.
+  @param iterator of type OutputIterator.
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+        \cgalParamNBegin{maximum_distance}
+          \cgalParamDescription{the maximum distance from a point to a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{maximum_angle}
+          \cgalParamDescription{the maximum angle in degrees between
+          the normal of a point and the normal of a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cosine_value}
+          \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
+          this parameter can be used instead of the `maximum_angle`}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{minimum_region_size}
+          \cgalParamDescription{the minimum number of 2D points a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{2}
+        \cgalParamNEnd
+        \cgalParamNBegin{vertex_point_map}
+          \cgalParamDescription{an instance of `VertexToPointMap` that maps a polygon mesh
+          vertex to `Kernel::Point_3`}
+          \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
+ */
 template<
 typename TriangleMesh,
 typename OutputIterator,
@@ -114,6 +280,55 @@ OutputIterator region_growing_planes_triangle_mesh(
   return regions;
 }
 
+/*!
+  \ingroup PkgPolygonMeshProcessingRef
+  helper function to facilitate region growing for line detection on point sets.
+
+  @tparam InputRange
+    a model of `ConstRange` representing a polyline.
+  @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Line_2, std::vector<InputRange::const_iterator> >` or `std::pair<Kernel::Line_3, std::vector<InputRange::const_iterator> >`.
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  @param
+      a range of input items for region growing.
+  @param iterator of type OutputIterator.
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+        \cgalParamNBegin{maximum_distance}
+          \cgalParamDescription{the maximum distance from a vertex to a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{maximum_angle}
+          \cgalParamDescription{the maximum angle in degrees between
+          the direction of a polyline edge and the direction of a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cosine_value}
+          \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
+          this parameter can be used instead of the `maximum_angle`}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{minimum_region_size}
+          \cgalParamDescription{the minimum number of vertices a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{2}
+        \cgalParamNEnd
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_2` or `Kernel::Point_3`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
+ */
 template<
 typename InputRange,
 typename OutputIterator,

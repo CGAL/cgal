@@ -51,9 +51,6 @@ namespace Triangle_mesh {
     using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
     using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
-  public:
-    using Segment_range = std::vector<edge_descriptor>;
-
   private:
 
     struct PEdge {
@@ -83,13 +80,20 @@ namespace Triangle_mesh {
       typedef unspecified_type Segment_map;
     #endif
 
+    /// Item type.
+    using Item = edge_descriptor;
+
+    /// Segment_range type.
+    using Segment_range = std::vector<edge_descriptor>;
+
     /// @}
 
     /// \cond SKIP_IN_MANUAL
     using Segment_map = Segment_from_edge_descriptor_map<TriangleMesh, VertexPointMap>;
 
-    using Item = edge_descriptor;
-    using Region = std::vector<Item>;
+
+
+
     /// \endcond
 
   public:
@@ -105,9 +109,9 @@ namespace Triangle_mesh {
       \tparam NamedParameters
       a sequence of optional \ref bgl_namedparameters "Named Parameters"
 
-      \param pmesh a polygon mesh
+      \param tmesh a polygon mesh
 
-      \param face_to_region_map maps each face of `pmesh` to
+      \param face_to_region_map maps each face of `tmesh` to
              a corresponding planar region id
 
       \param np a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -117,12 +121,12 @@ namespace Triangle_mesh {
         \cgalParamNBegin{vertex_point_map}
           \cgalParamDescription{an instance of `VertexPointMap` that maps a triangle mesh
           vertex to `Kernel::Point_3`}
-          \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+          \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
         \cgalParamNEnd
       \cgalNamedParamsEnd
 
-      \pre `faces(pmesh).size() > 0`
-      \pre `edges(pmesh).size() > 0`
+      \pre `faces(tmesh).size() > 0`
+      \pre `edges(tmesh).size() > 0`
     */
     template<typename FaceToRegionMap,
              typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -139,10 +143,10 @@ namespace Triangle_mesh {
       a model of `ReadablePropertyMap` whose key type is `face_descriptor` of the `TriangleMesh`
       and value type is `std::size_t`
 
+      \tparam EdgeRange a model of `ConstRange` with `edge_descriptor` as iterator value type.
+
       \tparam NamedParameters
       a sequence of optional \ref bgl_namedparameters "Named Parameters"
-
-      \tparam EdgeRange a model of `ConstRange` with `edge_descriptor` as iterator value type.
 
       \param tmesh a triangle mesh
 
@@ -241,17 +245,17 @@ namespace Triangle_mesh {
     /*!
       \brief implements `NeighborQuery::operator()()`.
 
-      This operator retrieves indices of all edges from `segment_range()`,
-      which are neighbors of the edge with the index `query_index`.
-      These indices are returned in `neighbors`.
+      This operator retrieves all edges from `segment_range()`,
+      which are neighbors of the edge `query`.
+      The `Items` are returned in `neighbors`.
 
-      \param query_index
-      index of the query edge
+      \param query
+      Iterator of EdgeRange of the query edge
 
       \param neighbors
-      indices of edges, which are neighbors of the query edge
+      Iterators of Segment_range of edges, which are adjacent to the query edge
 
-      \pre `query_index < segment_range().size()`
+      \pre `query` is a valid element of the input edge_range
     */
     template<typename I>
     void operator()(
@@ -280,45 +284,6 @@ namespace Triangle_mesh {
     const Segment_map& segment_map() const {
       return m_segment_map;
     }
-
-    /*!
-      \brief returns indices of all edges from `segment_range()`,
-      which are connected to a vertex of the edge
-      with the index `query_index`.
-
-      \pre `query_index < segment_range().size()`
-    */
-    const std::vector<Item>& neighbors(
-      const std::size_t query_index) const
-    {
-      CGAL_precondition(query_index < segment_range().size());
-      return m_pedges[query_index].neighbors;
-    }
-
-    /*!
-      \brief returns the edge descriptor which
-      corresponds to the edge from `segment_range()` with the index `query_index`.
-
-      \pre `query_index < segment_range().size()`
-    */
-    edge_descriptor descriptor(const std::size_t query_index) const {
-      CGAL_precondition(query_index < segment_range().size());
-      return m_pedges[query_index].ed;
-    }
-
-    /*!
-      \brief returns indices of the two distinct regions, which are shared by the edge
-      from `segment_range()` with the index `query_index`.
-
-      \pre `query_index < segment_range().size()`
-    */
-    const std::pair<std::size_t, std::size_t>& edge_regions(
-      const std::size_t query_index) const {
-
-      CGAL_precondition(query_index < segment_range().size());
-      return m_pedges[query_index].regions;
-    }
-
     /// @}
 
     /// \cond SKIP_IN_MANUAL

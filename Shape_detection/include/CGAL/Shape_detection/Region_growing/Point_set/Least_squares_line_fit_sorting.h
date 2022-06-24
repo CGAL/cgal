@@ -60,12 +60,13 @@ namespace Point_set {
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Point_map = PointMap;
-
-    using Item = typename InputRange::const_iterator;
-    using Region = std::vector<Item>;
-    using Seed_range = std::vector<Item>;
     /// \endcond
 
+    /// Item type.
+    using Item = typename InputRange::const_iterator;
+
+    /// Seed range.
+    using Seed_range = std::vector<Item>;
     #ifdef DOXYGEN_NS
       /*!
         a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
@@ -146,7 +147,6 @@ namespace Point_set {
       \brief sorts indices of input points.
     */
     void sort() {
-
       compute_scores();
       CGAL_precondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
@@ -161,21 +161,18 @@ namespace Point_set {
 
       m_ordered.swap(tmp);
     }
-
     /// @}
 
     /// \name Access
     /// @{
 
     /*!
-      \brief returns an instance of `Seed_map` to access the ordered indices
+      \brief returns an instance of `Seed_range` to access the ordered `Items`
       of input points.
     */
-
     const Seed_range ordered() {
       return m_ordered;
     }
-
     /// @}
 
   private:

@@ -61,11 +61,13 @@ namespace Segment_set {
     using Neighbor_query = NeighborQuery;
     using Segment_map = SegmentMap;
     using Segment_type = typename Segment_map::value_type;
-
-    using Item = typename InputRange::const_iterator;
-    using Region = std::vector<Item>;
-    using Seed_range = std::vector<Item>;
     /// \endcond
+
+    /// Item type.
+    using Item = typename InputRange::const_iterator;
+
+    /// Seed range.
+    using Seed_range = std::vector<Item>;
 
     #ifdef DOXYGEN_NS
       /*!
@@ -150,7 +152,7 @@ namespace Segment_set {
     /// @{
 
     /*!
-      \brief sorts indices of input segments.
+      \brief sorts `Items` of input segments.
     */
     void sort() {
 
@@ -168,20 +170,18 @@ namespace Segment_set {
 
       m_ordered.swap(tmp);
     }
-
     /// @}
 
     /// \name Access
     /// @{
 
     /*!
-      \brief returns an instance of `Seed_map` to access the ordered indices
+      \brief returns an instance of `Seed_range` to access the ordered `Items`
       of input segments.
     */
     const Seed_range &ordered() {
       return m_ordered;
     }
-
     /// @}
 
   private:

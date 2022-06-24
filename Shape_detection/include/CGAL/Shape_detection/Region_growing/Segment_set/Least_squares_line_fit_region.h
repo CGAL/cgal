@@ -19,6 +19,9 @@
 // CGAL includes.
 #include <CGAL/Dynamic_property_map.h>
 
+// Boost includes.
+#include <boost/unordered_map.hpp>
+
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/region_growing_traits.h>
 
@@ -199,9 +202,8 @@ namespace Segment_set {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps iterators on the input range to std::size_t
+      This function creates an empty property map that maps iterators on the input range `Item` to std::size_t.
     */
-
     Region_index_map region_index_map() {
       return Region_index_map(m_region_map);
     }
@@ -215,7 +217,6 @@ namespace Segment_set {
 
       \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
     */
-
     Primitive primitive() const {
       return m_line_of_best_fit;
     }
@@ -223,19 +224,19 @@ namespace Segment_set {
     /*!
       \brief implements `RegionType::is_part_of_region()`.
 
-      This function controls if a segment with the index `query_index` is within
+      This function controls if a segment with the index `query` is within
       the `maximum_distance` from the corresponding line and if the angle between the
       direction of this segment and the line's direction is within the `maximum_angle`.
       If both conditions are satisfied, it returns `true`, otherwise `false`.
 
-      \param query_index
-      index of the query segment
+      \param query
+      `Item` of the query segment
 
       The first and third parameters are not used in this implementation.
 
       \return Boolean `true` or `false`
 
-      \pre `query_index < input_range.size()`
+      \pre `query` is a valid const_iterator of `input_range`
     */
     bool is_part_of_region(
       const Item,
@@ -272,7 +273,7 @@ namespace Segment_set {
       This function controls if the `region` contains at least `minimum_region_size` segments.
 
       \param region
-      indices of segments included in the region
+      Segments of the region represented as `Items`.
 
       \return Boolean `true` or `false`
     */
@@ -286,7 +287,7 @@ namespace Segment_set {
       This function fits the least squares line to all segments from the `region`.
 
       \param region
-      indices of segments included in the region
+      Segments of the region represented as `Items`.
 
       \return Boolean `true` if the line fitting succeeded and `false` otherwise
 

@@ -159,17 +159,17 @@ public:
   /*!
     \brief implements `NeighborQuery::operator()()`.
 
-    This operator finds indices of all points, which fall into a sphere
-    of the fixed radius `sphere_radius` centered at the query point with
-    the index `query_index`. These neighbors are returned in `neighbors`.
+    This operator finds all points, which fall into a sphere
+    of the fixed radius `sphere_radius` centered at the query point.
+    The references of those neighbors are returned in `neighbors`.
 
-    \param query_index
-    index of the query point
+    \param query
+    `Item` of the query point
 
     \param neighbors
-    indices of points, which are neighbors of the query point
+    `Items` of points, which are neighbors of the query point
 
-    \pre `query_index < input_range.size()`
+    \pre `query` is a valid const_iterator of InputRange
   */
   void operator()(
     const Item query,

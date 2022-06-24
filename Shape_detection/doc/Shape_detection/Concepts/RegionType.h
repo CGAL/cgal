@@ -28,23 +28,28 @@ public:
   /// The reference type to the elements of the input range.
   typedef unspecified_type Item;
 
+  // The region types is defined by a vector of Items.
+  typedef std::vector<Item> Region;
+
+  /// The result type of the region growing provides the Primitive of each region with the Items combined in a `std::pair`.
+  typedef std::vector<std::pair<Primitive, Region> > Result_type;
+
   /*!
-    checks if the item with the index `index_to`, which is a neighbor of the item
-    with the index `index_from`, can be added to the region represented by `indices`.
+    checks if the item `to`, which is a neighbor of the item
+    `from`, can be added to the region represented by `region`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when
     trying to add a new item to a region. If this function returns `true`, the
-    item with the index `index_to`, is added to the region, otherwise ignored.
+    item with the index `to`, is added to the region, otherwise ignored.
   */
   bool is_part_of_region(
-    const std::size_t index_from,
-    const std::size_t index_to,
-    const std::vector<std::size_t>& indices) {
-
+    const Item from,
+    const Item to,
+    const Region &region) {
   }
 
   /*!
-    checks if the region represented by `indices` satisfies all necessary conditions.
+    checks if `region` satisfies all necessary conditions.
 
     `CGAL::Shape_detection::Region_growing` calls this function at the end of each
     propagation phase. If this function returns `true`, the region is accepted,
@@ -52,8 +57,7 @@ public:
     available for region growing again.
   */
   bool is_valid_region(
-    const std::vector<std::size_t>& indices) {
-
+    const Region& region) {
   }
 
   /*!
@@ -61,38 +65,24 @@ public:
   */
 
   Primitive primitive() const {
-    return Primitive(m_axis, m_radius);
   }
 
   /*!
-    enables to update any information that is maintained with the region
-    represented by `indices`.
+    enables to update any information about the region represented by the collection of Items `region`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when a
     new seed item is selected. This case can be identified by checking the
-    condition `indices.size() == 1`. This function is also called periodically
+    condition `region.size() == 1`. This function is also called periodically
     when enlarging the region. This case can be identified by checking the
-    condition `indices.size() > 1`.
+    condition `region.size() > 1`.
 
     This function also returns a Boolean at the first call when a new region
     with one seed item is being created. When it is `true`, the new region is
     further propagated, otherwise, it is rejected.
   */
   bool update(
-    const std::vector<std::size_t>& indices) {
-
+    const Region& region) {
   }
-
-  /*!
-    enables to update any information that is maintained with the region
-    represented by `indices`.
-
-    \deprecated This is deprecated function that was used in all versions before \cgal 5.4.
-    The change from `void` in the old version to `bool` in the new version affects
-    only user-defined region types.
-  */
-  void update(
-    const std::vector<std::size_t>& indices) {
 
   }
 };

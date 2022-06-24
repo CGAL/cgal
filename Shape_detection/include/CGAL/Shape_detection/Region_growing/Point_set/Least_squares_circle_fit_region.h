@@ -16,6 +16,9 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+// Boost includes.
+#include <boost/unordered_map.hpp>
+
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
@@ -58,7 +61,6 @@ namespace Point_set {
   class Least_squares_circle_fit_region {
 
   public:
-
     /// \name Types
     /// @{
 
@@ -225,9 +227,8 @@ namespace Point_set {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps iterators on the input range to std::size_t
+      This function creates an empty property map that maps iterators on the input range `Item` to std::size_t
     */
-
     Region_index_map region_index_map() {
       return Region_index_map(m_region_map);
     }
@@ -241,7 +242,6 @@ namespace Point_set {
 
       \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
     */
-
     Primitive primitive() const {
       return Primitive(m_center, m_radius);
     }

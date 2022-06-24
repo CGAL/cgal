@@ -61,11 +61,13 @@ namespace Polyline {
     using Neighbor_query = NeighborQuery;
     using Point_map = PointMap;
     using Point_type = typename Point_map::value_type;
-
-    using Item = typename NeighborQuery::Item;
-    using Region = std::vector<Item>;
-    using Seed_range = std::vector<Item>;
     /// \endcond
+
+    /// Item type.
+    using Item = typename InputRange::const_iterator;
+
+    /// Seed range.
+    using Seed_range = std::vector<Item>;
 
     #ifdef DOXYGEN_NS
       /*!
@@ -152,10 +154,9 @@ namespace Polyline {
     /// @{
 
     /*!
-      \brief sorts indices of input vertices.
+      \brief sorts `Items` of input vertices.
     */
     void sort() {
-
       compute_scores();
       CGAL_precondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
@@ -170,20 +171,18 @@ namespace Polyline {
 
       m_ordered.swap(tmp);
     }
-
     /// @}
 
     /// \name Access
     /// @{
 
     /*!
-      \brief returns an instance of `Seed_map` to access the ordered indices
-      of input vertices.
+      \brief returns an instance of `Seed_range` to access the ordered `Items`
+      of input points.
     */
       const Seed_range& ordered() {
       return m_ordered;
     }
-
     /// @}
 
   private:

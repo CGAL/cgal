@@ -198,13 +198,14 @@ namespace Shape_detection {
 
         // Try to grow a new region from the index of the seed item.
         if (!get(m_visited, seed)) {
-          const bool is_success = propagate(seed, region);
+          typename Region_type::Primitive primitive = m_region_type.primitive();
+          const bool is_success = propagate(seed, region, primitive);
 
           // Check global conditions.
           if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
           } else {
-            *(regions++) = std::pair<typename RegionType::Primitive, Region>(m_region_type.primitive(), region);
+            *(regions++) = std::pair<typename RegionType::Primitive, Region>(primitive, region);
             fill_region_map(idx++, region);
           }
         }
@@ -278,7 +279,7 @@ namespace Shape_detection {
       }
     }
 
-    bool propagate(const Item &seed, Region& region) {
+    bool propagate(const Item &seed, Region& region, typename RegionType::Primitive &primitive) {
       region.clear();
 
       // Use two queues, while running on this queue, push to the other queue;
@@ -294,6 +295,7 @@ namespace Shape_detection {
 
       // Update internal properties of the region.
       const bool is_well_created = m_region_type.update(region);
+      primitive = m_region_type.primitive();
       if (!is_well_created) return false;
 
       bool grown = true;
@@ -363,6 +365,9 @@ namespace Shape_detection {
               put(m_visited, p.second, false);
             return true;
           }
+
+          // If it fits, update the primitive.
+          primitive = m_region_type.primitive();
 
           // Try to continue growing the region by considering formerly rejected elements.
           for (const std::pair<const Item, const Item>& p : rejected) {

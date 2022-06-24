@@ -16,6 +16,9 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+// Boost includes.
+#include <boost/unordered_map.hpp>
+
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
@@ -221,7 +224,7 @@ namespace Point_set {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps iterators on the input range to std::size_t
+      This function creates an empty property map that maps iterators on the input range `Item` to std::size_t
     */
 
     Region_index_map region_index_map() {
@@ -235,7 +238,7 @@ namespace Point_set {
 
       \return Primitive parameters that fits the region
 
-      \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
+      \pre `fitted primitive via successful call of update(region) with a sufficient large region`
     */
 
     Primitive primitive() const {
@@ -273,7 +276,6 @@ namespace Point_set {
         return true;
       }
 
-      // TODO: Why do we get so many nan in this class?
       if (std::isnan(CGAL::to_double(m_radius))) {
         return false;
       }

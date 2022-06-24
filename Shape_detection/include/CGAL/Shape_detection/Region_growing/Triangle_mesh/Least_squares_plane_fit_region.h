@@ -209,7 +209,6 @@ namespace Triangle_mesh {
 
       This function creates an empty property map that maps each face to a std::size_t
     */
-
     Region_index_map region_index_map() {
       return get(CGAL::dynamic_face_property_t<std::size_t>(), m_face_graph);
     }
@@ -231,31 +230,31 @@ namespace Triangle_mesh {
     /*!
       \brief implements `RegionType::is_part_of_region()`.
 
-      This function controls if a face with the index `query_index` is within
+      This function controls if the face `query` is within
       the `maximum_distance` from the corresponding plane and if the angle between
       its normal and the plane's normal is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
-      \param query_index
-      index of the query face
+      \param query
+      `Item` of the query face
 
       The first and third parameters are not used in this implementation.
 
       \return Boolean `true` or `false`
 
-      \pre `query_index < faces(pmesh).size()`
+      \pre `query` is a valid const_iterator of `input_range`
     */
     bool is_part_of_region(
       const Item,
-      const Item face,
+      const Item query,
       const Region&) const {
 
-      const FT squared_distance_to_fitted_plane = get_max_squared_distance(face);
+      const FT squared_distance_to_fitted_plane = get_max_squared_distance(query);
       if (squared_distance_to_fitted_plane < FT(0)) return false;
       const FT squared_distance_threshold =
         m_distance_threshold * m_distance_threshold;
 
-      const Vector_3 face_normal = get_face_normal(face);
+      const Vector_3 face_normal = get_face_normal(query);
       const FT cos_value = m_scalar_product_3(face_normal, m_normal_of_best_fit);
       const FT squared_cos_value = cos_value * cos_value;
 
@@ -275,7 +274,7 @@ namespace Triangle_mesh {
       This function controls if the `region` contains at least `minimum_region_size` faces.
 
       \param region
-      indices of faces included in the region
+      Faces of the region represented as `Items`.
 
       \return Boolean `true` or `false`
     */
@@ -290,7 +289,7 @@ namespace Triangle_mesh {
       from the `region`.
 
       \param region
-      indices of faces included in the region
+      Faces of the region represented as `Items`.
 
       \return Boolean `true` if the plane fitting succeeded and `false` otherwise
 

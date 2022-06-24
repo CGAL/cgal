@@ -16,6 +16,9 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+// Boost includes.
+#include <boost/unordered_map.hpp>
+
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
@@ -81,11 +84,11 @@ namespace Point_set {
       typename Traits::Line_3 axis;
       typename Traits::FT radius;
     };
+    using Result_type = std::vector<std::pair<Primitive, Region> >;
 
     /// Region map
     using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
     using Region_index_map = boost::associative_property_map<Region_unordered_map>;
-
     /// @}
 
   private:
@@ -225,9 +228,8 @@ namespace Point_set {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps iterators on the input range to std::size_t
+      This function creates an empty property map that maps iterators on the input range `Item` to std::size_t
     */
-
     Region_index_map region_index_map() {
       return Region_index_map(m_region_map);
     }
@@ -241,7 +243,6 @@ namespace Point_set {
 
       \pre `successful fitted primitive via successful call of update(region) with a sufficient large region`
     */
-
     Primitive primitive() const {
       return Primitive(m_axis, m_radius);
     }

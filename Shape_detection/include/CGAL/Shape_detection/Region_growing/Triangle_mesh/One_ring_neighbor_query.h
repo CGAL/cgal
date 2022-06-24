@@ -52,10 +52,11 @@ namespace Triangle_mesh {
     /// \cond SKIP_IN_MANUAL
     using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
     using Face_graph = TriangleMesh;
+    /// \endcond
 
+    /// Item type.
     using Item = face_descriptor;
     using Region = std::vector<Item>;
-    /// \endcond
 
     /// \name Initialization
     /// @{
@@ -90,15 +91,15 @@ namespace Triangle_mesh {
     /*!
       \brief implements `NeighborQuery::operator()()`.
 
-      This operator retrieves indices of all faces,
-      which are edge-adjacent to the face with the index `query_index`.
+      This operator retrieves all faces,
+      which are edge-adjacent to the face `query`.
       These indices are returned in `neighbors`.
 
-      \param query_index
-      index of the query face
+      \param query
+      `Item` of the query face
 
       \param neighbors
-      indices of faces, which are neighbors of the query face
+      `Items` of faces, which are neighbors of the query face
 
       \pre `query_index < faces(tmesh).size()`
     */
