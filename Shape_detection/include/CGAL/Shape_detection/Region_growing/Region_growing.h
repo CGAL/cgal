@@ -52,10 +52,6 @@ namespace Shape_detection {
 
     \tparam RegionType
     a model of `RegionType`
-
-    \tparam SeedMap
-    a model of `ReadablePropertyMap` whose key and value types are `std::size_t`.
-    %Default is `CGAL::Identity_property_map`.
   */
   template<
   typename InputRange,
@@ -64,19 +60,25 @@ namespace Shape_detection {
   class Region_growing {
 
   public:
+    /// \name Types
     /// \cond SKIP_IN_MANUAL
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Region_type = RegionType;
 
-    using Item = typename RegionType::Item;
     using InputIterator = typename Input_range::const_iterator;
-    using Region = std::vector<Item>;
-
-    using Result_type = std::vector<std::pair<typename Region_type::Primitive, std::vector<Item> > >;
-    using Region_map = typename Region_type::Region_index_map;
-    using Unassigned_type = std::vector<Item>;
     /// \endcond
+
+    /// Item type.
+    using Item = typename RegionType::Item;
+    using Region = std::vector<Item>;
+    using Unassigned_type = std::vector<Item>;
+
+    /// Result type
+    using Result_type = std::vector<std::pair<typename Region_type::Primitive, std::vector<Item> > >;
+
+    /// Item to region property map.
+    using Region_map = typename Region_type::Region_index_map;
 
   private:
     using Running_queue = std::queue<Item>;
@@ -98,11 +100,6 @@ namespace Shape_detection {
       \param region_type
       an instance of `RegionType` that is used internally to
       control if items form a valid region type
-
-      \param seed_map
-      an instance of `SeedMap` property map that is used internally to
-      set the order of items in the region growing processing queue. If it maps
-      to `std::size_t(-1)`, the corresponding item is skipped.
 
       \pre `input_range.size() > 0`
     */
@@ -126,6 +123,26 @@ namespace Shape_detection {
       clear();
     }
 
+    /*!
+      \brief initializes the region growing algorithm.
+
+      \param input_range
+      a range of input items for region growing
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access item's neighbors
+
+      \param region_type
+      an instance of `RegionType` that is used internally to
+      control if items form a valid region type
+
+      \param seed_range
+      an vector of `Item` that is used as seeds for the region growing.
+      Defaults to the full input_range.
+
+      \pre `input_range.size() > 0`
+    */
     template<class SeedRange>
     Region_growing(
       const InputRange& input_range,
@@ -164,7 +181,7 @@ namespace Shape_detection {
 
       \param regions
       an output iterator that stores regions, where each region is returned
-      as a vector of indices of the items, which belong to this region
+      as a vector of indices of the items, which belong to this region.  The result type is given be the `Result_type` type.
 
       \return past-the-end position in the output sequence
     */

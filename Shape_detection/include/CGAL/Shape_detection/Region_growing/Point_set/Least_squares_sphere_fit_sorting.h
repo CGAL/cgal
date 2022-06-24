@@ -147,7 +147,7 @@ namespace Point_set {
     */
     void sort() {
 
-      compute_scores();
+      std::size_t seed_cutoff = compute_scores();
       CGAL_postcondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
 
@@ -155,8 +155,10 @@ namespace Point_set {
       std::iota(order.begin(), order.end(), 0);
       std::sort(order.begin(), order.end(), cmp);
 
-      std::vector<Item> tmp(m_input_range.size());
-      for (std::size_t i = 0; i < m_input_range.size(); i++)
+      order.resize(m_input_range.size() - seed_cutoff);
+
+      std::vector<Item> tmp(order.size());
+      for (std::size_t i = 0; i < order.size(); i++)
         tmp[i] = m_ordered[order[i]];
 
       m_ordered.swap(tmp);
@@ -185,10 +187,11 @@ namespace Point_set {
     Seed_range m_ordered;
     std::vector<FT> m_scores;
 
-    void compute_scores() {
+    std::size_t compute_scores() {
 
       std::vector<Item> neighbors;
       std::size_t idx = 0;
+      std::size_t seed_cutoff = 0;
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
         neighbors.clear();
         m_neighbor_query(it, neighbors);
@@ -196,9 +199,14 @@ namespace Point_set {
 
         m_scores[idx] = internal::create_sphere(
           neighbors, m_point_map, m_traits, true).second;
-        CGAL_assertion(m_scores[idx] <= FT(0));
+
+        if (m_scores[idx] == -(std::numeric_limits<double>::max)())
+          seed_cutoff++;
+
         idx++;
       }
+
+      return seed_cutoff;
     }
   };
 
