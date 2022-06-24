@@ -376,7 +376,7 @@ private:
     const CGAL::Identity_property_map<Plane_3> plane_identity_map;
     CGAL::internal::Dynamic_property_map<Point_set::Index, std::size_t> plane_index_map;
 
-    for (auto& it = points->begin(); it != points->end(); it++)
+    for (Point_set::const_iterator it = points->begin(); it != points->end(); it++)
       put(plane_index_map, *it, get(region_growing.region_map(), it));
 
     if (dialog.regularize()) {
