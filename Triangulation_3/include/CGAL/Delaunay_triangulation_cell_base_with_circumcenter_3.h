@@ -124,6 +124,15 @@ public:
       Cb::set_vertices(v0, v1, v2, v3);
   }
 
+  void set_circumcenter(const Point& p) const
+  {
+      if (circumcenter_ == nullptr) {
+        circumcenter_ = new Point(p);
+      } else {
+        *circumcenter_ = p;
+      }
+  }
+
   const Point& circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       if (circumcenter_ == nullptr) {

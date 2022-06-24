@@ -6,15 +6,16 @@
 #include "test_Prefix.h"
 
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <fstream>
 #include <map>
 #include <memory>
 #include <utility>
+#include <cassert>
 
-typedef boost::unordered_set<std::size_t> id_map;
+typedef std::unordered_set<std::size_t> id_map;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -24,7 +25,7 @@ void test_halfedge_around_vertex_iterator(const  Graph& g)
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
-  boost::unordered_map<g_face_descriptor, std::size_t> map(num_faces(g));
+  std::unordered_map<g_face_descriptor, std::size_t> map(num_faces(g));
   PMP::connected_components(g, boost::make_assoc_property_map(map));
 
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
@@ -416,29 +417,29 @@ void test_mesh(Adapter fga)
 {
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   //check that there is the right number of simplices in fga
-  CGAL_assertion(CGAL::is_valid_polygon_mesh(fga));
-  CGAL_assertion(num_faces(fga) == 2);
-  CGAL_assertion(num_edges(fga) == 5);
-  CGAL_assertion(num_halfedges(fga) == 10);
-  CGAL_assertion(num_vertices(fga) == 4);
+  assert(CGAL::is_valid_polygon_mesh(fga));
+  assert(num_faces(fga) == 2);
+  assert(num_edges(fga) == 5);
+  assert(num_halfedges(fga) == 10);
+  assert(num_vertices(fga) == 4);
   halfedge_descriptor h = halfedge(*faces(fga).first, fga);
-  CGAL_assertion_code( vertex_descriptor v = source(h, fga));
+  vertex_descriptor v = source(h, fga);
   //check that next() works inside the patch
-  CGAL_assertion(next(next(next(h, fga), fga), fga) == h);
+  assert(next(next(next(h, fga), fga), fga) == h);
   //check that next() works on bordure of the patch
   h = opposite(h, fga);
-  CGAL_assertion(next(next(next(next(h, fga), fga), fga), fga) == h);
+  assert(next(next(next(next(h, fga), fga), fga), fga) == h);
   //check that prev() works inside the patch
   h = halfedge(*faces(fga).first, fga);
-  CGAL_assertion(prev(prev(prev(h, fga), fga), fga) == h);
+  assert(prev(prev(prev(h, fga), fga), fga) == h);
   //check that prev() works on bordure of the patch
   h = opposite(h, fga);
-  CGAL_assertion(prev(prev(prev(prev(h, fga), fga), fga), fga) == h);
+  assert(prev(prev(prev(prev(h, fga), fga), fga), fga) == h);
   //check degree
-  CGAL_assertion(degree(v, fga) == 3);
+  assert(degree(v, fga) == 3);
   //check in_edges and out_edges
-  CGAL_assertion(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 3);
-  CGAL_assertion(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 3);
+  assert(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 3);
+  assert(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 3);
 
   Mesh copy;
   CGAL::copy_face_graph(fga, copy);
@@ -484,8 +485,8 @@ void test_invalid_selections()
   face_range.push_back(SM::Face_index(2));
   face_range.push_back(SM::Face_index(3));
 
-  CGAL::Face_filtered_graph<SM> bad_fg(mesh, face_range);
-  assert(!bad_fg.is_selection_valid());
+  CGAL::Face_filtered_graph<SM> pinched_fg(mesh, face_range);
+  assert(pinched_fg.is_selection_valid());
 
   // this creates a non-manifold vertex (multiple umbrellas)
   clear(mesh);
@@ -495,8 +496,8 @@ void test_invalid_selections()
   face_range.clear();
   merge_vertices(SM::Vertex_index(1337), SM::Vertex_index(87), face_range, mesh);
 
-  CGAL::Face_filtered_graph<SM> bad_fg_2(mesh, face_range);
-  assert(!bad_fg_2.is_selection_valid());
+  CGAL::Face_filtered_graph<SM> many_umbrellas_fg(mesh, face_range);
+  assert(!many_umbrellas_fg.is_selection_valid());
 }
 
 int main()
@@ -525,7 +526,7 @@ int main()
     *sm, fccmap, CGAL::parameters::edge_is_constrained_map(Constraint<SM, SM::Property_map<boost::graph_traits<SM>::vertex_descriptor,
                                                            SM::Point> >(*sm, positions)));
 
-  boost::unordered_set<long unsigned int> pids;
+  std::unordered_set<long unsigned int> pids;
   pids.insert(0);
   pids.insert(2);
   SM_Adapter sm_adapter(*sm, pids, fccmap);

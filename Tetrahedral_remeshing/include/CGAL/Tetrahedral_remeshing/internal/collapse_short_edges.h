@@ -19,12 +19,13 @@
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/array.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <unordered_set>
 
@@ -157,7 +158,7 @@ public:
         v0_new_pos = vec(point(vh1->point()));
       }
 
-      boost::unordered_set<Cell_handle> invalid_cells;
+      std::unordered_set<Cell_handle> invalid_cells;
 
       typedef typename Tr::Cell_circulator Cell_circulator;
       Cell_circulator circ = triangulation.incident_cells(edge);
@@ -554,12 +555,12 @@ bool collapse_preserves_surface_star(const typename C3t3::Edge& edge,
   typename Tr::Geom_traits::Construct_normal_3
     normal = gt.construct_normal_3_object();
 
-  boost::unordered_set<Facet> facets;
+  std::unordered_set<Facet, boost::hash<Facet>> facets;
   tr.finite_incident_facets(v0, std::inserter(facets, facets.end()));
   tr.finite_incident_facets(v1, std::inserter(facets, facets.end()));
 
 // note : checking a 2nd ring of facets does not change the result
-//  boost::unordered_set<Facet> ring2;
+//  std::unordered_set<Facet, boost::hash<Facet>> ring2;
 //  for (const Facet& f : facets)
 //  {
 //    for (int i = 1; i < 4; ++i)
@@ -671,7 +672,7 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   const Vertex_handle v1 = edge.first->vertex(edge.second);
   const Vertex_handle v2 = edge.first->vertex(edge.third);
 
-  boost::unordered_map<Vertex_handle, FT> edges_sqlength_after_collapse;
+  std::unordered_map<Vertex_handle, FT> edges_sqlength_after_collapse;
 
   std::vector<Edge> inc_edges;
   c3t3.triangulation().finite_incident_edges(v1,
@@ -790,7 +791,7 @@ collapse(const typename C3t3::Cell_handle ch,
 
   bool valid = true;
   std::vector<Cell_handle> cells_to_remove;
-  boost::unordered_set<Cell_handle> invalid_cells;
+  std::unordered_set<Cell_handle> invalid_cells;
 
   for(const Cell_handle& c : inc_cells)
   {
@@ -988,7 +989,7 @@ bool is_cells_set_manifold(const C3t3&,
   typedef std::array<Vh, 3> FV;
   typedef std::pair<Vh, Vh> EV;
 
-  boost::unordered_map<FV, int> facets;
+  std::unordered_map<FV, int, boost::hash<FV>> facets;
   for (Cell_handle c : cells)
   {
     for (int i = 0; i < 4; ++i)
@@ -996,7 +997,7 @@ bool is_cells_set_manifold(const C3t3&,
       const FV fvi = make_vertex_array(c->vertex((i + 1) % 4),
         c->vertex((i + 2) % 4),
         c->vertex((i + 3) % 4));
-      typename boost::unordered_map<FV, int>::iterator fit = facets.find(fvi);
+      typename std::unordered_map<FV, int, boost::hash<FV>>::iterator fit = facets.find(fvi);
       if (fit == facets.end())
         facets.insert(std::make_pair(fvi, 1));
       else
@@ -1004,7 +1005,7 @@ bool is_cells_set_manifold(const C3t3&,
     }
   }
 
-  boost::unordered_map<EV, int> edges;
+  std::unordered_map<EV, int, boost::hash<EV>> edges;
   for (const auto& fvv : facets)
   {
     if (fvv.second != 1)
@@ -1013,7 +1014,7 @@ bool is_cells_set_manifold(const C3t3&,
     for (int i = 0; i < 3; ++i)
     {
       const EV evi = make_vertex_pair(fvv.first[i], fvv.first[(i + 1) % 3]);
-      typename boost::unordered_map<EV, int>::iterator eit = edges.find(evi);
+      typename std::unordered_map<EV, int, boost::hash<EV>>::iterator eit = edges.find(evi);
       if (eit == edges.end())
         edges.insert(std::make_pair(evi, 1));
       else

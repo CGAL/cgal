@@ -26,9 +26,10 @@ int main()
   // ---------------------------------------------- //
   // two faces incident to the edge to be collapsed //
   // ---------------------------------------------- //
+  Point_3 p1(0,0,0), p2(1,0,0), p3(0,1,0);
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
   bool res = test(h2c, m);
@@ -36,7 +37,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   ECM ecm = m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
   put(ecm, edge(prev(h2c,m), m), true);
@@ -46,7 +47,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   ECM ecm = m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
   put(ecm, edge(next(h2c,m), m), true);
@@ -56,7 +57,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   ECM ecm = m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
   put(ecm, edge(prev(h2c,m), m), true);
@@ -67,7 +68,7 @@ int main()
 // duplicate block + add one border (1)
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
@@ -78,7 +79,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
@@ -91,7 +92,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
@@ -104,7 +105,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
@@ -118,7 +119,7 @@ int main()
   // duplicate block + add one border (2)
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb2 = opposite(next(opposite(h2c,m), m), m);
   assert(is_border(hb2, m));
@@ -129,7 +130,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb2 = opposite(next(opposite(h2c,m), m), m);
   assert(is_border(hb2, m));
@@ -142,7 +143,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb2 = opposite(next(opposite(h2c,m), m), m);
   assert(is_border(hb2, m));
@@ -155,7 +156,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb2 = opposite(next(opposite(h2c,m), m), m);
   assert(is_border(hb2, m));
@@ -169,7 +170,7 @@ int main()
 // duplicate block + add one border (1)
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
@@ -183,7 +184,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
@@ -199,7 +200,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
@@ -215,7 +216,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
@@ -235,7 +236,7 @@ int main()
   // center triangle with 2 border edges (1)
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb1=opposite(next(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
   /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
@@ -244,7 +245,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb1=opposite(next(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
   ECM ecm = m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
@@ -254,7 +255,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb1=opposite(next(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
   ECM ecm = m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
@@ -265,7 +266,7 @@ int main()
   // center triangle with 2 border edges (2)
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb2=opposite(prev(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb2, m), hb2, m);
   /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
@@ -274,7 +275,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb2=opposite(prev(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb2, m), hb2, m);
   ECM ecm = m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
@@ -284,7 +285,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb2=opposite(prev(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb2, m), hb2, m);
   ECM ecm = m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
@@ -295,7 +296,7 @@ int main()
   // center triangle with 1 border edges
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb1=opposite(next(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
   Mesh::Halfedge_index hb2=opposite(prev(h2c,m),m);
@@ -306,7 +307,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb1=opposite(next(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
   Mesh::Halfedge_index hb2=opposite(prev(h2c,m),m);
@@ -318,7 +319,7 @@ int main()
   }
   {
   Mesh m;
-  Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
+  Mesh::Halfedge_index h2c = CGAL::make_triangle(p1,p2,p3,m);
   Mesh::Halfedge_index hb1=opposite(next(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
   Mesh::Halfedge_index hb2=opposite(prev(h2c,m),m);

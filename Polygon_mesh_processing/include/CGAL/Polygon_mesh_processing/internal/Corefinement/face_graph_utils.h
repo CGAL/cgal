@@ -29,6 +29,9 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+enum Boolean_operation_type {UNION = 0, INTERSECTION,
+                             TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
+
 template <typename G>
 struct No_mark
 {
@@ -460,9 +463,39 @@ struct Default_visitor{
   void before_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/, TriangleMesh& /*tm_tgt*/){}
   void after_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/,
                          vertex_descriptor /* v_tgt */, TriangleMesh& /*tm_tgt*/){}
-// calls commented in the code and probably incomplete due to the migration
-// see NODE_VISITOR_TAG
-/*
+
+  // progress tracking
+  void start_filtering_intersections() const {}
+  void progress_filtering_intersections(double ) const {}
+  void end_filtering_intersections() const {}
+
+  void start_triangulating_faces(std::size_t) const {}
+  void triangulating_faces_step() const {}
+  void end_triangulating_faces() const {}
+
+  void start_handling_intersection_of_coplanar_faces(std::size_t) const {}
+  void intersection_of_coplanar_faces_step() const {}
+  void end_handling_intersection_of_coplanar_faces() const {}
+
+  void start_handling_edge_face_intersections(std::size_t) const {}
+  void edge_face_intersections_step() const {}
+  void end_handling_edge_face_intersections() const {}
+
+  void start_building_output() const {}
+  void end_building_output() const {}
+
+// Required by Face_graph_output_builder
+  void filter_coplanar_edges() const {}
+  void detect_patches() const {}
+  void classify_patches() const {}
+  void classify_intersection_free_patches(const TriangleMesh&) const {}
+  void out_of_place_operation(Boolean_operation_type) const {}
+  void in_place_operation(Boolean_operation_type) const {}
+  void in_place_operations(Boolean_operation_type,Boolean_operation_type) const {}
+
+  // calls commented in the code and probably incomplete due to the migration
+  // see NODE_VISITOR_TAG
+  /*
   // autorefinement only
   void new_node_added_triple_face(std::size_t node_id,
                                   face_descriptor f1,
@@ -470,13 +503,14 @@ struct Default_visitor{
                                   face_descriptor f3,
                                   const TriangleMesh& tm)
   {}
-*/
+  */
 };
 
 template < class TriangleMesh,
            class VertexPointMap,
            class Node_id,
            class Node_vector,
+           class Node_id_to_vertex,
            class CDT,
            class OutputBuilder,
            class UserVisitor>
@@ -486,8 +520,7 @@ triangulate_a_face(
   TriangleMesh& tm,
   Node_vector& nodes,
   const std::vector<Node_id>& node_ids,
-  typename std::vector<typename boost::graph_traits<TriangleMesh>
-                            ::vertex_descriptor>& node_id_to_vertex,
+  Node_id_to_vertex& node_id_to_vertex,
   std::map<std::pair<Node_id,Node_id>,
            typename boost::graph_traits<TriangleMesh>
                 ::halfedge_descriptor>& edge_to_hedge,
@@ -513,7 +546,7 @@ triangulate_a_face(
     user_visitor.new_vertex_added(node_id, v, tm);
 
     CGAL_assertion(node_id_to_vertex.size()>node_id);
-    node_id_to_vertex[node_id]=v;
+    node_id_to_vertex.register_vertex(node_id, v);
   }
 
   //insert the new halfedge and set their incident vertex
@@ -535,10 +568,10 @@ triangulate_a_face(
       halfedge_descriptor h=halfedge(e,tm), h_opp=opposite(h,tm);
 
       Node_id i0=cdt_v0->info(), i1=cdt_v1->info();
-      CGAL_assertion( node_id_to_vertex[i0]!=GT::null_vertex());
-      CGAL_assertion( node_id_to_vertex[i1]!=GT::null_vertex());
+      CGAL_assertion( node_id_to_vertex.get_vertex(i0)!=GT::null_vertex());
+      CGAL_assertion( node_id_to_vertex.get_vertex(i1)!=GT::null_vertex());
 
-      vertex_descriptor v0=node_id_to_vertex[i0], v1=node_id_to_vertex[i1];
+      vertex_descriptor v0=node_id_to_vertex.get_vertex(i0), v1=node_id_to_vertex.get_vertex(i1);
 
       set_target(h,v0,tm);
       set_target(h_opp,v1,tm);
@@ -569,9 +602,9 @@ triangulate_a_face(
     halfedge_descriptor h12=edge_to_hedge[std::make_pair(i1,i2)];
     halfedge_descriptor h20=edge_to_hedge[std::make_pair(i2,i0)];
 
-    CGAL_assertion(target(h01,tm)==node_id_to_vertex[i1]);
-    CGAL_assertion(target(h12,tm)==node_id_to_vertex[i2]);
-    CGAL_assertion(target(h20,tm)==node_id_to_vertex[i0]);
+    CGAL_assertion(target(h01,tm)==node_id_to_vertex.get_vertex(i1));
+    CGAL_assertion(target(h12,tm)==node_id_to_vertex.get_vertex(i2));
+    CGAL_assertion(target(h20,tm)==node_id_to_vertex.get_vertex(i0));
 
     set_next(h01,h12,tm);
     set_next(h12,h20,tm);
@@ -602,7 +635,7 @@ class Border_edge_map {
   typedef boost::graph_traits<PolygonMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
-  typedef boost::unordered_set<edge_descriptor> Intersection_edge_map;
+  typedef std::unordered_set<edge_descriptor> Intersection_edge_map;
   const Intersection_edge_map* intersection_edges;
   const PolygonMesh* tm;
 public:
@@ -979,7 +1012,7 @@ struct Triangle_mesh_extension_helper<TriangleMesh, true>
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  typedef boost::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
+  typedef std::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
   Edge_map& tm_to_output_edges;
   const TriangleMesh& tm;
   TriangleMesh& output;
@@ -1020,7 +1053,7 @@ struct Triangle_mesh_extension_helper<TriangleMesh, false>
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  typedef boost::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
+  typedef std::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
   Edge_map& tm_to_output_edges;
   const TriangleMesh& tm;
   TriangleMesh& output;
@@ -1070,7 +1103,7 @@ void append_patches_to_triangle_mesh(
   const VertexPointMap& vpm_tm,
   EdgeMarkMapOut& edge_mark_map_out,
   const EdgeMarkMapIn& edge_mark_map_in,
-  boost::unordered_map<
+  std::unordered_map<
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
     typename boost::graph_traits<TriangleMesh>::edge_descriptor
   >& tm_to_output_edges,
@@ -1234,6 +1267,7 @@ void append_patches_to_triangle_mesh(
     }
     set_next(h_out, candidate, output);
   }
+
   for(halfedge_descriptor h_out : border_halfedges_source_to_link)
   {
     halfedge_descriptor candidate =
@@ -1333,8 +1367,8 @@ void fill_new_triangle_mesh(
 
   //add a polyline inside O for each intersection polyline
   std::size_t nb_polylines = polylines.lengths.size();
-  boost::unordered_map<vertex_descriptor, vertex_descriptor> tm1_to_output_vertices;
-  boost::unordered_map<edge_descriptor, edge_descriptor> tm1_to_output_edges,
+  std::unordered_map<vertex_descriptor, vertex_descriptor> tm1_to_output_vertices;
+  std::unordered_map<edge_descriptor, edge_descriptor> tm1_to_output_edges,
                                                          tm2_to_output_edges;
 
   for (std::size_t i=0; i < nb_polylines; ++i)
@@ -1423,7 +1457,7 @@ void disconnect_patches(
     // start the duplicate step
     std::size_t nb_shared_edges = patch.shared_edges.size();
     new_patch_border.reserve( nb_shared_edges );
-    boost::unordered_map<halfedge_descriptor, halfedge_descriptor> old_to_new;
+    std::unordered_map<halfedge_descriptor, halfedge_descriptor> old_to_new;
 
     // save faces inside the patch and set the halfedge
     // to be duplicated on the boundary
@@ -1580,7 +1614,7 @@ void compute_inplace_operation_delay_removal_and_insideout(
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef boost::unordered_map<edge_descriptor, edge_descriptor> Edge_map;
+  typedef std::unordered_map<edge_descriptor, edge_descriptor> Edge_map;
 
   Edge_map tm2_edge_to_tm1_edge, tm1_edge_to_tm2_edge;
   //maps intersection edges from tm2 to tm1
@@ -1734,13 +1768,13 @@ void compute_inplace_operation(
         EdgeMarkMapIn1& edge_mark_map_in1,
   const EdgeMarkMapIn2& edge_mark_map_in2,
         EdgeMarkMapOut1& edge_mark_map_out1,
-  boost::unordered_map<
+  std::unordered_map<
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
     typename boost::graph_traits<TriangleMesh>::edge_descriptor
   >& tm2_edge_to_tm1_edge,
   UserVisitor& user_visitor)
 {
-  typedef boost::unordered_map<
+  typedef std::unordered_map<
       typename boost::graph_traits<TriangleMesh>::edge_descriptor,
       typename boost::graph_traits<TriangleMesh>::edge_descriptor> EdgeMap;
   //clean up patches not kept
@@ -1848,7 +1882,7 @@ void compute_inplace_operation(
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
 
-  boost::unordered_map<edge_descriptor, edge_descriptor> tm2_edge_to_tm1_edge;
+  std::unordered_map<edge_descriptor, edge_descriptor> tm2_edge_to_tm1_edge;
 
   //maps intersection edges from tm2 to the equivalent in tm1
   compute_border_edge_map(tm1, tm2,

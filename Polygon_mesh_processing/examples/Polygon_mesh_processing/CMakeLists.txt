@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Polygon_mesh_processing_Examples)
 
 # CGAL and its components
@@ -44,6 +44,8 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(hole_filling_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example_SM.cpp")
   target_link_libraries(hole_filling_example_SM PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("hole_filling_visitor_example.cpp")
+  target_link_libraries(hole_filling_visitor_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("refine_fair_example.cpp")
   target_link_libraries(refine_fair_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("shape_smoothing_example.cpp")
@@ -54,6 +56,7 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Eigen3_support)
 endif()
 
+create_single_source_cgal_program( "extrude.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope_of_triangle_soup.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope_mesh_containment.cpp" )
@@ -72,11 +75,13 @@ create_single_source_cgal_program( "mesh_slicer_example.cpp")
 #create_single_source_cgal_program( "remove_degeneracies_example.cpp")
 create_single_source_cgal_program("isotropic_remeshing_example.cpp")
 create_single_source_cgal_program("isotropic_remeshing_of_patch_example.cpp")
+create_single_source_cgal_program("tangential_relaxation_example.cpp")
 create_single_source_cgal_program("surface_mesh_intersection.cpp")
 create_single_source_cgal_program("corefinement_SM.cpp")
 create_single_source_cgal_program("corefinement_consecutive_bool_op.cpp")
 create_single_source_cgal_program("corefinement_difference_remeshed.cpp")
 create_single_source_cgal_program("corefinement_mesh_union.cpp")
+create_single_source_cgal_program("corefinement_mesh_union_progress.cpp")
 create_single_source_cgal_program(
   "corefinement_mesh_union_and_intersection.cpp")
 create_single_source_cgal_program("corefinement_mesh_union_with_attributes.cpp")
@@ -92,6 +97,7 @@ create_single_source_cgal_program("orientation_pipeline_example.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
 create_single_source_cgal_program("match_faces.cpp")
+create_single_source_cgal_program("cc_compatible_orientations.cpp")
 
 if(OpenMesh_FOUND)
 

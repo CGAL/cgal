@@ -6,6 +6,7 @@
 #include <boost/iterator/function_output_iterator.hpp>
 
 #include <array>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits_2;
@@ -29,7 +30,7 @@ struct Test_functor
   {
      const X_monotone_polyline* poly
       = CGAL::object_cast<X_monotone_polyline>(&obj);
-    CGAL_assertion_msg (poly != nullptr, "Intersection is not a polyline");
+     assert(poly != nullptr); //  Intersection is not a polyline
 
     typename X_monotone_polyline::Point_const_iterator
       itref = reference->points_begin(),
@@ -38,7 +39,7 @@ struct Test_functor
     for (; itref != reference->points_end()
            && itpoly != poly->points_end();
          ++ itref, ++ itpoly)
-      CGAL_assertion (*itref == *itpoly);
+      assert(*itref == *itpoly);
   }
 };
 

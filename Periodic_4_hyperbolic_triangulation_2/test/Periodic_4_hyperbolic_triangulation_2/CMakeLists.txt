@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Periodic_4_hyperbolic_triangulation_2_Tests)
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)

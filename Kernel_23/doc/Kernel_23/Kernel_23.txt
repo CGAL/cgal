@@ -290,7 +290,7 @@ crash or compute incorrect results due to accumulated rounding errors.
 
 \subsubsection Kernel_23PredefinedKernels Predefined Kernels
 
-For the user's convenience, \cgal provides 3 typedefs to generally useful
+For the user's convenience, \cgal provides 5 typedefs to generally useful
 kernels.
 
 <UL>
@@ -353,7 +353,7 @@ assert( p == q );
 
 In order to obtain the point corresponding to a vector \f$ v\f$ you simply
 have to add \f$ v\f$ to \ref ORIGIN. If you want to determine
-the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can write\cgalFootnote{you might call `midpoint(p_1,p_2)` instead.}
+the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can write\cgalFootnote{you might call \cgalFootnoteCode{midpoint(p_1,p_2)} instead.}
 
 \code{.cpp}
 q = p_1 + (p_2 - p_1) / 2.0;

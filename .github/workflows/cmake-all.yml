@@ -2,6 +2,9 @@ name: CMake Testsuite
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   cmake-testsuite:
 

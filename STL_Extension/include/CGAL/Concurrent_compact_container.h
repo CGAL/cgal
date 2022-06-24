@@ -27,6 +27,7 @@
 
 #include <CGAL/Compact_container.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
@@ -481,7 +482,7 @@ public:
     // We use the block structure to provide an efficient version :
     // we check if the address is in the range of each block.
 
-    assert(cit != end());
+    CGAL_assertion(cit != end());
 
     const_pointer c = &*cit;
     size_type res=0;

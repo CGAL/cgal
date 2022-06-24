@@ -631,7 +631,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   typedef std::pair<Curve_const_iterator, Curve_const_iterator>
                                                         Cci_pair;
   typedef typename Traits_2::Construct_curves_2         Construct_curves_2;
-  typedef typename Traits_2::Construct_general_polygon_with_holes_2
+  typedef typename Traits_2::Construct_polygon_with_holes_2
     Construct_polygon_with_holes_2;
 
   typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
@@ -698,7 +698,7 @@ bool are_holes_and_boundary_pairwise_disjoint
        * whose performance is better than the join(pgn)
        */
       Polygon_with_holes_2 empty_pwh = construct_pwh_functor(hole);
-      // traits.Construct_general_polygon_with_holes_2 (hole);
+      // traits.Construct_polygon_with_holes_2 (hole);
       // Polygon_with_holes_2 empty_pwh(hole);
       gps.insert(empty_pwh);
       num_of_holes++;

@@ -2388,9 +2388,13 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   if(!is)
     return is;
 
+  std::vector< Vertex_handle > V;
+  if(d > 3 || d < -2 || (n+1) > V.max_size()) {
+    is.setstate(std::ios_base::failbit);
+    return is;
+  }
   tr._tds.set_dimension(d);
-
-  std::vector< Vertex_handle > V(n+1);
+  V.resize(n+1);
   V[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
 
   for(std::size_t i=1; i <= n; i++)
@@ -3858,7 +3862,7 @@ Triangulation_3<GT,Tds,Lds>::
 insert(const Point& p, Cell_handle start)
 {
   Locate_type lt;
-  int li, lj;
+  int li = -1, lj = -1;
   Cell_handle c = locate(p, lt, li, lj, start);
   return insert(p, lt, c, li, lj);
 }
@@ -5170,6 +5174,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
     }
 
     typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    outer_map.erase(oit);
     Cell_handle o_ch = o_vt_f_pair.second.first;
     unsigned int o_i = o_vt_f_pair.second.second;
 
@@ -5215,7 +5220,6 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
         }
       }
     }
-    outer_map.erase(oit);
   }
   tds().delete_vertex(v);
   tds().delete_cells(hole.begin(), hole.end());
@@ -5367,6 +5371,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
     }
 
     typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    outer_map.erase(oit);
     Cell_handle o_ch = o_vt_f_pair.second.first;
     unsigned int o_i = o_vt_f_pair.second.second;
 
@@ -5413,7 +5418,6 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
         }
       }
     }
-    outer_map.erase(oit);
   }
   tds().delete_vertex(v);
   tds().delete_cells(inc_cells.begin(), inc_cells.end());
@@ -5670,6 +5674,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
     }
 
     typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    outer_map.erase(oit);
     Cell_handle o_ch = o_vt_f_pair.second.first;
     unsigned int o_i = o_vt_f_pair.second.second;
 
@@ -5717,7 +5722,6 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
         }
       }
     }
-    outer_map.erase(oit);
   }
   tds().delete_vertex(v);
   tds().delete_cells(hole.begin(), hole.end());
@@ -6059,6 +6063,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
     }
 
     typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    outer_map.erase(oit);
     Cell_handle o_ch = o_vt_f_pair.second.first;
     unsigned int o_i = o_vt_f_pair.second.second;
 
@@ -6105,7 +6110,6 @@ move_if_no_collision(Vertex_handle v, const Point& p,
         }
       }
     }
-    outer_map.erase(oit);
   }
 
   // fixing pointer
@@ -6511,6 +6515,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
     }
 
     typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    outer_map.erase(oit);
     Cell_handle o_ch = o_vt_f_pair.second.first;
     unsigned int o_i = o_vt_f_pair.second.second;
 
@@ -6558,7 +6563,6 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
         }
       }
     }
-    outer_map.erase(oit);
   }
 
   // fixing pointer
@@ -6851,6 +6855,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover& rem
       }
 
       typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+      outer_map.erase(oit);
       Cell_handle o_ch = o_vt_f_pair.second.first;
       unsigned int o_i = o_vt_f_pair.second.second;
 
@@ -6900,7 +6905,6 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover& rem
         }
       }
 
-      outer_map.erase(oit);
     }
 
     this->tds().delete_cells(hole.begin(), hole.end());

@@ -2,8 +2,9 @@
 #include <CGAL/Polyhedral_envelope.h>
 #include <CGAL/IO/OFF.h>
 
-#include <vector>
+#include <iostream>
 #include <fstream>
+#include <vector>
 
 int main(int argc, char* argv[])
 {

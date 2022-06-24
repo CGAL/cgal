@@ -11,8 +11,8 @@
 #include <CGAL/Unique_hash_map.h>
 
 #include <boost/array.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -65,7 +65,7 @@ bool read_vertices(const PolyMesh& mesh,
   std::size_t counter = 0;
   std::istringstream point_line(line);
   std::size_t s;
-  boost::unordered_set<std::size_t> indices;
+  std::unordered_set<std::size_t> indices;
   while(point_line >> s) {
     if(s >= vds.size())
     {

@@ -427,11 +427,14 @@ Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
     const Polygon_soup::Polygons& polygons;
     std::set<std::size_t>& nm_vertices;
     std::set< std::pair<std::size_t, std::size_t> > nm_edges;
+    std::vector<CGAL::IO::Color>& vcolors;
 
     Visitor(const Polygon_soup::Polygons& polygons,
-            std::set<std::size_t>& nm_vertices)
+            std::set<std::size_t>& nm_vertices,
+            std::vector<CGAL::IO::Color>& vcolors)
       : polygons(polygons)
       , nm_vertices(nm_vertices)
+      , vcolors(vcolors)
     {}
 
     void non_manifold_edge(std::size_t v1, std::size_t v2, std::size_t)
@@ -464,6 +467,18 @@ Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
         }
       nm_vertices.insert(v);
     }
+
+    void non_manifold_vertex(std::size_t, std::size_t nb_link_ccs)
+    {
+      if (!vcolors.empty())
+        vcolors.resize(vcolors.size()+nb_link_ccs-1);
+    }
+
+    void vertex_id_in_polygon_replaced(std::size_t, std::size_t input_id, std::size_t new_id)
+    {
+      if (!vcolors.empty())
+        vcolors[new_id]=vcolors[input_id];
+    }
   };
   if(isEmpty() || d->oriented)
     return true; // nothing to do
@@ -492,7 +507,7 @@ Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
 
   bool res;
   std::set<std::size_t> nm_v_set;
-  Visitor visitor(valid_polygons, nm_v_set);
+  Visitor visitor(valid_polygons, nm_v_set, d->soup->vcolors);
   QApplication::setOverrideCursor(Qt::WaitCursor);
   res =  CGAL::Polygon_mesh_processing::
     orient_polygon_soup(d->soup->points, d->soup->polygons, CGAL::parameters::visitor(visitor));

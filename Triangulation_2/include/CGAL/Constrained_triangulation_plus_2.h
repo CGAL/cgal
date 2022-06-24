@@ -633,7 +633,7 @@ public:
   file_output(std::ostream& os) const
   {
     os << static_cast<const Tr&>(*this);
-    Unique_hash_map<Vertex_handle,int> V;
+    Unique_hash_map<Vertex_handle,int> V(0, number_of_vertices());
     int inum = 0;
     for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
       if(! is_infinite(vit)){
@@ -1186,7 +1186,8 @@ intersect(Face_handle f, int i,
             << " , #" << vd->time_stamp() << "= " << vd->point()
             << " , Exact_intersections_tag)\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
-  Point pi;
+  Point pi(ORIGIN); // initialize although we are sure that it will be
+                    // set by the intersection, but to quiet a warning
   Intersection_tag itag = Intersection_tag();
   CGAL_triangulation_assertion_code( bool ok = )
   intersection(geom_traits(), pa, pb, pc, pd, pi, itag );

@@ -1049,11 +1049,7 @@ void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *vie
   viewer->setBackgroundColor(::Qt::white);
   draw_picking(viewer);
 
-  int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
-  const static int dataLength = rowLength * deviceHeight;
-  GLubyte* buffer = new GLubyte[dataLength];
-  // Qt uses upper corner for its origin while GL uses the lower corner.
-  viewer->glReadPixels(picked_pixel.x(), deviceHeight-1-picked_pixel.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+  const auto buffer = read_pixel_as_ubyte_rgba(picked_pixel, viewer, viewer->camera());
   //decode ID and pick (don't forget the case nothing is picked
   if(!(buffer[0]==buffer[1] && buffer[1]==buffer[2]))
   {
@@ -1080,7 +1076,6 @@ void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *vie
       }
     }
   }
-  delete[] buffer;
   viewer->setBackgroundColor(bgColor);
   fbo->release();
   delete fbo;

@@ -24,6 +24,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/demangle.h>
+#include <CGAL/assertions.h>
 
 #include <algorithm>
 #include <iterator>
@@ -178,7 +179,10 @@ public:
   public:
     typedef CGAL::Property_map_to_unary_function<Property_map<Type> > Unary_function;
     typedef boost::transform_iterator<Unary_function,
+                                      typename Point_set::iterator> iterator; // for NP helper
+    typedef boost::transform_iterator<Unary_function,
                                       typename Point_set::const_iterator> const_iterator;
+
   private:
     const_iterator m_begin;
     const_iterator m_end;
@@ -488,7 +492,7 @@ public:
   iterator insert (const Point& p, const Vector& n)
   {
     iterator out = insert (p);
-    assert (has_normal_map());
+    CGAL_assertion(has_normal_map());
     m_normals[size()-1] = n;
     return out;
   }

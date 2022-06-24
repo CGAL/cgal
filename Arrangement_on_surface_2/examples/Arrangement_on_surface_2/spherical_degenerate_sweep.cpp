@@ -5,6 +5,7 @@
 // #define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 1
 // #define CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 1
 
+#include <cassert>
 #include <vector>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -57,26 +58,26 @@ int main() {
   X_monotone_curve_2 xcv_sp1 = ctr_xcv(sp, p1);
   X_monotone_curve_2 xcv_sp2 = ctr_xcv(sp, p2);
   X_monotone_curve_2 xcv_sp3 = ctr_xcv(sp, p3);
-  CGAL_assertion(xcv_sp1.is_vertical());
-  CGAL_assertion(xcv_sp2.is_vertical());
-  CGAL_assertion(xcv_sp3.is_vertical());
+  assert(xcv_sp1.is_vertical());
+  assert(xcv_sp2.is_vertical());
+  assert(xcv_sp3.is_vertical());
   xcvs.push_back(xcv_sp1);      // 0
   xcvs.push_back(xcv_sp2);      // 1
   xcvs.push_back(xcv_sp3);      // 2
 
   X_monotone_curve_2 xcv_12 = ctr_xcv(p1, p2);
   X_monotone_curve_2 xcv_23 = ctr_xcv(p2, p3);
-  CGAL_assertion(!xcv_12.is_vertical());
-  CGAL_assertion(!xcv_23.is_vertical());
+  assert(!xcv_12.is_vertical());
+  assert(!xcv_23.is_vertical());
   xcvs.push_back(xcv_12);       // 3
   xcvs.push_back(xcv_23);       // 4
 
   X_monotone_curve_2 xcv_np1 = ctr_xcv(np, p1);
   X_monotone_curve_2 xcv_np2 = ctr_xcv(np, p2);
   X_monotone_curve_2 xcv_np3 = ctr_xcv(np, p3);
-  CGAL_assertion(xcv_np1.is_vertical());
-  CGAL_assertion(xcv_np2.is_vertical());
-  CGAL_assertion(xcv_np3.is_vertical());
+  assert(xcv_np1.is_vertical());
+  assert(xcv_np2.is_vertical());
+  assert(xcv_np3.is_vertical());
   xcvs.push_back(xcv_np1);      // 5
   xcvs.push_back(xcv_np2);      // 6
   xcvs.push_back(xcv_np3);      // 7

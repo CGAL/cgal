@@ -87,7 +87,7 @@ clip_to_bbox(const Plane_3& plane,
   }};
 
   // description of faces of the bbox
-  constexpr std::array<int, 24> face_indices
+  static constexpr std::array<int, 24> face_indices
     { { 0, 1, 2, 3,
         2, 1, 5, 6,
         3, 2, 6, 7,
@@ -95,7 +95,7 @@ clip_to_bbox(const Plane_3& plane,
         4, 0, 3, 7,
         6, 5, 4, 7 } };
 
-  constexpr std::array<int, 24> edge_indices
+  static constexpr std::array<int, 24> edge_indices
     { { 0,  1,  2, 3,
         1,  4,  5, 6,
         2,  6,  7, 8,
@@ -513,10 +513,11 @@ generic_clip_impl(
 /**
   * \ingroup PMP_corefinement_grp
   *
-  * clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink
-  * by `clipper`.
+  * \brief clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink by `clipper`.
+  *
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
   * See Subsection \ref coref_clip for more details.
+  *
   * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
@@ -593,6 +594,8 @@ generic_clip_impl(
   *
   * @return `true` if the output surface mesh is manifold.
   *         If `false` is returned `tm` and `clipper` are only corefined.
+  *
+  * @see `split()`
   */
 template <class TriangleMesh,
           class NamedParameters1 = parameters::Default_named_parameters,
@@ -623,12 +626,14 @@ clip(TriangleMesh& tm,
 
 /**
   * \ingroup PMP_corefinement_grp
-  * clips `tm` by keeping the part that is on the negative side of `plane` (side opposite to its normal vector).
+  *
+  * \brief clips `tm` by keeping the part that is on the negative side of `plane` (side opposite to its normal vector).
+  *
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \note In the current implementation it is not possible to set the vertex point map and the default will be used. `Plane_3` must be
-  * from the same %Kernel as the point of the vertex point map.
+  * \note `Plane_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
+  * \note `Plane_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
@@ -691,6 +696,8 @@ clip(TriangleMesh& tm,
   *
   * @return `true` if the output surface mesh is manifold.
   *         If `false` is returned `tm` is only refined by the intersection with `plane`.
+  *
+  * @see `split()`
   */
 template <class TriangleMesh,
           class NamedParameters = parameters::Default_named_parameters>
@@ -702,10 +709,12 @@ bool clip(TriangleMesh& tm,
 #endif
           const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = CGAL::parameters;
+
+  using params::get_parameter;
+  using params::choose_parameter;
+
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
 
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
@@ -735,12 +744,15 @@ bool clip(TriangleMesh& tm,
 
 /**
   * \ingroup PMP_corefinement_grp
-  * clips `tm` by keeping the part that is inside `iso_cuboid`.
+  *
+  * \brief clips `tm` by keeping the part that is inside `iso_cuboid`.
+  *
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \note In the current implementation it is not possible to set the vertex point map and the default will be used. `Iso_cuboid_3` must be
-  * from the same %Kernel as the point of the vertex point map.
+  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
+  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
+  *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
@@ -794,6 +806,8 @@ bool clip(TriangleMesh& tm,
   *
   * @return `true` if the output surface mesh is manifold.
   *         If `false` is returned `tm` is only refined by the intersection with `iso_cuboid`.
+  *
+  * @see `split()`
   */
 template <class TriangleMesh,
           class NamedParameters = parameters::Default_named_parameters>
@@ -805,10 +819,11 @@ bool clip(TriangleMesh& tm,
 #endif
           const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = CGAL::parameters;
+
+  using params::get_parameter;
+  using params::choose_parameter;
 
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
   TriangleMesh clipper;
@@ -824,12 +839,13 @@ bool clip(TriangleMesh& tm,
 
 /*!
   * \ingroup PMP_corefinement_grp
+  *
   * corefines `tm` and `splitter` and duplicates edges in `tm` that are on the intersection with `splitter`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(splitter)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
   *
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -874,6 +890,8 @@ bool clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
+  *
+  * @see `clip()`
 */
 template <class TriangleMesh,
           class NamedParameters1 = parameters::Default_named_parameters,
@@ -915,15 +933,16 @@ void split(TriangleMesh& tm,
 
 /**
   * \ingroup PMP_corefinement_grp
+  *
   * adds intersection edges of `plane` and `tm` in `tm` and duplicates those edges.
   *
-  * \note In the current implementation it is not possible to set the vertex point map and the default will be used.
+  * \note `Plane_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
+  * \note `Plane_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
-  *
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
@@ -962,6 +981,8 @@ void split(TriangleMesh& tm,
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`.}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
+  *
+  * @see `clip()`
   */
 template <class TriangleMesh,
           class NamedParameters = parameters::Default_named_parameters>
@@ -973,10 +994,11 @@ void split(TriangleMesh& tm,
 #endif
            const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = CGAL::parameters;
+
+  using params::get_parameter;
+  using params::choose_parameter;
 
   // create a splitter mesh for the splitting plane using an internal CGAL function
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm, np);
@@ -987,11 +1009,10 @@ void split(TriangleMesh& tm,
                       bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
 
   TriangleMesh splitter;
-  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, CGAL::parameters::default_values());
+  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, params::default_values());
 
   if(os == CGAL::ON_ORIENTED_BOUNDARY)
   {
-
     const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
     return split(tm, splitter, np, params::do_not_modify(do_not_modify));
   }
@@ -1002,16 +1023,16 @@ void split(TriangleMesh& tm,
 
 /**
   * \ingroup PMP_corefinement_grp
+  *
   * adds intersection edges of `iso_cuboid` and `tm` in `tm` and duplicates those edges.
   *
-  * \note In the current implementation it is not possible to set the vertex point map and the default will be used.
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the vertex point map.
+  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
+  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
-  *
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
@@ -1050,7 +1071,7 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_compact_clipper}
-  *     \cgalParamDescription{if `false` the parts of `tm` coplanar with `iso_cuboid` will not be part of the output}
+  *     \cgalParamDescription{if `false`, the parts of `tm` coplanar with `iso_cuboid` will not be part of the output.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
@@ -1063,28 +1084,31 @@ void split(TriangleMesh& tm,
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
   *   \cgalParamNEnd
-  *
   * \cgalNamedParamsEnd
+  *
+  * @see `clip()`
   */
 template <class TriangleMesh,
           class NamedParameters = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
-           #ifdef DOXYGEN_RUNNING
+#ifdef DOXYGEN_RUNNING
            const Iso_cuboid_3& iso_cuboid,
-           #else
+#else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
-           #endif
+#endif
            const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = CGAL::parameters;
+
+  using params::get_parameter;
+  using params::choose_parameter;
+
   TriangleMesh splitter;
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],
-      iso_cuboid[4], iso_cuboid[5], iso_cuboid[6], iso_cuboid[7],
-      splitter);
+                  iso_cuboid[4], iso_cuboid[5], iso_cuboid[6], iso_cuboid[7],
+                  splitter);
   triangulate_faces(splitter);
   const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   return split(tm, splitter, np, params::do_not_modify(do_not_modify));

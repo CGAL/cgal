@@ -18,6 +18,7 @@ typedef Traits::face_descriptor           face_descriptor;
 template<typename Graph>
 void concept_check_polyhedron() {
   boost::function_requires< boost::GraphConcept<Sm> >();
+  boost::function_requires< boost::AdjacencyGraphConcept<Sm> >();
 
   // Those have to be disabled due to OpenMesh's broken iterators.
   // boost::function_requires< boost::VertexListGraphConcept<Sm> >();

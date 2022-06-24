@@ -62,6 +62,7 @@ CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
 CGAL_add_named_parameter(vertex_incident_patches_t, vertex_incident_patches, vertex_incident_patches_map)
 CGAL_add_named_parameter(density_control_factor_t, density_control_factor, density_control_factor)
 CGAL_add_named_parameter(use_delaunay_triangulation_t, use_delaunay_triangulation, use_delaunay_triangulation)
+CGAL_add_named_parameter(do_not_use_cubic_algorithm_t, do_not_use_cubic_algorithm, do_not_use_cubic_algorithm)
 CGAL_add_named_parameter(use_2d_constrained_delaunay_triangulation_t, use_2d_constrained_delaunay_triangulation, use_2d_constrained_delaunay_triangulation)
 CGAL_add_named_parameter(fairing_continuity_t, fairing_continuity, fairing_continuity)
 CGAL_add_named_parameter(sparse_linear_solver_t, sparse_linear_solver, sparse_linear_solver)
@@ -89,6 +90,7 @@ CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounde
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
 CGAL_add_named_parameter(apply_per_connected_component_t, apply_per_connected_component, apply_per_connected_component)
 CGAL_add_named_parameter(projection_functor_t, projection_functor, projection_functor)
+CGAL_add_named_parameter(allow_move_functor_t, allow_move_functor, allow_move_functor)
 CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersection, throw_on_self_intersection)
 CGAL_add_named_parameter(clip_volume_t, clip_volume, clip_volume)
 CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
@@ -111,11 +113,11 @@ CGAL_add_named_parameter(error_codes_t, error_codes, error_codes)
 CGAL_add_named_parameter(volume_inclusions_t, volume_inclusions, volume_inclusions)
 CGAL_add_named_parameter(face_cc_map_t, face_connected_component_map, face_connected_component_map)
 CGAL_add_named_parameter(ccid_to_vid_vector_t, connected_component_id_to_volume_id, connected_component_id_to_volume_id)
-CGAL_add_named_parameter(is_cc_outward_oriented_bs_t, is_cc_outward_oriented, is_cc_outward_oriented);
-CGAL_add_named_parameter(intersecting_volume_pairs_t, intersecting_volume_pairs_output_iterator, intersecting_volume_pairs_output_iterator);
-CGAL_add_named_parameter(i_used_as_a_predicate_t, i_used_as_a_predicate, i_used_as_a_predicate);
-CGAL_add_named_parameter(nesting_levels_t, nesting_levels, nesting_levels);
-CGAL_add_named_parameter(i_used_for_volume_orientation_t, i_used_for_volume_orientation, i_used_for_volume_orientation);
+CGAL_add_named_parameter(is_cc_outward_oriented_bs_t, is_cc_outward_oriented, is_cc_outward_oriented)
+CGAL_add_named_parameter(intersecting_volume_pairs_t, intersecting_volume_pairs_output_iterator, intersecting_volume_pairs_output_iterator)
+CGAL_add_named_parameter(i_used_as_a_predicate_t, i_used_as_a_predicate, i_used_as_a_predicate)
+CGAL_add_named_parameter(nesting_levels_t, nesting_levels, nesting_levels)
+CGAL_add_named_parameter(i_used_for_volume_orientation_t, i_used_for_volume_orientation, i_used_for_volume_orientation)
 CGAL_add_named_parameter(area_threshold_t, area_threshold, area_threshold)
 CGAL_add_named_parameter(halfedges_keeper_t, halfedges_keeper, halfedges_keeper)
 CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
@@ -128,6 +130,7 @@ CGAL_add_named_parameter(match_faces_t, match_faces, match_faces)
 CGAL_add_named_parameter(face_epsilon_map_t, face_epsilon_map, face_epsilon_map)
 CGAL_add_named_parameter(maximum_number_t, maximum_number, maximum_number)
 CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use_one_sided_hausdorff)
+CGAL_add_named_parameter(flip_triangle_height_threshold_t, flip_triangle_height_threshold, flip_triangle_height_threshold)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -181,6 +184,7 @@ CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatche
 CGAL_add_named_parameter(adjacencies_t, adjacencies, adjacencies)
 CGAL_add_named_parameter(scan_angle_t, scan_angle_map, scan_angle_map)
 CGAL_add_named_parameter(scanline_id_t, scanline_id_map, scanline_id_map)
+CGAL_add_named_parameter(min_points_per_cell_t, min_points_per_cell, min_points_per_cell)
 CGAL_add_named_parameter(scalar_t, scalar_map, scalar_map)
 
 // List of named parameters used in Surface_mesh_approximation package
@@ -205,6 +209,10 @@ CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundari
 CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_is_selected_map)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
+
+// List of named parameters used in Alpha_wrap_3
+CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
+CGAL_add_named_parameter(seed_points_t, seed_points, seed_points)
 
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)

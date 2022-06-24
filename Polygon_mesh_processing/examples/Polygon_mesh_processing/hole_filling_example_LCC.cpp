@@ -5,8 +5,10 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <iterator>
+#include <string>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                              Kernel;

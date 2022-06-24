@@ -343,8 +343,8 @@ public:
       if(tet.is_degenerate())
         continue;
 
-      P l0 = tet0 + CGAL::cross_product(V(tet0, tet1), V(tet0, tet2));
-      P l1 = tet2 + CGAL::cross_product(V(tet2, tet1), V(tet2, tet0));
+      P l0 = tet0 - CGAL::cross_product(V(tet0, tet1), V(tet0, tet2));
+      P l1 = tet3 + CGAL::cross_product(V(tet3, tet1), V(tet3, tet2));
 
       assert(tet.has_on_unbounded_side(l0) && tet.has_on_unbounded_side(l1));
 
@@ -363,6 +363,7 @@ public:
 
     // No intersection
     Tr tr(p(0,0,0), p(1,0,1), p(1,1,0));
+
     check_no_intersection(L(p(5,0,0), p(5,1,0)), tr);
 
     // on edge

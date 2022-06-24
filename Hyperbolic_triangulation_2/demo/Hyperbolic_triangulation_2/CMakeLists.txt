@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Hyperbolic_triangulation_2_Demo)
 
 # Find includes in corresponding build directories

@@ -124,20 +124,20 @@ bool test_query(
 
   const auto a2 = wrapper.weight_a(t2, r2, p2, q2);
   const auto b2 = wrapper.weight_b(t2, r2, p2, q2);
-  CGAL_assertion(a2 >= FT(0) && b2 >= FT(0));
+  assert(a2 >= FT(0) && b2 >= FT(0));
   if (a2 < FT(0) || b2 < FT(0)) return false;
-  CGAL_assertion(CGAL::abs(a2 - b2) < tol);
+  assert(CGAL::abs(a2 - b2) < tol);
   if (CGAL::abs(a2 - b2) >= tol) return false;
 
   if (wrapper.supports_3d()) {
     const auto a3 = wrapper.weight_a(t3, r3, p3, q3);
     const auto b3 = wrapper.weight_b(t3, r3, p3, q3);
-    CGAL_assertion(a3 >= FT(0) && b3 >= FT(0));
+    assert(a3 >= FT(0) && b3 >= FT(0));
     if (a3 < FT(0) || b3 < FT(0)) return false;
-    CGAL_assertion(CGAL::abs(a3 - b3) < tol);
+    assert(CGAL::abs(a3 - b3) < tol);
     if (CGAL::abs(a3 - b3) >= tol) return false;
-    CGAL_assertion(CGAL::abs(a2 - a3) < tol);
-    CGAL_assertion(CGAL::abs(b2 - b3) < tol);
+    assert(CGAL::abs(a2 - a3) < tol);
+    assert(CGAL::abs(b2 - b3) < tol);
     if (CGAL::abs(a2 - a3) >= tol) return false;
     if (CGAL::abs(b2 - b3) >= tol) return false;
   }
@@ -169,20 +169,20 @@ bool test_symmetry_x(
 
   const auto a2 = wrapper.weight_a(t2, r2, p2, Point_2(-x, 0));
   const auto b2 = wrapper.weight_a(t2, r2, p2, Point_2(+x, 0));
-  CGAL_assertion(a2 >= FT(0) && b2 >= FT(0));
+  assert(a2 >= FT(0) && b2 >= FT(0));
   if (a2 < FT(0) || b2 < FT(0)) return false;
-  CGAL_assertion(CGAL::abs(a2 - b2) < tol);
+  assert(CGAL::abs(a2 - b2) < tol);
   if (CGAL::abs(a2 - b2) >= tol) return false;
 
   if (wrapper.supports_3d()) {
     const auto a3 = wrapper.weight_a(t3, r3, p3, Point_3(-x, 0, 1));
     const auto b3 = wrapper.weight_a(t3, r3, p3, Point_3(+x, 0, 1));
-    CGAL_assertion(a3 >= FT(0) && b3 >= FT(0));
+    assert(a3 >= FT(0) && b3 >= FT(0));
     if (a3 < FT(0) || b3 < FT(0)) return false;
-    CGAL_assertion(CGAL::abs(a3 - b3) < tol);
+    assert(CGAL::abs(a3 - b3) < tol);
     if (CGAL::abs(a3 - b3) >= tol) return false;
-    CGAL_assertion(CGAL::abs(a2 - a3) < tol);
-    CGAL_assertion(CGAL::abs(b2 - b3) < tol);
+    assert(CGAL::abs(a2 - a3) < tol);
+    assert(CGAL::abs(b2 - b3) < tol);
     if (CGAL::abs(a2 - a3) >= tol) return false;
     if (CGAL::abs(b2 - b3) >= tol) return false;
   }
@@ -218,17 +218,17 @@ bool test_compare(
 
   const auto a2 = wrapper1.weight_a(t2, r2, p2, q2);
   const auto b2 = wrapper2.weight_a(t2, r2, p2, q2);
-  CGAL_assertion(a2 >= FT(0) && b2 >= FT(0));
+  assert(a2 >= FT(0) && b2 >= FT(0));
   if (a2 < FT(0) || b2 < FT(0)) return false;
-  CGAL_assertion(CGAL::abs(a2 - b2) < tol);
+  assert(CGAL::abs(a2 - b2) < tol);
   if (CGAL::abs(a2 - b2) >= tol) return false;
 
   if (wrapper1.supports_3d() && wrapper2.supports_3d()) {
     const auto a3 = wrapper1.weight_a(t3, r3, p3, q3);
     const auto b3 = wrapper2.weight_a(t3, r3, p3, q3);
-    CGAL_assertion(a3 >= FT(0) && b3 >= FT(0));
+    assert(a3 >= FT(0) && b3 >= FT(0));
     if (a3 < FT(0) || b3 < FT(0)) return false;
-    CGAL_assertion(CGAL::abs(a3 - b3) < tol);
+    assert(CGAL::abs(a3 - b3) < tol);
     if (CGAL::abs(a3 - b3) >= tol) return false;
   }
   return true;
@@ -258,9 +258,9 @@ bool test_neighbors(
 
   const auto a2 = wrapper.weight(p2, q2, r2);
   const auto a3 = wrapper.weight(p3, q3, r3);
-  CGAL_assertion(a2 >= FT(0) && a3 >= FT(0));
+  assert(a2 >= FT(0) && a3 >= FT(0));
   if (a2 < FT(0) || a3 < FT(0)) return false;
-  CGAL_assertion(CGAL::abs(a2 - a3) < tol);
+  assert(CGAL::abs(a2 - a3) < tol);
   if (CGAL::abs(a2 - a3) >= tol) return false;
   return true;
 }
@@ -288,12 +288,12 @@ bool test_area(
 
   const auto a2 = wrapper.weight(p2, q2, r2);
   const auto a3 = wrapper.weight(p3, q3, r3);
-  CGAL_assertion(a2 <= CGAL::Weights::area(p2, q2, r2));
-  CGAL_assertion(a3 <= CGAL::Weights::area(p3, q3, r3));
+  assert(a2 <= CGAL::Weights::area(p2, q2, r2));
+  assert(a3 <= CGAL::Weights::area(p3, q3, r3));
   if (a2 > CGAL::Weights::area(p2, q2, r2)) return false;
   if (a3 > CGAL::Weights::area(p3, q3, r3)) return false;
-  CGAL_assertion(a2 >= FT(0));
-  CGAL_assertion(a3 >= FT(0));
+  assert(a2 >= FT(0));
+  assert(a3 >= FT(0));
   if (a2 < FT(0)) return false;
   if (a3 < FT(0)) return false;
   return true;
@@ -305,7 +305,7 @@ bool test_coordinates(
   const std::vector<Point>& polygon,
   const std::vector<FT>& weights) {
 
-  CGAL_assertion(weights.size() > 0);
+  assert(weights.size() > 0);
   if (weights.size() == 0) return false;
 
   // Compute the sum of weights.
@@ -314,7 +314,7 @@ bool test_coordinates(
   for (const FT& weight : weights) {
     sum += weight;
   }
-  CGAL_assertion(sum >= tol);
+  assert(sum >= tol);
   if (sum < tol) return false;
 
   // Compute coordinates.
@@ -323,7 +323,7 @@ bool test_coordinates(
   for (const FT& weight : weights) {
     coordinates.push_back(weight / sum);
   }
-  CGAL_assertion(coordinates.size() == weights.size());
+  assert(coordinates.size() == weights.size());
   if (coordinates.size() != weights.size()) return false;
 
   // Test partition of unity.
@@ -331,7 +331,7 @@ bool test_coordinates(
   for (const FT& coordinate : coordinates) {
     sum += coordinate;
   }
-  CGAL_assertion(CGAL::abs(FT(1) - sum) < tol);
+  assert(CGAL::abs(FT(1) - sum) < tol);
   if (CGAL::abs(FT(1) - sum) >= tol) return false;
 
   // Test linear precision.
@@ -340,8 +340,8 @@ bool test_coordinates(
     x += coordinates[i] * polygon[i].x();
     y += coordinates[i] * polygon[i].y();
   }
-  CGAL_assertion(CGAL::abs(query.x() - x) < tol);
-  CGAL_assertion(CGAL::abs(query.y() - y) < tol);
+  assert(CGAL::abs(query.x() - x) < tol);
+  assert(CGAL::abs(query.y() - y) < tol);
   if (CGAL::abs(query.x() - x) >= tol) return false;
   if (CGAL::abs(query.y() - y) >= tol) return false;
   return true;
@@ -357,7 +357,7 @@ bool test_on_polygon(
 
   // Get weights.
   using FT = typename Kernel::FT;
-  CGAL_assertion(polygon_2.size() >= 3);
+  assert(polygon_2.size() >= 3);
   if (polygon_2.size() < 3) return false;
 
   // 2D version.
@@ -365,7 +365,7 @@ bool test_on_polygon(
   weights_2.reserve(polygon_2.size());
   wrapper.compute_on_polygon(
     polygon_2, query_2, Kernel(), std::back_inserter(weights_2));
-  CGAL_assertion(weights_2.size() == polygon_2.size());
+  assert(weights_2.size() == polygon_2.size());
   if (weights_2.size() != polygon_2.size()) return false;
   if (!test_coordinates(query_2, polygon_2, weights_2)) return false;
 
@@ -377,7 +377,7 @@ bool test_on_polygon(
   for (const auto& vertex_2 : polygon_2) {
     polygon_3.push_back(Point_3(vertex_2.x(), vertex_2.y(), 1));
   }
-  CGAL_assertion(polygon_3.size() == polygon_2.size());
+  assert(polygon_3.size() == polygon_2.size());
   if (polygon_3.size() != polygon_2.size()) return false;
   const CGAL::Projection_traits_xy_3<Kernel> ptraits;
 
@@ -385,7 +385,7 @@ bool test_on_polygon(
   weights_3.reserve(polygon_3.size());
   wrapper.compute_on_polygon(
     polygon_3, query_3, ptraits, std::back_inserter(weights_3));
-  CGAL_assertion(weights_3.size() == polygon_3.size());
+  assert(weights_3.size() == polygon_3.size());
   if (weights_3.size() != polygon_3.size()) return false;
   if (!test_coordinates(query_3, polygon_3, weights_3)) return false;
   return true;
@@ -402,7 +402,7 @@ bool test_barycentric_properties(
   // Get weights.
   using FT = typename Kernel::FT;
   const std::size_t n = polygon.size();
-  CGAL_assertion(n >= 3);
+  assert(n >= 3);
   if (n < 3) return false;
 
   // Check properties.
@@ -418,7 +418,7 @@ bool test_barycentric_properties(
     const FT weight = wrapper.weight_a(t, r, p, q);
     weights.push_back(weight);
   }
-  CGAL_assertion(weights.size() == n);
+  assert(weights.size() == n);
   if (weights.size() != n) return false;
   if (!test_coordinates(query, polygon, weights)) return false;
   return true;

@@ -21,7 +21,6 @@
 
 #include <memory>
 #include <boost/format.hpp>
-#include <boost/unordered_set.hpp>
 #include <CGAL/ImageIO.h>
 #include <CGAL/function_objects.h>
 

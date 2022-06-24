@@ -4164,7 +4164,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
     return os;
 
   // write the vertices
-  Unique_hash_map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, std::size_t > V(0, number_of_vertices());
   std::size_t i = 0;
   if (is_1_cover())
     {
@@ -4208,7 +4208,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
     }
   CGAL_triangulation_postcondition(i == _cover[0]*_cover[1]*n);
 
-  Unique_hash_map<Face_handle, std::size_t> F;
+  Unique_hash_map<Face_handle, std::size_t> F(0,  _tds.number_of_faces());
   int inum = 0;
   // asks the tds for the combinatorial information
   // vertices of the faces

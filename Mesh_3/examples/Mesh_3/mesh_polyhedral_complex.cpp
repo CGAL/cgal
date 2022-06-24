@@ -8,6 +8,7 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <cstdlib>
+#include <cassert>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -54,8 +55,7 @@ const std::pair<int, int> incident_subdomains[] = {
 int main()
 {
   const std::size_t nb_patches = sizeof(filenames) / sizeof(const char*);
-  CGAL_assertion(sizeof(incident_subdomains) ==
-                 nb_patches * sizeof(std::pair<int, int>));
+  assert(sizeof(incident_subdomains) == nb_patches * sizeof(std::pair<int, int>));
   std::vector<Polyhedron> patches(nb_patches);
   for(std::size_t i = 0; i < nb_patches; ++i) {
     std::ifstream input(CGAL::data_file_path(filenames[i]));

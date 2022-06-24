@@ -12,8 +12,6 @@
 #ifndef CGAL_COMBINATORIAL_MAP_2_TEST
 #define CGAL_COMBINATORIAL_MAP_2_TEST 1
 
-#include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Combinatorial_map_operations.h>
 #include "Combinatorial_map_test_iterators.h"
 
 #include <iostream>

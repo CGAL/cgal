@@ -1,3 +1,4 @@
+#include <cassert>
 #include "test_dependencies.h"
 
 // and additionally
@@ -28,6 +29,6 @@ int main()
 
   CGAL::Lipschitz_sizing_field_2<CDT> lip_size(cdt);
   lip_size.set_K(2.);
-  CGAL_assertion(lip_size.get_K() == 2.);
+  assert(lip_size.get_K() == 2.);
 
 }

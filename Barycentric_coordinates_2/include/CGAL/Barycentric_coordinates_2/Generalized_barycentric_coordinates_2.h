@@ -489,6 +489,7 @@ private:
             ++output;
         }
         *output = coordinate[0];
+        ++output;
 
         // Return computed coordinates.
         if(success) return boost::optional<OutputIterator>(output);

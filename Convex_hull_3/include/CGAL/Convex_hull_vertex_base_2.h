@@ -23,20 +23,19 @@
 
 namespace CGAL {
 
-template < typename Info_, typename GT,
+template < typename GT,
            typename Vb = Triangulation_ds_vertex_base_2< > >
 class Convex_hull_vertex_base_2
   : public Vb
 {
 public:
-  typedef Info_                                                      Info;
   typedef typename GT::Point_2                                       Point;
 
-  typedef typename Vb::Face_handle                                   Face_handle;
+  typedef typename Vb::Face_handle                                  Face_handle;
   typedef typename Vb::Vertex_handle                                 Vertex_handle;
 
 private:
-  Info _info;
+  int _info = 0;
   Point _p;
 
 public:
@@ -44,7 +43,7 @@ public:
   struct Rebind_TDS
   {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other            Vb2;
-    typedef Convex_hull_vertex_base_2<Info, GT, Vb2>                 Other;
+    typedef Convex_hull_vertex_base_2<GT, Vb2>                       Other;
   };
 
   Convex_hull_vertex_base_2()
@@ -63,8 +62,8 @@ public:
   const Point&  point() const { return _p; }
   Point& point() { return _p; }
 
-  const Info& info() const { return _info; }
-  Info&       info()       { return _info; }
+  const int& info() const { return _info; }
+  int&       info()       { return _info; }
 };
 
 template <typename GT, typename Vb>

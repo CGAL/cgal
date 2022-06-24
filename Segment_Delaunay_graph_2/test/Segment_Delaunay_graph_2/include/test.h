@@ -11,7 +11,7 @@ bool test_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2 sdg;
   std::cout << "Testing data from file: " << ifname << std::endl;
-  return test_base(is, sdg, ifname, "sdg.tmp", test_remove);
+  return test_base(is, sdg, ifname, test_remove);
 }
 
 
@@ -20,7 +20,7 @@ bool test_no_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2_wi sdg;
   std::cout << "Testing data from file: " << ifname << std::endl;
-  return test_base(is, sdg, ifname, "sdg_wi.tmp", test_remove);
+  return test_base(is, sdg, ifname, test_remove);
 }
 
 //=====================================================================
@@ -30,7 +30,7 @@ bool test_hierarchy_x(InputStream& is, const char* ifname, bool test_remove = tr
 {
   SDG2 sdg;
   std::cout << "Testing data from file: " << ifname << std::endl;
-  return test_base(is, sdg, ifname, "sdgh.tmp", test_remove);
+  return test_base(is, sdg, ifname, test_remove);
 }
 
 
@@ -39,7 +39,7 @@ bool test_hierarchy_no_x(InputStream& is, const char* ifname, bool test_remove =
 {
   SDG2_wi sdg;
   std::cout << "Testing data from file: " << ifname << std::endl;
-  return test_base(is, sdg, ifname, "sdgh_wi.tmp", test_remove);
+  return test_base(is, sdg, ifname, test_remove);
 }
 
 
@@ -47,12 +47,12 @@ bool test_hierarchy_no_x(InputStream& is, const char* ifname, bool test_remove =
 
 
 template<class SDG, class InputStream>
-bool test_base(InputStream&, const SDG& sdg, const char* ifname, const char* ofname,
+bool test_base(InputStream&, const SDG& sdg, const char* ifname,
                bool test_remove)
 {
   print_separator();
 
-  bool types_ok = CGAL::test_sdg(std::cin, sdg, ifname, ofname, test_remove);
+  bool types_ok = CGAL::test_sdg(std::cin, sdg, ifname, test_remove);
 
   assert_no_warning( types_ok );
 

@@ -426,7 +426,9 @@ public:
 
 /**
 * \ingroup PMP_meshing_grp
-* triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2
+*
+* triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
+*
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -461,6 +463,8 @@ public:
 * \cgalNamedParamsEnd
 *
 * @return `true` if the face has been triangulated.
+*
+* @see `triangulate_faces()`
 */
 template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
@@ -497,11 +501,11 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 
 /**
 * \ingroup PMP_meshing_grp
-* triangulates given faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2
 *
-* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
-          model of `Range`.
-          Its iterator type is `InputIterator`.
+* triangulates given faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
+*
+* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
+*         Its iterator type is `InputIterator`.
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -537,7 +541,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *
 * @return `true` if all the faces have been triangulated.
 *
-* @see triangulate_face()
+* @see `triangulate_face()`
 */
 template <typename FaceRange, typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(FaceRange face_range,
@@ -574,7 +578,9 @@ bool triangulate_faces(FaceRange face_range,
 
 /**
 * \ingroup PMP_meshing_grp
-* triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2
+*
+* triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
+*
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -609,7 +615,7 @@ bool triangulate_faces(FaceRange face_range,
 *
 * @return `true` if all the faces have been triangulated.
 *
-* @see triangulate_face()
+* @see `triangulate_face()`
 */
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(PolygonMesh& pmesh,

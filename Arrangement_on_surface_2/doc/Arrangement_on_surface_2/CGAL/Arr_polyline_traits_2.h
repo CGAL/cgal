@@ -32,7 +32,8 @@ namespace CGAL {
  * of the concepts
  *   - `ArrangementTraits_2`,
  *   - `ArrangementDirectionalXMonotoneTraits_2`,
- *   - `ArrangementConstructXMonotoneCurveTraits_2`.
+ *   - `ArrangementConstructXMonotoneCurveTraits_2`,
+ *   - `ArrangementConstructCurveTraits_2`.
  *
  * If, in addition, the GeometryTraits_2 models the concept
  * `ArrangementApproximateTraits_2` then `Arr_polycurve_traits_2` models
@@ -79,6 +80,7 @@ namespace CGAL {
  * \cgalModels `ArrangementTraits_2`
  * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
  * \cgalModels `ArrangementConstructXMonotoneCurveTraits_2`
+ * \cgalModels `ArrangementConstructCurveTraits_2`
  * \cgalModels `ArrangementApproximateTraits_2` (if the type that substitutes
  *   the template parameter `SegmentTraits_2` models the concept as well)
  *

@@ -116,7 +116,7 @@ namespace CGAL {
      and returns an iterator over the first point to remove (see erase-remove idiom).
      For this reason it should not be called on sorted containers.
 
-     \pre `0 < maximum_variation < 1/3`
+     \pre `0 < maximum_variation <= 1/3`
      \pre `size > 0`
 
      \tparam PointRange is a model of `Range`. The value type of

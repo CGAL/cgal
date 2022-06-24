@@ -86,9 +86,9 @@ struct iterator_traits<T*> {
 
 \section secinput_and_output_iterators Input and output iterators
 
-<B>Operator * for input and output iterators</B>
+<B>Operator `*` for input and output iterators</B>
 
-The operator * of input and output iterators has a restricted semantics.
+The operator `*` of input and output iterators has a restricted semantics.
 Input iterators are designed for input operations, and it is not
 required that the value type `T`
 of  an input iterator `it` be assignable.

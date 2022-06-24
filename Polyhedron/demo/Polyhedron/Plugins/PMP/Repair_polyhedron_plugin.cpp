@@ -18,8 +18,10 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
 
 #include "ui_RemoveNeedlesDialog.h"
+#include "ui_SelfSnapDialog.h"
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -53,6 +55,7 @@ public:
     actionAutorefine = new QAction(tr("Autorefine Mesh"), mw);
     actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections"), mw);
     actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"));
+    actionSnapBorders = new QAction(tr("Snap Boundaries"));
 
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
@@ -64,6 +67,7 @@ public:
     actionAutorefine->setObjectName("actionAutorefine");
     actionAutorefineAndRMSelfIntersections->setObjectName("actionAutorefineAndRMSelfIntersections");
     actionRemoveNeedlesAndCaps->setObjectName("actionRemoveNeedlesAndCaps");
+    actionSnapBorders->setObjectName("actionSnapBorders");
 
     actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
@@ -74,7 +78,7 @@ public:
     actionMergeDuplicatedVerticesOnBoundaryCycles->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
-    actionRemoveNeedlesAndCaps->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionSnapBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
     autoConnectActions();
   }
@@ -90,7 +94,8 @@ public:
                              << actionMergeDuplicatedVerticesOnBoundaryCycles
                              << actionAutorefine
                              << actionAutorefineAndRMSelfIntersections
-                             << actionRemoveNeedlesAndCaps;
+                             << actionRemoveNeedlesAndCaps
+                             << actionSnapBorders;
   }
 
   bool applicable(QAction*) const
@@ -128,6 +133,7 @@ public Q_SLOTS:
   void on_actionAutorefine_triggered();
   void on_actionAutorefineAndRMSelfIntersections_triggered();
   void on_actionRemoveNeedlesAndCaps_triggered();
+  void on_actionSnapBorders_triggered();
 
 private:
   QAction* actionRemoveIsolatedVertices;
@@ -140,6 +146,7 @@ private:
   QAction* actionAutorefine;
   QAction* actionAutorefineAndRMSelfIntersections;
   QAction* actionRemoveNeedlesAndCaps;
+  QAction* actionSnapBorders;
 
   Messages_interface* messages;
 }; // end Polyhedron_demo_repair_polyhedron_plugin
@@ -196,6 +203,148 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_tri
   sm_item->itemChanged();
 }
 
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  if(!sm_item)
+  {
+    return;
+  }
+
+
+  QDialog dialog;
+  Ui::SelfSnapDialog ui;
+  ui.setupUi(&dialog);
+  connect(ui.use_local_tolerance, SIGNAL(toggled(bool)),
+          ui.tolerances, SLOT(setDisabled(bool)));
+
+  if(dialog.exec() != QDialog::Accepted)
+    return;
+
+  QCursor tmp_cursor(Qt::WaitCursor);
+  CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
+
+  typedef Scene_surface_mesh_item::Face_graph Face_graph;
+  Face_graph& tm = *sm_item->face_graph();
+  typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
+
+  CGAL::Polygon_mesh_processing::stitch_borders(tm);
+#if 1
+/// detection of non-manifold parts
+  std::map< std::pair<Kernel::Point_3, Kernel::Point_3>, std::vector<halfedge_descriptor> > edges;
+  for(halfedge_descriptor h : halfedges(tm))
+  {
+    if (is_border(h,tm))
+      edges[CGAL::make_sorted_pair(tm.point(target(h,tm)), tm.point(source(h,tm)))].push_back(h);
+  }
+
+  std::vector<int> fccs(num_faces(tm),-1);
+  int nbcc = CGAL::Polygon_mesh_processing::connected_components(tm, CGAL::make_property_map(fccs));
+  //this has to be done per cycle so as to keep 2 patches
+  // remove the smallest CCs
+  std::vector<int> cc_sizes(nbcc, 0);
+  for(int i : fccs)
+    cc_sizes[i]+=1;
+  std::set<int> ccs_to_rm;
+  for (auto p : edges)
+    if (p.second.size() >= 2)
+      for(halfedge_descriptor h : p.second)
+      {
+        int ccid = fccs[face(opposite(h, tm),tm)];
+        if ( cc_sizes[ccid]<=4 )
+          ccs_to_rm.insert(ccid);
+      }
+  std::cout << "removing " << ccs_to_rm.size() << " ccs\n";
+  CGAL::Polygon_mesh_processing::remove_connected_components(tm, ccs_to_rm, CGAL::make_property_map(fccs));
+  std::cout << "input is valid after cc removal:"<< CGAL::is_valid_polygon_mesh(tm) << "\n";
+///
+#endif
+
+  if (ui.use_local_tolerance->isChecked())
+  {
+    CGAL::Polygon_mesh_processing::experimental::snap_borders(tm, CGAL::parameters::do_simplify_border(ui.do_simplify_border->isChecked()));
+    CGAL::Polygon_mesh_processing::stitch_borders(tm);
+    CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(tm);
+  }
+  else
+  {
+    std::vector<double> tolerances/* = 0.005, 0.0125, 0.025, 0.05, 0.07 */;
+    bool ok;
+    Q_FOREACH(QString tol_text, ui.tolerances->text().split(","))
+    {
+      double d = tol_text.toDouble(&ok);
+      if (ok)
+        tolerances.push_back(d);
+      else
+        QMessageBox(QMessageBox::Warning,
+          QString("Invalid value"),
+          QString("\""+tol_text+"\" is not a valid double, ignored."),
+          QMessageBox::Ok,
+          this->mw).exec();
+    }
+
+    for (double tol : tolerances )
+    {
+      std::cout << "using tol = " << tol << "\n";
+      CGAL::Constant_property_map<vertex_descriptor, double> tolerance_map(tol);
+      CGAL::Polygon_mesh_processing::experimental::snap_borders(tm, tolerance_map, CGAL::parameters::do_simplify_border(ui.do_simplify_border->isChecked()));
+
+      CGAL::Polygon_mesh_processing::stitch_borders(tm);
+      CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(tm);
+
+      // post processing
+      std::vector<halfedge_descriptor> remaining_cycles;
+      CGAL::Polygon_mesh_processing::extract_boundary_cycles(tm, std::back_inserter(remaining_cycles));
+
+      int tested=0, done=0;
+      for (halfedge_descriptor hc : remaining_cycles)
+      {
+        if (next(next(hc,tm),tm)==prev(hc,tm))
+        {
+          ++tested;
+          //get smallest halfedge
+          halfedge_descriptor hm = hc;
+          double min_l = CGAL::Polygon_mesh_processing::edge_length(hc, tm);
+
+          double el = CGAL::Polygon_mesh_processing::edge_length(next(hc, tm), tm);
+          if (el<min_l)
+          {
+            min_l=el;
+            hm=next(hc, tm);
+          }
+
+          el = CGAL::Polygon_mesh_processing::edge_length(prev(hc, tm), tm);
+          if (el<min_l)
+          {
+            min_l=el;
+            hm=prev(hc, tm);
+          }
+          if (el>tol)
+            continue;
+          if (!CGAL::Euler::does_satisfy_link_condition(edge(hm, tm), tm))
+          {
+            // simply fill the face
+            std::array<vertex_descriptor,3> vr = { source(hm, tm), target(hm, tm), target(next(hm, tm), tm) };
+            CGAL::Euler::add_face(vr, tm);
+            continue;
+          }
+
+          std::array<vertex_descriptor,3> vr = { source(hm, tm), target(hm, tm), target(next(hm, tm), tm) };
+          CGAL::Euler::add_face(vr, tm);
+          CGAL::Euler::collapse_edge(edge(hm, tm), tm);
+          ++done;
+        }
+      }
+    }
+  }
+  CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(tm);
+
+  sm_item->invalidateOpenGLBuffers();
+  sm_item->itemChanged();
+}
+
 template <typename Item>
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_triggered(Scene_interface::Item_id index)
 {
@@ -231,7 +380,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
   {
     bool solved =
       CGAL::Polygon_mesh_processing::experimental::remove_self_intersections(
-      *poly_item->polyhedron());
+      *poly_item->polyhedron(), CGAL::parameters::preserve_genus(false));
     if (!solved)
       CGAL::Three::Three::information(tr("Some self-intersection could not be fixed"));
     poly_item->invalidateOpenGLBuffers();

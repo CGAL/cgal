@@ -2001,7 +2001,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
   typedef typename Tds::Vertex_iterator         Vertex_iterator;
 
 
-  Unique_hash_map<Vertex_handle, size_type> V;
+  Unique_hash_map<Vertex_handle, size_type> V(0, tds.number_of_vertices());
 
   // outputs dimension and number of vertices
   size_type n = tds.number_of_vertices();
@@ -2589,7 +2589,7 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
 {
-  Unique_hash_map<Cell_handle, std::size_t > C;
+  Unique_hash_map<Cell_handle, std::size_t > C(0, number_of_cells());
   std::size_t i = 0;
 
   switch ( dimension() ) {
@@ -4053,8 +4053,8 @@ copy_tds(const TDS_src& tds,
   const int nn = (std::max)(0, dimension() + 1);
 
   // Initializes maps
-  Unique_hash_map< typename TDS_src::Vertex_handle,Vertex_handle > V;
-  Unique_hash_map< typename TDS_src::Cell_handle,Cell_handle > F;
+  Unique_hash_map< typename TDS_src::Vertex_handle,Vertex_handle > V(Vertex_handle(), tds.number_of_vertices());
+  Unique_hash_map< typename TDS_src::Cell_handle,Cell_handle > F(Cell_handle(), tds.number_of_cells());
 
   // Create the vertices.
   for (typename TDS_src::Vertex_iterator vit = tds.vertices_begin();

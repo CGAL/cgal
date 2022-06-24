@@ -4,11 +4,11 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/assertions.h>
 
 #include <iostream>
 #include <iterator>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Epick_d< CGAL::Dynamic_dimension_tag >  K;
 typedef CGAL::Triangulation<K>                        Triangulation;
@@ -23,9 +23,9 @@ int main()
     std::copy_n(rand_it, N, std::back_inserter(points));
 
     Triangulation t(D);                      // create triangulation
-    CGAL_assertion(t.empty());
+    assert(t.empty());
     t.insert(points.begin(), points.end());  // compute triangulation
-    CGAL_assertion( t.is_valid() );
+    assert( t.is_valid() );
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 2
     typedef Triangulation::Face Face;
     typedef std::vector<Face> Faces;
@@ -41,4 +41,3 @@ int main()
 
     return 0;
 }
-

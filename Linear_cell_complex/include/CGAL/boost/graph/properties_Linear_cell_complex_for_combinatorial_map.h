@@ -16,7 +16,6 @@
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Dynamic_property_map.h>
 
 
