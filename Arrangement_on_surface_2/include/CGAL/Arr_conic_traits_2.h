@@ -1633,6 +1633,29 @@ public:
       return l;
     }
 
+    /*! The formula for the arc length of a parabola is:
+     * L = 1/2 * √(b^2+16⋅a^2) + b^2/(8*a) * ln((4*a+√(b^2+16⋅a^2))/b)
+     * where:
+     * L is the length of the parabola arc.
+     * a is the length along the parabola axis.
+     * b is the length of the chord perpendicular to the axis.
+     *
+     *      ---
+     *     / | \
+     *    /  |a \
+     *   /   |   \
+     *  /---------\
+     * /    b      \
+     *
+     */
+    double parabolic_arc_length(double a, double b) const {
+      if (a == 0) return b;
+      if (b == 0) return a;
+      auto b_sqr = b*b;
+      auto tmp = std::sqrt(b_sqr+16.0*a*a);
+      return tmp/2.0 + b_sqr*std::log((4.0*a + tmp)/b)/(8.0*a);
+    }
+
     /*! Obtain the parabolic arc length.
      */
     double parabola_length(const X_monotone_curve_2& xcv) {
@@ -1646,8 +1669,8 @@ public:
                                     xs_t, ys_t, xt_t, yt_t, a, ts, tt, cx, cy,
                                     xcv);
 
-      auto ds = m_traits.parabolic_arc_length(xs_t, 2.0*std::abs(ys_t));
-      auto dt = m_traits.parabolic_arc_length(xt_t, 2.0*std::abs(yt_t));
+      auto ds = parabolic_arc_length(xs_t, 2.0*std::abs(ys_t));
+      auto dt = parabolic_arc_length(xt_t, 2.0*std::abs(yt_t));
       auto d = (CGAL::sign(ys_t) == CGAL::sign(yt_t)) ?
         std::abs(ds - dt)/2.0 : (ds + dt)/2.0;
       // std::cout << "d, ds, dt = " << d << ", " << ds << "," << dt
@@ -1658,11 +1681,13 @@ public:
     double ellipse_length(const X_monotone_curve_2& xcv) {
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
+      double xs_t, ys_t, xt_t, yt_t;
       double a, b;
       double cx, cy;
       double ts, tt;
       m_traits.approximate_ellipse(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
-                                   ts, tt, a, b, cx, cy, xcv);
+                                   xs_t, ys_t, ts, xt_t, yt_t, tt,
+                                   a, b, cx, cy, xcv);
 
       namespace bm = boost::math;
       auto ratio = b/a;
@@ -1717,24 +1742,24 @@ public:
     /*! Obtain an approximation of an x-monotone curve.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(OutputIterator oi, double density,
+    OutputIterator operator()(OutputIterator oi, double error,
                               const X_monotone_curve_2& xcv,
                               bool l2r = true) const {
       if (xcv.orientation() == COLLINEAR)
-        return approximate_segment(oi, density, xcv, l2r);
+        return approximate_segment(oi, xcv, l2r);
       CGAL::Sign sign_conic = CGAL::sign(4*xcv.r()*xcv.s() - xcv.t()*xcv.t());
       if (sign_conic == POSITIVE)
-        return approximate_ellipse(oi, density, xcv, l2r);
+        return approximate_ellipse(oi, error, xcv, l2r);
       if (sign_conic == NEGATIVE)
-        return approximate_hyperbola(oi, density, xcv, l2r);
-      return approximate_parabola(oi, density, xcv, l2r);
+        return approximate_hyperbola(oi, error, xcv, l2r);
+      return approximate_parabola(oi, error, xcv, l2r);
     }
 
   private:
     /*! Handle segments.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_segment(OutputIterator oi, double density,
+    OutputIterator approximate_segment(OutputIterator oi,
                                        const X_monotone_curve_2& xcv,
                                        bool l2r) const {
       // std::cout << "SEGMENT\n";
@@ -1749,6 +1774,18 @@ public:
       *oi++ = Approximate_point_2(xs, ys);
       *oi++ = Approximate_point_2(xt, yt);
       return oi;
+    }
+
+    /*! Transform a point. In particular, rotate the canonical point
+     * (`xc`,`yc`) by an angle, the sine and cosine of which are `sint` and
+     * `cost`, respectively, and translate by (`cx`,`cy`).
+     */
+    void transform_point(double xc, double yc,
+                         double cost, double sint,
+                         double cx, double cy,
+                         double& x, double& y) const {
+      x = xc*cost - yc*sint + cx;
+      y = xc*sint + yc*cost + cy;
     }
 
     /*! Handle ellipses.
@@ -1814,12 +1851,12 @@ public:
      *   𝑥(𝛼) = a·𝑐𝑜𝑠(𝛼)·𝑐𝑜𝑠(𝜃) − b·𝑠𝑖𝑛(𝛼)·𝑠𝑖𝑛(𝜃) + 𝐶𝑥
      *   𝑦(𝛼) = a·𝑐𝑜𝑠(𝛼)·𝑠𝑖𝑛(𝜃) + b·𝑠𝑖𝑛(𝛼)·𝑐𝑜𝑠(𝜃) + 𝐶𝑦
      *
-     * @param density the density of the generated approximation. By default
-     *        this value is 1, which implies that approximately every segment
-     *        spans a unit length.
+     * @param error the error bound of the generated approximation. This is
+     *              the Hausdorff distance between the arc and the polyline,
+     *              which approximates the src.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_ellipse(OutputIterator oi, double density,
+    OutputIterator approximate_ellipse(OutputIterator oi, double error,
                                        const X_monotone_curve_2& xcv,
                                        bool l2r) const {
       // std::cout << "ELLIPSE\n";
@@ -1837,53 +1874,85 @@ public:
 
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
+      double xs_t, ys_t, xt_t, yt_t;
       double a, b;
       double cx, cy;
       double ts, tt;
       m_traits.approximate_ellipse(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
-                                   ts, tt, a, b, cx, cy, xcv, l2r);
+                                   xs_t, ys_t, ts, xt_t, yt_t, tt,
+                                   a, b, cx, cy, xcv, l2r);
+      // std::cout << "a, b: " << a << "," << b << std::endl;
 
-      namespace bm = boost::math;
-      auto ratio = b/a;
-      auto k = std::sqrt(1 - (ratio*ratio));
-      auto ds = a*bm::ellint_2(k, ts);
-      auto dt = a*bm::ellint_2(k, tt);
-      auto d = std::abs(dt - ds);
-      // std::cout << "d, ds, dt: " << d << "," << ds << ", " << dt
-      //           << std::endl;
-      auto size = static_cast<size_t>(d*density);
-      if (size == 0) size = 1;
-      auto delta_t = (tt - ts) / size;
-      auto t(ts);
       *oi++ = Approximate_point_2(xs, ys);
-      t += delta_t;
-      if (ts < tt) {
-        while (t < tt) {
-          oi = add_elliptic_point(oi, t, a, b, cost, sint, cx, cy);
-          t += delta_t;
-        }
-      }
-      else {
-        while (t > tt) {
-          oi = add_elliptic_point(oi, t, a, b, cost, sint, cx, cy);
-          t += delta_t;
-        }
-      }
+      add_points(xs_t, ys_t, ts, xt_t, yt_t, tt, error, oi,
+                 [&](double tm, double& xm, double& ym) {
+                   elliptic_point(a, b, tm, xm, ym);
+                 },
+                 [&](double xc, double& yc, double& x, double& y) {
+                   transform_point(xc, yc, cost, sint, cx, cy, x, y);
+                 });
       *oi++ = Approximate_point_2(xt, yt);
       return oi;
     }
 
-    template <typename OutputIterator>
-    OutputIterator add_elliptic_point(OutputIterator oi, double t,
-                                      double a, double b,
-                                      double cost, double sint,
-                                      double cx, double cy) const {
-      auto x = a*std::cos(t)*cost - b*std::sin(t)*sint + cx;
-      auto y = a*std::cos(t)*sint + b*std::sin(t)*cost + cy;
-      // std::cout << "t,(x, y): " << t << ",(" << x << "," << y << ")"
-      //           << std::endl;
+    /*! Add either an elliptic or a hyperbilc point.
+     * The arc endpoints are (`x1`, `y1`) and (`x2`, `y2`).
+     * In our parametric representations for ellipses and hyperbolas the
+     * following holds:
+     *   p1 = (x1, y1); x1 = x(t1), y1 = y(t1), and
+     *   p2 = (x2, y2); x2 = x(t2), y2 = y(t2)
+     * The Hausdorff distance between the arc and the segment (p1,p2) is
+     * at (xm,ym), where xm = x(tm), ym = y(tmp), and tm = (t1 + t2) / 2.
+     * \param[in] x1 the canonical-arc source-point \f$x\f$-coordinate.
+     * \param[in] y1 the canonical-arc source-point \f$y\f$-coordinate.
+     * \param[in] t1 the source-point parameter; \f$yx1 = x(t1) and y1 = y(t1)\f$y.
+     * \param[in] x2 the canonical-arc target-point \f$x\f$-coordinate.
+     * \param[in] y2 the canonical arc target-point \f$y\f$-coordinate.
+     * \param[in] t2 the target-point parameter; \f$yx2 = x(t2) and y2 = y(t2)\f$y.
+     * \param[in] error
+     * \param[out] oi
+     * \param[in] op a function that computes a point \f$(x(t),y(t))\f$ given \f$t\f$.
+     * \param[in] transform a function that transforms a canonical point to an
+     *                      actual point
+     *
+     * Observe that in our parametric representation for parabolas, the
+     * expression for tm is different.
+     */
+    template <typename OutputIterator, typename Op, typename Transform>
+    OutputIterator add_points(double x1, double y1, double t1,
+                              double x2, double y2, double t2,
+                              double error, OutputIterator oi,
+                              Op op, Transform transform) const {
+      auto tm = (t1 + t2)*0.5;
+
+      // Compute the canocal point where the error is maximal.
+      double xm, ym;
+      op(tm, xm, ym);
+
+      auto dx = x2 - x1;
+      auto dy = y2 - y1;
+
+      // Compute the error; abort if it is below the threshold
+      auto l = std::sqrt(dx*dx + dy*dy);
+      auto e = std::abs((xm*dy - ym*dx + x2*y1 - x1*y2) / l);
+      if (e < error) return oi;
+
+      double x, y;
+      transform(xm, ym, x, y);
+      add_points(x1, y1, t1, xm, ym, tm, error, oi, op, transform);
       *oi++ = Approximate_point_2(x, y);
+      add_points(xm, ym, tm, x2, y2, t2, error, oi, op, transform);
       return oi;
+    }
+
+    /*! Compute the hyperbolic point given the parameter t and the transform
+     * data, that is, the center (translation) and the sin and cos of the
+     * rotation angle.
+     */
+    void elliptic_point(double a, double b, double t,
+                        double& x, double& y) const {
+      x = a * std::cos(t);
+      y = b * std::sin(t);
     }
 
     /*! Handle parabolas.
@@ -1891,7 +1960,7 @@ public:
      * https://www.vcalc.com/wiki/vCalc/Parabola+-+arc+length
      */
     template <typename OutputIterator>
-    OutputIterator approximate_parabola(OutputIterator oi, double density,
+    OutputIterator approximate_parabola(OutputIterator oi, double error,
                                         const X_monotone_curve_2& xcv, bool l2r)
       const {
       // std::cout << "PARABOLA\n";
@@ -1916,86 +1985,87 @@ public:
       m_traits.approximate_parabola(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
                                     xs_t, ys_t, xt_t, yt_t, a, ts, tt, cx, cy,
                                     xcv, l2r);
+      // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
+      // std::cout << "a: " << a << std::endl;
+      // std::cout << "xs' = " << xs_t << "," << ys_t << std::endl;
+      // std::cout << "xt' = " << xt_t << "," << yt_t << std::endl;
+      // std::cout << "ts,tt = " << ts << "," << tt << std::endl;
 
-      auto ds = m_traits.parabolic_arc_length(xs_t, 2.0*std::abs(ys_t));
-      auto dt = m_traits.parabolic_arc_length(xt_t, 2.0*std::abs(yt_t));
-      auto d = (CGAL::sign(ys_t) == CGAL::sign(yt_t)) ?
-        std::abs(ds - dt)/2.0 : (ds + dt)/2.0;
-      // std::cout << "d, ds, dt = " << d << ", " << ds << "," << dt
-      //           << std::endl;
-
-      auto t(ts);
-      auto size = static_cast<size_t>(d*density);
-      if (size == 0) size = 1;
       *oi++ = Approximate_point_2(xs, ys);
-      auto delta_t = (tt - ts) / size;
-      auto delta_d = d / size;
-      adjust(t, delta_t, delta_d, a, 1.0/(density*2.0));
-
-      if (ts < tt) {
-        while (t < tt) {
-          oi = add_parabolic_point(oi, t, a, cost, sint, cx, cy);
-          adjust(t, delta_t, delta_d, a, 1.0/(density*2.0));
-        }
-      }
-      else {
-        while (t > tt) {
-          oi = add_parabolic_point(oi, t, a, cost, sint, cx, cy);
-          adjust(t, delta_t, delta_d, a, 1.0/(density*2.0));
-        }
-      }
+      add_parabolic_points(xs_t, ys_t, ts, xt_t, yt_t, tt, error, oi,
+                           [&](double tm, double& xm, double& ym) {
+                             parabolic_point(a, tm, xm, ym);
+                           },
+                           [&](double xc, double& yc, double& x, double& y) {
+                             transform_point(xc, yc, cost, sint, cx, cy, x, y);
+                           });
       *oi++ = Approximate_point_2(xt, yt);
       return oi;
     }
 
-    template <typename OutputIterator>
-    OutputIterator add_parabolic_point(OutputIterator oi, double t, double a,
-                                       double cost, double sint,
-                                       double cx, double cy) const {
-      auto xt = a*t*t;
-      auto yt = 2.0*a*t;
-      auto x = xt*cost - yt*sint + cx;
-      auto y = xt*sint + yt*cost + cy;
-      // std::cout << "t,(x,y): " << t << ",(" << x << "," << y << ")"
-      //           << std::endl;
+    /*! Add either an elliptic or a hyperbilc point.
+     * The arc endpoints are (`x1`, `y1`) and (`x2`, `y2`).
+     * In our parametric representations for ellipses and hyperbolas the
+     * following holds:
+     *   \f$p1 = (x1, y1); x1 = x(t1), y1 = y(t1)\f$, and
+     *   \f$p2 = (x2, y2); x2 = x(t2), y2 = y(t2)\f$
+     * The Hausdorff distance between the arc and the segment (p1,p2) is
+     * at (xm,ym), where xm = x(tm), ym = y(tmp), and tm = (x2-x1) / (y2-y1).
+     * \param[in] x1 the canonical-arc source-point \f$x\f$-coordinate.
+     * \param[in] y1 the canonical-arc source-point \f$y\f$-coordinate.
+     * \param[in] t1 the source-point parameter; \f$yx1 = x(t1) and y1 = y(t1)\f$y.
+     * \param[in] x2 the canonical-arc target-point \f$x\f$-coordinate.
+     * \param[in] y2 the canonical arc target-point \f$y\f$-coordinate.
+     * \param[in] t2 the target-point parameter; \f$yx2 = x(t2) and y2 = y(t2)\f$y.
+     * \param[in] error
+     * \param[out] oi
+     * \param[in] op a function that computes a point \f$(x(t),y(t))\f$ given \f$t\f$.
+     * \param[in] transform a function that transforms a canonical point to an
+     *                      actual point
+     *
+     * Observe that in our parametric representation for ellipses and
+     * hyperbolas, the expression for tm is different.
+     */
+    template <typename OutputIterator, typename Op, typename Transform>
+    OutputIterator add_parabolic_points(double x1, double y1, double t1,
+                                        double x2, double y2, double t2,
+                                        double error, OutputIterator oi,
+                                        Op op, Transform transform) const {
+      auto dx = x2 - x1;
+      auto dy = y2 - y1;
+      auto tm = (dy == 0) ? 0 : dx / dy;
+
+      // Compute the canocal point where the error is maximal.
+      double xm, ym;
+      op(tm, xm, ym);
+
+      // Compute the error and abort if it is below the threshold
+      auto l = std::sqrt(dx*dx + dy*dy);
+      auto e = std::abs((xm*dy - ym*dx + x2*y1 - x1*y2) / l);
+      if (e < error) return oi;
+
+      // Compute the actual (transformed) point
+      double x, y;
+      transform(xm, ym, x, y);
+      add_parabolic_points(x1, y1, t1, xm, ym, tm, error, oi, op, transform);
       *oi++ = Approximate_point_2(x, y);
+      add_parabolic_points(xm, ym, tm, x2, y2, t2, error, oi, op, transform);
       return oi;
     }
 
-    void adjust(double& t, double delta_t, double delta_d, double a,
-                double e) const {
-#if 1
-      t += delta_t;
-#else
-      auto xt_prev = 2.0*a*t;
-      auto yt_prev = a*t*t;
-      auto dt_prev = m_traits.parabolic_arc_length(yt_prev, 2.0*std::abs(xt_prev));
-
-      double d_t(delta_t);
-      double d;
-      double s(1);
-      do {
-        std::cout << "t: " << t << std::endl;
-        t += d_t*s;
-
-        auto xt = 2.0*a*t;
-        auto yt = a*t*t;
-        auto dt = m_traits.parabolic_arc_length(yt, 2.0*std::abs(xt));
-        d = (CGAL::sign(xt_prev) == CGAL::sign(xt)) ?
-          std::abs(dt - dt_prev)/2.0 : (dt + dt_prev)/2.0;
-
-        if (std::abs(d - delta_d) <= e) break;
-        d_t /= 2.0;
-        s = (d > delta_d) ? -1 : 1;
-      } while (true);
-      std::cout << "d: " << d << "," << e << std::endl;
-#endif
+    /*! Compute the parabolic point given the parameter t and the transform
+     * data, that is, the center (translation) and the sin and cos of the
+     * rotation angle.
+     */
+    void parabolic_point(double a, double t, double& x, double& y) const {
+      x = a*t*t;
+      y = 2.0*a*t;
     }
 
     /*! Handle hyperbolas.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_hyperbola(OutputIterator oi, double density,
+    OutputIterator approximate_hyperbola(OutputIterator oi, double error,
                                          const X_monotone_curve_2& xcv,
                                          bool l2r) const {
       // std::cout << "HYPERBOLA\n";
@@ -2010,49 +2080,37 @@ public:
 
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
+      double xs_t, ys_t, xt_t, yt_t;
       double a, b;
       double cx, cy;
       double ts, tt;
       m_traits.approximate_hyperbola(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
-                                     ts, tt, a, b, cx, cy, xcv, l2r);
+                                     xs_t, ys_t, ts, xt_t, yt_t, tt,
+                                     a, b, cx, cy, xcv, l2r);
+      // std::cout << "a, b: " << a << "," << b << std::endl;
+      // std::cout << "ts, tt: " << ts << "," << tt << std::endl;
 
-      auto t(ts);
-      auto size = static_cast<size_t>(density);
-      if (size == 0) size = 1;
+      // std::cout << "a, b: " << a << "," << b << std::endl;
       *oi++ = Approximate_point_2(xs, ys);
-      auto delta_t = (tt - ts) / size;
-      t += delta_t;
-
-      if (ts < tt) {
-        while (t < tt) {
-          oi = add_hyperbolic_point(oi, t, a, b, cost, sint, cx, cy);
-          t += delta_t;
-        }
-      }
-      else {
-        while (t > tt) {
-          oi = add_hyperbolic_point(oi, t, a, b, cost, sint, cx, cy);
-          t += delta_t;
-        }
-      }
+      add_points(xs_t, ys_t, ts, xt_t, yt_t, tt, error, oi,
+                 [&](double tm, double& xm, double& ym) {
+                   hyperbolic_point(a, b, tm, xm, ym);
+                 },
+                 [&](double xc, double& yc, double& x, double& y) {
+                   transform_point(xc, yc, cost, sint, cx, cy, x, y);
+                 });
       *oi++ = Approximate_point_2(xt, yt);
       return oi;
     }
 
-    template <typename OutputIterator>
-    OutputIterator add_hyperbolic_point(OutputIterator oi, double t,
-                                        double a, double b,
-                                        double cost, double sint,
-                                        double cx, double cy) const {
-      auto xt = a * std::cosh(t);
-      auto yt = b * std::sinh(t);
-
-      auto x = xt*cost - yt*sint + cx;
-      auto y = xt*sint + yt*cost + cy;
-      // std::cout << "t,(x,y): " << t << ",(" << x << "," << y << ")"
-      //           << std::endl;
-      *oi++ = Approximate_point_2(x, y);
-      return oi;
+    /*! Compute the hyperbolic point given the parameter t and the transform
+     * data, that is, the center (translation) and the sin and cos of the
+     * rotation angle.
+     */
+    void hyperbolic_point(double a, double b, double t,
+                          double& x, double& y) const {
+      x = a * std::cosh(t);
+      y = b * std::sinh(t);
     }
   };
 
@@ -3941,6 +3999,18 @@ public:
     inverse_conic(xcv, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
   }
 
+  /*! Inverse transform a point. In particular, inversly rotate the point
+   * (`x`,`y`) by an angle, the sine and cosine of which are `sint` and
+   * `cost`, respectively, and translate by (`-cx`,`-cy`).
+   */
+  void inverse_transform_point(double x, double y,
+                               double cost, double sint,
+                               double cx, double cy,
+                               double& xc, double& yc) const {
+    xc = x*cost + y*sint - cx;
+    yc = -x*sint + y*cost - cy;
+  }
+
   /*! Handle parabolas.
    * The arc-length closed form can be found here:
    * https://www.vcalc.com/wiki/vCalc/Parabola+-+arc+length
@@ -3989,7 +4059,6 @@ public:
     }
     // std::cout << r_m << "," << s_m << "," << t_m << ","
     //           << u_m << "," << v_m << "," << w_m << std::endl;
-    // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
 
     // Compute the center of the inversly rotated parabola:
     // double cx_m = -u_m / (2*r_m);
@@ -3998,18 +4067,13 @@ public:
     auto cy_m = -v_m / (2*s_m);
     // std::cout << "cx_m, cy_m: " << cx_m << "," << cy_m <<  std::endl;
 
-    // Transform the source and target
-    xs_t = xs*cost + ys*sint - cx_m;
-    ys_t = -xs*sint + ys*cost - cy_m;
-    xt_t = xt*cost + yt*sint - cx_m;
-    yt_t = -xt*sint + yt*cost - cy_m;
+    // Inverse transform the source and target
+    inverse_transform_point(xs, ys, cost, sint, cx_m, cy_m, xs_t, ys_t);
+    inverse_transform_point(xt, yt, cost, sint, cx_m, cy_m, xt_t, yt_t);
 
     a = -u_m / (4.0*s_m);
     ts = ys_t / (2.0*a);
     tt = yt_t / (2.0*a);
-    // std::cout << "xs' = " << xs_t << "," << ys_t << std::endl;
-    // std::cout << "xt' = " << xt_t << "," << yt_t << std::endl;
-    // std::cout << "ts,tt = " << ts << "," << tt << std::endl;
 
     // Compute the center (cx,cy) of the ellipse, rotating back:
     cx = cx_m*cost - cy_m*sint;
@@ -4017,34 +4081,13 @@ public:
     // std::cout << "center: " << cx << "," << cy << std::endl;
   }
 
-  /*! The formula for the arc length of a parabola is:
-   * L = 1/2 * √(b^2+16⋅a^2) + b^2/(8*a) * ln((4*a+√(b^2+16⋅a^2))/b)
-   * where:
-   * L is the length of the parabola arc.
-   * a is the length along the parabola axis.
-   * b is the length of the chord perpendicular to the axis.
-   *
-   *      ---
-   *     / | \
-   *    /  |a \
-   *   /   |   \
-   *  /---------\
-   * /    b      \
-   *
-   */
-  double parabolic_arc_length(double a, double b) const {
-    if (a == 0) return b;
-    if (b == 0) return a;
-    auto b_sqr = b*b;
-    auto tmp = std::sqrt(b_sqr+16.0*a*a);
-    return tmp/2.0 + b_sqr*std::log((4.0*a + tmp)/b)/(8.0*a);
-  }
-
   /*! Handle ellipses.
    */
   void approximate_ellipse(double& r_m, double& t_m, double& s_m,
                            double& u_m, double& v_m, double& w_m,
-                           double& cost, double& sint, double& ts, double& tt,
+                           double& cost, double& sint,
+                           double& xs_t, double& ys_t, double& ts,
+                           double& xt_t, double& yt_t, double& tt,
                            double& a, double& b, double& cx, double& cy,
                            const X_monotone_curve_2& xcv, bool l2r = true)
     const {
@@ -4081,7 +4124,6 @@ public:
 
     a = std::sqrt(a_sqr);
     b = std::sqrt(b_sqr);
-    // std::cout << "a, b: " << a << "," << b << std::endl;
 
     // Compute the center of the inversly rotated ellipse:
     auto cx_m = -u_m / (2*r_m);
@@ -4092,16 +4134,22 @@ public:
     cy = cx_m*sint + cy_m*cost;
     // std::cout << "center: " << cx << "," << cy << std::endl;
 
+    // Inverse transform the source and target
+    inverse_transform_point(xs, ys, cost, sint, cx_m, cy_m, xs_t, ys_t);
+    inverse_transform_point(xt, yt, cost, sint, cx_m, cy_m, xt_t, yt_t);
+    // std::cout << "xs_t,ys_t: " << xs_t << "," << ys_t << std::endl;
+    // std::cout << "xt_t,yt_t: " << xt_t << "," << yt_t << std::endl;
+
     // Compute the parameters ts and tt such that
     // source == (x(ts),y(ts)), and
     // target == (x(tt),y(tt))
     auto xds = xs - cx;
     auto yds = ys - cy;
-    ts = std::atan2(a*(cost*yds - sint*xds),b*(sint*yds + cost*xds));
+    ts = std::atan2(a*ys_t, b*xs_t);
     if (ts < 0) ts += 2*M_PI;
     auto xdt = xt - cx;
     auto ydt = yt - cy;
-    tt = std::atan2(a*(cost*ydt - sint*xdt),b*(sint*ydt + cost*xdt));
+    tt = std::atan2(a*yt_t, b*xt_t);
     if (tt < 0) tt += 2*M_PI;
     auto orient(xcv.orientation());
     if (xcv.source() != src) orient = CGAL::opposite(orient);
@@ -4116,11 +4164,11 @@ public:
 
   /*! Handle hyperbolas.
    */
-  /*! Handle ellipses.
-   */
   void approximate_hyperbola(double& r_m, double& t_m, double& s_m,
                              double& u_m, double& v_m, double& w_m,
-                             double& cost, double& sint, double& ts, double& tt,
+                             double& cost, double& sint,
+                             double& xs_t, double& ys_t, double& ts,
+                             double& xt_t, double& yt_t, double& tt,
                              double& a, double& b, double& cx, double& cy,
                              const X_monotone_curve_2& xcv, bool l2r = true)
     const {
@@ -4172,11 +4220,9 @@ public:
     auto cx_m = -u_m / (2*r_m);
     auto cy_m = -v_m / (2*s_m);
 
-    // Transform the source and target
-    auto xs_t = xs*cost + ys*sint - cx_m;
-    auto ys_t = -xs*sint + ys*cost - cy_m;
-    auto xt_t = xt*cost + yt*sint - cx_m;
-    auto yt_t = -xt*sint + yt*cost - cy_m;
+    // Inverse transform the source and target
+    inverse_transform_point(xs, ys, cost, sint, cx_m, cy_m, xs_t, ys_t);
+    inverse_transform_point(xt, yt, cost, sint, cx_m, cy_m, xt_t, yt_t);
     // std::cout << "xs_t,ys_t: " << xs_t << "," << ys_t << std::endl;
     // std::cout << "xt_t,yt_t: " << xt_t << "," << yt_t << std::endl;
 
@@ -4198,8 +4244,6 @@ public:
     ts = std::asinh(ys_t/b);
     tt = std::asinh(yt_t/b);
     assert(std::signbit(xs_t) == std::signbit(xt_t));
-    // std::cout << "a, b: " << a << "," << b << std::endl;
-    // std::cout << "ts, tt: " << ts << "," << tt << std::endl;
 
     if (std::signbit(xs_t)) a = -a;
   }
