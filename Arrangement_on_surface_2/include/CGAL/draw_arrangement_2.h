@@ -38,6 +38,11 @@ public:
     m_uni(0, 255)
   {}
 
+  virtual void resizeGL(int width, int height) {
+    m_width = width;
+    m_height = height;
+  }
+
   //!
   void add_elements() {
     clear();
@@ -60,6 +65,8 @@ public:
       draw_point(it->point());
 
     m_visited.clear();
+
+    // auto bb = bounding_box();
   }
 
 protected:
@@ -177,6 +184,12 @@ protected:
   }
 
 protected:
+  //! The window width in pixels.
+  int m_width;
+
+  //! The window height in pixels.
+  int m_height;
+
   //! The arrangement to draw
   const Arr& m_arr;
 
@@ -257,9 +270,9 @@ public:
         curr = curr->twin()->next();
 
       std::vector<typename Gt::Approximate_point_2> polyline;
-      double density(10);
+      double error(0.01);
       bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
-      approx(std::back_inserter(polyline), density, curr->curve(), l2r);
+      approx(std::back_inserter(polyline), error, curr->curve(), l2r);
       auto it = polyline.begin();
       auto prev = it++;
       for (; it != polyline.end(); prev = it++) {
@@ -277,8 +290,8 @@ public:
     const auto* traits = this->m_arr.geometry_traits();
     auto approx = traits->approximate_2_object();
     std::vector<typename Gt::Approximate_point_2> polyline;
-    double density(10);
-    approx(std::back_inserter(polyline), density, curve);
+    double error(0.01);
+    approx(std::back_inserter(polyline), error, curve);
     auto it = polyline.begin();
     auto prev = it++;
     for (; it != polyline.end(); prev = it++) this->add_segment(*prev, *it);
