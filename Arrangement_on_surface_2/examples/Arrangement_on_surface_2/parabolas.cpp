@@ -16,9 +16,6 @@ int main() {
   Arrangement arr(&traits);
 
   auto ctr_cv = traits.construct_curve_2_object();
-  Point p0(0, 0);
-  CGAL::insert(arr, ctr_cv(Point(-2.4,-1.4), Point(-2.4,2.4)));
-  CGAL::insert(arr, ctr_cv(Point(2.4,-1.4), Point(2.4,2.4)));
 
   // x-major
   // insert the parabola y = x^2; (-1,1)--(1,1)
