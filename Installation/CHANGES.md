@@ -1,6 +1,14 @@
 Release History
 ===============
 
+[Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
+-----------
+
+Release date: XXX
+
+### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps)
+
+- Added a version that uses indices instead of handles as dart and attribute descriptors. As the indices are integers convertible from and to std::size_t, they can be used as index into vectors which store properties. To use the index version, you should define the type Use_index equal to CGAL::Tag_true in the item class.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
