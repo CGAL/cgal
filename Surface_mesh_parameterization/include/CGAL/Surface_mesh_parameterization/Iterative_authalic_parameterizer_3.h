@@ -50,7 +50,7 @@
 #include <iomanip>
 #include <unordered_set>
 
-#define DEBUG_L0 1 // @fixme
+// #define DEBUG_L0 1 // @fixme
 
 /// \file Iterative_authalic_parameterizer_3.h
 
@@ -313,6 +313,8 @@ protected:
                           const Vertex_set& vertices,
                           const VertexIndexMap vimap)
   {
+    dest = src;
+    return;
     CGAL_precondition(src.row_dimension() == dest.row_dimension());
     CGAL_precondition(src.column_dimension() == dest.column_dimension());
 
