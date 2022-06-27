@@ -28,7 +28,7 @@ int main()
   Dart_descriptor d1=cm.make_combinatorial_hexahedron();
   Dart_descriptor d2=cm.make_combinatorial_hexahedron();
   cm.sew<3>(d1, d2); // 3-Sew the two hexahedra along one facet.
-  
+
   // Create two 3-attributes and associated them to darts.
   cm.set_attribute<3>(d1, cm.create_attribute<3>());
   cm.set_attribute<3>(d2, cm.create_attribute<3>());
@@ -49,6 +49,6 @@ int main()
   std::cout<<"Value in array for volumes of dart d1 and d2: "
            <<array_for_vols[cm.attribute<3>(d1)]<<" and "
            <<array_for_vols[cm.attribute<3>(d2)]<<std::endl;
-  
+
   return EXIT_SUCCESS;
 }
