@@ -16,7 +16,7 @@ struct Myitem
 
 // Definition of my combinatorial map.
 typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
-typedef CMap_3::Dart_descriptor               Dart_descriptor;
+typedef CMap_3::Dart_descriptor           Dart_descriptor;
 typedef CMap_3::Attribute_type<2>::type   Face_attribute;
 
 // Functor called when two faces are merged.

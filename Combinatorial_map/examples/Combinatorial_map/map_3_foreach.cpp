@@ -3,7 +3,7 @@
 #include <algorithm>
 
 typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef CMap_3::Dart_descriptor        Dart_descriptor;
+typedef CMap_3::Dart_descriptor    Dart_descriptor;
 
 // Functor used to display all the vertices of a given volume
 template<class CMap, unsigned int i>
