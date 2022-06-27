@@ -169,9 +169,6 @@ struct Node_id_set {
       }
       ++size_;
     }
-    else{
-      CGAL_assertion( (size_ == 2 && (v == first || v == second) ) || v==first );
-    }
   }
 
   std::size_t size() const
@@ -351,10 +348,34 @@ class Intersection_of_triangle_meshes
         if (const_mesh_ptr==&tm_f)
         {
           // tm_e might feature degenerate edges
-          auto filtered_callback = [&callback,&tm_e, &vpm_e](const Box* fb, const Box* eb)
+          auto filtered_callback = [&,this](const Box* fb, const Box* eb)
           {
             if (get(vpm_e, source(eb->info(), tm_e)) != get(vpm_e, target(eb->info(), tm_e)))
               callback(fb, eb);
+            else
+            {
+              halfedge_descriptor hf = fb->info();
+              halfedge_descriptor he = eb->info();
+              for (int i=0; i<2; ++i)
+              {
+                if (!is_border(he, tm_e))
+                {
+                  if ( get(vpm_e, target(next(he, tm_e), tm_e))==get(vpm_e, target(he, tm_e)) &&
+                       coplanar(get(vpm_f, source(hf, tm_f)),
+                                get(vpm_f, target(hf, tm_f)),
+                                get(vpm_f, target(next(hf, tm_f), tm_f)),
+                                get(vpm_e, target(he, tm_e))) )
+                  {
+                    coplanar_faces.insert(
+                        &tm_e < &tm_f
+                        ? std::make_pair(face(he, tm_e), face(hf, tm_f))
+                        : std::make_pair(face(hf, tm_f), face(he, tm_e))
+                      );
+                  }
+                }
+                he=opposite(he, tm_e);
+              }
+            }
           };
           CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
                                     edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
@@ -752,40 +773,37 @@ class Intersection_of_triangle_meshes
       face_descriptor f1=face_pair.first;
       face_descriptor f2=face_pair.second;
 
-      CGAL_assertion(&tm1!=&tm2 || f1!=f2);
-
-      //skip degenerate faces
-      if (const_mesh_ptr)
-      {
-        if (const_mesh_ptr == &tm2)
-        {
-          halfedge_descriptor h1 = halfedge(f1,tm1);
-          if (collinear(get(vpm1, source(h1, tm1)),
-                        get(vpm1, target(h1, tm1)),
-                        get(vpm1, target(next(h1, tm1), tm1))))
-          {
-            continue;
-          }
-        }
-        else
-        {
-          CGAL_assertion(const_mesh_ptr == &tm1);
-          halfedge_descriptor h2 = halfedge(f2,tm2);
-          if (collinear(get(vpm2, source(h2, tm2)),
-                        get(vpm2, target(h2, tm2)),
-                        get(vpm2, target(next(h2, tm2), tm2))))
-          {
-            continue;
-          }
-        }
-      }
-
       typedef typename Node_vector::Exact_kernel EK;
       typedef Coplanar_intersection<TriangleMesh, EK> Cpl_inter_pt;
       std::list<Cpl_inter_pt> inter_pts;
 
+      //handle degenerate faces
+      if (const_mesh_ptr)
+      {
+        halfedge_descriptor h1 = halfedge(f1,tm1);
+        halfedge_descriptor h2 = halfedge(f2,tm2);
+        if (const_mesh_ptr == &tm1)
+        {
+          const typename boost::property_traits<VPM2>::reference
+            a = get(vpm2, source(h2, tm2)),
+            b = get(vpm2, target(h2, tm2)),
+            c = get(vpm2, target(next(h2, tm2), tm2));
+
+          if (collinear(a, b, c))
+          {
+            intersection_coplanar_faces(f2, f1, tm2, tm1, vpm2, vpm1, inter_pts);
+            for (Cpl_inter_pt& ipt : inter_pts)
+            {
+              std::swap(ipt.type_1,ipt.type_2);
+              std::swap(ipt.info_1,ipt.info_2);
+            }
+          }
+        }
+      }
+
       // compute the intersection points between the two coplanar faces
-      intersection_coplanar_faces(f1, f2, tm1, tm2, vpm1, vpm2, inter_pts);
+      if (inter_pts.empty())
+        intersection_coplanar_faces(f1, f2, tm1, tm2, vpm1, vpm2, inter_pts);
 
       std::size_t nb_pts=inter_pts.size();
       std::vector<Node_id> cpln_nodes; cpln_nodes.reserve(nb_pts);

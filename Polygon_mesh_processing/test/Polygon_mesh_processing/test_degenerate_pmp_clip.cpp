@@ -26,7 +26,6 @@ void test()
   {
     std::cout << "running test " << i << "\n";
     TriangleMesh tm;
-    std::cout << &tm << "\n";
     std::ifstream(f) >> tm;
 #ifdef CGAL_DEBUG_PMP_CLIP
     std::ofstream("/tmp/input_"+std::to_string(i)+".off") << std::setprecision(17) << tm;
@@ -55,8 +54,8 @@ void test()
   run_a_test("data_degeneracies/trihole.off",1, 1.67292e-19, -2.22045e-16, -0.618478);
   run_a_test("data_degeneracies/trihole.off",1, 0, 0, -1);
   run_a_test("data_degeneracies/degtri_nullface.off",1, 1.67292e-19, -2.22045e-16, -0.618478);
-  // tests failing
-  // run_a_test("data_degeneracies/degtri_nullface.off",1, 0, 0, -1);
+  run_a_test("data_degeneracies/degtri_nullface.off",1, 0, 0, -1);
+  run_a_test("data_degeneracies/degtri_nullface_bis.off",1, 0, 0, -1);
   // TODO subdivide several times the central face
 }
 
