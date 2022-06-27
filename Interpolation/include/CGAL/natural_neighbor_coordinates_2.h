@@ -254,7 +254,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
                                OutputFunctor fct,
                                typename Dt::Face_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle(),
                                std::enable_if_t<
-                                          !is_iterator_v<OutputFunctor>
+                               !is_iterator<OutputFunctor>::value
                                         >* = 0)
 {
   CGAL_precondition(dt.dimension() == 2);

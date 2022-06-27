@@ -308,7 +308,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                OutputIteratorVorVertices vor_vertices,
                                typename Rt::Face_handle start,
                                std::enable_if_t<
-                                          is_iterator_v<OutputIteratorVorVertices>
+                               is_iterator<OutputIteratorVorVertices>::value
                                         >* = 0)
 {
   // Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
@@ -328,7 +328,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                OutputFunctor fct,
                                typename Rt::Face_handle start,
                                std::enable_if_t<
-                                          !is_iterator_v<OutputFunctor>
+                               !is_iterator<OutputFunctor>::value
                                         >* = 0)
 {
   return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(), start);
@@ -425,7 +425,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                VertexIterator hidden_vertices_begin,
                                VertexIterator hidden_vertices_end,
                                std::enable_if_t<
-                                          !is_iterator_v<OutputFunctor>
+                               !is_iterator<OutputFunctor>::value
                                         >* = 0)
 {
    return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(),
@@ -448,7 +448,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                VertexIterator hidden_vertices_begin,
                                VertexIterator hidden_vertices_end,
                                std::enable_if_t<
-                                          is_iterator_v<OutputIteratorVorVertices>
+                               is_iterator<OutputIteratorVorVertices>::value
                                         >* = 0)
 {
   typedef typename Rt::Geom_traits::FT                            FT;

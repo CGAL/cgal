@@ -823,7 +823,7 @@ struct Dispatch_centroid_3
 
 template < typename InputIterator, typename K>
 typename internal::Dispatch_centroid_3<
-  std::enable_if_t<is_iterator_v<InputIterator>,InputIterator>,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   K,Dynamic_dimension_tag>::result_type
 centroid(InputIterator begin, InputIterator end, const K& k, Dynamic_dimension_tag tag)
 {
@@ -832,7 +832,7 @@ centroid(InputIterator begin, InputIterator end, const K& k, Dynamic_dimension_t
 
 template < typename InputIterator, typename K, int d >
 typename internal::Dispatch_centroid_3<
-  std::enable_if_t<is_iterator_v<InputIterator>,InputIterator>,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   K,Dimension_tag<d> >::result_type
 centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<d> tag)
 {
@@ -897,7 +897,7 @@ struct Dispatch_centroid <InputIterator, Dynamic_dimension_tag>
 template < typename InputIterator, typename Kernel_or_dim >
 inline
 typename internal::Dispatch_centroid<
-  std::enable_if_t<is_iterator_v<InputIterator>,InputIterator>,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   Kernel_or_dim>::result_type
 centroid(InputIterator begin, InputIterator end, const Kernel_or_dim& k_or_d)
 {
@@ -906,7 +906,7 @@ centroid(InputIterator begin, InputIterator end, const Kernel_or_dim& k_or_d)
 }
 
 namespace internal {
-template<class It,bool=is_iterator_v<It>>
+  template<class It,bool=is_iterator<It>::value>
 class Centroid_2args_return_type_helper{};
 
 template<class It>

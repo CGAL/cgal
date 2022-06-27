@@ -33,7 +33,7 @@ namespace CGAL {
 
 namespace internal{
 
-template <class T,bool has_info=is_iterator_v<T>>
+template <class T,bool has_info=is_iterator<T>::value>
 struct Get_iterator_value_type{
  struct type{};
 };
