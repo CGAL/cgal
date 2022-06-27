@@ -282,7 +282,7 @@ different label in the input image.
 This includes:
 - internal polylines at the intersection of three subdomains,
 - polylines at the intersection between two subdomains and the bounding box of the image,
-- the bouding box edges when they are incident to "inner" voxels.
+- the bounding box edges when they are incident to "inner" voxels.
 
 This constructor uses named parameters (from the <em>Boost Parameter
 Library</em>). They can be specified in any order.
