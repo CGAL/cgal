@@ -4,22 +4,22 @@ namespace CGAL {
  *
  * The class `Arr_conic_traits_2` is a model of the `ArrangementTraits_2`
  * concept and can be used to construct and maintain arrangements of bounded
- * segments of algebraic curves of degree \f$ 2\f$ at most, also known as
+ * segments of algebraic curves of degree \f$2\f$ at most, also known as
  * <I>conic curves</I>.
  *
- * A general conic curve \f$ C\f$ is the locus of all points \f$ (x,y)\f$
- * satisfying the equation: \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$,
+ * A general conic curve \f$C\f$ is the locus of all points \f$(x,y)\f$
+ * satisfying the equation: \f$r x^2 + s y^2 + t x y + u x + v y + w = 0\f$,
  * where:
  *
  * <UL>
 
- * <LI>If \f$ 4 r s - t^2 > 0\f$, \f$ C\f$ is an ellipse.  A special case occurs
- * when \f$ r = s\f$ and \f$ t = 0\f$, when \f$ C\f$ becomes a circle.
+ * <LI>If \f$4 r s - t^2 > 0\f$, \f$ C\f$ is an ellipse.  A special case occurs
+ * when \f$r = s\f$ and \f$ t = 0\f$, when \f$ C\f$ becomes a circle.
  *
- * <LI>If \f$ 4 r s - t^2 < 0\f$, \f$ C\f$ is a hyperbola.
+ * <LI>If \f$4 r s - t^2 < 0\f$, \f$ C\f$ is a hyperbola.
  *
- * <LI>If \f$ 4 r s - t^2 = 0\f$, \f$ C\f$ is a parabola.  A degenerate case
- * occurs when \f$ r = s = t = 0\f$, when \f$ C\f$ is a line.
+ * <LI>If \f$4 r s - t^2 = 0\f$, \f$ C\f$ is a parabola.  A degenerate case
+ * occurs when \f$r = s = t = 0\f$, when \f$ C\f$ is a line.
  *
  * </UL>
  *
@@ -50,13 +50,13 @@ namespace CGAL {
  * only circular arcs and line segments, it is recommended using the
  * `Arr_circle_segment_2` class to achieve better running times.
  *
- * In our representation, all conic coefficients (namely \f$ r, s, t, u, v,
- * w\f$) must be rational numbers. This guarantees that the coordinates of all
+ * In our representation, all conic coefficients (namely \f$r, s, t, u, v, w\f$)
+ * must be rational numbers. This guarantees that the coordinates of all
  * arrangement vertices (in particular, those representing intersection points)
- * are algebraic numbers of degree \f$ 4\f$ (a real number \f$ \alpha\f$ is an
- * algebraic number of degree \f$ d\f$ if there exist a polynomial \f$ p\f$ with
- * <I>integer</I> coefficient of degree \f$ d\f$ such that \f$ p(\alpha) =
- * 0\f$).  We therefore require separate representations of the curve
+ * are algebraic numbers of degree \f$4\f$ (a real number \f$\alpha\f$ is an
+ * algebraic number of degree \f$d\f$ if there exist a polynomial \f$ p\f$ with
+ * <I>integer</I> coefficient of degree \f$d\f$ such that \f$p(\alpha) = 0\f$).
+ * We therefore require separate representations of the curve
  * coefficients and the point coordinates. The `NtTraits` should be instantiated
  * with a class that defines nested `Integer`, `Rational`, and `Algebraic` number
  * types and supports various operations on them, yielding certified computation
@@ -72,7 +72,7 @@ namespace CGAL {
  * simple algebraic numbers.
  *
  * The traits class inherits its point type from `AlgKernel::Point_2`,
- * and defines a curve and \f$ x\f$-monotone curve types, as detailed below.
+ * and defines a curve and \f$x\f$-monotone curve types, as detailed below.
  *
  * While the `Arr_conic_traits_2` models the concept
  * `ArrangementDirectionalXMonotoneTraits_2`, the implementation of
@@ -129,20 +129,19 @@ public:
      * violation does not cause the program to abort. Instead, the constructed
      * arc is invalid (a defaultly constructed arc is also invalid).  It is
      * however recommended to check that a constructed arc is valid before
-     * inserting it to an arrangement, as this operation <I>will</I> cause the
-     * program to abort.
+     * inserting it to an arrangement.
      */
     bool is_valid() const;
 
-    /*! determines whether the arc is \f$ x\f$-monotone, namely each vertical
+    /*! determines whether the arc is \f$x\f$-monotone, namely each vertical
      * line intersects it at most once. A vertical line segment is also
-     * considered (weakly) \f$ x\f$-monotone.
+     * considered (weakly) \f$x\f$-monotone.
      */
     bool is_x_monotone() const;
 
-    /*! determines whether the arc is \f$ y\f$-monotone, namely each horizontal
+    /*! determines whether the arc is \f$y\f$-monotone, namely each horizontal
      * line intersects it at most once. A horizontal line segment is also
-     * considered (weakly) \f$ x\f$-monotone.
+     * considered (weakly) \f$x\f$-monotone.
      */
     bool is_y_monotone() const;
 
@@ -160,23 +159,23 @@ public:
      */
     /// @{
 
-    /*! returns the coefficient of \f$ x^2\f$.
+    /*! returns the coefficient of \f$x^2\f$.
      */
     const typename NtTraits::Integer& r() const;
 
-    /*! returns the coefficient of \f$ t^2\f$.
+    /*! returns the coefficient of \f$t^2\f$.
      */
     const typename NtTraits::Integer& s() const;
 
-    /*! returns the coefficient of \f$ x y\f$.
+    /*! returns the coefficient of \f$x y\f$.
      */
     const typename NtTraits::Integer& t() const;
 
-    /*! returns the coefficient of \f$ x\f$.
+    /*! returns the coefficient of \f$x\f$.
      */
     const typename NtTraits::Integer& u() const;
 
-    /*! returns the coefficient of \f$ y\f$.
+    /*! returns the coefficient of \f$y\f$.
      */
     const typename NtTraits::Integer& v() const;
 
@@ -217,15 +216,16 @@ public:
 
   }; /* end Arr_conic_traits_2::Curve_2 */
 
-  /*! The `X_monotone_curve_2` class nested within the conic-arc traits is
+  /*! \class X_monotone_curve_2
+   * The `X_monotone_curve_2` class nested within the conic-arc traits is
    * used to represent \f$x\f$-monotone conic arcs. It inherits from the
    * `Curve_2` type, therefore supports the access methods and the operations
    * listed above.
    *
-   * For efficiency reasons, we recommend users not to construct \f$
-   * x\f$-monotone conic arc directly, but rather use the `Make_x_monotone_2`
+   * For efficiency reasons, we recommend users not to construct
+   * \f$x\f$-monotone conic arc directly, but rather use the `Make_x_monotone_2`
    * functor supplied by the conic-arc traits class to convert conic curves to
-   * \f$ x\f$-monotone curves.
+   * \f$x\f$-monotone curves.
    */
   class X_monotone_curve_2 {
   public:
@@ -281,10 +281,11 @@ public:
     /// @}
   };
 
-  /*! \class
+  /*! \class Construct_curve_2
    * A functor that constructs a conic arc.
    */
   class Construct_curve_2 {
+  public:
     /*! constructs an arc corresponding to the line segment `seg`.
      */
     Curve_2 operator()(const typename RatKernel::Segment_2& seg) const;
@@ -318,18 +319,18 @@ public:
                        const typename RatKernel::Point_2& p3) const;
 
     /*! constructs a conic arc that corresponds to the full conic curve
-     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$.
+     * \f$r x^2 + s y^2 + t x y + u x + v y + w = 0\f$.
      *
      * \pre As a conic arc must be bounded, the given curve must be an ellipse,
-     * that is \f$ 4 r s - t^2 > 0\f$.
+     * that is \f$4 r s - t^2 > 0\f$.
      */
     Curve_2 operator()(const Rational& r, const Rational& s,
                        const Rational& t, const Rational& u,
                        const Rational& v, const Rational& w) const;
 
     /*! constructs a conic arc supported by the conic curve
-     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going in the given
-     * orientation `o` from the source point `ps` to its target point `pt`.  * *
+     * \f$r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going in the given
+     * orientation `o` from the source point `ps` to its target point `pt`.
      *
      * \pre `ps` and `pt` both satisfy the equation of the supporting conic
      * curve and define a bounded segment of this curve (e.g. in case of a
@@ -361,13 +362,13 @@ public:
                        const typename RatKernel::Point_2& p5) const;
 
     /*! constructs a conic arc supported by the conic curve
-     * \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going in the given
+     * \f$r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going in the given
      * orientation `o` from its source point to its target Point. In this case
      * only some approximations of the endpoints (`app_ps` and `app_pt`,
      * respectively) is available, and their exact locations are given
      * implicitly, specified by the intersections of the supporting conic curve
-     * with \f$ r_1 x^2 + s_1 y^2 + t_1 x y + u_1 x + v_1 y + w_1 = 0\f$ and \f$
-     * r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0\f$, respectively.
+     * with \f$r_1 x^2 + s_1 y^2 + t_1 x y + u_1 x + v_1 y + w_1 = 0\f$ and
+     * \f$r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0\f$, respectively.
      *
      * \pre The two auxiliary curves specifying the endpoints really intersect
      * with the supporting conic curve, such that the arc endpoints define a
@@ -391,50 +392,114 @@ public:
                        const Rational& v2, const Rational& w2) const;
   };
 
-  /*! \class
-   * A functor that constructs an \f$X\f$-monotone conic arc.
+  /*! \class Construct_x_monotone_curve_2
+   * A functor that constructs an \f$x\f$-monotone conic arc.
    */
   class Construct_x_monotone_curve_2 {
-    /*! converts the given arc to an \f$ x\f$-monotone arc.
-     * \pre `arc` is \f$ x\f$-monotone.
+  public:
+    /*! converts a given arc to an \f$x\f$-monotone arc.
+     * \param cv The input arc.
+     * \pre `cv` is \f$x\f$-monotone.
      */
-    X_monotone_curve_2 operator()(const Curve_2& arc) const;
+    X_monotone_curve_2 operator()(const Curve_2& cv) const;
 
-    /*! Constructs an x-monotone curve connecting the two given endpoints.
-     * \param p The first point.
-     * \param q The second point.
-     * \pre p and q must not be the same.
-     * \return A segment connecting p and q.
+    /*! Constructs an \f$x\f$-monotone curve connecting the two given endpoints.
+     * \param source The first point.
+     * \param target The second point.
+     * \pre `source` and `target` must not be the same.
+     * \return A segment connecting `source` and `target`.
      */
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target) const;
 
     /*! Constructs a special segment of a given line connecting to given
      * endpoints.
-     * \param a, b, c The coefficients of the supporting line (ax + by + c = 0).
+     * \param a, b, c The coefficients of the supporting line (\f$ax + by + c = 0\f$).
      * \param source The source point.
      * \param target The target point.
+     * \pre `source` and `target` must not be the same.
+     * \return A segment connecting `source` and `target`.
      */
     X_monotone_curve_2 operator()(const Algebraic& a, const Algebraic& b,
                                   const Algebraic& c,
                                   const Point_2& source, const Point_2& target) const;
   };
 
-  /*! \class
+  /*! \class Construct_bbox_2
    * A functor that constructs a bounding box of a conic arc.
    */
   class Construct_bbox_2 {
-    /*! return a bounding box of the arc `a`.
+  public:
+    /*! Obtain a bounding box for a conic arc.
+     * \param cv The conic arc.
+     * \return The bounding box.
      */
-    Bbox_2 operator()() const;
+    Bbox_2 operator()(const Curve_2& cv) const { return bbox(cv); }
+
+    /*! Obtain a bounding box for an \f$x\f$-monotone conic arc.
+     * \param xcv The \f$x\f$-monotone conic arc.
+     * \return The bounding box.
+     */
+    Bbox_2 operator()(const X_monotone_curve_2& xcv) const { return bbox(xcv); }
   };
 
-  /*! \class
+  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks
+   * point-location strategy and the drawing function.
+   */
+  //@{
+  typedef double                                        Approximate_number_type;
+  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
+  typedef Approximate_kernel::Point_2                   Approximate_point_2;
+
+  /*! \class Approximate_2
+   * A functor that approximates a point and an \f$x\f$-monotone curve.
+   */
+  class Approximate_2 {
+  public:
+    /*! Obtain an approximation of a point coordinate.
+     * \param p The exact point.
+     * \param i The coordinate index (either 0 or 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of p's \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of p's \f$y\f$-coordinate (if `i` == 1).
+     */
+    Approximate_number_type operator()(const Point_2& p, int i) const;
+
+    /*! Obtain an approximation of a point.
+     * \param p The exact point.
+     */
+    Approximate_point_2 operator()(const Point_2& p) const;
+
+    /*! Obtain a polyline that approximates an \f$x\f$-monotone curve. The
+     * polyline is defined by a range of approximate points beginning at
+     * `oi`. The type `OutputIterator` must dereference the type
+     * `Approximate_point_2`. The first and last points in the range are always
+     * the endpoints of the given arc `xcv`. The operator returns a
+     * past-the-end iterator of the destination range.
+     * \param oi An output iterator for the resulting polyline.
+     * \param error The error bound of the polyline approximation. This is
+     *              the Hausdorff distance between the arc and the polyline
+     *              that approximates the arc.
+     * \param xcv The exact \f$x\f$-monotone arc.
+     * \param l2r A Boolean flag that indicates whether the arc direction is
+     *            left to right.
+     * \return The past-the-end iterator of the output iterator.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(OutputIterator oi, double error,
+                              const X_monotone_curve_2& xcv,
+                              bool l2r = true) const;
+  };
+
+  /*! \class Trim_2
    * A functor that trims a conic arc.
    */
   class Trim_2 {
   public:
-    /*! Trims the given x-monotone curve to an from source to target.
-     * \ pre `source` and `target` lies on the curve
+    /*! Trims the given \f$x\f$-monotone arc to new endpoints.
+     * \param xcv The \f$x\f$-monotone arc
+     * \param source The new source point.
+     * \param target The new target point.
+     * \pre `source` and `target` lies on the arc.
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
                                   const Point_2& source,
@@ -456,6 +521,9 @@ public:
 
   /*! Obtain a `Trim_2` functor. */
   Trim_2 trim_2_object() const;
+
+  /*! Obtain an `Approximate_2` functor. */
+  Trim_2 approximate_2_object() const;
 
   /// @}
 
