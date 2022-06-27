@@ -3,7 +3,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 
-#define CGAL_DEBUG_PMP_CLIP
+// #define CGAL_DEBUG_PMP_CLIP
 
 // TODO: test coref
 // TODO: test throw coref and clip
@@ -25,6 +25,26 @@ void test()
   auto run_a_test = [&i] (std::string f, double a, double b, double c, double d)
   {
     std::cout << "running test " << i << "\n";
+    {
+    std::cout << "   test clip with throw\n";
+    TriangleMesh tm;
+    std::ifstream(f) >> tm;
+    try{
+      PMP::clip(tm, K::Plane_3(a,b,c,d), params::throw_on_self_intersection(true));
+    }
+    catch(PMP::Corefinement::Self_intersection_exception&)
+    {}
+    }
+
+    {
+    std::cout << "   test split with SI allowed\n";
+    TriangleMesh tm;
+    std::ifstream(f) >> tm;
+    PMP::split(tm, K::Plane_3(a,b,c,d), params::allow_self_intersections(true));
+    }
+
+    {
+    std::cout << "   test clip with SI allowed\n";
     TriangleMesh tm;
     std::ifstream(f) >> tm;
 #ifdef CGAL_DEBUG_PMP_CLIP
@@ -34,6 +54,8 @@ void test()
 #ifdef CGAL_DEBUG_PMP_CLIP
     std::ofstream("/tmp/output_"+std::to_string(i)+".off") << std::setprecision(17) << tm;
 #endif
+    }
+
     ++i;
   };
 
