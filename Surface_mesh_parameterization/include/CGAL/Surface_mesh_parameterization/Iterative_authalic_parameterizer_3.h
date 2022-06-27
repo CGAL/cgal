@@ -50,7 +50,7 @@
 #include <iomanip>
 #include <unordered_set>
 
-// #define DEBUG_L0 1 // @fixme
+#define DEBUG_L0 0 // @fixme
 
 /// \file Iterative_authalic_parameterizer_3.h
 
