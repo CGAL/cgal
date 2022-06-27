@@ -59,6 +59,21 @@ int main() {
                            Point(Rational(-48, 10), Rational(-14, 10))));
   // 46*x*x + 4*y*y - 144*x*y - 100
 
+  CGAL::insert(arr, ctr_cv(4, 46, 144, 0, 0, -100, CGAL::CLOCKWISE,
+                           Point(-5, 0),
+                           Point(Rational(14,10), Rational(-48,10))));
+  CGAL::insert(arr, ctr_cv(4, 46, 144, 0, 0, -100, CGAL::CLOCKWISE,
+                           Point(5, 0),
+                           Point(Rational(-14,10), Rational(48,10))));
+  // 4*x*x + 46*y*y + 144*x*y - 100
+
+  CGAL::insert(arr, ctr_cv(46, 4, 144, 0, 0, -100, CGAL::COUNTERCLOCKWISE,
+                           Point(0, -5),
+                           Point(Rational(-48,10), Rational(14,10))));
+  CGAL::insert(arr, ctr_cv(46, 4, 144, 0, 0, -100, CGAL::COUNTERCLOCKWISE,
+                           Point(0, 5),
+                           Point(Rational(48,10), Rational(-14,10))));
+
   print_arrangement_size(arr);
 
   CGAL::draw(arr);
