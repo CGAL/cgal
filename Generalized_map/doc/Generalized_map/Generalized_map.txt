@@ -169,7 +169,7 @@ The diagram in \cgalFigureRef{fig_gmap_diagramme_class} shows the different clas
 
 \cgalModifBegin
 
-The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `std::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to `std::size_t`. As the indices are contiguous, they can be used as index into vectors which store properties.
+The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `std::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to `std::size_t`. Indices can be used as index into vectors which store properties (cf. one example in Section \ref ssecexample3DGMWI "3D Generalized Map using Indices").
 
 \cgalModifEnd
 
@@ -531,6 +531,16 @@ The next operations will call these functors when 2-cells are split or merged. T
 Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the fonctor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
 
 \cgalExample{Generalized_map/gmap_3_dynamic_onmerge.cpp}
+
+\cgalModifBegin
+
+\subsection ssecexample3DGMWI 3D Generalized Map using Indices
+
+In this example, a 3-dimensional generalized map is used, but using indices instead of handles. Two vectors are created to store some external information associated with darts and 3-attributes. Since descriptors are indices, they can directly be used to access elements of the vector.
+
+\cgalExample{Generalized_map/gmap_3_index.cpp}
+
+\cgalModifEnd
 
 
 \section sec_definition_gmap Mathematical Definitions
