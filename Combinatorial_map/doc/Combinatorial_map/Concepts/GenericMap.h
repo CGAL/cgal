@@ -304,13 +304,13 @@ size_type number_of_attributes() const;
 /*!
 Returns an upper bound of the id of dart descriptors if indices are used or 0 otherwise.
 */
-size_type upper_bound_dart_ids() const;
+size_type upper_bound_on_dart_ids() const;
 
 /*!
 Returns an upper bound of the id of <I>i</I>-attributes descriptors if indices are used or 0 otherwise.
 */
 template <unsigned int i>
-size_type upper_bound_attribute_ids() const;
+size_type upper_bound_on_attribute_ids() const;
 
 /*! Returns true if `d` is a descriptor of a used dart (i.e.\ valid).
  */

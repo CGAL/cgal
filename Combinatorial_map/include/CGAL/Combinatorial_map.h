@@ -155,8 +155,8 @@ namespace CGAL {
     using Base::darts;
     using Base::number_of_darts;
     using Base::is_empty;
-    using Base::upper_bound_dart_ids;
-    using Base::upper_bound_attribute_ids;
+    using Base::upper_bound_on_dart_ids;
+    using Base::upper_bound_on_attribute_ids;
 
     /// Typedef for attributes
     template<int i>

@@ -167,7 +167,7 @@ namespace CGAL {
     size_type number_of_darts() const
     { return mdarts.size(); }
 
-    size_type upper_bound_dart_ids() const
+    size_type upper_bound_on_dart_ids() const
     { return 0; }
 
    /** Return if this dart is free for adimension.
@@ -436,7 +436,7 @@ namespace CGAL {
         (mattribute_containers).index(ah); }
 
     template <unsigned int i>
-    size_type upper_bound_attribute_ids() const
+    size_type upper_bound_on_attribute_ids() const
     { return 0; }
 
   protected:
