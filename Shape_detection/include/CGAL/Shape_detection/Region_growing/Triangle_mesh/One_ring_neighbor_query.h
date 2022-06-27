@@ -64,7 +64,7 @@ namespace Triangle_mesh {
     /*!
       \brief initializes all internal data structures.
 
-      \param pmesh
+      \param tmesh
       an instance of a `TriangleMesh` that represents a triangle mesh
 
       \pre `faces(pmesh).size() > 0`

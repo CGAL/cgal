@@ -232,9 +232,6 @@ namespace Polyline {
       \param query
       `Item` of the query vertex
 
-      \param region
-      Vertices of the region represented as `Items`.
-
       \return Boolean `true` or `false`
 
       \pre `region.size() > 0`

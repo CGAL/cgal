@@ -98,7 +98,7 @@ namespace Triangle_mesh {
       \tparam NamedParameters
       a sequence of \ref bgl_namedparameters "Named Parameters"
 
-      \param pmesh
+      \param tmesh
       an instance of `TriangleMesh` that represents a triangle mesh
 
       \param neighbor_query

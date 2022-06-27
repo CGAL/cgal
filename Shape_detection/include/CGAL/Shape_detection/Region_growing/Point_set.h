@@ -20,7 +20,7 @@
 
 /**
 * \ingroup PkgShapeDetectionRef
-* \file CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h
+* \file CGAL/Shape_detection/Region_growing/Point_set.h
 * A convenience header that includes all classes related to the region growing algorithm on a point set.
 */
 

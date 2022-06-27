@@ -39,7 +39,7 @@ namespace Point_set {
 
     \tparam GeomTraits
     a model of `Kernel`
-
+g
     \tparam InputRange
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
@@ -253,11 +253,11 @@ namespace Point_set {
       its normal and the sphere radius is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
-      \param query_index
-      index of the query point
+      \param query
+      item of the query point
 
-      \param indices
-      indices of the inliers of the region
+      \param region
+      inlier items of the region
 
       The first parameter is not used in this implementation.
 
