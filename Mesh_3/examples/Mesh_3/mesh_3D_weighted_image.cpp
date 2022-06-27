@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
-                                                    weights = img_weights,
-                                                    relative_error_bound = 1e-6);
+                                                    weights_new = img_weights,
+                                                    relative_error_bound_new = 1e-6);
   /// [Domain creation]
 
   // Mesh criteria

@@ -367,6 +367,18 @@ const Boost_parameter_compatibility_wrapper<internal_np::reset_options_param_t> 
 const Boost_parameter_compatibility_wrapper<internal_np::mesh_param_t> mesh_options_param_new;
 const Boost_parameter_compatibility_wrapper<internal_np::manifold_param_t> manifold_options_param_new;
 const Boost_parameter_compatibility_wrapper<internal_np::features_option_param_t> features_param_new;
+
+const Boost_parameter_compatibility_wrapper<internal_np::image_3_param_t> image_new;
+const Boost_parameter_compatibility_wrapper<internal_np::iso_value_param_t> iso_value_new;
+const Boost_parameter_compatibility_wrapper<internal_np::image_subdomain_index_t> image_values_to_subdomain_indices_new;
+const Boost_parameter_compatibility_wrapper<internal_np::voxel_value_t> value_outside_new;
+const Boost_parameter_compatibility_wrapper<internal_np::error_bound_t> relative_error_bound_new;
+const Boost_parameter_compatibility_wrapper<internal_np::rng_t> p_rng_new;
+const Boost_parameter_compatibility_wrapper<internal_np::null_subdomain_index_param_t> null_subdomain_index_new;
+const Boost_parameter_compatibility_wrapper<internal_np::surface_patch_index_t> construct_surface_patch_index_new;
+const Boost_parameter_compatibility_wrapper<internal_np::weights_param_t> weights_new;
+
+
 #endif
 
 // function to extract a parameter

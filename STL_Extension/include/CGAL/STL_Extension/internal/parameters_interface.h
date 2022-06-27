@@ -278,3 +278,13 @@ CGAL_add_named_parameter(reset_options_param_t, reset_options_param, reset_optio
 CGAL_add_named_parameter(mesh_param_t, mesh_param, mesh_param)
 CGAL_add_named_parameter(manifold_param_t, manifold_param, manifold_param)
 CGAL_add_named_parameter(features_option_param_t,features_options_param,features_options_param)
+
+CGAL_add_named_parameter(image_3_param_t, image_3_param, image_3_param)
+CGAL_add_named_parameter(iso_value_param_t, iso_value_param, iso_value_param)
+CGAL_add_named_parameter(image_subdomain_index_t, image_subdomain_index, image_subdomain_index)
+CGAL_add_named_parameter(voxel_value_t, voxel_value, voxel_value)
+CGAL_add_named_parameter(error_bound_t, error_bound, error_bound)
+CGAL_add_named_parameter(rng_t, rng, rng)
+CGAL_add_named_parameter(null_subdomain_index_param_t,null_subdomain_index_param, null_subdomain_index_param)
+CGAL_add_named_parameter(surface_patch_index_t, surface_patch_index, surface_patch_index)
+CGAL_add_named_parameter(weights_param_t, weights_param, weights_param)

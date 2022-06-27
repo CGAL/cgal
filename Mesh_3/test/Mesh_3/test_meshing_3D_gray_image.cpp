@@ -67,10 +67,10 @@ public:
     // Domain
     Mesh_domain domain =
       Mesh_domain::create_gray_image_mesh_domain(image,
-                                                 p::iso_value = 2.9f,
-                                                 p::value_outside = 0.f,
-                                                 p::relative_error_bound = 1e-3,
-                                                 p::p_rng =
+                                                 p::iso_value_new = 2.9f,
+                                                 p::value_outside_new = 0.f,
+                                                 p::relative_error_bound_new = 1e-3,
+                                                 p::p_rng_new =
                                                  &CGAL::get_default_random());
 
     // Mesh criteria
