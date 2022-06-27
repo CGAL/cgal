@@ -160,7 +160,7 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Compare_x_2(const Traits& traits) : m_traits(traits) {}
 
@@ -189,7 +189,7 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Compare_xy_2(const Traits& traits) : m_traits(traits) {}
 
@@ -199,9 +199,9 @@ public:
     /*! Compares two points lexigoraphically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
-     * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
-     *         SMALLER if x(p1) < x(p2), or if x(p1) = x(p2) and y(p1) < y(p2);
-     *         EQUAL if the two points are equal.
+     * \return `LARGER` if `x(p1) > x(p2)`, or if `x(p1) = x(p2)` and `y(p1) > y(p2)`;
+     *         `SMALLER` if `x(p1) < x(p2)`, or if `x(p1) = x(p2)` and `y(p1) < y(p2)`;
+     *         `EQUAL` if the two points are equal.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { return m_traits.m_alg_kernel->compare_xy_2_object()(p1, p2); }
@@ -212,8 +212,8 @@ public:
 
   class Construct_min_vertex_2 {
   public:
-    /*! Obtain the left endpoint of the x-monotone curve (segment).
-     * \param cv The curve.
+    /*! Obtain the left endpoint of an x-monotone arc.
+     * \param cv The arc.
      * \return The left endpoint.
      */
     const Point_2& operator()(const X_monotone_curve_2& xcv) const
@@ -226,8 +226,8 @@ public:
 
   class Construct_max_vertex_2 {
   public:
-    /*! Obtain the right endpoint of the x-monotone curve (segment).
-     * \param cv The curve.
+    /*! Obtain the right endpoint of the x-monotone arc.
+     * \param cv The arc.
      * \return The right endpoint.
      */
     const Point_2& operator()(const X_monotone_curve_2& xcv) const
@@ -240,9 +240,9 @@ public:
 
   class Is_vertical_2 {
   public:
-    /*! Check whether the given x-monotone curve is a vertical segment.
-     * \param cv The curve.
-     * \return (true) if the curve is a vertical segment; (false) otherwise.
+    /*! Check whether a given x-monotone arc is a vertical segment.
+     * \param cv The vertical segment.
+     * \return `true` if the arc is a vertical segment; `false` otherwise.
      */
     bool operator()(const X_monotone_curve_2& cv) const
     { return cv.is_vertical(); }
@@ -259,20 +259,20 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Compare_y_at_x_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Return the location of the given point with respect to the input curve.
-     * \param xcv The curve.
+    /*! Return the location of a given point with respect to an input arc.
+     * \param xcv The arc.
      * \param p The point.
-     * \pre p is in the x-range of cv.
-     * \return SMALLER if y(p) < cv(x(p)), i.e. the point is below the curve;
-     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
-     *         EQUAL if p lies on the curve.
+     * \pre `p` is in the \f$x\f$-range of `xcv`.
+     * \return `SMALLER` if `y(p) < xcv(x(p))`, i.e. the point is below the arc;
+     *         `LARGER` if `y(p) > xcv(x(p))`, i.e. the point is above the arc;
+     *         `EQUAL` if `p` lies on the curve.
      */
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xcv) const {
@@ -311,11 +311,11 @@ public:
     }
 
   private:
-    /*! Compute a point on the arc with the same x-coordiante as the given
+    /*! Compute a point on an arc with the same \f$x\f$-coordiante as the given
      * point.
      * \param p The given point.
-     * \pre The arc is not vertical and p is in the x-range of the arc.
-     * \return A point on the arc with the same x-coordiante as p.
+     * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
+     * \return A point on the arc with the same \f$x\f$-coordiante as `p`.
      */
     Point_2 point_at_x(const X_monotone_curve_2& xcv, const Point_2& p) const {
       // Make sure that p is in the x-range of the arc.
@@ -404,22 +404,22 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Compare_y_at_x_left_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Compares the y value of two x-monotone curves immediately to the left
-     * of their intersection point.
-     * \param xcv1 The first curve.
-     * \param xcv2 The second curve.
+    /*! Compares the \f$y\f$ value of two \f$x\f$-monotone arcs immediately
+     * to the left of their intersection point.
+     * \param xcv1 The first arc.
+     * \param xcv2 The second arc.
      * \param p The intersection point.
-     * \pre The point p lies on both curves, and both of them must be also be
+     * \pre The point `p` lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its left.
-     * \return The relative position of xcv1 with respect to xcv2 immdiately to
-     *         the left of p: SMALLER, LARGER or EQUAL.
+     * \return The relative position of `xcv1` with respect to `xcv2` immdiately
+     *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
@@ -443,10 +443,11 @@ public:
     }
 
   private:
-    /*! Compare to arcs immediately to the leftt of their intersection point.
-     * \param arc The compared arc.
+    /*! Compare two arcs immediately to the leftt of their intersection point.
+     * \param xcv1 The first compared arc.
+     * \param xcv2 The second compared arc.
      * \param p The reference intersection point.
-     * \return The relative position of the arcs to the left of p.
+     * \return The relative position of the arcs to the left of `p`.
      * \pre Both arcs we compare are not vertical segments.
      */
     Comparison_result compare_to_left(const X_monotone_curve_2& xcv1,
@@ -588,15 +589,15 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Compares the y value of two x-monotone curves immediately to the right
-     * of their intersection point.
-     * \param xcv1 The first curve.
-     * \param xcv2 The second curve.
+    /*! Compares the `y` value of two \f$x\f$-monotone arcs immediately
+     * to the right of their intersection point.
+     * \param xcv1 The first arc.
+     * \param xcv2 The second arc.
      * \param p The intersection point.
-     * \pre The point p lies on both curves, and both of them must be also be
+     * \pre The point `p` lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its right.
-     * \return The relative position of xcv1 with respect to xcv2 immdiately to
-     *         the right of p: SMALLER, LARGER or EQUAL.
+     * \return The relative position of `xcv1` with respect to `xcv2` immdiately
+     *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
@@ -620,10 +621,11 @@ public:
     }
 
   private:
-  /*! Compare to arcs immediately to the right of their intersection point.
-   * \param arc The compared arc.
+  /*! Compare two arcs immediately to the right of their intersection point.
+   * \param xcv1 The first compared arc.
+   * \param xcv2 The second compared arc.
    * \param p The reference intersection point.
-   * \return The relative position of the arcs to the right of p.
+   * \return The relative position of the arcs to the right of `p`.
    * \pre Both arcs we compare are not vertical segments.
    */
   Comparison_result compare_to_right(const X_monotone_curve_2& xcv1,
@@ -750,18 +752,18 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Equal_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Check whether the two x-monotone curves are the same (have the same
+    /*! Check whether two \f$x\f$-monotone curves are the same (have the same
      * graph).
      * \param xcv1 The first curve.
      * \param xcv2 The second curve.
-     * \return (true) if the two curves are the same; (false) otherwise.
+     * \return `true` if the two curves are the same; `false` otherwise.
      */
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const
@@ -770,10 +772,10 @@ public:
       return equals(xcv1, xcv2);
     }
 
-    /*! Check whether the two points are the same.
+    /*! Check whether two points are the same.
      * \param p1 The first point.
      * \param p2 The second point.
-     * \return (true) if the two point are the same; (false) otherwise.
+     * \return `true` if the two point are the same; `false` otherwise.
      */
     bool operator()(const Point_2& p1, const Point_2& p2) const {
       if (&p1 == &p2) return (true);
@@ -781,9 +783,10 @@ public:
     }
 
   private:
-    /*! Check whether the two arcs are equal (have the same graph).
-     * \param arc The compared arc.
-     * \return (true) if the two arcs have the same graph; (false) otherwise.
+    /*! Check whether two arcs are equal (have the same graph).
+     * \param xcv1 The first compared arc.
+     * \param xcv2 The second compared arc.
+     * \return `true` if the two arcs have the same graph; `false` otherwise.
      */
     bool equals(const X_monotone_curve_2& xcv1,
                 const X_monotone_curve_2& xcv2) const {
@@ -821,21 +824,21 @@ public:
   //@{
 
   /*! A function object that obtains the parameter space of a geometric
-   * entity along the x-axis
+   * entity along the \f$x-\f$xaxis.
    */
   class Parameter_space_in_x_2 {
   public:
-    /*! Obtains the parameter space at the end of a line along the x-axis.
-     * \param xcv the line
-     * \param ce the line end indicator:
-     *     ARR_MIN_END - the minimal end of xc or
-     *     ARR_MAX_END - the maximal end of xc
-     * \return the parameter space at the ce end of the line xcv.
-     *   ARR_LEFT_BOUNDARY  - the line approaches the identification arc from
-     *                        the right at the line left end.
-     *   ARR_INTERIOR       - the line does not approache the identification arc.
-     *   ARR_RIGHT_BOUNDARY - the line approaches the identification arc from
-     *                        the left at the line right end.
+    /*! Obtains the parameter space at the end of an arc along the \f$x\f$-axis.
+     * \param xcv The arc.
+     * \param ce The arc end indicator:
+     *    `ARR_MIN_END`&mdash;the minimal end of `xcv` or
+     *    `ARR_MAX_END`&mdash;the maximal end of `xcv`.
+     * \return the parameter space at the `ce` end of the arc `xcv`.
+     *   `ARR_LEFT_BOUNDARY` &mdash;the arc approaches the identification curve from
+     *                              the right at the arc left end.
+     *   `ARR_INTERIOR`      &mdash;the arc does not approache the identification curve.
+     *   `ARR_RIGHT_BOUNDARY`&mdash;the arc approaches the identification curve from
+     *                              the left at the arc right end.
      */
     Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
                                    Arr_curve_end ce) const {
@@ -843,9 +846,9 @@ public:
       return ARR_INTERIOR;
     }
 
-    /*! Obtains the parameter space at a point along the x-axis.
-     * \param p the point.
-     * \return the parameter space at p.
+    /*! Obtains the parameter space at a point along the \f$x\f$-axis.
+     * \param p The point.
+     * \return the parameter space at `p`.
      */
     Arr_parameter_space operator()(const Point_2 ) const
     { return ARR_INTERIOR; }
@@ -860,22 +863,22 @@ public:
    */
   class Parameter_space_in_y_2 {
   public:
-    /*! Obtains the parameter space at the end of a line along the y-axis .
-     * Note that if the line end coincides with a pole, then unless the line
-     * coincides with the identification arc, the line end is considered to
+    /*! Obtains the parameter space at the end of an arc along the \f$y\f$-axis .
+     * Note that if the arc end coincides with a pole, then unless the arc
+     * coincides with the identification curve, the arc end is considered to
      * be approaching the boundary, but not on the boundary.
-     * If the line coincides with the identification arc, it is assumed to
+     * If the arc coincides with the identification curve, it is assumed to
      * be smaller than any other object.
-     * \param xcv the line
-     * \param ce the line end indicator:
-     *     ARR_MIN_END - the minimal end of xc or
-     *     ARR_MAX_END - the maximal end of xc
-     * \return the parameter space at the ce end of the line xcv.
-     *   ARR_BOTTOM_BOUNDARY  - the line approaches the south pole at the line
-     *                          left end.
-     *   ARR_INTERIOR         - the line does not approache a contraction point.
-     *   ARR_TOP_BOUNDARY     - the line approaches the north pole at the line
-     *                          right end.
+     * \param xcv The arc.
+     * \param ce The arc end indicator:
+     *   `ARR_MIN_END`&mdash;the minimal end of `xcv` or
+     *   `ARR_MAX_END`&mdash;the maximal end of `xcv`.
+     * \return the parameter space at the `ce` end of the arc `xcv`.
+     *   `ARR_BOTTOM_BOUNDARY`&mdash;the arc approaches the south pole at the arc
+     *                               left end.
+     *   `ARR_INTERIOR`       &mdash;the arc does not approache a contraction point.
+     *   `ARR_TOP_BOUNDARY`   &mdash;the arc approaches the north pole at the arc
+     *                               right end.
      */
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const {
@@ -883,9 +886,9 @@ public:
       return ARR_INTERIOR;
     }
 
-    /*! Obtains the parameter space at a point along the y-axis.
-     * \param p the point.
-     * \return the parameter space at p.
+    /*! Obtains the parameter space at a point along the \f$y\f$-axis.
+     * \param p The point.
+     * \return The parameter space at `p`.
      */
     Arr_parameter_space operator()(const Point_2 /* p */) const
     { return ARR_INTERIOR; }
@@ -911,16 +914,16 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Make_x_monotone_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Subdivide a given conic curve (or conic arc) into x-monotone subcurves
+    /*! Subdivide a given conic arc into \f$x\f$-monotone sub arcs
      * and insert them to a given output iterator.
-     * \param cv the curve.
+     * \param cv The arc.
      * \param oi the output iterator for the result. Its dereference type is a
      *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
      *           objects.
@@ -1026,19 +1029,19 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Split_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Split a given x-monotone curve at a given point into two sub-curves.
-     * \param cv The curve to split
+    /*! Split a given \f$x\f$-monotone arc at a given point into two sub-arcs.
+     * \param xcv The arc to split
      * \param p The split point.
-     * \param c1 Output: The left resulting subcurve (p is its right endpoint).
-     * \param c2 Output: The right resulting subcurve (p is its left endpoint).
-     * \pre p lies on cv but is not one of its end-points.
+     * \param xcv1 Output: The left resulting sub-arc (`p` is its right endpoint).
+     * \param xcv2 Output: The right resulting sub-arc (`p` is its left endpoint).
+     * \pre `p` lies on `xcv` but is not one of its end-points.
      */
     void operator()(const X_monotone_curve_2& xcv, const Point_2 & p,
                     X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const
@@ -1047,9 +1050,9 @@ public:
   private:
     /*! Split the arc into two at a given split point.
      * \param p The split point.
-     * \param xcv1 Output: The first resulting arc, lying to the left of p.
-     * \param xcv2 Output: The first resulting arc, lying to the right of p.
-     * \pre p lies in the interior of the arc (not one of its endpoints).
+     * \param xcv1 Output: The first resulting arc, lying to the left of `p`.
+     * \param xcv2 Output: The first resulting arc, lying to the right of `p`.
+     * \pre `p` lies in the interior of the arc (not one of its endpoints).
      */
     void split(const X_monotone_curve_2& xcv, const Point_2& p,
                X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const {
@@ -1100,7 +1103,7 @@ public:
     const Traits& m_traits;
 
     /*! Constructor.
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Intersect_2(const Traits& traits) : m_traits(traits) {}
 
@@ -1110,8 +1113,8 @@ public:
     /*! Find the intersections of the two given curves and insert them to the
      * given output iterator. As two segments may itersect only once, only a
      * single will be contained in the iterator.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
+     * \param cv1 The first arc.
+     * \param cv2 The second arc.
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
@@ -1124,7 +1127,8 @@ public:
   private:
     /*! Compute the overlap with a given arc, which is supposed to have the same
      * supporting conic curve as this arc.
-     * \param arc The given arc.
+     * \param xcv1 The first arc.
+     * \param xcv2 The second arc.
      * \param overlap Output: The overlapping arc (if any).
      * \return Whether we found an overlap.
      */
@@ -1479,7 +1483,7 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits (in case it has state)
+     * \param traits The traits (in case it has state)
      */
     Are_mergeable_2(const Traits& traits) : m_traits(traits) {}
 
@@ -1487,10 +1491,11 @@ public:
 
   public:
     /*! Check whether it is possible to merge two given x-monotone curves.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \return (true) if the two curves are mergeable - if they are supported
-     *         by the same line and share a common endpoint; (false) otherwise.
+     * \param xcv1 The first arc.
+     * \param xcv2 The second arc.
+     * \return `true` if the two curves are mergeable; that is, they are
+     *         supported by the same curve and share a common endpoint);
+     *         `false` otherwise.
      */
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const
@@ -1498,9 +1503,10 @@ public:
 
   private:
     /*! Check whether it is possible to merge the arc with the given arc.
-     * \param arc The query arc.
-     * \return (true) if it is possible to merge the two arcs;
-     *         (false) otherwise.
+     * \param xcv1 The first arc.
+     * \param xcv2 The second arc.
+     * \return `true` if it is possible to merge the two arcs;
+     *         `false` otherwise.
      */
     bool can_merge_with(const X_monotone_curve_2& xcv1,
                         const X_monotone_curve_2& xcv2) const {
@@ -1530,7 +1536,7 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits (in case it has state)
+     * \param traits The traits (in case it has state)
      */
     Merge_2(const Traits& traits) : m_traits(traits) {}
 
@@ -1538,10 +1544,10 @@ public:
 
   public:
     /*! Merge two given x-monotone curves into a single curve (segment).
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param c Output: The merged curve.
-     * \pre The two curves are mergeable.
+     * \param xcv1 The first arc.
+     * \param xcv2 The second arc.
+     * \param xcv The merged arc.
+     * \pre The two arcs are mergeable.
      */
     void operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2,
@@ -1554,7 +1560,8 @@ public:
 
   private:
     /*! Merge the current arc with the given arc.
-     * \param arc The arc to merge with.
+     * \param xcv1 The first arc to merge with.
+     * \param xcv2 The second arc to merge with.
      * \pre The two arcs are mergeable.
      */
     void merge(X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
@@ -1582,11 +1589,13 @@ public:
 
   //@}
 
-  /// \name Functor definitions for the landmarks point-location strategy.
+  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks
+   * point-location strategy and the drawing function.
+   */
   //@{
-  using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Cartesian<Approximate_number_type>;
-  using Approximate_point_2 = Approximate_kernel::Point_2;
+  typedef double                                        Approximate_number_type;
+  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
+  typedef Approximate_kernel::Point_2                   Approximate_point_2;
 
   class Approximate_curve_length_2 {
   protected:
@@ -1739,7 +1748,7 @@ public:
     Approximate_point_2 operator()(const Point_2& p) const
     { return std::make_pair(operator()(p, 0), operator()(p, 1)); }
 
-    /*! Obtain an approximation of an x-monotone curve.
+    /*! Obtain an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
     OutputIterator operator()(OutputIterator oi, double error,
@@ -1853,7 +1862,7 @@ public:
      *
      * @param error the error bound of the generated approximation. This is
      *              the Hausdorff distance between the arc and the polyline,
-     *              which approximates the src.
+     *              which approximates the arc.
      */
     template <typename OutputIterator>
     OutputIterator approximate_ellipse(OutputIterator oi, double error,
@@ -2125,16 +2134,16 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Construct_x_monotone_curve_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Construct an x-monotone arc from a conic arc.
-     * \param cv The given (Curve_2) curve.
-     * \pre cv is x-monotone.
+    /*! Construct an \f$x\f$-monotone arc from a conic arc.
+     * \param cv The given curve.
+     * \pre cv is \f$x\f$-monotone.
      */
     X_monotone_curve_2 operator()(const Curve_2& cv) const {
       CGAL_precondition(cv.is_valid() && is_x_monotone(cv));
@@ -2143,8 +2152,8 @@ public:
       return xcv;
     }
 
-    /*! Construct an x-monotone arc from a conic arc.
-     * \param xcv The given (Curve_2) curve.
+    /*! Construct an \f$x\f$-monotone arc from a conic arc.
+     * \param xcv The given curve.
      * \param id The ID of the base curve.
      */
     X_monotone_curve_2 operator()(const Curve_2& cv, const Conic_id& id) const {
@@ -2154,11 +2163,11 @@ public:
       return xcv;
     }
 
-    /*! Construct an x-monotone sub-arc from a conic arc.
+    /*! Construct an \f$x\f$-monotone sub-arc from a conic arc.
      * \param cv The given (base) arc.
      * \param source The source point.
      * \param target The target point.
-     * \param id The ID of the base arc.
+     * \param id The id of the base arc.
      */
     X_monotone_curve_2 operator()(const Curve_2& cv,
                                   const Point_2& source, const Point_2& target,
@@ -2173,11 +2182,11 @@ public:
       return xcv;
     }
 
-    /*! Return an x-monotone curve connecting the two given endpoints.
-     * \param p The first point.
-     * \param q The second point.
-     * \pre p and q must not be the same.
-     * \return A segment connecting p and q.
+    /*! Return an \f$x\f$-monotone curve connecting the two given endpoints.
+     * \param source The first point.
+     * \param target The second point.
+     * \pre `source` and `target` must not be the same.
+     * \return A segment connecting `source` and `target`.
      */
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target)
       const
@@ -2208,7 +2217,7 @@ public:
 
     /*! Construct a special segment of a given line connecting to given
      * endpoints.
-     * \param a, b, c The coefficients of the supporting line (ax + by + c = 0).
+     * \param a, b, c The coefficients of the supporting line (`ax + by + c = 0`).
      * \param source The source point.
      * \param target The target point.
      */
@@ -2246,7 +2255,7 @@ public:
     }
 
   private:
-    /*! Determine whether the arc is x-monotone.
+    /*! Determine whether the arc is \f$x\f$-monotone.
      */
     bool is_x_monotone(const Curve_2& cv) const {
       // Collect vertical tangency points.
@@ -2255,7 +2264,7 @@ public:
       return (res == 0);
     }
 
-    /*! Determine whether the arc is y-monotone.
+    /*! Determine whether the arc is \f$y\f$-monotone.
      */
     bool is_y_monotone(const Curve_2& cv) const {
       // Collect horizontal tangency points.
@@ -2279,7 +2288,7 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Construct_curve_2(const Traits& traits) : m_traits(traits) {}
 
@@ -2291,8 +2300,8 @@ public:
     Curve_2 operator()() const { return Curve_2(); }
 
     /*! Construct a conic arc which is the full conic:
-     *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
-     * \pre The conic C must be an ellipse (so 4rs - t^2 > 0).
+     *   `C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0`
+     * \pre The conic C must be an ellipse (so `4rs - t^2 > 0`).
      */
     Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
                        const Rational& u, const Rational& v, const Rational& w)
@@ -2315,7 +2324,7 @@ public:
     }
 
     /*! Construct a conic arc that lies on the conic:
-     *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
+     *   `C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0`
      * \param orient The orientation of the arc (clockwise or counterclockwise).
      * \param source The source point.
      * \param target The target point.
@@ -2512,11 +2521,11 @@ public:
     }
 
     /*! Construct a conic arc that lies on a conic given by its coefficients:
-     *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
+     *   `C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0`
      * The source and the target are specified by the intersection of the
      * conic with:
-     *   C_1: r_1*x^2 + s_1*y^2 + t_1*xy + u_1*x + v_1*y + w_1 = 0
-     *   C_2: r_2*x^2 + s_2*y^2 + t_2*xy + u_2*x + v_2*y + w_2 = 0
+     *   `C_1: r_1*x^2 + s_1*y^2 + t_1*xy + u_1*x + v_1*y + w_1 = 0`
+     *   `C_2: r_2*x^2 + s_2*y^2 + t_2*xy + u_2*x + v_2*y + w_2 = 0`
      * The user must also specify the source and the target with approximated
      * coordinates. The actual intersection points that best fits the source
      * (or the target) will be selected.
@@ -2672,11 +2681,11 @@ public:
       return arc;
     }
 
-    /*! Return a curve connecting the two given endpoints.
+    /*! Return a segment connecting the two given endpoints.
      * \param source The source point.
      * \param target The target point.
-     * \pre p and q must not be the same.
-     * \return A segment connecting p and q.
+     * \pre `source` and `target` must not be the same.
+     * \return A segment connecting `source` and `target`.
      */
     Curve_2 operator()(const Point_2& source, const Point_2& target) const {
       const auto alg_kernel = m_traits.m_alg_kernel;
@@ -2783,7 +2792,7 @@ public:
     }
 
     /*! Construct a conic arc that lies on a given circle:
-     *   C: (x - x0)^2 + (y - y0)^2 = R^2
+     *   `C: (x - x0)^2 + (y - y0)^2 = R^2`
      * \param orient The orientation of the circle.
      * \param source The source point.
      * \param target The target point.
@@ -2995,7 +3004,7 @@ public:
     const Traits& m_traits;
 
     /*! Constructor
-     * \param traits the traits.
+     * \param traits The traits.
      */
     Construct_bbox_2(const Traits& traits) : m_traits(traits) {}
 
@@ -3097,7 +3106,8 @@ public:
 
   /*! Set the properties of a conic arc (for the usage of the constructors).
    * \param rat_coeffs A vector of size 6, storing the rational coefficients
-   *                   of x^2, y^2, xy, x, y and the free coefficient resp.
+   *                   of \f$x^2\f$, \f$y^2\f$, \f$x \cdot y\f$, \f$x\f$, \f$y\f$
+   *                   and the free coefficient resp.
    */
   void set(Curve_2& cv, const Rational* rat_coeffs) const {
     cv.set_flag(Curve_2::IS_VALID);
@@ -3203,7 +3213,8 @@ public:
   /*! Set the properties of a conic arc that is really a full curve
    * (that is, an ellipse).
    * \param rat_coeffs A vector of size 6, storing the rational coefficients
-   *                   of x^2, y^2, xy, x, y and the free coefficient resp.
+   *                   of \f$x^2\f$, \f$y^2\f$, \f$x \cdot y\f$, \f$x\f$, \f$y\f$
+   *                   and the free coefficient resp.
    * \param comp_orient Should we compute the orientation of the given curve.
    */
   void set_full(Curve_2& cv, const Rational* rat_coeffs,
@@ -3278,8 +3289,8 @@ public:
   /*! Check whether the given point is between the source and the target.
    * The point is assumed to be on the conic's boundary.
    * \param p The query point.
-   * \return true if the point is between the two endpoints,
-   *         (false) if it is not.
+   * \return `true` if the point is between the two endpoints;
+   *         `false` if it is not.
    */
   bool is_between_endpoints(const Curve_2& cv, const Point_2& p) const {
     CGAL_precondition(! cv.is_full_conic());
@@ -3294,8 +3305,8 @@ public:
    * target (but not any of them).
    * The point is assumed to be on the conic's boundary.
    * \param p The query point.
-   * \return true if the point is strictly between the two endpoints,
-   *         (false) if it is not.
+   * \return `true` if the point is strictly between the two endpoints;
+   *         `false` if it is not.
    */
   bool is_strictly_between_endpoints(const Curve_2& cv, const Point_2& p) const
   {
@@ -3529,10 +3540,10 @@ public:
     return 2;
   }
 
-  /*! Find all points on the arc with a given x-coordinate.
-   * \param p A placeholder for the x-coordinate.
-   * \param ps The point on the arc at x(p).
-   * \pre The vector ps should be allocated at the size of 2.
+  /*! Find all points on the arc with a given \f$x\f$-coordinate.
+   * \param p A placeholder for the \f$x\f$-coordinate.
+   * \param ps The point on the arc at `x(p)`.
+   * \pre The vector `ps` should be allocated at the size of 2.
    * \return The number of points found.
    */
   int points_at_x(const Curve_2& cv, const Point_2& p, Point_2* ps) const {
@@ -3553,10 +3564,10 @@ public:
     return m;
   }
 
-  /*! Find all points on the arc with a given y-coordinate.
-   * \param p A placeholder for the y-coordinate.
-   * \param ps The point on the arc at x(p).
-   * \pre The vector ps should be allocated at the size of 2.
+  /*! Find all points on the arc with a given \f$y\f$-coordinate.
+   * \param p A placeholder for the \f$y\f$-coordinate.
+   * \param ps The point on the arc at `x(p)`.
+   * \pre The vector `ps` should be allocated at the size of 2.
    * \return The number of points found.
    */
   int points_at_y(const Curve_2& cv, const Point_2& p, Point_2* ps) const {
@@ -3677,8 +3688,9 @@ public:
   }
 
   /*! Check whether the two arcs have the same supporting conic.
-   * \param arc The compared arc.
-   * \return (true) if the two supporting conics are the same.
+   * \param xcv1 The first comparedb arc.
+   * \param xcv2 The secind compared arc.
+   * \return `true` if the two supporting conics are the same.
    */
   bool has_same_supporting_conic(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2) const {
@@ -3973,9 +3985,9 @@ public:
     auto r = CGAL::to_double(xcv.r());
     auto s = CGAL::to_double(xcv.s());
     auto t = CGAL::to_double(xcv.t());
-    auto u = CGAL::to_double(xcv.u());
-    auto v = CGAL::to_double(xcv.v());
-    auto w = CGAL::to_double(xcv.w());
+    // auto u = CGAL::to_double(xcv.u());
+    // auto v = CGAL::to_double(xcv.v());
+    // auto w = CGAL::to_double(xcv.w());
     // std::cout << r << "," << s << "," << t << ","
     //           << u << "," << v << "," << w << std::endl;
 
@@ -4143,12 +4155,8 @@ public:
     // Compute the parameters ts and tt such that
     // source == (x(ts),y(ts)), and
     // target == (x(tt),y(tt))
-    auto xds = xs - cx;
-    auto yds = ys - cy;
     ts = std::atan2(a*ys_t, b*xs_t);
     if (ts < 0) ts += 2*M_PI;
-    auto xdt = xt - cx;
-    auto ydt = yt - cy;
     tt = std::atan2(a*yt_t, b*xt_t);
     if (tt < 0) tt += 2*M_PI;
     auto orient(xcv.orientation());

@@ -1,3 +1,19 @@
+// Copyright (c) 2012
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s): Efi Fogel <efifogel@gmail.com>
+
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
@@ -6,6 +22,9 @@
 #include <random>
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
+
+#ifdef CGAL_USE_BASIC_VIEWER
+
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
@@ -41,6 +60,7 @@ public:
   virtual void resizeGL(int width, int height) {
     m_width = width;
     m_height = height;
+    // std::cout << width << "," << height << std::endl;
   }
 
   //!
@@ -145,7 +165,6 @@ protected:
 
   //!
   void add_ccb(Ccb_halfedge_const_circulator circ) {
-    auto face = circ->face();
     auto curr = circ;
     do {
       auto new_face = curr->twin()->face();
@@ -300,10 +319,9 @@ public:
 
 //!
 template <typename GeometryTraits_2, typename Dcel>
-void draw(const CGAL::Arrangement_2<GeometryTraits_2, Dcel>& arr,
+void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
           const char* title = "2D Arrangement Basic Viewer") {
   typedef GeometryTraits_2              Gt;
-  typedef CGAL::Arrangement_2<Gt, Dcel> Arr;
 
   CGAL::Qt::init_ogl_context(4,3);
 
@@ -318,4 +336,5 @@ void draw(const CGAL::Arrangement_2<GeometryTraits_2, Dcel>& arr,
 
 }
 
+#endif
 #endif
