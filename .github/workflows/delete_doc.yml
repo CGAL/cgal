@@ -3,13 +3,18 @@ name: Documentation Removal
 on:
   pull_request_target:
     types: [closed, removed]
+permissions:
+  contents: read
+
 jobs:
   build:
 
+    permissions:
+      contents: write  # for Git to git push
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2.0.0
+    - uses: actions/checkout@v3
     - name: delete directory
       run: |
          set -x

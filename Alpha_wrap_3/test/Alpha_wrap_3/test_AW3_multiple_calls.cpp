@@ -36,7 +36,7 @@ void alpha_wrap_triangle_soup(Points& pr,
   namespace AW3 = CGAL::Alpha_wraps_3;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  using Oracle = AW3::internal::Triangle_soup_oracle<Points, Faces, Kernel, int, false /*subdivide*/>;
+  using Oracle = AW3::internal::Triangle_soup_oracle<Kernel, int, false /*subdivide*/>;
 
   std::cout << "Input: " << pr.size() << " points, " << fr.size() << " faces" << std::endl;
 

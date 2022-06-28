@@ -27,7 +27,7 @@ namespace CGAL {
  * Container class representing a red-black tree, which is a balanced binary
  * tree that has the following invariants:
  * 1. Each node has a color, which is either red or black.
- * 2. Each red node has two red children (if a child is missing, it is
+ * 2. Each red node has two black children (if a child is missing, it is
  *    considered as a black node).
  * 3. The number of black nodes from every path from the tree root to a leaf
  *    is the same for all tree leaves (it is called the 'black height' of the
