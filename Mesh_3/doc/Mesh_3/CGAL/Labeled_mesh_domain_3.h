@@ -27,7 +27,8 @@ static template member functions that act as named constructors:
 <li>`create_implicit_mesh_domain()`, to create a domain from an implicit function,
 <li>`create_labeled_image_mesh_domain()`, to create a domain from a 3D labeled image, and
 <li>`create_labeled_image_mesh_domain_with_features()`, to create a domain from a 3D labeled image
-with automatically detected triple lines.
+with automatically detected 1D-curves that lie
+at the intersection of three or more subdomains.
 </ul>
 
 \tparam BGT is a geometric traits class that provides
