@@ -70,7 +70,7 @@ Release date: June 2022
 -   Improved the traits class template that handles conics, namely `Arr_conic_traits_2`. This includes the following:
     (i) Fixed a couple of bugs and slightly optimized some functions.
     (ii) Introduced functionality that approximates conics with polylines. (This is used to draw conic curves.)
-    (iii) **Breaking change**: Changed the interface to generate conic curves. In the past, curves where generated directly using the constructors of the conic and x-monotone conic constructs. Now, they are constructed via function objects provided by the traits. This eliminates the constructions of temporary kernels. The old functionality is obsolete, but still supported for a limited number of versions. It depends on a static member function of the traits. In the next version this function will no longer be static, implying that the old functionality will no longer be supported.
+    (iii) **Breaking change**: Changed the interface to generate conic curves. In the past, curves where generated directly using the constructors of the conic and x-monotone conic constructs. Now, they are constructed via function objects provided by the traits. This eliminates the constructions of temporary kernels. The old functionality is obsolete, but still supported for a limited number of versions. It depends on a static member function of the traits. In a future version this function will no longer be static, implying that the old functionality will no longer be supported.
 
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
