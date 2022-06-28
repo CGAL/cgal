@@ -29,6 +29,10 @@ int main() {
 
   CGAL::insert(arr, ctr_xcv(Point(0,0), Point(0,-3)));
 
+  std::cout << arr.number_of_vertices() << ", "
+            << arr.number_of_edges() << ", "
+            << arr.number_of_faces() << std::endl;
+
   CGAL::draw(arr);
 
   return EXIT_SUCCESS;
