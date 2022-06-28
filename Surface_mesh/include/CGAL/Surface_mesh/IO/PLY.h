@@ -631,11 +631,10 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
   typedef typename SMesh::Face_index                            FIndex;
   typedef typename SMesh::Vertex_index                          VIndex;
 
-  typedef CGAL::IO::Color Color;
   using VCM = typename internal_np::Lookup_named_param_def<
     internal_np::vertex_color_map_t,
     CGAL_NP_CLASS,
-    Surface_mesh<Point>::template Property_map<VIndex, CGAL::IO::Color> >::type;
+    typename Surface_mesh<Point>::template Property_map<VIndex, CGAL::IO::Color> >::type;
 
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -644,12 +643,10 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
   VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
   bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
 
-  typedef typename SMesh::template Property_map<FIndex, Color>  Fcolor_map;
-
   using FCM = typename internal_np::Lookup_named_param_def<
     internal_np::face_color_map_t,
     CGAL_NP_CLASS,
-    Surface_mesh<Point>::template Property_map<FIndex, CGAL::IO::Color> >::type;
+    typename Surface_mesh<Point>::template Property_map<FIndex, CGAL::IO::Color> >::type;
   FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
   bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
 
