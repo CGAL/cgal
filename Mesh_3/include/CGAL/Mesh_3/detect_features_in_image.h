@@ -14,8 +14,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_DETECT_TRIPLE_LINES_H
-#define CGAL_MESH_3_DETECT_TRIPLE_LINES_H
+#ifndef CGAL_MESH_3_DETECT_FEATURES_IN_IMAGE_H
+#define CGAL_MESH_3_DETECT_FEATURES_IN_IMAGE_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -254,4 +254,4 @@ bool detect_features_in_image(const CGAL::Image_3& image, Mesh_domain& domain)
 }//end namespace CGAL
 
 
-#endif //CGAL_MESH_3_DETECT_TRIPLE_LINES_H
+#endif //CGAL_MESH_3_DETECT_FEATURES_IN_IMAGE_H
