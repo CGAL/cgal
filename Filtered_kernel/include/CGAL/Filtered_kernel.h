@@ -77,6 +77,9 @@ struct Filtered_kernel_base
         typedef typename T::Feature_dimension type; // maybe not the right way...
     };
 
+    Exact_kernel exact_kernel() const { return {}; }
+    Approximate_kernel approximate_kernel() const { return {}; }
+
     // We change the predicates.
 #define CGAL_Kernel_pred(P, Pf) \
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
