@@ -321,8 +321,8 @@ public Q_SLOTS:
 private:
   Scene_mcf_item *getMCFItem();
   void createContractedItem(Scene_mcf_item* item);
-  QDockWidget* dockWidget;
-  Ui::Mean_curvature_flow_skeleton_plugin* ui;
+  QDockWidget* dockWidget = nullptr;
+  Ui::Mean_curvature_flow_skeleton_plugin* ui = nullptr;
 
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
