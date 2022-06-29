@@ -32,6 +32,8 @@ CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_
 CGAL_add_named_parameter(vertex_to_vertex_output_iterator_t, vertex_to_vertex_output_iterator, vertex_to_vertex_output_iterator)
 CGAL_add_named_parameter(halfedge_to_halfedge_output_iterator_t, halfedge_to_halfedge_output_iterator, halfedge_to_halfedge_output_iterator)
 CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_iterator, face_to_face_output_iterator)
+CGAL_add_named_parameter(point_to_vertex_output_iterator_t, point_to_vertex_output_iterator, point_to_vertex_output_iterator)
+CGAL_add_named_parameter(polygon_to_face_output_iterator_t, polygon_to_face_output_iterator, polygon_to_face_output_iterator)
 
 CGAL_add_named_parameter(vertex_to_vertex_map_t, vertex_to_vertex_map, vertex_to_vertex_map)
 CGAL_add_named_parameter(halfedge_to_halfedge_map_t, halfedge_to_halfedge_map, halfedge_to_halfedge_map)
@@ -213,6 +215,15 @@ CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, s
 // List of named parameters used in Alpha_wrap_3
 CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
 CGAL_add_named_parameter(seed_points_t, seed_points, seed_points)
+
+// SMDS_3 parameters
+CGAL_add_named_parameter(surface_facets_t, surface_facets, surface_facets)
+CGAL_add_named_parameter(subdomain_indices_t, subdomain_indices, subdomain_indices)
+CGAL_add_named_parameter(all_vertices_t, all_vertices, all_vertices)
+CGAL_add_named_parameter(all_cells_t, all_cells, all_cells)
+CGAL_add_named_parameter(rebind_labels_t, rebind_labels, rebind_labels)
+CGAL_add_named_parameter(show_patches_t, show_patches, show_patches)
+CGAL_add_named_parameter(allow_non_manifold_t, allow_non_manifold, allow_non_manifold)
 
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)

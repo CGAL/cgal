@@ -61,7 +61,7 @@ int main(int argc, char*argv[])
 
   // Output
   std::ofstream medit_file("out_1.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
 
   // Set tetrahedron size (keep cell_radius_edge_ratio), ignore facets
@@ -72,7 +72,8 @@ int main(int argc, char*argv[])
 
   // Output
   medit_file.open("out_2.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return EXIT_SUCCESS;
 }

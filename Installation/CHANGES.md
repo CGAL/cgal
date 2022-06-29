@@ -2,6 +2,19 @@ Release History
 ===============
 
 
+[Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
+-----------
+
+Release date: Dec 2022
+
+### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
+
+-   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3`
+    to describe 3D simplicial meshess, and makes the data structure independent
+    from the tetrahedral mesh generation package.
+
+
+
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
 
@@ -246,6 +259,7 @@ Release date: January 2022
 
 -   Added support for the [OSQP solver](https://osqp.org/). This solver enables to efficiently compute
     the convex Quadratic Programming (QP) problems arising in the context of several packages.
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
