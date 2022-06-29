@@ -133,6 +133,13 @@ CGAL_add_named_parameter(face_epsilon_map_t, face_epsilon_map, face_epsilon_map)
 CGAL_add_named_parameter(maximum_number_t, maximum_number, maximum_number)
 CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use_one_sided_hausdorff)
 CGAL_add_named_parameter(flip_triangle_height_threshold_t, flip_triangle_height_threshold, flip_triangle_height_threshold)
+CGAL_add_named_parameter(features_angle_bound_t, features_angle_bound, features_angle_bound)
+CGAL_add_named_parameter(mesh_edge_size_t, mesh_edge_size, mesh_edge_size)
+CGAL_add_named_parameter(mesh_facet_size_t, mesh_facet_size, mesh_facet_size)
+CGAL_add_named_parameter(mesh_facet_angle_t, mesh_facet_angle, mesh_facet_angle)
+CGAL_add_named_parameter(mesh_facet_distance_t, mesh_facet_distance, mesh_facet_distance)
+CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_topology)
+CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_constraints)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
