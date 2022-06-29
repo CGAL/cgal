@@ -44,6 +44,22 @@ struct Node_access
 
   template <typename Node>
   static void split(Node node) { return node.split(); }
+
+  template <typename Node>
+  static void free(Node node)
+  {
+    std::queue<Node> nodes;
+    nodes.push(node);
+    while (!nodes.empty())
+    {
+      Node node = nodes.front();
+      nodes.pop();
+      if (!node.is_leaf())
+        for (std::size_t i = 0; i < Node::Dimension::value; ++ i)
+          nodes.push (node[i]);
+      node.free();
+    }
+  }
 };
 
 } // namespace Orthtrees
