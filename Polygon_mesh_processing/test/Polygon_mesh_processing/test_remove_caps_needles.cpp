@@ -66,7 +66,7 @@ void test_with_envelope(std::string filename, double eps)
   // first a test where nothing should be done
   struct No_modification_allowed
   {
-    constexpr bool operator()(K::Point_3, K::Point_3, K::Point_3) const { return false; }
+    bool operator()(K::Point_3, K::Point_3, K::Point_3) const { return false; }
   };
   No_modification_allowed no_modif;
   const std::size_t nbv = vertices(mesh).size();

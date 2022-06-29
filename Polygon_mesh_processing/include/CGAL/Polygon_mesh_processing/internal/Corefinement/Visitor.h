@@ -75,8 +75,8 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
   No_mark<G> ecm1, ecm2;
   Ecm_bind(G&, G&, const No_mark<G>&, const No_mark<G>&){}
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  constexpr void call_put(G&, edge_descriptor, bool) const {}
-  constexpr bool call_get(G&, edge_descriptor) const {
+  void call_put(G&, edge_descriptor, bool) const {}
+  bool call_get(G&, edge_descriptor) const {
     return false;
   }
 };

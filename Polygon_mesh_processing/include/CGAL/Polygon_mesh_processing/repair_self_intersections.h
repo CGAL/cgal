@@ -2161,8 +2161,8 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     struct Return_true
     {
       constexpr bool is_empty() const { return true; }
-      constexpr bool operator()(const std::vector<std::vector<typename GeomTraits::Point_3> >&) const { return true; }
-      constexpr bool operator()(const TriangleMesh&) const { return true; }
+      bool operator()(const std::vector<std::vector<typename GeomTraits::Point_3> >&) const { return true; }
+      bool operator()(const TriangleMesh&) const { return true; }
     };
 
     Return_true cc_envelope;
@@ -2391,7 +2391,7 @@ bool remove_self_intersections(const FaceRange& face_range,
 
   struct Return_false
   {
-    constexpr bool operator()(std::pair<face_descriptor, face_descriptor>) const { return false; }
+    bool operator()(std::pair<face_descriptor, face_descriptor>) const { return false; }
   };
 
   typedef typename internal_np::Lookup_named_param_def <

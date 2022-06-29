@@ -618,7 +618,7 @@ bool use_dt3 =
     {
       struct Always_valid
       {
-        constexpr bool operator()(const std::vector<Point>&, int,int,int) const { return true; }
+        bool operator()(const std::vector<Point>&, int,int,int) const { return true; }
       };
       Always_valid is_valid;
 

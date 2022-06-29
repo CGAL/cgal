@@ -35,7 +35,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION,
 template <typename G>
 struct No_mark
 {
-  friend constexpr
+  friend
   bool get(No_mark<G>,
                   typename boost::graph_traits<G>::edge_descriptor)
   {
