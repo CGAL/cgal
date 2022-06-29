@@ -780,7 +780,6 @@ class Intersection_of_triangle_meshes
       //handle degenerate faces
       if (const_mesh_ptr)
       {
-        halfedge_descriptor h1 = halfedge(f1,tm1);
         halfedge_descriptor h2 = halfedge(f2,tm2);
         if (const_mesh_ptr == &tm1)
         {
