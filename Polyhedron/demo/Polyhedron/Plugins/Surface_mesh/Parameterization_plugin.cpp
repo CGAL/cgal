@@ -495,14 +495,14 @@ protected:
   void parameterize(Parameterization_method method);
 
 private:
-  Messages_interface *messages;
+  Messages_interface *messages = nullptr;
   QList<QAction*> _actions;
-  QDockWidget* dock_widget;
+  QDockWidget* dock_widget = nullptr;
   Ui::Parameterization ui_widget;
   QGraphicsScene *graphics_scene;
-  Navigation* navigation;
+  Navigation* navigation = nullptr;
   QMap<Scene_item*, UVItem*> projections;
-  UVItem* current_uv_item;
+  UVItem* current_uv_item = nullptr;
 }; // end Polyhedron_demo_parameterization_plugin
 
 void Polyhedron_demo_parameterization_plugin::on_prevButton_pressed()
