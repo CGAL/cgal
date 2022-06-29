@@ -626,7 +626,6 @@ template <typename Point, typename Simplex>
 void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
                  std::vector<Abstract_property_printer<Simplex>*>& printers)
 {
-  typedef Surface_mesh<Point>                                             SMesh;
   typedef std::tuple<std::int8_t, std::uint8_t,
                      std::int16_t , std::uint16_t,
                      std::int32_t , std::uint32_t,
