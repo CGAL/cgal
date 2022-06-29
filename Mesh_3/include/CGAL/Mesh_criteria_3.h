@@ -24,8 +24,6 @@
 #include <CGAL/disable_warnings.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Mesh_3/config.h>
-#include <boost/parameter/preprocessor.hpp>
-#include <CGAL/boost/parameter.h>
 #include <CGAL/Mesh_edge_criteria_3.h>
 #include <CGAL/Mesh_facet_criteria_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>

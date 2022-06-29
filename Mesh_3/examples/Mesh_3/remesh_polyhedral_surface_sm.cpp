@@ -54,7 +54,7 @@ int main()
                          facet_distance = 0.001);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param_new = no_perturb(), exude_param_new = no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param = no_perturb(), exude_param = no_exude());
 
   // Output the facets of the c3t3 to an OFF file. The facets will not be
   // oriented.

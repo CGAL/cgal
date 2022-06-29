@@ -68,7 +68,7 @@ int main()
   v.push_back(f1);
   v.push_back(f2);
   // Domain (Warning: Sphere_3 constructor uses square radius !)
-  Mesh_domain domain(Function_wrapper(v), K::Sphere_3(CGAL::ORIGIN, 5.*5.), relative_error_bound_new = 1e-6);
+  Mesh_domain domain(Function_wrapper(v), K::Sphere_3(CGAL::ORIGIN, 5.*5.), relative_error_bound = 1e-6);
 
   // Set mesh criteria
   Facet_criteria facet_criteria(30, 0.2, 0.02); // angle, size, approximation
@@ -76,7 +76,7 @@ int main()
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, exude_param_new = no_exude(), perturb_param_new = no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, exude_param = no_exude(), perturb_param = no_perturb());
 
   // Output
   std::stringstream off_file;

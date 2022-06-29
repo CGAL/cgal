@@ -68,8 +68,8 @@ public:
                    Transform(iso_value),
                    Transform(iso_value)(value_outside)),
            Mesh_3::internal::compute_bounding_box(image),
-           parameters::relative_error_bound_new = error_bound,
-           parameters::p_rng_new = p_rng)
+           parameters::relative_error_bound = error_bound,
+           parameters::p_rng = p_rng)
   {
     CGAL_assertion(Transform(iso_value)(value_outside) == 0);
   }
@@ -81,8 +81,8 @@ public:
                            CGAL::Random* p_rng = nullptr)
     : Base(Wrapper(image, transform, transform(value_outside)),
            Mesh_3::internal::compute_bounding_box(image),
-           parameters::relative_error_bound_new = error_bound,
-           parameters::p_rng_new = p_rng)
+           parameters::relative_error_bound = error_bound,
+           parameters::p_rng = p_rng)
   {
     CGAL_assertion(transform(value_outside) == 0);
   }

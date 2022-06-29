@@ -73,8 +73,8 @@ void test()
   {
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        perturb_param_new = no_perturb(),
-                                        exude_param_new = no_exude());
+                                        perturb_param = no_perturb(),
+                                        exude_param = no_exude());
     std::ostringstream oss;
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str()); //[5*i]
@@ -87,7 +87,7 @@ void test()
     oss.clear();
 
     //LLOYD (1)
-    CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number_new = nb_lloyd);
+    CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_lloyd);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+1]
     oss.clear();
@@ -98,7 +98,7 @@ void test()
     oss.clear();
 
     //ODT (2)
-    CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number_new = nb_odt);
+    CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_odt);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+2]
     oss.clear();
@@ -109,7 +109,7 @@ void test()
     oss.clear();
 
     //PERTURB (3)
-    CGAL::perturb_mesh_3(c3t3, domain, sliver_bound_new=perturb_bound);
+    CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=perturb_bound);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+3]
     oss.clear();
@@ -120,7 +120,7 @@ void test()
     oss.clear();
 
     //EXUDE (4)
-    CGAL::exude_mesh_3(c3t3, sliver_bound_new=exude_bound);
+    CGAL::exude_mesh_3(c3t3, sliver_bound=exude_bound);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+4]
     oss.clear();

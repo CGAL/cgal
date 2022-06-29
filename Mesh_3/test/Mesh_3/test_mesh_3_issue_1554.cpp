@@ -66,7 +66,7 @@ int main(int argc, char*argv[])
                          cell_radius_edge_ratio = 3);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param_new = no_perturb(), exude_param_new = no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param = no_perturb(), exude_param = no_exude());
 
   Gt::Construct_weighted_circumcenter_3 w_circumcenter =
       c3t3.triangulation().geom_traits().construct_weighted_circumcenter_3_object();

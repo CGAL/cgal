@@ -48,8 +48,8 @@ public:
       << CGAL::get_default_random().get_seed() << std::endl;
     Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
       (image,
-       CGAL::parameters::relative_error_bound_new = 1e-9,
-       CGAL::parameters::p_rng_new = &CGAL::get_default_random());
+       CGAL::parameters::relative_error_bound = 1e-9,
+       CGAL::parameters::p_rng = &CGAL::get_default_random());
 
     // Set mesh criteria
     Facet_criteria facet_criteria(25, 20*image.vx(), 5*image.vx());
@@ -58,8 +58,8 @@ public:
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        CGAL::parameters::exude_param_new = CGAL::parameters::no_exude(),
-                                        CGAL::parameters::perturb_param_new = CGAL::parameters::no_perturb());
+                                        CGAL::parameters::exude_param = CGAL::parameters::no_exude(),
+                                        CGAL::parameters::perturb_param = CGAL::parameters::no_perturb());
 
     c3t3.remove_isolated_vertices();
 

@@ -70,10 +70,10 @@ int main(int argc, char** argv)
 
   // Mesh generation with optimizers
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
-                                                 odt_param_new = odt(convergence=0.03, freeze_bound=0.02, time_limit=30),
-                                                 lloyd_param_new = lloyd(max_iteration_number=10),
-                                                 perturb_param_new = perturb(sliver_bound=10, time_limit=30),
-                                                 exude_param_new = exude(sliver_bound=10, time_limit=0));
+                                                 odt_param = odt(convergence=0.03, freeze_bound=0.02, time_limit=30),
+                                                 lloyd_param = lloyd(max_iteration_number=10),
+                                                 perturb_param = perturb(sliver_bound=10, time_limit=30),
+                                                 exude_param = exude(sliver_bound=10, time_limit=0));
 
   std::ofstream medit_file("output_implicit_shape_optimized.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3);
@@ -87,10 +87,10 @@ int main(int argc, char** argv)
   CGAL::IO::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
 
   // Now, call each optimizer with its global function
-  CGAL::odt_optimize_periodic_3_mesh_3(c3t3_bis, domain, convergence_new=0.03, freeze_bound_new=0.02, time_limit_new=30);
-  CGAL::lloyd_optimize_periodic_3_mesh_3(c3t3_bis, domain, max_iteration_number_new=10);
-  CGAL::perturb_periodic_3_mesh_3(c3t3_bis, domain, sliver_bound_new=10, time_limit_new=30);
-  CGAL::exude_periodic_3_mesh_3(c3t3_bis, sliver_bound_new=10, time_limit_new=0);
+  CGAL::odt_optimize_periodic_3_mesh_3(c3t3_bis, domain, convergence=0.03, freeze_bound=0.02, time_limit=30);
+  CGAL::lloyd_optimize_periodic_3_mesh_3(c3t3_bis, domain, max_iteration_number=10);
+  CGAL::perturb_periodic_3_mesh_3(c3t3_bis, domain, sliver_bound=10, time_limit=30);
+  CGAL::exude_periodic_3_mesh_3(c3t3_bis, sliver_bound=10, time_limit=0);
 
   std::ofstream medit_file_ter("output_implicit_shape_two_steps.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file_ter, c3t3_bis, number_of_copies_in_output);

@@ -26,7 +26,6 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/boost/parameter.h>
 #include <memory>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
@@ -44,9 +43,6 @@
 // support for implicit functions
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/parameter.h>
-#include <boost/parameter/preprocessor.hpp>
-#include <boost/parameter/name.hpp>
 #ifdef CGAL_MESH_3_VERBOSE
 #  include <boost/format.hpp>
 #endif
@@ -179,23 +175,6 @@ protected:
   static Construct_pair_from_subdomain_indices<Subdomain_index>
   construct_pair_functor() {
     return Construct_pair_from_subdomain_indices<Subdomain_index>();
-  }
-
-  template <class ArgumentPack>
-  Labeled_mesh_domain_3_impl_details(ArgumentPack const& args)
-    : function_(args[parameters::function])
-    , bbox_(iso_cuboid(args[parameters::bounding_object]))
-    , cstr_s_p_index(args[parameters::construct_surface_patch_index |
-                          construct_pair_functor()])
-    , null(args[parameters::null_subdomain_index | Null_subdomain_index()])
-    , p_rng_(args[parameters::p_rng|0] == 0 ?
-             CGAL_Random_share_ptr_t(new CGAL::Random(0)) :
-             CGAL_Random_share_ptr_t(args[parameters::p_rng|(CGAL::Random*)(0)],
-                                     Mesh_3::internal::Do_not_delete()))
-    , squared_error_bound_
-      ( squared_error_bound(bbox_,
-                            args[parameters::relative_error_bound|FT(1e-3)]))
-  {
   }
 
   template <typename Function,
@@ -450,11 +429,11 @@ public:
                         image_values_to_subdomain_indices_,
                         value_outside_),
                Mesh_3::internal::compute_bounding_box(image_),
-               p::relative_error_bound_new = relative_error_bound_,
-               p::p_rng_new = p_rng_,
-               p::null_subdomain_index_new =
+               p::relative_error_bound = relative_error_bound_,
+               p::p_rng = p_rng_,
+               p::null_subdomain_index =
                        create_null_subdomain_index(null_subdomain_index_),
-               p::construct_surface_patch_index_new =
+               p::construct_surface_patch_index =
                        create_construct_surface_patch_index(construct_surface_patch_index_));
 
   }
@@ -541,11 +520,11 @@ where the labeled image is used with a precomputed 3D image of weights :
                                   image_values_to_subdomain_indices_,
                                   value_outside_),
                          Mesh_3::internal::compute_bounding_box(image_),
-                         p::relative_error_bound_new = relative_error_bound_,
-                         p::p_rng_new = p_rng_,
-                         p::null_subdomain_index_new =
+                         p::relative_error_bound = relative_error_bound_,
+                         p::p_rng = p_rng_,
+                         p::null_subdomain_index =
                                  create_null_subdomain_index(null_subdomain_index_),
-                         p::construct_surface_patch_index_new =
+                         p::construct_surface_patch_index =
                                  create_construct_surface_patch_index(construct_surface_patch_index_));
             }
             else
@@ -556,11 +535,11 @@ where the labeled image is used with a precomputed 3D image of weights :
                                   image_values_to_subdomain_indices_,
                                   value_outside_),
                          Mesh_3::internal::compute_bounding_box(image_),
-                         p::relative_error_bound_new = relative_error_bound_,
-                         p::p_rng_new = p_rng_,
-                         p::null_subdomain_index_new =
+                         p::relative_error_bound = relative_error_bound_,
+                         p::p_rng = p_rng_,
+                         p::null_subdomain_index =
                                  create_null_subdomain_index(null_subdomain_index_),
-                         p::construct_surface_patch_index_new =
+                         p::construct_surface_patch_index =
                                  create_construct_surface_patch_index(construct_surface_patch_index_));
             }
         }
@@ -627,11 +606,11 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
       return Labeled_mesh_domain_3
               (make_implicit_to_labeling_function_wrapper<BGT>(function_),
                bounding_object_,
-               p::relative_error_bound_new = relative_error_bound_,
-               p::p_rng_new = p_rng_,
-               p::null_subdomain_index_new =
+               p::relative_error_bound = relative_error_bound_,
+               p::p_rng = p_rng_,
+               p::null_subdomain_index =
                        create_null_subdomain_index(null_subdomain_index_),
-               p::construct_surface_patch_index_new =
+               p::construct_surface_patch_index =
                        create_construct_surface_patch_index(construct_surface_patch_index_));
   }
 

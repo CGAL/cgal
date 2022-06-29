@@ -22,7 +22,6 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
-#include <CGAL/boost/parameter.h>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
@@ -30,7 +29,6 @@
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/parameter/preprocessor.hpp>
 
 #include <atomic>
 
@@ -110,19 +108,6 @@ namespace parameters {
 
     return Generator()();
   }
-
-  // -----------------------------------
-  // Parameters
-  // -----------------------------------
-
-// see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/boost/parameter.h>
-CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
-
-  BOOST_PARAMETER_NAME( features_param )
-
-CGAL_PRAGMA_DIAG_POP
 
 } // end namespace parameters::internal
 
@@ -432,7 +417,7 @@ of 1-dimensional exposed features.
 \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
 \cgalNamedParamsBegin
-   \cgalParamNBegin{features_param_new}
+   \cgalParamNBegin{features_param}
      \cgalParamDescription{allows the user to specify whether 0 and 1-dimensional features have to be
                            taken into account or not
                            when the domain is a model of `MeshDomainWithFeatures_3`.
@@ -449,7 +434,7 @@ of 1-dimensional exposed features.
       \cgalParamType{`parameters::features()' OR `parameters::features(domain)`}
       \cgalParamDefault{`parameters::features(domain)`}
 
-    \cgalParamNBegin{manifold_options_param_new}
+    \cgalParamNBegin{manifold_options_param}
      \cgalParamDescription{allows the user to drive the meshing algorithm,
                           and ensure that the output mesh surface follows the given manifold criterion.
                           It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
@@ -458,7 +443,7 @@ of 1-dimensional exposed features.
       \cgalParamType{`parameters::manifold()` OR `parameters::manifold_with_boundary()` OR `parameters::non_manifold()`}
       \cgalParamDefault{`parameters::non_manifold()`}
 
-    \cgalParamNBegin{lloyd_param_new}
+    \cgalParamNBegin{lloyd_param}
      \cgalParamDescription{`parameters::lloyd()` and `parameters::no_lloyd()` are designed to
                             trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the
                             parameters of this optimizer. If one parameter is not set, the default value of
@@ -466,7 +451,7 @@ of 1-dimensional exposed features.
       \cgalParamType{`parameters::lloyd()` OR `parameters::no_lloyd()`}
       \cgalParamDefault{`parameters::no_lloyd()`}
 
-    \cgalParamNBegin{odt_param_new}
+    \cgalParamNBegin{odt_param}
      \cgalParamDescription{`parameters::odt()` and `parameters::no_odt()` are designed to
                             trigger or not a call to `odt_optimize_mesh_3()` function and
                             to set the parameters of this optimizer.
@@ -475,7 +460,7 @@ of 1-dimensional exposed features.
       \cgalParamType{`parameters::odt()` OR `parameters::no_odt()`}
       \cgalParamDefault{`parameters::no_odt()`}
 
-    \cgalParamNBegin{perturb_param_new}
+    \cgalParamNBegin{perturb_param}
      \cgalParamDescription{`parameters::perturb()` and `parameters::no_perturb()` are designed to
                             trigger or not a call to `perturb_mesh_3()` function and
                             to set the parameters of this optimizer. If one parameter is not set, the default value of
@@ -484,7 +469,7 @@ of 1-dimensional exposed features.
       \cgalParamType{`parameters::perturb()` and `parameters::no_perturb()`}
       \cgalParamDefault{`parameters::no_perturb`}
 
-    \cgalParamNBegin{exude_param_new}
+    \cgalParamNBegin{exude_param}
      \cgalParamDescription{parameters::exude()` and `parameters::no_exude()` are designed to
                            trigger or not a call to `exude_mesh_3()` function and to override to set the
                            parameters of this optimizer. If one parameter is not set, the default value of
@@ -611,9 +596,9 @@ void make_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   // Don't reset c3t3 as we just created it
   refine_mesh_3(c3t3, domain, criteria,
-                parameters::exude_param_new=exude, parameters::perturb_param_new=perturb, parameters::odt_param_new=odt, parameters::lloyd_param_new= lloyd,
-                parameters::reset_param_new=parameters::no_reset_c3t3(), parameters::mesh_options_param_new= mesh_options,
-                parameters::manifold_options_param_new= manifold_options);
+                parameters::exude_param=exude, parameters::perturb_param=perturb, parameters::odt_param=odt, parameters::lloyd_param= lloyd,
+                parameters::reset_param=parameters::no_reset_c3t3(), parameters::mesh_options_param= mesh_options,
+                parameters::manifold_options_param= manifold_options);
 }
 #else
 namespace CGAL {

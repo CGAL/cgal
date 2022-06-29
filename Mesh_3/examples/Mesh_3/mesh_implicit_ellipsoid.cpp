@@ -51,7 +51,7 @@ int main()
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Mesh generation (without optimization)
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param_new = no_perturb(), exude_param_new = no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param = no_perturb(), exude_param = no_exude());
 
   // Output
   std::ofstream medit_file("out_wo.mesh");
@@ -59,7 +59,7 @@ int main()
   medit_file.close();
 
   // Perturbation (5s, 12degree)
-  CGAL::perturb_mesh_3(c3t3, domain, time_limit_new=5, sliver_bound_new=12);
+  CGAL::perturb_mesh_3(c3t3, domain, time_limit=5, sliver_bound=12);
 
   // Exudation
   CGAL::exude_mesh_3(c3t3);

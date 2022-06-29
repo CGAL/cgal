@@ -288,8 +288,8 @@ SMesh* cgal_off_meshing(QWidget*,
     Mesh_domain::create_implicit_mesh_domain
     (offset_function(tm_ptr, offset_value),
      Sphere_3(center, sqrad),
-     p::relative_error_bound_new = 1e-7,
-     p::construct_surface_patch_index_new = [](int i, int j) { return (i * 1000 + j); });
+     p::relative_error_bound = 1e-7,
+     p::construct_surface_patch_index = [](int i, int j) { return (i * 1000 + j); });
 
   const CGAL::Mesh_facet_topology topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
   auto manifold_option = p::non_manifold();

@@ -77,7 +77,7 @@ public:
                               CGAL::Random* p_rng = nullptr)
     : Base(Wrapper(image, Identity(), value_outside),
            compute_bounding_box(image),
-           parameters::relative_error_bound_new = error_bound,
+           parameters::relative_error_bound = error_bound,
            parameters::null_subdomain_index = null,
            parameters::p_rng = p_rng)
   {}
@@ -87,8 +87,8 @@ public:
                               CGAL::Random* p_rng)
     : Base(Wrapper(image),
            compute_bounding_box(image),
-           parameters::relative_error_bound_new = error_bound,
-           parameters::p_rng_new = p_rng)
+           parameters::relative_error_bound = error_bound,
+           parameters::p_rng = p_rng)
   {}
 
   /// Destructor

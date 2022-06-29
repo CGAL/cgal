@@ -22,7 +22,6 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
-#include <CGAL/boost/parameter.h>
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
@@ -32,6 +31,12 @@
 #include <CGAL/Named_function_parameters.h>
 
 #include <atomic>
+
+#define CGAL_BOOLEAN_PARAMETER(Class, function_true, function_false)     \
+  struct Class : public Base<bool> { Class(bool b) : Base<bool>(b){} };       \
+  inline Class function_true() { return Class(true); }                        \
+  inline Class function_false() { return Class(false); }
+
 
 namespace CGAL {
 
@@ -455,30 +460,19 @@ inline internal::Mesh_3_options mesh_3_dump()
 
   return options;
 }
+        template <typename T>
+        struct Base
+        {
+            Base(T t) : t_(t) {}
+            T operator()() const { return t_; }
+        private:
+            T t_;
+        };
 
 // -----------------------------------
 // Reset_c3t3 (undocumented)
 // -----------------------------------
   CGAL_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
-  // CGAL_BOOLEAN_PARAMETER defined in <CGAL/boost/parameter.h>
-
-// see <CGAL/config.h>
-        CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/boost/parameter.h>
-        CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
-
-// -----------------------------------
-// Parameters
-// -----------------------------------
-        BOOST_PARAMETER_NAME( exude_param )
-        BOOST_PARAMETER_NAME( perturb_param )
-        BOOST_PARAMETER_NAME( odt_param )
-        BOOST_PARAMETER_NAME( lloyd_param )
-        BOOST_PARAMETER_NAME( reset_param )
-        BOOST_PARAMETER_NAME( mesh_options_param )
-        BOOST_PARAMETER_NAME( manifold_options_param )
-
-        CGAL_PRAGMA_DIAG_POP
 
 } // end namespace parameters
 
@@ -565,7 +559,7 @@ For each optimization algorithm, there exist two global functions
 that allow to enable or disable the optimizer:
 
 \cgalNamedParamsBegin
-   \cgalParamNBegin{manifold_options_param_new}
+   \cgalParamNBegin{manifold_options_param}
      \cgalParamDescription{allows the user to drive the meshing algorithm,
                           and ensure that the output mesh surface follows the given manifold criterion.
                           It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
@@ -574,7 +568,7 @@ that allow to enable or disable the optimizer:
       \cgalParamType{`parameters::manifold()` OR `parameters::manifold_with_boundary()` OR `parameters::non_manifold()`}
       \cgalParamDefault{`parameters::non_manifold()`}
 
-    \cgalParamNBegin{lloyd_param_new}
+    \cgalParamNBegin{lloyd_param}
      \cgalParamDescription{`parameters::lloyd()` and `parameters::no_lloyd()` are designed to
                             trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the
                             parameters of this optimizer. If one parameter is not set, the default value of
@@ -582,7 +576,7 @@ that allow to enable or disable the optimizer:
       \cgalParamType{`parameters::lloyd()` OR `parameters::no_lloyd()`}
       \cgalParamDefault{'parameters::no_lloyd()'}
 
-    \cgalParamNBegin{odt_param_new}
+    \cgalParamNBegin{odt_param}
      \cgalParamDescription{`parameters::odt()` and `parameters::no_odt()` are designed to
                             trigger or not a call to `odt_optimize_mesh_3()` function and
                             to set the parameters of this optimizer.
@@ -591,7 +585,7 @@ that allow to enable or disable the optimizer:
       \cgalParamType{`parameters::odt()` OR `parameters::no_odt()`}
       \cgalParamDefault{`parameters::no_odt()`}
 
-    \cgalParamNBegin{perturb_param_new}
+    \cgalParamNBegin{perturb_param}
      \cgalParamDescription{`parameters::perturb()` and `parameters::no_perturb()` are designed to
                             trigger or not a call to `perturb_mesh_3()` function and
                             to set the parameters of this optimizer. If one parameter is not set, the default value of
@@ -600,7 +594,7 @@ that allow to enable or disable the optimizer:
       \cgalParamType{`parameters::perturb()` and `parameters::no_perturb()`}
       \cgalParamDefault{'parameters::no_perturb`}
 
-    \cgalParamNBegin{exude_param_new}
+    \cgalParamNBegin{exude_param}
      \cgalParamDescription{parameters::exude()` and `parameters::no_exude()` are designed to
                            trigger or not a call to `exude_mesh_3()` function and to override to set the
                            parameters of this optimizer. If one parameter is not set, the default value of
@@ -746,10 +740,10 @@ void refine_mesh_3_impl(C3T3& c3t3,
   {
     odt_optimize_mesh_3(c3t3,
                         domain,
-                        parameters::time_limit_new = odt.time_limit(),
-                        parameters::max_iteration_number_new = odt.max_iteration_number(),
-                        parameters::convergence_new = odt.convergence(),
-                        parameters::freeze_bound_new = odt.bound());
+                        parameters::time_limit = odt.time_limit(),
+                        parameters::max_iteration_number = odt.max_iteration_number(),
+                        parameters::convergence = odt.convergence(),
+                        parameters::freeze_bound = odt.bound());
   }
 
   // Lloyd
@@ -757,10 +751,10 @@ void refine_mesh_3_impl(C3T3& c3t3,
   {
     lloyd_optimize_mesh_3(c3t3,
                           domain,
-                          parameters::time_limit_new = lloyd.time_limit(),
-                          parameters::max_iteration_number_new = lloyd.max_iteration_number(),
-                          parameters::convergence_new = lloyd.convergence(),
-                          parameters::freeze_bound_new = lloyd.bound());
+                          parameters::time_limit = lloyd.time_limit(),
+                          parameters::max_iteration_number = lloyd.max_iteration_number(),
+                          parameters::convergence = lloyd.convergence(),
+                          parameters::freeze_bound = lloyd.bound());
   }
 
   if( odt || lloyd) {
@@ -777,8 +771,8 @@ void refine_mesh_3_impl(C3T3& c3t3,
 
     perturb_mesh_3(c3t3,
                    domain,
-                   parameters::time_limit_new = perturb_time_limit,
-                   parameters::sliver_bound_new = perturb.bound());
+                   parameters::time_limit = perturb_time_limit,
+                   parameters::sliver_bound = perturb.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
@@ -792,8 +786,8 @@ void refine_mesh_3_impl(C3T3& c3t3,
       exude_time_limit = exude.time_limit();
 
     exude_mesh_3(c3t3,
-                 parameters::time_limit_new = exude_time_limit,
-                 parameters::sliver_bound_new = exude.bound());
+                 parameters::time_limit = exude_time_limit,
+                 parameters::sliver_bound = exude.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_exude_prefix);
   }

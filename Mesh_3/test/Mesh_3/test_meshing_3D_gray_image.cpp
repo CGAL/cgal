@@ -67,10 +67,10 @@ public:
     // Domain
     Mesh_domain domain =
       Mesh_domain::create_gray_image_mesh_domain(image,
-                                                 p::iso_value_new = 2.9f,
-                                                 p::value_outside_new = 0.f,
-                                                 p::relative_error_bound_new = 1e-3,
-                                                 p::p_rng_new =
+                                                 p::iso_value = 2.9f,
+                                                 p::value_outside = 0.f,
+                                                 p::relative_error_bound = 1e-3,
+                                                 p::p_rng =
                                                  &CGAL::get_default_random());
 
     // Mesh criteria
@@ -82,10 +82,10 @@ public:
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        perturb_param_new = no_perturb(),
-                                        exude_param_new = no_exude(),
-      mesh_options_param_new = mesh_3_options(number_of_initial_points_new = 30),
-      manifold_options_param_new = non_manifold()
+                                        perturb_param = no_perturb(),
+                                        exude_param = no_exude(),
+      mesh_options_param = mesh_3_options(number_of_initial_points = 30),
+      manifold_options_param = non_manifold()
       );
 
     // Verify

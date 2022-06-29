@@ -71,14 +71,14 @@ object used to create the `c3t3` parameter.
 @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
 \cgalNamedParamsBegin
-   \cgalParamNBegin{time_limit_new}
+   \cgalParamNBegin{time_limit}
      \cgalParamDescription{to set up, in seconds, a CPU time limit after which the optimization process is stopped.
                             This time is measured using `CGAL::Real_timer`. 0 means that there is no time limit.}
       \cgalParamType{`double`}
-      \cgalParamExtra{\pre `time_limit_new` \f$ \geq\f$ 0}
+      \cgalParamExtra{\pre `time_limit` \f$ \geq\f$ 0}
       \cgalParamDefault{0}
 
-    \cgalParamNBegin{max_iteration_number_new}
+    \cgalParamNBegin{max_iteration_number}
       \cgalParamDescription{limit on the number of performed iterations. 0 means that there is
                             no limit on the number of performed iterations.}
       \cgalParamExtra{\pre `max_iteration_number >=0`}
@@ -86,7 +86,7 @@ object used to create the `c3t3` parameter.
       \cgalParamDefault{0}
 
 
-    \cgalParamNBegin{freeze_bound_new}
+    \cgalParamNBegin{freeze_bound}
       \cgalParamDescription{designed to reduce running time of each optimization iteration.
                             Any vertex that has a displacement less than a given fraction of the length
                             of its shortest incident edge, is frozen (i.e.\ is not relocated).
@@ -96,7 +96,7 @@ object used to create the `c3t3` parameter.
       \cgalParamType{`double`}
       \cgalParamDefault{0.001}
 
-    \cgalParamNBegin{convergence_new}
+    \cgalParamNBegin{convergence}
       \cgalParamDescription{threshold ratio of stopping criterion based on convergence: the optimization process is stopped
                             when at the last iteration the displacement of any vertex is less than
                             a given fraction of the length of the shortest edge incident to that vertex.}
@@ -104,7 +104,7 @@ object used to create the `c3t3` parameter.
       \cgalParamType{`double`}
       \cgalParamDefault{0.001}
 
-   \cgalParamNBegin{do_freeze_new}
+   \cgalParamNBegin{do_freeze}
      \cgalParamDescription{completes the `freeze_bound` parameter. If it is set to `true` (default value),
                            frozen vertices will not move anymore in next iterations. Otherwise, at each iteration, any vertex that
                            moves, unfreezes all its incident vertices.}

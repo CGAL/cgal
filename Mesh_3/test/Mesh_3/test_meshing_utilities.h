@@ -118,9 +118,9 @@ struct Tester
     // Refine again and verify nothing changed
     std::cerr << "Refining again...\n";
     refine_mesh_3(c3t3,domain,criteria,
-                  CGAL::parameters::exude_param_new = CGAL::parameters::no_exude(),
-                  CGAL::parameters::perturb_param_new = CGAL::parameters::no_perturb(),
-                  CGAL::parameters::reset_param_new = CGAL::parameters::no_reset_c3t3());
+                  CGAL::parameters::exude_param = CGAL::parameters::no_exude(),
+                  CGAL::parameters::perturb_param = CGAL::parameters::no_perturb(),
+                  CGAL::parameters::reset_param = CGAL::parameters::no_reset_c3t3());
 
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
     // Using adjacencies instead of calling oracle to update restricted
@@ -134,9 +134,9 @@ struct Tester
       v = c3t3.triangulation().number_of_vertices();
 
       refine_mesh_3(c3t3,domain,criteria,
-                    CGAL::parameters::exude_param_new = CGAL::parameters::no_exude(),
-                    CGAL::parameters::perturb_param_new = CGAL::parameters::no_perturb(),
-                    CGAL::parameters::reset_param_new = CGAL::parameters::no_reset_c3t3());
+                    CGAL::parameters::exude_param = CGAL::parameters::no_exude(),
+                    CGAL::parameters::perturb_param = CGAL::parameters::no_perturb(),
+                    CGAL::parameters::reset_param = CGAL::parameters::no_reset_c3t3());
     }
 
     f = c3t3.number_of_facets_in_complex();
@@ -164,7 +164,7 @@ struct Tester
     // Quality should increase
     C3t3 perturb_c3t3(c3t3);
     std::cerr << "Perturb...\n";
-    CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit_new =5);
+    CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit =5);
     verify_c3t3(perturb_c3t3,domain,domain_type,v,v);
     verify_c3t3_quality(c3t3,perturb_c3t3);
     verify_c3t3_volume(perturb_c3t3, volume*0.95, volume*1.05);
@@ -174,8 +174,8 @@ struct Tester
     // Vertex number should not change (obvious)
     C3t3 odt_c3t3(c3t3);
     std::cerr << "Odt...\n";
-    CGAL::odt_optimize_mesh_3(odt_c3t3, domain, CGAL::parameters::time_limit_new=5,
-                              CGAL::parameters::convergence_new=0.001, CGAL::parameters::freeze_bound_new=0.0005);
+    CGAL::odt_optimize_mesh_3(odt_c3t3, domain, CGAL::parameters::time_limit=5,
+                              CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(odt_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(odt_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(odt_c3t3, domain, domain_type, hdist);
@@ -184,8 +184,8 @@ struct Tester
     // Vertex number should not change (obvious)
     C3t3 lloyd_c3t3(c3t3);
     std::cerr << "Lloyd...\n";
-    CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit_new=5,
-                                CGAL::parameters::convergence_new=0.001, CGAL::parameters::freeze_bound_new=0.0005);
+    CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit=5,
+                                CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(lloyd_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(lloyd_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(lloyd_c3t3, domain, domain_type, hdist);

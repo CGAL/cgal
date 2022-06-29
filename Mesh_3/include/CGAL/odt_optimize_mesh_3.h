@@ -70,7 +70,7 @@ object used to create the `c3t3` parameter.
  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
  \cgalNamedParamsBegin
-   \cgalParamNBegin{time_limit_new}
+   \cgalParamNBegin{time_limit}
      \cgalParamDescription{is used to set up, in seconds,
                            a CPU time limit after which the optimization process is stopped. This time is
                            measured using `Real_timer`.
@@ -78,14 +78,14 @@ object used to create the `c3t3` parameter.
      \cgalParamType{`double`}
      \cgalParamDefault{0}
 
-   \cgalParamNBegin{max_iteration_number_new}
+   \cgalParamNBegin{max_iteration_number}
      \cgalParamDescription{sets a limit on the number of performed iterations.
                            The default value of 0 means that there is
                            no limit on the number of performed iterations.}
      \cgalParamType{`std::size_t`}
      \cgalParamDefault{0}
 
-   \cgalParamNBegin{convergence_new}
+   \cgalParamNBegin{convergence}
      \cgalParamDescription{is a stopping criterion based on convergence:
                            the optimization process is stopped, when at the last iteration,
                            the displacement of any vertex is less than a given percentage of the length
@@ -94,14 +94,14 @@ object used to create the `c3t3` parameter.
      \cgalParamType{`double`}
      \cgalParamDefault{0.02}
 
-   \cgalParamNBegin{freeze_bound_new}
+   \cgalParamNBegin{freeze_bound}
      \cgalParamDescription{is designed to reduce running time of each optimization iteration. Any vertex
                            that has a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e.\ is
                            not relocated). The parameter `freeze_bound` gives the threshold ratio.}
      \cgalParamType{`double`}
      \cgalParamDefault{0.01}
 
-   \cgalParamNBegin{do_freeze_new}
+   \cgalParamNBegin{do_freeze}
      \cgalParamDescription{completes the `freeze_bound` parameter. If it is set to `true` (default value),
                            frozen vertices will not move anymore in next iterations. Otherwise, at each iteration, any vertex that
                            moves, unfreezes all its incident vertices.}

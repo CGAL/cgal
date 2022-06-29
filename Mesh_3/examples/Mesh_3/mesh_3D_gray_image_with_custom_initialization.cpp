@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   }
   /// [Domain creation]
   Mesh_domain domain =
-    Mesh_domain::create_gray_image_mesh_domain(image, iso_value_new - 2.9f, value_outside_new = 0.f);
+    Mesh_domain::create_gray_image_mesh_domain(image, iso_value = 2.9f, value_outside = 0.f);
   /// [Domain creation]
 
   /// [Mesh criteria]

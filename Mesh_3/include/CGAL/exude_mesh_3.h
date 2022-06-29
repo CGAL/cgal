@@ -55,13 +55,13 @@ to represent the final optimized mesh.
  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
 \cgalNamedParamsBegin
- \cgalParamNBegin{time_limit_new}
+ \cgalParamNBegin{time_limit}
   \cgalParamDescription{is used to set up, in seconds, a CPU time limit after which the optimization process
                         is stopped. This time is measured using the `Real_timer` class. The default value is
                         0 and means that there is no time limit.}
   \cgalParamType{`double`}
   \cgalParamDefault{0}
- \cgalParamNBegin{sliver_bound_new}
+ \cgalParamNBegin{sliver_bound}
    \cgalParamDescription{is designed to give, in degrees, a targeted lower bound on dihedral angles of mesh cells.
                          The exudation process considers in turn all the mesh cells that have a smallest dihedral
                          angle less than sliver_bound and tries to make them disappear by weighting their vertices.

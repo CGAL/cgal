@@ -85,7 +85,7 @@ int main()
 
   // Mesh generation without feature preservation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      features_param_new = CGAL::parameters::no_features());
+                                      features_param = CGAL::parameters::no_features());
 
   std::ofstream medit_file("out-no-protection.mesh");
   c3t3.output_to_medit(medit_file);

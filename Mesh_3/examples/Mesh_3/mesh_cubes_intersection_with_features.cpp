@@ -168,13 +168,13 @@ int main()
       cell_radius_edge_ratio = 2, cell_size = 0.4);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, exude_param_new = no_exude(), perturb_param_new = no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, exude_param = no_exude(), perturb_param = no_perturb());
 
   // Perturbation (maximum cpu time: 10s, targeted dihedral angle: default)
-  CGAL::perturb_mesh_3(c3t3, domain, time_limit_new = 10);
+  CGAL::perturb_mesh_3(c3t3, domain, time_limit = 10);
 
   // Exudation
-  CGAL::exude_mesh_3(c3t3,CGAL::parameters::time_limit_new=12);
+  CGAL::exude_mesh_3(c3t3,CGAL::parameters::time_limit = 12);
 
   // Output
   std::ofstream medit_file("out_cubes_intersection_with_features.mesh");

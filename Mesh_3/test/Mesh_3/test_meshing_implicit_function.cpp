@@ -45,8 +45,8 @@ struct Implicit_tester : public Tester<K>
       Mesh_domain::create_implicit_mesh_domain
       (Implicit_tester<K>::sphere_function,
        Sphere_3(CGAL::ORIGIN,2.),
-       p::p_rng_new = &CGAL::get_default_random(),
-       p::relative_error_bound_new = 1e-3);
+       p::p_rng = &CGAL::get_default_random(),
+       p::relative_error_bound = 1e-3);
 
     // Set mesh criteria
     Facet_criteria facet_criteria(0, 0, 0.3);
@@ -68,8 +68,8 @@ struct Implicit_tester : public Tester<K>
                                domain.index_from_surface_patch_index(Surface_patch_index(0,1)));
 
     CGAL::refine_mesh_3(c3t3, domain, criteria,
-                        CGAL::parameters::exude_param_new = CGAL::parameters::no_exude(),
-                        CGAL::parameters::perturb_param_new = CGAL::parameters::no_perturb());
+                        CGAL::parameters::exude_param = CGAL::parameters::no_exude(),
+                        CGAL::parameters::perturb_param = CGAL::parameters::no_perturb());
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
 
