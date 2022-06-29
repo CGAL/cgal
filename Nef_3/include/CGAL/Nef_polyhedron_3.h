@@ -612,22 +612,6 @@ protected:
    simplify();
  }
 
- template <class T1, class T2,
-           template <class T31, class T32, class T33>
-           class T3, class T4 >
- Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P)
-   : Nef_polyhedron_3(Private_tag{})
- {
-    CGAL_NEF_TRACEN("construction from Polyhedron_3");
-    reserve_for_vertices(P.size_of_vertices());
-    initialize_infibox_vertices(EMPTY);
-    polyhedron_3_to_nef_3
-      <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
-    build_external_structure();
-    mark_bounded_volumes();
-    simplify();
-  }
-
  template <class PolygonMesh>
  explicit Nef_polyhedron_3(const PolygonMesh& pm)
    : Nef_polyhedron_3(Private_tag{})
@@ -635,7 +619,7 @@ protected:
     CGAL_NEF_TRACEN("construction from PolygonMesh with internal index maps");
     reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
-    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(pm, snc());
     build_external_structure();
     mark_bounded_volumes();
     simplify();
@@ -653,7 +637,7 @@ protected:
     CGAL_NEF_TRACEN("construction from PolygonMesh");
     reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
-    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(pm, snc(), fim, him);
     build_external_structure();
     mark_bounded_volumes();
     simplify();
