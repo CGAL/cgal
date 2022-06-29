@@ -22,7 +22,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>
-
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Mesh_3/config.h>
 #include <boost/parameter/preprocessor.hpp>
 #include <CGAL/boost/parameter.h>
@@ -33,29 +33,6 @@
 #include <boost/type_traits/is_base_of.hpp>
 namespace CGAL {
 
-namespace parameters {
-
-// see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/boost/parameter.h>
-CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
-
-  BOOST_PARAMETER_NAME( (edge_size, tag) edge_size_ )
-  BOOST_PARAMETER_NAME( (edge_sizing_field, tag) edge_sizing_field_ )
-  BOOST_PARAMETER_NAME( (facet_angle, tag) facet_angle_ )
-  BOOST_PARAMETER_NAME( (facet_size, tag) facet_size_ )
-  BOOST_PARAMETER_NAME( (facet_sizing_field, tag) facet_sizing_field_ )
-  BOOST_PARAMETER_NAME( (facet_distance, tag) facet_distance_ )
-  BOOST_PARAMETER_NAME( (facet_topology, tag) facet_topology_ )
-  BOOST_PARAMETER_NAME( (cell_radius_edge, tag) cell_radius_edge_ )
-  BOOST_PARAMETER_NAME( (cell_radius_edge_ratio, tag) cell_radius_edge_ratio_ )
-  BOOST_PARAMETER_NAME( (cell_size, tag) cell_size_ )
-  BOOST_PARAMETER_NAME( (cell_sizing_field, tag) cell_sizing_field_ )
-  BOOST_PARAMETER_NAME( (sizing_field, tag) sizing_field_ )
-
-CGAL_PRAGMA_DIAG_POP
-
-} // end namespace parameters
 
 namespace internal {
 
@@ -93,22 +70,22 @@ public:
   // This template constructor is not instantiated when named parameters
   // are not used, so Facet_criteria and Cell_criteria construction from FT
   // is not a problem
-  template <class ArgumentPack>
-  Mesh_criteria_3_impl(const ArgumentPack& args)
-    : edge_criteria_(args[parameters::edge_size
-                          | args[parameters::edge_sizing_field
-                                 | args[parameters::sizing_field | FT(DBL_MAX)] ] ])
-    , facet_criteria_(args[parameters::facet_angle | FT(0)],
-                      args[parameters::facet_size
-                           | args[parameters::facet_sizing_field
-                                  | args[parameters::sizing_field | FT(0)] ] ],
-                      args[parameters::facet_distance | FT(0)],
-                      args[parameters::facet_topology | CGAL::FACET_VERTICES_ON_SURFACE])
-    , cell_criteria_(args[parameters::cell_radius_edge_ratio
-                          | args[parameters::cell_radius_edge | FT(0)] ],
-                     args[parameters::cell_size
-                          | args[parameters::cell_sizing_field
-                                 | args[parameters::sizing_field | FT(0)] ] ])
+  template <typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Mesh_criteria_3_impl(const CGAL_NP_CLASS& np)
+    :edge_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_size_param),
+                                                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_sizing_field_param),
+                                                                              parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(DBL_MAX))))),
+    facet_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_angle_param), FT(0)),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_size_param),
+                                                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_sizing_field_param),
+                                                                              parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(0)))),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_distance_param), FT(0)),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE)),
+    cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param),
+                                                parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_param), FT(0))),
+                   parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_size_param),
+                                                parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_sizing_field_param),
+                                                                             parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(0)))))
   { }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -185,22 +162,63 @@ public:
     : Base(edge_criteria,
            facet_criteria,
            cell_criteria) {}
+/*!
+      \brief Construction from criteria parameters.
+      This constructor uses named
+      parameters (from <I>Boost.Parameter</I>) for convenient criteria
+      construction.
 
-  // For convenient constructor call (see examples)
-  BOOST_PARAMETER_CONSTRUCTOR(Mesh_criteria_3, (Base), parameters::tag,
-                              (optional (edge_size_,*)
-                                        (edge_sizing_field_,*)
-                                        (facet_angle_,*)
-                                        (facet_size_,*)
-                                        (facet_sizing_field_,*)
-                                        (facet_distance_,*)
-                                        (facet_topology_,*)
-                                        (cell_radius_edge_,*)
-                                        (cell_size_,*)
-                                        (cell_sizing_field_,*)
-                                        (sizing_field_,*)
-                              ))
+         \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
+         \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+
+         \cgalNamedParamsBegin
+           \cgalParamNBegin{edge_size}
+             \cgalParamDescription{a scalar field (resp. a constant) providing a space varying
+                                  (resp. a uniform)
+                                  upper bound for the lengths of curve edges. This parameter has to be set to a positive
+                                  value when 1-dimensional features protection is used.}
+
+           \cgalParamNBegin{facet_angle}
+             \cgalParamDescription{a lower bound for the angles (in degrees) of the
+                                   surface mesh facets.}
+
+           \cgalParamNBegin{facet_size}
+             \cgalParamDescription{ a scalar field (resp. a constant) describing
+                                    a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
+
+           \cgalParamNBegin{facet_distance}
+             \cgalParamDescription{ a scalar field (resp. a constant) describing a space varying (resp. a uniform)
+                                    upper bound for the distance between the facet circumcenter and the center of its surface
+                                    Delaunay ball.}
+           \cgalParamNBegin{facet_topology}
+             \cgalParamDescription{ the set of topological constraints
+                                    which have to be verified by each surface facet. See `Mesh_facet_topology` manual page to
+                                    get all possible values.}
+              \cgalParamDefault{CGAL::FACET_VERTICES_ON_SURFACE}
+
+            \cgalParamNBegin{cell_radius_edge_ratio}
+             \cgalParamDescription{ an upper bound for the radius-edge ratio of the mesh tetrahedra.}
+
+             \cgalParamNBegin{cell_size}
+             \cgalParamDescription{ a scalar field (resp. a constant) describing
+                                    a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.}
+
+
+         \cgalNamedParamsEnd
+       */
+
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+Mesh_criteria_3(const CGAL_NP_CLASS& np = parameters::default_values()): Base(np)
+{
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+        template<typename ... NP_PACK>
+        Mesh_criteria_3(const NP_PACK& ...nps):Mesh_criteria_3(internal_np::combine_named_parameters(nps...))
+        {
+        }
+#endif //CGAL_NO_DEPRECATED_CODE
 };  // end class Mesh_criteria_3
 
 }  // end namespace CGAL

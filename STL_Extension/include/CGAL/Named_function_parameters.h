@@ -378,6 +378,21 @@ const Boost_parameter_compatibility_wrapper<internal_np::null_subdomain_index_pa
 const Boost_parameter_compatibility_wrapper<internal_np::surface_patch_index_t> construct_surface_patch_index_new;
 const Boost_parameter_compatibility_wrapper<internal_np::weights_param_t> weights_new;
 
+const Boost_parameter_compatibility_wrapper<internal_np::edge_size_param_t> edge_size;
+const Boost_parameter_compatibility_wrapper<internal_np::edge_sizing_field_param_t> edge_sizing_field;
+const Boost_parameter_compatibility_wrapper<internal_np::facet_angle_param_t> facet_angle;
+const Boost_parameter_compatibility_wrapper<internal_np::facet_size_param_t> facet_size;
+const Boost_parameter_compatibility_wrapper<internal_np::facet_sizing_field_param_t> facet_sizing_field;
+const Boost_parameter_compatibility_wrapper<internal_np::facet_distance_param_t> facet_distance;
+const Boost_parameter_compatibility_wrapper<internal_np::facet_topology_param_t> facet_topology;
+const Boost_parameter_compatibility_wrapper<internal_np::cell_radius_edge_param_t> cell_radius_edge;
+const Boost_parameter_compatibility_wrapper<internal_np::cell_radius_edge_ratio_param_t> cell_radius_edge_ratio;
+const Boost_parameter_compatibility_wrapper<internal_np::cell_size_param_t> cell_size;
+const Boost_parameter_compatibility_wrapper<internal_np::cell_sizing_field_param_t> cell_sizing_field;
+const Boost_parameter_compatibility_wrapper<internal_np::sizing_field_param_t> sizing_field;
+
+
+
 
 #endif
 
