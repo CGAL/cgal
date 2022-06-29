@@ -615,7 +615,7 @@ void fill_header_impl(std::tuple<T,TN...>,
 
 template <std::size_t s, class Point, typename Simplex>
 void fill_header_impl(std::tuple<>,
-                      const char* const type_strings[],
+                      const char* const [],
                       const Surface_mesh<Point>&,
                       const std::string&,
                       std::ostream&,
