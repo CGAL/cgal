@@ -410,7 +410,11 @@ struct Property_map_to_unary_function{
   {}
 
   template <class KeyType>
+  #if defined(__INTEL_COMPILER) && defined(__INTEL_COMPILER_BUILD_DATE) && (__INTEL_COMPILER_BUILD_DATE < 20210000)
+  result_type
+  #else
   decltype(auto)
+  #endif
   operator()(const KeyType& a) const
   {
     return get(map,a);
