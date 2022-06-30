@@ -14,8 +14,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_TRIPLE_LINES_CASES_TABLES_H
-#define CGAL_MESH_3_TRIPLE_LINES_CASES_TABLES_H
+#ifndef CGAL_MESH_3_FEATURES_DETECTION_CASES_TABLES_H
+#define CGAL_MESH_3_FEATURES_DETECTION_CASES_TABLES_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -4201,4 +4201,4 @@ const Cases cases = {
 }//end namespace Mesh_3
 }//end namespace CGAL
 
-#endif // CGAL_MESH_3_TRIPLE_LINES_CASES_TABLES_H
+#endif // CGAL_MESH_3_FEATURES_DETECTION_CASES_TABLES_H

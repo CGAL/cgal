@@ -15,8 +15,8 @@
 //******************************************************************************
 
 
-#ifndef CGAL_MESH_3_TRIPLE_LINES_H
-#define CGAL_MESH_3_TRIPLE_LINES_H
+#ifndef CGAL_MESH_3_FEATURES_DETECTION_H
+#define CGAL_MESH_3_FEATURES_DETECTION_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -2431,4 +2431,4 @@ public:
 }//namespace CGAL
 
 
-#endif // CGAL_MESH_3_TRIPLE_LINES_H
+#endif // CGAL_MESH_3_FEATURES_DETECTION_H

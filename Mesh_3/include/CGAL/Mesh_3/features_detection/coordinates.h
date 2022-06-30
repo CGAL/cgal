@@ -15,8 +15,8 @@
 //******************************************************************************
 
 
-#ifndef CGAL_MESH_3_TRIPLE_LINES_COORDINATES_H
-#define CGAL_MESH_3_TRIPLE_LINES_COORDINATES_H
+#ifndef CGAL_MESH_3_FEATURES_DETECTION_COORDINATES_H
+#define CGAL_MESH_3_FEATURES_DETECTION_COORDINATES_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -59,4 +59,4 @@ namespace internal
 }//end namespace Mesh_3
 }//end namespace CGAL
 
-#endif // CGAL_MESH_3_TRIPLE_LINES_COORDINATES_H
+#endif // CGAL_MESH_3_FEATURES_DETECTION_COORDINATES_H

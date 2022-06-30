@@ -15,8 +15,8 @@
 //******************************************************************************
 
 
-#ifndef CGAL_MESH_3_TRIPLE_LINES_COMBINATIONS_H
-#define CGAL_MESH_3_TRIPLE_LINES_COMBINATIONS_H
+#ifndef CGAL_MESH_3_FEATURES_DETECTION_COMBINATIONS_H
+#define CGAL_MESH_3_FEATURES_DETECTION_COMBINATIONS_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -232,4 +232,4 @@ namespace internal
 }//end namespace CGAL
 
 
-#endif // CGAL_MESH_3_TRIPLE_LINES_COMBINATIONS_H
+#endif // CGAL_MESH_3_FEATURES_DETECTION_COMBINATIONS_H

@@ -14,8 +14,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_TRIPLE_LINES_CUBE_ISOMETRIES_H
-#define CGAL_MESH_3_TRIPLE_LINES_CUBE_ISOMETRIES_H
+#ifndef CGAL_MESH_3_FEATURES_DETECTION_CUBE_ISOMETRIES_H
+#define CGAL_MESH_3_FEATURES_DETECTION_CUBE_ISOMETRIES_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -86,4 +86,4 @@ namespace internal
 }//end namespace Mesh_3
 }//end namespace CGAL
 
-#endif // CGAL_MESH_3_TRIPLE_LINES_CUBE_ISOMETRIES_H
+#endif // CGAL_MESH_3_FEATURES_DETECTION_CUBE_ISOMETRIES_H
