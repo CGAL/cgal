@@ -16,8 +16,6 @@ is specified with each function.
 \cgalHasModel `CGAL::Projection_traits_yz_3<K>`
 \cgalHasModel `CGAL::Projection_traits_xz_3<K>`
 
-\sa `IsStronglyConvexTraits_3`
-
 */
 
 class ConvexHullTraits_2 {
