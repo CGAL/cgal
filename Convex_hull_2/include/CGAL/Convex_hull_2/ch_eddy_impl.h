@@ -34,8 +34,6 @@ ch__recursive_eddy(List& L,
                         ListIterator  a_it, ListIterator  b_it,
                         const Traits& ch_traits)
 {
-  using namespace boost;
-
   typedef  typename Traits::Point_2                         Point_2;
   typedef  typename Traits::Left_turn_2                     Left_turn_2;
   typedef  typename Traits::Less_signed_distance_to_line_2  Less_dist;
@@ -80,8 +78,6 @@ ch_eddy(InputIterator first, InputIterator last,
              OutputIterator  result,
              const Traits& ch_traits)
 {
-  using namespace boost;
-
   typedef  typename Traits::Point_2                         Point_2;
   typedef  typename Traits::Left_turn_2                     Left_turn_2;
   typedef  typename Traits::Equal_2                         Equal_2;
