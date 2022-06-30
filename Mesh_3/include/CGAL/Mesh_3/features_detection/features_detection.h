@@ -571,7 +571,7 @@ std::vector<std::vector<P>> poly00012120(const int prec = 10)
 {
     return { create_polyline<P>(2. / 3, 1,
                              [](double z) { return P((3 * z - 1) / (3 * z), (3 * z * z - 2 * z) / (6 * z * z - 5 * z + 1), z); },
-                             prec) };
+                             prec)};
 }
 //
 // 00012121
@@ -656,22 +656,19 @@ std::vector<std::vector<P>> poly00121201(const int prec = 10)
     };
 }
 
-// 00000123
-// curve_1 : x = 3./4. - sqrt(z*(9.*z - 8))/(4*z), y = 3./4. - sqrt(z*(9.*z - 8))/(4*z), z = [8/9, 1]
-// curve 2 : x = 3./4. + sqrt(z*(9.*z - 8))/(4*z), y = 3./4. + sqrt(z*(9.*z - 8))/(4*z), z = [8/9, 1]
-// curve 3 : x =1/2, y = -(z-2.)/(2.*z), z = [2/3, 1]
-// curve 4 : x = -(z/2.-1)/z, y = 1./2., z =[2/3, 1]
+
+double limit_value(double bound, double direction, double epsilon=1e-6)
+{
+  return bound + direction * epsilon;
+}
+
+// 00000123 
+// curve 1 : x =1/2, y = -(z-2.)/(2.*z), z = [2/3, 1]
+// curve 2 : x = -(z/2.-1)/z, y = 1./2., z =[2/3, 1]
 template<typename P>
 std::vector<std::vector<P>> poly00000123(const int prec = 10)
 {
   return {
-  create_polyline(8./9, 1., P(3./4, 3./4, 8./9),
-                  [](double z) { return P(  3./4. - sqrt(z*(9.*z - 8))/(4*z), 3./4. - sqrt(z*(9.*z - 8))/(4*z), z ); },
-                  prec),
-  create_polyline(8./9, 1., P(3./4, 3./4, 8./9),
-                  [](double z) { return P(  3./4. + sqrt(z*(9.*z - 8))/(4*z), 3./4. + sqrt(z*(9.*z - 8))/(4*z), z ); },
-                  prec),
-
   create_polyline(2./3, 1., P(1./2, 1, 2./3),
                   [](double z) { return P(  1./2, -(z-2.)/(2.*z), z); },
                   prec),
@@ -683,44 +680,70 @@ std::vector<std::vector<P>> poly00000123(const int prec = 10)
 
 
 //00001123
-//
-//
+// curve 1 : x = (3*z - 2)/(2*z - 1), y = (2*z - 1)/z, z = [2/3, 3/4]
+// curve 2 : x = -(z - 1)/(2*z - 1), y = (2*z - 1)/z, z = [2/3, 3/4]
+// curve 3 : x =1/2,  y = -2*(z - 1)/z, z = [2/3, 3/4]
 template<typename P>
-std::vector<std::vector<P>> poly00001123(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00001123(const int prec = 10)
 {
 return {
-
+  create_polyline(2./3, 3./4, P(0, 1./2, 2./3),
+                  [](double z) { return P( (3*z - 2)/(2*z - 1), (2*z - 1)/z, z); },
+                  prec),
+  create_polyline(2./3, 3./4, P(1, 1./2, 2./3),
+                  [](double z) { return P( -(z - 1)/(2*z - 1),(2*z - 1)/z, z); },
+                  prec),
+   create_polyline(2./3, 3./4, P(1./2, 1, 2./3),
+                  [](double z) { return P(  1./2,-2*(z - 1)/z, z); },
+                  prec),
 
 };
 }
 
 //00001223
-//
-//
+
+// curve 1 : x = -(z*(-sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z)) - 5*z + 3)/z, y = -sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z), z = [2/3, 9/13]
+// curve 2 : x = -(z*(sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z)) - 5*z + 3)/z,  y = sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z), z = [2/3, 9/13]
+// curve 3 : x = -(z*(-sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z)) + 3*z - 3)/z,  y = -sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z), z = [2/3, 9/13]
+// curve 4 : x =  -(z*(sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z)) + 3*z - 3)/z,  y = sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z), z = [2/3, 9/13]  
 template<typename P>
-std::vector<std::vector<P>> poly00001223(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00001223(const int prec = 10)
 {
 return {
-
-
+  create_polyline(2./3, 9./13, P(1./2, 0., 2./3),
+                [](double z) { return P( -(z*(-sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z)) - 5*z + 3)/z, -sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z), z); },
+                prec),
+  create_polyline(2./3, 9./13, P(0., 1./2, 2./3),
+                [](double z) { return P( -(z*(sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z)) - 5*z + 3)/z,  sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z), z); },
+                prec),
+  create_polyline(2./3, 9./13, P(1., 1./2, 2./3),
+                [](double z) { return P(-(z*(-sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z)) + 3*z - 3)/z, -sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z), z); },
+                prec),
+  create_polyline(2./3, 9./13, P(1./2, 1., 2./3),
+                [](double z) { return P(  -(z*(sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z)) + 3*z - 3)/z, sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z), z); },
+                prec),
 };
 }
 
 //00010123
-//
-//
+// curve 1 : x = -(3*z - 1)*(z*z /(3*z - 1) - 1)/(2*z*z), y = z/(3*z - 1), z = [1/2,1]
+// curve 2 : x =  1./2, y =  -(z - 2)/(z + 1), z = [1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly00010123(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00010123(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2, 1., P(1./2, 1., 1./2),
+                  [](double z) { return P(-(3*z - 1)*(z*z /(3*z - 1) - 1)/(2*z*z), z/(3*z - 1),z); },
+                  prec),
+  create_polyline(1./2, 1., P(1./2, 1., 1./2),
+                  [](double z) { return P( 1./2 , -(z - 2)/(z + 1),z); },
+                  prec),
 
 };
 }
 
 //00010230
-//
-//
+// no curves
 template<typename P>
 std::vector<std::vector<P>> poly00010230(const int /*prec*/ = 10)
 {
@@ -731,656 +754,1058 @@ return {
 }
 
 //00010231
-//
-//
+// curve 1 : x = (z + 1)*(z**2/(z + 1) - 1)/(z*(z - 3)), y = z/(z + 1), z = [1/2,1]
+// curve 2 : x = (z + 1 + (z**2 - 3*z)*(z**2 - z - 1)/(z*(z - 3)))/(z*(z + 1)), y = (z**2 - z - 1)/(z*(z - 3)), z = [1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly00010231(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00010231(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2, 1., P(1., 1./3, 1./2),
+                  [](double z) { return P((z + 1)*(z*z/(z + 1) - 1)/(z*(z - 3)), z/(z + 1),z); },
+                  prec),
+  create_polyline(1./2, 1., P(1./3, 1., 1./2),
+                  [](double z) { return P((z + 1 + (z*z - 3*z)*(z*z - z - 1)/(z*(z - 3)))/(z*(z + 1)), (z*z - z - 1)/(z*(z - 3)),z); },
+                  prec),
 
 };
 }
 
 //00011023
-//
-//
+
+// curve 1 : x = -(-2*z**2 + z + (z**2 - 3*z)*(-(z**2 + z + 1)/(2*z*(z - 3)) + sqrt(z**4 + 6*z**3 - 9*z**2 + 2*z + 1)/(2*z*(z - 3))) + 1)/(2*z**2), y = -(z**2 + z + 1)/(2*z*(z - 3)) + sqrt(z**4 + 6*z**3 - 9*z**2 + 2*z + 1)/(2*z*(z - 3)), z = [2/3,1] 
+// curve 2 : x = 1/2, y = -(z - 2)/(z + 1), z = [1/2,1]
+// curve 3 : x = [1/2,1[, y = (sqrt(8*x*x*x - 3*x*x - 2*x + 1) + x + 1)/(2*x*(2*x + 1)), z = (sqrt(8*x*x*x - 3*x*x - 2*x + 1) - x - 1)/(2*(2*x*x - x - 1)))
 template<typename P>
-std::vector<std::vector<P>> poly00011023(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00011023(const int prec = 10)
 {
 return {
+  create_polyline(2./3, 1., P(0, 1./2, 2./3),
+                  [](double z) { return P(-(-2*z*z + z + (z*z - 3*z)*(-(z*z + z + 1)/(2*z*(z - 3)) + sqrt(z*z*z*z + 6*z*z*z - 9*z*z + 2*z + 1)/(2*z*(z - 3))) + 1)/(2*z*z) , -(z*z + z + 1)/(2*z*(z - 3)) + sqrt(z*z*z*z + 6*z*z*z - 9*z*z + 2*z + 1)/(2*z*(z - 3)) ,z); },
+                  prec),
+  create_polyline(1./2, 1., P(1./2, 1., 1./2),
+                  [](double z) { return P(1./2,-(z - 2)/(z + 1) ,z); },
+                  prec),
+  create_polyline(1./2, limit_value(1.,-1.), P(1./2, 1.,1./2),
+                  [](double x) { return P(x, (sqrt(8*x*x*x - 3*x*x - 2*x + 1) + x + 1)/(2*x*(2*x + 1)) ,(sqrt(8*x*x*x - 3*x*x - 2*x + 1) - x - 1)/(2*(2*x*x - x - 1)) ); },
+                  prec),
 
 
 };
 }
 
 //00011123
-//
-//
+// curve 1 : x = z*(3*z - 2)/(2*z*z - 1), y = (2*z*z - 1)/(z*(4*z - 3)), z = [1/2.2/3]
+// curve 2 : x = 1./2, y = [2/3,1], z = y/(2*(-1 + 2*y))
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00011123(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00011123(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2, 2./3, P(1./2, 1., 1./2),P(0., 1./2, 2./3),
+                  [](double z) { return P(z*(3*z - 2)/(2*z*z - 1) , (2*z*z - 1)/(z*(4*z - 3)) ,z); },
+                  prec),
+   create_polyline( 2./3,1., P(1./2, 2./3, 1.),P(1./2, 1., 1./2),
+                  [](double y) { return P(1./2,y,y/(2*(-1 + 2*y))); },
+                  prec)
 };
 }
 
-//00011223
-//
-//
+//00011223 
+// curve 1 : x = [1/2,3/5[U ]3/5,1], y = (-2 + 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)), z = (2 - 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x)) 
+// curve 2 : x = ]0,1/2], y = (-2 + 2*x + 3*x*x + sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)), z = (2 - 2*x + 3*x*x + sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x)) 
+// curve 3 : x = -(-3*z + (4*z - 1)*(3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1))))/(4*z - 1), y = 3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)), z = [1/2,4/7]
+// curve 4 : x = -(-3*z + (4*z - 1)*(3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1))))/(4*z - 1), y = 3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)), z = [1/2,4/7]
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00011223(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00011223(const int prec = 10)
 {
 return {
-
-
+  create_polyline( 1./2,4./7, P(1./2, 1., 1./2),P(2./3, 2./3, 4./7),
+                  [](double z) { return P(-(-3*z + (4*z - 1)*(3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1))))/(4*z - 1),3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
+                  prec),
+  create_polyline( 1./2,4./7, P(1., 1./2, 1./2),P(2./3, 2./3, 4./7),
+                  [](double z) { return P(-(-3*z + (4*z - 1)*(3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1))))/(4*z - 1),3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
+                  prec),
+  create_polyline( 1./2,limit_value(3./5,-1.), P(1./2, 1., 1./2),P(3./5,5./7,5./9),
+                  [](double x) { return P(x,(-2. + 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x))  ); },
+                  prec),
+  create_polyline(limit_value(3./5,1.),1.,P(3./5,5./7,5./9),P(1., 1./2, 1./2),
+                  [](double x) { return P(x,(-2. + 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x))  ); },
+                  prec),
+  create_polyline( limit_value(0.,1.), 1./2, P(0., 1./2, 2./3),P(1./2, 0., 2./3),
+                  [](double x) { return P(x,(-2. + 2*x + 3*x*x + sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x + sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x)) ); },
+                  prec),
 };
 }
-
 //00011230
-//
-//
+//curve 1 : x = -(-4*z*z + z + (3*z*z - z)*((5*z*z - z - 1)/(2*z*(3*z - 1)) - sqrt(-11*z*z*z*z + 26*z*z*z - 17*z*z + 2*z + 1)/(2*z*(3*z - 1))) + 1)/(z*(5*z - 3)), y = (5*z*z - z - 1)/(2*z*(3*z - 1)) - sqrt(-11*z*z*z*z + 26*z*z*z - 17*z*z + 2*z + 1)/(2*z*(3*z - 1)), z = [2/3,1]
+//curve 2 : x = ]0,1/2], y = (-2 + x + x*x + sqrt(4 - 16*x + 25*x*x - 14*x*x*x + x*x*x*x))/(2*x*(-3 + 4*x)), z = (2 - x + x*x + sqrt(4 - 16*x + 25*x*x - 14*x*x*x + x*x*x*x))/(2*(3 - 5*x + 3*x*x))
 template<typename P>
-std::vector<std::vector<P>> poly00011230(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00011230(const int prec = 10)
 {
 return {
-
+  create_polyline(2./3, 1., P(1./2, 0.,2./3), P(1./2,1./2,1.),
+                  [](double z) { return P(-(-4*z*z + z + (3*z*z - z)*((5*z*z - z - 1)/(2*z*(3*z - 1)) - sqrt(-11*z*z*z*z + 26*z*z*z - 17*z*z + 2*z + 1)/(2*z*(3*z - 1))) + 1)/(z*(5*z - 3)),(5*z*z - z - 1)/(2*z*(3*z - 1)) - sqrt(-11*z*z*z*z + 26*z*z*z - 17*z*z + 2*z + 1)/(2*z*(3*z - 1)),z ); },
+                  prec),
+  create_polyline(limit_value(0.,1.), 1./2, P(0., 1./2,2./3), P(1./2,1./2,1.),
+                  [](double x) { return P(x,(-2 + x + x*x + sqrt(4 - 16*x + 25*x*x - 14*x*x*x + x*x*x*x))/(2*x*(-3 + 4*x)),(2 - x + x*x + sqrt(4 - 16*x + 25*x*x - 14*x*x*x + x*x*x*x))/(2*(3 - 5*x + 3*x*x))); },
+                  prec),  
 
 };
 }
 
 //00011231
-//
-//
+//curve 1 : x = [1/2,1], y = (-1 + 2*x + 3*x*x - sqrt(1 - 8*x + 22*x*x - 20*x*x*x + 9*x*x*x*x))/(2*x*(-1 + 4*x)), z = (1 - 2*x + 3*x*x - sqrt(1 - 8*x + 22*x*x - 20*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x))
+//curve 2 : x = [0,1/3], y = (-2 + 2*x + x*x + sqrt(4 - 20*x + 28*x*x - 12*x*x*x + x*x*x*x))/(2*x*(-3 + 4*x)), z = (2 - 2*x + x*x + sqrt(4 - 20*x + 28*x*x - 12*x*x*x + x*x*x*x))/(2*(3 - 5*x + 2*x*x))
 template<typename P>
-std::vector<std::vector<P>> poly00011231(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00011231(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2, 1., P(1./2, 0.,2./3), P(1.,1./3,1./2),
+                  [](double x) { return P(x,(-1 + 2*x + 3*x*x - sqrt(1 - 8*x + 22*x*x - 20*x*x*x + 9*x*x*x*x))/(2*x*(-1 + 4*x)),(1 - 2*x + 3*x*x - sqrt(1 - 8*x + 22*x*x - 20*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x)) ); },
+                  prec), 
+  create_polyline(0., 1./3, P(0.,1./2,2./3), P(1./3,1.,1./2),
+                  [](double x) { return P(x,(-2 + 2*x + x*x + sqrt(4 - 20*x + 28*x*x - 12*x*x*x + x*x*x*x))/(2*x*(-3 + 4*x)) ,(2 - 2*x + x*x + sqrt(4 - 20*x + 28*x*x - 12*x*x*x + x*x*x*x))/(2*(3 - 5*x + 2*x*x)) ); },
+                  prec), 
 };
 }
 
 //00011232
-//
-//
+//curve 1 : x = [1/2,1[, y = (-1 + 3*x*x - sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(-1 + x)*x), z = (1 + 3*x*x - sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(1 + 2*x*x))
+//curve 2 : x = [0.366025,1./2], y = (-1 + 3*x*x + sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(-1 + x)*x), z = (1 + 3*x*x + sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(1 + 2*x*x))
+//curve 3 : x =  -(-3.*z*z + z + (3*z*z - 3*z)*((2*z + 1)/(6*z) - sqrt(-8*z*z + 4*z + 1)/(6*z)) + 1)/(z*(2*z - 1)), y = (2*z + 1)/(6*z) - sqrt(-8.*z*z + 4*z + 1)/(6*z), z = [2./3,(1+1.73205)/4]
+//curve 4 : x =  [0.366025,1./2], y = -x/(-1 + x), z = (-1 + x + x*x)/(-1 + 2*x*x)
+//curve 5 : x = [1./3,0.366025], y = -x/(-1 + x), z = -(x*x)/(1 - 4*x + 2*x*x)
 template<typename P>
-std::vector<std::vector<P>> poly00011232(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00011232(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,limit_value(1.,-1.), P(1./2, 1.,1./2), P(1.,1./2,1./3),
+                  [](double x) { return P(x,(-1 + 3*x*x - sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(-1 + x)*x),(1 + 3*x*x - sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(1 + 2*x*x)) ); },
+                  prec),
+  create_polyline(0.366025,1./2, P(0.366025,0.57735,(1+1.73205)/4), P(1./2,0.,2./3),
+                  [](double x) { return P(x,(-1 + 3*x*x + sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(-1 + x)*x),(1 + 3*x*x + sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(1 + 2*x*x)) ); },
+                  prec), 
+  create_polyline(2./3,(1+1.73205)/4.,P(0.,1./2,2./3),P(0.366025,0.57735,(1+1.73205)/4),
+                  [](double z) { return P( -(-3.*z*z + z + (3*z*z - 3*z)*((2*z + 1)/(6*z) - sqrt(-8*z*z + 4*z + 1)/(6*z)) + 1)/(z*(2*z - 1)),(2*z + 1)/(6*z) - sqrt(-8.*z*z + 4*z + 1)/(6*z),z); },
+                  prec),
+  create_polyline(0.366025,1./2,P(0.366025,0.57735,(1+1.73205)/4),P(1./2,1.,1./2),
+                  [](double x) { return P( x,-x/(-1 + x),(-1 + x + x*x)/(-1 + 2*x*x)); },
+                  prec),
+  create_polyline(1./3,0.366025,P(1./3,1./2,1.),P(0.366025,0.57735,(1+1.73205)/4),
+                  [](double x) { return P( x,-x/(-1 + x),-(x*x)/(1 - 4*x + 2*x*x)); },
+                  prec),
 };
 }
 
 //00012003
-//
-//
+// curve 1 : x =  [2/3,1], y = (1 + x)/(-1 + 4*x), z = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly00012003(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012003(const int prec = 10)
 {
 return {
-
+  create_polyline(2./3, 1., P(2./3, 1.,1./2), P(1.,2./3,1./2),
+                  [](double x) { return P(x,(1 + x)/(-1 + 4*x) ,1./2); },
+                  prec), 
 
 };
 }
 
 //00012013
-//
-//
+// curve 1 : x = -(-5*z*z + 6*z + (z*z - 3*z)*((2*z*z - 6*z + 1)/(2*z*(z - 3)) + sqrt(4*z*z*z*z - 20*z*z*z + 28*z*z - 12*z + 1)/(2*z*(z - 3))) - 1)/(z*(5*z - 3)), y = (2*z*z - 6*z + 1)/(2*z*(z - 3)) + sqrt(4*z*z*z*z - 20*z*z*z + 28*z*z - 12*z + 1)/(2*z*(z - 3)), z = [2/3,1] 
+// curve 2 : x = (3*z*z - 4*z + 1 - (z*z + z)*(2*z*z - 4*z + 1)/(z*(z + 1)))/(z*(3*z - 1)), y = -(2*z*z - 4*z + 1)/(z*(z + 1)), z = [1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly00012013(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012013(const int prec = 10)
 {
 return {
-
+  create_polyline(2./3, 1., P(0., 1./2,2./3), P(1./2,1./2,1.),
+                  [](double z) { return P(-(-5*z*z + 6*z + (z*z - 3*z)*((2*z*z - 6*z + 1)/(2*z*(z - 3)) + sqrt(4*z*z*z*z - 20*z*z*z + 28*z*z - 12*z + 1)/(2*z*(z - 3))) - 1)/(z*(5*z - 3)),  (2*z*z - 6*z + 1)/(2*z*(z - 3)) + sqrt(4*z*z*z*z - 20*z*z*z + 28*z*z - 12*z + 1)/(2*z*(z - 3)) ,z ); },
+                  prec),
+  create_polyline(1./2, 1., P(1., 2./3,1./2), P(1./2,1./2,1.),
+                  [](double z) { return P( (3*z*z - 4*z + 1 - (z*z + z)*(2*z*z - 4*z + 1)/(z*(z + 1)))/(z*(3*z - 1)), -(2*z*z - 4*z + 1)/(z*(z + 1)),z ); },
+                  prec),            
 
 };
 }
 
 //00012023
-//
-//
+// curve 1 : x = 2*z/(2*z + 1), y = 1/(2*z), z = [1/2,1]
+// curve 2 : x = [1/2,1], y = (x+1)/(3*x), z = 1/2
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00012023(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012023(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2, 1., P(1./2, 1.,1./2),
+                  [](double z) { return P(2*z/(2*z + 1),1/(2*z) ,z ); },
+                  prec),
+  create_polyline(1./2, 1., P(1./2, 1.,1./2),
+                  [](double x) { return P(x,(x+1)/(3*x) ,1./2 ); },
+                  prec),
 
 };
 }
 
 //00012033
-//
-//
+// curve 1 : x = ((z*z - 2*z + 1 - (z*z - 2*z)*(2*z*z - 2*z + 1)/(z*(z - 2)))/(z*(z - 1)) , y = -(2*z*z - 2*z + 1)/(z*(z - 2)), z = [1/3,1/2]
+// curve 2 : x = (z + (z + 2)*((z + 1)/(z + 2) - sqrt(z*z + z - 1)/(z + 2)) - 2)/(z - 1), y = (z + 1)/(z + 2) - sqrt(z*z + z - 1)/(z + 2), z = [2/3,1[
 template<typename P>
-std::vector<std::vector<P>> poly00012033(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012033(const int prec = 10)
 {
 return {
-
-
+ create_polyline(1./3, 1./2, P(1./2, 1.,1./3), P(1., 2./3,1./2),
+                  [](double z) { return P((z*z - 2*z + 1 - (z*z - 2*z)*(2*z*z - 2*z + 1)/(z*(z - 2)))/(z*(z - 1)) ,-(2*z*z - 2*z + 1)/(z*(z - 2)) ,z ); },
+                  prec),
+create_polyline(2./3,limit_value(1.,-1.), P(0., 1./2,2./3), P(1./2, 1./3,1.),
+                  [](double z) { return P((z + (z + 2)*((z + 1)/(z + 2) - sqrt(z*z + z - 1)/(z + 2)) - 2)/(z - 1) ,(z + 1)/(z + 2) - sqrt(z*z + z - 1)/(z + 2) ,z ); },
+                  prec),
 };
 }
 
 //00012113
-//
-//
+// curve 1 : x = -(-8*z*z + 7*z + (4*z*z - 3*z)*(-(z - 1.)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), y = -(z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)), z = [(3.+ 2.23606)/8, 2./3]
+// curve 2 : x = -(-8*z*z + 7*z + (4*z*z - 3*z)*((z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), y = (z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)), z = [(3.+ 2.23606)/8, 2./3]
 template<typename P>
-std::vector<std::vector<P>> poly00012113(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012113(const int prec = 10)
 {
 return {
-
+  create_polyline((3.+ 2.23606)/8, 2./3,P(0.30902,0.30902,(3.+ 2.23606)/8),
+                  [](double z) { return P(-(-8*z*z + 7*z + (4*z*z - 3*z)*(-(z - 1.)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), -(z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)),z); },
+                  prec),
+  create_polyline((3.+ 2.23606)/8, 2./3,P(0.30902,0.30902,(3.+ 2.23606)/8), 
+                  [](double z) { return P( -(-8*z*z + 7*z + (4*z*z - 3*z)*((z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)),(z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)),z); },
+                  prec),
 
 };
 }
 
 //00012123
-//
-//
+// curve 1 : x = (5*z*z - 5*z + 1)/(z*(4*z - 3)), y =  z*(3*z - 2)/(5*z*z - 5*z + 1), z = [1/2,2/3]
+// curve 2 : x = [1/2,2/3], y = (1-x)/x, z = (x-1)/(4*x-3)
 template<typename P>
-std::vector<std::vector<P>> poly00012123(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012123(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2, 2./3, P(1./2, 1.,1./2),
+                  [](double z) { return P((5*z*z - 5*z + 1)/(z*(4*z - 3)), z*(3*z - 2)/(5*z*z - 5*z + 1) ,z ); },
+                  prec),
+  create_polyline(1./2, 2./3, P(1./2, 1.,1./2),
+                  [](double x) { return P(x, (1-x)/x ,(x-1)/(4*x-3) ); },
+                  prec),
 };
 }
 
 //00012130
-//
-//
+// curve 1 : x = -(2 - 3*z)/(3*z - 1), y = 1./2, z = [2/3,1]
+//curve 2 : x = -(-7*z*z + 6*z + (4*z*z - 2*z)*(-sqrt((2*z - 1)*(8*z*z*z - 16*z*z + 10*z - 1))/(4*z*(2*z - 1)) + (4*z - 1)/(4*z)) - 1)/(z*(5*z - 3)), y = -sqrt((2*z - 1)*(8*z*z*z - 16*z*z + 10*z - 1))/(4*z*(2*z - 1)) + (4*z - 1)/(4*z), z = [2/3,1]
 template<typename P>
-std::vector<std::vector<P>> poly00012130(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012130(const int prec = 10)
 {
 return {
-
-
+   create_polyline(2/3., 1., P(1./2, 0.,2./3),P(1./2,1./2,1.),
+                  [](double z) { return P(-(-7*z*z + 6*z + (4*z*z - 2*z)*(-sqrt((2*z - 1)*(8*z*z*z - 16*z*z + 10*z - 1))/(4*z*(2*z - 1)) + (4*z - 1)/(4*z)) - 1)/(z*(5*z - 3)), -sqrt((2*z - 1)*(8*z*z*z - 16*z*z + 10*z - 1))/(4*z*(2*z - 1)) + (4*z - 1)/(4*z),z); },
+                  prec),
+create_polyline(2/3., 1., P(0.,1./2,2./3),P(1./2,1./2,1.),
+                  [](double z) { return P(-(2 - 3*z)/(3*z - 1),1./2,z); },
+                  prec),
 };
 }
 
 //00012131
-//
-//
+// curve 1 : x = [0., (2. - 1.4142)/2], y = 1./2, z = (-2 + x)/(-3 + 2*x)
+// curve 2 : x = [((2. - 1.4142)/2.,1./3], y = 1./2, z = -x/(-1 + 2*x)
+// curve 3 : x = (z - 1)*(2*z*((z*z + z - 1)/(4*z*(z - 1)) - sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1))) - 1)/(z*(2*z - 1)), y = (z*z + z - 1)/(4*z*(z - 1)) - sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1)), z =[1./2, 1./1.4142]
+// curve 4 : x = [(2. - 1.4142)/2, 1./2[, y = (-1 - x + 3*x*x + sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(4*(-1 + x)*x), z = (1. - 5*x + 3*x*x + sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x))
 template<typename P>
-std::vector<std::vector<P>> poly00012131(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012131(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0., (2. - 1.4142)/2, P(0., 1./2,2./3),P((2. - 1.4142)/2,1./2,1./1.4142),
+                  [](double x) { return P(x,1./2,(-2 + x)/(-3 + 2*x)); },
+                  prec),
+  create_polyline((2. - 1.4142)/2.,1./3,P((2. - 1.4142)/2,1./2,1./1.4142), P(1./3, 1./2,1.),
+                  [](double x) { return P(x,1./2,-x/(-1 + 2*x) ); },
+                  prec),
+  create_polyline(1./2, 1./1.4142, P(1./3, 1.,1./2),P((2. - 1.4142)/2,1./2,1./1.4142),
+                  [](double z) { return P((z - 1)*(2*z*((z*z + z - 1)/(4*z*(z - 1)) - sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1))) - 1)/(z*(2*z - 1)),(z*z + z - 1)/(4*z*(z - 1)) - sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1)) ,z); },
+                  prec),
+  create_polyline((2. - 1.4142)/2,limit_value(1./2,-1.),P((2. - 1.4142)/2,1./2,1./1.4142), P(1./2,0. ,2./3),
+                  [](double x) { return P(x,(-1 - x + 3*x*x + sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(4*(-1 + x)*x),(1. - 5*x + 3*x*x + sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x))); },
+                  prec),
 };
 }
 
 //00012132
-//
-//
+// curve 1 : x = -(-7*z*z + 7*z + (3*z*z - 2*z)*(sqrt((z - 1)*(2*z - 1)*(14*z*z - 11*z + 1))/(2*z*(3*z - 2)) + (8*z*z - 7*z + 1)/(2*z*(3*z - 2))) - 1)/(z*(2*z - 3)), y = sqrt((z - 1)*(2*z - 1)*(14*z*z - 11*z + 1))/(2*z*(3*z - 2))+ (8*z*z - 7*z + 1)/(2*z*(3*z - 2)), z = [1/2,2/3[
+// curve 2 : x = -(-5*z + (z - 2)*(-sqrt((z - 1)*(3*z - 2))/(z - 2) + 2*(z - 1)/(z - 2)) + 4)/(2*z - 1), y = -sqrt((z - 1)*(3*z - 2))/(z - 2) + 2*(z - 1)/(z - 2), z  = [1/2,2/3]
 template<typename P>
-std::vector<std::vector<P>> poly00012132(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012132(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2, limit_value(2./3,-1.), P(1./2, 1.,1./2),P(1./2,0.,2./3),
+                  [](double z) { return P(-(-7*z*z + 7*z + (3*z*z - 2*z)*(sqrt((z - 1)*(2*z - 1)*(14*z*z - 11*z + 1))/(2*z*(3*z - 2)) + (8*z*z - 7*z + 1)/(2*z*(3*z - 2))) - 1)/(z*(2*z - 3)),sqrt((z - 1)*(2*z - 1)*(14*z*z - 11*z + 1))/(2*z*(3*z - 2))+ (8*z*z - 7*z + 1)/(2*z*(3*z - 2)),z); },
+                  prec),
+  create_polyline(1./2, (2./3), P(1./2, 1.,1./2),P(0.,1./2,2./3),
+                  [](double z) { return P(-(-5*z + (z - 2)*(-sqrt((z - 1)*(3*z - 2))/(z - 2) + 2*(z - 1)/(z - 2)) + 4)/(2*z - 1),-sqrt((z - 1)*(3*z - 2))/(z - 2) + 2*(z - 1)/(z - 2),z); },
+                  prec),
 };
 }
 
 //00012133
-//
-//
+// curve 1 : x = -(-6*z*z + 6*z + (3*z*z - 2*z)*((z - 1)*sqrt(13*z*z - 10*z + 1)/(2*z*(3*z - 2)) + (7*z*z - 6*z + 1)/(2*z*(3*z - 2))) - 1)/(3*z*(z - 1)), y = (z - 1)*sqrt(13*z*z - 10*z + 1)/(2*z*(3*z - 2)) + (7*z*z - 6*z + 1)/(2*z*(3*z - 2)), z = [2./3,0.70263]
+// curve 2 : x = (2*z*z - 3*z + (3*z*z - 2*z)*(-(z*z - 3*z + 1)/(2*z*(3*z - 2)) - sqrt(13*z*z*z*z - 26*z*z*z + 19*z*z - 6*z + 1)/(2*z*(3*z - 2))) + 1)/(z*(z - 1)), y = -(z*z - 3*z + 1)/(2*z*(3*z - 2)) - sqrt(13*z*z*z*z - 26*z*z*z + 19*z*z - 6*z + 1)/(2*z*(3*z - 2)), z = [1./3,0.70263]
+// curve 3 : x = [0,0.447683], y = (-1 + x)/(-2 + x), z = (2 - 2*x + x*x)/(3 - 3*x + x*x)
+//curve 4 : x = -(-2*z + (5*z - 2)*((5*z - 1)/(2*(5*z - 2)) - sqrt(5*z*z - 2*z + 1)/(2*(5*z - 2))) + 1)/(z - 1), y = (5*z - 1)/(2*(5*z - 2)) - sqrt(5*z*z - 2*z + 1)/(2*(5*z - 2)), z = [0.70263,1]
 template<typename P>
-std::vector<std::vector<P>> poly00012133(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012133(const int prec = 10)
 {
 return {
-
-
+  create_polyline(2./3,0.70263, P(1./2, 0.,2./3),P(0.447683,0.3555809, 0.70263),
+                  [](double z) { return P(-(-6*z*z + 6*z + (3*z*z - 2*z)*((z - 1)*sqrt(13*z*z - 10*z + 1)/(2*z*(3*z - 2)) + (7*z*z - 6*z + 1)/(2*z*(3*z - 2))) - 1)/(3*z*(z - 1)),(z - 1)*sqrt(13*z*z - 10*z + 1)/(2*z*(3*z - 2)) + (7*z*z - 6*z + 1)/(2*z*(3*z - 2)),z); },
+                  prec),
+  create_polyline(1./3, 0.70263, P(1./2, 1.,1./3),P(0.447683,0.3555809, 0.70263),
+                  [](double z) { return P((2*z*z - 3*z + (3*z*z - 2*z)*(-(z*z - 3*z + 1)/(2*z*(3*z - 2)) - sqrt(13*z*z*z*z - 26*z*z*z + 19*z*z - 6*z + 1)/(2*z*(3*z - 2))) + 1)/(z*(z - 1)), -(z*z - 3*z + 1)/(2*z*(3*z - 2)) - sqrt(13*z*z*z*z - 26*z*z*z + 19*z*z - 6*z + 1)/(2*z*(3*z - 2)),z); },
+                  prec),
+  create_polyline(0.,0.447683, P(0.,1./2,2./3),P(0.447683,0.3555809, 0.70263),
+                  [](double x) { return P(x,(-1 + x)/(-2 + x),(2 - 2*x + x*x)/(3 - 3*x + x*x) ); },
+                  prec),
+  create_polyline(0.70263,1.,P(0.447683,0.3555809, 0.70263),P(1./2,1./3,1.),
+                  [](double z) { return P(-(-2*z + (5*z - 2)*((5*z - 1)/(2*(5*z - 2)) - sqrt(5*z*z - 2*z + 1)/(2*(5*z - 2))) + 1)/(z - 1),(5*z - 1)/(2*(5*z - 2)) - sqrt(5*z*z - 2*z + 1)/(2*(5*z - 2)),z); },
+                  prec),      
 };
 }
 
 //00012223
-//
-//
+// curve 1 : x = 1/2y, y = [1/2,1], z = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly00012223(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012223(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2, 1., P(1., 1./2,1./2),
+                  [](double y) { return P( 1/(2*y) ,y,1./2); },
+                  prec),
 
 };
 }
 
 //00012230
-//
-//
+// curve 1 : x = (3*z - 2)/(2*(2*z - 1)), y = 2*(2*z - 1)/(5*z - 2), z =[2/3,1]
 template<typename P>
-std::vector<std::vector<P>> poly00012230(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012230(const int prec = 10)
 {
 return {
-
+  create_polyline(2./3, 1., P(0., 1./2,2./3),
+                  [](double z) { return P((3*z - 2)/(2*(2*z - 1)),2*(2*z - 1)/(5*z - 2),z); },
+                  prec),
 
 };
 }
 
 //00012231
-//
-//
+// curve 1 : x = z*(z - 1)/(z**2 - 3*z + 1), y = (z**2 - 3*z + 1)/(z*(z - 2)), z=[1/2,2/3]
+// curve 2 : x = z/(z + 1), y = (z - 1)*(z + 1)/(z*(z - 2)), z = [1/2,2/3]
+// curve 3 : x = [2/5,1/2], y = 1/(2-x), z = x/(1-x)
+// curve 4 : x = [0,2/5], y = 1/(2-x), z = 2./3
 template<typename P>
-std::vector<std::vector<P>> poly00012231(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012231(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2, 2./3, P(1., 1./3,1./2),
+                  [](double z) { return P(z*(z - 1)/(z*z - 3*z + 1),(z*z - 3*z + 1)/(z*(z - 2)),z); },
+                  prec),
+  create_polyline(1./2, 2./3, P(1./3, 1.,1./2),
+                  [](double z) { return P(z/(z + 1),(z - 1)*(z + 1)/(z*(z - 2)),z); },
+                  prec),
+  create_polyline(2./5,1./2, P(2./5, 5./8,2./3),
+                  [](double x) { return P(x,1/(2-x),x/(1-x)); },
+                 prec),
+  create_polyline(0.,2./5., P(0.,1./2,2./3),
+                  [](double x) { return P(x,1/(2-x),2./3); },
+                 prec),
 
 };
 }
 
 //00012232
-//
-//
+// curve 1 : x = z/(4*z - 1), y = (4*z - 1)/(2*z), z =[1/3,1/2]
+// curve 2 : x = (3*z - 2)/(4*z - 3), y = (4*z - 3)/(2*(z - 1)), z= [1/2,2/3]
 template<typename P>
-std::vector<std::vector<P>> poly00012232(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012232(const int prec = 10)
 {
 return {
-
+  create_polyline(1./3,1./2., P(1.,1./2,1./3),
+                  [](double z) { return P(z/(4*z - 1),(4*z - 1)/(2*z),z); },
+                 prec),
+  create_polyline(1./2,2./3., P(1./2,1.,1./2),
+                  [](double z) { return P((3*z - 2)/(4*z - 3),(4*z - 3)/(2*(z - 1)),z); },
+                 prec),
 
 };
 }
 
 //00012233
-//
-//
+// curve 1 : x = -z/(z-1), y = -(z - 1)/(2*z), z = [1/3,1/2]
+//curve 2 : x = (3*z - 2)/(z - 1), y = 1/2, z = [1/2,2/3]
 template<typename P>
-std::vector<std::vector<P>> poly00012233(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012233(const int prec = 10)
 {
 return {
+  create_polyline(1./3,1./2, P(1./2,1.,1./3),
+                  [](double z) { return P(-z/(z - 1),-(z - 1)/(2*z),z); },
+                 prec),
+  create_polyline(1./2,2./3, P(1.,1./2.,1./2),
+                  [](double z) { return P((3*z - 2)/(z - 1),1./2,z); },
+                 prec),
+  
 
 
 };
 }
 
 //00012330
-//
-//
+// curve 1 : x = [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = (2*(1 - 2*x + x*x))/(3 - 7*x + 5*x*x)
 template<typename P>
-std::vector<std::vector<P>> poly00012330(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012330(const int prec = 10)
 {
 return {
-
+  create_polyline(0.,1./2, P(0.,1./2.,2./3), P(1./2,0.,2./3),
+                  [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),(2*(1 - 2*x + x*x))/(3 - 7*x + 5*x*x)); },
+                 prec),
 
 };
 }
 
 //00012331
-//
-//
+// curve 1 : x = [1/3,1[, y = (-1 + 3*x + 2*x*x - sqrt(1 - 6*x + 13*x*x - 8*x*x*x + 4*x*x*x*x))/(2*x*(-2 + 5*x)), z  = (1 - x + 2*x*x - sqrt(1 - 6*x + 13*x*x - 8*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x)))
+// curve 2 : x = [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = 2./3
 template<typename P>
-std::vector<std::vector<P>> poly00012331(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012331(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,2./3),P(1./2,0.,2./3),
+                  [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),2./3); },
+                  prec),
+  create_polyline(1./3,limit_value(1.,-1.), P(1./3,1.,1./2),P(1.,1./3,1./2),
+                  [](double x) { return P(x,(-1 + 3*x + 2*x*x - sqrt(1 - 6*x + 13*x*x - 8*x*x*x + 4*x*x*x*x))/(2*x*(-2 + 5*x)) ,(1 - x + 2*x*x - sqrt(1 - 6*x + 13*x*x - 8*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x))); },
+                  prec),
 };
 }
 
 //00012332
-//
-//
+//curve 1 : x = -(4 - 6*z)/(2*(z - 1)), y = 1./2, z = [1/2,2/3]
+//curve 2 : x = -(-7*z + 5 + (2*z - 2)*(3*z - 2)/(z - 1))/(2*(z - 1)), y = (3*z - 2)/(z - 1), z = [1/2,2/3]
+//curve 3 : x = -(2*z*((5*z - 1)/(4*z) - sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z), y = (5*z - 1)/(4*z) - sqrt(17*z*z - 10*z + 1)/(4*z), z = [1./2, 2.*1.4142/17 + 5./17] 
+//curve 4 : x = -(2*z*((5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z), y = (5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z), z = [1./2, 2.*1.4142/17 + 5./17] 
 template<typename P>
-std::vector<std::vector<P>> poly00012332(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012332(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,3./5, P(1.,1./2.,1./2),P(1./2,1./2.,3./5),
+                  [](double z) { return P( -(4 - 6*z)/(2*(z - 1)),1./2,z); },
+                 prec),
+  create_polyline(3./5,2./3, P(1./2,1./2.,3./5),
+                  [](double z) { return P( -(4 - 6*z)/(2*(z - 1)),1./2,z); },
+                 prec),
+  create_polyline(1./2,3./5, P(1./2,1.,1./2),P(1./2,1./2.,3./5),
+                  [](double z) { return P(-(-7*z + 5 + (2*z - 2)*(3*z - 2)/(z - 1))/(2*(z - 1)),(3*z - 2)/(z - 1),z); },
+                 prec),
+  create_polyline(3./5,2./3, P(1./2,1./2,3./5),
+                  [](double z) { return P(-(-7*z + 5 + (2*z - 2)*(3*z - 2)/(z - 1))/(2*(z - 1)),(3*z - 2)/(z - 1),z); },
+                 prec),
+  create_polyline(1./2, 2.*1.4142/17 + 5./17, P(1.,1./2.,1./2),
+                  [](double z) { return P( -(2*z*((5*z - 1)/(4*z) - sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) - sqrt(17*z*z - 10*z + 1)/(4*z),z); },
+                 prec),
+  create_polyline(1./2,2.*1.4142/17 + 5./17, P(1./2,1.,1./2),
+                  [](double z) { return P( -(2*z*((5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z),z); },
+                 prec),  
 };
 }
 
 //00012333
-//
-//
+// curve 1 : x = [1/2,1], y = 1./(2*x), z = x/(2.*x*x+1)
+// curve 2 : x= [0,1/2], y = (2*x-1)/(2*x-2), z = (2 - 3*x + 2*x*x)/(3 - 4*x + 2*x*x)
 template<typename P>
-std::vector<std::vector<P>> poly00012333(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012333(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,1.,1./3),
+                  [](double x) { return P(x,1./(2*x),x/(2.*x*x+1)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,2./3),
+                  [](double x) { return P(x,(2*x-1)/(2*x-2),(2 - 3*x + 2*x*x)/(3 - 4*x + 2*x*x)); },
+                 prec),
 };
 }
 
 //00111123
-//
-//
+//curve 1 : x = 1/2, y =[2/3,1], z = (2*y)/(5*y-2)
 template<typename P>
-std::vector<std::vector<P>> poly00111123(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00111123(const int prec = 10)
 {
 return {
-
+  create_polyline(2./3,1., P(1./2,2./3,1.),
+                  [](double y) { return P(1./2,y,(2*y)/(5*y-2)); },
+                 prec),
 
 };
 }
 
 //00111203
-//
-//
+// curve 1 : x = [1/2,1], y = 1./2, z = 1./(2*x)
+// curve 2 : x = [1/2,2/3], y = (2*x-1.)/x, z = 1./(2.-x)
+// curve 3 : x = [1/2,2/3], y = (-x+1.)/x, z = 1./(2.-x)
+// curve 4 : x = [0,2/3], y = 1./2, z= 1./(2.-x)
 template<typename P>
-std::vector<std::vector<P>> poly00111203(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00111203(const int prec = 10)
 {
 return {
-
-
+  create_polyline(2./3,1., P(2./3,1./2,3./4),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./(2*x)); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,1./2,1.),P(2./3,1./2,3./4),
+                 [](double x) { return P(x,1./2,1./(2*x)); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,0.,2./3),P(2./3,1./2,3./4),
+                 [](double x) { return P(x,(2*x-1.)/x,1./(2.-x)); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,1.,2./3),P(2./3,1./2,3./4),
+                 [](double x) { return P(x,(-x+1.)/x,1./(2.-x)); },
+                 prec),
+  create_polyline(0.,2./3, P(0.,1./2,1./2),P(2./3,1./2,3./4),
+                 [](double x) { return P(x,1./2,1./(2.-x)); },
+                 prec),
+  
 };
 }
 
 //00111223
-//
-//
+// curve 1 : x = -(-5*z + (6*z - 5)*(sqrt(-(z - 1)*(2*z - 1))/(6*z - 5) + (4*z - 3)/(6*z - 5)) + 3)/z, y = sqrt(-(z - 1)*(2*z - 1))/(6*z - 5) + (4*z - 3)/(6*z - 5),z = [1/2,2/3]
+// curve 2 : x = [1/2,1], y = x/(3*x-1), z = x/(1 - 2*x + 3*x*x)
 template<typename P>
-std::vector<std::vector<P>> poly00111223(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00111223(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2,2./3, P(1.,1./2,1./2),
+                 [](double z) { return P(-(-5*z + (6*z - 5)*(sqrt(-(z - 1)*(2*z - 1))/(6*z - 5) + (4*z - 3)/(6*z - 5)) + 3)/z,sqrt(-(z - 1)*(2*z - 1))/(6*z - 5) + (4*z - 3)/(6*z - 5),z); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1.,2./3),
+                 [](double x) { return P(x,x/(3*x-1),x/(1 - 2*x + 3*x*x) ); },
+                 prec),
 
 };
 }
 
 //00111230
-//
-//
+// curve 1 : x = -(-2*z + (3*z - 2)*((8*z - 5)/(4*(3*z - 2)) - sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2))) + 1)/z, y = (8*z - 5)/(4*(3*z - 2)) - sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2)), z = ]2/3,1]
+// curve 2 : x = -(-2*z + (3*z - 2)*((4*z - 3)/(4*(3*z - 2)) + sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2))) + 1)/z, y = (4*z - 3)/(4*(3*z - 2)) + sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2)), z = ]2/3,1]
 template<typename P>
-std::vector<std::vector<P>> poly00111230(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00111230(const int prec = 10)
 {
 return {
-
-
+create_polyline(limit_value(2./3,1.),1, P(1./2,0.,2./3),P(1./2,1./2,1.),
+                 [](double z) { return P(-(-2*z + (3*z - 2)*((8*z - 5)/(4*(3*z - 2)) - sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2))) + 1)/z,(8*z - 5)/(4*(3*z - 2)) - sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2)),z ); },
+                 prec),
+create_polyline(limit_value(2./3,1.),1, P(1./2,1.,2./3),P(1./2,1./2,1.),
+                 [](double z) { return P(-(-2*z + (3*z - 2)*((4*z - 3)/(4*(3*z - 2)) + sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2))) + 1)/z,(4*z - 3)/(4*(3*z - 2)) + sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2)),z ); },
+                 prec),
 };
 }
 
 //00111232
-//
-//
+// curve 1 : x = (z - 1)*(-1 + (5*z - 4)/(2*(z - 1)) + sqrt(13*z*z - 20*z + 8)/(2*(z - 1)))/z, y = (5*z - 4)/(2*(z - 1)) + sqrt(13*z*z - 20*z + 8)/(2*(z - 1)), z = [1/3,2/3]
+// curve 2 : x = [1/3,1/2], y = x/(1. - x), z = -x/(1. - 5*x + 3*x*x
 template<typename P>
-std::vector<std::vector<P>> poly00111232(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00111232(const int prec = 10)
 {
 return {
-
+  create_polyline(1./3,2./3, P(1.,1./2,1./3),
+                 [](double z) { return P((z - 1)*(-1 + (5*z - 4)/(2*(z - 1)) + sqrt(13*z*z - 20*z + 8)/(2*(z - 1)))/z, (5*z - 4)/(2*(z - 1)) + sqrt(13*z*z - 20*z + 8)/(2*(z - 1)),z ); },
+                 prec),
+  create_polyline(1./3,1./2, P(1./3,1./2,1.),
+                 [](double x) { return P(x,x/(1. - x),-x/(1. - 5*x + 3*x*x)); },
+                 prec),
 
 };
 }
 
 //00111233
-//
-//
+// curve 1 : x = -(z - 1)/z, y = (3*z - 2)/(4*z - 3), z = [1/2,2/3]
+// curve 2 : x = [1/2,1], y = x/(x+1), z = x/(3*x-1)
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00111233(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00111233(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2,2./3, P(1.,1./2,1./2),
+                 [](double z) { return P(-(z - 1)/z, (3*z - 2)/(4*z - 3),z); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./3,1.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,x/(x+1),x/(3*x-1)); },
+                 prec),
 
 };
 }
 
 //00112233
-//
-//
+// curve 1 : x = [0,1], y = 1/2, z = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly00112233(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00112233(const int prec = 10)
 {
 return {
-
+create_polyline(0.,1., P(0.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
 
 };
 }
 
 //00112323
-//
-//
+// curve 1 : x = (3*z - 1)/(2*z), y = 1./2, z  = [1/3,1/2]
+// curve 2 : x = -(z - 1)/(2*z), y = 1./2, z = [1/3,1/2]
+// curve 3 : x =  1./2, y = (3*z - 2)/(2*(z - 1)), z = [1/2,2/3]
+// curve 4 : x = 1./2, y = -z /(2*(z - 1)), z = [1/2,2/3]
+
 template<typename P>
-std::vector<std::vector<P>> poly00112323(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00112323(const int prec = 10)
 {
 return {
+  create_polyline(1./3,1./2, P(0.,1./2,1./3),P(1./2,1./2,1./2),
+                 [](double z) { return P((3*z - 1)/(2*z),1./2,z); },
+                 prec),
+  create_polyline(1./3,1./2, P(1.,1./2,1./3),P(1./2,1./2,1./2),
+                 [](double z) { return P( -(z - 1)/(2*z),1./2,z); },
+                 prec),
+  create_polyline(1./2,2./3,P(1./2,1./2,1./2),P(1./2,0.,2./3),
+                 [](double z) { return P(1./2,(3*z - 2)/(2*(z - 1)),z); },
+                 prec),
+  create_polyline(1./2,2./3,P(1./2,1./2,1./2),P(1./2,1.,2./3),
+                 [](double z) { return P(1./2,-z /(2*(z - 1)),z); },
+                 prec),
 
 
 };
 }
 
 //00112332
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = y = 1/2, z = [1/2,1]
+// curve 3 : x =  1./2, y = (3*z - 2)/(2*(z - 1)), z = [1/2,2/3]
+// curve 4 : x = 1./2, y = -z /(2*(z - 1)), z = [1/2,2/3]
 template<typename P>
-std::vector<std::vector<P>> poly00112332(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00112332(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2,2./3,P(1./2,1./2,1./2),P(1./2,0.,2./3),
+                 [](double z) { return P(1./2,(3*z - 2)/(2*(z - 1)),z); },
+                 prec),
+  create_polyline(1./2,2./3,P(1./2,1./2,1./2),P(1./2,1.,2./3),
+                 [](double z) { return P(1./2,-z /(2*(z - 1)),z); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
 
 };
 }
 
 //00121203
-//
-//
+// curve 1 : x = (-5*z*z + 7*z + (3*z - 2)*(10*z*z - 11*z + 3)/(5*z - 3) - 2)/(2*z*z), y = (3*z - 2)/(5*z - 3), z = [0,1/2]U[2/3,1]
+// curve 2 : x = ((3*z - 1)*(z*(2*z - 1)/(3*z - 1) - z + 1)/(2*z*z)), y = z/(3*z - 1), z = [1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly00121203(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121203(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(1./2,2./3,0.),P(1./2,1.,1./2),
+                 [](double z) { return P((-5*z*z + 7*z + (3*z - 2)*(10*z*z - 11*z + 3)/(5*z - 3) - 2)/(2*z*z) ,(3*z - 2)/(5*z - 3),z); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,0.,2./3),P(1./2,1./2,1.),
+                 [](double z) { return P((-5*z*z + 7*z + (3*z - 2)*(10*z*z - 11*z + 3)/(5*z - 3) - 2)/(2*z*z) ,(3*z - 2)/(5*z - 3),z); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P(((3*z - 1)*(z*(2*z - 1)/(3*z - 1) - z + 1)/(2*z*z)), z/(3*z - 1),z); },
+                 prec),
 };
 }
 
 //00121223
-//
-//
+// curve 1 : x = ]3/8,1/2], y = (3 - 5*x + sqrt(-3 + 8*x) - x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x)), z = (3 - 5*x - sqrt(-3 + 8*x) + x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x))
+// curve 3 : x = ]3/8,1/2], y = (3 - 5*x - sqrt(-3 + 8*x) + x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x)), z = (3 - 5*x + sqrt(-3 + 8*x) - x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x))
 template<typename P>
-std::vector<std::vector<P>> poly00121223(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121223(const int prec = 10)
 {
 return {
-
+  create_polyline(limit_value(3./8,1.),1./2, P(3./8,4./9,4./9),P(1./2,2./3,0.),
+                 [](double x) { return P(x,(3 - 5*x + sqrt(-3 + 8*x) - x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x)), (3 - 5*x - sqrt(-3 + 8*x) + x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x))); },
+                 prec),
+  create_polyline(limit_value(3./8,1.),1./2, P(3./8,4./9,4./9),P(1./2,0.,2./3),
+                 [](double x) { return P(x,(3 - 5*x - sqrt(-3 + 8*x) + x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x)), (3 - 5*x + sqrt(-3 + 8*x) - x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x))); },
+                 prec),
 
 };
 }
 
 //00121233
-//
-//
+// curve 1 : x = 1./2, y = (3*z - 2)/(4*z - 3), z = [0,2/3]
+// curve 2 : x = 1./2, y = 1-z, z' = 1-(3*z - 2)/(4*z - 3), z = [0,2/3]
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00121233(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121233(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(1./2,2./3,0.),P(1./2,1./2,1./2),
+                 [](double z) { return P(1./2,(3*z - 2)/(4*z - 3),z); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,1./2,1./2),P(1./2,0.,2./3),
+                 [](double z) { return P(1./2,(3*z - 2)/(4*z - 3),z); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,1.,1./3),P(1./2,1./2,1./2),
+                 [](double z) { return P(1./2,1-z,1-(3*z - 2)/(4*z - 3)); },
+                 prec),
+  create_polyline(1./2.,2./3, P(1./2,1./2,1./2),P(1./2,1./3,1.),
+                 [](double z) { return P(1./2,1-z,1-(3*z - 2)/(4*z - 3)); },
+                 prec),
 };
 }
 
 //00121300
-//
-//
+
+// curve 1 : x = -(2*z - 1)*(-2*z + (4*z - 3)*(sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))) + 2)/(z*(z - 1)) , y = sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3)), z = ]0,1/3] 
+// curve 2 : x = -(2*z - 1)*(-2*z + (4*z - 3)*(sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))) + 2)/(z*(z - 1)) , y = 1-( sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))), z' = 1.-z, z = ]0,1/3]
 template<typename P>
-std::vector<std::vector<P>> poly00121300(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121300(const int prec = 10)
 {
 return {
-
+  create_polyline(limit_value(0.,1.),1./3, P(1./2,2./3,0.),P(1./2,1.,1./3),
+                 [](double z) { return P(-(2*z - 1)*(-2*z + (4*z - 3)*(sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))) + 2)/(z*(z - 1)) , sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3)),z); },
+                 prec),
+  create_polyline(limit_value(0.,1.),1./3, P(1./2,1./3,1.),P(1./2,0.,2./3),
+                 [](double z) { return P(-(2*z - 1)*(-2*z + (4*z - 3)*(sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))) + 2)/(z*(z - 1)) ,1-( sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))),1.-z); },
+                 prec),
+            
 
 };
 }
 
 //00121301
-//
-//
+// curve 1 : x = (-4*z*z + 7*z + (sqrt((z - 1)*(z*z*z - 5*z*z + 4*z - 1))/(8*z*z - 10*z + 3) + (z - 1)*(3*z - 1)/((2*z - 1)*(4*z - 3)))*(8*z*z - 10*z + 3) - 2)/z, y =  sqrt((z - 1)*(z*z*z - 5*z*z + 4*z - 1))/(8*z*z - 10*z + 3) + (z - 1)*(3*z - 1)/((2*z - 1)*(4*z - 3)), z = ]0,1/2[
+// curve 2 : x = ]1/2,1], y = (-2 + 6*x - x*x - sqrt(4 - 16*x + 24*x*x - 12*x*x*x + x*x*x*x))/(4*x), z = (-2 + 2*x + x*x + sqrt(4 - 16*x + 24*x*x - 12*x*x*x + x*x*x*x))/(4*x*(-1 + 2*x)) 
 template<typename P>
-std::vector<std::vector<P>> poly00121301(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121301(const int prec = 10)
 {
 return {
-
-
+  create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1.,1./2,1./2),
+                 [](double z) { return P( (-4*z*z + 7*z + (sqrt((z - 1)*(z*z*z - 5*z*z + 4*z - 1))/(8*z*z - 10*z + 3) + (z - 1)*(3*z - 1)/((2*z - 1)*(4*z - 3)))*(8*z*z - 10*z + 3) - 2)/z, sqrt((z - 1)*(z*z*z - 5*z*z + 4*z - 1))/(8*z*z - 10*z + 3) + (z - 1)*(3*z - 1)/((2*z - 1)*(4*z - 3)),z); },
+                 prec),
+  create_polyline(limit_value(1./2,1.),1., P(1./2,0.,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(-2 + 6*x - x*x - sqrt(4 - 16*x + 24*x*x - 12*x*x*x + x*x*x*x))/(4*x),(-2 + 2*x + x*x + sqrt(4 - 16*x + 24*x*x - 12*x*x*x + x*x*x*x))/(4*x*(-1 + 2*x))); },
+                 prec),
 };
 }
 
 //00121302
-//
-//
+// curve 1 : x = (-z*z + 5*z + (sqrt(z*z*z*z + 8*z*z - 12*z + 4)/(2*(2*z*z - 7*z + 3)) + (3*z*z - 6*z + 2)/(2*(z - 3)*(2*z - 1)))*(2*z*z - 7*z + 3) - 2)/(z*(z + 1)), y = sqrt(z*z*z*z + 8*z*z - 12*z + 4)/(2*(2*z*z - 7*z + 3)) + (3*z*z - 6*z + 2)/(2*(z - 3)*(2*z - 1)), z = ]0,1/2[
+// curve 2 : x = (-z + (2*z - 1)*(3*z*z - 2*z)/(6*z*z - 5*z + 1) + 1)/z, y = (3*z*z - 2*z)/(6*z*z - 5*z + 1), z = [2/3,1]
+// curve 3 : x = (-z + z*(2*z - 1)/(z + 1) + 1)/z, y = z/(z+1.), z =[1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly00121302(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121302(const int prec = 10)
 {
 return {
-
-
+  create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1./3,1.,1./2),
+                 [](double z) { return P((-z*z + 5*z + (sqrt(z*z*z*z + 8*z*z - 12*z + 4)/(2*(2*z*z - 7*z + 3)) + (3*z*z - 6*z + 2)/(2*(z - 3)*(2*z - 1)))*(2*z*z - 7*z + 3) - 2)/(z*(z + 1)) ,sqrt(z*z*z*z + 8*z*z - 12*z + 4)/(2*(2*z*z - 7*z + 3)) + (3*z*z - 6*z + 2)/(2*(z - 3)*(2*z - 1)),z); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,0.,2./3),P(1./2,1./2,1.),
+                 [](double z) { return P((-z + (2*z - 1)*(3*z*z - 2*z)/(6*z*z - 5*z + 1) + 1)/z, (3*z*z - 2*z)/(6*z*z - 5*z + 1),z); },
+                 prec),
+  create_polyline(1./2,1., P(1.,1./3.,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P((-z + z*(2*z - 1)/(z + 1) + 1)/z, z/(z+1.),z); },
+                 prec),
 };
 }
 
 //00121320
-//
-//
+// curve 1 : x = -(-7*z*z + 7*z + ((7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 2)/(z*(3*z - 1)), y = (7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)), z = [0,1]
+// curve 2 : x = [1/2,(8.06225-7)/2], y = (2 - 5*x + x*x + sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)), z = (2 - x - x*x - sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))
+// curve 3 : x = [1/2,(8.06225-7)/2], y = (2 - 5*x + x*x - sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)), z = (2 - x - x*x + sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))
 template<typename P>
-std::vector<std::vector<P>> poly00121320(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121320(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1., P(1./2,2./3,0.),P(1./2,1./2,1.),
+                 [](double z) { return P(-(-7*z*z + 7*z + ((7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 2)/(z*(3*z - 1)),(7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)),z); },
+                 prec),
+  create_polyline(1./2,(8.06225-7.)/2, P(1./2,0.,2./3),P((8.06225-7.)/2,1./3,(3.+8.06225)/14),
+                 [](double x) { return P(x,(2 - 5*x + x*x + sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x - sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
+                 prec),
+  create_polyline(1./2,(8.06225-7.)/2, P(1./2,1./2,1.),P((8.06225-7.)/2,1./3,(3.+8.06225)/14),
+                 [](double x) { return P(x,(2 - 5*x + x*x - sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x + sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
+                 prec),
 };
 }
 
 //00121321
-//
-//
+// curve 1 : x = -(-7*z*z + 8*z + (sqrt((z - 1)*(25*z*z*z - 37*z*z + 20*z - 4))/(2*(6*z*z - 10*z + 3)) + (z - 1)*(7*z - 2)/(2*(6*z*z - 10*z + 3)))*(6*z*z - 10*z +3) - 2)/(z*(2*z - 1)), y = sqrt((z - 1)*(25*z*z*z - 37*z*z + 20*z - 4))/(2*(6*z*z - 10*z + 3)) + (z - 1)*(7*z - 2)/(2*(6*z*z - 10*z + 3)), z = ]0,1/2[
+// curve 2 : x =  (-2*z*z + 3*z - 1)/(z*(2*z - 1)), y = (3*z*z - 2*z)/(6*z*z - 6*z + 1), z = ]1/2,2/3]
 template<typename P>
-std::vector<std::vector<P>> poly00121321(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121321(const int prec = 10)
 {
 return {
-
+ create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1.,1./2,1./2),
+                 [](double z) { return P( -(-7*z*z + 8*z + (sqrt((z - 1)*(25*z*z*z - 37*z*z + 20*z - 4))/(2*(6*z*z - 10*z + 3)) + (z - 1)*(7*z - 2)/(2*(6*z*z - 10*z + 3)))*(6*z*z - 10*z +3) - 2)/(z*(2*z - 1)),sqrt((z - 1)*(25*z*z*z - 37*z*z + 20*z - 4))/(2*(6*z*z - 10*z + 3)) + (z - 1)*(7*z - 2)/(2*(6*z*z - 10*z + 3)),z); },
+                 prec),
+  create_polyline(limit_value(1./2.,1.),2./3, P(1.,1./2,1./2),P(1./2,0.,2./3),
+                 [](double z) { return P((-2*z*z + 3*z - 1)/(z*(2*z - 1)),(3*z*z - 2*z)/(6*z*z - 6*z + 1),z); },
+                 prec),
 
 };
 }
 
 //00121323
-//
-//
+// curve 1 : x = -(-3*z + (3*z - 3)*((3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1))) + 2)/z, y = (3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1)), z = ]0,1[
+// curve 2 : x = (z - 1)*(-1 + sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z - 3*z + 1)) + (6*z*z - 6*z + 1)/(2*(z - 1)*(2*z - 1)))/z, y = sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z - 3*z + 1)) + (6*z*z - 6*z + 1)/(2*(z - 1)*(2*z - 1)), z = ]1/2,2/3]
+// curve 3 : x =  (z - 1)*(-1 - sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(2*z*z - 3*z + 1)) + (2*z*z - 2*z + 1)/(2*(z - 1)*(2*z - 1)))/z, y = -sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(2*z*z - 3*z + 1)) + (2*z*z - 2*z + 1)/(2*(z - 1)*(2*z - 1)), z = [1/3,1/2[
+// curve 4 : x = -(-z + (z - 1)*(-z*z/((z - 1)*(2*z - 1)) + z*sqrt(3*z*z - 3*z + 1)/(2*z*z - 3*z + 1)))/(3*z), y = -z*z/((z - 1)*(2*z - 1)) + z*sqrt(3*z*z - 3*z + 1)/(2*z*z - 3*z + 1), z = ]1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly00121323(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121323(const int prec = 10)
 {
 return {
-
-
+  create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1./2,1./2,1./2),
+                 [](double z) { return P(-(-3*z + (3*z - 3)*((3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1))) + 2)/z,(3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1)),z); },
+                 prec),
+  create_polyline(limit_value(1./2,1.),2./3,P(1./2,1./2,1./2), P(1./2,0.,2./3),
+                 [](double z) { return P( (z - 1)*(-1 + sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z - 3*z + 1)) + (6*z*z - 6*z + 1)/(2*(z - 1)*(2*z - 1)))/z,sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z - 3*z + 1)) + (6*z*z - 6*z + 1)/(2*(z - 1)*(2*z - 1)) ,z); },
+                 prec),
+  create_polyline(1./3,limit_value(1./2,-1.), P(1.,1./2,1./3),P(1./2,1./2,1./2),
+                 [](double z) { return P( (z - 1)*(-1 - sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(2*z*z - 3*z + 1)) + (2*z*z - 2*z + 1)/(2*(z - 1)*(2*z - 1)))/z,-sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(2*z*z - 3*z + 1)) + (2*z*z - 2*z + 1)/(2*(z - 1)*(2*z - 1)),z); },
+                 prec),
+  create_polyline(limit_value(1./2,1.),1., P(1./2,1./2,1./2),P(1./3,1./2,1.),
+                 [](double z) { return P( -(-z + (z - 1)*(-z*z/((z - 1)*(2*z - 1)) + z*sqrt(3*z*z - 3*z + 1)/(2*z*z - 3*z + 1)))/(3*z),-z*z/((z - 1)*(2*z - 1)) + z*sqrt(3*z*z - 3*z + 1)/(2*z*z - 3*z + 1) ,z); },
+                 prec),
 };
 }
 
 //00122103
-//
-//
+// curve 1 : x = 1/2, y = [0,1/2] U [2/3,1], z = (3*y-2.)/(5*y-3.)
+// curve 2 : x = [1/2,1], y = (2 - x + sqrt(x)* sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)), z = (-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))
+// curve 3 : x =  [1/2,1], y = (-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x)), z = (2 - x + sqrt(x)* sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x))
+// problem with polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00122103(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122103(const int prec = 10)
 {
 return {
-
+  create_polyline(0.,1./2, P(1./2,0.,2./3),P(1./2,1./2,1.),
+                 [](double y) { return P(1./2,y,(3*y-2.)/(5*y-3.)); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,2./3,0.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,(3*y-2.)/(5*y-3.)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(2 - x + sqrt(x)* sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)),(-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x)),(2 - x + sqrt(x)* sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x))); },
+                 prec),
 
 };
 }
 
 //00122113
-//
-//
+// curve 1 : x = [1/2,1], y = (-4 + 7*x - sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*(-3 + 4*x + x*x)), z = (-2 + 5*x - sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*x*(1 + x))
+// curve 2 : x = [0,1/2], y = (-4 + 7*x + sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*(-3 + 4*x + x*x)), z = (-2 + 5*x + sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*x*(1 + x))
+// curve 3 : x = [2/3,1], y = (-1. + 2*x)/(-1. + 3*x*x), z = (-1. + 2*x)/(x*(-1. + 3*x))
 template<typename P>
-std::vector<std::vector<P>> poly00122113(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122113(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,2./3,0.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(-4 + 7*x - sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*(-3. + 4*x + x*x)),(-2. + 5*x - sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*x*(1 + x))); },
+                 prec),
+  create_polyline(0.000001,1./2, P(0.,1./3,1./2),P(1./2,0.,2./3),
+                 [](double x) { return P(x,(-4. + 7*x + sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*(-3 + 4*x + x*x)),(-2. + 5*x + sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*x*(1 + x))); },
+                 prec),
+  create_polyline(2./3,1.,P(2./3,1.,1./2), P(1.,1./2,1./2),
+                 [](double x) { return P(x,(-1. + 2*x)/(-1. + 3*x*x),(-1. + 2*x)/(x*(-1. + 3*x))); },
+                 prec),
 };
 }
 
 //00122133
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = 1/ 2, y = (3*z - 2)/(4*z - 3), z = [0,2/3]
+// curve 3 : x = 1/2, y = [1/3,1], z =  y/(4.*y-1)
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00122133(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122133(const int prec = 10)
 {
 return {
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(0.,1./2,P(1./2,2./3,0.),P(1./2,1./2,1./2),
+                 [](double z) { return P(1./2,(3*z - 2)/(4*z - 3),z); },
+                 prec),
+  create_polyline(1./2,2./3,P(1./2,1./2,1./2),P(1./2,0.,2./3),
+                 [](double z) { return P(1./2,(3*z - 2)/(4*z - 3),z); },
+                 prec), 
+  create_polyline(1./2,1.,P(1./2,1./2,1./2),P(1./2,1.,1./3),
+                 [](double y) { return P(1./2,y,y/(4.*y-1)); },
+                 prec),
+  create_polyline(1./3,1./2,P(1./2,1./3,1.),P(1./2,1./2,1./2),
+                 [](double y) { return P(1./2,y,y/(4.*y-1)); },
+                 prec),                
 
 };
 }
 
 //00122300
-//
-//
+// curve 1 : x = 1/2, y = [2/3,1], z = (3*y-2)/(5*y-2)
+// curve 2 : x = 1/2, y' = 1-y, z = 1-(3*y-2)/(5*y-2), y'= [2/3,1]  
 template<typename P>
-std::vector<std::vector<P>> poly00122300(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122300(const int prec = 10)
 {
 return {
-
+create_polyline(2./3,1.,P(1./2,2./3,0.),P(1./2,1.,1./3),
+                 [](double y) { return P(1./2,y,(3*y-2)/(5*y-2)); },
+                 prec),
+create_polyline(2./3,1.,P(1./2,1./3,1.),P(1./2,0.,2./3),
+                 [](double y) { return P(1./2,1-y,1-(3*y-2)/(5*y-2)); },
+                 prec),
 
 };
 }
 
 //00122301
-//
-//
+// curve 1 : x = -(-5*z*z + 5*z + (sqrt((2*z - 1)*(14*z*z*z - 25*z*z + 16*z - 4))/(2*(6*z*z - 7*z + 3)) + (2*z*z - 3*z + 2)/(2*(6*z*z - 7*z + 3)))*(6*z*z - 7*z + 3) - 2)/(z*(3*z - 1)), y = sqrt((2*z - 1)*(14*z*z*z - 25*z*z + 16*z - 4))/(2*(6*z*z - 7*z + 3)) + (2*z*z - 3*z + 2)/(2*(6*z*z - 7*z + 3)), z = ]0,1/2]
+// curve 2 : x = (-z + (2*z - 1)*(sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(6*z*z - 5*z + 1)) + (6*z*z - 6*z + 1)/(2*(2*z - 1)*(3*z - 1))) + 1)/z, y = sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(6*z*z - 5*z + 1)) + (6*z*z - 6*z + 1)/(2*(2*z - 1)*(3*z - 1)), z = ]1/2,1] 
+// curve 3 : x = (-z + (2*z - 1)*(-sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1))) + 1)/z, y = -sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1)), z = [2/3,1]
 template<typename P>
-std::vector<std::vector<P>> poly00122301(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122301(const int prec = 10)
 {
 return {
-
-
+create_polyline(limit_value(0.,1.),1./2,P(1./2,2./3,0.),P(1.,1./2,1./2),
+                 [](double z) { return P(-(-5*z*z + 5*z + (sqrt((2*z - 1)*(14*z*z*z - 25*z*z + 16*z - 4))/(2*(6*z*z - 7*z + 3)) + (2*z*z - 3*z + 2)/(2*(6*z*z - 7*z + 3)))*(6*z*z - 7*z + 3) - 2)/(z*(3*z - 1)),sqrt((2*z - 1)*(14*z*z*z - 25*z*z + 16*z - 4))/(2*(6*z*z - 7*z + 3)) + (2*z*z - 3*z + 2)/(2*(6*z*z - 7*z + 3)) ,z); },
+                 prec),
+create_polyline(limit_value(1./2,1.),1.,P(1.,1./2,1./2),P(1.,1./2,1.),
+                 [](double z) { return P((-z + (2*z - 1)*(sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(6*z*z - 5*z + 1)) + (6*z*z - 6*z + 1)/(2*(2*z - 1)*(3*z - 1))) + 1)/z,sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(6*z*z - 5*z + 1)) + (6*z*z - 6*z + 1)/(2*(2*z - 1)*(3*z - 1)),z); },
+                 prec),
+create_polyline(2./3,1.,P(1./2,0.,2./3),P(1./2,1./2,1.),
+                 [](double z) { return P( (-z + (2*z - 1)*(-sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1))) + 1)/z, -sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1)) ,z); },
+                 prec),
 };
 }
 
 //00122302
-//
-//
+// curve 1 : x = (2*z*z - 3*z + (4*z - 3)*(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))) + 2)/(z*(2*z - 1)), y = -sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3)), z = ]0,1/2]
+// curve 2 : x = 1-z, y = 1-(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))), z' = 1-((2*z*z - 3*z + (4*z - 3)*(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))) + 2)/(z*(2*z - 1))), z = ]0,1/2]
 template<typename P>
-std::vector<std::vector<P>> poly00122302(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122302(const int prec = 10)
 {
 return {
-
+  create_polyline(limit_value(0.,1.),1./2, P(1./2,2./3,0.),P(1./3,1.,1./2),
+                 [](double z) { return P((2*z*z - 3*z + (4*z - 3)*(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))) + 2)/(z*(2*z - 1)),-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3)),z); },
+                 prec),
+  create_polyline(limit_value(0.,1.),1./2, P(1.,1./3,1./2),P(1./2,0.,2./3),
+                 [](double z) { return P(1-z,1-(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))),1-((2*z*z - 3*z + (4*z - 3)*(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))) + 2)/(z*(2*z - 1)))); },
+                 prec),
 
 };
 }
 
 //00122313
-//
-//
+// curve 1 : x =  (-1 + (3*z*z - 2*z)/(z - 1))*(z - 1)/z, y = (3*z*z - 2*z)/(z - 1), z = [1/3,2/3]
+// curve 2 : x = [1/3,2/3], y = (-1 + 3*x - 3*x*x)/(-1 + x), z = (1 - 3*x + 3*x*x)/x)
+// curve 3 : x = -(3*y*y-4*y+1)/y,y = [1/3,2/3], z = (3*y*y-2*y)/(y-1)
 template<typename P>
-std::vector<std::vector<P>> poly00122313(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122313(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./3,1./2, P(1.,1./2,1./3), P(1./2,1./2,1./2),
+                 [](double z) { return P( (-1 + (3*z*z - 2*z)/(z - 1))*(z - 1)/z, (3*z*z - 2*z)/(z - 1),z); },
+                 prec),
+  create_polyline(1./2,2./3,  P(1./2,1./2,1./2),P(1./2,0.,2./3),
+                 [](double z) { return P( (-1 + (3*z*z - 2*z)/(z - 1))*(z - 1)/z, (3*z*z - 2*z)/(z - 1),z); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,1./2,1./2),P(2./3,1.,1./2),
+                [](double x) { return P( x,(-1 + 3*x - 3*x*x)/(-1 + x),(1 - 3*x + 3*x*x)/x); },
+                 prec),
+  create_polyline(1./3,1./2, P(1./3,1./2,1.), P(1./2,1./2,1./2),
+                 [](double x) { return P( x,(-1 + 3*x - 3*x*x)/(-1 + x),(1 - 3*x + 3*x*x)/x); },
+                 prec),
+  create_polyline(1./3,1./2, P(0.,1./3,1./2), P(1./2,1./2,1./2),
+                 [](double y) { return P(-(3*y*y-4*y+1)/y ,y,(3*y*y-2*y)/(y-1)); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,1./2,1./2), P(1./2,2./3,0.),
+                 [](double y) { return P(-(3*y*y-4*y+1)/y ,y,(3*y*y-2*y)/(y-1)); },
+                 prec),
 };
 }
 
 //00122331
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = -(-4*z*z + 5*z + (-(2*z - 1)*sqrt(5*z*z - 8*z + 4)/(2*(4*z*z - 6*z + 3)) + (2*z*z - 3*z + 2)/(2*(4*z*z - 6*z + 3)))*(4*z*z - 6*z + 3) - 2)/(z*(2*z - 1)), y = -(2*z - 1)*sqrt(5*z*z - 8*z + 4)/(2*(4*z*z - 6*z + 3)) + (2*z*z - 3*z + 2)/(2*(4*z*z - 6*z + 3)),z = ]0,1/2[
+// curve 3 : x = -(-4*z*z + z + (sqrt(-(z - 1)*(3*z + 1))*(2*z - 1)/(2*(4*z*z - 2*z - 1)) + (6*z*z - 3*z - 1)/(2*(4*z*z - 2*z - 1)))*(4*z*z - 2*z - 1) + 1)/(z*(2*z - 1)), y = sqrt(-(z - 1)*(3*z + 1))*(2*z - 1)/(2*(4*z*z - 2*z - 1)) + (6*z*z - 3*z - 1)/(2*(4*z*z - 2*z - 1)),z = ]1/2,2/3]
 template<typename P>
-std::vector<std::vector<P>> poly00122331(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122331(const int prec = 10)
 {
 return {
-
+  create_polyline(0.,1./3, P(0.,1./2,1./2),P(1./3,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./3,2./3, P(1./3,1./2,1./2),P(2./3,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(2./3,1., P(2./3,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(2./3,1./2,1./2),
+                 [](double z) { return P(-(-4*z*z + 5*z + (-(2*z - 1)*sqrt(5*z*z - 8*z + 4)/(2*(4*z*z - 6*z + 3)) + (2*z*z - 3*z + 2)/(2*(4*z*z - 6*z + 3)))*(4*z*z - 6*z + 3) - 2)/(z*(2*z - 1)),-(2*z - 1)*sqrt(5*z*z - 8*z + 4)/(2*(4*z*z - 6*z + 3)) + (2*z*z - 3*z + 2)/(2*(4*z*z - 6*z + 3)),z); },
+                 prec),
+  create_polyline(limit_value(1./2,1.),2./3, P(1./3,1./2,1./2),P(1./2,0.,2./3),
+                 [](double z) { return P( -(-4*z*z + z + (sqrt(-(z - 1)*(3*z + 1))*(2*z - 1)/(2*(4*z*z - 2*z - 1)) + (6*z*z - 3*z - 1)/(2*(4*z*z - 2*z - 1)))*(4*z*z - 2*z - 1) + 1)/(z*(2*z - 1)),sqrt(-(z - 1)*(3*z + 1))*(2*z - 1)/(2*(4*z*z - 2*z - 1)) + (6*z*z - 3*z - 1)/(2*(4*z*z - 2*z - 1)),z); },
+                 prec),
 
 };
 }
 
 //01101023
-//
-//
+// curve 1 : x = 1./2, y = 1./(2*z), z = [1/2,1]
+// curve 2 : x = 1/2, y = [0,1/2], z = (-1 + 2*y)/(-2 + 3*y)
 template<typename P>
-std::vector<std::vector<P>> poly01101023(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01101023(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./(2*z),z); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,1./2),P(1./2,1./2,0.),
+                 [](double y) { return P(1./2,y,(-1 + 2*y)/(-2 + 3*y)); },
+                 prec),
 
 };
 }
 
 //01101223
-//
-//
+// curve 1 : x = [1/2,1], y = x/(-1 + 3*x), z = (-1 + 3*x - x*x)/(-1 + 3*x)
 template<typename P>
-std::vector<std::vector<P>> poly01101223(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01101223(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1, P(1./2,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,x/(-1 + 3*x),(-1 + 3*x - x*x)/(-1 + 3*x)); },
+                 prec),
 };
 }
 
 //01101231
-//
-//
+// no curves
 template<typename P>
 std::vector<std::vector<P>> poly01101231(const int /*prec*/ = 10)
 {
@@ -1391,22 +1816,39 @@ return {
 }
 
 //01102332
-//
-//
+// curve 1 : x =[0,1], y = z = 1/2
+// curve 2 : y =[0,1], x = z = 1/2
+// curve 3 : z =[0,1], y = x = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly01102332(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01102332(const int prec = 10)
 {
 return {
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,1./2),P(1./2,1./2,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,1./2,0.),P(1./2,1./2,1./2),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
 
 };
 }
 
 //01121223
-//
-//
+// no curves
 template<typename P>
-std::vector<std::vector<P>> poly01121223(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01121223(const int prec = 10)
 {
 return {
 
@@ -1415,503 +1857,1106 @@ return {
 }
 
 //01121230
-//
-//
+// curve 1 : x = -(-7*z*z + 8*z + (-sqrt(-(2*z - 1)*(4*z*z*z - 12*z*z + 10*z - 3))/(2*(9*z*z - 10*z + 3)) + (10*z*z - 10*z + 3)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 3)/(6*z*z - 7*z + 3), y = -sqrt(-(2*z - 1)*(4*z*z*z - 12*z*z + 10*z - 3))/(2*(9*z*z - 10*z + 3)) + (10*z*z - 10*z + 3)/(2*(9*z*z - 10*z + 3)), z = [1/2,1]
+// curve 2 : x =  -(-5*z*z + 5*z + (sqrt(-z*(8*z*z*z - 20*z*z + 15*z - 4))/(2*(3*z*z - 2*z + 1)) + (2*z*z - 3*z + 2)/(2*(3*z*z - 2*z + 1)))*(3*z*z - 2*z + 1) - 2)/((2*z - 1)*(3*z - 1)), y = sqrt(-z*(8*z*z*z - 20*z*z + 15*z - 4))/(2*(3*z*z - 2*z + 1)) + (2*z*z - 3*z + 2)/(2*(3*z*z - 2*z + 1)), z = ]1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly01121230(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01121230(const int prec = 10)
 {
 return {
-
-
+ create_polyline(1./2,1., P(1./2,1.,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P(-(-7*z*z + 8*z + (-sqrt(-(2*z - 1)*(4*z*z*z - 12*z*z + 10*z - 3))/(2*(9*z*z - 10*z + 3)) + (10*z*z - 10*z + 3)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 3)/(6*z*z - 7*z + 3),-sqrt(-(2*z - 1)*(4*z*z*z - 12*z*z + 10*z - 3))/(2*(9*z*z - 10*z + 3)) + (10*z*z - 10*z + 3)/(2*(9*z*z - 10*z + 3)) ,z); },
+                 prec),
+ create_polyline(limit_value(1./2,1.),1., P(1./2,1.,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P( -(-5*z*z + 5*z + (sqrt(-z*(8*z*z*z - 20*z*z + 15*z - 4))/(2*(3*z*z - 2*z + 1)) + (2*z*z - 3*z + 2)/(2*(3*z*z - 2*z + 1)))*(3*z*z - 2*z + 1) - 2)/((2*z - 1)*(3*z - 1)), sqrt(-z*(8*z*z*z - 20*z*z + 15*z - 4))/(2*(3*z*z - 2*z + 1)) + (2*z*z - 3*z + 2)/(2*(3*z*z - 2*z + 1)),z); },
+                 prec),
 };
 }
 
 //01122330
-//
-//
+// curve 1 : x =[0,1], y = z = 1/2
+// curve 2 : y =[0,1], x = z = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly01122330(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01122330(const int prec = 10)
 {
 return {
-
+ create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,1./2),P(1./2,1./2,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
 
 };
 }
 
 //01123023
-//
-//
+// curve 1 : x =[0,1], y = z = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly01123023(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01123023(const int prec = 10)
 {
 return {
-
+create_polyline(0.,1., P(0.,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
 
 };
 }
 
 //01233210
-//
-//
+// curve 1 : x =[0,1], y = z = 1/2
+// curve 2 : y =[0,1], x = z = 1/2
+// curve 3 : z =[0,1], y = x = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly01233210(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01233210(const int prec = 10)
 {
 return {
-
+ create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,1./2),P(1./2,1./2,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,1./2,0.),P(1./2,1./2,1./2),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
 
 };
 }
 
 
 //00001234
-//
-//
+// curve 1 :  x = 1/2, y = [0,1/2], z = 2/(3-y)
+// curve 2 : x = 1/2, y = [1/2,1], z = 1/(2+y)
+// curve 3 :  x = [0,1/2], y = 1/2, z = 2/(3-x)
+// curve 4 : x = [1/2,1], y = 1/2, z = 1/(2+x)
+// curve 5 : x = y = 1/2, z = [4/5,1]  
 template<typename P>
-std::vector<std::vector<P>> poly00001234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00001234(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(1./2,0.,2./3),P(1./2,1./2,4./5),
+                 [](double y) { return P(1./2,y,2./(3-y)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,4./5),P(1./2,1.,2./3),
+                 [](double y) { return P(1./2,y,2./(2+y)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,2./3),P(1./2,1./2,4./5),
+                 [](double x) { return P(x,1./2,2./(3-x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,4./5),P(1.,1./2,2./3),
+                 [](double x) { return P(x,1./2,2./(2+x)); },
+                 prec),
+  create_polyline(4./5,1., P(1./2,1./2,4./5),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),                 
 };
 }
 
 //00010234
-//
-//
+// curve 1 : x = [1/2,1], y = (2 - x)/(1 + x), z = 1/2
+// curve 2 : x = (2 - z)/(1 + z), y = 1/2, z = [1/2,1]
+// curve 3 : x = 1/2, y = [1/2,1], z = (2 - y)/(1 + y)
 template<typename P>
-std::vector<std::vector<P>> poly00010234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00010234(const int prec = 10)
 {
 return {
-
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(2 - x)/(1 + x),1./2); },
+                 prec), 
+  create_polyline(1./2,1., P(1.,1./2,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P((2 - z)/(1 + z),1./2,z); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,(2 - y)/(1 + y)); },
+                 prec), 
 
 };
 }
 
 //00011234
-//
-//
+// curve 1 : x = ]0,1/2], y = (2 + x - sqrt(4 - 8*x + x*x))/(6*x), z = (2 - x + x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*(3 - 4*x + 2*x*x))
+// curve 2 : x = 1/2, y = [2/3,1], z = 1-y/2
+// curve 3 : x = 1/2, y = [1/2,2/3], z = y/(-1 + 3*y)
+// curve 4 : x = [2/3,1], y = 1./2, z = 1.-x/2
+// curve 5 : x = [1/2,2/3], y = 1./2, z = x/(-1 + 3*x)
+// curve 6 : x = [1/2,2/3], y = (-1 + 2*x)/(x*(-1 + 3*x)), z = x/(1 - 2*x + 3*x*x)
+// curve 7 : x = [1/2,2/3], y = (1 - x)/x, z = x
+// curve 8 : x = [1/2,1], y = 1/(1+x),1/(1+x)
 template<typename P>
-std::vector<std::vector<P>> poly00011234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00011234(const int prec = 10)
 {
 return {
-
-
+  create_polyline(limit_value(0,1),1./2, P(0.,1./2,2./3),P(1./2,2./3,2./3),
+                 [](double x) { return P(x,(2 + x - sqrt(4 - 8*x + x*x))/(6*x),(2 - x + x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*(3 - 4*x + 2*x*x))); },
+                 prec), 
+  create_polyline(2./3,1.,P(1./2,2./3,2./3),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1.-y/2); },
+                 prec), 
+  create_polyline(1./2,2./3,P(1./2,1./2,1.),P(1./2,2./3,2./3),
+                 [](double y) { return P(1./2,y,y/(-1 + 3*y)); },
+                 prec),
+  create_polyline(2./3,1.,P(2./3,1./2,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1.-x/2); },
+                 prec), 
+  create_polyline(1./2,2./3,P(1./2,1./2,1.),P(2./3,1./2,2./3),
+                 [](double x) { return P(x,1./2,x/(-1 + 3*x)); },
+                 prec), 
+  create_polyline(1./2,2./3,P(1./2,0.,2./3),P(2./3,1./2,2./3),
+                 [](double x) { return P(x,(-1 + 2*x)/(x*(-1 + 3*x)),x/(1 - 2*x + 3*x*x)); },
+                 prec), 
+  create_polyline(1./2,(2.23606-1)/2,P(1./2,1.,1./2),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+                 [](double x) { return P(x,(1 - x)/x,x); },
+                 prec),
+    create_polyline((2.23606-1)/2,2./3,P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),P(2./3,1./2,2./3),
+                 [](double x) { return P(x,(1 - x)/x,x); },
+                 prec),  
+  create_polyline(1./2,(2.23606-1)/2,P(1./2,2./3,2./3),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+                 [](double x) { return P(x,1/(1+x),1/(1+x)); },
+                 prec),
+  create_polyline((2.23606-1)/2,1.,P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1/(1+x),1/(1+x)); },
+                 prec),  
 };
 }
 
 //00012034
-//
-//
+// curve 1 : x = [1/2,1], y = (1+ x)/(3*x), z = 1/2
+// curve 2 : x = 1/2, y = [1/2,1], z = (2 - y)/(1 + y)
+// curve 3 : x =[0,1/2], y = 1/2, z = (x-2)/(3*x-3)
 template<typename P>
-std::vector<std::vector<P>> poly00012034(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012034(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,2./3,1./2),
+                 [](double x) { return P(x,(1+ x)/(3*x),1./2); },
+                 prec), 
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,(2 - y)/(1 + y)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,2./3),P(1./2,1./2,1.),
+                 [](double x) { return P(x,1./2,(x-2)/(3*x-3)); },
+                 prec), 
 };
 }
 
 //00012134
-//
-//
+// curve 1 : x = [1-1./1.73205,1./2], y = (-1 + 2*x)/(x*(-2 + 3*x)), z = -x/(1 - 5*x + 3*x*x)
+// curve 2 : x = [(0.,1-1./1.73205], y = 1/2, z = (-2 + x)/(-3 + 2*x)
+// curve 3 : x = 1/2, y = [2/3,1], z = 1-y/2
+// curve 4 : x = -(z - 1)*(3*z - 1)/z, y = z/(3*z - 1), z = [1/2,2/3]
+// curve 5 : x = [1-1./1.73205,1./2], y = (-1 - x*x + sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-2 + x)*x), z = (-1 - 2*x + x*x - sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-1 - 2*x + 2*x*x))
+// curve 6 : x = 1/2, y = [1/2,2/3], z = y/(-1 + 3*y)
+// curve 7 : x = [1-1./1.73205,1./2], y = 1/2, z = x/(1-x)
 template<typename P>
-std::vector<std::vector<P>> poly00012134(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012134(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1-1./1.73205,1./2, P(1-1./1.73205,1./2,1.73205-1.),P(1./2,0.,2./3),
+                 [](double x) { return P(x,(-1 + 2*x)/(x*(-2 + 3*x)),-x/(1 - 5*x + 3*x*x)); },
+                 prec), 
+  create_polyline(0.,1-1./1.73205, P(0.,1./2,2./3),P(1-1./1.73205,1./2,1.73205-1.),
+                 [](double x) { return P(x,1./2,(-2 + x)/(-3 + 2*x)); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,2./3,2./3),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1.-y/2); },
+                 prec), 
+  create_polyline(1./2,2./3, P(1./2,1.,1./2),P(1./2,2./3,2./3),
+                 [](double z) { return P( -(z - 1)*(3*z - 1)/z,z/(3*z - 1),z); },
+                 prec),
+  create_polyline(1-1./1.73205,1./2,P(1-1./1.73205,1./2,1.73205-1.),P(1./2,2./3,2./3),
+                 [](double x) { return P(x,(-1 - x*x + sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-2 + x)*x),(-1 - 2*x + x*x - sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-1 - 2*x + 2*x*x)) ); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,1./2,1.),P(1./2,2./3,2./3),
+                 [](double y) { return P( 1./2,y,y/(-1 + 3*y)); },
+                 prec),
+  create_polyline(1-1./1.73205,1./2, P(1-1./1.73205,1./2,1.73205-1.),P(1./2,1./2,1.),
+                 [](double x) { return P(x ,1./2,x/(1-x)); },
+                 prec),
 };
 }
 
 //00012234
-//
-//
+// curve 1 : x = [1/2,1], y = 1/(2x), z = 1/2
+// curve 2 : x = [1/2,1], y = z = 1./(1+x)
+// curve 3 : x = 1/2, y = [2/3,1], z = 1-y/2
+// curve 4 : x = [0,1/2], y = 1/(2-x), z = 2/3
+// curve 5 : x = 1/2, y = 2/3, z  =[2/3,1]
 template<typename P>
-std::vector<std::vector<P>> poly00012234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012234(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x ,1./(2*x),1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,2./3,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x ,1./(1+x),1./(1+x)); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,2./3,2./3),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1.-y/2); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,2./3),P(1./2,2./3,2./3),
+                 [](double x) { return P(x,1./(2-x),2./3); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,2./3,2./3),P(1./2,2./3,1.),
+                 [](double z) { return P(1./2,2./3,z); },
+                 prec),
 };
 }
 
 //00012334
-//
-//
+// curve 1 : x = [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = 2./3
+// curve 2 :  x = [1/2,1], y = x/(-1 + 3*x), z = (-1 + 3*x - x*x)/(-1 + 3*x)
+// curve 3 : x = [1/2,1], y = 1/2x, z = 1/2
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00012334(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012334(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,2./3),P(1./2,0.,2./3),
+                 [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),2./3); },
+                 prec),
+  create_polyline(1./2,1., P(1/2.,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x, x/(-1 + 3*x),(-1 + 3*x - x*x)/(-1 + 3*x)); },
+                 prec),
+  create_polyline(1./2,1., P(1/2.,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./(2*x),1./2); },
+                 prec),
 };
 }
 
 //00012340
-//
-//
+// curve 1 : x = [0,1/2], y = 1/2, z = (-2 + x)/(3*(-1 + x))
+// curve 2 : x = [0,1/2], y = [0,1/2], z = (-2 + y)/(3*(-1 + y))
 template<typename P>
-std::vector<std::vector<P>> poly00012340(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012340(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,2./3),P(1./2,1./2,1.),
+                 [](double x) { return P(x,1./2,(-2 + x)/(3*(-1 + x))); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,2./3),P(1./2,1./2,1.),
+                 [](double y) { return P(1./2,y,(-2 + y)/(3*(-1 + y))); },
+                 prec),
 };
 }
 
 //00012341
-//
-//
+// curve 1 : x = 1/2, y = [0.,1-1./1.73205], z = (-2 + y)/(-3 + 2*y)
+// curve 2 : x =  [0.,1-1./1.73205], y = 1/2, z = (-2 + x)/(-3 + 2*x)
+// curve 3 : x = 1/2, y = [1-1./1.73205,1./2], z = -y/(-1 + y)
+// curve 4 : x = [1-1./1.73205,1./2], y = 1/2, z = -x/(-1 + x)
+// curve 5 : x = [1-1./1.73205,1./2], y = (-1 - 2*x + 2*x*x + sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-2 + x)*x), z = (1 - 4*x + 2*x*x + sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x))
+// curve 6 : x = [1/2,1], y = (1 + x - sqrt(1 - x + x*x))/(3*x), z = (x - sqrt(1 - x + x*x))/(-1 + x)
+// curve 7 : x = (1 + y - sqrt(1 - y + y*y))/(3*y), y = [1/2,1], z = (y - sqrt(1 - y + y*y))/(-1 + y)
 template<typename P>
-std::vector<std::vector<P>> poly00012341(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012341(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1-1./1.73205, P(1./2,0.,2./3),P(1./2,1-1./1.73205,1.73205-1),
+                 [](double y) { return P(1./2,y,(-2 + y)/(-3 + 2*y)); },
+                 prec),
+  create_polyline(0.,1-1./1.73205, P(0.,1./2,2./3),P(1-1./1.73205,1./2,1.73205-1),
+                 [](double x) { return P(x,1./2,(-2 + x)/(-3 + 2*x)); },
+                 prec),
+  create_polyline(1-1./1.73205,1./2,P(1./2,1-1./1.73205,1.73205-1), P(1./2,1./2,1.),
+                 [](double y) { return P(1./2,y,-y/(-1 + y)); },
+                 prec),
+  create_polyline(1-1./1.73205,1./2,P(1-1./1.73205,1./2,1.73205-1), P(1./2,1./2,1.),
+                 [](double x) { return P(x,1./2,-x/(-1 + x)); },
+                 prec),
+  create_polyline(1-1./1.73205,1./2,P(1-1./1.73205,1./2,1.73205-1),P(1./2,1-1./1.73205,1.73205-1),
+                 [](double x) { return P(x,(-1 - 2*x + 2*x*x + sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-2 + x)*x),(1 - 4*x + 2*x*x + sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x))); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1-1./1.73205,1.73205-1), P(1.,1./3,1./2) , 
+                 [](double x) { return P(x,(1 + x - sqrt(1 - x + x*x))/(3*x),(x - sqrt(1 - x + x*x))/(-1 + x)); },
+                 prec),
+  create_polyline(1./2,1.,P(1-1./1.73205,1./2,1.73205-1),P(1./3,1.,1./2),
+                 [](double y) { return P((1 + y - sqrt(1 - y + y*y))/(3*y),y,(y - sqrt(1 - y + y*y))/(-1 + y)); },
+                 prec),
 };
 }
 
 //00012342
-//
-//
+// curve 1 : x = [1/2,1], y = 1/(2*x), z = -x/(1 - 5*x + 2*x*x)
+// curve 2 : x = [1/2,1], y = (-1 + 2*x)/(-1 + 3*x), z = (1 - 4*x + 2*x*x)/(1 - 4*x + x*x)
+// curve 3 : x = [0,1/2], y = (-1 +x)/(-2 + 3*x), z = (2 - 4*x + x*x)/(3 - 6*x + 2*x*x)
 template<typename P>
-std::vector<std::vector<P>> poly00012342(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012342(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1/(2*x),-x/(1 - 5*x + 2*x*x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,0.,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(-1 + 2*x)/(-1 + 3*x),(1 - 4*x + 2*x*x)/(1 - 4*x + x*x)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,2./3),P(1./2,1.,1./2),
+                 [](double x) { return P(x,(-1 +x)/(-2 + 3*x),(2 - 4*x + x*x)/(3 - 6*x + 2*x*x)); },
+                 prec),
 };
 }
 
 //00012343
-//
-//
+// curve 1 : x = [1/2,1], y = 1/(2*x), z = 1/(2*x+1)
+// curve 2 : x = [1/3,1/2], y = (-1 + 2*x)/(-1 + x), z = (1 - 2*x + 2*x*x)/(1 - x + x*x)
+// curve 3 : x = [0,1/3], y = 1./2, z = (-2 + x)/(-3 + 2*x)
+// curve 4 : x = [1/3,1/2], y = -x/(-1 + x), z = (-1 + x + x*x)/(-1 + 2*x*x) 
+// curve 5 : x = 1/3, y = 1/2, z = [5/7,1]
 template<typename P>
-std::vector<std::vector<P>> poly00012343(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012343(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./3),
+                 [](double x) { return P(x,1/(2*x),1/(2*x+1)); },
+                 prec),
+  create_polyline(1./3,1./2, P(1./3,1./2,5./7),P(1./2,0.,2./3),
+                 [](double x) { return P(x,(-1 + 2*x)/(-1 + x),(1 - 2*x + 2*x*x)/(1 - x + x*x)); },
+                 prec),
+  create_polyline(0.,1./3, P(0.,1./2,2./3),P(1./3,1./2,5./7),
+                 [](double x) { return P(x,1./2,(-2 + x)/(-3 + 2*x)); },
+                 prec),
+  create_polyline(1./3,1./2,P(1./3,1./2,5./7), P(1./2,1.,1./2),
+                 [](double x) { return P(x,-x/(-1 + x),(-1 + x + x*x)/(-1 + 2*x*x)); },
+                 prec),
+  create_polyline(5./7,1., P(1./3,1./2,5./7),P(1./3,1./2,1.),
+                 [](double z) { return P(1./3,1./2,z); },
+                 prec),
 };
 }
 
 //00111234
-//
-//
+// curve 1 : x = [1/2,1], y = (-1 + 2*x)/(-1 + 3*x), z = 1/(1 + x)
+// curve 2 : x = [1/2,1], y = 1./2, z = 1./(2*x)
+// curve 3 : x = 1/2, y  =[1/2,1], z = (2*y)/(-1 + 4*y)  
 template<typename P>
-std::vector<std::vector<P>> poly00111234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00111234(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,0.,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(-1 + 2*x)/(-1 + 3*x),1/(1 + x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./(2*x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,2./3),
+                 [](double y) { return P(1./2,y,(2*y)/(-1 + 4*y)); },
+                 prec),
 };
 }
 
 //00112234
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = [1/2,1], y = z = 1/(1 + x)
+// curve 3 : x = 1/2, y = [2/3,1], z = 2/3
+// curve 4 : x = 1/2, y = 2/3, z = [2/3,1]
+// curve 5 : x = [0,1/2], y = z = 1/(2 - x)
 template<typename P>
-std::vector<std::vector<P>> poly00112234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00112234(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1., P(0.,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,2./3,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1/(1 + x),1/(1 + x)); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,2./3,2./3),P(1./2,1.,2./3),
+                 [](double y) { return P(1./2,y,2./3); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,2./3,2./3),P(1./2,2./3,1.),
+                 [](double z) { return P(1./2,2./3,z); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,2./3,2./3),
+                 [](double x) { return P(x,1/(2 - x),1/(2 - x)); },
+                 prec),
 };
 }
 
 //00112324
-//
-//
+// curve 1 : x = [0,2/3], y = 1/2, z = 1/(3 - 2*x)
+// curve 2 : x = [2/3,1], y = 1/2, z = 1./(1 + x)
+// curve 3 : x = [1/2,2/3], y = (-1 + 2*x)/x, z = 1/(1 + x)
+// curve 4 : x = [1/2,2/3], y = (1 - x)/x, z = 1/(1 + x)
+// curve 5 : x = 2/3, y = 1/2, z = [3/5,1]
 template<typename P>
-std::vector<std::vector<P>> poly00112324(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00112324(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,2./3, P(0.,1./2,1./3),P(2./3,1./2,3./5),
+                 [](double x) { return P(x,1./2 ,1/(3 - 2*x)); },
+                 prec),
+  create_polyline(2./3,1, P(2./3,1./2,3./5),P(1.,1./2,1.),
+                 [](double x) { return P(x,1./2 ,1./(1 + x)); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,0.,2./3),P(2./3,1./2,3./5),
+                 [](double x) { return P(x,(-1 + 2*x)/x,1/(1 + x)); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,1.,2./3),P(2./3,1./2,3./5),
+                 [](double x) { return P(x,(1 - x)/x,1/(1 + x)); },
+                 prec),
+  create_polyline(3./5,1., P(2./3,1./2,3./5),P(2./3,1./2,1.),
+                 [](double z) { return P(2./3,1./2,z); },
+                 prec),
+          
 };
 }
 
 //00112334
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = [1/2,1], y = x/(-1 + 3*x), z = 1/(1 + x)
+// curve 2 : x = 1-x', y = 1- x'/(-1 + 3*x'), z = 1/(1 + x'), x' = [1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly00112334(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00112334(const int prec = 10)
 {
 return {
+  create_polyline(0.,1., P(0.,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
 
-
+ create_polyline(1./2,1., P(1./2,1.,2./3),P(1.,1./2,1./2),
+                [](double x) { return P(x,x/(-1. + 3*x),1./(1 + x)); },
+                prec),
+ create_polyline(1./2,1., P(1./2,0.,2./3),P(0.,1./2,1./2),
+                [](double x) { return P(1-x,1 - x/(-1. + 3*x),1./(1 + x)); },
+                prec),
 };
 }
 
 //00121234
-//
-//
+// curve 1 : x = 1/2, y = [0,2/3], z = (-2 + 3*y)/(-3 + 4*y
+// curve 2 : x = 1/2, y =[1/2,1], z = y/(-1 + 3*y)
 template<typename P>
-std::vector<std::vector<P>> poly00121234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121234(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,2./3, P(1./2,0.,2./3),P(1./2,2./3,0.),
+                [](double y) { return P(1./2,y,(-2 + 3*y)/(-3 + 4*y)); },
+                prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,y/(-1 + 3*y)); },
+                prec),            
 };
 }
 
 //00121304
-//
-//
+// curve 1 : x = [1/2,4.-2*1.73205], y = (2 + x - sqrt(4 - 8*x + x*x))/(6*x), z = (-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x)
+// curve 2 : x = [1/2,4.-2*1.73205], y = (2 + x + sqrt(4 - 8*x + x*x))/(6*x), z = (-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x)
+// curve 3 : x = [1/2,4.-2*1.73205], y = (-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x), z = (2 + x + sqrt(4 - 8*x + x*x))/(6*x)
+// curve 4 : x = [1/2,4.-2*1.73205], y = (-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x), z = (2 + x - sqrt(4 - 8*x + x*x))/(6*x)
+// curve 5 : x = [1/2,1], y = 1/2x, z = 1/2
+// curve 6 : x = [1/2,1], y = 1/2, z = 1/2x
 template<typename P>
-std::vector<std::vector<P>> poly00121304(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121304(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,4.-2*1.73205, P(1./2,2./3,0.),P(4.-2*1.73205,(1.+1/1.73205)/2,(1.73205-1)/2.),
+                [](double x) { return P(x,(2 + x - sqrt(4 - 8*x + x*x))/(6*x),(-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x)); },
+                prec),  
+  create_polyline(1./2,4.-2*1.73205, P(1./2,1.,1./2),P(4.-2*1.73205,(1.+1/1.73205)/2,(1.73205-1)/2.),
+                [](double x) { return P(x,(2 + x + sqrt(4 - 8*x + x*x))/(6*x),(-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x)); },
+                prec),  
+  create_polyline(1./2,4.-2*1.73205, P(1./2,1./2,1.),P(4.-2*1.73205,(1.73205-1)/2.,(1.+1/1.73205)/2),
+                [](double x) { return P(x,(-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x),(2 + x + sqrt(4 - 8*x + x*x))/(6*x)); },
+                prec),  
+  create_polyline(1./2,4.-2*1.73205, P(1./2,0.,2./3),P(4.-2*1.73205,(1.73205-1)/2.,(1.+1/1.73205)/2),
+                [](double x) { return P(x,(-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x),(2 + x - sqrt(4 - 8*x + x*x))/(6*x)); },
+                prec),  
+ create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./(2*x),1./2); },
+                prec),
+ create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./(2*x)); },
+                prec),
 };
 }
 
 //00121324
-//
-//
+// curve 1 : x = [1./2,0.5944], y = (1 - 2*x)/(1 - 3*x + x*x), z = 1/(1 + x)
+// curve 2 : x = [0.5944,1], y = x/(1 + x*x), z = 1/(1 + x)
+// curve 3 : x = [3/5,1], y =1./2, z = x/(3*x-1)
+// curve 4 : x = z/(3*z-1), y = 1./2, z = [3/4,1]
+// curve 5 : x = [1./2,0.5944], y = (x*(-2 + 3*x))/(-1 + 2*x*x), z = (x*(-2 + 3*x))/(1 - 5*x + 5*x*x)
+// curve 6 : x = -(-3*z + (3*z - 3)*((3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1))) + 2)/z, y = (3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1)), z = ]0,0.6271]
 template<typename P>
-std::vector<std::vector<P>> poly00121324(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121324(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,0.5944, P(1./2,0.,2./3),P(0.5944,0.4392,0.6271),
+                [](double x) { return P(x,(1 - 2*x)/(1 - 3*x + x*x),1/(1 + x)); },
+                prec),
+  create_polyline(0.5944,1.,P(0.5944,0.4392,0.6271),P(1.,1./2,1./2),
+                [](double x) { return P(x,x/(1 + x*x),1/(1 + x)); },
+                prec),
+  create_polyline(3./5,1.,P(3./5,1./2,3./4),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,x/(3*x-1)); },
+                prec),
+  create_polyline(3./4,1.,P(3./5,1./2,3./4),P(1./2,1./2,1.),
+                [](double z) { return P(z/(3*z-1),1./2,z); },
+                prec),
+ create_polyline(1./2,0.5944, P(1./2,1./2,1.),P(0.5944,0.4392,0.6271),
+                [](double x) { return P(x,(x*(-2 + 3*x))/(-1 + 2*x*x),(x*(-2 + 3*x))/(1 - 5*x + 5*x*x)); },
+                prec),
+  create_polyline(limit_value(0.,1),0.6271,P(1./2,2./3,0.),P(0.5944,0.4392,0.6271),
+                [](double z) { return P(-(-3*z + (3*z - 3)*((3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1))) + 2)/z,(3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1)),z); },
+                prec),
 };
 }
 
 //00121340
-//
-//
+// curve 1 : x = -(-5*z*z + 6*z + ((2*z - 1)*(3*z - 2)/(2*(7*z*z - 9*z + 3)) + sqrt(8*z*z*z*z - 20*z*z*z + 25*z*z - 16*z + 4)/(2*(7*z*z - 9*z + 3)))*(7*z*z - 9*z + 3) - 2)/(z*(2*z - 1)), y = (2*z - 1)*(3*z - 2)/(2*(7*z*z - 9*z + 3)) + sqrt(8*z*z*z*z - 20*z*z*z + 25*z*z - 16*z + 4)/(2*(7*z*z - 9*z + 3)), z = ]0,1/2[
+// curve 2 : x = -(-5*z*z + 4*z + (-sqrt(-(z*z + z - 1)*(3*z*z - 5*z + 1))/(2*(7*z*z - 6*z + 1)) + (9*z*z - 7*z + 1)/(2*(7*z*z - 6*z + 1)))*(7*z*z - 6*z + 1) - 1)/(z*(z + 1)), y = -sqrt(-(z*z + z - 1)*(3*z*z - 5*z + 1))/(2*(7*z*z - 6*z + 1)) + (9*z*z - 7*z + 1)/(2*(7*z*z - 6*z + 1)), z = [2/3,1]
+// curve 3 : x = [3/8,1/2], y = (-3 - sqrt(-3 + 8*x))/(2*(-3 + 2*x)), z = (-3 + sqrt(-3 + 8*x))/(2*(-3 + 2*x))
+// curve 4 : x = [3/8,1/2], y = (-3 + sqrt(-3 + 8*x))/(2*(-3 + 2*x)), z = (-3 - sqrt(-3 + 8*x))/(2*(-3 + 2*x))
 template<typename P>
-std::vector<std::vector<P>> poly00121340(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121340(const int prec = 10)
 {
 return {
-
-
+ create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1./2,1.,1./2),
+                [](double z) { return P(-(-5*z*z + 6*z + ((2*z - 1)*(3*z - 2)/(2*(7*z*z - 9*z + 3)) + sqrt(8*z*z*z*z - 20*z*z*z + 25*z*z - 16*z + 4)/(2*(7*z*z - 9*z + 3)))*(7*z*z - 9*z + 3) - 2)/(z*(2*z - 1)),(2*z - 1)*(3*z - 2)/(2*(7*z*z - 9*z + 3)) + sqrt(8*z*z*z*z - 20*z*z*z + 25*z*z - 16*z + 4)/(2*(7*z*z - 9*z + 3)),z); },
+                prec),
+ create_polyline(2./3,1., P(1./2,0.,2./3),P(1./2,1./2,1.),
+                [](double z) { return P(-(-5*z*z + 4*z + (-sqrt(-(z*z + z - 1)*(3*z*z - 5*z + 1))/(2*(7*z*z - 6*z + 1)) + (9*z*z - 7*z + 1)/(2*(7*z*z - 6*z + 1)))*(7*z*z - 6*z + 1) - 1)/(z*(z + 1)),-sqrt(-(z*z + z - 1)*(3*z*z - 5*z + 1))/(2*(7*z*z - 6*z + 1)) + (9*z*z - 7*z + 1)/(2*(7*z*z - 6*z + 1)),z); },
+                prec),
+ create_polyline(3./8,1./2, P(3./8.,2./3,2./3),P(1./2,1.,1./2),
+                [](double x) { return P(x,(-3 - sqrt(-3 + 8*x))/(2*(-3 + 2*x)),(-3 + sqrt(-3 + 8*x))/(2*(-3 + 2*x))); },
+                prec),
+ create_polyline(3./8,1./2, P(3./8.,2./3,2./3),P(1./2,1./2,1.),
+                [](double x) { return P(x,(-3 + sqrt(-3 + 8*x))/(2*(-3 + 2*x)),(-3 - sqrt(-3 + 8*x))/(2*(-3 + 2*x))); },
+                prec),
 };
 }
 
 //00121341
-//
-//
+// curve 1 : x = [1/2,1], y = 1./(x+1), z = (1 - 2*x)/(1 - 4*x + x*x)
+// curve 2 : x = [1/2,1], y = (1 - 2*x)/(1 - 4*x + x*x), z = 1./(x+1)
 template<typename P>
-std::vector<std::vector<P>> poly00121341(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121341(const int prec = 10)
 {
 return {
-
-
+ create_polyline(1./2,1.,P(1./2,2./3,0.),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./(x+1),(1 - 2*x)/(1 - 4*x + x*x)); },
+                prec),
+ create_polyline(1./2,1.,P(1./2,0.,2./3),P(1.,1./2,1./2),
+                [](double x) { return P(x,(1 - 2*x)/(1 - 4*x + x*x),1./(x+1)); },
+                prec),
 };
 }
 
 //00121342
-//
-//
+// curve 1 : x = [1/3,1/2], y = x/(-1 + 4*x), z = -x/(-1 + x)
+// curve 2 : x = [1/2,1/1.73205], y = (1 - 2*x)/(1 - 3*x + x*x), z = 1/(1 + x)
+// curve 3 : x = [1/1.73205,1], y = 1/(2 + x), z = 1/(1 + x)
+// curve 4 : x = [1/2,1/1.73205], y = (-2 + 3*x)/(-3 + 4*x), z = (-2 + 3*x)/(-1 + x)
+// curve 5 : x = (-2*z*z + 5*z + ((3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)))*(2*z*z - 6*z + 3) - 2)/z, y = (3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)), z = [0,(3-1.73205)/2]
 template<typename P>
-std::vector<std::vector<P>> poly00121342(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121342(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./3,1./2,P(1./3,1.,1./2),P(1./2,1./2,1.),
+                [](double x) { return P(x,x/(-1 + 4*x),-x/(-1 + x)); },
+                prec),
+  create_polyline(1./2,1/1.73205,P(1./2,0.,2./3),P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),
+                [](double x) { return P(x,(1 - 2*x)/(1 - 3*x + x*x),1/(1 + x)); },
+                prec),
+  create_polyline(1./1.73205,1.,P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),P(1.,1./3,1./2),
+                [](double x) { return P(x,1/(2 + x),1/(1 + x)); },
+                prec),
+  create_polyline(1./2,1/1.73205,P(1./2,1./2,1.),P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),
+                [](double x) { return P(x,(-2 + 3*x)/(-3 + 4*x),(-2 + 3*x)/(-1 + x)); },
+                prec),
+  create_polyline(limit_value(0.,1),(3-1.73205)/2,P(1./2,2./3,0.),P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),
+                [](double z) { return P((-2*z*z + 5*z + ((3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)))*(2*z*z - 6*z + 3) - 2)/z,(3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)),z); },
+                prec),
 };
 }
 
 //00121344
-//
-//
+// curve 1 : x = [1./2,0.5698], y = 1/(1 + x), z = (1 - 2*x)/(1 - 3*x + x*x)
+// curve 2 : x = [0.5698,1], y = 1/(1 + x), z = x/(1 + x)
+// curve 3 : x = [1./2,0.5698], y = ((-1 + x)*x)/(1 - 3*x + x*x), z = x/(1 + x)
+// curve 4 : x = [0.5698,1], y = x/(1 + x), z = 1/(1 + x)
+// curve 5 : x = [1./2,0.5698], y = (1 - 2*x)/(1 - 3*x + x*x), z = 1/(1 + x)
+// curve 6 : x = [1./2,0.5698], y = x/(1 + x),((-1 + x)*x)/(1 - 3*x + x*x)
+// curve 7 : x = (3*z*z - 3*z + 1)/(2*z*z - 2*z + 1), y = 1-z, z = [0.3629,0.6370]
 template<typename P>
-std::vector<std::vector<P>> poly00121344(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121344(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,0.5698,P(1./2,2./3,0.),P(0.5698,0.6370,0.3629),
+                [](double x) { return P(x,1/(1 + x),(1 - 2*x)/(1 - 3*x + x*x)); },
+                prec),
+  create_polyline(0.5698,1.,P(0.5698,0.6370,0.3629),P(1.,1./2,1./2),
+                [](double x) { return P(x,1/(1 + x),x/(1 + x)); },
+                prec),
+  create_polyline(1./2,0.5698,P(1./2,1.,1./3),P(0.5698,0.6370,0.3629),
+                [](double x) { return P(x,((-1 + x)*x)/(1 - 3*x + x*x),x/(1 + x)); },
+                prec),
+  create_polyline(0.5698,1.,P(0.5698,0.3629,0.6370),P(1.,1./2,1./2),
+                [](double x) { return P(x,x/(1 + x),1/(1 + x)); },
+                prec),
+  create_polyline(1./2,0.5698,P(1./2,0.,2./3),P(0.5698,0.3629,0.6370),
+                [](double x) { return P(x,(1 - 2*x)/(1 - 3*x + x*x),1/(1 + x)); },
+                prec),
+  create_polyline(1./2,0.5698,P(1./2,1./3,1.),P(0.5698,0.3629,0.6370),
+                [](double x) { return P(x,x/(1 + x),((-1 + x)*x)/(1 - 3*x + x*x)); },
+                prec),
+  create_polyline(0.3629,0.6370,P(0.5698,0.6370,0.3629),P(0.5698,0.3629,0.6370),
+                [](double z) { return P((3*z*z - 3*z + 1)/(2*z*z - 2*z + 1),1-z,z); },
+                prec),
 };
 }
 
 //00122134
-//
-//
+// curve 1 : x = 1/2, y = [0,1], z = (-2 + 3*y)/(-3 + 4 y)
+// curve 2 : x = [0,1], y = z = 1/2
+// curve 3 : x = [0,1/2], y = z = 1/(2 - x)
+// curve 4 : x = [1/2,1], y = z = 1/(1+ x)
+// curve 5 : x = 1/2, y = [1/2,1], z = y/(-1 + 3*y)
+// curve 6 : x = 1/2, y = z = [1/2,2/3]
+
 template<typename P>
-std::vector<std::vector<P>> poly00122134(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122134(const int prec = 10)
 {
 return {
-
-
+ create_polyline(0.,1./2,P(1./2,0.,2./3),P(1./2,1./2,1./2),
+                [](double y) { return P(1./2,y,(-2 + 3*y)/(-3 + 4*y)); },
+                prec),
+ create_polyline(1./2,2./3,P(1./2,1./2,1./2),P(1./2,2./3,0.),
+                [](double y) { return P(1./2,y,(-2 + 3*y)/(-3 + 4*y)); },
+                prec),
+ create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+ create_polyline(1./2,1.,P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+ create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,2./3,2./3),
+                [](double x) { return P(x,1/(2 - x),1/(2 - x)); },
+                prec),
+ create_polyline(1./2,1.,P(1./2,2./3,2./3),P(1.,1./2,1./2),
+                [](double x) { return P(x,1/(1+ x),1/(1 +x)); },
+                prec),
+ create_polyline(2./3,1.,P(1./2,2./3,2./3),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,y/(-1 + 3*y)); },
+                prec),
+ create_polyline(1./2,2./3,P(1./2,1./2,1.),P(1./2,2./3,2./3),
+                [](double y) { return P(1./2,y,y/(-1 + 3*y)); },
+                prec),          
+ create_polyline(1./2,2./3,P(1./2,1./2,1./2),P(1./2,2./3,2./3),
+                [](double y) { return P(1./2,y,y); },
+                prec),
 };
 }
 
 //00122304
-//
-//
+// curve 1 : x = (-3*z*z + 4*z + (-sqrt(3*z*z - 3*z + 1)/(3*(z - 1)) - 1/(3*(z - 1)))*(3*z*z - 6*z + 3) - 2)/(z*(2*z - 1)), y = -sqrt(3*z*z - 3*z + 1)/(3*(z - 1)) - 1/(3*(z - 1)), z = [0,1/2]
+// curve 2 : x = [1/2,1], y = (2 - x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)), z = (-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))
+// curve 3 : x = [1/2,1], y = (2 - x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)), z = (-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))
+// curve 4 : x =  (-z + (2*z - 1)*(-sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1))) + 1)/z, y = -sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1)), z = [2/3,1]
 template<typename P>
-std::vector<std::vector<P>> poly00122304(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122304(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2,P(1./2,2./3,0.),P(1./2,1.,1./2),
+                [](double z) { return P(-(-3*z*z + 4*z + (-sqrt(3*z*z - 3*z + 1)/(3*(z - 1)) - 1/(3*(z - 1)))*(3*z*z - 6*z + 3) - 2)/(z*(2*z - 1)),-sqrt(3*z*z - 3*z + 1)/(3*(z - 1)) - 1/(3*(z - 1)),z); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1.,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,(2 - x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)),(-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1/(2*x)); },
+                prec),
+  create_polyline(2./3,1.,P(1./2,0.,2./3),P(1./2,1./2,1.),
+                [](double z) { return P((-z + (2*z - 1)*(-sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1))) + 1)/z,-sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1)),z); },
+                prec),
 };
 }
 
 //00122314
-//
-//
+// curve 1 : x = [1/2,1], y = (-1 + 2*x)/(-1 + 2*x + x*x), z = 1/(1 + x)
+// curve 2 : x = [0,4-21.73205], y = (4 - x - sqrt(4 - 8*x + x*x))/6, z = (-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x)
+// curve 3 : x = [1/2,4-21.73205], y = (4 - x + sqrt(4 - 8*x + x*x))/6, z = (-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x) 
+// curve 4 : x = [1/2,1], y = 1/2, z = x/(-1 + 3*x)
+// curve 5 : x = [1/2,2/3], y = (-1 + 2*x - x*x)/(-1 + 2*x*x), z = (1 - x)/x
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00122314(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122314(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1.,P(1./2,0.,2./3),P(1.,1./2,1./2),
+                [](double x) { return P(x,(-1 + 2*x)/(-1 + 2*x + x*x),1/(1 + x)); },
+                prec),
+  create_polyline(0.,4.-2*1.73205,P(0.,1./3,1./2),P(4.-2*1.73205,1/1.73205,(1.73205-1)/2.),
+                [](double x) { return P(x,(4 - x - sqrt(4 - 8*x + x*x))/6,(-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x) ); },
+                prec),
+  create_polyline(1./2,4.-2*1.73205,P(1./2,2./3,0.),P(4.-2*1.73205,1/1.73205,(1.73205-1)/2.),
+                [](double x) { return P(x,(4 - x + sqrt(4 - 8*x + x*x))/6,(-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x) ); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,x/(-1 + 3*x)); },
+                prec),
+  create_polyline(1./2,2./3,P(1./2,1./2,1.),P(2./3,1.,1./2),
+                [](double x) { return P(x,(-1 + 2*x - x*x)/(-1 + 2*x*x),(1 - x)/x); },
+                prec),
 };
 }
 
 //00122324
-//
-//
+// curve 1 : x = [0,1/2], y = 1/(2 - x), z = (1 - 2*x)/(3 - 5*x + x*x)
+// curve 2 : x = [1/2,1], y = (-1 + 2*x)/(x*(1 + x)), z = 1/(1 + x)
+// curve 3 : x = [2/3,1], y = 1/2, z = x/(2*(-1 + 2*x)
 template<typename P>
-std::vector<std::vector<P>> poly00122324(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122324(const int prec = 10)
 {
 return {
-
+  create_polyline(0.,1./2,P(0.,1./2,1./3),P(1./2,2./3,0.),
+                [](double x) { return P(x,1/(2 - x),(1 - 2*x)/(3 - 5*x + x*x)); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,0.,2./3),P(1.,1./2,1./2),
+                [](double x) { return P(x,(-1 + 2*x)/(x*(1 + x)),1/(1 + x)); },
+                prec),
+  create_polyline(2./3,1.,P(2./3,1./2,1.),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,x/(2*(-1 + 2*x))); },
+                prec),
 
 };
 }
 
 //00122334
-//
-//
+// curve 1 : x = [1/2,1], y = x/(-1 + 3*x), z = (x*x)/(1 - 3*x + 4*x*x)
+// curve 2 : x = [1/3,1/2], y = (1 - 3*x + 3*x*x)/(2 - 6*x + 5*x*x), z = (1 - 3*x + 3*x*x)/(2 - 5*x + 4*x*x)
+// curve 3 : x = [1/3,1/2], y = 1/(2 - x), z = (1 - 2*x)/(2 - 4*x + x*x)
+// curve 4 : x = [0,1/3], y = 1/(2 - x), z = 1/(2 + x)
+// curve 5 : x = [1/3,1/2], y = (-1 + 2*x)/(-1 + x + x*x), z = x/(1 - x + x*x)
+// curve 6 : x = [0,1], y = z = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly00122334(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122334(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1.,P(1./2,1.,1/2.),P(1.,1./2,1./2),
+                [](double x) { return P(x,x/(-1 + 3*x),(x*x)/(1 - 3*x + 4*x*x)); },
+                prec),
+  create_polyline(1./3,1./2,P(1./3,3./5,3./7),P(1./2,1.,1/2.),
+                [](double x) { return P(x,(1 - 3*x + 3*x*x)/(2 - 6*x + 5*x*x),(1 - 3*x + 3*x*x)/(2 - 5*x + 4*x*x)); },
+                prec),
+  create_polyline(1./3,1./2,P(1./3,3./5,3./7),P(1./2,2./3,0.),
+                [](double x) { return P(x,1/(2 - x),(1 - 2*x)/(2 - 4*x + x*x)); },
+                prec),
+  create_polyline(0.,1./3,P(0.,1./2,1./2),P(1./3,3./5,3./7),
+                [](double x) { return P(x,1/(2 - x),1/(2 + x)); },
+                prec),
+  create_polyline(1./3,(3.-2.23606)/2,P(1./3,3./5,3./7),P((3.-2.23606)/2,1./2,1./2),
+                [](double x) { return P(x,(-1 + 2*x)/(-1 + x + x*x),x/(1 - x + x*x)); },
+                prec),
+  create_polyline((3.-2.23606)/2,1./2,P((3.-2.23606)/2,1./2,1./2),P(1./2,0.,2./3),
+                [](double x) { return P(x,(-1 + 2*x)/(-1 + x + x*x),x/(1 - x + x*x)); },
+                prec),
+  create_polyline(0.,(3.-2.23606)/2,P(0.,1./2,1./2),P((3.-2.23606)/2,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+ create_polyline((3.-2.23606)/2,1.,P((3.-2.23606)/2,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
 };
 }
 
 //00122344
-//
-//
+// curve 1 : x = [1./2,(2.23606-1.)/2], y = x/(1 + x), z = (x*x)/(-1 + 2*x + x*x)
+// curve 2 : x = [(3.-2.23606)/2,1./2], y = (-1 + x)*(-1+x)/(2 - 4*x + x*x), z = (-1 + x)/(-2 + x)
+// curve 3 : x = [1./2,(2.23606-1.)/2], y = (-1 + 2*x)/(-1 + 2*x + x*x), z = 1/(1 + x)
+// curve 4 : x = [(2.23606-1.)/2,1], y =  x/(1 + x), z = 1/(1 + x)
+// curve 5 : x = [0.,(3.-2.23606)/2], y = 1/(2 - x), z = (-1 + x)/(-2 + x)
+// curve 6 : x = [3.-2.23606)/2,1./2], y = 1/(2 - x), z = (1 - 2*x)/(2 - 4*x + x*x)
+// curve 7 : x = [0,1], y = z = 1/2
+// curve 8 : x = z, y = 1-z, z = [(3.-2.23606)/2,(2.23606-1.)/2]
 template<typename P>
-std::vector<std::vector<P>> poly00122344(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122344(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,(2.23606-1.)/2,P(1./2,1./3,1.),P((2.23606-1.)/2,(3.-2.23606)/2,(2.23606-1.)/2),
+                [](double x) { return P(x,x/(1 + x),(x*x)/(-1 + 2*x + x*x)); },
+                prec),
+  create_polyline((3.-2.23606)/2,1./2,P((3.-2.23606)/2,(2.23606-1.)/2,(3.-2.23606)/2),P(1./2,1.,1./3),
+                [](double x) { return P(x,(-1 + x)*(-1+x)/(2 - 4*x + x*x),(-1 + x)/(-2 + x)); },
+                prec),
+  create_polyline(1./2,(2.23606-1.)/2,P(1./2,0.,2./3),P((2.23606-1.)/2,(3.-2.23606)/2,(2.23606-1.)/2),
+                [](double x) { return P(x,(-1 + 2*x)/(-1 + 2*x + x*x),1/(1 + x)); },
+                prec),
+  create_polyline((2.23606-1.)/2,1.,P((2.23606-1.)/2,(3.-2.23606)/2,(2.23606-1.)/2),P(1.,1./2,1./2),
+                [](double x) { return P(x,x/(1 + x),1/(1 + x)); },
+                prec),
+  create_polyline(0.,(3.-2.23606)/2,P(0.,1./2,1./2),P((3.-2.23606)/2,(2.23606-1.)/2,(3.-2.23606)/2),
+                [](double x) { return P(x,1/(2 - x),(-1 + x)/(-2 + x)); },
+                prec),
+  create_polyline((3.-2.23606)/2,1./2,P((3.-2.23606)/2,(2.23606-1.)/2,(3.-2.23606)/2),P(1./2,2./3,0.),
+                [](double x) { return P(x,1/(2 - x),(1 - 2*x)/(2 - 4*x + x*x)); },
+                prec),
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline((3.-2.23606)/2,1./2,P((3.-2.23606)/2,(2.23606-1.)/2,(3.-2.23606)/2),P(1./2,1./2,1./2),
+                [](double z) { return P(z,1-z,z); },
+                prec),
+  create_polyline(1./2,(2.23606-1.)/2,P(1./2,1./2,1./2),P((2.23606-1.)/2,(3.-2.23606)/2,(2.23606-1.)/2),
+                [](double z) { return P(z,1-z,z); },
+                prec),
 };
 }
 
 //00123400
-//
-//
+// curve 1 : x = 1/2, y = [2/3,1], z = (-2 + 3*y)/(-2 + 5*y)
+// curve 2 : x = 1/2, y = [0,1/3], z = (2*(-1 + y))/(-3 + 5*y
 template<typename P>
-std::vector<std::vector<P>> poly00123400(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123400(const int prec = 10)
 {
 return {
-
-
+  create_polyline(2./3,1.,P(1./2,2./3,0.),P(1./2,1.,1./3),
+                [](double y) { return P(1./2,y,(-2 + 3*y)/(-2 + 5*y)); },
+                prec),
+  create_polyline(0.,1./3,P(1./2,0.,2./3),P(1./2,1./3,1.),
+                [](double y) { return P(1./2,y,(2*(-1 + y))/(-3 + 5*y)); },
+                prec),
 };
 }
 
 //00123401
-//
-//
+// curve 1 : x = [1/2,1], y = x/(1 - 2*x + 3*x*x), z = (-1 + 2*x)/(-1 + 3*x)
+// curve 2 : x = [1/2,1], y = (4*x - x*x - sqrt(x)*sqrt(-4 + 12*x - 8*x*x + x*x*x))/(2*(1 + x)), z = (-2 + 2*x + x*x + sqrt(x)*sqrt(-4 + 12*x - 8*x*x + x*x*x))/(2*(-1 + 3*x*x))
+// curve 3 : X = 1/2, y = [0,1/2], z = (2*(-1 + y))/(-3 + 4*y)
 template<typename P>
-std::vector<std::vector<P>> poly00123401(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123401(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1.,P(1./2,2./3,0.),P(1.,1./2,1./2),
+                [](double x) { return P(x,x/(1 - 2*x + 3*x*x),(-1 + 2*x)/(-1 + 3*x)); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
+                [](double x) { return P(x,(4*x - x*x - sqrt(x)*sqrt(-4 + 12*x - 8*x*x + x*x*x))/(2*(1 + x)),(-2 + 2*x + x*x + sqrt(x)*sqrt(-4 + 12*x - 8*x*x + x*x*x))/(2*(-1 + 3*x*x))); },
+                prec),
+  create_polyline(0.,1./2,P(1./2,0.,2./3),P(1./2,1./2,1.),
+                [](double y) { return P(1./2,y,(2*(-1 + y))/(-3 + 4*y)); },
+                prec),
 };
 }
 
 //00123414
-//
-//
+// curve 1 : x = [(2.23606-1)/2,2./3], y = (1 - 2*x)/(-1 + x), z = (-1 + 2*x)/x
+// curve 2 : x = [1/2,(2.23606-1)/2], y = 1/(1 + x), z = (-1 + 2*x)/x
+// curve 3 : x = [(2.23606-1)/2,1], y = 1/(1+x), z = 1/(2+x)
+// curve 4 : x = [(3-2.23606)/2,1./2], y = (-1 + 2*x)/(-1 + x), z = 1/(2 - x)
+// curve 5 : x = [0.,(3-2.23606)/2], y = 1/(3-x), z = 1/(2 - x)
+// curve 6 : x = y = 1-z, z = [(3-2.23606)/2,(2.23606-1)/2]
+// curve 7 : x = [1./3,(3-2.23606)/2], y =  (-1 + 2*x)/(-1 + x), z = (1 - 2*x)/x
 template<typename P>
-std::vector<std::vector<P>> poly00123414(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123414(const int prec = 10)
 {
 return {
-
-
+  create_polyline((2.23606-1)/2,2./3,P((2.23606-1)/2,(2.23606-1)/2,(3-2.23606)/2),P(2./3,1.,1./2),
+                [](double x) { return P(x,(1 - 2*x)/(-1 + x),(-1 + 2*x)/x); },
+                prec),
+  create_polyline(1./2,(2.23606-1)/2,P(1./2,2./3,0.),P((2.23606-1)/2,(2.23606-1)/2,(3-2.23606)/2),
+                [](double x) { return P(x,1/(1 + x),(-1 + 2*x)/x); },
+                prec),
+  create_polyline((2.23606-1)/2,1.,P((2.23606-1)/2,(2.23606-1)/2,(3-2.23606)/2),P(1.,1./2,1./3),
+                [](double x) { return P(x,1/(1+x),1/(2+x)); },
+                prec),
+  create_polyline((3-2.23606)/2,1./2,P((3-2.23606)/2,(3-2.23606)/2,(2.23606-1)/2),P(1./2,0.,2./3),
+                [](double x) { return P(x,(-1 + 2*x)/(-1 + x),1/(2 - x)); },
+                prec),
+  create_polyline(0.,(3-2.23606)/2,P(0.,1./3,1./2),P((3-2.23606)/2,(3-2.23606)/2,(2.23606-1)/2),
+                [](double x) { return P(x,1/(3-x),1/(2 - x)); },
+                prec),
+  create_polyline((3-2.23606)/2,(2.23606-1)/2,P((2.23606-1)/2,(2.23606-1)/2,(3-2.23606)/2),P((3-2.23606)/2,(3-2.23606)/2,(2.23606-1)/2),
+                [](double z) { return P(1-z,1-z,z); },
+               prec),
+  create_polyline(1./3,(3-2.23606)/2,P(1./3,1./2,1.),P((3-2.23606)/2,(3-2.23606)/2,(2.23606-1)/2),
+                [](double x) { return P(x,(-1 + 2*x)/(-1 + x),(1 - 2*x)/x); },
+                prec),
 };
 }
 
 //00123421
-//
-//
+// curve 1 : x = 1/2, y = [2/5,1/2], z = y/(1-y)
+// curve 2 : x = 1/2, y = [0,2/5], z = 2/3
+// curve 3 : x = [1/2,1], y = 1/(3 - x), z = 1/(1 + x)
+// curve 4 : x = [0,1/2], y = 1/(2 + x), z = 1/(2- x)
+// curve 5 : x = [0,1], y = z = 1/2
+// curve 6 : x = 1/2, y = [2/5,2/3], z = (-2 + 3*y)/(2*(-1 + y))
+// curve 7 : x = 1/2, y = [1/2,1], z = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly00123421(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123421(const int prec = 10)
 {
 return {
-
-
+  create_polyline(2./5,1./2,P(1./2,2./5,2./3),P(1./2,1./2,1.),
+                [](double y) { return P(1./2,y,y/(1-y)); },
+                prec),
+  create_polyline(0.,2./5,P(1./2,0.,2./3),P(1./2,2./5,2./3),
+                [](double y) { return P(1./2,y,2./3); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,2./5,2./3),P(1.,1./2,1./2),
+                [](double x) { return P(x,1/(3 - x),1/(1 + x)); },
+                prec),
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,2./5,2./3),
+                [](double x) { return P(x,1/(2 + x),1/(2- x)); },
+                prec),
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(2./5,1./2,P(1./2,2./5,2./3),P(1./2,1./2,1./2),
+                [](double y) { return P(1./2,y,(-2 + 3*y)/(2*(-1 + y))); },
+                prec),
+  create_polyline(1./2,2./3,P(1./2,1./2,1./2),P(1./2,2./3,0.),
+                [](double y) { return P(1./2,y,(-2 + 3*y)/(2*(-1 + y))); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1./2),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec),
 };
 }
 
 //00123423
-//
-//
+// curve 1 : x = [0,1/2], y = 1/(2 - x), z = (-1 + 2*x)/(-2 + 3*x)
+// curve 2 : x = [1/2,1], y = (-1 + 2*x)/(-1 + 3*x), z = 1/(1 + x)
+// curve 3 : x = [0,1], y = z = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly00123423(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123423(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,2./3,0.),
+                [](double x) { return P(x,1/(2 - x),(-1 + 2*x)/(-2 + 3*x)); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,0.,2./3),P(1.,1./2,1./2),
+                [](double x) { return P(x,(-1 + 2*x)/(-1 + 3*x),1/(1 + x)); },
+                prec),
+  create_polyline(0.,1.,P(0.,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
 };
 }
 
 //01101234
-//
-//
+// curve 1 : x = 1/2, y = [1/2,1], z = 1/2y
+// curve 2 : x = [1/2,1], y = 1/2, z = 1/2x
+// curve 3 : x = ]1/2,1], y = (-2 + 4*x - x*x + sqrt(x)*sqrt(-4 + 16*x - 20*x*x + 9*x*x*x))/(2*(-1 + x + 2*x*x)), z = (-2 + 2*x + 3*x*x - sqrt(x)*sqrt(-4 + 16*x - 20*x*x + 9*x*x*x))/(2*(-1 - x + 4*x*x))
 template<typename P>
-std::vector<std::vector<P>> poly01101234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01101234(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1.,P(1./2,1./2,1.),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,1./(2*y)); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./(2*x)); },
+                prec),
+  create_polyline(limit_value(1./2,1.),1.,P(1./2,1.,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,(-2 + 4*x - x*x + sqrt(x)*sqrt(-4 + 16*x - 20*x*x + 9*x*x*x))/(2*(-1 + x + 2*x*x)),(-2 + 2*x + 3*x*x - sqrt(x)*sqrt(-4 + 16*x - 20*x*x + 9*x*x*x))/(2*(-1 - x + 4*x*x)) ); },
+                prec),
 };
 }
 
 //01102334
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = 1/2, y = [0,1], z = 1/2
+// curve 3 : x = [1/2,1], y = x/(-1 + 3*x), z = (-1 + 3*x - x*x)/(-1 + 3*x)
+// curve 4 : x = [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = (-1 + x + x*x)/(-2 + 3*x)
 template<typename P>
-std::vector<std::vector<P>> poly01102334(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01102334(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1.,P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(0.,1./2,P(1./2,1./2,0.),P(1./2,1./2,1./2),
+                [](double z) { return P(1./2,1./2,z); },
+                prec), 
+  create_polyline(0.,1./2,P(1./2,0.,1./2),P(1./2,1./2,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1./2),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1.,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,x/(-1 + 3*x),(-1 + 3*x - x*x)/(-1 + 3*x)); },
+                prec),
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,0.,1./2),
+                [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),(-1 + x + x*x)/(-2 + 3*x)); },
+                prec),
 };
 }
 
 //01121234
-//
-//
+// curve 1 : x = 1/2, y = [1/2,1], z = 1/2y
+// curve 2 : x = [1/2,4/7], y = (3*x - sqrt(-x (-4 + 7*x)))/(2*(-1 + 4*x)), z = (3*x + sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x))
+// curve 3 : x = [1/2,4/7], y = (3*x + sqrt(-x (-4 + 7*x)))/(2*(-1 + 4*x)), z = (3*x - sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x))
 template<typename P>
-std::vector<std::vector<P>> poly01121234(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01121234(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1.,P(1./2,1./2,1.),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,1./(2*y)); },
+                prec),
+  create_polyline(1./2,4./7,P(1./2,1./2,1.),P(4./7,2./3,2./3),
+                [](double x) { return P(x,(3*x - sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x)),(3*x + sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x))); },
+                prec),
+  create_polyline(1./2,4./7,P(1./2,1.,1./2),P(4./7,2./3,2./3),
+                [](double x) { return P(x,(3*x + sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x)),(3*x - sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x))); },
+                prec),
 };
 }
 
 //01121340
-//
-//
+// curve 1 : x = ]1/2,1], y = (2 - 3*x + 2*x*x + sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 2*x + 3*x*x)), z = (2 - 7*x + 8*x*x - sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 5*x + 6*x*x))
+// curve 2 : x = ]1/2,1], y = (2 - 7*x + 8*x*x - sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 5*x + 6*x*x)), z = (2 - 3*x + 2*x*x + sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 2*x + 3*x*x))
+// curve 3 : x = [0.45016,1/2], y = (3 - 7*x + 5*x*x - sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x)), z = (3 - 7*x + 5*x*x + sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x))
+// curve 4 : x = [(0.45016,1./2], y = (3 - 7*x + 5*x*x + sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x)), z = (3 - 7*x + 5*x*x - sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x))
 template<typename P>
-std::vector<std::vector<P>> poly01121340(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01121340(const int prec = 10)
 {
 return {
-
-
+  create_polyline(limit_value(1./2,1.),1.,P(1./2,1.,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,(2 - 3*x + 2*x*x + sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 2*x + 3*x*x)),(2 - 7*x + 8*x*x - sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 5*x + 6*x*x))); },
+                prec),
+  create_polyline(limit_value(1./2,1.),1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
+                [](double x) { return P(x,(2 - 7*x + 8*x*x - sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 5*x + 6*x*x)),(2 - 3*x + 2*x*x + sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 2*x + 3*x*x))); },
+                prec),
+  create_polyline(0.45016,1./2,P(0.45016,0.702631,0.700106),P(1./2,1./2,1.),
+                [](double x) { return P(x,(3 - 7*x + 5*x*x - sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x)),(3 - 7*x + 5*x*x + sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x))); },
+                prec),
+  create_polyline(0.45016,1./2,P(0.45016,0.702631,0.700106),P(1./2,1.,1./2),
+                [](double x) { return P(x,(3 - 7*x + 5*x*x + sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x)),(3 - 7*x + 5*x*x - sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x))); },
+                prec),
 };
 }
 
 //01121341
-//
+// no curve
 //
 template<typename P>
-std::vector<std::vector<P>> poly01121341(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01121341(const int prec = 10)
 {
 return {
 
@@ -1920,288 +2965,810 @@ return {
 }
 
 //01122034
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = -(-3*z*z + 2*z + (3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)))*(4*z*z - 5*z + 1))/(2*z*z - 2*z + 1), y = 3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)), z = [4/7,1/2]
+// curve 3 : x = -(-3*z*z + 2*z + (3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)))*(4*z*z - 5*z + 1))/(2*z*z - 2*z + 1), y = 3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)), z = [4/7,1/2]
+// curve 4 : x = 1/2, y = [0,1/2], z = y/(-1 + 3*y)
+// curve 5: x = -(z*z/(4*z*z - 3*z + 1) - 1)*(4*z*z - 3*z + 1)/(5*z*z - 4*z + 1), y = z*z/(4*z*z - 3*z + 1), z = [1/2,1]
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly01122034(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01122034(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1.,P(0.,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(1./2,4./7,P(0.,1./2,1./2),P(2./5,2./3,4./7),
+                [](double z) { return P(-(-3*z*z + 2*z + (3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)))*(4*z*z - 5*z + 1))/(2*z*z - 2*z + 1), 3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
+                prec),
+  create_polyline(1./2,4./7,P(1./2,1.,1./2),P(2./5,2./3,4./7),
+                [](double z) { return P(-(-3*z*z+ 2*z + (3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)))*(4*z*z - 5*z + 1))/(2*z*z - 2*z + 1),3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
+                prec),
+  create_polyline(1/2.,1.,P(1/2.,1./2,1.),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,y/(-1 + 3*y)); },
+                prec),
+  create_polyline(1./2,1.,P(1.,1./2,1./2),P(1./2,1./2,1.),
+                [](double z) { return P(-(z*z/(4*z*z - 3*z + 1) - 1)*(4*z*z - 3*z + 1)/(5*z*z - 4*z + 1), z*z/(4*z*z - 3*z + 1),z); },
+                prec),
 };
 }
 
 //01122334
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = 1/2, y = [0,1], z = 1/2
+// curve 3 : x = [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = (1 - 3*x + 3*x*x)/(2 - 5*x + 4*x*x)
+// curve 4 :  x = [0,1/2], x'=1-x, y = (-1 + 2*x)/(-2 + 3*x), z = (1 - 3*x + 3*x*x)/(2 - 5*x + 4*x*x)
 template<typename P>
-std::vector<std::vector<P>> poly01122334(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01122334(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(1./2,1.,P(1./2.,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(0.,1./2,P(1./2,0.,1./2),P(1./2,1./2,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec),               
+  create_polyline(1./2,1.,P(1./2,1./2.,1./2),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec), 
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,0.,1./2),
+                [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),(1 - 3*x + 3*x*x)/(2 - 5*x + 4*x*x)); },
+                prec),
+  create_polyline(0.,1./2,P(1.,1./2,1./2),P(1./2,1.,1./2),
+                [](double x) { return P(1-x,1-(-1 + 2*x)/(-2 + 3*x),1-(1 - 3*x + 3*x*x)/(2 - 5*x + 4*x*x)); },
+                prec),                  
 };
 }
 
 //01122340
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = 1/2, y = [0,1], z = 1/2
+// curve 3 : x = [0.,0.36299], y = (-1 + 4*x - sqrt(1 - 4*x*x))/(2*(-2 + 5*x)), z = (1 - x + 2*x*x + sqrt(1 - 4*x*x) - x*sqrt(1 - 4*x*x))/(2*(2 - 3*x + 2*x*x))
+// curve 4 : x = [0.36299,1./2], y = (1 - 3*x + 3*x*x)/(2 - 6*x + 5*x*x), z = (1 - 2*x + x*x)/(2 - 5*x + 4*x*x)
+// curve 5 : x = [0.,0.36299], x'=1-x, y = 1-(-1 + 4*x - sqrt(1 - 4*x*x))/(2*(-2 + 5*x)), z = (1 - x + 2*x*x + sqrt(1 - 4*x*x) - x*sqrt(1 - 4*x*x))/(2*(2 - 3*x + 2*x*x)) 
+// curve 6 : x = [0.36299,1./2], x'= 1-x, y = 1-(1 - 3*x + 3*x*x)/(2 - 6*x + 5*x*x), z = (1 - 2*x + x*x)/(2 - 5*x + 4*x*x)
+// curve 7 : x = [0.36299,1./2], y = 1-x, z = -x/(-1 + x)
+// curve 8 : x = [1./2,1-0.36299], y = 1-x,(1 - x)/x
+// curve 9 : x = [0.36299,1-0.36299], y = 1-x, z = (1 - 3*x + 3*x*x)/(1 - 2*x + 2*x*x)
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly01122340(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01122340(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(1./2,1.,P(1./2.,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(0.,1./2,P(1./2,0.,1./2),P(1./2,1./2,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec),               
+  create_polyline(1./2,1.,P(1./2,1./2.,1./2),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec), 
+  create_polyline(0.,0.36299,P(0.,1./2,1./2),P(0.36299,0.637,0.569841),
+                [](double x) { return P(x,(-1 + 4*x - sqrt(1 - 4*x*x))/(2*(-2 + 5*x)),(1 - x + 2*x*x + sqrt(1 - 4*x*x) - x*sqrt(1 - 4*x*x))/(2*(2 - 3*x + 2*x*x))); },
+                prec),
+  create_polyline(0.36299,1./2,P(0.36299,0.637,0.569841),P(1./2,1.,1./2),
+                [](double x) { return P(x,(1 - 3*x + 3*x*x)/(2 - 6*x + 5*x*x),(1 - 2*x + x*x)/(2 - 5*x + 4*x*x)); },
+                prec),
+  create_polyline(0.,0.36299,P(1.,1./2,1./2),P(1-0.36299,1-0.637,0.569841),
+                [](double x) { return P(1-x,1-(-1 + 4*x - sqrt(1 - 4*x*x))/(2*(-2 + 5*x)),(1 - x + 2*x*x + sqrt(1 - 4*x*x) - x*sqrt(1 - 4*x*x))/(2*(2 - 3*x + 2*x*x))); },
+                prec),
+  create_polyline(0.36299,1./2,P(1-0.36299,1-0.637,0.569841),P(1./2,0.,1./2),
+               [](double x) { return P(1-x,1-(1 - 3*x + 3*x*x)/(2 - 6*x + 5*x*x),(1 - 2*x + x*x)/(2 - 5*x + 4*x*x)); },
+                prec),
+  create_polyline(0.36299,1./2,P(0.36299,0.637,0.569841),P(1./2,1./2,1.),
+                [](double x) { return P(x,1-x,-x/(-1 + x)); },
+                prec),
+  create_polyline(1./2,1-0.36299,P(1./2,1./2,1.),P(1-0.36299,1-0.637,0.569841),
+                [](double x) { return P(x,1-x,(1 - x)/x); },
+                prec),
+  create_polyline(0.36299,1./2,P(0.36299,0.637,0.569841),P(1./2,1./2,1./2),
+                [](double x) { return P(x,1-x,(1 - 3*x + 3*x*x)/(1 - 2*x + 2*x*x)); },
+                prec),
+  create_polyline(1./2,1-0.36299,P(1./2,1./2,1./2),P(1-0.36299,1-0.637,0.569841),
+                [](double x) { return P(x,1-x,(1 - 3*x + 3*x*x)/(1 - 2*x + 2*x*x)); },
+                prec),
 };
 }
 
 //01123024
-//
-//
+// curve 1 : x = [0,1], y = z = 1./2
+// curve 2 : x = [1/2,1], y = (-1 + 3*x - x*x)/(-1 + 3*x), z = x/(-1 + 3*x)
+// curve 3 : x = [0,1], y = (-1 + 2*x - x*x)/(-2 + 3*x), z = (-1 + x)/(-2 + 3*x)
 template<typename P>
-std::vector<std::vector<P>> poly01123024(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01123024(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1.,P(0.,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
+                [](double x) { return P(x,(-1 + 3*x - x*x)/(-1 + 3*x),x/(-1 + 3*x)); },
+                prec),
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1.),
+                [](double x) { return P(x,(-1 + 2*x - x*x)/(-2 + 3*x),(-1 + x)/(-2 + 3*x)); },
+                prec),
 };
 }
 
 //01233214
-//
-//
+// curve 1 : x = [0,1], y = z = 1/2
+// curve 2 : x = 1/2, y = [0,1], z = 1/2
+// curve 3 : x = y = 1/2, z = [0,1]
+// curve 4 : x = [(2.23606-1)/2,1], y = z = 1/(1 + x)
+// curve 5 : x = [1./2,(2.23606-1)/2], y = (1 - x)/x, z = x
+// curve 6 : x = [0.,(3-2.23606)/2], y = z = (-1 + x)/(-2 + x)
+// curve 7 : x = [(3-2.23606)/2,1./2], y = (-1 + 2*x)/(-1 + x), z = x
+// curve 8 : x = y = z = [(3-2.23606)/2,(2.23606-1)/2]
+// curve 9 : x = y = [(3-2.23606)/2,1./2], z = (-1 + 2*x)/(-1 + x)
+// curve 10 : x = y = [1./2,(2.23606-1)/2], z  = (1-x)/x
 template<typename P>
-std::vector<std::vector<P>> poly01233214(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01233214(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(1./2,1.,P(1./2.,1./2,1./2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1./2,1./2); },
+                prec),
+  create_polyline(0.,1./2,P(1./2,0.,1./2),P(1./2,1./2,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec),               
+  create_polyline(1./2,1.,P(1./2,1./2.,1./2),P(1./2,1.,1./2),
+                [](double y) { return P(1./2,y,1./2); },
+                prec), 
+  create_polyline(0.,1./2,P(1./2,1./2,0.),P(1./2,1./2,1./2),
+                [](double z) { return P(1./2,1./2,z); },
+                prec),               
+  create_polyline(1./2,1.,P(1./2,1./2.,1./2),P(1./2,1./2,1.),
+                [](double z) { return P(1./2,1./2,z); },
+                prec), 
+  create_polyline((2.23606-1)/2,1.,P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),P(1.,1./2,1./2),
+                [](double x) { return P(x,1/(1 + x),1/(1 + x)); },
+                prec),
+  create_polyline(1./2,(2.23606-1)/2,P(1./2.,1.,1./2),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+                [](double x) { return P(x,(1 - x)/x,x); },
+                prec),
+  create_polyline(0.,(3-2.23606)/2,P(0.,1./2,1./2),P((3-2.23606)/2,(3-2.23606)/2,(3-2.23606)/2),
+                [](double x) { return P(x,(-1 + x)/(-2 + x),(-1 + x)/(-2 + x)); },
+                prec),
+  create_polyline((3-2.23606)/2,1./2,P((3-2.23606)/2,(3-2.23606)/2,(3-2.23606)/2),P(1./2.,0.,1./2),
+                [](double x) { return P(x,(-1 + 2*x)/(-1 + x),x); },
+                prec),
+  create_polyline((3-2.23606)/2,1./2,P((3-2.23606)/2,(3-2.23606)/2,(3-2.23606)/2),P(1./2,1./2,1./2),
+                [](double x) { return P(x,x,x); },
+                prec), 
+  create_polyline (1./2,(2.23606-1)/2,P(1./2.,1./2,1./2),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+                [](double x) { return P(x,x,x); },
+                prec),
+  create_polyline((3-2.23606)/2,1./2,P((3-2.23606)/2,(3-2.23606)/2,(3-2.23606)/2),P(1./2,1./2,0.),
+                [](double x) { return P(x,x,(-1 + 2*x)/(-1 + x)); },
+                prec), 
+  create_polyline (1./2,(2.23606-1)/2,P(1./2.,1./2,1.),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+                [](double x) { return P(x,x,(1 - x)/x); },
+                prec),
 };
 }
 
 //00012345
-//
-//
+// curve 1 : x = [0,1/2], y = 1/2x, z = 1/2
+// curve 2 : x = y = 1/2, z = [3/4,1]
+// curve 3 : x  = [1/2,1], y = 1/2, z = 1 -x/2
+// curve 4 : x = 1/2, y = [1/2,1], z = 1 -y/2
+// curve 5 : x = 1/2, y = [0,1/2], z = (-2 + y)/(-3 + 2*y)
+// curve 6 : x = [0,1/2], y =1/2, z = (-2 + x)/(-3 + 2*x)
 template<typename P>
-std::vector<std::vector<P>> poly00012345(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00012345(const int prec = 10)
 {
 return {
-
-
+  create_polyline(3./4,1., P(1./2,1./2,3./4),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./(2*x),1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,3./4),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1.-x/2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,3./4),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1.-y/2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,2./3),P(1./2,1./2,3./4),
+                 [](double y) { return P(1./2,y,(-2 + y)/(-3 + 2*y)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,2./3),P(1./2,1./2,3./4),
+                 [](double x) { return P(x,1./2,(-2 + x)/(-3 + 2*x)); },
+                 prec),
 };
 }
 
 //00112345
-//
-//
+// curve 1 : x = 1/2, y = [0,1], z = 2/3
+// curve 2 : x = y = 1/2, z = [2/3,1]
+// curve 2 : x = [0,1/2],y = 1/2, z = 1/(2-x)
+// curve 3 : x' = [0,1/2], x = 1-x', y = 1/2, z = 1/(2-x')
 template<typename P>
-std::vector<std::vector<P>> poly00112345(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00112345(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,2./3),
+                 [](double x) { return P(x,1./2,1./(2-x)); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,1./2,2./3),
+                 [](double x) { return P(1-x,1./2,1./(2-x)); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,2./3),P(1./2,1./2,2./3),
+                 [](double y) { return P(1./2,y,2./3); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,2./3),P(1./2,1.,2./3),
+                 [](double y) { return P(1./2,y,2./3); },
+                 prec),
+    create_polyline(2./3,1., P(1./2,1./2,2./3),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
 };
 }
 
 //00121345
-//
-//
+// curve 1 : x = 1/2, y = [1/2,1], z = y/(-1 + 3*y)
+// curve 2 : x = [1/2,(2.23606-1.)/2], y = 1./2, z = (1 - x)/x
+// curve 3 : x = [1/2,(2.23606-1.)/2], y = (1 - 2*x)/(1 - 3*x + x*x), z = 1./(x+1)
+// curve 4 : x = [(2.23606-1.)/2,1], y = 1./2, z = 1./(x+1)
+// curve 5 : x = [(2.23606-1.)/2,1], y = 1./(x+1), z = 1./2
+// curve 6 : x = [1./2,(2.23606-1.)/2], y = 1./(x+1), z = (1 - 2*x)/(1 - 3*x + x*x
+// curve 7 : x = [1./2,(2.23606-1.)/2], y = (1 - x)/x, z = 1./2
+// curve 8 : x = [(9-4.12310)/8,(2.23606-1.)/2[, y = -sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)), z = -(-x + (-sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)
+// curve 8 : x = [(9-4.12310)/8,(2.23606-1.)/2[, y = sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)), z = -(-x + (sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)
 template<typename P>
-std::vector<std::vector<P>> poly00121345(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00121345(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,y/(-1 + 3*y) ); },
+                 prec),
+  create_polyline(1./2,(2.23606-1.)/2, P(1./2,1./2,1.),P((2.23606-1.)/2,1./2,(2.23606-1.)/2), 
+                 [](double x) { return P(x,1./2,(1 - x)/x) ; },
+                 prec),
+  create_polyline(1./2,(2.23606-1.)/2, P(1./2,0.,2./3),P((2.23606-1)/2,1./2,(2.23606-1)/2), 
+                 [](double x) { return P(x,(1 - 2*x)/(1 - 3*x + x*x),1./(x+1)) ; },
+                 prec),
+  create_polyline((2.23606-1.)/2,1.,P((2.23606-1.)/2,1./2,(2.23606-1.)/2), P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./(x+1)) ; },
+                prec),
+  create_polyline((2.23606-1.)/2,1.,P((2.23606-1.)/2,(2.23606-1.)/2,1./2), P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./(x+1),1./2) ; },
+                 prec),
+  create_polyline(1./2,(2.23606-1.)/2, P(1./2,2./3,0.),P((2.23606-1)/2,(2.23606-1)/2,1./2), 
+                 [](double x) { return P(x,1./(x+1),(1 - 2*x)/(1 - 3*x + x*x)) ; },
+                 prec),
+  create_polyline(1./2,(2.23606-1.)/2, P(1./2,1.,1./2),P((2.23606-1.)/2,(2.23606-1)/2,1./2), 
+                 [](double x) { return P(x,(1 - x)/x,1./2) ; },
+                 prec),
+  create_polyline((9-4.12310)/8.,limit_value((2.23606-1.)/2,-1),P((9-4.12310)/8.,(4.12310-3)/2.,(4.12310-3)/2.), P((2.23606-1)/2,(2.23606-1)/2,1./2), 
+                 [](double x) { return P(x,-sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)),-(-x + (-sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)) ; },
+                 prec),
+  create_polyline((9-4.12310)/8.,limit_value((2.23606-1.)/2,-1),P((9-4.12310)/8.,(4.12310-3)/2.,(4.12310-3)/2.), P((2.23606-1)/2,1./2,(2.23606-1)/2), 
+                 [](double x) { return P(x,sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)),-(-x + (sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)) ; },
+                 prec),
 };
 }
 
 //00122345
-//
-//
+// curve 1 : x = [0,1/2], y =   1./(2-x), z = (1 - 2*x)/(2 - 4*x + x*x)
+// curve 2 : x = [1/2,1], y = (-1 + 2*x)/(-1 + 2*x + x*x), z = 1./(1+x)
+// curve 3 : x = [1/2,1], y  = 1./2, z = x/(-1 + 3*x)
+// curve 4 : x =  1/2, y = [1/2,1], z = y/(-1 + 3*y)
+// curve 5 : x = [0,1/2], y = (-1 + x)/(-2 + 3*x), z = 1./2
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly00122345(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00122345(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,2./3,0.),
+                 [](double x) { return P(x,1./(2-x),(1 - 2*x)/(2 - 4*x + x*x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,0.,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(-1 + 2*x)/(-1 + 2*x + x*x),1./(1+x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,x/(-1 + 3*x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,y/(-1 + 3*y)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1.,1./2),
+                 [](double x) { return P(x,(-1 + x)/(-2 + 3*x),1./2); },
+                 prec),
 };
 }
 
 //00123405
-//
-//
+// curve 1 : x = 1/2, y = [2/3,1], z = (-2 + 3*y)/(2*(-1 + 2*y))
+// curve 2 : x = [1/2,1], y = 1./(2*x), z = 1./2
+// curve 3 : x = [1/2,1], y = 1./2, z = 1./(2*x)
+// curve 4 : x = 1/2, y = [0,1/2], z = (2*(-1 + y))/(-3 + 4*y)
 template<typename P>
-std::vector<std::vector<P>> poly00123405(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123405(const int prec = 10)
 {
 return {
-
-
+  create_polyline(2./3.,1., P(1./2,2./3,0.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,(-2 + 3*y)/(2*(-1 + 2*y))); },
+                 prec),
+  create_polyline(1./2.,1., P(1./2,1.,1./2.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./(2*x),1./2); },
+                 prec),
+  create_polyline(1./2.,1., P(1./2,1./2.,1.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./(2*x)); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,2./3),P(1./2,1./2,1.),
+                 [](double y) { return P(1./2,y,(2*(-1 + y))/(-3 + 4*y)); },
+                 prec),
 };
 }
 
 //00123415
-//
-//
+// curve 1 : x = 1/2, y = [0,2/5], z = 2/3
+// curve 2 : x = [0,1/2], y = 1./(3-x), z = 1./(2-x)
+// curve 3 : x = [1./2,(2.23606-1)/2], y = -x/(-1 - x + x*x), z = 1./(x+1)
+// curve 4 : x = [(2.23606-1)/2.,1], y = 1./2, z = 1./(x+1)
+// curve 5 : x = [(2.23606-1)/2.,2./3], y = (1 - 2*x)/(1. - 3*x + x*x), z = (1. - x)/x
+// curve 6 : x = [2/3,1], y = 1./(x+1), z = 1./2
+// curve 7 : x = [1/2,2/3], y = 1./(x+1), z = (2*x-1.)/x
+// curve 8 : x = 2/3, y = [3/5,1], z = 1/2
+// curve 9 : x = [1/2,(2.23606-1)/2], y = 1/2, z = (1. - x)/x
+// curve 10 : x = 1/2, y = [2/5,1/2], z = y/(1.-y)
 template<typename P>
-std::vector<std::vector<P>> poly00123415(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123415(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,2./5, P(1./2,0.,2./3),P(1./2,2./5,2./3),
+                 [](double y) { return P(1./2,y,2./3); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./3,1./2),P(1./2,2./5,2./3),
+                 [](double x) { return P(x,1./(3-x),1./(2-x)); },
+                 prec),
+  create_polyline(1./2,(2.23606-1)/2., P(1./2,2./5,2./3),P((2.23606-1)/2.,1./2,(2.23606-1)/2.),
+                 [](double x) { return P(x,-x/(-1 - x + x*x),1./(x+1)); },
+                 prec),
+  create_polyline((2.23606-1)/2.,1., P((2.23606-1)/2.,1./2,(2.23606-1)/2.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./(x+1)); },
+                 prec),
+  create_polyline((2.23606-1)/2.,2./3, P((2.23606-1)/2.,1./2,(2.23606-1)/2.),P(2./3,3./5,1./2), 
+                 [](double x) { return P(x,(1 - 2*x)/(1. - 3*x + x*x),(1. - x)/x); },
+                 prec),
+  create_polyline(2./3,1., P(2./3,3./5,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./(x+1),1./2); },
+                 prec),
+  create_polyline(1./2,2./3,P(1./2,2./3,0.), P(2./3,3./5,1./2),
+                 [](double x) { return P(x,1./(x+1),(2*x-1.)/x); },
+                 prec),
+  create_polyline(3./5,1., P(2./3,3./5,1./2),P(2./3,1.,1./2),
+                 [](double y) { return P(2./3,y,1./2); },
+                 prec),
+  create_polyline(1./2.,(2.23606-1)/2., P(1./2,1./2,1.), P((2.23606-1)/2.,1./2,(2.23606-1)/2.),
+                 [](double x) { return P(x,1./2,(1. - x)/x); },
+                 prec),
+  create_polyline(2./5,1./2, P(1./2,2./5,2./3),P(1./2,1./2,1.),
+                 [](double y) { return P(1./2,y,y/(1.-y)); },
+                 prec),
 };
 }
 
 //00123425
-//
-//
+// curve 1 : x = 1/2, y = [0,2/5], z = 2/3
+// curve 2 : x = [1/2,1], y = x/(1.+x*x), z = 1./(x+1)
+// curve 3 : x = [0,1/2], y = 1/(2 + x), z = 1/(2 - x)
+// curve 4 : x = [0,1/2], y = 1/(2 - x), z = (-1 + 2*x)/(-2 + 3*x)
+// curve 5 : x = [1/2,1], y = 1/2, z = x/(-1 + 3*x)
+// curve 6 : x = 1/2, y = [2/5,1/2], z = y/(1.-y)
+// problem with close polylines, there is an over refinement
+
 template<typename P>
-std::vector<std::vector<P>> poly00123425(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123425(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,2./5, P(1./2,0.,2./3),P(1./2,2./5,2./3),
+                 [](double y) { return P(1./2,y,2./3); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,2./5,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,x/(1.+x*x),1./(x+1)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,2./5,2./3),
+                 [](double x) { return P(x,1/(2 + x),1/(2 - x)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,2./3,0.),
+                 [](double x) { return P(x,1/(2 - x),(-1 + 2*x)/(-2 + 3*x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,x/(-1 + 3*x)); },
+                 prec),
+  create_polyline(2./5,1./2, P(1./2,2./5,2./3),P(1./2,1./2,1.),
+                 [](double y) { return P(1./2,y,y/(1.-y)); },
+                 prec),
 };
 }
 
 //00123455
-//
-//
+// curve 1 : x = 1./2, y = [2/3,1], z = 1./3
+// curve 2 : x = 1./2, y = [0,1/3], z = 2./3
+// curve 3 : x = 1./2, y = 1./3, z = [2/3,1]
+// curve 4 : x = 1./2, y = 2./3, z = [0,1/3]
+// curve 5 : x = [1/2,1], y = 1./(1+x), z = x/(1.+x)
+// curve 6 : x = 1-x',1./(1+x'),x'/(1.+x'), x' = [1/2,1]
+// curve 7 :   x = 1-x', 1 - 1./(1+x'),1 - x'/(1.+x'), x' = [1/2,1]
+// curve 8 :   x = [1/2,1], y = 1 - 1./(1+x), z = 1 - x/(1.+x)
 template<typename P>
-std::vector<std::vector<P>> poly00123455(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123455(const int prec = 10)
 {
 return {
-
-
+  create_polyline(2./3.,1., P(1./2,2./3,1./3),P(1./2,1.,1./3),
+                 [](double y) { return P(1./2,y,1./3); },
+                 prec),
+  create_polyline(0.,1./3., P(1./2,0.,2./3),P(1./2,1./3,2./3),
+                 [](double y) { return P(1./2,y,2./3); },
+                 prec),
+  create_polyline(2./3.,1., P(1./2,1./3,2./3),P(1./2,1./3,1.),
+                 [](double z) { return P(1./2,1./3,z); },
+                 prec),
+  create_polyline(0.,1./3., P(1./2,2./3,0.),P(1./2,2./3,1./3),
+                 [](double z) { return P(1./2,2./3,z); },
+                 prec),
+  create_polyline(1/2.,1., P(1./2,2./3,1./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./(1+x),x/(1.+x)); },
+                 prec),
+  create_polyline(1/2.,1., P(1./2,2./3,1./3),P(0.,1./2,1./2),
+                 [](double x) { return P(1-x,1./(1+x),x/(1.+x)); },
+                 prec),
+  create_polyline(1/2.,1., P(1./2,1./3,2./3),P(0.,1./2,1./2),
+                 [](double x) { return P(1-x,1-1./(1+x),1- x/(1.+x)); },
+                 prec),
+  create_polyline(1/2.,1., P(1./2,1./3,2./3),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1- 1./(1+x),1- x/(1.+x)); },
+                 prec),
 };
 }
 
 //01102345
-//
-//
+// curve 1 : x = y = 1/2, z = [0,1]
+// curve 2 : x = 1./2, y = [0,1/2], z = 1./(2-y)
+// curve 3 : x = [0,1/2], y = 1/2, z = 1./(2-x)
+// curve 4 : x = 1./2, y = 1-y', z = 1./(2-y'), y' = [0,1/2]
+// curve 5 : x = 1-x', y = 1/2, z = 1./(2-x'), x' = [0,1/2] 
 template<typename P>
-std::vector<std::vector<P>> poly01102345(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01102345(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,2./3., P(1./2,1./2,0.),P(1./2,1./2,2./3),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
+  create_polyline(2./3.,1., P(1./2,1./2,2./3.),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,1./2),P(1./2,1./2,2./3),
+                 [](double y) { return P(1./2,y,1./(2-y)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,2./3),
+                 [](double x) { return P(x,1./2,1./(2-x)); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,1.,1./2),P(1./2,1./2,2./3),
+                 [](double y) { return P(1./2,1-y,1./(2-y)); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,1./2,2./3),
+                 [](double x) { return P(1-x,1./2,1./(2-x)); },
+                 prec),
 };
 }
 
 //01121345
-//
-//
+// curve 1 : x = [1/2,1], y = 1/2x, z = 1/2
+// curve 2 : x = [1/2,1], y = 1/2, z = 1/2x
+// curve 3 : x = 1/2, y = [1/2,1], z = 1/2y
 template<typename P>
-std::vector<std::vector<P>> poly01121345(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01121345(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./(2*x),1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./(2*x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1./(2*y)); },
+                 prec),
 };
 }
 
 //01122345
-//
-//
+// curve 1 : x = [1/2,1], y = (x*(-1 + 2*x))/(1 - 4*x + 5*x*x), z = x*x/(1 - 3*x + 4*x*x)
+// curve 2 : x = (x'*(-1 + 2*x'))/(1 - 4*x' + 5*x'*x'),y = x',z = x'*x'/(1 - 3*x' + 4*x'*x'), x'= [1/2,1]
+// curve 3 : x = 1./2,y = [1/2,1], z = y/(-1 + 3*y)
+// curve 4 : x = [1/2,1], y = 1./2, z = x/(-1 + 3*x)
+// curve 5 : x = [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = (1 - 3*x + 3*x*x)/(2 - 5*x + 4*x*x)
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly01122345(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01122345(const int prec = 10)
 {
 return {
-
-
+  create_polyline(1./2,1., P(1./2,0.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,(x*(-1 + 2*x))/(1 - 4*x + 5*x*x),x*x/(1 - 3*x + 4*x*x)); },
+                 prec),
+  create_polyline(1./2,1.,P(0.,1./2,1./2), P(1./2,1.,1./2),
+                 [](double x) { return P((x*(-1 + 2*x))/(1 - 4*x + 5*x*x),x,x*x/(1 - 3*x + 4*x*x)); },
+                 prec), 
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,y/(-1 + 3*y)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,x/(-1 + 3*x)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,0.,1./2),
+                 [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),(1 - 3*x + 3*x*x)/(2 - 5*x + 4*x*x)); },
+                 prec),
 };
 }
 
 //01123045
-//
-//
+// curve 1 : x = [0,1/2], y = 1/2, z =  (-1 + x)/(-2 + 3*x)
+// curve 2 : x = 1/2, y = [1/2,(2.23606-1.)/2], z = (1 - y)/y
+// curve 3 : x = (2*z*z - 3*z + 1)/(5*z*z - 5*z + 1), y = (-z*z + 2*z - 1)/(2*z*z - 1), z = [1/2,(2.23606-1.)/2]
+// curve 4 : x = [(2.23606-1.)/2,1], y = (-2 + 5*x - sqrt(4 - 8*x + 5*x*x))/(2*(-3 + 5*x)), z = (-2 + 4*x - x*x + x*sqrt(4 - 8*x + 5*x*x))/(2*(-1 + 2*x + x*x))
+// curve 5 : x  =[1/2,1], y = x/(-1 + 3*x), z = 1./2
+// curve 6 : x = 1/2, y = [(2.23606-1.)/2,1], z = 1./(y+1)
+// problem with close polylines, there is an over refinement
 template<typename P>
-std::vector<std::vector<P>> poly01123045(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01123045(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,1.),
+                 [](double x) { return P(x,1./2,(-1 + x)/(-2 + 3*x)); },
+                 prec),
+  create_polyline(1./2,(2.23606-1.)/2, P(1./2,1./2,1.),P(1./2,(2.23606-1.)/2,(2.23606-1.)/2),
+                 [](double y) { return P(1./2,y,(1 - y)/y); },
+                 prec),
+  create_polyline(1./2,(2.23606-1.)/2, P(0.,1./2,1./2),P(1./2,(2.23606-1.)/2,(2.23606-1.)/2),
+                 [](double z) { return P((2*z*z - 3*z + 1)/(5*z*z - 5*z + 1),(-z*z + 2*z - 1)/(2*z*z - 1),z); },
+                 prec),
+  create_polyline((2.23606-1.)/2,1.,P(1./2,(2.23606-1.)/2,(2.23606-1.)/2), P(1.,1./2,1./2),
+                 [](double x) { return P(x,(-2 + 5*x - sqrt(4 - 8*x + 5*x*x))/(2*(-3 + 5*x)),(-2 + 4*x - x*x + x*sqrt(4 - 8*x + 5*x*x))/(2*(-1 + 2*x + x*x)) ); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,x/(-1 + 3*x),1./2); },
+                 prec),
+  create_polyline((2.23606-1.)/2,1., P(1./2,(2.23606-1.)/2,(2.23606-1.)/2),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1./(y+1)); },
+                 prec),
 };
 }
 
 //01123445
-//
-//
+// curve 1 : x= [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = 1./2
+// curve 2  : x = 1- x', y = 1-  (-1 + 2*x')/(-2 + 3*x'), z = 1./2, x' = [0,1/2] 
 template<typename P>
-std::vector<std::vector<P>> poly01123445(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01123445(const int prec = 10)
 {
 return {
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,0.,1./2),
+                 [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,1.,1./2),
+                 [](double x) { return P(1-x,1-(-1 + 2*x)/(-2 + 3*x),1./2); },
+                 prec),
 
 };
 }
 
 //01123453
-//
-//
+// curve 1 : x = [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = (-1 + 2*x - x*x)/(-2 + 3*x)
+// curve 2 : x = 1-x', y = 1-(-1 + 2*x')/(-2 + 3*x'), z = (-1 + 2*x' - x'*x')/(-2 + 3*x'), x'= [0,1/2]
+// curve 3 : x = 1-x', y = (-1 + 2*x')/(-2 + 3*x'), z = 1-(-1 + 2*x' - x'*x')/(-2 + 3*x'), x'= [0,1/2]
+// curve 4 : x = x', y = 1-(-1 + 2*x')/(-2 + 3*x'), z = 1-(-1 + 2*x' - x'*x')/(-2 + 3*x'), x'= [0,1/2]
 template<typename P>
-std::vector<std::vector<P>> poly01123453(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01123453(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,0.,1./2),
+                 [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),(-1 + 2*x - x*x)/(-2 + 3*x)); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,1.,1./2),
+                 [](double x) { return P(1-x,1-(-1 + 2*x)/(-2 + 3*x),(-1 + 2*x - x*x)/(-2 + 3*x)); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,0.,1./2),
+                 [](double x) { return P(1-x,(-1 + 2*x)/(-2 + 3*x),1-(-1 + 2*x - x*x)/(-2 + 3*x)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1.,1./2),
+                 [](double x) { return P(x,1-(-1 + 2*x)/(-2 + 3*x),1-(-1 + 2*x - x*x)/(-2 + 3*x)); },
+                 prec),
 };
 }
 
 //01233245
-//
-//
+// curve 1 : x = 1./2, y = (2*z - 1)/(3*z - 2), z = [0,1/2]
+// curve 2 : x = 1./2, y = 1-(2*z' - 1)/(3*z' - 2), z = 1-z', z' = [0,1/2]
+// curve 3 : x = (z*z + z*(3*z - 2) - 4*z + 2)/(2*(z - 1)*(z-1)), y = z, z = [1/3,1/2]
+// curve 4 : x = 1-(z'*z' + z'*(3*z' - 2) - 4*z' + 2)/(2*(z' - 1)*(z'-1)), y = z', z = z' = [1/3,1/2]
+// curve 5 : x = 1-(z'*z' + z'*(3*z' - 2) - 4*z' + 2)/(2*(z' - 1)*(z'-1)), y = 1-z', z = 1-z', z' = [1/3,1/2]  
+// curve 6 : x = (z'*z' + z'*(3*z' - 2) - 4*z' + 2)/(2*(z' - 1)*(z'-1)), y = 1-z', z = 1-z', z' = [1/3,1/2]
+// curve 7 : x = 1./2, y = z = [1/3,2/3]   
 template<typename P>
-std::vector<std::vector<P>> poly01233245(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01233245(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./3, P(1./2,1./2,0.),P(1./2,1./3,1./3),
+                 [](double z) { return P(1./2, (2*z - 1)/(3*z - 2),z); },
+                 prec),
+  create_polyline(1./3,1./2, P(1./2,1./3,1./3),P(1./2,0.,1./2),
+                 [](double z) { return P(1./2, (2*z - 1)/(3*z - 2),z); },
+                 prec),
+  create_polyline(1/3.,1./2, P(1./2,2/3.,2./3),P(1./2,1.,1./2),
+                 [](double z) { return P(1./2, 1-(2*z - 1)/(3*z - 2),1-z); },
+                 prec),
+  create_polyline(0.,1./3, P(1./2,1./2,1.),P(1./2,2/3.,2./3),
+                 [](double z) { return P(1./2, 1-(2*z - 1)/(3*z - 2),1-z); },
+                 prec),
+  create_polyline(1./3,1./2, P(1./2,1./3,1./3),P(0.,1./2,1./2),
+                 [](double z) { return P( (z*z + z*(3*z - 2) - 4*z + 2)/(2*(z - 1)*(z-1)),z,z); },
+                 prec),
+  create_polyline(1./3,1./2, P(1./2,1./3,1./3),P(1.,1./2,1./2), 
+                 [](double z) { return P( 1-(z*z + z*(3*z - 2) - 4*z + 2)/(2*(z - 1)*(z-1)),z,z); },
+                 prec),
+  create_polyline(1./3,1./2, P(1./2,2./3,2./3),P(1.,1./2,1./2),
+                 [](double z) { return P( 1-(z*z + z*(3*z - 2) - 4*z + 2)/(2*(z - 1)*(z-1)),1-z,1-z); },
+                 prec),
+  create_polyline(1./3,1./2, P(1./2,2./3,2./3),P(0.,1./2,1./2),
+                 [](double z) { return P( (z*z + z*(3*z - 2) - 4*z + 2)/(2*(z - 1)*(z-1)),1-z,1-z); },
+                 prec),
+  create_polyline(1./3,2./3, P(1./2,1./3,1./3),P(1./2,2./3,2./3),
+                 [](double z) { return P(1./2,z,z); },
+                 prec),
 };
 }
 
 //00123456
-//
-//
+// curve 1 : x = [0,1/2], y = 1./2, z = 1./(2-x)
+// curve 2 : x' = [0,1/2], x = 1-x y = 1./2, z = 1./(2-x')
+// curve 3 : x = [0,1/2], y = 1./(2-x), z = 1./2
+// curve 4 : x' = [0,1/2], x = 1-x, y = 1./(2-x), z = 1./2
+// curve 5 : x = 1./2, y = 2./3, z = [0,1/2]
+// curve 6 : x = 1./2, y = [0,1/2], z = 2./3
+// curve 7 : x = 1./2, y = [2/3,1], z = 1./2
+// curve 8 : x = 1./2, y = 1./2, z = [2/3,1]
+// curve 9 : x = 1./2, y = [1/2,2/3], z = (2*(-1 + y))/(-2 + y)
 template<typename P>
-std::vector<std::vector<P>> poly00123456(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly00123456(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,2./3),
+                 [](double x) { return P(x,1./2,1./(2-x)); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,1./2,2./3),
+                 [](double x) { return P(1-x,1./2,1./(2-x)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,2./3,1./2),
+                 [](double x) { return P(x,1./(2-x),1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,2./3,1./2),
+                 [](double x) { return P(1-x,1./(2-x),1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,2./3,0.),P(1./2,2./3,1./2),
+                 [](double z) { return P(1./2,2./3,z); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,2./3),P(1./2,1./2,2./3),
+                 [](double y) { return P(1./2,y,2./3); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,2/3.,1./2),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,1./2,2/3.),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
+  create_polyline(1./2,2./3, P(1./2,1./2,2/3.),P(1./2,2./3,1./2),
+                 [](double y) { return P(1./2,y,(2*(-1 + y))/(-2 + y)); },
+                 prec),
 };
 }
 
 //01123456
-//
-//
+// curve 1 : x = [0,1/2], y = 1./2, z = 1./(2-x)
+// curve 2 : x = 1-x', y = 1./2, z = 1./(2-x'), x' = [0,1/2]
+// curve 3 : x = 1./2, y = [1/2,1], z = 1./(1+y)
+// curve 4 : x = 1./2, y = 1-y', z = 1./(1+y'), y' = [1/2,1]
+// curve 5 : x = [0,1/2], y = (-1 + 2*x)/(-2 + 3*x), z = 1./2
+// curve 6 : x = 1-x', y = 1-(-1 + 2*x')/(-2 + 3*x'), z = 1./2
+// curve 7 : x = 1./2, y = 1./2, z = [2/3,1]
 template<typename P>
-std::vector<std::vector<P>> poly01123456(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01123456(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,2./3),
+                 [](double x) { return P(x,1./2,1./(2-x)); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,1./2,2./3),
+                 [](double x) { return P(1-x,1./2,1./(2-x)); },
+                 prec),
+  create_polyline(1./2,1.,P(1./2,1./2,2./3),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1./(1+y)); },
+                 prec),
+  create_polyline(1./2,1.,P(1./2,1./2,2./3),P(1./2,0.,1./2),
+                 [](double y) { return P(1./2,1-y,1./(1+y)); },
+                 prec),
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,0.,1./2),
+                 [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,1.,1./2),
+                 [](double x) { return P(1-x,1-(-1 + 2*x)/(-2 + 3*x),1./2); },
+                 prec),
+  create_polyline(2./3,1., P(1./2,1./2,2./3),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
 };
 }
 
 //01233456
-//
-//
+// curve 1 : x = [0,1/2], y = (-1 + x)/(-2 + 3*x), z = 1./2
+// curve 2 : x = 1-x', y = 1-(-1 + x')/(-2 + 3*x'), z = 1./2, x' = [0,1/2]
+// curve 3 : x = [1/2,1], y = 1./2, z = x/(-1 + 3*x)
+// curve 4 : x = 1-x',1./2,1-(x'/(-1 + 3*x')), x'= [1/2,1]
+// curve 5 : x = 1./2, y = [1/2,1], z = y/(3*y-1)
+// curve 6 : x = 1./2, y = 1-y', z = 1 -(y'/(3*y'-1)), y'= [1/2,1]
 template<typename P>
-std::vector<std::vector<P>> poly01233456(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01233456(const int prec = 10)
 {
 return {
-
-
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1.,1./2),
+                 [](double x) { return P(x,(-1 + x)/(-2 + 3*x),1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1.,1./2,1./2),P(1./2,0.,1./2),
+                 [](double x) { return P(1-x,1-(-1 + x)/(-2 + 3*x),1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2.,1./2),
+                 [](double x) { return P(x,1./2,x/(-1 + 3*x)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,0.),P(0.,1./2.,1./2),
+                 [](double x) { return P(1-x,1./2,1-(x/(-1 + 3*x))); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,y/(3*y-1)); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,0.),P(1./2,0.,1./2),
+                 [](double y) { return P(1./2,1-y,1 -(y/(3*y-1))); },
+                 prec),
 };
 }
 
 //01234567
-//
-//
+// curve 1 : x =[0,1], y = z = 1/2
+// curve 2 : y =[0,1], x = z = 1/2
+// curve 3 : z =[0,1], y = x = 1/2
 template<typename P>
-std::vector<std::vector<P>> poly01234567(const int /*prec*/ = 10)
+std::vector<std::vector<P>> poly01234567(const int prec = 10)
 {
 return {
+  create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1.,1./2,1./2),
+                 [](double x) { return P(x,1./2,1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,0.,1./2),P(1./2,1./2,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1./2,1.,1./2),
+                 [](double y) { return P(1./2,y,1./2); },
+                 prec),
+  create_polyline(0.,1./2, P(1./2,1./2,0.),P(1./2,1./2,1./2),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
+  create_polyline(1./2,1., P(1./2,1./2,1./2),P(1./2,1./2,1.),
+                 [](double z) { return P(1./2,1./2,z); },
+                 prec),
 
 
 };
@@ -2425,10 +3992,8 @@ public:
           // 8 colors
             { 01234567_c, CGAL::Mesh_3::poly01234567 }
     };
-
-};//class Triple_line_extractor
-}//namespace Mesh_3
-}//namespace CGAL
-
+};// end triple_lines_extractor    
+}// end namespace Mesh 3
+}// end namespace CGAL
 
 #endif // CGAL_MESH_3_FEATURES_DETECTION_H
