@@ -351,18 +351,22 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
   typedef Cartesian_converter<Nef_Kernel, Output_kernel> Converter;
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();
-  if ( Nef_polyhedron::Infi_box::extended_kernel() ) ++vol_it; // skip Infi_box
+
+  if (Nef_polyhedron::Infi_box::extended_kernel()) {
+      ++vol_it; // skip Infi_box
+  }
+
   CGAL_assertion ( vol_it != vol_end );
-  ++vol_it; // skip unbounded volume
 
   Converter to_output;
   for (;vol_it!=vol_end;++vol_it)
-    nef_to_pm::collect_polygon_mesh_info(points,
-                                         polygons,
-                                         nef,
-                                         vol_it->shells_begin(),
-                                         to_output,
-                                         triangulate_all_faces);
+    for(auto sit = vol_it->shells_begin(); sit != vol_it->shells_end(); ++sit)
+      nef_to_pm::collect_polygon_mesh_info(points,
+                                           polygons,
+                                           nef,
+                                           sit,
+                                           to_output,
+                                           triangulate_all_faces);
 }
 
 template <class Nef_polyhedron, class Polygon_mesh>

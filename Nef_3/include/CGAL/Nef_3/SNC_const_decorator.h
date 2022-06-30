@@ -535,6 +535,16 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
             }
             Halffacet_handle f = ec->twin()->facet();
             if ( Done[f] ) continue;
+            Halffacet_handle tf = f->twin();
+            if ((f->incident_volume() == tf->incident_volume()) && Done[tf]) {
+                continue; // for example when we have to do with the unbounded volume and a surface with boundaries
+            }
+            Volume_const_iterator unbounded = volumes_begin();
+            Volume_const_iterator fit = f->incident_volume();
+            Volume_const_iterator tfit = tf->incident_volume();
+            if ((fit == unbounded) && (tfit != unbounded)) {
+                continue; // because we will later report it from the bounded side
+            }
             FacetCandidates.push_back(f); Done[f] = true;
           }
         } else if (fc.is_svertex() ) {
