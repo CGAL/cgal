@@ -13,9 +13,8 @@ The resulting sequence is placed starting at position
 `result`, and the past-the-end iterator for the resulting
 sequence is returned. It is not specified at which point the
 cyclic sequence of extreme points is cut into a linear sequence.
+
 \pre The source range [`first`,`beyond`) does not contain `result`.
-
-
 
 \cgalHeading{Requirements}
 
@@ -136,8 +135,8 @@ of \f$ O(n \log n)\f$ for \f$ n\f$ input points.
 template <class InputIterator, class OutputIterator>
 OutputIterator
 lower_hull_points_2(InputIterator first, InputIterator beyond,
-OutputIterator result,
-const Traits & ch_traits = Default_traits );
+                    OutputIterator result,
+                    const Traits& ch_traits = Default_traits );
 
 } /* namespace CGAL */
 
@@ -195,12 +194,10 @@ This function uses Andrew's
 variant of Graham's scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}. The algorithm
 has worst-case running time of \f$ O(n \log n)\f$ for \f$ n\f$ input points.
 
-
 */
 template <class InputIterator, class OutputIterator>
 OutputIterator
 upper_hull_points_2(InputIterator first, InputIterator beyond,
-OutputIterator result,
-const Traits & ch_traits = Default_traits );
-
+                    OutputIterator result,
+                    const Traits& ch_traits = Default_traits);
 } /* namespace CGAL */

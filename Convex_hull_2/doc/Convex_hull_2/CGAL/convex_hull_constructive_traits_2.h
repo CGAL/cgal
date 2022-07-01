@@ -43,7 +43,7 @@ typedef R::Less_xy_2 Less_xy_2;
 typedef R::Less_yx_2 Less_yx_2;
 
 /*!
-This internal functor builds and caches the line on the first call to its `operator()`.
+This internal functor builds and cache the line on the first call to its `operator()`.
 */
 typedef unspecified_type
 Compare_signed_distance_to_line_2;
