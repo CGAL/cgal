@@ -1,13 +1,16 @@
-#include <iostream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/convex_hull_traits_2.h>
+
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 
+#include <iostream>
+#include <iterator>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
-
 
 template <class F, class Point>
 struct Forward_bool_functor
@@ -128,5 +131,5 @@ int main()
 
   assert( result.size() == 3 );
 
-  return 0;
+  return EXIT_SUCCESS;
 }
