@@ -13,15 +13,11 @@
 #ifndef CGAL_CONVEX_HULL_TRAITS_ADAPTER_2_H
 #define CGAL_CONVEX_HULL_TRAITS_ADAPTER_2_H
 
-#include <CGAL/disable_warnings.h>
-
 #include <boost/call_traits.hpp>
 
 #include <CGAL/property_map.h>
 
-
 namespace CGAL{
-
 
 template<class Base_traits,class PointPropertyMap>
 class Convex_hull_traits_adapter_2:public Base_traits{
@@ -112,7 +108,5 @@ public:
 };
 
 } //namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_CONVEX_HULL_TRAITS_ADAPTER_2_H
