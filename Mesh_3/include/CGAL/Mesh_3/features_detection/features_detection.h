@@ -1848,7 +1848,7 @@ return {
 //01121223
 // no curves
 template<typename P>
-std::vector<std::vector<P>> poly01121223(const int prec = 10)
+std::vector<std::vector<P>> poly01121223(const int /*prec*/ = 10)
 {
 return {
 
@@ -2953,10 +2953,10 @@ return {
 }
 
 //01121341
-// no curve
+// no curves
 //
 template<typename P>
-std::vector<std::vector<P>> poly01121341(const int prec = 10)
+std::vector<std::vector<P>> poly01121341(const int /*prec*/ = 10)
 {
 return {
 
