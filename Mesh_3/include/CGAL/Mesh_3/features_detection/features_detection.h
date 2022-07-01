@@ -657,7 +657,7 @@ std::vector<std::vector<P>> poly00121201(const int prec = 10)
 }
 
 
-double limit_value(double bound, double direction, double epsilon=1e-6)
+inline double limit_value(double bound, double direction, double epsilon=1e-6)
 {
   return bound + direction * epsilon;
 }
