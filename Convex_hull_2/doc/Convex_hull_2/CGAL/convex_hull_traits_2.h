@@ -41,8 +41,8 @@ typedef R::Less_yx Less_yx_2;
 /*!
 
 */
-typedef R::Less_signed_distance_to_line_2
-Less_signed_distance_to_line_2;
+typedef R::Compare_signed_distance_to_line_2
+Compare_signed_distance_to_line_2;
 
 /*!
 
@@ -92,8 +92,8 @@ Less_yx_2 less_yx_2_object();
 /*!
 
 */
-Less_signed_distance_to_line_2
-less_signed_distance_to_line_2_object();
+Compare_signed_distance_to_line_2
+compare_signed_distance_to_line_2_object();
 
 /*!
 

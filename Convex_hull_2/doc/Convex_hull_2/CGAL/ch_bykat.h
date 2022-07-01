@@ -24,7 +24,7 @@ the concept `ConvexHullTraits_2` and their corresponding member
 functions that return instances of these types:
 <UL>
 <LI>`Traits::Point_2`,
-<LI>`Traits::Less_signed_distance_to_line_2`,
+<LI>`Traits::Compare_signed_distance_to_line_2`,
 <LI>`Traits::Left_turn_2`,
 <LI>`Traits::Less_xy_2`,
 <LI>`Traits::Equal_2`.
