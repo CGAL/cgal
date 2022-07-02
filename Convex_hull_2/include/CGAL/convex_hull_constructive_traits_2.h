@@ -19,6 +19,8 @@
 
 #include <CGAL/license/Convex_hull_2.h>
 
+#include <CGAL/enum.h>
+
 namespace CGAL {
 namespace Convex_hulls_2 {
 namespace internal {
