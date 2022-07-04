@@ -819,6 +819,18 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       // special case of `edge(h, tmesh)` being a border edge --> remove the face
       if(is_border(opposite(h, tmesh), tmesh))
       {
+        // check a non-manifold vertex won't be created
+        bool removal_is_nm=false;
+        for(halfedge_descriptor hh : CGAL::halfedges_around_target(next(h, tmesh), tmesh))
+        {
+          if (is_border(hh, tmesh))
+          {
+            removal_is_nm = true;
+            break;
+          }
+        }
+        if (removal_is_nm) continue;
+
         for(halfedge_descriptor hh : CGAL::halfedges_around_face(h, tmesh))
         {
           // Remove from even 'next_edges_to_flip' because it might have been re-added from a flip
