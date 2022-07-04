@@ -47,8 +47,8 @@
 #include <cstdlib>
 #include <cfloat>
 
-#include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Basic_shaders.h>
+#include <CGAL/GraphicBuffer.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
 #include <CGAL/Random.h>
@@ -111,54 +111,7 @@ public:
     m_faces_mono_color(60, 60, 200),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false),
-    m_buffer_for_mono_points(&arrays[POS_MONO_POINTS],
-                             nullptr,
-                             &m_bounding_box,
-                             nullptr, nullptr, nullptr),
-    m_buffer_for_colored_points(&arrays[POS_COLORED_POINTS],
-                                nullptr,
-                                &m_bounding_box,
-                                &arrays[COLOR_POINTS],
-                                nullptr, nullptr),
-    m_buffer_for_mono_segments(&arrays[POS_MONO_SEGMENTS],
-                               nullptr,
-                               &m_bounding_box,
-                               nullptr, nullptr, nullptr),
-    m_buffer_for_colored_segments(&arrays[POS_COLORED_SEGMENTS],
-                                  nullptr,
-                                  &m_bounding_box,
-                                  &arrays[COLOR_SEGMENTS],
-                                  nullptr, nullptr),
-    m_buffer_for_mono_rays(&arrays[POS_MONO_RAYS],
-                            nullptr,
-                            &m_bounding_box,
-                            nullptr, nullptr),
-    m_buffer_for_colored_rays(&arrays[POS_COLORED_RAYS],
-                               nullptr,
-                               &m_bounding_box,
-                               &arrays[COLOR_RAYS],
-                               nullptr, nullptr),
-    m_buffer_for_mono_lines(&arrays[POS_MONO_RAYS],
-                           nullptr,
-                           &m_bounding_box,
-                           nullptr, nullptr),
-    m_buffer_for_colored_lines(&arrays[POS_COLORED_LINES],
-                              nullptr,
-                              &m_bounding_box,
-                              &arrays[COLOR_LINES],
-                              nullptr, nullptr),
-    m_buffer_for_mono_faces(&arrays[POS_MONO_FACES],
-                            nullptr,
-                            &m_bounding_box,
-                            nullptr,
-                            &arrays[FLAT_NORMAL_MONO_FACES],
-                            &arrays[SMOOTH_NORMAL_MONO_FACES]),
-    m_buffer_for_colored_faces(&arrays[POS_COLORED_FACES],
-                               nullptr,
-                               &m_bounding_box,
-                               &arrays[COLOR_FACES],
-                               &arrays[FLAT_NORMAL_COLORED_FACES],
-                               &arrays[SMOOTH_NORMAL_COLORED_FACES])
+    gBuffer(arrays,m_bounding_box)
   {
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
     setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL, ::Qt::Key_Q);
@@ -257,16 +210,16 @@ public:
 
   bool is_empty() const
   {
-    return (m_buffer_for_mono_points.is_empty() &&
-            m_buffer_for_colored_points.is_empty() &&
-            m_buffer_for_mono_segments.is_empty() &&
-            m_buffer_for_colored_segments.is_empty() &&
-            m_buffer_for_mono_rays.is_empty() &&
-            m_buffer_for_colored_rays.is_empty() &&
-            m_buffer_for_mono_lines.is_empty() &&
-            m_buffer_for_colored_lines.is_empty() &&
-            m_buffer_for_mono_faces.is_empty() &&
-            m_buffer_for_colored_faces.is_empty());
+    return (gBuffer.get_buffer_for_mono_points().is_empty() &&
+            gBuffer.get_buffer_for_colored_points().is_empty() &&
+            gBuffer.get_buffer_for_mono_segments().is_empty() &&
+            gBuffer.get_buffer_for_colored_segments().is_empty() &&
+            gBuffer.get_buffer_for_mono_rays().is_empty() &&
+            gBuffer.get_buffer_for_colored_rays().is_empty() &&
+            gBuffer.get_buffer_for_mono_lines().is_empty() &&
+            gBuffer.get_buffer_for_colored_lines().is_empty() &&
+            gBuffer.get_buffer_for_mono_faces().is_empty() &&
+            gBuffer.get_buffer_for_colored_faces().is_empty());
   }
 
   const CGAL::Bbox_3& bounding_box() const
@@ -275,46 +228,46 @@ public:
   bool has_zero_x() const
   {
     return
-      m_buffer_for_mono_points.has_zero_x() &&
-      m_buffer_for_colored_points.has_zero_x() &&
-      m_buffer_for_mono_segments.has_zero_x() &&
-      m_buffer_for_colored_segments.has_zero_x() &&
-      m_buffer_for_mono_faces.has_zero_x() &&
-      m_buffer_for_colored_faces.has_zero_x() &&
-      m_buffer_for_mono_rays.has_zero_x() &&
-      m_buffer_for_colored_rays.has_zero_x() &&
-      m_buffer_for_mono_lines.has_zero_x() &&
-      m_buffer_for_colored_lines.has_zero_x();
+      gBuffer.get_buffer_for_mono_points().has_zero_x() &&
+      gBuffer.get_buffer_for_colored_points().has_zero_x() &&
+      gBuffer.get_buffer_for_mono_segments().has_zero_x() &&
+      gBuffer.get_buffer_for_colored_segments().has_zero_x() &&
+      gBuffer.get_buffer_for_mono_faces().has_zero_x() &&
+      gBuffer.get_buffer_for_colored_faces().has_zero_x() &&
+      gBuffer.get_buffer_for_mono_rays().has_zero_x() &&
+      gBuffer.get_buffer_for_colored_rays().has_zero_x() &&
+      gBuffer.get_buffer_for_mono_lines().has_zero_x() &&
+      gBuffer.get_buffer_for_colored_lines().has_zero_x();
   }
 
   bool has_zero_y() const
   {
     return
-      m_buffer_for_mono_points.has_zero_y() &&
-      m_buffer_for_colored_points.has_zero_y() &&
-      m_buffer_for_mono_segments.has_zero_y() &&
-      m_buffer_for_colored_segments.has_zero_y() &&
-      m_buffer_for_mono_faces.has_zero_y() &&
-      m_buffer_for_colored_faces.has_zero_y() &&
-      m_buffer_for_mono_rays.has_zero_y() &&
-      m_buffer_for_colored_rays.has_zero_y() &&
-      m_buffer_for_mono_lines.has_zero_y() &&
-      m_buffer_for_colored_lines.has_zero_y();
+      gBuffer.get_buffer_for_mono_points().has_zero_y() &&
+      gBuffer.get_buffer_for_colored_points().has_zero_y() &&
+      gBuffer.get_buffer_for_mono_segments().has_zero_y() &&
+      gBuffer.get_buffer_for_colored_segments().has_zero_y() &&
+      gBuffer.get_buffer_for_mono_faces().has_zero_y() &&
+      gBuffer.get_buffer_for_colored_faces().has_zero_y() &&
+      gBuffer.get_buffer_for_mono_rays().has_zero_y() &&
+      gBuffer.get_buffer_for_colored_rays().has_zero_y() &&
+      gBuffer.get_buffer_for_mono_lines().has_zero_y() &&
+      gBuffer.get_buffer_for_colored_lines().has_zero_y();
   }
 
   bool has_zero_z() const
   {
     return
-      m_buffer_for_mono_points.has_zero_z() &&
-      m_buffer_for_colored_points.has_zero_z() &&
-      m_buffer_for_mono_segments.has_zero_z() &&
-      m_buffer_for_colored_segments.has_zero_z() &&
-      m_buffer_for_mono_faces.has_zero_z() &&
-      m_buffer_for_colored_faces.has_zero_z() &&
-      m_buffer_for_mono_rays.has_zero_z() &&
-      m_buffer_for_colored_rays.has_zero_z() &&
-      m_buffer_for_mono_lines.has_zero_z() &&
-      m_buffer_for_colored_lines.has_zero_z();
+      gBuffer.get_buffer_for_mono_points().has_zero_z() &&
+      gBuffer.get_buffer_for_colored_points().has_zero_z() &&
+      gBuffer.get_buffer_for_mono_segments().has_zero_z() &&
+      gBuffer.get_buffer_for_colored_segments().has_zero_z() &&
+      gBuffer.get_buffer_for_mono_faces().has_zero_z() &&
+      gBuffer.get_buffer_for_colored_faces().has_zero_z() &&
+      gBuffer.get_buffer_for_mono_rays().has_zero_z() &&
+      gBuffer.get_buffer_for_colored_rays().has_zero_z() &&
+      gBuffer.get_buffer_for_mono_lines().has_zero_z() &&
+      gBuffer.get_buffer_for_colored_lines().has_zero_z();
   }
 
   Local_kernel::Plane_3 clipping_plane() const
@@ -330,20 +283,20 @@ public:
 
   template<typename KPoint>
   void add_point(const KPoint& p)
-  { m_buffer_for_mono_points.add_point(p); }
+  { gBuffer.add_point(p);} //get_buffer_for_mono_points().add_point(p); }
 
   template<typename KPoint>
   void add_point(const KPoint& p, const CGAL::IO::Color& acolor)
-  { m_buffer_for_colored_points.add_point(p, acolor); }
+  { gBuffer.get_buffer_for_colored_points().add_point(p, acolor); }
 
   template<typename KPoint>
   void add_segment(const KPoint& p1, const KPoint& p2)
-  { m_buffer_for_mono_segments.add_segment(p1, p2); }
+  { gBuffer.add_segment(p1, p2);}//get_buffer_for_mono_segments().add_segment(p1, p2); }
 
   template<typename KPoint>
   void add_segment(const KPoint& p1, const KPoint& p2,
                    const CGAL::IO::Color& acolor)
-  { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
+  { gBuffer.add_segment(p1, p2, acolor);}//get_buffer_for_colored_segments().add_segment(p1, p2, acolor); }
 
   template <typename KPoint, typename KVector>
   void update_bounding_box_for_ray(const KPoint &p, const KVector &v)
@@ -370,29 +323,34 @@ public:
   void add_ray(const KPoint &p, const KVector &v)
   {
     double bigNumber = 1e30;
-    m_buffer_for_mono_rays.add_ray_segment(p, (p + (bigNumber)*v));
+    gBuffer.get_buffer_for_mono_rays().add_ray_segment(p, (p + (bigNumber)*v));
+    // gBuffer.get_buffer_for_mono_rays().add_ray(p, v);
   }
 
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
   {
-    double bigNumber = 1e30;
-    m_buffer_for_colored_rays.add_ray_segment(p, (p + (bigNumber)*v), acolor);
+    // gBuffer.get_buffer_for_colored_rays().add_ray(p, v, acolor);
+        double bigNumber = 1e30;
+    gBuffer.get_buffer_for_colored_lines().add_ray_segment(p, (p + (bigNumber)*v), acolor);
   }
 
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v)
   {
-    double bigNumber = 1e30;
-    m_buffer_for_mono_lines.add_line_segment((p - (bigNumber)*v),
+    // gBuffer.add_line(p,v);
+        double bigNumber = 1e30;
+    gBuffer.get_buffer_for_mono_lines().add_line_segment((p - (bigNumber)*v),
                                              (p + (bigNumber)*v));
   }
 
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
   {
-    double bigNumber = 1e30;
-    m_buffer_for_colored_lines.add_line_segment((p - (bigNumber)*v),
+    // gBuffer.add_line(p,v,acolor);
+    
+        double bigNumber = 1e30;
+    gBuffer.get_buffer_for_colored_lines().add_line_segment((p - (bigNumber)*v),
                                                 (p + (bigNumber)*v), acolor);
   }
 
@@ -413,8 +371,8 @@ public:
 
   bool is_a_face_started() const
   {
-    return m_buffer_for_mono_faces.is_a_face_started() ||
-      m_buffer_for_colored_faces.is_a_face_started();
+    return gBuffer.get_buffer_for_mono_faces().is_a_face_started() ||
+      gBuffer.get_buffer_for_colored_faces().is_a_face_started();
   }
 
   void face_begin()
@@ -424,7 +382,10 @@ public:
       std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
     }
     else
-    { m_buffer_for_mono_faces.face_begin(); }
+    { 
+      auto mono_faces = gBuffer.get_buffer_for_mono_faces();
+      mono_faces.face_begin(); 
+    }
   }
 
   void face_begin(const CGAL::IO::Color& acolor)
@@ -434,35 +395,34 @@ public:
       std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
     }
     else
-    { m_buffer_for_colored_faces.face_begin(acolor); }
+    { 
+      auto colored_faces = gBuffer.get_buffer_for_colored_faces();
+      colored_faces.face_begin(acolor); 
+    }
   }
 
-  template<typename KPoint>
-  bool add_point_in_face(const KPoint& kp)
-  {
-    if (m_buffer_for_mono_faces.is_a_face_started())
-    { return m_buffer_for_mono_faces.add_point_in_face(kp); }
-    else if (m_buffer_for_colored_faces.is_a_face_started())
-    { return m_buffer_for_colored_faces.add_point_in_face(kp); }
-    return false;
+  template <typename KPoint>
+  bool add_point_in_face(const KPoint &kp) {
+      return gBuffer.add_point_in_face(kp);
   }
 
-  template<typename KPoint, typename KVector>
-  bool add_point_in_face(const KPoint& kp, const KVector& p_normal)
-  {
-    if (m_buffer_for_mono_faces.is_a_face_started())
-    { return m_buffer_for_mono_faces.add_point_in_face(kp, p_normal); }
-    else if (m_buffer_for_colored_faces.is_a_face_started())
-    { return m_buffer_for_colored_faces.add_point_in_face(kp, p_normal); }
-    return false;
+  template <typename KPoint, typename KVector>
+  bool add_point_in_face(const KPoint &kp, const KVector &p_normal) {
+      return gBuffer.add_point_in_face(kp, p_normal);
   }
 
   void face_end()
   {
-    if (m_buffer_for_mono_faces.is_a_face_started())
-    { m_buffer_for_mono_faces.face_end(); }
-    else if (m_buffer_for_colored_faces.is_a_face_started())
-    { return m_buffer_for_colored_faces.face_end(); }
+   if (gBuffer.get_buffer_for_mono_faces().is_a_face_started())
+    { 
+      auto mono_faces = gBuffer.get_buffer_for_mono_faces();
+      mono_faces.face_end(); 
+    }
+    else if (gBuffer.get_buffer_for_colored_faces().is_a_face_started())
+    { 
+      auto colored_faces = gBuffer.get_buffer_for_colored_faces();
+      return colored_faces.face_end(); 
+    }
   }
 
   virtual void redraw()
@@ -1422,8 +1382,11 @@ protected:
 
   void negate_all_normals()
   {
-    m_buffer_for_mono_faces.negate_normals();
-    m_buffer_for_colored_faces.negate_normals();
+    auto mono_faces = gBuffer.get_buffer_for_mono_faces();
+    mono_faces.negate_normals();
+
+    auto colored_faces = gBuffer.get_buffer_for_colored_faces();
+    mono_faces.negate_normals();
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -1682,6 +1645,9 @@ protected:
   }
 
 protected:
+
+  GraphicBuffer<float> gBuffer;
+
   bool m_draw_vertices;
   bool m_draw_edges;
   bool m_draw_rays;
@@ -1754,18 +1720,6 @@ protected:
     LAST_INDEX=END_NORMAL
   };
   std::vector<float> arrays[LAST_INDEX];
-
-  Buffer_for_vao<float> m_buffer_for_mono_points;
-  Buffer_for_vao<float> m_buffer_for_colored_points;
-  Buffer_for_vao<float> m_buffer_for_mono_segments;
-  Buffer_for_vao<float> m_buffer_for_colored_segments;
-  Buffer_for_vao<float> m_buffer_for_mono_rays;
-  Buffer_for_vao<float> m_buffer_for_colored_rays;
-  Buffer_for_vao<float> m_buffer_for_mono_lines;
-  Buffer_for_vao<float> m_buffer_for_colored_lines;
-  Buffer_for_vao<float> m_buffer_for_mono_faces;
-  Buffer_for_vao<float> m_buffer_for_colored_faces;
-  Buffer_for_vao<float> m_buffer_for_clipping_plane;
 
   static const unsigned int NB_VBO_BUFFERS=(END_POS-BEGIN_POS)+
     (END_COLOR-BEGIN_COLOR)+2; // +2 for 2 vectors of normals
