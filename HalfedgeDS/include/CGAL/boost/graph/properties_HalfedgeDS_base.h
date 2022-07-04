@@ -109,42 +109,42 @@ struct HDS_property_map {};
 
 #endif // CGAL_BOOST_GRAPH_PROPERTIES_HALFEDGEDS_BASE_H
 
-#if !defined(HDS_TMPLT) || ! defined(HDS_CLASS)
-#error HDS_TMPLT or HDS_CLASS is not defined
+#if !defined(CGAL_HDS_TMPLT) || ! defined(CGAL_HDS_CLASS)
+#error CGAL_HDS_TMPLT or CGAL_HDS_CLASS is not defined
 #endif
 
 namespace CGAL {
 
 // generalized 2-ary get functions
-template<class HDS_TMPLT, class PropertyTag>
-typename boost::property_map<HDS_CLASS, PropertyTag >::const_type
-get(PropertyTag,HDS_CLASS const&)
-{ return typename boost::property_map<HDS_CLASS, PropertyTag >::const_type(); }
+template<class CGAL_HDS_TMPLT, class PropertyTag>
+typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::const_type
+get(PropertyTag,CGAL_HDS_CLASS const&)
+{ return typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::const_type(); }
 
-template<class HDS_TMPLT, class PropertyTag>
-typename boost::property_map<HDS_CLASS, PropertyTag >::type
-get(PropertyTag,HDS_CLASS&)
-{ return typename boost::property_map<HDS_CLASS, PropertyTag >::type(); }
+template<class CGAL_HDS_TMPLT, class PropertyTag>
+typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::type
+get(PropertyTag,CGAL_HDS_CLASS&)
+{ return typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::type(); }
 
 // generalized 3-ary get functions
-template<class HDS_TMPLT, class PropertyTag, class Key>
-typename boost::property_traits< typename boost::property_map<HDS_CLASS, PropertyTag >::type >::reference
-get(PropertyTag p,HDS_CLASS& g, const Key& key)
+template<class CGAL_HDS_TMPLT, class PropertyTag, class Key>
+typename boost::property_traits< typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::type >::reference
+get(PropertyTag p,CGAL_HDS_CLASS& g, const Key& key)
 { return get(get(p, g), key); }
 
-template<class HDS_TMPLT, class PropertyTag, class Key>
-typename boost::property_traits< typename boost::property_map<HDS_CLASS, PropertyTag >::const_type >::reference
-get(PropertyTag p,HDS_CLASS const& g, const Key& key)
+template<class CGAL_HDS_TMPLT, class PropertyTag, class Key>
+typename boost::property_traits< typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::const_type >::reference
+get(PropertyTag p,CGAL_HDS_CLASS const& g, const Key& key)
 { return get(get(p, g), key); }
 
 
 
 #define DECLARE_HDS_DYNAMIC_PM(TAG, DESCRIPTOR)                             \
-template <typename HDS_TMPLT, class T>                                      \
-typename boost::property_map<HDS_CLASS, TAG >::const_type                   \
-get(const TAG&, const HDS_CLASS&)                                           \
+template <typename CGAL_HDS_TMPLT, class T>                                      \
+typename boost::property_map<CGAL_HDS_CLASS, TAG >::const_type                   \
+get(const TAG&, const CGAL_HDS_CLASS&)                                           \
 {                                                                           \
-  typedef typename boost::graph_traits< HDS_CLASS >::DESCRIPTOR descriptor; \
+  typedef typename boost::graph_traits< CGAL_HDS_CLASS >::DESCRIPTOR descriptor; \
   return internal::Dynamic_property_map<descriptor,T>();                    \
 }
 
@@ -156,23 +156,23 @@ DECLARE_HDS_DYNAMIC_PM(dynamic_face_property_t<T>, face_descriptor)
 #undef DECLARE_HDS_DYNAMIC_PM
 
 // generalized put
-template<class HDS_TMPLT, class PropertyTag, class Key,class Value>
-void put(PropertyTag p,HDS_CLASS& g, const Key& key, const Value& value)
+template<class CGAL_HDS_TMPLT, class PropertyTag, class Key,class Value>
+void put(PropertyTag p,CGAL_HDS_CLASS& g, const Key& key, const Value& value)
 {
-  typedef typename boost::property_map<HDS_CLASS, PropertyTag>::type Map;
+  typedef typename boost::property_map<CGAL_HDS_CLASS, PropertyTag>::type Map;
   Map pmap = get(p, g);
   put(pmap, key, value);
 }
 
 // specialization needs to be repeated for halfedge, vertex, face
 #define DECLARE_HDS_INDEX_PM(ENTITY, TAG, ACCESSOR)               \
-  template<class HDS_TMPLT>                                       \
-  struct HDS_property_map<HDS_CLASS,                              \
+  template<class CGAL_HDS_TMPLT>                                  \
+  struct HDS_property_map<CGAL_HDS_CLASS,                         \
                           boost::ENTITY##TAG> {                   \
     struct bind_ {                                                \
       typedef internal::ACCESSOR##_accessor<                      \
-        HDS_CLASS,                                                \
-        typename boost::graph_traits< HDS_CLASS                   \
+        CGAL_HDS_CLASS,                                           \
+        typename boost::graph_traits< CGAL_HDS_CLASS              \
                                     >::ENTITY##_descriptor > type;\
       typedef type const_type;                                    \
     };                                                            \
@@ -189,45 +189,45 @@ DECLARE_HDS_INDEX_PM(face, _index_t, Index)
 namespace CGAL {
 // not done with macros, because HDS_edge::id does not return a
 // reference
-template<class HDS_TMPLT>
-struct HDS_property_map<HDS_CLASS, boost::edge_index_t>
+template<class CGAL_HDS_TMPLT>
+struct HDS_property_map<CGAL_HDS_CLASS, boost::edge_index_t>
 {
   struct bind_
   {
     typedef internal::Edge_index_accessor<
       typename boost::graph_traits<
-        HDS_CLASS
+        CGAL_HDS_CLASS
         >::edge_descriptor > type;
     typedef type const_type;
   };
 };
 
-template<class HDS_TMPLT>
-struct HDS_property_map<HDS_CLASS, boost::edge_weight_t>
+template<class CGAL_HDS_TMPLT>
+struct HDS_property_map<CGAL_HDS_CLASS, boost::edge_weight_t>
 {
   struct bind_
   {
-    typedef typename HDS_CLASS::Traits::FT FT;
-    typedef typename boost::graph_traits<HDS_CLASS >::edge_descriptor edge_descriptor;
+    typedef typename CGAL_HDS_CLASS::Traits::FT FT;
+    typedef typename boost::graph_traits<CGAL_HDS_CLASS >::edge_descriptor edge_descriptor;
     typedef internal::HDS_wrap_squared<edge_descriptor,FT> type;
     typedef type const_type;
   };
 };
 
-template<class HDS_TMPLT>
-struct HDS_property_map<HDS_CLASS,vertex_point_t>
+template<class CGAL_HDS_TMPLT>
+struct HDS_property_map<CGAL_HDS_CLASS,vertex_point_t>
 {
   struct bind_
   {
     typedef internal::Point_accessor<
       typename boost::graph_traits<
-        HDS_CLASS
+        CGAL_HDS_CLASS
         >::vertex_descriptor,
       typename Gt::Point_3, typename Gt::Point_3&> type;
 
     typedef internal::Point_accessor<
       typename boost::graph_traits<
-        HDS_CLASS
+        CGAL_HDS_CLASS
         >::vertex_descriptor,
       typename Gt::Point_3, const typename Gt::Point_3&> const_type;
   };
@@ -237,128 +237,128 @@ struct HDS_property_map<HDS_CLASS,vertex_point_t>
 // external indices
 //
 
-template<class HDS_TMPLT>
-struct HDS_property_map<HDS_CLASS, edge_external_index_t>
+template<class CGAL_HDS_TMPLT>
+struct HDS_property_map<CGAL_HDS_CLASS, edge_external_index_t>
 {
   struct bind_
   {
     typedef internal::HDS_edge_index_map_external<
-      HDS_CLASS
+      CGAL_HDS_CLASS
       > type;
     typedef type const_type;
   };
 };
 
-template<class HDS_TMPLT>
-struct HDS_property_map<HDS_CLASS, halfedge_external_index_t>
+template<class CGAL_HDS_TMPLT>
+struct HDS_property_map<CGAL_HDS_CLASS, halfedge_external_index_t>
 {
   struct bind_
   {
     typedef internal::HDS_index_map_external<
       typename boost::graph_traits<
-        HDS_CLASS
+        CGAL_HDS_CLASS
         >::halfedge_descriptor > type;
     typedef type const_type;
   };
 };
 
 
-template<class HDS_TMPLT>
-struct HDS_property_map<HDS_CLASS, vertex_external_index_t>
+template<class CGAL_HDS_TMPLT>
+struct HDS_property_map<CGAL_HDS_CLASS, vertex_external_index_t>
 {
   struct bind_
   {
     typedef internal::HDS_index_map_external<
       typename boost::graph_traits<
-        HDS_CLASS
+        CGAL_HDS_CLASS
         >::vertex_descriptor > type;
     typedef type const_type;
   };
 };
 
-template<class HDS_TMPLT>
-struct HDS_property_map<HDS_CLASS, face_external_index_t>
+template<class CGAL_HDS_TMPLT>
+struct HDS_property_map<CGAL_HDS_CLASS, face_external_index_t>
 {
   struct bind_
   {
     typedef internal::HDS_index_map_external<
       typename boost::graph_traits<
-        HDS_CLASS
+        CGAL_HDS_CLASS
         >::face_descriptor > type;
     typedef type const_type;
   };
 };
 
-template<class HDS_TMPLT>
-typename boost::property_map<HDS_CLASS, boost::edge_external_index_t >::const_type
-get(boost::edge_external_index_t,HDS_CLASS const& p)
+template<class CGAL_HDS_TMPLT>
+typename boost::property_map<CGAL_HDS_CLASS, boost::edge_external_index_t >::const_type
+get(boost::edge_external_index_t,CGAL_HDS_CLASS const& p)
 {
-  return typename boost::property_map<HDS_CLASS, boost::edge_external_index_t >::const_type(
-    const_cast<HDS_CLASS& >(p));
+  return typename boost::property_map<CGAL_HDS_CLASS, boost::edge_external_index_t >::const_type(
+    const_cast<CGAL_HDS_CLASS& >(p));
 }
 
-template<class HDS_TMPLT>
-typename boost::property_map<HDS_CLASS, boost::halfedge_external_index_t >::const_type
-get(boost::halfedge_external_index_t,HDS_CLASS const& p)
+template<class CGAL_HDS_TMPLT>
+typename boost::property_map<CGAL_HDS_CLASS, boost::halfedge_external_index_t >::const_type
+get(boost::halfedge_external_index_t,CGAL_HDS_CLASS const& p)
 {
- HDS_CLASS& ncp = const_cast<HDS_CLASS&>(p);
+ CGAL_HDS_CLASS& ncp = const_cast<CGAL_HDS_CLASS&>(p);
 
-  return typename boost::property_map<HDS_CLASS, boost::halfedge_external_index_t >::const_type(
+  return typename boost::property_map<CGAL_HDS_CLASS, boost::halfedge_external_index_t >::const_type(
     ncp.halfedges_begin(), ncp.halfedges_end(), ncp.size_of_halfedges());
 }
 
-template<class HDS_TMPLT>
-typename boost::property_map<HDS_CLASS, boost::vertex_external_index_t >::const_type
-get(boost::vertex_external_index_t,HDS_CLASS const& p)
+template<class CGAL_HDS_TMPLT>
+typename boost::property_map<CGAL_HDS_CLASS, boost::vertex_external_index_t >::const_type
+get(boost::vertex_external_index_t,CGAL_HDS_CLASS const& p)
 {
- HDS_CLASS& ncp = const_cast<HDS_CLASS&>(p);
+ CGAL_HDS_CLASS& ncp = const_cast<CGAL_HDS_CLASS&>(p);
 
-  return typename boost::property_map<HDS_CLASS, boost::vertex_external_index_t >::const_type(
+  return typename boost::property_map<CGAL_HDS_CLASS, boost::vertex_external_index_t >::const_type(
     ncp.vertices_begin(), ncp.vertices_end(), ncp.size_of_vertices());
 }
 
-template<class HDS_TMPLT>
-typename boost::property_map<HDS_CLASS, boost::face_external_index_t >::const_type
-get(boost::face_external_index_t,HDS_CLASS const& p)
+template<class CGAL_HDS_TMPLT>
+typename boost::property_map<CGAL_HDS_CLASS, boost::face_external_index_t >::const_type
+get(boost::face_external_index_t,CGAL_HDS_CLASS const& p)
 {
- HDS_CLASS& ncp = const_cast<HDS_CLASS&>(p);
+ CGAL_HDS_CLASS& ncp = const_cast<CGAL_HDS_CLASS&>(p);
 
-  return typename boost::property_map<HDS_CLASS, boost::face_external_index_t >::const_type(
+  return typename boost::property_map<CGAL_HDS_CLASS, boost::face_external_index_t >::const_type(
     ncp.facets_begin(), ncp.facets_end(), ncp.size_of_facets());
 }
 
 // the same blurb for non-const
 
-template<class HDS_TMPLT>
-typename boost::property_map<HDS_CLASS, boost::edge_external_index_t >::type
-get(boost::edge_external_index_t,HDS_CLASS& p)
+template<class CGAL_HDS_TMPLT>
+typename boost::property_map<CGAL_HDS_CLASS, boost::edge_external_index_t >::type
+get(boost::edge_external_index_t,CGAL_HDS_CLASS& p)
 {
-  return typename boost::property_map<HDS_CLASS, boost::edge_external_index_t >::type(
+  return typename boost::property_map<CGAL_HDS_CLASS, boost::edge_external_index_t >::type(
     p);
 }
 
-template<class HDS_TMPLT>
-typename boost::property_map<HDS_CLASS, boost::halfedge_external_index_t >::type
-get(boost::halfedge_external_index_t,HDS_CLASS & ncp)
+template<class CGAL_HDS_TMPLT>
+typename boost::property_map<CGAL_HDS_CLASS, boost::halfedge_external_index_t >::type
+get(boost::halfedge_external_index_t,CGAL_HDS_CLASS & ncp)
 {
-  return typename boost::property_map<HDS_CLASS, boost::halfedge_external_index_t >::type(
+  return typename boost::property_map<CGAL_HDS_CLASS, boost::halfedge_external_index_t >::type(
     ncp.halfedges_begin(), ncp.halfedges_end(), ncp.size_of_halfedges());
 }
 
-template<class HDS_TMPLT>
-typename boost::property_map<HDS_CLASS, boost::vertex_external_index_t >::type
-get(boost::vertex_external_index_t,HDS_CLASS & ncp)
+template<class CGAL_HDS_TMPLT>
+typename boost::property_map<CGAL_HDS_CLASS, boost::vertex_external_index_t >::type
+get(boost::vertex_external_index_t,CGAL_HDS_CLASS & ncp)
 {
-  return typename boost::property_map<HDS_CLASS, boost::vertex_external_index_t >::type(
+  return typename boost::property_map<CGAL_HDS_CLASS, boost::vertex_external_index_t >::type(
     ncp.vertices_begin(), ncp.vertices_end(), ncp.size_of_vertices());
 }
 
 
-template<class HDS_TMPLT>
-typename boost::property_map<HDS_CLASS, boost::face_external_index_t >::type
-get(boost::face_external_index_t,HDS_CLASS & ncp)
+template<class CGAL_HDS_TMPLT>
+typename boost::property_map<CGAL_HDS_CLASS, boost::face_external_index_t >::type
+get(boost::face_external_index_t,CGAL_HDS_CLASS & ncp)
 {
-  return typename boost::property_map<HDS_CLASS, boost::face_external_index_t >::type(
+  return typename boost::property_map<CGAL_HDS_CLASS, boost::face_external_index_t >::type(
     ncp.facets_begin(), ncp.facets_end(), ncp.size_of_facets());
 }
 
@@ -368,76 +368,76 @@ get(boost::face_external_index_t,HDS_CLASS & ncp)
 namespace boost {
 
 // property_map dispatcher into Polyhedron
-template<class HDS_TMPLT, class Tag>
-struct property_map<HDS_CLASS, Tag>
+template<class CGAL_HDS_TMPLT, class Tag>
+struct property_map<CGAL_HDS_CLASS, Tag>
 {
-  typedef typename CGAL::HDS_property_map<HDS_CLASS, Tag>::
+  typedef typename CGAL::HDS_property_map<CGAL_HDS_CLASS, Tag>::
       bind_ map_gen;
   typedef typename map_gen::type       type;
   typedef typename map_gen::const_type const_type;
 };
 
 // property_map dispatcher into const Polyhedron
-template<class HDS_TMPLT, class Tag>
-struct property_map<const HDS_CLASS, Tag>
+template<class CGAL_HDS_TMPLT, class Tag>
+struct property_map<const CGAL_HDS_CLASS, Tag>
 {
-  typedef typename CGAL::HDS_property_map<HDS_CLASS, Tag>::
+  typedef typename CGAL::HDS_property_map<CGAL_HDS_CLASS, Tag>::
     bind_ map_gen;
   typedef typename map_gen::type       type;
   typedef typename map_gen::const_type const_type;
 };
 
-template<class HDS_TMPLT, class T>
-struct property_map<HDS_CLASS, CGAL::dynamic_vertex_property_t<T> >
+template<class CGAL_HDS_TMPLT, class T>
+struct property_map<CGAL_HDS_CLASS, CGAL::dynamic_vertex_property_t<T> >
 {
-  typedef HDS_CLASS G;
+  typedef CGAL_HDS_CLASS G;
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
   typedef CGAL::internal::Dynamic_property_map<vertex_descriptor,T> type;
   typedef type const_type;
 };
 
-template<class HDS_TMPLT, class T>
-struct property_map<HDS_CLASS, CGAL::dynamic_halfedge_property_t<T> >
+template<class CGAL_HDS_TMPLT, class T>
+struct property_map<CGAL_HDS_CLASS, CGAL::dynamic_halfedge_property_t<T> >
 {
-  typedef HDS_CLASS G;
+  typedef CGAL_HDS_CLASS G;
   typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
   typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor,T> type;
   typedef type const_type;
 };
 
-template<class HDS_TMPLT, class T>
-struct property_map<HDS_CLASS, CGAL::dynamic_edge_property_t<T> >
+template<class CGAL_HDS_TMPLT, class T>
+struct property_map<CGAL_HDS_CLASS, CGAL::dynamic_edge_property_t<T> >
 {
-  typedef HDS_CLASS G;
+  typedef CGAL_HDS_CLASS G;
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   typedef CGAL::internal::Dynamic_property_map<edge_descriptor,T> type;
   typedef type const_type;
 };
 
-template<class HDS_TMPLT, class T>
-struct property_map<HDS_CLASS, CGAL::dynamic_face_property_t<T> >
+template<class CGAL_HDS_TMPLT, class T>
+struct property_map<CGAL_HDS_CLASS, CGAL::dynamic_face_property_t<T> >
 {
-  typedef HDS_CLASS G;
+  typedef CGAL_HDS_CLASS G;
   typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
   typedef CGAL::internal::Dynamic_property_map<face_descriptor,T> type;
   typedef type const_type;
 };
 
 // What are those needed for ???
-template<class HDS_TMPLT>
-struct edge_property_type<HDS_CLASS >
+template<class CGAL_HDS_TMPLT>
+struct edge_property_type<CGAL_HDS_CLASS >
 {
   typedef edge_weight_t type;
 };
 
-template<class HDS_TMPLT>
-struct vertex_property_type<HDS_CLASS >
+template<class CGAL_HDS_TMPLT>
+struct vertex_property_type<CGAL_HDS_CLASS >
 {
   typedef CGAL::vertex_point_t type;
 };
 
-template<class HDS_TMPLT>
-struct vertex_property_type<const HDS_CLASS >
+template<class CGAL_HDS_TMPLT>
+struct vertex_property_type<const CGAL_HDS_CLASS >
 {
   typedef CGAL::vertex_point_t type;
 };
@@ -445,50 +445,50 @@ struct vertex_property_type<const HDS_CLASS >
 } // end of boost namespace
 
 namespace CGAL{
-template<class HDS_TMPLT>
-struct graph_has_property<HDS_CLASS, boost::vertex_point_t>
+template<class CGAL_HDS_TMPLT>
+struct graph_has_property<CGAL_HDS_CLASS, boost::vertex_point_t>
   : CGAL::Tag_true {};
 
-template<class HDS_TMPLT>
-struct graph_has_property<HDS_CLASS, boost::edge_weight_t>
+template<class CGAL_HDS_TMPLT>
+struct graph_has_property<CGAL_HDS_CLASS, boost::edge_weight_t>
   : CGAL::Tag_true {};
 
-template<class HDS_TMPLT>
-struct graph_has_property<HDS_CLASS, boost::edge_index_t>
+template<class CGAL_HDS_TMPLT>
+struct graph_has_property<CGAL_HDS_CLASS, boost::edge_index_t>
   : CGAL::Boolean_tag<
       CGAL::internal::Has_member_id<
-        typename boost::graph_traits<HDS_CLASS >::edge_descriptor
+        typename boost::graph_traits<CGAL_HDS_CLASS >::edge_descriptor
       >::value
     >
 {};
 
-template<class HDS_TMPLT>
-struct graph_has_property<HDS_CLASS, boost::face_index_t>
+template<class CGAL_HDS_TMPLT>
+struct graph_has_property<CGAL_HDS_CLASS, boost::face_index_t>
   : CGAL::Boolean_tag<
       CGAL::internal::Has_member_id<
-        typename HDS_CLASS::Facet
+        typename CGAL_HDS_CLASS::Facet
       >::value
     >
 {};
 
-template<class HDS_TMPLT>
-struct graph_has_property<HDS_CLASS, boost::halfedge_index_t>
+template<class CGAL_HDS_TMPLT>
+struct graph_has_property<CGAL_HDS_CLASS, boost::halfedge_index_t>
   : CGAL::Boolean_tag<
       CGAL::internal::Has_member_id<
-        typename HDS_CLASS::Halfedge
+        typename CGAL_HDS_CLASS::Halfedge
       >::value
     >
 {};
 
-template<class HDS_TMPLT>
-struct graph_has_property<HDS_CLASS, boost::vertex_index_t>
+template<class CGAL_HDS_TMPLT>
+struct graph_has_property<CGAL_HDS_CLASS, boost::vertex_index_t>
   : CGAL::Boolean_tag<
       CGAL::internal::Has_member_id<
-        typename HDS_CLASS::Vertex
+        typename CGAL_HDS_CLASS::Vertex
       >::value
     >
 {};
 }// end of CGAL namespace
 
-#undef HDS_TMPLT
-#undef HDS_CLASS
+#undef CGAL_HDS_TMPLT
+#undef CGAL_HDS_CLASS

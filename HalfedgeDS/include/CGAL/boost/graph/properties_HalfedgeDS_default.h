@@ -12,8 +12,8 @@
 #ifndef CGAL_BOOST_GRAPH_PROPERTIES_HALFEDGEDS_DEFAULT_H
 #define CGAL_BOOST_GRAPH_PROPERTIES_HALFEDGEDS_DEFAULT_H
 
-#define HDS_TMPLT Gt, class I,  class A
-#define HDS_CLASS CGAL::HalfedgeDS_default<Gt,I,A>
+#define CGAL_HDS_TMPLT Gt, class I,  class A
+#define CGAL_HDS_CLASS CGAL::HalfedgeDS_default<Gt,I,A>
 
 #include <CGAL/boost/graph/properties_HalfedgeDS_base.h>
 
