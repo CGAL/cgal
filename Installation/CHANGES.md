@@ -1,6 +1,14 @@
 Release History
 ===============
 
+### [2D Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgTriangulation2)
+
+-   Add function `mark_domina_in_triangulation()` to mark faces connected with non constrained edges as inside of the domain based on the nesting level.
+
+### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh22)
+
+-   Deprecate two overloads of Function `refine_Delaunay_mesh()` and replace them with versions with named parameteters.
+-   Add overloads of function `write_VTU()` with property maps for specifying the domain.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
