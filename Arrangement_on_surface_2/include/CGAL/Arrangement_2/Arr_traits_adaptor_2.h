@@ -1808,7 +1808,6 @@ public:
   //@{
   class Is_in_x_range_2 {
   public:
-  public:
     /*! Check whether a given point is in the x-range of the given x-monotone
      * curve.
      * \param xcv The x-monotone curve.
@@ -3145,7 +3144,7 @@ public:
       auto cmp_x_on_bd = m_self->compare_x_on_boundary_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      auto psy = ps_in_y(cv, ARR_MIN_END);
+      auto psy = ps_in_y(cv, ARR_MAX_END);
       CGAL_assertion(psy != ARR_BOTTOM_BOUNDARY);
 
       auto on_y_idnt = is_on_y_identification(cv);
