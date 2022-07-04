@@ -106,7 +106,7 @@ namespace Polygon_mesh {
       \tparam NamedParameters
       a sequence of \ref bgl_namedparameters "Named Parameters"
 
-      \param tmesh
+      \param pmesh
       an instance of `PolygonMesh` that represents a polygon mesh
 
       \param np

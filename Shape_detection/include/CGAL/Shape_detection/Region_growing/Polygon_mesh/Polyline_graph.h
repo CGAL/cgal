@@ -145,7 +145,7 @@ namespace Polygon_mesh {
       \tparam NamedParameters
       a sequence of optional \ref bgl_namedparameters "Named Parameters"
 
-      \param tmesh a polygon mesh
+      \param pmesh a polygon mesh
 
       \param edge_range contains all edges in `pmesh` to be considered in the graph
 
