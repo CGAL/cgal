@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Shape_detection {
 namespace internal {
 /*!
-  \ingroup PkgPolygonMeshProcessingRef
+  \ingroup PkgShapeDetectionRG
   helper function to facilitate region growing for line detection on point sets.
 
   @tparam InputRange
@@ -115,7 +115,7 @@ OutputIterator region_growing_lines(
 }
 
 /*!
-  \ingroup PkgPolygonMeshProcessingRef
+  \ingroup PkgShapeDetectionRG
   helper function to facilitate region growing for plane detection on point sets.
 
   @tparam InputRange
@@ -204,7 +204,7 @@ OutputIterator region_growing_planes(
 }
 
 /*!
-  \ingroup PkgPolygonMeshProcessingRef
+  \ingroup PkgShapeDetectionRG
   helper function to facilitate region growing for plane detection on surface meshes.
 
   @tparam TriangleMesh
@@ -281,7 +281,7 @@ OutputIterator region_growing_planes_triangle_mesh(
 }
 
 /*!
-  \ingroup PkgPolygonMeshProcessingRef
+  \ingroup PkgShapeDetectionRG
   helper function to facilitate region growing for line detection on point sets.
 
   @tparam InputRange

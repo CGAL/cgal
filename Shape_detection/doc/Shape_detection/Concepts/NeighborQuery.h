@@ -16,16 +16,19 @@ class NeighborQuery {
 
 public:
 
+  /// The reference type to the elements of the input range.
+  typedef unspecified_type Item;
+
   /*!
-    fills `neighbors` with the indices of all items, which are connected to the
-    item with the index `query_index`.
+    fills `neighbors` with the `Items` of all items, which are connected to the
+    `Item` query.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when
     a new query item is selected.
   */
   void operator()(
-    const std::size_t query_index,
-    std::vector<std::size_t>& neighbors) {
+    Item query_index,
+    std::vector<Item>& neighbors) {
 
   }
 };

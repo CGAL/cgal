@@ -84,15 +84,6 @@ namespace Triangle_mesh {
     /// Region map
     using Region_index_map = typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<std::size_t> >::const_type;
 
-    #ifdef DOXYGEN_NS
-      /*!
-        a model of `ReadablePropertyMap` whose key type is `face_descriptor`
-        and value type is `std::size_t`. This map associates each face of the input mesh
-        to the index of the planar region it belongs to.
-      */
-      typedef unspecified_type Face_to_region_map;
-    #endif
-
     /// @}
 
   private:

@@ -66,7 +66,7 @@ namespace Triangle_mesh {
     /// \name Types
     /// @{
 
-    #ifdef DOXYGEN_NS
+    #ifdef DOXYGEN_RUNNING
       /*!
         a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
         value type is `edge_descriptor` of the `TriangleMesh`.

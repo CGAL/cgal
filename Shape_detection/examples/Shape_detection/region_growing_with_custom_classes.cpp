@@ -12,7 +12,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 
-// Custom Neighbor_query, Region_type, and Seed_map classes for region growing.
+// Custom Neighbor_query and Region_type classes for region growing.
 namespace Custom {
 
   // An object that stores indices of all its neighbors.

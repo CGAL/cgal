@@ -42,7 +42,7 @@ namespace Shape_detection {
     of user-defined items
     - given a way to access neighbors of each item via the `NeighborQuery` parameter class and
     - control if items form a valid region type via the `RegionType` parameter class,
-    - the `SeedMap` property map enables to define the seeding order of items and skip unnecessary items.
+    - optional `SeedRange` defining the seeding order of items and skipping unnecessary items.
 
     \tparam InputRange
     a model of `ConstRange`

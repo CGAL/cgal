@@ -69,14 +69,6 @@ namespace Polyline {
     /// Seed range.
     using Seed_range = std::vector<Item>;
 
-    #ifdef DOXYGEN_NS
-      /*!
-        a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
-        This map provides an access to the ordered indices of input vertices.
-      */
-      typedef unspecified_type Seed_map;
-    #endif
-
     /// @}
 
   private:

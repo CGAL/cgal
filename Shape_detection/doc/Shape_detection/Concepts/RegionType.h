@@ -35,6 +35,14 @@ public:
   typedef std::vector<std::pair<Primitive, Region> > Result_type;
 
   /*!
+    a model of `ReadWritePropertyMap` whose key type is `Item`
+    and value type is `std::size_t`. This map associates item of the input range
+    to the index of the region it belongs to.
+  */
+  typedef unspecified_type Region_index_map;
+
+
+  /*!
     checks if the item `to`, which is a neighbor of the item
     `from`, can be added to the region represented by `region`.
 

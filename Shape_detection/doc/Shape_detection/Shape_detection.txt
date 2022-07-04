@@ -253,7 +253,7 @@ The main class `CGAL::Shape_detection::Region_growing` is parameterized by
 - `InputRange` that stores a range of user-defined input items;
 - \ref Shape_detection_RegionGrowingFramework_connectivity "NeighborQuery" that provides the means for accessing neighbors of an item;
 - \ref Shape_detection_RegionGrowingFramework_conditions "RegionType" that provides the means for validating regions;
-- \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" that defines the seeding order of items.
+- \ref Shape_detection_RegionGrowingFramework_seeding "SeedRange" that defines the seeding order of items.
 
 Using this generic framework, users can grow any type of regions on a set of arbitrary items with
 their own propagation and seeding conditions (see \ref Shape_detection_RegionGrowingFramework_examples "an example").
@@ -264,7 +264,7 @@ their own propagation and seeding conditions (see \ref Shape_detection_RegionGro
 The concept `NeighborQuery` provides the means for accessing neighbors of an item.
 To create a model that respects this concept, the user has to provide an overload of the operator:
 
-- `NeighborQuery::operator()()` that has to fill a vector with indices of all items, which
+- `NeighborQuery::operator()()` that has to fill a vector with `RegionType::Item`s of all items, which
 are neighbors of the query item.
 
 
@@ -272,7 +272,15 @@ are neighbors of the query item.
 
 The concept `RegionType` provides the means for validating regions. In fact, a model
 of this concept maintains a description of the region type that is used in region growing.
-To create a model that respect this concept, three functions have to be defined:
+To create a model that respect this concept, the following types and functions have to be defined:
+
+- `RegionType::Primitive` This type represents the parameters of the primitive, e.g., in case of a sphere it could be a struct containing a `Point_3` for the center and a floating point number for the radius.
+
+- `RegionType::Item` This type is used to reference the elements of a region.
+
+- `RegionType::Region` An std::vector of `RegionType::Item`.
+
+- `RegionType::Region_index_map` This type represents a property map that associates a `std::size_t` to each `RegionType::Item`.
 
 - `RegionType::is_part_of_region()` This function checks if an item satisfies
 all necessary region requirements and can be added to a region. It is called per item.
@@ -280,41 +288,39 @@ all necessary region requirements and can be added to a region. It is called per
 - `RegionType::is_valid_region()` This function checks if a region satisfies
 all necessary region requirements. It is called per region.
 
-- `RegionType::update()` This function enables to update any information,
-which is maintained with the region.
+- `RegionType::primitive()` This function provides the parameters of the primitive
+that has been fitted to a region. It may be called several times for each region during the detection. The returned instance of the parameters is provided for each region within the result vector of the region growing.
+
+- `RegionType::region_index_map()` This function provides an internal instance of an empty property map of type `RegionType::Region_index_map`. It is filled by the `Region_Growing` method to map each `RegionType::Item` to its associated region or to `std::size_t(-1)` if the item does not belong to a region.
+
+- `RegionType::update()` This function enables to update any information, which is maintained with the region.
 
 
 \subsubsection Shape_detection_RegionGrowingFramework_seeding Seeding
 
-The `SeedMap` property map, provided as an optional parameter to the main class, enables
-to define the seeding order of items that is which items are used first to grow regions from.
-Such items are referred to as *seed* items. The `SeedMap` maps the index of an item to its order
-number in the overall region growing processing queue. The default map is the identity one
-that is the seed index of the item equals to the item's index in the `input_range`.
-If it maps to `std::size_t(-1)`, then the corresponding item is skipped.
-
+The `SeedRange` is a range of the type `RegionType::Item`, provided as an optional parameter to the main class. It definesdefine the seeding order of items that is which items are used first to grow regions from. Such items are referred to as *seed* items. The `SeedRange` contains `RegionType::Item`s, which may be const iterators of the InputRange or `face_descriptor` in case of a mesh as input. The default preserves the ordering of the `input_range`. The provided `SeedRange` may contain fewer items than the `input_range`.
 
 \subsubsection Shape_detection_RegionGrowingFramework_examples Examples
 
 This toy example shows how to define one's own \ref Shape_detection_RegionGrowingFramework_connectivity "NeighborQuery" and
 \ref Shape_detection_RegionGrowingFramework_conditions "RegionType" classes, which are used to parameterize the
-`CGAL::Shape_detection::Region_growing`. It also shows how to skip unnecessary items and change their default seeding order.
+`CGAL::Shape_detection::Region_growing`.
 
-We choose a simple custom object item. We define four such objects, where for each object, we manually
-store indices of its neighbors. The operator `NeighborQuery::operator()()` does nothing but accessing those neighbors.
-The `RegionType` class defines the three necessary functions:
+We choose a simple custom object item. We define three such objects, where for each object, we manually
+provide the iterators to its neighbors. The operator `NeighborQuery::operator()()` does nothing but accessing those neighbors.
+The `Region_type` class defines the necessary types and functions:
 
-- `RegionType::is_part_of_region()` - `true` if the first and second objects are neighbors,
-- `RegionType::is_valid_region()` - always `true` after the first call to the function `update()`,
-- `RegionType::update()` - updates the internal flag from the default `false` to `true`.
+- `Region_type::Primitive` This type represents the parameters of the primitive, e.g., in case of a sphere it could be a struct containing a `Point_3` for the center and a floating point number for the radius.
 
-We also define a `SeedMap`, such that the second object is handled first, while the first object follows.
-Moreover, the last object is always skipped. Notice that in this example, the container with objects is `std::vector`,
-which is random access. However, the generic region growing algorithm can be applied
-to any other type of container, e.g. `std::list`.
+- `Region_type::Item` - a `const_iterator` of `std::vector<Object>`
+- `Region_type::Region_index_map` - an unordered map from `Region_type::Item` to `std::size_t` encapsuled in a `boost::associative_property_map`.
+- `Region_type::Primitive` - a `std::size_t`
+- `Region_type::is_part_of_region()` - `true` if the first and second objects are neighbors,
+- `Region_type::is_valid_region()` - always `true` after the first call to the function `update()`,
+- `Region_type::update()` - updates the internal flag from the default `false` to `true`.
 
 The result of using these classes with the region growing main class is that the first two objects form the first region,
-the third object forms the second region, and the last object is skipped.
+the third object forms the second region.
 
 \cgalExample{Shape_detection/region_growing_with_custom_classes.cpp}
 
@@ -355,23 +361,23 @@ The program associates all points from a region to the best-fit object (2D line,
 and controls the quality of this fit.
 
 The quality of region growing in a point set (2D or 3D) can be improved by slightly increasing the running time.
-To achieve this, one can sort indices of input points with respect to some quality criteria. These quality criteria
-can be included through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
+To achieve this, one can sort the input points with respect to some quality criteria. These quality criteria
+can be included through the seed range (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedRange" for more details).
 We provide a quality sorting both for 2D and 3D points:
 
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting` - indices of 2D input points are sorted with respect
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting` - the 2D input points are sorted with respect
 to the quality of the least squares line fit applied to the neighbors of each point;
 
-- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting` - indices of 2D input points are sorted with respect
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting` - the 2D input points are sorted with respect
 to the quality of the least squares circle fit applied to the neighbors of each point;
 
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting` - indices of 3D input points are sorted with respect
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting` - the 3D input points are sorted with respect
 to the quality of the least squares plane fit applied to the neighbors of each point.
 
-- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting` - indices of 3D input points are sorted with respect
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting` - the 3D input points are sorted with respect
 to the quality of the least squares sphere fit applied to the neighbors of each point.
 
-- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting` - indices of 3D input points are sorted with respect
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting` - the 3D input points are sorted with respect
 to the quality of the least squares cylinder fit applied to the neighbors of each point.
 
 
@@ -529,11 +535,11 @@ A surface mesh depicted with one color per detected plane.
 \cgalFigureEnd
 
 The quality of region growing on a polygon mesh can be improved by slightly increasing the running time. To achieve
-this, one can sort indices of input faces with respect to some quality criteria. These quality criteria
-can be included in region growing through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
+this, one can sort the input faces with respect to some quality criteria. These quality criteria
+can be included in region growing through the seed range (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedRange" for more details).
 We provide such a quality sorting:
 
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` - indices of input faces are sorted with respect
+- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` - the input faces are sorted with respect
 to the quality of the least squares plane fit applied to the neighbors of each face.
 
 
@@ -561,7 +567,7 @@ please note that it may significantly slow down the execution of the program, so
 use a floating type based kernel.
 
 We can improve the quality of region growing by providing a different seeding order (analogously to \ref Shape_detection_RegionGrowingPoints "Point Sets")
-that is why in this example we also sort indices of input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting`
+that is why in this example we also sort the input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting`
 and only then detect regions.
 
 \cgalExample{Shape_detection/region_growing_planes_on_polygon_mesh.cpp}
@@ -582,11 +588,11 @@ If one wants to detect lines in a segment set, this \cgal component provides the
 to the chunks of 2D or 3D segments, respectively, and controls the quality of this fit.
 
 The quality of region growing in a segment set (2D or 3D) can be improved by slightly increasing the running time.
-To achieve this, one can sort indices of input segments with respect to some quality criteria. These quality criteria
-can be included through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
+To achieve this, one can sort the input segments with respect to some quality criteria. These quality criteria
+can be included through the seed range (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedRange" for more details).
 We provide such a quality sorting:
 
-- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting` - indices of input segments are sorted with respect
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting` - the input segments are sorted with respect
 to the quality of the least squares line fit applied to the neighbors of each segment.
 
 If the user's input is a polygon mesh defined as a `FaceListGraph`, it is also possible to filter out all
@@ -622,7 +628,7 @@ If one wants to detect lines along a 2D or 3D polyline, one can use the
 to the chunks of polyline vertices, respectively, and controls the quality of this fit.
 
 As before, one can improve the quality of the region growing by using the class
-- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting` - indices of input vertices are sorted with respect
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting` - the input vertices are sorted with respect
 to the quality of the least squares line fit applied to the neighbors of each vertex.
 
 
@@ -682,7 +688,7 @@ The reason behind this change is to provide users with control for early rejecti
   void update(const std::vector<std::size_t>& indices) { };
 
   // New API.
-  bool update(const std::vector<std::size_t>& indices) { };
+  bool update(const Region& region) { };
 \endcode
 
 
