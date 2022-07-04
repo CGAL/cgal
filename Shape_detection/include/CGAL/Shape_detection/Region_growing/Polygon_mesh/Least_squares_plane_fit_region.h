@@ -11,8 +11,8 @@
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H
 
 #include <CGAL/license/Shape_detection.h>
 
@@ -21,40 +21,40 @@
 
 namespace CGAL {
 namespace Shape_detection {
-namespace Triangle_mesh {
+namespace Polygon_mesh {
 
   /*!
     \ingroup PkgShapeDetectionRGOnMesh
 
     \brief Region type based on the quality of the least squares plane
-    fit applied to faces of a triangle mesh.
+    fit applied to faces of a polygon mesh.
 
     This class fits a plane, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
-    to chunks of faces in a triangle mesh and controls the quality of this fit.
+    to chunks of faces in a polygon mesh and controls the quality of this fit.
     If all quality conditions are satisfied, the chunk is accepted as a valid region,
     otherwise rejected.
 
     \tparam GeomTraits
     a model of `Kernel`
 
-    \tparam TriangleMesh
+    \tparam PolygonMesh
     a model of `FaceListGraph`
 
     \tparam FaceRange
     a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a triangle mesh
+    value type is the face type of a polygon mesh
 
     \tparam VertexToPointMap
-    a model of `ReadablePropertyMap` whose key type is the vertex type of a triangle mesh and
+    a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
 
     \cgalModels `RegionType`
   */
   template<
   typename GeomTraits,
-  typename TriangleMesh,
-  typename FaceRange = typename TriangleMesh::Face_range,
-  typename VertexToPointMap = typename property_map_selector<TriangleMesh, CGAL::vertex_point_t>::const_type>
+  typename PolygonMesh,
+  typename FaceRange = typename PolygonMesh::Face_range,
+  typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
   class Least_squares_plane_fit_region {
 
   public:
@@ -63,11 +63,11 @@ namespace Triangle_mesh {
 
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
-    using Face_graph = TriangleMesh;
+    using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
 
-    using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+    using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
     /// \endcond
 
     /// Number type.
@@ -107,7 +107,7 @@ namespace Triangle_mesh {
       a sequence of \ref bgl_namedparameters "Named Parameters"
 
       \param tmesh
-      an instance of `TriangleMesh` that represents a triangle mesh
+      an instance of `PolygonMesh` that represents a polygon mesh
 
       \param np
       a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -155,12 +155,12 @@ namespace Triangle_mesh {
     */
     template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_plane_fit_region(
-      const TriangleMesh& tmesh,
+      const PolygonMesh& pmesh,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-    m_face_graph(tmesh),
+    m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
     m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh))),
+      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::geom_traits), GeomTraits())),
     m_squared_length_3(m_traits.compute_squared_length_3_object()),
@@ -441,8 +441,8 @@ namespace Triangle_mesh {
     }
   };
 
-} // namespace Triangle_mesh
+} // namespace Polygon_mesh
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H
+#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H

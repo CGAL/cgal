@@ -18,7 +18,7 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
-#include <CGAL/Shape_detection/Region_growing/Triangle_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Polyline.h>
 #include <CGAL/Shape_detection/Region_growing/Segment_set.h>
 
@@ -207,9 +207,9 @@ OutputIterator region_growing_planes(
   \ingroup PkgShapeDetectionRG
   helper function to facilitate region growing for plane detection on surface meshes.
 
-  @tparam TriangleMesh
+  @tparam PolygonMesh
     a model of `FaceListGraph`
-  @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Plane_3, std::vector<boost::graph_traits<TriangleMesh>::face_iterator> >`.
+  @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Plane_3, std::vector<boost::graph_traits<PolygonMesh>::face_iterator> >`.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param
@@ -253,28 +253,28 @@ OutputIterator region_growing_planes(
 
  */
 template<
-typename TriangleMesh,
+typename PolygonMesh,
 typename OutputIterator,
 typename CGAL_NP_TEMPLATE_PARAMETERS>
-OutputIterator region_growing_planes_triangle_mesh(
-  const TriangleMesh& triangle_mesh, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
+OutputIterator region_growing_planes_polygon_mesh(
+  const PolygonMesh& polygon_mesh, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
 
-  using Kernel = typename Kernel_traits<typename TriangleMesh::Point>::Kernel;
-  using Face_iterator = typename boost::graph_traits<TriangleMesh>::face_iterator;
+  using Kernel = typename Kernel_traits<typename PolygonMesh::Point>::Kernel;
+  using Face_iterator = typename boost::graph_traits<PolygonMesh>::face_iterator;
   using Face_range = Iterator_range<Face_iterator>;
 
-  using Neighbor_query = Triangle_mesh::One_ring_neighbor_query<TriangleMesh>;
-  using Region_type = Triangle_mesh::Least_squares_plane_fit_region<Kernel, TriangleMesh, Face_range>;
-  using Sorting = Triangle_mesh::Least_squares_plane_fit_sorting<Kernel, TriangleMesh, Neighbor_query, Face_range>;
+  using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<PolygonMesh>;
+  using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Kernel, PolygonMesh, Face_range>;
+  using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, PolygonMesh, Neighbor_query, Face_range>;
   using Region_growing = Region_growing<Face_range, Neighbor_query, Region_type>;
 
-  Neighbor_query neighbor_query(triangle_mesh);
-  Region_type region_type(triangle_mesh, np);
-  Sorting sorting(triangle_mesh, neighbor_query, np);
+  Neighbor_query neighbor_query(polygon_mesh);
+  Region_type region_type(polygon_mesh, np);
+  Sorting sorting(polygon_mesh, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(
-    faces(triangle_mesh), neighbor_query, region_type, sorting.ordered());
+    faces(polygon_mesh), neighbor_query, region_type, sorting.ordered());
   region_growing.detect(regions);
 
   return regions;

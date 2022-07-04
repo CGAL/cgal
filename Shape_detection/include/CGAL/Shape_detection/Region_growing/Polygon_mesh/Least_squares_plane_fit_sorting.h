@@ -11,8 +11,8 @@
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_LEAST_SQUARES_PLANE_FIT_SORTING_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_LEAST_SQUARES_PLANE_FIT_SORTING_H
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_SORTING_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_SORTING_H
 
 #include <CGAL/license/Shape_detection.h>
 
@@ -21,20 +21,20 @@
 
 namespace CGAL {
 namespace Shape_detection {
-namespace Triangle_mesh {
+namespace Polygon_mesh {
 
   /*!
     \ingroup PkgShapeDetectionRGOnMesh
 
-    \brief Sorting of triangle mesh faces with respect to the local plane fit quality.
+    \brief Sorting of polygon mesh faces with respect to the local plane fit quality.
 
-    Indices of faces in a triangle mesh are sorted with respect to the quality of the
+    Indices of faces in a polygon mesh are sorted with respect to the quality of the
     least squares plane fit applied to the vertices of incident faces of each face.
 
     \tparam GeomTraits
     a model of `Kernel`
 
-    \tparam TriangleMesh
+    \tparam PolygonMesh
     a model of `FaceListGraph`
 
     \tparam NeighborQuery
@@ -42,18 +42,18 @@ namespace Triangle_mesh {
 
     \tparam FaceRange
     a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a triangle mesh
+    value type is the face type of a polygon mesh
 
     \tparam VertexToPointMap
-    a model of `ReadablePropertyMap` whose key type is the vertex type of a triangle mesh and
+    a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
   */
   template<
   typename GeomTraits,
-  typename TriangleMesh,
+  typename PolygonMesh,
   typename NeighborQuery,
-  typename FaceRange = typename TriangleMesh::Face_range,
-  typename VertexToPointMap = typename property_map_selector<TriangleMesh, CGAL::vertex_point_t>::const_type>
+  typename FaceRange = typename PolygonMesh::Face_range,
+  typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
   class Least_squares_plane_fit_sorting {
 
   public:
@@ -62,14 +62,14 @@ namespace Triangle_mesh {
 
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
-    using Face_graph = TriangleMesh;
+    using Face_graph = PolygonMesh;
     using Neighbor_query = NeighborQuery;
     using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
     /// \endcond
 
     /// Item type.
-    using Item = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+    using Item = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
     /// Seed range.
     using Seed_range = std::vector<Item>;
@@ -90,8 +90,8 @@ namespace Triangle_mesh {
       \tparam NamedParameters
       a sequence of \ref bgl_namedparameters "Named Parameters"
 
-      \param tmesh
-      an instance of `TriangleMesh` that represents a triangle mesh
+      \param pmesh
+      an instance of `PolygonMesh` that represents a polygon mesh
 
       \param neighbor_query
       an instance of `NeighborQuery` that is used internally to
@@ -103,9 +103,9 @@ namespace Triangle_mesh {
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{vertex_point_map}
-          \cgalParamDescription{an instance of `VertexToPointMap` that maps a triangle mesh
+          \cgalParamDescription{an instance of `VertexToPointMap` that maps a polygon mesh
           vertex to `Kernel::Point_3`}
-          \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+          \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
         \cgalParamNEnd
         \cgalParamNBegin{geom_traits}
           \cgalParamDescription{an instance of `GeomTraits`}
@@ -117,14 +117,14 @@ namespace Triangle_mesh {
     */
     template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_plane_fit_sorting(
-      const TriangleMesh& tmesh,
+      const PolygonMesh& pmesh,
       NeighborQuery& neighbor_query,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-    m_face_graph(tmesh),
+    m_face_graph(pmesh),
     m_neighbor_query(neighbor_query),
     m_face_range(faces(m_face_graph)),
     m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh))),
+      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::geom_traits), GeomTraits())) {
 
@@ -167,7 +167,7 @@ namespace Triangle_mesh {
     /// @{
 
     /*!
-      \brief returns an instance of `Seed_map` to access the ordered `Items`
+      \brief returns an instance of `Seed_range` to access the ordered `Items`
       of input faces.
     */
     const Seed_range &ordered() {
@@ -198,8 +198,8 @@ namespace Triangle_mesh {
     }
   };
 
-} // namespace Triangle_mesh
+} // namespace Polygon_mesh
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_TRIANGLE_MESH_LEAST_SQUARES_PLANE_FIT_SORTING_H
+#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_SORTING_H
