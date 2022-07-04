@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2Ref
+\ingroup PkgTriangulation2Miscellaneous
 marks faces connected with non constrained edges
 as inside of the domain based on the nesting level.
 
@@ -20,7 +20,7 @@ mark_domain_in_triangulation(CT& ct, InDomainPmap ipm);
 
 
  /*!
-\ingroup PkgTriangulation2Ref
+\ingroup PkgTriangulation2Miscellaneous
 As the function above.
 
 Requires that the face type of `CT` has the methods `bool is_in_domain()`  and `void set_in_domain(bool)`.
