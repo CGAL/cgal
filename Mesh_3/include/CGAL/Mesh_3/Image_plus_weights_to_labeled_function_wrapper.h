@@ -49,9 +49,8 @@ public:
     double operator()(const Image_word_type& x) const
     {
       const std::ptrdiff_t offset = &x - (Image_word_type *)f.image.data();
-      const Weights_type w = (std::max)(
-          Weights_type(128), ((Weights_type *)f.weights.data())[offset]);
-      return (x == label) ? w : (255 - w);
+      const Weights_type w = ((Weights_type *)f.weights.data())[offset];
+      return (x == label) ? w : 0;
     }
   }; // end nested class Indicator
 
