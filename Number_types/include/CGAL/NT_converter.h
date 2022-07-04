@@ -17,11 +17,10 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/number_utils.h>
 
-template <bool> class Interval_nt;
-
 namespace CGAL {
 
-// A number type converter usable as default, using the conversion operator.
+template <bool>
+class Interval_nt;
 
 template < class NT1, class NT2 >
 struct NT_converter
