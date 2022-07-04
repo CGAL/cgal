@@ -289,6 +289,10 @@ Uncertain<bool> operator!(Uncertain<bool> a)
   return Uncertain<bool>(!a.sup(), !a.inf());
 }
 
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif
 inline
 Uncertain<bool> operator|(Uncertain<bool> a, Uncertain<bool> b)
 {
@@ -324,7 +328,9 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 {
   return Uncertain<bool>(a.inf() & b, a.sup() & b);
 }
-
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
 // Equality operators
 
