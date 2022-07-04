@@ -47,7 +47,7 @@ public:
 
   void clear_graph()
   {
-    graph = MaxFlow::Graph();
+    graph.clear();
   }
 
   Vertex_descriptor add_vertex()
