@@ -13,7 +13,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing\Point_set.h>
 
 namespace SD = CGAL::Shape_detection;
 
@@ -35,7 +35,6 @@ using Region_type    = SD::Point_set::Least_squares_plane_fit_region<Kernel, Inp
 using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
 using Timer  = CGAL::Real_timer;
-using Region = std::vector<std::size_t>;
 
 void create_input_range(
   const std::size_t num_copies, const Input_range& input, Input_range& output,
@@ -101,7 +100,7 @@ void benchmark_region_growing_on_point_set_3(
 
   // Run the algorithm.
   Timer timer;
-  std::vector<Region> regions;
+  Region_growing::Result_type regions;
 
   timer.start();
   region_growing.detect(std::back_inserter(regions));

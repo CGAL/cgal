@@ -13,7 +13,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing/Point_set.h>
 
 namespace SD = CGAL::Shape_detection;
 
@@ -33,7 +33,6 @@ using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Inpu
 using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
 using Timer  = CGAL::Real_timer;
-using Region = std::vector<std::size_t>;
 
 void benchmark_region_growing_on_point_set_2(
   const std::size_t test_count, const Input_range& input_range,
@@ -57,7 +56,7 @@ void benchmark_region_growing_on_point_set_2(
 
   // Run the algorithm.
   Timer timer;
-  std::vector<Region> regions;
+  Region_growing::Result_type regions;
 
   timer.start();
   region_growing.detect(std::back_inserter(regions));
@@ -66,9 +65,9 @@ void benchmark_region_growing_on_point_set_2(
   // Compute the number of points assigned to all found regions.
   std::size_t number_of_assigned_points = 0;
   for (const auto& region : regions)
-    number_of_assigned_points += region.size();
+    number_of_assigned_points += region.second.size();
 
-  std::vector<std::size_t> unassigned_points;
+  Region_growing::Unassigned_type unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
 
   // Print statistics.
