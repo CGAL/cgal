@@ -258,7 +258,7 @@ public:
   typedef typename R::FT        RT;
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  typedef bool result_type;
+  typedef typename R::Comparison_result result_type;
 
   Point_2 project(const Point_3& p) const
   {
@@ -284,7 +284,7 @@ public:
   typedef typename R::FT        RT;
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  typedef bool result_type;
+  typedef typename R::Boolean result_type;
 
   Point_2 project(const Point_3& p) const
   {
@@ -953,7 +953,7 @@ public:
 
 
   struct Less_xy_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_x_2 cx;
@@ -967,7 +967,7 @@ public:
 
 
   struct Less_yx_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_y_2 cy;
@@ -980,7 +980,7 @@ public:
   };
 
   struct Equal_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
 
@@ -991,7 +991,7 @@ public:
   };
 
   struct Left_turn_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
 
@@ -1001,7 +1001,7 @@ public:
   };
 
   struct Collinear_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       Orientation_2 ori;
