@@ -1,6 +1,33 @@
 Release History
 ===============
 
+### [Shape Detection](https://doc.cgal.org/5.6/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
+
+-   **Breaking change**: The method `update()` in the concept `RegionType` returns now
+    a `boolean` instead of  `void` that is used inside the class `Region_growing` for detecting if
+    the input conditions for the new region are satisfied. This change affects only user-defined
+    types of regions.
+-   **Breaking change**: Constructors of all models of the concepts [`RegionType`](https://doc.cgal.org/5.5/Shape_detection/classRegionType.html`)
+    and [`NeighborQuery`](https://doc.cgal.org/5.5/Shape_detection/classNeighborQuery.html`) have been updated to used named parameters.
+    Namely, the following classes are affected:
+      - [`CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Least__squares__line__fit__region.html)
+      - [`CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Least__squares__plane__fit__region.html)
+      - [`CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Least__squares__plane__fit__region.html)
+      - [`CGAL::Shape_detection::Point_set::K_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1K__neighbor__query.html)
+      - [`CGAL::Shape_detection::Point_set::Sphere_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Sphere__neighbor__query.html)
+      - [`CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1One__ring__neighbor__query.html)
+-   The constructors of all models used together with the region growing algorithm now enable users
+    to provide parameters through the named parameters mechanism. The old constructors without named
+    parameters are deprecated.
+-   All fitting classes in the region growing framework are now using better versions of the region
+    conditions, more precise and faster, including the correct normal orientations.
+-   Added new models of the concept `RegionType` for getting linear regions in a set of 2D and 3D
+    segments and on 2D and 3D polylines.
+-   Added the `Polyline_graph` class for extracting a set of polylines from a face graph, which splits
+    this graph into a set of user-defined regions.
+-   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
+    and cylinders in 3D.
+
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
@@ -68,34 +95,6 @@ Release date: June 2022
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.5/Manual/packages.html#PkgBGL)
 
 -   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html), which toggles the selected status of a graph: selected faces are deselected, and unselected faces are selected.
-
-### [Shape Detection](https://doc.cgal.org/5.5/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
-
--   **Breaking change**: The method `update()` in the concept `RegionType` returns now
-    a `boolean` instead of  `void` that is used inside the class `Region_growing` for detecting if
-    the input conditions for the new region are satisfied. This change affects only user-defined
-    types of regions.
--   **Breaking change**: Constructors of all models of the concepts [`RegionType`](https://doc.cgal.org/5.5/Shape_detection/classRegionType.html`) 
-    and [`NeighborQuery`](https://doc.cgal.org/5.5/Shape_detection/classNeighborQuery.html`) have been updated to used named parameters. 
-    Namely, the following classes are affected: 
-      - [`CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Least__squares__line__fit__region.html)
-      - [`CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Least__squares__plane__fit__region.html)
-      - [`CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Least__squares__plane__fit__region.html)
-      - [`CGAL::Shape_detection::Point_set::K_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1K__neighbor__query.html)
-      - [`CGAL::Shape_detection::Point_set::Sphere_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Sphere__neighbor__query.html)
-      - [`CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1One__ring__neighbor__query.html)
--   The constructors of all models used together with the region growing algorithm now enable users
-    to provide parameters through the named parameters mechanism. The old constructors without named
-    parameters are deprecated.
--   All fitting classes in the region growing framework are now using better versions of the region
-    conditions, more precise and faster, including the correct normal orientations.
--   Added new models of the concept `RegionType` for getting linear regions in a set of 2D and 3D
-    segments and on 2D and 3D polylines.
--   Added the `Polyline_graph` class for extracting a set of polylines from a face graph, which splits
-    this graph into a set of user-defined regions.
--   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
-    and cylinders in 3D.
-
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
