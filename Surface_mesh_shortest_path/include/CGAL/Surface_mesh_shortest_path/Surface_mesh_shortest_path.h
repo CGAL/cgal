@@ -830,42 +830,111 @@ private:
       std::cout << "\t\tBoundary: " << is_border_edge(baseEdge, m_graph) << std::endl;
     }
 
-    halfedge_descriptor baseEdges[2];
-    baseEdges[0] = baseEdge;
-    baseEdges[1] = opposite(baseEdge, m_graph);
-
-    Triangle_3 faces3d[2];
-    Triangle_2 layoutFaces[2];
-
-    for (std::size_t i = 0; i < 2; ++i)
-    {
-       faces3d[i] = triangle_from_halfedge(baseEdges[i]);
-       layoutFaces[i] = pt3t2(faces3d[i]);
-    }
-
-    Point_2 sourcePoints[2];
-    sourcePoints[0] = cb2(cv2(layoutFaces[0], 0), t0, cv2(layoutFaces[0], 1), t1);
-    sourcePoints[1] = cb2(cv2(layoutFaces[1], 0), t1, cv2(layoutFaces[1], 1), t0);
-
     Cone_tree_node* edgeRoot = new Cone_tree_node(m_traits, m_graph, m_rootNodes.size());
     node_created();
     m_rootNodes.emplace_back(edgeRoot, sourcePointIt);
 
+    // If v0v1 is not a border edge:
+    //
+    //      v2
+    //     /  \
+    //    /    \
+    //   /      \
+    // v0 - S - v1
+    //   \      /
+    //    \    /
+    //     \  /
+    //      v3
+    // The source S must reach all Vi, so for each side of the edge, there are two windwows being spawned:
+    // - v0v1 targetting v2 propagating only on the left (v0v2)
+    // - v2v0 targetting v1 propagating only on the left (v2v1)
+    // - v1v0 targetting v3 propagating only on the left (v1v3)
+    // - v3v1 targetting v0 propagating only on the left (v3v0)
+    //
+    // If v0v1 is a border edge, spawn 3 children in the face, and none on the other side
+
+    if(is_border_edge(baseEdge, m_graph))
+    {
+      const Face_location edgeSourceLocation = face_location(baseEdge, t0);
+      return expand_face_root(face(baseEdge, m_graph), edgeSourceLocation.second, sourcePointIt);
+    }
+
+    // From here on, it is not a border edge --> spawn 2 children on each side
+
+    halfedge_descriptor baseEdges[2];
+    baseEdges[0] = baseEdge;
+    baseEdges[1] = opposite(baseEdge, m_graph);
+
+    // shift is because the entry halfedge is not necessarily equal to halfedge(face(entry_h, g), g)
+    Barycentric_coordinates edgeSourceLocations[2];
+    edgeSourceLocations[0] = shifted_coordinates(face_location(baseEdges[0], t0).second,
+                                                 Surface_mesh_shortest_paths_3::internal::edge_index(baseEdges[0], m_graph));
+    edgeSourceLocations[1] = shifted_coordinates(face_location(baseEdges[1], t1).second,
+                                                 Surface_mesh_shortest_paths_3::internal::edge_index(baseEdges[1], m_graph));
+
     for (std::size_t side = 0; side < 2; ++side)
     {
+      Triangle_3 face3d(triangle_from_halfedge(baseEdges[side]));
+      Triangle_2 layoutFace(pt3t2(face3d));
+      Point_2 sourcePoint(construct_barycenter_in_triangle_2(layoutFace, edgeSourceLocations[side]));
+
+      // v0v1 targetting v2
       if (m_debugOutput)
       {
-        std::cout << "\tExpanding edge root #" << side << " : " << std::endl;;
-        std::cout << "\t\tFace = " << layoutFaces[side] << std::endl;
-        std::cout << "\t\tLocation = " << sourcePoints[side] << std::endl;
+        std::cout << std::endl << " ~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+        std::cout << "\tExpanding edge root, side #" << side << ", targetting LOCAL 'v2'" << std::endl;
+        std::cout << "\t\t3D Face = " << face3d << std::endl;
+        std::cout << "\t\t2D Face = " << layoutFace << std::endl;
+        std::cout << "\t\tBarycentric coordinates: " << edgeSourceLocations[side][0]
+                                              << " " << edgeSourceLocations[side][1]
+                                              << " " << edgeSourceLocations[side][2] << std::endl;
+        std::cout << "\t\tLocation = " << sourcePoint << std::endl;
       }
 
-      Cone_tree_node* mainChild = new Cone_tree_node(m_traits, m_graph, baseEdges[side], layoutFaces[side],
-                                                     sourcePoints[side], FT(0), cv2(layoutFaces[side], 0),
-                                                     cv2(layoutFaces[side], 1), Cone_tree_node::EDGE_SOURCE);
+      Cone_tree_node* v2_Child = new Cone_tree_node(m_traits, m_graph,
+                                                    baseEdges[side] /*entryEdge*/,
+                                                    layoutFace,
+                                                    sourcePoint /*sourceImage*/,
+                                                    FT(0) /*pseudoSourceDistance*/,
+                                                    cv2(layoutFace, 0) /*windowLeft*/,
+                                                    cv2(layoutFace, 2) /*windowRight*/,
+                                                    Cone_tree_node::EDGE_SOURCE);
       node_created();
-      edgeRoot->push_middle_child(mainChild);
-      process_node(mainChild);
+      edgeRoot->push_middle_child(v2_Child);
+      process_node(v2_Child);
+
+      // v2v0 targetting v1
+      face3d = triangle_from_halfedge(prev(baseEdges[side], m_graph));
+      layoutFace = pt3t2(face3d);
+
+      // shift the barycentric coordinates to correspond to the new layout
+      std::swap(edgeSourceLocations[side][1], edgeSourceLocations[side][2]);
+      std::swap(edgeSourceLocations[side][0], edgeSourceLocations[side][1]);
+      sourcePoint = Point_2(construct_barycenter_in_triangle_2(layoutFace, edgeSourceLocations[side]));
+
+      if (m_debugOutput)
+      {
+        std::cout << std::endl << " ~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+        std::cout << "\tExpanding edge root, side #" << side << ", targetting LOCAL 'v1'" << std::endl;
+        std::cout << "\t\t3D Face = " << face3d << std::endl;
+        std::cout << "\t\t2D Face = " << layoutFace << std::endl;
+        std::cout << "\t\tBarycentric coordinates: " << edgeSourceLocations[side][0]
+                                              << " " << edgeSourceLocations[side][1]
+                                              << " " << edgeSourceLocations[side][2] << std::endl;
+        std::cout << "\t\tLocation = " << sourcePoint << std::endl;
+      }
+
+      Cone_tree_node* v1_Child = new Cone_tree_node(m_traits, m_graph,
+                                                    prev(baseEdges[side], m_graph) /*entryEdge*/,
+                                                    layoutFace,
+                                                    sourcePoint /*sourceImage*/,
+                                                    FT(0) /*pseudoSourceDistance*/,
+                                                    cv2(layoutFace, 0) /*windowLeft*/,
+                                                    cv2(layoutFace, 2) /*windowRight*/,
+                                                    Cone_tree_node::EDGE_SOURCE);
+      node_created();
+      edgeRoot->push_middle_child(v1_Child);
+      process_node(v1_Child);
     }
   }
 
@@ -1165,18 +1234,10 @@ private:
       leftSide = node->has_left_side();
       rightSide = node->has_right_side();
     }
-    else // node corresponds to a source
+    else // source nodes only have left sides
     {
-      if (node->node_type() == Cone_tree_node::EDGE_SOURCE)
-      {
-        leftSide = true;
-        rightSide = true;
-      }
-      else
-      {
-        leftSide = true;
-        rightSide = false;
-      }
+      leftSide = true;
+      rightSide = false;
     }
 
     if (m_debugOutput)
@@ -1280,7 +1341,7 @@ private:
 
         // This is a consequence of using the same basic node type for source and interval nodes
         // If this is a source node, it is only pointing to one of the two opposite edges (the left one by convention)
-        if (node->node_type() != Cone_tree_node::INTERVAL && node->node_type() != Cone_tree_node::EDGE_SOURCE)
+        if (node->is_source_node())
         {
           propagateRight = false;
 
@@ -1413,7 +1474,7 @@ private:
         push_left_child(node);
       }
 
-      if (propagateRight && (!node->is_source_node() || node->node_type() == Cone_tree_node::EDGE_SOURCE))
+      if (propagateRight)
       {
         CGAL_assertion(!node->is_source_node());
         push_right_child(node);
@@ -1706,7 +1767,6 @@ private:
       switch (current->node_type())
       {
         case Cone_tree_node::INTERVAL:
-        case Cone_tree_node::EDGE_SOURCE:
         {
           const Segment_2& entrySegment = current->entry_segment();
           const Point_2& currentSourceImage = current->source_image();
@@ -1758,13 +1818,16 @@ private:
         }
           break;
         case Cone_tree_node::VERTEX_SOURCE:
+          // This might be a pseudo source
           visitor(target(current->entry_edge(), m_graph));
           currentLocation = current->parent()->target_point();
           current = current->parent();
           break;
+        case Cone_tree_node::EDGE_SOURCE:
         case Cone_tree_node::FACE_SOURCE:
           // This is guaranteed to be the final node in any sequence
-          visitor(m_rootNodes[current->tree_id()].second->first, m_rootNodes[current->tree_id()].second->second);
+          visitor(m_rootNodes[current->tree_id()].second->first,
+                  m_rootNodes[current->tree_id()].second->second);
           current = current->parent();
           break;
         default:
