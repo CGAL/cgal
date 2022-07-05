@@ -206,7 +206,7 @@ OutputIterator region_growing_planes(
 
   @tparam PolygonMesh
     a model of `FaceListGraph`
-  @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Plane_3, std::vector<boost::graph_traits<PolygonMesh>::face_iterator> >`.
+  @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Plane_3, std::vector<boost::graph_traits<PolygonMesh>::%face_iterator> >`.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param polygon_mesh polygon mesh for region growing.
