@@ -33,9 +33,8 @@ namespace Shape_detection {
   @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Line_2, std::vector<InputRange::const_iterator> >` or `std::pair<Kernel::Line_3, std::vector<InputRange::const_iterator> >`.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  @param
-      a range of input items for region growing.
-  @param iterator of type OutputIterator.
+  @param points input point range for region growing.
+  @param regions output iterator to store the detected regions and fitted lines.
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
@@ -122,9 +121,8 @@ OutputIterator region_growing_lines(
   @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Plane_3, std::vector<InputRange::const_iterator> >`.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  @param
-      a range of input items for region growing.
-  @param iterator of type OutputIterator.
+  @param points input point range for region growing.
+  @param regions output iterator to store the detected regions and fitted planes.
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
@@ -211,9 +209,8 @@ OutputIterator region_growing_planes(
   @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Plane_3, std::vector<boost::graph_traits<PolygonMesh>::face_iterator> >`.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  @param
-      a range of input items for region growing.
-  @param iterator of type OutputIterator.
+  @param polygon_mesh polygon mesh for region growing.
+  @param regions output iterator to store the detected regions and fitted planes.
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
@@ -288,9 +285,8 @@ OutputIterator region_growing_planes_polygon_mesh(
   @tparam OutputIterator a model of `OutputIterator` accepting a `std::pair<Kernel::Line_2, std::vector<InputRange::const_iterator> >` or `std::pair<Kernel::Line_3, std::vector<InputRange::const_iterator> >`.
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  @param
-      a range of input items for region growing.
-  @param iterator of type OutputIterator.
+  @param polyline input point range for region growing.
+  @param regions output iterator to store the detected regions and fitted lines.
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
