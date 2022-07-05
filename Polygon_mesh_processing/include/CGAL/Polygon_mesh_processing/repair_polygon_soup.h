@@ -1035,7 +1035,7 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
     using parameters::choose_parameter;
 
     typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+//    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
     std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " arrays" << std::endl;
