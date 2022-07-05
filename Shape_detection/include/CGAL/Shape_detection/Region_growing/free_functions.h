@@ -11,8 +11,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_INTERNAL_FREE_FUNCTIONS_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_INTERNAL_FREE_FUNCTIONS_H
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_FREE_FUNCTIONS_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_FREE_FUNCTIONS_H
 
 #include <CGAL/license/Shape_detection.h>
 
@@ -24,7 +24,6 @@
 
 namespace CGAL {
 namespace Shape_detection {
-namespace internal {
 /*!
   \ingroup PkgShapeDetectionRG
   helper function to facilitate region growing for line detection on point sets.
@@ -357,8 +356,7 @@ OutputIterator region_growing_polylines(
   return regions;
 }
 
-} // namespace internal
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_INTERNAL_FREE_FUNCTIONS_H
+#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_FREE_FUNCTIONS_H

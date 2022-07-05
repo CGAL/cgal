@@ -15,7 +15,7 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polyline.h>
-#include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
+#include <CGAL/Shape_detection/Region_growing/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions3.clear();
-    SD::internal::region_growing_polylines(
+    SD::region_growing_polylines(
       polyline_3, std::back_inserter(regions3),
       CGAL::parameters::
       maximum_distance(distance_threshold).
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions2.clear();
-    SD::internal::region_growing_polylines(
+    SD::region_growing_polylines(
       polyline_2, std::back_inserter(regions2),
       CGAL::parameters::
       maximum_distance(distance_threshold).

@@ -18,7 +18,7 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
-#include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
+#include <CGAL/Shape_detection/Region_growing/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 
@@ -111,7 +111,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
-    SD::internal::region_growing_planes_polygon_mesh(
+    SD::region_growing_planes_polygon_mesh(
       polyhedron, std::back_inserter(regions),
       CGAL::parameters::
       maximum_distance(distance_threshold).
