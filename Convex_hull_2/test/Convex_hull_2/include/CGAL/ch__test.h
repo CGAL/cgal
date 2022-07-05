@@ -178,10 +178,6 @@ ch__test(InputIterator first, InputIterator beyond,
   std::vector<Point_2> VI(first, beyond);
   std::vector<Point_2> VO;
 
-  using V_iter = typename std::vector<Point_2>::iterator;
-  V_iter VIfirst = VI.begin();
-  V_iter VIlast = VI.end();
-
   std::cout << "Algorithm: " << algorithm_names[std::size_t(alg)] << std::endl;
   switch(alg)
   {
