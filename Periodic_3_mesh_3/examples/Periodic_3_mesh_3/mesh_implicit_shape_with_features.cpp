@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 
   // Mesh generation WITHOUT feature preservation (and no optimizers)
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, no_features(),
-                                                 no_exude(), perturb_param = no_perturb());
+                                                 no_exude(), no_perturb());
   std::ofstream medit_file("output_implicit_shape_without_protection.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);
 

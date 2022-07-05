@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 
   // Mesh generation with optimizers
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
-                                                 odt_param = odt(convergence=0.03, freeze_bound=0.02, time_limit=30),
+                                                 odt(convergence=0.03, freeze_bound=0.02, time_limit=30),
                                                  lloyd(max_iteration_number=10),
                                                  perturb(sliver_bound=10, time_limit=30),
                                                  exude(sliver_bound=10, time_limit=0));
