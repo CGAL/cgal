@@ -34,8 +34,12 @@
 
 #define CGAL_BOOLEAN_PARAMETER(Class, function_true, function_false)     \
   struct Class : public Base<bool> { Class(bool b) : Base<bool>(b){} };       \
-  inline Class function_true() { return Class(true); }                        \
-  inline Class function_false() { return Class(false); }
+  inline Named_function_parameters<Class, internal_np::reset_options_param_t> function_true() { \
+  typedef Named_function_parameters<Class, internal_np::reset_options_param_t> Param;           \
+  return Param(Class(true)); }                        \
+  inline Named_function_parameters<Class, internal_np::reset_options_param_t> function_false() {\
+  typedef Named_function_parameters<Class, internal_np::reset_options_param_t> Param;           \
+  return Param(Class(false)); }
 
 
 namespace CGAL {
@@ -249,7 +253,7 @@ struct Mesh_3_options {
 // -----------------------------------
 
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-internal::Perturb_options perturb(const CGAL_NP_CLASS& np = parameters::default_values())
+Named_function_parameters<internal::Perturb_options, internal_np::perturb_options_param_t> perturb(const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -262,26 +266,30 @@ internal::Perturb_options perturb(const CGAL_NP_CLASS& np = parameters::default_
         options.set_time_limit(time_limit);
 
     options.set_bound(sliver_bound);
-
-    return options;
+    typedef Named_function_parameters<internal::Perturb_options, internal_np::perturb_options_param_t> Param;
+    return Param(options);
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 template<typename... NP_Pack>
-internal::Perturb_options perturb(const NP_Pack& ...nps)
+Named_function_parameters<internal::Perturb_options, internal_np::perturb_options_param_t> perturb(const NP_Pack& ...nps)
 {
     return perturb(internal_np::combine_named_parameters(nps...));
 }
 #endif
 
 
-inline internal::Perturb_options no_perturb() { return internal::Perturb_options(false); }
+inline Named_function_parameters<internal::Perturb_options, internal_np::perturb_options_param_t> no_perturb() {
+
+    typedef Named_function_parameters<internal::Perturb_options, internal_np::perturb_options_param_t> Param;
+    return Param(internal::Perturb_options(false));
+}
 
 // -----------------------------------
 // Exude
 // -----------------------------------
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-internal::Exude_options exude(const CGAL_NP_CLASS& np = parameters::default_values())
+Named_function_parameters<internal::Exude_options, internal_np::exude_options_param_t> exude(const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -292,26 +300,29 @@ internal::Exude_options exude(const CGAL_NP_CLASS& np = parameters::default_valu
 
     if ( internal::undef_parameter != time_limit)
         options.set_time_limit(time_limit);
-
     options.set_bound(sliver_bound);
+    typedef Named_function_parameters<internal::Exude_options, internal_np::exude_options_param_t> Param;
 
-    return options;
+    return Param(options);
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 template<typename... NP_Pack>
-internal::Exude_options exude(const NP_Pack& ...nps)
+Named_function_parameters<internal::Exude_options, internal_np::exude_options_param_t> exude(const NP_Pack& ...nps)
 {
-    return perturb(internal_np::combine_named_parameters(nps...));
+    return exude(internal_np::combine_named_parameters(nps...));
 }
 #endif
-inline internal::Exude_options no_exude() { return internal::Exude_options(false); }
+inline Named_function_parameters<internal::Exude_options, internal_np::exude_options_param_t> no_exude() {
+    typedef Named_function_parameters<internal::Exude_options, internal_np::exude_options_param_t> Param;
+    return Param(internal::Exude_options(false));
+}
 
 // -----------------------------------
 // Odt
 // -----------------------------------
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-internal::Odt_options odt(const CGAL_NP_CLASS& np = parameters::default_values())
+Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_t> odt(const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -325,24 +336,27 @@ internal::Odt_options odt(const CGAL_NP_CLASS& np = parameters::default_values()
     options.set_bound(freeze_bound);
     options.set_convergence(convergence);
     options.set_max_iteration_number(max_iteration_number);
-
-    return options;
+    typedef Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_t> Param;
+    return Param(options);
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 template<typename... NP_Pack>
-internal::Odt_options Odt(const NP_Pack& ...nps)
+Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_t> odt(const NP_Pack& ...nps)
 {
-    return Odt(internal_np::combine_named_parameters(nps...));
+    return odt(internal_np::combine_named_parameters(nps...));
 }
 #endif
-inline internal::Odt_options no_odt() { return internal::Odt_options(false); }
+inline Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_t> no_odt() {
+    typedef Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_t> Param;
+    return Param(internal::Odt_options(false));
+}
 
 // -----------------------------------
 // Lloyd
 // -----------------------------------
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-internal::Lloyd_options lloyd(const CGAL_NP_CLASS& np = parameters::default_values())
+Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_param_t> lloyd(const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -357,54 +371,63 @@ internal::Lloyd_options lloyd(const CGAL_NP_CLASS& np = parameters::default_valu
     options.set_convergence(convergence);
     options.set_max_iteration_number(max_iteration_number);
 
-    return options;
+    typedef Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_param_t> Param;
+    return Param(options);
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 template<typename... NP_Pack>
-internal::Lloyd_options lloyd(const NP_Pack& ...nps)
+Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_param_t> lloyd(const NP_Pack& ...nps)
 {
     return lloyd(internal_np::combine_named_parameters(nps...));
 }
 #endif
-inline internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
+inline Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_param_t> no_lloyd() {
+    typedef Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_param_t> Param;
+    return Param(internal::Lloyd_options(false));
+}
 
 // -----------------------------------
 // Manifold options ------------------
 // -----------------------------------
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-internal::Manifold_options manifold_options(const CGAL_NP_CLASS& np = parameters::default_values())
+Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> manifold_options(const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
     int mesh_topology = choose_parameter(get_parameter(np, internal_np::mesh_topology_number), -1);
     internal::Manifold_options options;
     options.mesh_topology = mesh_topology;
-    return options;
+
+    typedef Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> Param;
+    return Param(options);
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 template<typename... NP_Pack>
-internal::Manifold_options manifold_options(const NP_Pack& ...nps)
+Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> manifold_options(const NP_Pack& ...nps)
 {
     return manifold_options(internal_np::combine_named_parameters(nps...));
 }
 #endif
 
-inline internal::Manifold_options manifold()
+inline Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> manifold()
 {
-  return internal::Manifold_options(
-          internal::Manifold_options::MANIFOLD);
+    typedef Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> Param;
+  return Param(internal::Manifold_options(
+          internal::Manifold_options::MANIFOLD));
 }
-inline internal::Manifold_options manifold_with_boundary()
+inline Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> manifold_with_boundary()
 {
-  return internal::Manifold_options(
-          internal::Manifold_options::MANIFOLD_WITH_BOUNDARY);
+    typedef Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> Param;
+  return Param(internal::Manifold_options(
+          internal::Manifold_options::MANIFOLD_WITH_BOUNDARY));
 }
-inline internal::Manifold_options non_manifold()
+inline Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> non_manifold()
 {
-  return internal::Manifold_options(
-          internal::Manifold_options::NON_MANIFOLD);
+    typedef Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> Param;
+  return Param(internal::Manifold_options(
+          internal::Manifold_options::NON_MANIFOLD));
 }
 
 // -----------------------------------
@@ -416,7 +439,7 @@ inline internal::Manifold_options non_manifold()
 // algorithm.
 
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-internal::Mesh_3_options mesh_3_options(const CGAL_NP_CLASS& np = parameters::default_values())
+Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t> mesh_3_options(const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -436,11 +459,13 @@ internal::Mesh_3_options mesh_3_options(const CGAL_NP_CLASS& np = parameters::de
     options.pointer_to_stop_atomic_boolean=choose_parameter(get_parameter(np, internal_np::pointer_to_stop_atomic_boolean_param),
                                                             ((internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t)0));
 #endif
-    return options;
+
+    typedef Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t> Param;
+    return Param(options);
 }
 #ifndef CGAL_NO_DEPRECATED_CODE
 template<typename... NP_Pack>
-internal::Mesh_3_options manifold_options(const NP_Pack& ...nps)
+Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t> mesh_3_options(const NP_Pack& ...nps)
 {
     return mesh_3_options(internal_np::combine_named_parameters(nps...));
 }
@@ -645,11 +670,11 @@ void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude());
-    parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb());
-    parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt());
-    parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd());
-    parameters::Reset reset_param = choose_parameter(get_parameter(np, internal_np::reset_options_param), parameters::reset_c3t3());
+    parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude().v);
+    parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb().v);
+    parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt().v);
+    parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd().v);
+    parameters::Reset reset_param = choose_parameter(get_parameter(np, internal_np::reset_options_param), parameters::reset_c3t3().v);
     parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
     parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
 

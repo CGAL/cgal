@@ -68,8 +68,8 @@ struct Implicit_tester : public Tester<K>
                                domain.index_from_surface_patch_index(Surface_patch_index(0,1)));
 
     CGAL::refine_mesh_3(c3t3, domain, criteria,
-                        CGAL::parameters::exude_param = CGAL::parameters::no_exude(),
-                        CGAL::parameters::perturb_param = CGAL::parameters::no_perturb());
+                        CGAL::parameters::no_exude(),
+                        CGAL::parameters::no_perturb());
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
 

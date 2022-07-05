@@ -48,12 +48,12 @@ int main(int argc, char* argv[])
   // Mesh generation and optimization in one call (sliver_bound is the
   // targeted dihedral angle in degrees)
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      exude_param = no_exude(),
-                                      perturb_param = perturb(sliver_bound=10, time_limit=15));
+                                      no_exude(),
+                                      perturb(sliver_bound=10, time_limit=15));
 
   // Mesh generation and optimization in several call
   C3t3 c3t3_bis = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                          perturb_param = no_perturb(), exude_param = no_exude());
+                                          no_perturb(), no_exude());
 
   CGAL::perturb_mesh_3(c3t3_bis, domain, time_limit=15);
 

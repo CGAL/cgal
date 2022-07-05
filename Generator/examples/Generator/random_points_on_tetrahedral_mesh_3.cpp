@@ -50,7 +50,7 @@ int main()
   Mesh_criteria criteria(facet_angle=25, facet_size=0.15, facet_distance=0.008,
                          cell_radius_edge_ratio=3);
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param = no_perturb(), exude_param = no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
   // Create the generator, input is the C3t3 c3t3
   Random_points_in_tetrahedral_mesh_boundary_3<C3t3> g(c3t3);

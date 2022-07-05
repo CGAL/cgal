@@ -92,21 +92,27 @@ namespace parameters {
   // -----------------------------------
   // Features_options
   // -----------------------------------
-  inline internal::Features_options
-  features() { return internal::Features_options(true); }
+  inline Named_function_parameters<internal::Features_options, internal_np::features_option_param_t>
+  features() {
+      typedef Named_function_parameters<internal::Features_options, internal_np::features_option_param_t> Param;
+      return Param(internal::Features_options(true));
+  }
 
-  inline internal::Features_options
-  no_features() { return internal::Features_options(false); }
+  inline Named_function_parameters<internal::Features_options, internal_np::features_option_param_t>
+  no_features() {
+      typedef Named_function_parameters<internal::Features_options, internal_np::features_option_param_t> Param;
+      return Param(internal::Features_options(false)); }
 
   template < typename MeshDomain >
-  inline internal::Features_options
+  inline Named_function_parameters<internal::Features_options, internal_np::features_option_param_t>
   features(const MeshDomain& /*domain*/)
   {
     typedef typename internal::Domain_features_generator<
       MeshDomain,
       CGAL::Mesh_3::internal::has_Has_features<MeshDomain>::value > Generator;
 
-    return Generator()();
+    typedef Named_function_parameters<internal::Features_options, internal_np::features_option_param_t> Param;
+    return Param(Generator()());
   }
 
 } // end namespace parameters::internal
@@ -524,11 +530,11 @@ C3T3 make_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS
     using parameters::choose_parameter;
     using parameters::get_parameter;
     C3T3 c3t3;
-    parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude());
-    parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb());
-    parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt());
-    parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd());
-    parameters::internal::Features_options features_param = choose_parameter(get_parameter(np, internal_np::features_options_param), parameters::features(domain));
+    parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude().v);
+    parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb().v);
+    parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt().v);
+    parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd().v);
+    parameters::internal::Features_options features_param = choose_parameter(get_parameter(np, internal_np::features_options_param), parameters::features(domain).v);
     parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
     parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
 
@@ -597,7 +603,7 @@ void make_mesh_3_impl(C3T3& c3t3,
   // Don't reset c3t3 as we just created it
   refine_mesh_3(c3t3, domain, criteria,
                 parameters::exude_param=exude, parameters::perturb_param=perturb, parameters::odt_param=odt, parameters::lloyd_param= lloyd,
-                parameters::reset_param=parameters::no_reset_c3t3(), parameters::mesh_options_param= mesh_options,
+                parameters::no_reset_c3t3(), parameters::mesh_options_param= mesh_options,
                 parameters::manifold_options_param= manifold_options);
 }
 #else

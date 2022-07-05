@@ -118,9 +118,9 @@ struct Tester
     // Refine again and verify nothing changed
     std::cerr << "Refining again...\n";
     refine_mesh_3(c3t3,domain,criteria,
-                  CGAL::parameters::exude_param = CGAL::parameters::no_exude(),
-                  CGAL::parameters::perturb_param = CGAL::parameters::no_perturb(),
-                  CGAL::parameters::reset_param = CGAL::parameters::no_reset_c3t3());
+                  CGAL::parameters::no_exude(),
+                  CGAL::parameters::no_perturb(),
+                  CGAL::parameters::no_reset_c3t3());
 
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
     // Using adjacencies instead of calling oracle to update restricted
@@ -134,9 +134,9 @@ struct Tester
       v = c3t3.triangulation().number_of_vertices();
 
       refine_mesh_3(c3t3,domain,criteria,
-                    CGAL::parameters::exude_param = CGAL::parameters::no_exude(),
-                    CGAL::parameters::perturb_param = CGAL::parameters::no_perturb(),
-                    CGAL::parameters::reset_param = CGAL::parameters::no_reset_c3t3());
+                    CGAL::parameters::no_exude(),
+                    CGAL::parameters::no_perturb(),
+                    CGAL::parameters::no_reset_c3t3());
     }
 
     f = c3t3.number_of_facets_in_complex();

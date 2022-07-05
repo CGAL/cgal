@@ -59,7 +59,7 @@ int main(int argc, char*argv[])
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      perturb_param = no_perturb(), exude_param = no_exude());
+                                      no_perturb(), no_exude());
 
   std::cerr << t.time() << " sec." << std::endl;
   // Output

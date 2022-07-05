@@ -125,9 +125,9 @@ struct Polyhedron_with_features_tester : public Tester<K>
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        CGAL::parameters::manifold_options_param = CGAL::parameters::manifold(),
-                                        CGAL::parameters::exude_param = CGAL::parameters::no_exude(),
-                                        CGAL::parameters::perturb_param = CGAL::parameters::no_perturb());
+                                        CGAL::parameters::manifold(),
+                                        CGAL::parameters::no_exude(),
+                                        CGAL::parameters::no_perturb());
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
 

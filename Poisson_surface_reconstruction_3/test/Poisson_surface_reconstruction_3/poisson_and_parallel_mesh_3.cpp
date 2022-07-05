@@ -72,7 +72,7 @@ int main(int, char**)
                           CGAL::parameters::facet_size = 4,
                           CGAL::parameters::facet_distance = 0.1);
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3> (domain, criteria,
-                                       CGAL::parameters::manifold_options_param = CGAL::parameters::manifold());
+                                       CGAL::parameters::manifold());
 
   return EXIT_SUCCESS;
 }

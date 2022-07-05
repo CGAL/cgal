@@ -94,7 +94,7 @@ void test_protected_sphere()
   domain.add_features(polylines.begin(), polylines.end());
 
   // Mesh generation with feature preservation
-  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold_options_param = manifold());
+  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold());
 
   // Output
   std::ofstream medit_file_bis("protected_sphere.mesh");
@@ -159,7 +159,7 @@ void test_protected_squary_cylinder()
   domain.add_features(polylines.begin(), polylines.end());
 
   // Mesh generation with feature preservation
-  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold_options_param = manifold());
+  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold());
 
   // Output
   std::ofstream medit_file_bis("squary_cylinder.mesh");
@@ -272,7 +272,7 @@ void test_protected_squary_cylinder_2()
   domain.add_features(polylines.begin(), polylines.end());
 
   // Mesh generation with feature preservation
-  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold_options_param = manifold());
+  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold());
 
   // Output
   std::ofstream medit_file_bis("squary_cylinder_2.mesh");

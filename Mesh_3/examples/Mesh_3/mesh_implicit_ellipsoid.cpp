@@ -51,7 +51,7 @@ int main()
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Mesh generation (without optimization)
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, perturb_param = no_perturb(), exude_param = no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
   // Output
   std::ofstream medit_file("out_wo.mesh");
