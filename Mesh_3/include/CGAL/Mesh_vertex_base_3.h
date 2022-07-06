@@ -20,12 +20,12 @@
 #ifndef CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/Mesh_3.h>
 
 
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
-#include <CGAL/Mesh_3/internal/indices_management.h>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 #include <atomic>
@@ -289,6 +289,30 @@ public:
   }
 };  // end class Mesh_vertex_3
 
+
+/*!
+\ingroup PkgMesh3MeshClasses
+
+The class `Mesh_vertex_base_3` is a model of the concept `MeshVertexBase_3`.
+It is designed to serve as vertex base class for the 3D triangulation
+used in a 3D mesh generation process.
+
+\tparam GT is the geometric traits class.
+It must be a model of the concept `MeshTriangulationTraits_3`.
+
+\tparam MD provides the types of indices
+used to identify
+the faces of the input complex. It must be a model
+of the concept `MeshDomain_3`.
+
+\tparam Vb is the vertex base class. It has to be a model
+of the concept `RegularTriangulationVertexBase_3` and defaults to
+`Regular_triangulation_vertex_base_3<GT>`.
+
+\cgalModels `MeshVertexBase_3`
+
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+*/
 template<class GT,
          class MD,
          class Vb = Regular_triangulation_vertex_base_3<GT> >

@@ -66,7 +66,7 @@ int main(int argc, char*argv[])
   std::ofstream file("out.vtu");
   CGAL::IO::output_to_vtu(file, c3t3);
   // Could be replaced by:
-  // c3t3.output_to_medit(file);
+  // CGAL::IO::write_MEDIT(file, c3t3);
 
   return EXIT_SUCCESS;
 }

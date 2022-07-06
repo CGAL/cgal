@@ -59,6 +59,8 @@ using namespace CGAL::Three;
     }
     bool load_binary(std::istream& is) override;
 
+    void compute_bbox() const override;
+
     bool is_valid() const;//true if the c3t3 is correct, false if it was made from a .mesh, for example
     void set_valid(bool);
     QMenu* contextMenu() override;
@@ -95,6 +97,7 @@ using namespace CGAL::Three;
     bool do_take_vertex(const T3::Vertex_handle &)const override;
     bool is_facet_oriented(const T3::Facet&)const override;
     bool is_surface()const override;
+    QString toolTip() const override;
     void common_constructor(bool is_surface);
   };
 
