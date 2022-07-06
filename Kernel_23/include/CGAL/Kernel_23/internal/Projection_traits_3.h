@@ -960,7 +960,7 @@ public:
 
       Equal_x_2 eqx;
       Equal_y_2 eqy;
-      return eqx(p,q) & eqy(p,q);
+      return eqx(p,q) && eqy(p,q);
     }
   };
 
