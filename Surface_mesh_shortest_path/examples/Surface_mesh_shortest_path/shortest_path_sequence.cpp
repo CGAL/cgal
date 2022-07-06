@@ -36,7 +36,7 @@ struct Sequence_collector
 
   void operator()(halfedge_descriptor he, double alpha)
   {
-    sequence.emplace_back(he, alpha);
+    sequence.push_back(std::make_pair(he, alpha));
   }
 
   void operator()(vertex_descriptor v)
@@ -46,7 +46,7 @@ struct Sequence_collector
 
   void operator()(face_descriptor f, Barycentric_coordinates alpha)
   {
-    sequence.emplace_back(f, alpha);
+    sequence.push_back(std::make_pair(f, alpha));
   }
 };
 
