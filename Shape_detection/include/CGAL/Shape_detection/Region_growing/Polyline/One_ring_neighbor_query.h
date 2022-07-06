@@ -31,7 +31,7 @@ namespace Polyline {
 
     \brief Direct neighbors connectivity in a polyline.
 
-    This class returns indices of the previous and next vertex
+    This class returns `Items` of the previous and next vertex
     in a polyline given as `InputRange.`
 
     \tparam GeomTraits

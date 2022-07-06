@@ -56,7 +56,6 @@ namespace Segment_set {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Segment_map = SegmentMap;
@@ -72,11 +71,11 @@ namespace Segment_set {
     /// @}
 
   private:
-    using FT = typename Traits::FT;
+    using FT = typename GeomTraits::FT;
     using Segment_set_traits = typename std::conditional<
-      std::is_same<typename Traits::Segment_2, Segment_type>::value,
-      internal::Region_growing_traits_2<Traits>,
-      internal::Region_growing_traits_3<Traits> >::type;
+      std::is_same<typename GeomTraits::Segment_2, Segment_type>::value,
+      internal::Region_growing_traits_2<GeomTraits>,
+      internal::Region_growing_traits_3<GeomTraits> >::type;
     using Compare_scores = internal::Compare_scores<FT>;
 
   public:
@@ -180,7 +179,7 @@ namespace Segment_set {
     const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     const Segment_map m_segment_map;
-    const Traits m_traits;
+    const GeomTraits m_traits;
     const Segment_set_traits m_segment_set_traits;
     Seed_range m_ordered;
     std::vector<FT> m_scores;

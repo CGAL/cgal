@@ -62,14 +62,14 @@ int main(int argc, char *argv[]) {
     point_set_2, neighbor_query, region_type);
 
   // Run the algorithm.
-  Region_growing::Result_type regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found lines: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 72);
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "lines_point_set_2.ply");
-  utils::save_point_regions_2<Kernel, Region_growing::Result_type, Point_map>(
+  utils::save_point_regions_2<Kernel, std::vector<typename Region_growing::Primitive_and_region>, Point_map>(
     regions, fullpath);
   return EXIT_SUCCESS;
 }

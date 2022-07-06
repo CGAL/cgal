@@ -100,7 +100,7 @@ void benchmark_region_growing_on_point_set_3(
 
   // Run the algorithm.
   Timer timer;
-  Region_growing::Result_type regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
 
   timer.start();
   region_growing.detect(std::back_inserter(regions));

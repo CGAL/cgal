@@ -54,7 +54,7 @@ namespace Polygon_mesh {
     /// \endcond
 
     /// Item type.
-    using Item = face_descriptor;
+    using Item = typename boost::graph_traits<PolygonMesh>::face_descriptor;
     using Region = std::vector<Item>;
 
     /// \name Initialization
@@ -82,7 +82,7 @@ namespace Polygon_mesh {
 
       This operator retrieves all faces,
       which are edge-adjacent to the face `query`.
-      These indices are returned in `neighbors`.
+      These `Items` are returned in `neighbors`.
 
       \param query
       `Item` of the query face

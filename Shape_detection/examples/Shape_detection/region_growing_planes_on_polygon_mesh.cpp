@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
     face_range, neighbor_query, region_type, sorting.ordered());
 
   // Run the algorithm.
-  Region_growing::Result_type regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found planes: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 355);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
-  Region_growing::Unassigned_type unassigned;
+  std::vector<typename Region_growing::Item> unassigned;
   region_growing.unassigned_items(std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {

@@ -65,7 +65,6 @@ namespace Point_set {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
     using Normal_map = NormalMap;
@@ -79,8 +78,7 @@ namespace Point_set {
     using Region = std::vector<Item>;
 
     /// Primitive
-    using Primitive = typename Traits::Plane_3;
-    using Result_type = std::vector<std::pair<Primitive, Region> >;
+    using Primitive = typename GeomTraits::Plane_3;
 
     /// Region map
     using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
@@ -88,13 +86,13 @@ namespace Point_set {
     /// @}
 
   private:
-    using Point_3 = typename Traits::Point_3;
-    using Vector_3 = typename Traits::Vector_3;
-    using Plane_3 = typename Traits::Plane_3;
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
+    using Plane_3 = typename GeomTraits::Plane_3;
 
-    using Squared_length_3 = typename Traits::Compute_squared_length_3;
-    using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
-    using Scalar_product_3 = typename Traits::Compute_scalar_product_3;
+    using Squared_length_3 = typename GeomTraits::Compute_squared_length_3;
+    using Squared_distance_3 = typename GeomTraits::Compute_squared_distance_3;
+    using Scalar_product_3 = typename GeomTraits::Compute_scalar_product_3;
 
   public:
     /// \name Initialization
@@ -363,7 +361,7 @@ namespace Point_set {
     const Input_range& m_input_range;
     const Point_map m_point_map;
     const Normal_map m_normal_map;
-    const Traits m_traits;
+    const GeomTraits m_traits;
     Region_unordered_map m_region_map;
 
     FT m_distance_threshold;

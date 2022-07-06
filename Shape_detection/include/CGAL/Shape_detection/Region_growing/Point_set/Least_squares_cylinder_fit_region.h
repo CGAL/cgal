@@ -65,7 +65,6 @@ namespace Point_set {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
     using Normal_map = NormalMap;
@@ -79,12 +78,19 @@ namespace Point_set {
     using Region = std::vector<Item>;
 
     /// Primitive
-    using Primitive = struct P {
-      P(const typename Traits::Line_3& a, const typename Traits::FT r) : axis(a), radius(r) {}
-      typename Traits::Line_3 axis;
-      typename Traits::FT radius;
+#ifdef DOXYGEN_RUNNING
+    using Primitive = struct {
+      typename GeomTraits::Line_3 axis;
+      typename GeomTraits::FT radius;
     };
-    using Result_type = std::vector<std::pair<Primitive, Region> >;
+#else
+    using Primitive = struct P {
+      P(const typename GeomTraits::Line_3& a, const typename GeomTraits::FT r) : axis(a), radius(r) {}
+
+      typename GeomTraits::Line_3 axis;
+      typename GeomTraits::FT radius;
+    };
+#endif
 
     /// Region map
     using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
@@ -92,12 +98,12 @@ namespace Point_set {
     /// @}
 
   private:
-    using Point_3 = typename Traits::Point_3;
-    using Vector_3 = typename Traits::Vector_3;
-    using Line_3 = typename Traits::Line_3;
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
+    using Line_3 = typename GeomTraits::Line_3;
 
-    using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
-    using Get_sqrt = internal::Get_sqrt<Traits>;
+    using Squared_distance_3 = typename GeomTraits::Compute_squared_distance_3;
+    using Get_sqrt = internal::Get_sqrt<GeomTraits>;
     using Sqrt = typename Get_sqrt::Sqrt;
 
   public:
@@ -381,7 +387,7 @@ namespace Point_set {
     const Input_range& m_input_range;
     const Point_map m_point_map;
     const Normal_map m_normal_map;
-    const Traits m_traits;
+    const GeomTraits m_traits;
     Region_unordered_map m_region_map;
 
     FT m_distance_threshold;

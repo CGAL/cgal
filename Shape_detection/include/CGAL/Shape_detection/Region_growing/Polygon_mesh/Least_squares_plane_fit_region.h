@@ -62,7 +62,6 @@ namespace Polygon_mesh {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
     using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
@@ -78,8 +77,7 @@ namespace Polygon_mesh {
     using Region = std::vector<Item>;
 
     /// Primitive
-    using Primitive = typename Traits::Plane_3;
-    using Result_type = std::vector<std::pair<Primitive, Region> >;
+    using Primitive = typename GeomTraits::Plane_3;
 
     /// Region map
     using Region_index_map = typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<std::size_t> >::const_type;
@@ -87,14 +85,14 @@ namespace Polygon_mesh {
     /// @}
 
   private:
-    using Point_3 = typename Traits::Point_3;
-    using Vector_3 = typename Traits::Vector_3;
-    using Plane_3 = typename Traits::Plane_3;
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
+    using Plane_3 = typename GeomTraits::Plane_3;
 
-    using Squared_length_3 = typename Traits::Compute_squared_length_3;
-    using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
-    using Scalar_product_3 = typename Traits::Compute_scalar_product_3;
-    using Cross_product_3 = typename Traits::Construct_cross_product_vector_3;
+    using Squared_length_3 = typename GeomTraits::Compute_squared_length_3;
+    using Squared_distance_3 = typename GeomTraits::Compute_squared_distance_3;
+    using Scalar_product_3 = typename GeomTraits::Compute_scalar_product_3;
+    using Cross_product_3 = typename GeomTraits::Construct_cross_product_vector_3;
 
   public:
     /// \name Initialization
@@ -358,7 +356,7 @@ namespace Polygon_mesh {
     const Face_graph& m_face_graph;
     const Face_range m_face_range;
     const Vertex_to_point_map m_vertex_to_point_map;
-    const Traits m_traits;
+    const GeomTraits m_traits;
 
     FT m_distance_threshold;
     FT m_cos_value_threshold;

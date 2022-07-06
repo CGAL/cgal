@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
   Region_growing region_growing(
     face_range, neighbor_query, region_type, sorting.ordered());
 
-  Region_growing::Result_type regions;
+  std::vector<Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
   assert(regions.size() == 355);

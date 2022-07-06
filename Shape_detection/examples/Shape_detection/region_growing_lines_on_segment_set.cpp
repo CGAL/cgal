@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   Plane_region plane_region(surface_mesh);
   RG_planes rg_planes(face_range, one_ring_query, plane_region);
 
-  RG_planes::Result_type regions;
+  std::vector<typename RG_planes::Primitive_and_region> regions;
   rg_planes.detect(std::back_inserter(regions));
   std::cout << "* number of found planar regions: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 9);
@@ -72,13 +72,13 @@ int main(int argc, char *argv[]) {
   RG_lines rg_lines(
     segment_range, pgraph, line_region, line_sorting.ordered());
 
-  RG_lines::Result_type subregions;
+  std::vector<typename RG_lines::Primitive_and_region> subregions;
   rg_lines.detect(std::back_inserter(subregions));
   std::cout << "* number of found linear regions: " << subregions.size() << std::endl;
   assert(is_default_input && subregions.size() == 21);
 
   fullpath = (argc > 2 ? argv[2] : "subregions_sm.ply");
-  utils::save_segment_regions_3<Kernel, RG_lines::Result_type, Segment_map>(
+  utils::save_segment_regions_3<Kernel, std::vector<typename RG_lines::Primitive_and_region>, Segment_map>(
     subregions, fullpath, pgraph.segment_map());
 
   return EXIT_SUCCESS;

@@ -76,7 +76,7 @@ bool test(
   Region_growing region_growing(
     input_range, neighbor_query, region_type, sorting.ordered());
 
-  typename Region_growing::Result_type regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
   bool result = lambda_assertion(regions);
   assert(result);
@@ -91,7 +91,7 @@ bool test(
       }
     }
 
-  typename Region_growing::Unassigned_type unassigned;
+  std::vector<typename Region_growing::Item> unassigned;
   region_growing.unassigned_items(std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {

@@ -5,8 +5,7 @@
 A concept that describes the set of methods used by the `CGAL::Shape_detection::Region_growing`
 to maintain a region.
 
-A region is represented by a set of `indices` of the items, which are included in
-this region.
+A region is represented by a set items, which are included in this region.
 
 \cgalHasModel
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`
@@ -25,14 +24,11 @@ public:
   /// The parameters of the primitive covering the region.
   typedef unspecified_type Primitive;
 
-  /// The reference type to the elements of the input range.
+  /// The reference type to the elements of the input range, e.g., a const_iterator of the input range.
   typedef unspecified_type Item;
 
   // The region types is defined by a vector of Items.
   typedef std::vector<Item> Region;
-
-  /// The result type of the region growing provides the Primitive of each region with the Items combined in a `std::pair`.
-  typedef std::vector<std::pair<Primitive, Region> > Result_type;
 
   /*!
     a model of `ReadWritePropertyMap` whose key type is `Item`
@@ -40,7 +36,6 @@ public:
     to the index of the region it belongs to.
   */
   typedef unspecified_type Region_index_map;
-
 
   /*!
     checks if the item `to`, which is a neighbor of the item

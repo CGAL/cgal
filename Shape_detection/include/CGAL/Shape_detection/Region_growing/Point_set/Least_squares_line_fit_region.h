@@ -65,7 +65,6 @@ namespace Point_set {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
     using Normal_map = NormalMap;
@@ -79,8 +78,7 @@ namespace Point_set {
     using Region = std::vector<Item>;
 
     /// Primitive
-    using Primitive = typename Traits::Line_2;
-    using Result_type = std::vector<std::pair<Primitive, Region> >;
+    using Primitive = typename GeomTraits::Line_2;
 
     /// Region map
     using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
@@ -88,13 +86,13 @@ namespace Point_set {
     /// @}
 
   private:
-    using Point_2 = typename Traits::Point_2;
-    using Vector_2 = typename Traits::Vector_2;
-    using Line_2 = typename Traits::Line_2;
+    using Point_2 = typename GeomTraits::Point_2;
+    using Vector_2 = typename GeomTraits::Vector_2;
+    using Line_2 = typename GeomTraits::Line_2;
 
-    using Squared_length_2 = typename Traits::Compute_squared_length_2;
-    using Squared_distance_2 = typename Traits::Compute_squared_distance_2;
-    using Scalar_product_2 = typename Traits::Compute_scalar_product_2;
+    using Squared_length_2 = typename GeomTraits::Compute_squared_length_2;
+    using Squared_distance_2 = typename GeomTraits::Compute_squared_distance_2;
+    using Scalar_product_2 = typename GeomTraits::Compute_scalar_product_2;
 
   public:
     /// \name Initialization
@@ -202,7 +200,7 @@ namespace Point_set {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps iterators on the input range `Item` to std::size_t.
+      This function creates an empty property map that maps iterators on the input range `Item` to `std::size_t`.
     */
     Region_index_map region_index_map() {
       return Region_index_map(m_region_map);
@@ -364,7 +362,7 @@ namespace Point_set {
     const Input_range& m_input_range;
     const Point_map m_point_map;
     const Normal_map m_normal_map;
-    const Traits m_traits;
+    const GeomTraits m_traits;
     Region_unordered_map m_region_map;
 
     FT m_distance_threshold;

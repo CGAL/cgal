@@ -145,7 +145,7 @@ int main() {
     objects, neighbor_query, region_type);
 
   // Run the algorithm.
-  Region_growing::Result_type regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
   assert(regions.size() == 2);

@@ -16,7 +16,7 @@ class NeighborQuery {
 
 public:
 
-  /// The reference type to the elements of the input range.
+  /// The reference type to the elements of the input range, e.g., a const_iterator of the input range.
   typedef unspecified_type Item;
 
   /*!

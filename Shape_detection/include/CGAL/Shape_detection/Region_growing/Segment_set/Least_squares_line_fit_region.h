@@ -69,7 +69,6 @@ namespace Segment_set {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
     using Input_range = InputRange;
     using Segment_map = SegmentMap;
     using Segment_type = typename Segment_map::value_type;
@@ -82,9 +81,12 @@ namespace Segment_set {
     using Item = typename InputRange::const_iterator;
     using Region = std::vector<Item>;
 
-    /// Primitive
+    /// Primitive type depends on the dimension of the input data.
+#ifdef DOXYGEN_RUNNING
+    using Primitive = typename GeomTraits::Line_2 or typename GeomTraits::Line_3
+#else
     using Primitive = typename Segment_set_traits::Line;
-    using Result_type = std::vector<std::pair<Primitive, Region> >;
+#endif
 
     /// Region map
     using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
@@ -340,7 +342,7 @@ namespace Segment_set {
   private:
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
-    const Traits m_traits;
+    const GeomTraits m_traits;
     const Segment_set_traits m_segment_set_traits;
     Region_unordered_map m_region_map;
 

@@ -79,11 +79,11 @@ int main(int argc, char *argv[]) {
   Region_growing_3 region_growing_3(
     polyline_3, neighbor_query_3, region_type_3, sorting_3.ordered());
 
-  Region_growing_3::Result_type regions3;
+  std::vector<Region_growing_3::Primitive_and_region> regions3;
   region_growing_3.detect(std::back_inserter(regions3));
   assert(regions3.size() == 16);
 
-  Region_growing_3::Unassigned_type unassigned_points;
+  std::vector<Region_growing_3::Item> unassigned_points;
   region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 1);
 
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
   Region_growing_2 region_growing_2(
     polyline_2, neighbor_query_2, region_type_2, sorting_2.ordered());
 
-  typename Region_growing_2::Result_type regions2;
+  std::vector<typename Region_growing_2::Primitive_and_region> regions2;
   region_growing_2.detect(std::back_inserter(regions2));
   assert(regions2.size() == 5);
   for (const auto& region : regions2)
@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
-  Region_growing_2::Unassigned_type unassigned;
+  std::vector<Region_growing_2::Item> unassigned;
   region_growing_2.unassigned_items(std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {
@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  Region_growing_2::Unassigned_type unassigned2;
+  std::vector<Region_growing_2::Item> unassigned2;
   region_growing_2.unassigned_items(std::back_inserter(unassigned2));
   assert(unassigned2.size() == 0);
 

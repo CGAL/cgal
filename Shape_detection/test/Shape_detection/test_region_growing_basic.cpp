@@ -52,11 +52,11 @@ int main(int argc, char *argv[]) {
   Region_growing region_growing(
     input_range, neighbor_query, region_type);
 
-  Region_growing::Unassigned_type unassigned_points;
+  std::vector<typename Region_growing::Item> unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 3634);
 
-  Region_growing::Result_type regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
   const std::size_t num_regions = regions.size();
   assert(num_regions != 0);

@@ -28,7 +28,7 @@ namespace Polygon_mesh {
 
     \brief Sorting of polygon mesh faces with respect to the local plane fit quality.
 
-    Indices of faces in a polygon mesh are sorted with respect to the quality of the
+    `Items` of faces in a polygon mesh are sorted with respect to the quality of the
     least squares plane fit applied to the vertices of incident faces of each face.
 
     \tparam GeomTraits
@@ -61,7 +61,6 @@ namespace Polygon_mesh {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
     using Face_graph = PolygonMesh;
     using Neighbor_query = NeighborQuery;
     using Face_range = FaceRange;
@@ -77,7 +76,7 @@ namespace Polygon_mesh {
     /// @}
 
   private:
-    using FT = typename Traits::FT;
+    using FT = typename GeomTraits::FT;
     using Compare_scores = internal::Compare_scores<FT>;
 
   public:
@@ -180,7 +179,7 @@ namespace Polygon_mesh {
     Neighbor_query& m_neighbor_query;
     const Face_range m_face_range;
     const Vertex_to_point_map m_vertex_to_point_map;
-    const Traits m_traits;
+    const GeomTraits m_traits;
     Seed_range m_ordered;
     std::vector<FT> m_scores;
 

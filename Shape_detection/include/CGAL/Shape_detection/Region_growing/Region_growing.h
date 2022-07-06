@@ -72,10 +72,9 @@ namespace Shape_detection {
     /// Item type.
     using Item = typename RegionType::Item;
     using Region = std::vector<Item>;
-    using Unassigned_type = std::vector<Item>;
 
-    /// Result type
-    using Result_type = std::vector<std::pair<typename Region_type::Primitive, std::vector<Item> > >;
+    /// Primitive and region type
+    using Primitive_and_region = std::pair<typename Region_type::Primitive, Region>;
 
     /// Item to region property map.
     using Region_map = typename Region_type::Region_index_map;
@@ -174,19 +173,18 @@ namespace Shape_detection {
 
     /*!
       \brief runs the region growing algorithm and fills an output iterator
-      with the found regions.
+      with the fitted primitive and their region.
 
-      \tparam OutputIterator
-      a model of output iterator whose value type is `std::vector<std::size_t>`
+      \tparam PrimitiveAndRegionOutputIterator
+      a model of `OutputIterator` whose value type is `Primitive_and_region`
 
       \param regions
-      an output iterator to get for all items corresponding to each region its corresponding region.
-      Elements put are of type `std::pair<Region_type::Primitive, std::vector<Item> >`.
+      an iterator of type `PrimitiveAndRegionOutputIterator`.
 
       \return past-the-end position in the output sequence
     */
-    template<typename OutputIterator>
-    OutputIterator detect(OutputIterator regions) {
+    template<typename PrimitiveAndRegionOutputIterator>
+    PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator regions) {
       clear();
 
       Region region;
@@ -232,17 +230,16 @@ namespace Shape_detection {
     /*!
       \brief fills an output iterator with all unassigned items.
 
-      \tparam OutputIterator
-      a model of output iterator whose value type is `std::size_t`
+      \tparam ItemOutputIterator
+      a model of `OutputIterator` whose value type is `Item`
 
       \param output
-      an output iterator that stores indices of all items, which are not assigned
-      to any region
+      an iterator of type `PrimitiveAndRegionOutputIterator`.
 
       \return past-the-end position in the output sequence
     */
-    template<typename OutputIterator>
-    OutputIterator unassigned_items(OutputIterator output) const {
+    template<typename ItemOutputIterator>
+    ItemOutputIterator unassigned_items(ItemOutputIterator output) const {
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
         Item i = internal::conditional_deref<typename Input_range::const_iterator, Item>()(it);
         if (!get(m_visited, i))

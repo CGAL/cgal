@@ -28,7 +28,7 @@ namespace Polyline {
 
     \brief Sorting of polyline vertices with respect to the local line fit quality.
 
-    Indices of input vertices are sorted with respect to the quality of the
+    `Items` of input vertices are sorted with respect to the quality of the
     least squares line fit applied to the incident vertices of each vertex.
 
     \tparam GeomTraits
@@ -56,7 +56,6 @@ namespace Polyline {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Point_map = PointMap;
@@ -72,11 +71,11 @@ namespace Polyline {
     /// @}
 
   private:
-    using FT = typename Traits::FT;
+    using FT = typename GeomTraits::FT;
     using Polyline_traits = typename std::conditional<
-      std::is_same<typename Traits::Point_2, Point_type>::value,
-      internal::Region_growing_traits_2<Traits>,
-      internal::Region_growing_traits_3<Traits> >::type;
+      std::is_same<typename GeomTraits::Point_2, Point_type>::value,
+      internal::Region_growing_traits_2<GeomTraits>,
+      internal::Region_growing_traits_3<GeomTraits> >::type;
     using Compare_scores = internal::Compare_scores<FT>;
     using Dereference_pmap = internal::Dereference_property_map_adaptor<Item, PointMap>;
 
@@ -182,7 +181,7 @@ namespace Polyline {
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
     Dereference_pmap m_deref_pmap;
-    const Traits m_traits;
+    const GeomTraits m_traits;
     const Polyline_traits m_polyline_traits;
     Seed_range m_ordered;
     std::vector<FT> m_scores;

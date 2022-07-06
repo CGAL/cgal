@@ -65,14 +65,14 @@ int main(int argc, char *argv[]) {
     polyline_3, neighbor_query_3, region_type_3);
 
   // Run the algorithm on a 3D polyline.
-  Region_growing_3::Result_type regions;
+  std::vector<typename Region_growing_3::Primitive_and_region> regions;
   region_growing_3.detect(std::back_inserter(regions));
   std::cout << "* number of found 3D regions: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 17);
 
   // Save 3D regions to a file.
   std::string fullpath = (argc > 2 ? argv[2] : "regions_polyline_3.ply");
-  utils::save_point_regions_3<Kernel, Region_growing_3::Result_type, Point_map_3>(
+  utils::save_point_regions_3<Kernel, std::vector<typename Region_growing_3::Primitive_and_region>, Point_map_3>(
     regions, fullpath);
 
   // Create the 2D polyline.
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
     polyline_2, neighbor_query_2, region_type_2);
 
   // Run the algorithm on a 2D polyline.
-  Region_growing_2::Result_type regions2;
+  std::vector<typename Region_growing_2::Primitive_and_region> regions2;
   region_growing_2.detect(std::back_inserter(regions2));
   std::cout << "* number of found 2D regions: " << regions2.size() << std::endl;
   assert(is_default_input && regions2.size() == 5);
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
   }
 
   fullpath = (argc > 2 ? argv[2] : "regions_polyline_2.ply");
-  utils::save_point_regions_2<Kernel, Region_growing_2::Result_type, Point_map_2>(
+  utils::save_point_regions_2<Kernel, std::vector<typename Region_growing_2::Primitive_and_region>, Point_map_2>(
     regions2, fullpath);
 
   return EXIT_SUCCESS;

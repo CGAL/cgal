@@ -80,9 +80,12 @@ namespace Polyline {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
-    /// Primitive
+    /// Primitive type depends on the dimension of the input data.
+#ifdef DOXYGEN_RUNNING
+    using Primitive = typename GeomTraits::Line_2 or typename GeomTraits::Line_3
+#else
     using Primitive = typename Polyline_traits::Line;
-    using Result_type = std::vector<std::pair<Primitive, Region> >;
+#endif
 
     /// Region map
     using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;

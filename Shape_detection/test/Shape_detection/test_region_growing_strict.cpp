@@ -235,7 +235,7 @@ bool test_lines_segment_set_2_sorting() {
 
   Region_type region_type(segments);
 
-  typename Region_type::Result_type regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
   Region_growing region_growing(
     segments, neighbor_query, region_type, sorting.ordered());
   region_growing.detect(std::back_inserter(regions));
@@ -299,7 +299,7 @@ bool test_lines_segment_set_3() {
     face_range, one_ring_query, plane_type, plane_sorting.ordered());
 
   assert(surface_mesh.number_of_faces() == 7320);
-  typename RG_planes::Result_type regions;
+  std::vector<typename RG_planes::Primitive_and_region> regions;
   rg_planes.detect(std::back_inserter(regions));
   assert(regions.size() == 9);
 
@@ -314,7 +314,7 @@ bool test_lines_segment_set_3() {
     segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
   sorting.sort();
 
-  typename RG_lines::Result_type regions2;
+  std::vector<typename RG_lines::Primitive_and_region> regions2;
   RG_lines region_growing(
     segment_range, pgraph, region_type, sorting.ordered());
   region_growing.detect(std::back_inserter(regions2));
