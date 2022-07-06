@@ -220,7 +220,7 @@ private:
     Region_growing region_growing(
       face_range, neighbor_query, region_type, sorting.ordered());
 
-    Region_growing::Result_type regions;
+    std::vector<typename Region_growing::Primitive_and_region> regions;
     region_growing.detect(std::back_inserter(regions));
     std::cerr << "* " << regions.size() << " regions have been found" << std::endl;
 
@@ -359,7 +359,7 @@ private:
     // The actual shape detection.
     CGAL::Real_timer t;
     t.start();
-    Region_growing::Result_type regions;
+    std::vector<typename Region_growing::Primitive_and_region> regions;
     region_growing.detect(std::back_inserter(regions));
     t.stop();
 
