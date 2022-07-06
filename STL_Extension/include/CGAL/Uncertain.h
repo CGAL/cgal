@@ -291,6 +291,7 @@ Uncertain<bool> operator!(Uncertain<bool> a)
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wunknown-warning-option"
 #  pragma GCC diagnostic ignored "-Wbitwise-instead-of-logical"
 #endif
 inline
