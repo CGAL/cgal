@@ -359,14 +359,28 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
   CGAL_assertion ( vol_it != vol_end );
 
   Converter to_output;
+  bool handling_unbounded_volume = true;
+
+  auto shell_is_closed = [](typename Nef_polyhedron::SFace_const_handle sfh)
+  {
+    typename Nef_polyhedron::Halffacet_handle f = sfh;
+    return f->incident_volume()!=f->twin()->incident_volume();
+  };
+
   for (;vol_it!=vol_end;++vol_it)
+  {
     for(auto sit = vol_it->shells_begin(); sit != vol_it->shells_end(); ++sit)
+    {
+      if ( (handling_unbounded_volume || sit!=vol_it->shells_begin()) && shell_is_closed(sit)) continue;
       nef_to_pm::collect_polygon_mesh_info(points,
                                            polygons,
                                            nef,
                                            sit,
                                            to_output,
                                            triangulate_all_faces);
+    }
+    handling_unbounded_volume = false;
+  }
 }
 
 template <class Nef_polyhedron, class Polygon_mesh>
