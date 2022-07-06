@@ -180,8 +180,8 @@ namespace Shape_detection {
       a model of output iterator whose value type is `std::vector<std::size_t>`
 
       \param regions
-      an output iterator that stores regions, where each region is returned
-      as a vector of indices of the items, which belong to this region.  The result type is given be the `Result_type` type.
+      an output iterator to get for all items corresponding to each region its corresponding region.
+      Elements put are of type `std::pair<Region_type::Primitive, std::vector<Item> >`.
 
       \return past-the-end position in the output sequence
     */
