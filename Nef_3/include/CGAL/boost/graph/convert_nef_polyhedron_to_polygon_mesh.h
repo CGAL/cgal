@@ -361,9 +361,9 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
   Converter to_output;
   bool handling_unbounded_volume = true;
 
-  auto shell_is_closed = [](typename Nef_polyhedron::SFace_const_handle sfh)
+  auto shell_is_closed = [](typename Nef_polyhedron::Shell_entry_const_iterator sfh)
   {
-    typename Nef_polyhedron::Halffacet_handle f = sfh;
+    typename Nef_polyhedron::Halffacet_const_handle f = sfh;
     return f->incident_volume()!=f->twin()->incident_volume();
   };
 
