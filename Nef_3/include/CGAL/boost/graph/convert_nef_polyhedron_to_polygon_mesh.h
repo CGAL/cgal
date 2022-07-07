@@ -363,8 +363,12 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
 
   auto shell_is_closed = [](typename Nef_polyhedron::Shell_entry_const_iterator sfh)
   {
-    typename Nef_polyhedron::Halffacet_const_handle f = sfh;
-    return f->incident_volume()!=f->twin()->incident_volume();
+    typename Nef_polyhedron::Halffacet_const_handle f;
+
+    if (CGAL::assign(f,*sfh))
+      return f->incident_volume()!=f->twin()->incident_volume();
+    else
+      return false;
   };
 
   for (;vol_it!=vol_end;++vol_it)

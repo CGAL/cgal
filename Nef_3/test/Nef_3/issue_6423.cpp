@@ -11,7 +11,7 @@ typedef CGAL::Surface_mesh<Point_3> SurfaceMesh;
 typedef CGAL::Nef_polyhedron_3<Kernel> NefPolyhedron;
 
 
-int main(int argc, char* argv[])
+int main()
 {
     SurfaceMesh surfaceMesh;
     SurfaceMesh::Vertex_index v0 = surfaceMesh.add_vertex(Point_3(-1, 0, 0));
