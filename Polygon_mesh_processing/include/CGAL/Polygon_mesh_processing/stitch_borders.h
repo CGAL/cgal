@@ -1145,6 +1145,17 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 ///                     must be available in `PolygonMesh`.}
 ///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `Point_3`,
+///                    and the nested functors:
+///                    - `Less_xyz_3` to compare lexicographically two points
+///                    - `Equal_3` to check whether two points are identical.
+///                    For each functor `Foo`, a function `Foo foo_object()` must be provided.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \returns the number of pairs of halfedges that were stitched.
@@ -1212,6 +1223,17 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 ///                     must be available in `PolygonMesh`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `Point_3`,
+///                    and the nested functors:
+///                    - `Less_xyz_3` to compare lexicographically two points
+///                    - `Equal_3` to check whether two points are identical.
+///                    For each functor `Foo`, a function `Foo foo_object()` must be provided.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -1408,15 +1430,6 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 /// \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamNBegin{vertex_point_map}
-///     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-///                    as key type and `%Point_3` as value type}
-///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `PolygonMesh`.}
-///   \cgalParamNEnd
-///
 ///   \cgalParamNBegin{apply_per_connected_component}
 ///     \cgalParamDescription{specifies if the borders should only be stitched only within their own connected component.}
 ///     \cgalParamType{Boolean}
@@ -1428,6 +1441,26 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 ///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
 ///                    as key type and `std::size_t` as value type}
 ///     \cgalParamDefault{an automatically indexed internal map}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `PolygonMesh`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `Point_3`,
+///                    and the nested functors:
+///                    - `Less_xyz_3` to compare lexicographically two points
+///                    - `Equal_3` to check whether two points are identical.
+///                    For each functor `Foo`, a function `Foo foo_object()` must be provided.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
