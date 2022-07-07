@@ -73,16 +73,16 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
       for(uint i=0; i<nx; i++)
       {
         using CGAL::IMAGEIO::static_evaluate;
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wunknown-warning-option"
+#  pragma GCC diagnostic ignored "-Wpragmas"
 #  pragma GCC diagnostic ignored "-Wbitwise-instead-of-logical"
 #endif
         if(visited[voxel_index] | second_pass[voxel_index]) {
           ++voxel_index;
           continue;
         }
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #  pragma GCC diagnostic pop
 #endif
         const Label current_label =

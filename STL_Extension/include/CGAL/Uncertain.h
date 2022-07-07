@@ -289,9 +289,9 @@ Uncertain<bool> operator!(Uncertain<bool> a)
   return Uncertain<bool>(!a.sup(), !a.inf());
 }
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wunknown-warning-option"
+#  pragma GCC diagnostic ignored "-Wpragmas"
 #  pragma GCC diagnostic ignored "-Wbitwise-instead-of-logical"
 #endif
 inline
@@ -329,7 +329,7 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 {
   return Uncertain<bool>(a.inf() & b, a.sup() & b);
 }
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #  pragma GCC diagnostic pop
 #endif
 
