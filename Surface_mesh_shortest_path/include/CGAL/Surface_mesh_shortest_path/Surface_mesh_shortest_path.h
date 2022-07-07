@@ -2807,7 +2807,7 @@ public:
   /*!
   \brief returns the 3-dimensional coordinates of the given vertex.
 
-  \param vertex A vertex of the input face graph
+  \param v A vertex of the input face graph
   */
   decltype(auto) point(const vertex_descriptor v) const
   {
