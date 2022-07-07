@@ -1031,17 +1031,12 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
                   PolygonRange& polygons,
                   const NamedParameters& np) const
   {
-    using parameters::get_parameter;
-    using parameters::choose_parameter;
-
-    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-//    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
-
   #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
     std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " arrays" << std::endl;
   #endif
 
     merge_duplicate_points_in_polygon_soup(points, polygons, np);
+//  skipped steps:
 //    simplify_polygons_in_polygon_soup(points, polygons, traits);
 //    split_pinched_polygons_in_polygon_soup(points, polygons, traits);
     remove_invalid_polygons_in_polygon_soup(points, polygons);
