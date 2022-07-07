@@ -1691,7 +1691,7 @@ private:
     for(vertex_descriptor v : vertices(m_graph))
     {
       std::size_t vertexIndex = get(m_vertexIndexMap, v);
-      m_vertexIsPseudoSource[vertexIndex] = !is_isolated(v, m_graph) &&
+      m_vertexIsPseudoSource[vertexIndex] = !internal::is_isolated(v, m_graph) &&
                                             (is_saddle_vertex(v) || is_boundary_vertex(v));
     }
   }
