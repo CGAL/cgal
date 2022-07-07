@@ -817,7 +817,6 @@ private:
     CGAL_precondition(!is_border(baseEdge, m_graph));
     CGAL_precondition(t0 + t1 == FT(1));
 
-    typename Traits::Construct_barycenter_2 cb2(m_traits.construct_barycenter_2_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
 
