@@ -36,6 +36,11 @@ Release date: June 2022
 
     See also the [announcement page](https://www.cgal.org/2022/05/18/alpha_wrap/).
 
+### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.5/Manual/packages.html#PkgStraightSkeleton2)
+-   Fix the output of the function [CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()](https://doc.cgal.org/5.5/Straight_skeleton_2/group__PkgStraightSkeleton2OffsetFunctions.html#gaa159f093e5d6d7fdb62c1660a44f95fe)
+    to not take into account the offset of the outer frame.
+-   Fix the computation of the exterior offset of a polygon with holes that was not computing the offset of the holes
+
 ### [3D Convex Hulls](https://doc.cgal.org/5.5/Manual/packages.html#PkgConvexHull3)
 
 -   Added an [overload of the function `CGAL::convex_hull_3()`](https://doc.cgal.org/5.5/Convex_hull_3/group__PkgConvexHull3Functions.html#ga52fca4745c2ef0351063fbe66b035fd1), which writes the result in an indexed triangle set.
