@@ -422,10 +422,14 @@ This \cgal packages provides a helper function to compute the required separatio
 
 If you use this function to place the outer frame you are guaranteed to obtain an offset contour corresponding exclusively to the frame, which you can always identify as the one with the largest area and which you can simple remove from the result (to keep just the relevant outer contours).
 
-
 \cgalFigureBegin{Exterior,exterior_skeleton.png,exterior_offset.png}
 Exterior skeleton obtained using a frame (left) and 2 sample exterior offset contours (right)
 \cgalFigureEnd
+
+For convenience, the following functions are provided:
+
+- `CGAL::create_exterior_skeleton_and_offset_polygons_2()` adds the outer frame to the input polygon (with or without holes) and provides output offset polygons (`CGAL::Polygon_2<K>`), including the offset of the outer frame.
+- `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()` adds the outer frame to the input polygon (with or without holes) and provides as output offset polygons with holes (`CGAL::Polygon_with_holes_2`), exclusing the offset of the outer frame.
 
 \section Straight_skeleton_2Straight Straight Skeletons, Medial Axis and Voronoi Diagrams
 
@@ -441,7 +445,7 @@ On the other hand, only reflex vertices (whose internal angle \f$ > \pi\f$)
 are the source of deviations of the bisectors from its center
 location. Therefore, for convex polygons, the straight skeleton, the
 medial axis and the Voronoi diagram are exactly equivalent,
-and, if a non-convex polygon contains only vertices of lowfor f in *.txt ; do echo $f ; aspell list < $f | sort | uniq -c ; done
+and, if a non-convex polygon contains only vertices of low
 reflexivity, the straight skeleton bisectors will be placed nearly
 equidistant to their defining edges, producing a straight skeleton
 pretty much alike a proper medial axis.
