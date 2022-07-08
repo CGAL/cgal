@@ -833,24 +833,25 @@ private:
     node_created();
     m_rootNodes.emplace_back(edgeRoot, sourcePointIt);
 
-    // If v0v1 is not a border edge:
-    //
-    //      v2
-    //     /  \
-    //    /    \
-    //   /      \
-    // v0 - S - v1
-    //   \      /
-    //    \    /
-    //     \  /
-    //      v3
-    // The source S must reach all Vi, so for each side of the edge, there are two windwows being spawned:
-    // - v0v1 targetting v2 propagating only on the left (v0v2)
-    // - v2v0 targetting v1 propagating only on the left (v2v1)
-    // - v1v0 targetting v3 propagating only on the left (v1v3)
-    // - v3v1 targetting v0 propagating only on the left (v3v0)
-    //
-    // If v0v1 is a border edge, spawn 3 children in the face, and none on the other side
+    /* If v0v1 is not a border edge:
+     *
+     *      v2
+     *     /  \
+     *    /    \
+     *   /      \
+     * v0 - S - v1
+     *   \      /
+     *    \    /
+     *     \  /
+     *      v3
+     * The source S must reach all Vi, so for each side of the edge, there are two windwows being spawned:
+     * - v0v1 targetting v2 propagating only on the left (v0v2)
+     * - v2v0 targetting v1 propagating only on the left (v2v1)
+     * - v1v0 targetting v3 propagating only on the left (v1v3)
+     * - v3v1 targetting v0 propagating only on the left (v3v0)
+     *
+     * If v0v1 is a border edge, spawn 3 children in the face, and none on the other side
+     */
 
     if(is_border_edge(baseEdge, m_graph))
     {
