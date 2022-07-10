@@ -247,7 +247,7 @@ namespace internal {
     const IConverter iconverter = IConverter();
 
     for (auto item : region) {
-      const auto& element = get(item_map, *item);
+      const auto& element = get(item_map, internal::conditional_deref<typename std::iterator_traits<typename Region::iterator>::value_type, typename ItemMap::key_type>()(item));
       elements.push_back(iconverter(element));
     }
     CGAL_precondition(elements.size() == region.size());

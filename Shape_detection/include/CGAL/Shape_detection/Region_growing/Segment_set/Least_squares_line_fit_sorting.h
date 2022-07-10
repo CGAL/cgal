@@ -63,7 +63,10 @@ namespace Segment_set {
     /// \endcond
 
     /// Item type.
-    using Item = typename InputRange::const_iterator;
+    using Item = typename std::conditional<
+      std::is_same<typename std::iterator_traits<typename InputRange::const_iterator>::value_type, typename SegmentMap::value_type>::value,
+      typename InputRange::const_iterator,
+      typename std::iterator_traits<typename InputRange::const_iterator>::value_type > ::type;
 
     /// Seed range.
     using Seed_range = std::vector<Item>;
@@ -132,7 +135,7 @@ namespace Segment_set {
 
       std::size_t index = 0;
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
-        m_ordered[index++] = it;
+        m_ordered[index++] = internal::conditional_deref<typename Input_range::const_iterator, Item>()(it);
 
       m_scores.resize(m_input_range.size());
     }
@@ -191,7 +194,7 @@ namespace Segment_set {
       for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
         neighbors.clear();
         m_neighbor_query(it, neighbors);
-        neighbors.push_back(it);
+        neighbors.push_back(internal::conditional_deref<typename InputRange::const_iterator, Item>()(it));
 
         const auto& segment = get(m_segment_map, *it);
         const auto& source = segment.source();

@@ -22,6 +22,8 @@
 #include <CGAL/IO/Color.h>
 #include <CGAL/Random.h>
 
+#include <CGAL/Shape_detection/Region_growing/internal/utils.h>
+
 // Define how a color should be stored.
 namespace CGAL {
   template<class F>
@@ -178,9 +180,9 @@ void save_segment_regions_2(
   out.close();
 }
 
-template<typename Kernel, typename Region, typename Segment_map>
+template<typename Kernel, typename Regions, typename Segment_map>
 void save_segment_regions_3(
-  const Region& regions,
+  const Regions& regions,
   const std::string fullpath,
   const Segment_map segment_map = Segment_map()) {
 
@@ -205,7 +207,7 @@ void save_segment_regions_3(
 
     // Iterate through all region items.
     for (const auto &item : region.second) {
-      const auto& segment = get(segment_map, *item);
+      const auto& segment = get(segment_map, CGAL::Shape_detection::internal::conditional_deref<typename std::iterator_traits<typename std::iterator_traits<Regions::iterator>::value_type::second_type::iterator>::value_type, typename Segment_map::key_type>()(item));
       pwc.push_back(std::make_pair(segment.source(), color));
       pwc.push_back(std::make_pair(segment.target(), color));
     }

@@ -161,7 +161,7 @@ namespace Shape_detection {
 
       std::size_t idx = 0;
       for (auto it = seed_range.begin(); it != seed_range.end(); it++)
-        m_seed_range[idx++] = *it;
+        m_seed_range[idx++] = internal::conditional_deref<typename SeedRange::const_iterator, Item>()(it);
 
       clear();
     }
