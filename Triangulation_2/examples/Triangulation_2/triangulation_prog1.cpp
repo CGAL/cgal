@@ -1,27 +1,50 @@
-#include <fstream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Triangulation_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <CGAL/assertions.h>
 
-typedef CGAL::Triangulation_2<K>         Triangulation;
-typedef Triangulation::Vertex_circulator Vertex_circulator;
-typedef Triangulation::Point             Point;
 
-int main() {
-  std::ifstream in("data/triangulation_prog1.cin");
-  std::istream_iterator<Point> begin(in);
-  std::istream_iterator<Point> end;
+#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/Curvatures/interpolated_curvature_measures.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
+#include <chrono>
 
-  Triangulation t;
-  t.insert(begin, end);
+#define N 4
+namespace PMP = CGAL::Polygon_mesh_processing;
 
-  Vertex_circulator vc = t.incident_vertices(t.infinite_vertex()),
-    done(vc);
-  if (vc != nullptr) {
-    do { std::cout << vc->point() << std::endl;
-    }while(++vc != done);
-  }
-  return 0;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+
+int main(int argc, char* argv[])
+{
+    srand(time(NULL));
+
+    std::vector<Epic::Vector_3> X(N);
+    std::vector<Epic::Vector_3> U(N);
+
+    for (int i = 0; i < N; i++) {
+        X[i] = { rand() , rand() , rand() };
+        U[i] = { rand() , rand() , rand() };
+        U[i] = U[i] / sqrt(U[i] * U[i]);
+    }
+    std::cout << PMP::interpolated_mu_i_face(X, U, PMP::MU0_AREA_MEASURE) << std::endl;
+    std::cout << PMP::interpolated_mu_i_face(X, U, PMP::MU1_MEAN_CURVATURE_MEASURE) << std::endl;
+    std::cout << PMP::interpolated_mu_i_face(X, U, PMP::MU2_GAUSSIAN_CURVATURE_MEASURE) << std::endl;
+
+    /*srand(time(NULL));
+    Epic::Vector_3 x, y;
+    Epic::FT d = 0;
+
+    Epic::Vector_3 z;
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    for (int i = 0; i < N; i++)
+    {
+        x * y;
+    }
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << std::endl;*/
+
 }
+
