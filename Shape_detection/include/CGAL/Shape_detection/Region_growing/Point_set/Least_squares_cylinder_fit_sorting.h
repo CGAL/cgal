@@ -202,7 +202,7 @@ namespace Point_set {
         neighbors.push_back(it);
 
         m_scores[idx] = -internal::create_cylinder(
-          neighbors, m_point_map, m_normal_map, m_traits, true).second;
+          neighbors, m_point_map, m_normal_map, m_traits).second;
 
         if (m_scores[idx] == -(std::numeric_limits<double>::max)())
           seed_cutoff++;

@@ -62,11 +62,7 @@ namespace internal {
   };
 
   template<typename Input, typename Result, bool = std::is_same<Input, Result>::value >
-  struct conditional_deref {
-    Result operator()(Input it) {
-      assert(false);
-    }
-  };
+  struct conditional_deref;
 
   template<typename Input, typename Result>
   struct conditional_deref<Input, Result, true> {
@@ -655,7 +651,7 @@ namespace internal {
     create_cylinder(
       const Region& region, const PointMap point_map,
       const NormalMap normal_map,
-      const Traits& traits, const bool compute_score) {
+      const Traits& traits) {
 
     if (region.size() < 6)
       return std::make_pair(

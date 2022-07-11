@@ -361,7 +361,7 @@ namespace Point_set {
       FT radius; Line_3 axis;
       std::tie(radius, axis) = internal::create_cylinder(
         region, m_point_map, m_normal_map,
-        m_traits, false).first;
+        m_traits).first;
 
       if (radius >= FT(0)) {
         m_radius = radius;
@@ -379,7 +379,7 @@ namespace Point_set {
       const Region& region) const {
       return internal::create_cylinder(
         region, m_point_map, m_normal_map,
-        m_traits, false).first;
+        m_traits).first;
     }
     /// \endcond
 
