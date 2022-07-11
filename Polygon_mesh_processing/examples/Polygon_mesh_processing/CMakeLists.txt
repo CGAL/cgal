@@ -54,6 +54,8 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(hole_filling_example_LCC PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("mesh_smoothing_example.cpp")
   target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("delaunay_remeshing_example.cpp")
+  target_link_libraries(delaunay_remeshing_example PUBLIC CGAL::Eigen3_support)
 endif()
 
 create_single_source_cgal_program( "extrude.cpp" )

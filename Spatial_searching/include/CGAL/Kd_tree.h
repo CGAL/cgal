@@ -330,7 +330,7 @@ public:
     dim_ = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
 
     data.reserve(pts.size());
-    for(unsigned int i = 0; i < pts.size(); i++){
+    for(std::size_t i = 0; i < pts.size(); i++){
       data.push_back(&pts[i]);
     }
 

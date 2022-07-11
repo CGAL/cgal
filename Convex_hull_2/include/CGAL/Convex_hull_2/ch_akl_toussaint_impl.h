@@ -220,8 +220,6 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                  OutputIterator  result,
                  const Traits&   ch_traits)
 {
-  using namespace boost;
-
   typedef  typename Traits::Point_2                    Point_2;
   typedef  typename Traits::Left_turn_2                Left_of_line;
   // added

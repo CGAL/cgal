@@ -136,7 +136,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
                  Polyhedral_tag()); //, 1099, 1099, 1158, 1158, 4902, 4902);
 
     std::ofstream out_medit("test-medit.mesh");
-    CGAL::IO::output_to_medit(out_medit, c3t3);
+    CGAL::IO::write_MEDIT(out_medit, c3t3);
     CGAL::IO::output_to_tetgen("test-tetgen", c3t3);
     std::ofstream out_binary("test-binary.mesh.cgal",
                              std::ios_base::out|std::ios_base::binary);

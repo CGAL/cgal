@@ -178,7 +178,8 @@ int main()
 
   // Output
   std::ofstream medit_file("out_cubes_intersection_with_features.mesh");
-  CGAL::IO::output_to_medit(medit_file, c3t3);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }
