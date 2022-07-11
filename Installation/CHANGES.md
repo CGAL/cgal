@@ -3,7 +3,7 @@ Release History
 
 ### [2D Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgTriangulation2)
 
--   Add function `mark_domina_in_triangulation()` to mark faces connected with non constrained edges as inside of the domain based on the nesting level.
+-   Added function `mark_domains_in_triangulation()` to mark faces connected with non constrained edges as inside of the domain based on the nesting level.
 
 ### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh22)
 
