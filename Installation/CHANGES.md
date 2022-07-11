@@ -1,6 +1,18 @@
 Release History
 ===============
 
+[Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
+-----------
+
+Release date: November 2022
+
+### [2D Convex Hulls](https://doc.cgal.org/5.6/Manual/packages.html#PkgConvexHull2)
+
+-   **Breaking change**: The concept `ConvexHullTraits_2` no longer requires the functor
+    `Less_signed_distance_to_line_2`, but requires the functor `Compare_signed_distance_to_line_2` instead.
+-   The long-deprecated classes `Convex_hull_projective_xy_traits_2`, `Convex_hull_projective_xz_traits_2`,
+    and `Convex_hull_projective_yz_traits_2` have been removed. Users should use `Projection_traits_xy_3`,
+    `Projection_traits_xz_3`, and `Projection_traits_yz_3` instead.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
