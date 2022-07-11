@@ -30,7 +30,7 @@ using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
 using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
 using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
+using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
 using Timer  = CGAL::Real_timer;
 
@@ -68,7 +68,7 @@ void benchmark_region_growing_on_point_set_2(
     number_of_assigned_points += region.second.size();
 
   Region_growing::Unassigned_type unassigned_points;
-  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  region_growing.unassigned_items(input_range, std::back_inserter(unassigned_points));
 
   // Print statistics.
   std::cout << "Test #"                          << test_count                << std::endl;

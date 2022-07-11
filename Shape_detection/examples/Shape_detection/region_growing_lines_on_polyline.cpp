@@ -17,11 +17,11 @@ using Point_map_3 = CGAL::Identity_property_map<Point_3>;
 
 using Neighbor_query_2 = CGAL::Shape_detection::Polyline::One_ring_neighbor_query<Kernel, Polyline_2>;
 using Region_type_2    = CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<Kernel, Polyline_2, Point_map_2>;
-using Region_growing_2 = CGAL::Shape_detection::Region_growing<Polyline_2, Neighbor_query_2, Region_type_2>;
+using Region_growing_2 = CGAL::Shape_detection::Region_growing<Neighbor_query_2, Region_type_2>;
 
 using Neighbor_query_3 = CGAL::Shape_detection::Polyline::One_ring_neighbor_query<Kernel, Polyline_3>;
 using Region_type_3    = CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<Kernel, Polyline_3, Point_map_3>;
-using Region_growing_3 = CGAL::Shape_detection::Region_growing<Polyline_3, Neighbor_query_3, Region_type_3>;
+using Region_growing_3 = CGAL::Shape_detection::Region_growing<Neighbor_query_3, Region_type_3>;
 
 int main(int argc, char *argv[]) {
 

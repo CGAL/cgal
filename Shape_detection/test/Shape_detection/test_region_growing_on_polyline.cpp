@@ -34,11 +34,11 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
 
   using Neighbor_query_2 = SD::Polyline::One_ring_neighbor_query<Kernel, Polyline_2>;
   using Region_type_2    = SD::Polyline::Least_squares_line_fit_region<Kernel, Polyline_2, Point_map_2>;
-  using Region_growing_2 = SD::Region_growing<Polyline_2, Neighbor_query_2, Region_type_2>;
+  using Region_growing_2 = SD::Region_growing<Neighbor_query_2, Region_type_2>;
 
   using Neighbor_query_3 = SD::Polyline::One_ring_neighbor_query<Kernel, Polyline_3>;
   using Region_type_3    = SD::Polyline::Least_squares_line_fit_region<Kernel, Polyline_3, Point_map_3>;
-  using Region_growing_3 = SD::Region_growing<Polyline_3, Neighbor_query_3, Region_type_3>;
+  using Region_growing_3 = SD::Region_growing<Neighbor_query_3, Region_type_3>;
 
   // Default parameter values.
   const FT distance_threshold = FT(45) / FT(10);
@@ -81,7 +81,7 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
     assert(region_type_3.is_valid_region(region.second));
 
   std::vector<typename Region_growing_3::Item> unassigned_points;
-  region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
+  region_growing_3.unassigned_items(polyline_3, std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 0);
 
   // Create 2D polyline.
@@ -117,7 +117,7 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
   for (const auto& region : regions_2)
     assert(region_type_2.is_valid_region(region.second));
   std::vector<typename Region_growing_2::Item> unassigned_points2;
-  region_growing_2.unassigned_items(std::back_inserter(unassigned_points2));
+  region_growing_2.unassigned_items(polyline_2, std::back_inserter(unassigned_points2));
   assert(unassigned_points2.size() == 0);
 
   return true;

@@ -28,7 +28,7 @@ using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
 using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
 using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
+using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     input_range, neighbor_query, region_type);
 
   std::vector<typename Region_growing::Item> unassigned_points;
-  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  region_growing.unassigned_items(input_range, std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 3634);
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
   assert(num_regions != 0);
 
   unassigned_points.clear();
-  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  region_growing.unassigned_items(input_range, std::back_inserter(unassigned_points));
   const std::size_t num_unassigned_points = unassigned_points.size();
   assert(num_unassigned_points != 3634);
 
@@ -71,13 +71,13 @@ int main(int argc, char *argv[]) {
   assert(regions.size() == num_regions);
 
   unassigned_points.clear();
-  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  region_growing.unassigned_items(input_range, std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == num_unassigned_points);
 
-  region_growing.clear();
+  region_growing.clear(input_range);
 
   unassigned_points.clear();
-  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  region_growing.unassigned_items(input_range, std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 3634);
 
   std::cout << "rg_basic, epick_test_success: " << true << std::endl;

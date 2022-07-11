@@ -34,7 +34,7 @@ using Normal_map = CGAL::Second_of_pair_property_map<Pwn>;
 
 using RG_query = SD::Point_set::Sphere_neighbor_query<Kernel, Point_set, Point_map>;
 using RG_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Point_map, Normal_map>;
-using Region_growing = SD::Region_growing<Point_set, RG_query, RG_region>;
+using Region_growing = SD::Region_growing<RG_query, RG_region>;
 
 using RANSAC_traits = SD::Efficient_RANSAC_traits<Kernel, Point_set, Point_map, Normal_map>;
 using RANSAC = SD::Efficient_RANSAC<RANSAC_traits>;
@@ -124,7 +124,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
   std::size_t nb_detected = 0;
   std::size_t nb_unassigned = 0;
   region_growing.detect (boost::make_function_output_iterator ([&](const auto&) { ++ nb_detected; }));
-  region_growing.unassigned_items (boost::make_function_output_iterator ([&](const auto&) { ++ nb_unassigned; }));
+  region_growing.unassigned_items(points, boost::make_function_output_iterator ([&](const auto&) { ++ nb_unassigned; }));
   t.stop();
   std::cerr << "Region Growing = " << nb_detected << " planes (" << 1000 * t.time() << "ms)" << std::endl;
 

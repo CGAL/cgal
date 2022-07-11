@@ -157,9 +157,8 @@ void save_segment_regions_2(
         static_cast<unsigned char>(rand() % 256));
 
     // Iterate through all region items.
-    for (const auto index : region.second) {
-      const auto& key = *(input_range.begin() + index);
-      const auto& segment = get(segment_map, key);
+    for (const auto item : region.second) {
+      const auto& segment = get(segment_map, item);
       const auto& s = segment.source();
       const auto& t = segment.target();
       pwc.push_back(std::make_pair(Point_3(s.x(), s.y(), 0), color));
@@ -207,7 +206,7 @@ void save_segment_regions_3(
 
     // Iterate through all region items.
     for (const auto &item : region.second) {
-      const auto& segment = get(segment_map, CGAL::Shape_detection::internal::conditional_deref<typename std::iterator_traits<typename std::iterator_traits<Regions::iterator>::value_type::second_type::iterator>::value_type, typename Segment_map::key_type>()(item));
+      const auto& segment = get(segment_map, CGAL::Shape_detection::internal::conditional_deref<typename std::iterator_traits<typename std::iterator_traits<typename Regions::iterator>::value_type::second_type::iterator>::value_type, typename Segment_map::key_type>()(item));
       pwc.push_back(std::make_pair(segment.source(), color));
       pwc.push_back(std::make_pair(segment.target(), color));
     }

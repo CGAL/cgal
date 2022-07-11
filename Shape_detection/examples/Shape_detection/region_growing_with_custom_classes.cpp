@@ -116,7 +116,7 @@ using Object         = Custom::Object;
 using Objects        = Custom::Objects;
 using Neighbor_query = Custom::Neighbor_query;
 using Region_type    = Custom::Region_type;
-using Region_growing = CGAL::Shape_detection::Region_growing<Objects, Neighbor_query, Region_type>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main() {
 

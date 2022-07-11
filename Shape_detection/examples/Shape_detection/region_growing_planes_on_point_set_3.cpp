@@ -21,7 +21,7 @@ using Normal_map   = typename Input_range::Vector_map;
 using Region_type = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
 using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
-using Region_growing = CGAL::Shape_detection::Region_growing<Input_range, Neighbor_query, Region_type>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 using Point_inserter = utils::Insert_point_colored_by_region_index<Input_range, Output_range, Point_map, Kernel::Plane_3>;
 
 int main(int argc, char *argv[]) {
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 
   // Get all unassigned points.
   std::vector<Region_type::Item> unassigned_items;
-  region_growing.unassigned_items(std::back_inserter(unassigned_items));
+  region_growing.unassigned_items(input_range, std::back_inserter(unassigned_items));
   std::cout << "* number of unassigned points: " << unassigned_items.size() << std::endl;
   assert(is_default_input && unassigned_items.size() == 538);
 

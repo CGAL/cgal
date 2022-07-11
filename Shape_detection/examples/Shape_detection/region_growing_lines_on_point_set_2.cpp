@@ -16,7 +16,7 @@ using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
 using Neighbor_query = CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set_2, Point_map>;
 using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<Kernel, Point_set_2, Point_map, Normal_map>;
-using Region_growing = CGAL::Shape_detection::Region_growing<Point_set_2, Neighbor_query, Region_type>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
 

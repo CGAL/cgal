@@ -34,7 +34,7 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
 
   using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
   using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
+  using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
   // Default parameter values.
   const FT          sphere_radius      = FT(5);
@@ -79,7 +79,7 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
     assert(region_type.is_valid_region(region.second));
 
   std::vector<typename Region_growing::Item> unassigned_points;
-  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  region_growing.unassigned_items(input_range, std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 86);
   return true;
 }

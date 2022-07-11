@@ -29,7 +29,7 @@ using Face_range   = typename Polygon_mesh::Face_range;
 using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
 using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
 using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
-using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
+using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
 
   std::vector<Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
-  region_growing.clear();
+  region_growing.clear(face_range);
   assert(regions.size() == 355);
 
   // Test free functions and stability.

@@ -190,8 +190,7 @@ private:
     CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, SMesh>;
     using Sorting =
     CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, SMesh, Neighbor_query>;
-    using Region_growing = CGAL::Shape_detection::Region_growing<
-      Face_range, Neighbor_query, Region_type>;
+    using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
     CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
     const SMesh& mesh = *(sm_item->polyhedron());
@@ -280,7 +279,7 @@ private:
     using Sorting =
     CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Point_set, Neighbor_query, Point_map>;
     using Region_growing =
-    CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>;
+    CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
     // Set parameters.
     const double search_sphere_radius = dialog.cluster_epsilon();

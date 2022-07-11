@@ -32,12 +32,12 @@ using Point_map_3 = CGAL::Identity_property_map<Point_3>;
 using Neighbor_query_2 = SD::Polyline::One_ring_neighbor_query<Kernel, Polyline_2>;
 using Region_type_2    = SD::Polyline::Least_squares_line_fit_region<Kernel, Polyline_2, Point_map_2>;
 using Sorting_2        = SD::Polyline::Least_squares_line_fit_sorting<Kernel, Polyline_2, Neighbor_query_2, Point_map_2>;
-using Region_growing_2 = SD::Region_growing<Polyline_2, Neighbor_query_2, Region_type_2>;
+using Region_growing_2 = SD::Region_growing<Neighbor_query_2, Region_type_2>;
 
 using Neighbor_query_3 = SD::Polyline::One_ring_neighbor_query<Kernel, Polyline_3>;
 using Region_type_3    = SD::Polyline::Least_squares_line_fit_region<Kernel, Polyline_3, Point_map_3>;
 using Sorting_3        = SD::Polyline::Least_squares_line_fit_sorting<Kernel, Polyline_3, Neighbor_query_3, Point_map_3>;
-using Region_growing_3 = SD::Region_growing<Polyline_3, Neighbor_query_3, Region_type_3>;
+using Region_growing_3 = SD::Region_growing<Neighbor_query_3, Region_type_3>;
 
 int main(int argc, char *argv[]) {
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
   assert(regions3.size() == 16);
 
   std::vector<Region_growing_3::Item> unassigned_points;
-  region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
+  region_growing_3.unassigned_items(polyline_3, std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == 1);
 
   // Test free functions and stability.
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
     }
 
   std::vector<Region_growing_2::Item> unassigned;
-  region_growing_2.unassigned_items(std::back_inserter(unassigned));
+  region_growing_2.unassigned_items(polyline_2, std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {
     if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<Region_growing_2::Item, typename Region_growing_2::Region_map::key_type>()(item))) {
@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
   }
 
   std::vector<Region_growing_2::Item> unassigned2;
-  region_growing_2.unassigned_items(std::back_inserter(unassigned2));
+  region_growing_2.unassigned_items(polyline_2, std::back_inserter(unassigned2));
   assert(unassigned2.size() == 0);
 
   // Test free functions and stability.

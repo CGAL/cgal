@@ -46,7 +46,7 @@ bool test(
   const Lambda_region& lambda_region,
   const Lambda_assertion& lambda_assertion) {
 
-  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
+  using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
   // Default parameter values.
   const std::size_t k = 12;
@@ -92,7 +92,7 @@ bool test(
     }
 
   std::vector<typename Region_growing::Item> unassigned;
-  region_growing.unassigned_items(std::back_inserter(unassigned));
+  region_growing.unassigned_items(input_range, std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {
     if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<typename Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {

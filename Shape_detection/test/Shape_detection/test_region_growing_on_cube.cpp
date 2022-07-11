@@ -33,7 +33,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polyhedron>;
   using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polyhedron, Face_range>;
   using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query, Face_range>;
-  using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
+  using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
   // Default parameter values.
   const FT          distance_threshold = FT(1) / FT(10);
@@ -88,7 +88,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
     assert(region_type.is_valid_region(region.second));
 
   std::vector<typename Region_growing::Item> unassigned_faces;
-  region_growing.unassigned_items(std::back_inserter(unassigned_faces));
+  region_growing.unassigned_items(face_range, std::back_inserter(unassigned_faces));
   assert(unassigned_faces.size() == 0);
 
   const typename Region_growing::Region_map map = region_growing.region_map();

@@ -30,7 +30,7 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
 
   using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
   using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
-  using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
+  using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
   // Default parameter values.
   const FT          distance_threshold = FT(1);
@@ -73,7 +73,7 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
     assert(region_type.is_valid_region(region.second));
 
   std::vector<typename Region_growing::Item> unassigned_faces;
-  region_growing.unassigned_items(std::back_inserter(unassigned_faces));
+  region_growing.unassigned_items(face_range, std::back_inserter(unassigned_faces));
   assert(unassigned_faces.size() == 992);
   return true;
 }

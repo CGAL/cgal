@@ -114,7 +114,7 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 - `RegionType`
 
 ### Algorithm ###
-- `CGAL::Shape_detection::Region_growing<InputRange, %NeighborQuery, %RegionType, SeedMap>`
+- `CGAL::Shape_detection::Region_growing<%NeighborQuery, %RegionType, SeedMap>`
 
 ### Point Set ###
 - `CGAL::Shape_detection::Point_set::K_neighbor_query<GeomTraits, InputRange, PointMap>`

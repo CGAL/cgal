@@ -32,7 +32,7 @@ using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
 using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
 using Region_type    = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
+using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
 using Timer  = CGAL::Real_timer;
 

@@ -98,7 +98,7 @@ OutputIterator region_growing_lines(
   using Neighbor_query = Point_set::K_neighbor_query<Kernel, InputRange, PointMap>;
   using Region_type = Point_set::Least_squares_line_fit_region<Kernel, InputRange, PointMap, NormalMap>;
   using Sorting = Point_set::Least_squares_line_fit_sorting<Kernel, InputRange, Neighbor_query, PointMap>;
-  using Region_growing = Region_growing<InputRange, Neighbor_query, Region_type>;
+  using Region_growing = Region_growing<Neighbor_query, Region_type>;
 
   Neighbor_query neighbor_query(points, np);
   Region_type region_type(points, np);
@@ -186,7 +186,7 @@ OutputIterator region_growing_planes(
   using Neighbor_query = Point_set::K_neighbor_query<Kernel, InputRange, PointMap>;
   using Region_type = Point_set::Least_squares_plane_fit_region<Kernel, InputRange, PointMap, NormalMap>;
   using Sorting = Point_set::Least_squares_plane_fit_sorting<Kernel, InputRange, Neighbor_query, PointMap>;
-  using Region_growing = Region_growing<InputRange, Neighbor_query, Region_type>;
+  using Region_growing = Region_growing<Neighbor_query, Region_type>;
 
   Neighbor_query neighbor_query(points, np);
   Region_type region_type(points, np);
@@ -262,7 +262,7 @@ OutputIterator region_growing_planes_polygon_mesh(
   using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<PolygonMesh>;
   using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Kernel, PolygonMesh, Face_range>;
   using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, PolygonMesh, Neighbor_query, Face_range>;
-  using Region_growing = Region_growing<Face_range, Neighbor_query, Region_type>;
+  using Region_growing = Region_growing<Neighbor_query, Region_type>;
 
   Neighbor_query neighbor_query(polygon_mesh);
   Region_type region_type(polygon_mesh, np);
@@ -338,7 +338,7 @@ OutputIterator region_growing_polylines(
   using Neighbor_query = Polyline::One_ring_neighbor_query<Kernel, InputRange>;
   using Region_type = Polyline::Least_squares_line_fit_region<Kernel, InputRange, Point_map>;
   using Sorting = Polyline::Least_squares_line_fit_sorting<Kernel, InputRange, Neighbor_query, Point_map>;
-  using Region_growing = Region_growing<InputRange, Neighbor_query, Region_type>;
+  using Region_growing = Region_growing<Neighbor_query, Region_type>;
 
   Neighbor_query neighbor_query(polyline);
   Region_type region_type(polyline, np);

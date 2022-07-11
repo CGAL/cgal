@@ -42,7 +42,7 @@ Sphere_neighbor_query<Kernel, Point_vector, Point_map> Neighbor_query;
 typedef CGAL::Shape_detection::Point_set::
 Least_squares_plane_fit_region<Kernel, Point_vector, Point_map, Normal_map> Region_type;
 typedef CGAL::Shape_detection::
-Region_growing<Point_vector, Neighbor_query, Region_type> Region_growing;
+Region_growing<Neighbor_query, Region_type> Region_growing;
 
 typedef CGAL::Surface_mesh<Point>        Surface_mesh;
 typedef        CGAL::Polygonal_surface_reconstruction<Kernel> Polygonal_surface_reconstruction;

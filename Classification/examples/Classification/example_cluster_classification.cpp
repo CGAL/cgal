@@ -32,7 +32,7 @@ typedef Point_set::Property_map<unsigned char> UCmap;
 
 typedef CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set, Pmap>                Neighbor_query;
 typedef CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Pmap, Vmap> Region_type;
-typedef CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>                   Region_growing;
+typedef CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>                              Region_growing;
 
 namespace Classification = CGAL::Classification;
 namespace Feature = CGAL::Classification::Feature;

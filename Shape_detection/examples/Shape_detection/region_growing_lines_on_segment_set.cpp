@@ -17,7 +17,7 @@ using Edge_range   = typename Surface_mesh::Edge_range;
 
 using One_ring_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Surface_mesh>;
 using Plane_region   = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
-using RG_planes      = CGAL::Shape_detection::Region_growing<Face_range, One_ring_query, Plane_region>;
+using RG_planes      = CGAL::Shape_detection::Region_growing<One_ring_query, Plane_region>;
 
 using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<Surface_mesh>;
 using Segment_range      = typename Polyline_graph::Segment_range;
@@ -25,7 +25,7 @@ using Segment_map        = typename Polyline_graph::Segment_map;
 
 using Line_region  = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
 using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Polyline_graph, Segment_map>;
-using RG_lines     = CGAL::Shape_detection::Region_growing<Segment_range, Polyline_graph, Line_region>;
+using RG_lines     = CGAL::Shape_detection::Region_growing<Polyline_graph, Line_region>;
 
 int main(int argc, char *argv[]) {
 

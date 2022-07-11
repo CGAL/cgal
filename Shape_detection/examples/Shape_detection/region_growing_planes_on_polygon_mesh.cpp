@@ -29,7 +29,7 @@ using Point_3 = typename Kernel::Point_3;
     using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh, Face_range>;
     using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query, Face_range>;
 #endif
-using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
 
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
     }
 
   std::vector<typename Region_growing::Item> unassigned;
-  region_growing.unassigned_items(std::back_inserter(unassigned));
+  region_growing.unassigned_items(face_range, std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {
     if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {

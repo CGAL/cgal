@@ -44,9 +44,6 @@ namespace Shape_detection {
     - control if items form a valid region type via the `RegionType` parameter class,
     - optional `SeedRange` defining the seeding order of items and skipping unnecessary items.
 
-    \tparam InputRange
-    a model of `ConstRange`
-
     \tparam NeighborQuery
     a model of `NeighborQuery`
 
@@ -54,19 +51,15 @@ namespace Shape_detection {
     a model of `RegionType`
   */
   template<
-  typename InputRange,
-  typename NeighborQuery,
-  typename RegionType >
+    typename NeighborQuery,
+    typename RegionType >
   class Region_growing {
 
   public:
     /// \name Types
     /// \cond SKIP_IN_MANUAL
-    using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Region_type = RegionType;
-
-    using InputIterator = typename Input_range::const_iterator;
     /// \endcond
 
     /// Item type.
@@ -89,6 +82,9 @@ namespace Shape_detection {
     /*!
       \brief initializes the region growing algorithm.
 
+      \tparam InputRange
+        a model of `ConstRange`
+
       \param input_range
       a range of input items for region growing
 
@@ -102,28 +98,31 @@ namespace Shape_detection {
 
       \pre `input_range.size() > 0`
     */
+    template<typename InputRange>
     Region_growing(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       RegionType& region_type) :
-      m_input_range(input_range),
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
       m_region_map(region_type.region_index_map()),
       m_visited(m_visited_map) {
 
       CGAL_precondition(input_range.size() > 0);
-      m_seed_range.resize(m_input_range.size());
+      m_seed_range.resize(input_range.size());
 
       std::size_t idx = 0;
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
-        m_seed_range[idx++] = internal::conditional_deref<typename Input_range::const_iterator, Item>()(it);
+      for (auto it = input_range.begin(); it != input_range.end(); it++)
+        m_seed_range[idx++] = internal::conditional_deref<typename InputRange::const_iterator, Item>()(it);
 
-      clear();
+      clear(input_range);
     }
 
     /*!
       \brief initializes the region growing algorithm.
+
+      \tparam InputRange
+        a model of `ConstRange
 
       \param input_range
       a range of input items for region growing
@@ -137,18 +136,17 @@ namespace Shape_detection {
       control if items form a valid region type
 
       \param seed_range
-      an vector of `Item` that is used as seeds for the region growing.
+      a vector of `Item` that is used as seeds for the region growing.
       Defaults to the full input_range.
 
       \pre `input_range.size() > 0`
     */
-    template<class SeedRange>
+    template<typename InputRange, typename SeedRange>
     Region_growing(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       RegionType& region_type,
       SeedRange& seed_range) :
-      m_input_range(input_range),
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
       m_region_map(region_type.region_index_map()),
@@ -163,7 +161,7 @@ namespace Shape_detection {
       for (auto it = seed_range.begin(); it != seed_range.end(); it++)
         m_seed_range[idx++] = internal::conditional_deref<typename SeedRange::const_iterator, Item>()(it);
 
-      clear();
+      clear(input_range);
     }
 
     /// @}
@@ -185,7 +183,7 @@ namespace Shape_detection {
     */
     template<typename PrimitiveAndRegionOutputIterator>
     PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator regions) {
-      clear();
+//      clear(); TODO: this is not valid to comment this clear()
 
       Region region;
       std::size_t idx = 0;
@@ -238,10 +236,10 @@ namespace Shape_detection {
 
       \return past-the-end position in the output sequence
     */
-    template<typename ItemOutputIterator>
-    ItemOutputIterator unassigned_items(ItemOutputIterator output) const {
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
-        Item i = internal::conditional_deref<typename Input_range::const_iterator, Item>()(it);
+    template<typename InputRange, typename ItemOutputIterator>
+    ItemOutputIterator unassigned_items(const InputRange& input_range, ItemOutputIterator output) const {
+      for (auto it = input_range.begin(); it != input_range.end(); it++) {
+        Item i = internal::conditional_deref<typename InputRange::const_iterator, Item>()(it);
         if (!get(m_visited, i))
           *(output++) = i;
       }
@@ -251,16 +249,16 @@ namespace Shape_detection {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
-    void clear() {
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
-        put(m_region_map, internal::conditional_deref<typename Input_range::const_iterator, typename Region_map::key_type>()(it), std::size_t(-1));
-        put(m_visited, internal::conditional_deref<typename Input_range::const_iterator, Item>()(it), false);
+    template <class InputRange>
+    void clear(const InputRange& input_range) {
+      for (auto it = input_range.begin(); it != input_range.end(); it++) {
+        put(m_region_map, internal::conditional_deref<typename InputRange::const_iterator, typename Region_map::key_type>()(it), std::size_t(-1));
+        put(m_visited, internal::conditional_deref<typename InputRange::const_iterator, Item>()(it), false);
       }
     }
     /// \endcond
 
   private:
-    const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     Region_type& m_region_type;
     Region_map m_region_map;
