@@ -486,7 +486,7 @@ public:
                         compare_xy(cv2.right(), p) == LARGER);
 
       // Compare the slopes of the two segments to determine their relative
-      // position immediately to the left of q.
+      // position immediately to the right of q.
       // Notice we use the supporting lines in order to compare the slopes.
       return (kernel.compare_slope_2_object()(cv1.line(), cv2.line()));
     }
