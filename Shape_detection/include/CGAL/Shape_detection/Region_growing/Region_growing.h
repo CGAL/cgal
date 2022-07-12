@@ -184,6 +184,7 @@ namespace Shape_detection {
     template<typename PrimitiveAndRegionOutputIterator>
     PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator regions) {
 //      clear(); TODO: this is not valid to comment this clear()
+      m_visited_map.clear(); // tmp replacement for the line above
 
       Region region;
       std::size_t idx = 0;
