@@ -253,8 +253,8 @@ namespace Shape_detection {
     void clear(const InputRange& input_range) {
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
         put(m_region_map, internal::conditional_deref<typename InputRange::const_iterator, typename Region_map::key_type>()(it), std::size_t(-1));
-        put(m_visited, internal::conditional_deref<typename InputRange::const_iterator, Item>()(it), false);
       }
+      m_visited_map.clear();
     }
     /// \endcond
 
@@ -264,9 +264,9 @@ namespace Shape_detection {
     Region_map m_region_map;
     std::vector<Item> m_seed_range;
 
-    using VisitedMap = boost::unordered_map<typename Region_type::Item, bool, internal::hash_item<typename Region_type::Item> >;
+    using VisitedMap = std::unordered_set<typename Region_type::Item, internal::hash_item<typename Region_type::Item> >;
     VisitedMap m_visited_map;
-    boost::associative_property_map<VisitedMap> m_visited;
+    Boolean_property_map<VisitedMap> m_visited;
 
     void fill_region_map(std::size_t idx, const Region& region) {
       for (auto item : region) {
