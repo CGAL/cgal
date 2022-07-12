@@ -45,6 +45,10 @@ class Arr_2_basic_viewer_qt : public Basic_viewer_qt {
   typedef typename Arr::Ccb_halfedge_const_circulator
                                                 Ccb_halfedge_const_circulator;
 
+  // typedef double                                        Approximate_number_type;
+  // typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
+  // typedef Approximate_kernel::Point_2                   Approximate_point_2;
+
 public:
   /// Construct the viewer.
   /// @param arr the arrangement to view
@@ -55,16 +59,45 @@ public:
     Base(parent, title, true, true, true, false, false),
     m_arr(arr),
     m_uni(0, 255)
-  {}
+  {
+    // mimic the computation of Camera::pixelGLRatio()
+    auto bbox = bounding_box();
+    CGAL::qglviewer::Vec minv(bbox.xmin(), bbox.ymin(), 0);
+    CGAL::qglviewer::Vec maxv(bbox.xmax(), bbox.ymax(), 0);
+    auto diameter = (maxv - minv).norm();
+    m_pixel_ratio = diameter / m_height;
+  }
 
+  /*! Intercept the resizing of the window.
+   */
   virtual void resizeGL(int width, int height) {
+    CGAL::QGLViewer::resizeGL(width, height);
     m_width = width;
     m_height = height;
-    // std::cout << width << "," << height << std::endl;
+    CGAL::qglviewer::Vec p;
+    auto ratio = camera()->pixelGLRatio(p);
+    if (ratio != m_pixel_ratio) {
+      m_pixel_ratio = ratio;
+      add_elements();
+    }
+  }
+
+  //! \todo intercept the scaling of the scene and apply add_elements()
+
+  //! Compute the bounding box
+  CGAL::Bbox_2 bounding_box() {
+    // At this point we assume that the arrangement is not open, and thus the
+    // bounding box is defined by the vertices.
+    //! The bounding box
+    CGAL::Bbox_2 bbox;
+    for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it)
+      bbox += it->point().bbox();
+    return bbox;
   }
 
   //!
   void add_elements() {
+    // std::cout << "ratio: " << this->pixel_ratio() << std::endl;
     clear();
     m_visited.clear();
 
@@ -85,9 +118,11 @@ public:
       draw_point(it->point());
 
     m_visited.clear();
-
-    // auto bb = bounding_box();
   }
+
+  /*/ Obtain the pixel ratio
+   */
+  double pixel_ratio() const { return m_pixel_ratio; }
 
 protected:
   /*! Find the halfedge incident to the lexicographically smallest vertex
@@ -204,10 +239,13 @@ protected:
 
 protected:
   //! The window width in pixels.
-  int m_width;
+  int m_width = 500;
 
   //! The window height in pixels.
-  int m_height;
+  int m_height = 450;
+
+  //! The ratio between pixel and opengl units (in world coordinate system).
+  double m_pixel_ratio = 1;
 
   //! The arrangement to draw
   const Arr& m_arr;
@@ -289,7 +327,7 @@ public:
         curr = curr->twin()->next();
 
       std::vector<typename Gt::Approximate_point_2> polyline;
-      double error(0.01);
+      double error(this->pixel_ratio());
       bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
       approx(std::back_inserter(polyline), error, curr->curve(), l2r);
       auto it = polyline.begin();
@@ -309,7 +347,7 @@ public:
     const auto* traits = this->m_arr.geometry_traits();
     auto approx = traits->approximate_2_object();
     std::vector<typename Gt::Approximate_point_2> polyline;
-    double error(0.01);
+    double error(this->pixel_ratio());
     approx(std::back_inserter(polyline), error, curve);
     auto it = polyline.begin();
     auto prev = it++;
@@ -331,6 +369,7 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
   Arr_2_viewer_qt<Gt, Dcel> mainwindow(app.activeWindow(), arr, title);
   mainwindow.add_elements();
   mainwindow.show();
+
   app.exec();
 }
 
