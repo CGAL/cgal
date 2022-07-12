@@ -66,14 +66,14 @@ namespace internal {
 
   template<typename Input, typename Result>
   struct conditional_deref<Input, Result, true> {
-    Result operator()(Input it) {
+    const Result& operator()(const Input& it) {
       return it;
     }
   };
 
   template<typename Input, typename Result>
   struct conditional_deref<Input, Result, false> {
-    Result operator()(Input it) {
+    const Result& operator()(Input it) {
       return *it;
     }
   };
