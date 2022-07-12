@@ -400,7 +400,7 @@ OutputIterator collect_duplicated_stitchable_boundary_edges(const HalfedgeRange&
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
-  typedef typename GetGeomTraits<PolygonMesh, CGAL_PMP_NP_CLASS>::type GT;
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef CGAL::dynamic_face_property_t<int>                                      Face_property_tag;
@@ -1074,7 +1074,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
-  typedef typename GetGeomTraits<PolygonMesh, CGAL_PMP_NP_CLASS>::type GT;
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_keeper_t,
