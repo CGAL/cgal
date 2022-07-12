@@ -70,7 +70,9 @@ namespace Polyline {
     */
     One_ring_neighbor_query(
       const InputRange& input_range) :
-    m_input_range(input_range) {
+    m_begin(input_range.begin()) ,
+    m_end(input_range.end())
+    {
 
       CGAL_precondition(input_range.size() > 0);
     }
@@ -102,14 +104,14 @@ namespace Polyline {
       neighbors.clear();
 
       Item before;
-      if (query == m_input_range.begin())
-        before = m_input_range.end() - 1;
+      if (query == m_begin)
+        before = std::prev(m_end);
       else
         before = query - 1;
 
       Item after = query + 1;
-      if (after == m_input_range.end())
-        after = m_input_range.begin();
+      if (after == m_end)
+        after = m_begin;
 
       neighbors.push_back(before);
       neighbors.push_back(after);
@@ -118,7 +120,7 @@ namespace Polyline {
     /// @}
 
   private:
-    const Input_range& m_input_range;
+    Item m_begin, m_end;
   };
 
 } // namespace Polyline
