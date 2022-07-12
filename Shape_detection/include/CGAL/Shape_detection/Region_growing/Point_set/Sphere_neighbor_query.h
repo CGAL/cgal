@@ -134,7 +134,6 @@ public:
   Sphere_neighbor_query(
     const InputRange& input_range,
     const CGAL_NP_CLASS& np = parameters::default_values()) :
-  m_input_range(input_range),
   m_ref_gen(input_range.begin()),
   m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
   m_deref_pmap(m_point_map),
@@ -200,7 +199,6 @@ public:
   /// \endcond
 
 private:
-  const Input_range& m_input_range;
   internal::reference_iterator_generator<typename Input_range::const_iterator> m_ref_gen;
   const Point_map m_point_map;
   const Dereference_pmap m_deref_pmap;

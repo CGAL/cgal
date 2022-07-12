@@ -175,7 +175,6 @@ g
     Least_squares_sphere_fit_region(
       const InputRange& input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-      m_input_range(input_range),
       m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS,PointMap,NormalMap>::get_const_point_map(input_range, np)),
       m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS,PointMap,NormalMap>::get_normal_map(input_range, np)),
       m_traits(parameters::choose_parameter(parameters::get_parameter(
@@ -365,7 +364,6 @@ g
     /// \endcond
 
   private:
-    const Input_range& m_input_range;
     const Point_map m_point_map;
     const Normal_map m_normal_map;
     const GeomTraits m_traits;

@@ -59,7 +59,7 @@ namespace Segment_set {
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Segment_map = SegmentMap;
-    using Segment_type = typename Segment_map::value_type;
+    using Segment_type = typename boost::property_traits<Segment_map>::value_type;
     /// \endcond
 
     /// Item type.
@@ -104,7 +104,7 @@ namespace Segment_set {
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{segment_map}
-          \cgalParamDescription{an instance of `SegmentMap` that maps a segment from `input_range`
+          \cgalParamDescription{an instance of `SegmentMap` that maps the `Item` of a segment
           to `Kernel::Segment_2` or `Kernel::Segment_3`}
           \cgalParamDefault{`SegmentMap()`}
         \cgalParamNEnd
@@ -121,7 +121,6 @@ namespace Segment_set {
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       const NamedParameters& np = parameters::default_values()) :
-    m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_segment_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::segment_map), SegmentMap())),
@@ -131,13 +130,13 @@ namespace Segment_set {
 
       CGAL_precondition(input_range.size() > 0);
 
-      m_ordered.resize(m_input_range.size());
+      m_ordered.resize(input_range.size());
 
       std::size_t index = 0;
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
+      for (auto it = input_range.begin(); it != input_range.end(); it++)
         m_ordered[index++] = internal::conditional_deref<typename Input_range::const_iterator, Item>()(it);
 
-      m_scores.resize(m_input_range.size());
+      m_scores.resize(input_range.size());
     }
 
     /// @}
@@ -154,12 +153,12 @@ namespace Segment_set {
       CGAL_precondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
 
-      std::vector<std::size_t> order(m_input_range.size());
+      std::vector<std::size_t> order(m_ordered.size());
       std::iota(order.begin(), order.end(), 0);
       std::sort(order.begin(), order.end(), cmp);
 
-      std::vector<Item> tmp(m_input_range.size());
-      for (std::size_t i = 0; i < m_input_range.size(); i++)
+      std::vector<Item> tmp(m_ordered.size());
+      for (std::size_t i = 0; i < m_ordered.size(); i++)
         tmp[i] = m_ordered[order[i]];
 
       m_ordered.swap(tmp);
@@ -179,7 +178,6 @@ namespace Segment_set {
     /// @}
 
   private:
-    const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     const Segment_map m_segment_map;
     const GeomTraits m_traits;
@@ -191,12 +189,12 @@ namespace Segment_set {
 
       std::vector<Item> neighbors;
       std::size_t idx = 0;
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
+      for (const Item& item : m_ordered) {
         neighbors.clear();
-        m_neighbor_query(it, neighbors);
-        neighbors.push_back(internal::conditional_deref<typename InputRange::const_iterator, Item>()(it));
+        m_neighbor_query(item, neighbors);
+        neighbors.push_back(item);
 
-        const auto& segment = get(m_segment_map, *it);
+        const auto& segment = get(m_segment_map, internal::conditional_deref<Item, typename Segment_map::key_type>()(item));
         const auto& source = segment.source();
         const auto& target = segment.target();
         if (source == target)

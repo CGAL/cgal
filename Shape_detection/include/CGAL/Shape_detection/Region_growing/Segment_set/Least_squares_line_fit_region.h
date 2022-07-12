@@ -47,8 +47,8 @@ namespace Segment_set {
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam SegmentMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
+    a model of `ReadablePropertyMap` whose key type is `Item`
+    and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
 
     \cgalModels `RegionType`
   */
@@ -167,7 +167,6 @@ namespace Segment_set {
     Least_squares_line_fit_region(
       const InputRange& input_range,
       const NamedParameters& np = parameters::default_values()) :
-    m_input_range(input_range),
     m_segment_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::segment_map), SegmentMap())),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
@@ -343,7 +342,6 @@ namespace Segment_set {
     /// \endcond
 
   private:
-    const Input_range& m_input_range;
     const Segment_map m_segment_map;
     const GeomTraits m_traits;
     const Segment_set_traits m_segment_set_traits;

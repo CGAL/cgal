@@ -189,7 +189,7 @@ bool test_lines_segment_set_2_sorting() {
   using Segment_2 = typename Kernel::Segment_2;
 
   using Segment_range = std::vector<Segment_2>;
-  using Segment_map = CGAL::Identity_property_map<Segment_2>;
+  using Segment_map = CGAL::Identity_property_map<const Segment_2>;
 
   using Region_type = CGAL::Shape_detection::
     Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;

@@ -125,7 +125,6 @@ namespace Point_set {
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-      m_input_range(input_range),
       m_neighbor_query(neighbor_query),
       m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap, NormalMap>::get_const_point_map(input_range, np)),
       m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap, NormalMap>::get_normal_map(input_range, np)),
@@ -134,13 +133,13 @@ namespace Point_set {
 
       CGAL_precondition(input_range.size() > 0);
 
-      m_ordered.resize(m_input_range.size());
+      m_ordered.resize(input_range.size());
 
       std::size_t index = 0;
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
+      for (auto it = input_range.begin(); it != input_range.end(); it++)
         m_ordered[index++] = it;
 
-      m_scores.resize(m_input_range.size());
+      m_scores.resize(input_range.size());
     }
 
     /// @}
@@ -156,11 +155,11 @@ namespace Point_set {
       CGAL_postcondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
 
-      std::vector<std::size_t> order(m_input_range.size());
+      std::vector<std::size_t> order(m_ordered.size());
       std::iota(order.begin(), order.end(), 0);
       std::sort(order.begin(), order.end(), cmp);
 
-      order.resize(m_input_range.size() - seed_cutoff);
+      order.resize(m_ordered.size() - seed_cutoff);
 
       std::vector<Item> tmp(order.size());
       for (std::size_t i = 0; i < order.size(); i++)
@@ -183,7 +182,6 @@ namespace Point_set {
     /// @}
 
   private:
-    const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
     const Normal_map m_normal_map;
@@ -196,10 +194,10 @@ namespace Point_set {
       std::vector<Item> neighbors;
       std::size_t idx = 0;
       std::size_t seed_cutoff = 0;
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
+      for (const Item& item : m_ordered) {
         neighbors.clear();
-        m_neighbor_query(it, neighbors);
-        neighbors.push_back(it);
+        m_neighbor_query(item, neighbors);
+        neighbors.push_back(item);
 
         m_scores[idx] = -internal::create_cylinder(
           neighbors, m_point_map, m_normal_map, m_traits).second;

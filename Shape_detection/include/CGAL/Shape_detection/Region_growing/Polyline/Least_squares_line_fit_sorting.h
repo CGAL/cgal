@@ -119,7 +119,6 @@ namespace Polyline {
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       const NamedParameters& np = parameters::default_values()) :
-    m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())),
@@ -130,13 +129,13 @@ namespace Polyline {
 
       CGAL_precondition(input_range.size() > 0);
 
-      m_ordered.resize(m_input_range.size());
+      m_ordered.resize(input_range.size());
 
       std::size_t index = 0;
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++)
+      for (auto it = input_range.begin(); it != input_range.end(); it++)
         m_ordered[index++] = it;
 
-      m_scores.resize(m_input_range.size());
+      m_scores.resize(input_range.size());
     }
 
     /// @}
@@ -152,12 +151,12 @@ namespace Polyline {
       CGAL_precondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
 
-      std::vector<std::size_t> order(m_input_range.size());
+      std::vector<std::size_t> order(m_ordered.size());
       std::iota(order.begin(), order.end(), 0);
       std::sort(order.begin(), order.end(), cmp);
 
-      std::vector<Item> tmp(m_input_range.size());
-      for (std::size_t i = 0; i < m_input_range.size(); i++)
+      std::vector<Item> tmp(m_ordered.size());
+      for (std::size_t i = 0; i < m_ordered.size(); i++)
         tmp[i] = m_ordered[order[i]];
 
       m_ordered.swap(tmp);
@@ -177,7 +176,6 @@ namespace Polyline {
     /// @}
 
   private:
-    const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
     Dereference_pmap m_deref_pmap;
@@ -190,10 +188,10 @@ namespace Polyline {
 
       std::vector<Item> neighbors;
       std::size_t idx = 0;
-      for (auto it = m_input_range.begin(); it != m_input_range.end(); it++) {
+      for (const Item& item : m_ordered) {
         neighbors.clear();
-        m_neighbor_query(it, neighbors);
-        neighbors.push_back(it);
+        m_neighbor_query(item, neighbors);
+        neighbors.push_back(item);
         m_scores[idx++] = m_polyline_traits.create_line(
           neighbors, m_point_map).second;
       }

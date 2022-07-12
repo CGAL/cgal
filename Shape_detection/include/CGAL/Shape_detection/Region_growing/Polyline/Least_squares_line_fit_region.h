@@ -162,7 +162,6 @@ namespace Polyline {
     Least_squares_line_fit_region(
       const InputRange& input_range,
       const NamedParameters& np = parameters::default_values()) :
-    m_input_range(input_range),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
@@ -346,7 +345,6 @@ namespace Polyline {
     /// \endcond
 
   private:
-    const Input_range& m_input_range;
     const Point_map m_point_map;
     const Traits m_traits;
     const Polyline_traits m_polyline_traits;
