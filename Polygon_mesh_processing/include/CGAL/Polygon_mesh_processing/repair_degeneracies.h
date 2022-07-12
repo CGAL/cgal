@@ -1804,7 +1804,7 @@ bool remove_degenerate_edges(TriangleMesh& tmesh)
 //                    - `Collinear_3` to check whether 3 points are collinear
 //                    - `Less_xyz_3` to compare lexicographically two points
 //                    - `Equal_3` to check whether 2 points are identical.
-//                    For each functor Foo, a function `Foo foo_object()` must be provided.}
+//                    For each functor `Foo`, a function `Foo foo_object()` must be provided.}
 //     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 //     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 //   \cgalParamNEnd
