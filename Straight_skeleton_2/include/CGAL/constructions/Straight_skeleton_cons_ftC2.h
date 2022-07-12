@@ -45,7 +45,7 @@ bool are_parallel_edges_equally_oriented( Segment_2_with_ID<K> const& e0, Segmen
 template<class K>
 bool are_edges_orderly_collinear( Segment_2_with_ID<K> const& e0, Segment_2_with_ID<K> const& e1 )
 {
-  return are_edges_collinear(e0,e1) & are_parallel_edges_equally_oriented(e0,e1);
+  return are_edges_collinear(e0,e1) && are_parallel_edges_equally_oriented(e0,e1);
 }
 
 
