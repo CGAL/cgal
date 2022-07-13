@@ -55,12 +55,11 @@ namespace CGAL { namespace internal {
 template < typename >
 struct Exact_field_selector
 
-#if ( (defined(CGAL_TEST_SUITE) && CGAL_VERSION_NR == 1050500900) || defined(CGAL_FORCE_USE_BOOST_MP))\
-    && BOOST_VERSION > 107800 && defined(CGAL_USE_BOOST_MP)
-// use boost-mp by default in the testsuite until 5.5-beta is out
+#if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
+// use boost-mp by default
 // Boost
 { typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
-#else // BOOST_VERSION > 107800
+#else // BOOST_VERSION > 107900
 #ifdef CGAL_USE_GMPXX
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
