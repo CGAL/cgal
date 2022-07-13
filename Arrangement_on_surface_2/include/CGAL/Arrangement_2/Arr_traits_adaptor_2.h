@@ -127,8 +127,8 @@ public:
   /// \name Overriden functors for bounded boundaries.
   //@{
 
-  /*! A functor that compares the y-coordinates of a point an an x-monotone
-   * curve.
+  /*! A functor that compares the y-coordinates of (i) a given point and (ii)
+   * a point on a given x-monotone curve at the x-coordinate of the point.
    */
   class Compare_y_at_x_2 {
   public:
@@ -164,8 +164,8 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
 
   private:
-    /*! 1. Implementation of the operator in case the botto, top, right, and
-     * left sides do not boundary conditions.
+    /*! 1. Implementation of the operator in case the bottom, top, right, and
+     * left sides do not have boundary conditions.
      */
     Comparison_result compare_y_at_x(const Point_2& p,
                                      const X_monotone_curve_2& xcv,
@@ -355,7 +355,7 @@ public:
 
     /*! 7. Implementation of the operator in case the left and right sides do
      * not have boundary condition, and the bottom and top sides do have (but
-     * they are identified).
+     * they are not identified).
      */
     Comparison_result compare_y_at_x(const Point_2& p,
                                      const X_monotone_curve_2& xcv,
