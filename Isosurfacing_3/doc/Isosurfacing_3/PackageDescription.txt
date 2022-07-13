@@ -1,0 +1,37 @@
+/// \defgroup PkgIsosurfacing3Ref 3D Isosurfacing Reference
+/// \defgroup PkgIsosurfacing3Concepts Concepts
+/// \ingroup PkgIsosurfacing3Ref
+
+/*!
+\addtogroup PkgIsosurfacingRef
+\cgalPkgDescriptionBegin{3D Isosurfacing,PkgIsosurfacing3}
+\cgalPkgPicture{isosurfacing3_ico.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Julian Stahl and Daniel Zint}
+\cgalPkgDesc{This package implements several variations of the marching cubes algorithm to generate a triangle meshes out of a voxel grid. }
+\cgalPkgManuals{Chapter_Isosurfacing3,PkgMarchingCubesRef}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.7}
+\cgalPkgBib{cgal:sz-mc}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+Marching Cubes Algorithm .....
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `MarchingCubeOracle`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Marching_cubes_implicit_3`
+
+\cgalCRPSection{Free Functions}
+
+- `CGAL::make_triangle_mesh_using_marching_cubes()`
+
+*/
