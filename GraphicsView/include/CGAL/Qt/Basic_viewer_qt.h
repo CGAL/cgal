@@ -54,8 +54,12 @@
 #include <CGAL/Random.h>
 #include <CGAL/assertions.h>
 
+#define CGAL_BASIC_VIEWER_INIT_SIZE_X 500
+#define CGAL_BASIC_VIEWER_INIT_SIZE_Y 450
+
 namespace CGAL
 {
+
 //------------------------------------------------------------------------------
 inline CGAL::IO::Color get_random_color(CGAL::Random& random)
 {
@@ -202,7 +206,7 @@ public:
     else
       setWindowTitle(title);
 
-    resize(500, 450);
+    resize(CGAL_BASIC_VIEWER_INIT_SIZE_X, CGAL_BASIC_VIEWER_INIT_SIZE_X);
 
     if (inverse_normal)
     { negate_all_normals(); }
