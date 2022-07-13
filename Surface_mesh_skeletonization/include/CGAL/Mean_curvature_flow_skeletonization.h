@@ -392,7 +392,7 @@ public:
                                       const Traits& traits = Traits())
     : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
   {
-    init(tmesh);
+    init(tmesh, get(vertex_point, tmesh));
   }
   #endif
   /// @} Constructor
@@ -843,12 +843,13 @@ private:
   }
 
   /// Initialize some global data structures such as vertex id.
-  void init(const TriangleMesh& tmesh)
+  void init(const TriangleMesh& tmesh, VertexPointMap vpm)
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
     copy_face_graph(tmesh, m_tmesh,
-                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
+                    CGAL::parameters::vertex_to_vertex_output_iterator(
+                      std::back_inserter(v2v)).vertex_point_map(vpm));
 
     // copy input vertices to keep correspondence
     for(const Vertex_pair& vp : v2v)
