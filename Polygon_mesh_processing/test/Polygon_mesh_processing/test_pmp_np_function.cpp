@@ -53,7 +53,7 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
   bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), false);
 
   // If the NPs provide a vertex-normal-map use it, otherwise initialize the default one
-  VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),  get(Vector_map_tag(), mesh));
+  VNM vnm = choose_parameter<Default_vector_map>(get_parameter(np, internal_np::vertex_normal_map),  Vector_map_tag(), mesh);
   if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
     Polygon_mesh_processing::compute_vertex_normals(mesh, vnm);
 
