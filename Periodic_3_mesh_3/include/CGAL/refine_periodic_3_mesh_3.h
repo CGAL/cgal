@@ -465,7 +465,7 @@ namespace CGAL {
 
 /*!
 \ingroup PkgPeriodic3Mesh3Functions
-\deprecated This function is deprecated since \cgal 5.5, the overload using `NamedParameters` must be used instead.
+\deprecated This function is deprecated since \cgal 5.6, the overload using `NamedParameters` must be used instead.
 
 The function `refine_periodic_3_mesh_3()` is a 3D periodic
 mesh generator. It produces periodic simplicial meshes which discretize

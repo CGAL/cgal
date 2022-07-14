@@ -110,7 +110,7 @@ Labeled_mesh_domain_3(const A_i&...);
 
 /*!
 \brief Construction from an implicit function
-\deprecated This function is deprecated since \cgal 5.5, the overload using `NamedParameters` must be used instead.
+\deprecated This function is deprecated since \cgal 5.6, the overload using `NamedParameters` must be used instead.
 
 This static method is a <em>named constructor</em>. It constructs a domain
 whose bounding surface is described implicitly as the zero level set of a
@@ -157,7 +157,7 @@ create_implicit_mesh_domain(A_i&...);
 
 /*!
 \brief Construction from a 3D gray image
-\deprecated This function is deprecated since \cgal 5.5, the overload using `NamedParameters` must be used instead.
+\deprecated This function is deprecated since \cgal 5.6, the overload using `NamedParameters` must be used instead.
 
 This static method is a <em>named constructor</em>. It constructs a domain
 described by a 3D gray image. A 3D gray image is a grid of voxels,
@@ -217,7 +217,7 @@ create_gray_image_mesh_domain(A_i&...);
 
 /*!
 \brief Construction from a 3D labeled image
-\deprecated This function is deprecated since \cgal 5.5, the overload using `NamedParameters` must be used instead.
+\deprecated This function is deprecated since \cgal 5.6, the overload using `NamedParameters` must be used instead.
 
 This static method is a <em>named constructor</em>. It constructs a
 domain described by a 3D labeled image. A 3D labeled image is a grid

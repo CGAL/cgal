@@ -200,7 +200,7 @@ namespace CGAL {
 
 /*!
 \ingroup PkgMesh3Functions
-\deprecated This function is deprecated since \cgal 5.5, the overload using `NamedParameters` must be used instead.
+\deprecated This function is deprecated since \cgal 5.6, the overload using `NamedParameters` must be used instead.
 
 The function `perturb_mesh_3()` is a mesh optimizer that
 improves the quality of a Delaunay mesh

@@ -144,7 +144,7 @@ namespace CGAL {
 
 /*!
 \ingroup PkgMesh3Functions
-\deprecated This function is deprecated since \cgal 5.5, the overload using `NamedParameters` must be used instead.
+\deprecated This function is deprecated since \cgal 5.6, the overload using `NamedParameters` must be used instead.
 
  The function `exude_mesh_3()` performs a sliver exudation process on a Delaunay mesh.
 The sliver exudation process consists in optimizing the weights of vertices
