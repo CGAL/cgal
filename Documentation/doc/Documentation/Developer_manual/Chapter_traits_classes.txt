@@ -84,7 +84,7 @@ scope of the traits class in order for the algorithm to work.
 As you can guess, `Left_turn_2` is responsible for the orientation
 test, while `Less_xy_2` does the sorting. So, obviously, the traits class
 must provide these three identifiers. The requirements it has to satisfy
-beyond that are documented in full with the concept ConvexHullTraits_2.
+beyond that are documented in full with the concept `ConvexHullTraits_2`.
 
 \subsection subsectraits_class_requirements Traits class requirements
 
@@ -92,7 +92,7 @@ Whenever you write a function or class that is  parameterized with a traits
 class, you must provide the requirements that class has to fulfill. These
 requirements should be documented as a concept.  For the
 example above, if you look in the manual at the description of the concept
-`#ConvexHullTraits_2`, you will find  that the
+`ConvexHullTraits_2`, you will find  that the
 traits class itself and the identifiers that are mentioned have to meet the
 following specifications:
 
@@ -157,7 +157,7 @@ to the default traits class, and the last function parameter defaults to
 a default instance of the default traits class. Of course, such behavior
 must be specified in the \ref CGAL::ch_graham_andrew() "description of the function".
 
-The implication is that a user can call `ch_graham_andrews` with
+The implication is that a user can call `ch_graham_andrew` with
 just three parameters, which delimit the iterator range to be handled and
 supply the iterator for the result. The types
 and primitives used by the algorithm in this case are the ones from the \cgal 2D and 3D kernel.

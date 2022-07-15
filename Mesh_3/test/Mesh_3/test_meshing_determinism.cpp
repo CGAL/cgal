@@ -76,7 +76,7 @@ void test()
                                         no_perturb(),
                                         no_exude());
     std::ostringstream oss;
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str()); //[5*i]
     oss.clear();
     Polyhedron out_poly;
@@ -88,7 +88,7 @@ void test()
 
     //LLOYD (1)
     CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_lloyd);
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str());//[i*5+1]
     oss.clear();
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
@@ -99,7 +99,7 @@ void test()
 
     //ODT (2)
     CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_odt);
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str());//[i*5+2]
     oss.clear();
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
@@ -110,7 +110,7 @@ void test()
 
     //PERTURB (3)
     CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=perturb_bound);
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str());//[i*5+3]
     oss.clear();
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
@@ -121,7 +121,7 @@ void test()
 
     //EXUDE (4)
     CGAL::exude_mesh_3(c3t3, sliver_bound=exude_bound);
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str());//[i*5+4]
     oss.clear();
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);

@@ -3256,6 +3256,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
     typename Vertex_triple_Facet_map::iterator oit = outer_map.begin();
 
     typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    outer_map.erase(oit);
     Cell_handle o_ch = o_vt_f_pair.second.first;
     unsigned int o_i = o_vt_f_pair.second.second;
 
@@ -3314,7 +3315,6 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
         }
       }
     }
-    outer_map.erase(oit);
   }
 
   // finally set the neighboring relations

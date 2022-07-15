@@ -1,11 +1,8 @@
-#include <boost/config.hpp>
-#include <boost/version.hpp>
 #include <iostream>
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyline_simplification_2/simplify.h>
 #include <CGAL/IO/WKT.h>
-#include <list>
 #include <deque>
 
 namespace PS = CGAL::Polyline_simplification_2;

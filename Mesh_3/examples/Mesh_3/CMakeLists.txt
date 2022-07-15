@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Mesh_3_Examples)
 
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -13,7 +13,7 @@ find_package(Boost)
 
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
-if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
+if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
   add_definitions(-DCGAL_CONCURRENT_MESH_3)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)

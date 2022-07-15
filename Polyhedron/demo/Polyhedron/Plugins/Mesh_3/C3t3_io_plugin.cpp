@@ -1,6 +1,6 @@
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include "Scene_c3t3_item.h"
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/IO/File_avizo.h>
@@ -129,13 +129,11 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
-      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation(), true))
+      if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
+         /*verbose = */true, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
       {
         item->c3t3().rescan_after_load_of_triangulation(); //fix counters for facets and cells
-        for( C3t3::Triangulation::Finite_cells_iterator
-             cit = item->c3t3().triangulation().finite_cells_begin();
-             cit != item->c3t3().triangulation().finite_cells_end();
-             ++cit)
+        for( C3t3::Cell_handle cit : item->c3t3().triangulation().finite_cell_handles())
         {
             CGAL_assertion(cit->subdomain_index() >= 0);
             if(cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
@@ -152,22 +150,19 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
         //if there is no facet in the complex, we add the border facets.
         if(item->c3t3().number_of_facets_in_complex() == 0)
         {
-          for( C3t3::Triangulation::Finite_facets_iterator
-               fit = item->c3t3().triangulation().finite_facets_begin();
-               fit != item->c3t3().triangulation().finite_facets_end();
-               ++fit)
+          for( C3t3::Facet fit : item->c3t3().triangulation().finite_facets())
           {
             typedef C3t3::Triangulation::Cell_handle      Cell_handle;
 
-            Cell_handle c = fit->first;
-            Cell_handle nc = c->neighbor(fit->second);
+            Cell_handle c = fit.first;
+            Cell_handle nc = c->neighbor(fit.second);
 
             // By definition, Subdomain_index() is supposed to be the id of the exterior
             if(c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
                nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
             {
               // Color the border facet with the index of its cell
-              item->c3t3().add_to_complex(c, fit->second, c->subdomain_index());
+              item->c3t3().add_to_complex(c, fit.second, c->subdomain_index());
             }
           }
         }
@@ -236,7 +231,9 @@ save(QFileInfo fileinfo, QList<Scene_item *> &items)
   else  if (fileinfo.suffix() == "mesh")
   {
     std::ofstream medit_file (qPrintable(path));
-    c3t3_item->c3t3().output_to_medit(medit_file,true,true);
+    CGAL::IO::write_MEDIT(medit_file, c3t3_item->c3t3(),
+                          CGAL::parameters::rebind_labels(true)
+                          .show_patches(true));
     items.pop_front();
     return true;
   }

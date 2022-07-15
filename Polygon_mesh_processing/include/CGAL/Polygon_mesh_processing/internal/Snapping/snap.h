@@ -151,13 +151,19 @@ void simplify_range(HalfedgeRange& halfedge_range,
             new_tolerance += CGAL::approximate_sqrt(CGAL::squared_distance(new_p, pt));
         }
 
+        if (!CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
+          continue;
+        const halfedge_descriptor opoh = opposite(prev(opposite(h, tm), tm), tm);
+        if (is_border(opoh, tm))
+          edges_to_test.erase( opoh );
         vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
+
         put(vpm, v, new_p);
         put(tolerance_map, v, new_tolerance);
 
         if(get(range_halfedges, prev_h))
           edges_to_test.insert(prev_h);
-        if(get(range_halfedges, next_h))
+        if(next_h!=opoh && get(range_halfedges, next_h))
           edges_to_test.insert(next_h);
 
         ++collapsed_n;
@@ -1107,7 +1113,7 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   const bool is_second_mesh_fixed = choose_parameter(get_parameter(np_B, internal_np::do_lock_mesh), false);
 
   internal::Snapping_default_visitor<TriangleMesh> default_visitor;
-  Visitor& visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
+  Visitor visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
 
   if(visitor.stop())
     return 0;

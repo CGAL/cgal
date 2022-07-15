@@ -64,6 +64,7 @@ int main(int argc, char** argv)
   std::string output_name = input_name
                             + "_" + std::to_string(static_cast<int>(relative_alpha))
                             + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;

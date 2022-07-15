@@ -19,9 +19,13 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_default.h>
+#include <CGAL/HalfedgeDS_vertex_max_base_with_id.h>
+#include <CGAL/HalfedgeDS_halfedge_max_base_with_id.h>
+#include <CGAL/HalfedgeDS_face_max_base_with_id.h>
+
+#include <CGAL/boost/graph/graph_traits_HalfedgeDS_default.h>
+#include <CGAL/boost/graph/properties_HalfedgeDS_default.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <boost/graph/graph_traits.hpp>
@@ -91,11 +95,19 @@ struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Po
 };
 
 template <class vertex_descriptor>
-struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
+struct Skel_polyhedron_items_3 {
     template < class Refs, class Traits>
     struct Vertex_wrapper {
         typedef typename Traits::Point_3 Point;
       typedef Skel_HDS_vertex_type< Refs, Point, std::size_t, vertex_descriptor> Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef HalfedgeDS_halfedge_max_base_with_id<Refs, std::size_t> Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef HalfedgeDS_face_max_base_with_id< Refs, Tag_false, std::size_t>  Face;
     };
 };
 
@@ -192,7 +204,7 @@ public:
   typedef typename Traits::Vector_3                                             Vector;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  Input_vertex_descriptor;
-  typedef CGAL::Polyhedron_3<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
+  typedef CGAL::HalfedgeDS_default<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
   typedef typename boost::property_map<mTriangleMesh, CGAL::vertex_point_t>::type mVertexPointMap;
   typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
   typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
@@ -1193,7 +1205,7 @@ private:
       vertex_descriptor vk = target(ek, m_tmesh);
 
       // split the edge
-      halfedge_descriptor en = m_tmesh.split_edge(ei);
+      halfedge_descriptor en = Euler::split_edge(ei, m_tmesh);
       // split the incident faces
       Euler::split_face(en, next(ei,m_tmesh), m_tmesh);
       if (! is_border(ej,m_tmesh))

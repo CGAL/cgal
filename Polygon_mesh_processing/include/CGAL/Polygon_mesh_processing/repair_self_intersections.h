@@ -339,7 +339,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
   CGAL::IO::write_polygon_mesh("results/last_patch_replacement.off", pmesh, CGAL::parameters::stream_precision(17));
 #endif
 
-  CGAL_postcondition(is_valid_polygon_mesh(pmesh, true));
+  CGAL_postcondition(is_valid_polygon_mesh(pmesh));
 
   return out;
 }
@@ -550,7 +550,11 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
                                                     local_mesh,
                                                     CP::edge_is_constrained_map(eif)
                                                     .number_of_iterations(100)
-                                                    .use_safety_constraints(false));
+                                                    .use_safety_constraints(false)
+#ifndef CGAL_PMP_USE_CERES_SOLVER
+                                                    .use_area_smoothing(false)
+#endif
+                                                    );
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
   CGAL::IO::write_polygon_mesh("results/post_smoothing_local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
@@ -2156,7 +2160,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #else
     struct Return_true
     {
-      bool is_empty() const { return true; }
+      constexpr bool is_empty() const { return true; }
       bool operator()(const std::vector<std::vector<typename GeomTraits::Point_3> >&) const { return true; }
       bool operator()(const TriangleMesh&) const { return true; }
     };
@@ -2327,7 +2331,7 @@ namespace experimental {
 template <class TriangleMesh>
 struct Remove_self_intersection_default_visitor
 {
-  bool stop() const { return false; }
+  constexpr bool stop() const { return false; }
   template <class FaceContainer>
   void status_update(const FaceContainer&) {}
   void start_main_loop() {}

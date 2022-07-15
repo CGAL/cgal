@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Point_set_processing_3_Examples)
 
 # Find CGAL
@@ -39,7 +39,7 @@ endif()
 option(CGAL_ACTIVATE_CONCURRENT_PSP3 "Enable concurrency" OFF)
 
 set(CGAL_libs CGAL::CGAL)
-if(CGAL_ACTIVATE_CONCURRENT_PSP3 OR ENV{CGAL_ACTIVATE_CONCURRENT_PSP3})
+if(CGAL_ACTIVATE_CONCURRENT_PSP3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_PSP3}")
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
   if(TARGET CGAL::TBB_support)

@@ -160,10 +160,11 @@ frustrum coherence.
 If your Camera is used without a CGAL::QGLViewer (offscreen rendering, shadow maps),
 use setAspectRatio() instead to define the projection matrix. */
 CGAL_INLINE_FUNCTION
-void Camera::setScreenWidthAndHeight(int width, int height) {
+void Camera::setScreenWidthAndHeight(int width, int height, qreal devicePixelRatio) {
   // Prevent negative and zero dimensions that would cause divisions by zero.
   screenWidth_ = width > 0 ? width : 1;
   screenHeight_ = height > 0 ? height : 1;
+  devicePixelRatio_ = devicePixelRatio;
   projectionMatrixIsUpToDate_ = false;
 }
 
@@ -884,8 +885,7 @@ Vec Camera::pointUnderPixel(const QPoint &pixel, bool &found) const {
   // Qt uses upper corner for its origin while GL uses the lower corner.
   if(auto p = dynamic_cast<QOpenGLFunctions*>(parent()))
   {
-    p->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
-                    GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    depth = read_depth_under_pixel(pixel, p, this);
   }
   found = depth < 1.0;
   Vec point(pixel.x(), pixel.y(), depth);

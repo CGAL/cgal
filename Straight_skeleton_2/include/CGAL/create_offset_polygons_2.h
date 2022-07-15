@@ -389,7 +389,7 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
            ofk);
 }
 
-// Overloads common to both polygons with and without holes, a simple polygon is returned in any case
+// Overloads common to both polygons with and without holes, a simple polygons are returned in any case
 template<class FT, class APolygon, class OfK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
 std::vector< boost::shared_ptr<OutPolygon> >

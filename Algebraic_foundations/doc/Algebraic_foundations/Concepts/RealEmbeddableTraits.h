@@ -25,7 +25,7 @@ typedef unspecified_type Type;
 /*!
 Tag indicating whether the associated type is real embeddable.
 
-This is either \link Tag_true `Tag_true`\endlink or \link Tag_false `Tag_false`\endlink.
+This is either \link CGAL::Tag_true `Tag_true`\endlink or \link CGAL::Tag_false `Tag_false`\endlink.
 */
 typedef unspecified_type Is_real_embeddable;
 

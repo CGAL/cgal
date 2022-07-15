@@ -400,7 +400,6 @@ public:
 
   Vertex_handle collapse_edge(Edge e)
   {
-    std::cout << "before collapse"<<std::endl;
     Face_handle fh = e.first;
     int i = e.second;
     Vertex_handle vh = fh->vertex(cw(i));
@@ -428,7 +427,6 @@ public:
     delete_face(fh);
     delete_face(nh);
     delete_vertex(wh);
-    std::cout << "after collapse"<<std::endl;
     return vh;
   }
 
@@ -2008,7 +2006,6 @@ copy_tds(const TDS_src& tds_src,
   // Number of neighbors to set in each face (dim -1 has a single face)
   const int nn = (std::max)(0, dimension() + 1);
 
-  std::cout << "in copy_tds" << std::endl;
   //initializes maps
   Unique_hash_map<typename TDS_src::Vertex_handle,Vertex_handle> vmap(Vertex_handle(), tds_src.number_of_vertices());
   Unique_hash_map<typename TDS_src::Face_handle,Face_handle> fmap(Face_handle(), tds_src.number_of_faces());

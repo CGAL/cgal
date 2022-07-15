@@ -1,6 +1,5 @@
 #include <boost/config.hpp>
 
-//#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
 #include <CGAL/Epeck_d.h>
 #include <typeinfo>

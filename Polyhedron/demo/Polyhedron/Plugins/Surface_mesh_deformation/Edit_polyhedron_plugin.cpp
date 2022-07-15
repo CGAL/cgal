@@ -79,11 +79,11 @@ private:
   void updateSelectionItems(Scene_facegraph_item* target);
 
   Ui::DeformMesh ui_widget;
-  QDockWidget* dock_widget;
+  QDockWidget* dock_widget = nullptr;
 
-  QAction* actionDeformation;
+  QAction* actionDeformation = nullptr;
   RenderingMode last_RM;
-  QShortcut* e_shortcut;
+  QShortcut* e_shortcut = nullptr;
 }; // end Polyhedron_demo_edit_polyhedron_plugin
 
 QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {

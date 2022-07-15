@@ -33,8 +33,8 @@
 
 #include <functional>
 
-#include <CGAL/Mesh_3/internal/Handle_IO_for_pair_of_int.h>
-#include <CGAL/Mesh_3/internal/indices_management.h>
+#include <CGAL/SMDS_3/internal/Handle_IO_for_pair_of_int.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 // support for `CGAL::Image_3`
 #include <CGAL/Image_3.h>
@@ -372,6 +372,13 @@ public:
 #  pragma warning(push)
 #  pragma warning(disable: 4003)
 #endif
+
+  // see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
+
   BOOST_PARAMETER_MEMBER_FUNCTION(
                                   (Labeled_mesh_domain_3),
                                   static create_gray_image_mesh_domain,
@@ -493,6 +500,8 @@ public:
        p::construct_surface_patch_index =
          create_construct_surface_patch_index(construct_surface_patch_index_));
   }
+
+CGAL_PRAGMA_DIAG_POP
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
