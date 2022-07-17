@@ -43,9 +43,9 @@ int main(int argc, char* argv[])
 
   std::vector<Epic::FT> mu0_map, mu1_map, mu2_map;
 
-  mu0_map = PMP::interpolated_corrected_measure_i(g1, PMP::MU0_AREA_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
-  mu1_map = PMP::interpolated_corrected_measure_i(g1, PMP::MU1_MEAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
-  mu2_map = PMP::interpolated_corrected_measure_i(g1, PMP::MU2_GAUSSIAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
+  mu0_map = PMP::interpolated_corrected_measure_mesh(g1, PMP::MU0_AREA_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
+  mu1_map = PMP::interpolated_corrected_measure_mesh(g1, PMP::MU1_MEAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
+  mu2_map = PMP::interpolated_corrected_measure_mesh(g1, PMP::MU2_GAUSSIAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
 
   int n = g1.faces().size();
 
