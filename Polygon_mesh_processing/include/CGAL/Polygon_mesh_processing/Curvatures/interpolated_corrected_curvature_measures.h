@@ -3,6 +3,7 @@
 #endif
 
 #include <numeric>
+#include <CGAL/license/Polygon_mesh_processing/interpolated_corrected_curvature_measures.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Named_function_parameters.h>
@@ -17,10 +18,10 @@ namespace Polygon_mesh_processing {
 
 /*!
  * \ingroup PMP_corrected_curvatures_grp
- * Enumeration type used to specify which measure is computed for the
- * interpolated corrected curvature functions.
+ * Enumeration type used to specify which measure is computed for the 
+ * interpolated corrected curvature functions
  */
-// enum
+// enum 
 enum Measure_index {
     MU0_AREA_MEASURE, ///< corrected area density of the given face
     MU1_MEAN_CURVATURE_MEASURE, ///< corrected mean curvature density of the given face
@@ -30,7 +31,7 @@ enum Measure_index {
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of a specific triangle.
+* computes the interpolated corrected measure of specific triangle.
 *
 * @tparam GT is the geometric traits class.
 *
@@ -79,9 +80,9 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of a specific quad. \n
-* Note that the vertices 0 to 3 are ordered like this: \n
-* v0  _  v1 \n
+* computes the interpolated corrected measure of specific quad
+* Note that the vertices 0 to 3 are ordered like this \n 
+* v0  _  v1 \n 
 * v2 |_| v3
 *
 * @tparam GT is the geometric traits class.
@@ -148,7 +149,7 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of a specific face.
+* computes the interpolated corrected measure of specific face.
 *
 * @tparam GT is the geometric traits class.
 *
@@ -208,12 +209,12 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected curvature measure on each face of the mesh.
+* computes the interpolated corrected curvature measure on each face of the mesh
 *
 * @tparam PolygonMesh a model of `FaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param pmesh the polygon mesh
+* @param pmesh the polygon mesh 
 * @param mu_i an enum for choosing between computing the area measure, the mean curvature measure or the gaussian curvature measure
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -226,7 +227,7 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 *                     must be available in `PolygonMesh`.}
 *   \cgalParamNEnd
-*
+* 
 *   \cgalParamNBegin{vertex_normal_map}
 *     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`}
 *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -234,29 +235,27 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 *     \cgalParamDefault{`TODO`}
 *     \cgalParamExtra{If this parameter is omitted, vertex normals should be computed inside the function body.}
 *   \cgalParamNEnd
-*
+* 
 * \cgalNamedParamsEnd
 *
-* @return a vector of the computed measure on all faces. The return type is a std::vector<GT::FT>.
+* @return a vector of the computed measure on all faces. The return type is a std::vector<GT::FT>. 
 * GT is the type of the Geometric Triats deduced from the PolygonMesh and the NamedParameters arguments
 * This is to be changed later to a property_map<face_descriptor, GT::FT>.
 *
 * @see `interpolated_corrected_measure_face()`
 */
-template<typename PolygonMesh,
+template<typename PolygonMesh, typename FaceMeasureMap,
     typename NamedParameters = parameters::Default_named_parameters>
-#ifdef DOXYGEN_RUNNING
-    std::vector<FT>
-#else
-    std::vector<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT>
-#endif
+    void
     interpolated_corrected_measure_mesh(
         const PolygonMesh& pmesh,
+        FaceMeasureMap fmm,
         const Measure_index mu_i,
         NamedParameters& np = parameters::default_values())
 {
+
     typedef GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-    typedef dynamic_vertex_property_t<GT::Vector_3> Vector_map_tag;
+    typedef dynamic_vertex_property_t<typename GT::Vector_3> Vector_map_tag;
     typedef typename boost::property_map<PolygonMesh, Vector_map_tag>::type Default_vector_map;
     typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
         NamedParameters,
@@ -266,7 +265,6 @@ template<typename PolygonMesh,
     using parameters::get_parameter;
     using parameters::is_default_parameter;
 
-
     typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -274,15 +272,12 @@ template<typename PolygonMesh,
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
             get_const_property_map(CGAL::vertex_point, pmesh));
-
-    VNM vnm = choose_parameter<Default_vector_map>(
-        get_parameter(np, internal_np::vertex_normal_map), Vector_map_tag(), pmesh);
+    
+    // TODO - handle if vnm is not provided
+    VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), get(Vector_map_tag(), pmesh));
 
     if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
         compute_vertex_normals(pmesh, vnm, np);
-
-    std::vector<GT::FT> mu_i_map;
-
 
     for (face_descriptor f : faces(pmesh))
     {
@@ -301,10 +296,8 @@ template<typename PolygonMesh,
             h_iter = next(h_iter, pmesh);
         } while (h_iter != h_start);
 
-
-        mu_i_map.push_back(interpolated_corrected_measure_face<GT>(x, u, mu_i));
+        put(fmm, f, interpolated_corrected_measure_face<GT>(x, u, mu_i));
     }
-    return mu_i_map;
 }
 }
 }
