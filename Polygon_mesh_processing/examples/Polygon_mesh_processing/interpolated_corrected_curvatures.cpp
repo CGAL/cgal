@@ -28,7 +28,7 @@ typedef std::unordered_map<face_descriptor, Epic::FT> FaceMeasureMap_tag;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("small_bunny.obj");
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/small_bunny.obj");
 
   Mesh g1;
   if(!CGAL::IO::read_polygon_mesh(filename, g1))
