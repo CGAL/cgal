@@ -22,7 +22,7 @@ namespace Polygon_mesh_processing {
  * interpolated corrected curvature functions
  */
 // enum 
-enum Measure_index {
+enum Curvature_measure_index {
     MU0_AREA_MEASURE, ///< corrected area density of the given face
     MU1_MEAN_CURVATURE_MEASURE, ///< corrected mean curvature density of the given face
     MU2_GAUSSIAN_CURVATURE_MEASURE ///< corrected gaussian curvature density of the given face
@@ -51,7 +51,7 @@ enum Measure_index {
 */
 template<typename GT>
 typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vector_3 x0, const typename GT::Vector_3 x1, const typename GT::Vector_3 x2,
-    const typename GT::Vector_3 u0, const typename GT::Vector_3 u1, const typename GT::Vector_3 u2, const Measure_index mu_i)
+    const typename GT::Vector_3 u0, const typename GT::Vector_3 u1, const typename GT::Vector_3 u2, const Curvature_measure_index mu_i)
 {
     switch (mu_i)
     {
@@ -105,7 +105,7 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
 */
 template<typename GT>
 typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 x0, const typename GT::Vector_3 x1, const typename GT::Vector_3 x2, const typename GT::Vector_3 x3,
-    const typename GT::Vector_3 u0, const typename GT::Vector_3 u1, const typename GT::Vector_3 u2, const typename GT::Vector_3 u3, const Measure_index mu_i)
+    const typename GT::Vector_3 u0, const typename GT::Vector_3 u1, const typename GT::Vector_3 u2, const typename GT::Vector_3 u3, const Curvature_measure_index mu_i)
 {
     // x0  _  x1
     // x2 |_| x3
@@ -165,7 +165,7 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
 * @see `interpolated_corrected_measure_mesh()`
 */
 template<typename GT>
-typename GT::FT interpolated_corrected_measure_face(const std::vector<typename GT::Vector_3>& x, const std::vector<typename GT::Vector_3>& u, const Measure_index mu_i)
+typename GT::FT interpolated_corrected_measure_face(const std::vector<typename GT::Vector_3>& x, const std::vector<typename GT::Vector_3>& u, const Curvature_measure_index mu_i)
 {
     std::size_t n = x.size();
     CGAL_precondition(u.size() == n);
@@ -250,7 +250,7 @@ template<typename PolygonMesh, typename FaceMeasureMap,
     interpolated_corrected_measure_mesh(
         const PolygonMesh& pmesh,
         FaceMeasureMap fmm,
-        const Measure_index mu_i,
+        const Curvature_measure_index mu_i,
         const NamedParameters& np = parameters::default_values())
 {
 

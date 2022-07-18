@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   FaceMeasureMap_tag mu0_init, mu1_init, mu2_init;
   boost::associative_property_map<FaceMeasureMap_tag> mu0_map(mu0_init), mu1_map(mu1_init), mu2_map(mu2_init);
 
-  PMP::interpolated_corrected_measure_mesh(g1, mu0_map, PMP::MU0_AREA_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
+  PMP::interpolated_corrected_measure_mesh(g1, mu0_map, PMP::MU0_AREA_MEASURE);
   PMP::interpolated_corrected_measure_mesh(g1, mu1_map, PMP::MU1_MEAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
   PMP::interpolated_corrected_measure_mesh(g1, mu2_map, PMP::MU2_GAUSSIAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
 
