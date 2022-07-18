@@ -188,11 +188,11 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
         typename GT::FT mu0 = 0;
 
         // getting barycenter of points
-        typename GT::Vector_3 xm = std::accumulate(x.begin(), x.end(), GT::Vector_3(0, 0, 0));
+        typename GT::Vector_3 xm = std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
         xm /= n;
 
         // getting unit average normal of points
-        typename GT::Vector_3 um = std::accumulate(u.begin(), u.end(), GT::Vector_3(0, 0, 0));
+        typename GT::Vector_3 um = std::accumulate(u.begin(), u.end(), typename GT::Vector_3(0, 0, 0));
         um /= sqrt(um * um);
 
         // summing each triangle's measure after triangulation by barycenter split.
@@ -251,12 +251,12 @@ template<typename PolygonMesh, typename FaceMeasureMap,
         const PolygonMesh& pmesh,
         FaceMeasureMap fmm,
         const Measure_index mu_i,
-        NamedParameters& np = parameters::default_values())
+        const NamedParameters& np = parameters::default_values())
 {
 
-    typedef GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
     typedef dynamic_vertex_property_t<typename GT::Vector_3> Vector_map_tag;
-    typedef typename boost::property_map<PolygonMesh, Vector_map_tag>::type Default_vector_map;
+    typedef typename boost::property_map<PolygonMesh, Vector_map_tag>::const_type Default_vector_map;
     typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
         NamedParameters,
         Default_vector_map>::type       VNM;
@@ -265,9 +265,9 @@ template<typename PolygonMesh, typename FaceMeasureMap,
     using parameters::get_parameter;
     using parameters::is_default_parameter;
 
-    typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-    typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-    typedef boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
@@ -284,14 +284,14 @@ template<typename PolygonMesh, typename FaceMeasureMap,
         halfedge_descriptor h_start = pmesh.halfedge(f);
         halfedge_descriptor h_iter = h_start;
 
-        std::vector<GT::Vector_3> x;
-        std::vector<GT::Vector_3> u;
+        std::vector<typename GT::Vector_3> x;
+        std::vector<typename GT::Vector_3> u;
 
         // looping over vertices in face
         do {
             vertex_descriptor v = source(h_iter, pmesh);
-            GT::Point_3 p = get(vpm, v);
-            x.push_back(GT::Vector_3(p.x(),p.y(),p.z()));
+            typename GT::Point_3 p = get(vpm, v);
+            x.push_back(typename GT::Vector_3(p.x(),p.y(),p.z()));
             u.push_back(get(vnm, v));
             h_iter = next(h_iter, pmesh);
         } while (h_iter != h_start);
