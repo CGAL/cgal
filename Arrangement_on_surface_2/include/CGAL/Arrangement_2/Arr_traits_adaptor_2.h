@@ -391,9 +391,8 @@ public:
       // The endpoints of xcv lie on the same boundary as p.
       // There is no way to determine whether xcv completely resides on the same
       // boundary of p. Lacking a better choice, we call the base operator.
-      cmp_y_at_x(p, xcv);
-
       CGAL_assertion(ps_y == ARR_TOP_BOUNDARY);
+      return cmp_y_at_x(p, xcv);
     }
 
    /*! 8. Implementation of the operator in case the left and right sides are
