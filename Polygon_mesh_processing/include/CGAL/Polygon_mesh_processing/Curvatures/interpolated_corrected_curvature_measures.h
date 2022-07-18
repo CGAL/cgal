@@ -100,7 +100,7 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
 * @return a scalar of type GT::FT. This is the value of the interpolated corrected measure of the given triangle.
 *
 * @see `interpolated_corrected_measure_face()`
-* @see `interpolated_corrected_measure_quad()`
+* @see `interpolated_corrected_measure_triangle()`
 */
 template<typename GT>
 typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 x0, const typename GT::Vector_3 x1, const typename GT::Vector_3 x2, const typename GT::Vector_3 x3,
