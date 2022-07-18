@@ -18,10 +18,10 @@ namespace Polygon_mesh_processing {
 
 /*!
  * \ingroup PMP_corrected_curvatures_grp
- * Enumeration type used to specify which measure is computed for the 
+ * Enumeration type used to specify which measure is computed for the
  * interpolated corrected curvature functions
  */
-// enum 
+// enum
 enum Curvature_measure_index {
     MU0_AREA_MEASURE, ///< corrected area density of the given face
     MU1_MEAN_CURVATURE_MEASURE, ///< corrected mean curvature density of the given face
@@ -212,9 +212,12 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 * computes the interpolated corrected curvature measure on each face of the mesh
 *
 * @tparam PolygonMesh a model of `FaceGraph`
+* @tparam FaceMeasureMap a a model of `WritablePropertyMap` with
+* `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and GT::FT as value type.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param pmesh the polygon mesh 
+* @param pmesh the polygon mesh
+* @param fmm (face measure map) the property map used for storing the computed interpolated corrected measure
 * @param mu_i an enum for choosing between computing the area measure, the mean curvature measure or the gaussian curvature measure
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -227,7 +230,7 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 *                     must be available in `PolygonMesh`.}
 *   \cgalParamNEnd
-* 
+*
 *   \cgalParamNBegin{vertex_normal_map}
 *     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`}
 *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -235,12 +238,8 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 *     \cgalParamDefault{`TODO`}
 *     \cgalParamExtra{If this parameter is omitted, vertex normals should be computed inside the function body.}
 *   \cgalParamNEnd
-* 
-* \cgalNamedParamsEnd
 *
-* @return a vector of the computed measure on all faces. The return type is a std::vector<GT::FT>. 
-* GT is the type of the Geometric Triats deduced from the PolygonMesh and the NamedParameters arguments
-* This is to be changed later to a property_map<face_descriptor, GT::FT>.
+* \cgalNamedParamsEnd
 *
 * @see `interpolated_corrected_measure_face()`
 */
@@ -272,7 +271,7 @@ template<typename PolygonMesh, typename FaceMeasureMap,
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
             get_const_property_map(CGAL::vertex_point, pmesh));
-    
+
     // TODO - handle if vnm is not provided
     VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), get(Vector_map_tag(), pmesh));
 
@@ -291,7 +290,7 @@ template<typename PolygonMesh, typename FaceMeasureMap,
         do {
             vertex_descriptor v = source(h_iter, pmesh);
             typename GT::Point_3 p = get(vpm, v);
-            x.push_back(typename GT::Vector_3(p.x(),p.y(),p.z()));
+            x.push_back(typename GT::Vector_3(p.x(), p.y(), p.z()));
             u.push_back(get(vnm, v));
             h_iter = next(h_iter, pmesh);
         } while (h_iter != h_start);
