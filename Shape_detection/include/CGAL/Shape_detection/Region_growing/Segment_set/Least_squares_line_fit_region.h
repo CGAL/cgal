@@ -19,9 +19,6 @@
 // CGAL includes.
 #include <CGAL/Dynamic_property_map.h>
 
-// Boost includes.
-#include <boost/unordered_map.hpp>
-
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/region_growing_traits.h>
 
@@ -43,8 +40,8 @@ namespace Segment_set {
     \tparam GeomTraits
     a model of `Kernel`
 
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+    \tparam Item_
+    a descriptor representing a given segment. Must be a model of `Hashable`.
 
     \tparam SegmentMap
     a model of `ReadablePropertyMap` whose key type is `Item`
@@ -54,7 +51,7 @@ namespace Segment_set {
   */
   template<
   typename GeomTraits,
-  typename InputRange,
+  typename Item_,
   typename SegmentMap>
   class Least_squares_line_fit_region {
 
@@ -69,7 +66,6 @@ namespace Segment_set {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Input_range = InputRange;
     using Segment_map = SegmentMap;
     using Segment_type = typename Segment_map::value_type;
     /// \endcond
@@ -78,10 +74,7 @@ namespace Segment_set {
     typedef typename GeomTraits::FT FT;
 
     /// Item type.
-    using Item = typename std::conditional<
-      std::is_same<typename std::iterator_traits<typename InputRange::const_iterator>::value_type, typename SegmentMap::value_type>::value,
-      typename InputRange::const_iterator,
-      typename std::iterator_traits<typename InputRange::const_iterator>::value_type>::type;
+    using Item = Item_;
     using Region = std::vector<Item>;
 
     /// Primitive type depends on the dimension of the input data.
@@ -92,7 +85,7 @@ namespace Segment_set {
 #endif
 
     /// Region map
-    using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
+    using Region_unordered_map = std::unordered_map<Item, std::size_t, internal::hash_item<Item>>;
     using Region_index_map = boost::associative_property_map<Region_unordered_map>;
     /// @}
 
@@ -116,12 +109,12 @@ namespace Segment_set {
       \tparam NamedParameters
       a sequence of \ref bgl_namedparameters "Named Parameters"
 
-      \param input_range
-      an instance of `InputRange` with 2D or 3D segments
-
       \param np
       a sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
+
+      \tparam InputRange
+      a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{maximum_distance}
@@ -157,7 +150,6 @@ namespace Segment_set {
         \cgalParamNEnd
       \cgalNamedParamsEnd
 
-      \pre `input_range.size() > 0`
       \pre `maximum_distance >= 0`
       \pre `maximum_angle >= 0 && maximum_angle <= 90`
       \pre `cosine_value >= 0 && cosine_value <= 1`
@@ -165,7 +157,6 @@ namespace Segment_set {
     */
     template<typename NamedParameters = parameters::Default_named_parameters>
     Least_squares_line_fit_region(
-      const InputRange& input_range,
       const NamedParameters& np = parameters::default_values()) :
     m_segment_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::segment_map), SegmentMap())),
@@ -176,7 +167,6 @@ namespace Segment_set {
     m_squared_distance(m_segment_set_traits.compute_squared_distance_object()),
     m_scalar_product(m_segment_set_traits.compute_scalar_product_object()) {
 
-      CGAL_precondition(input_range.size() > 0);
       const FT max_distance = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
       CGAL_precondition(max_distance >= FT(0));
@@ -240,7 +230,6 @@ namespace Segment_set {
 
       \return Boolean `true` or `false`
 
-      \pre `query` is a valid const_iterator of `input_range`
     */
     bool is_part_of_region(
       const Item,

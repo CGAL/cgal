@@ -78,6 +78,7 @@ namespace internal {
     }
   };
 
+  // TODO: this should be customisable in named function parameters
   template<class T, bool = CGAL::is_iterator<T>::value>
   struct hash_item {};
 

@@ -28,6 +28,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/property_maps.h>
+#include <CGAL/Named_function_parameters.h>
 
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/region_growing_traits.h>
@@ -57,6 +58,37 @@ public:
   private:
     const PropertyMap m_property_map;
 };
+
+template <class NP, class Item, class Iterator, class Tag,
+          bool np_provided = /*true*/ !std::is_same<typename internal_np::Lookup_named_param_def<Tag,NP,Default>::type, Default>::value >
+struct Default_property_map_helper
+{
+  using type = typename internal_np::Lookup_named_param_def<Tag,NP,Default>::type;
+  static type get(const NP& np)
+  {
+    return parameters::get_parameter(np, Tag());
+  }
+};
+
+template <class NP, class Item, class Iterator, class Tag>
+struct Default_property_map_helper<NP, Item, Iterator, Tag, false>
+{
+  struct No_property_map_given_in_named_parameters_and_no_deducible_default {};
+  static const bool iterator_is_item = std::is_same<Item, Iterator>::value;
+  static const bool value_type_is_item = std::is_same<Item, typename std::iterator_traits<Iterator>::value_type>::value;
+  using type = std::conditional_t<iterator_is_item,
+                                  Identity_property_map<Item>,
+                                  std::conditional_t<value_type_is_item,
+                                                     Dereference_property_map<const Item>,
+                                                     No_property_map_given_in_named_parameters_and_no_deducible_default>>;
+
+  static type get(const NP&)
+  {
+    return type();
+  }
+};
+
+
 
 } // namespace internal
 } // namespace Shape_detection

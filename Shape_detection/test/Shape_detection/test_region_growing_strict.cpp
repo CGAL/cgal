@@ -137,7 +137,7 @@ bool test_lines_segment_set_2() {
   using Segment_map = CGAL::Identity_property_map<Segment_2>;
 
   using Region_type = CGAL::Shape_detection::
-    Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
+    Segment_set::Least_squares_line_fit_region<Kernel, typename Segment_range::const_iterator, Segment_map>;
 
   using Item = typename Region_type::Item;
 
@@ -170,7 +170,7 @@ bool test_lines_segment_set_2() {
     Region_growing<Neighbor_query, Region_type>;
 
   Neighbor_query neighbor_query(segments);
-  Region_type region_type(segments);
+  Region_type region_type;
 
   std::vector< std::pair< typename Region_type::Primitive, std::vector<Item> > > regions;
   Region_growing region_growing(
@@ -192,7 +192,7 @@ bool test_lines_segment_set_2_sorting() {
   using Segment_map = CGAL::Identity_property_map<const Segment_2>;
 
   using Region_type = CGAL::Shape_detection::
-    Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
+    Segment_set::Least_squares_line_fit_region<Kernel, typename Segment_range::const_iterator, Segment_map>;
 
   using Item = typename Region_type::Item;
 
@@ -225,7 +225,7 @@ bool test_lines_segment_set_2_sorting() {
   using Region_growing = CGAL::Shape_detection::
     Region_growing<Neighbor_query, Region_type>;
 
-  using Sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Neighbor_query, Segment_map>;
+  using Sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Kernel, typename Segment_range::const_iterator, Neighbor_query, Segment_map>;
 
   Neighbor_query neighbor_query(segments);
 
@@ -233,7 +233,7 @@ bool test_lines_segment_set_2_sorting() {
     segments, neighbor_query);
   sorting.sort();
 
-  Region_type region_type(segments);
+  Region_type region_type;
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
   Region_growing region_growing(
@@ -263,13 +263,12 @@ bool test_lines_segment_set_3() {
 
   using Polyline_graph = CGAL::Shape_detection::
     Polygon_mesh::Polyline_graph<Surface_mesh>;
-  using Segment_range = typename Polyline_graph::Segment_range;
   using Segment_map = typename Polyline_graph::Segment_map;
 
   using Region_type = CGAL::Shape_detection::
-    Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
+    Segment_set::Least_squares_line_fit_region<Kernel, typename Surface_mesh::Edge_index, Segment_map>;
   using Sorting = CGAL::Shape_detection::
-    Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Polyline_graph, Segment_map>;
+    Segment_set::Least_squares_line_fit_sorting<Kernel, typename Surface_mesh::Edge_index, Polyline_graph, Segment_map>;
   using RG_lines = CGAL::Shape_detection::
     Region_growing<Polyline_graph, Region_type>;
 
@@ -307,8 +306,7 @@ bool test_lines_segment_set_3() {
   Polyline_graph pgraph(surface_mesh, rg_planes.region_map());
   const auto& segment_range = pgraph.segment_range();
 
-  Region_type region_type(
-    segment_range, CGAL::parameters::segment_map(pgraph.segment_map()));
+  Region_type region_type(CGAL::parameters::segment_map(pgraph.segment_map()));
   Sorting sorting(
     segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
   sorting.sort();

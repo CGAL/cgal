@@ -23,8 +23,8 @@ using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<S
 using Segment_range      = typename Polyline_graph::Segment_range;
 using Segment_map        = typename Polyline_graph::Segment_map;
 
-using Line_region  = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
-using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Polyline_graph, Segment_map>;
+using Line_region  = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<Kernel, Surface_mesh::Edge_index, Segment_map>;
+using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Kernel, Surface_mesh::Edge_index, Polyline_graph, Segment_map>;
 using RG_lines     = CGAL::Shape_detection::Region_growing<Polyline_graph, Line_region>;
 
 int main(int argc, char *argv[]) {
@@ -63,8 +63,7 @@ int main(int argc, char *argv[]) {
   const auto& segment_range = pgraph.segment_range();
   std::cout << "* number of extracted segments: " << segment_range.size() << std::endl;
 
-  Line_region line_region(
-    segment_range, CGAL::parameters::segment_map(pgraph.segment_map()));
+  Line_region line_region(CGAL::parameters::segment_map(pgraph.segment_map()));
   Line_sorting line_sorting(
     segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
   line_sorting.sort();

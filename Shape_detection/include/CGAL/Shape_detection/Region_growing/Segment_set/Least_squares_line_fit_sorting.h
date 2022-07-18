@@ -34,11 +34,11 @@ namespace Segment_set {
     \tparam GeomTraits
     a model of `Kernel`
 
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
-
     \tparam NeighborQuery
     a model of `NeighborQuery`
+
+    \tparam Item_
+    a descriptor representing a given segment. Must be a model of `Hashable`.
 
     \tparam SegmentMap
     a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -46,7 +46,7 @@ namespace Segment_set {
   */
   template<
   typename GeomTraits,
-  typename InputRange,
+  typename Item_,
   typename NeighborQuery,
   typename SegmentMap>
   class Least_squares_line_fit_sorting {
@@ -56,17 +56,13 @@ namespace Segment_set {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Segment_map = SegmentMap;
     using Segment_type = typename boost::property_traits<Segment_map>::value_type;
     /// \endcond
 
     /// Item type.
-    using Item = typename std::conditional<
-      std::is_same<typename std::iterator_traits<typename InputRange::const_iterator>::value_type, typename SegmentMap::value_type>::value,
-      typename InputRange::const_iterator,
-      typename std::iterator_traits<typename InputRange::const_iterator>::value_type > ::type;
+    using Item = Item_;
 
     /// Seed range.
     using Seed_range = std::vector<Item>;
@@ -102,11 +98,19 @@ namespace Segment_set {
       a sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
+      \tparam InputRange
+      a model of `ConstRange` whose iterator type is `InputIterator`
+
       \cgalNamedParamsBegin
         \cgalParamNBegin{segment_map}
           \cgalParamDescription{an instance of `SegmentMap` that maps the `Item` of a segment
           to `Kernel::Segment_2` or `Kernel::Segment_3`}
           \cgalParamDefault{`SegmentMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{item_map}
+          \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `Input_range::const_iterator`
+                                as key type and `Item` as value type.`}
+          \cgalParamDefault{A default is provided when `Item` is `Input_range::const_iterator` or its value type.}
         \cgalParamNEnd
         \cgalParamNBegin{geom_traits}
           \cgalParamDescription{an instance of `GeomTraits`}
@@ -116,25 +120,29 @@ namespace Segment_set {
 
       \pre `input_range.size() > 0`
     */
-    template<typename NamedParameters = parameters::Default_named_parameters>
+    template<typename InputRange, typename NamedParameters = parameters::Default_named_parameters>
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const NamedParameters& np = parameters::default_values()) :
-    m_neighbor_query(neighbor_query),
-    m_segment_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::segment_map), SegmentMap())),
-    m_traits(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::geom_traits), GeomTraits())),
-    m_segment_set_traits(m_traits) {
-
+      const NamedParameters& np = parameters::default_values())
+    : m_neighbor_query(neighbor_query)
+    , m_segment_map(parameters::choose_parameter(parameters::get_parameter(
+        np, internal_np::segment_map), SegmentMap()))
+    , m_traits(parameters::choose_parameter(parameters::get_parameter(
+        np, internal_np::geom_traits), GeomTraits()))
+    , m_segment_set_traits(m_traits)
+    {
       CGAL_precondition(input_range.size() > 0);
+
+      using NP_helper = internal::Default_property_map_helper<NamedParameters, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
+      using Item_map = typename NP_helper::type;
+      Item_map item_map = NP_helper::get(np);
 
       m_ordered.resize(input_range.size());
 
       std::size_t index = 0;
       for (auto it = input_range.begin(); it != input_range.end(); it++)
-        m_ordered[index++] = internal::conditional_deref<typename Input_range::const_iterator, Item>()(it);
+        m_ordered[index++] = get(item_map, it);
 
       m_scores.resize(input_range.size());
     }
