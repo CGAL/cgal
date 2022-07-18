@@ -23,6 +23,7 @@ typedef CGAL::Polyhedron_3<Epic> Polyhedron;
 typedef CGAL::Surface_mesh<Epic::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef std::unordered_map<face_descriptor, Epic::FT> FaceMeasureMap_tag;
 
 
 int main(int argc, char* argv[])
@@ -35,41 +36,20 @@ int main(int argc, char* argv[])
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
-  std::unordered_map<vertex_descriptor, Epic::Vector_3> vnm_vec;
-  boost::associative_property_map< std::unordered_map<vertex_descriptor, Epic::Vector_3>> vnm(vnm_vec);
+  std::unordered_map<vertex_descriptor, Epic::Vector_3> vnm_init;
+  boost::associative_property_map< std::unordered_map<vertex_descriptor, Epic::Vector_3>> vnm(vnm_init);
 
   PMP::compute_vertex_normals(g1, vnm);
 
+  FaceMeasureMap_tag mu0_init, mu1_init, mu2_init;
+  boost::associative_property_map<FaceMeasureMap_tag> mu0_map(mu0_init), mu1_map(mu1_init), mu2_map(mu2_init);
 
-  std::vector<Epic::FT> mu0_map, mu1_map, mu2_map;
+  PMP::interpolated_corrected_measure_mesh(g1, mu0_map, PMP::MU0_AREA_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
+  PMP::interpolated_corrected_measure_mesh(g1, mu1_map, PMP::MU1_MEAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
+  PMP::interpolated_corrected_measure_mesh(g1, mu2_map, PMP::MU2_GAUSSIAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
 
-  mu0_map = PMP::interpolated_corrected_measure_mesh(g1, PMP::MU0_AREA_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
-  mu1_map = PMP::interpolated_corrected_measure_mesh(g1, PMP::MU1_MEAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
-  mu2_map = PMP::interpolated_corrected_measure_mesh(g1, PMP::MU2_GAUSSIAN_CURVATURE_MEASURE, CGAL::parameters::vertex_normal_map(vnm));
-
-  int n = g1.faces().size();
-
-  for (int i = 0; i < n; i++)
+  for (face_descriptor f: g1.faces())
   {
-      std::cout << mu0_map[i] << "\n";
+      std::cout << f.idx() << ": " << get(mu0_map, f) << ", " << get(mu1_map, f) << ", " << get(mu2_map, f) << ", " << "\n";
   }
-
-  std::cout << "\n";
-
-  for (int i = 0; i < n; i++)
-  {
-      std::cout << mu1_map[i] << "\n";
-  }
-
-  std::cout << "\n";
-
-  for (int i = 0; i < n; i++)
-  {
-      std::cout << mu2_map[i] << "\n";
-  }
-
-
-  CGAL::draw(g1);
-
-  return EXIT_SUCCESS;
 }
