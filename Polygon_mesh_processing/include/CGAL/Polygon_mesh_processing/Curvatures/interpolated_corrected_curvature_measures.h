@@ -15,17 +15,22 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-// enum to specify which measure is computed
+/*!
+ * \ingroup PMP_corrected_curvatures_grp
+ * Enumeration type used to specify which measure is computed for the
+ * interpolated corrected curvature functions.
+ */
+// enum
 enum Measure_index {
-    MU0_AREA_MEASURE,
-    MU1_MEAN_CURVATURE_MEASURE,
-    MU2_GAUSSIAN_CURVATURE_MEASURE
+    MU0_AREA_MEASURE, ///< corrected area density of the given face
+    MU1_MEAN_CURVATURE_MEASURE, ///< corrected mean curvature density of the given face
+    MU2_GAUSSIAN_CURVATURE_MEASURE ///< corrected gaussian curvature density of the given face
 };
 
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of specific triangle.
+* computes the interpolated corrected measure of a specific triangle.
 *
 * @tparam GT is the geometric traits class.
 *
@@ -74,8 +79,8 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of specific quad
-* Note that the vertices 0 to 3 are ordered like this \n
+* computes the interpolated corrected measure of a specific quad. \n
+* Note that the vertices 0 to 3 are ordered like this: \n
 * v0  _  v1 \n
 * v2 |_| v3
 *
@@ -95,14 +100,14 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
 * @return a scalar of type GT::FT. This is the value of the interpolated corrected measure of the given triangle.
 *
 * @see `interpolated_corrected_measure_face()`
-* @see `interpolated_corrected_measure_quad()`
+* @see `interpolated_corrected_measure_triangle()`
 */
 template<typename GT>
 typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 x0, const typename GT::Vector_3 x1, const typename GT::Vector_3 x2, const typename GT::Vector_3 x3,
     const typename GT::Vector_3 u0, const typename GT::Vector_3 u1, const typename GT::Vector_3 u2, const typename GT::Vector_3 u3, const Measure_index mu_i)
 {
-    /// x0  _  x1
-    /// x2 |_| x3
+    // x0  _  x1
+    // x2 |_| x3
 
     switch (mu_i)
     {
@@ -143,7 +148,7 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of specific face.
+* computes the interpolated corrected measure of a specific face.
 *
 * @tparam GT is the geometric traits class.
 *
@@ -172,8 +177,8 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 
     // Quad: use bilinear interpolation formulas
     else if (n == 4)
-        /// x[0]  _  x[1]  --->  x0  _  x1   (reason for changing order)
-        /// x[3] |_| x[2]  --->  x2 |_| x3
+        // x[0]  _  x[1]  --->  x0  _  x1   (reason for changing order)
+        // x[3] |_| x[2]  --->  x2 |_| x3
         return interpolated_corrected_measure_quad<GT>(x[0], x[1], x[3], x[2],
             u[0], u[1], u[3], u[2], mu_i);
 
@@ -203,7 +208,7 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected curvature measure on each face of the mesh
+* computes the interpolated corrected curvature measure on each face of the mesh.
 *
 * @tparam PolygonMesh a model of `FaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
