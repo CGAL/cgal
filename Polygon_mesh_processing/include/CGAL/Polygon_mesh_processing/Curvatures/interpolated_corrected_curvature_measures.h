@@ -18,7 +18,7 @@ namespace Polygon_mesh_processing {
 /*!
  * \ingroup PMP_corrected_curvatures_grp
  * Enumeration type used to specify which measure is computed for the
- * interpolated corrected curvature functions
+ * interpolated corrected curvature functions.
  */
 // enum
 enum Measure_index {
@@ -30,7 +30,7 @@ enum Measure_index {
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of specific triangle.
+* computes the interpolated corrected measure of a specific triangle.
 *
 * @tparam GT is the geometric traits class.
 *
@@ -79,8 +79,8 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of specific quad
-* Note that the vertices 0 to 3 are ordered like this \n
+* computes the interpolated corrected measure of a specific quad. \n
+* Note that the vertices 0 to 3 are ordered like this: \n
 * v0  _  v1 \n
 * v2 |_| v3
 *
@@ -148,7 +148,7 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected measure of specific face.
+* computes the interpolated corrected measure of a specific face.
 *
 * @tparam GT is the geometric traits class.
 *
@@ -208,7 +208,7 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected curvature measure on each face of the mesh
+* computes the interpolated corrected curvature measure on each face of the mesh.
 *
 * @tparam PolygonMesh a model of `FaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
