@@ -162,6 +162,7 @@ public:
   }
 
   Basic_viewer_qt(QWidget* parent,
+                  GraphicBuffer<>& buf,
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
@@ -171,8 +172,7 @@ public:
                   bool draw_rays=true,
                   bool draw_lines=true,
                   bool draw_text=true,
-                  bool no_2D_mode=false, 
-                  GraphicBuffer& buf) :
+                  bool no_2D_mode=false) :
                   gBuffer(buf) {}
 
   ~Basic_viewer_qt()
