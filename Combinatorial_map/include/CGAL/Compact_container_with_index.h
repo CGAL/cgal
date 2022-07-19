@@ -695,9 +695,6 @@ public:
     T& e=operator[](i);
     std::allocator_traits<allocator_type>::destroy(alloc, &e);
     //e.~T();
-#ifndef CGAL_NO_ASSERTIONS
-    std::memset(&e, 0, sizeof(T));
-#endif
     free_list.push(i);
     --size_;
   }
