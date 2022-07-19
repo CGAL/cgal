@@ -578,8 +578,8 @@ std::string get_property_raw_name(const std::string& prop, typename Surface_mesh
 template <typename Point, typename Simplex, typename Simplex2, bool = std::is_same<Simplex, Simplex2>::value >
 struct add_color_map {
   add_color_map() {}
-  void operator()(std::vector<Abstract_property_printer<Simplex>*>& printers,
-    typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color>& pmap) {
+  void operator()(std::vector<Abstract_property_printer<Simplex>*>&,
+    typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color>&) {
   }
 };
 
@@ -593,7 +593,6 @@ struct add_color_map<Point, Simplex, Simplex2, true> {
   }
 
   void operator()(std::vector<Abstract_property_printer<Simplex>*>& printers,
-    //CGAL::internal::Dynamic<CGAL::Surface_mesh<Point_3>,CGAL::Surface_mesh<Point_3>::Property_map<CGAL::Surface_mesh<Point_3>::Face_index,T>>
     CGAL::internal::Dynamic<Surface_mesh<Point>, typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color> >& pmap) {
     printers.push_back(new Property_printer<Simplex, typename Surface_mesh<Point>::template Property_map<Simplex, CGAL::IO::Color>>(*pmap.map_));
   }
@@ -602,11 +601,11 @@ struct add_color_map<Point, Simplex, Simplex2, true> {
 template <typename Point, typename Simplex, typename Simplex2>
 struct add_color_map<Point, Simplex, Simplex2, false> {
   add_color_map() {}
-  void operator()(std::vector<Abstract_property_printer<Simplex>*>& printers,
-    typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color>& pmap) {
+  void operator()(std::vector<Abstract_property_printer<Simplex>*>&,
+    typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color>&) {
   }
-  void operator()(std::vector<Abstract_property_printer<Simplex>*>& printers,
-    CGAL::internal::Dynamic<Surface_mesh<Point>, typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color> >& pmap) {
+  void operator()(std::vector<Abstract_property_printer<Simplex>*>&,
+    CGAL::internal::Dynamic<Surface_mesh<Point>, typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color> >&) {
   }
 };
 
