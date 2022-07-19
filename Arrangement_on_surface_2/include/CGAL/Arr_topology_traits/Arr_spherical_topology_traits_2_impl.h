@@ -302,8 +302,8 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
               if (is_on_y_identification(p)) {
                 // If the max end of cv1 is smaller than the max end of cv2,
                 // the identification x-coordinate is in the x-range.
-                auto rc1 = cmp_x_ce_ce(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
-                auto rc2 = LARGER;
+                rc1 = cmp_x_ce_ce(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
+                rc2 = LARGER;
               }
               else {
                 rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
