@@ -6,8 +6,6 @@ project(Combinatorial_map_Examples)
 
 find_package(CGAL REQUIRED)
 
-add_compile_options("-Wall -Wextra")
-
 # create a target per cppfile
 file(
   GLOB cppfiles
