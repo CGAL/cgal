@@ -200,7 +200,7 @@ class Free_list_management<CC_with_index, CGAL::Tag_false, CGAL::Tag_true>
   using Traits=Compact_container_with_index_traits <T, size_type>;
 
 public:
-  static const size_type null_descriptor=std::numeric_limits<size_type>::max();
+  static const size_type null_descriptor=(std::numeric_limits<size_type>::max)();
 
   Free_list_management(CC_with_index* cc_with_index):
     m_cc_with_index(cc_with_index)
