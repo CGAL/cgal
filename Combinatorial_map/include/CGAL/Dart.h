@@ -303,8 +303,7 @@ namespace CGAL {
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial or generalized map class.
      */
-    Dart(): minfo() //  value initialization => zero-initializing built-in types
-    {}
+    Dart()=default; //  default => zero-initializing built-in types
 
     Dart(const Info_& info) : minfo(info)
     {}
