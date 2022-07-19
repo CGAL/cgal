@@ -298,17 +298,16 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
               rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
               rc2 = LARGER;
             }
+            else if (is_on_y_identification(p)) {
+              // If the max end of cv1 is smaller than the max end of cv2,
+              // the identification x-coordinate is in the x-range.
+              rc1 = cmp_x_ce_ce(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
+              rc2 = LARGER;
+            }
             else {
-              if (is_on_y_identification(p)) {
-                // If the max end of cv1 is smaller than the max end of cv2,
-                // the identification x-coordinate is in the x-range.
-                rc1 = cmp_x_ce_ce(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
-                rc2 = LARGER;
-              }
-              else {
-                rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
-                rc2 = cmp_x_pt_ce(p, cv2, ARR_MAX_END);
-              }
+              // None of p, cv1, or cv2 lie on the identification curve.
+              rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
+              rc2 = cmp_x_pt_ce(p, cv2, ARR_MAX_END);
             }
             if (rc1 == opposite(rc2)) ++num_intersections;
           }
