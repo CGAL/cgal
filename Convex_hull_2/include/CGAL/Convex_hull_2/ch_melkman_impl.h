@@ -15,14 +15,14 @@
 
 #include <CGAL/license/Convex_hull_2.h>
 
-
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
 #include <CGAL/Convex_hull_2/ch_assertions.h>
-#include <queue>
-#include <iterator>
+
+#include <algorithm>
+#include <deque>
 
 namespace CGAL {
 

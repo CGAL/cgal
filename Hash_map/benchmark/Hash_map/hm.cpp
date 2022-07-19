@@ -12,7 +12,6 @@
 
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Timer.h>
 #include<boost/range/iterator_range.hpp>
