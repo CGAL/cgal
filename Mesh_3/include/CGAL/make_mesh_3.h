@@ -545,7 +545,6 @@ C3T3 make_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS
     return c3t3;
 }
 
-
 #ifndef DOXYGEN_RUNNING
 #ifndef CGAL_NO_DEPRECATED_CODE
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename ... NP_PACK>
@@ -553,6 +552,7 @@ C3T3 make_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const NP_PACK&...np
 {
     return make_mesh_3<C3T3>(domain, criteria, internal_np::combine_named_parameters(nps...));
 }
+
 
 #endif //CGAL_NO_DEPRECATED_CODE
 

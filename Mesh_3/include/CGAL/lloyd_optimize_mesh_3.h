@@ -161,12 +161,36 @@ Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain& doma
     bool do_freeze = choose_parameter(get_parameter(np,internal_np::freeze),true);
     return lloyd_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iterations, convergence_ratio, freeze_bound, do_freeze);
 }
+
+template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
+Mesh_optimization_return_code lloyd_optimize_mesh_3(const CGAL_NP_CLASS& np)
+{
+    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::c3t3_param_t>::value, "Value for required parameter not found");
+    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::mesh_domain_param_t>::value, "Value for required parameter not found");
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    int max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
+    const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), 0.001);
+    const double freeze_bound = choose_parameter(get_parameter(np, internal_np::vertex_freeze_bound), 0.001);
+    const double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
+    bool do_freeze = choose_parameter(get_parameter(np,internal_np::freeze),true);
+    auto c3t3 = get_parameter(np,internal_np::c3t3_param);
+    auto domain = get_parameter(np,internal_np::mesh_domain_param);
+    return lloyd_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iterations, convergence_ratio, freeze_bound, do_freeze);
+}
+
 #ifndef DOXYGEN_RUNNING
 #ifndef CGAL_NO_DEPRECATED_CODE
 template<typename C3T3, typename MeshDomain,typename ... NP_PACK>
 Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3,MeshDomain& domain, const NP_PACK& ...nps)
 {
     return lloyd_optimize_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
+}
+
+template<typename ... NP_PACK>
+Mesh_optimization_return_code lloyd_optimize_mesh_3(const NP_PACK& ...nps)
+{
+    return lloyd_optimize_mesh_3(internal_np::combine_named_parameters(nps...));
 }
 #endif //CGAL_NO_DEPRECATED_CODE
 
