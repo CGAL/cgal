@@ -161,6 +161,20 @@ public:
     { negate_all_normals(); }
   }
 
+  Basic_viewer_qt(QWidget* parent,
+                  const char* title="",
+                  bool draw_vertices=false,
+                  bool draw_edges=true,
+                  bool draw_faces=true,
+                  bool use_mono_color=false,
+                  bool inverse_normal=false,
+                  bool draw_rays=true,
+                  bool draw_lines=true,
+                  bool draw_text=true,
+                  bool no_2D_mode=false, 
+                  GraphicBuffer& buf) :
+                  gBuffer(buf) {}
+
   ~Basic_viewer_qt()
   {
     makeCurrent();
@@ -283,15 +297,15 @@ public:
 
   template<typename KPoint>
   void add_point(const KPoint& p)
-  { gBuffer.add_point(p);} //get_buffer_for_mono_points().add_point(p); }
+  { gBuffer.add_point(p); } 
 
   template<typename KPoint>
   void add_point(const KPoint& p, const CGAL::IO::Color& acolor)
-  { gBuffer.get_buffer_for_colored_points().add_point(p, acolor); }
+  { gBuffer.add_point(p, acolor); }
 
   template<typename KPoint>
   void add_segment(const KPoint& p1, const KPoint& p2)
-  { gBuffer.add_segment(p1, p2);}//get_buffer_for_mono_segments().add_segment(p1, p2); }
+  { gBuffer.add_segment(p1, p2);}
 
   template<typename KPoint>
   void add_segment(const KPoint& p1, const KPoint& p2,
@@ -331,7 +345,7 @@ public:
   void add_ray(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
   {
     // gBuffer.get_buffer_for_colored_rays().add_ray(p, v, acolor);
-        double bigNumber = 1e30;
+    double bigNumber = 1e30;
     gBuffer.get_buffer_for_colored_lines().add_ray_segment(p, (p + (bigNumber)*v), acolor);
   }
 
@@ -339,7 +353,7 @@ public:
   void add_line(const KPoint &p, const KVector &v)
   {
     // gBuffer.add_line(p,v);
-        double bigNumber = 1e30;
+    double bigNumber = 1e30;
     gBuffer.get_buffer_for_mono_lines().add_line_segment((p - (bigNumber)*v),
                                              (p + (bigNumber)*v));
   }
@@ -348,8 +362,7 @@ public:
   void add_line(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
   {
     // gBuffer.add_line(p,v,acolor);
-    
-        double bigNumber = 1e30;
+    double bigNumber = 1e30;
     gBuffer.get_buffer_for_colored_lines().add_line_segment((p - (bigNumber)*v),
                                                 (p + (bigNumber)*v), acolor);
   }
