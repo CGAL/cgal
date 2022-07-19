@@ -125,6 +125,8 @@ namespace CGAL {
     using Attribute_handle=Attribute_descriptor<i>;
     template<int i>
     using Attribute_const_handle=Attribute_const_descriptor<i>;
+    using Vertex_attribute_handle=Vertex_attribute_descriptor;
+    using Vertex_attribute_const_handle=Vertex_attribute_const_descriptor;
 
     static constexpr Null_descriptor_type null_handle=null_descriptor;
 
