@@ -97,7 +97,7 @@ class Free_list_management<CC_with_index, CGAL::Tag_true, CGAL::Tag_true>
   using size_type=typename CC_with_index::size_type;
 
 public:
-  static const size_type null_descriptor=std::numeric_limits<size_type>::max();
+  static const size_type null_descriptor=(std::numeric_limits<size_type>::max)();
 
   Free_list_management(CC_with_index* cc_with_index):
     m_cc_with_index(cc_with_index)
