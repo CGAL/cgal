@@ -5,6 +5,7 @@
 #include <fstream>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/Polyhedral_envelope.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <iostream>
 #include <vector>
@@ -116,7 +117,49 @@ void test_with_envelope(std::string filename, double eps)
     std::cout << "  Output mesh has self-intersections\n";
 }
 
+bool same_meshes(const Mesh& m1, const Mesh& m2)
+{
+  std::size_t c=0, m1_only=0, m2_only=0;
+  PMP::match_faces(m1, m2, CGAL::Counting_output_iterator(&c)
+                         , CGAL::Counting_output_iterator(&m1_only)
+                         , CGAL::Counting_output_iterator(&m2_only));
+  return m1_only==0 && m2_only==0;
+}
+void test_parameters_on_pig(std::string filename)
+{
+  std::ifstream input(filename);
 
+  Mesh mesh, bk;
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Not a valid input file." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  bk=mesh;
+
+  PMP::experimental::remove_almost_degenerate_faces(mesh,
+                                                    std::cos(160. / 180 * CGAL_PI),
+                                                    4,
+                                                    9999 /*no_constraints*/);
+  assert(vertices(mesh).size()!=vertices(bk).size());
+
+  mesh=bk;
+  PMP::experimental::remove_almost_degenerate_faces(mesh,
+                                                    std::cos(160. / 180 * CGAL_PI),
+                                                    4,
+                                                    0.000000000000001); // no-collapse but flips
+  assert(vertices(mesh).size()==vertices(bk).size());
+  assert(!same_meshes(mesh,bk));
+
+  mesh=bk;
+  PMP::experimental::remove_almost_degenerate_faces(mesh,
+                                                    std::cos(160. / 180 * CGAL_PI),
+                                                    4,
+                                                    0.000000000000001,
+                                                    CGAL::parameters::flip_triangle_height_threshold(0.000000000000001)); // no-collapse and no flip
+  assert(vertices(mesh).size()==vertices(bk).size());
+  assert(same_meshes(mesh,bk));
+}
 
 int main(int argc, char** argv)
 {
@@ -128,6 +171,10 @@ int main(int argc, char** argv)
   else
     if (argc==3)
       test_with_envelope(filename, atof(argv[2]));
+
+  // only run that test with pig.off
+  if (argc==1)
+    test_parameters_on_pig(filename);
 
   return 0;
 }

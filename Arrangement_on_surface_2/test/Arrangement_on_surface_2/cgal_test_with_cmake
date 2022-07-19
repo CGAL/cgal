@@ -129,7 +129,7 @@ configure()
   rm -rf CMakeCache.txt CMakeFiles/
   if [ -f "$INIT_FILE" ]
   then
-    if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+    if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                         -DCGAL_DIR="$CGAL_DIR" \
                                         -DCGAL_CXX_FLAGS:STRING="$CGAL_CXX_FLAGS $TESTSUITE_CXXFLAGS -I../../include" \
                                         -DCGAL_EXE_LINKER_FLAGS="$CGAL_EXE_LINKER_FLAGS $TESTSUITE_LDFLAGS" \

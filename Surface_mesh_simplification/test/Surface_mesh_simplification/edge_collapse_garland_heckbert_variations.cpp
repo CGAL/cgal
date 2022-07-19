@@ -280,9 +280,9 @@ void run(const std::pair<TriangleMesh, std::string>& input)
 
   time_all_policies(input.first, out);
 
-//  std::array<double, 10> range {{ 0.15 }};
+  std::array<double, 1> range {{ 0.15 }};
 //  std::array<double, 10> range {{ 0.7, 0.6, 0.5, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15 }};
-//  hausdorff_errors(input.first, out, range.begin(), range.end());
+  hausdorff_errors(input.first, out, range.begin(), range.end());
 
   gather_face_aspect_ratio(input.first, out);
 }

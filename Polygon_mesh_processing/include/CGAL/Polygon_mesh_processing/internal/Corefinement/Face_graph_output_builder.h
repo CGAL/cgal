@@ -52,9 +52,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-enum Boolean_operation_type {UNION = 0, INTERSECTION,
-                             TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
-
 // extra functions for handling non-documented functions for user visitors
 // with no extra functions
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_extra_functions,
@@ -564,6 +561,9 @@ public:
     // the result of the retriangulation.
     std::vector<face_descriptor> tm1_coplanar_faces, tm2_coplanar_faces;
 
+
+    user_visitor.filter_coplanar_edges();
+
     for (;epp_it!=epp_it_end;)
     {
       halfedge_descriptor h1  = epp_it->second.first[&tm1];
@@ -698,6 +698,8 @@ public:
       intersection_edges2.erase(ed);
     }
 
+    user_visitor.detect_patches();
+
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.
     // ... for tm1
@@ -728,7 +730,7 @@ public:
         ++tm2_patch_sizes[i];
 
 
-
+    user_visitor.classify_patches();
 
     // (2-a) Use the orientation around an edge to classify a patch
     boost::dynamic_bitset<> is_patch_inside_tm2(nb_patches_tm1, false);
@@ -1365,6 +1367,8 @@ public:
 
     if ( patch_status_not_set_tm1.any() )
     {
+      user_visitor.classify_intersection_free_patches(tm1);
+
       CGAL::Bounded_side in_tm2 = is_tm2_inside_out
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
@@ -1440,6 +1444,8 @@ public:
 
     if ( patch_status_not_set_tm2.any() )
     {
+      user_visitor.classify_intersection_free_patches(tm2);
+
       CGAL::Bounded_side in_tm1 = is_tm1_inside_out
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
@@ -1728,6 +1734,8 @@ public:
     /// first handle operations in a mesh that is neither tm1 nor tm2
     for(Boolean_operation_type operation : out_of_place_operations)
     {
+      user_visitor.out_of_place_operation(operation);
+
       TriangleMesh& output = *(*requested_output[operation]);
       CGAL_assertion(&tm1!=&output && &tm2!=&output);
 
@@ -1778,6 +1786,8 @@ public:
 
       if ( inplace_operation_tm2!=NONE)
       {
+        user_visitor.in_place_operations(inplace_operation_tm1, inplace_operation_tm2);
+
         // mark intersection edges in tm2 (using output constrained edge map)
         mark_edges(out_edge_mark_maps,
                    mesh_to_intersection_edges[&tm2],
@@ -1893,6 +1903,8 @@ public:
            CGAL::Polygon_mesh_processing::reverse_face_orientations(*&tm1);
       }
       else{
+        user_visitor.in_place_operation(inplace_operation_tm1);
+
         /// handle the operation updating only tm1
         CGAL_assertion( *requested_output[inplace_operation_tm1] == &tm1 );
         Intersection_polylines polylines(
@@ -2063,6 +2075,8 @@ public:
     else
       if ( inplace_operation_tm2!=NONE )
       {
+        user_visitor.in_place_operation(inplace_operation_tm2);
+
         // mark intersection edges in tm2 (using output constrained edge map)
         mark_edges(out_edge_mark_maps,
                    mesh_to_intersection_edges[&tm2],

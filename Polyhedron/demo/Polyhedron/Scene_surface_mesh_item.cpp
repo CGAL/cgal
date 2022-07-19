@@ -51,6 +51,7 @@
 #include "id_printing.h"
 #include <unordered_map>
 #include <functional>
+#include <utility>
 #endif
 
 typedef CGAL::Three::Triangle_container Tri;
@@ -350,9 +351,14 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
   standard_constructor(sm);
 }
 
-Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh sm)
+Scene_surface_mesh_item::Scene_surface_mesh_item(const SMesh& sm)
 {
   standard_constructor(new SMesh(sm));
+}
+
+Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh&& sm)
+{
+  standard_constructor(new SMesh(std::move(sm)));
 }
 
 Scene_surface_mesh_item*

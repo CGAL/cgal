@@ -351,7 +351,7 @@ void oriented_bounding_box(const PointRange& points,
   const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), -1); // undocumented
 
   CGAL::Random fixed_seed_rng(seed);
-  CGAL::Random& rng = is_default_parameter<NamedParameters,internal_np::random_seed_t>() ?
+  CGAL::Random& rng = is_default_parameter<NamedParameters, internal_np::random_seed_t>::value ?
                         CGAL::get_default_random() : fixed_seed_rng;
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG

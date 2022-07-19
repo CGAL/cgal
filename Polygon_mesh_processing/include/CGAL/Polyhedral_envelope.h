@@ -404,7 +404,7 @@ public:
       else
         deg_faces.insert(f);
     }
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
       init(epsilon);
     else
     {
@@ -513,7 +513,7 @@ public:
         deg_faces.insert(f);
     }
 
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
       init(epsilon);
     else
     {
@@ -597,8 +597,10 @@ public:
       env_faces.emplace_back(face);
     }
 
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
+    {
       init(epsilon);
+    }
     else
     {
       std::vector<double> epsilon_values;

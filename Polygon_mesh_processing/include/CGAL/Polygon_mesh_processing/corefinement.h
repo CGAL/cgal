@@ -737,8 +737,8 @@ corefine(      TriangleMesh& tm1,
   User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
   static const bool handle_non_manifold_features =
-    !parameters::Is_default<internal_np::non_manifold_feature_map_t, NamedParameters1>::value ||
-    !parameters::Is_default<internal_np::non_manifold_feature_map_t, NamedParameters2>::value;
+    !parameters::is_default_parameter<NamedParameters1, internal_np::non_manifold_feature_map_t>::value ||
+    !parameters::is_default_parameter<NamedParameters2, internal_np::non_manifold_feature_map_t>::value;
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
@@ -748,7 +748,7 @@ corefine(      TriangleMesh& tm1,
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr), const_mesh_ptr);
 
   // Fill non-manifold feature maps if provided
   functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));

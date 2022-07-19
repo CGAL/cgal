@@ -30,6 +30,7 @@
 #include <CGAL/Nef_3/SNC_simplify.h>
 #include <map>
 #include <list>
+#include <unordered_map>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 43
@@ -897,8 +898,7 @@ public:
       if ( f->volume() != Volume_handle() )
         continue;
       CGAL_NEF_TRACEN( "Outer shell #" << ShellSf[f] << " volume?");
-      Volume_handle c = determine_volume( MinimalSFace[ShellSf[f]],
-                                          MinimalSFace, ShellSf );
+      Volume_handle c = determine_volume( f, MinimalSFace, ShellSf );
       c->mark() = f->mark();
       link_as_outer_shell( f, c );
     }
@@ -1308,8 +1308,9 @@ public:
      //     O0.print();
     link_shalfedges_to_facet_cycles();
 
-    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false, this->sncp()->number_of_shalfedges());
+    std::size_t num_shalfedges = this->sncp()->number_of_shalfedges();
+    std::unordered_map<int, int> hash(num_shalfedges);
+    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false, num_shalfedges);
 
     SHalfedge_iterator sei;
     CGAL_forall_shalfedges(sei, *this->sncp()) {

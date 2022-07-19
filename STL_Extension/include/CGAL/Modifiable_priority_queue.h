@@ -168,6 +168,22 @@ public:
     return mHandles[vid];
   }
 
+  handle_type resize_and_push(const value_type& v)
+  {
+    auto vid = get(mID, v);
+    CGAL_precondition(0 <= vid);
+
+    if(vid >= mHandles.size())
+    {
+      mHandles.resize(vid + 1, handle_type());
+//      std::cout << "resize() to " << mHandles.size() << " (capacity = " << mHandles.capacity() << ")" << std::endl;
+    }
+
+    CGAL_precondition(!contains(v));
+    mHandles[vid] = mHeap.push(v);
+    return mHandles[vid];
+  }
+
   void update(const value_type& v)
   {
     CGAL_precondition(contains(v));
@@ -210,6 +226,16 @@ public:
     auto vid = get(mID, v);
     CGAL_precondition(0 <= vid && vid < mHandles.size());
     return mHandles[vid] != handle_type();
+  }
+
+  bool contains_with_bounds_check(const value_type& v)
+  {
+    auto vid = get(mID, v);
+    if(vid >= mHandles.size())
+      return false;
+
+    CGAL_precondition(0 <= vid && vid < mHandles.size());
+    return (mHandles[vid] != handle_type());
   }
 
   boost::optional<value_type> extract_top()

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Surface_mesh_simplification_Examples)
 
 # CGAL and its components
@@ -50,4 +50,17 @@ endif()
 if(OpenMesh_FOUND)
   create_single_source_cgal_program("edge_collapse_OpenMesh.cpp")
   target_link_libraries(edge_collapse_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
+endif()
+
+find_package(METIS)
+include(CGAL_METIS_support)
+
+find_package(TBB)
+include(CGAL_TBB_support)
+
+if(TARGET CGAL::TBB_support AND TARGET CGAL::METIS_support)
+  create_single_source_cgal_program("collapse_small_edges_in_parallel.cpp")
+  target_link_libraries(collapse_small_edges_in_parallel PUBLIC CGAL::TBB_support CGAL::METIS_support)
+else()
+  message(STATUS "collapse_small_edges_in_parallel, which use the METIS and TBB libraries will not be compiled.")
 endif()
