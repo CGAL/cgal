@@ -211,12 +211,12 @@ Mesh_criteria_3(const CGAL_NP_CLASS& np = parameters::default_values()): Base(np
 {
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-        template<typename ... NP_PACK>
-        Mesh_criteria_3(const NP_PACK& ...nps):Mesh_criteria_3(internal_np::combine_named_parameters(nps...))
-        {
-        }
-#endif //CGAL_NO_DEPRECATED_CODE
+
+template<typename ... NP_PACK>
+Mesh_criteria_3(const NP_PACK& ...nps):Mesh_criteria_3(internal_np::combine_named_parameters(nps...))
+{
+}
+
 };  // end class Mesh_criteria_3
 
 }  // end namespace CGAL

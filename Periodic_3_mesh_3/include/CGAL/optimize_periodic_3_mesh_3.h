@@ -50,7 +50,6 @@ Mesh_optimization_return_code perturb_periodic_3_mesh_3(const CGAL_NP_CLASS& np)
     auto perturbation_vector = choose_parameter(get_parameter(np,internal_np::perturb_vector), default_perturbation_vector(c3t3,domain,sliver_criterion));
     return perturb_mesh_3_impl(c3t3, domain, time_limit, sliver_criterion, perturbation_vector);
 }
-#ifndef CGAL_NO_DEPRECATED_CODE
 template<typename C3T3, typename MeshDomain, typename ... NP_PACK>
 Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const NP_PACK& ... nps)
 {
@@ -61,7 +60,6 @@ Mesh_optimization_return_code perturb_periodic_3_mesh_3(const NP_PACK& ...nps)
 {
     return perturb_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }
-#endif //CGAL_NO_DEPRECATED_CODE
 // ---------------------------------- exuder -----------------------------------
 
 template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -85,7 +83,6 @@ Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3,const CGAL_NP_C
         double sliver_bound= choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),parameters::default_values_for_mesh_3::exude_sliver_bound);
         return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
     }
-#ifndef CGAL_NO_DEPRECATED_CODE
 template<typename C3T3, typename ... NP_PACK>
 Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3, const NP_PACK& ...nps)
 {
@@ -96,7 +93,6 @@ Mesh_optimization_return_code exude_periodic_3_mesh_3(const NP_PACK& ...nps)
 {
     return exude_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }
-#endif //CGAL_NO_DEPRECATED_CODE
 
 // ------------------------------ odt optimizer --------------------------------
 
@@ -128,7 +124,6 @@ Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDom
         bool do_freeze=choose_parameter(get_parameter(np,internal_np::freeze),true);
         return odt_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iteration_number, convergence, freeze_bound, do_freeze);
     }
-#ifndef CGAL_NO_DEPRECATED_CODE
 template<typename C3T3, typename MeshDomain, typename... NP_Pack>
 Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const NP_Pack& ...nps)
 {
@@ -139,7 +134,6 @@ Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(const NP_PACK& ...n
 {
     return odt_optimize_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }
-#endif //CGAL_NO_DEPRECATED_CODE
 
 
 // ------------------------------- lloyd optimizer -----------------------------
@@ -171,7 +165,6 @@ Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshD
         bool do_freeze = choose_parameter(get_parameter(np,internal_np::freeze),true);
         return lloyd_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iterations, convergence_ratio, freeze_bound, do_freeze);
     }
-#ifndef CGAL_NO_DEPRECATED_CODE
 template<typename C3T3, typename MeshDomain,typename ... NP_PACK>
 Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,MeshDomain& domain, const NP_PACK& ...nps)
 {
@@ -182,7 +175,6 @@ Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(const NP_PACK& ..
 {
     return lloyd_optimize_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }
-#endif //CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 
