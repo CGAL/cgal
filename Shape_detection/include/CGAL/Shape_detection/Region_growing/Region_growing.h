@@ -232,6 +232,12 @@ namespace Shape_detection {
       \tparam ItemOutputIterator
       a model of `OutputIterator` whose value type is `Item`
 
+      \tparam InputRange
+        a model of `ConstRange
+
+      \param input_range
+      a range of input items for region growing
+
       \param output
       an iterator of type `PrimitiveAndRegionOutputIterator`.
 
