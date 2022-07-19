@@ -32,8 +32,8 @@
 
 namespace CGAL {
 
-// This class is responsible to deal with CGAL data structures,
-// filling mesh, and handling buffers.
+// This class is responsible for dealing with available CGAL data structures and
+// handling buffers.
 template <typename BufferType = float> class GraphicBuffer {
 
 public:
@@ -172,6 +172,39 @@ public:
       return m_buffer_for_colored_faces.add_point_in_face(kp, p_normal);
     }
     return false;
+  }
+
+  bool is_a_face_started() const {
+    return m_buffer_for_mono_faces.is_a_face_started() ||
+           m_buffer_for_colored_faces.is_a_face_started();
+  }
+
+  void face_begin() {
+    if (is_a_face_started()) {
+      std::cerr
+          << "You cannot start a new face before to finish the previous one."
+          << std::endl;
+    } else {
+      m_buffer_for_mono_faces.face_begin();
+    }
+  }
+
+  void face_begin(const CGAL::IO::Color &acolor) {
+    if (is_a_face_started()) {
+      std::cerr
+          << "You cannot start a new face before to finish the previous one."
+          << std::endl;
+    } else {
+      m_buffer_for_colored_faces.face_begin(acolor);
+    }
+  }
+
+  void face_end() {
+    if (m_buffer_for_mono_faces.is_a_face_started()) {
+      m_buffer_for_mono_faces.face_end();
+    } else if (m_buffer_for_colored_faces.is_a_face_started()) {
+      return m_buffer_for_colored_faces.face_end();
+    }
   }
 
 protected:
