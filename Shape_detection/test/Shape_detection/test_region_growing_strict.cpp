@@ -134,12 +134,13 @@ bool test_lines_segment_set_2() {
   using Segment_2 = typename Kernel::Segment_2;
 
   using Segment_range = std::vector<Segment_2>;
-  using Segment_map = CGAL::Identity_property_map<Segment_2>;
+  using Item = typename Segment_range::const_iterator;
+
+  using Segment_map = CGAL::Dereference_property_map<const Segment_2, Item>;
 
   using Region_type = CGAL::Shape_detection::
-    Segment_set::Least_squares_line_fit_region<Kernel, typename Segment_range::const_iterator, Segment_map>;
+    Segment_set::Least_squares_line_fit_region<Kernel, Item, Segment_map>;
 
-  using Item = typename Region_type::Item;
 
   const Segment_range segments = {
     Segment_2(Point_2(0.1, 0.0), Point_2(0.5, 0.0)),
@@ -189,12 +190,12 @@ bool test_lines_segment_set_2_sorting() {
   using Segment_2 = typename Kernel::Segment_2;
 
   using Segment_range = std::vector<Segment_2>;
-  using Segment_map = CGAL::Identity_property_map<const Segment_2>;
+  using Item = typename Segment_range::const_iterator;
+
+  using Segment_map = CGAL::Dereference_property_map<const Segment_2, Item>;
 
   using Region_type = CGAL::Shape_detection::
-    Segment_set::Least_squares_line_fit_region<Kernel, typename Segment_range::const_iterator, Segment_map>;
-
-  using Item = typename Region_type::Item;
+    Segment_set::Least_squares_line_fit_region<Kernel, Item, Segment_map>;
 
   const Segment_range segments = {
     Segment_2(Point_2(0.1, 0.0), Point_2(0.5, 0.0)),

@@ -168,20 +168,20 @@ struct Input_iterator_property_map{
 /// over `T` elements) to the `T` object.
 ///
 /// \cgalModels `LvaluePropertyMap`
-template <typename T>
+template <typename T, typename Iter = T*>
 struct Dereference_property_map
-  : public boost::put_get_helper<T&, Dereference_property_map<T> >
+  : public boost::put_get_helper<T&, Dereference_property_map<T, Iter> >
 {
-  typedef T* key_type; ///< typedef to 'T*'
-  typedef T value_type; ///< typedef to 'T'
+  typedef Iter key_type; ///< typedef to 'T*'
+  typedef std::remove_const_t<T> value_type; ///< typedef to 'T'
   typedef T& reference; ///< typedef to 'T&'
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
 
   /// Access a property map element.
   ///
   /// @tparam Iter Type convertible to `key_type`.
-  template <class Iter>
-  value_type& operator[](Iter it) const { return *it; }
+  template <class Iter_> // template kept for backward compatibility
+  reference operator[](Iter_ it) const { return *it; }
 };
 
 /// Free function to create a `Dereference_property_map` property map.

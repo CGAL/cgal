@@ -31,7 +31,7 @@ namespace Polyline {
     \ingroup PkgShapeDetectionRGOnPolyline
 
     \brief Region type based on the quality of the least squares line
-    fit applied to polyline vertices.
+    fit applied to the vertices of a polyline.
 
     This class fits a line, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
     to chunks of polyline vertices and controls the quality of this fit.

@@ -202,7 +202,7 @@ namespace Segment_set {
         m_neighbor_query(item, neighbors);
         neighbors.push_back(item);
 
-        const auto& segment = get(m_segment_map, internal::conditional_deref<Item, typename Segment_map::key_type>()(item));
+        const auto& segment = get(m_segment_map, item);
         const auto& source = segment.source();
         const auto& target = segment.target();
         if (source == target)

@@ -236,7 +236,7 @@ namespace Segment_set {
       const Item query,
       const Region&) const {
 
-      const Segment& query_segment = get(m_segment_map, internal::conditional_deref<Item, typename Segment_map::key_type>()(query));
+      const Segment& query_segment = get(m_segment_map, query);
       const Point& query_source = query_segment.source();
       const Point& query_target = query_segment.target();
       const Vector query_direction(query_source, query_target);
@@ -294,7 +294,7 @@ namespace Segment_set {
 
         // The best fit line will be a line obtained from this segment
         // with the same direction.
-        const Segment& segment = get(m_segment_map, internal::conditional_deref<Item, typename Segment_map::key_type>()(item));
+        const Segment& segment = get(m_segment_map, item);
         const Point& source = segment.source();
         const Point& target = segment.target();
         if (source == target) return false;
