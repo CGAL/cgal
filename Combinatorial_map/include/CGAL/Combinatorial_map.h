@@ -209,7 +209,7 @@ namespace CGAL {
 
     /** Copy the given combinatorial map 'amap' into *this.
      *  Note that both CMap can have different dimensions and/or non void attributes.
-     *  Here CMap2 is necessarily non const; while Dart_descriptor_2 can be a const or non const handle.
+     *  Here CMap2 is necessarily non const; while Dart_descriptor_2 can be a const or non const descriptor.
      *  This is the "generic" method, called by the different variants below.
      *  Marks reserved and automatic attributes management are not updated.
      *  @param amap the combinatorial map to copy.
@@ -750,7 +750,7 @@ namespace CGAL {
     }
 
     /** Return the highest dimension for which dh is not free.
-     * @param dh a dart handle
+     * @param dh a dart descriptor
      * @return the dimension d such that dh is not d-free but k-free for
      *         all k>d. -1 if the dart is free for all d in {0..n}
      */
@@ -763,7 +763,7 @@ namespace CGAL {
 
     /** Return a dart belonging to the same edge and to the second vertex
      * of the current edge (null_descriptor if such a dart does not exist).
-     * @return An handle to the opposite dart.
+     * @return An descriptor to the opposite dart.
      */
     Dart_descriptor opposite(Dart_descriptor dh)
     {
@@ -781,7 +781,7 @@ namespace CGAL {
     /** Return a dart incident to the other extremity of the current edge,
      *  but contrary to opposite, non necessary to the same edge
      *  (null_descriptor if such a dart does not exist).
-     * @return An handle to the opposite dart.
+     * @return An descriptor to the opposite dart.
      */
     Dart_descriptor other_extremity(Dart_descriptor dh)
     {
@@ -796,7 +796,7 @@ namespace CGAL {
       return null_descriptor;
     }
 
-    // Set the handle on the i th attribute
+    // Set the descriptor on the i th attribute
     // Restricted version which do not use delete attributes when their ref
     // counting become null, nor that update the dart of attribute.
     template<unsigned int i>
@@ -821,7 +821,7 @@ namespace CGAL {
       }
     }
 
-    // Set the handle on the i th attribute
+    // Set the descriptor on the i th attribute
     template<unsigned int i>
     void set_dart_attribute(Dart_descriptor dh,
                             typename Attribute_descriptor<i>::type ah)
@@ -850,7 +850,7 @@ namespace CGAL {
     }
 
   protected:
-    /// Marks can be modified even for const handle; otherwise it is not
+    /// Marks can be modified even for const descriptor; otherwise it is not
     /// possible to iterate through const combinatorial maps.
 
     // Initialize a given dart: all beta to null_dart_descriptor and all
@@ -1580,7 +1580,7 @@ namespace CGAL {
     }
 
     /// Create a new attribute.
-    /// @return a handle on the new attribute.
+    /// @return a descriptor on the new attribute.
     template<unsigned int i, typename ...Args>
     typename Attribute_descriptor<i>::type create_attribute(const Args&... args)
     {
@@ -1598,7 +1598,7 @@ namespace CGAL {
     }
 
     /// Erase an attribute.
-    /// @param h a handle to the attribute to erase.
+    /// @param h a descriptor to the attribute to erase.
     template<unsigned int i>
     void erase_attribute(typename Attribute_descriptor<i>::type h)
     {
@@ -2575,7 +2575,7 @@ namespace CGAL {
     /** Reverse the orientation (swap beta 0 & 1 links) of the connected
      * component containing the given dart.
      * A valid map after this operation remains valid.
-     * @param adart handle to a dart
+     * @param adart descriptor to a dart
      * @return none
      */
     void reverse_orientation_connected_component (Dart_descriptor adart,
@@ -3727,8 +3727,8 @@ namespace CGAL {
 
     /** Create an edge given 2 Attribute_descriptor<0>.
      * Note that this function can be used only if 0-attributes are non void
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
+     * @param h0 the first vertex descriptor.
+     * @param h1 the second vertex descriptor.
      * if closed==true, the edge has no 2-free dart.
      * (note that for CMap there is no differente between true and false, but
      *  this is not the case for GMap)
@@ -3790,9 +3790,9 @@ namespace CGAL {
     }
 
     /** Create a triangle given 3 Attribute_descriptor<0>.
-     * @param h0 the first handle.
-     * @param h1 the second handle.
-     * @param h2 the third handle.
+     * @param h0 the first descriptor.
+     * @param h1 the second descriptor.
+     * @param h2 the third descriptor.
      * Note that this function can be used only if 0-attributes are non void
      * @return the dart of the new triangle incident to h0 and to edge h0h1.
      */
@@ -3810,10 +3810,10 @@ namespace CGAL {
     }
 
     /** Create a quadrangle given 4 Vertex_attribute_descriptor.
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
-     * @param h2 the third vertex handle.
-     * @param h3 the fourth vertex handle.
+     * @param h0 the first vertex descriptor.
+     * @param h1 the second vertex descriptor.
+     * @param h2 the third vertex descriptor.
+     * @param h3 the fourth vertex descriptor.
      * Note that this function can be used only if 0-attributes are non void
      * @return the dart of the new quadrilateral incident to h0 and to edge h0h1.
      */

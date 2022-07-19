@@ -335,7 +335,7 @@ struct Init_id;
     { mdart.for_compact_container(p); }
 
   private:
-    /// The dart handle associated with the cell.
+    /// The dart descriptor associated with the cell.
     Dart_descriptor mdart;
 
     /// Reference counting: the number of darts linked to this cell.

@@ -66,8 +66,8 @@ namespace CGAL {
 
   /** Definition of nD dart without information.
    * The_dart class describes an nD dart (basic element of a combinatorial or generalized map).
-   * A dart is composed with handle towards its neighbors,
-   * a bitset containing Boolean marks, and handle towards enabled attributes.
+   * A dart is composed with descriptor towards its neighbors,
+   * a bitset containing Boolean marks, and descriptor towards enabled attributes.
    * n is the dimension of the space (2 for 2D, 3 for 3D...)
    * Refs the ref class
    */
@@ -222,7 +222,7 @@ namespace CGAL {
      void set_marks(const std::bitset<NB_MARKS>& amarks) const
     { mmarks = amarks; }
 
-    /// @return a handle on the i-attribute
+    /// @return a descriptor on the i-attribute
     template<int i>
     typename Attribute_descriptor<i>::type attribute()
     {

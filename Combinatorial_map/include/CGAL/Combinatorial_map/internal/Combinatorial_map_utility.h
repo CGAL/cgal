@@ -532,7 +532,7 @@ namespace CGAL
       struct Attribute_type<d,0>
       { typedef Void type; };
 
-      // Helper class allowing to retreive the d-cell-handle attribute
+      // Helper class allowing to retreive the d-cell-descriptor attribute
       template<int d, class Type=typename Attribute_type<d>::type,
                typename WithIndex=typename CMap::Use_index>
       struct Attribute_descriptor
@@ -549,7 +549,7 @@ namespace CGAL
       struct Attribute_descriptor<d, CGAL::Void, CGAL::Tag_true>
       { typedef typename CMap::Dart_index type; };
 
-      // Helper class allowing to retreive the d-cell-const handle attribute
+      // Helper class allowing to retreive the d-cell-const descriptor attribute
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_const_descriptor
       {
@@ -573,7 +573,7 @@ namespace CGAL
       struct Attribute_iterator<d, CGAL::Void>
       { typedef CGAL::Void* type; };
 
-      // Helper class allowing to retreive the d-cell-const handle attribute
+      // Helper class allowing to retreive the d-cell-const descriptor attribute
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_const_iterator
       {
