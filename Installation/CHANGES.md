@@ -4,7 +4,7 @@ Release History
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
-Release date: Dec 2022
+Release date: December 2022
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.6/Manual/packages.html#PkgPolygonMeshProcessing)
 
@@ -15,8 +15,16 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 -   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshess, and makes the data structure independent from the tetrahedral mesh generation package.
 
-### [2D Arrangements](https://doc.cgal.org/5.5/Manual/packages.html#PkgArrangementOnSurface2)
+### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed some code that handles geodesic-curves on spheres that compare x- and y-coordinates on the boundary of the parameter space. It mainly effected the naive point-location.
+
+### [2D Convex Hulls](https://doc.cgal.org/5.6/Manual/packages.html#PkgConvexHull2)
+
+-   **Breaking change**: The concept `ConvexHullTraits_2` no longer requires the functor
+    `Less_signed_distance_to_line_2`, but requires the functor `Compare_signed_distance_to_line_2` instead.
+-   The long-deprecated classes `Convex_hull_projective_xy_traits_2`, `Convex_hull_projective_xz_traits_2`,
+    and `Convex_hull_projective_yz_traits_2` have been removed. Users should use `Projection_traits_xy_3`,
+    `Projection_traits_xz_3`, and `Projection_traits_yz_3` instead.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
