@@ -36,13 +36,13 @@ namespace Polygon_mesh {
 
     \tparam VertexPointMap
     a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
-    value type is `Kernel::Point_3`
+    value type is `Point_3` from a \cgal %Kernel
 
     \cgalModels `NeighborQuery`
   */
   template<
     typename PolygonMesh,
-    typename VertexPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type
+    typename VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
     >
   class Polyline_graph {
 
@@ -66,6 +66,9 @@ namespace Polygon_mesh {
     /// \name Types
     /// @{
 
+    /// Item type.
+    using Item = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+  
     #ifdef DOXYGEN_RUNNING
       /*!
         a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
@@ -78,20 +81,14 @@ namespace Polygon_mesh {
         and value type is `Kernel::Segment_3`.
       */
       typedef unspecified_type Segment_map;
-    #endif
-
-    /// Item type.
-    using Item = edge_descriptor;
-
+    #else
     /// Segment_range type.
     using Segment_range = std::vector<edge_descriptor>;
 
-    /// @}
-
-    /// \cond SKIP_IN_MANUAL
     using Segment_map = Segment_from_edge_descriptor_map<PolygonMesh, VertexPointMap>;
+    #endif
 
-    /// \endcond
+    /// @}
 
   public:
     /// \name Initialization

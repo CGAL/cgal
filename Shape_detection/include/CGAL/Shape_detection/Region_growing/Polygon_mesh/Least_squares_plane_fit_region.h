@@ -40,10 +40,6 @@ namespace Polygon_mesh {
     \tparam PolygonMesh
     a model of `FaceListGraph`
 
-    \tparam FaceRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a polygon mesh
-
     \tparam VertexToPointMap
     a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
@@ -53,8 +49,7 @@ namespace Polygon_mesh {
   template<
   typename GeomTraits,
   typename PolygonMesh,
-  typename FaceRange = typename PolygonMesh::Face_range,
-  typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
+  typename VertexToPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
   class Least_squares_plane_fit_region {
 
   public:
@@ -63,7 +58,6 @@ namespace Polygon_mesh {
 
     /// \cond SKIP_IN_MANUAL
     using Face_graph = PolygonMesh;
-    using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
 
     using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
@@ -156,7 +150,6 @@ namespace Polygon_mesh {
       const PolygonMesh& pmesh,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_face_graph(pmesh),
-    m_face_range(faces(m_face_graph)),
     m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
@@ -166,7 +159,7 @@ namespace Polygon_mesh {
     m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
     m_cross_product_3(m_traits.construct_cross_product_vector_3_object()) {
 
-      CGAL_precondition(m_face_range.size() > 0);
+      CGAL_precondition(faces(m_face_graph).size() > 0);
       const FT max_distance = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
       CGAL_precondition(max_distance >= FT(0));
@@ -354,7 +347,6 @@ namespace Polygon_mesh {
 
   private:
     const Face_graph& m_face_graph;
-    const Face_range m_face_range;
     const Vertex_to_point_map m_vertex_to_point_map;
     const GeomTraits m_traits;
 

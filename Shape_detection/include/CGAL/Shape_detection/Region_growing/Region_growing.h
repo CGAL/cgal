@@ -255,6 +255,8 @@ namespace Shape_detection {
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
         put(m_region_map, internal::conditional_deref<typename InputRange::const_iterator, typename Region_map::key_type>()(it), std::size_t(-1));
       }
+      // TODO if we want to allow subranges while NeighborQuery operates on the full range 
+      // (like for faces in a PolygonMesh) we should fill a non-visited map rather than a visited map
       m_visited_map.clear();
     }
     /// \endcond

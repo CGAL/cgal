@@ -40,10 +40,6 @@ namespace Polygon_mesh {
     \tparam NeighborQuery
     a model of `NeighborQuery`
 
-    \tparam FaceRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a polygon mesh
-
     \tparam VertexToPointMap
     a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
@@ -52,8 +48,7 @@ namespace Polygon_mesh {
   typename GeomTraits,
   typename PolygonMesh,
   typename NeighborQuery,
-  typename FaceRange = typename PolygonMesh::Face_range,
-  typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
+  typename VertexToPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
   class Least_squares_plane_fit_sorting {
 
   public:
@@ -63,7 +58,6 @@ namespace Polygon_mesh {
     /// \cond SKIP_IN_MANUAL
     using Face_graph = PolygonMesh;
     using Neighbor_query = NeighborQuery;
-    using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
     /// \endcond
 
@@ -121,20 +115,19 @@ namespace Polygon_mesh {
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_face_graph(pmesh),
     m_neighbor_query(neighbor_query),
-    m_face_range(faces(m_face_graph)),
     m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::geom_traits), GeomTraits())) {
 
-      CGAL_precondition(m_face_range.size() > 0);
+      CGAL_precondition(faces(pmesh).size() > 0);
 
-      m_ordered.resize(m_face_range.size());
+      m_ordered.resize(faces(pmesh).size());
 
       std::size_t index = 0;
-      for (auto it = m_face_range.begin(); it != m_face_range.end(); it++)
-        m_ordered[index++] = *it;
-      m_scores.resize(m_face_range.size());
+      for (Item item : faces(pmesh))
+        m_ordered[index++] = item;
+      m_scores.resize(m_ordered.size());
     }
 
     /// @}
@@ -150,12 +143,12 @@ namespace Polygon_mesh {
       CGAL_precondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
 
-      std::vector<std::size_t> order(m_face_range.size());
+      std::vector<std::size_t> order(m_ordered.size());
       std::iota(order.begin(), order.end(), 0);
       std::sort(order.begin(), order.end(), cmp);
 
-      std::vector<Item> tmp(m_face_range.size());
-      for (std::size_t i = 0; i < m_face_range.size(); i++)
+      std::vector<Item> tmp(m_ordered.size());
+      for (std::size_t i = 0; i < m_ordered.size(); i++)
         tmp[i] = m_ordered[order[i]];
 
       m_ordered.swap(tmp);
@@ -177,7 +170,6 @@ namespace Polygon_mesh {
   private:
     const Face_graph& m_face_graph;
     Neighbor_query& m_neighbor_query;
-    const Face_range m_face_range;
     const Vertex_to_point_map m_vertex_to_point_map;
     const GeomTraits m_traits;
     Seed_range m_ordered;
@@ -187,10 +179,10 @@ namespace Polygon_mesh {
 
       std::vector<Item> neighbors;
       std::size_t idx = 0;
-      for (auto it = m_face_range.begin(); it != m_face_range.end(); it++) {
+      for (Item item : m_ordered) {
         neighbors.clear();
-        m_neighbor_query(*it, neighbors);
-        neighbors.push_back(*it);
+        m_neighbor_query(item, neighbors);
+        neighbors.push_back(item);
         m_scores[idx++] = internal::create_plane_from_faces(
           m_face_graph, neighbors, m_vertex_to_point_map, m_traits).second;
       }

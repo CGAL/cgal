@@ -260,8 +260,8 @@ OutputIterator region_growing_planes_polygon_mesh(
   using Face_range = Iterator_range<Face_iterator>;
 
   using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<PolygonMesh>;
-  using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Kernel, PolygonMesh, Face_range>;
-  using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, PolygonMesh, Neighbor_query, Face_range>;
+  using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Kernel, PolygonMesh>;
+  using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, PolygonMesh, Neighbor_query>;
   using Region_growing = Region_growing<Neighbor_query, Region_type>;
 
   Neighbor_query neighbor_query(polygon_mesh);

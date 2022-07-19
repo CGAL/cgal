@@ -40,19 +40,12 @@ namespace Polygon_mesh {
 
     \cgalModels `NeighborQuery`
   */
-  template<typename PolygonMesh
-#ifndef CGAL_NO_DEPRECATED_CODE
-  , typename FaceRange = void
-#endif
-  >
+  template<typename PolygonMesh>
   class One_ring_neighbor_query
   {
-  public:
-    /// \cond SKIP_IN_MANUAL
     using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
     using Face_graph = PolygonMesh;
-    /// \endcond
-
+  public:
     /// Item type.
     using Item = typename boost::graph_traits<PolygonMesh>::face_descriptor;
     using Region = std::vector<Item>;
@@ -68,9 +61,9 @@ namespace Polygon_mesh {
 
       \pre `faces(pmesh).size() > 0`
     */
-    One_ring_neighbor_query(
-      const PolygonMesh& pmesh) :
-    m_face_graph(pmesh) {}
+    One_ring_neighbor_query(const PolygonMesh& pmesh)
+      : m_face_graph(pmesh)
+    {}
 
     /// @}
 

@@ -31,8 +31,8 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   using Face_range = typename CGAL::Iterator_range<typename boost::graph_traits<Polyhedron>::face_iterator>;
 
   using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polyhedron>;
-  using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polyhedron, Face_range>;
-  using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query, Face_range>;
+  using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polyhedron>;
+  using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query>;
   using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
   // Default parameter values.
