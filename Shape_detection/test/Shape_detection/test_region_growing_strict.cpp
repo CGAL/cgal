@@ -23,7 +23,6 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
-#include <CGAL/Shape_detection/Region_growing/Polyline.h>
 #include <CGAL/Shape_detection/Region_growing/Segment_set.h>
 #include <CGAL/Shape_detection/Region_growing/free_functions.h>
 
@@ -57,73 +56,6 @@ bool test_lines_points_with_normals() {
   assert(regions[0].second.size() == 3);
   assert(regions[1].second.size() == 3);
   assert(regions[2].second.size() == 3);
-  return true;
-}
-
-template<class Kernel>
-bool test_lines_polylines_2() {
-
-  using Point_2 = typename Kernel::Point_2;
-  using Item = typename std::vector<Point_2>::const_iterator;
-  const std::vector<Point_2> polyline_2 = {
-    Point_2(0.10, 0.00), Point_2(0.50, 0.00), Point_2(0.90, 0.00),
-    Point_2(0.13, 0.00), Point_2(0.17, 0.00), Point_2(0.21, 0.00),
-    Point_2(0.21, 2.10), Point_2(0.21, 2.50), Point_2(0.21, 2.90),
-    Point_2(0.21, 2.13), Point_2(0.21, 2.17), Point_2(0.21, 2.21)
-  };
-
-  assert(polyline_2.size() == 12);
-  std::vector< std::pair< typename Kernel::Line_2, std::vector<Item> > > regions;
-  CGAL::Shape_detection::region_growing_polylines(
-    polyline_2, std::back_inserter(regions));
-  assert(regions.size() == 2);
-  assert(regions[0].second.size() == 6);
-  assert(regions[1].second.size() == 6);
-
-  return true;
-}
-
-template<class Kernel>
-bool test_lines_polylines_3() {
-
-  using Point_3 = typename Kernel::Point_3;
-  using Item = typename std::vector<Point_3>::const_iterator;
-  const std::vector<Point_3> polyline_3 = {
-    Point_3(0.10, 0.0, 1.0), Point_3(0.50, 0.0, 1.0), Point_3(0.90, 0.0, 1.0),
-    Point_3(0.13, 0.0, 1.0), Point_3(0.17, 0.0, 1.0), Point_3(0.21, 0.0, 1.0)
-  };
-
-  assert(polyline_3.size() == 6);
-  std::vector< std::pair< typename Kernel::Line_3, std::vector<Item> > > regions;
-  CGAL::Shape_detection::region_growing_polylines(
-    polyline_3, std::back_inserter(regions));
-  assert(regions.size() == 1);
-  assert(regions[0].second.size() == 6);
-  return true;
-}
-
-template<class Kernel>
-bool test_polylines_equal_points() {
-
-  using Point_2 = typename Kernel::Point_2;
-  using Item = typename std::vector<Point_2>::const_iterator;
-  const std::vector<Point_2> polyline_2 = {
-    Point_2(0, 0), Point_2(1, 0), Point_2(2, 0), Point_2(3, 0),
-    Point_2(7, 1), Point_2(8, 1), Point_2(9, 1), Point_2(10, 1),
-    Point_2(14, 2), Point_2(15, 2), Point_2(16, 2), Point_2(17, 2),
-    Point_2(19, 3), Point_2(20, 3), Point_2(21, 3), Point_2(22, 3)
-  };
-
-  assert(polyline_2.size() == 16);
-  std::vector< std::pair< typename Kernel::Line_2, std::vector<Item> > > regions;
-  CGAL::Shape_detection::region_growing_polylines(
-    polyline_2, std::back_inserter(regions), CGAL::parameters::maximum_distance(0.01));
-  assert(regions.size() == 4);
-
-  assert(regions[0].second.size() == 4);
-  assert(regions[1].second.size() == 4);
-  assert(regions[2].second.size() == 4);
-  assert(regions[3].second.size() == 4);
   return true;
 }
 
@@ -323,9 +255,6 @@ bool test_lines_segment_set_3() {
 template<class Kernel>
 bool test_region_growing_lines() {
   assert(test_lines_points_with_normals<Kernel>());
-  assert(test_lines_polylines_2<Kernel>());
-  assert(test_lines_polylines_3<Kernel>());
-  assert(test_polylines_equal_points<Kernel>());
   assert(test_lines_segment_set_2<Kernel>());
   assert(test_lines_segment_set_2_sorting<Kernel>());
   assert(test_lines_segment_set_3<Kernel>());

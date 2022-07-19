@@ -15,7 +15,6 @@ A region is represented by a set items, which are included in this region.
 - `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region`
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`
-- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region`
 */
 class RegionType {
 

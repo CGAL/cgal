@@ -24,24 +24,6 @@ namespace Shape_detection {
 namespace internal {
 
   template<typename GeomTraits>
-  struct Polyline_graph_traits_2 {
-    using Segment = typename GeomTraits::Segment_2;
-    using Construct_segment = typename GeomTraits::Construct_segment_2;
-    decltype(auto) construct_segment_object() const {
-      return GeomTraits().construct_segment_2_object();
-    }
-  };
-
-  template<typename GeomTraits>
-  struct Polyline_graph_traits_3 {
-    using Segment = typename GeomTraits::Segment_3;
-    using Construct_segment = typename GeomTraits::Construct_segment_3;
-    decltype(auto) construct_segment_object() const {
-      return GeomTraits().construct_segment_3_object();
-    }
-  };
-
-  template<typename GeomTraits>
   struct Region_growing_traits_2 {
     using Point = typename GeomTraits::Point_2;
     using Segment = typename GeomTraits::Segment_2;

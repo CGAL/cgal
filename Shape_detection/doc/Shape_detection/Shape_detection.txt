@@ -239,7 +239,6 @@ Together with the generic algorithm's implementation `CGAL::Shape_detection::Reg
 
 - Line and circle detection in a \ref Shape_detection_RegionGrowingPoints "2D point set";
 - Line detection in a \ref Shape_detection_RegionGrowingSegments "2D/3D segment set";
-- Line detection on a \ref Shape_detection_RegionGrowingPolyline "2D/3D polyline";
 - Plane, sphere, and cylinder detection in a \ref Shape_detection_RegionGrowingPoints "3D point set";
 - Plane detection on a \ref Shape_detection_RegionGrowingMesh "polygon mesh".
 
@@ -616,33 +615,6 @@ More details are explained in
 Section \ref Shape_detection_RegionGrowingFramework_conditions "Framework Regions".
 The right choice of these parameters is important for producing the good results.
 
-
-\subsection Shape_detection_RegionGrowingPolyline Polyline
-
-\cgalFigureBegin{Region_growing_on_polyline, Region_growing/region_growing_on_polyline.png}
-A 3D polyline depicted with one color per detected line.
-\cgalFigureEnd
-
-If one wants to detect lines along a 2D or 3D polyline, one can use the
-- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region` class that fits a 2D or 3D line
-to the chunks of polyline vertices, respectively, and controls the quality of this fit.
-
-As before, one can improve the quality of the region growing by using the class
-- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting` - the input vertices are sorted with respect
-to the quality of the least squares line fit applied to the neighbors of each vertex.
-
-
-\subsubsection Shape_detection_RegionGrowingPolyline_parameters Parameters
-
-The line fitting class above depends on three parameters:
-
-- `maximum_distance` - the maximum distance from the polyline vertex to a line;
-- `maximum_angle` - the maximum angle in degrees between the polyline edge direction and the direction of a line;
-- `minimum_region_size` - the minimum number of vertices a region must have.
-
-As already mentioned, the right choice of these parameters is important for producing the good results.
-
-
 \section Shape_detection_Comparison Comparison
 
 The Efficient RANSAC algorithm is very quick, however, since it is not deterministic, some small shapes might be missed in the detection process.
@@ -699,7 +671,7 @@ with the help of Clément Jamin and under the supervision of Pierre Alliez.
 
 The region growing algorithm on a 3D point set was first implemented by Simon Giraudot based on the prototype version developed by Florent Lafarge
 and then generalized to arbitrary items including versions for a 2D point set, a 3D point set, and a polygon mesh by Thien Hoang during the
-Google Summer of Code 2018 under the supervision of Dmitry Anisimov. The versions for segments and polylines were added later by Dmitry Anisimov.
+Google Summer of Code 2018 under the supervision of Dmitry Anisimov. The version for segments was added later by Dmitry Anisimov.
 
 
 \section Shape_detection_Acknowledgments Acknowledgments

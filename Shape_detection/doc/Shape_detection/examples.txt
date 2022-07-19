@@ -13,5 +13,4 @@
 \example Shape_detection/region_growing_cylinders_on_point_set_3.cpp
 \example Shape_detection/region_growing_planes_on_polygon_mesh.cpp
 \example Shape_detection/region_growing_lines_on_segment_set.cpp
-\example Shape_detection/region_growing_lines_on_polyline.cpp
 */

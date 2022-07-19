@@ -22,7 +22,6 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("region_growing_cylinders_on_point_set_3.cpp")
   create_single_source_cgal_program("region_growing_planes_on_polygon_mesh.cpp")
   create_single_source_cgal_program("region_growing_lines_on_segment_set.cpp")
-  create_single_source_cgal_program("region_growing_lines_on_polyline.cpp")
 
   foreach(
     target
@@ -35,8 +34,7 @@ if(TARGET CGAL::Eigen3_support)
     region_growing_spheres_on_point_set_3
     region_growing_cylinders_on_point_set_3
     region_growing_planes_on_polygon_mesh
-    region_growing_lines_on_segment_set
-    region_growing_lines_on_polyline)
+    region_growing_lines_on_segment_set)
 
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()

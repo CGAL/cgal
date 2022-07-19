@@ -29,12 +29,6 @@ for shape detection in a segment set.
 Models that can be used with the `CGAL::Shape_detection::Region_growing`
 for shape detection on a polygon mesh.
 
-\defgroup PkgShapeDetectionRGOnPolyline Polyline
-\ingroup PkgShapeDetectionRG
-
-Models that can be used with the `CGAL::Shape_detection::Region_growing`
-for shape detection on a polyline.
-
 \addtogroup PkgShapeDetectionRG
 
 \defgroup PkgShapeDetectionRANSAC Efficient RANSAC
@@ -141,10 +135,5 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 - `CGAL::Shape_detection::Polygon_mesh::Polyline_graph<GeomTraits, PolygonMesh, FaceRange, EdgeRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, FaceRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, %NeighborQuery, FaceRange, VertexToPointMap>`
-
-### Polyline ###
-- `CGAL::Shape_detection::Polyline::One_ring_neighbor_query<GeomTraits, InputRange>`
-- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap>`
-- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
 
 */
