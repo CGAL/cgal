@@ -37,6 +37,8 @@ namespace CGAL {
 template <typename BufferType = float> class GraphicBuffer {
 
 public:
+  typedef Local_kernel::Point_3 Local_point;
+
   GraphicBuffer(std::vector<BufferType> (&pos)[20], CGAL::Bbox_3 &bbox)
       : m_buffer_for_mono_points(&pos[POS_MONO_POINTS], nullptr, &bbox, nullptr,
                                  nullptr, nullptr),
@@ -62,6 +64,35 @@ public:
                                    &pos[COLOR_FACES],
                                    &pos[FLAT_NORMAL_COLORED_FACES],
                                    &pos[SMOOTH_NORMAL_COLORED_FACES]) {}
+
+  GraphicBuffer()
+      : m_buffer_for_mono_points(&arrays[POS_MONO_POINTS], nullptr,
+                                 &m_bounding_box, nullptr, nullptr, nullptr),
+        m_buffer_for_colored_points(&arrays[POS_COLORED_POINTS], nullptr,
+                                    &m_bounding_box, &arrays[COLOR_POINTS],
+                                    nullptr, nullptr),
+        m_buffer_for_mono_segments(&arrays[POS_MONO_SEGMENTS], nullptr,
+                                   &m_bounding_box, nullptr, nullptr, nullptr),
+        m_buffer_for_colored_segments(&arrays[POS_COLORED_SEGMENTS], nullptr,
+                                      &m_bounding_box, &arrays[COLOR_SEGMENTS],
+                                      nullptr, nullptr),
+        m_buffer_for_mono_rays(&arrays[POS_MONO_RAYS], nullptr, &m_bounding_box,
+                               nullptr, nullptr),
+        m_buffer_for_colored_rays(&arrays[POS_COLORED_RAYS], nullptr,
+                                  &m_bounding_box, &arrays[COLOR_RAYS], nullptr,
+                                  nullptr),
+        m_buffer_for_mono_lines(&arrays[POS_MONO_RAYS], nullptr,
+                                &m_bounding_box, nullptr, nullptr),
+        m_buffer_for_colored_lines(&arrays[POS_COLORED_LINES], nullptr,
+                                   &m_bounding_box, &arrays[COLOR_LINES],
+                                   nullptr, nullptr),
+        m_buffer_for_mono_faces(
+            &arrays[POS_MONO_FACES], nullptr, &m_bounding_box, nullptr,
+            &arrays[FLAT_NORMAL_MONO_FACES], &arrays[SMOOTH_NORMAL_MONO_FACES]),
+        m_buffer_for_colored_faces(&arrays[POS_COLORED_FACES], nullptr,
+                                   &m_bounding_box, &arrays[COLOR_FACES],
+                                   &arrays[FLAT_NORMAL_COLORED_FACES],
+                                   &arrays[SMOOTH_NORMAL_COLORED_FACES]) {}
 
   const Buffer_for_vao<BufferType> &get_buffer_for_mono_points() const {
     return m_buffer_for_mono_points;
@@ -105,6 +136,22 @@ public:
 
   const Buffer_for_vao<BufferType> &get_buffer_for_clipping_plane() const {
     return m_buffer_for_clipping_plane;
+  }
+
+  const CGAL::Bbox_3 &get_bounding_box() const {
+    return m_bounding_box;
+  }
+
+  std::vector<float>& get_array_of_index(int index) {
+    return arrays[index];
+  }
+
+  void update_bounding_box(CGAL::Bbox_3& box) {
+      m_bounding_box += box
+  }
+
+  void initiate_bounding_box(CGAL::Bbox_3 new_bounding_box) {
+    m_bounding_box = new_bounding_box;
   }
 
   template <typename KPoint> void add_point(const KPoint &p) {
@@ -207,6 +254,80 @@ public:
     }
   }
 
+  bool is_empty() const {
+    return (gBuffer.get_buffer_for_mono_points().is_empty() &&
+            gBuffer.get_buffer_for_colored_points().is_empty() &&
+            gBuffer.get_buffer_for_mono_segments().is_empty() &&
+            gBuffer.get_buffer_for_colored_segments().is_empty() &&
+            gBuffer.get_buffer_for_mono_rays().is_empty() &&
+            gBuffer.get_buffer_for_colored_rays().is_empty() &&
+            gBuffer.get_buffer_for_mono_lines().is_empty() &&
+            gBuffer.get_buffer_for_colored_lines().is_empty() &&
+            gBuffer.get_buffer_for_mono_faces().is_empty() &&
+            gBuffer.get_buffer_for_colored_faces().is_empty());
+  }
+
+  bool has_zero_x() const {
+    return gBuffer.get_buffer_for_mono_points().has_zero_x() &&
+           gBuffer.get_buffer_for_colored_points().has_zero_x() &&
+           gBuffer.get_buffer_for_mono_segments().has_zero_x() &&
+           gBuffer.get_buffer_for_colored_segments().has_zero_x() &&
+           gBuffer.get_buffer_for_mono_faces().has_zero_x() &&
+           gBuffer.get_buffer_for_colored_faces().has_zero_x() &&
+           gBuffer.get_buffer_for_mono_rays().has_zero_x() &&
+           gBuffer.get_buffer_for_colored_rays().has_zero_x() &&
+           gBuffer.get_buffer_for_mono_lines().has_zero_x() &&
+           gBuffer.get_buffer_for_colored_lines().has_zero_x();
+  }
+
+  bool has_zero_y() const {
+    return gBuffer.get_buffer_for_mono_points().has_zero_y() &&
+           gBuffer.get_buffer_for_colored_points().has_zero_y() &&
+           gBuffer.get_buffer_for_mono_segments().has_zero_y() &&
+           gBuffer.get_buffer_for_colored_segments().has_zero_y() &&
+           gBuffer.get_buffer_for_mono_faces().has_zero_y() &&
+           gBuffer.get_buffer_for_colored_faces().has_zero_y() &&
+           gBuffer.get_buffer_for_mono_rays().has_zero_y() &&
+           gBuffer.get_buffer_for_colored_rays().has_zero_y() &&
+           gBuffer.get_buffer_for_mono_lines().has_zero_y() &&
+           gBuffer.get_buffer_for_colored_lines().has_zero_y();
+  }
+
+  bool has_zero_z() const {
+    return gBuffer.get_buffer_for_mono_points().has_zero_z() &&
+           gBuffer.get_buffer_for_colored_points().has_zero_z() &&
+           gBuffer.get_buffer_for_mono_segments().has_zero_z() &&
+           gBuffer.get_buffer_for_colored_segments().has_zero_z() &&
+           gBuffer.get_buffer_for_mono_faces().has_zero_z() &&
+           gBuffer.get_buffer_for_colored_faces().has_zero_z() &&
+           gBuffer.get_buffer_for_mono_rays().has_zero_z() &&
+           gBuffer.get_buffer_for_colored_rays().has_zero_z() &&
+           gBuffer.get_buffer_for_mono_lines().has_zero_z() &&
+           gBuffer.get_buffer_for_colored_lines().has_zero_z();
+  }
+
+  template <typename KPoint>
+  static Local_point get_local_point(const KPoint &p) {
+    return internal::Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel,
+                                Local_kernel>::get_local_point(p);
+  }
+
+  template <typename KPoint>
+  void add_text(const KPoint &kp, const QString &txt) {
+    Local_point p = get_local_point(kp);
+    m_texts.push_back(std::make_tuple(p, txt));
+  }
+
+  template <typename KPoint> void add_text(const KPoint &kp, const char *txt) {
+    add_text(kp, QString(txt));
+  }
+
+  template <typename KPoint>
+  void add_text(const KPoint &kp, const std::string &txt) {
+    add_text(kp, txt.c_str());
+  }
+
+
 protected:
   // The following enum gives the indices of different elements of arrays
   // vectors.
@@ -251,6 +372,12 @@ protected:
   Buffer_for_vao<BufferType> m_buffer_for_mono_faces;
   Buffer_for_vao<BufferType> m_buffer_for_colored_faces;
   Buffer_for_vao<BufferType> m_buffer_for_clipping_plane;
+
+  std::vector<std::tuple<Local_point, QString>> m_texts;
+
+  std::vector<float> arrays[LAST_INDEX];
+
+  CGAL::Bbox_3 m_bounding_box;
 };
 
 } // namespace CGAL
