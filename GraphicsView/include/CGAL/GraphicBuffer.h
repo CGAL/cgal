@@ -13,6 +13,7 @@
 #define CGAL_GRAPHIC_BUFFER_H
 
 #include <CGAL/license/GraphicsView.h>
+// BUG: Warning - TODO?
 #include <QString>
 
 #include <iostream>
