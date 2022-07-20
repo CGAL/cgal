@@ -337,6 +337,7 @@ void add_in_graphic_buffer_lcc(GraphicBuffer<BufferType> &graphic_buffer,
   }
 }
 
+// TODO: Move to Basic_viewer_qt.h
 template <typename BufferType = float>
 void draw_buffer(GraphicBuffer<BufferType> &graphic_buffer) {
 
