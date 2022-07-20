@@ -205,7 +205,7 @@ public:
       { gbuffer.get_array_of_index(i).clear(); }
     }
 
-    m_bounding_box=CGAL::Bbox_3();
+    gbuffer.initiate_bounding_box(CGAL::Bbox_3());
     m_texts.clear();
   }
 
@@ -215,7 +215,10 @@ public:
   }
 
   const CGAL::Bbox_3& bounding_box() const
-  { return m_bounding_box; }
+  {
+    auto bounding_box = gbuffer.get_bounding_box();
+    return bounding_box;
+  }
 
   bool has_zero_x() const
   {
@@ -266,7 +269,7 @@ public:
     Local_point lp = get_local_point(p);
     Local_vector lv = get_local_vector(v);
     CGAL::Bbox_3 b = (lp + lv).bbox();
-    m_bounding_box += b;
+    gbuffer.update_bounding_box(b);
   }
 
   template <typename KPoint, typename KVector>
@@ -278,7 +281,7 @@ public:
     Local_vector lpv = get_local_vector(pv);
 
     CGAL::Bbox_3 b = lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox();
-    m_bounding_box += b;
+    gbuffer.update_bounding_box(b);
   }
 
   template <typename KPoint, typename KVector>
@@ -1644,6 +1647,7 @@ protected:
   QVector4D   m_ambient_color;
 
   bool m_are_buffers_initialized;
+  // TODO: deprecated, would remove!
   CGAL::Bbox_3 m_bounding_box;
 
   // CGAL::qglviewer::LocalConstraint constraint;
@@ -1713,6 +1717,7 @@ protected:
   bool clipping_plane_rendering = true; // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
   float clipping_plane_rendering_transparency = 0.5f; // to what extent the transparent part should be rendered;
 
+  // TODO: deprecated, would remove!
   std::vector<std::tuple<Local_point, QString> > m_texts;
 };
 
