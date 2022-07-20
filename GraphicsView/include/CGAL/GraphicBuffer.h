@@ -14,6 +14,11 @@
 
 #include <CGAL/license/GraphicsView.h>
 // BUG: Warning - TODO?
+/*
+#include errors detected. Please update your includePath. '
+Squiggles are disabled for this translation unit
+
+*/
 #include <QString>
 
 #include <iostream>
