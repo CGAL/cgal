@@ -12,8 +12,8 @@
 #ifndef CGAL_DRAW_LCC_H
 #define CGAL_DRAW_LCC_H
 
-#include <CGAL/GraphicBuffer.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/GraphicBuffer.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/Qt/init_ogl_context.h>
@@ -138,24 +138,22 @@ struct LCC_geom_utils<LCC, Local_kernel, 2> {
   }
 };
 
-// Specialization of draw function.
-#define CGAL_LCC_TYPE                                                          \
-  CGAL::Linear_cell_complex_base<d_, ambient_dim, Traits_, Items_, Alloc_,     \
-                                 Map, Refs, Storage_>
-
 // #define LCC  CGAL_LCC_TYPE                                
 
 // TODO?
-typedef typename LCC::Dart_const_handle Dart_const_handle;
-typedef typename LCC::Traits Kernel;
-typedef typename Kernel::Point Point;
-typedef typename Kernel::Vector Vector;
 
-template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
-void compute_face(Dart_const_handle dh, Dart_const_handle voldh, const LCC *lcc,
+
+template <typename BufferType = float, class LCC, class Local_kernel, class DrawingFunctorLCC>
+void compute_face(typename LCC::Dart_const_handle dh, typename LCC::Dart_const_handle voldh, const LCC *lcc,
                   bool m_nofaces, bool m_random_face_color,
                   const DrawingFunctorLCC &m_drawing_functor,
                   GraphicBuffer<BufferType> &graphic_buffer) {
+
+  typedef typename LCC::Dart_const_handle Dart_const_handle;
+  typedef typename LCC::Traits Kernel;
+  typedef typename Kernel::Point Point;
+  typedef typename Kernel::Vector Vector;
+
   if (m_nofaces || !m_drawing_functor.draw_face(*lcc, dh))
     return;
 
@@ -196,9 +194,13 @@ void compute_face(Dart_const_handle dh, Dart_const_handle voldh, const LCC *lcc,
 }
 
 template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
-void compute_edge(Dart_const_handle dh, const LCC *lcc,
+void compute_edge(typename LCC::Dart_const_handle dh, const LCC *lcc,
                   const DrawingFunctorLCC &m_drawing_functor,
                   GraphicBuffer<BufferType> &graphic_buffer) {
+  typedef typename LCC::Dart_const_handle Dart_const_handle;
+  typedef typename LCC::Traits Kernel;
+  typedef typename Kernel::Point Point;
+
   if (!m_drawing_functor.draw_edge(*lcc, dh))
     return;
 
@@ -215,7 +217,7 @@ void compute_edge(Dart_const_handle dh, const LCC *lcc,
 }
 
 template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
-void compute_vertex(Dart_const_handle dh, const LCC *lcc,
+void compute_vertex(typename LCC::Dart_const_handle dh, const LCC *lcc,
                     const DrawingFunctorLCC &m_drawing_functor,
                     GraphicBuffer<BufferType> &graphic_buffer) {
   if (!m_drawing_functor.draw_vertex(*lcc, dh))
@@ -356,6 +358,11 @@ void draw_buffer(GraphicBuffer<BufferType> &graphic_buffer) {
     app.exec();
   }
 }
+
+// Specialization of draw function.
+#define CGAL_LCC_TYPE                                                          \
+  CGAL::Linear_cell_complex_base<d_, ambient_dim, Traits_, Items_, Alloc_,     \
+                                 Map, Refs, Storage_>
 
 template <unsigned int d_, unsigned int ambient_dim, class Traits_,
           class Items_, class Alloc_,
