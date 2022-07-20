@@ -70,8 +70,6 @@ inline CGAL::IO::Color get_random_color(CGAL::Random& random)
   return res;
 }
 
-template <typename BufferType = float>
-class GraphicBuffer<BufferType>; 
 //------------------------------------------------------------------------------
 template <typename BufferType = float>
 class Basic_viewer_qt : public CGAL::QGLViewer
