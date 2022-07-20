@@ -29,7 +29,7 @@
 #include <string>
 
 #include <CGAL/Buffer_for_vao.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+// #include <CGAL/Qt/Basic_viewer_qt.h>
 
 namespace CGAL {
 
@@ -38,6 +38,8 @@ namespace CGAL {
 template <typename BufferType = float> class GraphicBuffer {
 
 public:
+
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
 
   GraphicBuffer(std::vector<BufferType> (&pos)[20], CGAL::Bbox_3 &bbox)
@@ -256,55 +258,55 @@ public:
   }
 
   bool is_empty() const {
-    return (gBuffer.get_buffer_for_mono_points().is_empty() &&
-            gBuffer.get_buffer_for_colored_points().is_empty() &&
-            gBuffer.get_buffer_for_mono_segments().is_empty() &&
-            gBuffer.get_buffer_for_colored_segments().is_empty() &&
-            gBuffer.get_buffer_for_mono_rays().is_empty() &&
-            gBuffer.get_buffer_for_colored_rays().is_empty() &&
-            gBuffer.get_buffer_for_mono_lines().is_empty() &&
-            gBuffer.get_buffer_for_colored_lines().is_empty() &&
-            gBuffer.get_buffer_for_mono_faces().is_empty() &&
-            gBuffer.get_buffer_for_colored_faces().is_empty());
+    return (m_buffer_for_mono_points.is_empty() &&
+            m_buffer_for_colored_points.is_empty() &&
+            m_buffer_for_mono_segments.is_empty() &&
+            m_buffer_for_colored_segments.is_empty() &&
+            m_buffer_for_mono_rays.is_empty() &&
+            m_buffer_for_colored_rays.is_empty() &&
+            m_buffer_for_mono_lines.is_empty() &&
+            m_buffer_for_colored_lines.is_empty() &&
+            m_buffer_for_mono_faces.is_empty() &&
+            m_buffer_for_colored_faces.is_empty());
   }
 
   bool has_zero_x() const {
-    return gBuffer.get_buffer_for_mono_points().has_zero_x() &&
-           gBuffer.get_buffer_for_colored_points().has_zero_x() &&
-           gBuffer.get_buffer_for_mono_segments().has_zero_x() &&
-           gBuffer.get_buffer_for_colored_segments().has_zero_x() &&
-           gBuffer.get_buffer_for_mono_faces().has_zero_x() &&
-           gBuffer.get_buffer_for_colored_faces().has_zero_x() &&
-           gBuffer.get_buffer_for_mono_rays().has_zero_x() &&
-           gBuffer.get_buffer_for_colored_rays().has_zero_x() &&
-           gBuffer.get_buffer_for_mono_lines().has_zero_x() &&
-           gBuffer.get_buffer_for_colored_lines().has_zero_x();
+    return m_buffer_for_mono_points.has_zero_x() &&
+           m_buffer_for_colored_points.has_zero_x() &&
+           m_buffer_for_mono_segments.has_zero_x() &&
+           m_buffer_for_colored_segments.has_zero_x() &&
+           m_buffer_for_mono_faces.has_zero_x() &&
+           m_buffer_for_colored_faces.has_zero_x() &&
+           m_buffer_for_mono_rays.has_zero_x() &&
+           m_buffer_for_colored_rays.has_zero_x() &&
+           m_buffer_for_mono_lines.has_zero_x() &&
+           m_buffer_for_colored_lines.has_zero_x();
   }
 
   bool has_zero_y() const {
-    return gBuffer.get_buffer_for_mono_points().has_zero_y() &&
-           gBuffer.get_buffer_for_colored_points().has_zero_y() &&
-           gBuffer.get_buffer_for_mono_segments().has_zero_y() &&
-           gBuffer.get_buffer_for_colored_segments().has_zero_y() &&
-           gBuffer.get_buffer_for_mono_faces().has_zero_y() &&
-           gBuffer.get_buffer_for_colored_faces().has_zero_y() &&
-           gBuffer.get_buffer_for_mono_rays().has_zero_y() &&
-           gBuffer.get_buffer_for_colored_rays().has_zero_y() &&
-           gBuffer.get_buffer_for_mono_lines().has_zero_y() &&
-           gBuffer.get_buffer_for_colored_lines().has_zero_y();
+    return m_buffer_for_mono_points.has_zero_y() &&
+           m_buffer_for_colored_points.has_zero_y() &&
+           m_buffer_for_mono_segments.has_zero_y() &&
+           m_buffer_for_colored_segments.has_zero_y() &&
+           m_buffer_for_mono_faces.has_zero_y() &&
+           m_buffer_for_colored_faces.has_zero_y() &&
+           m_buffer_for_mono_rays.has_zero_y() &&
+           m_buffer_for_colored_rays.has_zero_y() &&
+           m_buffer_for_mono_lines.has_zero_y() &&
+           m_buffer_for_colored_lines.has_zero_y();
   }
 
   bool has_zero_z() const {
-    return gBuffer.get_buffer_for_mono_points().has_zero_z() &&
-           gBuffer.get_buffer_for_colored_points().has_zero_z() &&
-           gBuffer.get_buffer_for_mono_segments().has_zero_z() &&
-           gBuffer.get_buffer_for_colored_segments().has_zero_z() &&
-           gBuffer.get_buffer_for_mono_faces().has_zero_z() &&
-           gBuffer.get_buffer_for_colored_faces().has_zero_z() &&
-           gBuffer.get_buffer_for_mono_rays().has_zero_z() &&
-           gBuffer.get_buffer_for_colored_rays().has_zero_z() &&
-           gBuffer.get_buffer_for_mono_lines().has_zero_z() &&
-           gBuffer.get_buffer_for_colored_lines().has_zero_z();
+    return m_buffer_for_mono_points.has_zero_z() &&
+           m_buffer_for_colored_points.has_zero_z() &&
+           m_buffer_for_mono_segments.has_zero_z() &&
+           m_buffer_for_colored_segments.has_zero_z() &&
+           m_buffer_for_mono_faces.has_zero_z() &&
+           m_buffer_for_colored_faces.has_zero_z() &&
+           m_buffer_for_mono_rays.has_zero_z() &&
+           m_buffer_for_colored_rays.has_zero_z() &&
+           m_buffer_for_mono_lines.has_zero_z() &&
+           m_buffer_for_colored_lines.has_zero_z();
   }
 
   template <typename KPoint>
