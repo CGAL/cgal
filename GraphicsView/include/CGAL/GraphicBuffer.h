@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <map>
 #include <queue>
+#include <string>
 
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
@@ -147,7 +148,7 @@ public:
   }
 
   void update_bounding_box(CGAL::Bbox_3& box) {
-      m_bounding_box += box
+      m_bounding_box += box;
   }
 
   void initiate_bounding_box(CGAL::Bbox_3 new_bounding_box) {
