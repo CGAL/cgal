@@ -1,10 +1,11 @@
-#include "include/utils.h"
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 #include <boost/iterator/function_output_iterator.hpp>
+
+#include "include/utils.h"
 
 // Typedefs.
 using Kernel   = CGAL::Simple_cartesian<double>;
@@ -20,9 +21,9 @@ using Point_set_3 = CGAL::Point_set_3<Point_3, Vector_3>;
 using Point_map  = Point_set_2::Point_map;
 using Normal_map = Point_set_2::Vector_map;
 
-using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Point_set_2, Point_map>;
-using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region<Kernel, Point_set_2, Point_map, Normal_map>;
-using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting<Kernel, Point_set_2, Neighbor_query, Point_map>;
+using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Kernel, Point_set_2>;
+using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region_for_point_set<Kernel, Point_set_2>;
+using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting_for_point_set<Kernel, Neighbor_query, Point_set_2>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char** argv) {
@@ -62,10 +63,10 @@ int main(int argc, char** argv) {
   const std::size_t min_region_size = 20;
 
   // Create instances of the classes Neighbor_query and Region_type.
-  Neighbor_query neighbor_query(
-    point_set_2, CGAL::parameters::k_neighbors(k).point_map(point_set_2.point_map()));
+  Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query<Kernel>(
+    point_set_2);
 
-  Region_type region_type(
+  Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_region<Kernel>(
     point_set_2,
     CGAL::parameters::
     maximum_distance(max_distance).
@@ -73,8 +74,8 @@ int main(int argc, char** argv) {
     minimum_region_size(min_region_size));
 
   // Sort indices.
-  Sorting sorting(
-    point_set_2, neighbor_query, CGAL::parameters::point_map(point_set_2.point_map()));
+  Sorting sorting = CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_sorting<Kernel>(
+    point_set_2, neighbor_query, CGAL::parameters::k_neighbors(k));
   sorting.sort();
 
   // Create an instance of the region growing class.
@@ -99,9 +100,9 @@ int main(int argc, char** argv) {
         const unsigned char g = static_cast<unsigned char>(random.get_int(64, 192));
         const unsigned char b = static_cast<unsigned char>(random.get_int(64, 192));
         for (auto item : region.second) {
-          red[*item] = r;
-          green[*item] = g;
-          blue[*item] = b;
+          red[item] = r;
+          green[item] = g;
+          blue[item] = b;
         }
         ++num_circles;
       }

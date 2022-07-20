@@ -259,9 +259,10 @@ namespace Shape_detection {
     template <class InputRange>
     void clear(const InputRange& input_range) {
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
-        put(m_region_map, internal::conditional_deref<typename InputRange::const_iterator, typename Region_map::key_type>()(it), std::size_t(-1));
+        Item item = internal::conditional_deref<typename InputRange::const_iterator, typename Region_map::key_type>()(it);
+        put(m_region_map, item, std::size_t(-1));
       }
-      // TODO if we want to allow subranges while NeighborQuery operates on the full range 
+      // TODO if we want to allow subranges while NeighborQuery operates on the full range
       // (like for faces in a PolygonMesh) we should fill a non-visited map rather than a visited map
       m_visited_map.clear();
     }
@@ -279,7 +280,7 @@ namespace Shape_detection {
 
     void fill_region_map(std::size_t idx, const Region& region) {
       for (auto item : region) {
-        put(m_region_map, internal::conditional_deref<Item, typename Region_map::key_type>()(item), idx);
+        put(m_region_map, item, idx);
       }
     }
 

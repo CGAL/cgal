@@ -108,9 +108,9 @@ namespace Segment_set {
           \cgalParamDefault{`SegmentMap()`}
         \cgalParamNEnd
         \cgalParamNBegin{item_map}
-          \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `Input_range::const_iterator`
+          \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
                                 as key type and `Item` as value type.`}
-          \cgalParamDefault{A default is provided when `Item` is `Input_range::const_iterator` or its value type.}
+          \cgalParamDefault{A default is provided when `Item` is `InputRange::const_iterator` or its value type.}
         \cgalParamNEnd
         \cgalParamNBegin{geom_traits}
           \cgalParamDescription{an instance of `GeomTraits`}

@@ -42,8 +42,8 @@ namespace Point_set {
     \tparam GeomTraits
     a model of `Kernel`
 
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+    \tparam Item_
+    a descriptor representing a given point. Must be a model of `Hashable`.
 
     \tparam PointMap
     a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -53,37 +53,34 @@ namespace Point_set {
   */
   template<
   typename GeomTraits,
-  typename InputRange,
+  typename Item_,
   typename PointMap>
   class K_neighbor_query {
 
   public:
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
-    using Input_range = InputRange;
     using Point_map = PointMap;
-    using Point_type = typename Point_map::value_type;
+    using Point_type = typename boost::property_traits<Point_map>::value_type;
     /// \endcond
 
     /// Item type. Needs to be compatible to Region_type::Item.
-    using Item = typename InputRange::const_iterator;
+    using Item = Item_;
     using Region = std::vector<Item>;
 
   private:
-    using Dereference_pmap = internal::Dereference_property_map_adaptor<Item, PointMap>;
-
     using Search_base = typename std::conditional<
       std::is_same<typename Traits::Point_2, Point_type>::value,
       CGAL::Search_traits_2<Traits>,
       CGAL::Search_traits_3<Traits> >::type;
 
     using Search_traits =
-      CGAL::Search_traits_adapter<Item, Dereference_pmap, Search_base>;
+      CGAL::Search_traits_adapter<Item, PointMap, Search_base>;
 
     using Distance =
       CGAL::Distance_adapter<
       Item,
-      Dereference_pmap,
+      PointMap,
       CGAL::Euclidean_distance<Search_base> >;
 
     using Splitter =
@@ -102,23 +99,15 @@ namespace Point_set {
     using Tree =
       typename Neighbor_search::Tree;
 
-    template<class T>
-    struct identity{
-      using result_type = T;
-      const T operator()(const T& t) const {
-        return t;
-      }
-    };
-
-    template<class T>
-    static T id(const T& t) { return t; }
-
   public:
     /// \name Initialization
     /// @{
 
     /*!
       \brief initializes a Kd-tree with input points.
+
+      \tparam InputRange
+      a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
       \tparam NamedParameters
       a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -146,26 +135,24 @@ namespace Point_set {
       \pre `input_range.size() > 0`
       \pre `K > 0`
     */
-    template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+    template<typename InputRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
     K_neighbor_query(
       const InputRange& input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-    m_ref_gen(input_range.begin()),
-    m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
-    m_deref_pmap(m_point_map),
-    m_distance(m_deref_pmap),
-    m_tree(
-      boost::make_function_input_iterator(m_ref_gen, std::size_t(0)),
-      boost::make_function_input_iterator(m_ref_gen, input_range.size()),
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap())),
+    m_distance(m_point_map),
+    m_tree_ptr(new Tree(
+      input_range.begin(),
+      input_range.end(),
       Splitter(),
-      Search_traits(m_deref_pmap)) {
-
+      Search_traits(m_point_map)))
+    {
       CGAL_precondition(input_range.size() > 0);
       const std::size_t K = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::k_neighbors), 12);
       CGAL_precondition(K > 0);
       m_number_of_neighbors = K;
-      m_tree.build();
+      m_tree_ptr->build();
     }
 
     /// @}
@@ -193,8 +180,8 @@ namespace Point_set {
 
       neighbors.clear();
       Neighbor_search neighbor_search(
-        m_tree,
-        get(m_point_map, *query),
+        *m_tree_ptr,
+        get(m_point_map, query),
         static_cast<unsigned int>(m_number_of_neighbors),
         0, true, m_distance);
       for (auto it = neighbor_search.begin(); it != neighbor_search.end(); ++it)
@@ -210,15 +197,34 @@ namespace Point_set {
     /// \endcond
 
   private:
-    internal::reference_iterator_generator<typename Input_range::const_iterator> m_ref_gen;
-    std::vector<Item> m_referenced_input_range;
-    const Point_map m_point_map;
-    const Dereference_pmap m_deref_pmap;
-
+    Point_map m_point_map;
     std::size_t m_number_of_neighbors;
     Distance m_distance;
-    Tree m_tree;
+    std::shared_ptr<Tree> m_tree_ptr; // TODO: move constructor?
   };
+
+  /*!
+      \ingroup PkgShapeDetectionRGOnPoints
+      shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
+      To be used together with `make_least_squares_sphere_fit_sorting_for_point_set()`.
+   */
+  template <class GeomTraits, class PointSet3>
+  using K_neighbor_query_for_point_set =
+    K_neighbor_query<GeomTraits,
+                     typename PointSet3::Index,
+                     typename PointSet3::Point_map>;
+
+  /*!
+      \ingroup PkgShapeDetectionRGOnPoints
+      returns a instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
+   */
+  template <class GeomTraits, class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  K_neighbor_query_for_point_set<GeomTraits, PointSet3>
+  make_k_neighbor_query(const PointSet3& ps, CGAL_NP_CLASS np = parameters::default_values())
+  {
+    return K_neighbor_query_for_point_set<GeomTraits, PointSet3>(
+      ps, np.point_map(ps.point_map()));
+  }
 
 } // namespace Point_set
 } // namespace Shape_detection

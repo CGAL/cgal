@@ -85,14 +85,14 @@ namespace internal {
   template<class T>
   struct hash_item<T, false> {
     std::size_t operator()(T i) const {
-      return hash_value(i);
+      return boost::hash_value(i);
     }
   };
 
   template<class T>
   struct hash_item<T, true> {
     std::size_t operator()(T i) const {
-      return hash_value(i.operator->());
+      return boost::hash_value(i.operator->());
     }
   };
 
@@ -427,7 +427,7 @@ namespace internal {
     FT xmin = +FT(1000000000000);
     FT ymin = +FT(1000000000000);
     for (auto item : region) {
-      const auto& point = get(point_map, *item);
+      const auto& point = get(point_map, item);
       xmin = (CGAL::min)(xmin, point.x());
       ymin = (CGAL::min)(ymin, point.y());
     }
@@ -456,7 +456,7 @@ namespace internal {
 
     A[0] = static_cast<IFT>(region.size());
     for (auto &item : region) {
-      const auto& point = get(point_map, *item);
+      const auto& point = get(point_map, item);
 
       const IFT x = static_cast<IFT>(CGAL::to_double(point.x() - xmin));
       const IFT y = static_cast<IFT>(CGAL::to_double(point.y() - ymin));
@@ -502,7 +502,7 @@ namespace internal {
 
     FT fitted_radius = FT(0);
     for (auto &item : region) {
-      const auto& point = get(point_map, *item);
+      const auto& point = get(point_map, item);
       fitted_radius += sqrt(squared_distance_2(point, fitted_center));
     }
     fitted_radius /= static_cast<FT>(region.size());
@@ -512,7 +512,7 @@ namespace internal {
     if (compute_score) {
       score = FT(0);
       for (auto &item : region) {
-        const auto& point = get(point_map, *item);
+        const auto& point = get(point_map, item);
         score -= CGAL::abs(sqrt(squared_distance_2(point, fitted_center))
                            - fitted_radius);
       }
