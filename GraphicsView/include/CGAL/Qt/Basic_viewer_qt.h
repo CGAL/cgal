@@ -79,6 +79,7 @@ public:
 
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
+                  GraphicBuffer<>& buf,
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
@@ -111,7 +112,7 @@ public:
     m_faces_mono_color(60, 60, 200),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false),
-    gBuffer(arrays,m_bounding_box)
+    gBuffer(buf)
   {
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
     setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL, ::Qt::Key_Q);
@@ -160,20 +161,6 @@ public:
     if (inverse_normal)
     { negate_all_normals(); }
   }
-
-  Basic_viewer_qt(QWidget* parent,
-                  GraphicBuffer<>& buf,
-                  const char* title="",
-                  bool draw_vertices=false,
-                  bool draw_edges=true,
-                  bool draw_faces=true,
-                  bool use_mono_color=false,
-                  bool inverse_normal=false,
-                  bool draw_rays=true,
-                  bool draw_lines=true,
-                  bool draw_text=true,
-                  bool no_2D_mode=false) :
-                  gBuffer(buf) {}
 
   ~Basic_viewer_qt()
   {
