@@ -13,6 +13,14 @@
 #define CGAL_GRAPHIC_BUFFER_H
 
 #include <CGAL/license/GraphicsView.h>
+#include <QString>
+
+#include <iostream>
+#include <map>
+#include <queue>
+#include <string>
+#include <tuple>
+#include <vector>
 
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -24,9 +32,6 @@
 #include <CGAL/assertions.h>
 
 #include <cstdlib>
-#include <map>
-#include <queue>
-#include <string>
 
 #include <CGAL/Buffer_for_vao.h>
 // #include <CGAL/Qt/Basic_viewer_qt.h>
@@ -35,10 +40,10 @@ namespace CGAL {
 
 // This class is responsible for dealing with available CGAL data structures and
 // handling buffers.
-template <typename BufferType = float> class GraphicBuffer {
+template <typename BufferType = float>
+class GraphicBuffer {
 
 public:
-
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
 
@@ -141,17 +146,11 @@ public:
     return m_buffer_for_clipping_plane;
   }
 
-  const CGAL::Bbox_3 &get_bounding_box() const {
-    return m_bounding_box;
-  }
+  const CGAL::Bbox_3 &get_bounding_box() const { return m_bounding_box; }
 
-  std::vector<float>& get_array_of_index(int index) {
-    return arrays[index];
-  }
+  std::vector<float> &get_array_of_index(int index) { return arrays[index]; }
 
-  void update_bounding_box(CGAL::Bbox_3& box) {
-      m_bounding_box += box;
-  }
+  void update_bounding_box(CGAL::Bbox_3 &box) { m_bounding_box += box; }
 
   void initiate_bounding_box(CGAL::Bbox_3 new_bounding_box) {
     m_bounding_box = new_bounding_box;
@@ -329,7 +328,6 @@ public:
   void add_text(const KPoint &kp, const std::string &txt) {
     add_text(kp, txt.c_str());
   }
-
 
 protected:
   // The following enum gives the indices of different elements of arrays
