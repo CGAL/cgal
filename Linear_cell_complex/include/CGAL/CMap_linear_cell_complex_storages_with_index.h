@@ -84,7 +84,7 @@ namespace CGAL {
     template <typename T>
     struct Container_for_attributes : public
         Compact_container_with_index<T,
-        typename Alloc_::template rebind<T>::other,
+        typename Allocator_traits::template rebind_alloc<T>,
         Multiply_by_two_policy_for_cc_with_size<64>, size_type >
     {};
     /// Typedef for attributes

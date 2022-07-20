@@ -74,7 +74,7 @@ namespace CGAL {
     struct Container_for_attributes :
       public internal::Container_type
                      <Concurrent_tag, T,
-                      typename std::allocator_traits<Alloc_>::template rebind_alloc<T>>::type
+                      typename Allocator_traits::template rebind_alloc<T>>::type
     {};
     /// Typedef for attributes
     typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
