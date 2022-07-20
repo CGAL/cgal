@@ -508,9 +508,11 @@ public:
   typedef Allocator                                 allocator_type;
   typedef value_type&                               reference;
   typedef const value_type&                         const_reference;
-  typedef typename Allocator::pointer               pointer;
-  typedef typename Allocator::const_pointer         const_pointer;
-  typedef typename Allocator::difference_type       difference_type;
+
+  typedef typename std::allocator_traits<Allocator>::pointer         pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer   const_pointer;
+  typedef typename std::allocator_traits<Allocator>::difference_type difference_type;
+
   typedef internal::CC_iterator_with_index<Self, false> iterator;
   typedef internal::CC_iterator_with_index<Self, true>  const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
