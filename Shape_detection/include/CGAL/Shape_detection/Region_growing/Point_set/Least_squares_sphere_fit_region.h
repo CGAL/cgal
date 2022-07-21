@@ -155,7 +155,6 @@ namespace Point_set {
         \cgalParamNEnd
       \cgalNamedParamsEnd
 
-      \pre `input_range.size() > 0`
       \pre `maximum_distance >= 0`
       \pre `maximum_angle >= 0 && maximum_angle <= 90`
       \pre `cosine_value >= 0 && cosine_value <= 1`

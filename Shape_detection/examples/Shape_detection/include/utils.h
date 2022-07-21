@@ -227,29 +227,25 @@ void save_segment_regions_3(
 
 // Define an insert iterator.
 template<
-typename Input_range,
+typename Item,
 typename Output_range,
 typename Point_map,
 typename Primitive>
 struct Insert_point_colored_by_region_index {
-  using Item = typename Input_range::const_iterator;
   using argument_type = std::pair< Primitive, std::vector<Item> >;
   using result_type   = void;
   using Color_map     =
     typename Output_range:: template Property_map<unsigned char>;
 
-  const Input_range& m_input_range;
   const   Point_map  m_point_map;
        Output_range& m_output_range;
         std::size_t& m_number_of_regions;
   Color_map m_red, m_green, m_blue;
 
   Insert_point_colored_by_region_index(
-    const Input_range& input_range,
     const   Point_map  point_map,
          Output_range& output_range,
           std::size_t& number_of_regions) :
-  m_input_range(input_range),
   m_point_map(point_map),
   m_output_range(output_range),
   m_number_of_regions(number_of_regions) {
@@ -266,7 +262,7 @@ struct Insert_point_colored_by_region_index {
     const unsigned char b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
 
     for (const Item index : region.second) {
-      const auto& point = get(m_point_map, *index);
+      const auto& point = get(m_point_map, index);
       const auto it = m_output_range.insert(point);
 
       m_red[*it]   = r;
