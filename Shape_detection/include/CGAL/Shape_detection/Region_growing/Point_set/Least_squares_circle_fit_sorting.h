@@ -216,9 +216,9 @@ namespace Point_set {
       shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
       To be used together with `make_least_squares_circle_fit_sorting()`.
    */
-  template <class GeomTraits, class NeighborQuery, class PointSet3>
+  template <class NeighborQuery, class PointSet3>
   using Least_squares_circle_fit_sorting_for_point_set =
-    Least_squares_circle_fit_sorting<GeomTraits,
+    Least_squares_circle_fit_sorting<typename Kernel_traits<typename PointSet3::Point_3>::Kernel,
                                      typename PointSet3::Index,
                                      NeighborQuery,
                                      typename PointSet3::Point_map>;
@@ -227,11 +227,11 @@ namespace Point_set {
       \ingroup PkgShapeDetectionRGOnPoints
       returns a instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
    */
-  template <class GeomTraits, class NeighborQuery, class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>
-  Least_squares_circle_fit_sorting_for_point_set<GeomTraits, NeighborQuery, PointSet3>
+  template <class NeighborQuery, class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Least_squares_circle_fit_sorting_for_point_set<NeighborQuery, PointSet3>
   make_least_squares_circle_fit_sorting(const PointSet3& ps, NeighborQuery& neighbor_query, const CGAL_NP_CLASS np = parameters::default_values())
   {
-    return Least_squares_circle_fit_sorting_for_point_set<GeomTraits, NeighborQuery, PointSet3>
+    return Least_squares_circle_fit_sorting_for_point_set<NeighborQuery, PointSet3>
       (ps, neighbor_query, np.point_map(ps.point_map()));
   }
 

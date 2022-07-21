@@ -21,9 +21,9 @@ using Point_set_3 = CGAL::Point_set_3<Point_3, Vector_3>;
 using Point_map  = Point_set_2::Point_map;
 using Normal_map = Point_set_2::Vector_map;
 
-using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Kernel, Point_set_2>;
-using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region_for_point_set<Kernel, Point_set_2>;
-using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting_for_point_set<Kernel, Neighbor_query, Point_set_2>;
+using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set_2>;
+using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region_for_point_set<Point_set_2>;
+using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting_for_point_set<Neighbor_query, Point_set_2>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char** argv) {
@@ -63,10 +63,10 @@ int main(int argc, char** argv) {
   const std::size_t min_region_size = 20;
 
   // Create instances of the classes Neighbor_query and Region_type.
-  Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query<Kernel>(
+  Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query(
     point_set_2);
 
-  Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_region<Kernel>(
+  Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_region(
     point_set_2,
     CGAL::parameters::
     maximum_distance(max_distance).
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     minimum_region_size(min_region_size));
 
   // Sort indices.
-  Sorting sorting = CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_sorting<Kernel>(
+  Sorting sorting = CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_sorting(
     point_set_2, neighbor_query, CGAL::parameters::k_neighbors(k));
   sorting.sort();
 
