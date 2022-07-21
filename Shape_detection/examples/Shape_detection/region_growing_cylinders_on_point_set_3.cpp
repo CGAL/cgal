@@ -1,10 +1,11 @@
-#include "include/utils.h"
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 #include <boost/iterator/function_output_iterator.hpp>
+
+#include "include/utils.h"
 
 // Typedefs.
 using Kernel   = CGAL::Simple_cartesian<double>;
@@ -16,8 +17,8 @@ using Point_set  = CGAL::Point_set_3<Point_3>;
 using Point_map  = typename Point_set::Point_map;
 using Normal_map = typename Point_set::Vector_map;
 
-using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Point_set, Point_map>;
-using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<Kernel, Point_set, Point_map, Normal_map>;
+using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set>;
+using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region_for_point_set<Point_set>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char** argv) {
@@ -46,10 +47,9 @@ int main(int argc, char** argv) {
   const std::size_t min_region_size = 20;
 
   // Create instances of the classes Neighbor_query and Region_type.
-  Neighbor_query neighbor_query(
-    point_set, CGAL::parameters::k_neighbors(k));
+  Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query(point_set, CGAL::parameters::k_neighbors(k));
 
-  Region_type region_type(
+  Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_cylinder_fit_region(
     point_set,
     CGAL::parameters::
     maximum_distance(max_distance).
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
   std::size_t num_cylinders = 0;
   region_growing.detect(
     boost::make_function_output_iterator(
-      [&](const std::pair< Region_type::Primitive, std::vector<typename Point_set::const_iterator> >& region) {
+      [&](const std::pair< Region_type::Primitive, std::vector<typename Point_set::Index> >& region) {
 
         // Assign a random color to each region.
         const unsigned char r = static_cast<unsigned char>(random.get_int(64, 192));
@@ -79,9 +79,9 @@ int main(int argc, char** argv) {
         const unsigned char b = static_cast<unsigned char>(random.get_int(64, 192));
 
         for (auto id : region.second) {
-          put(red, *id, r);
-          put(green, *id, g);
-          put(blue, *id, b);
+          put(red, id, r);
+          put(green, id, g);
+          put(blue, id, b);
         }
         ++num_cylinders;
       }

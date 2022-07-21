@@ -398,7 +398,8 @@ namespace Point_set {
    */
   template <class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Least_squares_circle_fit_region_for_point_set<PointSet3>
-  make_least_squares_circle_fit_region(const PointSet3& ps, CGAL_NP_CLASS np = parameters::default_values())
+  make_least_squares_circle_fit_region(const PointSet3& ps,
+                                       CGAL_NP_CLASS np = parameters::default_values())
   {
     return Least_squares_circle_fit_region_for_point_set<PointSet3>(
       np.point_map(ps.point_map()).normal_map(ps.normal_map()));

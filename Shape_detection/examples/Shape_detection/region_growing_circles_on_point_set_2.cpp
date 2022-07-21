@@ -23,7 +23,7 @@ using Normal_map = Point_set_2::Vector_map;
 
 using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set_2>;
 using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region_for_point_set<Point_set_2>;
-using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting_for_point_set<Neighbor_query, Point_set_2>;
+using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting_for_point_set<Point_set_2, Neighbor_query>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char** argv) {

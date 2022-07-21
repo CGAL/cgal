@@ -77,8 +77,8 @@ namespace CGAL
 
       average = typename Kernel::Vector_3(0, 0, 0);
 
-      for (auto it : indices) {
-        average += get(point_map, *it) - CGAL::ORIGIN;
+      for (auto item : indices) {
+        average += get(point_map, item) - CGAL::ORIGIN;
       }
 
       average = average / indices.size();
@@ -87,7 +87,7 @@ namespace CGAL
       prod.setZero();
 
       for (std::size_t i = 0; i < indices.size(); i++) {
-        typename Kernel::Vector_3 p = get(point_map, *indices[i])
+        typename Kernel::Vector_3 p = get(point_map, indices[i])
                              - average - CGAL::ORIGIN;
         prod(i, 0) = p.x() * p.x();
         prod(i, 1) = p.x() * p.y();
@@ -121,7 +121,7 @@ namespace CGAL
         f0(1, 2) += prod(i, 4);
         f0(2, 2) += prod(i, 5);
 
-        typename Kernel::Vector_3 tmp = get(point_map, *indices[i])
+        typename Kernel::Vector_3 tmp = get(point_map, indices[i])
                                - average - CGAL::ORIGIN;
         Eigen::Vector3d v(tmp[0], tmp[1], tmp[2]);
 
@@ -222,9 +222,9 @@ namespace CGAL
 
     // Axis direction estimation from sample normals by averaging.
     for (std::size_t i = 0; i < region.size() - 1; ++i) {
-      Vector_3 v0 = get(normal_map, *region[i]);
+      Vector_3 v0 = get(normal_map, region[i]);
       v0 = v0 / sqrt(v0 * v0);
-      Vector_3 v1 = get(normal_map, *region[i + 1]);
+      Vector_3 v1 = get(normal_map, region[i + 1]);
       v1 = v1 / sqrt(v1 * v1);
       Vector_3 axis = cross_product(v0, v1);
       if (sqrt(axis.squared_length()) < FT(1) / FT(100)) {

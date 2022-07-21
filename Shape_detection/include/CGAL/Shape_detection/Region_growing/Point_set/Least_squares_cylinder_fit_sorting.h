@@ -34,23 +34,21 @@ namespace Point_set {
     \tparam GeomTraits
     a model of `Kernel`
 
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+    \tparam Item_
+    a descriptor representing a given point. Must be a model of `Hashable`.
 
     \tparam NeighborQuery
     a model of `NeighborQuery`
 
     \tparam PointMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Point_3`
+    a model of `ReadablePropertyMap` whose key type `Item` and value type is `Kernel::Point_3`
 
     \tparam NormalMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Vector_3`
+    a model of `ReadablePropertyMap` whose key type is `Item` and value type is `Kernel::Vector_3`
   */
   template<
   typename GeomTraits,
-  typename InputRange,
+  typename Item_,
   typename NeighborQuery,
   typename PointMap,
   typename NormalMap>
@@ -62,14 +60,13 @@ namespace Point_set {
 
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
-    using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Point_map = PointMap;
     using Normal_map = NormalMap;
     /// \endcond
 
     /// Item type.
-    using Item = typename InputRange::const_iterator;
+    using Item = Item_;
 
     /// Seed range.
     using Seed_range = std::vector<Item>;
@@ -87,6 +84,9 @@ namespace Point_set {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam InputRange
+      a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
       \tparam NamedParameters
       a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -102,14 +102,17 @@ namespace Point_set {
       among the ones listed below
 
       \cgalNamedParamsBegin
+        \cgalParamNBegin{item_map}
+          \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
+                                as key type and `Item` as value type.`}
+          \cgalParamDefault{A default is provided when `Item` is `Input_range::const_iterator` or its value type.}
+        \cgalParamNEnd
         \cgalParamNBegin{point_map}
-          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
-          to `Kernel::Point_3`}
+          \cgalParamDescription{an instance of `PointMap` that maps an item to `Kernel::Point_3`}
           \cgalParamDefault{`PointMap()`}
         \cgalParamNEnd
         \cgalParamNBegin{normal_map}
-          \cgalParamDescription{ an instance of `NormalMap` that maps an item from `input_range`
-          to `Kernel::Vector_3`}
+          \cgalParamDescription{ an instance of `NormalMap` that maps an item to `Kernel::Vector_3`}
           \cgalParamDefault{`NormalMap()`}
         \cgalParamNEnd
         \cgalParamNBegin{geom_traits}
@@ -120,24 +123,28 @@ namespace Point_set {
 
       \pre `input_range.size() > 0`
     */
-    template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+    template<typename InputRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_cylinder_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
       m_neighbor_query(neighbor_query),
-      m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap, NormalMap>::get_const_point_map(input_range, np)),
-      m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap, NormalMap>::get_normal_map(input_range, np)),
+      m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap())),
+      m_normal_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), NormalMap())),
       m_traits(parameters::choose_parameter(parameters::get_parameter(
         np, internal_np::geom_traits), GeomTraits())) {
 
       CGAL_precondition(input_range.size() > 0);
 
+      using NP_helper = internal::Default_property_map_helper<CGAL_NP_CLASS, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
+      using Item_map = typename NP_helper::type;
+      Item_map item_map = NP_helper::get(np);
+
       m_ordered.resize(input_range.size());
 
       std::size_t index = 0;
       for (auto it = input_range.begin(); it != input_range.end(); it++)
-        m_ordered[index++] = it;
+        m_ordered[index++] = get(item_map, it);
 
       m_scores.resize(input_range.size());
     }
@@ -211,6 +218,33 @@ namespace Point_set {
       return seed_cutoff;
     }
   };
+
+  /*!
+      \ingroup PkgShapeDetectionRGOnPoints
+      shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
+      To be used together with `make_least_squares_cylinder_fit_sorting()`.
+   */
+  template <class PointSet3, class NeighborQuery>
+  using Least_squares_cylinder_fit_sorting_for_point_set =
+    Least_squares_cylinder_fit_sorting<typename Kernel_traits<typename PointSet3::Point_3>::Kernel,
+                                       typename PointSet3::Index,
+                                       NeighborQuery,
+                                       typename PointSet3::Point_map,
+                                       typename PointSet3::Normal_map>;
+
+  /*!
+      \ingroup PkgShapeDetectionRGOnPoints
+      returns a instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
+   */
+  template <class PointSet3, class NeighborQuery, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Least_squares_cylinder_fit_sorting_for_point_set<PointSet3,NeighborQuery>
+  make_least_squares_cylinder_fit_sorting(const PointSet3& ps,
+                                          NeighborQuery& neighbor_query,
+                                          const CGAL_NP_CLASS np = parameters::default_values())
+  {
+    return Least_squares_cylinder_fit_sorting_for_point_set<PointSet3,NeighborQuery>
+      (ps, neighbor_query, np.point_map(ps.point_map()).normal_map(ps.normal_map()));
+  }
 
 } // namespace Point_set
 } // namespace Shape_detection
