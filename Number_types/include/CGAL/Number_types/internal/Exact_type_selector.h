@@ -85,7 +85,7 @@ struct Exact_field_selector
 #else
 { typedef Quotient<MP_Float> Type; };
 #endif
-#endif // BOOST_VERSION > 107800
+#endif // BOOST_VERSION > 107900
 
 // By default, a field is a safe choice of ring.
 template < typename T >
