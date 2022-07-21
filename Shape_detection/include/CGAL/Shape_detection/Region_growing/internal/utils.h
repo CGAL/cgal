@@ -554,7 +554,7 @@ namespace internal {
     FT ymin = +FT(1000000000000);
     FT zmin = +FT(1000000000000);
     for (auto item : region) {
-      const auto& point = get(point_map, *item);
+      const auto& point = get(point_map, item);
       xmin = (CGAL::min)(xmin, point.x());
       ymin = (CGAL::min)(ymin, point.y());
       zmin = (CGAL::min)(zmin, point.z());
@@ -570,7 +570,7 @@ namespace internal {
 
     A[0] = static_cast<IFT>(region.size());
     for (auto item : region) {
-      const auto& point = get(point_map, *item);
+      const auto& point = get(point_map, item);
 
       const IFT x = static_cast<IFT>(CGAL::to_double(point.x() - xmin));
       const IFT y = static_cast<IFT>(CGAL::to_double(point.y() - ymin));
@@ -624,7 +624,7 @@ namespace internal {
 
     FT fitted_radius = FT(0);
     for (auto item : region) {
-      const auto& point = get(point_map, *item);
+      const auto& point = get(point_map, item);
       fitted_radius += sqrt(squared_distance_3(point, fitted_center));
     }
     fitted_radius /= static_cast<FT>(region.size());
@@ -634,7 +634,7 @@ namespace internal {
     if (compute_score) {
       score = FT(0);
       for (auto item : region) {
-        const auto& point = get(point_map, *item);
+        const auto& point = get(point_map, item);
         score -= CGAL::abs(sqrt(squared_distance_3(point, fitted_center))
                            - fitted_radius);
       }

@@ -372,7 +372,7 @@ namespace Point_set {
     Least_squares_line_fit_region<typename Kernel_traits<typename PointSet3::Point_3>::Kernel,
                                   typename PointSet3::Index,
                                   typename PointSet3::Point_map,
-                                  typename PointSet3::Normal_map>;
+                                  typename PointSet3::Vector_map>;
 
   /*!
       \ingroup PkgShapeDetectionRGOnPoints
@@ -384,7 +384,7 @@ namespace Point_set {
                                      const CGAL_NP_CLASS np = parameters::default_values())
   {
     return Least_squares_line_fit_region_for_point_set<PointSet3>
-      (ps, np.point_map(ps.point_map()).normal_map(ps.normal_map()));
+      (np.point_map(ps.point_map()).normal_map(ps.normal_map()));
   }
 
 } // namespace Point_set

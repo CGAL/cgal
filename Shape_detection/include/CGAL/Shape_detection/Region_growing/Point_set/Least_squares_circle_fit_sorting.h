@@ -101,7 +101,7 @@ namespace Point_set {
         \cgalParamNBegin{item_map}
           \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
                                 as key type and `Item` as value type.`}
-          \cgalParamDefault{A default is provided when `Item` is `Input_range::const_iterator` or its value type.}
+          \cgalParamDefault{A default is provided when `Item` is `InputRange::const_iterator` or its value type.}
         \cgalParamNEnd
         \cgalParamNBegin{point_map}
           \cgalParamDescription{an instance of `PointMap` that maps an item to `Kernel::Point_2`}

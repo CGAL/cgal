@@ -16,11 +16,10 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// Boost includes.
-#include <boost/unordered_map.hpp>
-
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
+
+#include <unordered_map>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -39,9 +38,9 @@ namespace Point_set {
 
     \tparam GeomTraits
     a model of `Kernel`
-g
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \tparam Item_
+    a descriptor representing a given point. Must be a model of `Hashable`.
 
     \tparam PointMap
     a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -55,7 +54,7 @@ g
   */
   template<
   typename GeomTraits,
-  typename InputRange,
+  typename Item_,
   typename PointMap,
   typename NormalMap>
   class Least_squares_sphere_fit_region {
@@ -65,7 +64,6 @@ g
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Input_range = InputRange;
     using Point_map = PointMap;
     using Normal_map = NormalMap;
     /// \endcond
@@ -74,14 +72,14 @@ g
     typedef typename GeomTraits::FT FT;
 
     /// Item type.
-    using Item = typename InputRange::const_iterator;
+    using Item = Item_;
     using Region = std::vector<Item>;
 
     /// Primitive
     using Primitive = typename GeomTraits::Sphere_3;
 
     /// Region map
-    using Region_unordered_map = boost::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
+    using Region_unordered_map = std::unordered_map<Item, std::size_t, internal::hash_item<Item> >;
     using Region_index_map = boost::associative_property_map<Region_unordered_map>;
     /// @}
 
@@ -103,10 +101,6 @@ g
 
       \tparam NamedParameters
       a sequence of \ref bgl_namedparameters "Named Parameters"
-
-      \param input_range
-      an instance of `InputRange` with 3D points and
-      corresponding 3D normal vectors
 
       \param np
       a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -148,13 +142,11 @@ g
           \cgalParamDefault{+infinity, no limit}
         \cgalParamNEnd
         \cgalParamNBegin{point_map}
-          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
-          to `Kernel::Point_3`}
+          \cgalParamDescription{an instance of `PointMap` that maps an item to `Kernel::Point_3`}
           \cgalParamDefault{`PointMap()`}
         \cgalParamNEnd
         \cgalParamNBegin{normal_map}
-          \cgalParamDescription{ an instance of `NormalMap` that maps an item from `input_range`
-          to `Kernel::Vector_3`}
+          \cgalParamDescription{an instance of `NormalMap` that maps an item to `Kernel::Vector_3`}
           \cgalParamDefault{`NormalMap()`}
         \cgalParamNEnd
         \cgalParamNBegin{geom_traits}
@@ -173,16 +165,14 @@ g
     */
     template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_sphere_fit_region(
-      const InputRange& input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-      m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS,PointMap,NormalMap>::get_const_point_map(input_range, np)),
-      m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS,PointMap,NormalMap>::get_normal_map(input_range, np)),
+      m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap())),
+      m_normal_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), NormalMap())),
       m_traits(parameters::choose_parameter(parameters::get_parameter(
         np, internal_np::geom_traits), GeomTraits())),
       m_sqrt(Get_sqrt::sqrt_object(m_traits)),
       m_squared_distance_3(m_traits.compute_squared_distance_3_object()) {
 
-      CGAL_precondition(input_range.size() > 0);
       const FT max_distance = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
       CGAL_precondition(max_distance >= FT(0));
@@ -259,8 +249,6 @@ g
       The first parameter is not used in this implementation.
 
       \return Boolean `true` or `false`
-
-      \pre `query_index < input_range.size()`
     */
     bool is_part_of_region(
       const Item,
@@ -282,8 +270,8 @@ g
         return false;
       }
 
-      const Point_3& query_point = get(m_point_map, *query);
-      Vector_3 normal = get(m_normal_map, *query);
+      const Point_3& query_point = get(m_point_map, query);
+      Vector_3 normal = get(m_normal_map, query);
 
       const FT sq_dist = m_squared_distance_3(query_point, m_center);
       if (std::isnan(CGAL::to_double(sq_dist))) return false;
@@ -381,6 +369,32 @@ g
     FT m_radius;
     Point_3 m_center;
   };
+
+
+/*!
+  \ingroup PkgShapeDetectionRGOnPoints
+  shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
+  To be used together with `make_least_squares_sphere_fit_region()`.
+ */
+template <class PointSet3>
+using Least_squares_sphere_fit_region_for_point_set =
+  Least_squares_sphere_fit_region<typename Kernel_traits<typename PointSet3::Point_3>::Kernel,
+                                  typename PointSet3::Index,
+                                  typename PointSet3::Point_map,
+                                  typename PointSet3::Vector_map>;
+
+/*!
+  \ingroup PkgShapeDetectionRGOnPoints
+  returns a instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
+ */
+template <class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>
+Least_squares_sphere_fit_region_for_point_set<PointSet3>
+make_least_squares_sphere_fit_region(const PointSet3& ps,
+                                     const CGAL_NP_CLASS np = parameters::default_values())
+{
+  return Least_squares_sphere_fit_region_for_point_set<PointSet3>
+    (np.point_map(ps.point_map()).normal_map(ps.normal_map()));
+}
 
 } // namespace Point_set
 } // namespace Shape_detection
