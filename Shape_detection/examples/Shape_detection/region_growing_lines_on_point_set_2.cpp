@@ -1,7 +1,10 @@
-#include "include/utils.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
+
+#include "include/utils.h"
+
+#include <boost/range/irange.hpp>
 
 // Typedefs.
 using Kernel   = CGAL::Simple_cartesian<double>;
@@ -11,11 +14,14 @@ using Vector_2 = typename Kernel::Vector_2;
 
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Point_set_2       = std::vector<Point_with_normal>;
-using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
-using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-using Neighbor_query = CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set_2, Point_map>;
-using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<Kernel, Point_set_2, Point_map, Normal_map>;
+using Point_map      = CGAL::Property_map_binder<CGAL::Pointer_property_map<Point_with_normal>::type,
+                                                 CGAL::First_of_pair_property_map<Point_with_normal> >;
+using Normal_map     = CGAL::Property_map_binder<CGAL::Pointer_property_map<Point_with_normal>::type,
+                                                 CGAL::Second_of_pair_property_map<Point_with_normal> >;
+
+using Neighbor_query = CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, std::size_t, Point_map>;
+using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<Kernel, std::size_t, Point_map, Normal_map>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
@@ -46,20 +52,26 @@ int main(int argc, char *argv[]) {
   const FT          max_angle       = FT(45);
   const std::size_t min_region_size = 5;
 
+  Point_map point_map(CGAL::make_property_map(point_set_2));
+  Normal_map normal_map(CGAL::make_property_map(point_set_2));
+
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    point_set_2, CGAL::parameters::sphere_radius(sphere_radius));
+    boost::irange<std::size_t>(0,point_set_2.size()),
+    CGAL::parameters::sphere_radius(sphere_radius)
+                     .point_map(point_map));
 
   Region_type region_type(
-    point_set_2,
     CGAL::parameters::
     maximum_distance(max_distance).
     maximum_angle(max_angle).
-    minimum_region_size(min_region_size));
+    minimum_region_size(min_region_size).
+    normal_map(normal_map).
+    point_map(point_map));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    point_set_2, neighbor_query, region_type);
+    boost::irange<std::size_t>(0,point_set_2.size()), neighbor_query, region_type);
 
   // Run the algorithm.
   std::vector<typename Region_growing::Primitive_and_region> regions;

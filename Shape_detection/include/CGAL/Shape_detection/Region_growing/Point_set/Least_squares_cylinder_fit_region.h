@@ -165,7 +165,6 @@ namespace Point_set {
         \cgalParamNEnd
       \cgalNamedParamsEnd
 
-      \pre `input_range.size() > 0`
       \pre `maximum_distance >= 0`
       \pre `maximum_angle >= 0 && maximum_angle <= 90`
       \pre `cosine_value >= 0 && cosine_value <= 1`
@@ -258,7 +257,6 @@ namespace Point_set {
 
       \return Boolean `true` or `false`
 
-      \pre `query_index < input_range.size()`
     */
     bool is_part_of_region(
       const Item,

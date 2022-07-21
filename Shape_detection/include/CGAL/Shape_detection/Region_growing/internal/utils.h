@@ -73,7 +73,8 @@ namespace internal {
 
   template<typename Input, typename Result>
   struct conditional_deref<Input, Result, false> {
-    const Result& operator()(Input it) {
+    typename std::iterator_traits<Input>::reference
+    operator()(Input it) {
       return *it;
     }
   };
@@ -166,10 +167,10 @@ namespace internal {
   template<
   typename Traits,
   typename Region,
-  typename ItemMap>
+  typename PrimitiveMap>
   std::pair<typename Traits::Line_2, typename Traits::FT>
   create_line_2(
-    const Region& region, const ItemMap item_map, const Traits&) {
+    const Region& region, const PrimitiveMap primitive_map, const Traits&) {
 
     using FT = typename Traits::FT;
     using Line_2 = typename Traits::Line_2;
@@ -181,19 +182,19 @@ namespace internal {
     using IPoint_2 = typename ITraits::Point_2;
     using ILine_2 = typename ITraits::Line_2;
 
-    using Input_type = typename ItemMap::value_type;
-    using Item = typename std::conditional<
-      std::is_same<typename Traits::Point_2, Input_type>::value,
+    using Item = typename boost::property_traits<PrimitiveMap>::key_type;
+    using Primitive = typename boost::property_traits<PrimitiveMap>::value_type;
+    using EPIC_Primitive = typename std::conditional<
+      std::is_same<typename Traits::Point_2, Primitive>::value,
       typename ITraits::Point_2, typename ITraits::Segment_2 >::type;
 
-    std::vector<Item> elements;
+    std::vector<EPIC_Primitive> elements;
     CGAL_precondition(region.size() > 0);
     elements.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (auto item : region) {
-      //const auto& element = get(item_map, item);
-      const auto& element = get(item_map, internal::conditional_deref<decltype(item), typename ItemMap::key_type>()(item));
+    for (Item item : region) {
+      const Primitive& element = get(primitive_map, item);
       elements.push_back(iconverter(element));
     }
     CGAL_precondition(elements.size() == region.size());
@@ -203,7 +204,7 @@ namespace internal {
     const IFT score = CGAL::linear_least_squares_fitting_2(
       elements.begin(), elements.end(),
       fitted_line, fitted_centroid,
-      CGAL::Dimension_tag<0>(), ITraits(),
+      CGAL::Dimension_tag<Feature_dimension<Primitive>::value>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 2>());
 
     const Line_2 line(
@@ -217,10 +218,10 @@ namespace internal {
   template<
   typename Traits,
   typename Region,
-  typename ItemMap>
+  typename PrimitiveMap>
   std::pair<typename Traits::Line_3, typename Traits::FT>
   create_line_3(
-    const Region& region, const ItemMap item_map, const Traits&) {
+    const Region& region, const PrimitiveMap primitive_map, const Traits&) {
 
     using FT = typename Traits::FT;
     using Line_3 = typename Traits::Line_3;
@@ -234,18 +235,19 @@ namespace internal {
     using IPoint_3 = typename ITraits::Point_3;
     using ILine_3 = typename ITraits::Line_3;
 
-    using Input_type = typename ItemMap::value_type;
-    using Item = typename std::conditional<
-      std::is_same<typename Traits::Point_3, Input_type>::value,
+    using Item = typename boost::property_traits<PrimitiveMap>::key_type;
+    using Primitive = typename boost::property_traits<PrimitiveMap>::value_type;
+    using EPIC_Primitive = typename std::conditional<
+      std::is_same<typename Traits::Point_3, Primitive>::value,
       typename ITraits::Point_3, typename ITraits::Segment_3 >::type;
 
-    std::vector<Item> elements;
+    std::vector<EPIC_Primitive> elements;
     CGAL_precondition(region.size() > 0);
     elements.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (auto item : region) {
-      const auto& element = get(item_map, internal::conditional_deref<typename std::iterator_traits<typename Region::iterator>::value_type, typename ItemMap::key_type>()(item));
+    for (Item item : region) {
+      const Primitive& element = get(primitive_map, item);
       elements.push_back(iconverter(element));
     }
     CGAL_precondition(elements.size() == region.size());
@@ -255,7 +257,7 @@ namespace internal {
     const IFT score = CGAL::linear_least_squares_fitting_3(
       elements.begin(), elements.end(),
       fitted_line, fitted_centroid,
-      CGAL::Dimension_tag<0>(), ITraits(),
+      CGAL::Dimension_tag<Feature_dimension<Primitive>::value>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
     const auto p = fitted_line.point(0);
@@ -312,7 +314,7 @@ namespace internal {
     const IFT score = CGAL::linear_least_squares_fitting_3(
       elements.begin(), elements.end(),
       fitted_plane, fitted_centroid,
-      CGAL::Dimension_tag<0>(), ITraits(),
+      CGAL::Dimension_tag<Feature_dimension<Element>::value>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
     const Plane_3 plane(
@@ -380,7 +382,6 @@ namespace internal {
       }
     }
     CGAL_precondition(points.size() >= region.size());
-
     IPlane_3 fitted_plane;
     IPoint_3 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_3(

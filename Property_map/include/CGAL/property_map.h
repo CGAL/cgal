@@ -174,7 +174,7 @@ struct Dereference_property_map
 {
   typedef Iter key_type; ///< typedef to 'T*'
   typedef std::remove_const_t<T> value_type; ///< typedef to 'T'
-  typedef T& reference; ///< typedef to 'T&'
+  typedef typename std::iterator_traits<Iter>::reference reference; ///< typedef to 'T&'
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
 
   /// Access a property map element.

@@ -120,6 +120,11 @@ namespace Point_set {
       among the ones listed below
 
       \cgalNamedParamsBegin
+        \cgalParamNBegin{item_map}
+          \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
+                                as key type and `Item` as value type.`}
+          \cgalParamDefault{A default is provided when `Item` is `InputRange::const_iterator` or its value type.}
+        \cgalParamNEnd
         \cgalParamNBegin{k_neighbors}
           \cgalParamDescription{the number of returned neighbors per each query point}
           \cgalParamType{`std::size_t`}
@@ -140,14 +145,19 @@ namespace Point_set {
       const InputRange& input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap())),
-    m_distance(m_point_map),
-    m_tree_ptr(new Tree(
-      input_range.begin(),
-      input_range.end(),
-      Splitter(),
-      Search_traits(m_point_map)))
+    m_distance(m_point_map)
     {
       CGAL_precondition(input_range.size() > 0);
+
+      using NP_helper = internal::Default_property_map_helper<CGAL_NP_CLASS, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
+      using Item_map = typename NP_helper::type;
+      Item_map item_map = NP_helper::get(np);
+
+      m_tree_ptr.reset( new Tree(make_transform_iterator_from_property_map(make_prevent_deref(input_range.begin()), item_map),
+                                 make_transform_iterator_from_property_map(make_prevent_deref(input_range.end()), item_map),
+                                 Splitter(),
+                                 Search_traits(m_point_map)) );
+
       const std::size_t K = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::k_neighbors), 12);
       CGAL_precondition(K > 0);
@@ -206,7 +216,7 @@ namespace Point_set {
   /*!
       \ingroup PkgShapeDetectionRGOnPoints
       shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
-      To be used together with `make_least_squares_sphere_fit_sorting_for_point_set()`.
+      To be used together with `make_k_neighbor_query()`.
    */
   template <class PointSet3>
   using K_neighbor_query_for_point_set =

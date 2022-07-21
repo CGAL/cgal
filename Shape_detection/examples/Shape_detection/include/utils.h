@@ -68,7 +68,7 @@ void save_point_regions_2(
 
     // Iterate through all region items.
     for (const auto item : region.second) {
-      const auto& point = get(point_map, *item);
+      const auto& point = get(point_map, item);
       pwc.push_back(std::make_pair(Point_3(point.x(), point.y(), 0), color));
     }
   }

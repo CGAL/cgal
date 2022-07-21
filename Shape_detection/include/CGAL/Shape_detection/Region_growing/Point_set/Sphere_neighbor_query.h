@@ -42,18 +42,17 @@ namespace Point_set {
   \tparam GeomTraits
   a model of `Kernel`
 
-  \tparam InputRange
-  a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+  \tparam Item_
+    a descriptor representing a given point. Must be a model of `Hashable`.
 
   \tparam PointMap
-  a model of `ReadablePropertyMap` whose key type is the value type of the input
-  range and value type is `Kernel::Point_2` or `Kernel::Point_3`
+  a model of `ReadablePropertyMap` whose key type is `Item_` and value type is `GeomTraits::Point_2` or `GeomTraits::Point_3`
 
   \cgalModels `NeighborQuery`
 */
 template<
 typename GeomTraits,
-typename InputRange,
+typename Item_,
 typename PointMap>
 class Sphere_neighbor_query {
 
@@ -63,11 +62,10 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   using Traits = GeomTraits;
-  using Input_range = InputRange;
   using Point_map = PointMap;
   using Point_type = typename boost::property_traits<Point_map>::value_type;
 
-  using Item = typename InputRange::const_iterator;
+  using Item = Item_;
   using Region = std::vector<Item>;
   /// \endcond
 
@@ -77,15 +75,13 @@ public:
   /// @}
 
 private:
-  using Dereference_pmap = internal::Dereference_property_map_adaptor<Item, PointMap>;
-
   using Search_base = typename std::conditional<
     std::is_same<typename Traits::Point_2, Point_type>::value,
     CGAL::Search_traits_2<Traits>,
     CGAL::Search_traits_3<Traits> >::type;
 
   using Search_traits =
-    CGAL::Search_traits_adapter<Item, Dereference_pmap, Search_base>;
+    CGAL::Search_traits_adapter<Item, PointMap, Search_base>;
 
   using Splitter =
     CGAL::Sliding_midpoint<Search_traits>;
@@ -103,6 +99,9 @@ public:
   /*!
     \brief initializes a Kd-tree with input points.
 
+    \tparam InputRange
+      a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -114,6 +113,11 @@ public:
     among the ones listed below
 
     \cgalNamedParamsBegin
+      \cgalParamNBegin{item_map}
+        \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
+                              as key type and `Item` as value type.`}
+        \cgalParamDefault{A default is provided when `Item` is `InputRange::const_iterator` or its value type.}
+      \cgalParamNEnd
       \cgalParamNBegin{sphere_radius}
         \cgalParamDescription{the fixed radius of the fuzzy sphere used for
         searching neighbors of a query point}
@@ -130,24 +134,26 @@ public:
     \pre `input_range.size() > 0`
     \pre `sphere_radius > 0`
   */
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  template<typename InputRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Sphere_neighbor_query(
     const InputRange& input_range,
     const CGAL_NP_CLASS& np = parameters::default_values()) :
-  m_ref_gen(input_range.begin()),
-  m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
-  m_deref_pmap(m_point_map),
-  m_tree(
-    boost::make_function_input_iterator(m_ref_gen, std::size_t(0)),
-    boost::make_function_input_iterator(m_ref_gen, input_range.size()),
-    Splitter(),
-    Search_traits(m_deref_pmap)) {
+  m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap()))
+  {
+    using NP_helper = internal::Default_property_map_helper<CGAL_NP_CLASS, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
+    using Item_map = typename NP_helper::type;
+    Item_map item_map = NP_helper::get(np);
+
+    m_tree_ptr.reset( new Tree(make_transform_iterator_from_property_map(make_prevent_deref(input_range.begin()), item_map),
+                               make_transform_iterator_from_property_map(make_prevent_deref(input_range.end()), item_map),
+                               Splitter(),
+                               Search_traits(m_point_map)) );
 
     CGAL_precondition(input_range.size() > 0);
     m_sphere_radius = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::sphere_radius), FT(1));
     CGAL_precondition(m_sphere_radius > FT(0));
-    m_tree.build();
+    m_tree_ptr->build();
   }
 
   /// @}
@@ -176,8 +182,8 @@ public:
 
     neighbors.clear();
     const Fuzzy_sphere sphere(
-      get(m_point_map, *query), m_sphere_radius, FT(0), m_tree.traits());
-    m_tree.search(std::back_inserter(neighbors), sphere);
+      get(m_point_map, query), m_sphere_radius, FT(0), m_tree_ptr->traits());
+    m_tree_ptr->search(std::back_inserter(neighbors), sphere);
   }
 
   /// @}
@@ -193,19 +199,40 @@ public:
 
     neighbors.clear();
     const Fuzzy_sphere sphere(
-      sphere_center, m_sphere_radius, FT(0), m_tree.traits());
-    m_tree.search(std::back_inserter(neighbors), sphere);
+      sphere_center, m_sphere_radius, FT(0), m_tree_ptr->traits());
+    m_tree_ptr->search(std::back_inserter(neighbors), sphere);
   }
   /// \endcond
 
 private:
-  internal::reference_iterator_generator<typename Input_range::const_iterator> m_ref_gen;
   const Point_map m_point_map;
-  const Dereference_pmap m_deref_pmap;
 
   FT m_sphere_radius;
-  Tree m_tree;
+  std::shared_ptr<Tree> m_tree_ptr;
 };
+
+/*!
+  \ingroup PkgShapeDetectionRGOnPoints
+  shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
+  To be used together with `make_sphere_neighbor_query()`.
+ */
+template <class PointSet3>
+using Sphere_neighbor_query_for_point_set =
+  Sphere_neighbor_query<typename Kernel_traits<typename PointSet3::Point_3>::Kernel,
+                        typename PointSet3::Index,
+                        typename PointSet3::Point_map>;
+
+/*!
+  \ingroup PkgShapeDetectionRGOnPoints
+  returns a instance of the sorting class to be used with `CGAL::Point_set_3`, with point and normal maps added to `np`.
+ */
+template <class PointSet3, typename CGAL_NP_TEMPLATE_PARAMETERS>
+Sphere_neighbor_query_for_point_set<PointSet3>
+make_sphere_neighbor_query(const PointSet3& ps, CGAL_NP_CLASS np = parameters::default_values())
+{
+  return Sphere_neighbor_query_for_point_set<PointSet3>(
+    ps, np.point_map(ps.point_map()));
+}
 
 } // namespace Point_set
 } // namespace Shape_detection
