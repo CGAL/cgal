@@ -2,7 +2,7 @@
 \ingroup PkgCombinatorialMapsConcepts
 \cgalConcept
 
-The concept `GenericMapItems` allows to customize a <I>d</I>D generic map by choosing the information associated with darts, by enabling and disabling some attributes, \tred{and by choosing to use indices or handles}. For that, it defines an inner class template named \link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, with one template parameter, `Map`, a model of the `GenericMap` concept. This inner class can define the two types `%Dart_info` and `%Attributes`.
+The concept `GenericMapItems` allows to customize a <I>d</I>D generic map by choosing the information associated with darts, by enabling and disabling some attributes, and by choosing to use indices or handles. For that, it defines an inner class template named \link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, with one template parameter, `Map`, a model of the `GenericMap` concept. This inner class can define the two types `%Dart_info` and `%Attributes`.
 
 \cgalHasModel \link CGAL::Generic_map_min_items `CGAL::Generic_map_min_items`\endlink
 
@@ -10,7 +10,7 @@ The concept `GenericMapItems` allows to customize a <I>d</I>D generic map by cho
 
 \cgalHeading{Example}
 
-The following examples show two possible models of the `GenericMapItems` concept: the first one for a generic map without dart information, nor enabled attributes, the second one for a generic map \tred{that uses std::uint16_t as indices,} with a `double` associated with each dart, and edge attributes enabled, and associated with a \link CGAL::Cell_attribute `Cell_attribute`\endlink containing an `int`.
+The following examples show two possible models of the `GenericMapItems` concept: the first one for a generic map without dart information, nor enabled attributes, the second one for a generic map that uses std::uint16_t as indices, with a `double` associated with each dart, and edge attributes enabled, and associated with a \link CGAL::Cell_attribute `Cell_attribute`\endlink containing an `int`.
 
   \code{.cpp}
   struct Exemple_Item_1
@@ -37,16 +37,12 @@ The following examples show two possible models of the `GenericMapItems` concept
 class GenericMapItems {
 public:
   /*!
-    \cgalModifBegin
     If `Use_index` is  `CGAL::Tag_true`, uses indices as descriptors. Otherwise (if this type is not defined or different from `CGAL::Tag_true`), use handles.
-    \cgalModifEnd
   */
   typedef unspecified_type Use_index;
 
   /*!
-    \cgalModifBegin
     Number type used for indices when Use_index is CGAL::Tag_true. By default, use std::uint32_t.
-    \cgalModifEnd
   */
   typedef unspecified_type Index_type;
 

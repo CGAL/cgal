@@ -167,11 +167,7 @@ Considering these different advantages and drawbacks, you can choose to use gene
 
 The diagram in \cgalFigureRef{fig_gmap_diagramme_class} shows the different classes of the package. `Generalized_map` is the main class (see Section \ref ssecgeneralizedmap "Generalized Maps"). It allows to manage darts and attributes (see Section \ref ssecattributesgmap "Cell Attributes"). Users can customize a generalized map thanks to an items class (see Section \ref ssecitemgmap "Generalized Map Items"), which defines the information associated with darts and the attribute types. These types may be different for different dimensions, and they may also be void (note that the main concepts of `GenericMap`, `GenericMapItems` and `CellAttribute` are shared between combinatorial maps and generalized maps).
 
-\cgalModifBegin
-
 The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `std::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to `std::size_t`. Indices can be used as index into vectors which store properties (cf. one example in Section \ref ssecexample3DGMWI "3D Generalized Map using Indices").
-
-\cgalModifEnd
 
 \cgalFigureBegin{fig_gmap_diagramme_class,gmap_diagramme_class.svg}
 UML diagram of the main classes of the package. k is the number of non void attributes.
@@ -231,8 +227,6 @@ typedef CGAL::Generalized_map<3, Example_items_3> Example_custom_gmap3;
 
 \endcode
 
-\cgalModifBegin
-
 \subsection ssecGMapIndicesHandles Indices or Handles
 
 By default, descriptors used to access darts and attributes are handles, and the darts and attributes are stored in a `Compact_container`. To use the index version, you should define the type `Use_index` equal to `CGAL::Tag_true` in the item class like in the code below. You can also define the type `Index_type` used to store indices (std::uint32_t by default when this type is not defined).
@@ -256,11 +250,9 @@ typedef CGAL::Generalized_map<3, Items_with_indices> Gmap3_with_index;
 
 The two main interests of the index version comparing to the handle ones are: (1) it has a lower memory footprint than a 64-bit pointer based version; (2) indices are contiguous, they can be used as index into vectors which store properties. The main interest of the handle version is the fact that handles can be dereferenced, which can simplify some code.
 
-\cgalModifEnd
-
 \section Generalized_mapIteration Iteration and Creation Operations
 
-An important operation in generalized maps consists in iterating over specific subsets of darts or over attributes. For that, several <I>ranges</I> are offered (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). A range is a model of the `Range` concept, thus supporting the two methods `begin()` and `end()` allowing to iterate over all the elements in the range. Several functions allow to create specific configurations of darts into a generalized map (see Section \ref ssecconstructiongmap "Construction Operations"). Darts can be marked during operations, for example when performing a breadth-first search traversal, thanks to Boolean marks (see Sections \ref ssecadvmarksgmap "Boolean Marks"). \tred{In the following, we denote by `d0`, `d1`, `d2` for dart descriptors, and identify in the explanations the descriptor and the object it describes.}
+An important operation in generalized maps consists in iterating over specific subsets of darts or over attributes. For that, several <I>ranges</I> are offered (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). A range is a model of the `Range` concept, thus supporting the two methods `begin()` and `end()` allowing to iterate over all the elements in the range. Several functions allow to create specific configurations of darts into a generalized map (see Section \ref ssecconstructiongmap "Construction Operations"). Darts can be marked during operations, for example when performing a breadth-first search traversal, thanks to Boolean marks (see Sections \ref ssecadvmarksgmap "Boolean Marks"). In the following, we denote by `d0`, `d1`, `d2` for dart descriptors, and identify in the explanations the descriptor and the object it describes.
 
 \subsection ssecrangegmap Iterating over Orbits, Cells, and Attributes
 
@@ -532,16 +524,11 @@ Lastly we remove the dynamic onmerge functor (step 7). This is done by initializ
 
 \cgalExample{Generalized_map/gmap_3_dynamic_onmerge.cpp}
 
-\cgalModifBegin
-
 \subsection ssecexample3DGMWI 3D Generalized Map using Indices
 
 In this example, a 3-dimensional generalized map is used, but using indices instead of handles. Two vectors are created to store some external information associated with darts and 3-attributes. Since descriptors are indices, they can directly be used to access elements of the vector.
 
 \cgalExample{Generalized_map/gmap_3_index.cpp}
-
-\cgalModifEnd
-
 
 \section sec_definition_gmap Mathematical Definitions
 

@@ -70,7 +70,7 @@ The class `Linear_cell_complex_traits<d,K>` is a model of `LinearCellComplexTrai
 \subsection Linear_cell_complexLinearCellComplexItems Linear Cell Complex Items
 \anchor sseclccitem
 
-The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept. \cgalModifBegin Like for combinatorial and generalized maps, it is possible to use indices instead of handles as descriptors, by defining CGAL::Tag_true for Use_index type in the item class. \cgalModifEnd
+The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept. Like for combinatorial and generalized maps, it is possible to use indices instead of handles as descriptors, by defining CGAL::Tag_true for Use_index type in the item class.
 
 The class `Linear_cell_complex_min_items<d>` is a model of `LinearCellComplexItems`. It defines `void` as information associated to darts, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.
 
@@ -114,7 +114,7 @@ Lastly, the function \link ::import_from_plane_graph `import_from_plane_graph(lc
 \subsection Linear_cell_complexModificationOperations Modification Operations
 \anchor ssecmodifop
 
-Some methods are defined in `LinearCellComplex` to modify a linear cell complex and update the vertex attributes. \tred{In the following, we denote by `d0`, `d1`, `d2` for three dart descriptors.}
+Some methods are defined in `LinearCellComplex` to modify a linear cell complex and update the vertex attributes. In the following, we denote by `d0`, `d1`, `d2` for three dart descriptors.
 
 \cgalFigureBegin{fig_lcc_insert_vertex,lcc_insert_vertex.svg}
 Example of \link LinearCellComplex::insert_barycenter_in_cell `insert_barycenter_in_cell<1>`\endlink and `remove_cell<0>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a point in the barycenter of the 1-cell containing dart <I>d1</I>. Now if we remove the 0-cell containing dart <I>d2</I>, we obtain a linear cell complex isomorphic to the initial one.

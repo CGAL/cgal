@@ -45,7 +45,7 @@ typedef unspecified_type Dart;
 typedef unspecified_type Dart_descriptor;
 
 /*!
-%Dart const descriptor type. \tred{When using indices, Dart_const_descriptor is equal to Dart_descriptor.}
+%Dart const descriptor type. When using indices, Dart_const_descriptor is equal to Dart_descriptor.
 */
 typedef unspecified_type Dart_const_descriptor;
 
@@ -74,14 +74,10 @@ The number of available Boolean marks of the generic map.
 */
 static const size_type NB_MARKS;
 
-\cgalModifBegin
-
 /*!
 A null descriptor. This descriptor is not valid and should not be used to access a dart or an attribute.
 */
 static unspecified_type null_descriptor;
-
-\cgalModifEnd
 
 /// @}
 
