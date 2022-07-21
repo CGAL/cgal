@@ -39,6 +39,7 @@ void trace_test_end()
 
 void trace_display_msg(const char* msg)
 {
+  CGAL_USE(msg);
 #ifdef LCC_TRACE_TEST_BEGIN
   std::cout<<"***************** "<<msg<<"***************** "<<std::endl;
 #endif
