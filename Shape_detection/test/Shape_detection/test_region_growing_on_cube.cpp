@@ -95,14 +95,14 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
 
   for (std::size_t i = 0; i < regions.size(); i++)
     for (auto& item : regions[i].second) {
-      if (i != get(map, CGAL::Shape_detection::internal::conditional_deref<typename Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+      if (i != get(map, item)) {
         std::cout << "Region map incorrect" << std::endl;
         assert(false);
       }
     }
 
   for (auto& item : unassigned_faces) {
-    if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<typename Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+    if (std::size_t(-1) != get(map, item)) {
       std::cout << "Region map for unassigned incorrect" << std::endl;
       assert(false);
     }

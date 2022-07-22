@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 
   for (std::size_t i = 0; i < regions.size(); i++)
     for (auto& item : regions[i].second) {
-      if (i != get(map, CGAL::Shape_detection::internal::conditional_deref<Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+      if (i != get(map, item)) {
         std::cout << "Region map incorrect" << std::endl;
       }
     }
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
   region_growing.unassigned_items(face_range, std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {
-    if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+    if (std::size_t(-1) != get(map, item)) {
       std::cout << "Region map for unassigned incorrect" << std::endl;
     }
   }

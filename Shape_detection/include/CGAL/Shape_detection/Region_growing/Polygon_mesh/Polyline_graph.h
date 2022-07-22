@@ -258,7 +258,7 @@ namespace Polygon_mesh {
       std::vector<edge_descriptor>& neighbors) const
     {
       neighbors.clear();
-      const auto& pedge = m_pedges[get(m_eimap, internal::conditional_deref<I, edge_descriptor>()(query))];
+      const auto& pedge = m_pedges[get(m_eimap, query)];
       neighbors.resize(pedge.neighbors.size());
       for (std::size_t i = 0; i < pedge.neighbors.size(); i++)
         neighbors[i] = m_pedges[pedge.neighbors[i]].ed;

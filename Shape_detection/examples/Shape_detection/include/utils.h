@@ -206,7 +206,7 @@ void save_segment_regions_3(
 
     // Iterate through all region items.
     for (const auto &item : region.second) {
-      const auto& segment = get(segment_map, CGAL::Shape_detection::internal::conditional_deref<typename std::iterator_traits<typename std::iterator_traits<typename Regions::iterator>::value_type::second_type::iterator>::value_type, typename Segment_map::key_type>()(item));
+      const auto& segment = get(segment_map, item);
       pwc.push_back(std::make_pair(segment.source(), color));
       pwc.push_back(std::make_pair(segment.target(), color));
     }
