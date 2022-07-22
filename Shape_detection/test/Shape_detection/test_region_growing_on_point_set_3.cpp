@@ -29,11 +29,9 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
   using Point_3 = typename Kernel::Point_3;
 
   using Input_range = CGAL::Point_set_3<Point_3>;
-  using Point_map   = typename Input_range::Point_map;
-  using Normal_map = typename Input_range::Vector_map;
 
-  using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
-  using Region_type    = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+  using Neighbor_query = SD::Point_set::Sphere_neighbor_query_for_point_set<Input_range>;
+  using Region_type    = SD::Point_set::Least_squares_plane_fit_region_for_point_set<Input_range>;
   using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
   // Default parameter values.
@@ -54,12 +52,11 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
   assert(input_range.size() == 8075);
 
   // Create parameter classes.
-  Neighbor_query neighbor_query(
+  Neighbor_query neighbor_query = SD::Point_set::make_sphere_neighbor_query(
     input_range, CGAL::parameters::
     sphere_radius(sphere_radius));
 
-  Region_type region_type(
-    input_range,
+  Region_type region_type = SD::Point_set::make_least_squares_plane_fit_region(input_range,
     CGAL::parameters::
     maximum_distance(distance_threshold).
     maximum_angle(angle_threshold).

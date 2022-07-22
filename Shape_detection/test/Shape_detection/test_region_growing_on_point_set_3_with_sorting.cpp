@@ -27,14 +27,14 @@ using Point_3 = typename Kernel::Point_3;
 using Input_range = CGAL::Point_set_3<Point_3>;
 using Point_map   = typename Input_range::Point_map;
 using Normal_map  = typename Input_range::Vector_map;
-using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
+using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range::Index, Point_map>;
 
-using Plane_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Plane_sorting = SD::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
-using Sphere_region = SD::Point_set::Least_squares_sphere_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Sphere_sorting = SD::Point_set::Least_squares_sphere_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
-using Cylinder_region = SD::Point_set::Least_squares_cylinder_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Cylinder_sorting = SD::Point_set::Least_squares_cylinder_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map, Normal_map>;
+using Plane_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range::Index, Point_map, Normal_map>;
+using Plane_sorting = SD::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range::Index, Neighbor_query, Point_map>;
+using Sphere_region = SD::Point_set::Least_squares_sphere_fit_region<Kernel, Input_range::Index, Point_map, Normal_map>;
+using Sphere_sorting = SD::Point_set::Least_squares_sphere_fit_sorting<Kernel, Input_range::Index, Neighbor_query, Point_map>;
+using Cylinder_region = SD::Point_set::Least_squares_cylinder_fit_region<Kernel, Input_range::Index, Point_map, Normal_map>;
+using Cylinder_sorting = SD::Point_set::Least_squares_cylinder_fit_sorting<Kernel, Input_range::Index, Neighbor_query, Point_map, Normal_map>;
 
 template<
 typename Region_type,
@@ -64,11 +64,11 @@ bool test(
   // Create parameter classes.
   Neighbor_query neighbor_query(
     input_range, CGAL::parameters::
-    k_neighbors(k));
+    k_neighbors(k).point_map(input_range.point_map()));
 
   // Sort indices.
   Sorting sorting(
-    input_range, neighbor_query);
+    input_range, neighbor_query, CGAL::parameters::point_map(input_range.point_map()));
   sorting.sort();
 
   // Run region growing.
@@ -85,7 +85,7 @@ bool test(
 
   for (std::size_t i = 0; i < regions.size(); i++)
     for (auto &item : regions[i].second) {
-      if (i != get(map, CGAL::Shape_detection::internal::conditional_deref<typename Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+      if (i != get(map, item)) {
         std::cout << "Region map incorrect" << std::endl;
         assert(result = false);
       }
@@ -95,7 +95,7 @@ bool test(
   region_growing.unassigned_items(input_range, std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {
-    if (std::size_t(-1) != get(map, CGAL::Shape_detection::internal::conditional_deref<typename Region_growing::Item, typename Region_growing::Region_map::key_type>()(item))) {
+    if (std::size_t(-1) != get(map, item)) {
       std::cout << "Region map for unassigned incorrect" << std::endl;
       assert(result = false);
     }
@@ -116,10 +116,12 @@ int main(int argc, char *argv[]) {
        const FT          max_distance    = FT(2);
        const FT          max_angle       = FT(20);
        const std::size_t min_region_size = 50;
-       return Plane_region(input_range, CGAL::parameters::
+       return Plane_region(CGAL::parameters::
          maximum_distance(max_distance).
          maximum_angle(max_angle).
-         minimum_region_size(min_region_size));
+         minimum_region_size(min_region_size).
+         point_map(input_range.point_map()).
+         normal_map(input_range.normal_map()));
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions planes: " << region.size() << std::endl;
@@ -138,10 +140,12 @@ int main(int argc, char *argv[]) {
        const FT          max_distance    = FT(1) / FT(100);
        const FT          max_angle       = FT(10);
        const std::size_t min_region_size = 50;
-       return Sphere_region(input_range, CGAL::parameters::
+       return Sphere_region(CGAL::parameters::
          maximum_distance(max_distance).
          maximum_angle(max_angle).
-         minimum_region_size(min_region_size));
+         minimum_region_size(min_region_size).
+         point_map(input_range.point_map()).
+         normal_map(input_range.normal_map()));
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions spheres: " << region.size() << std::endl;
@@ -160,10 +164,12 @@ int main(int argc, char *argv[]) {
        const FT          max_distance    = FT(1) / FT(20);
        const FT          max_angle       = FT(5);
        const std::size_t min_region_size = 200;
-       return Cylinder_region(input_range, CGAL::parameters::
+       return Cylinder_region(CGAL::parameters::
          maximum_distance(max_distance).
          maximum_angle(max_angle).
-         minimum_region_size(min_region_size));
+         minimum_region_size(min_region_size).
+         point_map(input_range.point_map()).
+         normal_map(input_range.normal_map()));
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions cylinders: " << region.size() << std::endl;

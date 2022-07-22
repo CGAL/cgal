@@ -23,11 +23,13 @@ using Vector_2 = typename Kernel::Vector_2;
 
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Input_range       = std::vector<Point_with_normal>;
-using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
-using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
-
-using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
-using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+using Deref_map         = CGAL::Dereference_property_map<const Point_with_normal, Input_range::const_iterator>;
+using Point_map         = CGAL::Property_map_binder<Deref_map,
+                                                    CGAL::First_of_pair_property_map<Point_with_normal>>;
+using Normal_map        = CGAL::Property_map_binder<Deref_map,
+                                                    CGAL::Second_of_pair_property_map<Point_with_normal>>;
+using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range::const_iterator, Point_map>;
+using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range::const_iterator, Point_map, Normal_map>;
 using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
@@ -44,9 +46,12 @@ int main(int argc, char *argv[]) {
   in.close();
   assert(input_range.size() == 3634);
 
+  Point_map point_map;
+  Normal_map normal_map;
+  
   // Create parameter classes.
   Neighbor_query neighbor_query(input_range);
-  Region_type region_type(input_range);
+  Region_type region_type;
 
   // Run region growing.
   Region_growing region_growing(

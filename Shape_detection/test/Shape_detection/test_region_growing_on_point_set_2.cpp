@@ -29,11 +29,15 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
 
   using Point_with_normal = std::pair<Point_2, Vector_2>;
   using Input_range       = std::vector<Point_with_normal>;
-  using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
-  using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
+  using Item              = typename Input_range::const_iterator;
+  using Deref_map         = CGAL::Dereference_property_map<const Point_with_normal, Item>;
+  using Point_map         = CGAL::Property_map_binder<Deref_map,
+                                                      CGAL::First_of_pair_property_map<Point_with_normal>>;
+  using Normal_map        = CGAL::Property_map_binder<Deref_map,
+                                                      CGAL::Second_of_pair_property_map<Point_with_normal>>;
 
-  using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
-  using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+  using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Item, Point_map>;
+  using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Item, Point_map, Normal_map>;
   using Region_growing = SD::Region_growing<Neighbor_query, Region_type>;
 
   // Default parameter values.
@@ -62,7 +66,6 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
     CGAL::parameters::sphere_radius(sphere_radius));
 
   Region_type region_type(
-    input_range,
     CGAL::parameters::
     maximum_distance(distance_threshold).
     maximum_angle(angle_threshold).
