@@ -793,7 +793,9 @@ void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::
 clear()
 {
   for (size_type i=0; i<capacity_; ++i)
-  { if ( is_used(i) ) alloc.destroy(&operator[](i)); }
+  { if ( is_used(i) )
+    { std::allocator_traits<allocator_type>::destroy(alloc, &operator[](i)); }
+  }
   std::allocator_traits<allocator_type>::deallocate(alloc, all_items, capacity_);
   all_items=nullptr;
 
@@ -816,7 +818,7 @@ increase_size()
       std::allocator_traits<allocator_type>::construct
           (alloc, &(all_items2[index]), std::move(all_items[index]));
       //new (&all_items2[index]) value_type(all_items[index]);
-      alloc.destroy(&(all_items[index]));
+      std::allocator_traits<allocator_type>::destroy(alloc, &(all_items[index]));
     }
     else
     { free_list.copy_special_data(all_items[index], all_items2[index]); }
