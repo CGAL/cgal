@@ -86,13 +86,15 @@ namespace internal {
   template<class T>
   struct hash_item<T, false> {
     std::size_t operator()(T i) const {
-      return boost::hash_value(i);
+      using boost::hash_value;
+      return hash_value(i);
     }
   };
 
   template<class T>
   struct hash_item<T, true> {
     std::size_t operator()(T i) const {
+      using boost::hash_value;
       return boost::hash_value(i.operator->());
     }
   };
