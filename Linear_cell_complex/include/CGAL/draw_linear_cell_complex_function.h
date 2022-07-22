@@ -12,8 +12,8 @@
 #ifndef CGAL_DRAW_LCC_H
 #define CGAL_DRAW_LCC_H
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/GraphicBuffer.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/Qt/init_ogl_context.h>
@@ -138,13 +138,10 @@ struct LCC_geom_utils<LCC, Local_kernel, 2> {
   }
 };
 
-// #define LCC  CGAL_LCC_TYPE                                
 
-// TODO?
-
-
-template <typename BufferType = float, class LCC, class Local_kernel, class DrawingFunctorLCC>
-void compute_face(typename LCC::Dart_const_handle dh, typename LCC::Dart_const_handle voldh, const LCC *lcc,
+template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
+void compute_face(typename LCC::Dart_const_handle dh,
+                  typename LCC::Dart_const_handle voldh, const LCC *lcc,
                   bool m_nofaces, bool m_random_face_color,
                   const DrawingFunctorLCC &m_drawing_functor,
                   GraphicBuffer<BufferType> &graphic_buffer) {
@@ -232,10 +229,9 @@ void compute_vertex(typename LCC::Dart_const_handle dh, const LCC *lcc,
 }
 
 template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
-void compute_elements(const LCC *lcc,
+void compute_elements(GraphicBuffer<BufferType> &graphic_buffer, const LCC *lcc,
                       const DrawingFunctorLCC &m_drawing_functor,
-                      bool m_nofaces, bool m_random_face_color,
-                      GraphicBuffer<BufferType> &graphic_buffer) {
+                      bool m_nofaces, bool m_random_face_color) {
 
   if (lcc == nullptr)
     return;
@@ -327,13 +323,13 @@ void compute_elements(const LCC *lcc,
 // This function is responsible for filling the buffer to allow visualization.
 template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
 void add_in_graphic_buffer_lcc(GraphicBuffer<BufferType> &graphic_buffer,
-                              const DrawingFunctorLCC &m_drawing_functor,
+                               const DrawingFunctorLCC &m_drawing_functor,
                                const LCC *alcc = nullptr, bool nofill = false,
-                               bool m_random_face_color = false
-                               ) {
+                               bool m_random_face_color = false) {
 
   if (alcc != nullptr) {
-    compute_elements(graphic_buffer, alcc, m_drawing_functor);
+    compute_elements(graphic_buffer, alcc, m_drawing_functor, nofill,
+                     m_random_face_color);
   }
 }
 
