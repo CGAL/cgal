@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    point_set_2, neighbor_query, region_type, sorting.ordered());
+    point_set_2, sorting.ordered(), neighbor_query, region_type);
 
   // Add maps to get a colored output.
   Point_set_2::Property_map<unsigned char>

@@ -61,24 +61,6 @@ namespace internal {
     mutable T it;
   };
 
-  template<typename Input, typename Result, bool = std::is_same<Input, Result>::value >
-  struct conditional_deref;
-
-  template<typename Input, typename Result>
-  struct conditional_deref<Input, Result, true> {
-    const Result& operator()(const Input& it) {
-      return it;
-    }
-  };
-
-  template<typename Input, typename Result>
-  struct conditional_deref<Input, Result, false> {
-    typename std::iterator_traits<Input>::reference
-    operator()(Input it) {
-      return *it;
-    }
-  };
-
   // TODO: this should be customisable in named function parameters
   template<class T, bool = CGAL::is_iterator<T>::value>
   struct hash_item {};

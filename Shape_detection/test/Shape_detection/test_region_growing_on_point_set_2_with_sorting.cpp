@@ -81,7 +81,7 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
 
   // Run region growing.
   Region_growing region_growing(
-    input_range, neighbor_query, region_type, sorting.ordered());
+    input_range, sorting.ordered(), neighbor_query, region_type);
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));

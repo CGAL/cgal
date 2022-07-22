@@ -29,6 +29,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
+#include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -85,6 +86,11 @@ namespace Shape_detection {
       \tparam InputRange
         a model of `ConstRange`
 
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
+
       \param input_range
       a range of input items for region growing
 
@@ -96,33 +102,49 @@ namespace Shape_detection {
       an instance of `RegionType` that is used internally to
       control if items form a valid region type
 
+      \param item_map
+        an instance of the property map to retrieve items from input values
+
       \pre `input_range.size() > 0`
     */
-    template<typename InputRange>
+    template<typename InputRange, typename ItemMap = Default>
     Region_growing(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      RegionType& region_type) :
+      RegionType& region_type,
+      ItemMap item_map = ItemMap()) :
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
       m_region_map(region_type.region_index_map()),
-      m_visited(m_visited_map) {
-
+      m_visited(m_visited_map)
+    {
       CGAL_precondition(input_range.size() > 0);
       m_seed_range.resize(input_range.size());
 
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
       std::size_t idx = 0;
       for (auto it = input_range.begin(); it != input_range.end(); it++)
-        m_seed_range[idx++] = internal::conditional_deref<typename InputRange::const_iterator, Item>()(it);
+        m_seed_range[idx++] = get(item_map_, it);
 
-      clear(input_range);
+      clear(input_range, item_map_);
     }
 
     /*!
       \brief initializes the region growing algorithm.
 
       \tparam InputRange
-        a model of `ConstRange
+        a model of `ConstRange`
+
+      \tparam SeedRange
+        a model of `ConstRange` with `Item` as value type
+
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
 
       \param input_range
       a range of input items for region growing
@@ -139,14 +161,18 @@ namespace Shape_detection {
       a vector of `Item` that is used as seeds for the region growing.
       Defaults to the full input_range.
 
+      \param item_map
+        an instance of the property map to retrieve items from input values
+
       \pre `input_range.size() > 0`
     */
-    template<typename InputRange, typename SeedRange>
+    template<typename InputRange, typename SeedRange, typename ItemMap = Default>
     Region_growing(
       const InputRange& input_range,
+      SeedRange& seed_range,
       NeighborQuery& neighbor_query,
       RegionType& region_type,
-      SeedRange& seed_range) :
+      ItemMap item_map = ItemMap()) :
       m_neighbor_query(neighbor_query),
       m_region_type(region_type),
       m_region_map(region_type.region_index_map()),
@@ -154,14 +180,17 @@ namespace Shape_detection {
 
       CGAL_precondition(input_range.size() > 0);
       CGAL_precondition(seed_range.size() > 0);
-
       m_seed_range.resize(seed_range.size());
+
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
 
       std::size_t idx = 0;
       for (auto it = seed_range.begin(); it != seed_range.end(); it++)
-        m_seed_range[idx++] = internal::conditional_deref<typename SeedRange::const_iterator, Item>()(it);
+        m_seed_range[idx++] = *it;
 
-      clear(input_range);
+      clear(input_range, item_map_);
     }
 
     /// @}
@@ -235,18 +264,31 @@ namespace Shape_detection {
       \tparam InputRange
         a model of `ConstRange
 
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
+
       \param input_range
       a range of input items for region growing
 
       \param output
       an iterator of type `PrimitiveAndRegionOutputIterator`.
 
+      \param item_map
+        an instance of the property map to retrieve items from input values
+
       \return past-the-end position in the output sequence
     */
-    template<typename InputRange, typename ItemOutputIterator>
-    ItemOutputIterator unassigned_items(const InputRange& input_range, ItemOutputIterator output) const {
+    template<typename InputRange, typename ItemOutputIterator, typename ItemMap = Default>
+    ItemOutputIterator unassigned_items(const InputRange& input_range, ItemOutputIterator output, ItemMap item_map = ItemMap()) const
+    {
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
-        Item i = internal::conditional_deref<typename InputRange::const_iterator, Item>()(it);
+        Item i = get(item_map_,it);
         if (!get(m_visited, i))
           *(output++) = i;
       }
@@ -256,10 +298,10 @@ namespace Shape_detection {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
-    template <class InputRange>
-    void clear(const InputRange& input_range) {
+    template <class InputRange, class ItemMap>
+    void clear(const InputRange& input_range, ItemMap item_map) {
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
-        Item item = internal::conditional_deref<typename InputRange::const_iterator, typename Region_map::key_type>()(it);
+        Item item = get(item_map, it);
         put(m_region_map, item, std::size_t(-1));
       }
       // TODO if we want to allow subranges while NeighborQuery operates on the full range

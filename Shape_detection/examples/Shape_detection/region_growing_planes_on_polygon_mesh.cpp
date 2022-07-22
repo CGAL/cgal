@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type, sorting.ordered());
+    face_range, sorting.ordered(), neighbor_query, region_type);
 
   // Run the algorithm.
   std::vector<typename Region_growing::Primitive_and_region> regions;

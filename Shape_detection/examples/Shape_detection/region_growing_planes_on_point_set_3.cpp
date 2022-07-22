@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    point_set, neighbor_query, region_type, sorting.ordered());
+    point_set, sorting.ordered(), neighbor_query, region_type);
 
   // Run the algorithm.
   Output_range output_range;

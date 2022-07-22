@@ -170,7 +170,7 @@ bool test_lines_segment_set_2_sorting() {
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
   Region_growing region_growing(
-    segments, neighbor_query, region_type, sorting.ordered());
+    segments, sorting.ordered(), neighbor_query, region_type);
   region_growing.detect(std::back_inserter(regions));
   assert(regions.size() == 2);
   assert(regions[0].second.size() == 2);
@@ -227,7 +227,7 @@ bool test_lines_segment_set_3() {
 
   // Create an instance of the region growing class.
   RG_planes rg_planes(
-    face_range, one_ring_query, plane_type, plane_sorting.ordered());
+    face_range, plane_sorting.ordered(), one_ring_query, plane_type);
 
   assert(surface_mesh.number_of_faces() == 7320);
   std::vector<typename RG_planes::Primitive_and_region> regions;
@@ -246,7 +246,7 @@ bool test_lines_segment_set_3() {
 
   std::vector<typename RG_lines::Primitive_and_region> regions2;
   RG_lines region_growing(
-    segment_range, pgraph, region_type, sorting.ordered());
+    segment_range, sorting.ordered(), pgraph, region_type);
   region_growing.detect(std::back_inserter(regions2));
   assert(regions2.size() == 21);
   return true;

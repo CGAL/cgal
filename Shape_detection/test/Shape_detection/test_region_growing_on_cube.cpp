@@ -79,7 +79,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
 
   // Run region growing.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type, sorting.ordered());
+    face_range, sorting.ordered(), neighbor_query, region_type);
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));

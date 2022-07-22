@@ -56,6 +56,26 @@ struct Default_property_map_helper<NP, Item, Iterator, Tag, false>
   }
 };
 
+template <class ItemMap, class Item, class Iterator>
+struct Item_map_helper
+{
+  using type = ItemMap;
+  static const ItemMap& get(const ItemMap& m)
+  {
+    return m;
+  }
+};
+
+template <class Item, class Iterator>
+struct Item_map_helper<Default, Item, Iterator>
+{
+  using type = typename Default_property_map_helper<Default, Item, Iterator, int, false>::type;
+  static type get(Default)
+  {
+    return type();
+  }
+};
+
 } // namespace internal
 } // namespace Shape_detection
 } // namespace CGAL

@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
   line_sorting.sort();
 
   RG_lines rg_lines(
-    segment_range, pgraph, line_region, line_sorting.ordered());
+    segment_range, line_sorting.ordered(), pgraph, line_region);
 
   std::vector<typename RG_lines::Primitive_and_region> subregions;
   rg_lines.detect(std::back_inserter(subregions));
