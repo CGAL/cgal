@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   }
   const Face_range face_range = faces(polygon_mesh);
   std::cout << "* number of input faces: " << face_range.size() << std::endl;
-  assert(is_default_input && face_range.size() == 32245);
+  assert(!is_default_input || face_range.size() == 32245);
 
   // Default parameter values for the data file building.off.
   const FT          max_distance    = FT(1);
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found planes: " << regions.size() << std::endl;
-  assert(is_default_input && regions.size() == 355);
+  assert(!is_default_input || regions.size() == 355);
 
   const Region_growing::Region_map& map = region_growing.region_map();
 

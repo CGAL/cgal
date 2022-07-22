@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
   in >> point_set;
   in.close();
   std::cout << "* number of input points: " << point_set.size() << std::endl;
-  assert(is_default_input && point_set.size() == 5969);
+  assert(!is_default_input || point_set.size() == 5969);
   assert(point_set.has_normal_map()); // input should have normals
 
   // Default parameter values for the data file spheres.ply.
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
     )
   );
   std::cout << "* number of found spheres: " << num_spheres << std::endl;
-  assert(is_default_input && num_spheres == 10);
+  assert(!is_default_input || num_spheres == 10);
 
   // Save regions to a file.
   std::ofstream out("spheres_point_set_3.ply");

@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
   in >> point_set;
   in.close();
   std::cout << "* number of input points: " << point_set.size() << std::endl;
-  assert(is_default_input && point_set.size() == 1813);
+  assert(!is_default_input || point_set.size() == 1813);
   assert(point_set.has_normal_map()); // input should have normals
 
   // Default parameter values for the data file cuble.pwn.
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
     )
   );
   std::cout << "* number of found cylinders: " << num_cylinders << std::endl;
-  assert(is_default_input && num_cylinders == 2);
+  assert(!is_default_input || num_cylinders == 2);
 
   // Save regions to a file.
   std::ofstream out("cylinders_point_set_3.ply");

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   in >> point_set;
   in.close();
   std::cout << "* number of input points: " << point_set.size() << std::endl;
-  assert(is_default_input && point_set.size() == 8075);
+  assert(!is_default_input || point_set.size() == 8075);
 
   // Default parameter values for the data file building.xyz.
   const std::size_t k               = 12;
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
   region_growing.detect(
     boost::make_function_output_iterator(inserter));
   std::cout << "* number of found planes: " << number_of_regions << std::endl;
-  assert(is_default_input && number_of_regions == 7);
+  assert(!is_default_input || number_of_regions == 7);
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "planes_point_set_3.ply");
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
   std::vector<Region_type::Item> unassigned_items;
   region_growing.unassigned_items(point_set, std::back_inserter(unassigned_items));
   std::cout << "* number of unassigned points: " << unassigned_items.size() << std::endl;
-  assert(is_default_input && unassigned_items.size() == 538);
+  assert(!is_default_input || unassigned_items.size() == 538);
 
   // Store all unassigned points.
   std::vector<Point_3> unassigned_points;

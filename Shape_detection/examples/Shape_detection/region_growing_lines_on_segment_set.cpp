@@ -42,8 +42,8 @@ int main(int argc, char *argv[]) {
   const Edge_range edge_range = edges(surface_mesh);
   std::cout << "* number of input faces: " << face_range.size() << std::endl;
   std::cout << "* number of input edges: " << edge_range.size() << std::endl;
-  assert(is_default_input && face_range.size() == 7320);
-  assert(is_default_input && edge_range.size() == 10980);
+  assert(!is_default_input || face_range.size() == 7320);
+  assert(!is_default_input || edge_range.size() == 10980);
 
   // Find planar regions.
   One_ring_query one_ring_query(surface_mesh);
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   std::vector<typename RG_planes::Primitive_and_region> regions;
   rg_planes.detect(std::back_inserter(regions));
   std::cout << "* number of found planar regions: " << regions.size() << std::endl;
-  assert(is_default_input && regions.size() == 9);
+  assert(!is_default_input || regions.size() == 9);
 
   std::string fullpath = (argc > 2 ? argv[2] : "regions_sm.ply");
   utils::save_polygon_mesh_regions(surface_mesh, regions, fullpath);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
   std::vector<typename RG_lines::Primitive_and_region> subregions;
   rg_lines.detect(std::back_inserter(subregions));
   std::cout << "* number of found linear regions: " << subregions.size() << std::endl;
-  assert(is_default_input && subregions.size() == 21);
+  assert(!is_default_input || subregions.size() == 21);
 
   fullpath = (argc > 2 ? argv[2] : "subregions_sm.ply");
   utils::save_segment_regions_3<Kernel, std::vector<typename RG_lines::Primitive_and_region>, Segment_map>(

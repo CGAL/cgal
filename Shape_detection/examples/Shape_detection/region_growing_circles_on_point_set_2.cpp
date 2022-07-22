@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   in >> point_set_3;
   in.close();
   std::cout << "* number of input points: " << point_set_3.size() << std::endl;
-  assert(is_default_input && point_set_3.size() == 1101);
+  assert(!is_default_input || point_set_3.size() == 1101);
   assert(point_set_3.has_normal_map()); // input should have normals
 
   // Create a 2D point set.
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
     )
   );
   std::cout << "* number of found circles: " << num_circles << std::endl;
-  assert(is_default_input && num_circles == 10);
+  assert(!is_default_input || num_circles == 10);
 
   // Save regions to a file.
   std::ofstream out("circles_point_set_2.ply");
