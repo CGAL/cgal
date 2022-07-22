@@ -1452,7 +1452,7 @@ protected:
   /// \name Flag manipulation functions.
   //@{
   template <typename T>
-  static constexpr size_t flag_mask(const T flag) { return 0x1 << flag; }
+  static constexpr auto flag_mask(const T flag) { return 0x1 << flag; }
 
   void reset_flags() { m_info = 0; }
 

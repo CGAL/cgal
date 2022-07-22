@@ -2502,7 +2502,7 @@ public:
       }
 
       // Set the arc properties (no need to compute the orientation).
-      set(arc, rat_coeffs);
+      m_traits.set(arc, rat_coeffs);
 
       // Make sure that all midpoints are strictly between the
       // source and the target.
@@ -3077,7 +3077,7 @@ public:
         // Go over the vertical tangency points and try to update the x-points.
         Alg_point_2 tan_ps[2];
         auto n_tan_ps = m_traits.vertical_tangency_points(xcv, tan_ps);
-        for (int i = 0; i < n_tan_ps; ++i) {
+        for (auto i = 0; i < n_tan_ps; ++i) {
           if (CGAL::to_double(tan_ps[i].x()) < x_min)
             x_min = CGAL::to_double(tan_ps[i].x());
           if (CGAL::to_double(tan_ps[i].x()) > x_max)
@@ -3086,7 +3086,7 @@ public:
 
         // Go over the horizontal tangency points and try to update the y-points.
         n_tan_ps = m_traits.horizontal_tangency_points(xcv, tan_ps);
-        for (int i = 0; i < n_tan_ps; ++i) {
+        for (auto i = 0; i < n_tan_ps; ++i) {
           if (CGAL::to_double(tan_ps[i].y()) < y_min)
             y_min = CGAL::to_double(tan_ps[i].y());
           if (CGAL::to_double(tan_ps[i].y()) > y_max)
@@ -3461,7 +3461,7 @@ public:
     auto side = CGAL::sign(val);
     CGAL_assertion(side != ZERO);
     cv.set_extra_data(a, b, c, side);
-    const auto& target = cv.target();
+    CGAL_assertion_code(const auto& target = cv.target());
     CGAL_assertion(side == cv.sign_of_extra_data(target.x(), target.y()));
   }
 
