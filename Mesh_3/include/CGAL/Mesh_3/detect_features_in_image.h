@@ -84,7 +84,7 @@ bool detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
   using Word //use unsigned integral Word type to use it as an index
     = typename CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, sizeof(Word_type)>::type;
 
-  using Color_transform = internal::Color_transformation_helper<Word_type>;
+  using Color_transform = internal::Color_transformation_helper<Word>;
   typename Color_transform::type color_transformation;
   std::array<Word, 8>            inv_color_transformation;
 
@@ -115,7 +115,7 @@ bool detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
 
         Color_transform::reset(color_transformation);
 
-        int nb_color = 0;
+        std::uint8_t nb_color = 0;
         for (int i = 0; i < 8; ++i) {
           if (!Color_transform::is_valid(color_transformation, cube[i]))
           {
