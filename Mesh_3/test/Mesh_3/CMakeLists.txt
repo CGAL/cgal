@@ -65,6 +65,7 @@ if ( CGAL_FOUND )
       test_without_detect_features
       test_meshing_3D_image
       test_meshing_3D_image_deprecated
+      test_meshing_3D_image_with_features
       test_meshing_3D_gray_image
       test_meshing_3D_gray_image_deprecated
       test_meshing_implicit_function
