@@ -448,7 +448,7 @@ public:
   {}
 
   /// Get the underlying index
-  operator size_t() const
+  operator size_type() const
   { return m_idx; }
 
   // Constructor allowing to transform an index from one container to another
