@@ -3778,7 +3778,9 @@ return {
 using Cube = std::array<std::uint8_t, 8>;
 
 inline constexpr Cube convert_to_cube(unsigned int n) {
+  #if !defined(_MSC_VER) ||  (_MSC_VER > 1900)
   assert(n < (1 << 24));
+  #endif
   return {
     (std::uint8_t)((n & 070000000) >> 21), (std::uint8_t)((n & 007000000) >> 18),
     (std::uint8_t)((n & 000700000) >> 15), (std::uint8_t)((n & 000070000) >> 12),
@@ -3792,7 +3794,9 @@ inline constexpr Cube convert_to_cube(unsigned int n) {
 // is `Cube{0, 1, 2, 3, 4, 5, 6, 7}`.
 inline constexpr Cube operator"" _c(unsigned long long n)
 {
+  #if !defined(_MSC_VER) ||  (_MSC_VER > 1900)
   assert(n < (1 << 24));
+  #endif
   return convert_to_cube(unsigned(n));
 }
 
