@@ -68,7 +68,7 @@ bool test(
 
   // Sort indices.
   Sorting sorting(
-    input_range, neighbor_query, CGAL::parameters::point_map(input_range.point_map()));
+    input_range, neighbor_query, CGAL::parameters::point_map(input_range.point_map()).normal_map(input_range.normal_map()));
   sorting.sort();
 
   // Run region growing.

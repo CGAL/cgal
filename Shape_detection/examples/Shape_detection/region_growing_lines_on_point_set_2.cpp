@@ -82,6 +82,6 @@ int main(int argc, char *argv[]) {
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "lines_point_set_2.ply");
   utils::save_point_regions_2<Kernel, std::vector<typename Region_growing::Primitive_and_region>, Point_map>(
-    regions, fullpath);
+    regions, fullpath, point_map);
   return EXIT_SUCCESS;
 }
