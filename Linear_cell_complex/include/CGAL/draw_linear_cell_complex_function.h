@@ -114,6 +114,13 @@ struct DefaultDrawingFunctorLCC {
   }
 };
 
+  namespace draw_function 
+  {
+    
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+typedef Local_kernel::Point_3  Local_point;
+typedef Local_kernel::Vector_3 Local_vector;
+  
 template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
 struct LCC_geom_utils;
 
@@ -320,6 +327,8 @@ void compute_elements(GraphicBuffer<BufferType> &graphic_buffer, const LCC *lcc,
   lcc->free_mark(oriented_mark);
 }
 
+} // namespace draw_function
+
 // This function is responsible for filling the buffer to allow visualization.
 template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
 void add_in_graphic_buffer_lcc(GraphicBuffer<BufferType> &graphic_buffer,
@@ -328,7 +337,7 @@ void add_in_graphic_buffer_lcc(GraphicBuffer<BufferType> &graphic_buffer,
                                bool m_random_face_color = false) {
 
   if (alcc != nullptr) {
-    compute_elements(graphic_buffer, alcc, m_drawing_functor, nofill,
+    draw_function::compute_elements(graphic_buffer, alcc, m_drawing_functor, nofill,
                      m_random_face_color);
   }
 }
