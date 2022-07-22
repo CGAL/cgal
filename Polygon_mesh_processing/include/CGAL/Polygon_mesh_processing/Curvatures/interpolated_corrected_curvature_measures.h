@@ -2,15 +2,15 @@
 #define CGAL_POLYGON_MESH_PROCESSING_INTERPOLATED_CORRECTED_CURVATURE_MEASURES_H
 #endif
 
-#include <numeric>
 #include <CGAL/license/Polygon_mesh_processing/interpolated_corrected_curvature_measures.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
 
+#include <numeric>
 
 namespace CGAL {
 
@@ -18,14 +18,14 @@ namespace Polygon_mesh_processing {
 
 /*!
  * \ingroup PMP_corrected_curvatures_grp
- * Enumeration type used to specify which measure is computed for the
- * interpolated corrected curvature functions
+ * Enumeration type used to specify which measure of a given face
+ * is computed for the interpolated corrected curvature functions
  */
 // enum
 enum Curvature_measure_index {
-    MU0_AREA_MEASURE, ///< corrected area density of the given face
-    MU1_MEAN_CURVATURE_MEASURE, ///< corrected mean curvature density of the given face
-    MU2_GAUSSIAN_CURVATURE_MEASURE ///< corrected gaussian curvature density of the given face
+    MU0_AREA_MEASURE, ///< corrected area density
+    MU1_MEAN_CURVATURE_MEASURE, ///< corrected mean curvature density
+    MU2_GAUSSIAN_CURVATURE_MEASURE ///< corrected gaussian curvature density
 };
 
 /**
@@ -44,14 +44,20 @@ enum Curvature_measure_index {
 * @param mu_i an enum for choosing between computing the area measure,
 * the mean curvature measure, or the gaussian curvature measure.
 *
-* @return a scalar of type GT::FT. This is the value of the interpolated corrected measure of the given triangle.
+* @return a scalar of type GT::FT. 
+* This is the value of the interpolated corrected measure of the given triangle.
 *
 * @see `interpolated_corrected_measure_face()`
 * @see `interpolated_corrected_measure_quad()`
 */
 template<typename GT>
-typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vector_3 x0, const typename GT::Vector_3 x1, const typename GT::Vector_3 x2,
-    const typename GT::Vector_3 u0, const typename GT::Vector_3 u1, const typename GT::Vector_3 u2, const Curvature_measure_index mu_i)
+typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vector_3 x0,
+                                                        const typename GT::Vector_3 x1,
+                                                        const typename GT::Vector_3 x2,
+                                                        const typename GT::Vector_3 u0, 
+                                                        const typename GT::Vector_3 u1, 
+                                                        const typename GT::Vector_3 u2, 
+                                                        const Curvature_measure_index mu_i)
 {
     switch (mu_i)
     {
@@ -98,26 +104,36 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
 * @param mu_i an enum for choosing between computing the area measure,
 * the mean curvature measure, or the gaussian curvature measure.
 *
-* @return a scalar of type GT::FT. This is the value of the interpolated corrected measure of the given triangle.
+* @return a scalar of type GT::FT. 
+* This is the value of the interpolated corrected measure of the given triangle.
 *
 * @see `interpolated_corrected_measure_face()`
 * @see `interpolated_corrected_measure_triangle()`
 */
 template<typename GT>
-typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 x0, const typename GT::Vector_3 x1, const typename GT::Vector_3 x2, const typename GT::Vector_3 x3,
-    const typename GT::Vector_3 u0, const typename GT::Vector_3 u1, const typename GT::Vector_3 u2, const typename GT::Vector_3 u3, const Curvature_measure_index mu_i)
+typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 x0,
+                                                    const typename GT::Vector_3 x1,
+                                                    const typename GT::Vector_3 x2,
+                                                    const typename GT::Vector_3 x3,
+                                                    const typename GT::Vector_3 u0,
+                                                    const typename GT::Vector_3 u1,
+                                                    const typename GT::Vector_3 u2,
+                                                    const typename GT::Vector_3 u3,
+                                                    const Curvature_measure_index mu_i)
 {
     // x0  _  x1
     // x2 |_| x3
-
+    
     switch (mu_i)
     {
     case MU0_AREA_MEASURE:
 
-        return (1 / 36.0) * ((4 * u0 + 2 * u1 + 2 * u2 + u3) * CGAL::cross_product(x1 - x0, x2 - x0)
+        return (1 / 36.0) * (
+              (4 * u0 + 2 * u1 + 2 * u2 + u3) * CGAL::cross_product(x1 - x0, x2 - x0)
             + (2 * u0 + 4 * u1 + u2 + 2 * u3) * CGAL::cross_product(x1 - x0, x3 - x1)
             + (2 * u0 + u1 + 4 * u2 + 2 * u3) * CGAL::cross_product(x3 - x2, x2 - x0)
-            + (u0 + 2 * u1 + 2 * u2 + 4 * u3) * CGAL::cross_product(x3 - x2, x3 - x1));
+            + (u0 + 2 * u1 + 2 * u2 + 4 * u3) * CGAL::cross_product(x3 - x2, x3 - x1)
+            );
 
     case MU1_MEAN_CURVATURE_MEASURE:
     {
@@ -129,17 +145,21 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
         const typename GT::Vector_3 x3_cross = -CGAL::cross_product(u12, x3);
 
 
-        return (1 / 12.0) * (u0 * (2 * x0_cross - CGAL::cross_product((u2 + u3), x1) + CGAL::cross_product((u1 + u3), x2) + x3_cross)
+        return (1 / 12.0) * (
+              u0 * (2 * x0_cross - CGAL::cross_product((u2 + u3), x1) + CGAL::cross_product((u1 + u3), x2) + x3_cross)
             + u1 * (CGAL::cross_product((u2 + u3), x0) + 2 * x1_cross + x2_cross - CGAL::cross_product((u0 + u2), x3))
-            + u2 * (CGAL::cross_product(-(u1 + u3), x0) + x1_cross + 2 * x2_cross + CGAL::cross_product((u0 + u1), x3))
-            + u3 * (x0_cross + CGAL::cross_product((u0 + u2), x1) - CGAL::cross_product((u0 + u1), x2) + 2 * x3_cross));
+            + u2 * (-CGAL::cross_product((u1 + u3), x0) + x1_cross + 2 * x2_cross + CGAL::cross_product((u0 + u1), x3))
+            + u3 * (x0_cross + CGAL::cross_product((u0 + u2), x1) - CGAL::cross_product((u0 + u1), x2) + 2 * x3_cross)
+            );
     }
     case MU2_GAUSSIAN_CURVATURE_MEASURE:
 
-        return (1 / 36.0) * ((4 * u0 + 2 * u1 + 2 * u2 + u3) * CGAL::cross_product(u1 - u0, u2 - u0)
+        return (1 / 36.0) * (
+              (4 * u0 + 2 * u1 + 2 * u2 + u3) * CGAL::cross_product(u1 - u0, u2 - u0)
             + (2 * u0 + 4 * u1 + u2 + 2 * u3) * CGAL::cross_product(u1 - u0, u3 - u1)
             + (2 * u0 + u1 + 4 * u2 + 2 * u3) * CGAL::cross_product(u3 - u2, u2 - u0)
-            + (u0 + 2 * u1 + 2 * u2 + 4 * u3) * CGAL::cross_product(u3 - u2, u3 - u1));
+            + (u0 + 2 * u1 + 2 * u2 + 4 * u3) * CGAL::cross_product(u3 - u2, u3 - u1)
+            );
 
     default: return 0;
     }
@@ -158,14 +178,17 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
 * @param mu_i an enum for choosing between computing the area measure,
 * the mean curvature measure, or the gaussian curvature measure.
 *
-* @return a scalar of type GT::FT. This is the value of the interpolated corrected measure of the given face.
+* @return a scalar of type GT::FT. 
+* This is the value of the interpolated corrected measure of the given face.
 *
 * @see `interpolated_corrected_measure_triangle()`
 * @see `interpolated_corrected_measure_quad()`
 * @see `interpolated_corrected_measure_mesh()`
 */
 template<typename GT>
-typename GT::FT interpolated_corrected_measure_face(const std::vector<typename GT::Vector_3>& x, const std::vector<typename GT::Vector_3>& u, const Curvature_measure_index mu_i)
+typename GT::FT interpolated_corrected_measure_face(const std::vector<typename GT::Vector_3>& x,
+                                                    const std::vector<typename GT::Vector_3>& u,
+                                                    const Curvature_measure_index mu_i)
 {
     std::size_t n = x.size();
     CGAL_precondition(u.size() == n);
@@ -188,11 +211,13 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
         typename GT::FT mu0 = 0;
 
         // getting barycenter of points
-        typename GT::Vector_3 xm = std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
+        typename GT::Vector_3 xm = 
+            std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
         xm /= n;
 
         // getting unit average normal of points
-        typename GT::Vector_3 um = std::accumulate(u.begin(), u.end(), typename GT::Vector_3(0, 0, 0));
+        typename GT::Vector_3 um = 
+            std::accumulate(u.begin(), u.end(), typename GT::Vector_3(0, 0, 0));
         um /= sqrt(um * um);
 
         // summing each triangle's measure after triangulation by barycenter split.
@@ -218,25 +243,29 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 *
 * @param pmesh the polygon mesh
 * @param fmm (face measure map) the property map used for storing the computed interpolated corrected measure
-* @param mu_i an enum for choosing between computing the area measure, the mean curvature measure or the gaussian curvature measure
+* @param mu_i an enum for choosing between computing 
+*             the area measure, the mean curvature measure or the gaussian curvature measure
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*     \cgalParamType{a class model of `ReadablePropertyMap` with 
+*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-*                     must be available in `PolygonMesh`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for
+*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_normal_map}
 *     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*     \cgalParamType{a class model of `ReadablePropertyMap` with 
+*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `%Vector_3` as value type}
-*     \cgalParamDefault{`TODO`}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals should be computed inside the function body.}
+*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, vertex normals should be
+*                     computed inside the function body.}
 *   \cgalParamNEnd
 *
 * \cgalNamedParamsEnd
@@ -246,11 +275,10 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 template<typename PolygonMesh, typename FaceMeasureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void
-    interpolated_corrected_measure_mesh(
-        const PolygonMesh& pmesh,
-        FaceMeasureMap fmm,
-        const Curvature_measure_index mu_i,
-        const NamedParameters& np = parameters::default_values())
+    interpolated_corrected_measure_mesh(const PolygonMesh& pmesh,
+                                        FaceMeasureMap fmm,
+                                        const Curvature_measure_index mu_i,
+                                        const NamedParameters& np = parameters::default_values())
 {
 
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
