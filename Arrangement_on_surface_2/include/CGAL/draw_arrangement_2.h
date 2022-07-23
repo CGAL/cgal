@@ -359,18 +359,25 @@ public:
 template <typename GeometryTraits_2, typename Dcel>
 void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
           const char* title = "2D Arrangement Basic Viewer") {
-  typedef GeometryTraits_2              Gt;
+#if defined(CGAL_TEST_SUITE)
+  bool cgal_test_suite=true;
+#else
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+#endif
 
-  CGAL::Qt::init_ogl_context(4,3);
+  if (!cgal_test_suite) {
+    typedef GeometryTraits_2            Gt;
 
-  int argc = 1;
-  const char* argv[2] = {"t2_viewer", nullptr};
-  QApplication app(argc, const_cast<char**>(argv));
-  Arr_2_viewer_qt<Gt, Dcel> mainwindow(app.activeWindow(), arr, title);
-  mainwindow.add_elements();
-  mainwindow.show();
+    CGAL::Qt::init_ogl_context(4,3);
 
-  app.exec();
+    int argc = 1;
+    const char* argv[2] = {"t2_viewer", nullptr};
+    QApplication app(argc, const_cast<char**>(argv));
+    Arr_2_viewer_qt<Gt, Dcel> mainwindow(app.activeWindow(), arr, title);
+    mainwindow.add_elements();
+    mainwindow.show();
+    app.exec();
+  }
 }
 
 }
