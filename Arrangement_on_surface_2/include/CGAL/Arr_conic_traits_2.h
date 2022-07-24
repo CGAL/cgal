@@ -1674,9 +1674,9 @@ public:
       double a;
       double ts, tt;
       double cx, cy;
-      m_traits.approximate_parabola(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
-                                    xs_t, ys_t, xt_t, yt_t, a, ts, tt, cx, cy,
-                                    xcv);
+      m_traits.approximate_parabola(xcv,
+                                    r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+                                    xs_t, ys_t, xt_t, yt_t, a, ts, tt, cx, cy);
 
       auto ds = parabolic_arc_length(xs_t, 2.0*std::abs(ys_t));
       auto dt = parabolic_arc_length(xt_t, 2.0*std::abs(yt_t));
@@ -1694,9 +1694,9 @@ public:
       double a, b;
       double cx, cy;
       double ts, tt;
-      m_traits.approximate_ellipse(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+      m_traits.approximate_ellipse(xcv, r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
                                    xs_t, ys_t, ts, xt_t, yt_t, tt,
-                                   a, b, cx, cy, xcv);
+                                   a, b, cx, cy);
 
       namespace bm = boost::math;
       auto ratio = b/a;
@@ -1746,31 +1746,29 @@ public:
     /*! Obtain an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const
-    { return std::make_pair(operator()(p, 0), operator()(p, 1)); }
+    { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
 
     /*! Obtain an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(OutputIterator oi, double error,
-                              const X_monotone_curve_2& xcv,
-                              bool l2r = true) const {
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
+                              OutputIterator oi, bool l2r = true) const {
       if (xcv.orientation() == COLLINEAR)
-        return approximate_segment(oi, xcv, l2r);
+        return approximate_segment(xcv, oi, l2r);
       CGAL::Sign sign_conic = CGAL::sign(4*xcv.r()*xcv.s() - xcv.t()*xcv.t());
       if (sign_conic == POSITIVE)
-        return approximate_ellipse(oi, error, xcv, l2r);
+        return approximate_ellipse(xcv, error, oi, l2r);
       if (sign_conic == NEGATIVE)
-        return approximate_hyperbola(oi, error, xcv, l2r);
-      return approximate_parabola(oi, error, xcv, l2r);
+        return approximate_hyperbola(xcv, error, oi, l2r);
+      return approximate_parabola(xcv, error, oi, l2r);
     }
 
   private:
     /*! Handle segments.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_segment(OutputIterator oi,
-                                       const X_monotone_curve_2& xcv,
-                                       bool l2r) const {
+    OutputIterator approximate_segment(const X_monotone_curve_2& xcv,
+                                       OutputIterator oi, bool l2r) const {
       // std::cout << "SEGMENT\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
@@ -1865,9 +1863,9 @@ public:
      *              which approximates the arc.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_ellipse(OutputIterator oi, double error,
-                                       const X_monotone_curve_2& xcv,
-                                       bool l2r) const {
+    OutputIterator approximate_ellipse(const X_monotone_curve_2& xcv,
+                                       double error, OutputIterator oi,
+                                       bool l2r = true) const {
       // std::cout << "ELLIPSE\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
@@ -1887,9 +1885,9 @@ public:
       double a, b;
       double cx, cy;
       double ts, tt;
-      m_traits.approximate_ellipse(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+      m_traits.approximate_ellipse(xcv, r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
                                    xs_t, ys_t, ts, xt_t, yt_t, tt,
-                                   a, b, cx, cy, xcv, l2r);
+                                   a, b, cx, cy, l2r);
       // std::cout << "a, b: " << a << "," << b << std::endl;
 
       *oi++ = Approximate_point_2(xs, ys);
@@ -1954,7 +1952,7 @@ public:
       return oi;
     }
 
-    /*! Compute the hyperbolic point given the parameter t and the transform
+    /*! Compute the elliptic point given the parameter t and the transform
      * data, that is, the center (translation) and the sin and cos of the
      * rotation angle.
      */
@@ -1969,8 +1967,9 @@ public:
      * https://www.vcalc.com/wiki/vCalc/Parabola+-+arc+length
      */
     template <typename OutputIterator>
-    OutputIterator approximate_parabola(OutputIterator oi, double error,
-                                        const X_monotone_curve_2& xcv, bool l2r)
+    OutputIterator approximate_parabola(const X_monotone_curve_2& xcv,
+                                        double error, OutputIterator oi,
+                                        bool l2r = true)
       const {
       // std::cout << "PARABOLA\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
@@ -1991,9 +1990,10 @@ public:
       double a;
       double ts, tt;
       double cx, cy;
-      m_traits.approximate_parabola(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+      m_traits.approximate_parabola(xcv,
+                                    r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
                                     xs_t, ys_t, xt_t, yt_t, a, ts, tt, cx, cy,
-                                    xcv, l2r);
+                                    l2r);
       // std::cout << "sint, cost: " << sint << "," << cost << std::endl;
       // std::cout << "a: " << a << std::endl;
       // std::cout << "xs' = " << xs_t << "," << ys_t << std::endl;
@@ -2074,9 +2074,9 @@ public:
     /*! Handle hyperbolas.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_hyperbola(OutputIterator oi, double error,
-                                         const X_monotone_curve_2& xcv,
-                                         bool l2r) const {
+    OutputIterator approximate_hyperbola(const X_monotone_curve_2& xcv,
+                                         double error, OutputIterator oi,
+                                         bool l2r = true) const {
       // std::cout << "HYPERBOLA\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
@@ -2093,9 +2093,10 @@ public:
       double a, b;
       double cx, cy;
       double ts, tt;
-      m_traits.approximate_hyperbola(r_m, t_m, s_m, u_m, v_m, w_m, cost, sint,
+      m_traits.approximate_hyperbola(xcv, r_m, t_m, s_m, u_m, v_m, w_m,
+                                     cost, sint,
                                      xs_t, ys_t, ts, xt_t, yt_t, tt,
-                                     a, b, cx, cy, xcv, l2r);
+                                     a, b, cx, cy, l2r);
       // std::cout << "a, b: " << a << "," << b << std::endl;
       // std::cout << "ts, tt: " << ts << "," << tt << std::endl;
 
@@ -4027,14 +4028,15 @@ public:
    * The arc-length closed form can be found here:
    * https://www.vcalc.com/wiki/vCalc/Parabola+-+arc+length
    */
-  void approximate_parabola(double& r_m, double& t_m, double& s_m,
+  void approximate_parabola(const X_monotone_curve_2& xcv,
+                            double& r_m, double& t_m, double& s_m,
                             double& u_m, double& v_m, double& w_m,
                             double& cost, double& sint,
                             double& xs_t, double& ys_t,
                             double& xt_t, double& yt_t,
                             double& a, double& ts, double& tt,
                             double& cx, double& cy,
-                            const X_monotone_curve_2& xcv, bool l2r = true)
+                            bool l2r = true)
     const {
     auto min_vertex = construct_min_vertex_2_object();
     auto max_vertex = construct_max_vertex_2_object();
@@ -4095,13 +4097,14 @@ public:
 
   /*! Handle ellipses.
    */
-  void approximate_ellipse(double& r_m, double& t_m, double& s_m,
+  void approximate_ellipse(const X_monotone_curve_2& xcv,
+                           double& r_m, double& t_m, double& s_m,
                            double& u_m, double& v_m, double& w_m,
                            double& cost, double& sint,
                            double& xs_t, double& ys_t, double& ts,
                            double& xt_t, double& yt_t, double& tt,
                            double& a, double& b, double& cx, double& cy,
-                           const X_monotone_curve_2& xcv, bool l2r = true)
+                           bool l2r = true)
     const {
     auto min_vertex = construct_min_vertex_2_object();
     auto max_vertex = construct_max_vertex_2_object();
@@ -4172,13 +4175,14 @@ public:
 
   /*! Handle hyperbolas.
    */
-  void approximate_hyperbola(double& r_m, double& t_m, double& s_m,
+  void approximate_hyperbola(const X_monotone_curve_2& xcv,
+                             double& r_m, double& t_m, double& s_m,
                              double& u_m, double& v_m, double& w_m,
                              double& cost, double& sint,
                              double& xs_t, double& ys_t, double& ts,
                              double& xt_t, double& yt_t, double& tt,
                              double& a, double& b, double& cx, double& cy,
-                             const X_monotone_curve_2& xcv, bool l2r = true)
+                             bool l2r = true)
     const {
     auto min_vertex = construct_min_vertex_2_object();
     auto max_vertex = construct_max_vertex_2_object();

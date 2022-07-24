@@ -21,17 +21,19 @@
 #include <cstdlib>
 #include <random>
 
+#include <experimental/type_traits>
+#include <boost/hana.hpp>
+
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_conic_traits_2.h>
 
 namespace CGAL {
 
-// Viewer class for Polygon_2
+// Viewer class for`< Polygon_2
 template <typename GeometryTraits_2, typename Dcel>
 class Arr_2_basic_viewer_qt : public Basic_viewer_qt {
   typedef GeometryTraits_2                      Gt;
@@ -45,9 +47,9 @@ class Arr_2_basic_viewer_qt : public Basic_viewer_qt {
   typedef typename Arr::Ccb_halfedge_const_circulator
                                                 Ccb_halfedge_const_circulator;
 
-  // typedef double                                        Approximate_number_type;
-  // typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
-  // typedef Approximate_kernel::Point_2                   Approximate_point_2;
+  template <typename T>
+  using approximate_2_object_t =
+    decltype(std::declval<T&>().approximate_2_object());
 
 public:
   /// Construct the viewer.
@@ -86,12 +88,33 @@ public:
 
   //! Compute the bounding box
   CGAL::Bbox_2 bounding_box() {
+    namespace bh = boost::hana;
+    auto has_approximate_2_object =
+      bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
+
     // At this point we assume that the arrangement is not open, and thus the
     // bounding box is defined by the vertices.
     //! The bounding box
     CGAL::Bbox_2 bbox;
-    for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it)
-      bbox += it->point().bbox();
+    for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it) {
+      bh::if_(has_approximate_2_object(Gt{}),
+              [&](auto& t) {
+                const auto* traits = this->m_arr.geometry_traits();
+                auto approx = traits->approximate_2_object();
+                auto has_operator =
+                  bh::is_valid([](auto&& x) -> decltype(x.operator()(Point{}, int{})){});
+                bh::if_(has_operator(approx),
+                        [&](auto& a) {
+                          auto x = approx(it->point(), 0);
+                          auto y = approx(it->point(), 1);
+                          bbox += CGAL::Bbox_2(x, y, x, y);
+                        },
+                        [&](auto& a) { bbox += it->point().bbox(); }
+                        )(approx);
+              },
+              [&](auto& t) { bbox += it->point().bbox(); }
+              )(*this);
+    }
     return bbox;
   }
 
@@ -167,36 +190,175 @@ protected:
     return ext;
   }
 
-  //!
-  virtual void draw_region(Ccb_halfedge_const_circulator circ) {
-    CGAL::IO::Color color(m_uni(m_rng), m_uni(m_rng), m_uni(m_rng));
-    this->face_begin(color);
-
-    auto ext = find_smallest(circ);
-    auto curr = ext;
-    do {
-      // Skip halfedges that are "antenas":
-      while (curr->face() == curr->twin()->face())
-        curr = curr->twin()->next();
-
-      this->add_point_in_face(curr->source()->point());
-      draw_curve(curr->curve());
-      curr = curr->next();
-    } while (curr != ext);
-
-    this->face_end();
+  //! Draw a region using aproximate coordinates.
+  // Call this member function only of the geometry traits is equipped to
+  // provide aproximate coordinates.
+  template <typename Approximate>
+  void draw_approximate_region(Halfedge_const_handle curr,
+                               const Approximate& approx) {
+    std::vector<typename Gt::Approximate_point_2> polyline;
+    double error(this->pixel_ratio());
+    bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
+    approx(curr->curve(), error, std::back_inserter(polyline), l2r);
+    if (polyline.empty()) return;
+    auto it = polyline.begin();
+    auto prev = it++;
+    for (; it != polyline.end(); prev = it++) {
+      this->add_segment(*prev, *it);
+      this->add_point_in_face(*prev);
+    }
   }
 
-  //!
-  virtual void draw_curve(const X_monotone_curve& curve) {
+  //! Draw an exact curve.
+  template <typename XMonotoneCurve>
+  void draw_exact_curve(const XMonotoneCurve& curve) {
     const auto* traits = this->m_arr.geometry_traits();
     auto ctr_min = traits->construct_min_vertex_2_object();
     auto ctr_max = traits->construct_max_vertex_2_object();
     this->add_segment(ctr_min(curve), ctr_max(curve));
   }
 
+  //! Draw an exact region.
+  void draw_exact_region(Halfedge_const_handle curr) {
+    this->add_point_in_face(curr->source()->point());
+    draw_exact_curve(curr->curve());
+  }
+
+  //! Utility struct
+  template <typename T>
+  struct can_call_operator_curve {
+    template <typename F>
+    constexpr auto operator()(F&& f) ->
+      decltype(f.template operator()<T>(X_monotone_curve{}, double{}, T{}, bool{})) {}
+  };
+
+  //! Draw a region.
+  void draw_region(Ccb_halfedge_const_circulator circ) {
+    /* Check whether the traits has a member function called
+     * approximate_2_object() and if so check whether the return type, namely
+     * `Approximate_2` has an appropriate operator.
+     *
+     * C++20 supports concepts and `requires` expression; see, e.g.,
+     * https://en.cppreference.com/w/cpp/language/constraints; thus, the first
+     * condition above can be elegantly verified as follows:
+     * constexpr bool has_approximate_2_object =
+     *   requires(const Gt& traits) { traits.approximate_2_object(); };
+     *
+     * C++17 has experimental constructs called is_detected and
+     * is_detected_v that can be used to achieve the same goal.
+     *
+     * For now we use C++14 features and boost.hana instead.
+     */
+    namespace bh = boost::hana;
+    auto has_approximate_2_object =
+      bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
+
+    CGAL::IO::Color color(m_uni(m_rng), m_uni(m_rng), m_uni(m_rng));
+    this->face_begin(color);
+
+    const auto* traits = this->m_arr.geometry_traits();
+    auto ext = find_smallest(circ);
+    auto curr = ext;
+    do {
+      // Skip halfedges that are "antenas":
+      while (curr->face() == curr->twin()->face()) curr = curr->twin()->next();
+
+      bh::if_(has_approximate_2_object(Gt{}),
+              [&](auto& x) {
+                auto approx = traits->approximate_2_object();
+                auto has_operator = bh::is_valid(can_call_operator_curve<int>{});
+                bh::if_(has_operator(approx),
+                        [&](auto& x) { x.draw_approximate_region(curr, approx); },
+                        [&](auto& x) { x.draw_exact_region(curr); }
+                        )(*this);
+              },
+              [&](auto& x) { x.draw_exact_region(curr); }
+              )(*this);
+      curr = curr->next();
+    } while (curr != ext);
+
+    this->face_end();
+  }
+
+  //! Draw a curve using aproximate coordinates.
+  // Call this member function only of the geometry traits is equipped to
+  // provide aproximate coordinates.
+  template <typename XMonotoneCurve, typename Approximate>
+  void draw_approximate_curve(const XMonotoneCurve& curve,
+                              const Approximate& approx) {
+    std::vector<typename Gt::Approximate_point_2> polyline;
+    double error(this->pixel_ratio());
+    approx(curve, error, std::back_inserter(polyline));
+    if (polyline.empty()) return;
+    auto it = polyline.begin();
+    auto prev = it++;
+    for (; it != polyline.end(); prev = it++) this->add_segment(*prev, *it);
+  }
+
+  //! Draw a curve.
+  template <typename XMonotoneCurve>
+  void draw_curve(const XMonotoneCurve& curve) {
+    /* Check whether the traits has a member function called
+     * approximate_2_object() and if so check whether the return type, namely
+     * `Approximate_2` has an appropriate operator.
+     *
+     * C++20 supports concepts and `requires` expression; see, e.g.,
+     * https://en.cppreference.com/w/cpp/language/constraints; thus, the first
+     * condition above can be elegantly verified as follows:
+     * constexpr bool has_approximate_2_object =
+     *   requires(const Gt& traits) { traits.approximate_2_object(); };
+     *
+     * C++17 has experimental constructs called is_detected and
+     * is_detected_v that can be used to achieve the same goal.
+     *
+     * For now we use C++14 features and boost.hana instead.
+     */
+#if 0
+    if constexpr (std::experimental::is_detected_v<approximate_2_object_t, Gt>) {
+      const auto* traits = this->m_arr.geometry_traits();
+      auto approx = traits->approximate_2_object();
+      draw_approximate_curve(curve, approx);
+      return;
+    }
+    draw_exact_curve(curve);
+#else
+    namespace bh = boost::hana;
+    auto has_approximate_2_object =
+      bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
+    const auto* traits = this->m_arr.geometry_traits();
+    bh::if_(has_approximate_2_object(Gt{}),
+            [&](auto& x) {
+              auto approx = traits->approximate_2_object();
+              auto has_operator = bh::is_valid(can_call_operator_curve<int>{});
+              bh::if_(has_operator(approx),
+                      [&](auto& x) { x.draw_approximate_curve(curve, approx); },
+                      [&](auto& x) { x.draw_exact_curve(curve); }
+                      )(*this);
+            },
+            [&](auto& x) { x.draw_exact_curve(curve); }
+            )(*this);
+#endif
+  }
+
   //!
-  virtual void draw_point(const Point& p) { this->add_point(p); }
+  void draw_point(const Point& p) {
+    namespace bh = boost::hana;
+    auto has_approximate_2_object =
+      bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
+    bh::if_(has_approximate_2_object(Gt{}),
+            [&](auto& x) {
+              const auto* traits = x.m_arr.geometry_traits();
+              auto approx = traits->approximate_2_object();
+              auto has_operator =
+                bh::is_valid([](auto&& x) -> decltype(x.operator()(Point{})){});
+              bh::if_(has_operator(approx),
+                      [&](auto& x) { /* x.add_point(approx(p)) */; },
+                      [&](auto& x) { x.add_point(p); }
+                      )(*this);
+            },
+            [&](auto& x) { x.add_point(p); }
+            )(*this);
+  }
 
   //!
   void add_ccb(Ccb_halfedge_const_circulator circ) {
@@ -278,81 +440,6 @@ public:
                   const char* title = "2D Arrangement Basic Viewer") :
     Base(parent, arr, title)
   {}
-};
-
-//!
-template <typename RatKernel, typename AlgKernel, typename NtTraits,
-          typename Dcel>
-class Arr_2_viewer_qt<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>,
-                      Dcel> :
-    public Arr_2_basic_viewer_qt<Arr_conic_traits_2<RatKernel, AlgKernel,
-                                                    NtTraits>, Dcel> {
-public:
-  typedef Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>    Gt;
-  typedef CGAL::Arrangement_2<Gt, Dcel>                         Arr;
-  typedef Arr_2_basic_viewer_qt<Gt, Dcel>                       Base;
-  typedef typename Arr::Point_2                 Point;
-  typedef typename Arr::X_monotone_curve_2      X_monotone_curve;
-  typedef typename Arr::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arr::Face_const_handle       Face_const_handle;
-  typedef typename Arr::Ccb_halfedge_const_circulator
-                                                Ccb_halfedge_const_circulator;
-
-  /// Construct the viewer.
-  /// @param arr the arrangement to view
-  /// @param title the title of the window
-  Arr_2_viewer_qt(QWidget* parent, const Arr& arr,
-                  const char* title = "2D Arrangement Basic Viewer") :
-    Base(parent, arr, title)
-  {}
-
-  //!
-  virtual void draw_region(Ccb_halfedge_const_circulator circ) {
-    auto& uni = this->m_uni;
-    auto& rng = this->m_rng;
-    CGAL::IO::Color color(uni(rng), uni(rng), uni(rng));
-    this->face_begin(color);
-
-    const auto* traits = this->m_arr.geometry_traits();
-    auto approx = traits->approximate_2_object();
-
-    // Find the lexicographically smallest halfedge:
-    auto ext = this->find_smallest(circ);
-
-    // Iterate, starting from the lexicographically smallest vertex:
-    auto curr = ext;
-    do {
-      // Skip halfedges that are "antenas":
-      while (curr->face() == curr->twin()->face())
-        curr = curr->twin()->next();
-
-      std::vector<typename Gt::Approximate_point_2> polyline;
-      double error(this->pixel_ratio());
-      bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
-      approx(std::back_inserter(polyline), error, curr->curve(), l2r);
-      auto it = polyline.begin();
-      auto prev = it++;
-      for (; it != polyline.end(); prev = it++) {
-        this->add_segment(*prev, *it);
-        this->add_point_in_face(*prev);
-      }
-      curr = curr->next();
-    } while (curr != ext);
-
-    this->face_end();
-  }
-
-  //!
-  virtual void draw_curve(const X_monotone_curve& curve) {
-    const auto* traits = this->m_arr.geometry_traits();
-    auto approx = traits->approximate_2_object();
-    std::vector<typename Gt::Approximate_point_2> polyline;
-    double error(this->pixel_ratio());
-    approx(std::back_inserter(polyline), error, curve);
-    auto it = polyline.begin();
-    auto prev = it++;
-    for (; it != polyline.end(); prev = it++) this->add_segment(*prev, *it);
-  }
 };
 
 //!
