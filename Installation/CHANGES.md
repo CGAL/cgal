@@ -26,6 +26,15 @@ CGAL tetrahedral Delaunay refinement algorithm.
     and `Convex_hull_projective_yz_traits_2` have been removed. Users should use `Projection_traits_xy_3`,
     `Projection_traits_xz_3`, and `Projection_traits_yz_3` instead.
 
+### [2D Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgTriangulation2)
+
+-   Added function `mark_domains_in_triangulation()` to mark faces connected with non constrained edges as inside of the domain based on the nesting level.
+
+### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh2)
+
+-   Deprecated two overloads of Function `refine_Delaunay_mesh()` and replaced them with versions using function named parameters.
+-   Add overloads of function `write_VTU()` with property maps for specifying the domain.    
+
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
 
@@ -64,7 +73,7 @@ Release date: June 2022
 
 ### [Combinatorial Maps](https://doc.cgal.org/5.5/Manual/packages.html#PkgCombinatorialMaps)
 
-- Removed old code deprecated in CGAL 4.9 and 4.10 (global functions, and information associated with darts).
+-   Removed old code deprecated in CGAL 4.9 and 4.10 (global functions, and information associated with darts).
 
 ### [2D Arrangements](https://doc.cgal.org/5.5/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed the `intersect_2`, `compare_y_at_x_right`, and `compare_y_at_x_left` function objects of the traits class template [`Arr_geodesic_arc_on_sphere_traits_2`](https://doc.cgal.org/5.5/Arrangement_on_surface_2/classCGAL_1_1Arr__geodesic__arc__on__sphere__traits__2.html) that handles geodesic arcs on sphere and applied a small syntactical fix to the tracing traits.
