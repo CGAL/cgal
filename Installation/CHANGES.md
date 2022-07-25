@@ -6,15 +6,40 @@ Release History
 
 Release date: December 2022
 
+### [Polygon Mesh Processing](https://doc.cgal.org/5.6/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh following the
+CGAL tetrahedral Delaunay refinement algorithm.
+
+### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
+
+-   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshess, and makes the data structure independent from the tetrahedral mesh generation package.
+
 ### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
--   Fixed the `intersect_2`, `compare_y_at_x_right`, and `compare_y_at_x_left` function objects of the traits class template that handles geodesic arcs on sphere and applied a small syntactical fix to the tracing traits.
--   Introduced a function template, namely, `draw_arrangement(arr)`, that renders arrangements based on the `Basic_viewer_qt` class template. At this point only 2D arrangements on the plane induced by (i) segments and (ii) conics are supported.
+-   Fixed some code that handles geodesic-curves on spheres that compare x- and y-coordinates on the boundary of the parameter space. It mainly effected the naive point-location.
+-   Introduced a function template, namely, `draw_arrangement(arr)`, that renders arrangements based on the `Basic_viewer_qt` class template. At this point only 2D arrangements on the plane induced by (i) segments, (ii) conics, and (iii) circular arcs or (linear) segments are supported.
 -   Improved the traits class template that handles conics, namely `Arr_conic_traits_2`. This includes the following:
     1. Fixed a couple of bugs and slightly optimized some functions.
     2. Introduced functionality that approximates conics with polylines. (This is used to draw conic curves.)
     3. **Breaking change**: Changed the interface to generate conic curves. In the past, curves where generated directly using the constructors of the conic and x-monotone conic constructs. Now, they are constructed via function objects provided by the traits. This eliminates the constructions of temporary kernels. The old functionality is obsolete, but still supported for a limited number of versions. It depends on a static member function of the traits. In a future version this function will no longer be static, implying that the old functionality will no longer be supported.
+- Introduced functionality that approximates circular segments with polylines. (This is used to draw conic curves.)
 
+### [2D Convex Hulls](https://doc.cgal.org/5.6/Manual/packages.html#PkgConvexHull2)
 
+-   **Breaking change**: The concept `ConvexHullTraits_2` no longer requires the functor
+    `Less_signed_distance_to_line_2`, but requires the functor `Compare_signed_distance_to_line_2` instead.
+-   The long-deprecated classes `Convex_hull_projective_xy_traits_2`, `Convex_hull_projective_xz_traits_2`,
+    and `Convex_hull_projective_yz_traits_2` have been removed. Users should use `Projection_traits_xy_3`,
+    `Projection_traits_xz_3`, and `Projection_traits_yz_3` instead.
+
+### [2D Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgTriangulation2)
+
+-   Added function `mark_domains_in_triangulation()` to mark faces connected with non constrained edges as inside of the domain based on the nesting level.
+
+### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh2)
+
+-   Deprecated two overloads of Function `refine_Delaunay_mesh()` and replaced them with versions using function named parameters.
+-   Add overloads of function `write_VTU()` with property maps for specifying the domain.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
@@ -35,6 +60,11 @@ Release date: June 2022
 
     See also the [announcement page](https://www.cgal.org/2022/05/18/alpha_wrap/).
 
+### [2D Straight Skeleton and Polygon Offsetting (breaking change)](https://doc.cgal.org/5.5/Manual/packages.html#PkgStraightSkeleton2)
+-   Fix the output of the function [CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()](https://doc.cgal.org/5.5/Straight_skeleton_2/group__PkgStraightSkeleton2OffsetFunctions.html#gaa159f093e5d6d7fdb62c1660a44f95fe)
+    to not take into account the offset of the outer frame.
+-   Fix the computation of the exterior offset of a polygon with holes that was not computing the offset of the holes
+
 ### [3D Convex Hulls](https://doc.cgal.org/5.5/Manual/packages.html#PkgConvexHull3)
 
 -   Added an [overload of the function `CGAL::convex_hull_3()`](https://doc.cgal.org/5.5/Convex_hull_3/group__PkgConvexHull3Functions.html#ga52fca4745c2ef0351063fbe66b035fd1), which writes the result in an indexed triangle set.
@@ -49,7 +79,7 @@ Release date: June 2022
 
 ### [Combinatorial Maps](https://doc.cgal.org/5.5/Manual/packages.html#PkgCombinatorialMaps)
 
-- Removed old code deprecated in CGAL 4.9 and 4.10 (global functions, and information associated with darts).
+-   Removed old code deprecated in CGAL 4.9 and 4.10 (global functions, and information associated with darts).
 
 ### [2D Arrangements](https://doc.cgal.org/5.5/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed the `intersect_2`, `compare_y_at_x_right`, and `compare_y_at_x_left` function objects of the traits class template [`Arr_geodesic_arc_on_sphere_traits_2`](https://doc.cgal.org/5.5/Arrangement_on_surface_2/classCGAL_1_1Arr__geodesic__arc__on__sphere__traits__2.html) that handles geodesic arcs on sphere and applied a small syntactical fix to the tracing traits.
@@ -260,6 +290,7 @@ Release date: January 2022
 
 -   Added support for the [OSQP solver](https://osqp.org/). This solver enables to efficiently compute
     the convex Quadratic Programming (QP) problems arising in the context of several packages.
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------

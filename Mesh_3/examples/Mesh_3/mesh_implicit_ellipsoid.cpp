@@ -55,7 +55,7 @@ int main()
 
   // Output
   std::ofstream medit_file("out_wo.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
 
   // Perturbation (5s, 12degree)
@@ -66,7 +66,8 @@ int main()
 
   // Output
   medit_file.open("out_optimized.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

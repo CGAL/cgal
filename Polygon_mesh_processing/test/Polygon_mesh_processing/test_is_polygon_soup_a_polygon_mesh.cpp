@@ -3,7 +3,6 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/property_maps.h>

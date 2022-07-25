@@ -214,16 +214,16 @@ private:
     MCFSKEL_DEBUG( std::cerr <<"init" << std::endl; )
 
     int nb_edges = static_cast<int>(num_edges(hg));
-    int num_faces = static_cast<int>(hg.size_of_facets());
+    int nb_faces = static_cast<int>(num_faces(hg));
     int nb_vertices = static_cast<int>(num_vertices(hg));
     edge_to_face.resize(nb_edges);
     edge_to_vertex.resize(nb_edges);
     vertex_to_edge.resize(nb_vertices);
-    face_to_edge.resize(num_faces);
+    face_to_edge.resize(nb_faces);
 
     is_vertex_deleted.resize(nb_vertices, false);
     is_edge_deleted.resize(nb_edges, false);
-    is_face_deleted.resize(num_faces, false);
+    is_face_deleted.resize(nb_faces, false);
 
     record.resize(nb_vertices);
     for (size_t i = 0; i < record.size(); ++i)

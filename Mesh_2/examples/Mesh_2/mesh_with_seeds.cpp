@@ -2,7 +2,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/draw_triangulation_2.h>
 
 #include <iostream>
 
@@ -11,7 +11,6 @@ typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds> CDT;
-typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
 
 typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Point Point;
@@ -46,8 +45,9 @@ int main()
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 
   std::cout << "Meshing the domain..." << std::endl;
-  CGAL::refine_Delaunay_mesh_2(cdt, list_of_seeds.begin(), list_of_seeds.end(),
-                               Criteria());
+  CGAL::refine_Delaunay_mesh_2(cdt,
+                               CGAL::parameters::seeds(list_of_seeds));
+
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
   std::cout << "Number of finite faces: " << cdt.number_of_faces() << std::endl;
@@ -58,4 +58,6 @@ int main()
     if(fit->is_in_domain()) ++mesh_faces_counter;
   }
   std::cout << "Number of faces in the mesh domain: " << mesh_faces_counter << std::endl;
+
+  CGAL::draw(cdt);
 }

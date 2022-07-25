@@ -73,8 +73,7 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
       for(uint i=0; i<nx; i++)
       {
         using CGAL::IMAGEIO::static_evaluate;
-
-        if(visited[voxel_index] | second_pass[voxel_index]) {
+        if(visited[voxel_index] || second_pass[voxel_index]) {
           ++voxel_index;
           continue;
         }
