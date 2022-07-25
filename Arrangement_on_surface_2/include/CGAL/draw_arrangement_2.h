@@ -440,22 +440,21 @@ protected:
 
 protected:
   //! The window width in pixels.
-  int m_width = 500;
+  int m_width = CGAL_BASIC_VIEWER_INIT_SIZE_X;
 
   //! The window height in pixels.
-  int m_height = 450;
+  int m_height = CGAL_BASIC_VIEWER_INIT_SIZE_Y;
 
   //! The ratio between pixel and opengl units (in world coordinate system).
   double m_pixel_ratio = 1;
 
-  //! The arrangement to draw
+  //! The arrangement to draw.
   const Arr& m_arr;
 
   std::unordered_map<Face_const_handle, bool> m_visited;
 
   std::mt19937 m_rng;
   std::uniform_int_distribution<size_t> m_uni;  // guaranteed unbiased
-
 };
 
 //! Basic viewer of a 2D arrangement.
