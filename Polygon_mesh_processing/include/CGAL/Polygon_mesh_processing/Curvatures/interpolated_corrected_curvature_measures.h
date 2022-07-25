@@ -44,7 +44,7 @@ enum Curvature_measure_index {
 * @param mu_i an enum for choosing between computing the area measure,
 * the mean curvature measure, or the gaussian curvature measure.
 *
-* @return a scalar of type GT::FT. 
+* @return a scalar of type `GT::FT`. 
 * This is the value of the interpolated corrected measure of the given triangle.
 *
 * @see `interpolated_corrected_measure_face()`
@@ -104,7 +104,7 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
 * @param mu_i an enum for choosing between computing the area measure,
 * the mean curvature measure, or the gaussian curvature measure.
 *
-* @return a scalar of type GT::FT. 
+* @return a scalar of type `GT::FT`. 
 * This is the value of the interpolated corrected measure of the given triangle.
 *
 * @see `interpolated_corrected_measure_face()`
@@ -178,7 +178,7 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
 * @param mu_i an enum for choosing between computing the area measure,
 * the mean curvature measure, or the gaussian curvature measure.
 *
-* @return a scalar of type GT::FT. 
+* @return a scalar of type `GT::FT`. 
 * This is the value of the interpolated corrected measure of the given face.
 *
 * @see `interpolated_corrected_measure_triangle()`
@@ -238,7 +238,7 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
 *
 * @tparam PolygonMesh a model of `FaceGraph`
 * @tparam FaceMeasureMap a a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and GT::FT as value type.
+* `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `GT::FT` as value type.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh the polygon mesh
