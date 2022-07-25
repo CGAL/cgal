@@ -84,7 +84,29 @@ public:
     }
   }
 
-  //! \todo intercept the scaling of the scene and apply add_elements()
+  /*! Compute an approximation of the bounding box of a point.
+   * \param[in] p the (exact) point.
+   * Call this member function only if the geometry traits is equipped with
+   * the coordinate-approximation functionality of a point coordinate.
+   * This function must be inlined (e.g., a template) to enable the
+   * compiled-time dispatching in the function `bounding_box()`.
+   */
+  template <typename Point, typename Approximate>
+  CGAL::Bbox_2 approximate_bbox(const Point& p, const Approximate& approx) {
+    auto x = approx(p, 0);
+    auto y = approx(p, 1);
+    return CGAL::Bbox_2(x, y, x, y);
+  }
+
+  /*! Obtain the bounding box of a point.
+   * \param[in] p the point.
+   * We assume that if the coordinate-approximation functionality is not
+   * supported, the point supports the member function `bbox()`.
+   * This function must be inlined (e.g., a template) to enable the
+   * compiled-time dispatching in the function `bounding_box()`.
+   */
+  template <typename Point>
+  CGAL::Bbox_2 exact_bbox(const Point& p) { return p.bbox(); }
 
   //! Compute the bounding box
   CGAL::Bbox_2 bounding_box() {
@@ -98,21 +120,19 @@ public:
     CGAL::Bbox_2 bbox;
     for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it) {
       bh::if_(has_approximate_2_object(Gt{}),
-              [&](auto& t) {
+              [&](auto& x) {
                 const auto* traits = this->m_arr.geometry_traits();
                 auto approx = traits->approximate_2_object();
                 auto has_operator =
-                  bh::is_valid([](auto&& x) -> decltype(x.operator()(Point{}, int{})){});
+                  bh::is_valid([](auto&& x) ->
+                               decltype(x.operator()(Point{}, int{})){});
                 bh::if_(has_operator(approx),
-                        [&](auto& a) {
-                          auto x = approx(it->point(), 0);
-                          auto y = approx(it->point(), 1);
-                          bbox += CGAL::Bbox_2(x, y, x, y);
-                        },
-                        [&](auto& a) { bbox += it->point().bbox(); }
-                        )(approx);
+                        [&](auto& x)
+                          { bbox += x.approximate_bbox(it->point(), approx); },
+                        [&](auto& x) { bbox += x.exact_bbox(it->point()); }
+                        )(*this);
               },
-              [&](auto& t) { bbox += it->point().bbox(); }
+              [&](auto& x) { bbox += x.exact_bbox(it->point()); }
               )(*this);
     }
     return bbox;
@@ -190,9 +210,12 @@ protected:
     return ext;
   }
 
-  //! Draw a region using aproximate coordinates.
-  // Call this member function only of the geometry traits is equipped to
-  // provide aproximate coordinates.
+  /*! Draw a region using aproximate coordinates.
+   * Call this member function only if the geometry traits is equipped with
+   * the coordinate-approximation functionality of a curve.
+   * This function must be inlined (e.g., a template) to enable the
+   * compiled-time dispatching in the function `draw_region()`.
+   */
   template <typename Approximate>
   void draw_approximate_region(Halfedge_const_handle curr,
                                const Approximate& approx) {
@@ -266,7 +289,8 @@ protected:
       bh::if_(has_approximate_2_object(Gt{}),
               [&](auto& x) {
                 auto approx = traits->approximate_2_object();
-                auto has_operator = bh::is_valid(can_call_operator_curve<int>{});
+                auto has_operator =
+                  bh::is_valid(can_call_operator_curve<int>{});
                 bh::if_(has_operator(approx),
                         [&](auto& x) { x.draw_approximate_region(curr, approx); },
                         [&](auto& x) { x.draw_exact_region(curr); }
@@ -280,9 +304,12 @@ protected:
     this->face_end();
   }
 
-  //! Draw a curve using aproximate coordinates.
-  // Call this member function only of the geometry traits is equipped to
-  // provide aproximate coordinates.
+  /*! Draw a curve using aproximate coordinates.
+   * Call this member function only of the geometry traits is equipped with
+   * the coordinate-aproximation functionality of a curve.
+   * This function must be inlined (e.g., a template) to enable the
+   * compiled-time dispatching in the function `draw_curve()`.
+   */
   template <typename XMonotoneCurve, typename Approximate>
   void draw_approximate_curve(const XMonotoneCurve& curve,
                               const Approximate& approx) {
@@ -314,7 +341,8 @@ protected:
      * For now we use C++14 features and boost.hana instead.
      */
 #if 0
-    if constexpr (std::experimental::is_detected_v<approximate_2_object_t, Gt>) {
+    if constexpr (std::experimental::is_detected_v<approximate_2_object_t, Gt>)
+    {
       const auto* traits = this->m_arr.geometry_traits();
       auto approx = traits->approximate_2_object();
       draw_approximate_curve(curve, approx);
@@ -340,6 +368,17 @@ protected:
 #endif
   }
 
+  /*! Add an approximation of a point.
+   * \param[in] p the (exact) point.
+   * Call this member function only if the geometry traits is equipped with
+   * the coordinate-approximation functionality of a point.
+   * This function must be inlined (e.g., a template) to enable the
+   * compiled-time dispatching in the function `draw_point()`.
+   */
+  template <typename Point, typename Approximate>
+  void draw_approximate_point(const Point& p, const Approximate& approx)
+  { this->add_point(approx(p)); }
+
   //!
   void draw_point(const Point& p) {
     namespace bh = boost::hana;
@@ -352,7 +391,7 @@ protected:
               auto has_operator =
                 bh::is_valid([](auto&& x) -> decltype(x.operator()(Point{})){});
               bh::if_(has_operator(approx),
-                      [&](auto& x) { /* x.add_point(approx(p)) */; },
+                      [&](auto& x) { x.draw_approximate_point(p, approx); },
                       [&](auto& x) { x.add_point(p); }
                       )(*this);
             },
