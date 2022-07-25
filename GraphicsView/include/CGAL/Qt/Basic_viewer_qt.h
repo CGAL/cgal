@@ -206,7 +206,7 @@ public:
     else
       setWindowTitle(title);
 
-    resize(CGAL_BASIC_VIEWER_INIT_SIZE_X, CGAL_BASIC_VIEWER_INIT_SIZE_X);
+    resize(CGAL_BASIC_VIEWER_INIT_SIZE_X, CGAL_BASIC_VIEWER_INIT_SIZE_Y);
 
     if (inverse_normal)
     { negate_all_normals(); }
