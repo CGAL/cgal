@@ -1,5 +1,3 @@
-#define CGAL_DEBUG_TRIPLE_LINES
-
 #include <vector>
 #include <iostream>
 
