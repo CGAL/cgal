@@ -53,6 +53,7 @@
 #include <CGAL/Qt/constraint.h>
 #include <CGAL/Random.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 namespace CGAL
 {
@@ -1718,6 +1719,30 @@ protected:
   float clipping_plane_rendering_transparency = 0.5f; // to what extent the transparent part should be rendered;
 
 };
+
+template <typename BufferType = float>
+void draw_buffer(GraphicBuffer<BufferType> &graphic_buffer) {
+
+#if defined(CGAL_TEST_SUITE)
+  bool cgal_test_suite = true;
+#else
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+#endif
+
+  if (!cgal_test_suite) {
+    CGAL::Qt::init_ogl_context(4, 3);
+    // Qt::init_ogl_context(4, 3);
+
+    int argc = 1;
+    const char *argv[2] = {"lccviewer", nullptr};
+    QApplication app(argc, const_cast<char **>(argv));
+
+    Basic_viewer_qt<float> basic_viewer(app.activeWindow(), graphic_buffer);
+
+    basic_viewer.show();
+    app.exec();
+  }
+}
 
 } // End namespace CGAL
 

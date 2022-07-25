@@ -16,7 +16,6 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
-#include <CGAL/Qt/init_ogl_context.h>
 
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>
@@ -339,29 +338,6 @@ void add_in_graphic_buffer_lcc(GraphicBuffer<BufferType> &graphic_buffer,
   if (alcc != nullptr) {
     draw_function::compute_elements(graphic_buffer, alcc, m_drawing_functor, nofill,
                      m_random_face_color);
-  }
-}
-
-// TODO: Move to Basic_viewer_qt.h
-template <typename BufferType = float>
-void draw_buffer(GraphicBuffer<BufferType> &graphic_buffer) {
-
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite = true;
-#else
-  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite) {
-    CGAL::Qt::init_ogl_context(4, 3);
-    int argc = 1;
-    const char *argv[2] = {"lccviewer", nullptr};
-    QApplication app(argc, const_cast<char **>(argv));
-
-    Basic_viewer_qt<float> basic_viewer(app.activeWindow(), graphic_buffer);
-
-    basic_viewer.show();
-    app.exec();
   }
 }
 
