@@ -208,7 +208,7 @@ public:
     }
 
     gBuffer.initiate_bounding_box(CGAL::Bbox_3());
-    m_texts.clear();
+    gBuffer.m_texts_clear();
   }
 
   bool is_empty() const
@@ -218,7 +218,7 @@ public:
 
   const CGAL::Bbox_3& bounding_box() const
   {
-    auto bounding_box = gBuffer.get_bounding_box();
+    const auto& bounding_box = gBuffer.get_bounding_box();
     return bounding_box;
   }
 
@@ -1260,14 +1260,15 @@ protected:
     if (m_draw_text)
     {
       glDisable(GL_LIGHTING);
-      for (std::size_t i=0; i<m_texts.size(); ++i)
+      for (std::size_t i=0; i<gBuffer.m_texts_size(); ++i)
       {
+        auto& m_texts_vec = gBuffer.get_m_texts();
         CGAL::qglviewer::Vec screenPos=camera()->projectedCoordinatesOf
-          (CGAL::qglviewer::Vec(std::get<0>(m_texts[i]).x(),
-                                std::get<0>(m_texts[i]).y(),
-                                std::get<0>(m_texts[i]).z()));
+          (CGAL::qglviewer::Vec(std::get<0>(m_texts_vec[i]).x(),
+                                std::get<0>(m_texts_vec[i]).y(),
+                                std::get<0>(m_texts_vec[i]).z()));
 
-        drawText((int)screenPos[0], (int)screenPos[1], std::get<1>(m_texts[i]));
+        drawText((int)screenPos[0], (int)screenPos[1], std::get<1>(m_texts_vec[i]));
       }
       glEnable(GL_LIGHTING);
     }
@@ -1328,7 +1329,7 @@ protected:
     for (unsigned int i=0; i<=nbSubdivisions; ++i)
     {
       const float pos = float(size*(2.0*i/nbSubdivisions-1.0));
-      auto array = gBuffer.get_array_of_index(POS_CLIPPING_PLANE);
+      auto& array = gBuffer.get_array_of_index(POS_CLIPPING_PLANE);
       array.push_back(pos);
       array.push_back(float(-size));
       array.push_back(0.f);
@@ -1650,8 +1651,6 @@ protected:
   QVector4D   m_ambient_color;
 
   bool m_are_buffers_initialized;
-  // TODO: deprecated, would remove!
-  CGAL::Bbox_3 m_bounding_box;
 
   // CGAL::qglviewer::LocalConstraint constraint;
   CGAL::qglviewer::WorldConstraint constraint;
@@ -1687,8 +1686,6 @@ protected:
     END_NORMAL,
     LAST_INDEX=END_NORMAL
   };
-  // TODO: deprecated, would remove!
-  std::vector<float> arrays[LAST_INDEX];
 
   static const unsigned int NB_VBO_BUFFERS=(END_POS-BEGIN_POS)+
     (END_COLOR-BEGIN_COLOR)+2; // +2 for 2 vectors of normals
@@ -1720,8 +1717,6 @@ protected:
   bool clipping_plane_rendering = true; // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
   float clipping_plane_rendering_transparency = 0.5f; // to what extent the transparent part should be rendered;
 
-  // TODO: deprecated, would remove!
-  std::vector<std::tuple<Local_point, QString> > m_texts;
 };
 
 } // End namespace CGAL
