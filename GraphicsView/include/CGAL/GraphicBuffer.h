@@ -335,6 +335,18 @@ public:
     add_text(kp, txt.c_str());
   }
 
+  void m_texts_clear() {
+    m_texts.clear();
+  }
+
+  int m_texts_size() {
+    return m_texts.size();
+  }
+
+  std::vector<std::tuple<Local_point, QString>>& get_m_texts() {
+    return m_texts;
+  }
+
 protected:
   // The following enum gives the indices of different elements of arrays
   // vectors.
