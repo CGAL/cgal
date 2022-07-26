@@ -11,6 +11,8 @@
 #include <CGAL/property_map.h>
 
 #include <numeric>
+#include <queue>
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -210,8 +212,8 @@ typename GT::FT interpolated_corrected_measure_face(const std::vector<typename G
     else {
         typename GT::FT mu0 = 0;
 
-        // getting barycenter of points
-        typename GT::Vector_3 xm = 
+        // getting center of points
+        typename GT::Vector_3 xm =
             std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
         xm /= n;
 
@@ -300,31 +302,229 @@ template<typename PolygonMesh, typename FaceMeasureMap,
         vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
             get_const_property_map(CGAL::vertex_point, pmesh));
 
-    // TODO - handle if vnm is not provided
-    VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), get(Vector_map_tag(), pmesh));
+    VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
+                               get(Vector_map_tag(), pmesh));
 
     if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
         compute_vertex_normals(pmesh, vnm, np);
 
     for (face_descriptor f : faces(pmesh))
     {
-        halfedge_descriptor h_start = pmesh.halfedge(f);
-        halfedge_descriptor h_iter = h_start;
-
         std::vector<typename GT::Vector_3> x;
         std::vector<typename GT::Vector_3> u;
 
-        // looping over vertices in face
-        do {
-            vertex_descriptor v = source(h_iter, pmesh);
+        for (vertex_descriptor v : vertices_around_face(halfedge(f, pmesh), pmesh))
+        {
             typename GT::Point_3 p = get(vpm, v);
             x.push_back(typename GT::Vector_3(p.x(), p.y(), p.z()));
             u.push_back(get(vnm, v));
-            h_iter = next(h_iter, pmesh);
-        } while (h_iter != h_start);
+        }
 
         put(fmm, f, interpolated_corrected_measure_face<GT>(x, u, mu_i));
     }
 }
+
+//
+//
+//template<typename GT>
+//typename GT::FT triangle_in_ball_ratio_1(const typename GT::Vector_3 x1,
+//                                         const typename GT::Vector_3 x2,
+//                                         const typename GT::Vector_3 x3,
+//                                         const typename GT::FT r,
+//                                         const typename GT::Vector_3 c,
+//                                         const std::size_t res = 3)
+//{
+//    const typename GT::FT R = r * r;
+//    const typename GT::FT acc = 1.0 / res;
+//    std::size_t samples_in = 0;
+//    for (GT::FT alpha = acc / 3; alpha < 1; alpha += acc)
+//        for (GT::FT beta = acc / 3; beta < 1 - alpha; beta += acc)
+//        {
+//            if ((alpha * x1 + beta * x2 + (1 - alpha - beta) * x3 - c).squared_length() < R)
+//                samples_in++;
+//        }
+//    return samples_in / (typename GT::FT)(res * (res + 1) / 2);
+//}
+
+
+template<typename GT>
+typename GT::FT face_in_ball_ratio_2(const std::vector<typename GT::Vector_3>& x,
+                                     const typename GT::FT r,
+                                     const typename GT::Vector_3 c)
+{
+    std::size_t n = x.size();
+
+    // getting center of points
+    typename GT::Vector_3 xm =
+        std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
+    xm /= n;
+
+    typename GT::FT d_min = (xm - c).squared_length();
+    typename GT::FT d_max = d_min;
+
+    for (const typename GT::Vector_3 xi : x)
+    {
+        const typename GT::FT d_sq = (xi - c).squared_length();
+        d_max = std::max(d_sq, d_max);
+        d_min = std::min(d_sq, d_min);
+    }
+
+    if (d_max <= r * r) return 1.0;
+    else if (r * r <= d_min) return 0.0;
+
+    d_max = sqrt(d_max);
+    d_min = sqrt(d_min);
+
+    return (r - d_min) / (d_max - d_min);
+}
+
+template<typename PolygonMesh, typename FaceMeasureMap,
+    typename NamedParameters = parameters::Default_named_parameters>
+    void expand_interpolated_corrected_measure_face(const PolygonMesh& pmesh,
+        FaceMeasureMap fmm,
+        const typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+        const NamedParameters& np = parameters::default_values())
+{
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+    const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT 
+        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0.01);
+
+    if (r < 0.000001)
+        return;
+
+    typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+        vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
+            get_const_property_map(CGAL::vertex_point, pmesh));
+
+
+    std::queue<face_descriptor> bfs_q;
+    std::unordered_set<face_descriptor> bfs_v;
+
+    //get face center c
+    typename GT::Vector_3 c;
+    for (vertex_descriptor v : vertices_around_face(halfedge(f, pmesh), pmesh))
+    {
+        typename GT::Point_3 p = get(vpm, v);
+        c += typename GT::Vector_3(p.x(), p.y(), p.z());
+    }
+    c /= degree(f, pmesh);
+
+    GT::FT corrected_mui = 0;
+
+    bfs_q.push(f);
+    bfs_v.insert(f);
+
+    while (!bfs_q.empty()) {
+        face_descriptor fi = bfs_q.front();
+        bfs_q.pop();
+
+        // looping over vertices in face to get point coordinates
+        std::vector<typename GT::Vector_3> x;
+        for (vertex_descriptor v : vertices_around_face(halfedge(fi, pmesh), pmesh))
+        {
+            typename GT::Point_3 p = get(vpm, v);
+            x.push_back(typename GT::Vector_3(p.x(), p.y(), p.z()));
+        }
+
+        const typename GT::FT f_ratio = face_in_ball_ratio_2<GT>(x, r, c);
+
+        if (f_ratio > 0.000001)
+        {
+            corrected_mui += f_ratio * get(fmm, fi);
+            for (face_descriptor fj : faces_around_face(halfedge(fi, pmesh), pmesh))
+            {
+                if (bfs_v.find(fj) == bfs_v.end())
+                {
+                    bfs_q.push(fj);
+                    bfs_v.insert(fj);
+                }
+            }
+        }
+    }
+
+    put(fmm, f, corrected_mui);
+}
+
+//template<typename PolygonMesh, typename FaceMeasureMap,
+//    typename NamedParameters = parameters::Default_named_parameters>
+//    void expand_interpolated_corrected_measure_mesh(const PolygonMesh& pmesh,
+//        FaceMeasureMap fmm,
+//        const NamedParameters& np = parameters::default_values())
+//{
+//    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+//    for (face_descriptor f : faces(pmesh))
+//        expand_interpolated_corrected_measure_face(pmesh, fmm, f, np);
+//}
+
+template<typename PolygonMesh, typename FaceCurvatureMap,
+    typename NamedParameters = parameters::Default_named_parameters>
+    void interpolated_corrected_mean_curvature(const PolygonMesh& pmesh,
+        FaceCurvatureMap fcm,
+        const NamedParameters& np = parameters::default_values())
+{
+    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+    typedef std::unordered_map<face_descriptor, GT::FT> FaceMeasureMap_tag;
+
+    FaceMeasureMap_tag mu0_init, mu1_init;
+    boost::associative_property_map<FaceMeasureMap_tag>
+        mu0_map(mu0_init), mu1_map(mu1_init);
+
+    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE);
+    interpolated_corrected_measure_mesh(pmesh, mu1_map, MU1_MEAN_CURVATURE_MEASURE);
+
+    for (face_descriptor f : faces(pmesh))
+    {
+        expand_interpolated_corrected_measure_face(pmesh, mu0_map, f, np);
+        expand_interpolated_corrected_measure_face(pmesh, mu1_map, f, np);
+
+        GT::FT f_mu0 = get(mu0_map, f);
+            if (f_mu0 > 0.000001)
+                put(fcm, f, 0.5 * get(mu1_map, f) / get(mu0_map, f));
+            else
+                put(fcm, f, 0);
+    }
+    
+}
+
+template<typename PolygonMesh, typename FaceCurvatureMap,
+    typename NamedParameters = parameters::Default_named_parameters>
+    void interpolated_corrected_gaussian_curvature(const PolygonMesh& pmesh,
+        FaceCurvatureMap fcm,
+        const NamedParameters& np = parameters::default_values())
+{
+    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+    typedef std::unordered_map<face_descriptor, GT::FT> FaceMeasureMap_tag;
+
+    FaceMeasureMap_tag mu0_init, mu2_init;
+    boost::associative_property_map<FaceMeasureMap_tag>
+        mu0_map(mu0_init), mu2_map(mu2_init);
+
+    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE);
+    interpolated_corrected_measure_mesh(pmesh, mu2_map, MU2_GAUSSIAN_CURVATURE_MEASURE);
+
+    for (face_descriptor f : faces(pmesh))
+    {
+        expand_interpolated_corrected_measure_face(pmesh, mu0_map, f, np);
+        expand_interpolated_corrected_measure_face(pmesh, mu2_map, f, np);
+
+        GT::FT f_mu0 = get(mu0_map, f);
+        if(f_mu0 > 0.000001)
+            put(fcm, f, get(mu2_map, f) / f_mu0);
+        else
+            put(fcm, f, 0);
+    }
+
+}
+
+
+
 }
 }

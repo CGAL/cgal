@@ -533,9 +533,8 @@ private Q_SLOTS:
         dock_widget->propertyBox->addItem("Scaled Jacobian");
         dock_widget->propertyBox->addItem("Heat Intensity");
         dock_widget->propertyBox->addItem("Heat Intensity (Intrinsic Delaunay)");
-        dock_widget->propertyBox->addItem("corrected area density");
-        dock_widget->propertyBox->addItem("corrected mean curvature density");
-        dock_widget->propertyBox->addItem("corrected gaussian curvature density");
+        dock_widget->propertyBox->addItem("Interpolated Corrected Mean Curvature");
+        dock_widget->propertyBox->addItem("Interpolated Corrected Gaussian Curvature");
       detectSMScalarProperties(sm_item->face_graph());
 
     }
@@ -610,15 +609,11 @@ private Q_SLOTS:
         return;
       sm_item->setRenderingMode(Gouraud);
       break;
-    case 4: // corrected area density
-        displayInterpolatedCurvatureMeasure(sm_item, PMP::MU0_AREA_MEASURE);
-        sm_item->setRenderingMode(Flat);
-        break;
-    case 5: // corrected mean curvature density
+    case 4: // Interpolated Corrected Mean Curvature
         displayInterpolatedCurvatureMeasure(sm_item, PMP::MU1_MEAN_CURVATURE_MEASURE);
         sm_item->setRenderingMode(Flat);
         break;
-    case 6: // corrected gaussian curvature density
+    case 5: // Interpolated Corrected Gaussian Curvature
         displayInterpolatedCurvatureMeasure(sm_item, PMP::MU2_GAUSSIAN_CURVATURE_MEASURE);
         sm_item->setRenderingMode(Flat);
         break;
@@ -657,15 +652,11 @@ private Q_SLOTS:
       if(does_exist)
         sm_item->face_graph()->remove_property_map(pmap);
       std::tie(pmap, does_exist) =
-          sm_item->face_graph()->property_map<face_descriptor, double>("f:corrected_area_density");
+          sm_item->face_graph()->property_map<face_descriptor, double>("f:interpolated_corrected_mean_curvature");
       if (does_exist)
           sm_item->face_graph()->remove_property_map(pmap);
       std::tie(pmap, does_exist) =
-          sm_item->face_graph()->property_map<face_descriptor, double>("f:corrected_mean_curvature_density");
-      if (does_exist)
-          sm_item->face_graph()->remove_property_map(pmap);
-      std::tie(pmap, does_exist) =
-          sm_item->face_graph()->property_map<face_descriptor, double>("f:corrected_gaussian_curvature_density");
+          sm_item->face_graph()->property_map<face_descriptor, double>("f:interpolated_corrected_gaussian_curvature");
       if (does_exist)
           sm_item->face_graph()->remove_property_map(pmap);
     });
@@ -707,16 +698,12 @@ private Q_SLOTS:
         dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(sm_item)>0);
         break;
       case 4:
-          dock_widget->zoomToMinButton->setEnabled(mu0_min.count(sm_item) > 0);
-          dock_widget->zoomToMaxButton->setEnabled(mu0_max.count(sm_item) > 0);
+          dock_widget->zoomToMinButton->setEnabled(mean_curvature_min.count(sm_item) > 0);
+          dock_widget->zoomToMaxButton->setEnabled(mean_curvature_max.count(sm_item) > 0);
           break;
       case 5:
-          dock_widget->zoomToMinButton->setEnabled(mu1_min.count(sm_item) > 0);
-          dock_widget->zoomToMaxButton->setEnabled(mu1_max.count(sm_item) > 0);
-          break;
-      case 6:
-          dock_widget->zoomToMinButton->setEnabled(mu2_min.count(sm_item) > 0);
-          dock_widget->zoomToMaxButton->setEnabled(mu2_max.count(sm_item) > 0);
+          dock_widget->zoomToMinButton->setEnabled(gaussian_curvature_min.count(sm_item) > 0);
+          dock_widget->zoomToMaxButton->setEnabled(gaussian_curvature_max.count(sm_item) > 0);
           break;
       default:
         break;
@@ -744,23 +731,17 @@ private Q_SLOTS:
     {
       smesh.remove_property_map(angles);
     }
-    SMesh::Property_map<face_descriptor, double> mu0;
-    std::tie(mu0, found) = smesh.property_map<face_descriptor, double>("f:corrected_area_density");
+    SMesh::Property_map<face_descriptor, double> mean_curvature;
+    std::tie(mean_curvature, found) = smesh.property_map<face_descriptor, double>("f:interpolated_corrected_mean_curvature");
     if (found)
     {
-        smesh.remove_property_map(mu0);
+        smesh.remove_property_map(mean_curvature);
     }
-    SMesh::Property_map<face_descriptor, double> mu1;
-    std::tie(mu1, found) = smesh.property_map<face_descriptor, double>("f:corrected_mean_curvature_density");
+    SMesh::Property_map<face_descriptor, double> gaussian_curvature;
+    std::tie(gaussian_curvature, found) = smesh.property_map<face_descriptor, double>("f:interpolated_corrected_gaussian_curvature");
     if (found)
     {
-        smesh.remove_property_map(mu0);
-    }
-    SMesh::Property_map<face_descriptor, double> mu2;
-    std::tie(mu2, found) = smesh.property_map<face_descriptor, double>("f:corrected_gaussian_curvature_density");
-    if (found)
-    {
-        smesh.remove_property_map(mu0);
+        smesh.remove_property_map(gaussian_curvature);
     }
   }
 
@@ -804,20 +785,20 @@ private Q_SLOTS:
 
   void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item, PMP::Curvature_measure_index mu_index)
   {
-    std::vector<std::string> tied_map = { 
-        "f:corrected_area_density",
-        "f:corrected_mean_curvature_density",
-        "f:corrected_gaussian_curvature_density" 
-    };
+    std::string tied_string = (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)? 
+        "f:interpolated_corrected_mean_curvature": "f:interpolated_corrected_gaussian_curvature";
     SMesh& smesh = *item->face_graph();
     //compute once and store the value per face
     bool non_init;
     SMesh::Property_map<face_descriptor, double> mu_i_map;
         std::tie(mu_i_map, non_init) = 
-            smesh.add_property_map<face_descriptor, double>(tied_map[mu_index], 0);
+            smesh.add_property_map<face_descriptor, double>(tied_string, 0);
     if (non_init)
     {
-        PMP::interpolated_corrected_measure_mesh(smesh, mu_i_map, mu_index);
+        if (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)
+            PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map);
+        else
+            PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map);
 
         double res_min = ARBITRARY_DBL_MAX,
             res_max = -ARBITRARY_DBL_MAX;
@@ -837,24 +818,20 @@ private Q_SLOTS:
         }
         switch (mu_index)
         {
-        case PMP::MU0_AREA_MEASURE:
-            mu0_max[item] = std::make_pair(res_max, max_index);
-            mu0_min[item] = std::make_pair(res_min, min_index);
-            break;
         case PMP::MU1_MEAN_CURVATURE_MEASURE:
-            mu1_max[item] = std::make_pair(res_max, max_index);
-            mu1_min[item] = std::make_pair(res_min, min_index);
+            mean_curvature_max[item] = std::make_pair(res_max, max_index);
+            mean_curvature_min[item] = std::make_pair(res_min, min_index);
             break;
         case PMP::MU2_GAUSSIAN_CURVATURE_MEASURE:
-            mu2_max[item] = std::make_pair(res_max, max_index);
-            mu2_min[item] = std::make_pair(res_min, min_index);
+            gaussian_curvature_max[item] = std::make_pair(res_max, max_index);
+            gaussian_curvature_min[item] = std::make_pair(res_min, min_index);
             break;
         }
 
         connect(item, &Scene_surface_mesh_item::itemChanged,
             this, &DisplayPropertyPlugin::resetProperty);
     }
-        treat_sm_property<face_descriptor>(tied_map[mu_index], item->face_graph());
+        treat_sm_property<face_descriptor>(tied_string, item->face_graph());
   }
 
 
@@ -1159,7 +1136,6 @@ private Q_SLOTS:
       case 1:
       case 4:
       case 5:
-      case 6:
         dock_widget->groupBox->  setEnabled(true);
         dock_widget->groupBox_3->setEnabled(true);
 
@@ -1223,7 +1199,7 @@ private Q_SLOTS:
     case 4:
     {
         ::zoomToId(*item->face_graph(),
-            QString("f%1").arg(mu0_min[item].second),
+            QString("f%1").arg(mean_curvature_min[item].second),
             getActiveViewer(),
             dummy_fd,
             dummy_p);
@@ -1232,20 +1208,12 @@ private Q_SLOTS:
     case 5:
     {
         ::zoomToId(*item->face_graph(),
-            QString("f%1").arg(mu1_min[item].second),
+            QString("f%1").arg(gaussian_curvature_min[item].second),
             getActiveViewer(),
             dummy_fd,
             dummy_p);
     }
     break;
-    case 6:
-    {
-        ::zoomToId(*item->face_graph(),
-            QString("f%1").arg(mu2_min[item].second),
-            getActiveViewer(),
-            dummy_fd,
-            dummy_p);
-    }
     break;
       break;
     default:
@@ -1284,7 +1252,7 @@ private Q_SLOTS:
     case 4:
     {
         ::zoomToId(*item->face_graph(),
-            QString("f%1").arg(mu0_max[item].second),
+            QString("f%1").arg(mean_curvature_max[item].second),
             getActiveViewer(),
             dummy_fd,
             dummy_p);
@@ -1293,21 +1261,12 @@ private Q_SLOTS:
     case 5:
     {
         ::zoomToId(*item->face_graph(),
-            QString("f%1").arg(mu1_max[item].second),
+            QString("f%1").arg(gaussian_curvature_max[item].second),
             getActiveViewer(),
             dummy_fd,
             dummy_p);
     }
     break;
-    case 6:
-    {
-        ::zoomToId(*item->face_graph(),
-            QString("f%1").arg(mu2_max[item].second),
-            getActiveViewer(),
-            dummy_fd,
-            dummy_p);
-    }
-      break;
     default:
       break;
     }
@@ -1598,14 +1557,11 @@ private:
   std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
   std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
 
-  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > mu0_min;
-  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > mu0_max;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > mean_curvature_min;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > mean_curvature_max;
 
-  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > mu1_min;
-  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > mu1_max;
-  
-  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > mu2_min;
-  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > mu2_max;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > gaussian_curvature_min;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > gaussian_curvature_max;
 
   std::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
