@@ -539,8 +539,8 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 /// \ingroup PMP_repairing_grp
 ///
 /// removes almost degenerate faces in a range of faces from a triangulated surface mesh.
-/// Almost degenerated triangle faces are classified as caps or needles: a triangle is said to be a needle<
-/// if its longest edge is much longer than its shortest edge. A triangle is said to be a cap if one of
+/// Almost degenerated triangle faces are classified as caps or needles: a triangle is said to be a <i>needle</i>
+/// if its longest edge is much longer than its shortest edge. A triangle is said to be a <i>cap</i> if one of
 /// its angles is close to `180` degrees. Needles are removed by collapsing their shortest edges, while caps are
 /// removed by flipping the edge opposite to the largest angle (with the exception of caps on the boundary that are
 /// simply removed from the mesh).
@@ -548,7 +548,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 /// @pre `CGAL::is_triangle_mesh(tmesh)`
 ///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @tparam `FaceRange` a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
+/// @tparam FaceRange a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
 /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param face_range the initial range of faces to be considered to look for badly shaped triangles.
