@@ -561,24 +561,24 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 ///   \cgalParamNBegin{cap_threshold}
 ///     \cgalParamDescription{the cosine of a minimum angle such that if a face has an angle greater than this bound,
 ///                           it is a cap. The threshold is in range `[-1 0]` and corresponds to an angle between `90` and `180` degrees.}
-///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamType{double}
 ///     \cgalParamDefault{the cosinus corresponding to an angle of 160 degrees}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{needle_threshold}
 ///     \cgalParamDescription{a bound on the ratio of the lengths of the longest edge and the shortest edge, such that a face having a ratio
 ///                           larger than the threshold is a needle.}
-///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamType{double}
 ///     \cgalParamDefault{4}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{collapse_length_threshold}
 ///     \cgalParamDescription{if different from 0, an edge collapsed will be prevented if the edge is longer than the threshold given.}
-///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamType{double}
 ///     \cgalParamDefault{0}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{flip_triangle_height_threshold}
 ///     \cgalParamDescription{if different from 0, an edge flip will be prevented if the height of the triangle (with base being the edge to be flipped)
 ///                           is longer than the threshold given.}
-///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamType{double}
 ///     \cgalParamDefault{0}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{vertex_point_map}
@@ -670,13 +670,13 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   DVCM vcm = get(Vertex_property_tag(), tmesh);
 
   // parameters
-  const typename Traits::FT cap_threshold =
+  const double cap_threshold =
     choose_parameter(get_parameter(np, internal_np::cap_threshold), -0.939692621); // cos(160)
-  const typename Traits::FT needle_threshold =
-    choose_parameter(get_parameter(np, internal_np::cap_threshold), 4.);
-  const typename Traits::FT collapse_length_threshold =
+  const double needle_threshold =
+    choose_parameter(get_parameter(np, internal_np::needle_threshold), 4.);
+  const double collapse_length_threshold =
     choose_parameter(get_parameter(np, internal_np::collapse_length_threshold), 0.);
-  const typename Traits::FT flip_triangle_height_threshold_squared =
+  const double flip_triangle_height_threshold_squared =
     CGAL::square(choose_parameter(get_parameter(np, internal_np::flip_triangle_height_threshold), 0));
 
   CGAL_precondition(is_valid_polygon_mesh(tmesh));
