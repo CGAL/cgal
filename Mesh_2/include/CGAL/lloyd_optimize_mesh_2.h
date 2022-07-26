@@ -166,9 +166,9 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
 }
 
 #ifndef DOXYGEN_RUNNING
-  template<typename CDT, typename ... NP_PACK>
+  template<typename CDT, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
   Mesh_optimization_return_code
-  lloyd_optimize_mesh_2(CDT& cdt, const NP_PACK& ... nps)
+  lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& ... nps)
   {
     return lloyd_optimize_mesh_2(cdt, internal_np::combine_named_parameters(nps ...));
   }
