@@ -565,7 +565,8 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 ///     \cgalParamDefault{the cosinus corresponding to an angle of 160 degrees}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{needle_threshold}
-///     \cgalParamDescription{a bound on the ratio of the longest edge length and the shortest edge length such that a face having a ratio}
+///     \cgalParamDescription{a bound on the ratio of the lengths of the longest edge and the shortest edge, such that a face having a ratio
+///                           larger than the threshold is a needle.}
 ///     \cgalParamType{`geom_traits::FT`}
 ///     \cgalParamDefault{4}
 ///   \cgalParamNEnd
@@ -609,7 +610,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 ///   \cgalParamNBegin{filter}
 ///     \cgalParamDescription{A function object providing `bool operator()(geom_traits::Point_3,geom_traits::Point_3,geom_traits::Point_3)`.}
 ///     \cgalParamType{The function object is queried each time a new triangle is created by passing the three points of the triangle.
-///                    The flip or collapsed responsible for the creation of that triangle is rejected if `false` is returned.}
+///                    The flip or collapse responsible for the creation of that triangle is rejected if `false` is returned.}
 ///     \cgalParamDefault{a functor always returning `true`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
