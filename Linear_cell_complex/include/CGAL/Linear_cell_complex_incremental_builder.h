@@ -328,7 +328,7 @@ public:
   DH add_facet(std::initializer_list<size_type> l)
   {
     begin_facet();
-    for (std::size_t i:l)
+    for (size_type i:l)
     { add_vertex_to_facet(i); }
     return end_facet();
   }
@@ -399,7 +399,7 @@ private:
   DH first_dart; /// First dart of the current face
   DH prev_dart; /// Prev dart of the current face
   DH min_dart; /// dart with the min vertex of the current facet.
-  std::size_t min_vertex, max_vertex; /// min and max indices of vertices of the current face
+  size_type min_vertex, max_vertex; /// min and max indices of vertices of the current face
 };
 
 } //namespace CGAL

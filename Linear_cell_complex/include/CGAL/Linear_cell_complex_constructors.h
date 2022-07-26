@@ -252,7 +252,7 @@ namespace CGAL {
         if(! in){
           return false;
         }
-        B.add_vertex_to_facet(index);
+        B.add_vertex_to_facet(static_cast<typename LCC::size_type>(index));
       }
       B.end_facet();
       scanner.skip_to_next_facet(i);
