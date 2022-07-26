@@ -179,6 +179,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+- `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()`
 
 \cgalCRPSection{Connected Components}
 - `CGAL::Polygon_mesh_processing::connected_component()`
