@@ -2508,7 +2508,7 @@ public:
       // Make sure that all midpoints are strictly between the
       // source and the target.
       Point_2 mp2(nt_traits->convert(p2.x()), nt_traits->convert(p2.y()));
-      Point_2 mp3(nt_traits->convert(p3.x()), m_nt_traits->convert(p3.y()));
+      Point_2 mp3(nt_traits->convert(p3.x()), nt_traits->convert(p3.y()));
       Point_2 mp4(nt_traits->convert(p4.x()), nt_traits->convert(p4.y()));
 
       if (! m_traits.is_strictly_between_endpoints(arc, mp2) ||
