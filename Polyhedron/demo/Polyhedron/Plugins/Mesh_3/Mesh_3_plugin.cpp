@@ -317,8 +317,8 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
           return tr("An image items cannot be mixed with other items type");
       }
 #  endif
-      else if (polylines_item =
-                qobject_cast<Scene_polylines_item*>(scene->item(ind)))
+      else if ((polylines_item =
+                qobject_cast<Scene_polylines_item*>(scene->item(ind))))
       {
         if (!items)
           continue;
