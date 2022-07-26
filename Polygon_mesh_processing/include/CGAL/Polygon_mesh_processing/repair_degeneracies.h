@@ -548,7 +548,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 /// @pre `CGAL::is_triangle_mesh(tmesh)`
 ///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @tparam a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
+/// @tparam `FaceRange` a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
 /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param face_range the initial range of faces to be considered to look for badly shaped triangles.
@@ -607,9 +607,9 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 ///     \cgalParamExtra{A constrained vertex is guaranteed to be present in `tmesh` after the function call.}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{filter}
-///     \cgalParamDescription{A function object providing `bool operator()('geom_traits::Point_3,geom_traits::Point_3,geom_traits::Point_3)`.}
-///     \cgalParamType{The function object is queried each time a new triangle is created by passing the three points and the flip or collapsed
-///                    responsible for the creation of that triangle is rejected if `false` is returned.}
+///     \cgalParamDescription{A function object providing `bool operator()(geom_traits::Point_3,geom_traits::Point_3,geom_traits::Point_3)`.}
+///     \cgalParamType{The function object is queried each time a new triangle is created by passing the three points of the triangle.
+///                    The flip or collapsed responsible for the creation of that triangle is rejected if `false` is returned.}
 ///     \cgalParamDefault{a functor always returning `true`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
