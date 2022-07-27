@@ -221,6 +221,10 @@ operator*(const NT& c, const Matrix& M);
 friend Matrix
 operator+(const Matrix& M0, const Matrix& M1);
 
+/// Assignment operator
+friend Matrix
+operator=(const Matrix& M);
+
 /// @}
 
 }; /* end Matrix */
