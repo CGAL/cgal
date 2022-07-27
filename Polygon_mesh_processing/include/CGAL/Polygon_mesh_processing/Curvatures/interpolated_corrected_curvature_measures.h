@@ -439,7 +439,7 @@ template<typename PolygonMesh, typename FaceMeasureMap,
             corrected_mui += f_ratio * get(fmm, fi);
             for (face_descriptor fj : faces_around_face(halfedge(fi, pmesh), pmesh))
             {
-                if (bfs_v.find(fj) == bfs_v.end())
+                if (bfs_v.find(fj) == bfs_v.end() && fj != boost::graph_traits<PolygonMesh>::null_face())
                 {
                     bfs_q.push(fj);
                     bfs_v.insert(fj);
