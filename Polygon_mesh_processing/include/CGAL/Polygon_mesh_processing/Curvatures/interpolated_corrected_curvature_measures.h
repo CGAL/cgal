@@ -74,7 +74,7 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
                                                         const typename GT::Vector_3 u2,
                                                         const Curvature_measure_index mu_i)
 {
-    typename GT::Construct_cross_product_3 cross_product;
+    typename GT::Construct_cross_product_vector_3 cross_product;
     switch (mu_i)
     {
     case MU0_AREA_MEASURE:
@@ -139,7 +139,7 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
 {
     // x0  _  x1
     // x2 |_| x3
-    typename GT::Construct_cross_product_3 cross_product;
+    typename GT::Construct_cross_product_vector_3 cross_product;
     switch (mu_i)
     {
     case MU0_AREA_MEASURE:
