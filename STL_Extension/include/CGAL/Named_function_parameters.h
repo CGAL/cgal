@@ -349,9 +349,6 @@ const Boost_parameter_compatibility_wrapper<internal_np::sliver_criteria_t> sliv
 const Boost_parameter_compatibility_wrapper<internal_np::perturb_vector_t> perturbation_vector;
 //Compatibility wrappers for exude_mesh_3.h
 const Boost_parameter_compatibility_wrapper<internal_np::lower_sliver_bound_t> sliver_bound;
-const Boost_parameter_compatibility_wrapper<internal_np::c3t3_param_t> c3t3_named_param;
-const Boost_parameter_compatibility_wrapper<internal_np::mesh_domain_param_t> mesh_domain;
-const Boost_parameter_compatibility_wrapper<internal_np::mesh_criteria_param_t> mesh_criteria;
 const Boost_parameter_compatibility_wrapper<internal_np::mesh_topology_number_t> mesh_topology;
 const Boost_parameter_compatibility_wrapper<internal_np::dump_after_init_prefix_param_t> dump_after_init_prefix;
 const Boost_parameter_compatibility_wrapper<internal_np::dump_after_refine_surface_prefix_param_t> dump_after_refine_surface_prefix;

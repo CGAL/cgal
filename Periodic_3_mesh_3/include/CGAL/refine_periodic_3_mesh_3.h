@@ -322,47 +322,11 @@ void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& crit
                               manifold_options_param);
 }
 
-    template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-    void refine_periodic_3_mesh_3(const CGAL_NP_CLASS& np)
-    {
-        static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::c3t3_param_t>::value, "Value for required parameter not found");
-        static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::mesh_domain_param_t>::value, "Value for required parameter not found");
-        static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::mesh_criteria_param_t>::value, "Value for required parameter not found");
-        using parameters::choose_parameter;
-        using parameters::get_parameter;
-        auto c3t3 = get_parameter(np,internal_np::c3t3_param);
-        auto domain = get_parameter(np,internal_np::mesh_domain_param);
-        auto criteria = get_parameter(np, internal_np::mesh_criteria_param);
-        parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::no_exude());
-        parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::no_perturb());
-        parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt());
-        parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd());
-        parameters::Reset reset_param = choose_parameter(get_parameter(np, internal_np::reset_options_param), parameters::reset_c3t3());
-        parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
-        parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
-
-        return refine_periodic_3_mesh_3_impl(c3t3,
-                                             domain,
-                                             criteria,
-                                             exude_param,
-                                             perturb_param,
-                                             odt_param,
-                                             lloyd_param,
-                                             reset_param(),
-                                             mesh_options_param,
-                                             manifold_options_param);
-    }
-
 #ifndef DOXYGEN_RUNNING
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& ... nps)
 {
     return refine_periodic_3_mesh_3(c3t3, domain, criteria, internal_np::combine_named_parameters(nps...));
-}
-template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-void refine_periodic_3_mesh_3(const CGAL_NP_CLASS& ... nps)
-{
-    return refine_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }
 /**
  * @brief This function refines the mesh c3t3 wrt domain & criteria

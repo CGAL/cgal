@@ -45,13 +45,11 @@ Named_function_parameters<internal::Perturb_options, internal_np::perturb_option
     return Param(options);
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Named_function_parameters<internal::Perturb_options, internal_np::perturb_options_param_t> perturb(const CGAL_NP_CLASS& ... nps)
 {
     return perturb(internal_np::combine_named_parameters(nps...));
 }
-#endif
 
 
 inline Named_function_parameters<internal::Perturb_options, internal_np::perturb_options_param_t> no_perturb() {
@@ -81,13 +79,12 @@ Named_function_parameters<internal::Exude_options, internal_np::exude_options_pa
     return Param(options);
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Named_function_parameters<internal::Exude_options, internal_np::exude_options_param_t> exude(const CGAL_NP_CLASS& ... nps)
 {
     return exude(internal_np::combine_named_parameters(nps...));
 }
-#endif
+
 inline Named_function_parameters<internal::Exude_options, internal_np::exude_options_param_t> no_exude() {
     typedef Named_function_parameters<internal::Exude_options, internal_np::exude_options_param_t> Param;
     return Param(internal::Exude_options(false));
@@ -115,13 +112,12 @@ Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_
     return Param(options);
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_t> odt(const CGAL_NP_CLASS& ... nps)
 {
     return odt(internal_np::combine_named_parameters(nps...));
 }
-#endif
+
 inline Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_t> no_odt() {
     typedef Named_function_parameters<internal::Odt_options, internal_np::odt_options_param_t> Param;
     return Param(internal::Odt_options(false));
@@ -150,13 +146,13 @@ Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_pa
     return Param(options);
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+
 template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_param_t> lloyd(const CGAL_NP_CLASS& ... nps)
 {
     return lloyd(internal_np::combine_named_parameters(nps...));
 }
-#endif
+
 inline Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_param_t> no_lloyd() {
     typedef Named_function_parameters<internal::Lloyd_options, internal_np::lloyd_options_param_t> Param;
     return Param(internal::Lloyd_options(false));
@@ -178,13 +174,12 @@ Named_function_parameters<internal::Manifold_options, internal_np::manifold_para
     return Param(options);
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+
 template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> manifold_options(const CGAL_NP_CLASS& ... nps)
 {
     return manifold_options(internal_np::combine_named_parameters(nps...));
 }
-#endif
 
 inline Named_function_parameters<internal::Manifold_options, internal_np::manifold_param_t> manifold()
 {
@@ -238,13 +233,12 @@ Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t> m
     typedef Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t> Param;
     return Param(options);
 }
-#ifndef CGAL_NO_DEPRECATED_CODE
+
 template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t> mesh_3_options(const CGAL_NP_CLASS& ... nps)
 {
     return mesh_3_options(internal_np::combine_named_parameters(nps...));
 }
-#endif
 
 
 } //namespace parameters

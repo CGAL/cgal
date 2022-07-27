@@ -114,17 +114,6 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, double time_limit = 0, do
   return exude_mesh_3(c3t3, CGAL::parameters::time_limit(time_limit).lower_sliver_bound(sliver_bound));
 }
 #endif
-template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-Mesh_optimization_return_code exude_mesh_3(const CGAL_NP_CLASS& np)
-{
-    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::c3t3_param_t>::value, "Value for required parameter not found");
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
-    int time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
-    double sliver_bound= choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),parameters::default_values_for_mesh_3::exude_sliver_bound);
-    auto c3t3 = get_parameter(np,internal_np::c3t3_param);
-    return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
-}
 #ifndef DOXYGEN_RUNNING
 template<typename C3T3, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, const CGAL_NP_CLASS& ... nps)
@@ -132,11 +121,6 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, const CGAL_NP_CLASS& ... 
     return exude_mesh_3(c3t3,internal_np::combine_named_parameters(nps...));
 }
 
-template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code exude_mesh_3(const CGAL_NP_CLASS& ... nps)
-{
-    return exude_mesh_3(internal_np::combine_named_parameters(nps...));
-}
 
 
 
