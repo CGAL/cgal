@@ -74,25 +74,26 @@ typename GT::FT interpolated_corrected_measure_triangle(const typename GT::Vecto
                                                         const typename GT::Vector_3 u2,
                                                         const Curvature_measure_index mu_i)
 {
+    GT::Construct_cross_product_3 cross_product;
     switch (mu_i)
     {
     case MU0_AREA_MEASURE:
     {
         const typename GT::Vector_3 um = (u0 + u1 + u2) / 3.0;
 
-        return 0.5 * um * CGAL::cross_product(x1 - x0, x2 - x0);
+        return 0.5 * um * cross_product(x1 - x0, x2 - x0);
     }
     case MU1_MEAN_CURVATURE_MEASURE:
     {
         const typename GT::Vector_3 um = (u0 + u1 + u2) / 3.0;
 
-        return 0.5 * um * (CGAL::cross_product(u2 - u1, x0)
-            + CGAL::cross_product(u0 - u2, x1)
-            + CGAL::cross_product(u1 - u0, x2));
+        return 0.5 * um * (cross_product(u2 - u1, x0)
+            + cross_product(u0 - u2, x1)
+            + cross_product(u1 - u0, x2));
     }
     case MU2_GAUSSIAN_CURVATURE_MEASURE:
 
-        return 0.5 * u0 * CGAL::cross_product(u1, u2);
+        return 0.5 * u0 * cross_product(u1, u2);
 
     default: return 0;
     }
@@ -138,42 +139,42 @@ typename GT::FT interpolated_corrected_measure_quad(const typename GT::Vector_3 
 {
     // x0  _  x1
     // x2 |_| x3
-
+    GT::Construct_cross_product_3 cross_product;
     switch (mu_i)
     {
     case MU0_AREA_MEASURE:
 
         return (1 / 36.0) * (
-              (4 * u0 + 2 * u1 + 2 * u2 + u3) * CGAL::cross_product(x1 - x0, x2 - x0)
-            + (2 * u0 + 4 * u1 + u2 + 2 * u3) * CGAL::cross_product(x1 - x0, x3 - x1)
-            + (2 * u0 + u1 + 4 * u2 + 2 * u3) * CGAL::cross_product(x3 - x2, x2 - x0)
-            + (u0 + 2 * u1 + 2 * u2 + 4 * u3) * CGAL::cross_product(x3 - x2, x3 - x1)
+              (4 * u0 + 2 * u1 + 2 * u2 + u3) * cross_product(x1 - x0, x2 - x0)
+            + (2 * u0 + 4 * u1 + u2 + 2 * u3) * cross_product(x1 - x0, x3 - x1)
+            + (2 * u0 + u1 + 4 * u2 + 2 * u3) * cross_product(x3 - x2, x2 - x0)
+            + (u0 + 2 * u1 + 2 * u2 + 4 * u3) * cross_product(x3 - x2, x3 - x1)
             );
 
     case MU1_MEAN_CURVATURE_MEASURE:
     {
         const typename GT::Vector_3 u03 = u3 - u0;
         const typename GT::Vector_3 u12 = u2 - u1;
-        const typename GT::Vector_3 x0_cross = CGAL::cross_product(u12, x0);
-        const typename GT::Vector_3 x1_cross = -CGAL::cross_product(u03, x1);
-        const typename GT::Vector_3 x2_cross = CGAL::cross_product(u03, x2);
-        const typename GT::Vector_3 x3_cross = -CGAL::cross_product(u12, x3);
+        const typename GT::Vector_3 x0_cross = cross_product(u12, x0);
+        const typename GT::Vector_3 x1_cross = -cross_product(u03, x1);
+        const typename GT::Vector_3 x2_cross = cross_product(u03, x2);
+        const typename GT::Vector_3 x3_cross = -cross_product(u12, x3);
 
 
         return (1 / 12.0) * (
-              u0 * (2 * x0_cross - CGAL::cross_product((u2 + u3), x1) + CGAL::cross_product((u1 + u3), x2) + x3_cross)
-            + u1 * (CGAL::cross_product((u2 + u3), x0) + 2 * x1_cross + x2_cross - CGAL::cross_product((u0 + u2), x3))
-            + u2 * (-CGAL::cross_product((u1 + u3), x0) + x1_cross + 2 * x2_cross + CGAL::cross_product((u0 + u1), x3))
-            + u3 * (x0_cross + CGAL::cross_product((u0 + u2), x1) - CGAL::cross_product((u0 + u1), x2) + 2 * x3_cross)
+              u0 * (2 * x0_cross - cross_product((u2 + u3), x1) + cross_product((u1 + u3), x2) + x3_cross)
+            + u1 * (cross_product((u2 + u3), x0) + 2 * x1_cross + x2_cross - cross_product((u0 + u2), x3))
+            + u2 * (-cross_product((u1 + u3), x0) + x1_cross + 2 * x2_cross + cross_product((u0 + u1), x3))
+            + u3 * (x0_cross + cross_product((u0 + u2), x1) - cross_product((u0 + u1), x2) + 2 * x3_cross)
             );
     }
     case MU2_GAUSSIAN_CURVATURE_MEASURE:
 
         return (1 / 36.0) * (
-              (4 * u0 + 2 * u1 + 2 * u2 + u3) * CGAL::cross_product(u1 - u0, u2 - u0)
-            + (2 * u0 + 4 * u1 + u2 + 2 * u3) * CGAL::cross_product(u1 - u0, u3 - u1)
-            + (2 * u0 + u1 + 4 * u2 + 2 * u3) * CGAL::cross_product(u3 - u2, u2 - u0)
-            + (u0 + 2 * u1 + 2 * u2 + 4 * u3) * CGAL::cross_product(u3 - u2, u3 - u1)
+              (4 * u0 + 2 * u1 + 2 * u2 + u3) * cross_product(u1 - u0, u2 - u0)
+            + (2 * u0 + 4 * u1 + u2 + 2 * u3) * cross_product(u1 - u0, u3 - u1)
+            + (2 * u0 + u1 + 4 * u2 + 2 * u3) * cross_product(u3 - u2, u2 - u0)
+            + (u0 + 2 * u1 + 2 * u2 + 4 * u3) * cross_product(u3 - u2, u3 - u1)
             );
 
     default: return 0;
