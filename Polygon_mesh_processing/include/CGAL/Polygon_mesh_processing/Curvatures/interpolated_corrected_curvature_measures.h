@@ -415,7 +415,7 @@ template<typename PolygonMesh, typename FaceMeasureMap,
     }
     c /= degree(f, pmesh);
 
-    GT::FT corrected_mui = 0;
+    typename GT::FT corrected_mui = 0;
 
     bfs_q.push(f);
     bfs_v.insert(f);
@@ -470,7 +470,7 @@ template<typename PolygonMesh, typename FaceCurvatureMap,
 {
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-    typedef std::unordered_map<face_descriptor, GT::FT> FaceMeasureMap_tag;
+    typedef std::unordered_map<face_descriptor, typename GT::FT> FaceMeasureMap_tag;
 
     FaceMeasureMap_tag mu0_init, mu1_init;
     boost::associative_property_map<FaceMeasureMap_tag>
@@ -484,13 +484,12 @@ template<typename PolygonMesh, typename FaceCurvatureMap,
         expand_interpolated_corrected_measure_face(pmesh, mu0_map, f, np);
         expand_interpolated_corrected_measure_face(pmesh, mu1_map, f, np);
 
-        GT::FT f_mu0 = get(mu0_map, f);
+        const typename GT::FT f_mu0 = get(mu0_map, f);
             if (f_mu0 > 0.000001)
                 put(fcm, f, 0.5 * get(mu1_map, f) / get(mu0_map, f));
             else
                 put(fcm, f, 0);
     }
-    
 }
 
 template<typename PolygonMesh, typename FaceCurvatureMap,
@@ -501,7 +500,7 @@ template<typename PolygonMesh, typename FaceCurvatureMap,
 {
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-    typedef std::unordered_map<face_descriptor, GT::FT> FaceMeasureMap_tag;
+    typedef std::unordered_map<face_descriptor, typename GT::FT> FaceMeasureMap_tag;
 
     FaceMeasureMap_tag mu0_init, mu2_init;
     boost::associative_property_map<FaceMeasureMap_tag>
@@ -515,13 +514,12 @@ template<typename PolygonMesh, typename FaceCurvatureMap,
         expand_interpolated_corrected_measure_face(pmesh, mu0_map, f, np);
         expand_interpolated_corrected_measure_face(pmesh, mu2_map, f, np);
 
-        GT::FT f_mu0 = get(mu0_map, f);
+        const typename GT::FT f_mu0 = get(mu0_map, f);
         if(f_mu0 > 0.000001)
             put(fcm, f, get(mu2_map, f) / f_mu0);
         else
             put(fcm, f, 0);
     }
-
 }
 
 
