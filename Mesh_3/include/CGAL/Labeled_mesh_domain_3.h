@@ -291,17 +291,20 @@ public:
   typedef BGT Geom_traits;
   using Impl_details::construct_pair_functor;
 
-  template<typename Func, typename BoundingBox, typename CGAL_NP_TEMPLATE_PARAMETERS>
-  Labeled_mesh_domain_3(const Func& f, const BoundingBox& bbox, const CGAL_NP_CLASS& np = parameters::default_values())
-  :Impl_details(f,bbox,
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Labeled_mesh_domain_3(const CGAL_NP_CLASS& np = parameters::default_values())
+  :Impl_details(parameters::get_parameter(np, internal_np::function_param),
+                parameters::get_parameter(np, internal_np::bounding_object_param),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
   {
   }
-  template<typename Func, typename BoundingBox, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-  Labeled_mesh_domain_3(const Func& f, const BoundingBox& bbox, const CGAL_NP_CLASS& ... nps):Labeled_mesh_domain_3(f, bbox, internal_np::combine_named_parameters(nps...))
+
+  template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+  Labeled_mesh_domain_3(const CGAL_NP_CLASS& ... nps)
+    : Labeled_mesh_domain_3(internal_np::combine_named_parameters(nps...))
   {
   }
 
