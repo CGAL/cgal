@@ -424,12 +424,12 @@ public:
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
-              (create_gray_image_wrapper
+              (p::function(create_gray_image_wrapper
                        (image_,
                         iso_value_,
                         image_values_to_subdomain_indices_,
-                        value_outside_),
-               Mesh_3::internal::compute_bounding_box(image_),
+                        value_outside_)),
+               p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
                p::relative_error_bound = relative_error_bound_,
                p::p_rng = p_rng_,
                p::null_subdomain_index =
@@ -454,12 +454,12 @@ public:
             auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
             namespace p = CGAL::parameters;
             return Labeled_mesh_domain_3
-                    (create_gray_image_wrapper
+                    (p::function(create_gray_image_wrapper
                              (image_,
                               iso_value_,
                               image_values_to_subdomain_indices_,
-                              value_outside_),
-                     Mesh_3::internal::compute_bounding_box(image_),
+                              value_outside_)),
+                     p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
                      p::relative_error_bound = relative_error_bound_,
                      p::p_rng = p_rng_,
                      p::null_subdomain_index =
@@ -548,12 +548,12 @@ where the labeled image is used with a precomputed 3D image of weights :
             if (weights_.is_valid())
             {
                 return Labeled_mesh_domain_3
-                        (create_weighted_labeled_image_wrapper
+                        (p::function(create_weighted_labeled_image_wrapper
                                  (image_,
                                   weights_,
                                   image_values_to_subdomain_indices_,
-                                  value_outside_),
-                         Mesh_3::internal::compute_bounding_box(image_),
+                                  value_outside_)),
+                         p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
                          p::relative_error_bound = relative_error_bound_,
                          p::p_rng = p_rng_,
                          p::null_subdomain_index =
@@ -564,11 +564,11 @@ where the labeled image is used with a precomputed 3D image of weights :
             else
             {
                 return Labeled_mesh_domain_3
-                        (create_labeled_image_wrapper
+                        (p::function(create_labeled_image_wrapper
                                  (image_,
                                   image_values_to_subdomain_indices_,
-                                  value_outside_),
-                         Mesh_3::internal::compute_bounding_box(image_),
+                                  value_outside_)),
+                         p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
                          p::relative_error_bound = relative_error_bound_,
                          p::p_rng = p_rng_,
                          p::null_subdomain_index =
@@ -679,19 +679,24 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
 
  */
 
-  template<typename Function, typename BoundingObject, typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(Function function_, BoundingObject bounding_object_, const CGAL_NP_CLASS& np = parameters::default_values())
+
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& np)
   {
+      static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value, "Value for required parameter not found");
+      static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::bounding_object_param_t>::value, "Value for required parameter not found");
       using parameters::get_parameter;
       using parameters::choose_parameter;
+      auto function_ = get_parameter(np, internal_np::function_param);
+      auto bounding_object_ = get_parameter(np, internal_np::bounding_object_param);
       FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
       CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), (CGAL::Random*)(0));
       auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
       auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
       namespace p = CGAL::parameters;
       return Labeled_mesh_domain_3
-              (make_implicit_to_labeling_function_wrapper<BGT>(function_),
-               bounding_object_,
+              (p::function(make_implicit_to_labeling_function_wrapper<BGT>(function_)),
+               p::bounding_object(bounding_object_),
                p::relative_error_bound = relative_error_bound_,
                p::p_rng = p_rng_,
                p::null_subdomain_index =
@@ -700,40 +705,16 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
                        create_construct_surface_patch_index(construct_surface_patch_index_));
   }
 
-        template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-        static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& np)
-        {
-            static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value, "Value for required parameter not found");
-            static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::bounding_object_param_t>::value, "Value for required parameter not found");
-            using parameters::get_parameter;
-            using parameters::choose_parameter;
-            auto function_ = get_parameter(np, internal_np::function_param);
-            auto bounding_object_ = get_parameter(np, internal_np::bounding_object_param);
-            FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
-            CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), (CGAL::Random*)(0));
-            auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
-            auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
-            namespace p = CGAL::parameters;
-            return Labeled_mesh_domain_3
-                    (make_implicit_to_labeling_function_wrapper<BGT>(function_),
-                     bounding_object_,
-                     p::relative_error_bound = relative_error_bound_,
-                     p::p_rng = p_rng_,
-                     p::null_subdomain_index =
-                             create_null_subdomain_index(null_subdomain_index_),
-                     p::construct_surface_patch_index =
-                             create_construct_surface_patch_index(construct_surface_patch_index_));
-        }
-
-  template<typename Function, typename BoundingObject, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(Function function_, BoundingObject bounding_object_, const CGAL_NP_CLASS& ... nps)
-  {
-      return create_implicit_mesh_domain(function_, bounding_object_, internal_np::combine_named_parameters(nps...));
-  }
   template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
   static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& ... nps)
   {
       return create_implicit_mesh_domain(internal_np::combine_named_parameters(nps...));
+  }
+
+  template <class Function, class Bounding_object>
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const Function& f, const Bounding_object& bo)
+  {
+    return create_implicit_mesh_domain(parameters::function_param(f).bounding_object_param(bo));
   }
 
   /// @}
