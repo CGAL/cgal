@@ -785,13 +785,13 @@ private Q_SLOTS:
 
   void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item, PMP::Curvature_measure_index mu_index)
   {
-    std::string tied_string = (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)? 
+    std::string tied_string = (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)?
         "f:interpolated_corrected_mean_curvature": "f:interpolated_corrected_gaussian_curvature";
     SMesh& smesh = *item->face_graph();
     //compute once and store the value per face
     bool non_init;
     SMesh::Property_map<face_descriptor, double> mu_i_map;
-        std::tie(mu_i_map, non_init) = 
+        std::tie(mu_i_map, non_init) =
             smesh.add_property_map<face_descriptor, double>(tied_string, 0);
     if (non_init)
     {

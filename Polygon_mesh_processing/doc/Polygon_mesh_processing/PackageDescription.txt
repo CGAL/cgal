@@ -16,7 +16,7 @@
 /// Functions to triangulate faces, and to refine and fair regions of a polygon mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-/// \defgroup PMP_corrected_curvatures_grp Corrected Curvature Computation 
+/// \defgroup PMP_corrected_curvatures_grp Corrected Curvature Computation
 /// Functions to compute the corrected curvatures of a polygon mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
 

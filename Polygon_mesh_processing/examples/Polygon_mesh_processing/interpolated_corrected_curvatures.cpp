@@ -47,6 +47,6 @@ int main(int argc, char* argv[])
   );
 
   for (face_descriptor f: g1.faces())
-      std::cout << f.idx() << ": HC = " << get(mean_curvature_map, f) 
+      std::cout << f.idx() << ": HC = " << get(mean_curvature_map, f)
                            << ", GC = " << get(gaussian_curvature_map, f) << "\n";
 }
