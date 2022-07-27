@@ -33,6 +33,8 @@
 #define CGAL_NP_TEMPLATE_PARAMETERS_2 NP_T2=bool, typename NP_Tag2=CGAL::internal_np::all_default_t, typename NP_Base2=CGAL::internal_np::No_property
 #define CGAL_NP_CLASS_2 CGAL::Named_function_parameters<NP_T2,NP_Tag2,NP_Base2>
 
+#define CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC NP_T, typename ... NP_Tag, typename ... NP_Base
+
 namespace CGAL {
 namespace internal_np{
 

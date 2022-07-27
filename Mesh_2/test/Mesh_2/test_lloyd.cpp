@@ -76,8 +76,7 @@ struct Lloyd_tester
   }
 };
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-struct Lloyd_tester_deprecated_API
+struct Lloyd_tester_original_BP_API
 {
   void operator()(CDT& cdt) const
   {
@@ -121,7 +120,6 @@ struct Lloyd_tester_deprecated_API
     assert( number_of_constraints == number_of_constrained_edges(cdt));
   }
 };
-#endif
 
 int main()
 {
@@ -130,11 +128,10 @@ int main()
   Lloyd_tester tester;
   tester(cdt);
 
-  #ifndef CGAL_NO_DEPRECATED_CODE
-  std::cerr << "TESTING lloyd_optimize_mesh_2 with Epick (deprecated API)...\n\n";
+  std::cerr << "TESTING lloyd_optimize_mesh_2 with Epick (original Boost Parameter API)...\n\n";
   cdt = CDT();
-  Lloyd_tester_deprecated_API tester_bis;
+  Lloyd_tester_original_BP_API tester_bis;
   tester_bis(cdt);
-  #endif
+
   return 0;
 }

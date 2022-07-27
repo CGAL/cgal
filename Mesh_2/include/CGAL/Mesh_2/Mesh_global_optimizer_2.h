@@ -21,7 +21,7 @@
   #define CGAL_MESH_2_OPTIMIZER_VERBOSE
 #endif
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
@@ -464,7 +464,7 @@ private:
   bool seeds_mark_;
 
   double time_limit_;
-  CGAL::Timer running_time_;
+  CGAL::Real_timer running_time_;
 
   std::list<FT> big_moves_;
 
