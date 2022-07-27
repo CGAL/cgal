@@ -111,6 +111,7 @@ include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 
@@ -199,5 +200,3 @@ if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
   # Do not use -isystem for CGAL include paths
   set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
 endif()
-
-include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

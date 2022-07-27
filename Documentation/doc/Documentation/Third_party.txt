@@ -135,7 +135,7 @@ The \eigen web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_
 
 \subsection thirdpartyOpenGR OpenGR
 
-\opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 licence.
+\opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 license.
 
 \cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3Ref
 packages. In order to use \opengr in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OpenGR_support` provided in `CGAL_OpenGR_support.cmake`.

@@ -1,4 +1,4 @@
-// Copyright(c) 2018  INRIA Sophia-Antipolis (France).
+// Copyright(c) 2022 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,41 +7,27 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+// Author(s)     : Andreas Fabri
 
-#ifndef CGAL_DRAW_T2_H
-#define CGAL_DRAW_T2_H
+#ifndef CGAL_DRAW_CT2_H
+#define CGAL_DRAW_CT2_H
 
 #include <CGAL/license/Triangulation_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
-#include <CGAL/draw_constrained_triangulation_2.h>
-
-#include <CGAL/Triangulation_2.h>
+#include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Triangulation_2/internal/In_domain.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Random.h>
 
 namespace CGAL
 {
 
-// Default color functor; user can change it to have its own face color
-struct DefaultColorFunctorT2
-{
-  template<typename T2>
-  static CGAL::IO::Color run(const T2&,
-                         const typename T2::Finite_faces_iterator fh)
-  {
-    CGAL::Random random((unsigned int)(std::size_t)(&*fh));
-    return get_random_color(random);
-  }
-};
-
 // Viewer class for T2
-template<class T2, class ColorFunctor>
-class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
+  template<class T2, class InDomainPmap>
+class SimpleConstrainedTriangulation2ViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt                    Base;
   typedef typename T2::Vertex_handle         Vertex_const_handle;
@@ -55,15 +41,15 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleTriangulation2ViewerQt(QWidget* parent, const T2& at2,
-                               const char* title="Basic T2 Viewer",
-                               bool anofaces=false,
-                               const ColorFunctor& fcolor=ColorFunctor()) :
+  SimpleConstrainedTriangulation2ViewerQt(QWidget* parent, const T2& at2,
+                                          InDomainPmap ipm,
+                                          const char* title="Basic CDT2 Viewer",
+                                          bool anofaces=false) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
     Base(parent, title, true, true, true, false, false),
     t2(at2),
-    m_nofaces(anofaces),
-    m_fcolor(fcolor)
+    ipm(ipm),
+    m_nofaces(anofaces)
   {
     compute_elements();
   }
@@ -71,7 +57,7 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::IO::Color c=m_fcolor.run(t2, fh);
+    CGAL::IO::Color c = get(ipm, fh)? CGAL::yellow() : CGAL::white();
     face_begin(c);
 
     add_point_in_face(fh->vertex(0)->point());
@@ -83,8 +69,10 @@ protected:
 
   void compute_edge(Edge_const_handle eh)
   {
+    CGAL::IO::Color  c = t2.is_constrained(*eh)? CGAL::green() : CGAL::black();
     add_segment(eh->first->vertex(eh->first->cw(eh->second))->point(),
-                eh->first->vertex(eh->first->ccw(eh->second))->point());
+                eh->first->vertex(eh->first->ccw(eh->second))->point(),
+                c);
   }
 
   void compute_vertex(Vertex_const_handle vh)
@@ -128,18 +116,20 @@ protected:
 
 protected:
   const T2& t2;
+  InDomainPmap ipm;
   bool m_nofaces;
-  const ColorFunctor& m_fcolor;
 };
 
 // Specialization of draw function.
-#define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
+#define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
 
-template<class Gt, class Tds>
-void draw(const CGAL_T2_TYPE& at2)
+template<class Gt, class Tds, class Itag, class InDomainPmap>
+void draw(const CGAL_T2_TYPE& at2,
+          InDomainPmap ipm)
 {
-  const char* title="Triangulation_2 Basic Viewer";
+  const char* title="Constrained_triangulation_2 Basic Viewer";
   bool nofill=false;
+
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
@@ -152,18 +142,39 @@ void draw(const CGAL_T2_TYPE& at2)
     int argc=1;
     const char* argv[2]={"t2_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
-    DefaultColorFunctorT2 fcolor;
-    SimpleTriangulation2ViewerQt<CGAL_T2_TYPE, DefaultColorFunctorT2>
-      mainwindow(app.activeWindow(), at2, title, nofill, fcolor);
+    SimpleConstrainedTriangulation2ViewerQt<CGAL_T2_TYPE, InDomainPmap>
+      mainwindow(app.activeWindow(), at2, ipm, title, nofill);
     mainwindow.show();
     app.exec();
   }
+}
+
+
+template<class Gt, class Tds, class Itag>
+void draw(const CGAL_T2_TYPE& at2)
+{
+  internal::In_domain<CGAL_T2_TYPE> in_domain;
+  draw(at2, in_domain);
 }
 
 #undef CGAL_T2_TYPE
 
 } // End namespace CGAL
 
+#else
+
+namespace CGAL {
+// Specialization of draw function.
+#define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
+
+template<class Gt, class Tds, class Itag, class InDomainPmap>
+void draw(const CGAL_T2_TYPE& ,
+          InDomainPmap )
+{}
+#undef CGAL_T2_TYPE
+
+} // End namespace CGAL
+
 #endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_DRAW_T2_H
+#endif // CGAL_DRAW_CT2_H
