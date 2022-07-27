@@ -354,13 +354,13 @@ void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& crit
     }
 
 #ifndef DOXYGEN_RUNNING
-template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename... NP_Pack>
-void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const NP_Pack& ...nps)
+template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename ... NP_PACK>
+void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const NP_PACK& ... nps)
 {
     return refine_periodic_3_mesh_3(c3t3, domain, criteria, internal_np::combine_named_parameters(nps...));
 }
 template<typename ... NP_PACK>
-void refine_periodic_3_mesh_3(const NP_PACK& ...nps)
+void refine_periodic_3_mesh_3(const NP_PACK& ... nps)
 {
     return refine_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }

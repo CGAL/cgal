@@ -56,7 +56,7 @@ Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& 
     return perturb_periodic_3_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
 }
 template<typename ... NP_PACK>
-Mesh_optimization_return_code perturb_periodic_3_mesh_3(const NP_PACK& ...nps)
+Mesh_optimization_return_code perturb_periodic_3_mesh_3(const NP_PACK& ... nps)
 {
     return perturb_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }
@@ -84,12 +84,12 @@ Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3,const CGAL_NP_C
         return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
     }
 template<typename C3T3, typename ... NP_PACK>
-Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3, const NP_PACK& ...nps)
+Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3, const NP_PACK& ... nps)
 {
     return exude_periodic_3_mesh_3(c3t3,internal_np::combine_named_parameters(nps...));
 }
 template<typename ... NP_PACK>
-Mesh_optimization_return_code exude_periodic_3_mesh_3(const NP_PACK& ...nps)
+Mesh_optimization_return_code exude_periodic_3_mesh_3(const NP_PACK& ... nps)
 {
     return exude_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }
@@ -124,13 +124,13 @@ Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDom
         bool do_freeze=choose_parameter(get_parameter(np,internal_np::freeze),true);
         return odt_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iteration_number, convergence, freeze_bound, do_freeze);
     }
-template<typename C3T3, typename MeshDomain, typename... NP_Pack>
-Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const NP_Pack& ...nps)
+template<typename C3T3, typename MeshDomain, typename ... NP_PACK>
+Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const NP_PACK& ... nps)
 {
     return odt_optimize_periodic_3_mesh_3(c3t3, domain, internal_np::combine_named_parameters(nps...));
 }
 template<typename ... NP_PACK>
-Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(const NP_PACK& ...nps)
+Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(const NP_PACK& ... nps)
 {
     return odt_optimize_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }
@@ -166,12 +166,12 @@ Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshD
         return lloyd_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iterations, convergence_ratio, freeze_bound, do_freeze);
     }
 template<typename C3T3, typename MeshDomain,typename ... NP_PACK>
-Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,MeshDomain& domain, const NP_PACK& ...nps)
+Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,MeshDomain& domain, const NP_PACK& ... nps)
 {
     return lloyd_optimize_periodic_3_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
 }
 template<typename ... NP_PACK>
-Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(const NP_PACK& ...nps)
+Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(const NP_PACK& ... nps)
 {
     return lloyd_optimize_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
 }

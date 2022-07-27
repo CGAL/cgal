@@ -213,7 +213,7 @@ Mesh_criteria_3(const CGAL_NP_CLASS& np = parameters::default_values()): Base(np
 
 
 template<typename ... NP_PACK>
-Mesh_criteria_3(const NP_PACK& ...nps):Mesh_criteria_3(internal_np::combine_named_parameters(nps...))
+Mesh_criteria_3(const NP_PACK& ... nps):Mesh_criteria_3(internal_np::combine_named_parameters(nps...))
 {
 }
 

@@ -347,7 +347,7 @@ C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CG
 
 #ifndef DOXYGEN_RUNNING
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename ... NP_PACK>
-C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const NP_PACK&...nps)
+C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const NP_PACK& ... nps)
 {
     return make_periodic_3_mesh_3<C3T3>(domain, criteria, internal_np::combine_named_parameters(nps...));
 }
