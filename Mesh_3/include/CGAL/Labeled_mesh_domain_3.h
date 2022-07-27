@@ -300,8 +300,8 @@ public:
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
   {
   }
-  template<typename Func, typename BoundingBox, typename ... NP_PACK>
-  Labeled_mesh_domain_3(const Func& f, const BoundingBox& bbox, const NP_PACK& ... nps):Labeled_mesh_domain_3(f, bbox, internal_np::combine_named_parameters(nps...))
+  template<typename Func, typename BoundingBox, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+  Labeled_mesh_domain_3(const Func& f, const BoundingBox& bbox, const CGAL_NP_CLASS& ... nps):Labeled_mesh_domain_3(f, bbox, internal_np::combine_named_parameters(nps...))
   {
   }
 
@@ -465,13 +465,13 @@ public:
                              create_construct_surface_patch_index(construct_surface_patch_index_));
 
         }
-        template<typename ... NP_PACK>
-        static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_, const NP_PACK& ... nps)
+        template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+        static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& ... nps)
         {
             return create_gray_image_mesh_domain(image_, internal_np::combine_named_parameters(nps...));
         }
-        template<typename ... NP_PACK>
-        static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const NP_PACK& ... nps)
+        template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+        static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL_NP_CLASS& ... nps)
         {
             return create_gray_image_mesh_domain(internal_np::combine_named_parameters(nps...));
         }
@@ -623,13 +623,13 @@ where the labeled image is used with a precomputed 3D image of weights :
                                  create_construct_surface_patch_index(construct_surface_patch_index_));
             }
         }
-        template<typename ... NP_PACK>
-        static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const NP_PACK& ... nps)
+        template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+        static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& ... nps)
         {
             return create_labeled_image_mesh_domain(image_, internal_np::combine_named_parameters(nps...));
         }
-        template<typename ... NP_PACK>
-        static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const NP_PACK& ... nps)
+        template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+        static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS& ... nps)
         {
             return create_labeled_image_mesh_domain(internal_np::combine_named_parameters(nps...));
         }
@@ -722,13 +722,13 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
                              create_construct_surface_patch_index(construct_surface_patch_index_));
         }
 
-  template<typename Function, typename BoundingObject, typename ... NP_PACK>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(Function function_, BoundingObject bounding_object_, const NP_PACK& ... nps)
+  template<typename Function, typename BoundingObject, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(Function function_, BoundingObject bounding_object_, const CGAL_NP_CLASS& ... nps)
   {
       return create_implicit_mesh_domain(function_, bounding_object_, internal_np::combine_named_parameters(nps...));
   }
-  template<typename ... NP_PACK>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const NP_PACK& ... nps)
+  template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& ... nps)
   {
       return create_implicit_mesh_domain(internal_np::combine_named_parameters(nps...));
   }

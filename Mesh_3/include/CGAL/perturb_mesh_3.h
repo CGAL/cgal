@@ -144,13 +144,13 @@ Mesh_optimization_return_code perturb_mesh_3(C3T3& c3t3, MeshDomain& domain, con
     }
 
 #ifndef DOXYGEN_RUNNING
-template<typename C3T3, typename MeshDomain, typename ... NP_PACK>
-Mesh_optimization_return_code perturb_mesh_3(C3T3& c3t3, MeshDomain& domain, const NP_PACK& ... nps)
+template<typename C3T3, typename MeshDomain, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+Mesh_optimization_return_code perturb_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& ... nps)
 {
     return perturb_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
 }
-template<typename ... NP_PACK>
-Mesh_optimization_return_code perturb_mesh_3(const NP_PACK& ... nps)
+template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+Mesh_optimization_return_code perturb_mesh_3(const CGAL_NP_CLASS& ... nps)
 {
     return perturb_mesh_3(internal_np::combine_named_parameters(nps...));
 }
