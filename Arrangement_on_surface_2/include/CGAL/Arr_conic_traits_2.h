@@ -23,6 +23,7 @@
  * The conic traits-class for the arrangement package.
  */
 
+#define _USE_MATH_DEFINES
 #include <fstream>
 #include <atomic>
 #include <memory>
