@@ -1052,8 +1052,9 @@ namespace internal {
                                      * Vector_3(get(vpmap_, v), get(vpmap_, ph1)));
               //check squared cosine is < 0.25 (~120 degrees)
               if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
-                barycenters.push_back( VNP(v, vn, CGAL::midpoint(midpoint(border_halfedges[0]),
-                                                                 midpoint(border_halfedges[1]))) );
+                barycenters.push_back( VNP(v, vn,
+                  gt_.construct_midpoint_3_object()(midpoint(border_halfedges[0]),
+                                                    midpoint(border_halfedges[1]))) );
             }
           }
         }
@@ -1238,7 +1239,7 @@ private:
     {
       Point p1 = get(vpmap_, target(he, mesh_));
       Point p2 = get(vpmap_, source(he, mesh_));
-      return CGAL::midpoint(p1, p2);
+      return gt_.construct_midpoint_3_object()(p1, p2);
     }
 
     void dump(const char* filename) const
