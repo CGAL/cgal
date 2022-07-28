@@ -623,6 +623,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         ui.protectEdges->addItem(QString("Input polylines"));
       else {
         ui.protectEdges->addItem(QString("Polylines on cube"));
+        ui.protectEdges->addItem(QString("Triple+ lines detected"));
       }
     }
   }
@@ -670,9 +671,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
   tets_shape = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
-  protect_features =
-      ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 0);
   protect_borders =
+      ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 0);
+  protect_features =
       ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 1);
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = (ui.manifoldCheckBox->isChecked() ? 1 : 0) +
