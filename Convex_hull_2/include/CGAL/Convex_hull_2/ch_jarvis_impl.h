@@ -36,8 +36,6 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
                 OutputIterator  result,
                 const Traits& ch_traits)
 {
-  using namespace boost;
-
   if (first == last) return result;
   typedef   typename Traits::Less_rotate_ccw_2     Less_rotate_ccw;
   typedef   typename Traits::Equal_2               Equal_2;

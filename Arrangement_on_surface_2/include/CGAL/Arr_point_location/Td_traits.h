@@ -352,14 +352,11 @@ public:
 
   };
 
-  /*! Obtain a Compare_y_at_x_2 functor object. */
+  /*! Obtain a Compare_curve_end_x_2 functor object. */
   Compare_curve_end_x_2 compare_curve_end_x_2_object () const
   {
     return Compare_curve_end_x_2(this);
   }
-
-
-
 
  /*! A functor that compares the y-coordinates of an edge end and a curve at
    * the point x-coordinate

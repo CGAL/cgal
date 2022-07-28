@@ -165,7 +165,7 @@ namespace CGAL {
   * @post the output triangulation must be a triangulation of the convex hull of `points`
   * @post `is_valid()` returns `true` for the returned triangulation
   *
-  * @sa \link polygon_soup_to_polygon_mesh() `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()` \endlink
+  * @sa \link Polygon_mesh_processing::polygon_soup_to_polygon_mesh() `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()` \endlink
   * @sa @ref SMDS_3/tetrahedron_soup_to_c3t3_example.cpp
   *
   */

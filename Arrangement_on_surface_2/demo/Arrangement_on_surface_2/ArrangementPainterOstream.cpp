@@ -289,7 +289,7 @@ ArrangementPainterOstream<CGAL::Arr_linear_traits_2<Kernel_>>::operator<<(
     QRectF seg_bb = this->convert(seg.bbox());
     if (
       this->clippingRect.isValid() &&
-      !this->clippingRect.intersects(seg_bb) &
+      !this->clippingRect.intersects(seg_bb) &&
         (!seg.is_horizontal() && !seg.is_vertical()))
     { return *this; }
 

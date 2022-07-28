@@ -6,6 +6,7 @@
 
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 namespace CGAL {
 template <class PolygonMesh,
@@ -32,6 +33,13 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
                                                        NamedParameters,
                                                        Default_VCM>::type       VCM;
 
+  // Normal map
+  typedef dynamic_vertex_property_t<typename Traits::Vector_3> Vector_map_tag;
+  typedef typename boost::property_map<PolygonMesh, Vector_map_tag>::type Default_vector_map;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
+                                                       NamedParameters,
+                                                       Default_vector_map>::type       VNM;
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
@@ -43,6 +51,11 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
                              get_property_map(vertex_point, mesh));
   //boolean NP example. Default value is `false`
   bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), false);
+
+  // If the NPs provide a vertex-normal-map use it, otherwise initialize the default one
+  VNM vnm = choose_parameter<Default_vector_map>(get_parameter(np, internal_np::vertex_normal_map),  Vector_map_tag(), mesh);
+  if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
+    Polygon_mesh_processing::compute_vertex_normals(mesh, vnm);
 
   // check is a parameter has been given by the user
   constexpr bool do_project_is_default = is_default_parameter<NamedParameters, internal_np::do_project_t>::value;

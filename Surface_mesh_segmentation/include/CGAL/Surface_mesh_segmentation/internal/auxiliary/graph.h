@@ -520,6 +520,8 @@ public:
   /* Destructor */
   ~Graph();
 
+  void clear();
+
   /* Adds a node to the graph */
   node_id add_node();
 
@@ -701,7 +703,7 @@ inline Graph::Graph(void (*err_function)(const char *))
   flow = 0;
 }
 
-inline Graph::~Graph()
+inline void Graph::clear()
 {
   while (node_block_first) {
     node_block *next = node_block_first -> next;
@@ -720,6 +722,11 @@ inline Graph::~Graph()
     delete[] arc_rev_block_first -> start;
     arc_rev_block_first = next;
   }
+}
+
+inline Graph::~Graph()
+{
+  clear();
 }
 
 inline Graph::node_id Graph::add_node()

@@ -11,8 +11,6 @@
 #include "Plugins/PMP/Scene_facegraph_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <iostream>

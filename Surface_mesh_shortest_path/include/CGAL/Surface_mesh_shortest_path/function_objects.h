@@ -493,7 +493,7 @@ public:
     // In the case of multiple rays reaching the same target, we want to know their respective position
     // so that pruning of branches can be done according to the "one angle one split" idiom.
     // However, the orientation predicate is evaluated in the unfolded 2D plane, which is obtained
-    // via square roots; inconsisnties will exist. We don't want to prune in case it might be wrong,
+    // via square roots; inconsistencies will exist. We don't want to prune in case it might be wrong,
     // so we add a little bit of tolerance on the evaluation of the predicate. If it's almost collinear,
     // return 'collinear' (EQUAL).
     const FT eps = (FT(100) * std::numeric_limits<FT>::epsilon());
