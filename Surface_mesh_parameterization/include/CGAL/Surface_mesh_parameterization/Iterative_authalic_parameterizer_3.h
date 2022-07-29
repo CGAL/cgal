@@ -304,32 +304,6 @@ public:
   }
 
   // Computation helpers
-protected:
-  // `operator=(onst Matrix& other)` isn't part of the concept...
-  template <typename VertexIndexMap>
-  void copy_sparse_matrix(const Matrix& src,
-                          Matrix& dest,
-                          const Triangle_mesh& tmesh,
-                          const Vertex_set& vertices,
-                          const VertexIndexMap vimap)
-  {
-    dest = src;
-    return;
-    CGAL_precondition(src.row_dimension() == dest.row_dimension());
-    CGAL_precondition(src.column_dimension() == dest.column_dimension());
-
-    for(vertex_descriptor vertex : vertices)
-    {
-      const int i = get(vimap, vertex);
-      vertex_around_target_circulator v_j(halfedge(vertex, tmesh), tmesh), end = v_j;
-      CGAL_For_all(v_j, end)
-      {
-        const int j = get(vimap, *v_j);
-        dest.set_coef(i, j, src.get_coef(i, j), false);
-      }
-    }
-  }
-
 private:
   double compute_vertex_L2(const Triangle_mesh& tmesh,
                            const vertex_descriptor v) const
@@ -999,8 +973,8 @@ public:
 //      for(std::size_t i=0; i<nv; ++i)
 //        std::cout << "Sol[" << i << "] = " << Xu[i] << " " << Xv[i] << std::endl;
 
-      // Copy A to A_prev, it is a computationally inefficient task but neccesary
-      copy_sparse_matrix(A, A_prev, tmesh, cc_vertices, vimap);
+      // Copy A to A_prev
+      A_prev = A;
 
       // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
       for(vertex_descriptor v : cc_vertices)
