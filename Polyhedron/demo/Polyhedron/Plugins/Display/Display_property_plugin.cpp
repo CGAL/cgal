@@ -8,6 +8,7 @@
 #include <QColorDialog>
 #include <QPalette>
 #include <QColor>
+#include <QSlider>
 #include <QStyleFactory>
 #include <QMessageBox>
 #include <QAbstractItemView>
@@ -783,12 +784,56 @@ private Q_SLOTS:
     treat_sm_property<face_descriptor>("f:jacobian", item->face_graph());
   }
 
+  double sliderRangeToExpandRadius(SMesh& smesh, double val)
+  {
+      double sliderMin = dock_widget->expandingRadiusSlider->minimum();
+      double sliderMax = dock_widget->expandingRadiusSlider->maximum() - sliderMin;
+      val -= sliderMin;
+      sliderMin = 0;
+
+      auto vpm = get(CGAL::vertex_point, smesh);
+
+      auto edge_range = CGAL::edges(smesh);
+
+      if (edge_range.begin() == edge_range.end())
+          return 0;
+
+      auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, smesh](auto l, auto r) {
+          auto res = EPICK().compare_squared_distance_3_object()(
+              get(vpm, source((l), smesh)),
+              get(vpm, target((l), smesh)),
+              get(vpm, source((r), smesh)),
+              get(vpm, target((r), smesh)));
+          return res == CGAL::SMALLER;
+      });
+
+      // if edge_reference is not derefrenceble
+      if (edge_reference == edge_range.end())
+          return 0;
+
+      double L = sqrt(
+          (get(vpm, source((*edge_reference), smesh)) - get(vpm, target((*edge_reference), smesh)))
+          .squared_length()
+      );
+      
+      std::cout << L << std::endl;
+
+      double outMin = 0, outMax = 5 * L, base = 1.2;
+
+      return (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
+
+  }
+
   void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item, PMP::Curvature_measure_index mu_index)
   {
     std::string tied_string = (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)?
         "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_gaussian_curvature";
     SMesh& smesh = *item->face_graph();
-    //compute once and store the value per face
+
+    expandRadius = sliderRangeToExpandRadius(smesh, dock_widget->expandingRadiusSlider->value());
+    dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
+
+    //compute once and store the value per vertex
     bool non_init;
     SMesh::Property_map<vertex_descriptor, double> mu_i_map;
         std::tie(mu_i_map, non_init) =
@@ -1565,7 +1610,7 @@ private:
 
   std::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
-
+  double expandRadius;
   double minBox;
   double maxBox;
   QPixmap legend_;

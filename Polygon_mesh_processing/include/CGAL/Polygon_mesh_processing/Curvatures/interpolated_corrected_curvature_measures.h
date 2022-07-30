@@ -339,7 +339,6 @@ template<typename PolygonMesh, typename FaceMeasureMap,
 }
 
 //
-//
 //template<typename GT>
 //typename GT::FT triangle_in_ball_ratio_1(const typename GT::Vector_3 x1,
 //                                         const typename GT::Vector_3 x2,
@@ -463,17 +462,6 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
 
     put(vcm, v, corrected_mui);
 }
-
-//template<typename PolygonMesh, typename FaceMeasureMap,
-//    typename NamedParameters = parameters::Default_named_parameters>
-//    void expand_interpolated_corrected_measure_mesh(const PolygonMesh& pmesh,
-//        FaceMeasureMap fmm,
-//        const NamedParameters& np = parameters::default_values())
-//{
-//    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-//    for (face_descriptor f : faces(pmesh))
-//        expand_interpolated_corrected_measure_face(pmesh, fmm, f, np);
-//}
 
 template<typename PolygonMesh, typename VertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>

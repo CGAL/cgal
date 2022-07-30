@@ -17,7 +17,7 @@ typedef CGAL::Surface_mesh<EpicKernel::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef std::unordered_map<face_descriptor, EpicKernel::FT> FaceMeasureMap_tag;
-typedef std::unordered_map<vertex_descriptor, EpicKernel::FT> vertexVectorMap_tag;
+typedef std::unordered_map<vertex_descriptor, EpicKernel::FT> vertexMeasureMap_tag;
 
 
 int main(int argc, char* argv[])
@@ -34,8 +34,8 @@ int main(int argc, char* argv[])
   }
 
 
-  vertexVectorMap_tag mean_curvature_init, gaussian_curvature_init;
-  boost::associative_property_map<vertexVectorMap_tag>
+  vertexMeasureMap_tag mean_curvature_init, gaussian_curvature_init;
+  boost::associative_property_map<vertexMeasureMap_tag>
       mean_curvature_map(mean_curvature_init), gaussian_curvature_map(gaussian_curvature_init);
 
   PMP::interpolated_corrected_mean_curvature(
