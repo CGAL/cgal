@@ -815,7 +815,7 @@ private Q_SLOTS:
           (get(vpm, source((*edge_reference), smesh)) - get(vpm, target((*edge_reference), smesh)))
           .squared_length()
       );
-      
+
       std::cout << L << std::endl;
 
       double outMin = 0, outMax = 5 * L, base = 1.2;
