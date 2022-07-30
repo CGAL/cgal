@@ -841,9 +841,9 @@ private Q_SLOTS:
     if (non_init)
     {
         if (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)
-            PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map);
+            PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expandRadius));
         else
-            PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map);
+            PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expandRadius));
 
         double res_min = ARBITRARY_DBL_MAX,
             res_max = -ARBITRARY_DBL_MAX;
