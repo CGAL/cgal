@@ -487,8 +487,10 @@ public:
     connect(scene_obj, SIGNAL(itemIndexSelected(int)),
             this,SLOT(detectScalarProperties(int)));
 
-    on_propertyBox_currentIndexChanged(0);
+    connect(dock_widget->expandingRadiusSlider, SIGNAL(valueChanged(int)),
+        this, SLOT(setExpandingRadius(int)));
 
+    on_propertyBox_currentIndexChanged(0);
 
   }
 private:
@@ -716,6 +718,10 @@ private Q_SLOTS:
   {
     Scene_surface_mesh_item* item =
         qobject_cast<Scene_surface_mesh_item*>(sender());
+
+    maxEdgeLength = -1;
+    setExpandingRadius(dock_widget->expandingRadiusSlider->value());
+    
     if(!item)
       return;
     SMesh& smesh = *item->face_graph();
@@ -784,43 +790,56 @@ private Q_SLOTS:
     treat_sm_property<face_descriptor>("f:jacobian", item->face_graph());
   }
 
-  double sliderRangeToExpandRadius(SMesh& smesh, double val)
+  void setExpandingRadius(int val_int)
   {
       double sliderMin = dock_widget->expandingRadiusSlider->minimum();
       double sliderMax = dock_widget->expandingRadiusSlider->maximum() - sliderMin;
-      val -= sliderMin;
+      double val =  val_int - sliderMin;
       sliderMin = 0;
+
+      SMesh& smesh = *(qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())))->face_graph();
 
       auto vpm = get(CGAL::vertex_point, smesh);
 
-      auto edge_range = CGAL::edges(smesh);
+      if (maxEdgeLength < 0)
+      {
+          auto edge_range = CGAL::edges(smesh);
 
-      if (edge_range.begin() == edge_range.end())
-          return 0;
+          if (edge_range.begin() == edge_range.end())
+          {
+              expandRadius = 0;
+              dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
+              return;
+          }
 
-      auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, smesh](auto l, auto r) {
-          auto res = EPICK().compare_squared_distance_3_object()(
-              get(vpm, source((l), smesh)),
-              get(vpm, target((l), smesh)),
-              get(vpm, source((r), smesh)),
-              get(vpm, target((r), smesh)));
-          return res == CGAL::SMALLER;
-      });
+          auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, smesh](auto l, auto r) {
+              auto res = EPICK().compare_squared_distance_3_object()(
+                  get(vpm, source((l), smesh)),
+                  get(vpm, target((l), smesh)),
+                  get(vpm, source((r), smesh)),
+                  get(vpm, target((r), smesh)));
+              return res == CGAL::SMALLER;
+          });
 
-      // if edge_reference is not derefrenceble
-      if (edge_reference == edge_range.end())
-          return 0;
+          // if edge_reference is not derefrenceble
+          if (edge_reference == edge_range.end())
+          {
+              expandRadius = 0;
+              dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
+              return;
+          }
 
-      double L = sqrt(
-          (get(vpm, source((*edge_reference), smesh)) - get(vpm, target((*edge_reference), smesh)))
-          .squared_length()
-      );
+          maxEdgeLength = sqrt(
+              (get(vpm, source((*edge_reference), smesh)) - get(vpm, target((*edge_reference), smesh)))
+              .squared_length()
+          );
 
-      std::cout << L << std::endl;
-
-      double outMin = 0, outMax = 5 * L, base = 1.2;
-
-      return (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
+      }
+      
+      double outMin = 0, outMax = 5 * maxEdgeLength, base = 1.2;
+      
+      expandRadius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
+      dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
 
   }
 
@@ -829,9 +848,6 @@ private Q_SLOTS:
     std::string tied_string = (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)?
         "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_gaussian_curvature";
     SMesh& smesh = *item->face_graph();
-
-    expandRadius = sliderRangeToExpandRadius(smesh, dock_widget->expandingRadiusSlider->value());
-    dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
 
     //compute once and store the value per vertex
     bool non_init;
@@ -1611,6 +1627,7 @@ private:
   std::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
   double expandRadius;
+  double maxEdgeLength = -1;
   double minBox;
   double maxBox;
   QPixmap legend_;

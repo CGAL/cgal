@@ -409,9 +409,6 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
     const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
         r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0.01);
 
-    if (r < 0.000001)
-        return;
-
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
             get_const_property_map(CGAL::vertex_point, pmesh));
@@ -446,7 +443,7 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
 
         const typename GT::FT f_ratio = face_in_ball_ratio_2<GT>(x, r, c);
 
-        if (f_ratio > 0.000001)
+        if (f_ratio > 0.00000001)
         {
             corrected_mui += f_ratio * get(fmm, fi);
             for (face_descriptor fj : faces_around_face(halfedge(fi, pmesh), pmesh))
@@ -492,7 +489,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         expand_interpolated_corrected_measure_vertex(pmesh, mu1_map, mu1_expand_map, v, np);
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
-        if (v_mu0 > 0.000001)
+        if (v_mu0 > 0.00000001)
             put(vcm, v, 0.5 * get(mu1_expand_map, v) / v_mu0);
         else
             put(vcm, v, 0);
@@ -528,7 +525,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         expand_interpolated_corrected_measure_vertex(pmesh, mu2_map, mu2_expand_map, v, np);
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
-        if(v_mu0 > 0.000001)
+        if(v_mu0 > 0.00000001)
             put(vcm, v, get(mu2_expand_map, v) / v_mu0);
         else
             put(vcm, v, 0);
