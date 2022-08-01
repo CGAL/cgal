@@ -295,7 +295,9 @@ typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std
 *
 * \cgalNamedParamsEnd
 *
-* @see `interpolated_corrected_measure_face()`
+* @see `interpolated_corrected_area_measure_face()`
+* @see `interpolated_corrected_mean_curvature_measure_face()`
+* @see `interpolated_corrected_gaussian_curvature_measure_face()`
 */
 template<typename PolygonMesh, typename FaceMeasureMap,
     typename NamedParameters = parameters::Default_named_parameters>
@@ -332,7 +334,7 @@ template<typename PolygonMesh, typename FaceMeasureMap,
         compute_vertex_normals(pmesh, vnm, np);
 
     std::function
-        <GT::FT(const std::vector<typename GT::Vector_3>&, const std::vector<typename GT::Vector_3>&)>
+        <typename GT::FT(const std::vector<typename GT::Vector_3>&, const std::vector<typename GT::Vector_3>&)>
         iccm_function;
     switch (mu_i)
     {
