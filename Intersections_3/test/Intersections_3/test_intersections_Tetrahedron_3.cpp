@@ -307,12 +307,23 @@ public:
     }
   }
 
+  void issue_6777()
+  {
+    Tr tri(P(0.191630, -0.331630, -0.370000), P(-0.124185, -0.385815, -0.185000), P(-0.0700000, -0.0700000, 0.00000));
+    Tet tet(P(0, -1, 0), P(-1, 0, 0), P(0, 0, 0), P(0, 0, -1));
+    auto res = intersection(tri, tet);
+    assert(res != boost::none);
+    const std::vector<P> *vps = boost::get<std::vector<P>>(&*res);
+    assert(vps!=nullptr);
+  }
+
   void run()
   {
     std::cout << "3D Tetrahedron Intersection tests\n";
 
     Tet_Tet();
     Tet_Tr();
+    issue_6777();
   }
 };
 
