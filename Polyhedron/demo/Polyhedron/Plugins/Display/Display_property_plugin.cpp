@@ -721,7 +721,7 @@ private Q_SLOTS:
 
     maxEdgeLength = -1;
     setExpandingRadius(dock_widget->expandingRadiusSlider->value());
-    
+
     if(!item)
       return;
     SMesh& smesh = *item->face_graph();
@@ -835,9 +835,9 @@ private Q_SLOTS:
           );
 
       }
-      
+
       double outMin = 0, outMax = 5 * maxEdgeLength, base = 1.2;
-      
+
       expandRadius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
       dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
 
