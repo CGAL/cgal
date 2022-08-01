@@ -683,6 +683,7 @@ std::vector<std::vector<P>> poly00000123(const int prec = 10)
 // curve 1 : x = (3*z - 2)/(2*z - 1), y = (2*z - 1)/z, z = [2/3, 3/4]
 // curve 2 : x = -(z - 1)/(2*z - 1), y = (2*z - 1)/z, z = [2/3, 3/4]
 // curve 3 : x =1/2,  y = -2*(z - 1)/z, z = [2/3, 3/4]
+// curve 4 : x = 1/2, y = 2/3, z = [3/4,1]
 template<typename P>
 std::vector<std::vector<P>> poly00001123(const int prec = 10)
 {
@@ -696,7 +697,9 @@ return {
    create_polyline(2./3, 3./4, P(1./2, 1, 2./3),
                   [](double z) { return P(  1./2,-2*(z - 1)/z, z); },
                   prec),
-
+   create_polyline(3./4, 1., P(1./2, 2./3, 3./4),P(1./2,2./3.,1.),
+                  [](double z) { return P(  1./2,2./3, z); },
+                  prec),
 };
 }
 
@@ -1196,6 +1199,7 @@ return {
 //curve 2 : x = -(-7*z + 5 + (2*z - 2)*(3*z - 2)/(z - 1))/(2*(z - 1)), y = (3*z - 2)/(z - 1), z = [1/2,2/3]
 //curve 3 : x = -(2*z*((5*z - 1)/(4*z) - sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z), y = (5*z - 1)/(4*z) - sqrt(17*z*z - 10*z + 1)/(4*z), z = [1./2, 2.*1.4142/17 + 5./17]
 //curve 4 : x = -(2*z*((5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z), y = (5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z), z = [1./2, 2.*1.4142/17 + 5./17]
+//curve 5 : x = y = 1/2, z = [3/5,1]
 template<typename P>
 std::vector<std::vector<P>> poly00012332(const int prec = 10)
 {
@@ -1217,6 +1221,9 @@ return {
                  prec),
   create_polyline(1./2,2.*1.4142/17 + 5./17, P(1./2,1.,1./2),
                   [](double z) { return P( -(2*z*((5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z),z); },
+                 prec),
+  create_polyline(3./5,1., P(1./2.,1./2,3./5),P(1./2,1./2.,1.),
+                  [](double z) { return P(1./2,1./2,z); },
                  prec),
 };
 }
