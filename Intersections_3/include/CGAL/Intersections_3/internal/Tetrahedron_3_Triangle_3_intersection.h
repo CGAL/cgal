@@ -60,7 +60,7 @@ intersection(const typename K::Tetrahedron_3& tet,
   std::vector<Point_3> res = { vertex(tr,0), vertex(tr,1), vertex(tr,2) };
   std::vector<std::bitset<4>> supporting_planes(3); // bitset used to indicate when a point is on a plane
 
-  // iteratively clip the triangle using the halfspaces which intersections is `tet`
+  // iteratively clip `tr` with the halfspaces which intersection is `tet`
   static constexpr std::array<int8_t, 12> vids = { 1, 2, 3, 0, 3, 2, 0, 1, 3, 1, 0, 2 };
   for (int pid=0; pid<4; ++pid)
   {
