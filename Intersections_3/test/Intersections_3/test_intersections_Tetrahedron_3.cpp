@@ -166,7 +166,7 @@ public:
 
     // face inside tr
     check_intersection(tet, Tr(p(0,2,0), p(0,-2,0), p(0,0,2)),
-                       Tr(p(0,0,1), p(0,0,0), p(0,1,0)));
+                       Tr(p(0,1,0), p(0,0,0), p(0,0,1)));
 
     // on the same plane, polygonal intersection
     Base::template check_intersection<Poly>(tet, Tr(p(0,-2,0), p(1,1,0), p(1,2,0)));
