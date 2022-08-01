@@ -62,9 +62,10 @@ intersection(const typename K::Tetrahedron_3& tet,
 
   // iteratively clip `tr` with the halfspaces which intersection is `tet`
   static constexpr std::array<int8_t, 12> vids = { 1, 2, 3, 0, 3, 2, 0, 1, 3, 1, 0, 2 };
+  const bool tet_ori_positive = (orientation(tet)==POSITIVE);
   for (int pid=0; pid<4; ++pid)
   {
-    Plane_3 pl = orientation(tet)==POSITIVE
+    Plane_3 pl = tet_ori_positive
                ? plane(vertex(tet, vids[pid*3]), vertex(tet, vids[pid*3+2]),vertex(tet, vids[pid*3+1]))
                : plane(vertex(tet, vids[pid*3]), vertex(tet, vids[pid*3+1]),vertex(tet, vids[pid*3+2]));
     CGAL_assertion(oriented_side(pl, vertex(tet,pid))==ON_POSITIVE_SIDE);
