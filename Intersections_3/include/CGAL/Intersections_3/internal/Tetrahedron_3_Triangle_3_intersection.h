@@ -54,17 +54,20 @@ intersection(const typename K::Tetrahedron_3& tet,
   typename K::Construct_segment_3 segment = k.construct_segment_3_object();
   typename K::Construct_line_3 line = k.construct_line_3_object();
   typename K::Oriented_side_3 oriented_side = k.oriented_side_3_object();
+  typename K::Orientation_3 orientation = k.orientation_3_object();
 
 
   std::vector<Point_3> res = { vertex(tr,0), vertex(tr,1), vertex(tr,2) };
   std::vector<std::bitset<4>> supporting_planes(3); // bitset used to indicate when a point is on a plane
 
   // iteratively clip the triangle using the halfspaces which intersections is `tet`
+  static constexpr std::array<int8_t, 12> vids = { 1, 2, 3, 0, 3, 2, 0, 1, 3, 1, 0, 2 };
   for (int pid=0; pid<4; ++pid)
   {
-    Plane_3 pl = plane(vertex(tet, (1+pid)%4), vertex(tet, (2+pid)%4),vertex(tet, (3+pid)%4));
-    if (oriented_side(pl, vertex(tet,pid))!=ON_POSITIVE_SIDE) // TODO: this should be precomputed based on the tetra orientation
-      pl = pl.opposite();
+    Plane_3 pl = orientation(tet)==POSITIVE
+               ? plane(vertex(tet, vids[pid*3]), vertex(tet, vids[pid*3+2]),vertex(tet, vids[pid*3+1]))
+               : plane(vertex(tet, vids[pid*3]), vertex(tet, vids[pid*3+1]),vertex(tet, vids[pid*3+2]));
+    CGAL_assertion(oriented_side(pl, vertex(tet,pid))==ON_POSITIVE_SIDE);
 
     std::vector<Point_3> current;
     std::vector<std::bitset<4>> current_sp;
