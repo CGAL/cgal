@@ -24,6 +24,7 @@
 #include <list>
 #include <utility>
 #include <vector>
+#include <bitset>
 
 namespace CGAL {
 namespace Intersections {
@@ -56,17 +57,38 @@ intersection(const typename K::Tetrahedron_3& tet,
 
 
   std::vector<Point_3> res = { vertex(tr,0), vertex(tr,1), vertex(tr,2) };
+  std::vector<std::bitset<4>> supporting_planes(3); // bitset used to indicate when a point is on a plane
 
-  for (int i=0; i<4; ++i)
+  // iteratively clip the triangle using the halfspaces which intersections is `tet`
+  for (int pid=0; pid<4; ++pid)
   {
-    Plane_3 pl = plane(vertex(tet, (1+i)%4), vertex(tet, (2+i)%4),vertex(tet, (3+i)%4));
-    if (oriented_side(pl, vertex(tet,i))!=ON_POSITIVE_SIDE) // TODO: this should be precomputed based on the tetra orientation
+    Plane_3 pl = plane(vertex(tet, (1+pid)%4), vertex(tet, (2+pid)%4),vertex(tet, (3+pid)%4));
+    if (oriented_side(pl, vertex(tet,pid))!=ON_POSITIVE_SIDE) // TODO: this should be precomputed based on the tetra orientation
       pl = pl.opposite();
 
     std::vector<Point_3> current;
+    std::vector<std::bitset<4>> current_sp;
     std::vector<Oriented_side> orientations(res.size());
     for (std::size_t i=0; i<res.size(); ++i)
+    {
       orientations[i]=oriented_side(pl, res[i]);
+      if (orientations[i]==ON_ORIENTED_BOUNDARY)
+      {
+        supporting_planes[i].set(pid);
+        //workaround for kernels with inexact constructions
+        //--
+        if (supporting_planes[i].count()==3)
+        {
+          for (int b=0; i<4; ++b)
+            if (!supporting_planes[i].test(b))
+            {
+              res[i] = vertex(tet, b);
+              break;
+            }
+        }
+        //--
+      }
+    }
 
     for (std::size_t i=0; i<res.size(); ++i)
     {
@@ -76,18 +98,53 @@ intersection(const typename K::Tetrahedron_3& tet,
       {
         case ON_POSITIVE_SIDE:
           if (test_segment && orientations[i]==ON_NEGATIVE_SIDE)
-            current.push_back(*CGAL::Intersections::internal::intersection_point(pl, line(res[i], res[j]), k));
+          {
+            current_sp.push_back(supporting_planes[i] & supporting_planes[j]);
+            current_sp.back().set(pid);
+            if (current_sp.back().count()==3)
+            {
+              for (int b=0; i<4; ++b)
+                if (!current_sp.back().test(b))
+                {
+                  current.push_back(vertex(tet, b));
+                  break;
+                }
+            }
+            else
+              current.push_back(*CGAL::Intersections::internal::intersection_point(pl, line(res[i], res[j]), k));
+          }
           current.push_back(res[j]);
+          current_sp.push_back(supporting_planes[j]);
         break;
         case ON_NEGATIVE_SIDE:
           if (test_segment && orientations[i]==ON_POSITIVE_SIDE)
-            current.push_back(*CGAL::Intersections::internal::intersection_point(pl, line(res[i], res[j]), k));
+          {
+            current_sp.push_back(supporting_planes[i] & supporting_planes[j]);
+            current_sp.back().set(pid);
+            if (current_sp.back().count()==3)
+            {
+              for (int b=0; i<4; ++b)
+                if (!current_sp.back().test(b))
+                {
+                  current.push_back(vertex(tet, b));
+                  break;
+                }
+            }
+            else
+              current.push_back(*CGAL::Intersections::internal::intersection_point(pl, line(res[i], res[j]), k));
+          }
         break;
         default:
+        {
+          CGAL_assertion(supporting_planes[j].test(pid));
           current.push_back(res[j]);
+          current_sp.push_back(supporting_planes[j]);
+        }
       }
     }
     res.swap(current);
+    supporting_planes.swap(current_sp);
+
     if (res.empty())
       return boost::none;
   }
