@@ -68,7 +68,7 @@ namespace Polygon_mesh {
 
     /// Item type.
     using Item = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
-  
+
     #ifdef DOXYGEN_RUNNING
       /*!
         a model of `ConstRange` whose iterator type is `RandomAccessIterator` and

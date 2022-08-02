@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 
   Point_map point_map;
   Normal_map normal_map;
-  
+
   // Create parameter classes.
   Neighbor_query neighbor_query(input_range);
   Region_type region_type;
