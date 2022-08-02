@@ -424,7 +424,7 @@ private:
 
       std::size_t nb_colored_pts = 0;
       if (dialog.generate_colored_point_set()) {
-        for(const auto item : regions[index].second) {
+        for(Point_set::Index item : regions[index].second) {
           auto it = colored_item->point_set()->insert(
             points->point(item));
           ++nb_colored_pts;
