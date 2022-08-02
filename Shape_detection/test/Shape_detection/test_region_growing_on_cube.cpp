@@ -18,7 +18,6 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
-#include <CGAL/Shape_detection/Region_growing/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 
@@ -61,65 +60,56 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   const Vertex_to_point_map vertex_to_point_map(
     get(CGAL::vertex_point, polyhedron));
 
-  // Create parameter classes.
-  Neighbor_query neighbor_query(polyhedron);
-  Region_type region_type(
-    polyhedron,
-    CGAL::parameters::
-    maximum_distance(distance_threshold).
-    maximum_angle(angle_threshold).
-    minimum_region_size(min_region_size).
-    vertex_point_map(vertex_to_point_map));
-
-  // Sort indices.
-  Sorting sorting(
-    polyhedron, neighbor_query,
-    CGAL::parameters::vertex_point_map(vertex_to_point_map));
-  sorting.sort();
-
-  // Run region growing.
-  Region_growing region_growing(
-    face_range, sorting.ordered(), neighbor_query, region_type);
-
-  std::vector<typename Region_growing::Primitive_and_region> regions;
-  region_growing.detect(std::back_inserter(regions));
-  assert(regions.size() == face_range.size());
-  for (const auto& region : regions)
-    assert(region_type.is_valid_region(region.second));
-
-  std::vector<typename Region_growing::Item> unassigned_faces;
-  region_growing.unassigned_items(face_range, std::back_inserter(unassigned_faces));
-  assert(unassigned_faces.size() == 0);
-
-  const typename Region_growing::Region_map map = region_growing.region_map();
-
-  for (std::size_t i = 0; i < regions.size(); i++)
-    for (auto& item : regions[i].second) {
-      if (i != get(map, item)) {
-        std::cout << "Region map incorrect" << std::endl;
-        assert(false);
-      }
-    }
-
-  for (auto& item : unassigned_faces) {
-    if (std::size_t(-1) != get(map, item)) {
-      std::cout << "Region map for unassigned incorrect" << std::endl;
-      assert(false);
-    }
-  }
-
-  // Test free functions and stability.
-  for (std::size_t k = 0; k < 3; ++k) {
-    regions.clear();
-    SD::region_growing_planes_polygon_mesh(
-      polyhedron, std::back_inserter(regions),
+  for (std::size_t k = 0; k < 3; ++k) // Test stability.
+  {
+    // Create parameter classes.
+    Neighbor_query neighbor_query(polyhedron);
+    Region_type region_type(
+      polyhedron,
       CGAL::parameters::
       maximum_distance(distance_threshold).
       maximum_angle(angle_threshold).
       minimum_region_size(min_region_size).
       vertex_point_map(vertex_to_point_map));
+
+    // Sort indices.
+    Sorting sorting(
+      polyhedron, neighbor_query,
+      CGAL::parameters::vertex_point_map(vertex_to_point_map));
+    sorting.sort();
+
+    // Run region growing.
+    Region_growing region_growing(
+      face_range, sorting.ordered(), neighbor_query, region_type);
+
+    std::vector<typename Region_growing::Primitive_and_region> regions;
+    region_growing.detect(std::back_inserter(regions));
     assert(regions.size() == face_range.size());
+    for (const auto& region : regions)
+      assert(region_type.is_valid_region(region.second));
+
+    std::vector<typename Region_growing::Item> unassigned_faces;
+    region_growing.unassigned_items(face_range, std::back_inserter(unassigned_faces));
+    assert(unassigned_faces.size() == 0);
+
+    const typename Region_growing::Region_map map = region_growing.region_map();
+
+    for (std::size_t i = 0; i < regions.size(); i++)
+      for (auto& item : regions[i].second) {
+        if (i != get(map, item)) {
+          std::cout << "Region map incorrect" << std::endl;
+          assert(false);
+        }
+      }
+
+    for (auto& item : unassigned_faces) {
+      if (std::size_t(-1) != get(map, item)) {
+        std::cout << "Region map for unassigned incorrect" << std::endl;
+        assert(false);
+      }
+    }
   }
+
   return true;
 }
 

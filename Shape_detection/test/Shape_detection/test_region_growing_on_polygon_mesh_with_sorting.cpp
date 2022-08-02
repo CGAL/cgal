@@ -15,7 +15,6 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
-#include <CGAL/Shape_detection/Region_growing/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -53,41 +52,32 @@ int main(int argc, char *argv[]) {
   const Vertex_to_point_map vertex_to_point_map(
     get(CGAL::vertex_point, polygon_mesh));
 
-  // Create parameter classes.
-  Neighbor_query neighbor_query(polygon_mesh);
-  Region_type region_type(
-    polygon_mesh,
-    CGAL::parameters::
-    maximum_distance(distance_threshold).
-    maximum_angle(angle_threshold).
-    minimum_region_size(min_region_size).
-    vertex_point_map(vertex_to_point_map));
 
-  // Sort indices.
-  Sorting sorting(
-    polygon_mesh, neighbor_query,
-    CGAL::parameters::vertex_point_map(vertex_to_point_map));
-  sorting.sort();
-
-  // Run region growing.
-  Region_growing region_growing(
-    face_range, sorting.ordered(), neighbor_query, region_type);
-
-  std::vector<Region_growing::Primitive_and_region> regions;
-  region_growing.detect(std::back_inserter(regions));
-  region_growing.clear(face_range);
-  assert(regions.size() == 355);
-
-  // Test free functions and stability.
-  for (std::size_t k = 0; k < 3; ++k) {
-    regions.clear();
-    SD::region_growing_planes_polygon_mesh(
-      polygon_mesh, std::back_inserter(regions),
+  for (std::size_t k = 0; k < 3; ++k) // test stability
+  {
+    // Create parameter classes.
+    Neighbor_query neighbor_query(polygon_mesh);
+    Region_type region_type(
+      polygon_mesh,
       CGAL::parameters::
       maximum_distance(distance_threshold).
       maximum_angle(angle_threshold).
       minimum_region_size(min_region_size).
       vertex_point_map(vertex_to_point_map));
+
+    // Sort indices.
+    Sorting sorting(
+      polygon_mesh, neighbor_query,
+      CGAL::parameters::vertex_point_map(vertex_to_point_map));
+    sorting.sort();
+
+    // Run region growing.
+    Region_growing region_growing(
+      face_range, sorting.ordered(), neighbor_query, region_type);
+
+    std::vector<Region_growing::Primitive_and_region> regions;
+    region_growing.detect(std::back_inserter(regions));
+    region_growing.clear(face_range);
     assert(regions.size() == 355);
   }
 

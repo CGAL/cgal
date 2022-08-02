@@ -298,10 +298,14 @@ namespace Shape_detection {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
-    template <class InputRange, class ItemMap>
-    void clear(const InputRange& input_range, ItemMap item_map) {
+    template <class InputRange, class ItemMap = Default>
+    void clear(const InputRange& input_range, ItemMap item_map = ItemMap()) {
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
-        Item item = get(item_map, it);
+        Item item = get(item_map_, it);
         put(m_region_map, item, std::size_t(-1));
       }
       // TODO if we want to allow subranges while NeighborQuery operates on the full range

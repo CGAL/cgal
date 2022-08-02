@@ -24,7 +24,6 @@
 * A convenience header that includes all classes related to the region growing algorithm.
 */
 
-#include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 #include <CGAL/Shape_detection/Region_growing/Segment_set.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>

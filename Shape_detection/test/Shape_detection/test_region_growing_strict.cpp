@@ -24,16 +24,16 @@
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Segment_set.h>
-#include <CGAL/Shape_detection/Region_growing/free_functions.h>
 
 template<class Kernel>
 bool test_lines_points_with_normals() {
 
   using Point_2  = typename Kernel::Point_2;
   using Vector_2 = typename Kernel::Vector_2;
-  using Item = typename std::vector< std::pair<Point_2, Vector_2> >::const_iterator;
-
-  const std::vector< std::pair<Point_2, Vector_2> > points_with_normals = {
+  using Point_with_normal = std::pair<Point_2, Vector_2>;
+  using Item = typename std::vector< Point_with_normal >::const_iterator;
+  using Input_range = std::vector< Point_with_normal >;
+  const Input_range points_with_normals = {
     std::make_pair(Point_2(0.1, 0.0), Vector_2(0.0, 1.0)),
     std::make_pair(Point_2(0.5, 0.0), Vector_2(0.0, 1.0)),
     std::make_pair(Point_2(0.9, 0.0), Vector_2(0.0, 1.0)),
@@ -47,11 +47,29 @@ bool test_lines_points_with_normals() {
 
   assert(points_with_normals.size() == 9);
   std::vector< std::pair< typename Kernel::Line_2, std::vector<Item> > > regions;
-  CGAL::Shape_detection::region_growing_lines(
-    points_with_normals,
-    std::back_inserter(regions),
-    CGAL::parameters::point_map(CGAL::First_of_pair_property_map<std::pair<Point_2, Vector_2> >()).
-    normal_map(CGAL::Second_of_pair_property_map<std::pair<Point_2, Vector_2> >()));
+
+  using Deref_map      = CGAL::Dereference_property_map<const Point_with_normal, typename Input_range::const_iterator>;
+  using Point_map      = CGAL::Property_map_binder<Deref_map,
+                                                   CGAL::First_of_pair_property_map<Point_with_normal> >;
+  using Normal_map     = CGAL::Property_map_binder<Deref_map,
+                                                   CGAL::Second_of_pair_property_map<Point_with_normal> >;
+
+  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Item, Point_map>;
+  using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<Kernel, Item, Point_map, Normal_map>;
+  using Sorting_type    = CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<Kernel, Item, Neighbor_query, Point_map>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
+
+  // Create parameter classes.
+  Neighbor_query neighbor_query(points_with_normals);
+  Region_type region_type;
+  Sorting_type sorting(points_with_normals, neighbor_query);
+  sorting.sort();
+
+  // Run region growing.
+  Region_growing region_growing(
+    points_with_normals, sorting.ordered(), neighbor_query, region_type);
+  region_growing.detect(std::back_inserter(regions));
+
   assert(regions.size() == 3);
   assert(regions[0].second.size() == 3);
   assert(regions[1].second.size() == 3);
@@ -267,8 +285,11 @@ bool test_planes_points_with_normals() {
 
   using Point_3  = typename Kernel::Point_3;
   using Vector_3 = typename Kernel::Vector_3;
+  using Point_with_normal = std::pair<Point_3, Vector_3>;
+  using Input_range = std::vector<Point_with_normal>;
+  using Item = typename Input_range::const_iterator;
 
-  const std::vector< std::pair<Point_3, Vector_3> > points_with_normals = {
+  const Input_range points_with_normals = {
     std::make_pair(Point_3(0.1, 0.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
     std::make_pair(Point_3(0.5, 0.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
     std::make_pair(Point_3(0.9, 0.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
@@ -281,15 +302,30 @@ bool test_planes_points_with_normals() {
   };
 
   assert(points_with_normals.size() == 9);
-  std::vector<
-    std::pair< typename Kernel::Plane_3, std::vector<typename std::vector<std::pair<Point_3, Vector_3> >::const_iterator> >
-  > regions;
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<Item> > > regions;
 
-  CGAL::Shape_detection::region_growing_planes(
-    points_with_normals,
-    std::back_inserter(regions),
-    CGAL::parameters::point_map(CGAL::First_of_pair_property_map<std::pair<Point_3, Vector_3> >()).
-    normal_map(CGAL::Second_of_pair_property_map<std::pair<Point_3, Vector_3> >()));
+  using Deref_map      = CGAL::Dereference_property_map<const Point_with_normal, typename Input_range::const_iterator>;
+  using Point_map      = CGAL::Property_map_binder<Deref_map,
+                                                   CGAL::First_of_pair_property_map<Point_with_normal> >;
+  using Normal_map     = CGAL::Property_map_binder<Deref_map,
+                                                   CGAL::Second_of_pair_property_map<Point_with_normal> >;
+
+  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Item, Point_map>;
+  using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Item, Point_map, Normal_map>;
+  using Sorting_type    = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Item, Neighbor_query, Point_map>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
+
+  // Create parameter classes.
+  Neighbor_query neighbor_query(points_with_normals);
+  Region_type region_type;
+  Sorting_type sorting(points_with_normals, neighbor_query);
+  sorting.sort();
+
+  // Run region growing.
+  Region_growing region_growing(
+    points_with_normals, sorting.ordered(), neighbor_query, region_type);
+  region_growing.detect(std::back_inserter(regions));
+
   assert(regions.size() == 1);
   assert(regions[0].second.size() == 9);
   return true;
@@ -323,9 +359,23 @@ bool test_planes_point_set() {
   points_with_normals.clear();
   assert(points_with_normals.size() == 0);
 
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<typename Point_set::const_iterator> > > regions;
-  CGAL::Shape_detection::region_growing_planes(
-    point_set, std::back_inserter(regions));
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<typename Point_set::Index> > > regions;
+
+  using Region_type = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_set>;
+  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set>;
+  using Sorting        = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting_for_point_set<Point_set, Neighbor_query>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
+
+  // Create instances of the classes Neighbor_query and Region_type.
+  Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query(point_set);
+
+  Sorting sorting = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_sorting(point_set, neighbor_query);
+  sorting.sort();
+
+  Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region(point_set);
+  Region_growing region_growing(point_set, sorting.ordered(), neighbor_query, region_type);
+  region_growing.detect(std::back_inserter(regions));
+
   assert(regions.size() == 1);
   assert(regions[0].second.size() == 9);
   return true;
@@ -333,24 +383,39 @@ bool test_planes_point_set() {
 
 template<class Kernel>
 bool test_planes_polyhedron() {
-
   using Point_3    = typename Kernel::Point_3;
-  using Polyhedron = CGAL::Polyhedron_3<
-    Kernel, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
+  using Polygon_mesh = CGAL::Polyhedron_3<Kernel>;
+  using Item = typename boost::graph_traits<Polygon_mesh>::face_descriptor;
+  using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
+  using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
+  using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
-  Polyhedron polyhedron;
+  Polygon_mesh polygon_mesh;
   const Point_3 p1(0, 0, 0);
   const Point_3 p2(1, 0, 0);
   const Point_3 p3(0, 1, 0);
   const Point_3 p4(0, 0, 1);
-  const auto handle = polyhedron.make_tetrahedron(p1, p2, p3, p4);
-  assert(polyhedron.is_tetrahedron(handle));
+  const auto handle = polygon_mesh.make_tetrahedron(p1, p2, p3, p4);
+  assert(polygon_mesh.is_tetrahedron(handle));
 
-  assert(polyhedron.size_of_facets() == 4);
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<typename boost::graph_traits<Polyhedron>::face_descriptor > > > regions;
-  CGAL::Shape_detection::region_growing_planes_polygon_mesh(
-    polyhedron, std::back_inserter(regions));
-  assert(regions.size() == polyhedron.size_of_facets());
+  assert(polygon_mesh.size_of_facets() == 4);
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<Item> > > regions;
+
+  // Create instances of the classes Neighbor_query and Region_type.
+  Neighbor_query neighbor_query(polygon_mesh);
+
+  Region_type region_type(polygon_mesh);
+
+  // Sort face indices.
+  Sorting sorting(polygon_mesh, neighbor_query);
+  sorting.sort();
+
+  // Create an instance of the region growing class.
+  Region_growing region_growing(faces(polygon_mesh), sorting.ordered(), neighbor_query, region_type);
+  region_growing.detect(std::back_inserter(regions));
+
+  assert(regions.size() == polygon_mesh.size_of_facets());
   return true;
 }
 
@@ -358,20 +423,37 @@ template<class Kernel>
 bool test_planes_surface_mesh() {
 
   using Point_3      = typename Kernel::Point_3;
-  using Surface_mesh = CGAL::Surface_mesh<Point_3>;
+  using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
+  using Item = typename boost::graph_traits<Polygon_mesh>::face_descriptor;
+  using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
+  using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
+  using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
   std::ifstream in(CGAL::data_file_path("meshes/am.off"));
   CGAL::IO::set_ascii_mode(in);
   assert(in);
 
-  Surface_mesh surface_mesh;
-  in >> surface_mesh;
+  Polygon_mesh polygon_mesh;
+  in >> polygon_mesh;
   in.close();
 
-  assert(surface_mesh.number_of_faces() == 7320);
-  std::vector< std::pair< typename Kernel::Plane_3, std::vector<typename Surface_mesh::Face_index> > > regions;
-  CGAL::Shape_detection::region_growing_planes_polygon_mesh(
-    surface_mesh, std::back_inserter(regions));
+  assert(polygon_mesh.number_of_faces() == 7320);
+  std::vector< std::pair< typename Kernel::Plane_3, std::vector<Item> > > regions;
+
+  // Create instances of the classes Neighbor_query and Region_type.
+  Neighbor_query neighbor_query(polygon_mesh);
+
+  Region_type region_type(polygon_mesh);
+
+  // Sort face indices.
+  Sorting sorting(polygon_mesh, neighbor_query);
+  sorting.sort();
+
+  // Create an instance of the region growing class.
+  Region_growing region_growing(faces(polygon_mesh), sorting.ordered(), neighbor_query, region_type);
+  region_growing.detect(std::back_inserter(regions));
+
   assert(regions.size() == 9);
   return true;
 }
