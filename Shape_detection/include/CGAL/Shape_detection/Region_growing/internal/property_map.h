@@ -19,6 +19,7 @@
 // CGAL includes.
 #include <CGAL/property_map.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/Default.h>
 
 // Boost includes.
 #include <boost/iterator/transform_iterator.hpp>
