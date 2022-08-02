@@ -54,8 +54,12 @@
 #include <CGAL/Random.h>
 #include <CGAL/assertions.h>
 
+#define CGAL_BASIC_VIEWER_INIT_SIZE_X 500
+#define CGAL_BASIC_VIEWER_INIT_SIZE_Y 450
+
 namespace CGAL
 {
+
 //------------------------------------------------------------------------------
 inline CGAL::IO::Color get_random_color(CGAL::Random& random)
 {
@@ -202,7 +206,7 @@ public:
     else
       setWindowTitle(title);
 
-    resize(500, 450);
+    resize(CGAL_BASIC_VIEWER_INIT_SIZE_X, CGAL_BASIC_VIEWER_INIT_SIZE_Y);
 
     if (inverse_normal)
     { negate_all_normals(); }
@@ -605,6 +609,7 @@ protected:
 
   void initialize_buffers()
   {
+    set_camera_mode();
     rendering_program_p_l.bind();
 
     // 1) POINT SHADER
@@ -989,19 +994,8 @@ protected:
             (has_zero_x() || has_zero_y() || has_zero_z()));
   }
 
-  virtual void draw()
+  void set_camera_mode()
   {
-    glEnable(GL_DEPTH_TEST);
-
-    QMatrix4x4 clipping_mMatrix;
-    clipping_mMatrix.setToIdentity();
-    for(int i=0; i< 16 ; i++)
-    { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
-    QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, 0.0);
-    QVector4D plane_point = clipping_mMatrix * QVector4D(0,0,0,1);
-    if(!m_are_buffers_initialized)
-    { initialize_buffers(); }
-
     if (is_two_dimensional())
     {
       camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
@@ -1023,6 +1017,20 @@ protected:
       camera()->setType(CGAL::qglviewer::Camera::PERSPECTIVE);
       camera()->frame()->setConstraint(nullptr);
     }
+  }
+
+  virtual void draw()
+  {
+    glEnable(GL_DEPTH_TEST);
+
+    QMatrix4x4 clipping_mMatrix;
+    clipping_mMatrix.setToIdentity();
+    for(int i=0; i< 16 ; i++)
+    { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
+    QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, 0.0);
+    QVector4D plane_point = clipping_mMatrix * QVector4D(0,0,0,1);
+    if(!m_are_buffers_initialized)
+    { initialize_buffers(); }
 
     QColor color;
     attrib_buffers(this);
@@ -1356,6 +1364,7 @@ protected:
 
   virtual void init()
   {
+    set_camera_mode();
     initializeOpenGLFunctions();
 
     // Light default parameters

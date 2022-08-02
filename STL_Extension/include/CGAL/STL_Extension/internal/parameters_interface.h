@@ -250,7 +250,6 @@ CGAL_add_named_parameter(maximum_distance_t, maximum_distance, maximum_distance)
 CGAL_add_named_parameter(minimum_region_size_t, minimum_region_size, minimum_region_size)
 CGAL_add_named_parameter(sphere_radius_t, sphere_radius, sphere_radius)
 CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)
-CGAL_add_named_parameter(segment_map_t, segment_map, segment_map)
 CGAL_add_named_parameter(item_map_t, item_map, item_map)
 CGAL_add_named_parameter(cosine_value_t, cosine_value, cosine_value)
 CGAL_add_named_parameter(minimum_radius_t, minimum_radius, minimum_radius)
@@ -266,3 +265,10 @@ CGAL_add_named_parameter(regularize_axis_symmetry_t, regularize_axis_symmetry, r
 CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_direction)
 CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
 CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
+CGAL_add_named_parameter(segment_t, segment_map, segment_map)
+
+// List of named parameters used in Mesh_2 package
+CGAL_add_named_parameter(seeds_t, seeds, seeds)
+CGAL_add_named_parameter(domain_is_initialized_t, domain_is_initialized, domain_is_initialized)
+CGAL_add_named_parameter(seeds_are_in_domain_t, seeds_are_in_domain, seeds_are_in_domain)
+CGAL_add_named_parameter(criteria_t, criteria, criteria)
