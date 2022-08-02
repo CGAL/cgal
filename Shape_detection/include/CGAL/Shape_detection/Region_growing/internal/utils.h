@@ -348,11 +348,12 @@ namespace internal {
 
     using IFT = typename ITraits::FT;
     using IPoint_3 = typename ITraits::Point_3;
+    using ITriangle_3 = typename ITraits::Triangle_3;
     using IPlane_3 = typename ITraits::Plane_3;
 
-    std::vector<IPoint_3> points;
+    std::vector<ITriangle_3> triangles;
     CGAL_precondition(region.size() > 0);
-    points.reserve(region.size());
+    triangles.reserve(region.size());
     const IConverter iconverter = IConverter();
 
     for (const typename Region::value_type face : region) {
@@ -360,18 +361,30 @@ namespace internal {
       const auto vertices = vertices_around_face(hedge, face_graph);
       CGAL_precondition(vertices.size() > 0);
 
+      std::vector<IPoint_3> points;
       for (const auto vertex : vertices) {
         const auto& point = get(vertex_to_point_map, vertex);
         points.push_back(iconverter(point));
       }
+      if (points.size()==3)
+        triangles.push_back(ITriangle_3(points[0], points[1], points[2]));
+      else
+      {
+        //use a triangulation using the centroid
+        std::size_t nb_edges = points.size();
+        IPoint_3 c = CGAL::centroid(points.begin(), points.end());
+        points.push_back(points.front());
+        for (std::size_t i=0; i<nb_edges; ++i)
+          triangles.push_back(ITriangle_3(points[i], points[i+1], c));
+      }
     }
-    CGAL_precondition(points.size() >= region.size());
+    CGAL_precondition(triangles.size() >= region.size());
     IPlane_3 fitted_plane;
     IPoint_3 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_3(
-      points.begin(), points.end(),
+      triangles.begin(), triangles.end(),
       fitted_plane, fitted_centroid,
-      CGAL::Dimension_tag<0>(), ITraits(),
+      CGAL::Dimension_tag<2>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
     const Plane_3 plane(
