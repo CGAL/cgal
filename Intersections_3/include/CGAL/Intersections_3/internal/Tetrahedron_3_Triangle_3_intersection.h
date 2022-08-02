@@ -42,11 +42,7 @@ intersection(const typename K::Tetrahedron_3& tet,
   CGAL_precondition(!tr.is_degenerate());
 
   typedef typename K::Point_3 Point_3;
-  typedef typename K::Segment_3 Segment_3;
   typedef typename K::Plane_3 Plane_3;
-  typedef typename K::Triangle_3 Triangle_3;
-  typedef typename K::Line_3 Line_3;
-  typedef typename K::Point_3 Point_3;
 
   typename K::Construct_plane_3 plane = k.construct_plane_3_object();
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
