@@ -20,6 +20,7 @@
 
 #include <CGAL/Shape_detection.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
@@ -217,7 +218,7 @@ private:
       mesh, neighbor_query, CGAL::parameters::vertex_point_map(vertex_to_point_map));
     sorting.sort();
     Region_growing region_growing(
-      face_range, neighbor_query, region_type, sorting.ordered());
+      face_range, sorting.ordered(), neighbor_query, region_type);
 
     std::vector<typename Region_growing::Primitive_and_region> regions;
     region_growing.detect(std::back_inserter(regions));
@@ -269,15 +270,12 @@ private:
     Scene_points_with_normal_item* item,
     Point_set_demo_point_set_shape_detection_dialog& dialog) {
 
-    using Point_map = typename Point_set::Point_map;
-    using Normal_map = typename Point_set::Vector_map;
-
     using Neighbor_query =
-    CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set, Point_map>;
-    using Region_type =
-    CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Point_map, Normal_map>;
+    CGAL::Shape_detection::Point_set::Sphere_neighbor_query_for_point_set<Point_set>;
     using Sorting =
-    CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Point_set, Neighbor_query, Point_map>;
+    CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting_for_point_set<Point_set, Neighbor_query>;
+    using Region_type =
+    CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_set>;
     using Region_growing =
     CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
@@ -334,19 +332,20 @@ private:
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
     // Region growing set up.
-    Neighbor_query neighbor_query(
+    Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_sphere_neighbor_query(
       *points, CGAL::parameters::
       sphere_radius(search_sphere_radius));
-    Region_type region_type(
+    Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region(
       *points, CGAL::parameters::
       maximum_distance(max_distance_to_plane).
       maximum_angle(max_accepted_angle).
       minimum_region_size(min_region_size));
-    Sorting sorting(
+    Sorting sorting = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_sorting(
       *points, neighbor_query);
     sorting.sort();
+
     Region_growing region_growing(
-      *points, neighbor_query, region_type, sorting.ordered());
+      *points, sorting.ordered(), neighbor_query, region_type);
 
     std::vector<Scene_group_item *> groups;
     groups.resize(1);
@@ -375,8 +374,8 @@ private:
     const CGAL::Identity_property_map<Plane_3> plane_identity_map;
     CGAL::internal::Dynamic_property_map<Point_set::Index, std::size_t> plane_index_map;
 
-    for (Point_set::const_iterator it = points->begin(); it != points->end(); it++)
-      put(plane_index_map, *it, get(region_growing.region_map(), it));
+    for (Point_set::Index idx : *points)
+      put(plane_index_map, idx, get(region_growing.region_map(), idx));
 
     if (dialog.regularize()) {
 
@@ -412,9 +411,9 @@ private:
       new Scene_points_with_normal_item;
 
       for (auto &item : regions[index].second) {
-        point_item->point_set()->insert(points->point(*item));
+        point_item->point_set()->insert(points->point(item));
         if (dialog.add_property())
-          shape_id[*item] = index;
+          shape_id[item] = index;
       }
 
       unsigned char r, g, b;
@@ -427,7 +426,7 @@ private:
       if (dialog.generate_colored_point_set()) {
         for(const auto item : regions[index].second) {
           auto it = colored_item->point_set()->insert(
-            points->point(*item));
+            points->point(item));
           ++nb_colored_pts;
           colored_item->point_set()->set_color(*it, r, g, b);
         }
