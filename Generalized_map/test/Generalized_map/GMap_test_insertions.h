@@ -22,7 +22,7 @@ bool check_number_of_cells_3(GMAP& gmap, unsigned int nbv, unsigned int nbe,
 template<typename GMAP>
 bool test_vertex_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
+  typename GMAP::Dart_descriptor d1, d2, d3;
 
   trace_test_begin();
   d1 = gmap.create_dart();
@@ -145,7 +145,7 @@ bool test_vertex_insertion(GMAP& gmap)
 template<typename GMAP>
 bool test_edge_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
+  typename GMAP::Dart_descriptor d1, d2, d3;
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
@@ -228,8 +228,8 @@ bool test_edge_insertion(GMAP& gmap)
 template<typename GMAP>
 bool test_face_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
-  std::vector<typename GMAP::Dart_handle> v;
+  typename GMAP::Dart_descriptor d1, d2, d3;
+  std::vector<typename GMAP::Dart_descriptor> v;
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
