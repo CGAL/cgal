@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query(
-    point_set_2);
+    point_set_2, CGAL::parameters::k_neighbors(k));
 
   Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_circle_fit_region(
     point_set_2,
