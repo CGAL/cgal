@@ -21,6 +21,7 @@
 #include <CGAL/Shape_detection.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
+#include <CGAL/Polygon_mesh_processing/region_growing.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
@@ -183,87 +184,43 @@ private:
     Scene_surface_mesh_item* sm_item,
     Point_set_demo_point_set_shape_detection_dialog& dialog) {
 
-    using Face_range = typename SMesh::Face_range;
-
-    using Neighbor_query =
-    CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<SMesh>;
-    using Region_type =
-    CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, SMesh>;
-    using Sorting =
-    CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, SMesh, Neighbor_query>;
-    using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
-
     CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
-    const SMesh& mesh = *(sm_item->polyhedron());
-    scene->setSelectedItem(-1);
-    const Face_range face_range = faces(mesh);
-
-    using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
-    const Vertex_to_point_map vertex_to_point_map(get(CGAL::vertex_point, mesh));
+    SMesh& mesh = *(sm_item->polyhedron());
 
     // Set parameters.
     const double max_distance_to_plane = dialog.epsilon();
     const double max_accepted_angle = dialog.normal_tolerance();
     const std::size_t min_region_size = dialog.min_points();
 
-    // Region growing.
-    Neighbor_query neighbor_query(mesh);
-    Region_type region_type(
-      mesh, CGAL::parameters::
-      maximum_distance(max_distance_to_plane).
-      maximum_angle(max_accepted_angle).
-      minimum_region_size(min_region_size).
-      vertex_point_map(vertex_to_point_map));
-    Sorting sorting(
-      mesh, neighbor_query, CGAL::parameters::vertex_point_map(vertex_to_point_map));
-    sorting.sort();
-    Region_growing region_growing(
-      face_range, sorting.ordered(), neighbor_query, region_type);
+    std::vector<std::size_t> region_ids(num_faces(mesh));
+    std::size_t nb_regions =
+      CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
+        mesh,
+        CGAL::make_property_map(region_ids),
+        CGAL::parameters::
+        maximum_distance(max_distance_to_plane).
+        maximum_angle(max_accepted_angle).
+        minimum_region_size(min_region_size));
 
-    std::vector<typename Region_growing::Primitive_and_region> regions;
-    region_growing.detect(std::back_inserter(regions));
-    std::cerr << "* " << regions.size() << " regions have been found" << std::endl;
+    std::cerr << "* " << nb_regions << " regions have been found" << std::endl;
 
-    // Output result as a new colored item.
-    Scene_surface_mesh_item *colored_item = new Scene_surface_mesh_item;
-    colored_item->setName(QString("%1 (region growing)").arg(sm_item->name()));
-    SMesh& fg = *(colored_item->polyhedron());
 
-    fg = mesh;
-    const Face_range fr = faces(fg);
+    typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+    Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), mesh);
 
-    colored_item->setItemIsMulticolor(true);
-    colored_item->computeItemColorVectorAutomatically(false);
-    auto& color_vector = colored_item->color_vector();
-    color_vector.clear();
-
-    for (std::size_t i = 0; i < regions.size(); ++i) {
-      for (const std::size_t idx : regions[i].second) {
-        const auto fit = fr.begin() + idx;
-        fg.property_map<face_descriptor, int>("f:patch_id").first[*fit] =
-        static_cast<int>(i);
-      }
-      CGAL::Random rnd(static_cast<unsigned int>(i));
-      color_vector.push_back(QColor(
-        64 + rnd.get_int(0, 192),
-        64 + rnd.get_int(0, 192),
-        64 + rnd.get_int(0, 192)));
-    }
-    if(color_vector.empty())
+    for(SMesh::Face_index f : faces(mesh))
     {
-      for(const auto& f : faces(fg))
-      {
-        fg.property_map<face_descriptor, int>("f:patch_id").first[f] =
-            static_cast<int>(0);
-      }
-      CGAL::Random rnd(static_cast<unsigned int>(0));
-      color_vector.push_back(QColor(
-        64 + rnd.get_int(0, 192),
-        64 + rnd.get_int(0, 192),
-        64 + rnd.get_int(0, 192)));
+      std::size_t region_id = region_ids[f];
+      if (region_id != std::size_t(-1))
+        put(pidmap, f, static_cast<int>(region_id)+1);
+      else
+        put(pidmap, f, static_cast<int>(nb_regions)+2); // TODO force black?
     }
-    colored_item->invalidateOpenGLBuffers();
-    scene->addItem(colored_item);
+
+    sm_item->setItemIsMulticolor(true);
+    sm_item->computeItemColorVectorAutomatically(true);
+    sm_item->invalidateOpenGLBuffers();
+    scene->itemChanged(sm_item);
   }
 
   void detect_shapes_with_region_growing (
@@ -978,9 +935,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_t
     dialog.groupBox_3->setEnabled(true);
 
     // Update scene.
-    scene->itemChanged(index);
     QApplication::restoreOverrideCursor();
-    sm_item->setVisible(false);
   }
 }
 
