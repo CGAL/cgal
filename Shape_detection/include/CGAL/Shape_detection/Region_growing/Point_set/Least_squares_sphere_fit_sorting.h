@@ -18,6 +18,7 @@
 
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
+#include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
 namespace CGAL {
 namespace Shape_detection {

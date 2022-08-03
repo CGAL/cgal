@@ -19,6 +19,7 @@
 // CGAL includes.
 #include <CGAL/property_map.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Default.h>
 
 // Boost includes.
