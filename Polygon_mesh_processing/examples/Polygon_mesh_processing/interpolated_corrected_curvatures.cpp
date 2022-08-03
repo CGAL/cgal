@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
   Mesh g1;
   const std::string filename = (argc>1) ?
       argv[1] :
-      CGAL::data_file_path("meshes/cylinder.off");
+      CGAL::data_file_path("meshes/sphere_diff_faces.obj");
 
   if(!CGAL::IO::read_polygon_mesh(filename, g1))
   {
