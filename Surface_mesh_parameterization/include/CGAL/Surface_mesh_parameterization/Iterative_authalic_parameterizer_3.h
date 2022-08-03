@@ -50,7 +50,7 @@
 #include <iomanip>
 #include <unordered_set>
 
-#define CGAL_DEBUG_IA 0
+#define CGAL_SMP_IA_DEBUG_L0 0
 
 /// \file Iterative_authalic_parameterizer_3.h
 
@@ -890,7 +890,7 @@ public:
 
     NT area_3D = initialize_faces_areas(cc_faces, tmesh);
 
-    if(CGAL_DEBUG_IA)
+    if(CGAL_SMP_IA_DEBUG_L0)
       std::cout << std::endl;
 
     unsigned int last_best_i = 0;
@@ -901,7 +901,7 @@ public:
     unsigned int i = 0;
     while(i < iterations)
     {
-      if(CGAL_DEBUG_IA)
+      if(CGAL_SMP_IA_DEBUG_L0)
         std::cout << "Iteration " << i << ", gamma = " << gamma << std::flush;
 
       // update weights for inner vertices
@@ -940,7 +940,7 @@ public:
       if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
          !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
       {
-        if(CGAL_DEBUG_IA)
+        if(CGAL_SMP_IA_DEBUG_L0)
           std::cout << " Linear solver failure #" << m_linear_solver_failures << std::endl;
 
         status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
@@ -988,7 +988,7 @@ public:
         }
       }
 
-      if(CGAL_DEBUG_IA)
+      if(CGAL_SMP_IA_DEBUG_L0)
       {
         std::ofstream out("last_solve.off");
         out.precision(17);
@@ -1001,7 +1001,7 @@ public:
 
       err[i] = compute_area_distortion(cc_faces, area_3D, tmesh, uvmap);
 
-      if(CGAL_DEBUG_IA)
+      if(CGAL_SMP_IA_DEBUG_L0)
         std::cout << " err " << err[i] << std::flush;
 
       if(err[i] <= err[last_best_i])
@@ -1011,7 +1011,7 @@ public:
         last_best_i = i;
         is_changed = false;
 
-        if(CGAL_DEBUG_IA)
+        if(CGAL_SMP_IA_DEBUG_L0)
           std::cout << " *****" << std::flush;
       }
       else if(err[i] > 100) // @fixme is that reasonnable
