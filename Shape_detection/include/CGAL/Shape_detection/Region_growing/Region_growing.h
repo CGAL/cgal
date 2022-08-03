@@ -205,18 +205,19 @@ namespace Shape_detection {
       \tparam PrimitiveAndRegionOutputIterator
       a model of `OutputIterator` whose value type is `Primitive_and_region`
 
-      \param regions
-      an iterator of type `PrimitiveAndRegionOutputIterator`.
+      \param region_out
+      an output iterator of type `PrimitiveAndRegionOutputIterator`.
 
       \return past-the-end position in the output sequence
     */
     template<typename PrimitiveAndRegionOutputIterator>
-    PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator regions) {
+    PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator region_out) {
 //      clear(); TODO: this is not valid to comment this clear()
       m_visited_map.clear(); // tmp replacement for the line above
 
       Region region;
-      std::size_t idx = 0;
+      m_nb_regions = 0;
+
 
       // Grow regions.
       for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
@@ -231,13 +232,13 @@ namespace Shape_detection {
           if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
           } else {
-            *(regions++) = std::pair<typename RegionType::Primitive, Region>(primitive, region);
-            fill_region_map(idx++, region);
+            *(region_out++) = std::pair<typename RegionType::Primitive, Region>(primitive, region);
+            fill_region_map(m_nb_regions++, region);
           }
         }
       }
 
-      return regions;
+      return region_out;
     }
 
     /*!
@@ -304,6 +305,7 @@ namespace Shape_detection {
       using Item_map = typename Item_helper::type;
       Item_map item_map_ = Item_helper::get(item_map);
 
+      m_nb_regions = 0;
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
         Item item = get(item_map_, it);
         put(m_region_map, item, std::size_t(-1));
@@ -312,6 +314,11 @@ namespace Shape_detection {
       // (like for faces in a PolygonMesh) we should fill a non-visited map rather than a visited map
       m_visited_map.clear();
     }
+
+    std::size_t number_of_regions_detected() const
+    {
+      return m_nb_regions;
+    }
     /// \endcond
 
   private:
@@ -319,6 +326,7 @@ namespace Shape_detection {
     Region_type& m_region_type;
     Region_map m_region_map;
     std::vector<Item> m_seed_range;
+    std::size_t m_nb_regions = 0;
 
     using VisitedMap = std::unordered_set<typename Region_type::Item, internal::hash_item<typename Region_type::Item> >;
     VisitedMap m_visited_map;
