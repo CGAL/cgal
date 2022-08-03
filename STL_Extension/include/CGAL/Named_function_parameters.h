@@ -18,7 +18,6 @@
 
 #include <CGAL/tags.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 
 #include <type_traits>
@@ -128,12 +127,12 @@ struct Lookup_named_param_def
   typedef typename internal_np::Get_param<typename NP::base, Query_tag>::reference NP_reference;
 
   typedef typename boost::mpl::if_<
-    boost::is_same<NP_type, internal_np::Param_not_found>,
+    std::is_same<NP_type, internal_np::Param_not_found>,
     D, NP_type>::type
   type;
 
   typedef typename boost::mpl::if_<
-    boost::is_same<NP_reference, internal_np::Param_not_found>,
+    std::is_same<NP_reference, internal_np::Param_not_found>,
     D&, NP_reference>::type
   reference;
 };
@@ -166,7 +165,7 @@ typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::type
 get_parameter_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
 {
 #ifndef CGAL_NO_STATIC_ASSERTION_TEST
-  CGAL_static_assertion( (!boost::is_same<Query_tag, Tag>::value) );
+  CGAL_static_assertion( (!std::is_same<Query_tag, Tag>::value) );
 #endif
   return get_parameter_impl(static_cast<const typename Base::base&>(np), tag);
 }
@@ -227,7 +226,7 @@ template <typename T, typename Tag, typename Base, typename Query_tag>
 typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::reference
 get_parameter_reference_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
 {
-  CGAL_static_assertion( (!boost::is_same<Query_tag, Tag>::value) );
+  CGAL_static_assertion( (!std::is_same<Query_tag, Tag>::value) );
   return get_parameter_reference_impl(static_cast<const typename Base::base&>(np), tag);
 }
 
@@ -379,7 +378,7 @@ struct is_default_parameter
                                                        NamedParameters,
                                                        internal_np::Param_not_found>::type NP_type;
 
-  static const bool value = boost::is_same<NP_type, internal_np::Param_not_found>::value;
+  static const bool value = std::is_same<NP_type, internal_np::Param_not_found>::value;
 
   typedef CGAL::Boolean_tag<value> type;
 };

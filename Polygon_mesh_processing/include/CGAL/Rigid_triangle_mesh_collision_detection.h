@@ -246,7 +246,7 @@ public:
   {
     // handle vpm
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion( (boost::is_same<Local_vpm,Vpm>::value) );
+    CGAL_static_assertion( (std::is_same<Local_vpm,Vpm>::value) );
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -558,7 +558,7 @@ public:
         parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion((boost::is_same<Local_vpm,Vpm>::value));
+    CGAL_static_assertion((std::is_same<Local_vpm,Vpm>::value));
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),

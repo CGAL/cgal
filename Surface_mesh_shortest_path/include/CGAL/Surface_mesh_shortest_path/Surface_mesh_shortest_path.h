@@ -36,6 +36,7 @@
 #include <queue>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 

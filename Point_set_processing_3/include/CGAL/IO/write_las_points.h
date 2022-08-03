@@ -26,7 +26,6 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/version.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #ifdef BOOST_MSVC
 #  pragma warning(push)
@@ -57,6 +56,7 @@
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -282,7 +282,7 @@ bool write_LAS(std::ostream& os,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range_v<PointRange>>* = nullptr
 #endif
                )
 {
@@ -337,7 +337,7 @@ bool write_LAS(const std::string& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range_v<PointRange>>* = nullptr
 #endif
                )
 {

@@ -102,7 +102,7 @@ public:
     template <typename T>
     T
     operator()(const T t,
-               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr) const
+               std::enable_if_t<std::is_fundamental<T>::value>* = nullptr) const
     {
         return t;
     }

@@ -28,6 +28,9 @@ public:
   static const bool value = (sizeof(f<T>(0)) == sizeof(char));
 };
 
+template<class T>
+CGAL_CPP17_INLINE constexpr bool Has_member_clear_v = Has_member_clear<T>::value;
+
 }  // internal
 }  // cgal
 
