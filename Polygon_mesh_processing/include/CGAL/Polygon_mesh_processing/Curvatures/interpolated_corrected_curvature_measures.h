@@ -690,7 +690,7 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
 
         const typename GT::FT f_ratio = face_in_ball_ratio_2<GT>(x, r, c);
 
-        if (f_ratio > 0.00000001)
+        if (f_ratio != 0.0)
         {
             corrected_mui += f_ratio * get(fmm, fi);
             for (face_descriptor fj : faces_around_face(halfedge(fi, pmesh), pmesh))
@@ -764,7 +764,7 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
 
         const typename GT::FT f_ratio = face_in_ball_ratio_2<GT>(x, r, c);
 
-        if (f_ratio > 0.00000001)
+        if (f_ratio != 0.0)
         {
             std::array<typename GT::FT, 3 * 3> muXY_face = get(fmm, fi);
 
@@ -817,7 +817,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         expand_interpolated_corrected_measure_vertex(pmesh, mu1_map, mu1_expand_map, v, np);
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
-        if (v_mu0 > 0.00000001)
+        if (v_mu0 != 0.0)
             put(vcm, v, 0.5 * get(mu1_expand_map, v) / v_mu0);
         else
             put(vcm, v, 0);
@@ -855,7 +855,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         expand_interpolated_corrected_measure_vertex(pmesh, mu2_map, mu2_expand_map, v, np);
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
-        if(v_mu0 > 0.00000001)
+        if(v_mu0 != 0.0)
             put(vcm, v, get(mu2_expand_map, v) / v_mu0);
         else
             put(vcm, v, 0);
@@ -864,7 +864,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
 template<typename PolygonMesh, typename VertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>
-    void interpolated_corrected_principal_curvature(const PolygonMesh& pmesh,
+    void interpolated_corrected_principal_curvatures(const PolygonMesh& pmesh,
         VertexCurvatureMap vcm,
         const NamedParameters& np = parameters::default_values())
 {
@@ -925,13 +925,27 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu0_expand_map, v, np);
         expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, muXY_map, muXY_expand_map, v, np);
 
+        typename GT::FT v_mu0 = get(mu0_expand_map, v);
+        Eigen::Matrix<typename GT::FT, 3, 3> v_muXY = get(muXY_expand_map, v);
+        typename GT::Vector_3 u_GT = get(vnm, v);
 
-        
-        /*typename GT::FT v_mu0 = get(mu0_expand_map, v);
-        if (v_mu0 > 0.00000001)
-            put(vcm, v, get(mu2_expand_map, v) / v_mu0);
-        else
-            put(vcm, v, 0);*/
+        Eigen::Vector<typename GT::FT, 3> u(u_GT.x(), u_GT.y(), u_GT.z());
+
+        const typename GT::FT K = 1000 * v_mu0;
+
+        v_muXY = 0.5 * (v_muXY + v_muXY.transpose()) + K * u * u.transpose();
+
+        Eigen::Vector<typename GT::FT, 3> eig_vals;
+        Eigen::Matrix<typename GT::FT, 3, 3> eig_vecs;
+
+
+        //(WIP)
+        EigenDecomposition< 3, typename GT::FT>::getEigenDecomposition(v_muXY, eig_vecs, eig_vals);
+
+        put(vcm, v, std::make_tuple((v_mu0 != 0.0) ? -eig_vals[0] / v_mu0 : 0.0,
+            (v_mu0 != 0.0) ? -eig_vals[1] / v_mu0 : 0.0,
+            eig_vecs.column(0),
+            eig_vecs.column(1)));
     }
 }
 

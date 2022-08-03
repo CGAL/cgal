@@ -18,6 +18,14 @@ typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef std::unordered_map<face_descriptor, EpicKernel::FT> FaceMeasureMap_tag;
 typedef std::unordered_map<vertex_descriptor, EpicKernel::FT> vertexMeasureMap_tag;
+typedef std::unordered_map<vertex_descriptor, std::tuple<
+    EpicKernel::FT,
+    EpicKernel::FT,
+    Eigen::Vector<EpicKernel::FT, 3>,
+    Eigen::Vector<EpicKernel::FT, 3>
+    >>
+vertexPrincipleCurvatureMap_tag;
+
 
 
 int main(int argc, char* argv[])
@@ -38,16 +46,27 @@ int main(int argc, char* argv[])
   boost::associative_property_map<vertexMeasureMap_tag>
       mean_curvature_map(mean_curvature_init), gaussian_curvature_map(gaussian_curvature_init);
 
+  vertexPrincipleCurvatureMap_tag principle_curvature_init;
+  boost::associative_property_map<vertexPrincipleCurvatureMap_tag> principle_curvature_map(principle_curvature_init);
+
   PMP::interpolated_corrected_mean_curvature(
       g1,
       mean_curvature_map
-      );
+  );
   PMP::interpolated_corrected_gaussian_curvature(
       g1,
       gaussian_curvature_map
   );
+  PMP::interpolated_corrected_principal_curvatures(
+      g1,
+      principle_curvature_map
+  );
 
   for (vertex_descriptor v : vertices(g1))
+  {
+    auto PC = get(principle_curvature_map, v);
       std::cout << v.idx() << ": HC = " << get(mean_curvature_map, v)
-                           << ", GC = " << get(gaussian_curvature_map, v) << "\n";
+                           << ", GC = " << get(gaussian_curvature_map, v) << "\n"
+                           << ", PC = [ " << std::get<0>(PC) << " , " << std::get<1>(PC) << " ]\n";
+  }
 }
