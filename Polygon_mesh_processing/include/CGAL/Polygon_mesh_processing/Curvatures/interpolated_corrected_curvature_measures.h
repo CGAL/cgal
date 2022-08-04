@@ -21,7 +21,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
-#include <Eigen/Eigenvalues> 
+#include <Eigen/Eigenvalues>
 
 #include <numeric>
 #include <queue>
@@ -305,7 +305,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
                 X = typename GT::Vector_3(1, 0, 0);
             if (ix == 1)
                 X = typename GT::Vector_3(0, 1, 0);
-            if (ix == 2)                  
+            if (ix == 2)
                 X = typename GT::Vector_3(0, 0, 1);
 
             for (std::size_t iy = 0; iy < 3; iy++)
@@ -945,7 +945,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix <typename GT::FT, 3, 3>> eigensolver;
 
         eigensolver.computeDirect(v_muXY);
-        
+
         if (eigensolver.info() != Eigen::Success)
         {
             put(vcm, v, std::make_tuple(
