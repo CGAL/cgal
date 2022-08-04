@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found planes: " << regions.size() << std::endl;
-  assert(!is_default_input || regions.size() == 355);
+  assert(!is_default_input || regions.size() == 365);
 
   const Region_growing::Region_map& map = region_growing.region_map();
 

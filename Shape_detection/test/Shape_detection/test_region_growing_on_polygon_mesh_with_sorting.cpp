@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     std::vector<Region_growing::Primitive_and_region> regions;
     region_growing.detect(std::back_inserter(regions));
     region_growing.clear(face_range);
-    assert(regions.size() == 355);
+    assert(regions.size() == 365);
   }
 
   std::cout << "rg_sortfaces3, epeck_test_success: " << true << std::endl;

@@ -68,13 +68,13 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
-  assert(regions.size() == 414);
+  assert(regions.size() == 416);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region.second));
 
   std::vector<typename Region_growing::Item> unassigned_faces;
   region_growing.unassigned_items(face_range, std::back_inserter(unassigned_faces));
-  assert(unassigned_faces.size() == 992);
+  assert(unassigned_faces.size() == 1006);
   return true;
 }
 
