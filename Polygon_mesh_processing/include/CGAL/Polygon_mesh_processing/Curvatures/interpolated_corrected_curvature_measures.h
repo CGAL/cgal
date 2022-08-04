@@ -21,7 +21,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
+#include <Eigen/Eigenvalues> 
 
 #include <numeric>
 #include <queue>
@@ -287,7 +287,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
     CGAL_precondition(n >= 3);
 
     typename GT::Construct_cross_product_vector_3 cross_product;
-    std::array<typename GT::FT, 3 * 3> muXY;
+    std::array<typename GT::FT, 3 * 3> muXY {0};
 
     // Triangle: use triangle formula
     if (n == 3)
@@ -300,8 +300,14 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
 
         for (std::size_t ix = 0; ix < 3; ix++)
         {
-            const typename GT::Vector_3 X(0, 0, 0);
-            X[ix] = 1;
+            typename GT::Vector_3 X;
+            if (ix == 0)
+                X = typename GT::Vector_3(1, 0, 0);
+            if (ix == 1)
+                X = typename GT::Vector_3(0, 1, 0);
+            if (ix == 2)                  
+                X = typename GT::Vector_3(0, 0, 1);
+
             for (std::size_t iy = 0; iy < 3; iy++)
                 muXY[ix * 3 + iy] = 0.5 * um * (cross_product(u02[iy] * X, x01) - cross_product(u01[iy] * X, x02));
         }
@@ -313,8 +319,14 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
         // the indices in paper vs in here are: 00 = 0, 10 = 1, 11 = 2, 01 = 3
         for (std::size_t ix = 0; ix < 3; ix++)
         {
-            const typename GT::Vector_3 X(0, 0, 0);
-            X[ix] = 1;
+            typename GT::Vector_3 X;
+            if (ix == 0)
+                X = typename GT::Vector_3(1, 0, 0);
+            if (ix == 1)
+                X = typename GT::Vector_3(0, 1, 0);
+            if (ix == 2)
+                X = typename GT::Vector_3(0, 0, 1);
+
             const typename GT::Vector_3 u0xX = cross_product(u[0], X);
             const typename GT::Vector_3 u1xX = cross_product(u[1], X);
             const typename GT::Vector_3 u2xX = cross_product(u[2], X);
@@ -350,8 +362,6 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
     // N-gon: split into n triangles by polygon center and use triangle formula for each
     else
     {
-        typename GT::FT muXY = 0;
-
         // getting center of points
         typename GT::Vector_3 xc =
             std::accumulate(x.begin(), x.end(), typename GT::Vector_3(0, 0, 0));
@@ -654,7 +664,7 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
     const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
-        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0.01);
+        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0.1);
 
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
@@ -737,11 +747,7 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
     typename GT::Point_3 vp = get(vpm, v);
     typename GT::Vector_3 c = typename GT::Vector_3(vp.x(), vp.y(), vp.z());
 
-    Eigen::Matrix<typename GT::FT, 3, 3> corrected_muXY = {
-        { 0.0, 0.0, 0.0},
-        { 0.0, 0.0, 0.0},
-        { 0.0, 0.0, 0.0}
-    };
+    Eigen::Matrix<typename GT::FT, 3, 3> corrected_muXY = Eigen::Matrix<typename GT::FT, 3, 3>::Zero();
 
     for (face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
         if (f != boost::graph_traits<PolygonMesh>::null_face())
@@ -935,17 +941,29 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
         v_muXY = 0.5 * (v_muXY + v_muXY.transpose()) + K * u * u.transpose();
 
-        Eigen::Vector<typename GT::FT, 3> eig_vals;
-        Eigen::Matrix<typename GT::FT, 3, 3> eig_vecs;
-
-
         //(WIP)
-        EigenDecomposition< 3, typename GT::FT>::getEigenDecomposition(v_muXY, eig_vecs, eig_vals);
+        Eigen::SelfAdjointEigenSolver<Eigen::Matrix <typename GT::FT, 3, 3>> eigensolver;
 
-        put(vcm, v, std::make_tuple((v_mu0 != 0.0) ? -eig_vals[0] / v_mu0 : 0.0,
+        eigensolver.computeDirect(v_muXY);
+        
+        if (eigensolver.info() != Eigen::Success)
+        {
+            put(vcm, v, std::make_tuple(
+                0,
+                0,
+                Eigen::Vector<typename GT::FT, 3>(.0,.0,.0),
+                Eigen::Vector<typename GT::FT, 3>(.0, .0, .0)));
+            continue;
+        }
+
+        Eigen::Vector<typename GT::FT, 3> eig_vals = eigensolver.eigenvalues();
+        Eigen::Matrix<typename GT::FT, 3, 3> eig_vecs = eigensolver.eigenvectors();
+
+        put(vcm, v, std::make_tuple(
             (v_mu0 != 0.0) ? -eig_vals[1] / v_mu0 : 0.0,
-            eig_vecs.column(0),
-            eig_vecs.column(1)));
+            (v_mu0 != 0.0) ? -eig_vals[0] / v_mu0 : 0.0,
+            eig_vecs.col(1),
+            eig_vecs.col(0)));
     }
 }
 
