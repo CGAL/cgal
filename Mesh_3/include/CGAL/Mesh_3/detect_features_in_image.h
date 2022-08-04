@@ -124,10 +124,6 @@ bool detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
             ++nb_color;
           }
         }
-        if (nb_color > 3) {
-          CGAL_warning_msg(nb_color > 3, "voxel with more than 3 colors");
-          continue;
-        }
         std::array<std::uint8_t, 8> reference_cube = {
             color_transformation[cube[0]],
             color_transformation[cube[1]],
