@@ -326,7 +326,7 @@ namespace Point_set {
 
       // Flip the plane's normal to agree with all input normals.
       long votes_to_keep_normal = 0;
-      for (const Item item : region) {
+      for (Item item : region) {
         const Vector_3& normal = get(m_normal_map, item);
         const bool agrees =
           m_scalar_product_3(normal, unoriented_normal_of_best_fit) > FT(0);

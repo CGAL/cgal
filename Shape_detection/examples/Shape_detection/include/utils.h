@@ -261,7 +261,7 @@ struct Insert_point_colored_by_region_index {
     const unsigned char g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
     const unsigned char b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
 
-    for (const Item index : region.second) {
+    for (Item index : region.second) {
       const auto& point = get(m_point_map, index);
       const auto it = m_output_range.insert(point);
 

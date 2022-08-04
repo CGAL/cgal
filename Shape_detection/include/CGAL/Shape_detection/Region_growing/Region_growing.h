@@ -378,7 +378,7 @@ namespace Shape_detection {
             m_neighbor_query(item, neighbors);
 
             // Visit all found neighbors.
-            for (const Item neighbor : neighbors) {
+            for (Item neighbor : neighbors) {
 
               if (!get(m_visited, neighbor)) {
                 if (m_region_type.is_part_of_region(item, neighbor, region)) {
@@ -409,7 +409,7 @@ namespace Shape_detection {
           // Verify that associated elements are still within the tolerance.
           bool fits = true;
           Item former = region.front();
-          for (const Item item : region) {
+          for (Item item : region) {
             if (!m_region_type.is_part_of_region(former, item, region)) {
               fits = false;
               break;
@@ -452,7 +452,7 @@ namespace Shape_detection {
     }
 
     void revert(const Region& region) {
-      for (const Item item : region)
+      for (Item item : region)
         put(m_visited, item, false);
     }
   };
