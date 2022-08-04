@@ -7,19 +7,55 @@ namespace CGAL {
 \cgalAutoToc
 \author Julian Stahl and Daniel Zint
 
-This chapter describes the ...
 
-\section secmydefinitions Definitions
+\section secmyintroduction Introduction
 
-Section on definitions here ...
+This package provides functions to compute a mesh representing an isosurface.
+The data structure from which an isosurface can be extracted is a 3-dimensional grid of scalar values.
+An isosurface is defined as the surface on which the value of the grid is equal to a given constant.
+This constant value is called the isovalue.
+The representation that is used to store the isosurface is a triangular or quadrilateral polygon soup.
+
+\section secmyalgorithms Algorithms
+
+There are multiple algorithms to extract an isosurface from a uniform grid.
+This package contains marching cubes, ...
+
+\section secmyinterface Interface
+
+The algorithms can be called with their respective functions. The parameters are always the same:
+
+\code{.cpp}
+template <class Domain_, class PointRange, class PolygonRange>
+void make_triangle_mesh_using_marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
+                                             PointRange& points, PolygonRange& polygons);
+\endcode
+
+The `domain` is an object that provides functions to access the input data in the form of a uniform grid.
+There are some predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
+Examples are `Cartesian_grid_domain`, which takes a `Cartesian_grid_3` as parameter, 
+and `Implicit_domain`, which represents the grid as an implicit function.
+
+The `iso_value` parameter describes the grid value the isosurface should represent.
+
+The output is in the form of a polygon soup that is written to the two collections `points` and `polygons`.
+The vertices are stored as `Point_3` in `points`. Each face in `polygons` is a list of indices pointing into the `points` collection.
 
 \section secmyexamples Examples
 
-\subsection myFirstExample First Example
+\subsection myExampleImplicit_domain Implicit sphere
 
-The following example shows ...
+The following example shows the use of the marching cubes algorithm to extract an isosurface.
+The domain is an `Implicit_domain` that describes a sphere by its implicit distance function.
 
-\cgalExample{Isosurfacing_3/simple_marching_cubes.cpp}
+\cgalExample{Isosurfacing_3/marching_cubes_implicit_sphere.cpp}
+
+\subsection myExampleCartesian_grid_domain Cartesian_grid_3 sphere
+
+The following example shows the use of the marching cubes algorithm to extract an isosurface.
+The domain is an `Cartesian_grid_domain` that describes a sphere by storing the distance to its origin in a `Cartesian_grid_3`.
+
+\cgalExample{Isosurfacing_3/marching_cubes_cartesian_grid_sphere.cpp}
 
 */
 } /* namespace CGAL */

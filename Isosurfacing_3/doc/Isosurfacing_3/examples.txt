@@ -1,3 +1,4 @@
 /*!
-\example Isosurfacing_3/simple_marching_cubes.cpp
+\example Isosurfacing_3/marching_cubes_implicit_sphere.cpp
+\example Isosurfacing_3/marching_cubes_cartesian_grid_sphere.cpp
 */

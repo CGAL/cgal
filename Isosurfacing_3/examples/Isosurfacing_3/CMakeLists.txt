@@ -6,7 +6,8 @@ project( Isosurfacing_3_examples )
 
 find_package(CGAL REQUIRED)
 
-create_single_source_cgal_program( "simple_marching_cube.cpp" )
+create_single_source_cgal_program( "marching_cubes_implicit_sphere.cpp" )
+create_single_source_cgal_program( "marching_cubes_cartesian_grid_sphere.cpp" )
 
 find_package(TBB)
 include(CGAL_TBB_support)
