@@ -836,11 +836,11 @@ more than once (although, with different vertices) before reaching the initial b
 vertices at identical positions, can be used to repair this configuration.
 
 \subsection PMPRemoveCapsNeedles Removal of Almost Degenerate Triangle Faces
-Triangle faces of a mesh defined by almost collinear points are badly shaped elements that
+Triangle faces of a mesh made up of almost collinear points are badly shaped elements that
 might not be desirable to have in a mesh. The function
-`CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` allows to remove such elements
-using user parameters to quality what <i>almost</i> means (`cap_threshold` and `needle_threshold`).
-As some badly shaped elements are inevitable (triangulation of a long cylinder
+`CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` enables removing such elements,
+with user-defined parameters to qualify what <i>almost</i> means (`cap_threshold` and `needle_threshold`).
+As some badly shaped elements are inevitable (the triangulation of a long cylinder
 with only vertices on the top and bottom circles for example), extra parameters can be passed
 to prevent the removal of such elements (`collapse_length_threshold` and `flip_triangle_height_threshold`).
 

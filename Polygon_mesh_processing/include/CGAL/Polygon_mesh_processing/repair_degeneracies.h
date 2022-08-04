@@ -552,7 +552,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param face_range the initial range of faces to be considered to look for badly shaped triangles.
-///                   Note that modifications of the `tmesh` is not limited to faces in `face_range`
+///                   Note that modifications of `tmesh` are not limited to faces in `face_range`
 ///                   and neighbor faces might also be impacted.
 /// @param tmesh the triangulated surface mesh to be modified
 /// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -576,7 +576,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 ///     \cgalParamDefault{0}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{flip_triangle_height_threshold}
-///     \cgalParamDescription{if different from 0, an edge flip will be prevented if the height of the triangle (with base being the edge to be flipped)
+///     \cgalParamDescription{if different from 0, an edge flip will be prevented if the height of the triangle (whose base is the edge to be flipped)
 ///                           is longer than the threshold given.}
 ///     \cgalParamType{double}
 ///     \cgalParamDefault{0}
@@ -595,22 +595,22 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{edge_is_constrained_map}
 ///     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`.}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
 ///                    as key type and `bool` as value type.}
 ///     \cgalParamDefault{a default property map where no edge is constrained.}
-///     \cgalParamExtra{A constrained edge can not be collapsed or flipped.}
+///     \cgalParamExtra{A constrained edge can not be collapsed nor flipped.}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{vertex_is_constrained_map}
 ///     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`.}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 ///                    as key type and `bool` as value type.}
 ///     \cgalParamDefault{a default property map where no vertex is constrained.}
 ///     \cgalParamExtra{A constrained vertex is guaranteed to be present in `tmesh` after the function call.}
 ///   \cgalParamNEnd
 ///   \cgalParamNBegin{filter}
 ///     \cgalParamDescription{A function object providing `bool operator()(geom_traits::Point_3,geom_traits::Point_3,geom_traits::Point_3)`.}
-///     \cgalParamType{The function object is queried each time a new triangle is created by passing the three points of the triangle.
-///                    The flip or collapse responsible for the creation of that triangle is rejected if `false` is returned.}
+///     \cgalParamType{The function object is queried each time a new triangle is about to be created by a flip or a collapse operation.
+///                    If `false` is returned, the operation is cancelled.}
 ///     \cgalParamDefault{a functor always returning `true`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
