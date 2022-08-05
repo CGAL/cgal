@@ -591,7 +591,7 @@ private: //------------------------------------------------------ iterator types
             return this->hnd_ == other.hnd_;
         }
 
-        Index_ dereference() const { return const_cast<Index_&>(hnd_); }
+        Index_ dereference() const { return hnd_; }
 
         Index_ hnd_;
         const Surface_mesh* mesh_;
