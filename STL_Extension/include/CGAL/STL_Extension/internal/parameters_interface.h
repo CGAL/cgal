@@ -251,6 +251,7 @@ CGAL_add_named_parameter(minimum_region_size_t, minimum_region_size, minimum_reg
 CGAL_add_named_parameter(sphere_radius_t, sphere_radius, sphere_radius)
 CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)
 CGAL_add_named_parameter(item_map_t, item_map, item_map)
+CGAL_add_named_parameter(segment_map_t, segment_map, segment_map)
 CGAL_add_named_parameter(cosine_value_t, cosine_value, cosine_value)
 CGAL_add_named_parameter(minimum_radius_t, minimum_radius, minimum_radius)
 CGAL_add_named_parameter(maximum_radius_t, maximum_radius, maximum_radius)
