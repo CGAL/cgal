@@ -170,7 +170,7 @@ struct Input_iterator_property_map{
 /// \cgalModels `LvaluePropertyMap`
 template <typename T, typename Iter = T*>
 struct Dereference_property_map
-  : public boost::put_get_helper<T&, Dereference_property_map<T, Iter> >
+  : public boost::put_get_helper<typename std::iterator_traits<Iter>::reference, Dereference_property_map<T, Iter> >
 {
   typedef Iter key_type; ///< typedef to 'T*'
   typedef std::remove_const_t<T> value_type; ///< typedef to 'T'
