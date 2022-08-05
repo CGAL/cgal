@@ -212,9 +212,12 @@ struct Identity_property_map
   typedef boost::lvalue_property_map_tag category;
 
   value_type& operator[](key_type& k) const { return k; }
+  const value_type& operator[](const key_type& k) const { return k; }
+  const value_type&& operator[](const key_type&& k) const { return std::forward(k); }
 
   friend value_type& get(const Self&, key_type& k) { return k; }
   friend const value_type& get(const Self&, const key_type& k) { return k; }
+  friend const value_type&& get(const Self&, const key_type&& k) { return std::forward(k); }
   friend void put(const Self&, key_type& k, const value_type& v) { k = v; }
 /// \endcond
 };
