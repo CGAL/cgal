@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.1...3.23)
 project(Polygon_mesh_processing_Examples)
 
 # CGAL and its components
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED)
 
 # Boost and its components
 find_package(Boost REQUIRED)
@@ -102,12 +102,11 @@ create_single_source_cgal_program("orientation_pipeline_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
 create_single_source_cgal_program("match_faces.cpp")
 create_single_source_cgal_program("cc_compatible_orientations.cpp")
-create_single_source_cgal_program("interpolated_corrected_curvatures.cpp")
 
-if(CGAL_Qt5_FOUND)
+if(TARGET CGAL::Eigen3_support)
 
-  #link it with the required CGAL libraries
-  target_link_libraries(interpolated_corrected_curvatures PUBLIC CGAL::CGAL_Basic_viewer)
+  create_single_source_cgal_program("interpolated_corrected_curvatures.cpp")
+  target_link_libraries(interpolated_corrected_curvatures PUBLIC CGAL::Eigen3_support)
 
 endif()
 

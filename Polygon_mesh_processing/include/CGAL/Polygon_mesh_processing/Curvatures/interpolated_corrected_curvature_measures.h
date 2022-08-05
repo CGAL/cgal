@@ -17,10 +17,10 @@
 #include <CGAL/license/Polygon_mesh_processing/interpolated_corrected_curvature_measures.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <Eigen/Eigenvalues>
 
 #include <numeric>
@@ -83,10 +83,10 @@ typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typen
         // for the formulas below, values of verices 2 & 3 are swapped (compared to paper) to correct order.
         // the indices in paper vs in here are: 00 = 0, 10 = 1, 11 = 2, 01 = 3
         return (1.0 / 36.0) * (
-              (4 * u[0] + 2 * u[1] + 2 * u[3] + u[2]) * cross_product(u[1] - u[0], u[3] - u[0])
-            + (2 * u[0] + 4 * u[1] + u[3] + 2 * u[2]) * cross_product(u[1] - u[0], u[2] - u[1])
-            + (2 * u[0] + u[1] + 4 * u[3] + 2 * u[2]) * cross_product(u[2] - u[3], u[3] - u[0])
-            + (u[0] + 2 * u[1] + 2 * u[3] + 4 * u[2]) * cross_product(u[2] - u[3], u[2] - u[1])
+              (4 * u[0] + 2 * u[1] + 2 * u[3] + u[2]) * cross_product(x[1] - x[0], x[3] - x[0])
+            + (2 * u[0] + 4 * u[1] + u[3] + 2 * u[2]) * cross_product(x[1] - x[0], x[2] - x[1])
+            + (2 * u[0] + u[1] + 4 * u[3] + 2 * u[2]) * cross_product(x[2] - x[3], x[3] - x[0])
+            + (u[0] + 2 * u[1] + 2 * u[3] + 4 * u[2]) * cross_product(x[2] - x[3], x[2] - x[1])
             );
     }
     // N-gon: split into n triangles by polygon center and use triangle formula for each
@@ -108,8 +108,8 @@ typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typen
         for (std::size_t i = 0; i < n; i++)
         {
             mu0 += interpolated_corrected_area_measure_face<GT>(
-                std::vector<typename GT::Vector_3> {u[i], u[i + 1 % n], uc},
-                std::vector<typename GT::Vector_3> {x[i], x[i + 1 % n], xc}
+                std::vector<typename GT::Vector_3> {u[i], u[(i + 1) % n], uc},
+                std::vector<typename GT::Vector_3> {x[i], x[(i + 1) % n], xc}
             );
         }
         return mu0;
@@ -191,8 +191,8 @@ typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::ve
         for (std::size_t i = 0; i < n; i++)
         {
             mu1 += interpolated_corrected_mean_curvature_measure_face<GT>(
-                std::vector<typename GT::Vector_3> {u[i], u[i + 1 % n], uc},
-                std::vector<typename GT::Vector_3> {x[i], x[i + 1 % n], xc}
+                std::vector<typename GT::Vector_3> {u[i], u[(i + 1) % n], uc},
+                std::vector<typename GT::Vector_3> {x[i], x[(i + 1) % n], xc}
             );
         }
         return mu1;
@@ -236,10 +236,10 @@ typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std
         // for the formulas below, values of verices 2 & 3 are swapped (compared to paper) to correct order.
         // the indices in paper vs in here are: 00 = 0, 10 = 1, 11 = 2, 01 = 3
         return (1.0 / 36.0) * (
-              (4 * u[0] + 2 * u[1] + 2 * u[3] + u[2]) * cross_product(x[1] - x[0], x[3] - x[0])
-            + (2 * u[0] + 4 * u[1] + u[3] + 2 * u[2]) * cross_product(x[1] - x[0], x[2] - x[1])
-            + (2 * u[0] + u[1] + 4 * u[3] + 2 * u[2]) * cross_product(x[2] - x[3], x[3] - x[0])
-            + (u[0] + 2 * u[1] + 2 * u[3] + 4 * u[2]) * cross_product(x[2] - x[3], x[2] - x[1])
+              (4 * u[0] + 2 * u[1] + 2 * u[3] + u[2]) * cross_product(u[1] - u[0], u[3] - u[0])
+            + (2 * u[0] + 4 * u[1] + u[3] + 2 * u[2]) * cross_product(u[1] - u[0], u[2] - u[1])
+            + (2 * u[0] + u[1] + 4 * u[3] + 2 * u[2]) * cross_product(u[2] - u[3], u[3] - u[0])
+            + (u[0] + 2 * u[1] + 2 * u[3] + 4 * u[2]) * cross_product(u[2] - u[3], u[2] - u[1])
             );
     }
     // N-gon: split into n triangles by polygon center and use triangle formula for each
@@ -256,7 +256,7 @@ typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std
         for (std::size_t i = 0; i < n; i++)
         {
             mu2 += interpolated_corrected_gaussian_curvature_measure_face<GT>(
-                std::vector<typename GT::Vector_3> {u[i], u[i + 1 % n], uc}
+                std::vector<typename GT::Vector_3> {u[i], u[(i + 1) % n], uc}
             );
         }
         return mu2;
@@ -377,8 +377,8 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
         {
             std::array<typename GT::FT, 3 * 3> muXY_curr_triangle =
                 interpolated_corrected_anisotropic_measure_face<GT>(
-                    std::vector<typename GT::Vector_3> {u[i], u[i + 1 % n], uc},
-                    std::vector<typename GT::Vector_3> {x[i], x[i + 1 % n], xc}
+                    std::vector<typename GT::Vector_3> {u[i], u[(i + 1) % n], uc},
+                    std::vector<typename GT::Vector_3> {x[i], x[(i + 1) % n], xc}
                 );
 
             for (std::size_t ix = 0; ix < 3; ix++)
@@ -486,10 +486,11 @@ template<typename PolygonMesh, typename FaceMeasureMap,
         break;
     }
 
+    std::vector<typename GT::Vector_3> x;
+    std::vector<typename GT::Vector_3> u;
+
     for (face_descriptor f : faces(pmesh))
     {
-        std::vector<typename GT::Vector_3> x;
-        std::vector<typename GT::Vector_3> u;
 
         for (vertex_descriptor v : vertices_around_face(halfedge(f, pmesh), pmesh))
         {
@@ -499,6 +500,8 @@ template<typename PolygonMesh, typename FaceMeasureMap,
         }
 
         put(fmm, f, iccm_function(u, x));
+        x.clear();
+        u.clear();
     }
 }
 
@@ -577,10 +580,11 @@ template<typename PolygonMesh, typename FaceMeasureMap,
     if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
         compute_vertex_normals(pmesh, vnm, np);
 
+    std::vector<typename GT::Vector_3> x;
+    std::vector<typename GT::Vector_3> u;
+
     for (face_descriptor f : faces(pmesh))
     {
-        std::vector<typename GT::Vector_3> x;
-        std::vector<typename GT::Vector_3> u;
 
         for (vertex_descriptor v : vertices_around_face(halfedge(f, pmesh), pmesh))
         {
@@ -590,6 +594,9 @@ template<typename PolygonMesh, typename FaceMeasureMap,
         }
 
         put(fmm, f, interpolated_corrected_anisotropic_measure_face<GT>(u, x));
+        x.clear();
+        u.clear();
+
     }
 }
 
@@ -634,8 +641,8 @@ typename GT::FT face_in_ball_ratio_2(const std::vector<typename GT::Vector_3>& x
     for (const typename GT::Vector_3 xi : x)
     {
         const typename GT::FT d_sq = (xi - c).squared_length();
-        d_max = std::max(d_sq, d_max);
-        d_min = std::min(d_sq, d_min);
+        d_max = (std::max)(d_sq, d_max);
+        d_min = (std::min)(d_sq, d_min);
     }
 
     if (d_max <= r * r) return 1.0;
