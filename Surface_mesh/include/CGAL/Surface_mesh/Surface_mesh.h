@@ -513,7 +513,7 @@ private: //------------------------------------------------------ iterator types
         typedef boost::iterator_facade< Index_iterator<Index_>,
                                         Index_,
                                         std::random_access_iterator_tag
-                                        > Facade;
+                                        Index_> Facade;
     public:
         Index_iterator() : hnd_(), mesh_(nullptr) {}
         Index_iterator(const Index_& h, const Surface_mesh* m)
