@@ -81,7 +81,7 @@ namespace CGAL
         average += get(point_map, item) - CGAL::ORIGIN;
       }
 
-      average = average / indices.size();
+      average = average / static_cast<double>(indices.size());
 
       Eigen::MatrixXd prod(indices.size(), 6);
       prod.setZero();
@@ -103,7 +103,7 @@ namespace CGAL
         mu[5] += prod(i, 5);
       }
 
-      mu /= indices.size();
+      mu /= static_cast<double>(indices.size());
 
       for (size_t i = 0; i < indices.size(); i++) {
         Eigen::VectorXd delta(6);
