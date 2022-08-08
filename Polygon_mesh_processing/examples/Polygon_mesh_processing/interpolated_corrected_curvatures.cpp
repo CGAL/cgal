@@ -9,24 +9,12 @@
 #include <iostream>
 #include <unordered_map>
 
-
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EpicKernel;
 typedef CGAL::Surface_mesh<EpicKernel::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef std::unordered_map<face_descriptor, EpicKernel::FT> FaceMeasureMap_tag;
-typedef std::unordered_map<vertex_descriptor, EpicKernel::FT> vertexMeasureMap_tag;
-typedef std::unordered_map<vertex_descriptor, std::tuple<
-    EpicKernel::FT,
-    EpicKernel::FT,
-    Eigen::Vector<EpicKernel::FT, 3>,
-    Eigen::Vector<EpicKernel::FT, 3>
-    >>
-vertexPrincipleCurvatureMap_tag;
-
-
 
 int main(int argc, char* argv[])
 {
@@ -41,13 +29,31 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
+  bool created = false;
 
-  vertexMeasureMap_tag mean_curvature_init, gaussian_curvature_init;
-  boost::associative_property_map<vertexMeasureMap_tag>
-      mean_curvature_map(mean_curvature_init), gaussian_curvature_map(gaussian_curvature_init);
+  Mesh::Property_map<vertex_descriptor, EpicKernel::FT> mean_curvature_map, gaussian_curvature_map;
+  boost::tie(mean_curvature_map, created) = g1.add_property_map<vertex_descriptor, EpicKernel::FT>("v:mean_curvature_map", 0);
+  assert(created);
 
-  vertexPrincipleCurvatureMap_tag principle_curvature_init;
-  boost::associative_property_map<vertexPrincipleCurvatureMap_tag> principle_curvature_map(principle_curvature_init);
+  boost::tie(gaussian_curvature_map, created) = g1.add_property_map<vertex_descriptor, EpicKernel::FT>("v:gaussian_curvature_map", 0);
+  assert(created);
+
+  Mesh::Property_map<vertex_descriptor, std::tuple<
+      EpicKernel::FT,
+      EpicKernel::FT,
+      Eigen::Vector<EpicKernel::FT, 3>,
+      Eigen::Vector<EpicKernel::FT, 3>
+      >> principle_curvature_map;
+
+  boost::tie(principle_curvature_map, created) = g1.add_property_map<vertex_descriptor, std::tuple<
+      EpicKernel::FT,
+      EpicKernel::FT,
+      Eigen::Vector<EpicKernel::FT, 3>,
+      Eigen::Vector<EpicKernel::FT, 3>
+      >>("v:principle_curvature_map", { 0, 0,
+          Eigen::Vector<EpicKernel::FT, 3>::Zero(),
+          Eigen::Vector<EpicKernel::FT, 3>::Zero() });
+  assert(created);
 
   PMP::interpolated_corrected_mean_curvature(
       g1,
@@ -64,9 +70,9 @@ int main(int argc, char* argv[])
 
   for (vertex_descriptor v : vertices(g1))
   {
-    auto PC = get(principle_curvature_map, v);
-      std::cout << v.idx() << ": HC = " << get(mean_curvature_map, v)
-                           << ", GC = " << get(gaussian_curvature_map, v) << "\n"
+    auto PC = principle_curvature_map[v];
+      std::cout << v.idx() << ": HC = " << mean_curvature_map[v]
+                           << ", GC = " << gaussian_curvature_map[v] << "\n"
                            << ", PC = [ " << std::get<0>(PC) << " , " << std::get<1>(PC) << " ]\n";
   }
 }
