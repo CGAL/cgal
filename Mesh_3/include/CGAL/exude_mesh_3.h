@@ -53,7 +53,6 @@ to represent the final optimized mesh.
 
  @param c3t3 the initial mesh that will be modified by the algorithm to represent the final optimized mesh.
  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
-
 \cgalNamedParamsBegin
  \cgalParamNBegin{time_limit}
   \cgalParamDescription{is used to set up, in seconds, a CPU time limit after which the optimization process

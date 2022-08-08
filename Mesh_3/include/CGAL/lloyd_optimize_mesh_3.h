@@ -67,7 +67,7 @@ object used to create the `c3t3` parameter.
 \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
 @param cdt the initial mesh that will be modified by the algorithm to represent the final optimized mesh.
-@param domain ...
+@param domain the domain to be discretized
 @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
 \cgalNamedParamsBegin

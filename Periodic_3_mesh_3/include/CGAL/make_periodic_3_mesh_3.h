@@ -221,6 +221,12 @@ of 1-dimensional exposed features.
 
 \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
+\param c3t3 the mesh to be refined.
+\param domain the domain to be discretized
+\param criteria the criteria
+
+The following are optional named parameters.
+
 \cgalNamedParamsBegin
    \cgalParamNBegin{features_param}
      \cgalParamDescription{allows the user to specify whether 0 and 1-dimensional features have to be

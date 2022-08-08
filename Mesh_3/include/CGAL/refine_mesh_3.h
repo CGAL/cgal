@@ -351,7 +351,11 @@ In addition, if the domain has features, the argument
 `criteria` provides a sizing field to guide the discretization
 of 1-dimensional exposed features.
 
-The four additional parameters are optimization parameters.
+\param c3t3 the mesh to be refined.
+\param domain the domain to be discretized
+\param criteria the criteria
+
+The following four parameters are optional optimization parameters.
 They control which optimization processes are performed
 and allow the user to tune the parameters of the optimization processes.
 Individual optimization parameters are not described here as they are
