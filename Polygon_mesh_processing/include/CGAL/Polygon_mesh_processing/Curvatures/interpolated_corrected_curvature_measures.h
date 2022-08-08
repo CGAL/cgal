@@ -47,15 +47,13 @@ enum Curvature_measure_index {
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected area measure (mu0) of a specific face.
+* computes the interpolated corrected area measure \f$ \mu_0 \f$ of a specific face.
 *
-* @tparam GT is the geometric traits class.
+* @tparam GT geometric traits class model of `Kernel`.
 *
 * @param x is a vector of the vertex positions of the face.
-* @param u is a vector of the vertex nomrals of the face.
+* @param u is a vector of the vertex normals of the face.
 *
-* @return a scalar of type `GT::FT`.
-* This is the value of the interpolated corrected area measure of the given face.
 *
 * @see `interpolated_corrected_mean_curvature_measure_face()`
 * @see `interpolated_corrected_gaussian_curvature_measure_face()`
@@ -119,15 +117,12 @@ typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typen
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected mean curvature measure (mu1) of a specific face.
+* computes the interpolated corrected mean curvature measure \f$ \mu_1 \f$ of a specific face.
 *
-* @tparam GT is the geometric traits class.
+* @tparam GT geometric traits class model of `Kernel`.
 *
 * @param x is a vector of the vertex positions of the face.
 * @param u is a vector of the vertex nomrals of the face.
-*
-* @return a scalar of type `GT::FT`.
-* This is the value of the interpolated corrected mean curvature measure of the given face.
 *
 * @see `interpolated_corrected_gaussian_curvature_measure_face()`
 * @see `interpolated_corrected_area_measure_face()`
@@ -202,15 +197,12 @@ typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::ve
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected gaussian curvature measure (mu2) of a specific face.
+* computes the interpolated corrected gaussian curvature measure \f$ \mu_2 \f$ of a specific face.
 *
-* @tparam GT is the geometric traits class.
+* @tparam GT geometric traits class model of `Kernel`.
 *
 * @param x is a vector of the vertex positions of the face.
 * @param u is a vector of the vertex nomrals of the face.
-*
-* @return a scalar of type `GT::FT`.
-* This is the value of the interpolated corrected gaussian curvature measure of the given face.
 *
 * @see `interpolated_corrected_mean_curvature_measure_face()`
 * @see `interpolated_corrected_area_measure_face()`
@@ -266,14 +258,14 @@ typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* computes the interpolated corrected anisotropic measure (muXY) of a specific face.
+* computes the interpolated corrected anisotropic measure \f$ \mu_{XY} \f$ of a specific face.
 *
-* @tparam GT is the geometric traits class.
+* @tparam GT geometric traits class model of `Kernel`.
 *
 * @param u is a vector of the vertex nomrals of the face.
 * @param x is a vector of the vertex positions of the face.
 *
-* @return an array of scalar values for each combination of the standard basis (3x3) of type `std::array<GT::FT, 3 * 3>`.
+* @return an array of scalar values for each combination of the standard basis (3x3)
 * These are the values of the interpolated corrected anisotropic measure of the given face.
 *
 * @see `interpolated_corrected_anisotropic_measure_mesh()`
@@ -395,7 +387,7 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
 *
 * computes the interpolated corrected curvature measure on each face of the mesh
 *
-* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam FaceMeasureMap a a model of `WritablePropertyMap` with
 * `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `GT::FT` as value type.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -423,8 +415,8 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `%Vector_3` as value type}
 *     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals should be
-*                     computed inside the function body.}
+*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
+*                     computed using compute_vertex_normals()}
 *   \cgalParamNEnd
 *
 * \cgalNamedParamsEnd
@@ -511,7 +503,7 @@ template<typename PolygonMesh, typename FaceMeasureMap,
 *
 * computes the interpolated corrected anisotropic measure on each face of the mesh
 *
-* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam FaceMeasureMap a a model of `WritablePropertyMap` with
 * `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::array<GT::FT, 3 * 3>` as value type.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -537,8 +529,8 @@ template<typename PolygonMesh, typename FaceMeasureMap,
 *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `%Vector_3` as value type}
 *     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals should be
-*                     computed inside the function body.}
+*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
+*                     computed using compute_vertex_normals()}
 *   \cgalParamNEnd
 *
 * \cgalNamedParamsEnd
@@ -956,7 +948,6 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
         v_muXY = 0.5 * (v_muXY + v_muXY.transpose()) + K * u * u.transpose();
 
-        //(WIP)
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix <typename GT::FT, 3, 3>> eigensolver;
 
         eigensolver.computeDirect(v_muXY);
