@@ -657,8 +657,10 @@ typename GT::FT face_in_ball_ratio_2(const std::vector<typename GT::Vector_3>& x
 template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void expand_interpolated_corrected_measure_vertex(const PolygonMesh& pmesh,
-        FaceMeasureMap fmm,
-        VertexCurvatureMap vcm,
+        FaceMeasureMap area_fmm,
+        FaceMeasureMap curvature_fmm,
+        VertexCurvatureMap area_vcm,
+        VertexCurvatureMap curvature_vcm,
         const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
         const NamedParameters& np = parameters::default_values())
 {
@@ -684,6 +686,7 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
     typename GT::Point_3 vp = get(vpm, v);
     typename GT::Vector_3 c = typename GT::Vector_3(vp.x(), vp.y(), vp.z());
 
+    typename GT::FT corrected_mu0 = 0;
     typename GT::FT corrected_mui = 0;
 
     for (face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
@@ -709,7 +712,8 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
 
         if (f_ratio != 0.0)
         {
-            corrected_mui += f_ratio * get(fmm, fi);
+            corrected_mu0 += f_ratio * get(area_fmm, fi);
+            corrected_mui += f_ratio * get(curvature_fmm, fi);
             for (face_descriptor fj : faces_around_face(halfedge(fi, pmesh), pmesh))
             {
                 if (bfs_v.find(fj) == bfs_v.end() && fj != boost::graph_traits<PolygonMesh>::null_face())
@@ -720,15 +724,18 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
             }
         }
     }
-
-    put(vcm, v, corrected_mui);
+    put(area_vcm, v, corrected_mu0);
+    put(curvature_vcm, v, corrected_mui);
 }
 
-template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvatureMap,
+template<typename PolygonMesh, typename AreaFaceMeasureMap, typename AnisotropicFaceMeasureMap,
+    typename AreaVertexCurvatureMap, typename AnisotropicVertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void expand_interpolated_corrected_anisotropic_measure_vertex(const PolygonMesh& pmesh,
-        FaceMeasureMap fmm,
-        VertexCurvatureMap vcm,
+        AreaFaceMeasureMap area_fmm,
+        AnisotropicFaceMeasureMap aniso_fmm,
+        AreaVertexCurvatureMap area_vcm,
+        AnisotropicVertexCurvatureMap aniso_vcm,
         const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
         const NamedParameters& np = parameters::default_values())
 {
@@ -754,6 +761,7 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
     typename GT::Point_3 vp = get(vpm, v);
     typename GT::Vector_3 c = typename GT::Vector_3(vp.x(), vp.y(), vp.z());
 
+    typename GT::FT corrected_mu0 = 0;
     Eigen::Matrix<typename GT::FT, 3, 3> corrected_muXY = Eigen::Matrix<typename GT::FT, 3, 3>::Zero();
 
     for (face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
@@ -779,7 +787,9 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
 
         if (f_ratio != 0.0)
         {
-            std::array<typename GT::FT, 3 * 3> muXY_face = get(fmm, fi);
+            corrected_mu0 += f_ratio * get(area_fmm, fi);
+
+            std::array<typename GT::FT, 3 * 3> muXY_face = get(aniso_fmm, fi);
 
             for (std::size_t ix = 0; ix < 3; ix++)
                 for (std::size_t iy = 0; iy < 3; iy++)
@@ -795,8 +805,8 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexCurvature
             }
         }
     }
-
-    put(vcm, v, corrected_muXY);
+    put(area_vcm, v, corrected_mu0);
+    put(aniso_vcm, v, corrected_muXY);
 }
 
 template<typename PolygonMesh, typename VertexCurvatureMap,
@@ -826,8 +836,8 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu0_expand_map, v, np);
-        expand_interpolated_corrected_measure_vertex(pmesh, mu1_map, mu1_expand_map, v, np);
+        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu1_map, mu0_expand_map, mu1_expand_map, v, np);
+
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         if (v_mu0 != 0.0)
@@ -864,8 +874,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu0_expand_map, v, np);
-        expand_interpolated_corrected_measure_vertex(pmesh, mu2_map, mu2_expand_map, v, np);
+        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu2_map, mu0_expand_map, mu2_expand_map, v, np);
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         if(v_mu0 != 0.0)
@@ -935,8 +944,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu0_expand_map, v, np);
-        expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, muXY_map, muXY_expand_map, v, np);
+        expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, mu0_map, muXY_map, mu0_expand_map, muXY_expand_map, v, np);
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         Eigen::Matrix<typename GT::FT, 3, 3> v_muXY = get(muXY_expand_map, v);
