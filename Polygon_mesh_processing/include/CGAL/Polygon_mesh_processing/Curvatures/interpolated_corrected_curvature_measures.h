@@ -785,7 +785,7 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexMeasureMa
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
-* Expands given face area and anisotropic curvature measures around a vertex `v`.
+* Expands given face area and anisotropic measures around a vertex `v`.
 * Expansion is based on the inclusion ratio of each face in a ball of radius `r` around the vertex `v`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
@@ -801,10 +801,10 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexMeasureMa
 *
 * @param pmesh the polygon mesh
 * @param area_fmm (area face measure map) the property map storing the already computed area measure on each face.
-* @param aniso_fmm (anisotropic face measure map) the property map storing the already computed anisotropic curvature measure on each face.
+* @param aniso_fmm (anisotropic face measure map) the property map storing the already computed anisotropic measure on each face.
 * @param area_vmm (area vertex measure map) the property map provided to store the expanded area measure on each vertex.
-* @param aniso_vmm (anisotropic vertex measure map) the property map provided to store the expanded anisotropic curvature measure on each vertex.
-* @param v (vertex) the vertex to expand the area and anisotropic curvature measure around.
+* @param aniso_vmm (anisotropic vertex measure map) the property map provided to store the expanded anisotropic measure on each vertex.
+* @param v (vertex) the vertex to expand the area and anisotropic measure around.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
