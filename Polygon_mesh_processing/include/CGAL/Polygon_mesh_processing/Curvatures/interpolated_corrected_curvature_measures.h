@@ -1068,7 +1068,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 * \cgalNamedParamsEnd
 *
 * @see `interpolated_corrected_mean_curvature()`
-* @see `interpolated_corrected_gaussian_curvatures()`
+* @see `interpolated_corrected_gaussian_curvature()`
 * @see `interpolated_corrected_anisotropic_measure_mesh()`
 * @see `expand_interpolated_corrected_anisotropic_measure_vertex()`
 */
