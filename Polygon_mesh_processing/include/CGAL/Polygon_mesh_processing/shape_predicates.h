@@ -388,6 +388,7 @@ struct Is_edge_length_ratio_over_threshold<K, true>
 ///         If the face contains degenerate edges, a halfedge corresponding to one of these edges is returned.
 ///
 /// \sa `is_cap_triangle_face()`
+/// \sa `remove_almost_degenerate_faces()`
 template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
@@ -536,6 +537,7 @@ struct Is_cap_angle_over_threshold<K, true>
 /// \return the halfedge opposite of the largest angle if the face is a cap, and a null halfedge otherwise.
 ///
 /// \sa `is_needle_triangle_face()`
+/// \sa `remove_almost_degenerate_faces()`
 template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
