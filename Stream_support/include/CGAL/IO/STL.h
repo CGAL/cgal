@@ -74,7 +74,7 @@ bool read_STL(std::istream& is,
               TriangleRange& facets,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<internal::is_Range_v<TriangleRange>>* = nullptr
+              , std::enable_if_t<internal::is_Range<TriangleRange>::value>* = nullptr
 #endif
               )
 {
@@ -193,7 +193,7 @@ bool read_STL(const std::string& fname,
               TriangleRange& facets,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<internal::is_Range_v<TriangleRange>>* = nullptr
+              , std::enable_if_t<internal::is_Range<TriangleRange>::value>* = nullptr
 #endif
               )
 {
@@ -282,7 +282,7 @@ bool write_STL(std::ostream& os,
                const TriangleRange& facets,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<internal::is_Range_v<TriangleRange>>* = nullptr
+               , std::enable_if_t<internal::is_Range<TriangleRange>::value>* = nullptr
 #endif
                )
 {
@@ -392,7 +392,7 @@ bool write_STL(const std::string& fname,
                const TriangleRange& facets,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<internal::is_Range_v<TriangleRange>>* = nullptr
+               , std::enable_if_t<internal::is_Range<TriangleRange>::value>* = nullptr
 #endif
                )
 {

@@ -126,7 +126,7 @@ bool write_XYZ(std::ostream& os,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<internal::is_Range_v<PointRange>>* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {
@@ -179,7 +179,7 @@ bool write_XYZ(const std::string& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<internal::is_Range_v<PointRange>>* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {
