@@ -23,10 +23,10 @@
  * The header file for the Arr_circle_segment_traits_2<Kenrel> class.
  */
 
-#define _USE_MATH_DEFINES
 #include <fstream>
-#include <atomic>
+#define _USE_MATH_DEFINES
 #include <cmath>
+#include <atomic>
 
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
