@@ -773,7 +773,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
 //
 template <typename Vis>
 void Surface_sweep_2<Vis>::_create_intersection_point(const Point_2& xp,
-                                                      unsigned int multiplicity,
+                                                      Multiplicity multiplicity,
                                                       Subcurve*& c1,
                                                       Subcurve*& c2)
 {
