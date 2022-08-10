@@ -116,11 +116,11 @@ private:
 
   typedef std::shared_ptr<Rat_kernel>               Shared_rat_kernel;
   typedef std::shared_ptr<Alg_kernel>               Shared_alg_kernel;
-  typedef std::shared_ptr<Nt_traits>                Shared_nt_Traits;
+  typedef std::shared_ptr<Nt_traits>                Shared_nt_traits;
 
   const Shared_rat_kernel m_rat_kernel;
   const Shared_alg_kernel m_alg_kernel;
-  const Shared_nt_Traits m_nt_traits;
+  const Shared_nt_traits m_nt_traits;
 
   mutable Intersection_map m_inter_map; // Mapping conic pairs to their
                                         // intersection points.
@@ -134,11 +134,23 @@ public:
    */
   Arr_conic_traits_2(Shared_rat_kernel rat_kernel,
                      Shared_alg_kernel alg_kernel,
-                     Shared_nt_Traits nt_traits) :
+                     Shared_nt_traits nt_traits) :
     m_rat_kernel(rat_kernel),
     m_alg_kernel(alg_kernel),
     m_nt_traits(nt_traits)
   {}
+
+  /*! Obtain the rational kernel.
+   */
+  Shared_rat_kernel rat_kernel() { return m_rat_kernel; }
+
+  /*! Obtain the algebraic kernel.
+   */
+  Shared_alg_kernel alg_kernel() { return m_alg_kernel; }
+
+  /*! Obtain the nt traits.
+   */
+  Shared_nt_traits nt_traits() { return m_nt_traits; }
 
   /*! Obtain the next conic index. */
   static size_t get_index() {
@@ -303,94 +315,13 @@ public:
         if (x_res_right == EQUAL) q = xcv.right();
         else {
           CGAL_precondition(x_res_right != LARGER);
-          q = point_at_x(xcv, p);
+          q = m_traits.point_at_x(xcv, p);
         }
       }
 
       // Compare p with the a point of the curve with the same x coordinate.
       return cmp_y(p, q);
     }
-
-  private:
-    /*! Compute a point on an arc with the same \f$x\f$-coordiante as the given
-     * point.
-     * \param p The given point.
-     * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
-     * \return A point on the arc with the same \f$x\f$-coordiante as `p`.
-     */
-    Point_2 point_at_x(const X_monotone_curve_2& xcv, const Point_2& p) const {
-      // Make sure that p is in the x-range of the arc.
-      CGAL_precondition(! xcv.is_vertical());
-
-      CGAL_precondition_code(auto cmp_x =
-                             m_traits.m_alg_kernel->compare_x_2_object());
-      CGAL_precondition((cmp_x(p, xcv.left()) != SMALLER) &&
-                        (cmp_x(p, xcv.right()) != LARGER));
-
-      if (xcv.is_special_segment()) {
-        // In case of a special segment, the equation of the supported line
-        // (a*x + b*y + c) = 0 is stored with the extra data field, and we
-        // simply have:
-        const auto& extra_data = xcv.extra_data();
-        Algebraic y = -(extra_data->a*p.x() + extra_data->c) / extra_data->b;
-
-        // Return the computed point.
-        return Point_2(p.x(), y);
-      }
-
-      // Compute the y-coordinate according to the degree of the supporting
-      // conic curve.
-      Algebraic y;
-
-      if (xcv.degree_mask() == X_monotone_curve_2::degree_1_mask()) {
-        // In case of a linear curve, the y-coordinate is a simple linear
-        // expression of x(p) (note that v is not 0 as the arc is not vertical):
-        //   y = -(u*x(p) + w) / v
-        y = -(xcv.alg_u()*p.x() + xcv.alg_w()) / xcv.alg_v();
-      }
-      else if (xcv.orientation() == COLLINEAR) {
-        const auto& extra_data = xcv.extra_data();
-        CGAL_assertion(extra_data != nullptr);
-
-        // In this case the equation of the supporting line is given by the
-        // extra data structure.
-        y = -(extra_data->a * p.x() + extra_data->c) / extra_data->b;
-      }
-      else {
-        CGAL_assertion(xcv.degree_mask() == X_monotone_curve_2::degree_2_mask());
-
-        // In this case the y-coordinate is one of solutions to the quadratic
-        // equation:
-        //  s*y^2 + (t*x(p) + v)*y + (r*x(p)^2 + u*x(p) + w) = 0
-        Algebraic A = xcv.alg_s();
-        Algebraic B = xcv.alg_t()*p.x() + xcv.alg_v();
-        Algebraic C = (xcv.alg_r()*p.x() + xcv.alg_u())*p.x() + xcv.alg_w();
-
-        if (CGAL::sign(xcv.s()) == ZERO) {
-          // In this case A is 0 and we have a linear equation.
-          CGAL_assertion(CGAL::sign(B) != ZERO);
-
-          y = -C / B;
-        }
-        else {
-          // Solve the quadratic equation.
-          Algebraic disc = B*B - 4*A*C;
-
-          CGAL_assertion(CGAL::sign(disc) != NEGATIVE);
-
-          // We take either the root involving -sqrt(disc) or +sqrt(disc)
-          // based on the information flags.
-          const auto nt_traits = m_traits.m_nt_traits;
-          y = (xcv.test_flag(X_monotone_curve_2::PLUS_SQRT_DISC_ROOT)) ?
-          (nt_traits->sqrt(disc) - B) / (2*A) :
-          -(B + nt_traits->sqrt(disc)) / (2*A);
-        }
-      }
-
-      // Return the computed point.
-      return Point_2(p.x(), y);
-    }
-
   };
 
   /*! Obtain a Compare_y_at_x_2 functor object. */
@@ -841,8 +772,8 @@ public:
      *   `ARR_RIGHT_BOUNDARY`&mdash;the arc approaches the identification curve from
      *                              the left at the arc right end.
      */
-    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
-                                   Arr_curve_end ce) const {
+    Arr_parameter_space operator()(const X_monotone_curve_2 & /* xcv */,
+                                   Arr_curve_end /* ce */) const {
       CGAL_error_msg("Not implemented yet!");
       return ARR_INTERIOR;
     }
@@ -1710,7 +1641,8 @@ public:
     }
 
     double hyperbola_length(const X_monotone_curve_2& xcv) {
-      double l;
+      CGAL_error_msg("Not implemented yet!");
+      double l(0.0);
       return l;
     }
   };
@@ -3196,7 +3128,7 @@ public:
           // the arc is not infinite.
           Point_2 p_mid =
             m_alg_kernel->construct_midpoint_2_object()(source, target);
-          Point_2 ps[2];
+          Alg_point_2 ps[2];
           bool finite_at_x = (points_at_x(cv, p_mid, ps) > 0);
           bool finite_at_y = (points_at_y(cv, p_mid, ps) > 0);
           if (! finite_at_x && ! finite_at_y) {
@@ -3542,13 +3474,90 @@ public:
     return 2;
   }
 
+  /*! Compute a point on an arc with the same \f$x\f$-coordiante as the given
+   * point.
+   * \param p The given point.
+   * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
+   * \return A point on the arc with the same \f$x\f$-coordiante as `p`.
+   */
+  Point_2 point_at_x(const X_monotone_curve_2& xcv, const Point_2& p) const {
+    // Make sure that p is in the x-range of the arc.
+    CGAL_precondition(! xcv.is_vertical());
+
+    CGAL_precondition_code(auto cmp_x = m_alg_kernel->compare_x_2_object());
+    CGAL_precondition((cmp_x(p, xcv.left()) != SMALLER) &&
+                      (cmp_x(p, xcv.right()) != LARGER));
+
+    if (xcv.is_special_segment()) {
+      // In case of a special segment, the equation of the supported line
+      // (a*x + b*y + c) = 0 is stored with the extra data field, and we
+      // simply have:
+      const auto& extra_data = xcv.extra_data();
+      Algebraic y = -(extra_data->a*p.x() + extra_data->c) / extra_data->b;
+
+      // Return the computed point.
+      return Point_2(p.x(), y);
+    }
+
+    // Compute the y-coordinate according to the degree of the supporting
+    // conic curve.
+    Algebraic y;
+
+    if (xcv.degree_mask() == X_monotone_curve_2::degree_1_mask()) {
+      // In case of a linear curve, the y-coordinate is a simple linear
+      // expression of x(p) (note that v is not 0 as the arc is not vertical):
+      //   y = -(u*x(p) + w) / v
+      y = -(xcv.alg_u()*p.x() + xcv.alg_w()) / xcv.alg_v();
+    }
+    else if (xcv.orientation() == COLLINEAR) {
+      const auto& extra_data = xcv.extra_data();
+      CGAL_assertion(extra_data != nullptr);
+
+      // In this case the equation of the supporting line is given by the
+      // extra data structure.
+      y = -(extra_data->a * p.x() + extra_data->c) / extra_data->b;
+    }
+    else {
+      CGAL_assertion(xcv.degree_mask() == X_monotone_curve_2::degree_2_mask());
+
+      // In this case the y-coordinate is one of solutions to the quadratic
+      // equation:
+      //  s*y^2 + (t*x(p) + v)*y + (r*x(p)^2 + u*x(p) + w) = 0
+      Algebraic A = xcv.alg_s();
+      Algebraic B = xcv.alg_t()*p.x() + xcv.alg_v();
+      Algebraic C = (xcv.alg_r()*p.x() + xcv.alg_u())*p.x() + xcv.alg_w();
+
+      if (CGAL::sign(xcv.s()) == ZERO) {
+        // In this case A is 0 and we have a linear equation.
+        CGAL_assertion(CGAL::sign(B) != ZERO);
+
+        y = -C / B;
+      }
+      else {
+        // Solve the quadratic equation.
+        Algebraic disc = B*B - 4*A*C;
+
+        CGAL_assertion(CGAL::sign(disc) != NEGATIVE);
+
+        // We take either the root involving -sqrt(disc) or +sqrt(disc)
+        // based on the information flags.
+        y = (xcv.test_flag(X_monotone_curve_2::PLUS_SQRT_DISC_ROOT)) ?
+          (m_nt_traits->sqrt(disc) - B) / (2*A) :
+          -(B + m_nt_traits->sqrt(disc)) / (2*A);
+      }
+    }
+
+    // Return the computed point.
+    return Point_2(p.x(), y);
+  }
+
   /*! Find all points on the arc with a given \f$x\f$-coordinate.
    * \param p A placeholder for the \f$x\f$-coordinate.
    * \param ps The point on the arc at `x(p)`.
    * \pre The vector `ps` should be allocated at the size of 2.
    * \return The number of points found.
    */
-  int points_at_x(const Curve_2& cv, const Point_2& p, Point_2* ps) const {
+  int points_at_x(const Curve_2& cv, const Point_2& p, Alg_point_2* ps) const {
     // Get the y coordinates of the points on the conic.
     Algebraic ys[2];
     int n = conic_get_y_coordinates(cv, p.x(), ys);
@@ -3572,7 +3581,7 @@ public:
    * \pre The vector `ps` should be allocated at the size of 2.
    * \return The number of points found.
    */
-  int points_at_y(const Curve_2& cv, const Point_2& p, Point_2* ps) const {
+  int points_at_y(const Curve_2& cv, const Point_2& p, Alg_point_2* ps) const {
     // Get the y coordinates of the points on the conic.
     Algebraic xs[2];
     int n = conic_get_x_coordinates(cv, p.y(), xs);
