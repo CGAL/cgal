@@ -434,9 +434,8 @@ private:
                               const T1& obj1,
                               const T2& obj2) const
   {
-    typename Kernel::Compare_distance_3 compare_distance =
-      Kernel().compare_distance_3_object();
-    return compare_distance(p,obj1,obj2);
+    return CGAL::compare(CGAL::squared_distance(p, obj1),
+                         CGAL::squared_distance(p, obj2));
   }
 
 public:
