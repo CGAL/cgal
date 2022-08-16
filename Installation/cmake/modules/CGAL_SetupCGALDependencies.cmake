@@ -75,6 +75,13 @@ endif()
 #   keyword.
 #
 function(CGAL_setup_CGAL_dependencies target)
+  foreach(dir ${CGAL_INCLUDE_DIRS})
+    target_include_directories(${target} INTERFACE
+      $<BUILD_INTERFACE:${dir}>)
+  endforeach()
+  target_include_directories(${target} INTERFACE
+    $<INSTALL_INTERFACE:include>)
+
   if(CGAL_DISABLE_GMP)
     target_compile_definitions(${target} INTERFACE CGAL_DISABLE_GMP=1)
   else()
@@ -96,13 +103,6 @@ function(CGAL_setup_CGAL_dependencies target)
 
   use_CGAL_Boost_support(${target} INTERFACE)
 
-  foreach(dir ${CGAL_INCLUDE_DIRS})
-    target_include_directories(${target} INTERFACE
-      $<BUILD_INTERFACE:${dir}>)
-  endforeach()
-  target_include_directories(${target} INTERFACE
-    $<INSTALL_INTERFACE:include>)
-
   # Make CGAL depend on threads-support (for Epeck and Epeck_d)
   if(CGAL_HAS_NO_THREADS)
     target_compile_definitions(${target} INTERFACE CGAL_HAS_NO_THREADS)
@@ -114,6 +114,11 @@ function(CGAL_setup_CGAL_dependencies target)
     target_link_libraries(${target} INTERFACE Threads::Threads)
   endif()
 
+  if(CGAL_USE_ASAN OR "$ENV{CGAL_USE_ASAN}")
+    set(CMAKE_DISABLE_FIND_PACKAGE_TBB TRUE CACHE BOOL "CGAL_USE_ASAN (AddressSanitizer) and TBB are incompatible")
+    target_compile_options(${target} INTERFACE -fsanitize=address)
+    target_link_options(${target} INTERFACE -fsanitize=address)
+  endif()
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} INTERFACE

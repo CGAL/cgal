@@ -8,6 +8,7 @@ of the points in the range [`first`, `beyond`).
 The resulting sequence is placed starting at
 position `result`, and the past-the-end iterator for
 the resulting sequence is returned.
+
 \pre The source range [`first`,`beyond`) corresponds to a simple polyline. [`first`,`beyond`) does not contain `result`.
 
 The default traits class `Default_traits` is the kernel in which the
@@ -35,6 +36,8 @@ functions that return instances of these types:
 \sa `CGAL::ch_graham_andrew()`
 \sa `CGAL::ch_jarvis()`
 \sa `CGAL::ch_melkman()`
+\sa `CGAL::lower_hull_points_2()`
+\sa `CGAL::upper_hull_points_2()`
 \sa `CGAL::convex_hull_2()`
 
 \cgalHeading{Implementation}
@@ -42,12 +45,11 @@ functions that return instances of these types:
 It uses an implementation of Melkman's algorithm \cgalCite{m-olcch-87}.
 Running time of this is linear.
 
-
 */
 template <class InputIterator, class OutputIterator>
 OutputIterator
-ch_melkman( InputIterator first, InputIterator last,
-OutputIterator result,
-const Traits& ch_traits = Default_traits);
+ch_melkman(InputIterator first, InputIterator beyond,
+           OutputIterator result,
+           const Traits& ch_traits = Default_traits);
 
 } /* namespace CGAL */

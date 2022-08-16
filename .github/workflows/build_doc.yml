@@ -9,7 +9,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v6
         id: get_round
         with:
          result-encoding: string
@@ -31,7 +31,7 @@ jobs:
              }
            }
            return 'stop'
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v6
         if: steps.get_round.outputs.result != 'stop'
         id: get_pr_number
         with:
@@ -40,7 +40,7 @@ jobs:
            //get pullrequest url
            const pr_number = context.payload.issue.number
            return pr_number
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         name: "checkout branch"
         if: steps.get_round.outputs.result != 'stop'
         with:
@@ -56,7 +56,7 @@ jobs:
           set -x
           sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
           sudo pip install lxml
-          sudo pip install 'pyquery==1.4.1' # it seems to be the last py2 compatible version
+          sudo pip install pyquery
           wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_8_13_patched/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
           sudo chmod +x /usr/bin/doxygen
@@ -115,7 +115,7 @@ jobs:
           fi
 
       - name: Post address
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         if: ${{ success() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
@@ -123,7 +123,7 @@ jobs:
             const id = tmp_round.indexOf(":");
             const round = tmp_round.substring(0,id);
             const address = "The documentation is built. It will be available, after a few minutes, here: https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/"+round+"/Manual/index.html"
-            github.issues.createComment({
+            github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
               issue_number: ${{ github.event.issue.number }},
@@ -131,13 +131,13 @@ jobs:
             });
 
       - name: Post error
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         if: ${{ failure() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
             const error = "${{steps.build_and_run.outputs.DoxygenError}}"
             const msg = "There was an error while building the doc: \n"+error
-            github.issues.createComment({
+            github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
               issue_number: ${{ github.event.issue.number }},

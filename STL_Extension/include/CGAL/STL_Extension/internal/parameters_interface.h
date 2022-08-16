@@ -32,6 +32,8 @@ CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_
 CGAL_add_named_parameter(vertex_to_vertex_output_iterator_t, vertex_to_vertex_output_iterator, vertex_to_vertex_output_iterator)
 CGAL_add_named_parameter(halfedge_to_halfedge_output_iterator_t, halfedge_to_halfedge_output_iterator, halfedge_to_halfedge_output_iterator)
 CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_iterator, face_to_face_output_iterator)
+CGAL_add_named_parameter(point_to_vertex_output_iterator_t, point_to_vertex_output_iterator, point_to_vertex_output_iterator)
+CGAL_add_named_parameter(polygon_to_face_output_iterator_t, polygon_to_face_output_iterator, polygon_to_face_output_iterator)
 
 CGAL_add_named_parameter(vertex_to_vertex_map_t, vertex_to_vertex_map, vertex_to_vertex_map)
 CGAL_add_named_parameter(halfedge_to_halfedge_map_t, halfedge_to_halfedge_map, halfedge_to_halfedge_map)
@@ -130,6 +132,17 @@ CGAL_add_named_parameter(match_faces_t, match_faces, match_faces)
 CGAL_add_named_parameter(face_epsilon_map_t, face_epsilon_map, face_epsilon_map)
 CGAL_add_named_parameter(maximum_number_t, maximum_number, maximum_number)
 CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use_one_sided_hausdorff)
+CGAL_add_named_parameter(cap_threshold_t, cap_threshold, cap_threshold)
+CGAL_add_named_parameter(needle_threshold_t, needle_threshold, needle_threshold)
+CGAL_add_named_parameter(flip_triangle_height_threshold_t, flip_triangle_height_threshold, flip_triangle_height_threshold)
+CGAL_add_named_parameter(collapse_length_threshold_t, collapse_length_threshold, collapse_length_threshold)
+CGAL_add_named_parameter(features_angle_bound_t, features_angle_bound, features_angle_bound)
+CGAL_add_named_parameter(mesh_edge_size_t, mesh_edge_size, mesh_edge_size)
+CGAL_add_named_parameter(mesh_facet_size_t, mesh_facet_size, mesh_facet_size)
+CGAL_add_named_parameter(mesh_facet_angle_t, mesh_facet_angle, mesh_facet_angle)
+CGAL_add_named_parameter(mesh_facet_distance_t, mesh_facet_distance, mesh_facet_distance)
+CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_topology)
+CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_constraints)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -213,6 +226,15 @@ CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, s
 CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
 CGAL_add_named_parameter(seed_points_t, seed_points, seed_points)
 
+// SMDS_3 parameters
+CGAL_add_named_parameter(surface_facets_t, surface_facets, surface_facets)
+CGAL_add_named_parameter(subdomain_indices_t, subdomain_indices, subdomain_indices)
+CGAL_add_named_parameter(all_vertices_t, all_vertices, all_vertices)
+CGAL_add_named_parameter(all_cells_t, all_cells, all_cells)
+CGAL_add_named_parameter(rebind_labels_t, rebind_labels, rebind_labels)
+CGAL_add_named_parameter(show_patches_t, show_patches, show_patches)
+CGAL_add_named_parameter(allow_non_manifold_t, allow_non_manifold, allow_non_manifold)
+
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)
 CGAL_add_named_parameter(proxies_t, proxies, proxies)
@@ -237,7 +259,6 @@ CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_dire
 CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
 CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
 CGAL_add_named_parameter(segment_t, segment_map, segment_map)
-
 
 // List of named parameters used in Mesh_2 package
 CGAL_add_named_parameter(seeds_t, seeds, seeds)
@@ -303,3 +324,4 @@ CGAL_add_named_parameter(sizing_field_param_t, sizing_field_param, sizing_field_
 
 CGAL_add_named_parameter(function_param_t, function_param, function_param)
 CGAL_add_named_parameter(bounding_object_param_t, bounding_object_param, bounding_object_param)
+

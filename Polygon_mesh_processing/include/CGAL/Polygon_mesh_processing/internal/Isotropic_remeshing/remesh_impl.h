@@ -441,18 +441,24 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
         {
+          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
         }
 
         //do it again on the other side if we're not on boundary
         halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
         if (!is_border(hnew_opp, mesh_))
         {
+          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
         }
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -853,11 +859,12 @@ namespace internal {
             mesh_, vpmap_, vcmap_, ecmap_, gt_,
             cap_threshold, // bound on the angle: above 160 deg => cap
             4, // bound on shortest/longest edge above 4 => needle
-            0);// collapse length threshold : not needed here
+            0,// collapse length threshold : not needed here
+            0); // flip triangle height threshold
 
         std::array<halfedge_descriptor, 2> r2 = internal::is_badly_shaped(
             face(opposite(he, mesh_), mesh_),
-            mesh_, vpmap_, vcmap_, ecmap_, gt_, cap_threshold, 4, 0);
+            mesh_, vpmap_, vcmap_, ecmap_, gt_, cap_threshold, 4, 0, 0);
 
         const bool badly_shaped = (r1[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
                                 || r1[1] != boost::graph_traits<PolygonMesh>::null_halfedge()//cap
@@ -1171,7 +1178,7 @@ private:
     {
       Point p1 = get(vpmap_, target(he, mesh_));
       Point p2 = get(vpmap_, source(he, mesh_));
-      return CGAL::midpoint(p1, p2);
+      return gt_.construct_midpoint_3_object()(p1, p2);
     }
 
     void dump(const char* filename) const

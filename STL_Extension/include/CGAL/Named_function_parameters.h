@@ -461,6 +461,19 @@ const T& choose_parameter(const T& t)
   return t;
 }
 
+// Version with three parameters for dynamic property maps
+template <typename D, typename Dynamic_tag, typename PolygonMesh>
+D choose_parameter(const internal_np::Param_not_found&, Dynamic_tag tag, PolygonMesh& pm)
+{
+  return get(tag, pm);
+}
+
+template <typename D, typename T, typename Dynamic_tag, typename PolygonMesh>
+const T& choose_parameter(const T& t, Dynamic_tag, PolygonMesh&)
+{
+  return t;
+}
+
 template <class NamedParameters, class Parameter>
 struct is_default_parameter
 {

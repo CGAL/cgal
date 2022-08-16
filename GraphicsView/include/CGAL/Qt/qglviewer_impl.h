@@ -3761,7 +3761,28 @@ void CGAL::QGLViewer::saveSnapshot()
   }
 }
 
+CGAL_INLINE_FUNCTION
+void CGAL::QGLViewer::saveSnapshot(const QString& fileName,
+                                   const qreal finalWidth, const qreal finalHeight,
+                                   const bool expand,
+                                   const double oversampling,
+                                   qglviewer::SnapShotBackground background_color)
+{
+  if(fileName.isEmpty())
+    return;
+
+  QSize finalSize(finalWidth, finalHeight);
+
+  QImage* image = takeSnapshot(qglviewer::SnapShotBackground(background_color),
+                               finalSize, oversampling, expand);
+  if(image)
+  {
+    image->save(fileName);
+    delete image;
+  }
 }
+
+} // namespace CGAL
 
 CGAL_INLINE_FUNCTION
 bool CGAL::QGLViewer::isSharing() const

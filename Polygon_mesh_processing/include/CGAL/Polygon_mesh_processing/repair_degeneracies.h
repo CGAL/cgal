@@ -61,7 +61,8 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
                 const Traits& gt,
                 const double cap_threshold, // angle over 160° ==> cap
                 const double needle_threshold, // longest edge / shortest edge over this ratio ==> needle
-                const double collapse_length_threshold) // max length of edges allowed to be collapsed
+                const double collapse_length_threshold, // max length of edges allowed to be collapsed
+                const double flip_triangle_height_threshold_squared) // max height of triangles allowed to be flipped
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -83,8 +84,14 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
   }
 
   res = PMP::is_cap_triangle_face(f, tmesh, cap_threshold, parameters::vertex_point_map(vpm).geom_traits(gt));
-  if(res != null_h && !get(ecm, edge(res, tmesh)))
+  if( res != null_h && !get(ecm, edge(res, tmesh) ) &&
+     (flip_triangle_height_threshold_squared == 0 ||
+      typename Traits::Compare_squared_distance_3()( get(vpm, target(next(res,tmesh), tmesh)),
+                                                     typename Traits::Line_3(get(vpm, source(res,tmesh)), get(vpm, target(res,tmesh))),
+                                                     flip_triangle_height_threshold_squared) != LARGER ))
+  {
     return make_array(null_h, res);
+  }
 
   return make_array(null_h, null_h);
 }
@@ -100,13 +107,15 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
                                     const double cap_threshold, // angle over this threshold (as a cosine) ==> cap
                                     const double needle_threshold, // longest edge / shortest edge over this ratio ==> needle
                                     const double collapse_length_threshold, // max length of edges allowed to be collapsed
+                                    const double flip_triangle_height_threshold_squared, // max height squared of triangles that can be flipped
                                     HalfedgeContainer& edges_to_collapse,
                                     HalfedgeContainer& edges_to_flip)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
 
   std::array<halfedge_descriptor, 2> res = is_badly_shaped(f, tmesh, vpm, vcm, ecm, gt, cap_threshold,
-                                                           needle_threshold, collapse_length_threshold);
+                                                           needle_threshold,
+                                                           collapse_length_threshold, flip_triangle_height_threshold_squared);
 
   if(res[0] != boost::graph_traits<TriangleMesh>::null_halfedge())
   {
@@ -527,15 +536,95 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 
 } // namespace internal
 
-namespace experimental {
-
-// @todo check what to use as priority queue with removable elements, set might not be optimal
+/// \ingroup PMP_repairing_grp
+///
+/// removes almost degenerate faces in a range of faces from a triangulated surface mesh.
+/// Almost degenerated triangle faces are classified as caps or needles: a triangle is said to be a <i>needle</i>
+/// if its longest edge is much longer than its shortest edge. A triangle is said to be a <i>cap</i> if one of
+/// its angles is close to `180` degrees. Needles are removed by collapsing their shortest edges, while caps are
+/// removed by flipping the edge opposite to the largest angle (with the exception of caps on the boundary that are
+/// simply removed from the mesh).
+///
+/// @pre `CGAL::is_triangle_mesh(tmesh)`
+///
+/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+/// @tparam FaceRange a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+///
+/// @param face_range the initial range of faces to be considered to look for badly shaped triangles.
+///                   Note that modifications of `tmesh` are not limited to faces in `face_range`
+///                   and neighbor faces might also be impacted.
+/// @param tmesh the triangulated surface mesh to be modified
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamNBegin{cap_threshold}
+///     \cgalParamDescription{the cosine of a minimum angle such that if a face has an angle greater than this bound,
+///                           it is a cap. The threshold is in range `[-1 0]` and corresponds to an angle between `90` and `180` degrees.}
+///     \cgalParamType{double}
+///     \cgalParamDefault{the cosinus corresponding to an angle of 160 degrees}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{needle_threshold}
+///     \cgalParamDescription{a bound on the ratio of the lengths of the longest edge and the shortest edge, such that a face having a ratio
+///                           larger than the threshold is a needle.}
+///     \cgalParamType{double}
+///     \cgalParamDefault{4}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{collapse_length_threshold}
+///     \cgalParamDescription{if different from 0, an edge collapsed will be prevented if the edge is longer than the threshold given.}
+///     \cgalParamType{double}
+///     \cgalParamDefault{0}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{flip_triangle_height_threshold}
+///     \cgalParamDescription{if different from 0, an edge flip will be prevented if the height of the triangle (whose base is the edge to be flipped)
+///                           is longer than the threshold given.}
+///     \cgalParamType{double}
+///     \cgalParamDefault{0}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tmesh`.}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`.}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class.}
+///     \cgalParamType{A model of `Kernel`.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{edge_is_constrained_map}
+///     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`.}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+///                    as key type and `bool` as value type.}
+///     \cgalParamDefault{a default property map where no edge is constrained.}
+///     \cgalParamExtra{A constrained edge can not be collapsed nor flipped.}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{vertex_is_constrained_map}
+///     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`.}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `bool` as value type.}
+///     \cgalParamDefault{a default property map where no vertex is constrained.}
+///     \cgalParamExtra{A constrained vertex is guaranteed to be present in `tmesh` after the function call.}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{filter}
+///     \cgalParamDescription{A function object providing `bool operator()(geom_traits::Point_3,geom_traits::Point_3,geom_traits::Point_3)`.}
+///     \cgalParamType{The function object is queried each time a new triangle is about to be created by a flip or a collapse operation.
+///                    If `false` is returned, the operation is cancelled.}
+///     \cgalParamDefault{a functor always returning `true`.}
+///   \cgalParamNEnd
+/// \cgalNamedParamsEnd
+///
+/// \return `true` if no almost degenerate face could not be removed (due to topological constraints), and `false` otherwise.
+///
+/// \sa `is_needle_triangle_face()`
+/// \sa `is_cap_triangle_face()`
+///
+/// @todo check what to use as priority queue with removable elements, set might not be optimal
+///
 template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool remove_almost_degenerate_faces(const FaceRange& face_range,
                                     TriangleMesh& tmesh,
-                                    const double cap_threshold,
-                                    const double needle_threshold,
-                                    const double collapse_length_threshold,
                                     const NamedParameters& np = parameters::default_values())
 {
   using CGAL::parameters::choose_parameter;
@@ -580,6 +669,16 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type DVCM;
   DVCM vcm = get(Vertex_property_tag(), tmesh);
 
+  // parameters
+  const double cap_threshold =
+    choose_parameter(get_parameter(np, internal_np::cap_threshold), -0.939692621); // cos(160)
+  const double needle_threshold =
+    choose_parameter(get_parameter(np, internal_np::needle_threshold), 4.);
+  const double collapse_length_threshold =
+    choose_parameter(get_parameter(np, internal_np::collapse_length_threshold), 0.);
+  const double flip_triangle_height_threshold_squared =
+    CGAL::square(choose_parameter(get_parameter(np, internal_np::flip_triangle_height_threshold), 0));
+
   CGAL_precondition(is_valid_polygon_mesh(tmesh));
   CGAL_precondition(is_triangle_mesh(tmesh));
 
@@ -611,7 +710,8 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   for(face_descriptor f : face_range)
   {
     internal::collect_badly_shaped_triangles(f, tmesh, vpm, vcm, ecm, gt,
-                                             cap_threshold, needle_threshold, collapse_length_threshold,
+                                             cap_threshold, needle_threshold,
+                                             collapse_length_threshold, flip_triangle_height_threshold_squared,
                                              edges_to_collapse, edges_to_flip);
   }
 
@@ -671,7 +771,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         // Verify that the element is still badly shaped
         const std::array<halfedge_descriptor, 2> nc =
           internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                    cap_threshold, needle_threshold, collapse_length_threshold);
+                                    cap_threshold, needle_threshold, collapse_length_threshold, flip_triangle_height_threshold_squared);
 
         if(nc[0] != h)
         {
@@ -757,7 +857,8 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           if(!is_border(hv, tmesh))
           {
             internal::collect_badly_shaped_triangles(face(hv, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                                     cap_threshold, needle_threshold, collapse_length_threshold,
+                                                     cap_threshold, needle_threshold,
+                                                     collapse_length_threshold, flip_triangle_height_threshold_squared,
                                                      edges_to_collapse, edges_to_flip);
           }
         }
@@ -806,7 +907,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 
       std::array<halfedge_descriptor,2> nc = internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
                                                                        cap_threshold, needle_threshold,
-                                                                       collapse_length_threshold);
+                                                                       collapse_length_threshold, flip_triangle_height_threshold_squared);
       // Check the triangle is still a cap
       if(nc[1] != h)
       {
@@ -819,6 +920,18 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       // special case of `edge(h, tmesh)` being a border edge --> remove the face
       if(is_border(opposite(h, tmesh), tmesh))
       {
+        // check a non-manifold vertex won't be created
+        bool removal_is_nm=false;
+        for(halfedge_descriptor hh : CGAL::halfedges_around_target(next(h, tmesh), tmesh))
+        {
+          if (is_border(hh, tmesh))
+          {
+            removal_is_nm = true;
+            break;
+          }
+        }
+        if (removal_is_nm) continue;
+
         for(halfedge_descriptor hh : CGAL::halfedges_around_face(h, tmesh))
         {
           // Remove from even 'next_edges_to_flip' because it might have been re-added from a flip
@@ -868,7 +981,8 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           CGAL_assertion(!is_border(h, tmesh));
           std::array<halfedge_descriptor, 2> nc =
             internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                      cap_threshold, needle_threshold, collapse_length_threshold);
+                                      cap_threshold, needle_threshold,
+                                      collapse_length_threshold, flip_triangle_height_threshold_squared);
 
           if(nc[1] != boost::graph_traits<TriangleMesh>::null_halfedge() && nc[1] != h)
             next_edges_to_flip.insert(nc[1]);
@@ -909,18 +1023,16 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   return false;
 }
 
+/// \ingroup PMP_repairing_grp
+/// removes all almost degenerate faces from a triangulated surface mesh.
+/// Equivalent to `remove_almost_degenerate_faces(faces(tmesh), tmesh, np)`
 template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool remove_almost_degenerate_faces(TriangleMesh& tmesh,
-                                    const double cap_threshold,
-                                    const double needle_threshold,
-                                    const double collapse_length_threshold,
                                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return remove_almost_degenerate_faces(faces(tmesh), tmesh, cap_threshold, needle_threshold,
-                                        collapse_length_threshold, np);
+  return remove_almost_degenerate_faces(faces(tmesh), tmesh, np);
 }
 
-} // namespace experimental
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////

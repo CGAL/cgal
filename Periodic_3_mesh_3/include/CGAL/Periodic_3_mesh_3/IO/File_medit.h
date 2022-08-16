@@ -308,7 +308,7 @@ void output_to_medit(std::ostream& os,
 #endif
   CGAL_precondition(c3t3.triangulation().is_1_cover());
 
-  typedef CGAL::Mesh_3::Medit_pmap_generator<C3T3, rebind, no_patch>  Generator;
+  typedef CGAL::SMDS_3::Medit_pmap_generator<C3T3, rebind, no_patch>  Generator;
   typedef typename Generator::Cell_pmap                               Cell_pmap;
   typedef typename Generator::Facet_pmap                              Facet_pmap;
   typedef typename Generator::Facet_pmap_twice                        Facet_pmap_twice;

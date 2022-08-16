@@ -52,9 +52,9 @@ int main()
 
   std::cout << "Run Lloyd optimization...";
   CGAL::lloyd_optimize_mesh_2(cdt,
-    CGAL::parameters::number_of_iterations(10));
+                              CGAL::parameters::number_of_iterations(10));
 
-std::cout << " done." << std::endl;
+  std::cout << " done." << std::endl;
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 }

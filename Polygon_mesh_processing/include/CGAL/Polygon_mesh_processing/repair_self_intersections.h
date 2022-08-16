@@ -2160,7 +2160,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #else
     struct Return_true
     {
-      bool is_empty() const { return true; }
+      constexpr bool is_empty() const { return true; }
       bool operator()(const std::vector<std::vector<typename GeomTraits::Point_3> >&) const { return true; }
       bool operator()(const TriangleMesh&) const { return true; }
     };
@@ -2331,7 +2331,7 @@ namespace experimental {
 template <class TriangleMesh>
 struct Remove_self_intersection_default_visitor
 {
-  bool stop() const { return false; }
+  constexpr bool stop() const { return false; }
   template <class FaceContainer>
   void status_update(const FaceContainer&) {}
   void start_main_loop() {}

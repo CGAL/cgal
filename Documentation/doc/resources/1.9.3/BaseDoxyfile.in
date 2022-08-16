@@ -307,15 +307,15 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalExample{1}=<br><b>File</b> \ref \1 \include \1" \
                          "cgalFigureAnchor{1}=\anchor fig__\1" \
                          "cgalFigureRef{1}=\ref fig__\1" \
-                         "cgalFigureBegin{2}=\anchor fig__\1 ^^ \image html \2 ^^ \image latex \2 \"\" width=15cm ^^ \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly \latexonly ^^ \endlatexonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{3}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=7.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=7.5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \latexonly ^^ \endlatexonly \ref fig__\1" \
-                         "cgalFigureBegin{4}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \latexonly ^^ \endlatexonly \ref fig__\1" \
-                         "cgalFigureBegin{5}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3.75cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3.75cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3.75cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3.75cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \latexonly ^^ \endlatexonly \ref fig__\1" \
-                         "cgalFigureBegin{6}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=3cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \latexonly ^^ \endlatexonly \ref fig__\1" \
-                         "cgalFigureBegin{7}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.5cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.5cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.5cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \latexonly ^^ \endlatexonly \ref fig__\1" \
-                         "cgalFigureBegin{8}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.1cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.1cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.1cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.1cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.1cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.1cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=2.1cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \latexonly ^^ \endlatexonly \ref fig__\1" \
-                         "cgalFigureBegin{9}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.9cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.9cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.9cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.9cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.9cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.9cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.9cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.9cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \latexonly ^^ \endlatexonly \ref fig__\1" \
-                         "cgalFigureBegin{10}=\anchor fig__\1 ^^ <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.6cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.6cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.6cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.6cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.6cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.6cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.6cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.6cm ^^ </TD> <TD> \image html \10 ^^ \image latex \10 \"\" width=1.6cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \latexonly ^^ \endlatexonly \ref fig__\1" \
+                         "cgalFigureBegin{2}=\anchor fig__\1 ^^ \image html \2 ^^ \image latex \2 \"\" width=15cm ^^ \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{3}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=7.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=7.5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{4}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{5}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3.75cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3.75cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3.75cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3.75cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{6}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=3cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{7}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.5cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.5cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.5cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{8}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.1cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.1cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.1cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.1cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.1cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.1cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=2.1cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{9}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.9cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.9cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.9cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.9cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.9cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.9cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.9cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.9cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{10}=\anchor fig__\1 ^^ <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.6cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.6cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.6cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.6cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.6cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.6cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.6cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.6cm ^^ </TD> <TD> \image html \10 ^^ \image latex \10 \"\" width=1.6cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
                          "cgalFigureEnd=\htmlonly[block] </div> \endhtmlonly <br>" \
                          "cgalFigureCaptionBegin{1}=\htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
                          "cgalFigureCaptionEnd=\htmlonly[block] </div> \endhtmlonly <br>" \
@@ -2355,22 +2355,27 @@ HAVE_DOT               = YES
 
 DOT_NUM_THREADS        = 0
 
-# When you want a differently looking font in the dot files that doxygen
-# generates you can specify the font name using DOT_FONTNAME. You need to make
-# sure dot is able to find the font, which can be done by putting it in a
-# standard location or by setting the DOTFONTPATH environment variable or by
-# setting DOT_FONTPATH to the directory containing the font.
-# The default value is: Helvetica.
+# DOT_COMMON_ATTR is common attributes for nodes, edges and labels of
+# subgraphs. When you want a differently looking font in the dot files that
+# doxygen generates you can specify fontname, fontcolor and fontsize attributes.
+# For details please see <a href=https://graphviz.org/doc/info/attrs.html>Node,
+# Edge and Graph Attributes specification</a> You need to make sure dot is able
+# to find the font, which can be done by putting it in a standard location or by
+# setting the DOTFONTPATH environment variable or by setting DOT_FONTPATH to the
+# directory containing the font. Default graphviz fontsize is 14.
+# The default value is: fontname=Helvetica,fontsize=10.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_FONTNAME           = Helvetica
+DOT_COMMON_ATTR        = "fontname=Helvetica,fontsize=10"
 
-# The DOT_FONTSIZE tag can be used to set the size (in points) of the font of
-# dot graphs.
-# Minimum value: 4, maximum value: 24, default value: 10.
+# DOT_EDGE_ATTR is concatenated with DOT_COMMON_ATTR. For elegant style you can
+# add 'arrowhead=open, arrowtail=open, arrowsize=0.5'. <a
+# href=https://graphviz.org/doc/info/arrows.html>Complete documentation about
+# arrows shapes.</a>
+# The default value is: labelfontname=Helvetica,labelfontsize=10.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_FONTSIZE           = 10
+DOT_EDGE_ATTR          = "labelfontname=Helvetica,labelfontsize=10"
 
 # By default doxygen will tell dot to use the default font as specified with
 # DOT_FONTNAME. If you specify a different font using DOT_FONTNAME you can set

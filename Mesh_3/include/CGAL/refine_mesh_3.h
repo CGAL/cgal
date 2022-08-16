@@ -23,11 +23,12 @@
 
 #include <CGAL/config.h>
 #include <CGAL/Mesh_3/config.h>
-#include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 #include <CGAL/Named_function_parameters.h>
+
 
 #include <atomic>
 
@@ -316,7 +317,9 @@ not change from one refinement to the next one.
 
 \tparam  C3T3 is required to be a model of
 the concept
-`MeshComplex_3InTriangulation_3`.
+`MeshComplex_3InTriangulation_3`,
+and a model of `MeshComplexWithFeatures_3InTriangulation_3`
+if the domain is a model of `MeshDomainWithFeatures_3`.
 The argument `c3t3` is passed by
 reference as this object is modified by the refinement process. As the
 refinement process only adds points to the triangulation, all
