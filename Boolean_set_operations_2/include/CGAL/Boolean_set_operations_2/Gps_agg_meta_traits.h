@@ -17,7 +17,6 @@
 #include <CGAL/license/Boolean_set_operations_2.h>
 
 #include <vector>
-#include <boost/mpl/assert.hpp>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_decorator.h>
 #include <CGAL/Boolean_set_operations_2/Curve_with_halfedge.h>
 #include <CGAL/Boolean_set_operations_2/Point_with_vertex.h>
@@ -124,18 +123,14 @@ public:
   typedef typename Arr::Right_side_category     Right_side_category;
 
   // a side is either oblivious or open (unbounded)
-  BOOST_MPL_ASSERT((boost::mpl::or_<
-                    boost::is_same<Left_side_category, Arr_oblivious_side_tag>,
-                    boost::is_same<Left_side_category, Arr_open_side_tag> >));
-  BOOST_MPL_ASSERT((boost::mpl::or_<
-                    boost::is_same<Bottom_side_category, Arr_oblivious_side_tag>,
-                    boost::is_same<Bottom_side_category, Arr_open_side_tag> >));
-  BOOST_MPL_ASSERT((boost::mpl::or_<
-                    boost::is_same<Top_side_category, Arr_oblivious_side_tag>,
-                    boost::is_same<Top_side_category, Arr_open_side_tag> >));
-  BOOST_MPL_ASSERT((boost::mpl::or_<
-                    boost::is_same<Right_side_category, Arr_oblivious_side_tag>,
-                    boost::is_same<Right_side_category, Arr_open_side_tag> >));
+  CGAL_static_assertion((std::is_same<Left_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Left_side_category, Arr_open_side_tag>::value));
+  CGAL_static_assertion((std::is_same<Bottom_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Bottom_side_category, Arr_open_side_tag>::value));
+  CGAL_static_assertion((std::is_same<Top_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Top_side_category, Arr_open_side_tag>::value));
+  CGAL_static_assertion((std::is_same<Right_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Right_side_category, Arr_open_side_tag>::value));
 
   typedef typename Arr::Halfedge_handle         Halfedge_handle;
   typedef typename Arr::Vertex_handle           Vertex_handle;

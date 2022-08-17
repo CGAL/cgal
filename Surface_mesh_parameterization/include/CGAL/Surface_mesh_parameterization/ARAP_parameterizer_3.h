@@ -83,7 +83,6 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <unordered_set>
 #include <iostream>
@@ -93,6 +92,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 /// \file ARAP_parameterizer_3.h
 
@@ -176,7 +176,7 @@ public:
     Two_vertices_parameterizer_3<TriangleMesh_> >::type       Border_parameterizer;
 
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 

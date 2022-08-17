@@ -279,7 +279,7 @@ Lrestart:
             std::cerr << "Switching to multi-precision arithmetic" <<
                 std::endl;
 #ifdef CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
-            if(::boost::is_same<typename Algebraic_structure_traits< Float >::
+            if(::std::is_same<typename Algebraic_structure_traits< Float >::
                     Is_exact, CGAL::Tag_true>::value)
                 goto Lexit;
 
@@ -298,7 +298,7 @@ Lrestart:
                 std::cerr << "Switching to exact arithmetic" << std::endl;
 #ifdef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
 
-                if(::boost::is_same<
+                if(::std::is_same<
                     typename Algebraic_structure_traits< Float >::Is_exact,
                          CGAL::Tag_true>::value)
                     goto Lexit;

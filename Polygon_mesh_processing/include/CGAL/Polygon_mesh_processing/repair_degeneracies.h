@@ -31,7 +31,6 @@
 #endif
 
 #include <boost/algorithm/minmax_element.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <algorithm>
 #include <fstream>

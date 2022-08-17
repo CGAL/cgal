@@ -63,8 +63,8 @@ public:
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
   CGAL_static_assertion(
-   (boost::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
-   (boost::is_same<typename Dt::Periodic_tag, Tag_false>::value));
+   (std::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
+   (std::is_same<typename Dt::Periodic_tag, Tag_false>::value));
 
   typedef typename internal::Alpha_nt_selector_2<
     Gt, ExactAlphaComparisonTag, typename Dt::Weighted_tag>::Type_of_alpha  Type_of_alpha;
@@ -77,8 +77,8 @@ public:
   typedef Type_of_alpha               FT;
 
   // check that simplices are correctly instantiated
-  CGAL_static_assertion( (boost::is_same<NT, typename Dt::Face::NT>::value) );
-  CGAL_static_assertion( (boost::is_same<NT, typename Dt::Vertex::NT>::value) );
+  CGAL_static_assertion( (std::is_same<NT, typename Dt::Face::NT>::value) );
+  CGAL_static_assertion( (std::is_same<NT, typename Dt::Vertex::NT>::value) );
 
   typedef typename Dt::Point Point;
 

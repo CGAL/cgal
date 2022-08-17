@@ -29,11 +29,11 @@ namespace CGAL {
 template <typename Mesh, typename Descriptor, typename Value>
 class OM_pmap {
 public:
-  typedef typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::vertex_descriptor>,
+  typedef typename boost::mpl::if_<std::is_same<Descriptor, typename boost::graph_traits<Mesh>::vertex_descriptor>,
                                    OpenMesh::VPropHandleT<Value>,
-                                   typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::face_descriptor>,
+                                   typename boost::mpl::if_<std::is_same<Descriptor, typename boost::graph_traits<Mesh>::face_descriptor>,
                                                             OpenMesh::FPropHandleT<Value>,
-                                                            typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::halfedge_descriptor>,
+                                                            typename boost::mpl::if_<std::is_same<Descriptor, typename boost::graph_traits<Mesh>::halfedge_descriptor>,
                                                                                      OpenMesh::HPropHandleT<Value>,
                                                                                      OpenMesh::EPropHandleT<Value> >::type>::type>::type H;
 

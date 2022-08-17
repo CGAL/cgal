@@ -23,9 +23,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -37,6 +35,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <type_traits>
 
 namespace CGAL {
 

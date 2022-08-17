@@ -23,7 +23,6 @@
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_2/internal/CTP2_subconstraint_graph.h>
 #include <boost/tuple/tuple.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -31,6 +30,7 @@
 #include <CGAL/Triangulation_2/insert_constraints.h>
 #include <boost/container/flat_set.hpp>
 
+#include <type_traits>
 
 namespace CGAL {
 
@@ -1092,7 +1092,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(boost::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
+    if(std::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
       throw typename Tr::Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
