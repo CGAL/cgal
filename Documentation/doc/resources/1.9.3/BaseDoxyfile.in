@@ -1308,6 +1308,23 @@ HTML_STYLESHEET        = ${CGAL_DOC_RESOURCE_DIR}/stylesheet.css
 
 HTML_EXTRA_STYLESHEET  =
 
+# The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
+# should be rendered with a dark or light theme. Default setting AUTO_LIGHT
+# enables light output unless the user preference is dark output. Other options
+# are DARK to always use dark mode, LIGHT to always use light mode, AUTO_DARK to
+# default to dark mode unless the user prefers light mode, and TOGGLE to let the
+# user toggle between dark and light mode via a button.
+# Possible values are: LIGHT Always generate light output., DARK Always generate
+# dark output., AUTO_LIGHT Automatically set the mode according to the user
+# preference, use light mode if no preference is set (the default)., AUTO_DARK
+# Automatically set the mode according to the user preference, use dark mode if
+# no preference is set. and TOGGLE Allow to user to switch between light and
+# dark mode via a button..
+# The default value is: AUTO_LIGHT.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_COLORSTYLE        = LIGHT
+
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
 # that these files will be copied to the base HTML output directory. Use the
