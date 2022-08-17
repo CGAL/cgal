@@ -1119,7 +1119,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
       invalidateOpenGLBuffers();
       poly_item->invalidateOpenGLBuffers();
       compute_normal_maps();
-      d->tempInstructions("Edge splitted.",
+      d->tempInstructions("Edge split.",
                           "Select the edge you want to split.");
       break;
     }
@@ -1401,7 +1401,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
             set_active_handle_type(static_cast<Active_handle::Type>(0));
             poly_item->resetColors();
             poly_item->invalidateOpenGLBuffers();
-            d->tempInstructions("Vertex splitted.", "Select the vertex you want splitted. (1/3)");
+            d->tempInstructions("Vertex split.", "Select the vertex you want to split. (1/3)");
           }
           else if(h1 == h2)
           {
