@@ -170,8 +170,6 @@ public:
 
          \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
-         The following are optional named parameters.
-
          \cgalNamedParamsBegin
            \cgalParamNBegin{edge_size}
              \cgalParamDescription{a scalar field (resp. a constant) providing a space varying

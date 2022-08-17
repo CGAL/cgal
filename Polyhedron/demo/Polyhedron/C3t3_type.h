@@ -3,8 +3,6 @@
 
 #include "config.h"
 #include "Plugins/Mesh_3/config_mesh_3.h"
-
-// include this to get #define BOOST_PARAMETER_MAX_ARITY 12
 // as otherwise it gets set via inclusion of Polyhedron_3.h
 #include <CGAL/boost/parameter.h>
 #include <CGAL/Default.h>

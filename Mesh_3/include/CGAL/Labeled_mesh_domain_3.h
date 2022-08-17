@@ -543,7 +543,7 @@ where the labeled image is used with a precomputed 3D image of weights :
             auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
             auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
             CGAL::Image_3 weights_ = choose_parameter(get_parameter(np, internal_np::weights_param), CGAL::Image_3());
-
+            CGAL_USE(iso_value_);
             namespace p = CGAL::parameters;
             if (weights_.is_valid())
             {
