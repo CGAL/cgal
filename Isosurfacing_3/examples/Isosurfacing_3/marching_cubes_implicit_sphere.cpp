@@ -1,9 +1,7 @@
 
 #include <CGAL/Isosurfacing_3/Implicit_domain.h>
 #include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -32,10 +30,6 @@ int main() {
     // execute marching cubes with an isovalue of 0.8
     CGAL::make_triangle_mesh_using_marching_cubes(domain, 0.8f, points, polygons);
 
-    // convert the polygon soup to a surface mesh
-    Mesh mesh;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
-
-    // save the mesh in the OFF format
-    CGAL::IO::write_OFF("result.off", mesh);
+    // save the polygon soup in the OFF format
+    CGAL::IO::write_OFF("result.off", points, polygons);
 }
