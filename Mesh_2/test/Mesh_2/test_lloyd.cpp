@@ -62,8 +62,8 @@ struct Lloyd_tester
     CGAL::Mesh_optimization_return_code rc
       = CGAL::lloyd_optimize_mesh_2(cdt,
               CGAL::parameters::number_of_iterations(10).
-              convergence_ratio(0.001).
-              vertex_freeze_bound(0.001).
+              convergence(0.001).
+              freeze_bound(0.001).
               seeds(seeds));
     const size_type number_of_vertices2 = cdt.number_of_vertices();
     std::cerr << " done (return code = "<< rc <<").\n";

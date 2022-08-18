@@ -46,8 +46,13 @@ enum all_default_t { all_default };
 // define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
+#define CGAL_add_named_parameter_with_compatibility(X, Y, Z)            \
+  enum X { Y };
+#define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
+#undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_extra_named_parameter_with_compatibility
 
 template <typename T, typename Tag, typename Base>
 struct Named_params_impl : Base
@@ -250,16 +255,34 @@ struct Named_function_parameters
 
 // create the functions for new named parameters and the one imported boost
 // used to concatenate several parameters
-#define CGAL_add_named_parameter(X, Y, Z)                          \
-  template<typename K>                                           \
+#define CGAL_add_named_parameter(X, Y, Z)                             \
+  template<typename K>                                                \
   Named_function_parameters<K, internal_np::X, self>                  \
-  Z(const K& k) const                                            \
-  {                                                              \
+  Z(const K& k) const                                                 \
+  {                                                                   \
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
-    return Params(k, *this);                                     \
+    return Params(k, *this);                                          \
+  }
+#define CGAL_add_named_parameter_with_compatibility(X, Y, Z)          \
+  template<typename K>                                                \
+  Named_function_parameters<K, internal_np::X, self>                  \
+  Z(const K& k) const                                                 \
+  {                                                                   \
+    typedef Named_function_parameters<K, internal_np::X, self> Params;\
+    return Params(k, *this);                                          \
+  }
+#define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)    \
+  template<typename K>                                                \
+  Named_function_parameters<K, internal_np::X, self>                  \
+  Z(const K& k) const                                                 \
+  {                                                                   \
+    typedef Named_function_parameters<K, internal_np::X, self> Params;\
+    return Params(k, *this);                                          \
   }
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
+#undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_extra_named_parameter_with_compatibility
 
   template <typename OT, typename OTag>
   Named_function_parameters<OT, OTag, self>
@@ -302,20 +325,6 @@ inline no_parameters(Named_function_parameters<T,Tag,Base>)
   return Params();
 }
 
-// define free functions for named parameters
-#define CGAL_add_named_parameter(X, Y, Z)        \
-  template <typename K>                        \
-  Named_function_parameters<K, internal_np::X>                  \
-  Z(const K& p)                                \
-  {                                            \
-    typedef Named_function_parameters<K, internal_np::X> Params;\
-    return Params(p);                          \
-  }
-
-#include <CGAL/STL_Extension/internal/parameters_interface.h>
-#undef CGAL_add_named_parameter
-
-#ifndef CGAL_NO_DEPRECATED_CODE
 template <class Tag>
 struct Boost_parameter_compatibility_wrapper
 {
@@ -336,69 +345,24 @@ struct Boost_parameter_compatibility_wrapper
   }
 };
 
+// define free functions and Boost_parameter_compatibility_wrapper for named parameters
+#define CGAL_add_named_parameter(X, Y, Z)        \
+  template <typename K>                        \
+  Named_function_parameters<K, internal_np::X>                  \
+  Z(const K& p)                                \
+  {                                            \
+    typedef Named_function_parameters<K, internal_np::X> Params;\
+    return Params(p);                          \
+  }
 // TODO: need to make sure this works when using several compilation units
-const Boost_parameter_compatibility_wrapper<internal_np::number_of_iterations_t> max_iteration_number;
-const Boost_parameter_compatibility_wrapper<internal_np::convergence_ratio_t> convergence;
-const Boost_parameter_compatibility_wrapper<internal_np::vertex_freeze_bound_t> freeze_bound;
-const Boost_parameter_compatibility_wrapper<internal_np::maximum_running_time_t> time_limit;
-const Boost_parameter_compatibility_wrapper<internal_np::i_seed_begin_iterator_t> seeds_begin;
-const Boost_parameter_compatibility_wrapper<internal_np::i_seed_end_iterator_t> seeds_end;
-const Boost_parameter_compatibility_wrapper<internal_np::seeds_are_in_domain_t> mark;
-const Boost_parameter_compatibility_wrapper<internal_np::freeze_t> do_freeze;
-const Boost_parameter_compatibility_wrapper<internal_np::sliver_criteria_t> sliver_criterion;
-const Boost_parameter_compatibility_wrapper<internal_np::perturb_vector_t> perturbation_vector;
-//Compatibility wrappers for exude_mesh_3.h
-const Boost_parameter_compatibility_wrapper<internal_np::lower_sliver_bound_t> sliver_bound;
-const Boost_parameter_compatibility_wrapper<internal_np::mesh_topology_number_t> mesh_topology;
-const Boost_parameter_compatibility_wrapper<internal_np::dump_after_init_prefix_param_t> dump_after_init_prefix;
-const Boost_parameter_compatibility_wrapper<internal_np::dump_after_refine_surface_prefix_param_t> dump_after_refine_surface_prefix;
-const Boost_parameter_compatibility_wrapper<internal_np::dump_after_refine_prefix_param_t> dump_after_refine_prefix;
-const Boost_parameter_compatibility_wrapper<internal_np::dump_after_glob_opt_prefix_param_t> dump_after_glob_opt_prefix;
-const Boost_parameter_compatibility_wrapper<internal_np::dump_after_perturb_prefix_param_t> dump_after_perturb_prefix;
-const Boost_parameter_compatibility_wrapper<internal_np::dump_after_exude_prefix_param_t> dump_after_exude_prefix;
-const Boost_parameter_compatibility_wrapper<internal_np::number_of_initial_points_param_t> number_of_initial_points;
-const Boost_parameter_compatibility_wrapper<internal_np::maximal_number_of_vertices_param_t> maximal_number_of_vertices;
-const Boost_parameter_compatibility_wrapper<internal_np::nonlinear_growth_of_balls_param_t> nonlinear_growth_of_balls;
-const Boost_parameter_compatibility_wrapper<internal_np::pointer_to_error_code_param_t> pointer_to_error_code;
-const Boost_parameter_compatibility_wrapper<internal_np::pointer_to_stop_atomic_boolean_param_t> pointer_to_stop_atomic_boolean;
-const Boost_parameter_compatibility_wrapper<internal_np::exude_options_param_t> exude_param;
-const Boost_parameter_compatibility_wrapper<internal_np::perturb_options_param_t> perturb_param;
-const Boost_parameter_compatibility_wrapper<internal_np::odt_options_param_t> odt_param;
-const Boost_parameter_compatibility_wrapper<internal_np::lloyd_options_param_t> lloyd_param;
-const Boost_parameter_compatibility_wrapper<internal_np::reset_options_param_t> reset_param;
-const Boost_parameter_compatibility_wrapper<internal_np::mesh_param_t> mesh_options_param;
-const Boost_parameter_compatibility_wrapper<internal_np::manifold_param_t> manifold_options_param;
-const Boost_parameter_compatibility_wrapper<internal_np::features_option_param_t> features_param;
-
-const Boost_parameter_compatibility_wrapper<internal_np::function_param_t> function;
-const Boost_parameter_compatibility_wrapper<internal_np::bounding_object_param_t> bounding_object;
-const Boost_parameter_compatibility_wrapper<internal_np::image_3_param_t> image;
-const Boost_parameter_compatibility_wrapper<internal_np::iso_value_param_t> iso_value;
-const Boost_parameter_compatibility_wrapper<internal_np::image_subdomain_index_t> image_values_to_subdomain_indices;
-const Boost_parameter_compatibility_wrapper<internal_np::voxel_value_t> value_outside;
-const Boost_parameter_compatibility_wrapper<internal_np::error_bound_t> relative_error_bound;
-const Boost_parameter_compatibility_wrapper<internal_np::rng_t> p_rng;
-const Boost_parameter_compatibility_wrapper<internal_np::null_subdomain_index_param_t> null_subdomain_index;
-const Boost_parameter_compatibility_wrapper<internal_np::surface_patch_index_t> construct_surface_patch_index;
-const Boost_parameter_compatibility_wrapper<internal_np::weights_param_t> weights;
-
-const Boost_parameter_compatibility_wrapper<internal_np::edge_size_param_t> edge_size;
-const Boost_parameter_compatibility_wrapper<internal_np::edge_sizing_field_param_t> edge_sizing_field;
-const Boost_parameter_compatibility_wrapper<internal_np::facet_angle_param_t> facet_angle;
-const Boost_parameter_compatibility_wrapper<internal_np::facet_size_param_t> facet_size;
-const Boost_parameter_compatibility_wrapper<internal_np::facet_sizing_field_param_t> facet_sizing_field;
-const Boost_parameter_compatibility_wrapper<internal_np::facet_distance_param_t> facet_distance;
-const Boost_parameter_compatibility_wrapper<internal_np::facet_topology_param_t> facet_topology;
-const Boost_parameter_compatibility_wrapper<internal_np::cell_radius_edge_param_t> cell_radius_edge;
-const Boost_parameter_compatibility_wrapper<internal_np::cell_radius_edge_ratio_param_t> cell_radius_edge_ratio;
-const Boost_parameter_compatibility_wrapper<internal_np::cell_size_param_t> cell_size;
-const Boost_parameter_compatibility_wrapper<internal_np::cell_sizing_field_param_t> cell_sizing_field;
-const Boost_parameter_compatibility_wrapper<internal_np::sizing_field_param_t> sizing_field;
-
-
-
-
-#endif
+#define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
+  const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+#define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)        \
+  const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
+#undef CGAL_add_named_parameter
+#undef CGAL_add_extra_named_parameter_with_compatibility
+#undef CGAL_add_named_parameter_with_compatibility
 
 // function to extract a parameter
 template <typename T, typename Tag, typename Base, typename Query_tag>
