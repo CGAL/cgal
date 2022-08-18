@@ -3,7 +3,7 @@
 /// \ingroup PkgIsosurfacing3Ref
 
 /*!
-\addtogroup PkgIsosurfacingRef
+\addtogroup PkgIsosurfacing3Ref
 \cgalPkgDescriptionBegin{3D Isosurfacing,PkgIsosurfacing3}
 \cgalPkgPicture{isosurfacing3_ico.png}
 \cgalPkgSummaryBegin
@@ -24,14 +24,15 @@ Marching Cubes Algorithm .....
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-- `MarchingCubeOracle`
+- `IsosurfacingDomain`
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Marching_cubes_implicit_3`
+- `CGAL::Isosurfacing::Cartesian_grid_domain`
+- `CGAL::Isosurfacing::Implicit_domain`
 
 \cgalCRPSection{Free Functions}
 
-- `CGAL::make_triangle_mesh_using_marching_cubes()`
+- `CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes()`
 
 */

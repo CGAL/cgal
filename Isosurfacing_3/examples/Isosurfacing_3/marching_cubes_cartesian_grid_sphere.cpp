@@ -1,16 +1,12 @@
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_domain.h>
 #include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::Vector_3 Vector_3;
 typedef typename Kernel::Point_3 Point_3;
-
-typedef CGAL::Surface_mesh<Point_3> Mesh;
 
 typedef std::vector<Point_3> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
@@ -40,10 +36,6 @@ int main() {
     // execute marching cubes with an isovalue of 0.8
     CGAL::make_triangle_mesh_using_marching_cubes(domain, 0.8f, points, polygons);
 
-    // convert the polygon soup to a surface mesh
-    Mesh mesh;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
-
-    // save the mesh in the OFF format
-    CGAL::IO::write_OFF("result.off", mesh);
+    // save the polygon soup in the OFF format
+    CGAL::IO::write_OFF("result.off", points, polygons);
 }

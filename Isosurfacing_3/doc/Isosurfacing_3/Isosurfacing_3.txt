@@ -18,7 +18,7 @@ The representation that is used to store the isosurface is a triangular or quadr
 
 \section secmyalgorithms Algorithms
 
-There are multiple algorithms to extract an isosurface from a uniform grid.
+There are multiple algorithms to extract an isosurface from a uniform grid or octree.
 This package contains marching cubes, ...
 
 \section secmyinterface Interface
@@ -31,7 +31,7 @@ void make_triangle_mesh_using_marching_cubes(const Domain_& domain, const typena
                                              PointRange& points, PolygonRange& polygons);
 \endcode
 
-The `domain` is an object that provides functions to access the input data in the form of a uniform grid.
+The `domain` is an object that provides functions to access the input data and its topology.
 There are some predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
 Examples are `Cartesian_grid_domain`, which takes a `Cartesian_grid_3` as parameter, 
 and `Implicit_domain`, which represents the grid as an implicit function.
