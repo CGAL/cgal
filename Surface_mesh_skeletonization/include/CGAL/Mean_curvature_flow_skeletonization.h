@@ -513,6 +513,28 @@ public:
     m_omega_P = value;
   }
 
+  /// \cgalAdvancedFunction
+  /// \cgalAdvancedBegin
+  /// Fixes a range of vertices.  Fixed vertices will not be moved
+  /// during contraction and this will therefore prevent convergence
+  /// towards the skeleton if `contract_until_convergence()` is used.
+  /// It is only useful if the object is to retrieve the meso-skeleton
+  /// after a number of `contract_geometry()`, keeping the specified
+  /// vertices fixed in place.
+  /// \cgalAdvancedEnd
+  template<class InputIterator>
+  void set_fixed_vertices(InputIterator begin, InputIterator end)
+  {
+    std::unordered_set<Input_vertex_descriptor> set(begin, end);
+
+    for(vertex_descriptor vd : vertices(m_tmesh))
+    {
+      if (set.find(vd->vertices[0]) != set.end()) {
+        vd->is_fixed = true;
+      }
+    }
+  }
+
   /// \cond SKIP_FROM_MANUAL
   void set_zero_TH(double value)
   {
