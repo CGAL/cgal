@@ -515,12 +515,13 @@ public:
 
   /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
-  /// Fixes a range of vertices.  Fixed vertices will not be moved
+  /// sets the vertices in the range `[begin, end)` as fixed.  Fixed vertices will not be moved
   /// during contraction and this will therefore prevent convergence
   /// towards the skeleton if `contract_until_convergence()` is used.
-  /// It is only useful if the object is to retrieve the meso-skeleton
+  /// It is useful only if the end goal is to retrieve the meso-skeleton
   /// after a number of `contract_geometry()`, keeping the specified
   /// vertices fixed in place.
+  /// \tparam InputIterator a model of `InputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as value type.
   /// \cgalAdvancedEnd
   template<class InputIterator>
   void set_fixed_vertices(InputIterator begin, InputIterator end)
