@@ -96,6 +96,7 @@ exude_mesh_3(c3t3,
 \sa `CGAL::odt_optimize_mesh_3()`
 
 */
+
 template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3,const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -110,7 +111,7 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3,const CGAL_NP_CLASS& np = 
 template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, double time_limit = 0, double sliver_bound = 0)
 {
-  return exude_mesh_3(c3t3, CGAL::parameters::time_limit(time_limit).lower_sliver_bound(sliver_bound));
+  return exude_mesh_3(c3t3, CGAL::parameters::time_limit(time_limit).sliver_bound(sliver_bound));
 }
 #endif
 #ifndef DOXYGEN_RUNNING

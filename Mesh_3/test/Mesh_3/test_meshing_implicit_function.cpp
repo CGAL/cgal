@@ -43,8 +43,8 @@ struct Implicit_tester : public Tester<K>
     namespace p = CGAL::parameters;
     Mesh_domain domain =
       Mesh_domain::create_implicit_mesh_domain
-      (Implicit_tester<K>::sphere_function,
-       Sphere_3(CGAL::ORIGIN,2.),
+      (p::function = Implicit_tester<K>::sphere_function,
+       p::bounding_object = Sphere_3(CGAL::ORIGIN,2.),
        p::p_rng = &CGAL::get_default_random(),
        p::relative_error_bound = 1e-3);
 

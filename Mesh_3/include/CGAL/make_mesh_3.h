@@ -607,9 +607,9 @@ void make_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   // Don't reset c3t3 as we just created it
   refine_mesh_3(c3t3, domain, criteria,
-                parameters::exude_param=exude, parameters::perturb_param=perturb, parameters::odt_param=odt, parameters::lloyd_param= lloyd,
-                parameters::no_reset_c3t3(), parameters::mesh_options_param= mesh_options,
-                parameters::manifold_options_param= manifold_options);
+                parameters::exude_options=exude, parameters::perturb_options=perturb, parameters::odt_options=odt, parameters::lloyd_options= lloyd,
+                parameters::no_reset_c3t3(), parameters::mesh_options= mesh_options,
+                parameters::manifold_option= manifold_options);
 }
 
 #endif //DOXYGEN_RUNNING

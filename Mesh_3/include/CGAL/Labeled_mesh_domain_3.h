@@ -714,7 +714,7 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
   template <class Function, class Bounding_object>
   static Labeled_mesh_domain_3 create_implicit_mesh_domain(const Function& f, const Bounding_object& bo)
   {
-    return create_implicit_mesh_domain(parameters::function_param(f).bounding_object_param(bo));
+    return create_implicit_mesh_domain(parameters::function(f).bounding_object(bo));
   }
 
   /// @}

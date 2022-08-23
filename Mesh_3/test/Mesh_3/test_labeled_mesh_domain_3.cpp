@@ -72,12 +72,12 @@ private:
 
     Function f_sphere(&sphere_function);
     Function_wrapper wrapper_1(f_sphere);
-    Mesh_domain domain(wrapper_1, bounding_shape, CGAL::parameters::relative_error_bound = error_bound);
+    Mesh_domain domain(wrapper_1, bounding_shape, error_bound);
     test_construct_initial_points(domain, error_bound);
 
     Function f_shape(&shape_function);
     Function_wrapper wrapper_2(f_shape);
-    Mesh_domain domain_2(wrapper_2, bounding_shape, CGAL::parameters::relative_error_bound = error_bound);
+    Mesh_domain domain_2(wrapper_2, bounding_shape, error_bound);
     test_is_in_domain(domain_2);
     test_do_intersect_surface(domain_2);
     test_construct_intersection(domain_2);

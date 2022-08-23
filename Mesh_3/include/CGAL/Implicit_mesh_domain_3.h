@@ -65,7 +65,7 @@ public:
                          const Sphere_3& bounding_sphere,
                          const FT& error_bound = FT(1e-6),
                          CGAL::Random* p_rng = nullptr)
-    : Base(Wrapper(f), bounding_sphere, parameters::relative_error_bound = error_bound,
+    : Base(parameters::function = Wrapper(f), parameters::bounding_object = bounding_sphere, parameters::relative_error_bound = error_bound,
            parameters::null_subdomain_index = Null_subdomain_index(), parameters::p_rng = p_rng)  {}
 
   /// Destructor
