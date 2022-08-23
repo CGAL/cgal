@@ -73,23 +73,23 @@ namespace CGAL
  *     \cgalParamDefault{false}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{number_of_iterations}
+ *   \cgalParamNBegin{max_iteration_number}
  *     \cgalParamDescription{limit on the number of performed iterations. 0 means that there is
  *                           no limit on the number of performed iterations.}
- *     \cgalParamExtra{\pre `number_of_iterations >=0`}
+ *     \cgalParamExtra{\pre `max_iteration_number >=0`}
  *     \cgalParamType{`int`}
  *     \cgalParamDefault{0}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{maximum_running_time}
+ *   \cgalParamNBegin{time_limit}
  *     \cgalParamDescription{to set up, in seconds, a CPU time limit after which the optimization process is stopped.
  *                           This time is measured using `CGAL::Real_timer`. 0 means that there is no time limit.}
  *     \cgalParamType{`double`}
- *     \cgalParamExtra{\pre `maximum_running_time` \f$ \geq\f$ 0}
+ *     \cgalParamExtra{\pre `time_limit` \f$ \geq\f$ 0}
  *     \cgalParamDefault{0}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{vertex_freeze_bound}
+ *   \cgalParamNBegin{freeze_bound}
  *     \cgalParamDescription{designed to reduce running time of each optimization iteration.
  *                           Any vertex that has a displacement less than a given fraction of the length
  *                           of its shortest incident edge, is frozen (i.e.\ is not relocated).
@@ -100,7 +100,7 @@ namespace CGAL
  *     \cgalParamDefault{0.001}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{convergence_ratio}
+ *   \cgalParamNBegin{convergence}
  *     \cgalParamDescription{threshold ratio of stopping criterion based on convergence: the optimization process is stopped
  *                           when at the last iteration the displacement of any vertex is less than
  *                           a given fraction of the length of the shortest edge incident to that vertex.}

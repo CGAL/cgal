@@ -367,7 +367,7 @@ For each optimization algorithm, there exist two global functions
 that allow to enable or disable the optimizer:
 
 \cgalNamedParamsBegin
-   \cgalParamNBegin{manifold_options_param}
+   \cgalParamNBegin{manifold_option}
      \cgalParamDescription{allows the user to drive the meshing algorithm,
                           and ensure that the output mesh surface follows the given manifold criterion.
                           It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
@@ -376,7 +376,7 @@ that allow to enable or disable the optimizer:
       \cgalParamType{`parameters::manifold()` OR `parameters::manifold_with_boundary()` OR `parameters::non_manifold()`}
       \cgalParamDefault{`parameters::non_manifold()`}
 
-    \cgalParamNBegin{lloyd_param}
+    \cgalParamNBegin{lloyd_options}
      \cgalParamDescription{`parameters::lloyd()` and `parameters::no_lloyd()` are designed to
                             trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the
                             parameters of this optimizer. If one parameter is not set, the default value of
@@ -384,7 +384,7 @@ that allow to enable or disable the optimizer:
       \cgalParamType{`parameters::lloyd()` OR `parameters::no_lloyd()`}
       \cgalParamDefault{'parameters::no_lloyd()'}
 
-    \cgalParamNBegin{odt_param}
+    \cgalParamNBegin{odt_options}
      \cgalParamDescription{`parameters::odt()` and `parameters::no_odt()` are designed to
                             trigger or not a call to `odt_optimize_mesh_3()` function and
                             to set the parameters of this optimizer.
@@ -393,7 +393,7 @@ that allow to enable or disable the optimizer:
       \cgalParamType{`parameters::odt()` OR `parameters::no_odt()`}
       \cgalParamDefault{`parameters::no_odt()`}
 
-    \cgalParamNBegin{perturb_param}
+    \cgalParamNBegin{perturb_options}
      \cgalParamDescription{`parameters::perturb()` and `parameters::no_perturb()` are designed to
                             trigger or not a call to `perturb_mesh_3()` function and
                             to set the parameters of this optimizer. If one parameter is not set, the default value of
@@ -402,7 +402,7 @@ that allow to enable or disable the optimizer:
       \cgalParamType{`parameters::perturb()` and `parameters::no_perturb()`}
       \cgalParamDefault{'parameters::no_perturb`}
 
-    \cgalParamNBegin{exude_param}
+    \cgalParamNBegin{exude_options}
      \cgalParamDescription{parameters::exude()` and `parameters::no_exude()` are designed to
                            trigger or not a call to `exude_mesh_3()` function and to override to set the
                            parameters of this optimizer. If one parameter is not set, the default value of
