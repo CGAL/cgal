@@ -319,7 +319,7 @@ private :
   }
 
  // the version to be used with Tag_true is templated to avoid
- // instanciation through explicit instantiation of the whole class
+ // instantiation through explicit instantiation of the whole class
   void set_alpha_min_of_vertices(Tag_false)
   {
     for( Finite_vertices_iterator vit = finite_vertices_begin();
