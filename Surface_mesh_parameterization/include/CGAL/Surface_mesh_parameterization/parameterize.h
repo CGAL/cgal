@@ -39,7 +39,7 @@ namespace Surface_mesh_parameterization {
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 /// \tparam Parameterizer must be a model of `Parameterizer_3`.
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
-///         traits of TriangleMesh.
+///         traits of `TriangleMesh`.
 /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
@@ -87,7 +87,7 @@ Error_code parameterize(TriangleMesh& mesh,
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
-///         traits of TriangleMesh.
+///         traits of `TriangleMesh`.
 /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)

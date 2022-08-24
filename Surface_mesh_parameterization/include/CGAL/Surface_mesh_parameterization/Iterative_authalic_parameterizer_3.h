@@ -69,7 +69,7 @@ namespace Surface_mesh_parameterization {
 /// the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
