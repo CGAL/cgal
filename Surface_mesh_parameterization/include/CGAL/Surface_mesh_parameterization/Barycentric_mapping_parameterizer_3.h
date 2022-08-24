@@ -157,8 +157,7 @@ public:
   // Default copy constructor and operator =() are fine
 
   /// returns whether the 3D -> 2D mapping is one-to-one.
-  template <typename VertexUVMap,
-            typename Faces_Container>
+  template <typename VertexUVMap>
   bool is_one_to_one_mapping(const Triangle_mesh& mesh,
                              halfedge_descriptor bhd,
                              const VertexUVMap uvmap) const
