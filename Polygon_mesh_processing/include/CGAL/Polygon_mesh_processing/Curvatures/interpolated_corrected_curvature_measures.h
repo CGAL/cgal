@@ -1138,7 +1138,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         Eigen::Matrix<typename GT::FT, 3, 3> v_muXY = get(muXY_expand_map, v);
         typename GT::Vector_3 u_GT = get(vnm, v);
 
-        Eigen::Vector<typename GT::FT, 3> u(u_GT.x(), u_GT.y(), u_GT.z());
+        Eigen::Matrix<typename GT::FT, 3, 1> u(u_GT.x(), u_GT.y(), u_GT.z());
 
         const typename GT::FT K = 1000 * v_mu0;
 
@@ -1153,12 +1153,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
             put(vcm, v, std::make_tuple(
                 0,
                 0,
-                Eigen::Vector<typename GT::FT, 3>(.0,.0,.0),
-                Eigen::Vector<typename GT::FT, 3>(.0, .0, .0)));
+                Eigen::Matrix<typename GT::FT, 3, 1>(.0,.0,.0),
+                Eigen::Matrix<typename GT::FT, 3, 1>(.0, .0, .0)));
             continue;
         }
 
-        Eigen::Vector<typename GT::FT, 3> eig_vals = eigensolver.eigenvalues();
+        Eigen::Matrix<typename GT::FT, 3, 1> eig_vals = eigensolver.eigenvalues();
         Eigen::Matrix<typename GT::FT, 3, 3> eig_vecs = eigensolver.eigenvectors();
 
         put(vcm, v, std::make_tuple(
