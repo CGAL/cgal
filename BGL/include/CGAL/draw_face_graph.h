@@ -22,17 +22,29 @@
 namespace CGAL
 {
 
+template <typename EI>
+std::string getColorPropertyName(void) { return std::string("color"); }
+
+template <>
+inline std::string getColorPropertyName<CGAL::SM_Face_index>(void) { return std::string("f:color"); }
+
+template <>
+inline std::string getColorPropertyName<CGAL::SM_Edge_index>(void) { return std::string("e:color"); }
+
+template <>
+inline std::string getColorPropertyName<CGAL::SM_Vertex_index>(void) { return std::string("v:color"); }
+
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorFaceGraph
 {
-  template<typename Graph>
-  CGAL::IO::Color operator()(const Graph&,
-                         typename boost::graph_traits<Graph>::face_descriptor fh) const
+  template<typename Graph, typename EI>
+  CGAL::IO::Color operator()(const Graph& mesh,
+                         EI elementIndex) const
   {
-    if (fh==boost::graph_traits<Graph>::null_face()) // use to get the mono color
-      return CGAL::IO::Color(100, 125, 200); // R G B between 0-255
-
-    return get_random_color(CGAL::get_default_random());
+    typename Graph::template Property_map<EI, CGAL::IO::Color> colorPm;
+    bool found;
+    std::tie(colorPm, found) = mesh.property_map<EI, CGAL::IO::Color>(getColorPropertyName<EI>()); //Get the color property map
+    return found ? colorPm[elementIndex] : get_random_color(CGAL::get_default_random()); //return the element color if any, otherwise return a random color
   }
 };
 
@@ -159,13 +171,16 @@ protected:
 
       for (auto e: edges(sm))
       {
+        CGAL::IO::Color c=fcolor(sm, e);
         add_segment(get(point_pmap, source(halfedge(e, sm), sm)),
-                    get(point_pmap, target(halfedge(e, sm), sm)));
+                    get(point_pmap, target(halfedge(e, sm), sm)),
+                    c);
       }
 
       for (auto v: vertices(sm))
       {
-        this->add_point(get(point_pmap, v));
+        CGAL::IO::Color c=fcolor(sm, v);
+        this->add_point(get(point_pmap, v), c);
       }
     };
   }
