@@ -895,49 +895,77 @@ is_valid(bool verbose, int level) const
   if (dimension() <= 0 || (dimension()==1 && number_of_vertices() == 2 ) )
     return result;
 
-  if (dimension() == 1) {
+  if (dimension() == 1)
+  {
     Finite_vertices_iterator it1 = finite_vertices_begin(),
                              it2(it1), it3(it1);
     ++it2;
     ++it3; ++it3;
     while( it3 != finite_vertices_end()) {
-     Orientation s = orientation(it1->point(),
-         it2->point(),
-         it3->point());
-     result = result && s == COLLINEAR ;
+     Orientation s = orientation(point(it1), point(it2), point(it3));
+     result = result && (s == COLLINEAR) ;
+     if(verbose && (s != COLLINEAR))
+     {
+       std::cerr << "Error: " << point(it1) << " "
+                              << point(it2) << " and "
+                              << point(it3) << " are not collinear" << std::endl;
+     }
+
      CGAL_triangulation_assertion(result);
      ++it1 ; ++it2; ++it3;
     }
   }
-  else { //dimension() == 2
-    for(Finite_faces_iterator it=finite_faces_begin();
-        it!=finite_faces_end(); it++) {
+  else //dimension() == 2
+  {
+    for(Finite_faces_iterator it=finite_faces_begin(); it!=finite_faces_end(); it++)
+    {
       CGAL_triangulation_assertion( ! is_infinite(it));
-      Orientation s = orientation(it->vertex(0)->point(),
-                                  it->vertex(1)->point(),
-                                  it->vertex(2)->point());
-      CGAL_triangulation_assertion( s == LEFT_TURN );
+      Orientation s = orientation(point(it, 0), point(it, 1), point(it, 2));
       result = result && ( s == LEFT_TURN );
+
+      if(verbose && (s != LEFT_TURN))
+      {
+        std::cerr << "Error: " << point(it, 0) << " "
+                               << point(it, 1) << " and "
+                               << point(it, 2) << " form a badly oriented face" << std::endl;
+      }
+
+      CGAL_triangulation_assertion(result);
     }
 
     Vertex_circulator start = incident_vertices(infinite_vertex());
     Vertex_circulator pc(start);
     Vertex_circulator qc(start); ++qc;
     Vertex_circulator rc(start); ++rc; ++rc;
-    do {
-      Orientation s = orientation(pc->point(),
-                                  qc->point(),
-                                  rc->point());
+    do
+    {
+      Orientation s = orientation(point(pc), point(qc), point(rc));
       CGAL_triangulation_assertion( s != LEFT_TURN );
       result = result && ( s != LEFT_TURN );
+
+      if(verbose && (s == LEFT_TURN))
+      {
+        std::cerr << "Error: " << point(pc) << " "
+                               << point(qc) << " and "
+                               << point(rc) << " form a badly oriented infinite face" << std::endl;
+      }
+
       ++pc ; ++qc ; ++rc;
     } while(pc != start);
 
     // check number of faces. This cannot be done by the Tds
     // which does not know the number of components nor the genus
-    result = result && (number_of_faces() == 2*(number_of_vertices()+1)
-                        - 4
-                        - degree(infinite_vertex()));
+    const bool genus_check = number_of_faces() == 2*(number_of_vertices()+1) - 4 - degree(infinite_vertex());
+    result = result && genus_check;
+    if(verbose && !genus_check)
+    {
+      std::cerr << "Error: Genus check fail " << number_of_faces()
+                << " vs " << 2*(number_of_vertices()+1) - 4 - degree(infinite_vertex())
+                << " (nv = " << number_of_vertices()
+                << " nf = " << number_of_faces()
+                << " and degree(infinite_vertex()) = " << degree(infinite_vertex()) << std::endl;
+    }
+
     CGAL_triangulation_assertion( result);
   }
   return result;
