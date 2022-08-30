@@ -3817,6 +3817,219 @@ operator>>(std::istream& is, Triangulation_2<Gt, Tds> &tr)
   return is;
 }
 
+namespace internal {
+
+// Internal function used by operator==.
+template < class GT, class TDS1, class TDS2, typename FMAP, typename VMAP >
+bool
+test_next(const Triangulation_2<GT, TDS1>& t1,
+          const Triangulation_2<GT, TDS2>& t2,
+          typename Triangulation_2<GT, TDS1>::Face_handle f1,
+          typename Triangulation_2<GT, TDS2>::Face_handle f2,
+          FMAP& Fmap,
+          VMAP& Vmap)
+{
+  // This function tests and registers the 3 neighbors of f1/f2,
+  // and recursively calls itself over them.
+  // We don't use the call stack as it may overflow
+  // Returns false if an inequality has been found.
+
+  // Precondition: f1, f2 have been registered as well as their 3 vertices.
+  CGAL_triangulation_precondition(t1.dimension() >= 2);
+  CGAL_triangulation_precondition(Fmap[f1] == f2);
+  CGAL_triangulation_precondition(Vmap.find(f1->vertex(0)) != Vmap.end());
+  CGAL_triangulation_precondition(Vmap.find(f1->vertex(1)) != Vmap.end());
+  CGAL_triangulation_precondition(t1.dimension() == 1 || Vmap.find(f1->vertex(2)) != Vmap.end());
+
+  typedef Triangulation_2<GT, TDS1>               Tr1;
+  typedef Triangulation_2<GT, TDS2>               Tr2;
+  typedef typename Tr1::Vertex_handle             Vertex_handle1;
+  typedef typename Tr1::Face_handle               Face_handle1;
+  typedef typename Tr2::Vertex_handle             Vertex_handle2;
+  typedef typename Tr2::Face_handle               Face_handle2;
+
+  typedef typename VMAP::const_iterator           Vit;
+  typedef typename FMAP::const_iterator           Fit;
+
+  typedef typename Tr1::Geom_traits::Construct_point_2    Construct_point_2;
+  typedef typename Tr1::Geom_traits::Compare_xy_2         Compare_xy_2;
+
+  Compare_xy_2 cmp1 = t1.geom_traits().compare_xy_2_object();
+  Construct_point_2 cp = t1.geom_traits().construct_point_2_object();
+
+  std::vector<std::pair<Face_handle1, Face_handle2> > face_stack;
+  face_stack.emplace_back(f1, f2);
+
+  while(! face_stack.empty())
+  {
+    Face_handle1 f1 = face_stack.back().first;
+    Face_handle2 f2 = face_stack.back().second;
+    face_stack.pop_back();
+
+    for(int i=0; i <= t1.dimension(); ++i)
+    {
+      Face_handle1 n1 = f1->neighbor(i);
+      Fit fit = Fmap.find(n1);
+      Vertex_handle1 v1 = f1->vertex(i);
+      Vertex_handle2 v2 = Vmap[v1];
+      Face_handle2 n2 = f2->neighbor(f2->index(v2));
+      if(fit != Fmap.end())
+      {
+        // n1 was already registered.
+        if(fit->second != n2)
+          return false;
+
+        continue;
+      }
+
+      // n1 has not yet been registered.
+      // We check that the new vertices match geometrically.
+      // And we register them.
+      Vertex_handle1 vn1 = n1->vertex(n1->index(f1));
+      Vertex_handle2 vn2 = n2->vertex(n2->index(f2));
+      Vit vit = Vmap.find(vn1);
+      if(vit != Vmap.end())
+      {
+        // vn1 already registered
+        if(vit->second != vn2)
+          return false;
+      }
+      else
+      {
+        if(t2.is_infinite(vn2))
+          return false; // vn1 can't be infinite,
+
+        // since it would have been registered.
+        if(cmp1(cp(vn1->point()), cp(vn2->point())) != 0)
+          return false;
+
+        // We register vn1/vn2.
+        Vmap.emplace(vn1, vn2);
+      }
+
+      // We register n1/n2.
+      Fmap.emplace(n1, n2);
+      face_stack.emplace_back(n1, n2);
+    }
+  }
+
+  return true;
+}
+
+} // namespace internal
+
+template < class GT, class TDS1, class TDS2 >
+bool
+operator==(const Triangulation_2<GT, TDS1>& t1,
+           const Triangulation_2<GT, TDS2>& t2)
+{
+  typedef typename Triangulation_2<GT, TDS1>::Vertex_handle Vertex_handle1;
+  typedef typename Triangulation_2<GT, TDS1>::Face_handle   Face_handle1;
+  typedef typename Triangulation_2<GT, TDS2>::Vertex_handle Vertex_handle2;
+  typedef typename Triangulation_2<GT, TDS2>::Face_handle   Face_handle2;
+
+  typedef typename Triangulation_2<GT, TDS1>::Point                          Point;
+
+  typedef typename Triangulation_2<GT, TDS1>::Geom_traits::Equal_2           Equal_2;
+  typedef typename Triangulation_2<GT, TDS1>::Geom_traits::Compare_xy_2      Compare_xy_2;
+  typedef typename Triangulation_2<GT, TDS1>::Geom_traits::Construct_point_2 Construct_point_2;
+
+  Equal_2 equal = t1.geom_traits().equal_2_object();
+  Compare_xy_2 cmp1 = t1.geom_traits().compare_xy_2_object();
+  Compare_xy_2 cmp2 = t2.geom_traits().compare_xy_2_object();
+  Construct_point_2 cp = t1.geom_traits().construct_point_2_object();
+
+  // Some quick checks.
+  if(t1.dimension() != t2.dimension() ||
+     t1.number_of_vertices() != t2.number_of_vertices() ||
+     t1.number_of_faces() != t2.number_of_faces())
+    return false;
+
+  int dim = t1.dimension();
+  // Special case for dimension < 1.
+  // The triangulation is uniquely defined in these cases.
+  if(dim < 1)
+    return true;
+
+  // Special case for dimension == 1.
+  if(dim == 1)
+  {
+    // It's enough to test that the points are the same,
+    // since the triangulation is uniquely defined in this case.
+    std::vector<Point> V1 (t1.points_begin(), t1.points_end());
+    std::vector<Point> V2 (t2.points_begin(), t2.points_end());
+
+    std::sort(V1.begin(), V1.end(),
+              [&cmp1, &cp](const Point& p1, const Point& p2){ return cmp1(cp(p1), cp(p2))==SMALLER; });
+
+    std::sort(V2.begin(), V2.end(),
+              [&cmp2, &cp](const Point& p1, const Point& p2){ return cmp2(cp(p1), cp(p2))==SMALLER; });
+
+    return V1 == V2;
+  }
+
+  // We will store the mapping between the 2 triangulations vertices and faces in 2 maps.
+  std::unordered_map<Vertex_handle1, Vertex_handle2> Vmap;
+  std::unordered_map<Face_handle1, Face_handle2> Fmap;
+
+  // Handle the infinite vertex.
+  Vertex_handle1 v1 = t1.infinite_vertex();
+  Vertex_handle2 iv2 = t2.infinite_vertex();
+  Vmap.emplace(v1, iv2);
+
+  // We pick one infinite face of t1, and try to match it against the infinite faces of t2.
+  Face_handle1 f = v1->face();
+  Vertex_handle1 v2 = f->vertex((f->index(v1)+1)%(dim+1));
+  Vertex_handle1 v3 = f->vertex((f->index(v1)+2)%(dim+1));
+  const Point& p2 = t1.point(v2);
+  const Point& p3 = t1.point(v3);
+
+  std::vector<Face_handle2> ifs;
+  auto fc = t2.incident_faces(iv2), done(fc);
+  do {
+    ifs.push_back(fc);
+  } while(++fc != done);
+
+  for(typename std::vector<Face_handle2>::const_iterator fit = ifs.begin();
+                                                         fit != ifs.end(); ++fit)
+  {
+    int inf = (*fit)->index(iv2);
+
+    if(equal(cp(p2), cp(t2.point(*fit, (inf+1)%(dim+1)))))
+      Vmap.emplace(v2, (*fit)->vertex((inf+1)%(dim+1)));
+    else if(dim == 2 && equal(cp(p2), cp(t2.point(*fit, (inf+2)%(dim+1)))))
+      Vmap.emplace(v2, (*fit)->vertex((inf+2)%(dim+1)));
+    else
+      continue; // None matched v2.
+
+    if(equal(cp(p3), cp(t2.point(*fit, (inf+1)%(dim+1)))))
+      Vmap.emplace(v3, (*fit)->vertex((inf+1)%(dim+1)));
+    else if(dim == 2 && equal(cp(p3), cp(t2.point(*fit, (inf+2)%(dim+1)))))
+      Vmap.emplace(v3, (*fit)->vertex((inf+2)%(dim+1)));
+    else
+      continue; // None matched v3.
+
+    // Found it !
+    Fmap.emplace(f, *fit);
+    break;
+  }
+
+  if(Fmap.size() == 0)
+    return false;
+
+  // We now have one face, we need to propagate recursively.
+  return internal::test_next(t1, t2, Fmap.begin()->first, Fmap.begin()->second, Fmap, Vmap);
+}
+
+template < class GT, class Tds1, class Tds2 >
+inline
+bool
+operator!=(const Triangulation_2<GT, Tds1>& t1,
+           const Triangulation_2<GT, Tds2>& t2)
+{
+  return ! (t1 == t2);
+}
+
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>
