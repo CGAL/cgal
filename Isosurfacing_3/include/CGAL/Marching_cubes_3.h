@@ -1,7 +1,9 @@
-#ifndef CGAL_MARCHING_CUBES_H
-#define CGAL_MARCHING_CUBES_H
+#ifndef CGAL_MARCHING_CUBES_3_H
+#define CGAL_MARCHING_CUBES_3_H
 
-#include "Isosurfacing_3/internal/Marching_cubes_3_internal.h"
+#include <CGAL/Cell_type.h>
+#include <CGAL/Isosurfacing_3/internal/Marching_cubes_3_internal.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -25,15 +27,17 @@ namespace Isosurfacing {
  * \param points points making the polygons of the soup
  * \param polygons each element in the vector describes a polygon using the indices of the points in points
  */
-template <typename ConcurrencyTag = Sequential_tag, class Domain_, class PointRange, class PolygonRange>
+template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange>
 void make_triangle_mesh_using_marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
                                              PointRange& points, PolygonRange& polygons) {
 
-    internal::Marching_cubes_RG2<Domain_, PointRange, PolygonRange> functor(domain, iso_value, points, polygons);
-    domain.iterate_cells(functor, ConcurrencyTag());
+    // static_assert(Domain_::CELL_TYPE & CUBICAL_CELL);
+
+    internal::Marching_cubes_functor<Domain_, PointRange, PolygonRange> functor(domain, iso_value, points, polygons);
+    domain.iterate_cells(functor, Concurrency_tag());
 }
 
 }  // namespace Isosurfacing
 }  // namespace CGAL
 
-#endif  // CGAL_MARCHING_CUBES_H
+#endif  // CGAL_MARCHING_CUBES_3_H
