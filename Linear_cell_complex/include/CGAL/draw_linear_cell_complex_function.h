@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Mostafa Ashraf <mostaphaashraf1996@gmail.com>
+// Author(s): Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//            Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_LCC_H
 #define CGAL_DRAW_LCC_H
@@ -113,13 +114,12 @@ struct DefaultDrawingFunctorLCC {
   }
 };
 
-  namespace draw_function 
-  {
-    
+namespace draw_function {
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-typedef Local_kernel::Point_3  Local_point;
+typedef Local_kernel::Point_3 Local_point;
 typedef Local_kernel::Vector_3 Local_vector;
-  
+
 template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
 struct LCC_geom_utils;
 
@@ -143,7 +143,6 @@ struct LCC_geom_utils<LCC, Local_kernel, 2> {
     return n;
   }
 };
-
 
 template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
 void compute_face(typename LCC::Dart_const_handle dh,
@@ -328,16 +327,23 @@ void compute_elements(GraphicBuffer<BufferType> &graphic_buffer, const LCC *lcc,
 
 } // namespace draw_function
 
-// This function is responsible for filling the buffer to allow visualization.
+/**
+ * @brief This function is responsible for filling the buffer to allow
+ * visualization.
+ *
+ * @param graphic_buffer
+ * @param m_drawing_functor
+ * @param alcc
+ */
 template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
 void add_in_graphic_buffer_lcc(GraphicBuffer<BufferType> &graphic_buffer,
                                const DrawingFunctorLCC &m_drawing_functor,
-                               const LCC *alcc = nullptr, bool nofill = false,
+                               const LCC *alcc = nullptr,
                                bool m_random_face_color = false) {
 
   if (alcc != nullptr) {
-    draw_function::compute_elements(graphic_buffer, alcc, m_drawing_functor, nofill,
-                     m_random_face_color);
+    draw_function::compute_elements(graphic_buffer, alcc, m_drawing_functor,
+                                    m_random_face_color);
   }
 }
 
@@ -352,10 +358,10 @@ template <unsigned int d_, unsigned int ambient_dim, class Traits_,
           class Refs, class Storage_,
           class DrawingFunctorLCC = DefaultDrawingFunctorLCC>
 void draw(const CGAL_LCC_TYPE &alcc,
-          const char *title = "LCC for CMap Basic Viewer", bool nofill = false,
+          const char *title = "LCC for CMap Basic Viewer",
           const DrawingFunctorLCC &drawing_functor = DrawingFunctorLCC()) {
   GraphicBuffer<float> buffer;
-  add_in_graphic_buffer_lcc(buffer, drawing_functor, &alcc, nofill, false);
+  add_in_graphic_buffer_lcc(buffer, drawing_functor, &alcc, false);
   draw_buffer(buffer);
 }
 
