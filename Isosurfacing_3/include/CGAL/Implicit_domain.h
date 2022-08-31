@@ -1,86 +1,79 @@
-#ifndef CGAL_CARTESIAN_GRID_DOMAIN_H
-#define CGAL_CARTESIAN_GRID_DOMAIN_H
+#ifndef CGAL_IMPLICIT_DOMAIN_H
+#define CGAL_IMPLICIT_DOMAIN_H
 
-#include <CGAL/Cartesian_grid_3.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian_topology_base.h>
-#include <CGAL/Isosurfacing_3/internal/Tables.h>
 #include <tbb/parallel_for.h>
 
 namespace CGAL {
 namespace Isosurfacing {
 
-template <class GeomTraits>
-class Cartesian_grid_domain : public Cartesian_topology_base {
+template <class GeomTraits, typename Function>
+class Implicit_domain : public Cartesian_topology_base {
 public:
     typedef GeomTraits Geom_traits;
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Point_3 Point;
-    typedef typename Geom_traits::Vector_3 Vector;
+    typedef typename Geom_traits::Vector_3 Grid_spacing;
 
 public:
-    Cartesian_grid_domain(const Cartesian_grid_3<Geom_traits>& grid) : grid(&grid) {}
+    Implicit_domain(const Function& func, const Bbox_3& domain, const Grid_spacing& spacing)
+        : func(&func), bbox(domain), spacing(spacing) {
 
-    Point position(const Vertex_handle& v) const {
-        const FT vx = grid->voxel_x();
-        const FT vy = grid->voxel_y();
-        const FT vz = grid->voxel_z();
-
-        return Point(v[0] * vx + grid->offset_x(), v[1] * vy + grid->offset_y(), v[2] * vz + grid->offset_z());
+        sizes[0] = domain.x_span() / spacing.x();
+        sizes[1] = domain.y_span() / spacing.y();
+        sizes[2] = domain.z_span() / spacing.z();
     }
 
-    Vector gradient(const Vertex_handle& v) const {
-        const FT vx = grid->voxel_x();
-        const FT vy = grid->voxel_y();
-        const FT vz = grid->voxel_z();
-
-        Vector g(v[0] * vx + grid->offset_x(), v[1] * vy + grid->offset_y(), v[2] * vz + grid->offset_z());
-        return g / std::sqrt(g.squared_length());
+    Point position(const Vertex_handle& v) const {
+        return Point(v[0] * spacing.x() + bbox.xmin(), v[1] * spacing.y() + bbox.ymin(),
+                     v[2] * spacing.z() + bbox.zmin());
     }
 
     FT value(const Vertex_handle& v) const {
-        return grid->value(v[0], v[1], v[2]);
+        return func->operator()(position(v));
     }
 
     template <typename Functor>
     void iterate_vertices(Functor& f, Sequential_tag tag = Sequential_tag()) const {
-        iterate_vertices_base(f, tag, grid->xdim(), grid->ydim(), grid->zdim());
+        iterate_vertices_base(f, tag, sizes[0], sizes[1], sizes[2]);
     }
 
     template <typename Functor>
     void iterate_edges(Functor& f, Sequential_tag tag = Sequential_tag()) const {
-        iterate_edges_base(f, tag, grid->xdim(), grid->ydim(), grid->zdim());
+        iterate_edges_base(f, tag, sizes[0], sizes[1], sizes[2]);
     }
 
     template <typename Functor>
     void iterate_cells(Functor& f, Sequential_tag tag = Sequential_tag()) const {
-        iterate_cells_base(f, tag, grid->xdim(), grid->ydim(), grid->zdim());
+        iterate_cells_base(f, tag, sizes[0], sizes[1], sizes[2]);
     }
 
 #ifdef CGAL_LINKED_WITH_TBB
     template <typename Functor>
     void iterate_vertices(Functor& f, Parallel_tag) const {
-        const std::size_t size_x = grid->xdim();
-        const std::size_t size_y = grid->ydim();
-        const std::size_t size_z = grid->zdim();
+        const std::size_t size_x = sizes[0];
+        const std::size_t size_y = sizes[1];
+        const std::size_t size_z = sizes[2];
 
         auto iterator = [=, &f](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t x = r.begin(); x != r.end(); x++) {
-                for (std::size_t y = 0; y < size_y - 1; y++) {
-                    for (std::size_t z = 0; z < size_z - 1; z++) {
+                for (std::size_t y = 0; y < size_y; y++) {
+                    for (std::size_t z = 0; z < size_z; z++) {
                         f({x, y, z});
                     }
                 }
             }
         };
 
-        tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_x - 1), iterator);
+        tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_x), iterator);
     }
 
     template <typename Functor>
     void iterate_edges(Functor& f, Parallel_tag) const {
-        const std::size_t size_x = grid->xdim();
-        const std::size_t size_y = grid->ydim();
-        const std::size_t size_z = grid->zdim();
+        const std::size_t size_x = sizes[0];
+        const std::size_t size_y = sizes[1];
+        const std::size_t size_z = sizes[2];
 
         auto iterator = [=, &f](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t x = r.begin(); x != r.end(); x++) {
@@ -99,9 +92,9 @@ public:
 
     template <typename Functor>
     void iterate_cells(Functor& f, Parallel_tag) const {
-        const std::size_t size_x = grid->xdim();
-        const std::size_t size_y = grid->ydim();
-        const std::size_t size_z = grid->zdim();
+        const std::size_t size_x = sizes[0];
+        const std::size_t size_y = sizes[1];
+        const std::size_t size_z = sizes[2];
 
         auto iterator = [=, &f](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t x = r.begin(); x != r.end(); x++) {
@@ -118,10 +111,22 @@ public:
 #endif  // CGAL_LINKED_WITH_TBB
 
 private:
-    const Cartesian_grid_3<Geom_traits>* grid;
+    const Function* func;
+
+    Bbox_3 bbox;
+    Grid_spacing spacing;
+
+    std::array<std::size_t, 3> sizes;
 };
+
+
+template <typename Function, class GeomTraits = typename Function::Geom_traits>
+Implicit_domain<GeomTraits, Function> create_implicit_domain(const Function& func, const Bbox_3& domain,
+                                                             const typename GeomTraits::Vector_3& spacing) {
+    return Implicit_domain<GeomTraits, Function>(func, domain, spacing);
+}
 
 }  // namespace Isosurfacing
 }  // namespace CGAL
 
-#endif  // CGAL_CARTESIAN_GRID_DOMAIN_H
+#endif  // CGAL_IMPLICIT_DOMAIN_H
