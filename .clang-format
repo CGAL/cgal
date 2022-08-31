@@ -1,0 +1,13 @@
+﻿---
+BasedOnStyle: Google
+AccessModifierOffset: '-4'
+AllowShortFunctionsOnASingleLine: Empty
+ColumnLimit: '120'
+IndentWidth: '4'
+KeepEmptyLinesAtTheStartOfBlocks: 'true'
+Language: Cpp
+MaxEmptyLinesToKeep: '2'
+NamespaceIndentation: None
+UseTab: Never
+
+...
