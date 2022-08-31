@@ -334,16 +334,17 @@ void compute_elements(GraphicBuffer<BufferType> &graphic_buffer, const LCC *lcc,
  * @param graphic_buffer
  * @param m_drawing_functor
  * @param alcc
+ * @param anofaces if true, do not draw faces.
  */
 template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
 void add_in_graphic_buffer_lcc(GraphicBuffer<BufferType> &graphic_buffer,
                                const DrawingFunctorLCC &m_drawing_functor,
-                               const LCC *alcc = nullptr,
+                               const LCC *alcc = nullptr, bool nofaces = false,
                                bool m_random_face_color = false) {
 
   if (alcc != nullptr) {
     draw_function::compute_elements(graphic_buffer, alcc, m_drawing_functor,
-                                    m_random_face_color);
+                                    nofaces, m_random_face_color);
   }
 }
 
