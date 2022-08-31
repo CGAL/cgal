@@ -69,12 +69,10 @@ struct Refine_one_eighth {
 int main() {
     Octree_wrapper_ octree_wrap({-1, -1, -1, 1, 1, 1});
 
-    Refine_one_eighth split_predicate(4, 8);
+    Refine_one_eighth split_predicate(4, 6);
     octree_wrap.refine(split_predicate);
 
     Octree_domain_ octree_domain(octree_wrap);
-
-    std::cout << "Init grid" << std::endl;
 
     auto lam = [&](const Octree_domain_::Vertex_handle& v) {
         Point_3 p = octree_domain.position(v);
@@ -89,7 +87,6 @@ int main() {
     Point_range points;
     Polygon_range polygons;
 
-    std::cout << "Run DC" << std::endl;
     CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(octree_domain, 0.8, points, polygons);
 
     CGAL::IO::write_OFF("result.off", points, polygons);
