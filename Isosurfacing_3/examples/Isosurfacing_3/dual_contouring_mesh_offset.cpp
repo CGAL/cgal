@@ -33,9 +33,9 @@ inline Kernel::FT distance_to_mesh(const Tree& tree, const Point& p) {
 }
 
 int main() {
-    const std::string input_name = "../../../../data/bunny.off";
-    const int n_voxels = 50;
-    const FT offset_value = 0.02;
+    const std::string input_name = "../data/bunny.off";
+    const int n_voxels = 20;
+    const FT offset_value = 0.01;
 
     Mesh mesh_input;
     if (!CGAL::IO::read_OFF(input_name, mesh_input)) {
@@ -69,10 +69,10 @@ int main() {
 
                 grid.value(x, y, z) = distance_to_mesh(tree, p);
 
-                const bool is_inside = (sotm(p) == CGAL::ON_BOUNDED_SIDE);
-                if (is_inside) {
-                    grid.value(x, y, z) *= -1;
-                }
+                // const bool is_inside = (sotm(p) == CGAL::ON_BOUNDED_SIDE);
+                // if (is_inside) {
+                //    grid.value(x, y, z) *= -1;
+                //}
             }
         }
     }
