@@ -155,7 +155,7 @@ protected:
                                         // the right endpoint it its interior.
 
   Point_2 m_intersect_p;                // The next intersection point.
-  unsigned int m_ip_multiplicity;       // Its multiplicity
+  Multiplicity m_ip_multiplicity;       // Its multiplicity
                                         // (0 in case of an overlap).
   bool m_found_intersect;               // An intersection has been found.
                                         // (or an overlap).
