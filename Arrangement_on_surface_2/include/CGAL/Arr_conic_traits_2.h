@@ -23,11 +23,12 @@
  * The conic traits-class for the arrangement package.
  */
 
+// Keep the following 2 lines first.
 #define _USE_MATH_DEFINES
+#include <cmath>
 #include <fstream>
 #include <atomic>
 #include <memory>
-#include <cmath>
 #include <map>
 
 #include <boost/variant.hpp>
@@ -2960,7 +2961,7 @@ public:
         // In case of a full conic (an ellipse or a circle), compute the
         // horizontal and vertical tangency points and use them to bound the arc.
         Alg_point_2 tan_ps[2];
-        CGAL_assertion_code(int n_tan_ps);
+        CGAL_assertion_code(size_t n_tan_ps);
 
         CGAL_assertion_code
           (n_tan_ps = m_traits.vertical_tangency_points(xcv, tan_ps));
