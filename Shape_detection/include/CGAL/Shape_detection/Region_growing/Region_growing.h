@@ -290,7 +290,7 @@ namespace Shape_detection {
 
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
         Item i = get(item_map_,it);
-        if (!get(m_visited, i))
+        if (get(m_region_map, i) == std::size_t(-1))
           *(output++) = i;
       }
       return output;
