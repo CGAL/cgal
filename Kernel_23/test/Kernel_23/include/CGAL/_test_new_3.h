@@ -22,8 +22,11 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>
+#include <CGAL/Has_member.h>
 
 #include <CGAL/use.h>
+
+CGAL_GENERATE_MEMBER_DETECTOR(needs_ft);
 
 using CGAL::internal::use;
 
@@ -605,6 +608,16 @@ test_new_3(const R& rep)
   Comparison_result tmp34ab = compare_dist(p2,p3,p4);
   tmp34ab = compare_dist(p2,p3,p2,p3);
   tmp34ab = compare_dist(p1, p2, p3, p4);
+  tmp34ab = compare_dist(l2, p1, p1);
+  tmp34ab = compare_dist(p1, p2, s2);
+  if constexpr (R::Has_filtered_predicates &&
+                has_needs_ft<typename R::Compare_distance_3>::value)
+{
+    assert(compare_dist.needs_ft(l1, p1, p1));
+    assert(compare_dist.needs_ft(p2, p3, p2, p3));
+    assert(!compare_dist.needs_ft(p1, p2, p3));
+    assert(!compare_dist.needs_ft(p2, p2, s2));
+  }
   (void) tmp34ab;
 
   typename R::Compare_squared_distance_3 compare_sq_dist

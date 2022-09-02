@@ -32,6 +32,13 @@
 #  define CGAL_Kernel_pred_RT(X, Y) CGAL_Kernel_pred(X, Y)
 #endif
 
+// Those predicates for which Simple_cartesian maybe use division of not.
+// Predicates using division must have Needs_FT<return_type> as actual return
+// type.
+#ifndef CGAL_Kernel_pred_RT_or_FT
+#  define CGAL_Kernel_pred_RT_or_FT(X, Y) CGAL_Kernel_pred(X, Y)
+#endif
+
 #ifndef CGAL_Kernel_cons
 #  define CGAL_Kernel_cons(X, Y)
 #endif
@@ -110,8 +117,8 @@ CGAL_Kernel_pred(Compare_dihedral_angle_3,
                  compare_dihedral_angle_3_object)
 CGAL_Kernel_pred(Compare_distance_2,
                  compare_distance_2_object)
-CGAL_Kernel_pred(Compare_distance_3,
-                 compare_distance_3_object)
+CGAL_Kernel_pred_RT_or_FT(Compare_distance_3,
+                          compare_distance_3_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_2,
                     compare_power_distance_2_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_3,
@@ -609,6 +616,7 @@ CGAL_Kernel_pred_RT(Side_of_oriented_circle_2,
 CGAL_Kernel_pred_RT(Side_of_oriented_sphere_3,
                     side_of_oriented_sphere_3_object)
 
+#undef CGAL_Kernel_pred_RT_or_FT
 #undef CGAL_Kernel_pred_RT
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_cons

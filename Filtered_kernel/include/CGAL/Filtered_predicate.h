@@ -19,6 +19,8 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
 
+#include <type_traits>
+
 namespace CGAL {
 
 // This template class is a wrapper that implements the filtering for any
@@ -110,6 +112,55 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return ep(c2e(args)...);
 }
+
+template <class EP_RT, class EP_FT, class AP, class C2E_RT, class C2E_FT, class C2A, bool Protection = true>
+class Filtered_predicate_RT_FT
+{
+  C2E_RT c2e_rt;
+  C2E_FT c2e_ft;
+  C2A c2a;
+  EP_RT ep_rt;
+  EP_FT ep_ft;
+  AP ap;
+
+  using Ares = typename Remove_needs_FT<typename AP::result_type>::Type;
+
+public:
+  using result_type =  typename Remove_needs_FT<typename EP_FT::result_type>::Type;
+
+  template <typename... Args>
+  bool needs_ft(const Args&... args) const {
+    using Actual_approx_res = std::remove_cv_t<std::remove_reference_t<decltype(ap(c2a(args)...))>>;
+    return std::is_same_v<Actual_approx_res, Needs_FT<Ares>>;
+  }
+
+  template <typename... Args>
+  result_type
+  operator()(const Args&... args) const
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+    {
+      Protect_FPU_rounding<Protection> p;
+      try
+        {
+          Ares res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
+      catch (Uncertain_conversion_exception&) {}
+    }
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+    using Actual_approx_res = std::remove_cv_t<std::remove_reference_t<decltype(ap(c2a(args)...))>>;
+    if constexpr (std::is_same_v<Actual_approx_res, Needs_FT<Ares>>)
+      return ep_ft(c2e_ft(args)...);
+    else
+      return ep_rt(c2e_rt(args)...);
+  }
+};
+
 
 } //namespace CGAL
 

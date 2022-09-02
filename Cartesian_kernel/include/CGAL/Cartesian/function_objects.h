@@ -17,6 +17,7 @@
 #ifndef CGAL_CARTESIAN_FUNCTION_OBJECTS_H
 #define CGAL_CARTESIAN_FUNCTION_OBJECTS_H
 
+#include <CGAL/tags.h>
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/predicates/kernel_ftC3.h>
@@ -591,14 +592,14 @@ namespace CartesianKernelFunctors {
     }
 
     template <class T1, class T2, class T3>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(p, r));
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));

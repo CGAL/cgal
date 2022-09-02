@@ -81,6 +81,23 @@ Assert_compile_time_tag( const Tag&, const Derived& b)
   x.match_compile_time_tag(b);
 }
 
+template <typename T>
+struct Needs_FT {
+  T value;
+  Needs_FT(T v) : value(v) {}
+  operator T() const { return value; }
+};
+
+template <typename T>
+struct Remove_needs_FT {
+  using Type = T;
+};
+
+template <typename T>
+struct Remove_needs_FT<Needs_FT<T>> {
+  using Type = T;
+};
+
 } //namespace CGAL
 
 #endif // CGAL_TAGS_H

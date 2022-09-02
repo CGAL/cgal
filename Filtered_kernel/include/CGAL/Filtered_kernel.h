@@ -89,6 +89,15 @@ struct Filtered_kernel_base
     typedef Filtered_predicate<typename Exact_kernel_rt::P, typename Approximate_kernel::P, C2E_rt, C2F> P; \
     P Pf() const { return P(); }
 
+#define CGAL_Kernel_pred_RT_or_FT(P, Pf) \
+    typedef Filtered_predicate_RT_FT<typename Exact_kernel_rt::P, \
+                                     typename Exact_kernel::P, \
+                                     typename Approximate_kernel::P, \
+                                    C2E_rt, \
+                                    C2E, \
+                                    C2F> P; \
+    P Pf() const { return P(); }
+
     // We don't touch the constructions.
 #define CGAL_Kernel_cons(Y,Z)
 
