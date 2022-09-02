@@ -25,7 +25,7 @@
 
 // CGAL includes.
 #include <CGAL/assertions.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
