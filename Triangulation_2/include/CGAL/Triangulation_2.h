@@ -3981,8 +3981,8 @@ operator==(const Triangulation_2<GT, TDS1>& t1,
   Face_handle1 f = v1->face();
   Vertex_handle1 v2 = f->vertex((f->index(v1)+1)%(dim+1));
   Vertex_handle1 v3 = f->vertex((f->index(v1)+2)%(dim+1));
-  const Point& p2 = t1.point(v2);
-  const Point& p3 = t1.point(v3);
+  const Point& p2 = v2->point();
+  const Point& p3 = v3->point();
 
   std::vector<Face_handle2> ifs;
   auto fc = t2.incident_faces(iv2), done(fc);
@@ -3995,16 +3995,16 @@ operator==(const Triangulation_2<GT, TDS1>& t1,
   {
     int inf = (*fit)->index(iv2);
 
-    if(equal(cp(p2), cp(t2.point(*fit, (inf+1)%(dim+1)))))
+    if(equal(cp(p2), cp((*fit)->vertex((inf+1)%(dim+1))->point())))
       Vmap.emplace(v2, (*fit)->vertex((inf+1)%(dim+1)));
-    else if(dim == 2 && equal(cp(p2), cp(t2.point(*fit, (inf+2)%(dim+1)))))
+    else if(dim == 2 && equal(cp(p2), cp((*fit)->vertex((inf+2)%(dim+1))->point())))
       Vmap.emplace(v2, (*fit)->vertex((inf+2)%(dim+1)));
     else
       continue; // None matched v2.
 
-    if(equal(cp(p3), cp(t2.point(*fit, (inf+1)%(dim+1)))))
+    if(equal(cp(p3), cp((*fit)->vertex((inf+1)%(dim+1))->point())))
       Vmap.emplace(v3, (*fit)->vertex((inf+1)%(dim+1)));
-    else if(dim == 2 && equal(cp(p3), cp(t2.point(*fit, (inf+2)%(dim+1)))))
+    else if(dim == 2 && equal(cp(p3), cp((*fit)->vertex((inf+2)%(dim+1))->point())))
       Vmap.emplace(v3, (*fit)->vertex((inf+2)%(dim+1)));
     else
       continue; // None matched v3.
