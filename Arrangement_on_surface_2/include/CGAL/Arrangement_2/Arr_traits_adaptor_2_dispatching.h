@@ -63,11 +63,11 @@ private:
   typedef boost::mpl::bool_< false > false_;
 
   typedef boost::mpl::if_<
-       boost::is_same< Arr_smaller_implementation_tag, Arr_use_traits_tag >,
+       std::is_same< Arr_smaller_implementation_tag, Arr_use_traits_tag >,
        true_, false_ > Smaller_traits;
 
   typedef boost::mpl::if_<
-       boost::is_same< Arr_larger_implementation_tag, Arr_use_traits_tag >,
+       std::is_same< Arr_larger_implementation_tag, Arr_use_traits_tag >,
        true_, false_ > Larger_traits;
 
 public:

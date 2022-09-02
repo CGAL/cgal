@@ -19,12 +19,13 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
 #include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/mpl/if.hpp>
 #include <fstream>
 #include <sstream>
 #include <set>
+#include <type_traits>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
@@ -386,7 +387,7 @@ struct TweakedGetVertexPointMap
 {
   typedef typename GetVertexPointMap<PolygonMesh,
                                      NamedParameters>::type Default_map;
-  typedef typename boost::is_same<Point_3,
+  typedef typename std::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
   typedef typename boost::mpl::if_<
@@ -399,7 +400,7 @@ struct TweakedGetVertexPointMap
 
 template <class PT, class NP, class PM>
 boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
+get_vpm(const NP& np, boost::optional<PM*> opm, std::true_type)
 {
   if (boost::none == opm) return boost::none;
   return parameters::choose_parameter(
@@ -409,7 +410,7 @@ get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
 
 template <class PT, class NP, class PM>
 boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP&, boost::optional<PM*> opm, boost::false_type)
+get_vpm(const NP&, boost::optional<PM*> opm, std::false_type)
 {
   if (boost::none == opm) return boost::none;
   return typename TweakedGetVertexPointMap<PT, NP, PM>::type();

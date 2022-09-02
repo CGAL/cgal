@@ -195,10 +195,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_tri
   ui.collapseBox->setValue(sm_item->diagonalBbox()*0.01);
   if(dialog.exec() != QDialog::Accepted)
     return;
-  CGAL::Polygon_mesh_processing::experimental::remove_almost_degenerate_faces(*sm_item->face_graph(),
-                                                                               std::cos((ui.capBox->value()/180.0) * CGAL_PI),
-                                                                              ui.needleBox->value(),
-                                                                              ui.collapseBox->value());
+  CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces(*sm_item->face_graph(),
+                                                                CGAL::parameters::cap_threshold(std::cos((ui.capBox->value()/180.0) * CGAL_PI))
+                                                                                 .needle_threshold(ui.needleBox->value())
+                                                                                 .collapse_length_threshold(ui.collapseBox->value())
+                                                                                 .flip_triangle_height_threshold(ui.flipBox->value()));
   sm_item->invalidateOpenGLBuffers();
   sm_item->itemChanged();
 }

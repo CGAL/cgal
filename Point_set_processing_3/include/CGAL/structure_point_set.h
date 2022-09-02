@@ -257,7 +257,7 @@ public:
     {
       m_points.push_back (get(point_map, *it));
       m_normals.push_back (get(normal_map, *it));
-      int plane_index = get (index_map, idx);
+      int plane_index = static_cast<int>(get (index_map, idx));
       if (plane_index != -1)
       {
         m_indices_of_assigned_points[std::size_t(plane_index)].push_back(idx);
