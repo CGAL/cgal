@@ -7286,11 +7286,11 @@ operator==(const Triangulation_3<GT, Tds1, Lds>& t1,
   int dim = t1.dimension();
   // Special case for dimension < 1.
   // The triangulation is uniquely defined in these cases.
-  if(dim < 1)
+  if(dim == - 1)
     return true;
 
-  // Special case for dimension == 1.
-  if(dim == 1)
+  // Special case for dimensions 0 and 1.
+  if(dim < 2)
   {
     // It's enough to test that the points are the same,
     // since the triangulation is uniquely defined in this case.
