@@ -23,6 +23,7 @@
 
 namespace CGAL {
 
+// This functor draws all faces, edges, and vertices.
 // Default color functor; user can change it to have its own face color
 struct DefaultDrawingFunctorLCC {
   /// @return true iff the volume containing dh is drawn.
@@ -111,6 +112,91 @@ struct DefaultDrawingFunctorLCC {
                                typename LCC::Dart_const_handle dh) const {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
+  }
+};
+
+// TODO: these functors will modify a specific face, edge, and vertex.
+struct DefaultDrawingFunctorX {
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool draw_face(const DS &, typename DS::Dart_const_handle) const {
+    return true;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool draw_edge(const DS &, typename DS::Dart_const_handle) const {
+    return true;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool draw_vertex(const DS &, typename DS::Dart_const_handle) const {
+    return true;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool face_wireframe(const DS &, typename DS::Dart_const_handle) const {
+    return false;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool colored_face(const DS &, typename DS::Dart_const_handle) const {
+    return false;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool colored_edge(const DS &, typename DS::Dart_const_handle) const {
+    return false;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool colored_vertex(const DS &, typename DS::Dart_const_handle) const {
+    return false;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  CGAL::IO::Color face_color(const DS &aVal,
+                             typename DS::Dart_const_handle dh) const {
+    CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
+    return get_random_color(random);
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  CGAL::IO::Color edge_color(const DS &aVal,
+                             typename DS::Dart_const_handle dh) const {
+    CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
+    return get_random_color(random);
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  CGAL::IO::Color vertex_color(const DS &aVal,
+                               typename DS::Dart_const_handle dh) const {
+    CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
+    return get_random_color(random);
+  }
+};
+
+struct DefaultDrawingFunctorXWithVoulume : public DefaultDrawingFunctorX {
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool draw_volume(const DS &, typename DS::Dart_const_handle) const {
+    return true;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  CGAL::IO::Color volume_color(const DS &aVal,
+                               typename LCC::Dart_const_handle dh) const {
+    CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
+    return get_random_color(random);
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool volume_wireframe(const DS &, typename DS::Dart_const_handle) const {
+    return false;
+  }
+
+  template <typename DS, typename face, typename edge, typename vertex>
+  bool colored_volume(const DS &, typename DS::Dart_const_handle) const {
+    return true;
   }
 };
 
