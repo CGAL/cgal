@@ -9,44 +9,54 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Kumar Snehasish <kumar.snehasish@gmail.com>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 //
 
 #include "Viewer.h"
 #include <CGAL/Qt/vec.h>
 
-Viewer::Viewer(QWidget* parent) :
-    Base(parent, nullptr, ""),
-    m_previous_scene_empty(true)
-{}
+Viewer::Viewer(QWidget *parent)
+    // TODO: add a new constructor that does not take graphic buffer.
+    : Base(parent, ""), m_drawing_functor(MyDrawingFunctorLCC()),
+      m_nofaces(false), m_random_face_color(false),
+      m_previous_scene_empty(true) {}
 
-void Viewer::setScene(Scene* scene_, bool doredraw)
-{
+void Viewer::setScene(Scene *scene_, bool doredraw) {
   scene = scene_;
-  set_lcc(scene->lcc, doredraw);
+
+  if (scene->lcc != nullptr) {
+    compute_elements(gBuffer, scene->lcc, m_drawing_functor, m_nofaces,
+                     m_random_face_color);
+  }
+
+  if (doredraw) {
+    Base::redraw();
+  }
 }
 
-void Viewer::sceneChanged()
-{
-  Base::compute_elements();
-  this->camera()->
-      setSceneBoundingBox(CGAL::qglviewer::Vec(m_bounding_box.xmin(),
-                                               m_bounding_box.ymin(),
-                                               m_bounding_box.zmin()),
-                          CGAL::qglviewer::Vec(m_bounding_box.xmax(),
-                                               m_bounding_box.ymax(),
-                                               m_bounding_box.zmax()));
+void Viewer::sceneChanged() {
+  compute_elements(gBuffer, scene->lcc, m_drawing_functor, m_nofaces,
+                   m_random_face_color);
+
+  this->camera()->setSceneBoundingBox(
+      CGAL::qglviewer::Vec(gBuffer.get_bounding_box().xmin(),
+                           gBuffer.get_bounding_box().ymin(),
+                           gBuffer.get_bounding_box().zmin()),
+      CGAL::qglviewer::Vec(gBuffer.get_bounding_box().xmax(),
+                           gBuffer.get_bounding_box().ymax(),
+                           gBuffer.get_bounding_box().zmax()));
   Base::redraw();
-  if (m_previous_scene_empty)
-  { this->showEntireScene(); }
+  if (m_previous_scene_empty) {
+    this->showEntireScene();
+  }
 
-  m_previous_scene_empty = scene->lcc->is_empty(); // for the next call to sceneChanged
+  m_previous_scene_empty =
+      scene->lcc->is_empty(); // for the next call to sceneChanged
 }
 
-void Viewer::keyPressEvent(QKeyEvent *e)
-{
+void Viewer::keyPressEvent(QKeyEvent *e) {
   // const Qt::KeyboardModifiers modifiers = e->modifiers();
   Base::keyPressEvent(e);
 }
 
-QString Viewer::helpString() const
-{ return Base::helpString("LCC Demo"); }
+QString Viewer::helpString() const { return Base::helpString("LCC Demo"); }

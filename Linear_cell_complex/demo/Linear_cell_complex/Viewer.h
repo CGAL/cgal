@@ -9,12 +9,15 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //                 Kumar Snehasish <kumar.snehasish@gmail.com>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 //
 #ifndef VIEWER_H
 #define VIEWER_H
 
 #include "typedefs.h"
-#include <CGAL/draw_linear_cell_complex.h>
+
+#include <CGAL/draw_linear_cell_complex_function.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 
 // Functor used by SimpleLCCViewerQt to colorize of not elements.
 struct MyDrawingFunctorLCC
@@ -104,11 +107,11 @@ struct MyDrawingFunctorLCC
 };
 
 
-class Viewer : public CGAL::SimpleLCCViewerQt<LCC, MyDrawingFunctorLCC>
+class Viewer : public Basic_viewer_qt
 {
   Q_OBJECT
 
-  typedef CGAL::SimpleLCCViewerQt<LCC, MyDrawingFunctorLCC> Base;
+  typedef CGAL::Basic_viewer_qt Base;
 
 public:
   Viewer(QWidget* parent);
@@ -120,6 +123,8 @@ public Q_SLOTS:
   void sceneChanged();
 
 private:
+  const DrawingFunctorLCC &m_drawing_functor;
+  bool m_nofaces,  m_random_face_color;
   Scene* scene;
   bool m_previous_scene_empty;
 };
