@@ -102,14 +102,18 @@ void sum_normals(const PM& pmesh,
     const Point_ref pvn = get(vpmap, the);
     const Point_ref pvnn = get(vpmap, tnhe);
 
-    const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
+    // Check whether the three vertices are collinear and skip normal computation due to numerical stability.
+    if (!traits.collinear_3_object()(pv, pvn, pvnn))
+    {
+      const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-    std::cout << "Normal of " << f << " pts: " << pv << " ; " << pvn << " ; " << pvnn << std::endl;
-    std::cout << " --> " << n << std::endl;
+      std::cout << "Normal of " << f << " pts: " << pv << " ; " << pvn << " ; " << pvnn << std::endl;
+      std::cout << " --> " << n << std::endl;
 #endif
 
-    sum = traits.construct_sum_of_vectors_3_object()(sum, n);
+      sum = traits.construct_sum_of_vectors_3_object()(sum, n);
+    }
 
     the = tnhe;
     he = next(he, pmesh);
