@@ -17,8 +17,7 @@ if(TARGET CGAL::Eigen3_support)
   # ------------------------------------------------------------------
 
   set(SuiteSparse_USE_LAPACK_BLAS ON)
-  find_package(SuiteSparse QUIET NO_MODULE
-  )# 1st: Try to locate the *config.cmake file.
+  find_package(SuiteSparse QUIET NO_MODULE)# 1st: Try to locate the *config.cmake file.
   if(NOT SuiteSparse_FOUND)
     set(SuiteSparse_VERBOSE ON)
     find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module

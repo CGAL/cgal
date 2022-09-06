@@ -55,8 +55,7 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(normal_estimation_test PUBLIC CGAL::Eigen3_support)
 
   create_single_source_cgal_program("hierarchy_simplification_test.cpp")
-  target_link_libraries(hierarchy_simplification_test
-                        PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(hierarchy_simplification_test PUBLIC CGAL::Eigen3_support)
 
   create_single_source_cgal_program("smoothing_test.cpp")
   target_link_libraries(smoothing_test PUBLIC CGAL::Eigen3_support)

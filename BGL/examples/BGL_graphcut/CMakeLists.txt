@@ -9,5 +9,4 @@ project(BGL_graphcut_Examples)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("alpha_expansion_example.cpp")
-create_single_source_cgal_program(
-  "face_selection_borders_regularization_example.cpp")
+create_single_source_cgal_program("face_selection_borders_regularization_example.cpp")

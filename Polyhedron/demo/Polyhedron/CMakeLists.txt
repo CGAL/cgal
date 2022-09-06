@@ -29,20 +29,18 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 include_directories(BEFORE ./ ./include ./CGAL_demo)
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}")
 
-# Find CGAL
-
 option(POLYHEDRON_QTSCRIPT_DEBUGGER
        "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
+# Find CGAL
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 ImageIO)
 set_package_properties(CGAL PROPERTIES TYPE REQUIRED)
 include(${CGAL_USE_FILE})
-# Find Qt5 itself
 
-find_package(
-  Qt5 QUIET
-  COMPONENTS OpenGL Script Widgets
-  OPTIONAL_COMPONENTS ScriptTools WebSockets Network)
+# Find Qt5 itself
+find_package(Qt5 QUIET
+             COMPONENTS OpenGL Script Widgets
+             OPTIONAL_COMPONENTS ScriptTools WebSockets Network)
 
 set_package_properties(
   Qt5 PROPERTIES
@@ -162,7 +160,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   # AUXILIARY LIBRARIES
 
-  # put s (which are shared libraries) at the same location as
+  # put plugins (which are shared libraries) at the same location as
   # executable files
   set(CGAL_POLYHEDRON_DEMO_PLUGINS_DIR "${RUNTIME_OUTPUT_PATH}")
   set(LIBRARY_OUTPUT_PATH "${CGAL_POLYHEDRON_DEMO_PLUGINS_DIR}")

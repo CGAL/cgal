@@ -24,5 +24,4 @@ target_link_libraries(heat_method_polyhedron PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("heat_method_surface_mesh.cpp")
 target_link_libraries(heat_method_surface_mesh PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("heat_method_surface_mesh_direct.cpp")
-target_link_libraries(heat_method_surface_mesh_direct
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(heat_method_surface_mesh_direct PUBLIC CGAL::Eigen3_support)
