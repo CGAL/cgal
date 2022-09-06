@@ -33,13 +33,11 @@ if (FAST_ENVELOPE_BUILD_DIR)
   target_link_libraries( fastE PUBLIC FastEnvelope IndirectPredicates geogram)
 
 else()
-  message(STATUS "Cmake variable FAST_ENVELOPE_BUILD_DIR is not defined fastE will not be built")
+  message(STATUS "CMake variable FAST_ENVELOPE_BUILD_DIR is not defined; benchmark 'fastE' will not be built")
 endif()
 
-create_single_source_cgal_program( "fast.cpp" )
+create_single_source_cgal_program("fast.cpp")
+
 create_single_source_cgal_program("polygon_mesh_slicer.cpp")
+target_link_libraries(polygon_mesh_slicer PUBLIC CGAL::Eigen3_support)
 
-
-if(TARGET CGAL::Eigen3_support)
-  target_link_libraries(polygon_mesh_slicer PUBLIC CGAL::Eigen3_support)
-endif()

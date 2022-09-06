@@ -7,7 +7,7 @@ find_package(CGAL REQUIRED)
 option(ACTIVATE_CONCURRENCY "Enable concurrency" ON)
 
 if(ACTIVATE_CONCURRENCY)
-  find_package(TBB)
+  find_package(TBB QUIET)
   include(CGAL_TBB_support)
   if(NOT TARGET CGAL::TBB_support)
     message(STATUS "NOTICE: Intel TBB not found. Examples are faster if TBB is linked.")

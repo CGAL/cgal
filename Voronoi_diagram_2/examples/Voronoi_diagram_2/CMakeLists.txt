@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Voronoi_diagram_2_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Qt5)
 
 # create a target per cppfile
 file(

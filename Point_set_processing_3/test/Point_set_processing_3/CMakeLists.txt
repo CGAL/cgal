@@ -19,9 +19,6 @@ if (MSVC)
   message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
 endif()
 
-find_package( TBB QUIET )
-include(CGAL_TBB_support)
-
 # Executables that do *not* require Eigen
 create_single_source_cgal_program( "read_test.cpp" )
 create_single_source_cgal_program( "test_read_write_point_set.cpp" )
@@ -37,7 +34,7 @@ create_single_source_cgal_program( "structuring_test.cpp" )
 #Use LAS
 #disable if MSVC 2017
 if(NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1919 AND  MSVC_VERSION LESS 1910))
-  find_package(LASLIB)
+  find_package(LASLIB QUIET)
   include(CGAL_LASLIB_support)
   if (TARGET CGAL::LASLIB_support)
     target_link_libraries(test_read_write_point_set PUBLIC ${CGAL_libs} CGAL::LASLIB_support)
@@ -50,9 +47,9 @@ else()
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
-if (EIGEN3_FOUND)
+if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen
   create_single_source_cgal_program( "normal_estimation_test.cpp" )
   target_link_libraries(normal_estimation_test PUBLIC CGAL::Eigen3_support)
@@ -76,6 +73,8 @@ else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
 
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
 if(TARGET CGAL::TBB_support)
   foreach(
     target

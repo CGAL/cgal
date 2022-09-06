@@ -55,7 +55,7 @@ if(Qt5_FOUND)
   add_definitions(-DSCENE_IMAGE_GL_BUFFERS_AVAILABLE)
 endif(Qt5_FOUND)
 
-find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
 set_package_properties(
   Eigen3 PROPERTIES
   DESCRIPTION "A library for linear algebra."
@@ -75,7 +75,7 @@ set_package_properties(
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY "Enable concurrency" ON)
 if(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY)
-  find_package(TBB)
+  find_package(TBB QUIET)
   include(CGAL_TBB_support)
   if(NOT TARGET CGAL::TBB_support)
     message(STATUS "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked.")
@@ -83,7 +83,7 @@ if(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY)
 endif()
 
 #find libssh for scene sharing
-find_package(LibSSH)
+find_package(LibSSH QUIET)
 set_package_properties(
   LibSSH PROPERTIES
   DESCRIPTION "A library implementing the SSH protocol on client and server side. "

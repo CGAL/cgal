@@ -20,7 +20,7 @@ create_single_source_cgal_program("test_efficient_RANSAC_scene.cpp")
 
 find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
 include(CGAL_Eigen3_support)
-if(EIGEN3_FOUND)
+if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("test_region_growing_basic.cpp")
   create_single_source_cgal_program("test_region_growing_on_cube.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_2.cpp")

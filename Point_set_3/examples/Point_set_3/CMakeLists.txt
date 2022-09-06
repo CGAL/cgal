@@ -16,9 +16,9 @@ set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 create_single_source_cgal_program("point_set_read_ply.cpp" CXX_FEATURES
                                   ${needed_cxx_features})
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
-if(EIGEN3_FOUND)
+if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("point_set_algo.cpp")
   target_link_libraries(point_set_algo PUBLIC CGAL::Eigen3_support)
 else()

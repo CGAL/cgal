@@ -77,7 +77,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     target_include_directories(Otr2_demo PRIVATE ${CIMG_INCLUDE_DIR})
     # Is pthread around? If yes, we need to link against it
     set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-    find_package(Threads)
+    find_package(Threads QUIET)
     if(CMAKE_USE_PTHREADS_INIT)
       target_link_libraries(Otr2_demo PRIVATE ${CMAKE_THREAD_LIBS_INIT})
     endif()

@@ -9,15 +9,11 @@ find_package(CGAL REQUIRED)
 
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
-
-if(NOT TARGET CGAL::Eigen3_support)
-  message(STATUS "NOTICE: Eigen 3.2 (or greater) is not found.")
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("solver_benchmark.cpp")
+  target_link_libraries(solver_benchmark PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("mcf_scale_invariance.cpp")
+  target_link_libraries(mcf_scale_invariance PUBLIC CGAL::Eigen3_support)
+else()
+  message("NOTICE: This project requires Eigen 3.2.0 (or greater), and will not be compiled.")
 endif()
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
-
-create_single_source_cgal_program("solver_benchmark.cpp")
-target_link_libraries(solver_benchmark PUBLIC CGAL::Eigen3_support)
-create_single_source_cgal_program("mcf_scale_invariance.cpp")
-target_link_libraries(mcf_scale_invariance PUBLIC CGAL::Eigen3_support)

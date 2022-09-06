@@ -2,7 +2,7 @@ include(polyhedron_demo_macros)
 
 if(TARGET CGAL::Eigen3_support)
 
-  find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
+  find_package(Boost QUIET OPTIONAL_COMPONENTS serialization iostreams)
   include(CGAL_Boost_serialization_support)
   include(CGAL_Boost_iostreams_support)
   if(NOT TARGET CGAL::Boost_serialization_support OR NOT TARGET CGAL::Boost_iostreams_support)

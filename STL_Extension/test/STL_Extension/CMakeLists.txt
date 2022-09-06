@@ -5,16 +5,11 @@ cmake_minimum_required(VERSION 3.1...3.23)
 project(STL_Extension_Tests)
 
 find_package(CGAL REQUIRED)
-find_package( TBB QUIET )
+
+find_package(TBB QUIET)
 include(CGAL_TBB_support)
-
-find_package(OpenMesh QUIET)
-
-if(OpenMesh_FOUND)
-  include(UseOpenMesh)
-  add_definitions(-DCGAL_USE_OPENMESH)
-else()
-  message(STATUS "Tests that use OpenMesh will not be compiled.")
+if(NOT TARGET CGAL::TBB_support)
+  message(STATUS "NOTICE: Tests are not using TBB.")
 endif()
 
 create_single_source_cgal_program("test_Boolean_tag.cpp")
@@ -59,7 +54,9 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(test_for_each PUBLIC CGAL::TBB_support)
 endif()
 
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
+  include(UseOpenMesh)
   create_single_source_cgal_program("test_hash_OpenMesh.cpp")
   target_link_libraries(test_hash_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
 else()

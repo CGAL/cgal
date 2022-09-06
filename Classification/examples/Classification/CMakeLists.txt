@@ -23,28 +23,19 @@ if(NOT TARGET CGAL::Boost_iostreams_support)
   set(Classification_dependencies_met FALSE)
 endif()
 
-find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
-include(CGAL_OpenCV_support)
-if(NOT TARGET CGAL::OpenCV_support)
-  message(
-    STATUS
-      "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available."
-  )
-endif()
-
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+find_package(Eigen3 3.1.0) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 
-find_package(TBB QUIET)
-include(CGAL_TBB_support)
-
 if(NOT Classification_dependencies_met)
   return()
 endif()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
 
 create_single_source_cgal_program( "example_classification.cpp" )
 create_single_source_cgal_program( "example_ethz_random_forest.cpp" )
@@ -55,10 +46,13 @@ create_single_source_cgal_program( "example_cluster_classification.cpp" )
 create_single_source_cgal_program( "gis_tutorial_example.cpp" )
 create_single_source_cgal_program( "example_deprecated_conversion.cpp" )
 
-if (TARGET CGAL::OpenCV_support)
+find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
+include(CGAL_OpenCV_support)
+if(TARGET CGAL::OpenCV_support)
   create_single_source_cgal_program( "example_opencv_random_forest.cpp" )
-  target_link_libraries(example_opencv_random_forest
-                        PUBLIC CGAL::OpenCV_support)
+  target_link_libraries(example_opencv_random_forest PUBLIC CGAL::OpenCV_support)
+else()
+  message("NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
 endif()
 
 foreach(target
@@ -72,9 +66,9 @@ foreach(target
     gis_tutorial_example
     example_deprecated_conversion)
   if(TARGET ${target})
-    target_link_libraries(
-      ${target} PUBLIC CGAL::Eigen3_support CGAL::Boost_iostreams_support
-                       CGAL::Boost_serialization_support)
+    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support
+                                           CGAL::Boost_iostreams_support
+                                           CGAL::Boost_serialization_support)
     if(TARGET CGAL::TBB_support)
       target_link_libraries(${target} PUBLIC CGAL::TBB_support)
     endif()

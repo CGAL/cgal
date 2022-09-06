@@ -6,7 +6,7 @@ project(Arithmetic_kernel_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-find_package(GMP QUIET)
+find_package(GMP)
 
 if(GMP_FOUND)
 
@@ -18,7 +18,7 @@ if(GMP_FOUND)
 
   include_directories(include)
 
-  find_package(MPFI)
+  find_package(MPFI QUIET)
 
   if(MPFI_FOUND)
     include(${MPFI_USE_FILE})

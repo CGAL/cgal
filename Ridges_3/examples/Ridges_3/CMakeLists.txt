@@ -9,8 +9,7 @@ include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
 
   # Link with Boost.ProgramOptions (optional)
-  find_package(Boost QUIET COMPONENTS program_options)
-
+  find_package(Boost COMPONENTS program_options)
   if(Boost_PROGRAM_OPTIONS_FOUND)
     create_single_source_cgal_program(Compute_Ridges_Umbilics.cpp)
     target_link_libraries(Compute_Ridges_Umbilics PUBLIC CGAL::Eigen3_support)

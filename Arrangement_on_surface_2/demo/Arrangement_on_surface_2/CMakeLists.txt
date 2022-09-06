@@ -12,10 +12,10 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL QUIET COMPONENTS Qt5 OPTIONAL_COMPONENTS Core)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt5)
 find_package(Qt5 QUIET COMPONENTS Gui Widgets)
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
+if (CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
   add_compile_definitions(QT_NO_KEYWORDS)
   include_directories( BEFORE ./ )
@@ -110,10 +110,10 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  ${CGAL_Qt5_RESOURCE_FILES}
                  ${CGAL_Qt5_MOC_FILES})
 
-  target_link_libraries(arrangement_2 Qt5::Core Qt5::Gui Qt5::Widgets)
-  target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5)
+  target_link_libraries(arrangement_2 PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets)
+  target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
   if(CGAL_Core_FOUND)
-    target_link_libraries(arrangement_2 CGAL::CGAL_Core)
+    target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL_Core)
   endif()
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)

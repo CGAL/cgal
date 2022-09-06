@@ -27,6 +27,8 @@ create_single_source_cgal_program("user_defined_point_and_distance.cpp")
 create_single_source_cgal_program("using_fair_splitting_rule.cpp")
 create_single_source_cgal_program("weighted_Minkowski_distance.cpp")
 
+find_package(Eigen3 3.1.91 QUIET) #(requires 3.1.91 or greater)
+include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("fuzzy_range_query.cpp")
   target_link_libraries(fuzzy_range_query PUBLIC CGAL::Eigen3_support)

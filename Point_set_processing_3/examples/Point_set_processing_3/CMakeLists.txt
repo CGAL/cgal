@@ -6,8 +6,6 @@ project(Point_set_processing_3_Examples)
 # Find CGAL
 find_package(CGAL REQUIRED)
 
-find_package(Boost QUIET)
-
 # VisualC++ optimization for applications dealing with large data
 if(MSVC)
   # Quit warning in the lasreader
@@ -56,7 +54,7 @@ foreach(
   target_link_libraries(${target} PRIVATE ${CGAL_libs})
 endforeach()
 
-find_package(LASLIB)
+find_package(LASLIB QUIET)
 include(CGAL_LASLIB_support)
 if(TARGET CGAL::LASLIB_support)
   create_single_source_cgal_program("read_las_example.cpp")
@@ -66,7 +64,7 @@ else()
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   set(CGAL_libs ${CGAL_libs} CGAL::Eigen3_support)

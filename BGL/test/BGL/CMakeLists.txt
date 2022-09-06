@@ -7,18 +7,6 @@ project(BGL_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-find_package(OpenMesh QUIET)
-
-if(OpenMesh_FOUND)
-  include(UseOpenMesh)
-  add_definitions(-DCGAL_USE_OPENMESH)
-else()
-  message(STATUS "Tests that use OpenMesh will not be compiled.")
-endif()
-if(OpenMesh_FOUND)
-  create_single_source_cgal_program("graph_concept_OpenMesh.cpp")
-  target_link_libraries(graph_concept_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
-endif()
 create_single_source_cgal_program("test_split.cpp")
 create_single_source_cgal_program("next.cpp")
 create_single_source_cgal_program("test_circulator.cpp")
@@ -52,7 +40,11 @@ create_single_source_cgal_program("bench_read_from_stream_vs_add_face_and_add_fa
 create_single_source_cgal_program("graph_traits_inheritance.cpp" )
 create_single_source_cgal_program("test_deprecated_io.cpp")
 
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
+  include(UseOpenMesh)
+  add_definitions(-DCGAL_USE_OPENMESH)
+
   target_link_libraries(test_clear PRIVATE ${OPENMESH_LIBRARIES})
   target_compile_definitions(test_clear PRIVATE -DCGAL_USE_OPENMESH)
   target_link_libraries(test_Euler_operations PRIVATE ${OPENMESH_LIBRARIES})
@@ -67,6 +59,11 @@ if(OpenMesh_FOUND)
   target_compile_definitions(test_Properties PRIVATE -DCGAL_USE_OPENMESH)
   target_link_libraries(test_bgl_read_write PRIVATE ${OPENMESH_LIBRARIES})
   target_compile_definitions(test_bgl_read_write PRIVATE -DCGAL_USE_OPENMESH)
+
+  create_single_source_cgal_program("graph_concept_OpenMesh.cpp")
+  target_link_libraries(graph_concept_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
+else()
+  message(STATUS "NOTICE: Tests that use OpenMesh will not be compiled.")
 endif()
 
 find_package(VTK QUIET COMPONENTS vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)

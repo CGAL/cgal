@@ -1,6 +1,6 @@
 include(polyhedron_demo_macros)
 
-find_package(LASLIB)
+find_package(LASLIB QUIET)
 set_package_properties(
   LASLIB PROPERTIES
   DESCRIPTION "A library for LIDAR I/O."

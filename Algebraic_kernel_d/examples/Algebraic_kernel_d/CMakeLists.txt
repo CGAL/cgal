@@ -3,8 +3,7 @@ project(Algebraic_kernel_d_Examples)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-find_package(MPFI QUIET)
-
+find_package(MPFI)
 if(MPFI_FOUND AND NOT CGAL_DISABLE_GMP)
   include(${MPFI_USE_FILE})
   create_single_source_cgal_program("Compare_1.cpp")

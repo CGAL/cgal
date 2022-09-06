@@ -13,7 +13,7 @@ set_property(DIRECTORY PROPERTY CGAL_NO_TESTING TRUE)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
+find_package(Eigen3 3.1.91) #(requires 3.1.91 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("deform_mesh_for_botsch08_format.cpp")

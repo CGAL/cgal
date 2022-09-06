@@ -11,7 +11,7 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt5)
 find_package(LEDA QUIET)
 
 # Find Qt5 itself

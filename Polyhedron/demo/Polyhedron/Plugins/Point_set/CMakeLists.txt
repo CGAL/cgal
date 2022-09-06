@@ -1,6 +1,6 @@
 include(polyhedron_demo_macros)
-if(TARGET CGAL::Eigen3_support)
 
+if(TARGET CGAL::Eigen3_support)
   find_package(SCIP QUIET)
 
   set_package_properties(

@@ -23,19 +23,19 @@ if(NOT TARGET CGAL::Boost_iostreams_support)
   set(Classification_dependencies_met FALSE)
 endif()
 
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+find_package(Eigen3 3.1.0) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 
-find_package(TBB QUIET)
-include(CGAL_TBB_support)
-
 if(NOT Classification_dependencies_met)
   return()
 endif()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
 
 create_single_source_cgal_program("test_classification_point_set.cpp")
 create_single_source_cgal_program("test_classification_io.cpp")

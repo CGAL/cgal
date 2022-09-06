@@ -3,8 +3,6 @@ project(Surface_mesh_shortest_path_Tests)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
 
-find_package(LEDA QUIET)
-
 include_directories(BEFORE "include")
 
 create_single_source_cgal_program("Surface_mesh_shortest_path_test_1.cpp")
@@ -14,6 +12,8 @@ create_single_source_cgal_program("Surface_mesh_shortest_path_test_4.cpp")
 create_single_source_cgal_program("Surface_mesh_shortest_path_test_5.cpp")
 create_single_source_cgal_program("Surface_mesh_shortest_path_test_6.cpp")
 create_single_source_cgal_program("Surface_mesh_shortest_path_traits_test.cpp")
+
+find_package(LEDA QUIET)
 
 # Link with Boost.ProgramOptions (optional)
 find_package(Boost QUIET COMPONENTS program_options)
