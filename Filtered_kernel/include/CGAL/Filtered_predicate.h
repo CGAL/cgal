@@ -129,9 +129,15 @@ public:
   using result_type =  typename Remove_needs_FT<typename EP_FT::result_type>::Type;
 
   template <typename... Args>
-  bool needs_ft(const Args&... args) const {
-    using Actual_approx_res = std::remove_cv_t<std::remove_reference_t<decltype(ap(c2a(args)...))>>;
-    return std::is_same_v<Actual_approx_res, Needs_FT<Ares>>;
+  struct Call_operator_needs_FT {
+    using Actual_approx_res = decltype(ap(c2a(std::declval<const Args&>())...));
+    using Approx_res = std::remove_cv_t<std::remove_reference_t<Actual_approx_res>>;
+    enum { value = std::is_same<Approx_res, Needs_FT<Ares>>::value };
+  };
+
+  template <typename... Args>
+  bool needs_ft(const Args&...) const {
+    return Call_operator_needs_FT<Args...>::value;
   }
 
   template <typename... Args>
@@ -153,8 +159,7 @@ public:
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    using Actual_approx_res = std::remove_cv_t<std::remove_reference_t<decltype(ap(c2a(args)...))>>;
-    if constexpr (std::is_same_v<Actual_approx_res, Needs_FT<Ares>>)
+    if constexpr (Call_operator_needs_FT<Args...>::value)
       return ep_ft(c2e_ft(args)...);
     else
       return ep_rt(c2e_rt(args)...);
