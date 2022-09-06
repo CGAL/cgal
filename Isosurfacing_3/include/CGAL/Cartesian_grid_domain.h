@@ -4,7 +4,10 @@
 #include <CGAL/Cartesian_grid_3.h>
 #include <CGAL/Cartesian_topology_base.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
+
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
+#endif  // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 namespace Isosurfacing {
