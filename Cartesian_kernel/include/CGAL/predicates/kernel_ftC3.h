@@ -754,7 +754,7 @@ power_side_of_bounded_power_sphereC3(
 }
 
 // return the sign of the power test of weighted point (rx,ry,rz,rw)
- // with respect to the smallest sphere orthogoanal to
+ // with respect to the smallest sphere orthogonal to
 // p,q
 template< class FT >
 typename Same_uncertainty_nt<Bounded_side, FT>::type
