@@ -22,9 +22,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
 
-  #--------------------------------
-  # Demo: Generator_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(DT_UI_FILES Generator_2.ui)
 

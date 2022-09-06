@@ -7,18 +7,6 @@ project(Surface_mesh_segmentation_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
 find_package(OpenMesh QUIET)
 
 if(OpenMesh_FOUND)
@@ -26,12 +14,6 @@ if(OpenMesh_FOUND)
 else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
-
-# include for local package
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
-
 create_single_source_cgal_program("sdf_values_example.cpp")
 create_single_source_cgal_program("segmentation_from_sdf_values_example.cpp")
 create_single_source_cgal_program("segmentation_via_sdf_values_example.cpp")

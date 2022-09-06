@@ -7,9 +7,6 @@ cmake_minimum_required(VERSION 3.1...3.23)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-include(CGAL_CreateSingleSourceCGALProgram)
-
 # Find OSQP library and headers.
 find_package(OSQP QUIET)
 include(CGAL_OSQP_support)

@@ -28,9 +28,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
 
-  #--------------------------------
-  # The "Segment Voronoi Linf" demo: Segment_voronoi_linf_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(CDT_UI_FILES Segment_voronoi_2.ui)
 

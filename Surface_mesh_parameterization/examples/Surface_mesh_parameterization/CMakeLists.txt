@@ -3,7 +3,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Surface_mesh_parameterization_Examples)
 
-# Find CGAL
 find_package(CGAL REQUIRED)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)

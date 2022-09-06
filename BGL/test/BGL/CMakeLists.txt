@@ -7,15 +7,6 @@ project(BGL_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost)
-
-if(NOT Boost_FOUND)
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
-endif()
-
 find_package(OpenMesh QUIET)
 
 if(OpenMesh_FOUND)
@@ -24,17 +15,10 @@ if(OpenMesh_FOUND)
 else()
   message(STATUS "Tests that use OpenMesh will not be compiled.")
 endif()
-
-# include for local package
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
-
 if(OpenMesh_FOUND)
   create_single_source_cgal_program("graph_concept_OpenMesh.cpp")
   target_link_libraries(graph_concept_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
 endif()
-
 create_single_source_cgal_program("test_split.cpp")
 create_single_source_cgal_program("next.cpp")
 create_single_source_cgal_program("test_circulator.cpp")

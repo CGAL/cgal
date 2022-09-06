@@ -8,14 +8,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
-if(has_cpp11 LESS 0)
-  message(
-    STATUS
-      "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
-  return()
-endif()
-
 #Defines flags to emulate windows behavior for linking error generation
 if(CMAKE_CXX_COMPILER_ID EQUAL Clang
    OR CMAKE_COMPILER_IS_GNUCC

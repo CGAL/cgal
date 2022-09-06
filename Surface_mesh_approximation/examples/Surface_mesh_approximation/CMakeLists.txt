@@ -7,14 +7,6 @@ project(Surface_mesh_approximation_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost
-find_package(Boost)
-if(NOT Boost_FOUND)
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
-endif()
-
 # Use Eigen (for PCA)
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
@@ -22,9 +14,6 @@ if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires Eigen 3.1 (or greater), and will not be compiled.")
   return()
 endif()
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
 
 create_single_source_cgal_program("vsa_approximation_2_example.cpp")
 target_link_libraries(vsa_approximation_2_example PUBLIC CGAL::Eigen3_support)

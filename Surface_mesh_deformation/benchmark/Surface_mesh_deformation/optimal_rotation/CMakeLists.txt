@@ -3,8 +3,6 @@ project(benchmark_for_closest_rotation)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)

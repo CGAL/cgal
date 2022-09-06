@@ -33,9 +33,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     add_definitions(-DCGAL_USE_CORE)
   endif()
 
-  #--------------------------------
-  # Demo: Polygon_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(DT_UI_FILES Polygon_2.ui)
 

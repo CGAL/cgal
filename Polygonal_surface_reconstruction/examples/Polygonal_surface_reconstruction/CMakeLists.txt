@@ -8,23 +8,6 @@ cmake_minimum_required(VERSION 3.1...3.23)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS
-      "NOTICE: This project requires the Boost library, and will not be compiled."
-  )
-
-  return()
-
-endif()
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)

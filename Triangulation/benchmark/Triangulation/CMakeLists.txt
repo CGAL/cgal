@@ -6,8 +6,6 @@ project(Triangulation_benchmark)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 find_package(Eigen3 3.1.0)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
@@ -16,7 +14,6 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(delaunay PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("Td_vs_T2_and_T3.cpp")
   target_link_libraries(Td_vs_T2_and_T3 PUBLIC CGAL::Eigen3_support)
-
 else()
   message("NOTICE: Executables in this directory require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

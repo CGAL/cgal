@@ -7,21 +7,6 @@ project(Point_set_3_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
 create_single_source_cgal_program("point_set.cpp")
 create_single_source_cgal_program("point_set_property.cpp")
 create_single_source_cgal_program("point_set_read_xyz.cpp")

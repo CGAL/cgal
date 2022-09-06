@@ -20,7 +20,6 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-
 # Find CGAL and CGAL Qt5
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 

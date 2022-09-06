@@ -7,28 +7,14 @@ project(Periodic_3_mesh_3_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
-# include for local package
 
 # Use Eigen
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS "This project requires the Eigen library, and will not be compiled.")
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
-
-# Boost and its components
-find_package(Boost)
-
-if(NOT Boost_FOUND)
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
-endif()
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
 
 create_single_source_cgal_program("mesh_implicit_shape.cpp")
 create_single_source_cgal_program("mesh_implicit_multi_domain.cpp")

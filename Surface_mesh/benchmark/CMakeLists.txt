@@ -3,8 +3,6 @@ project(Surface_mesh_performance)
 
 find_package(CGAL REQUIRED)
 
-include_directories(BEFORE "../include")
-
 # For profilling with gprof
 #add_definitions("-pg")
 #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")

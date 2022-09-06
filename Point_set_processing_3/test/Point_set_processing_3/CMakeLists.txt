@@ -19,9 +19,6 @@ if (MSVC)
   message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
 endif()
 
-# Temporary debugging stuff
-ADD_DEFINITIONS( "-DDEBUG_TRACE" )
-
 find_package( TBB QUIET )
 include(CGAL_TBB_support)
 

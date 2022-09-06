@@ -7,25 +7,12 @@ project(Polygon_mesh_processing)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
+find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message("NOTICE: Benchmarks require Eigen 3.2 (or greater), and will not be compiled")
   return()
 endif()
-
-# include for local directory
-
-# include for local package
-find_package(Eigen3 REQUIRED 3.2.0) #(requires 3.2.0 or greater)
-include(CGAL_Eigen3_support)
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
 
 set(FAST_ENVELOPE_BUILD_DIR "" CACHE PATH "Path to fast-evelope build directory")
 if (FAST_ENVELOPE_BUILD_DIR)

@@ -7,20 +7,10 @@ project(Spatial_searching_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
-include(CGAL_Eigen3_support)
-
 if(MSVC)
   # Turn off VC++ warning
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
 endif()
-
-# include for local directory
-
-# include for local package
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
 
 create_single_source_cgal_program("circular_query.cpp")
 create_single_source_cgal_program("distance_browsing.cpp")

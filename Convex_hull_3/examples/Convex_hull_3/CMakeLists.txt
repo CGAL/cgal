@@ -7,18 +7,6 @@ project(Convex_hull_3_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
 find_package(OpenMesh QUIET)
 
 if(OpenMesh_FOUND)
@@ -26,14 +14,6 @@ if(OpenMesh_FOUND)
 else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
-
-# include for local directory
-
-# include for local package
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
 create_single_source_cgal_program("quickhull_indexed_triangle_set_3.cpp")
 create_single_source_cgal_program("dynamic_hull_3.cpp")
 create_single_source_cgal_program("dynamic_hull_LCC_3.cpp")

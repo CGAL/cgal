@@ -9,7 +9,6 @@ if(CGAL_MESH_3_VERBOSE)
 endif()
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
-find_package(Boost)
 
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 

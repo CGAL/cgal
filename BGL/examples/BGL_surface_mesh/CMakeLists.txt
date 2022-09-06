@@ -3,8 +3,6 @@ project(BGL_surface_mesh_Examples)
 
 find_package(CGAL REQUIRED)
 
-# include for local package
-
 create_single_source_cgal_program("prim.cpp")
 create_single_source_cgal_program("gwdwg.cpp")
 create_single_source_cgal_program("seam_mesh.cpp")

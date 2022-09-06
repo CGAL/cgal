@@ -7,25 +7,6 @@ project(Point_set_3_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-# include for local directory
-
-# include for local package
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
 create_single_source_cgal_program("point_set_test.cpp")
 create_single_source_cgal_program("point_set_test_join.cpp")
 create_single_source_cgal_program("test_deprecated_io_ps.cpp")

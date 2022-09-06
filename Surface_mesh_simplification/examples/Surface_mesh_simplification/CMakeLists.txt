@@ -7,14 +7,6 @@ project(Surface_mesh_simplification_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost)
-if(NOT Boost_FOUND)
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
-endif()
-
 find_package(OpenMesh QUIET)
 
 if(OpenMesh_FOUND)
@@ -22,10 +14,6 @@ if(OpenMesh_FOUND)
 else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
-
 create_single_source_cgal_program("edge_collapse_envelope.cpp")
 create_single_source_cgal_program("edge_collapse_constrain_sharp_edges.cpp")
 create_single_source_cgal_program("edge_collapse_constrained_border_polyhedron.cpp")

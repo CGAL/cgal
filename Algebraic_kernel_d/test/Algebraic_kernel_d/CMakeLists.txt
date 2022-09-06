@@ -14,23 +14,8 @@ if(RS3_FOUND)
   include(${RS3_USE_FILE})
 endif()
 
-# Boost and its components
-find_package(Boost)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
 # include for local directory
 include_directories(BEFORE include)
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
 
 create_single_source_cgal_program("cyclic.cpp")
 create_single_source_cgal_program("Descartes.cpp")

@@ -21,9 +21,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
 
-  #--------------------------------
-  # The "2D Periodic triangulation" demo: Periodic_2_triangulation_2
-  #--------------------------------
   # UI files (Qt Designer files)
   qt5_wrap_ui(DT_UI_FILES Periodic_2_triangulation_2.ui)
 

@@ -7,18 +7,6 @@ project(Heat_method_3_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
 find_package(Eigen3 3.3.0)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
@@ -28,9 +16,6 @@ endif()
 
 # include for local directory
 include_directories(BEFORE include)
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
 
 create_single_source_cgal_program("heat_method_concept.cpp")
 target_link_libraries(heat_method_concept PUBLIC CGAL::Eigen3_support)

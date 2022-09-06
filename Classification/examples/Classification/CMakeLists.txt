@@ -7,15 +7,6 @@ project(Classification_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
-endif()
-
 set(Classification_dependencies_met TRUE)
 
 find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)

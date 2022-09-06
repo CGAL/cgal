@@ -7,8 +7,6 @@ project(Optimal_bounding_box_Benchmark)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# include helper file
-include(${CGAL_USE_FILE})
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)

@@ -7,7 +7,6 @@ find_package(MPFI QUIET)
 
 if(MPFI_FOUND AND NOT CGAL_DISABLE_GMP)
   include(${MPFI_USE_FILE})
-  include(CGAL_VersionUtils)
   create_single_source_cgal_program("Compare_1.cpp")
   create_single_source_cgal_program("Construct_algebraic_real_1.cpp")
   create_single_source_cgal_program("Isolate_1.cpp")
