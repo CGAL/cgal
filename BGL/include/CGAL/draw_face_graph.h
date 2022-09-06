@@ -43,7 +43,7 @@ struct DefaultColorFunctorFaceGraph
   {
     typename Graph::template Property_map<EI, CGAL::IO::Color> colorPm;
     bool found;
-    std::tie(colorPm, found) = mesh.property_map<EI, CGAL::IO::Color>(getColorPropertyName<EI>()); //Get the color property map
+    std::tie(colorPm, found) = mesh.template property_map<EI, CGAL::IO::Color>(getColorPropertyName<EI>()); //Get the color property map
     return found ? colorPm[elementIndex] : get_random_color(CGAL::get_default_random()); //return the element color if any, otherwise return a random color
   }
 };
