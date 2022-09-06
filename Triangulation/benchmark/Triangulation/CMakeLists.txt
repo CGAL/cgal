@@ -18,8 +18,5 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(Td_vs_T2_and_T3 PUBLIC CGAL::Eigen3_support)
 
 else()
-  message(
-    STATUS
-      "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message("NOTICE: Executables in this directory require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

@@ -31,7 +31,7 @@ if(TARGET CGAL::OSQP_support)
     endif()
   endforeach()
 else()
-  message(NOTICE "OSQP was not found. OSQP tests won't be available.")
+  message(STATUS "NOTICE: OSQP was not found. OSQP tests won't be available.")
 endif()
 
 set(targets

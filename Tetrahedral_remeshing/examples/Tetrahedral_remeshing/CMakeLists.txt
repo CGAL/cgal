@@ -44,6 +44,6 @@ create_single_source_cgal_program( "mesh_and_remesh_polyhedral_domain_with_featu
     target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PRIVATE CGAL::TBB_support)
   endif()
 else()
-  message(STATUS "Some examples need the Eigen3 library, and will not be compiled.")
+  message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
 

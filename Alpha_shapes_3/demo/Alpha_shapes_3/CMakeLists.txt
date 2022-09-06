@@ -47,8 +47,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL, and Qt5, and will not be compiled."
-  )
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()

@@ -42,8 +42,5 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries( MCF_Skeleton_om_example PUBLIC CGAL::Eigen3_support PRIVATE ${OPENMESH_LIBRARIES})
   endif()
 else()
-  message(
-    STATUS
-      "These programs require the Eigen library (3.2 or greater), and will not be compiled."
-  )
+  message("NOTICE: These programs require the Eigen library (3.2 or greater), and will not be compiled.")
 endif()

@@ -33,14 +33,10 @@ find_path(
   DOC "Path to the header of the CImg library")
 
 if(CIMG_INCLUDE_DIR)
-  message(
-    STATUS "CImg library found, the demo can load point set from image files.")
+  message(STATUS "NOTICE: CImg library found, the demo can load point set from image files.")
 else()
-  message(
-    STATUS
-      "CImg library was not found, the demo will not be able to load point set from image files. "
-      "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h."
-  )
+  message(STATUS "CImg library was not found, the demo will not be able to load point set from image files. "
+                 "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
 endif()
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
@@ -105,10 +101,7 @@ else(
     set(OTR2_MISSING_DEPS "Qt5.4, ${OTR2_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${OTR2_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${OTR2_MISSING_DEPS} and will not be compiled.")
 
 endif(
   CGAL_Qt5_FOUND

@@ -23,26 +23,19 @@ include(CGAL_Boost_serialization_support)
 include(CGAL_Boost_iostreams_support)
 
 if(NOT TARGET CGAL::Boost_serialization_support)
-  message(
-    STATUS
-      "NOTICE: This project requires Boost Serialization, and will not be compiled."
-  )
+  message("NOTICE: This project requires Boost Serialization, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 
 if(NOT TARGET CGAL::Boost_iostreams_support)
-  message(
-    STATUS
-      "NOTICE: This project requires Boost IO Streams, and will not be compiled."
-  )
+  message("NOTICE: This project requires Boost IO Streams, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS "This project requires the Eigen library, and will not be compiled.")
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 

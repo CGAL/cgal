@@ -14,12 +14,6 @@ if((CGAL_Core_FOUND OR LEDA_FOUND))
   create_single_source_cgal_program("test_p4ht2_removal_iterator.cpp")
   create_single_source_cgal_program("test_p4ht2_removal.cpp")
   create_single_source_cgal_program("test_p4ht2_insert_degenerate.cpp")
-
 else()
-
-  message(
-    STATUS
-      "This program requires the CGAL library and the GMP library, and will not be compiled."
-  )
-
+  message("NOTICE: This program requires the CGAL library and the GMP library, and will not be compiled.")
 endif()

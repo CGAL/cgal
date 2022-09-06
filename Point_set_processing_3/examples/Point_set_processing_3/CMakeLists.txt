@@ -62,9 +62,7 @@ if(TARGET CGAL::LASLIB_support)
   create_single_source_cgal_program("read_las_example.cpp")
   target_link_libraries(read_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
 else()
-  message(
-    STATUS
-      "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
+  message(STATUS "NOTICE: the LAS reader example requires LASlib and will not be compiled.")
 endif()
 
 # Use Eigen
@@ -102,11 +100,9 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(registration_with_pointmatcher PRIVATE ${CGAL_libs}
                           CGAL::pointmatcher_support)
   else()
-    message(
-      STATUS
-        "NOTICE : the registration_with_pointmatcher test requires libpointmatcher and will not be compiled."
-    )
+    message(STATUS "NOTICE: registration with pointmatcher requires libpointmatcher and will not be compiled.")
   endif()
+
   # Executables that require OpenGR
   find_package(OpenGR QUIET)
   include(CGAL_OpenGR_support)
@@ -115,10 +111,7 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(registration_with_OpenGR PRIVATE ${CGAL_libs}
                           CGAL::OpenGR_support)
   else()
-    message(
-      STATUS
-        "NOTICE : registration_with_OpenGR requires OpenGR, and will not be compiled."
-    )
+    message(STATUS "NOTICE: registration_with_OpenGR requires OpenGR, and will not be compiled.")
   endif()
 
   # Executables that require both libpointmatcher and OpenGR
@@ -129,15 +122,9 @@ if(TARGET CGAL::Eigen3_support)
       registration_with_opengr_pointmatcher_pipeline PRIVATE ${CGAL_libs}
       CGAL::pointmatcher_support CGAL::OpenGR_support)
   else()
-    message(
-      STATUS
-        "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled."
-    )
+    message(STATUS "NOTICE: registration with OpenGR and pointmatcher requires both libpointmatcher and OpenGR, and will not be compiled.")
   endif()
 
 else()
-  message(
-    STATUS
-      "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message(STATUS "NOTICE: Some of the executables in this directory require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

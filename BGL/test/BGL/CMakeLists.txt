@@ -118,5 +118,5 @@ if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/N
   target_link_libraries(test_3mf_to_sm PRIVATE ${3MF_LIBRARIES})
   target_compile_definitions(test_3mf_to_sm PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
-  message(STATUS "NOTICE : This program requires the lib3MF library, and will not be compiled.")
+  message(STATUS "NOTICE: The test 'test_3mf_to_sm' requires the lib3MF library, and will not be compiled.")
 endif()

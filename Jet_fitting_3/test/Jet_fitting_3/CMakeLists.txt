@@ -13,8 +13,5 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("blind_1pt.cpp")
   target_link_libraries(blind_1pt PUBLIC CGAL::Eigen3_support)
 else()
-  message(
-    STATUS
-      "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message("NOTICE: This project requires Eigen 3.1 (or greater), and will not be compiled.")
 endif()

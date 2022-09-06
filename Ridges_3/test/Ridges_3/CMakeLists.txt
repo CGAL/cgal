@@ -13,10 +13,5 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("ridge_test.cpp")
   target_link_libraries(ridge_test PUBLIC CGAL::Eigen3_support)
 else()
-
-  message(
-    STATUS
-      "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled."
-  )
-
+  message("NOTICE: This project requires Eigen 3.1 (or greater), and will not be compiled.")
 endif()

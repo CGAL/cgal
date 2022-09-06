@@ -18,6 +18,5 @@ create_single_source_cgal_program("test_Has_member_report.cpp")
 if(TARGET CGAL::TBB_support)
   target_link_libraries(test_box_grid PUBLIC CGAL::TBB_support)
 else()
-  message(
-    STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
+  message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
 endif()

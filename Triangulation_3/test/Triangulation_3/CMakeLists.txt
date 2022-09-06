@@ -41,6 +41,8 @@ if(TARGET CGAL::TBB_support)
       execution___of__test_regular_insert_range_with_info
       PROPERTY RUN_SERIAL 1)
   endif()
+else()
+  message(STATUS "NOTICE: The TBB library was not found. Some tests will not be available.")
 endif()
 
 if(BUILD_TESTING)

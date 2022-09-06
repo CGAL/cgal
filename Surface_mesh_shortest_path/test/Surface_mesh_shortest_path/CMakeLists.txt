@@ -26,14 +26,8 @@ if(Boost_PROGRAM_OPTIONS_FOUND)
       target_link_libraries(TestMesh PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
     endif()
   else()
-    message(
-      STATUS
-        "NOTICE: Example TestMesh.cpp requires the CGAL_Core library (or LEDA) and will not be compiled."
-    )
+    message(STATUS "NOTICE: The example TestMesh.cpp requires the CGAL_Core library (or LEDA) and will not be compiled.")
   endif()
 else()
-  message(
-    STATUS
-      "NOTICE: Example TestMesh.cpp requires boost program_option and will not be compiled."
-  )
+  message(STATUS "NOTICE: The example TestMesh.cpp requires boost program_option and will not be compiled.")
 endif()

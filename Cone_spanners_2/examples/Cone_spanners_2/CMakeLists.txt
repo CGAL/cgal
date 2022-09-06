@@ -21,10 +21,5 @@ if(CGAL_Core_FOUND OR LEDA_FOUND)
     create_single_source_cgal_program("${cppfile}")
   endforeach()
 else()
-
-  message(
-    STATUS
-      "This program requires the CGAL_Core library (or LEDA), and will not be compiled."
-  )
-
+  message("NOTICE: This program requires the CGAL_Core library (or LEDA), and will not be compiled.")
 endif()

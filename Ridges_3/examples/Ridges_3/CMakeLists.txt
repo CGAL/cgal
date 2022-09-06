@@ -31,14 +31,8 @@ if(TARGET CGAL::Eigen3_support)
       target_link_libraries(Ridges_Umbilics_LCC PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
     endif()
   else()
-    message(
-      STATUS
-        "NOTICE: This programs require Boost Program Options and will not be compiled."
-    )
+    message("NOTICE: This project requires Boost Program Options and will not be compiled.")
   endif()
 else()
-  message(
-    STATUS
-      "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message("NOTICE: This project requires Eigen 3.1 (or greater), and will not be compiled.")
 endif()

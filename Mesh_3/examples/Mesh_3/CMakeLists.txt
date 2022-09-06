@@ -23,9 +23,9 @@ endif()
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message( STATUS "NOTICE: All examples need the Eigen3 library, and will not be compiled." )
+  message("NOTICE: All examples require the Eigen3 library, and will not be compiled.")
   return()
-endif() #CGAL::Eigen_3_support
+endif()
 
 find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
 if(VTK_FOUND)
@@ -166,21 +166,15 @@ if(TARGET CGAL::CGAL_ImageIO)
       target_link_libraries(mesh_3D_weighted_image
                             PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
     else(ITK_FOUND)
-        message(STATUS "NOTICE: The examples that need ITK will not be compiled.")
+      message(STATUS "NOTICE: The examples that need ITK will not be compiled.")
     endif(ITK_FOUND)
 
   else()
-    message(
-      STATUS
-        "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_weighted_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled."
-    )
+    message(STATUS "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_weighted_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled.")
   endif()
 
 else()
-  message(
-    STATUS
-      "NOTICE: Some examples need the CGAL_ImageIO library, and will not be compiled."
-  )
+  message(STATUS "NOTICE: Some examples need the CGAL_ImageIO library, and will not be compiled.")
 endif()
 
 if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)

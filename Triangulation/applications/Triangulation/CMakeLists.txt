@@ -21,6 +21,10 @@ endif()
 
 find_package(Eigen3 3.1.0)
 include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message("NOTICE: Applications require Eigen 3.1 (or greater), and will not be compiled")
+  return()
+endif()
 
 # include for local directory
 include_directories(BEFORE include)

@@ -20,8 +20,5 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(deform_mesh_for_botsch08_format
                         PUBLIC CGAL::Eigen3_support)
 else()
-  message(
-    STATUS
-      "NOTICE: This program requires the Eigen library, version 3.2 or later and will not be compiled."
-  )
+  message("NOTICE: This program requires requires Eigen 3.1.91 (or greater) or later and will not be compiled.")
 endif()

@@ -73,9 +73,6 @@ else(CGAL_Qt5_FOUND AND Qt5_FOUND)
     set(AABB_MISSING_DEPS "Qt5, ${AABB_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${AABB_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${AABB_MISSING_DEPS}, and will not be compiled.")
 
 endif(CGAL_Qt5_FOUND AND Qt5_FOUND)

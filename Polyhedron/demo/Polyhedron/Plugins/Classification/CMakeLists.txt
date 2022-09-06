@@ -6,10 +6,7 @@ if(TARGET CGAL::Eigen3_support)
   include(CGAL_Boost_serialization_support)
   include(CGAL_Boost_iostreams_support)
   if(NOT TARGET CGAL::Boost_serialization_support OR NOT TARGET CGAL::Boost_iostreams_support)
-    message(
-      STATUS
-        "NOTICE: Boost IO Streams and/or Serialization not found, reading deprecated Classification config files won't be possible."
-    )
+    message(STATUS "NOTICE: Boost IO Streams and/or Serialization not found, reading deprecated Classification config files won't be possible.")
   endif()
 
   find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
@@ -20,10 +17,7 @@ if(TARGET CGAL::Eigen3_support)
   )
   include(CGAL_OpenCV_support)
   if(NOT TARGET CGAL::OpenCV_support)
-    message(
-      STATUS
-        "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available."
-    )
+    message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
   endif()
 
   qt5_wrap_ui(classificationUI_FILES Classification_widget.ui
@@ -69,8 +63,5 @@ if(TARGET CGAL::Eigen3_support)
   add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)
 
 else()
-  message(
-    STATUS
-      "NOTICE: Eigen 3.1 (or greater) was not found. Classification plugin will not be available."
-  )
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Classification plugin will not be available.")
 endif()

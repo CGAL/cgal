@@ -56,9 +56,7 @@ set_package_properties(
   Qt5 PROPERTIES
   TYPE REQUIRED
   PURPOSE "Enables the 3D Features, for GUI and visualization."
-  DESCRIPTION
-    "To find this package, it should be sufficient to fill the Qt5_DIR variable with : <Qt_dir>/<Qt_version>/<Compilator>/lib/cmake/Qt5"
-)
+  DESCRIPTION "To find this package, it should be sufficient to fill the Qt5_DIR variable with: <Qt_dir>/<Qt_version>/<Compilator>/lib/cmake/Qt5")
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
@@ -68,18 +66,19 @@ endif(Qt5_FOUND)
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 set_package_properties(
   Eigen3 PROPERTIES
-  DESCRIPTION "A library for mathematical tools."
-  PURPOSE
-    "Requiered for the Polyhedron Edit, Parameterization, Jet fitting, Classification plugin, Surface reconstruction, Normal estimation, Smoothing, Average spacing, Feature detection, Hole Filling and Fairing plugins ."
-)
+  DESCRIPTION "A library for linear algebra."
+  PURPOSE "Required for most plugins (Meshing, Mesh and Point Set Processing, etc.).")
 include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message(STATUS "NOTICE: Eigen was not found.")
+endif()
 
 find_package(METIS)
 include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
-  DESCRIPTION "A library for partitioning."
-  PURPOSE "Requiered for the partition plugin.")
+  DESCRIPTION "A library for graph partitioning."
+  PURPOSE "Required for the partition plugin.")
 
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY "Enable concurrency" ON)
@@ -87,10 +86,7 @@ if(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY)
   find_package(TBB)
   include(CGAL_TBB_support)
   if(NOT TARGET CGAL::TBB_support)
-    message(
-      STATUS
-        "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked."
-    )
+    message(STATUS "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked.")
   endif()
 endif()
 
@@ -98,11 +94,10 @@ endif()
 find_package(LibSSH)
 set_package_properties(
   LibSSH PROPERTIES
-  DESCRIPTION "A library used to enable the SSH features. "
-  PURPOSE "Requiered for loading (saving) a scene to (from) a distant server.")
-
+  DESCRIPTION "A library implementing the SSH protocol on client and server side. "
+  PURPOSE "Required for loading (saving) a scene to (from) a distant server.")
 if(NOT LIBSSH_FOUND)
-  message("NOTICE : The SSH features will be disabled.")
+  message(STATUS "NOTICE: The SSH features will be disabled.")
 endif()
 
 # Activate concurrency ? (turned OFF by default)
@@ -115,15 +110,11 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
     find_package(TBB REQUIRED)
     include(CGAL_TBB_support)
     if(NOT TARGET CGAL::TBB_support)
-      message(
-        STATUS
-          "NOTICE: Intel TBB was not found. Mesh_3 is faster if TBB is linked.")
+      message(STATUS "NOTICE: Intel TBB was not found. Mesh_3 is faster if TBB is linked.")
     endif()
   endif()
-
 else(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
-  option(LINK_WITH_TBB
-         "Link with TBB anyway so we can use TBB timers for profiling" ON)
+  option(LINK_WITH_TBB "Link with TBB anyway so we can use TBB timers for profiling" ON)
   if(LINK_WITH_TBB)
     find_package(TBB)
     include(CGAL_TBB_support)
@@ -132,9 +123,8 @@ endif()
 
 set_package_properties(
   TBB PROPERTIES
-  DESCRIPTION
-    "A library for parallelism. Mesh_3, Bilateral smoothing and WLOP plugins are faster if TBB is linked."
-  PURPOSE "Requiered for running some algorithms in parallel.")
+  DESCRIPTION "A library for parallel programming."
+  PURPOSE "Plugins such as Mesh_3, Bilateral smoothing, and WLOP are faster if TBB is linked.")
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
@@ -212,8 +202,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                                               Qt5::Script CGAL::CGAL_Qt5)
   if(TARGET Qt5::WebSockets)
     target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
-    message(
-      STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+    message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()
 
   #compilation_of__demo_framework is defined in polyhedron_demo_macros.cmake
@@ -383,10 +372,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     if(TARGET Qt5::ScriptTools)
       target_link_libraries(polyhedron_demo PUBLIC Qt5::ScriptTools)
     else()
-      message(
-        STATUS
-          "POLYHEDRON_QTSCRIPT_DEBUGGER is set to TRUE but the Qt5 ScriptTools library was not found."
-      )
+      message(STATUS "POLYHEDRON_QTSCRIPT_DEBUGGER is set to TRUE but the Qt5 ScriptTools library was not found.")
     endif()
   endif()
   target_link_libraries(Polyhedron_3 PRIVATE demo_framework)
@@ -433,8 +419,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   if(TARGET Qt5::WebSockets AND TARGET Qt5::Network)
     add_executable(WS_server Server_ws.cpp)
     target_link_libraries(WS_server PUBLIC Qt5::WebSockets Qt5::Widgets Qt5::Network)
-    message(
-      STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+    message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()
   #
   # Exporting
@@ -481,10 +466,7 @@ else(CGAL_Qt5_FOUND AND Qt5_FOUND)
     set(POLYHEDRON_MISSING_DEPS "Qt5, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS} and will not be compiled.")
 
 endif(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
@@ -495,7 +477,7 @@ feature_summary(
   QUIET_ON_EMPTY
   VAR NotFound_REQ_PACKAGES)
 if(NOT ${NotFound_REQ_PACKAGES} STREQUAL "")
-  message(STATUS "${NotFound_REQ_PACKAGES}")
+  message("${NotFound_REQ_PACKAGES}")
 endif()
 
 feature_summary(

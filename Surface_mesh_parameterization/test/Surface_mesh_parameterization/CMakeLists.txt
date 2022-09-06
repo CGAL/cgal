@@ -13,8 +13,5 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(extensive_parameterization_test
                         PUBLIC CGAL::Eigen3_support)
 else()
-  message(
-    STATUS
-      "NOTICE: The tests require Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message("NOTICE: The tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

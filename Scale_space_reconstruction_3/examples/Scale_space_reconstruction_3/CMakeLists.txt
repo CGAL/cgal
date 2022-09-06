@@ -10,9 +10,7 @@ if(ACTIVATE_CONCURRENCY)
   find_package(TBB)
   include(CGAL_TBB_support)
   if(NOT TARGET CGAL::TBB_support)
-    message(
-      STATUS
-        "NOTICE: Intel TBB NOT found! The example is faster if TBB is linked.")
+    message(STATUS "NOTICE: Intel TBB not found. Examples are faster if TBB is linked.")
   endif()
 endif()
 
@@ -35,8 +33,5 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(scale_space_advancing_front PUBLIC CGAL::TBB_support)
   endif()
 else()
-  message(
-    STATUS
-      "NOTICE: The example needs Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message("NOTICE: Examples require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

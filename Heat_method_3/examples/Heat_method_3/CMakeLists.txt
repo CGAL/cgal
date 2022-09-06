@@ -21,12 +21,8 @@ endif()
 
 find_package(Eigen3 3.3.0)
 include(CGAL_Eigen3_support)
-
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS
-      "This project requires the Eigen library (3.3 or greater), and will not be compiled."
-  )
+  message("NOTICE: These examples require the Eigen library (3.3 or greater), and will not be compiled.")
   return()
 endif()
 

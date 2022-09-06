@@ -44,13 +44,8 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("general_neighbor_searching.cpp")
   target_link_libraries(general_neighbor_searching PUBLIC CGAL::Eigen3_support)
 else()
-
-  message(STATUS "fuzzy_range_query.cpp and general_neighbor_searching.cpp")
-  message(
-    STATUS
-      "will not be compiled as they use CGAL::Epick_d which requires the Eigen library."
-  )
-
+  message(STATUS "NOTICE: The examples 'fuzzy_range_query' and 'general_neighbor_searching'")
+  message(STATUS "will not be compiled as they use CGAL::Epick_d, which requires the Eigen library.")
 endif()
 
 find_package(TBB QUIET)
@@ -59,5 +54,5 @@ if(TARGET CGAL::TBB_support)
   create_single_source_cgal_program("parallel_kdtree.cpp")
   target_link_libraries(parallel_kdtree PUBLIC CGAL::TBB_support)
 else()
-  message(STATUS "parallel_kdtree.cpp requires TBB and will not be compiled")
+  message(STATUS "NOTICE: The example 'parallel_kdtree' requires TBB, and will not be compiled")
 endif()

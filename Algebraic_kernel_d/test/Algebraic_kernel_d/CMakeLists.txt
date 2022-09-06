@@ -52,14 +52,13 @@ if(NOT CGAL_DISABLE_GMP)
   create_single_source_cgal_program("Curve_analysis_2.cpp")
   create_single_source_cgal_program("Curve_pair_analysis_2.cpp")
   create_single_source_cgal_program("Real_embeddable_traits_extension.cpp")
+
   if(RS_FOUND)
     create_single_source_cgal_program("Algebraic_kernel_rs_gmpq_d_1.cpp")
     create_single_source_cgal_program("Algebraic_kernel_rs_gmpz_d_1.cpp")
   else()
-    message(
-      STATUS
-        "NOTICE: Some tests require the RS library, and will not be compiled.")
+    message(STATUS "NOTICE: Some tests require the RS library, and will not be compiled.")
   endif()
 else()
-  message(STATUS "NOTICE: Some tests require the CGAL_Core library, and will not be compiled.")
+  message(STATUS "NOTICE: Some tests require GMP support, and will not be compiled.")
 endif()

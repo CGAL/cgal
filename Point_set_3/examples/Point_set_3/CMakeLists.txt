@@ -36,6 +36,8 @@ include(CGAL_Eigen3_support)
 if(EIGEN3_FOUND)
   create_single_source_cgal_program("point_set_algo.cpp")
   target_link_libraries(point_set_algo PUBLIC CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: The example 'point_set_algo' requires the Eigen library, and will not be compiled.")
 endif()
 
 create_single_source_cgal_program("draw_point_set_3.cpp")

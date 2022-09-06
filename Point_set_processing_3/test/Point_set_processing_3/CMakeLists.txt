@@ -46,10 +46,10 @@ if(NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1919 AND  MSVC_VERSION LESS 1
     target_link_libraries(test_read_write_point_set PUBLIC ${CGAL_libs} CGAL::LASLIB_support)
     target_link_libraries(test_deprecated_io_point_set PUBLIC ${CGAL_libs} CGAL::LASLIB_support)
   else()
-    message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
+    message(STATUS "NOTICE: the LAS reader test requires LASlib and will not be compiled.")
   endif()
 else()
-  message(STATUS "NOTICE : the LAS reader does not work with Visual Studio 2017.")
+  message(STATUS "NOTICE: the LAS reader does not work with Visual Studio 2017.")
 endif()
 
 # Use Eigen
@@ -76,10 +76,7 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("jet_pointer_as_property_map.cpp")
   target_link_libraries(jet_pointer_as_property_map PUBLIC CGAL::Eigen3_support)
 else()
-  message(
-    STATUS
-      "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled."
-  )
+  message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
 
 if(TARGET CGAL::TBB_support)
@@ -92,4 +89,6 @@ if(TARGET CGAL::TBB_support)
       target_link_libraries(${target} PUBLIC CGAL::TBB_support)
     endif()
   endforeach()
+else()
+  message(STATUS "NOTICE: Tests are not using TBB.")
 endif()

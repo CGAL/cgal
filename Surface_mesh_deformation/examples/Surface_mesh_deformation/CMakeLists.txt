@@ -38,12 +38,9 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(all_roi_assign_example_with_OpenMesh
                           PRIVATE ${OPENMESH_LIBRARIES} CGAL::Eigen3_support)
   else()
-    message(STATUS "Example that use OpenMesh will not be compiled.")
+    message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
   endif()
 
 else()
-  message(
-    STATUS
-      "NOTICE: These examples require the Eigen library, version 3.2 or later and will not be compiled."
-  )
+  message("NOTICE: These examples require Eigen 3.1.91 (or greater) or later and will not be compiled.")
 endif()

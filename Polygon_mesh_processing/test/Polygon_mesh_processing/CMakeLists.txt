@@ -117,7 +117,7 @@ include(CGAL_METIS_support)
 if(TARGET CGAL::METIS_support)
   target_link_libraries(test_hausdorff_bounded_error_distance PUBLIC CGAL::METIS_support)
 else()
-  message(STATUS "Tests, which use the METIS library will not be compiled.")
+  message(STATUS "NOTICE: Tests are not using METIS.")
 endif()
 
 if(TARGET CGAL::TBB_support)
@@ -127,15 +127,14 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(self_intersection_surface_mesh_test
                         PUBLIC CGAL::TBB_support)
 else()
-  message(
-    STATUS
-      "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code."
-  )
+  message(STATUS "NOTICE: Intel TBB was not found. Tests will use sequential code.")
 endif()
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp")
   target_link_libraries(remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES})
+else()
+  message(STATUS "NOTICE: Tests that use OpenMesh will not be compiled.")
 endif()
 
 find_package(Ceres QUIET)

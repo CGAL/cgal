@@ -24,8 +24,7 @@ include(GNUInstallDirs)
 
 if(CGAL_BRANCH_BUILD)
 
-  message(
-    STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}")
+  message(STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}")
 
   # list packages
   file(

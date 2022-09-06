@@ -6,10 +6,7 @@ cmake_minimum_required(VERSION 3.1...3.23)
 project(NewKernel_d_Tests)
 
 if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
-  message(
-    STATUS
-      "NOTICE: this directory requires a version of gcc >= 4.4, and will not be compiled."
-  )
+  message("NOTICE: this directory requires a version of gcc >= 4.4, and will not be compiled.")
   return()
 endif()
 
@@ -28,10 +25,5 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 else()
-
-  message(
-    STATUS
-      "NOTICE: These programs require the Eigen3 library, and will not be compiled."
-  )
-
+  message("NOTICE: These programs require the Eigen3 library, and will not be compiled.")
 endif()

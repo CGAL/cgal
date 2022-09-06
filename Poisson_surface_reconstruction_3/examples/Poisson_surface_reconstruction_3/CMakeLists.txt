@@ -32,7 +32,5 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("tutorial_example.cpp")
   target_link_libraries(tutorial_example PUBLIC CGAL::Eigen3_support)
 else()
-  message(
-    STATUS
-      "NOTICE: The examples need Eigen 3.1 (or greater) will not be compiled.")
+  message("NOTICE: The examples require Eigen 3.1 (or greater) will not be compiled.")
 endif()

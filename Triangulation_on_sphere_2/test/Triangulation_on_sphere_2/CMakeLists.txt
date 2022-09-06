@@ -22,7 +22,5 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-
+  message(STATUS "NOTICE: The Eigen library was not found. The test 'test_dtos_dual' will not be compiled.")
 endif()

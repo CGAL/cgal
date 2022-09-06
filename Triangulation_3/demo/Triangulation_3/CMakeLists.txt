@@ -94,10 +94,7 @@ else(Qt5_FOUND)
     set(TRIANGULATION_3_MISSING_DEPS "Qt5, ${TRIANGULATION_3_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}, and will not be compiled.")
 
 endif(
   CGAL_Qt5_FOUND

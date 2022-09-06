@@ -39,8 +39,5 @@ if(CGAL_Qt5_FOUND
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test( HDT2 )
 else()
-  message(
-    STATUS
-      "NOTICE: This demo requires CGAL, CGAL_Core (or LEDA), and Qt5 and will not be compiled."
-  )
+  message("NOTICE: This demo requires CGAL_Core (or LEDA), and Qt5 and will not be compiled.")
 endif()

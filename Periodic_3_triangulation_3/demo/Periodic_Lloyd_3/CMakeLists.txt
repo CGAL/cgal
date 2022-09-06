@@ -92,9 +92,6 @@ else(CGAL_Qt5_FOUND
         "${CGAL_QCOLLECTIONGENERATOR_TARGET}, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS} and will not be compiled.")
 
 endif()

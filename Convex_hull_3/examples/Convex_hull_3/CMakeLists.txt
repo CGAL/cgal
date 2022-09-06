@@ -52,4 +52,6 @@ if(OpenMesh_FOUND)
 
   target_link_libraries(quickhull_OM_3 PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries(dynamic_hull_OM_3 PRIVATE ${OPENMESH_LIBRARIES})
+else()
+  message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
 endif()

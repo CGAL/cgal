@@ -12,8 +12,5 @@ if(EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
   endif()
 
 else()
-  message(
-    STATUS
-      "NOTICE: The polyhedron edit plugin require Eigen 3.2 (or higher) and will not be available."
-  )
+  message(STATUS "NOTICE: The polyhedron edit plugin requires Eigen 3.2 (or higher) and will not be available.")
 endif()

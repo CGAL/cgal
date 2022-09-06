@@ -133,6 +133,5 @@ else()
   if(NOT Qt5_FOUND)
     set(MISSING_DEPS "Qt5, ${MISSING_DEPS}")
   endif()
-  message(STATUS
-          "NOTICE: This demo requires ${MISSING_DEPS} and will not be compiled.")
+  message("NOTICE: This demo requires ${MISSING_DEPS} and will not be compiled.")
 endif()

@@ -46,8 +46,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   cgal_add_compilation_test(Largest_empty_rectangle_2)
 else()
 
-  message(
-    STATUS "NOTICE: This demo requires CGAL, and Qt5, and will not be compiled."
-  )
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()
