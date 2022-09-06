@@ -31,14 +31,11 @@ find_package(TBB QUIET)
 include(CGAL_TBB_support)
 
 if(TARGET CGAL::TBB_support)
-  create_single_source_cgal_program(
-    "parallel_insertion_and_removal_in_regular_3.cpp")
+  create_single_source_cgal_program("parallel_insertion_and_removal_in_regular_3.cpp")
   create_single_source_cgal_program("parallel_insertion_in_delaunay_3.cpp")
   create_single_source_cgal_program("sequential_parallel.cpp")
-  target_link_libraries(parallel_insertion_and_removal_in_regular_3
-                        PUBLIC CGAL::TBB_support)
-  target_link_libraries(parallel_insertion_in_delaunay_3
-                        PUBLIC CGAL::TBB_support)
+  target_link_libraries(parallel_insertion_and_removal_in_regular_3 PUBLIC CGAL::TBB_support)
+  target_link_libraries(parallel_insertion_in_delaunay_3 PUBLIC CGAL::TBB_support)
   target_link_libraries(sequential_parallel PUBLIC CGAL::TBB_support)
 
   if(BUILD_TESTING)

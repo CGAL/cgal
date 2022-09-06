@@ -23,42 +23,26 @@ endif()
 # ##########################################################
 
 create_single_source_cgal_program("circular_query.cpp")
-
 create_single_source_cgal_program("distance_browsing.cpp")
-
 create_single_source_cgal_program("iso_rectangle_2_query.cpp")
-
 create_single_source_cgal_program("nearest_neighbor_searching.cpp")
-
 create_single_source_cgal_program("searching_with_circular_query.cpp")
-
 create_single_source_cgal_program("searching_with_point_with_info.cpp")
-
 create_single_source_cgal_program("searching_with_point_with_info_inplace.cpp")
-
 create_single_source_cgal_program("searching_with_point_with_info_pmap.cpp")
-
 create_single_source_cgal_program("searching_surface_mesh_vertices.cpp")
-
 create_single_source_cgal_program("searching_polyhedron_vertices.cpp")
-
-create_single_source_cgal_program(
-  "searching_polyhedron_vertices_with_fuzzy_sphere.cpp")
-
+create_single_source_cgal_program("searching_polyhedron_vertices_with_fuzzy_sphere.cpp")
 create_single_source_cgal_program("user_defined_point_and_distance.cpp")
-
 create_single_source_cgal_program("using_fair_splitting_rule.cpp")
-
 create_single_source_cgal_program("weighted_Minkowski_distance.cpp")
 
 if(TARGET CGAL::Eigen3_support)
-
   create_single_source_cgal_program("fuzzy_range_query.cpp")
   target_link_libraries(fuzzy_range_query PUBLIC CGAL::Eigen3_support)
 
   create_single_source_cgal_program("general_neighbor_searching.cpp")
   target_link_libraries(general_neighbor_searching PUBLIC CGAL::Eigen3_support)
-
 else()
 
   message(STATUS "fuzzy_range_query.cpp and general_neighbor_searching.cpp")

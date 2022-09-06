@@ -46,11 +46,9 @@ if(TARGET CGAL::Eigen3_support)
            scene_points_with_normal_item CGAL::Eigen3_support)
 
   if(TARGET CGAL::SCIP_support)
-    target_link_libraries(surface_reconstruction_plugin
-                          PUBLIC CGAL::SCIP_support)
+    target_link_libraries(surface_reconstruction_plugin PUBLIC CGAL::SCIP_support)
   elseif(TARGET CGAL::GLPK_support)
-    target_link_libraries(surface_reconstruction_plugin
-                          PUBLIC CGAL::GLPK_support)
+    target_link_libraries(surface_reconstruction_plugin PUBLIC CGAL::GLPK_support)
   endif()
 
   qt5_wrap_ui(point_set_normal_estimationUI_FILES

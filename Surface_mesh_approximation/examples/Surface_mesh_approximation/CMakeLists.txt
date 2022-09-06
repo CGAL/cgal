@@ -43,5 +43,4 @@ create_single_source_cgal_program("vsa_segmentation_example.cpp")
 target_link_libraries(vsa_segmentation_example PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("vsa_simple_approximation_example.cpp")
-target_link_libraries(vsa_simple_approximation_example
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(vsa_simple_approximation_example PUBLIC CGAL::Eigen3_support)

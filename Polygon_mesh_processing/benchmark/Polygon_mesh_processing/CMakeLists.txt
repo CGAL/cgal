@@ -16,7 +16,6 @@ if(NOT Boost_FOUND)
     STATUS "This project requires the Boost library, and will not be compiled.")
 
   return()
-
 endif()
 
 # include for local directory
@@ -33,7 +32,7 @@ if (FAST_ENVELOPE_BUILD_DIR)
   message(STATUS "Using ${FAST_ENVELOPE_BUILD_DIR} as build directory of fast-evelope")
 
   include_directories("${FAST_ENVELOPE_BUILD_DIR}/include")
-  link_directories ( "${FAST_ENVELOPE_BUILD_DIR}/lib"  "${FAST_ENVELOPE_BUILD_DIR}"  "${FAST_ENVELOPE_BUILD_DIR}/tbb"   )
+  link_directories ( "${FAST_ENVELOPE_BUILD_DIR}/lib" "${FAST_ENVELOPE_BUILD_DIR}" "${FAST_ENVELOPE_BUILD_DIR}/tbb")
 
   find_package(OpenMP)
   if (OPENMP_FOUND)
@@ -42,7 +41,7 @@ if (FAST_ENVELOPE_BUILD_DIR)
       set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
   endif()
 
-  create_single_source_cgal_program( "fastE.cpp" )
+  create_single_source_cgal_program("fastE.cpp")
   target_link_libraries( fastE PUBLIC CGAL::Eigen3_support)
   target_link_libraries( fastE PUBLIC FastEnvelope IndirectPredicates geogram)
 

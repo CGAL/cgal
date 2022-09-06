@@ -10,17 +10,13 @@ find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("all_roi_assign_example.cpp")
-  create_single_source_cgal_program(
-    "all_roi_assign_example_custom_polyhedron.cpp")
+  create_single_source_cgal_program("all_roi_assign_example_custom_polyhedron.cpp")
   create_single_source_cgal_program("all_roi_assign_example_Surface_mesh.cpp")
   create_single_source_cgal_program("custom_weight_for_edges_example.cpp")
-  create_single_source_cgal_program(
-    "deform_polyhedron_with_custom_pmap_example.cpp")
+  create_single_source_cgal_program("deform_polyhedron_with_custom_pmap_example.cpp")
   create_single_source_cgal_program("k_ring_roi_translate_rotate_example.cpp")
-  create_single_source_cgal_program(
-    "k_ring_roi_translate_rotate_Surface_mesh.cpp")
-  create_single_source_cgal_program(
-    "deform_mesh_for_botsch08_format_sre_arap.cpp")
+  create_single_source_cgal_program("k_ring_roi_translate_rotate_Surface_mesh.cpp")
+  create_single_source_cgal_program("deform_mesh_for_botsch08_format_sre_arap.cpp")
 
   foreach(
     target
@@ -38,8 +34,7 @@ if(TARGET CGAL::Eigen3_support)
   find_package(OpenMesh QUIET)
   if(OpenMesh_FOUND)
     include(UseOpenMesh)
-    create_single_source_cgal_program(
-      "all_roi_assign_example_with_OpenMesh.cpp")
+    create_single_source_cgal_program("all_roi_assign_example_with_OpenMesh.cpp")
     target_link_libraries(all_roi_assign_example_with_OpenMesh
                           PRIVATE ${OPENMESH_LIBRARIES} CGAL::Eigen3_support)
   else()

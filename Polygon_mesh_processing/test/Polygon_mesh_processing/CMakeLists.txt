@@ -140,7 +140,6 @@ endif()
 
 find_package(Ceres QUIET)
 include(CGAL_Ceres_support)
-
 if(TARGET CGAL::Ceres_support AND TARGET CGAL::Eigen3_support)
   target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen3_support CGAL::Ceres_support)
 

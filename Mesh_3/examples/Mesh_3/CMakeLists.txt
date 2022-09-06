@@ -51,12 +51,10 @@ create_single_source_cgal_program("mesh_implicit_sphere.cpp")
 target_link_libraries(mesh_implicit_sphere PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_implicit_sphere_variable_size.cpp")
-target_link_libraries(mesh_implicit_sphere_variable_size
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(mesh_implicit_sphere_variable_size PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_two_implicit_spheres_with_balls.cpp")
-target_link_libraries(mesh_two_implicit_spheres_with_balls
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(mesh_two_implicit_spheres_with_balls PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_implicit_domains_2.cpp"
                                   "implicit_functions.cpp")
@@ -66,8 +64,7 @@ create_single_source_cgal_program("mesh_cubes_intersection.cpp")
 target_link_libraries(mesh_cubes_intersection PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_cubes_intersection_with_features.cpp")
-target_link_libraries(mesh_cubes_intersection_with_features
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(mesh_cubes_intersection_with_features PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_implicit_domains.cpp"
                                   "implicit_functions.cpp")

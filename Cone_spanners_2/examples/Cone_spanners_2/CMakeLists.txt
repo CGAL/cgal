@@ -20,7 +20,6 @@ if(CGAL_Core_FOUND OR LEDA_FOUND)
   foreach(cppfile ${cppfiles})
     create_single_source_cgal_program("${cppfile}")
   endforeach()
-
 else()
 
   message(

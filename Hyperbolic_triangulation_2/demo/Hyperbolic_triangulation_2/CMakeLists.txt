@@ -17,7 +17,6 @@ find_package(LEDA QUIET)
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS OpenGL Gui)
 
-
 if(CGAL_Qt5_FOUND
    AND Qt5_FOUND
    AND (CGAL_Core_FOUND OR LEDA_FOUND))

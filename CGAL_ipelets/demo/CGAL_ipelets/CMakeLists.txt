@@ -33,14 +33,12 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 find_package(IPE 7)
-
 if(IPE_FOUND)
   if ( NOT ${IPE_VERSION} EQUAL "7")
     message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 7 is).")
     set(IPE_FOUND FALSE)
   endif()
 endif()
-
 
 if(IPE_FOUND AND IPE_VERSION)
   message("-- Using IPE version ${IPE_VERSION} compatibility.")

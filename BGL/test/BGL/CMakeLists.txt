@@ -36,68 +36,36 @@ if(OpenMesh_FOUND)
 endif()
 
 create_single_source_cgal_program("test_split.cpp")
-
 create_single_source_cgal_program("next.cpp")
-
 create_single_source_cgal_program("test_circulator.cpp")
-
 create_single_source_cgal_program("test_Gwdwg.cpp")
-
 create_single_source_cgal_program("test_bgl_dual.cpp")
-
 create_single_source_cgal_program("graph_concept_Polyhedron_3.cpp")
-
 create_single_source_cgal_program("graph_concept_Dual.cpp")
-
 create_single_source_cgal_program("graph_concept_Triangulation_2.cpp")
-
 create_single_source_cgal_program("graph_concept_Surface_mesh.cpp")
-
 create_single_source_cgal_program("graph_concept_Seam_mesh_Surface_mesh.cpp")
-
 create_single_source_cgal_program("graph_concept_Gwdwg_Surface_mesh.cpp")
-
 create_single_source_cgal_program("graph_concept_Linear_cell_complex.cpp")
-
 create_single_source_cgal_program("graph_concept_Arrangement_2.cpp")
-
-create_single_source_cgal_program( "graph_concept_Derived.cpp" )
-
-create_single_source_cgal_program( "test_clear.cpp" )
-
+create_single_source_cgal_program("graph_concept_Derived.cpp" )
+create_single_source_cgal_program("test_clear.cpp" )
 create_single_source_cgal_program("test_helpers.cpp")
-
 create_single_source_cgal_program("test_Has_member_clear.cpp")
-
 create_single_source_cgal_program("test_Has_member_id.cpp")
-
 create_single_source_cgal_program("test_bgl_read_write.cpp")
-
 create_single_source_cgal_program("graph_concept_Face_filtered_graph.cpp")
-
 create_single_source_cgal_program("test_Manifold_face_removal.cpp")
-
 create_single_source_cgal_program("test_Regularize_face_selection_borders.cpp")
-
 create_single_source_cgal_program("test_Face_filtered_graph.cpp")
-
 create_single_source_cgal_program("test_Euler_operations.cpp")
-
-create_single_source_cgal_program( "test_test_face.cpp" )
-
-create_single_source_cgal_program( "test_Collapse_edge.cpp" )
-
-create_single_source_cgal_program( "test_Collapse_edge_with_constraints.cpp" )
-
+create_single_source_cgal_program("test_test_face.cpp" )
+create_single_source_cgal_program("test_Collapse_edge.cpp" )
+create_single_source_cgal_program("test_Collapse_edge_with_constraints.cpp" )
 create_single_source_cgal_program("test_graph_traits.cpp")
-
 create_single_source_cgal_program("test_Properties.cpp")
-
-create_single_source_cgal_program(
-  "bench_read_from_stream_vs_add_face_and_add_faces.cpp")
-
-create_single_source_cgal_program( "graph_traits_inheritance.cpp" )
-
+create_single_source_cgal_program("bench_read_from_stream_vs_add_face_and_add_faces.cpp")
+create_single_source_cgal_program("graph_traits_inheritance.cpp" )
 create_single_source_cgal_program("test_deprecated_io.cpp")
 
 if(OpenMesh_FOUND)

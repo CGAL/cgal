@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1...3.23)
-project( Polyhedron_Demo )
+project(Polyhedron_Demo)
 include(FeatureSummary)
 
 # Find includes in corresponding build directories
@@ -29,6 +29,7 @@ if(CMAKE_CXX_COMPILER_ID EQUAL Clang
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z defs")
   endif()
 endif()
+
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
@@ -60,7 +61,6 @@ set_package_properties(
 )
 
 if(Qt5_FOUND)
-
   add_definitions(-DQT_NO_KEYWORDS)
   add_definitions(-DSCENE_IMAGE_GL_BUFFERS_AVAILABLE)
 endif(Qt5_FOUND)
@@ -83,7 +83,6 @@ set_package_properties(
 
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY "Enable concurrency" ON)
-
 if(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY)
   find_package(TBB)
   include(CGAL_TBB_support)
@@ -475,8 +474,7 @@ else(CGAL_Qt5_FOUND AND Qt5_FOUND)
   set(POLYHEDRON_MISSING_DEPS "")
 
   if(NOT CGAL_Qt5_FOUND)
-    set(POLYHEDRON_MISSING_DEPS
-        "the CGAL Qt5 library, ${POLYHEDRON_MISSING_DEPS}")
+    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt5 library, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
   if(NOT Qt5_FOUND)
@@ -493,8 +491,7 @@ endif(CGAL_Qt5_FOUND AND Qt5_FOUND)
 feature_summary(
   WHAT REQUIRED_PACKAGES_NOT_FOUND
   INCLUDE_QUIET_PACKAGES
-  DESCRIPTION
-    "NOTICE: Missing required packages that prevent the demo from being compiled:"
+  DESCRIPTION "NOTICE: Missing required packages that prevent the demo from being compiled:"
   QUIET_ON_EMPTY
   VAR NotFound_REQ_PACKAGES)
 if(NOT ${NotFound_REQ_PACKAGES} STREQUAL "")

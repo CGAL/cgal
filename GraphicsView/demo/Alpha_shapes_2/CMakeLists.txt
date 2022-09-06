@@ -46,7 +46,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Alpha_shapes_2)
-
 else()
 
   message(

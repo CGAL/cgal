@@ -18,8 +18,6 @@ endif()
 create_single_source_cgal_program("test_implicit_shapes_bunch.cpp")
 target_link_libraries(test_implicit_shapes_bunch PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("test_implicit_shapes_with_features.cpp")
-target_link_libraries(test_implicit_shapes_with_features
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(test_implicit_shapes_with_features PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("test_triply_periodic_minimal_surfaces.cpp")
-target_link_libraries(test_triply_periodic_minimal_surfaces
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(test_triply_periodic_minimal_surfaces PUBLIC CGAL::Eigen3_support)

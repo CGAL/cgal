@@ -35,25 +35,15 @@ endif()
 # ##########################################################
 
 create_single_source_cgal_program("quickhull_indexed_triangle_set_3.cpp")
-
 create_single_source_cgal_program("dynamic_hull_3.cpp")
-
 create_single_source_cgal_program("dynamic_hull_LCC_3.cpp")
-
 create_single_source_cgal_program("dynamic_hull_SM_3.cpp")
-
 create_single_source_cgal_program("halfspace_intersection_3.cpp")
-
 create_single_source_cgal_program("lloyd_algorithm.cpp")
-
 create_single_source_cgal_program("quickhull_3.cpp")
-
 create_single_source_cgal_program("graph_hull_3.cpp")
-
 create_single_source_cgal_program("quickhull_any_dim_3.cpp")
-
 create_single_source_cgal_program("extreme_points_3_sm.cpp")
-
 create_single_source_cgal_program("extreme_indices_3.cpp")
 
 if(OpenMesh_FOUND)

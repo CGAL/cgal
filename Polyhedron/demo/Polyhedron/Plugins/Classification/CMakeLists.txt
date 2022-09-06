@@ -15,7 +15,7 @@ if(TARGET CGAL::Eigen3_support)
   find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
   set_package_properties(
     OpenCV PROPERTIES
-    DESCRIPTION "A library for  real-time computer vision."
+    DESCRIPTION "A library for real-time computer vision."
     PURPOSE "Enables the random forest predicate for the classification plugin."
   )
   include(CGAL_OpenCV_support)
@@ -54,9 +54,8 @@ if(TARGET CGAL::Eigen3_support)
     endif()
 
   if(TARGET CGAL::Boost_serialization_support AND TARGET CGAL::Boost_iostreams_support)
-    target_link_libraries(classification_plugin PUBLIC
-      CGAL::Boost_serialization_support
-      CGAL::Boost_iostreams_support)
+    target_link_libraries(classification_plugin PUBLIC CGAL::Boost_serialization_support
+                                                       CGAL::Boost_iostreams_support)
   endif()
 
   if(TARGET CGAL::OpenCV_support)
@@ -67,8 +66,7 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(classification_plugin PUBLIC CGAL::TBB_support)
   endif()
 
-  add_dependencies(classification_plugin point_set_selection_plugin
-    selection_plugin)
+  add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)
 
 else()
   message(

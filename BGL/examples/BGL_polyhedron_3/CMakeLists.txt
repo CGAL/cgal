@@ -27,17 +27,11 @@ endif()
 # ##########################################################
 
 create_single_source_cgal_program("distance.cpp")
-
 create_single_source_cgal_program("incident_vertices.cpp")
-
 create_single_source_cgal_program("kruskal.cpp")
-
 create_single_source_cgal_program("kruskal_with_stored_id.cpp")
-
 create_single_source_cgal_program("normals.cpp")
-
 create_single_source_cgal_program("range.cpp")
-
 create_single_source_cgal_program("transform_iterator.cpp")
 
 create_single_source_cgal_program("copy_polyhedron.cpp")

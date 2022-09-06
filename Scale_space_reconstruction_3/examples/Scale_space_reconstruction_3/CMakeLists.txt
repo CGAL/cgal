@@ -27,6 +27,7 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(scale_space_manifold PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("scale_space_advancing_front.cpp")
   target_link_libraries(scale_space_advancing_front PUBLIC CGAL::Eigen3_support)
+
   if(ACTIVATE_CONCURRENCY AND TARGET CGAL::TBB_support)
     target_link_libraries(scale_space PUBLIC CGAL::TBB_support)
     target_link_libraries(scale_space_incremental PUBLIC CGAL::TBB_support)

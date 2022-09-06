@@ -21,7 +21,6 @@ endif()
 
 find_package(Eigen3 3.3.0)
 include(CGAL_Eigen3_support)
-
 if(NOT TARGET CGAL::Eigen3_support)
   message(
     STATUS
@@ -41,8 +40,6 @@ target_link_libraries(heat_method_concept PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("heat_method_surface_mesh_test.cpp")
 target_link_libraries(heat_method_surface_mesh_test PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("heat_method_surface_mesh_direct_test.cpp")
-target_link_libraries(heat_method_surface_mesh_direct_test
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(heat_method_surface_mesh_direct_test PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("heat_method_surface_mesh_intrinsic_test.cpp")
-target_link_libraries(heat_method_surface_mesh_intrinsic_test
-                      PUBLIC CGAL::Eigen3_support)
+target_link_libraries(heat_method_surface_mesh_intrinsic_test PUBLIC CGAL::Eigen3_support)
