@@ -10,23 +10,48 @@ namespace CGAL {
 
 \section secmyintroduction Introduction
 
-This package provides functions to compute a mesh representing an isosurface.
-The data structure from which an isosurface can be extracted is a 3-dimensional grid of scalar values.
-An isosurface is defined as the surface on which the value of the grid is equal to a given constant.
+This package provides functions to compute a surface mesh representing an isosurface.
+The data structure from which an isosurface can be extracted is a 3-dimensional scalar function.
+An isosurface is defined as the surface on which the value of this function is equal to a given constant.
 This constant value is called the isovalue.
-The representation that is used to store the isosurface is a triangular or quadrilateral polygon soup.
+The representation that is used to store the isosurface is a triangular or quadrilateral indexed face set. Or triangle soup?
 
 \section secmyalgorithms Algorithms
 
 There are multiple algorithms to extract an isosurface from a uniform grid or octree.
-This package contains marching cubes, ...
+This package contains marching cubes, topologically correct marching cubes, dual contouring and octree marching?.
+
+\subsection subsecmc Marching cubes
+The marching cubes algorithm iterates over all cells of the input domain and processes each cell individually.
+Firstly, the values of all eight corners of a cell are compared to the isovalue.
+Each corner gets a sign (+/-) to indicate if it is outside or inside the isosurface.
+On every edge of the cube that connects corners with different signs a new vertex is created via linear interpolation.
+Depending on the configuration of signs at the corners the resulting vertices are connected to form triangles within the cell.
+
+<center>
+<img src="mc_cases.png" style="max-width:70%;"/>
+</center>
+
+\subsection subsectmc Topologically correct marching cubes
+
+\subsection subsecdc Dual contouring
+
+\subsection subseccomparison Comparison
+table with pros/cons or applicability and guarantees
+
+\subsection subsecparameters Parameters
+gif with different isosurfaces zooming in or out
+
+\section secmydomains Domains
+necessary?
+
 
 \section secmyinterface Interface
 
 The algorithms can be called with their respective functions. The parameters are always the same:
 
 \code{.cpp}
-template <class Domain_, class PointRange, class PolygonRange>
+template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange>
 void make_triangle_mesh_using_marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
                                              PointRange& points, PolygonRange& polygons);
 \endcode
@@ -41,12 +66,18 @@ The `iso_value` parameter describes the grid value the isosurface should represe
 The output is in the form of a polygon soup that is written to the two collections `points` and `polygons`.
 The vertices are stored as `Point_3` in `points`. Each face in `polygons` is a list of indices pointing into the `points` collection.
 
+Algorithms can run sequentially on one CPU core or in parallel.
+The Concurrency_tag can be Sequential_tag or Parallel_tag and is used to specify how the algorithm is executed.
+To enable parallelism, CGAL needs to be linked with the Intel TBB library.
+If the parallel version is not availible the sequential version will always be used as a fallback.
+
+
 \section secmyexamples Examples
 
 \subsection myExampleImplicit_domain Implicit sphere
 
 The following example shows the use of the marching cubes algorithm to extract an isosurface.
-The domain is an `Implicit_domain` that describes a sphere by its implicit distance function.
+The domain is an `Implicit_domain` that describes a sphere by the distance to its origin as an implicit function.
 
 \cgalExample{Isosurfacing_3/marching_cubes_implicit_sphere.cpp}
 
@@ -55,7 +86,13 @@ The domain is an `Implicit_domain` that describes a sphere by its implicit dista
 The following example shows the use of the marching cubes algorithm to extract an isosurface.
 The domain is an `Cartesian_grid_domain` that describes a sphere by storing the distance to its origin in a `Cartesian_grid_3`.
 
-\cgalExample{Isosurfacing_3/marching_cubes_cartesian_grid_sphere.cpp}
+\cgalExample{Isosurfacing_3/dual_contouring_cartesian_grid.cpp}
+
+\cgalExample{Isosurfacing_3/marching_cubes_inrimage.cpp}
+
+\cgalExample{Isosurfacing_3/marching_cubes_mesh_offset.cpp}
+
+\cgalExample{Isosurfacing_3/dual_contouring_octree.cpp}
 
 */
 } /* namespace CGAL */
