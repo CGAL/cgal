@@ -3,7 +3,10 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian_topology_base.h>
+
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
+#endif  // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 namespace Isosurfacing {

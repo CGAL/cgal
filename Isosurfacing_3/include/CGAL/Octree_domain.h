@@ -3,7 +3,10 @@
 
 #include <CGAL/Cell_type.h>
 #include <CGAL/Octree_wrapper.h>
+
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
+#endif  // CGAL_LINKED_WITH_TBB
 
 #include <array>
 
