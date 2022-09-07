@@ -232,7 +232,7 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
      criteria,
      p_.protect_features,
      p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
-                       p::nonlinear_growth_of_balls = true));
+                       p::nonlinear_growth_of_balls = true).v);
 }
 
 template < typename D_, typename Tag >

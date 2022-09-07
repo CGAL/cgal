@@ -597,12 +597,12 @@ where the labeled image is used with a precomputed 3D image of weights :
             if (weights_.is_valid())
             {
                 return Labeled_mesh_domain_3
-                        (create_weighted_labeled_image_wrapper
+                        (p::function(create_weighted_labeled_image_wrapper
                                  (image_,
                                   weights_,
                                   image_values_to_subdomain_indices_,
-                                  value_outside_),
-                         Mesh_3::internal::compute_bounding_box(image_),
+                                  value_outside_)),
+                         p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
                          p::relative_error_bound = relative_error_bound_,
                          p::p_rng = p_rng_,
                          p::null_subdomain_index =
@@ -613,11 +613,11 @@ where the labeled image is used with a precomputed 3D image of weights :
             else
             {
                 return Labeled_mesh_domain_3
-                        (create_labeled_image_wrapper
+                        (p::function(create_labeled_image_wrapper
                                  (image_,
                                   image_values_to_subdomain_indices_,
-                                  value_outside_),
-                         Mesh_3::internal::compute_bounding_box(image_),
+                                  value_outside_)),
+                         p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
                          p::relative_error_bound = relative_error_bound_,
                          p::p_rng = p_rng_,
                          p::null_subdomain_index =
