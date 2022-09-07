@@ -4,7 +4,6 @@
 #include "config.h"
 #include "Plugins/Mesh_3/config_mesh_3.h"
 // as otherwise it gets set via inclusion of Polyhedron_3.h
-#include <CGAL/boost/parameter.h>
 #include <CGAL/Default.h>
 
 #include "SMesh_type.h"
