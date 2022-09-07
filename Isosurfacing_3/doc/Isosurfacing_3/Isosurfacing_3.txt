@@ -7,48 +7,61 @@ namespace CGAL {
 \cgalAutoToc
 \author Julian Stahl and Daniel Zint
 
+gif with different isosurfaces zooming in or out
 
 \section secmyintroduction Introduction
 
 This package provides functions to compute a surface mesh representing an isosurface.
-The data structure from which an isosurface can be extracted is a 3-dimensional scalar function.
-An isosurface is defined as the surface on which the value of this function is equal to a given constant.
-This constant value is called the isovalue.
-The representation that is used to store the isosurface is a triangular or quadrilateral indexed face set. Or triangle soup?
+The data structure from which an isosurface is extracted is a 3-dimensional scalar function.
+An isosurface is defined as the surface on which the value of this function is equal to a given constant, i.e. the isovalue.
+The isosurface is stored as a triangular or quadrilateral indexed face set.
 
 \section secmyalgorithms Algorithms
 
-There are multiple algorithms to extract an isosurface from a uniform grid or octree.
-This package contains marching cubes, topologically correct marching cubes, dual contouring and octree marching?.
+There are multiple algorithms to extract isosurfaces.
+This package contains Marching Cubes, topologically correct Marching Cubes, Dual Contouring and Octree Marching. (References?)
 
-\subsection subsecmc Marching cubes
-The marching cubes algorithm iterates over all cells of the input domain and processes each cell individually.
-Firstly, the values of all eight corners of a cell are compared to the isovalue.
-Each corner gets a sign (+/-) to indicate if it is outside or inside the isosurface.
-On every edge of the cube that connects corners with different signs a new vertex is created via linear interpolation.
+\subsection subsecmc Marching Cubes
+The Marching Cubes algorithm processes all cells of the input domain individually.
+Each cell corner gets a sign (+/-) to indicate if it is above or below the isovalue.
+A new vertex is created on every cell edge where the sign changes, i.e. the isosurface is intersected.
+The vertex position is computed via linear interpolation of the scalar values of the incident corners.
 Depending on the configuration of signs at the corners the resulting vertices are connected to form triangles within the cell.
 
-<center>
-<img src="mc_cases.png" style="max-width:70%;"/>
-</center>
+Marching Cubes is an old algorithm that is fast but approximate. It can be run on any domain that has cubical cells.
+The algorithm creates a manifold triangle mesh if the domain is a regular grid.
+This guarantees that every edge is incident to at most two faces and every vertex is surrounded by one triangle fan.
+As long as the isosurface does not intersect the domains boundaries the resulting mesh is also watertight.
+If the input domain contains multiple isosurfaces with the same value that are not connected Marching Cubes will also generate multiple meshes.
+Compared to other approaches the algorithm often generates more triangles and many thin or acute triangles.
+Sharp edges are not well preserved in a mesh generated with Marching Cubes.
 
-\subsection subsectmc Topologically correct marching cubes
+\image html mc_cases.png
 
-\subsection subsecdc Dual contouring
+\subsection subsectmc Topologically correct Marching Cubes
+This algorithm is an extension to Marching Cubes that provides additional guarantees.
+It generates a mesh that is homeomorph to the trilinear interpolant of the input function inside each cube. ...
+
+TODO examples
+
+\subsection subsecdc Dual Contouring
+The Dual Contouring algorithm first iterates over all cells. If a cell intersects the isosurface a vertex inside this cell is created.
+Then it checks for each edge if it intersects the isosurface. If that is the case the vertices of all incident cells are connects to form a face.
+
+This algorithm needs a functor that returns the normals of vertices as an additional parameter.
+The placement of a vertex position inside a cell is also configurable with an optional parameter. ...
+
+Dual Contouring works on any domain but does not guarantee a manifold or watertight mesh.
+It creates less faces than Marching Cubes.
+The algorithms can represent sharp edges better than Marching Cubes.
 
 \subsection subseccomparison Comparison
 table with pros/cons or applicability and guarantees
 
-\subsection subsecparameters Parameters
-gif with different isosurfaces zooming in or out
-
-\section secmydomains Domains
-necessary?
-
 
 \section secmyinterface Interface
 
-The algorithms can be called with their respective functions. The parameters are always the same:
+Each algorithm is represented by a single functions. The function signature is the same for each algorithm (except for some additional parameters for some of them):
 
 \code{.cpp}
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange>
@@ -56,20 +69,41 @@ void make_triangle_mesh_using_marching_cubes(const Domain_& domain, const typena
                                              PointRange& points, PolygonRange& polygons);
 \endcode
 
-The `domain` is an object that provides functions to access the input data and its topology.
-There are some predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
-Examples are `Cartesian_grid_domain`, which takes a `Cartesian_grid_3` as parameter, 
-and `Implicit_domain`, which represents the grid as an implicit function.
+The input is provided in the form of a `domain` (see \ref secmydomains).
 
 The `iso_value` parameter describes the grid value the isosurface should represent.
 
-The output is in the form of a polygon soup that is written to the two collections `points` and `polygons`.
-The vertices are stored as `Point_3` in `points`. Each face in `polygons` is a list of indices pointing into the `points` collection.
+The output is in the form of an indexed face set that is written to the two collections `points` and `polygons`.
+The vertex positions are stored as `Point_3` in `points`. Each face in `polygons` is a list of indices pointing into the `points` collection.
+Depending on the algorithm, the indexed face set may either store a polygon soup or a topological mesh.
 
 Algorithms can run sequentially on one CPU core or in parallel.
-The Concurrency_tag can be Sequential_tag or Parallel_tag and is used to specify how the algorithm is executed.
+The Concurrency_tag is used to specify how the algorithm is executed and is either Sequential_tag or Parallel_tag.
 To enable parallelism, CGAL needs to be linked with the Intel TBB library.
 If the parallel version is not availible the sequential version will always be used as a fallback.
+
+
+\section secmydomains Domains
+
+A domain is an object that provides functions to access the input data, its geometry, topology, and optionally its gradient.
+There are some predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
+Users can also define new domains by implementing the `Isosurfacing_domain` concept.
+
+\subsection mysubsecimplicitdomain Implicit domain
+The `Implicit_domain` represents the input function in an implicit form without storing any values.
+It takes a functor that computes the value of the function from the position of a vertex as parameter.
+Additionally, the bounding box and spacing between grid points have to be specified.
+
+\subsection mysubseccartesiandomain Cartesian grid domain
+The `Cartesian_grid_domain` only takes a `Cartesian_grid_3` as parameter.
+It represents a uniform grid of values that are either computed by the user or read from an `Image_3`.
+The constructor of `Cartesian_grid_3` needs the number of grid points in each dimension and the bounding box.
+The values are read and written with `value(x, y, z)` where x, y, and z are the coordinates of a grid point.
+Alternatively, all required data can be copied from an `Image_3`.
+
+\subsection mysubsecoctreedomain Octree domain
+The `Octree_domain` wraps an octree to be used by isosurfacing algorithms.
+The octree has to be already refined. ...
 
 
 \section secmyexamples Examples
@@ -81,16 +115,32 @@ The domain is an `Implicit_domain` that describes a sphere by the distance to it
 
 \cgalExample{Isosurfacing_3/marching_cubes_implicit_sphere.cpp}
 
-\subsection myExampleCartesian_grid_domain Cartesian_grid_3 sphere
+\subsection myExampleAll_cube Cartesian_grid_3 cube comparison
 
-The following example shows the use of the marching cubes algorithm to extract an isosurface.
-The domain is an `Cartesian_grid_domain` that describes a sphere by storing the distance to its origin in a `Cartesian_grid_3`.
+The following example compares all provided algorithms to extract an isosurface.
+The domain is an `Cartesian_grid_domain` that describes a cube by storing the manhattan distance to its origin in a `Cartesian_grid_3`.
 
-\cgalExample{Isosurfacing_3/dual_contouring_cartesian_grid.cpp}
+\cgalExample{Isosurfacing_3/all_cartesian_cube.cpp}
+
+\subsection myExampleImage Image_3
+
+The following example shows how to load data from an `Image_3`.
 
 \cgalExample{Isosurfacing_3/marching_cubes_inrimage.cpp}
 
+\subsection myExampleMeshOffset Offset mesh
+
+The following example shows how to compute an offset mesh.
+The original mesh is passed to an `AABB_tree` to allow fast distance queries.
+With the use of `Side_of_triangle_mesh` the sign of the distance function is flipped inside the mesh.
+
 \cgalExample{Isosurfacing_3/marching_cubes_mesh_offset.cpp}
+
+\subsection myExampleOctree Octree Dual Contouring
+
+The following example shows how to extract an isosurface from an octree using Dual Contouring.
+The domain is an `Octree_domain` that describes a sphere by the distance to its origin stored in an octree.
+The octree is highly refined in one octant and only coarse in the others.
 
 \cgalExample{Isosurfacing_3/dual_contouring_octree.cpp}
 
