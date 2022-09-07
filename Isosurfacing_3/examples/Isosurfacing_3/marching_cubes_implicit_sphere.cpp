@@ -18,8 +18,8 @@ int main() {
     };
 
     // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
-    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(sphere_function)> domain(
-        sphere_function, {-1, -1, -1, 1, 1, 1}, Vector(0.02f, 0.02f, 0.02f));
+    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(sphere_function), decltype(CGAL::Isosurfacing::Default_gradient<Kernel, decltype(sphere_function)>(sphere_function))> domain(
+        {-1, -1, -1, 1, 1, 1}, Vector(0.02f, 0.02f, 0.02f), sphere_function, CGAL::Isosurfacing::Default_gradient<Kernel, decltype(sphere_function)>(sphere_function));  // TODO
 
     // prepare collections for the result
     Point_range points;

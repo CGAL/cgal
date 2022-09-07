@@ -23,9 +23,9 @@ int main() {
         for (std::size_t y = 0; y < grid.ydim(); y++) {
             for (std::size_t z = 0; z < grid.zdim(); z++) {
 
-                const FT pos_x = x * grid.voxel_x() + grid.offset_x();
-                const FT pos_y = y * grid.voxel_y() + grid.offset_y();
-                const FT pos_z = z * grid.voxel_z() + grid.offset_z();
+                const FT pos_x = x * grid.get_spacing()[0] + grid.get_bbox().xmin();
+                const FT pos_y = y * grid.get_spacing()[1] + grid.get_bbox().ymin();
+                const FT pos_z = z * grid.get_spacing()[2] + grid.get_bbox().zmin();
 
                 // distance to the origin
                 grid.value(x, y, z) = std::sqrt(pos_x * pos_x + pos_y * pos_y + pos_z * pos_z);

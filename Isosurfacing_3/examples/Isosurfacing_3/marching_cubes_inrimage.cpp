@@ -4,7 +4,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
-typedef CGAL::Simple_cartesian<float> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::FT FT;
 typedef typename Kernel::Point_3 Point;
 
@@ -23,7 +23,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    Grid grid(image);
+    const Grid grid(image);
 
     CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
 
