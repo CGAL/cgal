@@ -135,6 +135,13 @@ public:
     enum { value = std::is_same<Approx_res, Needs_FT<Ares>>::value };
   };
 
+  // ## Important note
+  //
+  // If you want to remove of rename that member function template `needs_ft`,
+  // please also change the lines with
+  // `CGAL_GENERATE_MEMBER_DETECTOR(needs_ft);`
+  // or `has_needs_ft<typename R::Compare_distance_3>` in
+  // the file `Kernel_23/test/Kernel_23/include/CGAL/_test_new_3.h`.
   template <typename... Args>
   bool needs_ft(const Args&...) const {
     return Call_operator_needs_FT<Args...>::value;
