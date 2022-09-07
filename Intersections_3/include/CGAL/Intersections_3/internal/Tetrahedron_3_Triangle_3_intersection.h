@@ -56,8 +56,8 @@ intersection(const typename K::Tetrahedron_3& tet,
   std::vector<Point_3> res = { vertex(tr,0), vertex(tr,1), vertex(tr,2) };
   std::vector<std::bitset<4>> supporting_planes(3); // bitset used to indicate when a point is on a plane
 
-  // iteratively clip `tr` with the halfspaces which intersection is `tet`
-  static constexpr std::array<int8_t, 12> vids = { 1, 2, 3, 0, 3, 2, 0, 1, 3, 1, 0, 2 };
+  // iteratively clip `tr` with the halfspaces whose intersection form `tet`
+  static constexpr std::array<int8_t, 12> vids = { 1,2,3, 0,3,2, 0,1,3, 1,0,2 };
   const bool tet_ori_positive = (orientation(tet)==POSITIVE);
   for (int pid=0; pid<4; ++pid)
   {
@@ -80,11 +80,13 @@ intersection(const typename K::Tetrahedron_3& tet,
         if (supporting_planes[i].count()==3)
         {
           for (int b=0; i<4; ++b)
+          {
             if (!supporting_planes[i].test(b))
             {
               res[i] = vertex(tet, b);
               break;
             }
+          }
         }
         //--
       }
