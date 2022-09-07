@@ -248,7 +248,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                            pfunction->bbox().zmax());
   namespace p = CGAL::parameters;
   Function_mesh_domain* p_domain =
-    new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7,
+    new Function_mesh_domain(p::function = Function_wrapper(*pfunction), p::bounding_object = domain_bbox, p::relative_error_bound = 1e-7,
                              p::construct_surface_patch_index =
                                [](int i, int j) { return (i * 1000 + j); }
                              );
