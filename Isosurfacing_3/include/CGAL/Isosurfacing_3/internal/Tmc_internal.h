@@ -20,11 +20,13 @@ private:
     typedef PolygonRange Polygon_range;
 
     typedef typename Domain::FT FT;
-    typedef typename Domain::Point_3 Point;
-    typedef typename Domain::Vector_3 Vector;
+    typedef typename Domain::Point Point;
+    typedef typename Domain::Vector Vector;
     typedef typename Domain::Vertex_handle Vertex_handle;
     typedef typename Domain::Edge_handle Edge_handle;
     typedef typename Domain::Cell_handle Cell_handle;
+
+    typedef unsigned int uint;
 
 public:
     TMC_functor(const Domain& domain, const FT iso_value, Point_range& points, Polygon_range& polygons)
@@ -83,7 +85,7 @@ public:
         std::vector<FT> ecoord{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
         // collect vertices
-        ushort flag{1};
+        unsigned short flag{1};
         for (int eg = 0; eg < 12; eg++) {
             if (flag & Cube_table::intersected_edges[i_case]) {
                 // the edge global index is given by the vertex global index + the edge offset
@@ -788,7 +790,7 @@ public:
                 // fc1 = fs(1, 1)*fs(2, 1) + fs(1, 2)*fs(2, 2);
                 // fc2 = fs(1, 1)*fs(3, 1) + fs(1, 2)*fs(3, 2);
                 // fc3 = fs(2, 1)*fs(3, 2) + fs(2, 2)*fs(3, 1);
-                typedef u_char uchar;  // TODO
+                typedef unsigned char uchar;  // TODO
 
                 unsigned char fs[3][2]{{(uchar)(q_sol & 1), (uchar)((q_sol >> 1) & 1)},
                                        {(uchar)((q_sol >> 2) & 1), (uchar)((q_sol >> 3) & 1)},
