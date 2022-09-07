@@ -143,6 +143,8 @@ public:
     // edge shared, 3rd point outside
     check_intersection(tet, Tr(p(0,1,0), p(1,0,0), P(0.5,0,-100)),
                        S(p(0,1,0), p(1,0,0)));
+    check_intersection(tet, Tr(P(0.75,0.25,0), p(10,10,10), P(0.25,0.75,0)),
+                       S(P(0.75,0.25,0), P(0.25,0.75,0)));
 
     // shared edge, 3rd point inside
     check_intersection(tet, Tr(p(0,1,0), p(1,0,0), P(0.25,0.25,0.25)),
@@ -188,6 +190,14 @@ public:
 
     // vertex on edge & triangle inside, double segment non-incident
     Base::template check_intersection<Poly>(tet, Tr(P(0.25,0,0.25), P(-1,0.5,0.25), P(1.5,0.5,0.25)));
+
+    // vertex on face, triangle outside & point intersection
+    Base::check_intersection(tet, Tr(P(-1,1,0.25), P(-1,0,0.25), P(0,0.25,0.25)),
+                             P(0, 0.25, 0.25));
+    Base::check_intersection(tet, Tr(P(-1,0,0.25), P(-1,1,0.25), P(0,0.25,0.25)),
+                             P(0, 0.25, 0.25));
+    Base::check_intersection(tet, Tr(P(0,0.25,0.25), P(-1,1,0.25), P(-1,0,0.25)),
+                             P(0, 0.25, 0.25));
 
     // vertex on face, triangle outside & segment intersection
     Base::check_intersection(tet, Tr(P(0.5,0,-0.25), P(0.5,0,0.25), P(0.5,-0.5,0)),
