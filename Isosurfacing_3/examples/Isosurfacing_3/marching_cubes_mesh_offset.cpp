@@ -28,6 +28,7 @@ typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 
+// computes the distance of a point p from the mesh with the use of a AABB_tree
 inline Kernel::FT distance_to_mesh(const Tree& tree, const Point& p) {
     const Point& x = tree.closest_point(p);
     return std::sqrt((p - x).squared_length());
@@ -38,13 +39,14 @@ int main() {
     const int n_voxels = 20;
     const FT offset_value = 0.01;
 
+    // load the original mesh
     Mesh mesh_input;
     if (!CGAL::IO::read_OFF(input_name, mesh_input)) {
         std::cerr << "Could not read mesh" << std::endl;
         exit(-1);
     }
 
-    // compute bounding box
+    // compute the new bounding box
     CGAL::Bbox_3 aabb_grid = CGAL::Polygon_mesh_processing::bbox(mesh_input);
     Vector aabb_increase_vec = Vector(offset_value + 0.01, offset_value + 0.01, offset_value + 0.01);
     aabb_grid += (Point(aabb_grid.xmax(), aabb_grid.ymax(), aabb_grid.zmax()) + aabb_increase_vec).bbox();
@@ -55,9 +57,8 @@ int main() {
 
     CGAL::Side_of_triangle_mesh<Mesh, CGAL::GetGeomTraits<Mesh>::type> sotm(mesh_input);
 
+    // create the grid
     Grid grid(n_voxels, n_voxels, n_voxels, aabb_grid);
-
-    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
 
     for (std::size_t z = 0; z < grid.zdim(); z++) {
         for (std::size_t y = 0; y < grid.ydim(); y++) {
@@ -68,8 +69,10 @@ int main() {
                 const FT pos_z = z * grid.get_spacing()[2] + grid.get_bbox().zmin();
                 const Point p(pos_x, pos_y, pos_z);
 
+                // compute the distance
                 grid.value(x, y, z) = distance_to_mesh(tree, p);
 
+                // flip the sign, so the distance is negative inside the mesh
                 const bool is_inside = (sotm(p) == CGAL::ON_BOUNDED_SIDE);
                 if (is_inside) {
                     grid.value(x, y, z) *= -1;
@@ -78,10 +81,16 @@ int main() {
         }
     }
 
+    // create a domain from the grid
+    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
+
+    // prepare collections for the result
     Point_range points;
     Polygon_range polygons;
 
+    // execute marching cubes with an isovalue equal to the offset
     CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, offset_value, points, polygons);
 
+    // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
 }

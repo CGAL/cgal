@@ -6,4 +6,5 @@
 \example Isosurfacing_3/dual_contouring_cartesian_grid.cpp
 \example Isosurfacing_3/dual_contouring_mesh_offset.cpp
 \example Isosurfacing_3/dual_contouring_octree.cpp
+\example Isosurfacing_3/all_cartesian_cube.cpp
 */

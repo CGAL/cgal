@@ -16,21 +16,27 @@ typedef std::vector<std::vector<std::size_t>> Polygon_range;
 int main() {
 
     const std::string fname = "../data/skull_2.9.inr";
-    // Load image
+
+    // load the image
     CGAL::Image_3 image;
     if (!image.read(fname)) {
         std::cerr << "Error: Cannot read file " << fname << std::endl;
         return EXIT_FAILURE;
     }
 
+    // convert it to a cartesian grid
     const Grid grid(image);
 
+    // create a domain from the grid
     CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
 
+    // prepare collections for the result
     Point_range points;
     Polygon_range polygons;
 
+    // execute marching cubes with an isovalue of 0.8
     CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, 2.9f, points, polygons);
 
+    // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
 }
