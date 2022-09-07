@@ -251,10 +251,10 @@ public:
   {
     // Get the circle properties.
     Rat_kernel ker;
-    Rat_point_2 center = ker.construct_center_2_object() (circ);
+    Rat_point_2 center = ker.construct_center_2_object()(circ);
     Rational x0 = center.x();
     Rational y0 = center.y();
-    Rational R_sqr = ker.compute_squared_radius_2_object() (circ);
+    Rational R_sqr = ker.compute_squared_radius_2_object()(circ);
 
     // Produce the correponding conic: if the circle center is (x0,y0)
     // and its squared radius is R^2, that its equation is:
@@ -740,7 +740,7 @@ public:
         CGAL::to_double(m_target.y()) : CGAL::to_double(m_source.y());
 
       // Go over the vertical tangency points and try to update the x-points.
-      Point_2 tan_ps[2];
+      Alg_point_2 tan_ps[2];
       int n_tan_ps;
       int i;
 
@@ -774,12 +774,12 @@ protected:
    * \pre The vpts vector should be allocated at the size of 2.
    * \return The number of vertical tangency points.
    */
-  CGAL_DEPRECATED int vertical_tangency_points(Point_2* vpts) const {
+  CGAL_DEPRECATED int vertical_tangency_points(Alg_point_2* vpts) const {
     // No vertical tangency points for line segments:
     if (m_orient == COLLINEAR) return 0;
 
     // Calculate the vertical tangency points of the supporting conic.
-    Point_2 ps[2];
+    Alg_point_2 ps[2];
     int n = _conic_vertical_tangency_points(ps);
 
     // Return only the points that are contained in the arc interior.
@@ -802,12 +802,12 @@ protected:
    * \pre The hpts vector should be allocated at the size of 2.
    * \return The number of horizontal tangency points.
    */
-  CGAL_DEPRECATED int horizontal_tangency_points(Point_2* hpts) const {
+  CGAL_DEPRECATED int horizontal_tangency_points(Alg_point_2* hpts) const {
     // No horizontal tangency points for line segments:
     if (m_orient == COLLINEAR) return 0;
 
     // Calculate the horizontal tangency points of the conic.
-    Point_2 ps[2];
+    Alg_point_2 ps[2];
     int n = _conic_horizontal_tangency_points(ps);
 
     // Return only the points that are contained in the arc interior.
@@ -890,6 +890,134 @@ protected:
       else
         return (ker.orientation_2_object()(m_source, p, m_target) == RIGHT_TURN);
     }
+  }
+
+  /*! Find the vertical tangency points of the undelying conic.
+   * \param ps The output points of vertical tangency.
+   *           This area must be allocated at the size of 2.
+   * \return The number of vertical tangency points.
+   */
+  CGAL_DEPRECATED
+  int _conic_vertical_tangency_points(Alg_point_2* ps) const {
+    const auto& cv = *this;
+    Nt_traits nt_traits;
+
+    // In case the base conic is of degree 1 (and not 2), the arc has no
+    // vertical tangency points.
+    if (CGAL::sign(cv.s()) == ZERO) return 0;
+
+    // We are interested in the x coordinates where the quadratic equation:
+    //  s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0
+    // has a single solution (obviously if s = 0, there are no such points).
+    // We therefore demand that the discriminant of this equation is zero:
+    //  (t*x + v)^2 - 4*s*(r*x^2 + u*x + w) = 0
+    const Integer two(2);
+    const Integer four(4);
+    Algebraic xs[2];
+
+    auto r = cv.r();
+    auto s = cv.s();
+    auto t = cv.t();
+    auto u = cv.u();
+    auto v = cv.v();
+    auto w = cv.w();
+    Algebraic* xs_end = nt_traits.solve_quadratic_equation(t*t - four*r*s,
+                                                           two*t*v - four*s*u,
+                                                           v*v - four*s*w,
+                                                           xs);
+    auto n_xs = static_cast<int>(xs_end - xs);
+
+    // Find the y-coordinates of the vertical tangency points.
+    Algebraic ys[2];
+    Algebraic* ys_end;
+    int n_ys;
+
+    if (CGAL::sign(cv.t()) == ZERO) {
+      // The two vertical tangency points have the same y coordinate:
+      ys[0] = nt_traits.convert(-v) / nt_traits.convert(two*s);
+      n_ys = 1;
+    }
+    else {
+      ys_end = nt_traits.solve_quadratic_equation(four*r*s*s - s*t*t,
+                                                  four*r*s*v - two*s*t*u,
+                                                  r*v*v - t*u*v +
+                                                  t*t*w,
+                                                  ys);
+      n_ys = static_cast<int>(ys_end - ys);
+    }
+
+    // Pair the x and y coordinates and obtain the vertical tangency points.
+    int n(0);
+
+    for (int i = 0; i < n_xs; ++i) {
+      if (n_ys == 1) {
+        ps[n++] = Point_2(xs[i], ys[0]);
+      }
+      else {
+        for (int j = 0; j < n_ys; ++j) {
+          if (CGAL::compare(nt_traits.convert(two*s) * ys[j],
+                            -(nt_traits.convert(t) * xs[i] +
+                              nt_traits.convert(v))) == EQUAL)
+          {
+            ps[n++] = Point_2(xs[i], ys[j]);
+            break;
+          }
+        }
+      }
+    }
+
+    CGAL_assertion(n <= 2);
+    return n;
+  }
+
+  /*! Find the horizontal tangency points of the undelying conic.
+   * \param ps The output points of horizontal tangency.
+   *           This area must be allocated at the size of 2.
+   * \return The number of horizontal tangency points.
+   */
+  CGAL_DEPRECATED
+  size_t _conic_horizontal_tangency_points(Alg_point_2* ps) const {
+    const auto& cv = *this;
+    Nt_traits nt_traits;
+
+    const Integer zero(0);
+
+    // In case the base conic is of degree 1 (and not 2), the arc has no
+    // vertical tangency points.
+    if (CGAL::sign(cv.r()) == ZERO) return 0;
+
+    // We are interested in the y coordinates were the quadratic equation:
+    //  r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0
+    // has a single solution (obviously if r = 0, there are no such points).
+    // We therefore demand that the discriminant of this equation is zero:
+    //  (t*y + u)^2 - 4*r*(s*y^2 + v*y + w) = 0
+    const Integer two(2);
+    const Integer four(4);
+    Algebraic ys[2];
+
+    auto r = cv.r();
+    auto s = cv.s();
+    auto t = cv.t();
+    auto u = cv.u();
+    auto v = cv.v();
+    auto w = cv.w();
+    Algebraic* ys_end = nt_traits.solve_quadratic_equation(t*t - four*r*s,
+                                                           two*t*u - four*r*v,
+                                                           u*u - four*r*w,
+                                                           ys);
+    auto n = static_cast<int>(ys_end - ys);
+
+    // Compute the x coordinates and construct the horizontal tangency points.
+    for (int i = 0; i < n; ++i) {
+      // Having computed y, x is the single solution to the quadratic equation
+      // above, and since its discriminant is 0, x is simply given by:
+      Algebraic x = -(nt_traits.convert(t)*ys[i] + nt_traits.convert(u)) /
+        nt_traits.convert(two*r);
+      ps[i] = Point_2(x, ys[i]);
+    }
+
+    CGAL_assertion(n <= 2);
+    return n;
   }
 
   /*! Set the properties of a conic arc that is really a full curve

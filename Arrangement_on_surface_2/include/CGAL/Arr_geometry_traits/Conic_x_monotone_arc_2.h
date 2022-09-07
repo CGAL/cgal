@@ -476,6 +476,88 @@ public:
   }
   //@}
 
+  /*! Compute a point on an arc with the same \f$x\f$-coordiante as the given
+   * point.
+   * \param p The given point.
+   * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
+   * \return A point on the arc with the same \f$x\f$-coordiante as `p`.
+   */
+  CGAL_DEPRECATED
+  Point_2 point_at_x(const Point_2& p) const {
+    const auto& xcv = *this;
+    Alg_kernel alg_kernel;
+
+    // Make sure that p is in the x-range of the arc.
+    CGAL_precondition(! xcv.is_vertical());
+
+    CGAL_precondition_code(auto cmp_x = alg_kernel.compare_x_2_object());
+    CGAL_precondition((cmp_x(p, xcv.left()) != SMALLER) &&
+                      (cmp_x(p, xcv.right()) != LARGER));
+
+    if (xcv.is_special_segment()) {
+      // In case of a special segment, the equation of the supported line
+      // (a*x + b*y + c) = 0 is stored with the extra data field, and we
+      // simply have:
+      const auto& extra_data = xcv.extra_data();
+      Algebraic y = -(extra_data->a*p.x() + extra_data->c) / extra_data->b;
+
+      // Return the computed point.
+      return Point_2(p.x(), y);
+    }
+
+    // Compute the y-coordinate according to the degree of the supporting
+    // conic curve.
+    typename Base::Nt_traits nt_traits;
+    Algebraic y;
+
+    if (xcv.degree_mask() == Self::degree_1_mask()) {
+      // In case of a linear curve, the y-coordinate is a simple linear
+      // expression of x(p) (note that v is not 0 as the arc is not vertical):
+      //   y = -(u*x(p) + w) / v
+      y = -(xcv.alg_u()*p.x() + xcv.alg_w()) / xcv.alg_v();
+    }
+    else if (xcv.orientation() == COLLINEAR) {
+      const auto& extra_data = xcv.extra_data();
+      CGAL_assertion(extra_data != nullptr);
+
+      // In this case the equation of the supporting line is given by the
+      // extra data structure.
+      y = -(extra_data->a * p.x() + extra_data->c) / extra_data->b;
+    }
+    else {
+      CGAL_assertion(xcv.degree_mask() == Self::degree_2_mask());
+
+      // In this case the y-coordinate is one of solutions to the quadratic
+      // equation:
+      //  s*y^2 + (t*x(p) + v)*y + (r*x(p)^2 + u*x(p) + w) = 0
+      Algebraic A = xcv.alg_s();
+      Algebraic B = xcv.alg_t()*p.x() + xcv.alg_v();
+      Algebraic C = (xcv.alg_r()*p.x() + xcv.alg_u())*p.x() + xcv.alg_w();
+
+      if (CGAL::sign(xcv.s()) == ZERO) {
+        // In this case A is 0 and we have a linear equation.
+        CGAL_assertion(CGAL::sign(B) != ZERO);
+
+        y = -C / B;
+      }
+      else {
+        // Solve the quadratic equation.
+        Algebraic disc = B*B - 4*A*C;
+
+        CGAL_assertion(CGAL::sign(disc) != NEGATIVE);
+
+        // We take either the root involving -sqrt(disc) or +sqrt(disc)
+        // based on the information flags.
+        y = (xcv.test_flag(Self::PLUS_SQRT_DISC_ROOT)) ?
+          (nt_traits.sqrt(disc) - B) / (2*A) :
+          -(B + nt_traits.sqrt(disc)) / (2*A);
+      }
+    }
+
+    // Return the computed point.
+    return Point_2(p.x(), y);
+  }
+
   /// \name Constructing points on the arc.
   //@{
 
@@ -568,7 +650,379 @@ public:
 
     return arc;
   }
+
+  /*! Trim the arc given its new endpoints.
+   * \param ps The new source point.
+   * \param pt The new target point.
+   * \return The new trimmed arc.
+   * \pre Both ps and pt lies on the arc and must conform with the current
+   *      direction of the arc.
+   */
+  CGAL_DEPRECATED
+  Self trim(const Point_2& ps, const Point_2& pt) const {
+    auto& xcv = *this;
+    // Make sure that both ps and pt lie on the arc.
+    CGAL_precondition(contains_point(ps) && contains_point(pt));
+
+    // Make sure that the endpoints conform with the direction of the arc.
+    Alg_kernel alg_kernel;
+    Self res_xcv = xcv;
+      auto cmp_xy = alg_kernel.compare_xy_2_object();
+      if (! ((xcv.test_flag(Self::IS_DIRECTED_RIGHT) &&
+              (cmp_xy(ps, pt) == SMALLER)) ||
+             (xcv.test_flag(Self::IS_DIRECTED_RIGHT) &&
+              (cmp_xy(ps, pt) == LARGER))))
+      {
+        // We are allowed to change the direction only in case of a segment.
+        CGAL_assertion(xcv.orientation() == COLLINEAR);
+        res_xcv.flip_flag(Self::IS_DIRECTED_RIGHT);
+      }
+
+      // Make a copy of the current arc and assign its endpoints.
+      auto eq = alg_kernel.equal_2_object();
+      if (! eq(ps, xcv.source())) {
+        res_xcv.set_source(ps);
+
+        if (! ps.is_generating_conic(xcv.id()))
+          res_xcv.source().set_generating_conic(xcv.id());
+      }
+
+      if (! eq(pt, xcv.target())) {
+        res_xcv.set_target(pt);
+
+        if (! pt.is_generating_conic(xcv.id()))
+          res_xcv.target().set_generating_conic(xcv.id());
+      }
+
+      return res_xcv;
+    }
   //@}
+
+  /*! Compare two arcs immediately to the leftt of their intersection point.
+   * \param xcv1 The first compared arc.
+   * \param xcv2 The second compared arc.
+   * \param p The reference intersection point.
+   * \return The relative position of the arcs to the left of `p`.
+   * \pre Both arcs we compare are not vertical segments.
+   */
+  CGAL_DEPRECATED
+  Comparison_result compare_to_left(const Self& xcv2, const Point_2& p) const {
+    const auto& xcv1 = *this;
+    CGAL_precondition(! xcv1.is_vertical() && ! xcv2.is_vertical());
+
+    // In case one arc is facing upwards and another facing downwards, it is
+    // clear that the one facing upward is above the one facing downwards.
+    if (_has_same_supporting_conic(xcv2)) {
+      if (xcv1.test_flag(Self::FACING_UP) &&
+          xcv2.test_flag(Self::FACING_DOWN))
+        return LARGER;
+      else if (xcv1.test_flag(Self::FACING_DOWN) &&
+               xcv2.test_flag(Self::FACING_UP))
+        return SMALLER;
+
+      // In this case the two arcs overlap.
+      CGAL_assertion(xcv1.facing_mask() == xcv2.facing_mask());
+
+      return EQUAL;
+    }
+
+    // Compare the slopes of the two arcs at p, using their first-order
+    // partial derivatives.
+    Algebraic slope1_numer, slope1_denom;
+    Algebraic slope2_numer, slope2_denom;
+
+    xcv1.derive_by_x_at(p, 1, slope1_numer, slope1_denom);
+    xcv2.derive_by_x_at(p, 1, slope2_numer, slope2_denom);
+
+    // Check if any of the slopes is vertical.
+    const bool is_vertical_slope1 = (CGAL::sign (slope1_denom) == ZERO);
+    const bool is_vertical_slope2 = (CGAL::sign (slope2_denom) == ZERO);
+
+    if (! is_vertical_slope1 && ! is_vertical_slope2) {
+      // The two derivatives at p are well-defined: use them to determine
+      // which arc is above the other (the one with a larger slope is below).
+      Comparison_result slope_res = CGAL::compare(slope2_numer*slope1_denom,
+                                                  slope1_numer*slope2_denom);
+
+      if (slope_res != EQUAL) return slope_res;
+
+      // Use the second-order derivative.
+      xcv1.derive_by_x_at(p, 2, slope1_numer, slope1_denom);
+      xcv2.derive_by_x_at(p, 2, slope2_numer, slope2_denom);
+
+      slope_res = CGAL::compare(slope1_numer*slope2_denom,
+                                slope2_numer*slope1_denom);
+
+      if (slope_res != EQUAL) return (slope_res);
+
+      // Use the third-order derivative.
+      xcv1.derive_by_x_at(p, 3, slope1_numer, slope1_denom);
+      xcv2.derive_by_x_at(p, 3, slope2_numer, slope2_denom);
+
+      slope_res = CGAL::compare(slope2_numer*slope1_denom,
+                                slope1_numer*slope2_denom);
+
+      // \todo Handle higher-order derivatives:
+      CGAL_assertion(slope_res != EQUAL);
+
+      return slope_res;
+    }
+    else if (! is_vertical_slope2) {
+      // The first arc has a vertical slope at p: check whether it is
+      // facing upwards or downwards and decide accordingly.
+      CGAL_assertion(xcv1.facing_mask() != 0);
+
+      return (xcv1.test_flag(Self::FACING_UP)) ?
+        LARGER : SMALLER;
+    }
+    else if (! is_vertical_slope1) {
+      // The second arc has a vertical slope at p_int: check whether it is
+      // facing upwards or downwards and decide accordingly.
+      CGAL_assertion(xcv2.facing_mask() != 0);
+
+      return (xcv2.test_flag(Self::FACING_UP)) ?
+        SMALLER : LARGER;
+    }
+
+    // The two arcs have vertical slopes at p_int:
+    // First check whether one is facing up and one down. In this case the
+    // comparison result is trivial.
+    if (xcv1.test_flag(Self::FACING_UP) &&
+        xcv2.test_flag(Self::FACING_DOWN))
+      return LARGER;
+    else if (xcv1.test_flag(Self::FACING_DOWN) &&
+             xcv2.test_flag(Self::FACING_UP))
+      return SMALLER;
+
+    // Compute the second-order derivative by y and act according to it.
+    xcv1.derive_by_y_at(p, 2, slope1_numer, slope1_denom);
+    xcv2.derive_by_y_at(p, 2, slope2_numer, slope2_denom);
+
+    Comparison_result slope_res =
+      CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
+
+    // If necessary, use the third-order derivative by y.
+    if (slope_res == EQUAL) {
+      // \todo Check this!
+      xcv1.derive_by_y_at(p, 3, slope1_numer, slope1_denom);
+      xcv2.derive_by_y_at(p, 3, slope2_numer, slope2_denom);
+
+      slope_res =
+        CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
+    }
+
+    // \todo Handle higher-order derivatives:
+    CGAL_assertion(slope_res != EQUAL);
+
+    // Check whether both are facing up.
+    if (xcv1.test_flag(Self::FACING_UP) &&
+        xcv2.test_flag(Self::FACING_UP))
+      return ((slope_res == LARGER) ? SMALLER : LARGER);
+
+    // Both are facing down.
+    return slope_res;
+  }
+
+  /*! Compare two arcs immediately to the right of their intersection point.
+   * \param xcv1 The first compared arc.
+   * \param xcv2 The second compared arc.
+   * \param p The reference intersection point.
+   * \return The relative position of the arcs to the right of `p`.
+   * \pre Both arcs we compare are not vertical segments.
+   */
+  CGAL_DEPRECATED
+  Comparison_result compare_to_right(const Self& xcv2, const Point_2& p) const {
+    const auto& xcv1 = *this;
+    CGAL_precondition(! xcv1.is_vertical() && ! xcv2.is_vertical());
+
+    // In case one arc is facing upwards and another facing downwards, it is
+    // clear that the one facing upward is above the one facing downwards.
+    if (_has_same_supporting_conic(xcv2)) {
+      if (xcv1.test_flag(Self::FACING_UP) &&
+          xcv2.test_flag(Self::FACING_DOWN))
+        return LARGER;
+      else if (xcv1.test_flag(Self::FACING_DOWN) &&
+               xcv2.test_flag(Self::FACING_UP))
+        return SMALLER;
+
+      // In this case the two arcs overlap.
+      CGAL_assertion(xcv1.facing_mask() == xcv2.facing_mask());
+      return EQUAL;
+    }
+
+    // Compare the slopes of the two arcs at p, using their first-order
+    // partial derivatives.
+    Algebraic slope1_numer, slope1_denom;
+    Algebraic slope2_numer, slope2_denom;
+
+    xcv1.derive_by_x_at(p, 1, slope1_numer, slope1_denom);
+    xcv2.derive_by_x_at(p, 1, slope2_numer, slope2_denom);
+
+    // Check if any of the slopes is vertical.
+    const bool is_vertical_slope1 = (CGAL::sign(slope1_denom) == ZERO);
+    const bool is_vertical_slope2 = (CGAL::sign(slope2_denom) == ZERO);
+
+    if (! is_vertical_slope1 && ! is_vertical_slope2) {
+      // The two derivatives at p are well-defined: use them to determine
+      // which arc is above the other (the one with a larger slope is below).
+      Comparison_result slope_res =
+        CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
+
+      if (slope_res != EQUAL) return (slope_res);
+
+      // Use the second-order derivative.
+      xcv1.derive_by_x_at(p, 2, slope1_numer, slope1_denom);
+      xcv2.derive_by_x_at(p, 2, slope2_numer, slope2_denom);
+
+      slope_res =
+        CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
+
+      if (slope_res != EQUAL) return (slope_res);
+
+      // Use the third-order derivative.
+      xcv1.derive_by_x_at(p, 3, slope1_numer, slope1_denom);
+      xcv2.derive_by_x_at(p, 3, slope2_numer, slope2_denom);
+
+      slope_res =
+        CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
+
+      // \todo Handle higher-order derivatives:
+      CGAL_assertion(slope_res != EQUAL);
+
+      return slope_res;
+    }
+    else if (! is_vertical_slope2) {
+      // The first arc has a vertical slope at p: check whether it is
+      // facing upwards or downwards and decide accordingly.
+      CGAL_assertion(xcv1.facing_mask() != 0);
+
+      return (xcv1.test_flag(Self::FACING_UP)) ? LARGER : SMALLER;
+    }
+    else if (! is_vertical_slope1) {
+      // The second arc has a vertical slope at p_int: check whether it is
+      // facing upwards or downwards and decide accordingly.
+      CGAL_assertion(xcv2.facing_mask() != 0);
+
+      return (xcv2.test_flag(Self::FACING_UP)) ? SMALLER : LARGER;
+    }
+
+    // The two arcs have vertical slopes at p_int:
+    // First check whether one is facing up and one down. In this case the
+    // comparison result is trivial.
+    if (xcv1.test_flag(Self::FACING_UP) &&
+        xcv2.test_flag(Self::FACING_DOWN)) return LARGER;
+    else if (xcv1.test_flag(Self::FACING_DOWN) &&
+             xcv2.test_flag(Self::FACING_UP)) return SMALLER;
+
+    // Compute the second-order derivative by y and act according to it.
+    xcv1.derive_by_y_at(p, 2, slope1_numer, slope1_denom);
+    xcv2.derive_by_y_at(p, 2, slope2_numer, slope2_denom);
+
+    Comparison_result slope_res =
+      CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
+
+    // If necessary, use the third-order derivative by y.
+    if (slope_res == EQUAL) {
+      // \todo Check this!
+      xcv1.derive_by_y_at(p, 3, slope1_numer, slope1_denom);
+      xcv2.derive_by_y_at(p, 3, slope2_numer, slope2_denom);
+
+      slope_res =
+        CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
+    }
+
+    // \todo Handle higher-order derivatives:
+    CGAL_assertion(slope_res != EQUAL);
+
+    if (xcv1.test_flag(Self::FACING_UP) &&
+        xcv2.test_flag(Self::FACING_UP))
+      return (slope_res == LARGER) ? SMALLER : LARGER;  // both are facing up
+    return slope_res;                                   // both are facing down
+  }
+
+  /*! Check whether two arcs are equal (have the same graph).
+   * \param xcv1 The first compared arc.
+   * \param xcv2 The second compared arc.
+   * \return `true` if the two arcs have the same graph; `false` otherwise.
+   */
+  CGAL_DEPRECATED
+  bool equals(const Self& xcv2) const {
+    const auto& xcv1 = *this;
+    Alg_kernel alg_kernel;
+
+    // The two arc must have the same supporting conic curves.
+    if (! _has_same_supporting_conic(xcv2)) return false;
+
+    auto eq = alg_kernel.equal_2_object();
+
+    // Check that the arc endpoints are the same.
+    if (xcv1.orientation() == COLLINEAR) {
+      CGAL_assertion(xcv2.orientation() == COLLINEAR);
+      return((eq(xcv1.source(), xcv2.source()) &&
+              eq(xcv1.target(), xcv2.target())) ||
+             (eq(xcv1.source(), xcv2.target()) &&
+              eq(xcv1.target(), xcv2.source())));
+    }
+
+    if (xcv1.orientation() == xcv2.m_orient) {
+      // Same orientation - the source and target points must be the same.
+      return (eq(xcv1.source(), xcv2.source()) &&
+              eq(xcv1.target(), xcv2.target()));
+    }
+
+    // Reverse orientation - the source and target points must be swapped.
+    return (eq(xcv1.source(), xcv2.target()) &&
+            eq(xcv1.target(), xcv2.source()));
+  }
+
+  /*! Check whether it is possible to merge the arc with the given arc.
+   * \param xcv1 The first arc.
+   * \param xcv2 The second arc.
+   * \return `true` if it is possible to merge the two arcs;
+   *         `false` otherwise.
+   */
+  CGAL_DEPRECATED
+  bool can_merge_with(const Self& xcv2) const {
+    const auto& xcv1 = *this;
+    Alg_kernel alg_kernel;
+
+    // In order to merge the two arcs, they should have the same supporting
+    // conic.
+    if (! _has_same_supporting_conic(xcv2)) return false;
+
+    // Check if the left endpoint of one curve is the right endpoint of the
+    // other.
+    auto eq = alg_kernel.equal_2_object();
+    return (eq(xcv1.right(), xcv2.left()) || eq(xcv1.left(), xcv2.right()));
+  }
+
+  /*! Merge the current arc with the given arc.
+   * \param xcv1 The first arc to merge with.
+   * \param xcv2 The second arc to merge with.
+   * \pre The two arcs are mergeable.
+   */
+  CGAL_DEPRECATED
+  void merge(const Self& xcv2) const {
+    const auto& xcv1 = *this;
+    Alg_kernel alg_kernel;
+
+    // Check whether we should extend the arc to the left or to the right.
+    auto eq = alg_kernel.equal_2_object();
+    if (eq(xcv1.right(), xcv2.left())) {
+      // Extend the arc to the right.
+      if (xcv1.test_flag(Self::IS_DIRECTED_RIGHT))
+        xcv1.set_target(xcv2.right());
+      else xcv1.set_source(xcv2.right());
+    }
+    else {
+      CGAL_precondition(eq(xcv1.left(), xcv2.right()));
+
+      // Extend the arc to the left.
+      if (xcv1.test_flag(Self::IS_DIRECTED_RIGHT))
+        xcv1.set_source(xcv2.left());
+      else xcv1.set_target(xcv2.left());
+    }
+  }
 
 private:
   /// \name Auxiliary (private) functions.
