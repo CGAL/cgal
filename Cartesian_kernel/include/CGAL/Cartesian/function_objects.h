@@ -566,7 +566,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r, RT_sufficient = {}) const
     {
       return cmp_dist_to_pointC3(p.x(), p.y(), p.z(),
                                  q.x(), q.y(), q.z(),
@@ -574,32 +574,32 @@ namespace CartesianKernelFunctors {
     }
 
     result_type
-    operator()(const Point_3& p1, const Segment_3& s1, const Segment_3& s2) const
+    operator()(const Point_3& p1, const Segment_3& s1, const Segment_3& s2, RT_sufficient = {}) const
     {
       return internal::compare_distance_pssC3(p1,s1,s2, K());
     }
 
     result_type
-    operator()(const Point_3& p1, const Point_3& p2, const Segment_3& s2) const
+    operator()(const Point_3& p1, const Point_3& p2, const Segment_3& s2, RT_sufficient = {}) const
     {
       return internal::compare_distance_ppsC3(p1,p2,s2, K());
     }
 
     result_type
-    operator()(const Point_3& p1, const Segment_3& s2, const Point_3& p2) const
+    operator()(const Point_3& p1, const Segment_3& s2, const Point_3& p2, RT_sufficient = {}) const
     {
       return opposite(internal::compare_distance_ppsC3(p1,p2,s2, K()));
     }
 
     template <class T1, class T2, class T3>
-    Needs_FT<result_type>
+    result_type
     operator()(const T1& p, const T2& q, const T3& r) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(p, r));
     }
 
     template <class T1, class T2, class T3, class T4>
-    Needs_FT<result_type>
+    std::enable_if_t< !std::is_same<T4, RT_sufficient>::value, result_type >
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));

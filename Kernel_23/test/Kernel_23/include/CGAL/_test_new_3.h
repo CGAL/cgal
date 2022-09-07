@@ -606,17 +606,22 @@ test_new_3(const R& rep)
   typename R::Compare_distance_3 compare_dist
         = rep.compare_distance_3_object();
   Comparison_result tmp34ab = compare_dist(p2,p3,p4);
+  tmp34ab = compare_dist(p1, s2, s2);
+  tmp34ab = compare_dist(p1, p2, s2);
+  tmp34ab = compare_dist(p1, s2, p2);
   tmp34ab = compare_dist(p2,p3,p2,p3);
   tmp34ab = compare_dist(p1, p2, p3, p4);
   tmp34ab = compare_dist(l2, p1, p1);
-  tmp34ab = compare_dist(p1, p2, s2);
   if constexpr (R::Has_filtered_predicates &&
                 has_needs_ft<typename R::Compare_distance_3>::value)
 {
+    assert(!compare_dist.needs_ft(p1, p2, p3));
+    assert(!compare_dist.needs_ft(p2, s2, s2));
+    assert(!compare_dist.needs_ft(p2, p2, s2));
+    assert(!compare_dist.needs_ft(p1, s2, p2));
     assert(compare_dist.needs_ft(l1, p1, p1));
     assert(compare_dist.needs_ft(p2, p3, p2, p3));
-    assert(!compare_dist.needs_ft(p1, p2, p3));
-    assert(!compare_dist.needs_ft(p2, p2, s2));
+    assert(compare_dist.needs_ft(p2, s2, l1, s2));
   }
   (void) tmp34ab;
 

@@ -33,8 +33,9 @@
 #endif
 
 // Those predicates for which Simple_cartesian maybe use division of not.
-// Predicates using division must have Needs_FT<return_type> as actual return
-// type.
+// Predicates that do not require the division must have `RT_sufficient` as last
+// argument, with a default. See for example `Compare_distance_3` in the file
+// Cartesian_kernel/include/CGAL/Cartesian/function_objects.h
 #ifndef CGAL_Kernel_pred_RT_or_FT
 #  define CGAL_Kernel_pred_RT_or_FT(X, Y) CGAL_Kernel_pred(X, Y)
 #endif

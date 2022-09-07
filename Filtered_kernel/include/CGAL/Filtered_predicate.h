@@ -123,16 +123,26 @@ class Filtered_predicate_RT_FT
   EP_FT ep_ft;
   AP ap;
 
-  using Ares = typename Remove_needs_FT<typename AP::result_type>::Type;
+  using Ares = typename AP::result_type;
 
 public:
-  using result_type =  typename Remove_needs_FT<typename EP_FT::result_type>::Type;
+  using result_type =  typename EP_FT::result_type;
 
   template <typename... Args>
   struct Call_operator_needs_FT {
-    using Actual_approx_res = decltype(ap(c2a(std::declval<const Args&>())...));
-    using Approx_res = std::remove_cv_t<std::remove_reference_t<Actual_approx_res>>;
-    enum { value = std::is_same<Approx_res, Needs_FT<Ares>>::value };
+    // This type traits class checks if the call operator can be called with
+    // `(const Args&..., RT_sufficient())`.
+    using ArrayOfOne = char[1];
+    using ArrayOfTwo = char[2];
+
+    static ArrayOfOne& test(...);
+
+    template <typename... Args2>
+    static auto test(const Args2 &...args)
+        -> decltype(ap(c2a(args)..., RT_sufficient()),
+                    std::declval<ArrayOfTwo &>());
+
+    enum { value = sizeof(test(std::declval<const Args&>()...)) == sizeof(ArrayOfOne) };
   };
 
   // ## Important note
