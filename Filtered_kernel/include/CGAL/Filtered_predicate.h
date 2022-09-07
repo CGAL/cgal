@@ -153,7 +153,7 @@ public:
   // or `has_needs_ft<typename R::Compare_distance_3>` in
   // the file `Kernel_23/test/Kernel_23/include/CGAL/_test_new_3.h`.
   template <typename... Args>
-  bool needs_ft(const Args&...) const {
+  constexpr bool needs_ft(const Args&...) const {
     return Call_operator_needs_FT<Args...>::value;
   }
 
