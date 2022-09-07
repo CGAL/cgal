@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-typedef CGAL::Simple_cartesian<float> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::FT FT;
 typedef typename Kernel::Point_3 Point;
 typedef typename Kernel::Vector_3 Vector;
@@ -63,9 +63,9 @@ int main() {
         for (std::size_t y = 0; y < grid.ydim(); y++) {
             for (std::size_t x = 0; x < grid.xdim(); x++) {
 
-                const FT pos_x = x * grid.voxel_x() + grid.offset_x();
-                const FT pos_y = y * grid.voxel_y() + grid.offset_y();
-                const FT pos_z = z * grid.voxel_z() + grid.offset_z();
+                const FT pos_x = x * grid.get_spacing()[0] + grid.get_bbox().xmin();
+                const FT pos_y = y * grid.get_spacing()[1] + grid.get_bbox().ymin();
+                const FT pos_z = z * grid.get_spacing()[2] + grid.get_bbox().zmin();
                 const Point p(pos_x, pos_y, pos_z);
 
                 grid.value(x, y, z) = distance_to_mesh(tree, p);

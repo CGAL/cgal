@@ -19,25 +19,21 @@ public:
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Point_3 Point;
     typedef typename Geom_traits::Vector_3 Vector;
+    typedef typename Geom_traits::Vector_3 Grid_spacing;
 
 public:
     Cartesian_grid_domain(const Cartesian_grid_3<Geom_traits>& grid) : grid(&grid) {}
 
     Point position(const Vertex_handle& v) const {
-        const FT vx = grid->voxel_x();
-        const FT vy = grid->voxel_y();
-        const FT vz = grid->voxel_z();
+        const Bbox_3& bbox = grid->get_bbox();
+        const Vector& spacing = grid->get_spacing();
 
-        return Point(v[0] * vx + grid->offset_x(), v[1] * vy + grid->offset_y(), v[2] * vz + grid->offset_z());
+        return Point(v[0] * spacing.x() + bbox.xmin(), v[1] * spacing.y() + bbox.ymin(),
+                     v[2] * spacing.z() + bbox.zmin());
     }
 
     Vector gradient(const Vertex_handle& v) const {
-        const FT vx = grid->voxel_x();
-        const FT vy = grid->voxel_y();
-        const FT vz = grid->voxel_z();
-
-        Vector g(v[0] * vx + grid->offset_x(), v[1] * vy + grid->offset_y(), v[2] * vz + grid->offset_z());
-        return g / std::sqrt(g.squared_length());
+        return grid->gradient(v[0], v[1], v[2]);
     }
 
     FT value(const Vertex_handle& v) const {

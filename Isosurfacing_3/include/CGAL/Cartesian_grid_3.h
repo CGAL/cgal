@@ -5,72 +5,115 @@
 #include <CGAL/Image_3.h>
 
 #include <type_traits>
+#include <vector>
+#include <array>
 
 namespace CGAL {
 
-// TODO: not sure if anything other than float works
-template <class Traits>
+template <class GeomTraits>
 class Cartesian_grid_3 {
 public:
-    typedef typename Traits::FT FT;
+    typedef GeomTraits Geom_traits;
+    typedef typename Geom_traits::FT FT;
+    typedef typename Geom_traits::Vector_3 Vector;
 
 public:
-    Cartesian_grid_3(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim, const Bbox_3 &bbox) {
-        create_image(xdim, ydim, zdim, bbox);
+    Cartesian_grid_3(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim, const Bbox_3 &bbox)
+        : sizes{xdim, ydim, zdim}, bbox(bbox) {
+        
+        values.resize(xdim * ydim * zdim);
+        gradients.resize(xdim * ydim * zdim);
+
+        const FT d_x = bbox.x_span() / (xdim - 1);
+        const FT d_y = bbox.y_span() / (ydim - 1);
+        const FT d_z = bbox.z_span() / (zdim - 1);
+        spacing = Vector(d_x, d_y, d_z);
     }
 
-    Cartesian_grid_3(const Image_3 &image) : grid(image) {}
+    Cartesian_grid_3(const Image_3 &image) {
+        from_image(image);
+    }
 
     FT value(const std::size_t x, const std::size_t y, const std::size_t z) const {
-        return grid.value(x, y, z);
+        return values[linear_index(x, y, z)];
     }
 
     FT &value(const std::size_t x, const std::size_t y, const std::size_t z) {
-        FT *data = (FT *)grid.image()->data;
-        return data[(z * ydim() + y) * xdim() + x];
+        return values[linear_index(x, y, z)];
+    }
+
+    Vector gradient(const std::size_t x, const std::size_t y, const std::size_t z) const {
+        return gradients[linear_index(x, y, z)];
+    }
+
+    Vector &gradient(const std::size_t x, const std::size_t y, const std::size_t z) {
+        return gradients[linear_index(x, y, z)];
     }
 
     std::size_t xdim() const {
-        return grid.xdim();
+        return sizes[0];
     }
     std::size_t ydim() const {
-        return grid.ydim();
+        return sizes[1];
     }
     std::size_t zdim() const {
-        return grid.zdim();
+        return sizes[2];
     }
 
-    // TODO: better return types
-    double voxel_x() const {
-        return grid.vx();
-    }
-    double voxel_y() const {
-        return grid.vy();
-    }
-    double voxel_z() const {
-        return grid.vz();
+    const Bbox_3& get_bbox() const {
+        return bbox;
     }
 
-    float offset_x() const {
-        return grid.tx();
-    }
-    float offset_y() const {
-        return grid.ty();
-    }
-    float offset_z() const {
-        return grid.tz();
+    const Vector& get_spacing() const {
+        return spacing;
     }
 
 private:
-    void create_image(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim, const Bbox_3 &bbox);
+    std::size_t linear_index(const std::size_t x, const std::size_t y, const std::size_t z) const {
+        return (z * ydim() + y) * xdim() + x;
+    }
+
+    void from_image(const Image_3 &image);
+    Image_3 to_image() const;
 
 private:
-    Image_3 grid;
+    std::vector<FT> values;
+    std::vector<Vector> gradients;
+
+    std::array<std::size_t, 3> sizes;
+
+    Bbox_3 bbox;
+    Vector spacing;
 };
 
-template <typename T>
-void Cartesian_grid_3<T>::create_image(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim,
-                                       const Bbox_3 &bbox) {
+template <typename GeomTraits>
+void Cartesian_grid_3<GeomTraits>::from_image(const Image_3 &image) {
+    const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();
+    const FT max_y = image.ty() + (image.ydim() - 1) * image.vy();
+    const FT max_z = image.tz() + (image.zdim() - 1) * image.vz();
+    bbox = Bbox_3(image.tx(), image.ty(), image.tz(), max_x, max_y, max_z);
+
+    spacing = Vector(image.vx(), image.vy(), image.vz());
+
+    sizes[0] = image.xdim();
+    sizes[1] = image.ydim();
+    sizes[2] = image.zdim();
+
+    values.resize(xdim() * ydim() * zdim());
+    gradients.resize(xdim() * ydim() * zdim());
+
+    for (std::size_t x = 0; x < sizes[0]; x++) {
+        for (std::size_t y = 0; y < sizes[1]; y++) {
+            for (std::size_t z = 0; z < sizes[2]; z++) {
+
+                value(x, y, z) = image.value(x, y, z);
+            }
+        }
+    }
+}
+
+template <typename GeomTraits>
+Image_3 Cartesian_grid_3<GeomTraits>::to_image() const {
 
     WORD_KIND wordkind;
     if (std::is_floating_point<FT>::value)
@@ -84,11 +127,11 @@ void Cartesian_grid_3<T>::create_image(const std::size_t xdim, const std::size_t
     else
         sign = SGN_UNSIGNED;
 
-    const double vx = bbox.x_span() / xdim;
-    const double vy = bbox.y_span() / ydim;
-    const double vz = bbox.z_span() / zdim;
+    const double vx = bbox.x_span() / (image.xdim() - 1);
+    const double vy = bbox.y_span() / (image.ydim() - 1);
+    const double vz = bbox.z_span() / (image.zdim() - 1);
 
-    _image *im = _createImage(xdim, ydim, zdim,
+    _image *im = _createImage(image.xdim(), image.ydim(), image.zdim(),
                               1,           // vectorial dimension
                               vx, vy, vz,  // voxel size
                               sizeof(FT),  // image word size in bytes
@@ -103,7 +146,17 @@ void Cartesian_grid_3<T>::create_image(const std::size_t xdim, const std::size_t
     im->ty = bbox.ymin();
     im->tz = bbox.zmin();
 
-    grid = Image_3(im, Image_3::OWN_THE_DATA);
+    FT *data = (FT *)im->data;
+    for (std::size_t x = 0; x < image.xdim(); x++) {
+        for (std::size_t y = 0; y < image.ydim(); y++) {
+            for (std::size_t z = 0; z < image.zdim(); z++) {
+                
+               data[(z * ydim() + y) * xdim() + x] = value(x, y, z);
+            }
+        }
+    }
+
+    return Image_3(im, Image_3::OWN_THE_DATA);
 }
 
 }  // end namespace CGAL

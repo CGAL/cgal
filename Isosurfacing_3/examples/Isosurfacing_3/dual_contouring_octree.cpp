@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-typedef CGAL::Simple_cartesian<float> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::FT FT;
 typedef typename Kernel::Vector_3 Vector_3;
 typedef typename Kernel::Point_3 Point_3;
@@ -32,7 +32,7 @@ struct Refine_one_eighth {
         auto coords = node.global_coordinates();
         const std::size_t depth_factor = std::size_t(1) << (max_depth_ - node.depth());
         for (int i = 0; i < Octree_wrapper_::Octree::Node::Dimension::value; ++i) {
-            coords[i] *= depth_factor;
+            coords[i] *= (uint32_t) depth_factor;
         }
 
         return coords;
