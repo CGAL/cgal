@@ -563,7 +563,7 @@ bool test(bool exact_kernel = false)
   Triangle t3(Point(0, 1, 1), Point(0, 0, 0), Point(0, 0, 1));   // parallel to the left side
   Triangle t4(Point(-1, 3, 2), Point(0, 2, 2), Point(0, 3, 2));  // projection inside the left side
   Triangle t5(Point(-1, 3, 2), Point(0, 1, 2), Point(0, 3, -1)); // projection with one point outside of the left side
- 
+
   b &= test_aux(t123,"t123",bbox,true);
   b &= test_aux(t124,"t124",bbox,true);
   b &= test_aux(t126,"t126",bbox,true);
