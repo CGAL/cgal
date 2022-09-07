@@ -338,7 +338,7 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
   // Otherwise, take the unbounded face.
   Face_const_handle face = (halfedge_found == invalid_he) ?
     _get_unbounded_face(tr, p, All_sides_oblivious_category()) :
-    face = halfedge_found->face();
+    halfedge_found->face();
 
   // Go over the isolated vertices in the face.
   for (auto iso_verts_it = face->isolated_vertices_begin();
