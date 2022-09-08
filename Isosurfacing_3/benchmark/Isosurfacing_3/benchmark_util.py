@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import subprocess
 import pandas as pd
 
@@ -25,13 +26,16 @@ def build(scenario, kernel, algorithm, tag):
     run(["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release", "-DCGAL_DIR=../../../"])
     run(["make", "-C", "build", "CXX_FLAGS='-D" + scenario + " -D" + kernel + " -D" + algorithm + " -D" + tag + "'"])
 
-def execute(n, times=1):
+def execute(n, threads, times=1):
     time = 0
     for i in range(times):
-        process = run(["./build/benchmark", "-N", str(n)], False)
-        print(process.stdout.readline(), end="")
-        print(process.stdout.readline(), end="")
-        print(process.stdout.readline(), end="")
-        print(process.stdout.readline(), end="")
-        time += int(process.stdout.readline())
+        process = run(["likwid", "-g", "MEM_DP", "-c", "S0:0-" + str(threads - 1), "./build/benchmark", "-N", str(n)], False)
+
+        for line in process.stdout.readlines():
+            print(line)
+
+            m = re.search(r'internal timer:\s*(\d*)', line)
+            if m is not None:
+                time += int(m.group(1))
+        
     return time / times

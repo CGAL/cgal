@@ -5,15 +5,15 @@ kernel = "KERNEL_SIMPLE_CARTESIAN_FLOAT"
 algorithm = "ALGO_MARCHING_CUBES"
 tag = "TAG_PARALLEL"
 min_threads = 1
-max_threads = 8
-cells = 500
+max_threads = 12
+cells = 300
 
 build(scenario, kernel, algorithm, tag)
 
 data = []
 
 for t in range(min_threads, max_threads):
-	time = execute(cells)
+	time = execute(cells, t)
 
 	data.append([scenario, kernel, algorithm, tag, t, cells, time])
 
