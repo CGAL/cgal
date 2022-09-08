@@ -37,7 +37,7 @@ std::size_t get_cell_corners(const Domain_& domain, const typename Domain_::Cell
 
     // collect function values and build index
     std::size_t v_id = 0;
-    std::bitset<Domain_::VERTICES_PER_CELL> index = 0;  // TODO: get size from domain
+    std::bitset<Domain_::VERTICES_PER_CELL> index = 0;
     for (const Vertex_handle& v : domain.cell_vertices(cell)) {
         // collect scalar values and computex index
         corners[v_id] = domain.position(v);

@@ -165,7 +165,7 @@ int main(int argc, char* argv[]) {
     typedef CGAL::Parallel_tag Tag;
 #elif defined TAG_SEQUENTIAL
     std::cout << "TAG_SEQUENTIAL" << std::endl;
-    typedef CGAL::Sequential_tag<float> Tag;
+    typedef CGAL::Sequential_tag Tag;
 #else
     std::cout << "no tag selected!" << std::endl;
     typedef CGAL::Sequential_tag Tag;
@@ -190,5 +190,5 @@ int main(int argc, char* argv[]) {
         std::cout << "This should never print and only prevents optimizations" << std::endl;
     }
 
-    std::cout << ms << std::endl;
+    std::cout << "internal timer: " << ms << std::endl;
 }

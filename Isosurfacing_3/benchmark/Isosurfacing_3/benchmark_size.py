@@ -17,7 +17,7 @@ c = min_cells
 while c < max_cells:
 	n = int(c ** (1.0 / 3.0))
 
-	time = execute(n)
+	time = execute(n, threads)
 	data.append([scenario, kernel, algorithm, tag, threads, int(c), time])
 
 	c *= exponent
