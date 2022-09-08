@@ -127,11 +127,11 @@ Image_3 Cartesian_grid_3<GeomTraits>::to_image() const {
     else
         sign = SGN_UNSIGNED;
 
-    const double vx = bbox.x_span() / (image.xdim() - 1);
-    const double vy = bbox.y_span() / (image.ydim() - 1);
-    const double vz = bbox.z_span() / (image.zdim() - 1);
+    const double vx = bbox.x_span() / (xdim() - 1);
+    const double vy = bbox.y_span() / (ydim() - 1);
+    const double vz = bbox.z_span() / (zdim() - 1);
 
-    _image *im = _createImage(image.xdim(), image.ydim(), image.zdim(),
+    _image *im = _createImage(xdim(), ydim(), zdim(),
                               1,           // vectorial dimension
                               vx, vy, vz,  // voxel size
                               sizeof(FT),  // image word size in bytes
@@ -147,9 +147,9 @@ Image_3 Cartesian_grid_3<GeomTraits>::to_image() const {
     im->tz = bbox.zmin();
 
     FT *data = (FT *)im->data;
-    for (std::size_t x = 0; x < image.xdim(); x++) {
-        for (std::size_t y = 0; y < image.ydim(); y++) {
-            for (std::size_t z = 0; z < image.zdim(); z++) {
+    for (std::size_t x = 0; x < xdim(); x++) {
+        for (std::size_t y = 0; y < ydim(); y++) {
+            for (std::size_t z = 0; z < zdim(); z++) {
                 
                data[(z * ydim() + y) * xdim() + x] = value(x, y, z);
             }
