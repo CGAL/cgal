@@ -20,6 +20,7 @@
 #ifndef CGAL_KERNEL_FUNCTION_OBJECTS_H
 #define CGAL_KERNEL_FUNCTION_OBJECTS_H
 
+#include <CGAL/tags.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
@@ -30,7 +31,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-
+#include <type_traits> // for std::is_same and std::enable_if
 #include <cmath> // for Compute_dihedral_angle
 
 namespace CGAL {
@@ -338,7 +339,8 @@ namespace CommonKernelFunctors {
 
     Comparison_result operator()(const Point_3 & p,
                                  const Weighted_point_3 & q,
-                                 const Weighted_point_3 & r) const
+                                 const Weighted_point_3 & r,
+                                 RT_sufficient = {}) const
     {
       return compare_power_distanceC3(p.x(), p.y(), p.z(),
                                       q.x(), q.y(), q.z(), q.weight(),
@@ -513,7 +515,8 @@ namespace CommonKernelFunctors {
                              const Weighted_point_3 & q,
                              const Weighted_point_3 & r,
                              const Weighted_point_3 & s,
-                             const Weighted_point_3 & t) const
+                             const Weighted_point_3 & t,
+                             RT_sufficient = {}) const
     {
       return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
                                                    q.x(), q.y(), q.z(), q.weight(),
@@ -535,7 +538,8 @@ namespace CommonKernelFunctors {
     Oriented_side operator()(const Weighted_point_3 & p,
                              const Weighted_point_3 & q,
                              const Weighted_point_3 & r,
-                             const Weighted_point_3 & s) const
+                             const Weighted_point_3 & s,
+                             RT_sufficient = {}) const
     {
       //CGAL_kernel_precondition( coplanar(p, q, r, s) );
       //CGAL_kernel_precondition( !collinear(p, q, r) );
@@ -547,7 +551,8 @@ namespace CommonKernelFunctors {
 
     Oriented_side operator()(const Weighted_point_3 & p,
                              const Weighted_point_3 & q,
-                             const Weighted_point_3 & r) const
+                             const Weighted_point_3 & r,
+                             RT_sufficient = {}) const
     {
       //CGAL_kernel_precondition( collinear(p, q, r) );
       //CGAL_kernel_precondition( p.point() != q.point() );
@@ -557,7 +562,8 @@ namespace CommonKernelFunctors {
     }
 
     Oriented_side operator()(const Weighted_point_3 & p,
-                             const Weighted_point_3 & q) const
+                             const Weighted_point_3 & q,
+                             RT_sufficient = {}) const
     {
       //CGAL_kernel_precondition( p.point() == r.point() );
       return power_side_of_oriented_power_sphereC3(p.weight(),q.weight());
@@ -824,7 +830,7 @@ namespace CommonKernelFunctors {
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    std::enable_if_t< !std::is_same<T4, RT_sufficient>::value, result_type >
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
@@ -846,7 +852,7 @@ namespace CommonKernelFunctors {
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    std::enable_if_t< !std::is_same<T4, RT_sufficient>::value, result_type >
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
@@ -2988,7 +2994,8 @@ namespace CommonKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-                const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s,
+                RT_sufficient = {}) const
     {
       return o(p, q, r, s) == COPLANAR;
     }
@@ -3032,13 +3039,16 @@ namespace CommonKernelFunctors {
 
     template <class T1, class T2>
     result_type
-    operator()(const T1& t1, const T2& t2) const
+    operator()(const T1& t1, const T2& t2, RT_sufficient = {}) const
     { return Intersections::internal::do_intersect(t1, t2, K()); }
 
-    result_type
-    operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
-    { return Intersections::internal::do_intersect(pl1, pl2, pl3, K() ); }
-
+    result_type operator()(const typename K::Plane_3& pl1,
+                           const typename K::Plane_3& pl2,
+                           const typename K::Plane_3& pl3,
+                           RT_sufficient = {}) const
+    {
+      return Intersections::internal::do_intersect(pl1, pl2, pl3, K());
+    }
   };
 
   template <typename K>
@@ -3656,39 +3666,39 @@ namespace CommonKernelFunctors {
     typedef typename K::Boolean           result_type;
 
     result_type
-    operator()( const Iso_cuboid_3& c) const
+    operator()( const Iso_cuboid_3& c, RT_sufficient = {}) const
     { return c.rep().is_degenerate(); }
 
     result_type
-    operator()( const Line_3& l) const
+    operator()( const Line_3& l, RT_sufficient = {}) const
     { return l.rep().is_degenerate();  }
 
     result_type
-    operator()( const Plane_3& pl) const
+    operator()( const Plane_3& pl, RT_sufficient = {}) const
     { return pl.rep().is_degenerate(); }
 
     result_type
-    operator()( const Ray_3& r) const
+    operator()( const Ray_3& r, RT_sufficient = {}) const
     { return r.rep().is_degenerate(); }
 
     result_type
-    operator()( const Segment_3& s) const
+    operator()( const Segment_3& s, RT_sufficient = {}) const
     { return s.rep().is_degenerate(); }
 
     result_type
-    operator()( const Sphere_3& s) const
+    operator()( const Sphere_3& s, RT_sufficient = {}) const
     { return s.rep().is_degenerate(); }
 
     result_type
-    operator()( const Triangle_3& t) const
+    operator()( const Triangle_3& t, RT_sufficient = {}) const
     { return t.rep().is_degenerate(); }
 
     result_type
-    operator()( const Tetrahedron_3& t) const
+    operator()( const Tetrahedron_3& t, RT_sufficient = {}) const
     { return t.rep().is_degenerate(); }
 
     result_type
-    operator()( const Circle_3& t) const
+    operator()( const Circle_3& t, RT_sufficient = {}) const
     { return t.rep().is_degenerate(); }
 
   };

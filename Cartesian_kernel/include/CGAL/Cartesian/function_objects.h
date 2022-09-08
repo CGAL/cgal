@@ -398,7 +398,7 @@ namespace CartesianKernelFunctors {
     Collinear_2(const Orientation_2 o_) : o(o_) {}
 
     result_type
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(const Point_2& p, const Point_2& q, const Point_2& r, RT_sufficient = {}) const
     { return o(p, q, r) == COLLINEAR; }
   };
 
@@ -410,7 +410,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Boolean    result_type;
 
     result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r, RT_sufficient = {}) const
     {
       return collinearC3(p.x(), p.y(), p.z(),
                          q.x(), q.y(), q.z(),
@@ -453,7 +453,7 @@ namespace CartesianKernelFunctors {
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    std::enable_if_t< !std::is_same<T4, RT_sufficient>::value, result_type >
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
@@ -618,7 +618,7 @@ namespace CartesianKernelFunctors {
 
     Comparison_result operator()(const Point_2& r,
                                  const Weighted_point_2& p,
-                                 const Weighted_point_2& q) const
+                                 const Weighted_point_2& q, RT_sufficient = {}) const
     {
       return CGAL::compare_power_distanceC2(p.x(), p.y(), p.weight(),
                                             q.x(), q.y(), q.weight(),
@@ -3769,7 +3769,8 @@ namespace CartesianKernelFunctors {
 #endif // CGAL_kernel_exactness_preconditions
 
     result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r,
+               RT_sufficient = {}) const
     {
       return coplanar_orientationC3(p.x(), p.y(), p.z(),
                                     q.x(), q.y(), q.z(),
@@ -3778,7 +3779,8 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-                const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s,
+                RT_sufficient = {}) const
     {
       // p,q,r,s supposed to be coplanar
       // p,q,r supposed to be non collinear
@@ -3819,7 +3821,8 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-                const Point_3& r, const Point_3& t) const
+                const Point_3& r, const Point_3& t,
+                RT_sufficient = {}) const
     {
       // p,q,r,t are supposed to be coplanar.
       // p,q,r determine an orientation of this plane (not collinear).
@@ -4206,20 +4209,20 @@ namespace CartesianKernelFunctors {
   public:
     typedef typename K::Orientation   result_type;
 
-    result_type
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    result_type operator()(const Point_2& p, const Point_2& q, const Point_2& r,
+                           RT_sufficient = {}) const
     {
       return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
 
     result_type
-    operator()(const Vector_2& u, const Vector_2& v) const
+    operator()(const Vector_2& u, const Vector_2& v, RT_sufficient = {}) const
     {
       return orientationC2(u.x(), u.y(), v.x(), v.y());
     }
 
     result_type
-    operator()(const Circle_2& c) const
+    operator()(const Circle_2& c, RT_sufficient = {}) const
     {
       return c.rep().orientation();
     }
@@ -4237,7 +4240,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-                const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s, RT_sufficient = {}) const
     {
       return orientationC3(p.x(), p.y(), p.z(),
                            q.x(), q.y(), q.z(),
@@ -4246,7 +4249,8 @@ namespace CartesianKernelFunctors {
     }
 
     result_type
-    operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
+    operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w,
+                RT_sufficient = {}) const
     {
       return orientationC3(u.x(), u.y(), u.z(),
                            v.x(), v.y(), v.z(),
@@ -4255,7 +4259,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( Origin, const Point_3& u,
-                const Point_3& v, const Point_3& w) const
+                const Point_3& v, const Point_3& w, RT_sufficient = {}) const
     {
       return orientationC3(u.x(), u.y(), u.z(),
                            v.x(), v.y(), v.z(),
@@ -4263,13 +4267,13 @@ namespace CartesianKernelFunctors {
     }
 
     result_type
-    operator()( const Tetrahedron_3& t) const
+    operator()( const Tetrahedron_3& t, RT_sufficient = {}) const
     {
       return t.rep().orientation();
     }
 
     result_type
-    operator()(const Sphere_3& s) const
+    operator()(const Sphere_3& s, RT_sufficient = {}) const
     {
       return s.rep().orientation();
     }
@@ -4287,7 +4291,8 @@ namespace CartesianKernelFunctors {
     Oriented_side operator()(const Weighted_point_2& p,
                              const Weighted_point_2& q,
                              const Weighted_point_2& r,
-                             const Weighted_point_2& t) const
+                             const Weighted_point_2& t,
+                             RT_sufficient = {}) const
     {
       //CGAL_kernel_precondition( ! collinear(p, q, r) );
       return power_side_of_oriented_power_circleC2(p.x(), p.y(), p.weight(),
@@ -4308,7 +4313,8 @@ namespace CartesianKernelFunctors {
 
     Oriented_side operator()(const Weighted_point_2& p,
                              const Weighted_point_2& q,
-                             const Weighted_point_2& t) const
+                             const Weighted_point_2& t,
+                             RT_sufficient = {}) const
     {
       //CGAL_kernel_precondition( collinear(p, q, r) );
       //CGAL_kernel_precondition( p.point() != q.point() );
@@ -4318,7 +4324,8 @@ namespace CartesianKernelFunctors {
     }
 
     Oriented_side operator()(const Weighted_point_2& p,
-                             const Weighted_point_2& t) const
+                             const Weighted_point_2& t,
+                             RT_sufficient = {}) const
     {
       //CGAL_kernel_precondition( p.point() == r.point() );
       Comparison_result r = CGAL::compare(p.weight(), t.weight());
@@ -4407,7 +4414,8 @@ namespace CartesianKernelFunctors {
     typedef typename K::Bounded_side   result_type;
 
     result_type
-    operator()( const Point_2& p, const Point_2& q, const Point_2& t) const
+    operator()( const Point_2& p, const Point_2& q, const Point_2& t,
+                RT_sufficient = {}) const
     {
       return side_of_bounded_circleC2(p.x(), p.y(),
                                       q.x(), q.y(),
@@ -4416,7 +4424,8 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_2& p, const Point_2& q,
-                const Point_2& r, const Point_2& t) const
+                const Point_2& r, const Point_2& t,
+                RT_sufficient = {}) const
     {
       return side_of_bounded_circleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(),
                                       t.x(), t.y());
@@ -4431,7 +4440,8 @@ namespace CartesianKernelFunctors {
     typedef typename K::Bounded_side   result_type;
 
     result_type
-    operator()( const Point_3& p, const Point_3& q, const Point_3& test) const
+    operator()( const Point_3& p, const Point_3& q, const Point_3& test,
+                RT_sufficient = {}) const
     {
       return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
                                       q.x(), q.y(), q.z(),
@@ -4440,7 +4450,8 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-                const Point_3& r, const Point_3& test) const
+                const Point_3& r, const Point_3& test,
+                RT_sufficient = {}) const
     {
       return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
                                       q.x(), q.y(), q.z(),
@@ -4450,7 +4461,8 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-                const Point_3& s, const Point_3& test) const
+                const Point_3& s, const Point_3& test,
+                RT_sufficient = {}) const
     {
       return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
                                       q.x(), q.y(), q.z(),
@@ -4469,7 +4481,8 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_2& p, const Point_2& q,
-                const Point_2& r, const Point_2& t) const
+                const Point_2& r, const Point_2& t,
+                RT_sufficient = {}) const
     {
       return side_of_oriented_circleC2(p.x(), p.y(),
                                        q.x(), q.y(),
@@ -4487,7 +4500,8 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-                const Point_3& s, const Point_3& test) const
+                const Point_3& s, const Point_3& test,
+                RT_sufficient = {}) const
     {
       return side_of_oriented_sphereC3(p.x(), p.y(), p.z(),
                                        q.x(), q.y(), q.z(),

@@ -13,7 +13,7 @@
 #define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
 #include <CGAL/assertions.h>
-
+#include <CGAL/tags.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
 #include <CGAL/Triangle_3.h>
@@ -1021,7 +1021,7 @@ public:
 
   struct Collinear_2 {
     typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r, RT_sufficient = {}) const
     {
       Orientation_2 ori;
       return ori(p,q,r) == COLLINEAR;

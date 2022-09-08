@@ -81,13 +81,13 @@ struct Filtered_kernel_base
     Approximate_kernel approximate_kernel() const { return {}; }
 
     // We change the predicates.
-#define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
-    P Pf() const { return P(); }
+// #define CGAL_Kernel_pred(P, Pf) \
+//     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
+//     P Pf() const { return P(); }
 
-#define CGAL_Kernel_pred_RT(P, Pf) \
-    typedef Filtered_predicate<typename Exact_kernel_rt::P, typename Approximate_kernel::P, C2E_rt, C2F> P; \
-    P Pf() const { return P(); }
+// #define CGAL_Kernel_pred_RT(P, Pf) \
+//     typedef Filtered_predicate<typename Exact_kernel_rt::P, typename Approximate_kernel::P, C2E_rt, C2F> P; \
+//     P Pf() const { return P(); }
 
 #define CGAL_Kernel_pred_RT_or_FT(P, Pf) \
     typedef Filtered_predicate_RT_FT<typename Exact_kernel_rt::P, \
@@ -97,6 +97,8 @@ struct Filtered_kernel_base
                                     C2E, \
                                     C2F> P; \
     P Pf() const { return P(); }
+#define CGAL_Kernel_pred_RT(P, Pf) CGAL_Kernel_pred_RT_or_FT(P, Pf)
+#define CGAL_Kernel_pred(P, Pf) CGAL_Kernel_pred_RT_or_FT(P, Pf)
 
     // We don't touch the constructions.
 #define CGAL_Kernel_cons(Y,Z)
