@@ -120,14 +120,19 @@ int main(int argc, char* argv[]) {
     CLI11_PARSE(app, argc, argv);
 
 #if defined KERNEL_SIMPLE_CARTESIAN_DOUBLE
+    std::cout << "KERNEL_SIMPLE_CARTESIAN_DOUBLE" << std::endl;
     typedef CGAL::Simple_cartesian<double> Kernel;
 #elif defined KERNEL_SIMPLE_CARTESIAN_FLOAT
+    std::cout << "KERNEL_SIMPLE_CARTESIAN_FLOAT" << std::endl;
     typedef CGAL::Simple_cartesian<float> Kernel;
 #elif defined KERNEL_CARTESIAN_DOUBLE
+    std::cout << "KERNEL_CARTESIAN_DOUBLE" << std::endl;
     typedef CGAL::Cartesian<double> Kernel;
 #elif defined KERNEL_EPIC
+    std::cout << "KERNEL_EPIC" << std::endl;
     typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 #else
+    std::cout << "no kernel selected!" << std::endl;
     typedef CGAL::Simple_cartesian<double> Kernel;
 #endif
 
@@ -137,12 +142,16 @@ int main(int argc, char* argv[]) {
     typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 #if defined SCENARIO_GRID_SPHERE
+    std::cout << "SCENARIO_GRID_SPHERE" << std::endl;
     auto scenario = Grid_sphere<Kernel>();
 #elif defined SCENARIO_IMPLICIT_SPHERE
+    std::cout << "SCENARIO_IMPLICIT_SPHERE" << std::endl;
     auto scenario = Implicit_sphere<Kernel>();
 #elif defined SCENARIO_SKULL_IMAGE
+    std::cout << "SCENARIO_SKULL_IMAGE" << std::endl;
     auto scenario = Skull_image<Kernel>();
 #else
+    std::cout << "no scenario selected!" << std::endl;
     auto scenario = Implicit_sphere<Kernel>();
 #endif
 
@@ -151,12 +160,28 @@ int main(int argc, char* argv[]) {
 
     ScopeTimer timer;
 
-#if defined ALGO_MARCHING_CUBES
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(scenario.domain(N), scenario.iso(), points, polygons);
-#elif defined ALGO_DUAL_CONTOURING
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(scenario.domain(N), scenario.iso(), points, polygons);
+#if defined TAG_PARALLEL
+    std::cout << "TAG_PARALLEL" << std::endl;
+    typedef CGAL::Parallel_tag Tag;
+#elif defined TAG_SEQUENTIAL
+    std::cout << "TAG_SEQUENTIAL" << std::endl;
+    typedef CGAL::Sequential_tag<float> Tag;
 #else
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(scenario.domain(N), scenario.iso(), points, polygons);
+    std::cout << "no tag selected!" << std::endl;
+    typedef CGAL::Sequential_tag Tag;
+#endif
+
+#if defined ALGO_MARCHING_CUBES
+    std::cout << "ALGO_MARCHING_CUBES" << std::endl;
+    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<Tag>(scenario.domain(N), scenario.iso(), points,
+                                                                     polygons);
+#elif defined ALGO_DUAL_CONTOURING
+    std::cout << "ALGO_DUAL_CONTOURING" << std::endl;
+    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring<Tag>(scenario.domain(N), scenario.iso(), points, polygons);
+#else
+    std::cout << "no algorithm selected!" << std::endl;
+    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<Tag>(scenario.domain(N), scenario.iso(), points,
+                                                                     polygons);
 #endif
 
     const int64_t ms = timer.stop();

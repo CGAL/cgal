@@ -20,14 +20,18 @@ def run(cmd, output=True):
         sys.exit(exit_code)
     return process
 
-def build(scenario, kernel, algorithm):
+def build(scenario, kernel, algorithm, tag):
     run(["cmake", "-E", "make_directory", "build"])
-    run(["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release", "-DCGAL_DIR=../../../", "-D" + scenario + "= -D" + kernel + "= -D" + algorithm + "="])
-    run(["cmake", "--build", "build"])
+    run(["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release", "-DCGAL_DIR=../../../"])
+    run(["make", "-C", "build", "CXX_FLAGS='-D" + scenario + " -D" + kernel + " -D" + algorithm + " -D" + tag + "'"])
 
 def execute(n, times=1):
     time = 0
     for i in range(times):
-        run(["./build/benchmark", "-N", str(n)], False)
+        process = run(["./build/benchmark", "-N", str(n)], False)
+        print(process.stdout.readline(), end="")
+        print(process.stdout.readline(), end="")
+        print(process.stdout.readline(), end="")
+        print(process.stdout.readline(), end="")
         time += int(process.stdout.readline())
     return time / times
