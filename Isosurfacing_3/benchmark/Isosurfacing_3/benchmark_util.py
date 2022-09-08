@@ -23,8 +23,8 @@ def run(cmd, output=True):
 
 def build(scenario, kernel, algorithm, tag):
     run(["cmake", "-E", "make_directory", "build"])
-    run(["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release", "-DCGAL_DIR=../../../"])
-    run(["make", "-C", "build", "CXX_FLAGS='-D" + scenario + " -D" + kernel + " -D" + algorithm + " -D" + tag + "'"])
+    run(["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release", "-DSCENARIO=" + scenario, "-DKERNEL=" + kernel, "-DALGO=" + algorithm, "-DTAG=" + tag, "-DCGAL_DIR=../../../"])
+    run(["make", "-C", "build"])
 
 def execute(n, threads, times=1):
     time = 0

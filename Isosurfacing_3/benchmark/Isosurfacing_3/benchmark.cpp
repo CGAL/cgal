@@ -38,15 +38,20 @@ struct Implicit_sphere {
     typedef CGAL::Isosurfacing::Implicit_domain<GeomTraits, SphereValue<GeomTraits>, SphereGradient<GeomTraits>> Domain;
     typedef typename GeomTraits::Vector_3 Vector;
 
-    Domain domain(const std::size_t N) const {
+    Implicit_sphere(const std::size_t N) : res(2.0 / N, 2.0 / N, 2.0 / N) {}
 
-        const Vector res(2.0 / N, 2.0 / N, 2.0 / N);
-        return Domain({-1, -1, -1, 1, 1, 1}, res, SphereValue<GeomTraits>(), SphereGradient<GeomTraits>());
+    Domain domain() const {
+        return Domain({-1, -1, -1, 1, 1, 1}, res, val, grad);
     }
 
     typename GeomTraits::FT iso() const {
         return 0.8;
     }
+
+private:
+    SphereValue<GeomTraits> val;
+    SphereGradient<GeomTraits> grad;
+    Vector res;
 };
 
 template <class GeomTraits>
@@ -57,13 +62,10 @@ struct Grid_sphere {
     typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point;
 
-    Domain domain(const std::size_t N) const {
-
+    Grid_sphere(const std::size_t N) : grid(N, N, N, {-1, -1, -1, 1, 1, 1}) {
         const FT resolution = 2.0 / N;
         SphereValue<GeomTraits> val;
         SphereGradient<GeomTraits> grad;
-
-        Grid grid(N, N, N, {-1, -1, -1, 1, 1, 1});
 
         for (std::size_t x = 0; x < grid.xdim(); x++) {
             const FT xp = x * resolution - 1.0;
@@ -79,12 +81,18 @@ struct Grid_sphere {
                 }
             }
         }
+    }
+
+    Domain domain() const {
         return Domain(grid);
     }
 
     typename GeomTraits::FT iso() const {
         return 0.8;
     }
+
+private:
+    Grid grid;
 };
 
 template <class GeomTraits>
@@ -93,8 +101,7 @@ struct Skull_image {
     typedef CGAL::Isosurfacing::Cartesian_grid_domain<GeomTraits> Domain;
     typedef CGAL::Cartesian_grid_3<GeomTraits> Grid;
 
-    Domain domain(const std::size_t N) const {
-
+    Skull_image(const std::size_t N) : grid(2, 2, 2, {-1, -1, -1, 1, 1, 1}) {
         const std::string fname = "../data/skull_2.9.inr";
         CGAL::Image_3 image;
         if (!image.read(fname)) {
@@ -102,13 +109,19 @@ struct Skull_image {
             return EXIT_FAILURE;
         }
 
-        const Grid grid(image);
+        grid = Grid(image);
+    }
+
+    Domain domain() const {
         return Domain(grid);
     }
 
     typename GeomTraits::FT iso() const {
         return 2.9;
     }
+
+private:
+    Grid grid;
 };
 
 int main(int argc, char* argv[]) {
@@ -143,13 +156,13 @@ int main(int argc, char* argv[]) {
 
 #if defined SCENARIO_GRID_SPHERE
     std::cout << "SCENARIO_GRID_SPHERE" << std::endl;
-    auto scenario = Grid_sphere<Kernel>();
+    auto scenario = Grid_sphere<Kernel>(N);
 #elif defined SCENARIO_IMPLICIT_SPHERE
     std::cout << "SCENARIO_IMPLICIT_SPHERE" << std::endl;
-    auto scenario = Implicit_sphere<Kernel>();
+    auto scenario = Implicit_sphere<Kernel>(N);
 #elif defined SCENARIO_SKULL_IMAGE
     std::cout << "SCENARIO_SKULL_IMAGE" << std::endl;
-    auto scenario = Skull_image<Kernel>();
+    auto scenario = Skull_image<Kernel>(N);
 #else
     std::cout << "no scenario selected!" << std::endl;
     auto scenario = Implicit_sphere<Kernel>();
@@ -173,14 +186,14 @@ int main(int argc, char* argv[]) {
 
 #if defined ALGO_MARCHING_CUBES
     std::cout << "ALGO_MARCHING_CUBES" << std::endl;
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<Tag>(scenario.domain(N), scenario.iso(), points,
+    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<Tag>(scenario.domain(), scenario.iso(), points,
                                                                      polygons);
 #elif defined ALGO_DUAL_CONTOURING
     std::cout << "ALGO_DUAL_CONTOURING" << std::endl;
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring<Tag>(scenario.domain(N), scenario.iso(), points, polygons);
+    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring<Tag>(scenario.domain(), scenario.iso(), points, polygons);
 #else
     std::cout << "no algorithm selected!" << std::endl;
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<Tag>(scenario.domain(N), scenario.iso(), points,
+    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<Tag>(scenario.domain(), scenario.iso(), points,
                                                                      polygons);
 #endif
 
