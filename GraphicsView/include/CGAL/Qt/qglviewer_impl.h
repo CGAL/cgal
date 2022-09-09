@@ -3143,7 +3143,7 @@ void CGAL::QGLViewer::drawArrow(double r, double R, int prec,
   for(int d = 0; d<360; d+= 360/prec)
   {
       float D = float(d * CGAL_PI / 180.);
-      float a = float(std::atan(Rf / 0.33));
+//      float a = float(std::atan(Rf / 0.33));
 
       //point A1
       QVector4D p(0.f, 1.f, 0.f, 1.f);
