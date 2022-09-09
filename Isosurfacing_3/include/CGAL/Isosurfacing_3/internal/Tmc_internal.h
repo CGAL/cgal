@@ -7,6 +7,7 @@
 #include <array>
 #include <map>
 #include <mutex>
+#include <atomic>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -53,8 +54,7 @@ public:
         std::array<Point, 12> vertices;
         mc_construct_vertices(domain.cell_edges(cell), iso_value, i_case, corners, values, vertices);
 
-        std::lock_guard<std::mutex> lock(mutex);
-        mc_construct_triangles(i_case, vertices, points, polygons);
+        mc_construct_triangles(i_case, vertices, points, polygons, triangle_id++);
     }
 
     void add_triangle(const std::size_t p0, const std::size_t p1, const std::size_t p2) {
@@ -893,7 +893,7 @@ private:
     // use as key the unique edge number
     std::map<Edge_handle, std::size_t> vertex_map;
 
-    std::mutex mutex;
+    std::atomic_size_t triangle_id;
 };
 
 }  // namespace internal

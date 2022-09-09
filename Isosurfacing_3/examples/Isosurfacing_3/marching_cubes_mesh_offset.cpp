@@ -9,6 +9,8 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
+#include <tbb/concurrent_vector.h>
+
 #include <iostream>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -24,8 +26,8 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
-typedef std::vector<Point> Point_range;
-typedef std::vector<std::vector<std::size_t>> Polygon_range;
+typedef tbb::concurrent_vector<Point> Point_range;
+typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
 
 
 // computes the distance of a point p from the mesh with the use of a AABB_tree

@@ -62,7 +62,7 @@ public:
         const std::size_t size_y = grid->ydim();
         const std::size_t size_z = grid->zdim();
 
-        auto iterator = [=, &f](const tbb::blocked_range<std::size_t>& r) {
+        auto iterator = [&f, size_x, size_y, size_z](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t x = r.begin(); x != r.end(); x++) {
                 for (std::size_t y = 0; y < size_y - 1; y++) {
                     for (std::size_t z = 0; z < size_z - 1; z++) {
@@ -81,7 +81,7 @@ public:
         const std::size_t size_y = grid->ydim();
         const std::size_t size_z = grid->zdim();
 
-        auto iterator = [=, &f](const tbb::blocked_range<std::size_t>& r) {
+        auto iterator = [&f, size_x, size_y, size_z](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t x = r.begin(); x != r.end(); x++) {
                 for (std::size_t y = 0; y < size_y - 1; y++) {
                     for (std::size_t z = 0; z < size_z - 1; z++) {
@@ -102,7 +102,16 @@ public:
         const std::size_t size_y = grid->ydim();
         const std::size_t size_z = grid->zdim();
 
-        auto iterator = [=, &f](const tbb::blocked_range<std::size_t>& r) {
+        //#pragma omp parallel for
+        //for (int x = 0; x < size_x - 1; x++) {
+        //    for (std::size_t y = 0; y < size_y - 1; y++) {
+        //        for (std::size_t z = 0; z < size_z - 1; z++) {
+        //            f({(std::size_t)x, y, z});
+        //        }
+        //    }
+        //}
+
+        auto iterator = [&f, size_x, size_y, size_z](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t x = r.begin(); x != r.end(); x++) {
                 for (std::size_t y = 0; y < size_y - 1; y++) {
                     for (std::size_t z = 0; z < size_z - 1; z++) {
@@ -111,7 +120,7 @@ public:
                 }
             }
         };
-
+        
         tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_x - 1), iterator);
     }
 #endif  // CGAL_LINKED_WITH_TBB

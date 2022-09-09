@@ -12,6 +12,8 @@
 #include <CGAL/TC_marching_cubes_3.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
+#include <tbb/concurrent_vector.h>
+
 #include "Timer.h"
 
 typedef CGAL::Simple_cartesian<float> Kernel;
@@ -21,18 +23,22 @@ typedef typename Kernel::Point_3 Point;
 typedef CGAL::Surface_mesh<Point> Mesh;
 typedef CGAL::Cartesian_grid_3<Kernel> Grid;
 
-typedef std::vector<Point> Point_range;
-typedef std::vector<std::vector<std::size_t>> Polygon_range;
+typedef tbb::concurrent_vector<Point> Point_range;
+typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
-    const Vector spacing(0.02f, 0.02f, 0.02f);
+    const Vector spacing(0.002f, 0.002f, 0.02f);
     const CGAL::Bbox_3 bbox = {-1, -1, -1, 1, 1, 1};
 
     auto sphere_function = [](const Point& point) {
         return std::sqrt(point.x() * point.x() + point.y() * point.y() + point.z() * point.z());
     };
-    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(sphere_function)> implicit_domain(sphere_function, bbox,
-                                                                                           spacing);
+    CGAL::Isosurfacing::Implicit_domain<
+        Kernel, decltype(sphere_function),
+        decltype(CGAL::Isosurfacing::Default_gradient<Kernel, decltype(sphere_function)>(sphere_function))>
+        implicit_domain({-1, -1, -1, 1, 1, 1}, spacing, sphere_function,
+                        CGAL::Isosurfacing::Default_gradient<Kernel, decltype(sphere_function)>(
+                            sphere_function));  // TODO: this is ugly
 
 
     Grid grid(2.f / spacing.x(), 2.f / spacing.y(), 2.f / spacing.z(), bbox);
@@ -65,14 +71,15 @@ int main() {
 
     {
         ScopeTimer timer;
-        CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring<CGAL::Parallel_tag>(grid_domain, 0.8f, points,
-                                                                                     polygons);
+        CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<CGAL::Parallel_tag>(implicit_domain, 0.8f, points,
+                                                                                        polygons);
     }
 
     // TODO: compare results with mesh_3
 
-    Mesh mesh;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
+    //Mesh mesh;
+    //CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
 
-    CGAL::IO::write_OFF("result.off", mesh);
+    //CGAL::IO::write_OFF("result.off", mesh);
+    CGAL::IO::write_OFF("result.off", points, polygons);
 }

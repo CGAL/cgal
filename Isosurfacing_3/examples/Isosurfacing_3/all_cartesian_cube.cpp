@@ -6,6 +6,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
+#include <tbb/concurrent_vector.h>
+
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::FT FT;
 typedef typename Kernel::Point_3 Point;
@@ -13,8 +15,12 @@ typedef typename Kernel::Vector_3 Vector;
 
 typedef CGAL::Cartesian_grid_3<Kernel> Grid;
 
-typedef std::vector<Point> Point_range;
-typedef std::vector<std::vector<std::size_t>> Polygon_range;
+typedef tbb::concurrent_vector<Point> Point_range;
+typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
+
+FT sign(FT value) {
+    return (value > 0) - (value < 0);
+}
 
 int main() {
     // create a cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
@@ -33,12 +39,19 @@ int main() {
                 grid.value(x, y, z) = std::max({std::abs(pos_x), std::abs(pos_y), std::abs(pos_z)});
 
                 // the normal depends on the side of the cube
+                grid.gradient(x, y, z) = Vector(0, 0, 0);
                 if (grid.value(x, y, z) == std::abs(pos_x)) {
-                    grid.gradient(x, y, z) = Vector(std::copysign(1.0, pos_x), 0, 0);
-                } else if (grid.value(x, y, z) == std::abs(pos_y)) {
-                    grid.gradient(x, y, z) = Vector(0, std::copysign(1.0, pos_y), 0);
-                } else if (grid.value(x, y, z) == std::abs(pos_z)) {
-                    grid.gradient(x, y, z) = Vector(0, 0, std::copysign(1.0, pos_z));
+                    grid.gradient(x, y, z) += Vector(sign(pos_x), 0, 0);
+                }
+                if (grid.value(x, y, z) == std::abs(pos_y)) {
+                    grid.gradient(x, y, z) += Vector(0, sign(pos_y), 0);
+                }
+                if (grid.value(x, y, z) == std::abs(pos_z)) {
+                    grid.gradient(x, y, z) += Vector(0, 0, sign(pos_z));
+                }
+                const FT length_sq = grid.gradient(x, y, z).squared_length();
+                if (length_sq > 0.00001) {
+                    grid.gradient(x, y, z) /= CGAL::approximate_sqrt(length_sq);
                 }
             }
         }
@@ -52,9 +65,9 @@ int main() {
     Polygon_range polygons_mc, polygons_tmc, polygons_dc;
 
     // execute marching cubes, topologically correct marching cubes and dual contouring with an isovalue of 0.8
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, 0.8, points_mc, polygons_mc);
-    CGAL::Isosurfacing::make_triangle_mesh_using_tmc(domain, 0.8, points_tmc, polygons_tmc);
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(domain, 0.8, points_dc, polygons_dc);
+    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, 0.88, points_mc, polygons_mc);
+    //CGAL::Isosurfacing::make_triangle_mesh_using_tmc(domain, 0.88, points_tmc, polygons_tmc);
+    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(domain, 0.88, points_dc, polygons_dc);
 
     // save the results in the OFF format
     CGAL::IO::write_OFF("result_mc.off", points_mc, polygons_mc);

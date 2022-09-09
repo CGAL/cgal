@@ -6,6 +6,7 @@
 #include <array>
 #include <bitset>
 #include <mutex>
+#include <atomic>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -79,7 +80,8 @@ void mc_construct_vertices(const CellEdges& cell_edges, const FT iso_value, cons
 }
 
 template <typename Vertices_, class PointRange, class PolygonRange>
-void mc_construct_triangles(const int i_case, const Vertices_& vertices, PointRange& points, PolygonRange& polygons) {
+void mc_construct_triangles(const int i_case, const Vertices_& vertices, PointRange& points, PolygonRange& polygons,
+                            std::atomic_size_t& triangle_id) {
     // construct triangles
     for (int t = 0; t < 16; t += 3) {
 
@@ -91,19 +93,20 @@ void mc_construct_triangles(const int i_case, const Vertices_& vertices, PointRa
         const int eg1 = Cube_table::triangle_cases[t_index + 1];
         const int eg2 = Cube_table::triangle_cases[t_index + 2];
 
-        const std::size_t p0_idx = points.size();  // TODO: not allowed
+        const std::size_t t_id = triangle_id++;
 
-        points.push_back(vertices[eg0]);
-        points.push_back(vertices[eg1]);
-        points.push_back(vertices[eg2]);
+        points.grow_to_at_least((t_id + 1) * 3);
+        points[t_id * 3 + 0] = vertices[eg0];
+        points[t_id * 3 + 1] = vertices[eg1];
+        points[t_id * 3 + 2] = vertices[eg2];
 
         // insert new triangle in list
-        polygons.push_back({});
-        auto& triangle = polygons.back();
+        PolygonRange::value_type triangle(3);
+        triangle[0] = t_id * 3 + 2;
+        triangle[1] = t_id * 3 + 1;
+        triangle[2] = t_id * 3 + 0;
 
-        triangle.push_back(p0_idx + 2);
-        triangle.push_back(p0_idx + 1);
-        triangle.push_back(p0_idx + 0);
+        polygons.push_back(triangle);
     }
 }
 
@@ -142,8 +145,7 @@ public:
         std::array<Point, 12> vertices;
         mc_construct_vertices(domain.cell_edges(cell), iso_value, i_case, corners, values, vertices);
 
-        std::lock_guard<std::mutex> lock(mutex);
-        mc_construct_triangles(i_case, vertices, points, polygons);
+        mc_construct_triangles(i_case, vertices, points, polygons, triangle_id);
     }
 
 private:
@@ -157,7 +159,7 @@ private:
     // use as key the unique edge number
     std::map<Edge_handle, std::size_t> vertex_map;
 
-    std::mutex mutex;
+    std::atomic_size_t triangle_id;
 };
 
 }  // namespace internal

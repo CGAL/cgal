@@ -8,8 +8,11 @@ find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program( "test.cpp" )
 
+find_package(OpenMP)
+
 find_package(TBB)
 include(CGAL_TBB_support)
 if(TARGET CGAL::TBB_support)
   target_link_libraries(test PUBLIC CGAL::TBB_support)
+  target_link_libraries(test PRIVATE OpenMP::OpenMP_CXX)
 endif()

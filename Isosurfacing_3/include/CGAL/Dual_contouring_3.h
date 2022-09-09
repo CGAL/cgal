@@ -9,7 +9,7 @@ namespace CGAL {
 namespace Isosurfacing {
 
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange,
-          class Positioning = internal::Positioning::QEM_SVD<false>>
+          class Positioning = internal::Positioning::QEM_SVD<true>>
 void make_quad_mesh_using_dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value,
                                           PointRange& points, PolygonRange& polygons, const Positioning& positioning = Positioning()) {
 
