@@ -29,10 +29,10 @@ def build(scenario, kernel, algorithm, tag):
 def execute(n, threads, times=1):
     time = 0
     for i in range(times):
-        process = run(["likwid", "-g", "MEM_DP", "-c", "S0:0-" + str(threads - 1), "./build/benchmark", "-N", str(n)], False)
+        process = run(["likwid-perfctr", "-g", "MEM_DP", "-C", "S0:0-" + str(threads - 1), "./build/benchmark", "-N", str(n)], False)
 
         for line in process.stdout.readlines():
-            print(line)
+            print(line, end='')
 
             m = re.search(r'internal timer:\s*(\d*)', line)
             if m is not None:

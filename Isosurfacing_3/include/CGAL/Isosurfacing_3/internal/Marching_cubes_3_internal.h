@@ -101,7 +101,7 @@ void mc_construct_triangles(const int i_case, const Vertices_& vertices, PointRa
         points[t_id * 3 + 2] = vertices[eg2];
 
         // insert new triangle in list
-        PolygonRange::value_type triangle(3);
+        typename PolygonRange::value_type triangle(3);
         triangle[0] = t_id * 3 + 2;
         triangle[1] = t_id * 3 + 1;
         triangle[2] = t_id * 3 + 0;
