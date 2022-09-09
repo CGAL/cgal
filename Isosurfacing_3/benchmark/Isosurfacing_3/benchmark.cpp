@@ -11,11 +11,15 @@
 #include <CGAL/boost/graph/IO/OFF.h>
 #include <math.h>
 
+#include <tbb/concurrent_vector.h>
+
 #include <iostream>
 #include <limits>
 
 #include "CLI11.hpp"
 #include "Timer.h"
+
+#define M_PI 3.141592653589793238462643383279502884L
 
 template <class GeomTraits>
 struct SphereValue {
@@ -50,6 +54,42 @@ struct Implicit_sphere {
 
 private:
     SphereValue<GeomTraits> val;
+    SphereGradient<GeomTraits> grad;
+    Vector res;
+};
+
+template <class GeomTraits>
+struct IWPValue {
+    typedef typename GeomTraits::FT FT;
+
+    FT operator()(const typename GeomTraits::Point_3& point) const {
+        const FT alpha = 5.01;
+        // const float alpha = 1.01;
+        const FT x = alpha * (point.x() + 1) * M_PI;
+        const FT y = alpha * (point.y() + 1) * M_PI;
+        const FT z = alpha * (point.z() + 1) * M_PI;
+        return cos(x) * cos(y) + cos(y) * cos(z) + cos(z) * cos(x) - cos(x) * cos(y) * cos(z);  // iso-value = 0
+    }
+};
+
+template <class GeomTraits>
+struct Implicit_iwp {
+
+    typedef CGAL::Isosurfacing::Implicit_domain<GeomTraits, IWPValue<GeomTraits>, SphereGradient<GeomTraits>> Domain;
+    typedef typename GeomTraits::Vector_3 Vector;
+
+    Implicit_iwp(const std::size_t N) : res(2.0 / N, 2.0 / N, 2.0 / N) {}
+
+    Domain domain() const {
+        return Domain({-1, -1, -1, 1, 1, 1}, res, val, grad);
+    }
+
+    typename GeomTraits::FT iso() const {
+        return 0.0;
+    }
+
+private:
+    IWPValue<GeomTraits> val;
     SphereGradient<GeomTraits> grad;
     Vector res;
 };
@@ -106,7 +146,6 @@ struct Skull_image {
         CGAL::Image_3 image;
         if (!image.read(fname)) {
             std::cerr << "Error: Cannot read file " << fname << std::endl;
-            return EXIT_FAILURE;
         }
 
         grid = Grid(image);
@@ -127,7 +166,7 @@ private:
 int main(int argc, char* argv[]) {
     CLI::App app{"Isosurfacing benchmarks"};
 
-    std::size_t N = 2;
+    std::size_t N = 100;
     app.add_option("-N", N, "Grid size");
 
     CLI11_PARSE(app, argc, argv);
@@ -151,8 +190,8 @@ int main(int argc, char* argv[]) {
 
     typedef Kernel::Point_3 Point;
 
-    typedef std::vector<Point> Point_range;
-    typedef std::vector<std::vector<std::size_t>> Polygon_range;
+    typedef tbb::concurrent_vector<Point> Point_range;
+    typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
 
 #if defined SCENARIO_GRID_SPHERE
     std::cout << "SCENARIO_GRID_SPHERE" << std::endl;
@@ -160,6 +199,9 @@ int main(int argc, char* argv[]) {
 #elif defined SCENARIO_IMPLICIT_SPHERE
     std::cout << "SCENARIO_IMPLICIT_SPHERE" << std::endl;
     auto scenario = Implicit_sphere<Kernel>(N);
+#elif defined SCENARIO_IMPLICIT_IWP
+    std::cout << "SCENARIO_IMPLICIT_IWP" << std::endl;
+    auto scenario = Implicit_iwp<Kernel>(N);
 #elif defined SCENARIO_SKULL_IMAGE
     std::cout << "SCENARIO_SKULL_IMAGE" << std::endl;
     auto scenario = Skull_image<Kernel>(N);
@@ -204,4 +246,6 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "internal timer: " << ms << std::endl;
+
+    CGAL::IO::write_OFF("result.off", points, polygons);
 }
