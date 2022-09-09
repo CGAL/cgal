@@ -19,7 +19,9 @@
 #include "CLI11.hpp"
 #include "Timer.h"
 
+#ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884L
+#endif
 
 template <class GeomTraits>
 struct SphereValue {
@@ -246,6 +248,4 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "internal timer: " << ms << std::endl;
-
-    CGAL::IO::write_OFF("result.off", points, polygons);
 }

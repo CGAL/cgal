@@ -1,7 +1,7 @@
 from benchmark_util import *
 
-scenario = "SCENARIO_GRID_SPHERE"
-kernel = "KERNEL_SIMPLE_CARTESIAN_FLOAT"
+scenario = "SCENARIO_IMPLICIT_SPHERE"
+kernel = "KERNEL_SIMPLE_CARTESIAN_DOUBLE"
 algorithm = "ALGO_MARCHING_CUBES"
 tag = "TAG_PARALLEL"
 min_threads = 1
