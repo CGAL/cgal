@@ -51,10 +51,11 @@ protected:
 
 // msvc2015 doesn't play well with polymorphic lambdas
 namespace {
+
 struct ExplicitLambda {
   template <typename Arrangement>
   void operator()(demo_types::TypeHolder<Arrangement>) {
-    Arrangement* arr = nullptr;
+    Arrangement* arr(nullptr);
     CGAL::assign(arr, arr_obj);
     res = new MergeEdgeCallback<Arrangement>(arr, parent);
   }
@@ -63,6 +64,7 @@ struct ExplicitLambda {
   CGAL::Object& arr_obj;
   QObject* parent;
 };
+
 } // anonymous namespace
 
 //
@@ -80,8 +82,8 @@ template <typename Arr_>
 MergeEdgeCallback<Arr_>::MergeEdgeCallback(Arrangement* arr_,
                                            QObject* parent_) :
   MergeEdgeCallbackBase(parent_),
-  highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>()),
-  highlightedCurve2(new CGAL::Qt::CurveGraphicsItem<Traits>()), arr(arr_),
+  highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>(*(arr_->geometry_traits()))),
+  highlightedCurve2(new CGAL::Qt::CurveGraphicsItem<Traits>(*(arr_->geometry_traits()))), arr(arr_),
   isFirst(true)
 {
   QObject::connect(this, SIGNAL(modelChanged()), this->highlightedCurve,
@@ -115,8 +117,8 @@ void MergeEdgeCallback<Arr_>::reset() {
 //
 template <typename Arr_>
 void MergeEdgeCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-  if (this->isFirst)
-  { // save the first edge if mergeable
+  if (this->isFirst) {
+    // save the first edge if mergeable
     Halfedge_handle halfedge = this->getNearestMergeableCurve(event);
     if (halfedge == Halfedge_handle()) return;
     this->isFirst = false;
@@ -187,7 +189,7 @@ getNearestMergeableCurve(QGraphicsSceneMouseEvent* event) {
       squared_distance(*(arr->geometry_traits()));
     squared_distance.setScene(this->getScene());
     double dist = CGAL::to_double(squared_distance(p, curve));
-    if (!found || dist < min_dist) {
+    if (! found || dist < min_dist) {
       found = true;
       min_dist = dist;
       nearestHei = hei;
@@ -218,9 +220,8 @@ getNearestMergeableCurve(Halfedge_handle h, QGraphicsSceneMouseEvent* event) {
   if (source->degree() != 2 && target->degree() != 2) return Halfedge_handle();
   else if (source->degree() != 2) return h2;
   else if (target->degree() != 2) return h1;
-  else if (
-    this->mergeEdge.areMergeable(arr, h, h1) &&
-    this->mergeEdge.areMergeable(arr, h, h2))
+  else if (this->mergeEdge.areMergeable(arr, h, h1) &&
+           this->mergeEdge.areMergeable(arr, h, h2))
   {
     X_monotone_curve_2 c1 = h1->curve();
     X_monotone_curve_2 c2 = h2->curve();
