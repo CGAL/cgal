@@ -9,6 +9,7 @@
 //
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_BASIC_VIEWER_QT_H
 #define CGAL_BASIC_VIEWER_QT_H
@@ -92,6 +93,28 @@ public:
                   bool draw_rays=true,
                   bool draw_lines=true,
                   bool draw_text=true,
+                  bool no_2D_mode=false):
+      Basic_viewer_qt(parent, title,  draw_vertices,
+        draw_edges,
+        draw_faces,
+        use_mono_color,
+        inverse_normal,
+        draw_rays,
+        draw_lines,
+        draw_text,
+        no_2D_mode), gBuffer(buf){}
+
+
+  Basic_viewer_qt(QWidget* parent,
+                  const char* title="",
+                  bool draw_vertices=false,
+                  bool draw_edges=true,
+                  bool draw_faces=true,
+                  bool use_mono_color=false,
+                  bool inverse_normal=false,
+                  bool draw_rays=true,
+                  bool draw_lines=true,
+                  bool draw_text=true,
                   bool no_2D_mode=false) :
     CGAL::QGLViewer(parent),
     m_draw_vertices(draw_vertices),
@@ -114,8 +137,7 @@ public:
     m_lines_mono_color(0, 0, 0),
     m_faces_mono_color(60, 60, 200),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
-    m_are_buffers_initialized(false),
-    gBuffer(buf)
+    m_are_buffers_initialized(false)
   {
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
     setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL, ::Qt::Key_Q);
@@ -1720,6 +1742,12 @@ protected:
 
 };
 
+/**
+ * @brief
+ *
+ * @tparam BufferType
+ * @param graphic_buffer
+ */
 template <typename BufferType = float>
 void draw_buffer(GraphicBuffer<BufferType> &graphic_buffer) {
 
