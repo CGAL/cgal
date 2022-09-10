@@ -573,7 +573,7 @@ template <typename Arr_>
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
-  const CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>&)
+  const CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>& traits)
 {
   if (!f->is_unbounded()) // f is not the unbounded face
   {
@@ -643,7 +643,7 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
                 ker.compare_x_2_object()(curr_p, c.right()) != CGAL::LARGER))
           { continue; }
 
-          auto px = c.point_at_x(curr_p);
+          auto px = traits.point_at_x(c, curr_p);
           double curr_y = CGAL::to_double(px.y());
           QPointF curr(curr_x, curr_y);
           pts.push_back(curr);

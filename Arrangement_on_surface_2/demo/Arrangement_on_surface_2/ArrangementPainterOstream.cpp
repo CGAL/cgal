@@ -177,7 +177,7 @@ ArrangementPainterOstream<
 ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
   RatKernel, AlgKernel, NtTraits>>::operator<<(const X_monotone_curve_2& curve)
 {
-  CGAL::Bbox_2 bb = curve.bbox();
+  CGAL::Bbox_2 bb = traits.construct_bbox_2_object()(curve);
   QRectF qbb = this->convert(bb);
 
   // quick cull
@@ -185,47 +185,49 @@ ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
   { return *this; }
 
   // get number of segments
-  QGraphicsView* view = this->scene->views().first();
-  int xmin = view->mapFromScene(bb.xmin(), bb.ymin()).x();
-  int xmax = view->mapFromScene(bb.xmax(), bb.ymin()).x();
-  // can be negitive due to rotation trasnformation
-  size_t n = static_cast<size_t>(std::abs(xmax - xmin));
-  if (n == 0) { return *this; }
+  // QGraphicsView* view = this->scene->views().first();
+  // auto pmin = view->mapFromScene(bb.xmin(), bb.ymin());
+  // auto pmax = view->mapFromScene(bb.xmax(), bb.ymax());
+  // std::cout << "extreme: "
+  //           << pmin.x() << ", " << pmin.y() << ","
+  //           << pmax.x() << ", " << pmax.y() << std::endl;
+  // // can be negitive due to rotation trasnformation
+  // size_t n = static_cast<size_t>(std::abs(xmax - xmin));
+  // if (n == 0) { return *this; }
+  double error = 1;
 
-  auto paintCurve = [&](auto&& curve_) {
-    std::vector<std::pair<double, double>> app_pts;
-    app_pts.reserve(n + 1);
-    curve_.polyline_approximation(n, std::back_inserter(app_pts));
-
+  auto paint_curve = [&](auto&& curve_) {
+    using Approximate_point_2 = typename Traits::Approximate_point_2;
+    std::vector<Approximate_point_2> app_pts;
+  //   app_pts.reserve(n + 1);
+  //   curve_.polyline_approximation(n, std::back_inserter(app_pts));
+    auto aprox = traits.approximate_2_object();
+    aprox(curve_, error, std::back_inserter(app_pts));
     auto p_curr = app_pts.begin();
     auto end_pts = app_pts.end();
     auto p_next = p_curr + 1;
-    int count = 0;
-    do
-    {
-      QPointF p1(p_curr->first, p_curr->second);
-      QPointF p2(p_next->first, p_next->second);
+    do {
+      QPointF p1(p_curr->x(), p_curr->y());
+      QPointF p2(p_next->x(), p_next->y());
       this->qp->drawLine(p1, p2);
       p_curr++;
       p_next++;
-      ++count;
     } while (p_next != end_pts);
   };
 
-  if (this->clippingRect.isValid())
-  {
+  if (this->clippingRect.isValid()) {
     std::vector<X_monotone_curve_2> visibleParts;
     if (this->clippingRect.contains(qbb))
       visibleParts.push_back(curve);
     else
       visibleParts = this->visibleParts(curve);
-
-    for (auto& visiblePart : visibleParts) paintCurve(visiblePart);
+    for (auto& visiblePart : visibleParts) paint_curve(visiblePart);
   }
-  else
-  { // draw the whole curve
-    paintCurve(curve);
+  else {
+    // draw the whole curve
+    paint_curve(curve);
   }
+  // paint_curve(curve);
 
   return *this;
 }

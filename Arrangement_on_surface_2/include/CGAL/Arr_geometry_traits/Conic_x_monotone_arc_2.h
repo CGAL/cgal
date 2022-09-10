@@ -42,6 +42,7 @@ public:
   typedef typename Point_2::Conic_id            Conic_id;
 
   using Conic_arc_2::sign_of_extra_data;
+  using Conic_arc_2::_is_between_endpoints;
 
   using Conic_arc_2::IS_VALID;
   using Conic_arc_2::IS_FULL_CONIC;
@@ -445,6 +446,34 @@ public:
    */
   Conic_id id() const { return m_id; }
 
+  /*! Check whether the given point lies on the arc.
+   * \param p The qury point.
+   * \param (true) if p lies on the arc; (false) otherwise.
+   */
+  CGAL_DEPRECATED
+  bool contains_point(const Point_2& p) const {
+    const auto& xcv = *this;
+    // First check if p lies on the supporting conic. We first check whether
+    // it is one of p's generating conic curves.
+    bool p_on_conic(false);
+    if (p.is_generating_conic(xcv.id())) p_on_conic = true;
+    else {
+      // Check whether p satisfies the supporting conic equation.
+      p_on_conic = xcv.is_on_supporting_conic(p.x(), p.y());
+      if (p_on_conic) {
+        // As p lies on the supporting conic of our arc, add its ID to
+        // the list of generating conics for p.
+        Point_2& p_non_const = const_cast<Point_2&>(p);
+        p_non_const.set_generating_conic(xcv.id());
+      }
+    }
+
+    if (! p_on_conic) return false;
+
+    // Check if p is between the endpoints of the arc.
+    return _is_between_endpoints(p);
+  }
+
   /*! Obtain a bounding box for the conic arc.
    * \return The bounding box.
    */
@@ -667,35 +696,36 @@ public:
     // Make sure that the endpoints conform with the direction of the arc.
     Alg_kernel alg_kernel;
     Self res_xcv = xcv;
-      auto cmp_xy = alg_kernel.compare_xy_2_object();
-      if (! ((xcv.test_flag(Self::IS_DIRECTED_RIGHT) &&
-              (cmp_xy(ps, pt) == SMALLER)) ||
-             (xcv.test_flag(Self::IS_DIRECTED_RIGHT) &&
-              (cmp_xy(ps, pt) == LARGER))))
-      {
-        // We are allowed to change the direction only in case of a segment.
-        CGAL_assertion(xcv.orientation() == COLLINEAR);
-        res_xcv.flip_flag(Self::IS_DIRECTED_RIGHT);
-      }
-
-      // Make a copy of the current arc and assign its endpoints.
-      auto eq = alg_kernel.equal_2_object();
-      if (! eq(ps, xcv.source())) {
-        res_xcv.set_source(ps);
-
-        if (! ps.is_generating_conic(xcv.id()))
-          res_xcv.source().set_generating_conic(xcv.id());
-      }
-
-      if (! eq(pt, xcv.target())) {
-        res_xcv.set_target(pt);
-
-        if (! pt.is_generating_conic(xcv.id()))
-          res_xcv.target().set_generating_conic(xcv.id());
-      }
-
-      return res_xcv;
+    auto cmp_xy = alg_kernel.compare_xy_2_object();
+    if (! ((xcv.test_flag(Self::IS_DIRECTED_RIGHT) &&
+            (cmp_xy(ps, pt) == SMALLER)) ||
+           (xcv.test_flag(Self::IS_DIRECTED_RIGHT) &&
+            (cmp_xy(ps, pt) == LARGER))))
+    {
+      // We are allowed to change the direction only in case of a segment.
+      CGAL_assertion(xcv.orientation() == COLLINEAR);
+      res_xcv.flip_flag(Self::IS_DIRECTED_RIGHT);
     }
+
+    // Make a copy of the current arc and assign its endpoints.
+    auto eq = alg_kernel.equal_2_object();
+    if (! eq(ps, xcv.source())) {
+      res_xcv.set_source(ps);
+
+      if (! ps.is_generating_conic(xcv.id()))
+        res_xcv.source().set_generating_conic(xcv.id());
+    }
+
+    if (! eq(pt, xcv.target())) {
+      res_xcv.set_target(pt);
+
+      if (! pt.is_generating_conic(xcv.id()))
+        res_xcv.target().set_generating_conic(xcv.id());
+    }
+
+    return res_xcv;
+  }
+
   //@}
 
   /*! Compare two arcs immediately to the leftt of their intersection point.
