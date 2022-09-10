@@ -41,16 +41,17 @@ namespace CGAL {
 namespace Qt {
 
 //
-GraphicsViewCurveInputBase::GraphicsViewCurveInputBase(
-  QObject* parent, QGraphicsScene* scene) :
-    Callback(parent, scene),
-    inputMethod(nullptr)
+GraphicsViewCurveInputBase::
+GraphicsViewCurveInputBase(QObject* parent, QGraphicsScene* scene) :
+  Callback(parent, scene),
+  inputMethod(nullptr)
 {}
 
 //
 void GraphicsViewCurveInputBase::setInputMethod(CurveInputMethod* inputMethod_)
 { this->inputMethod = inputMethod_; }
 
+//
 void GraphicsViewCurveInputBase::reset() {
   if (this->inputMethod) {
     this->inputMethod->reset();
@@ -68,18 +69,18 @@ void GraphicsViewCurveInputBase::setColor(QColor c)
 
 //
 template <typename Arr_>
-GraphicsViewCurveInput<Arr_>::GraphicsViewCurveInput(
-  Arrangement* arrangement_, QObject* parent, QGraphicsScene* scene) :
-    GraphicsViewCurveInputBase(parent, scene),
-    arrangement(arrangement_)
+GraphicsViewCurveInput<Arr_>::
+GraphicsViewCurveInput(Arrangement* arrangement_, QObject* parent,
+                       QGraphicsScene* scene) :
+  GraphicsViewCurveInputBase(parent, scene),
+  arrangement(arrangement_)
 {
-  this->setDefaultInputMethod(
-    std::integral_constant<
-      bool, std::tuple_size<InputMethodTuple>::value != 0>{});
+  this->setDefaultInputMethod(std::integral_constant<bool,
+                              std::tuple_size<InputMethodTuple>::value != 0>{});
   for_each(inputMethods, [&](auto&& it) {
-    it.setScene(scene);
-    it.setCallback(this);
-  });
+                           it.setScene(scene);
+                           it.setCallback(this);
+                         });
   curveGenerator.setTraits(this->arrangement->traits());
 }
 
@@ -87,10 +88,11 @@ GraphicsViewCurveInput<Arr_>::GraphicsViewCurveInput(
 template <typename Arr_>
 void GraphicsViewCurveInput<Arr_>::setCurveType(CurveType type) {
   this->reset();
-  for_each(inputMethods, [&](auto&& it) {
-    if (it.curveType() == type)
-      this->setInputMethod(static_cast<CurveInputMethod*>(&it));
-  });
+  for_each(inputMethods,
+           [&](auto&& it) {
+             if (it.curveType() == type)
+               this->setInputMethod(static_cast<CurveInputMethod*>(&it));
+           });
 }
 
 //
@@ -136,8 +138,7 @@ generate(const std::vector<Point_2>& clickedPoints, CurveType type)
   -> boost::optional<Curve_2>
 {
   boost::optional<Curve_2> res;
-  switch (type)
-  {
+  switch (type) {
   case CurveType::Segment:
     res = generateSegment(clickedPoints);
     break;
@@ -177,8 +178,9 @@ void CurveGeneratorBase<ArrTraits_>::setTraits(const ArrTraits* traits_)
 
 // Curve Generator Segment Traits
 template <typename Kernel_>
-auto CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::generateSegment(
-  const std::vector<Point_2>& clickedPoints) -> boost::optional<Curve_2>
+auto CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::
+generateSegment(const std::vector<Point_2>& clickedPoints)
+  -> boost::optional<Curve_2>
 {
   Curve_2 res{clickedPoints[0], clickedPoints[1]};
   return res;
@@ -331,8 +333,7 @@ generateFivePointConicArc(const std::vector<Point_2>& points)
 // CurveGenerator Algebraic Traits
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-generateLine(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
-{
+generateLine(const std::vector<Point_2>& points) -> boost::optional<Curve_2> {
   RationalTraits ratTraits;
 
   Rational dx = points[1].x() - points[0].x();
@@ -368,8 +369,7 @@ generateLine(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
 //
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-generateCircle(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
-{
+generateCircle(const std::vector<Point_2>& points) -> boost::optional<Curve_2> {
   auto sq_rad =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
     (points[0].y() - points[1].y()) * (points[0].y() - points[1].y());
@@ -378,8 +378,8 @@ generateCircle(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
 
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateEllipse(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+generateEllipse(const std::vector<Point_2>& points)
+  -> boost::optional<Curve_2>
 {
   auto rx =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) / 4.;
