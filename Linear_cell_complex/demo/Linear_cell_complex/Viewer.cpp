@@ -16,17 +16,16 @@
 #include <CGAL/Qt/vec.h>
 
 Viewer::Viewer(QWidget *parent)
-    // TODO: add a new constructor that does not take graphic buffer.
-    : Base(parent, ""), m_drawing_functor(MyDrawingFunctorLCC()),
-      m_nofaces(false), m_random_face_color(false),
+    : Base(parent, ""), m_drawing_functor_(MyDrawingFunctorLCC()),
+      m_nofaces_(false), m_random_face_color_(false),
       m_previous_scene_empty(true) {}
 
 void Viewer::setScene(Scene *scene_, bool doredraw) {
   scene = scene_;
 
   if (scene->lcc != nullptr) {
-    compute_elements(gBuffer, scene->lcc, m_drawing_functor, m_nofaces,
-                     m_random_face_color);
+    CGAL::add_in_graphic_buffer_lcc(gBuffer, m_drawing_functor_, scene->lcc, m_nofaces_,
+                              m_random_face_color_);
   }
 
   if (doredraw) {
@@ -35,8 +34,9 @@ void Viewer::setScene(Scene *scene_, bool doredraw) {
 }
 
 void Viewer::sceneChanged() {
-  compute_elements(gBuffer, scene->lcc, m_drawing_functor, m_nofaces,
-                   m_random_face_color);
+
+  CGAL::add_in_graphic_buffer_lcc(gBuffer, m_drawing_functor_, scene->lcc,
+                                  m_nofaces_, m_random_face_color_);
 
   this->camera()->setSceneBoundingBox(
       CGAL::qglviewer::Vec(gBuffer.get_bounding_box().xmin(),

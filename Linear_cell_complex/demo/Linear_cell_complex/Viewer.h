@@ -16,7 +16,10 @@
 
 #include "typedefs.h"
 
-#include <CGAL/draw_linear_cell_complex_function.h>
+// QUESTION: When I added this line compiler tell me "No such file or directory!" how?
+// #include <CGAL/draw_linear_cell_complex_function.h>
+
+#include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 // Functor used by SimpleLCCViewerQt to colorize of not elements.
@@ -107,7 +110,7 @@ struct MyDrawingFunctorLCC
 };
 
 
-class Viewer : public Basic_viewer_qt
+class Viewer : public CGAL::Basic_viewer_qt
 {
   Q_OBJECT
 
@@ -123,8 +126,8 @@ public Q_SLOTS:
   void sceneChanged();
 
 private:
-  const DrawingFunctorLCC &m_drawing_functor;
-  bool m_nofaces,  m_random_face_color;
+  const MyDrawingFunctorLCC &m_drawing_functor_;
+  bool m_nofaces_,  m_random_face_color_;
   Scene* scene;
   bool m_previous_scene_empty;
 };
