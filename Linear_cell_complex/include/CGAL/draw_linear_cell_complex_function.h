@@ -118,58 +118,65 @@ struct DefaultDrawingFunctorLCC {
 // TODO: these functors will modify a specific face, edge, and vertex.
 struct DefaultDrawingFunctorX {
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool draw_face(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  bool draw_face(const DS &, face_handle handle) const {
     return true;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool draw_edge(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  bool draw_edge(const DS &, edge_handle handle) const {
     return true;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool draw_vertex(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  bool draw_vertex(const DS &, vertex_handle handle) const {
     return true;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
   bool face_wireframe(const DS &, typename DS::Dart_const_handle) const {
     return false;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool colored_face(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  bool colored_face(const DS &, face_handle handle) const {
     return false;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool colored_edge(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  bool colored_edge(const DS &, edge_handle handle) const {
     return false;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool colored_vertex(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  bool colored_vertex(const DS &, vertex_handle handle) const {
     return false;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  CGAL::IO::Color face_color(const DS &aVal,
-                             typename DS::Dart_const_handle dh) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  CGAL::IO::Color face_color(const DS &aVal, face_handle dh) const {
     CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
     return get_random_color(random);
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  CGAL::IO::Color edge_color(const DS &aVal,
-                             typename DS::Dart_const_handle dh) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  CGAL::IO::Color edge_color(const DS &aVal, edge_handle dh) const {
     CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
     return get_random_color(random);
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  CGAL::IO::Color vertex_color(const DS &aVal,
-                               typename DS::Dart_const_handle dh) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle>
+  CGAL::IO::Color vertex_color(const DS &aVal, vertex_handle dh) const {
     CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
     return get_random_color(random);
   }
@@ -177,25 +184,29 @@ struct DefaultDrawingFunctorX {
 
 struct DefaultDrawingFunctorXWithVoulume : public DefaultDrawingFunctorX {
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool draw_volume(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle, typename volume_handle>
+  bool draw_volume(const DS &, volume_handle) const {
     return true;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle, typename volume_handle>
   CGAL::IO::Color volume_color(const DS &aVal,
-                               typename LCC::Dart_const_handle dh) const {
+                               volume_handle dh) const {
     CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
     return get_random_color(random);
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool volume_wireframe(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle, typename volume_handle>
+  bool volume_wireframe(const DS &, volume_handle) const {
     return false;
   }
 
-  template <typename DS, typename face, typename edge, typename vertex>
-  bool colored_volume(const DS &, typename DS::Dart_const_handle) const {
+  template <typename DS, typename face_handle, typename edge_handle,
+            typename vertex_handle, typename volume_handle>
+  bool colored_volume(const DS &, volume_handle) const {
     return true;
   }
 };
@@ -444,9 +455,13 @@ template <unsigned int d_, unsigned int ambient_dim, class Traits_,
           template <unsigned int, class, class, class, class> class Map,
           class Refs, class Storage_,
           class DrawingFunctorLCC = DefaultDrawingFunctorLCC>
+          // TODO: I'll add it again after done LCC demo.
+          // class DrawingFunctorLCC = DefaultDrawingFunctorXWithVoulume>
 void draw(const CGAL_LCC_TYPE &alcc,
           const char *title = "LCC for CMap Basic Viewer",
           const DrawingFunctorLCC &drawing_functor = DrawingFunctorLCC()) {
+          // TODO: I'll add it again after done LCC demo.
+          // const DrawingFunctorLCC &drawing_functor = DefaultDrawingFunctorXWithVoulume()) {
   GraphicBuffer<float> buffer;
   add_in_graphic_buffer_lcc(buffer, drawing_functor, &alcc, false);
   draw_buffer(buffer);
