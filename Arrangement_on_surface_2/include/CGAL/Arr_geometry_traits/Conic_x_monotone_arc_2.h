@@ -695,32 +695,34 @@ public:
 
     // Make sure that the endpoints conform with the direction of the arc.
     Alg_kernel alg_kernel;
-    Self res_xcv = xcv;
-    auto cmp_xy = alg_kernel.compare_xy_2_object();
-    if (! ((xcv.test_flag(Self::IS_DIRECTED_RIGHT) &&
-            (cmp_xy(ps, pt) == SMALLER)) ||
-           (xcv.test_flag(Self::IS_DIRECTED_RIGHT) &&
-            (cmp_xy(ps, pt) == LARGER))))
-    {
-      // We are allowed to change the direction only in case of a segment.
-      CGAL_assertion(xcv.orientation() == COLLINEAR);
-      res_xcv.flip_flag(Self::IS_DIRECTED_RIGHT);
-    }
-
-    // Make a copy of the current arc and assign its endpoints.
+    Self res_xcv = xcv;          // make a copy of the current arc
     auto eq = alg_kernel.equal_2_object();
-    if (! eq(ps, xcv.source())) {
-      res_xcv.set_source(ps);
+      auto set_source = [&](const Point_2 ps)->void {
+                          if (! eq(ps, xcv.source())) {
+                            res_xcv.set_source(ps);
+                            if (! ps.is_generating_conic(xcv.id()))
+                              res_xcv.source().set_generating_conic(xcv.id());
+                          }
+                        };
+      auto set_target = [&](const Point_2 pt)->void {
+                          if (! eq(pt, xcv.target())) {
+                            res_xcv.set_target(pt);
+                            if (! pt.is_generating_conic(xcv.id()))
+                              res_xcv.target().set_generating_conic(xcv.id());
+                          }
+                        };
 
-      if (! ps.is_generating_conic(xcv.id()))
-        res_xcv.source().set_generating_conic(xcv.id());
+    auto cmp_xy = alg_kernel.compare_xy_2_object();
+    auto res = cmp_xy(ps, pt);
+    CGAL_assertion(res != EQUAL);
+    if ((xcv.test_flag(Self::IS_DIRECTED_RIGHT) && (res == LARGER)) ||
+        (! xcv.test_flag(Self::IS_DIRECTED_RIGHT) && (res == SMALLER))) {
+      set_source(pt);
+      set_target(ps);
     }
-
-    if (! eq(pt, xcv.target())) {
-      res_xcv.set_target(pt);
-
-      if (! pt.is_generating_conic(xcv.id()))
-        res_xcv.target().set_generating_conic(xcv.id());
+    else {
+      set_source(ps);
+      set_target(pt);
     }
 
     return res_xcv;
