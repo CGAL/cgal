@@ -158,8 +158,9 @@ typedef CGAL::Linear_cell_complex_traits
 <3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Mytraits,Myitems> LCC;
-typedef LCC::Dart_handle      Dart_handle;
-typedef LCC::Vertex_attribute Vertex;
+typedef LCC::Dart_handle       Dart_handle;
+typedef LCC::Dart_const_handle Dart_const_handle;
+typedef LCC::Vertex_attribute  Vertex;
 
 typedef LCC::Point    Point_3;
 typedef LCC::Vector   Vector_3;
