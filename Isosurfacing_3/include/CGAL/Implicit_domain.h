@@ -3,6 +3,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian_topology_base.h>
+#include <CGAL/Default_gradients.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -11,26 +12,7 @@
 namespace CGAL {
 namespace Isosurfacing {
 
-template <class GeomTraits, typename Function>
-class Default_gradient {
-public:
-    typedef GeomTraits Geom_traits;
-    typedef typename Geom_traits::FT FT;
-    typedef typename Geom_traits::Point_3 Point;
-    typedef typename Geom_traits::Vector_3 Vector;
-
-public:
-    Default_gradient(const Function& func) : func(&func) {}
-
-    Vector operator()(const Point& point) {
-        return Vector();
-    }
-
-private:
-    const Function* func;
-};
-
-template <class GeomTraits, typename Function, typename Gradient>
+template <class GeomTraits, typename Function, typename Gradient = Zero_gradient<GeomTraits>>
 class Implicit_domain : public Cartesian_topology_base {
 public:
     typedef GeomTraits Geom_traits;
@@ -41,7 +23,7 @@ public:
 
 public:
     Implicit_domain(const Bbox_3& domain, const Grid_spacing& spacing, const Function& func,
-                    const Gradient& grad)
+                    const Gradient& grad = Gradient())
         : bbox(domain), spacing(spacing), func(&func), grad(&grad) {
 
         sizes[0] = domain.x_span() / spacing.x() + 1;
@@ -125,7 +107,7 @@ public:
         const std::size_t size_z = sizes[2];
 
         //#pragma omp parallel for
-        //for (int x = 0; x < size_x - 1; x++) {
+        // for (int x = 0; x < size_x - 1; x++) {
         //    Cell_handle h;
         //    h[0] = x;
         //    for (std::size_t y = 0; y < size_y - 1; y++) {
@@ -146,7 +128,7 @@ public:
                 }
             }
         };
-        
+
         tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_x - 1), iterator);
     }
 #endif  // CGAL_LINKED_WITH_TBB

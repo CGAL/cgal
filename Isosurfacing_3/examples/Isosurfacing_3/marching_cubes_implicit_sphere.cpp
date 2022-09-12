@@ -3,7 +3,6 @@
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-
 #include <tbb/concurrent_vector.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -20,8 +19,8 @@ int main() {
     };
 
     // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
-    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(sphere_function), decltype(CGAL::Isosurfacing::Default_gradient<Kernel, decltype(sphere_function)>(sphere_function))> domain(
-        {-1, -1, -1, 1, 1, 1}, Vector(0.02f, 0.02f, 0.02f), sphere_function, CGAL::Isosurfacing::Default_gradient<Kernel, decltype(sphere_function)>(sphere_function));  // TODO: this is ugly
+    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(sphere_function)> domain(
+        {-1, -1, -1, 1, 1, 1}, Vector(0.02f, 0.02f, 0.02f), sphere_function);  // TODO: this is ugly
 
     // prepare collections for the result
     Point_range points;
