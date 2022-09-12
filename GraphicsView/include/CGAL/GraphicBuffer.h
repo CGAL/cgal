@@ -162,6 +162,12 @@ public:
     m_bounding_box = new_bounding_box;
   }
 
+  void negate_all_normals()
+  {
+    m_buffer_for_mono_faces.negate_normals();
+    m_buffer_for_colored_faces.negate_normals();
+  }
+
   template <typename KPoint> void add_point(const KPoint &p) {
     m_buffer_for_mono_points.add_point(p);
   }
@@ -329,7 +335,7 @@ public:
     m_buffer_for_clipping_plane.clear();
     m_texts.clear();
   }
-  
+
   template <typename KPoint>
   static Local_point get_local_point(const KPoint &p) {
     return internal::Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel,

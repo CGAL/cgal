@@ -252,7 +252,7 @@ public:
 
   template<typename KPoint>
   void add_point(const KPoint& p)
-  { gBuffer.add_point(p); } 
+  { gBuffer.add_point(p); }
 
   template<typename KPoint>
   void add_point(const KPoint& p, const CGAL::IO::Color& acolor)
@@ -349,9 +349,9 @@ public:
       std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
     }
     else
-    { 
+    {
       auto mono_faces = gBuffer.get_buffer_for_mono_faces();
-      mono_faces.face_begin(); 
+      mono_faces.face_begin();
     }
   }
 
@@ -362,9 +362,9 @@ public:
       std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
     }
     else
-    { 
+    {
       auto colored_faces = gBuffer.get_buffer_for_colored_faces();
-      colored_faces.face_begin(acolor); 
+      colored_faces.face_begin(acolor);
     }
   }
 
@@ -381,12 +381,12 @@ public:
   void face_end()
   {
    if (gBuffer.get_buffer_for_mono_faces().is_a_face_started())
-    { 
+    {
       auto mono_faces = gBuffer.get_buffer_for_mono_faces();
-      mono_faces.face_end(); 
+      mono_faces.face_end();
     }
     else if (gBuffer.get_buffer_for_colored_faces().is_a_face_started())
-    { 
+    {
       auto colored_faces = gBuffer.get_buffer_for_colored_faces();
       // return colored_faces.face_end();
       colored_faces.face_end();
@@ -1352,11 +1352,7 @@ protected:
 
   void negate_all_normals()
   {
-    auto mono_faces = gBuffer.get_buffer_for_mono_faces();
-    mono_faces.negate_normals();
-
-    auto colored_faces = gBuffer.get_buffer_for_colored_faces();
-    mono_faces.negate_normals();
+    gBuffer.negate_all_normals();
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
