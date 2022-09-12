@@ -314,6 +314,22 @@ public:
            m_buffer_for_colored_lines.has_zero_z();
   }
 
+  void clear()
+  {
+    m_buffer_for_mono_points.clear();
+    m_buffer_for_colored_points.clear();
+    m_buffer_for_mono_segments.clear();
+    m_buffer_for_colored_segments.clear();
+    m_buffer_for_mono_rays.clear();
+    m_buffer_for_colored_rays.clear();
+    m_buffer_for_mono_lines.clear();
+    m_buffer_for_colored_lines.clear();
+    m_buffer_for_mono_faces.clear();
+    m_buffer_for_colored_faces.clear();
+    m_buffer_for_clipping_plane.clear();
+    m_texts.clear();
+  }
+  
   template <typename KPoint>
   static Local_point get_local_point(const KPoint &p) {
     return internal::Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel,

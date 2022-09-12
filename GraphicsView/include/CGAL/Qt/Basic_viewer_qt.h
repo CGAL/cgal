@@ -83,29 +83,7 @@ public:
 
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
-                  GraphicBuffer<>& buf,
-                  const char* title="",
-                  bool draw_vertices=false,
-                  bool draw_edges=true,
-                  bool draw_faces=true,
-                  bool use_mono_color=false,
-                  bool inverse_normal=false,
-                  bool draw_rays=true,
-                  bool draw_lines=true,
-                  bool draw_text=true,
-                  bool no_2D_mode=false):
-      Basic_viewer_qt(parent, title,  draw_vertices,
-        draw_edges,
-        draw_faces,
-        use_mono_color,
-        inverse_normal,
-        draw_rays,
-        draw_lines,
-        draw_text,
-        no_2D_mode), gBuffer(buf){}
-
-
-  Basic_viewer_qt(QWidget* parent,
+                  GraphicBuffer<BufferType>& buf,
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
@@ -117,6 +95,7 @@ public:
                   bool draw_text=true,
                   bool no_2D_mode=false) :
     CGAL::QGLViewer(parent),
+    gBuffer(buf),
     m_draw_vertices(draw_vertices),
     m_draw_edges(draw_edges),
     m_draw_rays(draw_rays),
@@ -1637,7 +1616,7 @@ protected:
 
 protected:
 
-  GraphicBuffer<BufferType> gBuffer;
+  GraphicBuffer<BufferType>& gBuffer;
 
   bool m_draw_vertices;
   bool m_draw_edges;

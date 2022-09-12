@@ -16,9 +16,9 @@
 #include <CGAL/Qt/vec.h>
 
 Viewer::Viewer(QWidget *parent)
-    : Base(parent, ""), m_drawing_functor_(MyDrawingFunctorLCC()),
-      m_nofaces_(false), m_random_face_color_(false),
-      m_previous_scene_empty(true) {}
+  : Base(parent, m_graphic_buffer, ""), 
+    m_nofaces_(false), m_random_face_color_(false),
+    m_previous_scene_empty(true) {}
 
 void Viewer::setScene(Scene *scene_, bool doredraw) {
   scene = scene_;
@@ -34,7 +34,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw) {
 }
 
 void Viewer::sceneChanged() {
-
+  gBuffer.clear();
   CGAL::add_in_graphic_buffer_lcc(gBuffer, m_drawing_functor_, scene->lcc,
                                   m_nofaces_, m_random_face_color_);
 

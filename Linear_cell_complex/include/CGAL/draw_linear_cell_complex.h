@@ -148,7 +148,7 @@ struct LCC_geom_utils<LCC, Local_kernel, 2>
 };
 
 // Viewer class for LCC
-template<class LCC, class DrawingFunctorLCC>
+/*template<class LCC, class DrawingFunctorLCC>
 class SimpleLCCViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt Base;
@@ -379,9 +379,9 @@ protected:
   bool m_random_face_color;
   const DrawingFunctorLCC& m_drawing_functor;
 };
-
+*/
 // Specialization of draw function.
-#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_base                    \
+/*#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_base                  \
   <d_, ambient_dim, Traits_, Items_, Alloc_, Map, Refs, Storage_>
 
 template < unsigned int d_, unsigned int ambient_dim,
@@ -419,7 +419,7 @@ void draw(const CGAL_LCC_TYPE& alcc,
 
 // Todo a function taking a const DrawingFunctorLCC& drawing_functor as parameter
 #undef CGAL_LCC_TYPE
-
+*/
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER

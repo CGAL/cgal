@@ -17,8 +17,7 @@
 #include "typedefs.h"
 
 // QUESTION: When I added this line compiler tell me "No such file or directory!" how?
-// #include <CGAL/draw_linear_cell_complex_function.h>
-
+#include <CGAL/draw_linear_cell_complex_function.h>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
@@ -109,12 +108,11 @@ struct MyDrawingFunctorLCC
   { return CGAL::IO::Color(0, 0, 0); }
 };
 
-
-class Viewer : public CGAL::Basic_viewer_qt
+class Viewer : public CGAL::Basic_viewer_qt<float>
 {
   Q_OBJECT
 
-  typedef CGAL::Basic_viewer_qt Base;
+  typedef CGAL::Basic_viewer_qt<float> Base;
 
 public:
   Viewer(QWidget* parent);
@@ -126,7 +124,8 @@ public Q_SLOTS:
   void sceneChanged();
 
 private:
-  const MyDrawingFunctorLCC &m_drawing_functor_;
+  MyDrawingFunctorLCC m_drawing_functor_;
+  CGAL::GraphicBuffer<float> m_graphic_buffer;
   bool m_nofaces_,  m_random_face_color_;
   Scene* scene;
   bool m_previous_scene_empty;
