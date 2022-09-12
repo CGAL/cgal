@@ -6,14 +6,15 @@ algorithm = "ALGO_MARCHING_CUBES"
 tag = "TAG_PARALLEL"
 min_threads = 1
 max_threads = 12
-cells = 300
+n = 300
+cells = n ** 3
 
 build(scenario, kernel, algorithm, tag)
 
 data = []
 
 for t in range(min_threads, max_threads):
-	time = execute(cells, t)
+	time = execute(n, t)
 
 	data.append([scenario, kernel, algorithm, tag, t, cells, time])
 

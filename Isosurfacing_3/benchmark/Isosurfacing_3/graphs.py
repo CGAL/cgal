@@ -44,20 +44,26 @@ if latex_export:
     plt.rcParams['font.size'] = "17"
 
 
-data = pd.read_csv("threads_implicit.csv")
-add_threads_graph(data, "implicit")
+data = pd.read_csv("implicit_iwp_mc.csv")
+add_threads_graph(data, "mc")
 
-data = pd.read_csv("threads_grid.csv")
-add_threads_graph(data, "grid")
+#data = pd.read_csv("threads_grid.csv")
+#add_threads_graph(data, "grid")
 
-plt.xticks(np.arange(1, max(data["threads"]) + 0.1, 1))
+xt = np.arange(0, min(max(data["threads"]), 9) + 0.1, 2)
+if max(data["threads"]) > 10:
+    print("more")
+    xt = np.concatenate((xt, np.arange(10, max(data["threads"]) + 0.1, 2)))
+
+print(xt)
+plt.xticks(xt)
 plot_graph("perf_threads.svg", "", False, "performance [10^3 cubes/s]", "cores")
 
 
-data = pd.read_csv("size_implicit.csv")
-add_size_graph(data, "implicit")
-
-data = pd.read_csv("size_grid.csv")
-add_size_graph(data, "grid")
-
-plot_graph("perf_size.svg", "", True, "performance [10^3 cubes/s]", "cubes")
+#data = pd.read_csv("size_implicit.csv")
+#add_size_graph(data, "implicit")
+#
+#data = pd.read_csv("size_grid.csv")
+#add_size_graph(data, "grid")
+#
+#plot_graph("perf_size.svg", "", True, "performance [10^3 cubes/s]", "cubes")
