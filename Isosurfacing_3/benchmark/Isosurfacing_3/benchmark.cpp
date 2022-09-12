@@ -75,9 +75,28 @@ struct IWPValue {
 };
 
 template <class GeomTraits>
+struct IWPGradient {
+    typedef typename GeomTraits::FT FT;
+    typedef typename GeomTraits::Vector_3 Vector;
+
+    Vector operator()(const typename GeomTraits::Point_3& point) const {
+        const FT alpha = 5.01;
+        // const float alpha = 1.01;
+        const FT x = alpha * (point.x() + 1) * M_PI;
+        const FT y = alpha * (point.y() + 1) * M_PI;
+        const FT z = alpha * (point.z() + 1) * M_PI;
+
+        const FT gx = M_PI * alpha * sin(x) * (cos(y) * (cos(z) - 1.0) - cos(z));
+        const FT gy = M_PI * alpha * sin(y) * (cos(x) * (cos(z) - 1.0) - cos(z));
+        const FT gz = M_PI * alpha * sin(z) * (cos(x) * (cos(y) - 1.0) - cos(y));
+        return Vector(gx, gy, gz);
+    }
+};
+
+template <class GeomTraits>
 struct Implicit_iwp {
 
-    typedef CGAL::Isosurfacing::Implicit_domain<GeomTraits, IWPValue<GeomTraits>, SphereGradient<GeomTraits>> Domain;
+    typedef CGAL::Isosurfacing::Implicit_domain<GeomTraits, IWPValue<GeomTraits>, IWPGradient<GeomTraits>> Domain;
     typedef typename GeomTraits::Vector_3 Vector;
 
     Implicit_iwp(const std::size_t N) : res(2.0 / N, 2.0 / N, 2.0 / N) {}
@@ -92,7 +111,7 @@ struct Implicit_iwp {
 
 private:
     IWPValue<GeomTraits> val;
-    SphereGradient<GeomTraits> grad;
+    IWPGradient<GeomTraits> grad;
     Vector res;
 };
 
