@@ -285,10 +285,11 @@ clip_to_bbox(const Plane_3& plane,
   return ON_ORIENTED_BOUNDARY;
 }
 
-template <class TriangleMesh, class Ecm, class VPM>
+template <class TriangleMesh, class Ecm, class VPM, class UserVisitor>
 void split_along_edges(TriangleMesh& tm,
                        Ecm ecm,
-                       VPM vpm)
+                       VPM vpm,
+                       UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
@@ -337,8 +338,10 @@ void split_along_edges(TriangleMesh& tm,
     halfedge_descriptor h    = halfedge(shared_edges[k], tm);
     face_descriptor fh = face(h, tm);
     //add edge
+    user_visitor.before_edge_duplicated(h, tm);
     halfedge_descriptor new_hedge = halfedge(add_edge(tm), tm),
                         new_opp   = opposite(new_hedge,tm);
+    user_visitor.after_edge_duplicated(h, new_hedge, tm);
 
     vertex_descriptor vt = target(h, tm);
     vertex_descriptor vs = source(h, tm);
@@ -395,8 +398,11 @@ void split_along_edges(TriangleMesh& tm,
 
   for(const std::pair<halfedge_descriptor, vertex_descriptor>& p : vertices_to_duplicate)
   {
+    user_visitor.before_vertex_copy(p.second, tm, tm);
     vertex_descriptor nv = add_vertex(tm);
     put(vpm, nv, get(vpm, p.second));
+    user_visitor.after_vertex_copy(p.second, tm, nv, tm);
+
     for(halfedge_descriptor h : halfedges_around_target(p.first, tm))
       set_target(h, nv, tm);
     set_halfedge(nv, p.first, tm);
@@ -900,6 +906,14 @@ void split(TriangleMesh& tm,
 
   Ecm ecm  = get(CGAL::dynamic_edge_property_t<bool>(), tm);
 
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters1,
+    Corefinement::Default_visitor<TriangleMesh>//default
+  > ::type User_visitor;
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np_tm, internal_np::visitor)));
+
+
   // create a constrained edge map and corefine input mesh with the splitter,
   // and mark edges
 
@@ -910,7 +924,7 @@ void split(TriangleMesh& tm,
                 CGAL::parameters::vertex_point_map(vpm_s).do_not_modify(do_not_modify_splitter));
 
   //split mesh along marked edges
-  internal::split_along_edges(tm, ecm, vpm_tm);
+  internal::split_along_edges(tm, ecm, vpm_tm, uv);
 }
 
 /**
