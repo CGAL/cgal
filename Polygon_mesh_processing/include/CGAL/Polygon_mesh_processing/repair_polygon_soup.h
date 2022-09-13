@@ -345,6 +345,66 @@ std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
   return removed_polygons_n;
 }
 
+// \ingroup PMP_repairing_grp
+//
+// Removes invalid array-based polygons, i.e. polygons which have two equal consecutive points.
+//
+// \tparam PointRange a model of the concept `Container` whose value type is the point type.
+// \tparam PolygonRange a model of the concept `SequenceContainer`
+//                      whose value_type is `std::array<std::size_t, N>` with `N`.
+// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+//
+// \param points points of the soup of polygons.
+// \param polygons a vector of polygons. Each element in the vector describes a polygon
+//        using the indices of the points in `points`.
+//
+template <typename Traits, typename PointRange, typename PolygonRange>
+std::size_t remove_invalid_polygons_in_array_polygon_soup(PointRange& points,
+                                                          PolygonRange& polygons,
+                                                          const Traits& traits = Traits())
+{
+  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+
+  std::vector<std::size_t> to_remove;
+  const std::size_t ini_polygons_size = polygons.size();
+  for(std::size_t polygon_index=0; polygon_index!=ini_polygons_size; ++polygon_index)
+  {
+    const Polygon_3& polygon = polygons[polygon_index];
+    const std::size_t N = polygon.size(), last = N-1;
+    CGAL_assertion(N > 2);
+
+    for(std::size_t i=0; i<N; ++i)
+    {
+      const std::size_t next_i = (i == last) ? 0 : i+1;
+      if(polygon[i] == polygon[next_i] || // combinatorial equality
+         traits.equal_3_object()(points[polygon[i]], points[polygon[next_i]])) // geometric equality
+      {
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
+        std::cout << "Invalid polygon:";
+        print_polygon(std::cout, polygons[polygon_index]);
+#endif
+        to_remove.push_back(polygon_index);
+        break;
+      }
+    }
+  }
+
+  while(!to_remove.empty())
+  {
+    polygons.erase(polygons.begin() + to_remove.back());
+    to_remove.pop_back();
+  }
+
+  const std::size_t removed_polygons_n = ini_polygons_size - polygons.size();
+
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+  if(removed_polygons_n > 0)
+    std::cout << "Removed " << removed_polygons_n << " invalid polygon(s)" << std::endl;
+#endif
+
+  return removed_polygons_n;
+}
+
 } // end namespace internal
 
 /// \ingroup PMP_repairing_grp
@@ -1031,15 +1091,21 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
                   PolygonRange& polygons,
                   const NamedParameters& np) const
   {
-  #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+
+    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
     std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " arrays" << std::endl;
-  #endif
+#endif
 
     merge_duplicate_points_in_polygon_soup(points, polygons, np);
 //  skipped steps:
 //    simplify_polygons_in_polygon_soup(points, polygons, traits);
 //    split_pinched_polygons_in_polygon_soup(points, polygons, traits);
-    remove_invalid_polygons_in_polygon_soup(points, polygons);
+    remove_invalid_polygons_in_array_polygon_soup(points, polygons, traits);
     merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
     remove_isolated_points_in_polygon_soup(points, polygons);
   }
