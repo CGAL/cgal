@@ -203,22 +203,12 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose `value_type` is itself a model of the concepts `SequenceContainer`
 //                      and `Swappable` whose `value_type` is `std::size_t`.
-// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+// \tparam Traits a traits class providing `Equal_3` and `Less_xyz_3` for two 3D points
 //
 // \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
-//        using the indices of the points in `points`.
-// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-//
-// \cgalNamedParamsBegin
-//   \cgalParamNBegin{geom_traits}
-//     \cgalParamDescription{an instance of a geometric traits class}
-//     \cgalParamType{The traits class must provide the nested functor `Less_xyz_3`
-//                    to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.}
-//     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-//     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-//   \cgalParamNEnd
-// \cgalNamedParamsEnd
+//                 using the indices of the points in `points`.
+// \param traits an instance of traits
 //
 // \sa `repair_polygon_soup()`
 template <typename Traits, typename PointRange, typename PolygonRange>
@@ -309,11 +299,10 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose `value_type` is itself a model of the concept `Container`
 //                      whose `value_type` is `std::size_t`.
-// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
-//        using the indices of the points in `points`.
+//                 using the indices of the points in `points`.
 //
 // \sa `repair_polygon_soup()`
 template <typename PointRange, typename PolygonRange>
@@ -352,11 +341,12 @@ std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
 // \tparam PointRange a model of the concept `Container` whose value type is the point type.
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose value_type is `std::array<std::size_t, N>` with `N`.
-// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+// \tparam Traits Traits class providing `Equal_3` for two points.
 //
 // \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
-//        using the indices of the points in `points`.
+//                 using the indices of the points in `points`.
+// \param traits an instance of the traits clas
 //
 template <typename Traits, typename PointRange, typename PolygonRange>
 std::size_t remove_invalid_polygons_in_array_polygon_soup(PointRange& points,
@@ -839,12 +829,14 @@ struct Duplicate_collector<ValueType, CGAL::Emptyset_iterator>
 //                      and `ReversibleContainer` whose `value_type` is `std::size_t`.
 // \tparam DuplicateOutputIterator a model of `OutputIterator` with value type
 //                                 `std::vector<std::vector<std::size_t> >`.
+// \tparam Traits a traits class providing `Less_xyz_3` for two 3D points
 //
 // \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
 // \param out the output iterator in which duplicate polygons are put. Each entry is a vector of
 //            polygon ids `i0`, `i1`, etc. such that `polygons[i0] = polygons[i1] = ...`
+// \param traits an instance of traits
 // \param same_orientation whether two polygons should have the same orientation to be duplicates.
 //
 // \sa `repair_polygon_soup()`
