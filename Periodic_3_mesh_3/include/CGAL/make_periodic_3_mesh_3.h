@@ -335,11 +335,11 @@ C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CG
     using parameters::choose_parameter;
     using parameters::get_parameter;
     C3T3 c3t3;
-    parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude());
-    parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb());
-    parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt());
-    parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd());
-    parameters::internal::Features_options features_param = choose_parameter(get_parameter(np, internal_np::features_options_param), parameters::features(domain));
+    parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude().v);
+    parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb().v);
+    parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt().v);
+    parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd().v);
+    parameters::internal::Features_options features_param = choose_parameter(get_parameter(np, internal_np::features_options_param), parameters::features(domain).v);
     parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
     parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
 
@@ -396,7 +396,7 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   refine_periodic_3_mesh_3(c3t3, domain, criteria,
                            parameters::exude_options = exude, parameters::perturb_options = perturb, parameters::odt_options = odt,
-                           parameters::lloyd_options = lloyd, parameters::reset_options = parameters::no_reset_c3t3(), // do not reset c3t3 as we just created it
+                           parameters::lloyd_options = lloyd, parameters::no_reset_c3t3(), // do not reset c3t3 as we just created it
                            parameters::mesh_options = mesh_options, parameters::manifold_option = manifold_options);
 }
 #endif //DOXYGEN_RUNNING
