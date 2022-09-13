@@ -17,30 +17,27 @@ Different isovalues of a bunny.
 
 \section secmyintroduction Introduction
 
-This package provides functions to compute a surface mesh representing an isosurface.
-The data structure from which an isosurface is extracted is a 3-dimensional scalar function.
-An isosurface is defined as the surface on which the value of this function is equal to a given constant, i.e. the isovalue.
-The isosurface is stored as a triangular or quadrilateral indexed face set.
+This package provides methods to compute a surface mesh representing an isosurface of a 3-dimensional scalar field.
+An isosurface is defined as the surface on which the value of this field is equal to a given constant, i.e. the isovalue.
+Depending on the isosurfacing method and the input data structure, the result is either a triangular, quadrilateral, or higher order polygonal indexed face set.
 
 \section secmyalgorithms Algorithms
 
 There are multiple algorithms to extract isosurfaces.
-This package contains Marching Cubes, topologically correct Marching Cubes, Dual Contouring and Octree Marching. (References?)
+This package contains Marching Cubes, topologically correct Marching Cubes, Dual Contouring, and Octree Marching. (References?)
 
-\subsection subsecmc Marching Cubes
-The Marching Cubes algorithm processes all cells of the input domain individually.
+\subsection subsecmc Marching Cubes (MC)
+MC processes all cells of the input domain individually.
 Each cell corner gets a sign (+/-) to indicate if it is above or below the isovalue.
 A new vertex is created on every cell edge where the sign changes, i.e. the isosurface is intersected.
 The vertex position is computed via linear interpolation of the scalar values of the incident corners.
 Depending on the configuration of signs at the corners the resulting vertices are connected to form triangles within the cell.
 
-Marching Cubes is an old algorithm that is fast but approximate. It can be run on any domain that has cubical cells.
-The algorithm creates a manifold triangle mesh if the domain is a regular grid.
-This guarantees that every edge is incident to at most two faces and every vertex is surrounded by one triangle fan.
-As long as the isosurface does not intersect the domains boundaries the resulting mesh is also watertight.
-If the input domain contains multiple isosurfaces with the same value that are not connected Marching Cubes will also generate multiple meshes.
-Compared to other approaches the algorithm often generates more triangles and many thin or acute triangles.
-Sharp edges are not well preserved in a mesh generated with Marching Cubes.
+MC can process any input data structure that consists of hexahedral cells.
+In case of a conforming grid, MC produces a triangle mesh that is manifold in most scenarios.
+If the mesh is manifold and the isosurface does not intersect the domain boundaries, the mesh is also watertight.
+Compared to other approaches the algorithm often generates more and many thin triangles with acute angles.
+MC does not preserve sharp edges.
 
 \cgalFigureAnchor{isosurfacing_mc_cases}
 <center>
@@ -50,24 +47,27 @@ Sharp edges are not well preserved in a mesh generated with Marching Cubes.
 Some example cases of Marching Cubes.
 \cgalFigureCaptionEnd
 
-\subsection subsectmc Topologically correct Marching Cubes
-This algorithm is an extension to Marching Cubes that provides additional guarantees.
-It generates a mesh that is homeomorph to the trilinear interpolant of the input function inside each cube. ...
+\subsection subsectmc Topologically correct Marching Cubes (TMC)
+This algorithm is an extension to MC and provides additional guarantees.
+It generates a mesh that is homeomorphic to the trilinear interpolant of the input function inside each cube.
+Furthermore, the mesh is guaranteed to be manifold and watertight, as long as the isosurface does not intersect the domain boundaries.
 
 TODO examples
 
-\subsection subsecdc Dual Contouring
-The Dual Contouring algorithm first iterates over all cells. If a cell intersects the isosurface a vertex inside this cell is created.
-Then it checks for each edge if it intersects the isosurface. If that is the case the vertices of all incident cells are connects to form a face.
+\subsection subsecdc Dual Contouring (DC)
+DC creates one vertex in every cell that is intersected by the isosurface. 
+Next, a face is created for each edge that intersects the isosurface, by connecting the vertices of the incident cells. 
+For a uniform hexahedral grid, this results in a quadrilateral mesh.
 
-This algorithm needs a functor that returns the gradient of the input function as an additional parameter.
-The default argument for this parameter assumes the gradient to be zero.
-The placement of a vertex position inside a cell is also configurable with an optional parameter.
-Different placement methods are available, some of which require the gradient to be non-zero.
+The classical DC method requires the gradient of the scalar field. It is passed to the method as an additional parameter in the form of a functor.
+The default argument for this parameter assumes the gradient to be zero. Thus, for using the classical DC, the gradient has to be defined by the user.
+
+Different versions of DC compute the vertex positions differently. Therefore, the vertex positioning is configurable with an optional parameter. 
+Some of them do not require the gradient and therefore even work with the zero gradient.
 
 Dual Contouring works on any domain but does not guarantee a manifold or watertight mesh.
 It creates less faces than Marching Cubes.
-The algorithms can represent sharp edges better than Marching Cubes.
+The main advantage of DC over MC is the ability to represent sharp edges.
 
 \cgalFigureAnchor{isosurfacing_iwp_dc}
 <center>
@@ -79,11 +79,11 @@ Isosurface of the IWP function generated by Dual Contouring.
 
 \subsection subseccomparison Comparison
 
-|  Algorithm        | Domains | Faces       | Manifold  | Watertight*   | Topologically correct |
-| ----              | ----    | ----        | ----      | ----          | ----                  |
-  Marching Cubes    | Cubical | Triangles   | yes       | yes           | no                    |
-  TMC               | Cubical | Triangles   | yes       | yes           | yes                   |
-  Dual Contouring   | All     | Polygons    | no        | no            | no                    |
+|  Algorithm        | Domains    | Faces       | Manifold  | Watertight*   | Topologically correct |
+| ----              | ----       | ----        | ----      | ----          | ----                  |
+  MC                | Hexahedral | Triangles   | no        | no            | no                    |
+  TMC               | Hexahedral | Triangles   | yes       | yes           | yes                   |
+  DC                | All        | Polygons    | no        | no            | no                    |
 
 (* assuming the isosurface does not leave the given bounding box)
 
@@ -98,7 +98,7 @@ Comparison between a cube generated by Dual Contouring (left) and Marching Cubes
 
 \section secmyinterface Interface
 
-Each algorithm is represented by a single functions. The function signature is the same for each algorithm (except for some additional parameters for some of them):
+Each algorithm is represented by a single functions. The function signature is the same for all algorithms:
 
 \code{.cpp}
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange>
@@ -158,7 +158,7 @@ Scaling of Marching Cubes with more threads.
 
 \subsection myExampleImplicit_domain Implicit sphere
 
-The following example shows the use of the marching cubes algorithm to extract an isosurface.
+The following example shows the usage of the Marching Cubes algorithm to extract an isosurface.
 The domain is an `Implicit_domain` that describes a sphere by the distance to its origin as an implicit function.
 
 \cgalExample{Isosurfacing_3/marching_cubes_implicit_sphere.cpp}
