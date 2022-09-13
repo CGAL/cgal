@@ -267,4 +267,6 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "internal timer: " << ms << std::endl;
+    std::cout << "internal polygons: " << polygons.size() << std::endl;
+    std::cout << "internal points: " << points.size() << std::endl;
 }
