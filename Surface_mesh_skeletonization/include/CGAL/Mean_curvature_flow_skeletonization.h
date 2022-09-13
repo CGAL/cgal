@@ -392,7 +392,7 @@ public:
                                       const Traits& traits = Traits())
     : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
   {
-    init(tmesh);
+    init(tmesh, get(vertex_point, tmesh));
   }
   #endif
   /// @} Constructor
@@ -511,6 +511,29 @@ public:
   void set_medially_centered_speed_tradeoff(double value)
   {
     m_omega_P = value;
+  }
+
+  /// \cgalAdvancedFunction
+  /// \cgalAdvancedBegin
+  /// sets the vertices in the range `[begin, end)` as fixed.  Fixed vertices will not be moved
+  /// during contraction and this will therefore prevent convergence
+  /// towards the skeleton if `contract_until_convergence()` is used.
+  /// It is useful only if the end goal is to retrieve the meso-skeleton
+  /// after a number of `contract_geometry()`, keeping the specified
+  /// vertices fixed in place.
+  /// \tparam InputIterator a model of `InputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as value type.
+  /// \cgalAdvancedEnd
+  template<class InputIterator>
+  void set_fixed_vertices(InputIterator begin, InputIterator end)
+  {
+    std::unordered_set<Input_vertex_descriptor> set(begin, end);
+
+    for(vertex_descriptor vd : vertices(m_tmesh))
+    {
+      if (set.find(vd->vertices[0]) != set.end()) {
+        vd->is_fixed = true;
+      }
+    }
   }
 
   /// \cond SKIP_FROM_MANUAL
@@ -843,12 +866,13 @@ private:
   }
 
   /// Initialize some global data structures such as vertex id.
-  void init(const TriangleMesh& tmesh)
+  void init(const TriangleMesh& tmesh, VertexPointMap vpm)
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
     copy_face_graph(tmesh, m_tmesh,
-                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
+                    CGAL::parameters::vertex_to_vertex_output_iterator(
+                      std::back_inserter(v2v)).vertex_point_map(vpm));
 
     // copy input vertices to keep correspondence
     for(const Vertex_pair& vp : v2v)
