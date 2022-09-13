@@ -27,15 +27,47 @@ def build(scenario, kernel, algorithm, tag):
     run(["make", "-C", "build"])
 
 def execute(n, threads, times=1):
-    time = 0
+    measurements = {"time" : 0, "polygons" : 0, "points" : 0, "bandwidth" : 0, "transfer" : 0, "performance" : 0, "clock" : 0, "intensity" : 0}
+
     for i in range(times):
         process = run(["likwid-perfctr", "-g", "MEM_DP", "-C", "S0:0-" + str(threads - 1), "./build/benchmark", "-N", str(n)], False)
 
         for line in process.stdout.readlines():
             print(line, end='')
 
-            m = re.search(r'internal timer:\s*(\d*)', line)
+            m = re.search(r'internal timer:\s*(\d+)', line)
             if m is not None:
-                time += int(m.group(1))
+                measurements["time"] += int(m.group(1))
+
+            m = re.search(r'internal polygons:\s*(\d+)', line)
+            if m is not None:
+                measurements["polygons"] += int(m.group(1))
+
+            m = re.search(r'internal points:\s*(\d+)', line)
+            if m is not None:
+                measurements["points"] += int(m.group(1))
+
+            m = re.search(r'Memory bandwidth.*\s+(\d+(\.\d+)?) |\s*$', line)
+            if m is not None:
+                measurements["bandwidth"] += int(m.group(1))
+
+            m = re.search(r'Memory data volume.*\s+(\d+(\.\d+)?) |\s*$', line)
+            if m is not None:
+                measurements["transfer"] += int(m.group(1))
+
+            m = re.search(r'DP.*\s+(\d+(\.\d+)?) |\s*$', line)
+            if m is not None:
+                measurements["performance"] += int(m.group(1))
+
+            m = re.search(r'Clock.*\s+(\d+(\.\d+)?) |\s*$', line)
+            if m is not None:
+                measurements["clock"] += int(m.group(1))
+
+            m = re.search(r'Operational intensity.*\s+(\d+(\.\d+)?) |\s*$', line)
+            if m is not None:
+                measurements["intensity"] += int(m.group(1))
         
-    return time / times
+    for key, value in measurements:
+        measurements[key] = value / times
+
+    return measurements
