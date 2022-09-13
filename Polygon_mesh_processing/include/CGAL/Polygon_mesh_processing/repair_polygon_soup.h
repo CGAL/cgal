@@ -723,14 +723,14 @@ Polygon construct_canonical_polygon(const PointRange& points,
   return construct_canonical_polygon(points, polygon, useless, traits);
 }
 
-template <typename PointRange, typename PolygonRange, typename Traits>
+template <typename PointRange, typename PolygonRange>
 struct Polygon_hash
 {
   typedef std::size_t                                                             result_type;
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
-  Polygon_hash(const PointRange& points, const PolygonRange& canonical_polygons, const Traits& traits)
-    : points(points), canonical_polygons(canonical_polygons), traits(traits)
+  Polygon_hash(const PointRange& points, const PolygonRange& canonical_polygons)
+    : points(points), canonical_polygons(canonical_polygons)
   { }
 
   template <typename Polygon_ID>
@@ -748,7 +748,6 @@ struct Polygon_hash
 private:
   const PointRange& points;
   const PolygonRange& canonical_polygons;
-  const Traits& traits;
 };
 
 template <typename PointRange, typename PolygonRange, typename Reversed_markers, typename Traits>
@@ -849,11 +848,11 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 {
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
 
-  typedef internal::Polygon_hash<PointRange, PolygonRange, Traits>                Hasher;
+  typedef internal::Polygon_hash<PointRange, PolygonRange>                        Hasher;
   typedef boost::dynamic_bitset<>                                                 Reversed_markers;
   typedef internal::Polygon_equality_tester<PointRange, PolygonRange,
                                             Reversed_markers, Traits>             Equality;
-  typedef std::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
+  typedef std::unordered_set<P_ID, Hasher, Equality>                              Unique_polygons;
 
   const std::size_t polygons_n = polygons.size();
 
@@ -871,7 +870,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
       is_reversed.set(polygon_index);
   }
 
-  Hasher hash(points, canonical_polygons, traits);
+  Hasher hash(points, canonical_polygons);
   Equality equal(points, canonical_polygons, is_reversed, traits, same_orientation);
 
   Unique_polygons unique_polygons(polygons_n /*bucket size*/, hash, equal);
