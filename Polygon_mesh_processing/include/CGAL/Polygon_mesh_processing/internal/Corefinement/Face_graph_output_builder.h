@@ -1066,7 +1066,7 @@ public:
           // check incompatibility of patch classifications
           auto inconsistent_classification = [&]()
           {
-            if (!is_tm1_closed || !is_tm2_closed)
+            if (!used_to_clip_a_surface && !used_to_classify_patches && (!is_tm1_closed || !is_tm2_closed))
             {
               //make sure there is no ambiguity in tm1
               if( (patch_status_was_not_already_set[0] && previous_bitvalue[0]!=is_patch_inside_tm2[patch_id_p1] ) ||
