@@ -45,12 +45,12 @@ struct ArrReader<Arrangement,
   using Curve_2 = typename Arrangement::Curve_2;
 
   Arrangement* operator()(std::ifstream& ifs) {
-    Traits* traits = new Traits;
+    auto arr = new Arrangement();
+    const auto* traits = arr->geometry_traits();
     Conic_reader<Traits> conicReader(*traits);;
     std::vector<Curve_2> curve_list;
     CGAL::Bbox_2 bbox;
     conicReader.read_data(ifs, std::back_inserter(curve_list), bbox);
-    auto arr = new Arrangement(traits);
     CGAL::insert(*arr, curve_list.begin(), curve_list.end());
     return arr;
   }
