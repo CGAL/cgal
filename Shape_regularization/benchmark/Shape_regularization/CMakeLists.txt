@@ -11,6 +11,8 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 find_package(OSQP QUIET)
 include(CGAL_OSQP_support)
 if(TARGET CGAL::OSQP_support)
+  message(STATUS "Found OSQP")
+
   set(osqp_targets benchmark_contours benchmark_qp_segments)
   foreach(osqp_target ${osqp_targets})
     create_single_source_cgal_program("${osqp_target}.cpp")

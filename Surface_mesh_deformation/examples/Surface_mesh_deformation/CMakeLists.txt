@@ -6,7 +6,7 @@ project(Surface_mesh_deformation_Examples)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.91) #(requires 3.1.91 or greater)
+find_package(Eigen3 3.1.91 QUIET) #(requires 3.1.91 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("all_roi_assign_example.cpp")
@@ -34,6 +34,8 @@ if(TARGET CGAL::Eigen3_support)
   find_package(OpenMesh QUIET)
   if(OpenMesh_FOUND)
     include(UseOpenMesh)
+    message(STATUS "Found OpenMesh")
+
     create_single_source_cgal_program("all_roi_assign_example_with_OpenMesh.cpp")
     target_link_libraries(all_roi_assign_example_with_OpenMesh
                           PRIVATE ${OPENMESH_LIBRARIES} CGAL::Eigen3_support)

@@ -6,7 +6,7 @@ project(Surface_mesh_skeletonization_Tests)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.2.0 REQUIRED) #(requires 3.2.0 or greater)
+find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("MCF_Skeleton_test.cpp")

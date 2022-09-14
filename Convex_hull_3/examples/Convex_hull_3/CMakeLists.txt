@@ -22,6 +22,7 @@ create_single_source_cgal_program("extreme_indices_3.cpp")
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(UseOpenMesh)
+  message(STATUS "Found OpenMesh")
 
   create_single_source_cgal_program("quickhull_OM_3.cpp")
   target_link_libraries(quickhull_OM_3 PRIVATE ${OPENMESH_LIBRARIES})

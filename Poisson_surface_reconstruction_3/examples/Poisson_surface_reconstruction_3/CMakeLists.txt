@@ -19,7 +19,7 @@ if(MSVC)
 endif()
 
 # Find Eigen3 (requires 3.1.0 or greater)
-find_package(Eigen3 3.1.0)
+find_package(Eigen3 3.1.0 QUIET)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3

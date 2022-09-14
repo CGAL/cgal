@@ -14,7 +14,7 @@ if(ACTIVATE_CONCURRENCY)
   endif()
 endif()
 
-find_package(Eigen3 3.1.0)
+find_package(Eigen3 3.1.0 QUIET)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("scale_space.cpp")
@@ -27,6 +27,8 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(scale_space_advancing_front PUBLIC CGAL::Eigen3_support)
 
   if(ACTIVATE_CONCURRENCY AND TARGET CGAL::TBB_support)
+    message(STATUS "Found TBB")
+
     target_link_libraries(scale_space PUBLIC CGAL::TBB_support)
     target_link_libraries(scale_space_incremental PUBLIC CGAL::TBB_support)
     target_link_libraries(scale_space_manifold PUBLIC CGAL::TBB_support)

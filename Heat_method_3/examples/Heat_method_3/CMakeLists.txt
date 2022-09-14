@@ -7,7 +7,7 @@ project(Heat_method_3_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.3.0)
+find_package(Eigen3 3.3.0 QUIET)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: These examples require the Eigen library (3.3 or greater), and will not be compiled.")

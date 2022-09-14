@@ -6,7 +6,7 @@ project(Surface_mesh_deformation_Tests)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.91) #(requires 3.1.91 or greater)
+find_package(Eigen3 3.1.91 QUIET) #(requires 3.1.91 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("Cactus_deformation_session.cpp")
@@ -19,6 +19,8 @@ if(TARGET CGAL::Eigen3_support)
   find_package(OpenMesh QUIET)
   if(OpenMesh_FOUND)
     include(UseOpenMesh)
+    message(STATUS "Found OpenMesh")
+
     create_single_source_cgal_program("Cactus_deformation_session_OpenMesh.cpp")
     target_link_libraries(Cactus_deformation_session_OpenMesh
                           PRIVATE ${OPENMESH_LIBRARIES} CGAL::Eigen3_support)

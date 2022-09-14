@@ -5,7 +5,7 @@ project(Surface_mesh_parameterization_Examples)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3.1

@@ -30,10 +30,13 @@ create_single_source_cgal_program("test_triangulation_3.cpp")
 create_single_source_cgal_program("test_io_triangulation_3.cpp")
 
 if(TARGET CGAL::TBB_support)
+  message(STATUS "Found TBB")
+
   foreach(target test_delaunay_3 test_regular_3
                  test_regular_insert_range_with_info)
     target_link_libraries(${target} PUBLIC CGAL::TBB_support)
   endforeach()
+
   if(BUILD_TESTING)
     set_property(TEST
       execution___of__test_delaunay_3

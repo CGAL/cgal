@@ -43,6 +43,8 @@ endif()
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
 if(TARGET CGAL::TBB_support)
+  message(STATUS "Found TBB")
+
   create_single_source_cgal_program("parallel_kdtree.cpp")
   target_link_libraries(parallel_kdtree PUBLIC CGAL::TBB_support)
 else()

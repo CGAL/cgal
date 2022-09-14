@@ -23,7 +23,7 @@ if(NOT TARGET CGAL::Boost_iostreams_support)
   set(Classification_dependencies_met FALSE)
 endif()
 
-find_package(Eigen3 3.1.0) #(3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires the Eigen library, and will not be compiled.")
@@ -49,6 +49,8 @@ create_single_source_cgal_program( "example_deprecated_conversion.cpp" )
 find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
 include(CGAL_OpenCV_support)
 if(TARGET CGAL::OpenCV_support)
+  message(STATUS "Found OpenCV")
+
   create_single_source_cgal_program( "example_opencv_random_forest.cpp" )
   target_link_libraries(example_opencv_random_forest PUBLIC CGAL::OpenCV_support)
 else()

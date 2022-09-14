@@ -15,7 +15,7 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 Core)
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This demo requires the Eigen library, and will not be compiled.")

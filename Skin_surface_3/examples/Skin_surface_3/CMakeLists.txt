@@ -22,6 +22,7 @@ create_single_source_cgal_program("union_of_balls_subdiv.cpp")
 
 find_package(ESBTL QUIET)
 if(ESBTL_FOUND)
+  message(STATUS "Found ESBTL")
   include_directories(${ESBTL_INCLUDE_DIR})
   create_single_source_cgal_program("skin_surface_pdb_reader.cpp")
 else(ESBTL_FOUND)

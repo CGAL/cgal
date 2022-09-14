@@ -33,6 +33,8 @@ find_package(TBB QUIET)
 include(CGAL_TBB_support)
 
 if(TARGET CGAL::TBB_support)
+  message(STATUS "Found TBB")
+
   create_single_source_cgal_program("parallel_insertion_and_removal_in_regular_3.cpp")
   create_single_source_cgal_program("parallel_insertion_in_delaunay_3.cpp")
   create_single_source_cgal_program("sequential_parallel.cpp")

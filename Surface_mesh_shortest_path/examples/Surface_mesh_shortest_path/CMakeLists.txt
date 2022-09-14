@@ -16,6 +16,8 @@ create_single_source_cgal_program("shortest_path_with_locate.cpp")
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(UseOpenMesh)
+  message(STATUS "Found OpenMesh")
+
   create_single_source_cgal_program("shortest_paths_OpenMesh.cpp")
   target_link_libraries(shortest_paths_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
 else()

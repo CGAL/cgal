@@ -31,8 +31,8 @@ include(CGAL_Eigen3_support)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET CGAL::Eigen3_support)
   # Include this package's headers first
-
   include_directories(BEFORE ./ ./include)
+
   # ui file, created wih Qt Designer
   qt5_wrap_ui( uis Mainwindow.ui )
 

@@ -31,6 +31,7 @@ if(TARGET CGAL::OSQP_support)
   include(CGAL_Eigen3_support)
   if(TARGET CGAL::Eigen3_support)
     message(STATUS "Found Eigen")
+
     create_single_source_cgal_program("regularize_real_data_2.cpp")
     target_link_libraries(regularize_real_data_2 PUBLIC CGAL::Eigen3_support CGAL::OSQP_support)
   else()

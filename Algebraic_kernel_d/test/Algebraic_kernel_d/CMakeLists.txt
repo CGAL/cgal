@@ -6,11 +6,13 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 
 find_package(MPFI QUIET)
 if(MPFI_FOUND)
+  message(STATUS "Found MPFI")
   include(${MPFI_USE_FILE})
 endif()
 
 find_package(RS3 QUIET)
 if(RS3_FOUND)
+  message(STATUS "Found RS3")
   include(${RS3_USE_FILE})
 endif()
 

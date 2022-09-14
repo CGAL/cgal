@@ -11,6 +11,7 @@ create_single_source_cgal_program("kernel_converter_properties_test.cpp")
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
+  message(STATUS "Found OpenMesh")
   include(UseOpenMesh)
 
   target_link_libraries(dynamic_properties_test PRIVATE ${OPENMESH_LIBRARIES})

@@ -63,7 +63,7 @@ if(NOT TARGET CGAL::Eigen3_support)
   message(STATUS "NOTICE: Eigen was not found.")
 endif()
 
-find_package(METIS)
+find_package(METIS QUIET)
 include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
