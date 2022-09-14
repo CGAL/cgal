@@ -47,27 +47,27 @@ def execute(n, threads, times=1):
             if m is not None:
                 measurements["points"] += int(m.group(1))
 
-            m = re.search(r'Memory bandwidth.*\s+(\d+(\.\d+)?) |\s*$', line)
+            m = re.search(r'Memory bandwidth.*\s+(\d+(\.\d+)?) \|\s*$', line)
             if m is not None:
-                measurements["bandwidth"] += int(m.group(1))
+                measurements["bandwidth"] += float(m.group(1))
 
-            m = re.search(r'Memory data volume.*\s+(\d+(\.\d+)?) |\s*$', line)
+            m = re.search(r'Memory data volume.*\s+(\d+(\.\d+)?) \|\s*$', line)
             if m is not None:
-                measurements["transfer"] += int(m.group(1))
+                measurements["transfer"] += float(m.group(1))
 
-            m = re.search(r'DP.*\s+(\d+(\.\d+)?) |\s*$', line)
+            m = re.search(r'DP.*\s+(\d+(\.\d+)?) \|\s*$', line)
             if m is not None:
-                measurements["performance"] += int(m.group(1))
+                measurements["performance"] += float(m.group(1))
 
-            m = re.search(r'Clock.*\s+(\d+(\.\d+)?) |\s*$', line)
+            m = re.search(r'Clock.*\s+(\d+(\.\d+)?) \|\s*$', line)
             if m is not None:
-                measurements["clock"] += int(m.group(1))
+                measurements["clock"] += float(m.group(1))
 
-            m = re.search(r'Operational intensity.*\s+(\d+(\.\d+)?) |\s*$', line)
+            m = re.search(r'Operational intensity.*\s+(\d+(\.\d+)?) \|\s*$', line)
             if m is not None:
-                measurements["intensity"] += int(m.group(1))
+                measurements["intensity"] += float(m.group(1))
         
-    for key, value in measurements:
-        measurements[key] = value / times
+    for item in measurements.items():
+        measurements[item[0]] = item[1] / times
 
     return measurements

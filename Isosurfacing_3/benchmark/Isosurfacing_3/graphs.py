@@ -23,6 +23,12 @@ def add_size_graph(data, label):
     plt.plot(x, y, label=label)
     plt.legend()
 
+def add_triangle_graph(data, label, factor):
+    x = data["cells"]
+    y = data["polygons"] * factor
+    plt.plot(x, y, label=label)
+    plt.legend()
+
 
 def plot_graph(file, name, log, ylabel, xlabel):
     plt.title(name)

@@ -13,7 +13,7 @@ build(scenario, kernel, algorithm, tag)
 
 data = []
 
-for t in range(min_threads, max_threads):
+for t in range(min_threads, max_threads + 1):
 	res = execute(n, t, times=5)
 
 	data.append([scenario, kernel, algorithm, tag, t, cells, res["time"], res["bandwidth"]])
