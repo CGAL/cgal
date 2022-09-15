@@ -1,3 +1,43 @@
+// Copyright (c) 2020 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: ( GPL-3.0-or-later OR LicenseRef-Commercial ) AND MIT
+//
+// Author(s)     : Julian Stahl
+//
+// This file incorporates work covered by the following copyright and permission notice:
+//
+//     MIT License
+//
+//     Copyright (c) 2020 Roberto Grosso
+//
+//     Permission is hereby granted, free of charge, to any person obtaining a copy
+//     of this software and associated documentation files (the "Software"), to deal
+//     in the Software without restriction, including without limitation the rights
+//     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//     copies of the Software, and to permit persons to whom the Software is
+//     furnished to do so, subject to the following conditions:
+//
+//     The above copyright notice and this permission notice shall be included in all
+//     copies or substantial portions of the Software.
+//
+//     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//     SOFTWARE.
+//
+//
+// The code below uses the version of
+// https://github.com/rogrosso/tmc available on 15th of September 2022.
+//
+
 #ifndef CGAL_MARCHING_CUBES_3_INTERNAL_TABLES_H
 #define CGAL_MARCHING_CUBES_3_INTERNAL_TABLES_H
 
@@ -90,8 +130,8 @@ constexpr int local_vertex_position[N_VERTICES][3] = {
 // there are 12 edges, assign to each vertex three edges, the global edge numbering
 // consist of 3*global_vertex_id + edge_offset.
 constexpr int global_edge_id[][4] = {{0, 0, 0, 0}, {1, 0, 0, 1}, {0, 1, 0, 0}, {0, 0, 0, 1},
-                                     {0, 0, 1, 0}, {1, 0, 1, 1},
-                                 {0, 1, 1, 0}, {0, 0, 1, 1}, {0, 0, 0, 2}, {1, 0, 0, 2}, {1, 1, 0, 2}, {0, 1, 0, 2}};
+                                     {0, 0, 1, 0}, {1, 0, 1, 1}, {0, 1, 1, 0}, {0, 0, 1, 1},
+                                     {0, 0, 0, 2}, {1, 0, 0, 2}, {1, 1, 0, 2}, {0, 1, 0, 2}};
 
 // probably a list without errors
 // indicates which edges has to be intersected

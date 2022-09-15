@@ -1,3 +1,15 @@
+// Copyright (c) 2022 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Daniel Zint
+//                 Julian Stahl
+
 #ifndef CGAL_DUAL_CONTOURING_3_INTERNAL_DUAL_CONTOURING_3_H
 #define CGAL_DUAL_CONTOURING_3_INTERNAL_DUAL_CONTOURING_3_H
 
@@ -62,9 +74,9 @@ public:
 
         point = CGAL::ORIGIN + (pos[0] + 0.5 * (pos[7] - pos[0]));  // set point to voxel center
 
-        std::array<Vector, Tables::N_VERTICES> normals;
-        std::transform(vertices.begin(), vertices.end(), normals.begin(),
-                       [&](const auto& v) { return domain.gradient(v); });
+        // std::array<Vector, Tables::N_VERTICES> normals;
+        // std::transform(vertices.begin(), vertices.end(), normals.begin(),
+        //                [&](const auto& v) { return domain.gradient(domain.position(v)); });
 
         // compute edge intersections
         std::vector<Point> edge_intersections;
@@ -78,8 +90,8 @@ public:
                 const FT u = (s[v0] - iso_value) / (s[v0] - s[v1]);
                 const Point p_lerp = CGAL::ORIGIN + ((1 - u) * pos[v0] + u * pos[v1]);
                 edge_intersections.push_back(p_lerp);
-                const Vector n_lerp = (1 - u) * normals[v0] + u * normals[v1];
-                edge_intersection_normals.push_back(n_lerp);
+                // const Vector n_lerp = (1 - u) * normals[v0] + u * normals[v1];
+                edge_intersection_normals.push_back(domain.gradient(p_lerp));
             }
         }
 
@@ -229,7 +241,10 @@ public:
 
         point = CGAL::ORIGIN + (pos[0] + 0.5 * (pos[7] - pos[0]));  // set point to voxel center
 
-        std::array<Vector, Tables::N_VERTICES> normals = domain.gradient(vh);
+        std::array<Vector, Tables::N_VERTICES> normals;
+        std::transform(vertices.begin(), vertices.end(), normals.begin(),
+                       [&](const auto& v) { return domain.gradient(domain.position(v)); });
+
 
         // compute edge intersections
         std::vector<Point> edge_intersections;

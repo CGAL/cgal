@@ -1,3 +1,15 @@
+// Copyright (c) 2022 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Julian Stahl
+//                 Daniel Zint
+
 #ifndef CGAL_DUAL_CONTOURING_3_H
 #define CGAL_DUAL_CONTOURING_3_H
 
@@ -11,7 +23,8 @@ namespace Isosurfacing {
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange,
           class Positioning = internal::Positioning::QEM_SVD<true>>
 void make_quad_mesh_using_dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value,
-                                          PointRange& points, PolygonRange& polygons, const Positioning& positioning = Positioning()) {
+                                          PointRange& points, PolygonRange& polygons,
+                                          const Positioning& positioning = Positioning()) {
 
     // static_assert(Domain_::CELL_TYPE & ANY_CELL);
 

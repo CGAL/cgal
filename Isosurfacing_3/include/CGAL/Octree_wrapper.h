@@ -1,3 +1,15 @@
+// Copyright (c) 2022 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Daniel Zint
+//                 Julian Stahl
+
 #pragma once
 
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
