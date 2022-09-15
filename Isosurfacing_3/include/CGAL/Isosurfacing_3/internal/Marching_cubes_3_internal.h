@@ -1,12 +1,54 @@
+// Copyright (c) 2020 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: ( GPL-3.0-or-later OR LicenseRef-Commercial ) AND MIT
+//
+// Author(s)     : Julian Stahl
+//
+// This file incorporates work covered by the following copyright and permission notice:
+//
+//     MIT License
+//
+//     Copyright (c) 2020 Roberto Grosso
+//
+//     Permission is hereby granted, free of charge, to any person obtaining a copy
+//     of this software and associated documentation files (the "Software"), to deal
+//     in the Software without restriction, including without limitation the rights
+//     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//     copies of the Software, and to permit persons to whom the Software is
+//     furnished to do so, subject to the following conditions:
+//
+//     The above copyright notice and this permission notice shall be included in all
+//     copies or substantial portions of the Software.
+//
+//     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//     SOFTWARE.
+//
+//
+// The code below uses the version of
+// https://github.com/rogrosso/tmc available on 15th of September 2022.
+//
+
 #ifndef CGAL_MARCHING_CUBES_3_INTERNAL_MARCHING_CUBES_3_H
 #define CGAL_MARCHING_CUBES_3_INTERNAL_MARCHING_CUBES_3_H
 
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
+#include <tbb/concurrent_vector.h>
 
 #include <array>
-#include <bitset>
-#include <mutex>
 #include <atomic>
+#include <bitset>
+#include <cassert>
+#include <mutex>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -79,9 +121,8 @@ void mc_construct_vertices(const CellEdges& cell_edges, const FT iso_value, cons
     }
 }
 
-template <typename Vertices_, class PointRange, class PolygonRange>
-void mc_construct_triangles(const int i_case, const Vertices_& vertices, PointRange& points, PolygonRange& polygons,
-                            std::atomic_size_t& triangle_id) {
+template <typename Vertices_, class TriangleList>
+void mc_construct_triangles(const int i_case, const Vertices_& vertices, TriangleList& triangles) {
     // construct triangles
     for (int t = 0; t < 16; t += 3) {
 
@@ -93,39 +134,45 @@ void mc_construct_triangles(const int i_case, const Vertices_& vertices, PointRa
         const int eg1 = Cube_table::triangle_cases[t_index + 1];
         const int eg2 = Cube_table::triangle_cases[t_index + 2];
 
-        const std::size_t t_id = triangle_id++;
-
-        points.grow_to_at_least((t_id + 1) * 3);
-        points[t_id * 3 + 0] = vertices[eg0];
-        points[t_id * 3 + 1] = vertices[eg1];
-        points[t_id * 3 + 2] = vertices[eg2];
-
         // insert new triangle in list
-        typename PolygonRange::value_type triangle(3);
-        triangle[0] = t_id * 3 + 2;
-        triangle[1] = t_id * 3 + 1;
-        triangle[2] = t_id * 3 + 0;
+        std::array<Point, 3> points;
+        points[0] = vertices[eg0];
+        points[1] = vertices[eg1];
+        points[2] = vertices[eg2];
 
-        polygons.push_back(triangle);
+        triangles.push_back(points);
     }
 }
 
-template <class Domain_, class PointRange, class PolygonRange>
+template <class TriangleList, class PointRange, class PolygonRange>
+void to_indexed_face_set(const TriangleList& triangle_list, PointRange& points, PolygonRange& polygons) {
+    for (auto& triangle : triangle_list) {
+        const std::size_t id = points.size();
+
+        points.push_back(triangle[0]);
+        points.push_back(triangle[1]);
+        points.push_back(triangle[2]);
+
+        polygons.push_back({});
+        auto& triangle = polygons.back();
+        triangle.push_back(id + 2);
+        triangle.push_back(id + 1);
+        triangle.push_back(id + 0);
+    }
+}
+
+template <class Domain_>
 class Marching_cubes_functor {
 private:
     typedef Domain_ Domain;
-    typedef PointRange Point_range;
-    typedef PolygonRange Polygon_range;
-
     typedef typename Domain::FT FT;
     typedef typename Domain::Point Point;
-    typedef typename Domain::Vertex_handle Vertex_handle;
-    typedef typename Domain::Edge_handle Edge_handle;
     typedef typename Domain::Cell_handle Cell_handle;
 
+    typedef tbb::concurrent_vector<std::array<Point, 3>> Triangle_list;
+
 public:
-    Marching_cubes_functor(const Domain& domain, const FT iso_value, Point_range& points, Polygon_range& polygons)
-        : domain(domain), iso_value(iso_value), points(points), polygons(polygons) {}
+    Marching_cubes_functor(const Domain& domain, const FT iso_value) : domain(domain), iso_value(iso_value) {}
 
 
     void operator()(const Cell_handle& cell) {
@@ -145,21 +192,18 @@ public:
         std::array<Point, 12> vertices;
         mc_construct_vertices(domain.cell_edges(cell), iso_value, i_case, corners, values, vertices);
 
-        mc_construct_triangles(i_case, vertices, points, polygons, triangle_id);
+        mc_construct_triangles(i_case, vertices, triangle_list);
+    }
+
+    const Triangle_list& get_triangles() const {
+        return triangle_list;
     }
 
 private:
     const Domain& domain;
     FT iso_value;
 
-    Point_range& points;
-    Polygon_range& polygons;
-
-    // compute a unique global index for vertices
-    // use as key the unique edge number
-    std::map<Edge_handle, std::size_t> vertex_map;
-
-    std::atomic_size_t triangle_id;
+    Triangle_list triangle_list;
 };
 
 }  // namespace internal

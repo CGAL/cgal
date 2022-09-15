@@ -1,3 +1,43 @@
+// Copyright (c) 2020 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: ( GPL-3.0-or-later OR LicenseRef-Commercial ) AND MIT
+//
+// Author(s)     : Julian Stahl
+//
+// This file incorporates work covered by the following copyright and permission notice:
+//
+//     MIT License
+//
+//     Copyright (c) 2020 Roberto Grosso
+//
+//     Permission is hereby granted, free of charge, to any person obtaining a copy
+//     of this software and associated documentation files (the "Software"), to deal
+//     in the Software without restriction, including without limitation the rights
+//     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//     copies of the Software, and to permit persons to whom the Software is
+//     furnished to do so, subject to the following conditions:
+//
+//     The above copyright notice and this permission notice shall be included in all
+//     copies or substantial portions of the Software.
+//
+//     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//     SOFTWARE.
+//
+//
+// The code below uses the version of
+// https://github.com/rogrosso/tmc available on 15th of September 2022.
+//
+
 #ifndef CGAL_TMC_INTERNAL_TMC_H
 #define CGAL_TMC_INTERNAL_TMC_H
 
@@ -5,9 +45,9 @@
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 
 #include <array>
+#include <atomic>
 #include <map>
 #include <mutex>
-#include <atomic>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -23,7 +63,6 @@ private:
     typedef typename Domain::FT FT;
     typedef typename Domain::Point Point;
     typedef typename Domain::Vector Vector;
-    typedef typename Domain::Vertex_handle Vertex_handle;
     typedef typename Domain::Edge_handle Edge_handle;
     typedef typename Domain::Cell_handle Cell_handle;
 
@@ -54,10 +93,38 @@ public:
         std::array<Point, 12> vertices;
         mc_construct_vertices(domain.cell_edges(cell), iso_value, i_case, corners, values, vertices);
 
-        mc_construct_triangles(i_case, vertices, points, polygons, triangle_id++);
+        // TODO: improve triangle generation
+        // construct triangles
+        std::lock_guard<std::mutex> lock(mutex);
+        for (int t = 0; t < 16; t += 3) {
+
+            const int t_index = i_case * 16 + t;
+            // if (e_tris_list[t_index] == 0x7f)
+            if (Cube_table::triangle_cases[t_index] == -1) break;
+
+            const int eg0 = Cube_table::triangle_cases[t_index + 0];  // TODO: move more of this stuff into the table
+            const int eg1 = Cube_table::triangle_cases[t_index + 1];
+            const int eg2 = Cube_table::triangle_cases[t_index + 2];
+
+            const std::size_t p0_idx = points.size();
+
+            points.push_back(vertices[eg0]);
+            points.push_back(vertices[eg1]);
+            points.push_back(vertices[eg2]);
+
+            // insert new triangle in list
+            polygons.push_back({});
+            auto& triangle = polygons.back();
+
+            triangle.push_back(p0_idx + 2);
+            triangle.push_back(p0_idx + 1);
+            triangle.push_back(p0_idx + 0);
+        }
     }
 
     void add_triangle(const std::size_t p0, const std::size_t p1, const std::size_t p2) {
+        std::lock_guard<std::mutex> lock(mutex);
+
         polygons.push_back({});
         auto& triangle = polygons.back();
 
@@ -893,7 +960,7 @@ private:
     // use as key the unique edge number
     std::map<Edge_handle, std::size_t> vertex_map;
 
-    std::atomic_size_t triangle_id;
+    std::mutex mutex;
 };
 
 }  // namespace internal

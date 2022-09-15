@@ -1,3 +1,14 @@
+// Copyright (c) 2022 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Julian Stahl
+
 #ifndef CGAL_MARCHING_CUBES_3_H
 #define CGAL_MARCHING_CUBES_3_H
 
@@ -33,8 +44,9 @@ void make_triangle_mesh_using_marching_cubes(const Domain_& domain, const typena
 
     // static_assert(Domain_::CELL_TYPE & CUBICAL_CELL);
 
-    internal::Marching_cubes_functor<Domain_, PointRange, PolygonRange> functor(domain, iso_value, points, polygons);
+    internal::Marching_cubes_functor<Domain_> functor(domain, iso_value);
     domain.iterate_cells(functor, Concurrency_tag());
+    internal::to_indexed_face_set(functor.get_triangles(), points, polygons);
 }
 
 }  // namespace Isosurfacing
