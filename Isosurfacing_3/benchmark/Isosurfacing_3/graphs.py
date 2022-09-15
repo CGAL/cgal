@@ -23,6 +23,7 @@ def add_size_graph(data, label):
     plt.plot(x, y, label=label)
     plt.legend()
 
+
 def add_triangle_graph(data, label, factor):
     x = data["cells"]
     y = data["polygons"] * factor
@@ -50,8 +51,8 @@ if latex_export:
     plt.rcParams['font.size'] = "17"
 
 
-data = pd.read_csv("implicit_iwp_mc.csv")
-add_threads_graph(data, "mc")
+data = pd.read_csv("implicit_iwp_mc_1.csv")
+add_threads_graph(data, "MC")
 
 #data = pd.read_csv("threads_grid.csv")
 #add_threads_graph(data, "grid")
@@ -61,15 +62,26 @@ if max(data["threads"]) > 10:
     print("more")
     xt = np.concatenate((xt, np.arange(10, max(data["threads"]) + 0.1, 2)))
 
+yt = np.arange(0, 20 + 0.1, 2)
+
 print(xt)
 plt.xticks(xt)
+plt.yticks(yt)
 plot_graph("perf_threads.svg", "", False, "performance [10^3 cubes/s]", "cores")
 
 
-#data = pd.read_csv("size_implicit.csv")
-#add_size_graph(data, "implicit")
-#
-#data = pd.read_csv("size_grid.csv")
-#add_size_graph(data, "grid")
-#
-#plot_graph("perf_size.svg", "", True, "performance [10^3 cubes/s]", "cubes")
+data = pd.read_csv("size_iwp_mc.csv")
+add_size_graph(data, "MC")
+
+data = pd.read_csv("size_iwp_dc.csv")
+add_size_graph(data, "DC")
+
+plot_graph("perf_size.svg", "", False, "performance [10^3 cubes/s]", "cells")
+
+data = pd.read_csv("size_iwp_mc.csv")
+add_triangle_graph(data, "MC", 1)
+
+data = pd.read_csv("size_iwp_dc.csv")
+add_triangle_graph(data, "DC", 1)
+
+plot_graph("triangles_size.svg", "", False, "triangles", "cells")
