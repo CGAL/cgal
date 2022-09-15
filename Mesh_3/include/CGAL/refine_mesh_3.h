@@ -277,7 +277,7 @@ inline internal::Mesh_3_options mesh_3_dump()
   CGAL_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
 
 } // end namespace parameters
-#include <CGAL/Mesh_3/internal/parameters.h>
+#include <CGAL/Mesh_3/parameters.h>
 /*!
 \ingroup PkgMesh3Functions
 
