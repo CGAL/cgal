@@ -7,21 +7,17 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-//
-//
-//******************************************************************************
-// File Description : Named Function Parameters specific code
-//******************************************************************************
-#ifndef CGAL_PARAMETERS_H
-#define CGAL_PARAMETERS_H
+
+#ifndef CGAL_MESH_3_PARAMETERS_H
+#define CGAL_MESH_3_PARAMETERS_H
 
 #include <CGAL/license/Mesh_3.h>
 #include <CGAL/disable_warnings.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/optimize_mesh_3.h>
 
-namespace parameters{
+namespace CGAL {
+namespace parameters {
 
 // -----------------------------------
 // Perturb
@@ -241,6 +237,6 @@ Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t> m
 }
 
 
-} //namespace parameters
+} } //namespace CGAL::parameters
 
-#endif //CGAL_PARAMETERS_H
+#endif //CGAL_MESH_3_PARAMETERS_H

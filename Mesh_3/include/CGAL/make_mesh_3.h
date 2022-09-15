@@ -425,11 +425,9 @@ of 1-dimensional exposed features.
 
 \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
- @param c3t3 the mesh to be refined.
  @param domain the domain to be discretized
  @param criteria the criteria
-
- The following are optional named parameters.
+ @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
 \cgalNamedParamsBegin
    \cgalParamNBegin{features_options}
@@ -495,7 +493,7 @@ of 1-dimensional exposed features.
 
 \cgalNamedParamsEnd
 
- The optimization parameters can be passed in an arbitrary order. If one parameter
+The optimization parameters can be passed in an arbitrary order. If one parameter
 is not passed, its default value is used. The default values are
 `no_lloyd()`, `no_odt()`, `perturb()` and `exude()`.
 

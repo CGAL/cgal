@@ -217,18 +217,60 @@ protected:
   FT squared_error_bound_;
 }; // Labeled_mesh_domain_3_impl_details
 
-/**
- * \class Labeled_mesh_domain_3
- *
- * Function f must take his values into N.
- * Let p be a Point.
- *  - f(p)=0 means that p is outside domain.
- *  - f(p)=a, a!=0 means that p is inside subdomain a.
- *
- *  Any boundary facet is labelled <a,b>, with a<b, where a and b are the
- *  tags of it's incident subdomain.
- *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
- */
+/*!
+\ingroup PkgMesh3Domains
+
+\brief The class `Labeled_mesh_domain_3` implements indexed domains.
+
+This class is a model of concept `MeshDomain_3`.
+
+Any boundary facet is labeled <a,b>, with a<b, where a and b are the
+tags of its incident subdomains.
+Thus, a boundary facet of the domain is labeled <0,b>, where b!=0.
+
+This class includes a <em>labeling function</em> that provides the index of the subdomain in which any
+query point lies. An intersection between a segment and bounding
+surfaces is detected when both segment endpoints are associated with different
+values of subdomain indices. The intersection is then constructed by bisection.
+The bisection stops when the query segment is shorter than an error bound
+`e` given by the product of the
+length of the diagonal of the bounding box (in world coordinates), or the radius of the bounding sphere, and
+a relative error bound passed as argument to the constructor of `Labeled_mesh_domain_3`.
+
+This class has a constructor taking a labeling function. It has also three
+static template member functions that act as named constructors:
+<ul>
+<li>`create_gray_image_mesh_domain()`, to create a domain from a 3D gray image,
+<li>`create_labeled_image_mesh_domain()`, to create a domain from a 3D labeled image, and
+<li>`create_implicit_mesh_domain()`, to create a domain from an implicit function.
+</ul>
+
+\tparam BGT is a geometric traits class that provides
+the basic operations to implement
+intersection tests and intersection computations
+through a bisection method. This parameter must be instantiated
+with a model of the concept `BisectionGeometricTraits_3`.
+
+\cgalHeading{Labeling function}
+
+A labeling function `f` must return `0` if the point isn't located in any subdomain. The return type of labeling functions is an integer.
+
+Let `p` be a Point.
+<ul>
+<li>`f(p)=0` means that `p` is outside domain.</li>
+<li>`f(p)=a`, `a!=0` means that `p` is inside subdomain `a`.</li>
+</ul>
+`CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
+if there are several components to mesh.
+
+The function type can be any model of the concept `Callable` compatible with the signature `Subdomain_index(const Point_3&)`: it can be a function, a function object, a lambda expression... that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
+
+\cgalModels MeshDomain_3
+
+\sa `Implicit_multi_domain_to_labeling_function_wrapper`
+\sa `CGAL::make_mesh_3()`.
+
+*/
 template<class BGT,
          class Subdomain_index_ = int,
          class Surface_patch_index_ = std::pair<Subdomain_index_,
@@ -291,6 +333,25 @@ public:
   typedef BGT Geom_traits;
   using Impl_details::construct_pair_functor;
 
+/// \name Creation
+/// @{
+/*!  \brief Construction from a function, a bounding
+object and a relative error bound.
+
+This constructor uses named parameters (from the <em>Boost Parameter
+Library</em>). They can be specified in any order.
+
+\cgalHeading{Named Parameters}
+- <b>`parameters::function` (mandatory)</b>  the labeling function, compatible with `Labeling_function`.
+- <b>`parameters::bounding_object` (mandatory)</b>  the bounding object is either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`), or a bounding `Iso_cuboid_3`. It bounds the meshable space.
+- <b>`parameters::relative_error_bound` (optional)</b>  the relative error bound used to compute intersection points between the implicit surface and query segments. The
+bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the diameter of the bounding object. Its default value is `FT(1e-3)`.
+
+\cgalHeading{Example}
+From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
+\snippet Mesh_3/mesh_implicit_domains_2.cpp Domain creation
+
+ */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   Labeled_mesh_domain_3(const CGAL_NP_CLASS& np = parameters::default_values())
   :Impl_details(parameters::get_parameter(np, internal_np::function_param),
@@ -308,7 +369,9 @@ public:
   {
   }
 
-  /**
+///@}
+
+  /*
    * Backward-compatibility constructors, with `null_subdomain_index` as
    * fourth parameter.
    * @{
@@ -342,7 +405,7 @@ public:
                    construct_pair_functor(),
                    null, p_rng)
   {}
-  /**
+  /*
    * @}
    */
 
@@ -364,7 +427,7 @@ public:
       This constructor uses named parameters . They can be specified in any order.
          \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-         \param image the input 3D image. Must be a `CGAL::Image_3` object.
+         \param image_ the input 3D image. Must be a `CGAL::Image_3` object.
 
          \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
@@ -493,7 +556,7 @@ public:
         This constructor uses named parameters . They can be specified in any order.
         \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-        \param image the input 3D image. Must be a `CGAL::Image_3` object.
+        \param image_ the input 3D image. Must be a `CGAL::Image_3` object.
 
         \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
@@ -720,9 +783,9 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
   /// @}
 
   /**
-   * Constructs  a set of \ccc{n} points on the surface, and output them to
-   *  the output iterator \ccc{pts} whose value type is required to be
-   *  \ccc{std::pair<Points_3, Index>}.
+   * Constructs  a set of `n` points on the surface, and output them to
+   *  the output iterator `pts` whose value type is required to be
+   *  `std::pair<Points_3, Index>`.
    */
   struct Construct_initial_points
   {
@@ -750,7 +813,7 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
   }
 
   /**
-   * Returns true if point~\ccc{p} is in the domain. If \ccc{p} is in the
+   * Returns true if point~`p` is in the domain. If `p` is in the
    *  domain, the parameter index is set to the index of the subdomain
    *  including $p$. It is set to the default value otherwise.
    */
@@ -775,12 +838,12 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
   Is_in_domain is_in_domain_object() const { return Is_in_domain(*this); }
 
   /**
-   * Returns true is the element \ccc{type} intersect properly any of the
+   * Returns true is the element `type` intersect properly any of the
    * surface patches describing the either the domain boundary or some
    * subdomain boundary.
-   * \ccc{Type} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
+   * `Type is either `Segment_3`, `Ray_3` or `Line_3`.
    * Parameter index is set to the index of the intersected surface patch
-   * if \ccc{true} is returned and to the default \ccc{Surface_patch_index}
+   * if `true` is returned and to the default `Surface_patch_index`
    * value otherwise.
    */
   struct Do_intersect_surface
@@ -849,12 +912,12 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
   }
 
   /**
-   * Returns a point in the intersection of the primitive \ccc{type}
+   * Returns a point in the intersection of the primitive `type`
    * with some boundary surface.
-   * \ccc{Type1} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
-   * The integer \ccc{dimension} is set to the dimension of the lowest
+   * `Type1` is either `Segment_3`, `Ray_3` or `Line_3`.
+   * The integer `dimension` is set to the dimension of the lowest
    * dimensional face in the input complex containing the returned point, and
-   * \ccc{index} is set to the index to be stored at a mesh vertex lying
+   * `index` is set to the index to be stored at a mesh vertex lying
    * on this face.
    */
   struct Construct_intersection

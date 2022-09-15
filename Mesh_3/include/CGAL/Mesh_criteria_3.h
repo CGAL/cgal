@@ -125,8 +125,58 @@ private:
 
 
 
-// Class Mesh_criteria_3
-// Provides default mesh criteria to drive Mesh_3 process
+
+/*!
+\ingroup PkgMesh3MeshClasses
+
+The class `Mesh_criteria_3` is a model of both concepts `MeshCriteria_3`
+and `MeshCriteriaWithFeatures_3`.
+It gathers the refinement criteria for mesh tetrahedra and
+surface facets where
+surface facets are facets in the mesh approximating the domain surface patches.
+In addition, for domain with exposed 1-dimensional features,
+the class `Mesh_criteria_3`
+handles the definition of a sizing field to guide the discretization of
+1-dimensional features.
+
+\tparam Tr has to be instantiated with the type used for
+`C3T3::Triangulation`,
+where `C3T3` is the model of `MeshComplex_3InTriangulation_3`
+used in the mesh generation process,
+and `C3T3::Triangulation` its nested triangulation type.
+
+\cgalModels `MeshCriteria_3`
+
+\cgalHeading{Example}
+
+\code{.cpp}
+
+// Create a Mesh_criteria_3<Tr> object with all cell and facet parameters set
+Mesh_criteria_3<Tr> criteria (parameters::facet_angle=30,
+                              parameters::facet_size=1,
+                              parameters::facet_distance=0.1,
+                              parameters::cell_radius_edge_ratio=2,
+                              parameters::cell_size=1.5);
+
+// Create a Mesh_criteria_3<Tr> object with size ignored (note that the order changed)
+Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge_ratio=2,
+                              parameters::facet_angle=30,
+                              parameters::facet_distance=0.1);
+
+\endcode
+
+\sa `MeshCriteria_3`
+\sa `MeshCriteriaWithFeatures_3`
+\sa `MeshCellCriteria_3`
+\sa `MeshEdgeCriteria_3`
+\sa `MeshFacetCriteria_3`
+\sa `MeshDomainField_3`
+\sa `CGAL::Mesh_cell_criteria_3<Tr>`
+\sa `CGAL::Mesh_edge_criteria_3<Tr>`
+\sa `CGAL::Mesh_facet_criteria_3<Tr>`
+\sa `CGAL::Mesh_facet_topology`
+
+*/
 template <typename Tr,
           typename EdgeCriteria = Mesh_edge_criteria_3<Tr>,
           typename FacetCriteria = Mesh_facet_criteria_3<Tr>,
@@ -143,9 +193,32 @@ class Mesh_criteria_3
                                           CellCriteria>   Base;
 
 public:
+#ifdef DOXYGEN_RUNNING
+/// \name Types
+/// @{
+
+/*!
+The criteria for edges.
+*/
+typedef Mesh_edge_criteria_3<Tr> Edge_criteria;
+
+/*!
+The criteria for facets.
+*/
+typedef Mesh_facet_criteria_3<Tr> Facet_criteria;
+
+/*!
+The
+criteria for cells.
+*/
+typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
+
+/// @}
+#else
   typedef typename Base::Edge_criteria    Edge_criteria;
   typedef typename Base::Facet_criteria   Facet_criteria;
   typedef typename Base::Cell_criteria    Cell_criteria;
+#endif
 
   // Constructor
   Mesh_criteria_3(Facet_criteria facet_criteria,
@@ -161,51 +234,47 @@ public:
            facet_criteria,
            cell_criteria) {}
 /*!
-      \brief Construction from criteria parameters.
-      This constructor uses named
-      parameters (from <I>Boost.Parameter</I>) for convenient criteria
-      construction.
+  \brief Construction from criteria parameters.
 
-         \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+     \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-         \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+     \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
-         \cgalNamedParamsBegin
-           \cgalParamNBegin{edge_size}
-             \cgalParamDescription{a scalar field (resp. a constant) providing a space varying
-                                  (resp. a uniform)
-                                  upper bound for the lengths of curve edges. This parameter has to be set to a positive
-                                  value when 1-dimensional features protection is used.}
+     \cgalNamedParamsBegin
+       \cgalParamNBegin{edge_size}
+         \cgalParamDescription{a scalar field (resp. a constant) providing a space varying
+                              (resp. a uniform)
+                              upper bound for the lengths of curve edges. This parameter has to be set to a positive
+                              value when 1-dimensional features protection is used.}
 
-           \cgalParamNBegin{facet_angle}
-             \cgalParamDescription{a lower bound for the angles (in degrees) of the
-                                   surface mesh facets.}
+       \cgalParamNBegin{facet_angle}
+         \cgalParamDescription{a lower bound for the angles (in degrees) of the
+                               surface mesh facets.}
 
-           \cgalParamNBegin{facet_size}
-             \cgalParamDescription{ a scalar field (resp. a constant) describing
-                                    a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
+       \cgalParamNBegin{facet_size}
+         \cgalParamDescription{ a scalar field (resp. a constant) describing
+                                a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
 
-           \cgalParamNBegin{facet_distance}
-             \cgalParamDescription{ a scalar field (resp. a constant) describing a space varying (resp. a uniform)
-                                    upper bound for the distance between the facet circumcenter and the center of its surface
-                                    Delaunay ball.}
-           \cgalParamNBegin{facet_topology}
-             \cgalParamDescription{ the set of topological constraints
-                                    which have to be verified by each surface facet. See `Mesh_facet_topology` manual page to
-                                    get all possible values.}
-              \cgalParamDefault{CGAL::FACET_VERTICES_ON_SURFACE}
+       \cgalParamNBegin{facet_distance}
+         \cgalParamDescription{ a scalar field (resp. a constant) describing a space varying (resp. a uniform)
+                                upper bound for the distance between the facet circumcenter and the center of its surface
+                                Delaunay ball.}
+       \cgalParamNBegin{facet_topology}
+         \cgalParamDescription{ the set of topological constraints
+                                which have to be verified by each surface facet. See `Mesh_facet_topology` manual page to
+                                get all possible values.}
+          \cgalParamDefault{CGAL::FACET_VERTICES_ON_SURFACE}
 
-            \cgalParamNBegin{cell_radius_edge_ratio}
-             \cgalParamDescription{ an upper bound for the radius-edge ratio of the mesh tetrahedra.}
+        \cgalParamNBegin{cell_radius_edge_ratio}
+         \cgalParamDescription{ an upper bound for the radius-edge ratio of the mesh tetrahedra.}
 
-             \cgalParamNBegin{cell_size}
-             \cgalParamDescription{ a scalar field (resp. a constant) describing
-                                    a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.}
+         \cgalParamNBegin{cell_size}
+         \cgalParamDescription{ a scalar field (resp. a constant) describing
+                                a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.}
 
 
-         \cgalNamedParamsEnd
-       */
-
+     \cgalNamedParamsEnd
+   */
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_criteria_3(const CGAL_NP_CLASS& np = parameters::default_values()): Base(np)
 {

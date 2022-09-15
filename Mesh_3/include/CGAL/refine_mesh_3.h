@@ -277,7 +277,7 @@ inline internal::Mesh_3_options mesh_3_dump()
   CGAL_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
 
 } // end namespace parameters
-#include <CGAL/Mesh_3/parameters.h>
+
 /*!
 \ingroup PkgMesh3Functions
 
@@ -357,6 +357,7 @@ of 1-dimensional exposed features.
 \param c3t3 the mesh to be refined.
 \param domain the domain to be discretized
 \param criteria the criteria
+\param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 
 The following four parameters are optional optimization parameters.
 They control which optimization processes are performed
@@ -601,4 +602,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
 }
 #endif // DOXYGEN_RUNNING
 } // end namespace CGAL
+
+#include <CGAL/Mesh_3/parameters.h>
+
 #endif // CGAL_REFINE_MESH_3_H

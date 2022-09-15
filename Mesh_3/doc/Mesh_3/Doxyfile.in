@@ -14,7 +14,7 @@ INPUT += \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/refine_mesh_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/make_mesh_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Labeled_mesh_domain_3.h \
-      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_criteria_3.h
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_criteria_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_facet_topology.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_vertex_base_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_cell_base_3.h \

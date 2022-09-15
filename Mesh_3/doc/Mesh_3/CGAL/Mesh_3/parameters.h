@@ -20,7 +20,7 @@ namespace parameters {
   \sa `CGAL::parameters::manifold_with_boundary()`
   \sa `CGAL::parameters::non_manifold()`
   */
-  parameters::internal::Manifold_options manifold();
+  unspecified_type manifold();
 
   /*!
   \ingroup PkgMesh3Parameters
@@ -35,7 +35,7 @@ namespace parameters {
   \sa `CGAL::parameters::manifold_with_boundary()`
   \sa `CGAL::parameters::manifold()`
   */
-  parameters::internal::Manifold_options non_manifold();
+  unspecified_type non_manifold();
 
   /*!
   \ingroup PkgMesh3Parameters
@@ -55,7 +55,7 @@ namespace parameters {
   \sa `CGAL::parameters::non_manifold()`
   \sa `CGAL::parameters::manifold()`
   */
-  parameters::internal::Manifold_options manifold_with_boundary();
+  unspecified_type manifold_with_boundary();
 
 /*!
 \ingroup PkgMesh3Parameters
@@ -91,15 +91,15 @@ refine_mesh_3(c3t3,
 \sa `CGAL::refine_mesh_3()`
 
 */
-parameters::internal::Exude_options exude(
+unspecified_type exude(
   double parameters::time_limit = 0,
   double parameters::sliver_bound = 0);
 
 /*!
 \ingroup PkgMesh3Parameters
 
-The function `parameters::features()` provides a value of internal type `Features`
-to specify if 0 and 1-dimensional features have to be taken into account.
+The function `parameters::features()` can be used to specify 
+that 0 and 1-dimensional features have to be taken into account.
 The provided value is a default value that triggers the representation
 of corners and curves in the mesh when the domain is a model
 of `MeshDomainWithFeatures_3`.
@@ -113,7 +113,7 @@ if domain is a model of the refined concept `MeshDomainWithFeatures_3`.
 \sa `CGAL::parameters::no_features()`
 
 */
-parameters::internal::Features_options features();
+unspecified_type features();
 
 /*!
 \ingroup PkgMesh3Parameters
@@ -151,7 +151,7 @@ refine_mesh_3(c3t3,
 \sa `CGAL::refine_mesh_3()`
 
 */
-parameters::internal::Lloyd_options lloyd(
+unspecified_type lloyd(
 double parameters::time_limit = 0,
 std::size_t parameters::max_iteration_number = 0,
 double parameters::convergence = 0.02,
@@ -179,7 +179,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
 \sa `CGAL::refine_mesh_3()`
 
 */
-parameters::internal::Exude_options no_exude();
+unspecified_type no_exude();
 
 /*!
 \ingroup PkgMesh3Parameters
@@ -199,7 +199,7 @@ to take into account 0 and 1-dimensional input features.
 \sa `CGAL::parameters::features()`
 
 */
-parameters::internal::Features_options no_features();
+unspecified_type no_features();
 
 /*!
 \ingroup PkgMesh3Parameters
@@ -222,7 +222,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
 \sa `CGAL::refine_mesh_3()`
 
 */
-parameters::internal::Lloyd_options no_lloyd();
+unspecified_type no_lloyd();
 
 /*!
 \ingroup PkgMesh3Parameters
@@ -245,7 +245,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
 \sa `CGAL::refine_mesh_3()`
 
 */
-parameters::internal::Odt_options no_odt();
+unspecified_type no_odt();
 
 /*!
 \ingroup PkgMesh3Parameters
@@ -268,7 +268,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
 \sa `CGAL::refine_mesh_3()`
 
 */
-parameters::internal::Perturb_options no_perturb();
+unspecified_type no_perturb();
 
 /*!
 \ingroup PkgMesh3Parameters
@@ -305,7 +305,7 @@ refine_mesh_3(c3t3,
 \sa `CGAL::refine_mesh_3()`
 
 */
-parameters::internal::Odt_options odt(
+unspecified_type odt(
 double parameters::time_limit = 0,
 std::size_t parameters::max_iteration_number = 0,
 double parameters::convergence = 0.02,
@@ -348,7 +348,7 @@ refine_mesh_3(c3t3,
 \sa `CGAL::refine_mesh_3()`
 
 */
-parameters::internal::Perturb_options perturb(
+unspecified_type perturb(
   double parameters::time_limit = 0,
   double parameters::sliver_bound = 0);
 
