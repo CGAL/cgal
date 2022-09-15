@@ -31,6 +31,11 @@ public:
     typedef unspecified_type Point;
 
     /*!
+    The vector type.
+    */
+    typedef unspecified_type Vector;
+
+    /*!
     A handle to identify a vertex.
     */
     typedef unspecified_type Vertex_handle;
@@ -78,9 +83,14 @@ public:
     Point position(const Vertex_handle& v) const;
 
     /*!
-    Returns the stored value of vertex v
+    Returns the value of vertex v
     */
     FT value(const Vertex_handle& v) const;
+
+    /*!
+    (Optional) Returns the gradient at the position p
+    */
+    Vector gradient(const Point& p) const;
 
     /*!
     Returns the two vertices incident to edge e
