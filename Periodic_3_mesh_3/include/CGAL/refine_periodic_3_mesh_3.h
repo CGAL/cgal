@@ -208,9 +208,10 @@ In addition, if the domain has features, the argument
 `criteria` provides a sizing field to guide the discretization
 of 1-dimensional exposed features.
 
- \param c3t3 the mesh to be refined.
+\param c3t3 the mesh to be refined.
 \param domain the domain to be discretized
 \param criteria the criteria
+\param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
 The following four parameters are optional optimization parameters.
 They control which optimization processes are performed
