@@ -3,7 +3,6 @@
 #include <CGAL/Dual_contouring_3.h>
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/TC_marching_cubes_3.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -68,9 +67,8 @@ int main() {
     Polygon_range polygons_mc, polygons_tmc, polygons_dc;
 
     // execute marching cubes, topologically correct marching cubes and dual contouring with an isovalue of 0.8
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, 0.88, points_mc, polygons_mc);
-    CGAL::Isosurfacing::make_triangle_mesh_using_tmc(domain, 0.88, points_tmc, polygons_tmc);
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(domain, 0.88, points_dc, polygons_dc);
+    CGAL::Isosurfacing::marching_cubes(domain, 0.88, points_mc, polygons_mc);
+    CGAL::Isosurfacing::dual_contouring(domain, 0.88, points_dc, polygons_dc);
 
     // save the results in the OFF format
     CGAL::IO::write_OFF("result_mc.off", points_mc, polygons_mc);

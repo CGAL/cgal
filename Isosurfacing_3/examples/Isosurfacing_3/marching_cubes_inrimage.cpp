@@ -14,7 +14,7 @@ typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
 
-    const std::string fname = "../../../data/skull_2.9.inr";
+    const std::string fname = CGAL::data_file_path("skull_2.9.inr");  // TODO: get other examples with rights
 
     // load the image
     CGAL::Image_3 image;
@@ -34,7 +34,7 @@ int main() {
     Polygon_range polygons;
 
     // execute marching cubes with an isovalue of 2.9
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, 2.9, points, polygons);
+    CGAL::Isosurfacing::marching_cubes(domain, 2.9, points, polygons);
 
     // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);

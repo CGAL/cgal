@@ -72,8 +72,7 @@ int main() {
 
     {
         ScopeTimer timer;
-        CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring<CGAL::Parallel_tag>(implicit_domain, 0.8f, points,
-                                                                                     polygons);
+        CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_tag>(implicit_domain, 0.8f, points, polygons);
     }
 
     // TODO: compare results with mesh_3
