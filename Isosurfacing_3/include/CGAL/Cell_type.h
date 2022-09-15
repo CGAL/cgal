@@ -12,6 +12,7 @@
 #ifndef CGAL_DOMAIN_CELL_TYPE
 #define CGAL_DOMAIN_CELL_TYPE
 
+#include <CGAL/license/Isosurfacing_3.h>
 #include <limits>
 
 namespace CGAL {

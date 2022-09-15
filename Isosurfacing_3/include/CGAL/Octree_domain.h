@@ -12,6 +12,7 @@
 #ifndef CGAL_OCTREE_DOMAIN_H
 #define CGAL_OCTREE_DOMAIN_H
 
+#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Cell_type.h>
 #include <CGAL/Default_gradients.h>
 #include <CGAL/Octree_wrapper.h>

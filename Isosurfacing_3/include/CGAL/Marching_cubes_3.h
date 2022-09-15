@@ -12,6 +12,7 @@
 #ifndef CGAL_MARCHING_CUBES_3_H
 #define CGAL_MARCHING_CUBES_3_H
 
+#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/Marching_cubes_3_internal.h>
 #include <CGAL/tags.h>

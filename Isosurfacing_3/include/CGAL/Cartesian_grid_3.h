@@ -12,6 +12,7 @@
 #ifndef CGAL_CARTESIAN_GRID_3_H
 #define CGAL_CARTESIAN_GRID_3_H
 
+#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Image_3.h>
 
