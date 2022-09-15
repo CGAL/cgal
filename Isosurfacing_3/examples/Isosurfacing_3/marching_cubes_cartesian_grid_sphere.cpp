@@ -5,16 +5,14 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
-#include <tbb/concurrent_vector.h>
-
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::FT FT;
 typedef typename Kernel::Point_3 Point;
 
 typedef CGAL::Cartesian_grid_3<Kernel> Grid;
 
-typedef tbb::concurrent_vector<Point> Point_range;
-typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
+typedef std::vector<Point> Point_range;
+typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
     // create a cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3

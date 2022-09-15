@@ -2,11 +2,9 @@
 #include <CGAL/Cartesian_grid_domain.h>
 #include <CGAL/Dual_contouring_3.h>
 #include <CGAL/Marching_cubes_3.h>
-#include <CGAL/TC_marching_cubes_3.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/TC_marching_cubes_3.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-
-#include <tbb/concurrent_vector.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::FT FT;
@@ -15,8 +13,8 @@ typedef typename Kernel::Vector_3 Vector;
 
 typedef CGAL::Cartesian_grid_3<Kernel> Grid;
 
-typedef tbb::concurrent_vector<Point> Point_range;
-typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
+typedef std::vector<Point> Point_range;
+typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 FT sign(FT value) {
     return (value > 0) - (value < 0);
@@ -24,7 +22,7 @@ FT sign(FT value) {
 
 int main() {
     // create a cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
-    Grid grid(100, 100, 100, {-1, -1, -1, 1, 1, 1});
+    Grid grid(7, 7, 7, {-1, -1, -1, 1, 1, 1});
 
     // calculate the value at all grid points
     for (std::size_t x = 0; x < grid.xdim(); x++) {
@@ -37,28 +35,33 @@ int main() {
 
                 // manhattan distance to the origin
                 grid.value(x, y, z) = std::max({std::abs(pos_x), std::abs(pos_y), std::abs(pos_z)});
-
-                // the normal depends on the side of the cube
-                grid.gradient(x, y, z) = Vector(0, 0, 0);
-                if (grid.value(x, y, z) == std::abs(pos_x)) {
-                    grid.gradient(x, y, z) += Vector(sign(pos_x), 0, 0);
-                }
-                if (grid.value(x, y, z) == std::abs(pos_y)) {
-                    grid.gradient(x, y, z) += Vector(0, sign(pos_y), 0);
-                }
-                if (grid.value(x, y, z) == std::abs(pos_z)) {
-                    grid.gradient(x, y, z) += Vector(0, 0, sign(pos_z));
-                }
-                const FT length_sq = grid.gradient(x, y, z).squared_length();
-                if (length_sq > 0.00001) {
-                    grid.gradient(x, y, z) /= CGAL::approximate_sqrt(length_sq);
-                }
             }
         }
     }
 
+    auto cube_gradient = [](const Point& p) {
+        // the normal depends on the side of the cube
+        const FT max_value = std::max({std::abs(p.x()), std::abs(p.y()), std::abs(p.z())});
+
+        Vector g(0, 0, 0);
+        if (max_value == std::abs(p.x())) {
+            g += Vector(sign(p.x()), 0, 0);
+        }
+        if (max_value == std::abs(p.y())) {
+            g += Vector(0, sign(p.y()), 0);
+        }
+        if (max_value == std::abs(p.z())) {
+            g += Vector(0, 0, sign(p.z()));
+        }
+        const FT length_sq = g.squared_length();
+        if (length_sq > 0.00001) {
+            g /= CGAL::approximate_sqrt(length_sq);
+        }
+        return g;
+    };
+
     // create a domain from the grid
-    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
+    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel, decltype(cube_gradient)> domain(grid, cube_gradient);
 
     // prepare collections for the results
     Point_range points_mc, points_tmc, points_dc;
@@ -66,7 +69,7 @@ int main() {
 
     // execute marching cubes, topologically correct marching cubes and dual contouring with an isovalue of 0.8
     CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, 0.88, points_mc, polygons_mc);
-    //CGAL::Isosurfacing::make_triangle_mesh_using_tmc(domain, 0.88, points_tmc, polygons_tmc);
+    CGAL::Isosurfacing::make_triangle_mesh_using_tmc(domain, 0.88, points_tmc, polygons_tmc);
     CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(domain, 0.88, points_dc, polygons_dc);
 
     // save the results in the OFF format
