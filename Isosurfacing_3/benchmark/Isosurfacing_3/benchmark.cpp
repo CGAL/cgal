@@ -11,8 +11,6 @@
 #include <CGAL/boost/graph/IO/OFF.h>
 #include <math.h>
 
-#include <tbb/concurrent_vector.h>
-
 #include <iostream>
 #include <limits>
 
@@ -211,8 +209,8 @@ int main(int argc, char* argv[]) {
 
     typedef Kernel::Point_3 Point;
 
-    typedef tbb::concurrent_vector<Point> Point_range;
-    typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
+    typedef std::vector<Point> Point_range;
+    typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 #if defined SCENARIO_GRID_SPHERE
     std::cout << "SCENARIO_GRID_SPHERE" << std::endl;
