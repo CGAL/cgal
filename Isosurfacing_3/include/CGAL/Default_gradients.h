@@ -12,6 +12,8 @@
 #ifndef CGAL_DEFAULT_GRADIENT_H
 #define CGAL_DEFAULT_GRADIENT_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 namespace CGAL {
 namespace Isosurfacing {
 

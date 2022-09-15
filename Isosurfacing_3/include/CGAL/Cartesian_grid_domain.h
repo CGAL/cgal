@@ -12,6 +12,7 @@
 #ifndef CGAL_CARTESIAN_GRID_DOMAIN_H
 #define CGAL_CARTESIAN_GRID_DOMAIN_H
 
+#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Cartesian_grid_3.h>
 #include <CGAL/Cartesian_topology_base.h>
 #include <CGAL/Default_gradients.h>

@@ -10,8 +10,10 @@
 // Author(s)     : Daniel Zint
 //                 Julian Stahl
 
-#pragma once
+#ifndef CGAL_OCTREE_WRAPPER_H
+#define CGAL_OCTREE_WRAPPER_H
 
+#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
@@ -522,3 +524,5 @@ public:
 
 }  // namespace Isosurfacing
 }  // namespace CGAL
+
+#endif // CGAL_OCTREE_WRAPPER_H

@@ -12,6 +12,7 @@
 #ifndef CGAL_CARTESIAN_TOPOLOGY_BASE_H
 #define CGAL_CARTESIAN_TOPOLOGY_BASE_H
 
+#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 #include <CGAL/tags.h>

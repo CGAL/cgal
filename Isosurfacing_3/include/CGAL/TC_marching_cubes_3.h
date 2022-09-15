@@ -12,6 +12,7 @@
 #ifndef CGAL_TMC_3_H
 #define CGAL_TMC_3_H
 
+#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/Tmc_internal.h>
 #include <CGAL/tags.h>

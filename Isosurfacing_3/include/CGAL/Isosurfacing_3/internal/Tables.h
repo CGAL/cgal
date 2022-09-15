@@ -41,6 +41,8 @@
 #ifndef CGAL_MARCHING_CUBES_3_INTERNAL_TABLES_H
 #define CGAL_MARCHING_CUBES_3_INTERNAL_TABLES_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
