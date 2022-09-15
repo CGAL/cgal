@@ -1,3 +1,14 @@
+// Copyright (c) 2022 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Julian Stahl
+
 #ifndef CGAL_IMPLICIT_DOMAIN_H
 #define CGAL_IMPLICIT_DOMAIN_H
 
@@ -22,13 +33,13 @@ public:
     typedef typename Geom_traits::Vector_3 Grid_spacing;
 
 public:
-    Implicit_domain(const Bbox_3& domain, const Grid_spacing& spacing, const Function& func,
+    Implicit_domain(const Bbox_3& bbox, const Grid_spacing& spacing, const Function& func,
                     const Gradient& grad = Gradient())
-        : bbox(domain), spacing(spacing), func(&func), grad(&grad) {
+        : bbox(bbox), spacing(spacing), func(&func), grad(&grad) {
 
-        sizes[0] = domain.x_span() / spacing.x() + 1;
-        sizes[1] = domain.y_span() / spacing.y() + 1;
-        sizes[2] = domain.z_span() / spacing.z() + 1;
+        sizes[0] = bbox.x_span() / spacing.x() + 1;
+        sizes[1] = bbox.y_span() / spacing.y() + 1;
+        sizes[2] = bbox.z_span() / spacing.z() + 1;
     }
 
     Point position(const Vertex_handle& v) const {
@@ -36,8 +47,8 @@ public:
                      v[2] * spacing.z() + bbox.zmin());
     }
 
-    Vector gradient(const Vertex_handle& v) const {
-        return grad->operator()(position(v));
+    Vector gradient(const Point& p) const {
+        return grad->operator()(p);
     }
 
     FT value(const Vertex_handle& v) const {

@@ -1,3 +1,14 @@
+// Copyright (c) 2022 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Julian Stahl
+
 #ifndef CGAL_DEFAULT_GRADIENT_H
 #define CGAL_DEFAULT_GRADIENT_H
 
@@ -28,7 +39,7 @@ public:
 public:
     Finite_difference_gradient(const Function& func, const FT delta = 0.001) : func(&func), delta(delta) {}
 
-    Vector operator()(const Point& point) const {
+    Vector operator()(const Point& point) const {  // TODO
         const Point p0 = point + Vector(delta, 0, 0);
         const Point p1 = point - Vector(delta, 0, 0);
         const Point p2 = point + Vector(0, delta, 0);

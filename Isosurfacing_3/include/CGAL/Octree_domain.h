@@ -1,7 +1,19 @@
+// Copyright (c) 2022 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Julian Stahl
+
 #ifndef CGAL_OCTREE_DOMAIN_H
 #define CGAL_OCTREE_DOMAIN_H
 
 #include <CGAL/Cell_type.h>
+#include <CGAL/Default_gradients.h>
 #include <CGAL/Octree_wrapper.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -13,7 +25,7 @@
 namespace CGAL {
 namespace Isosurfacing {
 
-template <typename GeomTraits>
+template <typename GeomTraits, typename Gradient = Zero_gradient<GeomTraits>>
 class Octree_domain {
 public:
     typedef GeomTraits Geom_traits;
@@ -36,14 +48,14 @@ public:
     typedef std::array<Edge_handle, 12> Cell_edges;
 
 public:
-    Octree_domain(const Octree& octree) : octree_(&octree) {}
+    Octree_domain(const Octree& octree, const Gradient& grad = Gradient()) : octree_(&octree), grad(&grad) {}
 
     Point position(const Vertex_handle& v) const {
         return octree_->point(v);
     }
 
-    Vector gradient(const Vertex_handle& v) const {
-        return octree_->gradient(v);
+    Vector gradient(const Point& p) const {
+        return grad->operator()(p);
     }
 
     FT value(const Vertex_handle& v) const {
@@ -130,6 +142,8 @@ public:
 
 private:
     const Octree* octree_;
+
+    const Gradient* grad;
 };
 
 }  // namespace Isosurfacing
