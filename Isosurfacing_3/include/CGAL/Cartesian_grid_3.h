@@ -1,12 +1,23 @@
+// Copyright (c) 2022 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Julian Stahl
+
 #ifndef CGAL_CARTESIAN_GRID_3_H
 #define CGAL_CARTESIAN_GRID_3_H
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Image_3.h>
 
+#include <array>
 #include <type_traits>
 #include <vector>
-#include <array>
 
 namespace CGAL {
 
@@ -20,7 +31,7 @@ public:
 public:
     Cartesian_grid_3(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim, const Bbox_3 &bbox)
         : sizes{xdim, ydim, zdim}, bbox(bbox) {
-        
+
         values.resize(xdim * ydim * zdim);
         gradients.resize(xdim * ydim * zdim);
 
@@ -60,11 +71,11 @@ public:
         return sizes[2];
     }
 
-    const Bbox_3& get_bbox() const {
+    const Bbox_3 &get_bbox() const {
         return bbox;
     }
 
-    const Vector& get_spacing() const {
+    const Vector &get_spacing() const {
         return spacing;
     }
 
@@ -150,8 +161,8 @@ Image_3 Cartesian_grid_3<GeomTraits>::to_image() const {
     for (std::size_t x = 0; x < xdim(); x++) {
         for (std::size_t y = 0; y < ydim(); y++) {
             for (std::size_t z = 0; z < zdim(); z++) {
-                
-               data[(z * ydim() + y) * xdim() + x] = value(x, y, z);
+
+                data[(z * ydim() + y) * xdim() + x] = value(x, y, z);
             }
         }
     }
