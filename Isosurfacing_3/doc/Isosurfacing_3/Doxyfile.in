@@ -1,3 +1,9 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Isosurfacing"
+
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/bunny_offset.gif \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/mc_cases.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/iwp_dc.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/cube_mc_dc.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/perf_threads_iwp_mc.svg
