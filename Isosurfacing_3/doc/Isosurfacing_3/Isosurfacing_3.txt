@@ -55,14 +55,14 @@ Furthermore, the mesh is guaranteed to be manifold and watertight, as long as th
 TODO examples
 
 \subsection subsecdc Dual Contouring (DC)
-DC creates one vertex in every cell that is intersected by the isosurface. 
-Next, a face is created for each edge that intersects the isosurface, by connecting the vertices of the incident cells. 
+DC creates one vertex in every cell that is intersected by the isosurface.
+Next, a face is created for each edge that intersects the isosurface, by connecting the vertices of the incident cells.
 For a uniform hexahedral grid, this results in a quadrilateral mesh.
 
 The classical DC method requires the gradient of the scalar field. It is passed to the method as an additional parameter in the form of a functor.
 The default argument for this parameter assumes the gradient to be zero. Thus, for using the classical DC, the gradient has to be defined by the user.
 
-Different versions of DC compute the vertex positions differently. Therefore, the vertex positioning is configurable with an optional parameter. 
+Different versions of DC compute the vertex positions differently. Therefore, the vertex positioning is configurable with an optional parameter.
 Some of them do not require the gradient and therefore even work with the zero gradient.
 
 Dual Contouring works on any domain but does not guarantee a manifold or watertight mesh.
