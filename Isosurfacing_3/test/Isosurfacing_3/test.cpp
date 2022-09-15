@@ -11,7 +11,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/TC_marching_cubes_3.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-
 #include <tbb/concurrent_vector.h>
 
 #include "Timer.h"
@@ -27,21 +26,23 @@ typedef tbb::concurrent_vector<Point> Point_range;
 typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
-    const Vector spacing(0.002f, 0.002f, 0.02f);
+    const Vector spacing(0.002, 0.002, 0.02);
     const CGAL::Bbox_3 bbox = {-1, -1, -1, 1, 1, 1};
 
     auto sphere_function = [](const Point& point) {
         return std::sqrt(point.x() * point.x() + point.y() * point.y() + point.z() * point.z());
     };
-    CGAL::Isosurfacing::Implicit_domain<
-        Kernel, decltype(sphere_function),
-        decltype(CGAL::Isosurfacing::Default_gradient<Kernel, decltype(sphere_function)>(sphere_function))>
-        implicit_domain({-1, -1, -1, 1, 1, 1}, spacing, sphere_function,
-                        CGAL::Isosurfacing::Default_gradient<Kernel, decltype(sphere_function)>(
-                            sphere_function));  // TODO: this is ugly
 
+    typedef CGAL::Isosurfacing::Finite_difference_gradient<Kernel, decltype(sphere_function)> Gradient;
 
-    Grid grid(2.f / spacing.x(), 2.f / spacing.y(), 2.f / spacing.z(), bbox);
+    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(sphere_function), Gradient> implicit_domain(
+        {-1, -1, -1, 1, 1, 1}, spacing, sphere_function, Gradient(sphere_function, 0.0001));  // TODO: this is ugly
+
+    const std::size_t nx = static_cast<std::size_t>(2.0 / spacing.x());
+    const std::size_t ny = static_cast<std::size_t>(2.0 / spacing.y());
+    const std::size_t nz = static_cast<std::size_t>(2.0 / spacing.z());
+
+    Grid grid(nx, ny, nz, bbox);
 
     for (std::size_t x = 0; x < grid.xdim(); x++) {
         for (std::size_t y = 0; y < grid.ydim(); y++) {
@@ -71,15 +72,15 @@ int main() {
 
     {
         ScopeTimer timer;
-        CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<CGAL::Parallel_tag>(implicit_domain, 0.8f, points,
-                                                                                        polygons);
+        CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring<CGAL::Parallel_tag>(implicit_domain, 0.8f, points,
+                                                                                     polygons);
     }
 
     // TODO: compare results with mesh_3
 
-    //Mesh mesh;
-    //CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
+    // Mesh mesh;
+    // CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
 
-    //CGAL::IO::write_OFF("result.off", mesh);
+    // CGAL::IO::write_OFF("result.off", mesh);
     CGAL::IO::write_OFF("result.off", points, polygons);
 }
