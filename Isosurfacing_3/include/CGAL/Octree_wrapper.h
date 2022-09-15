@@ -326,6 +326,7 @@ public:
     /// <param name="i_idx">i-index of cell</param>
     /// <param name="j_idx">j-index of cell</param>
     /// <param name="k_idx">k-index of cell</param>
+    /// <param name="depth">depth of cell</param>
     /// <returns></returns>
     std::size_t e_glIndex(const std::size_t& e, const std::size_t& i_idx, const std::size_t& j_idx,
                           const std::size_t& k_idx, const std::size_t& depth) const {
