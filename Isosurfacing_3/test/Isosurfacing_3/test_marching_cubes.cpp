@@ -13,8 +13,7 @@ struct Sphere_function {
 
 template <class Domain_>
 void run(const Domain_& domain, const FT iso_value, Point_range& points, Polygon_range& polygons) {
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<CGAL::Parallel_tag>(domain, iso_value, points,
-                                                                                    polygons);
+    CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_tag>(domain, iso_value, points, polygons);
 }
 
 void test_implicit_sphere() {

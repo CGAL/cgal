@@ -40,7 +40,7 @@ int main() {
     Point_range points;
     Polygon_range polygons;
 
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(domain, 0.8, points, polygons);
+    CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
 
     CGAL::IO::write_OFF("result.off", points, polygons);
 }

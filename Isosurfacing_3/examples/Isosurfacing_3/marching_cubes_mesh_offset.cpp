@@ -35,7 +35,7 @@ inline Kernel::FT distance_to_mesh(const Tree& tree, const Point& p) {
 }
 
 int main() {
-    const std::string input_name = "../../../data/bunny.off";
+    const std::string input_name = CGAL::data_file_path("bunny.off");
     const int n_voxels = 20;
     const FT offset_value = -0.03;
 
@@ -89,7 +89,7 @@ int main() {
     Polygon_range polygons;
 
     // execute marching cubes with an isovalue equal to the offset
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, offset_value, points, polygons);
+    CGAL::Isosurfacing::marching_cubes(domain, offset_value, points, polygons);
 
     // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);

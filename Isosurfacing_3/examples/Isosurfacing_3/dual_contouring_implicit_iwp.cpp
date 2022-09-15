@@ -45,7 +45,7 @@ int main() {
     Polygon_range polygons;
 
     // execute marching cubes with an isovalue of 0
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(domain, 0.0f, points, polygons);
+    CGAL::Isosurfacing::dual_contouring(domain, 0.0f, points, polygons);
 
     // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);

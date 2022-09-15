@@ -41,7 +41,7 @@ int main() {
     Polygon_range polygons;
 
     // execute marching cubes with an isovalue of 0.8
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, 0.8f, points, polygons);
+    CGAL::Isosurfacing::marching_cubes(domain, 0.8f, points, polygons);
 
     // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);

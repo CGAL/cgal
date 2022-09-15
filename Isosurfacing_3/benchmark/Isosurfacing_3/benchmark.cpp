@@ -247,15 +247,13 @@ int main(int argc, char* argv[]) {
 
 #if defined ALGO_MARCHING_CUBES
     std::cout << "ALGO_MARCHING_CUBES" << std::endl;
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<Tag>(scenario.domain(), scenario.iso(), points,
-                                                                     polygons);
+    CGAL::Isosurfacing::marching_cubes<Tag>(scenario.domain(), scenario.iso(), points, polygons, false);
 #elif defined ALGO_DUAL_CONTOURING
     std::cout << "ALGO_DUAL_CONTOURING" << std::endl;
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring<Tag>(scenario.domain(), scenario.iso(), points, polygons);
+    CGAL::Isosurfacing::dual_contouring<Tag>(scenario.domain(), scenario.iso(), points, polygons);
 #else
     std::cout << "no algorithm selected!" << std::endl;
-    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes<Tag>(scenario.domain(), scenario.iso(), points,
-                                                                     polygons);
+    CGAL::Isosurfacing::marching_cubes<Tag>(scenario.domain(), scenario.iso(), points, polygons);
 #endif
 
     const int64_t ms = timer.stop();

@@ -25,7 +25,7 @@ typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
-    const std::string input_name = "../../../data/bunny.off";
+    const std::string input_name = CGAL::data_file_path("bunny.off");
     const Vector grid_spacing(0.005, 0.005, 0.005);
     const FT offset_value = 0.01;
 
@@ -65,7 +65,7 @@ int main() {
     Point_range points;
     Polygon_range polygons;
 
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(domain, offset_value, points, polygons);
+    CGAL::Isosurfacing::dual_contouring(domain, offset_value, points, polygons);
 
     CGAL::IO::write_OFF("result.off", points, polygons);
 }
