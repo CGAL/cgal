@@ -13,9 +13,9 @@
 #ifndef CGAL_DUAL_CONTOURING_3_H
 #define CGAL_DUAL_CONTOURING_3_H
 
-#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/Dual_contouring_internal.h>
+#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/tags.h>
 
 namespace CGAL {
@@ -23,9 +23,8 @@ namespace Isosurfacing {
 
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange,
           class Positioning = internal::Positioning::QEM_SVD<true>>
-void make_quad_mesh_using_dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value,
-                                          PointRange& points, PolygonRange& polygons,
-                                          const Positioning& positioning = Positioning()) {
+void dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value, PointRange& points,
+                     PolygonRange& polygons, const Positioning& positioning = Positioning()) {
 
     // static_assert(Domain_::CELL_TYPE & ANY_CELL);
 
