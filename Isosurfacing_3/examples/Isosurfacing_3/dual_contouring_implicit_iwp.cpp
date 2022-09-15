@@ -2,15 +2,14 @@
 #include <CGAL/Implicit_domain.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-#include <tbb/concurrent_vector.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::FT FT;
 typedef typename Kernel::Vector_3 Vector;
 typedef typename Kernel::Point_3 Point;
 
-typedef tbb::concurrent_vector<Point> Point_range;
-typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
+typedef std::vector<Point> Point_range;
+typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884L

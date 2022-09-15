@@ -1,19 +1,16 @@
 #include <CGAL/Cartesian_grid_3.h>
 #include <CGAL/Cartesian_grid_domain.h>
-#include <CGAL/Dual_contouring_3.h>
+#include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
-#include <tbb/concurrent_vector.h>
-
 typedef CGAL::Simple_cartesian<double> Kernel;
-typedef typename Kernel::FT FT;
 typedef typename Kernel::Point_3 Point;
 
 typedef CGAL::Cartesian_grid_3<Kernel> Grid;
 
-typedef tbb::concurrent_vector<Point> Point_range;
-typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
+typedef std::vector<Point> Point_range;
+typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
 
@@ -37,7 +34,7 @@ int main() {
     Polygon_range polygons;
 
     // execute marching cubes with an isovalue of 2.9
-    CGAL::Isosurfacing::make_quad_mesh_using_dual_contouring(domain, 2.9, points, polygons);
+    CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes(domain, 2.9, points, polygons);
 
     // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);

@@ -32,7 +32,7 @@ struct Refine_one_eighth {
         auto coords = node.global_coordinates();
         const std::size_t depth_factor = std::size_t(1) << (max_depth_ - node.depth());
         for (int i = 0; i < Octree_wrapper_::Octree::Node::Dimension::value; ++i) {
-            coords[i] *= (uint32_t) depth_factor;
+            coords[i] *= (uint32_t)depth_factor;
         }
 
         return coords;

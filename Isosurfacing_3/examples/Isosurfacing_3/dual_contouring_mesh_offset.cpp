@@ -1,9 +1,8 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Cartesian_grid_domain.h>
 #include <CGAL/Dual_contouring_3.h>
+#include <CGAL/Implicit_domain.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
@@ -16,8 +15,6 @@ typedef typename Kernel::FT FT;
 typedef typename Kernel::Point_3 Point;
 typedef typename Kernel::Vector_3 Vector;
 
-typedef CGAL::Cartesian_grid_3<Kernel> Grid;
-
 typedef CGAL::Surface_mesh<Point> Mesh;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
@@ -27,14 +24,9 @@ typedef CGAL::AABB_tree<Traits> Tree;
 typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
-inline Kernel::FT distance_to_mesh(const Tree& tree, const Point& p) {
-    const Point& x = tree.closest_point(p);
-    return std::sqrt((p - x).squared_length());
-}
-
 int main() {
-    const std::string input_name = "../data/bunny.off";
-    const int n_voxels = 20;
+    const std::string input_name = "../../../data/bunny.off";
+    const Vector grid_spacing(0.005, 0.005, 0.005);
     const FT offset_value = 0.01;
 
     Mesh mesh_input;
@@ -54,30 +46,21 @@ int main() {
 
     CGAL::Side_of_triangle_mesh<Mesh, CGAL::GetGeomTraits<Mesh>::type> sotm(mesh_input);
 
-    Grid grid(n_voxels, n_voxels, n_voxels, aabb_grid);
 
-    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
+    auto mesh_distance = [&tree](const Point& p) {
+        const Point& x = tree.closest_point(p);
+        return std::sqrt((p - x).squared_length());
+    };
 
-    for (std::size_t z = 0; z < grid.zdim(); z++) {
-        for (std::size_t y = 0; y < grid.ydim(); y++) {
-            for (std::size_t x = 0; x < grid.xdim(); x++) {
+    auto mesh_normal = [&tree](const Point& p) {
+        const Point& x = tree.closest_point(p);
+        const Vector n = p - x;
+        return n / std::sqrt(n.squared_length());
+    };
 
-                const FT pos_x = x * grid.get_spacing()[0] + grid.get_bbox().xmin();
-                const FT pos_y = y * grid.get_spacing()[1] + grid.get_bbox().ymin();
-                const FT pos_z = z * grid.get_spacing()[2] + grid.get_bbox().zmin();
-                const Point p(pos_x, pos_y, pos_z);
-
-                grid.value(x, y, z) = distance_to_mesh(tree, p);
-
-                // const bool is_inside = (sotm(p) == CGAL::ON_BOUNDED_SIDE);
-                // if (is_inside) {
-                //    grid.value(x, y, z) *= -1;
-                //}
-
-                // TODO: mormals
-            }
-        }
-    }
+    // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
+    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(mesh_distance), decltype(mesh_normal)> domain(
+        aabb_grid, grid_spacing, mesh_distance, mesh_normal);
 
     Point_range points;
     Polygon_range polygons;

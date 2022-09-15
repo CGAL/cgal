@@ -3,14 +3,13 @@
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-#include <tbb/concurrent_vector.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::Vector_3 Vector;
 typedef typename Kernel::Point_3 Point;
 
-typedef tbb::concurrent_vector<Point> Point_range;
-typedef tbb::concurrent_vector<std::vector<std::size_t>> Polygon_range;
+typedef std::vector<Point> Point_range;
+typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
     // distance to the origin
