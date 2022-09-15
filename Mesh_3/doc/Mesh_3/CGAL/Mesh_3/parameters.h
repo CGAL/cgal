@@ -98,7 +98,7 @@ unspecified_type exude(
 /*!
 \ingroup PkgMesh3Parameters
 
-The function `parameters::features()` can be used to specify 
+The function `parameters::features()` can be used to specify
 that 0 and 1-dimensional features have to be taken into account.
 The provided value is a default value that triggers the representation
 of corners and curves in the mesh when the domain is a model
