@@ -506,8 +506,9 @@ From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
         {
             static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::image_3_param_t>::value, "Value for required parameter not found");
             using parameters::get_parameter;
+            using parameters::get_parameter_reference;
             using parameters::choose_parameter;
-            const CGAL::Image_3& image_ = get_parameter(np,internal_np::image_3_param);
+            const CGAL::Image_3& image_ = get_parameter_reference(np,internal_np::image_3_param);
             auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
             auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
             FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
@@ -597,6 +598,7 @@ where the labeled image is used with a precomputed 3D image of weights :
         static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
         {
             using parameters::get_parameter;
+            using parameters::get_parameter_reference;
             using parameters::choose_parameter;
             auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), FT(0));
             auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), FT(0));
@@ -605,9 +607,10 @@ where the labeled image is used with a precomputed 3D image of weights :
             CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), (CGAL::Random*)(0));
             auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
             auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
-            CGAL::Image_3 weights_ = choose_parameter(get_parameter(np, internal_np::weights_param), CGAL::Image_3());
+            const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), CGAL::Image_3());
             CGAL_USE(iso_value_);
             namespace p = CGAL::parameters;
+
             if (weights_.is_valid())
             {
                 return Labeled_mesh_domain_3
@@ -645,8 +648,9 @@ where the labeled image is used with a precomputed 3D image of weights :
         {
             static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::image_3_param_t>::value, "Value for required parameter not found");
             using parameters::get_parameter;
+            using parameters::get_parameter_reference;
             using parameters::choose_parameter;
-            const CGAL::Image_3& image_ = get_parameter(np,internal_np::image_3_param);
+            const CGAL::Image_3& image_ = get_parameter_reference(np,internal_np::image_3_param);
             auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), FT(0));
             auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), FT(0));
             FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
@@ -654,7 +658,7 @@ where the labeled image is used with a precomputed 3D image of weights :
             CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), (CGAL::Random*)(0));
             auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
             auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
-            CGAL::Image_3 weights_ = choose_parameter(get_parameter(np, internal_np::weights_param), CGAL::Image_3());
+            const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), CGAL::Image_3());
 
             namespace p = CGAL::parameters;
             if (weights_.is_valid())

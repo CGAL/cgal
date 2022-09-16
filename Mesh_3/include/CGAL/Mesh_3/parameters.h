@@ -12,9 +12,7 @@
 #define CGAL_MESH_3_PARAMETERS_H
 
 #include <CGAL/license/Mesh_3.h>
-#include <CGAL/disable_warnings.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/optimize_mesh_3.h>
 
 namespace CGAL {
 

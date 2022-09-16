@@ -48,10 +48,13 @@ enum all_default_t { all_default };
   enum X { Y };
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)            \
   enum X { Y };
+#define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)            \
+  enum X { Y };
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_named_parameter_with_compatibility_ref_only
 #undef CGAL_add_extra_named_parameter_with_compatibility
 
 template <typename T, typename Tag, typename Base>
@@ -271,6 +274,16 @@ struct Named_function_parameters
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
     return Params(k, *this);                                          \
   }
+#define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z) \
+  template<typename K>                                                \
+  Named_function_parameters<std::reference_wrapper<const K>,          \
+                            internal_np::X, self>                     \
+  Z(const K& k) const                                                 \
+  {                                                                   \
+    typedef Named_function_parameters<std::reference_wrapper<const K>,\
+                                      internal_np::X, self> Params;   \
+    return Params(std::cref(k), *this);                               \
+  }
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)    \
   template<typename K>                                                \
   Named_function_parameters<K, internal_np::X, self>                  \
@@ -282,6 +295,7 @@ struct Named_function_parameters
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_named_parameter_with_compatibility_ref_only
 #undef CGAL_add_extra_named_parameter_with_compatibility
 
   template <typename OT, typename OTag>
@@ -325,7 +339,7 @@ inline no_parameters(Named_function_parameters<T,Tag,Base>)
   return Params();
 }
 
-template <class Tag>
+template <class Tag, bool ref_only = false>
 struct Boost_parameter_compatibility_wrapper
 {
   template <typename K>
@@ -345,6 +359,26 @@ struct Boost_parameter_compatibility_wrapper
   }
 };
 
+template <class Tag>
+struct Boost_parameter_compatibility_wrapper<Tag, true>
+{
+  template <typename K>
+  Named_function_parameters<std::reference_wrapper<const K>, Tag>
+  operator()(const K& p) const
+  {
+    typedef Named_function_parameters<std::reference_wrapper<const K>, Tag> Params;
+    return Params(std::cref(p));
+  }
+
+  template <typename K>
+  Named_function_parameters<std::reference_wrapper<const K>, Tag>
+  operator=(const K& p) const
+  {
+    typedef Named_function_parameters<std::reference_wrapper<const K>, Tag> Params;
+    return Params(std::cref(p));
+  }
+};
+
 // define free functions and Boost_parameter_compatibility_wrapper for named parameters
 #define CGAL_add_named_parameter(X, Y, Z)        \
   template <typename K>                        \
@@ -357,12 +391,15 @@ struct Boost_parameter_compatibility_wrapper
 // TODO: need to make sure this works when using several compilation units
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
   const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+#define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)        \
+  const Boost_parameter_compatibility_wrapper<internal_np::X, true> Z;
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)        \
   const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_extra_named_parameter_with_compatibility
 #undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_named_parameter_with_compatibility_ref_only
 
 // function to extract a parameter
 template <typename T, typename Tag, typename Base, typename Query_tag>
