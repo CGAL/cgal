@@ -21,6 +21,28 @@
 namespace CGAL {
 namespace Isosurfacing {
 
+/**
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \brief Creates an indexed face set that represents an isosurface using the Dual Contouring algorithm.
+ *
+ * \details
+ *
+ * \tparam ConcurrencyTag determines if the algorithm is executed sequentially or in parallel.
+ *
+ * \tparam Domain_ must be a model of `IsosurfacingDomain`.
+ *
+ * \tparam PointRange is a model of the concept `RandomAccessContainer` and `BackInsertionSequence` whose value type can
+ * be constructed from the point type of the polygon mesh.
+ * \tparam PolygonRange a model of the concept
+ * `RandomAccessContainer` and `BackInsertionSequence` whose value type is itself a model of the concepts
+ * `RandomAccessContainer` and `BackInsertionSequence` whose value type is `std::size_t`.
+ *
+ * \param domain the domain providing input data and its topology
+ * \param iso_value value of the isosurface
+ * \param points points making the polygons of the indexed face set
+ * \param polygons each element in the vector describes a polygon using the indices of the points in points
+ */
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange,
           class Positioning = internal::Positioning::QEM_SVD<true>>
 void dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value, PointRange& points,
