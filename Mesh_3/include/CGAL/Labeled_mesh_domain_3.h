@@ -542,7 +542,20 @@ From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
         {
             return create_gray_image_mesh_domain(internal_np::combine_named_parameters(nps...));
         }
-
+        template<typename SubdomainIndex = Null_functor>
+        static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_,
+                                                                   double iso_value=0,
+                                                                   double value_outside=0,
+                                                                   double relative_error_bound = 1e-3,
+                                                                   CGAL::Random* rng = nullptr,
+                                                                   SubdomainIndex image_values_to_subdom_indices = SubdomainIndex())
+        {
+            return create_gray_image_mesh_domain(image_, parameters::iso_value(iso_value)
+                                                                    .image_values_to_subdomain_indices(image_values_to_subdom_indices)
+                                                                    .value_outside(value_outside)
+                                                                    .relative_error_bound(relative_error_bound)
+                                                                    .p_rng(rng));
+        }
 
         /*!
          * \brief Construction from a 3D labeled image
