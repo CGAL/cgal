@@ -12,6 +12,8 @@
 #define CGAL_MESH_3_PARAMETERS_H
 
 #include <CGAL/license/Mesh_3.h>
+#include <CGAL/Mesh_error_code.h>
+#include <CGAL/Mesh_3/parameters_defaults.h>
 #include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
