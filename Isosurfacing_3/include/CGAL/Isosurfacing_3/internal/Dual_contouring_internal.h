@@ -19,7 +19,7 @@
 #include <CGAL/Origin.h>
 
 #include <array>
-#include <eigen3/Eigen/SVD>
+#include <Eigen/SVD>
 #include <map>
 #include <mutex>
 #include <vector>

@@ -48,7 +48,7 @@ void marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
     // static_assert(Domain_::CELL_TYPE & CUBICAL_CELL);
 
     if (topologically_correct) {
-        internal::TMC_functor<Domain_, PointRange, PolygonRange> functor(domain, iso_value, points, polygons);
+        internal::TMC_functor<Domain_, PointRange, TriangleRange> functor(domain, iso_value, points, polygons);
         domain.iterate_cells(functor, Concurrency_tag());
     } else {
         internal::Marching_cubes_functor<Domain_> functor(domain, iso_value);
