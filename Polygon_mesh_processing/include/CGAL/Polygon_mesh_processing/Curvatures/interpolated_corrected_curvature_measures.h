@@ -18,6 +18,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -28,9 +29,30 @@
 #include <unordered_set>
 #include <functional>
 
+#define EXPANDING_RADIUS_EPSILON 1e-6
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
+
+namespace internal {
+
+template<typename PolygonMesh, typename GT>
+typename GT::FT average_edge_length(const PolygonMesh& pmesh)
+{
+    const std::size_t n = edges(pmesh).size();
+    if (n == 0)
+        return 0;
+
+    GT::FT avg_edge_length = 0;
+    for (auto e : edges(pmesh))
+        avg_edge_length += edge_length(e, pmesh);
+
+    avg_edge_length /= n;
+    return avg_edge_length;   
+}
+
+}
 
 /*!
  * \ingroup PMP_corrected_curvatures_grp
@@ -63,7 +85,7 @@ template<typename GT>
 typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typename GT::Vector_3>& u,
                                                          const std::vector<typename GT::Vector_3>& x = {})
 {
-    std::size_t n = x.size();
+    const std::size_t n = x.size();
     CGAL_precondition(u.size() == n);
     CGAL_precondition(n >= 3);
 
@@ -132,7 +154,7 @@ template<typename GT>
 typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::vector<typename GT::Vector_3>& u,
                                                                    const std::vector<typename GT::Vector_3>& x = {})
 {
-    std::size_t n = x.size();
+    const std::size_t n = x.size();
     CGAL_precondition(u.size() == n);
     CGAL_precondition(n >= 3);
 
@@ -212,7 +234,7 @@ template<typename GT>
 typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std::vector<typename GT::Vector_3>& u,
                                                                        const std::vector<typename GT::Vector_3>& x = {})
 {
-    std::size_t n = u.size();
+    const std::size_t n = u.size();
     CGAL_precondition(n >= 3);
 
     typename GT::Construct_cross_product_vector_3 cross_product;
@@ -274,7 +296,7 @@ template<typename GT>
 std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_face(const std::vector<typename GT::Vector_3>& u,
                                                                                    const std::vector<typename GT::Vector_3>& x)
 {
-    std::size_t n = x.size();
+    const std::size_t n = x.size();
     CGAL_precondition(u.size() == n);
     CGAL_precondition(n >= 3);
 
@@ -636,7 +658,7 @@ typename GT::FT face_in_ball_ratio(const std::vector<typename GT::Vector_3>& x,
                                    const typename GT::FT r,
                                    const typename GT::Vector_3 c)
 {
-    std::size_t n = x.size();
+    const std::size_t n = x.size();
 
     // getting center of points
     typename GT::Vector_3 xm =
@@ -726,8 +748,8 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexMeasureMa
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-    const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
-        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0.1);
+    const typename GT::FT
+        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0);
 
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
@@ -849,8 +871,8 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-    const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
-        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0.01);
+    const typename GT::FT
+        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0);
 
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
@@ -938,6 +960,9 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         VertexCurvatureMap vcm,
         const NamedParameters& np = parameters::default_values())
 {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
 
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -945,6 +970,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef std::unordered_map<vertex_descriptor, typename GT::FT> VertexMeasureMap_tag;
+
+    typename GT::FT
+        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0);
+
+    if (r == 0)
+        r = internal::average_edge_length<PolygonMesh, GT>(pmesh) * EXPANDING_RADIUS_EPSILON;
 
     FaceMeasureMap_tag mu0_init, mu1_init;
     boost::associative_property_map<FaceMeasureMap_tag>
@@ -959,7 +990,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu1_map, mu0_expand_map, mu1_expand_map, v, np);
+        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu1_map, mu0_expand_map, mu1_expand_map, v, CGAL::parameters::ball_radius(r));
 
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
@@ -996,6 +1027,9 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
         VertexCurvatureMap vcm,
         const NamedParameters& np = parameters::default_values())
 {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
 
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -1003,6 +1037,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef std::unordered_map<vertex_descriptor, typename GT::FT> VertexMeasureMap_tag;
+
+    typename GT::FT
+        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0);
+
+    if (r == 0)
+        r = internal::average_edge_length<PolygonMesh, GT>(pmesh) * EXPANDING_RADIUS_EPSILON;
 
     FaceMeasureMap_tag mu0_init, mu2_init;
     boost::associative_property_map<FaceMeasureMap_tag>
@@ -1017,7 +1057,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu2_map, mu0_expand_map, mu2_expand_map, v, np);
+        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu2_map, mu0_expand_map, mu2_expand_map, v, CGAL::parameters::ball_radius(r));
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         if(v_mu0 != 0.0)
@@ -1097,8 +1137,16 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
         get(Vector_map_tag(), pmesh));
 
+    typename GT::FT
+        r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0);
+
+    if (r == 0)
+        r = internal::average_edge_length<PolygonMesh, GT>(pmesh) * EXPANDING_RADIUS_EPSILON;
+
     if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
         compute_vertex_normals(pmesh, vnm, np);
+
+
 
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef std::unordered_map<face_descriptor, typename GT::FT> FaceScalarMeasureMap_tag;
@@ -1132,7 +1180,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, mu0_map, muXY_map, mu0_expand_map, muXY_expand_map, v, np);
+        expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, mu0_map, muXY_map, mu0_expand_map, muXY_expand_map, v, CGAL::parameters::ball_radius(r));
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         Eigen::Matrix<typename GT::FT, 3, 3> v_muXY = get(muXY_expand_map, v);
