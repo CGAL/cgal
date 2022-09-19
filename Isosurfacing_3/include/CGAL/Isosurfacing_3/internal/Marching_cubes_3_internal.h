@@ -43,7 +43,9 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_vector.h>
+#endif
 
 #include <array>
 #include <atomic>
@@ -170,7 +172,11 @@ private:
     typedef typename Domain::Point Point;
     typedef typename Domain::Cell_handle Cell_handle;
 
+#ifdef CGAL_LINKED_WITH_TBB
     typedef tbb::concurrent_vector<std::array<Point, 3>> Triangle_list;
+#else
+    typedef std::vector<std::array<Point, 3>> Triangle_list;
+#endif
 
 public:
     Marching_cubes_functor(const Domain& domain, const FT iso_value) : domain(domain), iso_value(iso_value) {}
