@@ -37,11 +37,14 @@ namespace Isosurfacing {
  * \tparam PolygonRange a model of the concept
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is itself a model of the concepts
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is `std::size_t`.
+ * \tparam Positioning is a functor containing the operator() that takes `domain`, `iso_value`, `cell`, and `position` as input
+ * and returns a boolean that is true if the isosurface intersects the cell.
  *
  * \param domain the domain providing input data and its topology
  * \param iso_value value of the isosurface
  * \param points points making the polygons of the indexed face set
  * \param polygons each element in the vector describes a polygon using the indices of the points in points
+ * \param positioning the functor dealing with vertex positioning inside a voxel
  */
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange,
           class Positioning = internal::Positioning::QEM_SVD<true>>
