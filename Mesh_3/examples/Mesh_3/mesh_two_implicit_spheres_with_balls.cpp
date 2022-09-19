@@ -61,8 +61,8 @@ int main()
 {
   // Domain (Warning: Sphere_3 constructor uses squared radius !)
   Mesh_domain domain =
-    Mesh_domain::create_implicit_mesh_domain(sphere_function,
-                                             K::Sphere_3(Point(1, 0, 0), 6.));
+    Mesh_domain::create_implicit_mesh_domain(function = sphere_function,
+                                             bounding_object = K::Sphere_3(Point(1, 0, 0), 6.));
 
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.15,
