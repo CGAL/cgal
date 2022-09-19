@@ -68,8 +68,6 @@ public:
 
         typename Domain_::Cell_vertices vertices = domain.cell_vertices(cell);
 
-        namespace Tables = internal::Cube_table;
-
         std::vector<Point> pos(vertices.size());
         std::transform(vertices.begin(), vertices.end(), pos.begin(),
                        [&](const auto& v) { return domain.position(v); });
