@@ -20,6 +20,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 #include <type_traits>
 #include <utility>
@@ -311,6 +312,9 @@ struct Named_function_parameters
   {
     return Named_function_parameters<OT, OTag, self>(np.v,*this).combine(nps...);
   }
+
+  // typedef for SFINAE
+  typedef int CGAL_Named_function_parameters_class;
 };
 
 namespace parameters {
@@ -521,5 +525,10 @@ namespace boost
   }
 }
 #endif
+
+// For disambiguation using SFINAR
+BOOST_MPL_HAS_XXX_TRAIT_DEF(CGAL_Named_function_parameters_class)
+template<class T>
+CGAL_CPP17_INLINE constexpr bool is_named_function_parameter = has_CGAL_Named_function_parameters_class<T>::value;
 
 #endif // CGAL_BOOST_FUNCTION_PARAMS_HPP
