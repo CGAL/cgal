@@ -165,6 +165,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
   }
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 #ifndef DOXYGEN_RUNNING
   template<typename CDT, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
   Mesh_optimization_return_code
@@ -183,6 +184,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
   * (and any other type could).
   */
   template<typename CDT>
+  CGAL_DEPRECATED
   Mesh_optimization_return_code
   lloyd_optimize_mesh_2_impl(CDT& cdt,
                              const int max_iterations,
@@ -199,6 +201,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
   }
 
   template<typename CDT, typename InputIterator>
+  CGAL_DEPRECATED
   Mesh_optimization_return_code
   lloyd_optimize_mesh_2_impl(CDT& cdt,
                              const int max_iterations,
@@ -242,7 +245,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
     return rc;
   }
 #endif // DOXYGEN_RUNNING
-
+#endif // CGAL_NO_DEPRECATED_CODE
 } //end namespace CGAL
 
 #endif
