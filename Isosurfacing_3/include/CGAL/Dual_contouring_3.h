@@ -37,8 +37,8 @@ namespace Isosurfacing {
  * \tparam PolygonRange a model of the concept
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is itself a model of the concepts
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is `std::size_t`.
- * \tparam Positioning is a functor containing the operator() that takes `domain`, `iso_value`, `cell`, and `position` as input
- * and returns a boolean that is true if the isosurface intersects the cell.
+ * \tparam Positioning is a functor containing the operator() that takes `domain`, `iso_value`, `cell`, and `position`
+ * as input and returns a boolean that is true if the isosurface intersects the cell.
  *
  * \param domain the domain providing input data and its topology
  * \param iso_value value of the isosurface
@@ -69,9 +69,13 @@ void dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value
     for (const auto& q : quad_func.quads) {
         std::vector<std::size_t> vertex_ids;
         for (const auto& v_id : q.second) {
-            vertex_ids.push_back(pos_func.map_voxel_to_point_id[v_id]);
+            if (pos_func.map_voxel_to_point_id.count(v_id) > 0) {
+                vertex_ids.push_back(pos_func.map_voxel_to_point_id[v_id]);
+            }
         }
-        polygons.push_back(vertex_ids);
+        if (vertex_ids.size() > 2) {
+            polygons.push_back(vertex_ids);
+        }
     }
 }
 
