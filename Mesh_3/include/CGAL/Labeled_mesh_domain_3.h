@@ -542,13 +542,17 @@ From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
         {
             return create_gray_image_mesh_domain(internal_np::combine_named_parameters(nps...));
         }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
         template<typename SubdomainIndex = Null_functor>
-        static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_,
-                                                                   double iso_value=0,
-                                                                   double value_outside=0,
-                                                                   double relative_error_bound = 1e-3,
-                                                                   CGAL::Random* rng = nullptr,
-                                                                   SubdomainIndex image_values_to_subdom_indices = SubdomainIndex())
+        CGAL_DEPRECATED
+        static Labeled_mesh_domain_3
+        create_gray_image_mesh_domain(const CGAL::Image_3& image_,
+                                      double iso_value=0,
+                                      double value_outside=0,
+                                      double relative_error_bound = 1e-3,
+                                      CGAL::Random* rng = nullptr,
+                                      SubdomainIndex image_values_to_subdom_indices = SubdomainIndex())
         {
             return create_gray_image_mesh_domain(image_, parameters::iso_value(iso_value)
                                                                     .image_values_to_subdomain_indices(image_values_to_subdom_indices)
@@ -556,6 +560,7 @@ From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
                                                                     .relative_error_bound(relative_error_bound)
                                                                     .p_rng(rng));
         }
+#endif
 
         /*!
          * \brief Construction from a 3D labeled image
@@ -793,8 +798,8 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   template <class Function, class Bounding_object>
-  static
-  CGAL_DEPRECATED Labeled_mesh_domain_3
+  CGAL_DEPRECATED
+  static Labeled_mesh_domain_3
   create_implicit_mesh_domain(const Function& f,
                               const Bounding_object& bo,
                               std::enable_if_t<!is_named_function_parameter<Function>>* = nullptr)
