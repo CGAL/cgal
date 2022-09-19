@@ -53,20 +53,20 @@ void dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value
 
     // static_assert(Domain_::CELL_TYPE & ANY_CELL);
 
-    internal::Dual_contouring_position_functor<Domain_, Positioning> pos_func(domain, iso_value, positioning);
+    internal::Dual_contouring_vertex_positioning<Domain_, Positioning> pos_func(domain, iso_value, positioning);
     domain.iterate_cells(pos_func, Concurrency_tag());
 
-    internal::Dual_contouring_quads_functor<Domain_> quad_func(domain, iso_value);
-    domain.iterate_edges(quad_func, Concurrency_tag());
+    internal::Dual_contouring_face_generation<Domain_> face_generation(domain, iso_value);
+    domain.iterate_edges(face_generation, Concurrency_tag());
 
-    // write points and quads in ranges
+    // write points and faces in ranges
     points.resize(pos_func.points_counter);
     for (const auto& vtop : pos_func.map_voxel_to_point) {
         points[pos_func.map_voxel_to_point_id[vtop.first]] = vtop.second;
     }
 
-    polygons.reserve(quad_func.quads.size());
-    for (const auto& q : quad_func.quads) {
+    polygons.reserve(face_generation.faces.size());
+    for (const auto& q : face_generation.faces) {
         std::vector<std::size_t> vertex_ids;
         for (const auto& v_id : q.second) {
             if (pos_func.map_voxel_to_point_id.count(v_id) > 0) {
