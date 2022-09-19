@@ -268,7 +268,7 @@ public:
 }  // namespace Positioning
 
 template <class Domain_, class Positioning_>
-class Dual_contouring_position_functor {
+class Dual_contouring_vertex_positioning {
 private:
     typedef Domain_ Domain;
     typedef Positioning_ Positioning;
@@ -278,7 +278,7 @@ private:
     typedef typename Domain::Cell_handle Cell_handle;
 
 public:
-    Dual_contouring_position_functor(const Domain& domain, FT iso_value, const Positioning& positioning)
+    Dual_contouring_vertex_positioning(const Domain& domain, FT iso_value, const Positioning& positioning)
         : domain(domain), iso_value(iso_value), positioning(positioning), points_counter(0) {}
 
     void operator()(const Cell_handle& v) {
@@ -305,7 +305,7 @@ public:
 };
 
 template <class Domain_>
-class Dual_contouring_quads_functor {
+class Dual_contouring_face_generation {
 private:
     typedef Domain_ Domain;
 
@@ -314,30 +314,30 @@ private:
     typedef typename Domain_::Cell_handle Cell_handle;
 
 public:
-    Dual_contouring_quads_functor(const Domain& domain, FT iso_value) : domain(domain), iso_value(iso_value) {}
+    Dual_contouring_face_generation(const Domain& domain, FT iso_value) : domain(domain), iso_value(iso_value) {}
 
     void operator()(const Edge_handle& e) {
-        // save all quads
+        // save all faces
         const auto& vertices = domain.edge_vertices(e);
         const FT s0 = domain.value(vertices[0]);
         const FT s1 = domain.value(vertices[1]);
 
         if (s0 <= iso_value && s1 > iso_value) {
-            const auto voxels = domain.cells_incident_to_edge(e);
+            const auto& voxels = domain.cells_incident_to_edge(e);
 
             std::lock_guard<std::mutex> lock(mutex);
-            quads[e] = {voxels[0], voxels[1], voxels[2], voxels[3]};
+            faces[e].insert(faces[e].begin(), voxels.begin(), voxels.end());
 
         } else if (s1 <= iso_value && s0 > iso_value) {
-            const auto voxels = domain.cells_incident_to_edge(e);
+            const auto& voxels = domain.cells_incident_to_edge(e);
 
             std::lock_guard<std::mutex> lock(mutex);
-            quads[e] = {voxels[0], voxels[3], voxels[2], voxels[1]};
+            faces[e].insert(faces[e].begin(), voxels.rbegin(), voxels.rend());
         }
     }
 
     // private:
-    std::map<Edge_handle, std::array<Cell_handle, 4>> quads;
+    std::map<Edge_handle, std::vector<Cell_handle>> faces;
 
     const Domain& domain;
     FT iso_value;
