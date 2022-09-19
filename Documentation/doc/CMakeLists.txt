@@ -131,6 +131,10 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       endif()
     endif()
   endif()
+  if(EXISTS "${CGAL_PACKAGE_DIR}/include/CGAL/${CGAL_PACKAGE_NAME}/internal")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
+        "EXCLUDE += ${CGAL_PACKAGE_DIR}/include/CGAL/${CGAL_PACKAGE_NAME}/internal\n")
+  endif()
 
   # IMAGE_PATH is set by default. For Documentation, we generate the extra path using packages.txt
   set(IMAGE_PATHS "${CGAL_PACKAGE_DOC_DIR}/fig")
