@@ -791,12 +791,17 @@ From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
       return create_implicit_mesh_domain(internal_np::combine_named_parameters(nps...));
   }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   template <class Function, class Bounding_object>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const Function& f, const Bounding_object& bo)
+  static
+  CGAL_DEPRECATED Labeled_mesh_domain_3
+  create_implicit_mesh_domain(const Function& f,
+                              const Bounding_object& bo,
+                              std::enable_if_t<!is_named_function_parameter<Function>>* = nullptr)
   {
     return create_implicit_mesh_domain(parameters::function(f).bounding_object(bo));
   }
-
+#endif
   /// @}
 
   /**
