@@ -41,7 +41,7 @@ namespace CGAL {
  * if called, must be the last optimizer to be called. If the mesh is refined after
  * this optimization has been performed, all improvements will be lost.
  *
- * @tparam  C3T3 is required to be a model of the concept `MeshComplex_3InTriangulation_3`.
+ * @tparam C3T3 a model of the concept `MeshComplex_3InTriangulation_3`.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param c3t3 the initial mesh that will be modified by the algorithm to represent the final optimized mesh.

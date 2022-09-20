@@ -101,176 +101,165 @@ private:
 } // namespace details
 
 /*!
-\ingroup PkgMesh3Functions
-
-The function `refine_mesh_3()` is a 3D
-mesh generator. It produces simplicial meshes which discretize
-3D domains.
-
-The mesh generation algorithm is a Delaunay refinement process
-followed by an optimization phase.
-The criteria driving the Delaunay refinement
-process may be tuned to achieve the user needs with respect to
-the size of mesh elements, the accuracy of boundaries approximation,
-etc.
-
-The optimization phase is a sequence of optimization processes,
-amongst the following available optimizers: an ODT-smoothing,
-a Lloyd smoothing, a sliver perturber, and a sliver exuder.
-Each optimization process
-can be activated or not,
-according to the user requirements
-and available time.
-By default, only the perturber and the exuder are activated.
-Note that the benefits of the exuder will be lost if the mesh
-is further refined afterward.
-
-\attention The function template `refine_mesh_3()` may be used to refine a previously
-computed mesh, e.g.:
-\code{.cpp}
-C3T3 c3t3 = CGAL::make_mesh_3<C3T3>(domain,criteria);
-
-CGAL::refine_mesh_3(c3t3, domain, new_criteria);
-\endcode
-
-Please note that we guarantee the result if and only if the domain does
-not change from one refinement to the next one.
-
-
-\tparam  C3T3 is required to be a model of
-the concept
-`MeshComplex_3InTriangulation_3`,
-and a model of `MeshComplexWithFeatures_3InTriangulation_3`
-if the domain is a model of `MeshDomainWithFeatures_3`.
-The argument `c3t3` is passed by
-reference as this object is modified by the refinement process. As the
-refinement process only adds points to the triangulation, all
-vertices of the triangulation of `c3t3` remain in the
-mesh during the refinement process. Object `c3t3` can be used to insert
-specific points in the domain to ensure that they will be contained in the
-final triangulation.
-The type `C3T3` is in particular required to provide a nested type
-`C3T3::Triangulation` for the 3D triangulation
-embedding the mesh. The vertex and cell base classes of the
-triangulation `C3T3::Triangulation` are required to be models of the
-concepts `MeshVertexBase_3` and `MeshCellBase_3`
-respectively.
-
-\tparam MD is required to be a model of
-the concept `MeshDomain_3` or of the refined concept
-`MeshDomainWithFeatures_3` if 0 and 1-dimensional features
-of the input complex have to be accurately represented in the mesh.
-The argument `domain`
-is the sole link through which the domain
-to be discretized is known by the mesh generation algorithm.
-
-\tparam MC is required to be a model of the concept
-`MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3`
-if the domain has exposed features. The argument `criteria` of
-type `MC` specifies the
-size and shape requirements for mesh tetrahedra
-and surface facets. These criteria
-form the rules which drive the refinement process. All mesh elements
-satisfy those criteria at the end of the refinement process.
-In addition, if the domain has features, the argument
-`criteria` provides a sizing field to guide the discretization
-of 1-dimensional exposed features.
-
-\param c3t3 the mesh to be refined.
-\param domain the domain to be discretized
-\param criteria the criteria
-\param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
-
-The following four parameters are optional optimization parameters.
-They control which optimization processes are performed
-and allow the user to tune the parameters of the optimization processes.
-Individual optimization parameters are not described here as they are
-internal types (see instead the documentation page of each optimizer).
-For each optimization algorithm, there exist two global functions
-that allow to enable or disable the optimizer:
-
-\cgalNamedParamsBegin
-   \cgalParamNBegin{manifold_option}
-     \cgalParamDescription{allows the user to drive the meshing algorithm,
-                          and ensure that the output mesh surface follows the given manifold criterion.
-                          It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
-                          and `parameters::non_manifold()`. Note that the meshing algorithm cannot generate a manifold
-                          surface if the input surface is not manifold.}
-      \cgalParamType{`parameters::manifold()` OR `parameters::manifold_with_boundary()` OR `parameters::non_manifold()`}
-      \cgalParamDefault{`parameters::non_manifold()`}
-
-    \cgalParamNBegin{lloyd_options}
-     \cgalParamDescription{`parameters::lloyd()` and `parameters::no_lloyd()` are designed to
-                            trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the
-                            parameters of this optimizer. If one parameter is not set, the default value of
-                            `lloyd_optimize_mesh_3()` is used for this parameter.}
-      \cgalParamType{`parameters::lloyd()` OR `parameters::no_lloyd()`}
-      \cgalParamDefault{'parameters::no_lloyd()'}
-
-    \cgalParamNBegin{odt_options}
-     \cgalParamDescription{`parameters::odt()` and `parameters::no_odt()` are designed to
-                            trigger or not a call to `odt_optimize_mesh_3()` function and
-                            to set the parameters of this optimizer.
-                            If one parameter is not set, the default value of
-                           `odt_optimize_mesh_3()` is used for this parameter.}
-      \cgalParamType{`parameters::odt()` OR `parameters::no_odt()`}
-      \cgalParamDefault{`parameters::no_odt()`}
-
-    \cgalParamNBegin{perturb_options}
-     \cgalParamDescription{`parameters::perturb()` and `parameters::no_perturb()` are designed to
-                            trigger or not a call to `perturb_mesh_3()` function and
-                            to set the parameters of this optimizer. If one parameter is not set, the default value of
-                            `perturb_mesh_3()` is used for this parameter, except for the time bound which is set to be
-                             equal to the refinement CPU time.}
-      \cgalParamType{`parameters::perturb()` and `parameters::no_perturb()`}
-      \cgalParamDefault{'parameters::no_perturb`}
-
-    \cgalParamNBegin{exude_options}
-     \cgalParamDescription{parameters::exude()` and `parameters::no_exude()` are designed to
-                           trigger or not a call to `exude_mesh_3()` function and to override to set the
-                           parameters of this optimizer. If one parameter is not set, the default value of
-                          `exude_mesh_3()` is used for this parameter, except for the time bound which is set to be
-                           equal to the refinement CPU time.}
-      \cgalParamType{`parameters::exude()` and `parameters::no_exude()`}
-      \cgalParamDefault{'parameters::no_exude`}
-
-\cgalNamedParamsEnd
-
-The optimization parameters can be passed in arbitrary order. If one parameter
-is not passed, its default value is used. The default values are
-`no_lloyd()`, `no_odt()`, `perturb()` and `exude()`.
-Note that whatever may be the optimization processes activated,
-they are always launched in the order that is a suborder
-of the following (see user manual for further
-details): *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
-
-Beware that optimization of the mesh is obtained
-by perturbing mesh vertices and modifying the mesh connectivity
-and that this has an impact
-on the strict compliance to the refinement criteria.
-Though a strict compliance to mesh criteria
-is guaranteed at the end of the Delaunay refinement, this may no longer be true after
-some optimization processes. Also beware that the default behavior does involve some
-optimization processes.
-
-\sa `CGAL::make_mesh_3()`
-\sa `CGAL::parameters::manifold`
-\sa `CGAL::parameters::manifold_with_boundary`
-\sa `CGAL::parameters::non_manifold`
-\sa `CGAL::exude_mesh_3()`
-\sa `CGAL::perturb_mesh_3()`
-\sa `CGAL::lloyd_optimize_mesh_3()`
-\sa `CGAL::odt_optimize_mesh_3()`
-\sa `CGAL::parameters::exude`
-\sa `CGAL::parameters::no_exude`
-\sa `CGAL::parameters::perturb`
-\sa `CGAL::parameters::no_perturb`
-\sa `CGAL::parameters::lloyd`
-\sa `CGAL::parameters::no_lloyd`
-\sa `CGAL::parameters::odt`
-\sa `CGAL::parameters::no_odt`
+ * \ingroup PkgMesh3Functions
+ *
+ * The function `refine_mesh_3()` is a 3D
+ * mesh generator. It produces simplicial meshes which discretize
+ * 3D domains.
+ *
+ * The mesh generation algorithm is a Delaunay refinement process
+ * followed by an optimization phase.
+ * The criteria driving the Delaunay refinement
+ * process may be tuned to achieve the user needs with respect to
+ * the size of mesh elements, the accuracy of boundaries approximation,
+ * etc.
+ *
+ * The optimization phase is a sequence of optimization processes,
+ * amongst the following available optimizers: an ODT-smoothing,
+ * a Lloyd smoothing, a sliver perturber, and a sliver exuder.
+ * Each optimization process
+ * can be activated or not,
+ * according to the user requirements
+ * and available time.
+ * By default, only the perturber and the exuder are activated.
+ * Note that the benefits of the exuder will be lost if the mesh
+ * is further refined afterward.
+ *
+ * \attention The function template `refine_mesh_3()` may be used to refine a previously
+ * computed mesh, e.g.:
+ * \code{.cpp}
+ * C3T3 c3t3 = CGAL::make_mesh_3<C3T3>(domain,criteria);
+ *
+ * CGAL::refine_mesh_3(c3t3, domain, new_criteria);
+ * \endcode
+ *
+ * Please note that we guarantee the result if and only if the domain does
+ * not change from one refinement to the next one.
+ *
+ *
+ * \tparam C3T3 either a model of the concept `MeshComplex_3InTriangulation_3` or
+ *              of `MeshComplexWithFeatures_3InTriangulation_3` if `MD`
+ *              is a model of `MeshDomainWithFeatures_3`.
+ *              The type `C3T3` is in particular required to provide a nested type
+ *              `C3T3::Triangulation` for the 3D triangulation
+ *              embedding the mesh. The vertex and cell base classes of the
+ *              triangulation `C3T3::Triangulation` are required to be models of the
+ *              concepts `MeshVertexBase_3` and `MeshCellBase_3` respectively.
+ *
+ * \tparam MD either a model of the concept `MeshDomain_3` or of
+ *            `MeshDomainWithFeatures_3` if 0 and 1-dimensional features
+ *            of the input complex have to be accurately represented in the mesh.
+ *
+ * \tparam MC either a model of the concept `MeshCriteria_3` or a model
+ *            of `MeshCriteriaWithFeatures_3` if the domain has exposed features.
+ *
+ * \param c3t3 the mesh to be refined that is modified by the refinement process.
+ *             As the refinement process only adds points to the triangulation, all
+ *             vertices of the triangulation of `c3t3` remain in the
+ *             mesh during the refinement process. `c3t3` can be used to insert
+ *             specific points in the domain to ensure that they will be contained in the
+ *             final triangulation.
+ * \param domain the domain used to create the `c3t3` parameter. It is the sole link through which the domain
+ *               to be discretized is known by the mesh generation algorithm.
+ * \param criteria specifies the size and shape requirements for mesh tetrahedra
+ *                 and surface facets. These criteria form the rules which drive
+ *                 the refinement process. All mesh elements satisfy those criteria
+ *                 at the end of the refinement process.
+ *                 In addition, if the domain has features, the argument
+ *                 `criteria` provides a sizing field to guide the discretization
+ *                 of 1-dimensional exposed features.
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+ *           They control which optimization processes are performed
+ *           and allow the user to tune the parameters of the optimization processes.
+ *           Individual optimization parameters are not described here as they are
+ *           internal types (see instead the documentation page of each optimizer).
+ *           For each optimization algorithm, there exist two global functions
+ *           that allow to enable or disable the optimizer.
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{Topological options (manifoldness)}
+ *     \cgalParamDescription{In order to drive the meshing algorithm and ensure that the output mesh follows a desired topological criterion,
+ *                           three named parameters control this option:
+ *                           <UL>
+ *                             <LI>`parameters::manifold()`
+ *                             <LI>`parameters::manifold_with_boundary()`
+ *                             <LI>`parameters::non_manifold()`
+ *                           </UL>
+ *                           Note that the meshing algorithm cannot generate a manifold surface if the input surface is not manifold.}
+ *     \cgalParamDefault{`parameters::non_manifold()`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{Lloyd optimization}
+ *     \cgalParamDescription{`lloyd_optimize_mesh_3()` can optionally be called after the meshing process.
+ *                           Two named parameters control this behavior:
+ *                           <UL>
+ *                             <LI> `parameters::no_lloyd()`
+ *                             <LI> `parameters::lloyd_optimize_mesh_3()`
+ *                           </UL>}
+ *     \cgalParamDefault{`parameters::no_lloyd()`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{ODT optimization}
+ *     \cgalParamDescription{`odt_optimize_mesh_3()` can optionally be called after the meshing process.
+ *                           Two named parameters control this behavior:
+ *                           <UL>
+ *                             <LI> `parameters::no_odt()`
+ *                             <LI> `parameters::odt()`
+ *                           </UL>}
+ *     \cgalParamDefault{`parameters::no_odt()`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{Mesh perturbation}
+ *     \cgalParamDescription{`perturb_mesh_3()` can optionally be called after the meshing process.
+ *                           Two named parameters control this behavior:
+ *                           <UL>
+ *                             <LI> `parameters::no_perturb()`
+ *                             <LI> `parameters::perturb()`
+ *                           </UL>}
+ *     \cgalParamDefault{`parameters::perturb()`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{Mesh exudation}
+ *     \cgalParamDescription{`exude_mesh_3()` can optionally be called after the meshing process.
+ *                           Two named parameters control this behavior:
+ *                           <UL>
+ *                             <LI> `parameters::exude()`
+ *                             <LI> `parameters::no_exude()`
+ *                           </UL>}
+ *     \cgalParamDefault{`parameters::exude()`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * The optimization parameters can be passed in arbitrary order. If one parameter
+ * is not passed, its default value is used. The default values are
+ * `no_lloyd()`, `no_odt()`, `perturb()` and `exude()`.
+ * Note that whatever may be the optimization processes activated,
+ * they are always launched in the order that is a suborder
+ * of the following (see user manual for further
+ * details): *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
+ *
+ * Beware that optimization of the mesh is obtained
+ * by perturbing mesh vertices and modifying the mesh connectivity
+ * and that this has an impact
+ * on the strict compliance to the refinement criteria.
+ * Though a strict compliance to mesh criteria
+ * is guaranteed at the end of the Delaunay refinement, this may no longer be true after
+ * some optimization processes. Also beware that the default behavior does involve some
+ * optimization processes.
+ *
+ * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::parameters::manifold`
+ * \sa `CGAL::parameters::manifold_with_boundary`
+ * \sa `CGAL::parameters::non_manifold`
+ * \sa `CGAL::exude_mesh_3()`
+ * \sa `CGAL::perturb_mesh_3()`
+ * \sa `CGAL::lloyd_optimize_mesh_3()`
+ * \sa `CGAL::odt_optimize_mesh_3()`
+ * \sa `CGAL::parameters::exude`
+ * \sa `CGAL::parameters::no_exude`
+ * \sa `CGAL::parameters::perturb`
+ * \sa `CGAL::parameters::no_perturb`
+ * \sa `CGAL::parameters::lloyd`
+ * \sa `CGAL::parameters::no_lloyd`
+ * \sa `CGAL::parameters::odt`
+ * \sa `CGAL::parameters::no_odt`
  */
-
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -307,7 +296,7 @@ void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const
  * @brief This function refines the mesh c3t3 wrt domain & criteria
  *
  * @param c3t3 the mesh to be refined.
- * @param domain the domain to be discretized
+ * @param domain the domain used to create the `c3t3` parameter
  * @param criteria the criteria
  * @param exude if \c true, an exudation step will be done at
  *   the end of the Delaunay refinement process

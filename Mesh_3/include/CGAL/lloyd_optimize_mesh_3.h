@@ -51,21 +51,12 @@ namespace CGAL {
  * in a special way so as to preserve an accurate
  * representation of the domain boundaries.
  *
- * \tparam C3T3 is required to be a model of the concept
- * `MeshComplex_3InTriangulation_3`.
- * The argument `c3t3`, passed by
- * reference, provides the initial mesh
- * and is modified by the algorithm
- * to represent the final optimized mesh.
- *
- * \tparam MD is required to be a model of the concept
- * `MeshDomain_3`. The argument `domain` must be the `MD`
- * object used to create the `c3t3` parameter.
- *
+ * \tparam C3T3 a model of the concept `MeshComplex_3InTriangulation_3`.
+ * \tparam MD a model of the concept `MeshDomain_3`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param c3t3 the initial mesh that will be modified by the algorithm to represent the final optimized mesh.
- * @param domain the domain to be discretized
+ * @param domain the domain used to create the `c3t3` parameter
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  * \cgalNamedParamsBegin

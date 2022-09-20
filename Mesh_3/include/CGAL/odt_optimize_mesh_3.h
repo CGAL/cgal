@@ -52,7 +52,6 @@ namespace CGAL {
  *
  * @tparam C3T3 a model of the concept `MeshComplex_3InTriangulation_3`
  * @tparam MeshDomain a model of the concept `MeshDomain_3`
- *
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param c3t3 the initial mesh and is modified by the algorithm to represent the final optimized mesh.
@@ -102,6 +101,7 @@ namespace CGAL {
  *     \cgalParamDefault{true}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
  * \return a value of type `CGAL::Mesh_optimization_return_code` which is:
  * <UL>
  *   <LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached.
