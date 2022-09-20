@@ -31,8 +31,19 @@ namespace Polygon_mesh_processing {
 
 /**
   * \ingroup PMP_corefinement_grp
-  * @tparam PointRange defines a closed polyline that is close to `tm`. The first and last point must be equal.
-  **/
+  *
+  * trims `tm` at a polyline that must be close to the surface mesh.
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
+  *                      An internal property map for `CGAL::vertex_point_t` must be available.
+  * @tparam PointRange a range of 3D points
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param tm input triangulated surface mesh that will also contain one output mesh
+  * @param other the second output mesh
+  * @param pr the point range for a closed polyline  that is close to `tm`. The first and last point must be equal.
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+**/
 
 template <class TriangleMesh,
           class PointRange,
