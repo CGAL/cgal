@@ -26,9 +26,9 @@ typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
-    const std::string input_name = CGAL::data_file_path("meshes/triceratops.off");
-    const Vector grid_spacing(0.5, 0.5, 0.5);
-    const FT offset_value = 0.1;
+    const std::string input_name = CGAL::data_file_path("meshes/cross.off");
+    const Vector grid_spacing(0.1, 0.1, 0.1);
+    const FT offset_value = 0.2;
 
     Mesh mesh_input;
     if (!CGAL::IO::read_OFF(input_name, mesh_input)) {
