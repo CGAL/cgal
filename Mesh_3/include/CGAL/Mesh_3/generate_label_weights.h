@@ -21,7 +21,7 @@
 #include <itkImage.h>
 #include <itkImageDuplicator.h>
 #include <itkBinaryThresholdImageFilter.h>
-#include <itkRecursiveGaussianImageFilter.h>
+#include <itkDiscreteGaussianImageFilter.h>
 #include <itkMaximumImageFilter.h>
 
 #include <iostream>
@@ -145,8 +145,7 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
 
 /// @cond INTERNAL
 template<typename Image_word_type>
-CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image,
-                                                    const float& sigma)
+CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image)
 {
   typedef unsigned char Weights_type; //from 0 t 255
   const std::size_t img_size = image.size();
@@ -173,12 +172,15 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   typename ImageType::Pointer itk_img = ImageType::New();
   std::set<Image_word_type> labels;
   internal::convert_image_3_to_itk(image, itk_img.GetPointer(), labels);
+
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
   CGAL_assertion(internal::count_non_white_pixels<Image_word_type>(image)
               == internal::count_non_white_pixels<Image_word_type>(itk_img.GetPointer()));
+#endif
 
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
   using IndicatorFilter = itk::BinaryThresholdImageFilter<ImageType, WeightsType>;
-  using GaussianFilterType = itk::RecursiveGaussianImageFilter<WeightsType, WeightsType>;
+  using GaussianFilterType = itk::DiscreteGaussianImageFilter<WeightsType, WeightsType>;
   using MaximumImageFilterType = itk::MaximumImageFilter<WeightsType>;
 
   std::vector<typename ImageType::Pointer> indicators(labels.size());
@@ -222,8 +224,9 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 
     //perform gaussian smoothing
     typename GaussianFilterType::Pointer smoother = GaussianFilterType::New();
+    smoother->SetUseImageSpacing(false);//variance/std deviation is counted in voxels
     smoother->SetInput(indicator->GetOutput());
-    smoother->SetSigma(sigma);
+    smoother->SetVariance(1);
     smoother->Update();
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
@@ -246,6 +249,8 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
     }
 
     id++;
+  }
+
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
     std::ostringstream oss2;
@@ -259,7 +264,6 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
     std::cout << "\tnon zero in max ("
       << id << ")\t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
 #endif
-  }
 
   //copy pixels to weights
   std::copy(blured_max->GetBufferPointer(),
@@ -291,17 +295,15 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 *
 * @param image the input labeled image from which the weights image is computed.
 *   Both will then be used to construct a `Labeled_mesh_domain_3`.
-* @param sigma the standard deviation parameter of the internal Gaussian filter
 *
 * @returns a `CGAL::Image_3` of weights used to build a quality `Labeled_mesh_domain_3`,
 * with the same dimensions as `image`
 */
 
-CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
-                               const float& sigma)
+CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
-    return generate_label_weights_with_known_word_type<Word>(image, sigma);
+    return generate_label_weights_with_known_word_type<Word>(image);
   );
   CGAL_error_msg("This place should never be reached, because it would mean "
     "the image word type is a type that is not handled by "

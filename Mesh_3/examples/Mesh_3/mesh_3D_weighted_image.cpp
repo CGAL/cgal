@@ -1,3 +1,5 @@
+#define CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -39,9 +41,7 @@ int main(int argc, char* argv[])
   /// [Loads image]
 
   /// [Domain creation]
-  const float sigma = 10.f;
-  CGAL::Image_3 img_weights =
-    CGAL::Mesh_3::generate_label_weights(image, sigma);
+  CGAL::Image_3 img_weights = CGAL::Mesh_3::generate_label_weights(image);
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
