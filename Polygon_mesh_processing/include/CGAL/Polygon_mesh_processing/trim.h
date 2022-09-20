@@ -61,9 +61,9 @@ bool trim(TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor     face_descriptor;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh>          AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                 AABB_face_graph_traits;
+  typedef CGAL::AABB_traits<Geom_traits, AABB_face_graph_primitive>       AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits>                         Tree;
-  typedef PMP::Face_location<Mesh, double>                                Face_location;
+  typedef PMP::Face_location<TriangleMesh, double>                        Face_location;
 
   Tree tree;
   build_AABB_tree(tm, tree);
