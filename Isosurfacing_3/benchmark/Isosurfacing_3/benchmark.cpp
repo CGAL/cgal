@@ -1,9 +1,9 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Cartesian_grid_domain.h>
+#include <CGAL/Default_gradients.h>
 #include <CGAL/Dual_contouring_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Implicit_domain.h>
+#include <CGAL/Isosurfacing_domains.h>
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Simple_cartesian.h>
@@ -39,13 +39,16 @@ struct SphereGradient {
 template <class GeomTraits>
 struct Implicit_sphere {
 
-    typedef CGAL::Isosurfacing::Implicit_domain<GeomTraits, SphereValue<GeomTraits>, SphereGradient<GeomTraits>> Domain;
+    typedef CGAL::Isosurfacing::Implicit_cartesian_grid_domain_with_gradient<GeomTraits, SphereValue<GeomTraits>,
+                                                                             SphereGradient<GeomTraits>>
+        Domain;
     typedef typename GeomTraits::Vector_3 Vector;
 
     Implicit_sphere(const std::size_t N) : res(2.0 / N, 2.0 / N, 2.0 / N) {}
 
     Domain domain() const {
-        return Domain({-1, -1, -1, 1, 1, 1}, res, val, grad);
+        return CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<GeomTraits>({-1, -1, -1, 1, 1, 1}, res, val,
+                                                                                     grad);
     }
 
     typename GeomTraits::FT iso() const {
@@ -94,13 +97,16 @@ struct IWPGradient {
 template <class GeomTraits>
 struct Implicit_iwp {
 
-    typedef CGAL::Isosurfacing::Implicit_domain<GeomTraits, IWPValue<GeomTraits>, IWPGradient<GeomTraits>> Domain;
+    typedef CGAL::Isosurfacing::Implicit_cartesian_grid_domain_with_gradient<GeomTraits, IWPValue<GeomTraits>,
+                                                                             IWPGradient<GeomTraits>>
+        Domain;
     typedef typename GeomTraits::Vector_3 Vector;
 
     Implicit_iwp(const std::size_t N) : res(2.0 / N, 2.0 / N, 2.0 / N) {}
 
     Domain domain() const {
-        return Domain({-1, -1, -1, 1, 1, 1}, res, val, grad);
+        return CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<GeomTraits>({-1, -1, -1, 1, 1, 1}, res, val,
+                                                                                     grad);
     }
 
     typename GeomTraits::FT iso() const {
@@ -116,7 +122,8 @@ private:
 template <class GeomTraits>
 struct Grid_sphere {
 
-    typedef CGAL::Isosurfacing::Cartesian_grid_domain<GeomTraits> Domain;
+    typedef CGAL::Isosurfacing::Explicit_cartesian_grid_gradient<GeomTraits> Gradient;
+    typedef CGAL::Isosurfacing::Explicit_cartesian_grid_domain_with_gradient<GeomTraits, Gradient> Domain;
     typedef CGAL::Cartesian_grid_3<GeomTraits> Grid;
     typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point;
@@ -143,7 +150,7 @@ struct Grid_sphere {
     }
 
     Domain domain() const {
-        return Domain(grid);
+        return CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<GeomTraits>(grid, Gradient(grid));
     }
 
     typename GeomTraits::FT iso() const {
@@ -157,11 +164,12 @@ private:
 template <class GeomTraits>
 struct Skull_image {
 
-    typedef CGAL::Isosurfacing::Cartesian_grid_domain<GeomTraits> Domain;
+    typedef CGAL::Isosurfacing::Explicit_cartesian_grid_gradient<GeomTraits> Gradient;
+    typedef CGAL::Isosurfacing::Explicit_cartesian_grid_domain_with_gradient<GeomTraits, Gradient> Domain;
     typedef CGAL::Cartesian_grid_3<GeomTraits> Grid;
 
     Skull_image(const std::size_t N) : grid(2, 2, 2, {-1, -1, -1, 1, 1, 1}) {
-        const std::string fname = "../data/skull_2.9.inr";
+        const std::string fname = CGAL::data_file_path("images/skull_2.9.inr");
         CGAL::Image_3 image;
         if (!image.read(fname)) {
             std::cerr << "Error: Cannot read file " << fname << std::endl;
@@ -171,7 +179,7 @@ struct Skull_image {
     }
 
     Domain domain() const {
-        return Domain(grid);
+        return CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<GeomTraits>(grid, Gradient(grid));
     }
 
     typename GeomTraits::FT iso() const {

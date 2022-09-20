@@ -125,10 +125,13 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
     template <typename Functor>
     void iterate_vertices(Functor& f, Parallel_tag) const {
-        auto iterator = [&f, size_i, size_j, size_k](const tbb::blocked_range<std::size_t>& r) {
+        const std::size_t sj = size_j;
+        const std::size_t sk = size_k;
+
+        auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t i = r.begin(); i != r.end(); i++) {
-                for (std::size_t j = 0; j < size_j; j++) {
-                    for (std::size_t k = 0; k < size_k; k++) {
+                for (std::size_t j = 0; j < sj; j++) {
+                    for (std::size_t k = 0; k < sk; k++) {
                         f({i, j, k});
                     }
                 }
@@ -140,10 +143,13 @@ public:
 
     template <typename Functor>
     void iterate_edges(Functor& f, Parallel_tag) const {
-        auto iterator = [&f, size_i, size_j, size_k](const tbb::blocked_range<std::size_t>& r) {
+        const std::size_t sj = size_j;
+        const std::size_t sk = size_k;
+
+        auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t i = r.begin(); i != r.end(); i++) {
-                for (std::size_t j = 0; j < size_j - 1; j++) {
-                    for (std::size_t k = 0; k < size_k - 1; k++) {
+                for (std::size_t j = 0; j < sj - 1; j++) {
+                    for (std::size_t k = 0; k < sk - 1; k++) {
                         f({i, j, k, 0});
                         f({i, j, k, 1});
                         f({i, j, k, 2});
@@ -157,10 +163,13 @@ public:
 
     template <typename Functor>
     void iterate_cells(Functor& f, Parallel_tag) const {
-        auto iterator = [&f, size_i, size_j, size_k](const tbb::blocked_range<std::size_t>& r) {
+        const std::size_t sj = size_j;
+        const std::size_t sk = size_k;
+
+        auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r) {
             for (std::size_t i = r.begin(); i != r.end(); i++) {
-                for (std::size_t j = 0; j < size_j - 1; j++) {
-                    for (std::size_t k = 0; k < size_k - 1; k++) {
+                for (std::size_t j = 0; j < sj - 1; j++) {
+                    for (std::size_t k = 0; k < sk - 1; k++) {
                         f({i, j, k});
                     }
                 }
