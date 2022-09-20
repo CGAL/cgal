@@ -182,10 +182,12 @@ template <typename Tr,
           typename FacetCriteria = Mesh_facet_criteria_3<Tr>,
           typename CellCriteria = Mesh_cell_criteria_3<Tr> >
 class Mesh_criteria_3
+#ifndef DOXYGEN_RUNNING
   : public internal::Mesh_criteria_3_impl< Tr,
                                            EdgeCriteria,
                                            FacetCriteria,
                                            CellCriteria >
+#endif
 {
   typedef internal::Mesh_criteria_3_impl< Tr,
                                           EdgeCriteria,
@@ -220,13 +222,13 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
   typedef typename Base::Cell_criteria    Cell_criteria;
 #endif
 
-  // Constructor
+  /// Construction from facet and cell criteria, the edge criteria are ignored in this case.
   Mesh_criteria_3(Facet_criteria facet_criteria,
                   Cell_criteria cell_criteria)
     : Base(facet_criteria,
            cell_criteria) {}
 
-  // Constructor
+  /// Constructor from edge, face and cell criteria.
   Mesh_criteria_3(Edge_criteria edge_criteria,
                   Facet_criteria facet_criteria,
                   Cell_criteria cell_criteria)
@@ -234,47 +236,53 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
            facet_criteria,
            cell_criteria) {}
 /*!
-  \brief Construction from criteria parameters.
-
-     \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-     \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
-
-     \cgalNamedParamsBegin
-       \cgalParamNBegin{edge_size}
-         \cgalParamDescription{a scalar field (resp. a constant) providing a space varying
-                              (resp. a uniform)
-                              upper bound for the lengths of curve edges. This parameter has to be set to a positive
-                              value when 1-dimensional features protection is used.}
-
-       \cgalParamNBegin{facet_angle}
-         \cgalParamDescription{a lower bound for the angles (in degrees) of the
-                               surface mesh facets.}
-
-       \cgalParamNBegin{facet_size}
-         \cgalParamDescription{ a scalar field (resp. a constant) describing
-                                a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
-
-       \cgalParamNBegin{facet_distance}
-         \cgalParamDescription{ a scalar field (resp. a constant) describing a space varying (resp. a uniform)
-                                upper bound for the distance between the facet circumcenter and the center of its surface
-                                Delaunay ball.}
-       \cgalParamNBegin{facet_topology}
-         \cgalParamDescription{ the set of topological constraints
-                                which have to be verified by each surface facet. See `Mesh_facet_topology` manual page to
-                                get all possible values.}
-          \cgalParamDefault{CGAL::FACET_VERTICES_ON_SURFACE}
-
-        \cgalParamNBegin{cell_radius_edge_ratio}
-         \cgalParamDescription{ an upper bound for the radius-edge ratio of the mesh tetrahedra.}
-
-         \cgalParamNBegin{cell_size}
-         \cgalParamDescription{ a scalar field (resp. a constant) describing
-                                a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.}
-
-
-     \cgalNamedParamsEnd
-   */
+ * \brief Construction from criteria parameters.
+ *
+ * Note that each size or distance parameter can be specified using two ways: either as a scalar field or
+ * as a numerical value when the field is uniform.
+ *
+ * If not specified, each parameter has a default value such that the corresponding criterion will be ignored.
+ * Numerical sizing or distance values, as well as scalar fields should be given in the unit used for coordinates
+ * of points in the mesh domain class of the mesh generation process.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{edge_size}
+ *     \cgalParamDescription{a scalar field (resp. a constant) providing a space varying
+ *                           (resp. a uniform)
+ *                           upper bound for the lengths of curve edges. This parameter has to be set to a positive
+ *                           value when 1-dimensional features protection is used.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{facet_angle}
+ *     \cgalParamDescription{a lower bound for the angles (in degrees) of the
+ *                            surface mesh facets.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{facet_size}
+ *     \cgalParamDescription{a scalar field (resp. a constant) describing
+ *                           a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{facet_distance}
+ *     \cgalParamDescription{a scalar field (resp. a constant) describing a space varying (resp. a uniform)
+ *                           upper bound for the distance between the facet circumcenter and the center of its surface
+ *                           Delaunay ball.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{facet_topology}
+ *     \cgalParamDescription{the set of topological constraints
+ *                           which have to be verified by each surface facet. See `Mesh_facet_topology` manual page to
+ *                           get all possible values.}
+ *     \cgalParamDefault{CGAL::FACET_VERTICES_ON_SURFACE}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{cell_radius_edge_ratio}
+ *     \cgalParamDescription{ an upper bound for the radius-edge ratio of the mesh tetrahedra.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{cell_size}
+ *     \cgalParamDescription{ a scalar field (resp. a constant) describing
+ *                            a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ */
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_criteria_3(const CGAL_NP_CLASS& np = parameters::default_values()): Base(np)
 {
