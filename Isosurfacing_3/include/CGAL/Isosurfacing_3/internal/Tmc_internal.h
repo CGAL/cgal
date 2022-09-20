@@ -45,6 +45,7 @@
 #include <CGAL/Isosurfacing_3/internal/Marching_cubes_3_internal.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 
+#include <cmath>
 #include <array>
 #include <atomic>
 #include <map>
