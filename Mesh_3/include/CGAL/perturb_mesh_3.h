@@ -33,87 +33,75 @@
 
 namespace CGAL {
 /*!
-\ingroup PkgMesh3Functions
-
-The function `perturb_mesh_3()` is a mesh optimizer that
-improves the quality of a Delaunay mesh
-by changing the positions of some vertices of the mesh.
-
-The perturber tries to improve the dihedral angles of the worst cells in the mesh
-degree by degree: the
-step number `n` is considered as successful
-if after this step the worst tetrahedron of the mesh has a minimal dihedral
-angle larger than `n` degrees.
-The perturber exits if this is not the case.
-
-\pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `sliver_bound` \f$ \leq\f$ 180
-
-\tparam C3T3 is required to be a model of the concept
-`MeshComplex_3InTriangulation_3`.
-The argument `c3t3`, passed by
-reference, provides the initial mesh
-and is modified by the algorithm
-to represent the final optimized mesh.
-
-\tparam MD is required to be a model of the concept
-`MeshDomain_3`. The argument `domain` must be the `MD`
-object used to create the `c3t3` parameter.
-
-\tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
- @param c3t3 the initial mesh that will be modified by the algorithm to represent the final optimized mesh.
- @param domain ...
- @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
-
- \cgalNamedParamsBegin
- \cgalParamNBegin{time_limit}
-  \cgalParamDescription{is used to set up, in seconds, a CPU time limit after which the optimization process
-                        is stopped. This time is measured using the `Real_timer` class. The default value is
-                        0 and means that there is no time limit.}
-  \cgalParamType{`double`}
-  \cgalParamDefault{0}
- \cgalParamNBegin{sliver_bound}
-   \cgalParamDescription{is designed to give, in degrees, a targeted lower bound on dihedral angles of mesh cells.
-                         The exudation process considers in turn all the mesh cells that have a smallest dihedral
-                         angle less than sliver_bound and tries to make them disappear by weighting their vertices.
-                         The optimization process stops when every cell in the mesh achieves this quality. The
-                         default value is 0 and means that there is no targeted bound: the exuder then runs as long
-                         as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}
-   \cgalParamType{`double`}
-   \cgalParamDefault{0}
-\cgalNamedParamsEnd
-
-
-\return
-The function `perturb_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code`
-which is:
-<UL>
-<LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached.
-<LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached.
-<LI>`CGAL::CANT_IMPROVE_ANYMORE` when the perturbation process stops because the last step is unsuccessful.
-</UL>
-
-
-\cgalHeading{Example}
-
-\code{.cpp}
-// Perturb until every dihedral angle of the mesh is >= 10 degrees
-// No time bound is set
-perturb_mesh_3(c3t3,
-               domain,
-               parameters::sliver_bound = 10);
-\endcode
-
-\sa `CGAL::Mesh_optimization_return_code`
-\sa `CGAL::make_mesh_3()`
-\sa `CGAL::refine_mesh_3()`
-\sa `CGAL::exude_mesh_3()`
-\sa `CGAL::lloyd_optimize_mesh_3()`
-\sa `CGAL::odt_optimize_mesh_3()`
-
-*/
-
-
+ * \ingroup PkgMesh3Functions
+ *
+ * The function `perturb_mesh_3()` is a mesh optimizer that
+ * improves the quality of a Delaunay mesh
+ * by changing the positions of some vertices of the mesh.
+ *
+ * The perturber tries to improve the dihedral angles of the worst cells in the mesh
+ * degree by degree: the
+ * step number `n` is considered as successful
+ * if after this step the worst tetrahedron of the mesh has a minimal dihedral
+ * angle larger than `n` degrees.
+ * The perturber exits if this is not the case.
+ *
+ * \tparam C3T3 a model of the concept `MeshComplex_3InTriangulation_3`
+ * \tparam MD a model of the concept `MeshDomain_3`
+ *
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ *  @param c3t3 the initial mesh and is modified by the algorithm to represent the final optimized mesh
+ *  @param domain the domain used to create the `c3t3` parameter
+ *  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{time_limit}
+ *     \cgalParamDescription{is used to set up, in seconds, a CPU time limit after which the optimization process
+ *                           is stopped. This time is measured using the `Real_timer` class. The default value is
+ *                           0 and means that there is no time limit.}
+ *     \cgalParamType{`double`}
+ *     \cgalParamExtra{\pre `0 <= sliver_bound <= 180`}
+ *   \cgalParamDefault{0}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{sliver_bound}
+ *     \cgalParamDescription{is designed to give, in degrees, a targeted lower bound on dihedral angles of mesh cells.
+ *                          The exudation process considers in turn all the mesh cells that have a smallest dihedral
+ *                          angle less than sliver_bound and tries to make them disappear by weighting their vertices.
+ *                          The optimization process stops when every cell in the mesh achieves this quality. The
+ *                          default value is 0 and means that there is no targeted bound: the exuder then runs as long
+ *                          as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}
+ *     \cgalParamType{`double`}
+ *     \cgalParamExtra{\pre `time_limit >= 0`}
+ *     \cgalParamDefault{0}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \return a value of type `CGAL::Mesh_optimization_return_code` which is:
+ * <UL>
+ *   <LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached.
+ *   <LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached.
+ *   <LI>`CGAL::CANT_IMPROVE_ANYMORE` when the perturbation process stops because the last step is unsuccessful.
+ * </UL>
+ *
+ * \cgalHeading{Example}
+ *
+ * \code{.cpp}
+ * // Perturb until every dihedral angle of the mesh is >= 10 degrees
+ * // No time bound is set
+ * perturb_mesh_3(c3t3,
+ *                domain,
+ *                parameters::sliver_bound = 10);
+ * \endcode
+ *
+ * \sa `CGAL::Mesh_optimization_return_code`
+ * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::refine_mesh_3()`
+ * \sa `CGAL::exude_mesh_3()`
+ * \sa `CGAL::lloyd_optimize_mesh_3()`
+ * \sa `CGAL::odt_optimize_mesh_3()`
+ *
+ */
 template<typename C3T3, typename MeshDomain, typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_optimization_return_code perturb_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& np = parameters::default_values())
 {
