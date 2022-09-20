@@ -108,6 +108,39 @@ SIGN get_sign()
 //    SGN_UNKNOWN
 }
 
+template<typename Image_word_type>
+void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
+                            const char* filename = "")
+{
+  auto t = itk_img->GetOrigin();
+  auto v = itk_img->GetSpacing();
+  auto region = itk_img->GetRequestedRegion();
+
+  _image* img
+    = _createImage(region.GetSize(0), region.GetSize(1), region.GetSize(2),
+      1,                                        //vectorial dimension
+      v[0], v[1], v[2],
+      sizeof(Image_word_type),                     //image word size in bytes
+      internal::get_wordkind<Image_word_type>(),   //image word kind WK_FIXED, WK_FLOAT, WK_UNKNOWN
+      internal::get_sign<Image_word_type>());      //image word sign
+  Image_word_type* img_ptr = (Image_word_type*)(img->data);
+
+  const int size = region.GetSize(0) * region.GetSize(1) * region.GetSize(2);
+  std::fill(img_ptr,
+            img_ptr + size,
+            Image_word_type(0));
+  img->tx = t[0];
+  img->ty = t[1];
+  img->tz = t[2];
+
+  std::copy(itk_img->GetBufferPointer(),
+            itk_img->GetBufferPointer() + size,
+            img_ptr);
+
+  if(filename != "")
+    _writeImage(img, filename);
+}
+
 }//namespace internal
 
 /// @cond INTERNAL
@@ -140,6 +173,8 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   typename ImageType::Pointer itk_img = ImageType::New();
   std::set<Image_word_type> labels;
   internal::convert_image_3_to_itk(image, itk_img.GetPointer(), labels);
+  CGAL_assertion(internal::count_non_white_pixels<Image_word_type>(image)
+              == internal::count_non_white_pixels<Image_word_type>(itk_img.GetPointer()));
 
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
   using IndicatorFilter = itk::BinaryThresholdImageFilter<ImageType, WeightsType>;
@@ -178,11 +213,25 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
     indicator->SetUpperThreshold(label);
     indicator->Update();
 
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+    std::ostringstream oss;
+    oss << "indicator_" << id << ".inr.gz";
+    std::cout << "filename = " << oss.str().c_str() << std::endl;
+    internal::convert_itk_to_image_3(indicator->GetOutput(), oss.str().c_str());
+#endif
+
     //perform gaussian smoothing
     typename GaussianFilterType::Pointer smoother = GaussianFilterType::New();
     smoother->SetInput(indicator->GetOutput());
     smoother->SetSigma(sigma);
     smoother->Update();
+
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+    std::ostringstream oss1;
+    oss1 << "smooth_" << id << ".inr.gz";
+    std::cout << "filename = " << oss1.str().c_str() << std::endl;
+    internal::convert_itk_to_image_3(smoother->GetOutput(), oss1.str().c_str());
+#endif
 
     //take the max of smoothed indicator functions
     if (id == 0)
@@ -199,9 +248,16 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
     id++;
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-    std::cout << "AFTER MAX (label = " << label << ") : " <<  std::endl;
+    std::ostringstream oss2;
+    oss2 << "max_" << "all" << ".inr.gz";
+    std::cout << "filename = " << oss2.str().c_str() << std::endl;
+    internal::convert_itk_to_image_3(blured_max.GetPointer(), oss2.str().c_str());
+#endif
+
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+//    std::cout << "AFTER MAX (label = " << label << ") : " <<  std::endl;
     std::cout << "\tnon zero in max ("
-      << label << ")\t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
+      << id << ")\t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
 #endif
   }
 
