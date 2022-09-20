@@ -1496,10 +1496,10 @@ private:
   void displayMapLegend(const std::vector<Value_type>& values)
   {
     // Create a legend_ and display it
-    const std::size_t size = (std::min)(color_map.size(), (std::size_t)256);
+    const std::size_t size = (std::min)(color_map.size(), (std::size_t)2048);
     const int text_height = 20;
     const int height = text_height*static_cast<int>(size) + text_height;
-    const int width = 140;
+    const int width = 170;
     const int cell_width = width/3;
     const int top_margin = 15;
     const int left_margin = 5;
@@ -1525,8 +1525,8 @@ private:
                        tick_height,
                        color);
       QRect text_rect(left_margin + cell_width+10, drawing_height - top_margin - j,
-                          50, text_height);
-      painter.drawText(text_rect, Qt::AlignCenter, tr("%1").arg(values[i], 0, 'f', 3, QLatin1Char(' ')));
+          100, text_height);
+      painter.drawText(text_rect, Qt::AlignCenter, tr("%1").arg(values[i], 0, 'f', 7, QLatin1Char(' ')));
     }
     if(color_map.size() > size){
       QRect text_rect(left_margin + cell_width+10, 0,
@@ -1545,7 +1545,7 @@ private:
   {
     // Create a legend_ and display it
     const int height = 256;
-    const int width = 140;
+    const int width = 170;
     const int cell_width = width/3;
     const int top_margin = 5;
     const int left_margin = 5;
@@ -1589,11 +1589,11 @@ private:
     painter.setPen(Qt::blue);
     QRect min_text_rect(left_margin + cell_width+10,drawing_height - top_margin,
                         100, text_height);
-    painter.drawText(min_text_rect, Qt::AlignCenter, tr("%1").arg(min_value, 0, 'f', 1));
+    painter.drawText(min_text_rect, Qt::AlignCenter, tr("%1").arg(min_value, 0, 'f', 7));
 
     QRect max_text_rect(left_margin + cell_width+10, drawing_height - top_margin - 200,
                         100, text_height);
-    painter.drawText(max_text_rect, Qt::AlignCenter, tr("%1").arg(max_value, 0, 'f', 1));
+    painter.drawText(max_text_rect, Qt::AlignCenter, tr("%1").arg(max_value, 0, 'f', 7));
 
     dock_widget->legendLabel->setPixmap(legend_);
   }
