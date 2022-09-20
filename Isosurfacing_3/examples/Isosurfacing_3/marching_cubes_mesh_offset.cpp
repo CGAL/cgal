@@ -2,7 +2,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Cartesian_grid_domain.h>
+#include <CGAL/Isosurfacing_domains.h>
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Simple_cartesian.h>
@@ -82,7 +82,7 @@ int main() {
     }
 
     // create a domain from the grid
-    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
+    auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
 
     // prepare collections for the result
     Point_range points;

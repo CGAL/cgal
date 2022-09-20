@@ -1,5 +1,6 @@
 
-#include <CGAL/Implicit_domain.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Isosurfacing_domains.h>
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
@@ -12,14 +13,13 @@ typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
-    // distance to the origin
-    auto sphere_function = [](const Point& point) {
-        return std::sqrt(point.x() * point.x() + point.y() * point.y() + point.z() * point.z());
-    };
+    const CGAL::Bbox_3 bbox{-1, -1, -1, 1, 1, 1};
+    const Vector spacing(0.02f, 0.02f, 0.02f);
+
+    auto sphere_function = [&](const Point& p) { return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z()); };
 
     // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
-    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(sphere_function)> domain(
-        {-1, -1, -1, 1, 1, 1}, Vector(0.02f, 0.02f, 0.02f), sphere_function);  // TODO: this is ugly
+    auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, spacing, sphere_function);
 
     // prepare collections for the result
     Point_range points;

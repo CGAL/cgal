@@ -1,5 +1,6 @@
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Dual_contouring_3.h>
-#include <CGAL/Implicit_domain.h>
+#include <CGAL/Isosurfacing_domains.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
@@ -36,9 +37,12 @@ int main() {
         return Vector(gx, gy, gz);
     };
 
+    const CGAL::Bbox_3 bbox{-1, -1, -1, 1, 1, 1};
+    const Vector spacing(0.02f, 0.02f, 0.02f);
+
     // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
-    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(iwp_value), decltype(iwp_gradient)> domain(
-        {-1, -1, -1, 1, 1, 1}, Vector(0.02f, 0.02f, 0.02f), iwp_value, iwp_gradient);
+    auto domain =
+        CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, spacing, iwp_value, iwp_gradient);
 
     // prepare collections for the result
     Point_range points;
