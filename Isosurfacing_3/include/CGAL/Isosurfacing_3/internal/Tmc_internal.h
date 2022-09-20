@@ -41,9 +41,9 @@
 #ifndef CGAL_TMC_INTERNAL_TMC_H
 #define CGAL_TMC_INTERNAL_TMC_H
 
-#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Isosurfacing_3/internal/Marching_cubes_3_internal.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
+#include <CGAL/license/Isosurfacing_3.h>
 
 #include <cmath>
 #include <array>
@@ -65,8 +65,8 @@ private:
     typedef typename Domain::FT FT;
     typedef typename Domain::Point Point;
     typedef typename Domain::Vector Vector;
-    typedef typename Domain::Edge_handle Edge_handle;
-    typedef typename Domain::Cell_handle Cell_handle;
+    typedef typename Domain::Edge_descriptor Edge_descriptor;
+    typedef typename Domain::Cell_descriptor Cell_descriptor;
 
     typedef unsigned int uint;
 
@@ -74,7 +74,7 @@ public:
     TMC_functor(const Domain& domain, const FT iso_value, Point_range& points, Polygon_range& polygons)
         : domain(domain), iso_value(iso_value), points(points), polygons(polygons) {}
 
-    void operator()(const Cell_handle& cell) {
+    void operator()(const Cell_descriptor& cell) {
 
         FT values[8];
         Point corners[8];
@@ -135,7 +135,7 @@ public:
         triangle.push_back(p2);
     }
 
-    void p_slice(const Cell_handle& cell, const double i0, FT* values, Point* corners, const int i_case) {
+    void p_slice(const Cell_descriptor& cell, const double i0, FT* values, Point* corners, const int i_case) {
         // there are 12 edges, assign to each vertex three edges, the global edge numbering
         // consist of 3*global_vertex_id + edge_offset.
         const unsigned long long gei_pattern_ = 670526590282893600ull;
@@ -960,7 +960,7 @@ private:
 
     // compute a unique global index for vertices
     // use as key the unique edge number
-    std::map<Edge_handle, std::size_t> vertex_map;
+    std::map<Edge_descriptor, std::size_t> vertex_map;
 
     std::mutex mutex;
 };

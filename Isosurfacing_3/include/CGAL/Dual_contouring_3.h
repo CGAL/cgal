@@ -13,7 +13,7 @@
 #ifndef CGAL_DUAL_CONTOURING_3_H
 #define CGAL_DUAL_CONTOURING_3_H
 
-#include <CGAL/Cell_type.h>
+#include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/Dual_contouring_internal.h>
 #include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/tags.h>
@@ -54,10 +54,10 @@ void dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value
     // static_assert(Domain_::CELL_TYPE & ANY_CELL);
 
     internal::Dual_contouring_vertex_positioning<Domain_, Positioning> pos_func(domain, iso_value, positioning);
-    domain.iterate_cells(pos_func, Concurrency_tag());
+    domain.iterate_cells<Concurrency_tag>(pos_func);
 
     internal::Dual_contouring_face_generation<Domain_> face_generation(domain, iso_value);
-    domain.iterate_edges(face_generation, Concurrency_tag());
+    domain.iterate_edges<Concurrency_tag>(face_generation);
 
     // write points and faces in ranges
     points.resize(pos_func.points_counter);
