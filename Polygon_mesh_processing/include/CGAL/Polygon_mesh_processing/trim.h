@@ -57,7 +57,6 @@ bool trim(TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type     Geom_traits;
   typedef typename Geom_traits::Point_3                                   Point_3;
   typedef typename Geom_traits::Vector_3                                  Vector_3;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor     face_descriptor;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh>          AABB_face_graph_primitive;
