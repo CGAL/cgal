@@ -49,7 +49,7 @@ typename GT::FT average_edge_length(const PolygonMesh& pmesh)
         avg_edge_length += edge_length(e, pmesh);
 
     avg_edge_length /= n;
-    return avg_edge_length;   
+    return avg_edge_length;
 }
 
 }

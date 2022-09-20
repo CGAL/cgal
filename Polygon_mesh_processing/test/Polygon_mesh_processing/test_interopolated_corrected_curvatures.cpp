@@ -58,7 +58,7 @@ void test(std::string mesh_path, EpicKernel::FT rel_expansion_radius, EpicKernel
 		SMesh::Property_map<vertex_descriptor, EpicKernel::Vector_3> vnm;
 		boost::tie(vnm, created) = pmesh.add_property_map<vertex_descriptor, EpicKernel::Vector_3>("v:vnm", { 0 , 0 , 0 });
 		assert(created);
-		
+
 		CGAL::Polygon_mesh_processing::compute_vertex_normals(pmesh, vnm);
 
 		PMP::random_perturbation(pmesh, rel_noise_magnitude * min_edge_length, CGAL::parameters::random_seed(0));
@@ -87,7 +87,7 @@ void test(std::string mesh_path, EpicKernel::FT rel_expansion_radius, EpicKernel
 
 	}
 
-	
+
 
 	//PMP::interpolated_corrected_mean_curvature(
 	//	pmesh,
@@ -106,8 +106,8 @@ void test(std::string mesh_path, EpicKernel::FT rel_expansion_radius, EpicKernel
 	const EpicKernel::FT max_gaussian_curvature = *std::max_element(gaussian_curvature_map.begin(), gaussian_curvature_map.end());
 	const EpicKernel::FT min_gaussian_curvature = *std::min_element(gaussian_curvature_map.begin(), gaussian_curvature_map.end());
 
-	std::cout << "# " << mesh_path << ":\n" 
-		<< "expansion radius ratio to max length / expansion radius = " << rel_expansion_radius << " / " << rel_expansion_radius * max_edge_length << ",\n" 
+	std::cout << "# " << mesh_path << ":\n"
+		<< "expansion radius ratio to max length / expansion radius = " << rel_expansion_radius << " / " << rel_expansion_radius * max_edge_length << ",\n"
 		<< "max perturbation ratio to minlength / max perturbation = " << rel_noise_magnitude << " / " << rel_noise_magnitude * min_edge_length << "\n"
 		<< "mean curvature: min = " << min_mean_curvature << " <-> " << max_mean_curvature << " = max" << "\n"
 		<< "gaussian curvature: min = " << min_gaussian_curvature << " <-> " << max_gaussian_curvature << " = max" << "\n\n\n";
