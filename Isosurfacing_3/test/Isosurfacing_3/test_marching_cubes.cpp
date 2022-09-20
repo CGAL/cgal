@@ -22,8 +22,7 @@ void test_implicit_sphere() {
     const Vector spacing(0.2, 0.2, 0.2);
     const CGAL::Bbox_3 bbox = {-1, -1, -1, 1, 1, 1};
 
-    CGAL::Isosurfacing::Implicit_domain<Kernel, Sphere_function> domain(bbox, spacing,
-                                                                        Sphere_function());  // TODO: this is ugly
+    auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, spacing, Sphere_function());
 
     Point_range points;
     Polygon_range polygons;
@@ -64,7 +63,7 @@ void test_grid_sphere(const std::size_t n) {
         }
     }
 
-    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
+    auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
 
     Point_range points;
     Polygon_range polygons;
