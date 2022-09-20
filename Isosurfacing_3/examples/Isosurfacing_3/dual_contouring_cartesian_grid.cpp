@@ -1,6 +1,7 @@
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Cartesian_grid_domain.h>
+#include <CGAL/Default_gradients.h>
 #include <CGAL/Dual_contouring_3.h>
+#include <CGAL/Isosurfacing_domains.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
@@ -35,7 +36,9 @@ int main() {
         }
     }
 
-    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel> domain(grid);
+    CGAL::Isosurfacing::Explicit_cartesian_grid_gradient<Kernel> gradient(grid);
+
+    auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid, gradient);
 
     Point_range points;
     Polygon_range polygons;

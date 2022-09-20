@@ -1,8 +1,9 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Dual_contouring_3.h>
-#include <CGAL/Implicit_domain.h>
+#include <CGAL/Isosurfacing_domains.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
@@ -25,9 +26,9 @@ typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
-    const std::string input_name = CGAL::data_file_path("bunny.off");
-    const Vector grid_spacing(0.005, 0.005, 0.005);
-    const FT offset_value = 0.01;
+    const std::string input_name = CGAL::data_file_path("meshes/triceratops.off");
+    const Vector grid_spacing(0.5, 0.5, 0.5);
+    const FT offset_value = 0.1;
 
     Mesh mesh_input;
     if (!CGAL::IO::read_OFF(input_name, mesh_input)) {
@@ -59,8 +60,8 @@ int main() {
     };
 
     // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
-    CGAL::Isosurfacing::Implicit_domain<Kernel, decltype(mesh_distance), decltype(mesh_normal)> domain(
-        aabb_grid, grid_spacing, mesh_distance, mesh_normal);
+    auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(aabb_grid, grid_spacing,
+                                                                                    mesh_distance, mesh_normal);
 
     Point_range points;
     Polygon_range polygons;

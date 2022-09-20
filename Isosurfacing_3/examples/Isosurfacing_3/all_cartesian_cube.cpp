@@ -1,6 +1,6 @@
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Cartesian_grid_domain.h>
 #include <CGAL/Dual_contouring_3.h>
+#include <CGAL/Isosurfacing_domains.h>
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>
@@ -60,7 +60,7 @@ int main() {
     };
 
     // create a domain from the grid
-    CGAL::Isosurfacing::Cartesian_grid_domain<Kernel, decltype(cube_gradient)> domain(grid, cube_gradient);
+    auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid, cube_gradient);
 
     // prepare collections for the results
     Point_range points_mc, points_tmc, points_dc;
