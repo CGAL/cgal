@@ -118,17 +118,18 @@ void test(std::string mesh_path, EpicKernel::FT rel_expansion_radius, EpicKernel
 int main()
 {
 	const std::vector<std::string> mesh_pathes_to_test = {
-		"meshes/icc_test/Cube with fillet Quads.obj",
-		"meshes/icc_test/Lantern Quads.obj",
-		"meshes/icc_test/Lantern Tris.obj",
-		"meshes/icc_test/Sphere Ngons + Quads + Tris.obj",
-		"meshes/icc_test/Sphere Quads + Tris 100352.obj",
 		"meshes/icc_test/Sphere Quads + Tris.obj",
-		"meshes/icc_test/Sphere Quads Remesh.obj",
-		"meshes/icc_test/Sphere Quads.obj",
+		"meshes/icc_test/Sphere Quads + Tris 100352.obj",
 		"meshes/icc_test/Sphere Tris Ico.obj",
+		"meshes/icc_test/Sphere Tris Tet.obj",
 		"meshes/icc_test/Sphere Tris Oct.obj",
-		"meshes/icc_test/Sphere Tris Tet.obj"
+		"meshes/icc_test/Sphere Quads.obj",
+		"meshes/icc_test/Sphere Quads Remesh.obj",
+		"meshes/icc_test/Sphere Ngons + Quads + Tris.obj",
+		"meshes/icc_test/Cube with fillet Quads.obj",
+		"meshes/cylinder.off",
+		"meshes/icc_test/Lantern Tris.obj",
+		"meshes/icc_test/Lantern Quads.obj"
 	};
 
 	const std::vector<EpicKernel::FT> rel_expansion_radii = { 0, 0.1, 0.5, 1 };
