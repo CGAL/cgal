@@ -16,7 +16,7 @@ typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
     // create a cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
-    Grid grid(100, 100, 100, {-1, -1, -1, 1, 1, 1});
+    Grid grid(50, 50, 50, {-1, -1, -1, 1, 1, 1});
 
     // calculate the value at all grid points
     for (std::size_t x = 0; x < grid.xdim(); x++) {

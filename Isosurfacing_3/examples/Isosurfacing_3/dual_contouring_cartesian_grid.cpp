@@ -17,7 +17,7 @@ typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
 
-    Grid grid(100, 100, 100, {-1, -1, -1, 1, 1, 1});
+    Grid grid(30, 30, 30, {-1, -1, -1, 1, 1, 1});
 
     for (std::size_t x = 0; x < grid.xdim(); x++) {
         for (std::size_t y = 0; y < grid.ydim(); y++) {

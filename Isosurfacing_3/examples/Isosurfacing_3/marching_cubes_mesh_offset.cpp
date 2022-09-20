@@ -35,9 +35,9 @@ inline Kernel::FT distance_to_mesh(const Tree& tree, const Point& p) {
 }
 
 int main() {
-    const std::string input_name = CGAL::data_file_path("bunny.off");
+    const std::string input_name = CGAL::data_file_path("meshes/cross.off");
     const int n_voxels = 20;
-    const FT offset_value = -0.03;
+    const FT offset_value = 0.2;
 
     // load the original mesh
     Mesh mesh_input;

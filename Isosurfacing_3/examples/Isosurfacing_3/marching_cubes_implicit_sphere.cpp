@@ -14,7 +14,7 @@ typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
     const CGAL::Bbox_3 bbox{-1, -1, -1, 1, 1, 1};
-    const Vector spacing(0.02f, 0.02f, 0.02f);
+    const Vector spacing(0.04f, 0.04f, 0.04f);
 
     auto sphere_function = [&](const Point& p) { return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z()); };
 

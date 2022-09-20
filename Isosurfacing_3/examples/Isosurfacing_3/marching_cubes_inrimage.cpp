@@ -14,7 +14,7 @@ typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
 
-    const std::string fname = CGAL::data_file_path("skull_2.9.inr");  // TODO: get other examples with rights
+    const std::string fname = CGAL::data_file_path("images/skull_2.9.inr");
 
     // load the image
     CGAL::Image_3 image;

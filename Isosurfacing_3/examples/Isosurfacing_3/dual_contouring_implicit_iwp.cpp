@@ -38,7 +38,7 @@ int main() {
     };
 
     const CGAL::Bbox_3 bbox{-1, -1, -1, 1, 1, 1};
-    const Vector spacing(0.02f, 0.02f, 0.02f);
+    const Vector spacing(0.05f, 0.05f, 0.05f);
 
     // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
     auto domain =
