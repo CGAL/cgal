@@ -58,6 +58,7 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(delaunay_remeshing_example PUBLIC CGAL::Eigen3_support)
 endif()
 
+create_single_source_cgal_program( "trim.cpp" )
 create_single_source_cgal_program( "extrude.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope_of_triangle_soup.cpp" )
