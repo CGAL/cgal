@@ -12,9 +12,9 @@
 #ifndef CGAL_CARTESIAN_GRID_3_H
 #define CGAL_CARTESIAN_GRID_3_H
 
-#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Image_3.h>
+#include <CGAL/license/Isosurfacing_3.h>
 
 #include <array>
 #include <type_traits>
@@ -44,6 +44,10 @@ public:
 
     Cartesian_grid_3(const Image_3 &image) {
         from_image(image);
+    }
+
+    FT operator()(const std::array<std::size_t, 3> &idx) const {
+        return values[linear_index(idx[0], idx[1], idx[2])];
     }
 
     FT value(const std::size_t x, const std::size_t y, const std::size_t z) const {
