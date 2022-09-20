@@ -43,7 +43,11 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_vector.h>
+#else
+#include <vector>
+#endif
 
 #include <array>
 #include <atomic>
@@ -136,12 +140,7 @@ void mc_construct_triangles(const int i_case, const Vertices_& vertices, Triangl
         const int eg2 = Cube_table::triangle_cases[t_index + 2];
 
         // insert new triangle in list
-        std::array<Point, 3> points;
-        points[0] = vertices[eg0];
-        points[1] = vertices[eg1];
-        points[2] = vertices[eg2];
-
-        triangles.push_back(points);
+        triangles.push_back({vertices[eg0], vertices[eg1], vertices[eg2]});
     }
 }
 
@@ -154,11 +153,7 @@ void to_indexed_face_set(const TriangleList& triangle_list, PointRange& points, 
         points.push_back(triangle[1]);
         points.push_back(triangle[2]);
 
-        polygons.push_back({});
-        auto& triangle = polygons.back();
-        triangle.push_back(id + 2);
-        triangle.push_back(id + 1);
-        triangle.push_back(id + 0);
+        polygons.push_back({id + 2, id + 1, id + 0});
     }
 }
 
@@ -170,7 +165,11 @@ private:
     typedef typename Domain::Point Point;
     typedef typename Domain::Cell_handle Cell_handle;
 
+#ifdef CGAL_LINKED_WITH_TBB
     typedef tbb::concurrent_vector<std::array<Point, 3>> Triangle_list;
+#else
+    typedef std::vector<std::array<Point, 3>> Triangle_list;
+#endif
 
 public:
     Marching_cubes_functor(const Domain& domain, const FT iso_value) : domain(domain), iso_value(iso_value) {}
