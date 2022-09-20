@@ -136,9 +136,9 @@ public:
         if (use_bbox) {
             CGAL::Bbox_3 bbox = pos[0].bbox() + pos[7].bbox();  // TODO remove[0],[7]
 
-            FT x = std::min<FT>(std::max<FT>(point.x(), bbox.xmin()), bbox.xmax());
-            FT y = std::min<FT>(std::max<FT>(point.y(), bbox.ymin()), bbox.ymax());
-            FT z = std::min<FT>(std::max<FT>(point.z(), bbox.zmin()), bbox.zmax());
+            FT x = (std::min<FT>)((std::max<FT>)(point.x(), bbox.xmin()), bbox.xmax());
+            FT y = (std::min<FT>)((std::max<FT>)(point.y(), bbox.ymin()), bbox.ymax());
+            FT z = (std::min<FT>)((std::max<FT>)(point.z(), bbox.zmin()), bbox.zmax());
             point = Point(x, y, z);
         }
 
@@ -170,8 +170,8 @@ public:
      * \return true, if the voxel intersects the isosurface
      */
     template <class Domain_>
-    bool position(const Domain_& domain, const typename Domain_::FT iso_value, const typename Domain_::Cell_descriptor& vh,
-                  typename Domain_::Point& point) const {
+    bool position(const Domain_& domain, const typename Domain_::FT iso_value,
+                  const typename Domain_::Cell_descriptor& vh, typename Domain_::Point& point) const {
         typedef typename Domain_::Point Point;
         typedef typename Domain_::Geom_traits::Vector_3 Vector;
         typedef typename Domain_::FT FT;
