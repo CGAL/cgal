@@ -807,8 +807,8 @@ private Q_SLOTS:
 
           if (edge_range.begin() == edge_range.end())
           {
-              expandRadius = 0;
-              dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
+              expand_radius = 0;
+              dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
               return;
           }
 
@@ -824,8 +824,8 @@ private Q_SLOTS:
           // if edge_reference is not derefrenceble
           if (edge_reference == edge_range.end())
           {
-              expandRadius = 0;
-              dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
+              expand_radius = 0;
+              dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
               return;
           }
 
@@ -838,8 +838,8 @@ private Q_SLOTS:
 
       double outMin = 0, outMax = 5 * maxEdgeLength, base = 1.2;
 
-      expandRadius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
-      dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expandRadius));
+      expand_radius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
+      dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
 
   }
 
@@ -849,6 +849,9 @@ private Q_SLOTS:
         "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_gaussian_curvature";
     SMesh& smesh = *item->face_graph();
 
+    const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").first;
+    const bool vnm_exists = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").second;
+
     //compute once and store the value per vertex
     bool non_init;
     SMesh::Property_map<vertex_descriptor, double> mu_i_map;
@@ -856,11 +859,18 @@ private Q_SLOTS:
             smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
     if (non_init)
     {
-        if (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)
-            PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expandRadius));
-        else
-            PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expandRadius));
-
+        if (vnm_exists) {
+            if (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)
+                PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
+            else
+                PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
+        }
+        else {
+            if (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)
+                PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+            else
+                PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
+        }
         double res_min = ARBITRARY_DBL_MAX,
             res_max = -ARBITRARY_DBL_MAX;
         SMesh::Vertex_index min_index, max_index;
@@ -1626,7 +1636,7 @@ private:
 
   std::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
-  double expandRadius;
+  double expand_radius;
   double maxEdgeLength = -1;
   double minBox;
   double maxBox;

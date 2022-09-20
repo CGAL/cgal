@@ -483,8 +483,6 @@ template<typename PolygonMesh, typename FaceMeasureMap,
     if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
         compute_vertex_normals(pmesh, vnm, np);
 
-    typedef typename property_map_value<PolygonMesh, FaceMeasureMap>::type measure;
-
     std::function
         <typename GT::FT(const std::vector<typename GT::Vector_3>&, const std::vector<typename GT::Vector_3>&)>
         iccm_function;
@@ -985,12 +983,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     boost::associative_property_map<VertexMeasureMap_tag>
         mu0_expand_map(mu0_expand_init), mu1_expand_map(mu1_expand_init);
 
-    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE);
-    interpolated_corrected_measure_mesh(pmesh, mu1_map, MU1_MEAN_CURVATURE_MEASURE);
+    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE, np);
+    interpolated_corrected_measure_mesh(pmesh, mu1_map, MU1_MEAN_CURVATURE_MEASURE, np);
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu1_map, mu0_expand_map, mu1_expand_map, v, CGAL::parameters::ball_radius(r));
+        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu1_map, mu0_expand_map, mu1_expand_map, v, np.ball_radius(r));
 
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
@@ -1052,12 +1050,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     boost::associative_property_map<VertexMeasureMap_tag>
         mu0_expand_map(mu0_expand_init), mu2_expand_map(mu2_expand_init);
 
-    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE);
-    interpolated_corrected_measure_mesh(pmesh, mu2_map, MU2_GAUSSIAN_CURVATURE_MEASURE);
+    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE, np);
+    interpolated_corrected_measure_mesh(pmesh, mu2_map, MU2_GAUSSIAN_CURVATURE_MEASURE, np);
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu2_map, mu0_expand_map, mu2_expand_map, v, CGAL::parameters::ball_radius(r));
+        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu2_map, mu0_expand_map, mu2_expand_map, v, np.ball_radius(r));
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         if(v_mu0 != 0.0)
@@ -1175,12 +1173,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     boost::associative_property_map<VertexMatrixMeasureMap_tag>
         muXY_expand_map(muXY_expand_init);
 
-    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE);
-    interpolated_corrected_anisotropic_measure_mesh(pmesh, muXY_map);
+    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE, np);
+    interpolated_corrected_anisotropic_measure_mesh(pmesh, muXY_map, np);
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, mu0_map, muXY_map, mu0_expand_map, muXY_expand_map, v, CGAL::parameters::ball_radius(r));
+        expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, mu0_map, muXY_map, mu0_expand_map, muXY_expand_map, v, np.ball_radius(r));
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         Eigen::Matrix<typename GT::FT, 3, 3> v_muXY = get(muXY_expand_map, v);

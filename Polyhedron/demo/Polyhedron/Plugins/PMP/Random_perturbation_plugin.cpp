@@ -106,7 +106,7 @@ public Q_SLOTS:
       if(ui.keep_normal_checkbox->isChecked())
       {
         SMesh::Property_map<vertex_descriptor, EPICK::Vector_3 > vnormals =
-          pmesh.add_property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
+          pmesh.add_property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal_before_perturbation").first;
         CGAL::Polygon_mesh_processing::compute_vertex_normals(pmesh,vnormals);
       }
       if(ui.deterministic_checkbox->isChecked())
