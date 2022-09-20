@@ -45,6 +45,8 @@
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_vector.h>
+#else
+#include <vector>
 #endif
 
 #include <array>
