@@ -244,21 +244,21 @@ private:
  * optimization processes.
  *
  * \sa `CGAL::make_mesh_3()`
- * \sa `CGAL::parameters::manifold`
- * \sa `CGAL::parameters::manifold_with_boundary`
- * \sa `CGAL::parameters::non_manifold`
+ * \sa `CGAL::parameters::manifold()`
+ * \sa `CGAL::parameters::manifold_with_boundary()`
+ * \sa `CGAL::parameters::non_manifold()`
  * \sa `CGAL::exude_mesh_3()`
  * \sa `CGAL::perturb_mesh_3()`
  * \sa `CGAL::lloyd_optimize_mesh_3()`
  * \sa `CGAL::odt_optimize_mesh_3()`
- * \sa `CGAL::parameters::exude`
- * \sa `CGAL::parameters::no_exude`
- * \sa `CGAL::parameters::perturb`
- * \sa `CGAL::parameters::no_perturb`
- * \sa `CGAL::parameters::lloyd`
- * \sa `CGAL::parameters::no_lloyd`
- * \sa `CGAL::parameters::odt`
- * \sa `CGAL::parameters::no_odt`
+ * \sa `CGAL::parameters::exude()`
+ * \sa `CGAL::parameters::no_exude()`
+ * \sa `CGAL::parameters::perturb()`
+ * \sa `CGAL::parameters::no_perturb()`
+ * \sa `CGAL::parameters::lloyd()`
+ * \sa `CGAL::parameters::no_lloyd()`
+ * \sa `CGAL::parameters::odt()`
+ * \sa `CGAL::parameters::no_odt()`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
