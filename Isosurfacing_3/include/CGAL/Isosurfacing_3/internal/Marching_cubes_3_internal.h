@@ -78,15 +78,15 @@ Point_3 vertex_interpolation(const Point_3& p0, const Point_3& p1, const FT d0, 
 }
 
 template <class Domain_, typename Corners_, typename Values_>
-std::size_t get_cell_corners(const Domain_& domain, const typename Domain_::Cell_handle& cell,
+std::size_t get_cell_corners(const Domain_& domain, const typename Domain_::Cell_descriptor& cell,
                              const typename Domain_::FT iso_value, Corners_& corners, Values_& values) {
 
-    typedef typename Domain_::Vertex_handle Vertex_handle;
+    typedef typename Domain_::Vertex_descriptor Vertex_descriptor;
 
     // collect function values and build index
     std::size_t v_id = 0;
     std::bitset<Domain_::VERTICES_PER_CELL> index = 0;
-    for (const Vertex_handle& v : domain.cell_vertices(cell)) {
+    for (const Vertex_descriptor& v : domain.cell_vertices(cell)) {
         // collect scalar values and computex index
         corners[v_id] = domain.position(v);
         values[v_id] = domain.value(v);
@@ -163,7 +163,7 @@ private:
     typedef Domain_ Domain;
     typedef typename Domain::FT FT;
     typedef typename Domain::Point Point;
-    typedef typename Domain::Cell_handle Cell_handle;
+    typedef typename Domain::Cell_descriptor Cell_descriptor;
 
 #ifdef CGAL_LINKED_WITH_TBB
     typedef tbb::concurrent_vector<std::array<Point, 3>> Triangle_list;
@@ -175,7 +175,7 @@ public:
     Marching_cubes_functor(const Domain& domain, const FT iso_value) : domain(domain), iso_value(iso_value) {}
 
 
-    void operator()(const Cell_handle& cell) {
+    void operator()(const Cell_descriptor& cell) {
 
         assert(domain.cell_vertices(cell).size() == 8);
         assert(domain.cell_edges(cell).size() == 12);

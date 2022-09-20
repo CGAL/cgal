@@ -61,7 +61,7 @@ public:
      */
     template <class Domain_>
     bool position(const Domain_& domain, const typename Domain_::FT iso_value,
-                  const typename Domain_::Cell_handle& cell, typename Domain_::Point& point) const {
+                  const typename Domain_::Cell_descriptor& cell, typename Domain_::Point& point) const {
         typedef typename Domain_::Point Point;
         typedef typename Domain_::Geom_traits::Vector_3 Vector;
         typedef typename Domain_::FT FT;
@@ -170,7 +170,7 @@ public:
      * \return true, if the voxel intersects the isosurface
      */
     template <class Domain_>
-    bool position(const Domain_& domain, const typename Domain_::FT iso_value, const typename Domain_::Cell_handle& vh,
+    bool position(const Domain_& domain, const typename Domain_::FT iso_value, const typename Domain_::Cell_descriptor& vh,
                   typename Domain_::Point& point) const {
         typedef typename Domain_::Point Point;
         typedef typename Domain_::Geom_traits::Vector_3 Vector;
@@ -225,7 +225,7 @@ public:
      */
     template <class Domain_>
     bool position(const Domain_& domain, const typename Domain_::FT iso_value,
-                  const typename Domain_::Cell_handle& cell, typename Domain_::Point& point) const {
+                  const typename Domain_::Cell_descriptor& cell, typename Domain_::Point& point) const {
         typedef typename Domain_::Point Point;
         typedef typename Domain_::Geom_traits::Vector_3 Vector;
         typedef typename Domain_::FT FT;
@@ -273,13 +273,13 @@ private:
 
     typedef typename Domain::FT FT;
     typedef typename Domain::Point Point;
-    typedef typename Domain::Cell_handle Cell_handle;
+    typedef typename Domain::Cell_descriptor Cell_descriptor;
 
 public:
     Dual_contouring_vertex_positioning(const Domain& domain, FT iso_value, const Positioning& positioning)
         : domain(domain), iso_value(iso_value), positioning(positioning), points_counter(0) {}
 
-    void operator()(const Cell_handle& v) {
+    void operator()(const Cell_descriptor& v) {
         // compute dc-vertices
         Point p;
         if (positioning.position(domain, iso_value, v, p)) {
@@ -295,8 +295,8 @@ public:
     FT iso_value;
     const Positioning& positioning;
 
-    std::map<Cell_handle, std::size_t> map_voxel_to_point_id;
-    std::map<Cell_handle, Point> map_voxel_to_point;
+    std::map<Cell_descriptor, std::size_t> map_voxel_to_point_id;
+    std::map<Cell_descriptor, Point> map_voxel_to_point;
     std::size_t points_counter;
 
     std::mutex mutex;
@@ -308,13 +308,13 @@ private:
     typedef Domain_ Domain;
 
     typedef typename Domain_::FT FT;
-    typedef typename Domain_::Edge_handle Edge_handle;
-    typedef typename Domain_::Cell_handle Cell_handle;
+    typedef typename Domain_::Edge_descriptor Edge_descriptor;
+    typedef typename Domain_::Cell_descriptor Cell_descriptor;
 
 public:
     Dual_contouring_face_generation(const Domain& domain, FT iso_value) : domain(domain), iso_value(iso_value) {}
 
-    void operator()(const Edge_handle& e) {
+    void operator()(const Edge_descriptor& e) {
         // save all faces
         const auto& vertices = domain.edge_vertices(e);
         const FT s0 = domain.value(vertices[0]);
@@ -335,7 +335,7 @@ public:
     }
 
     // private:
-    std::map<Edge_handle, std::vector<Cell_handle>> faces;
+    std::map<Edge_descriptor, std::vector<Cell_descriptor>> faces;
 
     const Domain& domain;
     FT iso_value;
