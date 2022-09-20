@@ -108,14 +108,14 @@ bool trim(TriangleMesh& tm,
     return false;
   }
 
-  Mesh splitter;
+  TriangleMesh splitter;
   polygon_soup_to_polygon_mesh(points, faces, splitter);
 
   // CGAL::IO::write_polygon_mesh("splitter.off", splitter);
 
   split(tm, splitter);
 
-  std::vector<Mesh> cctm;
+  std::vector<TriangleMesh> cctm;
 
   split_connected_components(tm, cctm);
 
