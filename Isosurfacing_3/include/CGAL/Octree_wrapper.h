@@ -13,10 +13,10 @@
 #ifndef CGAL_OCTREE_WRAPPER_H
 #define CGAL_OCTREE_WRAPPER_H
 
-#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
+#include <CGAL/license/Isosurfacing_3.h>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -318,7 +318,8 @@ public:
 
     std::tuple<std::size_t, std::size_t, std::size_t> ijk_index(const std::size_t& lex_index,
                                                                 const std::size_t& depth) const {
-        return std::make_tuple(i_index(lex_index, depth), j_index(lex_index, depth), k_index(lex_index, depth));
+        const std::size_t dim = (std::size_t(1) << depth) + 1;
+        return std::make_tuple(lex_index % dim, (lex_index / dim) % dim, lex_index / (dim * dim));
     }
 
     /// <summary>
@@ -525,4 +526,4 @@ public:
 }  // namespace Isosurfacing
 }  // namespace CGAL
 
-#endif // CGAL_OCTREE_WRAPPER_H
+#endif  // CGAL_OCTREE_WRAPPER_H
