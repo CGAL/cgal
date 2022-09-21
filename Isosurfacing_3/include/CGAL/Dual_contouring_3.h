@@ -34,9 +34,11 @@ namespace Isosurfacing {
  *
  * \tparam PointRange is a model of the concept `RandomAccessContainer` and `BackInsertionSequence` whose value type can
  * be constructed from the point type of the polygon mesh.
+ *
  * \tparam PolygonRange a model of the concept
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is itself a model of the concepts
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is `std::size_t`.
+ *
  * \tparam Positioning is a functor containing the operator() that takes `domain`, `iso_value`, `cell`, and `position`
  * as input and returns a boolean that is true if the isosurface intersects the cell.
  *

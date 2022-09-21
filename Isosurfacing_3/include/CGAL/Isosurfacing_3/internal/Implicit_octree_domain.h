@@ -39,10 +39,12 @@ public:
     typedef Implicit_function_with_geometry<Geom_traits, Geometry, Function_with_point> Function;
     typedef Gradient_ Gradient;
 
+    typedef Base_domain<Geom_traits, Topology, Geometry, Function, Gradient> Base;
+
 public:
     Implicit_octree_domain_with_gradient(const Octree& octree, const Function_with_point& func_with_point,
                                          const Gradient& grad)
-        : topo(octree), geom(octree), func(geom, func_with_point), Base_domain(topo, geom, func, grad) {}
+        : topo(octree), geom(octree), func(geom, func_with_point), Base(topo, geom, func, grad) {}
 
 private:
     Topology topo;
@@ -59,9 +61,10 @@ public:
     typedef Function_ Function_with_point;
     typedef Zero_gradient<Geom_traits> Gradient;
 
+    typedef Implicit_octree_domain_with_gradient<Geom_traits, Function_, Gradient> Base;
+
 public:
-    Implicit_octree_domain(const Octree& octree, const Function_with_point& func)
-        : Implicit_cartesian_grid_domain_with_gradient(octree, func, grad) {}
+    Implicit_octree_domain(const Octree& octree, const Function_with_point& func) : Base(octree, func, grad) {}
 
 private:
     Gradient grad;
