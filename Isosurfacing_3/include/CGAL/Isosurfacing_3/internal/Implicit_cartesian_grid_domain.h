@@ -37,7 +37,7 @@ public:
     typedef Implicit_function_with_geometry<Geom_traits, Geometry, Function_with_point> Function;
     typedef Gradient_ Gradient;
 
-    typedef typename Topology::Vertex_descriptor Vertex_descriptor;
+    typedef Base_domain<Geom_traits, Topology, Geometry, Function, Gradient> Base;
 
 public:
     Implicit_cartesian_grid_domain_with_gradient(const std::size_t size_i, const std::size_t size_j,
@@ -46,7 +46,7 @@ public:
         : topo(size_i, size_j, size_k),
           geom(offset, spacing),
           func(geom, func_with_point),
-          Base_domain(topo, geom, func, grad) {}
+          Base(topo, geom, func, grad) {}
 
 private:
     Topology topo;
@@ -64,10 +64,12 @@ public:
     typedef Function_ Function_with_point;
     typedef Zero_gradient<Geom_traits> Gradient;
 
+    typedef Implicit_cartesian_grid_domain_with_gradient<Geom_traits, Function_, Gradient> Base;
+
 public:
     Implicit_cartesian_grid_domain(const std::size_t size_i, const std::size_t size_j, const std::size_t size_k,
                                    const Vector& offset, const Vector& spacing, const Function_with_point& func)
-        : Implicit_cartesian_grid_domain_with_gradient(size_i, size_j, size_k, offset, spacing, func, grad) {}
+        : Base(size_i, size_j, size_k, offset, spacing, func, grad) {}
 
 private:
     Gradient grad;

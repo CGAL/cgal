@@ -35,11 +35,13 @@ public:
     typedef Cartesian_grid_3<Geom_traits> Function;
     typedef Gradient_ Gradient;
 
+    typedef Base_domain<Geom_traits, Topology, Geometry, Function, Gradient> Base;
+
 public:
     Explicit_cartesian_grid_domain_with_gradient(const std::size_t size_i, const std::size_t size_j,
                                                  const std::size_t size_k, const Vector& offset, const Vector& spacing,
                                                  const Function& grid, const Gradient& grad)
-        : topo(size_i, size_j, size_k), geom(offset, spacing), Base_domain(topo, geom, grid, grad) {}
+        : topo(size_i, size_j, size_k), geom(offset, spacing), Base(topo, geom, grid, grad) {}
 
 private:
     Topology topo;
@@ -56,10 +58,12 @@ public:
     typedef Cartesian_grid_3<Geom_traits> Function;
     typedef Zero_gradient<Geom_traits> Gradient;
 
+    typedef Explicit_cartesian_grid_domain_with_gradient<Geom_traits, Gradient> Base;
+
 public:
     Explicit_cartesian_grid_domain(const std::size_t size_i, const std::size_t size_j, const std::size_t size_k,
                                    const Vector& offset, const Vector& spacing, const Function& grid)
-        : Explicit_cartesian_grid_domain_with_gradient(size_i, size_j, size_k, offset, spacing, grid, grad) {}
+        : Base(size_i, size_j, size_k, offset, spacing, grid, grad) {}
 
 private:
     Gradient grad;

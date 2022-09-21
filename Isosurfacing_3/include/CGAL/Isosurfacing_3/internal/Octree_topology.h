@@ -97,7 +97,7 @@ public:
     }
 
     template <typename Functor>
-    void iterate_edges(Functor& f) const {
+    void iterate_edges(Functor& f, Parallel_tag) const {
         const auto& edges = octree->leaf_edges();
 
         auto iterator = [&](const tbb::blocked_range<std::size_t>& r) {
@@ -110,7 +110,7 @@ public:
     }
 
     template <typename Functor>
-    void iterate_cells(Functor& f) const {
+    void iterate_cells(Functor& f, Parallel_tag) const {
         const auto& cells = octree->leaf_voxels();
 
         auto iterator = [&](const tbb::blocked_range<std::size_t>& r) {
