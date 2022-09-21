@@ -177,7 +177,7 @@ private:
  *           that allow to enable or disable the optimizer.
  *
  * \cgalNamedParamsBegin
- *   \cgalParamNBegin{Topological options (manifoldness)}
+ *   \cgalParamSectionBegin{Topological options (manifoldness)}
  *     \cgalParamDescription{In order to drive the meshing algorithm and ensure that the output mesh follows a desired topological criterion,
  *                           three named parameters control this option:
  *                           <UL>
@@ -187,8 +187,8 @@ private:
  *                           </UL>
  *                           Note that the meshing algorithm cannot generate a manifold surface if the input surface is not manifold.}
  *     \cgalParamDefault{`parameters::non_manifold()`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{Lloyd optimization}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Lloyd optimization}
  *     \cgalParamDescription{`lloyd_optimize_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
@@ -196,8 +196,8 @@ private:
  *                             <LI> `parameters::lloyd_optimize_mesh_3()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::no_lloyd()`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{ODT optimization}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{ODT optimization}
  *     \cgalParamDescription{`odt_optimize_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
@@ -205,8 +205,8 @@ private:
  *                             <LI> `parameters::odt()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::no_odt()`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{Mesh perturbation}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Mesh perturbation}
  *     \cgalParamDescription{`perturb_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
@@ -214,8 +214,8 @@ private:
  *                             <LI> `parameters::perturb()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::perturb()`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{Mesh exudation}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Mesh exudation}
  *     \cgalParamDescription{`exude_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
@@ -223,7 +223,7 @@ private:
  *                             <LI> `parameters::no_exude()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::exude()`}
- *   \cgalParamNEnd
+ *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd
  *
  * The optimization parameters can be passed in arbitrary order. If one parameter

@@ -422,7 +422,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  * \cgalNamedParamsBegin
- *   \cgalParamNBegin{Feature preservation options}
+ *   \cgalParamSectionBegin{Feature preservation options}
  *     \cgalParamDescription{If the domain is a model of `MeshDomainWithFeatures_3`, 0 and 1-dimensional features can be
  *                           taken into account while generating the mesh. The following two named parameters control
  *                           this option:
@@ -431,8 +431,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                             <LI>`parameters::no_features()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::features(domain)`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{Topological options (manifoldness)}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Topological options (manifoldness)}
  *     \cgalParamDescription{In order to drive the meshing algorithm and ensure that the output mesh follows a desired topological criterion,
  *                           three named parameters control this option:
  *                           <UL>
@@ -442,8 +442,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                           </UL>
  *                           Note that the meshing algorithm cannot generate a manifold surface if the input surface is not manifold.}
  *     \cgalParamDefault{`parameters::non_manifold()`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{Lloyd optimization}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Lloyd optimization}
  *     \cgalParamDescription{`lloyd_optimize_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
@@ -451,8 +451,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                             <LI> `parameters::lloyd_optimize_mesh_3()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::no_lloyd()`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{ODT optimization}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{ODT optimization}
  *     \cgalParamDescription{`odt_optimize_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
@@ -460,8 +460,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                             <LI> `parameters::odt()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::no_odt()`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{Mesh perturbation}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Mesh perturbation}
  *     \cgalParamDescription{`perturb_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
@@ -469,8 +469,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                             <LI> `parameters::perturb()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::perturb()`}
- *   \cgalParamNEnd
- *   \cgalParamNBegin{Mesh exudation}
+ *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Mesh exudation}
  *     \cgalParamDescription{`exude_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
@@ -478,7 +478,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                             <LI> `parameters::no_exude()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::exude()`}
- *   \cgalParamNEnd
+ *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd
  *
  * Note that whatever may be the optimization processes activated,
