@@ -58,6 +58,13 @@ template <class GeomTraits, typename Function_>
 class Implicit_cartesian_grid_domain
     : public Implicit_cartesian_grid_domain_with_gradient<GeomTraits, Function_, Zero_gradient<GeomTraits>> {
 public:
+    typedef GeomTraits Geom_traits;
+    typedef typename Geom_traits::Vector_3 Vector;
+
+    typedef Function_ Function_with_point;
+    typedef Zero_gradient<Geom_traits> Gradient;
+
+public:
     Implicit_cartesian_grid_domain(const std::size_t size_i, const std::size_t size_j, const std::size_t size_k,
                                    const Vector& offset, const Vector& spacing, const Function_with_point& func)
         : Implicit_cartesian_grid_domain_with_gradient(size_i, size_j, size_k, offset, spacing, func, grad) {}
