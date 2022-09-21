@@ -206,47 +206,24 @@ struct Domain_features_generator< MeshDomain, true >
 
 } // end namespace internal
 
-// Undocumented parameter for refine_mesh_3 and make_mesh_3.
-// Default Mesh_3_options: dump at every stage of the mesh generation.
-inline internal::Mesh_3_options mesh_3_dump()
-{
-  internal::Mesh_3_options options;
 
-  options.dump_after_init_prefix = "mesh_dump_after_init";
-  options.dump_after_refine_surface_prefix = "mesh_dump_after_refine_surface";
-  options.dump_after_refine_prefix = "mesh_dump_after_refine";
-  options.dump_after_glob_opt_prefix = "mesh_dump_after_glob_opt";
-  options.dump_after_perturb_prefix = "mesh_dump_after_perturb";
-  options.dump_after_exude_prefix = "mesh_dump_after_exude";
-
-  return options;
-}
-
-template <typename T>
-struct Base
-{
-  Base(T t) : t_(t) {}
-  T operator()() const { return t_; }
-private:
-  T t_;
-};
 
 // -----------------------------------
 // Reset_c3t3 (undocumented)
 // -----------------------------------
+inline
+Named_function_parameters<bool, internal_np::do_reset_c3t3_t>
+reset_c3t3()
+{
+  return Named_function_parameters<bool, internal_np::do_reset_c3t3_t>(true);
+}
 
-#define CGAL_BOOLEAN_PARAMETER(Class, function_true, function_false)     \
-  struct Class : public Base<bool> { Class(bool b) : Base<bool>(b){} };       \
-  inline Named_function_parameters<Class, internal_np::reset_options_param_t> function_true() { \
-  typedef Named_function_parameters<Class, internal_np::reset_options_param_t> Param;           \
-  return Param(Class(true)); }                        \
-  inline Named_function_parameters<Class, internal_np::reset_options_param_t> function_false() {\
-  typedef Named_function_parameters<Class, internal_np::reset_options_param_t> Param;           \
-  return Param(Class(false)); }
-
-CGAL_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
-
-#undef CGAL_BOOLEAN_PARAMETER
+inline
+Named_function_parameters<bool, internal_np::do_reset_c3t3_t>
+no_reset_c3t3()
+{
+  return Named_function_parameters<bool, internal_np::do_reset_c3t3_t>(false);
+}
 
 // -----------------------------------
 // Perturb
@@ -507,7 +484,6 @@ non_manifold()
 // Undocumented parameter for refine_mesh_3 and make_mesh_3.
 // Allows to dump the mesh at given stage of the mesh generation
 // algorithm.
-
 template<typename CGAL_NP_TEMPLATE_PARAMETERS>
 Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t>
 mesh_3_options(const CGAL_NP_CLASS& np = parameters::default_values())
@@ -540,6 +516,25 @@ Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t>
 mesh_3_options(const CGAL_NP_CLASS& ... nps)
 {
   return mesh_3_options(internal_np::combine_named_parameters(nps...));
+}
+
+// Undocumented parameter for refine_mesh_3 and make_mesh_3.
+// Default Mesh_3_options: dump at every stage of the mesh generation.
+inline
+Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t>
+mesh_3_dump()
+{
+  typedef Named_function_parameters<internal::Mesh_3_options, internal_np::mesh_param_t> Param;
+  internal::Mesh_3_options options;
+
+  options.dump_after_init_prefix = "mesh_dump_after_init";
+  options.dump_after_refine_surface_prefix = "mesh_dump_after_refine_surface";
+  options.dump_after_refine_prefix = "mesh_dump_after_refine";
+  options.dump_after_glob_opt_prefix = "mesh_dump_after_glob_opt";
+  options.dump_after_perturb_prefix = "mesh_dump_after_perturb";
+  options.dump_after_exude_prefix = "mesh_dump_after_exude";
+
+  return Param(options);
 }
 
 // -----------------------------------
