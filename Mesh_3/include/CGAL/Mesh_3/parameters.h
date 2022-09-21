@@ -15,6 +15,7 @@
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/SMDS_3/Has_features.h>
 
 namespace CGAL {
 
@@ -555,9 +556,8 @@ template < typename MeshDomain >
 inline Named_function_parameters<internal::Features_options, internal_np::features_option_param_t>
 features(const MeshDomain& /*domain*/)
 {
-typedef typename internal::Domain_features_generator<
-  MeshDomain,
-  CGAL::Mesh_3::internal::has_Has_features<MeshDomain>::value > Generator;
+  typedef typename internal::Domain_features_generator<MeshDomain,
+    CGAL::Mesh_3::internal::has_Has_features<MeshDomain>::value > Generator;
 
 typedef Named_function_parameters<internal::Features_options, internal_np::features_option_param_t> Param;
 return Param(Generator()());
