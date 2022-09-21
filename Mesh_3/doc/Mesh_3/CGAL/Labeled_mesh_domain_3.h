@@ -20,7 +20,7 @@ The bisection stops when the query segment is shorter than an error bound
 length of the diagonal of the bounding box (in world coordinates), or the radius of the bounding sphere, and
 a relative error bound passed as argument to the constructor of `Labeled_mesh_domain_3`.
 
-This class has a constructor taking a labeling function. It has also three
+This class has a constructor taking a labeling function. It has also four
 static template member functions that act as named constructors:
 <ul>
 <li>`create_gray_image_mesh_domain()`, to create a domain from a 3D gray image,
