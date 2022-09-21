@@ -19,7 +19,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
--   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshess, and makes the data structure independent from the tetrahedral mesh generation package.
+-   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
 
 ### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed some code that handles geodesic-curves on spheres that compare x- and y-coordinates on the boundary of the parameter space. It mainly effected the naive point-location.
