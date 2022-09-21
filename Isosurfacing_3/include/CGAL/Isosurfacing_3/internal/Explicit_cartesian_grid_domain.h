@@ -28,6 +28,7 @@ class Explicit_cartesian_grid_domain_with_gradient
                          Gradient_> {
 public:
     typedef GeomTraits Geom_traits;
+    typedef typename Geom_traits::Vector_3 Vector;
 
     typedef Grid_topology Topology;
     typedef Cartesian_grid_geometry<Geom_traits> Geometry;
@@ -48,6 +49,13 @@ private:
 template <class GeomTraits>
 class Explicit_cartesian_grid_domain
     : public Explicit_cartesian_grid_domain_with_gradient<GeomTraits, Zero_gradient<GeomTraits>> {
+public:
+    typedef GeomTraits Geom_traits;
+    typedef typename Geom_traits::Vector_3 Vector;
+
+    typedef Cartesian_grid_3<Geom_traits> Function;
+    typedef Zero_gradient<Geom_traits> Gradient;
+
 public:
     Explicit_cartesian_grid_domain(const std::size_t size_i, const std::size_t size_j, const std::size_t size_k,
                                    const Vector& offset, const Vector& spacing, const Function& grid)

@@ -54,6 +54,12 @@ template <class GeomTraits, typename Function_>
 class Implicit_octree_domain
     : public Implicit_octree_domain_with_gradient<GeomTraits, Function_, Zero_gradient<GeomTraits>> {
 public:
+    typedef GeomTraits Geom_traits;
+    typedef Octree_wrapper<Geom_traits> Octree;
+    typedef Function_ Function_with_point;
+    typedef Zero_gradient<Geom_traits> Gradient;
+
+public:
     Implicit_octree_domain(const Octree& octree, const Function_with_point& func)
         : Implicit_cartesian_grid_domain_with_gradient(octree, func, grad) {}
 
