@@ -53,7 +53,7 @@ namespace CGAL {
  *                           is stopped. This time is measured using the `Real_timer` class. The default value is
  *                           0 and means that there is no time limit.}
  *     \cgalParamType{`double`}
- *     \cgalParamExtra{\pre `time_limit >= 0`}
+ *     \cgalParamPrecondition{`time_limit >= 0`}
  *     \cgalParamDefault{0}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{sliver_bound}
@@ -64,7 +64,7 @@ namespace CGAL {
  *                           default value is 0 and means that there is no targeted bound: the exuder then runs as long
  *                           as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}
  *     \cgalParamType{`double`}
- *     \cgalParamExtra{\pre `sliver_bound <= 180`}
+ *     \cgalParamPrecondition{`0<= sliver_bound <= 180`}
  *     \cgalParamDefault{0}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd

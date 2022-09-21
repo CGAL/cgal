@@ -65,7 +65,7 @@ namespace CGAL {
  *                          measured using `Real_timer`.
  *                          The default value is 0 and means that there is no time limit.}
  *     \cgalParamType{`double`}
- *     \cgalParamExtra{\pre `time_limit >= 0`}
+ *     \cgalParamPrecondition{`time_limit >= 0`}
  *     \cgalParamDefault{0}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{max_iteration_number}
@@ -82,7 +82,7 @@ namespace CGAL {
  *                          the shortest edge incident to that vertex.
  *                          The parameter `convergence` gives the threshold ratio.}
  *     \cgalParamType{`double`}
- *     \cgalParamExtra{\pre `0 <= convergence <= 1`}
+ *     \cgalParamPrecondition{`0 <= convergence <= 1`}
  *     \cgalParamDefault{0.02}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{freeze_bound}
@@ -90,7 +90,7 @@ namespace CGAL {
  *                          that has a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e.\ is
  *                          not relocated). The parameter `freeze_bound` gives the threshold ratio.}
  *     \cgalParamType{`double`}
- *     \cgalParamExtra{\pre `0 <= freeze_bound <= 1`}
+ *     \cgalParamPrecondition{`0 <= freeze_bound <= 1`}
  *     \cgalParamDefault{0.01}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{do_freeze}

@@ -358,6 +358,7 @@ ALIASES+= "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>"
 ALIASES+= "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>"
 ALIASES+= "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}"
 ALIASES+= "cgalParamSectionEnd=\cgalParamNEnd"
+ALIASES+= "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>"
 
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
