@@ -37,7 +37,6 @@
 #include <CGAL/SMDS_3/internal/indices_management.h>
 
 // support for `CGAL::Image_3`
-// support for `CGAL::Image_3`
 #include <CGAL/Image_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 #include <CGAL/Mesh_3/Image_plus_weights_to_labeled_function_wrapper.h>
