@@ -47,6 +47,34 @@ void compute_face(typename T3::Finite_facets_iterator fh,
                   GraphicBuffer<BufferType> &graphic_buffer, const T3 *t3,
                   const ColorFunctor &m_fcolor) {
 
+/*
+  // QUESTION: I would like to assign custom color functor during run time, which one down is right?
+
+  // Solution 1 to assign custom color functor.
+  // m_fcolor.face_color = DefaultColorFunctorT3::run;
+
+  // Solution 2 to assign custom color functor.
+  // m_fcolor.face_color =
+  //     [](const T3 &,
+  //        const typename T3::Finite_facets_iterator *fh) -> CGAL::IO::Color {
+  //   if (fh == nullptr)                       // use to get the mono color
+  //     return CGAL::IO::Color(100, 125, 200); // R G B between 0-255
+
+  //   CGAL::Random random((unsigned int)((std::size_t)(&*((*fh)->first)) +
+  //                                      (std::size_t)((*fh)->second)));
+
+  //   return get_random_color(random);
+  // };
+  // CGAL::IO::Color c = m_fcolor.face_color(*t3, &fh);
+
+
+  // Solution 3 to assign custom color functor.
+  m_fcolor.test_m = []() -> void {std::cout << "Hello\n";};
+  std::invoke(&ColorFunctor::test_m, m_fcolor);
+
+  I tried the above solutions but they don't work.
+*/
+
   // TODO: change it to m_fcolor.face_color(*t3, fh)
   CGAL::IO::Color c = m_fcolor.run(*t3, &fh);
 
