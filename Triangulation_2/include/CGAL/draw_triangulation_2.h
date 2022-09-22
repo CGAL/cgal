@@ -8,153 +8,119 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_T2_H
 #define CGAL_DRAW_T2_H
 
-#include <CGAL/license/Triangulation_2.h>
+#include <CGAL/Generic_functors.h>
+#include <CGAL/GraphicBuffer.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/license/Triangulation_2.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
+#include <CGAL/Triangulation_2.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
 // Default color functor; user can change it to have its own face color
-struct DefaultColorFunctorT2
-{
-  template<typename T2>
-  static CGAL::IO::Color run(const T2&,
-                         const typename T2::Finite_faces_iterator fh)
-  {
+struct DefaultColorFunctorT2 {
+  template <typename T2>
+  static CGAL::IO::Color run(const T2 &,
+                             const typename T2::Finite_faces_iterator fh) {
     CGAL::Random random((unsigned int)(std::size_t)(&*fh));
     return get_random_color(random);
   }
 };
 
-// Viewer class for T2
-template<class T2, class ColorFunctor>
-class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
-{
-  typedef Basic_viewer_qt                    Base;
-  typedef typename T2::Vertex_handle         Vertex_const_handle;
-  typedef typename T2::Finite_edges_iterator Edge_const_handle;
-  typedef typename T2::Finite_faces_iterator Facet_const_handle;
-  typedef typename T2::Point                 Point;
+namespace draw_function_for_t2 {
 
-public:
-  /// Construct the viewer.
-  /// @param at2 the t2 to view
-  /// @param title the title of the window
-  /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
-  SimpleTriangulation2ViewerQt(QWidget* parent, const T2& at2,
-                               const char* title="Basic T2 Viewer",
-                               bool anofaces=false,
-                               const ColorFunctor& fcolor=ColorFunctor()) :
-    // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false),
-    t2(at2),
-    m_nofaces(anofaces),
-    m_fcolor(fcolor)
-  {
-    compute_elements();
-  }
+template <typename BufferType = float, class T2, class ColorFunctor>
+void compute_face(typename T2::Finite_faces_iterator fh,
+                  GraphicBuffer<BufferType> &graphic_buffer, const T2 *t2,
+                  const ColorFunctor &m_fcolor) {
 
-protected:
-  void compute_face(Facet_const_handle fh)
-  {
-    CGAL::IO::Color c=m_fcolor.run(t2, fh);
-    face_begin(c);
+  // TODO: change it to m_fcolor.face_color(*t2, fh)
+  CGAL::IO::Color c = m_fcolor.run(*t2, fh);
+  graphic_buffer.face_begin(c);
 
-    add_point_in_face(fh->vertex(0)->point());
-    add_point_in_face(fh->vertex(1)->point());
-    add_point_in_face(fh->vertex(2)->point());
+  graphic_buffer.add_point_in_face(fh->vertex(0)->point());
+  graphic_buffer.add_point_in_face(fh->vertex(1)->point());
+  graphic_buffer.add_point_in_face(fh->vertex(2)->point());
 
-    face_end();
-  }
+  graphic_buffer.face_end();
+}
 
-  void compute_edge(Edge_const_handle eh)
-  {
-    add_segment(eh->first->vertex(eh->first->cw(eh->second))->point(),
-                eh->first->vertex(eh->first->ccw(eh->second))->point());
-  }
+template <typename BufferType = float, class T2>
+void compute_edge(typename T2::Finite_edges_iterator eh,
+                  GraphicBuffer<BufferType> &graphic_buffer) {
+  graphic_buffer.add_segment(
+      eh->first->vertex(eh->first->cw(eh->second))->point(),
+      eh->first->vertex(eh->first->ccw(eh->second))->point());
+}
 
-  void compute_vertex(Vertex_const_handle vh)
-  { add_point(vh->point()); }
+template <typename BufferType = float, class T2>
+void compute_vertex(typename T2::Vertex_handle vh,
+                    GraphicBuffer<BufferType> &graphic_buffer) {
+  graphic_buffer.add_point(vh->point());
+}
 
-  void compute_elements()
-  {
-    clear();
+template <typename BufferType = float, class T2, class ColorFunctor>
+void compute_elements(GraphicBuffer<BufferType> &graphic_buffer, const T2 *t2,
+                      const ColorFunctor &m_color_functor,
+                      bool m_nofaces = false) {
+  // clear();
 
-    if (!m_nofaces)
-    {
-      for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
-           it!=t2.finite_faces_end(); ++it)
-      { compute_face(it); }
+  if (!m_nofaces) {
+    for (typename T2::Finite_faces_iterator it = t2->finite_faces_begin();
+         it != t2->finite_faces_end(); ++it) {
+      compute_face(it, graphic_buffer, t2, m_color_functor);
     }
-
-    for (typename T2::Finite_edges_iterator it=t2.finite_edges_begin();
-         it!=t2.finite_edges_end(); ++it)
-    { compute_edge(it); }
-
-    for (typename T2::Finite_vertices_iterator it=t2.finite_vertices_begin();
-         it!=t2.finite_vertices_end(); ++it)
-    { compute_vertex(it); }
   }
 
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-
-    // Call: * compute_elements() if the model changed, followed by
-    //       * redraw() if some viewing parameters changed that implies some
-    //                  modifications of the buffers
-    //                  (eg. type of normal, color/mono)
-    //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    Base::keyPressEvent(e);
+  for (typename T2::Finite_edges_iterator it = t2->finite_edges_begin();
+       it != t2->finite_edges_end(); ++it) {
+    compute_edge<float, T2>(it, graphic_buffer);
   }
 
-protected:
-  const T2& t2;
-  bool m_nofaces;
-  const ColorFunctor& m_fcolor;
-};
+  for (typename T2::Finite_vertices_iterator it = t2->finite_vertices_begin();
+       it != t2->finite_vertices_end(); ++it) {
+    compute_vertex<float, T2>(it, graphic_buffer);
+  }
+}
+
+} // namespace draw_function_for_t2
+
+template <typename BufferType = float, class T2, class ColorFunctor>
+void add_in_graphic_buffer_t2(GraphicBuffer<BufferType> &graphic_buffer,
+                              const ColorFunctor &m_color_functor,
+                              const T2 *at2 = nullptr, bool m_nofaces = false) {
+  if (at2 != nullptr) {
+    draw_function_for_t2::compute_elements(graphic_buffer, at2, m_color_functor,
+                                           m_nofaces);
+  }
+}
 
 // Specialization of draw function.
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
 
-template<class Gt, class Tds>
-void draw(const CGAL_T2_TYPE& at2,
-          const char* title="Triangulation_2 Basic Viewer",
-          bool nofill=false)
-{
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
+template <class Gt, class Tds,
+          class ColorFunctor =
+              GenericFunctor<CGAL_T2_TYPE, typename CGAL_T2_TYPE::Vertex_handle,
+                             typename CGAL_T2_TYPE::Finite_edges_iterator,
+                             typename CGAL_T2_TYPE::Finite_faces_iterator>>
+void draw(const CGAL_T2_TYPE &at2,
+          const char *title = "Triangulation_2 Basic Viewer",
+          const ColorFunctor &color_functor = ColorFunctor(),
+          bool nofill = false) {
 
-  if (!cgal_test_suite)
-  {
-    CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[2]={"t2_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    DefaultColorFunctorT2 fcolor;
-    SimpleTriangulation2ViewerQt<CGAL_T2_TYPE, DefaultColorFunctorT2>
-      mainwindow(app.activeWindow(), at2, title, nofill, fcolor);
-    mainwindow.show();
-    app.exec();
-  }
+  GraphicBuffer<float> buffer;
+  // add_in_graphic_buffer_t3(buffer, color_functor, &at3, false);
+  add_in_graphic_buffer_t2(buffer, DefaultColorFunctorT2(), &at2, false);
+  draw_buffer(buffer);
 }
 
 #undef CGAL_T2_TYPE
