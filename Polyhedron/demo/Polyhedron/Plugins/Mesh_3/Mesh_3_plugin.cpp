@@ -770,7 +770,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
      }
     break;
   }//end case POLYHEDRAL_MESH_ITEMS
-  // Image
+  // Implicit functions
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   case IMPLICIT_MESH_ITEMS: {
     const Implicit_function_interface* pFunction = function_item->function();
@@ -789,8 +789,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                               manifold,
                               mesh_type == Mesh_type::SURFACE_ONLY);
     break;
-  }
+  }//end case IMPLICIT_MESH_ITEMS
 #  endif
+  // Images
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   case IMAGE_MESH_ITEMS: {
     const Image* pImage = image_item->image();
@@ -826,6 +827,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         edges_sizing,
         tets_shape,
         protect_features,
+        protect_borders,
         manifold,
         mesh_type == Mesh_type::SURFACE_ONLY,
         detect_connected_components,
