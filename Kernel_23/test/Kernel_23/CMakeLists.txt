@@ -35,8 +35,8 @@ create_single_source_cgal_program("test_Projection_traits_xy_3_Intersect_2.cpp")
 
 set(CGAL_KERNEL_23_TEST_RT_FT_PREDICATE_FLAGS ON)
 if(CGAL_KERNEL_23_TEST_RT_FT_PREDICATE_FLAGS)
-  # expensive because of templated operators creating a lot of possible combinations
-  add_definitions(-DCGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_COMPARE_DISTANCES)
+  # templated operators create a lot of possible combinations, which is expensive to test
+  add_definitions(-DCGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS)
 
   create_single_source_cgal_program("atomic_compilation_test.cpp")
   create_single_source_cgal_program("test_RT_or_FT_predicates.cpp")

@@ -16,15 +16,15 @@
 // > 8, everything
 #define CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY 8
 
-std::vector<std::string> predicates_types = { };
+std::vector<std::string> predicates_types = { "Angle_2" };
 
-// @todo, technically somebody might in the future create predicates with non kernel objects (nor FT).
-// In that case, they'd have to be added to these lists since there is no scrapping of the predicate
-// arguments but rather try all combinations of objects from these lists.
-std::vector<std::string> object_types_2 = { "FT" };
-std::vector<std::string> object_types_3 = { "FT" };
+// @todo, technically somebody could create predicates with non-kernel objects (nor FT/Origin), e.g. `int`.
+// In that case, these arguments would have to be added to the lists below since there is no scrapping
+// of the predicate arguments, but simply trying all combinations of objects from these lists.
+std::vector<std::string> object_types_2 = { "FT", "Origin" };
+std::vector<std::string> object_types_3 = { "FT", "Origin" };
 
-// @todo potential operator()s with more than MAX_ARITY are not tested
+// @todo potential operator()s with fewer than MIN_ARITY and more than MAX_ARITY are not tested
 constexpr std::size_t MIN_ARITY = 0;
 constexpr std::size_t MAX_ARITY = 12;
 
@@ -82,6 +82,8 @@ std::string parameter_with_namespace(const std::string& FT_name,
     return "CGAL::FT_necessary";
   else if(o == "FT")
     return "K::FT";
+  else if(o == "Origin")
+    return "CGAL::Origin";
   else
     return "CGAL::" + o + "<" + kernel_with_FT(FT_name) + " >";
 }
@@ -113,7 +115,7 @@ Compilation_result parse_output(const std::string& predicate_name,
     return UNKNOWN;
   }
 
-#ifdef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_COMPARE_DISTANCES
+#ifdef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS
   // Compare_(squared)_distance_23 have templated operator()s, which are a lot of combinations to test.
   // In templated operator()s, the compare is simply a call to squared_distance()s and a CGAL::compare().
   // Below prunes some exploration branches in case the first squared_distance() call does not even compile.
@@ -142,7 +144,7 @@ Compilation_result parse_output(const std::string& predicate_name,
     } else if(line.find("too many arguments") != std::string::npos) { // @todo what is that exact error?
       res = FAILED_NO_MATCH;
       break;
-#ifdef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_COMPARE_DISTANCES
+#ifdef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS
     } else if(prune_compare_distance_branches && parameters.size() > 1 &&
               parameters[0] != "Any" && parameters[1] != "Any" &&
               line.find(std::string{"no matching function for call to ‘squared_distance(const " +
@@ -168,7 +170,8 @@ Compilation_result parse_output(const std::string& predicate_name,
       res = SUCCESSFUL;
       break;
     } else if(line.find("undefined reference") != std::string::npos) {
-      res = SUCCESSFUL; // @todo should it be a different value?
+      // Can happen because the conversion Any -> kernel object is not implemented
+      res = SUCCESSFUL;
       break;
     }
   }
@@ -353,10 +356,11 @@ void test_predicate(const std::string& predicate_name,
 
   for(const std::string& object_type : object_types)
   {
-#ifdef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_COMPARE_DISTANCES
+#ifdef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS
     // This pruning could be done for other predicates, but they're not as expensive so it doesn't matter
     if((predicate_name == "Compare_distance_2" || predicate_name == "Compare_distance_3" ||
-        predicate_name == "Compare_squared_distance_2" || predicate_name == "Compare_squared_distance_3") &&
+        predicate_name == "Compare_squared_distance_2" || predicate_name == "Compare_squared_distance_3" ||
+        predicate_name == "Do_intersect_2" || predicate_name == "Do_intersect_3") &&
        object_type == "FT")
     {
       continue;
@@ -420,12 +424,13 @@ void test_predicate(const std::string& predicate_name)
   std::cout << "\n\n=== Test predicate: " << predicate_name << "... ===" << std::endl;
 #endif
 
-#ifndef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_COMPARE_DISTANCES
+#ifndef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS
   if(predicate_name == "Compare_distance_2" || predicate_name == "Compare_distance_3" ||
-     predicate_name == "Compare_squared_distance_2" || predicate_name == "Compare_squared_distance_3")
+     predicate_name == "Compare_squared_distance_2" || predicate_name == "Compare_squared_distance_3" ||
+     predicate_name == "Do_intersect_2" || predicate_name == "Do_intersect_3")
   {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 1)
-    std::cout << "Skipping because 'CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_COMPARE_DISTANCES' is not defined!" << std::endl;
+    std::cout << "Skipping because 'CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS' is not defined!" << std::endl;
 #endif
     return;
   }
