@@ -308,7 +308,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     protect_features = true; // so that it will be passed in make_mesh_3
   }
   Mesh_parameters param;
-  param.protect_features = protect_features;
+  param.protect_features = protect_features || protect_borders;
   param.detect_connected_components = detect_connected_components;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
