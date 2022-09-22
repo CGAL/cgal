@@ -21,7 +21,7 @@
 #include <itkImage.h>
 #include <itkImageDuplicator.h>
 #include <itkBinaryThresholdImageFilter.h>
-#include <itkRecursiveGaussianImageFilter.h>
+#include <itkDiscreteGaussianImageFilter.h>
 #include <itkMaximumImageFilter.h>
 
 #include <iostream>
@@ -173,12 +173,15 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   typename ImageType::Pointer itk_img = ImageType::New();
   std::set<Image_word_type> labels;
   internal::convert_image_3_to_itk(image, itk_img.GetPointer(), labels);
+
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
   CGAL_assertion(internal::count_non_white_pixels<Image_word_type>(image)
               == internal::count_non_white_pixels<Image_word_type>(itk_img.GetPointer()));
+#endif
 
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
   using IndicatorFilter = itk::BinaryThresholdImageFilter<ImageType, WeightsType>;
-  using GaussianFilterType = itk::RecursiveGaussianImageFilter<WeightsType, WeightsType>;
+  using GaussianFilterType = itk::DiscreteGaussianImageFilter<WeightsType, WeightsType>;
   using MaximumImageFilterType = itk::MaximumImageFilter<WeightsType>;
 
   std::vector<typename ImageType::Pointer> indicators(labels.size());
@@ -222,8 +225,9 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 
     //perform gaussian smoothing
     typename GaussianFilterType::Pointer smoother = GaussianFilterType::New();
+    smoother->SetUseImageSpacing(true);//variance/std deviation is counted real world distances
     smoother->SetInput(indicator->GetOutput());
-    smoother->SetSigma(sigma);
+    smoother->SetVariance(sigma*sigma);
     smoother->Update();
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
@@ -246,6 +250,8 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
     }
 
     id++;
+  }
+
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
     std::ostringstream oss2;
@@ -259,7 +265,6 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
     std::cout << "\tnon zero in max ("
       << id << ")\t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
 #endif
-  }
 
   //copy pixels to weights
   std::copy(blured_max->GetBufferPointer(),
