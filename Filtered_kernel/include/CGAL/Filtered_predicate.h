@@ -129,9 +129,10 @@ public:
   using result_type =  typename EP_FT::result_type;
 
   template <typename... Args>
-  struct Call_operator_needs_FT {
+  struct Call_operator_needs_FT
+  {
     // This type traits class checks if the call operator can be called with
-    // `(const Args&..., RT_sufficient())`.
+    // `(const Args&..., FT_necessary())`.
     using ArrayOfOne = char[1];
     using ArrayOfTwo = char[2];
 
@@ -139,21 +140,21 @@ public:
 
     template <typename... Args2>
     static auto test(const Args2 &...args)
-        -> decltype(ap(c2a(args)..., RT_sufficient()),
+        -> decltype(ap(c2a(args)..., FT_necessary()),
                     std::declval<ArrayOfTwo &>());
 
-    enum { value = sizeof(test(std::declval<const Args&>()...)) == sizeof(ArrayOfOne) };
+    enum { value = sizeof(test(std::declval<const Args&>()...)) == sizeof(ArrayOfTwo) };
   };
 
   // ## Important note
   //
-  // If you want to remove of rename that member function template `needs_ft`,
+  // If you want to remove of rename that member function template `needs_FT`,
   // please also change the lines with
-  // `CGAL_GENERATE_MEMBER_DETECTOR(needs_ft);`
-  // or `has_needs_ft<typename R::Compare_distance_3>` in
+  // `CGAL_GENERATE_MEMBER_DETECTOR(needs_FT);`
+  // or `has_needs_FT<typename R::Compare_distance_3>` in
   // the file `Kernel_23/test/Kernel_23/include/CGAL/_test_new_3.h`.
   template <typename... Args>
-  constexpr bool needs_ft(const Args&...) const {
+  constexpr bool needs_FT(const Args&...) const {
     return Call_operator_needs_FT<Args...>::value;
   }
 

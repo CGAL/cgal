@@ -1021,7 +1021,7 @@ public:
 
   struct Collinear_2 {
     typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r, RT_sufficient = {}) const
+    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       Orientation_2 ori;
       return ori(p,q,r) == COLLINEAR;

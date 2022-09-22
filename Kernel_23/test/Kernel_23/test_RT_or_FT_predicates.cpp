@@ -9,7 +9,7 @@
 #include <vector>
 
 // 0, nothing
-// > 0, print RT_sufficient errors and successes
+// > 0, print RT_sufficient/FT_necessary errors and successes
 // > 1, same as above + predicate being tested
 // > 2, same as above + some general indications on what is going on
 // > 4, same as above + even more indications on what is going on
@@ -78,8 +78,8 @@ std::string parameter_with_namespace(const std::string& FT_name,
 {
   if(o == "Any")
     return "CGAL::Kernel_23_tests::Any";
-  else if(o == "RT_sufficient")
-    return "CGAL::RT_sufficient";
+  else if(o == "FT_necessary")
+    return "CGAL::FT_necessary";
   else if(o == "FT")
     return "K::FT";
   else
@@ -259,81 +259,81 @@ Arity_test_result test_arity(const std::string& predicate_name,
     return Arity_test_result::NO_MATCH;
 }
 
-bool ensure_RT_sufficient_is_present(const std::string& predicate_name,
-                                     // intentional copy, don't want to pollute the parameters with `RT_sufficient`
-                                     std::vector<std::string> parameters)
+bool ensure_FT_necessary_is_present(const std::string& predicate_name,
+                                    // intentional copy, don't want to pollute the parameters with `FT_necessary`
+                                    std::vector<std::string> parameters)
 {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 4)
   std::cout << predicate_name << "(";
   for(std::size_t j=0, i=parameters.size(); j<i; ++j)
     std::cout << ((j != 0) ? ", " : "") << parameters[j];
-  std::cout << ") is RT_sufficient; check that the tag is present..." << std::endl;
+  std::cout << ") is FT_necessary; check that the tag is present..." << std::endl;
 #endif
 
-  // RT is sufficient, check that RT_sufficient is in the operator()'s signature
-  parameters.push_back("RT_sufficient");
-  generate_atomic_file(RT_no_div, predicate_name, parameters);
-  compile();
-  Compilation_result res = parse_output(predicate_name);
-
-#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-  std::cout << predicate_name << "(";
-  for(std::size_t j=0, i=parameters.size() - 1; j<i; ++j) // -1 to ignore "RT_sufficient"
-    std::cout << ((j != 0) ? ", " : "") << parameters[j];
-  std::cout << ") is RT_sufficient..." << std::endl;
-#endif
-
-  if(res != SUCCESSFUL)
-  {
-#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-    std::cerr << "Error: this predicate is RT_sufficient, but the tag is missing!\n" << std::endl;
-#endif
-    return false;
-  }
-  else
-  {
-#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-    std::cout << "... and the tag is properly set!\n" << std::endl;
-#endif
-    return true;
-  }
-}
-
-bool ensure_RT_sufficient_is_NOT_present(const std::string& predicate_name,
-                                         // intentional copy, don't want to pollute the parameters with `RT_sufficient`
-                                         std::vector<std::string> parameters)
-{
-#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 4)
-  std::cout << predicate_name << "(";
-  for(std::size_t j=0, i=parameters.size(); j<i; ++j)
-    std::cout << ((j != 0) ? ", " : "") << parameters[j];
-  std::cout << ") is FT_necessary; check that the tag is absent..." << std::endl;
-#endif
-
-  // The predicate requires a FT with division, ensure that RT_sufficient is not present in the operator()'s signature
-  parameters.push_back("RT_sufficient");
+  // The predicate requires a FT with division, ensure that FT_necessary is present in the operator()'s signature
+  parameters.push_back("FT_necessary");
   generate_atomic_file(FT_div, predicate_name, parameters);
   compile();
   Compilation_result res = parse_output(predicate_name);
 
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
   std::cout << predicate_name << "(";
-  for(std::size_t j=0, i=parameters.size() - 1; j<i; ++j) // -1 to ignore "RT_sufficient"
+  for(std::size_t j=0, i=parameters.size() - 1; j<i; ++j) // -1 to ignore "FT_necessary"
     std::cout << ((j != 0) ? ", " : "") << parameters[j];
   std::cout << ") is FT_necessary..." << std::endl;
 #endif
 
-  if(res == SUCCESSFUL)
+  if(res != SUCCESSFUL)
   {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-    std::cerr << "Error: this predicate is NOT RT_sufficient, but the tag is present!\n" << std::endl;
+    std::cerr << "Error: this predicate is `FT_necessary`, but the tag is missing!\n" << std::endl;
 #endif
     return false;
   }
   else
   {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-    std::cout << "... and the tag is (correctly) absent!\n" << std::endl;
+    std::cout << "... and the tag `FT_necessary` is correctly present!\n" << std::endl;
+#endif
+    return true;
+  }
+}
+
+bool ensure_FT_necessary_is_NOT_present(const std::string& predicate_name,
+                                        // intentional copy, don't want to pollute the parameters with `RT_sufficient`
+                                        std::vector<std::string> parameters)
+{
+#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 4)
+  std::cout << predicate_name << "(";
+  for(std::size_t j=0, i=parameters.size(); j<i; ++j)
+    std::cout << ((j != 0) ? ", " : "") << parameters[j];
+  std::cout << ") is RT_sufficient; check that the tag is absent..." << std::endl;
+#endif
+
+  // RT is sufficient, check that `FT_necessary` is not in the operator()'s signature
+  parameters.push_back("FT_necessary");
+  generate_atomic_file(RT_no_div, predicate_name, parameters);
+  compile();
+  Compilation_result res = parse_output(predicate_name);
+
+#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
+  std::cout << predicate_name << "(";
+  for(std::size_t j=0, i=parameters.size() - 1; j<i; ++j) // -1 to ignore "FT_necessary"
+    std::cout << ((j != 0) ? ", " : "") << parameters[j];
+  std::cout << ") is RT_sufficient..." << std::endl;
+#endif
+
+  if(res == SUCCESSFUL)
+  {
+#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
+    std::cerr << "Error: this predicate is NOT 'FT_necessary', but the tag is present!\n" << std::endl;
+#endif
+    return false;
+  }
+  else
+  {
+#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
+    std::cout << "... and the tag `FT_necessary` is (correctly) absent!\n" << std::endl;
 #endif
     return true;
   }
@@ -370,15 +370,15 @@ void test_predicate(const std::string& predicate_name,
 
     // See if we can already conclude on the current parameter list
     // - if that successful compiles, then it is RT_sufficient
-    // - call to deleted operator, this means FT_necessary
+    // - call to deleted or missing division operator, this means FT_necessary
     // - any other error, this combination of parameters was not a valid input for the predicate
     if(res == SUCCESSFUL)
     {
-      ensure_RT_sufficient_is_present(predicate_name, parameters);
+      ensure_FT_necessary_is_NOT_present(predicate_name, parameters);
     }
     else if(res == FAILED_NO_DIVISION_OPERATOR)
     {
-      ensure_RT_sufficient_is_NOT_present(predicate_name, parameters);
+      ensure_FT_necessary_is_present(predicate_name, parameters);
     }
 
     if(res == FAILED_AMBIGUOUS_CALL && object_pos != last)
@@ -437,12 +437,12 @@ void test_predicate(const std::string& predicate_name)
     if(res == Arity_test_result::RT_SUFFICIENT)
     {
       std::vector<std::string> parameters(i, "Any");
-      ensure_RT_sufficient_is_present(predicate_name, parameters);
+      ensure_FT_necessary_is_NOT_present(predicate_name, parameters);
     }
     else if(res == Arity_test_result::FT_NECESSARY)
     {
       std::vector<std::string> parameters(i, "Any");
-      ensure_RT_sufficient_is_NOT_present(predicate_name, parameters);
+      ensure_FT_necessary_is_present(predicate_name, parameters);
     }
     else if(res == Arity_test_result::EXPLORATION_REQUIRED)
     {

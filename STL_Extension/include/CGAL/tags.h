@@ -81,8 +81,8 @@ Assert_compile_time_tag( const Tag&, const Derived& b)
   x.match_compile_time_tag(b);
 }
 
-// for Cartesian_kernel/include/CGAL/Cartesian/function_objects.h
-struct RT_sufficient {};
+// for kernel predicates, to indicate a FT providing a division operator is required
+struct FT_necessary {};
 
 } //namespace CGAL
 

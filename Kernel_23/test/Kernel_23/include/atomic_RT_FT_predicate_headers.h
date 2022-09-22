@@ -15,7 +15,7 @@ namespace Kernel_23_tests {
 struct Any {
 
   template <class T,
-            typename = typename std::enable_if<!std::is_same<T, CGAL::RT_sufficient>::value>::type>
+            typename = typename std::enable_if<!std::is_same<T, CGAL::FT_necessary>::value>::type>
   operator T();
 };
 

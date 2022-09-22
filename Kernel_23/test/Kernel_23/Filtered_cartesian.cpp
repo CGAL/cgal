@@ -14,9 +14,8 @@
 //
 // Author(s)     : Sylvain Pion
 
-// This defines removes the operator/ from CGAL::Mpzf, to check that functors
-// declared with CGAL_Kernel_pred_RT in interface_macros.h really only need
-// a RT (ring type), without division.
+// This defines removes the operator/ from CGAL::Mpzf to check that functors not using
+// the tag`FT_necessary` really only need a RT (ring type) without division.
 #define CGAL_NO_MPZF_DIVISION_OPERATOR 1
 
 #include <CGAL/Cartesian.h>

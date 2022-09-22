@@ -26,7 +26,7 @@
 
 #include <CGAL/use.h>
 
-CGAL_GENERATE_MEMBER_DETECTOR(needs_ft);
+CGAL_GENERATE_MEMBER_DETECTOR(needs_FT);
 
 using CGAL::internal::use;
 
@@ -613,15 +613,15 @@ test_new_3(const R& rep)
   tmp34ab = compare_dist(p1, p2, p3, p4);
   tmp34ab = compare_dist(l2, p1, p1);
   if constexpr (R::Has_filtered_predicates &&
-                has_needs_ft<typename R::Compare_distance_3>::value)
+                has_needs_FT<typename R::Compare_distance_3>::value)
 {
-    assert(!compare_dist.needs_ft(p1, p2, p3));
-    assert(!compare_dist.needs_ft(p2, s2, s2));
-    assert(!compare_dist.needs_ft(p2, p2, s2));
-    assert(!compare_dist.needs_ft(p1, s2, p2));
-    assert(compare_dist.needs_ft(l1, p1, p1));
-    assert(compare_dist.needs_ft(p2, p3, p2, p3));
-    assert(compare_dist.needs_ft(p2, s2, l1, s2));
+    assert(!compare_dist.needs_FT(p1, p2, p3));
+    assert(!compare_dist.needs_FT(p2, s2, s2));
+    assert(!compare_dist.needs_FT(p2, p2, s2));
+    assert(!compare_dist.needs_FT(p1, s2, p2));
+    assert(compare_dist.needs_FT(l1, p1, p1));
+    assert(compare_dist.needs_FT(p2, p3, p2, p3));
+    assert(compare_dist.needs_FT(p2, s2, l1, s2));
   }
   (void) tmp34ab;
 
