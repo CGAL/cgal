@@ -9,12 +9,13 @@
 //
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_POINT_SET_3_H
 #define CGAL_DRAW_POINT_SET_3_H
 
-#include <CGAL/license/Point_set_3.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/license/Point_set_3.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -36,82 +37,49 @@ void draw(const PS& aps);
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
-// Viewer class for Point_set
-template<class PointSet>
-class SimplePointSetViewerQt : public Basic_viewer_qt
-{
-  typedef Basic_viewer_qt Base;
-  typedef typename PointSet::Point_map::value_type Point;
+namespace draw_function_for_PointSet {
 
-public:
-  /// Construct the viewer.
-  /// @param apointset the point set to view
-  /// @param title the title of the window
-  SimplePointSetViewerQt(QWidget* parent,
-                         const PointSet& apointset, const char* title="") :
-    // First draw: vertices; no-edge, no-face; mono-color; no inverse normal
-    Base(parent, title, true, false, false, true, false),
-    pointset(apointset)
-  {
-    compute_elements();
+template <typename BufferType = float, class PointSet>
+void compute_vertex(const typename PointSet::Point_map::value_type &p,
+                    GraphicBuffer<BufferType> &graphic_buffer) {
+  graphic_buffer.add_point(p);
+
+  // We can use add_point(p, c) with c a CGAL::IO::Color to add a colored point
+  // E.g: graphic_buffer.add_point(p, CGAL::IO::Color(100, 125, 200));
+}
+
+template <typename BufferType = float, class PointSet>
+void compute_elements(const PointSet *pointset,
+                      GraphicBuffer<BufferType> &graphic_buffer) {
+  for (typename PointSet::const_iterator it = pointset->begin();
+       it != pointset->end(); ++it) {
+    compute_vertex<float, PointSet>(pointset->point(*it), graphic_buffer);
   }
+}
 
-protected:
-  void compute_vertex(const Point& p)
-  {
-    add_point(p);
-    // We can use add_point(p, c) with c a CGAL::IO::Color to add a colored point
+} // namespace draw_function_for_PointSet
+
+template <typename BufferType = float, class PointSet>
+void add_in_graphic_buffer_point_set(GraphicBuffer<BufferType> &graphic_buffer,
+                                     const PointSet *aPointSet = nullptr) {
+  if (aPointSet != nullptr) {
+    draw_function_for_PointSet::compute_elements(aPointSet, graphic_buffer);
   }
-
-  void compute_elements()
-  {
-    clear();
-
-    for (typename PointSet::const_iterator it=pointset.begin();
-          it!=pointset.end(); ++it)
-    { compute_vertex(pointset.point(*it)); }
-  }
-
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    // const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    Base::keyPressEvent(e);
-  }
-
-protected:
-  const PointSet& pointset;
-};
+}
 
 // Specialization of draw function.
-template<class P, class V>
-void draw(const Point_set_3<P, V>& apointset,
-          const char* title="Point_set_3 Basic Viewer")
-{
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite)
-  {
-    CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[2]={"point_set_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    SimplePointSetViewerQt<Point_set_3<P, V> > mainwindow(app.activeWindow(),
-                                                          apointset,
-                                                          title);
-    mainwindow.show();
-    app.exec();
-  }
+template <class P, class V>
+void draw(const Point_set_3<P, V> &apointset,
+          const char *title = "Point_set_3 Basic Viewer") {
+  GraphicBuffer<float> buffer;
+  add_in_graphic_buffer_point_set(buffer, &apointset);
+  draw_buffer(buffer);
 }
 
 } // End namespace CGAL
