@@ -455,8 +455,6 @@ int main(int , char** )
 {
   // Get the predicates
   #define CGAL_Kernel_pred(X, Y) predicates_types.push_back(#X);
-  #define CGAL_Kernel_pred_RT(X, Y) predicates_types.push_back(#X);
-  #define CGAL_Kernel_pred_RT_or_FT(X, Y) predicates_types.push_back(#X);
   #include <CGAL/Kernel/interface_macros.h>
 
   // Get the objects
