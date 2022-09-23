@@ -19,9 +19,9 @@ template <typename DS,
           typename vertex_handle,
           typename edge_handle,
           typename face_handle>  
-struct DrawingFunctor
+struct Drawing_functor
 {
-  DrawingFunctor(): m_enabled_vertices(true),
+  Drawing_functor(): m_enabled_vertices(true),
                             m_enabled_edges(true),
                             m_enabled_faces(true)
   {
@@ -71,10 +71,10 @@ template <typename DS,
           typename edge_handle,
           typename face_handle,
           typename volume_handle>
-struct DrawingFunctorWithVolume :
-    public DrawingFunctor<DS, vertex_handle, edge_handle, face_handle>
+struct Drawing_functor_with_volume :
+    public Drawing_functor<DS, vertex_handle, edge_handle, face_handle>
 {
-  DrawingFunctorWithVolume() : m_enabled_volumes(true)
+  Drawing_functor_with_volume() : m_enabled_volumes(true)
   {
     draw_volume=[](const DS &, volume_handle)->bool { return true; };
     colored_volume=[](const DS &, volume_handle)->bool { return false; };

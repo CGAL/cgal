@@ -13,7 +13,7 @@
 #ifndef CGAL_DRAW_T2_H
 #define CGAL_DRAW_T2_H
 
-#include <CGAL/Generic_functors.h>
+#include <CGAL/Drawing_functor.h>
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/license/Triangulation_2.h>
@@ -109,7 +109,7 @@ void add_in_graphic_buffer_t2(GraphicBuffer<BufferType> &graphic_buffer,
 
 template <class Gt, class Tds,
           class ColorFunctor =
-              DrawingFunctor<CGAL_T2_TYPE, typename CGAL_T2_TYPE::Vertex_handle,
+              Drawing_functor<CGAL_T2_TYPE, typename CGAL_T2_TYPE::Vertex_handle,
                              typename CGAL_T2_TYPE::Finite_edges_iterator,
                              typename CGAL_T2_TYPE::Finite_faces_iterator>>
 void draw(const CGAL_T2_TYPE &at2,

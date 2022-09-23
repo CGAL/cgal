@@ -13,7 +13,7 @@
 #ifndef CGAL_DRAW_T3_H
 #define CGAL_DRAW_T3_H
 
-#include <CGAL/Generic_functors.h>
+#include <CGAL/Drawing_functor.h>
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/license/Triangulation_3.h>

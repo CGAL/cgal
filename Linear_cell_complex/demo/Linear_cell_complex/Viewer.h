@@ -37,7 +37,7 @@ public Q_SLOTS:
   void sceneChanged();
 
 private:
-  CGAL::DrawingFunctorWithVolume<LCC,
+  CGAL::Drawing_functor_with_volume<LCC,
                                          Dart_const_handle,
                                          Dart_const_handle,
                                          Dart_const_handle,
