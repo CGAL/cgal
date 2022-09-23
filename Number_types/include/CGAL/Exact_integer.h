@@ -51,7 +51,7 @@ typedef unspecified_type Exact_integer;
 #else // not DOXYGEN_RUNNING
 
 #if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
-// use boost-mp by default in the testsuite until 5.5-beta is out
+// use boost-mp by default
 typedef BOOST_cpp_arithmetic_kernel::Integer Exact_integer;
 #else // BOOST_VERSION > 107900
 #ifdef CGAL_USE_GMPXX
