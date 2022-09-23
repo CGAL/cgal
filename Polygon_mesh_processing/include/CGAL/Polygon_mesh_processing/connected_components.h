@@ -439,11 +439,12 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fimap);
-  std::size_t num = connected_components(pmesh, face_cc, np);
 
   // Even if we do not want to keep anything we need to first
   // calculate the number of existing connected_components to get the
   // correct return value.
+  const std::size_t num = connected_components(pmesh, face_cc, np);
+
   if(nb_components_to_keep == 0)
   {
     CGAL::clear(pmesh);

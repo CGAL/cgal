@@ -180,6 +180,7 @@ void test_CC_with_area_size_map(Mesh sm,
   // didn't actually remove anything
   assert(PMP::internal::number_of_connected_components(sm) == num);
   assert(num_vertices(sm) == nv);
+  assert(faces_to_remove.size() == 680);
 
   if(num > 2)
   {
