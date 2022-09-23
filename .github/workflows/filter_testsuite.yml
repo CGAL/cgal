@@ -8,8 +8,7 @@ permissions: {}
 jobs:
   build:
     permissions:
-      pull-requests: read
-      issues: write # to create comment
+      pull-requests: write # to create comment
 
     if: (github.event.comment.user.login == 'sloriot' || github.event.comment.user.login == 'lrineau') && contains(github.event.comment.body, '/testme')
     runs-on: ubuntu-latest
