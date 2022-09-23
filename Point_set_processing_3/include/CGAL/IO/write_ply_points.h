@@ -18,7 +18,7 @@
 #include <CGAL/IO/PLY.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Iterator_range.h>
 
 #include <CGAL/Named_function_parameters.h>
@@ -111,7 +111,7 @@ template <typename PointRange,
                                  const PointRange& points, ///< input point range.
                                  PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {

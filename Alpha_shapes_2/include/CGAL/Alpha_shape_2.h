@@ -23,7 +23,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/utility.h>
 
@@ -849,7 +849,7 @@ Alpha_shape_2<Dt,EACT>::initialize_interval_edge_map()
                 {
                   // both faces are infinite by definition unattached
                   // the edge is finite by construction
-                  CGAL_triangulation_precondition((is_infinite(pNeighbor)
+                  CGAL_precondition((is_infinite(pNeighbor)
                                                    && is_infinite(pFace)));
                   interval = make_triple(squared_radius(pFace, i),
                                          Infinity,
@@ -859,7 +859,7 @@ Alpha_shape_2<Dt,EACT>::initialize_interval_edge_map()
           else
             { // is_infinite(pNeighbor)
 
-              CGAL_triangulation_precondition((is_infinite(pNeighbor)
+              CGAL_precondition((is_infinite(pNeighbor)
                                                && !is_infinite(pFace)));
               if (is_attached(pFace, i))
                 interval = make_triple(UNDEFINED,
@@ -1109,7 +1109,7 @@ Alpha_shape_2<Dt,EACT>::update_alpha_shape_vertex_list()const {
                 // which might be infinity
                 // write the vertex
                 v = (*vertex_alpha_it).second;
-                CGAL_triangulation_assertion((classify(v) == REGULAR));
+                CGAL_assertion((classify(v) == REGULAR));
                 Alpha_shape_vertices_list.push_back(v);
                 }
                 }
@@ -1122,7 +1122,7 @@ Alpha_shape_2<Dt,EACT>::update_alpha_shape_vertex_list()const {
                 ++vertex_alpha_it)
                 {
                 v = (*vertex_alpha_it).second;
-                CGAL_triangulation_assertion((classify(v) == SINGULAR));
+                CGAL_assertion((classify(v) == SINGULAR));
 
                 Alpha_shape_vertices_list.push_back(v);
                 }
@@ -1159,7 +1159,7 @@ Alpha_shape_2<Dt,EACT>::update_alpha_shape_edges_list() const
         {
           pInterval = &(*edge_alpha_it).first;
 
-          CGAL_triangulation_assertion(pInterval->second != Infinity);
+          CGAL_assertion(pInterval->second != Infinity);
           // since this happens only for convex hull of dimension 2
           // thus singular
 
@@ -1171,9 +1171,9 @@ Alpha_shape_2<Dt,EACT>::update_alpha_shape_edges_list() const
               // and alpha is smaller than the upper boundary
               // which might be infinity
               // visualize the boundary
- CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-                                        (*edge_alpha_it).second.second)
-                               == REGULAR));
+              CGAL_assertion((classify((*edge_alpha_it).second.first,
+                                       (*edge_alpha_it).second.second)
+                              == REGULAR));
               Alpha_shape_edges_list.push_back(Edge((*edge_alpha_it).second.first,
                                                     (*edge_alpha_it).second.second));
             }
@@ -1191,7 +1191,7 @@ Alpha_shape_2<Dt,EACT>::update_alpha_shape_edges_list() const
 
           if (pInterval->first == UNDEFINED)
             {
-              CGAL_triangulation_assertion(pInterval->second != Infinity);
+              CGAL_assertion(pInterval->second != Infinity);
               // since this happens only for convex hull of dimension 2
               // thus singular
 
@@ -1203,9 +1203,9 @@ Alpha_shape_2<Dt,EACT>::update_alpha_shape_edges_list() const
                   // and alpha is smaller than the upper boundary
                   // which might be infinity
                   // visualize the boundary
- CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-                                        (*edge_alpha_it).second.second)
-                               == REGULAR));
+                  CGAL_assertion((classify((*edge_alpha_it).second.first,
+                                           (*edge_alpha_it).second.second)
+                                  == REGULAR));
                   Alpha_shape_edges_list.push_back(Edge((*edge_alpha_it).second.first,
                                                         (*edge_alpha_it).second.second));
                 }
@@ -1219,12 +1219,12 @@ Alpha_shape_2<Dt,EACT>::update_alpha_shape_edges_list() const
                   // if alpha is smaller than the upper boundary
                   // which might be infinity
                   // visualize the boundary
- CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-                                         (*edge_alpha_it).second.second)
-                                == REGULAR)
-                               || (classify((*edge_alpha_it).second.first,
+                  CGAL_assertion(((classify((*edge_alpha_it).second.first,
                                             (*edge_alpha_it).second.second)
-                                   == SINGULAR)));
+                                   == REGULAR)
+                                  || (classify((*edge_alpha_it).second.first,
+                                               (*edge_alpha_it).second.second)
+                                      == SINGULAR)));
                   Alpha_shape_edges_list.push_back(Edge((*edge_alpha_it).second.first,
                                                         (*edge_alpha_it).second.second));
                 }
@@ -1324,7 +1324,7 @@ Alpha_shape_2<Dt,EACT>::number_of_solid_components(const Type_of_alpha& alpha) c
        ++face_it)
     {
       Face_handle pFace = face_it;
-      CGAL_triangulation_postcondition( pFace != nullptr);
+      CGAL_postcondition( pFace != nullptr);
 
       if (classify(pFace, alpha) == INTERIOR){
         Data& data = marked_face_set[pFace];
@@ -1358,7 +1358,7 @@ Alpha_shape_2<Dt,EACT>::traverse(const Face_handle& pFace,
     for (int i=0; i<3; i++)
       {
         pNeighbor = fh->neighbor(i);
-         CGAL_triangulation_assertion(pNeighbor != nullptr);
+        CGAL_assertion(pNeighbor != nullptr);
         if (classify(pNeighbor, alpha) == INTERIOR){
           Data& data = marked_face_set[pNeighbor];
           if(data == false){
@@ -1514,7 +1514,7 @@ Alpha_shape_2<Dt,EACT>::op_ostream(std::ostream& os) const
         // write the vertex
 
         v = (*vertex_alpha_it).second;
-        CGAL_triangulation_assertion((classify(v) ==
+        CGAL_assertion((classify(v) ==
                                       Alpha_shape_2<Dt,EACT>::REGULAR));
         // if we used Edelsbrunner and Muecke's definition
         // regular means incident to a higher-dimensional face
@@ -1536,7 +1536,7 @@ Alpha_shape_2<Dt,EACT>::op_ostream(std::ostream& os) const
     {
       pInterval = &(*edge_alpha_it).first;
 
-      CGAL_triangulation_assertion(pInterval->second != Infinity);
+      CGAL_assertion(pInterval->second != Infinity);
       // since this happens only for convex hull of dimension 1
       // thus singular
 
@@ -1563,11 +1563,11 @@ Alpha_shape_2<Dt,EACT>::op_ostream(std::ostream& os) const
           f = pNeighbor;
         }
 
-        CGAL_triangulation_assertion((classify(f) ==
-                                      Alpha_shape_2<Dt,EACT>::INTERIOR));
+        CGAL_assertion((classify(f) ==
+                        Alpha_shape_2<Dt,EACT>::INTERIOR));
 
-        CGAL_triangulation_assertion((classify(f, i) ==
-                                      Alpha_shape_2<Dt,EACT>::REGULAR));
+        CGAL_assertion((classify(f, i) ==
+                        Alpha_shape_2<Dt,EACT>::REGULAR));
 
         os << V[f->vertex(f->ccw(i))] << ' '
                                       << V[f->vertex(f->cw(i))] << std::endl;
@@ -1595,8 +1595,7 @@ Alpha_shape_2<Dt,EACT>::op_ostream(std::ostream& os) const
         // write the vertex
 
         v = (*vertex_alpha_it).second;
-        CGAL_triangulation_assertion((classify(v) ==
-                                      Alpha_shape_2<Dt,EACT>::REGULAR));
+        CGAL_assertion((classify(v) == Alpha_shape_2<Dt,EACT>::REGULAR));
         V[v] = number_of_vertices++;
         os << v->point() << std::endl;
       }
@@ -1608,8 +1607,7 @@ Alpha_shape_2<Dt,EACT>::op_ostream(std::ostream& os) const
          ++vertex_alpha_it)
     {
       v = (*vertex_alpha_it).second;
-      CGAL_triangulation_assertion((classify(v) ==
-                                    Alpha_shape_2<Dt,EACT>::SINGULAR));
+      CGAL_assertion((classify(v) == Alpha_shape_2<Dt,EACT>::SINGULAR));
 
       V[v] = number_of_vertices++;
       os << v->point() << std::endl;
@@ -1652,7 +1650,7 @@ Alpha_shape_2<Dt,EACT>::op_ostream(std::ostream& os) const
         if (pInterval->second != Infinity &&
             pInterval->second <= get_alpha())
         {
-          CGAL_triangulation_assertion((classify(f, i) ==
+          CGAL_assertion((classify(f, i) ==
                                         Alpha_shape_2<Dt,EACT>::REGULAR));
           // assure that all vertices are in ccw order
           if (classify(f) == Alpha_shape_2<Dt,EACT>::EXTERIOR)
@@ -1665,7 +1663,7 @@ Alpha_shape_2<Dt,EACT>::op_ostream(std::ostream& os) const
             f = pNeighbor;
           }
 
-          CGAL_triangulation_assertion((classify(f) ==
+          CGAL_assertion((classify(f) ==
                                         Alpha_shape_2<Dt,EACT>::INTERIOR));
 
           os << V[f->vertex(f->ccw(i))] << ' '
@@ -1680,7 +1678,7 @@ Alpha_shape_2<Dt,EACT>::op_ostream(std::ostream& os) const
           // write the singular edges
           if (pInterval->first != UNDEFINED)
           {
-            CGAL_triangulation_assertion((classify(f, i) ==
+            CGAL_assertion((classify(f, i) ==
                                           Alpha_shape_2<Dt,EACT>::SINGULAR));
             os << V[f->vertex(f->ccw(i))] << ' '
                                           << V[f->vertex(f->cw(i))] << std::endl;
@@ -1739,7 +1737,7 @@ Alpha_shape_2<Dt,EACT>::Output ()
           // which might be infinity
           // visualize the boundary
 
-          CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
+          CGAL_assertion((classify((*edge_alpha_it).second.first,
                                                  (*edge_alpha_it).second.second) ==
                                         REGULAR));
 
@@ -1769,7 +1767,7 @@ Alpha_shape_2<Dt,EACT>::Output ()
       if (pInterval->first == UNDEFINED)
       {
 
-        CGAL_triangulation_assertion(pInterval->second != Infinity);
+        CGAL_assertion(pInterval->second != Infinity);
         // since this happens only for convex hull of dimension 1
         // thus singular
 
@@ -1782,9 +1780,9 @@ Alpha_shape_2<Dt,EACT>::Output ()
           // which might be infinity
           // visualize the boundary
 
-          CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-                                                 (*edge_alpha_it).second.second) ==
-                                        REGULAR));
+          CGAL_assertion((classify((*edge_alpha_it).second.first,
+                                   (*edge_alpha_it).second.second) ==
+                          REGULAR));
           L.push_back((this->segment((*edge_alpha_it).second.first,
                                      (*edge_alpha_it).second.second))
                       .source());
@@ -1802,12 +1800,12 @@ Alpha_shape_2<Dt,EACT>::Output ()
           // which might be infinity
           // visualize the boundary
 
-          CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-                                                  (*edge_alpha_it).second.second) ==
-                                         REGULAR) ||
-                                        (classify((*edge_alpha_it).second.first,
-                                                  (*edge_alpha_it).second.second) ==
-                                         SINGULAR)));
+          CGAL_assertion(((classify((*edge_alpha_it).second.first,
+                                    (*edge_alpha_it).second.second) ==
+                           REGULAR) ||
+                          (classify((*edge_alpha_it).second.first,
+                                    (*edge_alpha_it).second.second) ==
+                           SINGULAR)));
           L.push_back((this->segment((*edge_alpha_it).second.first,
                                      (*edge_alpha_it).second.second))
                       .source());

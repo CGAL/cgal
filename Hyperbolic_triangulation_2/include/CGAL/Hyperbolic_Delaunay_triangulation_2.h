@@ -77,7 +77,7 @@ public:
   Hyperbolic_Delaunay_triangulation_2(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds> &tr)
     : Delaunay_triangulation_2<Gt,Tds>(tr), _gt()
   {
-    CGAL_triangulation_postcondition(this->is_valid());
+    CGAL_postcondition(this->is_valid());
   }
 
   template<class InputIterator>
@@ -291,13 +291,13 @@ public:
 
     Vertex& operator*() const
     {
-      CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
+      CGAL_precondition(pos != Face_handle() && _v != Vertex_handle());
       return *(pos->vertex(_ri));
     }
 
     Vertex* operator->() const
     {
-      CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
+      CGAL_precondition(pos != Face_handle() && _v != Vertex_handle());
       return &*(pos->vertex(_ri));
     }
 
@@ -458,7 +458,7 @@ public:
 
   void remove(Vertex_handle v)
   {
-    CGAL_triangulation_precondition(tds().is_vertex(v));
+    CGAL_precondition(tds().is_vertex(v));
     std::vector<Vertex_handle> nbr;
     bool dim_was_2 = false;
     if (this->dimension() == 2)
@@ -541,16 +541,16 @@ private:
 
     unsigned int get_non_hyperbolic_edge() const
     {
-      CGAL_triangulation_precondition(!_is_Delaunay_hyperbolic);
-      CGAL_triangulation_precondition(_non_hyperbolic_edge <= 2);
+      CGAL_precondition(!_is_Delaunay_hyperbolic);
+      CGAL_precondition(_non_hyperbolic_edge <= 2);
 
       return _non_hyperbolic_edge;
     }
 
     void set_non_hyperbolic_edge(unsigned int uschar)
     {
-      CGAL_triangulation_precondition(!_is_Delaunay_hyperbolic);
-      CGAL_triangulation_precondition(uschar <= 2);
+      CGAL_precondition(!_is_Delaunay_hyperbolic);
+      CGAL_precondition(uschar <= 2);
 
       _non_hyperbolic_edge = uschar;
     }
@@ -580,7 +580,7 @@ private:
         }
         while(++fc != done);
       }
-      CGAL_triangulation_postcondition(is_Delaunay_hyperbolic(v->face()));
+      CGAL_postcondition(is_Delaunay_hyperbolic(v->face()));
     }
   }
 
@@ -588,7 +588,7 @@ private:
                                             const Point& query, Locate_type &lt, int& li) const
   {
     // The triangle (p,q,r) must be Delaunay hyperbolic
-    CGAL_triangulation_precondition(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r));
+    CGAL_precondition(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r));
 
     // Point p is assumed to be at index 0, q at index 1 and r at index 2 in the face.
     li = -1;
@@ -652,7 +652,7 @@ private:
 
   int get_finite_non_hyperbolic_edge(Face_handle f) const
   {
-    CGAL_triangulation_precondition(is_finite_non_hyperbolic(f));
+    CGAL_precondition(is_finite_non_hyperbolic(f));
     Face_data fd = object_cast<Face_data>(f->tds_data());
     return fd.get_non_hyperbolic_edge();
   }
@@ -862,7 +862,7 @@ public:
 
   Hyperbolic_Voronoi_point dual(Face_handle f) const
   {
-    CGAL_triangulation_precondition(is_Delaunay_hyperbolic(f));
+    CGAL_precondition(is_Delaunay_hyperbolic(f));
     return geom_traits().construct_hyperbolic_circumcenter_2_object()(point(f,0),
                                                                       point(f,1),
                                                                       point(f,2));
@@ -872,7 +872,7 @@ public:
 
   Hyperbolic_segment dual(Face_handle f, int i) const
   {
-    CGAL_triangulation_precondition(is_Delaunay_hyperbolic(f, i));
+    CGAL_precondition(is_Delaunay_hyperbolic(f, i));
 
     if(dimension() == 1)
     {
@@ -938,8 +938,8 @@ public:
 
   const Point point(const Face_handle fh, const int i) const
   {
-    CGAL_triangulation_precondition(0 <= i);
-    CGAL_triangulation_precondition(i <= 2);
+    CGAL_precondition(0 <= i);
+    CGAL_precondition(i <= 2);
     return fh->vertex(i)->point();
   }
 
@@ -951,8 +951,8 @@ public:
 
   Point point(const Face_handle fh, const int i)
   {
-    CGAL_triangulation_precondition(0 <= i);
-    CGAL_triangulation_precondition(i <= 2);
+    CGAL_precondition(0 <= i);
+    CGAL_precondition(i <= 2);
     return fh->vertex(i)->point();
   }
 

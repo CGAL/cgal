@@ -17,7 +17,6 @@
 
 #include <utility>
 
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
 
 namespace CGAL { namespace internal {

@@ -21,7 +21,7 @@
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Has_timestamp.h>
@@ -351,7 +351,7 @@ public:
 
   Vertex_handle vertex(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3 );
+    CGAL_precondition( i >= 0 && i <= 3 );
     return V[i];
   }
 
@@ -374,13 +374,13 @@ public:
     if (v == V[0]) { return 0; }
     if (v == V[1]) { return 1; }
     if (v == V[2]) { return 2; }
-    CGAL_triangulation_assertion( v == V[3] );
+    CGAL_assertion( v == V[3] );
     return 3;
   }
 
   Cell_handle neighbor(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     return N[i];
   }
 
@@ -403,7 +403,7 @@ public:
     if (n == N[0]) return 0;
     if (n == N[1]) return 1;
     if (n == N[2]) return 2;
-    CGAL_triangulation_assertion( n == N[3] );
+    CGAL_assertion( n == N[3] );
     return 3;
   }
 
@@ -412,8 +412,8 @@ public:
 
   void set_neighbor(int i, Cell_handle n)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
-    CGAL_triangulation_precondition( this != n.operator->() );
+    CGAL_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( this != n.operator->() );
     N[i] = n;
   }
 
@@ -426,10 +426,10 @@ public:
   void set_neighbors(Cell_handle n0, Cell_handle n1,
                      Cell_handle n2, Cell_handle n3)
   {
-    CGAL_triangulation_precondition( this != n0.operator->() );
-    CGAL_triangulation_precondition( this != n1.operator->() );
-    CGAL_triangulation_precondition( this != n2.operator->() );
-    CGAL_triangulation_precondition( this != n3.operator->() );
+    CGAL_precondition( this != n0.operator->() );
+    CGAL_precondition( this != n1.operator->() );
+    CGAL_precondition( this != n2.operator->() );
+    CGAL_precondition( this != n3.operator->() );
     N[0] = n0;
     N[1] = n1;
     N[2] = n2;
@@ -462,7 +462,7 @@ public:
   // but there's not much we can do for this now.
   void set_vertex(int i, Vertex_handle v)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     invalidate_weighted_circumcenter_cache();
     V[i] = v;
   }
