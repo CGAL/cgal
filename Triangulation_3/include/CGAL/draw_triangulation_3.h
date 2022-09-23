@@ -58,14 +58,14 @@ void compute_face(typename T3::Finite_facets_iterator fh,
   graphic_buffer.face_end();
 }
 
-template <typename BufferType = float, class T3>
+template <typename BufferType = float, class T3, class DrawingFunctor>
 void compute_edge(typename T3::Finite_edges_iterator eh,
-                  CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 *t3) {
+                  CGAL::GraphicBuffer<BufferType> &graphic_buffer, const DrawingFunctor &drawing_functor, const T3 *t3) {
   // DONE: TEST draw_edge + edge color
   if(!drawing_functor.draw_edge(*t3, eh)) {
       return;
   }
-  if( && drawing_functor.edge_color)  {
+  if(drawing_functor.edge_color)  {
 
     CGAL::IO::Color c = drawing_functor.edge_color(*t3, eh);
     graphic_buffer.add_segment(eh->first->vertex(eh->second)->point(),
@@ -77,9 +77,9 @@ void compute_edge(typename T3::Finite_edges_iterator eh,
   }
 }
 
-template <typename BufferType = float, class T3>
+template <typename BufferType = float, class T3, class DrawingFunctor>
 void compute_vertex(typename T3::Vertex_handle vh,
-                    CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 *t3) {
+                    CGAL::GraphicBuffer<BufferType> &graphic_buffer, const DrawingFunctor &drawing_functor, const T3 *t3) {
 
   // DONE TEST draw_vertex  + vertex color
   if(!drawing_functor.draw_vertex(*t3, vh))
@@ -113,13 +113,13 @@ void compute_elements(CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 
   for (typename T3::Finite_edges_iterator it = t3->finite_edges_begin();
        it != t3->finite_edges_end(); ++it)
   {
-    compute_edge<float, T3>(it, graphic_buffer);
+    compute_edge(it, graphic_buffer,drawing_functor ,  t3);
   }
 
   for (typename T3::Finite_vertices_iterator it = t3->finite_vertices_begin();
        it != t3->finite_vertices_end(); ++it)
   {
-    compute_vertex<float, T3>(it, graphic_buffer);
+    compute_vertex(it, graphic_buffer, drawing_functor, t3);
   }
 }
 
