@@ -16,7 +16,7 @@
 // > 8, everything
 #define CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY 8
 
-std::vector<std::string> predicates_types = { "Angle_2" };
+std::vector<std::string> predicates_types = { };
 
 // @todo, technically somebody could create predicates with non-kernel objects (nor FT/Origin), e.g. `int`.
 // In that case, these arguments would have to be added to the lists below since there is no scrapping
@@ -141,7 +141,7 @@ Compilation_result parse_output(const std::string& predicate_name,
     if(line.find("no match for call") != std::string::npos) {
       res = FAILED_NO_MATCH;
       break;
-    } else if(line.find("too many arguments") != std::string::npos) { // @todo what is that exact error?
+    } else if(line.find("use of deleted function") != std::string::npos) {
       res = FAILED_NO_MATCH;
       break;
 #ifdef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS
@@ -158,10 +158,6 @@ Compilation_result parse_output(const std::string& predicate_name,
       break;
     } else if(line.find("candidate") != std::string::npos) {
       res = FAILED_AMBIGUOUS_CALL;
-      break;
-    } else if(line.find("call to deleted") != std::string::npos) {
-      // @todo unused since the macro makes it so no operator is defined at all
-      res = FAILED_NO_DIVISION_OPERATOR;
       break;
     } else if(line.find("no match for ‘operator/’") != std::string::npos) {
       res = FAILED_NO_DIVISION_OPERATOR;
