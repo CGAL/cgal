@@ -12,7 +12,7 @@ jobs:
 
     permissions:
       contents: read # to fetch code (actions/checkout)
-      issues: write # to create comment
+      pull-requests: write # to create comment
 
     runs-on: ubuntu-latest
     steps:
