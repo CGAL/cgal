@@ -154,7 +154,7 @@ void draw(const CGAL_T2_TYPE &at2,
       drawingFunctor;
 
   drawingFunctor.colored_face =
-      [](const CGAL_T2_TYPE &at3,
+      [](const CGAL_T2_TYPE &at2,
          const typename CGAL_T2_TYPE::Finite_faces_iterator fh) -> bool {
     return true;
   };
