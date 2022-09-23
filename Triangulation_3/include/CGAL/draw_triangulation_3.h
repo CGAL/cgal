@@ -142,7 +142,7 @@ template <class Gt, class Tds, class Lock_data_structure>
 void draw(const CGAL_T3_TYPE &at3, const char *title = "T3 Basic Viewer")
 {
   CGAL::GraphicBuffer<float> buffer;
-  CGAL::DrawingFunctor<CGAL_T3_TYPE,
+  CGAL::Drawing_functor<CGAL_T3_TYPE,
                        typename CGAL_T3_TYPE::Vertex_handle,
                        typename CGAL_T3_TYPE::Finite_edges_iterator,
                        typename CGAL_T3_TYPE::Finite_facets_iterator>
