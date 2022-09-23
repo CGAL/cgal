@@ -669,28 +669,34 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s, const FT& ft) const
     {
-      return CGAL::compare(squared_radiusC3(p.x(), p.y(), p.z(),
-                                            q.x(), q.y(), q.z(),
-                                            r.x(), r.y(), r.z(),
-                                            s.x(), s.y(), s.z() ),
-                           ft);
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       r.x(), r.y(), r.z(),
+                       s.x(), s.y(), s.z(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
     }
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r, const FT& ft) const
     {
-      return CGAL::compare(squared_radiusC3(p.x(), p.y(), p.z(),
-                                            q.x(), q.y(), q.z(),
-                                            r.x(), r.y(), r.z()),
-                           ft);
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       r.x(), r.y(), r.z(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
     }
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const FT& ft) const
     {
-      return CGAL::compare(squared_radiusC3(p.x(), p.y(), p.z(),
-                                            q.x(), q.y(), q.z() ),
-                           ft);
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
     }
 
     result_type
@@ -1235,26 +1241,35 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Point_3& p, const Point_3& q) const
     {
-      return squared_radiusC3(p.x(), p.y(), p.z(),
-                              q.x(), q.y(), q.z());
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       num, den);
+      return num / den;
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
     {
-      return squared_radiusC3(p.x(), p.y(), p.z(),
-                              q.x(), q.y(), q.z(),
-                              r.x(), r.y(), r.z());
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       r.x(), r.y(), r.z(),
+                       num, den);
+      return num / den;
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
     {
-      return squared_radiusC3(p.x(), p.y(), p.z(),
-                              q.x(), q.y(), q.z(),
-                              r.x(), r.y(), r.z(),
-                              s.x(), s.y(), s.z());
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       r.x(), r.y(), r.z(),
+                       s.x(), s.y(), s.z(),
+                       num, den);
+      return num / den;
     }
   };
 
