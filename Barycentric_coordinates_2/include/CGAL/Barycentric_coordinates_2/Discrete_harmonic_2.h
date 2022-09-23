@@ -217,6 +217,7 @@ private:
 
         CGAL_precondition( A[n-2] != FT(0) && A[n-1] != FT(0) );
         *output = (r[0]*A[n-2] - r[n-1]*B[n-1] + r[n-2]*A[n-1]) / (A[n-2] * A[n-1]);
+        ++output;
 
         // Return weights.
         return boost::optional<OutputIterator>(output);
@@ -277,6 +278,7 @@ private:
             ++output;
         }
         *output = weight[n-1] * inverted_dh_denominator;
+        ++output;
 
         // Return coordinates.
         return boost::optional<OutputIterator>(output);
@@ -333,6 +335,7 @@ private:
             ++output;
         }
         *output = weight[n-1] * inverted_dh_denominator;
+        ++output;
 
         // Return coordinates.
         return boost::optional<OutputIterator>(output);

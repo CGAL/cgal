@@ -104,7 +104,7 @@ void mesh_no_id(const std::string argv1, const bool save_output)
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   //}
 
-  PMP::keep_largest_connected_components(sm, 2, PMP::parameters::vertex_index_map(vim));
+  PMP::keep_largest_connected_components(sm, 2, CGAL::parameters::vertex_index_map(vim));
   if (save_output)
     return;
 

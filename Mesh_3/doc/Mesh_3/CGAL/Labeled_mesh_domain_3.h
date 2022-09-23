@@ -20,12 +20,15 @@ The bisection stops when the query segment is shorter than an error bound
 length of the diagonal of the bounding box (in world coordinates), or the radius of the bounding sphere, and
 a relative error bound passed as argument to the constructor of `Labeled_mesh_domain_3`.
 
-This class has a constructor taking a labeling function. It has also three
-static template member functions that act as named constructors:
+This class has a constructor taking a labeling function. It has also four
+static member function templates that act as named constructors:
 <ul>
 <li>`create_gray_image_mesh_domain()`, to create a domain from a 3D gray image,
+<li>`create_implicit_mesh_domain()`, to create a domain from an implicit function,
 <li>`create_labeled_image_mesh_domain()`, to create a domain from a 3D labeled image, and
-<li>`create_implicit_mesh_domain()`, to create a domain from an implicit function.
+<li>`create_labeled_image_mesh_domain_with_features()`, to create a domain from a 3D labeled image
+with automatically detected 1D-curves that lie
+at the intersection of three or more subdomains.
 </ul>
 
 \tparam BGT is a geometric traits class that provides
@@ -187,11 +190,11 @@ be a `CGAL::Image_3` object.
   corresponding to a pixel value. If this parameter is used, then the
   parameter `iso_value` is ignored.
 
-<li><b>`parameter::value_outside`</b> the value attached to voxels
+<li><b>`parameters::value_outside`</b> the value attached to voxels
  outside of the domain to be meshed. It should be lower than
  `iso_value`. Its default value is `0`.
 
-<li><b>`parameter::relative_error_bound`</b> is the relative error
+<li><b>`parameters::relative_error_bound`</b> is the relative error
   bound, relative to the diameter of the box of the image. Its default
   value is `FT(1e-3)`.  </ul>
 
@@ -239,10 +242,10 @@ and the voxels values are integers between 0 and 255).
 The weights image can be generated with `CGAL::Mesh_3::generate_label_weights()`.
 Its dimensions must be the same as the dimensions of `parameters::image`.
 
-<li><b>`parameter::value_outside`</b> the value attached to voxels
+<li><b>`parameters::value_outside`</b> the value attached to voxels
  outside of the domain to be meshed. Its default value is `0`.
 
-<li><b>`parameter::relative_error_bound`</b> is the relative error
+<li><b>`parameters::relative_error_bound`</b> is the relative error
   bound, relative to the diameter of the box of the image. Its default
   value is `FT(1e-3)`.  </ul>
 
@@ -262,6 +265,54 @@ template <typename ... A_i>
 static
 Labeled_mesh_domain_3
 create_labeled_image_mesh_domain(A_i&...);
+
+/*!
+ \brief Construction from a 3D labeled image with detected triple lines.
+
+This static method is a <em>named constructor</em>. It constructs a domain
+described by a 3D labeled image, with automatically detected polyline features.
+
+A 3D labeled image is a grid of voxels, where each voxel is associated
+with an index (a subdomain index) characterizing the subdomain in which
+the voxel lies. The domain to be discretized is the union of voxels
+that have non-zero values.
+
+The detected polyline features are a discretization of the 1D-curves that lie
+at the intersection of 3 subdomains (including the outside), each represented by a
+different label in the input image.
+This includes:
+- internal polylines at the intersection of three subdomains,
+- polylines at the intersection between two subdomains and the bounding box of the image,
+- the bounding box edges when they are incident to "inner" voxels.
+
+This constructor uses named parameters (from the <em>Boost Parameter
+Library</em>). They can be specified in any order.
+
+\cgalHeading{Named Parameters}
+The parameters are optional unless otherwise specified.
+<ul>
+
+<li> <b>`parameters::image` (mandatory)</b> the input 3D image. Must
+be a `CGAL::Image_3` object.
+
+<li><b>`parameters::value_outside`</b> the value attached to voxels
+ outside of the domain to be meshed. Its default value is `0`.
+
+<li><b>`parameters::relative_error_bound`</b> is the relative error
+  bound, relative to the diameter of the box of the image. Its default
+  value is `FT(1e-3)`.</ul>
+
+
+\cgalHeading{Example}
+
+From the example (\ref Mesh_3/mesh_3D_image_with_detection_of_features.cpp):
+
+\snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
+*/
+template <typename ... A_i>
+static
+CGAL::Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
+create_labeled_image_mesh_domain_with_features(A_i&...);
 
 /// \name Deprecated constructors
 ///

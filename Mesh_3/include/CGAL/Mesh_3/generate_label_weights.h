@@ -227,6 +227,7 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 /// @endcond
 
 /*!
+* \ingroup PkgMesh3Functions
 * Free function that generates a `CGAL::Image_3` of weights associated to each
 * voxel of `image`, to make the output mesh surfaces smoother.
 * The weights image is generated using the algorithm described by Stalling et al

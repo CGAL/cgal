@@ -486,7 +486,7 @@ public:
                         compare_xy(cv2.right(), p) == LARGER);
 
       // Compare the slopes of the two segments to determine their relative
-      // position immediately to the left of q.
+      // position immediately to the right of q.
       // Notice we use the supporting lines in order to compare the slopes.
       return (kernel.compare_slope_2_object()(cv1.line(), cv2.line()));
     }
@@ -900,6 +900,7 @@ public:
   /*! Obtain an Approximate_2 functor object. */
   Approximate_2 approximate_2_object() const { return Approximate_2(); }
 
+  //! Functor
   class Construct_x_monotone_curve_2 {
   protected:
     typedef Arr_segment_traits_2<Kernel>        Traits;
@@ -991,6 +992,17 @@ public:
 
   /*! Obtain a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
+  { return Construct_x_monotone_curve_2(*this); }
+  //@}
+
+  /// \name Functor definitions for polylines.
+  //@{
+
+  //! Functor
+  typedef Construct_x_monotone_curve_2  Construct_curve_2;
+
+  /*! Obtain a Construct_curve_2 functor object. */
+  Construct_curve_2 construct_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
   //@}
 

@@ -21,7 +21,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Iterator_range.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/utility/enable_if.hpp>
@@ -30,34 +30,27 @@
 #include <fstream>
 #include <iterator>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
-
 namespace CGAL {
 namespace Point_set_processing_3 {
 namespace internal {
 
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ_PSP(std::ostream& os,
                    const PointRange& points,
-                   const CGAL_BGL_NP_CLASS& np)
+                   const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
   // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type                    PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type NormalMap;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
 
-  bool has_normals = !(std::is_same<NormalMap,
-                                    typename Point_set_processing_3::GetNormalMap<
-                                      PointRange, CGAL_BGL_NP_CLASS>::NoMap>::value);
+  bool has_normals = NP_helper::has_normal_map();
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
@@ -129,10 +122,10 @@ namespace IO {
 
    \returns `true` if writing was successful, `false` otherwise.
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -140,17 +133,6 @@ bool write_XYZ(std::ostream& os,
 {
   return Point_set_processing_3::internal::write_XYZ_PSP(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_XYZ(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_XYZ(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOXyz
@@ -193,10 +175,10 @@ bool write_XYZ(std::ostream& os, const PointRange& points,
 
    \returns `true` if writing was successful, `false` otherwise.
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -205,18 +187,6 @@ bool write_XYZ(const std::string& filename,
   std::ofstream os(filename);
   return write_XYZ(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_XYZ(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  std::ofstream os(filename);
-  return write_XYZ(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 
@@ -317,21 +287,11 @@ bool write_xyz_points(std::ostream& os, ///< output stream.
   \deprecated This function is deprecated since \cgal 5.3,
               \link PkgPointSetProcessing3IOXyz `CGAL::write_XYZ()` \endlink should be used instead.
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_XYZ(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points)
-{
-  return IO::write_XYZ(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

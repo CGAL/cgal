@@ -409,9 +409,9 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
 #define CGAL_TEST_ALGEBRAIC_REAL_IO(_f)         \
     alg1=_f;                                    \
     ss<<CGAL::IO::oformat(alg1);                \
-    CGAL_assertion(ss.good());                  \
-    ss>>CGAL::IO::iformat(alg2);                    \
-    CGAL_assertion(!ss.fail());                 \
+    assert(ss.good());                          \
+    ss>>CGAL::IO::iformat(alg2);                \
+    assert(!ss.fail());                         \
     ss.clear();                                 \
     assert(alg1==alg2)
     // Note: after the reading ss>>CGAL::IO::iformat(alg2) the state of ss can

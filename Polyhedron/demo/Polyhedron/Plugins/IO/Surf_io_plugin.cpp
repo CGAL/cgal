@@ -104,6 +104,14 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     FaceGraphItem *patch = new FaceGraphItem(patches[i]);
     patch->setName(QString("Patch #%1").arg(i));
     patch->setColor(colors_[i]);
+
+    patch->setProperty("inner material id", material_data[i].innerRegion.first);
+    patch->setProperty("inner material name",
+                       QString(material_data[i].innerRegion.second.data()));
+    patch->setProperty("outer material id", material_data[i].outerRegion.first);
+    patch->setProperty("outer material name",
+                       QString(material_data[i].outerRegion.second.data()));
+
     CGAL::Three::Three::scene()->addItem(patch);
     CGAL::Three::Three::scene()->changeGroup(patch, group);
   }

@@ -48,8 +48,6 @@
 #include <CGAL/Iterator_transform.h>
 #include <CGAL/Arr_point_location_result.h>
 
-#include <boost/pool/pool_alloc.hpp>
-
 namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
@@ -68,7 +66,7 @@ class Arrangement_on_surface_2 {
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
-  typedef boost::fast_pool_allocator<int>                 Allocator;
+  typedef CGAL_ALLOCATOR(int)                             Allocator;
 
   // first define adaptor ...
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;

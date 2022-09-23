@@ -97,6 +97,44 @@ create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// EXTERIOR
 
+/*! create_exterior_skeleton_and_offset_polygons_with_holes_2 (orders the resulting polygons) */
+
+// Polygon might be a Polygon with holes or not, but it returns a Polygon with holes
+template<class FT, class Polygon, class OfK, class SsK,
+         class OutPolygonWithHoles = typename CGAL_SS_i::Default_return_polygon_with_holes_type<Polygon, OfK>::type>
+std::vector<boost::shared_ptr<OutPolygonWithHoles> >
+inline
+create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
+                                                          const Polygon& aPoly,
+                                                          const OfK& ofk,
+                                                          const SsK& ssk)
+{
+  typedef typename CGAL_SS_i::Default_return_polygon_type<Polygon, OfK>::type Polygon_;
+  std::vector<boost::shared_ptr<Polygon_> > raw_output =
+    create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly, ofk, ssk);
+
+  // filter offset of the outer frame
+  typename OfK::Point_2 xtrm_pt = *(raw_output[0]->begin());
+  std::size_t outer_id=0;
+  for(std::size_t i=0; i<raw_output.size(); ++i)
+    if (raw_output[i]->orientation() == COUNTERCLOCKWISE)
+    {
+      for (const typename OfK::Point_2& p : raw_output[i]->container())
+        if (p < xtrm_pt)
+        {
+          xtrm_pt=p;
+          outer_id=i;
+        }
+    }
+  if (outer_id != (raw_output.size()-1))
+    std::swap(raw_output[outer_id], raw_output.back());
+  raw_output.pop_back();
+  for (boost::shared_ptr<Polygon_> ptr : raw_output)
+    ptr->reverse_orientation();
+
+  return arrange_offset_polygons_2<OutPolygonWithHoles>(raw_output);
+}
+
 /*! create_interior_skeleton_and_offset_polygons_2 with a polygon with holes */
 
 // overload where PolygonWithHoles actually is a type of Polygon that supports holes
@@ -111,23 +149,21 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                typename std::enable_if<
                                                  CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>::type* = nullptr)
 {
-  return create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(), ofk, ssk);
-}
+  std::vector<boost::shared_ptr<OutPolygon> > polygons =
+    create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly.outer_boundary(), ofk, ssk);
 
-/*! create_exterior_skeleton_and_offset_polygons_with_holes_2 (orders the resulting polygons) */
+  for (typename PolygonWithHoles::Hole_const_iterator hit=aPoly.holes_begin(); hit!=aPoly.holes_end(); ++hit)
+  {
+    typename PolygonWithHoles::Polygon_2 hole = *hit;
+    hole.reverse_orientation();
+    std::vector<boost::shared_ptr<OutPolygon> > hole_polygons =
+        create_interior_skeleton_and_offset_polygons_2(aOffset,
+                                                       hole,
+                                                       ofk,ssk);
+    polygons.insert(polygons.end(), hole_polygons.begin(), hole_polygons.end());
+  }
 
-// Polygon might be a Polygon with holes or not, but it returns a Polygon with holes
-template<class FT, class Polygon, class OfK, class SsK,
-         class OutPolygonWithHoles = typename CGAL_SS_i::Default_return_polygon_with_holes_type<Polygon, OfK>::type>
-std::vector<boost::shared_ptr<OutPolygonWithHoles> >
-inline
-create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
-                                                          const Polygon& aPoly,
-                                                          const OfK& ofk,
-                                                          const SsK& ssk)
-{
-  return arrange_offset_polygons_2<OutPolygonWithHoles>(
-           create_exterior_skeleton_and_offset_polygons_2(aOffset, aPoly, ofk, ssk));
+  return polygons;
 }
 
 template<class FT, class Polygon, class OfK,

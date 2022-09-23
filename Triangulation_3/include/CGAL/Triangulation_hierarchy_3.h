@@ -439,7 +439,7 @@ protected:
 
   struct locs {
       Cell_handle pos;
-      int li, lj;
+      int li = -1, lj = -1;
       Locate_type lt;
   };
 
@@ -538,7 +538,7 @@ insert(const Point &p, Cell_handle start)
 {
   int vertex_level = random_level();
   Locate_type lt;
-  int i, j;
+  int i = -1, j = -1;
   // locate using hierarchy
   locs positions[maxlevel];
   locate(p, lt, i, j, positions, start);

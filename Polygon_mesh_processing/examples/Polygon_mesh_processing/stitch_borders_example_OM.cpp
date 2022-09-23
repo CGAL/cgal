@@ -7,7 +7,7 @@
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 
 #include <iostream>
-#include <fstream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 

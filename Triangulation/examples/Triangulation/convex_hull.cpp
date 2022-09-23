@@ -3,7 +3,7 @@
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
-#include <CGAL/assertions.h>
+#include <cassert>
 
 #include <iostream>
 #include <iterator>
@@ -28,7 +28,7 @@ int main(int argc, char **argv)
   std::copy_n(rand_it, N, std::back_inserter(points));
 
   T t(D);
-  CGAL_assertion(t.empty());
+  assert(t.empty());
 
   // insert the points in the triangulation, only if they are outside the
   // convex hull

@@ -1,7 +1,7 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 
 message("== CMake setup ==")
 project(CGAL CXX C)
@@ -13,6 +13,7 @@ set(CGAL_BRANCH_BUILD
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/CGALConfigVersion.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/Installation/cmake/modules/CGAL_SCM.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/Installation/cmake/modules/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_detect_git(${CMAKE_CURRENT_SOURCE_DIR})
 
 function(CGAL_error_if_detect_in_source_build)

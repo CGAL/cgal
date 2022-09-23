@@ -1535,6 +1535,7 @@ public:
   /*! Obtain an Approximate_2 functor object. */
   Approximate_2 approximate_2_object() const { return Approximate_2(); }
 
+  //! Functor
   class Construct_x_monotone_curve_2 {
   public:
     /*! Obtain an x-monotone curve connecting the two given endpoints.
@@ -1555,6 +1556,17 @@ public:
   /*! Obtain a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(); }
+  //@}
+
+  /// \name Functor definitions for polylines.
+  //@{
+
+  //! Functor
+  typedef Construct_x_monotone_curve_2  Construct_curve_2;
+
+  /*! Obtain a Construct_curve_2 functor object. */
+  Construct_curve_2 construct_curve_2_object() const
+  { return Construct_x_monotone_curve_2(*this); }
   //@}
 };
 

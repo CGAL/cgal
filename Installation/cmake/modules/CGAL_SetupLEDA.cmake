@@ -9,7 +9,7 @@
 #    find_package(LEDA)
 #
 # and defines the function :command:`use_CGAL_LEDA_support`.
-
+cmake_minimum_required(VERSION 3.11...3.23)
 if(CGAL_SetupLEDA_included)
   return()
 endif()
@@ -39,11 +39,7 @@ function(use_CGAL_LEDA_support target)
   separate_arguments(LIST_LEDA_CXX_FLAGS UNIX_COMMAND "${LEDA_CXX_FLAGS}")
   separate_arguments(LIST_LEDA_DEFINITIONS UNIX_COMMAND "${LEDA_DEFINITIONS} -DCGAL_USE_LEDA")
 
-  if(CMAKE_VERSION VERSION_LESS 3.3)
-    target_compile_options(${target} INTERFACE ${LIST_LEDA_CXX_FLAGS})
-  else()
-    target_compile_options(${target} INTERFACE $<$<COMPILE_LANGUAGE:CXX>:${LIST_LEDA_CXX_FLAGS}>)
-  endif()
+  target_compile_options(${target} INTERFACE $<$<COMPILE_LANGUAGE:CXX>:${LIST_LEDA_CXX_FLAGS}>)
   target_compile_options(${target} INTERFACE ${LIST_LEDA_DEFINITIONS})
 
   target_include_directories(${target} SYSTEM INTERFACE ${LEDA_INCLUDE_DIR})

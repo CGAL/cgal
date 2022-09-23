@@ -32,9 +32,6 @@
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/iterator.h>
-#ifdef CGAL_USE_GEOMVIEW
-#include <CGAL/IO/Geomview_stream.h>  // TBC
-#endif
 
 #include <CGAL/Alpha_shapes_3/internal/Classification_type.h>
 
@@ -727,10 +724,6 @@ private:
 
   //---------------------------------------------------------------------
 public:
-#ifdef CGAL_USE_GEOMVIEW
-  void show_alpha_shape_faces(Geomview_stream &gv) const;
-#endif
-
 
   //Iterators
 

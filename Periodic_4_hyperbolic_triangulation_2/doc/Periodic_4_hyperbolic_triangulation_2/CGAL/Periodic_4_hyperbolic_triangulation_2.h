@@ -109,7 +109,7 @@ public:
                 typedef typename Triangulation_data_structure::Vertex_circulator    Vertex_circulator;
         /// @}
 
-        /// \name
+        /// \name Enums
         /// The following enumeration type indicates where a point is located in the triangulation.
         /// @{
         enum Locate_type {

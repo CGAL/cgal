@@ -16,8 +16,9 @@
  * \cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
  *
  * \sa `ArrangementApproximateTraits_2`,
- *     `ArrangementXMonotoneTraits_2`, and
- *     `ArrangementTraits_2`
+ *     `ArrangementXMonotoneTraits_2`
+ *     `ArrangementTraits_2`, and
+ *     `ArrangementConstructCurveTraits_2`.
  */
 class ArrangementConstructXMonotoneCurveTraits_2 {
 public:

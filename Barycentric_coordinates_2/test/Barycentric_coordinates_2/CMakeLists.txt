@@ -3,12 +3,9 @@
 
 project(Barycentric_coordinates_2_Tests)
 
-cmake_minimum_required(VERSION 3.1...3.15)
-set(CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 3.1...3.23)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
-include(${CGAL_USE_FILE})
-include(CGAL_CreateSingleSourceCGALProgram)
 
 create_single_source_cgal_program("test_almost_degenerate_segment.cpp")
 create_single_source_cgal_program("test_segment_coordinates.cpp")

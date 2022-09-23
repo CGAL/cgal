@@ -1,6 +1,7 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <iostream>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Linear_cell_complex_for_generalized_map<4,5> LCC_4;
 typedef LCC_4::Dart_handle                                 Dart_handle;
@@ -42,24 +43,24 @@ int main()
 
   // Add one vertex on the middle of the edge containing dart d1.
   Dart_handle d3 = lcc.insert_barycenter_in_cell<1>(d1);
-  CGAL_assertion( lcc.is_valid() );
+  assert( lcc.is_valid() );
 
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // Add one edge to cut the face containing dart d3 in two.
   Dart_handle d4 = lcc.insert_cell_1_in_cell_2(d3, lcc.alpha(d1, 1, 0, 1));
-  CGAL_assertion( lcc.is_valid() );
+  assert( lcc.is_valid() );
 
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // We use removal operations to get back to the initial configuration.
   lcc.remove_cell<1>(d4);
-  CGAL_assertion( lcc.is_valid() );
+  assert( lcc.is_valid() );
 
   lcc.remove_cell<0>(d3);
-  CGAL_assertion( lcc.is_valid() );
+  assert( lcc.is_valid() );
 
   lcc.unsew<4>(d1);
 
@@ -68,4 +69,3 @@ int main()
 
   return EXIT_SUCCESS;
 }
-

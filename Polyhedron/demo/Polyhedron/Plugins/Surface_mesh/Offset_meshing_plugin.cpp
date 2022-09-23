@@ -291,9 +291,10 @@ SMesh* cgal_off_meshing(QWidget*,
      p::relative_error_bound = 1e-7,
      p::construct_surface_patch_index = [](int i, int j) { return (i * 1000 + j); });
 
-  CGAL::Mesh_facet_topology topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
-  if(tag == 1) topology = CGAL::Mesh_facet_topology(topology | CGAL::MANIFOLD_WITH_BOUNDARY);
-  if(tag == 2) topology = CGAL::Mesh_facet_topology(topology | CGAL::MANIFOLD);
+  const CGAL::Mesh_facet_topology topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
+  auto manifold_option = p::non_manifold();
+  if(tag == 1) manifold_option = p::manifold_with_boundary();
+  if(tag == 2) manifold_option = p::manifold();
   Mesh_criteria criteria(p::facet_angle = angle,
                          p::facet_size = sizing,
                          p::facet_distance = approx,
@@ -314,7 +315,8 @@ SMesh* cgal_off_meshing(QWidget*,
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       p::no_perturb(),
-                                      p::no_exude());
+                                      p::no_exude(),
+                                      manifold_option);
 
   const Tr& tr = c3t3.triangulation();
 

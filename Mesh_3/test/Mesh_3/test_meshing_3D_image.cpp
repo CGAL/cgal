@@ -61,6 +61,8 @@ public:
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
 
+    c3t3.remove_isolated_vertices();
+
     // Verify
     this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
     this->verify(c3t3,domain,criteria, Bissection_tag());

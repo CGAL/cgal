@@ -285,12 +285,6 @@ using std::min;
 using std::max;
 #endif
 
-//-------------------------------------------------------------------//
-// Is Geomview usable ?
-//#if !defined(_MSC_VER) && !defined(__MINGW32__)
-//#  define CGAL_USE_GEOMVIEW
-//#endif
-
 
 //-------------------------------------------------------------------//
 // Compilers provide different macros to access the current function name
@@ -493,16 +487,22 @@ namespace cpp11{
 //   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
 // See for gcc:
 //   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-#if __cpp_attributes >= 200809 && __has_cpp_attribute(fallthrough)
+#if __cplusplus > 201402L && __has_cpp_attribute(fallthrough)
 #  define CGAL_FALLTHROUGH [[fallthrough]]
-#elif __cpp_attributes >= 200809 && __has_cpp_attribute(gnu::fallthrough)
+#elif __has_cpp_attribute(gnu::fallthrough)
 #  define CGAL_FALLTHROUGH [[gnu::fallthrough]]
-#elif __cpp_attributes >= 200809 && __has_cpp_attribute(clang::fallthrough)
+#elif __has_cpp_attribute(clang::fallthrough)
 #  define CGAL_FALLTHROUGH [[clang::fallthrough]]
 #elif __has_attribute(fallthrough) && ! __clang__
 #  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
 #else
 #  define CGAL_FALLTHROUGH while(false){}
+#endif
+
+#if CGAL_CXX17
+#  define CGAL_CPP17_INLINE inline
+#else
+#  define CGAL_CPP17_INLINE
 #endif
 
 #ifndef CGAL_NO_ASSERTIONS
@@ -529,7 +529,7 @@ namespace cpp11{
 /// Macro `CGAL_WARNING`.
 /// Must be used with `#pragma`, this way:
 ///
-///     #pragma CGAL_WARNING(This line should trigger a warning)
+///     #pragma CGAL_WARNING("This line should trigger a warning")
 ///
 /// @{
 #ifdef BOOST_MSVC

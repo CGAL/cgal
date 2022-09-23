@@ -19,16 +19,20 @@ LC_CTYPE=en_US.UTF-8
 # The script also updates the manual tools.
 
 # "master" alone
-0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/master.git --do-it || echo ERROR
+0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/master.git --do-it --public || echo ERROR
 # "integration"
 0 21  *  *  Mon,Tue,Wed,Thu          cd $HOME/CGAL/create_internal_release && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --do-it || echo ERROR
-# from branch 5.3
-0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-5.3-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.3-branch.git --public --do-it || echo ERROR
-# from branch 5.2
-0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-5.2-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.2-branch.git --public --do-it || echo ERROR
+# from branch 5.5
+0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-5.5-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.5-branch.git --public --do-it || echo ERROR
+# from branch 5.4
+0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-5.4-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.4-branch.git --public --do-it || echo ERROR
 
 
 ## Older stuff
+# from branch 5.3
+#0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-5.3-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.3-branch.git --public --do-it || echo ERROR
+# from branch 5.2
+#0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-5.2-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.2-branch.git --public --do-it || echo ERROR
 # from branch 5.1
 #0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-5.1-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.1-branch.git --public --do-it || echo ERROR
 # from branch 5.0

@@ -205,7 +205,6 @@ public:
     // else
     return add (name, found->second.second, found->second.first);
   }
-  /// \endcond
 
   /*!
     \brief removes a label.

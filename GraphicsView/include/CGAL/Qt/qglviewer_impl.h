@@ -217,9 +217,7 @@ void CGAL::QGLViewer::initializeGL() {
 
     QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
     const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
-    qDebug()<<"Using context "
-           <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
-          << rt;
+    qDebug().noquote() <<tr("Using OpenGL context %1.%2 %3").arg(cur_f.majorVersion()).arg(cur_f.minorVersion()).arg(rt);
   }
   else
   {
@@ -807,7 +805,7 @@ void CGAL::QGLViewer::setCamera(qglviewer::Camera *const camera) {
 
   camera->setSceneRadius(sceneRadius());
   camera->setSceneCenter(sceneCenter());
-  camera->setScreenWidthAndHeight(width(), height());
+  camera->setScreenWidthAndHeight(width(), height(), devicePixelRatio());
 
   // Disconnect current camera from this viewer.
   disconnect(this->camera()->frame(), SIGNAL(manipulated()), this,
@@ -1147,7 +1145,9 @@ void CGAL::QGLViewer::beginSelection(const QPoint &point)
 {
   makeCurrent();
   glEnable(GL_SCISSOR_TEST);
-  glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
+  glScissor(point.x() * devicePixelRatio(),
+            (camera()->screenHeight() - point.y()) * devicePixelRatio() - 1, 1,
+            1);
 }
 
 /*! This method is called by select() after scene elements were drawn by
@@ -2369,7 +2369,7 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::resizeGL(int width, int height) {
   QOpenGLWidget::resizeGL(width, height);
   glViewport(0, 0, GLint(width), GLint(height));
-  camera()->setScreenWidthAndHeight(this->width(), this->height());
+  camera()->setScreenWidthAndHeight(this->width(), this->height(), this->devicePixelRatio());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -3187,10 +3187,11 @@ void CGAL::QGLViewer::drawVisualHints() {
     mvpMatrix.ortho(-1,1,-1,1,-1,1);
     size=30*devicePixelRatio();
     rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-    glViewport(GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
-               GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
-    glScissor (GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
-               GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
+    const auto point_2d = camera()->projectedCoordinatesOf(camera()->pivotPoint());
+    glViewport(GLint(point_2d.x*devicePixelRatio()-size/2),
+               GLint((height() - point_2d.y)*devicePixelRatio()-size/2), size, size);
+    glScissor (GLint(point_2d.x*devicePixelRatio()-size/2),
+               GLint((height() - point_2d.y)*devicePixelRatio()-size/2), size, size);
     rendering_program.setUniformValue("color", QColor(::Qt::black));
     glDisable(GL_DEPTH_TEST);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
@@ -3758,7 +3759,28 @@ void CGAL::QGLViewer::saveSnapshot()
   }
 }
 
+CGAL_INLINE_FUNCTION
+void CGAL::QGLViewer::saveSnapshot(const QString& fileName,
+                                   const qreal finalWidth, const qreal finalHeight,
+                                   const bool expand,
+                                   const double oversampling,
+                                   qglviewer::SnapShotBackground background_color)
+{
+  if(fileName.isEmpty())
+    return;
+
+  QSize finalSize(finalWidth, finalHeight);
+
+  QImage* image = takeSnapshot(qglviewer::SnapShotBackground(background_color),
+                               finalSize, oversampling, expand);
+  if(image)
+  {
+    image->save(fileName);
+    delete image;
+  }
 }
+
+} // namespace CGAL
 
 CGAL_INLINE_FUNCTION
 bool CGAL::QGLViewer::isSharing() const

@@ -28,7 +28,7 @@ bool do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
                                const K&)
 {
   typedef typename K::FT SFT;
-  typedef typename Coercion_traits<double, SFT>::Type FT;
+  typedef typename Coercion_traits<SFT, BFT>::Type FT;
   typedef typename K::Point_3 Point;
 
   typename Coercion_traits<SFT, BFT>::Cast to_FT;

@@ -13,6 +13,7 @@ triangulation and some function object types for the required
 predicates on those primitives.
 
 \cgalHasModel All models of `Kernel`.
+\cgalHasModel `CGAL::Projection_traits_3<K>`
 \cgalHasModel `CGAL::Projection_traits_xy_3<K>`
 \cgalHasModel `CGAL::Projection_traits_yz_3<K>`
 \cgalHasModel `CGAL::Projection_traits_xz_3<K>`
@@ -261,4 +262,3 @@ Construct_circumcenter_2 construct_circumcenter_2_object();
 /// @}
 
 }; /* end TriangulationTraits_2 */
-

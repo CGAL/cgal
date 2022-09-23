@@ -20,6 +20,7 @@ provides exact predicates.
 \cgalModels `ConstrainedTriangulationTraits_2`
 \cgalModels `PolygonTraits_2`
 \cgalModels `ConformingDelaunayTriangulationTraits_2`
+\cgalModels `Barycentric_coordinates::BarycentricTraits_2`
 
 \sa `CGAL::Projection_traits_xy_3`
 \sa `CGAL::Projection_traits_xz_3`

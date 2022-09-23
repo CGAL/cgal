@@ -1330,7 +1330,7 @@ public:
     \image html euler_vertex.png
     \image latex euler_vertex.png
 
-\note
+    \note
     A special application of the split is
     `split_vertex(h,h->%next()->%opposite())` which is equivalent to an
     edge split of the halfedge `h->%next()` that creates a new

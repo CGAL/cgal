@@ -9,7 +9,7 @@
 /*!
 \addtogroup PkgHeatMethod
 
-\cgalPkgDescriptionBegin{The Heat Method,PkgHeatMethodSummary}
+\cgalPkgDescriptionBegin{The Heat Method,PkgHeatMethod}
 \cgalPkgPicture{heat-method-small.png}
 
 \cgalPkgSummaryBegin

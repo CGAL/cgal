@@ -28,7 +28,7 @@ A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`
 It must be created in the corresponding folder named after its package, and containing all the files created for the plugin, and a CMakeLists.txt file.
 Its name must be of the form Xxxx_yyyy_plugin. \n
 
-  [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *, Messages_interface*)
+  [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow*,CGAL::Three::Scene_interface*,Messages_interface*)
   [applicable()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#applicable()
   [actions()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#actions()
   The class must contain the following lines :\n
@@ -328,7 +328,7 @@ Configure CMake as you desire and fetch the right Qt5 packages :
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 3.1)
+    cmake_minimum_required(VERSION 3.1...3.23)
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt5)
@@ -367,7 +367,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 3.1)
+    cmake_minimum_required(VERSION 3.1...3.23)
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt5)

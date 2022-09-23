@@ -34,8 +34,6 @@ Other methods have all a constant time complexity.
 
 \sa `GenericMapItems`
 
-\deprecated Before CGAL 4.9, `Items` had to define the type of dart used, and the default class was `Combinatorial_map_min_items`. This is now deprecated, the `Dart` type is no more defined in the item class, but replaced by the `Dart_info` type. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
-
 */
 template< unsigned int d, typename Items, typename Alloc >
 class Combinatorial_map {

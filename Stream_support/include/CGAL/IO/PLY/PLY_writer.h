@@ -148,7 +148,7 @@ void simple_property_write(std::ostream& stream,
                            ForwardIterator it,
                            std::pair<PropertyMap, PLY_property<std::vector<T> > > map)
 {
-  const typename PropertyMap::reference value = get(map.first, *it);
+  const typename PropertyMap::value_type& value = get(map.first, *it);
 
   if(CGAL::IO::get_mode(stream) == CGAL::IO::ASCII)
   {

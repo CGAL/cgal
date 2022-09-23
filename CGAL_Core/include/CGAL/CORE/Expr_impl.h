@@ -1225,21 +1225,6 @@ CORE_MEMORY_IMPL(SqrtRep)
 
 CORE_MEMORY_IMPL(MultRep)
 CORE_MEMORY_IMPL(DivRep)
-
-
- template class AddSubRep<Add>;
- template class AddSubRep<Sub>;
-
-template class Realbase_for<long>;
-template class Realbase_for<double>;
-template class Realbase_for<BigInt>;
-template class Realbase_for<BigRat>;
-template class Realbase_for<BigFloat>;
-
- template class ConstPolyRep<Expr>;
- template class ConstPolyRep<BigFloat>;
- template class ConstPolyRep<BigInt>;
- template class ConstPolyRep<BigRat>;
 } //namespace CORE
 
 #include <CGAL/enable_warnings.h>

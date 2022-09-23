@@ -423,7 +423,7 @@ inline std::string BigFloatRep::toString(long prec, bool sci) const {
     else
       return r.rep;
   }
-  return nullptr;
+  return std::string();
 }
 
 inline void BigFloatRep::dump() const {

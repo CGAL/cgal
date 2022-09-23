@@ -51,9 +51,9 @@ BOOST_PARAMETER_FUNCTION(
   (optional
     (time_limit_, *, 0 )
     (max_iteration_number_, *, 0 )
-    (convergence_, *, parameters::default_values::lloyd_convergence_ratio )
-    (freeze_bound_, *, parameters::default_values::lloyd_freeze_ratio )
-    (do_freeze_, *, parameters::default_values::do_freeze ))
+    (convergence_, *, parameters::default_values_for_mesh_3::lloyd_convergence_ratio )
+    (freeze_bound_, *, parameters::default_values_for_mesh_3::lloyd_freeze_ratio )
+    (do_freeze_, *, parameters::default_values_for_mesh_3::do_freeze ))
 )
 {
   return lloyd_optimize_mesh_3_impl(c3t3, domain,

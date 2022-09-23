@@ -1,7 +1,8 @@
-//! \file examples/Arrangement_on_surface_2/plane_sweep.cpp
+//! \file examples/Surface_sweep_2/plane_sweep.cpp
 // Computing intersection points among curves using the surface-sweep alg.
 
 #include <list>
+#include <cassert>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -39,7 +40,7 @@ int main()
   std::cout << "Found " << sub_segs.size()
             << " interior-disjoint sub-segments." << std::endl;
 
-  CGAL_assertion(CGAL::do_curves_intersect (segments, segments + 4));
+  assert(CGAL::do_curves_intersect (segments, segments + 4));
 
   return 0;
 }

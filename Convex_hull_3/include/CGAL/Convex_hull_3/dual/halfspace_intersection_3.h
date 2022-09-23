@@ -29,7 +29,7 @@
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_interior_point_3.h>
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include <boost/type_traits/is_floating_point.hpp>
 #include <deque>
 
@@ -72,7 +72,7 @@ namespace CGAL
                                                        Plane_3 > > result_inter;
 
 
-              boost::unordered_map <Facet_const_handle, vertex_descriptor> primal_vertices;
+              std::unordered_map <Facet_const_handle, vertex_descriptor> primal_vertices;
               size_t n = 0;
 
               // First, computing the primal vertices

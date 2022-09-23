@@ -3,19 +3,24 @@ name: Documentation Removal
 on:
   pull_request_target:
     types: [closed, removed]
+permissions:
+  contents: read
+
 jobs:
   build:
 
+    permissions:
+      contents: write  # for Git to git push
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2.0.0
+    - uses: actions/checkout@v3
     - name: delete directory
       run: |
          set -x
-         git config --global user.email "maxime.gimeno@geometryfactory.com"
-         git config --global user.name "Maxime Gimeno"
-         git clone https://maxGimeno:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
+         git config --global user.email "cgal@geometryfactory.com"
+         git config --global user.name "cgaltest"
+         git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
          PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
          cd cgal.github.io/
          egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true

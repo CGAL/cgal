@@ -65,12 +65,6 @@ private:
   Exact_kernel ek;
   Exact_to_double exact_to_double;
 
-  typename Exact_kernel::Point_3
-  to_exact(const typename Input_kernel::Point_3& p) const
-  {
-    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
-  }
-
 public:
   const TriangleMesh &tm1, &tm2;
   const VertexPointMap1& vpm1;
@@ -85,6 +79,12 @@ public:
   , vpm1(vpm1_)
   , vpm2(vpm2_)
   {}
+
+  static typename Exact_kernel::Point_3
+  to_exact(const typename Input_kernel::Point_3& p)
+  {
+    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
+  }
 
   const Point_3& operator[](std::size_t i) const {
     return nodes[i];
@@ -132,7 +132,7 @@ public:
   template <class Mesh_to_map_node>
   void finalize(const Mesh_to_map_node&) {}
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
   }
@@ -202,8 +202,9 @@ public:
     return enodes[i];
   }
 
+  static
   Exact_kernel::Point_3
-  to_exact(const Point_3& p) const
+  to_exact(const Point_3& p)
   {
     return Exact_kernel::Point_3(p.x(), p.y(), p.z());
   }
@@ -296,10 +297,8 @@ public:
       for (std::size_t i=0, e=enodes.size(); i!=e; ++i)
       {
         Point_3 pt = exact_to_double(enodes[i]);
-        if ( tm1_vertices[i] != GT::null_vertex() )
-          put(vpm1, tm1_vertices[i], pt);
-        if ( tm2_vertices[i] != GT::null_vertex() )
-          put(vpm2, tm2_vertices[i], pt);
+        tm1_vertices.update_vertex_point(i, pt, vpm1);
+        tm2_vertices.update_vertex_point(i, pt, vpm2);
       }
     }
     else{
@@ -307,13 +306,12 @@ public:
       for (std::size_t i=0, e=enodes.size(); i!=e; ++i)
       {
         Point_3 pt = exact_to_double(enodes[i]);
-        if ( tm1_vertices[i] != GT::null_vertex() )
-          put(vpm1, tm1_vertices[i], pt);
+        tm1_vertices.update_vertex_point(i, pt, vpm1);
       }
     }
   }
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(enodes.size() == std::set<typename Exact_kernel::Point_3>(enodes.begin(), enodes.end()).size());
   }
@@ -422,7 +420,7 @@ public:
     nodes.push_back(p);
   }
 
-  const Point_3& to_exact(const Point_3& p) const { return p; }
+  static const Point_3& to_exact(const Point_3& p) { return p; }
 
   template <class VPM> // VertexPointMap1 or VertexPointMap2
   void call_put(const VPM& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
@@ -437,7 +435,7 @@ public:
   {}
 
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
   }

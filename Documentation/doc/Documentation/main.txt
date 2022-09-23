@@ -21,7 +21,7 @@ objects and predicates are regrouped in \ref PartKernels "CGAL Kernels".
 Finally, the \ref PartSupportLibrary "Support Library" offers geometric object generators and
 spatial sorting functions, as well as a matrix search framework and a
 solver for linear and quadratic programs. It further offers interfaces
-to third party software such as the GUI libraries Qt, Geomview, and
+to third party software such as the GUI libraries Qt, and
 the Boost Graph Library.
 
 The complete list of packages is available on the page \ref packages.

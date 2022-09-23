@@ -74,7 +74,7 @@ int main(int, char**)
 //  result = traits.power_test_2_object()(P2, P1, P10);
 //  assert(result == CGAL::ON_NEGATIVE_SIDE);
 
-  // power_test_2(p,q) where p, q, and the center of the sphere are colinear
+  // power_test_2(p,q) where p, q, and the center of the sphere are collinear
 //  result = traits.power_test_2_object()(P1, P7);
 //  assert(result == CGAL::ON_POSITIVE_SIDE);
 //  result = traits.power_test_2_object()(P1, P1);
@@ -101,7 +101,7 @@ int main(int, char**)
 //  result = traits_6.power_test_2_object()(P14, P1, P11);
 //  assert(result == CGAL::ON_NEGATIVE_SIDE);
 
-  // power_test_2(p,q) where p, q and sphere are colinear
+  // power_test_2(p,q) where p, q and sphere are collinear
 //  result = traits_6.power_test_2_object()(P13, P0);
 //  assert(result == CGAL::ON_POSITIVE_SIDE);
 //  result = traits_6.power_test_2_object()(P13, P13);

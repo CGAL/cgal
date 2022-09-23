@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Hyperbolic_triangulation_2_Demo)
 
 # Find includes in corresponding build directories
@@ -36,6 +36,9 @@ if(CGAL_Qt5_FOUND
   else()
     target_link_libraries ( HDT2 ${LEDA_LIBRARIES})
   endif()
+
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test( HDT2 )
 else()
   message(
     STATUS

@@ -14,6 +14,7 @@
 
 #include <CGAL/tags.h>
 #include <CGAL/assertions.h>
+#include <cstddef>
 
 namespace CGAL {
 
@@ -88,8 +89,7 @@ namespace CGAL {
     { m_id=id; }
 
   protected:
-    /// id of the cell
-    std::size_t m_id;
+    std::size_t m_id; ///< id of the cell
   };
 
   /// If the tag WithId is false, we do not add id to cells.

@@ -8,9 +8,9 @@ void insert_in_edge(Triangulation &t, const Point &p)
   int li;
 
   Face_handle fh = t.locate(p, lt, li);
-  CGAL_assertion(lt == Triangulation::EDGE);
+  assert(lt == Triangulation::EDGE);
   t.insert(p, fh);
-  CGAL_assertion(t.is_valid());
+  assert(t.is_valid());
 }
 
 int main()

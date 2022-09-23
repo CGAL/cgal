@@ -3205,7 +3205,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
   // in Euclidean space and make a map from the vertices in remover.tmp
   // towards the vertices in *this
 
-  Unique_hash_map<VertexE_handle,Vertex_handle> vmap;
+  Unique_hash_map<VertexE_handle,Vertex_handle> vmap(Vertex_handle(), vertices.size());
   CellE_handle ch;
   remover.tmp.clear();
 
@@ -3256,6 +3256,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
     typename Vertex_triple_Facet_map::iterator oit = outer_map.begin();
 
     typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    outer_map.erase(oit);
     Cell_handle o_ch = o_vt_f_pair.second.first;
     unsigned int o_i = o_vt_f_pair.second.second;
 
@@ -3314,7 +3315,6 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
         }
       }
     }
-    outer_map.erase(oit);
   }
 
   // finally set the neighboring relations
@@ -4145,7 +4145,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
     return os;
 
   // write the vertices
-  Unique_hash_map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, std::size_t > V(0, tr.number_of_vertices());
   std::size_t i=0;
   if(tr.is_1_cover()) {
     for(Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it) {

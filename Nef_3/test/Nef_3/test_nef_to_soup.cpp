@@ -7,6 +7,7 @@
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
 #include <fstream>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel EPEC;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
@@ -39,8 +40,8 @@ int main()
   PolygonRange polygons;
     std::cout << "    convert...\n";
   CGAL::convert_nef_polyhedron_to_polygon_soup(nef, points, polygons);
-  CGAL_assertion(points.size() == 4);
-  CGAL_assertion(polygons.size() == 4);
+  assert(points.size() == 4);
+  assert(polygons.size() == 4);
   PolygonMesh pm;
   CGAL::convert_nef_polyhedron_to_polygon_mesh<
       Nef_polyhedron,

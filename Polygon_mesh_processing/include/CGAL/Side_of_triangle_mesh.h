@@ -29,7 +29,7 @@
 namespace CGAL {
 
 /**
- * \ingroup PkgPolygonMeshProcessingRef
+ * \ingroup PMP_predicates_grp
  * This class provides an efficient point location functionality with respect to a domain bounded
  * by one or several disjoint closed triangle meshes.
  *
