@@ -466,12 +466,12 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
   if(dry_run)
   {
-    std::vector<bool> is_to_be_removed(num, false);
+    std::vector<bool> is_to_be_kept(num, false);
     for(std::size_t i=0; i<nb_components_to_keep; ++i)
-      is_to_be_removed[component_size[i].first] = true;
+      is_to_be_kept[component_size[i].first] = true;
 
     for(face_descriptor f : faces(pmesh))
-      if(is_to_be_removed[face_cc[f]])
+      if(!is_to_be_kept[face_cc[f]])
         *out++ = f;
   }
   else
