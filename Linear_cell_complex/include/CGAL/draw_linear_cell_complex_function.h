@@ -13,7 +13,7 @@
 #ifndef CGAL_DRAW_LCC_H
 #define CGAL_DRAW_LCC_H
 
-#include <CGAL/GraphicBuffer.h>
+#include <CGAL/Graphic_buffer.h>
 #include <CGAL/Generic_functors.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <functional>
@@ -264,7 +264,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_,
-         class DrawingFunctor=GenericFunctorWithVolume<CGAL_LCC_TYPE,
+         class DrawingFunctor=DrawingFunctorWithVolume<CGAL_LCC_TYPE,
                                                                typename CGAL_LCC_TYPE::Dart_const_handle,
                                                                typename CGAL_LCC_TYPE::Dart_const_handle,
                                                                typename CGAL_LCC_TYPE::Dart_const_handle,

@@ -13,12 +13,6 @@
 #define CGAL_GRAPHIC_BUFFER_H
 
 #include <CGAL/license/GraphicsView.h>
-// BUG: Warning - TODO?
-/*
-#include errors detected. Please update your includePath. '
-Squiggles are disabled for this translation unit
-
-*/
 #include <QString>
 
 #include <iostream>
@@ -40,7 +34,6 @@ Squiggles are disabled for this translation unit
 #include <cstdlib>
 
 #include <CGAL/Buffer_for_vao.h>
-// #include <CGAL/Qt/Basic_viewer_qt.h>
 
 namespace CGAL {
 

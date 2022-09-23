@@ -14,7 +14,7 @@
 #define CGAL_DRAW_T3_H
 
 #include <CGAL/Generic_functors.h>
-#include <CGAL/GraphicBuffer.h>
+#include <CGAL/Graphic_buffer.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/license/Triangulation_3.h>
 
@@ -23,7 +23,6 @@
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 #include <CGAL/Triangulation_3.h>
-#include <CGAL/GraphicBuffer.h>
 
 namespace CGAL {
 
@@ -35,6 +34,12 @@ void compute_face(typename T3::Finite_facets_iterator fh,
                   const DrawingFunctor &drawing_functor,
                   CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 *t3)
 {
+  // DONE: TEST draw_face
+  if(!drawing_functor.draw_face(*t3, fh))
+  {
+    return;
+  }
+
   if(drawing_functor.face_color)
   {
     CGAL::IO::Color c = drawing_functor.face_color(*t3, fh);
@@ -55,15 +60,41 @@ void compute_face(typename T3::Finite_facets_iterator fh,
 
 template <typename BufferType = float, class T3>
 void compute_edge(typename T3::Finite_edges_iterator eh,
-                  CGAL::GraphicBuffer<BufferType> &graphic_buffer) {
-  graphic_buffer.add_segment(eh->first->vertex(eh->second)->point(),
-                             eh->first->vertex(eh->third)->point());
+                  CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 *t3) {
+  // DONE: TEST draw_edge + edge color
+  if(!drawing_functor.draw_edge(*t3, eh)) {
+      return;
+  }
+  if( && drawing_functor.edge_color)  {
+
+    CGAL::IO::Color c = drawing_functor.edge_color(*t3, eh);
+    graphic_buffer.add_segment(eh->first->vertex(eh->second)->point(),
+                             eh->first->vertex(eh->third)->point(), c);
+  }
+  else {
+    graphic_buffer.add_segment(eh->first->vertex(eh->second)->point(),
+                              eh->first->vertex(eh->third)->point());
+  }
 }
 
 template <typename BufferType = float, class T3>
 void compute_vertex(typename T3::Vertex_handle vh,
-                    CGAL::GraphicBuffer<BufferType> &graphic_buffer) {
-  graphic_buffer.add_point(vh->point());
+                    CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 *t3) {
+
+  // DONE TEST draw_vertex  + vertex color
+  if(!drawing_functor.draw_vertex(*t3, vh))
+  {
+    return;
+  }
+
+  if(drawing_functor.vertex_color)
+  {
+    CGAL::IO::Color c = drawing_functor.vertex_color(*t3, vh);
+    graphic_buffer.add_point(vh->point(), c);
+  }
+  else
+  { graphic_buffer.add_point(vh->point()); }
+
 }
 
 template <typename BufferType = float, class T3, class DrawingFunctor>
@@ -75,20 +106,19 @@ void compute_elements(CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 
     for (typename T3::Finite_facets_iterator it = t3->finite_facets_begin();
          it != t3->finite_facets_end(); ++it)
     {
-      // TODO TEST draw_face
-    compute_face(it, drawing_functor, graphic_buffer, t3);
+      compute_face(it, drawing_functor, graphic_buffer, t3);
     }
   }
 
   for (typename T3::Finite_edges_iterator it = t3->finite_edges_begin();
        it != t3->finite_edges_end(); ++it)
-  {       // TODO TEST draw_edge + edge color
+  {
     compute_edge<float, T3>(it, graphic_buffer);
   }
 
   for (typename T3::Finite_vertices_iterator it = t3->finite_vertices_begin();
        it != t3->finite_vertices_end(); ++it)
-  {       // TODO TEST draw_vertex  + vertex color
+  {
     compute_vertex<float, T3>(it, graphic_buffer);
   }
 }
@@ -122,7 +152,7 @@ template <class Gt, class Tds, class Lock_data_structure>
 void draw(const CGAL_T3_TYPE &at3, const char *title = "T3 Basic Viewer")
 {
   CGAL::GraphicBuffer<float> buffer;
-  CGAL::GenericFunctor<CGAL_T3_TYPE,
+  CGAL::DrawingFunctor<CGAL_T3_TYPE,
                        typename CGAL_T3_TYPE::Vertex_handle,
                        typename CGAL_T3_TYPE::Finite_edges_iterator,
                        typename CGAL_T3_TYPE::Finite_facets_iterator>

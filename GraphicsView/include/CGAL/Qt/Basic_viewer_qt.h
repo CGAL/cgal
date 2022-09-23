@@ -49,7 +49,7 @@
 #include <cfloat>
 
 #include <CGAL/Basic_shaders.h>
-#include <CGAL/GraphicBuffer.h>
+#include <CGAL/Graphic_buffer.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
 #include <CGAL/Random.h>
