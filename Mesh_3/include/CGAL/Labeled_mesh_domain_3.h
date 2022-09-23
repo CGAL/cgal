@@ -328,10 +328,10 @@ public:
     Index_generator<Subdomain_index, Surface_patch_index>::Index Index;
 
 private:
-  typedef Labeled_mesh_domain_3_impl<BGT,
-                                     Subdomain_index,
-                                     Surface_patch_index
-                                     > Impl_details;
+  typedef details::Labeled_mesh_domain_3_impl<BGT,
+                                              Subdomain_index,
+                                              Surface_patch_index
+                                             > Impl_details;
   typedef typename Impl_details::Null     Null;
   typedef typename Impl_details::Construct_surface_patch_index
                                           Construct_surface_patch_index;
