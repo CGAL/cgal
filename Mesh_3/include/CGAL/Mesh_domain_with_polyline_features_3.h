@@ -536,20 +536,19 @@ class Mesh_domain_with_polyline_features_3
 public:
 /// \name Types
 /// @{
-  typedef typename MeshDomain_3::Surface_patch_index Surface_patch_index; //!< \cgalEmptyDoc
-  typedef typename MeshDomain_3::Subdomain_index     Subdomain_index; //!< \cgalEmptyDoc
-  typedef int                                        Curve_index; //!< \cgalEmptyDoc
-  typedef int                                        Corner_index; //!< \cgalEmptyDoc
+  typedef typename MeshDomain_3::Surface_patch_index Surface_patch_index;
+  typedef typename MeshDomain_3::Subdomain_index     Subdomain_index;
+  typedef int                                        Curve_index;
+  typedef int                                        Corner_index;
 
-  /// \cgalEmptyDoc
   typedef typename Mesh_3::internal::Index_generator_with_features<
     typename MeshDomain_3::Subdomain_index,
     Surface_patch_index,
     Curve_index,
     Corner_index>::type                              Index;
 
-  typedef CGAL::Tag_true                             Has_features; //!< \cgalEmptyDoc
-  typedef typename MeshDomain_3::R::FT               FT; //!< \cgalEmptyDoc
+  typedef CGAL::Tag_true                             Has_features;
+  typedef typename MeshDomain_3::R::FT               FT;
 /// @}
 
 #ifndef DOXYGEN_RUNNING
@@ -568,7 +567,6 @@ public:
 /// of the base class.
 /// @{
 
-  /// \cgalEmptyDoc
   template <typename ... T>
   Mesh_domain_with_polyline_features_3(const T& ...o)
     : MeshDomain_3(o...)
@@ -576,7 +574,7 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-  Mesh_domain_with_polyline_features_3(const Mesh_domain_with_polyline_features_3&) = default; //!< \cgalEmptyDoc
+  Mesh_domain_with_polyline_features_3(const Mesh_domain_with_polyline_features_3&) = default;
 
 /// @}
 

@@ -184,17 +184,60 @@ typedef unspecified_type Has_on_bounded_side_3;
 /// The following functions give access to the predicate and construction objects:
 /// @{
 
-Compute_scalar_product_3 compute_scalar_product_3_object(); //!< \cgalEmptyDoc
-Compute_squared_distance_3 compute_squared_distance_3_object(); //!< \cgalEmptyDoc
-Compute_squared_radius_3 compute_squared_radius_3_object(); //!< \cgalEmptyDoc
-Construct_center_3 construct_center_3_object(); //!< \cgalEmptyDoc
-Construct_midpoint_3 construct_midpoint_3_object(); //!< \cgalEmptyDoc
-Construct_point_on_3 construct_point_on_3_object(); //!< \cgalEmptyDoc
-Construct_scaled_vector_3 construct_scaled_vector_3_object(); //!< \cgalEmptyDoc
-Construct_segment_3 construct_segment_3_object(); //!< \cgalEmptyDoc
-Construct_translated_point_3 construct_translated_point_3_object(); //!< \cgalEmptyDoc
-Construct_vector_3 construct_vector_3_object(); //!< \cgalEmptyDoc
-Has_on_bounded_side_3 has_on_bounded_side_3_object(); //!< \cgalEmptyDoc
+/*!
+
+*/
+Compute_scalar_product_3 compute_scalar_product_3_object();
+
+/*!
+
+*/
+Compute_squared_distance_3 compute_squared_distance_3_object();
+
+/*!
+
+*/
+Compute_squared_radius_3 compute_squared_radius_3_object();
+
+/*!
+
+*/
+Construct_center_3 construct_center_3_object();
+
+/*!
+
+*/
+Construct_midpoint_3 construct_midpoint_3_object();
+
+/*!
+
+*/
+Construct_point_on_3 construct_point_on_3_object();
+
+/*!
+
+*/
+Construct_scaled_vector_3 construct_scaled_vector_3_object();
+
+/*!
+
+*/
+Construct_segment_3 construct_segment_3_object();
+
+/*!
+
+*/
+Construct_translated_point_3 construct_translated_point_3_object();
+
+/*!
+
+*/
+Construct_vector_3 construct_vector_3_object();
+
+/*!
+
+*/
+Has_on_bounded_side_3 has_on_bounded_side_3_object();
 
 /// @}
 
