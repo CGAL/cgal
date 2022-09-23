@@ -23,7 +23,6 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
-#include <CGAL/assertions.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/utility.h>
 

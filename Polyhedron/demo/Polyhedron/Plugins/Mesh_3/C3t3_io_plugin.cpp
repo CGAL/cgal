@@ -341,9 +341,9 @@ struct Fake_CDT_3_cell_base : public Cb
   int constrained_facet[4];
   bool _restoring[6];
   int to_edge_index( int li, int lj ) const {
-    CGAL_triangulation_precondition( li >= 0 && li < 4 );
-    CGAL_triangulation_precondition( lj >= 0 && lj < 4 );
-    CGAL_triangulation_precondition( li != lj );
+    CGAL_precondition( li >= 0 && li < 4 );
+    CGAL_precondition( lj >= 0 && lj < 4 );
+    CGAL_precondition( li != lj );
     return ( li==0 || lj==0 ) ? li+lj-1 : li+lj;
   }
 

@@ -22,7 +22,6 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
-#include <CGAL/assertions.h>
 #include <CGAL/hierarchy_simplify_point_set.h>
 #include <CGAL/random_simplify_point_set.h>
 #include <CGAL/Point_set_2.h>

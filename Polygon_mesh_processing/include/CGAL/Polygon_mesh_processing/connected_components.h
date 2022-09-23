@@ -32,9 +32,6 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Container_helper.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/tuple.h>
-
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/Default.h>
 #include <CGAL/Dynamic_property_map.h>

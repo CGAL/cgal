@@ -23,7 +23,6 @@
 #include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
-#include <CGAL/assertions.h>
 #include <functional>
 
 #include <CGAL/Named_function_parameters.h>

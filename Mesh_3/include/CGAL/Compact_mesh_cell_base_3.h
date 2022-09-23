@@ -21,7 +21,6 @@
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
-#include <CGAL/assertions.h>
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Has_timestamp.h>

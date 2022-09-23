@@ -72,13 +72,13 @@ public:
 
   Hyperbolic_translation translation(int i) const
   {
-    CGAL_triangulation_precondition(i >= 0 && i <= 2);
+    CGAL_precondition(i >= 0 && i <= 2);
     return o[i];
   }
 
   void set_translation(const int& k, const Hyperbolic_translation& new_o)
   {
-    CGAL_triangulation_precondition(k >= 0 && k <= 2);
+    CGAL_precondition(k >= 0 && k <= 2);
     o[k] = new_o;
   }
 
