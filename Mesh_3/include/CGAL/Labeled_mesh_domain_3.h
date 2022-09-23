@@ -480,6 +480,7 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
                                   )
                                   (optional
                                     (relative_error_bound_, (const FT&), FT(1e-3))
+                                    (weights_, (const CGAL::Image_3&), CGAL::Image_3())
                                     (value_outside_, *, 0)
                                     (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
                                     (image_values_to_subdomain_indices_, *, Null_functor())
@@ -490,8 +491,9 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
   {
     namespace p = CGAL::parameters;
     CGAL::Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3> domain
-      = create_labeled_image_mesh_domain(image_,
+        = create_labeled_image_mesh_domain(image_,
           p::relative_error_bound = relative_error_bound_,
+          p::weights = weights_,
           p::p_rng = p_rng_,
           p::image_values_to_subdomain_indices = image_values_to_subdomain_indices_,
           p::null_subdomain_index = null_subdomain_index_,
