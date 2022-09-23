@@ -120,6 +120,7 @@ namespace internal {
 } // end namespace CGAL::Mesh_3::internal
 } // end namespace CGAL::Mesh_3
 
+#ifndef DOXYGEN_RUNNING
 struct Null_subdomain_index {
   template <typename T>
   bool operator()(const T& x) const { return 0 == x; }
@@ -133,11 +134,15 @@ struct Construct_pair_from_subdomain_indices {
     return result_type(a, b);
   }
 }; // end class template Construct_pair_from_subdomain_indices
+#endif
+
+namespace details
+{
 
 template <typename Geom_traits,
           typename Subdomain_index,
           typename Surface_patch_index_>
-class Labeled_mesh_domain_3_impl_details
+class Labeled_mesh_domain_3_impl
 {
 protected:
   typedef Surface_patch_index_ Surface_patch_index;
@@ -181,7 +186,7 @@ protected:
             typename Bounding_object,
             typename Null,
             typename Construct_surface_patch_index>
-  Labeled_mesh_domain_3_impl_details(const Function& f,
+  Labeled_mesh_domain_3_impl(const Function& f,
                                      const Bounding_object& bounding,
                                      const FT& error_bound,
                                      Construct_surface_patch_index cstr_s_p_i,
@@ -215,7 +220,9 @@ protected:
   CGAL_Random_share_ptr_t p_rng_;
   // Error bound relative to sphere radius
   FT squared_error_bound_;
-}; // Labeled_mesh_domain_3_impl_details
+}; // Labeled_mesh_domain_3_impl
+
+} // namespace details
 
 /*!
 \ingroup PkgMesh3Domains
@@ -277,9 +284,9 @@ template<class BGT,
                                                 Subdomain_index_> >
 class Labeled_mesh_domain_3
 #ifndef DOXYGEN_RUNNING
-: protected Labeled_mesh_domain_3_impl_details<BGT,
-                                               Subdomain_index_,
-                                               Surface_patch_index_>
+: protected details::Labeled_mesh_domain_3_impl<BGT,
+                                                Subdomain_index_,
+                                                Surface_patch_index_>
 #endif
 {
 public:
@@ -310,7 +317,6 @@ public:
 ///@}
 #else
   typedef boost::optional<Subdomain_index>  Subdomain;
-#endif
 
   // Type of indexes for cells of the input complex
   typedef Surface_patch_index_                  Surface_patch_index;
@@ -322,10 +328,10 @@ public:
     Index_generator<Subdomain_index, Surface_patch_index>::Index Index;
 
 private:
-  typedef Labeled_mesh_domain_3_impl_details<BGT,
-                                             Subdomain_index,
-                                             Surface_patch_index
-                                             > Impl_details;
+  typedef Labeled_mesh_domain_3_impl<BGT,
+                                     Subdomain_index,
+                                     Surface_patch_index
+                                     > Impl_details;
   typedef typename Impl_details::Null     Null;
   typedef typename Impl_details::Construct_surface_patch_index
                                           Construct_surface_patch_index;
@@ -356,6 +362,7 @@ public:
   typedef typename BGT::FT FT;
   typedef BGT Geom_traits;
   using Impl_details::construct_pair_functor;
+#endif
 
 /// \name Creation
 /// @{
@@ -397,6 +404,7 @@ public:
   {}
 ///@}
 
+#ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
   Labeled_mesh_domain_3(const CGAL_NP_CLASS& np)
   :Impl_details(parameters::get_parameter(np, internal_np::function_param),
@@ -423,6 +431,7 @@ public:
                           bounding_object,
                           parameters::relative_error_bound(error_bound))
   {}
+#endif
 #endif
 
 /// \name Creation of domains from 3D images
@@ -613,6 +622,7 @@ public:
   }
 /// @}
 
+#ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
   static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL_NP_CLASS& np)
   {
@@ -676,7 +686,7 @@ public:
   {
     return create_labeled_image_mesh_domain(internal_np::combine_named_parameters(nps...));
   }
-
+#endif
 
 /// \name Creation of domains from implicit functions
 /// @{
@@ -751,6 +761,7 @@ public:
                      create_construct_surface_patch_index(construct_surface_patch_index_));
   }
 /// @}
+#ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& np = parameters::default_values())
   {
@@ -1298,9 +1309,11 @@ protected:
 public:
   // Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return this->bbox_; }
+#endif //DOXYGEN_RUNNING
 
 };  // end class Labeled_mesh_domain_3
 
+#ifndef DOXYGEN_RUNNING
 //-------------------------------------------------------
 // Method implementation
 //-------------------------------------------------------
@@ -1382,7 +1395,7 @@ Construct_initial_points::operator()(OutputIterator pts,
 #endif
   return pts;
 }
-
+#endif
 
 }  // end namespace CGAL
 

@@ -36,7 +36,7 @@ namespace CGAL {
 
 namespace details {
 
-/**
+/*
  * @class Insert_vertex_in_c3t3
  *
  * A functor designed to insert unweighted points into the triangulation

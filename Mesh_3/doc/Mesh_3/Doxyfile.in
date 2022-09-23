@@ -37,6 +37,4 @@ HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_3.jpg 
 
 EXAMPLE_PATH += ${CGAL_PACKAGE_INCLUDE_DIR} # non-documented headers are advertised
 
-EXTRACT_ALL                =  NO
-HIDE_UNDOC_MEMBERS         =  YES
-HIDE_UNDOC_CLASSES         =  YES
+EXCLUDE_SYMBOLS += details
