@@ -189,25 +189,10 @@ Bbox_3 bbox() const;
 /// The following functions give access to the function objects:
 /// @{
 
-/*!
-
-*/
-Construct_initial_points construct_initial_points_object();
-
-/*!
-
-*/
-Is_in_domain is_in_domain_object();
-
-/*!
-
-*/
-Do_intersect_surface do_intersect_surface_object();
-
-/*!
-
-*/
-Construct_intersection construct_intersection_object();
+Construct_initial_points construct_initial_points_object(); //!< \cgalEmptyDoc
+Is_in_domain is_in_domain_object(); //!< \cgalEmptyDoc
+Do_intersect_surface do_intersect_surface_object(); //!< \cgalEmptyDoc
+Construct_intersection construct_intersection_object(); //!< \cgalEmptyDoc
 
 /// @}
 

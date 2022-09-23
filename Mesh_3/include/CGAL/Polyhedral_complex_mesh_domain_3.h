@@ -138,10 +138,10 @@ public:
   /// \name Index types
   /// @{
   /// The types are `int` or types compatible with `int`.
-  typedef typename Base::Corner_index         Corner_index;
-  typedef typename Base::Curve_index          Curve_index;
-  typedef typename Base::Surface_patch_index  Surface_patch_index;
-  typedef typename Base::Subdomain_index      Subdomain_index;
+  typedef typename Base::Corner_index         Corner_index; //!< \cgalEmptyDoc
+  typedef typename Base::Curve_index          Curve_index; //!< \cgalEmptyDoc
+  typedef typename Base::Surface_patch_index  Surface_patch_index; //!< \cgalEmptyDoc
+  typedef typename Base::Subdomain_index      Subdomain_index; //!< \cgalEmptyDoc
   /// @}
 
   /// @cond DEVELOPERS

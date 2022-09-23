@@ -27,10 +27,8 @@ class Implicit_multi_domain_to_labeling_function_wrapper
 public:
   /// \name Types
   /// @{
-  //!
-  typedef std::vector<Function*>   Function_vector;
-  //!
-  typedef typename Function::Point     Point_3;
+  typedef std::vector<Function*>   Function_vector; //!< \cgalEmptyDoc
+  typedef typename Function::Point     Point_3; //!< \cgalEmptyDoc
   /// @}
 
   /// \name Creation

@@ -328,135 +328,32 @@ public:
   /// The following functions give access to the predicate and construction objects:
   /// @{
 
-  /*!
-
-  */
-  Do_intersect_3 do_intersect_3_object();
-
-  /*!
-
-  */
-  Equal_3 equal_3_object();
-
-  /*!
-
-  */
-  Is_degenerate_3 equal_3_object();
-
-  /*!
-
-  */
-  Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object();
-
-  /*!
-
-  */
-  Compute_approximate_dihedral_angle_3 compute_approximate_dihedral_angle_3_object();
-
-  /*!
-
-  */
-  Compute_area_3 compute_area_3_object();
-
-  /*!
-
-  */
-  Compute_power_distance_to_power_sphere_3 compute_power_distance_to_power_sphere_3_object();
-
-  /*!
-
-  */
-  Compute_squared_area_3 compute_squared_area_3_object();
-
-  /*!
-
-  */
-  Compute_squared_distance_3 compute_squared_distance_3_object();
-
-  /*!
-
-  */
-  Compute_squared_length_3 compute_squared_length_3_object();
-
-  /*!
-
-  */
-  Compute_squared_radius_3 compute_squared_radius_3_object();
-
-  /*!
-
-  */
-  Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere_3_object();
-
-  /*!
-
-  */
-  Compute_volume_3 compute_volume_3_object();
-
-  /*!
-
-  */
-  Compute_weight_3 compute_weight_3_object();
-
-  /*!
-
-  */
-  Construct_base_vector_3 construct_base_vector_3_object();
-
-  /*!
-
-  */
-  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object();
-
-  /*!
-
-  */
-  Construct_center_3 construct_center_3_object();
-
-  /*!
-
-  */
-  Construct_midpoint_3 construct_midpoint_3_object();
-
-  /*!
-
-  */
-  Construct_normal_3 construct_normal_3_object();
-
-  /*!
-
-  */
-  Construct_sphere_3 construct_sphere_3_object();
-
-  /*!
-
-  */
-  Construct_tetrahedron_3 construct_tetrahedron_3_object();
-
-  /*!
-
-  */
-  Construct_translated_point_3 construct_translated_point_3_object();
-
-  /*!
-
-  */
-  Construct_vector_3 construct_vector_3_object();
-
-  /*!
-
-  */
-  Construct_scaled_vector_3 construct_scaled_vector_3_object();
-
-  /*!
-
-  */
-  Construct_opposite_vector_3 construct_opposite_vector_3_object();
-
-  /*!
-
-  */
-  Intersect_3 intersect_3_object();
+  Do_intersect_3 do_intersect_3_object(); //!< \cgalEmptyDoc
+  Equal_3 equal_3_object(); //!< \cgalEmptyDoc
+  Is_degenerate_3 equal_3_object(); //!< \cgalEmptyDoc
+  Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object(); //!< \cgalEmptyDoc
+  Compute_approximate_dihedral_angle_3 compute_approximate_dihedral_angle_3_object(); //!< \cgalEmptyDoc
+  Compute_area_3 compute_area_3_object(); //!< \cgalEmptyDoc
+  Compute_power_distance_to_power_sphere_3 compute_power_distance_to_power_sphere_3_object(); //!< \cgalEmptyDoc
+  Compute_squared_area_3 compute_squared_area_3_object(); //!< \cgalEmptyDoc
+  Compute_squared_distance_3 compute_squared_distance_3_object(); //!< \cgalEmptyDoc
+  Compute_squared_length_3 compute_squared_length_3_object(); //!< \cgalEmptyDoc
+  Compute_squared_radius_3 compute_squared_radius_3_object(); //!< \cgalEmptyDoc
+  Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere_3_object(); //!< \cgalEmptyDoc
+  Compute_volume_3 compute_volume_3_object(); //!< \cgalEmptyDoc
+  Compute_weight_3 compute_weight_3_object(); //!< \cgalEmptyDoc
+  Construct_base_vector_3 construct_base_vector_3_object(); //!< \cgalEmptyDoc
+  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object(); //!< \cgalEmptyDoc
+  Construct_center_3 construct_center_3_object(); //!< \cgalEmptyDoc
+  Construct_midpoint_3 construct_midpoint_3_object(); //!< \cgalEmptyDoc
+  Construct_normal_3 construct_normal_3_object(); //!< \cgalEmptyDoc
+  Construct_sphere_3 construct_sphere_3_object(); //!< \cgalEmptyDoc
+  Construct_tetrahedron_3 construct_tetrahedron_3_object(); //!< \cgalEmptyDoc
+  Construct_translated_point_3 construct_translated_point_3_object(); //!< \cgalEmptyDoc
+  Construct_vector_3 construct_vector_3_object(); //!< \cgalEmptyDoc
+  Construct_scaled_vector_3 construct_scaled_vector_3_object(); //!< \cgalEmptyDoc
+  Construct_opposite_vector_3 construct_opposite_vector_3_object(); //!< \cgalEmptyDoc
+  Intersect_3 intersect_3_object(); //!< \cgalEmptyDoc
 
   /// @}
 

@@ -91,35 +91,12 @@ Sets the special aspect of the vertex.
 */
 void set_special(bool);
 
-/*!
-
-*/
-FT meshing_info() const;
-
-/*!
-
-*/
-void set_meshing_info(FT);
-
-/*!
-
-*/
-Vertex_handle next_intrusive() const;
-
-/*!
-
-*/
-void set_next_intrusive(Vertex_handle);
-
-/*!
-
-*/
-Vertex_handle previous_intrusive() const;
-
-/*!
-
-*/
-void set_previous_intrusive(Vertex_handle);
+FT meshing_info() const; //!< \cgalEmptyDoc
+void set_meshing_info(FT); //!< \cgalEmptyDoc
+Vertex_handle next_intrusive() const; //!< \cgalEmptyDoc
+void set_next_intrusive(Vertex_handle); //!< \cgalEmptyDoc
+Vertex_handle previous_intrusive() const; //!< \cgalEmptyDoc
+void set_previous_intrusive(Vertex_handle); //!< \cgalEmptyDoc
 
 /// Get the erase counter.
 /// Only required by the parallel algorithms.

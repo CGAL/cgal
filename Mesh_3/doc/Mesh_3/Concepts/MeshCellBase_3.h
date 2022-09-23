@@ -177,42 +177,15 @@ The class should provide storage, accessors and modificators for two `Vertex_han
 and two `Cell_handle`, and a cache value for sliverity.*/
 /// @{
 
-/*!
-*/
-void set_sliver_value(double value);
 
-/*!
-*/
-double sliver_value() const;
-
-/*!
-*/
-bool is_cache_valid() const;
-
-/*!
-*/
-void reset_cache_validity() const;
-
-/*!
-
-*/
-Cell_handle next_intrusive() const;
-
-/*!
-
-*/
-void set_next_intrusive(Cell_handle);
-
-/*!
-
-*/
-Cell_handle previous_intrusive() const;
-
-/*!
-
-*/
-void set_previous_intrusive(Cell_handle);
-
+void set_sliver_value(double value); //!< \cgalEmptyDoc
+double sliver_value() const; //!< \cgalEmptyDoc
+bool is_cache_valid() const; //!< \cgalEmptyDoc
+void reset_cache_validity() const; //!< \cgalEmptyDoc
+Cell_handle next_intrusive() const; //!< \cgalEmptyDoc
+void set_next_intrusive(Cell_handle); //!< \cgalEmptyDoc
+Cell_handle previous_intrusive() const; //!< \cgalEmptyDoc
+void set_previous_intrusive(Cell_handle); //!< \cgalEmptyDoc
 
 /// @}
 
