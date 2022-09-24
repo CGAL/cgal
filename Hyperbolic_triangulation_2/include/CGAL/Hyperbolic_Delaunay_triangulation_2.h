@@ -86,8 +86,6 @@ public:
     : Delaunay_triangulation_2<Gt,Tds>(gt), _gt(gt)
   {
     insert(first, last);
-    for(All_vertices_iterator vit=all_vertices_begin(); vit!=all_vertices_end(); ++vit)
-      ensure_hyperbolic_face_handle(vit);
   }
 
   /*************************************
