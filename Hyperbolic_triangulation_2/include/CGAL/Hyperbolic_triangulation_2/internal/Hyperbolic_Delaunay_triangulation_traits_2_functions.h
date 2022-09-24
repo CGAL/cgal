@@ -249,18 +249,7 @@ public:
     {
       Euclidean_line_2 seg(p, q);
       Orientation qori = _gt.orientation_2_object()(p, q, query);
-      if(qori == COLLINEAR)
-      {
-        return ON_ORIENTED_BOUNDARY;
-      }
-      else
-      {
-        // It is sufficient that these are consistent.
-        if(qori == LEFT_TURN)
-          return ON_POSITIVE_SIDE;
-        else
-          return ON_NEGATIVE_SIDE;
-      }
+      return qori;
     }
 
     Weighted_point_2 wp(p);
@@ -272,17 +261,7 @@ public:
 
     Circle_2 circle = _gt.construct_circle_2_object()(center, sq_radius);
     Bounded_side bs = _gt.bounded_side_2_object()(circle, query);
-    if(bs == ON_BOUNDARY)
-    {
-      return ON_ORIENTED_BOUNDARY;
-    }
-    else
-    {
-      if(bs == ON_BOUNDED_SIDE)
-        return ON_POSITIVE_SIDE;
-      else
-        return ON_NEGATIVE_SIDE;
-    }
+    return enum_cast<Oriented_side>(bs);
   }
 
 private:
