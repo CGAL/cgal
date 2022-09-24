@@ -87,8 +87,6 @@ private:
   const Traits& _gt;
 }; // end Construct_supporting_circle_of_bisector
 
-
-
 template <typename Traits>
 class Construct_hyperbolic_segment_2
 {
@@ -136,8 +134,6 @@ private:
   const Traits& _gt;
 }; // end Construct_hyperbolic_segment_2
 
-
-
 // For details see the JoCG paper (5:56-85, 2014)
 template <typename Traits>
 class Is_Delaunay_hyperbolic
@@ -178,7 +174,7 @@ public:
                   const Hyperbolic_point_2& p2,
                   int& ind) const
   {
-    if(this->operator()(p0, p1, p2) == false)
+    if(!this->operator()(p0, p1, p2))
     {
       ind = find_non_hyperbolic_edge(p0, p1, p2);
       return false;
@@ -188,7 +184,7 @@ public:
   }
 
 private:
-  // assume the face (p0, p1, p2) is non-hyperbolic
+  // assumes that the face (p0, p1, p2) is non-hyperbolic
   int find_non_hyperbolic_edge(const Hyperbolic_point_2& p0,
                                const Hyperbolic_point_2& p1,
                                const Hyperbolic_point_2& p2) const

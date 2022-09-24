@@ -15,11 +15,11 @@
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
+
 #include <QGraphicsSceneMouseEvent>
 #include <QEvent>
+
 #include <list>
-
-
 
 namespace CGAL {
 namespace Qt {
@@ -51,14 +51,12 @@ protected:
   Face_handle hint;
 };
 
-
 template <typename T>
 TriangulationConflictZone<T>::TriangulationConflictZone(QGraphicsScene* s,
-                                                        T * dt_,
+                                                        T* dt_,
                                                         QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s), animate(false)
 {}
-
 
 template <typename T>
 void
@@ -67,11 +65,9 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
   Point p(convert(qt_point));
 
   faces.clear();
-  for(std::list<QGraphicsPolygonItem*>::iterator it = qfaces.begin();
-      it != qfaces.end();
-      ++it){
-    delete *it;
-  }
+  for(QGraphicsPolygonItem* gpi : qfaces)
+    delete gpi;
+
   qfaces.clear();
   hint = dt->locate(p, hint);
   dt->find_conflicts(p, std::back_inserter(faces), hint);
@@ -88,8 +84,6 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
     }
   }
 }
-
-
 
 template <typename T>
 void
@@ -121,11 +115,9 @@ void
 TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent * /*event*/)
 {
   faces.clear();
-  for(std::list<QGraphicsPolygonItem*>::iterator it = qfaces.begin();
-      it != qfaces.end();
-      ++it){
-    delete *it;
-  }
+  for(QGraphicsPolygonItem* gpi : qfaces)
+    delete gpi;
+
   qfaces.clear();
   animate = false;
 }

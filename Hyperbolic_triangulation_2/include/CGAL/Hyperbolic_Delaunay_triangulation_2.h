@@ -18,8 +18,10 @@
 #include <CGAL/Hyperbolic_triangulation_face_base_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
+#include <algorithm>
 #include <stack>
 #include <set>
+#include <vector>
 
 namespace CGAL {
 
@@ -77,7 +79,7 @@ public:
   Hyperbolic_Delaunay_triangulation_2(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds> &tr)
     : Delaunay_triangulation_2<Gt,Tds>(tr), _gt()
   {
-    CGAL_triangulation_postcondition(this->is_valid());
+    CGAL_postcondition(this->is_valid());
   }
 
   template<class InputIterator>
@@ -289,13 +291,13 @@ public:
 
     Vertex& operator*() const
     {
-      CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
+      CGAL_precondition(pos != Face_handle() && _v != Vertex_handle());
       return *(pos->vertex(_ri));
     }
 
     Vertex* operator->() const
     {
-      CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
+      CGAL_precondition(pos != Face_handle() && _v != Vertex_handle());
       return &*(pos->vertex(_ri));
     }
 
@@ -307,10 +309,9 @@ public:
   };
 
 private:
-  Geom_traits   _gt;
+  Geom_traits _gt;
 
 public:
-
   Tds& tds()
   {
     return Base::tds();
@@ -343,16 +344,13 @@ public:
     tr.mark_finite_non_hyperbolic_faces();
   }
 
-
   Self& operator=(const Self &tr)
   {
-
     Self newone = Self(tr);
     this->swap(newone);
 
     return *this;
   }
-
 
   bool operator==(const Self& tr )
   {
@@ -452,11 +450,9 @@ public:
     return n;
   }
 
-
-
   void remove(Vertex_handle v)
   {
-    CGAL_triangulation_precondition(tds().is_vertex(v));
+    CGAL_precondition(tds().is_vertex(v));
     std::vector<Vertex_handle> nbr;
     bool dim_was_2 = false;
     if (this->dimension() == 2)
@@ -481,7 +477,6 @@ public:
     }
   }
 
-
   template <class VertexRemoveIterator>
   void remove(VertexRemoveIterator first, VertexRemoveIterator last)
   {
@@ -491,11 +486,6 @@ public:
     }
   }
 
-
-
-  /*
-    Needed by DT_2: do not document!
-  */
   template <typename T>
   bool is_infinite(T v) const { return Base::is_infinite(v); }
 
@@ -860,7 +850,7 @@ public:
 
   Hyperbolic_Voronoi_point dual(Face_handle f) const
   {
-    CGAL_triangulation_precondition(is_Delaunay_hyperbolic(f));
+    CGAL_precondition(is_Delaunay_hyperbolic(f));
     return geom_traits().construct_hyperbolic_circumcenter_2_object()(point(f,0),
                                                                       point(f,1),
                                                                       point(f,2));
@@ -870,7 +860,7 @@ public:
 
   Hyperbolic_segment dual(Face_handle f, int i) const
   {
-    CGAL_triangulation_precondition(is_Delaunay_hyperbolic(f, i));
+    CGAL_precondition(is_Delaunay_hyperbolic(f, i));
 
     if(dimension() == 1)
     {
@@ -888,7 +878,7 @@ public:
     bool fhyp = is_Delaunay_hyperbolic(f);
     bool nhyp = is_Delaunay_hyperbolic(n);
 
-    // both faces are non_hyperbolic, but the incident edge is hyperbolic
+    // both faces are non_hyperbolic, but the common edge is hyperbolic
     if(!fhyp && !nhyp)
     {
       const Point& p = point(f,ccw(i));
@@ -1060,7 +1050,7 @@ public:
       }
     }
 
-    // Here, the face has been located in the Euclidean face lh
+    // Here, the face has been located in the Euclidean face fh
     const Point& p = point(fh, 0);
     const Point& q = point(fh, 1);
     const Point& r = point(fh, 2);
