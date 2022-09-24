@@ -70,14 +70,16 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
 
 
   dt->find_conflicts(p, std::back_inserter(faces));
-  for(typename std::list<Face_handle>::iterator it = faces.begin();
-      it != faces.end();
-      ++it){
-    if(dt->is_Delaunay_hyperbolic(*it)){
-      QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->hyperbolic_triangle(*it)));
+
+  QPen blackPen(::Qt::black, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin);
+
+  for(Face_handle fh : faces){
+    if(! dt->is_infinite(fh)){
+      QGraphicsPolygonItem* item = new QGraphicsPolygonItem(convert(dt->hyperbolic_triangle(fh)));
       QColor color(::Qt::blue);
       color.setAlpha(150);
       item->setBrush(color);
+      item->setPen(::Qt::NoPen);
       scene_->addItem(item);
       qfaces.push_back(item);
     }

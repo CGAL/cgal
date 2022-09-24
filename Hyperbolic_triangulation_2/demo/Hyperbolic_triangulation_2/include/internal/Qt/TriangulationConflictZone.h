@@ -67,18 +67,18 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
   faces.clear();
   for(QGraphicsPolygonItem* gpi : qfaces)
     delete gpi;
-
   qfaces.clear();
+
   hint = dt->locate(p, hint);
   dt->find_conflicts(p, std::back_inserter(faces), hint);
-  for(typename std::list<Face_handle>::iterator it = faces.begin();
-      it != faces.end();
-      ++it){
-    if(! dt->is_infinite(*it)){
-      QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->hyperbolic_triangle(*it)));
+
+  for(Face_handle fh : faces){
+    if(! dt->is_infinite(fh)){
+      QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->hyperbolic_triangle(fh)));
       QColor color(::Qt::blue);
       color.setAlpha(150);
       item->setBrush(color);
+      item->setPen(::Qt::NoPen);
       scene_->addItem(item);
       qfaces.push_back(item);
     }
