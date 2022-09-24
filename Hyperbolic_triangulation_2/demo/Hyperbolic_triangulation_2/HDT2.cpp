@@ -183,9 +183,11 @@ MainWindow::MainWindow()
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
-  //ag->addAction(this->actionMovingPoint);
+  ag->addAction(this->actionMovingPoint);
   ag->addAction(this->actionCircumcenter);
   ag->addAction(this->actionShowConflictZone);
+
+  this->actionMovingPoint->setDisabled(true);
 
   // Check two actions
   this->actionInsertPoint->setChecked(true);
