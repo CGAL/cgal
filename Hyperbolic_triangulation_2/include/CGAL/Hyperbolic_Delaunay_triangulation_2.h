@@ -928,33 +928,31 @@ public:
   }
 
 public:
-
-  const Point point(const Vertex_handle vh) const
+  const Point& point(const Vertex_handle vh) const
   {
+    CGAL_precondition(!is_infinite(vh));
     return vh->point();
   }
 
-  const Point point(const Face_handle fh, const int i) const
+  const Point& point(const Face_handle fh, const int i) const
   {
-    CGAL_triangulation_precondition(0 <= i);
-    CGAL_triangulation_precondition(i <= 2);
+    CGAL_precondition(!is_infinite(fh->vertex(i)));
+    CGAL_precondition(0 <= i && i <= 2);
     return fh->vertex(i)->point();
   }
 
-
-  Point point(const Vertex_handle vh)
+  Point& point(const Vertex_handle vh)
   {
+    CGAL_precondition(!is_infinite(vh));
     return vh->point();
   }
 
-  Point point(const Face_handle fh, const int i)
+  Point& point(const Face_handle fh, const int i)
   {
-    CGAL_triangulation_precondition(0 <= i);
-    CGAL_triangulation_precondition(i <= 2);
+    CGAL_precondition(!is_infinite(fh->vertex(i)));
+    CGAL_precondition(0 <= i && i <= 2);
     return fh->vertex(i)->point();
   }
-
-
 
   bool is_valid()
   {
