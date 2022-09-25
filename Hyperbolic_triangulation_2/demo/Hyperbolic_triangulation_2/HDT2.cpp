@@ -47,8 +47,9 @@
   typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<> K;
 #endif
 
-
+typedef K::FT FT;
 typedef K::Point_2 Point_2;
+typedef K::Circle_2 Circle_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
 
 typedef CGAL::Hyperbolic_Delaunay_triangulation_2<K> Delaunay;
@@ -61,6 +62,8 @@ class MainWindow :
 
 private:
   Delaunay dt;
+  Circle_2 p_disk = Circle_2(Point_2(0, 0), 1);
+
   QGraphicsEllipseItem* disk;
   QGraphicsScene scene;
 
@@ -114,7 +117,10 @@ MainWindow::MainWindow()
   this->graphicsView->setAcceptDrops(false);
 
   // Add Poincaré disk
-  qreal origin_x = 0, origin_y = 0, radius = 1, diameter = 2*radius;
+  qreal origin_x = CGAL::to_double(p_disk.center().x());
+  qreal origin_y = CGAL::to_double(p_disk.center().y());
+  qreal radius = std::sqrt(CGAL::to_double(p_disk.squared_radius()));
+  qreal diameter = std::sqrt(CGAL::to_double(4 * p_disk.squared_radius()));
   qreal left_top_corner_x = origin_x - radius;
   qreal left_top_corner_y = origin_y - radius;
   qreal width = diameter, height = diameter;
@@ -231,12 +237,9 @@ MainWindow::processInput(CGAL::Object o)
 {
   Point_2 p;
   if(CGAL::assign(p, o)){
-    QPointF qp(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
-
     // note that if the point is on the boundary then the disk contains the point
-    if(disk->contains(qp)){
+    if(!p_disk.has_on_unbounded_side(p))
       dt.insert(p);
-    }
   }
   emit(changed());
 }
@@ -361,9 +364,11 @@ MainWindow::open(QString fileName)
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
 
-  K::Point_2 p;
-  std::vector<K::Point_2> points;
+  Point_2 p;
+  std::vector<Point_2> points;
   while(ifs >> p) {
+    if(p_disk.has_on_unbounded_side(p))
+      continue;
     points.push_back(p);
   }
   dt.insert(points.begin(), points.end());
