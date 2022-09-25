@@ -754,8 +754,8 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexMeasureMa
             get_const_property_map(CGAL::vertex_point, pmesh));
 
 
-    std::queue<face_descriptor> bfs_q;
-    std::unordered_set<face_descriptor> bfs_v;
+    std::queue<face_descriptor> bfs_queue;
+    std::unordered_set<face_descriptor> bfs_visited;
 
     typename GT::Point_3 vp = get(vpm, v);
     typename GT::Vector_3 c = typename GT::Vector_3(vp.x(), vp.y(), vp.z());
@@ -766,13 +766,13 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexMeasureMa
     for (face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
         if (f != boost::graph_traits<PolygonMesh>::null_face())
         {
-            bfs_q.push(f);
-            bfs_v.insert(f);
+            bfs_queue.push(f);
+            bfs_visited.insert(f);
         }
     }
-    while (!bfs_q.empty()) {
-        face_descriptor fi = bfs_q.front();
-        bfs_q.pop();
+    while (!bfs_queue.empty()) {
+        face_descriptor fi = bfs_queue.front();
+        bfs_queue.pop();
 
         // looping over vertices in face to get point coordinates
         std::vector<typename GT::Vector_3> x;
@@ -790,10 +790,10 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexMeasureMa
             corrected_mui += f_ratio * get(curvature_fmm, fi);
             for (face_descriptor fj : faces_around_face(halfedge(fi, pmesh), pmesh))
             {
-                if (bfs_v.find(fj) == bfs_v.end() && fj != boost::graph_traits<PolygonMesh>::null_face())
+                if (bfs_visited.find(fj) == bfs_visited.end() && fj != boost::graph_traits<PolygonMesh>::null_face())
                 {
-                    bfs_q.push(fj);
-                    bfs_v.insert(fj);
+                    bfs_queue.push(fj);
+                    bfs_visited.insert(fj);
                 }
             }
         }
@@ -877,8 +877,8 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
             get_const_property_map(CGAL::vertex_point, pmesh));
 
 
-    std::queue<face_descriptor> bfs_q;
-    std::unordered_set<face_descriptor> bfs_v;
+    std::queue<face_descriptor> bfs_queue;
+    std::unordered_set<face_descriptor> bfs_visited;
 
     typename GT::Point_3 vp = get(vpm, v);
     typename GT::Vector_3 c = typename GT::Vector_3(vp.x(), vp.y(), vp.z());
@@ -889,13 +889,13 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
     for (face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
         if (f != boost::graph_traits<PolygonMesh>::null_face())
         {
-            bfs_q.push(f);
-            bfs_v.insert(f);
+            bfs_queue.push(f);
+            bfs_visited.insert(f);
         }
     }
-    while (!bfs_q.empty()) {
-        face_descriptor fi = bfs_q.front();
-        bfs_q.pop();
+    while (!bfs_queue.empty()) {
+        face_descriptor fi = bfs_queue.front();
+        bfs_queue.pop();
 
         // looping over vertices in face to get point coordinates
         std::vector<typename GT::Vector_3> x;
@@ -915,14 +915,14 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
 
             for (std::size_t ix = 0; ix < 3; ix++)
                 for (std::size_t iy = 0; iy < 3; iy++)
-                    corrected_muXY(ix, iy) += muXY_face[ix * 3 + iy];
+                    corrected_muXY(ix, iy) += f_ratio * muXY_face[ix * 3 + iy];
 
             for (face_descriptor fj : faces_around_face(halfedge(fi, pmesh), pmesh))
             {
-                if (bfs_v.find(fj) == bfs_v.end() && fj != boost::graph_traits<PolygonMesh>::null_face())
+                if (bfs_visited.find(fj) == bfs_visited.end() && fj != boost::graph_traits<PolygonMesh>::null_face())
                 {
-                    bfs_q.push(fj);
-                    bfs_v.insert(fj);
+                    bfs_queue.push(fj);
+                    bfs_visited.insert(fj);
                 }
             }
         }
@@ -989,7 +989,6 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     for (vertex_descriptor v : vertices(pmesh))
     {
         expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu1_map, mu0_expand_map, mu1_expand_map, v, np.ball_radius(r));
-
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         if (v_mu0 != 0.0)
@@ -1182,6 +1181,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         Eigen::Matrix<typename GT::FT, 3, 3> v_muXY = get(muXY_expand_map, v);
+
         typename GT::Vector_3 u_GT = get(vnm, v);
 
         Eigen::Matrix<typename GT::FT, 3, 1> u(u_GT.x(), u_GT.y(), u_GT.z());
@@ -1199,19 +1199,22 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
             put(vcm, v, std::make_tuple(
                 0,
                 0,
-                Eigen::Matrix<typename GT::FT, 3, 1>(.0,.0,.0),
-                Eigen::Matrix<typename GT::FT, 3, 1>(.0, .0, .0)));
+                typename GT::Vector_3(0, 0, 0),
+                typename GT::Vector_3(0, 0, 0)));
             continue;
         }
 
-        Eigen::Matrix<typename GT::FT, 3, 1> eig_vals = eigensolver.eigenvalues();
-        Eigen::Matrix<typename GT::FT, 3, 3> eig_vecs = eigensolver.eigenvectors();
+        const Eigen::Matrix<typename GT::FT, 3, 1> eig_vals = eigensolver.eigenvalues();
+        const Eigen::Matrix<typename GT::FT, 3, 3> eig_vecs = eigensolver.eigenvectors();
+
+        const typename GT::Vector_3 min_eig_vec(eig_vecs(0, 1), eig_vecs(1, 1), eig_vecs(2, 1));
+        const typename GT::Vector_3 max_eig_vec(eig_vecs(0, 0), eig_vecs(1, 0), eig_vecs(2, 0));
 
         put(vcm, v, std::make_tuple(
             (v_mu0 != 0.0) ? -eig_vals[1] / v_mu0 : 0.0,
             (v_mu0 != 0.0) ? -eig_vals[0] / v_mu0 : 0.0,
-            eig_vecs.col(1),
-            eig_vecs.col(0)));
+            min_eig_vec,
+            max_eig_vec));
     }
 }
 

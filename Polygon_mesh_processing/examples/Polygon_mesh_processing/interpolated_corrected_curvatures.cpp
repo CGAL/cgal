@@ -41,18 +41,18 @@ int main(int argc, char* argv[])
   Mesh::Property_map<vertex_descriptor, std::tuple<
       EpicKernel::FT,
       EpicKernel::FT,
-      Eigen::Matrix<EpicKernel::FT, 3, 1>,
-      Eigen::Matrix<EpicKernel::FT, 3, 1>
+      EpicKernel::Vector_3,
+      EpicKernel::Vector_3
       >> principle_curvature_map;
 
   boost::tie(principle_curvature_map, created) = g1.add_property_map<vertex_descriptor, std::tuple<
       EpicKernel::FT,
       EpicKernel::FT,
-      Eigen::Matrix<EpicKernel::FT, 3, 1>,
-      Eigen::Matrix<EpicKernel::FT, 3, 1>
+      EpicKernel::Vector_3,
+      EpicKernel::Vector_3
       >>("v:principle_curvature_map", { 0, 0,
-          Eigen::Matrix<EpicKernel::FT, 3, 1>::Zero(),
-          Eigen::Matrix<EpicKernel::FT, 3, 1>::Zero() });
+          EpicKernel::Vector_3 (0,0,0),
+          EpicKernel::Vector_3 (0,0,0)});
   assert(created);
 
   PMP::interpolated_corrected_mean_curvature(
