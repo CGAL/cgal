@@ -22,6 +22,7 @@
 
 #include <QGraphicsScene>
 #include <QPainter>
+#include <QRectF>
 #include <QStyleOption>
 
 namespace CGAL {
@@ -101,7 +102,7 @@ protected:
 
 template <typename T>
 TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
-  :  t(t_), painterostream(0),
+  :  t(t_), painterostream(nullptr),
      bb(0,0,0,0), bb_initialized(false),
      visible_edges(true), visible_vertices(true)
 {
@@ -142,15 +143,13 @@ template <typename T>
 void
 TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
-  QPen pen;
-  pen.setWidthF(0.005);
-  pen.setBrush(::Qt::black);
+  QPen pen(::Qt::black, 0.005);
   painter->setPen(edges_pen);
   painterostream = PainterOstream<Geom_traits>(painter);
 
   if(visibleEdges()) {
-    for(typename T::All_edges_iterator eit = t->all_edges_begin();
-        eit != t->all_edges_end();
+    for(typename T::Hyperbolic_edges_iterator eit = t->hyperbolic_edges_begin();
+        eit != t->hyperbolic_edges_end();
         ++eit){
       painterostream << t->hyperbolic_segment(*eit);
     }

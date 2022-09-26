@@ -32,7 +32,7 @@ public:
   typedef typename DT::Face_handle Face_handle;
   typedef typename DT::Point Point;
 
-  TriangulationConflictZone(QGraphicsScene* s, DT  * dt_, QObject* parent);
+  TriangulationConflictZone(QGraphicsScene* s, DT* dt_, QObject* parent);
 
 protected:
   void localize_and_insert_point(QPointF qt_point);
@@ -44,7 +44,7 @@ protected:
 
   std::list<Face_handle> faces;
   std::list<QGraphicsPolygonItem*> qfaces;
-  DT * dt;
+  DT* dt;
   Converter<K> convert;
   QGraphicsScene *scene_;
   bool animate;
@@ -99,7 +99,6 @@ TriangulationConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
   animate = true;
 }
 
-
 template <typename T>
 void
 TriangulationConflictZone<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -108,7 +107,6 @@ TriangulationConflictZone<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     localize_and_insert_point(event->scenePos());
   }
 }
-
 
 template <typename T>
 void
@@ -121,8 +119,6 @@ TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent * /*eve
   qfaces.clear();
   animate = false;
 }
-
-
 
 template <typename T>
 bool
@@ -145,7 +141,6 @@ TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
   }
 }
-
 
 } // namespace Qt
 } // namespace CGAL

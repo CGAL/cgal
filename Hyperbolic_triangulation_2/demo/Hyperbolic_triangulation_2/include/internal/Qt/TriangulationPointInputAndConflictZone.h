@@ -51,9 +51,10 @@ protected:
 };
 
 template <typename T>
-TriangulationPointInputAndConflictZone<T>::TriangulationPointInputAndConflictZone(QGraphicsScene* s,
-                                                        T* dt_,
-                                                        QObject* parent)
+TriangulationPointInputAndConflictZone<T>::
+TriangulationPointInputAndConflictZone(QGraphicsScene* s,
+                                       T* dt_,
+                                       QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {}
 
@@ -68,10 +69,7 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
     return;
   }
 
-
   dt->find_conflicts(p, std::back_inserter(faces));
-
-  QPen blackPen(::Qt::black, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin);
 
   for(Face_handle fh : faces){
     if(! dt->is_infinite(fh)){
@@ -96,7 +94,7 @@ TriangulationPointInputAndConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouse
     delete gpi;
   }
   qfaces.clear();
-  emit (generate(CGAL::make_object(p)));
+  Q_EMIT (generate(CGAL::make_object(p)));
 }
 
 template <typename T>

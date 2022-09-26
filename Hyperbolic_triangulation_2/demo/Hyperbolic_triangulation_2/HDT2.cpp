@@ -1,7 +1,3 @@
-#include <fstream>
-
-// CGAL headers
-
 #define USE_CORE_EXPR_KERNEL
 
 #ifndef USE_CORE_EXPR_KERNEL
@@ -17,14 +13,6 @@
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/point_generators_2.h>
 
-// Qt headers
-#include <QtGui>
-#include <QString>
-#include <QActionGroup>
-#include <QFileDialog>
-#include <QInputDialog>
-#include <QGraphicsEllipseItem>
-
 // GraphicsView items and event filters (input classes)
 #include <internal/Qt/TriangulationCircumcircle.h>
 #include <internal/Qt/TriangulationConflictZone.h>
@@ -38,8 +26,19 @@
 // the two base classes
 #include <CGAL/Qt/DemosMainWindow.h>
 
+// Qt headers
+#include <QtGui>
+#include <QString>
+#include <QActionGroup>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QGraphicsEllipseItem>
+
 #include "ui_HDT2.h"
 
+#include <fstream>
+#include <limits>
+#include <vector>
 
 #ifndef USE_CORE_EXPR_KERNEL
   typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<> K;
@@ -78,7 +77,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -104,7 +103,7 @@ public slots:
 
   virtual void open(QString fileName);
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -124,15 +123,9 @@ MainWindow::MainWindow()
   qreal left_top_corner_x = origin_x - radius;
   qreal left_top_corner_y = origin_y - radius;
   qreal width = diameter, height = diameter;
-
   disk = new QGraphicsEllipseItem(left_top_corner_x, left_top_corner_y, width, height);
-
-  QPen pen;  // creates a default pen
-
-  pen.setWidthF(0.025);
-  pen.setBrush(Qt::black);
+  QPen pen(::Qt::black, 0.015);
   disk->setPen(pen);
-
   scene.addItem(disk);
 
   // Add a GraphicItem for the Delaunay triangulation
@@ -232,13 +225,13 @@ MainWindow::processInput(CGAL::Object o)
     if(!p_disk.has_on_unbounded_side(p))
       dt.insert(p);
   }
-  emit(changed());
+  Q_EMIT(changed());
 }
 
 
 /*
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -296,7 +289,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   dt.clear();
-  emit(changed());
+  Q_EMIT(changed());
 }
 
 
@@ -306,7 +299,9 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
   CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
-  CGAL::Random_points_in_disc_2<Point_2> pg(1);
+
+  qreal radius = std::sqrt(CGAL::to_double(p_disk.squared_radius()));
+  CGAL::Random_points_in_disc_2<Point_2> pg(radius);
   bool ok = false;
   const int number_of_points =
     QInputDialog::getInt(this,
@@ -332,7 +327,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   dt.insert(points.begin(), points.end());
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT(changed());
 }
 
 
@@ -368,7 +363,7 @@ MainWindow::open(QString fileName)
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
-  emit(changed());
+  Q_EMIT(changed());
 
 }
 
@@ -414,11 +409,10 @@ int main(int argc, char **argv)
 
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
-  app.setApplicationName("Delaunay_triangulation_2 demo");
+  app.setApplicationName("Hyperbolic_Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGALQt5
-  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
-  CGAL_Qt_init_resources();// that function is in a DLL
+  // Import resources from libCGAL (QT5).
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();
