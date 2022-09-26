@@ -39,10 +39,6 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 using namespace CGAL::parameters;
 
 /// [Add 1D features]
-#include "read_polylines.h"
-#include <CGAL/Mesh_3/polylines_to_protect.h> // undocumented header
-
-#include <CGAL/Mesh_3/add_triple_line_features.h>
 
 int main(int argc, char* argv[])
 {
@@ -55,24 +51,21 @@ int main(int argc, char* argv[])
   }
 
   /// [Domain creation]
-  const float sigma = 10.f;
+  const float sigma = (std::max)(image.vx(), (std::max)(image.vy(), image.vz()));
   CGAL::Image_3 img_weights =
     CGAL::Mesh_3::generate_label_weights(image, sigma);
 
   CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
 
   Mesh_domain domain
-    = Mesh_domain::create_labeled_image_mesh_domain(image, weights = img_weights);
+    = Mesh_domain::create_labeled_image_mesh_domain_with_features(image,
+                                                                  weights = img_weights);
   /// [Domain creation]
 
-  /// Declare 1D-features, see above [Call add_1D_features]
-  if(!add_triple_line_features(image, domain)) {
-    return EXIT_FAILURE;
-  }
-  /// [Call add_1D_features]
-
   CGAL::Bbox_3 bbox = domain.bbox();
-  double diag = CGAL::sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
+  double diag = CGAL::sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
+                         + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())
+                         + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
   double sizing_default = diag * 0.05;
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
@@ -86,8 +79,7 @@ int main(int argc, char* argv[])
   // Meshing
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       CGAL::parameters::no_exude(),
-                                      CGAL::parameters::no_perturb(),
-                                      CGAL::parameters::mesh_3_dump());
+                                      CGAL::parameters::no_perturb());
 
   // Output
   CGAL::dump_c3t3(c3t3, "out");

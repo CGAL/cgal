@@ -1,13 +1,9 @@
-#define CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-#define CGAL_MESH_3_VERBOSE 1
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/generate_label_weights.h>
 #include <CGAL/make_mesh_3.h>
@@ -17,9 +13,7 @@
 
 // Domain
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Image_domain = CGAL::Labeled_mesh_domain_3<K>;
-using Mesh_domain = CGAL::Mesh_domain_with_polyline_features_3<Image_domain>;
-
+using Mesh_domain = CGAL::Labeled_mesh_domain_3<K>;
 
 // Triangulation
 using Tr   = CGAL::Mesh_triangulation_3<Mesh_domain,
@@ -52,17 +46,14 @@ int main(int argc, char* argv[])
   CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
 
   Mesh_domain domain
-    = Mesh_domain::create_labeled_image_mesh_domain_with_features(image,
+    = Mesh_domain::create_labeled_image_mesh_domain(image,
                                                     weights = img_weights,
                                                     relative_error_bound = 1e-6);
   /// [Domain creation]
 
   // Mesh criteria
-//  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=0.5,
-//                         cell_radius_edge_ratio=3, cell_size=8);
-  Mesh_criteria criteria(facet_size=0.02,
-                         facet_distance=0.0005,
-                         cell_size=0.02);
+  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=0.5,
+                         cell_radius_edge_ratio=3, cell_size=8);
 
   /// [Meshing]
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
