@@ -25,7 +25,7 @@
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
-#include <CGAL/SMDS_3/Has_features.h>
+#include <CGAL/STL_Extension/internal/Has_features.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 
 #include <boost/mpl/has_xxx.hpp>
@@ -494,7 +494,7 @@ void make_mesh_3_impl(C3T3& c3t3,
     C3T3,
     MeshDomain,
     MeshCriteria,
-    Mesh_3::internal::has_Has_features<MeshDomain>::value > () (c3t3,
+    ::CGAL::internal::has_Has_features<MeshDomain>::value > () (c3t3,
             domain,
             criteria,
             with_features,

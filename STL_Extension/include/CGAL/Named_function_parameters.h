@@ -17,6 +17,7 @@
 #endif
 
 #include <CGAL/tags.h>
+#include <CGAL/STL_Extension/internal/mesh_option_classes.h>
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
@@ -242,11 +243,93 @@ get_parameter_reference_impl(const Named_params_impl<T, Tag, Base>& np, Query_ta
   return get_parameter_reference_impl(static_cast<const typename Base::base&>(np), tag);
 }
 
+} // end of internal_np namespace
+
+template <typename T, typename Tag, typename Base = internal_np::No_property>
+struct Named_function_parameters;
+
+namespace parameters{
+
+typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
+
+Default_named_parameters
+inline default_values();
+
+// function to extract a parameter
+template <typename T, typename Tag, typename Base, typename Query_tag>
+typename internal_np::Get_param<internal_np::Named_params_impl<T, Tag, Base>, Query_tag>::type
+get_parameter(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
+{
+  return internal_np::get_parameter_impl(static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np), tag);
+}
+
+template <typename T, typename Tag, typename Base, typename Query_tag>
+typename internal_np::Get_param<internal_np::Named_params_impl<T, Tag, Base>, Query_tag>::reference
+get_parameter_reference(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
+{
+  return internal_np::get_parameter_reference_impl(
+    static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np),
+    tag);
+}
+
+// Two parameters, non-trivial default value
+template <typename D>
+D& choose_parameter(const internal_np::Param_not_found&, D& d)
+{
+  return d;
+}
+
+template <typename D>
+const D& choose_parameter(const internal_np::Param_not_found&, const D& d)
+{
+  return d;
+}
+
+template <typename D>
+D choose_parameter(const internal_np::Param_not_found&, D&& d)
+{
+  return std::forward<D>(d);
+}
+
+template <typename T, typename D>
+T& choose_parameter(T& t, D&)
+{
+  return t;
+}
+
+template <typename T, typename D>
+const T& choose_parameter(const T& t, const D&)
+{
+  return t;
+}
+
+// single parameter so that we can avoid a default construction
+template <typename D>
+D choose_parameter(const internal_np::Param_not_found&)
+{
+  return D();
+}
+
+template <typename D, typename T>
+const T& choose_parameter(const T& t)
+{
+  return t;
+}
+
+} // parameters namespace
+
+namespace internal_np {
+
+template <typename Tag, typename K, typename ... NPS>
+auto
+combine_named_parameters(const Named_function_parameters<K, Tag>& np, const NPS& ... nps)
+{
+  return np.combine(nps ...);
+}
 
 } // end of internal_np namespace
 
-
-template <typename T, typename Tag, typename Base = internal_np::No_property>
+template <typename T, typename Tag, typename Base>
 struct Named_function_parameters
   : internal_np::Named_params_impl<T, Tag, Base>
 {
@@ -299,6 +382,15 @@ struct Named_function_parameters
 #undef CGAL_add_named_parameter_with_compatibility_ref_only
 #undef CGAL_add_extra_named_parameter_with_compatibility
 
+// inject mesh specific named parameter functions
+#define CGAL_NP_BASE self
+#define CGAL_NP_BUILD(P, V) P(V, *this)
+
+#include <CGAL/STL_Extension/internal/mesh_parameters_interface.h>
+
+#undef CGAL_NP_BASE
+#undef CGAL_NP_BUILD
+
   template <typename OT, typename OTag>
   Named_function_parameters<OT, OTag, self>
   combine(const Named_function_parameters<OT,OTag>& np) const
@@ -319,7 +411,11 @@ struct Named_function_parameters
 
 namespace parameters {
 
-typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
+Default_named_parameters
+inline default_values()
+{
+  return Default_named_parameters();
+}
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 Default_named_parameters
@@ -328,12 +424,6 @@ inline all_default()
   return Default_named_parameters();
 }
 #endif
-
-Default_named_parameters
-inline default_values()
-{
-  return Default_named_parameters();
-}
 
 template <typename T, typename Tag, typename Base>
 Named_function_parameters<T,Tag,Base>
@@ -405,67 +495,6 @@ struct Boost_parameter_compatibility_wrapper<Tag, true>
 #undef CGAL_add_named_parameter_with_compatibility
 #undef CGAL_add_named_parameter_with_compatibility_ref_only
 
-// function to extract a parameter
-template <typename T, typename Tag, typename Base, typename Query_tag>
-typename internal_np::Get_param<internal_np::Named_params_impl<T, Tag, Base>, Query_tag>::type
-get_parameter(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
-{
-  return internal_np::get_parameter_impl(static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np), tag);
-}
-
-template <typename T, typename Tag, typename Base, typename Query_tag>
-typename internal_np::Get_param<internal_np::Named_params_impl<T, Tag, Base>, Query_tag>::reference
-get_parameter_reference(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
-{
-  return internal_np::get_parameter_reference_impl(
-    static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np),
-    tag);
-}
-
-// Two parameters, non-trivial default value
-template <typename D>
-D& choose_parameter(const internal_np::Param_not_found&, D& d)
-{
-  return d;
-}
-
-template <typename D>
-const D& choose_parameter(const internal_np::Param_not_found&, const D& d)
-{
-  return d;
-}
-
-template <typename D>
-D choose_parameter(const internal_np::Param_not_found&, D&& d)
-{
-  return std::forward<D>(d);
-}
-
-template <typename T, typename D>
-T& choose_parameter(T& t, D&)
-{
-  return t;
-}
-
-template <typename T, typename D>
-const T& choose_parameter(const T& t, const D&)
-{
-  return t;
-}
-
-// single parameter so that we can avoid a default construction
-template <typename D>
-D choose_parameter(const internal_np::Param_not_found&)
-{
-  return D();
-}
-
-template <typename D, typename T>
-const T& choose_parameter(const T& t)
-{
-  return t;
-}
-
 // Version with three parameters for dynamic property maps
 template <typename D, typename Dynamic_tag, typename PolygonMesh>
 D choose_parameter(const internal_np::Param_not_found&, Dynamic_tag tag, PolygonMesh& pm)
@@ -493,17 +522,6 @@ struct is_default_parameter
 
 } // end of parameters namespace
 
-namespace internal_np {
-
-template <typename Tag, typename K, typename ... NPS>
-auto
-combine_named_parameters(const Named_function_parameters<K, Tag>& np, const NPS& ... nps)
-{
-  return np.combine(nps ...);
-}
-
-} // end of internal_np namespace
-
 #ifndef CGAL_NO_DEPRECATED_CODE
 namespace Polygon_mesh_processing {
 
@@ -526,7 +544,7 @@ namespace boost
 }
 #endif
 
-// For disambiguation using SFINAR
+// For disambiguation using SFINAE
 BOOST_MPL_HAS_XXX_TRAIT_DEF(CGAL_Named_function_parameters_class)
 template<class T>
 CGAL_CPP17_INLINE constexpr bool is_named_function_parameter = has_CGAL_Named_function_parameters_class<T>::value;

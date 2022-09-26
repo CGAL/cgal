@@ -226,7 +226,7 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
     C3t3,
     Domain,
     Mesh_criteria,
-    CGAL::Mesh_3::internal::has_Has_features<Domain>::value >()
+    CGAL::internal::has_Has_features<Domain>::value >()
     (c3t3_,
      *domain_,
      criteria,

@@ -382,11 +382,11 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
   // Initialize c3t3
   Periodic_3_mesh_3::internal::C3t3_initializer<
     C3T3, MeshDomain, MeshCriteria,
-    Mesh_3::internal::has_Has_features<MeshDomain>::value>()(c3t3,
-                                                             domain,
-                                                             criteria,
-                                                             with_features,
-                                                             mesh_options);
+    internal::has_Has_features<MeshDomain>::value>()(c3t3,
+                                                     domain,
+                                                     criteria,
+                                                     with_features,
+                                                     mesh_options);
 
   // Build mesher and launch refinement process
   refine_periodic_3_mesh_3(c3t3, domain, criteria,
