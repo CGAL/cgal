@@ -418,6 +418,10 @@ public:
     return v;
   }
 
+  // Note that this is _Base::Locate_type_ and not Locate_type.
+  // Do _not_ use this function with the result of a call to HDT2::locate(), which is a locate
+  // on the hyperbolic triangulation, and not the underlying Delaunay triangulation (in which
+  // new points are inserted, and thus it needs to be DT2::locate_type).
   Vertex_handle insert(const Point& p,
                        typename Base::Locate_type lt,
                        Face_handle loc, int li)
