@@ -107,8 +107,7 @@ private:
     bool operator()(const typename Base::All_faces_iterator & fit) const { return !t->is_Delaunay_hyperbolic(fit); }
     bool operator()(const typename Base::All_edges_iterator & eit) const
     {
-      Edge e(eit->first, eit->second);
-      return !t->is_Delaunay_hyperbolic(e);
+      return !t->is_Delaunay_hyperbolic(eit->first, eit->second);
     }
   };
 
@@ -549,7 +548,7 @@ private:
 
   /*
     During the insertion of a new point in the triangulation, the added vertex points to a face.
-    This function ensures that the face to which the vertex points is hyperbolic.
+    This function ensures that the face to which the vertex points is hyperbolic (if there exists one).
   */
   void ensure_hyperbolic_face_handle(Vertex_handle v)
   {
@@ -575,8 +574,8 @@ private:
   Oriented_side side_of_hyperbolic_triangle(const Point& p, const Point& q, const Point& r,
                                             const Point& query, Locate_type &lt, int& li) const
   {
-    // The triangle (p,q,r) must be Delaunay hyperbolic
-    CGAL_triangulation_precondition(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r));
+    CGAL_precondition(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r));
+    CGAL_precondition(query != p && query != q && query != r);
 
     // Point p is assumed to be at index 0, q at index 1 and r at index 2 in the face.
     li = -1;
@@ -802,16 +801,23 @@ private:
   }
 
 public:
-
   Line_face_circulator line_walk(const Point& p, const Point& q, Face_handle f = Face_handle()) const
   {
     return Base::line_walk(p, q, f);
   }
 
-  Hyperbolic_triangle hyperbolic_triangle(const Face_handle f) const { return Base::triangle(f); }
+  Hyperbolic_triangle hyperbolic_triangle(const Face_handle f) const
+  {
+    CGAL_precondition(!is_infinite(f));
+    return Base::triangle(f);
+  }
 
   // needed by DT_2: do not document!
-  Hyperbolic_triangle triangle(const Face_handle f) const { return hyperbolic_triangle(f); }
+  Hyperbolic_triangle triangle(const Face_handle f) const
+  {
+    CGAL_precondition(!is_infinite(f));
+    return hyperbolic_triangle(f);
+  }
 
   Hyperbolic_segment hyperbolic_segment(const Face_handle f, const int i) const
   {
@@ -946,25 +952,22 @@ public:
 
   bool is_valid()
   {
-    if (Base::is_valid())
+    if (!Base::is_valid())
+      return false;
+
+    for (Hyperbolic_faces_iterator fit = hyperbolic_faces_begin(); fit != hyperbolic_faces_end(); fit++)
     {
-      for (Hyperbolic_faces_iterator fit = hyperbolic_faces_begin(); fit != hyperbolic_faces_end(); fit++)
-      {
-        if (!is_Delaunay_hyperbolic(fit))
-        {
-          return false;
-        }
-      }
-      for (Hyperbolic_edges_iterator eit = hyperbolic_edges_begin(); eit != hyperbolic_edges_end(); eit++)
-      {
-        if (!is_Delaunay_hyperbolic(eit))
-        {
-          return false;
-        }
-      }
-      return true;
+      if (!is_Delaunay_hyperbolic(fit))
+        return false;
     }
-    return false;
+
+    for (Hyperbolic_edges_iterator eit = hyperbolic_edges_begin(); eit != hyperbolic_edges_end(); eit++)
+    {
+      if (!is_Delaunay_hyperbolic(eit))
+        return false;
+    }
+
+    return true;
   }
 
   Face_handle locate(const Point& p, const Face_handle hint = Face_handle()) const
