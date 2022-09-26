@@ -160,12 +160,12 @@ void Polyhedron_demo_interpolated_corrected_principal_curvatures_plugin::on_acti
   Scene_polylines_item* max_negative_curv = new Scene_polylines_item;
   max_negative_curv->setColor(Qt::cyan);
   max_negative_curv->setWidth(4);
-  max_negative_curv->setName(tr("%1 (min negative curvatures)").arg(name));
+  max_negative_curv->setName(tr("%1 (max negative curvatures)").arg(name));
 
   Scene_polylines_item* min_negative_curv = new Scene_polylines_item;
   min_negative_curv->setColor(Qt::blue);
   min_negative_curv->setWidth(3);
-  min_negative_curv->setName(tr("%1 (max negative curvatures)").arg(name));
+  min_negative_curv->setName(tr("%1 (min negative curvatures)").arg(name));
 
   SMesh* pMesh = sm_item->polyhedron();
   compute(pMesh, max_curv, min_curv, max_negative_curv, min_negative_curv);
