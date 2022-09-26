@@ -33,7 +33,6 @@ class Construct_circle_or_line_supporting_bisector
   typedef typename Traits::Euclidean_line_2                   Euclidean_line_2;
   typedef typename Traits::Euclidean_circle_or_line_2         Euclidean_circle_or_line_2;
   typedef typename Traits::Circle_2                           Circle_2;
-  typedef typename Traits::Point_3                            Point_3;
 
 public:
   Construct_circle_or_line_supporting_bisector(const Traits& gt = Traits()) : _gt(gt) {}
@@ -41,15 +40,9 @@ public:
   Euclidean_circle_or_line_2 operator()(const Hyperbolic_point_2& p,
                                         const Hyperbolic_point_2& q) const
   {
-    Hyperbolic_point_2 po = CGAL::ORIGIN;
-
+    const Hyperbolic_point_2 po = CGAL::ORIGIN;
     if(_gt.compare_distance_2_object()(po, p, q) == EQUAL)
       return _gt.construct_bisector_2_object()(p, q);
-
-    FT dop2 = p.x()*p.x() + p.y()*p.y();
-    FT doq2 = q.x()*q.x() + q.y()*q.y();
-    Point_3 p3(p.x(), p.y(), dop2);
-    Point_3 q3(q.x(), q.y(), doq2);
 
     // TODO MT improve
 
@@ -142,7 +135,6 @@ public:
   typedef typename Traits::FT                                 FT;
   typedef typename Traits::Hyperbolic_point_2                 Hyperbolic_point_2;
   typedef typename Traits::Direction_2                        Direction_2;
-  typedef typename Traits::Point_3                            Point_3;
   typedef typename Traits::Vector_3                           Vector_3;
 
   Is_Delaunay_hyperbolic(const Traits& gt = Traits())
