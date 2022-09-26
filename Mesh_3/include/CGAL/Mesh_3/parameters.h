@@ -22,7 +22,7 @@ namespace parameters {
 
 #define CGAL_NP_BASE internal_np::No_property
 #define CGAL_NP_BUILD(P, V) P(V)
-  
+
 #include <CGAL/STL_Extension/internal/mesh_parameters_interface.h>
 
 #undef CGAL_NP_BASE

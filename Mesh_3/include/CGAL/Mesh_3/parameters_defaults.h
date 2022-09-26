@@ -23,7 +23,7 @@
 
 #include <CGAL/Mesh_3/sliver_criteria.h>
 
-// see also default_values_for_mesh_3 namespace 
+// see also default_values_for_mesh_3 namespace
 // in CGAL/STL_Extension/internal/mesh_option_classes.h
 
 namespace CGAL {

@@ -47,7 +47,7 @@ int main()
   namespace params = CGAL::parameters;
   Mesh_domain domain(Function_wrapper(v, vps),
                      K::Sphere_3(CGAL::ORIGIN,5.*5.),
-                     params::relative_error_bound = 1e-6);
+                     params::relative_error_bound(1e-6));
   /// [Domain creation]
 
   // Set mesh criteria
@@ -56,13 +56,13 @@ int main()
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude(), params::no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude().no_perturb());
 
   // Perturbation (maximum cpu time: 10s, targeted dihedral angle: default)
-  CGAL::perturb_mesh_3(c3t3, domain, params::time_limit = 10);
+  CGAL::perturb_mesh_3(c3t3, domain, params::time_limit(10));
 
   // Exudation
-  CGAL::exude_mesh_3(c3t3,12);
+  CGAL::exude_mesh_3(c3t3, params::time_limit(12));
 
   // Output
   std::ofstream medit_file("out.mesh");
