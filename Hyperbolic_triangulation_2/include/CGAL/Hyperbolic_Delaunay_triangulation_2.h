@@ -193,10 +193,10 @@ public:
       do
       {
         _ri = cw(_iv);
-        if (_tri.is_finite_non_hyperbolic(pos, ccw(_iv)))
+        if (!_tri.is_Delaunay_hyperbolic(pos, ccw(_iv)))
         {
           _ri = ccw(_iv);
-          if (_tri.is_finite_non_hyperbolic(pos, cw(_iv)))
+          if (!_tri.is_Delaunay_hyperbolic(pos, cw(_iv)))
           {
             pos = pos->neighbor(cw(_iv));
             _iv = pos->index(_v);
@@ -222,10 +222,10 @@ public:
       do
       {
         _ri = cw(_iv);
-        if (_tri.is_finite_non_hyperbolic(pos, ccw(_iv)))
+        if (!_tri.is_Delaunay_hyperbolic(pos, ccw(_iv)))
         {
           _ri = ccw(_iv);
-          if (_tri.is_finite_non_hyperbolic(pos, cw(_iv)))
+          if (!_tri.is_Delaunay_hyperbolic(pos, cw(_iv)))
           {
             pos = pos->neighbor(cw(_iv));
             _iv = pos->index(_v);
@@ -253,10 +253,10 @@ public:
       do
       {
         _ri = ccw(_iv);
-        if (_tri.is_finite_non_hyperbolic(pos, cw(_iv)))
+        if (!_tri.is_Delaunay_hyperbolic(pos, cw(_iv)))
         {
           _ri = cw(_iv);
-          if (_tri.is_finite_non_hyperbolic(pos, ccw(_iv)))
+          if (!_tri.is_Delaunay_hyperbolic(pos, ccw(_iv)))
           {
             pos = pos->neighbor(ccw(_iv));
             _iv = pos->index(_v);
@@ -396,12 +396,6 @@ public:
 
   void clear() { Base::clear(); }
 
-  void mark_star(Vertex_handle v) const
-  {
-    if(!is_star_bounded(v))
-      mark_star_faces(v);
-  }
-
   template<class OutputItFaces>
   OutputItFaces find_conflicts(const Point& p, OutputItFaces fit, Face_handle start = Face_handle()) const
   {
@@ -412,7 +406,7 @@ public:
                        Face_handle start = Face_handle())
   {
     Vertex_handle v = Base::insert(p, start);
-    mark_star(v);
+    mark_star_faces(v);
     ensure_hyperbolic_face_handle(v);
 
     return v;
@@ -427,7 +421,7 @@ public:
                        Face_handle loc, int li)
   {
     Vertex_handle v = Base::insert(p, lt, loc, li);
-    mark_star(v);
+    mark_star_faces(v);
     ensure_hyperbolic_face_handle(v);
 
     return v;
@@ -491,15 +485,35 @@ public:
 
   template <typename T>
   bool is_infinite(T v) const { return Base::is_infinite(v); }
+  bool is_infinite(Face_handle f, int i) const { return Base::is_infinite(f, i); }
 
   bool is_Delaunay_hyperbolic(Face_handle f) const
   {
-    return !Base::is_infinite(f) && !is_finite_non_hyperbolic(f);
+    if(dimension() <= 1)
+      return false;
+
+    return f->hyperbolic_data().is_Delaunay_hyperbolic();
   }
 
   bool is_Delaunay_hyperbolic(Face_handle f, int i) const
   {
-    return !Base::is_infinite(f, i) && !is_finite_non_hyperbolic(f, i);
+    if(dimension() <= 1)
+      return false;
+
+    if(is_infinite(f, i))
+      return false;
+
+    if(f->hyperbolic_data().is_Delaunay_non_hyperbolic(i))
+      return false;
+
+    // another incident face and corresponding index
+    Face_handle f2 = f->neighbor(i);
+    int i2 = f2->index(f);
+
+    if(f2->hyperbolic_data().is_Delaunay_non_hyperbolic(i2))
+      return false;
+
+    return true;
   }
 
   bool is_Delaunay_hyperbolic(const Edge& e) const
@@ -518,38 +532,6 @@ public:
   }
 
 private:
-  class Face_data
-  {
-  private:
-    // a finite face is non_hyperbolic if its circumscribing circle intersects the circle at infinity
-    bool _is_Delaunay_hyperbolic;
-
-    // defined only if the face is finite and non_hyperbolic
-    unsigned int _non_hyperbolic_edge;
-
-  public:
-    Face_data() : _is_Delaunay_hyperbolic(true), _non_hyperbolic_edge(UCHAR_MAX) {}
-
-    unsigned int get_non_hyperbolic_edge() const
-    {
-      CGAL_triangulation_precondition(!_is_Delaunay_hyperbolic);
-      CGAL_triangulation_precondition(_non_hyperbolic_edge <= 2);
-
-      return _non_hyperbolic_edge;
-    }
-
-    void set_non_hyperbolic_edge(unsigned int uschar)
-    {
-      CGAL_triangulation_precondition(!_is_Delaunay_hyperbolic);
-      CGAL_triangulation_precondition(uschar <= 2);
-
-      _non_hyperbolic_edge = uschar;
-    }
-
-    bool get_is_Delaunay_hyperbolic() const { return _is_Delaunay_hyperbolic; }
-    void set_is_Delaunay_hyperbolic(bool flag) { _is_Delaunay_hyperbolic = flag; }
-  };
-
   /*
     During the insertion of a new point in the triangulation, the added vertex points to a face.
     This function ensures that the face to which the vertex points is hyperbolic (if there exists one).
@@ -634,137 +616,50 @@ private:
 
     // Cannot be on the boundary here.
     lt = FACE;
+    li = 4;
+
     if(cs1 != cp1 || cs2 != cp2 || cs3 != cp3)
       return ON_NEGATIVE_SIDE;
     else
       return ON_POSITIVE_SIDE;
   }
 
-  int get_finite_non_hyperbolic_edge(Face_handle f) const
-  {
-    CGAL_triangulation_precondition(is_finite_non_hyperbolic(f));
-    Face_data fd = object_cast<Face_data>(f->tds_data());
-    return fd.get_non_hyperbolic_edge();
-  }
-
-  bool is_finite_non_hyperbolic(Face_handle f) const
-  {
-    if(const Face_data* td = object_cast<Face_data>(&f->tds_data()))
-    {
-      return !td->get_is_Delaunay_hyperbolic();
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  bool is_finite_non_hyperbolic(Face_handle f, int i) const
-  {
-    if(dimension() <= 1)
-      return false;
-
-    if(is_finite_non_hyperbolic(f) && get_finite_non_hyperbolic_edge(f) == i)
-      return true;
-
-    // another incident face and corresponding index
-    Face_handle f2 = f->neighbor(i);
-    int i2 = f2->index(f);
-
-    if(is_finite_non_hyperbolic(f2) && get_finite_non_hyperbolic_edge(f2) == i2)
-      return true;
-
-    return false;
-  }
-
-  bool is_finite_non_hyperbolic(const Edge& e) const
-  {
-    return is_finite_non_hyperbolic(e.first, e.second);
-  }
-
-  // Depth-first search (dfs) and marking the finite non_hyperbolic faces.
   void mark_finite_non_hyperbolic_faces() const
   {
     if(dimension() <= 1)
       return;
 
-    std::set<Face_handle> visited_faces;
+    for(auto fit = Base::all_faces_begin(); fit != Base::all_faces_end(); ++fit)
+      fit->hyperbolic_data().set_Delaunay_hyperbolic(); // finite & hyperbolic
 
-    // maintain a stack to be able to backtrack
-    // to the most recent faces which neighbors are not visited
-    std::stack<Face_handle> backtrack;
+    Face_handle ifh = Base::infinite_face();
+    ifh->hyperbolic_data().set_infinite();
 
-    // start from a face with infinite vertex
-    Face_handle current = Base::infinite_face();
+    std::stack<Face_handle> to_visit;
+    to_visit.push(ifh);
 
-    // mark it as visited
-    visited_faces.insert(current);
+    std::set<Face_handle> visited_faces; // @todo squat tds_data()
 
-    // put the element whose neighbors we are going to explore.
-    backtrack.push(current);
-
-    Face_handle next;
-
-    while(!backtrack.empty())
+    while(!to_visit.empty())
     {
-      // take a face
-      current = backtrack.top();
+      Face_handle fh = to_visit.top();
+      to_visit.pop();
 
-      // start visiting the neighbors
-      int i = 0;
-      for(; i<3; ++i)
+      if(!visited_faces.insert(fh).second) // already visited previously
+        continue;
+
+      for(int i = 0; i<3; ++i)
       {
-        next = current->neighbor(i);
+        Face_handle nfh = fh->neighbor(i);
+        mark_face(nfh);
 
-        // if a neighbor is already visited, then stop going deeper
-        if(visited_faces.find(next) != visited_faces.end())
+        if(is_Delaunay_hyperbolic(nfh))
           continue;
 
-        visited_faces.insert(next);
-        mark_face(next);
-
-        // go deeper if the neighbor is non_hyperbolic
-        if(!is_Delaunay_hyperbolic(next))
-        {
-          backtrack.push(next);
-          break;
-        }
+        to_visit.push(nfh);
       }
-
-      // if all the neighbors are already visited, then remove "current" face.
-      if(i == 3)
-        backtrack.pop();
     }
   }
-
-  // check if a star is bounded by finite faces
-  bool is_star_bounded(Vertex_handle v) const
-  {
-    if(dimension() <= 1)
-      return true;
-
-    Face_handle f = v->face();
-    Face_handle next;
-    int i;
-    Face_handle start(f);
-    Face_handle opposite_face;
-
-    do
-    {
-      i = f->index(v);
-      next = f->neighbor(ccw(i));  // turn ccw around v
-
-      opposite_face = f->neighbor(i);
-      if(!is_Delaunay_hyperbolic(opposite_face))
-        return false;
-
-      f = next;
-    }
-    while(next != start);
-
-    return true;
-  }
-
 
   void mark_star_faces(Vertex_handle v) const
   {
@@ -772,35 +667,36 @@ private:
       return;
 
     Face_handle f = v->face();
-    Face_handle start(f), next;
-    int i;
+    Face_handle start(f);
     do
     {
-      i = f->index(v);
-      next = f->neighbor(ccw(i));  // turn ccw around v
-
       mark_face(f);
 
-      f = next;
-    } while(next != start);
+      int i = f->index(v);
+      f = f->neighbor(ccw(i));
+    }
+    while(f != start);
   }
 
   void mark_face(const Face_handle f) const
   {
-    Is_Delaunay_hyperbolic del;
-    int idx;
-    bool flag = del(point(f,0),
-                    point(f,1),
-                    point(f,2),
-                    idx);
+    if(is_infinite(f))
+    {
+      f->hyperbolic_data().set_infinite();
+    }
+    else
+    {
+      int idx;
+      bool flag = geom_traits().is_Delaunay_hyperbolic_2_object()(point(f,0),
+                                                                  point(f,1),
+                                                                  point(f,2),
+                                                                  idx);
 
-    Face_data fd;
-    fd.set_is_Delaunay_hyperbolic(flag);
-
-    if(!flag)
-      fd.set_non_hyperbolic_edge(idx);
-
-    f->tds_data() = make_object(fd);
+      if(flag)
+        f->hyperbolic_data().set_Delaunay_hyperbolic(); // finite & hyperbolic
+      else
+        f->hyperbolic_data().set_Delaunay_non_hyperbolic(idx); // finite but not hyperbolic
+    }
   }
 
 public:
