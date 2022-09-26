@@ -57,7 +57,8 @@ void compute_face(typename T3::Finite_facets_iterator fh,
 
 template <typename BufferType = float, class T3, class DrawingFunctor>
 void compute_edge(typename T3::Finite_edges_iterator eh,
-                  CGAL::GraphicBuffer<BufferType> &graphic_buffer, const DrawingFunctor &drawing_functor, const T3 *t3)
+                  CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                  const DrawingFunctor &drawing_functor, const T3 *t3)
 {
   if(!drawing_functor.draw_edge(*t3, eh))
   { return; }
@@ -76,7 +77,8 @@ void compute_edge(typename T3::Finite_edges_iterator eh,
 
 template <typename BufferType = float, class T3, class DrawingFunctor>
 void compute_vertex(typename T3::Vertex_handle vh,
-                    CGAL::GraphicBuffer<BufferType> &graphic_buffer, const DrawingFunctor &drawing_functor, const T3 *t3)
+                    CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                    const DrawingFunctor &drawing_functor, const T3 *t3)
 {
   if(!drawing_functor.draw_vertex(*t3, vh))
   { return; }
@@ -116,32 +118,17 @@ void compute_elements(CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 
 } // namespace draw_function_for_t3
 
 template <typename BufferType = float, class T3, class DrawingFunctor>
-void add_in_graphic_buffer_t3(CGAL::GraphicBuffer<BufferType> &graphic_buffer,
-                              const DrawingFunctor &drawing_functor,
-                              const T3 *at3 = nullptr)
+void add_in_graphic_buffer_t3(const T3 &at3,
+                              CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                              const DrawingFunctor &drawing_functor)
 {
-  if (at3 != nullptr)
-  {
-    draw_function_for_t3::compute_elements(graphic_buffer, at3, drawing_functor);
-  }
+  draw_function_for_t3::compute_elements(at3, graphic_buffer, drawing_functor);
 }
 
-// Specialization of draw function.
-#define CGAL_T3_TYPE CGAL::Triangulation_3<Gt, Tds, Lock_data_structure>
-
-template<class Gt, class Tds, class Lock_data_structure, class DrawingFunctor>
-void draw(const CGAL_T3_TYPE &at3, const DrawingFunctor &drawingfunctor,
-          const char *title = "T3 Basic Viewer")
+template <typename BufferType = float, class T3>
+void add_in_graphic_buffer_t3(const T3 &at3,
+                              CGAL::GraphicBuffer<BufferType> &graphic_buffer)
 {
-  CGAL::GraphicBuffer<float> buffer;
-  add_in_graphic_buffer_t3(buffer, drawingfunctor, &at3);
-  draw_buffer(buffer);
-}
-
-template <class Gt, class Tds, class Lock_data_structure>
-void draw(const CGAL_T3_TYPE &at3, const char *title = "T3 Basic Viewer")
-{
-  CGAL::GraphicBuffer<float> buffer;
   CGAL::Drawing_functor<CGAL_T3_TYPE,
                        typename CGAL_T3_TYPE::Vertex_handle,
                        typename CGAL_T3_TYPE::Finite_edges_iterator,
@@ -165,8 +152,28 @@ void draw(const CGAL_T3_TYPE &at3, const char *title = "T3 Basic Viewer")
      
      return get_random_color(random);
      };
+  
+  add_in_graphic_buffer_t3(at3, graphic_buffer, drawing_functor);
+}
 
-  draw(at3, drawingfunctor, title);
+// Specialization of draw function.
+#define CGAL_T3_TYPE CGAL::Triangulation_3<Gt, Tds, Lock_data_structure>
+
+template<class Gt, class Tds, class Lock_data_structure, class DrawingFunctor>
+void draw(const CGAL_T3_TYPE &at3, const DrawingFunctor &drawingfunctor,
+          const char *title = "T3 Basic Viewer")
+{
+  CGAL::GraphicBuffer<float> buffer;
+  add_in_graphic_buffer_t3(buffer, drawingfunctor, &at3);
+  draw_buffer(buffer);
+}
+
+template <class Gt, class Tds, class Lock_data_structure>
+void draw(const CGAL_T3_TYPE &at3, const char *title = "T3 Basic Viewer")
+{
+  CGAL::GraphicBuffer<float> buffer;
+  add_in_graphic_buffer_t3(buffer, &at3);
+  draw_buffer(buffer);
 }
 
 #undef CGAL_T3_TYPE
