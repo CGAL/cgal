@@ -199,20 +199,11 @@ MainWindow::MainWindow()
   this->actionInsertPoint->setChecked(true);
   this->actionShowDelaunay->setChecked(true);
 
-  //
   // Setup the scene and the view
-  //
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
   scene.setSceneRect(left_top_corner_x, left_top_corner_y, width, height);
   this->graphicsView->setScene(&scene);
   this->graphicsView->setMouseTracking(true);
-
-  // we want to adjust the coordinates of QGraphicsView to the coordinates of QGraphicsScene
-  // the following line must do this:
-  //   this->graphicsView->fitInView( scene.sceneRect(), Qt::KeepAspectRatio);
-  // It does not do this sufficiently well.
-  // Current solution:
-  this->graphicsView->shear(230, 230);
 
   // Turn the vertical axis upside down
   this->graphicsView->transform().scale(1, -1);
@@ -403,10 +394,17 @@ MainWindow::on_actionSavePoints_triggered()
 void
 MainWindow::on_actionRecenter_triggered()
 {
-  this->graphicsView->setSceneRect(dgi->boundingRect());
-  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);
-}
+  qreal origin_x = CGAL::to_double(p_disk.center().x());
+  qreal origin_y = CGAL::to_double(p_disk.center().y());
+  qreal radius = std::sqrt(CGAL::to_double(p_disk.squared_radius()));
+  qreal diameter = std::sqrt(CGAL::to_double(4 * p_disk.squared_radius()));
+  qreal scale = 1.1;
 
+  this->graphicsView->setSceneRect(origin_x - radius, origin_y - radius, diameter, diameter);
+  this->graphicsView->fitInView(origin_x - scale * radius, origin_y - scale * radius,
+                                scale * diameter, scale * diameter,
+                                Qt::KeepAspectRatio);
+}
 
 #include "HDT2.moc"
 
@@ -424,6 +422,7 @@ int main(int argc, char **argv)
 
   MainWindow mainWindow;
   mainWindow.show();
+  mainWindow.on_actionRecenter_triggered();
 
   QStringList args = app.arguments();
   args.removeAt(0);
