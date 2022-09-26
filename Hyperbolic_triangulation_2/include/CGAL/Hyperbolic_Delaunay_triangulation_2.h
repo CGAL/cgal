@@ -980,22 +980,13 @@ public:
     typename Base::Locate_type blt;
     Face_handle fh = Base::locate(query, blt, li, hint);
 
-    if(blt == Base::VERTEX) {
-      lt = VERTEX;
-    } else {
-      if(blt == Base::EDGE) {
-        lt = EDGE;
-      } else {
-        if(blt == Base::FACE) {
-          lt = FACE;
-        } else {
-          if(blt == Base::OUTSIDE_CONVEX_HULL) {
-            lt = OUTSIDE_CONVEX_HULL;
-          } else {
-            lt = OUTSIDE_AFFINE_HULL;
-          }
-        }
-      }
+    switch(blt)
+    {
+      case Base::VERTEX: lt = VERTEX; break;
+      case Base::EDGE: lt = EDGE; break;
+      case Base::FACE: lt = FACE; break;
+      case Base::OUTSIDE_CONVEX_HULL: lt = OUTSIDE_CONVEX_HULL; break;
+      case Base::OUTSIDE_AFFINE_HULL: lt = OUTSIDE_AFFINE_HULL; break;
     }
 
     if(lt == VERTEX)
@@ -1004,49 +995,43 @@ public:
     if(lt == OUTSIDE_CONVEX_HULL || lt == OUTSIDE_AFFINE_HULL)
       return Face_handle();
 
+    CGAL_assertion(!is_infinite(fh));
+
     // This case corresponds to when the point is located on an Euclidean edge.
     if(lt == EDGE)
     {
-      Point p = point(fh, 0);
-      Point q = point(fh, 1);
-      Point r = point(fh, 2);
+      // Here because the call to `side_of_hyperbolic_triangle` might change `li`
+      Face_handle mfh = fh->neighbor(li);
 
-      if(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
+      if(is_Delaunay_hyperbolic(fh))
       {
+        const Point& p = point(fh, 0);
+        const Point& q = point(fh, 1);
+        const Point& r = point(fh, 2);
+
         Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
-        if(side == ON_ORIENTED_BOUNDARY) {
-          lt = EDGE;
+        if(side != ON_NEGATIVE_SIDE)
           return fh;
-        } else {
-          if(side == ON_POSITIVE_SIDE) {
-            lt = FACE;
-            return fh;
-          } else {
-            // do nothing -- we still have to check the neighboring face
-          }
-        }
       }
 
-      p = point(fh, ccw(li));
-      q = point(Base::mirror_vertex(fh, li));
-      r = point(fh, cw(li));
-
-      if(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
+      if(is_Delaunay_hyperbolic(mfh))
       {
+        const Point& p = point(mfh, 0);
+        const Point& q = point(mfh, 1);
+        const Point& r = point(mfh, 2);
         Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
-        if(side == ON_ORIENTED_BOUNDARY) {
-          lt = EDGE;
+
+        if(side != ON_NEGATIVE_SIDE) {
           return fh;
         } else {
-          if(side == ON_POSITIVE_SIDE) {
-            lt = FACE;
-            return fh;
-          } else {
-            // There is nothing to be done now -- the point is outside the convex hull of the triangulation
-            lt = OUTSIDE_CONVEX_HULL;
-            return Face_handle();
-          }
+          lt = OUTSIDE_CONVEX_HULL;
+          return Face_handle();
         }
+      }
+      else
+      {
+        lt = OUTSIDE_CONVEX_HULL;
+        return Face_handle();
       }
     }
 
@@ -1054,55 +1039,56 @@ public:
     const Point& p = point(fh, 0);
     const Point& q = point(fh, 1);
     const Point& r = point(fh, 2);
-    int idx;
-    if(!geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r, idx))
+
+    if(!is_Delaunay_hyperbolic(fh))
     {
       // Need to check if the point lies on one of the sides of the face
       // Note that at least one side is Delaunay hyperbolic!
-      if (geom_traits().side_of_oriented_hyperbolic_segment_2_object()(p,q,query) == ON_ORIENTED_BOUNDARY ||
-          geom_traits().side_of_oriented_hyperbolic_segment_2_object()(q,r,query) == ON_ORIENTED_BOUNDARY ||
-          geom_traits().side_of_oriented_hyperbolic_segment_2_object()(r,p,query) == ON_ORIENTED_BOUNDARY   )
-          lt = EDGE;
-      else
-        lt = OUTSIDE_CONVEX_HULL;
+      if(geom_traits().side_of_oriented_hyperbolic_segment_2_object()(p,q,query) == ON_ORIENTED_BOUNDARY)
+      {
+        lt = EDGE;
+        li = 2;
+        return fh;
+      }
+      else if(geom_traits().side_of_oriented_hyperbolic_segment_2_object()(q,r,query) == ON_ORIENTED_BOUNDARY)
+      {
+        lt = EDGE;
+        li = 0;
+        return fh;
+      }
+      else if(geom_traits().side_of_oriented_hyperbolic_segment_2_object()(r,p,query) == ON_ORIENTED_BOUNDARY)
+      {
+        lt = EDGE;
+        li = 1;
+        return fh;
+      }
+
+      lt = OUTSIDE_CONVEX_HULL;
       return Face_handle();
     }
 
     Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
-    if(side == ON_POSITIVE_SIDE) {
-      lt = FACE;
+    if(side != ON_NEGATIVE_SIDE) {
       return fh;
     } else {
-      if(side == ON_ORIENTED_BOUNDARY) {
-        lt = EDGE;
-        return fh;
-      } else {
-        // Here, the point lies in a face that is a neighbor to fh
-        for(int i = 0; i < 3; i++) {
-          Face_handle nfh = fh->neighbor(i);
-          if(geom_traits().is_Delaunay_hyperbolic_2_object()(point(nfh,0),
-                                                             point(nfh,1),
-                                                             point(nfh,2)))
-          {
-            Oriented_side nside = side_of_hyperbolic_triangle(point(nfh,0),
-                                                              point(nfh,1),
-                                                              point(nfh,2),
-                                                              query, lt, li);
-            if(nside == ON_POSITIVE_SIDE) {
-              lt = FACE;
-              return nfh;
-            } else if(nside == ON_ORIENTED_BOUNDARY) {
-              lt = EDGE;
-              return nfh;
-            }
-          }
+      // Here, the point lies in a face that is a neighbor to fh
+      for(int i = 0; i < 3; ++i) {
+        Face_handle nfh = fh->neighbor(i);
+        if(is_Delaunay_hyperbolic(nfh))
+        {
+          Oriented_side nside = side_of_hyperbolic_triangle(point(nfh,0),
+                                                            point(nfh,1),
+                                                            point(nfh,2),
+                                                            query, lt, li);
+          if(nside != ON_NEGATIVE_SIDE)
+            return nfh;
         }
-
-        // At this point, the point lies outside of the convex hull of the triangulation,
-        // since it has not been found in any of the hyperbolic faces adjacent to fh.
-        lt = OUTSIDE_CONVEX_HULL;
-        return Face_handle();
       }
+
+      // At this point, the point lies outside of the convex hull of the triangulation,
+      // since it has not been found in any of the hyperbolic faces adjacent to fh.
+      lt = OUTSIDE_CONVEX_HULL;
+      return Face_handle();
     }
 
     // We never reach this point, but we have to make the compiler happy
