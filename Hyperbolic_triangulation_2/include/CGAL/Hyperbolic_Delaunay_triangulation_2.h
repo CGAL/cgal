@@ -552,22 +552,21 @@ private:
   */
   void ensure_hyperbolic_face_handle(Vertex_handle v)
   {
-    if(dimension() > 2)
+    if(dimension() <= 1)
+      return;
+
+    Face_circulator fc = this->incident_faces(v), done(fc);
+    if(fc != 0)
     {
-      Face_circulator fc = this->incident_faces(v), done(fc);
-      if(fc != 0)
+      do
       {
-        do
+        if(is_Delaunay_hyperbolic(fc))
         {
-          if(is_Delaunay_hyperbolic(fc))
-          {
-            v->set_face(fc);
-            break;
-          }
+          v->set_face(fc);
+          break;
         }
-        while(++fc != done);
       }
-      CGAL_triangulation_postcondition(is_Delaunay_hyperbolic(v->face()));
+      while(++fc != done);
     }
   }
 
