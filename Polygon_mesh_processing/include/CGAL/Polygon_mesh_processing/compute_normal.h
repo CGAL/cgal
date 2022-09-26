@@ -717,9 +717,15 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   }
 #endif
 
-    // Change for debugging (comparing with DGtal)
-    Vector_3 normal = internal::compute_vertex_normal_as_sum_of_weighted_normals(
-               v, internal::NO_WEIGHT, face_normals, vpmap, pmesh, traits);
+  Vector_3 normal = internal::compute_vertex_normal_most_visible_min_circle(v, face_normals, pmesh, traits);
+  if(traits.equal_3_object()(normal, CGAL::NULL_VECTOR)) // can't always find a most visible normal
+  {
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+    std::cout << "Failed to find most visible normal, use weighted sum of normals" << std::endl;
+#endif
+    normal = internal::compute_vertex_normal_as_sum_of_weighted_normals(
+               v, internal::SIN_WEIGHT, face_normals, vpmap, pmesh, traits);
+  }
 
   if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
