@@ -138,8 +138,8 @@ all entries are grayed. You are now ready to press *Generate*. Once this is
 done, you can quit `cmake-gui`.
 
 Without an explicit `CMAKE_BUILD_TYPE`, `CMake` does not add any additional build flags.
-This will result in a default build without any optimizations and without any debug symbols.
-You should set the variable `CMAKE_BUILD_TYPE` to `Release` or `Debug` to enable optimizations or debug symbols.
+This will result in a default build without any debug symbols, and without any optimizations.
+You should set the variable `CMAKE_BUILD_TYPE` to `Debug` to compile with debug symbols, or `Release` to enable optimizations.
 
 \subsection installation_configuring_cmd Configuring CGAL with the cmake Command-Line Tool
 
