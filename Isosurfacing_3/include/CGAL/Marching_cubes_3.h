@@ -49,10 +49,10 @@ void marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
 
     if (topologically_correct) {
         internal::TMC_functor<Domain_, PointRange, TriangleRange> functor(domain, iso_value, points, polygons);
-        domain.iterate_cells<Concurrency_tag>(functor);
+        domain.template iterate_cells<Concurrency_tag>(functor);
     } else {
         internal::Marching_cubes_functor<Domain_> functor(domain, iso_value);
-        domain.iterate_cells<Concurrency_tag>(functor);
+        domain.template iterate_cells<Concurrency_tag>(functor);
         internal::to_indexed_face_set(functor.get_triangles(), points, polygons);
     }
 }
