@@ -46,9 +46,6 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
                                , const K&
                                )
 {
-  bool bk_poly_assert_mode = get_use_polygon_assertions();
-  set_use_polygon_assertions(false); // disable assertions in Polygon_2 function as we may manipulate strictly simple polygons
-
   typedef typename std::iterator_traits<InputPolygonPtrIterator>::difference_type difference_type ;
   typedef typename std::iterator_traits<InputPolygonPtrIterator>::value_type PolygonPtr ;
 
@@ -100,14 +97,12 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
 
       if (lParent == nullptr)
       {
-        set_use_polygon_assertions(bk_poly_assert_mode);
         return false;
       }
 
       lParent->add_hole(*lPoly);
     }
   }
-  set_use_polygon_assertions(bk_poly_assert_mode);
   return true;
 }
 
