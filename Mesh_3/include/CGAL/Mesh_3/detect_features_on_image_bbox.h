@@ -43,7 +43,6 @@ void detect_features_on_bbox_with_know_word_type(const CGAL::Image_3& image,
   CGAL::polylines_to_protect(image, polylines_on_bbox);
 
   domain.add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
- 
 }
 
 template<typename Mesh_domain>
