@@ -286,17 +286,13 @@ void test_random_entities(const G& g, CGAL::Random& rnd)
     }
 
     loc = PMP::random_location_on_halfedge<FT>(h, g, rnd);
-    if (std::is_same<K, EPECK>()) {
-      assert(loc.first == face(h, g));
-      assert(loc.second[0] >= FT(0) && loc.second[0] <= FT(1) &&
-        loc.second[1] >= FT(0) && loc.second[1] <= FT(1) &&
-        loc.second[2] >= FT(0) && loc.second[2] <= FT(1));
-    }
+    assert(loc.first == face(h, g));
+    assert(loc.second[0] >= FT(0) && loc.second[0] <= FT(1) &&
+      loc.second[1] >= FT(0) && loc.second[1] <= FT(1) &&
+      loc.second[2] >= FT(0) && loc.second[2] <= FT(1));
     int h_id = CGAL::halfedge_index_in_face(h, g);
 
-    if (std::is_same<K, EPECK>()) {
-      assert(loc.second[(h_id + 2) % 3] == FT(0));
-    }
+    assert(loc.second[(h_id + 2) % 3] == FT(0));
   }
 }
 
@@ -337,18 +333,14 @@ void test_helpers(const G& g, CGAL::Random& rnd)
   Face_location loc = PMP::random_location_on_face<FT>(f, g, rnd);
   std::set<face_descriptor> s;
   PMP::internal::incident_faces(loc, g, std::inserter(s, s.begin()));
-  if (std::is_same<K, EPECK>()) {
-    assert(PMP::is_on_face_border(loc, g) || s.size() == 1);
-  }
+  assert(PMP::is_on_face_border(loc, g) || s.size() == 1);
 
   loc = PMP::random_location_on_halfedge<FT>(h, g, rnd);
   std::vector<face_descriptor> vec;
   PMP::internal::incident_faces(loc, g, std::back_inserter(vec));
-  if (std::is_same<K, EPECK>()) {
-    assert(PMP::is_on_vertex(loc, source(h, g), g) ||
-      PMP::is_on_vertex(loc, target(h, g), g) ||
-      vec.size() == 2);
-  }
+  assert(PMP::is_on_vertex(loc, source(h, g), g) ||
+    PMP::is_on_vertex(loc, target(h, g), g) ||
+    vec.size() == 2);
 }
 
 template<typename K, typename G>
@@ -520,12 +512,10 @@ void test_locate_in_face(const G& g,
     neigh_loc.second[(neigh_hd_id+2)%3] = FT(0);
 
     PMP::locate_in_adjacent_face(loc, neigh_f, g);
-    if (std::is_same<K, EPECK>()) {
-      assert(PMP::locate_in_common_face<FT>(loc, neigh_loc, g));
+    assert(PMP::locate_in_common_face<FT>(loc, neigh_loc, g));
 
-      assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K())));
-      assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()), 1e-7));
-    }
+    assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K())));
+    assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()), 1e-7));
   }
 }
 
@@ -582,40 +572,29 @@ struct Locate_with_AABB_tree_Tester // 2D case
 
     // sanitize otherwise some test platforms fail
     PMP::internal::snap_location_to_border(loc, g, FT(1e-7));
-
-    if (std::is_same<K, EPECK>()) {
-      assert(PMP::is_on_vertex(loc, v, g)); // might fail due to precision issues...
-      assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)], FT(1)));
-      assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 1) % 3], FT(0)));
-      assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 2) % 3], FT(0)));
-      assert(is_equal(CGAL::squared_distance(to_p3(
-        PMP::construct_point<FT>(loc, g, CGAL::parameters::vertex_point_map(vpm))), p3_a), FT(0)));
-    }
+    assert(PMP::is_on_vertex(loc, v, g)); // might fail due to precision issues...
+    assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)], FT(1)));
+    assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 1) % 3], FT(0)));
+    assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 2) % 3], FT(0)));
+    assert(is_equal(CGAL::squared_distance(to_p3(
+      PMP::construct_point<FT>(loc, g, CGAL::parameters::vertex_point_map(vpm))), p3_a), FT(0)));
 
     loc = PMP::locate_with_AABB_tree(p_a, tree_a, g, CGAL::parameters::vertex_point_map(vpm));
-    if (std::is_same<K, EPECK>()) {
-      assert(is_equal(CGAL::squared_distance(to_p3(
-        PMP::construct_point<FT>(loc, g, CGAL::parameters::vertex_point_map(vpm))), p3_a), FT(0)));
-    }
+    assert(is_equal(CGAL::squared_distance(to_p3(
+      PMP::construct_point<FT>(loc, g, CGAL::parameters::vertex_point_map(vpm))), p3_a), FT(0)));
 
     // ---------------------------------------------------------------------------
     loc = PMP::locate(p_a, g, CGAL::parameters::vertex_point_map(vpm));
-    if (std::is_same<K, EPECK>()) {
-      assert(is_equal(CGAL::squared_distance(to_p3(
-        PMP::construct_point(loc, g, CGAL::parameters::vertex_point_map(vpm))), p3_a), FT(0)));
+    assert(is_equal(CGAL::squared_distance(to_p3(
+      PMP::construct_point(loc, g, CGAL::parameters::vertex_point_map(vpm))), p3_a), FT(0)));
 
-      assert(PMP::is_in_face(loc, g));
-    }
+    assert(PMP::is_in_face(loc, g));
 
     loc = PMP::locate_with_AABB_tree(CGAL::ORIGIN, tree_b, g, CGAL::parameters::vertex_point_map(vpm_b));
-    if (std::is_same<K, EPECK>()) {
-      assert(PMP::is_in_face(loc, g));
-    }
+    assert(PMP::is_in_face(loc, g));
 
     loc = PMP::locate(CGAL::ORIGIN, g, CGAL::parameters::vertex_point_map(vpm_b));
-    if (std::is_same<K, EPECK>()) {
-      assert(PMP::is_in_face(loc, g));
-    }
+    assert(PMP::is_in_face(loc, g));
 
     // ---------------------------------------------------------------------------
     Ray_2 r2 = random_2D_ray<CGAL::AABB_tree<AABB_face_graph_traits> >(tree_a, rnd);
