@@ -36,12 +36,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 
-namespace CGAL {
-  struct Null_subdomain_index {
-    template <typename T>
-    bool operator()(const T& x) const { return 0 == x; }
-  };
-}
+#include <CGAL/Mesh_3/Null_subdomain_index.h>
 
 namespace CGAL {
 namespace Mesh_3 {

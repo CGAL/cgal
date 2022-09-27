@@ -13,6 +13,9 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 
+#include <CGAL/Mesh_3/detect_features_in_image.h>
+
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
@@ -47,7 +50,8 @@ int main(int argc, char* argv[])
 
   /// [Domain creation]
   Mesh_domain domain
-    = Mesh_domain::create_labeled_image_mesh_domain_with_features(image);
+    = Mesh_domain::create_labeled_image_mesh_domain_with_features(image,
+         detect_features = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();

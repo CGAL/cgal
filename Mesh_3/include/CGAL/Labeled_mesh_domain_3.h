@@ -55,7 +55,7 @@
 #endif
 #include <boost/optional.hpp>
 
-#include <CGAL/Mesh_3/detect_features_in_image.h> //needs Null_subdomain_index
+#include <CGAL/Mesh_3/Null_subdomain_index.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -125,6 +125,17 @@ namespace internal {
       return type();
     }
   };
+
+  template<typename Mesh_domain, typename DetectFunctor>
+  void detect_features(const CGAL::Image_3& image,
+                       Mesh_domain& domain,
+                       DetectFunctor functor)
+  {
+    if (boost::is_same<DetectFunctor, Null_functor>::value)
+      return;
+    else
+      return functor(image, domain);
+  }
 
 } // end namespace CGAL::Mesh_3::internal
 } // end namespace CGAL::Mesh_3
@@ -485,6 +496,7 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
                                     (image_values_to_subdomain_indices_, *, Null_functor())
                                     (null_subdomain_index_, *, Null_functor())
                                     (construct_surface_patch_index_, *, Null_functor())
+                                    (detect_features_, *, Null_functor())
                                   )
   )
   {
@@ -497,7 +509,7 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
           p::null_subdomain_index = null_subdomain_index_,
           p::construct_surface_patch_index = construct_surface_patch_index_);
 
-    CGAL::Mesh_3::detect_features_in_image(image_, domain);
+    CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
 
     return domain;
   }

@@ -13,6 +13,8 @@
 #include "Mesh_function.h"
 #include "Facet_extra_criterion.h"
 
+#include <CGAL/Mesh_3/detect_features_in_image.h>
+
 
 using namespace CGAL::Three;
 
@@ -369,7 +371,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
           (p::image = *pImage,
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); }
+            [](int i, int j) { return (i * 1000 + j); },
+            p::detect_features = CGAL::Mesh_3::Detect_features_in_image()
           )
           );
         }

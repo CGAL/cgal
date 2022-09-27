@@ -41,6 +41,8 @@ namespace CGAL
 {
 namespace Mesh_3
 {
+namespace internal
+{
 
 // Protect the intersection of the object with the box of the image,
 // by declaring 1D-features. Note that `CGAL::polylines_to_protect` is
@@ -244,6 +246,17 @@ bool detect_features_in_image(const CGAL::Image_3& image, Mesh_domain& domain)
                  "CGAL_ImageIO.");
   return false;
 }
+
+}// namespace internal
+
+struct Detect_features_in_image
+{
+  template<typename Mesh_domain>
+  void operator()(const CGAL::Image_3& image, Mesh_domain& domain)
+  {
+    internal::detect_features_in_image(image, domain);
+  }
+};
 
 
 }//end namespace Mesh_3
