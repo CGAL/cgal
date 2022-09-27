@@ -1,6 +1,3 @@
-#define CGAL_MESH_3_VERBOSE 1
-#define CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-
 #include <iostream>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -42,7 +39,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/liver.inr.gz");// 420.inr");
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/liver.inr.gz");
   // Loads image
   CGAL::Image_3 image;
   if(!image.read(fname)){
@@ -59,7 +56,8 @@ int main(int argc, char* argv[])
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain_with_features(image,
-                                                                  weights = img_weights);
+                                                                  weights = img_weights,
+                                                                  relative_error_bound = 1e-6);
   /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();
