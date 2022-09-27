@@ -7,7 +7,7 @@ namespace CGAL {
 /*!
 \ingroup STLAlgos
 
-\deprecated This function is deprecated, std::copy_n should be
+\deprecated This function is deprecated, `std::copy_n()` should be
 used instead.
 
 Copies the first `n` items from `first` to `result`.
@@ -36,15 +36,15 @@ namespace CGAL {
 
 Computes the minimal and the
 maximal element of a range. It is modeled after the STL functions
-`std::min_element` and `std::max_element`. The advantage of
-`min_max_element` compared to calling both STL functions is that
+`std::min_element()` and `std::max_element()`. The advantage of
+`min_max_element()` compared to calling both STL functions is that
 one only iterates once over the sequence. This is more efficient
 especially for large and/or complex sequences.
 
 \cgalHeading{Example}
 
 The following example program computes the minimal and
-maximal element of the sequence ` (3,\,6,\,5)`. Hence the output is
+maximal element of the sequence `(3,\,6,\,5)`. Hence the output is
 `min = 3, max = 6`.
 
 \cgalExample{STL_Extension/min_max_element_example.cpp}
@@ -65,8 +65,8 @@ first, ForwardIterator last);
 
 Computes the minimal and the
 maximal element of a range. It is modeled after the STL functions
-`std::min_element` and `std::max_element`. The advantage of
-`min_max_element` compared to calling both STL functions is that
+`std::min_element()` and `std::max_element()`. The advantage of
+`min_max_element()` compared to calling both STL functions is that
 one only iterates once over the sequence. This is more efficient
 especially for large and/or complex sequences.
 
@@ -95,11 +95,11 @@ namespace CGAL {
 /*!
 \ingroup STLAlgos
 
-\deprecated This function is deprecated. `std::prev` should be used
+\deprecated This function is deprecated. `std::prev()` should be used
 instead.
 
 Returns the previous iterator,
-i.e.\ the result of `operator--` on a bidirectional iterator.
+i.e.\ the result of `operator--()` on a bidirectional iterator.
 
 \sa `CGAL::successor()`
 
@@ -115,17 +115,17 @@ namespace CGAL {
 /*!
 \ingroup STLAlgos
 
-\deprecated This function is deprecated. `std::next` should be used
+\deprecated This function is deprecated. `std::next()` should be used
 instead.
 
 
-Returns the next iterator, i.e.
-the result of `operator++` on a forward iterator.
+Returns the next iterator, i.e.,
+the result of `operator++()` on a forward iterator.
 
 
 \sa `CGAL::predecessor()`
 
-\returns `++it`.
+\returns `it`.
 */
 template <class ForwardIterator>
 ForwardIterator successor(ForwardIterator it);
