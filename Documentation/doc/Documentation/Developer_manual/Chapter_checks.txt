@@ -154,7 +154,9 @@ the computation is done with some exact number type.
 
 The macros and related compile-time flags described so far all operate
 on the whole library.  \cgal offers the possibility to turn checks on
-and off just for the kernel.
+and off just for the kernel. Kernel assertions are stated using the
+macro `CGAL_kernel_assertion(<Cond>)`, and they can be disabled by defining
+the macros `CGAL_KERNEL_NO_ASSERTIONS` or `CGAL_NO_ASSERTIONS`.
 
 \section secchecks_cgal_assume Suppress warnings using CGAL_assume.
 
