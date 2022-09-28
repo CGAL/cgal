@@ -32,7 +32,6 @@
 
 #include <boost/variant.hpp>
 #include <boost/math/constants/constants.hpp>
-#include <boost/math/special_functions/ellint_2.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/tags.h>
@@ -4121,7 +4120,6 @@ public:
                            double& a, double& b, double& cx, double& cy,
                            bool l2r = true)
     const {
-    const double pi = boost::math::constants::pi<double>();
     auto min_vertex = construct_min_vertex_2_object();
     auto max_vertex = construct_max_vertex_2_object();
     const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
@@ -4175,16 +4173,16 @@ public:
     // source == (x(ts),y(ts)), and
     // target == (x(tt),y(tt))
     ts = std::atan2(a*ys_t, b*xs_t);
-    if (ts < 0) ts += 2*pi;
+    if (ts < 0) ts += 2*CGAL_PI;
     tt = std::atan2(a*yt_t, b*xt_t);
-    if (tt < 0) tt += 2*pi;
+    if (tt < 0) tt += 2*CGAL_PI;
     auto orient(xcv.orientation());
     if (xcv.source() != src) orient = CGAL::opposite(orient);
     if (orient == COUNTERCLOCKWISE) {
-      if (tt < ts) tt += 2*pi;
+      if (tt < ts) tt += 2*CGAL_PI;
     }
     else {
-      if (ts < tt) ts += 2*pi;
+      if (ts < tt) ts += 2*CGAL_PI;
     }
     // std::cout << "ts,tt: " << ts << "," << tt << std::endl;
   }

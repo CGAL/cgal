@@ -28,8 +28,6 @@
 #include <fstream>
 #include <atomic>
 
-#include <boost/math/constants/constants.hpp>
-
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Cartesian.h>
@@ -504,7 +502,6 @@ public:
     OutputIterator approximate_arc(const X_monotone_curve_2& xcv,
                                    double error, OutputIterator oi,
                                    bool l2r = true) const {
-      constexpr auto pi = boost::math::constants::pi<double>();
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
       const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
@@ -532,16 +529,16 @@ public:
       // source == (x(ts),y(ts)), and
       // target == (x(tt),y(tt))
       auto ts = std::atan2(r*ys_t, r*xs_t);
-      if (ts < 0) ts += 2*pi;
+      if (ts < 0) ts += 2*CGAL_PI;
       auto tt = std::atan2(r*yt_t, r*xt_t);
-      if (tt < 0) tt += 2*pi;
+      if (tt < 0) tt += 2*CGAL_PI;
       auto orient(xcv.orientation());
       if (xcv.source() != src) orient = CGAL::opposite(orient);
       if (orient == COUNTERCLOCKWISE) {
-        if (tt < ts) tt += 2*pi;
+        if (tt < ts) tt += 2*CGAL_PI;
       }
       else {
-        if (ts < tt) ts += 2*pi;
+        if (ts < tt) ts += 2*CGAL_PI;
       }
 
       *oi++ = Approximate_point_2(xs, ys);
