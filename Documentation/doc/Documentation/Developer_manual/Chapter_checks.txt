@@ -157,6 +157,7 @@ on the whole library.  \cgal offers the possibility to turn checks on
 and off just for the kernel. Kernel assertions are stated using the
 macro `CGAL_kernel_assertion(<Cond>)`, and they can be disabled by defining
 the macros `CGAL_KERNEL_NO_ASSERTIONS` or `CGAL_NO_ASSERTIONS`.
+See \ref secchecks "the section Checks in STL Extensions", for details.
 
 \section secchecks_cgal_assume Suppress warnings using CGAL_assume.
 
