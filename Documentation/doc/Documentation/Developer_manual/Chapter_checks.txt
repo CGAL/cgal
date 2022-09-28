@@ -145,12 +145,9 @@ To disable all checks in the library, the flag `CGAL_NDEBUG` can be set.
 Note that the standard flag `NDEBUG` sets `CGAL_NDEBUG`,
 but it also affects the `assert` macro.
 
-To enable expensive and exactness checks, respectively, the compile-time
-flags `CGAL_CHECK_EXPENSIVE`
-
-and `CGAL_CHECK_EXACTNESS`
-
-have to be supplied. However, exactness checks should only be turned on if
+To enable expensive and exactness checks, respectively, the preprocessor macros
+`CGAL_CHECK_EXPENSIVE` and `CGAL_CHECK_EXACTNESS`
+have to be defined. However, exactness checks should only be turned on if
 the computation is done with some exact number type.
 
 \section secchecks_controlling Controlling checks at a finer granularity
