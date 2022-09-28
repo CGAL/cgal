@@ -341,7 +341,10 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
     halfedge_found->face();
 
   // Go over the isolated vertices in the face.
-  for (auto iso_verts_it = face->isolated_vertices_begin();
+  // The following statement pacifies MSVC. Without it the implicit conversion
+  // from the iterator to the corresponding handle fails!
+  Isolated_vertex_const_iterator iso_verts_it;
+  for (iso_verts_it = face->isolated_vertices_begin();
        iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
   {
     // The current isolated vertex should have the same x-coordinate as the
