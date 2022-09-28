@@ -342,6 +342,10 @@ void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
         std::array<Weights_type, 2> colors;
         colors[0] = cube[0];
         std::size_t nb_colors = 1;
+        if ( i == 0 || i == image.xdim() - 1) nb_colors++;
+        if ( j == 0 || j == image.ydim() - 1) nb_colors++;
+        if ( k == 0 || k == image.zdim() - 1) nb_colors++;
+
         for (int ii = 1; ii < 8; ++ii)
         {
           if (colors[0] == cube[ii])
