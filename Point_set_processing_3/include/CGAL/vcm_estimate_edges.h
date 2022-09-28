@@ -40,7 +40,7 @@ namespace CGAL {
 /// `CGAL_EIGEN3_ENABLED` is defined then an overload using
 /// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
 /// implementation `Diagonalize_traits` is used.
-/// \sa CGAL::compute_vcm()`
+/// \sa `CGAL::compute_vcm()`
 ///
 template <class FT, class VCMTraits>
 bool
