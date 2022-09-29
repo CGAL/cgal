@@ -582,8 +582,7 @@ public:
   void merge(Self& x, StrictWeakOrdering ord)
   // merges the list x into the list `l' and x becomes empty.
   // It is stable.
-  // stable. Precondition: Both lists are sorted in increasing order
-  // wrt. ord.
+  // Precondition: Both lists are sorted in increasing order wrt. `ord`.
   {
     iterator first1 = begin();
     iterator last1 = end();
