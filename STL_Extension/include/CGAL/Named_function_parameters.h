@@ -28,6 +28,8 @@
 
 #define CGAL_NP_TEMPLATE_PARAMETERS NP_T=bool, typename NP_Tag=CGAL::internal_np::all_default_t, typename NP_Base=CGAL::internal_np::No_property
 #define CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT NP_T, typename NP_Tag, typename NP_Base
+#define CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1 NP_T1, typename NP_Tag1, typename NP_Base1
+#define CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2 NP_T2, typename NP_Tag2, typename NP_Base2
 #define CGAL_NP_CLASS CGAL::Named_function_parameters<NP_T,NP_Tag,NP_Base>
 
 #define CGAL_NP_TEMPLATE_PARAMETERS_1 NP_T1=bool, typename NP_Tag1=CGAL::internal_np::all_default_t, typename NP_Base1=CGAL::internal_np::No_property

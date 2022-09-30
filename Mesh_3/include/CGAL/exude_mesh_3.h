@@ -111,36 +111,44 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, double time_limit = 0, do
 }
 #endif
 #ifndef DOXYGEN_RUNNING
+#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
 template<typename C3T3, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, const CGAL_NP_CLASS& ... nps)
 {
-    return exude_mesh_3(c3t3,internal_np::combine_named_parameters(nps...));
+  return exude_mesh_3(c3t3,internal_np::combine_named_parameters(nps...));
 }
+#else
+template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
+Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+{
+  return exude_mesh_3(c3t3,internal_np::combine_named_parameters(np1, np2, nps...));
+}
+#endif
 
 
 
 
-  template <typename C3T3>
-  Mesh_optimization_return_code
-  exude_mesh_3_impl(C3T3& c3t3,
-                  const double time_limit,
-                  const double sliver_bound)
-  {
-     typedef typename C3T3::Triangulation Tr;
-     typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
-     //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
-     typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
+template <typename C3T3>
+Mesh_optimization_return_code
+exude_mesh_3_impl(C3T3& c3t3,
+                const double time_limit,
+                const double sliver_bound)
+{
+   typedef typename C3T3::Triangulation Tr;
+   typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
+   //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
+   typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
 
-     // Create exuder
-     Sc criterion(sliver_bound, c3t3.triangulation());
-     Exuder exuder(c3t3, criterion);
+   // Create exuder
+   Sc criterion(sliver_bound, c3t3.triangulation());
+   Exuder exuder(c3t3, criterion);
 
-     // Set time_limit
-     exuder.set_time_limit(time_limit);
+   // Set time_limit
+   exuder.set_time_limit(time_limit);
 
-     // Launch exudation
-     return exuder();
-  }
+   // Launch exudation
+   return exuder();
+}
 #endif //DOXYGEN_RUNNING
 
 } //namespace CGAL
