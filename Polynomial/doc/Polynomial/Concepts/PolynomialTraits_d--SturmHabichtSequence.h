@@ -15,8 +15,15 @@ Let \f$ n:=\deg f\f$ and \f$ \delta_k:=(-1)^{k(k+1)/2}\f$.
 For \f$ k\in\{0,\ldots,n\}\f$, the <I>\f$ k\f$-th Sturm-Habicht polynomial</I>
 of \f$ f\f$ is defined as:
 
-\image html sturm_habicht_def.png
-\image latex sturm_habicht_def.png
+\f[
+Stha_{k}(f) = \left \{
+\begin{array}{cll}
+f & if & k = n \\
+f' & if & k = n - 1 \\
+\delta_{n - k - 1}Sres_{k}(f,f') & if & 0 \leq k \leq n - 2
+\end{array}
+\right .
+\f]
 
 where \f$ \mathrm{Sres}_k(f,f')\f$ is defined
 as in the concept `PolynomialTraits_d::PolynomialSubresultants`.
