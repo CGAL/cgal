@@ -16,11 +16,11 @@ For \f$ k\in\{0,\ldots,n\}\f$, the <I>\f$ k\f$-th Sturm-Habicht polynomial</I>
 of \f$ f\f$ is defined as:
 
 \f[
-Stha_{k}(f) = \left \{
+\mathrm{Stha}_{k}(f) = \left \{
 \begin{array}{cll}
-f & if & k = n \\
-f' & if & k = n - 1 \\
-\delta_{n - k - 1}Sres_{k}(f,f') & if & 0 \leq k \leq n - 2
+f & \text{if} & k = n \\
+f' & \text{if} & k = n - 1 \\
+\delta_{n - k - 1}\mathrm{Sres}_{k}(f,f') & \text{if} & 0 \leq k \leq n - 2
 \end{array}
 \right .
 \f]
