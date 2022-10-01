@@ -514,8 +514,10 @@ void test_locate_in_face(const G& g,
     PMP::locate_in_adjacent_face(loc, neigh_f, g);
     assert(PMP::locate_in_common_face<FT>(loc, neigh_loc, g));
 
-    assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K())));
-    assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()), 1e-7));
+    if (std::is_same<K, EPECK>()) {
+      assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K())));
+      assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()), 1e-7));
+    }
   }
 }
 
@@ -588,13 +590,19 @@ struct Locate_with_AABB_tree_Tester // 2D case
     assert(is_equal(CGAL::squared_distance(to_p3(
       PMP::construct_point(loc, g, CGAL::parameters::vertex_point_map(vpm))), p3_a), FT(0)));
 
-    assert(PMP::is_in_face(loc, g));
+    if (std::is_same<K, EPECK>()) {
+      assert(PMP::is_in_face(loc, g));
+    }
 
     loc = PMP::locate_with_AABB_tree(CGAL::ORIGIN, tree_b, g, CGAL::parameters::vertex_point_map(vpm_b));
-    assert(PMP::is_in_face(loc, g));
+    if (std::is_same<K, EPECK>()) {
+      assert(PMP::is_in_face(loc, g));
+    }
 
     loc = PMP::locate(CGAL::ORIGIN, g, CGAL::parameters::vertex_point_map(vpm_b));
-    assert(PMP::is_in_face(loc, g));
+    if (std::is_same<K, EPECK>()) {
+      assert(PMP::is_in_face(loc, g));
+    }
 
     // ---------------------------------------------------------------------------
     Ray_2 r2 = random_2D_ray<CGAL::AABB_tree<AABB_face_graph_traits> >(tree_a, rnd);
@@ -894,7 +902,7 @@ void test(CGAL::Random& rnd)
 {
   test_2D_triangulation<K>("data/stair.xy", rnd);
 //  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd); // temporarily disabled, until Surface_mesh's IO is "fixed"
-  test_surface_mesh_3D<K>(CGAL::data_file_path("meshes/mech-holes-shark.off"), rnd);
+  test_surface_mesh_3D<K>("meshes/mech-holes-shark.off", rnd);
   test_surface_mesh_projection<K>("data/unit-grid.off", rnd);
   test_polyhedron<K>("data-coref/elephant_split_2.off", rnd);
 }
