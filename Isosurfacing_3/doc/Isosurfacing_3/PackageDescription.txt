@@ -28,14 +28,16 @@ Available algorithms include Marching Cubes, Dual Contouring, and others.
 
 \cgalCRPSection{Concepts}
 - `IsosurfacingDomain`
+- `IsosurfacingDomainWithGradient`
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Isosurfacing::Cartesian_grid_domain`
-- `CGAL::Isosurfacing::Implicit_domain`
-
 \cgalCRPSection{Free Functions}
 
-- `CGAL::Isosurfacing::make_triangle_mesh_using_marching_cubes()`
+- `CGAL::Isosurfacing::marching_cubes()`
+- `CGAL::Isosurfacing::dual_contouring()`
+- `CGAL::Isosurfacing::create_explicit_cartesian_grid_domain()`
+- `CGAL::Isosurfacing::create_implicit_cartesian_grid_domain()`
+- `CGAL::Isosurfacing::create_implicit_octree_domain()`
 
 */

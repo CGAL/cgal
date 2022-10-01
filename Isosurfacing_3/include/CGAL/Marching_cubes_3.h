@@ -40,6 +40,7 @@ namespace Isosurfacing {
  * \param iso_value value of the isosurface
  * \param points points making the polygons of the soup
  * \param polygons each element in the vector describes a polygon using the indices of the points in points
+ * \param topologically_correct decides whether the topologically correct variant of Marching Cubes should be used
  */
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class TriangleRange>
 void marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value, PointRange& points,

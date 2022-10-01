@@ -5,8 +5,9 @@
 The concept `IsosurfacingDomain` describes the set of requirements to be
 fulfilled by any class used as input data for any isosurfacing algorithms.
 
-\cgalHasModel `CGAL::Isosurfacing::Cartesian_grid_domain`
-\cgalHasModel `CGAL::Isosurfacing::Implicit_domain`
+\cgalHasModel `CGAL::Isosurfacing::Explicit_cartesian_grid_domain`
+\cgalHasModel `CGAL::Isosurfacing::Implicit_cartesian_grid_domain`
+\cgalHasModel `CGAL::Isosurfacing::Implicit_octree_domain`
 
 */
 
@@ -18,7 +19,7 @@ public:
     /*!
     Traits type model of \cgal %Kernel
     */
-    typedef unspecified_type Traits;
+    typedef unspecified_type Geom_traits;
 
     /*!
     The scalar type.
@@ -31,29 +32,24 @@ public:
     typedef unspecified_type Point;
 
     /*!
-    The vector type.
+    A descriptor to uniquely identify a vertex.
     */
-    typedef unspecified_type Vector;
+    typedef unspecified_type Vertex_descriptor;
 
     /*!
-    A handle to identify a vertex.
+    A descriptor to uniquely identify an edge.
     */
-    typedef unspecified_type Vertex_handle;
+    typedef unspecified_type Edge_descriptor;
 
     /*!
-    A handle to identify an edge.
+    A descriptor to uniquely identify a cell.
     */
-    typedef unspecified_type Edge_handle;
-
-    /*!
-    A handle to identify a cell.
-    */
-    typedef unspecified_type Cell_handle;
+    typedef unspecified_type Cell_descriptor;
 
     /*!
     A container for the two vertices of an edge.
     */
-    typedef unspecified_type Edge_vertices;
+    typedef unspecified_type Vertices_incident_to_edge;
 
     /*!
     A container for the cells incident to an edge.
@@ -80,37 +76,32 @@ public:
     /*!
     Returns the position of vertex v in 3D space
     */
-    Point position(const Vertex_handle& v) const;
+    Point position(const Vertex_descriptor& v) const;
 
     /*!
     Returns the value of vertex v
     */
-    FT value(const Vertex_handle& v) const;
-
-    /*!
-    (Optional) Returns the gradient at the position p
-    */
-    Vector gradient(const Point& p) const;
+    FT value(const Vertex_descriptor& v) const;
 
     /*!
     Returns the two vertices incident to edge e
     */
-    Edge_vertices edge_vertices(const Edge_handle& e) const;
+    Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const;
 
     /*!
     Returns all voxels incident to edge e
     */
-    Cells_incident_to_edge cells_incident_to_edge(const Edge_handle& e) const;
+    Cells_incident_to_edge cells_incident_to_edge(const Edge_descriptor& e) const;
 
     /*!
     Returns all vertices of the cell c
     */
-    Cell_vertices cell_vertices(const Cell_handle& c) const;
+    Cell_vertices cell_vertices(const Cell_descriptor& c) const;
 
     /*!
     Returns all edges of the cell c
     */
-    Cell_edges cell_edges(const Cell_handle& c) const;
+    Cell_edges cell_edges(const Cell_descriptor& c) const;
 
     /*!
     Iterate sequentially over all vertices and call the functor f on each one
