@@ -154,7 +154,7 @@ void compute_vertex(typename LCC::Dart_const_handle dh, const LCC *lcc,
 }
 
 template <typename BufferType = float, class LCC, class DrawingFunctor>
-void compute_elements(GraphicBuffer<BufferType> &graphic_buffer, const LCC *lcc,
+void compute_elements(const LCC *lcc, GraphicBuffer<BufferType> &graphic_buffer, 
                       const DrawingFunctor &m_drawing_functor)
 {
   if (lcc==nullptr)
@@ -245,14 +245,21 @@ void compute_elements(GraphicBuffer<BufferType> &graphic_buffer, const LCC *lcc,
  * @param alcc
  */
 template <typename BufferType = float, class LCC, class DrawingFunctor>
-void add_in_graphic_buffer_lcc(GraphicBuffer<BufferType> &graphic_buffer,
-                               const DrawingFunctor &m_drawing_functor,
-                               const LCC *alcc = nullptr)
+void add_in_graphic_buffer_lcc(const LCC &alcc, GraphicBuffer<BufferType> &graphic_buffer,
+                               const DrawingFunctor &m_drawing_functor)
 {
-  if (alcc!=nullptr)
-  {
-    draw_function_for_lcc::compute_elements(graphic_buffer, alcc, m_drawing_functor);
-  }
+  draw_function_for_lcc::compute_elements(&alcc, graphic_buffer, m_drawing_functor);
+}
+
+template <typename BufferType = float, class LCC>
+void add_in_graphic_buffer_lcc(const LCC &alcc, GraphicBuffer<BufferType> &graphic_buffer)
+{
+  Drawing_functor_with_volume<LCC,typename LCC::Dart_const_handle,
+                                  typename LCC::Dart_const_handle,
+                                  typename LCC::Dart_const_handle,
+                                  typename LCC::Dart_const_handle> drawing_functor_with_volume;
+
+  add_in_graphic_buffer_lcc(alcc, graphic_buffer, drawing_functor_with_volume);
 }
 
 // Specialization of draw function.
@@ -264,17 +271,23 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_,
-         class DrawingFunctor=Drawing_functor_with_volume<CGAL_LCC_TYPE,
-                                                               typename CGAL_LCC_TYPE::Dart_const_handle,
-                                                               typename CGAL_LCC_TYPE::Dart_const_handle,
-                                                               typename CGAL_LCC_TYPE::Dart_const_handle,
-                                                               typename CGAL_LCC_TYPE::Dart_const_handle>>
-void draw(const CGAL_LCC_TYPE &alcc,
-          const char *title = "LCC for CMap Basic Viewer",
-          const DrawingFunctor &drawing_functor=DrawingFunctor())
+         class DrawingFunctor>
+void draw(const CGAL_LCC_TYPE &alcc, const DrawingFunctor &drawing_functor, 
+          const char *title = "LCC for CMap Basic Viewer")
 {
   GraphicBuffer<float> buffer;
-  add_in_graphic_buffer_lcc(buffer, drawing_functor, &alcc);
+  add_in_graphic_buffer_lcc(alcc, buffer, drawing_functor);
+  draw_buffer(buffer);
+}
+
+template<unsigned int d_, unsigned int ambient_dim, class Traits_,
+         class Items_, class Alloc_,
+         template <unsigned int, class, class, class, class> class Map,
+         class Refs, class Storage_>
+void draw(const CGAL_LCC_TYPE &alcc, const char *title = "LCC for CMap Basic Viewer")
+{
+  GraphicBuffer<float> buffer;
+  add_in_graphic_buffer_lcc(alcc, buffer);
   draw_buffer(buffer);
 }
 
