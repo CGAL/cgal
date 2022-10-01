@@ -12,7 +12,7 @@ is the outermost variable.
 The \f$ i\f$-th subresultant (with \f$ i=0,\ldots,\min\{n,m\}\f$) is defined by
 
 \f[
-Sres_{i}(p,q) = \det
+\mathrm{Sres}_{i}(p,q) = \det
 \begin{pmatrix}
     p_{n} & \dots & & \dots & p_{2i-m+2} & x^{m-i-1}p  \\
     & \ddots & & & \vdots & \vdots\\
