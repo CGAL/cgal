@@ -93,7 +93,7 @@ void compute_vertex(typename T3::Vertex_handle vh,
 }
 
 template <typename BufferType = float, class T3, class DrawingFunctor>
-void compute_elements(CGAL::GraphicBuffer<BufferType> &graphic_buffer, const T3 *t3,
+void compute_elements(const T3 *t3, CGAL::GraphicBuffer<BufferType> &graphic_buffer,
                       const DrawingFunctor &drawing_functor)
 {
   for (typename T3::Finite_facets_iterator it = t3->finite_facets_begin();
@@ -122,26 +122,26 @@ void add_in_graphic_buffer_t3(const T3 &at3,
                               CGAL::GraphicBuffer<BufferType> &graphic_buffer,
                               const DrawingFunctor &drawing_functor)
 {
-  draw_function_for_t3::compute_elements(at3, graphic_buffer, drawing_functor);
+  draw_function_for_t3::compute_elements(&at3, graphic_buffer, drawing_functor);
 }
 
 template <typename BufferType = float, class T3>
 void add_in_graphic_buffer_t3(const T3 &at3,
                               CGAL::GraphicBuffer<BufferType> &graphic_buffer)
 {
-  CGAL::Drawing_functor<CGAL_T3_TYPE,
-                       typename CGAL_T3_TYPE::Vertex_handle,
-                       typename CGAL_T3_TYPE::Finite_edges_iterator,
-                       typename CGAL_T3_TYPE::Finite_facets_iterator>
-    drawingfunctor;
+  CGAL::Drawing_functor<T3,
+                       typename T3::Vertex_handle,
+                       typename T3::Finite_edges_iterator,
+                       typename T3::Finite_facets_iterator>
+    drawing_functor;
 
-  drawingfunctor.colored_face =
-    [](const CGAL_T3_TYPE &at3, const typename CGAL_T3_TYPE::Finite_facets_iterator fh)
+  drawing_functor.colored_face =
+    [](const T3 &at3, const typename T3::Finite_facets_iterator fh)
     -> bool
     { return true; };
 
-      drawingfunctor.face_color =
-    [](const CGAL_T3_TYPE &at3, const typename CGAL_T3_TYPE::Finite_facets_iterator fh)
+      drawing_functor.face_color =
+    [](const T3 &at3, const typename T3::Finite_facets_iterator fh)
     -> CGAL::IO::Color
     {
      if (fh==at3.finite_facets_end())         // use to get the mono color
@@ -164,7 +164,7 @@ void draw(const CGAL_T3_TYPE &at3, const DrawingFunctor &drawingfunctor,
           const char *title = "T3 Basic Viewer")
 {
   CGAL::GraphicBuffer<float> buffer;
-  add_in_graphic_buffer_t3(buffer, drawingfunctor, &at3);
+  add_in_graphic_buffer_t3(at3, buffer, drawingfunctor);
   draw_buffer(buffer);
 }
 
@@ -172,7 +172,7 @@ template <class Gt, class Tds, class Lock_data_structure>
 void draw(const CGAL_T3_TYPE &at3, const char *title = "T3 Basic Viewer")
 {
   CGAL::GraphicBuffer<float> buffer;
-  add_in_graphic_buffer_t3(buffer, &at3);
+  add_in_graphic_buffer_t3(at3, buffer);
   draw_buffer(buffer);
 }
 
