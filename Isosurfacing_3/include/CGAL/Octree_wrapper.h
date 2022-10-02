@@ -367,13 +367,19 @@ public:
     }
 
     std::array<Edge_handle, 12> voxel_edges(const Voxel_handle& vox) const {
-        namespace Tables = internal::Cube_table;
 
-        std::array<Vertex_handle, 8> v = voxel_vertices(vox);
+        std::size_t i, j, k;
+        std::tie(i, j, k) = ijk_index(vox, max_depth_);
+        Node node = get_node(i, j, k);
 
-        std::array<Edge_handle, 12> edges;
-        for (int e_id = 0; e_id < Tables::N_EDGES; ++e_id) {
-            edges[e_id] = {v[Tables::edge_to_vertex[e_id][0]], v[Tables::edge_to_vertex[e_id][1]]};
+        const auto& coords_global = node.global_coordinates();
+        const auto& depth = node.depth();
+
+        std::array<Edge_handle, internal::Cube_table::N_EDGES> edges;
+        for (int e_id = 0; e_id < edges.size(); ++e_id) {
+
+            const std::size_t e_gl = e_glIndex(e_id, coords_global[0], coords_global[1], coords_global[2], depth);
+            edges[e_id] = {e_gl, depth};
         }
 
         return edges;
