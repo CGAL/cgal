@@ -64,7 +64,7 @@ struct Refine_one_eighth {
 int main() {
     Octree_wrapper_ octree_wrap({-1, -1, -1, 1, 1, 1});
 
-    Refine_one_eighth split_predicate(4, 4);
+    Refine_one_eighth split_predicate(3, 4);
     octree_wrap.refine(split_predicate);
 
     auto sphere_function = [&](const Point& p) { return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z()); };
