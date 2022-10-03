@@ -301,6 +301,8 @@ of the `C3T3`. They can be removed using the function `remove_isolated_vertices(
 
 \section Mesh_3_section_interface Interface
 
+Since \cgal 5.6, this packages uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
+
 \subsection Mesh_3TheGlobalFunctions The Global Functions
 
 A 3D mesh generation process is launched through a call
