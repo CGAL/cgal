@@ -398,6 +398,8 @@ bool build_triangulation_impl(Tr& tr,
     const bool replace_domain_0,// = false,
     const bool allow_non_manifold) // = false
 {
+  if (verbose)
+    std::cout << "build_triangulation_impl()..." << std::endl;
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef std::array<Vertex_handle, 3>          Facet_vvv;
@@ -430,22 +432,28 @@ bool build_triangulation_impl(Tr& tr,
   if (!finite_cells.empty())
   {
     if (!CGAL::SMDS_3::build_finite_cells<Tr>(tr, finite_cells, subdomains, vertex_handle_vector, incident_cells_map,
-                                border_facets, verbose, replace_domain_0))
+      border_facets, verbose, replace_domain_0))
     {
-      if(verbose) std::cout << "build_finite_cells went wrong" << std::endl;
+      if (verbose) std::cout << "build_finite_cells went wrong" << std::endl;
       success = false;
     }
+    else
+      std::cout << "build finite cells done" << std::endl;
     if (!CGAL::SMDS_3::build_infinite_cells<Tr>(tr, incident_cells_map, verbose, allow_non_manifold))
     {
       if(verbose) std::cout << "build_infinite_cells went wrong" << std::endl;
       success = false;
     }
+    else
+      std::cout << "build infinite cells done" << std::endl;
     tr.tds().set_dimension(3);
     if (!CGAL::SMDS_3::assign_neighbors<Tr>(tr, incident_cells_map, allow_non_manifold))
     {
       if(verbose) std::cout << "assign_neighbors went wrong" << std::endl;
       success = false;
     }
+    else
+      std::cout << "assign neighbors done" << std::endl;
     if (verbose)
     {
       std::cout << "built triangulation : " << std::endl;
