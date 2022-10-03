@@ -32,7 +32,7 @@ namespace draw_function_for_ss2 {
 template <typename BufferType = float, class SS2, class DrawingFunctor>
 void compute_edge(typename SS2::Halfedge_const_handle eh,
                   const DrawingFunctor &drawing_functor, const SS2 *ss2,
-                  CGAL::GraphicBuffer<BufferType> &graphic_buffer) {
+                  CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
 
   if (!drawing_functor.draw_edge(*ss2, eh)) {
     return;
@@ -50,7 +50,7 @@ void compute_edge(typename SS2::Halfedge_const_handle eh,
 
 template <typename BufferType = float, class SS2>
 void print_halfedge_labels(typename SS2::Halfedge_const_handle h,
-                           CGAL::GraphicBuffer<BufferType> &graphic_buffer) {
+                           CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
   std::stringstream label;
 
   label << "H" << h->id() << " (V" << h->vertex()->id() << ") ";
@@ -65,7 +65,7 @@ void print_halfedge_labels(typename SS2::Halfedge_const_handle h,
 template <typename BufferType = float, class SS2, class DrawingFunctor>
 void compute_vertex(typename SS2::Vertex_const_handle vh,
                     const DrawingFunctor &drawing_functor, const SS2 *ss2,
-                    CGAL::GraphicBuffer<BufferType> &graphic_buffer) {
+                    CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
 
   if (!drawing_functor.draw_vertex(*ss2, vh)) {
     return;
@@ -84,7 +84,7 @@ void compute_vertex(typename SS2::Vertex_const_handle vh,
 
 template <typename BufferType = float, class SS2>
 void print_vertex_label(typename SS2::Vertex_const_handle vh,
-                        CGAL::GraphicBuffer<BufferType> &graphic_buffer) {
+                        CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
   std::stringstream label;
   label << "V" << vh->id() << std::ends;
   graphic_buffer.add_text(vh->point(), label.str());
@@ -92,7 +92,7 @@ void print_vertex_label(typename SS2::Vertex_const_handle vh,
 
 template <typename BufferType = float, class SS2, class DrawingFunctor>
 void compute_elements(const SS2 *ss2,
-                      CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                       const DrawingFunctor &drawing_functor) {
 
   for (typename SS2::Halfedge_const_iterator it = ss2->halfedges_begin();
@@ -113,7 +113,7 @@ void compute_elements(const SS2 *ss2,
 
 template <typename BufferType = float, class SS2, class DrawingFunctor>
 void add_in_graphic_buffer_ss2(const SS2 &ass2,
-                               CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                               CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                                const DrawingFunctor &drawing_functor) {
   draw_function_for_ss2::compute_elements(&ass2, graphic_buffer,
                                           drawing_functor);
@@ -121,7 +121,7 @@ void add_in_graphic_buffer_ss2(const SS2 &ass2,
 
 template <typename BufferType = float, class SS2>
 void add_in_graphic_buffer_ss2(
-    const SS2 &ass2, CGAL::GraphicBuffer<BufferType> &graphic_buffer) {
+    const SS2 &ass2, CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
   Drawing_functor<SS2, typename SS2::Vertex_const_handle,
                   typename SS2::Halfedge_const_handle,
                   typename SS2::Face_const_handle>
@@ -136,7 +136,7 @@ void add_in_graphic_buffer_ss2(
 template <class K, class DrawingFunctor>
 void draw(const CGAL_SS_TYPE &ass2, const DrawingFunctor &drawingfunctor,
           const char *title = "Straight Skeleton Basic Viewer") {
-  CGAL::GraphicBuffer<float> buffer;
+  CGAL::Graphic_buffer<float> buffer;
   add_in_graphic_buffer_ss2(ass2, buffer, drawingfunctor);
   draw_buffer(buffer);
 }
@@ -144,7 +144,7 @@ void draw(const CGAL_SS_TYPE &ass2, const DrawingFunctor &drawingfunctor,
 template <class K>
 void draw(const CGAL_SS_TYPE &ass2,
           const char *title = "Straight Skeleton Basic Viewer") {
-  CGAL::GraphicBuffer<float> buffer;
+  CGAL::Graphic_buffer<float> buffer;
   add_in_graphic_buffer_ss2(ass2, buffer);
   draw_buffer(buffer);
 }

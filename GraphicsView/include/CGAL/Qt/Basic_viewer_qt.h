@@ -83,7 +83,7 @@ public:
 
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
-                  GraphicBuffer<BufferType>& buf,
+                  Graphic_buffer<BufferType>& buf,
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
@@ -1612,7 +1612,7 @@ protected:
 
 protected:
 
-  GraphicBuffer<BufferType>& gBuffer;
+  Graphic_buffer<BufferType>& gBuffer;
 
   bool m_draw_vertices;
   bool m_draw_edges;
@@ -1724,7 +1724,7 @@ protected:
  * @param graphic_buffer
  */
 template <typename BufferType = float>
-void draw_buffer(GraphicBuffer<BufferType> &graphic_buffer) {
+void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer) {
 
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;

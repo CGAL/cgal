@@ -40,13 +40,13 @@ namespace CGAL {
 // This class is responsible for dealing with available CGAL data structures and
 // handling buffers.
 template <typename BufferType = float>
-class GraphicBuffer {
+class Graphic_buffer {
 
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
 
-  GraphicBuffer(std::vector<BufferType> (&pos)[20], CGAL::Bbox_3 &bbox)
+  Graphic_buffer(std::vector<BufferType> (&pos)[20], CGAL::Bbox_3 &bbox)
       : m_buffer_for_mono_points(&pos[POS_MONO_POINTS], nullptr, &bbox, nullptr,
                                  nullptr, nullptr),
         m_buffer_for_colored_points(&pos[POS_COLORED_POINTS], nullptr, &bbox,
@@ -72,7 +72,7 @@ public:
                                    &pos[FLAT_NORMAL_COLORED_FACES],
                                    &pos[SMOOTH_NORMAL_COLORED_FACES]) {}
 
-  GraphicBuffer()
+  Graphic_buffer()
       : m_buffer_for_mono_points(&arrays[POS_MONO_POINTS], nullptr,
                                  &m_bounding_box, nullptr, nullptr, nullptr),
         m_buffer_for_colored_points(&arrays[POS_COLORED_POINTS], nullptr,

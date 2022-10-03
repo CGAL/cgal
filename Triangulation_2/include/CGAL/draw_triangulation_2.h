@@ -31,7 +31,7 @@ namespace draw_function_for_t2 {
 template <typename BufferType = float, class T2, class DrawingFunctor>
 void compute_face(typename T2::Finite_faces_iterator fh,
                   const DrawingFunctor &drawing_functor,
-                  CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                   const T2 *t2) {
 
   if (!drawing_functor.draw_face(*t2, fh)) {
@@ -56,7 +56,7 @@ void compute_face(typename T2::Finite_faces_iterator fh,
 template <typename BufferType = float, class T2, class DrawingFunctor>
 void compute_edge(typename T2::Finite_edges_iterator eh,
                   const DrawingFunctor &drawing_functor, const T2 *t2,
-                  CGAL::GraphicBuffer<BufferType> &graphic_buffer) {
+                  CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
 
   if (!drawing_functor.draw_edge(*t2, eh)) {
     return;
@@ -79,7 +79,7 @@ void compute_edge(typename T2::Finite_edges_iterator eh,
 
 template <typename BufferType = float, class T2, class DrawingFunctor>
 void compute_vertex(typename T2::Vertex_handle vh,
-                    CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                    CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                     const DrawingFunctor &drawing_functor, const T2 *t2) {
 
   if (!drawing_functor.draw_vertex(*t2, vh)) {
@@ -96,7 +96,7 @@ void compute_vertex(typename T2::Vertex_handle vh,
 
 template <typename BufferType = float, class T2, class DrawingFunctor>
 void compute_elements(const T2 *t2,
-                      CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                       const DrawingFunctor &drawing_functor,
                       bool m_nofaces = false) {
 
@@ -122,7 +122,7 @@ void compute_elements(const T2 *t2,
 
 template <typename BufferType = float, class T2, class DrawingFunctor>
 void add_in_graphic_buffer_t2(const T2 &at2,
-                              CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                              CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                               const DrawingFunctor &drawing_functor,
                               bool m_nofaces = false) {
   draw_function_for_t2::compute_elements(&at2, graphic_buffer, drawing_functor,
@@ -131,10 +131,10 @@ void add_in_graphic_buffer_t2(const T2 &at2,
 
 template <typename BufferType = float, class T2>
 void add_in_graphic_buffer_t2(const T2 &at2,
-                              CGAL::GraphicBuffer<BufferType> &graphic_buffer,
+                              CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                               bool m_nofaces = false) {
 
-  CGAL::GraphicBuffer<float> buffer;
+  CGAL::Graphic_buffer<float> buffer;
   Drawing_functor<T2, typename T2::Vertex_handle,
                   typename T2::Finite_edges_iterator,
                   typename T2::Finite_faces_iterator>
@@ -162,7 +162,7 @@ template <class Gt, class Tds, class DrawingFunctor>
 void draw(const CGAL_T2_TYPE &at2, const DrawingFunctor &drawingfunctor,
           const char *title = "Triangulation_2 Basic Viewer",
           bool nofill = false) {
-  CGAL::GraphicBuffer<float> buffer;
+  CGAL::Graphic_buffer<float> buffer;
   add_in_graphic_buffer_t2(at2, buffer, drawingfunctor, nofill);
   draw_buffer(buffer);
 }
@@ -171,7 +171,7 @@ template <class Gt, class Tds>
 void draw(const CGAL_T2_TYPE &at2,
           const char *title = "Triangulation_2 Basic Viewer",
           bool nofill = false) {
-  CGAL::GraphicBuffer<float> buffer;
+  CGAL::Graphic_buffer<float> buffer;
   add_in_graphic_buffer_t2(at2, buffer, nofill);
   draw_buffer(buffer);
 }

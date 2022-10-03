@@ -47,7 +47,7 @@ namespace draw_function_for_PointSet {
 
 template <typename BufferType = float, class PointSet>
 void compute_vertex(const typename PointSet::Point_map::value_type &p,
-                    GraphicBuffer<BufferType> &graphic_buffer) {
+                    Graphic_buffer<BufferType> &graphic_buffer) {
   graphic_buffer.add_point(p);
 
   // We can use add_point(p, c) with c a CGAL::IO::Color to add a colored point
@@ -56,7 +56,7 @@ void compute_vertex(const typename PointSet::Point_map::value_type &p,
 
 template <typename BufferType = float, class PointSet>
 void compute_elements(const PointSet *pointset,
-                      GraphicBuffer<BufferType> &graphic_buffer) {
+                      Graphic_buffer<BufferType> &graphic_buffer) {
   for (typename PointSet::const_iterator it = pointset->begin();
        it != pointset->end(); ++it) {
     compute_vertex<float, PointSet>(pointset->point(*it), graphic_buffer);
@@ -66,7 +66,7 @@ void compute_elements(const PointSet *pointset,
 } // namespace draw_function_for_PointSet
 
 template <typename BufferType = float, class PointSet>
-void add_in_graphic_buffer_point_set(GraphicBuffer<BufferType> &graphic_buffer,
+void add_in_graphic_buffer_point_set(Graphic_buffer<BufferType> &graphic_buffer,
                                      const PointSet *aPointSet = nullptr) {
   if (aPointSet != nullptr) {
     draw_function_for_PointSet::compute_elements(aPointSet, graphic_buffer);
@@ -77,7 +77,7 @@ void add_in_graphic_buffer_point_set(GraphicBuffer<BufferType> &graphic_buffer,
 template <class P, class V>
 void draw(const Point_set_3<P, V> &apointset,
           const char *title = "Point_set_3 Basic Viewer") {
-  GraphicBuffer<float> buffer;
+  Graphic_buffer<float> buffer;
   add_in_graphic_buffer_point_set(buffer, &apointset);
   draw_buffer(buffer);
 }
