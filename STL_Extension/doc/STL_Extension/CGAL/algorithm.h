@@ -125,7 +125,6 @@ the result of `operator++()` on a forward iterator.
 
 \sa `CGAL::predecessor()`
 
-\returns `it`.
 */
 template <class ForwardIterator>
 ForwardIterator successor(ForwardIterator it);
