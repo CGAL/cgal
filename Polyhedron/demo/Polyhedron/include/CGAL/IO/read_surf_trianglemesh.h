@@ -11,6 +11,8 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+namespace CGAL {
+
 //a material is composed of an material Id and a material name.
 typedef std::pair<int, std::string> material;
 
@@ -27,10 +29,11 @@ std::string to_lower_case(const std::string& str)
   return r;
 }
 
+template <typename MaterialIdType>
 bool get_material_metadata(std::istream& input,
                            std::string& line,
                            material& _material,
-                           int material_id)
+                           MaterialIdType material_id)
 {
   std::istringstream iss;
   iss.str(line);
@@ -76,9 +79,10 @@ bool line_starts_with(const std::string& line, const char* cstr)
 namespace IO{
 namespace internal{
 
+template<typename IdType>
 bool treat_surf_materials(std::istream& input,
                           std::vector<material>& materials,
-                          int& material_id)
+                          IdType& material_id)
 {
   std::string line;
   while(std::getline(input, line))
@@ -571,3 +575,5 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   }
   return true;
 }
+
+}//end namespace CGAL

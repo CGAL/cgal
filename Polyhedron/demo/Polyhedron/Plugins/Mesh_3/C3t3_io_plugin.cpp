@@ -19,9 +19,11 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
 
 public:
   QString name() const override { return "C3t3_io_plugin"; }
-  QString nameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
-  QString saveNameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
-  QString loadNameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh)"; }
+  QString nameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.tetra.am)"; }
+  QString saveNameFilters() const override{
+    return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.tetra.am);;OFF files (*.off)"; }
+  QString loadNameFilters() const override {
+    return "binary files (*.cgal);;ascii (*.mesh);;avizo (*.tetra.am)"; }
   bool canLoad(QFileInfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
@@ -49,14 +51,21 @@ bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad(QFileInfo fi) const {
               << (const char*)fi.filePath().toUtf8() << std::endl;
     return false;
   }
-  std::string line;
-  std::istringstream iss;
-  std::getline (in,line);
-  iss.str(line);
-  std::string keyword;
-  if (iss >> keyword)
-    if (keyword == "binary")
-      return true;
+  if (fi.suffix().toLower() == "cgal")
+  {
+    std::string line;
+    std::istringstream iss;
+    std::getline(in, line);
+    iss.str(line);
+    std::string keyword;
+    if (iss >> keyword)
+      if (keyword == "binary")
+        return true;
+  }
+  else if (fi.suffix().toLower() == "am")
+  {
+    return true;
+  }
   return false;
 }
 
@@ -87,7 +96,6 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
     if(fileinfo.suffix().toLower() == "cgal")
     {
         item->setName(fileinfo.baseName());
-
 
         if(item->load_binary(in)) {
           if(add_to_scene){
@@ -181,7 +189,27 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
                                         QMessageBox::Ok);
       }
     }
+    else if (fileinfo.suffix().toLower() == "am")
+    {
+      if (CGAL::IO::internal::is_avizo_tetra_format(in, "ascii"))
+      {
+        in.close();
+        in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
+        CGAL_assertion(!(!in));
+      }
 
+      item->setName(fileinfo.baseName());
+
+      if (CGAL::IO::read_AVIZO_TETRA(in, item->c3t3().triangulation()))
+      {
+        item->resetCutPlane();
+        item->c3t3_changed();
+        item->changed();
+        if (add_to_scene)
+          CGAL::Three::Three::scene()->addItem(item);
+        return QList<Scene_item*>() << item;
+      }
+    }
 
     // if all loading failed...
     delete item;
