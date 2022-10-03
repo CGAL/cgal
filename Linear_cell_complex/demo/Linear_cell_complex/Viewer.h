@@ -16,9 +16,7 @@
 
 #include "typedefs.h"
 
-// QUESTION: When I added this line compiler tell me "No such file or directory!" how?
-#include <CGAL/draw_linear_cell_complex_function.h>
-// #include <CGAL/draw_linear_cell_complex.h>
+#include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 class Viewer : public CGAL::Basic_viewer_qt<float>

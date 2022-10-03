@@ -38,7 +38,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
   scene = scene_;
 
   if (scene->lcc!=nullptr)
-  { CGAL::add_in_graphic_buffer_lcc(gBuffer, m_drawing_functor, scene->lcc); }
+  { CGAL::add_in_graphic_buffer_lcc(*scene->lcc, gBuffer, m_drawing_functor); }
 
   if (doredraw)
   { Base::redraw(); }
@@ -47,7 +47,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
 void Viewer::sceneChanged()
 {
   gBuffer.clear();
-  CGAL::add_in_graphic_buffer_lcc(gBuffer, m_drawing_functor, scene->lcc);
+  CGAL::add_in_graphic_buffer_lcc(*scene->lcc, gBuffer, m_drawing_functor);
 
   this->camera()->setSceneBoundingBox(
       CGAL::qglviewer::Vec(gBuffer.get_bounding_box().xmin(),
