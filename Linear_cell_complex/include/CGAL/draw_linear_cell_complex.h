@@ -259,6 +259,17 @@ void add_in_graphic_buffer_lcc(const LCC &alcc, Graphic_buffer<BufferType> &grap
                                   typename LCC::Dart_const_handle,
                                   typename LCC::Dart_const_handle> drawing_functor_with_volume;
 
+  drawing_functor_with_volume.colored_volume = [](const LCC&,
+                      typename LCC::Dart_const_handle) -> bool
+  { return true; };
+
+  drawing_functor_with_volume.volume_color =  [] (const LCC& alcc,
+                           typename LCC::Dart_const_handle dh) -> CGAL::IO::Color
+  {
+    CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
+    return get_random_color(random);
+  };
+
   add_in_graphic_buffer_lcc(alcc, graphic_buffer, drawing_functor_with_volume);
 }
 
