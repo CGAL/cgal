@@ -15,9 +15,7 @@
 
 #include <CGAL/license/SMDS_3.h>
 
-
 #include <CGAL/IO/File_medit.h>
-#include <CGAL/IO/read_surf_trianglemesh.h>
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 
 #include <iostream>
@@ -39,6 +37,81 @@ namespace CGAL {
 // ---------------------------------
 
 namespace IO {
+
+namespace internal {
+
+  //a material is composed of an material Id and a material name.
+  typedef std::pair<int, std::string> material;
+
+  struct MaterialData
+  {
+    material innerRegion;
+    material outerRegion;
+  };
+
+  template <typename MaterialIdType>
+  bool get_material_metadata(std::istream& input,
+                             std::string& line,
+                             material& _material,
+                             MaterialIdType material_id)
+  {
+    std::istringstream iss;
+    iss.str(line);
+
+    iss >> _material.second;//name
+
+    while (std::getline(input, line))
+    {
+      std::string prop; //property
+      iss.clear();
+      iss.str(line);
+      iss >> prop;
+
+      if (prop.compare("Id") == 0)
+      {
+        int tmp_id;
+        iss >> tmp_id;
+        _material.first = material_id;
+
+        std::string mat = _material.second;
+        boost::algorithm::to_lower(mat);
+        if ((0 == mat.compare("exterior"))
+          && _material.first != 0)
+        {
+          std::cerr << "Exterior should have index 0. ";
+          std::cerr << "In this file it has index " << _material.first << "." << std::endl;
+          std::cerr << "Reader failed, because Meshing will fail to terminate." << std::endl;
+          return false;
+        }
+      }
+      else if (prop.compare("}") == 0)
+        return true; //end of this material
+    }
+    return false;
+  }
+
+  template<typename IdType>
+  bool treat_surf_materials(std::istream& input,
+                            std::vector<material>& materials,
+                            IdType& material_id)
+  {
+    std::string line;
+    while (std::getline(input, line))
+    {
+      if (line_starts_with(line, "}"))
+        break;
+      else
+      {
+        material _material;
+        if (!get_material_metadata(input, line, _material, material_id++))
+          return false;
+        materials.push_back(_material);
+      }
+    }
+    return true;
+  }
+
+}
 
 /**
  * @ingroup PkgSMDS3ExportFunctions
@@ -264,6 +337,14 @@ namespace internal {
     std::string description;
     std::string at_label;
   };
+
+  bool line_starts_with(const std::string& line, const char* cstr)
+  {
+    const std::size_t fnws = line.find_first_not_of(" \t");
+    if (fnws != std::string::npos)
+      return (line.compare(fnws, strlen(cstr), cstr) == 0);
+    return false;
+  }
 
   void go_to_at_label(std::istream& input,
                       std::string& line,
