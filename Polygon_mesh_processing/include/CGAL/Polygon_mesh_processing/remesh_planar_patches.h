@@ -28,6 +28,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
 #include <unordered_map>
+#include <boost/dynamic_bitset.hpp>
 
 #ifdef DEBUG_PCA
 #include <fstream>
@@ -412,7 +413,7 @@ template <typename TriangleMesh,
           typename FaceCCIdMap,
           typename VertexPointMap>
 bool decimate_impl(TriangleMesh& tm,
-                   const std::pair<std::size_t, std::size_t>& nb_corners_and_nb_cc,
+                   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc,
                    VertexCornerIdMap& vertex_corner_id,
                    EdgeIsConstrainedMap& edge_is_constrained,
                    FaceCCIdMap& face_cc_ids,
@@ -423,8 +424,8 @@ bool decimate_impl(TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename graph_traits::face_descriptor face_descriptor;
   typedef std::pair<std::size_t, std::size_t> Id_pair;
-  std::vector< std::vector<Id_pair> > face_boundaries(nb_corners_and_nb_cc.second);
   std::vector< typename K::Vector_3 > face_normals(nb_corners_and_nb_cc.second, NULL_VECTOR);
   //collect corners
   std::vector< Point_3 > corners(nb_corners_and_nb_cc.first);
@@ -435,63 +436,117 @@ bool decimate_impl(TriangleMesh& tm,
       corners[i]=get(vpm, v);
   }
 
-  // collect maximal constrained edges per cc
-  for(halfedge_descriptor h : halfedges(tm))
-  {
-    if (!get(edge_is_constrained, edge(h, tm)) || is_border(h, tm)) continue;
-
-    std::size_t i1 = get(vertex_corner_id, source(h, tm));
-    if ( is_corner_id(i1) )
-    {
-      halfedge_descriptor h_init = h;
-      do{
-        std::size_t i2 = get(vertex_corner_id, target(h_init, tm));
-        if ( is_corner_id(i2) )
-        {
-          std::size_t cc_id = get(face_cc_ids, face(h_init, tm));
-          face_boundaries[ cc_id ].push_back( Id_pair(i1,i2) );
-          if (face_normals[ cc_id ] == NULL_VECTOR)
-          {
-            face_normals[ cc_id ] = normal(get(vpm, source(h, tm)),
-                                           get(vpm, target(h, tm)),
-                                           get(vpm, target(next(h, tm), tm)));
-          }
-          break;
-        }
-
-        do{
-          h_init=opposite(next(h_init, tm), tm);
-        } while( !get(edge_is_constrained, edge(h_init, tm)) );
-        h_init=opposite(h_init, tm);
-      }
-      while(true);
-    }
-  }
 
   /// @TODO this is rather drastic in particular if the mesh has almost none simplified faces
 /// TODO use add_faces?
 
   // compute the new mesh
-  std::vector< cpp11::array<std::size_t, 3> > triangles;
-  triangles.reserve(nb_corners_and_nb_cc.second);
+  std::vector< std::vector< cpp11::array<std::size_t, 3> > > triangles_per_cc(nb_corners_and_nb_cc.second);
+  boost::dynamic_bitset<> cc_to_handle(nb_corners_and_nb_cc.second);
+  cc_to_handle.set();
 
-  for(std::size_t cc_id=0; cc_id<nb_corners_and_nb_cc.second; ++cc_id)
+  do
   {
-    const std::vector< Id_pair >& csts = face_boundaries[cc_id];
-    if (csts.size() < 3)
-      return false;
-    if (csts.size()==3)
+    std::vector< std::vector<Id_pair> > face_boundaries(nb_corners_and_nb_cc.second);
+    // collect maximal constrained edges per cc
+    for(halfedge_descriptor h : halfedges(tm))
     {
-      triangles.push_back( make_array(csts[0].first,
-                                      csts[0].second,
-                                      csts[0].first==csts[1].first ||
-                                      csts[0].second==csts[1].first ?
-                                      csts[1].second:csts[1].first) );
+      if (!get(edge_is_constrained, edge(h, tm)) || is_border(h, tm)) continue;
+
+      std::size_t i1 = get(vertex_corner_id, source(h, tm));
+      if ( is_corner_id(i1) )
+      {
+        halfedge_descriptor h_init = h;
+        std::size_t cc_id = get(face_cc_ids, face(h_init, tm));
+        if (!cc_to_handle.test(cc_id)) continue;
+        do{
+          std::size_t i2 = get(vertex_corner_id, target(h_init, tm));
+          if ( is_corner_id(i2) )
+          {
+            face_boundaries[ cc_id ].push_back( Id_pair(i1,i2) );
+            if (face_normals[ cc_id ] == NULL_VECTOR)
+            {
+              face_normals[ cc_id ] = normal(get(vpm, source(h, tm)),
+                                             get(vpm, target(h, tm)),
+                                             get(vpm, target(next(h, tm), tm)));
+            }
+            break;
+          }
+
+          do{
+            h_init=opposite(next(h_init, tm), tm);
+          } while( !get(edge_is_constrained, edge(h_init, tm)) );
+          h_init=opposite(h_init, tm);
+        }
+        while(true);
+      }
     }
-    else
-      if (!add_triangle_faces<K>(csts, face_normals[cc_id], corners, triangles))
+
+    for (std::size_t cc_id = cc_to_handle.find_first();
+                         cc_id < cc_to_handle.npos;
+                         cc_id = cc_to_handle.find_next(cc_id))
+    {
+      std::vector< cpp11::array<std::size_t, 3> >& triangles = triangles_per_cc[cc_id];
+      triangles.clear();
+
+      const std::vector< Id_pair >& csts = face_boundaries[cc_id];
+      if (csts.size() < 3)
         return false;
+      if (csts.size()==3)
+      {
+        triangles.push_back( make_array(csts[0].first,
+                                        csts[0].second,
+                                        csts[0].first==csts[1].first ||
+                                        csts[0].second==csts[1].first ?
+                                        csts[1].second:csts[1].first) );
+        cc_to_handle.set(cc_id, 0);
+      }
+      else
+      {
+        if (add_triangle_faces<K>(csts, face_normals[cc_id], corners, triangles))
+          cc_to_handle.set(cc_id, 0);
+        else
+        {
+          // make all vertices of the patch a corner
+          CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, cc_id, face_cc_ids);
+          std::vector<vertex_descriptor> new_corners;
+          for (vertex_descriptor v : vertices(ffg))
+          {
+            std::size_t i = get(vertex_corner_id, v);
+            if ( !is_corner_id(i) )
+            {
+              put(vertex_corner_id, v, nb_corners_and_nb_cc.first++);
+              corners.push_back(get(vpm, v));
+              new_corners.push_back(v);
+            }
+          }
+          // add all the faces of the current patch
+          for (face_descriptor f : faces(ffg))
+          {
+            halfedge_descriptor h = halfedge(f, tm);
+            triangles.push_back({ get(vertex_corner_id, source(h,tm)),
+                                  get(vertex_corner_id, target(h,tm)),
+                                  get(vertex_corner_id, target(next(h,tm), tm)) });
+          }
+          // reset flag for neighbor connected components only if interface has changed
+          for (vertex_descriptor v : new_corners)
+          {
+            for (halfedge_descriptor h : halfedges_around_target(halfedge(v, tm), tm))
+            {
+              if (!is_border(h, tm))
+                cc_to_handle.set(get(face_cc_ids, face(h, tm)), 1);
+            }
+          }
+          cc_to_handle.set(cc_id, 0);
+        }
+      }
+    }
   }
+  while(cc_to_handle.any());
+
+  std::vector< cpp11::array<std::size_t, 3> > triangles;
+  for (const std::vector<cpp11::array<std::size_t, 3>>& cc_trs : triangles_per_cc)
+    triangles.insert(triangles.end(), cc_trs.begin(), cc_trs.end());
 
   if (!is_polygon_soup_a_polygon_mesh(triangles))
     return false;
