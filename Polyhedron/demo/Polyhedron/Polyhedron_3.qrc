@@ -50,6 +50,7 @@
         <file>resources/shader_instanced.vert</file>
         <file>resources/shader_no_light_no_selection.frag</file>
         <file>resources/shader_c3t3_spheres.vert</file>
+        <file>resources/shader_c3t3_spheres.frag</file>
         <file>resources/shader_c3t3_edges.vert</file>
         <file>resources/shader_c3t3_edges.frag</file>
         <file>resources/shader_c3t3.vert</file>
@@ -84,6 +85,7 @@
         <file>resources/compatibility_shaders/shader_c3t3_edges.frag</file>
         <file>resources/compatibility_shaders/shader_c3t3_edges.vert</file>
         <file>resources/compatibility_shaders/shader_c3t3_spheres.vert</file>
+        <file>resources/compatibility_shaders/shader_c3t3_spheres.frag</file>
         <file>resources/compatibility_shaders/shader_c3t3.frag</file>
         <file>resources/compatibility_shaders/shader_c3t3.vert</file>
         <file>resources/compatibility_shaders/shader_instanced.vert</file>
