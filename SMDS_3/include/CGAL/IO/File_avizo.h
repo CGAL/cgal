@@ -304,7 +304,10 @@ namespace internal {
       {
         int i, j, k, l;
         input >> i >> j >> k >> l;
-        tetrahedra.push_back({ {i, j, k, l} });
+        tetrahedra.push_back({ {i - 1,
+                                j - 1,
+                                k - 1,
+                                l - 1} });
       }
     }
   }
