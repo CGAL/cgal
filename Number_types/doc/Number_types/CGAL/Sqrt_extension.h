@@ -11,15 +11,15 @@ An instance of this class represents an extension of the type `NT` by *one* squa
 
 `Sqrt_extension` is `RealEmbeddable` if NT is `RealEmbeddable`.
 
-For example, let `Integer` be some type representing \f$ \Z\f$, then
-`Sqrt_extension<Integer,Integer>` is able to represent \f$ \Z[\sqrt{\mathrm{root}}]\f$
+For example, let `Integer` be some type representing \f$ \mathbb{Z}\f$, then
+`Sqrt_extension<Integer,Integer>` is able to represent \f$ \mathbb{Z}[\sqrt{\mathrm{root}}]\f$
 for some arbitrary Integer \f$\mathrm{root}\f$. \cgalFootnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="http://mathworld.wolfram.com/ExtensionRing.html">\cgalFootnoteCode{http://mathworld.wolfram.com/ExtensionRing.html}</A>}
 The value of \f$\mathrm{root}\f$ is set at
 construction time, or set to zero if it is not specified.
 
-Arithmetic operations among different extensions, say \f$ \Z[\sqrt{a}]\f$
-and \f$ \Z[\sqrt{b}]\f$, are not supported.
-The result would be in \f$ \Z[\sqrt{a},\sqrt{b}]\f$, which is not
+Arithmetic operations among different extensions, say \f$ \mathbb{Z}[\sqrt{a}]\f$
+and \f$ \mathbb{Z}[\sqrt{b}]\f$, are not supported.
+The result would be in \f$ \mathb{Z}Z[\sqrt{a},\sqrt{b}]\f$, which is not
 representable by `Sqrt_extension<Integer,Integer>`.
 
 \attention The user is responsible to check that arithmetic operations are carried out for elements from the same extensions only.
@@ -78,7 +78,7 @@ NT
 </TABLE>
 
 The extension of a `UniqueFactorizationDomain` or
-`EuclideanRing` is just an `IntegralDomain`, since the extension in general destroys the unique factorization property. For instance consider \f$ \Z[\sqrt{10}]\f$, the extension of \f$ \Z\f$ by \f$ \sqrt{10}\f$: in \f$ \Z[\sqrt{10}]\f$ the element 10 has two different factorizations \f$ \sqrt{10} \cdot \sqrt{10}\f$ and \f$ 2 \cdot 5\f$. In particular, the factorization is not unique.
+`EuclideanRing` is just an `IntegralDomain`, since the extension in general destroys the unique factorization property. For instance consider \f$ \mathbb{Z}[\sqrt{10}]\f$, the extension of \f$ \mathbb{Z}\f$ by \f$ \sqrt{10}\f$: in \f$ \mathbb{Z}[\sqrt{10}]\f$ the element 10 has two different factorizations \f$ \sqrt{10} \cdot \sqrt{10}\f$ and \f$ 2 \cdot 5\f$. In particular, the factorization is not unique.
 
 If `NT` is a model of `RealEmbeddable` the type `Sqrt_extension` is also considered as `RealEmbeddable`. However, by default it is not allowed to compare values from different extensions for efficiency reasons. In case such a comparison becomes necessary, use the member function compare with the according Boolean flag.
 If such a comparison is a very frequent case, override the default of `DifferentExtensionComparable` by giving \cgalTagTrue as third template parameter. This effects the behavior of compare functions as well as the compare operators.

@@ -37,7 +37,7 @@ The function `make_root_of_2()` constructs an algebraic number of degree 2 over 
 ring number type.
 
 Returns the smallest real root of the polynomial \f$ aX^2+bX+c\f$ if
-\f$ s\f$ is true, and the largest root is \f$ s\f$ is false.
+\f$ s\f$ is `true`, and the largest root is \f$ s\f$ is `false`.
 
 \pre `RT` is an `IntegralDomainWithoutDivision`.
 \pre The polynomial has at least one real root.
