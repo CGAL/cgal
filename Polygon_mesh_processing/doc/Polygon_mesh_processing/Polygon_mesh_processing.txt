@@ -876,6 +876,60 @@ not provide storage for the normals.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp}
 
+****************************************
+\section PMPICC Computing Curvatures
+
+This package provides methods to compute curvatures on polygonal meshes based on #PAPER#.
+This includes mean curvature, gaussian curvature, principal curvatures and directions.
+These can be computed on triangle meshes, quad meshes, and meshes with n-gon faces.
+The algorithms used prove to work well in general. Also, on meshes with noise
+on vertex positions, they give accurate results, on the condition that the
+correct vertex normals are provided.
+
+The implementation is generic in terms of mesh data structure. It can be used on Surface_mesh,
+Polyhedron_3 and other polygonal mesh structures based on the Face Graph Model.
+
+These computations are performed using :
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures()`
+
+\cgalFigureRef{icc_diff_radius} shows how the mean curvature changes depending on
+the ball_radius named parameter which can be set to a value > 0 to get a smoother
+distribution of valuesa and "diffuse" the extreme values of curvatures across the mesh.
+
+\cgalFigureAnchor{icc_diff_radius}
+<center>
+<img src="icc_diff_radius.png" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{icc_diff_radius}
+The mean curvature distrubution on a bear mesh with different values for the expanding ball radius
+\cgalFigureCaptionEnd
+
+Property maps are used to record the computed curvatures as shown in examples.
+
+\subsection ICCExample Interpolated Corrected Curvature Examples
+
+Property maps are an API introduced in the boost library that allows to
+associate values to keys. In the following examples, for each proberty map, we associate
+a curvature value to each vertex.
+
+\subsubsection ICCExample Interpolated Corrected Curvature on a Surface Mesh.
+
+The following example illustrates how to
+compute the curvatures on vertices
+and store them in property maps provided by the class `Surface_mesh`.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example.cpp}
+
+\subsubsection NormalsExampleNP Interpolated Corrected Curvature on a Polyhedron
+
+The following example illustrates how to
+compute the curvatures on vertices
+and store them in unordered (or ordered) maps as the class `Polyhedron_3` does
+not provide storage for the curvatures.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_polyhedron_example.cpp}
 
 ****************************************
 \section PMPSlicer Slicer

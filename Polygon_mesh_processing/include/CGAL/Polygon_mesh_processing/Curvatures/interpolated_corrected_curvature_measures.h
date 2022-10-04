@@ -44,7 +44,7 @@ typename GT::FT average_edge_length(const PolygonMesh& pmesh)
     if (n == 0)
         return 0;
 
-    GT::FT avg_edge_length = 0;
+    typename GT::FT avg_edge_length = 0;
     for (auto e : edges(pmesh))
         avg_edge_length += edge_length(e, pmesh);
 
@@ -52,35 +52,12 @@ typename GT::FT average_edge_length(const PolygonMesh& pmesh)
     return avg_edge_length;
 }
 
-}
-
-/*!
- * \ingroup PMP_corrected_curvatures_grp
- * Enumeration type used to specify which measure of a given face
- * is computed for the interpolated corrected curvature functions.
- */
-// enum
 enum Curvature_measure_index {
     MU0_AREA_MEASURE, ///< corrected area density
     MU1_MEAN_CURVATURE_MEASURE, ///< corrected mean curvature density
     MU2_GAUSSIAN_CURVATURE_MEASURE ///< corrected gaussian curvature density
 };
 
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Computes the interpolated corrected area measure \f$ \mu_0 \f$ of a specific face.
-*
-* @tparam GT geometric traits class model of `Kernel`.
-*
-* @param x is a vector of the vertex positions of the face.
-* @param u is a vector of the vertex normals of the face.
-*
-*
-* @see `interpolated_corrected_mean_curvature_measure_face()`
-* @see `interpolated_corrected_gaussian_curvature_measure_face()`
-* @see `interpolated_corrected_measure_mesh()`
-*/
 template<typename GT>
 typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typename GT::Vector_3>& u,
                                                          const std::vector<typename GT::Vector_3>& x = {})
@@ -136,20 +113,6 @@ typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typen
     }
 }
 
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Computes the interpolated corrected mean curvature measure \f$ \mu_1 \f$ of a specific face.
-*
-* @tparam GT geometric traits class model of `Kernel`.
-*
-* @param x is a vector of the vertex positions of the face.
-* @param u is a vector of the vertex nomrals of the face.
-*
-* @see `interpolated_corrected_gaussian_curvature_measure_face()`
-* @see `interpolated_corrected_area_measure_face()`
-* @see `interpolated_corrected_measure_mesh()`
-*/
 template<typename GT>
 typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::vector<typename GT::Vector_3>& u,
                                                                    const std::vector<typename GT::Vector_3>& x = {})
@@ -216,20 +179,6 @@ typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::ve
     }
 }
 
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Computes the interpolated corrected gaussian curvature measure \f$ \mu_2 \f$ of a specific face.
-*
-* @tparam GT geometric traits class model of `Kernel`.
-*
-* @param x is a vector of the vertex positions of the face.
-* @param u is a vector of the vertex nomrals of the face.
-*
-* @see `interpolated_corrected_mean_curvature_measure_face()`
-* @see `interpolated_corrected_area_measure_face()`
-* @see `interpolated_corrected_measure_mesh()`
-*/
 template<typename GT>
 typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std::vector<typename GT::Vector_3>& u,
                                                                        const std::vector<typename GT::Vector_3>& x = {})
@@ -277,21 +226,6 @@ typename GT::FT interpolated_corrected_gaussian_curvature_measure_face(const std
     }
 }
 
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Computes the interpolated corrected anisotropic measure \f$ \mu_{XY} \f$ of a specific face.
-*
-* @tparam GT geometric traits class model of `Kernel`.
-*
-* @param u is a vector of the vertex nomrals of the face.
-* @param x is a vector of the vertex positions of the face.
-*
-* @return an array of scalar values for each combination of the standard basis (3x3)
-* These are the values of the interpolated corrected anisotropic measure of the given face.
-*
-* @see `interpolated_corrected_anisotropic_measure_mesh()`
-*/
 template<typename GT>
 std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_face(const std::vector<typename GT::Vector_3>& u,
                                                                                    const std::vector<typename GT::Vector_3>& x)
@@ -403,51 +337,6 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
     return muXY;
 }
 
-
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Computes the interpolated corrected curvature measure on each face of the mesh.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam FaceMeasureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `GT::FT` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param fmm (face measure map) the property map used for storing the computed interpolated corrected measure.
-* @param mu_i an enum for choosing between computing
-*             the area measure, the mean curvature measure or the gaussian curvature measure.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Point_3` as value type}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Vector_3` as value type}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using compute_vertex_normals()}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @see `interpolated_corrected_area_measure_face()`
-* @see `interpolated_corrected_mean_curvature_measure_face()`
-* @see `interpolated_corrected_gaussian_curvature_measure_face()`
-*/
 template<typename PolygonMesh, typename FaceMeasureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void
@@ -518,48 +407,6 @@ template<typename PolygonMesh, typename FaceMeasureMap,
     }
 }
 
-
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Computes the interpolated corrected anisotropic measure on each face of the mesh
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam FaceMeasureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::array<GT::FT, 3 * 3>` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param fmm (face measure map) the property map used for storing the computed interpolated corrected measure.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Point_3` as value type}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Vector_3` as value type}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using compute_vertex_normals()}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @see `interpolated_corrected_anisotropic_measure_face()`
-* @see `interpolated_corrected_measure_mesh()`
-*/
 template<typename PolygonMesh, typename FaceMeasureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void
@@ -636,21 +483,6 @@ template<typename PolygonMesh, typename FaceMeasureMap,
 //    return samples_in / (typename GT::FT)(res * (res + 1) / 2);
 //}
 
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Computes the ratio of inclusion of a face in a ball of radius `r` around the
-* point `c`.
-*
-* @tparam GT geometric traits class model of `Kernel`.
-*
-* @param x is a vector of the vertex positions of the face.
-* @param r is the radius of the ball.
-* @param c is the center of the ball.
-*
-* @see `expand_interpolated_corrected_measure_vertex()`
-* @see `expand_interpolated_corrected_anisotropic_measure_vertex()`
-*/
 template<typename GT>
 typename GT::FT face_in_ball_ratio(const std::vector<typename GT::Vector_3>& x,
                                    const typename GT::FT r,
@@ -682,52 +514,6 @@ typename GT::FT face_in_ball_ratio(const std::vector<typename GT::Vector_3>& x,
     return (r - d_min) / (d_max - d_min);
 }
 
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Expands given face area and curvature (mean or gaussian) measures around a vertex `v`.
-* Expansion is based on the inclusion ratio of each face in a ball of radius `r` around the vertex `v`.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam FaceMeasureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `GT::FT` as value type.
-* @tparam VertexMeasureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `GT::FT` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param area_fmm (area face measure map) the property map storing the already computed area measure on each face.
-* @param curvature_fmm (curvature face measure map) the property map storing the already computed curvature measure on each face.
-* This curvature measure can be either the Mean Curvature or the Gaussian Curvature.
-* @param area_vmm (area vertex measure map) the property map provided to store the expanded area measure on each vertex.
-* @param curvature_vmm (curvature vertex measure map) the property map provided to store the expanded curvature measure on each vertex.
-* This curvature measure can be either the Mean Curvature or the Gaussian Curvature.
-* @param v (vertex) the vertex to expand the area and curvature measure around.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*
-*   \cgalParamNBegin{ball_radius}
-*     \cgalParamDescription{the radius of the ball around the vertex `v` to expand the area and curvature measure}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{`0.01`}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Point_3` as value type}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @see `expand_interpolated_corrected_anisotropic_measure_vertex()`
-* @see `face_in_ball_ratio()`
-*/
 template<typename PolygonMesh, typename FaceMeasureMap, typename VertexMeasureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void expand_interpolated_corrected_measure_vertex(const PolygonMesh& pmesh,
@@ -802,54 +588,6 @@ template<typename PolygonMesh, typename FaceMeasureMap, typename VertexMeasureMa
     put(curvature_vmm, v, corrected_mui);
 }
 
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* Expands given face area and anisotropic measures around a vertex `v`.
-* Expansion is based on the inclusion ratio of each face in a ball of radius `r` around the vertex `v`.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`
-* @tparam AreaFaceMeasureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `GT::FT` as value type.
-* @tparam AnisotropicFaceMeasureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::array<typename GT::FT, 3 * 3>` as value type.
-* @tparam AreaVertexMeasureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `GT::FT` as value type.
-* @tparam AnisotropicVertexMeasureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `std::array<typename GT::FT, 3 * 3>` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param area_fmm (area face measure map) the property map storing the already computed area measure on each face.
-* @param aniso_fmm (anisotropic face measure map) the property map storing the already computed anisotropic measure on each face.
-* @param area_vmm (area vertex measure map) the property map provided to store the expanded area measure on each vertex.
-* @param aniso_vmm (anisotropic vertex measure map) the property map provided to store the expanded anisotropic measure on each vertex.
-* @param v (vertex) the vertex to expand the area and anisotropic measure around.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*
-*   \cgalParamNBegin{ball_radius}
-*     \cgalParamDescription{the radius of the ball around the vertex `v` to expand the area and curvature measure}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{`0.01`}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Point_3` as value type}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @see `expand_interpolated_corrected_measure_vertex()`
-* @see `face_in_ball_ratio()`
-*/
 template<typename PolygonMesh, typename AreaFaceMeasureMap, typename AnisotropicFaceMeasureMap,
     typename AreaVertexMeasureMap, typename AnisotropicVertexMeasureMap,
     typename NamedParameters = parameters::Default_named_parameters>
@@ -931,6 +669,8 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
     put(aniso_vmm, v, corrected_muXY);
 }
 
+} // namespace internal
+
 /**
 * \ingroup PMP_corrected_curvatures_grp
 *
@@ -948,8 +688,6 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
 *
 * @see `interpolated_corrected_gaussian_curvature()`
 * @see `interpolated_corrected_principal_curvatures()`
-* @see `interpolated_corrected_measure_mesh()`
-* @see `expand_interpolated_corrected_measure_vertex()`
 */
 
 template<typename PolygonMesh, typename VertexCurvatureMap,
@@ -983,12 +721,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     boost::associative_property_map<VertexMeasureMap_tag>
         mu0_expand_map(mu0_expand_init), mu1_expand_map(mu1_expand_init);
 
-    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE, np);
-    interpolated_corrected_measure_mesh(pmesh, mu1_map, MU1_MEAN_CURVATURE_MEASURE, np);
+    internal::interpolated_corrected_measure_mesh(pmesh, mu0_map, internal::MU0_AREA_MEASURE, np);
+    internal::interpolated_corrected_measure_mesh(pmesh, mu1_map, internal::MU1_MEAN_CURVATURE_MEASURE, np);
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu1_map, mu0_expand_map, mu1_expand_map, v, np.ball_radius(r));
+        internal::expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu1_map, mu0_expand_map, mu1_expand_map, v, np.ball_radius(r));
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         if (v_mu0 != 0.0)
@@ -1015,8 +753,6 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *
 * @see `interpolated_corrected_mean_curvature()`
 * @see `interpolated_corrected_principal_curvatures()`
-* @see `interpolated_corrected_measure_mesh()`
-* @see `expand_interpolated_corrected_measure_vertex()`
 */
 template<typename PolygonMesh, typename VertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>
@@ -1049,12 +785,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     boost::associative_property_map<VertexMeasureMap_tag>
         mu0_expand_map(mu0_expand_init), mu2_expand_map(mu2_expand_init);
 
-    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE, np);
-    interpolated_corrected_measure_mesh(pmesh, mu2_map, MU2_GAUSSIAN_CURVATURE_MEASURE, np);
+    internal::interpolated_corrected_measure_mesh(pmesh, mu0_map, internal::MU0_AREA_MEASURE, np);
+    internal::interpolated_corrected_measure_mesh(pmesh, mu2_map, internal::MU2_GAUSSIAN_CURVATURE_MEASURE, np);
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu2_map, mu0_expand_map, mu2_expand_map, v, np.ball_radius(r));
+        internal::expand_interpolated_corrected_measure_vertex(pmesh, mu0_map, mu2_map, mu0_expand_map, mu2_expand_map, v, np.ball_radius(r));
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         if(v_mu0 != 0.0)
@@ -1106,8 +842,6 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *
 * @see `interpolated_corrected_mean_curvature()`
 * @see `interpolated_corrected_gaussian_curvature()`
-* @see `interpolated_corrected_anisotropic_measure_mesh()`
-* @see `expand_interpolated_corrected_anisotropic_measure_vertex()`
 */
 template<typename PolygonMesh, typename VertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>
@@ -1172,12 +906,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     boost::associative_property_map<VertexMatrixMeasureMap_tag>
         muXY_expand_map(muXY_expand_init);
 
-    interpolated_corrected_measure_mesh(pmesh, mu0_map, MU0_AREA_MEASURE, np);
-    interpolated_corrected_anisotropic_measure_mesh(pmesh, muXY_map, np);
+    internal::interpolated_corrected_measure_mesh(pmesh, mu0_map, internal::MU0_AREA_MEASURE, np);
+    internal::interpolated_corrected_anisotropic_measure_mesh(pmesh, muXY_map, np);
 
     for (vertex_descriptor v : vertices(pmesh))
     {
-        expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, mu0_map, muXY_map, mu0_expand_map, muXY_expand_map, v, np.ball_radius(r));
+        internal::expand_interpolated_corrected_anisotropic_measure_vertex(pmesh, mu0_map, muXY_map, mu0_expand_map, muXY_expand_map, v, np.ball_radius(r));
 
         typename GT::FT v_mu0 = get(mu0_expand_map, v);
         Eigen::Matrix<typename GT::FT, 3, 3> v_muXY = get(muXY_expand_map, v);
