@@ -1364,7 +1364,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
             else
                 read(is, index);
             s->set_vertex(j, vertices[index]);
-	    s->vertex(j)->set_full_cell(s);
+            s->vertex(j)->set_full_cell(s);
         }
         // read other non-combinatorial information for the full_cells
         is >> (*s);
