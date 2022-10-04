@@ -239,14 +239,14 @@ void compute_elements(const LCC *lcc, Graphic_buffer<BufferType> &graphic_buffer
  * @param alcc
  */
 template <typename BufferType = float, class LCC, class DrawingFunctor>
-void add_in_graphic_buffer_lcc(const LCC &alcc, Graphic_buffer<BufferType> &graphic_buffer,
+void add_in_graphic_buffer(const LCC &alcc, Graphic_buffer<BufferType> &graphic_buffer,
                                const DrawingFunctor &m_drawing_functor)
 {
   draw_function_for_lcc::compute_elements(&alcc, graphic_buffer, m_drawing_functor);
 }
 
 template <typename BufferType = float, class LCC>
-void add_in_graphic_buffer_lcc(const LCC &alcc, Graphic_buffer<BufferType> &graphic_buffer)
+void add_in_graphic_buffer(const LCC &alcc, Graphic_buffer<BufferType> &graphic_buffer)
 {
   Drawing_functor_with_volume<LCC,typename LCC::Dart_const_handle,
                                   typename LCC::Dart_const_handle,
@@ -264,7 +264,7 @@ void add_in_graphic_buffer_lcc(const LCC &alcc, Graphic_buffer<BufferType> &grap
     return get_random_color(random);
   };
 
-  add_in_graphic_buffer_lcc(alcc, graphic_buffer, drawing_functor_with_volume);
+  add_in_graphic_buffer(alcc, graphic_buffer, drawing_functor_with_volume);
 }
 
 // Specialization of draw function.
@@ -281,7 +281,7 @@ void draw(const CGAL_LCC_TYPE &alcc, const DrawingFunctor &drawing_functor,
           const char *title = "LCC for CMap Basic Viewer")
 {
   Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_lcc(alcc, buffer, drawing_functor);
+  add_in_graphic_buffer(alcc, buffer, drawing_functor);
   draw_buffer(buffer);
 }
 
@@ -292,7 +292,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
 void draw(const CGAL_LCC_TYPE &alcc, const char *title = "LCC for CMap Basic Viewer")
 {
   Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_lcc(alcc, buffer);
+  add_in_graphic_buffer(alcc, buffer);
   draw_buffer(buffer);
 }
 

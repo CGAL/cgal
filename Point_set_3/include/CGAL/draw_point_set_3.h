@@ -66,7 +66,7 @@ void compute_elements(const PointSet *pointset,
 } // namespace draw_function_for_PointSet
 
 template <typename BufferType = float, class PointSet>
-void add_in_graphic_buffer_point_set(Graphic_buffer<BufferType> &graphic_buffer,
+void add_in_graphic_buffer(Graphic_buffer<BufferType> &graphic_buffer,
                                      const PointSet *aPointSet = nullptr) {
   if (aPointSet != nullptr) {
     draw_function_for_PointSet::compute_elements(aPointSet, graphic_buffer);
@@ -78,7 +78,7 @@ template <class P, class V>
 void draw(const Point_set_3<P, V> &apointset,
           const char *title = "Point_set_3 Basic Viewer") {
   Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_point_set(buffer, &apointset);
+  add_in_graphic_buffer(buffer, &apointset);
   draw_buffer(buffer);
 }
 

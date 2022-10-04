@@ -79,7 +79,7 @@ void compute_elements(CGAL::Graphic_buffer<BufferType> &graphic_buffer,
 } // namespace draw_function_for_p2
 
 template <typename BufferType = float, class P2>
-void add_in_graphic_buffer_p2(CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+void add_in_graphic_buffer(CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                               const P2 *p2 = nullptr) {
   if (p2 != nullptr) {
     draw_function_for_p2::compute_elements(graphic_buffer, p2);
@@ -99,7 +99,7 @@ void draw(const CGAL_P2_TYPE &ap2,
   //     drawingFunctor;
 
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_p2(buffer, &ap2);
+  add_in_graphic_buffer(buffer, &ap2);
   draw_buffer(buffer);
 }
 

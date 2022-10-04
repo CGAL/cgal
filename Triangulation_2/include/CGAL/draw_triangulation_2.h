@@ -121,7 +121,7 @@ void compute_elements(const T2 *t2,
 } // namespace draw_function_for_t2
 
 template <typename BufferType = float, class T2, class DrawingFunctor>
-void add_in_graphic_buffer_t2(const T2 &at2,
+void add_in_graphic_buffer(const T2 &at2,
                               CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                               const DrawingFunctor &drawing_functor,
                               bool m_nofaces = false) {
@@ -130,7 +130,7 @@ void add_in_graphic_buffer_t2(const T2 &at2,
 }
 
 template <typename BufferType = float, class T2>
-void add_in_graphic_buffer_t2(const T2 &at2,
+void add_in_graphic_buffer(const T2 &at2,
                               CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                               bool m_nofaces = false) {
 
@@ -152,7 +152,7 @@ void add_in_graphic_buffer_t2(const T2 &at2,
     return get_random_color(random);
   };
 
-  add_in_graphic_buffer_t2(at2, graphic_buffer, drawingFunctor, m_nofaces);
+  add_in_graphic_buffer(at2, graphic_buffer, drawingFunctor, m_nofaces);
 }
 
 // Specialization of draw function.
@@ -163,7 +163,7 @@ void draw(const CGAL_T2_TYPE &at2, const DrawingFunctor &drawingfunctor,
           const char *title = "Triangulation_2 Basic Viewer",
           bool nofill = false) {
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_t2(at2, buffer, drawingfunctor, nofill);
+  add_in_graphic_buffer(at2, buffer, drawingfunctor, nofill);
   draw_buffer(buffer);
 }
 
@@ -172,7 +172,7 @@ void draw(const CGAL_T2_TYPE &at2,
           const char *title = "Triangulation_2 Basic Viewer",
           bool nofill = false) {
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_t2(at2, buffer, nofill);
+  add_in_graphic_buffer(at2, buffer, nofill);
   draw_buffer(buffer);
 }
 

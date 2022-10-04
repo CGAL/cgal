@@ -118,7 +118,7 @@ void compute_elements(const T3 *t3, CGAL::Graphic_buffer<BufferType> &graphic_bu
 } // namespace draw_function_for_t3
 
 template <typename BufferType = float, class T3, class DrawingFunctor>
-void add_in_graphic_buffer_t3(const T3 &at3,
+void add_in_graphic_buffer(const T3 &at3,
                               CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                               const DrawingFunctor &drawing_functor)
 {
@@ -126,7 +126,7 @@ void add_in_graphic_buffer_t3(const T3 &at3,
 }
 
 template <typename BufferType = float, class T3>
-void add_in_graphic_buffer_t3(const T3 &at3,
+void add_in_graphic_buffer(const T3 &at3,
                               CGAL::Graphic_buffer<BufferType> &graphic_buffer)
 {
   CGAL::Drawing_functor<T3,
@@ -153,7 +153,7 @@ void add_in_graphic_buffer_t3(const T3 &at3,
      return get_random_color(random);
      };
   
-  add_in_graphic_buffer_t3(at3, graphic_buffer, drawing_functor);
+  add_in_graphic_buffer(at3, graphic_buffer, drawing_functor);
 }
 
 // Specialization of draw function.
@@ -164,7 +164,7 @@ void draw(const CGAL_T3_TYPE &at3, const DrawingFunctor &drawingfunctor,
           const char *title = "T3 Basic Viewer")
 {
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_t3(at3, buffer, drawingfunctor);
+  add_in_graphic_buffer(at3, buffer, drawingfunctor);
   draw_buffer(buffer);
 }
 
@@ -172,7 +172,7 @@ template <class Gt, class Tds, class Lock_data_structure>
 void draw(const CGAL_T3_TYPE &at3, const char *title = "T3 Basic Viewer")
 {
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_t3(at3, buffer);
+  add_in_graphic_buffer(at3, buffer);
   draw_buffer(buffer);
 }
 

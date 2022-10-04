@@ -112,7 +112,7 @@ void compute_elements(const SS2 *ss2,
 } // namespace draw_function_for_ss2
 
 template <typename BufferType = float, class SS2, class DrawingFunctor>
-void add_in_graphic_buffer_ss2(const SS2 &ass2,
+void add_in_graphic_buffer(const SS2 &ass2,
                                CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                                const DrawingFunctor &drawing_functor) {
   draw_function_for_ss2::compute_elements(&ass2, graphic_buffer,
@@ -120,14 +120,14 @@ void add_in_graphic_buffer_ss2(const SS2 &ass2,
 }
 
 template <typename BufferType = float, class SS2>
-void add_in_graphic_buffer_ss2(
+void add_in_graphic_buffer(
     const SS2 &ass2, CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
   Drawing_functor<SS2, typename SS2::Vertex_const_handle,
                   typename SS2::Halfedge_const_handle,
                   typename SS2::Face_const_handle>
       drawingFunctor;
 
-  add_in_graphic_buffer_ss2(ass2, graphic_buffer, drawingFunctor);
+  add_in_graphic_buffer(ass2, graphic_buffer, drawingFunctor);
 }
 
 // Specialization of draw function.
@@ -137,7 +137,7 @@ template <class K, class DrawingFunctor>
 void draw(const CGAL_SS_TYPE &ass2, const DrawingFunctor &drawingfunctor,
           const char *title = "Straight Skeleton Basic Viewer") {
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_ss2(ass2, buffer, drawingfunctor);
+  add_in_graphic_buffer(ass2, buffer, drawingfunctor);
   draw_buffer(buffer);
 }
 
@@ -145,7 +145,7 @@ template <class K>
 void draw(const CGAL_SS_TYPE &ass2,
           const char *title = "Straight Skeleton Basic Viewer") {
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer_ss2(ass2, buffer);
+  add_in_graphic_buffer(ass2, buffer);
   draw_buffer(buffer);
 }
 
