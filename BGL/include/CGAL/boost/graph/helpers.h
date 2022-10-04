@@ -75,213 +75,6 @@ is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd,
   return boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>();
 }
 
-
- /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` if there are no border edges.
-  */
-template <typename FaceGraph>
-bool is_closed(const FaceGraph& g)
-{
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  for(halfedge_descriptor hd : halfedges(g)){
-    if(is_border(hd,g)){
-      return false;
-    }
-  }
-  return true;
-}
-
-  /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` if the target of `hd` has exactly two incident edges.
-  */
-template <typename FaceGraph>
-bool is_bivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
-{
-  return hd == opposite(next(opposite(next(hd,g),g),g),g);
-}
-
-  /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` if all vertices have exactly two incident edges.
-  */
-template <typename FaceGraph>
-  bool is_bivalent_mesh(const FaceGraph& g)
-{
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  for(vertex_descriptor vd : vertices(g)){
-    halfedge_descriptor hd = halfedge(vd,g);
-    if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
-       (! is_bivalent(hd,g))){
-      return false;
-    }
-  }
-  return true;
-}
-
-  /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` if the target of `hd` has exactly three incident edges.
-  */
-template <typename FaceGraph>
-bool is_trivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
-{
-  return hd == opposite(next(opposite(next(opposite(next(hd,g),g),g),g),g),g);
-}
-
-  /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` if all
-    vertices have exactly three incident edges.
-  */
-template <typename FaceGraph>
-  bool is_trivalent_mesh(const FaceGraph& g)
-{
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  for(vertex_descriptor vd : vertices(g)){
-    halfedge_descriptor hd = halfedge(vd,g);
-    if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
-       (! is_trivalent(halfedge(hd,g),g))){
-      return false;
-    }
-  }
-  return true;
-}
-
- /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `hd` is a triangle.
-    \pre `g` must be valid.
-  */
-template <typename FaceGraph>
-  bool is_isolated_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
-{
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor beg = hd;
-  if(is_border(hd,g)) return false;
-  for(int i=0; i<3;i++){
-    if(! is_border(opposite(hd,g),g)) return false;
-    hd = next(hd,g);
-  }
-  return hd == beg;
-}
-
- /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` iff the face denoted by `hd` is a triangle, that is it has three incident halfedges.
- */
-template <typename FaceGraph>
-bool is_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
-{
-  return hd == next(next(next(hd,g),g),g);
-}
-
-  /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` if all faces are triangles.
-  */
-template <typename FaceGraph>
-  bool is_triangle_mesh(const FaceGraph& g)
-{
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  for(face_descriptor fd : faces(g)){
-    if(! is_triangle(halfedge(fd,g),g)){
-      return false;
-    }
-  }
-  return true;
-}
-
-/*!
-   \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `hd` is a quadrilateral.
-  */
-template <typename FaceGraph>
-bool is_isolated_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
-{
- typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor beg = hd;
-  if(is_border(hd,g)) return false;
-  for(int i=0; i<4;i++){
-    if(! is_border(opposite(hd,g),g)) return false;
-    hd = next(hd,g);
-  }
-  return hd == beg;
-}
-
-
- /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` iff the face denoted by `hd` is a quad, that is it has four incident halfedges.
- */
-template <typename FaceGraph>
-bool is_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
-{
-  return hd == next(next(next(next(hd,g),g),g),g);
-}
-
-  /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` if all faces are quadrilaterals.
-  */
-template <typename FaceGraph>
-  bool is_quad_mesh(const FaceGraph& g)
-{
-    typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  for(face_descriptor fd : faces(g)){
-    if(! is_quad(halfedge(fd,g),g)){
-      return false;
-    }
-  }
-  return true;
-}
-
-  /*!
-   \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `hd` is a tetrahedron.
-  */
-template <typename FaceGraph>
-bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
-{
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-
-  halfedge_descriptor h1 = hd;
-  if(is_border(h1,g)) return false;
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor h2 = next(h1,g);
-  halfedge_descriptor h3 = next(h2,g);
-  halfedge_descriptor h4 = next(opposite(h1,g),g );
-  halfedge_descriptor h5 = next(opposite(h2,g),g );
-  halfedge_descriptor h6 = next(opposite(h3,g),g );
-  // check halfedge combinatorics.
-  // at least three edges at vertices 1, 2, 3.
-  if ( h4 == opposite(h3,g) ) return false;
-  if ( h5 == opposite(h1,g) ) return false;
-  if ( h6 == opposite(h2,g) ) return false;
-  // exact three edges at vertices 1, 2, 3.
-  if ( next(opposite(h4,g),g) != opposite(h3,g) ) return false;
-  if ( next(opposite(h5,g),g) != opposite(h1,g) ) return false;
-  if ( next(opposite(h6,g),g) != opposite(h2,g) ) return false;
-  // three edges at v4.
-  if ( opposite(next(h4,g),g) != h5 ) return false;
-  if ( opposite(next(h5,g),g) != h6 ) return false;
-  if ( opposite(next(h6,g),g) != h4 ) return false;
-  // All facets are triangles.
-  if ( next(next(next(h1,g),g),g) != h1 ) return false;
-  if ( next(next(next(h4,g),g),g) != h4 ) return false;
-  if ( next(next(next(h5,g),g),g) != h5 ) return false;
-  if ( next(next(next(h6,g),g),g) != h6 ) return false;
-  // all edges are non-border edges.
-  if ( is_border(h1,g) ) return false;  // implies h2 and h3
-  if ( is_border(h4,g) ) return false;
-  if ( is_border(h5,g) ) return false;
-  if ( is_border(h6,g) ) return false;
-  return true;
-}
-
 namespace BGL {
 
 template <typename Graph>
@@ -409,7 +202,6 @@ bool is_valid_edge_descriptor(typename boost::graph_traits<FaceGraph>::edge_desc
   bool valid = true;
 
   // there is no null_edge() in the Graph concepts
-
 
   // Pointer integrity.
   const halfedge_descriptor h = halfedge(e, g);
@@ -770,6 +562,234 @@ bool is_valid_polygon_mesh(const Mesh& g, bool verb = false)
   }
 
   verr << "Polygon Mesh Structure is valid." << std::endl;
+  return true;
+}
+
+ /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if there are no border edges.
+  */
+template <typename FaceGraph>
+bool is_closed(const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  for(halfedge_descriptor hd : halfedges(g)){
+    if(is_border(hd,g)){
+      return false;
+    }
+  }
+  return true;
+}
+
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if the target of `hd` has exactly two incident edges.
+  */
+template <typename FaceGraph>
+bool is_bivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
+{
+  CGAL_precondition(is_valid_halfedge_descriptor(hd, g));
+
+  return hd == opposite(next(opposite(next(hd,g),g),g),g);
+}
+
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if all vertices have exactly two incident edges.
+  */
+template <typename FaceGraph>
+bool is_bivalent_mesh(const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  for(vertex_descriptor vd : vertices(g)){
+    halfedge_descriptor hd = halfedge(vd,g);
+    if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
+       (! is_bivalent(hd,g))){
+      return false;
+    }
+  }
+  return true;
+}
+
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if the target of `hd` has exactly three incident edges.
+  */
+template <typename FaceGraph>
+bool is_trivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
+{
+  CGAL_precondition(is_valid_halfedge_descriptor(hd, g));
+
+  return hd == opposite(next(opposite(next(opposite(next(hd,g),g),g),g),g),g);
+}
+
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if all
+    vertices have exactly three incident edges.
+  */
+template <typename FaceGraph>
+bool is_trivalent_mesh(const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  for(vertex_descriptor vd : vertices(g)){
+    halfedge_descriptor hd = halfedge(vd,g);
+    if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
+       (! is_trivalent(halfedge(hd,g),g))){
+      return false;
+    }
+  }
+  return true;
+}
+
+ /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` iff the connected component denoted by `hd` is a triangle.
+    \pre `g` must be valid.
+  */
+template <typename FaceGraph>
+bool is_isolated_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd,
+                          const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+
+  CGAL_precondition(is_valid_halfedge_descriptor(hd, g));
+
+  halfedge_descriptor beg = hd;
+  if(is_border(hd,g)) return false;
+  for(int i=0; i<3;i++){
+    if(! is_border(opposite(hd,g),g)) return false;
+    hd = next(hd,g);
+  }
+  return hd == beg;
+}
+
+ /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` iff the face denoted by `hd` is a triangle, that is it has three incident halfedges.
+ */
+template <typename FaceGraph>
+bool is_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd,
+                 const FaceGraph& g)
+{
+  CGAL_precondition(is_valid_halfedge_descriptor(hd, g));
+
+  return hd == next(next(next(hd,g),g),g);
+}
+
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if all faces are triangles.
+  */
+template <typename FaceGraph>
+bool is_triangle_mesh(const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+  for(face_descriptor fd : faces(g)){
+    if(! is_triangle(halfedge(fd,g),g)){
+      return false;
+    }
+  }
+  return true;
+}
+
+/*!
+   \ingroup PkgBGLHelperFct
+    returns `true` iff the connected component denoted by `hd` is a quadrilateral.
+  */
+template <typename FaceGraph>
+bool is_isolated_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd,
+                      const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+
+  CGAL_precondition(is_valid_halfedge_descriptor(hd, g));
+
+  halfedge_descriptor beg = hd;
+  if(is_border(hd,g)) return false;
+  for(int i=0; i<4;i++){
+    if(! is_border(opposite(hd,g),g)) return false;
+    hd = next(hd,g);
+  }
+  return hd == beg;
+}
+
+
+ /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` iff the face denoted by `hd` is a quad, that is it has four incident halfedges.
+ */
+template <typename FaceGraph>
+bool is_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd,
+             const FaceGraph& g)
+{
+  CGAL_precondition(is_valid_halfedge_descriptor(hd, g));
+
+  return hd == next(next(next(next(hd,g),g),g),g);
+}
+
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if all faces are quadrilaterals.
+  */
+template <typename FaceGraph>
+bool is_quad_mesh(const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+
+  for(face_descriptor fd : faces(g)){
+    if(! is_quad(halfedge(fd,g),g)){
+      return false;
+    }
+  }
+  return true;
+}
+
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` iff the connected component denoted by `hd` is a tetrahedron.
+  */
+template <typename FaceGraph>
+bool is_tetrahedron(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd,
+                    const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+
+  CGAL_precondition(is_valid_halfedge_descriptor(hd, g));
+
+  halfedge_descriptor h1 = hd;
+  if(is_border(h1,g)) return false;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  halfedge_descriptor h2 = next(h1,g);
+  halfedge_descriptor h3 = next(h2,g);
+  halfedge_descriptor h4 = next(opposite(h1,g),g );
+  halfedge_descriptor h5 = next(opposite(h2,g),g );
+  halfedge_descriptor h6 = next(opposite(h3,g),g );
+  // check halfedge combinatorics.
+  // at least three edges at vertices 1, 2, 3.
+  if ( h4 == opposite(h3,g) ) return false;
+  if ( h5 == opposite(h1,g) ) return false;
+  if ( h6 == opposite(h2,g) ) return false;
+  // exact three edges at vertices 1, 2, 3.
+  if ( next(opposite(h4,g),g) != opposite(h3,g) ) return false;
+  if ( next(opposite(h5,g),g) != opposite(h1,g) ) return false;
+  if ( next(opposite(h6,g),g) != opposite(h2,g) ) return false;
+  // three edges at v4.
+  if ( opposite(next(h4,g),g) != h5 ) return false;
+  if ( opposite(next(h5,g),g) != h6 ) return false;
+  if ( opposite(next(h6,g),g) != h4 ) return false;
+  // All facets are triangles.
+  if ( next(next(next(h1,g),g),g) != h1 ) return false;
+  if ( next(next(next(h4,g),g),g) != h4 ) return false;
+  if ( next(next(next(h5,g),g),g) != h5 ) return false;
+  if ( next(next(next(h6,g),g),g) != h6 ) return false;
+  // all edges are non-border edges.
+  if ( is_border(h1,g) ) return false;  // implies h2 and h3
+  if ( is_border(h4,g) ) return false;
+  if ( is_border(h5,g) ) return false;
+  if ( is_border(h6,g) ) return false;
   return true;
 }
 
