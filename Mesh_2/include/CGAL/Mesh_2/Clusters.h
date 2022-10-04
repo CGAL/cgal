@@ -70,7 +70,7 @@ public:
   /** \name Clusters public types */
 
   /**
-   * \c Cluster register several informations about clusters.
+   * `Cluster` register several informations about clusters.
    * A cluster is a set of vertices v_i incident to one vertice
    * v_0, so that angles between segments [v_0, v_i] is less than 60
    * degres.
@@ -127,7 +127,7 @@ private:
   Tr& tr; /**< The triangulation itself. */
 
   /**
-   * Multimap \c Vertex_handle -> \c Cluster
+   * Multimap `Vertex_handle -> Cluster`
    * Each vertex can have several clusters.
    */
   Cluster_map cluster_map;
@@ -178,14 +178,14 @@ public:
 
 private:
   /**
-   * Computes clusters of the vertex \c v, using the auxiliary function
+   * Computes clusters of the vertex `v`, using the auxiliary function
    * construct_cluster().
    */
   void create_clusters_of_vertex(const Vertex_handle v);
 
   /**
-   * Adds the sequence [\c begin, \c end] to the cluster \c c and adds it
-   * to the clusters of the vertex \c v.
+   * Adds the sequence `[begin, end]` to the cluster `c` and adds it
+   * to the clusters of the vertex `v`.
    */
   void construct_cluster(const Vertex_handle v,
                          const Constrained_edge_circulator& begin,
@@ -196,7 +196,7 @@ public:
   /** \name Functions to manage clusters during the refinement process. */
 
   /**
-   * Update the cluster of [\c va,\c vb], putting \c vm instead of \c vb.
+   * Update the cluster of `[va,vb]`, putting `vm` instead of `vb`.
    * If reduction=false, the edge [va,vm] is not set reduced.
    */
   void update_cluster(Cluster& c, iterator it,
@@ -205,8 +205,8 @@ public:
                       bool reduction = true);
 
   /**
-   * Returns the cluster of [\c va,\c vb] in \c c and return true
-   * if it is in a cluster. Returns also a const_iterator in \c it.
+   * Returns the cluster of `[va,vb]` in `c` and return true
+   * if it is in a cluster. Returns also a const_iterator in `it`.
    */
   bool get_cluster(const Vertex_handle va, const Vertex_handle vb,
                    Cluster& c, iterator& it);

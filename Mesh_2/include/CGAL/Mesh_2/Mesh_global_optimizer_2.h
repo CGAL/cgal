@@ -92,7 +92,7 @@ public:
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
 
-  /** The value type of \a InputIterator should be \c Point, and represents
+  /** The value type of \a InputIterator should be `Point`, and represents
       seeds.
   */
   template<typename InputIterator>
@@ -222,7 +222,7 @@ public:
 
 private:
   /**
-   * Returns moves for vertices of set \c moving_vertices
+   * Returns moves for vertices of set `moving_vertices`
    */
   Moves_vector compute_moves(Vertex_set& moving_vertices)
   {
@@ -260,7 +260,7 @@ private:
   }
 
   /**
-   * Returns the move for vertex \c v
+   * Returns the move for vertex `v`
    */
   Vector_2 compute_move(const Vertex_handle& v)
   {
@@ -284,7 +284,7 @@ private:
   }
 
   /**
-   * Returns the minimum cicumradius length of faces incident to \c v
+   * Returns the minimum cicumradius length of faces incident to `v`
    */
   FT min_sq_circumradius(const Vertex_handle& v) const
   {
@@ -395,8 +395,8 @@ private:
       seeds_.end(),
       seeds_mark_/*faces that are not in domain are tagged false*/);
     //Connected components of seeds are marked with the value of
-    //  \a mark. Other components are marked with \c !mark. The connected
-    //  component of infinite faces is always marked with \c false.
+    //  \a mark. Other components are marked with `!mark`. The connected
+    //  component of infinite faces is always marked with `false`.
   }
 
   void after_all_moves()
