@@ -90,6 +90,14 @@ namespace internal {
     return false;
   }
 
+  bool line_starts_with(const std::string& line, const char* cstr)
+  {
+    const std::size_t fnws = line.find_first_not_of(" \t");
+    if (fnws != std::string::npos)
+      return (line.compare(fnws, strlen(cstr), cstr) == 0);
+    return false;
+  }
+
   template<typename IdType>
   bool treat_surf_materials(std::istream& input,
                             std::vector<material>& materials,
@@ -337,14 +345,6 @@ namespace internal {
     std::string description;
     std::string at_label;
   };
-
-  bool line_starts_with(const std::string& line, const char* cstr)
-  {
-    const std::size_t fnws = line.find_first_not_of(" \t");
-    if (fnws != std::string::npos)
-      return (line.compare(fnws, strlen(cstr), cstr) == 0);
-    return false;
-  }
 
   void go_to_at_label(std::istream& input,
                       std::string& line,
