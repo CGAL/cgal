@@ -19,7 +19,7 @@ construction time, or set to zero if it is not specified.
 
 Arithmetic operations among different extensions, say \f$ \mathbb{Z}[\sqrt{a}]\f$
 and \f$ \mathbb{Z}[\sqrt{b}]\f$, are not supported.
-The result would be in \f$ \mathb{Z}Z[\sqrt{a},\sqrt{b}]\f$, which is not
+The result would be in \f$ \mathbb{Z}[\sqrt{a},\sqrt{b}]\f$, which is not
 representable by `Sqrt_extension<Integer,Integer>`.
 
 \attention The user is responsible to check that arithmetic operations are carried out for elements from the same extensions only.
@@ -91,8 +91,8 @@ In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as 
 \cgalModels `CopyConstructible`
 \cgalModels `DefaultConstructible`
 \cgalModels `EqualityComparable`
-\cgalModels `ImplicitInteroperable` with int
-\cgalModels `ImplicitInteroperable` with NT
+\cgalModels `ImplicitInteroperable` with `int`
+\cgalModels `ImplicitInteroperable` with `NT`
 \cgalModels `Fraction` if NT is a `Fraction`
 \cgalModels `RootOf_2`
 
