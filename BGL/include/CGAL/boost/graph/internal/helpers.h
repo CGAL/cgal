@@ -11,13 +11,14 @@
 #ifndef CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H
 #define CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H
 
-#include <boost/graph/graph_traits.hpp>
-#include <boost/optional.hpp>
 #include <CGAL/iterator.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Named_function_parameters.h>
+
 #include <boost/iterator/function_output_iterator.hpp>
+
+#include <tuple>
 
 namespace CGAL {
 
@@ -133,7 +134,7 @@ std::size_t
 exact_num_vertices(const Graph& g)
 {
   typename boost::graph_traits<Graph>::vertex_iterator beg, end;
-  boost::tie(beg,end) = vertices(g);
+  std::tie(beg,end) = vertices(g);
   return std::distance(beg,end);
  }
 
@@ -142,7 +143,7 @@ std::size_t
 exact_num_halfedges(const Graph& g)
 {
   typename boost::graph_traits<Graph>::halfedge_iterator beg, end;
-  boost::tie(beg,end) = halfedges(g);
+  std::tie(beg,end) = halfedges(g);
   return std::distance(beg,end);
  }
 
@@ -151,7 +152,7 @@ std::size_t
 exact_num_edges(const Graph& g)
 {
   typename boost::graph_traits<Graph>::edge_iterator beg, end;
-  boost::tie(beg,end) = edges(g);
+  std::tie(beg,end) = edges(g);
   return std::distance(beg,end);
  }
 
@@ -160,7 +161,7 @@ std::size_t
 exact_num_faces(const Graph& g)
 {
   typename boost::graph_traits<Graph>::face_iterator beg, end;
-  boost::tie(beg,end) = faces(g);
+  std::tie(beg,end) = faces(g);
   return std::distance(beg,end);
 }
 
