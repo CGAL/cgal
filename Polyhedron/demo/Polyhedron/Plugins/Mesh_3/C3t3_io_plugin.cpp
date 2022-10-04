@@ -38,6 +38,7 @@ public:
 private:
   bool try_load_other_binary_format(std::istream& in, C3t3& c3t3);
   bool try_load_a_cdt_3(std::istream& in, C3t3& c3t3);
+  void update_c3t3(C3t3& c3t3);
 };
 
 
@@ -133,47 +134,13 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
       CGAL_assertion(!(!in));
 
-      Scene_c3t3_item* item = new Scene_c3t3_item();
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
       if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
          /*verbose = */true, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
       {
-        item->c3t3().rescan_after_load_of_triangulation(); //fix counters for facets and cells
-        for( C3t3::Cell_handle cit : item->c3t3().triangulation().finite_cell_handles())
-        {
-            CGAL_assertion(cit->subdomain_index() >= 0);
-            if(cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
-              item->c3t3().add_to_complex(cit, cit->subdomain_index());
-            for(int i=0; i < 4; ++i)
-            {
-              if(cit->surface_patch_index(i)>0)
-              {
-                item->c3t3().add_to_complex(cit, i, cit->surface_patch_index(i));
-              }
-            }
-        }
-
-        //if there is no facet in the complex, we add the border facets.
-        if(item->c3t3().number_of_facets_in_complex() == 0)
-        {
-          for( C3t3::Facet fit : item->c3t3().triangulation().finite_facets())
-          {
-            typedef C3t3::Triangulation::Cell_handle      Cell_handle;
-
-            Cell_handle c = fit.first;
-            Cell_handle nc = c->neighbor(fit.second);
-
-            // By definition, Subdomain_index() is supposed to be the id of the exterior
-            if(c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
-               nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
-            {
-              // Color the border facet with the index of its cell
-              item->c3t3().add_to_complex(c, fit.second, c->subdomain_index());
-            }
-          }
-        }
+        update_c3t3(item->c3t3());
 
         item->resetCutPlane();
         item->c3t3_changed();
@@ -202,9 +169,10 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
 
       if (CGAL::IO::read_AVIZO_TETRA(in, item->c3t3().triangulation()))
       {
+        update_c3t3(item->c3t3());
+
         item->resetCutPlane();
         item->c3t3_changed();
-        item->changed();
         if (add_to_scene)
           CGAL::Three::Three::scene()->addItem(item);
         return QList<Scene_item*>() << item;
@@ -552,6 +520,47 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
     return false;
   }
 }
+
+void
+Polyhedron_demo_c3t3_binary_io_plugin::
+update_c3t3(C3t3& c3t3)
+{
+  using Cell_handle = C3t3::Triangulation::Cell_handle;
+
+  c3t3.rescan_after_load_of_triangulation(); //fix counters for facets and cells
+  for (Cell_handle cit : c3t3.triangulation().finite_cell_handles())
+  {
+    CGAL_assertion(cit->subdomain_index() >= 0);
+    if (cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
+      c3t3.add_to_complex(cit, cit->subdomain_index());
+
+    for (int i = 0; i < 4; ++i)
+    {
+      if (cit->surface_patch_index(i) > 0)
+        c3t3.add_to_complex(cit, i, cit->surface_patch_index(i));
+    }
+  }
+
+  //if there is no facet in the complex, we add the border facets.
+  if (c3t3.number_of_facets_in_complex() == 0)
+  {
+    for (C3t3::Facet fit : c3t3.triangulation().finite_facets())
+    {
+      Cell_handle c = fit.first;
+      Cell_handle nc = c->neighbor(fit.second);
+
+      // By definition, Subdomain_index() is supposed to be the id of the exterior
+      if (c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
+          nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
+      {
+        // Color the border facet with the index of its cell
+        c3t3.add_to_complex(c, fit.second, c->subdomain_index());
+      }
+    }
+  }
+
+}
+
 //Generates a compilation error.
 bool
 Polyhedron_demo_c3t3_binary_io_plugin::
