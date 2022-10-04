@@ -762,7 +762,7 @@ std::istream& operator >> (
 
   is >> arcno;
 
-  // read the ")
+  // read the ")"
   swallow(is, ')');
 
   pt = Xy_coordinate_2(x, curve, arcno);
