@@ -97,7 +97,7 @@ public:
   using Base::bbox;
 
 private:
-  /// Returns a box enclosing image \c im
+  /// Returns a box enclosing image `im`
   Bbox_3 compute_bounding_box(const Image& im) const
   {
     return Bbox_3(-im.vx()+im.tx(),

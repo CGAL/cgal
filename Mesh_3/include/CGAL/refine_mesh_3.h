@@ -307,11 +307,11 @@ void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const
  * @param c3t3 the mesh to be refined.
  * @param domain the domain used to create the `c3t3` parameter
  * @param criteria the criteria
- * @param exude if \c true, an exudation step will be done at
+ * @param exude if `true`, an exudation step will be done at
  *   the end of the Delaunay refinement process
- * @param perturb if \c true, an explicit vertex perturbation step will be
+ * @param perturb if `true`, an explicit vertex perturbation step will be
  *   done at the end of refinement process
- * @param reset_c3t3 if \c true, a new C3T3 will be construct from param c3t3.
+ * @param reset_c3t3 if `true`, a new C3T3 will be construct from param c3t3.
  *   The new c3t3 keeps only the vertices (as NON-weighted points with their
  *   dimension and Index) of the triangulation. That allows to refine a mesh
  *   which has been exuded.

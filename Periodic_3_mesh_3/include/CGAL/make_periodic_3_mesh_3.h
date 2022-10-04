@@ -367,7 +367,7 @@ C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CG
  *
  * @param domain the domain to be discretized
  * @param criteria the criteria
- * @param exude if it is set to \c true, an exudation step will be done at
+ * @param exude if it is set to `true`, an exudation step will be done at
  *   the end of the Delaunay refinement process
  *
  * @return The mesh as a C3T3 object

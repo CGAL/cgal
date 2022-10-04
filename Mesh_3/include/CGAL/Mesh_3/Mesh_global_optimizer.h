@@ -313,19 +313,19 @@ public:
 
 private:
   /**
-   * Returns moves for vertices of set \c moving_vertices
+   * Returns moves for vertices of set `moving_vertices`
    */
   Moves_vector compute_moves(Moving_vertices_set& moving_vertices);
 
   /**
-   * Returns the move for vertex \c v
+   * Returns the move for vertex `v`
    * \warning This function should be called only on moving vertices
    *          even for frozen vertices, it could return a non-zero vector
    */
   Vector_3 compute_move(const Vertex_handle& v);
 
   /**
-   * Updates mesh using moves of \c moves vector. Updates moving_vertices with
+   * Updates mesh using moves of `moves` vector. Updates moving_vertices with
    * the new set of moving vertices after the move.
    */
   void update_mesh(const Moves_vector& moves,
@@ -343,17 +343,17 @@ private:
   bool check_convergence() const;
 
   /**
-   * Returns the average circumradius length of cells incident to \c v
+   * Returns the average circumradius length of cells incident to `v`
    */
   FT average_circumradius_length(const Vertex_handle& v) const;
 
   /**
-   * Returns the minimum cicumradius length of cells incident to \c v
+   * Returns the minimum cicumradius length of cells incident to `v`
    */
   FT min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const;
 
   /**
-   * Returns the squared circumradius length of cell \c cell
+   * Returns the squared circumradius length of cell `cell`
    */
   FT sq_circumradius_length(const Cell_handle& cell,
                             const Vertex_handle& v) const;

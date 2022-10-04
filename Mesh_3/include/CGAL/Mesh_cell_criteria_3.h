@@ -82,8 +82,8 @@ public:
   ~Mesh_cell_criteria_3() { }
 
   /**
-   * @brief returns whether the cell \c cell is bad or not.
-   * @param tr the triangulation within which \c cell lives
+   * @brief returns whether the cell `cell` is bad or not.
+   * @param tr the triangulation within which `cell` lives
    * @param cell the cell
    */
   Is_cell_bad operator()(const Tr& tr, const Cell_handle& cell) const

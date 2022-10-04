@@ -126,21 +126,21 @@ public:
   }
 #endif
 
-  /// Marks \c facet as visited
+  /// Marks `facet` as visited
   void set_facet_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet <4);
     bits_ |= char(1 << facet);
   }
 
-  /// Marks \c facet as not visited
+  /// Marks `facet` as not visited
   void reset_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
     bits_ = char(bits_ & (15 & ~(1 << facet)));
   }
 
-  /// Returns \c true if \c facet is marked as visited
+  /// Returns `true` if `facet` is marked as visited
   bool is_facet_visited (const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
@@ -197,7 +197,7 @@ public:
     ++this->m_erase_counter;
   }
 
-  /// Marks \c facet as visited
+  /// Marks `facet` as visited
   void set_facet_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
@@ -209,7 +209,7 @@ public:
     }
   }
 
-  /// Marks \c facet as not visited
+  /// Marks `facet` as not visited
   void reset_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
@@ -222,7 +222,7 @@ public:
     }
   }
 
-  /// Returns \c true if \c facet is marked as visited
+  /// Returns `true` if `facet` is marked as visited
   bool is_facet_visited (const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
@@ -530,42 +530,42 @@ public:
   bool is_cache_valid() const { return sliver_cache_validity_; }
   void reset_cache_validity() const { sliver_cache_validity_ = false;  }
 
-  /// Set surface index of \c facet to \c index
+  /// Set surface index of `facet` to `index`
   void set_surface_patch_index(const int facet, const Surface_patch_index& index)
   {
     CGAL_precondition(facet>=0 && facet<4);
     surface_index_table_[facet] = index;
   }
 
-  /// Returns surface index of facet \c facet
+  /// Returns surface index of facet `facet`
   Surface_patch_index surface_patch_index(const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
     return surface_index_table_[facet];
   }
 
-  /// Sets surface center of \c facet to \c point
+  /// Sets surface center of `facet` to `point`
   void set_facet_surface_center(const int facet, const Point_3& point)
   {
     CGAL_precondition(facet>=0 && facet<4);
     surface_center_table_[facet] = point;
   }
 
-  /// Returns surface center of \c facet
+  /// Returns surface center of `facet`
   Point_3 get_facet_surface_center(const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
     return surface_center_table_[facet];
   }
 
-  /// Sets surface center index of \c facet to \c index
+  /// Sets surface center index of `facet` to `index`
   void set_facet_surface_center_index(const int facet, const Index& index)
   {
     CGAL_precondition(facet>=0 && facet<4);
     surface_center_index_table_[facet] = index;
   }
 
-  /// Returns surface center of \c facet
+  /// Returns surface center of `facet`
   Index get_facet_surface_center_index(const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
@@ -588,7 +588,7 @@ public:
   void set_surface_index(const int facet, const Surface_index& index)
   { set_surface_patch_index(facet,index); }
 
-  /// Returns surface index of facet \c facet
+  /// Returns surface index of facet `facet`
   Surface_index surface_index(const int facet) const
   { return surface_patch_index(facet); }
 #endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX

@@ -72,7 +72,7 @@ namespace internal {
     template <typename T> void operator()(T*) const { }
   };
 
-  // Returns a box enclosing image \c im
+  // Returns a box enclosing image `im`
   inline Bbox_3 compute_bounding_box(const Image_3& im)
   {
     return Bbox_3(-1+im.tx(),-1+im.ty(),-1+im.tz(),
@@ -151,7 +151,7 @@ protected:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename Geom_traits::FT FT;
   typedef std::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
-  // Returns squared error bound from \c bbox and \c error
+  // Returns squared error bound from `bbox` and `error`
   FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
   {
     typename Geom_traits::Compute_squared_distance_3 squared_distance =
@@ -925,10 +925,10 @@ public:
   Is_in_domain is_in_domain_object() const { return Is_in_domain(*this); }
 
   /*
-   * Returns true is the element `type` intersect properly any of the
+   * Returns `true` if the element `type` intersect properly any of the
    * surface patches describing the either the domain boundary or some
    * subdomain boundary.
-   * `Type is either `Segment_3`, `Ray_3` or `Line_3`.
+   * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    * Parameter index is set to the index of the intersected surface patch
    * if `true` is returned and to the default `Surface_patch_index`
    * value otherwise.
@@ -954,8 +954,8 @@ public:
     }
 
   private:
-    // Returns true if points \c a & \c b do not belong to the same subdomain
-    // \c index is set to the surface index of subdomains f(a), f(b)
+    // Returns true if points `a` and `b` do not belong to the same subdomain
+    // `index` is set to the surface index of subdomains f(a), f(b)
     Surface_patch operator()(const Point_3& a, const Point_3& b) const
     {
       // If f(a) != f(b), then [a,b] intersects some surface. Here we consider
@@ -975,7 +975,7 @@ public:
     }
 
     /*
-     * Clips \c query to a segment \c s, and call operator()(s)
+     * Clips  `query` to a segment `s`, and call `operator()(s)`
      */
     template<typename Query>
     Surface_patch clip_to_segment(const Query& query) const
@@ -1033,9 +1033,9 @@ public:
   private:
     /*
      * Returns a point in the intersection of [a,b] with the surface
-     * \c a must be the source point, and \c b the out point. It's important
+     *  `a` must be the source point, and `b` the out point. It's important
      * because it drives bisection cuts.
-     * Indeed, the returned point is the first intersection from \c [a,b]
+     * Indeed, the returned point is the first intersection from  `[a,b]`
      * with a subdomain surface.
      */
     Intersection operator()(const Point_3& a, const Point_3& b) const
@@ -1104,7 +1104,7 @@ public:
       }
     }
 
-    // Clips \c query to a segment \c s, and call operator()(s)
+    // Clips  `query` to a segment `s`, and call `operator()(s)`
     template<typename Query>
     Intersection clip_to_segment(const Query& query) const
     {
@@ -1128,28 +1128,28 @@ public:
 
   /*
    * Returns the index to be stored in a vertex lying on the surface identified
-   * by \c index.
+   * by `index`.
    */
   Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return Index(index); }
 
   /*
    * Returns the index to be stored in a vertex lying in the subdomain
-   * identified by \c index.
+   * identified by `index`.
    */
   Index index_from_subdomain_index(const Subdomain_index& index) const
   { return Index(index); }
 
   /*
-   * Returns the \c Surface_patch_index of the surface patch
-   * where lies a vertex with dimension 2 and index \c index.
+   * Returns the `Surface_patch_index` of the surface patch
+   * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
   { return boost::get<Surface_patch_index>(index); }
 
   /*
    * Returns the index of the subdomain containing a vertex
-   *  with dimension 3 and index \c index.
+   *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }
@@ -1171,7 +1171,7 @@ public:
   // -----------------------------------
 
 protected:
-  // Returns Surface_patch_index from \c i and \c j
+  // Returns Surface_patch_index from `i` and `j`
   Surface_patch_index make_surface_index(const Subdomain_index i,
                                          const Subdomain_index j) const
   {

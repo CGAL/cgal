@@ -228,7 +228,7 @@ public:
     return result;
   }
 
-  /// Returns signed geodesic distance between \c p and \c q
+  /// Returns signed geodesic distance between `p` and `q`
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q) const
   {
     // Locate p & q on polyline
@@ -260,7 +260,7 @@ public:
   }
 
 
-  /// Returns a point at geodesic distance \c distance from p along the
+  /// Returns a point at geodesic distance `distance` from p along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
   Point_3 point_at(const Point_3& p, FT distance) const
@@ -587,7 +587,7 @@ public:
   /// Add a 0-dimensional feature in the domain.
   Corner_index add_corner(const Point_3& p);
 
-  /// Overloads where the last parameter \c out is not `CGAL::Emptyset_iterator()`.
+  /// Overloads where the last parameter `out` is not `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_corners(InputIterator first, InputIterator end,
@@ -605,7 +605,7 @@ public:
   Corner_index register_corner(const Point_3& p, const Curve_index& index);
   Corner_index add_corner_with_context(const Point_3& p, const Surface_patch_index& index);
 
-  /// Overloads where the last parameter \c out is not
+  /// Overloads where the last parameter `out` is not
   /// `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
@@ -735,14 +735,14 @@ public:
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
-   * by \c index.
+   * by `index`.
    */
   Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return Index(index); }
 
   /**
    * Returns the index to be stored in a vertex lying in the subdomain
-   * identified by \c index.
+   * identified by `index`.
    */
   Index index_from_subdomain_index(const Subdomain_index& index) const
   { return Index(index); }
@@ -756,15 +756,15 @@ public:
   { return Index(index); }
 
   /**
-   * Returns the \c Surface_patch_index of the surface patch
-   * where lies a vertex with dimension 2 and index \c index.
+   * Returns the `Surface_patch_index` of the surface patch
+   * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
   { return boost::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
-   *  with dimension 3 and index \c index.
+   *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }
