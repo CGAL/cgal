@@ -1,14 +1,14 @@
-// Copyright (c) 2022 GeometryFactory Sarl (France).
+// Copyright (c) 2018 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
-//            Mostafa Ashraf <mostaphaashraf1996@gmail.com>
+// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_LCC_H
 #define CGAL_DRAW_LCC_H
@@ -24,12 +24,6 @@
 #include <CGAL/Random.h>
 
 namespace CGAL {
-
-  
-  //   CGAL::IO::Color face_color(const DS &aVal, face_handle dh) const {
-  //   CGAL::Random random((unsigned int)(aVal.darts().index(dh)));
-  //   return get_random_color(random);
-  // }
 
 namespace draw_function_for_lcc
 {
