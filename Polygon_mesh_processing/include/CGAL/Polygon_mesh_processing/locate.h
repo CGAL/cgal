@@ -442,8 +442,8 @@ random_location_on_face(typename boost::graph_traits<TriangleMesh>::face_descrip
                         CGAL::Random& rnd = get_default_random())
 {
   CGAL_USE(tm);
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
-  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(is_valid_face_descriptor(fd, tm));
+  CGAL_precondition(is_triangle(halfedge(fd, tm), tm));
 
   // calling 'rnd.uniform real' with double in case FT comes from an EPECK kernel (which doesn't seem to work too well)
   FT u(rnd.uniform_real(0., 1.));
@@ -523,8 +523,8 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
   const face_descriptor fd = loc.first;
   const Barycentric_coordinates& bar = loc.second;
 
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
-  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(is_valid_face_descriptor(fd, tm));
+  CGAL_precondition(is_triangle(halfedge(fd, tm), tm));
   CGAL_precondition(is_in_face(loc, tm));
 
   // the first barycentric coordinate corresponds to source(halfedge(fd, tm), tm)
@@ -942,11 +942,10 @@ locate_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
     }
   }
 
-  CGAL_postcondition(!CGAL::is_border(hd, tm)); // must find a 'real' face incident to 'vd'
+  CGAL_postcondition(!is_border(hd, tm)); // must find a 'real' face incident to 'vd'
+  CGAL_assertion(target(hd, tm) == vd);
 
   face_descriptor fd = face(hd, tm);
-
-  CGAL_assertion(target(hd, tm) == vd);
   CGAL_assertion(fd != boost::graph_traits<TriangleMesh>::null_face());
 
   // isolated vertex
@@ -989,7 +988,7 @@ locate_vertex(const typename boost::graph_traits<TriangleMesh>::vertex_descripto
               const typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
               const TriangleMesh& tm)
 {
-  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(is_valid_vertex_descriptor(vd, tm) && is_valid_face_descriptor(fd, tm));
 
   FT coords[3] = { FT(0), FT(0), FT(0) };
   std::size_t vertex_local_index = vertex_index_in_face(vd, fd, tm);
@@ -1121,13 +1120,13 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
+  CGAL_precondition(is_valid_face_descriptor(fd, tm));
+
   VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get_const_property_map(boost::vertex_point, tm));
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), 0);
-
-  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
 
   vertex_descriptor vd0 = source(halfedge(fd, tm), tm);
   vertex_descriptor vd1 = target(halfedge(fd, tm), tm);
@@ -1288,10 +1287,9 @@ locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face
   else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
   {
     const halfedge_descriptor hd = *hd_ptr;
-    face_descriptor fd = face(hd, tm);
-
-    if(fd != boost::graph_traits<TriangleMesh>::null_face())
+    if(!is_border(hd, tm))
     {
+      face_descriptor fd = face(hd, tm);
       query_location = locate_in_face(query, fd, tm, np);
       internal::snap_location_to_border<FT>(query_location, tm, tolerance); // @tmp keep or not ?
       is_query_location_in_face = is_in_face(query_location, tm);
@@ -1299,7 +1297,7 @@ locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face
 
     if(!is_query_location_in_face)
     {
-      fd = face(opposite(hd, tm), tm);
+      face_descriptor fd = face(opposite(hd, tm), tm);
       query_location = locate_in_face(query, fd, tm, np);
       is_query_location_in_face = is_in_face(query_location, tm);
     }

@@ -803,6 +803,8 @@ bool is_hexahedron(typename boost::graph_traits<FaceGraph>::halfedge_descriptor 
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
+  CGAL_precondition(is_valid_halfedge_descriptor(hd, g));
+
   halfedge_descriptor h1 = hd;
   if(is_border(h1,g)) return false;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
@@ -863,6 +865,8 @@ void swap_vertices(typename boost::graph_traits<FaceGraph>::vertex_descriptor& p
 {
  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
+  CGAL_precondition(is_valid_vertex_descriptor(p, g) && is_valid_vertex_descriptor(q, g));
+
   halfedge_descriptor hq=halfedge(q, g);
   halfedge_descriptor hp=halfedge(p, g);
   for(halfedge_descriptor h : halfedges_around_target(hq, g))
@@ -881,6 +885,9 @@ void swap_edges(const typename boost::graph_traits<FaceGraph>::halfedge_descript
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+
+  CGAL_precondition(is_valid_halfedge_descriptor(h1, g) && is_valid_halfedge_descriptor(h2, g));
+
   const halfedge_descriptor oh1 = opposite(h1, g), oh2 = opposite(h2, g);
 
   // backup vertex pointers
@@ -1010,6 +1017,8 @@ int vertex_index_in_face(const typename boost::graph_traits<Graph>::vertex_descr
 {
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
 
+  CGAL_precondition(is_valid_vertex_descriptor(vd, g) && is_valid_face_descriptor(fd, g));
+
   halfedge_descriptor start = halfedge(fd, g);
   halfedge_descriptor current = start;
   int counter = 0;
@@ -1050,7 +1059,7 @@ int halfedge_index_in_face(typename boost::graph_traits<Graph>::halfedge_descrip
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor     face_descriptor;
 
-  CGAL_precondition(he != boost::graph_traits<Graph>::null_halfedge());
+  CGAL_precondition(is_valid_halfedge_descriptor(he, g));
   CGAL_precondition(!is_border(he, g));
 
   face_descriptor f = face(he, g);

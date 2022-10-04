@@ -89,6 +89,8 @@ void sum_normals(const PM& pmesh,
 
   typedef typename boost::property_traits<VertexPointMap>::reference    Point_ref;
 
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
+
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
   vertex_descriptor the = target(he,pmesh);
@@ -171,6 +173,8 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type               GT;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -664,6 +668,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_vertex_descriptor(v, pmesh));
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
