@@ -217,9 +217,7 @@ void CGAL::QGLViewer::initializeGL() {
 
     QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
     const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
-    qDebug()<<"Using context "
-           <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
-          << rt;
+    qDebug().noquote() <<tr("Using OpenGL context %1.%2 %3").arg(cur_f.majorVersion()).arg(cur_f.minorVersion()).arg(rt);
   }
   else
   {
