@@ -1307,7 +1307,6 @@ locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face
   else
   {
     const face_descriptor fd = boost::get<face_descriptor>(dv);
-
     CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
 
     query_location = locate_in_face(query, fd, tm, np);

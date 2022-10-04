@@ -798,7 +798,8 @@ bool is_tetrahedron(typename boost::graph_traits<FaceGraph>::halfedge_descriptor
     returns `true` iff the connected component denoted by `hd` is a hexahedron.
   */
 template <typename FaceGraph>
-bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
+bool is_hexahedron(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd,
+                   const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
@@ -856,10 +857,9 @@ clear_impl(FaceGraph& g)
 }
 
 template <class FaceGraph>
-void swap_vertices(
-  typename boost::graph_traits<FaceGraph>::vertex_descriptor& p,
-  typename boost::graph_traits<FaceGraph>::vertex_descriptor& q,
-  FaceGraph& g)
+void swap_vertices(typename boost::graph_traits<FaceGraph>::vertex_descriptor& p,
+                   typename boost::graph_traits<FaceGraph>::vertex_descriptor& q,
+                   FaceGraph& g)
 {
  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
@@ -874,10 +874,9 @@ void swap_vertices(
 }
 
 template <class FaceGraph>
-void swap_edges(
-  const typename boost::graph_traits<FaceGraph>::halfedge_descriptor& h1,
-  const typename boost::graph_traits<FaceGraph>::halfedge_descriptor& h2,
-  FaceGraph& g)
+void swap_edges(const typename boost::graph_traits<FaceGraph>::halfedge_descriptor& h1,
+                const typename boost::graph_traits<FaceGraph>::halfedge_descriptor& h2,
+                FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;

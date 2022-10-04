@@ -38,7 +38,7 @@ typename boost::graph_traits<Graph>::halfedge_descriptor
 join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
           Graph& g)
 {
- typedef typename boost::graph_traits<Graph> Traits;
+  typedef typename boost::graph_traits<Graph> Traits;
   typedef typename Traits::halfedge_descriptor           halfedge_descriptor;
 
   typedef typename Traits::face_descriptor               face_descriptor;
@@ -73,16 +73,16 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
   remove_edge(edge(h, g), g);
   return hprev;
-
 }
+
 } // namespace EulerImpl
 
 /// \endcond
 
-  namespace Euler {
+namespace Euler {
+
 /// \ingroup PkgBGLEulerOperations
 /// @{
-
 
 /**
  * joins the two vertices incident to `h`, (that is `source(h, g)` and
@@ -260,8 +260,6 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   return EulerImpl::join_face(h,g);
 }
 
-
-
 /**
  * splits the face incident to `h1` and `h2`.  Creates the opposite
  * halfedges `h3` and `h4`, such that `next(h1,g) == h3` and `next(h2,g) == h4`.
@@ -298,6 +296,7 @@ split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
   internal::set_face_in_face_loop(opposite(hnew,g), fnew, g);
   set_halfedge(face(hnew,g), hnew, g);
   set_halfedge(face(opposite(hnew,g),g), opposite(hnew,g), g);
+
   return hnew;
 }
 
@@ -506,6 +505,7 @@ void remove_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   typedef typename Traits::face_descriptor               face_descriptor;
 
   CGAL_precondition(! is_border(h,g));
+
   face_descriptor f = face(h, g);
 
   halfedge_descriptor end = h;
@@ -554,9 +554,9 @@ add_edge(typename boost::graph_traits<Graph>::vertex_descriptor s,
   typename boost::graph_traits<Graph>::edge_descriptor e = add_edge(g);
   set_target(halfedge(e, g), t, g);
   set_target(opposite(halfedge(e, g), g), s, g);
+
   return e;
 }
-
 
 /**
 * checks whether a new face defined by a range of vertices (identified by their descriptors,
@@ -1520,8 +1520,8 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
 template<typename Graph, typename EdgeIsConstrainedMap>
 typename boost::graph_traits<Graph>::vertex_descriptor
 collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
-              Graph& g
-              , EdgeIsConstrainedMap Edge_is_constrained_map)
+              Graph& g,
+              EdgeIsConstrainedMap Edge_is_constrained_map)
 {
   typedef boost::graph_traits< Graph > Traits;
   typedef typename Traits::vertex_descriptor          vertex_descriptor;
@@ -1798,9 +1798,8 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
 #ifndef CGAL_NO_DEPRECATED_CODE
 /// \cond SKIP_IN_MANUAL
 template<typename Graph>
-bool
-  satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
-                           const Graph& g)
+bool satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
+                              const Graph& g)
 {
   return does_satisfy_link_condition(e, g);
 }
@@ -1808,9 +1807,8 @@ bool
 #endif
 /// @}
 
-} // CGAL
+} // namespace Euler
 
-} // CGAL
-
+} // namespace CGAL
 
 #endif /* CGAL_EULER_OPERATIONS_H */
