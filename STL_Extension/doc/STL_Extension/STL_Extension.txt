@@ -409,7 +409,7 @@ Mesh_criteria criteria(edge_size = 8,
                        cell_radius_edge_ratio = 3,
                        cell_size = 10);
 \endcode
-should now be written as follow:
+should now be written as follows:
 \code
 Mesh_criteria criteria(edge_size(8).
                        facet_angle(25).
@@ -422,6 +422,6 @@ Mesh_criteria criteria(edge_size(8).
 Note that we have tried to preserve the backward compatibility by allowing previous API
 to remain valid. However, if new parameters are introduced for those functions, there is
 no guarantee that they will be ported to the old API. So we strongly encourage users to
-upgrade to the new API. Additionally, passing parameters without names is deprecated or
+upgrade to the new API. Additionally, passing parameters without names is deprecated
 and even removed for some functions.
 */

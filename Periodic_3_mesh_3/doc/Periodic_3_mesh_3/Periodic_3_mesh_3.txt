@@ -76,7 +76,7 @@ of the manual of 3D periodic triangulations).
 Thanks to this construction, the meshing process can be exclusively conducted
 within the canonical cube.
 The mesh can then be created using the \ref PkgMesh3 package of \cgal.
-As this package originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, an interfacez
+As this package originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, an interface
 is necessary between the packages \ref PkgMesh3 and \ref PkgPeriodic3Triangulation3.
 This package provides this interface.
 
@@ -250,7 +250,7 @@ for further information.
 
 \section Periodic_3_mesh_3_section_interface Interface
 
-Since \cgal 5.6, this packages uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
+As of \cgal 5.6, this package uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
 
 \subsection Periodic_3_mesh_3TheGlobalFunctions The Global Functions
 

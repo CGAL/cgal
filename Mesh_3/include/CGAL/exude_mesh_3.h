@@ -59,7 +59,7 @@ namespace CGAL {
  *   \cgalParamNBegin{sliver_bound}
  *     \cgalParamDescription{is designed to give, in degrees, a targeted lower bound on dihedral angles of mesh cells.
  *                           The exudation process considers in turn all the mesh cells that have a smallest dihedral
- *                           angle less than sliver_bound and tries to make them disappear by weighting their vertices.
+ *                           angle less than `sliver_bound` and tries to make them disappear by weighting their vertices.
  *                           The optimization process stops when every cell in the mesh achieves this quality. The
  *                           default value is 0 and means that there is no targeted bound: the exuder then runs as long
  *                           as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}

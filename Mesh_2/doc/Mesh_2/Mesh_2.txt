@@ -278,7 +278,7 @@ After Delaunay refinement, angles are in the interval [28.5; 121.9] degrees.
 After 10 iterations of Lloyd optimization, they are in [29.1; 110.8]. 100 iterations take them to [29.3; 109.9].
 \cgalFigureEnd
 
-Since \cgal 5.6, `lloyd_optimize_mesh_2()` uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
+As of \cgal 5.6, `lloyd_optimize_mesh_2()` uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
 
 \subsection Mesh_2Examples Examples
 
