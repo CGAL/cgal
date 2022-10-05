@@ -15,8 +15,6 @@
 
 #include <CGAL/license/Mesh_2.h>
 
-#include <CGAL/disable_warnings.h>
-
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
 #include <CGAL/Mesh_2/Mesh_sizing_field.h>

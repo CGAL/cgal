@@ -116,15 +116,10 @@ unspecified_type exude(const Named_function_parameters& np = parameters::default
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::features()` can be used to specify
- * that 0 and 1-dimensional features have to be taken into account.
- * The provided value is a default value that triggers the representation
- * of corners and curves in the mesh when the domain is a model
+ * Provides an option indicating that 0 and 1-dimensional features
+ * have to be taken into account (the domain must be a model of `MeshDomainWithFeatures_3`).
+ * This is the default behavior when the domain is a model
  * of `MeshDomainWithFeatures_3`.
- *
- * Provides a `Features_options` value such that
- * 0 and 1-dimensional input features are taken into account
- * if domain is a model of the refined concept `MeshDomainWithFeatures_3`.
  *
  * \sa `CGAL::make_mesh_3()`
  * \sa `CGAL::refine_mesh_3()`
@@ -199,7 +194,7 @@ unspecified_type features();
  * refine_mesh_3(c3t3,
  *               domain,
  *               criteria,
- *               parameters::lloyd(parameters::time_limit=10));
+ *               parameters::lloyd(parameters::time_limit(10)));
  *
  * \endcode
  *
@@ -238,15 +233,8 @@ unspecified_type no_exude();
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::no_features()` allows the user to prevent the handling
- * of 0 and 1-dimensional features. This is useful when the
- * domain is a model of `MeshDomainWithFeatures_3`
- * and the user does not want corners and curves
- * to be accurately represented
- * in the mesh.
- *
- * Returns a `Features_options` value that prevents the mesh generator
- * to take into account 0 and 1-dimensional input features.
+ * Provides an option indicating no special treatment should be done
+ * with 0 and 1-dimensional features.
  *
  * \sa `CGAL::make_mesh_3()`
  * \sa `CGAL::refine_mesh_3()`
@@ -392,7 +380,7 @@ unspecified_type no_perturb();
  * refine_mesh_3(c3t3,
  *               domain,
  *               criteria,
- *               parameters::odt(parameters::time_limit=10));
+ *               parameters::odt(parameters::time_limit(10)));
  * \endcode
  *
  * \sa `CGAL::parameters::no_odt()`
@@ -450,7 +438,7 @@ unspecified_type odt(const Named_function_parameters& np = parameters::default_v
  * refine_mesh_3(c3t3,
  *               domain,
  *               criteria,
- *               parameters::perturb(parameters::time_limit=10));
+ *               parameters::perturb(parameters::time_limit(10)));
  *
  * \endcode
  *

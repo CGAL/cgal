@@ -19,8 +19,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-#include <CGAL/disable_warnings.h>
-
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 #include <CGAL/Mesh_optimization_return_code.h>
@@ -82,7 +80,7 @@ namespace CGAL {
  * \code{.cpp}
  * // Exude without sliver_bound, using at most 10s CPU time
  * exude_mesh_3(c3t3,
- *              parameters::time_limit=10);
+ *              parameters::time_limit(10));
  * \endcode
  *
  * \sa `CGAL::Mesh_optimization_return_code`
@@ -96,11 +94,11 @@ namespace CGAL {
 template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3,const CGAL_NP_CLASS& np = parameters::default_values())
 {
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
-    int time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
-    double sliver_bound= choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),parameters::default_values_for_mesh_3::exude_sliver_bound);
-    return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  int time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+  double sliver_bound= choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),parameters::default_values_for_mesh_3::exude_sliver_bound);
+  return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -131,23 +129,23 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, const CGAL_NP_CLASS_1&  n
 template <typename C3T3>
 Mesh_optimization_return_code
 exude_mesh_3_impl(C3T3& c3t3,
-                const double time_limit,
-                const double sliver_bound)
+                  const double time_limit,
+                  const double sliver_bound)
 {
-   typedef typename C3T3::Triangulation Tr;
-   typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
-   //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
-   typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
+  typedef typename C3T3::Triangulation Tr;
+  typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
+  //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
+  typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
 
-   // Create exuder
-   Sc criterion(sliver_bound, c3t3.triangulation());
-   Exuder exuder(c3t3, criterion);
+  // Create exuder
+  Sc criterion(sliver_bound, c3t3.triangulation());
+  Exuder exuder(c3t3, criterion);
 
-   // Set time_limit
-   exuder.set_time_limit(time_limit);
+  // Set time_limit
+  exuder.set_time_limit(time_limit);
 
-   // Launch exudation
-   return exuder();
+  // Launch exudation
+  return exuder();
 }
 #endif //DOXYGEN_RUNNING
 

@@ -310,8 +310,8 @@ void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& crit
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::no_exude().v);
-  parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::no_perturb().v);
+  parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude().v);
+  parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb().v);
   parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt().v);
   parameters::internal::Lloyd_options lloyd_param = choose_parameter(get_parameter(np, internal_np::lloyd_options_param), parameters::no_lloyd().v);
   bool reset = choose_parameter(get_parameter(np, internal_np::do_reset_c3t3), false);

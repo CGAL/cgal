@@ -121,9 +121,9 @@ namespace CGAL {
  * // move less than 0.001*shortest_incident_edge_length
  * lloyd_optimize_mesh_3(c3t3,
  *                       domain,
- *                       parameters::convergence=0.01,
- *                       parameters::freeze_bound=0.001,
- *                       parameters::do_freeze=true);
+ *                       parameters::convergence(0.01).
+ *                       parameters::freeze_bound(0.001).
+ *                       parameters::do_freeze(true));
  *
  * \endcode
  *
@@ -142,7 +142,7 @@ Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain& doma
     using parameters::choose_parameter;
     using parameters::get_parameter;
     int max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
-    const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), 0.001);
+    const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), 0.02);
     const double freeze_bound = choose_parameter(get_parameter(np, internal_np::vertex_freeze_bound), 0.001);
     const double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
     bool do_freeze = choose_parameter(get_parameter(np,internal_np::freeze),true);
