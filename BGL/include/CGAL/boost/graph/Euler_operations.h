@@ -1171,7 +1171,7 @@ void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   typedef typename Traits::halfedge_descriptor halfedge_descriptor;
 
   CGAL_precondition(is_valid_halfedge_descriptor(h, g));
-  CGAL_precondition(!is_border(h, g));
+  CGAL_precondition(is_border(h, g));
 
   face_descriptor f = add_face(g);
   for(halfedge_descriptor hd : halfedges_around_face(h,g)){
