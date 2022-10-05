@@ -815,6 +815,7 @@ Iterator_range<Halfedge_around_source_iterator<Graph> >
 halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Halfedge_around_source_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -826,6 +827,7 @@ template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
 halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
+  CGAL_precondition(is_valid_vertex_descriptor(v, g));
   return halfedges_around_source(opposite(halfedge(v,g),g),g);
 }
 
@@ -838,6 +840,7 @@ Iterator_range<Halfedge_around_target_iterator<Graph> >
 halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Halfedge_around_target_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -849,6 +852,7 @@ template<typename Graph>
 Iterator_range<Halfedge_around_target_iterator<Graph> >
 halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
+  CGAL_precondition(is_valid_vertex_descriptor(v, g));
   return halfedges_around_target(halfedge(v,g),g);
 }
 
@@ -861,6 +865,7 @@ Iterator_range<Halfedge_around_face_iterator<Graph> >
 halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Halfedge_around_face_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -965,6 +970,7 @@ Iterator_range<Face_around_target_iterator<Graph> >
 faces_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Face_around_target_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -977,6 +983,7 @@ Iterator_range<Face_around_face_iterator<Graph> >
 faces_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Face_around_face_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -1117,6 +1124,7 @@ Iterator_range<Opposite_edge_around_face_iterator<Graph> >
 opposite_edges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Opposite_edge_around_face_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -1152,10 +1160,9 @@ Iterator_range<Edge_around_face_iterator<Graph> >
 edges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Edge_around_face_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
-
-
 
 /**
  * \ingroup PkgBGLIterators
@@ -1273,15 +1280,16 @@ Iterator_range<Vertex_around_target_iterator<Graph> >
 adjacent_vertices(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Vertex_around_target_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
-
 
 template <typename Graph>
 Iterator_range<Vertex_around_target_iterator<Graph> >
 adjacent_vertices(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
   typedef Vertex_around_target_iterator<Graph> I;
+  CGAL_precondition(is_valid_vertex_descriptor(v, g));
   return make_range(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
 }
 
@@ -1294,6 +1302,7 @@ Iterator_range<Vertex_around_target_iterator<Graph> >
 vertices_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Vertex_around_target_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -1302,6 +1311,7 @@ Iterator_range<Vertex_around_target_iterator<Graph> >
 vertices_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
   typedef Vertex_around_target_iterator<Graph> I;
+  CGAL_precondition(is_valid_vertex_descriptor(v, g));
   return make_range(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
 }
 /**
@@ -1313,6 +1323,7 @@ Iterator_range<Vertex_around_face_iterator<Graph> >
 vertices_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Vertex_around_face_iterator<Graph> I;
+  CGAL_precondition(is_valid_halfedge_descriptor(h, g));
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -1355,9 +1366,6 @@ private:
   typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return opp(*this->base_reference()); }
 };
 
-
-
-
 template <class Graph>
 class In_edge_iterator
   : public boost::iterator_adaptor<
@@ -1396,12 +1404,6 @@ public:
   typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return fct(*this->base_reference()); }
 };
 
-
-
-
-
-
 } // CGAL
-
 
 #endif /* CGAL_BGL_ITERATORS_H */
