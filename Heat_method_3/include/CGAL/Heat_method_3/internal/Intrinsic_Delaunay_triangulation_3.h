@@ -82,7 +82,8 @@ bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits)
 }
 
 template <class TriangleMesh>
-struct Intrinsic_Delaunay_triangulation_3_vertex_descriptor {
+struct Intrinsic_Delaunay_triangulation_3_vertex_descriptor
+{
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   halfedge_descriptor hd;
@@ -99,6 +100,16 @@ struct Intrinsic_Delaunay_triangulation_3_vertex_descriptor {
   explicit Intrinsic_Delaunay_triangulation_3_vertex_descriptor(const vertex_descriptor vd, const TriangleMesh& tm)
     : hd(halfedge(vd,tm))
   {}
+
+  bool operator==(const Intrinsic_Delaunay_triangulation_3_vertex_descriptor& other) const
+  {
+    return hd == other.hd;
+  }
+
+  bool operator!=(const Intrinsic_Delaunay_triangulation_3_vertex_descriptor& other) const
+  {
+    return ! (*this == other);
+  }
 };
 
 template <class TriangleMesh>
@@ -549,6 +560,8 @@ struct graph_traits<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T
 
   typedef typename boost::graph_traits<TM>::vertices_size_type vertices_size_type;
 
+  static vertex_descriptor null_vertex() { return vertex_descriptor(boost::graph_traits<TM>::null_halfedge()); }
+  static halfedge_descriptor null_halfedge() { return boost::graph_traits<TM>::null_halfedge(); }
   static face_descriptor null_face() { return boost::graph_traits<TM>::null_face(); }
 };
 
@@ -589,7 +602,7 @@ template <typename TM,
           typename T>
 Iterator_range<typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::vertex_iterator>
 vertices(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
- {
+{
    std::pair<typename boost::graph_traits<TM>::vertex_iterator,
              typename boost::graph_traits<TM>::vertex_iterator> p = vertices(idt.triangle_mesh());
 
@@ -597,7 +610,7 @@ vertices(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
   Fct fct(idt.triangle_mesh());
   return make_range(boost::make_transform_iterator(p.first, fct),
                     boost::make_transform_iterator(p.second,fct));
- }
+}
 
 
 template <typename TM,
@@ -622,9 +635,9 @@ template <typename TM,
           typename T>
 Iterator_range<typename boost::graph_traits<TM>::face_iterator>
 faces(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
- {
-   return make_range( faces(idt.triangle_mesh()) );
- }
+{
+  return make_range( faces(idt.triangle_mesh()) );
+}
 
 template <typename TM,
           typename T>
@@ -659,7 +672,7 @@ template <typename TM,
           typename T>
 typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::edge_descriptor ed,
-       const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
+         const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
 {
   return halfedge(ed, idt.triangle_mesh());
 }
@@ -684,6 +697,23 @@ next(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::ha
   return next(hd, idt.triangle_mesh());
 }
 
+template <typename TM,
+          typename T>
+typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::halfedge_descriptor
+prev(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::halfedge_descriptor hd,
+     const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
+{
+  return prev(hd, idt.triangle_mesh());
+}
+
+template <typename TM,
+          typename T>
+typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::edge_descriptor
+edge(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::halfedge_descriptor hd,
+     const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
+{
+  return edge(hd, idt.triangle_mesh());
+}
 
 template <typename TM,
           typename T>
