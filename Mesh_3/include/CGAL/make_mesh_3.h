@@ -19,8 +19,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-#include <CGAL/disable_warnings.h>
-
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
