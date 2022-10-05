@@ -914,7 +914,7 @@ Property maps are an API introduced in the boost library that allows to
 associate values to keys. In the following examples, for each proberty map, we associate
 a curvature value to each vertex.
 
-\subsubsection ICCExample Interpolated Corrected Curvature on a Surface Mesh.
+\subsubsection ICCExampleSM Interpolated Corrected Curvature on a Surface Mesh.
 
 The following example illustrates how to
 compute the curvatures on vertices
