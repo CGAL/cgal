@@ -66,7 +66,7 @@ namespace Surface_mesh_parameterization {
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// reads a serie of cones from an input stream. Cones are passed as an
-/// integer value that is the index of a vertex handle in the mesh tm`, using
+/// integer value that is the index of a vertex handle in the mesh `tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
 /// \attention The mesh is here `tm`, it is the base mesh of the `CGAL::Seam_mesh`
