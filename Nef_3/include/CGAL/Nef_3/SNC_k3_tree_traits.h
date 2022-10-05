@@ -209,7 +209,7 @@ Side_of_plane<SNC_decorator>::operator()(Halfedge_handle e) {
 
 
 /*
-   As for the edges, if a facet is tanget to the plane it is not considered as
+   As for the edges, if a facet is tangent to the plane it is not considered as
    a interesection since lower dimensional faces, like the edges and vertices
    where the tangency occurrs, should be reported as the objects intersecting
    the plane.

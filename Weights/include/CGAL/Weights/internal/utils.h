@@ -162,7 +162,7 @@ namespace internal {
     v /= length;
   }
 
-  // Computes cotanget between two 2D vectors.
+  // Computes cotangent between two 2D vectors.
   template<typename GeomTraits>
   typename GeomTraits::FT cotangent_2(
     const GeomTraits& traits,
@@ -193,7 +193,7 @@ namespace internal {
     }
   }
 
-  // Computes tanget between two 2D vectors.
+  // Computes tangent between two 2D vectors.
   template<typename GeomTraits>
   typename GeomTraits::FT tangent_2(
     const GeomTraits& traits,
@@ -268,7 +268,7 @@ namespace internal {
     v /= length;
   }
 
-  // Computes cotanget between two 3D vectors.
+  // Computes cotangent between two 3D vectors.
   template<typename GeomTraits>
   typename GeomTraits::FT cotangent_3(
     const GeomTraits& traits,
@@ -303,7 +303,7 @@ namespace internal {
     }
   }
 
-  // Computes tanget between two 3D vectors.
+  // Computes tangent between two 3D vectors.
   template<typename GeomTraits>
   typename GeomTraits::FT tangent_3(
     const GeomTraits& traits,
