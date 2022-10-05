@@ -136,10 +136,10 @@ Mesh_optimization_return_code odt_optimize_mesh_3(C3T3& c3t3, MeshDomain& domain
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    double time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+    double time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),parameters::default_values_for_mesh_3::time_limit);
     std::size_t max_iteration_number=choose_parameter(get_parameter(np,internal_np::number_of_iterations),0);
-    double convergence=choose_parameter(get_parameter(np,internal_np::convergence_ratio),0.02);
-    double freeze_bound=choose_parameter(get_parameter(np,internal_np::vertex_freeze_bound),0.01);
+    double convergence=choose_parameter(get_parameter(np,internal_np::convergence_ratio),parameters::default_values_for_mesh_3::odt_convergence_ratio);
+    double freeze_bound=choose_parameter(get_parameter(np,internal_np::vertex_freeze_bound),parameters::default_values_for_mesh_3::odt_freeze_ratio);
     bool do_freeze=choose_parameter(get_parameter(np,internal_np::freeze),true);
     return odt_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iteration_number, convergence, freeze_bound, do_freeze);
 }

@@ -29,8 +29,6 @@
 namespace CGAL {
 namespace parameters { namespace default_values_for_mesh_3 {
 
-// exude_mesh_3
-const double exude_sliver_bound = 0.;
 
 // perturb_mesh_3
 template<typename C3T3>
@@ -41,9 +39,6 @@ CGAL::Mesh_3::Min_dihedral_angle_criterion
   typedef typename C3T3::Triangulation Tr;
   return CGAL::Mesh_3::Min_dihedral_angle_criterion<Tr>(bound, c3t3.triangulation());
 }
-
-// global optimizers
-const bool do_freeze = true;
 
 } } // end namespace parameters::default_values_for_mesh_3
 } // end namespace CGAL

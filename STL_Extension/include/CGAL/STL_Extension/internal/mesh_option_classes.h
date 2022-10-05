@@ -212,6 +212,11 @@ struct Domain_features_generator< MeshDomain, true >
 
 namespace default_values_for_mesh_3 {
 
+const double time_limit = 0.;
+
+// exude_mesh_3
+const double exude_sliver_bound = 0.;
+
 // perturb_mesh_3
 const double perturb_sliver_bound = 0.;
 
@@ -223,6 +228,8 @@ const double lloyd_convergence_ratio = 0.02;
 const double odt_freeze_ratio = 0.01;
 const double odt_convergence_ratio = 0.02;
 
+// global optimizers
+const bool do_freeze = true;
 
 } } } //namespace CGAL::parameters::def
 

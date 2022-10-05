@@ -164,7 +164,7 @@ unspecified_type features();
  *                           If it is set to 0, freezing of vertices is disabled.}
  *     \cgalParamPrecondition{`0<= freeze_bound <=1`}
  *     \cgalParamType{`double`}
- *     \cgalParamDefault{0.001}
+ *     \cgalParamDefault{0.01}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{convergence}
  *     \cgalParamDescription{threshold ratio of stopping criterion based on convergence: the optimization process is stopped

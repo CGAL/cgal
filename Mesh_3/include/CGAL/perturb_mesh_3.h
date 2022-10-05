@@ -106,7 +106,7 @@ Mesh_optimization_return_code perturb_mesh_3(C3T3& c3t3, MeshDomain& domain, con
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    double time_limit = choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+    double time_limit = choose_parameter(get_parameter(np,internal_np::maximum_running_time),parameters::default_values_for_mesh_3::time_limit);
     auto sliver_bound = choose_parameter(get_parameter(np,internal_np::lower_sliver_bound), parameters::default_values_for_mesh_3::perturb_sliver_bound);
     auto sliver_criterion = choose_parameter(get_parameter(np, internal_np::sliver_criteria), parameters::default_values_for_mesh_3::default_sliver_criterion(c3t3,sliver_bound));
     auto perturbation_vector = choose_parameter(get_parameter(np,internal_np::perturb_vector), default_perturbation_vector(c3t3,domain,sliver_criterion));

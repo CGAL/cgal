@@ -82,7 +82,7 @@ namespace CGAL {
  *                           If it is set to 0, freezing of vertices is disabled.}
  *     \cgalParamPrecondition{`0<= freeze_bound <=1`}
  *     \cgalParamType{`double`}
- *     \cgalParamDefault{0.001}
+ *     \cgalParamDefault{0.01}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{convergence}
  *     \cgalParamDescription{threshold ratio of stopping criterion based on convergence: the optimization process is stopped
@@ -142,9 +142,9 @@ Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain& doma
     using parameters::choose_parameter;
     using parameters::get_parameter;
     int max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
-    const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), 0.02);
-    const double freeze_bound = choose_parameter(get_parameter(np, internal_np::vertex_freeze_bound), 0.001);
-    const double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
+    const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), parameters::default_values_for_mesh_3::lloyd_convergence_ratio);
+    const double freeze_bound = choose_parameter(get_parameter(np, internal_np::vertex_freeze_bound), parameters::default_values_for_mesh_3::lloyd_freeze_ratio);
+    const double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), parameters::default_values_for_mesh_3::time_limit);
     bool do_freeze = choose_parameter(get_parameter(np,internal_np::freeze),true);
     return lloyd_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iterations, convergence_ratio, freeze_bound, do_freeze);
 }
