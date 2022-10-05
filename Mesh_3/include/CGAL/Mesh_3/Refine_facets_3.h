@@ -447,7 +447,7 @@ protected:
     return f.first->get_facet_surface_center_index(f.second);
   }
 
-  /// Sets `f` to surface facets, with index `index`
+  /// Sets `f` to surface facets, with index `index`.
   void set_facet_on_surface(const Facet& f,
                             const Surface_patch_index& index)
   {
