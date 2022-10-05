@@ -109,8 +109,8 @@ public:
   ~Triangulation_helpers() {}
 
   /**
-   * Returns true if moving `v` to `p` makes no topological
-   * change in `tr`
+   * Returns `true` if moving `v` to `p` makes no topological
+   * change in `tr`.
    */
   bool no_topological_change(Tr& tr,
                              const Vertex_handle v,
@@ -137,7 +137,7 @@ public:
                                const Bare_point& p) const;
 
   /**
-   * Returns the squared distance from `vh` to its closest vertex
+   * Returns the squared distance from `vh` to its closest vertex.
    *
    * \pre `vh` is not the infinite vertex
    */
@@ -156,7 +156,7 @@ public:
 
 private:
   /**
-   * Returns true if `v` is well_oriented on each cell of `cell_tos`
+   * Returns `true` if `v` is well_oriented on each cell of `cell_tos`.
    */
   // For sequential version
   bool well_oriented(const Tr& tr,

@@ -101,7 +101,7 @@ unspecified_type manifold_with_boundary();
  * refine_mesh_3(c3t3,
  *               domain,
  *               criteria,
- *               parameters::exude(parameters::time_limit=10));
+ *               parameters::exude(parameters::time_limit(10)));
  * \endcode
  *
  * \sa `CGAL::parameters::no_exude()`
@@ -282,7 +282,7 @@ unspecified_type no_lloyd();
  * \ingroup PkgMesh3Parameters
  *
  * The function `parameters::no_odt()` allows the user to tell the mesh generation functions
- * `make_mesh_3()` and `refine_mesh_3()` that no odt optimization must be done.
+ * `make_mesh_3()` and `refine_mesh_3()` that no ODT optimization must be done.
  *
  * \cgalHeading{Example}
  *
@@ -423,7 +423,7 @@ unspecified_type odt(const Named_function_parameters& np = parameters::default_v
  *                           is stopped. This time is measured using the `Real_timer` class. The default value is
  *                           0 and means that there is no time limit.}
  *     \cgalParamType{`double`}
- *     \cgalParamPrecondition{`0 <= sliver_bound <= 180`}
+ *     \cgalParamPrecondition{`time_limit >= 0`}
  *   \cgalParamDefault{0}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{sliver_bound}
@@ -434,7 +434,7 @@ unspecified_type odt(const Named_function_parameters& np = parameters::default_v
  *                          default value is 0 and means that there is no targeted bound: the exuder then runs as long
  *                          as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}
  *     \cgalParamType{`double`}
- *     \cgalParamPrecondition{`time_limit >= 0`}
+ *     \cgalParamPrecondition{`0 <= sliver_bound <= 180`}
  *     \cgalParamDefault{0}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd

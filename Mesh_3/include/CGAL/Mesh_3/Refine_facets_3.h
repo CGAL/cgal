@@ -409,19 +409,19 @@ protected:
     return ( (facet < mirror)?facet:mirror );
   }
 
-  /// Returns true if `f` has already been visited
+  /// Returns true if `f` has already been visited.
   bool is_facet_visited(const Facet& f) const
   {
     return f.first->is_facet_visited(f.second);
   }
 
-  /// Sets facet `f` to visited
+  /// Sets facet `f` to visited.
   void set_facet_visited(Facet& f) const
   {
     f.first->set_facet_visited(f.second);
   }
 
-  /// Sets the facet `f` and its mirrored facet's surface centers to `p`
+  /// Sets the facet `f` and its mirrored facet's surface centers to `p`.
   void set_facet_surface_center(const Facet& f,
                                 const Bare_point& p,
                                 const Index& index) const
@@ -435,13 +435,13 @@ protected:
     mirror.first->set_facet_surface_center_index(mirror.second,index);
   }
 
-  /// Returns facet surface center of `f`
+  /// Returns facet surface center of `f`.
   Bare_point get_facet_surface_center(const Facet& f) const
   {
     return f.first->get_facet_surface_center(f.second);
   }
 
-  /// Returns index of surface center of facet `f`
+  /// Returns index of surface center of facet `f`.
   Index get_facet_surface_center_index(const Facet& f) const
   {
     return f.first->get_facet_surface_center_index(f.second);
@@ -454,13 +454,13 @@ protected:
     r_c3t3_.add_to_complex(f, index);
   }
 
-  /// Returns index of facet `f`
+  /// Returns index of facet `f`.
   Surface_patch_index get_facet_surface_index(const Facet& f) const
   {
     return r_c3t3_.surface_patch_index(f.first, f.second);
   }
 
-  /// Sets index and dimension of vertex `v`
+  /// Sets index and dimension of vertex `v`.
   void set_vertex_properties(Vertex_handle& v, const Index& index)
   {
     r_c3t3_.set_index(v, index);
@@ -560,7 +560,7 @@ protected:
     return r_c3t3_.is_in_complex(f) ;
   }
 
-  /// Removes `f` from surface facets
+  /// Removes `f` from surface facets.
   void remove_facet_from_surface(const Facet& f)
   {
     r_c3t3_.remove_from_complex(f);
@@ -595,7 +595,7 @@ protected:
   void treat_new_facet(Facet& facet);
 
   /**
-   * Computes at once is_facet_on_surface and facet_surface_center.
+   * Computes simultaneously `is_facet_on_surface` and `facet_surface_center`.
    * @param facet The input facet
    * @return `true` if `facet` is on surface, `false` otherwise
    */
@@ -835,12 +835,12 @@ public:
       Container_::get_next_local_element_impl());
   }
 
-  /// Tests if `p` encroaches facet from zone
+  /// Tests if `p` encroaches facet from `zone`.
   // For sequential
   Mesher_level_conflict_status
   test_point_conflict_from_superior_impl(const Weighted_point& p, Zone& zone);
 
-  /// Tests if `p` encroaches facet from zone
+  /// Tests if `p` encroaches facet from `zone`.
   // For parallel
   template <typename Mesh_visitor>
   Mesher_level_conflict_status
@@ -875,7 +875,7 @@ public:
                            , bool &facet_is_in_its_cz
                            , bool &could_lock_zone);
 
-  /// Insert `p` into the triangulation
+  /// Inserts `p` into the triangulation.
   Vertex_handle insert_impl(const Weighted_point& p, const Zone& zone);
 
   bool try_lock_element(const Facet &f, int lock_radius = 0) const

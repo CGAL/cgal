@@ -196,7 +196,7 @@ private:
   Vertex_handle get_vertex_corner_from_point(const Bare_point& p,
                                              const Index& p_index) const;
 
-  /// Insert point(p,w) into the triangulation and set its dimension to `dim`
+  /// Inserts `point(p,w)` into the triangulation and set its dimension to `dim`
   /// and its index to `index`.
   /// The handle of the newly created vertex is returned.
   Vertex_handle insert_point(const Bare_point& p,
@@ -206,7 +206,7 @@ private:
                              const bool special_ball = false);
 
   /**
-   * Insert point(p,w) into the triangulation and set its dimension to `dim` and
+   * Inserts `point(p,w)` into the triangulation and set its dimension to `dim` and
    * its index to `index`.
    * The handle of the newly created vertex is returned.
    *
@@ -223,7 +223,7 @@ private:
                      const Index& index,
                      ErasedVeOutIt out);
 
-  /// Insert balls between the points identified by the handles `vp` and `vq`
+  /// Inserts balls between the points identified by the handles `vp` and `vq`
   /// on the curve identified by `curve_index`.
   ///
   /// \param orientation Orientation of the curve segment between `vp` and
@@ -251,22 +251,22 @@ private:
                              const Curve_index& curve_index,
                              ErasedVeOutIt out);
 
-  /// Return `true` if the balls of `va` and `vb` intersect, and `(va,vb)` is not
+  /// Returns `true` if the balls of `va` and `vb` intersect, and `(va,vb)` is not
   /// an edge of the complex.
   bool non_adjacent_but_intersect(const Vertex_handle& va,
                                   const Vertex_handle& vb) const;
 
-  /// Return `true` if the balls of `va` and `vb` intersect.
+  /// Returns `true` if the balls of `va` and `vb` intersect.
   bool do_balls_intersect(const Vertex_handle& va,
                           const Vertex_handle& vb) const;
 
-  /// Change the size of the ball of the vertex `v`.
+  /// Changes the size of the ball of the vertex `v`.
   Vertex_handle change_ball_size(const Vertex_handle& v,
                                  const FT squared_size,
                                  const bool special_ball = false);
 
 
-  /// Return `true` if balls of v1 and v2 intersect "enough".
+  /// Returns `true` if balls of v1 and v2 intersect "enough".
   /// \param orientation Orientation of the curve segment between `v1` and
   ///        `v2`, given the orientation of the curve of index
   ///        `curve_index`
@@ -280,15 +280,15 @@ private:
   /// of those vertices is ok. If not, fix it.
   void check_and_repopulate_edges();
 
-  /// Check if the vertex `v` is well sampled, and if its not the case, fix it.
-  /// Fill `out` with deleted vertices during this process. The value type of `out`
+  /// Checks if the vertex `v` is well sampled, and if its not the case, fix it.
+  /// Fills `out` with deleted vertices during this process. The value type of `out`
   /// is `Vertex_handle`.
   template <typename ErasedVeOutIt>
   ErasedVeOutIt
   check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out);
 
   /// Given two vertices `start` and `next` inserted on the curve with
-  /// index `curve_index`, return `CGAL::POSITIVE` if the curve arc from
+  /// index `curve_index`, returns `CGAL::POSITIVE` if the curve arc from
   /// `start` to `next` is oriented in the same orientation as the curve
   /// segment with index `curve_index`, or `CGAL::NEGATIVE` otherwise.
   ///
@@ -298,7 +298,7 @@ private:
                       const Vertex_handle& next,
                       Curve_index curve_index) const;
 
-  /// Walk along the edge from `start`, following the direction `start` to
+  /// Walks along the edge from `start`, following the direction `start` to
   /// `next`, and fills `out` with the vertices which do not fulfill
   /// the sampling conditions.
   ///
@@ -315,7 +315,7 @@ private:
                   const CGAL::Orientation orientation,
                   ErasedVeOutIt out) const;
 
-  /// Return the next vertex along edge, i.e the vertex after `start`, following
+  /// Returns the next vertex along edge, i.e the vertex after `start`, following
   /// the direction from `previous` to `start`.
   /// \pre (previous,start) is in c3t3
   /// \pre `c3t3.curve_index(start, previous) == curve_index`
@@ -324,7 +324,7 @@ private:
                           const Vertex_handle& previous,
                           const Curve_index& curve_index) const;
 
-  /// Replace the vertices between ]begin,last[ with new vertices, along the curve
+  /// Replaces the vertices within `]begin,last[` with new vertices, along the curve
   /// identified by `curve_index`.
   /// The value type of `InputIterator` is `Vertex_handle`.
   ///
@@ -346,7 +346,7 @@ private:
                                        const CGAL::Orientation orientation,
                                        ErasedVeOutIt out);
 
-  /// Check if the size of `v2` is compatible (i.e. greater) with the linear
+  /// Checks if the size of `v2` is compatible (i.e. greater) with the linear
   /// interpolation of the sizes of `v1` and `v3`.
   bool is_sizing_field_correct(const Vertex_handle& v1,
                                const Vertex_handle& v2,
@@ -354,25 +354,25 @@ private:
                                const Curve_index& index,
                                const CGAL::Orientation orientation) const;
 
-  /// Repopulate all incident curves around the corner `v`.
+  /// Repopulates all incident curves around the corner `v`.
   /// \pre `v` is a corner of c3t3
   template <typename ErasedVeOutIt>
   ErasedVeOutIt
   repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out);
 
-  /// Return `true` if the edge with index `curve_index` is already treated.
+  /// Returns `true` if the edge with index `curve_index` is already treated.
   bool is_treated(const Curve_index& curve_index) const
   {
     return ( treated_edges_.find(curve_index) != treated_edges_.end() );
   }
 
-  /// Set the edge with index `curve_index` as treated.
+  /// Sets the edge with index `curve_index` as treated.
   void set_treated(const Curve_index& curve_index)
   {
     treated_edges_.insert(curve_index);
   }
 
-  /// Compute the Euclidean distance between the bare points of `va` and `vb`.
+  /// Computes the Euclidean distance between the bare points of `va` and `vb`.
   FT compute_distance(const Vertex_handle& va, const Vertex_handle& vb) const
   {
     typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
@@ -384,14 +384,14 @@ private:
     return compute_distance(cp(wpa), cp(wpb));
   }
 
-  /// Compute the Euclidean distance between the bare points `p` and `q`.
+  /// Computes the Euclidean distance between the bare points `p` and `q`.
   FT compute_distance(const Bare_point& p, const Bare_point& q) const
   {
     return CGAL::sqrt(c3t3_.triangulation().geom_traits().
                         compute_squared_distance_3_object()(p,q));
   }
 
-  /// Return the radius of the ball of vertex `v`.
+  /// Returns the radius of the ball of vertex `v`.
   FT get_radius(const Vertex_handle& v) const
   {
     typename Gt::Compute_weight_3 cw =

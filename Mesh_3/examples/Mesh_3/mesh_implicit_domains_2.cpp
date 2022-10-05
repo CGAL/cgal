@@ -46,7 +46,7 @@ int main()
   /// [Domain creation] (Warning: Sphere_3 constructor uses square radius !)
   namespace params = CGAL::parameters;
   Mesh_domain domain(Function_wrapper(v, vps),
-                     K::Sphere_3(CGAL::ORIGIN,5.*5.),
+                     K::Sphere_3(CGAL::ORIGIN, CGAL::square(K::FT(5))),
                      params::relative_error_bound(1e-6));
   /// [Domain creation]
 

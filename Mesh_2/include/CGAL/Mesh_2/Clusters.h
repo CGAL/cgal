@@ -196,7 +196,7 @@ public:
   /** \name Functions to manage clusters during the refinement process. */
 
   /**
-   * Update the cluster of `[va,vb]`, putting `vm` instead of `vb`.
+   * Updates the cluster of `[va,vb]`, putting `vm` instead of `vb`.
    * If reduction=false, the edge [va,vm] is not set reduced.
    */
   void update_cluster(Cluster& c, iterator it,

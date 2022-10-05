@@ -63,12 +63,12 @@ namespace CGAL
  *                           the bounded connected components including at least
  *                           one seed. If `seeds_are_in_domain==false`, the domain is the
  *                           union of the bounded components including no seed.}
- *     \cgalParamType{a class model of `ConstRange` with iterator being a model of `InputIterator` with `CDT::Point_2` as value type.}
+ *     \cgalParamType{a class model of `ConstRange` whose iterator is a model of `InputIterator` with `CDT::Point_2` as value type.}
  *     \cgalParamDefault{No seed.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{seeds_are_in_domain}
- *     \cgalParamDescription{specified if seeds indicates bounded connected components inside or outside of the domain.}
+ *     \cgalParamDescription{specified if seeds indicate bounded connected components inside or outside of the domain.}
  *     \cgalParamType{`bool`}
  *     \cgalParamDefault{false}
  *   \cgalParamNEnd
@@ -82,7 +82,7 @@ namespace CGAL
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{time_limit}
- *     \cgalParamDescription{to set up, in seconds, a CPU time limit after which the optimization process is stopped.
+ *     \cgalParamDescription{CPU time limit (in seconds) after which the optimization process is stopped.
  *                           This time is measured using `CGAL::Real_timer`. 0 means that there is no time limit.}
  *     \cgalParamType{`double`}
  *     \cgalParamPrecondition{`time_limit` \f$ \geq\f$ 0}
@@ -127,7 +127,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
 
   int max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
   const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), 0.001);
-  const double freeze_bound = 0.001; /* choose_parameter(get_parameter(np, internal_np::freeze_bound), 0.001); */
+  const double freeze_bound = choose_parameter(get_parameter(np, internal_np::freeze_bound), 0.001);
   const double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
   // Seeds
   // {

@@ -99,7 +99,7 @@ public:
 
 private:
   /**
-   * Returns size at point `p`, by interpolation inside facet
+   * Returns size at point `p`, by interpolation inside facet.
    */
   FT interpolate_on_face_vertices(const Point_2&
 #ifdef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES

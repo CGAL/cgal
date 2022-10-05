@@ -313,12 +313,12 @@ public:
 
 private:
   /**
-   * Returns moves for vertices of set `moving_vertices`
+   * Returns moves for vertices of set `moving_vertices`.
    */
   Moves_vector compute_moves(Moving_vertices_set& moving_vertices);
 
   /**
-   * Returns the move for vertex `v`
+   * Returns the move for vertex `v`.
    * \warning This function should be called only on moving vertices
    *          even for frozen vertices, it could return a non-zero vector
    */
@@ -343,17 +343,17 @@ private:
   bool check_convergence() const;
 
   /**
-   * Returns the average circumradius length of cells incident to `v`
+   * Returns the average circumradius length of cells incident to `v`.
    */
   FT average_circumradius_length(const Vertex_handle& v) const;
 
   /**
-   * Returns the minimum cicumradius length of cells incident to `v`
+   * Returns the minimum cicumradius length of cells incident to `v`.
    */
   FT min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const;
 
   /**
-   * Returns the squared circumradius length of cell `cell`
+   * Returns the squared circumradius length of cell `cell`.
    */
   FT sq_circumradius_length(const Cell_handle& cell,
                             const Vertex_handle& v) const;

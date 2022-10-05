@@ -214,7 +214,7 @@ int main()
   // (Warning: Sphere_3 constructor uses square radius !)
   Implicit_domain sphere_domain =
     Implicit_domain::create_implicit_mesh_domain(sphere_centered_at_111,
-                                                 K::Sphere_3(K::Point_3(1, 1, 1), 2.));
+                                                 K::Sphere_3(K::Point_3(1, 1, 1), K::FT(2)));
 
   Domain domain(sphere_domain, polyhedron_domain);
 

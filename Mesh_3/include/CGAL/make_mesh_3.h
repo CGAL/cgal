@@ -391,14 +391,14 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *     \cgalParamDescription{`exude_mesh_3()` can optionally be called after the meshing process.
  *                           Two named parameters control this behavior:
  *                           <UL>
- *                             <LI> `parameters::exude()`
  *                             <LI> `parameters::no_exude()`
+ *                             <LI> `parameters::exude()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::exude()`}
  *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd
  *
- * Note that whatever may be the optimization processes activated,
+ * Note that regardless of which optimization processes are activated,
  * they are always launched in the order that is a suborder
  * of the following (see user manual for further
  * details): *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.

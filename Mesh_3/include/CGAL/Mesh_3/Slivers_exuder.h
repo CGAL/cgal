@@ -172,7 +172,7 @@ protected:
   };
 
   /**
-   * Delete cells of `cells` from `cells_queue`
+   * Deletes cells of `cells` from `cells_queue`.
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
@@ -300,7 +300,7 @@ protected:
   };
 
   /**
-   * Delete cells of `cells` from `cells_queue`
+   * Deletes cells of `cells` from `cells_queue`.
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
@@ -595,7 +595,7 @@ private:
 
   /**
    * Returns the `Boundary_facets_from_outside` object containing mirror facets
-   * of `facets`
+   * of `facets`.
    */
   Boundary_facets_from_outside
   get_boundary_facets_from_outside(const Facet_vector& facets) const
@@ -616,7 +616,7 @@ private:
   }
 
   /**
-   * Add a cell `ch` to `cells_queue`
+   * Adds a cell `ch` to `cells_queue`.
    */
   template <bool pump_vertices_on_surfaces>
   void add_cell_to_queue(Cell_handle ch, FT criterion_value)
@@ -651,7 +651,7 @@ private:
   };
 
   /**
-   * Removes objects of [begin,end[ range from `c3t3_`
+   * Removes objects of [begin,end[ range from `c3t3_`.
    */
   template<typename ForwardIterator>
   void remove_from_c3t3(ForwardIterator begin, ForwardIterator end)
@@ -853,7 +853,7 @@ private:
 
   /**
    * Checks if the sliver criterion values from `criterion_values` are the same as
-   * those that will be found if wp is inserted in the triangulation
+   * those that will be found if wp is inserted in the triangulation.
    */
   bool check_ratios(const Sliver_values& criterion_values,
                     const Weighted_point& wp,

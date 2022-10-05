@@ -553,7 +553,7 @@ private:
   int build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const;
 
   /**
-   * Updates priority queue for all vertices of `vertices`
+   * Updates priority queue for all vertices of `vertices`.
    */
   // Sequential
   int update_priority_queue(const Vertex_vector& vertices,
@@ -568,7 +568,7 @@ private:
 #endif
 
   /**
-   * Updates `pv` in priority queue
+   * Updates `pv` in priority queue.
    */
   int update_priority_queue(const PVertex& pv, PQueue& pqueue) const;
 
@@ -582,7 +582,7 @@ private:
                 ) const;
 
   /**
-   * Returns a pvertex from a vertex handle `vh`, using id `pv_id`
+   * Returns a pvertex from a vertex handle `vh`, using the id `pv_id`.
    */
   PVertex
   make_pvertex(const Vertex_handle& vh,
@@ -595,13 +595,13 @@ private:
                const typename PVertex::id_type& pv_id) const;
 
   /**
-   * Updates a pvertex `pv`
+   * Updates a pvertex `pv`.
    */
   void update_pvertex(PVertex& pv, const FT& sliver_bound) const;
   void update_pvertex__concurrent(PVertex& pv, const FT& sliver_bound) const;
 
   /**
-   * Returns `vh` pvertex id
+   * Returns `vh` pvertex id.
    */
   typename PVertex::id_type get_pvertex_id(const Vertex_handle& vh) const
   {
@@ -609,7 +609,7 @@ private:
   }
 
   /**
-   * Update bad vertices vector, wrt `sliver_bound`
+   * Updates bad vertices vector, wrt. `sliver_bound`.
    */
   // Sequential
   void update_bad_vertices(std::vector<Vertex_handle> &bad_vertices,

@@ -228,7 +228,7 @@ public:
     return result;
   }
 
-  /// Returns signed geodesic distance between `p` and `q`
+  /// Returns signed geodesic distance between `p` and `q`.
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q) const
   {
     // Locate p & q on polyline
@@ -587,7 +587,7 @@ public:
   /// Add a 0-dimensional feature in the domain.
   Corner_index add_corner(const Point_3& p);
 
-  /// Overloads where the last parameter `out` is not `CGAL::Emptyset_iterator()`.
+  /// Overload where the last parameter `out` is not `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_corners(InputIterator first, InputIterator end,

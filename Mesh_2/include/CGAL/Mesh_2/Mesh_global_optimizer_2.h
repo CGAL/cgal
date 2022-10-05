@@ -222,7 +222,7 @@ public:
 
 private:
   /**
-   * Returns moves for vertices of set `moving_vertices`
+   * Returns moves for vertices of set `moving_vertices`.
    */
   Moves_vector compute_moves(Vertex_set& moving_vertices)
   {
@@ -260,7 +260,7 @@ private:
   }
 
   /**
-   * Returns the move for vertex `v`
+   * Returns the move for vertex `v`.
    */
   Vector_2 compute_move(const Vertex_handle& v)
   {
@@ -284,7 +284,7 @@ private:
   }
 
   /**
-   * Returns the minimum cicumradius length of faces incident to `v`
+   * Returns the minimum cicumradius length of faces incident to `v`.
    */
   FT min_sq_circumradius(const Vertex_handle& v) const
   {

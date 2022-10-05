@@ -134,7 +134,7 @@ and `MeshCriteriaWithFeatures_3`.
 It gathers the refinement criteria for mesh tetrahedra and
 surface facets where
 surface facets are facets in the mesh approximating the domain surface patches.
-In addition, for domain with exposed 1-dimensional features,
+In addition, for domains with exposed 1-dimensional features,
 the class `Mesh_criteria_3`
 handles the definition of a sizing field to guide the discretization of
 1-dimensional features.
@@ -228,7 +228,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
     : Base(facet_criteria,
            cell_criteria) {}
 
-  /// Constructor from edge, face and cell criteria.
+  /// Constructor from edge, face, and cell criteria.
   Mesh_criteria_3(Edge_criteria edge_criteria,
                   Facet_criteria facet_criteria,
                   Cell_criteria cell_criteria)

@@ -108,7 +108,7 @@ angle_in_radian(const Vector_3& u, const Vector_3& v)
 }
 
 /**
-   * @brief Returns the squared length of edge `e`
+   * @brief Returns the squared length of edge `e`.
    */
 template <typename Tr>
 typename Tr::Geom_traits::FT
@@ -134,7 +134,7 @@ edge_sq_length(const typename Tr::Edge& e,
 
 /**
    * @brief Returns the minimal incident edge length of `v`
-   * in triangulation `tr`
+   * in triangulation `tr`.
    */
 template <typename Tr>
 typename Tr::Geom_traits::FT
@@ -1054,7 +1054,7 @@ private:
   }
 
   /**
-   * @brief returns the cotangent of `value`
+   * @brief returns the cotangent of `value`.
    */
   FT cotangent(const FT& value) const
   {
@@ -1062,8 +1062,8 @@ private:
   }
 
   /**
-   * @brief returns the normal of facet (ch,i), oriented from inside to outside
-   * of `ch`
+   * @brief returns the normal of facet `(ch,i)`, oriented from inside to outside
+   * of `ch`.
    */
   Vector_3 normal_estimate(const C3T3& c3t3, const Cell_handle& ch, const int i) const
   {
@@ -1157,7 +1157,7 @@ protected:
   FT sphere_sq_radius() const { return sphere_sq_radius_; }
 
   /**
-   * @brief returns a FT between `min` and `max`
+   * @brief returns a FT between `min` and `max`.
    */
   FT random_ft(const FT& min = FT(0.), const FT& max = FT(1.)) const
   {
@@ -1166,7 +1166,7 @@ protected:
   }
 
   /**
-   * @brief returns a random vector with size `vector_size`
+   * @brief returns a random vector with size `vector_size`.
    */
   Vector_3 random_vector_fixed_size(const C3T3& c3t3,
                                     const FT& vector_sq_size) const
@@ -1184,7 +1184,7 @@ protected:
   }
 
   /**
-   * @brief returns a random vector with size between 0 and `vector_size`
+   * @brief returns a random vector with size between 0 and `vector_size`.
    */
   Vector_3 random_vector_max_size(const C3T3& c3t3,
                                   const FT& vector_max_sq_size) const
@@ -1299,7 +1299,7 @@ private:
   // -----------------------------------
 
   /**
-   * @brief try to improve mesh using random moves of `v`
+   * @brief tries to improve mesh using random moves of `v`.
    */
   std::pair<bool,Vertex_handle>
   apply_perturbation(const Vertex_handle& v,
@@ -1410,7 +1410,7 @@ private:
   }
 
 private:
-  // If set to `true`, then random point will be generated on sphere surface.
+  // If set to `true`, then random points will be generated on sphere surface.
   bool on_sphere_;
 };
 

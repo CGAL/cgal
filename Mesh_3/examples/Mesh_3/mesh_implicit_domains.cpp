@@ -49,7 +49,7 @@ int main()
   v.push_back(f2);
 
   // Domain (Warning: Sphere_3 constructor uses square radius !)
-  Mesh_domain domain(Function_wrapper(v), K::Sphere_3(CGAL::ORIGIN, 5.*5.),
+  Mesh_domain domain(Function_wrapper(v), K::Sphere_3(CGAL::ORIGIN, CGAL::square(K::FT(5))),
                      params::relative_error_bound(1e-6));
 
   // Set mesh criteria

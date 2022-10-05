@@ -72,7 +72,7 @@ public:
   ~Image_to_labeled_function_wrapper() {}
 
   /**
-   * Returns an int corresponding to the label at point `p`
+   * Returns an int corresponding to the label at point `p`.
    * @param p the input point
    * @return the label at point `p`
    */

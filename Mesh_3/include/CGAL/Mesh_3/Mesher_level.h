@@ -520,7 +520,7 @@ public:
       type is made of two booleans:
         - the first one tells if the point can be inserted,
         - in case of, the first one is `false`, the second one tells if
-        the tested element should be reconsidered latter.
+        the tested element should be reconsidered later.
       This function is called by the superior level, if any.
   */
   Mesher_level_conflict_status
@@ -805,7 +805,7 @@ public:
       type is made of two booleans:
         - the first one tells if the point can be inserted,
         - in case of, the first one is `false`, the second one tells if
-        the tested element should be reconsidered latter.
+        the tested element should be reconsidered later.
       This function is called by the superior level, if any.
   */
   template <class Mesh_visitor>

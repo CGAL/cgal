@@ -272,7 +272,7 @@ if there are several components to mesh.
 
 The function type can be any model of the concept `Callable` compatible with the signature `Subdomain_index(const Point_3&)`: it can be a function, a function object, a lambda expression... that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
 
-\cgalModels MeshDomain_3
+\cgalModels `MeshDomain_3`
 
 \sa `Implicit_multi_domain_to_labeling_function_wrapper`
 \sa `CGAL::make_mesh_3()`.
@@ -509,7 +509,7 @@ public:
     auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
     FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
     auto image_values_to_subdomain_indices_ = choose_parameter(get_parameter(np, internal_np::image_subdomain_index), Null_functor());
-    CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), (CGAL::Random*)(0));
+    CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
     auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
     namespace p = CGAL::parameters;
@@ -746,9 +746,6 @@ public:
    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
    *
    * \cgalNamedParamsBegin
-   *   \cgalParamNBegin{function}
-   *     \cgalParamDescription{the .}
-   *   \cgalParamNEnd
    *   \cgalParamNBegin{relative_error_bound}
    *     \cgalParamDescription{ is the relative error
    *                            bound, relative to the diameter of the box of the image.}

@@ -73,7 +73,7 @@ public:
   Triangulation_sizing_field(const Tr& tr);
 
   /**
-   * Fill sizing field, using size associated to point in `value_map`.
+   * Fills the sizing field, using size associated to point in `value_map`.
    */
   void fill(const std::map<Weighted_point, FT>& value_map);
 

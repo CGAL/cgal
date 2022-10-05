@@ -31,7 +31,7 @@ namespace CGAL {
  * improves the quality of a Delaunay mesh by changing the positions of some vertices of the mesh.
  *
  * This function directly calls `perturb_mesh_3()`, but is provided for convenience.
- * Further information can be found on the documentation of the function `perturb_mesh_3()`.
+ * Further information can be found in the documentation of the function `perturb_mesh_3()`.
  */
 template<typename C3T3, typename MeshDomain, typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& np = parameters::default_values())
@@ -84,7 +84,7 @@ Mesh_optimization_return_code perturb_periodic_3_mesh_3(const CGAL_NP_CLASS_1&  
  * this optimization has been performed, all improvements will be lost.
  *
  * This function directly calls `exude_mesh_3()`, but is provided for convenience.
- * Further information can be found on the documentation of the function `exude_mesh_3()`.
+ * Further information can be found in the documentation of the function `exude_mesh_3()`.
  */
 template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3,const CGAL_NP_CLASS& np = parameters::default_values())
@@ -128,7 +128,7 @@ Mesh_optimization_return_code exude_periodic_3_mesh_3(const CGAL_NP_CLASS_1&  np
  * process based on the minimization of a global energy function.
  *
  * This function directly calls `odt_optimize_mesh_3()`, but is provided for convenience.
- * Further information can be found on the documentation of the function `odt_optimize_mesh_3()`.
+ * Further information can be found in the documentation of the function `odt_optimize_mesh_3()`.
  */
 template<typename C3T3,typename MeshDomain,typename CGAL_NP_TEMPLATE_PARAMETERS>
 Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& np = parameters::default_values())
@@ -175,7 +175,7 @@ Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(const CGAL_NP_CLASS
  * process based on the minimization of a global energy function.
  *
  * This function directly calls `lloyd_optimize_mesh_3()`, but is provided for convenience.
- * Further information can be found on the documentation of the function `lloyd_optimize_mesh_3()`.
+ * Further information can be found in the documentation of the function `lloyd_optimize_mesh_3()`.
  *
  * \note This function requires the \ref thirdpartyEigen library.
 */

@@ -115,7 +115,7 @@ private:
  * etc.
  *
  * The optimization phase is a sequence of optimization processes,
- * amongst the following available optimizers: an ODT-smoothing,
+ * amongst the following available optimizers: an ODT smoothing,
  * a Lloyd smoothing, a sliver perturber, and a sliver exuder.
  * Each optimization process
  * can be activated or not,
@@ -231,7 +231,7 @@ private:
  * The optimization parameters can be passed in arbitrary order. If one parameter
  * is not passed, its default value is used. The default values are
  * `no_lloyd()`, `no_odt()`, `perturb()` and `exude()`.
- * Note that whatever may be the optimization processes activated,
+ * Note that regardless of which optimization processes are activated,
  * they are always launched in the order that is a suborder
  * of the following (see user manual for further
  * details): *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.

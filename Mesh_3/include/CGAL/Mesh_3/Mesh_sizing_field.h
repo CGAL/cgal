@@ -107,7 +107,7 @@ public:
   Mesh_sizing_field(Tr& tr);
 
   /**
-   * Fill sizing field, using size associated to point in `value_map`
+   * Fills sizing field, using size associated to point in `value_map`
    */
   void fill(const std::map<Bare_point, FT>& value_map);
 

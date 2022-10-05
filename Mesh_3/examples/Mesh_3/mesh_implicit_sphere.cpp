@@ -39,7 +39,7 @@ int main()
   /// [Domain creation] (Warning: Sphere_3 constructor uses squared radius !)
   Mesh_domain domain =
     Mesh_domain::create_implicit_mesh_domain( sphere_function,
-                                              K::Sphere_3(CGAL::ORIGIN, 2.));
+                                              K::Sphere_3(CGAL::ORIGIN, K::FT(2)));
   /// [Domain creation]
 
   // Mesh criteria
