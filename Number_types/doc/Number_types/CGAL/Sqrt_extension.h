@@ -3,9 +3,9 @@ namespace CGAL {
 /*!
 \ingroup nt_ralgebraic
 
-An instance of this class represents an extension of the type `NT` by *one* square root of the type `ROOT`.
+An instance of this class represents an extension of the type `NT` by *one* square root of the type `Root`.
 
-`NT` is required to be constructible from `ROOT`.
+`NT` is required to be constructible from `Root`.
 
 `NT` is required to be an `IntegralDomainWithoutDivision`.
 
@@ -23,9 +23,9 @@ The result would be in \f$ \mathbb{Z}[\sqrt{a},\sqrt{b}]\f$, which is not
 representable by `Sqrt_extension<Integer,Integer>`.
 
 \attention The user is responsible to check that arithmetic operations are carried out for elements from the same extensions only.
-
 This is not tested by `Sqrt_extension` for efficiency reasons.
 A violation of the precondition leads to undefined behavior.
+
 Be aware that for efficiency reasons the given \f$\mathrm{root}\f$ is stored as it is given to
 the constructor. In particular, an extension by a square root of a square is
 considered as an extension.
@@ -104,7 +104,7 @@ In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as 
 \sa \cgalTagFalse
 
 */
-template< typename NT, typename ROOT,
+template< typename NT, typename Root,
           typename DifferentExtensionComparable = Tag_false,
           typename FilterPredicates = Tag_false>
 class Sqrt_extension {
@@ -148,7 +148,7 @@ Sqrt_extension (int a0, int a1, int r);
 /*!
 General constructor: `ext`\f$ = a0 + a1 \cdot sqrt(r)\f$. \pre \f$ r \neq0\f$
 */
-Sqrt_extension (NT a0, NT a1, ROOT r);
+Sqrt_extension (NT a0, NT a1, Root r);
 
 /// @}
 
@@ -172,10 +172,10 @@ const NT & a1 () const ;
 /*!
 Const access operator for root
 */
-const ROOT &         root () const;
+const Root &         root () const;
 
 /*!
-Returns true in case root of `ext` is not zero.
+Returns `true` in case root of `ext` is not zero.
 
 Note that \f$ a1 == 0 \f$ does not imply \f$ \mathrm{root} == 0\f$.
 */
@@ -192,7 +192,7 @@ of `ext`. see also: `AlgebraicStructureTraits::Simplify`.
 void         simplify ();
 
 /*!
-returns true if `ext` represents the value zero.
+returns `true` if `ext` represents the value zero.
 */
 bool         is_zero () const;
 
@@ -326,19 +326,19 @@ In case the mode is `CGAL::IO::ASCII` the format is `EXT[a0,a1,root]`.
 
 In case the mode is `CGAL::IO::PRETTY` the format is human readable.
 
-\attention `operator>>` must be defined for `ROOT` and `NT`.
+\attention `operator>>` must be defined for `Root` and `NT`.
 
 \relates Sqrt_extension
 */
-std::ostream& operator<<(std::ostream& os, const Sqrt_extension<NT,ROOT> &ext);
+std::ostream& operator<<(std::ostream& os, const Sqrt_extension<NT,Root> &ext);
 
 /*!
 reads `ext` from istream `is` in format `EXT[a0,a1,root]`, the output format in mode `CGAL::IO::ASCII`
 
-\attention `operator<<` must be defined exist for `ROOT` and `NT`.
+\attention `operator<<` must be defined exist for `Root` and `NT`.
 
 \relates Sqrt_extension
 */
-std::istream& operator>>(std::istream& is, const Sqrt_extension<NT,ROOT> &ext);
+std::istream& operator>>(std::istream& is, const Sqrt_extension<NT,Root> &ext);
 
 } /* end namespace CGAL */

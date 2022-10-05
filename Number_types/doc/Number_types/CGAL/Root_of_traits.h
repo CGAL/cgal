@@ -6,7 +6,7 @@ namespace CGAL {
 The function `compute_roots_of_2()` solves a univariate polynomial as it is defined by the
 coefficients given to the function. The solutions are written into the given
 `OutputIterator`.
-Writes the real roots of the polynomial \f$ aX^2+bX+c\f$ into \f$ oit\f$ in ascending order.
+Writes the real roots of the polynomial \f$ aX^2+bX+c\f$ into `oit` in ascending order.
 
 `OutputIterator` is required to accept \link Root_of_traits::Root_of_2 `Root_of_traits<RT>::Root_of_2`\endlink.
 
@@ -81,8 +81,8 @@ namespace CGAL {
 /*!
 \ingroup nt_ralgebraic
 
-The function `make_sqrt()` constructs a square root of a given value of type \f$ RT\f$.
-Depending on the type \f$ RT\f$ the square root may be returned in a new type that
+The function `make_sqrt()` constructs a square root of a given value of type `RT`.
+Depending on the type `RT` the square root may be returned in a new type that
 can represent algebraic extensions of degree \f$ 2\f$.
 
 \returns \f$ \sqrt{x}.\f$
