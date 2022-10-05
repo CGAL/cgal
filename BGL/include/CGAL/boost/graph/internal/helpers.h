@@ -168,7 +168,7 @@ exact_num_faces(const Graph& g)
 template<typename Graph>
 bool
 is_isolated(typename boost::graph_traits<Graph>::vertex_descriptor v,
-            Graph& g)
+            const Graph& g)
 {
   return halfedge(v, g) == boost::graph_traits<Graph>::null_halfedge();
 }
