@@ -914,7 +914,7 @@ Property maps are an API introduced in the boost library that allows to
 associate values to keys. In the following examples, for each proberty map, we associate
 a curvature value to each vertex.
 
-\subsubsection ICCExample Interpolated Corrected Curvature on a Surface Mesh.
+\subsubsection ICCExampleSM Interpolated Corrected Curvature on a Surface Mesh.
 
 The following example illustrates how to
 compute the curvatures on vertices
@@ -922,7 +922,7 @@ and store them in property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example.cpp}
 
-\subsubsection NormalsExampleNP Interpolated Corrected Curvature on a Polyhedron
+\subsubsection ICCExamplePH Interpolated Corrected Curvature on a Polyhedron
 
 The following example illustrates how to
 compute the curvatures on vertices
