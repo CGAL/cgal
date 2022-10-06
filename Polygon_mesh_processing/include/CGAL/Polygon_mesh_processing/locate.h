@@ -25,7 +25,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
 

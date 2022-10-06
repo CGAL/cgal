@@ -26,7 +26,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap_vertices.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
