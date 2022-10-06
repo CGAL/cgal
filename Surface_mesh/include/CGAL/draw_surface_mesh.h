@@ -39,6 +39,7 @@ void draw(const SM& asm);
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
+
 namespace CGAL
 {
 
