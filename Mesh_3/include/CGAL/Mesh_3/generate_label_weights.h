@@ -296,7 +296,13 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 *
 * @param image the input labeled image from which the weights image is computed.
 *   Both will then be used to construct a `Labeled_mesh_domain_3`.
-* @param sigma the standard deviation parameter of the internal Gaussian filter
+* @param sigma the standard deviation parameter of the internal Gaussian filter,
+*   measured in real-world distances. The size of a voxel (e.g. shortest length
+*   or longest length) usually is a good value for this parameter.
+*   Note that if `sigma` is too small, the "stair-effect" of meshing from
+*   a voxel image can appear. On the other side, if `sigma` is too large,
+*   thin volumes (basically one voxel thick) may be lost in the meshing process
+*   because the computed weights are too blurry.
 *
 * @returns a `CGAL::Image_3` of weights used to build a quality `Labeled_mesh_domain_3`,
 * with the same dimensions as `image`
