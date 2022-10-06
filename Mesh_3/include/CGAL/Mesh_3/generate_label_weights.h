@@ -108,9 +108,10 @@ SIGN get_sign()
 //    SGN_UNKNOWN
 }
 
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
 template<typename Image_word_type>
 void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
-                            const char* filename = "")
+                            const char* filename)
 {
   auto t = itk_img->GetOrigin();
   auto v = itk_img->GetSpacing();
@@ -137,9 +138,9 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
             itk_img->GetBufferPointer() + size,
             img_ptr);
 
-  if(std::strlen(filename)!=0)
-    _writeImage(img, filename);
+  _writeImage(img, filename);
 }
+#endif
 
 }//namespace internal
 
