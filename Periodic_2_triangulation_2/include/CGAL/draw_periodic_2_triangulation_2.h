@@ -68,7 +68,6 @@ void compute_face(typename P2T2::Periodic_triangle_iterator ti, const P2T2 &p2t2
 
   if(m_drawing_functor.colored_face(p2t2, ti)) {
 
-    // Need CGAL::IO::Color(73, 250, 117);
     CGAL::IO::Color c= m_drawing_functor.face_color(p2t2, ti);
     graphic_buffer.face_begin(c);
     graphic_buffer.add_point_in_face(t[0]);
@@ -80,15 +79,12 @@ void compute_face(typename P2T2::Periodic_triangle_iterator ti, const P2T2 &p2t2
 
   // Display the edges of the faces as segments with a
   // light gray color for better visualization
-  if(m_drawing_functor.colored_face(p2t2, ti)) {
+  CGAL::IO::Color segment_color = CGAL::IO::Color(207, 213, 211);
 
-    // Need CGAL::IO::Color(207, 213, 211);
-    CGAL::IO::Color c = m_drawing_functor.face_color(p2t2, ti);
+  graphic_buffer.add_segment(t[0], t[1], segment_color);
+  graphic_buffer.add_segment(t[1], t[2], segment_color);
+  graphic_buffer.add_segment(t[2], t[0], segment_color);
 
-    graphic_buffer.add_segment(t[0], t[1], c);
-    graphic_buffer.add_segment(t[1], t[2], c);
-    graphic_buffer.add_segment(t[2], t[0], c);
-  }
 }
 
 template <typename BufferType = float, class P2T2>
@@ -121,7 +117,7 @@ void compute_elements(const P2T2 &p2t2, CGAL::Graphic_buffer<BufferType> &graphi
 
   typedef typename P2T2::Iterator_type   Iterator_type;
 
-  Display_type m_display_type(Display_type::STORED_COVER_DOMAIN);
+  draw_function_for_P2T2::Display_type m_display_type = draw_function_for_P2T2::Display_type::STORED_COVER_DOMAIN;
 
   // Get the display type, iterate through periodic elements according
   // to the display type
@@ -160,13 +156,13 @@ void compute_elements(const P2T2 &p2t2, CGAL::Graphic_buffer<BufferType> &graphi
 template <typename BufferType = float, class P2T2, class DrawingFunctor>
 void add_in_graphic_buffer(const P2T2 &p2t2, CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                                const DrawingFunctor &m_drawing_functor) {
-  draw_function_for_P2T2::compute_elements(p2t2, graphic_buffer, m_drawing_functor);
+  draw_function_for_P2T2::compute_elements(p2t2, graphic_buffer, m_drawing_functor, true);
 }
 
 template <typename BufferType = float, class P2T2>
 void add_in_graphic_buffer(const P2T2 &p2t2, CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
 
-  Drawing_functor<P2T2,typename P2T2::Periodic_triangle_iterator,
+  CGAL::Drawing_functor<P2T2,typename P2T2::Periodic_triangle_iterator,
                   typename P2T2::Periodic_triangle_iterator,
                   typename P2T2::Periodic_triangle_iterator> drawing_functor;
 
@@ -174,18 +170,10 @@ void add_in_graphic_buffer(const P2T2 &p2t2, CGAL::Graphic_buffer<BufferType> &g
                       typename P2T2::Periodic_triangle_iterator) -> bool
   { return true; };
 
-  // TODO: I think we need to add std::function like this:
-  // drawing_functor.face_color =  [] (const P2T2&,
-  //                          typename P2T2::Periodic_triangle_iterator,
-  // int R, int G, int B)  -> CGAL::IO::Color
-  // {
-  //     return CGAL::IO::Color(R, G, B);
-  // };  // What do you think?
-
   drawing_functor.face_color =  [] (const P2T2& alcc,
                            typename P2T2::Periodic_triangle_iterator dh) -> CGAL::IO::Color
   {
-      return CGAL::IO::Color(207, 213, 211);
+    return CGAL::IO::Color(73, 250, 117);
   };
 
   add_in_graphic_buffer(p2t2, graphic_buffer, drawing_functor);
