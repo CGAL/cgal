@@ -399,7 +399,6 @@ public:
     update();
   }
 
-protected:
   // Shortcuts to simplify function calls.
   template<typename KPoint>
   static Local_point get_local_point(const KPoint& p)
@@ -414,6 +413,7 @@ protected:
       get_local_vector(v);
   }
 
+protected:
   void compile_shaders()
   {
     rendering_program_face.removeAllShaders();
