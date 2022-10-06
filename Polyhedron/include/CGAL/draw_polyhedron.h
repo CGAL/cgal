@@ -8,10 +8,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_POLYHEDRON_H
 #define CGAL_DRAW_POLYHEDRON_H
 
+#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Drawing_functor.h>
 #include <CGAL/license/Polyhedron.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
@@ -32,28 +35,29 @@ template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
          template < class T, class I, class A>
          class T_HDS,
-         class Alloc>
+         class Alloc, typename BufferType = float>
 void draw(const CGAL_POLY_TYPE& apoly,
           const char* title="Polyhedron Basic Viewer",
           bool nofill=false)
 {
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(apoly, buffer);
+  draw_buffer(buffer);
+}
 
-  if (!cgal_test_suite)
-  {
-    CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[2]={"polyhedron_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    SimpleFaceGraphViewerQt
-      mainwindow(app.activeWindow(), apoly, title, nofill);
-    mainwindow.show();
-    app.exec();
-  }
+template<class PolyhedronTraits_3,
+         class PolyhedronItems_3,
+         template < class T, class I, class A>
+         class T_HDS,
+         class Alloc, typename BufferType = float, class DrawingFunctor>
+void draw(const CGAL_POLY_TYPE& apoly,
+          const DrawingFunctor &drawing_functor,
+          const char* title="Polyhedron Basic Viewer",
+          bool nofill=false)
+{
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(apoly, buffer, drawing_functor);
+  draw_buffer(buffer);
 }
 
 #undef CGAL_POLY_TYPE
