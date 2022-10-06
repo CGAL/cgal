@@ -13,10 +13,13 @@
 //
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 #define CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 
+#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphic_buffer.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef DOXYGEN_RUNNING
@@ -45,113 +48,92 @@ void draw(const PH& aph);
 namespace CGAL
 {
 
-// Viewer class for Polygon_with_holes_2
-template<class P2>
-class SimplePolygonWithHoles2ViewerQt : public Basic_viewer_qt
+namespace draw_function_for_ph2_with_holes {
+
+template <typename BufferType = float, class P2>
+void compute_one_loop_elements(const typename P2::General_polygon_2& p, Graphic_buffer<BufferType> &graphic_buffer, bool hole)
 {
-  typedef Basic_viewer_qt      Base;
-  typedef typename P2::General_polygon_2::Point_2 Point;
+  
+  if (hole)
+  { graphic_buffer.add_point_in_face(p.vertex(p.size()-1)); }
 
-public:
-  /// Construct the viewer without drawing anything.
-  /// @param title the title of the window
-  SimplePolygonWithHoles2ViewerQt(QWidget* parent,
-                                  const char* title="Basic Polygon_with_holes_2 Viewer") :
-    Base(parent, title, true, true, true, false, false)
+  typename P2::General_polygon_2::Vertex_const_iterator prev;
+  for (typename P2::General_polygon_2::Vertex_const_iterator i=p.vertices_begin();
+        i!=p.vertices_end(); ++i)
   {
-      clear();
+    graphic_buffer.add_point(*i);         // Add vertex
+    if (i!=p.vertices_begin())
+    { graphic_buffer.add_segment(*prev, *i); } // Add segment with previous point
+    graphic_buffer.add_point_in_face(*i); // Add point in face
+    prev=i;
   }
 
-  /// Construct the viewer.
-  /// @param ap2 the polygon to view
-  /// @param title the title of the window
-  SimplePolygonWithHoles2ViewerQt(QWidget* parent, const P2& ap2,
-                                  const char* title="Basic Polygon_with_holes_2 Viewer") :
-    // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false)
+  // Add the last segment between the last point and the first one
+  graphic_buffer.add_segment(*prev, *(p.vertices_begin()));
+}
+
+template <typename BufferType = float, class P2, class DrawingFunctor>
+void compute_elements(const P2& p2, Graphic_buffer<BufferType> &graphic_buffer, 
+                      const DrawingFunctor &m_drawing_functor)
+{
+
+  if (p2.outer_boundary().is_empty()) return;
+
+  // TODO: use face_color after adding a handler if exists.
+  CGAL::IO::Color c(75,160,255);
+  graphic_buffer.face_begin(c);
+
+  compute_one_loop_elements<BufferType, P2>(p2.outer_boundary(), graphic_buffer, false);
+
+  for (typename P2::Hole_const_iterator it=p2.holes_begin(); it!=p2.holes_end(); ++it)
   {
-    clear();
-    compute_elements(ap2);
+    compute_one_loop_elements<BufferType, P2>(*it, graphic_buffer, true);
+    graphic_buffer.add_point_in_face(p2.outer_boundary().vertex(p2.outer_boundary().size()-1));
   }
 
-protected:
-  void compute_one_loop_elements(const typename P2::General_polygon_2& p, bool hole)
-  {
-    if (hole)
-    { add_point_in_face(p.vertex(p.size()-1)); }
+  graphic_buffer.face_end();
+}
 
-    typename P2::General_polygon_2::Vertex_const_iterator prev;
-    for (typename P2::General_polygon_2::Vertex_const_iterator i=p.vertices_begin();
-         i!=p.vertices_end(); ++i)
-    {
-      add_point(*i);         // Add vertex
-      if (i!=p.vertices_begin())
-      { add_segment(*prev, *i); } // Add segment with previous point
-      add_point_in_face(*i); // Add point in face
-      prev=i;
-    }
+} // draw_function_for_ph2
 
-    // Add the last segment between the last point and the first one
-    add_segment(*prev, *(p.vertices_begin()));
-  }
 
-  void compute_elements(const P2& p2)
-  {
-    if (p2.outer_boundary().is_empty()) return;
+template <typename BufferType = float, class P2, class DrawingFunctor>
+void add_in_graphic_buffer(const P2 &p2, CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                             const DrawingFunctor &m_drawing_functor ) {
+  draw_function_for_ph2_with_holes::compute_elements(p2, graphic_buffer, m_drawing_functor);
+}
 
-    CGAL::IO::Color c(75,160,255);
-    face_begin(c);
+template <typename BufferType = float, class P2>
+void add_in_graphic_buffer(const P2 &p2, CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
 
-    compute_one_loop_elements(p2.outer_boundary(), false);
+  // TODO: use colord_face and face_color if a handler exits.
+  Drawing_functor<P2, typename P2::Hole_const_iterator,
+                  typename P2::Hole_const_iterator,
+                  typename P2::Hole_const_iterator>
+      drawing_functor;
 
-    for (typename P2::Hole_const_iterator it=p2.holes_begin(); it!=p2.holes_end(); ++it)
-    {
-      compute_one_loop_elements(*it, true);
-      add_point_in_face(p2.outer_boundary().vertex(p2.outer_boundary().size()-1));
-    }
-
-    face_end();
-  }
-
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-
-    // Call: * compute_elements() if the model changed, followed by
-    //       * redraw() if some viewing parameters changed that implies some
-    //                  modifications of the buffers
-    //                  (eg. type of normal, color/mono)
-    //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    Base::keyPressEvent(e);
-  }
-};
+  add_in_graphic_buffer(p2, graphic_buffer, drawing_functor);
+}
 
 // Specialization of draw function.
-template<class T, class C>
-void draw(const CGAL::Polygon_with_holes_2<T, C>& ap2,
+#define CGAL_P2_WITH_HOLES_TYPE CGAL::Polygon_with_holes_2<T, C>
+
+
+template<class T, class C, typename BufferType = float, class DrawingFunctor>
+void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2, const DrawingFunctor &drawing_functor)
+{
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(ap2, buffer, drawing_functor);
+  draw_buffer(buffer);
+}
+
+template<class T, class C, typename BufferType = float>
+void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
           const char* title="Polygon_with_holes_2 Basic Viewer")
 {
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite)
-  {
-    CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[2]={"t2_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    SimplePolygonWithHoles2ViewerQt<CGAL::Polygon_with_holes_2<T, C> >
-      mainwindow(app.activeWindow(), ap2, title);
-    mainwindow.show();
-    app.exec();
-  }
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(ap2, buffer);
+  draw_buffer(buffer);
 }
 
 } // End namespace CGAL
