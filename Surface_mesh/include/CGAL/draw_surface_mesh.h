@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_SURFACE_MESH_H
 #define CGAL_DRAW_SURFACE_MESH_H
@@ -28,6 +29,8 @@ void draw(const SM& asm);
 
 #else // DOXYGEN_RUNNING
 
+#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Drawing_functor.h>
 #include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
@@ -40,28 +43,25 @@ namespace CGAL
 {
 
 // Specialization of draw function.
-template<class K>
+template<class K, typename BufferType = float>
 void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer",
           bool nofill=false)
 {
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(amesh, buffer);
+  draw_buffer(buffer);
+}
 
-  if (!cgal_test_suite)
-  {
-    CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[2]={"surface_mesh_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    SimpleFaceGraphViewerQt mainwindow(app.activeWindow(), amesh, title,
-                                       nofill);
-    mainwindow.show();
-    app.exec();
-  }
+template<class K, typename BufferType = float, class DrawingFunctor>
+void draw(const Surface_mesh<K>& amesh,
+          const DrawingFunctor &drawing_functor,
+          const char* title="Surface_mesh Basic Viewer",
+          bool nofill=false)
+{
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(amesh, buffer, drawing_functor);
+  draw_buffer(buffer);
 }
 
 } // End namespace CGAL
