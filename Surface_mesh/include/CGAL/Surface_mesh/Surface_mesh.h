@@ -1467,7 +1467,7 @@ public:
 
     /// perform an expensive validity check on the data structure and
     /// print found errors to `std::cerr` when `verbose == true`.
-    bool is_valid(bool verbose = true) const
+    bool is_valid(bool verbose = false) const
     {
         bool valid = true;
         size_type vcount = 0, hcount = 0, fcount = 0;
@@ -1580,12 +1580,15 @@ public:
 
     /// performs a validity check on a single vertex.
     bool is_valid(Vertex_index v,
-                  bool verbose = true) const
+                  bool verbose = false) const
     {
         Verbose_ostream verr(verbose);
 
         if(!has_valid_index(v))
-         return false;
+        {
+          verr << "Vertex has invalid index: " << (size_type)v << std::endl;
+          return false;
+        }
 
         Halfedge_index h = vconn_[v].halfedge_;
         if(h != null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
@@ -1598,12 +1601,15 @@ public:
 
     /// performs a validity check on a single halfedge.
     bool is_valid(Halfedge_index h,
-                  bool verbose = true) const
+                  bool verbose = false) const
     {
         Verbose_ostream verr(verbose);
 
         if(!has_valid_index(h))
+        {
+          verr << "Halfedge has invalid index: " << (size_type)h << std::endl;
           return false;
+        }
 
         Face_index f = hconn_[h].face_;
         Vertex_index v = hconn_[h].vertex_;
@@ -1646,10 +1652,15 @@ public:
 
     /// performs a validity check on a single edge.
     bool is_valid(Edge_index e,
-                  bool verbose = true) const
+                  bool verbose = false) const
     {
+      Verbose_ostream verr(verbose);
+
       if(!has_valid_index(e))
+      {
+        verr << "Edge has invalid index: " << (size_type)e << std::endl;
         return false;
+      }
 
       Halfedge_index h = halfedge(e);
       return is_valid(h, verbose) && is_valid(opposite(h), verbose);
@@ -1658,12 +1669,15 @@ public:
 
     /// performs a validity check on a single face.
     bool is_valid(Face_index f,
-                  bool verbose = true) const
+                  bool verbose = false) const
     {
         Verbose_ostream verr(verbose);
 
         if(!has_valid_index(f))
+        {
+          verr << "Face has invalid index: " << (size_type)f << std::endl;
           return false;
+        }
 
         Halfedge_index h = fconn_[f].halfedge_;
         if(!has_valid_index(h) || is_removed(h)) {
