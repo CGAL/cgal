@@ -151,7 +151,7 @@ public:
         put(fcm, f, face_colors[i]);
     }
 
-    return is_valid_face_graph(g);
+    return is_valid(g);
   }
 
 protected:
