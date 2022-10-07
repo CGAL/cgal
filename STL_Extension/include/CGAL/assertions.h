@@ -44,12 +44,8 @@
 #  define CGAL_NO_WARNINGS
 #endif
 
-#if defined(CGAL_NO_ASSERTIONS)
-namespace CGAL{
-inline void set_use_assertions(bool){}
-inline bool get_use_assertions(){return true;}
-}
-#else
+#if defined(CGAL_ENABLE_DISABLE_ASSERTIONS_AT_RUNTIME)
+
 #include <CGAL/tss.h>
 namespace CGAL{
 inline bool& get_use_assertions()
@@ -62,6 +58,14 @@ inline void set_use_assertions(bool b)
   get_use_assertions() = b;
 }
 }
+
+#else
+
+namespace CGAL{
+inline void set_use_assertions(bool){}
+inline bool get_use_assertions(){return true;}
+}
+
 #endif
 
 
