@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
       Epic_Kernel::FT,
       Epic_Kernel::Vector_3,
       Epic_Kernel::Vector_3
-      >> principle_curvature_map;
+      >> principal_curvature_map;
 
   PMP::interpolated_corrected_mean_curvature(
       g1,
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
   // uncomment this to compute a curvature while specifying named parameters
   // Example: an expansion ball radius of 0.5 and a vertex normals map (does not have to depend on positions)
-  
+
   /*std::unordered_map<vertex_descriptor, Epic_Kernel::Vector_3> vnm;
 
   PMP::interpolated_corrected_mean_curvature(
@@ -59,13 +59,13 @@ int main(int argc, char* argv[])
   );
   PMP::interpolated_corrected_principal_curvatures(
       g1,
-      boost::make_assoc_property_map(principle_curvature_map)
+      boost::make_assoc_property_map(principal_curvature_map)
   );
 
   int i = 0;
   for (vertex_descriptor v : vertices(g1))
   {
-    auto PC = principle_curvature_map[v];
+    auto PC = principal_curvature_map[v];
       std::cout << i << ": HC = " << mean_curvature_map[v]
                      << ", GC = " << gaussian_curvature_map[v] << "\n"
                      << ", PC = [ " << std::get<0>(PC) << " , " << std::get<1>(PC) << " ]\n";
