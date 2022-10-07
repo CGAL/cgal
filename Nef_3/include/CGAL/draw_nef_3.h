@@ -31,11 +31,11 @@
 
 namespace CGAL {
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-typedef Local_kernel::Vector_3 Local_vector;
-
 namespace draw_function_for_nef_polyhedron
 {
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+typedef Local_kernel::Vector_3 Local_vector;
 
 template <class Nef_Polyhedron>
 Local_vector get_face_normal(typename Nef_Polyhedron::SHalfedge_const_handle she)
