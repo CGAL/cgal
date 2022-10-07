@@ -63,7 +63,7 @@ inline void set_use_assertions(bool b)
 
 namespace CGAL{
 inline void set_use_assertions(bool){}
-inline bool get_use_assertions(){return true;}
+inline constexpr bool get_use_assertions(){return true;}
 }
 
 #endif
