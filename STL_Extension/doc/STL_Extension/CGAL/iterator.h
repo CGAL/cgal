@@ -120,7 +120,7 @@ must be a subset of the parameters of `V`. Should the
 
 \cgalModels `OutputIterator`
 
-cgalExample{STL_Extension/Dispatch_output_iterator.cpp}
+\cgalExample{STL_Extension/Dispatch_output_iterator.cpp}
 
 \sa `CGAL::Dispatch_output_iterator<V,O>`
 */
