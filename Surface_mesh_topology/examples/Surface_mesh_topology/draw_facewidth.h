@@ -8,7 +8,7 @@
 #include <CGAL/draw_linear_cell_complex.h>
 
 template<typename ALCC>
-struct Facewidth_draw_functor : public CGAL::DefaultDrawingFunctorLCC
+struct Facewidth_draw_functor //: public CGAL::DefaultDrawingFunctorLCC
 {
   Facewidth_draw_functor(typename ALCC::size_type amark1, typename ALCC::size_type amark2) :
     m_vertex_mark(amark1), m_face_mark(amark2)

@@ -32,15 +32,13 @@
 
 namespace CGAL {
 
-namespace draw_function_for_face_graph_with_paths
+  
+namespace draw_function_for_lcc
 {
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-typedef Local_kernel::Point_3 Local_point;
-typedef Local_kernel::Vector_3 Local_vector;
-
-template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
-struct LCC_geom_utils;
+  // We need to re-use the namespace draw_function_for_lcc because we want to specialize
+  // the previous struct LCC_geom_utils
+//   template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
+// struct LCC_geom_utils;
 
 // Specialisation for face graph; otherwise use the LCC_geom_utils of LCC.
 template<class Mesh, class Local_kernel>
@@ -88,17 +86,26 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
       ++nb;
     }
 
-    if ( nb<2 ) return internal::Geom_utils
+    if ( nb<2 ) return draw_function_for_lcc::LCC_geom_utils
                   <typename Get_traits<Mesh>::Kernel, Local_kernel>::
                   get_local_vector(normal);
 
-    return internal::Geom_utils
+    return draw_function_for_lcc::LCC_geom_utils
       <typename Get_traits<Mesh>::Kernel, Local_kernel>::
       get_local_vector(typename Get_traits<Mesh>::Kernel::
                        Construct_scaled_vector_3()(normal, 1.0/nb));
   }
 };
 
+} // namespace draw_function_for_lcc
+  
+namespace draw_function_for_face_graph_with_paths
+{
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+typedef Local_kernel::Point_3 Local_point;
+typedef Local_kernel::Vector_3 Local_vector;
+  
 // Destructor.
 // lcc.free_mark(m_oriented_mark);
 
@@ -148,7 +155,7 @@ void compute_face(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
   do
   {
     graphic_buffer.add_point_in_face(draw_function_for_face_graph_with_paths::get_point(cur, mesh),
-                      LCC_geom_utils<LCC, Local_kernel>::
+                                     draw_function_for_lcc::LCC_geom_utils<LCC, Local_kernel>::
                       get_vertex_normal(lcc, cur));
     cur=lcc.next(cur);
   }
@@ -365,9 +372,9 @@ void add_in_graphic_buffer(const Mesh &mesh,
 
   // Default functor; user can add his own functor.
   Drawing_functor<Mesh,
-                  typename Mesh::Dart_const_handle /*vh*/,
-                  typename Mesh::Dart_const_handle /*eh*/,
-                  typename Mesh::Dart_const_handle /*fh*/>
+                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle /*vh*/,
+                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle /*eh*/,
+                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle /*fh*/>
       drawing_functor;
 
   add_in_graphic_buffer(mesh, graphic_buffer, drawing_functor, lcc, m_paths, amark, m_nofaces);
