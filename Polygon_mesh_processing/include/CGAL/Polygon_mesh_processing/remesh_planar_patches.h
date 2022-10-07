@@ -411,15 +411,17 @@ template <typename TriangleMesh,
           typename VertexCornerIdMap,
           typename EdgeIsConstrainedMap,
           typename FaceCCIdMap,
-          typename VertexPointMap>
-bool decimate_impl(TriangleMesh& tm,
-                   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc,
+          typename VertexPointMap,
+          typename Point_3>
+bool decimate_impl(const TriangleMesh& tm,
+                   std::pair<std::size_t, std::size_t>& nb_corners_and_nb_cc,
                    VertexCornerIdMap& vertex_corner_id,
                    EdgeIsConstrainedMap& edge_is_constrained,
                    FaceCCIdMap& face_cc_ids,
-                   const VertexPointMap& vpm)
+                   const VertexPointMap& vpm,
+                   std::vector< Point_3 >& corners,
+                   std::vector< cpp11::array<std::size_t, 3> >& out_triangles)
 {
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::type K;
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
@@ -427,14 +429,6 @@ bool decimate_impl(TriangleMesh& tm,
   typedef typename graph_traits::face_descriptor face_descriptor;
   typedef std::pair<std::size_t, std::size_t> Id_pair;
   std::vector< typename K::Vector_3 > face_normals(nb_corners_and_nb_cc.second, NULL_VECTOR);
-  //collect corners
-  std::vector< Point_3 > corners(nb_corners_and_nb_cc.first);
-  for(vertex_descriptor v : vertices(tm))
-  {
-    std::size_t i = get(vertex_corner_id, v);
-    if ( is_corner_id(i) )
-      corners[i]=get(vpm, v);
-  }
 
 
   /// @TODO this is rather drastic in particular if the mesh has almost none simplified faces
@@ -445,6 +439,7 @@ bool decimate_impl(TriangleMesh& tm,
   boost::dynamic_bitset<> cc_to_handle(nb_corners_and_nb_cc.second);
   cc_to_handle.set();
 
+  bool all_patches_successfully_remeshed = true;
   do
   {
     std::vector< std::vector<Id_pair> > face_boundaries(nb_corners_and_nb_cc.second);
@@ -490,8 +485,6 @@ bool decimate_impl(TriangleMesh& tm,
       triangles.clear();
 
       const std::vector< Id_pair >& csts = face_boundaries[cc_id];
-      if (csts.size() < 3)
-        return false;
       if (csts.size()==3)
       {
         triangles.push_back( make_array(csts[0].first,
@@ -503,10 +496,12 @@ bool decimate_impl(TriangleMesh& tm,
       }
       else
       {
-        if (add_triangle_faces<K>(csts, face_normals[cc_id], corners, triangles))
+        if (csts.size() > 3 && add_triangle_faces<K>(csts, face_normals[cc_id], corners, triangles))
           cc_to_handle.set(cc_id, 0);
         else
         {
+          std::cout << "  DEBUG: Failed to remesh a patch" << std::endl;
+          all_patches_successfully_remeshed = false;
           // make all vertices of the patch a corner
           CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, cc_id, face_cc_ids);
           std::vector<vertex_descriptor> new_corners;
@@ -544,9 +539,46 @@ bool decimate_impl(TriangleMesh& tm,
   }
   while(cc_to_handle.any());
 
-  std::vector< cpp11::array<std::size_t, 3> > triangles;
   for (const std::vector<cpp11::array<std::size_t, 3>>& cc_trs : triangles_per_cc)
-    triangles.insert(triangles.end(), cc_trs.begin(), cc_trs.end());
+    out_triangles.insert(out_triangles.end(), cc_trs.begin(), cc_trs.end());
+
+  return all_patches_successfully_remeshed;
+}
+
+template <typename TriangleMesh,
+          typename VertexCornerIdMap,
+          typename EdgeIsConstrainedMap,
+          typename FaceCCIdMap,
+          typename VertexPointMap>
+bool decimate_impl(TriangleMesh& tm,
+                   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc,
+                   VertexCornerIdMap& vertex_corner_id,
+                   EdgeIsConstrainedMap& edge_is_constrained,
+                   FaceCCIdMap& face_cc_ids,
+                   const VertexPointMap& vpm)
+{
+  typedef typename boost::graph_traits<TriangleMesh> graph_traits;
+  typedef typename graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
+
+  //collect corners
+  std::vector< Point_3 > corners(nb_corners_and_nb_cc.first);
+  for(vertex_descriptor v : vertices(tm))
+  {
+    std::size_t i = get(vertex_corner_id, v);
+    if ( is_corner_id(i) )
+      corners[i]=get(vpm, v);
+  }
+
+  std::vector< cpp11::array<std::size_t, 3> > triangles;
+  bool remeshing_failed = decimate_impl(tm,
+                                        nb_corners_and_nb_cc,
+                                        vertex_corner_id,
+                                        edge_is_constrained,
+                                        face_cc_ids,
+                                        vpm,
+                                        corners,
+                                        triangles);
 
   if (!is_polygon_soup_a_polygon_mesh(triangles))
     return false;
@@ -554,7 +586,7 @@ bool decimate_impl(TriangleMesh& tm,
   //clear(tm);
   tm.clear_without_removing_property_maps();
   polygon_soup_to_polygon_mesh(corners, triangles, tm, parameters::all_default(), parameters::vertex_point_map(vpm));
-  return true;
+  return remeshing_failed;
 }
 
 template <typename vertex_descriptor,
@@ -665,7 +697,7 @@ void mark_boundary_of_shared_patches_as_constrained_edges(
 
 template<typename Point_3,
          typename vertex_descriptor,
-         typename VertexIsSharedMap >
+         typename VertexIsSharedMap>
 void propagate_corner_status(
   std::vector<VertexIsSharedMap>& vertex_corner_id_maps,
   std::map<Point_3, std::map<std::size_t, vertex_descriptor> >& point_to_vertex_maps,
@@ -692,8 +724,10 @@ void propagate_corner_status(
       {
         std::size_t mesh_id = mp.first;
         if ( !is_corner_id(get(vertex_corner_id_maps[mesh_id], mp.second)) )
+        {
           put(vertex_corner_id_maps[mesh_id], mp.second,
             nb_corners_and_nb_cc_all[mesh_id].first++);
+        }
       }
     }
   }
@@ -993,21 +1027,97 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
   /// @TODO: make identical patches normal identical (up to the sign). Needed only in the approximate case
 
-  // now call the decimation
-  bool res=false;
-  mesh_id=0;
-  for(Triangle_mesh* tm_ptr : mesh_ptrs)
-  {
-    Triangle_mesh& tm = *tm_ptr;
+// now call the decimation
+  // storage of all new triangles and all corners
+  std::vector< std::vector< Point_3 > > all_corners(nb_meshes);
+  std::vector< std::vector< cpp11::array<std::size_t, 3> > > all_triangles(nb_meshes);
+  bool res = true;
+  std::vector<bool> to_be_processed(nb_meshes, true);
+  bool loop_again = false;
+  bool no_remeshing_issue = true;
+  do{
+    for(std::size_t mesh_id=0; mesh_id<nb_meshes; ++mesh_id)
+    {
+      if (!to_be_processed[mesh_id]) continue;
+      all_triangles[mesh_id].clear();
+      Triangle_mesh& tm = *mesh_ptrs[mesh_id];
 
-    res = decimate_impl(tm,
-                        nb_corners_and_nb_cc_all[mesh_id],
-                        vertex_corner_id_maps[mesh_id],
-                        edge_is_constrained_maps[mesh_id],
-                        face_cc_ids_maps[mesh_id],
-                        vpms[mesh_id]);
-    if (!res) break;
-    ++mesh_id;
+      //collect corners
+      std::vector< Point_3 >& corners = all_corners[mesh_id];
+      if (corners.empty())
+      {
+        corners.resize(nb_corners_and_nb_cc_all[mesh_id].first);
+        for(vertex_descriptor v : vertices(tm))
+        {
+          std::size_t i = get(vertex_corner_id_maps[mesh_id], v);
+          if ( is_corner_id(i) )
+            corners[i]=get(vpms[mesh_id], v);
+        }
+      }
+      std::size_t ncid=corners.size();
+
+      bool all_patches_successfully_remeshed =
+        decimate_impl(tm,
+                      nb_corners_and_nb_cc_all[mesh_id],
+                      vertex_corner_id_maps[mesh_id],
+                      edge_is_constrained_maps[mesh_id],
+                      face_cc_ids_maps[mesh_id],
+                      vpms[mesh_id],
+                      corners,
+                      all_triangles[mesh_id]);
+
+      if (!all_patches_successfully_remeshed)
+      {
+        no_remeshing_issue=false;
+        // iterate over points newly marked as corners
+        std::set<std::size_t> mesh_ids;
+        for (std::size_t cid=ncid; cid<corners.size(); ++cid)
+        {
+
+          typedef std::pair<const std::size_t, vertex_descriptor> Map_pair_type;
+          auto find_res = point_to_vertex_maps.find(corners[cid]);
+          assert(find_res != point_to_vertex_maps.end());
+          for(Map_pair_type& mp : find_res->second)
+          {
+            std::size_t other_mesh_id = mp.first;
+            if ( other_mesh_id!=mesh_id  && !is_corner_id(get(vertex_corner_id_maps[mesh_id], mp.second)))
+            {
+              mesh_ids.insert(other_mesh_id);
+              put(vertex_corner_id_maps[other_mesh_id], mp.second,
+                nb_corners_and_nb_cc_all[other_mesh_id].first++);
+              all_corners[other_mesh_id].push_back(corners[cid]);
+            }
+          }
+        }
+        for (std::size_t mid : mesh_ids)
+          if (!to_be_processed[mid])
+          {
+            if (!loop_again)
+              std::cout << "setting for another loop\n";
+            loop_again=true;
+            to_be_processed[mesh_id] = true;
+          }
+      }
+      to_be_processed[mesh_id] = false;
+    }
+  }
+  while(loop_again);
+
+  // now create the new meshes:
+  for(std::size_t mesh_id=0; mesh_id<nb_meshes; ++mesh_id)
+  {
+    Triangle_mesh& tm = *mesh_ptrs[mesh_id];
+    if (!is_polygon_soup_a_polygon_mesh(all_triangles[mesh_id]))
+    {
+      no_remeshing_issue = false;
+      continue;
+    }
+
+    //clear(tm);
+    tm.clear_without_removing_property_maps();
+    polygon_soup_to_polygon_mesh(all_corners[mesh_id], all_triangles[mesh_id],
+                                 tm, parameters::all_default(), parameters::vertex_point_map(vpms[mesh_id]));
+    return true;
   }
 
   return res;
