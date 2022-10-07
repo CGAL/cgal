@@ -21,10 +21,10 @@
 
 #include <CGAL/ImageIO.h>
 
+#include <CGAL/Mesh_3/features_detection/features_detection.h>
 #include <CGAL/Mesh_3/features_detection/coordinates.h>
 #include <CGAL/Mesh_3/features_detection/combinations.h>
 #include <CGAL/Mesh_3/features_detection/cases_table.h>
-#include <CGAL/Mesh_3/features_detection/features_detection.h>
 #include <CGAL/Mesh_3/features_detection/cube_isometries.h>
 #include <CGAL/Mesh_3/features_detection/features_detection_helpers.h>
 

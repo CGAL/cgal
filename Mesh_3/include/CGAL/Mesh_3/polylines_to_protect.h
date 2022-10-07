@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <vector>
 #include <map>
 #include <utility> // std::swap
@@ -23,12 +22,12 @@
 
 #include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/squared_distance_3.h>
+
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
-
-#include <CGAL/number_utils.h>
-#include <CGAL/squared_distance_3.h>
 
 #include <boost/utility.hpp> // for boost::prior
 #include <boost/optional.hpp>
