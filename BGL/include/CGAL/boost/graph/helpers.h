@@ -82,8 +82,6 @@ bool is_valid_vertex_descriptor(typename boost::graph_traits<Graph>::vertex_desc
                                 const Graph& g,
                                 const bool verb = false)
 {
-  typedef typename boost::graph_traits<Graph>::halfedge_descriptor   halfedge_descriptor;
-
   Verbose_ostream verr(verb);
   bool valid = true;
 
