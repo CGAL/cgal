@@ -8,11 +8,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 //
 #ifndef CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
 #define CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
 
 #include <CGAL/license/Surface_mesh_topology.h>
+
+#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Drawing_functor.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 
 #include <iostream>
 #include <initializer_list>
@@ -26,6 +31,16 @@
 #include <CGAL/Random.h>
 
 namespace CGAL {
+
+namespace draw_function_for_face_graph_with_paths
+{
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+typedef Local_kernel::Point_3 Local_point;
+typedef Local_kernel::Vector_3 Local_vector;
+
+template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
+struct LCC_geom_utils;
 
 // Specialisation for face graph; otherwise use the LCC_geom_utils of LCC.
 template<class Mesh, class Local_kernel>
@@ -84,316 +99,326 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
   }
 };
 
-// Viewer class for Face_graph with paths.
-template<class Mesh, class DrawingFunctorLCC>
-class Face_graph_with_path_viewer : public Basic_viewer_qt
+// Destructor.
+// lcc.free_mark(m_oriented_mark);
+
+
+
+template <typename Mesh>
+const typename CGAL::Get_traits<Mesh>::Point& get_point(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh, const Mesh &mesh)
 {
-  typedef Basic_viewer_qt                         Base;
-  typedef typename Get_map<Mesh, Mesh>::type      LCC;
-  typedef typename LCC::Dart_const_handle         Dart_const_handle;
-  typedef typename LCC::size_type                 size_type;
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
   typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
 
-public:
-  /// Construct the viewer.
-  /// @param alcc the lcc to view
-  /// @param title the title of the window
-  /// @param anofaces if true, do not draw faces (faces are not computed;
-  ///     this can be usefull for very big object where this time could be long)
-  Face_graph_with_path_viewer(QWidget* parent,
-                              const Mesh& amesh,
-                              const std::vector
-                              <Surface_mesh_topology::Path_on_surface<Mesh> >
-                              *paths=nullptr,
-                              size_type amark=LCC::INVALID_MARK,
-                              const char* title="", bool anofaces=false,
-                              const DrawingFunctorLCC&
-                              drawing_functor=DrawingFunctorLCC()) :
-    Base(parent, title, true, true, true, false, true),
-    mesh(amesh),
-    lcc(amesh),
-    m_oriented_mark(lcc.get_new_mark()),
-    m_nofaces(anofaces),
-    m_drawing_functor(drawing_functor),
-    m_paths(paths),
-    m_current_path(m_paths->size()),
-    m_current_dart(lcc.darts().end()),
-    m_draw_marked_darts(true),
-    m_amark(amark==(std::numeric_limits<size_type>::max)()?
-            LCC::INVALID_MARK:amark)
+  return CGAL::Get_traits<Mesh>::get_point(mesh, dh);
+
+}
+
+template <typename Mesh, typename BufferType = float>
+void compute_face(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
+                  const Mesh &mesh,
+                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc)
+{
+  typedef typename Get_map<Mesh, Mesh>::type      LCC;
+
+  typedef typename LCC::size_type                 size_type;
+
+  typedef typename LCC::Dart_const_handle         Dart_const_handle;
+  typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
+  typedef typename CGAL::Get_traits<Mesh>::Point  Point;
+  typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
+
+  // We fill only closed faces.
+  Dart_const_handle cur=dh;
+  Dart_const_handle min=dh;
+  do
   {
-    lcc.orient(m_oriented_mark);
-    compute_elements();
+    if (!lcc.is_next_exist(cur)) return; // open face=>not filled
+    if (cur<min) min=cur;
+    cur=lcc.next(cur);
   }
+  while(cur!=dh);
 
-  ~Face_graph_with_path_viewer()
+  // CGAL::IO::Color c=m_fcolor.run(*lcc, dh);
+  graphic_buffer.face_begin(); //c);
+
+  cur=dh;
+  do
   {
-    lcc.free_mark(m_oriented_mark);
+    graphic_buffer.add_point_in_face(draw_function_for_face_graph_with_paths::get_point(cur, mesh),
+                      LCC_geom_utils<LCC, Local_kernel>::
+                      get_vertex_normal(lcc, cur));
+    cur=lcc.next(cur);
   }
+  while(cur!=dh);
 
-protected:
+  graphic_buffer.face_end();
+}
 
-  const Point& get_point(Dart_const_handle dh) const
-  { return CGAL::Get_traits<Mesh>::get_point(mesh, dh); }
 
-  void compute_elements()
+  // typename LCC::size_type m_amark; // If !=INVALID_MARK, show darts marked with this mark
+
+template <typename Mesh, typename BufferType = float>
+void compute_edge(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
+                  const Mesh &mesh,
+                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                  typename Get_map<Mesh, Mesh>::type::size_type m_amark,
+                  bool m_draw_marked_darts = true)
+{
+  typedef typename Get_map<Mesh, Mesh>::type      LCC;
+  typedef typename LCC::size_type                 size_type;
+
+  typedef typename LCC::Dart_const_handle         Dart_const_handle;
+  typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
+  typedef typename CGAL::Get_traits<Mesh>::Point  Point;
+  typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
+
+  Point p1 = get_point(dh, mesh);
+  Dart_const_handle d2 = lcc.other_extremity(dh);
+  if (d2!=LCC::null_handle)
   {
-    clear();
-
-    typename LCC::size_type markfaces    = lcc.get_new_mark();
-    typename LCC::size_type markedges    = lcc.get_new_mark();
-    typename LCC::size_type markvertices = lcc.get_new_mark();
-
-    if (m_current_dart!=lcc.darts().end())
-    { // We want to draw only one dart
-      Dart_const_handle selected_dart=m_current_dart; //lcc.dart_handle(m_current_dart);
-      compute_edge(selected_dart, CGAL::IO::Color(255,0,0));
-      lcc.template mark_cell<1>(selected_dart, markedges);
-      compute_vertex(selected_dart);
-
-      if ( !m_nofaces )
-      { compute_face(selected_dart); }
-
-      for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
-           itend=lcc.darts().end(); it!=itend; ++it )
-      {
-        if ( !lcc.is_marked(it, markedges) )
-        {
-          compute_edge(it);
-          lcc.template mark_cell<1>(it, markedges);
-        }
-      }
-    }
+    if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
+        (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.opposite2(dh), m_amark)))
+    { graphic_buffer.add_segment(p1, get_point(d2, mesh), CGAL::IO::Color(0, 0, 255)); }
     else
+    { graphic_buffer.add_segment(p1, get_point(d2, mesh)); }
+  }
+}
+
+template <typename Mesh, typename BufferType = float>
+void compute_edge(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
+                  const CGAL::IO::Color& color,
+                  const Mesh &mesh,
+                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc)
+{
+  typedef typename Get_map<Mesh, Mesh>::type      LCC;
+  typedef typename LCC::Dart_const_handle         Dart_const_handle;
+  typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
+  typedef typename CGAL::Get_traits<Mesh>::Point  Point;
+  typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
+
+  Point p1 = get_point(dh, mesh);
+  Dart_const_handle d2 = lcc.other_extremity(dh);
+  if (d2!=LCC::null_handle)
+  { graphic_buffer.add_segment(p1, get_point(d2, mesh), color); }
+}
+
+template <typename Mesh, typename BufferType = float>
+void compute_vertex(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
+                    const Mesh &mesh,
+                    CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+{
+  typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
+  typedef typename CGAL::Get_traits<Mesh>::Point  Point;
+  typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
+  graphic_buffer.add_point(get_point(dh, mesh));
+}
+
+template <typename Mesh, typename BufferType = float>
+void compute_path(std::size_t i,
+                  typename Get_map<Mesh, Mesh>::type::size_type amark,
+                  const Mesh &mesh,
+                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                  const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc)
+{
+
+  typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
+  typedef typename CGAL::Get_traits<Mesh>::Point  Point;
+  typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
+
+  if ((*m_paths)[i].is_empty())
+  { return; }
+
+  CGAL::Random random(static_cast<unsigned int>(i));
+  CGAL::IO::Color color = get_random_color(random);
+
+  graphic_buffer.add_point(get_point((*m_paths)[i].get_ith_dart(0), mesh), color);
+  for (std::size_t j=0; j<(*m_paths)[i].length(); ++j)
+  {
+    if ( !lcc.is_marked( (*m_paths)[i].get_ith_dart(j), amark) )
     {
-      if (m_current_path==m_paths->size())
+      compute_edge<Mesh, BufferType>((*m_paths)[i].get_ith_dart(j), color, mesh, graphic_buffer, lcc);
+      lcc.template mark_cell<1>((*m_paths)[i].get_ith_dart(j), amark);
+    }
+  }
+}
+
+template <class Mesh, class DrawingFunctor, typename BufferType = float>
+void compute_elements(const Mesh &mesh,
+                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                      const DrawingFunctor &m_drawing_functor,
+                      // TODO: I think I need to use smart pointers with lcc, right?
+                      const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                      const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
+                      typename Get_map<Mesh, Mesh>::type::size_type amark /*= typename Get_map<Mesh, Mesh>::type::INVALID_MARK*/,
+                      bool m_nofaces = false,
+                      bool m_draw_marked_darts = true)
+{
+  typedef typename Get_map<Mesh, Mesh>::type      LCC;
+  typedef typename LCC::size_type                 size_type;
+
+  typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
+  typedef typename CGAL::Get_traits<Mesh>::Point  Point;
+  typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
+
+  typedef typename LCC::Dart_const_handle         Dart_const_handle;
+
+  typename LCC::Dart_range::const_iterator m_current_dart = lcc.darts().end();
+  typename LCC::size_type m_oriented_mark = lcc.get_new_mark();
+  std::size_t m_current_path = m_paths->size();
+  typename LCC::size_type m_amark = amark==(std::numeric_limits<size_type>::max)()?
+            LCC::INVALID_MARK:amark; // If !=INVALID_MARK, show darts marked with this mark
+
+  lcc.orient(m_oriented_mark);
+
+
+  typename LCC::size_type markfaces    = lcc.get_new_mark();
+  typename LCC::size_type markedges    = lcc.get_new_mark();
+  typename LCC::size_type markvertices = lcc.get_new_mark();
+
+  if (m_current_dart!=lcc.darts().end())
+  { // We want to draw only one dart
+    Dart_const_handle selected_dart=m_current_dart; //lcc.dart_handle(m_current_dart);
+    compute_edge<Mesh, BufferType>(selected_dart, CGAL::IO::Color(255,0,0), mesh, graphic_buffer, lcc);
+    lcc.template mark_cell<1>(selected_dart, markedges);
+    compute_vertex<Mesh, BufferType>(selected_dart, mesh, graphic_buffer);
+
+    if ( !m_nofaces )
+    { compute_face<Mesh, BufferType>(selected_dart, mesh, graphic_buffer, lcc); }
+
+    for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
+          itend=lcc.darts().end(); it!=itend; ++it )
+    {
+      if ( !lcc.is_marked(it, markedges) )
       {
-        for (std::size_t i=0; i<m_paths->size(); ++i)
-        { compute_path(i, markedges); }
+        compute_edge<Mesh, BufferType>(it, mesh, graphic_buffer, lcc, m_amark, m_draw_marked_darts);
+        lcc.template mark_cell<1>(it, markedges);
       }
-      else if (m_current_path!=m_paths->size()+1)
-      { compute_path(m_current_path, markedges); }
+    }
+  }
+  else
+  {
+    if (m_current_path==m_paths->size())
+    {
+      for (std::size_t i=0; i<m_paths->size(); ++i)
+      { compute_path<Mesh, BufferType>(i, markedges, mesh, graphic_buffer, m_paths, lcc); }
+    }
+    else if (m_current_path!=m_paths->size()+1)
+    { compute_path<Mesh, BufferType>(m_current_path, markedges, mesh, graphic_buffer, m_paths, lcc); }
 
-      for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
-           itend=lcc.darts().end(); it!=itend; ++it )
+    for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
+          itend=lcc.darts().end(); it!=itend; ++it )
+    {
+      if (!m_nofaces && !lcc.is_marked(it, markfaces) &&
+          !lcc.is_perforated(it) && lcc.is_marked(it, m_oriented_mark))
       {
-        if (!m_nofaces && !lcc.is_marked(it, markfaces) &&
-            !lcc.is_perforated(it) && lcc.is_marked(it, m_oriented_mark))
-        {
-          compute_face(it);
-          lcc.template mark_cell<2>(it, markfaces);
-        }
-
-        if ( !lcc.is_marked(it, markedges) )
-        {
-          compute_edge(it);
-          lcc.template mark_cell<1>(it, markedges);
-        }
-
-        if ( !lcc.is_marked(it, markvertices) )
-        {
-          compute_vertex(it);
-          lcc.template mark_cell<0>(it, markvertices);
-        }
+        compute_face<Mesh, BufferType>(it, mesh, graphic_buffer, lcc);
+        lcc.template mark_cell<2>(it, markfaces);
       }
-    }
 
-    lcc.free_mark(markfaces);
-    lcc.free_mark(markedges);
-    lcc.free_mark(markvertices);
-  }
-
-  void compute_face(Dart_const_handle dh)
-  {
-    // We fill only closed faces.
-    Dart_const_handle cur=dh;
-    Dart_const_handle min=dh;
-    do
-    {
-      if (!lcc.is_next_exist(cur)) return; // open face=>not filled
-      if (cur<min) min=cur;
-      cur=lcc.next(cur);
-    }
-    while(cur!=dh);
-
-    // CGAL::IO::Color c=m_fcolor.run(*lcc, dh);
-    face_begin(); //c);
-
-    cur=dh;
-    do
-    {
-      add_point_in_face(get_point(cur),
-                        LCC_geom_utils<LCC, Local_kernel>::
-                        get_vertex_normal(lcc, cur));
-      cur=lcc.next(cur);
-    }
-    while(cur!=dh);
-
-    face_end();
-  }
-
-  void compute_edge(Dart_const_handle dh)
-  {
-    Point p1 = get_point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=LCC::null_handle)
-    {
-      if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
-          (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.opposite2(dh), m_amark)))
-      { add_segment(p1, get_point(d2), CGAL::IO::Color(0, 0, 255)); }
-      else
-      { add_segment(p1, get_point(d2)); }
-    }
-  }
-
-  void compute_edge(Dart_const_handle dh, const CGAL::IO::Color& color)
-  {
-    Point p1 = get_point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=LCC::null_handle)
-    { add_segment(p1, get_point(d2), color); }
-  }
-
-  void compute_vertex(Dart_const_handle dh)
-  { add_point(get_point(dh)); }
-
-  virtual void init()
-  {
-    Base::init();
-    setKeyDescription(::Qt::Key_D, "Increase current dart drawing");
-    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_D, "Decrease current dart drawing");
-    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Draw all darts");
-
-    setKeyDescription(::Qt::Key_X, "Toggles marked darts display");
-
-    setKeyDescription(::Qt::Key_P, "Increase current path drawing");
-    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_P, "Decrease current path drawing");
-    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_P, "Draw all paths");
-  }
-
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-
-    if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
-    {
-      if (m_current_dart==lcc.darts().end())
-      { m_current_dart=lcc.darts().begin(); }
-      else
-      { ++m_current_dart; }
-      if (m_current_dart==lcc.darts().end())
-      { displayMessage(QString("Draw all darts.")); }
-      else
-      { displayMessage(QString("Draw dart=%1.").arg(lcc.darts().index(m_current_dart))); }
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ControlModifier))
-    {
-      if (m_current_dart==lcc.darts().begin())
-      { m_current_dart=lcc.darts().end(); }
-      else
-      { --m_current_dart; }
-      if (m_current_dart==lcc.darts().end())
-      { displayMessage(QString("Draw all darts.")); }
-      else
-      { displayMessage(QString("Draw dart=%1.").arg(lcc.darts().index(m_current_dart))); }
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
-    {
-      m_current_dart=lcc.darts().end();
-      displayMessage(QString("Draw all darts."));
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))
-    {
-      m_current_path=(m_current_path+1)%(m_paths->size()+2);
-      if (m_current_path==m_paths->size())
-      { displayMessage(QString("Draw all paths.")); }
-      else if (m_current_path==m_paths->size()+1)
-      { displayMessage(QString("Do not draw paths.")); }
-      else
-      { displayMessage(QString("Draw path=%1, nb_darts=%2.").
-                       arg(m_current_path).
-                       arg((*m_paths)[m_current_path].length())); }
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ControlModifier))
-    {
-      m_current_path=(m_current_path==0?m_paths->size()+1:m_current_path-1);
-      if (m_current_path==m_paths->size())
-      { displayMessage(QString("Draw all paths.")); }
-      else if (m_current_path==m_paths->size()+1)
-      { displayMessage(QString("Do not draw paths.")); }
-      else
-      { displayMessage(QString("Draw path=%1, nb_darts=%2.").
-                       arg(m_current_path).
-                       arg((*m_paths)[m_current_path].length())); }
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ShiftModifier))
-    {
-      m_current_path=m_paths->size();
-      displayMessage(QString("Draw all paths."));
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_X) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_marked_darts=!m_draw_marked_darts;
-
-      if (m_draw_marked_darts)
-      { displayMessage(QString("Draw marked darts in blue.")); }
-      else
+      if ( !lcc.is_marked(it, markedges) )
       {
-        displayMessage(QString("Do not draw marked darts in different color."));
+        compute_edge<Mesh, BufferType>(it, mesh, graphic_buffer, lcc, m_amark, m_draw_marked_darts);
+        lcc.template mark_cell<1>(it, markedges);
       }
-      compute_elements();
-      redraw();
-    }
-    else
-    { Base::keyPressEvent(e); }
-  }
 
-  void compute_path(std::size_t i, typename LCC::size_type amark)
-  {
-    if ((*m_paths)[i].is_empty())
-    { return; }
-
-    CGAL::Random random(static_cast<unsigned int>(i));
-    CGAL::IO::Color color=get_random_color(random);
-
-    add_point(get_point((*m_paths)[i].get_ith_dart(0)), color);
-    for (std::size_t j=0; j<(*m_paths)[i].length(); ++j)
-    {
-      if ( !lcc.is_marked( (*m_paths)[i].get_ith_dart(j), amark) )
+      if ( !lcc.is_marked(it, markvertices) )
       {
-        compute_edge((*m_paths)[i].get_ith_dart(j), color);
-        lcc.template mark_cell<1>((*m_paths)[i].get_ith_dart(j), amark);
+        compute_vertex<Mesh, BufferType>(it, mesh, graphic_buffer);
+        lcc.template mark_cell<0>(it, markvertices);
       }
     }
   }
 
-protected:
-  const Mesh& mesh;
-  const typename Get_map<Mesh, Mesh>::storage_type lcc;
-  typename LCC::size_type m_oriented_mark;
-  bool m_nofaces;
-  const DrawingFunctorLCC& m_drawing_functor;
-  const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* m_paths;
-  std::size_t m_current_path;
-  typename LCC::Dart_range::const_iterator m_current_dart;
-  bool m_draw_marked_darts;
-  typename LCC::size_type m_amark; // If !=INVALID_MARK, show darts marked with this mark
-};
+  lcc.free_mark(markfaces);
+  lcc.free_mark(markedges);
+  lcc.free_mark(markvertices);
+}
 
+} // namespace draw_function_for_face_graph_with_paths
+
+template <typename BufferType = float, class Mesh, class DrawingFunctor>
+void add_in_graphic_buffer(const Mesh &mesh,
+                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                      const DrawingFunctor &m_drawing_functor,
+                      // TODO: I think I need to use smart pointers with lcc, right?
+                      const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                      const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
+                      typename Get_map<Mesh, Mesh>::type::size_type amark= /*typename*/ Get_map<Mesh, Mesh>::type::INVALID_MARK,
+                      bool m_nofaces = false) {
+  draw_function_for_face_graph_with_paths::compute_elements(mesh, graphic_buffer, m_drawing_functor, lcc, m_paths, amark, m_nofaces);
+}
+
+template <typename BufferType = float, class Mesh>
+void add_in_graphic_buffer(const Mesh &mesh,
+                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                      // TODO: I think I need to use smart pointers with lcc, right?
+                      const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                      const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
+                      typename Get_map<Mesh, Mesh>::type::size_type amark= /*typename*/ Get_map<Mesh, Mesh>::type::INVALID_MARK,
+                      bool m_nofaces = false) {
+
+  // Default functor; user can add his own functor.
+  Drawing_functor<Mesh,
+                  typename Mesh::Dart_const_handle /*vh*/,
+                  typename Mesh::Dart_const_handle /*eh*/,
+                  typename Mesh::Dart_const_handle /*fh*/>
+      drawing_functor;
+
+  add_in_graphic_buffer(mesh, graphic_buffer, drawing_functor, lcc, m_paths, amark, m_nofaces);
+}
+
+
+template<typename Mesh, typename BufferType = float >
+void draw(const Mesh& alcc,
+          const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
+          typename Get_map<Mesh, Mesh>::type::size_type amark=
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
+          const char* title="Mesh Viewer With Path",
+          bool nofill=false) {
+
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(alcc, buffer, alcc, &paths, amark, nofill);
+  draw_buffer(buffer);
+}
+
+
+template<typename Mesh, typename DrawingFunctor, typename BufferType = float>
+void draw(const Mesh& alcc,
+          const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
+          const DrawingFunctor& drawing_functor,
+          typename Get_map<Mesh, Mesh>::type::size_type amark=
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
+          const char* title="Mesh Viewer With Path",
+          bool nofill=false) {
+
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(alcc, buffer, drawing_functor, alcc, &paths, amark, nofill);
+  draw_buffer(buffer);
+}
+
+
+template<class Mesh, typename BufferType = float >
+void draw(const Mesh& alcc,
+          std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
+          typename Get_map<Mesh, Mesh>::type::size_type amark=
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
+          const char* title="Mesh Viewer With Path",
+          bool nofill=false)
+{
+  std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
+
+  CGAL::Graphic_buffer<BufferType> buffer;
+  add_in_graphic_buffer(alcc, buffer, alcc, &paths, amark, nofill);
+  draw_buffer(buffer);
+}
+
+/*
 template<class Mesh, class DrawingFunctor>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
@@ -447,6 +472,7 @@ void draw(const Mesh& alcc,
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh> > paths=l;
   draw(alcc, paths, title, amark, nofill);
 }
+*/
 
 } // End namespace CGAL
 
