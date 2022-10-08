@@ -1357,7 +1357,13 @@ protected:
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
+
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+
+    if(_onPress) {
+        _onPress(e, this);
+    }
+else {
 
     if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
     {
@@ -1573,6 +1579,7 @@ protected:
     }
     else
       CGAL::QGLViewer::keyPressEvent(e);
+}
   }
 
   virtual QString helpString() const
@@ -1609,7 +1616,9 @@ protected:
     text += "Press <b>Escape</b> to exit the viewer.";
     return text;
   }
-
+public:
+  // std::function<void(QKeyEvent *e)> _onPress;
+  std::function<void(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> _onPress;
 protected:
 
   Graphic_buffer<BufferType>& gBuffer;
@@ -1746,6 +1755,36 @@ void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer) {
     app.exec();
   }
 }
+
+
+template <typename BufferType = float>
+void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,const std::function<void(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress) {
+
+#if defined(CGAL_TEST_SUITE)
+  bool cgal_test_suite = true;
+#else
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+#endif
+
+  if (!cgal_test_suite) {
+    CGAL::Qt::init_ogl_context(4, 3);
+    // Qt::init_ogl_context(4, 3);
+
+    int argc = 1;
+    const char *argv[2] = {"lccviewer", nullptr};
+    QApplication app(argc, const_cast<char **>(argv));
+
+    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer);
+
+    basic_viewer._onPress = onPress;
+
+    basic_viewer.show();
+    app.exec();
+  }
+}
+
+
+
 
 } // End namespace CGAL
 

@@ -352,6 +352,58 @@ void add_in_graphic_buffer(const V2 &v2, CGAL::Graphic_buffer<BufferType> &graph
   add_in_graphic_buffer(v2, graphic_buffer, drawing_functor);
 }
 
+// TODO: I'll add a description after idea verification
+// Add custom key description (see keyPressEvent)
+// setKeyDescription(::Qt::Key_R, "Toggles rays display");
+// setKeyDescription(::Qt::Key_D, "Toggles dual vertices display");
+// setKeyDescription(::Qt::Key_V, "Toggles voronoi vertices display");
+
+
+// TODO: Expected solution, I need to add reference to drawing_functor, OR, pass m_draw_rays, m_draw_voronoi_vertices, m_draw_dual_vertices
+std::function<void(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> VoronoiKeyPressEvent = [] (QKeyEvent *e, CGAL::Basic_viewer_qt<float> *_this)
+{
+  /// [Keypress]
+  const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+  if ((e->key() == ::Qt::Key_R) && (modifiers == ::Qt::NoButton)) {
+    // m_draw_rays = !m_draw_rays;
+    std::cout << "R Pressed\n";
+
+    _this->displayMessage(
+        QString("Draw rays=%1."));//.arg(m_draw_rays ? "true" : "false"));
+    // _this.update();
+  } else if ((e->key() == ::Qt::Key_V) && (modifiers == ::Qt::NoButton)) {
+
+    std::cout << "V Pressed\n";
+
+    // m_draw_voronoi_vertices = !m_draw_voronoi_vertices;
+
+    _this->displayMessage(
+        QString("Voronoi vertices=%1."));//.arg(m_draw_voronoi_vertices? "true" : "false"));
+
+    // TODO: What are the expected args? I think I need a kind of function wrapper to wrap drawing_functor, mesh, and buffer.
+    // draw_function_for_v2::compute_elements();
+
+    // _this->redraw();
+  } else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton)) {
+
+    std::cout << "D Pressed\n";
+
+    // m_draw_dual_vertices = !m_draw_dual_vertices;
+
+    _this->displayMessage(QString("Dual vertices=%1."));
+                        //.arg(m_draw_dual_vertices ? "true" : "false"));
+
+    // TODO: What are the expected args? I think I need a kind of function wrapper to wrap drawing_functor, mesh, and buffer.
+    // draw_function_for_v2::compute_elements();
+
+    // _this->redraw();
+  } else {
+    // Call the base method to process others/classicals key
+    // Base::keyPressEvent(e);
+  }
+  /// [Keypress]
+};
+
 // Specialization of draw function.
 #define CGAL_VORONOI_TYPE CGAL::Voronoi_diagram_2 <DG, AT, AP>
 
@@ -374,7 +426,11 @@ void draw(const CGAL_VORONOI_TYPE &av2,
 {
   CGAL::Graphic_buffer<BufferType> buffer;
   add_in_graphic_buffer(av2, buffer);
-  draw_buffer(buffer);
+  // draw_buffer(buffer);
+
+  // Test
+  draw_buffer(buffer, VoronoiKeyPressEvent);
+
 }
 
 } // End namespace CGAL
