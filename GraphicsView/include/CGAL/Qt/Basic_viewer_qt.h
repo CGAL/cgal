@@ -1740,7 +1740,7 @@ void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer) {
     const char *argv[2] = {"lccviewer", nullptr};
     QApplication app(argc, const_cast<char **>(argv));
 
-    Basic_viewer_qt<float> basic_viewer(app.activeWindow(), graphic_buffer);
+    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer);
 
     basic_viewer.show();
     app.exec();
