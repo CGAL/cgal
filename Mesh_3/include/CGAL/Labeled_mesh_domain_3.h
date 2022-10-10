@@ -414,7 +414,7 @@ public:
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
   {}
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
   template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
   Labeled_mesh_domain_3(const CGAL_NP_CLASS& ... nps)
     : Labeled_mesh_domain_3(internal_np::combine_named_parameters(nps...))
@@ -662,7 +662,7 @@ public:
                      create_construct_surface_patch_index(construct_surface_patch_index_));
 
   }
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
   template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
   static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& ... nps)
   {
@@ -696,7 +696,7 @@ public:
     return create_labeled_image_mesh_domain(image_, np);
   }
 
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
   template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
   static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& ... nps)
   {
@@ -804,7 +804,7 @@ public:
                                        np);
   }
 
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
   template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
   static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& ... nps)
   {

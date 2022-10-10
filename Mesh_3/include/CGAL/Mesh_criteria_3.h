@@ -288,7 +288,7 @@ Mesh_criteria_3(const CGAL_NP_CLASS& np = parameters::default_values()): Base(np
 {
 }
 
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
 template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Mesh_criteria_3(const CGAL_NP_CLASS& ... nps):Mesh_criteria_3(internal_np::combine_named_parameters(nps...))
 {

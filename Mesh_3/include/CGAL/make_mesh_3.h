@@ -451,7 +451,7 @@ C3T3 make_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS
 }
 
 #ifndef DOXYGEN_RUNNING
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 C3T3 make_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& ... nps)
 {

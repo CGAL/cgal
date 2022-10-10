@@ -144,7 +144,7 @@ Mesh_optimization_return_code odt_optimize_mesh_3(C3T3& c3t3, MeshDomain& domain
 
 #ifndef DOXYGEN_RUNNING
 
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
 template<typename C3T3, typename MeshDomain, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Mesh_optimization_return_code odt_optimize_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& ... nps)
 {

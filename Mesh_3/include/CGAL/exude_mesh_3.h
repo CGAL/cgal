@@ -109,7 +109,7 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, double time_limit = 0, do
 }
 #endif
 #ifndef DOXYGEN_RUNNING
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
 template<typename C3T3, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
 Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3, const CGAL_NP_CLASS& ... nps)
 {
