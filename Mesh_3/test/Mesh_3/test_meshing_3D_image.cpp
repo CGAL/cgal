@@ -1,3 +1,4 @@
+#define CGAL_MESH_3_VERBOSE 1
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -48,7 +49,7 @@ public:
       << CGAL::get_default_random().get_seed() << std::endl;
     Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
       (image,
-       1e-9,
+       1e-6,
        CGAL::parameters::p_rng = &CGAL::get_default_random());
 
     // Set mesh criteria
@@ -78,6 +79,7 @@ public:
 
 int main()
 {
+  std::cerr.precision(17);
   Image_tester<> test_epic;
   std::cerr << "Mesh generation from a 3D image:\n";
   test_epic.image();
