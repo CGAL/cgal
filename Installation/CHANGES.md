@@ -41,6 +41,13 @@ CGAL tetrahedral Delaunay refinement algorithm.
 -   Deprecated two overloads of Function `refine_Delaunay_mesh()` and replaced them with versions using function named parameters.
 -   Add overloads of function `write_VTU()` with property maps for specifying the domain.    
 
+### [2D Hyperbolic Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgHyperbolicTriangulation2)
+
+-   **Breaking change**: the concept `HyperbolicTriangulationFaceBase_2` has been modified to
+    better reflect the triangulation's requirements and avoid a conflict with the requirements
+    described by the concept `TriangulationDataStructure_2::Face`. The model `CGAL::Hyperbolic_triangulation_face_base_2`
+    has been adapted correspondingly.
+
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
 
