@@ -26,9 +26,15 @@ namespace CGAL {
 // The following is equivalent to Filtered_kernel< Simple_cartesian<double> >,
 // but it's shorter in terms of template name length (for error messages, mangling...).
 
+#ifndef CGAL_EPICK_SINGLE_PRECISION
+using Epick_number_type = double;
+#else
+using Epick_number_type = float;
+#endif
+
 class Epick
   : public Filtered_kernel_adaptor<
-               Type_equality_wrapper< Simple_cartesian<double>::Base<Epick>::Type, Epick >,
+               Type_equality_wrapper< Simple_cartesian<Epick_number_type>::Base<Epick>::Type, Epick >,
 #ifdef CGAL_NO_STATIC_FILTERS
                false >
 #else
