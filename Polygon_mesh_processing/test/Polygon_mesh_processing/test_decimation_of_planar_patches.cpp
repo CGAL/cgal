@@ -36,10 +36,7 @@ int main()
 
     // call the decimation function
     if (!PMP::remesh_planar_patches(sm))
-    {
       std::cerr << "ERROR: decimate cannot be done correctly\n";
-      continue;
-    }
     ss=std::stringstream();
     ss << "out" << i << ".off";
     std::ofstream out(ss.str().c_str());
@@ -59,10 +56,7 @@ int main()
 
     // call the decimation function
     if (!PMP::remesh_planar_patches(sm, CGAL::parameters::cosinus_threshold(-0.99)))
-    {
       std::cerr << "ERROR: decimate cannot be done correctly\n";
-      continue;
-    }
     ss=std::stringstream();
     ss << "out_a" << i << ".off";
     std::ofstream out(ss.str().c_str());
@@ -140,10 +134,7 @@ int main()
     // call the decimation function
 
     if (!PMP::decimate_with_pca_for_coplanarity(sm, 1e-5, -0.99))
-    {
       std::cerr << "ERROR: decimate cannot be done correctly\n";
-      continue;
-    }
     ss=std::stringstream();
     ss << "out_a_pca" << i << ".off";
     std::ofstream out(ss.str().c_str());

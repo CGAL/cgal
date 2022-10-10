@@ -443,6 +443,7 @@ bool decimate_impl(const TriangleMesh& tm,
   do
   {
     std::vector< std::vector<Id_pair> > face_boundaries(nb_corners_and_nb_cc.second);
+    std::vector<bool> face_boundaries_valid(nb_corners_and_nb_cc.second, true);
     // collect maximal constrained edges per cc
     for(halfedge_descriptor h : halfedges(tm))
     {
@@ -485,6 +486,9 @@ bool decimate_impl(const TriangleMesh& tm,
       triangles.clear();
 
       const std::vector< Id_pair >& csts = face_boundaries[cc_id];
+
+      if (!face_boundaries_valid[cc_id]) continue;
+
       if (csts.size()==3)
       {
         triangles.push_back( make_array(csts[0].first,
@@ -529,7 +533,11 @@ bool decimate_impl(const TriangleMesh& tm,
             for (halfedge_descriptor h : halfedges_around_target(halfedge(v, tm), tm))
             {
               if (!is_border(h, tm))
-                cc_to_handle.set(get(face_cc_ids, face(h, tm)), 1);
+              {
+                std::size_t other_cc_id = get(face_cc_ids, face(h, tm));
+                cc_to_handle.set(other_cc_id, 1);
+                face_boundaries_valid[ other_cc_id ]=false;
+              }
             }
           }
           cc_to_handle.set(cc_id, 0);
