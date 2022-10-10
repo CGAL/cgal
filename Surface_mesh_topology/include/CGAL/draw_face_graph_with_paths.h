@@ -372,9 +372,9 @@ void add_in_graphic_buffer(const Mesh &mesh,
 
   // Default functor; user can add his own functor.
   Drawing_functor<Mesh,
-                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle /*vh*/,
-                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle /*eh*/,
-                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle /*fh*/>
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_handle /*vh*/,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_handle /*eh*/,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_handle /*fh*/>
       drawing_functor;
 
   add_in_graphic_buffer(mesh, graphic_buffer, drawing_functor, lcc, m_paths, amark, m_nofaces);
