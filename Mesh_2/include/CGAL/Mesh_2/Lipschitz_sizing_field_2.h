@@ -54,6 +54,7 @@ public:
   typedef Apollonius_graph_traits_2<Geom_traits> Apollonius_traits;
   typedef Apollonius_graph_2<Apollonius_traits> Apollonius_graph;
   typedef typename Apollonius_traits::Site_2 Site;
+  typedef typename Sizing_field_2<Tr>::FT FT;
 
 public:
   typedef std::list<Site> Site_set_2;
@@ -144,7 +145,7 @@ public:
     return *this;
   }
 
-  double operator()(const Point& p) const
+  FT operator()(const Point& p) const
   {
     if(points.empty() || points.size() == 1)
       return K;

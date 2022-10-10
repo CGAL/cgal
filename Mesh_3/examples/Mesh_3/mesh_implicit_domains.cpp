@@ -22,7 +22,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef FT_to_point_function_wrapper<K::FT, K::Point_3> Function;
+typedef FT_to_point_function_wrapper<double, K::Point_3> Function;
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;

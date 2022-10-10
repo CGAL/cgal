@@ -81,20 +81,20 @@ int main()
   Mc ec3(edge_sizing_field = 3.);
   assert( ec3.edge_criteria_object().sizing_field(bp1,1,index) == 3 );
 
-  Mc ec4(edge_size = 4.1,
-         edge_sizing_field = Esf(4.2));
-  assert( ec4.edge_criteria_object().sizing_field(bp1,1,index) == 4.1 );
+  Mc ec4(edge_size = 4.,
+         edge_sizing_field = Esf(5.));
+  assert( ec4.edge_criteria_object().sizing_field(bp1,1,index) == 4. );
 
   Mc ec5(sizing_field = 5.);
   assert( ec5.edge_criteria_object().sizing_field(bp1,1,index) == 5 );
 
-  Mc ec6(sizing_field = 6.1,
-         edge_sizing_field = 6.2);
-  assert( ec6.edge_criteria_object().sizing_field(bp1,1,index) == 6.2 );
+  Mc ec6(sizing_field = 6.,
+         edge_sizing_field = 7.);
+  assert( ec6.edge_criteria_object().sizing_field(bp1,1,index) == 7. );
 
-  Mc ec7(sizing_field = 7.1,
-         edge_size = 7.2);
-  assert( ec7.edge_criteria_object().sizing_field(bp1,1,index) == 7.2 );
+  Mc ec7(sizing_field = 7.,
+         edge_size = 8.);
+  assert( ec7.edge_criteria_object().sizing_field(bp1,1,index) == 8. );
 
 
   // -----------------------------------
