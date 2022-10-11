@@ -91,9 +91,9 @@ struct Lloyd_tester_original_BP_API
               << "\nNumber of seeds: " << seeds.size() << "\n\n";
 
     std::cerr << "Meshing the triangulation with size 0.1...";
-    CGAL::refine_Delaunay_mesh_2(cdt,
-                                 seeds.begin(), seeds.end(),
-                                 Criteria(0.125, 0.1));
+    CGAL::refine_Delaunay_mesh_2(cdt, 
+                                 CGAL::parameters::seeds(seeds).
+                                 criteria(Criteria(0.125, 0.1)));
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
     assert( cdt.is_valid() );
     assert( 580 <= cdt.number_of_vertices() &&
