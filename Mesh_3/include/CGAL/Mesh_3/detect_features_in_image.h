@@ -21,6 +21,8 @@
 
 #include <CGAL/ImageIO.h>
 
+#include <CGAL/Delaunay_triangulation_3.h>
+
 #include <CGAL/Mesh_3/features_detection/features_detection.h>
 #include <CGAL/Mesh_3/features_detection/coordinates.h>
 #include <CGAL/Mesh_3/features_detection/combinations.h>

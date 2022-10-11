@@ -412,7 +412,7 @@ std::vector<std::vector<P>> poly00001122(const int prec = 10)
 template<typename P>
 std::vector<std::vector<P>> poly00010121(const int prec = 10)
 {
-    auto y = [](double z) { return ((3 * z * z - 1) - std::sqrt(CGAL::square(1 - 3 * z * z) - 12 * (z - 1) * z * z)) / (6 * (z - 1) * z); };
+    auto y = [](double z) { return ((3 * z * z - 1) - std::sqrt((1. - 3 * z * z)*(1. - 3 * z * z) - 12 * (z - 1) * z * z)) / (6 * (z - 1) * z); };
     auto x = [](double y, double z) { return y * z / (z + y); };
     P corner(1. / 3, 1. / 2, 1);
     return { create_polyline<P>(1, 1. / 2, corner,
