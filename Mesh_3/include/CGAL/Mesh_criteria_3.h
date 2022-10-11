@@ -129,9 +129,7 @@ private:
 /*!
 \ingroup PkgMesh3MeshClasses
 
-The class `Mesh_criteria_3` is a model of both concepts `MeshCriteria_3`
-and `MeshCriteriaWithFeatures_3`.
-It gathers the refinement criteria for mesh tetrahedra and
+The class gathers the refinement criteria for mesh tetrahedra and
 surface facets where
 surface facets are facets in the mesh approximating the domain surface patches.
 In addition, for domains with exposed 1-dimensional features,
@@ -145,7 +143,7 @@ where `C3T3` is the model of `MeshComplex_3InTriangulation_3`
 used in the mesh generation process,
 and `C3T3::Triangulation` its nested triangulation type.
 
-\cgalModels `MeshCriteria_3`
+\cgalModels `MeshCriteria_3` and `MeshCriteriaWithFeatures_3`
 
 \cgalHeading{Example}
 
