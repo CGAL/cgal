@@ -514,12 +514,12 @@ public:
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
-              (p::function(create_gray_image_wrapper
+              (p::function = create_gray_image_wrapper
                        (image_,
                         iso_value_,
                         image_values_to_subdomain_indices_,
-                        value_outside_)),
-               p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
+                        value_outside_),
+               p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
                p::relative_error_bound = relative_error_bound_,
                p::p_rng = p_rng_,
                p::null_subdomain_index =
@@ -599,12 +599,12 @@ public:
     if (weights_.is_valid())
     {
       return Labeled_mesh_domain_3
-              (p::function(create_weighted_labeled_image_wrapper
+              (p::function = create_weighted_labeled_image_wrapper
                        (image_,
                         weights_,
                         image_values_to_subdomain_indices_,
-                        value_outside_)),
-               p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
+                        value_outside_),
+               p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
                p::relative_error_bound = relative_error_bound_,
                p::p_rng = p_rng_,
                p::null_subdomain_index =
@@ -615,11 +615,11 @@ public:
     else
     {
       return Labeled_mesh_domain_3
-              (p::function(create_labeled_image_wrapper
+              (p::function = create_labeled_image_wrapper
                        (image_,
                         image_values_to_subdomain_indices_,
-                        value_outside_)),
-               p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
+                        value_outside_),
+               p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
                p::relative_error_bound = relative_error_bound_,
                p::p_rng = p_rng_,
                p::null_subdomain_index =
@@ -648,12 +648,12 @@ public:
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
-            (p::function(create_gray_image_wrapper
+            (p::function = create_gray_image_wrapper
                      (image_,
                       iso_value_,
                       image_values_to_subdomain_indices_,
-                      value_outside_)),
-             p::bounding_object(Mesh_3::internal::compute_bounding_box(image_)),
+                      value_outside_),
+             p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
              p::relative_error_bound = relative_error_bound_,
              p::p_rng = p_rng_,
              p::null_subdomain_index =
@@ -781,8 +781,8 @@ public:
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
-            (p::function(make_implicit_to_labeling_function_wrapper<BGT>(function)),
-             p::bounding_object(bounding_object),
+            (p::function = make_implicit_to_labeling_function_wrapper<BGT>(function),
+             p::bounding_object = bounding_object,
              p::relative_error_bound = relative_error_bound_,
              p::p_rng = p_rng_,
              p::null_subdomain_index =
