@@ -48,6 +48,7 @@ class Tetrahedral_remeshing_smoother
   typedef typename Tr::Geom_traits           Gt;
   typedef typename Gt::Vector_3              Vector_3;
   typedef typename Gt::Point_3               Point_3;
+  typedef typename Gt::FT                    FT;
 
 private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
@@ -332,9 +333,9 @@ private:
                                 const CellRange& inc_cells,
                                 const Tr& /* tr */,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-                                double& total_move)
+                                FT& total_move)
 #else
-                                double&)
+                                FT&)
 #endif
   {
     const typename Tr::Point backup = v->point(); //backup v's position
