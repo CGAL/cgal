@@ -411,23 +411,10 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  * optimization processes.
  *
  * \sa `refine_mesh_3()`
- * \sa `parameters::features()`
- * \sa `parameters::no_features()`
- * \sa `parameters::manifold()`
- * \sa `parameters::manifold_with_boundary()`
- * \sa `parameters::non_manifold()`
  * \sa `exude_mesh_3()`
  * \sa `perturb_mesh_3()`
  * \sa `lloyd_optimize_mesh_3()`
  * \sa `odt_optimize_mesh_3()`
- * \sa `parameters::exude()`
- * \sa `parameters::no_exude()`
- * \sa `parameters::perturb()`
- * \sa `parameters::no_perturb()`
- * \sa `parameters::lloyd()`
- * \sa `parameters::no_lloyd()`
- * \sa `parameters::odt()`
- * \sa `parameters::no_odt()`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
 C3T3 make_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())

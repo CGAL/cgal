@@ -296,14 +296,6 @@ void project_points(C3T3& c3t3,
  * \sa `perturb_periodic_3_mesh_3()`
  * \sa `lloyd_optimize_periodic_3_mesh_3()`
  * \sa `odt_optimize_periodic_3_mesh_3()`
- * \sa `parameters::exude`
- * \sa `parameters::no_exude`
- * \sa `parameters::perturb`
- * \sa `parameters::no_perturb`
- * \sa `parameters::lloyd`
- * \sa `parameters::no_lloyd`
- * \sa `parameters::odt`
- * \sa `parameters::no_odt`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
