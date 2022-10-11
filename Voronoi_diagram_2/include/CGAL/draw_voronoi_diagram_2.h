@@ -359,50 +359,7 @@ void add_in_graphic_buffer(const V2 &v2, CGAL::Graphic_buffer<BufferType> &graph
 // setKeyDescription(::Qt::Key_V, "Toggles voronoi vertices display");
 
 
-// TODO: Expected solution, I need to add reference to drawing_functor, OR, pass m_draw_rays, m_draw_voronoi_vertices, m_draw_dual_vertices
-std::function<void(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> VoronoiKeyPressEvent = [] (QKeyEvent *e, CGAL::Basic_viewer_qt<float> *_this)
-{
-  /// [Keypress]
-  const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-  if ((e->key() == ::Qt::Key_R) && (modifiers == ::Qt::NoButton)) {
-    // m_draw_rays = !m_draw_rays;
-    std::cout << "R Pressed\n";
 
-    _this->displayMessage(
-        QString("Draw rays=%1."));//.arg(m_draw_rays ? "true" : "false"));
-    // _this.update();
-  } else if ((e->key() == ::Qt::Key_V) && (modifiers == ::Qt::NoButton)) {
-
-    std::cout << "V Pressed\n";
-
-    // m_draw_voronoi_vertices = !m_draw_voronoi_vertices;
-
-    _this->displayMessage(
-        QString("Voronoi vertices=%1."));//.arg(m_draw_voronoi_vertices? "true" : "false"));
-
-    // TODO: What are the expected args? I think I need a kind of function wrapper to wrap drawing_functor, mesh, and buffer.
-    // draw_function_for_v2::compute_elements();
-
-    // _this->redraw();
-  } else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton)) {
-
-    std::cout << "D Pressed\n";
-
-    // m_draw_dual_vertices = !m_draw_dual_vertices;
-
-    _this->displayMessage(QString("Dual vertices=%1."));
-                        //.arg(m_draw_dual_vertices ? "true" : "false"));
-
-    // TODO: What are the expected args? I think I need a kind of function wrapper to wrap drawing_functor, mesh, and buffer.
-    // draw_function_for_v2::compute_elements();
-
-    // _this->redraw();
-  } else {
-    // Call the base method to process others/classicals key
-    // Base::keyPressEvent(e);
-  }
-  /// [Keypress]
-};
 
 // Specialization of draw function.
 #define CGAL_VORONOI_TYPE CGAL::Voronoi_diagram_2 <DG, AT, AP>
@@ -425,10 +382,93 @@ void draw(const CGAL_VORONOI_TYPE &av2,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
   CGAL::Graphic_buffer<BufferType> buffer;
-  add_in_graphic_buffer(av2, buffer);
-  // draw_buffer(buffer);
 
-  // Test
+  CGAL::draw_function_for_v2::Drawing_functor_voronoi<CGAL_VORONOI_TYPE, 
+              typename CGAL_VORONOI_TYPE::Vertex_iterator,
+              typename CGAL_VORONOI_TYPE::Halfedge_iterator,
+              typename CGAL_VORONOI_TYPE::Face_iterator>
+  drawing_functor;
+
+  drawing_functor.colored_face = [](const CGAL_VORONOI_TYPE&,
+                      typename CGAL_VORONOI_TYPE::Face_iterator fh) -> bool
+  { return true; };
+
+
+  drawing_functor.face_color =  [] (const CGAL_VORONOI_TYPE& alcc,
+                           typename CGAL_VORONOI_TYPE::Face_iterator fh) -> CGAL::IO::Color
+  {
+    return CGAL::IO::Color(73, 250, 117);
+  };
+
+  add_in_graphic_buffer(av2, buffer, drawing_functor);
+
+  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> VoronoiKeyPressEvent = 
+            [&av2, &drawing_functor] (QKeyEvent *e, CGAL::Basic_viewer_qt<float> *_this) -> bool
+  {
+    /// [Keypress]
+    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+    if ((e->key() == ::Qt::Key_R) && (modifiers == ::Qt::NoButton)) {
+
+      // This is like m_draw_rays = !m_draw_rays;
+      if(drawing_functor.are_rays_enabled())
+      {
+        drawing_functor.disable_rays();
+      }
+      else {
+        drawing_functor.enable_rays();
+      }
+
+      std::cout << "R Pressed\n";
+
+      _this->displayMessage(
+          QString("Draw rays=%1.").arg(drawing_functor.are_rays_enabled() ? "true" : "false"));
+      _this->update();
+
+    } else if ((e->key() == ::Qt::Key_V) && (modifiers == ::Qt::NoButton)) {
+
+      std::cout << "V Pressed\n";
+
+      // This is like m_draw_voronoi_vertices = !m_draw_voronoi_vertices;
+      if(drawing_functor.are_voronoi_vertices_enabled())
+      {
+        drawing_functor.disable_voronoi_vertices();
+      }
+      else {
+        drawing_functor.enable_voronoi_vertices();
+      }
+
+      _this->displayMessage(
+          QString("Voronoi vertices=%1.").arg(drawing_functor.are_voronoi_vertices_enabled()? "true" : "false"));
+
+      draw_function_for_v2::compute_elements(av2, _this->get_graphic_buffer(), drawing_functor);
+
+      _this->redraw();
+    } else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton)) {
+
+      std::cout << "D Pressed\n";
+
+      // m_draw_dual_vertices = !m_draw_dual_vertices;
+      if(drawing_functor.are_dual_vertices_enabled())
+      {
+        drawing_functor.disable_dual_vertices();
+      }
+      else {
+        drawing_functor.enable_dual_vertices();
+      }
+
+      _this->displayMessage(QString("Dual vertices=%1.")
+                          .arg(drawing_functor.are_dual_vertices_enabled() ? "true" : "false"));
+
+      draw_function_for_v2::compute_elements(av2, _this->get_graphic_buffer(), drawing_functor);
+
+      _this->redraw();
+    } else {
+      // Return false will call the base method to process others/classicals key
+      return false;
+    }
+    /// [Keypress]
+    return true;
+  };
   draw_buffer(buffer, VoronoiKeyPressEvent);
 
 }

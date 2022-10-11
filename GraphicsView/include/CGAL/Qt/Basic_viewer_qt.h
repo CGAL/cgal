@@ -378,6 +378,10 @@ public:
       return gBuffer.add_point_in_face(kp, p_normal);
   }
 
+  Graphic_buffer<float>& get_graphic_buffer() {
+    return gBuffer;
+  }
+
   void face_end()
   {
    if (gBuffer.get_buffer_for_mono_faces().is_a_face_started())
@@ -1361,9 +1365,8 @@ protected:
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
 
     if(_onPress) {
-        _onPress(e, this);
-    }
-else {
+      bool is_pressed = _onPress(e, this);
+    if(!is_pressed) {
 
     if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
     {
@@ -1579,9 +1582,9 @@ else {
     }
     else
       CGAL::QGLViewer::keyPressEvent(e);
-}
   }
-
+  }
+  }
   virtual QString helpString() const
   { return helpString("CGAL Basic Viewer"); }
 
@@ -1618,7 +1621,7 @@ else {
   }
 public:
   // std::function<void(QKeyEvent *e)> _onPress;
-  std::function<void(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> _onPress;
+  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> _onPress;
 protected:
 
   Graphic_buffer<BufferType>& gBuffer;
@@ -1758,7 +1761,7 @@ void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer) {
 
 
 template <typename BufferType = float>
-void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,const std::function<void(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress) {
+void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,const std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress) {
 
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
