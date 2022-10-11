@@ -303,7 +303,7 @@ void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const
  * @brief This function refines the mesh c3t3 wrt domain & criteria
  *
  * @param c3t3 the mesh to be refined.
- * @param domain the domain used to create the `c3t3` parameter
+ * @param domain the domain used to be discretized
  * @param criteria the criteria
  * @param exude if `true`, an exudation step will be done at
  *   the end of the Delaunay refinement process

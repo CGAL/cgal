@@ -605,7 +605,7 @@ public:
   Corner_index register_corner(const Point_3& p, const Curve_index& index);
   Corner_index add_corner_with_context(const Point_3& p, const Surface_patch_index& index);
 
-  /// Overloads where the last parameter `out` is not
+  /// Overload where the last parameter `out` is not
   /// `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator

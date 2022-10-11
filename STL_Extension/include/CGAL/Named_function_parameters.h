@@ -484,7 +484,7 @@ struct Boost_parameter_compatibility_wrapper<Tag, true>
     typedef Named_function_parameters<K, internal_np::X> Params;\
     return Params(p);                          \
   }
-// TODO: need to make sure this works when using several compilation units
+
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
   const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)        \
