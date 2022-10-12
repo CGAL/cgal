@@ -31,7 +31,6 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-#include <type_traits> // for std::is_same and std::enable_if
 #include <cmath> // for Compute_dihedral_angle
 
 namespace CGAL {
