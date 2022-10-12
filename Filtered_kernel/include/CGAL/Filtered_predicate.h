@@ -86,15 +86,8 @@ public:
 
   template <typename... Args>
   result_type
-  operator()(const Args&... args) const;
-};
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <typename... Args>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const Args&... args) const
-{
+  {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
@@ -111,7 +104,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return ep(c2e(args)...);
-}
+  }
+};
 
 template <class EP_RT, class EP_FT, class AP, class C2E_RT, class C2E_FT, class C2A, bool Protection = true>
 class Filtered_predicate_RT_FT
@@ -123,27 +117,17 @@ class Filtered_predicate_RT_FT
   EP_FT ep_ft;
   AP ap;
 
-  using Ares = typename AP::result_type;
+  using Ares = typename Remove_needs_FT<typename AP::result_type>::Type;
 
 public:
-  using result_type =  typename EP_FT::result_type;
+  using result_type = typename Remove_needs_FT<typename EP_FT::result_type>::Type;
 
   template <typename... Args>
   struct Call_operator_needs_FT
   {
-    // This type traits class checks if the call operator can be called with
-    // `(const Args&..., FT_necessary())`.
-    using ArrayOfOne = char[1];
-    using ArrayOfTwo = char[2];
-
-    static ArrayOfOne& test(...);
-
-    template <typename... Args2>
-    static auto test(const Args2 &...args)
-        -> decltype(ap(c2a(args)..., FT_necessary()),
-                    std::declval<ArrayOfTwo &>());
-
-    enum { value = sizeof(test(std::declval<const Args&>()...)) == sizeof(ArrayOfTwo) };
+    using Actual_approx_res = decltype(ap(c2a(std::declval<const Args&>())...));
+    using Approx_res = std::remove_cv_t<std::remove_reference_t<Actual_approx_res> >;
+    enum { value = std::is_same<Approx_res, Needs_FT<Ares> >::value };
   };
 
   // ## Important note
@@ -154,9 +138,7 @@ public:
   // or `has_needs_FT<typename R::Compare_distance_3>` in
   // the file `Kernel_23/test/Kernel_23/include/CGAL/_test_new_3.h`.
   template <typename... Args>
-  constexpr bool needs_FT(const Args&...) const {
-    return Call_operator_needs_FT<Args...>::value;
-  }
+  bool needs_FT(const Args&...) const { return Call_operator_needs_FT<Args...>::value; }
 
   template <typename... Args>
   result_type

@@ -15,7 +15,7 @@
 // Author(s)     : Sylvain Pion
 
 // This defines removes the operator/ from CGAL::Mpzf to check that functors not using
-// the tag `FT_necessary` really only need a RT (ring type) without division.
+// the tag `Needs_FT<>` really only need a RT (ring type) without division.
 #define CGAL_NO_MPZF_DIVISION_OPERATOR 1
 
 #include <CGAL/Cartesian.h>

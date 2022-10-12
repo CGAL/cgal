@@ -81,9 +81,27 @@ Assert_compile_time_tag( const Tag&, const Derived& b)
   x.match_compile_time_tag(b);
 }
 
-// for kernel predicates, to indicate a FT providing a division operator is required
-struct FT_necessary {};
+// To distinguish between kernel predicates for which a division-less FT is sufficient
+template <typename T>
+struct Needs_FT
+{
+  T value;
+  Needs_FT(T v) : value(v) {}
+  operator T() const { return value; }
+};
 
-} //namespace CGAL
+template <typename T>
+struct Remove_needs_FT
+{
+  using Type = T;
+};
+
+template <typename T>
+struct Remove_needs_FT<Needs_FT<T> >
+{
+  using Type = T;
+};
+
+} // namespace CGAL
 
 #endif // CGAL_TAGS_H

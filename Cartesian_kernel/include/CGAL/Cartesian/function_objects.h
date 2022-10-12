@@ -445,20 +445,16 @@ namespace CartesianKernelFunctors {
       return cmp_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
 
-    // Slightly wkward, but not to get a false positive in the `test_RT_or_FT_predicate`
-    // as otherwise trying to compile P2,P2,P2,FT_necessary would match the T1,T2,T3 templated operator()
-    result_type operator()(const Point_2& p, const Point_2& q, const Point_2& r, FT_necessary) = delete;
-
     template <class T1, class T2, class T3>
-    result_type
-    operator()(const T1& p, const T2& q, const T3& r, FT_necessary = {}) const
+    Needs_FT<result_type>
+    operator()(const T1& p, const T2& q, const T3& r) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(p, r));
     }
 
     template <class T1, class T2, class T3, class T4>
-    std::enable_if_t<!std::is_same<T4, FT_necessary>::value, result_type>
-    operator()(const T1& p, const T2& q, const T3& r, const T4& s, FT_necessary = {}) const
+    Needs_FT<result_type>
+    operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
@@ -596,15 +592,15 @@ namespace CartesianKernelFunctors {
     }
 
     template <class T1, class T2, class T3>
-    result_type
-    operator()(const T1& p, const T2& q, const T3& r, FT_necessary = {}) const
+    Needs_FT<result_type>
+    operator()(const T1& p, const T2& q, const T3& r) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(p, r));
     }
 
     template <class T1, class T2, class T3, class T4>
-    std::enable_if_t<!std::is_same<T4, FT_necessary>::value, result_type>
-    operator()(const T1& p, const T2& q, const T3& r, const T4& s, FT_necessary = {}) const
+    Needs_FT<result_type>
+    operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
@@ -3981,8 +3977,8 @@ namespace CartesianKernelFunctors {
     operator()(const Circle_3 &a, const Point_3 &p) const
     { return a.rep().has_on(p); }
 
-    result_type
-    operator()(const Sphere_3 &a, const Circle_3 &p, FT_necessary = {}) const
+    Needs_FT<result_type>
+    operator()(const Sphere_3 &a, const Circle_3 &p) const
     { return a.rep().has_on(p); }
 
     result_type
