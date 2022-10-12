@@ -34,7 +34,7 @@ private:
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
+struct Draw_functor
 {
   Draw_functor(LCC_3::size_type am1, LCC_3::size_type am2) : is_root(am1),
                                                              belong_to_cycle(am2)
@@ -70,6 +70,46 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   template<typename LCC>
   bool colored_volume(const LCC& /* alcc */,
                       typename LCC::Dart_const_handle /* dh */) const { return false; }
+
+  template<typename LCC>
+  bool draw_volume (const LCC& /* alcc */,
+                      typename LCC::Dart_const_handle /* dh */) const
+  { return false; }
+
+  template<typename LCC>
+  bool draw_face (const LCC& /* alcc */,
+                      typename LCC::Dart_const_handle /* dh */) const
+  { return false; }
+
+  template<typename LCC>
+  bool draw_edge (const LCC& /* alcc */,
+                      typename LCC::Dart_const_handle /* dh */) const
+  { return false; }
+
+  template<typename LCC>
+  bool volume_wireframe (const LCC& /* alcc */,
+                      typename LCC::Dart_const_handle /* dh */) const
+  { return false; }
+
+  template<typename LCC>
+  bool face_wireframe (const LCC& /* alcc */,
+                      typename LCC::Dart_const_handle /* dh */) const
+  { return false; }
+
+  template<typename LCC>
+  bool draw_vertex (const LCC& /* alcc */,
+                      typename LCC::Dart_const_handle /* dh */) const
+  { return false; }
+
+  template<typename LCC>
+  CGAL::IO::Color volume_color(const LCC& /* alcc */,
+                         typename LCC::Dart_const_handle /* dh */) const {
+    return CGAL::IO::Color(10, 20, 20);
+  }
+
+  bool are_edges_enabled() const { return true; }
+  bool are_vertices_enabled() const { return true; }
+  bool are_faces_enabled() const { return true; }
 
   LCC_3::size_type is_root;
   LCC_3::size_type belong_to_cycle;
@@ -159,7 +199,7 @@ int main(int argc, char* argv[])
   if (draw)
   {
     Draw_functor df(is_root, belong_to_cycle);
-    CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df);
+    CGAL::draw(lccoriginal, df, "Unsew edge width repeatdly");
   }
 #endif // CGAL_USE_BASIC_VIEWER
 
