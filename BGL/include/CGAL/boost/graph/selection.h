@@ -207,13 +207,11 @@ struct Regularization_graph
       prevent_unselection (prevent_unselection)
   {
     labels.reserve(num_faces(fg));
-    std::size_t nb_selected = 0;
     for (fg_face_descriptor fd : faces(fg))
     {
       if (get(is_selected_map,fd))
       {
         labels.push_back(1);
-        ++ nb_selected;
       }
       else
         labels.push_back(0);
