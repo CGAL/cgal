@@ -282,29 +282,67 @@ void mark_face_triangles(CDT& cdt)
   }
 }
 
+template < typename GT,
+           typename Vb = Triangulation_vertex_base_2<GT> >
+class Triangulation_vertex_base_with_id_2
+  : public Vb
+{
+  std::size_t _id;
+
+public:
+  typedef typename Vb::Face_handle                   Face_handle;
+  typedef typename Vb::Point                         Point;
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other          Vb2;
+    typedef Triangulation_vertex_base_with_id_2<GT, Vb2>   Other;
+  };
+
+  Triangulation_vertex_base_with_id_2()
+    : Vb(), _id(-1) {}
+
+  Triangulation_vertex_base_with_id_2(const Point & p)
+    : Vb(p), _id(-1) {}
+
+  Triangulation_vertex_base_with_id_2(const Point & p, Face_handle c)
+    : Vb(p, c), _id(-1) {}
+
+  Triangulation_vertex_base_with_id_2(Face_handle c)
+    : Vb(c), _id(-1) {}
+
+  const std::size_t& corner_id() const { return _id; }
+        std::size_t& corner_id()       { return _id; }
+};
+
+
 template <typename Kernel>
 bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >& csts,
                         typename Kernel::Vector_3 normal,
                         const std::vector<typename Kernel::Point_3>& corners,
                         std::vector<cpp11::array<std::size_t, 3> >& triangles)
 {
-  typedef Projection_traits_3<Kernel>                                  P_traits;
-  typedef Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
+  typedef Projection_traits_3<Kernel>                            P_traits;
+  typedef Triangulation_vertex_base_with_id_2<P_traits>                Vb;
   typedef Triangulation_face_base_with_info_2<FaceInfo2,P_traits>     Fbb;
   typedef Constrained_triangulation_face_base_2<P_traits,Fbb>          Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>                       TDS;
   typedef No_constraint_intersection_requiring_constructions_tag     Itag;
   typedef Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>   CDT;
+  typedef typename CDT::Vertex_handle                       Vertex_handle;
+  typedef typename CDT::Face_handle                           Face_handle;
+
   typedef typename Kernel::Point_3 Point_3;
 
-  std::vector<std::pair<Point_3, std::size_t> > points;
-  points.reserve(csts.size()/2);
+  std::size_t expected_nb_pts = csts.size()/2;
+  std::vector<std::size_t> corner_ids;
+  corner_ids.reserve(expected_nb_pts);
 
   typedef std::pair<std::size_t, std::size_t> Id_pair;
   for(const Id_pair& p : csts)
   {
     CGAL_assertion(p.first<corners.size());
-    points.push_back( std::make_pair(corners[p.first], p.first) );
+    corner_ids.push_back(p.first);
   }
 
   bool reverse_face_orientation = is_vector_positive(normal);
@@ -314,10 +352,24 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
   // create cdt and insert points
   P_traits p_traits(normal);
   CDT cdt(p_traits);
-  cdt.insert(points.begin(), points.end());
 
-  if (cdt.number_of_vertices() != points.size())
-    return false;
+  // now do the point insert and info set
+  typedef typename Pointer_property_map<Point_3>::const_type Pmap;
+  typedef Spatial_sort_traits_adapter_2<P_traits,Pmap> Search_traits;
+
+  spatial_sort(corner_ids.begin(), corner_ids.end(),
+               Search_traits(make_property_map(corners),p_traits));
+
+  Vertex_handle v_hint;
+  Face_handle hint;
+  for (std::size_t corner_id : corner_ids)
+  {
+    v_hint = cdt.insert(corners[corner_id], hint);
+    if (v_hint->corner_id()!=std::size_t(-1) && v_hint->corner_id()!=corner_id)
+      return false; // handle case of points being identical upon projection
+    v_hint->corner_id()=corner_id;
+    hint=v_hint->face();
+  }
 
   // note that nbv might be different from points.size() in case of hole
   // tangent to the principal CCB
@@ -328,7 +380,7 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
   for(typename CDT::Finite_vertices_iterator vit = cdt.finite_vertices_begin(),
                                              end = cdt.finite_vertices_end(); vit!=end; ++vit)
   {
-    vertex_map[vit->info()]=vit;
+    vertex_map[vit->corner_id()]=vit;
   }
 
   std::vector< std::pair<typename CDT::Vertex_handle, typename CDT::Vertex_handle> > local_csts;
@@ -355,13 +407,13 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
     if (cdt.is_infinite(fit)) return false;
 
     if (reverse_face_orientation)
-      triangles.push_back( make_array(fit->vertex(1)->info(),
-                                      fit->vertex(0)->info(),
-                                      fit->vertex(2)->info()) );
+      triangles.push_back( make_array(fit->vertex(1)->corner_id(),
+                                      fit->vertex(0)->corner_id(),
+                                      fit->vertex(2)->corner_id()) );
     else
-      triangles.push_back( make_array(fit->vertex(0)->info(),
-                                      fit->vertex(1)->info(),
-                                      fit->vertex(2)->info()) );
+      triangles.push_back( make_array(fit->vertex(0)->corner_id(),
+                                      fit->vertex(1)->corner_id(),
+                                      fit->vertex(2)->corner_id()) );
   }
 
   return true;
@@ -444,6 +496,15 @@ bool decimate_impl(const TriangleMesh& tm,
   {
     std::vector< std::vector<Id_pair> > face_boundaries(nb_corners_and_nb_cc.second);
     std::vector<bool> face_boundaries_valid(nb_corners_and_nb_cc.second, true);
+
+    std::vector<vertex_descriptor> corner_id_to_vd(nb_corners_and_nb_cc.first, graph_traits::null_vertex());
+    std::vector<bool> duplicated_corners(nb_corners_and_nb_cc.first, false);
+    auto check_corner = [&corner_id_to_vd, &duplicated_corners](std::size_t corner_id, vertex_descriptor vd)
+    {
+      if (corner_id_to_vd[corner_id]!=graph_traits::null_vertex() && corner_id_to_vd[corner_id]!=vd)
+        duplicated_corners[corner_id]=true;
+    };
+
     // collect maximal constrained edges per cc
     for(halfedge_descriptor h : halfedges(tm))
     {
@@ -452,6 +513,7 @@ bool decimate_impl(const TriangleMesh& tm,
       std::size_t i1 = get(vertex_corner_id, source(h, tm));
       if ( is_corner_id(i1) )
       {
+        check_corner(i1, source(h, tm));
         halfedge_descriptor h_init = h;
         std::size_t cc_id = get(face_cc_ids, face(h_init, tm));
         if (!cc_to_handle.test(cc_id)) continue;
@@ -459,6 +521,7 @@ bool decimate_impl(const TriangleMesh& tm,
           std::size_t i2 = get(vertex_corner_id, target(h_init, tm));
           if ( is_corner_id(i2) )
           {
+            check_corner(i2, target(h_init, tm));
             face_boundaries[ cc_id ].push_back( Id_pair(i1,i2) );
             if (face_normals[ cc_id ] == NULL_VECTOR)
             {
@@ -485,9 +548,17 @@ bool decimate_impl(const TriangleMesh& tm,
       std::vector< cpp11::array<std::size_t, 3> >& triangles = triangles_per_cc[cc_id];
       triangles.clear();
 
-      const std::vector< Id_pair >& csts = face_boundaries[cc_id];
+      std::vector< Id_pair >& csts = face_boundaries[cc_id];
 
       if (!face_boundaries_valid[cc_id]) continue;
+
+      // do not remesh a patch containing duplicated vertices
+      for (auto c : csts)
+        if (duplicated_corners[c.first] || duplicated_corners[c.second])
+        {
+          csts.clear(); // this will trigger the copy of the current patch rather than a remeshing
+          break;
+        }
 
       if (csts.size()==3)
       {
@@ -504,7 +575,9 @@ bool decimate_impl(const TriangleMesh& tm,
           cc_to_handle.set(cc_id, 0);
         else
         {
+#ifdef CGAL_DEBUG_DECIMATION
           std::cout << "  DEBUG: Failed to remesh a patch" << std::endl;
+#endif
           all_patches_successfully_remeshed = false;
           // make all vertices of the patch a corner
           CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, cc_id, face_cc_ids);

@@ -1,3 +1,5 @@
+#define CGAL_DEBUG_DECIMATION
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #ifdef USE_POLYHEDRON
 #include <CGAL/Polyhedron_3.h>
