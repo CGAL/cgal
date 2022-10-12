@@ -86,11 +86,11 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
       ++nb;
     }
 
-    if ( nb<2 ) return draw_function_for_lcc::LCC_geom_utils
+    if ( nb<2 ) return internal::Geom_utils
                   <typename Get_traits<Mesh>::Kernel, Local_kernel>::
                   get_local_vector(normal);
 
-    return draw_function_for_lcc::LCC_geom_utils
+    return internal::Geom_utils
       <typename Get_traits<Mesh>::Kernel, Local_kernel>::
       get_local_vector(typename Get_traits<Mesh>::Kernel::
                        Construct_scaled_vector_3()(normal, 1.0/nb));
@@ -119,7 +119,6 @@ const typename CGAL::Get_traits<Mesh>::Point& get_point(typename Get_map<Mesh, M
   typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
 
   return CGAL::Get_traits<Mesh>::get_point(mesh, dh);
-
 }
 
 template <typename Mesh, typename BufferType = float>
@@ -259,7 +258,6 @@ template <class Mesh, class DrawingFunctor, typename BufferType = float>
 void compute_elements(const Mesh &mesh,
                       CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                       const DrawingFunctor &m_drawing_functor,
-                      // TODO: I think I need to use smart pointers with lcc, right?
                       const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                       const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
                       typename Get_map<Mesh, Mesh>::type::size_type amark /*= typename Get_map<Mesh, Mesh>::type::INVALID_MARK*/,
@@ -411,7 +409,7 @@ void draw(const Mesh& alcc,
 
 
 template<class Mesh, typename BufferType = float >
-void draw(const Mesh& alcc,
+void draw(const Mesh& mesh,
           std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
           typename Get_map<Mesh, Mesh>::type::size_type amark=
           (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
@@ -421,7 +419,8 @@ void draw(const Mesh& alcc,
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
 
   CGAL::Graphic_buffer<BufferType> buffer;
-  add_in_graphic_buffer(alcc, buffer, alcc, &paths, amark, nofill);
+  typename Get_map<Mesh, Mesh>::storage_type alcc(mesh);
+  add_in_graphic_buffer(mesh, buffer, alcc, &paths, amark, nofill);
   draw_buffer(buffer);
 }
 

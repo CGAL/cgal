@@ -5,7 +5,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/draw_linear_cell_complex.h>
+#include <CGAL/draw_face_graph_with_paths.h>
 
 template<typename ALCC>
 struct Facewidth_draw_functor //: public CGAL::DefaultDrawingFunctorLCC
