@@ -14,7 +14,7 @@
 // > 2, same as above + some general indications on what is going on
 // > 4, same as above + even more indications on what is going on
 // > 8, everything
-#define CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY 8
+#define CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY 4
 
 std::vector<std::string> predicates_types = { };
 
@@ -32,21 +32,21 @@ const std::string kernel_name = "Simple_cartesian";
 const std::string FT_div = "double";
 const std::string RT_no_div = "CGAL::Mpzf";
 
+enum Needs_FT_checks
+{
+  NO_CHECK = 0,
+  CHECK_NEEDS_FT,
+  CHECK_NO_NEEDS_FT
+};
+
 enum Compilation_result
 {
   SUCCESSFUL = 0, // if it got to linking, it is also a successful compilation
   FAILED_NO_MATCH,
   FAILED_AMBIGUOUS_CALL, // ambiguous calls means the arity is valid
   FAILED_NO_DIVISION_OPERATOR, // used to detect if a valid compilation can be done with RT
+  FAILED_STATIC_ASSERTION, // used to detect failures in the result type checks
   UNKNOWN
-};
-
-enum class Arity_test_result
-{
-  EXPLORATION_REQUIRED = 0,
-  RT_SUFFICIENT,
-  FT_NECESSARY,
-  NO_MATCH
 };
 
 inline const char* get_error_message(int error_code)
@@ -58,6 +58,7 @@ inline const char* get_error_message(int error_code)
     "Failed: no match!",
     "Failed: ambiguous call!",
     "Failed: called division operator!",
+    "Failed: static assertion violated!",
     "Unexpected error!"
   };
 
@@ -78,8 +79,6 @@ std::string parameter_with_namespace(const std::string& FT_name,
 {
   if(o == "Any")
     return "CGAL::Kernel_23_tests::Any";
-  else if(o == "FT_necessary")
-    return "CGAL::FT_necessary";
   else if(o == "FT")
     return "K::FT";
   else if(o == "Origin")
@@ -162,6 +161,12 @@ Compilation_result parse_output(const std::string& predicate_name,
     } else if(line.find("no match for ‘operator/’") != std::string::npos) {
       res = FAILED_NO_DIVISION_OPERATOR;
       break;
+    } else if(line.find("no match for ‘operator/=’") != std::string::npos) {
+      res = FAILED_NO_DIVISION_OPERATOR;
+      break;
+    } else if(line.find("static assertion failed") != std::string::npos) {
+      res = FAILED_STATIC_ASSERTION;
+      break;
     } else if(line.find("Built") != std::string::npos) {
       res = SUCCESSFUL;
       break;
@@ -180,16 +185,17 @@ Compilation_result parse_output(const std::string& predicate_name,
   return res;
 }
 
-void generate_atomic_file(const std::string& FT_name,
-                          const std::string& predicate_name,
-                          const std::vector<std::string>& parameters)
+void generate_atomic_compilation_test(const std::string& FT_name,
+                                      const std::string& predicate_name,
+                                      const std::vector<std::string>& parameters,
+                                      const Needs_FT_checks check = NO_CHECK)
 {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 4)
-  std::cout << "====== Generate atomic file... ======" << std::endl;
+  std::cout << "\n====== Generate atomic compilation test... ======" << std::endl;
 #endif
 
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 4)
-  std::cout << predicate_name << "(";
+  std::cout << "\t" << predicate_name << "(";
   for(std::size_t j=0, i=parameters.size(); j<i; ++j)
     std::cout << ((j != 0) ? ", " : "") << parameter_with_namespace(FT_name, parameters[j]);
   std::cout << ")" << std::endl;
@@ -206,135 +212,122 @@ void generate_atomic_file(const std::string& FT_name,
 
   out << "using K = " + kernel_with_FT(FT_name) + ";\n";
   out << "using P = K::" << predicate_name << ";\n";
+  out << "using B = P::result_type;\n";
+  out << "using NFT_B = CGAL::Needs_FT<B>;\n";
 
   out << "int main(int, char**)\n";
   out << "{\n";
-  out << "  P p;\n";
+
+  out << "  P p{};\n";
   for(std::size_t j=0, i=parameters.size(); j<i; ++j)
-    out << "  " << parameter_with_namespace(FT_name, parameters[j]) << " o" << j << ";\n";
+    out << "  " << parameter_with_namespace(FT_name, parameters[j]) << " o" << j << "{};\n";
+
   out << "  p(";
   for(std::size_t j=0, i=parameters.size(); j<i; ++j)
     out << ((j != 0) ? ", o" : "o") << j;
   out << ");\n";
+
+  if(check != NO_CHECK)
+  {
+    out << "  static_assert((std::is_same<decltype(";
+
+    out << "p(";
+    for(std::size_t j=0, i=parameters.size(); j<i; ++j)
+      out << ((j != 0) ? ", o" : "o") << j;
+    out << "))";
+
+    if(check == CHECK_NO_NEEDS_FT)
+      out << ", B>::value));\n";
+    else if(check == CHECK_NEEDS_FT)
+      out << ", NFT_B>::value));\n";
+  }
+
   out << "  return EXIT_SUCCESS;\n";
   out << "}\n";
   out.close();
 }
 
-// Just to not get a diff at the end of the test
-void restore_atomic_file()
-{
-  std::ofstream out("../atomic_compilation_test.cpp");
-  if(!out)
-  {
-    std::cerr << "Error: could not write into atomic compilation test" << std::endl;
-    std::exit(1);
-  }
-
-  out << "int main(int, char**) { }\n";
-  out.close();
-}
-
-Arity_test_result test_arity(const std::string& predicate_name,
-                             const std::size_t arity)
-{
-#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 2)
-  std::cout << "\n===== Checking potential arity " << arity << "... =====" << std::endl;
-#endif
-
-  std::vector<std::string> parameters(arity, "Any");
-
-  generate_atomic_file(RT_no_div, predicate_name, parameters);
-  compile();
-  Compilation_result res = parse_output(predicate_name);
-
-  if(res == SUCCESSFUL)
-    return Arity_test_result::RT_SUFFICIENT;
-  else if(res == FAILED_NO_DIVISION_OPERATOR)
-    return Arity_test_result::FT_NECESSARY;
-  else if(res == FAILED_AMBIGUOUS_CALL)
-    return Arity_test_result::EXPLORATION_REQUIRED;
-  else // FAILED_NO_MATCH and UNKNOWN
-    return Arity_test_result::NO_MATCH;
-}
-
-bool ensure_FT_necessary_is_present(const std::string& predicate_name,
-                                    // intentional copy, don't want to pollute the parameters with `FT_necessary`
-                                    std::vector<std::string> parameters)
+void ensure_NO_Needs_FT(const std::string& predicate_name,
+                        const std::vector<std::string>& parameters)
 {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 4)
   std::cout << predicate_name << "(";
   for(std::size_t j=0, i=parameters.size(); j<i; ++j)
     std::cout << ((j != 0) ? ", " : "") << parameters[j];
-  std::cout << ") is FT_necessary; check that the tag is present..." << std::endl;
+  std::cout << ") is RT-sufficient; check that the return type is *NOT* wrapped..." << std::endl;
 #endif
 
-  // The predicate requires a FT with division, ensure that FT_necessary is present in the operator()'s signature
-  parameters.push_back("FT_necessary");
-  generate_atomic_file(FT_div, predicate_name, parameters);
+  // RT is sufficient, check that `Needs_FT` is not in the operator()'s return type
+  generate_atomic_compilation_test(RT_no_div, predicate_name, parameters, CHECK_NO_NEEDS_FT);
   compile();
   Compilation_result res = parse_output(predicate_name);
 
-#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-  std::cout << predicate_name << "(";
-  for(std::size_t j=0, i=parameters.size() - 1; j<i; ++j) // -1 to ignore "FT_necessary"
-    std::cout << ((j != 0) ? ", " : "") << parameters[j];
-  std::cout << ") is FT_necessary..." << std::endl;
-#endif
-
-  if(res != SUCCESSFUL)
+  if(res == SUCCESSFUL)
   {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-    std::cerr << "Error: this predicate is `FT_necessary`, but the tag is missing!\n" << std::endl;
+    std::cout << predicate_name << "(";
+    for(std::size_t j=0, i=parameters.size(); j<i; ++j)
+      std::cout << ((j != 0) ? ", " : "") << parameters[j];
+    std::cout << ") is RT-sufficient, and the wrap `Needs_FT` is (correctly) absent!" << std::endl;
 #endif
-    return false;
+  }
+  else if(res == FAILED_STATIC_ASSERTION)
+  {
+#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
+    std::cout << "Error: " << predicate_name << "(";
+    for(std::size_t j=0, i=parameters.size(); j<i; ++j)
+      std::cout << ((j != 0) ? ", " : "") << parameters[j];
+    std::cout << ") is RT-sufficient, but the return type is wrong (superfluous `Needs_FT`?)!" << std::endl;
+#endif
   }
   else
   {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-    std::cout << "... and the tag `FT_necessary` is correctly present!\n" << std::endl;
+    std::cerr << "Unexpected error during Needs_FT checks" << std::endl;
 #endif
-    return true;
+    assert(false);
   }
 }
 
-bool ensure_FT_necessary_is_NOT_present(const std::string& predicate_name,
-                                        // intentional copy, don't want to pollute the parameters with `RT_sufficient`
-                                        std::vector<std::string> parameters)
+void ensure_Needs_FT(const std::string& predicate_name,
+                     const std::vector<std::string>& parameters)
 {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 4)
   std::cout << predicate_name << "(";
   for(std::size_t j=0, i=parameters.size(); j<i; ++j)
     std::cout << ((j != 0) ? ", " : "") << parameters[j];
-  std::cout << ") is RT_sufficient; check that the tag is absent..." << std::endl;
+  std::cout << ") is FT-necessary; check that the return type is wrapped..." << std::endl;
 #endif
 
-  // RT is sufficient, check that `FT_necessary` is not in the operator()'s signature
-  parameters.push_back("FT_necessary");
-  generate_atomic_file(RT_no_div, predicate_name, parameters);
+  // The predicate requires a FT with division, ensure that Needs_FT is present in the operator()'s return type
+  generate_atomic_compilation_test(FT_div, predicate_name, parameters, CHECK_NEEDS_FT);
   compile();
   Compilation_result res = parse_output(predicate_name);
-
-#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-  std::cout << predicate_name << "(";
-  for(std::size_t j=0, i=parameters.size() - 1; j<i; ++j) // -1 to ignore "FT_necessary"
-    std::cout << ((j != 0) ? ", " : "") << parameters[j];
-  std::cout << ") is RT_sufficient..." << std::endl;
-#endif
 
   if(res == SUCCESSFUL)
   {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-    std::cerr << "Error: this predicate is NOT 'FT_necessary', but the tag is present!\n" << std::endl;
+    std::cout << predicate_name << "(";
+    for(std::size_t j=0, i=parameters.size(); j<i; ++j)
+      std::cout << ((j != 0) ? ", " : "") << parameters[j];
+    std::cout << ") is FT-necessary, and the wrap `Needs_FT` is (correctly) present!" << std::endl;
 #endif
-    return false;
+  }
+  else if(res == FAILED_STATIC_ASSERTION)
+  {
+#if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
+    std::cout << "Error: " << predicate_name << "(";
+    for(std::size_t j=0, i=parameters.size(); j<i; ++j)
+      std::cout << ((j != 0) ? ", " : "") << parameters[j];
+    std::cout << ") is FT-necessary, but the wrap `Needs_FT` is missing!" << std::endl;
+#endif
   }
   else
   {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 0)
-    std::cout << "... and the tag `FT_necessary` is (correctly) absent!\n" << std::endl;
+    std::cerr << "Unexpected error during Needs_FT checks" << std::endl;
 #endif
-    return true;
+    assert(false);
   }
 }
 
@@ -364,31 +357,31 @@ void test_predicate(const std::string& predicate_name,
 #endif
 
     parameters[object_pos] = object_type;
-    generate_atomic_file(RT_no_div, predicate_name, parameters);
+    generate_atomic_compilation_test(RT_no_div, predicate_name, parameters);
     compile();
     Compilation_result res = parse_output(predicate_name, RT_no_div, parameters);
 
-    // See if we can already conclude on the current parameter list
-    // - if that successful compiles, then it is RT_sufficient
-    // - call to deleted or missing division operator, this means FT_necessary
-    // - any other error, this combination of parameters was not a valid input for the predicate
-    if(res == SUCCESSFUL)
+    // See if we can already (i.e., possibly with `Any`s) conclude on the current parameter list
+    if(res == FAILED_NO_MATCH)
     {
-      ensure_FT_necessary_is_NOT_present(predicate_name, parameters);
+      // The object at the current position yields a compilation error, do not explore any further
+      continue;
     }
-    else if(res == FAILED_NO_DIVISION_OPERATOR)
+    else if(object_pos == last)
     {
-      ensure_FT_necessary_is_present(predicate_name, parameters);
-    }
-
-    if(res == FAILED_AMBIGUOUS_CALL && object_pos != last)
-    {
-      // The object at the current position does not invalid the call, explore further this list
-      test_predicate(predicate_name, object_pos + 1, arity, parameters);
+      if(res == SUCCESSFUL)
+      {
+        ensure_NO_Needs_FT(predicate_name, parameters);
+      }
+      else if(res == FAILED_NO_DIVISION_OPERATOR)
+      {
+        ensure_Needs_FT(predicate_name, parameters);
+      }
     }
     else
     {
-      // The object at the current position yields a compilation error, do not explore any further
+      // The object at the current position does not invalid the call, explore further this list
+      test_predicate(predicate_name, object_pos + 1, arity, parameters);
     }
   }
 }
@@ -397,9 +390,8 @@ void test_predicate(const std::string& predicate_name,
                     const std::size_t arity)
 {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 2)
-  std::cout << "===== Test predicate with arity " << arity << "... =====" << std::endl;
+  std::cout << "\n\n==== Test predicate with arity " << arity << "... ====" << std::endl;
 #endif
-  CGAL_precondition(arity > 0);
 
   // Use "Any" to prune early:
   // 1st try "Object_1, Any, ..., Any" (i - 1 "Any")
@@ -410,6 +402,14 @@ void test_predicate(const std::string& predicate_name,
   // the position of the object being changed/tested, when object_pos == arity - 1,
   // then this is a call with full objects on which we can do the RT test
   std::vector<std::string> parameters(arity, "Any");
+
+  // Quick try to see if it even matches anything
+  generate_atomic_compilation_test(RT_no_div, predicate_name, parameters);
+  compile();
+  Compilation_result res = parse_output(predicate_name);
+  if(res == FAILED_NO_MATCH) // No point with this current arity
+    return;
+
   std::size_t object_pos = 0;
   test_predicate(predicate_name, object_pos, arity, parameters);
 }
@@ -417,7 +417,7 @@ void test_predicate(const std::string& predicate_name,
 void test_predicate(const std::string& predicate_name)
 {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 1)
-  std::cout << "\n\n=== Test predicate: " << predicate_name << "... ===" << std::endl;
+  std::cout << "\n\n\n== Test predicate: " << predicate_name << "... ==" << std::endl;
 #endif
 
 #ifndef CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS
@@ -433,26 +433,25 @@ void test_predicate(const std::string& predicate_name)
 #endif
 
   for(std::size_t i=MIN_ARITY; i<=MAX_ARITY; ++i)
-  {
-    Arity_test_result res = test_arity(predicate_name, i);
-    if(res == Arity_test_result::RT_SUFFICIENT)
-    {
-      std::vector<std::string> parameters(i, "Any");
-      ensure_FT_necessary_is_NOT_present(predicate_name, parameters);
-    }
-    else if(res == Arity_test_result::FT_NECESSARY)
-    {
-      std::vector<std::string> parameters(i, "Any");
-      ensure_FT_necessary_is_present(predicate_name, parameters);
-    }
-    else if(res == Arity_test_result::EXPLORATION_REQUIRED)
-    {
-      test_predicate(predicate_name, i);
-    }
-  }
+    test_predicate(predicate_name, i);
 }
 
-int main(int , char** )
+// Just to not get a diff at the end of the test
+void restore_atomic_file()
+{
+  std::ofstream out("../atomic_compilation_test.cpp");
+  if(!out)
+  {
+    std::cerr << "Error: could not write into atomic compilation test" << std::endl;
+    std::exit(1);
+  }
+
+  out << "// This executable is used by test_RT_or_FT_predicates.cpp\n";
+  out << "int main(int, char**) { }\n";
+  out.close();
+}
+
+int main(int , char**)
 {
   // Get the predicates
   #define CGAL_Kernel_pred(X, Y) predicates_types.push_back(#X);

@@ -3,19 +3,21 @@
 
 #define CGAL_NO_MPZF_DIVISION_OPERATOR
 
+// These includes are there because this header is precompiled
+
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/tags.h>
 #include <CGAL/Mpzf.h>
+#include <CGAL/tags.h>
 
 #include <iostream>
+#include <type_traits>
 
 namespace CGAL {
 namespace Kernel_23_tests {
 
-struct Any {
-
-  template <class T,
-            typename = typename std::enable_if<!std::is_same<T, CGAL::FT_necessary>::value>::type>
+struct Any
+{
+  template <class T>
   operator T();
 };
 
