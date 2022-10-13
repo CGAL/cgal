@@ -809,9 +809,11 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
             edges_to_collapse.erase(h);
             next_edges_to_collapse.erase(h);
 
-            halfedge_descriptor rm_h = prev(h, tmesh);
+            // By default, prev(h) is removed. If prev(h) is constrained, then next(h) is removed.
+            // Both cannot be constrained, otherwise we would not be collapsing `h`.
+            halfedge_descriptor rm_h = prev(h, tmesh), ot_h = next(h, tmesh);
             if(get(ecm, edge(rm_h, tmesh)))
-              rm_h = next(h, tmesh);
+              std::swap(rm_h, ot_h);
 
             edges_to_flip.erase(rm_h);
             edges_to_collapse.erase(rm_h);
@@ -821,6 +823,16 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
             edges_to_flip.erase(opp_rm_h);
             edges_to_collapse.erase(opp_rm_h);
             next_edges_to_collapse.erase(opp_rm_h);
+
+            // If the third (i.e., non-removed) halfedge of the face becomes a border halfedge
+            // with the collapse, then it also needs to be removed.
+            // Pre-collapse, the corresponding halfedge is `opp_rm_h`.
+            if(is_border(opp_rm_h, tmesh))
+            {
+              edges_to_flip.erase(ot_h);
+              edges_to_collapse.erase(ot_h);
+              next_edges_to_collapse.erase(ot_h);
+            }
           }
 
           h = opposite(h, tmesh);
