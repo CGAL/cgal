@@ -714,7 +714,7 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
 
 
 /**
- * \ingroup PkgHeatMethod
+ * \ingroup PkgHeatMethodRef
  *
  * Class `Surface_mesh_geodesic_distances_3` computes estimated geodesic distances for a set of source vertices where sources can be added and removed.
  * The class performs a preprocessing step that only depends on the mesh, so that the distance computation takes less
@@ -906,7 +906,7 @@ public:
 };
 
 #if defined(DOXYGEN_RUNNING) || defined(CGAL_EIGEN3_ENABLED)
-/// \ingroup PkgHeatMethod
+/// \ingroup PkgHeatMethodRef
 /// computes for each vertex of the triangle mesh `tm` the estimated geodesic distance to a given source vertex.
 /// This function is provided only if \ref thirdpartyEigen "Eigen" 3.3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
@@ -947,7 +947,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 #endif
 
 
-/// \ingroup PkgHeatMethod
+/// \ingroup PkgHeatMethodRef
 /// computes for each vertex  of the triangle mesh `tm` the estimated geodesic distance to a given set of source vertices.
 /// This function is provided only if \ref thirdpartyEigen "Eigen" 3.3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
