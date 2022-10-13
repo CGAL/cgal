@@ -9,7 +9,7 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 //a material is composed of an material Id and a material name.
 typedef std::pair<int, std::string> material;
