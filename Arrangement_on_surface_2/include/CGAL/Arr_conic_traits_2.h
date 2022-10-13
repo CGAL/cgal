@@ -812,8 +812,8 @@ public:
      *   `ARR_TOP_BOUNDARY`   &mdash;the arc approaches the north pole at the arc
      *                               right end.
      */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
-                                   Arr_curve_end ce) const {
+    Arr_parameter_space operator()(const X_monotone_curve_2& /* xcv */,
+                                   Arr_curve_end /* ce */) const {
       CGAL_error_msg("Not implemented yet!");
       return ARR_INTERIOR;
     }
@@ -1640,7 +1640,7 @@ public:
       return d;
     }
 
-    double hyperbola_length(const X_monotone_curve_2& xcv) {
+    double hyperbola_length(const X_monotone_curve_2& /* xcv */) {
       CGAL_error_msg("Not implemented yet!");
       double l(0.0);
       return l;
@@ -3015,7 +3015,7 @@ public:
         // Go over the vertical tangency points and try to update the x-points.
         Alg_point_2 tan_ps[2];
         auto n_tan_ps = m_traits.vertical_tangency_points(xcv, tan_ps);
-        for (auto i = 0; i < n_tan_ps; ++i) {
+        for (decltype(n_tan_ps) i = 0; i < n_tan_ps; ++i) {
           if (CGAL::to_double(tan_ps[i].x()) < x_min)
             x_min = CGAL::to_double(tan_ps[i].x());
           if (CGAL::to_double(tan_ps[i].x()) > x_max)
@@ -3024,7 +3024,7 @@ public:
 
         // Go over the horizontal tangency points and try to update the y-points.
         n_tan_ps = m_traits.horizontal_tangency_points(xcv, tan_ps);
-        for (auto i = 0; i < n_tan_ps; ++i) {
+        for (decltype(n_tan_ps) i = 0; i < n_tan_ps; ++i) {
           if (CGAL::to_double(tan_ps[i].y()) < y_min)
             y_min = CGAL::to_double(tan_ps[i].y());
           if (CGAL::to_double(tan_ps[i].y()) > y_max)
@@ -3944,12 +3944,12 @@ public:
 
     // Calculate the horizontal tangency points of the conic.
     Alg_point_2 ps[2];
-    int n = conic_horizontal_tangency_points(cv, ps);
+    std::size_t n = conic_horizontal_tangency_points(cv, ps);
 
     // Return only the points that are contained in the arc interior.
     int m = 0;
 
-    for (int i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < n; ++i) {
       if (cv.is_full_conic() || is_strictly_between_endpoints(cv, ps[i]))
         hpts[m++] = ps[i];
     }
