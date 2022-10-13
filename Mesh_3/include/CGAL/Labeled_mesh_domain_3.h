@@ -126,15 +126,31 @@ namespace internal {
     }
   };
 
-  template<typename Mesh_domain, typename DetectFunctor>
+  template<typename MeshDomain, typename DetectFunctor>
+  struct Detect_features_in_domain {
+    void operator()(const CGAL::Image_3& image,
+                    MeshDomain& domain,
+                    DetectFunctor functor) const {
+      return functor(image, domain);
+    }
+  };
+  // specialization for `Null_functor`: create the default functor
+  template<typename MeshDomain>
+  struct Detect_features_in_domain<MeshDomain, Null_functor> {
+    void operator()(const CGAL::Image_3& image,
+                    MeshDomain& domain,
+                    Null_functor) const {
+      return;
+    }
+  };
+
+  template<typename MeshDomain, typename DetectFunctor>
   void detect_features(const CGAL::Image_3& image,
-                       Mesh_domain& domain,
+                       MeshDomain& domain,
                        DetectFunctor functor)
   {
-    if (boost::is_same<DetectFunctor, Null_functor>::value)
-      return;
-    else
-      return functor(image, domain);
+    return Detect_features_in_domain<MeshDomain, DetectFunctor>()
+            (image, domain, functor);
   }
 
 } // end namespace CGAL::Mesh_3::internal
