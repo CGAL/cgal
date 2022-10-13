@@ -137,8 +137,8 @@ namespace internal {
   // specialization for `Null_functor`: create the default functor
   template<typename MeshDomain>
   struct Detect_features_in_domain<MeshDomain, Null_functor> {
-    void operator()(const CGAL::Image_3& image,
-                    MeshDomain& domain,
+    void operator()(const CGAL::Image_3&,
+                    MeshDomain&,
                     Null_functor) const {
       return;
     }
