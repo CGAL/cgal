@@ -404,7 +404,8 @@ private:
   void
   build(VertexPointMap vpm)
   {
-    CGAL_precondition(is_triangle_mesh(m_intrinsic_tm));
+    CGAL_precondition(is_empty(m_intrinsic_tm));
+    CGAL_precondition(is_triangle_mesh(m_input_tm));
 
     typename Traits::Compute_squared_distance_3 squared_distance = Traits().compute_squared_distance_3_object();
 
