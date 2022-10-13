@@ -54,17 +54,16 @@ template<typename LCC>
 void draw_facewidth(const LCC& lcc,
                     const std::vector<typename LCC::Dart_const_descriptor>& cycle)
 {
-  int nbv=0, nbf=0;
   typename LCC::size_type vertex_mark = lcc.get_new_mark();
   typename LCC::size_type face_mark = lcc.get_new_mark();
   for (std::size_t i=0; i<cycle.size(); ++i)
   {
     // Color the vertex
     if (!lcc.is_marked(cycle[i], vertex_mark))
-    { lcc.template mark_cell<0>(cycle[i], vertex_mark); ++nbv; }
+    { lcc.template mark_cell<0>(cycle[i], vertex_mark); }
     // Color the face
     if (!lcc.is_marked(cycle[i], face_mark))
-    { lcc.template mark_cell<2>(cycle[i], face_mark); ++nbf; }
+    { lcc.template mark_cell<2>(cycle[i], face_mark); }
   }
 
   Facewidth_draw_functor<LCC> df(vertex_mark, face_mark);
