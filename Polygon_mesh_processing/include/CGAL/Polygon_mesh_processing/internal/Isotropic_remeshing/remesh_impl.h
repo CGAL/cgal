@@ -530,8 +530,9 @@ namespace internal {
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)) );
+#ifdef CGAL_PMP_REMESHING_VERBOSE
         ++nb_splits;
-
+#endif
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
