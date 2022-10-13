@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   /// [Loads image]
 
   /// [Domain creation]
-  const float sigma = 10.f;
+  const float sigma = (std::max)(image.vx(), (std::max)(image.vy(), image.vz()));
   CGAL::Image_3 img_weights =
     CGAL::Mesh_3::generate_label_weights(image, sigma);
 
