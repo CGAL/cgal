@@ -90,7 +90,6 @@ protected:
   Face_id_map face_id_map;
 
 public:
-
   /*!
     \brief Constructor
   */
@@ -99,7 +98,6 @@ public:
   {
     build();
   }
-
 
   /*!
     \brief Constructor
@@ -110,23 +108,20 @@ public:
     build();
   }
 
-
   /**
    * returns the triangle mesh the algorithm is running on.
    */
-  const TriangleMesh& triangle_mesh() const{
+  const TriangleMesh& triangle_mesh() const
+  {
     return tm;
   }
 
-
 private:
-
   const Matrix&
   mass_matrix() const
   {
     return m_mass_matrix;
   }
-
 
   const Matrix&
   cotan_matrix() const
@@ -134,13 +129,11 @@ private:
     return m_cotan_matrix;
   }
 
-
   const VertexPointMap&
   vertex_point_map() const
   {
     return vpm;
   }
-
 
   const Vertex_id_map&
   get_vertex_id_map() const
@@ -149,7 +142,6 @@ private:
   }
 
 public:
-
   /**
    * adds `vd` to the source set, returning `false` iff `vd` is already in the set.
    */
@@ -176,7 +168,6 @@ public:
     }
   }
 
-
   /**
    * removes `vd` from the source set, returning `true` iff `vd` was in the set.
    */
@@ -187,7 +178,6 @@ public:
     m_source_change_flag = true;
     return (m_sources.erase(v2v(vd)) == 1);
   }
-
 
   /**
    * clears the current source set.
@@ -203,7 +193,6 @@ public:
   /**
    * returns the set of  source vertices.
    */
-
   const Vertex_const_range&
   sources() const
   {
@@ -211,7 +200,6 @@ public:
   }
 
 private:
-
   double
   summation_of_edges() const
   {
@@ -237,13 +225,11 @@ private:
     return edge_sum;
   }
 
-
   double
   time_step() const
   {
     return m_time_step;
   }
-
 
   void
   update_kronecker_delta()
@@ -263,13 +249,11 @@ private:
     m_kronecker.swap(K);
   }
 
-
   const Matrix&
   kronecker_delta() const
   {
     return m_kronecker;
   }
-
 
   void factor_cotan_laplace()
   {
@@ -292,7 +276,6 @@ private:
       CGAL_error_msg("Eigen Solving in cotan failed");
     }
   }
-
 
   void
   compute_unit_gradient()
@@ -352,7 +335,6 @@ private:
     }
   }
 
-
   void
   compute_divergence()
   {
@@ -400,7 +382,6 @@ private:
     indexD.swap(m_index_divergence);
   }
 
-
   // modifies m_solved_phi
   void
   value_at_source_set(const Vector& phi)
@@ -432,7 +413,6 @@ private:
     m_solved_phi.swap(source_set_val);
   }
 
-
   void
   factor_phi()
   {
@@ -442,7 +422,6 @@ private:
       CGAL_error_msg("Eigen Decomposition in solve_phi() failed");
     }
   }
-
 
   void
   solve_phi()
@@ -456,7 +435,6 @@ private:
     value_at_source_set(phi);
   }
 
-
   // this function returns a (number of vertices)x1 vector where
   // the ith index has the distance from the first vertex to the ith vertex
   const Vector&
@@ -466,7 +444,6 @@ private:
   }
 
 public:
-
   /**
    *  Updates the distance property map after changes in the source set.
    **/
@@ -494,7 +471,6 @@ public:
   }
 
 private:
-
   void
   build()
   {
@@ -788,6 +764,7 @@ class Surface_mesh_geodesic_distances_3
   typedef typename Default::Get<
     VertexPointMap,
     typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>::type Vertex_point_map;
+
   typedef
     typename Default::Get<Traits,
                           typename Kernel_traits<
@@ -808,7 +785,6 @@ class Surface_mesh_geodesic_distances_3
   }
 
 public:
-
   /// Vertex descriptor type
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   #ifndef DOXYGEN_RUNNING
