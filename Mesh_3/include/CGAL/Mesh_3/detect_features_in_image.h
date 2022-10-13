@@ -21,10 +21,12 @@
 
 #include <CGAL/ImageIO.h>
 
+#include <CGAL/Delaunay_triangulation_3.h>
+
+#include <CGAL/Mesh_3/features_detection/features_detection.h>
 #include <CGAL/Mesh_3/features_detection/coordinates.h>
 #include <CGAL/Mesh_3/features_detection/combinations.h>
 #include <CGAL/Mesh_3/features_detection/cases_table.h>
-#include <CGAL/Mesh_3/features_detection/features_detection.h>
 #include <CGAL/Mesh_3/features_detection/cube_isometries.h>
 #include <CGAL/Mesh_3/features_detection/features_detection_helpers.h>
 
@@ -40,6 +42,8 @@
 namespace CGAL
 {
 namespace Mesh_3
+{
+namespace internal
 {
 
 // Protect the intersection of the object with the box of the image,
@@ -244,6 +248,17 @@ bool detect_features_in_image(const CGAL::Image_3& image, Mesh_domain& domain)
                  "CGAL_ImageIO.");
   return false;
 }
+
+}// namespace internal
+
+struct Detect_features_in_image
+{
+  template<typename Mesh_domain>
+  void operator()(const CGAL::Image_3& image, Mesh_domain& domain)
+  {
+    internal::detect_features_in_image(image, domain);
+  }
+};
 
 
 }//end namespace Mesh_3

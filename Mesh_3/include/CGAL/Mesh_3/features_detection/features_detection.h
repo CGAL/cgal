@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sebastien Loriot
+// Author(s)     : Sebastien Loriot, Christopher Nicol
 //
 //******************************************************************************
 //
@@ -26,6 +26,7 @@
 #include <boost/unordered_map.hpp>
 
 #include <vector>
+#include <cmath> //std::sqrt
 
 namespace CGAL
 {
@@ -225,7 +226,7 @@ template<typename P>
 std::vector<std::vector<P>> poly00011221(const int prec = 10)
 {
     auto sq_exp = [](double x) {
-        return sqrt(9 * x * x * x * x - 30 * x * x * x + 45 * x * x - 24 * x + 4);
+        return std::sqrt(9 * x * x * x * x - 30 * x * x * x + 45 * x * x - 24 * x + 4);
     };
     auto y1 = [sq_exp](double x) { return (3 * x * x - sq_exp(x) + 3 * x - 2) / (6 * x * (2 * x - 1)); };
     P corner1 = { 1. / 2, 0, 2. / 3 };
@@ -252,7 +253,7 @@ template<typename P>
 std::vector<std::vector<P>> poly00011222(const int prec = 10)
 {
     auto sq_exp = [](double x) {
-        return sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4);
+        return std::sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4);
     };
     auto y1 = [sq_exp](double x) { return (3 * x * x - sq_exp(x) + x - 2) / (6 * (x - 1) * x); };
     P corner1 = { 1. / 2, 1, 1. / 3 };
@@ -332,7 +333,7 @@ template<typename P>
 std::vector<std::vector<P>> poly00122101(const int prec = 10)
 {
     auto sq_exp = [](double x) {
-        return sqrt(24 * x * x * x - 35 * x * x + 18 * x - 3);
+        return std::sqrt(24 * x * x * x - 35 * x * x + 18 * x - 3);
     };
     auto y1 = [sq_exp](double x)
       { return (-sq_exp(x) - 5 * x + 3) / (6 * (x - 1) * (x - 1)); };
@@ -411,7 +412,7 @@ std::vector<std::vector<P>> poly00001122(const int prec = 10)
 template<typename P>
 std::vector<std::vector<P>> poly00010121(const int prec = 10)
 {
-    auto y = [](double z) { return ((3 * z * z - 1) - sqrt(CGAL::square(1 - 3 * z * z) - 12 * (z - 1) * z * z)) / (6 * (z - 1) * z); };
+    auto y = [](double z) { return ((3 * z * z - 1) - std::sqrt((1. - 3 * z * z)*(1. - 3 * z * z) - 12 * (z - 1) * z * z)) / (6 * (z - 1) * z); };
     auto x = [](double y, double z) { return y * z / (z + y); };
     P corner(1. / 3, 1. / 2, 1);
     return { create_polyline<P>(1, 1. / 2, corner,
@@ -498,7 +499,7 @@ std::vector<std::vector<P>> poly00011220(const int prec = 10)
 template<typename P>
 std::vector<std::vector<P>> poly00012002(const int prec = 10)
 {
-    auto y = [](double x) { return (3 * x * x + sqrt(9 * x * x * x * x - 24 * x * x * x + 30 * x * x - 12 * x + 1) - 1) / (6 * x * (2 * x - 1)); };
+    auto y = [](double x) { return (3 * x * x + std::sqrt(9 * x * x * x * x - 24 * x * x * x + 30 * x * x - 12 * x + 1) - 1) / (6 * x * (2 * x - 1)); };
     return { create_polyline<P>(2. / 3, 1,
                              [y](double x) { return P(x, y(x), 1 - 1. / (3 * x * y(x))); },
                              prec) };
@@ -513,7 +514,7 @@ template<typename P>
 std::vector<std::vector<P>> poly00012012(const int prec = 10)
 {
     auto y = [](double x, double z) { return 1. / (-6 * x * z + 3 * x + 3 * z); };
-    auto z = [](double x) { return (3 * x * x + sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4) - 7 * x + 2) / (6 * (x - 1) * (2 * x - 1)); };
+    auto z = [](double x) { return (3 * x * x + std::sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4) - 7 * x + 2) / (6 * (x - 1) * (2 * x - 1)); };
     P corner1(1. / 2, 2. / 3, 2. / 3);
     P corner2(1, 2. / 3, 1. / 2);
     return { create_polyline<P>(1. / 2, 0, corner1,
@@ -540,7 +541,7 @@ std::vector<std::vector<P>> poly00012021(const int prec = 10)
 template<typename P>
 std::vector<std::vector<P>> poly00012110(const int prec = 10)
 {
-    auto y = [](double x) { return (3 * x * x + sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4) + x - 2) / (6 * (x - 1) * x); };
+    auto y = [](double x) { return (3 * x * x + std::sqrt(9 * x * x * x * x - 18 * x * x * x + 25 * x * x - 16 * x + 4) + x - 2) / (6 * (x - 1) * x); };
     auto z = [](double x, double y) { return (3 * x * y - 1) / (9 * x * y - 3 * x - 3 * y); };
     P corner(0, 1. / 2, 2. / 3);
     return { create_polyline<P>(0, 1. / 2, corner,
@@ -555,7 +556,7 @@ std::vector<std::vector<P>> poly00012110(const int prec = 10)
 template<typename P>
 std::vector<std::vector<P>> poly00012112(const int prec = 10)
 {
-    auto y = [](double x) { return (3 * x * x + sqrt(9 * x * x * x * x - 36 * x * x * x + 40 * x * x - 20 * x + 4) + 2 * x - 2) / (6 * x * (2 * x - 1)); };
+    auto y = [](double x) { return (3 * x * x + std::sqrt(9 * x * x * x * x - 36 * x * x * x + 40 * x * x - 20 * x + 4) + 2 * x - 2) / (6 * x * (2 * x - 1)); };
     auto z = [](double x, double y) { return (3 * x * y - 1) / (9 * x * y - 3 * x - 3 * y); };
     P corner1(0, 1. / 2, 2. / 3);
     P corner2(1. / 2, 0, 2. / 3);
@@ -640,7 +641,7 @@ template<typename P>
 std::vector<std::vector<P>> poly00121201(const int prec = 10)
 {
     auto sq_exp = [](double x) {
-        return sqrt(-24 * x * x * x + 37 * x * x - 20 * x + 4);
+        return std::sqrt(-24 * x * x * x + 37 * x * x - 20 * x + 4);
     };
     auto y = [sq_exp](double x) { return (-sq_exp(x) + 5 * x - 2) / (6 * x * x); };
     auto z = [sq_exp](double x) { return (sq_exp(x) + 5 * x - 2) / (6 * x * x); };
@@ -714,16 +715,16 @@ std::vector<std::vector<P>> poly00001223(const int prec = 10)
 {
 return {
   create_polyline(2./3, 9./13, P(1./2, 0., 2./3),
-                [](double z) { return P( -(z*(-sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z)) - 5*z + 3)/z, -sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z), z); },
+                [](double z) { return P( -(z*(-std::sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z)) - 5*z + 3)/z, -std::sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z), z); },
                 prec),
   create_polyline(2./3, 9./13, P(0., 1./2, 2./3),
-                [](double z) { return P( -(z*(sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z)) - 5*z + 3)/z,  sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z), z); },
+                [](double z) { return P( -(z*(std::sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z)) - 5*z + 3)/z,  std::sqrt((z - 1)*(13*z - 9))/(2*z) + (5*z - 3)/(2*z), z); },
                 prec),
   create_polyline(2./3, 9./13, P(1., 1./2, 2./3),
-                [](double z) { return P(-(z*(-sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z)) + 3*z - 3)/z, -sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z), z); },
+                [](double z) { return P(-(z*(-std::sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z)) + 3*z - 3)/z, -std::sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z), z); },
                 prec),
   create_polyline(2./3, 9./13, P(1./2, 1., 2./3),
-                [](double z) { return P(  -(z*(sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z)) + 3*z - 3)/z, sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z), z); },
+                [](double z) { return P(  -(z*(std::sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z)) + 3*z - 3)/z, std::sqrt((z - 1)*(13*z - 9))/(2*z) - 3*(z - 1)/(2*z), z); },
                 prec),
 };
 }
@@ -783,13 +784,13 @@ std::vector<std::vector<P>> poly00011023(const int prec = 10)
 {
 return {
   create_polyline(2./3, 1., P(0, 1./2, 2./3),
-                  [](double z) { return P(-(-2*z*z + z + (z*z - 3*z)*(-(z*z + z + 1)/(2*z*(z - 3)) + sqrt(z*z*z*z + 6*z*z*z - 9*z*z + 2*z + 1)/(2*z*(z - 3))) + 1)/(2*z*z) , -(z*z + z + 1)/(2*z*(z - 3)) + sqrt(z*z*z*z + 6*z*z*z - 9*z*z + 2*z + 1)/(2*z*(z - 3)) ,z); },
+                  [](double z) { return P(-(-2*z*z + z + (z*z - 3*z)*(-(z*z + z + 1)/(2*z*(z - 3)) + std::sqrt(z*z*z*z + 6*z*z*z - 9*z*z + 2*z + 1)/(2*z*(z - 3))) + 1)/(2*z*z) , -(z*z + z + 1)/(2*z*(z - 3)) + std::sqrt(z*z*z*z + 6*z*z*z - 9*z*z + 2*z + 1)/(2*z*(z - 3)) ,z); },
                   prec),
   create_polyline(1./2, 1., P(1./2, 1., 1./2),
                   [](double z) { return P(1./2,-(z - 2)/(z + 1) ,z); },
                   prec),
   create_polyline(1./2, limit_value(1.,-1.), P(1./2, 1.,1./2),
-                  [](double x) { return P(x, (sqrt(8*x*x*x - 3*x*x - 2*x + 1) + x + 1)/(2*x*(2*x + 1)) ,(sqrt(8*x*x*x - 3*x*x - 2*x + 1) - x - 1)/(2*(2*x*x - x - 1)) ); },
+                  [](double x) { return P(x, (std::sqrt(8*x*x*x - 3*x*x - 2*x + 1) + x + 1)/(2*x*(2*x + 1)) ,(std::sqrt(8*x*x*x - 3*x*x - 2*x + 1) - x - 1)/(2*(2*x*x - x - 1)) ); },
                   prec),
 
 
@@ -824,19 +825,19 @@ std::vector<std::vector<P>> poly00011223(const int prec = 10)
 {
 return {
   create_polyline( 1./2,4./7, P(1./2, 1., 1./2),P(2./3, 2./3, 4./7),
-                  [](double z) { return P(-(-3*z + (4*z - 1)*(3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1))))/(4*z - 1),3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
+                  [](double z) { return P(-(-3*z + (4*z - 1)*(3*z/(2*(4*z - 1)) + std::sqrt(-z*(7*z - 4))/(2*(4*z - 1))))/(4*z - 1),3*z/(2*(4*z - 1)) + std::sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
                   prec),
   create_polyline( 1./2,4./7, P(1., 1./2, 1./2),P(2./3, 2./3, 4./7),
-                  [](double z) { return P(-(-3*z + (4*z - 1)*(3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1))))/(4*z - 1),3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
+                  [](double z) { return P(-(-3*z + (4*z - 1)*(3*z/(2*(4*z - 1)) - std::sqrt(-z*(7*z - 4))/(2*(4*z - 1))))/(4*z - 1),3*z/(2*(4*z - 1)) - std::sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
                   prec),
   create_polyline( 1./2,limit_value(3./5,-1.), P(1./2, 1., 1./2),P(3./5,5./7,5./9),
-                  [](double x) { return P(x,(-2. + 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x))  ); },
+                  [](double x) { return P(x,(-2. + 2*x + 3*x*x - std::sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x - std::sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x))  ); },
                   prec),
   create_polyline(limit_value(3./5,1.),1.,P(3./5,5./7,5./9),P(1., 1./2, 1./2),
-                  [](double x) { return P(x,(-2. + 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x - sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x))  ); },
+                  [](double x) { return P(x,(-2. + 2*x + 3*x*x - std::sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x - std::sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x))  ); },
                   prec),
   create_polyline( limit_value(0.,1.), 1./2, P(0., 1./2, 2./3),P(1./2, 0., 2./3),
-                  [](double x) { return P(x,(-2. + 2*x + 3*x*x + sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x + sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x)) ); },
+                  [](double x) { return P(x,(-2. + 2*x + 3*x*x + std::sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*x*(-3 + 5*x)),(2. - 2*x + 3*x*x + std::sqrt(4 - 20*x + 36*x*x - 28*x*x*x + 9*x*x*x*x))/(2*(3 - 5*x + 4*x*x)) ); },
                   prec),
 };
 }
@@ -848,10 +849,10 @@ std::vector<std::vector<P>> poly00011230(const int prec = 10)
 {
 return {
   create_polyline(2./3, 1., P(1./2, 0.,2./3), P(1./2,1./2,1.),
-                  [](double z) { return P(-(-4*z*z + z + (3*z*z - z)*((5*z*z - z - 1)/(2*z*(3*z - 1)) - sqrt(-11*z*z*z*z + 26*z*z*z - 17*z*z + 2*z + 1)/(2*z*(3*z - 1))) + 1)/(z*(5*z - 3)),(5*z*z - z - 1)/(2*z*(3*z - 1)) - sqrt(-11*z*z*z*z + 26*z*z*z - 17*z*z + 2*z + 1)/(2*z*(3*z - 1)),z ); },
+                  [](double z) { return P(-(-4*z*z + z + (3*z*z - z)*((5*z*z - z - 1)/(2*z*(3*z - 1)) - std::sqrt(-11*z*z*z*z + 26*z*z*z - 17*z*z + 2*z + 1)/(2*z*(3*z - 1))) + 1)/(z*(5*z - 3)),(5*z*z - z - 1)/(2*z*(3*z - 1)) - std::sqrt(-11*z*z*z*z + 26*z*z*z - 17*z*z + 2*z + 1)/(2*z*(3*z - 1)),z ); },
                   prec),
   create_polyline(limit_value(0.,1.), 1./2, P(0., 1./2,2./3), P(1./2,1./2,1.),
-                  [](double x) { return P(x,(-2 + x + x*x + sqrt(4 - 16*x + 25*x*x - 14*x*x*x + x*x*x*x))/(2*x*(-3 + 4*x)),(2 - x + x*x + sqrt(4 - 16*x + 25*x*x - 14*x*x*x + x*x*x*x))/(2*(3 - 5*x + 3*x*x))); },
+                  [](double x) { return P(x,(-2 + x + x*x + std::sqrt(4 - 16*x + 25*x*x - 14*x*x*x + x*x*x*x))/(2*x*(-3 + 4*x)),(2 - x + x*x + std::sqrt(4 - 16*x + 25*x*x - 14*x*x*x + x*x*x*x))/(2*(3 - 5*x + 3*x*x))); },
                   prec),
 
 };
@@ -865,10 +866,10 @@ std::vector<std::vector<P>> poly00011231(const int prec = 10)
 {
 return {
   create_polyline(1./2, 1., P(1./2, 0.,2./3), P(1.,1./3,1./2),
-                  [](double x) { return P(x,(-1 + 2*x + 3*x*x - sqrt(1 - 8*x + 22*x*x - 20*x*x*x + 9*x*x*x*x))/(2*x*(-1 + 4*x)),(1 - 2*x + 3*x*x - sqrt(1 - 8*x + 22*x*x - 20*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x)) ); },
+                  [](double x) { return P(x,(-1 + 2*x + 3*x*x - std::sqrt(1 - 8*x + 22*x*x - 20*x*x*x + 9*x*x*x*x))/(2*x*(-1 + 4*x)),(1 - 2*x + 3*x*x - std::sqrt(1 - 8*x + 22*x*x - 20*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x)) ); },
                   prec),
   create_polyline(0., 1./3, P(0.,1./2,2./3), P(1./3,1.,1./2),
-                  [](double x) { return P(x,(-2 + 2*x + x*x + sqrt(4 - 20*x + 28*x*x - 12*x*x*x + x*x*x*x))/(2*x*(-3 + 4*x)) ,(2 - 2*x + x*x + sqrt(4 - 20*x + 28*x*x - 12*x*x*x + x*x*x*x))/(2*(3 - 5*x + 2*x*x)) ); },
+                  [](double x) { return P(x,(-2 + 2*x + x*x + std::sqrt(4 - 20*x + 28*x*x - 12*x*x*x + x*x*x*x))/(2*x*(-3 + 4*x)) ,(2 - 2*x + x*x + std::sqrt(4 - 20*x + 28*x*x - 12*x*x*x + x*x*x*x))/(2*(3 - 5*x + 2*x*x)) ); },
                   prec),
 };
 }
@@ -884,13 +885,13 @@ std::vector<std::vector<P>> poly00011232(const int prec = 10)
 {
 return {
   create_polyline(1./2,limit_value(1.,-1.), P(1./2, 1.,1./2), P(1.,1./2,1./3),
-                  [](double x) { return P(x,(-1 + 3*x*x - sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(-1 + x)*x),(1 + 3*x*x - sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(1 + 2*x*x)) ); },
+                  [](double x) { return P(x,(-1 + 3*x*x - std::sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(-1 + x)*x),(1 + 3*x*x - std::sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(1 + 2*x*x)) ); },
                   prec),
   create_polyline(0.366025,1./2, P(0.366025,0.57735,(1+1.73205)/4), P(1./2,0.,2./3),
-                  [](double x) { return P(x,(-1 + 3*x*x + sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(-1 + x)*x),(1 + 3*x*x + sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(1 + 2*x*x)) ); },
+                  [](double x) { return P(x,(-1 + 3*x*x + std::sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(-1 + x)*x),(1 + 3*x*x + std::sqrt(1 - 4*x + 6*x*x - 8*x*x*x + 9*x*x*x*x))/(2*(1 + 2*x*x)) ); },
                   prec),
   create_polyline(2./3,(1+1.73205)/4.,P(0.,1./2,2./3),P(0.366025,0.57735,(1+1.73205)/4),
-                  [](double z) { return P( -(-3.*z*z + z + (3*z*z - 3*z)*((2*z + 1)/(6*z) - sqrt(-8*z*z + 4*z + 1)/(6*z)) + 1)/(z*(2*z - 1)),(2*z + 1)/(6*z) - sqrt(-8.*z*z + 4*z + 1)/(6*z),z); },
+                  [](double z) { return P( -(-3.*z*z + z + (3*z*z - 3*z)*((2*z + 1)/(6*z) - std::sqrt(-8*z*z + 4*z + 1)/(6*z)) + 1)/(z*(2*z - 1)),(2*z + 1)/(6*z) - std::sqrt(-8.*z*z + 4*z + 1)/(6*z),z); },
                   prec),
   create_polyline(0.366025,1./2,P(0.366025,0.57735,(1+1.73205)/4),P(1./2,1.,1./2),
                   [](double x) { return P( x,-x/(-1 + x),(-1 + x + x*x)/(-1 + 2*x*x)); },
@@ -922,7 +923,7 @@ std::vector<std::vector<P>> poly00012013(const int prec = 10)
 {
 return {
   create_polyline(2./3, 1., P(0., 1./2,2./3), P(1./2,1./2,1.),
-                  [](double z) { return P(-(-5*z*z + 6*z + (z*z - 3*z)*((2*z*z - 6*z + 1)/(2*z*(z - 3)) + sqrt(4*z*z*z*z - 20*z*z*z + 28*z*z - 12*z + 1)/(2*z*(z - 3))) - 1)/(z*(5*z - 3)),  (2*z*z - 6*z + 1)/(2*z*(z - 3)) + sqrt(4*z*z*z*z - 20*z*z*z + 28*z*z - 12*z + 1)/(2*z*(z - 3)) ,z ); },
+                  [](double z) { return P(-(-5*z*z + 6*z + (z*z - 3*z)*((2*z*z - 6*z + 1)/(2*z*(z - 3)) + std::sqrt(4*z*z*z*z - 20*z*z*z + 28*z*z - 12*z + 1)/(2*z*(z - 3))) - 1)/(z*(5*z - 3)),  (2*z*z - 6*z + 1)/(2*z*(z - 3)) + std::sqrt(4*z*z*z*z - 20*z*z*z + 28*z*z - 12*z + 1)/(2*z*(z - 3)) ,z ); },
                   prec),
   create_polyline(1./2, 1., P(1., 2./3,1./2), P(1./2,1./2,1.),
                   [](double z) { return P( (3*z*z - 4*z + 1 - (z*z + z)*(2*z*z - 4*z + 1)/(z*(z + 1)))/(z*(3*z - 1)), -(2*z*z - 4*z + 1)/(z*(z + 1)),z ); },
@@ -960,7 +961,7 @@ return {
                   [](double z) { return P((z*z - 2*z + 1 - (z*z - 2*z)*(2*z*z - 2*z + 1)/(z*(z - 2)))/(z*(z - 1)) ,-(2*z*z - 2*z + 1)/(z*(z - 2)) ,z ); },
                   prec),
 create_polyline(2./3,limit_value(1.,-1.), P(0., 1./2,2./3), P(1./2, 1./3,1.),
-                  [](double z) { return P((z + (z + 2)*((z + 1)/(z + 2) - sqrt(z*z + z - 1)/(z + 2)) - 2)/(z - 1) ,(z + 1)/(z + 2) - sqrt(z*z + z - 1)/(z + 2) ,z ); },
+                  [](double z) { return P((z + (z + 2)*((z + 1)/(z + 2) - std::sqrt(z*z + z - 1)/(z + 2)) - 2)/(z - 1) ,(z + 1)/(z + 2) - std::sqrt(z*z + z - 1)/(z + 2) ,z ); },
                   prec),
 };
 }
@@ -973,10 +974,10 @@ std::vector<std::vector<P>> poly00012113(const int prec = 10)
 {
 return {
   create_polyline((3.+ 2.23606)/8, 2./3,P(0.30902,0.30902,(3.+ 2.23606)/8),
-                  [](double z) { return P(-(-8*z*z + 7*z + (4*z*z - 3*z)*(-(z - 1.)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), -(z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)),z); },
+                  [](double z) { return P(-(-8*z*z + 7*z + (4*z*z - 3*z)*(-(z - 1.)*std::sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), -(z - 1)*std::sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)),z); },
                   prec),
   create_polyline((3.+ 2.23606)/8, 2./3,P(0.30902,0.30902,(3.+ 2.23606)/8),
-                  [](double z) { return P( -(-8*z*z + 7*z + (4*z*z - 3*z)*((z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)),(z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)),z); },
+                  [](double z) { return P( -(-8*z*z + 7*z + (4*z*z - 3*z)*((z - 1)*std::sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)),(z - 1)*std::sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)),z); },
                   prec),
 
 };
@@ -1006,7 +1007,7 @@ std::vector<std::vector<P>> poly00012130(const int prec = 10)
 {
 return {
    create_polyline(2/3., 1., P(1./2, 0.,2./3),P(1./2,1./2,1.),
-                  [](double z) { return P(-(-7*z*z + 6*z + (4*z*z - 2*z)*(-sqrt((2*z - 1)*(8*z*z*z - 16*z*z + 10*z - 1))/(4*z*(2*z - 1)) + (4*z - 1)/(4*z)) - 1)/(z*(5*z - 3)), -sqrt((2*z - 1)*(8*z*z*z - 16*z*z + 10*z - 1))/(4*z*(2*z - 1)) + (4*z - 1)/(4*z),z); },
+                  [](double z) { return P(-(-7*z*z + 6*z + (4*z*z - 2*z)*(-std::sqrt((2*z - 1)*(8*z*z*z - 16*z*z + 10*z - 1))/(4*z*(2*z - 1)) + (4*z - 1)/(4*z)) - 1)/(z*(5*z - 3)), -std::sqrt((2*z - 1)*(8*z*z*z - 16*z*z + 10*z - 1))/(4*z*(2*z - 1)) + (4*z - 1)/(4*z),z); },
                   prec),
 create_polyline(2/3., 1., P(0.,1./2,2./3),P(1./2,1./2,1.),
                   [](double z) { return P(-(2 - 3*z)/(3*z - 1),1./2,z); },
@@ -1030,10 +1031,10 @@ return {
                   [](double x) { return P(x,1./2,-x/(-1 + 2*x) ); },
                   prec),
   create_polyline(1./2, 1./1.4142, P(1./3, 1.,1./2),P((2. - 1.4142)/2,1./2,1./1.4142),
-                  [](double z) { return P((z - 1)*(2*z*((z*z + z - 1)/(4*z*(z - 1)) - sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1))) - 1)/(z*(2*z - 1)),(z*z + z - 1)/(4*z*(z - 1)) - sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1)) ,z); },
+                  [](double z) { return P((z - 1)*(2*z*((z*z + z - 1)/(4*z*(z - 1)) - std::sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1))) - 1)/(z*(2*z - 1)),(z*z + z - 1)/(4*z*(z - 1)) - std::sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1)) ,z); },
                   prec),
   create_polyline((2. - 1.4142)/2,limit_value(1./2,-1.),P((2. - 1.4142)/2,1./2,1./1.4142), P(1./2,0. ,2./3),
-                  [](double x) { return P(x,(-1 - x + 3*x*x + sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(4*(-1 + x)*x),(1. - 5*x + 3*x*x + sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x))); },
+                  [](double x) { return P(x,(-1 - x + 3*x*x + std::sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(4*(-1 + x)*x),(1. - 5*x + 3*x*x + std::sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x))); },
                   prec),
 };
 }
@@ -1046,10 +1047,10 @@ std::vector<std::vector<P>> poly00012132(const int prec = 10)
 {
 return {
   create_polyline(1./2, limit_value(2./3,-1.), P(1./2, 1.,1./2),P(1./2,0.,2./3),
-                  [](double z) { return P(-(-7*z*z + 7*z + (3*z*z - 2*z)*(sqrt((z - 1)*(2*z - 1)*(14*z*z - 11*z + 1))/(2*z*(3*z - 2)) + (8*z*z - 7*z + 1)/(2*z*(3*z - 2))) - 1)/(z*(2*z - 3)),sqrt((z - 1)*(2*z - 1)*(14*z*z - 11*z + 1))/(2*z*(3*z - 2))+ (8*z*z - 7*z + 1)/(2*z*(3*z - 2)),z); },
+                  [](double z) { return P(-(-7*z*z + 7*z + (3*z*z - 2*z)*(std::sqrt((z - 1)*(2*z - 1)*(14*z*z - 11*z + 1))/(2*z*(3*z - 2)) + (8*z*z - 7*z + 1)/(2*z*(3*z - 2))) - 1)/(z*(2*z - 3)),std::sqrt((z - 1)*(2*z - 1)*(14*z*z - 11*z + 1))/(2*z*(3*z - 2))+ (8*z*z - 7*z + 1)/(2*z*(3*z - 2)),z); },
                   prec),
   create_polyline(1./2, (2./3), P(1./2, 1.,1./2),P(0.,1./2,2./3),
-                  [](double z) { return P(-(-5*z + (z - 2)*(-sqrt((z - 1)*(3*z - 2))/(z - 2) + 2*(z - 1)/(z - 2)) + 4)/(2*z - 1),-sqrt((z - 1)*(3*z - 2))/(z - 2) + 2*(z - 1)/(z - 2),z); },
+                  [](double z) { return P(-(-5*z + (z - 2)*(-std::sqrt((z - 1)*(3*z - 2))/(z - 2) + 2*(z - 1)/(z - 2)) + 4)/(2*z - 1),-std::sqrt((z - 1)*(3*z - 2))/(z - 2) + 2*(z - 1)/(z - 2),z); },
                   prec),
 };
 }
@@ -1064,16 +1065,16 @@ std::vector<std::vector<P>> poly00012133(const int prec = 10)
 {
 return {
   create_polyline(2./3,0.70263, P(1./2, 0.,2./3),P(0.447683,0.3555809, 0.70263),
-                  [](double z) { return P(-(-6*z*z + 6*z + (3*z*z - 2*z)*((z - 1)*sqrt(13*z*z - 10*z + 1)/(2*z*(3*z - 2)) + (7*z*z - 6*z + 1)/(2*z*(3*z - 2))) - 1)/(3*z*(z - 1)),(z - 1)*sqrt(13*z*z - 10*z + 1)/(2*z*(3*z - 2)) + (7*z*z - 6*z + 1)/(2*z*(3*z - 2)),z); },
+                  [](double z) { return P(-(-6*z*z + 6*z + (3*z*z - 2*z)*((z - 1)*std::sqrt(13*z*z - 10*z + 1)/(2*z*(3*z - 2)) + (7*z*z - 6*z + 1)/(2*z*(3*z - 2))) - 1)/(3*z*(z - 1)),(z - 1)*std::sqrt(13*z*z - 10*z + 1)/(2*z*(3*z - 2)) + (7*z*z - 6*z + 1)/(2*z*(3*z - 2)),z); },
                   prec),
   create_polyline(1./3, 0.70263, P(1./2, 1.,1./3),P(0.447683,0.3555809, 0.70263),
-                  [](double z) { return P((2*z*z - 3*z + (3*z*z - 2*z)*(-(z*z - 3*z + 1)/(2*z*(3*z - 2)) - sqrt(13*z*z*z*z - 26*z*z*z + 19*z*z - 6*z + 1)/(2*z*(3*z - 2))) + 1)/(z*(z - 1)), -(z*z - 3*z + 1)/(2*z*(3*z - 2)) - sqrt(13*z*z*z*z - 26*z*z*z + 19*z*z - 6*z + 1)/(2*z*(3*z - 2)),z); },
+                  [](double z) { return P((2*z*z - 3*z + (3*z*z - 2*z)*(-(z*z - 3*z + 1)/(2*z*(3*z - 2)) - std::sqrt(13*z*z*z*z - 26*z*z*z + 19*z*z - 6*z + 1)/(2*z*(3*z - 2))) + 1)/(z*(z - 1)), -(z*z - 3*z + 1)/(2*z*(3*z - 2)) - std::sqrt(13*z*z*z*z - 26*z*z*z + 19*z*z - 6*z + 1)/(2*z*(3*z - 2)),z); },
                   prec),
   create_polyline(0.,0.447683, P(0.,1./2,2./3),P(0.447683,0.3555809, 0.70263),
                   [](double x) { return P(x,(-1 + x)/(-2 + x),(2 - 2*x + x*x)/(3 - 3*x + x*x) ); },
                   prec),
   create_polyline(0.70263,1.,P(0.447683,0.3555809, 0.70263),P(1./2,1./3,1.),
-                  [](double z) { return P(-(-2*z + (5*z - 2)*((5*z - 1)/(2*(5*z - 2)) - sqrt(5*z*z - 2*z + 1)/(2*(5*z - 2))) + 1)/(z - 1),(5*z - 1)/(2*(5*z - 2)) - sqrt(5*z*z - 2*z + 1)/(2*(5*z - 2)),z); },
+                  [](double z) { return P(-(-2*z + (5*z - 2)*((5*z - 1)/(2*(5*z - 2)) - std::sqrt(5*z*z - 2*z + 1)/(2*(5*z - 2))) + 1)/(z - 1),(5*z - 1)/(2*(5*z - 2)) - std::sqrt(5*z*z - 2*z + 1)/(2*(5*z - 2)),z); },
                   prec),
 };
 }
@@ -1189,7 +1190,7 @@ return {
                   [](double x) { return P(x,(-1 + 2*x)/(-2 + 3*x),2./3); },
                   prec),
   create_polyline(1./3,limit_value(1.,-1.), P(1./3,1.,1./2),P(1.,1./3,1./2),
-                  [](double x) { return P(x,(-1 + 3*x + 2*x*x - sqrt(1 - 6*x + 13*x*x - 8*x*x*x + 4*x*x*x*x))/(2*x*(-2 + 5*x)) ,(1 - x + 2*x*x - sqrt(1 - 6*x + 13*x*x - 8*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x))); },
+                  [](double x) { return P(x,(-1 + 3*x + 2*x*x - std::sqrt(1 - 6*x + 13*x*x - 8*x*x*x + 4*x*x*x*x))/(2*x*(-2 + 5*x)) ,(1 - x + 2*x*x - std::sqrt(1 - 6*x + 13*x*x - 8*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x))); },
                   prec),
 };
 }
@@ -1217,10 +1218,10 @@ return {
                   [](double z) { return P(-(-7*z + 5 + (2*z - 2)*(3*z - 2)/(z - 1))/(2*(z - 1)),(3*z - 2)/(z - 1),z); },
                  prec),
   create_polyline(1./2, 2.*1.4142/17 + 5./17, P(1.,1./2.,1./2),
-                  [](double z) { return P( -(2*z*((5*z - 1)/(4*z) - sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) - sqrt(17*z*z - 10*z + 1)/(4*z),z); },
+                  [](double z) { return P( -(2*z*((5*z - 1)/(4*z) - std::sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) - std::sqrt(17*z*z - 10*z + 1)/(4*z),z); },
                  prec),
   create_polyline(1./2,2.*1.4142/17 + 5./17, P(1./2,1.,1./2),
-                  [](double z) { return P( -(2*z*((5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) + sqrt(17*z*z - 10*z + 1)/(4*z),z); },
+                  [](double z) { return P( -(2*z*((5*z - 1)/(4*z) + std::sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) + std::sqrt(17*z*z - 10*z + 1)/(4*z),z); },
                  prec),
   create_polyline(3./5,1., P(1./2.,1./2,3./5),P(1./2,1./2.,1.),
                   [](double z) { return P(1./2,1./2,z); },
@@ -1293,7 +1294,7 @@ std::vector<std::vector<P>> poly00111223(const int prec = 10)
 {
 return {
   create_polyline(1./2,2./3, P(1.,1./2,1./2),
-                 [](double z) { return P(-(-5*z + (6*z - 5)*(sqrt(-(z - 1)*(2*z - 1))/(6*z - 5) + (4*z - 3)/(6*z - 5)) + 3)/z,sqrt(-(z - 1)*(2*z - 1))/(6*z - 5) + (4*z - 3)/(6*z - 5),z); },
+                 [](double z) { return P(-(-5*z + (6*z - 5)*(std::sqrt(-(z - 1)*(2*z - 1))/(6*z - 5) + (4*z - 3)/(6*z - 5)) + 3)/z,std::sqrt(-(z - 1)*(2*z - 1))/(6*z - 5) + (4*z - 3)/(6*z - 5),z); },
                  prec),
   create_polyline(1./2,1., P(1./2,1.,2./3),
                  [](double x) { return P(x,x/(3*x-1),x/(1 - 2*x + 3*x*x) ); },
@@ -1310,10 +1311,10 @@ std::vector<std::vector<P>> poly00111230(const int prec = 10)
 {
 return {
 create_polyline(limit_value(2./3,1.),1, P(1./2,0.,2./3),P(1./2,1./2,1.),
-                 [](double z) { return P(-(-2*z + (3*z - 2)*((8*z - 5)/(4*(3*z - 2)) - sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2))) + 1)/z,(8*z - 5)/(4*(3*z - 2)) - sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2)),z ); },
+                 [](double z) { return P(-(-2*z + (3*z - 2)*((8*z - 5)/(4*(3*z - 2)) - std::sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2))) + 1)/z,(8*z - 5)/(4*(3*z - 2)) - std::sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2)),z ); },
                  prec),
 create_polyline(limit_value(2./3,1.),1, P(1./2,1.,2./3),P(1./2,1./2,1.),
-                 [](double z) { return P(-(-2*z + (3*z - 2)*((4*z - 3)/(4*(3*z - 2)) + sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2))) + 1)/z,(4*z - 3)/(4*(3*z - 2)) + sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2)),z ); },
+                 [](double z) { return P(-(-2*z + (3*z - 2)*((4*z - 3)/(4*(3*z - 2)) + std::sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2))) + 1)/z,(4*z - 3)/(4*(3*z - 2)) + std::sqrt(-8*z*z + 16*z - 7)/(4*(3*z - 2)),z ); },
                  prec),
 };
 }
@@ -1326,7 +1327,7 @@ std::vector<std::vector<P>> poly00111232(const int prec = 10)
 {
 return {
   create_polyline(1./3,2./3, P(1.,1./2,1./3),
-                 [](double z) { return P((z - 1)*(-1 + (5*z - 4)/(2*(z - 1)) + sqrt(13*z*z - 20*z + 8)/(2*(z - 1)))/z, (5*z - 4)/(2*(z - 1)) + sqrt(13*z*z - 20*z + 8)/(2*(z - 1)),z ); },
+                 [](double z) { return P((z - 1)*(-1 + (5*z - 4)/(2*(z - 1)) + std::sqrt(13*z*z - 20*z + 8)/(2*(z - 1)))/z, (5*z - 4)/(2*(z - 1)) + std::sqrt(13*z*z - 20*z + 8)/(2*(z - 1)),z ); },
                  prec),
   create_polyline(1./3,1./2, P(1./3,1./2,1.),
                  [](double x) { return P(x,x/(1. - x),-x/(1. - 5*x + 3*x*x)); },
@@ -1448,10 +1449,10 @@ std::vector<std::vector<P>> poly00121223(const int prec = 10)
 {
 return {
   create_polyline(limit_value(3./8,1.),1./2, P(3./8,4./9,4./9),P(1./2,2./3,0.),
-                 [](double x) { return P(x,(3 - 5*x + sqrt(-3 + 8*x) - x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x)), (3 - 5*x - sqrt(-3 + 8*x) + x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x))); },
+                 [](double x) { return P(x,(3 - 5*x + std::sqrt(-3 + 8*x) - x*std::sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x)), (3 - 5*x - std::sqrt(-3 + 8*x) + x*std::sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x))); },
                  prec),
   create_polyline(limit_value(3./8,1.),1./2, P(3./8,4./9,4./9),P(1./2,0.,2./3),
-                 [](double x) { return P(x,(3 - 5*x - sqrt(-3 + 8*x) + x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x)), (3 - 5*x + sqrt(-3 + 8*x) - x*sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x))); },
+                 [](double x) { return P(x,(3 - 5*x - std::sqrt(-3 + 8*x) + x*std::sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x)), (3 - 5*x + std::sqrt(-3 + 8*x) - x*std::sqrt(-3 + 8*x))/(2*(3 - 5*x + x*x))); },
                  prec),
 
 };
@@ -1489,10 +1490,10 @@ std::vector<std::vector<P>> poly00121300(const int prec = 10)
 {
 return {
   create_polyline(limit_value(0.,1.),1./3, P(1./2,2./3,0.),P(1./2,1.,1./3),
-                 [](double z) { return P(-(2*z - 1)*(-2*z + (4*z - 3)*(sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))) + 2)/(z*(z - 1)) , sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3)),z); },
+                 [](double z) { return P(-(2*z - 1)*(-2*z + (4*z - 3)*(std::sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))) + 2)/(z*(z - 1)) , std::sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3)),z); },
                  prec),
   create_polyline(limit_value(0.,1.),1./3, P(1./2,1./3,1.),P(1./2,0.,2./3),
-                 [](double z) { return P(-(2*z - 1)*(-2*z + (4*z - 3)*(sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))) + 2)/(z*(z - 1)) ,1-( sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))),1.-z); },
+                 [](double z) { return P(-(2*z - 1)*(-2*z + (4*z - 3)*(std::sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))) + 2)/(z*(z - 1)) ,1-( std::sqrt((2*z - 1)*(2*z*z*z - 5*z*z + 8*z - 4))/(2*(8*z*z - 10*z + 3)) + (3*z - 2)/(2*(4*z - 3))),1.-z); },
                  prec),
 
 
@@ -1507,10 +1508,10 @@ std::vector<std::vector<P>> poly00121301(const int prec = 10)
 {
 return {
   create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1.,1./2,1./2),
-                 [](double z) { return P( (-4*z*z + 7*z + (sqrt((z - 1)*(z*z*z - 5*z*z + 4*z - 1))/(8*z*z - 10*z + 3) + (z - 1)*(3*z - 1)/((2*z - 1)*(4*z - 3)))*(8*z*z - 10*z + 3) - 2)/z, sqrt((z - 1)*(z*z*z - 5*z*z + 4*z - 1))/(8*z*z - 10*z + 3) + (z - 1)*(3*z - 1)/((2*z - 1)*(4*z - 3)),z); },
+                 [](double z) { return P( (-4*z*z + 7*z + (std::sqrt((z - 1)*(z*z*z - 5*z*z + 4*z - 1))/(8*z*z - 10*z + 3) + (z - 1)*(3*z - 1)/((2*z - 1)*(4*z - 3)))*(8*z*z - 10*z + 3) - 2)/z, std::sqrt((z - 1)*(z*z*z - 5*z*z + 4*z - 1))/(8*z*z - 10*z + 3) + (z - 1)*(3*z - 1)/((2*z - 1)*(4*z - 3)),z); },
                  prec),
   create_polyline(limit_value(1./2,1.),1., P(1./2,0.,2./3),P(1.,1./2,1./2),
-                 [](double x) { return P(x,(-2 + 6*x - x*x - sqrt(4 - 16*x + 24*x*x - 12*x*x*x + x*x*x*x))/(4*x),(-2 + 2*x + x*x + sqrt(4 - 16*x + 24*x*x - 12*x*x*x + x*x*x*x))/(4*x*(-1 + 2*x))); },
+                 [](double x) { return P(x,(-2 + 6*x - x*x - std::sqrt(4 - 16*x + 24*x*x - 12*x*x*x + x*x*x*x))/(4*x),(-2 + 2*x + x*x + std::sqrt(4 - 16*x + 24*x*x - 12*x*x*x + x*x*x*x))/(4*x*(-1 + 2*x))); },
                  prec),
 };
 }
@@ -1524,7 +1525,7 @@ std::vector<std::vector<P>> poly00121302(const int prec = 10)
 {
 return {
   create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1./3,1.,1./2),
-                 [](double z) { return P((-z*z + 5*z + (sqrt(z*z*z*z + 8*z*z - 12*z + 4)/(2*(2*z*z - 7*z + 3)) + (3*z*z - 6*z + 2)/(2*(z - 3)*(2*z - 1)))*(2*z*z - 7*z + 3) - 2)/(z*(z + 1)) ,sqrt(z*z*z*z + 8*z*z - 12*z + 4)/(2*(2*z*z - 7*z + 3)) + (3*z*z - 6*z + 2)/(2*(z - 3)*(2*z - 1)),z); },
+                 [](double z) { return P((-z*z + 5*z + (std::sqrt(z*z*z*z + 8*z*z - 12*z + 4)/(2*(2*z*z - 7*z + 3)) + (3*z*z - 6*z + 2)/(2*(z - 3)*(2*z - 1)))*(2*z*z - 7*z + 3) - 2)/(z*(z + 1)) ,std::sqrt(z*z*z*z + 8*z*z - 12*z + 4)/(2*(2*z*z - 7*z + 3)) + (3*z*z - 6*z + 2)/(2*(z - 3)*(2*z - 1)),z); },
                  prec),
   create_polyline(2./3,1., P(1./2,0.,2./3),P(1./2,1./2,1.),
                  [](double z) { return P((-z + (2*z - 1)*(3*z*z - 2*z)/(6*z*z - 5*z + 1) + 1)/z, (3*z*z - 2*z)/(6*z*z - 5*z + 1),z); },
@@ -1544,13 +1545,13 @@ std::vector<std::vector<P>> poly00121320(const int prec = 10)
 {
 return {
   create_polyline(0.,1., P(1./2,2./3,0.),P(1./2,1./2,1.),
-                 [](double z) { return P(-(-7*z*z + 7*z + ((7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 2)/(z*(3*z - 1)),(7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)),z); },
+                 [](double z) { return P(-(-7*z*z + 7*z + ((7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + std::sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 2)/(z*(3*z - 1)),(7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + std::sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)),z); },
                  prec),
   create_polyline(1./2,(8.06225-7.)/2, P(1./2,0.,2./3),P((8.06225-7.)/2,1./3,(3.+8.06225)/14),
-                 [](double x) { return P(x,(2 - 5*x + x*x + sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x - sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
+                 [](double x) { return P(x,(2 - 5*x + x*x + std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x - std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
                  prec),
   create_polyline(1./2,(8.06225-7.)/2, P(1./2,1./2,1.),P((8.06225-7.)/2,1./3,(3.+8.06225)/14),
-                 [](double x) { return P(x,(2 - 5*x + x*x - sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x + sqrt(x)*sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
+                 [](double x) { return P(x,(2 - 5*x + x*x - std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x + std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
                  prec),
 };
 }
@@ -1563,7 +1564,7 @@ std::vector<std::vector<P>> poly00121321(const int prec = 10)
 {
 return {
  create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1.,1./2,1./2),
-                 [](double z) { return P( -(-7*z*z + 8*z + (sqrt((z - 1)*(25*z*z*z - 37*z*z + 20*z - 4))/(2*(6*z*z - 10*z + 3)) + (z - 1)*(7*z - 2)/(2*(6*z*z - 10*z + 3)))*(6*z*z - 10*z +3) - 2)/(z*(2*z - 1)),sqrt((z - 1)*(25*z*z*z - 37*z*z + 20*z - 4))/(2*(6*z*z - 10*z + 3)) + (z - 1)*(7*z - 2)/(2*(6*z*z - 10*z + 3)),z); },
+                 [](double z) { return P( -(-7*z*z + 8*z + (std::sqrt((z - 1)*(25*z*z*z - 37*z*z + 20*z - 4))/(2*(6*z*z - 10*z + 3)) + (z - 1)*(7*z - 2)/(2*(6*z*z - 10*z + 3)))*(6*z*z - 10*z +3) - 2)/(z*(2*z - 1)),std::sqrt((z - 1)*(25*z*z*z - 37*z*z + 20*z - 4))/(2*(6*z*z - 10*z + 3)) + (z - 1)*(7*z - 2)/(2*(6*z*z - 10*z + 3)),z); },
                  prec),
   create_polyline(limit_value(1./2.,1.),2./3, P(1.,1./2,1./2),P(1./2,0.,2./3),
                  [](double z) { return P((-2*z*z + 3*z - 1)/(z*(2*z - 1)),(3*z*z - 2*z)/(6*z*z - 6*z + 1),z); },
@@ -1582,16 +1583,16 @@ std::vector<std::vector<P>> poly00121323(const int prec = 10)
 {
 return {
   create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1./2,1./2,1./2),
-                 [](double z) { return P(-(-3*z + (3*z - 3)*((3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1))) + 2)/z,(3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1)),z); },
+                 [](double z) { return P(-(-3*z + (3*z - 3)*((3*z - 1)/(3*(2*z - 1)) - std::sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1))) + 2)/z,(3*z - 1)/(3*(2*z - 1)) - std::sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1)),z); },
                  prec),
   create_polyline(limit_value(1./2,1.),2./3,P(1./2,1./2,1./2), P(1./2,0.,2./3),
-                 [](double z) { return P( (z - 1)*(-1 + sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z - 3*z + 1)) + (6*z*z - 6*z + 1)/(2*(z - 1)*(2*z - 1)))/z,sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z - 3*z + 1)) + (6*z*z - 6*z + 1)/(2*(z - 1)*(2*z - 1)) ,z); },
+                 [](double z) { return P( (z - 1)*(-1 + std::sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z - 3*z + 1)) + (6*z*z - 6*z + 1)/(2*(z - 1)*(2*z - 1)))/z,std::sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z - 3*z + 1)) + (6*z*z - 6*z + 1)/(2*(z - 1)*(2*z - 1)) ,z); },
                  prec),
   create_polyline(1./3,limit_value(1./2,-1.), P(1.,1./2,1./3),P(1./2,1./2,1./2),
-                 [](double z) { return P( (z - 1)*(-1 - sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(2*z*z - 3*z + 1)) + (2*z*z - 2*z + 1)/(2*(z - 1)*(2*z - 1)))/z,-sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(2*z*z - 3*z + 1)) + (2*z*z - 2*z + 1)/(2*(z - 1)*(2*z - 1)),z); },
+                 [](double z) { return P( (z - 1)*(-1 - std::sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(2*z*z - 3*z + 1)) + (2*z*z - 2*z + 1)/(2*(z - 1)*(2*z - 1)))/z,-std::sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(2*z*z - 3*z + 1)) + (2*z*z - 2*z + 1)/(2*(z - 1)*(2*z - 1)),z); },
                  prec),
   create_polyline(limit_value(1./2,1.),1., P(1./2,1./2,1./2),P(1./3,1./2,1.),
-                 [](double z) { return P( -(-z + (z - 1)*(-z*z/((z - 1)*(2*z - 1)) + z*sqrt(3*z*z - 3*z + 1)/(2*z*z - 3*z + 1)))/(3*z),-z*z/((z - 1)*(2*z - 1)) + z*sqrt(3*z*z - 3*z + 1)/(2*z*z - 3*z + 1) ,z); },
+                 [](double z) { return P( -(-z + (z - 1)*(-z*z/((z - 1)*(2*z - 1)) + z*std::sqrt(3*z*z - 3*z + 1)/(2*z*z - 3*z + 1)))/(3*z),-z*z/((z - 1)*(2*z - 1)) + z*std::sqrt(3*z*z - 3*z + 1)/(2*z*z - 3*z + 1) ,z); },
                  prec),
 };
 }
@@ -1612,10 +1613,10 @@ return {
                  [](double y) { return P(1./2,y,(3*y-2.)/(5*y-3.)); },
                  prec),
   create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
-                 [](double x) { return P(x,(2 - x + sqrt(x)* sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)),(-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))); },
+                 [](double x) { return P(x,(2 - x + std::sqrt(x)* std::sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)),(-3*x + std::sqrt(x)*std::sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))); },
                  prec),
   create_polyline(1./2,1., P(1./2,1./2,1.),P(1.,1./2,1./2),
-                 [](double x) { return P(x,(-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x)),(2 - x + sqrt(x)* sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x))); },
+                 [](double x) { return P(x,(-3*x + std::sqrt(x)*std::sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x)),(2 - x + std::sqrt(x)* std::sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x))); },
                  prec),
 
 };
@@ -1630,10 +1631,10 @@ std::vector<std::vector<P>> poly00122113(const int prec = 10)
 {
 return {
   create_polyline(1./2,1., P(1./2,2./3,0.),P(1.,1./2,1./2),
-                 [](double x) { return P(x,(-4 + 7*x - sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*(-3. + 4*x + x*x)),(-2. + 5*x - sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*x*(1 + x))); },
+                 [](double x) { return P(x,(-4 + 7*x - std::sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*(-3. + 4*x + x*x)),(-2. + 5*x - std::sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*x*(1 + x))); },
                  prec),
   create_polyline(0.000001,1./2, P(0.,1./3,1./2),P(1./2,0.,2./3),
-                 [](double x) { return P(x,(-4. + 7*x + sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*(-3 + 4*x + x*x)),(-2. + 5*x + sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*x*(1 + x))); },
+                 [](double x) { return P(x,(-4. + 7*x + std::sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*(-3 + 4*x + x*x)),(-2. + 5*x + std::sqrt(4 - 16*x + 21*x*x - 8*x*x*x))/(2*x*(1 + x))); },
                  prec),
   create_polyline(2./3,1.,P(2./3,1.,1./2), P(1.,1./2,1./2),
                  [](double x) { return P(x,(-1. + 2*x)/(-1. + 3*x*x),(-1. + 2*x)/(x*(-1. + 3*x))); },
@@ -1698,13 +1699,13 @@ std::vector<std::vector<P>> poly00122301(const int prec = 10)
 {
 return {
 create_polyline(limit_value(0.,1.),1./2,P(1./2,2./3,0.),P(1.,1./2,1./2),
-                 [](double z) { return P(-(-5*z*z + 5*z + (sqrt((2*z - 1)*(14*z*z*z - 25*z*z + 16*z - 4))/(2*(6*z*z - 7*z + 3)) + (2*z*z - 3*z + 2)/(2*(6*z*z - 7*z + 3)))*(6*z*z - 7*z + 3) - 2)/(z*(3*z - 1)),sqrt((2*z - 1)*(14*z*z*z - 25*z*z + 16*z - 4))/(2*(6*z*z - 7*z + 3)) + (2*z*z - 3*z + 2)/(2*(6*z*z - 7*z + 3)) ,z); },
+                 [](double z) { return P(-(-5*z*z + 5*z + (std::sqrt((2*z - 1)*(14*z*z*z - 25*z*z + 16*z - 4))/(2*(6*z*z - 7*z + 3)) + (2*z*z - 3*z + 2)/(2*(6*z*z - 7*z + 3)))*(6*z*z - 7*z + 3) - 2)/(z*(3*z - 1)),std::sqrt((2*z - 1)*(14*z*z*z - 25*z*z + 16*z - 4))/(2*(6*z*z - 7*z + 3)) + (2*z*z - 3*z + 2)/(2*(6*z*z - 7*z + 3)) ,z); },
                  prec),
 create_polyline(limit_value(1./2,1.),1.,P(1.,1./2,1./2),P(1.,1./2,1.),
-                 [](double z) { return P((-z + (2*z - 1)*(sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(6*z*z - 5*z + 1)) + (6*z*z - 6*z + 1)/(2*(2*z - 1)*(3*z - 1))) + 1)/z,sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(6*z*z - 5*z + 1)) + (6*z*z - 6*z + 1)/(2*(2*z - 1)*(3*z - 1)),z); },
+                 [](double z) { return P((-z + (2*z - 1)*(std::sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(6*z*z - 5*z + 1)) + (6*z*z - 6*z + 1)/(2*(2*z - 1)*(3*z - 1))) + 1)/z,std::sqrt(12*z*z*z*z - 28*z*z*z + 24*z*z - 8*z + 1)/(2*(6*z*z - 5*z + 1)) + (6*z*z - 6*z + 1)/(2*(2*z - 1)*(3*z - 1)),z); },
                  prec),
 create_polyline(2./3,1.,P(1./2,0.,2./3),P(1./2,1./2,1.),
-                 [](double z) { return P( (-z + (2*z - 1)*(-sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1))) + 1)/z, -sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1)) ,z); },
+                 [](double z) { return P( (-z + (2*z - 1)*(-std::sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1))) + 1)/z, -std::sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1)) ,z); },
                  prec),
 };
 }
@@ -1717,10 +1718,10 @@ std::vector<std::vector<P>> poly00122302(const int prec = 10)
 {
 return {
   create_polyline(limit_value(0.,1.),1./2, P(1./2,2./3,0.),P(1./3,1.,1./2),
-                 [](double z) { return P((2*z*z - 3*z + (4*z - 3)*(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))) + 2)/(z*(2*z - 1)),-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3)),z); },
+                 [](double z) { return P((2*z*z - 3*z + (4*z - 3)*(-std::sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))) + 2)/(z*(2*z - 1)),-std::sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3)),z); },
                  prec),
   create_polyline(limit_value(0.,1.),1./2, P(1.,1./3,1./2),P(1./2,0.,2./3),
-                 [](double z) { return P(1-z,1-(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))),1-((2*z*z - 3*z + (4*z - 3)*(-sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))) + 2)/(z*(2*z - 1)))); },
+                 [](double z) { return P(1-z,1-(-std::sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))),1-((2*z*z - 3*z + (4*z - 3)*(-std::sqrt((z - 1)*(z*z*z - 13*z*z + 12*z - 4))/(2*(4*z - 3)) + (z - 1)*(z + 2)/(2*(4*z - 3))) + 2)/(z*(2*z - 1)))); },
                  prec),
 
 };
@@ -1773,10 +1774,10 @@ return {
                  [](double x) { return P(x,1./2,1./2); },
                  prec),
   create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(2./3,1./2,1./2),
-                 [](double z) { return P(-(-4*z*z + 5*z + (-(2*z - 1)*sqrt(5*z*z - 8*z + 4)/(2*(4*z*z - 6*z + 3)) + (2*z*z - 3*z + 2)/(2*(4*z*z - 6*z + 3)))*(4*z*z - 6*z + 3) - 2)/(z*(2*z - 1)),-(2*z - 1)*sqrt(5*z*z - 8*z + 4)/(2*(4*z*z - 6*z + 3)) + (2*z*z - 3*z + 2)/(2*(4*z*z - 6*z + 3)),z); },
+                 [](double z) { return P(-(-4*z*z + 5*z + (-(2*z - 1)*std::sqrt(5*z*z - 8*z + 4)/(2*(4*z*z - 6*z + 3)) + (2*z*z - 3*z + 2)/(2*(4*z*z - 6*z + 3)))*(4*z*z - 6*z + 3) - 2)/(z*(2*z - 1)),-(2*z - 1)*std::sqrt(5*z*z - 8*z + 4)/(2*(4*z*z - 6*z + 3)) + (2*z*z - 3*z + 2)/(2*(4*z*z - 6*z + 3)),z); },
                  prec),
   create_polyline(limit_value(1./2,1.),2./3, P(1./3,1./2,1./2),P(1./2,0.,2./3),
-                 [](double z) { return P( -(-4*z*z + z + (sqrt(-(z - 1)*(3*z + 1))*(2*z - 1)/(2*(4*z*z - 2*z - 1)) + (6*z*z - 3*z - 1)/(2*(4*z*z - 2*z - 1)))*(4*z*z - 2*z - 1) + 1)/(z*(2*z - 1)),sqrt(-(z - 1)*(3*z + 1))*(2*z - 1)/(2*(4*z*z - 2*z - 1)) + (6*z*z - 3*z - 1)/(2*(4*z*z - 2*z - 1)),z); },
+                 [](double z) { return P( -(-4*z*z + z + (std::sqrt(-(z - 1)*(3*z + 1))*(2*z - 1)/(2*(4*z*z - 2*z - 1)) + (6*z*z - 3*z - 1)/(2*(4*z*z - 2*z - 1)))*(4*z*z - 2*z - 1) + 1)/(z*(2*z - 1)),std::sqrt(-(z - 1)*(3*z + 1))*(2*z - 1)/(2*(4*z*z - 2*z - 1)) + (6*z*z - 3*z - 1)/(2*(4*z*z - 2*z - 1)),z); },
                  prec),
 
 };
@@ -1871,10 +1872,10 @@ std::vector<std::vector<P>> poly01121230(const int prec = 10)
 {
 return {
  create_polyline(1./2,1., P(1./2,1.,1./2),P(1./2,1./2,1.),
-                 [](double z) { return P(-(-7*z*z + 8*z + (-sqrt(-(2*z - 1)*(4*z*z*z - 12*z*z + 10*z - 3))/(2*(9*z*z - 10*z + 3)) + (10*z*z - 10*z + 3)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 3)/(6*z*z - 7*z + 3),-sqrt(-(2*z - 1)*(4*z*z*z - 12*z*z + 10*z - 3))/(2*(9*z*z - 10*z + 3)) + (10*z*z - 10*z + 3)/(2*(9*z*z - 10*z + 3)) ,z); },
+                 [](double z) { return P(-(-7*z*z + 8*z + (-std::sqrt(-(2*z - 1)*(4*z*z*z - 12*z*z + 10*z - 3))/(2*(9*z*z - 10*z + 3)) + (10*z*z - 10*z + 3)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 3)/(6*z*z - 7*z + 3),-std::sqrt(-(2*z - 1)*(4*z*z*z - 12*z*z + 10*z - 3))/(2*(9*z*z - 10*z + 3)) + (10*z*z - 10*z + 3)/(2*(9*z*z - 10*z + 3)) ,z); },
                  prec),
  create_polyline(limit_value(1./2,1.),1., P(1./2,1.,1./2),P(1./2,1./2,1.),
-                 [](double z) { return P( -(-5*z*z + 5*z + (sqrt(-z*(8*z*z*z - 20*z*z + 15*z - 4))/(2*(3*z*z - 2*z + 1)) + (2*z*z - 3*z + 2)/(2*(3*z*z - 2*z + 1)))*(3*z*z - 2*z + 1) - 2)/((2*z - 1)*(3*z - 1)), sqrt(-z*(8*z*z*z - 20*z*z + 15*z - 4))/(2*(3*z*z - 2*z + 1)) + (2*z*z - 3*z + 2)/(2*(3*z*z - 2*z + 1)),z); },
+                 [](double z) { return P( -(-5*z*z + 5*z + (std::sqrt(-z*(8*z*z*z - 20*z*z + 15*z - 4))/(2*(3*z*z - 2*z + 1)) + (2*z*z - 3*z + 2)/(2*(3*z*z - 2*z + 1)))*(3*z*z - 2*z + 1) - 2)/((2*z - 1)*(3*z - 1)), std::sqrt(-z*(8*z*z*z - 20*z*z + 15*z - 4))/(2*(3*z*z - 2*z + 1)) + (2*z*z - 3*z + 2)/(2*(3*z*z - 2*z + 1)),z); },
                  prec),
 };
 }
@@ -2009,7 +2010,7 @@ std::vector<std::vector<P>> poly00011234(const int prec = 10)
 {
 return {
   create_polyline(limit_value(0,1),1./2, P(0.,1./2,2./3),P(1./2,2./3,2./3),
-                 [](double x) { return P(x,(2 + x - sqrt(4 - 8*x + x*x))/(6*x),(2 - x + x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*(3 - 4*x + 2*x*x))); },
+                 [](double x) { return P(x,(2 + x - std::sqrt(4 - 8*x + x*x))/(6*x),(2 - x + x*x + std::sqrt(4 - 8*x + x*x) - x*std::sqrt(4 - 8*x + x*x))/(2*(3 - 4*x + 2*x*x))); },
                  prec),
   create_polyline(2./3,1.,P(1./2,2./3,2./3),P(1./2,1.,1./2),
                  [](double y) { return P(1./2,y,1.-y/2); },
@@ -2086,7 +2087,7 @@ return {
                  [](double z) { return P( -(z - 1)*(3*z - 1)/z,z/(3*z - 1),z); },
                  prec),
   create_polyline(1-1./1.73205,1./2,P(1-1./1.73205,1./2,1.73205-1.),P(1./2,2./3,2./3),
-                 [](double x) { return P(x,(-1 - x*x + sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-2 + x)*x),(-1 - 2*x + x*x - sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-1 - 2*x + 2*x*x)) ); },
+                 [](double x) { return P(x,(-1 - x*x + std::sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-2 + x)*x),(-1 - 2*x + x*x - std::sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-1 - 2*x + 2*x*x)) ); },
                  prec),
   create_polyline(1./2,2./3, P(1./2,1./2,1.),P(1./2,2./3,2./3),
                  [](double y) { return P( 1./2,y,y/(-1 + 3*y)); },
@@ -2187,13 +2188,13 @@ return {
                  [](double x) { return P(x,1./2,-x/(-1 + x)); },
                  prec),
   create_polyline(1-1./1.73205,1./2,P(1-1./1.73205,1./2,1.73205-1),P(1./2,1-1./1.73205,1.73205-1),
-                 [](double x) { return P(x,(-1 - 2*x + 2*x*x + sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-2 + x)*x),(1 - 4*x + 2*x*x + sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x))); },
+                 [](double x) { return P(x,(-1 - 2*x + 2*x*x + std::sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-2 + x)*x),(1 - 4*x + 2*x*x + std::sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x))); },
                  prec),
   create_polyline(1./2,1., P(1./2,1-1./1.73205,1.73205-1), P(1.,1./3,1./2) ,
-                 [](double x) { return P(x,(1 + x - sqrt(1 - x + x*x))/(3*x),(x - sqrt(1 - x + x*x))/(-1 + x)); },
+                 [](double x) { return P(x,(1 + x - std::sqrt(1 - x + x*x))/(3*x),(x - std::sqrt(1 - x + x*x))/(-1 + x)); },
                  prec),
   create_polyline(1./2,1.,P(1-1./1.73205,1./2,1.73205-1),P(1./3,1.,1./2),
-                 [](double y) { return P((1 + y - sqrt(1 - y + y*y))/(3*y),y,(y - sqrt(1 - y + y*y))/(-1 + y)); },
+                 [](double y) { return P((1 + y - std::sqrt(1 - y + y*y))/(3*y),y,(y - std::sqrt(1 - y + y*y))/(-1 + y)); },
                  prec),
 };
 }
@@ -2372,16 +2373,16 @@ std::vector<std::vector<P>> poly00121304(const int prec = 10)
 {
 return {
   create_polyline(1./2,4.-2*1.73205, P(1./2,2./3,0.),P(4.-2*1.73205,(1.+1/1.73205)/2,(1.73205-1)/2.),
-                [](double x) { return P(x,(2 + x - sqrt(4 - 8*x + x*x))/(6*x),(-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x)); },
+                [](double x) { return P(x,(2 + x - std::sqrt(4 - 8*x + x*x))/(6*x),(-2 + 5*x - x*x - std::sqrt(4 - 8*x + x*x) + x*std::sqrt(4 - 8*x + x*x))/(2*x)); },
                 prec),
   create_polyline(1./2,4.-2*1.73205, P(1./2,1.,1./2),P(4.-2*1.73205,(1.+1/1.73205)/2,(1.73205-1)/2.),
-                [](double x) { return P(x,(2 + x + sqrt(4 - 8*x + x*x))/(6*x),(-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x)); },
+                [](double x) { return P(x,(2 + x + std::sqrt(4 - 8*x + x*x))/(6*x),(-2 + 5*x - x*x + std::sqrt(4 - 8*x + x*x) - x*std::sqrt(4 - 8*x + x*x))/(2*x)); },
                 prec),
   create_polyline(1./2,4.-2*1.73205, P(1./2,1./2,1.),P(4.-2*1.73205,(1.73205-1)/2.,(1.+1/1.73205)/2),
-                [](double x) { return P(x,(-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x),(2 + x + sqrt(4 - 8*x + x*x))/(6*x)); },
+                [](double x) { return P(x,(-2 + 5*x - x*x + std::sqrt(4 - 8*x + x*x) - x*std::sqrt(4 - 8*x + x*x))/(2*x),(2 + x + std::sqrt(4 - 8*x + x*x))/(6*x)); },
                 prec),
   create_polyline(1./2,4.-2*1.73205, P(1./2,0.,2./3),P(4.-2*1.73205,(1.73205-1)/2.,(1.+1/1.73205)/2),
-                [](double x) { return P(x,(-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x),(2 + x - sqrt(4 - 8*x + x*x))/(6*x)); },
+                [](double x) { return P(x,(-2 + 5*x - x*x - std::sqrt(4 - 8*x + x*x) + x*std::sqrt(4 - 8*x + x*x))/(2*x),(2 + x - std::sqrt(4 - 8*x + x*x))/(6*x)); },
                 prec),
  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
                 [](double x) { return P(x,1./(2*x),1./2); },
@@ -2419,7 +2420,7 @@ return {
                 [](double x) { return P(x,(x*(-2 + 3*x))/(-1 + 2*x*x),(x*(-2 + 3*x))/(1 - 5*x + 5*x*x)); },
                 prec),
   create_polyline(limit_value(0.,1),0.6271,P(1./2,2./3,0.),P(0.5944,0.4392,0.6271),
-                [](double z) { return P(-(-3*z + (3*z - 3)*((3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1))) + 2)/z,(3*z - 1)/(3*(2*z - 1)) - sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1)),z); },
+                [](double z) { return P(-(-3*z + (3*z - 3)*((3*z - 1)/(3*(2*z - 1)) - std::sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1))) + 2)/z,(3*z - 1)/(3*(2*z - 1)) - std::sqrt(3*z*z - 3*z + 1)/(3*(2*z - 1)),z); },
                 prec),
 };
 }
@@ -2434,16 +2435,16 @@ std::vector<std::vector<P>> poly00121340(const int prec = 10)
 {
 return {
  create_polyline(limit_value(0.,1.),limit_value(1./2,-1.), P(1./2,2./3,0.),P(1./2,1.,1./2),
-                [](double z) { return P(-(-5*z*z + 6*z + ((2*z - 1)*(3*z - 2)/(2*(7*z*z - 9*z + 3)) + sqrt(8*z*z*z*z - 20*z*z*z + 25*z*z - 16*z + 4)/(2*(7*z*z - 9*z + 3)))*(7*z*z - 9*z + 3) - 2)/(z*(2*z - 1)),(2*z - 1)*(3*z - 2)/(2*(7*z*z - 9*z + 3)) + sqrt(8*z*z*z*z - 20*z*z*z + 25*z*z - 16*z + 4)/(2*(7*z*z - 9*z + 3)),z); },
+                [](double z) { return P(-(-5*z*z + 6*z + ((2*z - 1)*(3*z - 2)/(2*(7*z*z - 9*z + 3)) + std::sqrt(8*z*z*z*z - 20*z*z*z + 25*z*z - 16*z + 4)/(2*(7*z*z - 9*z + 3)))*(7*z*z - 9*z + 3) - 2)/(z*(2*z - 1)),(2*z - 1)*(3*z - 2)/(2*(7*z*z - 9*z + 3)) + std::sqrt(8*z*z*z*z - 20*z*z*z + 25*z*z - 16*z + 4)/(2*(7*z*z - 9*z + 3)),z); },
                 prec),
  create_polyline(2./3,1., P(1./2,0.,2./3),P(1./2,1./2,1.),
-                [](double z) { return P(-(-5*z*z + 4*z + (-sqrt(-(z*z + z - 1)*(3*z*z - 5*z + 1))/(2*(7*z*z - 6*z + 1)) + (9*z*z - 7*z + 1)/(2*(7*z*z - 6*z + 1)))*(7*z*z - 6*z + 1) - 1)/(z*(z + 1)),-sqrt(-(z*z + z - 1)*(3*z*z - 5*z + 1))/(2*(7*z*z - 6*z + 1)) + (9*z*z - 7*z + 1)/(2*(7*z*z - 6*z + 1)),z); },
+                [](double z) { return P(-(-5*z*z + 4*z + (-std::sqrt(-(z*z + z - 1)*(3*z*z - 5*z + 1))/(2*(7*z*z - 6*z + 1)) + (9*z*z - 7*z + 1)/(2*(7*z*z - 6*z + 1)))*(7*z*z - 6*z + 1) - 1)/(z*(z + 1)),-std::sqrt(-(z*z + z - 1)*(3*z*z - 5*z + 1))/(2*(7*z*z - 6*z + 1)) + (9*z*z - 7*z + 1)/(2*(7*z*z - 6*z + 1)),z); },
                 prec),
  create_polyline(3./8,1./2, P(3./8.,2./3,2./3),P(1./2,1.,1./2),
-                [](double x) { return P(x,(-3 - sqrt(-3 + 8*x))/(2*(-3 + 2*x)),(-3 + sqrt(-3 + 8*x))/(2*(-3 + 2*x))); },
+                [](double x) { return P(x,(-3 - std::sqrt(-3 + 8*x))/(2*(-3 + 2*x)),(-3 + std::sqrt(-3 + 8*x))/(2*(-3 + 2*x))); },
                 prec),
  create_polyline(3./8,1./2, P(3./8.,2./3,2./3),P(1./2,1./2,1.),
-                [](double x) { return P(x,(-3 + sqrt(-3 + 8*x))/(2*(-3 + 2*x)),(-3 - sqrt(-3 + 8*x))/(2*(-3 + 2*x))); },
+                [](double x) { return P(x,(-3 + std::sqrt(-3 + 8*x))/(2*(-3 + 2*x)),(-3 - std::sqrt(-3 + 8*x))/(2*(-3 + 2*x))); },
                 prec),
 };
 }
@@ -2487,7 +2488,7 @@ return {
                 [](double x) { return P(x,(-2 + 3*x)/(-3 + 4*x),(-2 + 3*x)/(-1 + x)); },
                 prec),
   create_polyline(limit_value(0.,1),(3-1.73205)/2,P(1./2,2./3,0.),P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),
-                [](double z) { return P((-2*z*z + 5*z + ((3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)))*(2*z*z - 6*z + 3) - 2)/z,(3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)),z); },
+                [](double z) { return P((-2*z*z + 5*z + ((3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + std::sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)))*(2*z*z - 6*z + 3) - 2)/z,(3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + std::sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)),z); },
                 prec),
 };
 }
@@ -2580,16 +2581,16 @@ std::vector<std::vector<P>> poly00122304(const int prec = 10)
 {
 return {
   create_polyline(0.,1./2,P(1./2,2./3,0.),P(1./2,1.,1./2),
-                [](double z) { return P(-(-3*z*z + 4*z + (-sqrt(3*z*z - 3*z + 1)/(3*(z - 1)) - 1/(3*(z - 1)))*(3*z*z - 6*z + 3) - 2)/(z*(2*z - 1)),-sqrt(3*z*z - 3*z + 1)/(3*(z - 1)) - 1/(3*(z - 1)),z); },
+                [](double z) { return P(-(-3*z*z + 4*z + (-std::sqrt(3*z*z - 3*z + 1)/(3*(z - 1)) - 1/(3*(z - 1)))*(3*z*z - 6*z + 3) - 2)/(z*(2*z - 1)),-std::sqrt(3*z*z - 3*z + 1)/(3*(z - 1)) - 1/(3*(z - 1)),z); },
                 prec),
   create_polyline(1./2,1.,P(1./2,1.,1./2),P(1.,1./2,1./2),
-                [](double x) { return P(x,(2 - x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)),(-3*x + sqrt(x)*sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))); },
+                [](double x) { return P(x,(2 - x + std::sqrt(x)*std::sqrt(4 - 11*x + 8*x*x))/(2*(1 - x + 2*x*x)),(-3*x + std::sqrt(x)*std::sqrt(4 - 11*x + 8*x*x))/(2*(1 - 5*x + 2*x*x))); },
                 prec),
   create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
                 [](double x) { return P(x,1./2,1/(2*x)); },
                 prec),
   create_polyline(2./3,1.,P(1./2,0.,2./3),P(1./2,1./2,1.),
-                [](double z) { return P((-z + (2*z - 1)*(-sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1))) + 1)/z,-sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1)),z); },
+                [](double z) { return P((-z + (2*z - 1)*(-std::sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1))) + 1)/z,-std::sqrt(12*z*z*z*z - 20*z*z*z + 12*z*z - 4*z + 1)/(2*(2*z*z + z - 1)) + (6*z*z - 2*z - 1)/(2*(z + 1)*(2*z - 1)),z); },
                 prec),
 };
 }
@@ -2609,10 +2610,10 @@ return {
                 [](double x) { return P(x,(-1 + 2*x)/(-1 + 2*x + x*x),1/(1 + x)); },
                 prec),
   create_polyline(0.,4.-2*1.73205,P(0.,1./3,1./2),P(4.-2*1.73205,1/1.73205,(1.73205-1)/2.),
-                [](double x) { return P(x,(4 - x - sqrt(4 - 8*x + x*x))/6,(-2 + 5*x - x*x + sqrt(4 - 8*x + x*x) - x*sqrt(4 - 8*x + x*x))/(2*x) ); },
+                [](double x) { return P(x,(4 - x - std::sqrt(4 - 8*x + x*x))/6,(-2 + 5*x - x*x + std::sqrt(4 - 8*x + x*x) - x*std::sqrt(4 - 8*x + x*x))/(2*x) ); },
                 prec),
   create_polyline(1./2,4.-2*1.73205,P(1./2,2./3,0.),P(4.-2*1.73205,1/1.73205,(1.73205-1)/2.),
-                [](double x) { return P(x,(4 - x + sqrt(4 - 8*x + x*x))/6,(-2 + 5*x - x*x - sqrt(4 - 8*x + x*x) + x*sqrt(4 - 8*x + x*x))/(2*x) ); },
+                [](double x) { return P(x,(4 - x + std::sqrt(4 - 8*x + x*x))/6,(-2 + 5*x - x*x - std::sqrt(4 - 8*x + x*x) + x*std::sqrt(4 - 8*x + x*x))/(2*x) ); },
                 prec),
   create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
                 [](double x) { return P(x,1./2,x/(-1 + 3*x)); },
@@ -2756,7 +2757,7 @@ return {
                 [](double x) { return P(x,x/(1 - 2*x + 3*x*x),(-1 + 2*x)/(-1 + 3*x)); },
                 prec),
   create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
-                [](double x) { return P(x,(4*x - x*x - sqrt(x)*sqrt(-4 + 12*x - 8*x*x + x*x*x))/(2*(1 + x)),(-2 + 2*x + x*x + sqrt(x)*sqrt(-4 + 12*x - 8*x*x + x*x*x))/(2*(-1 + 3*x*x))); },
+                [](double x) { return P(x,(4*x - x*x - std::sqrt(x)*std::sqrt(-4 + 12*x - 8*x*x + x*x*x))/(2*(1 + x)),(-2 + 2*x + x*x + std::sqrt(x)*std::sqrt(-4 + 12*x - 8*x*x + x*x*x))/(2*(-1 + 3*x*x))); },
                 prec),
   create_polyline(0.,1./2,P(1./2,0.,2./3),P(1./2,1./2,1.),
                 [](double y) { return P(1./2,y,(2*(-1 + y))/(-3 + 4*y)); },
@@ -2877,7 +2878,7 @@ return {
                 [](double x) { return P(x,1./2,1./(2*x)); },
                 prec),
   create_polyline(limit_value(1./2,1.),1.,P(1./2,1.,1./2),P(1.,1./2,1./2),
-                [](double x) { return P(x,(-2 + 4*x - x*x + sqrt(x)*sqrt(-4 + 16*x - 20*x*x + 9*x*x*x))/(2*(-1 + x + 2*x*x)),(-2 + 2*x + 3*x*x - sqrt(x)*sqrt(-4 + 16*x - 20*x*x + 9*x*x*x))/(2*(-1 - x + 4*x*x)) ); },
+                [](double x) { return P(x,(-2 + 4*x - x*x + std::sqrt(x)*std::sqrt(-4 + 16*x - 20*x*x + 9*x*x*x))/(2*(-1 + x + 2*x*x)),(-2 + 2*x + 3*x*x - std::sqrt(x)*std::sqrt(-4 + 16*x - 20*x*x + 9*x*x*x))/(2*(-1 - x + 4*x*x)) ); },
                 prec),
 };
 }
@@ -2927,10 +2928,10 @@ return {
                 [](double y) { return P(1./2,y,1./(2*y)); },
                 prec),
   create_polyline(1./2,4./7,P(1./2,1./2,1.),P(4./7,2./3,2./3),
-                [](double x) { return P(x,(3*x - sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x)),(3*x + sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x))); },
+                [](double x) { return P(x,(3*x - std::sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x)),(3*x + std::sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x))); },
                 prec),
   create_polyline(1./2,4./7,P(1./2,1.,1./2),P(4./7,2./3,2./3),
-                [](double x) { return P(x,(3*x + sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x)),(3*x - sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x))); },
+                [](double x) { return P(x,(3*x + std::sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x)),(3*x - std::sqrt(-x*(-4 + 7*x)))/(2*(-1 + 4*x))); },
                 prec),
 };
 }
@@ -2945,16 +2946,16 @@ std::vector<std::vector<P>> poly01121340(const int prec = 10)
 {
 return {
   create_polyline(limit_value(1./2,1.),1.,P(1./2,1.,1./2),P(1.,1./2,1./2),
-                [](double x) { return P(x,(2 - 3*x + 2*x*x + sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 2*x + 3*x*x)),(2 - 7*x + 8*x*x - sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 5*x + 6*x*x))); },
+                [](double x) { return P(x,(2 - 3*x + 2*x*x + std::sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 2*x + 3*x*x)),(2 - 7*x + 8*x*x - std::sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 5*x + 6*x*x))); },
                 prec),
   create_polyline(limit_value(1./2,1.),1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
-                [](double x) { return P(x,(2 - 7*x + 8*x*x - sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 5*x + 6*x*x)),(2 - 3*x + 2*x*x + sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 2*x + 3*x*x))); },
+                [](double x) { return P(x,(2 - 7*x + 8*x*x - std::sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 5*x + 6*x*x)),(2 - 3*x + 2*x*x + std::sqrt(-x*(-4 + 15*x - 20*x*x + 8*x*x*x)))/(2*(1 - 2*x + 3*x*x))); },
                 prec),
   create_polyline(0.45016,1./2,P(0.45016,0.702631,0.700106),P(1./2,1./2,1.),
-                [](double x) { return P(x,(3 - 7*x + 5*x*x - sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x)),(3 - 7*x + 5*x*x + sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x))); },
+                [](double x) { return P(x,(3 - 7*x + 5*x*x - std::sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x)),(3 - 7*x + 5*x*x + std::sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x))); },
                 prec),
   create_polyline(0.45016,1./2,P(0.45016,0.702631,0.700106),P(1./2,1.,1./2),
-                [](double x) { return P(x,(3 - 7*x + 5*x*x + sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x)),(3 - 7*x + 5*x*x - sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x))); },
+                [](double x) { return P(x,(3 - 7*x + 5*x*x + std::sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x)),(3 - 7*x + 5*x*x - std::sqrt(-3 + 14*x - 21*x*x + 10*x*x*x + x*x*x*x))/(2*(3 - 8*x + 6*x*x))); },
                 prec),
 };
 }
@@ -2986,10 +2987,10 @@ return {
                 [](double x) { return P(x,1./2,1./2); },
                 prec),
   create_polyline(1./2,4./7,P(0.,1./2,1./2),P(2./5,2./3,4./7),
-                [](double z) { return P(-(-3*z*z + 2*z + (3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)))*(4*z*z - 5*z + 1))/(2*z*z - 2*z + 1), 3*z/(2*(4*z - 1)) - sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
+                [](double z) { return P(-(-3*z*z + 2*z + (3*z/(2*(4*z - 1)) - std::sqrt(-z*(7*z - 4))/(2*(4*z - 1)))*(4*z*z - 5*z + 1))/(2*z*z - 2*z + 1), 3*z/(2*(4*z - 1)) - std::sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
                 prec),
   create_polyline(1./2,4./7,P(1./2,1.,1./2),P(2./5,2./3,4./7),
-                [](double z) { return P(-(-3*z*z+ 2*z + (3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)))*(4*z*z - 5*z + 1))/(2*z*z - 2*z + 1),3*z/(2*(4*z - 1)) + sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
+                [](double z) { return P(-(-3*z*z+ 2*z + (3*z/(2*(4*z - 1)) + std::sqrt(-z*(7*z - 4))/(2*(4*z - 1)))*(4*z*z - 5*z + 1))/(2*z*z - 2*z + 1),3*z/(2*(4*z - 1)) + std::sqrt(-z*(7*z - 4))/(2*(4*z - 1)),z); },
                 prec),
   create_polyline(1/2.,1.,P(1/2.,1./2,1.),P(1./2,1.,1./2),
                 [](double y) { return P(1./2,y,y/(-1 + 3*y)); },
@@ -3058,13 +3059,13 @@ return {
                 [](double y) { return P(1./2,y,1./2); },
                 prec),
   create_polyline(0.,0.36299,P(0.,1./2,1./2),P(0.36299,0.637,0.569841),
-                [](double x) { return P(x,(-1 + 4*x - sqrt(1 - 4*x*x))/(2*(-2 + 5*x)),(1 - x + 2*x*x + sqrt(1 - 4*x*x) - x*sqrt(1 - 4*x*x))/(2*(2 - 3*x + 2*x*x))); },
+                [](double x) { return P(x,(-1 + 4*x - std::sqrt(1 - 4*x*x))/(2*(-2 + 5*x)),(1 - x + 2*x*x + std::sqrt(1 - 4*x*x) - x*std::sqrt(1 - 4*x*x))/(2*(2 - 3*x + 2*x*x))); },
                 prec),
   create_polyline(0.36299,1./2,P(0.36299,0.637,0.569841),P(1./2,1.,1./2),
                 [](double x) { return P(x,(1 - 3*x + 3*x*x)/(2 - 6*x + 5*x*x),(1 - 2*x + x*x)/(2 - 5*x + 4*x*x)); },
                 prec),
   create_polyline(0.,0.36299,P(1.,1./2,1./2),P(1-0.36299,1-0.637,0.569841),
-                [](double x) { return P(1-x,1-(-1 + 4*x - sqrt(1 - 4*x*x))/(2*(-2 + 5*x)),(1 - x + 2*x*x + sqrt(1 - 4*x*x) - x*sqrt(1 - 4*x*x))/(2*(2 - 3*x + 2*x*x))); },
+                [](double x) { return P(1-x,1-(-1 + 4*x - std::sqrt(1 - 4*x*x))/(2*(-2 + 5*x)),(1 - x + 2*x*x + std::sqrt(1 - 4*x*x) - x*std::sqrt(1 - 4*x*x))/(2*(2 - 3*x + 2*x*x))); },
                 prec),
   create_polyline(0.36299,1./2,P(1-0.36299,1-0.637,0.569841),P(1./2,0.,1./2),
                [](double x) { return P(1-x,1-(1 - 3*x + 3*x*x)/(2 - 6*x + 5*x*x),(1 - 2*x + x*x)/(2 - 5*x + 4*x*x)); },
@@ -3259,10 +3260,10 @@ return {
                  [](double x) { return P(x,(1 - x)/x,1./2) ; },
                  prec),
   create_polyline((9-4.12310)/8.,limit_value((2.23606-1.)/2,-1),P((9-4.12310)/8.,(4.12310-3)/2.,(4.12310-3)/2.), P((2.23606-1)/2,(2.23606-1)/2,1./2),
-                 [](double x) { return P(x,-sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)),-(-x + (-sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)) ; },
+                 [](double x) { return P(x,-std::sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)),-(-x + (-std::sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)) ; },
                  prec),
   create_polyline((9-4.12310)/8.,limit_value((2.23606-1.)/2,-1),P((9-4.12310)/8.,(4.12310-3)/2.,(4.12310-3)/2.), P((2.23606-1)/2,1./2,(2.23606-1)/2),
-                 [](double x) { return P(x,sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)),-(-x + (sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)) ; },
+                 [](double x) { return P(x,std::sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)),-(-x + (std::sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)) ; },
                  prec),
 };
 }
@@ -3544,7 +3545,7 @@ return {
                  [](double z) { return P((2*z*z - 3*z + 1)/(5*z*z - 5*z + 1),(-z*z + 2*z - 1)/(2*z*z - 1),z); },
                  prec),
   create_polyline((2.23606-1.)/2,1.,P(1./2,(2.23606-1.)/2,(2.23606-1.)/2), P(1.,1./2,1./2),
-                 [](double x) { return P(x,(-2 + 5*x - sqrt(4 - 8*x + 5*x*x))/(2*(-3 + 5*x)),(-2 + 4*x - x*x + x*sqrt(4 - 8*x + 5*x*x))/(2*(-1 + 2*x + x*x)) ); },
+                 [](double x) { return P(x,(-2 + 5*x - std::sqrt(4 - 8*x + 5*x*x))/(2*(-3 + 5*x)),(-2 + 4*x - x*x + x*std::sqrt(4 - 8*x + 5*x*x))/(2*(-1 + 2*x + x*x)) ); },
                  prec),
   create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
                  [](double x) { return P(x,x/(-1 + 3*x),1./2); },

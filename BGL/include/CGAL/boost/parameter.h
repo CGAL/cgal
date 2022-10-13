@@ -114,6 +114,7 @@ BOOST_PARAMETER_NAME( (weights, tag) weights_)
 BOOST_PARAMETER_NAME( (p_rng, tag ) p_rng_)
 BOOST_PARAMETER_NAME( (null_subdomain_index, tag ) null_subdomain_index_)
 BOOST_PARAMETER_NAME( (construct_surface_patch_index, tag ) construct_surface_patch_index_)
+BOOST_PARAMETER_NAME( (detect_features, tag ) detect_features_)
 
 // First used in <CGAL/Gray_image_mesh_domain_3.h>
 BOOST_PARAMETER_NAME( (image, tag ) image_)
