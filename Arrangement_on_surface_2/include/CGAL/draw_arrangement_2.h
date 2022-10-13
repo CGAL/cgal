@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <random>
 
-#include <experimental/type_traits>
+#include <type_traits>
 #include <boost/hana.hpp>
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
