@@ -1198,7 +1198,6 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     tm.clear_without_removing_property_maps();
     polygon_soup_to_polygon_mesh(all_corners[mesh_id], all_triangles[mesh_id],
                                  tm, parameters::all_default(), parameters::vertex_point_map(vpms[mesh_id]));
-    return true;
   }
 
   return res;
