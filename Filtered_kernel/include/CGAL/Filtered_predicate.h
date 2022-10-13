@@ -122,6 +122,7 @@ class Filtered_predicate_RT_FT
 public:
   using result_type = typename Remove_needs_FT<typename EP_FT::result_type>::Type;
 
+private:
   template <typename... Args>
   struct Call_operator_needs_FT
   {
@@ -130,6 +131,15 @@ public:
     enum { value = std::is_same<Approx_res, Needs_FT<Ares> >::value };
   };
 
+  template <typename... Args,
+            std::enable_if_t<Call_operator_needs_FT<Args...>::value>* = nullptr>
+  result_type call(const Args&... args) const { return ep_ft(c2e_ft(args)...); }
+
+  template <typename... Args,
+            std::enable_if_t<! Call_operator_needs_FT<Args...>::value>* = nullptr>
+  result_type call(const Args&... args) const { return ep_rt(c2e_rt(args)...); }
+
+public:
   // ## Important note
   //
   // If you want to remove of rename that member function template `needs_FT`,
@@ -159,14 +169,11 @@ public:
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    if constexpr (Call_operator_needs_FT<Args...>::value)
-      return ep_ft(c2e_ft(args)...);
-    else
-      return ep_rt(c2e_rt(args)...);
+
+    return call(args...);
   }
 };
 
-
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_FILTERED_PREDICATE_H
