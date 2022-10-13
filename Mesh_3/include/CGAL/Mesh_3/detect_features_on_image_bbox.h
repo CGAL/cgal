@@ -40,7 +40,7 @@ void detect_features_on_bbox_with_know_word_type(const CGAL::Image_3& image,
   using Polylines = std::vector<Polyline_type>;
 
   Polylines polylines_on_bbox;
-  CGAL::polylines_to_protect(image, polylines_on_bbox);
+  CGAL::polylines_to_protect<Point_3, Word_type>(image, polylines_on_bbox);
 
   domain.add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
 }
