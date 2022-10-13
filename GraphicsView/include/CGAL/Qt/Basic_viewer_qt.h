@@ -1305,7 +1305,7 @@ protected:
           { setManipulatedFrame(nullptr); }
           else
           { setManipulatedFrame(m_frame_plane); }
-          
+
           switch(m_use_clipping_plane)
           {
           case CLIPPING_PLANE_OFF: displayMessage(QString("Draw clipping = false")); break;
@@ -1510,7 +1510,7 @@ protected:
       { CGAL::QGLViewer::keyPressEvent(e); } // By default call QGLViewer key press
     }
   }
-  
+
   virtual QString helpString() const
   { return helpString("CGAL Basic Viewer"); }
 

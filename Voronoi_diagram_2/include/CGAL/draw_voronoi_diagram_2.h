@@ -57,7 +57,6 @@ struct Drawing_functor_voronoi :
   std::function<bool(const DS&, vertex_handle)> draw_dual_vertices;
   std::function<bool(const DS&, vertex_handle)> draw_rays;
 
-
   void disable_voronoi_vertices() { m_draw_voronoi_vertices=false; }
   void enable_voronoi_vertices() { m_draw_voronoi_vertices=true; }
   bool are_voronoi_vertices_enabled() const { return m_draw_voronoi_vertices; }
@@ -69,7 +68,6 @@ struct Drawing_functor_voronoi :
   void disable_rays() { m_draw_rays=false; }
   void enable_rays() { m_draw_rays=true; }
   bool are_rays_enabled() const { return m_draw_rays; }
-
 
   void disable_nofaces() { m_nofaces=false; }
   void enable_nofaces() { m_nofaces=true; }
@@ -88,15 +86,13 @@ typedef Local_kernel::Vector_3 Local_vector;
 
 template <typename BufferType = float, class V2>
 void compute_vertex(typename V2::Vertex_iterator vh,
-                    CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
-  graphic_buffer.add_point(vh->point()); 
-}
+                    CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+{ graphic_buffer.add_point(vh->point());  }
 
 template <typename BufferType = float, class V2>
 void compute_dual_vertex(typename V2::Delaunay_graph::Finite_vertices_iterator vi,
-                        CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
-  graphic_buffer.add_point(vi->point(), CGAL::IO::Color(50, 100, 180));
-}
+                        CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+{ graphic_buffer.add_point(vi->point(), CGAL::IO::Color(50, 100, 180)); }
 
 template <typename BufferType = float, class V2>
 void add_segments_and_update_bounding_box(typename V2::Halfedge_handle he,
@@ -105,30 +101,33 @@ void add_segments_and_update_bounding_box(typename V2::Halfedge_handle he,
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef typename V2::Delaunay_vertex_handle Delaunay_vertex_const_handle;
 
-  if (he->is_segment()) {
-    graphic_buffer.add_segment(he->source()->point(), he->target()->point());
-  } else {
+  if (he->is_segment())
+  { graphic_buffer.add_segment(he->source()->point(), he->target()->point()); }
+  else
+  {
     Delaunay_vertex_const_handle v1 = he->up();
     Delaunay_vertex_const_handle v2 = he->down();
 
     Kernel::Vector_2 direction(v1->point().y() - v2->point().y(),
-                                v2->point().x() - v1->point().x());
-    if (he->is_ray()) {
+                               v2->point().x() - v1->point().x());
+    if (he->is_ray())
+    {
       Kernel::Point_2 end_point;
-      if (he->has_source()) {
+      if (he->has_source())
+      {
         end_point = he->source()->point();
 
-    // update_bounding_box_for_ray(end_point, direction);
+        // update_bounding_box_for_ray(end_point, direction);
 
-    // update_bounding_box_for_ray
-    Local_point lp = Basic_viewer_qt<>::get_local_point(end_point);
-    Local_vector lv = Basic_viewer_qt<>::get_local_vector(direction);
-    CGAL::Bbox_3 b = (lp + lv).bbox();
-    graphic_buffer.update_bounding_box(b);
-  
-
+        // update_bounding_box_for_ray
+        Local_point lp = Basic_viewer_qt<>::get_local_point(end_point);
+        Local_vector lv = Basic_viewer_qt<>::get_local_vector(direction);
+        CGAL::Bbox_3 b = (lp + lv).bbox();
+        graphic_buffer.update_bounding_box(b);
       }
-    } else if (he->is_bisector()) {
+    }
+    else if (he->is_bisector())
+    {
       Kernel::Point_2 pointOnLine((v1->point().x() + v2->point().x()) / 2,
                                   (v1->point().y() + v2->point().y()) / 2);
       Kernel::Vector_2 perpendicularDirection(
@@ -145,7 +144,6 @@ void add_segments_and_update_bounding_box(typename V2::Halfedge_handle he,
 
       CGAL::Bbox_3 b = lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox();
       graphic_buffer.update_bounding_box(b);
-
     }
   }
 }
@@ -167,32 +165,37 @@ Local_kernel::Point_2 get_second_point(typename V2::Halfedge_handle ray,
 
   // origin of the ray
   Kernel::Point_2 p;
-  if (ray->has_source()) {
-    p = ray->source()->point();
-  } else {
-    p = ray->target()->point();
-  }
+  if (ray->has_source())
+  { p = ray->source()->point(); }
+  else
+  { p = ray->target()->point(); }
 
   // get the bounding box of the viewer
   Local_kernel::Vector_2 boundsMin(m_bounding_box.xmin(),
-                                    m_bounding_box.zmin());
+                                   m_bounding_box.zmin());
   Local_kernel::Vector_2 boundsMax(m_bounding_box.xmax(),
-                                    m_bounding_box.zmax());
+                                   m_bounding_box.zmax());
   // calculate intersection
   double txmax, txmin, tymax, tymin;
 
-  if (inv.x() >= 0) {
+  if (inv.x() >= 0)
+  {
     txmax = (boundsMax.x() - p.x()) * inv.x();
     txmin = (boundsMin.x() - p.x()) * inv.x();
-  } else {
+  }
+  else
+  {
     txmax = (boundsMin.x() - p.x()) * inv.x();
     txmin = (boundsMax.x() - p.x()) * inv.x();
   }
 
-  if (inv.y() >= 0) {
+  if (inv.y() >= 0)
+  {
     tymax = (boundsMax.y() - p.y()) * inv.y();
     tymin = (boundsMin.y() - p.y()) * inv.y();
-  } else {
+  }
+  else
+  {
     tymax = (boundsMin.y() - p.y()) * inv.y();
     tymin = (boundsMax.y() - p.y()) * inv.y();
   }
@@ -203,20 +206,19 @@ Local_kernel::Point_2 get_second_point(typename V2::Halfedge_handle ray,
     txmax = tymax;
 
   Local_kernel::Point_2 p1;
-  if (v.x() == 0) {
-    p1 = Local_kernel::Point_2(p.x(), p.y() + tymax * v.y());
-  } else if (v.y() == 0) {
-    p1 = Local_kernel::Point_2(p.x() + txmax * v.x(), p.y());
-  } else {
-    p1 = Local_kernel::Point_2(p.x() + txmax * v.x(), p.y() + tymax * v.y());
-  }
+  if (v.x() == 0)
+  { p1 = Local_kernel::Point_2(p.x(), p.y() + tymax * v.y()); }
+  else if (v.y() == 0)
+  { p1 = Local_kernel::Point_2(p.x() + txmax * v.x(), p.y()); }
+  else
+  { p1 = Local_kernel::Point_2(p.x() + txmax * v.x(), p.y() + tymax * v.y()); }
   return p1;
 }
 
 // Halfedge_const_handle
 template <typename BufferType = float, class V2>
 void compute_rays_and_bisectors(typename V2::Halfedge_iterator he,
-                              CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+                                CGAL::Graphic_buffer<BufferType> &graphic_buffer)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef typename V2::Delaunay_vertex_handle Delaunay_vertex_const_handle;
@@ -225,7 +227,7 @@ void compute_rays_and_bisectors(typename V2::Halfedge_iterator he,
   Delaunay_vertex_const_handle v2 = he->down();
 
   Kernel::Vector_2 direction(v1->point().y() - v2->point().y(),
-                              v2->point().x() - v1->point().x());
+                             v2->point().x() - v1->point().x());
   if (he->is_ray()) {
     if (he->has_source()) {
       // add_ray_segment(he->source()->point(), get_second_point(he, graphic_buffer.get_bounding_box()));
@@ -276,7 +278,7 @@ void compute_face(typename V2::Face_iterator fh,
 }
 
 template <typename BufferType = float, class V2, class DrawingFunctor>
-void compute_elements(const V2& v2, CGAL::Graphic_buffer<BufferType> &graphic_buffer, 
+void compute_elements(const V2& v2, CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                       const DrawingFunctor &m_drawing_functor)
 {
   typedef typename V2::Delaunay_graph::Finite_vertices_iterator Dual_vertices_iterator;
@@ -290,61 +292,65 @@ void compute_elements(const V2& v2, CGAL::Graphic_buffer<BufferType> &graphic_bu
   }
 
   // Draw the dual vertices
-  if (m_drawing_functor.are_dual_vertices_enabled()) {
+  if (m_drawing_functor.are_dual_vertices_enabled())
+  {
     for (Dual_vertices_iterator it = v2.dual().finite_vertices_begin();
-          it != v2.dual().finite_vertices_end(); ++it) {
-      compute_dual_vertex<BufferType, V2>(it, graphic_buffer);
-    }
+          it != v2.dual().finite_vertices_end(); ++it)
+    { compute_dual_vertex<BufferType, V2>(it, graphic_buffer); }
   }
 
   // Add segments and update bounding box
   for (typename V2::Halfedge_iterator it = v2.halfedges_begin();
-        it != v2.halfedges_end(); ++it) {
-    add_segments_and_update_bounding_box<BufferType, V2>(it, graphic_buffer);
-  }
+        it != v2.halfedges_end(); ++it)
+  { add_segments_and_update_bounding_box<BufferType, V2>(it, graphic_buffer); }
 
-  if(m_drawing_functor.are_rays_enabled()) {
+  if(m_drawing_functor.are_rays_enabled())
+  {
     for (typename V2::Halfedge_iterator it = v2.halfedges_begin();
-          it != v2.halfedges_end(); ++it) {
-      compute_rays_and_bisectors<BufferType, V2>(it, graphic_buffer);
-    }
+          it != v2.halfedges_end(); ++it)
+    { compute_rays_and_bisectors<BufferType, V2>(it, graphic_buffer); }
   }
 
-  if (!m_drawing_functor.are_nofaces_enabled()) {
+  if (!m_drawing_functor.are_nofaces_enabled())
+  {
     for (typename V2::Face_iterator it = v2.faces_begin();
-          it != v2.faces_end(); ++it) {
-      compute_face(it, v2, graphic_buffer, m_drawing_functor);
-    }
+          it != v2.faces_end(); ++it)
+    { compute_face(it, v2, graphic_buffer, m_drawing_functor); }
   }
 }
 
 } // namespace draw_function_for_v2
 
-template <typename BufferType = float, class V2, class DrawingFunctor>
-void add_in_graphic_buffer(const V2 &v2, CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                             const DrawingFunctor &m_drawing_functor)
+#define CGAL_VORONOI_TYPE CGAL::Voronoi_diagram_2 <DG, AT, AP>
+
+template <class DG, class AT, class AP,
+          typename BufferType=float, class DrawingFunctor>
+void add_in_graphic_buffer(const CGAL_VORONOI_TYPE &v2,
+                           CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                           const DrawingFunctor &m_drawing_functor)
 {
   draw_function_for_v2::compute_elements(v2, graphic_buffer, m_drawing_functor);
 }
 
-template <typename BufferType = float, class V2>
-void add_in_graphic_buffer(const V2 &v2, CGAL::Graphic_buffer<BufferType> &graphic_buffer, 
+template <class DG, class AT, class AP, typename BufferType=float>
+void add_in_graphic_buffer(const CGAL_VORONOI_TYPE &v2,
+                           CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                            bool m_nofaces = false, bool m_draw_voronoi_vertices = true,
-                           bool m_draw_dual_vertices = true ) {
-
+                           bool m_draw_dual_vertices = true )
+{
   // Default functor; user can add his own functor.
-  CGAL::draw_function_for_v2::Drawing_functor_voronoi<V2, typename V2::Vertex_iterator,
-                typename V2::Halfedge_iterator,
-                typename V2::Face_iterator>
+  CGAL::draw_function_for_v2::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
+                                                      typename CGAL_VORONOI_TYPE::Vertex_iterator,
+                                                      typename CGAL_VORONOI_TYPE::Halfedge_iterator,
+                                                      typename CGAL_VORONOI_TYPE::Face_iterator>
     drawing_functor;
 
-  drawing_functor.colored_face = [](const V2&,
-                      typename V2::Face_iterator fh) -> bool
+  drawing_functor.colored_face = [](const CGAL_VORONOI_TYPE&,
+                                    typename CGAL_VORONOI_TYPE::Face_iterator fh) -> bool
   { return true; };
 
-
-  drawing_functor.face_color =  [] (const V2& alcc,
-                           typename V2::Face_iterator fh) -> CGAL::IO::Color
+  drawing_functor.face_color =  [] (const CGAL_VORONOI_TYPE& alcc,
+                                    typename CGAL_VORONOI_TYPE::Face_iterator fh) -> CGAL::IO::Color
   {
     return CGAL::IO::Color(73, 250, 117);
   };
@@ -358,32 +364,25 @@ void add_in_graphic_buffer(const V2 &v2, CGAL::Graphic_buffer<BufferType> &graph
 // setKeyDescription(::Qt::Key_D, "Toggles dual vertices display");
 // setKeyDescription(::Qt::Key_V, "Toggles voronoi vertices display");
 
-
-
-
 // Specialization of draw function.
-#define CGAL_VORONOI_TYPE CGAL::Voronoi_diagram_2 <DG, AT, AP>
-
-template<class DG,
-         class AT,
-         class AP, typename BufferType = float, class DrawingFunctor>
+template<class DG, class AT, class AP,
+         typename BufferType=float, class DrawingFunctor>
 void draw(const CGAL_VORONOI_TYPE &av2,
-          const DrawingFunctor &drawing_functor)
+          const DrawingFunctor &drawing_functor,
+          const char *title="2D Voronoi Diagram Basic Viewer")
 {
   CGAL::Graphic_buffer<BufferType> buffer;
   add_in_graphic_buffer(av2, buffer, drawing_functor);
-  draw_buffer(buffer);
+  draw_buffer(buffer, title);
 }
 
-template<class DG,
-         class AT,
-         class AP, typename BufferType = float>
+template<class DG, class AT, class AP, typename BufferType=float>
 void draw(const CGAL_VORONOI_TYPE &av2,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
   CGAL::Graphic_buffer<BufferType> buffer;
 
-  CGAL::draw_function_for_v2::Drawing_functor_voronoi<CGAL_VORONOI_TYPE, 
+  CGAL::draw_function_for_v2::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
               typename CGAL_VORONOI_TYPE::Vertex_iterator,
               typename CGAL_VORONOI_TYPE::Halfedge_iterator,
               typename CGAL_VORONOI_TYPE::Face_iterator>
@@ -402,7 +401,7 @@ void draw(const CGAL_VORONOI_TYPE &av2,
 
   add_in_graphic_buffer(av2, buffer, drawing_functor);
 
-  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> VoronoiKeyPressEvent = 
+  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> VoronoiKeyPressEvent =
             [&av2, &drawing_functor] (QKeyEvent *e, CGAL::Basic_viewer_qt<float> *_this) -> bool
   {
     /// [Keypress]
@@ -469,7 +468,7 @@ void draw(const CGAL_VORONOI_TYPE &av2,
     /// [Keypress]
     return true;
   };
-  draw_buffer(buffer, VoronoiKeyPressEvent);
+  draw_buffer(buffer, VoronoiKeyPressEvent, title);
 
 }
 

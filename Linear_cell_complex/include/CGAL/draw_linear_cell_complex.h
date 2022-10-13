@@ -13,13 +13,12 @@
 #ifndef CGAL_DRAW_LCC_H
 #define CGAL_DRAW_LCC_H
 
-#include <CGAL/Graphic_buffer.h>
-#include <CGAL/Drawing_functor.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <functional>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Drawing_functor.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>
 
@@ -90,7 +89,7 @@ void compute_face(typename LCC::Dart_const_handle dh,
     CGAL::IO::Color c=m_drawing_functor.face_color(*lcc, dh);
     graphic_buffer.face_begin(c);
   }
-  else 
+  else
   { graphic_buffer.face_begin(); }
 
   cur=dh;
@@ -148,7 +147,7 @@ void compute_vertex(typename LCC::Dart_const_handle dh, const LCC *lcc,
 }
 
 template <typename BufferType = float, class LCC, class DrawingFunctor>
-void compute_elements(const LCC *lcc, CGAL::Graphic_buffer<BufferType> &graphic_buffer, 
+void compute_elements(const LCC *lcc, CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                       const DrawingFunctor &m_drawing_functor)
 {
   if (lcc==nullptr)
@@ -228,37 +227,48 @@ void compute_elements(const LCC *lcc, CGAL::Graphic_buffer<BufferType> &graphic_
   lcc->free_mark(oriented_mark);
 }
 
-} // namespace draw_function
+} // namespace draw_function_for_lcc
 
-/**
- * @brief This function is responsible for filling the buffer to allow
- * visualization.
- *
- * @param graphic_buffer
- * @param m_drawing_functor
- * @param alcc
- */
-template <typename BufferType = float, class LCC, class DrawingFunctor>
-void add_in_graphic_buffer(const LCC &alcc, CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                               const DrawingFunctor &m_drawing_functor)
+#define CGAL_LCC_TYPE                                                          \
+  CGAL::Linear_cell_complex_base<d_, ambient_dim, Traits_, Items_, Alloc_,     \
+                                 Map, Refs, Storage_>
+
+// add_in_graphic_buffer: to add a LCC in the given graphic buffer, with a
+// drawing functor.
+template<unsigned int d_, unsigned int ambient_dim, class Traits_,
+         class Items_, class Alloc_,
+         template <unsigned int, class, class, class, class> class Map,
+         class Refs, class Storage_,
+         typename BufferType=float, class DrawingFunctor>
+void add_in_graphic_buffer(const CGAL_LCC_TYPE &alcc,
+                           CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                           const DrawingFunctor &m_drawing_functor)
 {
   draw_function_for_lcc::compute_elements(&alcc, graphic_buffer, m_drawing_functor);
 }
 
-template <typename BufferType = float, class LCC>
-void add_in_graphic_buffer(const LCC &alcc, CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+// add_in_graphic_buffer: to add a LCC in the given graphic buffer, without a
+// drawing functor. Use default drawing values.
+template<unsigned int d_, unsigned int ambient_dim, class Traits_,
+         class Items_, class Alloc_,
+         template <unsigned int, class, class, class, class> class Map,
+         class Refs, class Storage_, typename BufferType=float>
+void add_in_graphic_buffer(const CGAL_LCC_TYPE &alcc,
+                           CGAL::Graphic_buffer<BufferType> &graphic_buffer)
 {
-  Drawing_functor_with_volume<LCC,typename LCC::Dart_const_handle,
-                                  typename LCC::Dart_const_handle,
-                                  typename LCC::Dart_const_handle,
-                                  typename LCC::Dart_const_handle> drawing_functor_with_volume;
+  CGAL::Drawing_functor_with_volume<CGAL_LCC_TYPE,
+                                    typename CGAL_LCC_TYPE::Dart_const_handle,
+                                    typename CGAL_LCC_TYPE::Dart_const_handle,
+                                    typename CGAL_LCC_TYPE::Dart_const_handle,
+                                    typename CGAL_LCC_TYPE::Dart_const_handle>
+    drawing_functor_with_volume;
 
-  drawing_functor_with_volume.colored_volume = [](const LCC&,
-                      typename LCC::Dart_const_handle) -> bool
+  drawing_functor_with_volume.colored_volume = [](const CGAL_LCC_TYPE&,
+                      typename CGAL_LCC_TYPE::Dart_const_handle) -> bool
   { return true; };
 
-  drawing_functor_with_volume.volume_color =  [] (const LCC& alcc,
-                           typename LCC::Dart_const_handle dh) -> CGAL::IO::Color
+  drawing_functor_with_volume.volume_color =  [] (const CGAL_LCC_TYPE& alcc,
+                           typename CGAL_LCC_TYPE::Dart_const_handle dh) -> CGAL::IO::Color
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
@@ -267,33 +277,30 @@ void add_in_graphic_buffer(const LCC &alcc, CGAL::Graphic_buffer<BufferType> &gr
   add_in_graphic_buffer(alcc, graphic_buffer, drawing_functor_with_volume);
 }
 
-// Specialization of draw function.
-#define CGAL_LCC_TYPE                                                          \
-  CGAL::Linear_cell_complex_base<d_, ambient_dim, Traits_, Items_, Alloc_,     \
-                                 Map, Refs, Storage_>
-
+// Specialization of draw function for a LCC, with a drawing functor.
 template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_,
          class DrawingFunctor>
-void draw(const CGAL_LCC_TYPE &alcc, const DrawingFunctor &drawing_functor, 
-          const char *title = "LCC for CMap Basic Viewer")
+void draw(const CGAL_LCC_TYPE &alcc, const DrawingFunctor &drawing_functor,
+          const char *title="LCC Basic Viewer")
 {
   CGAL::Graphic_buffer<float> buffer;
   add_in_graphic_buffer(alcc, buffer, drawing_functor);
-  draw_buffer(buffer);
+  draw_buffer(buffer, title);
 }
 
+// Specialization of draw function for a LCC, without a drawing functor.
 template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_>
-void draw(const CGAL_LCC_TYPE &alcc, const char *title = "LCC for CMap Basic Viewer")
+void draw(const CGAL_LCC_TYPE &alcc, const char *title="LCC Basic Viewer")
 {
   CGAL::Graphic_buffer<float> buffer;
   add_in_graphic_buffer(alcc, buffer);
-  draw_buffer(buffer);
+  draw_buffer(buffer, title);
 }
 
 #undef CGAL_LCC_TYPE
