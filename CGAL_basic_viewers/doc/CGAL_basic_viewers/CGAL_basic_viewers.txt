@@ -1,0 +1,13 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_CGAL_Basic_viewers
+\anchor 
+\cgalAutoToc
+\author Guillaume Damiand, Mostafa Ashraf
+
+
+*/
+
+} /* namespace CGAL */
