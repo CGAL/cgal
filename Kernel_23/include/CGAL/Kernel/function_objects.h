@@ -3351,17 +3351,17 @@ namespace CommonKernelFunctors {
       const bool a_in_s1 = has_on_bounded_side(s1, a);
       const bool a_in_s2 = has_on_bounded_side(s2, a);
 
-      if(!(a_in_s1 || a_in_s2)) return false;
+      if(!(a_in_s1 || a_in_s2)) return {false};
 
       const bool b_in_s1 = has_on_bounded_side(s1, b);
       const bool b_in_s2 = has_on_bounded_side(s2, b);
 
-      if(!(b_in_s1 || b_in_s2)) return false;
+      if(!(b_in_s1 || b_in_s2)) return {false};
 
-      if(a_in_s1 && b_in_s1) return true;
-      if(a_in_s2 && b_in_s2) return true;
+      if(a_in_s1 && b_in_s1) return {true};
+      if(a_in_s2 && b_in_s2) return {true};
 
-      if(!K().do_intersect_3_object()(s1, s2)) return false;
+      if(!K().do_intersect_3_object()(s1, s2)) return {false};
       const Circle_3 circ(s1, s2);
       const Plane_3& plane = circ.supporting_plane();
       const auto optional = K().intersect_3_object()(plane, Segment_3(a, b));
