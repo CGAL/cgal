@@ -501,7 +501,9 @@ namespace internal {
       }
 
       //split long edges
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_splits = 0;
+#endif
       while (!long_edges.empty())
       {
         //the edge with longest length
