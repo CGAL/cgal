@@ -52,7 +52,6 @@
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
-#include <CGAL/Random.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Qt/init_ogl_context.h>
 
@@ -62,19 +61,6 @@
 namespace CGAL
 {
 
-//------------------------------------------------------------------------------
-inline CGAL::IO::Color get_random_color(CGAL::Random& random)
-{
-  CGAL::IO::Color res;
-  do
-  {
-    res=CGAL::IO::Color(random.get_int(0,256),
-                    random.get_int(0,256),
-                    random.get_int(0,256));
-  }
-  while(res.red()==255 && res.green()==255 && res.blue()==255);
-  return res;
-}
 //------------------------------------------------------------------------------
 template <typename BufferType = float>
 class Basic_viewer_qt : public CGAL::QGLViewer

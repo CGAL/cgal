@@ -31,6 +31,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Random.h>
 
 #include <cstdlib>
 
@@ -38,6 +39,20 @@
 
 namespace CGAL {
 
+//------------------------------------------------------------------------------
+inline CGAL::IO::Color get_random_color(CGAL::Random& random)
+{
+  CGAL::IO::Color res;
+  do
+  {
+    res=CGAL::IO::Color(random.get_int(0,256),
+                        random.get_int(0,256),
+                        random.get_int(0,256));
+  }
+  while(res.red()==255 && res.green()==255 && res.blue()==255);
+  return res;
+}
+//------------------------------------------------------------------------------
 // This class is responsible for dealing with available CGAL data structures and
 // handling buffers.
 template <typename BufferType = float>
@@ -46,33 +61,6 @@ class Graphic_buffer
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
-
-  Graphic_buffer(std::vector<BufferType> (&pos)[20], CGAL::Bbox_3 &bbox)
-      : m_buffer_for_mono_points(&pos[POS_MONO_POINTS], nullptr, &bbox, nullptr,
-                                 nullptr, nullptr),
-        m_buffer_for_colored_points(&pos[POS_COLORED_POINTS], nullptr, &bbox,
-                                    &pos[COLOR_POINTS], nullptr, nullptr),
-        m_buffer_for_mono_segments(&pos[POS_MONO_SEGMENTS], nullptr, &bbox,
-                                   nullptr, nullptr, nullptr),
-        m_buffer_for_colored_segments(&pos[POS_COLORED_SEGMENTS], nullptr,
-                                      &bbox, &pos[COLOR_SEGMENTS], nullptr,
-                                      nullptr),
-        m_buffer_for_mono_rays(&pos[POS_MONO_RAYS], nullptr, &bbox, nullptr,
-                               nullptr),
-        m_buffer_for_colored_rays(&pos[POS_COLORED_RAYS], nullptr, &bbox,
-                                  &pos[COLOR_RAYS], nullptr, nullptr),
-        m_buffer_for_mono_lines(&pos[POS_MONO_RAYS], nullptr, &bbox, nullptr,
-                                nullptr),
-        m_buffer_for_colored_lines(&pos[POS_COLORED_LINES], nullptr, &bbox,
-                                   &pos[COLOR_LINES], nullptr, nullptr),
-        m_buffer_for_mono_faces(&pos[POS_MONO_FACES], nullptr, &bbox, nullptr,
-                                &pos[FLAT_NORMAL_MONO_FACES],
-                                &pos[SMOOTH_NORMAL_MONO_FACES]),
-        m_buffer_for_colored_faces(&pos[POS_COLORED_FACES], nullptr, &bbox,
-                                   &pos[COLOR_FACES],
-                                   &pos[FLAT_NORMAL_COLORED_FACES],
-                                   &pos[SMOOTH_NORMAL_COLORED_FACES])
-  {}
 
   Graphic_buffer()
       : m_buffer_for_mono_points(&arrays[POS_MONO_POINTS], nullptr,
