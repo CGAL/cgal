@@ -13,6 +13,9 @@
 #include "Mesh_function.h"
 #include "Facet_extra_criterion.h"
 
+#include <CGAL/Mesh_3/detect_features_in_image.h>
+#include <CGAL/Mesh_3/detect_features_on_image_bbox.h>
+
 
 using namespace CGAL::Three;
 
@@ -344,81 +347,62 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   {
     namespace p = CGAL::parameters;
 
-    Image_mesh_domain* p_domain;
-    if (protect_borders || !polylines.empty())
+    Image_mesh_domain* p_domain = nullptr;
+#ifdef CGAL_USE_ITK
+    if(nullptr != pWeights)
     {
-      p_domain = (nullptr != pWeights)
-        ? new Image_mesh_domain(
-            Image_mesh_domain::create_labeled_image_mesh_domain
-              (p::image = *pImage,
-               p::weights = *pWeights,
-               p::relative_error_bound = 1e-6,
-               p::construct_surface_patch_index =
-                 [](int i, int j) { return (i * 1000 + j); }))
-        : new Image_mesh_domain(
-            Image_mesh_domain::create_labeled_image_mesh_domain
-              (p::image = *pImage,
-               p::relative_error_bound = 1e-6,
-               p::construct_surface_patch_index =
-                 [](int i, int j) { return (i * 1000 + j); }));
-
-      if (protect_borders && polylines.empty())
-      {
-        std::vector<std::vector<Bare_point> > polylines_on_bbox;
-
-        CGAL_IMAGE_IO_CASE(pImage->image(),
-          {
-            typedef Word Image_word_type;
-            (CGAL::polylines_to_protect<
-               Bare_point,
-               Image_word_type>(*pImage, polylines_on_bbox));
-          }
-        );
-        if (!polylines_on_bbox.empty())
-          p_domain->add_features(polylines_on_bbox.begin(),
-                                 polylines_on_bbox.end());
-      }
-      else if(!polylines.empty())
-      {
-        // Insert input edges in domain
-        p_domain->add_features(polylines.begin(), polylines.end());
-      }
+      p_domain = new Image_mesh_domain
+      (Image_mesh_domain::create_labeled_image_mesh_domain
+       (p::image = *pImage,
+        p::weights = *pWeights,
+        p::relative_error_bound = 1e-6,
+        p::construct_surface_patch_index =
+        [](int i, int j) { return (i * 1000 + j); }
+       )
+      );
     }
-
-    else if(protect_features)
-    {
-      p_domain = (nullptr != pWeights)
-        ? new Image_mesh_domain
+    else
+#endif
+      if (protect_features && polylines.empty())
+      {
+        p_domain = new Image_mesh_domain
           (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
-           (p::image = *pImage,
-            p::weights = *pWeights,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); }))
-        : new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
-            (p::image = *pImage,
-             p::relative_error_bound = 1e-6,
-             p::construct_surface_patch_index =
-             [](int i, int j) { return (i * 1000 + j); }));
-    }
-    else //no feature protection
-    {
-      p_domain = (nullptr != pWeights)
-        ? new Image_mesh_domain
-         (Image_mesh_domain::create_labeled_image_mesh_domain
           (p::image = *pImage,
-           p::weights = *pWeights,
-           p::relative_error_bound = 1e-6,
-           p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); }))
-        : new Image_mesh_domain
-         (Image_mesh_domain::create_labeled_image_mesh_domain
-           (p::image = *pImage,
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
-             [](int i, int j) { return (i * 1000 + j); }));
+            [](int i, int j) { return (i * 1000 + j); },
+            p::detect_features = CGAL::Mesh_3::Detect_features_in_image()
+          )
+        );
       }
+      else if (protect_borders && polylines.empty())//protect polylines on image Bbox
+      {
+        p_domain = new Image_mesh_domain
+          (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
+          (p::image = *pImage,
+            p::relative_error_bound = 1e-6,
+            p::construct_surface_patch_index =
+            [](int i, int j) { return (i * 1000 + j); },
+            p::detect_features = CGAL::Mesh_3::Detect_features_on_image_bbox()
+          )
+        );
+      }
+
+      if (p_domain == nullptr)
+      {
+        p_domain = new Image_mesh_domain
+          (Image_mesh_domain::create_labeled_image_mesh_domain
+          (p::image = *pImage,
+            p::relative_error_bound = 1e-6,
+            p::construct_surface_patch_index =
+            [](int i, int j) { return (i * 1000 + j); }
+          )
+        );
+      }
+
+      // Insert input edges in domain
+      if (!polylines.empty())
+        p_domain->add_features(polylines.begin(), polylines.end());
 
     typedef ::Mesh_function<Image_mesh_domain,
                             Mesh_fnt::Labeled_image_domain_tag> Mesh_function;
