@@ -6,6 +6,10 @@ Release History
 
 Release date: December 2022
 
+### General Changes
+
+- The per package assertions, pre- and postconditions are no longer supported.
+
 ### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps) [Generalized Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgGeneralizedMaps) [Linear Cell Complex](https://doc.cgal.org/5.6/Manual/packages.html#PkgLinearCellComplex)
 
 - Added a version that uses indices instead of handles as dart and attribute descriptors. As the indices are integers convertible from and to `std::size_t`, they can be used as index into vectors which store properties. To use the index version,  `Use_index` must be defined and be equal to `CGAL::Tag_true` in the item class.
@@ -39,7 +43,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 ### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh2)
 
 -   Deprecated two overloads of Function `refine_Delaunay_mesh()` and replaced them with versions using function named parameters.
--   Add overloads of function `write_VTU()` with property maps for specifying the domain.    
+-   Add overloads of function `write_VTU()` with property maps for specifying the domain.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
