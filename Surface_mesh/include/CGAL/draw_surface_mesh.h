@@ -29,45 +29,55 @@ void draw(const SM& asm);
 
 #else // DOXYGEN_RUNNING
 
+#include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Drawing_functor.h>
-#include <CGAL/license/Surface_mesh.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
-
-#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
+
+#ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/Qt/Basic_viewer_qt.h>
+#endif
 
 namespace CGAL
 {
 
-// Specialization of draw function.
-template<class K, typename BufferType = float>
+template<class K, typename BufferType=float,  class DrawingFunctor>
+void add_in_graphic_buffer(const Surface_mesh<K>& amesh,
+                           CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                           const DrawingFunctor &drawing_functor)
+{ add_in_graphic_buffer_for_fg(amesh, graphic_buffer, drawing_functor); }
+ 
+template<class K, typename BufferType=float>
+void add_in_graphic_buffer(const Surface_mesh<K>& amesh,
+                           CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+{ add_in_graphic_buffer_for_fg(amesh, graphic_buffer); }
+ 
+#ifdef CGAL_USE_BASIC_VIEWER
+
+  // Specialization of draw function.
+template<class K, typename BufferType=float>
 void draw(const Surface_mesh<K>& amesh,
-          const char* title="Surface_mesh Basic Viewer",
-          bool nofill=false)
+          const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphic_buffer<BufferType> buffer;
-  add_in_graphic_buffer(amesh, buffer);
-  draw_buffer(buffer);
+  add_in_graphic_buffer_for_fg(amesh, buffer);
+  draw_buffer(buffer, title);
 }
 
-template<class K, typename BufferType = float, class DrawingFunctor>
+template<class K, typename BufferType=float, class DrawingFunctor>
 void draw(const Surface_mesh<K>& amesh,
           const DrawingFunctor &drawing_functor,
-          const char* title="Surface_mesh Basic Viewer",
-          bool nofill=false)
+          const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphic_buffer<BufferType> buffer;
-  add_in_graphic_buffer(amesh, buffer, drawing_functor);
-  draw_buffer(buffer);
+  add_in_graphic_buffer_for_fg(amesh, buffer, drawing_functor);
+  draw_buffer(buffer, title);
 }
 
-} // End namespace CGAL
-
 #endif // CGAL_USE_BASIC_VIEWER
+
+} // End namespace CGAL
 
 #endif // DOXYGEN_RUNNING
 
