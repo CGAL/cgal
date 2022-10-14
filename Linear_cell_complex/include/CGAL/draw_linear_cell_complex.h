@@ -14,9 +14,6 @@
 #define CGAL_DRAW_LCC_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
-
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Linear_cell_complex_operations.h>
@@ -81,13 +78,11 @@ void compute_face(typename LCC::Dart_const_handle dh,
 
   if (m_drawing_functor.colored_volume(*lcc, voldh))
   {
-    CGAL::IO::Color c=m_drawing_functor.volume_color(*lcc, voldh);
-    graphic_buffer.face_begin(c);
+    graphic_buffer.face_begin(m_drawing_functor.volume_color(*lcc, voldh));
   }
   else if (m_drawing_functor.colored_face(*lcc, dh))
   {
-    CGAL::IO::Color c=m_drawing_functor.face_color(*lcc, dh);
-    graphic_buffer.face_begin(c);
+    graphic_buffer.face_begin(m_drawing_functor.face_color(*lcc, dh));
   }
   else
   { graphic_buffer.face_begin(); }
@@ -128,7 +123,7 @@ void compute_edge(typename LCC::Dart_const_handle dh, const LCC *lcc,
   }
 }
 
-template <typename BufferType = float, class LCC, class DrawingFunctorLCC>
+template <typename BufferType=float, class LCC, class DrawingFunctorLCC>
 void compute_vertex(typename LCC::Dart_const_handle dh, const LCC *lcc,
                     const DrawingFunctorLCC &m_drawing_functor,
                     CGAL::Graphic_buffer<BufferType> &graphic_buffer)
@@ -146,8 +141,9 @@ void compute_vertex(typename LCC::Dart_const_handle dh, const LCC *lcc,
   { graphic_buffer.add_point(lcc->point(dh)); }
 }
 
-template <typename BufferType = float, class LCC, class DrawingFunctor>
-void compute_elements(const LCC *lcc, CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+template <typename BufferType=float, class LCC, class DrawingFunctor>
+void compute_elements(const LCC *lcc,
+                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                       const DrawingFunctor &m_drawing_functor)
 {
   if (lcc==nullptr)
@@ -277,6 +273,8 @@ void add_in_graphic_buffer(const CGAL_LCC_TYPE &alcc,
   add_in_graphic_buffer(alcc, graphic_buffer, drawing_functor_with_volume);
 }
 
+#ifdef CGAL_USE_BASIC_VIEWER
+
 // Specialization of draw function for a LCC, with a drawing functor.
 template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
@@ -303,10 +301,10 @@ void draw(const CGAL_LCC_TYPE &alcc, const char *title="LCC Basic Viewer")
   draw_buffer(buffer, title);
 }
 
+#endif // CGAL_USE_BASIC_VIEWER
+
 #undef CGAL_LCC_TYPE
 
 } // End namespace CGAL
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // CGAL_DRAW_LCC_H

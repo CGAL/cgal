@@ -41,6 +41,7 @@ struct Drawing_functor
     face_wireframe=[](const DS &, face_handle)->bool { return false; };
   }
 
+  // The seven following functions should not be null
   std::function<bool(const DS &, vertex_handle)> draw_vertex;
   std::function<bool(const DS &, edge_handle)>   draw_edge;
   std::function<bool(const DS &, face_handle)>   draw_face;
@@ -51,6 +52,8 @@ struct Drawing_functor
 
   std::function<bool(const DS &, face_handle)> face_wireframe;
 
+  // These functions must be non null if the corresponding colored_XXX function
+  // returns true.
   std::function<CGAL::IO::Color(const DS &, vertex_handle)> vertex_color;
   std::function<CGAL::IO::Color(const DS &, edge_handle)>   edge_color;
   std::function<CGAL::IO::Color(const DS &, face_handle)>   face_color;

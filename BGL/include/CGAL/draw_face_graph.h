@@ -63,7 +63,7 @@ void compute_elements(const FG &fg,
     for (auto fh : faces(fg))
     {
       if (fh != boost::graph_traits<FG>::null_face() && // face exists
-          m_drawing_functor.colored_face && // std::function is not null
+          !m_drawing_functor.face_wireframe(fg, fh) && // face is not wireframe
           m_drawing_functor.colored_face(fg, fh)) // and face is colored
       {
         graphic_buffer.face_begin(m_drawing_functor.face_color(fg, fh));
@@ -85,8 +85,7 @@ void compute_elements(const FG &fg,
   {
     for (auto e : edges(fg))
     {
-      if(m_drawing_functor.colored_edge && // std::function is not null
-         m_drawing_functor.colored_edge(fg, e)) // and edge is colored
+      if(m_drawing_functor.colored_edge(fg, e)) // edge is colored
       { 
         graphic_buffer.add_segment(get(point_pmap, source(halfedge(e, fg), fg)),
                                    get(point_pmap, target(halfedge(e, fg), fg)),
@@ -104,8 +103,7 @@ void compute_elements(const FG &fg,
   {
     for (auto v : vertices(fg))
     {
-      if(m_drawing_functor.colored_vertex && // std::function is not null
-         m_drawing_functor.colored_vertex(fg, v)) // and vertex is colored
+      if(m_drawing_functor.colored_vertex(fg, v)) // vertex is colored
       { 
         graphic_buffer.add_point(get(point_pmap, v),
                                  m_drawing_functor.vertex_color(fg, v));

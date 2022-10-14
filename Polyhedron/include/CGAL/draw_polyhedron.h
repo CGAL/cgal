@@ -18,10 +18,7 @@
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/draw_face_graph.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#endif
 
 namespace CGAL
 {

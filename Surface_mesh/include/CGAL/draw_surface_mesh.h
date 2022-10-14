@@ -34,10 +34,7 @@ void draw(const SM& asm);
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#endif
 
 namespace CGAL
 {
