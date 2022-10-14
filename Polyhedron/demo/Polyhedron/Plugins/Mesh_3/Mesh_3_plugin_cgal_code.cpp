@@ -348,26 +348,12 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     namespace p = CGAL::parameters;
 
     Image_mesh_domain* p_domain = nullptr;
-#ifdef CGAL_USE_ITK
-    if(nullptr != pWeights)
-    {
-      p_domain = new Image_mesh_domain
-      (Image_mesh_domain::create_labeled_image_mesh_domain
-       (p::image = *pImage,
-        p::weights = *pWeights,
-        p::relative_error_bound = 1e-6,
-        p::construct_surface_patch_index =
-        [](int i, int j) { return (i * 1000 + j); }
-       )
-      );
-    }
-    else
-#endif
       if (protect_features && polylines.empty())
       {
         p_domain = new Image_mesh_domain
           (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
           (p::image = *pImage,
+            p::weights = (pWeights == nullptr) ? CGAL::Image_3() : * pWeights, //used only if valid
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
             [](int i, int j) { return (i * 1000 + j); },
@@ -380,6 +366,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
         p_domain = new Image_mesh_domain
           (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
           (p::image = *pImage,
+            p::weights = (pWeights == nullptr) ? CGAL::Image_3() : *pWeights, //used only if valid
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
             [](int i, int j) { return (i * 1000 + j); },
@@ -393,6 +380,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
         p_domain = new Image_mesh_domain
           (Image_mesh_domain::create_labeled_image_mesh_domain
           (p::image = *pImage,
+            p::weights = (pWeights == nullptr) ? CGAL::Image_3() : *pWeights, //used only if valid
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
             [](int i, int j) { return (i * 1000 + j); }
