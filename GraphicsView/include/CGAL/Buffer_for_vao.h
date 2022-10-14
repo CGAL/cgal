@@ -164,7 +164,7 @@ public:
     if (m_flat_normal_buffer!=nullptr)    { m_flat_normal_buffer->clear(); }
     if (m_gouraud_normal_buffer!=nullptr) { m_gouraud_normal_buffer->clear(); }
     if (m_bb!=nullptr)                    { (*m_bb)=CGAL::Bbox_3(); }
-    
+
     m_zero_x=true;
     m_zero_y=true;
     m_zero_z=true;

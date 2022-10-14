@@ -114,7 +114,7 @@ void compute_elements(const T3 *t3, CGAL::Graphic_buffer<BufferType> &graphic_bu
     compute_vertex(it, graphic_buffer, drawing_functor, t3);
   }
 }
-  
+
 } // namespace draw_function_for_t3
 
 template <typename BufferType = float, class T3, class DrawingFunctor>
@@ -149,10 +149,10 @@ void add_in_graphic_buffer(const T3 &at3,
 
      CGAL::Random random((unsigned int)((std::size_t)(&*(fh->first)) +
                                         (std::size_t)(fh->second)));
-     
+
      return get_random_color(random);
      };
-  
+
   add_in_graphic_buffer(at3, graphic_buffer, drawing_functor);
 }
 

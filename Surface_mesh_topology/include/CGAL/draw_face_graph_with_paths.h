@@ -32,7 +32,7 @@
 
 namespace CGAL {
 
-  
+
 namespace draw_function_for_lcc
 {
   // We need to re-use the namespace draw_function_for_lcc because we want to specialize
@@ -98,14 +98,14 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 };
 
 } // namespace draw_function_for_lcc
-  
+
 namespace draw_function_for_face_graph_with_paths
 {
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3 Local_point;
 typedef Local_kernel::Vector_3 Local_vector;
-  
+
 // Destructor.
 // lcc.free_mark(m_oriented_mark);
 

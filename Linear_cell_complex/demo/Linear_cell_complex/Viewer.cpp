@@ -16,7 +16,7 @@
 #include <CGAL/Qt/vec.h>
 
 Viewer::Viewer(QWidget *parent)
-  : Base(parent, m_graphic_buffer, ""), 
+  : Base(parent, m_graphic_buffer, ""),
     m_previous_scene_empty(true)
 {
   m_drawing_functor.volume_color=[](const LCC & alcc,

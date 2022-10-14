@@ -53,7 +53,7 @@ namespace draw_function_for_ph2_with_holes {
 template <typename BufferType = float, class P2>
 void compute_one_loop_elements(const typename P2::General_polygon_2& p, Graphic_buffer<BufferType> &graphic_buffer, bool hole)
 {
-  
+
   if (hole)
   { graphic_buffer.add_point_in_face(p.vertex(p.size()-1)); }
 
@@ -73,7 +73,7 @@ void compute_one_loop_elements(const typename P2::General_polygon_2& p, Graphic_
 }
 
 template <typename BufferType = float, class P2, class DrawingFunctor>
-void compute_elements(const P2& p2, Graphic_buffer<BufferType> &graphic_buffer, 
+void compute_elements(const P2& p2, Graphic_buffer<BufferType> &graphic_buffer,
                       const DrawingFunctor &m_drawing_functor)
 {
 

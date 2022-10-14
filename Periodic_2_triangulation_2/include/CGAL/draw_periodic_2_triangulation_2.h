@@ -38,7 +38,7 @@ enum Display_type
 };
 
 template <typename BufferType = float, class P2T2>
-void compute_vertex(typename P2T2::Periodic_point_iterator pi, const P2T2 &p2t2, 
+void compute_vertex(typename P2T2::Periodic_point_iterator pi, const P2T2 &p2t2,
                     CGAL::Graphic_buffer<BufferType> &graphic_buffer)
 {
   // Construct the point in 9-sheeted covering space and add to viewer
@@ -46,7 +46,7 @@ void compute_vertex(typename P2T2::Periodic_point_iterator pi, const P2T2 &p2t2,
 }
 
 template <typename BufferType = float, class P2T2>
-void compute_edge(typename P2T2::Periodic_segment_iterator si, const P2T2 &p2t2, 
+void compute_edge(typename P2T2::Periodic_segment_iterator si, const P2T2 &p2t2,
                   CGAL::Graphic_buffer<BufferType> &graphic_buffer)
 {
   typedef typename P2T2::Segment  Segment;
@@ -57,8 +57,8 @@ void compute_edge(typename P2T2::Periodic_segment_iterator si, const P2T2 &p2t2,
 }
 
 template <typename BufferType = float, class P2T2, class DrawingFunctor>
-void compute_face(typename P2T2::Periodic_triangle_iterator ti, const P2T2 &p2t2, 
-                  CGAL::Graphic_buffer<BufferType> &graphic_buffer, 
+void compute_face(typename P2T2::Periodic_triangle_iterator ti, const P2T2 &p2t2,
+                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                   const DrawingFunctor &m_drawing_functor)
 {
   typedef typename P2T2::Triangle    Triangle;
