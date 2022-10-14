@@ -1,8 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/draw_surface_mesh.h>
-
 #include <fstream>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
