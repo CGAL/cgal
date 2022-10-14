@@ -702,15 +702,18 @@ scan_triangulation_impl()
   {
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad cells (sequential)... ";
+    int count = 0;
 #endif
 
-    int count = 0;
+
     for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
         cell_it != r_tr_.finite_cells_end();
         ++cell_it)
     {
       treat_new_cell(cell_it);
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
       ++count;
+#endif
     }
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << count << " cells scanned, ";
