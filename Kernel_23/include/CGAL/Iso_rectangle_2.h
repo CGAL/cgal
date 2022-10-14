@@ -18,7 +18,6 @@
 #define CGAL_ISO_RECTANGLE_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
@@ -34,7 +33,7 @@ class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
   typedef Iso_rectangle_2                    Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Iso_rectangle_2>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Iso_rectangle_2>::value));
 
 public:
 

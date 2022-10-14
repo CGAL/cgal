@@ -23,7 +23,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL {
 

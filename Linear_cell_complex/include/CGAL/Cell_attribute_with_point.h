@@ -62,6 +62,33 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template <class, class, class, class>
+    friend class Compact_container_with_index;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_with_index;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_with_index;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_with_index;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_with_index;
+
   public:
     typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
                                       Functor_on_split_> Self;
@@ -71,8 +98,8 @@ namespace CGAL {
     typedef Point_for_cell<typename LCC::Point> Base2;
 
     typedef typename LCC::Point             Point;
-    typedef typename LCC::Dart_handle       Dart_handle;
-    typedef typename LCC::Dart_const_handle Dart_const_handle;
+    typedef typename LCC::Dart_descriptor       Dart_descriptor;
+    typedef typename LCC::Dart_const_descriptor Dart_const_descriptor;
 
     typedef Info_                Info;
     typedef Functor_on_merge_    Functor_on_merge;
@@ -120,6 +147,36 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template <class, class, class, class>
+    friend class Compact_container_with_index;
+
+    template <class, class>
+    friend class Concurrent_compact_container;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_with_index;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_with_index;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_with_index;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_with_index;
+
   public:
     typedef Cell_attribute<LCC, void, Tag,
                            Functor_on_merge_, Functor_on_split_, WithID> Base1;
@@ -127,8 +184,8 @@ namespace CGAL {
 
     typedef void                            Info;
     typedef typename LCC::Point             Point;
-    typedef typename LCC::Dart_handle       Dart_handle;
-    typedef typename LCC::Dart_const_handle Dart_const_handle;
+    typedef typename LCC::Dart_descriptor       Dart_descriptor;
+    typedef typename LCC::Dart_const_descriptor Dart_const_descriptor;
 
     typedef Functor_on_merge_ Functor_on_merge;
     typedef Functor_on_split_ Functor_on_split;

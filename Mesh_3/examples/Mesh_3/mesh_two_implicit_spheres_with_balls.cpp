@@ -88,7 +88,7 @@ int main()
                                       CGAL::parameters::no_features());
 
   std::ofstream medit_file("out-no-protection.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
   c3t3.clear();
 
@@ -97,7 +97,7 @@ int main()
 
   // Output
   medit_file.open("out-with-protection.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
 
   return 0;

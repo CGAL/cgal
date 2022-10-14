@@ -120,7 +120,7 @@ struct Property_map_binder
 
   template <typename VM>
   Property_map_binder(const VM& value_map,
-                      typename std::enable_if<!std::is_same<KeyMap, VM>::value>::type* = nullptr)
+                      std::enable_if_t<!std::is_same<KeyMap, VM>::value>* = nullptr)
     : value_map(value_map)
   { }
 
@@ -410,7 +410,11 @@ struct Property_map_to_unary_function{
   {}
 
   template <class KeyType>
+  #if defined(__INTEL_COMPILER) && defined(__INTEL_COMPILER_BUILD_DATE) && (__INTEL_COMPILER_BUILD_DATE < 20210000)
+  result_type
+  #else
   decltype(auto)
+  #endif
   operator()(const KeyType& a) const
   {
     return get(map,a);
@@ -662,13 +666,13 @@ struct Random_index_access_property_map
     : m_begin(begin), m_map(map) {}
 
   friend reference get (const Random_index_access_property_map& map, const key_type& index,
-                        typename std::enable_if<std::is_convertible<category, boost::readable_property_map_tag>::value>::type* = 0)
+                        std::enable_if_t<std::is_convertible<category, boost::readable_property_map_tag>::value>* = 0)
   {
     return get(map.m_map, *std::next(map.m_begin, index));
   }
 
   friend void put (Random_index_access_property_map& map, const key_type& index, const value_type& value,
-                   typename std::enable_if<std::is_convertible<category, boost::writable_property_map_tag>::value>::type* = 0)
+                   std::enable_if_t<std::is_convertible<category, boost::writable_property_map_tag>::value>* = 0)
   {
     put (map.m_map, *std::next(map.m_begin, index), value);
   }

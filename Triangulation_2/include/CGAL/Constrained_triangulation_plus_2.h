@@ -23,7 +23,6 @@
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_2/internal/CTP2_subconstraint_graph.h>
 #include <boost/tuple/tuple.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -31,6 +30,7 @@
 #include <CGAL/Triangulation_2/insert_constraints.h>
 #include <boost/container/flat_set.hpp>
 
+#include <type_traits>
 
 namespace CGAL {
 
@@ -1092,7 +1092,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(boost::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
+    if(std::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
       throw typename Tr::Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
@@ -1208,7 +1208,7 @@ Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i,
           Vertex_handle vaa,
           Vertex_handle vbb,
-          Exact_predicates_tag)
+          Exact_predicates_tag itag)
 {
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));
@@ -1227,32 +1227,8 @@ intersect(Face_handle f, int i,
             << " , Exact_predicates_tag)\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
-  Point pi; //creator for point is required here
-  Intersection_tag itag = Intersection_tag();
-  bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
-
-  Vertex_handle vi;
-  if ( !ok) {  //intersection detected but not computed
-    int i = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
-    switch(i){
-    case 0 : vi = vaa; break;
-    case 1 : vi = vbb; break;
-    case 2 : vi = vcc; break;
-    case 3 : vi = vdd; break;
-    }
-    if(vi == vaa || vi == vbb) {
-      Triangulation::remove_constrained_edge(f, i);
-    }
-  }
-  else{ //computed
-    Triangulation::remove_constrained_edge(f, i);
-    vi = insert(pi, f);
-  }
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-  std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_plus_2::intersect, `vi` is ( #" << vi->time_stamp() << "= " << vi->point()
-            << " )\n";
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+  Vertex_handle vi = Triangulation::insert_intersection(
+      f, i, vaa, vbb, vcc, vdd, pa, pb, pc, pd, itag);
 
   // vi == vc or vi == vd may happen even if intersection==true
   // due to approximate construction of the intersection

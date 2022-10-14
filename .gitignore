@@ -2,6 +2,7 @@
 /*/*/*/build
 /*/*/*/VC*
 /*/*/*/GCC
+.vscode
 AABB_tree/demo/AABB_tree/AABB_demo
 AABB_tree/demo/AABB_tree/Makefile
 AABB_tree/examples/AABB_tree/*.kdev*

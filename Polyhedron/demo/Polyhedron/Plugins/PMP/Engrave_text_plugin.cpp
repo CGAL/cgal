@@ -961,8 +961,8 @@ private:
   int pointsize;
   bool locked;
   EPICK::Line_2 bf_line;
-  QGraphicsScene *graphics_scene;
-  Navigation* navigation;
+  QGraphicsScene *graphics_scene = nullptr;
+  Navigation* navigation = nullptr;
 };
 #include "Engrave_text_plugin.moc"
 

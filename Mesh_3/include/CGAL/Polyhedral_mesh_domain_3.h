@@ -38,11 +38,9 @@
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/format.hpp>
 #include <boost/variant.hpp>
 #include <boost/math/special_functions/round.hpp>
@@ -52,6 +50,7 @@
 #include <sstream>
 #include <string>
 #include <utility>
+#include <type_traits>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/enumerable_thread_specific.h>
@@ -59,9 +58,9 @@
 
 // To handle I/O for Surface_patch_index if that is a pair of `int` (the
 // default)
-#include <CGAL/Mesh_3/internal/Handle_IO_for_pair_of_int.h>
+#include <CGAL/SMDS_3/internal/Handle_IO_for_pair_of_int.h>
 
-#include <CGAL/Mesh_3/internal/indices_management.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 namespace CGAL {
 
@@ -191,7 +190,7 @@ public:
                                 Default,
                                 Ins_fctor_AABB_tree>      Inside_functor;
   typedef typename Inside_functor::AABB_tree              AABB_tree_;
-  BOOST_STATIC_ASSERT((boost::is_same<AABB_tree_, Ins_fctor_AABB_tree>::value));
+  BOOST_STATIC_ASSERT((std::is_same<AABB_tree_, Ins_fctor_AABB_tree>::value));
   typedef typename AABB_tree_::AABB_traits                AABB_traits;
   typedef typename AABB_tree_::Primitive                  AABB_primitive;
   typedef typename AABB_tree_::Primitive_id               AABB_primitive_id;
@@ -382,9 +381,9 @@ public:
       : r_domain_(domain) {}
 
     template <typename Query>
-    typename boost::enable_if<typename boost::mpl::contains<Allowed_query_types,
-                                                            Query>::type,
-                              Surface_patch>::type
+    typename std::enable_if_t<boost::mpl::contains<Allowed_query_types,
+                                                   Query>::value,
+                              Surface_patch>
     operator()(const Query& q) const
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -423,9 +422,9 @@ public:
       : r_domain_(domain) {}
 
     template <typename Query>
-    typename boost::enable_if<typename boost::mpl::contains<Allowed_query_types,
-                                                            Query>::type,
-                              Intersection>::type
+    typename std::enable_if_t<boost::mpl::contains<Allowed_query_types,
+                                                   Query>::value,
+                              Intersection>
     operator()(const Query& q) const
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));

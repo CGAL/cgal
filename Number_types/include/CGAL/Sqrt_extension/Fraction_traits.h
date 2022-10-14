@@ -147,7 +147,7 @@ template <class COEFF, class ROOT, class ACDE_TAG, class FP_TAG>
 class Sqrt_ext_Ftr_base_1< Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG>, CGAL::Tag_true >
     : public Sqrt_ext_Ftr_base_2<
     Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG>,
-    ::boost::is_same< typename CGAL::Coercion_traits<ROOT,typename CGAL::Fraction_traits<COEFF>::Numerator_type>::Type,
+    ::std::is_same< typename CGAL::Coercion_traits<ROOT,typename CGAL::Fraction_traits<COEFF>::Numerator_type>::Type,
                         typename CGAL::Fraction_traits<COEFF>::Numerator_type>::value >
 {
     //nothing new

@@ -46,12 +46,12 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 {
   static typename Get_traits<Mesh>::Vector
   get_face_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
-                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
+                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor dh)
   {
     typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
     const typename Get_traits<Mesh>::Point*
         curr=&Get_traits<Mesh>::get_point(mesh.get_fg(), dh);
-    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle adart=dh;
+    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor adart=dh;
     unsigned int nb=0;
 
     do
@@ -72,7 +72,7 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
   }
   static typename Local_kernel::Vector_3
   get_vertex_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
-                    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
+                    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_descriptor dh)
   {
     typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
     unsigned int nb = 0;
@@ -128,17 +128,16 @@ void compute_face(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc)
 {
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
-
+  typedef typename LCC::Dart_const_descriptor     Dart_const_descriptor;
   typedef typename LCC::size_type                 size_type;
 
-  typedef typename LCC::Dart_const_handle         Dart_const_handle;
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
   typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
 
   // We fill only closed faces.
-  Dart_const_handle cur=dh;
-  Dart_const_handle min=dh;
+  Dart_const_descriptor cur=dh;
+  Dart_const_descriptor min=dh;
   do
   {
     if (!lcc.is_next_exist(cur)) return; // open face=>not filled
@@ -163,9 +162,6 @@ void compute_face(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
   graphic_buffer.face_end();
 }
 
-
-  // typename LCC::size_type m_amark; // If !=INVALID_MARK, show darts marked with this mark
-
 template <typename Mesh, typename BufferType = float>
 void compute_edge(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
                   const Mesh &mesh,
@@ -176,7 +172,6 @@ void compute_edge(typename Get_map<Mesh, Mesh>::type::Dart_const_handle dh,
 {
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
   typedef typename LCC::size_type                 size_type;
-
   typedef typename LCC::Dart_const_handle         Dart_const_handle;
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
@@ -270,7 +265,6 @@ void compute_elements(const Mesh &mesh,
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
   typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
-
   typedef typename LCC::Dart_const_handle         Dart_const_handle;
 
   typename LCC::Dart_range::const_iterator m_current_dart = lcc.darts().end();

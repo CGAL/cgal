@@ -23,9 +23,9 @@
 
 #include <CGAL/pointmatcher/compute_registration_transformation.h>
 
-#include <boost/type_traits/is_same.hpp>
-
 #include <Eigen/Dense>
+
+#include <type_traits>
 
 namespace CGAL {
 

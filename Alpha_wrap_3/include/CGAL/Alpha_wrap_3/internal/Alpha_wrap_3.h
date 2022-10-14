@@ -99,6 +99,32 @@ public:
   };
 };
 
+struct Wrapping_default_visitor
+{
+  Wrapping_default_visitor() { }
+
+  template <typename AlphaWrapper>
+  void on_alpha_wrapping_begin(const AlphaWrapper&) { }
+
+  template <typename AlphaWrapper>
+  void on_flood_fill_begin(const AlphaWrapper&) { }
+
+  template <typename AlphaWrapper, typename Gate>
+  void before_facet_treatment(const AlphaWrapper&, const Gate&) { }
+
+  template <typename Wrapper, typename Point>
+  void before_Steiner_point_insertion(const Wrapper&, const Point&) { }
+
+  template <typename Wrapper, typename VertexHandle>
+  void after_Steiner_point_insertion(const Wrapper&, VertexHandle) { }
+
+  template <typename AlphaWrapper>
+  void on_flood_fill_end(const AlphaWrapper&) { }
+
+  template <typename AlphaWrapper>
+  void on_alpha_wrapping_end(const AlphaWrapper&) { };
+};
+
 template <typename Oracle>
 class Alpha_wrap_3
 {
@@ -172,6 +198,9 @@ public:
 
 public:
   const Geom_traits& geom_traits() const { return m_dt.geom_traits(); }
+  Dt& triangulation() { return m_dt; }
+  const Dt& triangulation() const { return m_dt; }
+  const Alpha_PQ& queue() const { return m_queue; }
 
   double default_alpha() const
   {
@@ -216,6 +245,15 @@ public:
     OVPM ovpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_property_map(vertex_point, output_mesh));
 
+    typedef typename internal_np::Lookup_named_param_def <
+      internal_np::visitor_t,
+      NamedParameters,
+      Wrapping_default_visitor // default
+    >::reference                                                                 Visitor;
+
+    Wrapping_default_visitor default_visitor;
+    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+
     std::vector<Point_3> no_seeds;
     using Seeds = typename internal_np::Lookup_named_param_def<
                     internal_np::seed_points_t, NamedParameters, std::vector<Point_3> >::reference;
@@ -228,6 +266,8 @@ public:
     t.start();
 #endif
 
+    visitor.on_alpha_wrapping_begin(*this);
+
     if(!initialize(alpha, offset, seeds))
       return;
 
@@ -237,7 +277,7 @@ public:
                                  CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
 #endif
 
-    alpha_flood_fill();
+    alpha_flood_fill(visitor);
 
 #ifdef CGAL_AW3_TIMER
     t.stop();
@@ -315,6 +355,8 @@ public:
     dump_triangulation_faces("final_dt3.off", false /*only_boundary_faces*/);
  #endif
 #endif
+
+    visitor.on_alpha_wrapping_end(*this);
   }
 
   // Convenience overloads
@@ -607,11 +649,12 @@ private:
     return true;
   }
 
+public:
   // Manifoldness is tolerated while debugging and extracting at intermediate states
   // Not the preferred way because it uses 3*nv storage
   template <typename OutputMesh, typename OVPM>
   void extract_possibly_non_manifold_surface(OutputMesh& output_mesh,
-                                             OVPM ovpm)
+                                             OVPM ovpm) const
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -696,7 +739,7 @@ private:
 
   template <typename OutputMesh, typename OVPM>
   void extract_manifold_surface(OutputMesh& output_mesh,
-                                OVPM ovpm)
+                                OVPM ovpm) const
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -748,7 +791,12 @@ private:
     if(faces.empty())
       return;
 
-    CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(faces));
+    if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
+    {
+      CGAL_warning_msg(false, "Could NOT extract mesh...");
+      return;
+    }
+
     PMP::polygon_soup_to_polygon_mesh(points, faces, output_mesh,
                                       CGAL::parameters::default_values(),
                                       CGAL::parameters::vertex_point_map(ovpm));
@@ -763,7 +811,7 @@ private:
   template <typename OutputMesh, typename OVPM>
   void extract_surface(OutputMesh& output_mesh,
                        OVPM ovpm,
-                       const bool tolerate_non_manifoldness = false)
+                       const bool tolerate_non_manifoldness = false) const
   {
     if(tolerate_non_manifoldness)
       extract_possibly_non_manifold_surface(output_mesh, ovpm);
@@ -990,11 +1038,14 @@ private:
       return initialize_with_cavities(seeds);
   }
 
-  void alpha_flood_fill()
+  template <typename Visitor>
+  void alpha_flood_fill(Visitor& visitor)
   {
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Flood fill..." << std::endl;
 #endif
+
+    visitor.on_flood_fill_begin(*this);
 
     // Explore all finite cells that are reachable from one of the initial outside cells.
     while(!m_queue.empty())
@@ -1021,6 +1072,8 @@ private:
                 << m_dt.point(ch, (id+1)&3) << "\n" << m_dt.point(ch, (id+2)&3) << "\n" << m_dt.point(ch, (id+3)&3) << std::endl;
       std::cout << "Priority: " << gate.priority() << std::endl;
 #endif
+
+      visitor.before_facet_treatment(*this, gate);
 
       m_queue.pop();
 
@@ -1082,9 +1135,13 @@ private:
             m_queue.erase(Gate(mf));
         }
 
+        visitor.before_Steiner_point_insertion(*this, steiner_point);
+
         // Actual insertion of the Steiner point
         Vertex_handle vh = m_dt.insert(steiner_point, lt, conflict_cell, li, lj);
         vh->info() = DEFAULT;
+
+        visitor.after_Steiner_point_insertion(*this, vh);
 
         std::vector<Cell_handle> new_cells;
         new_cells.reserve(32);
@@ -1132,6 +1189,8 @@ private:
         }
       }
     } // while(!queue.empty())
+
+    visitor.on_flood_fill_end(*this);
 
     // Check that no useful facet has been ignored
     CGAL_postcondition_code(for(auto fit=m_dt.finite_facets_begin(), fend=m_dt.finite_facets_end(); fit!=fend; ++fit) {)

@@ -19,12 +19,13 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
 #include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/mpl/if.hpp>
 #include <fstream>
 #include <sstream>
 #include <set>
+#include <type_traits>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
@@ -35,7 +36,8 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION,
 template <typename G>
 struct No_mark
 {
-  friend bool get(No_mark<G>,
+  friend
+  bool get(No_mark<G>,
                   typename boost::graph_traits<G>::edge_descriptor)
   {
     return false;
@@ -385,7 +387,7 @@ struct TweakedGetVertexPointMap
 {
   typedef typename GetVertexPointMap<PolygonMesh,
                                      NamedParameters>::type Default_map;
-  typedef typename boost::is_same<Point_3,
+  typedef typename std::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
   typedef typename boost::mpl::if_<
@@ -398,7 +400,7 @@ struct TweakedGetVertexPointMap
 
 template <class PT, class NP, class PM>
 boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
+get_vpm(const NP& np, boost::optional<PM*> opm, std::true_type)
 {
   if (boost::none == opm) return boost::none;
   return parameters::choose_parameter(
@@ -408,7 +410,7 @@ get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
 
 template <class PT, class NP, class PM>
 boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP&, boost::optional<PM*> opm, boost::false_type)
+get_vpm(const NP&, boost::optional<PM*> opm, std::false_type)
 {
   if (boost::none == opm) return boost::none;
   return typename TweakedGetVertexPointMap<PT, NP, PM>::type();
@@ -779,6 +781,7 @@ struct Patch_container{
     Patch_description<PolygonMesh>& patch=this->operator[](i);
 
     std::stringstream ss;
+    ss.precision(17);
     std::map<vertex_descriptor, int> vertexid;
     int id=0;
     for(vertex_descriptor vh : patch.interior_vertices)

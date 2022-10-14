@@ -15,7 +15,6 @@
 #define VIEWER_H
 
 #include "typedefs.h"
-
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 

@@ -31,12 +31,12 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #include <CGAL/IO/File_binary_mesh_3.h>
 #endif
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
-#include <CGAL/Mesh_3/utilities.h>
+#include <CGAL/SMDS_3/utilities.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/enum.h>
@@ -75,7 +75,7 @@ namespace Periodic_3_mesh_3 {
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
 class Protect_edges_sizing_field
-  : public CGAL::Mesh_3::internal::Debug_messages_tools
+  : public CGAL::SMDS_3::internal::Debug_messages_tools
 {
   typedef Protect_edges_sizing_field          Self;
 
@@ -556,7 +556,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 operator()(const bool refine)
 {
   // This class is only meant to be used with periodic triangulations
-  CGAL_assertion((boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+  CGAL_assertion((std::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
 
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Inserting protection balls..." << std::endl

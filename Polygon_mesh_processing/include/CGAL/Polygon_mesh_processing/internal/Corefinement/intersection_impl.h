@@ -38,14 +38,6 @@ namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-struct Self_intersection_exception :
-  public std::runtime_error
-{
-  Self_intersection_exception()
-    : std::runtime_error("Self-intersection detected in input mesh")
-  {}
-};
-
 struct Triple_intersection_exception :
   public std::runtime_error
 {
@@ -101,6 +93,8 @@ struct Default_surface_intersection_visitor{
   void start_new_polyline(std::size_t,std::size_t){}
   void add_node_to_polyline(std::size_t){}
   void input_have_coplanar_faces(){}
+  template<class T>
+  void check_no_duplicates(const T&){}
   template<class T,class VPM1,class VPM2>
   void finalize(T&,
                 const TriangleMesh&, const TriangleMesh&,
@@ -175,9 +169,6 @@ struct Node_id_set {
       }
       ++size_;
     }
-    else{
-      CGAL_assertion( (size_ == 2 && (v == first || v == second) ) || v==first );
-    }
   }
 
   std::size_t size() const
@@ -245,6 +236,7 @@ class Intersection_of_triangle_meshes
   std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
   Non_manifold_feature_map<TriangleMesh> non_manifold_feature_map_1,
                                          non_manifold_feature_map_2;
+  const TriangleMesh* const_mesh_ptr;
   static const constexpr std::size_t NM_NID = (std::numeric_limits<std::size_t>::max)();
   CGAL_assertion_code(bool doing_autorefinement;)
 
@@ -332,16 +324,68 @@ class Intersection_of_triangle_meshes
     //using pointers in box_intersection_d is about 10% faster
     if (throw_on_self_intersection){
         Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si(callback, tm_f_faces, tm_e_faces);
-        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                  edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                  callback_si, cutoff );
+        CGAL::box_intersection_d(face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                 edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                 callback_si, cutoff);
         if (run_check && callback_si.self_intersections_found())
          throw Self_intersection_exception();
     }
     else {
-      CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                callback, cutoff );
+      if (const_mesh_ptr==&tm_e)
+      {
+        // tm_f might feature degenerate faces
+        auto filtered_callback = [&callback](const Box* fb, const Box* eb)
+        {
+          if (!callback.is_face_degenerated(fb->info()))
+            callback(fb, eb);
+        };
+        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                  edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                  filtered_callback, cutoff );
+      }
+      else
+      {
+        if (const_mesh_ptr==&tm_f)
+        {
+          // tm_e might feature degenerate edges
+          auto filtered_callback = [&,this](const Box* fb, const Box* eb)
+          {
+            if (get(vpm_e, source(eb->info(), tm_e)) != get(vpm_e, target(eb->info(), tm_e)))
+              callback(fb, eb);
+            else
+            {
+              halfedge_descriptor hf = fb->info();
+              halfedge_descriptor he = eb->info();
+              for (int i=0; i<2; ++i)
+              {
+                if (!is_border(he, tm_e))
+                {
+                  if ( get(vpm_e, target(next(he, tm_e), tm_e))==get(vpm_e, target(he, tm_e)) &&
+                       coplanar(get(vpm_f, source(hf, tm_f)),
+                                get(vpm_f, target(hf, tm_f)),
+                                get(vpm_f, target(next(hf, tm_f), tm_f)),
+                                get(vpm_e, target(he, tm_e))) )
+                  {
+                    coplanar_faces.insert(
+                        &tm_e < &tm_f
+                        ? std::make_pair(face(he, tm_e), face(hf, tm_f))
+                        : std::make_pair(face(hf, tm_f), face(he, tm_e))
+                      );
+                  }
+                }
+                he=opposite(he, tm_e);
+              }
+            }
+          };
+          CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                    filtered_callback, cutoff );
+        }
+        else
+          CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                    callback, cutoff );
+      }
     }
   }
 
@@ -729,14 +773,36 @@ class Intersection_of_triangle_meshes
       face_descriptor f1=face_pair.first;
       face_descriptor f2=face_pair.second;
 
-      CGAL_assertion(&tm1!=&tm2 || f1!=f2);
-
       typedef typename Node_vector::Exact_kernel EK;
       typedef Coplanar_intersection<TriangleMesh, EK> Cpl_inter_pt;
       std::list<Cpl_inter_pt> inter_pts;
 
+      //handle degenerate faces
+      if (const_mesh_ptr)
+      {
+        halfedge_descriptor h2 = halfedge(f2,tm2);
+        if (const_mesh_ptr == &tm1)
+        {
+          const typename boost::property_traits<VPM2>::reference
+            a = get(vpm2, source(h2, tm2)),
+            b = get(vpm2, target(h2, tm2)),
+            c = get(vpm2, target(next(h2, tm2), tm2));
+
+          if (collinear(a, b, c))
+          {
+            intersection_coplanar_faces(f2, f1, tm2, tm1, vpm2, vpm1, inter_pts);
+            for (Cpl_inter_pt& ipt : inter_pts)
+            {
+              std::swap(ipt.type_1,ipt.type_2);
+              std::swap(ipt.info_1,ipt.info_2);
+            }
+          }
+        }
+      }
+
       // compute the intersection points between the two coplanar faces
-      intersection_coplanar_faces(f1, f2, tm1, tm2, vpm1, vpm2, inter_pts);
+      if (inter_pts.empty())
+        intersection_coplanar_faces(f1, f2, tm1, tm2, vpm1, vpm2, inter_pts);
 
       std::size_t nb_pts=inter_pts.size();
       std::vector<Node_id> cpln_nodes; cpln_nodes.reserve(nb_pts);
@@ -1602,9 +1668,11 @@ public:
                                   const TriangleMesh& tm2,
                                   const VertexPointMap1& vpm1,
                                   const VertexPointMap2& vpm2,
-                                  const Node_visitor& v=Node_visitor())
+                                  const Node_visitor& v=Node_visitor(),
+                                  const TriangleMesh* const_mesh_ptr=nullptr)
   : nodes(tm1, tm2, vpm1, vpm2)
   , visitor(v)
+  , const_mesh_ptr(const_mesh_ptr)
   {
     CGAL_precondition(is_triangle_mesh(tm1));
     CGAL_precondition(is_triangle_mesh(tm2));
@@ -1684,7 +1752,7 @@ public:
     compute_intersection_points(tm1_edge_to_tm2_faces, tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, current_node);
     compute_intersection_points(tm2_edge_to_tm1_faces, tm2, tm1, vpm2, vpm1, non_manifold_feature_map_2, non_manifold_feature_map_1, current_node);
 
-    nodes.check_no_duplicates();
+    visitor.check_no_duplicates(nodes);
 
     if (!build_polylines){
       visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);

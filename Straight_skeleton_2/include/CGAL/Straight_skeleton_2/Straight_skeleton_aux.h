@@ -21,9 +21,9 @@
 #include <boost/mpl/or.hpp>
 #include <boost/none.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <iostream>
+#include <type_traits>
 
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 namespace CGAL {
@@ -34,8 +34,8 @@ template<class K> struct Has_inexact_constructions
 {
   typedef typename K::FT FT ;
 
-  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
-                                                   , boost::is_same<FT,Interval_nt_advanced>
+  typedef typename boost::mpl::if_< boost::mpl::or_< std::is_same<FT,double>
+                                                   , std::is_same<FT,Interval_nt_advanced>
                                                    >
                                   , Tag_true
                                   , Tag_false

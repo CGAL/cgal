@@ -19,14 +19,14 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Weights/cotangent_weights.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 #endif
 
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -152,11 +152,11 @@ namespace internal {
 
 #if defined(CGAL_EIGEN3_ENABLED)
     CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
       "The function `fair` requires Eigen3 version 3.2 or later.");
 #else
     CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
       "The function `fair` requires Eigen3 version 3.2 or later.");
 #endif
 

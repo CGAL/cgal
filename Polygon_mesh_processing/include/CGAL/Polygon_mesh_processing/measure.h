@@ -22,7 +22,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
@@ -987,7 +987,7 @@ void match_faces(const PolygonMesh1& m1,
                                        get_const_property_map(vertex_point, m1));
   const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                        get_const_property_map(vertex_point, m2));
-  CGAL_static_assertion_msg((boost::is_same<typename boost::property_traits<VPMap1>::value_type,
+  CGAL_static_assertion_msg((std::is_same<typename boost::property_traits<VPMap1>::value_type,
                              typename boost::property_traits<VPMap2>::value_type>::value),
                             "Both vertex point maps must have the same point type.");
 

@@ -22,7 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Projection_traits_xy_3.h>
@@ -982,6 +982,8 @@ volume_connected_components(const TriangleMesh& tm,
           cc_to_handle.reset(xtrm_cc_id);
           nesting_levels[xtrm_cc_id] = k;
 
+          if(!cc_to_handle.any()) break;
+
         // collect id inside xtrm_cc_id CC
           typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
           typename Side_of_tm::AABB_tree aabb_tree(faces_per_cc[xtrm_cc_id].begin(),
@@ -1243,6 +1245,8 @@ volume_connected_components(const TriangleMesh& tm,
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
+ *
+ * @attention if `tm` is self-intersecting the behavior of this function is undefined.
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

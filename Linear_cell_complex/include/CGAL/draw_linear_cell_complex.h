@@ -39,7 +39,7 @@ template <class LCC, class Local_kernel>
 struct LCC_geom_utils<LCC, Local_kernel, 3>
 {
   static typename Local_kernel::Vector_3
-  get_vertex_normal(const LCC &lcc, typename LCC::Dart_const_handle dh)
+  get_vertex_normal(const LCC& lcc, typename LCC::Dart_const_descriptor dh)
   {
     typename Local_kernel::Vector_3 n =
         internal::Geom_utils<typename LCC::Traits, Local_kernel>::
@@ -53,7 +53,7 @@ template <class LCC, class Local_kernel>
 struct LCC_geom_utils<LCC, Local_kernel, 2>
 {
   static typename Local_kernel::Vector_3
-  get_vertex_normal(const LCC &, typename LCC::Dart_const_handle)
+  get_vertex_normal(const LCC&, typename LCC::Dart_const_descriptor)
   {
     typename Local_kernel::Vector_3 n=CGAL::NULL_VECTOR;
     return n;
