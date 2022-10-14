@@ -83,6 +83,7 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
+  using GB=Graphic_buffer<BufferType>;
 
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
@@ -201,9 +202,9 @@ public:
 
   void clear()
   {
-    for (unsigned int i=0; i<LAST_INDEX; ++i)
+    for (unsigned int i=0; i<GB::LAST_INDEX; ++i)
     {
-      if (i!=POS_CLIPPING_PLANE)
+      if (i!=GB::POS_CLIPPING_PLANE)
       { gBuffer.get_array_of_index(i).clear(); }
     }
 
@@ -480,10 +481,12 @@ protected:
     unsigned int bufn = 0;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_MONO_POINTS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_MONO_POINTS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_MONO_POINTS).data(),
+                           gBuffer.get_size_of_index(GB::POS_MONO_POINTS));
     rendering_program_p_l.enableAttributeArray("vertex");
     rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    // TODO/QUESTION can we use double for BufferType?
+    // if not remove the template parameter and use float everywhere.
 
     buffers[bufn].release();
 
@@ -497,8 +500,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_COLORED_POINTS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_COLORED_POINTS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_COLORED_POINTS).data(),
+                           gBuffer.get_size_of_index(GB::POS_COLORED_POINTS));
     rendering_program_p_l.enableAttributeArray("vertex");
     rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
     buffers[bufn].release();
@@ -506,8 +509,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(COLOR_POINTS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(COLOR_POINTS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::COLOR_POINTS).data(),
+                           gBuffer.get_size_of_index(GB::COLOR_POINTS));
     rendering_program_p_l.enableAttributeArray("color");
     rendering_program_p_l.setAttributeBuffer("color",GL_FLOAT,0,3);
     buffers[bufn].release();
@@ -522,8 +525,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_MONO_SEGMENTS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_MONO_SEGMENTS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_MONO_SEGMENTS).data(),
+                           gBuffer.get_size_of_index(GB::POS_MONO_SEGMENTS));
     rendering_program_p_l.enableAttributeArray("vertex");
     rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
@@ -539,8 +542,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_COLORED_SEGMENTS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_COLORED_SEGMENTS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_COLORED_SEGMENTS).data(),
+                           gBuffer.get_size_of_index(GB::POS_COLORED_SEGMENTS));
     rendering_program_p_l.enableAttributeArray("vertex");
     rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
@@ -549,8 +552,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(COLOR_SEGMENTS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(COLOR_SEGMENTS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::COLOR_SEGMENTS).data(),
+                           gBuffer.get_size_of_index(GB::COLOR_SEGMENTS));
     rendering_program_p_l.enableAttributeArray("color");
     rendering_program_p_l.setAttributeBuffer("color",GL_FLOAT,0,3);
     buffers[bufn].release();
@@ -567,8 +570,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_MONO_RAYS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_MONO_RAYS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_MONO_RAYS).data(),
+                           gBuffer.get_size_of_index(GB::POS_MONO_RAYS));
     rendering_program_p_l.enableAttributeArray("vertex");
     rendering_program_p_l.setAttributeArray("vertex",GL_FLOAT,0,3);
 
@@ -585,8 +588,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_COLORED_RAYS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_COLORED_RAYS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_COLORED_RAYS).data(),
+                           gBuffer.get_size_of_index(GB::POS_COLORED_RAYS));
     rendering_program_p_l.enableAttributeArray("vertex");
     rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
@@ -595,8 +598,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(COLOR_RAYS).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(COLOR_RAYS).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::COLOR_RAYS).data(),
+                           gBuffer.get_size_of_index(GB::COLOR_RAYS));
     rendering_program_p_l.enableAttributeArray("color");
     rendering_program_p_l.setAttributeBuffer("color",GL_FLOAT,0,3);
     buffers[bufn].release();
@@ -612,8 +615,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_MONO_LINES).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_MONO_LINES).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_MONO_LINES).data(),
+                           gBuffer.get_size_of_index(GB::POS_MONO_LINES));
     rendering_program_p_l.enableAttributeArray("vertex");
     rendering_program_p_l.setAttributeArray("vertex",GL_FLOAT,0,3);
 
@@ -630,8 +633,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_COLORED_LINES).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_COLORED_LINES).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_COLORED_LINES).data(),
+                           gBuffer.get_size_of_index(GB::POS_COLORED_LINES));
     rendering_program_p_l.enableAttributeArray("vertex");
     rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
@@ -640,8 +643,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(COLOR_LINES).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(COLOR_LINES).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::COLOR_LINES).data(),
+                           gBuffer.get_size_of_index(GB::COLOR_LINES));
     rendering_program_p_l.enableAttributeArray("color");
     rendering_program_p_l.setAttributeBuffer("color",GL_FLOAT,0,3);
     buffers[bufn].release();
@@ -660,8 +663,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_MONO_FACES).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_MONO_FACES).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_MONO_FACES).data(),
+                           gBuffer.get_size_of_index(GB::POS_MONO_FACES));
     rendering_program_face.enableAttributeArray("vertex");
     rendering_program_face.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
@@ -673,15 +676,13 @@ protected:
     buffers[bufn].bind();
     if (m_flatShading)
     {
-      buffers[bufn].allocate(gBuffer.get_array_of_index(FLAT_NORMAL_MONO_FACES).data(),
-                                    static_cast<int>(gBuffer.get_array_of_index(FLAT_NORMAL_MONO_FACES).size()*
-                                                     sizeof(float)));
+      buffers[bufn].allocate(gBuffer.get_array_of_index(GB::FLAT_NORMAL_MONO_FACES).data(),
+                             gBuffer.get_size_of_index(GB::FLAT_NORMAL_MONO_FACES));
     }
     else
     {
-      buffers[bufn].allocate(gBuffer.get_array_of_index(SMOOTH_NORMAL_MONO_FACES).data(),
-                                    static_cast<int>(gBuffer.get_array_of_index(SMOOTH_NORMAL_MONO_FACES).size()*
-                                                       sizeof(float)));
+      buffers[bufn].allocate(gBuffer.get_array_of_index(GB::SMOOTH_NORMAL_MONO_FACES).data(),
+                             gBuffer.get_size_of_index(GB::SMOOTH_NORMAL_MONO_FACES));
     }
     rendering_program_face.enableAttributeArray("normal");
     rendering_program_face.setAttributeBuffer("normal",GL_FLOAT,0,3);
@@ -699,8 +700,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(POS_COLORED_FACES).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(POS_COLORED_FACES).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_COLORED_FACES).data(),
+                           gBuffer.get_size_of_index(GB::POS_COLORED_FACES));
     rendering_program_face.enableAttributeArray("vertex");
     rendering_program_face.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
@@ -712,15 +713,13 @@ protected:
     buffers[bufn].bind();
     if (m_flatShading)
     {
-      buffers[bufn].allocate(gBuffer.get_array_of_index(FLAT_NORMAL_COLORED_FACES).data(),
-                                    static_cast<int>(gBuffer.get_array_of_index(FLAT_NORMAL_COLORED_FACES).size()*
-                                                     sizeof(float)));
+      buffers[bufn].allocate(gBuffer.get_array_of_index(GB::FLAT_NORMAL_COLORED_FACES).data(),
+                             gBuffer.get_size_of_index(GB::FLAT_NORMAL_COLORED_FACES));
     }
     else
     {
-      buffers[bufn].allocate(gBuffer.get_array_of_index(SMOOTH_NORMAL_COLORED_FACES).data(),
-                                    static_cast<int>(gBuffer.get_array_of_index(SMOOTH_NORMAL_COLORED_FACES).size()*
-                                                     sizeof(float)));
+      buffers[bufn].allocate(gBuffer.get_array_of_index(GB::SMOOTH_NORMAL_COLORED_FACES).data(),
+                             gBuffer.get_size_of_index(GB::SMOOTH_NORMAL_COLORED_FACES));
     }
     rendering_program_face.enableAttributeArray("normal");
     rendering_program_face.setAttributeBuffer("normal",GL_FLOAT,0,3);
@@ -731,8 +730,8 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(COLOR_FACES).data(),
-                           static_cast<int>(gBuffer.get_array_of_index(COLOR_FACES).size()*sizeof(float)));
+    buffers[bufn].allocate(gBuffer.get_array_of_index(GB::COLOR_FACES).data(),
+                           gBuffer.get_size_of_index(GB::COLOR_FACES));
     rendering_program_face.enableAttributeArray("color");
     rendering_program_face.setAttributeBuffer("color",GL_FLOAT,0,3);
 
@@ -754,8 +753,8 @@ protected:
       ++bufn;
       CGAL_assertion(bufn < NB_VBO_BUFFERS);
       buffers[bufn].bind();
-      buffers[bufn].allocate(gBuffer.get_array_of_index(POS_CLIPPING_PLANE).data(),
-                            static_cast<int>(gBuffer.get_array_of_index(POS_CLIPPING_PLANE).size() * sizeof(float)));
+      buffers[bufn].allocate(gBuffer.get_array_of_index(GB::POS_CLIPPING_PLANE).data(),
+                             gBuffer.get_size_of_index(GB::POS_CLIPPING_PLANE));
       rendering_program_clipping_plane.enableAttributeArray("vertex");
       rendering_program_clipping_plane.setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
 
@@ -912,7 +911,7 @@ protected:
         rendering_program_p_l.setUniformValue("clipPlane", clipPlane);
         rendering_program_p_l.setUniformValue("pointPlane", plane_point);
         rendering_program_p_l.setUniformValue("rendering_mode", rendering_mode);
-        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_MONO_POINTS).size()/3));
+        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_MONO_POINTS)));
         vao[VAO_MONO_POINTS].release();
 
         vao[VAO_COLORED_POINTS].bind();
@@ -932,7 +931,7 @@ protected:
         rendering_program_p_l.setUniformValue("clipPlane", clipPlane);
         rendering_program_p_l.setUniformValue("pointPlane", plane_point);
         rendering_program_p_l.setUniformValue("rendering_mode", rendering_mode);
-        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_COLORED_POINTS).size()/3));
+        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_COLORED_POINTS)));
         vao[VAO_COLORED_POINTS].release();
       };
 
@@ -971,7 +970,7 @@ protected:
         rendering_program_p_l.setUniformValue("pointPlane", plane_point);
         rendering_program_p_l.setUniformValue("rendering_mode", rendering_mode);
         glLineWidth(m_size_edges);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_MONO_SEGMENTS).size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_MONO_SEGMENTS)));
         vao[VAO_MONO_SEGMENTS].release();
 
         vao[VAO_COLORED_SEGMENTS].bind();
@@ -991,7 +990,7 @@ protected:
         rendering_program_p_l.setUniformValue("pointPlane", plane_point);
         rendering_program_p_l.setUniformValue("rendering_mode", rendering_mode);
         glLineWidth(m_size_edges);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_COLORED_SEGMENTS).size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_COLORED_SEGMENTS)));
         vao[VAO_COLORED_SEGMENTS].release();
       };
 
@@ -1023,7 +1022,7 @@ protected:
                       (double)m_rays_mono_color.blue()/(double)255);
         rendering_program_p_l.setAttributeValue("color",color);
         glLineWidth(m_size_rays);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_MONO_RAYS).size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_MONO_RAYS)));
         vao[VAO_MONO_RAYS].release();
 
         vao[VAO_COLORED_RAYS].bind();
@@ -1040,7 +1039,7 @@ protected:
             rendering_program_p_l.enableAttributeArray("color");
         }
         glLineWidth(m_size_rays);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_COLORED_RAYS).size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_COLORED_RAYS)));
         vao[VAO_COLORED_RAYS].release();
 
         rendering_program_p_l.release();
@@ -1056,7 +1055,7 @@ protected:
                       (double)m_lines_mono_color.blue()/(double)255);
         rendering_program_p_l.setAttributeValue("color",color);
         glLineWidth(m_size_lines);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_MONO_LINES).size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_MONO_LINES)));
         vao[VAO_MONO_LINES].release();
 
         rendering_program_p_l.release();
@@ -1075,7 +1074,7 @@ protected:
             rendering_program_p_l.enableAttributeArray("color");
         }
         glLineWidth(m_size_lines);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_COLORED_LINES).size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_COLORED_LINES)));
         vao[VAO_COLORED_LINES].release();
 
         rendering_program_p_l.release();
@@ -1109,7 +1108,7 @@ protected:
       rendering_program_face.setUniformValue("rendering_transparency", clipping_plane_rendering_transparency);
       rendering_program_face.setUniformValue("clipPlane", clipPlane);
       rendering_program_face.setUniformValue("pointPlane", plane_point);
-      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_MONO_FACES).size()/3));
+      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_MONO_FACES)));
       vao[VAO_MONO_FACES].release();
 
         vao[VAO_COLORED_FACES].bind();
@@ -1129,7 +1128,7 @@ protected:
         rendering_program_face.setUniformValue("rendering_transparency", clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("clipPlane", clipPlane);
         rendering_program_face.setUniformValue("pointPlane", plane_point);
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_COLORED_FACES).size()/3));
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_COLORED_FACES)));
         vao[VAO_COLORED_FACES].release();
       };
 
@@ -1140,7 +1139,7 @@ protected:
         rendering_program_clipping_plane.bind();
         vao[VAO_CLIPPING_PLANE].bind();
         glLineWidth(0.1f);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.get_array_of_index(POS_CLIPPING_PLANE).size() / 3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GB::POS_CLIPPING_PLANE)));
         glLineWidth(1.0f);
         vao[VAO_CLIPPING_PLANE].release();
         rendering_program_clipping_plane.release();
@@ -1268,11 +1267,11 @@ protected:
                 (bounding_box().zmax() - bounding_box().zmin()));
     const unsigned int nbSubdivisions=30;
 
-    gBuffer.get_array_of_index(POS_CLIPPING_PLANE).clear();
+    auto& array = gBuffer.get_array_of_index(GB::POS_CLIPPING_PLANE);
+    array.clear();
     for (unsigned int i=0; i<=nbSubdivisions; ++i)
     {
       const float pos = float(size*(2.0*i/nbSubdivisions-1.0));
-      auto& array = gBuffer.get_array_of_index(POS_CLIPPING_PLANE);
       array.push_back(pos);
       array.push_back(float(-size));
       array.push_back(0.f);
@@ -1595,40 +1594,8 @@ protected:
   // CGAL::qglviewer::LocalConstraint constraint;
   CGAL::qglviewer::WorldConstraint constraint;
 
-  // The following enum gives the indices of different elements of arrays vectors.
-  enum
-  {
-    BEGIN_POS=0,
-    POS_MONO_POINTS=BEGIN_POS,
-    POS_COLORED_POINTS,
-    POS_MONO_SEGMENTS,
-    POS_COLORED_SEGMENTS,
-    POS_MONO_RAYS,
-    POS_COLORED_RAYS,
-    POS_MONO_LINES,
-    POS_COLORED_LINES,
-    POS_MONO_FACES,
-    POS_COLORED_FACES,
-    POS_CLIPPING_PLANE,
-    END_POS,
-    BEGIN_COLOR=END_POS,
-    COLOR_POINTS=BEGIN_COLOR,
-    COLOR_SEGMENTS,
-    COLOR_RAYS,
-    COLOR_LINES,
-    COLOR_FACES,
-    END_COLOR,
-    BEGIN_NORMAL=END_COLOR,
-    SMOOTH_NORMAL_MONO_FACES=BEGIN_NORMAL,
-    FLAT_NORMAL_MONO_FACES,
-    SMOOTH_NORMAL_COLORED_FACES,
-    FLAT_NORMAL_COLORED_FACES,
-    END_NORMAL,
-    LAST_INDEX=END_NORMAL
-  };
-
-  static const unsigned int NB_VBO_BUFFERS=(END_POS-BEGIN_POS)+
-    (END_COLOR-BEGIN_COLOR)+2; // +2 for 2 vectors of normals
+  static const unsigned int NB_VBO_BUFFERS=(GB::END_POS-GB::BEGIN_POS)+
+    (GB::END_COLOR-GB::BEGIN_COLOR)+2; // +2 for 2 vectors of normals
 
   QGLBuffer buffers[NB_VBO_BUFFERS];
 

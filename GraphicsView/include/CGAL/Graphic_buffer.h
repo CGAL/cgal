@@ -141,6 +141,12 @@ public:
 
   std::vector<float> &get_array_of_index(int index) { return arrays[index]; }
 
+  int get_size_of_index(int index) const
+  { return static_cast<int>(arrays[index].size()*sizeof(BufferType)); }
+
+  unsigned int number_of_elements(int index) const
+  { return static_cast<unsigned int>(arrays[index].size()/3); }
+
   void update_bounding_box(const CGAL::Bbox_3 &box) { m_bounding_box+=box; }
 
   void initiate_bounding_box(const CGAL::Bbox_3& new_bounding_box)
@@ -360,10 +366,10 @@ public:
   std::vector<std::tuple<Local_point, QString>>& get_m_texts()
   { return m_texts; }
 
-protected:
+public:
   // The following enum gives the indices of different elements of arrays
   // vectors.
-  enum {
+  enum Buffers {
     BEGIN_POS = 0,
     POS_MONO_POINTS = BEGIN_POS,
     POS_COLORED_POINTS,
@@ -393,6 +399,7 @@ protected:
     LAST_INDEX = END_NORMAL
   };
 
+protected:
   Buffer_for_vao<BufferType> m_buffer_for_mono_points;
   Buffer_for_vao<BufferType> m_buffer_for_colored_points;
   Buffer_for_vao<BufferType> m_buffer_for_mono_segments;
