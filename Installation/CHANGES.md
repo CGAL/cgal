@@ -8,7 +8,7 @@ Release date: December 2022
 
 ### General Changes
 
-- The per package assertions, pre- and postconditions are no longer supported.
+- **Breaking change**: The per package assertions, pre- and postconditions are no longer supported.
 
 ### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps) [Generalized Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgGeneralizedMaps) [Linear Cell Complex](https://doc.cgal.org/5.6/Manual/packages.html#PkgLinearCellComplex)
 
