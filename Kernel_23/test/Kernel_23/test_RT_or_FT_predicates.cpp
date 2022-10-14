@@ -14,7 +14,7 @@
 // > 2, same as above + some general indications on what is going on
 // > 4, same as above + even more indications on what is going on
 // > 8, everything
-#define CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY 4
+#define CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY 2
 
 std::vector<std::string> predicates_types = { };
 
@@ -87,13 +87,13 @@ std::string parameter_with_namespace(const std::string& FT_name,
     return "CGAL::" + o + "<" + kernel_with_FT(FT_name) + " >";
 }
 
-void compile()
+int compile()
 {
 #if (CGAL_KERNEL_23_TEST_RT_FT_VERBOSITY > 4)
   std::cout << "====== Compiling atomic file... ======" << std::endl;
 #endif
 
-  std::system("make atomic_compilation_test > log.txt 2>&1");
+  return std::system("cmake --build " CGAL_STRINGIZE(CMAKE_BINARY_DIR) " -t atomic_compilation_test > log.txt 2>&1");
 }
 
 Compilation_result parse_output(const std::string& predicate_name,
@@ -201,7 +201,7 @@ void generate_atomic_compilation_test(const std::string& FT_name,
   std::cout << ")" << std::endl;
 #endif
 
-  std::ofstream out("../atomic_compilation_test.cpp");
+  std::ofstream out(CGAL_STRINGIZE(CMAKE_CURRENT_SOURCE_DIR) "/atomic_compilation_test.cpp");
   if(!out)
   {
     std::cerr << "Error: could not write into atomic compilation test" << std::endl;
@@ -259,8 +259,10 @@ void ensure_NO_Needs_FT(const std::string& predicate_name,
 
   // RT is sufficient, check that `Needs_FT` is not in the operator()'s return type
   generate_atomic_compilation_test(RT_no_div, predicate_name, parameters, CHECK_NO_NEEDS_FT);
-  compile();
-  Compilation_result res = parse_output(predicate_name);
+  auto compilation_result = compile();
+  Compilation_result res = compilation_result == 0 ?
+                           SUCCESSFUL :
+                           parse_output(predicate_name);
 
   if(res == SUCCESSFUL)
   {
@@ -301,8 +303,10 @@ void ensure_Needs_FT(const std::string& predicate_name,
 
   // The predicate requires a FT with division, ensure that Needs_FT is present in the operator()'s return type
   generate_atomic_compilation_test(FT_div, predicate_name, parameters, CHECK_NEEDS_FT);
-  compile();
-  Compilation_result res = parse_output(predicate_name);
+  auto compilation_result = compile();
+  Compilation_result res = compilation_result == 0 ?
+                           SUCCESSFUL :
+                           parse_output(predicate_name);
 
   if(res == SUCCESSFUL)
   {
@@ -358,8 +362,10 @@ void test_predicate(const std::string& predicate_name,
 
     parameters[object_pos] = object_type;
     generate_atomic_compilation_test(RT_no_div, predicate_name, parameters);
-    compile();
-    Compilation_result res = parse_output(predicate_name, RT_no_div, parameters);
+    auto compilation_result = compile();
+    Compilation_result res = compilation_result == 0 ?
+                             SUCCESSFUL :
+                             parse_output(predicate_name, RT_no_div, parameters);
 
     // See if we can already (i.e., possibly with `Any`s) conclude on the current parameter list
     if(res == FAILED_NO_MATCH)
@@ -405,8 +411,10 @@ void test_predicate(const std::string& predicate_name,
 
   // Quick try to see if it even matches anything
   generate_atomic_compilation_test(RT_no_div, predicate_name, parameters);
-  compile();
-  Compilation_result res = parse_output(predicate_name);
+  auto compilation_result = compile();
+  Compilation_result res = compilation_result == 0 ?
+                           SUCCESSFUL :
+                           parse_output(predicate_name);
   if(res == FAILED_NO_MATCH) // No point with this current arity
     return;
 
