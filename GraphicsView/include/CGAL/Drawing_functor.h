@@ -15,37 +15,39 @@
 
 namespace CGAL {
 
+// Drawing functor for a 2D combinatorial data structure
+// (with vertices, edges and faces)
 template <typename DS,
           typename vertex_handle,
           typename edge_handle,
-          typename face_handle>  
+          typename face_handle>
 struct Drawing_functor
 {
   Drawing_functor(): m_enabled_vertices(true),
-                            m_enabled_edges(true),
-                            m_enabled_faces(true)
+                     m_enabled_edges(true),
+                     m_enabled_faces(true)
   {
     draw_vertex=[](const DS &, vertex_handle)->bool { return true; };
     draw_edge=[](const DS &, edge_handle)->bool { return true; };
     draw_face=[](const DS &, face_handle)->bool { return true; };
-    
+
     colored_vertex=[](const DS &, vertex_handle)->bool { return false; };
     colored_edge=[](const DS &, edge_handle)->bool { return false; };
     colored_face=[](const DS &, face_handle)->bool { return false; };
 
     face_wireframe=[](const DS &, face_handle)->bool { return false; };
   }
-    
+
   std::function<bool(const DS &, vertex_handle)> draw_vertex;
   std::function<bool(const DS &, edge_handle)>   draw_edge;
   std::function<bool(const DS &, face_handle)>   draw_face;
-  
+
   std::function<bool(const DS &, vertex_handle)> colored_vertex;
   std::function<bool(const DS &, edge_handle)>   colored_edge;
   std::function<bool(const DS &, face_handle)>   colored_face;
-  
+
   std::function<bool(const DS &, face_handle)> face_wireframe;
-  
+
   std::function<CGAL::IO::Color(const DS &, vertex_handle)> vertex_color;
   std::function<CGAL::IO::Color(const DS &, edge_handle)>   edge_color;
   std::function<CGAL::IO::Color(const DS &, face_handle)>   face_color;
@@ -61,13 +63,15 @@ struct Drawing_functor
   void disable_faces() { m_enabled_faces=false; }
   void enable_faces() { m_enabled_faces=true; }
   bool are_faces_enabled() const { return m_enabled_faces; }
-  
+
 protected:
   bool m_enabled_vertices, m_enabled_edges, m_enabled_faces;
 };
 
-template <typename DS, 
-          typename vertex_handle, 
+// Drawing functor for a 3D combinatorial data structure
+// (with vertices, edges, faces and volumes)
+template <typename DS,
+          typename vertex_handle,
           typename edge_handle,
           typename face_handle,
           typename volume_handle>

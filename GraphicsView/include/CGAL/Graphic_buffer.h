@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Mostafa Ashraf <mostaphaashraf1996@gmail.com>
+// Author(s): Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//            Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_GRAPHIC_BUFFER_H
 #define CGAL_GRAPHIC_BUFFER_H
@@ -40,8 +41,8 @@ namespace CGAL {
 // This class is responsible for dealing with available CGAL data structures and
 // handling buffers.
 template <typename BufferType = float>
-class Graphic_buffer {
-
+class Graphic_buffer
+{
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
@@ -70,7 +71,8 @@ public:
         m_buffer_for_colored_faces(&pos[POS_COLORED_FACES], nullptr, &bbox,
                                    &pos[COLOR_FACES],
                                    &pos[FLAT_NORMAL_COLORED_FACES],
-                                   &pos[SMOOTH_NORMAL_COLORED_FACES]) {}
+                                   &pos[SMOOTH_NORMAL_COLORED_FACES])
+  {}
 
   Graphic_buffer()
       : m_buffer_for_mono_points(&arrays[POS_MONO_POINTS], nullptr,
@@ -99,61 +101,50 @@ public:
         m_buffer_for_colored_faces(&arrays[POS_COLORED_FACES], nullptr,
                                    &m_bounding_box, &arrays[COLOR_FACES],
                                    &arrays[FLAT_NORMAL_COLORED_FACES],
-                                   &arrays[SMOOTH_NORMAL_COLORED_FACES]) {}
+                                   &arrays[SMOOTH_NORMAL_COLORED_FACES])
+  {}
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_points() const {
-    return m_buffer_for_mono_points;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_mono_points() const
+  { return m_buffer_for_mono_points; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_points() const {
-    return m_buffer_for_colored_points;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_colored_points() const
+  { return m_buffer_for_colored_points; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_segments() const {
-    return m_buffer_for_mono_segments;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_mono_segments() const
+  { return m_buffer_for_mono_segments; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_segments() const {
-    return m_buffer_for_colored_segments;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_colored_segments() const
+  { return m_buffer_for_colored_segments; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_rays() const {
-    return m_buffer_for_mono_rays;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_mono_rays() const
+  { return m_buffer_for_mono_rays; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_rays() const {
-    return m_buffer_for_colored_rays;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_colored_rays() const
+  { return m_buffer_for_colored_rays; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_lines() const {
-    return m_buffer_for_mono_lines;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_mono_lines() const
+  { return m_buffer_for_mono_lines; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_lines() const {
-    return m_buffer_for_colored_lines;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_colored_lines() const
+  { return m_buffer_for_colored_lines; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_faces() const {
-    return m_buffer_for_mono_faces;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_mono_faces() const
+  { return m_buffer_for_mono_faces; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_faces() const {
-    return m_buffer_for_colored_faces;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_colored_faces() const
+  { return m_buffer_for_colored_faces; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_clipping_plane() const {
-    return m_buffer_for_clipping_plane;
-  }
+  const Buffer_for_vao<BufferType> &get_buffer_for_clipping_plane() const
+  { return m_buffer_for_clipping_plane; }
 
   const CGAL::Bbox_3 &get_bounding_box() const { return m_bounding_box; }
 
   std::vector<float> &get_array_of_index(int index) { return arrays[index]; }
 
-  void update_bounding_box(CGAL::Bbox_3 &box) { m_bounding_box += box; }
+  void update_bounding_box(const CGAL::Bbox_3 &box) { m_bounding_box+=box; }
 
-  void initiate_bounding_box(CGAL::Bbox_3 new_bounding_box) {
-    m_bounding_box = new_bounding_box;
-  }
+  void initiate_bounding_box(const CGAL::Bbox_3& new_bounding_box)
+  { m_bounding_box = new_bounding_box; }
 
   void negate_all_normals()
   {
@@ -161,41 +152,40 @@ public:
     m_buffer_for_colored_faces.negate_normals();
   }
 
-  template <typename KPoint> void add_point(const KPoint &p) {
-    m_buffer_for_mono_points.add_point(p);
-  }
+  template <typename KPoint> void add_point(const KPoint &p)
+  { m_buffer_for_mono_points.add_point(p); }
 
   template <typename KPoint>
-  void add_point(const KPoint &p, const CGAL::IO::Color &acolor) {
-    m_buffer_for_colored_points.add_point(p, acolor);
-  }
+  void add_point(const KPoint &p, const CGAL::IO::Color &acolor)
+  { m_buffer_for_colored_points.add_point(p, acolor); }
 
   template <typename KPoint>
-  void add_segment(const KPoint &p1, const KPoint &p2) {
-    m_buffer_for_mono_segments.add_segment(p1, p2);
-  }
+  void add_segment(const KPoint &p1, const KPoint &p2)
+  { m_buffer_for_mono_segments.add_segment(p1, p2); }
 
   template <typename KPoint>
   void add_segment(const KPoint &p1, const KPoint &p2,
-                   const CGAL::IO::Color &acolor) {
-    m_buffer_for_colored_segments.add_segment(p1, p2, acolor);
-  }
+                   const CGAL::IO::Color &acolor)
+  { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
 
   template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v) {
+  void add_ray(const KPoint &p, const KVector &v)
+  {
     double bigNumber = 1e30;
     m_buffer_for_mono_rays.add_ray_segment(p, (p + (bigNumber)*v));
   }
 
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v,
-               const CGAL::IO::Color &acolor) {
+               const CGAL::IO::Color &acolor)
+  {
     double bigNumber = 1e30;
     m_buffer_for_colored_rays.add_ray_segment(p, (p + (bigNumber)*v), acolor);
   }
 
   template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v) {
+  void add_line(const KPoint &p, const KVector &v)
+  {
     double bigNumber = 1e30;
     m_buffer_for_mono_lines.add_line_segment((p - (bigNumber)*v),
                                              (p + (bigNumber)*v));
@@ -203,65 +193,72 @@ public:
 
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v,
-                const CGAL::IO::Color &acolor) {
+                const CGAL::IO::Color &acolor)
+  {
     double bigNumber = 1e30;
     m_buffer_for_colored_lines.add_line_segment((p - (bigNumber)*v),
                                                 (p + (bigNumber)*v), acolor);
   }
 
-  template <typename KPoint> bool add_point_in_face(const KPoint &kp) {
-    if (m_buffer_for_mono_faces.is_a_face_started()) {
-      return m_buffer_for_mono_faces.add_point_in_face(kp);
-    } else if (m_buffer_for_colored_faces.is_a_face_started()) {
-      return m_buffer_for_colored_faces.add_point_in_face(kp);
-    }
+  template <typename KPoint> bool add_point_in_face(const KPoint &kp)
+  {
+    if (m_buffer_for_mono_faces.is_a_face_started())
+    { return m_buffer_for_mono_faces.add_point_in_face(kp); }
+    else if (m_buffer_for_colored_faces.is_a_face_started())
+    { return m_buffer_for_colored_faces.add_point_in_face(kp); }
     return false;
   }
 
   template <typename KPoint, typename KVector>
-  bool add_point_in_face(const KPoint &kp, const KVector &p_normal) {
-    if (m_buffer_for_mono_faces.is_a_face_started()) {
-      return m_buffer_for_mono_faces.add_point_in_face(kp, p_normal);
-    } else if (m_buffer_for_colored_faces.is_a_face_started()) {
-      return m_buffer_for_colored_faces.add_point_in_face(kp, p_normal);
-    }
+  bool add_point_in_face(const KPoint &kp, const KVector &p_normal)
+  {
+    if (m_buffer_for_mono_faces.is_a_face_started())
+    { return m_buffer_for_mono_faces.add_point_in_face(kp, p_normal); }
+    else if (m_buffer_for_colored_faces.is_a_face_started())
+    { return m_buffer_for_colored_faces.add_point_in_face(kp, p_normal); }
     return false;
   }
 
-  bool is_a_face_started() const {
+  bool is_a_face_started() const
+  {
     return m_buffer_for_mono_faces.is_a_face_started() ||
            m_buffer_for_colored_faces.is_a_face_started();
   }
 
-  void face_begin() {
-    if (is_a_face_started()) {
+  void face_begin()
+  {
+    if (is_a_face_started())
+    {
       std::cerr
           << "You cannot start a new face before to finish the previous one."
           << std::endl;
-    } else {
-      m_buffer_for_mono_faces.face_begin();
     }
+    else
+    { m_buffer_for_mono_faces.face_begin(); }
   }
 
-  void face_begin(const CGAL::IO::Color &acolor) {
-    if (is_a_face_started()) {
+  void face_begin(const CGAL::IO::Color &acolor)
+  {
+    if (is_a_face_started())
+    {
       std::cerr
           << "You cannot start a new face before to finish the previous one."
           << std::endl;
-    } else {
-      m_buffer_for_colored_faces.face_begin(acolor);
     }
+    else
+    { m_buffer_for_colored_faces.face_begin(acolor); }
   }
 
-  void face_end() {
-    if (m_buffer_for_mono_faces.is_a_face_started()) {
-      m_buffer_for_mono_faces.face_end();
-    } else if (m_buffer_for_colored_faces.is_a_face_started()) {
-      return m_buffer_for_colored_faces.face_end();
-    }
+  void face_end()
+  {
+    if (m_buffer_for_mono_faces.is_a_face_started())
+    { m_buffer_for_mono_faces.face_end(); }
+    else if (m_buffer_for_colored_faces.is_a_face_started())
+    { m_buffer_for_colored_faces.face_end(); }
   }
 
-  bool is_empty() const {
+  bool is_empty() const
+  {
     return (m_buffer_for_mono_points.is_empty() &&
             m_buffer_for_colored_points.is_empty() &&
             m_buffer_for_mono_segments.is_empty() &&
@@ -274,7 +271,8 @@ public:
             m_buffer_for_colored_faces.is_empty());
   }
 
-  bool has_zero_x() const {
+  bool has_zero_x() const
+  {
     return m_buffer_for_mono_points.has_zero_x() &&
            m_buffer_for_colored_points.has_zero_x() &&
            m_buffer_for_mono_segments.has_zero_x() &&
@@ -287,7 +285,8 @@ public:
            m_buffer_for_colored_lines.has_zero_x();
   }
 
-  bool has_zero_y() const {
+  bool has_zero_y() const
+  {
     return m_buffer_for_mono_points.has_zero_y() &&
            m_buffer_for_colored_points.has_zero_y() &&
            m_buffer_for_mono_segments.has_zero_y() &&
@@ -300,7 +299,8 @@ public:
            m_buffer_for_colored_lines.has_zero_y();
   }
 
-  bool has_zero_z() const {
+  bool has_zero_z() const
+  {
     return m_buffer_for_mono_points.has_zero_z() &&
            m_buffer_for_colored_points.has_zero_z() &&
            m_buffer_for_mono_segments.has_zero_z() &&
@@ -327,40 +327,38 @@ public:
     m_buffer_for_colored_faces.clear();
     m_buffer_for_clipping_plane.clear();
     m_texts.clear();
+    m_bounding_box=CGAL::Bbox_3();
   }
 
   template <typename KPoint>
-  static Local_point get_local_point(const KPoint &p) {
+  static Local_point get_local_point(const KPoint &p)
+  {
     return internal::Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel,
                                 Local_kernel>::get_local_point(p);
   }
 
   template <typename KPoint>
-  void add_text(const KPoint &kp, const QString &txt) {
+  void add_text(const KPoint &kp, const QString &txt)
+  {
     Local_point p = get_local_point(kp);
     m_texts.push_back(std::make_tuple(p, txt));
   }
 
-  template <typename KPoint> void add_text(const KPoint &kp, const char *txt) {
-    add_text(kp, QString(txt));
-  }
+  template <typename KPoint> void add_text(const KPoint &kp, const char *txt)
+  { add_text(kp, QString(txt)); }
 
   template <typename KPoint>
-  void add_text(const KPoint &kp, const std::string &txt) {
-    add_text(kp, txt.c_str());
-  }
+  void add_text(const KPoint &kp, const std::string &txt)
+  { add_text(kp, txt.c_str()); }
 
-  void m_texts_clear() {
-    m_texts.clear();
-  }
+  void m_texts_clear()
+  { m_texts.clear(); }
 
-  int m_texts_size() {
-    return m_texts.size();
-  }
+  int m_texts_size()
+  { return m_texts.size(); }
 
-  std::vector<std::tuple<Local_point, QString>>& get_m_texts() {
-    return m_texts;
-  }
+  std::vector<std::tuple<Local_point, QString>>& get_m_texts()
+  { return m_texts; }
 
 protected:
   // The following enum gives the indices of different elements of arrays

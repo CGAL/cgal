@@ -75,7 +75,6 @@ inline CGAL::IO::Color get_random_color(CGAL::Random& random)
   while(res.red()==255 && res.green()==255 && res.blue()==255);
   return res;
 }
-
 //------------------------------------------------------------------------------
 template <typename BufferType = float>
 class Basic_viewer_qt : public CGAL::QGLViewer
@@ -145,9 +144,12 @@ public:
     setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
 
     // Add custom mouse description
-    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton, "Rotate the clipping plane when enabled");
-    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton, "Translate the clipping plane when enabled");
-    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MiddleButton, "Control the clipping plane transparency when enabled");
+    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton,
+                               "Rotate the clipping plane when enabled");
+    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton,
+                               "Translate the clipping plane when enabled");
+    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MiddleButton,
+                               "Control the clipping plane transparency when enabled");
 
     setMouseBinding(::Qt::ControlModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
     setMouseBinding(::Qt::ControlModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
@@ -180,30 +182,22 @@ public:
       vao[i].destroy();
   }
 
-  void set_draw_vertices(bool b) {
-    m_draw_vertices = b;
-  }
-  void set_draw_edges(bool b) {
-    m_draw_edges = b;
-  }
-  void set_draw_rays(bool b) {
-    m_draw_rays = b;
-  }
-  void set_draw_lines(bool b) {
-    m_draw_lines = b;
-  }
-  void set_draw_faces(bool b) {
-    m_draw_faces = b;
-  }
-  void set_use_mono_color(bool b) {
-    m_use_mono_color = b;
-  }
-  void set_inverse_normal(bool b) {
-    m_inverse_normal = b;
-  }
-  void set_draw_text(bool b) {
-    m_draw_text = b;
-  }
+  void set_draw_vertices(bool b)
+  { m_draw_vertices = b; }
+  void set_draw_edges(bool b)
+  { m_draw_edges = b; }
+  void set_draw_rays(bool b)
+  { m_draw_rays = b; }
+  void set_draw_lines(bool b)
+  { m_draw_lines = b; }
+  void set_draw_faces(bool b)
+  { m_draw_faces = b; }
+  void set_use_mono_color(bool b)
+  { m_use_mono_color = b; }
+  void set_inverse_normal(bool b)
+  { m_inverse_normal = b; }
+  void set_draw_text(bool b)
+  { m_draw_text = b; }
 
   void clear()
   {
@@ -218,30 +212,19 @@ public:
   }
 
   bool is_empty() const
-  {
-    return gBuffer.is_empty();
-  }
+  { return gBuffer.is_empty(); }
 
   const CGAL::Bbox_3& bounding_box() const
-  {
-    const auto& bounding_box = gBuffer.get_bounding_box();
-    return bounding_box;
-  }
+  { return gBuffer.get_bounding_box(); }
 
   bool has_zero_x() const
-  {
-    return gBuffer.has_zero_x();
-  }
+  { return gBuffer.has_zero_x(); }
 
   bool has_zero_y() const
-  {
-    return gBuffer.has_zero_y();
-  }
+  { return gBuffer.has_zero_y(); }
 
   bool has_zero_z() const
-  {
-    return gBuffer.has_zero_z();
-  }
+  { return gBuffer.has_zero_z(); }
 
   Local_kernel::Plane_3 clipping_plane() const
   {
@@ -269,7 +252,35 @@ public:
   template<typename KPoint>
   void add_segment(const KPoint& p1, const KPoint& p2,
                    const CGAL::IO::Color& acolor)
-  { gBuffer.add_segment(p1, p2, acolor);}//get_buffer_for_colored_segments().add_segment(p1, p2, acolor); }
+  { gBuffer.add_segment(p1, p2, acolor);}
+
+  template <typename KPoint, typename KVector>
+  void add_ray(const KPoint &p, const KVector &v)
+  { gBuffer.add_ray(p, v); }
+
+  template <typename KPoint, typename KVector>
+  void add_ray(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
+  { gBuffer.add_ray(p, v, acolor); }
+
+  template <typename KPoint, typename KVector>
+  void add_line(const KPoint &p, const KVector &v)
+  { gBuffer.add_line(p, v); }
+
+  template <typename KPoint, typename KVector>
+  void add_line(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
+  { gBuffer.add_line(p, v, acolor); }
+
+  template<typename KPoint>
+  void add_text(const KPoint& kp, const QString& txt)
+  { gBuffer.add_text(kp, txt); }
+
+  template<typename KPoint>
+  void add_text(const KPoint& kp, const char* txt)
+  { gBuffer.add_text(kp, txt); }
+
+  template<typename KPoint>
+  void add_text(const KPoint& kp, const std::string& txt)
+  { gBuffer.add_text(kp, txt.c_str()); }
 
   template <typename KPoint, typename KVector>
   void update_bounding_box_for_ray(const KPoint &p, const KVector &v)
@@ -292,54 +303,6 @@ public:
     gBuffer.update_bounding_box(b);
   }
 
-  template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v)
-  {
-    double bigNumber = 1e30;
-    gBuffer.get_buffer_for_mono_rays().add_ray_segment(p, (p + (bigNumber)*v));
-    // gBuffer.get_buffer_for_mono_rays().add_ray(p, v);
-  }
-
-  template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
-  {
-    // gBuffer.get_buffer_for_colored_rays().add_ray(p, v, acolor);
-    double bigNumber = 1e30;
-    gBuffer.get_buffer_for_colored_lines().add_ray_segment(p, (p + (bigNumber)*v), acolor);
-  }
-
-  template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v)
-  {
-    // gBuffer.add_line(p,v);
-    double bigNumber = 1e30;
-    gBuffer.get_buffer_for_mono_lines().add_line_segment((p - (bigNumber)*v),
-                                             (p + (bigNumber)*v));
-  }
-
-  template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
-  {
-    // gBuffer.add_line(p,v,acolor);
-    double bigNumber = 1e30;
-    gBuffer.get_buffer_for_colored_lines().add_line_segment((p - (bigNumber)*v),
-                                                (p + (bigNumber)*v), acolor);
-  }
-
-  template<typename KPoint>
-  void add_text(const KPoint& kp, const QString& txt)
-  {
-    gBuffer.add_text(kp, txt);
-  }
-
-  template<typename KPoint>
-  void add_text(const KPoint& kp, const char* txt)
-  { gBuffer.add_text(kp, txt); }
-
-  template<typename KPoint>
-  void add_text(const KPoint& kp, const std::string& txt)
-  { gBuffer.add_text(kp, txt.c_str()); }
-
   bool is_a_face_started() const
   {
     return gBuffer.get_buffer_for_mono_faces().is_a_face_started() ||
@@ -347,59 +310,24 @@ public:
   }
 
   void face_begin()
-  {
-    if (is_a_face_started())
-    {
-      std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
-    }
-    else
-    {
-      auto mono_faces = gBuffer.get_buffer_for_mono_faces();
-      mono_faces.face_begin();
-    }
-  }
+  { gBuffer.face_begin(); }
 
   void face_begin(const CGAL::IO::Color& acolor)
-  {
-    if (is_a_face_started())
-    {
-      std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
-    }
-    else
-    {
-      auto colored_faces = gBuffer.get_buffer_for_colored_faces();
-      colored_faces.face_begin(acolor);
-    }
-  }
+  { gBuffer.face_begin(acolor); }
 
   template <typename KPoint>
-  bool add_point_in_face(const KPoint &kp) {
-      return gBuffer.add_point_in_face(kp);
-  }
+  bool add_point_in_face(const KPoint &kp)
+  { return gBuffer.add_point_in_face(kp); }
 
   template <typename KPoint, typename KVector>
-  bool add_point_in_face(const KPoint &kp, const KVector &p_normal) {
-      return gBuffer.add_point_in_face(kp, p_normal);
-  }
-
-  Graphic_buffer<float>& get_graphic_buffer() {
-    return gBuffer;
-  }
+  bool add_point_in_face(const KPoint &kp, const KVector &p_normal)
+  { return gBuffer.add_point_in_face(kp, p_normal); }
 
   void face_end()
-  {
-   if (gBuffer.get_buffer_for_mono_faces().is_a_face_started())
-    {
-      auto mono_faces = gBuffer.get_buffer_for_mono_faces();
-      mono_faces.face_end();
-    }
-    else if (gBuffer.get_buffer_for_colored_faces().is_a_face_started())
-    {
-      auto colored_faces = gBuffer.get_buffer_for_colored_faces();
-      // return colored_faces.face_end();
-      colored_faces.face_end();
-    }
-  }
+  { gBuffer.face_end(); }
+
+  Graphic_buffer<float>& get_graphic_buffer()
+  { return gBuffer; }
 
   virtual void redraw()
   {
@@ -1364,93 +1292,87 @@ protected:
   }
 
   void negate_all_normals()
-  {
-    gBuffer.negate_all_normals();
-  }
+  { gBuffer.negate_all_normals(); }
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
-
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-
-    if(_onPress) {
-      bool is_pressed = _onPress(e, this);
-    if(!is_pressed) {
-
-    if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
+    if(!_onPress || !_onPress(e, this))
     {
-      if (!isOpenGL_4_3()) return;
-      if (!is_two_dimensional())
+      if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
       {
-        // toggle clipping plane
-        m_use_clipping_plane = (m_use_clipping_plane + 1) % CLIPPING_PLANE_END_INDEX;
-        if (m_use_clipping_plane==CLIPPING_PLANE_OFF)
-        { setManipulatedFrame(nullptr); }
-        else
-        { setManipulatedFrame(m_frame_plane); }
-
-        switch(m_use_clipping_plane)
+        if (!isOpenGL_4_3()) return;
+        if (!is_two_dimensional())
         {
-        case CLIPPING_PLANE_OFF: displayMessage(QString("Draw clipping = false")); break;
-        case CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF: clipping_plane_rendering=true; displayMessage(QString("Draw clipping = solid half & transparent half")); break;
-        case CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: displayMessage(QString("Draw clipping = solid half & wireframe half")); break;
-        case CLIPPING_PLANE_SOLID_HALF_ONLY: displayMessage(QString("Draw clipping = solid half only")); break;
-        default: break;
-        }
-        update();
-      }
-    }
+          // toggle clipping plane
+          m_use_clipping_plane = (m_use_clipping_plane + 1) % CLIPPING_PLANE_END_INDEX;
+          if (m_use_clipping_plane==CLIPPING_PLANE_OFF)
+          { setManipulatedFrame(nullptr); }
+          else
+          { setManipulatedFrame(m_frame_plane); }
 
-    else if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::AltModifier))
-    {
-      if (!isOpenGL_4_3()) return;
-      if (m_use_clipping_plane!=CLIPPING_PLANE_OFF)
+          switch(m_use_clipping_plane)
+          {
+          case CLIPPING_PLANE_OFF: displayMessage(QString("Draw clipping = false")); break;
+          case CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF: clipping_plane_rendering=true; displayMessage(QString("Draw clipping = solid half & transparent half")); break;
+          case CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: displayMessage(QString("Draw clipping = solid half & wireframe half")); break;
+          case CLIPPING_PLANE_SOLID_HALF_ONLY: displayMessage(QString("Draw clipping = solid half only")); break;
+          default: break;
+          }
+          update();
+        }
+      }
+
+      else if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::AltModifier))
       {
-        clipping_plane_rendering = !clipping_plane_rendering;
-        displayMessage(QString("Draw clipping plane=%1.").arg(clipping_plane_rendering?"true":"false"));
+        if (!isOpenGL_4_3()) return;
+        if (m_use_clipping_plane!=CLIPPING_PLANE_OFF)
+        {
+          clipping_plane_rendering = !clipping_plane_rendering;
+          displayMessage(QString("Draw clipping plane=%1.").arg(clipping_plane_rendering?"true":"false"));
+          update();
+        }
+      }
+      else if ((e->key()==::Qt::Key_E) && (modifiers==::Qt::NoButton))
+      {
+        m_draw_edges=!m_draw_edges;
+        displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
         update();
       }
-    }
-    else if ((e->key()==::Qt::Key_E) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_edges=!m_draw_edges;
-      displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::NoButton))
-    {
-      m_use_mono_color=!m_use_mono_color;
-      displayMessage(QString("Mono color=%1.").arg(m_use_mono_color?"true":"false"));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
-    {
-      m_inverse_normal=!m_inverse_normal;
-      displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
-      negate_all_normals();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_S) && (modifiers==::Qt::NoButton))
-    {
-      m_flatShading=!m_flatShading;
-      if (m_flatShading)
-        displayMessage("Flat shading.");
-      else
-        displayMessage("Gouraud shading.");
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_text=!m_draw_text;
-      displayMessage(QString("Draw text=%1.").arg(m_draw_text?"true":"false"));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_U) && (modifiers==::Qt::NoButton))
-    {
-      if (is_two_dimensional())
+      else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::NoButton))
       {
-        displayMessage(QString("Move camera direction upside down."));
-        /* CGAL::qglviewer::Vec cur=camera()->viewDirection();
+        m_use_mono_color=!m_use_mono_color;
+        displayMessage(QString("Mono color=%1.").arg(m_use_mono_color?"true":"false"));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
+      {
+        m_inverse_normal=!m_inverse_normal;
+        displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
+        negate_all_normals();
+        redraw();
+      }
+      else if ((e->key()==::Qt::Key_S) && (modifiers==::Qt::NoButton))
+      {
+        m_flatShading=!m_flatShading;
+        if (m_flatShading)
+          displayMessage("Flat shading.");
+        else
+          displayMessage("Gouraud shading.");
+        redraw();
+      }
+      else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::NoButton))
+      {
+        m_draw_text=!m_draw_text;
+        displayMessage(QString("Draw text=%1.").arg(m_draw_text?"true":"false"));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_U) && (modifiers==::Qt::NoButton))
+      {
+        if (is_two_dimensional())
+        {
+          displayMessage(QString("Move camera direction upside down."));
+        /* CGAL::qglviewer::Vec cur=camera()->viewDirection(); // TODO !
         double cx=cur.x, cy=cur.y, cz=cur.z;
         if (has_zero_x())      { cx=-cx; }
         else if (has_zero_y()) { cy=-cy; }
@@ -1460,140 +1382,140 @@ protected:
         else if (has_zero_y()) { cy=(cur.y<0?-1.:1); }
         else                   { cz=(cur.z<0?-1.:1); }*/
 
-        camera()->setUpVector(-camera()->upVector());
+          camera()->setUpVector(-camera()->upVector());
         //camera()->frame()->setConstraint(NULL);
         // camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
         //constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
         //camera()->frame()->setConstraint(&constraint);
         //update();
-        redraw();
+          redraw();
+        }
       }
-    }
-    else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_vertices=!m_draw_vertices;
-      displayMessage(QString("Draw vertices=%1.").arg(m_draw_vertices?"true":"false"));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_W) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_faces=!m_draw_faces;
-      displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
-    {
-      m_size_edges+=.5;
-      displayMessage(QString("Size of edges=%1.").arg(m_size_edges));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_Minus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
-    {
-      if (m_size_edges>.5) m_size_edges-=.5;
-      displayMessage(QString("Size of edges=%1.").arg(m_size_edges));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_Plus) && (modifiers.testFlag(::Qt::ControlModifier)))
-    {
-      m_size_points+=.5;
-      displayMessage(QString("Size of points=%1.").arg(m_size_points));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_Minus) && (modifiers.testFlag(::Qt::ControlModifier)))
-    {
-      if (m_size_points>.5) m_size_points-=.5;
-      displayMessage(QString("Size of points=%1.").arg(m_size_points));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::NoButton))
-    {
-      m_ambient_color.setX(m_ambient_color.x()+.1);
-      if (m_ambient_color.x()>1.) m_ambient_color.setX(1.);
-      m_ambient_color.setY(m_ambient_color.x()+.1);
-      if (m_ambient_color.y()>1.) m_ambient_color.setY(1.);
-      m_ambient_color.setZ(m_ambient_color.x()+.1);
-      if (m_ambient_color.z()>1.) m_ambient_color.setZ(1.);
-      displayMessage(QString("Light color=(%1 %2 %3).").
-                     arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::NoButton))
-    {
-      m_ambient_color.setX(m_ambient_color.x()-.1);
-      if (m_ambient_color.x()<0.) m_ambient_color.setX(0.);
-      m_ambient_color.setY(m_ambient_color.y()-.1);
-      if (m_ambient_color.y()<0.) m_ambient_color.setY(0.);
-      m_ambient_color.setZ(m_ambient_color.z()-.1);
-      if (m_ambient_color.z()<0.) m_ambient_color.setZ(0.);
-      displayMessage(QString("Light color=(%1 %2 %3).").
-                     arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::ShiftModifier))
-    {
-      m_ambient_color.setX(m_ambient_color.x()+.1);
-      if (m_ambient_color.x()>1.) m_ambient_color.setX(1.);
-      displayMessage(QString("Light color=(%1 %2 %3).").
-                     arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::AltModifier))
-    {
-      m_ambient_color.setY(m_ambient_color.y()+.1);
-      if (m_ambient_color.y()>1.) m_ambient_color.setY(1.);
-      displayMessage(QString("Light color=(%1 %2 %3).").
-                     arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::ControlModifier))
-    {
-      m_ambient_color.setZ(m_ambient_color.z()+.1);
-      if (m_ambient_color.z()>1.) m_ambient_color.setZ(1.);
-      displayMessage(QString("Light color=(%1 %2 %3).").
-                     arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::ShiftModifier))
-    {
-      m_ambient_color.setX(m_ambient_color.x()-.1);
-      if (m_ambient_color.x()<0.) m_ambient_color.setX(0.);
-      displayMessage(QString("Light color=(%1 %2 %3).").
-                     arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::AltModifier))
-    {
-      m_ambient_color.setY(m_ambient_color.y()-.1);
-      if (m_ambient_color.y()<0.) m_ambient_color.setY(0.);
-      displayMessage(QString("Light color=(%1 %2 %3).").
-                     arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::ControlModifier))
-    {
-      m_ambient_color.setZ(m_ambient_color.z()-.1);
-      if (m_ambient_color.z()<0.) m_ambient_color.setZ(0.);
-      displayMessage(QString("Light color=(%1 %2 %3).").
-                     arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_O) && (modifiers==::Qt::NoButton))
-    {
-      bool old_2D=is_two_dimensional();
-      m_no_2D_mode=!m_no_2D_mode;
-      if (old_2D!=is_two_dimensional())
+      else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::NoButton))
       {
-        if (is_two_dimensional())
-        { displayMessage(QString("Viewer is in 2D mode.")); }
-        else { displayMessage(QString("Viewer is in 3D mode.")); }
+        m_draw_vertices=!m_draw_vertices;
+        displayMessage(QString("Draw vertices=%1.").arg(m_draw_vertices?"true":"false"));
         update();
       }
+      else if ((e->key()==::Qt::Key_W) && (modifiers==::Qt::NoButton))
+      {
+        m_draw_faces=!m_draw_faces;
+        displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
+      {
+        m_size_edges+=.5;
+        displayMessage(QString("Size of edges=%1.").arg(m_size_edges));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_Minus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
+      {
+        if (m_size_edges>.5) m_size_edges-=.5;
+        displayMessage(QString("Size of edges=%1.").arg(m_size_edges));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_Plus) && (modifiers.testFlag(::Qt::ControlModifier)))
+      {
+        m_size_points+=.5;
+        displayMessage(QString("Size of points=%1.").arg(m_size_points));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_Minus) && (modifiers.testFlag(::Qt::ControlModifier)))
+      {
+        if (m_size_points>.5) m_size_points-=.5;
+        displayMessage(QString("Size of points=%1.").arg(m_size_points));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::NoButton))
+      {
+        m_ambient_color.setX(m_ambient_color.x()+.1);
+        if (m_ambient_color.x()>1.) m_ambient_color.setX(1.);
+        m_ambient_color.setY(m_ambient_color.x()+.1);
+        if (m_ambient_color.y()>1.) m_ambient_color.setY(1.);
+        m_ambient_color.setZ(m_ambient_color.x()+.1);
+        if (m_ambient_color.z()>1.) m_ambient_color.setZ(1.);
+        displayMessage(QString("Light color=(%1 %2 %3).").
+                       arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::NoButton))
+      {
+        m_ambient_color.setX(m_ambient_color.x()-.1);
+        if (m_ambient_color.x()<0.) m_ambient_color.setX(0.);
+        m_ambient_color.setY(m_ambient_color.y()-.1);
+        if (m_ambient_color.y()<0.) m_ambient_color.setY(0.);
+        m_ambient_color.setZ(m_ambient_color.z()-.1);
+        if (m_ambient_color.z()<0.) m_ambient_color.setZ(0.);
+        displayMessage(QString("Light color=(%1 %2 %3).").
+                       arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::ShiftModifier))
+      {
+        m_ambient_color.setX(m_ambient_color.x()+.1);
+        if (m_ambient_color.x()>1.) m_ambient_color.setX(1.);
+        displayMessage(QString("Light color=(%1 %2 %3).").
+                       arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::AltModifier))
+      {
+        m_ambient_color.setY(m_ambient_color.y()+.1);
+        if (m_ambient_color.y()>1.) m_ambient_color.setY(1.);
+        displayMessage(QString("Light color=(%1 %2 %3).").
+                       arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::ControlModifier))
+      {
+        m_ambient_color.setZ(m_ambient_color.z()+.1);
+        if (m_ambient_color.z()>1.) m_ambient_color.setZ(1.);
+        displayMessage(QString("Light color=(%1 %2 %3).").
+                       arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::ShiftModifier))
+      {
+        m_ambient_color.setX(m_ambient_color.x()-.1);
+        if (m_ambient_color.x()<0.) m_ambient_color.setX(0.);
+        displayMessage(QString("Light color=(%1 %2 %3).").
+                       arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::AltModifier))
+      {
+        m_ambient_color.setY(m_ambient_color.y()-.1);
+        if (m_ambient_color.y()<0.) m_ambient_color.setY(0.);
+        displayMessage(QString("Light color=(%1 %2 %3).").
+                       arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::ControlModifier))
+      {
+        m_ambient_color.setZ(m_ambient_color.z()-.1);
+        if (m_ambient_color.z()<0.) m_ambient_color.setZ(0.);
+        displayMessage(QString("Light color=(%1 %2 %3).").
+                       arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_O) && (modifiers==::Qt::NoButton))
+      {
+        bool old_2D=is_two_dimensional();
+        m_no_2D_mode=!m_no_2D_mode;
+        if (old_2D!=is_two_dimensional())
+        {
+          if (is_two_dimensional())
+          { displayMessage(QString("Viewer is in 2D mode.")); }
+          else { displayMessage(QString("Viewer is in 3D mode.")); }
+          update();
+        }
+      }
+      else
+      { CGAL::QGLViewer::keyPressEvent(e); } // By default call QGLViewer key press
     }
-    else
-      CGAL::QGLViewer::keyPressEvent(e);
   }
-  }
-  }
+
   virtual QString helpString() const
   { return helpString("CGAL Basic Viewer"); }
 
@@ -1629,10 +1551,9 @@ protected:
     return text;
   }
 public:
-  // std::function<void(QKeyEvent *e)> _onPress;
   std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> _onPress;
-protected:
 
+protected:
   Graphic_buffer<BufferType>& gBuffer;
 
   bool m_draw_vertices;
@@ -1738,65 +1659,55 @@ protected:
 
 };
 
-/**
- * @brief
- *
- * @tparam BufferType
- * @param graphic_buffer
- */
 template <typename BufferType = float>
-void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer) {
-
+void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,
+                 const char *title="CGAL Basic Viewer")
+{
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
   bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
-  if (!cgal_test_suite) {
-    CGAL::Qt::init_ogl_context(4, 3);
-    // Qt::init_ogl_context(4, 3);
+  if (!cgal_test_suite)
+  {
+    Qt::init_ogl_context(4, 3);
 
     int argc = 1;
-    const char *argv[2] = {"lccviewer", nullptr};
+    const char *argv[2] = {title, nullptr};
     QApplication app(argc, const_cast<char **>(argv));
-
-    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer);
+    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer, title);
 
     basic_viewer.show();
     app.exec();
   }
 }
 
-
 template <typename BufferType = float>
-void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,const std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress) {
-
+void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,
+                 const std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress,
+                 const char *title="CGAL Basic Viewer")
+{
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
   bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
-  if (!cgal_test_suite) {
-    CGAL::Qt::init_ogl_context(4, 3);
-    // Qt::init_ogl_context(4, 3);
+  if (!cgal_test_suite)
+  {
+    Qt::init_ogl_context(4, 3);
 
     int argc = 1;
-    const char *argv[2] = {"lccviewer", nullptr};
+    const char *argv[2] = {title, nullptr};
     QApplication app(argc, const_cast<char **>(argv));
-
-    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer);
-
+    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer, title);
     basic_viewer._onPress = onPress;
 
     basic_viewer.show();
     app.exec();
   }
 }
-
-
-
 
 } // End namespace CGAL
 
