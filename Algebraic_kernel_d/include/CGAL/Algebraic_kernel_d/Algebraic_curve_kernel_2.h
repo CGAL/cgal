@@ -73,7 +73,7 @@ namespace CGAL {
  * in turn required by the \c CurvedKernelViaAnalysis_2 concept
  * (see the documentation of the corresponding package). Therefore,
  * some types and methods of the class have both an "algebraic" name
- * (demanded by \c CurveKernelWithAnalysis_d_2) and an "non-algebraic name
+ * (demanded by \c CurveKernelWithAnalysis_d_2) and a "non-algebraic" name
  * (demanded by \c CurveKernel_2).
  *
  * \b Algebraic_curve_kernel_2 is a template class, and needs a model

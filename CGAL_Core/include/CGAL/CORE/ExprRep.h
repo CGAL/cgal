@@ -1340,7 +1340,7 @@ inline int ExprRep::getExactSign() {
 }
 
 // Chee, 7/17/02: degreeBound() function is now
-// taken out of "computeExactFlags()
+// taken out of "computeExactFlags()"
 inline int ExprRep::getSign() {
   if (ffVal.isOK())
     return ffVal.sign();
