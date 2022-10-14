@@ -13,6 +13,9 @@
 #ifndef CGAL_DRAWING_FUNCTORS_H
 #define CGAL_DRAWING_FUNCTORS_H
 
+#include <CGAL/license/GraphicsView.h>
+#include <functional>
+
 namespace CGAL {
 
 // Drawing functor for a 2D combinatorial data structure
