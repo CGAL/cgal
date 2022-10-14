@@ -48,12 +48,10 @@ ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits>>&
 ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits>>::
 operator<<(const X_monotone_curve_2& curve)
 {
-  int cnt = 0;
   for (typename X_monotone_curve_2::Subcurve_const_iterator it =
          curve.subcurves_begin();
        it != curve.subcurves_end(); ++it)
   {
-    cnt++;
     this->painterOstream << *it;
   }
 
