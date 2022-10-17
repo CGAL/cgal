@@ -57,44 +57,6 @@ typename GeomTraits::FT weight(const GeomTraits& traits,
 
 } // namespace three_point_family_ns
 
-/// \endcond
-
-#if defined(DOXYGEN_RUNNING)
-
-/*!
-  \ingroup PkgWeightsRefThreePointFamilyWeights
-
-  \brief computes the three-point family weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2` and the power parameter `a`, given a traits class `traits` with geometric objects,
-  predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT three_point_family_weight(
-    const typename GeomTraits::Point_2& p0,
-    const typename GeomTraits::Point_2& p1,
-    const typename GeomTraits::Point_2& p2,
-    const typename GeomTraits::Point_2& q,
-    const typename GeomTraits::FT a,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefThreePointFamilyWeights
-
-  \brief computes the three-point family weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K, and the power parameter `a` which
-  can be omitted.
-*/
-template<typename K>
-typename K::FT three_point_family_weight(
-    const CGAL::Point_2<K>& p0,
-    const CGAL::Point_2<K>& p1,
-    const CGAL::Point_2<K>& p2,
-    const CGAL::Point_2<K>& q,
-    const typename K::FT a = typename K::FT(1)) { }
-
-#endif // DOXYGEN_RUNNING
-
-/// \cond SKIP_IN_MANUAL
 template<typename GeomTraits>
 typename GeomTraits::FT three_point_family_weight(const typename GeomTraits::Point_2& t,
                                                   const typename GeomTraits::Point_2& r,

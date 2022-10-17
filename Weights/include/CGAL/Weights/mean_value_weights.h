@@ -76,40 +76,6 @@ typename GeomTraits::FT weight(const GeomTraits& traits,
 
 } // namespace mean_value_ns
 
-/// \endcond
-
-#if defined(DOXYGEN_RUNNING)
-
-/*!
-  \ingroup PkgWeightsRefMeanValueWeights
-
-  \brief computes the mean value weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT mean_value_weight(
-    const typename GeomTraits::Point_2& p0,
-    const typename GeomTraits::Point_2& p1,
-    const typename GeomTraits::Point_2& p2,
-    const typename GeomTraits::Point_2& q,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefMeanValueWeights
-
-  \brief computes the mean value weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K.
-*/
-template<typename K>
-typename K::FT mean_value_weight(
-    const CGAL::Point_2<K>& p0,
-    const CGAL::Point_2<K>& p1,
-    const CGAL::Point_2<K>& p2,
-    const CGAL::Point_2<K>& q) { }
-
-#endif // DOXYGEN_RUNNING
-
-/// \cond SKIP_IN_MANUAL
 template<typename GeomTraits>
 typename GeomTraits::FT mean_value_weight(const typename GeomTraits::Point_2& t,
                                           const typename GeomTraits::Point_2& r,

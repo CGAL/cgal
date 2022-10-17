@@ -234,64 +234,6 @@ FT half_tangent_weight(const FT d, const FT l, const FT A, const FT D)
   return half_tangent_weight(tan05, d);
 }
 
-#if defined(DOXYGEN_RUNNING)
-
-/*!
-  \ingroup PkgWeightsRefTangentWeights
-
-  \brief computes the tangent weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT tangent_weight(
-    const typename GeomTraits::Point_2& p0,
-    const typename GeomTraits::Point_2& p1,
-    const typename GeomTraits::Point_2& p2,
-    const typename GeomTraits::Point_2& q,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefTangentWeights
-
-  \brief computes the tangent weight in 3D at `q` using the points `p0`, `p1`,
-  and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT tangent_weight(
-    const typename GeomTraits::Point_3& p0,
-    const typename GeomTraits::Point_3& p1,
-    const typename GeomTraits::Point_3& p2,
-    const typename GeomTraits::Point_3& q,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefTangentWeights
-
-  \brief computes the tangent weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K.
-*/
-template<typename K>
-typename K::FT tangent_weight(
-    const CGAL::Point_2<K>& p0,
-    const CGAL::Point_2<K>& p1,
-    const CGAL::Point_2<K>& p2,
-    const CGAL::Point_2<K>& q) { }
-
-/*!
-  \ingroup PkgWeightsRefTangentWeights
-
-  \brief computes the tangent weight in 3D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K.
-*/
-template<typename K>
-typename K::FT tangent_weight(
-    const CGAL::Point_3<K>& p0,
-    const CGAL::Point_3<K>& p1,
-    const CGAL::Point_3<K>& p2,
-    const CGAL::Point_3<K>& q) { }
-
-#endif // DOXYGEN_RUNNING
-
 /// \cond SKIP_IN_MANUAL
 template<typename GeomTraits>
 typename GeomTraits::FT tangent_weight(const typename GeomTraits::Point_2& t,

@@ -42,40 +42,6 @@ FT weight(const FT r1, const FT r2, const FT r3,
 
 } // namespace discrete_harmonic_ns
 
-/// \endcond
-
-#if defined(DOXYGEN_RUNNING)
-
-/*!
-  \ingroup PkgWeightsRefDiscreteHarmonicWeights
-
-  \brief computes the discrete harmonic weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT discrete_harmonic_weight(
-    const typename GeomTraits::Point_2& p0,
-    const typename GeomTraits::Point_2& p1,
-    const typename GeomTraits::Point_2& p2,
-    const typename GeomTraits::Point_2& q,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefDiscreteHarmonicWeights
-
-  \brief computes the discrete harmonic weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K.
-*/
-template<typename K>
-typename K::FT discrete_harmonic_weight(
-    const CGAL::Point_2<K>& p0,
-    const CGAL::Point_2<K>& p1,
-    const CGAL::Point_2<K>& p2,
-    const CGAL::Point_2<K>& q) { }
-
-#endif // DOXYGEN_RUNNING
-
-/// \cond SKIP_IN_MANUAL
 template<typename GeomTraits>
 typename GeomTraits::FT discrete_harmonic_weight(const typename GeomTraits::Point_2& t,
                                                  const typename GeomTraits::Point_2& r,

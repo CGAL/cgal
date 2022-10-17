@@ -14,69 +14,10 @@
 #ifndef CGAL_UNIFORM_WEIGHTS_H
 #define CGAL_UNIFORM_WEIGHTS_H
 
-// Internal includes.
 #include <CGAL/Weights/internal/utils.h>
 
 namespace CGAL {
 namespace Weights {
-
-#if defined(DOXYGEN_RUNNING)
-
-/*!
-    \ingroup PkgWeightsRefUniformWeights
-
-    \brief this function always returns 1, given four points in 2D and a traits class
-    with geometric objects, predicates, and constructions.
-  */
-template<typename GeomTraits>
-typename GeomTraits::FT uniform_weight(
-    const typename GeomTraits::Point_2&,
-    const typename GeomTraits::Point_2&,
-    const typename GeomTraits::Point_2&,
-    const typename GeomTraits::Point_2&,
-    const GeomTraits&) { }
-
-/*!
-    \ingroup PkgWeightsRefUniformWeights
-
-    \brief this function always returns 1, given four points in 3D and a traits class
-    with geometric objects, predicates, and constructions.
-  */
-template<typename GeomTraits>
-typename GeomTraits::FT uniform_weight(
-    const typename GeomTraits::Point_3&,
-    const typename GeomTraits::Point_3&,
-    const typename GeomTraits::Point_3&,
-    const typename GeomTraits::Point_3&,
-    const GeomTraits&) { }
-
-/*!
-    \ingroup PkgWeightsRefUniformWeights
-
-    \brief this function always returns 1, given four points in 2D which are
-    parameterized by a `Kernel` K.
-  */
-template<typename K>
-typename K::FT uniform_weight(
-    const CGAL::Point_2<K>&,
-    const CGAL::Point_2<K>&,
-    const CGAL::Point_2<K>&,
-    const CGAL::Point_2<K>&) { }
-
-/*!
-    \ingroup PkgWeightsRefUniformWeights
-
-    \brief this function always returns 1, given four points in 3D which are
-    parameterized by a `Kernel` K.
-  */
-template<typename K>
-typename K::FT uniform_weight(
-    const CGAL::Point_3<K>&,
-    const CGAL::Point_3<K>&,
-    const CGAL::Point_3<K>&,
-    const CGAL::Point_3<K>&) { }
-
-#endif // DOXYGEN_RUNNING
 
 /// \cond SKIP_IN_MANUAL
 template<typename GeomTraits>

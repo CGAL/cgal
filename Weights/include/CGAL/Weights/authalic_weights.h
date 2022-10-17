@@ -76,66 +76,6 @@ FT half_authalic_weight(const FT cot, const FT d2)
   return authalic_ns::half_weight(cot, d2);
 }
 
-#if defined(DOXYGEN_RUNNING)
-
-/*!
-  \ingroup PkgWeightsRefAuthalicWeights
-
-  \brief computes the authalic weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT authalic_weight(
-    const typename GeomTraits::Point_2& p0,
-    const typename GeomTraits::Point_2& p1,
-    const typename GeomTraits::Point_2& p2,
-    const typename GeomTraits::Point_2& q,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefAuthalicWeights
-
-  \brief computes the authalic weight in 3D at `q` using the points `p0`, `p1`,
-  and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT authalic_weight(
-    const typename GeomTraits::Point_3& p0,
-    const typename GeomTraits::Point_3& p1,
-    const typename GeomTraits::Point_3& p2,
-    const typename GeomTraits::Point_3& q,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefAuthalicWeights
-
-  \brief computes the authalic weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K.
-*/
-template<typename K>
-typename K::FT authalic_weight(
-    const CGAL::Point_2<K>& p0,
-    const CGAL::Point_2<K>& p1,
-    const CGAL::Point_2<K>& p2,
-    const CGAL::Point_2<K>& q) { }
-
-/*!
-  \ingroup PkgWeightsRefAuthalicWeights
-
-  \brief computes the authalic weight in 3D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K.
-*/
-template<typename K>
-typename K::FT authalic_weight(
-    const CGAL::Point_3<K>& p0,
-    const CGAL::Point_3<K>& p1,
-    const CGAL::Point_3<K>& p2,
-    const CGAL::Point_3<K>& q) { }
-
-#endif // DOXYGEN_RUNNING
-
-/// \cond SKIP_IN_MANUAL
-// Overloads!
 template<typename GeomTraits>
 typename GeomTraits::FT authalic_weight(const typename GeomTraits::Point_2& t,
                                         const typename GeomTraits::Point_2& r,
@@ -191,8 +131,6 @@ typename GeomTraits::FT authalic_weight(const CGAL::Point_3<GeomTraits>& t,
   const GeomTraits traits;
   return authalic_weight(t, r, p, q, traits);
 }
-
-/// \endcond
 
 } // namespace Weights
 } // namespace CGAL

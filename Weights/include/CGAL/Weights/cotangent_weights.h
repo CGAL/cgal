@@ -59,65 +59,6 @@ FT half_cotangent_weight(const FT cot)
   return cotangent_ns::half_weight(cot);
 }
 
-#if defined(DOXYGEN_RUNNING)
-
-/*!
-  \ingroup PkgWeightsRefCotangentWeights
-
-  \brief computes the cotangent weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT cotangent_weight(
-    const typename GeomTraits::Point_2& p0,
-    const typename GeomTraits::Point_2& p1,
-    const typename GeomTraits::Point_2& p2,
-    const typename GeomTraits::Point_2& q,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefCotangentWeights
-
-  \brief computes the cotangent weight in 3D at `q` using the points `p0`, `p1`,
-  and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-*/
-template<typename GeomTraits>
-typename GeomTraits::FT cotangent_weight(
-    const typename GeomTraits::Point_3& p0,
-    const typename GeomTraits::Point_3& p1,
-    const typename GeomTraits::Point_3& p2,
-    const typename GeomTraits::Point_3& q,
-    const GeomTraits& traits) { }
-
-/*!
-  \ingroup PkgWeightsRefCotangentWeights
-
-  \brief computes the cotangent weight in 2D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K.
-*/
-template<typename K>
-typename K::FT cotangent_weight(
-    const CGAL::Point_2<K>& p0,
-    const CGAL::Point_2<K>& p1,
-    const CGAL::Point_2<K>& p2,
-    const CGAL::Point_2<K>& q) { }
-
-/*!
-  \ingroup PkgWeightsRefCotangentWeights
-
-  \brief computes the cotangent weight in 3D at `q` using the points `p0`, `p1`,
-  and `p2` which are parameterized by a `Kernel` K.
-*/
-template<typename K>
-typename K::FT cotangent_weight(
-    const CGAL::Point_3<K>& p0,
-    const CGAL::Point_3<K>& p1,
-    const CGAL::Point_3<K>& p2,
-    const CGAL::Point_3<K>& q) { }
-
-#endif // DOXYGEN_RUNNING
-
-/// \cond SKIP_IN_MANUAL
 template<typename GeomTraits>
 typename GeomTraits::FT cotangent_weight(const typename GeomTraits::Point_2& t,
                                          const typename GeomTraits::Point_2& r,
@@ -511,8 +452,6 @@ private:
     return voronoi_area;
   }
 };
-
-/// \endcond
 
 } // namespace Weights
 } // namespace CGAL

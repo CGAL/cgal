@@ -14,7 +14,6 @@
 #ifndef CGAL_WEIGHTS_UTILS_H
 #define CGAL_WEIGHTS_UTILS_H
 
-// Internal includes.
 #include <CGAL/Weights/internal/utils.h>
 
 namespace CGAL {
