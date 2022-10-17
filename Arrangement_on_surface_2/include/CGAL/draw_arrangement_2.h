@@ -21,12 +21,23 @@
 #include <cstdlib>
 #include <random>
 
-#include <type_traits>
-#include <boost/hana.hpp>
-
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
+
+#include <type_traits>
+
+
+#if defined(BOOST_MSVC)
+// workaround for using boost::hana with MSVC without warnings
+#pragma push_macro("__cplusplus")
+#undef __cplusplus
+#define __cplusplus _MSVC_LANG
+#include <boost/hana.hpp>
+#pragma pop_macro("__cplusplus")
+#else
+#include <boost/hana.hpp>
+#endif
 
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Arrangement_2.h>
