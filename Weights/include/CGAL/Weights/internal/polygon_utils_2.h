@@ -101,9 +101,9 @@ Edge_case bounded_side_2(const VertexRange& polygon,
   if (next == last)
     return Edge_case::EXTERIOR;
 
-  const auto compare_x_2 = traits.compare_x_2_object();
-  const auto compare_y_2 = traits.compare_y_2_object();
-  const auto orientation_2 = traits.orientation_2_object();
+  auto compare_x_2 = traits.compare_x_2_object();
+  auto compare_y_2 = traits.compare_y_2_object();
+  auto orientation_2 = traits.orientation_2_object();
 
   bool is_inside = false;
   auto curr_y_comp_res = compare_y_2(get(point_map, *curr), query);
@@ -224,15 +224,15 @@ bool is_convex_2(const VertexRange& polygon,
   if (next == last)
     return true;
 
-  const auto equal_2 = traits.equal_2_object();
+  auto equal_2 = traits.equal_2_object();
   while (equal_2(get(point_map, *prev), get(point_map, *curr))) {
     curr = next; ++next;
     if (next == last)
       return true;
   }
 
-  const auto less_xy_2 = traits.less_xy_2_object();
-  const auto orientation_2 = traits.orientation_2_object();
+  auto less_xy_2 = traits.less_xy_2_object();
+  auto orientation_2 = traits.orientation_2_object();
 
   bool has_clockwise_triplets = false;
   bool has_counterclockwise_triplets = false;

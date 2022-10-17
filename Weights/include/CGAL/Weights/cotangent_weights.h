@@ -146,11 +146,11 @@ public:
     FT weight = FT(0);
     if (is_border_edge(he, m_pmesh))
     {
-      const auto h1 = next(he, m_pmesh);
+      const halfedge_descriptor h1 = next(he, m_pmesh);
 
-      const auto v0 = target(he, m_pmesh);
-      const auto v1 = source(he, m_pmesh);
-      const auto v2 = target(h1, m_pmesh);
+      const vertex_descriptor v0 = target(he, m_pmesh);
+      const vertex_descriptor v1 = source(he, m_pmesh);
+      const vertex_descriptor v2 = target(h1, m_pmesh);
 
       const auto& p0 = get(m_pmap, v0);
       const auto& p1 = get(m_pmap, v1);
@@ -161,13 +161,13 @@ public:
     }
     else
     {
-      const auto h1 = next(he, m_pmesh);
-      const auto h2 = prev(opposite(he, m_pmesh), m_pmesh);
+      const halfedge_descriptor h1 = next(he, m_pmesh);
+      const halfedge_descriptor h2 = prev(opposite(he, m_pmesh), m_pmesh);
 
-      const auto v0 = target(he, m_pmesh);
-      const auto v1 = source(he, m_pmesh);
-      const auto v2 = target(h1, m_pmesh);
-      const auto v3 = source(h2, m_pmesh);
+      const vertex_descriptor v0 = target(he, m_pmesh);
+      const vertex_descriptor v1 = source(he, m_pmesh);
+      const vertex_descriptor v2 = target(h1, m_pmesh);
+      const vertex_descriptor v3 = source(h2, m_pmesh);
 
       const auto& p0 = get(m_pmap, v0);
       const auto& p1 = get(m_pmap, v1);
@@ -249,8 +249,8 @@ public:
 
     GeomTraits traits;
 
-    const auto v0 = target(he, pmesh);
-    const auto v1 = source(he, pmesh);
+    const vertex_descriptor v0 = target(he, pmesh);
+    const vertex_descriptor v1 = source(he, pmesh);
 
     const auto& p0 = get(pmap, v0);
     const auto& p1 = get(pmap, v1);
@@ -258,12 +258,12 @@ public:
     FT weight = FT(0);
     if (is_border_edge(he, pmesh))
     {
-      const auto he_cw = opposite(next(he, pmesh), pmesh);
+      const halfedge_descriptor he_cw = opposite(next(he, pmesh), pmesh);
       auto v2 = source(he_cw, pmesh);
 
       if (is_border_edge(he_cw, pmesh))
       {
-        const auto he_ccw = prev(opposite(he, pmesh), pmesh);
+        const halfedge_descriptor he_ccw = prev(opposite(he, pmesh), pmesh);
         v2 = source(he_ccw, pmesh);
 
         const auto& p2 = get(pmap, v2);
@@ -289,10 +289,10 @@ public:
     }
     else
     {
-      const auto he_cw = opposite(next(he, pmesh), pmesh);
-      const auto v2 = source(he_cw, pmesh);
-      const auto he_ccw = prev(opposite(he, pmesh), pmesh);
-      const auto v3 = source(he_ccw, pmesh);
+      const halfedge_descriptor he_cw = opposite(next(he, pmesh), pmesh);
+      const vertex_descriptor v2 = source(he_cw, pmesh);
+      const halfedge_descriptor he_ccw = prev(opposite(he, pmesh), pmesh);
+      const vertex_descriptor v3 = source(he_ccw, pmesh);
 
       const auto& p2 = get(pmap, v2);
       const auto& p3 = get(pmap, v3);
@@ -331,6 +331,7 @@ class Secure_cotangent_weight_with_voronoi_area
 {
   using GeomTraits = typename CGAL::Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type;
   using FT = typename GeomTraits::FT;
+  using Vector_3 = typename GeomTraits::Vector_3;
 
   const PolygonMesh& m_pmesh;
   const VertexPointMap m_pmap;
@@ -359,8 +360,8 @@ private:
   FT cotangent_clamped(const halfedge_descriptor he) const
   {
 
-    const auto v0 = target(he, m_pmesh);
-    const auto v1 = source(he, m_pmesh);
+    const vertex_descriptor v0 = target(he, m_pmesh);
+    const vertex_descriptor v1 = source(he, m_pmesh);
 
     const auto& p0 = get(m_pmap, v0);
     const auto& p1 = get(m_pmap, v1);
@@ -368,12 +369,12 @@ private:
     FT weight = FT(0);
     if (is_border_edge(he, m_pmesh))
     {
-      const auto he_cw = opposite(next(he, m_pmesh), m_pmesh);
-      auto v2 = source(he_cw, m_pmesh);
+      const halfedge_descriptor he_cw = opposite(next(he, m_pmesh), m_pmesh);
+      vertex_descriptor v2 = source(he_cw, m_pmesh);
 
       if (is_border_edge(he_cw, m_pmesh))
       {
-        const auto he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
+        const halfedge_descriptor he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
         v2 = source(he_ccw, m_pmesh);
 
         const auto& p2 = get(m_pmap, v2);
@@ -387,10 +388,10 @@ private:
     }
     else
     {
-      const auto he_cw = opposite(next(he, m_pmesh), m_pmesh);
-      const auto v2 = source(he_cw, m_pmesh);
-      const auto he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
-      const auto v3 = source(he_ccw, m_pmesh);
+      const halfedge_descriptor he_cw = opposite(next(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v2 = source(he_cw, m_pmesh);
+      const halfedge_descriptor he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v3 = source(he_ccw, m_pmesh);
 
       const auto& p2 = get(m_pmap, v2);
       const auto& p3 = get(m_pmap, v3);
@@ -405,27 +406,27 @@ private:
 
   FT voronoi(const vertex_descriptor v0) const
   {
-    const auto squared_length_3 = m_traits.compute_squared_length_3_object();
-    const auto construct_vector_3 = m_traits.construct_vector_3_object();
+    auto squared_length_3 = m_traits.compute_squared_length_3_object();
+    auto vector_3 = m_traits.construct_vector_3_object();
 
     FT voronoi_area = FT(0);
     CGAL_assertion(CGAL::is_triangle_mesh(m_pmesh));
-    for (const auto& he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh))
+    for (const halfedge_descriptor& he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh))
     {
       CGAL_assertion(v0 == target(he, m_pmesh));
       if (is_border(he, m_pmesh))
         continue;
 
-      const auto v1 = source(he, m_pmesh);
-      const auto v2 = target(next(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v1 = source(he, m_pmesh);
+      const vertex_descriptor v2 = target(next(he, m_pmesh), m_pmesh);
 
       const auto& p0 = get(m_pmap, v0);
       const auto& p1 = get(m_pmap, v1);
       const auto& p2 = get(m_pmap, v2);
 
-      const auto angle0 = CGAL::angle(p1, p0, p2);
-      const auto angle1 = CGAL::angle(p2, p1, p0);
-      const auto angle2 = CGAL::angle(p0, p2, p1);
+      const Angle angle0 = CGAL::angle(p1, p0, p2);
+      const Angle angle1 = CGAL::angle(p2, p1, p0);
+      const Angle angle2 = CGAL::angle(p0, p2, p1);
 
       const bool obtuse = (angle0 == CGAL::OBTUSE) ||
                           (angle1 == CGAL::OBTUSE) ||
@@ -436,8 +437,8 @@ private:
         const FT cot_p1 = internal::cotangent_3(m_traits, p2, p1, p0);
         const FT cot_p2 = internal::cotangent_3(m_traits, p0, p2, p1);
 
-        const auto v1 = construct_vector_3(p0, p1);
-        const auto v2 = construct_vector_3(p0, p2);
+        const Vector_3 v1 = vector_3(p0, p1);
+        const Vector_3 v2 = vector_3(p0, p2);
 
         const FT t1 = cot_p1 * squared_length_3(v2);
         const FT t2 = cot_p2 * squared_length_3(v1);

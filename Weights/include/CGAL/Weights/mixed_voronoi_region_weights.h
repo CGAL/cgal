@@ -32,13 +32,13 @@ typename GeomTraits::FT mixed_voronoi_area(const typename GeomTraits::Point_2& p
   using FT = typename GeomTraits::FT;
   using Point_2 = typename GeomTraits::Point_2;
 
-  const auto angle_2 = traits.angle_2_object();
-  const auto midpoint_2 = traits.construct_midpoint_2_object();
-  const auto circumcenter_2 = traits.construct_circumcenter_2_object();
+  auto angle_2 = traits.angle_2_object();
+  auto midpoint_2 = traits.construct_midpoint_2_object();
+  auto circumcenter_2 = traits.construct_circumcenter_2_object();
 
-  const auto a1 = angle_2(p, q, r);
-  const auto a2 = angle_2(q, r, p);
-  const auto a3 = angle_2(r, p, q);
+  const Angle a1 = angle_2(p, q, r);
+  const Angle a2 = angle_2(q, r, p);
+  const Angle a3 = angle_2(r, p, q);
 
   Point_2 center;
   if (a1 != CGAL::OBTUSE && a2 != CGAL::OBTUSE && a3 != CGAL::OBTUSE)
@@ -46,8 +46,8 @@ typename GeomTraits::FT mixed_voronoi_area(const typename GeomTraits::Point_2& p
   else
     center = midpoint_2(r, p);
 
-  const auto m1 = midpoint_2(q, r);
-  const auto m2 = midpoint_2(q, p);
+  const Point_2 m1 = midpoint_2(q, r);
+  const Point_2 m2 = midpoint_2(q, p);
 
   const FT A1 = internal::positive_area_2(traits, q, m1, center);
   const FT A2 = internal::positive_area_2(traits, q, center, m2);
@@ -72,13 +72,13 @@ typename GeomTraits::FT mixed_voronoi_area(const typename GeomTraits::Point_3& p
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
 
-  const auto angle_3 = traits.angle_3_object();
-  const auto midpoint_3 = traits.construct_midpoint_3_object();
-  const auto circumcenter_3 = traits.construct_circumcenter_3_object();
+  auto angle_3 = traits.angle_3_object();
+  auto midpoint_3 = traits.construct_midpoint_3_object();
+  auto circumcenter_3 = traits.construct_circumcenter_3_object();
 
-  const auto a1 = angle_3(p, q, r);
-  const auto a2 = angle_3(q, r, p);
-  const auto a3 = angle_3(r, p, q);
+  const Angle a1 = angle_3(p, q, r);
+  const Angle a2 = angle_3(q, r, p);
+  const Angle a3 = angle_3(r, p, q);
 
   Point_3 center;
   if (a1 != CGAL::OBTUSE && a2 != CGAL::OBTUSE && a3 != CGAL::OBTUSE)
@@ -86,8 +86,8 @@ typename GeomTraits::FT mixed_voronoi_area(const typename GeomTraits::Point_3& p
   else
     center = midpoint_3(r, p);
 
-  const auto m1 = midpoint_3(q, r);
-  const auto m2 = midpoint_3(q, p);
+  const Point_3 m1 = midpoint_3(q, r);
+  const Point_3 m2 = midpoint_3(q, p);
 
   const FT A1 = internal::positive_area_3(traits, q, m1, center);
   const FT A2 = internal::positive_area_3(traits, q, center, m2);

@@ -103,13 +103,14 @@ typename GeomTraits::FT tangent_weight_v1(const typename GeomTraits::Point_3& t,
                                           const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
+  using Vector_3 = typename GeomTraits::Vector_3;
 
-  const auto dot_product_3 = traits.compute_scalar_product_3_object();
-  const auto construct_vector_3 = traits.construct_vector_3_object();
+  auto dot_product_3 = traits.compute_scalar_product_3_object();
+  auto construct_vector_3 = traits.construct_vector_3_object();
 
-  const auto v1 = construct_vector_3(q, t);
-  const auto v2 = construct_vector_3(q, r);
-  const auto v3 = construct_vector_3(q, p);
+  const Vector_3 v1 = construct_vector_3(q, t);
+  const Vector_3 v2 = construct_vector_3(q, r);
+  const Vector_3 v3 = construct_vector_3(q, p);
 
   const FT l1 = internal::length_3(traits, v1);
   const FT l2 = internal::length_3(traits, v2);
@@ -134,12 +135,13 @@ typename GeomTraits::FT tangent_weight_v2(const typename GeomTraits::Point_3& t,
                                           const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
+  using Vector_3 = typename GeomTraits::Vector_3;
 
-  const auto construct_vector_3 = traits.construct_vector_3_object();
+  auto construct_vector_3 = traits.construct_vector_3_object();
 
-  auto v1 = construct_vector_3(q, t);
-  auto v2 = construct_vector_3(q, r);
-  auto v3 = construct_vector_3(q, p);
+  Vector_3 v1 = construct_vector_3(q, t);
+  Vector_3 v2 = construct_vector_3(q, r);
+  Vector_3 v3 = construct_vector_3(q, p);
 
   const FT l2 = internal::length_3(traits, v2);
 
@@ -247,12 +249,14 @@ typename GeomTraits::FT tangent_weight(const typename GeomTraits::Point_2& t,
                                        const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
-  const auto dot_product_2 = traits.compute_scalar_product_2_object();
-  const auto construct_vector_2 = traits.construct_vector_2_object();
+  using Vector_2 = typename GeomTraits::Vector_2;
 
-  const auto v1 = construct_vector_2(q, t);
-  const auto v2 = construct_vector_2(q, r);
-  const auto v3 = construct_vector_2(q, p);
+  auto dot_product_2 = traits.compute_scalar_product_2_object();
+  auto construct_vector_2 = traits.construct_vector_2_object();
+
+  const Vector_2 v1 = construct_vector_2(q, t);
+  const Vector_2 v2 = construct_vector_2(q, r);
+  const Vector_2 v3 = construct_vector_2(q, p);
 
   const FT l1 = internal::length_2(traits, v1);
   const FT l2 = internal::length_2(traits, v2);
@@ -327,11 +331,11 @@ public:
     FT weight = FT(0);
     if (is_border_edge(he, m_pmesh))
     {
-      const auto h1 = next(he, m_pmesh);
+      const halfedge_descriptor h1 = next(he, m_pmesh);
 
-      const auto v0 = target(he, m_pmesh);
-      const auto v1 = source(he, m_pmesh);
-      const auto v2 = target(h1, m_pmesh);
+      const vertex_descriptor v0 = target(he, m_pmesh);
+      const vertex_descriptor v1 = source(he, m_pmesh);
+      const vertex_descriptor v2 = target(h1, m_pmesh);
 
       const auto& p0 = get(m_pmap, v0);
       const auto& p1 = get(m_pmap, v1);
@@ -341,13 +345,13 @@ public:
     }
     else
     {
-      const auto h1 = next(he, m_pmesh);
-      const auto h2 = prev(opposite(he, m_pmesh), m_pmesh);
+      const halfedge_descriptor h1 = next(he, m_pmesh);
+      const halfedge_descriptor h2 = prev(opposite(he, m_pmesh), m_pmesh);
 
-      const auto v0 = target(he, m_pmesh);
-      const auto v1 = source(he, m_pmesh);
-      const auto v2 = target(h1, m_pmesh);
-      const auto v3 = source(h2, m_pmesh);
+      const vertex_descriptor v0 = target(he, m_pmesh);
+      const vertex_descriptor v1 = source(he, m_pmesh);
+      const vertex_descriptor v2 = target(h1, m_pmesh);
+      const vertex_descriptor v3 = source(h2, m_pmesh);
 
       const auto& p0 = get(m_pmap, v0);
       const auto& p1 = get(m_pmap, v1);
@@ -375,22 +379,24 @@ public:
                  const CGAL::Point_2<GeomTraits>& q,
                  const CGAL::Point_2<GeomTraits>& r)
   {
+    using Vector_2 = typename GeomTraits::Vector_2;
+
     const GeomTraits traits;
 
-    const auto scalar_product_2 = traits.compute_scalar_product_2_object();
-    const auto construct_vector_2 = traits.construct_vector_2_object();
+    auto scalar_product_2 = traits.compute_scalar_product_2_object();
+    auto construct_vector_2 = traits.construct_vector_2_object();
 
     m_d_r = internal::distance_2(traits, q, r);
     CGAL_assertion(m_d_r != FT(0)); // two points are identical!
     m_d_p = internal::distance_2(traits, q, p);
     CGAL_assertion(m_d_p != FT(0)); // two points are identical!
 
-    const auto v1 = construct_vector_2(q, r);
-    const auto v2 = construct_vector_2(q, p);
+    const Vector_2 v1 = construct_vector_2(q, r);
+    const Vector_2 v2 = construct_vector_2(q, p);
 
-    const auto A = internal::positive_area_2(traits, p, q, r);
+    const FT A = internal::positive_area_2(traits, p, q, r);
     CGAL_assertion(A != FT(0)); // three points are identical!
-    const auto S = scalar_product_2(v1, v2);
+    const FT S = scalar_product_2(v1, v2);
     m_w_base = -tangent_half_angle(m_d_r, m_d_p, A, S);
   }
 
@@ -399,21 +405,24 @@ public:
                  const CGAL::Point_3<GeomTraits>& q,
                  const CGAL::Point_3<GeomTraits>& r)
   {
+    using Vector_3 = typename GeomTraits::Vector_3;
+
     const GeomTraits traits;
-    const auto scalar_product_3 = traits.compute_scalar_product_3_object();
-    const auto construct_vector_3 = traits.construct_vector_3_object();
+
+    auto scalar_product_3 = traits.compute_scalar_product_3_object();
+    auto construct_vector_3 = traits.construct_vector_3_object();
 
     m_d_r = internal::distance_3(traits, q, r);
     CGAL_assertion(m_d_r != FT(0)); // two points are identical!
     m_d_p = internal::distance_3(traits, q, p);
     CGAL_assertion(m_d_p != FT(0)); // two points are identical!
 
-    const auto v1 = construct_vector_3(q, r);
-    const auto v2 = construct_vector_3(q, p);
+    const Vector_3 v1 = construct_vector_3(q, r);
+    const Vector_3 v2 = construct_vector_3(q, p);
 
-    const auto A = internal::positive_area_3(traits, p, q, r);
+    const FT A = internal::positive_area_3(traits, p, q, r);
     CGAL_assertion(A != FT(0)); // three points are identical!
-    const auto S = scalar_product_3(v1, v2);
+    const FT S = scalar_product_3(v1, v2);
     m_w_base = -tangent_half_angle(m_d_r, m_d_p, A, S);
   }
 

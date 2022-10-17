@@ -89,7 +89,7 @@ typename GeomTraits::FT authalic_weight(const typename GeomTraits::Point_2& t,
 {
   using FT = typename GeomTraits::FT;
 
-  const auto squared_distance_2 = traits.compute_squared_distance_2_object();
+  auto squared_distance_2 = traits.compute_squared_distance_2_object();
 
   const FT cot_gamma = internal::cotangent_2(traits, t, r, q);
   const FT cot_beta  = internal::cotangent_2(traits, q, r, p);
@@ -117,7 +117,7 @@ typename GeomTraits::FT authalic_weight(const typename GeomTraits::Point_3& t,
 {
   using FT = typename GeomTraits::FT;
 
-  const auto squared_distance_3 = traits.compute_squared_distance_3_object();
+  auto squared_distance_3 = traits.compute_squared_distance_3_object();
 
   const FT cot_gamma = internal::cotangent_3(traits, t, r, q);
   const FT cot_beta  = internal::cotangent_3(traits, q, r, p);

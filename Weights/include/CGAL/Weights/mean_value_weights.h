@@ -62,7 +62,7 @@ typename GeomTraits::FT weight(const GeomTraits& traits,
   using FT = typename GeomTraits::FT;
 
   using Get_sqrt = internal::Get_sqrt<GeomTraits>;
-  const auto sqrt = Get_sqrt::sqrt_object(traits);
+  auto sqrt = Get_sqrt::sqrt_object(traits);
 
   const FT P1 = r1 * r2 + D1;
   const FT P2 = r2 * r3 + D2;
@@ -92,13 +92,14 @@ typename GeomTraits::FT mean_value_weight(const typename GeomTraits::Point_2& t,
                                           const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
+  using Vector_2 = typename GeomTraits::Vector_2;
 
-  const auto dot_product_2 = traits.compute_scalar_product_2_object();
-  const auto construct_vector_2 = traits.construct_vector_2_object();
+  auto dot_product_2 = traits.compute_scalar_product_2_object();
+  auto construct_vector_2 = traits.construct_vector_2_object();
 
-  const auto v1 = construct_vector_2(q, t);
-  const auto v2 = construct_vector_2(q, r);
-  const auto v3 = construct_vector_2(q, p);
+  const Vector_2 v1 = construct_vector_2(q, t);
+  const Vector_2 v2 = construct_vector_2(q, r);
+  const Vector_2 v3 = construct_vector_2(q, p);
 
   const FT l1 = internal::length_2(traits, v1);
   const FT l2 = internal::length_2(traits, v2);

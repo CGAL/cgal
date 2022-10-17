@@ -104,7 +104,7 @@ typename GeomTraits::FT squared_distance(const CGAL::Point_2<GeomTraits>& p,
                                          const CGAL::Point_2<GeomTraits>& q)
 {
   const GeomTraits traits;
-  const auto squared_distance_2 = traits.compute_squared_distance_2_object();
+  auto squared_distance_2 = traits.compute_squared_distance_2_object();
   return squared_distance_2(p, q);
 }
 
@@ -113,7 +113,7 @@ typename GeomTraits::FT squared_distance(const CGAL::Point_3<GeomTraits>& p,
                                          const CGAL::Point_3<GeomTraits>& q)
 {
   const GeomTraits traits;
-  const auto squared_distance_3 = traits.compute_squared_distance_3_object();
+  auto squared_distance_3 = traits.compute_squared_distance_3_object();
   return squared_distance_3(p, q);
 }
 
@@ -156,13 +156,15 @@ typename GeomTraits::FT scalar_product(const CGAL::Point_2<GeomTraits>& p,
                                        const CGAL::Point_2<GeomTraits>& q,
                                        const CGAL::Point_2<GeomTraits>& r)
 {
+  using Vector_2 = typename GeomTraits::Vector_2;
+
   const GeomTraits traits;
 
-  const auto scalar_product_2 = traits.compute_scalar_product_2_object();
-  const auto construct_vector_2 = traits.construct_vector_2_object();
+  auto scalar_product_2 = traits.compute_scalar_product_2_object();
+  auto construct_vector_2 = traits.construct_vector_2_object();
 
-  const auto v1 = construct_vector_2(q, r);
-  const auto v2 = construct_vector_2(q, p);
+  const Vector_2 v1 = construct_vector_2(q, r);
+  const Vector_2 v2 = construct_vector_2(q, p);
   return scalar_product_2(v1, v2);
 }
 
@@ -171,12 +173,15 @@ typename GeomTraits::FT scalar_product(const CGAL::Point_3<GeomTraits>& p,
                                        const CGAL::Point_3<GeomTraits>& q,
                                        const CGAL::Point_3<GeomTraits>& r)
 {
-  const GeomTraits traits;
-  const auto scalar_product_3 = traits.compute_scalar_product_3_object();
-  const auto construct_vector_3 = traits.construct_vector_3_object();
+  using Vector_3 = typename GeomTraits::Vector_3;
 
-  const auto v1 = construct_vector_3(q, r);
-  const auto v2 = construct_vector_3(q, p);
+  const GeomTraits traits;
+
+  auto scalar_product_3 = traits.compute_scalar_product_3_object();
+  auto vector_3 = traits.construct_vector_3_object();
+
+  const Vector_3 v1 = vector_3(q, r);
+  const Vector_3 v2 = vector_3(q, p);
   return scalar_product_3(v1, v2);
 }
 

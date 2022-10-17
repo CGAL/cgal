@@ -57,7 +57,7 @@ typename GeomTraits::FT discrete_harmonic_weight(const typename GeomTraits::Poin
 {
   using FT = typename GeomTraits::FT;
 
-  const auto squared_distance_2 = traits.compute_squared_distance_2_object();
+  auto squared_distance_2 = traits.compute_squared_distance_2_object();
 
   const FT d1 = squared_distance_2(q, t);
   const FT d2 = squared_distance_2(q, r);
