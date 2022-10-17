@@ -34,15 +34,9 @@ typename GeomTraits::FT weight(const GeomTraits& traits,
   using FT = typename GeomTraits::FT;
 
   FT w = FT(0);
-  CGAL_precondition(d != FT(0));
-  if (d != FT(0))
-  {
-    FT denom = d;
-    if (p != FT(1))
-      denom = internal::power(traits, d, p);
-
-    w = FT(1) / denom;
-  }
+  CGAL_precondition(is_positive(d));
+  if(is_positive(d))
+    w = internal::power(d, -p);
 
   return w;
 }

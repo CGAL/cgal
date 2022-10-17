@@ -25,36 +25,22 @@ namespace Weights {
 /// \cond SKIP_IN_MANUAL
 namespace three_point_family_ns {
 
-template<typename GeomTraits>
-typename GeomTraits::FT weight(const GeomTraits& traits,
-                               const typename GeomTraits::FT d1,
-                               const typename GeomTraits::FT d2,
-                               const typename GeomTraits::FT d3,
-                               const typename GeomTraits::FT A1,
-                               const typename GeomTraits::FT A2,
-                               const typename GeomTraits::FT B,
-                               const typename GeomTraits::FT p)
+template<typename FT>
+FT weight(const FT d1, const FT d2, const FT d,
+          const FT A1, const FT A2, const FT B,
+          const FT p)
 {
-  using FT = typename GeomTraits::FT;
-
   FT w = FT(0);
-  CGAL_precondition(A1 != FT(0) && A2 != FT(0));
+  CGAL_precondition(!is_zero(A1) && !is_zero(A2));
   const FT prod = A1 * A2;
-  if (prod != FT(0))
+  if (!is_zero(prod))
   {
-    const FT inv = FT(1) / prod;
-    FT r1 = d1;
-    FT r2 = d2;
-    FT r3 = d3;
-    if (p != FT(1))
-    {
-      r1 = internal::power(traits, d1, p);
-      r2 = internal::power(traits, d2, p);
-      r3 = internal::power(traits, d3, p);
-    }
-    w = (r3 * A1 - r2 * B + r1 * A2) * inv;
-  }
+    const FT r1 = internal::power(d1, p);
+    const FT r2 = internal::power(d2, p);
+    const FT r  = internal::power(d , p);
 
+    w = (r2 * A1 - r * B + r1 * A2) / prod;
+  }
   return w;
 }
 

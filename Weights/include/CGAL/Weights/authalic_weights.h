@@ -30,11 +30,10 @@ template<typename FT>
 FT half_weight(const FT cot, const FT r2)
 {
   FT w = FT(0);
-  CGAL_precondition(r2 != FT(0));
-  if (r2 != FT(0)) {
-    const FT inv = FT(2) / r2;
-    w = cot * inv;
-  }
+  CGAL_precondition(!is_zero(r2));
+  if (!is_zero(r2))
+    w = FT(2) * cot / r2;
+
   return w;
 }
 
@@ -42,12 +41,9 @@ template<typename FT>
 FT weight(const FT cot_gamma, const FT cot_beta, const FT r2)
 {
   FT w = FT(0);
-  CGAL_precondition(r2 != FT(0));
-  if (r2 != FT(0))
-  {
-    const FT inv = FT(2) / r2;
-    w = (cot_gamma + cot_beta) * inv;
-  }
+  CGAL_precondition(!is_zero(r2));
+  if (!is_zero(r2))
+    w = FT(2) * (cot_gamma + cot_beta) / r2;
 
   return w;
 }

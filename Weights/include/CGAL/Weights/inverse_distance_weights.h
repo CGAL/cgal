@@ -29,8 +29,8 @@ template<typename FT>
 FT weight(const FT d)
 {
   FT w = FT(0);
-  CGAL_precondition(d != FT(0));
-  if (d != FT(0))
+  CGAL_precondition(!is_zero(d));
+  if (!is_zero(d))
     w = FT(1) / d;
 
   return w;

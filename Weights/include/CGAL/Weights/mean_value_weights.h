@@ -68,9 +68,9 @@ typename GeomTraits::FT weight(const GeomTraits& traits,
   const FT P2 = r2 * r3 + D2;
 
   FT w = FT(0);
-  CGAL_precondition(P1 != FT(0) && P2 != FT(0));
+  CGAL_precondition(!is_zero(P1) && !is_zero(P2));
   const FT prod = P1 * P2;
-  if (prod != FT(0))
+  if (!is_zero(prod))
   {
     const FT inv = FT(1) / prod;
     w = FT(2) * (r1 * r3 - D) * inv;

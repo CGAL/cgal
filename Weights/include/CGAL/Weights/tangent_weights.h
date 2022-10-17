@@ -25,33 +25,16 @@ namespace CGAL {
 namespace Weights {
 
 /// \cond SKIP_IN_MANUAL
+
 namespace tangent_ns {
-
-template<typename FT>
-FT half_angle_tangent(const FT r, const FT d, const FT A, const FT D)
-{
-  FT t = FT(0);
-  const FT P = r * d + D;
-  CGAL_precondition(P != FT(0));
-  if (P != FT(0))
-  {
-    const FT inv = FT(2) / P;
-    t = A * inv;
-  }
-
-  return t;
-}
 
 template<typename FT>
 FT half_weight(const FT t, const FT r)
 {
   FT w = FT(0);
-  CGAL_precondition(r != FT(0));
-  if (r != FT(0))
-  {
-    const FT inv = FT(2) / r;
-    w = t * inv;
-  }
+  CGAL_precondition(!is_zero(r));
+  if (!is_zero(r))
+    w = FT(2) * t / r;
 
   return w;
 }
@@ -62,33 +45,27 @@ FT weight(const FT t1, const FT t2, const FT r)
   FT w = FT(0);
   CGAL_precondition(r != FT(0));
   if (r != FT(0))
-  {
-    const FT inv = FT(2) / r;
-    w = (t1 + t2) * inv;
-  }
+    w = FT(2) * (t1 + t2) / r;
 
   return w;
 }
 
 template<typename FT>
-FT weight(const FT d1, const FT r, const FT d2,
+FT weight(const FT d1, const FT d, const FT d2,
           const FT A1, const FT A2,
           const FT D1, const FT D2)
 {
-  const FT P1 = d1 * r + D1;
-  const FT P2 = d2 * r + D2;
+  const FT P1 = d1 * d + D1;
+  const FT P2 = d2 * d + D2;
 
   FT w = FT(0);
-  CGAL_precondition(P1 != FT(0) && P2 != FT(0));
-  if (P1 != FT(0) && P2 != FT(0))
+  CGAL_precondition(!is_zero(P1) && !is_zero(P2));
+  if (!is_zero(P1) && !is_zero(P2))
   {
-    const FT inv1 = FT(2) / P1;
-    const FT inv2 = FT(2) / P2;
-    const FT t1 = A1 * inv1;
-    const FT t2 = A2 * inv2;
-    w = weight(t1, t2, r);
+    const FT t1 = FT(2) * A1 / P1;
+    const FT t2 = FT(2) * A2 / P2;
+    w = weight(t1, t2, d);
   }
-
   return w;
 }
 
@@ -168,23 +145,29 @@ typename GeomTraits::FT tangent_weight_v2(const typename GeomTraits::Point_3& t,
 
   This function computes the tangent of the half angle using the precomputed
   distance, area, and dot product values. The returned value is
-  \f$\frac{2\textbf{A}}{\textbf{d}\textbf{l} + \textbf{D}}\f$.
+  \f$\frac{2\textbf{A}}{\textbf{d}\textbf{d_1} + \textbf{D_1}}\f$.
 
   \tparam FT a model of `FieldNumberType`
 
-  \param d the distance value
-  \param l the distance value
+  \param d1 the first distance value
+  \param d2 the second distance value
   \param A the area value
   \param D the dot product value
 
-  \pre (d * l + D) != 0
+  \pre (d1 * d2 + D) != 0
 
   \sa `half_tangent_weight()`
 */
 template<typename FT>
-FT tangent_half_angle(const FT d, const FT l, const FT A, const FT D)
+FT tangent_half_angle(const FT d1, const FT d2, const FT A, const FT D)
 {
-  return tangent_ns::half_angle_tangent(d, l, A, D);
+  FT t = FT(0);
+  const FT P = d1 * d2 + D;
+  CGAL_precondition(!is_zero(P));
+  if (!is_zero(P))
+    t = FT(2) * A / P;
+
+  return t;
 }
 
 /*!
@@ -237,7 +220,7 @@ template<typename FT>
 FT half_tangent_weight(const FT d, const FT l, const FT A, const FT D)
 {
   const FT tan05 = tangent_half_angle(d, l, A, D);
-  return half_tangent_weight(tan05, d);
+  return tangent_ns::half_weight(tan05, d);
 }
 
 /// \cond SKIP_IN_MANUAL

@@ -31,17 +31,14 @@ namespace Weights {
 namespace discrete_harmonic_ns {
 
 template<typename FT>
-FT weight(const FT r1, const FT r2, const FT r3,
+FT weight(const FT d1, const FT d2, const FT d,
           const FT A1, const FT A2, const FT B)
 {
   FT w = FT(0);
-  CGAL_precondition(A1 != FT(0) && A2 != FT(0));
+  CGAL_precondition(!is_zero(A1) && !is_zero(A2));
   const FT prod = A1 * A2;
-  if (prod != FT(0))
-  {
-    const FT inv = FT(1) / prod;
-    w = (r3 * A1 - r2 * B + r1 * A2) * inv;
-  }
+  if (!is_zero(prod))
+    w = (d2 * A1 - d * B + d1 * A2) / prod;
 
   return w;
 }

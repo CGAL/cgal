@@ -86,8 +86,8 @@ void normalize(std::vector<FT>& values)
   for (const FT& value : values)
     sum += value;
 
-  CGAL_assertion(sum != FT(0));
-  if (sum == FT(0))
+  CGAL_assertion(!is_zero(sum));
+  if (is_zero(sum))
     return;
 
   const FT inv_sum = FT(1) / sum;
@@ -95,14 +95,10 @@ void normalize(std::vector<FT>& values)
     value *= inv_sum;
 }
 
-// Raises value to the power.
-template<typename GeomTraits>
-typename GeomTraits::FT power(const GeomTraits&,
-                              const typename GeomTraits::FT value,
-                              const typename GeomTraits::FT p)
+template<typename FT>
+FT power(const FT value,
+         const FT p)
 {
-  using FT = typename GeomTraits::FT;
-
   const double base = CGAL::to_double(value);
   const double exp = CGAL::to_double(p);
 
