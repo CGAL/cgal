@@ -86,7 +86,7 @@ void compute_elements(const FG &fg,
     for (auto e : edges(fg))
     {
       if(m_drawing_functor.colored_edge(fg, e)) // edge is colored
-      { 
+      {
         graphic_buffer.add_segment(get(point_pmap, source(halfedge(e, fg), fg)),
                                    get(point_pmap, target(halfedge(e, fg), fg)),
                                    m_drawing_functor.edge_color(fg, e));
@@ -104,12 +104,12 @@ void compute_elements(const FG &fg,
     for (auto v : vertices(fg))
     {
       if(m_drawing_functor.colored_vertex(fg, v)) // vertex is colored
-      { 
+      {
         graphic_buffer.add_point(get(point_pmap, v),
                                  m_drawing_functor.vertex_color(fg, v));
       }
       else
-      { 
+      {
         graphic_buffer.add_point(get(point_pmap, v));
       }
     }

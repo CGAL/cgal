@@ -51,7 +51,7 @@ void add_in_graphic_buffer(const CGAL_POLY_TYPE& apoly,
 
 // Specialization of draw function: require Qt and the CGAL basic viewer.
 #ifdef CGAL_USE_BASIC_VIEWER
-  
+
 template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
          template < class T, class I, class A>
@@ -82,7 +82,7 @@ void draw(const CGAL_POLY_TYPE& apoly,
   draw_buffer(buffer, title);
 }
 #endif // CGAL_USE_BASIC_VIEWER
-  
+
 #undef CGAL_POLY_TYPE
 
 } // End namespace CGAL

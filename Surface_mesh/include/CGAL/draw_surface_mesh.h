@@ -44,12 +44,12 @@ void add_in_graphic_buffer(const Surface_mesh<K>& amesh,
                            CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                            const DrawingFunctor &drawing_functor)
 { add_in_graphic_buffer_for_fg(amesh, graphic_buffer, drawing_functor); }
- 
+
 template<class K, typename BufferType=float>
 void add_in_graphic_buffer(const Surface_mesh<K>& amesh,
                            CGAL::Graphic_buffer<BufferType> &graphic_buffer)
 { add_in_graphic_buffer_for_fg(amesh, graphic_buffer); }
- 
+
 #ifdef CGAL_USE_BASIC_VIEWER
 
   // Specialization of draw function.
