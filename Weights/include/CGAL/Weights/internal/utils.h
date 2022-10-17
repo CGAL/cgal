@@ -105,11 +105,12 @@ FT power(const FT value,
   return static_cast<FT>(std::pow(base, exp));
 }
 
-// Computes distance between two 2D points.
+// 2D ==============================================================================================
+
 template<typename GeomTraits>
-typename GeomTraits::FT distance_2(const GeomTraits& traits,
-                                   const typename GeomTraits::Point_2& p,
-                                   const typename GeomTraits::Point_2& q)
+typename GeomTraits::FT distance_2(const typename GeomTraits::Point_2& p,
+                                   const typename GeomTraits::Point_2& q,
+                                   const GeomTraits& traits)
 {
   using Get_sqrt = Get_sqrt<GeomTraits>;
   auto sqrt = Get_sqrt::sqrt_object(traits);
@@ -118,10 +119,9 @@ typename GeomTraits::FT distance_2(const GeomTraits& traits,
   return sqrt(squared_distance_2(p, q));
 }
 
-// Computes length of a 2D vector.
 template<typename GeomTraits>
-typename GeomTraits::FT length_2(const GeomTraits& traits,
-                                 const typename GeomTraits::Vector_2& v)
+typename GeomTraits::FT length_2(const typename GeomTraits::Vector_2& v,
+                                 const GeomTraits& traits)
 {
   using Get_sqrt = Get_sqrt<GeomTraits>;
   auto sqrt = Get_sqrt::sqrt_object(traits);
@@ -131,8 +131,8 @@ typename GeomTraits::FT length_2(const GeomTraits& traits,
 }
 
 template<typename GeomTraits>
-void normalize_2(const GeomTraits& traits,
-                 typename GeomTraits::Vector_2& v)
+void normalize_2(typename GeomTraits::Vector_2& v,
+                 const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
   const FT length = length_2(traits, v);
@@ -143,78 +143,24 @@ void normalize_2(const GeomTraits& traits,
   v /= length;
 }
 
-// Computes cotanget between two 2D vectors.
+// 3D ==============================================================================================
+
 template<typename GeomTraits>
-typename GeomTraits::FT cotangent_2(const GeomTraits& traits,
-                                    const typename GeomTraits::Point_2& p,
-                                    const typename GeomTraits::Point_2& q,
-                                    const typename GeomTraits::Point_2& r)
+typename GeomTraits::FT distance_3(const typename GeomTraits::Point_3& p,
+                                   const typename GeomTraits::Point_3& q,
+                                   const GeomTraits& traits)
 {
-  using FT = typename GeomTraits::FT;
-  using Vector_2 = typename GeomTraits::Vector_2;
+  auto squared_distance_3 = traits.compute_squared_distance_3_object();
 
-  auto dot_product_2 = traits.compute_scalar_product_2_object();
-  auto cross_product_2 = traits.compute_determinant_2_object();
-  auto construct_vector_2 = traits.construct_vector_2_object();
-
-  const Vector_2 v1 = construct_vector_2(q, r);
-  const Vector_2 v2 = construct_vector_2(q, p);
-
-  const FT dot = dot_product_2(v1, v2);
-  const FT cross = cross_product_2(v1, v2);
-
-  const FT length = CGAL::abs(cross);
-  // CGAL_assertion(length != FT(0)); not really necessary
-  if (length != FT(0))
-    return dot / length;
-  else
-    return FT(0); // undefined
-}
-
-// Computes tanget between two 2D vectors.
-template<typename GeomTraits>
-typename GeomTraits::FT tangent_2(const GeomTraits& traits,
-                                  const typename GeomTraits::Point_2& p,
-                                  const typename GeomTraits::Point_2& q,
-                                  const typename GeomTraits::Point_2& r)
-{
-  using FT = typename GeomTraits::FT;
-  using Vector_2 = typename GeomTraits::Vector_2;
-
-  auto dot_product_2 = traits.compute_scalar_product_2_object();
-  auto cross_product_2 = traits.compute_determinant_2_object();
-  auto construct_vector_2 = traits.construct_vector_2_object();
-
-  const Vector_2 v1 = construct_vector_2(q, r);
-  const Vector_2 v2 = construct_vector_2(q, p);
-
-  const FT dot = dot_product_2(v1, v2);
-  const FT cross = cross_product_2(v1, v2);
-
-  const FT length = CGAL::abs(cross);
-  // CGAL_assertion(dot != FT(0)); not really necessary
-  if (dot != FT(0))
-    return length / dot;
-  else
-    return FT(0); // undefined
-}
-
-// Computes distance between two 3D points.
-template<typename GeomTraits>
-typename GeomTraits::FT distance_3(const GeomTraits& traits,
-                                   const typename GeomTraits::Point_3& p,
-                                   const typename GeomTraits::Point_3& q)
-{
   using Get_sqrt = Get_sqrt<GeomTraits>;
   auto sqrt = Get_sqrt::sqrt_object(traits);
 
-  auto squared_distance_3 = traits.compute_squared_distance_3_object();
   return sqrt(squared_distance_3(p, q));
 }
 
 template<typename GeomTraits>
-typename GeomTraits::FT length_3(const GeomTraits& traits,
-                                 const typename GeomTraits::Vector_3& v)
+typename GeomTraits::FT length_3(const typename GeomTraits::Vector_3& v,
+                                 const GeomTraits& traits)
 {
   using Get_sqrt = Get_sqrt<GeomTraits>;
   auto sqrt = Get_sqrt::sqrt_object(traits);
@@ -224,8 +170,8 @@ typename GeomTraits::FT length_3(const GeomTraits& traits,
 }
 
 template<typename GeomTraits>
-void normalize_3(const GeomTraits& traits,
-                 typename GeomTraits::Vector_3& v)
+void normalize_3(typename GeomTraits::Vector_3& v,
+                 const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
@@ -238,71 +184,12 @@ void normalize_3(const GeomTraits& traits,
 }
 
 template<typename GeomTraits>
-typename GeomTraits::FT cotangent_3(const GeomTraits& traits,
-                                    const typename GeomTraits::Point_3& p,
-                                    const typename GeomTraits::Point_3& q,
-                                    const typename GeomTraits::Point_3& r)
-{
-  using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
-
-  auto dot_product_3 = traits.compute_scalar_product_3_object();
-  auto cross_product_3 = traits.construct_cross_product_vector_3_object();
-  auto vector_3 = traits.construct_vector_3_object();
-
-  const Vector_3 v1 = vector_3(q, r);
-  const Vector_3 v2 = vector_3(q, p);
-
-  const FT dot = dot_product_3(v1, v2);
-  auto cross = cross_product_3(v1, v2);
-
-  const FT length = length_3(traits, cross);
-  // TODO:
-  // Not really necessary: since we handle case length = 0. Does this case happen?
-  // Yes, e.g. in Surface Parameterization tests. Does it affect the results?
-  // In current applications, not really.
-  // CGAL_assertion(length != FT(0));
-  if (length != FT(0))
-    return dot / length;
-  else
-    return FT(0); // undefined
-}
-
-// Computes tanget between two 3D vectors.
-template<typename GeomTraits>
-typename GeomTraits::FT tangent_3(const GeomTraits& traits,
-                                  const typename GeomTraits::Point_3& p,
-                                  const typename GeomTraits::Point_3& q,
-                                  const typename GeomTraits::Point_3& r)
-{
-  using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
-
-  auto dot_product_3 = traits.compute_scalar_product_3_object();
-  auto cross_product_3 = traits.construct_cross_product_vector_3_object();
-  auto vector_3 = traits.construct_vector_3_object();
-
-  const Vector_3 v1 = vector_3(q, r);
-  const Vector_3 v2 = vector_3(q, p);
-
-  const FT dot = dot_product_3(v1, v2);
-  auto cross = cross_product_3(v1, v2);
-
-  const FT length = length_3(traits, cross);
-  // CGAL_assertion(dot != FT(0)); not really necessary
-  if (dot != FT(0))
-    return length / dot;
-  else
-    return FT(0); // undefined
-}
-
-// Computes 3D angle between two vectors.
-template<typename GeomTraits>
-double angle_3(const GeomTraits& traits,
-               const typename GeomTraits::Vector_3& v1,
-               const typename GeomTraits::Vector_3& v2)
+double angle_3(const typename GeomTraits::Vector_3& v1,
+               const typename GeomTraits::Vector_3& v2,
+               const GeomTraits& traits)
 {
   auto dot_product_3 = traits.compute_scalar_product_3_object();
+
   const double dot = CGAL::to_double(dot_product_3(v1, v2));
 
   double angle_rad = 0.0;
@@ -318,10 +205,10 @@ double angle_3(const GeomTraits& traits,
 
 // Rotates a 3D point around axis.
 template<typename GeomTraits>
-typename GeomTraits::Point_3 rotate_point_3(const GeomTraits&,
-                                            const double angle_rad,
+typename GeomTraits::Point_3 rotate_point_3(const double angle_rad,
                                             const typename GeomTraits::Vector_3& axis,
-                                            const typename GeomTraits::Point_3& query)
+                                            const typename GeomTraits::Point_3& query,
+                                            const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
@@ -348,10 +235,10 @@ typename GeomTraits::Point_3 rotate_point_3(const GeomTraits&,
 
 // Computes two 3D orthogonal base vectors wrt a given normal.
 template<typename GeomTraits>
-void orthogonal_bases_3(const GeomTraits& traits,
-                        const typename GeomTraits::Vector_3& normal,
+void orthogonal_bases_3(const typename GeomTraits::Vector_3& normal,
                         typename GeomTraits::Vector_3& b1,
-                        typename GeomTraits::Vector_3& b2)
+                        typename GeomTraits::Vector_3& b2,
+                        const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
   using Vector_3 = typename GeomTraits::Vector_3;
@@ -369,17 +256,17 @@ void orthogonal_bases_3(const GeomTraits& traits,
 
   b2 = cross_product_3(normal, b1);
 
-  normalize_3(traits, b1);
-  normalize_3(traits, b2);
+  normalize_3(b1, traits);
+  normalize_3(b2, traits);
 }
 
 // Converts a 3D point into a 2D point wrt to a given plane.
 template<typename GeomTraits>
-typename GeomTraits::Point_2 to_2d(const GeomTraits& traits,
-                                   const typename GeomTraits::Vector_3& b1,
+typename GeomTraits::Point_2 to_2d(const typename GeomTraits::Vector_3& b1,
                                    const typename GeomTraits::Vector_3& b2,
                                    const typename GeomTraits::Point_3& origin,
-                                   const typename GeomTraits::Point_3& query)
+                                   const typename GeomTraits::Point_3& query,
+                                   const GeomTraits& traits)
 {
   using FT  = typename GeomTraits::FT;
   using Point_2  = typename GeomTraits::Point_2;
@@ -453,15 +340,15 @@ typename GeomTraits::Point_2 to_2d(const GeomTraits& traits,
 
 // Flattens an arbitrary quad into a planar quad.
 template<typename GeomTraits>
-void flatten(const GeomTraits& traits,
-             const typename GeomTraits::Point_3& t, // prev neighbor/vertex/point
+void flatten(const typename GeomTraits::Point_3& t, // prev neighbor/vertex/point
              const typename GeomTraits::Point_3& r, // curr neighbor/vertex/point
              const typename GeomTraits::Point_3& p, // next neighbor/vertex/point
              const typename GeomTraits::Point_3& q, // query point
              typename GeomTraits::Point_2& tf,
              typename GeomTraits::Point_2& rf,
              typename GeomTraits::Point_2& pf,
-             typename GeomTraits::Point_2& qf)
+             typename GeomTraits::Point_2& qf,
+             const GeomTraits& traits)
 {
   // std::cout << std::endl;
   using Point_3 = typename GeomTraits::Point_3;
@@ -488,89 +375,76 @@ void flatten(const GeomTraits& traits,
 
   // Middle axis.
   Vector_3 ax = vector_3(q1, r1);
-  normalize_3(traits, ax);
+  normalize_3(ax, traits);
 
   // Prev and next vectors.
   Vector_3 v1 = vector_3(q1, t1);
   Vector_3 v2 = vector_3(q1, p1);
 
-  normalize_3(traits, v1);
-  normalize_3(traits, v2);
+  normalize_3(v1, traits);
+  normalize_3(v2, traits);
 
   // Two triangle normals.
   Vector_3 n1 = cross_product_3(v1, ax);
   Vector_3 n2 = cross_product_3(ax, v2);
 
-  normalize_3(traits, n1);
-  normalize_3(traits, n2);
+  normalize_3(n1, traits);
+  normalize_3(n2, traits);
 
   // std::cout << "normal n1: " << n1 << std::endl;
   // std::cout << "normal n2: " << n2 << std::endl;
 
   // Angle between two normals.
-  const double angle_rad = angle_3(traits, n1, n2);
+  const double angle_rad = angle_3(n1, n2, traits);
   // std::cout << "angle deg n1 <-> n2: " << angle_rad * 180.0 / CGAL_PI << std::endl;
 
   // Rotate p1 around ax so that it lands onto the plane [q1, t1, r1].
   const Point_3& t2 = t1;
   const Point_3& r2 = r1;
-  const Point_3  p2 = rotate_point_3(traits, angle_rad, ax, p1);
+  const Point_3  p2 = rotate_point_3(angle_rad, ax, p1, traits);
   const Point_3& q2 = q1;
   // std::cout << "rotated p2: " << p2 << std::endl;
 
   // Compute orthogonal base vectors.
   Vector_3 b1, b2;
   const Vector_3& normal = n1;
-  orthogonal_bases_3(traits, normal, b1, b2);
+  orthogonal_bases_3(normal, b1, b2, traits);
 
-  // const Angle angle12 = angle_3(traits, b1, b2);
+  // const Angle angle12 = angle_3(b1, b2, traits);
   // std::cout << "angle deg b1 <-> b2: " << angle12 * 180.0 / CGAL_PI << std::endl;
 
   // Flatten a quad.
   const Point_3& origin = q2;
-  tf = to_2d(traits, b1, b2, origin, t2);
-  rf = to_2d(traits, b1, b2, origin, r2);
-  pf = to_2d(traits, b1, b2, origin, p2);
-  qf = to_2d(traits, b1, b2, origin, q2);
+  tf = to_2d(b1, b2, origin, t2, traits);
+  rf = to_2d(b1, b2, origin, r2, traits);
+  pf = to_2d(b1, b2, origin, p2, traits);
+  qf = to_2d(b1, b2, origin, q2, traits);
 
   // std::cout << "flattened qf: " << qf << std::endl;
   // std::cout << "flattened tf: " << tf << std::endl;
   // std::cout << "flattened rf: " << rf << std::endl;
   // std::cout << "flattened pf: " << pf << std::endl;
 
-  // std::cout << "A1: " << area_2(traits, rf, qf, pf) << std::endl;
-  // std::cout << "A2: " << area_2(traits, pf, qf, rf) << std::endl;
-  // std::cout << "C: "  << area_2(traits, tf, rf, pf) << std::endl;
-  // std::cout << "B: "  << area_2(traits, pf, qf, tf) << std::endl;
+  // std::cout << "A1: " << area_2(rf, qf, pf, traits) << std::endl;
+  // std::cout << "A2: " << area_2(pf, qf, rf, traits) << std::endl;
+  // std::cout << "C: "  << area_2(tf, rf, pf, traits) << std::endl;
+  // std::cout << "B: "  << area_2(pf, qf, tf, traits) << std::endl;
 }
 
-// Computes area of a 2D triangle.
 template<typename GeomTraits>
-typename GeomTraits::FT area_2(const GeomTraits& traits,
-                               const typename GeomTraits::Point_2& p,
-                               const typename GeomTraits::Point_2& q,
-                               const typename GeomTraits::Point_2& r)
-{
-  auto area_2 = traits.compute_area_2_object();
-  return area_2(p, q, r);
-}
-
-// Computes positive area of a 2D triangle.
-template<typename GeomTraits>
-typename GeomTraits::FT positive_area_2(const GeomTraits& traits,
-                                        const typename GeomTraits::Point_2& p,
+typename GeomTraits::FT positive_area_2(const typename GeomTraits::Point_2& p,
                                         const typename GeomTraits::Point_2& q,
-                                        const typename GeomTraits::Point_2& r)
+                                        const typename GeomTraits::Point_2& r,
+                                        const GeomTraits& traits)
 {
   return CGAL::abs(area_2(traits, p, q, r));
 }
 
-// Computes area of a 3D triangle.
 template<typename GeomTraits>
-typename GeomTraits::FT area_3(const GeomTraits& traits,
-                               const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT area_3(const typename GeomTraits::Point_3& p,
                                const typename GeomTraits::Point_3& q,
-                               const typename GeomTraits::Point_3& r)
+                               const typename GeomTraits::Point_3& r,
+                               const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
   using Point_2 = typename GeomTraits::Point_2;
@@ -592,22 +466,22 @@ typename GeomTraits::FT area_3(const GeomTraits& traits,
   // Prev and next vectors.
   Vector_3 v1 = vector_3(b, a);
   Vector_3 v2 = vector_3(b, c);
-  normalize_3(traits, v1);
-  normalize_3(traits, v2);
+  normalize_3(v1, traits);
+  normalize_3(v2, traits);
 
   // Compute normal.
   Vector_3 normal = cross_product_3(v1, v2);
-  normalize_3(traits, normal);
+  normalize_3(normal, traits);
 
   // Compute orthogonal base vectors.
   Vector_3 b1, b2;
-  orthogonal_bases_3(traits, normal, b1, b2);
+  orthogonal_bases_3(normal, b1, b2, traits);
 
   // Compute area.
   const Point_3& origin = b;
-  const Point_2 pf = to_2d(traits, b1, b2, origin, a);
-  const Point_2 qf = to_2d(traits, b1, b2, origin, b);
-  const Point_2 rf = to_2d(traits, b1, b2, origin, c);
+  const Point_2 pf = to_2d(b1, b2, origin, a, traits);
+  const Point_2 qf = to_2d(b1, b2, origin, b, traits);
+  const Point_2 rf = to_2d(b1, b2, origin, c, traits);
 
   const FT A = area_2(traits, pf, qf, rf);
   return A;
@@ -615,62 +489,18 @@ typename GeomTraits::FT area_3(const GeomTraits& traits,
 
 // Computes positive area of a 3D triangle.
 template<typename GeomTraits>
-typename GeomTraits::FT positive_area_3(const GeomTraits& traits,
-                                        const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT positive_area_3(const typename GeomTraits::Point_3& p,
                                         const typename GeomTraits::Point_3& q,
-                                        const typename GeomTraits::Point_3& r)
+                                        const typename GeomTraits::Point_3& r,
+                                        const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
-
-  auto vector_3 = traits.construct_vector_3_object();
-  auto cross_product_3 = traits.construct_cross_product_vector_3_object();
-
-  const Vector_3 v1 = vector_3(q, r);
-  const Vector_3 v2 = vector_3(q, p);
-
-  Vector_3 cross = cross_product_3(v1, v2);
-  const FT half = FT(1) / FT(2);
-  const FT A = half * length_3(traits, cross);
-  return A;
-}
-
-// Computes a clamped cotangent between two 3D vectors.
-// In the old version of weights in PMP, it has been called secure.
-// See Weights/internal/pmp_weights_deprecated.h for more information.
-template<typename GeomTraits>
-typename GeomTraits::FT cotangent_3_clamped(const GeomTraits& traits,
-                                            const typename GeomTraits::Point_3& p,
-                                            const typename GeomTraits::Point_3& q,
-                                            const typename GeomTraits::Point_3& r)
-{
-  using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
-
   using Get_sqrt = Get_sqrt<GeomTraits>;
   auto sqrt = Get_sqrt::sqrt_object(traits);
 
-  auto dot_product_3 = traits.compute_scalar_product_3_object();
-  auto vector_3 = traits.construct_vector_3_object();
+  auto squared_area_3 = traits.compute_squared_area_3_object();
 
-  const Vector_3 v1 = vector_3(q, r);
-  const Vector_3 v2 = vector_3(q, p);
-
-  const FT dot = dot_product_3(v1, v2);
-  const FT length_v1 = length_3(traits, v1);
-  const FT length_v2 = length_3(traits, v2);
-
-  const FT lb = -FT(999) / FT(1000), ub = FT(999) / FT(1000);
-  FT cosine = dot / length_v1 / length_v2;
-  cosine = (cosine < lb) ? lb : cosine;
-  cosine = (cosine > ub) ? ub : cosine;
-  const FT sine = sqrt(FT(1) - cosine * cosine);
-
-  CGAL_assertion(sine != FT(0));
-  if (sine != FT(0))
-    return cosine / sine;
-
-  return FT(0); // undefined
+  return sqrt(squared_area_3(p, q, r));
 }
 
 } // namespace internal
