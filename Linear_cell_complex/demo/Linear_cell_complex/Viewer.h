@@ -35,10 +35,10 @@ public Q_SLOTS:
 
 private:
   CGAL::Drawing_functor_with_volume<LCC,
-                                         Dart_const_handle,
-                                         Dart_const_handle,
-                                         Dart_const_handle,
-                                         Dart_const_handle> m_drawing_functor;
+                                         Dart_const_descriptor,
+                                         Dart_const_descriptor,
+                                         Dart_const_descriptor,
+                                         Dart_const_descriptor> m_drawing_functor;
   CGAL::Graphic_buffer<float> m_graphic_buffer;
   Scene* scene;
   bool m_previous_scene_empty;

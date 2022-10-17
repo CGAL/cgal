@@ -111,7 +111,7 @@ void compute_edge(typename LCC::Dart_const_handle dh, const LCC *lcc,
 
   const typename LCC::Point& p1=lcc->point(dh);
   typename LCC::Dart_const_handle d2=lcc->other_extremity(dh);
-  if (d2!=nullptr)
+  if (d2!=LCC::null_descriptor)
   {
     if (m_drawing_functor.colored_edge(*lcc, dh))
     {
@@ -173,7 +173,9 @@ void compute_elements(const LCC *lcc,
             lcc->is_marked(itv, oriented_mark) &&
             m_drawing_functor.draw_face(*lcc, itv))
         {
-          if (!m_drawing_functor.volume_wireframe(*lcc, itv) &&
+          if ((!m_drawing_functor.volume_wireframe(*lcc, itv) ||
+               (!lcc->template is_free<3>(itv) &&
+                !m_drawing_functor.volume_wireframe(*lcc, lcc->template beta<3>(itv)))) &&
               !m_drawing_functor.face_wireframe(*lcc, itv))
           { compute_face(itv, it, lcc, m_drawing_functor, graphic_buffer); }
           for(typename LCC::template Dart_of_cell_basic_range<2>::const_iterator
@@ -240,7 +242,8 @@ void add_in_graphic_buffer(const CGAL_LCC_TYPE &alcc,
                            CGAL::Graphic_buffer<BufferType> &graphic_buffer,
                            const DrawingFunctor &m_drawing_functor)
 {
-  draw_function_for_lcc::compute_elements(&alcc, graphic_buffer, m_drawing_functor);
+  draw_function_for_lcc::compute_elements(static_cast<const Refs*>(&alcc),
+                                          graphic_buffer, m_drawing_functor);
 }
 
 // add_in_graphic_buffer: to add a LCC in the given graphic buffer, without a

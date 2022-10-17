@@ -19,17 +19,32 @@ Viewer::Viewer(QWidget *parent)
   : Base(parent, m_graphic_buffer, ""),
     m_previous_scene_empty(true)
 {
-  m_drawing_functor.volume_color=[](const LCC & alcc,
-                                    Dart_const_handle dh)->CGAL::IO::Color
-  { return alcc.template info<3>(dh).color(); };
+  m_drawing_functor.face_color=[](const LCC & alcc,
+                                    Dart_const_descriptor dh)->CGAL::IO::Color
+  {
+    if(alcc.template is_free<3>(dh))
+    { return alcc.template info<3>(dh).color(); }
 
-  m_drawing_functor.colored_volume=[](const LCC &, Dart_const_handle)->bool
+    if(!alcc.template info<3>(dh).is_visible() ||
+       !alcc.template info<3>(dh).is_filled())
+    { return alcc.template info<3>(alcc.template beta<3>(dh)).color(); }
+
+    if(!alcc.template info<3>(alcc.template beta<3>(dh)).is_visible() ||
+       !alcc.template info<3>(alcc.template beta<3>(dh)).is_filled())
+    { return alcc.template info<3>(dh).color(); }
+
+    const CGAL::IO::Color& c1=alcc.template info<3>(dh).color();
+    const CGAL::IO::Color& c2=alcc.template info<3>(alcc.template beta<3>(dh)).color();
+    return CGAL::IO::Color((c1[0]+c2[0])/2, (c1[1]+c2[1])/2, (c1[2]+c2[2])/2);
+  };
+
+  m_drawing_functor.colored_face=[](const LCC &, Dart_const_descriptor)->bool
   { return true; };
 
-  m_drawing_functor.draw_volume=[](const LCC & alcc, Dart_const_handle dh)->bool
+  m_drawing_functor.draw_volume=[](const LCC & alcc, Dart_const_descriptor dh)->bool
   { return alcc.template info<3>(dh).is_visible(); };
 
-  m_drawing_functor.volume_wireframe=[](const LCC& alcc, Dart_const_handle dh)->bool
+  m_drawing_functor.volume_wireframe=[](const LCC& alcc, Dart_const_descriptor dh)->bool
   { return !(alcc.template info<3>(dh).is_filled()); };
 }
 
@@ -69,4 +84,5 @@ void Viewer::keyPressEvent(QKeyEvent *e)
   Base::keyPressEvent(e);
 }
 
-QString Viewer::helpString() const { return Base::helpString("LCC Demo"); }
+QString Viewer::helpString() const
+{ return Base::helpString("LCC Demo"); }
