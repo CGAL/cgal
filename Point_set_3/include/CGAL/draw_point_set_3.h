@@ -14,8 +14,11 @@
 #ifndef CGAL_DRAW_POINT_SET_3_H
 #define CGAL_DRAW_POINT_SET_3_H
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/license/Point_set_3.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Drawing_functor.h>
+#include <CGAL/Point_set_3.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -35,55 +38,80 @@ void draw(const PS& aps);
 } /* namespace CGAL */
 #endif
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
-#include <CGAL/Point_set_3.h>
-#include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Random.h>
-
 namespace CGAL {
 
 namespace draw_function_for_PointSet {
 
-template <typename BufferType = float, class PointSet>
-void compute_vertex(const typename PointSet::Point_map::value_type &p,
-                    Graphic_buffer<BufferType> &graphic_buffer) {
-  graphic_buffer.add_point(p);
+template <typename BufferType=float, class PointSet, class DrawingFunctor>
+void compute_elements(const PointSet& pointset,
+                      Graphic_buffer<BufferType>& graphic_buffer,
+                      const DrawingFunctor& drawing_functor)
+{
+  if (!drawing_functor.are_vertices_enabled())
+  { return; }
 
-  // We can use add_point(p, c) with c a CGAL::IO::Color to add a colored point
-  // E.g: graphic_buffer.add_point(p, CGAL::IO::Color(100, 125, 200));
-}
-
-template <typename BufferType = float, class PointSet>
-void compute_elements(const PointSet *pointset,
-                      Graphic_buffer<BufferType> &graphic_buffer) {
-  for (typename PointSet::const_iterator it = pointset->begin();
-       it != pointset->end(); ++it) {
-    compute_vertex<float, PointSet>(pointset->point(*it), graphic_buffer);
+  for (typename PointSet::const_iterator it=pointset.begin();
+       it!=pointset.end(); ++it)
+  {
+    if(drawing_functor.draw_vertex(pointset, it))
+    {
+      if (drawing_functor.colored_vertex(pointset, it))
+      {
+        graphic_buffer.add_point(pointset.point(*it),
+                                 drawing_functor.vertex_color(pointset, it));
+      }
+      else
+      { graphic_buffer.add_point(pointset.point(*it)); }
+    }
   }
 }
 
 } // namespace draw_function_for_PointSet
 
-template <typename BufferType = float, class PointSet>
-void add_in_graphic_buffer(Graphic_buffer<BufferType> &graphic_buffer,
-                                     const PointSet *aPointSet = nullptr) {
-  if (aPointSet != nullptr) {
-    draw_function_for_PointSet::compute_elements(aPointSet, graphic_buffer);
-  }
+template <class P, class V, typename BufferType=float, class DrawingFunctor>
+void add_in_graphic_buffer(const Point_set_3<P, V>& apointset,
+                           Graphic_buffer<BufferType>& graphic_buffer,
+                           const DrawingFunctor& drawing_functor)
+{
+  draw_function_for_PointSet::compute_elements(apointset,
+                                               graphic_buffer,
+                                               drawing_functor);
 }
+
+template <class P, class V, typename BufferType=float>
+void add_in_graphic_buffer(const Point_set_3<P, V>& apointset,
+                           Graphic_buffer<BufferType>& graphic_buffer)
+{
+  CGAL::Drawing_functor<Point_set_3<P, V>,
+                        typename Point_set_3<P, V>::const_iterator,
+                        int, int> drawing_functor;
+  add_in_graphic_buffer(apointset, graphic_buffer, drawing_functor);
+}
+
+#ifdef CGAL_USE_BASIC_VIEWER
 
 // Specialization of draw function.
-template <class P, class V>
-void draw(const Point_set_3<P, V> &apointset,
-          const char *title = "Point_set_3 Basic Viewer") {
+  template <class P, class V, class DrawingFunctor>
+void draw(const Point_set_3<P, V>& apointset,
+          const DrawingFunctor& drawing_functor,
+          const char *title="Point_set_3 Basic Viewer")
+{
   Graphic_buffer<float> buffer;
-  add_in_graphic_buffer(buffer, &apointset);
-  draw_buffer(buffer);
+  add_in_graphic_buffer(apointset, buffer, drawing_functor);
+  draw_buffer(buffer, title);
 }
 
-} // End namespace CGAL
+template <class P, class V>
+void draw(const Point_set_3<P, V>& apointset,
+          const char *title="Point_set_3 Basic Viewer")
+{
+  Graphic_buffer<float> buffer;
+  add_in_graphic_buffer(apointset, buffer);
+  draw_buffer(buffer, title);
+}
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+} // End namespace CGAL
 
 #endif // CGAL_DRAW_POINT_SET_3_H
