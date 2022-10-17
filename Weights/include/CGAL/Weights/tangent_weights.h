@@ -14,8 +14,12 @@
 #ifndef CGAL_TANGENT_WEIGHTS_H
 #define CGAL_TANGENT_WEIGHTS_H
 
-// Internal includes.
-#include <CGAL/Weights/internal/utils.h>
+#include <CGAL/Weights/utils.h>
+
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
+
+#include <cmath>
 
 namespace CGAL {
 namespace Weights {

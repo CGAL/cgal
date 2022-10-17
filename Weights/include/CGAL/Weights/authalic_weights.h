@@ -14,12 +14,16 @@
 #ifndef CGAL_AUTHALIC_WEIGHTS_H
 #define CGAL_AUTHALIC_WEIGHTS_H
 
-#include <CGAL/Weights/internal/utils.h>
+#include <CGAL/Weights/utils.h>
+
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
 
 namespace CGAL {
 namespace Weights {
 
 /// \cond SKIP_IN_MANUAL
+
 namespace authalic_ns {
 
 template<typename FT>

@@ -14,14 +14,20 @@
 #ifndef CGAL_WACHSPRESS_WEIGHTS_H
 #define CGAL_WACHSPRESS_WEIGHTS_H
 
-// Internal includes.
 #include <CGAL/Weights/internal/utils.h>
 #include <CGAL/Weights/internal/polygon_utils_2.h>
+
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
+#include <CGAL/property_map.h>
+
+#include <vector>
 
 namespace CGAL {
 namespace Weights {
 
 /// \cond SKIP_IN_MANUAL
+
 namespace wachspress_ns {
 
 template<typename FT>

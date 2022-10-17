@@ -14,7 +14,13 @@
 #ifndef CGAL_COTANGENT_WEIGHTS_H
 #define CGAL_COTANGENT_WEIGHTS_H
 
-#include <CGAL/Weights/internal/utils.h>
+#include <CGAL/Weights/utils.h>
+
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
+#include <CGAL/utility.h>
 
 namespace CGAL {
 namespace Weights {

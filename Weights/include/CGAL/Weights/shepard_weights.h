@@ -16,10 +16,14 @@
 
 #include <CGAL/Weights/internal/utils.h>
 
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
+
 namespace CGAL {
 namespace Weights {
 
 /// \cond SKIP_IN_MANUAL
+
 namespace shepard_ns {
 
 template<typename GeomTraits>

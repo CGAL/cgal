@@ -14,7 +14,8 @@
 #ifndef CGAL_UNIFORM_REGION_WEIGHTS_H
 #define CGAL_UNIFORM_REGION_WEIGHTS_H
 
-#include <CGAL/Weights/internal/utils.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
 
 namespace CGAL {
 namespace Weights {

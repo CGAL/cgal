@@ -14,7 +14,10 @@
 #ifndef CGAL_UNIFORM_WEIGHTS_H
 #define CGAL_UNIFORM_WEIGHTS_H
 
-#include <CGAL/Weights/internal/utils.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
+
+#include <boost/graph/graph_traits.hpp>
 
 namespace CGAL {
 namespace Weights {
