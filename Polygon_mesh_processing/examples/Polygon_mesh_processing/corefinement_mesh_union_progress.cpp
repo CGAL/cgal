@@ -130,7 +130,7 @@ struct Visitor :
     sptr->start_triangulating_faces(tf);
   }
 
-  void face_triangulation(std::size_t i) const
+  void triangulating_faces_step(std::size_t i) const
   {
     sptr->face_triangulation(i);
   }
@@ -140,7 +140,7 @@ struct Visitor :
     std::cout << "Visitor::end_triangulating_faces() at " << sptr->time() << " sec."  << std::endl;
   }
 
-  void start_coplanar_faces(std::size_t i) const
+  void start_handling_intersection_of_coplanar_faces(std::size_t i) const
   {
     sptr->start_coplanar_faces(i);
   }
@@ -150,12 +150,12 @@ struct Visitor :
     sptr->intersection_of_coplanar_faces_step();
   }
 
-  void end_coplanar_faces() const
+  void end_handling_intersection_of_coplanar_faces() const
   {
     std::cout << "Visitor::end_coplanar_faces() at " << sptr->time() << " sec." << std::endl;
   }
 
-  void start_intersection_points(std::size_t i) const
+  void start_handling_edge_face_intersections(std::size_t i) const
   {
     sptr->start_intersection_points(i);
   }
@@ -165,7 +165,7 @@ struct Visitor :
     sptr->edge_face_intersections_step();
   }
 
-  void end_intersection_points() const
+  void end_handling_edge_face_intersections() const
   {
     std::cout << "Visitor::end_intersection_points() at " << sptr->time() << " sec." << std::endl;
   }
