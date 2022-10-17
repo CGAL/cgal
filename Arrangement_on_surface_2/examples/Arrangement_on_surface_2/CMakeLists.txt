@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Arrangement_on_surface_2_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Core Qt5)
+find_package(CGAL REQUIRED COMPONENTS Core OPTIONAL_COMPONENTS Qt5)
 
 # create a target per cppfile
 file(
@@ -24,4 +24,9 @@ if(CGAL_Qt5_FOUND)
   target_link_libraries(polylines PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(circles PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(circular_arcs PUBLIC CGAL::CGAL_Basic_viewer)
+else()
+  message(
+    STATUS
+      "NOTICE: Several examples require Qt and will not be compiled."
+  )
 endif()
