@@ -7,7 +7,7 @@
 # Careful when modifying
 
 cmake_minimum_required(VERSION 3.1...3.23)
-project(CGAL_basic_viewers)
+project(CGAL_basic_viewers_Examples)
 
 #CGAL_Qt5 is needed for the drawing.
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
