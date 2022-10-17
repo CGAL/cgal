@@ -20,103 +20,100 @@
 namespace CGAL {
 namespace Weights {
 
-  #if defined(DOXYGEN_RUNNING)
+#if defined(DOXYGEN_RUNNING)
 
-  /*!
-    \ingroup PkgWeightsRefUniformRegionWeights
+/*!
+  \ingroup PkgWeightsRefUniformRegionWeights
 
-    \brief this function always returns 1, given three points in 2D and a traits class
-    with geometric objects, predicates, and constructions.
-  */
-  template<typename GeomTraits>
-  typename GeomTraits::FT uniform_area(
+  \brief this function always returns 1, given three points in 2D and a traits class
+  with geometric objects, predicates, and constructions.
+*/
+template<typename GeomTraits>
+typename GeomTraits::FT uniform_area(
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2&,
     const GeomTraits&) { }
 
-  /*!
-    \ingroup PkgWeightsRefUniformRegionWeights
+/*!
+  \ingroup PkgWeightsRefUniformRegionWeights
 
-    \brief this function always returns 1, given three points in 3D and a traits class
-    with geometric objects, predicates, and constructions.
-  */
-  template<typename GeomTraits>
-  typename GeomTraits::FT uniform_area(
+  \brief this function always returns 1, given three points in 3D and a traits class
+  with geometric objects, predicates, and constructions.
+*/
+template<typename GeomTraits>
+typename GeomTraits::FT uniform_area(
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3&,
     const GeomTraits&) { }
 
-  /*!
-    \ingroup PkgWeightsRefUniformRegionWeights
+/*!
+  \ingroup PkgWeightsRefUniformRegionWeights
 
-    \brief this function always returns 1, given three points in 2D which are
-    parameterized by a `Kernel` K.
-  */
-  template<typename K>
-  typename K::FT uniform_area(
+  \brief this function always returns 1, given three points in 2D which are
+  parameterized by a `Kernel` K.
+*/
+template<typename K>
+typename K::FT uniform_area(
     const CGAL::Point_2<K>&,
     const CGAL::Point_2<K>&,
     const CGAL::Point_2<K>&) { }
 
-  /*!
-    \ingroup PkgWeightsRefUniformRegionWeights
+/*!
+  \ingroup PkgWeightsRefUniformRegionWeights
 
-    \brief this function always returns 1, given three points in 3D which are
-    parameterized by a `Kernel` K.
-  */
-  template<typename K>
-  typename K::FT uniform_area(
+  \brief this function always returns 1, given three points in 3D which are
+  parameterized by a `Kernel` K.
+*/
+template<typename K>
+typename K::FT uniform_area(
     const CGAL::Point_3<K>&,
     const CGAL::Point_3<K>&,
     const CGAL::Point_3<K>&) { }
 
-  #endif // DOXYGEN_RUNNING
+#endif // DOXYGEN_RUNNING
 
-  /// \cond SKIP_IN_MANUAL
-  template<typename GeomTraits>
-  typename GeomTraits::FT uniform_area(
-    const typename GeomTraits::Point_2&,
-    const typename GeomTraits::Point_2&,
-    const typename GeomTraits::Point_2&,
-    const GeomTraits&) {
+/// \cond SKIP_IN_MANUAL
+template<typename GeomTraits>
+typename GeomTraits::FT uniform_area(const typename GeomTraits::Point_2&,
+                                     const typename GeomTraits::Point_2&,
+                                     const typename GeomTraits::Point_2&,
+                                     const GeomTraits&)
+{
+  using FT = typename GeomTraits::FT;
+  return FT(1);
+}
 
-    using FT = typename GeomTraits::FT;
-    return FT(1);
-  }
+template<typename GeomTraits>
+typename GeomTraits::FT uniform_area(const CGAL::Point_2<GeomTraits>& p,
+                                     const CGAL::Point_2<GeomTraits>& q,
+                                     const CGAL::Point_2<GeomTraits>& r)
+{
+  const GeomTraits traits;
+  return uniform_area(p, q, r, traits);
+}
 
-  template<typename GeomTraits>
-  typename GeomTraits::FT uniform_area(
-    const CGAL::Point_2<GeomTraits>& p,
-    const CGAL::Point_2<GeomTraits>& q,
-    const CGAL::Point_2<GeomTraits>& r) {
+template<typename GeomTraits>
+typename GeomTraits::FT uniform_area(const typename GeomTraits::Point_3&,
+                                     const typename GeomTraits::Point_3&,
+                                     const typename GeomTraits::Point_3&,
+                                     const GeomTraits&)
+{
+  using FT = typename GeomTraits::FT;
+  return FT(1);
+}
 
-    const GeomTraits traits;
-    return uniform_area(p, q, r, traits);
-  }
+template<typename GeomTraits>
+typename GeomTraits::FT uniform_area(const CGAL::Point_3<GeomTraits>& p,
+                                     const CGAL::Point_3<GeomTraits>& q,
+                                     const CGAL::Point_3<GeomTraits>& r)
+{
+  const GeomTraits traits;
+  return uniform_area(p, q, r, traits);
+}
 
-  template<typename GeomTraits>
-  typename GeomTraits::FT uniform_area(
-    const typename GeomTraits::Point_3&,
-    const typename GeomTraits::Point_3&,
-    const typename GeomTraits::Point_3&,
-    const GeomTraits&) {
-
-    using FT = typename GeomTraits::FT;
-    return FT(1);
-  }
-
-  template<typename GeomTraits>
-  typename GeomTraits::FT uniform_area(
-    const CGAL::Point_3<GeomTraits>& p,
-    const CGAL::Point_3<GeomTraits>& q,
-    const CGAL::Point_3<GeomTraits>& r) {
-
-    const GeomTraits traits;
-    return uniform_area(p, q, r, traits);
-  }
-  /// \endcond
+/// \endcond
 
 } // namespace Weights
 } // namespace CGAL
