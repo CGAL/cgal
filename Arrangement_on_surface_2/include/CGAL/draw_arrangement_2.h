@@ -131,7 +131,7 @@ public:
     CGAL::Bbox_2 bbox;
     for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it) {
       bh::if_(has_approximate_2_object(Gt{}),
-              [&](auto& x) {
+              [&](auto& /* x */) {
                 const auto* traits = this->m_arr.geometry_traits();
                 auto approx = traits->approximate_2_object();
                 auto has_operator =
@@ -298,7 +298,7 @@ protected:
       while (curr->face() == curr->twin()->face()) curr = curr->twin()->next();
 
       bh::if_(has_approximate_2_object(Gt{}),
-              [&](auto& x) {
+              [&](auto& /* x */) {
                 auto approx = traits->approximate_2_object();
                 auto has_operator =
                   bh::is_valid(can_call_operator_curve<int>{});
@@ -366,7 +366,7 @@ protected:
       bh::is_valid([](auto&& x) -> decltype(x.approximate_2_object()){});
     const auto* traits = this->m_arr.geometry_traits();
     bh::if_(has_approximate_2_object(Gt{}),
-            [&](auto& x) {
+            [&](auto& /* x */) {
               auto approx = traits->approximate_2_object();
               auto has_operator = bh::is_valid(can_call_operator_curve<int>{});
               bh::if_(has_operator(approx),
