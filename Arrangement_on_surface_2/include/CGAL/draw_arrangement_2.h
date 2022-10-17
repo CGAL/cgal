@@ -454,7 +454,7 @@ protected:
   std::unordered_map<Face_const_handle, bool> m_visited;
 
   std::mt19937 m_rng;
-  std::uniform_int_distribution<size_t> m_uni;  // guaranteed unbiased
+  std::uniform_int_distribution<unsigned char> m_uni;  // guaranteed unbiased
 };
 
 //! Basic viewer of a 2D arrangement.

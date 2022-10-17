@@ -598,7 +598,7 @@ public:
           Curve_2 inter_cv = ctr_cv(R, S, T, U, V, W);
           Alg_point_2 vtan_ps[2];
 
-          CGAL_assertion_code(int n_vtan_ps =)
+          CGAL_assertion_code(std::size_t n_vtan_ps =)
             gt_2->vertical_tangency_points(inter_cv, vtan_ps);
 
           CGAL_assertion(n_vtan_ps == 2);
