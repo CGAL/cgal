@@ -18,9 +18,10 @@
 #ifndef CGAL_DRAW_POLYGON_2_H
 #define CGAL_DRAW_POLYGON_2_H
 
-#include <CGAL/Drawing_functor.h>
-#include <CGAL/Graphic_buffer.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Drawing_functor.h>
+#include <CGAL/Polygon_2.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -41,70 +42,107 @@ void draw(const P& ap);
 
 #endif
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
-#include <CGAL/Polygon_2.h>
-#include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Random.h>
-
 namespace CGAL {
 
 namespace draw_function_for_p2 {
 
-template <typename BufferType = float, class P2>
-void compute_elements(CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                      const P2 *p2) {
-
-  typedef typename P2::Point_2 Point;
-
-  if (p2->is_empty())
+template <typename BufferType=float, class P2, class DrawingFunctor>
+void compute_elements(const P2& p2,
+                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
+                      const DrawingFunctor& drawing_functor)
+{
+  if (p2.is_empty())
     return;
 
-  Point prev = p2->vertex(p2->size() - 1);
+  typename P2::Point_2 prev=p2.vertex(p2.size()-1);
 
-  CGAL::IO::Color c(75, 160, 255);
-  graphic_buffer.face_begin(c);
+  if (drawing_functor.are_faces_enabled())
+  {
+    if(drawing_functor.colored_face(p2, nullptr))
+    { graphic_buffer.face_begin(drawing_functor.face_color(p2, nullptr)); }
+    else
+    { graphic_buffer.face_begin(); }
+  }
 
-  for (typename P2::Vertex_const_iterator i = p2->vertices_begin();
-       i != p2->vertices_end(); ++i) {
-    graphic_buffer.add_point(*i);         // Add vertex
-    graphic_buffer.add_segment(prev, *i); // Add segment with previous point
-    graphic_buffer.add_point_in_face(*i); // Add point in face
+  for (typename P2::Vertex_const_iterator i=p2.vertices_begin();
+       i!=p2.vertices_end(); ++i)
+  {
+    if(drawing_functor.are_vertices_enabled() &&
+       drawing_functor.draw_vertex(p2, i))
+    { // Add vertex
+      if(drawing_functor.colored_vertex(p2, i))
+      { graphic_buffer.add_point(*i, drawing_functor.vertex_color(p2, i)); }
+      else
+      { graphic_buffer.add_point(*i); }
+    }
+
+    if(drawing_functor.are_edges_enabled() &&
+       drawing_functor.draw_edge(p2, i))
+    { // Add edge with previous point
+      if(drawing_functor.colored_vertex(p2, i))
+      { graphic_buffer.add_segment(prev, *i, drawing_functor.edge_color(p2, i)); }
+      else
+      { graphic_buffer.add_segment(prev, *i); }
+    }
+
+    if(drawing_functor.are_faces_enabled())
+    { graphic_buffer.add_point_in_face(*i); } // Add point in face
+
     prev = *i;
   }
 
-  graphic_buffer.face_end();
+  if (drawing_functor.are_faces_enabled())
+  { graphic_buffer.face_end(); }
 }
 
 } // namespace draw_function_for_p2
 
-template <typename BufferType = float, class P2>
-void add_in_graphic_buffer(CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                              const P2 *p2 = nullptr) {
-  if (p2 != nullptr) {
-    draw_function_for_p2::compute_elements(graphic_buffer, p2);
-  }
+#define CGAL_P2_TYPE CGAL::Polygon_2<T, C>
+
+// Specializations of add_in_graphic_buffer function
+
+template<typename BufferType=float, class T, class C, class DrawingFunctor>
+void add_in_graphic_buffer(const CGAL_P2_TYPE& ap2,
+                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           const DrawingFunctor& drawingfunctor)
+{ draw_function_for_p2::compute_elements(ap2, graphic_buffer, drawingfunctor); }
+
+template<typename BufferType=float, class T, class C>
+void add_in_graphic_buffer(const CGAL_P2_TYPE& ap2,
+                           CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+{
+  CGAL::Drawing_functor<CGAL_P2_TYPE,
+                        typename CGAL_P2_TYPE::Vertex_const_iterator,
+                        typename CGAL_P2_TYPE::Vertex_const_iterator,
+                        void*> drawingfunctor;
+  draw_function_for_p2::compute_elements(ap2, graphic_buffer, drawingfunctor);
 }
 
 // Specialization of draw function.
-#define CGAL_P2_TYPE CGAL::Polygon_2<T, C>
+
+#ifdef CGAL_USE_BASIC_VIEWER
 
 template <class T, class C>
 void draw(const CGAL_P2_TYPE &ap2,
-          const char *title = "Polygon_2 Basic Viewer") {
-
-  // Drawing_functor<CGAL_P2_TYPE, typename CGAL_P2_TYPE::Vertex_const_handle,
-  //                 typename CGAL_P2_TYPE::Halfedge_const_handle,
-  //                 typename CGAL_P2_TYPE::Face_const_handle>
-  //     drawingFunctor;
-
+          const char *title="Polygon_2 Basic Viewer")
+{
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer(buffer, &ap2);
-  draw_buffer(buffer);
+  add_in_graphic_buffer(ap2, buffer);
+  draw_buffer(buffer, title);
 }
 
-} // End namespace CGAL
+template <class T, class C, class DrawingFunctor>
+void draw(const CGAL_P2_TYPE &ap2,
+          const DrawingFunctor& drawingfunctor,
+          const char *title="Polygon_2 Basic Viewer")
+{
+  CGAL::Graphic_buffer<float> buffer;
+  add_in_graphic_buffer(ap2, buffer, drawingfunctor);
+  draw_buffer(buffer, title);
+}
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+} // End namespace CGAL
 
 #endif // CGAL_DRAW_POLYGON_2_H
