@@ -17,6 +17,8 @@
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
+#include <CGAL/config.h>
+
 #include <unordered_map>
 #include <cstdlib>
 #include <random>
