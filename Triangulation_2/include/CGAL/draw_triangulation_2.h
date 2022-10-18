@@ -13,42 +13,30 @@
 #ifndef CGAL_DRAW_T2_H
 #define CGAL_DRAW_T2_H
 
-#include <CGAL/Drawing_functor.h>
-#include <CGAL/Graphic_buffer.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/license/Triangulation_2.h>
-
-#include <CGAL/draw_constrained_triangulation_2.h>
-
+#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Graphic_buffer.h>
+#include <CGAL/Drawing_functor.h>
 #include <CGAL/Triangulation_2.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
-
-#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
-#include <CGAL/Triangulation_2.h>
 
 namespace CGAL {
 
 namespace draw_function_for_t2 {
 
-template <typename BufferType = float, class T2, class DrawingFunctor>
-void compute_face(typename T2::Finite_faces_iterator fh,
-                  const DrawingFunctor &drawing_functor,
-                  CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                  const T2 *t2) {
+template <typename BufferType=float, class T2, class DrawingFunctor>
+void compute_face(const T2& t2,
+                  typename T2::Finite_faces_iterator fh,
+                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  const DrawingFunctor& drawing_functor)
+{
+  if (!drawing_functor.draw_face(t2, fh))
+  { return; }
 
-  if (!drawing_functor.draw_face(*t2, fh)) {
-    return;
-  }
-
-  if (drawing_functor.colored_face(*t2, fh) && drawing_functor.face_color) {
-    CGAL::IO::Color c = drawing_functor.face_color(*t2, fh);
-    graphic_buffer.face_begin(c);
-
-  } else {
-    graphic_buffer.face_begin();
-  }
+  if (drawing_functor.colored_face(t2, fh))
+  { graphic_buffer.face_begin(drawing_functor.face_color(t2, fh)); }
+  else
+  { graphic_buffer.face_begin(); }
 
   graphic_buffer.add_point_in_face(fh->vertex(0)->point());
   graphic_buffer.add_point_in_face(fh->vertex(1)->point());
@@ -57,133 +45,136 @@ void compute_face(typename T2::Finite_faces_iterator fh,
   graphic_buffer.face_end();
 }
 
-template <typename BufferType = float, class T2, class DrawingFunctor>
-void compute_edge(typename T2::Finite_edges_iterator eh,
-                  const DrawingFunctor &drawing_functor, const T2 *t2,
-                  CGAL::Graphic_buffer<BufferType> &graphic_buffer) {
+template <typename BufferType=float, class T2, class DrawingFunctor>
+void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
+                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  const DrawingFunctor& drawing_functor)
+{
+  if (!drawing_functor.draw_edge(t2, eh))
+  { return; }
 
-  if (!drawing_functor.draw_edge(*t2, eh)) {
-    return;
+  if (drawing_functor.colored_edge(t2, eh))
+  {
+    graphic_buffer.add_segment
+      (eh->first->vertex(eh->first->cw(eh->second))->point(),
+       eh->first->vertex(eh->first->ccw(eh->second))->point(),
+       drawing_functor.edge_color(t2, eh));
   }
-
-  if (drawing_functor.colored_edge(*t2, eh) && drawing_functor.edge_color) {
-
-    CGAL::IO::Color c = drawing_functor.edge_color(*t2, eh);
-    graphic_buffer.add_segment(
-        eh->first->vertex(eh->first->cw(eh->second))->point(),
-        eh->first->vertex(eh->first->ccw(eh->second))->point(), c);
-  }
-
-  else {
-    graphic_buffer.add_segment(
-        eh->first->vertex(eh->first->cw(eh->second))->point(),
-        eh->first->vertex(eh->first->ccw(eh->second))->point());
+  else
+  {
+    graphic_buffer.add_segment
+      (eh->first->vertex(eh->first->cw(eh->second))->point(),
+       eh->first->vertex(eh->first->ccw(eh->second))->point());
   }
 }
 
-template <typename BufferType = float, class T2, class DrawingFunctor>
-void compute_vertex(typename T2::Vertex_handle vh,
-                    CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                    const DrawingFunctor &drawing_functor, const T2 *t2) {
+template <typename BufferType=float, class T2, class DrawingFunctor>
+void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
+                    CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                    const DrawingFunctor& drawing_functor)
+{
+  if (!drawing_functor.draw_vertex(t2, vh))
+  { return; }
 
-  if (!drawing_functor.draw_vertex(*t2, vh)) {
-    return;
+  if (drawing_functor.colored_vertex(t2, vh))
+  {
+    graphic_buffer.add_point(vh->point(), drawing_functor.vertex_color(t2, vh));
   }
-
-  if (drawing_functor.colored_vertex(*t2, vh) && drawing_functor.vertex_color) {
-    CGAL::IO::Color c = drawing_functor.vertex_color(*t2, vh);
-    graphic_buffer.add_point(vh->point(), c);
-  } else {
+  else
+  {
     graphic_buffer.add_point(vh->point());
   }
 }
 
-template <typename BufferType = float, class T2, class DrawingFunctor>
-void compute_elements(const T2 *t2,
-                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                      const DrawingFunctor &drawing_functor,
-                      bool m_nofaces = false) {
-
-  if (!m_nofaces) {
-    for (typename T2::Finite_faces_iterator it = t2->finite_faces_begin();
-         it != t2->finite_faces_end(); ++it) {
-      compute_face(it, drawing_functor, graphic_buffer, t2);
-    }
+template <typename BufferType=float, class T2, class DrawingFunctor>
+void compute_elements(const T2& t2,
+                      CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                      const DrawingFunctor& drawing_functor)
+{
+  if (drawing_functor.are_faces_enabled())
+  {
+    for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
+         it!=t2.finite_faces_end(); ++it)
+    { compute_face(t2, it, graphic_buffer, drawing_functor); }
   }
 
-  for (typename T2::Finite_edges_iterator it = t2->finite_edges_begin();
-       it != t2->finite_edges_end(); ++it) {
-    compute_edge(it, drawing_functor, t2, graphic_buffer);
+  if (drawing_functor.are_edges_enabled())
+  {
+    for (typename T2::Finite_edges_iterator it=t2.finite_edges_begin();
+         it!=t2.finite_edges_end(); ++it)
+    { compute_edge(t2, it, graphic_buffer, drawing_functor); }
   }
 
-  for (typename T2::Finite_vertices_iterator it = t2->finite_vertices_begin();
-       it != t2->finite_vertices_end(); ++it) {
-    compute_vertex(it, graphic_buffer, drawing_functor, t2);
+  if (drawing_functor.are_vertices_enabled())
+  {
+    for (typename T2::Finite_vertices_iterator it=t2.finite_vertices_begin();
+         it!=t2.finite_vertices_end(); ++it)
+    { compute_vertex(t2, it, graphic_buffer, drawing_functor); }
   }
 }
 
 } // namespace draw_function_for_t2
 
-template <typename BufferType = float, class T2, class DrawingFunctor>
-void add_in_graphic_buffer(const T2 &at2,
-                              CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                              const DrawingFunctor &drawing_functor,
-                              bool m_nofaces = false) {
-  draw_function_for_t2::compute_elements(&at2, graphic_buffer, drawing_functor,
-                                         m_nofaces);
+#define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
+
+template <class Gt, class Tds, typename BufferType=float, class DrawingFunctor>
+void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
+                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           const DrawingFunctor& drawing_functor)
+{
+  draw_function_for_t2::compute_elements(at2, graphic_buffer, drawing_functor);
 }
 
-template <typename BufferType = float, class T2>
-void add_in_graphic_buffer(const T2 &at2,
-                              CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                              bool m_nofaces = false) {
-
+template <class Gt, class Tds, typename BufferType=float>
+void add_in_graphic_buffer(const CGAL_T2_TYPE& at2,
+                           CGAL::Graphic_buffer<BufferType>& graphic_buffer)
+{
   CGAL::Graphic_buffer<float> buffer;
-  Drawing_functor<T2, typename T2::Vertex_handle,
-                  typename T2::Finite_edges_iterator,
-                  typename T2::Finite_faces_iterator>
+  Drawing_functor<CGAL_T2_TYPE,
+                  typename CGAL_T2_TYPE::Vertex_handle,
+                  typename CGAL_T2_TYPE::Finite_edges_iterator,
+                  typename CGAL_T2_TYPE::Finite_faces_iterator>
       drawingFunctor;
 
   drawingFunctor.colored_face =
-      [](const T2 &at2, const typename T2::Finite_faces_iterator fh) -> bool {
-    return true;
-  };
+      [](const CGAL_T2_TYPE&, const typename CGAL_T2_TYPE::Finite_faces_iterator) -> bool
+      { return true; };
 
   drawingFunctor.face_color =
-      [](const T2 &at2,
-         const typename T2::Finite_faces_iterator fh) -> CGAL::IO::Color {
-    CGAL::Random random((unsigned int)(std::size_t)(&*fh));
-    return get_random_color(random);
-  };
+      [](const CGAL_T2_TYPE&, const typename CGAL_T2_TYPE::Finite_faces_iterator fh) -> CGAL::IO::Color
+      {
+        CGAL::Random random((unsigned int)(std::size_t)(&*fh));
+        return get_random_color(random);
+      };
 
-  add_in_graphic_buffer(at2, graphic_buffer, drawingFunctor, m_nofaces);
+  add_in_graphic_buffer(at2, graphic_buffer, drawingFunctor);
 }
 
-// Specialization of draw function.
-#define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
+#ifdef CGAL_USE_BASIC_VIEWER
 
+// Specialization of draw function.
 template <class Gt, class Tds, class DrawingFunctor>
 void draw(const CGAL_T2_TYPE &at2, const DrawingFunctor &drawingfunctor,
-          const char *title = "Triangulation_2 Basic Viewer",
-          bool nofill = false) {
+          const char *title="Triangulation_2 Basic Viewer")
+{
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer(at2, buffer, drawingfunctor, nofill);
-  draw_buffer(buffer);
+  add_in_graphic_buffer(at2, buffer, drawingfunctor);
+  draw_buffer(buffer, title);
 }
 
 template <class Gt, class Tds>
-void draw(const CGAL_T2_TYPE &at2,
-          const char *title = "Triangulation_2 Basic Viewer",
-          bool nofill = false) {
+void draw(const CGAL_T2_TYPE& at2,
+          const char *title="Triangulation_2 Basic Viewer")
+{
   CGAL::Graphic_buffer<float> buffer;
-  add_in_graphic_buffer(at2, buffer, nofill);
-  draw_buffer(buffer);
+  add_in_graphic_buffer(at2, buffer);
+  draw_buffer(buffer, title);
 }
+
+#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_T2_TYPE
 
 } // End namespace CGAL
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // CGAL_DRAW_T2_H
