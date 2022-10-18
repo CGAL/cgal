@@ -14,6 +14,7 @@
 #define CGAL_DRAWING_FUNCTORS_H
 
 #include <CGAL/license/GraphicsView.h>
+#include <CGAL/IO/Color.h>
 #include <functional>
 
 namespace CGAL {
