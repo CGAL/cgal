@@ -286,18 +286,16 @@ Mesh_criteria_3(const CGAL_NP_CLASS& np = parameters::default_values()): Base(np
 {
 }
 
-#if !defined(BOOST_MSVC)
-template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_criteria_3(const CGAL_NP_CLASS& ... nps):Mesh_criteria_3(internal_np::combine_named_parameters(nps...))
-{
-}
-#else
-template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Mesh_criteria_3(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+Mesh_criteria_3(const CGAL_NP_CLASS_1&  np1,
+                const CGAL_NP_CLASS_2&  np2,
+                const NP& ... nps)
   : Mesh_criteria_3(internal_np::combine_named_parameters(np1, np2, nps...))
 {
 }
-#endif
 
 };  // end class Mesh_criteria_3
 

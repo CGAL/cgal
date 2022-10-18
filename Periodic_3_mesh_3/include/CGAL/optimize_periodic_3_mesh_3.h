@@ -45,29 +45,29 @@ Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& 
   return perturb_mesh_3_impl(c3t3, domain, time_limit, sliver_criterion, perturbation_vector);
 }
 
-#if !defined(BOOST_MSVC)
-template<typename C3T3, typename MeshDomain, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& ... nps)
-{
-  return perturb_periodic_3_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
-}
-template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code perturb_periodic_3_mesh_3(const CGAL_NP_CLASS& ... nps)
-{
-  return perturb_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
-}
-#else
-template<typename C3T3, typename MeshDomain, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename C3T3, typename MeshDomain,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+Mesh_optimization_return_code perturb_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain,
+                                                        const CGAL_NP_CLASS_1&  np1,
+                                                        const CGAL_NP_CLASS_2&  np2,
+                                                        const NP& ... nps)
 {
   return perturb_periodic_3_mesh_3(c3t3,domain, internal_np::combine_named_parameters(np1, np2, nps...));
 }
-template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Mesh_optimization_return_code perturb_periodic_3_mesh_3(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+Mesh_optimization_return_code perturb_periodic_3_mesh_3(const CGAL_NP_CLASS_1&  np1,
+                                                        const CGAL_NP_CLASS_2&  np2,
+                                                        const NP& ... nps)
 {
   return perturb_periodic_3_mesh_3(internal_np::combine_named_parameters(np1, np2, nps...));
 }
-#endif
+
 // ---------------------------------- exuder -----------------------------------
 /*!
  * \ingroup PkgPeriodic3Mesh3Functions
@@ -95,29 +95,29 @@ Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3,const CGAL_NP_C
   double sliver_bound= choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),parameters::default_values_for_mesh_3::exude_sliver_bound);
   return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
 }
-#if !defined(BOOST_MSVC)
-template<typename C3T3, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3, const CGAL_NP_CLASS& ... nps)
-{
-  return exude_periodic_3_mesh_3(c3t3,internal_np::combine_named_parameters(nps...));
-}
-template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code exude_periodic_3_mesh_3(const CGAL_NP_CLASS& ... nps)
-{
-  return exude_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
-}
-#else
-template<typename C3T3, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename C3T3,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3,
+                                                      const CGAL_NP_CLASS_1&  np1,
+                                                      const CGAL_NP_CLASS_2&  np2,
+                                                      const NP& ... nps)
 {
   return exude_periodic_3_mesh_3(c3t3,internal_np::combine_named_parameters(np1, np2, nps...));
 }
-template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Mesh_optimization_return_code exude_periodic_3_mesh_3(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+Mesh_optimization_return_code exude_periodic_3_mesh_3(const CGAL_NP_CLASS_1&  np1,
+                                                      const CGAL_NP_CLASS_2&  np2,
+                                                      const NP& ... nps)
 {
   return exude_periodic_3_mesh_3(internal_np::combine_named_parameters(np1, np2, nps...));
 }
-#endif
+
 
 
 // ------------------------------ odt optimizer --------------------------------
@@ -143,29 +143,29 @@ Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDom
   return odt_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iteration_number, convergence, freeze_bound, do_freeze);
 }
 
-#if !defined(BOOST_MSVC)
-template<typename C3T3, typename MeshDomain, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS& ... nps)
-{
-  return odt_optimize_periodic_3_mesh_3(c3t3, domain, internal_np::combine_named_parameters(nps...));
-}
-template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(const CGAL_NP_CLASS& ... nps)
-{
-  return odt_optimize_periodic_3_mesh_3(internal_np::combine_named_parameters(nps...));
-}
-#else
-template<typename C3T3, typename MeshDomain, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename C3T3, typename MeshDomain,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain,
+                                                             const CGAL_NP_CLASS_1&  np1,
+                                                             const CGAL_NP_CLASS_2&  np2,
+                                                             const NP& ... nps)
 {
   return odt_optimize_periodic_3_mesh_3(c3t3, domain, internal_np::combine_named_parameters(np1, np2, nps...));
 }
-template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+Mesh_optimization_return_code odt_optimize_periodic_3_mesh_3(const CGAL_NP_CLASS_1&  np1,
+                                                             const CGAL_NP_CLASS_2&  np2,
+                                                             const NP& ... nps)
 {
   return odt_optimize_periodic_3_mesh_3(internal_np::combine_named_parameters(np1, np2, nps...));
 }
-#endif
+
 
 // ------------------------------- lloyd optimizer -----------------------------
 /*!
@@ -192,19 +192,19 @@ Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshD
   return lloyd_optimize_mesh_3_impl(c3t3, domain, time_limit, max_iterations, convergence_ratio, freeze_bound, do_freeze);
 }
 
-#if !defined(BOOST_MSVC)
-template<typename C3T3, typename MeshDomain,typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,MeshDomain& domain, const CGAL_NP_CLASS& ... nps)
-{
-  return lloyd_optimize_periodic_3_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
-}
-#else
-template<typename C3T3, typename MeshDomain,typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,MeshDomain& domain, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename C3T3, typename MeshDomain,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,MeshDomain& domain,
+                                                               const CGAL_NP_CLASS_1&  np1,
+                                                               const CGAL_NP_CLASS_2&  np2,
+                                                               const NP& ... nps)
 {
   return lloyd_optimize_periodic_3_mesh_3(c3t3,domain, internal_np::combine_named_parameters(np1, np2, nps...));
 }
-#endif
+
 } // namespace CGAL
 
 #endif // CGAL_OPTIMIZE_PERIODIC_3_MESH_3_H

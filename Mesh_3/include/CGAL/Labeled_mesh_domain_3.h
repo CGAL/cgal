@@ -414,17 +414,17 @@ public:
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
   {}
-#if !defined(BOOST_MSVC)
-  template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-  Labeled_mesh_domain_3(const CGAL_NP_CLASS& ... nps)
-    : Labeled_mesh_domain_3(internal_np::combine_named_parameters(nps...))
-  {}
-#else
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-  Labeled_mesh_domain_3(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  Labeled_mesh_domain_3(const CGAL_NP_CLASS_1&  np1,
+                        const CGAL_NP_CLASS_2&  np2,
+                        const NP& ... nps)
     : Labeled_mesh_domain_3(internal_np::combine_named_parameters(np1, np2, nps...))
   {}
-#endif
+
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -662,31 +662,29 @@ public:
                      create_construct_surface_patch_index(construct_surface_patch_index_));
 
   }
-#if !defined(BOOST_MSVC)
-  template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& ... nps)
-  {
-    return create_gray_image_mesh_domain(image_, internal_np::combine_named_parameters(nps...));
-  }
 
-  template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL_NP_CLASS& ... nps)
-  {
-    return create_gray_image_mesh_domain(internal_np::combine_named_parameters(nps...));
-  }
-#else
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_,
+                                                             const CGAL_NP_CLASS_1&  np1,
+                                                             const CGAL_NP_CLASS_2&  np2,
+                                                             const NP& ... nps)
   {
     return create_gray_image_mesh_domain(image_, internal_np::combine_named_parameters(np1, np2, nps...));
   }
-
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL_NP_CLASS_1&  np1,
+                                                             const CGAL_NP_CLASS_2&  np2,
+                                                             const NP& ... nps)
   {
     return create_gray_image_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
   }
-#endif
+
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
   static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS& np)
   {
@@ -696,29 +694,27 @@ public:
     return create_labeled_image_mesh_domain(image_, np);
   }
 
-#if !defined(BOOST_MSVC)
-  template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& ... nps)
-  {
-    return create_labeled_image_mesh_domain(image_, internal_np::combine_named_parameters(nps...));
-  }
-  template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS& ... nps)
-  {
-    return create_labeled_image_mesh_domain(internal_np::combine_named_parameters(nps...));
-  }
-#else
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
+                                                                const CGAL_NP_CLASS_1&  np1,
+                                                                const CGAL_NP_CLASS_2&  np2,
+                                                                const NP& ... nps)
   {
     return create_labeled_image_mesh_domain(image_, internal_np::combine_named_parameters(np1, np2, nps...));
   }
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1&  np1,
+                                                                const CGAL_NP_CLASS_2&  np2,
+                                                                const NP& ... nps)
   {
     return create_labeled_image_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
   }
-#endif
 #endif
 
 /// \name Creation of domains from implicit functions
@@ -804,19 +800,17 @@ public:
                                        np);
   }
 
-#if !defined(BOOST_MSVC)
-  template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& ... nps)
-  {
-    return create_implicit_mesh_domain(internal_np::combine_named_parameters(nps...));
-  }
-#else
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS_1&  np1,
+                                                           const CGAL_NP_CLASS_2&  np2,
+                                                           const NP& ... nps)
   {
     return create_implicit_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
   }
-#endif
+
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   template<typename SubdomainIndex = Null_functor,

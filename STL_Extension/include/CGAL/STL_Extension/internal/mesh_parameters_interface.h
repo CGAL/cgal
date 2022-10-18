@@ -54,11 +54,11 @@ perturb(const CGAL_NP_CLASS& np = parameters::default_values())
   return CGAL_NP_BUILD(Param, options);
 }
 
-template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Named_function_parameters<::CGAL::parameters::internal::Perturb_options, ::CGAL::internal_np::perturb_options_param_t, CGAL_NP_BASE>
-perturb(const CGAL_NP_CLASS& ... nps)
+template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
+Named_function_parameters<::CGAL::parameters::internal::Exude_options, ::CGAL::internal_np::exude_options_param_t, CGAL_NP_BASE>
+perturb(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
 {
-  return perturb(::CGAL::internal_np::combine_named_parameters(nps...));
+  return perturb(::CGAL::internal_np::combine_named_parameters(np1, np2, nps...));
 }
 
 
@@ -103,11 +103,11 @@ exude(const CGAL_NP_CLASS& np = parameters::default_values())
   return CGAL_NP_BUILD(Param, options);
 }
 
-template<typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
 Named_function_parameters<::CGAL::parameters::internal::Exude_options, ::CGAL::internal_np::exude_options_param_t, CGAL_NP_BASE>
-exude(const CGAL_NP_CLASS& ... nps)
+exude(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
 {
-  return exude(::CGAL::internal_np::combine_named_parameters(nps...));
+  return exude(::CGAL::internal_np::combine_named_parameters(np1, np2, nps...));
 }
 
 inline Named_function_parameters<::CGAL::parameters::internal::Exude_options, ::CGAL::internal_np::exude_options_param_t, CGAL_NP_BASE>

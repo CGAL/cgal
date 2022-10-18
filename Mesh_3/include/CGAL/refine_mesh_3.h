@@ -286,19 +286,18 @@ void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const
 }
 
 #ifndef DOXYGEN_RUNNING
-#if !defined(BOOST_MSVC)
-template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& ... nps)
-{
-  return refine_mesh_3(c3t3, domain, criteria, internal_np::combine_named_parameters(nps...));
-}
-#else
-template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
+// Overload handling parameters passed with operator=
+template<typename C3T3, typename MeshDomain, typename MeshCriteria,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
+void refine_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria,
+                   const CGAL_NP_CLASS_1&  np1,
+                   const CGAL_NP_CLASS_2&  np2,
+                   const NP& ... nps)
 {
   return refine_mesh_3(c3t3, domain, criteria, internal_np::combine_named_parameters(np1, np2, nps...));
 }
-#endif
 /**
  * @brief This function refines the mesh c3t3 wrt domain & criteria
  *

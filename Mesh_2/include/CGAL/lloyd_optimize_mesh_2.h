@@ -164,11 +164,18 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
 }
 
 #ifndef DOXYGEN_RUNNING
-  template<typename CDT, typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
+  // Overload handling parameters passed with operator=
+  template<typename CDT,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
   Mesh_optimization_return_code
-  lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& ... nps)
+  perturb_periodic_3_mesh_3(CDT& cdt,
+                            const CGAL_NP_CLASS_1&  np1,
+                            const CGAL_NP_CLASS_2&  np2,
+                            const NP& ... nps)
   {
-    return lloyd_optimize_mesh_2(cdt, internal_np::combine_named_parameters(nps ...));
+    return lloyd_optimize_mesh_2(cdt, internal_np::combine_named_parameters(np1, np2, nps...));
   }
 
   /**

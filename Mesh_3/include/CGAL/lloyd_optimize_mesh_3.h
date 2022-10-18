@@ -148,20 +148,15 @@ Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain& doma
 }
 
 #ifndef DOXYGEN_RUNNING
-#if !defined(BOOST_MSVC)
-template<typename C3T3, typename MeshDomain,typename ... CGAL_NP_TEMPLATE_PARAMETERS_VARIADIC>
-Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3,MeshDomain& domain, const CGAL_NP_CLASS& ... nps)
-{
-    return lloyd_optimize_mesh_3(c3t3,domain, internal_np::combine_named_parameters(nps...));
-}
-#else
-template<typename C3T3, typename MeshDomain, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
+// Overload handling parameters passed with operator=
+template<typename C3T3, typename MeshDomain,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+         typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+         typename ... NP>
 Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3,MeshDomain& domain, const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
 {
     return lloyd_optimize_mesh_3(c3t3,domain, internal_np::combine_named_parameters(np1, np2, nps...));
 }
-#endif
-
 
 template <typename C3T3, typename MeshDomain>
 Mesh_optimization_return_code
