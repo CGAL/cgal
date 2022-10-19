@@ -26,9 +26,6 @@
 
 namespace CGAL {
 
-namespace draw_function_for_v2
-{
-
 // We need a specific functor for voronoi2 in order to allow to differentiate
 // voronoi and dual vertices, and to manage rays.
 template <typename DS,
@@ -63,6 +60,9 @@ protected:
   bool m_draw_voronoi_vertices;
   bool m_draw_dual_vertices;
 };
+
+namespace draw_function_for_v2
+{
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3  Local_point;
@@ -348,10 +348,10 @@ void add_in_graphic_buffer(const CGAL_VORONOI_TYPE& v2,
                            CGAL::Graphic_buffer<BufferType>& graphic_buffer)
 {
   // Default functor; user can add his own functor.
-  CGAL::draw_function_for_v2::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
-                                                      typename CGAL_VORONOI_TYPE::Vertex_iterator,
-                                                      typename CGAL_VORONOI_TYPE::Halfedge_iterator,
-                                                      typename CGAL_VORONOI_TYPE::Face_iterator>
+  CGAL::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
+                                typename CGAL_VORONOI_TYPE::Vertex_iterator,
+                                typename CGAL_VORONOI_TYPE::Halfedge_iterator,
+                                typename CGAL_VORONOI_TYPE::Face_iterator>
     drawing_functor;
 
   add_in_graphic_buffer(v2, graphic_buffer, drawing_functor);
@@ -377,11 +377,11 @@ void draw(const CGAL_VORONOI_TYPE& av2,
 {
   CGAL::Graphic_buffer<BufferType> buffer;
 
-  CGAL::draw_function_for_v2::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
-              typename CGAL_VORONOI_TYPE::Vertex_iterator,
-              typename CGAL_VORONOI_TYPE::Halfedge_iterator,
-              typename CGAL_VORONOI_TYPE::Face_iterator>
-  drawing_functor;
+  CGAL::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
+                                typename CGAL_VORONOI_TYPE::Vertex_iterator,
+                                typename CGAL_VORONOI_TYPE::Halfedge_iterator,
+                                typename CGAL_VORONOI_TYPE::Face_iterator>
+    drawing_functor;
 
   add_in_graphic_buffer(av2, buffer, drawing_functor);
 
