@@ -140,7 +140,7 @@ odt(const CGAL_NP_CLASS& np = parameters::default_values())
   double time_limit = choose_parameter(get_parameter(np,::CGAL::internal_np::maximum_running_time),0);
   double freeze_bound = choose_parameter(get_parameter(np,::CGAL::internal_np::vertex_freeze_bound),::CGAL::parameters::default_values_for_mesh_3::odt_freeze_ratio);
   double convergence = choose_parameter(get_parameter(np,::CGAL::internal_np::convergence_ratio), ::CGAL::parameters::default_values_for_mesh_3::odt_convergence_ratio);
-  int max_iteration_number = choose_parameter(get_parameter(np,::CGAL::internal_np::number_of_iterations), 0);
+  std::size_t max_iteration_number = choose_parameter(get_parameter(np,::CGAL::internal_np::number_of_iterations), 0);
   ::CGAL::parameters::internal::Odt_options options(true);
 
   options.set_time_limit(time_limit);
@@ -195,7 +195,7 @@ lloyd(const CGAL_NP_CLASS& np = parameters::default_values())
   double time_limit = choose_parameter(get_parameter(np,::CGAL::internal_np::maximum_running_time),0);
   double freeze_bound = choose_parameter(get_parameter(np,::CGAL::internal_np::vertex_freeze_bound),::CGAL::parameters::default_values_for_mesh_3::lloyd_freeze_ratio);
   double convergence = choose_parameter(get_parameter(np,::CGAL::internal_np::convergence_ratio), ::CGAL::parameters::default_values_for_mesh_3::lloyd_convergence_ratio);
-  int max_iteration_number = choose_parameter(get_parameter(np,::CGAL::internal_np::number_of_iterations), 0);
+  std::size_t max_iteration_number = choose_parameter(get_parameter(np,::CGAL::internal_np::number_of_iterations), 0);
   ::CGAL::parameters::internal::Lloyd_options options(true);
 
   options.set_time_limit(time_limit);

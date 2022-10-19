@@ -91,7 +91,7 @@ Mesh_optimization_return_code exude_periodic_3_mesh_3(C3T3& c3t3,const CGAL_NP_C
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  int time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
+  double time_limit=choose_parameter(get_parameter(np,internal_np::maximum_running_time),0);
   double sliver_bound= choose_parameter(get_parameter(np,internal_np::lower_sliver_bound),parameters::default_values_for_mesh_3::exude_sliver_bound);
   return exude_mesh_3_impl(c3t3,time_limit,sliver_bound);
 }
