@@ -62,7 +62,7 @@ namespace CGAL
 {
 
 //------------------------------------------------------------------------------
-template <typename BufferType = float>
+template <typename BufferType=float>
 class Basic_viewer_qt : public CGAL::QGLViewer
 {
 public:
@@ -181,10 +181,62 @@ public:
   { m_draw_faces = b; }
   void set_use_mono_color(bool b)
   { m_use_mono_color = b; }
-  void set_inverse_normal(bool b)
-  { m_inverse_normal = b; }
   void set_draw_text(bool b)
   { m_draw_text = b; }
+
+  void set_vertices_mono_color(const CGAL::IO::Color& c)
+  { m_vertices_mono_color=c; }
+  void set_edges_mono_color(const CGAL::IO::Color& c)
+  { m_edges_mono_color=c; }
+  void set_rays_mono_color(const CGAL::IO::Color& c)
+  { m_rays_mono_color=c; }
+  void set_lines_mono_color(const CGAL::IO::Color& c)
+  { m_lines_mono_color=c; }
+  void set_faces_mono_color(const CGAL::IO::Color& c)
+  { m_faces_mono_color=c; }
+
+  void negate_draw_vertices()
+  { m_draw_vertices = !m_draw_vertices; }
+  void negate_draw_edges()
+  { m_draw_edges = !m_draw_edges; }
+  void negate_draw_rays()
+  { m_draw_rays = !m_draw_rays; }
+  void negate_draw_lines()
+  { m_draw_lines = !m_draw_lines; }
+  void negate_draw_faces()
+  { m_draw_faces = !m_draw_faces; }
+  void negate_use_mono_color()
+  { m_use_mono_color = !m_use_mono_color; }
+  void negate_draw_text()
+  { m_draw_text = !m_draw_text; }
+
+  bool get_draw_vertices() const
+  { return m_draw_vertices; }
+  bool get_draw_edges() const
+  { return m_draw_edges; }
+  bool get_draw_rays() const
+  { return m_draw_rays; }
+  bool get_draw_lines() const
+  { return m_draw_lines; }
+  bool get_draw_faces() const
+  { return m_draw_faces; }
+  bool get_use_mono_color() const
+  { return m_use_mono_color; }
+  bool get_inverse_normal() const
+  { return m_inverse_normal; }
+  bool get_draw_text() const
+  { return m_draw_text; }
+
+  const CGAL::IO::Color& get_vertices_mono_color() const
+  { return m_vertices_mono_color; }
+  const CGAL::IO::Color& get_edges_mono_color() const
+  { return m_edges_mono_color; }
+  const CGAL::IO::Color& get_rays_mono_color() const
+  { return m_rays_mono_color; }
+  const CGAL::IO::Color& get_lines_mono_color() const
+  { return m_lines_mono_color; }
+  const CGAL::IO::Color& get_faces_mono_color() const
+  { return m_faces_mono_color; }
 
   void clear()
   {
@@ -334,6 +386,12 @@ public:
   {
     return internal::Geom_utils<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel>::
       get_local_vector(v);
+  }
+
+  void negate_all_normals()
+  {
+    m_inverse_normal=!m_inverse_normal;
+    gBuffer.negate_all_normals();
   }
 
 protected:
@@ -1276,14 +1334,11 @@ protected:
     }
   }
 
-  void negate_all_normals()
-  { gBuffer.negate_all_normals(); }
-
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    if(!_onPress || !_onPress(e, this))
+    if(!on_key_pressed || !on_key_pressed(e, this))
     {
+      const ::Qt::KeyboardModifiers modifiers = e->modifiers();
       if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
       {
         if (!isOpenGL_4_3()) return;
@@ -1332,9 +1387,8 @@ protected:
       }
       else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
       {
-        m_inverse_normal=!m_inverse_normal;
-        displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
         negate_all_normals();
+        displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
         redraw();
       }
       else if ((e->key()==::Qt::Key_S) && (modifiers==::Qt::NoButton))
@@ -1536,7 +1590,7 @@ protected:
     return text;
   }
 public:
-  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> _onPress;
+  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)> on_key_pressed;
 
 protected:
   Graphic_buffer<BufferType>& gBuffer;
@@ -1612,8 +1666,8 @@ protected:
 
 };
 
-template <typename BufferType = float>
-void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,
+template <typename BufferType=float>
+void draw_buffer(Graphic_buffer<BufferType>& graphic_buffer,
                  const char *title="CGAL Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
@@ -1629,38 +1683,101 @@ void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,
     int argc = 1;
     const char *argv[2] = {title, nullptr};
     QApplication app(argc, const_cast<char **>(argv));
-    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer, title);
+    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(),
+                                             graphic_buffer, title);
 
     basic_viewer.show();
     app.exec();
   }
 }
 
-template <typename BufferType = float>
-void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,
-                 const std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress,
-                 const char *title="CGAL Basic Viewer")
+// template <typename BufferType = float>
+// void draw_buffer(Graphic_buffer<BufferType> &graphic_buffer,
+//                  const std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<float> *)>& onPress,
+//                  const char *title="CGAL Basic Viewer")
+// {
+// #if defined(CGAL_TEST_SUITE)
+//   bool cgal_test_suite = true;
+// #else
+//   bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+// #endif
+
+//   if (!cgal_test_suite)
+//   {
+//     Qt::init_ogl_context(4, 3);
+
+//     int argc = 1;
+//     const char *argv[2] = {title, nullptr};
+//     QApplication app(argc, const_cast<char **>(argv));
+//     Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer, title);
+//     basic_viewer._onPress = onPress;
+
+//     basic_viewer.show();
+//     app.exec();
+//   }
+// }
+
+//------------------------------------------------------------------------------
+template <typename BufferType=float>
+class QApplication_and_basic_viewer
 {
+public:
+  QApplication_and_basic_viewer(CGAL::Graphic_buffer<BufferType>& buffer,
+                                const char* title="CGAL Basic Viewer"):
+    m_application(nullptr),
+    m_basic_viewer(nullptr),
+    m_argc(1)
+  {
+    m_argv[0]=new char[strlen(title)+1];
+    strcpy(m_argv[0], title);
+    m_argv[1]=nullptr;
+
 #if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite = true;
+    bool cgal_test_suite = true;
 #else
-  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+    bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
-  if (!cgal_test_suite)
-  {
+    if (cgal_test_suite)
+    { return; }
+
     Qt::init_ogl_context(4, 3);
-
-    int argc = 1;
-    const char *argv[2] = {title, nullptr};
-    QApplication app(argc, const_cast<char **>(argv));
-    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(), graphic_buffer, title);
-    basic_viewer._onPress = onPress;
-
-    basic_viewer.show();
-    app.exec();
+    m_application=new QApplication(m_argc, const_cast<char **>(m_argv));
+    m_basic_viewer=new Basic_viewer_qt<BufferType>(m_application->activeWindow(),
+                                                   buffer, title);
   }
-}
+
+  ~QApplication_and_basic_viewer()
+  {
+    delete[] m_argv[0];
+    delete m_basic_viewer;
+    delete m_application;
+  }
+
+  operator bool() const
+  { return m_application!=nullptr; }
+
+  void run()
+  {
+    if (m_application!=nullptr)
+    {
+      m_basic_viewer->show();
+      m_application->exec();
+    }
+  }
+
+  Basic_viewer_qt<BufferType>& basic_viewer()
+  {
+    CGAL_assertion(m_basic_viewer!=nullptr);
+    return *m_basic_viewer;
+  }
+
+protected:
+  QApplication* m_application;
+  Basic_viewer_qt<BufferType>* m_basic_viewer;
+  char *m_argv[2];
+  int m_argc;
+};
 
 } // End namespace CGAL
 
