@@ -58,32 +58,33 @@ struct LCC_geom_utils<LCC, Local_kernel, 2>
 };
 
 template <typename BufferType=float, class LCC, class DrawingFunctorLCC>
-void compute_face(typename LCC::Dart_const_handle dh,
-                  typename LCC::Dart_const_handle voldh, const LCC *lcc,
-                  const DrawingFunctorLCC &m_drawing_functor,
-                  CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+void compute_face(const LCC& lcc,
+                  typename LCC::Dart_const_handle dh,
+                  typename LCC::Dart_const_handle voldh,
+                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  const DrawingFunctorLCC& drawing_functor)
 {
-  if (!m_drawing_functor.are_faces_enabled() ||
-      !m_drawing_functor.draw_face(*lcc, dh))
+  if (!drawing_functor.are_faces_enabled() ||
+      !drawing_functor.draw_face(lcc, dh))
   { return; }
 
   // We fill only closed faces.
   typename LCC::Dart_const_handle cur=dh;
   do
   {
-    if (!lcc->is_next_exist(cur))
+    if (!lcc.is_next_exist(cur))
     { return; } // open face=>not filled
-    cur = lcc->next(cur);
+    cur = lcc.next(cur);
   }
   while (cur!=dh);
 
-  if (m_drawing_functor.colored_volume(*lcc, voldh))
+  if (drawing_functor.colored_volume(lcc, voldh))
   {
-    graphic_buffer.face_begin(m_drawing_functor.volume_color(*lcc, voldh));
+    graphic_buffer.face_begin(drawing_functor.volume_color(lcc, voldh));
   }
-  else if (m_drawing_functor.colored_face(*lcc, dh))
+  else if (drawing_functor.colored_face(lcc, dh))
   {
-    graphic_buffer.face_begin(m_drawing_functor.face_color(*lcc, dh));
+    graphic_buffer.face_begin(drawing_functor.face_color(lcc, dh));
   }
   else
   { graphic_buffer.face_begin(); }
@@ -92,9 +93,9 @@ void compute_face(typename LCC::Dart_const_handle dh,
   do
   {
     graphic_buffer.add_point_in_face
-      (lcc->point(cur),
-       LCC_geom_utils<LCC, Local_kernel>::get_vertex_normal(*lcc, cur));
-    cur=lcc->next(cur);
+      (lcc.point(cur),
+       LCC_geom_utils<LCC, Local_kernel>::get_vertex_normal(lcc, cur));
+    cur=lcc.next(cur);
   }
   while (cur!=dh);
 
@@ -102,104 +103,103 @@ void compute_face(typename LCC::Dart_const_handle dh,
 }
 
 template <typename BufferType=float, class LCC, class DrawingFunctor>
-void compute_edge(typename LCC::Dart_const_handle dh, const LCC *lcc,
-                  const DrawingFunctor &m_drawing_functor,
-                  CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+void compute_edge(const LCC& lcc,
+                  typename LCC::Dart_const_handle dh,
+                  CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                  const DrawingFunctor& drawing_functor)
 {
-  if (!m_drawing_functor.are_edges_enabled() ||
-      !m_drawing_functor.draw_edge(*lcc, dh))
+  if (!drawing_functor.are_edges_enabled() ||
+      !drawing_functor.draw_edge(lcc, dh))
   { return; }
 
-  const typename LCC::Point& p1=lcc->point(dh);
-  typename LCC::Dart_const_handle d2=lcc->other_extremity(dh);
+  const typename LCC::Point& p1=lcc.point(dh);
+  typename LCC::Dart_const_handle d2=lcc.other_extremity(dh);
   if (d2!=LCC::null_descriptor)
   {
-    if (m_drawing_functor.colored_edge(*lcc, dh))
+    if (drawing_functor.colored_edge(lcc, dh))
     {
-      graphic_buffer.add_segment(p1, lcc->point(d2),
-                                 m_drawing_functor.edge_color(*lcc, dh));
+      graphic_buffer.add_segment(p1, lcc.point(d2),
+                                 drawing_functor.edge_color(lcc, dh));
     }
     else
-    { graphic_buffer.add_segment(p1, lcc->point(d2)); }
+    { graphic_buffer.add_segment(p1, lcc.point(d2)); }
   }
 }
 
 template <typename BufferType=float, class LCC, class DrawingFunctorLCC>
-void compute_vertex(typename LCC::Dart_const_handle dh, const LCC *lcc,
-                    const DrawingFunctorLCC &m_drawing_functor,
-                    CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+void compute_vertex(const LCC& lcc,
+                    typename LCC::Dart_const_handle dh,
+                    CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                    const DrawingFunctorLCC& drawing_functor)
 {
-  if (!m_drawing_functor.are_vertices_enabled() ||
-      !m_drawing_functor.draw_vertex(*lcc, dh))
+  if (!drawing_functor.are_vertices_enabled() ||
+      !drawing_functor.draw_vertex(lcc, dh))
   { return; }
 
-  if (m_drawing_functor.colored_vertex(*lcc, dh))
+  if (drawing_functor.colored_vertex(lcc, dh))
   {
-    graphic_buffer.add_point(lcc->point(dh),
-                             m_drawing_functor.vertex_color(*lcc, dh));
+    graphic_buffer.add_point(lcc.point(dh),
+                             drawing_functor.vertex_color(lcc, dh));
   }
   else
-  { graphic_buffer.add_point(lcc->point(dh)); }
+  { graphic_buffer.add_point(lcc.point(dh)); }
 }
 
 template <typename BufferType=float, class LCC, class DrawingFunctor>
-void compute_elements(const LCC *lcc,
-                      CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                      const DrawingFunctor &m_drawing_functor)
+void compute_elements(const LCC& lcc,
+                      CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                      const DrawingFunctor& drawing_functor)
 {
-  if (lcc==nullptr)
-  { return; }
+  typename LCC::size_type markvolumes = lcc.get_new_mark();
+  typename LCC::size_type markfaces = lcc.get_new_mark();
+  typename LCC::size_type markedges = lcc.get_new_mark();
+  typename LCC::size_type markvertices = lcc.get_new_mark();
+  typename LCC::size_type oriented_mark = lcc.get_new_mark();
 
-  typename LCC::size_type markvolumes = lcc->get_new_mark();
-  typename LCC::size_type markfaces = lcc->get_new_mark();
-  typename LCC::size_type markedges = lcc->get_new_mark();
-  typename LCC::size_type markvertices = lcc->get_new_mark();
-  typename LCC::size_type oriented_mark = lcc->get_new_mark();
+  lcc.orient(oriented_mark);
 
-  lcc->orient(oriented_mark);
-
-  for(typename LCC::Dart_range::const_iterator it=lcc->darts().begin(),
-        itend=lcc->darts().end(); it!=itend; ++it)
+  for(typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
+        itend=lcc.darts().end(); it!=itend; ++it)
   {
-    if (!lcc->is_marked(it, markvolumes) &&
-        m_drawing_functor.draw_volume(*lcc, it))
+    if (!lcc.is_marked(it, markvolumes) &&
+        drawing_functor.draw_volume(lcc, it))
     {
       for(typename LCC::template Dart_of_cell_basic_range<3>::const_iterator
-            itv=lcc->template darts_of_cell_basic<3>(it, markvolumes).begin(),
-            itvend=lcc->template darts_of_cell_basic<3>(it, markvolumes).end();
+            itv=lcc.template darts_of_cell_basic<3>(it, markvolumes).begin(),
+            itvend=lcc.template darts_of_cell_basic<3>(it, markvolumes).end();
           itv!=itvend; ++itv)
       {
-        lcc->mark(itv, markvolumes);
-        if (!lcc->is_marked(itv, markfaces) &&
-            lcc->is_marked(itv, oriented_mark) &&
-            m_drawing_functor.draw_face(*lcc, itv))
+        lcc.mark(itv, markvolumes);
+        if (!lcc.is_marked(itv, markfaces) &&
+            lcc.is_marked(itv, oriented_mark) &&
+            drawing_functor.draw_face(lcc, itv))
         {
-          if ((!m_drawing_functor.volume_wireframe(*lcc, itv) ||
-               (!lcc->template is_free<3>(itv) &&
-                !m_drawing_functor.volume_wireframe(*lcc, lcc->template beta<3>(itv)))) &&
-              !m_drawing_functor.face_wireframe(*lcc, itv))
-          { compute_face(itv, it, lcc, m_drawing_functor, graphic_buffer); }
+          if ((!drawing_functor.volume_wireframe(lcc, itv) ||
+               (!lcc.template is_free<3>(itv) &&
+                !drawing_functor.volume_wireframe(lcc, lcc.template beta<3>(itv)))) &&
+              !drawing_functor.face_wireframe(lcc, itv))
+          { compute_face(lcc, itv, it, graphic_buffer, drawing_functor); }
           for(typename LCC::template Dart_of_cell_basic_range<2>::const_iterator
-                itf=lcc->template darts_of_cell_basic<2>(itv, markfaces).begin(),
-                itfend=lcc->template darts_of_cell_basic<2>(itv, markfaces).end();
+                itf=lcc.template darts_of_cell_basic<2>(itv, markfaces).begin(),
+                itfend=lcc.template darts_of_cell_basic<2>(itv, markfaces).end();
               itf!=itfend; ++itf)
           {
-            lcc->mark(itf, markfaces);
-            if (!lcc->is_marked(itf, markedges) &&
-                m_drawing_functor.draw_edge(*lcc, itf))
+            lcc.mark(itf, markfaces);
+            if (!lcc.is_marked(itf, markedges) &&
+                drawing_functor.draw_edge(lcc, itf))
             {
-              compute_edge(itf, lcc, m_drawing_functor, graphic_buffer);
+              compute_edge(lcc, itf, graphic_buffer, drawing_functor);
               for(typename LCC::template Dart_of_cell_basic_range<1>::const_iterator
-                    ite=lcc->template darts_of_cell_basic<1>(itf, markedges).begin(),
-                    iteend=lcc->template darts_of_cell_basic<1>(itf, markedges).end();
+                    ite=lcc.template darts_of_cell_basic<1>(itf, markedges).begin(),
+                    iteend=lcc.template darts_of_cell_basic<1>(itf, markedges).end();
                   ite!=iteend; ++ite)
               {
-                lcc->mark(ite, markedges);
-                if (!lcc->is_marked(ite, markvertices) &&
-                    m_drawing_functor.draw_vertex(*lcc, ite))
+                lcc.mark(ite, markedges);
+                if (!lcc.is_marked(ite, markvertices) &&
+                    drawing_functor.draw_vertex(lcc, ite))
                 {
-                  compute_vertex(ite, lcc, m_drawing_functor, graphic_buffer);
-                  CGAL::mark_cell<LCC, 0>(*lcc, ite, markvertices);
+                  compute_vertex(lcc, ite, graphic_buffer, drawing_functor);
+                  CGAL::mark_cell<LCC, 0>(lcc, ite, markvertices);
                 }
               }
             }
@@ -209,21 +209,21 @@ void compute_elements(const LCC *lcc,
     }
   }
 
-  for (typename LCC::Dart_range::const_iterator it = lcc->darts().begin(),
-         itend = lcc->darts().end(); it != itend; ++it)
+  for (typename LCC::Dart_range::const_iterator it = lcc.darts().begin(),
+         itend = lcc.darts().end(); it != itend; ++it)
   {
-    lcc->unmark(it, markvertices);
-    lcc->unmark(it, markedges);
-    lcc->unmark(it, markfaces);
-    lcc->unmark(it, markvolumes);
-    lcc->unmark(it, oriented_mark);
+    lcc.unmark(it, markvertices);
+    lcc.unmark(it, markedges);
+    lcc.unmark(it, markfaces);
+    lcc.unmark(it, markvolumes);
+    lcc.unmark(it, oriented_mark);
   }
 
-  lcc->free_mark(markvolumes);
-  lcc->free_mark(markfaces);
-  lcc->free_mark(markedges);
-  lcc->free_mark(markvertices);
-  lcc->free_mark(oriented_mark);
+  lcc.free_mark(markvolumes);
+  lcc.free_mark(markfaces);
+  lcc.free_mark(markedges);
+  lcc.free_mark(markvertices);
+  lcc.free_mark(oriented_mark);
 }
 
 } // namespace draw_function_for_lcc
@@ -239,12 +239,12 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_,
          typename BufferType=float, class DrawingFunctor>
-void add_in_graphic_buffer(const CGAL_LCC_TYPE &alcc,
-                           CGAL::Graphic_buffer<BufferType> &graphic_buffer,
-                           const DrawingFunctor &m_drawing_functor)
+void add_in_graphic_buffer(const CGAL_LCC_TYPE& alcc,
+                           CGAL::Graphic_buffer<BufferType>& graphic_buffer,
+                           const DrawingFunctor& drawing_functor)
 {
-  draw_function_for_lcc::compute_elements(static_cast<const Refs*>(&alcc),
-                                          graphic_buffer, m_drawing_functor);
+  draw_function_for_lcc::compute_elements(static_cast<const Refs&>(alcc),
+                                          graphic_buffer, drawing_functor);
 }
 
 // add_in_graphic_buffer: to add a LCC in the given graphic buffer, without a
@@ -253,8 +253,8 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_, typename BufferType=float>
-void add_in_graphic_buffer(const CGAL_LCC_TYPE &alcc,
-                           CGAL::Graphic_buffer<BufferType> &graphic_buffer)
+void add_in_graphic_buffer(const CGAL_LCC_TYPE& alcc,
+                           CGAL::Graphic_buffer<BufferType>& graphic_buffer)
 {
   CGAL::Drawing_functor_with_volume<CGAL_LCC_TYPE,
                                     typename CGAL_LCC_TYPE::Dart_const_handle,
@@ -285,7 +285,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_,
          class DrawingFunctor>
-void draw(const CGAL_LCC_TYPE &alcc, const DrawingFunctor &drawing_functor,
+void draw(const CGAL_LCC_TYPE& alcc, const DrawingFunctor& drawing_functor,
           const char *title="LCC Basic Viewer")
 {
   CGAL::Graphic_buffer<float> buffer;
@@ -298,7 +298,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_>
-void draw(const CGAL_LCC_TYPE &alcc, const char *title="LCC Basic Viewer")
+void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
 {
   CGAL::Graphic_buffer<float> buffer;
   add_in_graphic_buffer(alcc, buffer);
