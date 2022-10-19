@@ -105,6 +105,7 @@ struct Visitor :
   public PMP::Corefinement::Default_visitor<Mesh>
 {
   std::shared_ptr<Visitor_rep> sptr;
+  mutable std::size_t tf_counter = 0;
 
   Visitor()
     : sptr(std::make_shared<Visitor_rep>())
@@ -124,15 +125,16 @@ struct Visitor :
     std::cout << "Visitor::end_filtering_intersections() at " << sptr->time() << " sec."  << std::endl;
   }
 
-  void start_triangulating_faces(std::size_t tf)const
+  void start_triangulating_faces(std::size_t tf) const
   {
     std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->time() << " sec."  << std::endl;
     sptr->start_triangulating_faces(tf);
+    tf_counter = 0;
   }
 
-  void triangulating_faces_step(std::size_t i) const
+  void triangulating_faces_step() const
   {
-    sptr->face_triangulation(i);
+    sptr->face_triangulation(tf_counter++);
   }
 
   void end_triangulating_faces()const
