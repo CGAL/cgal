@@ -18,6 +18,7 @@
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Triangulation_utils_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
 #include <CGAL/Voronoi_diagram_2/Face.h>
 #include <CGAL/Voronoi_diagram_2/Handle_adaptor.h>
 #include <CGAL/Voronoi_diagram_2/Vertex.h>
