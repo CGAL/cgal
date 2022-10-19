@@ -170,10 +170,10 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
   Mesh_optimization_return_code
-  perturb_periodic_3_mesh_3(CDT& cdt,
-                            const CGAL_NP_CLASS_1&  np1,
-                            const CGAL_NP_CLASS_2&  np2,
-                            const NP& ... nps)
+  lloyd_optimize_mesh_2(CDT& cdt,
+                        const CGAL_NP_CLASS_1&  np1,
+                        const CGAL_NP_CLASS_2&  np2,
+                        const NP& ... nps)
   {
     return lloyd_optimize_mesh_2(cdt, internal_np::combine_named_parameters(np1, np2, nps...));
   }
