@@ -127,8 +127,8 @@ void add_segments_and_update_bounding_box(const V2& v2,
         end_point = he->source()->point();
 
         // update_bounding_box_for_ray(end_point, direction);
-        Local_point lp = Basic_viewer_qt<>::get_local_point(end_point);
-        Local_vector lv = Basic_viewer_qt<>::get_local_vector(direction);
+        Local_point lp = graphic_buffer.get_local_point(end_point);
+        Local_vector lv = graphic_buffer.get_local_vector(direction);
         CGAL::Bbox_3 b = (lp + lv).bbox();
         graphic_buffer.update_bounding_box(b);
       }
@@ -143,9 +143,9 @@ void add_segments_and_update_bounding_box(const V2& v2,
 
       // update_bounding_box_for_line(pointOnLine, direction,
       //                               perpendicularDirection);
-      Local_point lp = Basic_viewer_qt<>::get_local_point(pointOnLine);
-      Local_vector lv = Basic_viewer_qt<>::get_local_vector(direction);
-      Local_vector lpv = Basic_viewer_qt<>::get_local_vector(perpendicularDirection);
+      Local_point lp = graphic_buffer.get_local_point(pointOnLine);
+      Local_vector lv = graphic_buffer.get_local_vector(direction);
+      Local_vector lpv = graphic_buffer.get_local_vector(perpendicularDirection);
 
       CGAL::Bbox_3 b = lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox();
       graphic_buffer.update_bounding_box(b);

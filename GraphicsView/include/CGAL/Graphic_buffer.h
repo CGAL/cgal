@@ -61,6 +61,7 @@ class Graphic_buffer
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
+  typedef Local_kernel::Vector_3 Local_vector;
 
   Graphic_buffer()
       : m_buffer_for_mono_points(&arrays[POS_MONO_POINTS], nullptr,
@@ -329,6 +330,13 @@ public:
   {
     return internal::Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel,
                                 Local_kernel>::get_local_point(p);
+  }
+
+  template <typename KVector>
+  static Local_vector get_local_vector(const KVector &v)
+  {
+    return internal::Geom_utils<typename CGAL::Kernel_traits<KVector>::Kernel,
+                                Local_kernel>::get_local_vector(v);
   }
 
   template <typename KPoint>
