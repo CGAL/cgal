@@ -176,7 +176,7 @@ void compute_elements(const LCC& lcc,
         {
           if ((!drawing_functor.volume_wireframe(lcc, itv) ||
                (!lcc.template is_free<3>(itv) &&
-                !drawing_functor.volume_wireframe(lcc, lcc.template beta<3>(itv)))) &&
+                !drawing_functor.volume_wireframe(lcc, lcc.template opposite<3>(itv)))) &&
               !drawing_functor.face_wireframe(lcc, itv))
           { compute_face(lcc, itv, it, graphic_buffer, drawing_functor); }
           for(typename LCC::template Dart_of_cell_basic_range<2>::const_iterator
