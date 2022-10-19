@@ -18,6 +18,7 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Drawing_functor.h>
+#include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Random.h>
