@@ -428,7 +428,7 @@ public:
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1910)
+#if !defined(BOOST_MSVC)
   CGAL_DEPRECATED
 #endif
   Labeled_mesh_domain_3(const Function& function,
