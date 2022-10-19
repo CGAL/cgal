@@ -18,6 +18,7 @@
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Drawing_functor.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Periodic_2_triangulation_2.h>
 
 namespace CGAL {
 
