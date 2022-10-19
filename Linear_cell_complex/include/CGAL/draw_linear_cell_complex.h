@@ -16,6 +16,7 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Graphic_buffer.h>
 #include <CGAL/Drawing_functor.h>
+#include <CGAL/Linear_cell_complex_base.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>
 
