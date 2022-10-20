@@ -79,7 +79,7 @@ typename GeomTraits::FT cotangent_weight(const typename GeomTraits::Point_2& p0,
 {
   using FT = typename GeomTraits::FT;
 
-  const FT cot_beta  = cotangent_2(q, p0, p1, traits);
+  const FT cot_beta = cotangent_2(q, p0, p1, traits);
   const FT cot_gamma = cotangent_2(p1, p2, q, traits);
 
   return cotangent_ns::weight(cot_beta, cot_gamma);
@@ -116,7 +116,7 @@ typename GeomTraits::FT cotangent_weight(const typename GeomTraits::Point_3& p0,
 {
   using FT = typename GeomTraits::FT;
 
-  const FT cot_beta  = cotangent_3(q, p0, p1, traits);
+  const FT cot_beta = cotangent_3(q, p0, p1, traits);
   const FT cot_gamma = cotangent_3(p1, p2, q, traits);
 
   return cotangent_ns::weight(cot_beta, cot_gamma);

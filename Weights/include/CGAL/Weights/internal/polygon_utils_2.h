@@ -106,7 +106,7 @@ Edge_case bounded_side_2(const VertexRange& polygon,
   auto orientation_2 = traits.orientation_2_object();
 
   bool is_inside = false;
-  auto curr_y_comp_res = compare_y_2(get(point_map, *curr), query);
+  Comparison_result curr_y_comp_res = compare_y_2(get(point_map, *curr), query);
 
   // Check if the segment (curr, next) intersects
   // the ray { (t, query.y()) | t >= query.x() }.
@@ -225,7 +225,8 @@ bool is_convex_2(const VertexRange& polygon,
     return true;
 
   auto equal_2 = traits.equal_2_object();
-  while (equal_2(get(point_map, *prev), get(point_map, *curr))) {
+  while (equal_2(get(point_map, *prev), get(point_map, *curr)))
+  {
     curr = next; ++next;
     if (next == last)
       return true;

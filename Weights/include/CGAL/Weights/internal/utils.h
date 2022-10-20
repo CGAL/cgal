@@ -135,9 +135,10 @@ void normalize_2(typename GeomTraits::Vector_2& v,
                  const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
-  const FT length = length_2(traits, v);
-  CGAL_assertion(length != FT(0));
-  if (length == FT(0))
+
+  const FT length = length_2(v, traits);
+  CGAL_assertion(!is_zero(length));
+  if (is_zero(length))
     return;
 
   v /= length;
@@ -174,15 +175,15 @@ void normalize_3(typename GeomTraits::Vector_3& v,
                  const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
-
-  const FT length = length_3(traits, v);
-  CGAL_assertion(length != FT(0));
-  if (length == FT(0))
+  const FT length = length_3(v, traits);
+  CGAL_assertion(!is_zero(length));
+  if (is_zero(length))
     return;
 
   v /= length;
 }
 
+// the angle is in radians
 template<typename GeomTraits>
 double angle_3(const typename GeomTraits::Vector_3& v1,
                const typename GeomTraits::Vector_3& v2,
@@ -213,24 +214,26 @@ typename GeomTraits::Point_3 rotate_point_3(const double angle_rad,
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
 
+  auto point_3 = traits.construct_point_3_object();
+
   const FT c = static_cast<FT>(std::cos(angle_rad));
   const FT s = static_cast<FT>(std::sin(angle_rad));
   const FT C = FT(1) - c;
 
-  const FT x = axis.x();
-  const FT y = axis.y();
-  const FT z = axis.z();
+  const FT& x = axis.x();
+  const FT& y = axis.y();
+  const FT& z = axis.z();
 
-  return Point_3(
-        (x * x * C + c)     * query.x() +
-        (x * y * C - z * s) * query.y() +
-        (x * z * C + y * s) * query.z(),
-        (y * x * C + z * s) * query.x() +
-        (y * y * C + c)     * query.y() +
-        (y * z * C - x * s) * query.z(),
-        (z * x * C - y * s) * query.x() +
-        (z * y * C + x * s) * query.y() +
-        (z * z * C + c)     * query.z());
+  return point_3(
+    (x * x * C + c)     * query.x() +
+    (x * y * C - z * s) * query.y() +
+    (x * z * C + y * s) * query.z(),
+    (y * x * C + z * s) * query.x() +
+    (y * y * C + c)     * query.y() +
+    (y * z * C - x * s) * query.z(),
+    (z * x * C - y * s) * query.x() +
+    (z * y * C + x * s) * query.y() +
+    (z * z * C + c)     * query.z());
 }
 
 // Computes two 3D orthogonal base vectors wrt a given normal.
@@ -245,9 +248,9 @@ void orthogonal_bases_3(const typename GeomTraits::Vector_3& normal,
 
   auto cross_product_3 = traits.construct_cross_product_vector_3_object();
 
-  const FT nx = normal.x();
-  const FT ny = normal.y();
-  const FT nz = normal.z();
+  const FT& nx = normal.x();
+  const FT& ny = normal.y();
+  const FT& nz = normal.z();
 
   if (CGAL::abs(nz) >= CGAL::abs(ny))
     b1 = Vector_3(nz, 0, -nx);
@@ -268,13 +271,13 @@ typename GeomTraits::Point_2 to_2d(const typename GeomTraits::Vector_3& b1,
                                    const typename GeomTraits::Point_3& query,
                                    const GeomTraits& traits)
 {
-  using FT  = typename GeomTraits::FT;
-  using Point_2  = typename GeomTraits::Point_2;
+  using FT = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
   using Vector_3 = typename GeomTraits::Vector_3;
 
-  auto point_2 = traits.construct_point_2_object();
   auto dot_product_3 = traits.compute_scalar_product_3_object();
   auto vector_3 = traits.construct_vector_3_object();
+  auto point_2 = traits.construct_point_2_object();
 
   const Vector_3 v = vector_3(origin, query);
   const FT x = dot_product_3(b1, v);
@@ -354,6 +357,7 @@ void flatten(const typename GeomTraits::Point_3& t, // prev neighbor/vertex/poin
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
 
+  auto point_3 = traits.construct_point_3_object();
   auto cross_product_3 = traits.construct_cross_product_vector_3_object();
   auto vector_3 = traits.construct_vector_3_object();
   auto centroid_3 = traits.construct_centroid_3_object();
@@ -363,10 +367,10 @@ void flatten(const typename GeomTraits::Point_3& t, // prev neighbor/vertex/poin
   // std::cout << "centroid: " << center << std::endl;
 
   // Translate.
-  const Point_3 t1 = Point_3(t.x() - center.x(), t.y() - center.y(), t.z() - center.z());
-  const Point_3 r1 = Point_3(r.x() - center.x(), r.y() - center.y(), r.z() - center.z());
-  const Point_3 p1 = Point_3(p.x() - center.x(), p.y() - center.y(), p.z() - center.z());
-  const Point_3 q1 = Point_3(q.x() - center.x(), q.y() - center.y(), q.z() - center.z());
+  const Point_3 t1 = point_3(t.x() - center.x(), t.y() - center.y(), t.z() - center.z());
+  const Point_3 r1 = point_3(r.x() - center.x(), r.y() - center.y(), r.z() - center.z());
+  const Point_3 p1 = point_3(p.x() - center.x(), p.y() - center.y(), p.z() - center.z());
+  const Point_3 q1 = point_3(q.x() - center.x(), q.y() - center.y(), q.z() - center.z());
 
   // std::cout << "translated t1: " << t1 << std::endl;
   // std::cout << "translated r1: " << r1 << std::endl;
@@ -447,10 +451,11 @@ typename GeomTraits::FT area_3(const typename GeomTraits::Point_3& p,
                                const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
-  using Point_2 = typename GeomTraits::Point_2;
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
 
+  auto area_2 = traits.compute_area_2_object();
+  auto point_3 = traits.construct_point_3_object();
   auto cross_product_3 = traits.construct_cross_product_vector_3_object();
   auto vector_3 = traits.construct_vector_3_object();
   auto centroid_3 = traits.construct_centroid_3_object();
@@ -459,9 +464,9 @@ typename GeomTraits::FT area_3(const typename GeomTraits::Point_3& p,
   const Point_3 center = centroid_3(p, q, r);
 
   // Translate.
-  const Point_3 a = Point_3(p.x() - center.x(), p.y() - center.y(), p.z() - center.z());
-  const Point_3 b = Point_3(q.x() - center.x(), q.y() - center.y(), q.z() - center.z());
-  const Point_3 c = Point_3(r.x() - center.x(), r.y() - center.y(), r.z() - center.z());
+  const Point_3 a = point_3(p.x() - center.x(), p.y() - center.y(), p.z() - center.z());
+  const Point_3 b = point_3(q.x() - center.x(), q.y() - center.y(), q.z() - center.z());
+  const Point_3 c = point_3(r.x() - center.x(), r.y() - center.y(), r.z() - center.z());
 
   // Prev and next vectors.
   Vector_3 v1 = vector_3(b, a);
@@ -483,8 +488,7 @@ typename GeomTraits::FT area_3(const typename GeomTraits::Point_3& p,
   const Point_2 qf = to_2d(b1, b2, origin, b, traits);
   const Point_2 rf = to_2d(b1, b2, origin, c, traits);
 
-  const FT A = area_2(traits, pf, qf, rf);
-  return A;
+  return area_2(pf, qf, rf);
 }
 
 // Computes positive area of a 3D triangle.

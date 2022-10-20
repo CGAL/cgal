@@ -45,8 +45,8 @@ typename GeomTraits::FT cotangent_2(const typename GeomTraits::Point_2& p,
 
   if (!is_zero(length))
     return dot / length;
-  else
-    return FT(0); // undefined
+
+  return FT(0); // undefined
 }
 
 template<typename GeomTraits>
@@ -92,8 +92,8 @@ typename GeomTraits::FT cotangent_3(const typename GeomTraits::Point_3& p,
   const FT length = internal::length_3(cross, traits);
   if (!is_zero(length))
     return dot / length;
-  else
-    return FT(0); // undefined
+
+  return FT(0); // undefined
 }
 
 template<typename GeomTraits>
@@ -140,10 +140,8 @@ typename GeomTraits::FT tangent_2(const typename GeomTraits::Point_2& p,
     const FT length = CGAL::abs(cross);
     return length / dot;
   }
-  else
-  {
-    return FT(0); // undefined
-  }
+
+  return FT(0); // undefined
 }
 
 template<typename GeomTraits>
@@ -190,10 +188,8 @@ typename GeomTraits::FT tangent_3(const typename GeomTraits::Point_3& p,
     const FT length = internal::length_3(cross, traits);
     return length / dot;
   }
-  else
-  {
-    return FT(0); // undefined
-  }
+
+  return FT(0); // undefined
 }
 
 template<typename GeomTraits>

@@ -41,18 +41,18 @@ namespace internal {
            typename TriangleMesh,
            typename VertexRange,
            typename VertexPointMap>
-  bool fair(TriangleMesh& tmesh,
-    const VertexRange& vertices,
-    SparseLinearSolver solver,
-    WeightCalculator weight_calculator,
-    unsigned int continuity,
-    VertexPointMap vpmap)
-  {
-    CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3
-       <TriangleMesh, SparseLinearSolver, WeightCalculator, VertexPointMap>
-       fair_functor(tmesh, vpmap, weight_calculator);
-    return fair_functor.fair(vertices, solver, continuity);
-  }
+bool fair(TriangleMesh& tmesh,
+          const VertexRange& vertices,
+          SparseLinearSolver solver,
+          WeightCalculator weight_calculator,
+          unsigned int continuity,
+          VertexPointMap vpmap)
+{
+  CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3
+     <TriangleMesh, SparseLinearSolver, WeightCalculator, VertexPointMap>
+     fair_functor(tmesh, vpmap, weight_calculator);
+  return fair_functor.fair(vertices, solver, continuity);
+}
 
 } //end namespace internal
 
@@ -182,9 +182,9 @@ namespace internal {
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
-} //end namespace Polygon_mesh_processing
+} // namespace Polygon_mesh_processing
 
-} //end namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
