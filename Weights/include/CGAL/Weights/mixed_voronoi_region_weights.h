@@ -42,12 +42,10 @@ typename GeomTraits::FT mixed_voronoi_area(const typename GeomTraits::Point_2& p
   auto midpoint_2 = traits.construct_midpoint_2_object();
   auto circumcenter_2 = traits.construct_circumcenter_2_object();
 
-  const Angle a1 = angle_2(p, q, r);
-  const Angle a2 = angle_2(q, r, p);
-  const Angle a3 = angle_2(r, p, q);
-
   Point_2 center;
-  if (a1 != CGAL::OBTUSE && a2 != CGAL::OBTUSE && a3 != CGAL::OBTUSE)
+  if (angle_2(p, q, r) != CGAL::OBTUSE &&
+      angle_2(q, r, p) != CGAL::OBTUSE &&
+      angle_2(r, p, q) != CGAL::OBTUSE)
     center = circumcenter_2(p, q, r);
   else
     center = midpoint_2(r, p);
@@ -95,12 +93,10 @@ typename GeomTraits::FT mixed_voronoi_area(const typename GeomTraits::Point_3& p
   auto midpoint_3 = traits.construct_midpoint_3_object();
   auto circumcenter_3 = traits.construct_circumcenter_3_object();
 
-  const Angle a1 = angle_3(p, q, r);
-  const Angle a2 = angle_3(q, r, p);
-  const Angle a3 = angle_3(r, p, q);
-
   Point_3 center;
-  if (a1 != CGAL::OBTUSE && a2 != CGAL::OBTUSE && a3 != CGAL::OBTUSE)
+  if (angle_3(p, q, r) != CGAL::OBTUSE &&
+      angle_3(q, r, p) != CGAL::OBTUSE &&
+      angle_3(r, p, q) != CGAL::OBTUSE)
     center = circumcenter_3(p, q, r);
   else
     center = midpoint_3(r, p);
