@@ -59,12 +59,12 @@ struct Global_optimization_options_base
   double convergence() const { return convergence_; }
 
   bool is_max_iteration_number_set() const { return max_it_nb_ != undef_parameter; }
-  void set_max_iteration_number(int i) { max_it_nb_ = i; }
+  void set_max_iteration_number(std::size_t i) { max_it_nb_ = i; }
   int max_iteration_number() const { return max_it_nb_; }
 
 private:
   double convergence_;
-  int max_it_nb_;
+  std::size_t max_it_nb_;
 };
 
 // Perturb
