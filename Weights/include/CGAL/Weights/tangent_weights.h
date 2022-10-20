@@ -40,32 +40,33 @@ FT half_weight(const FT t, const FT r)
 }
 
 template<typename FT>
-FT weight(const FT t1, const FT t2, const FT r)
+FT weight(const FT t0, const FT t2, const FT r)
 {
   FT w = FT(0);
   CGAL_precondition(r != FT(0));
   if (r != FT(0))
-    w = FT(2) * (t1 + t2) / r;
+    w = FT(2) * (t0 + t2) / r;
 
   return w;
 }
 
 template<typename FT>
-FT weight(const FT d1, const FT d, const FT d2,
-          const FT A1, const FT A2,
-          const FT D1, const FT D2)
+FT weight(const FT d0, const FT d2, const FT d,
+          const FT A0, const FT A2,
+          const FT D0, const FT D2)
 {
-  const FT P1 = d1 * d + D1;
-  const FT P2 = d2 * d + D2;
+  const FT P0 = d * d0 + D0;
+  const FT P2 = d * d2 + D2;
 
   FT w = FT(0);
-  CGAL_precondition(!is_zero(P1) && !is_zero(P2));
-  if (!is_zero(P1) && !is_zero(P2))
+  CGAL_precondition(!is_zero(P0) && !is_zero(P2));
+  if (!is_zero(P0) && !is_zero(P2))
   {
-    const FT t1 = FT(2) * A1 / P1;
+    const FT t0 = FT(2) * A0 / P0;
     const FT t2 = FT(2) * A2 / P2;
-    w = weight(t1, t2, d);
+    w = weight(t0, t2, d);
   }
+
   return w;
 }
 
@@ -73,9 +74,9 @@ FT weight(const FT d1, const FT d, const FT d2,
 // This version is based on the positive area.
 // This version is more precise for all positive cases.
 template<typename GeomTraits>
-typename GeomTraits::FT tangent_weight_v1(const typename GeomTraits::Point_3& t,
-                                          const typename GeomTraits::Point_3& r,
-                                          const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT tangent_weight_v1(const typename GeomTraits::Point_3& p0,
+                                          const typename GeomTraits::Point_3& p1,
+                                          const typename GeomTraits::Point_3& p2,
                                           const typename GeomTraits::Point_3& q,
                                           const GeomTraits& traits)
 {
@@ -83,92 +84,62 @@ typename GeomTraits::FT tangent_weight_v1(const typename GeomTraits::Point_3& t,
   using Vector_3 = typename GeomTraits::Vector_3;
 
   auto dot_product_3 = traits.compute_scalar_product_3_object();
-  auto construct_vector_3 = traits.construct_vector_3_object();
+  auto vector_3 = traits.construct_vector_3_object();
 
-  const Vector_3 v1 = construct_vector_3(q, t);
-  const Vector_3 v2 = construct_vector_3(q, r);
-  const Vector_3 v3 = construct_vector_3(q, p);
+  const Vector_3 v0 = vector_3(q, p0);
+  const Vector_3 v = vector_3(q, p1);
+  const Vector_3 v2 = vector_3(q, p2);
 
-  const FT l1 = internal::length_3(traits, v1);
-  const FT l2 = internal::length_3(traits, v2);
-  const FT l3 = internal::length_3(traits, v3);
+  const FT d0 = internal::length_3(v0, traits);
+  const FT d = internal::length_3(v, traits);
+  const FT d2 = internal::length_3(v2, traits);
 
-  const FT A1 = internal::positive_area_3(traits, r, q, t);
-  const FT A2 = internal::positive_area_3(traits, p, q, r);
+  const FT A0 = internal::positive_area_3(p1, q, p0, traits);
+  const FT A2 = internal::positive_area_3(p2, q, p1, traits);
 
-  const FT D1 = dot_product_3(v1, v2);
-  const FT D2 = dot_product_3(v2, v3);
+  const FT D0 = dot_product_3(v0, v);
+  const FT D2 = dot_product_3(v, v2);
 
-  return weight(l1, l2, l3, A1, A2, D1, D2);
+  return weight(d0, d2, d, A0, A2, D0, D2);
 }
 
 // This version handles both positive and negative cases.
 // However, it is less precise.
 template<typename GeomTraits>
-typename GeomTraits::FT tangent_weight_v2(const typename GeomTraits::Point_3& t,
-                                          const typename GeomTraits::Point_3& r,
-                                          const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT tangent_weight_v2(const typename GeomTraits::Point_3& p0,
+                                          const typename GeomTraits::Point_3& p1,
+                                          const typename GeomTraits::Point_3& p2,
                                           const typename GeomTraits::Point_3& q,
                                           const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
   using Vector_3 = typename GeomTraits::Vector_3;
 
-  auto construct_vector_3 = traits.construct_vector_3_object();
+  auto vector_3 = traits.construct_vector_3_object();
 
-  Vector_3 v1 = construct_vector_3(q, t);
-  Vector_3 v2 = construct_vector_3(q, r);
-  Vector_3 v3 = construct_vector_3(q, p);
+  Vector_3 v0 = vector_3(q, p0);
+  Vector_3 v = vector_3(q, p1);
+  Vector_3 v2 = vector_3(q, p2);
 
-  const FT l2 = internal::length_3(traits, v2);
+  const FT l2 = internal::length_3(v, traits);
 
-  internal::normalize_3(traits, v1);
-  internal::normalize_3(traits, v2);
-  internal::normalize_3(traits, v3);
+  internal::normalize_3(v0, traits);
+  internal::normalize_3(v, traits);
+  internal::normalize_3(v2, traits);
 
-  const double ha_rad_1 = internal::angle_3(traits, v1, v2) / 2.0;
-  const double ha_rad_2 = internal::angle_3(traits, v2, v3) / 2.0;
-  const FT t1 = static_cast<FT>(std::tan(ha_rad_1));
+  const double ha_rad_1 = internal::angle_3(v0, v, traits) / 2.0;
+  const double ha_rad_2 = internal::angle_3(v, v2, traits) / 2.0;
+  const FT t0 = static_cast<FT>(std::tan(ha_rad_1));
   const FT t2 = static_cast<FT>(std::tan(ha_rad_2));
 
-  return weight(t1, t2, l2);
+  return weight(t0, t2, l2);
 }
 
 } // namespace tangent_ns
 
 /// \endcond
 
-/*!
-  \ingroup PkgWeightsRefTangentWeights
-
-  \brief computes the tangent of the half angle.
-
-  This function computes the tangent of the half angle using the precomputed
-  distance, area, and dot product values. The returned value is
-  \f$\frac{2\textbf{A}}{\textbf{d}\textbf{d_1} + \textbf{D_1}}\f$.
-
-  \tparam FT a model of `FieldNumberType`
-
-  \param d1 the first distance value
-  \param d2 the second distance value
-  \param A the area value
-  \param D the dot product value
-
-  \pre (d1 * d2 + D) != 0
-
-  \sa `half_tangent_weight()`
-*/
-template<typename FT>
-FT tangent_half_angle(const FT d1, const FT d2, const FT A, const FT D)
-{
-  FT t = FT(0);
-  const FT P = d1 * d2 + D;
-  CGAL_precondition(!is_zero(P));
-  if (!is_zero(P))
-    t = FT(2) * A / P;
-
-  return t;
-}
+// 2D ==============================================================================================
 
 /*!
   \ingroup PkgWeightsRefTangentWeights
@@ -193,6 +164,42 @@ template<typename FT>
 FT half_tangent_weight(const FT tan05, const FT d)
 {
   return tangent_ns::half_weight(tan05, d);
+}
+
+/*!
+  \ingroup PkgWeightsRefTangentWeights
+
+  \brief computes the tangent of the half angle.
+
+  This function computes the tangent of the half angle using the precomputed
+  distance, area, and dot product values. The returned value is
+  \f$\frac{2\textbf{A}}{\textbf{d}\textbf{l} + \textbf{D}}\f$.
+
+  \tparam FT a model of `FieldNumberType`
+
+  \param d the distance value
+  \param l the distance value
+  \param A the area value
+  \param D the dot product value
+
+  \pre (d * l + D) != 0
+
+  \sa `half_tangent_weight()`
+*/
+template<typename FT>
+FT tangent_half_angle(const FT d, const FT l, const FT A, const FT D)
+{
+  // tan(theta/2) = sin(theta) / ( 1 + cos(theta) ), also = (1 - cos(theta)) / sin(theta).
+  //              = ( 2*A / |v1|*|v2| ) / ( 1 + v1.v2 / |v1|*|v2| )
+  //              = 2*A / ( |v1|*|v2| + v1.v2 )
+
+  FT t = FT(0);
+  const FT P = d * l + D;
+  CGAL_precondition(!is_zero(P));
+  if (!is_zero(P))
+    t = FT(2) * A / P;
+
+  return t;
 }
 
 /*!
@@ -224,65 +231,138 @@ FT half_tangent_weight(const FT d, const FT l, const FT A, const FT D)
 }
 
 /// \cond SKIP_IN_MANUAL
+
 template<typename GeomTraits>
-typename GeomTraits::FT tangent_weight(const typename GeomTraits::Point_2& t,
-                                       const typename GeomTraits::Point_2& r,
-                                       const typename GeomTraits::Point_2& p,
+typename GeomTraits::FT half_tangent_weight(const typename GeomTraits::Point_2& p0,
+                                            const typename GeomTraits::Point_2& q,
+                                            const typename GeomTraits::Point_2& p2,
+                                            const GeomTraits& traits)
+{
+  using FT = typename GeomTraits::FT;
+
+  auto vector_2 = traits.construct_vector_2_object();
+  auto dot_product_2 = traits.compute_scalar_product_2_object();
+  auto area_2 = traits.compute_area_2_object();
+
+  const Vector_2 v0 = vector_2(q, p0);
+  const Vector_2 v2 = vector_2(q, p2);
+
+  const FT l0 = internal::length_2(v0, traits);
+  const FT l2 = internal::length_2(v2, traits);
+  const FT A = area_2(p2, q, p0);
+  const FT D = dot_product_2(v0, v2);
+
+  return half_tangent_weight(l0, l2, A, D);
+}
+
+template<typename GeomTraits>
+typename GeomTraits::FT half_tangent_weight(const typename GeomTraits::Point_3& p0,
+                                            const typename GeomTraits::Point_3& q,
+                                            const typename GeomTraits::Point_3& p2,
+                                            const GeomTraits& traits)
+{
+  using FT = typename GeomTraits::FT;
+
+  auto vector_3 = traits.construct_vector_3_object();
+  auto dot_product_3 = traits.compute_scalar_product_3_object();
+
+  const Vector_3 v0 = vector_3(q, p0);
+  const Vector_3 v2 = vector_3(q, p2);
+
+  const FT l0 = internal::length_3(v0, traits);
+  const FT l2 = internal::length_3(v2, traits);
+  const FT A = internal::area_3(p2, q, p0, traits);
+  const FT D = dot_product_3(v0, v2);
+
+  return half_tangent_weight(l0, l2, A, D);
+}
+
+/// \endcond
+
+// 2D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefTangentWeights
+  \brief computes the tangent weight in 2D at `q` using the points `p0`, `p1`, and `p2`
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
+template<typename GeomTraits>
+typename GeomTraits::FT tangent_weight(const typename GeomTraits::Point_2& p0,
+                                       const typename GeomTraits::Point_2& p1,
+                                       const typename GeomTraits::Point_2& p2,
                                        const typename GeomTraits::Point_2& q,
                                        const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
   using Vector_2 = typename GeomTraits::Vector_2;
 
+  auto vector_2 = traits.construct_vector_2_object();
   auto dot_product_2 = traits.compute_scalar_product_2_object();
-  auto construct_vector_2 = traits.construct_vector_2_object();
+  auto area_2 = traits.compute_area_2_object();
 
-  const Vector_2 v1 = construct_vector_2(q, t);
-  const Vector_2 v2 = construct_vector_2(q, r);
-  const Vector_2 v3 = construct_vector_2(q, p);
+  const Vector_2 v0 = vector_2(q, p0);
+  const Vector_2 v = vector_2(q, p1);
+  const Vector_2 v2 = vector_2(q, p2);
 
-  const FT l1 = internal::length_2(traits, v1);
-  const FT l2 = internal::length_2(traits, v2);
-  const FT l3 = internal::length_2(traits, v3);
+  const FT l0 = internal::length_2(v0, traits);
+  const FT l = internal::length_2(v, traits);
+  const FT l2 = internal::length_2(v2, traits);
 
-  const FT A1 = internal::area_2(traits, r, q, t);
-  const FT A2 = internal::area_2(traits, p, q, r);
+  const FT A0 = area_2(p1, q, p0);
+  const FT A2 = area_2(p2, q, p1);
 
-  const FT D1 = dot_product_2(v1, v2);
-  const FT D2 = dot_product_2(v2, v3);
+  const FT D0 = dot_product_2(v0, v);
+  const FT D2 = dot_product_2(v, v2);
 
-  return tangent_ns::weight(l1, l2, l3, A1, A2, D1, D2);
+  return tangent_ns::weight(l0, l2, l, A0, A2, D0, D2);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT tangent_weight(const CGAL::Point_2<GeomTraits>& t,
-                                       const CGAL::Point_2<GeomTraits>& r,
-                                       const CGAL::Point_2<GeomTraits>& p,
-                                       const CGAL::Point_2<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefTangentWeights
+  \brief computes the tangent weight in 2D at `q` using the points `p0`, `p1`, and `p2`
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT tangent_weight(const CGAL::Point_2<Kernel>& p0,
+                                   const CGAL::Point_2<Kernel>& p1,
+                                   const CGAL::Point_2<Kernel>& p2,
+                                   const CGAL::Point_2<Kernel>& q)
 {
-  const GeomTraits traits;
-  return tangent_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return tangent_weight(p0, p1, p2, q, traits);
 }
 
+// 3D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefTangentWeights
+  \brief computes the tangent weight in 3D at `q` using the points `p0`, `p1`, and `p2`
+  \tparam GeomTraits a model of `AnalyticWeightTraits_3`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT tangent_weight(const typename GeomTraits::Point_3& t,
-                                       const typename GeomTraits::Point_3& r,
-                                       const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT tangent_weight(const typename GeomTraits::Point_3& p0,
+                                       const typename GeomTraits::Point_3& p1,
+                                       const typename GeomTraits::Point_3& p2,
                                        const typename GeomTraits::Point_3& q,
                                        const GeomTraits& traits)
 {
-  // return tangent_ns::tangent_weight_v1(t, r, p, q, traits);
-  return tangent_ns::tangent_weight_v2(t, r, p, q, traits);
+//  return tangent_ns::tangent_weight_v1(p0, p1, p2, q, traits);
+  return tangent_ns::tangent_weight_v2(p0, p1, p2, q, traits);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT tangent_weight(const CGAL::Point_3<GeomTraits>& t,
-                                       const CGAL::Point_3<GeomTraits>& r,
-                                       const CGAL::Point_3<GeomTraits>& p,
-                                       const CGAL::Point_3<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefTangentWeights
+  \brief computes the tangent weight in 3D at `q` using the points `p0`, `p1`, and `p2`
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT tangent_weight(const CGAL::Point_3<Kernel>& p0,
+                                   const CGAL::Point_3<Kernel>& p1,
+                                   const CGAL::Point_3<Kernel>& p2,
+                                   const CGAL::Point_3<Kernel>& q)
 {
-  const GeomTraits traits;
-  return tangent_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return tangent_weight(p0, p1, p2, q, traits);
 }
 
 // Undocumented tangent weight class.

@@ -20,7 +20,13 @@
 namespace CGAL {
 namespace Weights {
 
-/// \cond SKIP_IN_MANUAL
+// 2D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefUniformRegionWeights
+  \brief this function always returns `1`, given three 2D points.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
 typename GeomTraits::FT uniform_area(const typename GeomTraits::Point_2&,
                                      const typename GeomTraits::Point_2&,
@@ -31,15 +37,27 @@ typename GeomTraits::FT uniform_area(const typename GeomTraits::Point_2&,
   return FT(1);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT uniform_area(const CGAL::Point_2<GeomTraits>& p,
-                                     const CGAL::Point_2<GeomTraits>& q,
-                                     const CGAL::Point_2<GeomTraits>& r)
+/*!
+  \ingroup PkgWeightsRefUniformRegionWeights
+  \brief this function always returns `1`, given three 2D points in 2D.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT uniform_area(const CGAL::Point_2<Kernel>& p,
+                                 const CGAL::Point_2<Kernel>& q,
+                                 const CGAL::Point_2<Kernel>& r)
 {
-  const GeomTraits traits;
+  const Kernel traits;
   return uniform_area(p, q, r, traits);
 }
 
+// 3D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefUniformRegionWeights
+  \brief this function always returns `1`, given three 3D points.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_3`
+*/
 template<typename GeomTraits>
 typename GeomTraits::FT uniform_area(const typename GeomTraits::Point_3&,
                                      const typename GeomTraits::Point_3&,
@@ -50,16 +68,19 @@ typename GeomTraits::FT uniform_area(const typename GeomTraits::Point_3&,
   return FT(1);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT uniform_area(const CGAL::Point_3<GeomTraits>& p,
-                                     const CGAL::Point_3<GeomTraits>& q,
-                                     const CGAL::Point_3<GeomTraits>& r)
+/*!
+  \ingroup PkgWeightsRefUniformRegionWeights
+  \brief this function always returns `1`, given three 3D points.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT uniform_area(const CGAL::Point_3<Kernel>& p,
+                                 const CGAL::Point_3<Kernel>& q,
+                                 const CGAL::Point_3<Kernel>& r)
 {
-  const GeomTraits traits;
+  const Kernel traits;
   return uniform_area(p, q, r, traits);
 }
-
-/// \endcond
 
 } // namespace Weights
 } // namespace CGAL

@@ -38,29 +38,53 @@ FT weight(const FT d)
 
 } // namespace inverse_distance_ns
 
+/// \endcond
+
+/*!
+  \ingroup PkgWeightsRefInverseDistanceWeights
+  \brief computes the inverse distance weight in 2D using the points `p` and `q`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
 typename GeomTraits::FT inverse_distance_weight(const typename GeomTraits::Point_2&,
-                                                const typename GeomTraits::Point_2& r,
+                                                const typename GeomTraits::Point_2& p,
                                                 const typename GeomTraits::Point_2&,
                                                 const typename GeomTraits::Point_2& q,
                                                 const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
-  const FT d = internal::distance_2(traits, q, r);
+  const FT d = internal::distance_2(p, q, traits);
   return inverse_distance_ns::weight(d);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT inverse_distance_weight(const CGAL::Point_2<GeomTraits>& t,
-                                                const CGAL::Point_2<GeomTraits>& r,
-                                                const CGAL::Point_2<GeomTraits>& p,
-                                                const CGAL::Point_2<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefInverseDistanceWeights
+  \brief computes the inverse distance weight in 2D using the points `p` and `q`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+#ifdef DOXYGEN_RUNNING
+typename Kernel::FT inverse_distance_weight(const CGAL::Point_2<Kernel>&,
+                                            const CGAL::Point_2<Kernel>& p,
+                                            const CGAL::Point_2<Kernel>&,
+                                            const CGAL::Point_2<Kernel>& q)
+#else
+typename Kernel::FT inverse_distance_weight(const CGAL::Point_2<Kernel>& stub_l,
+                                            const CGAL::Point_2<Kernel>& p,
+                                            const CGAL::Point_2<Kernel>& stub_r,
+                                            const CGAL::Point_2<Kernel>& q)
+#endif
 {
-  const GeomTraits traits;
-  return inverse_distance_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return inverse_distance_weight(stub_l, p, stub_r, q, traits);
 }
 
+/*!
+  \ingroup PkgWeightsRefInverseDistanceWeights
+  \brief computes the inverse distance weight in 2D using the points `p` and `q`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
 typename GeomTraits::FT inverse_distance_weight(const typename GeomTraits::Point_2& p,
                                                 const typename GeomTraits::Point_2& q,
@@ -70,37 +94,66 @@ typename GeomTraits::FT inverse_distance_weight(const typename GeomTraits::Point
   return inverse_distance_weight(stub, p, stub, q, traits);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT inverse_distance_weight(const CGAL::Point_2<GeomTraits>& p,
-                                                const CGAL::Point_2<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefInverseDistanceWeights
+  \brief computes the inverse distance weight in 2D using the points `p` and `q`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT inverse_distance_weight(const CGAL::Point_2<Kernel>& p,
+                                            const CGAL::Point_2<Kernel>& q)
 {
-  CGAL::Point_2<GeomTraits> stub;
+  CGAL::Point_2<Kernel> stub;
   return inverse_distance_weight(stub, p, stub, q);
 }
 
+// 3D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefInverseDistanceWeights
+  \brief computes the inverse distance weight in 3D using the points `p` and `q`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_3`
+*/
 template<typename GeomTraits>
 typename GeomTraits::FT inverse_distance_weight(const typename GeomTraits::Point_3&,
-                                                const typename GeomTraits::Point_3& r,
+                                                const typename GeomTraits::Point_3& p,
                                                 const typename GeomTraits::Point_3&,
                                                 const typename GeomTraits::Point_3& q,
                                                 const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
-  const FT d = internal::distance_3(traits, q, r);
+  const FT d = internal::distance_3(p, q, traits);
   return inverse_distance_ns::weight(d);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT inverse_distance_weight(const CGAL::Point_3<GeomTraits>& t,
-                                                const CGAL::Point_3<GeomTraits>& r,
-                                                const CGAL::Point_3<GeomTraits>& p,
-                                                const CGAL::Point_3<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefInverseDistanceWeights
+  \brief computes the inverse distance weight in 3D using the points `p` and `q`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+#ifdef DOXYGEN_RUNNING
+typename Kernel::FT inverse_distance_weight(const CGAL::Point_3<Kernel>&,
+                                            const CGAL::Point_3<Kernel>& p,
+                                            const CGAL::Point_3<Kernel>&,
+                                            const CGAL::Point_3<Kernel>& q)
+#else
+typename Kernel::FT inverse_distance_weight(const CGAL::Point_3<Kernel>& stub_l,
+                                            const CGAL::Point_3<Kernel>& p,
+                                            const CGAL::Point_3<Kernel>& stub_r,
+                                            const CGAL::Point_3<Kernel>& q)
+#endif
 {
-  const GeomTraits traits;
-  return inverse_distance_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return inverse_distance_weight(stub_l, p, stub_r, q, traits);
 }
 
+/*!
+  \ingroup PkgWeightsRefInverseDistanceWeights
+  \brief computes the inverse distance weight in 3D using the points `p` and `q`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_3`
+*/
 template<typename GeomTraits>
 typename GeomTraits::FT inverse_distance_weight(const typename GeomTraits::Point_3& p,
                                                 const typename GeomTraits::Point_3& q,
@@ -110,15 +163,18 @@ typename GeomTraits::FT inverse_distance_weight(const typename GeomTraits::Point
   return inverse_distance_weight(stub, p, stub, q, traits);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT inverse_distance_weight(const CGAL::Point_3<GeomTraits>& p,
-                                                const CGAL::Point_3<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefInverseDistanceWeights
+  \brief computes the inverse distance weight in 3D using the points `p` and `q`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT inverse_distance_weight(const CGAL::Point_3<Kernel>& p,
+                                            const CGAL::Point_3<Kernel>& q)
 {
-  CGAL::Point_3<GeomTraits> stub;
+  CGAL::Point_3<Kernel> stub;
   return inverse_distance_weight(stub, p, stub, q);
 }
-
-/// \endcond
 
 } // namespace Weights
 } // namespace CGAL

@@ -214,6 +214,11 @@ typename Kernel::FT tangent(const CGAL::Point_3<Kernel>& p,
   return tangent(p, q, r, traits);
 }
 
+// =================================================================================================
+
+// Computes a clamped cotangent between two 3D vectors.
+// In the old version of weights in PMP, it was called "Cotangent_value_Meyer_secure".
+// See Weights/internal/pmp_weights_deprecated.h for more information.
 template<typename GeomTraits>
 typename GeomTraits::FT cotangent_3_clamped(const typename GeomTraits::Point_3& p,
                                             const typename GeomTraits::Point_3& q,

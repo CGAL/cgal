@@ -31,74 +31,91 @@ namespace Weights {
 namespace wachspress_ns {
 
 template<typename FT>
-FT weight(const FT A1, const FT A2, const FT C)
+FT weight(const FT A0, const FT A2, const FT C)
 {
   FT w = FT(0);
-  CGAL_precondition(A1 != FT(0) && A2 != FT(0));
-  const FT prod = A1 * A2;
-  if (prod != FT(0))
-  {
-    const FT inv = FT(1) / prod;
-    w = C * inv;
-  }
+  CGAL_precondition(!is_zero(A0) && !is_zero(A2));
+  const FT prod = A0 * A2;
+  if (!is_zero(prod))
+    w = C / prod;
+
   return w;
 }
 
-} // wachspress_ns
+} // namespace wachspress_ns
 
+/// \endcond
+
+// 2D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefWachspressWeights
+  \brief computes the Wachspress weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT wachspress_weight(const typename GeomTraits::Point_2& t,
-                                          const typename GeomTraits::Point_2& r,
-                                          const typename GeomTraits::Point_2& p,
+typename GeomTraits::FT wachspress_weight(const typename GeomTraits::Point_2& p0,
+                                          const typename GeomTraits::Point_2& p1,
+                                          const typename GeomTraits::Point_2& p2,
                                           const typename GeomTraits::Point_2& q,
                                           const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
-  const FT A1 = internal::area_2(traits, r, q, t);
-  const FT A2 = internal::area_2(traits, p, q, r);
-  const FT C  = internal::area_2(traits, t, r, p);
-  return wachspress_ns::weight(A1, A2, C);
+
+  auto area_2 = traits.compute_area_2_object();
+
+  const FT A0 = area_2(p1, q, p0);
+  const FT A2 = area_2(p2, q, p1);
+  const FT C  = area_2(p0, p1, p2);
+
+  return wachspress_ns::weight(A0, A2, C);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT wachspress_weight(const CGAL::Point_2<GeomTraits>& t,
-                                          const CGAL::Point_2<GeomTraits>& r,
-                                          const CGAL::Point_2<GeomTraits>& p,
-                                          const CGAL::Point_2<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefWachspressWeights
+  \brief computes the Wachspress weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT wachspress_weight(const CGAL::Point_2<Kernel>& p0,
+                                      const CGAL::Point_2<Kernel>& p1,
+                                      const CGAL::Point_2<Kernel>& p2,
+                                      const CGAL::Point_2<Kernel>& q)
 {
-  const GeomTraits traits;
-  return wachspress_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return wachspress_weight(p0, p1, p2, q, traits);
 }
 
-namespace internal {
+// 3D ==============================================================================================
+
+/// \cond SKIP_IN_MANUAL
 
 template<typename GeomTraits>
-typename GeomTraits::FT wachspress_weight(const typename GeomTraits::Point_3& t,
-                                          const typename GeomTraits::Point_3& r,
-                                          const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT wachspress_weight(const typename GeomTraits::Point_3& p0,
+                                          const typename GeomTraits::Point_3& p1,
+                                          const typename GeomTraits::Point_3& p2,
                                           const typename GeomTraits::Point_3& q,
                                           const GeomTraits& traits)
 {
   using Point_2 = typename GeomTraits::Point_2;
 
-  Point_2 tf, rf, pf, qf;
-  internal::flatten(traits,
-                    t,  r,  p,  q,
-                    tf, rf, pf, qf);
-  return CGAL::Weights::wachspress_weight(tf, rf, pf, qf, traits);
+  Point_2 p0f, p1f, p2f, qf;
+  internal::flatten(p0, p1, p2, q,
+                    p0f, p1f, p2f, qf,
+                    traits);
+
+  return CGAL::Weights::wachspress_weight(p0f, p1f, p2f, qf, traits);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT wachspress_weight(const CGAL::Point_3<GeomTraits>& t,
-                                          const CGAL::Point_3<GeomTraits>& r,
-                                          const CGAL::Point_3<GeomTraits>& p,
-                                          const CGAL::Point_3<GeomTraits>& q)
+template<typename Kernel>
+typename Kernel::FT wachspress_weight(const CGAL::Point_3<Kernel>& p0,
+                                      const CGAL::Point_3<Kernel>& p1,
+                                      const CGAL::Point_3<Kernel>& p2,
+                                      const CGAL::Point_3<Kernel>& q)
 {
-  const GeomTraits traits;
-  return wachspress_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return wachspress_weight(p0, p1, p2, q, traits);
 }
-
-} // namespace internal
 
 /// \endcond
 
@@ -164,9 +181,9 @@ public:
     \param point_map an instance of `PointMap` that maps a vertex from `polygon` to `Point_2`;
                      the default initialization is provided
 
-    \pre polygon.size() >= 3
-    \pre polygon is simple
-    \pre polygon is strictly convex
+    \pre `polygon.size() >= 3`
+    \pre `polygon` is simple
+    \pre `polygon` is strictly convex
   */
   Wachspress_weights_2(const VertexRange& polygon,
                        const GeomTraits traits = GeomTraits(),
@@ -331,9 +348,9 @@ private:
 
   \return an output iterator to the element in the destination range, one past the last weight stored
 
-  \pre polygon.size() >= 3
-  \pre polygon is simple
-  \pre polygon is strictly convex
+  \pre `polygon.size() >= 3`
+  \pre `polygon` is simple
+  \pre `polygon` is strictly convex
 */
 template<typename PointRange,
          typename OutIterator,

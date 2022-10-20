@@ -32,12 +32,12 @@ namespace Weights {
 namespace mean_value_ns {
 
 template<typename FT>
-FT sign_of_weight(const FT A1, const FT A2, const FT B)
+FT sign_of_weight(const FT A0, const FT A2, const FT B)
 {
-  if (A1 > FT(0) && A2 > FT(0) && B <= FT(0))
+  if (A0 > FT(0) && A2 > FT(0) && B <= FT(0))
     return +FT(1);
 
-  if (A1 < FT(0) && A2 < FT(0) && B >= FT(0))
+  if (A0 < FT(0) && A2 < FT(0) && B >= FT(0))
     return -FT(1);
 
   if (B > FT(0))
@@ -50,111 +50,126 @@ FT sign_of_weight(const FT A1, const FT A2, const FT B)
 }
 
 template<typename GeomTraits>
-typename GeomTraits::FT weight(const GeomTraits& traits,
-                               const typename GeomTraits::FT r1,
-                               const typename GeomTraits::FT r2,
-                               const typename GeomTraits::FT r3,
-                               const typename GeomTraits::FT D1,
+typename GeomTraits::FT weight(const typename GeomTraits::FT d0,
+                               const typename GeomTraits::FT d2,
+                               const typename GeomTraits::FT d,
+                               const typename GeomTraits::FT D0,
                                const typename GeomTraits::FT D2,
                                const typename GeomTraits::FT D,
-                               const typename GeomTraits::FT sign)
+                               const typename GeomTraits::FT sign,
+                               const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
   using Get_sqrt = internal::Get_sqrt<GeomTraits>;
   auto sqrt = Get_sqrt::sqrt_object(traits);
 
-  const FT P1 = r1 * r2 + D1;
-  const FT P2 = r2 * r3 + D2;
+  const FT P1 = d * d0 + D0;
+  const FT P2 = d * d2 + D2;
 
   FT w = FT(0);
   CGAL_precondition(!is_zero(P1) && !is_zero(P2));
   const FT prod = P1 * P2;
   if (!is_zero(prod))
   {
-    const FT inv = FT(1) / prod;
-    w = FT(2) * (r1 * r3 - D) * inv;
+    w = FT(2) * (d0 * d2 - D) / prod;
     CGAL_assertion(w >= FT(0));
     w = sqrt(w);
   }
 
-  w *= FT(2); w *= sign;
+  w *= sign * FT(2);
   return w;
 }
 
 } // namespace mean_value_ns
 
+/// \endcond
+
+// 2D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefMeanValueWeights
+  \brief computes the mean value weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT mean_value_weight(const typename GeomTraits::Point_2& t,
-                                          const typename GeomTraits::Point_2& r,
-                                          const typename GeomTraits::Point_2& p,
+typename GeomTraits::FT mean_value_weight(const typename GeomTraits::Point_2& p0,
+                                          const typename GeomTraits::Point_2& p1,
+                                          const typename GeomTraits::Point_2& p2,
                                           const typename GeomTraits::Point_2& q,
                                           const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
   using Vector_2 = typename GeomTraits::Vector_2;
 
+  auto vector_2 = traits.construct_vector_2_object();
   auto dot_product_2 = traits.compute_scalar_product_2_object();
-  auto construct_vector_2 = traits.construct_vector_2_object();
+  auto area_2 = traits.compute_area_2_object();
 
-  const Vector_2 v1 = construct_vector_2(q, t);
-  const Vector_2 v2 = construct_vector_2(q, r);
-  const Vector_2 v3 = construct_vector_2(q, p);
+  const Vector_2 v1 = vector_2(q, p0);
+  const Vector_2 v = vector_2(q, p1);
+  const Vector_2 v2 = vector_2(q, p2);
 
-  const FT l1 = internal::length_2(traits, v1);
-  const FT l2 = internal::length_2(traits, v2);
-  const FT l3 = internal::length_2(traits, v3);
+  const FT d0 = internal::length_2(v1, traits);
+  const FT d = internal::length_2(v, traits);
+  const FT d2 = internal::length_2(v2, traits);
 
-  const FT D1 = dot_product_2(v1, v2);
-  const FT D2 = dot_product_2(v2, v3);
-  const FT D  = dot_product_2(v1, v3);
+  const FT D0 = dot_product_2(v1, v);
+  const FT D2 = dot_product_2(v, v2);
+  const FT D = dot_product_2(v1, v2);
 
-  const FT A1 = internal::area_2(traits, r, q, t);
-  const FT A2 = internal::area_2(traits, p, q, r);
-  const FT B  = internal::area_2(traits, p, q, t);
+  const FT A0 = area_2(p1, q, p0);
+  const FT A2 = area_2(p2, q, p1);
+  const FT B = area_2(p2, q, p0);
 
-  const FT sign = mean_value_ns::sign_of_weight(A1, A2, B);
-  return mean_value_ns::weight(traits, l1, l2, l3, D1, D2, D, sign);
+  const FT sign = mean_value_ns::sign_of_weight(A0, A2, B);
+  return mean_value_ns::weight(d0, d2, d, D0, D2, D, sign, traits);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT mean_value_weight(const CGAL::Point_2<GeomTraits>& t,
-                                          const CGAL::Point_2<GeomTraits>& r,
-                                          const CGAL::Point_2<GeomTraits>& p,
-                                          const CGAL::Point_2<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefMeanValueWeights
+  \brief computes the mean value weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT mean_value_weight(const CGAL::Point_2<Kernel>& p0,
+                                      const CGAL::Point_2<Kernel>& p1,
+                                      const CGAL::Point_2<Kernel>& p2,
+                                      const CGAL::Point_2<Kernel>& q)
 {
-  const GeomTraits traits;
-  return mean_value_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return mean_value_weight(p0, p1, p2, q, traits);
 }
 
-namespace internal {
+// 3D ==============================================================================================
+
+/// \cond SKIP_IN_MANUAL
 
 template<typename GeomTraits>
-typename GeomTraits::FT mean_value_weight(const typename GeomTraits::Point_3& t,
-                                          const typename GeomTraits::Point_3& r,
-                                          const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT mean_value_weight(const typename GeomTraits::Point_3& p0,
+                                          const typename GeomTraits::Point_3& p1,
+                                          const typename GeomTraits::Point_3& p2,
                                           const typename GeomTraits::Point_3& q,
                                           const GeomTraits& traits)
 {
   using Point_2 = typename GeomTraits::Point_2;
-  Point_2 tf, rf, pf, qf;
-  internal::flatten(traits,
-                    t,  r,  p,  q,
-                    tf, rf, pf, qf);
-  return CGAL::Weights::mean_value_weight(tf, rf, pf, qf, traits);
+
+  Point_2 p0f, p1f, p2f, qf;
+  internal::flatten(p0, p1, p2, q,
+                    p0f, p1f, p2f, qf,
+                    traits);
+  return CGAL::Weights::mean_value_weight(p0f, p1f, p2f, qf, traits);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT mean_value_weight(const CGAL::Point_3<GeomTraits>& t,
-                                          const CGAL::Point_3<GeomTraits>& r,
-                                          const CGAL::Point_3<GeomTraits>& p,
-                                          const CGAL::Point_3<GeomTraits>& q)
+template<typename Kernel>
+typename Kernel::FT mean_value_weight(const CGAL::Point_3<Kernel>& p0,
+                                      const CGAL::Point_3<Kernel>& p1,
+                                      const CGAL::Point_3<Kernel>& p2,
+                                      const CGAL::Point_3<Kernel>& q)
 {
-  const GeomTraits traits;
-  return mean_value_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return mean_value_weight(p0, p1, p2, q, traits);
 }
-
-} // namespace internal
 
 /// \endcond
 
@@ -163,13 +178,12 @@ typename GeomTraits::FT mean_value_weight(const CGAL::Point_3<GeomTraits>& t,
 
   \brief 2D mean value weights for polygons.
 
-  This class implements 2D mean value weights ( \cite cgal:bc:hf-mvcapp-06,
-  \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ) which can be computed
-  at any point inside and outside a simple polygon.
+  This class implements 2D mean value weights (\cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03,
+  \cite cgal:bc:hf-mvcapp-06) which can be computed at any point inside and outside a simple polygon.
 
   Mean value weights are well-defined inside and outside a simple polygon and are
   non-negative in the kernel of a star-shaped polygon. These weights are computed
-  analytically using the formulation from the `tangent_weight()`.
+  analytically using the formulation from `tangent_weight()`.
 
   \tparam VertexRange a model of `ConstRange` whose iterator type is `RandomAccessIterator`
   \tparam GeomTraits a model of `AnalyticWeightTraits_2`
@@ -188,6 +202,7 @@ public:
   /// @{
 
   /// \cond SKIP_IN_MANUAL
+
   using Vertex_range = VertexRange;
   using Geom_traits = GeomTraits;
   using Point_map = PointMap;
@@ -199,6 +214,7 @@ public:
   using Scalar_product_2 = typename GeomTraits::Compute_scalar_product_2;
   using Get_sqrt = internal::Get_sqrt<GeomTraits>;
   using Sqrt = typename Get_sqrt::Sqrt;
+
   /// \endcond
 
   /// Number type.
@@ -274,6 +290,7 @@ public:
   /// @}
 
   /// \cond SKIP_IN_MANUAL
+
   template<typename OutIterator>
   OutIterator operator()(const Point_2& query,
                          OutIterator weights,
@@ -414,11 +431,10 @@ private:
   \param traits a traits class with geometric objects, predicates, and constructions;
                 this parameter can be omitted if the traits class can be deduced from the point type
 
-  \return an output iterator to the element in the destination range,
-  one past the last weight stored
+  \return an output iterator to the element in the destination range, one past the last weight stored
 
-  \pre polygon.size() >= 3
-  \pre polygon is simple
+  \pre `polygon.size() >= 3`
+  \pre `polygon` is simple
 */
 template<typename PointRange,
          typename OutIterator,

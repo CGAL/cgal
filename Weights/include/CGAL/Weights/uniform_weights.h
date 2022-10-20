@@ -22,51 +22,68 @@
 namespace CGAL {
 namespace Weights {
 
-/// \cond SKIP_IN_MANUAL
-template<typename GeomTraits>
-typename GeomTraits::FT uniform_weight(
-    const typename GeomTraits::Point_2&,
-    const typename GeomTraits::Point_2&,
-    const typename GeomTraits::Point_2&,
-    const typename GeomTraits::Point_2&,
-    const GeomTraits&) {
+// 2D ==============================================================================================
 
-  using FT = typename GeomTraits::FT;
-  return FT(1);
+/*!
+  \ingroup PkgWeightsRefUniformWeights
+  \brief returns `1`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
+template<typename GeomTraits>
+typename GeomTraits::FT uniform_weight(const typename GeomTraits::Point_2&,
+                                       const typename GeomTraits::Point_2&,
+                                       const typename GeomTraits::Point_2&,
+                                       const typename GeomTraits::Point_2&,
+                                       const GeomTraits&)
+{
+  return {1};
 }
 
+/*!
+  \ingroup PkgWeightsRefUniformWeights
+  \brief returns `1`.
+  \tparam Kernel a model of `Kernel`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT uniform_weight(
-    const CGAL::Point_2<GeomTraits>& q,
-    const CGAL::Point_2<GeomTraits>& t,
-    const CGAL::Point_2<GeomTraits>& r,
-    const CGAL::Point_2<GeomTraits>& p) {
-
+typename GeomTraits::FT uniform_weight(const CGAL::Point_2<GeomTraits>& p0,
+                                       const CGAL::Point_2<GeomTraits>& p1,
+                                       const CGAL::Point_2<GeomTraits>& p2,
+                                       const CGAL::Point_2<GeomTraits>& q)
+{
   const GeomTraits traits;
-  return uniform_weight(q, t, r, p, traits);
+  return uniform_weight(p0, p1, p2, q, traits);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT uniform_weight(
-    const typename GeomTraits::Point_3&,
-    const typename GeomTraits::Point_3&,
-    const typename GeomTraits::Point_3&,
-    const typename GeomTraits::Point_3&,
-    const GeomTraits&) {
+// 3D ==============================================================================================
 
-  using FT = typename GeomTraits::FT;
-  return FT(1);
+/*!
+  \ingroup PkgWeightsRefUniformWeights
+  \brief returns `1`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
+template<typename GeomTraits>
+typename GeomTraits::FT uniform_weight(const typename GeomTraits::Point_3&,
+                                       const typename GeomTraits::Point_3&,
+                                       const typename GeomTraits::Point_3&,
+                                       const typename GeomTraits::Point_3&,
+                                       const GeomTraits&)
+{
+  return {1};
 }
 
+/*!
+  \ingroup PkgWeightsRefUniformWeights
+  \brief returns `1`.
+  \tparam Kernel a model of `Kernel`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT uniform_weight(
-    const CGAL::Point_3<GeomTraits>& q,
-    const CGAL::Point_3<GeomTraits>& t,
-    const CGAL::Point_3<GeomTraits>& r,
-    const CGAL::Point_3<GeomTraits>& p) {
-
+typename GeomTraits::FT uniform_weight(const CGAL::Point_3<GeomTraits>& p0,
+                                       const CGAL::Point_3<GeomTraits>& p1,
+                                       const CGAL::Point_3<GeomTraits>& p2,
+                                       const CGAL::Point_3<GeomTraits>& q)
+{
   const GeomTraits traits;
-  return uniform_weight(q, t, r, p, traits);
+  return uniform_weight(p0, p1, p2, q, traits);
 }
 
 // Undocumented uniform weight class taking as input a polygon mesh.
@@ -84,8 +101,6 @@ public:
   double w_i(vertex_descriptor) { return 1.; }
   double w_ij(halfedge_descriptor) { return 1.; }
 };
-
-/// \endcond
 
 } // namespace Weights
 } // namespace CGAL

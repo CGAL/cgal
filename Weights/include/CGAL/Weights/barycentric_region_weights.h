@@ -22,6 +22,13 @@
 namespace CGAL {
 namespace Weights {
 
+// 2D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefBarycentricRegionWeights
+  \brief computes the area of the barycentric cell in 2D using the points `p`, `q`, and `r`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
 typename GeomTraits::FT barycentric_area(const typename GeomTraits::Point_2& p,
                                          const typename GeomTraits::Point_2& q,
@@ -38,20 +45,32 @@ typename GeomTraits::FT barycentric_area(const typename GeomTraits::Point_2& p,
   const Point_2 m1 = midpoint_2(q, r);
   const Point_2 m2 = midpoint_2(q, p);
 
-  const FT A1 = internal::positive_area_2(traits, q, m1, center);
-  const FT A2 = internal::positive_area_2(traits, q, center, m2);
+  const FT A1 = internal::positive_area_2(q, m1, center, traits);
+  const FT A2 = internal::positive_area_2(q, center, m2, traits);
   return A1 + A2;
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT barycentric_area(const CGAL::Point_2<GeomTraits>& p,
-                                         const CGAL::Point_2<GeomTraits>& q,
-                                         const CGAL::Point_2<GeomTraits>& r)
+/*!
+  \ingroup PkgWeightsRefBarycentricRegionWeights
+  \brief computes the area of the barycentric cell in 2D using the points `p`, `q`, and `r`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT barycentric_area(const CGAL::Point_2<Kernel>& p,
+                                     const CGAL::Point_2<Kernel>& q,
+                                     const CGAL::Point_2<Kernel>& r)
 {
-  const GeomTraits traits;
+  const Kernel traits;
   return barycentric_area(p, q, r, traits);
 }
 
+// 3D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefBarycentricRegionWeights
+  \brief computes the area of the barycentric cell in 3D using the points `p`, `q`, and `r`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_3`
+*/
 template<typename GeomTraits>
 typename GeomTraits::FT barycentric_area(const typename GeomTraits::Point_3& p,
                                          const typename GeomTraits::Point_3& q,
@@ -68,17 +87,22 @@ typename GeomTraits::FT barycentric_area(const typename GeomTraits::Point_3& p,
   const Point_3 m1 = midpoint_3(q, r);
   const Point_3 m2 = midpoint_3(q, p);
 
-  const FT A1 = internal::positive_area_3(traits, q, m1, center);
-  const FT A2 = internal::positive_area_3(traits, q, center, m2);
+  const FT A1 = internal::positive_area_3(q, m1, center, traits);
+  const FT A2 = internal::positive_area_3(q, center, m2, traits);
   return A1 + A2;
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT barycentric_area(const CGAL::Point_3<GeomTraits>& p,
-                                         const CGAL::Point_3<GeomTraits>& q,
-                                         const CGAL::Point_3<GeomTraits>& r)
+/*!
+  \ingroup PkgWeightsRefBarycentricRegionWeights
+  \brief computes the area of the barycentric cell in 3D using the points `p`, `q`, and `r`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT barycentric_area(const CGAL::Point_3<Kernel>& p,
+                                     const CGAL::Point_3<Kernel>& q,
+                                     const CGAL::Point_3<Kernel>& r)
 {
-  const GeomTraits traits;
+  const Kernel traits;
   return barycentric_area(p, q, r, traits);
 }
 

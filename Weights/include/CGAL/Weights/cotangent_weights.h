@@ -65,57 +65,82 @@ FT half_cotangent_weight(const FT cot)
   return cotangent_ns::half_weight(cot);
 }
 
+/*!
+  \ingroup PkgWeightsRefCotangentWeights
+  \brief computes the cotangent weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT cotangent_weight(const typename GeomTraits::Point_2& t,
-                                         const typename GeomTraits::Point_2& r,
-                                         const typename GeomTraits::Point_2& p,
+typename GeomTraits::FT cotangent_weight(const typename GeomTraits::Point_2& p0,
+                                         const typename GeomTraits::Point_2& p1,
+                                         const typename GeomTraits::Point_2& p2,
                                          const typename GeomTraits::Point_2& q,
                                          const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
-  const FT cot_beta  = internal::cotangent_2(traits, q, t, r);
-  const FT cot_gamma = internal::cotangent_2(traits, r, p, q);
+  const FT cot_beta  = cotangent_2(q, p0, p1, traits);
+  const FT cot_gamma = cotangent_2(p1, p2, q, traits);
 
   return cotangent_ns::weight(cot_beta, cot_gamma);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT cotangent_weight(const CGAL::Point_2<GeomTraits>& t,
-                                         const CGAL::Point_2<GeomTraits>& r,
-                                         const CGAL::Point_2<GeomTraits>& p,
-                                         const CGAL::Point_2<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefCotangentWeights
+  \brief computes the cotangent weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT cotangent_weight(const CGAL::Point_2<Kernel>& p0,
+                                     const CGAL::Point_2<Kernel>& p1,
+                                     const CGAL::Point_2<Kernel>& p2,
+                                     const CGAL::Point_2<Kernel>& q)
 {
-  GeomTraits traits;
-  return cotangent_weight(t, r, p, q, traits);
+  Kernel traits;
+  return cotangent_weight(p0, p1, p2, q, traits);
 }
 
+// 3D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefCotangentWeights
+  \brief computes the cotangent weight in 3D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_3`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT cotangent_weight(const typename GeomTraits::Point_3& t,
-                                         const typename GeomTraits::Point_3& r,
-                                         const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT cotangent_weight(const typename GeomTraits::Point_3& p0,
+                                         const typename GeomTraits::Point_3& p1,
+                                         const typename GeomTraits::Point_3& p2,
                                          const typename GeomTraits::Point_3& q,
                                          const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
-  const FT cot_beta  = internal::cotangent_3(traits, q, t, r);
-  const FT cot_gamma = internal::cotangent_3(traits, r, p, q);
+  const FT cot_beta  = cotangent_3(q, p0, p1, traits);
+  const FT cot_gamma = cotangent_3(p1, p2, q, traits);
 
   return cotangent_ns::weight(cot_beta, cot_gamma);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT cotangent_weight(const CGAL::Point_3<GeomTraits>& t,
-                                         const CGAL::Point_3<GeomTraits>& r,
-                                         const CGAL::Point_3<GeomTraits>& p,
-                                         const CGAL::Point_3<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefCotangentWeights
+  \brief computes the cotangent weight in 3D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT cotangent_weight(const CGAL::Point_3<Kernel>& p0,
+                                     const CGAL::Point_3<Kernel>& p1,
+                                     const CGAL::Point_3<Kernel>& p2,
+                                     const CGAL::Point_3<Kernel>& q)
 {
-  GeomTraits traits;
-  return cotangent_weight(t, r, p, q, traits);
+  Kernel traits;
+  return cotangent_weight(p0, p1, p2, q, traits);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 // Undocumented cotangent weight class.
+//
 // Its constructor takes a polygon mesh and a vertex to point map
 // and its operator() is defined based on the halfedge_descriptor only.
 // This version is currently used in:
@@ -219,6 +244,7 @@ public:
 };
 
 // Undocumented cotangent weight class.
+//
 // Its constructor takes a boolean flag to choose between default and clamped
 // versions of the cotangent weights and its operator() is defined based on the
 // halfedge_descriptor, polygon mesh, and vertex to point map.
@@ -459,6 +485,8 @@ private:
     return voronoi_area;
   }
 };
+
+/// \endcond
 
 } // namespace Weights
 } // namespace CGAL

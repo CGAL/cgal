@@ -31,81 +31,96 @@ namespace Weights {
 namespace discrete_harmonic_ns {
 
 template<typename FT>
-FT weight(const FT d1, const FT d2, const FT d,
-          const FT A1, const FT A2, const FT B)
+FT weight(const FT d0, const FT d2, const FT d,
+          const FT A0, const FT A2, const FT B)
 {
   FT w = FT(0);
-  CGAL_precondition(!is_zero(A1) && !is_zero(A2));
-  const FT prod = A1 * A2;
+  CGAL_precondition(!is_zero(A0) && !is_zero(A2));
+  const FT prod = A0 * A2;
   if (!is_zero(prod))
-    w = (d2 * A1 - d * B + d1 * A2) / prod;
+    w = (d2 * A0 - d * B + d0 * A2) / prod;
 
   return w;
 }
 
 } // namespace discrete_harmonic_ns
 
+/// \endcond
+
+// 2D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefDiscreteHarmonicWeights
+  \brief computes the discrete harmonic weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT discrete_harmonic_weight(const typename GeomTraits::Point_2& t,
-                                                 const typename GeomTraits::Point_2& r,
-                                                 const typename GeomTraits::Point_2& p,
+typename GeomTraits::FT discrete_harmonic_weight(const typename GeomTraits::Point_2& p0,
+                                                 const typename GeomTraits::Point_2& p1,
+                                                 const typename GeomTraits::Point_2& p2,
                                                  const typename GeomTraits::Point_2& q,
                                                  const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
   auto squared_distance_2 = traits.compute_squared_distance_2_object();
+  auto area_2 = traits.compute_area_2_object();
 
-  const FT d1 = squared_distance_2(q, t);
-  const FT d2 = squared_distance_2(q, r);
-  const FT d3 = squared_distance_2(q, p);
+  const FT d0 = squared_distance_2(q, p0);
+  const FT d = squared_distance_2(q, p1);
+  const FT d2 = squared_distance_2(q, p2);
 
-  const FT A1 = internal::area_2(traits, r, q, t);
-  const FT A2 = internal::area_2(traits, p, q, r);
-  const FT B  = internal::area_2(traits, p, q, t);
+  const FT A0 = area_2(p1, q, p0);
+  const FT A2 = area_2(p2, q, p1);
+  const FT B = area_2(p2, q, p0);
 
-  return discrete_harmonic_ns::weight(d1, d2, d3, A1, A2, B);
+  return discrete_harmonic_ns::weight(d0, d2, d, A0, A2, B);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT discrete_harmonic_weight(const CGAL::Point_2<GeomTraits>& t,
-                                                 const CGAL::Point_2<GeomTraits>& r,
-                                                 const CGAL::Point_2<GeomTraits>& p,
-                                                 const CGAL::Point_2<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefDiscreteHarmonicWeights
+  \brief computes the discrete harmonic weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT discrete_harmonic_weight(const CGAL::Point_2<Kernel>& p0,
+                                             const CGAL::Point_2<Kernel>& p1,
+                                             const CGAL::Point_2<Kernel>& p2,
+                                             const CGAL::Point_2<Kernel>& q)
 {
-  const GeomTraits traits;
-  return discrete_harmonic_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return discrete_harmonic_weight(p0, p1, p2, q, traits);
 }
 
-namespace internal {
+// 3D ==============================================================================================
+
+/// \cond SKIP_IN_MANUAL
 
 template<typename GeomTraits>
-typename GeomTraits::FT discrete_harmonic_weight(const typename GeomTraits::Point_3& t,
-                                                 const typename GeomTraits::Point_3& r,
-                                                 const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT discrete_harmonic_weight(const typename GeomTraits::Point_3& p0,
+                                                 const typename GeomTraits::Point_3& p1,
+                                                 const typename GeomTraits::Point_3& p2,
                                                  const typename GeomTraits::Point_3& q,
                                                  const GeomTraits& traits)
 {
   using Point_2 = typename GeomTraits::Point_2;
 
-  Point_2 tf, rf, pf, qf;
-  internal::flatten(traits,
-                    t,  r,  p,  q,
-                    tf, rf, pf, qf);
-  return CGAL::Weights::discrete_harmonic_weight(tf, rf, pf, qf, traits);
+  Point_2 p0f, p1f, p2f, qf;
+  internal::flatten(p0, p1, p2, q,
+                    p0f, p1f, p2f, qf,
+                    traits);
+  return discrete_harmonic_weight(p0f, p1f, p2f, qf, traits);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT discrete_harmonic_weight(const CGAL::Point_3<GeomTraits>& t,
-                                                 const CGAL::Point_3<GeomTraits>& r,
-                                                 const CGAL::Point_3<GeomTraits>& p,
-                                                 const CGAL::Point_3<GeomTraits>& q)
+template<typename Kernel>
+typename Kernel::FT discrete_harmonic_weight(const CGAL::Point_3<Kernel>& p0,
+                                             const CGAL::Point_3<Kernel>& p1,
+                                             const CGAL::Point_3<Kernel>& p2,
+                                             const CGAL::Point_3<Kernel>& q)
 {
-  const GeomTraits traits;
-  return discrete_harmonic_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return discrete_harmonic_weight(p0, p1, p2, q, traits);
 }
-
-} // namespace internal
 
 /// \endcond
 
@@ -125,7 +140,7 @@ typename GeomTraits::FT discrete_harmonic_weight(const CGAL::Point_3<GeomTraits>
   \tparam VertexRange a model of `ConstRange` whose iterator type is `RandomAccessIterator`
   \tparam GeomTraits a model of `AnalyticWeightTraits_2`
   \tparam PointMap a model of `ReadablePropertyMap` whose key type is `VertexRange::value_type` and
-  value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+                   value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
   \cgalModels `BarycentricWeights_2`
 */
@@ -341,9 +356,9 @@ private:
 
   \return an output iterator to the element in the destination range, one past the last weight stored
 
-  \pre polygon.size() >= 3
-  \pre polygon is simple
-  \pre polygon is strictly convex
+  \pre `polygon.size() >= 3`
+  \pre `polygon` is simple
+  \pre `polygon` is strictly convex
 */
 template<typename PointRange,
          typename OutIterator,
@@ -358,7 +373,6 @@ OutIterator discrete_harmonic_weights_2(const PointRange& polygon,
 }
 
 /// \cond SKIP_IN_MANUAL
-
 template<typename PointRange,
          typename OutIterator>
 OutIterator discrete_harmonic_weights_2(const PointRange& polygon,

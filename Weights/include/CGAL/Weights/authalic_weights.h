@@ -57,79 +57,103 @@ FT weight(const FT cot_gamma, const FT cot_beta, const FT r2)
 
   \brief computes the half value of the authalic weight.
 
-  This function constructs the half of the authalic weight using the precomputed
+  This function computes the half of the authalic weight using the precomputed
   cotangent and squared distance values. The returned value is
-  \f$\frac{2\textbf{cot}}{\textbf{d2}}\f$.
+  \f$\frac{2\textbf{cot}}{\textbf{sq_d}}\f$.
 
   \tparam FT a model of `FieldNumberType`
 
   \param cot the cotangent value
-  \param d2 the squared distance value
+  \param sq_d the squared distance value
 
-  \pre d2 != 0
+  \pre sq_d != 0
 
   \sa `authalic_weight()`
 */
 template<typename FT>
-FT half_authalic_weight(const FT cot, const FT d2)
+FT half_authalic_weight(const FT cot, const FT sq_d)
 {
-  return authalic_ns::half_weight(cot, d2);
+  return authalic_ns::half_weight(cot, sq_d);
 }
 
+// 2D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefAuthalicWeights
+  \brief computes the authalic weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT authalic_weight(const typename GeomTraits::Point_2& t,
-                                        const typename GeomTraits::Point_2& r,
-                                        const typename GeomTraits::Point_2& p,
+typename GeomTraits::FT authalic_weight(const typename GeomTraits::Point_2& p0,
+                                        const typename GeomTraits::Point_2& p1,
+                                        const typename GeomTraits::Point_2& p2,
                                         const typename GeomTraits::Point_2& q,
                                         const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
+  const FT cot_gamma = cotangent_2(p0, p1, q, traits);
+  const FT cot_beta = cotangent_2(q, p1, p2, traits);
+
   auto squared_distance_2 = traits.compute_squared_distance_2_object();
+  const FT sq_d = squared_distance_2(q, p1);
 
-  const FT cot_gamma = internal::cotangent_2(traits, t, r, q);
-  const FT cot_beta  = internal::cotangent_2(traits, q, r, p);
-
-  const FT d2 = squared_distance_2(q, r);
-  return authalic_ns::weight(cot_gamma, cot_beta, d2);
+  return authalic_ns::weight(cot_gamma, cot_beta, sq_d);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT authalic_weight(const CGAL::Point_2<GeomTraits>& t,
-                                        const CGAL::Point_2<GeomTraits>& r,
-                                        const CGAL::Point_2<GeomTraits>& p,
-                                        const CGAL::Point_2<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefAuthalicWeights
+  \brief computes the authalic weight in 2D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT authalic_weight(const CGAL::Point_2<Kernel>& p0,
+                                    const CGAL::Point_2<Kernel>& p1,
+                                    const CGAL::Point_2<Kernel>& p2,
+                                    const CGAL::Point_2<Kernel>& q)
 {
-  const GeomTraits traits;
-  return authalic_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return authalic_weight(p0, p1, p2, q, traits);
 }
 
+// 3D ==============================================================================================
+
+/*!
+  \ingroup PkgWeightsRefAuthalicWeights
+  \brief computes the authalic weight in 3D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_3`
+*/
 template<typename GeomTraits>
-typename GeomTraits::FT authalic_weight(const typename GeomTraits::Point_3& t,
-                                        const typename GeomTraits::Point_3& r,
-                                        const typename GeomTraits::Point_3& p,
+typename GeomTraits::FT authalic_weight(const typename GeomTraits::Point_3& p0,
+                                        const typename GeomTraits::Point_3& p1,
+                                        const typename GeomTraits::Point_3& p2,
                                         const typename GeomTraits::Point_3& q,
                                         const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
 
+  const FT cot_gamma = cotangent_3(p0, p1, q, traits);
+  const FT cot_beta  = cotangent_3(q, p1, p2, traits);
+
   auto squared_distance_3 = traits.compute_squared_distance_3_object();
+  const FT sq_d = squared_distance_3(q, p1);
 
-  const FT cot_gamma = internal::cotangent_3(traits, t, r, q);
-  const FT cot_beta  = internal::cotangent_3(traits, q, r, p);
-  const FT d2 = squared_distance_3(q, r);
-
-  return authalic_ns::weight(cot_gamma, cot_beta, d2);
+  return authalic_ns::weight(cot_gamma, cot_beta, sq_d);
 }
 
-template<typename GeomTraits>
-typename GeomTraits::FT authalic_weight(const CGAL::Point_3<GeomTraits>& t,
-                                        const CGAL::Point_3<GeomTraits>& r,
-                                        const CGAL::Point_3<GeomTraits>& p,
-                                        const CGAL::Point_3<GeomTraits>& q)
+/*!
+  \ingroup PkgWeightsRefAuthalicWeights
+  \brief computes the authalic weight in 3D at `q` using the points `p0`, `p1`, and `p2`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT authalic_weight(const CGAL::Point_3<Kernel>& p0,
+                                    const CGAL::Point_3<Kernel>& p1,
+                                    const CGAL::Point_3<Kernel>& p2,
+                                    const CGAL::Point_3<Kernel>& q)
 {
-  const GeomTraits traits;
-  return authalic_weight(t, r, p, q, traits);
+  const Kernel traits;
+  return authalic_weight(p0, p1, p2, q, traits);
 }
 
 } // namespace Weights
