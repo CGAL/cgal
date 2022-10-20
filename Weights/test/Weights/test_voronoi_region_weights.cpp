@@ -12,6 +12,22 @@ using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 template<typename Kernel>
 void test_kernel()
 {
+  using FT      = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
+  using Point_3 = typename Kernel::Point_3;
+
+  const Point_2 p( 2, 0);
+  const Point_2 q( 0, 2);
+  const Point_2 r(-2, 0);
+  const FT w1 = CGAL::Weights::voronoi_area(p, q, r);
+  assert(w1 == FT(2));
+
+  const Point_3 s( 0, -2, 0);
+  const Point_3 t( 0,  0, 2);
+  const Point_3 u( 0,  2, 0);
+  const FT w4 = CGAL::Weights::voronoi_area(s, t, u);
+  assert(w4 == FT(2));
+
   const wrappers::Voronoi_region_wrapper<Kernel> vor;
   tests::test_region_weight<Kernel>(vor);
 }
