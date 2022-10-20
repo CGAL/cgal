@@ -78,7 +78,7 @@ public:
       vimap_(get(Vertex_local_index(), mesh_)),
       scale_volume_after_smoothing(true),
       traits_(traits),
-      weight_calculator_(mesh, vpmap)
+      weight_calculator_(mesh_, vpmap_, traits_, false /*no clamping*/, false /*no bounding from below*/)
   { }
 
   template<typename FaceRange>
@@ -177,7 +177,8 @@ public:
         if(is_source_constrained && is_target_constrained)
           continue;
 
-        const FT Lij = weight_calculator_(hi);
+        // Cotangent_weight returns (cot(beta) + cot(gamma)) / 2
+        const FT Lij = FT(2) * weight_calculator_(hi);
 
         const std::size_t i_source = get(vimap_, v_source);
         const std::size_t i_target = get(vimap_, v_target);
@@ -368,8 +369,8 @@ private:
   std::vector<double> diagonal_; // index of vector -> index of vimap_
   std::vector<bool> constrained_flags_;
 
-  const GeomTraits& traits_;
-  const CGAL::Weights::Edge_cotangent_weight<TriangleMesh, VertexPointMap> weight_calculator_;
+  GeomTraits traits_;
+  const CGAL::Weights::Cotangent_weight<TriangleMesh, VertexPointMap, GeomTraits> weight_calculator_;
 };
 
 } // internal
