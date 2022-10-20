@@ -19,6 +19,8 @@
   "This part of the package is deprecated since the version 5.4 of CGAL!"
 #include <CGAL/Installation/internal/deprecation_warning.h>
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 // README:
 // This header collects all weights which have been in CGAL before unifying them
 // into the new package Weights. This header is for information purpose only. It
