@@ -726,7 +726,7 @@ private:
 
     for(halfedge_descriptor h : CGAL::halfedges_around_target(v, tmesh))
     {
-      NT w_ij = NT(-1) * compute_mvc(h);
+      NT w_ij = NT(-1) * weight_calc(h);
       // w_ii = - sum of w_ijs
       w_ii -= w_ij;
 
