@@ -641,9 +641,6 @@ private:
     const PPM_ref position_v_i = get(ppmap, main_vertex_v_i);
     const PPM_ref position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    const Vector_3 edge = position_v_i - position_v_j;
-    const NT squared_length = edge * edge;
-
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     --previous_vertex_v_k;
     const PPM_ref position_v_k = get(ppmap, *previous_vertex_v_k);
@@ -652,14 +649,10 @@ private:
     ++next_vertex_v_l;
     const PPM_ref position_v_l = get(ppmap, *next_vertex_v_l);
 
-    NT weight = NT(0);
-    CGAL_assertion(squared_length > NT(0)); // two points are identical!
-    if(squared_length != NT(0)) {
-      // This version was commented out to be an alternative weight
-      // in the original code by authors.
-      // weight = CGAL::Weights::authalic_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
-      weight = CGAL::Weights::cotangent_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
-    }
+    // This version was commented out to be an alternative weight in the original code by authors.
+//    NT weight = CGAL::Weights::authalic_weight(position_v_l, position_v_j, position_v_k, position_v_i) / NT(2);
+    NT weight = CGAL::Weights::cotangent_weight(position_v_l, position_v_j, position_v_k, position_v_i) / NT(2);
+
     return weight;
   }
 
