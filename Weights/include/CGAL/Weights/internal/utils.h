@@ -191,19 +191,19 @@ double angle_3(const typename GeomTraits::Vector_3& v1,
 {
   auto dot_product_3 = traits.compute_scalar_product_3_object();
 
-  const double product = CGAL::sqrt(to_double(scalar_product(v1,v1)) * to_double(scalar_product(v2,v2)));
+  const double product = CGAL::sqrt(to_double(dot_product_3(v1,v1) * dot_product_3(v2,v2)));
   if(product == 0.)
     return 0.;
 
   const double dot = CGAL::to_double(dot_product_3(v1, v2));
-  const double costine = dot / product;
+  const double cosine = dot / product;
 
-  if (dot < -1.0)
+  if (cosine < -1.0)
     return std::acos(-1.0);
-  else if (dot > 1.0)
+  else if (cosine > 1.0)
     return std::acos(+1.0);
   else
-    return std::acos(dot);
+    return std::acos(cosine);
 }
 
 // Rotates a 3D point around axis.
@@ -387,15 +387,9 @@ void flatten(const typename GeomTraits::Point_3& t, // prev neighbor/vertex/poin
   Vector_3 v1 = vector_3(q1, t1);
   Vector_3 v2 = vector_3(q1, p1);
 
-  normalize_3(v1, traits);
-  normalize_3(v2, traits);
-
   // Two triangle normals.
   Vector_3 n1 = cross_product_3(v1, ax);
   Vector_3 n2 = cross_product_3(ax, v2);
-
-  normalize_3(n1, traits);
-  normalize_3(n2, traits);
 
   // std::cout << "normal n1: " << n1 << std::endl;
   // std::cout << "normal n2: " << n2 << std::endl;
@@ -474,12 +468,9 @@ typename GeomTraits::FT area_3(const typename GeomTraits::Point_3& p,
   // Prev and next vectors.
   Vector_3 v1 = vector_3(b, a);
   Vector_3 v2 = vector_3(b, c);
-  normalize_3(v1, traits);
-  normalize_3(v2, traits);
 
   // Compute normal.
   Vector_3 normal = cross_product_3(v1, v2);
-  normalize_3(normal, traits);
 
   // Compute orthogonal base vectors.
   Vector_3 b1, b2;

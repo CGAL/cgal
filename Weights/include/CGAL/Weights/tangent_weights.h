@@ -123,10 +123,6 @@ typename GeomTraits::FT tangent_weight_v2(const typename GeomTraits::Point_3& p0
 
   const FT l2 = internal::length_3(v, traits);
 
-  internal::normalize_3(v0, traits);
-  internal::normalize_3(v, traits);
-  internal::normalize_3(v2, traits);
-
   const double ha_rad_1 = internal::angle_3(v0, v, traits) / 2.0;
   const double ha_rad_2 = internal::angle_3(v, v2, traits) / 2.0;
   const FT t0 = static_cast<FT>(std::tan(ha_rad_1));
