@@ -186,14 +186,14 @@ public:
         // note that these constraints create asymmetry in the matrix
         if(!is_source_constrained)
         {
-          stiffness_elements.push_back(Triplet(i_source, i_target, Lij));
-          diag_coeff.insert(std::make_pair(i_source, 0)).first->second -= Lij;
+          stiffness_elements.emplace_back(i_source, i_target, Lij);
+          diag_coeff.emplace(i_source, 0).first->second -= Lij;
         }
 
         if(!is_target_constrained)
         {
-          stiffness_elements.push_back(Triplet(i_target, i_source, Lij));
-          diag_coeff.insert(std::make_pair(i_target, 0)).first->second -= Lij;
+          stiffness_elements.emplace_back(i_target, i_source, Lij);
+          diag_coeff.emplace(i_target, 0).first->second -= Lij;
         }
       }
     }
@@ -201,7 +201,7 @@ public:
     typename std::unordered_map<std::size_t, double>::iterator it = diag_coeff.begin(),
                                                                end = diag_coeff.end();
     for(; it!=end; ++it)
-      stiffness_elements.push_back(Triplet(it->first, it->first, it->second));
+      stiffness_elements.emplace_back(it->first, it->first, it->second);
   }
 
   void update_mesh_no_scaling(const Eigen_vector& Xx, const Eigen_vector& Xy, const Eigen_vector& Xz)
