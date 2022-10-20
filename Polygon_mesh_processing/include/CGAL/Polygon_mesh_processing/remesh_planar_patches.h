@@ -675,7 +675,7 @@ template <typename vertex_descriptor,
           typename OutputIterator>
 void extract_meshes_containing_a_point(
   const Point_3& pt,
-  const std::map<Point_3, std::map<std::size_t, vertex_descriptor> >& point_to_vertex_maps,
+  const std::map<Point_3, std::multimap<std::size_t, vertex_descriptor> >& point_to_vertex_maps,
   OutputIterator out)
 {
   typedef std::pair<const std::size_t, vertex_descriptor> Pair_type;
@@ -691,7 +691,7 @@ template <typename TriangleMesh,
           typename VertexPointMap>
 void mark_boundary_of_shared_patches_as_constrained_edges(
   std::vector<TriangleMesh*>& mesh_ptrs,
-  std::map<Point_3, std::map<std::size_t, vertex_descriptor> >& point_to_vertex_maps,
+  std::map<Point_3, std::multimap<std::size_t, vertex_descriptor> >& point_to_vertex_maps,
   std::vector<EdgeIsConstrainedMap>& edge_is_constrained_maps,
   std::vector<VertexIsSharedMap>& vertex_shared_maps,
   const std::vector<VertexPointMap>& vpms)
@@ -728,9 +728,9 @@ void mark_boundary_of_shared_patches_as_constrained_edges(
                               tgt_set.begin(), tgt_set.end(),
                               std::inserter(inter_set, inter_set.begin()));
 
-        std::map<std::size_t, vertex_descriptor>& mesh_to_vertex_src =
+        std::multimap<std::size_t, vertex_descriptor>& mesh_to_vertex_src =
           point_to_vertex_maps[get(vpms[mesh_id], src)];
-        std::map<std::size_t, vertex_descriptor>& mesh_to_vertex_tgt =
+        std::multimap<std::size_t, vertex_descriptor>& mesh_to_vertex_tgt =
           point_to_vertex_maps[get(vpms[mesh_id], tgt)];
 
         std::set<Point_3> incident_face_points;
@@ -745,28 +745,41 @@ void mark_boundary_of_shared_patches_as_constrained_edges(
         {
           TriangleMesh* other_tm_ptr = mesh_ptrs[other_mesh_id];
           if (other_tm_ptr==&tm) continue;
-          vertex_descriptor other_src=mesh_to_vertex_src[other_mesh_id];
-          vertex_descriptor other_tgt=mesh_to_vertex_tgt[other_mesh_id];
-          std::pair<halfedge_descriptor, bool> hres = halfedge(other_src, other_tgt, *other_tm_ptr);
-          if (hres.second)
+
+          std::vector<vertex_descriptor> srcs, tgts;
+          auto it = mesh_to_vertex_src.find(other_mesh_id);
+          while (it!=mesh_to_vertex_src.end() && it->first==other_mesh_id)
+            srcs.push_back(it++->second);
+          it = mesh_to_vertex_tgt.find(other_mesh_id);
+          while (it!=mesh_to_vertex_tgt.end() && it->first==other_mesh_id)
+            tgts.push_back(it++->second);
+
+          for (vertex_descriptor other_src : srcs)
           {
-            if (is_border_edge(hres.first, *other_tm_ptr))
+            for (vertex_descriptor other_tgt : tgts)
             {
-              put(edge_is_constrained, e, true);
-              break;
-            }
-            if (incident_face_points.count(
-                  get(vpms[other_mesh_id], target(next(hres.first, *other_tm_ptr), *other_tm_ptr)))==0)
-            {
-              put(edge_is_constrained, e, true);
-              break;
-            }
-            hres.first=opposite(hres.first, *other_tm_ptr);
-            if (incident_face_points.count(
-                  get(vpms[other_mesh_id], target(next(hres.first, *other_tm_ptr), *other_tm_ptr)))==0)
-            {
-              put(edge_is_constrained, e, true);
-              break;
+              std::pair<halfedge_descriptor, bool> hres = halfedge(other_src, other_tgt, *other_tm_ptr);
+              if (hres.second)
+              {
+                if (is_border_edge(hres.first, *other_tm_ptr))
+                {
+                  put(edge_is_constrained, e, true);
+                  break;
+                }
+                if (incident_face_points.count(
+                      get(vpms[other_mesh_id], target(next(hres.first, *other_tm_ptr), *other_tm_ptr)))==0)
+                {
+                  put(edge_is_constrained, e, true);
+                  break;
+                }
+                hres.first=opposite(hres.first, *other_tm_ptr);
+                if (incident_face_points.count(
+                      get(vpms[other_mesh_id], target(next(hres.first, *other_tm_ptr), *other_tm_ptr)))==0)
+                {
+                  put(edge_is_constrained, e, true);
+                  break;
+                }
+              }
             }
           }
         }
@@ -781,10 +794,10 @@ template<typename Point_3,
          typename VertexIsSharedMap>
 void propagate_corner_status(
   std::vector<VertexIsSharedMap>& vertex_corner_id_maps,
-  std::map<Point_3, std::map<std::size_t, vertex_descriptor> >& point_to_vertex_maps,
+  std::map<Point_3, std::multimap<std::size_t, vertex_descriptor> >& point_to_vertex_maps,
   std::vector< std::pair<std::size_t, std::size_t> >& nb_corners_and_nb_cc_all)
 {
-  typedef std::pair<const Point_3, std::map<std::size_t, vertex_descriptor> > Pair_type;
+  typedef std::pair<const Point_3, std::multimap<std::size_t, vertex_descriptor> > Pair_type;
   for(Pair_type& p : point_to_vertex_maps)
   {
     // if one vertex is a corner, all should be
@@ -1010,7 +1023,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
       put(face_cc_ids_maps.back(), f, -1);
   }
 
-  std::map<Point_3, std::map<std::size_t, vertex_descriptor> > point_to_vertex_maps;
+  std::map<Point_3, std::multimap<std::size_t, vertex_descriptor> > point_to_vertex_maps;
 
   //start by detecting and marking all shared vertices
   std::size_t mesh_id = 0;
@@ -1020,7 +1033,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
     for(vertex_descriptor v : vertices(tm))
     {
-      std::map<std::size_t, vertex_descriptor>& mesh_id_to_vertex =
+      std::multimap<std::size_t, vertex_descriptor>& mesh_id_to_vertex =
         point_to_vertex_maps[get(vpms[mesh_id], v)];
       if (!mesh_id_to_vertex.empty())
         put(vertex_shared_maps[mesh_id], v, true);
