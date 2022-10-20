@@ -723,7 +723,7 @@ private:
                                               VertexIndexMap& vimap) const
   {
     auto vpm = get_const_property_map(CGAL::vertex_point, tmesh);
-    const CGAL::Weights::Edge_tangent_weight<Triangle_mesh, decltype(vpm)> compute_mvc(tmesh, vpm);
+    const CGAL::Weights::Edge_tangent_weight<Triangle_mesh, decltype(vpm), Kernel> weight_calc(tmesh, vpm, Kernel());
 
     const int i = get(vimap, v);
 
