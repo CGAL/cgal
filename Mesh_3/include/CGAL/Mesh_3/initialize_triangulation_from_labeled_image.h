@@ -33,6 +33,7 @@ struct Get_point
 {
   const double vx, vy, vz;
   const double tx, ty, tz;
+  const std::size_t xdim, ydim, zdim;
   Get_point(const CGAL::Image_3* image)
     : vx(image->vx())
     , vy(image->vy())
@@ -40,15 +41,27 @@ struct Get_point
     , tx(image->tx())
     , ty(image->ty())
     , tz(image->tz())
+    , xdim(image->xdim())
+    , ydim(image->ydim())
+    , zdim(image->zdim())
   {}
 
   Point operator()(const std::size_t i,
                    const std::size_t j,
                    const std::size_t k) const
   {
-    return Point(double(i) * vx + tx,
-                 double(j) * vy + ty,
-                 double(k) * vz + tz);
+    double x = double(i) * vx + tx;
+    double y = double(j) * vy + ty;
+    double z = double(k) * vz + tz;
+
+    if (i == 0)              x += 1. / 6. * vx;
+    else if (i == xdim - 1)  x -= 1. / 6. * vx;
+    if (j == 0)              y += 1. / 6. * vy;
+    else if (j == ydim - 1)  y -= 1. / 6. * vy;
+    if (k == 0)              z += 1. / 6. * vz;
+    else if (k == zdim - 1)  z -= 1. / 6. * vz;
+
+    return Point(x, y, z);
   }
 };
 template<class C3T3, class MeshDomain, class MeshCriteria>
