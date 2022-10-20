@@ -191,17 +191,19 @@ double angle_3(const typename GeomTraits::Vector_3& v1,
 {
   auto dot_product_3 = traits.compute_scalar_product_3_object();
 
+  const double product = CGAL::sqrt(to_double(scalar_product(v1,v1)) * to_double(scalar_product(v2,v2)));
+  if(product == 0.)
+    return 0.;
+
   const double dot = CGAL::to_double(dot_product_3(v1, v2));
+  const double costine = dot / product;
 
-  double angle_rad = 0.0;
   if (dot < -1.0)
-    angle_rad = std::acos(-1.0);
+    return std::acos(-1.0);
   else if (dot > 1.0)
-    angle_rad = std::acos(+1.0);
+    return std::acos(+1.0);
   else
-    angle_rad = std::acos(dot);
-
-  return angle_rad;
+    return std::acos(dot);
 }
 
 // Rotates a 3D point around axis.
@@ -441,7 +443,8 @@ typename GeomTraits::FT positive_area_2(const typename GeomTraits::Point_2& p,
                                         const typename GeomTraits::Point_2& r,
                                         const GeomTraits& traits)
 {
-  return CGAL::abs(area_2(traits, p, q, r));
+  auto area_2 = traits.compute_area_2_object();
+  return CGAL::abs(area_2(p, q, r));
 }
 
 template<typename GeomTraits>

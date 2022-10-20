@@ -114,7 +114,7 @@ Edge_case bounded_side_2(const VertexRange& polygon,
     const auto& currp = get(point_map, *curr);
     const auto& nextp = get(point_map, *next);
 
-    auto next_y_comp_res = compare_y_2(nextp, query);
+    Comparison_result next_y_comp_res = compare_y_2(nextp, query);
     switch (curr_y_comp_res) {
       case CGAL::SMALLER:
         switch (next_y_comp_res) {

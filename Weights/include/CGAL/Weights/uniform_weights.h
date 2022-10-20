@@ -86,7 +86,10 @@ typename GeomTraits::FT uniform_weight(const CGAL::Point_3<GeomTraits>& p0,
   return uniform_weight(p0, p1, p2, q, traits);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 // Undocumented uniform weight class taking as input a polygon mesh.
+//
 // It is currently used in:
 // Polygon_mesh_processing -> triangulate_hole_Polyhedron_3_test.cpp
 // Polygon_mesh_processing -> triangulate_hole_Polyhedron_3_no_delaunay_test.cpp
@@ -101,6 +104,8 @@ public:
   double w_i(vertex_descriptor) { return 1.; }
   double w_ij(halfedge_descriptor) { return 1.; }
 };
+
+/// \endcond
 
 } // namespace Weights
 } // namespace CGAL
