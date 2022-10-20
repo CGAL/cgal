@@ -478,7 +478,7 @@ private:
     double weight;
   };
 
-  NT determinant(Point_2& v0, Point_2& v1) const
+  NT determinant(const Point_2& v0, const Point_2& v1) const
   {
     return (v0.x() * v1.y() - v1.x() * v0.y());
   }
@@ -489,8 +489,8 @@ private:
     const NT det0 = determinant(uv1, uv2);
     const NT det1 = determinant(uv2, uv0);
     const NT det2 = determinant(uv0, uv1);
-    const NT det3 = CGAL::determinant(Vector_2<Kernel>(uv1.x()-uv0.x(), uv1.y()-uv0.y()),
-                                      Vector_2<Kernel>(uv2.x()-uv0.x(), uv2.y()-uv0.y()));
+    NT det3 = CGAL::determinant(Vector_2<Kernel>(uv1.x()-uv0.x(), uv1.y()-uv0.y()),
+                                Vector_2<Kernel>(uv2.x()-uv0.x(), uv2.y()-uv0.y()));
     CGAL_assertion(det3 > NT(0));
     if(det3 <= NT(0))
       det3 = NT(1);
@@ -527,7 +527,7 @@ private:
     {
       Neighbor_list NL;
       NL.vertex = *v_j;
-      NL.vector = Vector_3(get(ppmap, v), tmesh.point(*v_j));
+      NL.vector = Vector_3(get(ppmap, v), get(ppmap, *v_j));
       NL.length = sqrt(NL.vector.squared_length());
       neighbor_list.push_back(NL);
       ++neighborsCounter;
