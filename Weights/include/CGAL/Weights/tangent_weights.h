@@ -365,16 +365,24 @@ typename Kernel::FT tangent_weight(const CGAL::Point_3<Kernel>& p0,
   return tangent_weight(p0, p1, p2, q, traits);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 // Undocumented tangent weight class.
+//
 // Its constructor takes a polygon mesh and a vertex to point map
 // and its operator() is defined based on the halfedge_descriptor only.
 // This version is currently used in:
 // Surface_mesh_parameterizer -> Iterative_authalic_parameterizer_3.h
-template<typename PolygonMesh,
-         typename VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
+template<
+    typename PolygonMesh,
+    typename VertexPointMap,
+    typename GeomTraits>
 class Edge_tangent_weight
 {
-  using GeomTraits = typename CGAL::Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type;
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+
+  using Point_ref = typename boost::property_traits<VertexPointMap>::reference;
   using FT = typename GeomTraits::FT;
 
   const PolygonMesh& m_pmesh;
@@ -382,17 +390,20 @@ class Edge_tangent_weight
   const GeomTraits m_traits;
 
 public:
-  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
-  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
-  Edge_tangent_weight(const PolygonMesh& pmesh, const VertexPointMap pmap)
-    : m_pmesh(pmesh), m_pmap(pmap), m_traits()
+  Edge_tangent_weight(const PolygonMesh& pmesh,
+                      const VertexPointMap pmap,
+                      const GeomTraits& traits)
+    : m_pmesh(pmesh), m_pmap(pmap), m_traits(traits)
   { }
 
-  FT operator()(const halfedge_descriptor he) const
+  FT operator()(halfedge_descriptor he) const
   {
+    if(is_border(he, m_pmesh))
+      return FT(0);
+
     FT weight = FT(0);
-    if (is_border_edge(he, m_pmesh))
+    if (is_border_edge(he, m_pmesh)) // ie, opp(he, pmesh) is a border halfedge
     {
       const halfedge_descriptor h1 = next(he, m_pmesh);
 
@@ -400,11 +411,11 @@ public:
       const vertex_descriptor v1 = source(he, m_pmesh);
       const vertex_descriptor v2 = target(h1, m_pmesh);
 
-      const auto& p0 = get(m_pmap, v0);
-      const auto& p1 = get(m_pmap, v1);
-      const auto& p2 = get(m_pmap, v2);
+      const Point_ref p0 = get(m_pmap, v0);
+      const Point_ref p1 = get(m_pmap, v1);
+      const Point_ref p2 = get(m_pmap, v2);
 
-      weight = internal::tangent_3(m_traits, p0, p2, p1);
+      weight = half_tangent_weight(p1, p0, p2, m_traits) / FT(2);
     }
     else
     {
@@ -416,75 +427,80 @@ public:
       const vertex_descriptor v2 = target(h1, m_pmesh);
       const vertex_descriptor v3 = source(h2, m_pmesh);
 
-      const auto& p0 = get(m_pmap, v0);
-      const auto& p1 = get(m_pmap, v1);
-      const auto& p2 = get(m_pmap, v2);
-      const auto& p3 = get(m_pmap, v3);
+      const Point_ref p0 = get(m_pmap, v0);
+      const Point_ref p1 = get(m_pmap, v1);
+      const Point_ref p2 = get(m_pmap, v2);
+      const Point_ref p3 = get(m_pmap, v3);
 
-      weight = tangent_weight(p2, p1, p3, p0) / FT(2);
+      weight = tangent_weight(p2, p1, p3, p0, m_traits) / FT(2);
     }
     return weight;
   }
 };
 
 // Undocumented tangent weight class.
+// Returns - std::tan(theta/2); uses positive areas.
+//
 // Its constructor takes three points either in 2D or 3D.
 // This version is currently used in:
 // Surface_mesh_parameterizer -> MVC_post_processor_3.h
 // Surface_mesh_parameterizer -> Orbifold_Tutte_parameterizer_3.h
 template<typename FT>
-class Tangent_weight {
+class Tangent_weight
+{
   FT m_d_r, m_d_p, m_w_base;
 
 public:
-  template<typename GeomTraits>
-  Tangent_weight(const CGAL::Point_2<GeomTraits>& p,
-                 const CGAL::Point_2<GeomTraits>& q,
-                 const CGAL::Point_2<GeomTraits>& r)
+  template<typename Kernel>
+  Tangent_weight(const CGAL::Point_2<Kernel>& p,
+                 const CGAL::Point_2<Kernel>& q,
+                 const CGAL::Point_2<Kernel>& r)
   {
-    using Vector_2 = typename GeomTraits::Vector_2;
+    const Kernel traits;
 
-    const GeomTraits traits;
+    using Vector_2 = typename Kernel::Vector_2;
 
+    auto vector_2 = traits.construct_vector_2_object();
     auto scalar_product_2 = traits.compute_scalar_product_2_object();
-    auto construct_vector_2 = traits.construct_vector_2_object();
 
-    m_d_r = internal::distance_2(traits, q, r);
-    CGAL_assertion(m_d_r != FT(0)); // two points are identical!
-    m_d_p = internal::distance_2(traits, q, p);
-    CGAL_assertion(m_d_p != FT(0)); // two points are identical!
+    m_d_r = internal::distance_2(q, r, traits);
+    CGAL_assertion(is_positive(m_d_r)); // two points are identical!
+    m_d_p = internal::distance_2(q, p, traits);
+    CGAL_assertion(is_positive(m_d_p)); // two points are identical!
 
-    const Vector_2 v1 = construct_vector_2(q, r);
-    const Vector_2 v2 = construct_vector_2(q, p);
+    const Vector_2 v1 = vector_2(q, r);
+    const Vector_2 v2 = vector_2(q, p);
 
-    const FT A = internal::positive_area_2(traits, p, q, r);
-    CGAL_assertion(A != FT(0)); // three points are identical!
+    const FT A = internal::positive_area_2(p, q, r, traits);
+    CGAL_assertion(!is_zero(A));
+
     const FT S = scalar_product_2(v1, v2);
     m_w_base = -tangent_half_angle(m_d_r, m_d_p, A, S);
   }
 
-  template<typename GeomTraits>
-  Tangent_weight(const CGAL::Point_3<GeomTraits>& p,
-                 const CGAL::Point_3<GeomTraits>& q,
-                 const CGAL::Point_3<GeomTraits>& r)
+  template<typename Kernel>
+  Tangent_weight(const CGAL::Point_3<Kernel>& p,
+                 const CGAL::Point_3<Kernel>& q,
+                 const CGAL::Point_3<Kernel>& r)
   {
-    using Vector_3 = typename GeomTraits::Vector_3;
+    const Kernel traits;
 
-    const GeomTraits traits;
+    using Vector_3 = typename Kernel::Vector_3;
 
+    auto vector_3 = traits.construct_vector_3_object();
     auto scalar_product_3 = traits.compute_scalar_product_3_object();
-    auto construct_vector_3 = traits.construct_vector_3_object();
 
-    m_d_r = internal::distance_3(traits, q, r);
-    CGAL_assertion(m_d_r != FT(0)); // two points are identical!
-    m_d_p = internal::distance_3(traits, q, p);
-    CGAL_assertion(m_d_p != FT(0)); // two points are identical!
+    m_d_r = internal::distance_3(q, r, traits);
+    CGAL_assertion(is_positive(m_d_r)); // two points are identical!
+    m_d_p = internal::distance_3(q, p, traits);
+    CGAL_assertion(is_positive(m_d_p)); // two points are identical!
 
-    const Vector_3 v1 = construct_vector_3(q, r);
-    const Vector_3 v2 = construct_vector_3(q, p);
+    const Vector_3 v1 = vector_3(q, r);
+    const Vector_3 v2 = vector_3(q, p);
 
-    const FT A = internal::positive_area_3(traits, p, q, r);
-    CGAL_assertion(A != FT(0)); // three points are identical!
+    const FT A = internal::positive_area_3(p, q, r, traits);
+    CGAL_assertion(is_positive(A));
+
     const FT S = scalar_product_3(v1, v2);
     m_w_base = -tangent_half_angle(m_d_r, m_d_p, A, S);
   }
