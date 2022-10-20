@@ -883,11 +883,9 @@ private:
   void compute_edge_weight()
   {
     m_edge_weight.clear();
-    m_edge_weight.reserve(2 * num_edges(m_tmesh));
+    m_edge_weight.reserve(num_halfedges(m_tmesh));
     for(halfedge_descriptor hd : halfedges(m_tmesh))
-    {
       m_edge_weight.push_back(m_weight_calculator(hd, m_tmesh, m_tmesh_point_pmap));
-    }
   }
 
   /// Assemble the left hand side.
