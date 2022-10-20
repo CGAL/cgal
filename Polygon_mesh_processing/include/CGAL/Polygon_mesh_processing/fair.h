@@ -159,20 +159,22 @@ bool fair(TriangleMesh& tmesh,
 #endif
 
     typedef typename GetVertexPointMap < TriangleMesh, NamedParameters>::type VPMap;
+    VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                   get_property_map(vertex_point, tmesh));
+
+    typedef typename GetGeomTraits < TriangleMesh, NamedParameters>::type GT;
+    GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
     // Cotangent_weight_with_voronoi_area_fairing has been changed to the version:
-    // Cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from
+    // Secure_cotangent_weight_with_voronoi_area to avoid imprecisions from
     // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
-    typedef CGAL::Weights::Secure_cotangent_weight_with_voronoi_area<TriangleMesh, VPMap> Default_weight_calculator;
-
-    VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                    get_property_map(vertex_point, tmesh));
+    typedef CGAL::Weights::Secure_cotangent_weight_with_voronoi_area<TriangleMesh, VPMap, GT> Default_weight_calculator;
 
     return internal::fair(tmesh, vertices,
       choose_parameter<Default_solver>(get_parameter(np, internal_np::sparse_linear_solver)),
-      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_weight_calculator(tmesh, vpmap_)),
+      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_weight_calculator(tmesh, vpmap, gt)),
       choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
-      vpmap_);
+      vpmap);
   }
 
   template<typename TriangleMesh, typename VertexRange>
