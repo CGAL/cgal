@@ -13,7 +13,7 @@ typedef CGAL::Point_set_3<Point> Point_set;
 
 int main (int argc, char** argv)
 {
-  const char* filename = argc > 1 ? argv[1] : "data/oni.xyz";
+  const std::string filename = argc > 1 ? argv[1] : CGAL::data_file_path("points_3/oni.pwn");
 
   Point_set point_set;
   if(!CGAL::IO::read_point_set(filename, point_set))

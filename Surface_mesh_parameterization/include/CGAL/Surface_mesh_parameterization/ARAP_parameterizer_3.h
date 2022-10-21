@@ -83,9 +83,8 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <iostream>
 #include <fstream>
 #include <limits>
@@ -93,6 +92,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 /// \file ARAP_parameterizer_3.h
 
@@ -138,7 +138,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -162,7 +162,7 @@ namespace Surface_mesh_parameterization {
 /// \endcode
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Iterative_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+/// \sa `CGAL::Surface_mesh_parameterization::Iterative_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
 template < class TriangleMesh_,
            class BorderParameterizer_ = Default,
@@ -176,7 +176,7 @@ public:
     Two_vertices_parameterizer_3<TriangleMesh_> >::type       Border_parameterizer;
 
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -223,7 +223,7 @@ private:
   typedef CGAL::Halfedge_around_target_circulator<Triangle_mesh>    halfedge_around_target_circulator;
   typedef CGAL::Halfedge_around_face_circulator<Triangle_mesh>      halfedge_around_face_circulator;
 
-  typedef boost::unordered_set<vertex_descriptor>                   Vertex_set;
+  typedef std::unordered_set<vertex_descriptor>                     Vertex_set;
   typedef std::vector<face_descriptor>                              Faces_vector;
 
   // Traits subtypes:
@@ -378,8 +378,8 @@ private:
     }
 
     // temporary vpmap since we do not need it in the future
-    boost::unordered_set<vertex_descriptor> vs;
-    internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpmap(vs);
+    std::unordered_set<vertex_descriptor> vs;
+    internal::Bool_property_map<std::unordered_set<vertex_descriptor> > vpmap(vs);
 
     // According to the paper, MVC is better for single border and LSCM is better
     // when there are multiple borders
@@ -420,7 +420,7 @@ private:
       // A local uvmap (that is then discarded) is passed to avoid changing
       // the values of the real uvmap. Since we can't get VertexUVMap::C,
       // we build a map with the same key and value types
-      typedef boost::unordered_map<typename VertexUVMap::key_type,
+      typedef std::unordered_map<typename VertexUVMap::key_type,
                                    typename VertexUVMap::value_type> Useless_map;
       typedef boost::associative_property_map<Useless_map>           Useless_pmap;
 
@@ -1293,9 +1293,9 @@ public:
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The vertices must be indexed (vimap must be initialized).

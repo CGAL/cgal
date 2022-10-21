@@ -7,8 +7,11 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
-#include <iostream>
+#include <cassert>
 #include <fstream>
+#include <iostream>
+#include <iterator>
+#include <string>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
@@ -23,7 +26,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mech-holes-shark.off");
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
@@ -42,7 +45,7 @@ int main(int argc, char* argv[])
                                                                        CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, mesh))
                                                                                         .geom_traits(Kernel())));
 
-      CGAL_assertion(CGAL::is_valid_polygon_mesh(mesh));
+      assert(CGAL::is_valid_polygon_mesh(mesh));
 
       std::cout << "* FILL HOLE NUMBER " << ++nb_holes << std::endl;
       std::cout << "  Number of facets in constructed patch: " << patch_facets.size() << std::endl;
@@ -51,7 +54,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  CGAL_assertion(CGAL::is_valid_polygon_mesh(mesh));
+  assert(CGAL::is_valid_polygon_mesh(mesh));
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
 

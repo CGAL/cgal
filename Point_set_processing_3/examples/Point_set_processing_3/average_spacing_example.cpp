@@ -20,7 +20,7 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/sphere_20k.xyz";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("points_3/sphere_20k.xyz");
 
   // Reads a file in points.
   // As the point is the second element of the tuple (that is with index 1)

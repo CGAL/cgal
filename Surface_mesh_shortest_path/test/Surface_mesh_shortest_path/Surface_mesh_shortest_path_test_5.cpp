@@ -5,7 +5,6 @@
 
 #include <CGAL/Random.h>
 
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
@@ -17,7 +16,6 @@
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
-#include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/test_util.h>
 #include "check.h"
@@ -188,6 +186,3 @@ int main(int argc, char* argv[])
   }
    return 0;
 }
-
-
-

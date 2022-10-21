@@ -28,6 +28,12 @@ target_link_libraries(
          ${OPENGL_gl_LIBRARY})
 target_include_directories(mesh_3_plugin PRIVATE include)
 
+find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+if(ITK_FOUND)
+  include(CGAL_ITK_support)
+  target_link_libraries(mesh_3_plugin PUBLIC CGAL::ITK_support)
+endif(ITK_FOUND)
+
 find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
 if(VTK_FOUND)
   if(VTK_USE_FILE)

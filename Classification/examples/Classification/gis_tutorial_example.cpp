@@ -188,17 +188,18 @@ using CTP = CGAL::Constrained_triangulation_plus_2<CDT>;
 
 int main (int argc, char** argv)
 {
+  const std::string fname = argc != 2 ? CGAL::data_file_path("points_3/b9_training.ply") : argv[1];
   if (argc != 2)
   {
     std::cerr << "Usage: " << argv[0] << " points.ply" << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << "Running with default value " << fname << "\n";
   }
 
   ///////////////////////////////////////////////////////////////////
   //! [Init DSM]
 
   // Read points
-  std::ifstream ifile (argv[1], std::ios_base::binary);
+  std::ifstream ifile (fname, std::ios_base::binary);
   CGAL::Point_set_3<Point_3> points;
   ifile >> points;
   std::cerr << points.size() << " point(s) read" << std::endl;
@@ -669,7 +670,7 @@ int main (int argc, char** argv)
   }
 
   std::size_t nb_vertices
-    = std::accumulate (polylines.begin(), polylines.end(), 0u,
+    = std::accumulate (polylines.begin(), polylines.end(), std::size_t(0),
                        [](std::size_t size, const std::vector<Point_3>& poly) -> std::size_t
                        { return size + poly.size(); });
 

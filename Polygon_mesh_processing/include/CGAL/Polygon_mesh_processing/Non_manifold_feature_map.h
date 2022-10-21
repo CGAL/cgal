@@ -10,8 +10,10 @@
 // Author(s)     : Sebastien Loriot
 
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_NON_MANIFOLD_FEATURE_MAP
-#define CGAL_POLYGON_MESH_PROCESSING_NON_MANIFOLD_FEATURE_MAP
+#ifndef CGAL_POLYGON_MESH_PROCESSING_NON_MANIFOLD_FEATURE_MAP_H
+#define CGAL_POLYGON_MESH_PROCESSING_NON_MANIFOLD_FEATURE_MAP_H
+
+#include <CGAL/license/Polygon_mesh_processing/core.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {

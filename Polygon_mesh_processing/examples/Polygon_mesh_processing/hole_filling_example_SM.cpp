@@ -8,9 +8,10 @@
 #include <boost/lexical_cast.hpp>
 
 #include <iostream>
-#include <fstream>
+#include <iterator>
+#include <string>
+#include <tuple>
 #include <vector>
-#include <set>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
@@ -49,7 +50,7 @@ bool is_small_hole(halfedge_descriptor h, Mesh & mesh,
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mech-holes-shark.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))

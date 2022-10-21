@@ -487,7 +487,7 @@ public:
           sce[1-i] = svc;
           --svc;
           if(svc->circle().oriented_side(sv[0]->point()) == os1) {
-            // sedges are only on one side "
+            // sedges are only on one side
             sce[i] = scb[1-i] = sce[1-i];
             empty_c[1-i] = true;
             done = true;
@@ -796,7 +796,7 @@ public:
 
     if(!empty_c[1] && !empty_e[1]) {
       CGAL_assertion(first_first == empty_c[0]);
-      if(first_first) { // nothing happend on the other half
+      if(first_first) { // nothing happened on the other half
         if(equator[2] || equator[3]) {
           first_first = false;
           previous_first = sv[3]->out_sedge();

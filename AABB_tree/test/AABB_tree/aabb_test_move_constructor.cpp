@@ -2,6 +2,7 @@
 #include <iostream>
 #include <list>
 #include <utility>
+#include <cassert>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
@@ -124,7 +125,7 @@ public:
       assert(in);
       in >> m1;
       in.close();
-      in.open("data/tetrahedron.off");
+      in.open(CGAL::data_file_path("meshes/tetrahedron.off"));
       assert(in);
       in >> m2;
       in.close();
@@ -149,12 +150,12 @@ public:
     std::list<S_Tree::Primitive::Id> s_primitives;
     cube_tree.all_intersected_primitives(tet_tree,
                                          std::back_inserter(t_primitives));
-    CGAL_assertion(t_primitives.size() == 6);
+    assert(t_primitives.size() == 6);
     tet_tree.all_intersected_primitives(cube_tree,
                                         std::back_inserter(s_primitives));
-    CGAL_assertion(s_primitives.size() == 6);
-    CGAL_assertion(tet_tree.do_intersect(cube_tree));
-    CGAL_assertion(cube_tree.do_intersect(tet_tree));
+    assert(s_primitives.size() == 6);
+    assert(tet_tree.do_intersect(cube_tree));
+    assert(cube_tree.do_intersect(tet_tree));
 
     std::vector<T_Tree::Primitive::Id> all_primitives;
     cube_tree.all_intersected_primitives(tet_tree,
@@ -164,8 +165,8 @@ public:
       if ((int)prim.first == 5)
         found_f5 = true;
     }
-    CGAL_assertion(found_f5);
-    CGAL_USE(found_f5);
+    assert(found_f5);
+
     return true;
   }
 };

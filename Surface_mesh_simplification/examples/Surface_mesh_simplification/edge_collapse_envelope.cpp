@@ -30,7 +30,7 @@ typedef SMS::Polyhedral_envelope_filter<Kernel,SMS::Bounded_normal_change_filter
 int main(int argc, char** argv)
 {
   Surface mesh;
-  std::ifstream is(argc > 1 ? argv[1] : "data/helmet.off");
+  std::ifstream is(argc > 1 ? argv[1] : CGAL::data_file_path("meshes/helmet.off"));
   is >> mesh;
 
   SMS::Count_stop_predicate<Surface> stop(0); // go as far as you can while in the envelope

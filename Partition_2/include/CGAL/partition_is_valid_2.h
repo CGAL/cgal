@@ -201,10 +201,10 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 }
 } // namespace internal
 
-template<class InputIterator, class FowardIterator>
+template<class InputIterator, class ForwardIterator>
 bool
 partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
-                      FowardIterator poly_first, FowardIterator poly_last)
+                      ForwardIterator poly_first, ForwardIterator poly_last)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
    typedef typename Kernel_traits<Point_2>::Kernel     K;
@@ -218,10 +218,10 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 }
 
 
-template<class InputIterator, class FowardIterator, class Traits>
+template<class InputIterator, class ForwardIterator, class Traits>
 bool
 partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
-                      FowardIterator poly_first, FowardIterator poly_last,
+                      ForwardIterator poly_first, ForwardIterator poly_last,
                       const Traits& traits)
 {
   //typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;

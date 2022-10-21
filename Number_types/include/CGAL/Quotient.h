@@ -33,6 +33,9 @@
 #include <CGAL/Kernel/mpl.h>
 
 #include <boost/operators.hpp>
+#ifdef CGAL_USE_BOOST_MP
+#include <boost/multiprecision/cpp_int.hpp>
+#endif // CGAL_USE_BOOST_MP
 
 namespace CGAL {
 
@@ -45,6 +48,15 @@ namespace CGAL {
 template < typename NT >
 inline void
 simplify_quotient(NT &, NT &) {}
+
+#ifdef CGAL_USE_BOOST_MP
+inline void
+simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
+  const boost::multiprecision::cpp_int r = boost::multiprecision::gcd(a, b);
+  a /= r;
+  b /= r;
+}
+#endif // CGAL_USE_BOOST_MP
 
 // This one should be replaced by some functor or tag.
 // Meanwhile, the class is specialized for Gmpz, mpz_class, leda_integer.
@@ -616,7 +628,7 @@ public:
     };
 
     typedef typename boost::mpl::if_c<
-        !boost::is_same< typename Algebraic_structure_traits<NT>::Sqrt,
+        !std::is_same< typename Algebraic_structure_traits<NT>::Sqrt,
                          Null_functor >::value,
          typename INTERN_QUOTIENT::Sqrt_selector< Type,
                                                   Is_exact >::Sqrt,
@@ -687,7 +699,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-          Interval_nt<> quot =
+          const Interval_nt<> quot =
                           Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
                           Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
           return std::make_pair(quot.inf(), quot.sup());

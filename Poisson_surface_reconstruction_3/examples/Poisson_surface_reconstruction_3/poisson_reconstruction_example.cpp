@@ -43,7 +43,7 @@ int main(void)
     // Note: read_points() requires an iterator over points
     // + property maps to access each point's position and normal.
     PointList points;
-    if(!CGAL::IO::read_points("data/kitten.xyz", std::back_inserter(points),
+    if(!CGAL::IO::read_points(CGAL::data_file_path("points_3/kitten.xyz"), std::back_inserter(points),
                           CGAL::parameters::point_map(Point_map())
                                            .normal_map (Normal_map())))
     {

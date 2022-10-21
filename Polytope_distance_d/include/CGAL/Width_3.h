@@ -1231,7 +1231,7 @@ class Width_3 {
 
   // *** ORIGIN_INSIDE_CH ***
   //-------------------------
-  // To ensure that zero lies completly inside the convex hull of a point set.
+  // To ensure that zero lies completely inside the convex hull of a point set.
   // Returns true if the point set is not coplanar, false otherwise
   // PRECONDITION: Iterator range has at least 3 points
   template<class InputDA, class Vertex_iterator_>

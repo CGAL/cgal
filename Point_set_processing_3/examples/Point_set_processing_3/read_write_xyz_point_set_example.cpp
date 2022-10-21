@@ -19,7 +19,7 @@ typedef std::pair<Point, Vector> Pwn;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1) ? argv[1] : "data/oni.xyz";
+  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/oni.pwn");
 
   // Reads a .xyz point set file in points[].
   // Note: read_points() requires an output iterator

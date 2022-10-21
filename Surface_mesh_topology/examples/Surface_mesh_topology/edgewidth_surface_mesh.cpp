@@ -31,7 +31,7 @@ void display_cycle_info(const Mesh& mesh, const Path_on_surface& cycle)
 
 int main(int argc, char* argv[])
 {
-  std::string filename(argc==1?"data/3torus.off":argv[1]);
+  std::string filename(argc==1?CGAL::data_file_path("meshes/3torus.off"):argv[1]);
   bool draw=(argc<3?false:(std::string(argv[2])=="-draw"));
 
   Mesh sm;

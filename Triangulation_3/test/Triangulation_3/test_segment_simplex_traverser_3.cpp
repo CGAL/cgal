@@ -144,7 +144,7 @@ bool test(const DT& dt,
         break;
       }
       default:
-        CGAL_assume(false);
+        CGAL_unreachable();
       } // end switch
   }
 }

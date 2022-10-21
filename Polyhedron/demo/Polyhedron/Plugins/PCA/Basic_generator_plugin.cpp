@@ -772,7 +772,7 @@ void Basic_generator_plugin::generateLines()
       std::vector<Face> patch;
       CGAL::Polygon_mesh_processing::triangulate_hole_polyline(polyline,
                                                                std::back_inserter(patch),
-                                                               CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(true));
+                                                               CGAL::parameters::use_delaunay_triangulation(true));
 
       if(patch.empty()) {
           QMessageBox::warning(mw, "Warning", "Triangulation failed.");

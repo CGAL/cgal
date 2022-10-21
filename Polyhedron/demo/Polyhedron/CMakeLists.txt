@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 project( Polyhedron_Demo )
 include(FeatureSummary)
 
@@ -110,7 +110,7 @@ endif()
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
-if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
+if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
   add_definitions(-DCGAL_CONCURRENT_MESH_3)
   if(NOT TBB_FOUND)
     find_package(TBB REQUIRED)
@@ -122,7 +122,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
     endif()
   endif()
 
-else(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
+else(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
   option(LINK_WITH_TBB
          "Link with TBB anyway so we can use TBB timers for profiling" ON)
   if(LINK_WITH_TBB)
@@ -268,6 +268,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   endif()
   add_item(scene_tetrahedra_item Scene_tetrahedra_item.cpp)
   target_link_libraries(scene_tetrahedra_item PUBLIC scene_c3t3_item)
+
   add_item(scene_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp)
   add_item(scene_image_item Scene_image_item.cpp)

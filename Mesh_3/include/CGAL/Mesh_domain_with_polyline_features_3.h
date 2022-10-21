@@ -29,17 +29,16 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Mesh_3/internal/indices_management.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 #include <vector>
 #include <set>
 #include <map>
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <memory>
 
 namespace CGAL {
@@ -373,16 +372,23 @@ private:
 
       if(nearest_is_a_segment)
       {
-        if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
-        {
-          nearest_segment = seg;
-          result = previous;
-        }
         if(compare_distance(p, *it, nearest_segment) == CGAL::SMALLER)
         {
           nearest_vertex = it;
           nearest_is_a_segment = false;
           result = it;
+          if (possibly(angle(*previous, *it, p) == CGAL::ACUTE) &&
+              compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+          {
+            nearest_segment = seg;
+            nearest_is_a_segment = true;
+            result = previous;
+          }
+        }
+        else if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
+        {
+          nearest_segment = seg;
+          result = previous;
         }
       }
       else {
@@ -391,7 +397,9 @@ private:
           nearest_vertex = it;
           result = it;
         }
-        if(compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+        if ((nearest_vertex != it ||
+             possibly(angle(*previous, *it, p) == CGAL::ACUTE)) &&
+            compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
         {
           nearest_segment = seg;
           nearest_is_a_segment = true;
@@ -1104,25 +1112,29 @@ add_features(InputIterator first, InputIterator end,
 namespace details {
 
 template <typename PolylineWithContext>
-struct Get_content_from_polyline_with_context {
+struct Get_content_from_polyline_with_context
+{
   typedef Get_content_from_polyline_with_context Self;
-  typedef const PolylineWithContext& key_type;
-  typedef const typename PolylineWithContext::Bare_polyline& value_type;
-  typedef value_type reference;
+  typedef PolylineWithContext key_type;
+  typedef typename PolylineWithContext::Bare_polyline value_type;
+  typedef const value_type& reference;
   typedef boost::readable_property_map_tag category;
-  friend value_type get(const Self, key_type polyline) {
+
+  friend reference get(const Self&, const key_type& polyline) {
     return polyline.polyline_content;
   }
 }; // end Get_content_from_polyline_with_context<PolylineWithContext>
 
 template <typename PolylineWithContext>
-struct Get_patches_id_from_polyline_with_context {
+struct Get_patches_id_from_polyline_with_context
+{
   typedef Get_patches_id_from_polyline_with_context Self;
-  typedef const PolylineWithContext& key_type;
-  typedef const typename PolylineWithContext::Context::Patches_ids& value_type;
-  typedef value_type reference;
+  typedef PolylineWithContext key_type;
+  typedef typename PolylineWithContext::Context::Patches_ids value_type;
+  typedef const value_type& reference;
   typedef boost::readable_property_map_tag category;
-  friend value_type get(const Self, key_type polyline) {
+
+  friend reference get(const Self&, const key_type& polyline) {
     return polyline.context.adjacent_patches_ids;
   }
 }; // end Get_patches_id_from_polyline_with_context<PolylineWithContext>

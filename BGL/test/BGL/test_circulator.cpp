@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
    BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<in_edge_iterator>));
    BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<out_edge_iterator>));
 
-  std::ifstream in((argc>1)?argv[1]:"data/cube.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube.off"));
   Polyhedron P;
   in >> P;
 

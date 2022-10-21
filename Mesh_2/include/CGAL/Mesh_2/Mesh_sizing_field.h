@@ -169,7 +169,7 @@ private:
     typename Tr::Edge_circulator end = ec;
 
     FT sum_len(0.);
-    FT nb = 0.;
+    unsigned int nb = 0;
     do
     {
       Edge e = *ec;
@@ -187,7 +187,7 @@ private:
     while(++ec != end);
     // nb == 0 could happen if there is an isolated point.
     if( 0 != nb )
-      return sum_len/nb;
+      return sum_len/FT(nb);
     else
      // Use outside faces to compute size of point
       return 1.;//todo

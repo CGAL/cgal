@@ -23,7 +23,6 @@
 #error Requires Eigen
 #endif
 #include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <CGAL/Dimension.h>
 #include <Eigen/Dense>
 #include <CGAL/iterator_from_indices.h>
@@ -92,7 +91,7 @@ namespace CGAL {
 
     struct Initializer_list {
       result_type operator()(std::initializer_list<NT> l) const {
-        return Iterator()(l.size(),l.begin(),l.end());
+        return Iterator()(static_cast<int>(l.size()),l.begin(),l.end());
       }
     };
 

@@ -14,7 +14,7 @@ typedef CGAL::Point_set_3<Point> Point_set;
 
 int main (int argc, char** argv)
 {
-  std::ifstream f(argc > 1 ? argv[1] : "data/example.ply",
+  std::ifstream f(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/example.ply"),
                   std::ios_base::binary); // Mandatory on Windows if input is binary PLY
 
   Point_set point_set;

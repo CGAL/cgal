@@ -24,7 +24,7 @@ typedef Skeleton::edge_descriptor                             Skeleton_edge;
 int main()
 {
   LCC lcc;
-  CGAL::IO::read_polygon_mesh("data/elephant.off", lcc);
+  CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/elephant.off"), lcc);
 
   Skeleton skeleton;
   Skeletonization mcs(lcc);

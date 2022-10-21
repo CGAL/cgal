@@ -26,7 +26,7 @@ typedef Tree::Splitter                             Splitter;
 int main(int argc, char* argv[])
 {
   Mesh mesh;
-  std::ifstream in((argc>1)?argv[1]:"data/tripod.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/tripod.off"));
   in >> mesh;
 
   Vertex_point_pmap vppmap = get(CGAL::vertex_point,mesh);

@@ -5,9 +5,9 @@
 #include <fstream>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3;
-typedef LCC_3::Dart_handle             Dart_handle;
-typedef LCC_3::Point                   Point;
-typedef LCC_3::FT                      FT;
+typedef LCC_3::Dart_descriptor Dart_descriptor;
+typedef LCC_3::Point           Point;
+typedef LCC_3::FT              FT;
 
 void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
                            bool updateattribs, int percent)
@@ -17,7 +17,7 @@ void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
   {
     CGAL::load_off(lcc, ifile);
     CGAL::Timer timer;
-    Dart_handle dh;
+    Dart_descriptor d;
     std::size_t nb=(lcc.number_of_darts()*percent)/200;
     timer.start();
 
@@ -25,9 +25,9 @@ void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
     for (LCC_3::Dart_range::iterator it=lcc.darts().begin(),
            itend=lcc.darts().end(); it!=itend && nb>0; )
     {
-      dh=it++;
-      if ( it!=itend && it==lcc.beta<2>(dh) ) ++it;
-      lcc.remove_cell<1>(dh);
+      d=it++;
+      if ( it!=itend && it==lcc.beta<2>(d) ) ++it;
+      lcc.remove_cell<1>(d);
       --nb;
     }
     if ( !updateattribs ) lcc.set_automatic_attributes_management(true);
@@ -50,7 +50,7 @@ int main(int narg, char** argv)
   std::string filename;
   if ( narg==1 )
   {
-    filename=std::string("data/armadillo.off");
+    filename=std::string(CGAL::data_file_path("meshes/armadillo.off"));
     std::cout<<"No filename given: use data/armadillo.off by default."<<std::endl;
   }
   else filename=std::string(argv[1]);

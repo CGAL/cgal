@@ -87,20 +87,21 @@ namespace Custom {
   public:
     using key_type   = std::size_t;
     using value_type = std::size_t;
-    using category   = boost::lvalue_property_map_tag;
+    using reference  = std::size_t;
+    using category   = boost::readable_property_map_tag;
 
-    Seed_map(const std::map<std::size_t, std::size_t>& objects_map) :
-    m_objects_map(objects_map)
+    Seed_map(const std::map<std::size_t, std::size_t>& objects_map)
+      : m_objects_map(objects_map)
     { }
 
-    value_type operator[](const key_type key) const {
+    value_type operator[](const key_type& key) const
+    {
       return m_objects_map.find(key)->second;
     }
 
-    friend value_type get(
-      const Seed_map& seed_map,
-      const key_type key) {
-
+    friend value_type get(const Seed_map& seed_map,
+                          const key_type& key)
+    {
       return seed_map[key];
     }
 

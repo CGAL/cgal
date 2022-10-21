@@ -12,8 +12,9 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Point_3                                            Point_3;
@@ -24,8 +25,8 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
-  const char* input_filename = (argc < 2) ? "data/blobby-shuffled.off" : argv[1];
-  const char* reference_filename = (argc < 2) ? "data/blobby.off" : argv[2];
+  const std::string input_filename = (argc < 2) ? CGAL::data_file_path("meshes/blobby-shuffled.off") : argv[1];
+  const std::string reference_filename = (argc < 2) ? CGAL::data_file_path("meshes/blobby.off") : argv[2];
 
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > polygons;

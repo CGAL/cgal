@@ -32,7 +32,7 @@ typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 // This example is using deprecated code!
 // Please update your code to the new version using other examples!
 template<typename ShapeDetection>
-int run(const char* filename) {
+int run(const std::string filename) {
 
   // Points with normals.
   Pwn_vector points;
@@ -73,8 +73,8 @@ int main (int argc, char** argv) {
 
   if (argc > 1 && std::string(argv[1]) == "-r") {
     std::cout << "Efficient RANSAC" << std::endl;
-    return run<Efficient_ransac> ((argc > 2) ? argv[2] : "data/cube.pwn");
+    return run<Efficient_ransac> ((argc > 2) ? argv[2] : CGAL::data_file_path("points_3/cube.pwn"));
   }
   std::cout << "Region Growing" << std::endl;
-  return run<Region_growing> ((argc > 1) ? argv[1] : "data/cube.pwn");
+  return run<Region_growing> ((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn"));
 }

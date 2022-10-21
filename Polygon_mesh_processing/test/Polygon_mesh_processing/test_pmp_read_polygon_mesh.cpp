@@ -86,9 +86,9 @@ int main()
   typedef CGAL::Linear_cell_complex_traits<3, Kernel>                                        LCC_traits;
   typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper<2, 3, LCC_traits>::type LCC;
 
-  test<SM>("data/pig.off", true);
-  test<Polyhedron>("data/pig.off", true);
-  test<LCC>("data/pig.off", true);
+  test<SM>(CGAL::data_file_path("meshes/pig.off"), true);
+  test<Polyhedron>(CGAL::data_file_path("meshes/pig.off"), true);
+  test<LCC>(CGAL::data_file_path("meshes/pig.off"), true);
 
   test<SM>("data_polygon_soup/nm_vertex_and_edge.off", false);
   test<Polyhedron>("data_polygon_soup/nm_vertex_and_edge.off", false);

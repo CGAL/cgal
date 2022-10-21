@@ -52,12 +52,6 @@ struct Intrinsic_Delaunay
 {};
 
 namespace internal {
-
-  template<typename TriangleMesh, typename Traits>
-  bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits);
-}
-
-namespace internal {
 template <typename TriangleMesh,
           typename Traits,
           typename LA,
@@ -111,7 +105,7 @@ public:
     \brief Constructor
   */
   Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
-    : v2v(tm), tm(tm), vpm(vpm)
+    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(vpm)
   {
     build();
   }
@@ -673,32 +667,6 @@ struct Idt_storage
   {}
 };
 
-template<typename TriangleMesh, typename Traits>
-bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits)
-{
-  typedef typename Traits::Point_3  Point;
-  typedef typename Traits::Vector_3 Vector_3;
-  typename Traits::Construct_vector_3
-    construct_vector = traits.construct_vector_3_object();
-  typename Traits::Compute_scalar_product_3
-    scalar_product = traits.compute_scalar_product_3_object();
-  typename Traits::Construct_cross_product_vector_3
-    cross_product = traits.construct_cross_product_vector_3_object();
-
-  typename boost::property_map< TriangleMesh, boost::vertex_point_t>::const_type
-    vpm = get(boost::vertex_point, tm);
-  for (typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tm))
-  {
-    const Point p1 = get(vpm, target(halfedge(f, tm), tm));
-    const Point p2 = get(vpm, target(next(halfedge(f, tm), tm), tm));
-    const Point p3 = get(vpm, target(next(next(halfedge(f, tm), tm), tm), tm));
-    Vector_3 v = cross_product(construct_vector(p1, p2), construct_vector(p1, p3));
-    if(scalar_product(v, v) == 0.)
-      return true;
-  }
-  return false;
-}
-
 template <typename TriangleMesh,
           typename Traits,
           typename LA,
@@ -789,14 +757,14 @@ class Surface_mesh_geodesic_distances_3
         >::Kernel
       >::type,
       Mode,
-      #ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
       typename Default::Get<
         LA,
         Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
       >::type,
-      #else
+#else
       LA,
-      #endif
+#endif
       typename Default::Get<
         VertexPointMap,
         typename boost::property_map< TriangleMesh, vertex_point_t>::const_type
@@ -804,15 +772,18 @@ class Surface_mesh_geodesic_distances_3
     >
 #endif
 {
+  CGAL_static_assertion((std::is_same<Mode, Direct>::value) ||
+                        (std::is_same<Mode, Intrinsic_Delaunay>::value));
+
   // extract real types from Default
-  #ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
   typedef typename Default::Get<
     LA,
     Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
   >::type LA_type;
-  #else
+#else
   typedef LA LA_type;
-  #endif
+#endif
 
   typedef typename Default::Get<
     VertexPointMap,
@@ -997,9 +968,9 @@ estimate_geodesic_distances(const TriangleMesh& tm,
                             const VertexConstRange& sources,
                             Mode
 #ifndef DOXYGEN_RUNNING
-                            , typename boost::enable_if<
-                              typename boost::has_range_const_iterator<VertexConstRange>
-                                     >::type* = 0
+                            , std::enable_if_t<
+                                boost::has_range_const_iterator<VertexConstRange>::value
+                                     >* = 0
 #endif
 )
 {
@@ -1014,9 +985,9 @@ void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
                             const VertexConstRange& sources,
-                            typename boost::enable_if<
-                              typename boost::has_range_const_iterator<VertexConstRange>
-                                     >::type* = 0)
+                            std::enable_if_t<
+                              boost::has_range_const_iterator<VertexConstRange>::value
+                                     >* = 0)
 {
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Intrinsic_Delaunay> hm(tm);
   hm.add_sources(sources);

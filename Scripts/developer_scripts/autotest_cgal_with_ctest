@@ -97,8 +97,10 @@ download_latest()
   fi
     log "${ACTUAL_LOGFILE}" "getting LATEST"
     if [ -n "${USE_CURL}" ]; then
+      echo "using curl..."
       ${CURL} ${CURL_OPTS} "${LATEST_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
     else
+      echo "using wget..."
       ${WGET} ${WGET_OPTS} "${LATEST_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
     fi
   if [ ! -f "LATEST" ]; then
@@ -114,8 +116,7 @@ download_latest()
 abort_if_latest_already_tested()
 {
   if [ -r "RELEASE_NR" ]; then
-    cmp LATEST RELEASE_NR >> "${ACTUAL_LOGFILE}"
-    if [ ! ${?} != 0 ]; then
+    if cmp LATEST RELEASE_NR >> "${ACTUAL_LOGFILE}"; then
       log "${ACTUAL_LOGFILE}" "This release has already been tested."
       rm -f "$LOCK_FILE";
       exit 1;

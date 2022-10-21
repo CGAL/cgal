@@ -16,7 +16,7 @@ void test_API()
   std::cout << "---- test_API() ----\n";
   std::vector<EPIC::Point_3> points;
   std::vector<std::array<int, 3> > triangles;
-  std::ifstream in("data/eight.off");
+  std::ifstream in(CGAL::data_file_path("meshes/eight.off"));
   CGAL::IO::read_OFF(in, points, triangles);
   CGAL::Surface_mesh<EPIC::Point_3> sm;
   CGAL::Polyhedron_3<EPIC> poly;
@@ -99,7 +99,7 @@ void test_remove_si()
 {
   std::cout << "---- test_remove_si() ----\n";
   CGAL::Surface_mesh<EPIC::Point_3> tm;
-  std::ifstream in("data/pig.off");
+  std::ifstream in(CGAL::data_file_path("meshes/pig.off"));
   in >> tm;
   assert(tm.vertices().size()!=0);
 

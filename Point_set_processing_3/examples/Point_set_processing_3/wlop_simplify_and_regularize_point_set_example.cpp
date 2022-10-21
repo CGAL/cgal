@@ -17,7 +17,7 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char** argv)
 {
-  const char* input_filename = (argc>1)?argv[1]:"data/sphere_20k.xyz";
+  const std::string input_filename = (argc>1)?argv[1]:CGAL::data_file_path("points_3/sphere_20k.xyz");
   const char* output_filename = (argc>2)?argv[2]:"data/sphere_20k_WLOPED.xyz";
 
   // Reads a .xyz point set file in points[]

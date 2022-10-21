@@ -12,7 +12,7 @@
 
 // Note: whenever a comment refers to "Khachiyan's paper" then the
 // paper "Rounding of polytopes in the real number model of
-// computation" is ment (Mathematics of Operations Research, Vol. 21,
+// computation" is meant (Mathematics of Operations Research, Vol. 21,
 // No. 2, May 1996).  Nontheless, most comments refer to the
 // accompanying documentation sheet (and not to the above paper), see
 // the file(s) in documentation/.
@@ -482,10 +482,16 @@ namespace CGAL {
     // check whether eps is negative (which under exact arithmetic is
     // not possible, and which we will take as a sign that the input
     // points are degenerate):
-    if (CGAL::is_negative(eps_e)) {
-      CGAL_APPEL_LOG("appel", "Negative Exact epsilon -> degenerate!" << "\n");
-      is_deg = true;
-    }
+    // BG: the following check is wrong and has been commented out.
+    // If the ellipsoid happens to be optimal (valid with eps=0),
+    // a slightly negative eps_e is a legit outcome due to roundoff:
+    // while eps_e is computed with exact arithmetic, it is based on
+    // the inexact inverse M(x)^{-1}.
+    //
+    // if (CGAL::is_negative(eps_e)) {
+    //   CGAL_APPEL_LOG("appel", "Negative Exact epsilon -> degenerate!" << "\n");
+    //  is_deg = true;
+    // }
 
     is_exact_eps_uptodate = true;
     return eps_exact;

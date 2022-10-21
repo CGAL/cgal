@@ -19,7 +19,7 @@ typedef L21_approx::Error_metric L21_metric;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-bool load_mesh(const char *file_name, Mesh &mesh)
+bool load_mesh(const std::string file_name, Mesh &mesh)
 {
   std::ifstream input(file_name);
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
@@ -40,7 +40,7 @@ bool load_mesh(const char *file_name, Mesh &mesh)
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
   std::cout << "Load mesh " << file_name << " done." << std::endl;
@@ -96,13 +96,13 @@ bool test_shape(const Mesh &mesh, const std::size_t target_num_proxies)
  */
 int main()
 {
-  const char file_cube[] = "./data/cube.off";
+  const std::string file_cube = CGAL::data_file_path("meshes/cube.off");
   std::cout << "Testing close mesh " << file_cube << std::endl;
   Mesh mesh_cube;
   if (!load_mesh(file_cube, mesh_cube) || !test_shape(mesh_cube, 6))
     return EXIT_FAILURE;
 
-  const char file_cube2[] = "./data/cube-ouvert.off";
+  const std::string file_cube2 = CGAL::data_file_path("meshes/cube-ouvert.off");
   std::cout << "Testing open mesh " << file_cube2 << std::endl;
   Mesh mesh_cube2;
   if (!load_mesh(file_cube2, mesh_cube2) || !test_shape(mesh_cube2, 5))

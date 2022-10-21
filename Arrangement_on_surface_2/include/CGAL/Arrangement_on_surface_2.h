@@ -48,8 +48,6 @@
 #include <CGAL/Iterator_transform.h>
 #include <CGAL/Arr_point_location_result.h>
 
-#include <boost/pool/pool_alloc.hpp>
-
 namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
@@ -68,7 +66,7 @@ class Arrangement_on_surface_2 {
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
-  typedef boost::fast_pool_allocator<int>                 Allocator;
+  typedef CGAL_ALLOCATOR(int)                             Allocator;
 
   // first define adaptor ...
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
@@ -79,13 +77,10 @@ public:
   typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
-  BOOST_MPL_ASSERT(
-                   (typename
-                    Arr_sane_identified_tagging<Left_side_category,
-                    Bottom_side_category,
-                    Top_side_category,
-                    Right_side_category>::result)
-                   );
+  CGAL_static_assertion((Arr_sane_identified_tagging<Left_side_category,
+                        Bottom_side_category,
+                        Top_side_category,
+                        Right_side_category>::value));
 
 public:
   typedef Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
@@ -2855,7 +2850,7 @@ protected:
 // In some compilers there is a template deduction disambiguity between this
 // function and the following function receiving two InputIterator.
 // For now the solution is to add a dummy variable at the end (referring
-// to point-location). Maybe the proper solution is to use boost::enable_if
+// to point-location). Maybe the proper solution is to use std::enable_if
 // together with appropriate tag.
 /*!
  * Insert a curve or x-monotone curve into the arrangement (incremental

@@ -15,7 +15,7 @@ typedef CGAL::Point_set_3<Point> Point_set;
 
 int main (int argc, char** argv)
 {
-  const char* filename = argc > 1 ? argv[1] : "data/camel.off";
+  const std::string filename = argc > 1 ? argv[1] : CGAL::data_file_path("meshes/camel.off");
 
   Point_set point_set;
   point_set.add_normal_map();

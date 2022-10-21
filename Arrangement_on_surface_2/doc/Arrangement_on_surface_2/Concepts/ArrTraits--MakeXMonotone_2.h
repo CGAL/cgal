@@ -14,7 +14,7 @@ public:
   /// @{
 
   /*! subdivides the input curve `c` into \f$x\f$-monotone subcurves and
-   * isolated points, and inserts the results into a range begining at the given
+   * isolated points, and inserts the results into a range beginning at the given
    * output iterator `oi`. The type `OutputIterator` dereferences a
    * `boost::variant` that wraps either an `ArrTraits::Point_2` object or an
    * `ArrTraits::X_monotone_curve_2` object. The operator returns a past-the-end

@@ -28,7 +28,7 @@ int main()
 {
   // Load a polyhedron
   Polyhedron poly;
-  std::ifstream input("data/lion-head.off");
+  std::ifstream input(CGAL::data_file_path("meshes/lion-head.off"));
   input >> poly;
 
   if (!CGAL::is_triangle_mesh(poly)){

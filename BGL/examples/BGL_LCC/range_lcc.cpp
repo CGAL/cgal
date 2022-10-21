@@ -52,7 +52,7 @@ void fct(const LCC& lcc)
 int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:"cube.off", lcc);
+  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"), lcc);
 
   fct(lcc);
   return 0;

@@ -73,7 +73,7 @@ struct No_constrained_edge_map
   typedef bool                                                      value_type;
   typedef value_type                                                reference;
   typedef boost::readable_property_map_tag                          category;
-  friend bool get(No_constrained_edge_map, key_type) { return false; }
+  friend value_type get(No_constrained_edge_map, key_type) { return false; }
 };
 
 } // namespace Surface_mesh_simplification

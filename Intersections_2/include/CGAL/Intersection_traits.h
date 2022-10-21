@@ -18,8 +18,9 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/variant.hpp>
+
+#include <type_traits>
 
 #define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2)                \
   template<typename K>     \
@@ -86,28 +87,6 @@ struct Intersection_traits {
   // This defaults to Object, if we use VERSION < 2 and do nothing
   // otherwise.
 };
-
-
-// Alias that gets the Kernel automatically and does some error checking.
-// Including corresponding specialization for Bbox, as it has no Kernel.
-template<typename A, typename B>
-class IT : public Intersection_traits< typename Kernel_traits<A>::Kernel, A, B > {
-  typedef typename Kernel_traits<A>::Kernel A_Kernel;
-  typedef typename Kernel_traits<B>::Kernel B_Kernel;
-  // CGAL_static_assertion_msg( (boost::is_same< A_Kernel, B_Kernel>::value),
-  //                            "IT instantiated with objects from two different Kernels");
-};
-
-class Bbox_2;
-class Bbox_3;
-
-template<typename B>
-class IT<Bbox_2, B> : public Intersection_traits< typename Kernel_traits<B>::Kernel, CGAL::Bbox_2, B >
-{ };
-
-template<typename B>
-class IT<Bbox_3, B> : public Intersection_traits< typename Kernel_traits<B>::Kernel, CGAL::Bbox_3, B >
-{ };
 
 
 namespace Intersections {
@@ -202,7 +181,7 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 // inline
 // typename Intersection_traits< typename Kernel_traits<A>::Kernel, A, B>::result_type >::type
 // intersection(const A& a, const B& b) {
-//   CGAL_static_assertion_msg( (boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
+//   CGAL_static_assertion_msg( (std::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
 //                               "intersection with objects of different dimensions not supported");
 //   return internal::intersection_impl(a, b, typename A::Ambient_dimension());
 // }
@@ -211,7 +190,7 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 // inline
 // bool
 // do_intersect(const A& a, const B& b) {
-//   CGAL_static_assertion_msg((boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
+//   CGAL_static_assertion_msg((std::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
 //                         "do_intersect with objects of different dimensions not supported");
 //   return internal::do_intersect_impl(a, b, typename A::Ambient_dimension());
 // }

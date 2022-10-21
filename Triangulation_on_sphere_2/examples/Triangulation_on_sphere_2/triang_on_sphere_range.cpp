@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
   std::cout.precision(17);
 
-  const char* filename = (argc > 1) ? argv[1] : "data/radar.xyz";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/radar.xyz");
 
   std::vector<Point> points;
   double x, y, z;

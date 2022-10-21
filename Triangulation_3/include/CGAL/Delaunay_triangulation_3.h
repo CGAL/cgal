@@ -333,12 +333,12 @@ public:
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                        typename boost::enable_if<
+                        std::enable_if_t<
                           boost::is_convertible<
                               typename std::iterator_traits<InputIterator>::value_type,
                               Point
-                          >
-                        >::type* = nullptr)
+                          >::value
+                        >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -479,12 +479,12 @@ private:
 public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                        typename boost::enable_if<
+                        std::enable_if_t<
                           boost::is_convertible<
                             typename std::iterator_traits<InputIterator>::value_type,
                             std::pair<Point, typename internal::Info_check<
                                                typename Triangulation_data_structure::Vertex>::type>
-                          > >::type* =nullptr)
+                          >::value >* =nullptr)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);
   }
@@ -493,12 +493,12 @@ public:
   std::ptrdiff_t
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-          typename boost::enable_if<
+          std::enable_if_t<
             boost::mpl::and_<
               boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
               boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-            >
-          >::type* =nullptr)
+            >::value
+          >* =nullptr)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<
         typename Triangulation_data_structure::Vertex>::type> >(first,last);
@@ -1076,7 +1076,7 @@ Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert(const Point& p, Cell_handle start, bool *could_lock_zone)
 {
   Locate_type lt;
-  int li, lj;
+  int li = -1, lj = -1;
 
   // Parallel
   if(could_lock_zone)

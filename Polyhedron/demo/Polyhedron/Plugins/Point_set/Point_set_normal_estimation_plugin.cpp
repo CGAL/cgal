@@ -82,11 +82,10 @@ struct Vector_to_pmap
   Vector_to_pmap (std::vector<bool>* vec = nullptr) : vec (vec) { }
 
   friend inline
-  reference get(const Vector_to_pmap& map, key_type p)
+  value_type get(const Vector_to_pmap& map, key_type i)
   {
-    return (*map.vec)[p];
+    return (*map.vec)[i];
   }
-
 };
 
 using namespace CGAL::Three;
@@ -203,17 +202,17 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
 
   if(item)
   {
+    // Gets options
+    Point_set_demo_normal_estimation_dialog dialog;
+    if(!dialog.exec())
+      return;
+
     // Gets point set
     Point_set* points = item->point_set();
     if(points == nullptr)
         return;
     if (!(points->has_normal_map()))
       points->add_normal_map();
-
-    // Gets options
-    Point_set_demo_normal_estimation_dialog dialog;
-    if(!dialog.exec())
-      return;
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();

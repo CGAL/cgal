@@ -352,7 +352,7 @@ private:
       sum += CGAL::sqrt(*it);
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
-    sum_moves_ = sum/big_moves_.size();
+    sum_moves_ = sum/FT(big_moves_.size());
 #endif
 
     return ( sum/FT(big_moves_.size()) < convergence_ratio_ );

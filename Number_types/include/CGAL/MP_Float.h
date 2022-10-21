@@ -762,7 +762,7 @@ namespace INTERN_MP_FLOAT {
     while (true) {
       x = x % y;
       if (x == 0) {
-        CGAL_postcondition(internal::divides(y, a) & internal::divides(y, b));
+        CGAL_postcondition(internal::divides(y, a) && internal::divides(y, b));
         y.gcd_normalize();
         return y;
       }

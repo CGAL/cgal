@@ -18,7 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Weights/cotangent_weights.h>
 
@@ -26,7 +26,7 @@
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 #endif
 
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -58,7 +58,9 @@ namespace internal {
 
   /*!
   \ingroup PMP_meshing_grp
+
   @brief fairs a region on a triangle mesh.
+
   The points of the selected vertices are
   relocated to yield an as-smooth-as-possible surface patch,
   based on solving a linear bi-Laplacian system with boundary constraints,
@@ -114,20 +116,20 @@ namespace internal {
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  @return `true` if fairing is successful, otherwise no vertices are relocated
+  @return `true` if fairing is successful, otherwise no vertices are relocated.
 
   @pre `is_triangle_mesh(tmesh)`
 
-  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
+  @warning This function involves linear algebra, that is computed using non-exact, floating-point arithmetic.
 
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */
   template<typename TriangleMesh,
            typename VertexRange,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   bool fair(TriangleMesh& tmesh,
             const VertexRange& vertices,
-            const NamedParameters& np)
+            const NamedParameters& np = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;
@@ -150,11 +152,11 @@ namespace internal {
 
 #if defined(CGAL_EIGEN3_ENABLED)
     CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
       "The function `fair` requires Eigen3 version 3.2 or later.");
 #else
     CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
       "The function `fair` requires Eigen3 version 3.2 or later.");
 #endif
 
@@ -173,13 +175,6 @@ namespace internal {
       choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_weight_calculator(tmesh, vpmap_)),
       choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
       vpmap_);
-  }
-
-  template<typename TriangleMesh, typename VertexRange>
-  bool fair(TriangleMesh& tmesh, const VertexRange& vertices)
-  {
-    return fair(tmesh, vertices,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
 } //end namespace Polygon_mesh_processing

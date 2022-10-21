@@ -22,7 +22,7 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char*argv[])
 {
-  const char* input_filename = (argc>1) ? argv[1] : "data/fin90_with_PCA_normals.xyz";
+  const std::string input_filename = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/fin90_with_PCA_normals.xyz");
   const char* output_filename = (argc>2) ? argv[2] : "data/fin90_with_PCA_normals_bilateral_smoothed.xyz";
 
   // Reads a point set file in points[] * with normals *.

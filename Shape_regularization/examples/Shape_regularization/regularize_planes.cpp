@@ -22,7 +22,7 @@ using Plane_map = CGAL::Shape_detection::Plane_map<Traits>;
 int main(int argc, char** argv) {
 
   // If we want to load a different file, we load it from a path.
-  std::string path = "data/cube.pwn";
+  std::string path = CGAL::data_file_path("points_3/cube.pwn");
   if (argc > 1) path = argv[1];
 
   Pwn_vector points;

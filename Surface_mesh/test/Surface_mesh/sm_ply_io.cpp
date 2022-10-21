@@ -14,7 +14,7 @@ typedef boost::graph_traits<SMesh>::face_descriptor           face_descriptor;
 
 int main()
 {
-  std::ifstream in("colored_tetra.ply");
+  std::ifstream in(CGAL::data_file_path("meshes/colored_tetra.ply"));
   SMesh mesh;
   CGAL::IO::read_PLY(in, mesh);
 

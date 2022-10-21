@@ -112,7 +112,7 @@ public:
   typedef X_monotone_curve_2                    Curve_2;
 
   //! A functor that trims curves.
-  Class Trim_2 {
+  class Trim_2 {
   public:
     //! \name Creation
     //! @{

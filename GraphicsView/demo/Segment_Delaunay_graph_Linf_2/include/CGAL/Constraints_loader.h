@@ -9,7 +9,14 @@
 #include <utility>
 #include <iostream>
 
+#include <boost/version.hpp>
+#if BOOST_VERSION < 107200
 #include <boost/progress.hpp>
+using boost::progress_display;
+#else
+#include <boost/timer/progress_display.hpp>
+using boost::timer::progress_display;
+#endif
 
 namespace CGAL {
 
@@ -118,9 +125,9 @@ class Constraints_loader {
     std::cerr << " done (" << timer.time() << "s)\n";
 
     std::cerr << "Inserting constraints...\n";
-    boost::progress_display show_progress(constraints.size(),
-                                          std::cerr,
-                                          "");
+    progress_display show_progress(constraints.size(),
+                                   std::cerr,
+                                   "");
     timer.reset();
     timer.start();
     for(typename Constraints_container::const_iterator

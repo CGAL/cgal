@@ -7,13 +7,14 @@
 
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 typedef CGAL::Simple_cartesian<double>                           K;
 typedef CGAL::Surface_mesh<K::Point_3>                           SM;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc>1) ? argv[1] : "data/blobby.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
   int number_of_parts = (argc>2) ? atoi(argv[2]) : 8;
 
   SM sm;
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
   // Extract the part n°0 of the partition into a new, independent mesh
   typedef CGAL::Face_filtered_graph<SM>                            Filtered_graph;
   Filtered_graph filtered_sm(sm, 0 /*id of th part*/, face_pid_map);
-    CGAL_assertion(filtered_sm.is_selection_valid());
+  assert(filtered_sm.is_selection_valid());
   SM part_sm;
   CGAL::copy_face_graph(filtered_sm, part_sm);
 

@@ -17,7 +17,7 @@ int main(void)
 {
   std::vector<Pwn> points;
 
-  if(!CGAL::IO::read_points("data/kitten.xyz", std::back_inserter(points),
+  if(!CGAL::IO::read_points(CGAL::data_file_path("points_3/kitten.xyz"), std::back_inserter(points),
                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
                                              .normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
   {

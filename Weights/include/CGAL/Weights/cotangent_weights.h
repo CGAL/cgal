@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Dmitry Anisimov
@@ -13,8 +13,6 @@
 
 #ifndef CGAL_COTANGENT_WEIGHTS_H
 #define CGAL_COTANGENT_WEIGHTS_H
-
-#include <CGAL/license/Weights.h>
 
 // Internal includes.
 #include <CGAL/Weights/internal/utils.h>
@@ -138,8 +136,7 @@ namespace Weights {
     const CGAL::Point_2<GeomTraits>& r,
     const CGAL::Point_2<GeomTraits>& p,
     const CGAL::Point_2<GeomTraits>& q) {
-
-    const GeomTraits traits;
+    GeomTraits traits;
     return cotangent_weight(t, r, p, q, traits);
   }
 
@@ -164,7 +161,7 @@ namespace Weights {
     const CGAL::Point_3<GeomTraits>& p,
     const CGAL::Point_3<GeomTraits>& q) {
 
-    const GeomTraits traits;
+    GeomTraits traits;
     return cotangent_weight(t, r, p, q, traits);
   }
 
@@ -184,7 +181,7 @@ namespace Weights {
 
     const PolygonMesh& m_pmesh;
     const VertexPointMap m_pmap;
-    const GeomTraits m_traits;
+    GeomTraits m_traits;
 
   public:
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
@@ -249,7 +246,7 @@ namespace Weights {
       using GeomTraits = typename CGAL::Kernel_traits<
         typename boost::property_traits<VertexPointMap>::value_type>::type;
       using FT = typename GeomTraits::FT;
-      const GeomTraits traits;
+      GeomTraits traits;
 
       if (is_border(he, pmesh)) {
         return FT(0);
@@ -293,7 +290,7 @@ namespace Weights {
       using GeomTraits = typename CGAL::Kernel_traits<
         typename boost::property_traits<VertexPointMap>::value_type>::type;
       using FT = typename GeomTraits::FT;
-      const GeomTraits traits;
+      GeomTraits traits;
 
       const auto v0 = target(he, pmesh);
       const auto v1 = source(he, pmesh);
@@ -377,7 +374,7 @@ namespace Weights {
 
     const PolygonMesh& m_pmesh;
     const VertexPointMap m_pmap;
-    const GeomTraits m_traits;
+    GeomTraits m_traits;
 
   public:
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;

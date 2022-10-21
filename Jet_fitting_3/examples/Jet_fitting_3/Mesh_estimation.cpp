@@ -133,7 +133,7 @@ int main()
     po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
-      ("input-file,f", po::value<string>(&if_name_string)->default_value("data/ellipe0.003.off"),
+      ("input-file,f", po::value<string>(&if_name_string)->default_value(CGAL::data_file_path("meshes/ellipe0.003.off")),
        "name of the input off file")
       ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(2),
        "degree of the jet, 1 <= degre-jet <= 4")
@@ -157,7 +157,7 @@ int main()
     }
 #else
     std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
-    if_name_string = "data/ellipe0.003.off";
+    if_name_string = CGAL::data_file_path("meshes/ellipe0.003.off");
     d_fitting = 2;
     d_monge = 2;
     nb_rings = 0;

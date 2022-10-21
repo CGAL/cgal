@@ -28,7 +28,7 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/nefertiti.off");
+  std::ifstream in((argc>1) ? argv[1] : CGAL::data_file_path("meshes/nefertiti.off"));
   if(!in)
   {
     std::cerr << "Error: problem loading the input data" << std::endl;

@@ -7,7 +7,9 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <vector>
+
 #define POINT_SIZE 11
+
 template<class Mesh>
 struct VKRingPMAP{
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor key_type;
@@ -15,10 +17,10 @@ struct VKRingPMAP{
   typedef value_type                                            reference;
   typedef boost::read_write_property_map_tag                    category;
   typedef typename boost::property_map<Mesh, boost::vertex_index_t>::type IDmap;
+
   std::vector<bool>* vec;
   Mesh* poly;
   IDmap idmap;
-
 
   VKRingPMAP(std::vector<bool>* vec, Mesh* poly)
     :vec(vec), poly(poly)
@@ -26,11 +28,11 @@ struct VKRingPMAP{
     idmap = get(boost::vertex_index, *poly);
   }
 
-  friend value_type get(const VKRingPMAP<Mesh>& map, const key_type& f){
-    return (*map.vec)[get(map.idmap, f)];
+  friend value_type get(const VKRingPMAP<Mesh>& map, const key_type& v){
+    return (*map.vec)[get(map.idmap, v)];
   }
-  friend void put(VKRingPMAP<Mesh>& map, const key_type& f, const value_type i){
-    (*map.vec)[get(map.idmap, f)] = i;
+  friend void put(VKRingPMAP<Mesh>& map, const key_type& v, const value_type i){
+    (*map.vec)[get(map.idmap, v)] = i;
   }
 };
 template<class Mesh>
@@ -40,6 +42,7 @@ struct EdgeKRingPMAP{
   typedef value_type                                           reference;
   typedef boost::read_write_property_map_tag                   category;
   typedef typename boost::property_map<Mesh, boost::halfedge_index_t>::type IDmap;
+
   std::vector<bool>* vec;
   Mesh* poly;
   IDmap idmap;
@@ -50,11 +53,11 @@ struct EdgeKRingPMAP{
     idmap = get(boost::halfedge_index, *poly);
   }
 
-  friend value_type get(const EdgeKRingPMAP<Mesh>& map, const key_type& f){
-    return (*map.vec)[get(map.idmap, halfedge(f, *map.poly))/2];
+  friend value_type get(const EdgeKRingPMAP<Mesh>& map, const key_type& e){
+    return (*map.vec)[get(map.idmap, halfedge(e, *map.poly))/2];
   }
-  friend void put(EdgeKRingPMAP<Mesh>& map, const key_type& f, const value_type i){
-    (*map.vec)[get(map.idmap, halfedge(f, *map.poly))/2] = i;
+  friend void put(EdgeKRingPMAP<Mesh>& map, const key_type& e, const value_type i){
+    (*map.vec)[get(map.idmap, halfedge(e, *map.poly))/2] = i;
   }
 };
 template<class Mesh>
@@ -64,6 +67,7 @@ struct FKRingPMAP{
   typedef value_type                                          reference;
   typedef boost::read_write_property_map_tag                  category;
   typedef typename boost::property_map<Mesh, boost::face_index_t>::type IDmap;
+
   std::vector<bool>* vec;
   Mesh* poly;
   IDmap idmap;

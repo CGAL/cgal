@@ -3,9 +3,9 @@
 #include <algorithm>
 
 typedef CGAL::Linear_cell_complex_for_generalized_map<3> LCC_3;
-typedef LCC_3::Dart_handle                Dart_handle;
-typedef LCC_3::Point                      Point;
-typedef LCC_3::FT                         FT;
+typedef LCC_3::Dart_descriptor Dart_descriptor;
+typedef LCC_3::Point           Point;
+typedef LCC_3::FT              FT;
 
 // Functor used to display all the vertices of a given volume.
 template<class LCC>
@@ -21,9 +21,9 @@ struct Display_vol_vertices : public CGAL::cpp98::unary_function<LCC, void>
     std::cout<<"Volume "<<++nb_volume<<" : ";
     for (typename LCC::template One_dart_per_incident_cell_range<0,3>::
            const_iterator it=lcc.template one_dart_per_incident_cell<0,3>
-           (lcc.dart_handle(d)).begin(),
+           (lcc.dart_descriptor(d)).begin(),
            itend=lcc.template one_dart_per_incident_cell<0,3>
-           (lcc.dart_handle(d)).end();
+           (lcc.dart_descriptor(d)).end();
          it!=itend; ++it)
     {
       std::cout << lcc.point(it) << "; ";
@@ -40,9 +40,9 @@ int main()
   LCC_3 lcc;
 
   // Create two tetrahedra.
-  Dart_handle d1 = lcc.make_tetrahedron(Point(-1, 0, 0), Point(0, 2, 0),
+  Dart_descriptor d1 = lcc.make_tetrahedron(Point(-1, 0, 0), Point(0, 2, 0),
                                         Point(1, 0, 0), Point(1, 1, 2));
-  Dart_handle d2 = lcc.make_tetrahedron(Point(0, 2, -1),
+  Dart_descriptor d2 = lcc.make_tetrahedron(Point(0, 2, -1),
                                         Point(-1, 0, -1),
                                         Point(1, 0, -1),
                                         Point(1, 1, -3));

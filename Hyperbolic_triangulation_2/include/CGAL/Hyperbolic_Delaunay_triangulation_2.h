@@ -437,9 +437,9 @@ public:
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                        typename boost::enable_if<
-                          boost::is_base_of<Point, typename std::iterator_traits<InputIterator>::value_type>
-                        >::type* = nullptr)
+                        std::enable_if_t<
+                          boost::is_base_of<Point, typename std::iterator_traits<InputIterator>::value_type>::value
+                        >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)

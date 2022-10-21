@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   CGAL::Tetrahedral_remeshing::generate_input_two_subdomains(nbv, tr);
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
-      CGAL::parameters::cell_selector(Cells_of_subdomain(2)));
+      CGAL::parameters::cell_is_selected_map(Cells_of_subdomain(2)));
 
   return EXIT_SUCCESS;
 }

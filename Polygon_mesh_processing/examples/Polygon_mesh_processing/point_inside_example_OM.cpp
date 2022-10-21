@@ -7,9 +7,10 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
-#include <vector>
-#include <fstream>
+#include <iostream>
 #include <limits>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 
@@ -36,7 +37,7 @@ double max_coordinate(const Mesh& mesh)
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);

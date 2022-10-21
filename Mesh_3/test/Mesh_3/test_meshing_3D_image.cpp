@@ -42,7 +42,7 @@ public:
     // Data generation
     //-------------------------------------------------------
     Image image;
-    image.read("data/liver.inr.gz");
+    image.read(CGAL::data_file_path("images/liver.inr.gz"));
 
     std::cout << "\tSeed is\t"
       << CGAL::get_default_random().get_seed() << std::endl;
@@ -60,6 +60,8 @@ public:
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
+
+    c3t3.remove_isolated_vertices();
 
     // Verify
     this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);

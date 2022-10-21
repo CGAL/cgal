@@ -41,7 +41,7 @@ typedef CGAL::Nth_of_tuple_property_map<2, PNI>                                 
 
 int main()
 {
-    const std::string& input_file("data/ball.ply");
+    const std::string& input_file(CGAL::data_file_path("points_3/ball.ply"));
   std::ifstream input_stream(input_file.c_str());
 
   std::vector<PNI> points; // store points

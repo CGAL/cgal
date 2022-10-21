@@ -99,7 +99,7 @@ struct Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> : public R_ {
         template <class D> struct Functor <Orientation_of_points_tag,D> {
                 typedef
                         //typename boost::mpl::if_ <
-                        //boost::is_same<D,No_filter_tag>,
+                        //std::is_same<D,No_filter_tag>,
                         //typename Get_functor<R_, Orientation_of_points_tag>::type,
                         SFA::Orientation_of_points_2<R_,Derived>
                         //        >::type

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Documentation NONE)
 
 # Minimal version of CMake:
@@ -27,7 +27,7 @@ else()
 endif()
 
 find_package(Doxygen)
-find_package(Python3 COMPONENTS Interpreter)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 if(NOT DOXYGEN_FOUND)
   message(WARNING "Cannot build the documentation without Doxygen!")
@@ -252,7 +252,7 @@ set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
 #Setting the resource directory depending on the version of doxygen
-set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.8.20")
+set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.9.3")
 
 #  first look if resources for the specific doxygen version is available, fallback
 #  on the default otherwise
@@ -322,23 +322,22 @@ endif()
 set(CGAL_DOC_VERSION ${CGAL_CREATED_VERSION_NUM})
 
 ## generate how_to_cite files
-if(Python3_Interpreter_FOUND)
-  execute_process(
-    COMMAND ${Python3_EXECUTABLE} ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
-            ${CGAL_ROOT} ${CMAKE_BINARY_DIR} "${CGAL_BRANCH_BUILD}"
-    RESULT_VARIABLE GENERATE_HOW_TO_CITE_RESULT)
-  if(NOT GENERATE_HOW_TO_CITE_RESULT EQUAL "0")
-    message(FATAL_ERROR "generate_how_to_cite did not exit correctly")
-  endif()
-
-  configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib.in
-                 ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
-  configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt.in
-                 ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt)
-  configure_file(${CMAKE_BINARY_DIR}/how_to_cite.html.in
-                 ${CMAKE_BINARY_DIR}/how_to_cite.html)
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
+          ${CGAL_ROOT} ${CMAKE_BINARY_DIR} "${CGAL_BRANCH_BUILD}"
+  RESULT_VARIABLE GENERATE_HOW_TO_CITE_RESULT)
+if(NOT GENERATE_HOW_TO_CITE_RESULT EQUAL "0")
+  message(FATAL_ERROR "generate_how_to_cite did not exit correctly")
 endif()
 
+configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib.in
+               ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
+configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt.in
+               ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt)
+configure_file(${CMAKE_BINARY_DIR}/how_to_cite.html.in
+               ${CMAKE_BINARY_DIR}/how_to_cite.html)
+
+#
 configure_file(${CGAL_DOC_RESOURCE_DIR}/BaseDoxyfile.in
                ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
 
@@ -436,51 +435,50 @@ add_dependencies(Documentation_copy_doc_tags doc_pre)
 #total level doc dependencies
 add_dependencies(doc doc_post)
 
-if(Python3_Interpreter_FOUND)
-  set(CGAL_DOC_TESTSUITE_SCRIPT "${CGAL_DOC_SCRIPT_DIR}/testsuite.py")
+
+set(CGAL_DOC_TESTSUITE_SCRIPT "${CGAL_DOC_SCRIPT_DIR}/testsuite.py")
+
+add_custom_target(
+  doc_with_postprocessing
+  ${Python3_EXECUTABLE} ${CGAL_DOC_SCRIPT_DIR}/html_output_post_processing.py
+  --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CGAL_DOC_RESOURCE_DIR})
+add_dependencies(doc_with_postprocessing doc)
+
+if(CGAL_DOC_CREATE_LOGS)
+  add_custom_target(
+    Documentation_test
+    ${Python3_EXECUTABLE} ${CGAL_DOC_TESTSUITE_SCRIPT} --output-dir
+    ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR})
+  add_dependencies(Documentation_test doc)
 
   add_custom_target(
-    doc_with_postprocessing
-    ${Python3_EXECUTABLE} ${CGAL_DOC_SCRIPT_DIR}/html_output_post_processing.py
-    --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CGAL_DOC_RESOURCE_DIR})
-  add_dependencies(doc_with_postprocessing doc)
+    Documentation_test_publish
+    ${Python3_EXECUTABLE}
+    ${CGAL_DOC_TESTSUITE_SCRIPT}
+    --output-dir
+    ${CGAL_DOC_OUTPUT_DIR}
+    --doc-log-dir
+    ${CGAL_DOC_LOG_DIR}
+    --publish
+    ${CGAL_DOC_PUBLISH_DIR}
+    --do-copy-results)
+  add_dependencies(Documentation_test_publish doc)
 
-  if(CGAL_DOC_CREATE_LOGS)
-    add_custom_target(
-      Documentation_test
-      ${Python3_EXECUTABLE} ${CGAL_DOC_TESTSUITE_SCRIPT} --output-dir
-      ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR})
-    add_dependencies(Documentation_test doc)
+  add_custom_target(
+    doc_and_publish_testsuite
+    ${Python3_EXECUTABLE}
+    ${CGAL_DOC_TESTSUITE_SCRIPT}
+    --output-dir
+    ${CGAL_DOC_OUTPUT_DIR}
+    --doc-log-dir
+    ${CGAL_DOC_LOG_DIR}
+    --publish
+    ${CGAL_DOC_PUBLISH_DIR}
+    --do-copy-results
+    --cgal-version
+    "${CGAL_FULL_VERSION}"
+    --version-to-keep
+    10)
+  add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
 
-    add_custom_target(
-      Documentation_test_publish
-      ${Python3_EXECUTABLE}
-      ${CGAL_DOC_TESTSUITE_SCRIPT}
-      --output-dir
-      ${CGAL_DOC_OUTPUT_DIR}
-      --doc-log-dir
-      ${CGAL_DOC_LOG_DIR}
-      --publish
-      ${CGAL_DOC_PUBLISH_DIR}
-      --do-copy-results)
-    add_dependencies(Documentation_test_publish doc)
-
-    add_custom_target(
-      doc_and_publish_testsuite
-      ${Python3_EXECUTABLE}
-      ${CGAL_DOC_TESTSUITE_SCRIPT}
-      --output-dir
-      ${CGAL_DOC_OUTPUT_DIR}
-      --doc-log-dir
-      ${CGAL_DOC_LOG_DIR}
-      --publish
-      ${CGAL_DOC_PUBLISH_DIR}
-      --do-copy-results
-      --cgal-version
-      "${CGAL_FULL_VERSION}"
-      --version-to-keep
-      10)
-    add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
-
-  endif()
 endif()

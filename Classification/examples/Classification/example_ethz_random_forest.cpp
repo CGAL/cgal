@@ -36,7 +36,7 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    
 
 int main (int argc, char** argv)
 {
-  std::string filename = "data/b9_training.ply";
+  std::string filename = CGAL::data_file_path("points_3/b9_training.ply");
 
   if (argc > 1)
     filename = argv[1];

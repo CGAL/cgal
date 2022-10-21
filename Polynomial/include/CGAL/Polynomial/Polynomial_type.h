@@ -130,7 +130,7 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
   operations (e.g. for symbolic computation with an infimaximal \e x ),
   and various algebraic operations (gcd, resultant).
 
-  \c CGAL:Polynomial offers a full set of algebraic operators, i.e.
+  \c CGAL::Polynomial offers a full set of algebraic operators, i.e.
   binary +, -, *, / as well as +=, -=, *=, /=; not only for polynomials
   but also for a polynomial and a number of the coefficient type.
   (The / operator must only be used for integral divisions, i.e.
@@ -487,7 +487,7 @@ public:
       typedef typename Fraction_traits<NTX>::Is_fraction Is_fraction;
       typedef typename Coercion_traits<NT,NTX>::Type Type;
       typedef typename ::boost::mpl::if_c<
-      ::boost::is_same<Type,NT>::value, Is_fraction, CGAL::Tag_false
+      ::std::is_same<Type,NT>::value, Is_fraction, CGAL::Tag_false
         >::type If_decomposable_AND_Type_equals_NT;
 
       return sign_at_(x,If_decomposable_AND_Type_equals_NT());
@@ -545,7 +545,7 @@ public:
      *  Also available as non-member function.
      */
     CGAL::Sign sign() const {
-//        CGAL_static_assertion( (boost::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
+//        CGAL_static_assertion( (std::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
 //                              CGAL::Tag_true>::value) );
       return CGAL::sign(lcoeff());
     }

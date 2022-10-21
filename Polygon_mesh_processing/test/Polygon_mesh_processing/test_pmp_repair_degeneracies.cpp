@@ -38,10 +38,10 @@ void detect_degeneracies(const EdgeRange& edge_range,
   std::set<edge_descriptor> dedges;
   PMP::degenerate_edges(mesh, std::inserter(dedges, dedges.end()));
   PMP::degenerate_edges(edge_range, mesh, std::inserter(dedges, dedges.begin()));
-  PMP::degenerate_edges(mesh, std::inserter(dedges, dedges.end()), CP::all_default());
+  PMP::degenerate_edges(mesh, std::inserter(dedges, dedges.end()), CP::default_values());
 
   dedges.clear();
-  PMP::degenerate_edges(edge_range, mesh, std::inserter(dedges, dedges.begin()), CP::all_default());
+  PMP::degenerate_edges(edge_range, mesh, std::inserter(dedges, dedges.begin()), CP::default_values());
   std::cout << "\t" << dedges.size() << " degenerate edges vs " <<  expected_dedges_n << std::endl;
   assert(dedges.size() == expected_dedges_n);
 
@@ -49,10 +49,10 @@ void detect_degeneracies(const EdgeRange& edge_range,
   std::vector<face_descriptor> dfaces;
   PMP::degenerate_faces(mesh, std::back_inserter(dfaces));
   PMP::degenerate_faces(face_range, mesh, std::back_inserter(dfaces));
-  PMP::degenerate_faces(mesh, std::back_inserter(dfaces), CP::all_default());
+  PMP::degenerate_faces(mesh, std::back_inserter(dfaces), CP::default_values());
 
   dfaces.clear();
-  PMP::degenerate_faces(face_range, mesh, std::back_inserter(dfaces), CP::all_default());
+  PMP::degenerate_faces(face_range, mesh, std::back_inserter(dfaces), CP::default_values());
   std::cout << "\t" << dfaces.size() << " degenerate faces vs " << expected_dfaces_n << std::endl;
   assert(dfaces.size() == expected_dfaces_n);
 }
@@ -103,7 +103,7 @@ bool remove_dedges(const std::vector<std::size_t>& edges_selection_ids,
   for(std::size_t edge_id : edges_selection_ids)
     edge_range.push_back(all_edges[edge_id]);
 
-  return CGAL::Polygon_mesh_processing::remove_degenerate_edges(edge_range, mesh, CP::all_default());
+  return CGAL::Polygon_mesh_processing::remove_degenerate_edges(edge_range, mesh, CP::default_values());
 }
 
 template <typename Mesh>
@@ -119,11 +119,11 @@ bool remove_dfaces(const std::vector<std::size_t>& faces_selection_ids,
   for(std::size_t face_id : faces_selection_ids)
     face_range.push_back(all_faces[face_id]);
 
-  return CGAL::Polygon_mesh_processing::remove_degenerate_faces(face_range, mesh, CP::all_default());
+  return CGAL::Polygon_mesh_processing::remove_degenerate_faces(face_range, mesh, CP::default_values());
 }
 
 template <typename K, typename Mesh>
-void remove_degeneracies(const char* filename,
+void remove_degeneracies(const std::string filename,
                          const std::vector<std::size_t>& edges_selection_ids,
                          const std::vector<std::size_t>& faces_selection_ids,
                          const std::size_t expected_all_degen_edges_n,
@@ -153,12 +153,12 @@ void remove_degeneracies(const char* filename,
   // Complete remove
   std::cout << "    Remove all..." << std::endl;
   mesh = mesh_cpy;
-  /* bool all_removed = */ CGAL::Polygon_mesh_processing::remove_degenerate_edges(mesh, CP::all_default());
+  /* bool all_removed = */ CGAL::Polygon_mesh_processing::remove_degenerate_edges(mesh, CP::default_values());
   //assert(all_removed);
   assert(CGAL::is_valid_polygon_mesh(mesh));
 
   mesh = mesh_cpy;
-  /* all_removed = */ CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh, CP::all_default());
+  /* all_removed = */ CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh, CP::default_values());
   // assert(all_removed);
   assert(CGAL::is_valid_polygon_mesh(mesh));
 
@@ -203,7 +203,7 @@ void initialize_IDs(const CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with
 }
 
 template <typename K, typename Mesh>
-void remove_negligible_connected_components(const char* filename)
+void remove_negligible_connected_components(const std::string filename)
 {
   typedef typename boost::graph_traits<Mesh>::face_descriptor           face_descriptor;
 
@@ -322,7 +322,7 @@ void test()
                                std::initializer_list<std::size_t>({4, 5}),
                                1, 3, 1, 2, 0, 0);
 
-  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_sliding.off",
+  remove_degeneracies<K, Mesh>(CGAL::data_file_path("meshes/degtri_sliding.off"),
                                std::initializer_list<std::size_t>({2}),
                                std::initializer_list<std::size_t>({2, 4}),
                                0, 4, 0, 2, 0, 0);

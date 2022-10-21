@@ -789,7 +789,7 @@ public:
       if(Base::bitstream_tree.max_var(curr) == 1) {
         ++curr;
         ++curr_mark;
-        //AcX_DSTREAM("nothing happend" << std::endl);
+        //AcX_DSTREAM("nothing happened" << std::endl);
       }
       else {
         newly_created =

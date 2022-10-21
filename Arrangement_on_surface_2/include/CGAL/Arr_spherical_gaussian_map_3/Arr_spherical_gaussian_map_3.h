@@ -134,8 +134,7 @@ public:
                                  OutputIterator oi)
   {
     const Geometry_traits_2* traits = this->m_sgm.geometry_traits();
-    typename Traits::Construct_point_2 ctr_point =
-      traits->construct_point_2_object();
+    auto ctr_point = traits->construct_point_2_object();
     Curve_2 cv =
       traits->construct_curve_2_object()(ctr_point(normal1.direction()),
                                          ctr_point(normal2.direction()));

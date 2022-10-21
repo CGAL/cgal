@@ -18,7 +18,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   if(argc!=2){
-    std::cerr << "Please provide only an off-file as input\n";
+    std::cerr << "Please provide only an OFF file as input\n";
     return 1;
   }
 
@@ -43,6 +43,7 @@ int main(int argc, char** argv)
             ,stop
              ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,surface))
                                .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface))
+                               .use_relaxed_order(CGAL::Tag_true())
            );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"

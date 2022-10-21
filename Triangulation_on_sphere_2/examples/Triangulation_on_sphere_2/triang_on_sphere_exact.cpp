@@ -8,7 +8,7 @@
 #include <fstream>
 
 template <typename Kernel>
-void create_triangulation(const char* filename)
+void create_triangulation(const std::string& filename)
 {
   typedef typename Kernel::FT                                          FT;
 
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   // and thus a separation mechanism is needed to ensure that no points are hidden
   typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 
-  const char* filename = (argc > 1) ? argv[1] : "data/poste_france.xyz";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/poste_france.xyz");
 
   create_triangulation<EPICK>(filename);
   create_triangulation<EPECK_w_SQRT>(filename);

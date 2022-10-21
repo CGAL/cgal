@@ -12,7 +12,7 @@ using Face_index = Mesh::Face_index;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
+  std::ifstream in((argc>1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
 
   if(!in)
   {
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
   Mesh mesh;
   CGAL::IO::read_OFF (in, mesh);
 
-  boost::unordered_map<Face_index, bool> is_selected_map;
+  std::unordered_map<Face_index, bool> is_selected_map;
 
   // randomly select 1/3 of faces
   std::size_t nb_selected_before = 0;

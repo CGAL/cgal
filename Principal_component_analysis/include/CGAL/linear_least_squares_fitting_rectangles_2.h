@@ -93,7 +93,7 @@ linear_least_squares_fitting_2(InputIterator first,
     Matrix transformation = init_matrix<FT>(2,delta);
     FT area = (x1-x0)*(y2-y0);
 
-    CGAL_assertion(area != 0.0);
+    CGAL_assertion(!CGAL::is_zero(area));
 
     // Find the 2nd order moment for the rectangle wrt to the origin by an affine transformation.
 
@@ -104,20 +104,20 @@ linear_least_squares_fitting_2(InputIterator first,
     FT xav0 = (x1-x0)/FT(2);
     FT yav0 = (y2-y0)/FT(2);
     // and add to covariance matrix
-    covariance[0] += transformation[0][0] + area * (x0*xav0*2 + x0*x0);
+    covariance[0] += transformation[0][0] + area * (x0*xav0*2 + CGAL::square(x0));
     covariance[1] += transformation[0][1] + area * (x0*yav0 + xav0*y0 + x0*y0);
-    covariance[2] += transformation[1][1] + area * (y0*yav0*2 + y0*y0);
+    covariance[2] += transformation[1][1] + area * (y0*yav0*2 + CGAL::square(y0));
 
     mass += area;
   }
 
-  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
+  CGAL_assertion_msg (!CGAL::is_zero(mass), "Can't compute PCA of null measure.");
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += -mass * (c.x() * c.x());
-  covariance[1] += -mass * (c.x() * c.y());
-  covariance[2] += -mass * (c.y() * c.y());
+  covariance[0] -= mass * (CGAL::square(c.x()));
+  covariance[1] -= mass * (c.x() * c.y());
+  covariance[2] -= mass * (CGAL::square(c.y()));
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order,

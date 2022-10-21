@@ -582,8 +582,8 @@ CGAL_Kernel_pred(Less_y_3,
                  less_y_3_object)
 CGAL_Kernel_pred(Less_z_3,
                  less_z_3_object)
-CGAL_Kernel_pred(Non_zero_dimension_3,
-                 non_zero_dimension_3_object)
+CGAL_Kernel_pred(Non_zero_coordinate_index_3,
+                 non_zero_coordinate_index_3_object)
 CGAL_Kernel_pred_RT(Orientation_2,
                     orientation_2_object)
 CGAL_Kernel_pred_RT(Orientation_3,

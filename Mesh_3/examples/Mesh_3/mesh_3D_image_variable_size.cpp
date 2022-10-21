@@ -36,7 +36,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/liver.inr.gz";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/liver.inr.gz");
   // Loads image
   CGAL::Image_3 image;
   if(!image.read(fname)){
@@ -63,7 +63,8 @@ int main(int argc, char* argv[])
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

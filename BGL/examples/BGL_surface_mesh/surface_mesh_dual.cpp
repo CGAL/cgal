@@ -37,7 +37,7 @@ typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/prim.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/prim.off");
 
   Mesh primal;
   if(!CGAL::IO::read_polygon_mesh(filename, primal))

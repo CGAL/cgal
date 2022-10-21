@@ -7,7 +7,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <iostream>
-#include <fstream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Point_3                                            Point;
@@ -20,7 +20,7 @@ typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);

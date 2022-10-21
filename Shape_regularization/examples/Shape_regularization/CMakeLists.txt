@@ -3,13 +3,9 @@
 
 project(Shape_regularization_Examples)
 
-cmake_minimum_required(VERSION 3.1...3.15)
-set(CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 3.1...3.23)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
-
-include(${CGAL_USE_FILE})
-include(CGAL_CreateSingleSourceCGALProgram)
 
 # Find OSQP library and headers.
 find_package(OSQP QUIET)

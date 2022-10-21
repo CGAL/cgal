@@ -17,7 +17,7 @@
 
 /*!
 \addtogroup PkgSurfaceMeshTopology
-\cgalPkgDescriptionBegin{Surface Mesh Topology,PkgSurfaceMeshTopologySummary}
+\cgalPkgDescriptionBegin{Surface Mesh Topology,PkgSurfaceMeshTopology}
 \cgalPkgPicture{surface-mesh-topology-logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand, Francis Lazarus}

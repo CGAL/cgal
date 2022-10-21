@@ -41,8 +41,6 @@ namespace IO {
   left to its default value (255 = no transparency), which is why we
   often refer to the <I>rgb-value</I> of the color.
 
-  \sa `CGAL::Geomview_stream`
-
 */
 
 class Color
@@ -134,6 +132,11 @@ public:
     return !( (*this) == c);
   }
 
+  bool operator<(const Color& c) const
+  {
+      return m_data < c.to_rgba();
+  }
+
   unsigned char r() const { return red(); }
   unsigned char g() const { return green(); }
   unsigned char b() const { return blue(); }
@@ -208,7 +211,7 @@ public:
   /*!
     replaces the rgb values of the colors by the one given as parameters.
   */
-  void set_rgb (unsigned char red,
+  Color& set_rgb (unsigned char red,
                 unsigned char green,
                 unsigned char blue,
                 unsigned char alpha = 255)
@@ -217,13 +220,15 @@ public:
     m_data[1] = green;
     m_data[2] = blue;
     m_data[3] = alpha;
+
+    return *this;
   }
 
   /*!
     replaces the rgb values of the colors by the conversion to rgb of
     the hsv values given as parameters.
   */
-  void set_hsv (double hue,
+  Color& set_hsv (double hue,
                 double saturation,
                 double value,
                 unsigned char alpha = 255)
@@ -277,6 +282,8 @@ public:
     m_data[1] = (unsigned char)g;
     m_data[2] = (unsigned char)b;
     m_data[3] = alpha;
+
+    return *this;
   }
 
   /// @}

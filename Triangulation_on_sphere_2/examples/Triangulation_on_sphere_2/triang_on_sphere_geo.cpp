@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 {
   std::cout.precision(17);
 
-  const char* filename = (argc > 1) ? argv[1] : "data/poste_france.xyz";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/poste_france.xyz");
 
   Traits traits(Point_3(0, 0, 0), 100);
 

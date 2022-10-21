@@ -6,8 +6,8 @@
 
 #include <boost/container/flat_map.hpp>
 
-#include <fstream>
 #include <iostream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef CGAL::Surface_mesh<K::Point_3>                       Mesh;
@@ -48,8 +48,8 @@ struct Visitor :
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
   if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
   visitor.properties[&mesh2] = mesh2_id;
   visitor.properties[&out] = out_id;
 
-  bool valid_union = PMP::corefine_and_compute_union(mesh1, mesh2, out, PMP::parameters::visitor(visitor));
+  bool valid_union = PMP::corefine_and_compute_union(mesh1, mesh2, out, CGAL::parameters::visitor(visitor));
 
   for(Mesh::Face_index f : faces(mesh1))
     assert( mesh1_id[f] == 1 );

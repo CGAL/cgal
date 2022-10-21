@@ -9,7 +9,7 @@
 //
 // Author(s) : Andreas Fabri
 //
-// Warning: this file is generated, see include/CGAL/licence/README.md
+// Warning: this file is generated, see include/CGAL/license/README.md
 
 
 #ifndef CGAL_LICENSE_HEAT_METHOD_3_H

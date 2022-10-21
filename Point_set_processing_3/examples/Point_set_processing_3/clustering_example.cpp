@@ -17,7 +17,7 @@ using Point_set = CGAL::Point_set_3<Point_3>;
 int main (int argc, char** argv)
 {
   // Read input file
-  std::ifstream ifile((argc > 1) ? argv[1] : "data/hippo1.ply", std::ios_base::binary);
+  std::ifstream ifile((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/hippo1.ply"), std::ios_base::binary);
   Point_set points;
   ifile >> points;
 

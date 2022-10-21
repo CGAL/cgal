@@ -97,7 +97,7 @@ void alpha_edges(InputIterator begin, InputIterator end,
 template <class OutputIterator>
 bool file_input(OutputIterator out)
 {
-  std::ifstream is("./data/fin3", std::ios::in);
+  std::ifstream is("data/fin3", std::ios::in);
 
   if(is.fail()) {
     std::cerr << "unable to open file for input" << std::endl;

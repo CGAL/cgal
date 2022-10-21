@@ -75,13 +75,11 @@ struct No_constraint_pmap
 public:
   typedef Primitive                           key_type;
   typedef bool                                value_type;
-  typedef value_type&                         reference;
+  typedef value_type                          reference;
   typedef boost::read_write_property_map_tag  category;
 
-  friend bool get(const No_constraint_pmap&, const key_type&) {
-    return false;
-  }
-  friend void put(No_constraint_pmap&, const key_type&, const bool) {}
+  friend value_type get(No_constraint_pmap, key_type) { return false; }
+  friend void put(No_constraint_pmap, key_type, value_type) {}
 };
 
 template<typename Triangulation

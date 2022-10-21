@@ -16,7 +16,7 @@
 
 #include <CGAL/squared_distance_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/linear_least_squares_fitting_3.h>
@@ -456,16 +456,17 @@ void orient_scanline (Iterator begin, Iterator end,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 */
-template <typename PointRange, typename NamedParameters>
-void scanline_orient_normals (PointRange& points, const NamedParameters& np)
+template <typename PointRange, typename NamedParameters = parameters::Default_named_parameters>
+void scanline_orient_normals (PointRange& points, const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   using Iterator = typename PointRange::iterator;
   using Value_type = typename std::iterator_traits<Iterator>::value_type;
-  using PointMap = typename CGAL::GetPointMap<PointRange, NamedParameters>::type;
-  using NormalMap = typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type;
+  using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
+  using PointMap = typename NP_helper::Point_map;
+  using NormalMap = typename NP_helper::Normal_map;
 
   using No_map = Constant_property_map<Value_type, int>;
 
@@ -477,13 +478,10 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
     <internal_np::scanline_id_t, NamedParameters, No_map>::type;
   using Fallback_scanline_ID = Boolean_tag<std::is_same<ScanlineIDMap, No_map>::value>;
 
-  CGAL_static_assertion_msg(!(std::is_same<NormalMap,
-                              typename Point_set_processing_3::GetNormalMap
-                              <PointRange, NamedParameters>::NoMap>::value),
-                            "Error: no normal map");
+  CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
   ScanAngleMap scan_angle_map = choose_parameter<ScanAngleMap>
     (get_parameter(np, internal_np::scan_angle_map));
   ScanlineIDMap scanline_id_map = choose_parameter<ScanlineIDMap>
@@ -548,13 +546,6 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
             << std::size_t(points.size() / double(nb_scanlines))
             << " point(s))" << std::endl;
 #endif
-}
-
-template <typename PointRange>
-void scanline_orient_normals (PointRange& points)
-{
-  return scanline_orient_normals (points,
-                               CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 } // namespace CGAL

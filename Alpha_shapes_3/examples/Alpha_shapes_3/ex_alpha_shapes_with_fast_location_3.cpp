@@ -24,7 +24,7 @@ typedef Alpha_shape_3::NT                                NT;
 int main()
 {
   Delaunay dt;
-  std::ifstream is("./data/bunny_1000");
+  std::ifstream is("data/bunny_1000");
   int n;
   is >> n;
   Point p;

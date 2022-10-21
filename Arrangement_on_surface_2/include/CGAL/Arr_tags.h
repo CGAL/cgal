@@ -252,7 +252,7 @@ typedef boost::mpl::bool_<false>                                Arr_false;
 template <typename ArrSideCategory>
 struct Arr_is_side_oblivious {
   typedef ArrSideCategory                                       Side_cat;
-  typedef boost::is_same<Side_cat, Arr_oblivious_side_tag>      Is_same;
+  typedef std::is_same<Side_cat, Arr_oblivious_side_tag>        Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
   typedef typename result::type                                 type;
 };
@@ -260,7 +260,7 @@ struct Arr_is_side_oblivious {
 template <typename ArrSideCategory>
 struct Arr_is_side_open {
   typedef ArrSideCategory                                       Side_cat;
-  typedef boost::is_same<Side_cat, Arr_open_side_tag>           Is_same;
+  typedef std::is_same<Side_cat, Arr_open_side_tag>             Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
   typedef typename result::type                                 type;
 };
@@ -268,7 +268,7 @@ struct Arr_is_side_open {
 template <typename ArrSideCategory>
 struct Arr_is_side_identified {
   typedef ArrSideCategory                                       Side_cat;
-  typedef boost::is_same<Side_cat, Arr_identified_side_tag>     Is_same;
+  typedef std::is_same<Side_cat, Arr_identified_side_tag>       Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
   typedef typename result::type                                 type;
 };
@@ -276,7 +276,7 @@ struct Arr_is_side_identified {
 template <typename ArrSideCategory>
 struct Arr_is_side_contracted {
   typedef ArrSideCategory                                       Side_cat;
-  typedef boost::is_same<Side_cat, Arr_contracted_side_tag>     Is_same;
+  typedef std::is_same<Side_cat, Arr_contracted_side_tag>       Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
   typedef typename result::type                                 type;
 };
@@ -284,7 +284,7 @@ struct Arr_is_side_contracted {
 template <typename ArrSideCategory>
 struct Arr_is_side_closed {
   typedef ArrSideCategory                                       Side_cat;
-  typedef boost::is_same<Side_cat, Arr_closed_side_tag>         Is_same;
+  typedef std::is_same<Side_cat, Arr_closed_side_tag>           Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
   typedef typename result::type                                 type;
 };
@@ -429,6 +429,7 @@ struct Arr_sane_identified_tagging {
    * otherwise bool_<false>
    */
   typedef boost::mpl::and_<LR_ok, BT_ok>                result;
+  static constexpr bool value = result::value;
 };
 
 /*! Checks whether one of two boundary sides are identified

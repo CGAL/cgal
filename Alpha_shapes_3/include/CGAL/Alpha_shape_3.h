@@ -24,12 +24,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Object.h>
 #include <CGAL/Unique_hash_map.h>
-#ifdef CGAL_USE_GEOMVIEW
-#include <CGAL/IO/Geomview_stream.h>  // TBC
-#endif
 #include <CGAL/Triangulation_utils_3.h>
-
-#include <boost/type_traits/is_same.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -38,6 +33,7 @@
 #include <set>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 //-------------------------------------------------------------------
 namespace CGAL {
@@ -102,8 +98,8 @@ public:
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
   CGAL_static_assertion(
-   (boost::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
-   (boost::is_same<typename Dt::Periodic_tag, Tag_false>::value));
+   (std::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
+   (std::is_same<typename Dt::Periodic_tag, Tag_false>::value));
 
   //extra the type used for representing alpha according to ExactAlphaComparisonTag
   typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
@@ -112,8 +108,8 @@ public:
   typedef typename Gt::FT Coord_type;
 
   //checks whether tags are correctly set in Vertex and Cell classes
-  CGAL_static_assertion( (boost::is_same<NT,typename Dt::Cell::NT>::value) );
-  CGAL_static_assertion( (boost::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
+  CGAL_static_assertion( (std::is_same<NT,typename Dt::Cell::NT>::value) );
+  CGAL_static_assertion( (std::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
 
   typedef typename Dt::Point Point;
 
@@ -323,7 +319,7 @@ private :
   }
 
  // the version to be used with Tag_true is templated to avoid
- // instanciation through explicit instantiation of the whole class
+ // instantiation through explicit instantiation of the whole class
   void set_alpha_min_of_vertices(Tag_false)
   {
     for( Finite_vertices_iterator vit = finite_vertices_begin();
@@ -786,11 +782,6 @@ private:
 
   //---------------------------------------------------------------------
 public:
-#ifdef CGAL_USE_GEOMVIEW
-  void show_triangulation_edges(Geomview_stream &gv) const;
-  void show_alpha_shape_faces(Geomview_stream &gv) const;
-#endif
-
 
   // to Debug
   void print_maps() const;
@@ -1950,8 +1941,5 @@ Alpha_shape_3<Dt,EACT>::print_alpha_status(const Alpha_status& as) const
 
 } //namespace CGAL
 
-#ifdef CGAL_USE_GEOMVIEW
-#include <CGAL/IO/alpha_shape_geomview_ostream_3.h>
-#endif
 
 #endif //CGAL_ALPHA_SHAPE_3_H

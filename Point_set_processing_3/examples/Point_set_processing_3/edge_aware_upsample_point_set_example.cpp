@@ -20,7 +20,7 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char* argv[])
 {
-  const char* input_filename = (argc>1) ? argv[1] : "data/before_upsample.xyz";
+  const std::string input_filename = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/before_upsample.xyz");
   const char* output_filename = (argc>2) ? argv[2] : "data/before_upsample_UPSAMPLED.xyz";
 
   // Reads a .xyz point set file in points[], *with normals*.

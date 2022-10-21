@@ -11,6 +11,7 @@ coordinates from the namespace `CGAL::Barycentric_coordinates`.
 
 \cgalHasModel
 - All models of `Kernel`
+- `CGAL::Projection_traits_3<K>`
 - `CGAL::Projection_traits_xy_3<K>`
 - `CGAL::Projection_traits_yz_3<K>`
 - `CGAL::Projection_traits_xz_3<K>`

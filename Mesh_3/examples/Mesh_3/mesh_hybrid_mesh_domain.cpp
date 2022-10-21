@@ -13,7 +13,7 @@
 #include <CGAL/make_mesh_3.h>
 
 // Ouput
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 // Read 1D features from input file
 #include "read_polylines.h"
@@ -195,7 +195,7 @@ using namespace CGAL::parameters;
 
 int main()
 {
-  const char* fname = "data/cube.off";
+  const std::string fname = CGAL::data_file_path("meshes/cube.off");
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(fname);

@@ -237,7 +237,7 @@ void test_impl(Tree& tree, Polyhedron& p, const double duration);
  * Generic test method. Build AABB_tree and call test_impl()
  */
 template <class K, Primitive_type Primitive>
-void test(const char *filename,
+void test(const std::string filename,
           const double duration)
 {
     typedef CGAL::Polyhedron_3<K> Polyhedron;
@@ -264,7 +264,7 @@ void test(const char *filename,
  * Generic test_kernel method. call test<K> for various kernel K.
  */
 template<Primitive_type Primitive>
-void test_kernels(const char *filename,
+void test_kernels(const std::string filename,
                   const double duration)
 {
     std::cout << std::endl;

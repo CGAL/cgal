@@ -259,7 +259,7 @@ public:
   template <typename P>
   Vertex_handle insert(const P& p,
                        Face_handle f = Face_handle(),
-                       typename std::enable_if<!std::is_same<P, Point>::value>::type* = nullptr)
+                       std::enable_if_t<!std::is_same<P, Point>::value>* = nullptr)
   {
     CGAL_triangulation_assertion((std::is_same<P, Point_3>::value));
 
@@ -291,16 +291,16 @@ public:
   // Input range has value type Point, with Point != Point_3
   template <typename InputIterator>
   size_type insert(InputIterator first, InputIterator beyond,
-                   typename std::enable_if<
+                   std::enable_if_t<
                               !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                            Point_3>::value>::type* = nullptr);
+                                            Point_3>::value>* = nullptr);
 
   // Input range has value type Point_3, possibly with Point == Point_3
   template <typename InputIterator>
   size_type insert(InputIterator first, InputIterator beyond,
-                   typename std::enable_if<
+                   std::enable_if_t<
                               std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                           Point_3>::value>::type* = nullptr);
+                                           Point_3>::value>* = nullptr);
 
   bool update_ghost_faces(Vertex_handle v, bool first = false);
 
@@ -626,9 +626,9 @@ template <typename InputIterator>
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::size_type
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert(InputIterator first, InputIterator beyond,
-       typename std::enable_if<
+       std::enable_if_t<
                   !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                Point_3>::value>::type*)
+                                Point_3>::value>*)
 {
   typedef Point_3_with_iterator<Self>                                P3_wit;
 
@@ -682,9 +682,9 @@ template <typename InputIterator>
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::size_type
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert(InputIterator first, InputIterator beyond,
-       typename std::enable_if<
+       std::enable_if_t<
                   std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                               Point_3>::value>::type*)
+                               Point_3>::value>*)
 {
   const size_type n = number_of_vertices();
 

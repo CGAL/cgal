@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -37,7 +38,7 @@ void generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulatio
     else
       c->set_subdomain_index(2);
   }
-  CGAL_assertion(tr.is_valid(true));
+  assert(tr.is_valid(true));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
   std::ofstream os("data/triangulation_two_subdomains.binary.cgal",
@@ -74,8 +75,7 @@ int main(int argc, char* argv[])
   generate_input_two_subdomains(1000, tr);
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
-      CGAL::parameters::cell_selector(Cells_of_subdomain(2)));
+      CGAL::parameters::cell_is_selected_map(Cells_of_subdomain(2)));
 
   return EXIT_SUCCESS;
 }
-

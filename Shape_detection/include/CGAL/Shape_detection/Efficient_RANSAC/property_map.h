@@ -90,7 +90,7 @@ namespace Shape_detection {
     typedef value_type reference;
     typedef boost::read_write_property_map_tag category;
 
-    inline friend reference get (const Plane_map&, const key_type& k)
+    inline friend value_type get (const Plane_map&, const key_type& k)
     {
       return value_type(*k);
     }

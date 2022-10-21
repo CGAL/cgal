@@ -2,6 +2,7 @@
 #include <CGAL/Polyhedral_envelope.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <iostream>
 #include <fstream>
 
 int main(int argc, char* argv[])
@@ -13,7 +14,7 @@ int main(int argc, char* argv[])
 
   typedef CGAL::Polyhedral_envelope<Kernel> Envelope;
 
-  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
+  std::ifstream in((argc>1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   Surface_mesh tmesh;
 
   in >> tmesh;

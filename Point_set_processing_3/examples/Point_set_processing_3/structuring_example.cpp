@@ -25,7 +25,7 @@ typedef CGAL::Shape_detection::Plane<Traits>               Plane;
 
 int main (int argc, char** argv)
 {
-  const char* filename = (argc>1) ? argv[1] : "data/cube.pwn";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn");
 
   // Points with normals.
   Pwn_vector points;

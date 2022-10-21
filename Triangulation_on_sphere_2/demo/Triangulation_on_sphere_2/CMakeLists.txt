@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.23)
 
 project (Triangulation_on_sphere_2_Demo)
 
@@ -44,6 +44,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET CGAL::Eigen3_support)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Triangulation_on_sphere_2_Demo )
 
   target_link_libraries( Triangulation_on_sphere_2_Demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::Eigen3_support)
+
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test( Triangulation_on_sphere_2_Demo )
 else()
-  message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, OpenGL and Qt4, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, Qt5 and OpenGL, and will not be compiled.")
 endif()

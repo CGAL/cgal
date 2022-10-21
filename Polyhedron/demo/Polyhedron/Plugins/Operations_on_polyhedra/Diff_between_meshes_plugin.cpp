@@ -77,7 +77,7 @@ void Polyhedron_demo_diff_between_meshes_plugin::diff()
   QCursor c(Qt::WaitCursor);
   CGAL::Three::Three::CursorScopeGuard guard(c);
 
-  //Get the two meshes. No need to check their existance, applicable()
+  //Get the two meshes. No need to check their existence, applicable()
   //is not permissive enough to let it crash.
   Scene_surface_mesh_item* m1_item = qobject_cast<Scene_surface_mesh_item*>(
         scene->item(scene->selectionIndices().front())),

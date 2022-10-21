@@ -181,7 +181,7 @@ _test_cls_alpha_shape_3()
 // test a bigger alpha_shapes
   a1.clear();
   L.clear();
-  std::ifstream is("./data/fin", std::ios::in);
+  std::ifstream is("data/fin", std::ios::in);
   assert(is);
   file_input(is,L);
   a1.set_mode(Alpha_shape_3::REGULARIZED);

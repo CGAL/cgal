@@ -186,7 +186,7 @@ generate_point() {
         this->d_item = creator( T( this->d_range),        T(d));
         break;
     default:
-        CGAL_assume(false);
+        CGAL_unreachable();
     }
 }
 

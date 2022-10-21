@@ -22,6 +22,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/assertions.h>
 
 #include <vector>
 #include <cstdlib>
@@ -58,7 +59,7 @@ namespace internal
       ++nb;
     }
 
-    assert(nb>0);
+    CGAL_assertion(nb>0);
     return (typename Kernel_traits<Vector>::Kernel::Construct_scaled_vector_3()
             (normal, 1.0/nb));
   }

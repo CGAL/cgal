@@ -120,7 +120,7 @@ public:
   Listing_intersection_traits(Output_iterator out_it, const AABBTraits& traits)
     : m_out_it(out_it), m_traits(traits) {}
 
-  bool go_further() const { return true; }
+  constexpr bool go_further() const { return true; }
 
   void intersection(const Query& query, const Primitive& primitive)
   {
@@ -163,7 +163,7 @@ public:
   Listing_primitive_traits(Output_iterator out_it, const AABBTraits& traits)
     : m_out_it(out_it), m_traits(traits) {}
 
-  bool go_further() const { return true; }
+  constexpr bool go_further() const { return true; }
 
   void intersection(const Query& query, const Primitive& primitive)
   {
@@ -295,7 +295,7 @@ public:
       m_traits(traits)
   {}
 
-  bool go_further() const { return true; }
+  constexpr bool go_further() const { return true; }
 
   void intersection(const Point& query, const Primitive& primitive)
   {

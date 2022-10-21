@@ -834,7 +834,7 @@ test_new_3(const R& rep)
   // More tests, that require sqrt().
   typedef ::CGAL::Algebraic_structure_traits<FT> AST;
   static const bool has_sqrt =
-      ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
+      ! ::std::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
   _test_new_3_sqrt(rep, ::CGAL::Boolean_tag<has_sqrt>() );
 
   return true;

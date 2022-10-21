@@ -8,6 +8,7 @@
 #include <CGAL/Lazy_exact_nt.h>
 
 #include <list>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef Kernel::Point_2                                   Point_2;
@@ -28,7 +29,7 @@ Polygon_2 construct_polygon (const Circle_2& circle)
   Curve_2 curve (circle);
   std::list<CGAL::Object>  objects;
   traits.make_x_monotone_2_object() (curve, std::back_inserter(objects));
-  CGAL_assertion (objects.size() == 2);
+  assert(objects.size() == 2);
 
   // Construct the polygon.
   Polygon_2 pgn;

@@ -18,11 +18,12 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
+#include <unordered_map>
 #include <functional>
 #include <utility>
 
@@ -68,8 +69,8 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   }
   CGAL_assertion(dimension > 0);
 
-  boost::unordered_map<Facet, Subdomain_index> cells_info;
-  boost::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index> > facets_info;
+  std::unordered_map<Facet, Subdomain_index, boost::hash<Facet>> cells_info;
+  std::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index>, boost::hash<Facet>> facets_info;
 
   // check orientation and collect incident cells to avoid circulating twice
   boost::container::small_vector<Cell_handle, 30> inc_cells;
@@ -238,7 +239,6 @@ void split_long_edges(C3T3& c3t3,
   typedef typename C3T3::Triangulation       T3;
   typedef typename T3::Cell_handle           Cell_handle;
   typedef typename T3::Edge                  Edge;
-  typedef typename T3::Finite_edges_iterator Finite_edges_iterator;
   typedef typename T3::Vertex_handle         Vertex_handle;
   typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
@@ -259,10 +259,8 @@ void split_long_edges(C3T3& c3t3,
   //collect long edges
   T3& tr = c3t3.triangulation();
   Boost_bimap long_edges;
-  for (Finite_edges_iterator eit = tr.finite_edges_begin();
-       eit != tr.finite_edges_end(); ++eit)
+  for (Edge e : tr.finite_edges())
   {
-    Edge e = *eit;
     if (!can_be_split(e, c3t3, protect_boundaries, cell_selector))
       continue;
 

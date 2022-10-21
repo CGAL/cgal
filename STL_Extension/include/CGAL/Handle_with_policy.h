@@ -275,7 +275,7 @@ public:
     //! the virtual destructor is essential for proper memory management here.
     virtual ~Reference_counted_hierarchy() {}
     //! can be used to minimize memory consumption once it is known that this
-    //! representation is not used anymore and only needed to keep a fowarding
+    //! representation is not used anymore and only needed to keep a forwarding
     //! pointer. One example would be cleaning up dynamically allocated
     //! data, or another example would be overwriting a \c leda::real with
     //! a default constructed value to free its old expression tree. However,

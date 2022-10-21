@@ -124,7 +124,7 @@ is opposite to the vertex with the same index. See
 - \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
 
 \cgalCRPSection{I/O}
- - \link PkgIOTriangulation3 CGAL:Triangulation_3::file_input<Tr_src, ConvertVertex, ConvertCell>()\endlink
+ - \link PkgIOTriangulation3 CGAL::Triangulation_3::file_input<Tr_src, ConvertVertex, ConvertCell>()\endlink
  - \link PkgIOTriangulation3 CGAL::file_input<Tr_src, Tr_tgt, ConvertVertex, ConvertCell>()\endlink
 */
 

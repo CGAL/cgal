@@ -706,7 +706,7 @@ homogeneous(int i, int j) const
               case 1: return t01;
               case 2: return t02;
               case 3: return t03;
-              default: CGAL_assume(false);
+              default: CGAL_unreachable();
             }
             break;
     case 1: switch (j)
@@ -715,7 +715,7 @@ homogeneous(int i, int j) const
               case 1: return t11;
               case 2: return t12;
               case 3: return t13;
-              default: CGAL_assume(false);
+              default: CGAL_unreachable();
             }
             break;
     case 2: switch (j)
@@ -724,7 +724,7 @@ homogeneous(int i, int j) const
               case 1: return t21;
               case 2: return t22;
               case 3: return t23;
-              default: CGAL_assume(false);
+              default: CGAL_unreachable();
             }
             break;
     case 3: switch (j)
@@ -733,10 +733,10 @@ homogeneous(int i, int j) const
               case 1: return RT0;
               case 2: return RT0;
               case 3: return t33;
-              default: CGAL_assume(false);
+              default: CGAL_unreachable();
             }
   }
-  CGAL_assume(false);
+  CGAL_unreachable();
   return RT0;
 }
 
@@ -864,7 +864,7 @@ Translation_repH3<R>::homogeneous(int i, int j) const
               case 1: return RT0;
               case 2: return RT0;
               case 3: return tv.hx();
-              default: CGAL_assume(false);
+              default: CGAL_unreachable();
             }
             break;
     case 1: switch (j)
@@ -873,7 +873,7 @@ Translation_repH3<R>::homogeneous(int i, int j) const
               case 1: return tv.hw();
               case 2: return RT0;
               case 3: return tv.hy();
-              default: CGAL_assume(false);
+              default: CGAL_unreachable();
             }
             break;
     case 2: switch (j)
@@ -882,7 +882,7 @@ Translation_repH3<R>::homogeneous(int i, int j) const
               case 1: return RT0;
               case 2: return tv.hw();
               case 3: return tv.hz();
-              default: CGAL_assume(false);
+              default: CGAL_unreachable();
             }
             break;
     case 3: switch (j)
@@ -891,10 +891,10 @@ Translation_repH3<R>::homogeneous(int i, int j) const
               case 1: return RT0;
               case 2: return RT0;
               case 3: return tv.hw();
-              default: CGAL_assume(false);
+              default: CGAL_unreachable();
             }
   }
-  CGAL_assume(false);
+  CGAL_unreachable();
   return RT0;
 }
 

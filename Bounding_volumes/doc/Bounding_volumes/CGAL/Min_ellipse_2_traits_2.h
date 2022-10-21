@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgBoundingVolumesRef
 
 The class `Min_ellipse_2_traits_2` is a traits class for `CGAL::Min_ellipse_2<Traits>`
-using the two-di-men-sional \cgal kernel.
+using the two-dimensional \cgal kernel.
 
 The template parameter `K` must be a model for `Kernel`.
 

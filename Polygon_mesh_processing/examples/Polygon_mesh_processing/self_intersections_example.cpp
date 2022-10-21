@@ -8,7 +8,9 @@
 #include <CGAL/tags.h>
 
 #include <iostream>
-#include <fstream>
+#include <iterator>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3>                      Mesh;
@@ -18,7 +20,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))

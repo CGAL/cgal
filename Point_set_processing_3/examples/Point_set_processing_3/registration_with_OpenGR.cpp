@@ -22,8 +22,8 @@ namespace params = CGAL::parameters;
 
 int main(int argc, const char** argv)
 {
-  const char* fname1 = (argc>1) ? argv[1] : "data/hippo1.ply";
-  const char* fname2 = (argc>2) ? argv[2] : "data/hippo2.ply";
+  const std::string fname1 = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/hippo1.ply");
+  const std::string fname2 = (argc>2) ? argv[2] : CGAL::data_file_path("points_3/hippo2.ply");
 
   std::vector<Pwn> pwns1, pwns2;
   if(!CGAL::IO::read_points(fname1, std::back_inserter(pwns1),

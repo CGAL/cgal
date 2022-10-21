@@ -22,7 +22,6 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
@@ -43,7 +42,7 @@ class Vector_3 : public R_::Kernel_base::Vector_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Vector_3                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Vector_3>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Vector_3>::value));
 
 public:
 
@@ -96,7 +95,7 @@ public:
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z, w)) {}
 
   friend void swap(Self& a, Self& b)
-#ifdef __cpp_lib_is_swappable
+#if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
     noexcept(std::is_nothrow_swappable_v<Rep>)
 #endif
   {

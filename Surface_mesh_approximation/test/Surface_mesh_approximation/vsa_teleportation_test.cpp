@@ -53,7 +53,7 @@ bool check_strict_ordering(const std::vector<FT> &error)
 int main()
 {
   Mesh mesh;
-  std::ifstream input("./data/plane-sphere-high.off");
+  std::ifstream input("data/plane-sphere-high.off");
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;

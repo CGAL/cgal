@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 {
   // read input polyhedron
   Triangle_mesh tmesh;
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
+  std::ifstream input((argc>1)?argv[1]:CGAL::data_file_path("meshes/elephant.off"));
   input >> tmesh;
 
   // initialize indices of vertices, halfedges and faces

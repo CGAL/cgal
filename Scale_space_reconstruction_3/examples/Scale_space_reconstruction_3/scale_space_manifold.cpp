@@ -20,17 +20,13 @@ typedef Reconstruction::Facet_const_iterator                    Facet_iterator;
 typedef Mesher::Facet_const_iterator                            Mesher_iterator;
 typedef CGAL::Timer Timer;
 
-int main(int argc, char* argv[])
-{
-  if(argc != 2)
-  {
-    std::cerr << "Error, no input file provided\n";
-    return 1;
-  }
+int main(int argc, char* argv[]) {
+  // Read the dat
+  std::string fname = argc==1?CGAL::data_file_path("points_3/kitten.off"):argv[1];
 
   std::cerr << "Reading " << std::flush;
   std::vector<Point> points;
-  if(!CGAL::IO::read_points(argv[1], std::back_inserter(points)))
+  if(!CGAL::IO::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file" << std::endl;
     return EXIT_FAILURE;

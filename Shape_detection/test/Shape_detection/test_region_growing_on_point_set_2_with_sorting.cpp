@@ -42,7 +42,7 @@ bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/point_set_2.xyz"));
   CGAL::IO::set_ascii_mode(in);
 
   if (!in) {

@@ -8,6 +8,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
+#include <CGAL/IO/File_medit.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -33,7 +34,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/elephant.off";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/elephant.off");
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(fname);
@@ -61,7 +62,7 @@ int main(int argc, char*argv[])
 
   // Output
   std::ofstream medit_file("out_1.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
 
   // Set tetrahedron size (keep cell_radius_edge_ratio), ignore facets
@@ -72,7 +73,8 @@ int main(int argc, char*argv[])
 
   // Output
   medit_file.open("out_2.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return EXIT_SUCCESS;
 }

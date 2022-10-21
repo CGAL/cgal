@@ -5,9 +5,10 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
-#include <vector>
-#include <fstream>
+#include <iostream>
 #include <limits>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef K::Point_3                                             Point;
@@ -30,7 +31,7 @@ double max_coordinate(const Polyhedron& poly)
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Polyhedron poly;
   if(!PMP::IO::read_polygon_mesh(filename, poly) || CGAL::is_empty(poly) || !CGAL::is_triangle_mesh(poly))

@@ -38,7 +38,7 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc>1) ? argv[1] : "data/lion.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/lion.off");
 
   SurfaceMesh sm;
   if(!CGAL::IO::read_polygon_mesh(filename, sm))
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   UV_pmap uv_pm = sm.add_property_map<SM_halfedge_descriptor, Point_2>("h:uv").first;
 
   // A halfedge on the (possibly virtual) border
-  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh, CGAL::Polygon_mesh_processing::parameters::all_default()).first;
+  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
 
   typedef SMP::Two_vertices_parameterizer_3<Mesh>                Border_parameterizer;
   typedef SMP::LSCM_parameterizer_3<Mesh, Border_parameterizer>  Parameterizer;

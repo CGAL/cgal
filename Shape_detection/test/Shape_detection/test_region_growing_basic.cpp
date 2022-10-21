@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   bool success = true;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/point_set_2.xyz"));
   CGAL::IO::set_ascii_mode(in);
 
   if (!in) {

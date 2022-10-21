@@ -708,6 +708,28 @@ power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
   return cmpy * sign_of_determinant(dpy, dpz, dqy, dqz);
 }
 
+template <class FT>
+Oriented_side
+circumcenter_oriented_side_of_oriented_segmentC2(const FT& ax,  const FT& ay,
+                                                 const FT& bx,  const FT& by,
+                                                 const FT& p0x, const FT& p0y,
+                                                 const FT& p1x, const FT& p1y,
+                                                 const FT& p2x, const FT& p2y)
+{
+  const FT dX = bx - ax;
+  const FT dY = by - ay;
+  const FT R0 = p0x * p0x + p0y * p0y;
+  const FT R1 = p1x * p1x + p1y * p1y;
+  const FT R2 = p2x * p2x + p2y * p2y;
+  const FT denominator = (p1x - p0x) * (p2y - p0y) +
+                         (p0x - p2x) * (p1y - p0y);
+  const FT det = 2 * denominator * (ax * dY - ay * dX)
+                   - (R2 - R1) * (p0x * dX + p0y * dY)
+                   - (R0 - R2) * (p1x * dX + p1y * dY)
+                   - (R1 - R0) * (p2x * dX + p2y * dY);
+  return CGAL::sign(det);
+}
+
 } //namespace CGAL
 
 #endif  // CGAL_PREDICATES_KERNEL_FTC2_H

@@ -41,7 +41,6 @@
 #include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -1684,9 +1683,8 @@ private:
   /**
    * Returns the least square plane from v, using adjacent surface points
    */
-  boost::optional<Plane_3>
+  std::pair<boost::optional<Plane_3>, Bare_point>
   get_least_square_surface_plane(const Vertex_handle& v,
-                                 Bare_point& ref_point,
                                  Surface_patch_index index = Surface_patch_index()) const;
 
   /**
@@ -2669,7 +2667,7 @@ update_mesh(const Vertex_handle& old_vertex,
 
   // Fill modified vertices
   if ( fill_vertices
-        && !(boost::is_same<OutputIterator,CGAL::Emptyset_iterator>::value))
+        && !(std::is_same<OutputIterator,CGAL::Emptyset_iterator>::value))
   {
     fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
                            new_vertex, modified_vertices);
@@ -3285,7 +3283,7 @@ move_point_topo_change_conflict_zone_known(
   std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
 
   // Fill deleted_cells
-  if(! boost::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
+  if(! std::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
     std::copy(conflict_zone.begin(), conflict_zone.end(), deleted_cells);
 
   return new_vertex;
@@ -3414,10 +3412,10 @@ project_on_surface_aux(const Bare_point& p,
 
 
 template <typename C3T3, typename MD>
-boost::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>
+std::pair<boost::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>,
+          typename C3T3_helpers<C3T3, MD>::Bare_point>
 C3T3_helpers<C3T3,MD>::
 get_least_square_surface_plane(const Vertex_handle& v,
-                               Bare_point& reference_point,
                                Surface_patch_index patch_index) const
 {
   typedef typename C3T3::Triangulation::Triangle Triangle;
@@ -3467,7 +3465,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // In some cases point is not a real surface point
   if ( triangles.empty() )
-    return boost::none;
+    return std::make_pair(boost::none, Bare_point());
 
   // Compute least square fitting plane
   Plane_3 plane;
@@ -3481,9 +3479,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                        tr_.geom_traits(),
                                        Default_diagonalize_traits<FT, 3>());
 
-  reference_point = ref_facet.first->get_facet_surface_center(ref_facet.second);
-
-  return plane;
+   return std::make_pair(plane,
+     ref_facet.first->get_facet_surface_center(ref_facet.second));
 }
 
 
@@ -3515,9 +3512,10 @@ project_on_surface_if_possible(const Vertex_handle& v,
   typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   // Get plane
-  Bare_point reference_point;
-  boost::optional<Plane_3> opt_plane = get_least_square_surface_plane(v, reference_point, index);
+  std::pair<boost::optional<Plane_3>, Bare_point> pl_rp
+    = get_least_square_surface_plane(v, index);
 
+  boost::optional<Plane_3> opt_plane = pl_rp.first;
   if(!opt_plane) return boost::none;
 
   // Project
@@ -3525,7 +3523,10 @@ project_on_surface_if_possible(const Vertex_handle& v,
   if ( ! equal(p, cp(position)) )
     return project_on_surface_aux(p, cp(position), opt_plane->orthogonal_vector());
   else
+  {
+    const Bare_point& reference_point = pl_rp.second;
     return project_on_surface_aux(p, reference_point, opt_plane->orthogonal_vector());
+  }
 }
 
 
