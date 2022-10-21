@@ -559,7 +559,9 @@ bool decimate_impl(const TriangleMesh& tm,
           csts.clear(); // this will trigger the copy of the current patch rather than a remeshing
           break;
         }
-
+#ifdef CGAL_DEBUG_DECIMATION
+      std::cout << "csts.size() " <<  csts.size() << "\n";
+#endif
       if (csts.size()==3)
       {
         triangles.push_back( make_array(csts[0].first,
@@ -575,6 +577,7 @@ bool decimate_impl(const TriangleMesh& tm,
           cc_to_handle.set(cc_id, 0);
         else
         {
+          //TODO: shall we try to plug pseudo-cdt?
 #ifdef CGAL_DEBUG_DECIMATION
           std::cout << "  DEBUG: Failed to remesh a patch" << std::endl;
 #endif
@@ -1127,12 +1130,16 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   std::vector< std::vector< cpp11::array<std::size_t, 3> > > all_triangles(nb_meshes);
   bool res = true;
   std::vector<bool> to_be_processed(nb_meshes, true);
-  bool loop_again = false;
+  bool loop_again;
   bool no_remeshing_issue = true;
   do{
+    loop_again = false;
     for(std::size_t mesh_id=0; mesh_id<nb_meshes; ++mesh_id)
     {
       if (!to_be_processed[mesh_id]) continue;
+#ifdef CGAL_DEBUG_DECIMATION
+      std::cout << "Handling mesh #" << mesh_id << "\n";
+#endif
       all_triangles[mesh_id].clear();
       Triangle_mesh& tm = *mesh_ptrs[mesh_id];
 
@@ -1159,7 +1166,9 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                       vpms[mesh_id],
                       corners,
                       all_triangles[mesh_id]);
-
+#ifdef CGAL_DEBUG_DECIMATION
+      std::cout << "all_patches_successfully_remeshed? " << all_patches_successfully_remeshed << "\n";
+#endif
       if (!all_patches_successfully_remeshed)
       {
         no_remeshing_issue=false;
@@ -1167,19 +1176,19 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
         std::set<std::size_t> mesh_ids;
         for (std::size_t cid=ncid; cid<corners.size(); ++cid)
         {
-
           typedef std::pair<const std::size_t, vertex_descriptor> Map_pair_type;
           auto find_res = point_to_vertex_maps.find(corners[cid]);
           assert(find_res != point_to_vertex_maps.end());
           for(Map_pair_type& mp : find_res->second)
           {
             std::size_t other_mesh_id = mp.first;
-            if ( other_mesh_id!=mesh_id  && !is_corner_id(get(vertex_corner_id_maps[mesh_id], mp.second)))
+            if ( other_mesh_id!=mesh_id  && !is_corner_id(get(vertex_corner_id_maps[other_mesh_id], mp.second)))
             {
               mesh_ids.insert(other_mesh_id);
               put(vertex_corner_id_maps[other_mesh_id], mp.second,
                 nb_corners_and_nb_cc_all[other_mesh_id].first++);
-              all_corners[other_mesh_id].push_back(corners[cid]);
+              if (!all_corners[other_mesh_id].empty())
+                all_corners[other_mesh_id].push_back(corners[cid]);
             }
           }
         }
@@ -1189,7 +1198,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
             if (!loop_again)
               std::cout << "setting for another loop\n";
             loop_again=true;
-            to_be_processed[mesh_id] = true;
+            to_be_processed[mid] = true;
           }
       }
       to_be_processed[mesh_id] = false;
@@ -1220,6 +1229,9 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
 
 /// @TODO: Add doc
+/// @TODO: with the current implementation, if the input contains
+///        a non-manifold vertex patches will be simplified but in the end writing will fail
+///        because of polygon_soup_to_polygon_mesh
 template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool remesh_planar_patches(TriangleMesh& tm,
                            const NamedParameters& np = parameters::default_values())
