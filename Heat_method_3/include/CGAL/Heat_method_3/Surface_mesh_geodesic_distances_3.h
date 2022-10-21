@@ -21,6 +21,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/double.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Default.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
