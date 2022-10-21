@@ -66,13 +66,16 @@ bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits)
   typename Traits::Construct_cross_product_vector_3
     cross_product = traits.construct_cross_product_vector_3_object();
 
-  typename boost::property_map< TriangleMesh, boost::vertex_point_t>::const_type
-    vpm = get(boost::vertex_point, tm);
+  typedef typename boost::property_map< TriangleMesh, boost::vertex_point_t>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::reference Point_ref;
+
+  VPM vpm = get(boost::vertex_point, tm);
+
   for (typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tm))
   {
-    const Point p1 = get(vpm, target(halfedge(f, tm), tm));
-    const Point p2 = get(vpm, target(next(halfedge(f, tm), tm), tm));
-    const Point p3 = get(vpm, target(next(next(halfedge(f, tm), tm), tm), tm));
+    const Point_ref p1 = get(vpm, target(halfedge(f, tm), tm));
+    const Point_ref p2 = get(vpm, target(next(halfedge(f, tm), tm), tm));
+    const Point_ref p3 = get(vpm, target(next(next(halfedge(f, tm), tm), tm), tm));
     Vector_3 v = cross_product(construct_vector(p1, p2), construct_vector(p1, p3));
     if(scalar_product(v, v) == 0.)
       return true;
@@ -278,7 +281,7 @@ private:
   }
 
 
-  //returns true if edge is locally Delaunay (opposing angles are less than pi):
+  //returns `true` if edge is locally Delaunay (opposing angles are less than pi):
   //Two ways of doing this: taking angles directly (not good with virtual edges)
   //OR: taking edge length and using law of cosines,
   //The second way checks cotan weights
@@ -797,11 +800,11 @@ struct IDT_vertex_distance_property_map {
 
   friend void put(IDT_vertex_distance_property_map<IDT,PM> idtpm,
                   key_type vd,
-                  value_type v)
+                  value_type val)
   {
     typename boost::graph_traits<TM>::vertex_descriptor tm_vd = target(vd.hd, idtpm.idt.triangle_mesh());
 
-    put(idtpm.pm, idtpm.idt.v2v.at(tm_vd), v);
+    put(idtpm.pm, idtpm.idt.v2v.at(tm_vd), val);
   }
 };
 

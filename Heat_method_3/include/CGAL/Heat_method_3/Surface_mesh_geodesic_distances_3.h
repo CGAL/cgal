@@ -92,8 +92,13 @@ public:
   /*!
     \brief Constructor
   */
-  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm)
-    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(get(vertex_point,tm))
+  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm,
+                                    VertexPointMap vpm)
+    : vertex_id_map(get(Vertex_property_tag(), tm)),
+      face_id_map(get(Face_property_tag(), tm)),
+      v2v(tm),
+      tm(tm),
+      vpm(vpm)
   {
     build();
   }
@@ -101,8 +106,8 @@ public:
   /*!
     \brief Constructor
   */
-  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
-    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(vpm)
+  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm)
+    : Surface_mesh_geodesic_distances_3(tm, get(vertex_point, tm))
   {
     build();
   }
