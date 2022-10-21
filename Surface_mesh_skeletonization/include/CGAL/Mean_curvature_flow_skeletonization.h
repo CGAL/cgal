@@ -223,7 +223,7 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
 
   // Get weight from the weight interface.
-  typedef CGAL::Weights::Cotangent_weight<mTriangleMesh>                       Weight_calculator;
+  typedef CGAL::Weights::Cotangent_weight<mTriangleMesh, mVertexPointMap, Traits> Weight_calculator;
 
   typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
@@ -371,17 +371,15 @@ public:
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
+    : m_traits(traits), m_weight_calculator(tmesh, vertex_point_map, traits, true /* use_clamped_version */)
   {
     init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
-  {
-    init(tmesh);
-  }
+    : Mean_curvature_flow_skeletonization(tmesh, get(vertex_point, tmesh), traits)
+  { }
   #endif
   /// @} Constructor
 
@@ -831,12 +829,13 @@ private:
   }
 
   /// Initialize some global data structures such as vertex id.
-  void init(const TriangleMesh& tmesh)
+  void init(const TriangleMesh& tmesh, VertexPointMap vpm)
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
     copy_face_graph(tmesh, m_tmesh,
-                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
+                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v))
+                                     .vertex_point_map(vpm));
 
     // copy input vertices to keep correspondence
     for(const Vertex_pair& vp : v2v)
