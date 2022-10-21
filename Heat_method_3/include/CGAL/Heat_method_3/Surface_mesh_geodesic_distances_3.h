@@ -487,13 +487,16 @@ private:
     }
     m_source_change_flag = false;
 
-    CGAL_precondition(is_triangle_mesh(tm));
     Index i = 0;
     for(vertex_descriptor vd : vertices(tm)){
       put(vertex_id_map, vd, i++);
     }
     Index face_i = 0;
     for(face_descriptor fd : faces(tm)){
+      // Do not use BGL's version because `tm` is not a valid halfedge graph due to its weird vertex descriptor:
+      // it fails checks such as halfedge(target(h, g), g) == h
+      CGAL_assertion_code(halfedge_descriptor hd = halfedge(fd, tm);)
+      CGAL_assertion(hd == next(next(next(hd,tm),tm),tm));
       put(face_id_map, fd, face_i++);
     }
     dimension = static_cast<int>(num_vertices(tm));
