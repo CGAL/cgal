@@ -371,7 +371,11 @@ public:
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(tmesh, vertex_point_map, traits, true /* use_clamped_version */)
+    :
+      m_tmesh(),
+      m_tmesh_point_pmap(get(CGAL::vertex_point, m_tmesh)),
+      m_traits(traits),
+      m_weight_calculator(m_tmesh, m_tmesh_point_pmap, m_traits, true /* use_clamped_version */)
   {
     init(tmesh, vertex_point_map);
   }
@@ -884,7 +888,7 @@ private:
     m_edge_weight.clear();
     m_edge_weight.reserve(num_halfedges(m_tmesh));
     for(halfedge_descriptor hd : halfedges(m_tmesh))
-      m_edge_weight.push_back(m_weight_calculator(hd, m_tmesh, m_tmesh_point_pmap));
+      m_edge_weight.push_back(m_weight_calculator(hd));
   }
 
   /// Assemble the left hand side.
