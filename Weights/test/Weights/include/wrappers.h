@@ -245,7 +245,7 @@ struct Triangular_region_wrapper
 };
 
 template<typename Kernel>
-struct Barycentric_region_wrapper 
+struct Barycentric_region_wrapper
 {
   using FT = typename Kernel::FT;
   template<typename Point>
