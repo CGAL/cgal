@@ -338,7 +338,7 @@ private:
          (CGAL::angle(p2, p1, p0) == CGAL::OBTUSE) ||
          (CGAL::angle(p0, p2, p1) == CGAL::OBTUSE))
       {
-        const FT A = internal::positive_area_3(m_traits, p0, p1, p2);
+        const FT A = internal::positive_area_3(p0, p1, p2, m_traits);
         if (angle0 == CGAL::OBTUSE)
           voronoi_area += A / FT(2);
          else
