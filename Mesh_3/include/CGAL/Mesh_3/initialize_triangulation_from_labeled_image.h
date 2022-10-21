@@ -24,6 +24,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Image_3.h>
+#include <CGAL/ImageIO.h>
 
 #include <iostream>
 #include <queue>
@@ -127,7 +128,11 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
                                              image.vy()),
                                   image.vz());
 
-  typedef std::vector<std::pair<Bare_point, std::size_t> > Seeds;
+  using Point_indices = std::tuple<std::size_t, std::size_t, std::size_t>;
+  using Seed = std::pair<Point_indices, std::size_t>;
+  using Seeds = std::vector<Seed>;
+  using Subdomain_index = typename Mesh_domain::Subdomain_index;
+
   Seeds seeds;
   Get_point<Bare_point> get_point(&image);
   std::cout << "Searching for connected components..." << std::endl;
@@ -135,20 +140,36 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
                                                    std::back_inserter(seeds),
                                                    CGAL::Emptyset_iterator(),
                                                    transform,
-                                                   get_point,
                                                    Image_word_type());
   std::cout << "  " << seeds.size() << " components were found." << std::endl;
   std::cout << "Construct initial points..." << std::endl;
-  for(typename Seeds::const_iterator it = seeds.begin(), end = seeds.end();
-      it != end; ++it)
+  for(const Seed seed : seeds)
   {
-    const double radius = double(it->second + 1)* max_v;
+    const std::size_t i = get<0>(seed.first);
+    const std::size_t j = get<1>(seed.first);
+    const std::size_t k = get<2>(seed.first);
+
+    const Bare_point seed_point = get_point(i, j, k);
+    Cell_handle seed_cell = tr.locate(cwp(seed_point));
+
+    const boost::optional<Subdomain_index> seed_label
+      = domain.is_in_domain_object()(seed_point);
+    const boost::optional<Subdomain_index> seed_cell_label
+      = domain.is_in_domain_object()(
+          seed_cell->weighted_circumcenter(tr.geom_traits()));
+
+    if ( seed_label != boost::none
+      && seed_cell_label != boost::none
+      && seed_label.get() == seed_cell_label.get())
+        continue; //this means the connected component has already been initialized
+
+    const double radius = double(seed.second + 1)* max_v;
     CGAL::Random_points_on_sphere_3<Bare_point> points_on_sphere_3(radius);
     typename Mesh_domain::Construct_intersection construct_intersection =
       domain.construct_intersection_object();
 
     std::vector<Vector_3> directions;
-    if(it->second < 2) {
+    if(seed.second < 2) {
       // shoot in six directions
       directions.push_back(Vector_3(-radius, 0, 0));
       directions.push_back(Vector_3(+radius, 0, 0));
@@ -166,9 +187,10 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
 
     for(const Vector_3& v : directions)
     {
-      const Bare_point test = it->first + v;
+      const Bare_point test = seed_point + v;
+
       const typename Mesh_domain::Intersection intersect =
-        construct_intersection(Segment_3(it->first, test));
+        construct_intersection(Segment_3(seed_point, test));
       if (std::get<2>(intersect) != 0)
       {
         const Bare_point& bpi = std::get<0>(intersect);

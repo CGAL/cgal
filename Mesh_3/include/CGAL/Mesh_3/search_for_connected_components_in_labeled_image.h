@@ -34,14 +34,12 @@
 template <typename PointsOutputIterator,
           typename DomainsOutputIterator,
           typename TransformOperator,
-          typename Construct_point,
           typename Image_word_type>
 void
 search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
                                                  PointsOutputIterator it,
                                                  DomainsOutputIterator dom_it,
                                                  TransformOperator transform,
-                                                 Construct_point point,
                                                  Image_word_type)
 {
   const std::size_t nx = image.xdim();
@@ -210,7 +208,7 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
             {
 //               if(nb_voxels >= 100)
               {
-                *it++ = std::make_pair(point(i, j, k),
+                *it++ = std::make_pair(std::make_tuple(i, j, k),
                                        depth+1);
 #if CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE > 1
                 std::cerr << boost::format("Found seed %5%, which is voxel "
