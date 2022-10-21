@@ -299,12 +299,10 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
       std::vector<halfedge_descriptor> remaining_cycles;
       CGAL::Polygon_mesh_processing::extract_boundary_cycles(tm, std::back_inserter(remaining_cycles));
 
-      int tested=0, done=0;
       for (halfedge_descriptor hc : remaining_cycles)
       {
         if (next(next(hc,tm),tm)==prev(hc,tm))
         {
-          ++tested;
           //get smallest halfedge
           halfedge_descriptor hm = hc;
           double min_l = CGAL::Polygon_mesh_processing::edge_length(hc, tm);
@@ -335,7 +333,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
           std::array<vertex_descriptor,3> vr = { source(hm, tm), target(hm, tm), target(next(hm, tm), tm) };
           CGAL::Euler::add_face(vr, tm);
           CGAL::Euler::collapse_edge(edge(hm, tm), tm);
-          ++done;
         }
       }
     }
