@@ -24,7 +24,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Image_3.h>
-#include <CGAL/ImageIO.h>
 
 #include <iostream>
 #include <queue>
