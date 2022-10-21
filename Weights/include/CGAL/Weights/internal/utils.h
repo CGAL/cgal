@@ -448,6 +448,7 @@ typename GeomTraits::FT area_3(const typename GeomTraits::Point_3& p,
                                const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
 
