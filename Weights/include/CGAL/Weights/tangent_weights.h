@@ -235,6 +235,7 @@ typename GeomTraits::FT half_tangent_weight(const typename GeomTraits::Point_2& 
                                             const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
+  using Vector_2 = typename GeomTraits::Vector_2;
 
   auto vector_2 = traits.construct_vector_2_object();
   auto dot_product_2 = traits.compute_scalar_product_2_object();
