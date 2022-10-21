@@ -70,10 +70,7 @@ struct Tangent_wrapper
   template<typename Point>
   FT weight_b(const Point& t, const Point& r, const Point& p, const Point& q) const
   {
-    return CGAL::Weights::half_tangent_weight(CGAL::Weights::internal::distance(r, q),
-                                              CGAL::Weights::internal::distance(t, q),
-                                              CGAL::Weights::internal::area(r, q, t),
-                                              CGAL::Weights::internal::scalar_product(r, q, t)) +
+    return CGAL::Weights::half_tangent_weight(r, q, t, Kernel()) +
            CGAL::Weights::half_tangent_weight(CGAL::Weights::internal::distance(r, q),
                                               CGAL::Weights::internal::distance(p, q),
                                               CGAL::Weights::internal::area(p, q, r),
