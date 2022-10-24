@@ -154,8 +154,10 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
     const boost::optional<Subdomain_index> seed_label
       = domain.is_in_domain_object()(seed_point);
     const boost::optional<Subdomain_index> seed_cell_label
-      = domain.is_in_domain_object()(
-          seed_cell->weighted_circumcenter(tr.geom_traits()));
+      = (seed_cell == Cell_handle()) //seed_point is OUTSIDE_AFFINE_HULL
+        ? boost::none
+        : domain.is_in_domain_object()(
+            seed_cell->weighted_circumcenter(tr.geom_traits()));
 
     if ( seed_label != boost::none
       && seed_cell_label != boost::none
