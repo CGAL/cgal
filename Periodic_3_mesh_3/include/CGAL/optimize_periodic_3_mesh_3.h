@@ -184,7 +184,7 @@ Mesh_optimization_return_code lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3, MeshD
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  int max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
+  std::size_t max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
   const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), 0.02);
   const double freeze_bound = choose_parameter(get_parameter(np, internal_np::vertex_freeze_bound), 0.001);
   const double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);

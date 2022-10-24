@@ -139,7 +139,7 @@ Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain& doma
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    int max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
+    std::size_t max_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 0);
     const double convergence_ratio = choose_parameter(get_parameter(np, internal_np::convergence_ratio), parameters::default_values_for_mesh_3::lloyd_convergence_ratio);
     const double freeze_bound = choose_parameter(get_parameter(np, internal_np::vertex_freeze_bound), parameters::default_values_for_mesh_3::lloyd_freeze_ratio);
     const double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), parameters::default_values_for_mesh_3::time_limit);
