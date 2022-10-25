@@ -190,7 +190,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
   template<typename CDT>
   Mesh_optimization_return_code
   lloyd_optimize_mesh_2_impl(CDT& cdt,
-                             const int max_iterations,
+                             const std::size_t max_iterations,
                              const double convergence_ratio,
                              const double freeze_bound,
                              const double time_limit,
@@ -206,7 +206,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
   template<typename CDT, typename InputIterator>
   Mesh_optimization_return_code
   lloyd_optimize_mesh_2_impl(CDT& cdt,
-                             const int max_iterations,
+                             const std::size_t max_iterations,
                              const double convergence_ratio,
                              const double freeze_bound,
                              const double time_limit,
@@ -231,7 +231,7 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
 #endif
 
     // 1000 iteration max to avoid infinite loop
-    int nb_iterations = (0 == max_iterations)
+    std::size_t nb_iterations = (0 == max_iterations)
       ? 1000
       : max_iterations;
 

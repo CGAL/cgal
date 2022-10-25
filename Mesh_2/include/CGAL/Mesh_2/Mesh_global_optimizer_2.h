@@ -108,7 +108,7 @@ public:
     }
   }
 
-  Mesh_optimization_return_code operator()(const int nb_iterations)
+  Mesh_optimization_return_code operator()(const std::size_t nb_iterations)
   {
     running_time_.reset();
     running_time_.start();
@@ -141,7 +141,7 @@ public:
     bool convergence_stop = false;
 
     // Iterate
-    int i = -1;
+    std::size_t i = -1;
     while ( ++i < nb_iterations && ! is_time_limit_reached() )
     {
       this->before_move();
