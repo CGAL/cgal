@@ -870,7 +870,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
     M <<= e2;         // M = x * 2^(e2)
   }
 
-  std::string decRep = M.get_str();
+  std::string decRep = M.convert_to<std::string>();
   // Determine the "significant part" of this string, i.e. the part which
   // is guaranteed to be correct in the presence of error,
   // except that the last digit which might be subject to +/- 1.

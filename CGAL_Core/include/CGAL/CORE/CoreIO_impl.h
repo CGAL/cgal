@@ -164,6 +164,7 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
 
   // read base and compute digits
   if (c == '0') {
+      assert(false); // no longer supported
     in.get(c);
     if (c == 'b') {
       base = 2;
@@ -202,7 +203,7 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
   append_char(buffer, size, pos, '\0');
 
   // convert string to bigint.
-  if (m.set_str(buffer, base) < 0)
+  if (set_str(m, buffer) < 0)
     core_io_error_handler("CoreIO::read_from_file()","bad big number format.");
   delete[] buffer;
 

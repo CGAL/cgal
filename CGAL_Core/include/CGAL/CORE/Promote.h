@@ -30,6 +30,8 @@
 #define __PROMOTE_H__
 
 #include <CGAL/CORE/Impl.h>
+#include <CGAL/CORE/BigInt.h>
+#include <CGAL/CORE/BigRat.h>
 
 namespace CORE {
 
@@ -119,9 +121,9 @@ class Promotion<T, T> {
  *
  */
 
-class BigInt;
+//class BigInt;
 class BigFloat;
-class BigRat;
+//class BigRat;
 class Expr;
 
 DEFINE_MAX_TYPE(long, BigInt, BigInt)

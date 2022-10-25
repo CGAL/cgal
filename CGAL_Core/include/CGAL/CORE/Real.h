@@ -277,7 +277,7 @@ const long halfLongMin = LONG_MIN /2;
 struct _real_add {
   template <class T>
   static Real eval(const T& a, const T& b) {
-    return a+b;
+    return T(a+b);
   }
   // specialized for two long values
   static Real eval(long a, long b) {
@@ -291,7 +291,7 @@ struct _real_add {
 struct _real_sub {
   template <class T>
   static Real eval(const T& a, const T& b) {
-    return a-b;
+    return T(a-b);
   }
   // specialized for two long values
   static Real eval(long a, long b) {
@@ -305,7 +305,7 @@ struct _real_sub {
 struct _real_mul {
   template <class T>
   static Real eval(const T& a, const T& b) {
-    return a*b;
+    return T(a*b);
   }
   // specialized for two long values
   static Real eval(long a, long b) {
@@ -478,7 +478,7 @@ inline Real sqrt(const Real& x) {
 // unary minus operator
 template <class T>
 inline Real Realbase_for<T>::operator-() const {
-  return -ker;
+  return -T(ker);
 }
 template <>
 inline Real RealLong::operator-() const {

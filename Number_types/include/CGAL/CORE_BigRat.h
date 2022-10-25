@@ -10,7 +10,6 @@
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
 
-
 #ifndef CGAL_CORE_BIGRAT_H
 #define CGAL_CORE_BIGRAT_H
 
@@ -20,6 +19,8 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
+
+#if 0
 
 //#if defined(CGAL_CORE_BIGRAT_NUMER_DENOM_ARE_MEMBERS)
 //  #define CGAL_CORE_NUMERATOR(X) ((X).numerator())
@@ -251,6 +252,8 @@ namespace Eigen {
     };
   };
 }
+
+#endif
 
 #include <CGAL/enable_warnings.h>
 

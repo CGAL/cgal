@@ -30,6 +30,176 @@
 #include <CGAL/CORE/MemoryPool.h>
 #include <string>
 
+#if 1
+
+namespace CORE {
+
+#ifdef CGAL_CORE_USE_GMP_BACKEND
+  typedef boost::multiprecision::mpz_int BigInt;
+#else
+  typedef  boost::multiprecision::cpp_int BigInt;
+#endif
+
+
+inline int cmp(const BigInt& x, const BigInt& y) {
+  return x.compare(y);
+}
+
+
+  int set_str(BigInt& a, const char* s) {
+      // AF   makeCopy();
+    a = BigInt(s);
+    return 0;  // should be -1 if not correct in the base (we ignore)
+  }
+
+  /// longValue
+inline long longValue(const BigInt& a) {
+  return a.convert_to<long>();;
+}
+
+  /// doubleValue
+inline double doubleValue(const BigInt& a) {
+  return a.convert_to<double>();;
+}
+
+  /// isEven
+inline bool isEven(const BigInt& z) {
+  return bit_test(z,0) == 0;
+}
+/// isOdd
+inline bool isOdd(const BigInt& z) {
+  return bit_test(z,0) == 1;
+}
+
+  inline bool isDivisible(const BigInt& x, const BigInt& y) {
+    BigInt q, r;
+    divide_qr(x, y, q, r);
+    return r.is_zero();
+}
+
+inline bool isDivisible(int x, int y) {
+  return x % y == 0;
+}
+
+inline bool isDivisible(long x, long y) {
+  return x % y == 0;
+
+}
+  /// get exponent of power 2
+inline unsigned long getBinExpo(const BigInt& z) {
+    if (z.is_zero()) {
+        return (std::numeric_limits<unsigned long>::max)();
+    }
+    return lsb(abs(z));
+}
+
+  // bit length
+inline int bitLength(const BigInt& a) {
+    if (a.is_zero()) {
+        return 0;
+    }
+  return msb(abs(a))+1;
+}
+
+/// floorLg -- floor of log_2(a)
+/** Convention: a=0, floorLg(a) returns -1.
+ *  This makes sense for integer a.
+ */
+inline long floorLg(const BigInt& a) {
+  return (sign(a) == 0) ? (-1) : (bitLength(a)-1);
+}
+
+
+/// div_rem
+inline void div_rem(BigInt& q, BigInt& r, const BigInt& a, const BigInt& b) {
+  // AF q.makeCopy();
+  // AF r.makeCopy();
+  divide_qr(a, b, q, r);
+}
+
+
+  /// ulongValue
+inline unsigned long ulongValue(const BigInt& a) {
+    assert(a >= BigInt(0));
+  return a.convert_to<unsigned long>();
+}
+
+  /// exact div
+inline void divexact(BigInt& z, const BigInt& x, const BigInt& y) {
+  // AF z.makeCopy();
+  BigInt r;
+  divide_qr(x, y, z, r );  // was void mpz_divexact (mpz_t q, const mpz_t n, const mpz_t d)   Is this faster?
+  assert(r.is_zero());
+}
+
+// Chee (1/12/2004)   The definition of div_exact(x,y) next
+//   ensure that in Polynomials<NT> works with both NT=BigInt and NT=int:
+inline BigInt div_exact(const BigInt& x, const BigInt& y) {
+  BigInt z;             // precodition: isDivisible(x,y)
+  divexact(z, x, y); // z is set to x/y;
+  return z;
+}
+
+inline int div_exact(int x, int y) {
+  return x/y;  // precondition: isDivisible(x,y)
+}
+
+inline long div_exact(long x, long y) {
+  return x/y;  // precondition: isDivisible(x,y)
+}
+
+
+/// ceilLg -- ceiling of log_2(a) where a=BigInt, int or long
+/** Convention: a=0, ceilLg(a) returns -1.
+ *  This makes sense for integer a.
+ */
+inline long ceilLg(const BigInt& a) {
+  if (sign(a) == 0)
+    return -1;
+  unsigned long len = bitLength(a);
+
+  return (lsb(abs(a)) == len - 1) ? (len - 1) : len;
+}
+
+inline long ceilLg(long a) { // need this for Polynomial<long>
+  return ceilLg(BigInt(a));
+}
+
+inline long ceilLg(int a) { // need this for Polynomial<int>
+  return ceilLg(BigInt(a));
+}
+
+
+/// negate
+inline void negate(BigInt& a) {
+  // AF a.makeCopy();
+  a= - a;
+}
+
+/// get exponent of power k
+inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long uk) {
+    BigInt k(uk), q, r;
+    e = 0;
+    m = z;
+    // AF m.makeCopy();
+    for(;;) {
+        divide_qr(m, k, q, r);
+        if (!r.is_zero()) break;
+        m = q;
+        ++e;
+    }
+}
+
+  inline void power(BigInt& c, const BigInt& a, unsigned long ul) {
+    // AF c.makeCopy();
+  c = pow(a, ul);
+}
+
+} // namespace CORE
+
+#else
+
+
 namespace CORE {
 
 #ifdef CGAL_CORE_USE_GMP_BACKEND
@@ -55,11 +225,7 @@ public:
     : mp(c)
     {}
 
-  BigIntRep(const char* s, int base=0)
-    : mp(s)
-    { assert(base == 0); }
-
-  BigIntRep(const std::string& s, int base=0)
+  BigIntRep(const std::string& s)
     : mp(s)
     {}
 
@@ -118,10 +284,9 @@ public:
   BigInt(float x) : RCBigInt(new BigIntRep(x)) {}
   /// constructor for <tt>double</tt>
   BigInt(double x) : RCBigInt(new BigIntRep(x)) {}
-  /// constructor for <tt>const char*</tt> with base
-  BigInt(const char* s, int base=0) : RCBigInt(new BigIntRep(s, base)) {}
-  /// constructor for <tt>std::string</tt> with base
-  BigInt(const std::string& s, int base=0) : RCBigInt(new BigIntRep(s, base)) {}
+
+  /// constructor for <tt>std::string</tt>
+  BigInt(const std::string& s) : RCBigInt(new BigIntRep(s)) {}
 
   /// constructor for <tt>mpz_srcptr</tt>
   // explicit BigInt(mpz_srcptr z) : RCBigInt(new BigIntRep(z)) {}
@@ -254,13 +419,13 @@ public:
   /// \name String Conversion Functions
   //@{
   /// set value from <tt>const char*</tt>
-  int set_str(const char* s, int base = 0) {
+  int set_str(const char* s) {
     makeCopy();
     get_mp() = Z(s);
     return 0;  // should be -1 if not correct in the base (we ignore)
   }
   /// convert to <tt>std::string</tt>
-  std::string get_str(int base = 10) const {
+  std::string get_str() const {
     return get_mp().convert_to<std::string>();
   }
   //@}
@@ -443,7 +608,7 @@ inline double doubleValue(const BigInt& a) {
 
 void readFromFile(BigInt& z, std::istream& in, long maxLength = 0);
 /// write to file
-void writeToFile(const BigInt& z, std::ostream& in, int base=10, int charsPerLine=80);
+void writeToFile(const BigInt& z, std::ostream& in, int charsPerLine=80);
 //@}
 */
 
@@ -483,8 +648,8 @@ inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long uk) {
 
 /// divisible(x,y) = "x | y"
 inline bool isDivisible(const BigInt& x, const BigInt& y) {
-    BigInt z, r;
-    divide_qr(x.get_mp(), y.get_mp(), z.get_mp(), r.get_mp());
+    BigInt q, r;
+    divide_qr(x.get_mp(), y.get_mp(), q.get_mp(), r.get_mp());
     return r.get_mp().is_zero();
 }
 
@@ -538,7 +703,7 @@ inline void div_rem(BigInt& q, BigInt& r, const BigInt& a, const BigInt& b) {
 /// power
 inline void power(BigInt& c, const BigInt& a, unsigned long ul) {
   c.makeCopy();
-  c.get_mp() = pow(a.get_mp(), ul);
+  //c.get_mp() = pow(a.get_mp(), ul);
 }
 
 // pow
@@ -553,7 +718,7 @@ inline int bitLength(const BigInt& a) {
     if (a.get_mp().is_zero()) {
         return 0;
     }
-  return msb(abs(a.get_mp()))+1;    /// AF todo     was    mpz_sizeinbase(a.get_mp(), 2);
+  return msb(abs(a.get_mp()))+1;
 }
 
 /// floorLg -- floor of log_2(a)
@@ -589,5 +754,7 @@ inline long ceilLg(int a) { // need this for Polynomial<int>
 
 
 } //namespace CORE
+
+#endif
 
 #endif // _CORE_BIGINT_H_

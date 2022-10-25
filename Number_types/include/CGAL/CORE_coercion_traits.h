@@ -24,13 +24,12 @@
 
 #include <CGAL/CORE/CORE.h>
 
-//#include <NiX/Coercion_traits.h>
 
 namespace CGAL {
 
 //CORE internal coercions:
 
-
+#if 0
 // The following definitions reflect the interaction of the CORE number types
 // with the built in types,
 // CORE BigInt:
@@ -46,7 +45,7 @@ namespace CGAL {
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float         ,::CORE::BigRat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double        ,::CORE::BigRat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::BigRat)
-
+#endif 
 // CORE Expr:
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short         ,::CORE::Expr)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int           ,::CORE::Expr)
@@ -78,8 +77,8 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::BigInt>{
             CORE::BigFloat result;
             result.approx(x,CORE::get_static_defRelPrec().toLong(),LONG_MAX);
             // Do not use MakeFloorExact as it changes the Bigfloat
-            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
-            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
+            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
+            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
             return result;
         }
     };
@@ -98,8 +97,8 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::BigRat>{
 
           CORE::BigFloat result(x,CORE::get_static_defRelPrec().toLong(),LONG_MAX);
             // Do not use MakeFloorExact as it changes the Bigfloat
-            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
-            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
+            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
+            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
             return result;
         }
     };
@@ -117,8 +116,8 @@ struct Coercion_traits<CORE::BigFloat , ::CORE::Expr>{
         Type operator()(const ::CORE::Expr x) const {
             CORE::BigFloat result(x, CORE::get_static_defRelPrec().toLong(),LONG_MAX);
             // Do not use MakeFloorExact as it changes the Bigfloat
-            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
-            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
+            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
+            // AF CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
             return result;
         }
     };
@@ -149,6 +148,8 @@ template <> struct Coercion_traits< ::CORE::Expr, CORE::BigFloat >
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::CORE::Expr)
 
 } //namespace CGAL
+
+
 
 #endif // CGAL_USE_CORE
 #endif //CGAL_CORE_COERCION_TRAITS_H 1

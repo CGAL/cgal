@@ -181,10 +181,12 @@ public:
             if(::CORE::bitLength(err.m()+err.err()) >= digits_long){
                 long shift = ::CORE::bitLength(err.m()) - digits_long + 1 ;
                 //std::cout << "shift " << shift<< std::endl;
-                long new_err = ((err.m()+err.err()) >> shift).longValue()+1;
+                CORE::BigInt bi = (err.m() + err.err());
+                bi = bi >> shift;
+                long new_err = CORE::longValue(bi)+1;
                 err = CORE::BigFloat(0,new_err,0) * CORE::BigFloat::exp2(err.exp()*CORE::CHUNK_BIT+shift);
             }else{
-                err = CORE::BigFloat(0,err.m().longValue()+err.err(),err.exp());
+                err = CORE::BigFloat(0, CORE::longValue(err.m())+err.err(),err.exp());
             }
             //print_bf(err,"new_err");
 

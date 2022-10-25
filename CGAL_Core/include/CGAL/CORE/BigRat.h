@@ -27,6 +27,26 @@
 
 #include <CGAL/CORE/BigInt.h>
 
+#if 1
+namespace CORE {
+#ifdef CGAL_CORE_USE_GMP_BACKEND
+  typedef boost::multiprecision::mpq_rational BigRat;
+#else
+  typedef  boost::multiprecision::cpp_rational BigRat;
+#endif
+
+
+  /// BigIntValue
+  BigInt BigIntValue(const BigRat& br) {
+    BigInt r, rem;
+    divide_qr(numerator(br), denominator(br), r, rem);
+    return r;
+  }
+
+} // namespace CORE
+
+#else
+
 namespace CORE {
 
 #ifdef CGAL_CORE_USE_GMP_BACKEND
@@ -203,6 +223,8 @@ public:
     get_mp() /= rhs.get_mp();
     return *this;
   }
+
+  /*
   BigRat& operator <<=(unsigned long ul) {
     makeCopy();
     assert(false);
@@ -215,6 +237,7 @@ public:
     // AF no >> for Q    get_mp() >>= ul;
     return *this;
   }
+  */
   //@}
 
   /// \name div2, unary, increment, decrement operators
@@ -259,11 +282,15 @@ public:
   /// \name Helper Functions
   //@{
   /// Canonicalize
+
+  /*
   void canonicalize() {
     makeCopy();
     assert(false);
     // AF todo    mpq_canonicalize(get_mp());
   }
+  */
+
   /// Has Exact Division
   static bool hasExactDivision() {
     return true;
@@ -398,6 +425,8 @@ inline bool isDivisible(const BigRat& x, const BigRat& y) {
   r.get_mp() = x.get_mp() / y.get_mp();
   return isInteger(r);
 }
+
+  /*
 inline BigRat operator<<(const BigRat& a, unsigned long ul) {
   BigRat r;
   assert(false);
@@ -410,7 +439,7 @@ inline BigRat operator>>(const BigRat& a, unsigned long ul) {
   // AF todo no >> for Q    r.get_mp() =  a.get_mp() >> ul;
   return r;
 }
-
+  */
 inline int cmp(const BigRat& x, const BigRat& y) {
   return x.get_mp().compare(y.get_mp());
 }
@@ -477,4 +506,7 @@ inline BigInt BigIntValue(const BigRat& a) {
 
 
 } //namespace CORE
+
+#endif
+
 #endif // _CORE_BIGRAT_H_

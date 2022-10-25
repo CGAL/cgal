@@ -57,6 +57,24 @@
 // TODO: work on the coercions (end of the file)
 
 namespace CGAL {
+template<>
+struct Needs_parens_as_product<typename boost::multiprecision::cpp_int>{
+  bool operator()(const typename boost::multiprecision::cpp_int& x){
+    return x < 0;
+  }
+};
+
+template<>
+struct Needs_parens_as_product<typename boost::multiprecision::cpp_rational>{
+  bool operator()(const typename boost::multiprecision::cpp_rational& x){
+    if (denominator(x) != 1 )
+      return true;
+    else
+      return needs_parens_as_product(numerator(x)) ;
+  }
+
+};
+
 
 // Algebraic_structure_traits
 

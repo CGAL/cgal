@@ -59,7 +59,7 @@ public:
   /// constructor for <tt>const char* </tt>(default base = 10)
   BigFloat(const char* s) : RCBigFloat(new BigFloatRep(s)) {}
   /// constructor for <tt>std::string</tt>(default base = 10)
-  BigFloat(const std::string& s) : RCBigFloat(new BigFloatRep(s)) {}
+  BigFloat(const std::string& s) : RCBigFloat(new BigFloatRep(s.c_str())) {}
 
   /// constructor for <tt>int</tt> and <tt>long</tt>
   //     This is a hack because in Sturm, we need to approximate any
@@ -614,11 +614,23 @@ inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
   //mpz_tdiv_qr(q.get_mp(), r.get_mp(), a.get_mp(), b.get_mp());
 //}//
 
-
+/* AF
 // constructor BigRat from BigFloat
 inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
   *this = f.BigRatValue();
 }
+*/
+
+  double doubleValue(const BigFloat& bf)
+  {
+    return bf.doubleValue();
+  }
+
+  long longValue(const BigFloat& bf)
+  {
+    return bf.longValue();
+  }
+
 } //namespace CORE
 
 #ifdef CGAL_HEADER_ONLY

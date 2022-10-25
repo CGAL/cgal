@@ -19,18 +19,18 @@ void test_io(){
         std::stringstream ss;
         CGAL::IO::set_ascii_mode(ss);
         ss << CGAL::IO::oformat(NT(1));
-        //std::cout << ss.str()<<std::endl;
-        assert( ss.str() == "1/1");
+        std::cout << ss.str()<<std::endl;
+        assert( ss.str() == "1");
     }{
         std::stringstream ss;
         CGAL::IO::set_ascii_mode(ss);
         ss << CGAL::IO::oformat(NT(0));
-        assert( ss.str() == "0/1");
+        assert( ss.str() == "0");
     }{
         std::stringstream ss;
         CGAL::IO::set_ascii_mode(ss);
         ss << CGAL::IO::oformat(NT(-1));
-        assert( ss.str() == "-1/1");
+        assert( ss.str() == "-1");
     }
     //MODE PRETTY
     {

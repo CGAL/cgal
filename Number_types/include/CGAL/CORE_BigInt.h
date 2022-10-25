@@ -10,7 +10,6 @@
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
 
-
 #ifndef CGAL_CORE_BIGINT_H
 #define CGAL_CORE_BIGINT_H
 
@@ -23,6 +22,8 @@
 
 #include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
+
+#if 0
 
 namespace CGAL {
 
@@ -215,6 +216,7 @@ namespace Eigen {
     };
   };
 }
+#endif
 
 #include <CGAL/enable_warnings.h>
 
