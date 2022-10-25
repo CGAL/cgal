@@ -208,8 +208,7 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
             {
 //               if(nb_voxels >= 100)
               {
-                *it++ = std::make_pair(std::make_tuple(i, j, k),
-                                       depth+1);
+                *it++ = { i, j, k, std::size_t(depth + 1) };
 #if CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE > 1
                 std::cerr << boost::format("Found seed %5%, which is voxel "
                                            "(%1%, %2%, %3%), value=%4%\n")

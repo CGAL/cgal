@@ -127,10 +127,13 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
                                              image.vy()),
                                   image.vz());
 
-  using Point_indices = std::tuple<std::size_t, std::size_t, std::size_t>;
-  using Seed = std::pair<Point_indices, std::size_t>;
+  struct Seed {
+    std::size_t i, j, k;
+    std::size_t radius;
+  };
   using Seeds = std::vector<Seed>;
   using Subdomain_index = typename Mesh_domain::Subdomain_index;
+  using Subdomain = typename Mesh_domain::Subdomain;
 
   Seeds seeds;
   Get_point<Bare_point> get_point(&image);
@@ -144,33 +147,29 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   std::cout << "Construct initial points..." << std::endl;
   for(const Seed seed : seeds)
   {
-    const std::size_t i = get<0>(seed.first);
-    const std::size_t j = get<1>(seed.first);
-    const std::size_t k = get<2>(seed.first);
-
-    const Bare_point seed_point = get_point(i, j, k);
+    const Bare_point seed_point = get_point(seed.i, seed.j, seed.k);
     Cell_handle seed_cell = tr.locate(cwp(seed_point));
 
-    const boost::optional<Subdomain_index> seed_label
+    const Subdomain seed_label
       = domain.is_in_domain_object()(seed_point);
-    const boost::optional<Subdomain_index> seed_cell_label
+    const Subdomain seed_cell_label
       = (seed_cell == Cell_handle()) //seed_point is OUTSIDE_AFFINE_HULL
-        ? boost::none
+        ? Subdomain()
         : domain.is_in_domain_object()(
             seed_cell->weighted_circumcenter(tr.geom_traits()));
 
-    if ( seed_label != boost::none
-      && seed_cell_label != boost::none
-      && seed_label.get() == seed_cell_label.get())
+    if ( seed_label.has_value()
+      && seed_cell_label.has_value()
+      && *seed_label == *seed_cell_label)
         continue; //this means the connected component has already been initialized
 
-    const double radius = double(seed.second + 1)* max_v;
+    const double radius = double(seed.radius + 1)* max_v;
     CGAL::Random_points_on_sphere_3<Bare_point> points_on_sphere_3(radius);
     typename Mesh_domain::Construct_intersection construct_intersection =
       domain.construct_intersection_object();
 
     std::vector<Vector_3> directions;
-    if(seed.second < 2) {
+    if(seed.radius < 2) {
       // shoot in six directions
       directions.push_back(Vector_3(-radius, 0, 0));
       directions.push_back(Vector_3(+radius, 0, 0));
