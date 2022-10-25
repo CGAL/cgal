@@ -17,13 +17,13 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
+#include <CGAL/optimize_periodic_3_mesh_3.h>
 
 #include <CGAL/Mesh_3/C3T3_helpers.h>
-#include <CGAL/SMDS_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/refine_mesh_3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 #include <CGAL/Time_stamper.h>
 
 #include <boost/parameter/preprocessor.hpp>
@@ -253,21 +253,21 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   // Odt
   if(odt)
   {
-    odt_optimize_mesh_3(c3t3, domain,
-                        parameters::time_limit = odt.time_limit(),
-                        parameters::max_iteration_number = odt.max_iteration_number(),
-                        parameters::convergence = odt.convergence(),
-                        parameters::freeze_bound = odt.bound());
+    odt_optimize_periodic_3_mesh_3(c3t3, domain,
+                                   parameters::time_limit = odt.time_limit(),
+                                   parameters::max_iteration_number = odt.max_iteration_number(),
+                                   parameters::convergence = odt.convergence(),
+                                   parameters::freeze_bound = odt.bound());
   }
 
   // Lloyd
   if(lloyd)
   {
-    lloyd_optimize_mesh_3(c3t3, domain,
-                          parameters::time_limit = lloyd.time_limit(),
-                          parameters::max_iteration_number = lloyd.max_iteration_number(),
-                          parameters::convergence = lloyd.convergence(),
-                          parameters::freeze_bound = lloyd.bound());
+    lloyd_optimize_periodic_3_mesh_3(c3t3, domain,
+                                     parameters::time_limit = lloyd.time_limit(),
+                                     parameters::max_iteration_number = lloyd.max_iteration_number(),
+                                     parameters::convergence = lloyd.convergence(),
+                                     parameters::freeze_bound = lloyd.bound());
   }
 
   if(odt || lloyd)
@@ -283,9 +283,9 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
     if(perturb.is_time_limit_set())
       perturb_time_limit = perturb.time_limit();
 
-    perturb_mesh_3(c3t3, domain,
-                   parameters::time_limit = perturb_time_limit,
-                   parameters::sliver_bound = perturb.bound());
+    perturb_periodic_3_mesh_3(c3t3, domain,
+                              parameters::time_limit = perturb_time_limit,
+                              parameters::sliver_bound = perturb.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
@@ -298,9 +298,9 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
     if(exude.is_time_limit_set())
       exude_time_limit = exude.time_limit();
 
-    exude_mesh_3(c3t3,
-                 parameters::time_limit = exude_time_limit,
-                 parameters::sliver_bound = exude.bound());
+    exude_periodic_3_mesh_3(c3t3,
+                            parameters::time_limit = exude_time_limit,
+                            parameters::sliver_bound = exude.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
