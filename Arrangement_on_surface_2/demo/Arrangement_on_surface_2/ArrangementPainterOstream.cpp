@@ -198,7 +198,6 @@ ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
     auto p_curr = app_pts.begin();
     auto end_pts = app_pts.end();
     auto p_next = p_curr + 1;
-    int count = 0;
     do
     {
       QPointF p1(p_curr->first, p_curr->second);
@@ -206,7 +205,6 @@ ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
       this->qp->drawLine(p1, p2);
       p_curr++;
       p_next++;
-      ++count;
     } while (p_next != end_pts);
   };
 
