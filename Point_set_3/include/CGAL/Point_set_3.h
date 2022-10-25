@@ -219,9 +219,11 @@ public:
     added. If `false` (default value), the normal map can still be
     added later on (see `add_normal_map()`).
    */
-  Point_set_3 () : m_base()
+  Point_set_3 (bool with_normal_map = false) : m_base()
   {
     clear();
+    if (with_normal_map)
+      add_normal_map();
   }
 
   /*!
