@@ -56,6 +56,8 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("delaunay_remeshing_example.cpp")
   target_link_libraries(delaunay_remeshing_example PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("decimation_planar_patches.cpp")
+  target_link_libraries(decimation_planar_patches PUBLIC CGAL::Eigen3_support)
 endif()
 
 create_single_source_cgal_program( "extrude.cpp" )

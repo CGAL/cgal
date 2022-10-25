@@ -22,6 +22,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>
+#include <CGAL/_test_compare_angle_3.h>
 
 #include <CGAL/use.h>
 
@@ -597,6 +598,10 @@ test_new_3(const R& rep)
 
   {
     bool tmp = _test_compare_dihedral_angle_3(rep);
+    assert(tmp);
+  }
+  {
+    bool tmp = _test_compare_angle_3(rep);
     assert(tmp);
   }
 

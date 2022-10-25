@@ -619,7 +619,19 @@ const CGAL::Point_3<Kernel>&r);
 
 /// @}
 
-
+/// \ingroup kernel_global_function
+/*!
+compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+\f$ \theta_1\f$ is the angle, in \f$ [0, \pi]\f$, of the triangle
+\f$ (a, b, c)\f$ at the vertex `b`, and \f$ \theta_2\f$ is
+the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
+\pre `a!=b && c!=b`.
+*/
+template <typename Kernel>
+Comparison_result compare_angle(const CGAL::Point_3<Kernel>& a,
+                                const CGAL::Point_3<Kernel>& b,
+                                const CGAL::Point_3<Kernel>& c,
+                                const Kernel::FT& cosine);
 
 /// \defgroup compare_dihedral_angle_grp CGAL::compare_dihedral_angle()
 /// \ingroup kernel_global_function

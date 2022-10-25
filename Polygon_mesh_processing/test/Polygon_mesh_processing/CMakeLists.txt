@@ -44,6 +44,8 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("delaunay_remeshing_test.cpp")
   target_link_libraries(delaunay_remeshing_test PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("test_decimation_of_planar_patches.cpp")
+  target_link_libraries(test_decimation_of_planar_patches PUBLIC CGAL::Eigen3_support)
 endif()
 
 find_package(OpenMesh QUIET)

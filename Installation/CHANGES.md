@@ -120,6 +120,11 @@ Release date: June 2022
 
 -   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html), which toggles the selected status of a graph: selected faces are deselected, and unselected faces are selected.
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.5/Manual/packages.html#PkgKernel23)
+-   Added the functor
+    [`CompareAngle_3`](https://doc.cgal.org/5.5/Kernel_23/classKernel_1_1CompareAngle__3.html)
+    to the concept [`Kernel`](https://doc.cgal.org/5.5/Kernel_23/classKernel.html) to compare
+    an angle defined by three points to the cosinus of another angle.
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
