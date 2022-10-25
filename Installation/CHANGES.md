@@ -6,10 +6,10 @@ Release History
 
 Release date: December 2022
 
-### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.5/Manual/packages.html#PkgKernel23)
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.6/Manual/packages.html#PkgKernel23)
 -   Added the functor
-    [`CompareAngle_3`](https://doc.cgal.org/5.5/Kernel_23/classKernel_1_1CompareAngle__3.html)
-    to the concept [`Kernel`](https://doc.cgal.org/5.5/Kernel_23/classKernel.html) to compare
+    [`CompareAngle_3`](https://doc.cgal.org/5.6/Kernel_23/classKernel_1_1CompareAngle__3.html)
+    to the concept [`Kernel`](https://doc.cgal.org/5.6/Kernel_23/classKernel.html) to compare
     an angle defined by three points to the cosinus of another angle.
 
 ### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps) [Generalized Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgGeneralizedMaps) [Linear Cell Complex](https://doc.cgal.org/5.6/Manual/packages.html#PkgLinearCellComplex)
