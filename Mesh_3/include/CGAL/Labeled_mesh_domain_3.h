@@ -585,8 +585,8 @@ public:
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
     using parameters::choose_parameter;
-    auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), FT(0));
-    auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), FT(0));
+    auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
+    auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
     FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
     auto image_values_to_subdomain_indices_ = choose_parameter(get_parameter(np, internal_np::image_subdomain_index), Null_functor());
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
