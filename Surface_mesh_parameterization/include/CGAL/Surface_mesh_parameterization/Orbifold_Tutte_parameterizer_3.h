@@ -836,7 +836,7 @@ private:
     const int big_n = M.row_dimension();
     const std::size_t n = 2 * num_vertices(mesh);
 
-    NT D;
+    double D;
     Vector Xf(big_n);
 
     CGAL::Timer task_timer;

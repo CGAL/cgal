@@ -1128,7 +1128,7 @@ private:
 
     // Solve "A*Xu = Bu". On success, the solution is (1/Du) * Xu.
     // Solve "A*Xv = Bv". On success, the solution is (1/Dv) * Xv.
-    NT Du, Dv;
+    double Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)) {
       std::cerr << "Could not solve linear system" << std::endl;

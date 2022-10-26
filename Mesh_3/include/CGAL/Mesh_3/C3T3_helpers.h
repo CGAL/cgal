@@ -3477,7 +3477,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                        point,
                                        Dimension_tag<2>(),
                                        tr_.geom_traits(),
-                                       Default_diagonalize_traits<FT, 3>());
+                                       Default_diagonalize_traits<double, 3>());
 
    return std::make_pair(plane,
      ref_facet.first->get_facet_surface_center(ref_facet.second));

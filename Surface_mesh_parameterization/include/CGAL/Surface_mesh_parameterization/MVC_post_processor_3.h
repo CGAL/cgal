@@ -598,7 +598,7 @@ private:
   {
     Error_code status = OK;
 
-    NT Du, Dv;
+    double Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)) {
       status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
