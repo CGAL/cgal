@@ -957,7 +957,7 @@ namespace Eigen {
       MulCost = 100
     };
   };
-}
+
 
 } // namespace Eigen
 
