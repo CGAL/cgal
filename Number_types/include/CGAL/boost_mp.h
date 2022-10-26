@@ -914,6 +914,53 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
 
 } //namespace CGAL
 
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<boost::multiprecision::cpp_int>
+  {
+    typedef boost::multiprecision::cpp_int Real;
+    typedef boost::multiprecision::cpp_rational NonInteger;
+    typedef boost::multiprecision::cpp_int Nested;
+    typedef boost::multiprecision::cpp_int Literal;
+
+    static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
+
+    enum {
+      IsInteger = 1,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 30,
+      MulCost = 50
+    };
+  };
+
+  template<> struct NumTraits<boost::multiprecision::cpp_rational>
+  {
+    typedef boost::multiprecision::cpp_rational Real;
+    typedef boost::multiprecision::cpp_rational NonInteger;
+    typedef boost::multiprecision::cpp_rational Nested;
+    typedef boost::multiprecision::cpp_rational Literal;
+
+    static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 150,
+      MulCost = 100
+    };
+  };
+}
+
+} // namespace Eigen
+
 #include <CGAL/BOOST_MP_arithmetic_kernel.h>
 
 #endif // BOOST_VERSION
