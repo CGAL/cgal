@@ -440,47 +440,58 @@ bool build_triangulation_impl(Tr& tr,
   for(Vertex_handle vh : vertex_handle_vector)
     vh->set_dimension(-1);
 
+  if(verbose)
+    std::cout << "build vertices done (" << tr.tds().number_of_vertices() << " vertices)" << std::endl;
+
   if (!finite_cells.empty())
   {
     if (!CGAL::SMDS_3::build_finite_cells<Tr>(tr, finite_cells, subdomains, vertex_handle_vector,
                                               incident_cells_map, border_facets, verbose, replace_domain_0))
     {
       if (verbose)
-        std::cout << "build_finite_cells went wrong" << std::endl;
+        std::cerr << "Error: build_finite_cells went wrong!" << std::endl;
       success = false;
     }
-    else
-      std::cout << "build finite cells done" << std::endl;
+    else if(verbose)
+    {
+      std::cout << "build finite cells done (" << tr.tds().cells().size() << " cells)" << std::endl;
+    }
+
     if (!CGAL::SMDS_3::build_infinite_cells<Tr>(tr, incident_cells_map, verbose, allow_non_manifold))
     {
       if(verbose)
-        std::cout << "build_infinite_cells went wrong" << std::endl;
+        std::cerr << "Error: build_infinite_cells went wrong!" << std::endl;
       success = false;
     }
-    else
-      std::cout << "build infinite cells done" << std::endl;
+    else if(verbose)
+    {
+      std::cout << "build infinite cells done (" << tr.tds().cells().size() << " cells)" << std::endl;
+    }
+
     tr.tds().set_dimension(3);
 
     if (!CGAL::SMDS_3::assign_neighbors<Tr>(tr, incident_cells_map, allow_non_manifold))
     {
       if(verbose)
-        std::cout << "assign_neighbors went wrong" << std::endl;
+        std::cerr << "Error: assign_neighbors went wrong!" << std::endl;
       success = false;
     }
-    else
+    else if(verbose)
+    {
       std::cout << "assign neighbors done" << std::endl;
+    }
+
     if (verbose)
     {
-      std::cout << "built triangulation : " << std::endl;
-      std::cout << tr.number_of_cells() << " cells" << std::endl;
+      std::cout << "built triangulation!" << std::endl;
     }
   }
 
-  if(verbose)
-    std::cout << tr.number_of_vertices() << " vertices" << std::endl;
+  // disabled because the TDS is not valid when cells do not cover the convex hull of vertices
+  // return tr.tds().is_valid();
 
-  return success;// tr.tds().is_valid();
-              //TDS not valid when cells do not cover the convex hull of vertices
+  return success;
+
 }
 
 template<class Tr,
@@ -577,7 +588,11 @@ bool build_triangulation_from_file(std::istream& is,
   CGAL_assertion(dim == 3);
 
   if(verbose)
+  {
     std::cout << "Reading .mesh file..." << std::endl;
+    std::cout << "Replace domain #0 = " << replace_domain_0 << std::endl;
+    std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
+  }
 
   bool dont_replace_domain_0 = false;
 
@@ -621,6 +636,7 @@ bool build_triangulation_from_file(std::istream& is,
         facet[0] = n1 - 1;
         facet[1] = n2 - 1;
         facet[2] = n3 - 1;
+
         //find the circular permutation that puts the smallest index in the first place.
         int n0 = (std::min)((std::min)(facet[0],facet[1]), facet[2]);
         int k=0;
