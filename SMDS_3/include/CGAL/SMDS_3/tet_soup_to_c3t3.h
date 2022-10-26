@@ -387,7 +387,7 @@ bool assign_neighbors(Tr& tr,
 
       tr.tds().set_adjacency(c0, i0, c1, i1);
     }
-    else if(allow_non_manifold)// if (adjacent_cells.size() == 4)
+    else if(!allow_non_manifold)
     {
       CGAL_assertion_code(const auto& f = icit->first);
       CGAL_assertion(is_infinite(f, tr));
