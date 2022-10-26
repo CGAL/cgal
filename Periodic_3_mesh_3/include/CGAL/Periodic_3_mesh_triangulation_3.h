@@ -51,7 +51,7 @@ namespace CGAL {
 
 /// This class currently provides an interface between the classe
 /// `CGAL::Periodic_3_regular_triangulation_3` and the mesher `Mesh_3`.
-/// As periodic triangulations are parallelized, a lot of these functions will
+/// If periodic triangulations are parallelized, a lot of these functions will
 /// become obsolete.
 template<class Gt_, class Tds_>
 class Periodic_3_regular_triangulation_3_wrapper

@@ -3145,7 +3145,9 @@ template < class GT, class TDS >
 template < class PointRemover, class CoverManager >
 inline bool
 Periodic_3_triangulation_3<GT,TDS>::
-periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_manager,
+periodic_remove(Vertex_handle v,
+                PointRemover& remover,
+                CoverManager& cover_manager,
                 const bool abort_if_cover_change)
 {
   // Construct the set of vertex triples on the boundary

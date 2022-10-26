@@ -34,7 +34,6 @@
 #include <iterator>
 
 namespace CGAL {
-
 namespace internal {
 
 template<class C3T3, class MeshDomain>
