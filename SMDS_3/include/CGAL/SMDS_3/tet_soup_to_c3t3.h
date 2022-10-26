@@ -392,6 +392,7 @@ bool assign_neighbors(Tr& tr,
       CGAL_assertion_code(const auto& f = icit->first);
       CGAL_assertion(is_infinite(f, tr));
 
+      CGAL_assertion(adjacent_cells.size() % 2 == 0);
       success = false;
     }
   }
