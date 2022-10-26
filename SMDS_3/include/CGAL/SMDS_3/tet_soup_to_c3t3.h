@@ -90,13 +90,22 @@ bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
       incident_cells_map.emplace(f, vec);
   if(!is_insert_successful.second) // the entry already exists in the map
   {
-    // a facet must have exactly two incident cells
-    if (is_insert_successful.first->second.size() != 1)
+    // A finite facet must have exactly two incident cells
+    //
+    // If there is a non-manifold edge on the boundary, the infinite facet being
+    // that edge + the infinite vertex has (strictly) more than 2 incident cells
+    if(is_insert_successful.first->second.size() != 1)
     {
-      if(verbose)
-        std::cout << "Error in add_facet_to_incident_cells_map" << std::endl;
       if(!allow_non_manifold)
+      {
         success = false;
+        if(verbose)
+          std::cerr << "Error: " << is_insert_successful.first->second.size() << " previous incidences" << std::endl;
+      }
+      else if(verbose)
+      {
+        std::cerr << "Warning: " << is_insert_successful.first->second.size() << " previous incidences" << std::endl;
+      }
     }
     is_insert_successful.first->second.push_back(e);
   }
@@ -169,7 +178,7 @@ bool build_finite_cells(Tr& tr,
     // build the map used for adjacency later
     for(int j=0; j<4; ++j)
     {
-      // do not allow non-manifold in the finite cells case
+      // do not allow non-manifoldness in the finite cells case
       if(!CGAL::SMDS_3::add_facet_to_incident_cells_map<Tr>(c, j, incident_cells_map, verbose, false))
         success = false;
 
