@@ -958,6 +958,51 @@ namespace Eigen {
     };
   };
 
+#ifdef CGAL_USE_GMP
+
+  template<> struct NumTraits<boost::multiprecision::mpz_int>
+  {
+    typedef boost::multiprecision::mpz_int Real;
+    typedef boost::multiprecision::mpq_rational NonInteger;
+    typedef boost::multiprecision::mpz_int Nested;
+    typedef boost::multiprecision::mpz_int Literal;
+
+    static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
+
+    enum {
+      IsInteger = 1,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 30,
+      MulCost = 50
+    };
+  };
+
+  template<> struct NumTraits<boost::multiprecision::mpq_rational>
+  {
+    typedef boost::multiprecision::mpq_rational Real;
+    typedef boost::multiprecision::mpq_rational NonInteger;
+    typedef boost::multiprecision::mpq_rational Nested;
+    typedef boost::multiprecision::mpq_rational Literal;
+
+    static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 150,
+      MulCost = 100
+    };
+  };
+#endif // CGAL_USE_GMP
+
 
 } // namespace Eigen
 
