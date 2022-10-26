@@ -339,7 +339,7 @@ bool build_infinite_cells(Tr& tr,
   for (const Cell_handle& c : infinite_cells)
   {
     if(!CGAL::SMDS_3::add_infinite_facets_to_incident_cells_map<Tr>(c,
-                                                                    0,
+                                                                    c->index(tr.infinite_vertex()),
                                                                     incident_cells_map,
                                                                     verbose,
                                                                     allow_non_manifold))
