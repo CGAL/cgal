@@ -1775,9 +1775,9 @@ private:
 
   template <typename OutputIterator>
   OutputIterator
-  get_conflict_zone_topo_change(const Vertex_handle& vertex,
-                                const Weighted_point& conflict_point,
-                                OutputIterator conflict_cells) const;
+  get_conflict_zone_after_move_topo_change(const Vertex_handle& new_vertex,
+                                           const Weighted_point& old_position,
+                                           OutputIterator conflict_cells) const;
 
   template <typename CellsOutputIterator,
             typename FacetsOutputIterator>
@@ -3278,8 +3278,9 @@ move_point_topo_change_conflict_zone_known(
   // Get conflict zone in new triangulation and set cells outdated
   Cell_vector new_conflict_cells;
   new_conflict_cells.reserve(64);
-  get_conflict_zone_topo_change(new_vertex, old_position,
-                                std::back_inserter(new_conflict_cells));
+  get_conflict_zone_after_move_topo_change(new_vertex, old_position,
+                                           std::back_inserter(new_conflict_cells));
+
   std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
 
   // Fill deleted_cells
@@ -3884,34 +3885,43 @@ template <typename C3T3, typename MD>
 template <typename OutputIterator>
 OutputIterator
 C3T3_helpers<C3T3,MD>::
-get_conflict_zone_topo_change(const Vertex_handle& vertex,
-                              const Weighted_point& conflict_point,
-                              OutputIterator conflict_cells) const
+get_conflict_zone_after_move_topo_change(const Vertex_handle& new_vertex,
+                                         const Weighted_point& old_position,
+                                         OutputIterator conflict_cells) const
 {
   // Get triangulation_vertex incident cells
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
-  tr_.incident_cells(vertex, std::back_inserter(incident_cells_));
+  tr_.incident_cells(new_vertex, std::back_inserter(incident_cells_));
 
-  // Get conflict_point conflict zone
+  // Get the conflict zone of `old_point`
   Cell_vector deleted_cells;
   deleted_cells.reserve(64);
 
-  // Vertex removal is forbidden
   int li=0;
   int lj=0;
-  typename Tr::Locate_type locate_type;
-  Cell_handle cell = tr_.locate(conflict_point, locate_type, li, lj, vertex->cell());
+  typename Tr::Locate_type lt;
+  Cell_handle cell = tr_.locate(old_position, lt, li, lj, new_vertex->cell());
 
-  if ( Tr::VERTEX == locate_type )
-    return conflict_cells;
+  // `Periodic_mesh_triangulation::remove()` can refuse to remove a point if this removal
+  // would compromise the 1-cover property (i.e., no too-long edges).
+  // The cells incident to `old_vertex` have not been modified at the TDS level if removal
+  // was rejected, but they still must be gathered here because of the call to
+  // `remove_cells_and_facets_from_c3t3()`
+  if (lt == Tr::VERTEX)
+  {
+    CGAL_assertion((std::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+    tr_.incident_cells(cell->vertex(li), std::back_inserter(deleted_cells));
+  }
+  else
+  {
+    tr_.find_conflicts(old_position,
+                       cell,
+                       CGAL::Emptyset_iterator(),
+                       std::back_inserter(deleted_cells),
+                       CGAL::Emptyset_iterator());
+  }
 
-  // Find conflict zone
-  tr_.find_conflicts(conflict_point,
-                     cell,
-                     CGAL::Emptyset_iterator(),
-                     std::back_inserter(deleted_cells),
-                     CGAL::Emptyset_iterator());
 
   // Compute union of conflict_point conflict zone and triangulation_vertex
   // incident cells
