@@ -87,7 +87,7 @@ bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
   std::vector<Incident_cell> vec;
   vec.push_back(e);
   std::pair<typename Incident_cells_map::iterator, bool> is_insert_successful =
-      incident_cells_map.insert(std::make_pair(f, vec));
+      incident_cells_map.emplace(f, vec);
   if(!is_insert_successful.second) // the entry already exists in the map
   {
     // a facet must have exactly two incident cells
@@ -286,7 +286,7 @@ bool build_infinite_cells(Tr& tr,
       tr.infinite_vertex()->set_cell(opp_c);
 
     // the only finite facet
-    it->second.push_back(std::make_pair(opp_c, 0));
+    it->second.emplace_back(opp_c, 0);
     CGAL_assertion(it->second.size() == 2);
 
     opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
@@ -305,7 +305,7 @@ bool build_infinite_cells(Tr& tr,
                                                                                 c->vertex((i + 2) % 4),
                                                                                 c->vertex((i + 3) % 4));
       if (facets.find(vs) == facets.end())
-        facets.insert(std::make_pair(vs, 1));
+        facets.emplace(vs, 1);
       else
         facets[vs]++;
     }
@@ -596,7 +596,7 @@ bool build_triangulation_from_file(std::istream& is,
       {
         double x,y,z;
         is >> x >> y >> z >> ref;
-        points.push_back(Point_3(x,y,z));
+        points.emplace_back(x,y,z);
       }
     }
 
@@ -622,8 +622,10 @@ bool build_triangulation_from_file(std::istream& is,
           f[1] = facet[(1+k)%3];
           f[2] = facet[(2+k)%3];
           ++k;
-        } while(f[0] != n0);
-        border_facets.insert(std::make_pair(f, surface_patch_id));
+        }
+        while(f[0] != n0);
+
+        border_facets.emplace(f, surface_patch_id);
       }
     }
 
