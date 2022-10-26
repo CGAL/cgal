@@ -350,10 +350,10 @@ bool build_infinite_cells(Tr& tr,
 }
 
 template<typename Tr>
-bool has_infinite_vertex(const std::array<typename Tr::Vertex_handle, 3>& v,
-                         const Tr& tr)
+bool is_infinite(const std::array<typename Tr::Vertex_handle, 3>& f,
+                 const Tr& tr)
 {
-  for (auto vh : v)
+  for (auto vh : f)
   {
     if (tr.infinite_vertex() == vh)
       return true;
@@ -389,8 +389,9 @@ bool assign_neighbors(Tr& tr,
     }
     else if(allow_non_manifold)// if (adjacent_cells.size() == 4)
     {
-      CGAL_assertion_code(const auto& v = icit->first);
-      CGAL_assertion(has_infinite_vertex(v, tr));
+      CGAL_assertion_code(const auto& f = icit->first);
+      CGAL_assertion(is_infinite(f, tr));
+
       success = false;
     }
   }
@@ -577,7 +578,6 @@ bool build_triangulation_from_file(std::istream& is,
   std::vector<Point_3> points;
   boost::unordered_map<Facet, typename Tr::Cell::Surface_patch_index> border_facets;
 
-  // grab the vertices
   int dim;
   int nv, nf, ntet, ref;
   std::string word;
@@ -594,7 +594,7 @@ bool build_triangulation_from_file(std::istream& is,
     std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
   }
 
-  bool dont_replace_domain_0 = false;
+  bool is_CGAL_mesh = false;
 
   while(is >> word && word != "End")
   {
@@ -607,7 +607,7 @@ bool build_triangulation_from_file(std::istream& is,
       }
       else if (word == "CGAL::Mesh_complex_3_in_triangulation_3")
       {
-        dont_replace_domain_0 = true;//with CGAL meshes, domain 0 should be kept
+        is_CGAL_mesh = true; // with CGAL meshes, domain 0 should be kept
         continue;
       }
       //else skip other comments
