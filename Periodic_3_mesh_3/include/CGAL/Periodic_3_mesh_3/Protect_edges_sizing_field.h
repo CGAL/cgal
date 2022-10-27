@@ -38,6 +38,9 @@
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
 #include <CGAL/SMDS_3/utilities.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
+#if CGAL_MESH_3_PROTECTION_DEBUG
+#  include <CGAL/Mesh_3/Dump_c3t3.h>
+#endif
 
 #include <CGAL/enum.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
