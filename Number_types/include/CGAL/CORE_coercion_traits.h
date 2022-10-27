@@ -29,23 +29,6 @@ namespace CGAL {
 
 //CORE internal coercions:
 
-#if 0
-// The following definitions reflect the interaction of the CORE number types
-// with the built in types,
-// CORE BigInt:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,::CORE::BigInt)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,::CORE::BigInt)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,::CORE::BigInt)
-
-
-// CORE BigRat:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short         ,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int           ,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long          ,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float         ,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double        ,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::BigRat)
-#endif
 // CORE Expr:
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short         ,::CORE::Expr)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int           ,::CORE::Expr)
