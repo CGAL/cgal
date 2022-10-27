@@ -883,7 +883,7 @@ public:
   }
 
   void build_curves_aabb_tree() const {
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "Building curves AABB tree...";
     CGAL::Real_timer timer;
     timer.start();
@@ -909,7 +909,7 @@ public:
     }
     curves_aabb_tree_ptr_->build();
     curves_aabb_tree_is_built = true;
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     timer.stop();
     std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 #endif
