@@ -282,7 +282,7 @@ struct _real_add {
   // specialized for two long values
   static Real eval(long a, long b) {
     if ((a > halfLongMax && b > halfLongMax) || (a < halfLongMin && b < halfLongMin))
-      return BigInt(a)+BigInt(b);
+      return BigInt(BigInt(a)+ BigInt(b));
     else
       return a+b;
   }
@@ -296,7 +296,7 @@ struct _real_sub {
   // specialized for two long values
   static Real eval(long a, long b) {
     if ((a > halfLongMax && b < halfLongMin) || (a < halfLongMin && b > halfLongMax))
-      return BigInt(a)-BigInt(b);
+      return BigInt(BigInt(a)-BigInt(b));
     else
       return a-b;
   }
@@ -310,7 +310,7 @@ struct _real_mul {
   // specialized for two long values
   static Real eval(long a, long b) {
     if (flrLg(a) + flrLg(b) >= static_cast<int>(LONG_BIT-2))
-      return BigInt(a)*BigInt(b);
+      return BigInt(BigInt(a)*BigInt(b));
     else
       return a*b;
   }
