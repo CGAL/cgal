@@ -57,7 +57,6 @@ namespace internal {
 template<typename TriangleMesh, typename Traits>
 bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits)
 {
-  typedef typename Traits::Point_3  Point;
   typedef typename Traits::Vector_3 Vector_3;
   typename Traits::Construct_vector_3
     construct_vector = traits.construct_vector_3_object();
