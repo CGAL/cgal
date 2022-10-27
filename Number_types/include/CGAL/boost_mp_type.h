@@ -89,6 +89,8 @@ struct AST_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_int
     typedef Boolean_tag<std::numeric_limits<Type>::is_exact> Is_exact;
     typedef Tag_false Is_numerical_sensitive;
 
+    typedef INTERN_AST::Is_square_per_sqrt< Type > Is_square;
+
     struct Is_zero: public CGAL::cpp98::unary_function<Type ,bool> {
         bool operator()( const Type& x) const {
             return x.is_zero();
