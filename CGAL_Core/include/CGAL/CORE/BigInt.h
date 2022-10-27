@@ -32,6 +32,10 @@
 
 #if 1
 
+#if !(BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP))
+#define CGAL_CORE_USE_GMP_BACKEND 1
+#endif
+
 namespace CORE {
 
 #ifdef CGAL_CORE_USE_GMP_BACKEND
