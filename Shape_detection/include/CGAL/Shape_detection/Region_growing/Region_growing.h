@@ -21,7 +21,7 @@
 #include <vector>
 
 // Boost includes.
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
