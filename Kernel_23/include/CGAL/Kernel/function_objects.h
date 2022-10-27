@@ -2176,6 +2176,10 @@ namespace CommonKernelFunctors {
   public:
     typedef Point_3          result_type;
 
+    const Point_3&
+    operator()( const Line_3& l) const
+    { return l.rep().point(); }
+
     Point_3
     operator()( const Line_3& l, const FT i) const
     { return l.rep().point(i); }

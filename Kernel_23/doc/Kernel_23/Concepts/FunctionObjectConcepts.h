@@ -5923,6 +5923,11 @@ public:
                              const Kernel::FT i);
 
   /*!
+    returns `point(0)` on `l`, identical to `operator()(l,0)`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Line_3& l);
+
+  /*!
     returns an arbitrary point on `h`.
   */
   Kernel::Point_3 operator()(const Kernel::Plane_3& h);
