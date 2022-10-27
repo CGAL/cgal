@@ -771,8 +771,8 @@ BigFloat Polynomial<NT>::eval(const BigFloat& f) const {        // evaluation
 
 template <class NT>
 template <class T>
-MAX_TYPE(NT, T) Polynomial<NT>::eval(const T& f) const {        // evaluation
-  typedef MAX_TYPE(NT, T) ResultT;
+CORE_MAX_TYPE(NT, T) Polynomial<NT>::eval(const T& f) const {        // evaluation
+  typedef CORE_MAX_TYPE(NT, T) ResultT;
   if (degree == -1)
     return ResultT(0);
   if (degree == 0)
