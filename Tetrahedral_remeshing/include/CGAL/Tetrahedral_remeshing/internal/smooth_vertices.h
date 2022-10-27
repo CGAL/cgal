@@ -451,7 +451,7 @@ public:
     inc_cells(nbv, boost::container::small_vector<Cell_handle, 40>());
     for (const Cell_handle c : tr.finite_cell_handles())
     {
-      const bool cell_is_selected = cell_selector(c);
+      const bool cell_is_selected = get(cell_selector, c);
 
       for (int i = 0; i < 4; ++i)
       {

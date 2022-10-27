@@ -440,7 +440,7 @@ bool is_boundary(const C3T3& c3t3,
                  const CellSelector& cell_selector)
 {
   return c3t3.is_in_complex(f)
-         || cell_selector(f.first) != cell_selector(f.first->neighbor(f.second));
+    || get(cell_selector, f.first) != get(cell_selector, f.first->neighbor(f.second));
 }
 
 template<typename C3T3, typename CellSelector>
@@ -496,7 +496,7 @@ bool is_boundary_vertex(const typename C3t3::Vertex_handle& v,
   {
     if (c3t3.is_in_complex(f))
       return true;
-    if (cell_selector(f.first) ^ cell_selector(f.first->neighbor(f.second)))
+    if (get(cell_selector, f.first) ^ get(cell_selector, f.first->neighbor(f.second)))
       return true;
   }
   return false;
@@ -766,7 +766,7 @@ bool is_outside(const typename C3t3::Edge & edge,
     if (c3t3.is_in_complex(circ))
       return false;
     // does circ belong to the selection?
-    if (cell_selector(circ))
+    if (get(cell_selector, circ))
       return false;
 
     ++circ;
@@ -788,7 +788,7 @@ bool is_selected(const typename C3t3::Vertex_handle v,
 
   for(Cell_handle c : cells)
   {
-    if (cell_selector(c))
+    if (get(cell_selector, c))
       return true;
   }
   return false;
@@ -813,7 +813,7 @@ bool is_internal(const typename C3t3::Edge& edge,
       return false;
     if (si != circ->subdomain_index())
       return false;
-    if (!cell_selector(circ))
+    if (!get(cell_selector, circ))
       return false;
     if (c3t3.is_in_complex(
           circ,
@@ -835,7 +835,7 @@ bool is_selected(const typename C3T3::Triangulation::Edge& e,
   Cell_circulator done = circ;
   do
   {
-    if (cell_selector(circ))
+    if (get(cell_selector, circ))
       return true;
   } while (++circ != done);
 

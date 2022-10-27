@@ -55,33 +55,6 @@ public:
   void after_flip(CellHandle /* c */) {}
 };
 
-template<typename Tr>
-struct All_cells_selected
-{
-  typedef typename Tr::Cell_handle argument_type;
-  typedef typename Tr::Cell::Subdomain_index Subdomain_index;
-
-  typedef bool                     result_type;
-
-  result_type operator()(const argument_type c) const
-  {
-    return c->subdomain_index() != Subdomain_index();
-  }
-};
-
-template<typename Primitive>
-struct No_constraint_pmap
-{
-public:
-  typedef Primitive                           key_type;
-  typedef bool                                value_type;
-  typedef value_type                          reference;
-  typedef boost::read_write_property_map_tag  category;
-
-  friend value_type get(No_constraint_pmap, key_type) { return false; }
-  friend void put(No_constraint_pmap, key_type, value_type) {}
-};
-
 template<typename Triangulation
          , typename SizingFunction
          , typename EdgeIsConstrainedMap
@@ -407,7 +380,7 @@ private:
     //tag cells
     for (Cell_handle cit : tr().finite_cell_handles())
     {
-      if (m_cell_selector(cit))
+      if (get(m_cell_selector, cit))
       {
         const Subdomain_index index = cit->subdomain_index();
         if(!input_is_c3t3())
