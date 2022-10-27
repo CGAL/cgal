@@ -37,11 +37,12 @@ namespace CORE {
 
 
   /// BigIntValue
-  BigInt BigIntValue(const BigRat& br) {
-    BigInt r, rem;
-    divide_qr(numerator(br), denominator(br), r, rem);
-    return r;
-  }
+inline BigInt BigIntValue(const BigRat& br)
+{
+  BigInt r, rem;
+  divide_qr(numerator(br), denominator(br), r, rem);
+  return r;
+}
 
 } // namespace CORE
 

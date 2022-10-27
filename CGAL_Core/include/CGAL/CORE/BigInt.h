@@ -50,7 +50,7 @@ inline int cmp(const BigInt& x, const BigInt& y) {
 }
 
 
-  int set_str(BigInt& a, const char* s) {
+inline int set_str(BigInt& a, const char* s) {
       // AF   makeCopy();
     a = BigInt(s);
     return 0;  // should be -1 if not correct in the base (we ignore)
@@ -75,7 +75,7 @@ inline bool isOdd(const BigInt& z) {
   return bit_test(z,0) == 1;
 }
 
-  inline bool isDivisible(const BigInt& x, const BigInt& y) {
+inline bool isDivisible(const BigInt& x, const BigInt& y) {
     BigInt q, r;
     divide_qr(x, y, q, r);
     return r.is_zero();
@@ -194,7 +194,7 @@ inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long uk) {
     }
 }
 
-  inline void power(BigInt& c, const BigInt& a, unsigned long ul) {
+inline void power(BigInt& c, const BigInt& a, unsigned long ul) {
     // AF c.makeCopy();
   c = pow(a, ul);
 }

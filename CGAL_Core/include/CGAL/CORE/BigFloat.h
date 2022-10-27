@@ -621,15 +621,15 @@ inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
 }
 */
 
-  double doubleValue(const BigFloat& bf)
-  {
-    return bf.doubleValue();
-  }
+inline double doubleValue(const BigFloat& bf)
+{
+  return bf.doubleValue();
+}
 
-  long longValue(const BigFloat& bf)
-  {
-    return bf.longValue();
-  }
+inline long longValue(const BigFloat& bf)
+{
+  return bf.longValue();
+}
 
 } //namespace CORE
 
