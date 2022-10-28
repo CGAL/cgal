@@ -1591,11 +1591,9 @@ void dump_cells_with_small_dihedral_angle(const Tr& tr,
   std::vector<Cell_handle>     cells;
   std::vector<Subdomain_index> indices;
 
-  for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-       cit != tr.finite_cells_end(); ++cit)
+  for (Cell_handle c : tr.finite_cell_handles())
   {
-    Cell_handle c = cit;
-    if (c->subdomain_index() != Subdomain_index() && cell_select(c))
+    if (c->subdomain_index() != Subdomain_index() && get(cell_select, c))
     {
       double dh = min_dihedral_angle(tr, c);
       if (dh < angle_bound)
