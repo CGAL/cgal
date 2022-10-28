@@ -32,6 +32,7 @@
 #include <list>
 #include <vector>
 #include <cassert>
+#include <type_traits>
 #include <CGAL/use.h>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
@@ -47,7 +48,6 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/tuple.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/typeof/typeof.hpp>
 
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
@@ -8120,7 +8120,7 @@ void test_tuple(){
   CGAL_static_assertion( std::tuple_size<T0>::value == 0 );
   CGAL_static_assertion( std::tuple_size<T1>::value == 2 );
   CGAL_static_assertion( std::tuple_size<T2>::value == 4 );
-  CGAL_static_assertion( (boost::is_same<std::tuple_element<1,T2>::type,My_to_int>::value) );
+  CGAL_static_assertion( (std::is_same<std::tuple_element<1,T2>::type,My_to_int>::value) );
 
   T1 t1=std::make_tuple(1,2);
   T1 t1_2=std::make_tuple(1,2);
@@ -8206,15 +8206,15 @@ void test_make_sorted_pair() {
   assert(p3==p4);
   int i=2;
   assert( CGAL::make_sorted_pair(1,i) == std::make_pair(1,i) );
-  CGAL_static_assertion( (boost::is_same<
+  CGAL_static_assertion( (std::is_same<
                           BOOST_TYPEOF(CGAL::make_sorted_pair<long>(1L,i)),
                           std::pair<long,long> >::value) );
   assert( (CGAL::make_sorted_pair<long>(i,1L) == std::pair<long,long>(1L,2L)) );
 
-  CGAL_static_assertion( (boost::is_same<
+  CGAL_static_assertion( (std::is_same<
                           BOOST_TYPEOF(CGAL::make_sorted_pair<double>(1,2L)),
                           std::pair<double,double> >::value) );
-  CGAL_static_assertion( (boost::is_same<
+  CGAL_static_assertion( (std::is_same<
                           BOOST_TYPEOF(CGAL::make_sorted_pair<int>(1,2L)),
                           std::pair<int,int> >::value) );
 }
@@ -8237,8 +8237,8 @@ void test_result_of() {
   typedef CGAL::cpp11::result_of<Result_functor(int)>::type result_type_float;
   CGAL_USE_TYPE(result_type);
   CGAL_USE_TYPE(result_type_float);
-  CGAL_static_assertion((boost::is_same<result_type, int>::value));
-  CGAL_static_assertion((boost::is_same<result_type_float, float>::value));
+  CGAL_static_assertion((std::is_same<result_type, int>::value));
+  CGAL_static_assertion((std::is_same<result_type_float, float>::value));
 
 }
 

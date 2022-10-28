@@ -83,7 +83,6 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <unordered_set>
 #include <iostream>
@@ -93,6 +92,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 /// \file ARAP_parameterizer_3.h
 
@@ -138,7 +138,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -176,7 +176,7 @@ public:
     Two_vertices_parameterizer_3<TriangleMesh_> >::type       Border_parameterizer;
 
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -1293,9 +1293,9 @@ public:
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The vertices must be indexed (vimap must be initialized).

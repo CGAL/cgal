@@ -21,8 +21,6 @@
 #include <CGAL/license/SMDS_3.h>
 
 
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/variant/apply_visitor.hpp>
@@ -30,6 +28,7 @@
 #include <CGAL/IO/io.h>
 
 #include <tuple>
+#include <type_traits>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -145,7 +144,7 @@ struct Index_generator_with_features<T, T, T, T>
 
 template <typename T, typename Boost_variant>
 const T& get_index(const Boost_variant& x,
-                   typename boost::disable_if<boost::is_same<T, Boost_variant> >::type * = 0)
+                   std::enable_if_t<!std::is_same<T, Boost_variant>::value > * = 0)
 { return boost::get<T>(x); }
 
 template <typename T>

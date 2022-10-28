@@ -22,9 +22,9 @@
 #include <CGAL/Handle_with_policy.h>
 
 #include <iostream>
+#include <type_traits>
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Arr_enums.h>
@@ -232,7 +232,7 @@ public:
     //!@}
 
     #if !defined(CGAL_NO_ASSERTIONS)
-    static const bool Kernel_arc_2_equals_Arc_2 = boost::is_same<Arc_2, Kernel_arc_2>::value;
+    static const bool Kernel_arc_2_equals_Arc_2 = std::is_same<Arc_2, Kernel_arc_2>::value;
     #endif
 
 public:

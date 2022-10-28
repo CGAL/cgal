@@ -18,8 +18,6 @@
 #ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 #define CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 
-#include <boost/type_traits/is_same.hpp>
-
 template <class R>
 bool
 _test_fct_points_implicit_sphere(const R&)
@@ -28,7 +26,7 @@ _test_fct_points_implicit_sphere(const R&)
   typedef typename R::FT    FT;
   typedef CGAL::Tetrahedron_3<R>  Tetrahedron;
 
-  const bool nonexact = boost::is_same<FT, double>::value;
+  const bool nonexact = std::is_same<FT, double>::value;
 
   const RT RT0(0);
   const RT RT4(4);

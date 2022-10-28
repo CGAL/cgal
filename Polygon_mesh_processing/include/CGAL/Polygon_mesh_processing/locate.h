@@ -25,7 +25,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
 
@@ -1492,10 +1492,10 @@ template <typename TriangleMesh, typename AABBTraits, typename VPM>
 void build_AABB_tree(const TriangleMesh& tm,
                      AABB_tree<AABBTraits>& outTree,
                      const VPM& wrapped_vpm,
-                     typename std::enable_if<
+                     std::enable_if_t<
                        std::is_same<
                          typename AABBTraits::Point_3, typename boost::property_traits<VPM>::value_type
-                       >::value>::type* = 0)
+                       >::value>* = 0)
 {
   typename boost::graph_traits<TriangleMesh>::face_iterator ffirst, fbeyond;
   boost::tie(ffirst, fbeyond) = faces(tm);
@@ -1507,10 +1507,10 @@ template <typename TriangleMesh, typename AABBTraits, typename VPM>
 void build_AABB_tree(const TriangleMesh& tm,
                      AABB_tree<AABBTraits>& outTree,
                      const VPM& vpm,
-                     typename std::enable_if<
+                     std::enable_if_t<
                        !std::is_same<
                          typename AABBTraits::Point_3, typename boost::property_traits<VPM>::value_type
-                       >::value>::type* = 0)
+                       >::value>* = 0)
 {
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VPM>              Wrapped_VPM;
   const Wrapped_VPM wrapped_vpm(vpm);

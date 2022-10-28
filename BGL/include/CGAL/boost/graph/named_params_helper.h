@@ -20,7 +20,6 @@
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <fstream>
 #include <iterator>
@@ -151,7 +150,7 @@ class GetGeomTraits
   struct Fake_GT {}; // to be used if there is no internal vertex_point_map in PolygonMesh
 
   typedef typename boost::mpl::if_c<Has_internal_pmap::value ||
-                                    !boost::is_same<internal_np::Param_not_found, NP_vpm>::value,
+                                    !std::is_same<internal_np::Param_not_found, NP_vpm>::value,
                                     typename GetK<PolygonMesh, NamedParametersVPM>::Kernel,
                                     Fake_GT>::type DefaultKernel;
 
@@ -338,7 +337,7 @@ struct Point_set_processing_3_np_helper
 
   static constexpr bool has_normal_map()
   {
-    return !boost::is_same< typename internal_np::Get_param<typename NamedParameters::base, internal_np::normal_t>::type,
+    return !std::is_same< typename internal_np::Get_param<typename NamedParameters::base, internal_np::normal_t>::type,
                             internal_np::Param_not_found> ::value;
   }
 };

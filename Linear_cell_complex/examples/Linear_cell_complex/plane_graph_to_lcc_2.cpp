@@ -21,7 +21,7 @@ int main(int narg, char** argv)
              <<"nbvertices nbedges"<<std::endl
              <<"x y //coordinates, one pair for each vertex"<<std::endl
              <<"..."<<std::endl
-             <<"i j //edge betwen vertices number i and j,"
+             <<"i j //edge between vertices number i and j,"
              <<" one pair for each edge"<<std::endl
              <<"..."<<std::endl
              <<"***********************************************"<<std::endl

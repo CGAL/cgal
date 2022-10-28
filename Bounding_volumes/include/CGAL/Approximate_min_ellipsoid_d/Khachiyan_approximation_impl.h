@@ -12,7 +12,7 @@
 
 // Note: whenever a comment refers to "Khachiyan's paper" then the
 // paper "Rounding of polytopes in the real number model of
-// computation" is ment (Mathematics of Operations Research, Vol. 21,
+// computation" is meant (Mathematics of Operations Research, Vol. 21,
 // No. 2, May 1996).  Nontheless, most comments refer to the
 // accompanying documentation sheet (and not to the above paper), see
 // the file(s) in documentation/.

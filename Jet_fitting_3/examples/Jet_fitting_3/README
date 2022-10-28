@@ -6,7 +6,7 @@ takes as input a <inputPoints.txt> which is a xyz text file
 it compute the fitting for this single entry and 
 it outputs results in the <output.txt> file and on the standard std::cout
 
-Usage is : Single_estimation <inputPoints.txt> <d_fitting>, <d_monge>" 
+Usage is : Single_estimation <inputPoints.txt> <d_fitting>, <d_monge>
 
 in_points are sampled on 0.1(x²+2y²)
 
@@ -49,4 +49,4 @@ Note : if the nb of collected points is less than the required min number of
 ./Mesh_estimation
  ./Mesh_estimation -f data/ellipe0.003.off -d2 -m2 -a2 
  ./Mesh_estimation -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
-		
+

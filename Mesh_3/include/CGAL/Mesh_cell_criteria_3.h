@@ -67,9 +67,9 @@ public:
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
-                       typename std::enable_if<
+                       std::enable_if_t<
                          Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
-                       >::type* = 0
+                       >* = 0
                        )
   {
     init_radius(radius_bound);

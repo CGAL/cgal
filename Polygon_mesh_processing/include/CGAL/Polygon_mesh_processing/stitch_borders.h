@@ -20,7 +20,7 @@
 #include <CGAL/boost/graph/properties.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
@@ -33,7 +33,6 @@
 #include <CGAL/use.h>
 
 #include <boost/range.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <iostream>
@@ -44,6 +43,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 #ifdef CGAL_PMP_STITCHING_DEBUG_PP
 # ifndef CGAL_PMP_STITCHING_DEBUG
@@ -1306,9 +1306,9 @@ template <typename PolygonMesh,
 std::size_t stitch_borders(PolygonMesh& pmesh,
                            const HalfedgePairsRange& hedge_pairs_to_stitch,
                            const CGAL_NP_CLASS& np = parameters::default_values(),
-                           typename boost::enable_if<
-                             typename boost::has_range_iterator<HalfedgePairsRange>
-                           >::type* = 0)
+                           std::enable_if_t<
+                             boost::has_range_iterator<HalfedgePairsRange>::value
+                           >* = 0)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1511,9 +1511,9 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
                            PolygonMesh& pmesh,
                            const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                           , typename boost::enable_if<
-                               typename boost::has_range_iterator<BorderHalfedgeRange>
-                           >::type* = 0
+                           , std::enable_if_t<
+                               boost::has_range_iterator<BorderHalfedgeRange>::value
+                           >* = 0
 #endif
                            )
 {

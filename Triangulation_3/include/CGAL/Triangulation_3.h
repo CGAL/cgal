@@ -24,14 +24,6 @@
 # include <CGAL/Profile_counter.h>
 #endif
 
-#include <iostream>
-#include <list>
-#include <set>
-#include <map>
-#include <unordered_map>
-#include <utility>
-#include <stack>
-
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
@@ -76,6 +68,14 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/scalable_allocator.h>
 #endif
+
+#include <iostream>
+#include <list>
+#include <set>
+#include <map>
+#include <unordered_map>
+#include <utility>
+#include <stack>
 
 #define CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
 
@@ -1145,12 +1145,12 @@ public:
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                        typename boost::enable_if<
+                        std::enable_if_t<
                           boost::is_convertible<
                               typename std::iterator_traits<InputIterator>::value_type,
                               Point
-                          >
-                        >::type* = nullptr)
+                          >::value
+                        >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -1208,12 +1208,12 @@ protected:
 public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                        typename boost::enable_if<
+                        std::enable_if_t<
                           boost::is_convertible<
                             typename std::iterator_traits<InputIterator>::value_type,
                             std::pair<Point, typename internal::Info_check<
                                                typename Triangulation_data_structure::Vertex>::type>
-                          > >::type* =NULL)
+                          >::value >* =NULL)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);
   }
@@ -1222,12 +1222,12 @@ public:
   std::ptrdiff_t
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-          typename boost::enable_if<
+          std::enable_if_t<
             boost::mpl::and_<
               boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
               boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-            >
-          >::type* =NULL)
+            >::value
+          >* =NULL)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<
         typename Triangulation_data_structure::Vertex>::type> >(first,last);
@@ -7154,16 +7154,14 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 namespace internal {
 
 // Internal function used by operator==.
-template < class GT, class Tds1, class Tds2, class Lds >
+template < class GT, class Tds1, class Tds2, class Lds, typename CMAP, typename VMAP >
 bool
 test_next(const Triangulation_3<GT, Tds1, Lds>& t1,
           const Triangulation_3<GT, Tds2, Lds>& t2,
           typename Triangulation_3<GT, Tds1, Lds>::Cell_handle c1,
           typename Triangulation_3<GT, Tds2, Lds>::Cell_handle c2,
-          std::map<typename Triangulation_3<GT, Tds1, Lds>::Cell_handle,
-          typename Triangulation_3<GT, Tds2, Lds>::Cell_handle>& Cmap,
-          std::map<typename Triangulation_3<GT, Tds1, Lds>::Vertex_handle,
-          typename Triangulation_3<GT, Tds2, Lds>::Vertex_handle>& Vmap)
+          CMAP& Cmap,
+          VMAP& Vmap)
 {
   // This function tests and registers the 4 neighbors of c1/c2,
   // and recursively calls itself over them.
@@ -7186,8 +7184,8 @@ test_next(const Triangulation_3<GT, Tds1, Lds>& t1,
   typedef typename Tr2::Vertex_handle             Vertex_handle2;
   typedef typename Tr2::Cell_handle               Cell_handle2;
 
-  typedef typename std::map<Vertex_handle1, Vertex_handle2>::const_iterator Vit;
-  typedef typename std::map<Cell_handle1, Cell_handle2>::const_iterator     Cit;
+  typedef typename std::unordered_map<Vertex_handle1, Vertex_handle2>::const_iterator Vit;
+  typedef typename std::unordered_map<Cell_handle1, Cell_handle2>::const_iterator     Cit;
 
   typedef typename Tr1::Geom_traits::Construct_point_3    Construct_point_3;
   typedef typename Tr1::Geom_traits::Compare_xyz_3        Compare_xyz_3;
@@ -7196,7 +7194,7 @@ test_next(const Triangulation_3<GT, Tds1, Lds>& t1,
   Construct_point_3 cp = t1.geom_traits().construct_point_3_object();
 
   std::vector<std::pair<Cell_handle1, Cell_handle2> > cell_stack;
-  cell_stack.push_back(std::make_pair(c1, c2));
+  cell_stack.emplace_back(c1, c2);
 
   while(! cell_stack.empty())
   {
@@ -7242,12 +7240,12 @@ test_next(const Triangulation_3<GT, Tds1, Lds>& t1,
           return false;
 
         // We register vn1/vn2.
-        Vmap.insert(std::make_pair(vn1, vn2));
+        Vmap.emplace(vn1, vn2);
       }
 
       // We register n1/n2.
-      Cmap.insert(std::make_pair(n1, n2));
-      cell_stack.push_back(std::make_pair(n1, n2));
+      Cmap.emplace(n1, n2);
+      cell_stack.emplace_back(n1, n2);
     }
   }
 
@@ -7286,11 +7284,11 @@ operator==(const Triangulation_3<GT, Tds1, Lds>& t1,
   int dim = t1.dimension();
   // Special case for dimension < 1.
   // The triangulation is uniquely defined in these cases.
-  if(dim < 1)
+  if(dim == - 1)
     return true;
 
-  // Special case for dimension == 1.
-  if(dim == 1)
+  // Special case for dimensions 0 and 1.
+  if(dim < 2)
   {
     // It's enough to test that the points are the same,
     // since the triangulation is uniquely defined in this case.
@@ -7308,13 +7306,13 @@ operator==(const Triangulation_3<GT, Tds1, Lds>& t1,
 
   // We will store the mapping between the 2 triangulations vertices and
   // cells in 2 maps.
-  std::map<Vertex_handle1, Vertex_handle2> Vmap;
-  std::map<Cell_handle1, Cell_handle2> Cmap;
+  std::unordered_map<Vertex_handle1, Vertex_handle2> Vmap;
+  std::unordered_map<Cell_handle1, Cell_handle2> Cmap;
 
   // Handle the infinite vertex.
   Vertex_handle1 v1 = t1.infinite_vertex();
   Vertex_handle2 iv2 = t2.infinite_vertex();
-  Vmap.insert(std::make_pair(v1, iv2));
+  Vmap.emplace(v1, iv2);
 
   // We pick one infinite cell of t1, and try to match it against the
   // infinite cells of t2.
@@ -7364,7 +7362,7 @@ operator==(const Triangulation_3<GT, Tds1, Lds>& t1,
     }
 
     // Found it !
-    Cmap.insert(std::make_pair(c, *cit));
+    Cmap.emplace(c, *cit);
     break;
   }
 

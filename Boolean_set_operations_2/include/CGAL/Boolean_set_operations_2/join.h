@@ -18,8 +18,6 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
-#include <boost/utility/enable_if.hpp>
-
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_2.h>
@@ -33,7 +31,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Boolean_set_operations_2/Bso_internal_functions.h>
 #include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 namespace CGAL
 {

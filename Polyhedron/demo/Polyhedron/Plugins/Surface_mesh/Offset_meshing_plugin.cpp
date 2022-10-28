@@ -465,12 +465,22 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_item* item = scene->item(index);
+  if(item == nullptr){
+    return;
+  }
+
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(item);
 
-  SMesh* sMesh = sm_item->face_graph();
-  if(!sMesh)
+  if(sm_item == nullptr){
     return;
+  }
+
+  SMesh* sMesh = sm_item->face_graph();
+
+  if(sMesh == nullptr){
+    return;
+  }
 
   double diag = sm_item->diagonalBbox();
   double offset_value = QInputDialog::getDouble(mw,
@@ -479,11 +489,12 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
                                                 0.1*diag,
                                                 -(std::numeric_limits<double>::max)(),
                                                 (std::numeric_limits<double>::max)(), 10);
-  SMesh* smesh = sm_item->face_graph();
-  auto vpm = get(CGAL::vertex_point,*smesh);
+
+  auto vpm = get(CGAL::vertex_point,*sMesh);
   auto vnm =
-      smesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
-  for(const auto& v : vertices(*smesh))
+      sMesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
+
+  for(const auto& v : vertices(*sMesh))
   {
     Point_3 p = get(vpm, v);
     EPICK::Vector_3 n = get(vnm, v);

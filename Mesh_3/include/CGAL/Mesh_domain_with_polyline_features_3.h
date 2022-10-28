@@ -35,11 +35,10 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <memory>
 
 namespace CGAL {
@@ -373,16 +372,23 @@ private:
 
       if(nearest_is_a_segment)
       {
-        if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
-        {
-          nearest_segment = seg;
-          result = previous;
-        }
         if(compare_distance(p, *it, nearest_segment) == CGAL::SMALLER)
         {
           nearest_vertex = it;
           nearest_is_a_segment = false;
           result = it;
+          if (possibly(angle(*previous, *it, p) == CGAL::ACUTE) &&
+              compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+          {
+            nearest_segment = seg;
+            nearest_is_a_segment = true;
+            result = previous;
+          }
+        }
+        else if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
+        {
+          nearest_segment = seg;
+          result = previous;
         }
       }
       else {
@@ -391,7 +397,9 @@ private:
           nearest_vertex = it;
           result = it;
         }
-        if(compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+        if ((nearest_vertex != it ||
+             possibly(angle(*previous, *it, p) == CGAL::ACUTE)) &&
+            compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
         {
           nearest_segment = seg;
           nearest_is_a_segment = true;

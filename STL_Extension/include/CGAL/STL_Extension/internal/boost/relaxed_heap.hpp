@@ -194,7 +194,7 @@ public:
     void remove(const value_type& x)
     {
         group* a = &index_to_group[get(id, x) / log_n];
-        CGAL_assertion(groups[get(id, x)]);
+        CGAL_assertion(static_cast< bool >(groups[get(id, x)]));
         a->value = x;
         a->kind = smallest_key;
         promote(a);
