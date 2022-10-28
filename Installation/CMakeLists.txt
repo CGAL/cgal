@@ -842,7 +842,7 @@ endmacro()
 # This allows programs to locate CGALConfig.cmake
 set(CGAL_DIR ${CGAL_BINARY_DIR})
 
-if(NOT RUNNING_CGAL_AUTO_TEST AND NOT CGAL_TEST_SUITE)
+if(NOT RUNNING_CGAL_AUTO_TEST)
 
   add_programs(examples examples OFF)
   add_programs(demo demos OFF)
