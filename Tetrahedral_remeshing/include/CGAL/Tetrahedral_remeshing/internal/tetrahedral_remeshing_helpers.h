@@ -1134,6 +1134,38 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
+namespace internal
+{
+  template<typename C3t3, typename CellSelector>
+  void treat_before_delete(typename C3t3::Cell_handle c,
+                           CellSelector& cell_selector,
+                           C3t3& c3t3)
+  {
+    if (c3t3.is_in_complex(c))
+      c3t3.remove_from_complex(c);
+    if (get(cell_selector, c))
+      put(cell_selector, c, false);
+  }
+
+  template<typename C3t3, typename CellSelector>
+  void treat_new_cell(typename C3t3::Cell_handle c,
+                      const typename C3t3::Subdomain_index& subdomain,
+                      CellSelector& cell_selector,
+                      const bool selected,
+                      C3t3& c3t3)
+  {
+    //update C3t3
+    using Subdomain_index = typename C3t3::Subdomain_index;
+    if (Subdomain_index() != subdomain)
+      c3t3.add_to_complex(c, subdomain);
+    else
+      c->set_subdomain_index(Subdomain_index());
+
+    //update cell_selector property map
+    put(cell_selector, c, selected);
+  }
+}
+
 namespace debug
 {
 
