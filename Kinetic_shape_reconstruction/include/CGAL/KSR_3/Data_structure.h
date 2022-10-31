@@ -529,7 +529,8 @@ public:
     event.crossed_edge = edge;
     event.support_plane = sp_idx;
 
-    std::pair<IFace, IFace> faces = m_intersection_graph.get_faces(sp_idx, edge);
+    std::pair<IFace, IFace> faces;
+    m_intersection_graph.get_faces(sp_idx, edge, faces);
 
     if (m_intersection_graph.face(faces.first).part_of_partition)
       event.face = faces.second;

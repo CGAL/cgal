@@ -273,12 +273,10 @@ public:
     return false;
   }
 
-  const std::pair<Face_descriptor, Face_descriptor>& get_faces(std::size_t sp_idx, const Edge_descriptor& edge) const {
+  void get_faces(std::size_t sp_idx, const Edge_descriptor& edge, std::pair<Face_descriptor, Face_descriptor> &pair) const {
     auto it = m_graph[edge].faces.find(sp_idx);
-    if (it == m_graph[edge].faces.end())
-      return std::pair<Face_descriptor, Face_descriptor>(null_iface(), null_iface());
-    else
-      return it->second;
+    if (it != m_graph[edge].faces.end())
+      pair = it->second;
   }
 
   const Face_property& face(Face_descriptor idx) const {
