@@ -71,19 +71,19 @@ public:
   template <typename CGAL_NP_TEMPLATE_PARAMETERS>
   Mesh_criteria_3_impl(const CGAL_NP_CLASS& np)
     :edge_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_size_param),
-                                                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_sizing_field_param),
+                                                 parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::edge_sizing_field_param),
                                                                               parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(DBL_MAX))))),
     facet_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_angle_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_size_param),
-                                                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_sizing_field_param),
+                                                 parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_sizing_field_param),
                                                                               parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(0)))),
-                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_distance_param), FT(0)),
+                    parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_distance_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE)),
     cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param),
                                                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_param), FT(0))),
                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_size_param),
-                                                parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_sizing_field_param),
-                                                                             parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(0)))))
+                                                parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::cell_sizing_field_param),
+                                                                             parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::sizing_field_param), FT(0)))))
   { }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
