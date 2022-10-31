@@ -557,45 +557,49 @@ private:
       std::cout << " face already crossed, skipping event" << std::endl;
       return;
     }
-    // Check intersection against kinetic intervals from other support planes
-    std::size_t crossing = 0;
-    auto kis = m_data.igraph().kinetic_intervals(event.crossed_edge);
-    for (auto ki = kis.first; ki != kis.second; ki++) {
-      if (ki->first == event.support_plane)
-        continue;
 
-      for (std::size_t i = 0; i < ki->second.size(); i++) {
-        // Exactly on one
-        if (ki->second[i].first == event.intersection_bary) {
-          if (ki->second[i].second < event.time)
-            crossing++;
+    std::size_t line = m_data.line_idx(event.crossed_edge);
+    if (!m_data.support_plane(event.support_plane).has_crossed_line(line)) {
+      // Check intersection against kinetic intervals from other support planes
+      std::size_t crossing = 0;
+      auto kis = m_data.igraph().kinetic_intervals(event.crossed_edge);
+      for (auto ki = kis.first; ki != kis.second; ki++) {
+        if (ki->first == event.support_plane)
+          continue;
 
-          break;
-        }
+        for (std::size_t i = 0; i < ki->second.size(); i++) {
+          // Exactly on one
+          if (ki->second[i].first == event.intersection_bary) {
+            if (ki->second[i].second < event.time)
+              crossing++;
 
-        // Within an interval
-        if (ki->second[i].first > event.intersection_bary && ki->second[i - 1].first < event.intersection_bary) {
-          FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
-          FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
+            break;
+          }
 
-          if (event.time > interval_time)
-            crossing++;
+          // Within an interval
+          if (ki->second[i].first > event.intersection_bary && ki->second[i - 1].first < event.intersection_bary) {
+            FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
+            FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
 
-          break;
+            if (event.time > interval_time)
+              crossing++;
+
+            break;
+          }
         }
       }
+
+      // Check if the k value is sufficient for crossing the edge.
+      unsigned int& k = m_data.support_plane(event.support_plane).k();
+      if (k < crossing)
+        return;
+
+      // The edge can be crossed.
+      // Adjust k value
+      k -= crossing;
+
+      m_data.support_plane(event.support_plane).set_crossed_line(line);
     }
-
-    // Check if the k value is sufficient for crossing the edge.
-    unsigned int& k = m_data.support_plane(event.support_plane).k();
-    if (k < crossing)
-      return;
-
-    // The edge can be crossed.
-    // Adjust k value
-    k -= crossing;
-
-
 
     // Associate IFace to mesh.
     PFace f = m_data.add_iface_to_mesh(event.support_plane, event.face);

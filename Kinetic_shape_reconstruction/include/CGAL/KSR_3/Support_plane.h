@@ -98,6 +98,7 @@ private:
     std::set<IFace> ifaces;
     std::map<IVertex, Vertex_index> ivertex2pvertex;
     std::set<IEdge> unique_iedges;
+    std::set<std::size_t> crossed_lines;
     std::vector<IEdge> iedges;
     std::vector<Segment_2> isegments;
     std::vector<Bbox_2> ibboxes;
@@ -511,6 +512,14 @@ public:
       input_vec.push_back(input_index);
     }
     return static_cast<std::size_t>(fi);
+  }
+
+  bool has_crossed_line(std::size_t line) const {
+    return m_data->crossed_lines.find(line) != m_data->crossed_lines.end();
+  }
+
+  void set_crossed_line(std::size_t line) {
+    m_data->crossed_lines.insert(line);
   }
 
   template<typename Pair>
