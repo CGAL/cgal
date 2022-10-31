@@ -135,7 +135,7 @@ public:
     const FT time_diff = CGAL::abs(next().time() - event.time());
     if (time_diff < tol) {
       if (m_verbose) {
-        std::cout << "WARNING: NEXT EVENT IS HAPPENNING AT THE SAME TIME!" << std::endl;
+        std::cout << "WARNING: NEXT EVENT IS HAPPENING AT THE SAME TIME!" << std::endl;
       }
     }
     CGAL_assertion(has_unique_keys());

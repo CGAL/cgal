@@ -37,7 +37,7 @@ class Kinetic_traits_3 {
   using Point_2 = typename GeomTraits::Point_2;
   using Line_2  = typename GeomTraits::Line_2;
 
-  // TODO: This is very naive way of doing this. We should compare IT anf ET
+  // TODO: This is very naive way of doing this. We should compare IT and ET
   // and, in case they are the same or IT is already exact, abort conversion!
   using EK = CGAL::Exact_predicates_exact_constructions_kernel;
   using ET = typename EK::FT;

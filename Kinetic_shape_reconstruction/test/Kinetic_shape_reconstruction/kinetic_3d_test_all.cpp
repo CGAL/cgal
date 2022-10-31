@@ -55,25 +55,27 @@ bool run_test(
   using KSR = CGAL::Kinetic_shape_reconstruction_3<Traits>;
 
   ++num_tests;
-  std::ifstream input_file_off(input_filename);
-  std::ifstream input_file_ply(input_filename);
+  std::string baseDir = "C:/dev/kinetic/Kinetic_shape_reconstruction/examples/Kinetic_shape_reconstruction/";
+  std::string filename = baseDir + input_filename;
+  std::ifstream input_file_off(filename);
+  std::ifstream input_file_ply(filename);
   std::vector<Point_3> input_vertices;
   std::vector< std::vector<std::size_t> > input_faces;
 
   if (CGAL::IO::read_OFF(input_file_off, input_vertices, input_faces)) {
-    std::cout << "* reading the OFF file: " << input_filename << "!" << std::endl;
+    std::cout << "* reading the OFF file: " << filename << "!" << std::endl;
     input_file_off.close();
   } else if (CGAL::IO::read_PLY(input_file_ply, input_vertices, input_faces)) {
-    std::cout << "* reading the PLY file: " << input_filename << "!" << std::endl;
+    std::cout << "* reading the PLY file: " << filename << "!" << std::endl;
     input_file_ply.close();
   } else {
-    std::cerr << "ERROR: can't read the OFF/PLY file " << input_filename << "!" << std::endl;
+    std::cerr << "ERROR: can't read the OFF/PLY file " << filename << "!" << std::endl;
     return false;
   }
   std::vector<double> times;
 
   std::cout << std::endl;
-  std::cout << "--INPUT FILE: " << input_filename << std::endl;
+  std::cout << "--INPUT FILE: " << filename << std::endl;
   const Polygon_map<Point_3> polygon_map(input_vertices);
   for (const unsigned int k : ks) {
     std::cout << std::endl << "--INPUT K: " << k << std::endl;
@@ -81,7 +83,7 @@ bool run_test(
     double time = 0.0;
     for (std::size_t iter = 0; iter < num_iters; ++iter) {
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " BEGIN!" << std::endl;
-      KSR ksr(false, false);
+       KSR ksr(true, true); // first verbose, second debug
 
       // Running KSR.
       Timer timer;
@@ -191,9 +193,8 @@ bool run_test(
 
 template<typename Traits>
 void run_all_tests() {
-
   std::size_t num_tests = 0;
-  const std::size_t num_iters = 3;
+  const std::size_t num_iters = 1;
 
   std::cout.precision(10);
   std::vector< std::vector<double> > all_times;
@@ -204,18 +205,36 @@ void run_all_tests() {
   // Number of allowed intersections k.
   std::vector<unsigned int> ks;
   for (unsigned int k = 1; k <= 6; ++k) {
-    ks.push_back(k);
+    //ks.push_back(k);
   }
-  ks.push_back(100);
+  ks.push_back(3);
+  //results = { 9,1,28,56,35,6 };
+  //run_test<Traits>("data/stress-test-1/test-8-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests);
+  //results = { 16,1,133,315,212,34 };
+  //run_test<Traits>("data/real-data-test/test-10-polygons.off", ks, num_iters, results, all_times, num_tests);
+  //results = { 10,1,37,77,46,6 };
+  //run_test<Traits>("data/stress-test-4/test-4-rnd-polygons-4-6.off", ks, num_iters, results, all_times, num_tests);
+  //results = { 10,1,37,77,46,6 };
+  //assert(run_test<Traits>("data/edge-case-test/test-box.off", ks, num_iters, results, all_times, num_tests));
+  //results = {7,1,12,20,11,2};
+  //assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy-split.off", ks, num_iters, results, all_times, num_tests));
 
   // Edge case tests.
 
   // flat bbox / 2 coplanar in XY
-  results = {7,1,12,20,11,2};
-  assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, results, all_times, num_tests));
+  //results = { 7,1,14,24,13,2 };
+  //assert(run_test<Traits>("data/stress-test-0/test-1-polygon-a.off", ks, num_iters, results, all_times, num_tests));
+
+  //results = { 8,1,20,37,21,3 };
+  //assert(run_test<Traits>("data/stress-test-0/test-2-polygons-ab.off", ks, num_iters, results, all_times, num_tests));
+  //results = {7,1,12,20,11,2};
+  //assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy-split.off", ks, num_iters, results, all_times, num_tests));
+  //results = { 10,1,38,78,46,6 };
+  //assert(run_test<Traits>("data/stress-test-0/test-4-polygons-abcd.off", ks, num_iters, results, all_times, num_tests));
+
 
   // flat bbox / 2 coplanar in XZ
-  results = {7,1,12,20,11,2};
+ /* results = {7,1,12,20,11,2};
   assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xz.off", ks, num_iters, results, all_times, num_tests));
 
   // flat bbox / 2 coplanar in YZ
@@ -248,12 +267,12 @@ void run_all_tests() {
 
   // failure case #2 that produces holes
   results = {12,1,54,117,70,9};
-  assert(run_test<Traits>("data/edge-case-test/test-local-global-2.off", ks, num_iters, results, all_times, num_tests));
+  assert(run_test<Traits>("data/edge-case-test/test-local-global-2.off", ks, num_iters, results, all_times, num_tests));*/
 
   // Stress tests 0.
-  results = {7,1,14,24,13,2};
-  assert(run_test<Traits>("data/stress-test-0/test-1-polygon-a.off"    , ks, num_iters, results, all_times, num_tests));
-  results = {7,1,14,24,13,2};
+  //results = {7,1,14,24,13,2};
+  //assert(run_test<Traits>("data/stress-test-0/test-1-polygon-a.off"    , ks, num_iters, results, all_times, num_tests));
+  /*results = {7,1,14,24,13,2};
   assert(run_test<Traits>("data/stress-test-0/test-1-polygon-b.off"    , ks, num_iters, results, all_times, num_tests));
   results = {7,1,14,24,13,2};
   assert(run_test<Traits>("data/stress-test-0/test-1-polygon-c.off"    , ks, num_iters, results, all_times, num_tests));
@@ -273,18 +292,20 @@ void run_all_tests() {
   assert(run_test<Traits>("data/stress-test-0/test-2-polygons-cd.off"  , ks, num_iters, results, all_times, num_tests));
   results = {9,1,27,52,30,4};
   assert(run_test<Traits>("data/stress-test-0/test-3-polygons-abc.off" , ks, num_iters, results, all_times, num_tests));
+
   results = {9,1,30,60,34,4};
   assert(run_test<Traits>("data/stress-test-0/test-3-polygons-abd.off" , ks, num_iters, results, all_times, num_tests));
   results = {9,1,28,55,33,5};
-  assert(run_test<Traits>("data/stress-test-0/test-3-polygons-acd.off" , ks, num_iters, results, all_times, num_tests));
-  results = {9,1,26,50,30,5};
+  assert(run_test<Traits>("data/stress-test-0/test-3-polygons-acd.off" , ks, num_iters, results, all_times, num_tests));*/
+  /*results = {9,1,26,50,30,5};
   assert(run_test<Traits>("data/stress-test-0/test-3-polygons-bcd.off" , ks, num_iters, results, all_times, num_tests));
   results = {10,1,38,78,46,6};
   assert(run_test<Traits>("data/stress-test-0/test-4-polygons-abcd.off", ks, num_iters, results, all_times, num_tests));
-  results = {12,1,67,149,90,11};
-  assert(run_test<Traits>("data/stress-test-0/test-6-polygons.off"     , ks, num_iters, results, all_times, num_tests));
+  results = { 12,1,67,149,90,11 };
+  assert(run_test<Traits>("data/stress-test-0/test-6-polygons.off", ks, num_iters, results, all_times, num_tests));*/
 
   // Stress tests 1.
+/*
   results = {7,1,14,24,13,2};
   assert(run_test<Traits>("data/stress-test-1/test-1-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
   results = {7,1,14,24,13,2};
@@ -298,11 +319,10 @@ void run_all_tests() {
   results = {8,1,19,35,20,3};
   assert(run_test<Traits>("data/stress-test-1/test-6-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
   results = {8,1,20,37,22,4};
-  assert(run_test<Traits>("data/stress-test-1/test-7-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
-  results = {9,1,28,56,35,6};
-  assert(run_test<Traits>("data/stress-test-1/test-8-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests));
+  assert(run_test<Traits>("data/stress-test-1/test-7-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));*/
 
   // Stress tests 2.
+/*
   results = {7,1,14,24,13,2};
   assert(run_test<Traits>("data/stress-test-2/test-1-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
   results = {7,1,14,24,13,2};
@@ -314,9 +334,10 @@ void run_all_tests() {
   results = {8,1,19,35,20,3};
   assert(run_test<Traits>("data/stress-test-2/test-5-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
   results = {9,1,26,50,30,5};
-  assert(run_test<Traits>("data/stress-test-2/test-6-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests));
+  assert(run_test<Traits>("data/stress-test-2/test-6-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests));*/
 
   // Stress tests 3.
+/*
   results = {8,1,20,37,21,3};
   assert(run_test<Traits>("data/stress-test-3/test-1-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
   results = {8,1,17,30,17,3};
@@ -336,9 +357,10 @@ void run_all_tests() {
   results = {10,1,39,82,50,7};
   assert(run_test<Traits>("data/stress-test-3/test-9-rnd-polygons-4-4.off" , ks, num_iters, results, all_times, num_tests));
   results = {11,1,55,119,78,13};
-  assert(run_test<Traits>("data/stress-test-3/test-10-rnd-polygons-5-4.off", ks, num_iters, results, all_times, num_tests));
+  assert(run_test<Traits>("data/stress-test-3/test-10-rnd-polygons-5-4.off", ks, num_iters, results, all_times, num_tests));*/
 
   // Stress tests 4.
+/*
   results = {8,1,20,37,21,3};
   assert(run_test<Traits>("data/stress-test-4/test-1-rnd-polygons-2-6.off" , ks, num_iters, results, all_times, num_tests));
   results = {9,1,29,58,36,6};
@@ -356,24 +378,29 @@ void run_all_tests() {
   results = {13,1,69,152,96,13};
   assert(run_test<Traits>("data/stress-test-4/test-8-rnd-polygons-7-8.off" , ks, num_iters, results, all_times, num_tests));
   results = {18,3,250,629,449,76};
-  assert(run_test<Traits>("data/stress-test-4/test-9-rnd-polygons-12-4.off", ks, num_iters, results, all_times, num_tests));
+  assert(run_test<Traits>("data/stress-test-4/test-9-rnd-polygons-12-4.off", ks, num_iters, results, all_times, num_tests));*/
 
   // Stress tests 5.
+
   results = {21,2,468,1224,720,66};
-  assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
-  results = {26,3,1037,2829,1693,161};
-  assert(run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests));
+  run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests);
+  //results = {26,3,1037,2829,1693,161};
+  //run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests);
 
   // Real data tests.
+/*
   results = {16,1,133,315,212,34};
   assert(run_test<Traits>("data/real-data-test/test-10-polygons.off", ks, num_iters, results, all_times, num_tests));
   results = {18,2,217,543,370,58};
-  assert(run_test<Traits>("data/real-data-test/test-15-polygons.off", ks, num_iters, results, all_times, num_tests));
-  results = {21,3,375,974,629,74};
-  assert(run_test<Traits>("data/real-data-test/test-20-polygons.off", ks, num_iters, results, all_times, num_tests));
+  run_test<Traits>("data/real-data-test/test-15-polygons.off", ks, num_iters, results, all_times, num_tests);
+  //results = {21,3,375,974,629,74};
+  //run_test<Traits>("data/real-data-test/test-20-polygons.off", ks, num_iters, results, all_times, num_tests);*/
 
-  // results = {38,3,2556,7128,3272,133}; // fails for k = 1 and coplanarity = 0.1; and k = 6 and coplanarity = 0.5
-  // assert(run_test<Traits>("data/real-data-test/test-40-polygons.ply", ks, num_iters, results, all_times, num_tests));
+  //ks.clear();
+  //ks.push_back(5);
+
+  //results = { 38,3,2556,7128,3272,133 }; // fails for k = 1 and coplanarity = 0.1; and k = 6 and coplanarity = 0.5
+  //run_test<Traits>("data/real-data-test/test-40-polygons.ply", ks, num_iters, results, all_times, num_tests);
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of tests: "               << num_tests << std::endl;
@@ -405,11 +432,12 @@ void run_all_tests() {
   }
 }
 
-int main(const int /* argc */, const char** /* argv */) {
+#include <CGAL/intersections.h>
 
+int main(const int /* argc */, const char** /* argv */) {
   // run_all_tests<SCF>();
   // run_all_tests<SCD>();
-  // run_all_tests<EPECK>();
+  //run_all_tests<EPECK>();
 
   // Passes all tests except for those when
   // intersections lead to accumulated errors.

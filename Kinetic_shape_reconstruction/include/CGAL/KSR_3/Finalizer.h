@@ -139,12 +139,12 @@ public:
     // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
     //   std::cout << "num pfaces sp " << i << ": " << pfaces(i).size() << std::endl;
 
-    CGAL_assertion(m_data.check_bbox());
-    CGAL_assertion(m_data.check_interior());
-    CGAL_assertion(m_data.check_vertices());
-    CGAL_assertion(m_data.check_edges());
+    //CGAL_assertion(m_data.check_bbox());
+    //CGAL_assertion(m_data.check_interior());
+    //CGAL_assertion(m_data.check_vertices());
+    //CGAL_assertion(m_data.check_edges());
     create_volumes();
-    CGAL_assertion(m_data.check_faces());
+    //CGAL_assertion(m_data.check_faces());
   }
 
   void clear() {

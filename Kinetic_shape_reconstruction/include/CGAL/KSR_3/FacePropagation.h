@@ -10,8 +10,8 @@
 //
 // Author(s)     : Simon Giraudot, Dmitry Anisimov
 
-#ifndef CGAL_KSR_3_PROPAGATION_H
-#define CGAL_KSR_3_PROPAGATION_H
+#ifndef CGAL_KSR_3_FACEPROPAGATION_H
+#define CGAL_KSR_3_FACEPROPAGATION_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
@@ -29,7 +29,7 @@ namespace CGAL {
 namespace KSR_3 {
 
 template<typename GeomTraits>
-class Propagation {
+class FacePropagation {
 
 public:
   using Kernel = GeomTraits;
@@ -46,6 +46,7 @@ private:
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
+  using IFace   = typename Data_structure::IFace;
 
   using PVertex = typename Data_structure::PVertex;
   using PEdge   = typename Data_structure::PEdge;
@@ -60,44 +61,32 @@ private:
   using Parameters     = KSR::Parameters_3<FT>;
   using Kinetic_traits = KSR::Kinetic_traits_3<Kernel>;
 
+  using FaceEvent      = typename Data_structure::Support_plane::FaceEvent;
+
+  struct FaceEventOrder {
+    bool operator()(const FaceEvent &a, const FaceEvent &b) {
+      return a.time > b.time;
+    }
+  };
+
 public:
-  Propagation(Data_structure& data, const Parameters& parameters) :
+  FacePropagation(Data_structure& data, const Parameters& parameters) :
   m_data(data), m_parameters(parameters), m_kinetic_traits(parameters.use_hybrid_mode),
   m_queue(parameters.debug), m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
 
-  const std::pair<std::size_t, std::size_t> propagate(const FT time_step) {
-
+  const std::pair<std::size_t, std::size_t> propagate(const FT) {
     std::size_t num_queue_calls = 0;
-    m_min_time = FT(0);
-    m_max_time = time_step;
-    CGAL_assertion(m_min_time >= FT(0) && m_max_time >= m_min_time);
     std::size_t num_events = 0;
-    while (initialize_queue()) {
 
-      // ++num_queue_calls; // alternative way to build next time
+    initialize_queue();
+
+    while (!m_face_queue.empty()) {
       num_events = run(num_events);
-      m_min_time = m_max_time;
-      m_max_time += time_step;
-      // m_max_time = FT(num_queue_calls + 1) * time_step;
-      CGAL_assertion(m_data.check_integrity());
+
       ++num_queue_calls;
-
-      if (m_parameters.verbose && !m_parameters.debug) {
-        if ((num_queue_calls % 50) == 0) {
-          std::cout << ".................................................." << std::endl;
-        }
-      }
-
-      if (num_queue_calls > 1000000) {
-        CGAL_assertion_msg(false, "DEBUG ERROR: WHY SO MANY ITERATIONS?");
-        break;
-      }
-      if (num_events == 214) {
-        int a;
-        a = 4;
-      }
     }
+
     return std::make_pair(num_queue_calls, num_events);
   }
 
@@ -116,31 +105,20 @@ private:
   FT m_min_time;
   FT m_max_time;
 
+  std::priority_queue<typename Data_structure::Support_plane::FaceEvent, std::vector<FaceEvent>, FaceEventOrder> m_face_queue;
+
   /*******************************
   **       IDENTIFY EVENTS      **
   ********************************/
 
-  bool initialize_queue() {
+  void initialize_queue() {
+    //m_face_queue.clear();
 
     if (m_parameters.debug) {
-      std::cout << "* initializing queue for events in [" <<
-      m_min_time << ";" << m_max_time << "]" << std::endl;
+      std::cout << "initializing queue" << std::endl;
     }
 
-    m_data.update_positions(m_max_time);
-    bool still_running = false;
-    for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
-      const auto& iedges   = m_data.iedges(i);
-      const auto& segments = m_data.isegments(i);
-      const auto& bboxes   = m_data.ibboxes(i);
-      for (const auto pvertex : m_data.pvertices(i)) {
-        if (compute_events_of_pvertex(pvertex, iedges, segments, bboxes)) {
-          still_running = true;
-        }
-      }
-    }
-    m_data.update_positions(m_min_time);
-    return still_running;
+    m_data.fill_event_queue(m_face_queue);
   }
 
   bool compute_events_of_pvertex(
@@ -528,18 +506,19 @@ private:
     const std::size_t initial_iteration) {
 
     if (m_parameters.debug) {
-      std::cout << "* unstacking queue, current size: " << m_queue.size() << std::endl;
+      std::cout << "* unstacking queue, current size: " << m_face_queue.size() << std::endl;
     }
 
     std::size_t iteration = initial_iteration;
-    while (!m_queue.empty()) {
+    while (!m_face_queue.empty()) {
       // m_queue.print();
 
-      const Event event = m_queue.pop();
-      const FT current_time = event.time();
+      const FaceEvent event = m_face_queue.top();
+      m_face_queue.pop();
+      const FT current_time = event.time;
 
       // const std::size_t sp_debug_idx = 20;
-      if (m_parameters.export_all /* && event.pvertex().first == sp_debug_idx */) {
+      /*if (m_parameters.export_all / * && event.pvertex().first == sp_debug_idx * /) {
         if (iteration < 10) {
           dump(m_data, "iter-0" + std::to_string(iteration));
 
@@ -552,83 +531,85 @@ private:
             dump_event(m_data, event, "iter-" + std::to_string(iteration));
           // }
         }
-      }
+      }*/
 
-      const std::size_t export_mesh = 6;
+      //m_data.dump_loop(15);
 
-      //m_data.dump_loop(export_mesh);
+      //dump_2d_surface_mesh(m_data, 15, "iter-" + std::to_string(iteration) + "-surface-mesh-" + std::to_string(15));
 
-      //dump_2d_surface_mesh(m_data, export_mesh, "iter-" + std::to_string(iteration) + "-surface-mesh-" + std::to_string(export_mesh));
-
-      m_data.update_positions(current_time);
+      //m_data.update_positions(current_time);
+/*
       if (m_parameters.debug) {
         std::cout << std::endl << "* APPLYING " << iteration << ": " << event << std::endl;
-      }
+      }*/
       ++iteration;
 
-      // if (iteration == 1500) {algorithm
-      //   exit(EXIT_FAILURE);
-      // }
-
       apply(event);
+      //dump_2d_surface_mesh(m_data, event.support_plane, "iter-" + std::to_string(iteration) + "-surface-mesh-" + std::to_string(event.support_plane));
       CGAL_assertion(m_data.check_integrity());
     }
     return iteration;
   }
 
-  void apply(const Event& event) {
+  void apply(const FaceEvent& event) {
+    std::cout << "support plane: " << event.support_plane << " edge: " << event.crossed_edge << " t: " << event.time << std::endl;
+    if (m_data.igraph().face(event.face).part_of_partition) {
+      std::cout << " face already crossed, skipping event" << std::endl;
+      return;
+    }
+    // Check intersection against kinetic intervals from other support planes
+    std::size_t crossing = 0;
+    auto kis = m_data.igraph().kinetic_intervals(event.crossed_edge);
+    for (auto ki = kis.first; ki != kis.second; ki++) {
+      if (ki->first == event.support_plane)
+        continue;
 
-    const auto pvertex = event.pvertex();
-    if (event.is_pvertices_to_ivertex()) {
+      for (std::size_t i = 0; i < ki->second.size(); i++) {
+        // Exactly on one
+        if (ki->second[i].first == event.intersection_bary) {
+          if (ki->second[i].second < event.time)
+            crossing++;
 
-      const auto pother  = event.pother();
-      const auto ivertex = event.ivertex();
-      apply_event_pvertices_meet_ivertex(pvertex, pother, ivertex, event);
-
-    } else if (event.is_pvertex_to_pvertex()) {
-      const auto pother = event.pother();
-
-      remove_events(pvertex);
-      remove_events(pother);
-
-      if (m_data.has_iedge(pvertex)) {
-        CGAL_assertion(m_data.has_iedge(pvertex));
-        if (m_data.has_iedge(pother)) {
-          apply_event_two_constrained_pvertices_meet(pvertex, pother, event);
-        } else {
-          apply_event_constrained_pvertex_meets_free_pvertex(pvertex, pother, event);
+          break;
         }
-      } else {
-        CGAL_assertion(!m_data.has_iedge(pvertex));
-        if (!m_data.has_iedge(pother)) {
-          apply_event_two_unconstrained_pvertices_meet(pvertex, pother, event);
-        } else {
-          CGAL_assertion_msg(false, "ERROR: THIS EVENT SHOULD NOT EVER HAPPEN!");
-          apply_event_constrained_pvertex_meets_free_pvertex(pother, pvertex, event);
-        }
-      }
-    } else if (event.is_pvertex_to_iedge()) {
 
-      const auto iedge = event.iedge();
-      if (m_data.has_iedge(pvertex)) {
-        apply_event_constrained_pvertex_meets_iedge(pvertex, iedge, event);
-      } else {
-        const bool is_event_happend = apply_event_unconstrained_pedge_meets_iedge(
-          pvertex, iedge, event);
-        if (!is_event_happend) {
-          apply_event_unconstrained_pvertex_meets_iedge(pvertex, iedge, event);
+        // Within an interval
+        if (ki->second[i].first > event.intersection_bary && ki->second[i - 1].first < event.intersection_bary) {
+          FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
+          FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
+
+          if (event.time > interval_time)
+            crossing++;
+
+          break;
         }
       }
-    } else if (event.is_pvertex_to_ivertex()) {
+    }
 
-      const auto ivertex = event.ivertex();
-      if (m_data.has_iedge(pvertex)) {
-        apply_event_constrained_pvertex_meets_ivertex(pvertex, ivertex, event);
-      } else {
-        apply_event_unconstrained_pvertex_meets_ivertex(pvertex, ivertex, event);
-      }
-    } else {
-      CGAL_assertion_msg(false, "ERROR: INVALID EVENT FOUND!");
+    // Check if the k value is sufficient for crossing the edge.
+    unsigned int& k = m_data.support_plane(event.support_plane).k();
+    if (k < crossing)
+      return;
+
+    // The edge can be crossed.
+    // Adjust k value
+    k -= crossing;
+
+
+
+    // Associate IFace to mesh.
+    PFace f = m_data.add_iface_to_mesh(event.support_plane, event.face);
+
+    // Calculate events for new border edges.
+    // Iterate inside of this face, check if each opposite edge is border and on bbox and then calculate intersection times.
+    std::vector<IEdge> border;
+    m_data.support_plane(event.support_plane).get_border(m_data.igraph(), f.second, border);
+
+    for (IEdge edge : border) {
+      FaceEvent fe;
+      FT t = m_data.calculate_edge_intersection_time(event.support_plane, edge, fe);
+      if (t > 0)
+        m_face_queue.push(fe);
     }
   }
 

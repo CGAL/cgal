@@ -30,17 +30,21 @@ class Support_plane {
 
 public:
   using Kernel = GeomTraits;
+  using IK = Exact_predicates_inexact_constructions_kernel;
+  using EK = Exact_predicates_exact_constructions_kernel;
+  using IK_to_EK = CGAL::Cartesian_converter<IK, EK>;
 
-  using FT        = typename Kernel::FT;
-  using Point_2   = typename Kernel::Point_2;
-  using Point_3   = typename Kernel::Point_3;
-  using Vector_2  = typename Kernel::Vector_2;
-  using Vector_3  = typename Kernel::Vector_3;
-  using Segment_2 = typename Kernel::Segment_2;
-  using Segment_3 = typename Kernel::Segment_3;
-  using Line_2    = typename Kernel::Line_2;
-  using Line_3    = typename Kernel::Line_3;
-  using Plane_3   = typename Kernel::Plane_3;
+  using FT          = typename Kernel::FT;
+  using Point_2     = typename Kernel::Point_2;
+  using Point_3     = typename Kernel::Point_3;
+  using Vector_2    = typename Kernel::Vector_2;
+  using Vector_3    = typename Kernel::Vector_3;
+  using Direction_2 = typename Kernel::Direction_2;
+  using Segment_2   = typename Kernel::Segment_2;
+  using Segment_3   = typename Kernel::Segment_3;
+  using Line_2      = typename Kernel::Line_2;
+  using Line_3      = typename Kernel::Line_3;
+  using Plane_3     = typename Kernel::Plane_3;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
   using Intersection_graph = KSR_3::Intersection_graph<Kernel>;
@@ -48,6 +52,7 @@ public:
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
   using IEdge   = typename Intersection_graph::Edge_descriptor;
+  using IFace   = typename Intersection_graph::Face_descriptor;
 
   using Vertex_index   = typename Mesh::Vertex_index;
   using Face_index     = typename Mesh::Face_index;
@@ -64,6 +69,16 @@ public:
   using V_original_map = typename Mesh::template Property_map<Vertex_index, bool>;
   using V_time_map     = typename Mesh::template Property_map<Vertex_index, std::vector<FT> >;
 
+  struct FaceEvent {
+    FaceEvent() {}
+    FaceEvent(std::size_t sp_idx, FT time, IEdge edge, IFace face) : support_plane(sp_idx), time(time), crossed_edge(edge), face(face) {}
+    std::size_t support_plane;
+    FT time;
+    FT intersection_bary;
+    IEdge crossed_edge;
+    IFace face;
+  };
+
 private:
   struct Data {
     bool is_bbox;
@@ -79,10 +94,17 @@ private:
     F_uint_map k_map;
     V_original_map v_original_map;
     V_time_map v_time_map;
+    std::map<IEdge, std::pair<IFace, IFace> > iedge2ifaces;
+    std::set<IFace> ifaces;
+    std::map<IVertex, Vertex_index> ivertex2pvertex;
     std::set<IEdge> unique_iedges;
     std::vector<IEdge> iedges;
     std::vector<Segment_2> isegments;
     std::vector<Bbox_2> ibboxes;
+    std::vector<Point_2> original_vertices;
+    std::vector<Vector_2> original_vectors;
+    std::vector<Direction_2> original_directions;
+    std::vector<EK::Ray_2> original_rays;
     unsigned int k;
     FT distance_tolerance;
   };
@@ -328,6 +350,64 @@ public:
     }
   }
 
+  void get_border(Intersection_graph& igraph, std::vector<IEdge>& border) {
+    border.clear();
+    auto m = mesh();
+
+    Vertex_index s = Mesh::null_vertex();
+
+    for (auto v : m_data->mesh.vertices()) {
+      if (m_data->mesh.is_border(v)) {
+        s = v;
+        break;
+      }
+    }
+
+    if (s == Mesh::null_vertex()) {
+      std::cout << "Support plane does not have border vertices" << std::endl;
+      return;
+    }
+
+    auto h = m.halfedge(s);
+    if (!m.is_border(h))
+      h = m.opposite(h);
+
+    auto n = h;
+    IVertex last = ivertex(s);
+    do {
+      n = m.next(n);
+      IVertex current = ivertex(m.target(n));
+      border.push_back(igraph.edge(last, current));
+      last = current;
+    } while (n != h && n != Mesh::null_halfedge());
+
+    if (n == Mesh::null_halfedge()) {
+      std::cout << " NULL_HALFEDGE!";
+    }
+    std::cout << "edges: " << border.size() << std::endl;
+  }
+
+  void get_border(Intersection_graph& igraph, const Face_index &fi, std::vector<IEdge>& border) {
+    border.clear();
+    auto m = mesh();
+
+    auto first = m.halfedge(fi);
+    auto h = first;
+    do {
+      auto o = m.opposite(h);
+
+      if (m.is_border(o))
+        border.push_back(igraph.edge(ivertex(m.target(h)), ivertex(m.target(o))));
+
+      h = m.next(h);
+    } while (h != first && h != Mesh::null_halfedge());
+
+    if (h == Mesh::null_halfedge()) {
+      std::cout << " NULL_HALFEDGE!";
+    }
+    std::cout << "edges: " << border.size() << std::endl;
+  }
+
   Data& data() { return *m_data; }
 
   FT distance_tolerance() const {
@@ -376,10 +456,18 @@ public:
     const std::size_t n = points.size();
     CGAL_assertion(n >= 3);
     vertices.reserve(n);
+    m_data->original_vertices.resize(n);
+    m_data->original_vectors.resize(n);
+    m_data->original_directions.resize(n);
+    m_data->original_rays.resize(n);
+
+    m_data->centroid = to_3d(centroid);
 
     FT sum_length = FT(0);
     std::vector<Vector_2> directions;
     directions.reserve(n);
+
+    std::vector<std::pair<std::size_t, Direction_2> > dir_vec;
 
     for (const auto& pair : points) {
       const auto& point = pair.first;
@@ -391,10 +479,26 @@ public:
     CGAL_assertion(directions.size() == n);
     sum_length /= static_cast<FT>(n);
 
+    dir_vec.reserve(n);
+    for (std::size_t i = 0; i < n; i++)
+      dir_vec.push_back(std::pair<std::size_t, Direction_2>(i, directions[i]));
+
+    std::sort(dir_vec.begin(), dir_vec.end(),
+      [&](const std::pair<std::size_t, Direction_2>& a,
+        const std::pair<std::size_t, Direction_2>& b) -> bool {
+        return a.second < b.second;
+      });
+
+    IK_to_EK to_exact;
+
     for (std::size_t i = 0; i < n; ++i) {
-      const auto& point = points[i].first;
+      const auto& point = points[dir_vec[i].first].first;
       const auto vi = m_data->mesh.add_vertex(point);
-      m_data->direction[vi] = directions[i] / sum_length;
+      m_data->direction[vi] = directions[dir_vec[i].first] / sum_length;
+      m_data->original_vertices[dir_vec[i].first] = point;
+      m_data->original_vectors[dir_vec[i].first] = directions[dir_vec[i].first] / sum_length;
+      m_data->original_directions[dir_vec[i].first] = Direction_2(directions[dir_vec[i].first]);
+      m_data->original_rays[dir_vec[i].first] = EK::Ray_2(to_exact(point), to_exact(m_data->original_directions[dir_vec[i].first]));
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
     }
@@ -449,6 +553,7 @@ public:
   const Plane_3& plane() const { return m_data->plane; }
   const Point_3& centroid() const { return m_data->centroid; }
   bool is_bbox() const { return m_data->is_bbox; }
+  std::map<IVertex, Vertex_index> &ivertex2pvertex() { return m_data->ivertex2pvertex; }
 
   const Mesh& mesh() const { return m_data->mesh; }
   Mesh& mesh() { return m_data->mesh; }
@@ -483,6 +588,44 @@ public:
     // return last_time;
 
     return m_data->v_time_map[vi].back();
+  }
+
+  void add_neighbor(IEdge edge, IFace face) {
+    std::pair<IEdge, std::pair<IFace, IFace>> neighbor(edge, std::pair<IFace, IFace>(face, Intersection_graph::null_iface()));
+    auto& pair = m_data->iedge2ifaces.insert(neighbor);
+    m_data->ifaces.insert(face);
+    if (!pair.second) {
+      CGAL_assertion(pair.first->second.first != Intersection_graph::null_iface());
+      CGAL_assertion(pair.first->second.second = Intersection_graph::null_iface());
+      pair.first->second.second = face;
+    }
+  }
+
+  IFace iface(IEdge edge) {
+    auto& it = m_data->iedge2ifaces.find(edge);
+    if (it == m_data->iedge2ifaces.end())
+      return Intersection_graph::null_iface();
+    else return it->second.first;
+  }
+
+  IFace other(IEdge edge, IFace face) {
+    auto& it = m_data->iedge2ifaces.find(edge);
+    if (it == m_data->iedge2ifaces.end())
+      return Intersection_graph::null_iface();
+    if (it->second.first == face)
+      return it->second.second;
+    else
+      return it->second.first;
+  }
+
+  std::size_t has_ifaces(IEdge edge) const {
+    auto& it = m_data->iedge2ifaces.find(edge);
+    if (it == m_data->iedge2ifaces.end())
+      return 0;
+    if (it->second.second != Intersection_graph::null_iface())
+      return 2;
+    else
+      return 1;
   }
 
   const Vertex_index prev(const Vertex_index& vi) const {
@@ -592,6 +735,19 @@ public:
   const Vector_2& direction(const Vertex_index& vi) const { return m_data->direction[vi]; }
   Vector_2& direction(const Vertex_index& vi) { return m_data->direction[vi]; }
 
+  const Vector_2 original_edge_direction(std::size_t v1, std::size_t v2) const {
+    const Vector_2 edge = m_data->original_vertices[v1] - m_data->original_vertices[v2];
+    Vector_2 orth = Vector_2(-edge.y(), edge.x());
+    orth = (1.0 / (CGAL::sqrt(orth * orth))) * orth;
+    FT s1 = orth * m_data->original_vectors[v1];
+    FT s2 = orth * m_data->original_vectors[v2];
+
+    if (abs(s1 - s2) > 0.0001)
+      std::cout << "edge speed seems inconsistent" << std::endl;
+
+    return s1 * orth;
+  }
+
   const FT speed(const Vertex_index& vi) const {
     return static_cast<FT>(CGAL::sqrt(
       CGAL::to_double(CGAL::abs(m_data->direction[vi].squared_length()))));
@@ -620,6 +776,8 @@ public:
   bool is_frozen(const Vertex_index& vi) const {
     return (m_data->direction[vi] == CGAL::NULL_VECTOR);
   }
+
+  const std::set<IFace>& ifaces() const { return m_data->ifaces; }
 
   const std::set<IEdge>& unique_iedges() const { return m_data->unique_iedges; }
   std::set<IEdge>& unique_iedges() { return m_data->unique_iedges; }

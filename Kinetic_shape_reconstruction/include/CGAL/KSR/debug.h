@@ -687,6 +687,27 @@ void dump_polygon(
   saver.export_polygon_soup_3(polygons, "volumes/" + name);
 }
 
+template<typename DS>
+void dump_ifaces(const DS& data, const std::string tag = std::string()) {
+  // write all polygons into a separate ply with support plane index and iface index
+  for (std::size_t sp_idx = data.number_of_support_planes(); sp_idx++;) {
+    for (typename DS::IFace f : data.support_plane(sp_idx).ifaces()) {
+      Saver<typename DS::Kernel> saver;
+      std::vector<std::vector<typename DS::Kernel::Point_3> > pts(1);
+      for (auto v : data.igraph().face(f).vertices)
+        pts.back().push_back(data.igraph().point_3(v));
+      saver.export_polygon_soup_3(pts, tag + "-" + std::to_string(sp_idx) + "-" + std::to_string(f));
+    }
+  }
+}
+
+template<typename DS, typename PTS>
+void dump_polygon(const DS& data, PTS pts, std::string tag = std::string()) {
+  // write all polygons into a separate ply with support plane index and iface index
+  Saver<typename DS::Kernel> saver;
+  saver.export_polygon_soup_3(pts, tag);
+}
+
 template<typename DS, typename PFace>
 void dump_pface(
   const DS& data,
