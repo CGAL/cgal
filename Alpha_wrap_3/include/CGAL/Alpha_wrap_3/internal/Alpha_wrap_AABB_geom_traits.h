@@ -13,8 +13,8 @@
 //                 Andreas Fabri
 //                 Michael Hemmer
 //
-#ifndef CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_TRAITS_H
-#define CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_TRAITS_H
+#ifndef CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_GEOM_TRAITS_H
+#define CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_GEOM_TRAITS_H
 
 #include <CGAL/license/Alpha_wrap_3.h>
 
@@ -295,4 +295,4 @@ public:
 } // namespace Alpha_wraps_3
 } // namespace CGAL
 
-#endif // CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_TRAITS_H
+#endif // CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_GEOM_TRAITS_H
