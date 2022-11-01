@@ -89,14 +89,14 @@ public:
 };
 
 template <typename GT>
-class Alpha_wrap_AABB_traits
+class Alpha_wrap_AABB_geom_traits
   : public GT
 {
 public:
   using Ball_3 = internal::Ball_3<GT>;
 
 public:
-  Alpha_wrap_AABB_traits(const GT& gt = GT()) : GT(gt) { }
+  Alpha_wrap_AABB_geom_traits(const GT& gt = GT()) : GT(gt) { }
 
 public:
   class Construct_ball_3

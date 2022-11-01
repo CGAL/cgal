@@ -29,7 +29,7 @@
 
 #include <CGAL/license/Alpha_wrap_3.h>
 
-#include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_AABB_traits.h>
+#include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_AABB_geom_traits.h>
 #include <CGAL/Alpha_wrap_3/internal/gate_priority_queue.h>
 #include <CGAL/Alpha_wrap_3/internal/geometry_utils.h>
 #include <CGAL/Alpha_wrap_3/internal/oracles.h>
