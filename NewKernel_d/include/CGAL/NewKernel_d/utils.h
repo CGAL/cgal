@@ -138,7 +138,7 @@ struct Has_type_different_from <T, No, true>
 }
 
 // TODO: make a Cartesian-only variant
-// WARNING: do not use the Req* parameters too much, they can cause circular instanciations and are only useful for dispatching.
+// WARNING: do not use the Req* parameters too much, they can cause circular instantiations and are only useful for dispatching.
 #define CGAL_STRIP_PAREN_(...) __VA_ARGS__
 #define CGAL_STRIP_PAREN(...) CGAL_STRIP_PAREN_ __VA_ARGS__
 // What to do with O? pass it down to other functors or drop it?

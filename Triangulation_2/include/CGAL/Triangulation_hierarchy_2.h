@@ -267,7 +267,7 @@ private:
 
   // helping function to copy_triangulation
   // the version to be used with Tag_true is templated to avoid
-  // systematique instanciation
+  // systematic instantiation
   template <class Tag>
   void add_hidden_vertices_into_map(Tag,
                                     std::map<Vertex_handle,Vertex_handle >& V)

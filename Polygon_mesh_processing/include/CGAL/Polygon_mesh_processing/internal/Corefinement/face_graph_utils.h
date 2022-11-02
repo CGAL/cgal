@@ -781,6 +781,7 @@ struct Patch_container{
     Patch_description<PolygonMesh>& patch=this->operator[](i);
 
     std::stringstream ss;
+    ss.precision(17);
     std::map<vertex_descriptor, int> vertexid;
     int id=0;
     for(vertex_descriptor vh : patch.interior_vertices)

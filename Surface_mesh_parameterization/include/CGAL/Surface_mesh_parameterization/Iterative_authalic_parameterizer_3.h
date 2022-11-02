@@ -69,7 +69,7 @@ namespace Surface_mesh_parameterization {
 /// the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -806,8 +806,8 @@ public:
   /// \param Bv the right hand side vector in the linear system of y coordinates
   /// \param tmesh a triangulated surface
   /// \param bhd a halfedge descriptor on the boundary of `mesh`
-  /// \param uvmap an instanciation of the class `VertexUVmap`
-  /// \param vimap an instanciation of the class `VertexIndexMap`
+  /// \param uvmap an instantiation of the class `VertexUVmap`
+  /// \param vimap an instantiation of the class `VertexIndexMap`
   ///
   /// \pre Vertices must be indexed (`vimap` must be initialized).
   /// \pre `A`, `Bu`, and `Bv` must be allocated.
@@ -1082,9 +1082,9 @@ public:
   ///
   /// \param tmesh a triangulated surface
   /// \param bhd a halfedge descriptor on the boundary of `mesh`
-  /// \param uvmap an instanciation of the class `VertexUVmap`
-  /// \param vimap an instanciation of the class `VertexIndexMap`
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`
+  /// \param uvmap an instantiation of the class `VertexUVmap`
+  /// \param vimap an instantiation of the class `VertexIndexMap`
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`
   /// \param iterations an integer number of iterations to run the parameterization
   ///
   /// \pre `tmesh` must be a triangular mesh.

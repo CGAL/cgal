@@ -43,6 +43,7 @@ int main(int argc, char** argv)
             ,stop
              ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,surface))
                                .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface))
+                               .use_relaxed_order(CGAL::Tag_true())
            );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
