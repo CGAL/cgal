@@ -19,15 +19,7 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-//*******************************************************************************************************************
-//                                -= stopping condition predicate =-
-//
-// Determines whether the simplification has finished.
-// The arguments are (current_cost,vertex,vertex,is_edge,initial_pair_count,current_pair_count,surface) and the result is bool
-//
-//*******************************************************************************************************************
-
-// Stops when the number of edges left falls below a given number.
+// Stops when the number of edges falls below a given number.
 template<class TM_>
 class Count_stop_predicate
 {

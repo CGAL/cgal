@@ -19,15 +19,7 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-//*******************************************************************************************************************
-//                                -= stopping condition predicate =-
-//
-// Determines whether the simplification has finished.
-// The arguments are (current_cost,vertex,vertex,is_edge,initial_pair_count,current_pair_count,surface) and the result is bool
-//
-//*******************************************************************************************************************
-
-// Stops when the ratio of initial to current vertex pairs is below some value.
+// Stops when the ratio of initial to current number of edges is below some value.
 template<class TM_>
 class Count_ratio_stop_predicate
 {
