@@ -53,6 +53,8 @@ if(TARGET CGAL::Eigen3_support)
   #   End of SuiteSparse detection
   # ------------------------------------------------------------------
 
+  create_single_source_cgal_program("ARAP_parameterization.cpp")
+  target_link_libraries(ARAP_parameterization PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("discrete_authalic.cpp")
   target_link_libraries(discrete_authalic PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("lscm.cpp")
@@ -68,6 +70,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "iterative_authalic_parameterizer.cpp" )
   target_link_libraries(iterative_authalic_parameterizer PUBLIC CGAL::Eigen3_support)
   if(SuiteSparse_FOUND)
+    target_link_libraries(ARAP_parameterization PRIVATE ${SuiteSparse_LIBRARIES})
     target_link_libraries(orbifold PRIVATE ${SuiteSparse_LIBRARIES})
   endif()
 
