@@ -137,7 +137,7 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
             {
               visited[offset] = true;
               second_pass[offset] = false;
-#if CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE > 1
+#ifdef CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE
               ++nb_voxels;
 #endif
               boost::get<0>(bbox_min) = (std::min)(i, boost::get<0>(bbox_min));
