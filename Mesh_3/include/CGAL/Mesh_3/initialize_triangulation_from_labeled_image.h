@@ -132,7 +132,6 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
     std::size_t radius;
   };
   using Seeds = std::vector<Seed>;
-  using Subdomain_index = typename Mesh_domain::Subdomain_index;
   using Subdomain = typename Mesh_domain::Subdomain;
 
   Seeds seeds;
