@@ -929,7 +929,6 @@ void initial_polygon_iedge_intersections() {
         auto& other_indices = pair.second;
         other_indices.push_back(input_index);
         merge_polygons(support_plane_idx, polygon_2, other_polygon);
-        // CGAL_assertion_msg(false, "TODO: FINISH POLYGONS PREPROCESSING!");
       }
       ++input_index;
     }
@@ -955,6 +954,7 @@ void initial_polygon_iedge_intersections() {
     // Create the merged polygon.
     std::vector<Point_2> merged;
     create_merged_polygon(support_plane_idx, points, merged);
+    m_data.support_plane(support_plane_idx).update_polygon(merged);
 
     if (is_debug) {
       std::cout << "merged polygon: " << std::endl;

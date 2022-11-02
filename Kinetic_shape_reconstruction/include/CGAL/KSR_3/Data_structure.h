@@ -888,6 +888,7 @@ public:
     // std::cout << "num intersections: " << polygon.size() << std::endl;
 
     // Sort the points to get an oriented polygon.
+    // These are only the intersections between the bbox and the support plane.
     FT x = FT(0), y = FT(0), z = FT(0);
     for (const auto& pair : polygon) {
       const auto& point = pair.first;
@@ -899,7 +900,6 @@ public:
     y /= static_cast<FT>(polygon.size());
     z /= static_cast<FT>(polygon.size());
     const Point_3 centroid_3(x, y, z);
-    // std::cout << "centroid: " << centroid_3 << std::endl;
 
     Point_2 centroid_2 = sp.to_2d(centroid_3);
     std::sort(polygon.begin(), polygon.end(),

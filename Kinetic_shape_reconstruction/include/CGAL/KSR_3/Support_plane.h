@@ -17,6 +17,7 @@
 
 // CGAL includes.
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/centroid.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -45,6 +46,7 @@ public:
   using Line_2      = typename Kernel::Line_2;
   using Line_3      = typename Kernel::Line_3;
   using Plane_3     = typename Kernel::Plane_3;
+  using Triangle_3  = typename Kernel::Triangle_3;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
   using Intersection_graph = KSR_3::Intersection_graph<Kernel>;
@@ -133,9 +135,9 @@ public:
     const std::size_t n = points.size();
     CGAL_assertion(n == polygon.size());
 
-    // Newell's method.
     FT cx = FT(0), cy = FT(0), cz = FT(0);
     Vector_3 normal = CGAL::NULL_VECTOR;
+    std::vector<Triangle_3> tris(n - 2);
     for (std::size_t i = 0; i < n; ++i) {
       const std::size_t ip = (i + 1) % n;
       const auto& pa = points[i];
@@ -144,22 +146,32 @@ public:
       const FT y = normal.y() + (pa.z() - pb.z()) * (pa.x() + pb.x());
       const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
       normal = Vector_3(x, y, z);
-      cx += pa.x();
-      cy += pa.y();
-      cz += pa.z();
+
+      if (i >= 2)
+        tris[i - 2] = Triangle_3(points[0], points[1], points[i]);
     }
     CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: BBOX IS FLAT!");
     CGAL_assertion(n != 0);
-    cx /= static_cast<FT>(n);
-    cy /= static_cast<FT>(n);
-    cz /= static_cast<FT>(n);
 
     m_data->k = 0;
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
-    m_data->centroid = Point_3(cx, cy, cz);
+    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = distance_tolerance;
+
     add_property_maps();
+  }
+
+  void update_polygon(const std::vector<Point_2>& pts) {
+    CGAL_assertion(pts.size() < 3);
+    std::vector<Triangle_3> tris(pts.size() - 2);
+    Point_3 first = to_3d(pts[0]);
+    Point_3 second = to_3d(pts[1]);
+    for (std::size_t i = 2; i < pts.size(); i++) {
+      tris[i - 2] = Triangle_3(first, second, to_3d(pts[i]));
+    }
+
+    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
   }
 
   void add_property_maps() {
