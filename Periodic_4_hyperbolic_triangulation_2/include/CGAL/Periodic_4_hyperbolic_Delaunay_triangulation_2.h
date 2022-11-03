@@ -165,15 +165,11 @@ public:
     spatial_sort(points.begin(), points.end(), geom_traits());
 
     Face_handle f;
-    int cnt = 0;
-    int cnt_good = 0;
     for(typename std::vector<Point>::const_iterator p=points.begin(), end = points.end(); p != end; ++p)
     {
-      ++cnt;
       Vertex_handle v = insert(*p, f);
       if(v != Vertex_handle())
       {
-        ++cnt_good;
         f = v->face();
       }
     }
@@ -596,8 +592,6 @@ remove(Vertex_handle v)
 
     Nbr_history failsafe;
 
-    int internb = 0;
-    int bdrynb = 0;
     for(std::size_t i=0; i<new_f.size(); ++i)
     {
       for(int k=0; k< 3; k++)
@@ -623,7 +617,6 @@ remove(Vertex_handle v)
             failsafe.push_back(hist);
 
             tds().set_adjacency(nbf, nbidx, new_f[i], k);
-            bdrynb++;
             break;
           }
         }
@@ -641,7 +634,6 @@ remove(Vertex_handle v)
                  new_f[i]->vertex(cw(k))  == new_f[l]->vertex(ccw(j)))
               {
                 tds().set_adjacency(new_f[i], k, new_f[l], j);
-                internb++;
                 break;
               }
             }

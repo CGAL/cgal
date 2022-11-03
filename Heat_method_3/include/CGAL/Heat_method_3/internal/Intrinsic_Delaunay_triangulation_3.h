@@ -340,7 +340,6 @@ private:
   void
   loop_over_edges(edge_stack stack, std::vector<int>& marked_edges)
   {
-    int a = 0;
     while(!stack.empty()) {
       edge_descriptor ed = stack.top();
       stack.pop();
@@ -351,7 +350,6 @@ private:
       //if the edge itself is not locally delaunay, go back
       if(!(is_edge_locally_delaunay(ed))) {
         if(!(is_border(ed,m_intrinsic_tm))) {
-          a++;
           change_edge_length(edge_i,ed);
           halfedge_descriptor hd = (halfedge(ed, m_intrinsic_tm));
           CGAL::Euler::flip_edge(hd, m_intrinsic_tm);

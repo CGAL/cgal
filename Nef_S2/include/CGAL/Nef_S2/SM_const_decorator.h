@@ -358,6 +358,8 @@ check_integrity_and_topological_planarity(bool faces) const
                       iso_vert_num
                       + number_of_sloops());
   CGAL_assertion_code(std::size_t f_num = number_of_sface_cycles() - c_num + 1);
+  CGAL_USE(fc_num);
+  CGAL_USE(iv_num);
   CGAL_assertion_code(CGAL_NEF_TRACEV(fc_num));
   CGAL_assertion_code(CGAL_NEF_TRACEV(iv_num));
   CGAL_assertion_code(CGAL_NEF_TRACEV(iso_vert_num));

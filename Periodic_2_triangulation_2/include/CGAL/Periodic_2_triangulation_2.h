@@ -2180,12 +2180,10 @@ Gt, Tds >::insert_first(const Point& p)
   CGAL_triangulation_assertion(_too_long_edge_counter == 0);
 
   // Insert all vertices as the first vertex in the _too_long_edges list
-  int k = 0;
   std::list<Vertex_handle> empty_list;
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
     {
       _too_long_edges[vit] = empty_list;
-      k++;
     }
 
   // Insert all edges as all edges are too long
@@ -3466,11 +3464,9 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
   _cover = make_array(3, 3);
 
   // Set up too long edges data structure
-  int i = 0;
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
     {
       _too_long_edges[vit] = std::list<Vertex_handle>();
-      ++i;
     }
   _too_long_edge_counter = find_too_long_edges(_too_long_edges);
 
@@ -4434,12 +4430,10 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   for (std::size_t j = 0 ; j < m; j++)
     is >> *(F[j]);
 
-  int i = 0;
   for (Vertex_iterator vi = vertices_begin();
        vi != vertices_end(); ++vi)
     {
       _too_long_edges[vi] = std::list<Vertex_handle>();
-      ++i;
     }
 
   _edge_length_threshold = FT(0.166) * (_domain.xmax() - _domain.xmin())

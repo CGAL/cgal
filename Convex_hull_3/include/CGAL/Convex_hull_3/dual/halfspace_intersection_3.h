@@ -73,7 +73,6 @@ namespace CGAL
 
 
               std::unordered_map <Facet_const_handle, vertex_descriptor> primal_vertices;
-              size_t n = 0;
 
               // First, computing the primal vertices
               for(Facet_const_handle fd : faces(_dual)){
@@ -111,7 +110,6 @@ namespace CGAL
                 vertex_descriptor vd = add_vertex(primal);
                 primal_vertices[fd] = vd;
                 put(vpm, vd, ppp);
-                ++n;
               }
 
               // Then, add facets to the primal polyhedron
@@ -283,4 +281,3 @@ namespace CGAL
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_HALFSPACE_INTERSECTION_3_H
-
