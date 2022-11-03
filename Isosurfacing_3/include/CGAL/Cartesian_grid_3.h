@@ -30,7 +30,7 @@ public:
     typedef typename Geom_traits::Vector_3 Vector;
 
 public:
-    Cartesian_grid_3(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim, const Bbox_3 &bbox)
+    Cartesian_grid_3(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim, const Bbox_3& bbox)
         : sizes{xdim, ydim, zdim}, bbox(bbox) {
 
         values.resize(xdim * ydim * zdim);
@@ -42,11 +42,11 @@ public:
         spacing = Vector(d_x, d_y, d_z);
     }
 
-    Cartesian_grid_3(const Image_3 &image) {
+    Cartesian_grid_3(const Image_3& image) {
         from_image(image);
     }
 
-    FT operator()(const std::array<std::size_t, 3> &idx) const {
+    FT operator()(const std::array<std::size_t, 3>& idx) const {
         return values[linear_index(idx[0], idx[1], idx[2])];
     }
 
@@ -54,7 +54,7 @@ public:
         return values[linear_index(x, y, z)];
     }
 
-    FT &value(const std::size_t x, const std::size_t y, const std::size_t z) {
+    FT& value(const std::size_t x, const std::size_t y, const std::size_t z) {
         return values[linear_index(x, y, z)];
     }
 
@@ -62,7 +62,7 @@ public:
         return gradients[linear_index(x, y, z)];
     }
 
-    Vector &gradient(const std::size_t x, const std::size_t y, const std::size_t z) {
+    Vector& gradient(const std::size_t x, const std::size_t y, const std::size_t z) {
         return gradients[linear_index(x, y, z)];
     }
 
@@ -76,11 +76,11 @@ public:
         return sizes[2];
     }
 
-    const Bbox_3 &get_bbox() const {
+    const Bbox_3& get_bbox() const {
         return bbox;
     }
 
-    const Vector &get_spacing() const {
+    const Vector& get_spacing() const {
         return spacing;
     }
 
@@ -89,7 +89,7 @@ private:
         return (z * ydim() + y) * xdim() + x;
     }
 
-    void from_image(const Image_3 &image);
+    void from_image(const Image_3& image);
     Image_3 to_image() const;
 
 private:
@@ -103,7 +103,7 @@ private:
 };
 
 template <typename GeomTraits>
-void Cartesian_grid_3<GeomTraits>::from_image(const Image_3 &image) {
+void Cartesian_grid_3<GeomTraits>::from_image(const Image_3& image) {
     const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();
     const FT max_y = image.ty() + (image.ydim() - 1) * image.vy();
     const FT max_z = image.tz() + (image.zdim() - 1) * image.vz();
@@ -147,7 +147,7 @@ Image_3 Cartesian_grid_3<GeomTraits>::to_image() const {
     const double vy = bbox.y_span() / (ydim() - 1);
     const double vz = bbox.z_span() / (zdim() - 1);
 
-    _image *im = _createImage(xdim(), ydim(), zdim(),
+    _image* im = _createImage(xdim(), ydim(), zdim(),
                               1,           // vectorial dimension
                               vx, vy, vz,  // voxel size
                               sizeof(FT),  // image word size in bytes
@@ -162,7 +162,7 @@ Image_3 Cartesian_grid_3<GeomTraits>::to_image() const {
     im->ty = bbox.ymin();
     im->tz = bbox.zmin();
 
-    FT *data = (FT *)im->data;
+    FT* data = (FT*)im->data;
     for (std::size_t x = 0; x < xdim(); x++) {
         for (std::size_t y = 0; y < ydim(); y++) {
             for (std::size_t z = 0; z < zdim(); z++) {

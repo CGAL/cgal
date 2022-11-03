@@ -2,7 +2,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Isosurfacing_domains.h>
+#include <CGAL/Explicit_cartesian_grid_domain.h>
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Simple_cartesian.h>
