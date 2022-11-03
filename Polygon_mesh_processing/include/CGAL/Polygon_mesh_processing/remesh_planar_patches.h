@@ -17,6 +17,7 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -994,6 +995,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   std::vector<Vertex_corner_id_map> vertex_corner_id_maps;
   std::vector<Face_cc_map> face_cc_ids_maps;
   const std::size_t nb_meshes = meshes.size();
+  std::vector<bool> mesh_has_non_manifold_vertices(nb_meshes, false);
   vertex_corner_id_maps.reserve(nb_meshes);
   vertex_shared_maps.reserve(nb_meshes);
   edge_is_constrained_maps.reserve(nb_meshes);
@@ -1004,11 +1006,18 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   for(Mesh_descriptor& md : meshes)
     mesh_ptrs.push_back( &(mesh_map[md]) );
 
+  auto has_non_manifold_vertices = [](const Triangle_mesh& tm)
+  {
+    std::vector<halfedge_descriptor> nmvs;
+    non_manifold_vertices(tm, std::back_inserter(nmvs));
+    return !nmvs.empty();
+  };
 
+  std::size_t mesh_id=0;
   for(Triangle_mesh* tm_ptr : mesh_ptrs)
   {
     Triangle_mesh& tm = *tm_ptr;
-
+    mesh_has_non_manifold_vertices[mesh_id] = has_non_manifold_vertices(tm);
     vertex_shared_maps.push_back( get(CGAL::dynamic_vertex_property_t<bool>(), tm) );
     for(vertex_descriptor v : vertices(tm))
       put(vertex_shared_maps.back(), v, false);
@@ -1024,12 +1033,13 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     face_cc_ids_maps.push_back( get(CGAL::dynamic_face_property_t<std::size_t>(), tm) );
     for(face_descriptor f : faces(tm))
       put(face_cc_ids_maps.back(), f, -1);
+    ++mesh_id;
   }
 
   std::map<Point_3, std::multimap<std::size_t, vertex_descriptor> > point_to_vertex_maps;
 
   //start by detecting and marking all shared vertices
-  std::size_t mesh_id = 0;
+  mesh_id = 0;
   for(Triangle_mesh* tm_ptr : mesh_ptrs)
   {
     Triangle_mesh& tm = *tm_ptr;
@@ -1091,13 +1101,26 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     for(face_descriptor f : faces(tm))
       put(face_cc_ids_maps[mesh_id], f, -1);
 
-    nb_corners_and_nb_cc_all[mesh_id] =
-      tag_corners_and_constrained_edges(tm,
-                                        coplanar_cos_threshold,
-                                        vertex_corner_id_maps[mesh_id],
-                                        edge_is_constrained_maps[mesh_id],
-                                        face_cc_ids_maps[mesh_id],
-                                        vpms[mesh_id]);
+    if (!mesh_has_non_manifold_vertices[mesh_id])
+      nb_corners_and_nb_cc_all[mesh_id] =
+        tag_corners_and_constrained_edges(tm,
+                                          coplanar_cos_threshold,
+                                          vertex_corner_id_maps[mesh_id],
+                                          edge_is_constrained_maps[mesh_id],
+                                          face_cc_ids_maps[mesh_id],
+                                          vpms[mesh_id]);
+    else
+    {
+      nb_corners_and_nb_cc_all[mesh_id]={0,1};
+      for (vertex_descriptor vd : vertices(tm))
+      {
+        if (get(vertex_shared_maps[mesh_id], vd))
+        {
+          put(vertex_corner_id_maps[mesh_id], vd, true);
+          ++nb_corners_and_nb_cc_all[mesh_id].first;
+        }
+      }
+    }
     ++mesh_id;
   }
 #ifndef CGAL_DO_NOT_USE_PCA
@@ -1108,12 +1131,13 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     {
       Triangle_mesh& tm = *tm_ptr;
 
-      nb_corners_and_nb_cc_all[mesh_id].first = mark_extra_corners_with_pca(tm,
-                                                  max_frechet_distance,
-                                                  nb_corners_and_nb_cc_all[mesh_id].first,
-                                                  edge_is_constrained_maps[mesh_id],
-                                                  vertex_corner_id_maps[mesh_id],
-                                                  vpms[mesh_id]);
+      if (!mesh_has_non_manifold_vertices[mesh_id])
+        nb_corners_and_nb_cc_all[mesh_id].first = mark_extra_corners_with_pca(tm,
+                                                    max_frechet_distance,
+                                                    nb_corners_and_nb_cc_all[mesh_id].first,
+                                                    edge_is_constrained_maps[mesh_id],
+                                                    vertex_corner_id_maps[mesh_id],
+                                                    vpms[mesh_id]);
       ++mesh_id;
     }
   }
@@ -1139,7 +1163,14 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
       if (!to_be_processed[mesh_id]) continue;
 #ifdef CGAL_DEBUG_DECIMATION
       std::cout << "Handling mesh #" << mesh_id << "\n";
+      if (mesh_has_non_manifold_vertices[mesh_id])
+        std::cout << "  mesh has non-manifold vertices, mesh is kept as is.\n";
 #endif
+      if (mesh_has_non_manifold_vertices[mesh_id])
+      {
+        to_be_processed[mesh_id]=false;
+        continue;
+      }
       all_triangles[mesh_id].clear();
       Triangle_mesh& tm = *mesh_ptrs[mesh_id];
 
@@ -1165,7 +1196,8 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                       face_cc_ids_maps[mesh_id],
                       vpms[mesh_id],
                       corners,
-                      all_triangles[mesh_id]);
+                      all_triangles[mesh_id]) &&
+        is_polygon_soup_a_polygon_mesh(all_triangles[mesh_id]);
 #ifdef CGAL_DEBUG_DECIMATION
       std::cout << "all_patches_successfully_remeshed? " << all_patches_successfully_remeshed << "\n";
 #endif
@@ -1210,11 +1242,12 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   for(std::size_t mesh_id=0; mesh_id<nb_meshes; ++mesh_id)
   {
     Triangle_mesh& tm = *mesh_ptrs[mesh_id];
-    if (!is_polygon_soup_a_polygon_mesh(all_triangles[mesh_id]))
+    if (mesh_has_non_manifold_vertices[mesh_id])
     {
       no_remeshing_issue = false;
       continue;
     }
+    CGAL_assertion(is_polygon_soup_a_polygon_mesh(all_triangles[mesh_id]));
 
     //clear(tm);
     tm.clear_without_removing_property_maps();
