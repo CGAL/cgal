@@ -267,7 +267,7 @@ public:
 
   Point get_dummy_point(int i) const
   {
-    CGAL_triangulation_precondition(0 <= i && i <= static_cast<int>(dummy_points.size()));
+    CGAL_precondition(0 <= i && i <= static_cast<int>(dummy_points.size()));
     return dummy_points[i]();
   }
 
@@ -539,7 +539,7 @@ remove(Vertex_handle v)
       int nidx = 0;
       if(nbf->neighbor(1) == nb) nidx = 1;
       if(nbf->neighbor(2) == nb) nidx = 2;
-      CGAL_triangulation_assertion(nbf->neighbor(nidx) == nb);
+      CGAL_assertion(nbf->neighbor(nidx) == nb);
 
       bdry_nbrs.insert(Edge_neighbor(e, Neighbor_pair(nbf, nidx)));
       bdry_verts.push_back(nb->vertex(ccw(idx)));
@@ -610,8 +610,8 @@ remove(Vertex_handle v)
             Nbr_entry side1(nbf, nbidx);
             Nbr_entry side2(nbf->neighbor(nbidx), nbf->neighbor(nbidx)->index(nbf));
 
-            CGAL_triangulation_assertion(side1.first->neighbor(side1.second) == side2.first);
-            CGAL_triangulation_assertion(side2.first->neighbor(side2.second) == side1.first);
+            CGAL_assertion(side1.first->neighbor(side1.second) == side2.first);
+            CGAL_assertion(side2.first->neighbor(side2.second) == side1.first);
 
             Nbr_pair hist(side1, side2);
             failsafe.push_back(hist);
@@ -672,7 +672,7 @@ remove(Vertex_handle v)
                 tds().delete_face(new_f[rit]);
               }
 
-              CGAL_triangulation_assertion(this->is_valid(true));
+              CGAL_assertion(this->is_valid(true));
 
               return false;
             }
@@ -704,7 +704,7 @@ remove(Vertex_handle v)
 
     tds().delete_vertex(v);
 
-    CGAL_triangulation_assertion(this->is_valid(true));
+    CGAL_assertion(this->is_valid(true));
 
     return true;
   }

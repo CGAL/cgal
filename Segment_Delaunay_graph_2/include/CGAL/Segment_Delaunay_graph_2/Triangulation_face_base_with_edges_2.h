@@ -17,12 +17,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_2.h>
 
-
-
 #include <CGAL/Triangulation_ds_face_base_2.h>
-#include <CGAL/triangulation_assertions.h>
-
-
 
 namespace CGAL {
 

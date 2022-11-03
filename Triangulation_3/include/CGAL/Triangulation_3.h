@@ -25,7 +25,7 @@
 #endif
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -660,8 +660,8 @@ public:
     // --------------- s ---------------- t --------------
     // BEFORE       SOURCE    MIDDLE    TARGET       AFTER
 
-    CGAL_triangulation_precondition(!equal(s, t));
-    CGAL_triangulation_precondition(collinear(s, p, t));
+    CGAL_precondition(!equal(s, t));
+    CGAL_precondition(collinear(s, p, t));
 
     Comparison_result ps = compare_xyz(p, s);
     if(ps == EQUAL)
@@ -736,7 +736,7 @@ public:
     : Base(tr.get_lock_data_structure()), _gt(tr._gt)
   {
     infinite = _tds.copy_tds(tr._tds, tr.infinite);
-    CGAL_triangulation_expensive_postcondition(*this == tr);
+    CGAL_expensive_postcondition(*this == tr);
   }
 
   Triangulation_3(Triangulation_3&& tr) = default;
@@ -758,7 +758,7 @@ public:
                   const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds), _gt(gt)
   {
-    CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
+    CGAL_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
     init_tds(p0, p1, p3, p4);
   }
 
@@ -807,15 +807,15 @@ public:
 
   Cell_handle infinite_cell() const
   {
-    CGAL_triangulation_assertion(infinite_vertex()->cell()->has_vertex(infinite_vertex()));
+    CGAL_assertion(infinite_vertex()->cell()->has_vertex(infinite_vertex()));
     return infinite_vertex()->cell();
   }
 
   // GEOMETRIC ACCESS FUNCTIONS
   Tetrahedron tetrahedron(const Cell_handle c) const
   {
-    CGAL_triangulation_precondition(dimension() == 3);
-    CGAL_triangulation_precondition(! is_infinite(c));
+    CGAL_precondition(dimension() == 3);
+    CGAL_precondition(! is_infinite(c));
     return construct_tetrahedron(c->vertex(0)->point(),
                                  c->vertex(1)->point(),
                                  c->vertex(2)->point(),
@@ -848,31 +848,31 @@ public:
 
   void set_point(Cell_handle c, int i, const Point& p)
   {
-    CGAL_triangulation_precondition(dimension() >= 0);
-    CGAL_triangulation_precondition(i >= 0 && i <= dimension());
-    CGAL_triangulation_precondition(! is_infinite(c->vertex(i)));
+    CGAL_precondition(dimension() >= 0);
+    CGAL_precondition(i >= 0 && i <= dimension());
+    CGAL_precondition(! is_infinite(c->vertex(i)));
     c->vertex(i)->point() = p;
   }
 
   const Point& point(Cell_handle c, int i) const
   {
-    CGAL_triangulation_precondition(dimension() >= 0);
-    CGAL_triangulation_precondition(i >= 0 && i <= dimension());
-    CGAL_triangulation_precondition(! is_infinite(c->vertex(i)));
+    CGAL_precondition(dimension() >= 0);
+    CGAL_precondition(i >= 0 && i <= dimension());
+    CGAL_precondition(! is_infinite(c->vertex(i)));
     return c->vertex(i)->point();
   }
 
   void set_point(Vertex_handle v, const Point& p)
   {
-    CGAL_triangulation_precondition(dimension() >= 0);
-    CGAL_triangulation_precondition(! is_infinite(v));
+    CGAL_precondition(dimension() >= 0);
+    CGAL_precondition(! is_infinite(v));
     v->point() = p;
   }
 
   const Point& point(Vertex_handle v) const
   {
-    CGAL_triangulation_precondition(number_of_vertices() > 0);
-    CGAL_triangulation_precondition(! is_infinite(v));
+    CGAL_precondition(number_of_vertices() > 0);
+    CGAL_precondition(! is_infinite(v));
     return v->point();
   }
 
@@ -880,7 +880,7 @@ public:
   bool is_infinite(const Vertex_handle v) const { return v == infinite_vertex(); }
   bool is_infinite(const Cell_handle c) const
   {
-    CGAL_triangulation_precondition(dimension() == 3);
+    CGAL_precondition(dimension() == 3);
     return c->has_vertex(infinite_vertex());
   }
 
@@ -1060,7 +1060,7 @@ public:
                              const Facet& f,
                              Locate_type& lt, int& li, int& lj) const
   {
-    CGAL_triangulation_precondition(f.second == 3);
+    CGAL_precondition(f.second == 3);
     return side_of_facet(p, f.first, lt, li, lj);
   }
   Bounded_side side_of_segment(const Point& p,
@@ -1073,8 +1073,8 @@ public:
                             const Edge& e,
                             Locate_type& lt, int& li) const
   {
-    CGAL_triangulation_precondition(e.second == 0);
-    CGAL_triangulation_precondition(e.third == 1);
+    CGAL_precondition(e.second == 0);
+    CGAL_precondition(e.third == 1);
     return side_of_edge(p, e.first, lt, li);
   }
 
@@ -1329,7 +1329,7 @@ protected:
                  const Facet *this_facet_must_be_in_the_cz = nullptr,
                  bool *the_facet_is_in_its_cz = nullptr) const
   {
-    CGAL_triangulation_precondition(dimension()>=2);
+    CGAL_precondition(dimension()>=2);
 
     if(the_facet_is_in_its_cz)
       *the_facet_is_in_its_cz = false;
@@ -1344,7 +1344,7 @@ protected:
       }
     }
 
-    CGAL_triangulation_precondition(tester(d));
+    CGAL_precondition(tester(d));
 
     // To store the boundary cells, in case we need to rollback
     typedef boost::container::small_vector<Cell_handle,64> SV;
@@ -1443,9 +1443,9 @@ protected:
   template < class Conflict_test >
   Vertex_handle insert_conflict(Cell_handle c, const Conflict_test& tester)
   {
-    CGAL_triangulation_precondition(dimension() >= 2);
-    CGAL_triangulation_precondition(c != Cell_handle());
-    CGAL_triangulation_precondition(tester(c));
+    CGAL_precondition(dimension() >= 2);
+    CGAL_precondition(c != Cell_handle());
+    CGAL_precondition(tester(c));
 
     std::vector<Cell_handle> cells;
     cells.reserve(32);
@@ -1569,7 +1569,7 @@ protected:
   // at this time, it should be implemented here.
   void flip_2D(Cell_handle f, int i)
   {
-    CGAL_triangulation_precondition(dimension()==2);
+    CGAL_precondition(dimension()==2);
     Cell_handle n  = f->neighbor(i);
     int ni = this->_tds.mirror_index(f,i); // ni = n->index(f);
 
@@ -1737,7 +1737,7 @@ private:
   {
   // tests whether removing the cluster of vertices
   // marked as "to remove", decreases the dimension of the triangulation
-    CGAL_triangulation_precondition(dimension() == 3);
+    CGAL_precondition(dimension() == 3);
     int k=0;
     Vertex_handle v[4];
     for(Finite_vertices_iterator fit = finite_vertices_begin();
@@ -2348,7 +2348,7 @@ public:
       convert_cell(c, *C[j]);
     }
 
-    CGAL_triangulation_assertion( is_valid(false) );
+    CGAL_assertion( is_valid(false) );
     return is;
   }
 };
@@ -2413,7 +2413,7 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
     if(!(is >> *(C[j])))
       return is;
 
-  CGAL_triangulation_assertion(tr.is_valid(false));
+  CGAL_assertion(tr.is_valid(false));
   return is;
 }
 
@@ -2460,8 +2460,8 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   for(Vertex_iterator it = tr.vertices_begin(), end = tr.vertices_end(); it != end; ++it)
     TV[i++] = it;
 
-  CGAL_triangulation_assertion(i == n+1);
-  CGAL_triangulation_assertion(tr.is_infinite(TV[0]));
+  CGAL_assertion(i == n+1);
+  CGAL_assertion(tr.is_infinite(TV[0]));
 
   Unique_hash_map<Vertex_handle, std::size_t > V;
   V[tr.infinite_vertex()] = 0;
@@ -2578,10 +2578,10 @@ typename Triangulation_3<GT,Tds,Lds>::Triangle
 Triangulation_3<GT,Tds,Lds>::
 triangle(const Cell_handle c, int i) const
 {
-  CGAL_triangulation_precondition(dimension() == 2 || dimension() == 3);
-  CGAL_triangulation_precondition((dimension() == 2 && i == 3) ||
-                                  (dimension() == 3 && i >= 0 && i <= 3));
-  CGAL_triangulation_precondition(! is_infinite(Facet(c, i)));
+  CGAL_precondition(dimension() == 2 || dimension() == 3);
+  CGAL_precondition((dimension() == 2 && i == 3) ||
+                    (dimension() == 3 && i >= 0 && i <= 3));
+  CGAL_precondition(! is_infinite(Facet(c, i)));
   if((i&1)==0)
     return construct_triangle(c->vertex((i+2)&3)->point(),
                               c->vertex((i+1)&3)->point(),
@@ -2597,11 +2597,11 @@ typename Triangulation_3<GT,Tds,Lds>::Segment
 Triangulation_3<GT,Tds,Lds>::
 segment(const Cell_handle c, int i, int j) const
 {
-  CGAL_triangulation_precondition(i != j);
-  CGAL_triangulation_precondition(dimension() >= 1 && dimension() <= 3);
-  CGAL_triangulation_precondition(i >= 0 && i <= dimension() &&
-                                  j >= 0 && j <= dimension());
-  CGAL_triangulation_precondition(! is_infinite(Edge(c, i, j)));
+  CGAL_precondition(i != j);
+  CGAL_precondition(dimension() >= 1 && dimension() <= 3);
+  CGAL_precondition(i >= 0 && i <= dimension() &&
+                    j >= 0 && j <= dimension());
+  CGAL_precondition(! is_infinite(Edge(c, i, j)));
   return construct_segment(c->vertex(i)->point(), c->vertex(j)->point());
 }
 
@@ -2611,9 +2611,9 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 is_infinite(const Cell_handle c, int i) const
 {
-  CGAL_triangulation_precondition(dimension() == 2 || dimension() == 3);
-  CGAL_triangulation_precondition((dimension() == 2 && i == 3) ||
-                                  (dimension() == 3 && i >= 0 && i <= 3));
+  CGAL_precondition(dimension() == 2 || dimension() == 3);
+  CGAL_precondition((dimension() == 2 && i == 3) ||
+                    (dimension() == 3 && i >= 0 && i <= 3));
   return is_infinite(c->vertex(i<=0 ? 1 : 0)) ||
       is_infinite(c->vertex(i<=1 ? 2 : 1)) ||
       is_infinite(c->vertex(i<=2 ? 3 : 2));
@@ -2625,9 +2625,9 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 is_infinite(const Cell_handle c, int i, int j) const
 {
-  CGAL_triangulation_precondition(i != j);
-  CGAL_triangulation_precondition(dimension() >= 1 && dimension() <= 3);
-  CGAL_triangulation_precondition(i >= 0 && i <= dimension() &&
+  CGAL_precondition(i != j);
+  CGAL_precondition(dimension() >= 1 && dimension() <= 3);
+  CGAL_precondition(i >= 0 && i <= dimension() &&
                                   j >= 0 && j <= dimension());
   return is_infinite(c->vertex(i)) || is_infinite(c->vertex(j));
 }
@@ -2790,7 +2790,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
   //  from the rest of the triangulation
   // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
 
-  CGAL_triangulation_expensive_assertion(start == Cell_handle() || tds().is_simplex(start));
+  CGAL_expensive_assertion(start == Cell_handle() || tds().is_simplex(start));
 
   if(could_lock_zone)
     *could_lock_zone = true;
@@ -2812,8 +2812,8 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
   {
     case 3:
     {
-      CGAL_triangulation_precondition(start != Cell_handle());
-      CGAL_triangulation_precondition(! start->has_vertex(infinite));
+      CGAL_precondition(start != Cell_handle());
+      CGAL_precondition(! start->has_vertex(infinite));
 
       // We implement the remembering visibility/stochastic walk.
 
@@ -2931,9 +2931,9 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
                  (o[1] != COPLANAR) ? 1 : 2;
           lj = (o[li+1] != COPLANAR) ? li+1 :
                  (o[li+2] != COPLANAR) ? li+2 : li+3;
-          CGAL_triangulation_assertion(collinear(p,
-                                                 c->vertex(li)->point(),
-                                                 c->vertex(lj)->point()));
+          CGAL_assertion(collinear(p,
+                                   c->vertex(li)->point(),
+                                   c->vertex(lj)->point()));
           break;
         }
         case 3:
@@ -2950,8 +2950,8 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
 
     case 2:
     {
-      CGAL_triangulation_precondition(start != Cell_handle());
-      CGAL_triangulation_precondition(! start->has_vertex(infinite));
+      CGAL_precondition(start != Cell_handle());
+      CGAL_precondition(! start->has_vertex(infinite));
       Cell_handle c = start;
 
       boost::uniform_smallint<> three(0, 2);
@@ -2990,7 +2990,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
         const Point& p1 = c->vertex(ccw(i))->point();
         const Point& p2 = c->vertex(cw(i))->point();
         Orientation o[3];
-        CGAL_triangulation_assertion(coplanar_orientation(p0,p1,p2) == POSITIVE);
+        CGAL_assertion(coplanar_orientation(p0,p1,p2) == POSITIVE);
         o[0] = coplanar_orientation(p0,p1,p);
         if(o[0] == NEGATIVE)
         {
@@ -3047,8 +3047,8 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
     }
     case 1:
     {
-      CGAL_triangulation_precondition(start != Cell_handle());
-      CGAL_triangulation_precondition(! start->has_vertex(infinite));
+      CGAL_precondition(start != Cell_handle());
+      CGAL_precondition(! start->has_vertex(infinite));
       Cell_handle c = start;
 
       //first tests whether p is collinear with the current triangulation
@@ -3114,7 +3114,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
     }
     default:
     {
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
       return Cell_handle();
     }
   }
@@ -3128,8 +3128,8 @@ Triangulation_3<Gt, Tds, Lds>::
 inexact_locate(const Point& t, Cell_handle start, int n_of_turns,
                bool *could_lock_zone) const
 {
-  CGAL_triangulation_expensive_assertion(start == Cell_handle() ||
-                                         tds().is_simplex(start));
+  CGAL_expensive_assertion(start == Cell_handle() ||
+                           tds().is_simplex(start));
 
   if(could_lock_zone)
     *could_lock_zone = true;
@@ -3155,8 +3155,8 @@ inexact_locate(const Point& t, Cell_handle start, int n_of_turns,
   if(start->has_vertex(infinite, ind_inf))
     start = start->neighbor(ind_inf);
 
-  CGAL_triangulation_precondition(start != Cell_handle());
-  CGAL_triangulation_precondition(! start->has_vertex(infinite));
+  CGAL_precondition(start != Cell_handle());
+  CGAL_precondition(! start->has_vertex(infinite));
 
   // We implement the remembering visibility walk.
   // In this phase, no need to be stochastic
@@ -3242,7 +3242,7 @@ side_of_tetrahedron(const Point& p,
   // - ON_BOUNDARY if p lies on one of the facets
   // - ON_UNBOUNDED_SIDE if p lies strictly outside the tetrahedron
 
-  CGAL_triangulation_precondition(orientation(p0,p1,p2,p3) == POSITIVE);
+  CGAL_precondition(orientation(p0,p1,p2,p3) == POSITIVE);
 
   Orientation o0,o1,o2,o3;
   if(((o0 = orientation(p,p1,p2,p3)) == NEGATIVE) ||
@@ -3306,7 +3306,7 @@ side_of_tetrahedron(const Point& p,
     default:
     {
       // impossible : cannot be on 4 facets for a real tetrahedron
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
       return ON_BOUNDARY;
     }
   }
@@ -3330,7 +3330,7 @@ side_of_cell(const Point& p,
   //  two cases)
   // lt only has meaning when ON_BOUNDED_SIDE or ON_BOUNDARY
 
-  CGAL_triangulation_precondition(dimension() == 3);
+  CGAL_precondition(dimension() == 3);
   if(! is_infinite(c))
   {
     return side_of_tetrahedron(p,
@@ -3401,14 +3401,14 @@ side_of_cell(const Point& p,
           }
           default:
           {
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return ON_BOUNDARY;
           }
         } // switch side
       } // case ZERO
       default:
       {
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return ON_BOUNDARY;
       }
     } // switch o
@@ -3432,10 +3432,10 @@ side_of_triangle(const Point& p,
   // - ON_BOUNDARY if p lies on one of the edges
   // - ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
 
-  CGAL_triangulation_precondition(coplanar(p,p0,p1,p2));
+  CGAL_precondition(coplanar(p,p0,p1,p2));
 
   Orientation o012 = coplanar_orientation(p0,p1,p2);
-  CGAL_triangulation_precondition(o012 != COLLINEAR);
+  CGAL_precondition(o012 != COLLINEAR);
 
   Orientation o0; // edge p0 p1
   Orientation o1; // edge p1 p2
@@ -3485,7 +3485,7 @@ side_of_triangle(const Point& p,
     default:
     {
       // cannot happen
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
       return ON_BOUNDARY;
     }
   }
@@ -3512,15 +3512,15 @@ side_of_facet(const Point& p,
   // When they mean anything, li and lj refer to indices in the cell c
   // giving the facet (c,i).
 
-  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_precondition(dimension() == 2);
   if(! is_infinite(c,3))
   {
     // The following precondition is useless because it is written
     // in side_of_facet
-    //         CGAL_triangulation_precondition(coplanar (p,
-    //                                             c->vertex(0)->point,
-    //                                             c->vertex(1)->point,
-    //                                             c->vertex(2)->point));
+    //         CGAL_precondition(coplanar (p,
+    //                                     c->vertex(0)->point,
+    //                                     c->vertex(1)->point,
+    //                                     c->vertex(2)->point));
     int i_t, j_t;
     Bounded_side side = side_of_triangle(p,
                                          c->vertex(0)->point(),
@@ -3544,7 +3544,7 @@ side_of_facet(const Point& p,
   int inf = c->index(infinite);
   // The following precondition is useless because it is written
   // in side_of_facet
-  //         CGAL_triangulation_precondition(coplanar (p,
+  //         CGAL_precondition(coplanar (p,
   //                                     c->neighbor(inf)->vertex(0)->point(),
   //                                     c->neighbor(inf)->vertex(1)->point(),
   //                                     c->neighbor(inf)->vertex(2)->point()));
@@ -3553,8 +3553,8 @@ side_of_facet(const Point& p,
   Vertex_handle v1 = c->vertex(i1),
                 v2 = c->vertex(i2);
 
-  CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
-                                                    mirror_vertex(c, inf)->point()) == POSITIVE);
+  CGAL_assertion(coplanar_orientation(v1->point(), v2->point(),
+                                      mirror_vertex(c, inf)->point()) == POSITIVE);
 
   switch(coplanar_orientation(v1->point(), v2->point(), p))
   {
@@ -3603,8 +3603,8 @@ side_of_segment(const Point& p,
   // - ON_BOUNDARY if p equals p0 or p1
   // - ON_UNBOUNDED_SIDE if p lies strictly outside the edge
 
-  CGAL_triangulation_precondition(! equal(p0, p1));
-  CGAL_triangulation_precondition(collinear(p, p0, p1));
+  CGAL_precondition(! equal(p0, p1));
+  CGAL_precondition(collinear(p, p0, p1));
 
   switch(collinear_position(p0, p, p1))
   {
@@ -3643,7 +3643,7 @@ side_of_edge(const Point& p,
   // lt only has meaning when ON_BOUNDED_SIDE and ON_BOUNDARY
   // li refer to indices in the cell c
 
-  CGAL_triangulation_precondition(dimension() == 1);
+  CGAL_precondition(dimension() == 1);
   if(! is_infinite(c,0,1))
     return side_of_segment(p, c->vertex(0)->point(), c->vertex(1)->point(),
                            lt, li);
@@ -3669,8 +3669,8 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 flip(Cell_handle c, int i)
 {
-  CGAL_triangulation_precondition((dimension() == 3) && (0<=i) && (i<4) &&
-                                  (number_of_vertices() >= 5));
+  CGAL_precondition((dimension() == 3) && (0<=i) && (i<4) &&
+                    (number_of_vertices() >= 5));
 
   Cell_handle n = c->neighbor(i);
   int in = n->index(c);
@@ -3727,41 +3727,41 @@ void
 Triangulation_3<GT,Tds,Lds>::
 flip_flippable(Cell_handle c, int i)
 {
-  CGAL_triangulation_precondition((dimension() == 3) && (0<=i) && (i<4) &&
-                                  (number_of_vertices() >= 5));
-  CGAL_triangulation_precondition_code(Cell_handle n = c->neighbor(i););
-  CGAL_triangulation_precondition_code(int in = n->index(c););
-  CGAL_triangulation_precondition((! is_infinite(c)) &&(! is_infinite(n)));
+  CGAL_precondition((dimension() == 3) && (0<=i) && (i<4) &&
+                    (number_of_vertices() >= 5));
+  CGAL_precondition_code(Cell_handle n = c->neighbor(i););
+  CGAL_precondition_code(int in = n->index(c););
+  CGAL_precondition((! is_infinite(c)) &&(! is_infinite(n)));
 
   if(i%2 == 1)
   {
-    CGAL_triangulation_precondition(orientation(c->vertex((i+1)&3)->point(),
-                                                c->vertex((i+2)&3)->point(),
-                                                n->vertex(in)->point(),
-                                                c->vertex(i)->point()) == POSITIVE);
-    CGAL_triangulation_precondition(orientation(c->vertex((i+2)&3)->point(),
-                                                c->vertex((i+3)&3)->point(),
-                                                n->vertex(in)->point(),
-                                                c->vertex(i)->point()) == POSITIVE);
-    CGAL_triangulation_precondition(orientation(c->vertex((i+3)&3)->point(),
-                                                c->vertex((i+1)&3)->point(),
-                                                n->vertex(in)->point(),
-                                                c->vertex(i)->point()) == POSITIVE);
+    CGAL_precondition(orientation(c->vertex((i+1)&3)->point(),
+                                  c->vertex((i+2)&3)->point(),
+                                  n->vertex(in)->point(),
+                                  c->vertex(i)->point()) == POSITIVE);
+    CGAL_precondition(orientation(c->vertex((i+2)&3)->point(),
+                                  c->vertex((i+3)&3)->point(),
+                                  n->vertex(in)->point(),
+                                  c->vertex(i)->point()) == POSITIVE);
+    CGAL_precondition(orientation(c->vertex((i+3)&3)->point(),
+                                  c->vertex((i+1)&3)->point(),
+                                  n->vertex(in)->point(),
+                                  c->vertex(i)->point()) == POSITIVE);
   }
   else
   {
-    CGAL_triangulation_precondition(orientation(c->vertex((i+2)&3)->point(),
-                                                c->vertex((i+1)&3)->point(),
-                                                n->vertex(in)->point(),
-                                                c->vertex(i)->point()) == POSITIVE);
-    CGAL_triangulation_precondition(orientation(c->vertex((i+3)&3)->point(),
-                                                c->vertex((i+2)&3)->point(),
-                                                n->vertex(in)->point(),
-                                                c->vertex(i)->point()) == POSITIVE);
-    CGAL_triangulation_precondition(orientation(c->vertex((i+1)&3)->point(),
-                                                c->vertex((i+3)&3)->point(),
-                                                n->vertex(in)->point(),
-                                                c->vertex(i)->point()) == POSITIVE);
+    CGAL_precondition(orientation(c->vertex((i+2)&3)->point(),
+                                  c->vertex((i+1)&3)->point(),
+                                  n->vertex(in)->point(),
+                                  c->vertex(i)->point()) == POSITIVE);
+    CGAL_precondition(orientation(c->vertex((i+3)&3)->point(),
+                                  c->vertex((i+2)&3)->point(),
+                                  n->vertex(in)->point(),
+                                  c->vertex(i)->point()) == POSITIVE);
+    CGAL_precondition(orientation(c->vertex((i+1)&3)->point(),
+                                  c->vertex((i+3)&3)->point(),
+                                  n->vertex(in)->point(),
+                                  c->vertex(i)->point()) == POSITIVE);
   }
 
   _tds.flip_flippable(c, i);
@@ -3774,10 +3774,10 @@ flip(Cell_handle c, int i, int j)
 {
   // Flips the edge (i,j) of cell c
 
-  CGAL_triangulation_precondition((dimension() == 3) &&
-                                  (0<=i) && (i<4) && (0<=j) &&
-                                  (j<4) &&(i != j) &&
-                                  (number_of_vertices() >= 5));
+  CGAL_precondition((dimension() == 3) &&
+                    (0<=i) && (i<4) && (0<=j) &&
+                    (j<4) &&(i != j) &&
+                    (number_of_vertices() >= 5));
 
   // Checks that degree 3 and not on the convex hull
   int degree = 0;
@@ -3825,32 +3825,32 @@ flip_flippable(Cell_handle c, int i, int j)
 
 #if !defined CGAL_TRIANGULATION_NO_PRECONDITIONS && \
   !defined CGAL_NO_PRECONDITIONS && !defined NDEBUG
-  CGAL_triangulation_precondition((dimension() == 3) &&
-                                  (0<=i) && (i<4) && (0<=j) && (j<4) &&
-                                  (i != j) && (number_of_vertices() >= 5));
+  CGAL_precondition((dimension() == 3) &&
+                    (0<=i) && (i<4) && (0<=j) && (j<4) &&
+                    (i != j) && (number_of_vertices() >= 5));
   int degree = 0;
   Cell_circulator ccir = incident_cells(c,i,j);
   Cell_circulator cdone = ccir;
   do
   {
-    CGAL_triangulation_precondition(! is_infinite(ccir));
+    CGAL_precondition(! is_infinite(ccir));
     ++degree;
     ++ccir;
   }
   while(ccir != cdone);
-  CGAL_triangulation_precondition(degree == 3);
+  CGAL_precondition(degree == 3);
 
   Cell_handle n = c->neighbor(next_around_edge(i, j));
   int in = n->index(c->vertex(i));
   int jn = n->index(c->vertex(j));
-  CGAL_triangulation_precondition(orientation(c->vertex(next_around_edge(i,j))->point(),
-                                              c->vertex(next_around_edge(j,i))->point(),
-                                              n->vertex(next_around_edge(jn,in))->point(),
-                                              c->vertex(j)->point()) == POSITIVE);
-  CGAL_triangulation_precondition(orientation(c->vertex(i)->point(),
-                                              c->vertex(next_around_edge(j,i))->point(),
-                                              n->vertex(next_around_edge(jn,in))->point(),
-                                              c->vertex(next_around_edge(i,j))->point()) == POSITIVE);
+  CGAL_precondition(orientation(c->vertex(next_around_edge(i,j))->point(),
+                                c->vertex(next_around_edge(j,i))->point(),
+                                n->vertex(next_around_edge(jn,in))->point(),
+                                c->vertex(j)->point()) == POSITIVE);
+  CGAL_precondition(orientation(c->vertex(i)->point(),
+                                c->vertex(next_around_edge(j,i))->point(),
+                                n->vertex(next_around_edge(jn,in))->point(),
+                                c->vertex(next_around_edge(i,j))->point()) == POSITIVE);
 #endif
 
   _tds.flip_flippable(c, i, j);
@@ -4088,17 +4088,17 @@ typename Triangulation_3<GT,Tds,Lds>::Vertex_handle
 Triangulation_3<GT,Tds,Lds>::
 insert_in_cell(const Point& p, Cell_handle c)
 {
-  CGAL_triangulation_precondition(dimension() == 3);
-  CGAL_triangulation_precondition_code(
+  CGAL_precondition(dimension() == 3);
+  CGAL_precondition_code(
     Locate_type lt;
     int i; int j;
   );
-  CGAL_triangulation_precondition(side_of_tetrahedron(p,
-                                                      c->vertex(0)->point(),
-                                                      c->vertex(1)->point(),
-                                                      c->vertex(2)->point(),
-                                                      c->vertex(3)->point(),
-                                                      lt,i,j) == ON_BOUNDED_SIDE);
+  CGAL_precondition(side_of_tetrahedron(p,
+                                        c->vertex(0)->point(),
+                                        c->vertex(1)->point(),
+                                        c->vertex(2)->point(),
+                                        c->vertex(3)->point(),
+                                        lt,i,j) == ON_BOUNDED_SIDE);
 
   Vertex_handle v = _tds.insert_in_cell(c);
   v->set_point(p);
@@ -4111,21 +4111,21 @@ typename Triangulation_3<GT,Tds,Lds>::Vertex_handle
 Triangulation_3<GT,Tds,Lds>::
 insert_in_facet(const Point& p, Cell_handle c, int i)
 {
-  CGAL_triangulation_precondition(dimension() == 2 || dimension() == 3);
-  CGAL_triangulation_precondition((dimension() == 2 && i == 3) ||
-                                  (dimension() == 3 && i >= 0 && i <= 3));
-  CGAL_triangulation_exactness_precondition_code(
+  CGAL_precondition(dimension() == 2 || dimension() == 3);
+  CGAL_precondition((dimension() == 2 && i == 3) ||
+                    (dimension() == 3 && i >= 0 && i <= 3));
+  CGAL_exactness_precondition_code(
     Locate_type lt;
     int li; int lj;
   );
-  CGAL_triangulation_exactness_precondition(coplanar(p, c->vertex((i+1)&3)->point(),
-                                                     c->vertex((i+2)&3)->point(),
-                                                     c->vertex((i+3)&3)->point()) &&
-                                            side_of_triangle(p,
-                                                             c->vertex((i+1)&3)->point(),
-                                                             c->vertex((i+2)&3)->point(),
-                                                             c->vertex((i+3)&3)->point(),
-                                                             lt, li, lj) == ON_BOUNDED_SIDE);
+  CGAL_exactness_precondition(coplanar(p, c->vertex((i+1)&3)->point(),
+                                       c->vertex((i+2)&3)->point(),
+                                       c->vertex((i+3)&3)->point()) &&
+                              side_of_triangle(p,
+                                               c->vertex((i+1)&3)->point(),
+                                               c->vertex((i+2)&3)->point(),
+                                               c->vertex((i+3)&3)->point(),
+                                               lt, li, lj) == ON_BOUNDED_SIDE);
 
   Vertex_handle v = _tds.insert_in_facet(c, i);
   v->set_point(p);
@@ -4137,11 +4137,11 @@ typename Triangulation_3<GT,Tds,Lds>::Vertex_handle
 Triangulation_3<GT,Tds,Lds>::
 insert_in_edge(const Point& p, Cell_handle c, int i, int j)
 {
-  CGAL_triangulation_precondition(i != j);
-  CGAL_triangulation_precondition(dimension() >= 1 && dimension() <= 3);
-  CGAL_triangulation_precondition(i >= 0 && i <= dimension() &&
-                                  j >= 0 && j <= dimension());
-  CGAL_triangulation_exactness_precondition_code(
+  CGAL_precondition(i != j);
+  CGAL_precondition(dimension() >= 1 && dimension() <= 3);
+  CGAL_precondition(i >= 0 && i <= dimension() &&
+                    j >= 0 && j <= dimension());
+  CGAL_exactness_precondition_code(
     Locate_type lt;
     int li;
   );
@@ -4151,19 +4151,19 @@ insert_in_edge(const Point& p, Cell_handle c, int i, int j)
     case 3:
     case 2:
     {
-      CGAL_triangulation_precondition(! is_infinite(c, i, j));
-      CGAL_triangulation_exactness_precondition(collinear(c->vertex(i)->point(),
-                                                          p,
-                                                          c->vertex(j)->point())
-                                                && side_of_segment(p,
-                                                                   c->vertex(i)->point(),
-                                                                   c->vertex(j)->point(),
-                                                                   lt, li) == ON_BOUNDED_SIDE);
+      CGAL_precondition(! is_infinite(c, i, j));
+      CGAL_exactness_precondition(collinear(c->vertex(i)->point(),
+                                            p,
+                                            c->vertex(j)->point())
+                                  && side_of_segment(p,
+                                                     c->vertex(i)->point(),
+                                                     c->vertex(j)->point(),
+                                                     lt, li) == ON_BOUNDED_SIDE);
       break;
     }
     case 1:
     {
-      CGAL_triangulation_exactness_precondition(side_of_edge(p, c, lt, li) == ON_BOUNDED_SIDE);
+      CGAL_exactness_precondition(side_of_edge(p, c, lt, li) == ON_BOUNDED_SIDE);
       break;
     }
   }
@@ -4182,8 +4182,8 @@ insert_outside_convex_hull(const Point& p, Cell_handle c)
   // p is strictly outside the convex hull
   // dimension 0 not allowed, use outside-affine-hull
 
-  CGAL_triangulation_precondition(dimension() > 0);
-  CGAL_triangulation_precondition(c->has_vertex(infinite));
+  CGAL_precondition(dimension() > 0);
+  CGAL_precondition(c->has_vertex(infinite));
   // the precondition that p is in c is tested in each of the
   // insertion methods called from this method
 
@@ -4218,7 +4218,7 @@ typename Triangulation_3<GT,Tds,Lds>::Vertex_handle
 Triangulation_3<GT,Tds,Lds>::
 insert_outside_affine_hull(const Point& p)
 {
-  CGAL_triangulation_precondition(dimension() < 3);
+  CGAL_precondition(dimension() < 3);
   bool reorient;
   switch(dimension())
   {
@@ -4228,7 +4228,7 @@ insert_outside_affine_hull(const Point& p)
       Cell_handle n = c->neighbor(c->index(infinite_vertex()));
       Orientation o = coplanar_orientation(n->vertex(0)->point(),
                                            n->vertex(1)->point(), p);
-      CGAL_triangulation_precondition(o != COLLINEAR);
+      CGAL_precondition(o != COLLINEAR);
       reorient = o == NEGATIVE;
       break;
     }
@@ -4239,7 +4239,7 @@ insert_outside_affine_hull(const Point& p)
       Orientation o = orientation(n->vertex(0)->point(),
                                   n->vertex(1)->point(),
                                   n->vertex(2)->point(), p);
-      CGAL_triangulation_precondition(o != COPLANAR);
+      CGAL_precondition(o != COPLANAR);
       reorient = o == NEGATIVE;
       break;
     }
@@ -4410,8 +4410,8 @@ test_dim_down(Vertex_handle v) const
   // Returns true iff v is incident to all finite cells/facets
   // and all the other vertices are coplanar/collinear in dim3/2.
 
-  CGAL_triangulation_precondition(dimension() >= 0);
-  CGAL_triangulation_precondition(! is_infinite(v));
+  CGAL_precondition(dimension() >= 0);
+  CGAL_precondition(! is_infinite(v));
 
   if(dimension() == 3)
   {
@@ -4474,8 +4474,8 @@ test_dim_down_using_incident_cells_3(Vertex_handle v,
                                      std::vector<Vertex_handle>& adj_vertices,
                                      bool *could_lock_zone) const
 {
-  CGAL_triangulation_precondition(dimension() == 3);
-  CGAL_triangulation_precondition(! is_infinite(v));
+  CGAL_precondition(dimension() == 3);
+  CGAL_precondition(! is_infinite(v));
 
   // Collect all vertices on the boundary
   // and all incident cells
@@ -4913,7 +4913,7 @@ make_hole_3D(Vertex_handle v,
              Vertex_triple_Facet_map& outer_map,
              std::vector<Cell_handle>& hole)
 {
-  CGAL_triangulation_expensive_precondition(! test_dim_down(v));
+  CGAL_expensive_precondition(! test_dim_down(v));
 
   incident_cells(v, std::back_inserter(hole));
 
@@ -4943,7 +4943,7 @@ make_hole_3D(Vertex_handle v,
              const std::vector<Cell_handle>& incident_cells,
              Vertex_triple_Facet_map& outer_map)
 {
-  CGAL_triangulation_expensive_precondition(! test_dim_down(v));
+  CGAL_expensive_precondition(! test_dim_down(v));
 
   for(typename std::vector<Cell_handle>::const_iterator cit = incident_cells.begin(),
        end = incident_cells.end(); cit != end; ++cit)
@@ -4968,7 +4968,7 @@ VertexRemover&
 Triangulation_3<Gt,Tds,Lds>::
 remove_dim_down(Vertex_handle v, VertexRemover& remover)
 {
-  CGAL_triangulation_precondition (dimension() >= 0);
+  CGAL_precondition (dimension() >= 0);
 
   // Collect all the hidden points.
   for(All_cells_iterator ci = tds().raw_cells_begin(),
@@ -4998,7 +4998,7 @@ VertexRemover&
 Triangulation_3<Gt,Tds,Lds>::
 remove_1D(Vertex_handle v, VertexRemover& remover)
 {
-  CGAL_triangulation_precondition (dimension() == 1);
+  CGAL_precondition (dimension() == 1);
 
   Cell_handle c1 = v->cell();
   Cell_handle c2 = c1->neighbor(c1->index(v) == 0 ? 1 : 0);
@@ -5016,7 +5016,7 @@ VertexRemover&
 Triangulation_3<Gt,Tds,Lds>::
 remove_2D(Vertex_handle v, VertexRemover& remover)
 {
-  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_precondition(dimension() == 2);
   std::list<Edge_2D> hole;
   make_hole_2D(v, hole, remover);
   fill_hole_2D(hole, remover);
@@ -5124,7 +5124,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
     vmap[remover.tmp.infinite_vertex()] = infinite_vertex();
   }
 
-  CGAL_triangulation_assertion(remover.tmp.dimension() == 3);
+  CGAL_assertion(remover.tmp.dimension() == 3);
 
   // Construct the set of vertex triples of remover.tmp
   // We reorient the vertex triple so that it matches those from outer_map
@@ -5179,7 +5179,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover)
     unsigned int o_i = o_vt_f_pair.second.second;
 
     typename Vertex_triple_Facet_map::iterator iit = inner_map.find(o_vt_f_pair.first);
-    CGAL_triangulation_assertion(iit != inner_map.end());
+    CGAL_assertion(iit != inner_map.end());
     typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
     Cell_handle i_ch = i_vt_f_pair.second.first;
     unsigned int i_i = i_vt_f_pair.second.second;
@@ -5321,7 +5321,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
     vmap[remover.tmp.infinite_vertex()] = infinite_vertex();
   }
 
-  CGAL_triangulation_assertion(remover.tmp.dimension() == 3);
+  CGAL_assertion(remover.tmp.dimension() == 3);
 
   // Construct the set of vertex triples of remover.tmp
   // We reorient the vertex triple so that it matches those from outer_map
@@ -5377,7 +5377,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover,
 
     typename Vertex_triple_Facet_map::iterator iit =
       inner_map.find(o_vt_f_pair.first);
-    CGAL_triangulation_assertion(iit != inner_map.end());
+    CGAL_assertion(iit != inner_map.end());
     typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
     Cell_handle i_ch = i_vt_f_pair.second.first;
     unsigned int i_i = i_vt_f_pair.second.second;
@@ -5431,9 +5431,9 @@ void
 Triangulation_3<Gt, Tds, Lds>::
 remove(Vertex_handle v, VertexRemover& remover)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!is_infinite(v));
-  CGAL_triangulation_expensive_precondition(tds().is_vertex(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!is_infinite(v));
+  CGAL_expensive_precondition(tds().is_vertex(v));
 
   if(test_dim_down (v))
   {
@@ -5450,7 +5450,7 @@ remove(Vertex_handle v, VertexRemover& remover)
       case 3: remove_3D (v, remover);
         break;
       default:
-        CGAL_triangulation_assertion (false);
+        CGAL_assertion (false);
     }
   }
 }
@@ -5464,10 +5464,10 @@ remove(Vertex_handle v, VertexRemover& remover, bool *could_lock_zone)
   // N.B.: dimension doesn't need to be atomic since the parallel removal
   //       will never decrease the dimension (the last few removes are done
   //       sequentially)
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!is_infinite(v));
-  CGAL_triangulation_precondition(dimension() == 3);
-  CGAL_triangulation_expensive_precondition(tds().is_vertex(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!is_infinite(v));
+  CGAL_precondition(dimension() == 3);
+  CGAL_expensive_precondition(tds().is_vertex(v));
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
   static Profile_branch_counter_3 bcounter(
@@ -5551,7 +5551,7 @@ VertexRemover&
 Triangulation_3<Gt, Tds, Lds>::
 remove_2D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_precondition(dimension() == 2);
   std::list<Edge_2D> hole;
   make_hole_2D(v, hole, remover);
   fill_hole_2D(hole, remover, fit);
@@ -5565,7 +5565,7 @@ VertexRemover&
 Triangulation_3<Gt, Tds, Lds>::
 remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(dimension() == 3);
+  CGAL_precondition(dimension() == 3);
 
   std::vector<Cell_handle> hole;
   hole.reserve(64);
@@ -5624,7 +5624,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
     vmap[remover.tmp.infinite_vertex()] = infinite_vertex();
   }
 
-  CGAL_triangulation_assertion(remover.tmp.dimension() == 3);
+  CGAL_assertion(remover.tmp.dimension() == 3);
 
   // Construct the set of vertex triples of remover.tmp
   // We reorient the vertex triple so that it matches those from outer_map
@@ -5680,7 +5680,7 @@ remove_3D(Vertex_handle v, VertexRemover& remover, OutputItCells fit)
 
     typename Vertex_triple_Facet_map::iterator iit =
         inner_map.find(o_vt_f_pair.first);
-    CGAL_triangulation_assertion(iit != inner_map.end());
+    CGAL_assertion(iit != inner_map.end());
     typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
     Cell_handle i_ch = i_vt_f_pair.second.first;
     unsigned int i_i = i_vt_f_pair.second.second;
@@ -5737,9 +5737,9 @@ Triangulation_3<Gt, Tds, Lds>::
 remove_and_give_new_cells(Vertex_handle v, VertexRemover& remover,
                           OutputItCells fit)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!is_infinite(v));
-  CGAL_triangulation_expensive_precondition(tds().is_vertex(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!is_infinite(v));
+  CGAL_expensive_precondition(tds().is_vertex(v));
 
   if(test_dim_down (v))
   {
@@ -5756,7 +5756,7 @@ remove_and_give_new_cells(Vertex_handle v, VertexRemover& remover,
       case 3: remove_3D (v, remover, fit);
         break;
       default:
-        CGAL_triangulation_assertion (false);
+        CGAL_assertion (false);
     }
   }
 }
@@ -5772,7 +5772,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
                      VertexRemover& remover, VertexInserter& inserter)
 {
   CGAL_assertion(remover.hidden_points_begin() == remover.hidden_points_end());
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(!is_infinite(v));
   if(v->point() == p)
     return v;
   const int dim = dimension();
@@ -5829,7 +5829,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
       if(i == 0)
         f = f->neighbor(1);
 
-      CGAL_triangulation_assertion(f->index(v) == 1);
+      CGAL_assertion(f->index(v) == 1);
       Cell_handle g= f->neighbor(0);
       f->set_vertex(1, g->vertex(1));
       f->set_neighbor(0,g->neighbor(0));
@@ -5841,7 +5841,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
       if(i == 0)
         f_ins = f_ins->neighbor(1);
 
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
+      CGAL_assertion(f_ins->index(inserted) == 1);
       Cell_handle g_ins = f_ins->neighbor(0);
       f_ins->set_vertex(1, v);
       g_ins->set_vertex(0, v);
@@ -6012,7 +6012,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
     vmap[remover.tmp.infinite_vertex()] = infinite_vertex();
   }
 
-  CGAL_triangulation_assertion(remover.tmp.dimension() == 3);
+  CGAL_assertion(remover.tmp.dimension() == 3);
 
   // Construct the set of vertex triples of remover.tmp
   // We reorient the vertex triple so that it matches those from outer_map
@@ -6069,7 +6069,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
 
     typename Vertex_triple_Facet_map::iterator iit =
         inner_map.find(o_vt_f_pair.first);
-    CGAL_triangulation_assertion(iit != inner_map.end());
+    CGAL_assertion(iit != inner_map.end());
     typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
     Cell_handle i_ch = i_vt_f_pair.second.first;
     unsigned int i_i = i_vt_f_pair.second.second;
@@ -6138,7 +6138,7 @@ move(Vertex_handle v, const Point& p,
      VertexRemover& remover, VertexInserter& inserter)
 {
   CGAL_assertion(remover.hidden_points_begin() == remover.hidden_points_end());
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(!is_infinite(v));
 
   if(v->point() == p)
     return v;
@@ -6164,7 +6164,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
                                         OutputItCells fit)
 {
   CGAL_assertion(remover.hidden_points_begin() == remover.hidden_points_end());
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(!is_infinite(v));
 
   if(v->point() == p)
     return v;
@@ -6233,7 +6233,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
       if(i==0)
         f = f->neighbor(1);
 
-      CGAL_triangulation_assertion(f->index(v) == 1);
+      CGAL_assertion(f->index(v) == 1);
       Cell_handle g = f->neighbor(0);
       f->set_vertex(1, g->vertex(1));
       f->set_neighbor(0,g->neighbor(0));
@@ -6246,7 +6246,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
       if(i==0)
         f_ins = f_ins->neighbor(1);
 
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
+      CGAL_assertion(f_ins->index(inserted) == 1);
       Cell_handle g_ins = f_ins->neighbor(0);
       f_ins->set_vertex(1, v);
       g_ins->set_vertex(0, v);
@@ -6465,7 +6465,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
     vmap[remover.tmp.infinite_vertex()] = infinite_vertex();
   }
 
-  CGAL_triangulation_assertion(remover.tmp.dimension() == 3);
+  CGAL_assertion(remover.tmp.dimension() == 3);
 
   // Construct the set of vertex triples of remover.tmp
   // We reorient the vertex triple so that it matches those from outer_map
@@ -6521,7 +6521,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
 
     typename Vertex_triple_Facet_map::iterator iit =
         inner_map.find(o_vt_f_pair.first);
-    CGAL_triangulation_assertion(iit != inner_map.end());
+    CGAL_assertion(iit != inner_map.end());
     typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
     Cell_handle i_ch = i_vt_f_pair.second.first;
     unsigned int i_i = i_vt_f_pair.second.second;
@@ -6861,7 +6861,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover& rem
 
       typename Vertex_triple_Facet_map::iterator iit =
           inner_map.find(o_vt_f_pair.first);
-      CGAL_triangulation_assertion(iit != inner_map.end());
+      CGAL_assertion(iit != inner_map.end());
       typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
       Cell_handle i_ch = i_vt_f_pair.second.first;
       unsigned int i_i = i_vt_f_pair.second.second;
@@ -6949,8 +6949,8 @@ typename Triangulation_3<Gt, Tds, Lds>::size_type
 Triangulation_3<Gt, Tds, Lds>::
 remove(InputIterator first, InputIterator beyond, VertexRemover& remover)
 {
-  CGAL_triangulation_precondition(!does_repeat_in_range(first, beyond));
-  CGAL_triangulation_precondition(!infinite_vertex_in_range(first, beyond));
+  CGAL_precondition(!does_repeat_in_range(first, beyond));
+  CGAL_precondition(!infinite_vertex_in_range(first, beyond));
 
   size_type n = number_of_vertices();
   InputIterator init = first, init2 = first;
@@ -6988,7 +6988,7 @@ is_valid(bool verbose, int level) const
     if(verbose)
       std::cerr << "invalid data structure" << std::endl;
 
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return false;
   }
 
@@ -6997,7 +6997,7 @@ is_valid(bool verbose, int level) const
     if(verbose)
       std::cerr << "no infinite vertex" << std::endl;
 
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return false;
   }
 
@@ -7047,7 +7047,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
       std::cerr << std::endl;
     }
 
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return false;
   }
 
@@ -7083,7 +7083,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
                     << c->vertex(2)->point() << ", "
                     << c->vertex(3)->point() << std::endl;
         }
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       break;
@@ -7101,7 +7101,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
                     << c->vertex(1)->point() << ", "
                     << c->vertex(2)->point() << std::endl;
         }
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       break;
@@ -7123,7 +7123,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
                       << c->neighbor(0)->vertex(1-c->neighbor(0)->index(c))->point()
                       << ", " << v->point() << std::endl;
           }
-          CGAL_triangulation_assertion(false);
+          CGAL_assertion(false);
           return false;
         }
       }
@@ -7140,7 +7140,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
                       << c->neighbor(1)->vertex(1-c->neighbor(1)->index(c))->point()
                       << ", " << v->point() << std::endl;
           }
-          CGAL_triangulation_assertion(false);
+          CGAL_assertion(false);
           return false;
         }
       }
@@ -7169,12 +7169,12 @@ test_next(const Triangulation_3<GT, Tds1, Lds>& t1,
   // Returns false if an inequality has been found.
 
   // Precondition: c1, c2 have been registered as well as their 4 vertices.
-  CGAL_triangulation_precondition(t1.dimension() >= 2);
-  CGAL_triangulation_precondition(Cmap[c1] == c2);
-  CGAL_triangulation_precondition(Vmap.find(c1->vertex(0)) != Vmap.end());
-  CGAL_triangulation_precondition(Vmap.find(c1->vertex(1)) != Vmap.end());
-  CGAL_triangulation_precondition(Vmap.find(c1->vertex(2)) != Vmap.end());
-  CGAL_triangulation_precondition(t1.dimension() == 2 ||
+  CGAL_precondition(t1.dimension() >= 2);
+  CGAL_precondition(Cmap[c1] == c2);
+  CGAL_precondition(Vmap.find(c1->vertex(0)) != Vmap.end());
+  CGAL_precondition(Vmap.find(c1->vertex(1)) != Vmap.end());
+  CGAL_precondition(Vmap.find(c1->vertex(2)) != Vmap.end());
+  CGAL_precondition(t1.dimension() == 2 ||
                                   Vmap.find(c1->vertex(3)) != Vmap.end());
 
   typedef Triangulation_3<GT, Tds1, Lds>          Tr1;
