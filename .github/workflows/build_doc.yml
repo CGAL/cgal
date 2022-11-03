@@ -51,12 +51,22 @@ jobs:
         name: "checkout branch"
         if: steps.get_round.outputs.result != 'stop'
         with:
-          repository: ${{ github.repository }}
-          ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
-          token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
-          fetch-depth: 2
+           repository: ${{ github.repository }}
+           ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
+           token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
+           fetch-depth: 2
 
-
+      - name: Emoji-comment
+        uses: actions/github-script@v6
+        if: steps.get_round.outputs.result != 'stop'
+        with:
+          script: |
+            github.rest.reactions.createForIssueComment({
+              comment_id: ${{ github.event.comment.id }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              content: 'rocket'
+            })
       - name: install dependencies
         if: steps.get_round.outputs.result != 'stop'
         run: |
@@ -90,14 +100,14 @@ jobs:
             #list impacted packages
             LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
-              echo "::set-output name=DoxygenError::No package affected."
+              echo "DoxygenError=No package affected." >> $GITHUB_OUTPUT
               exit 1
             fi
             cd build_doc && make -j2 doc
             make -j2 doc_with_postprocessing 2>tmp.log
             if [ -s tmp.log ]; then
               content=`cat ./tmp.log`
-              echo "::set-output name=DoxygenError::$(cat tmp.log)"
+              echo "DoxygenError=$(cat tmp.log)" >> $GITHUB_OUTPUT
               exit 1
             fi
             cd ..
@@ -117,7 +127,7 @@ jobs:
             mv tmp.html index.html
             git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
-            echo "::set-output name=DoxygenError::This round already exists. Overwrite it with /force-build."
+            echo "DoxygenError=This round already exists. Overwrite it with /force-build." >> $GITHUB_OUTPUT
             exit 1
           fi
 
