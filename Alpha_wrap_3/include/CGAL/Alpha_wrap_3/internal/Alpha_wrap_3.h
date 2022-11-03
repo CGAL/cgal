@@ -229,11 +229,14 @@ private:
   }
 
 public:
-  template <typename OutputMesh, typename NamedParameters>
+  template <typename OutputMesh,
+            typename InputNamedParameters = parameters::Default_named_parameters,
+            typename OutputNamedParameters = parameters::Default_named_parameters>
   void operator()(const double alpha, // = default_alpha()
                   const double offset, // = alpha / 30.
                   OutputMesh& output_mesh,
-                  const NamedParameters& np)
+                  const InputNamedParameters& in_np = parameters::default_values(),
+                  const OutputNamedParameters& out_np = parameters::default_values())
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -241,25 +244,25 @@ public:
     using parameters::get_parameter_reference;
     using parameters::choose_parameter;
 
-    using OVPM = typename CGAL::GetVertexPointMap<OutputMesh, NamedParameters>::type;
-    OVPM ovpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+    using OVPM = typename CGAL::GetVertexPointMap<OutputMesh, OutputNamedParameters>::type;
+    OVPM ovpm = choose_parameter(get_parameter(out_np, internal_np::vertex_point),
                                  get_property_map(vertex_point, output_mesh));
 
     typedef typename internal_np::Lookup_named_param_def <
       internal_np::visitor_t,
-      NamedParameters,
+      InputNamedParameters,
       Wrapping_default_visitor // default
     >::reference                                                                 Visitor;
 
     Wrapping_default_visitor default_visitor;
-    Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+    Visitor visitor = choose_parameter(get_parameter_reference(in_np, internal_np::visitor), default_visitor);
 
     std::vector<Point_3> no_seeds;
     using Seeds = typename internal_np::Lookup_named_param_def<
-                    internal_np::seed_points_t, NamedParameters, std::vector<Point_3> >::reference;
-    Seeds seeds = choose_parameter(get_parameter_reference(np, internal_np::seed_points), no_seeds);
+                    internal_np::seed_points_t, InputNamedParameters, std::vector<Point_3> >::reference;
+    Seeds seeds = choose_parameter(get_parameter_reference(in_np, internal_np::seed_points), no_seeds);
 
-    const bool do_enforce_manifoldness = choose_parameter(get_parameter(np, internal_np::do_enforce_manifoldness), true);
+    const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
 #ifdef CGAL_AW3_TIMER
     CGAL::Real_timer t;
@@ -360,14 +363,6 @@ public:
   }
 
   // Convenience overloads
-  template <typename OutputMesh>
-  void operator()(const double alpha,
-                  const double offset,
-                  OutputMesh& output_mesh)
-  {
-    return operator()(alpha, offset, output_mesh, parameters::default_values());
-  }
-
   template <typename OutputMesh>
   void operator()(const double alpha,
                   OutputMesh& output_mesh)
