@@ -21,7 +21,7 @@ jobs:
             });
       - name: Post address
         uses: actions/github-script@v6
-        if: ${{ success() && github.event_name == 'pull_request_target' }}
+        if: ${{ success() }}
         with:
           script: |
             github.rest.issues.createComment({
