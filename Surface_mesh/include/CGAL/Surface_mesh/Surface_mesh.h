@@ -82,6 +82,10 @@ namespace CGAL {
         size_type idx() const {
           return idx_;
         }
+        // For convenience
+        size_type id() const {
+          return idx_;
+        }
 
         /// increments the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
