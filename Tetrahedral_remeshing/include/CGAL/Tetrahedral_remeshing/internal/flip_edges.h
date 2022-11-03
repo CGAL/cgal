@@ -87,12 +87,13 @@ void update_c3t3_facets(C3t3& c3t3,
   }
 }
 
-template<typename C3t3, typename IncCellsVectorMap>
+template<typename C3t3, typename IncCellsVectorMap, typename Cell_selector>
 Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
                                   const std::vector<typename C3t3::Vertex_handle>& vertices_around_edge,
                                   const Flip_Criterion& criterion,
-                                  IncCellsVectorMap& inc_cells)
+                                  IncCellsVectorMap& inc_cells,
+                                  Cell_selector& cell_selector)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Facet         Facet;
@@ -323,7 +324,7 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
   // Update c3t3
   update_c3t3_facets(c3t3, cells_to_update, outer_mirror_facets);
 
-  c3t3.remove_from_complex(cell_to_remove);
+  treat_before_delete(cell_to_remove, cell_selector, c3t3);
   tr.tds().delete_cell(cell_to_remove);
 
   /********************VALIDITY CHECK***************************/
@@ -703,11 +704,15 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   }
 }
 
-template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
+template<typename C3t3,
+         typename IncCellsVectorMap,
+         typename Cell_selector,
+         typename Visitor>
 Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                   typename C3t3::Edge& edge,
                                   typename C3t3::Vertex_handle vh,
                                   IncCellsVectorMap& inc_cells,
+                                  Cell_selector& cell_selector,
                                   Visitor& visitor,
                                   bool check_validity = false)
 {
@@ -862,6 +867,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 
   //Subdomain index?
   typename C3t3::Subdomain_index subdomain = to_remove[0]->subdomain_index();
+  bool selected = get(m_cell_selector, to_remove[0]);
   visitor.before_flip(to_remove[0]);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -882,7 +888,8 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 
     new_cell->set_vertex(fi.second, vh);
 
-    c3t3.add_to_complex(new_cell, subdomain);
+    treat_new_cell(new_cell, subdomain, cell_selector, selected, c3t3);
+
     visitor.after_flip(new_cell);
     cells_to_update.push_back(new_cell);
   }
@@ -951,7 +958,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   //Remove cells
   for (Cell_handle ch : to_remove)
   {
-    c3t3.remove_from_complex(ch);
+    treat_before_delete(ch, cell_selector, c3t3);
     tr.tds().delete_cell(ch);
   }
 
@@ -1072,11 +1079,12 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
   return result;
 }
 
-template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename Cell_selector, typename Visitor>
 Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
                                      C3t3& c3t3,
                                      const Flip_Criterion& criterion,
                                      IncCellsVectorMap& inc_cells,
+                                     Cell_selector& cell_selector,
                                      Visitor& visitor)
 {
   typedef typename C3t3::Triangulation        Tr;
@@ -1139,7 +1147,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
     {
       std::vector<Vertex_handle> vertices;
       vertices.insert(vertices.end(), vertices_around_edge.begin(), vertices_around_edge.end());
-      res = flip_3_to_2(edge, c3t3, vertices, criterion, inc_cells);
+      res = flip_3_to_2(edge, c3t3, vertices, criterion, inc_cells, cell_selector);
     }
   }
   else
@@ -1151,7 +1159,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
     {
       std::vector<Vertex_handle> vertices;
       vertices.insert(vertices.end(), boundary_vertices.begin(), boundary_vertices.end());
-      res = flip_n_to_m(edge, c3t3, vertices, criterion, inc_cells, visitor);
+      res = flip_n_to_m(edge, c3t3, vertices, criterion, inc_cells, cell_selector, visitor);
       //return n_to_m_flip(edge, boundary_vertices, flip_criterion);
     }
   }
@@ -1160,10 +1168,11 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
 }
 
 
-template<typename VertexPair, typename C3t3, typename Visitor>
+template<typename VertexPair, typename C3t3, typename Cell_selector, typename Visitor>
 std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
                            C3t3& c3t3,
                            const Flip_Criterion& criterion,
+                           Cell_selector& cell_selector,
                            Visitor& visitor)
 {
   typedef typename C3t3::Triangulation Tr;
@@ -1194,7 +1203,8 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
     {
       Edge edge(ch, i0, i1);
 
-      Sliver_removal_result res = find_best_flip(edge, c3t3, criterion, inc_cells, visitor);
+      Sliver_removal_result res
+        = find_best_flip(edge, c3t3, criterion, inc_cells, cell_selector, visitor);
       if (res == INVALID_CELL || res == INVALID_VERTEX || res == INVALID_ORIENTATION)
       {
         std::cout << "FLIP PROBLEM!!!!" << std::endl;
@@ -1237,8 +1247,6 @@ void flip_edges(C3T3& c3t3,
 
   //const Flip_Criterion criterion = VALENCE_MIN_DH_BASED;
 
-  //collect long edges
-
   //compute vertices normals map?
 
   // typedef typename C3T3::Surface_patch_index Surface_patch_index;
@@ -1272,7 +1280,7 @@ void flip_edges(C3T3& c3t3,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   nb_flips =
 #endif
-    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, visitor);
+    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, cell_selector, visitor);
   //}
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
