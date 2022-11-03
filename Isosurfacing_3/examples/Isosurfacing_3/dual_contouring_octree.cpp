@@ -1,5 +1,5 @@
 #include <CGAL/Dual_contouring_3.h>
-#include <CGAL/Isosurfacing_domains.h>
+#include <CGAL/Implicit_octree_domain.h>
 #include <CGAL/Octree_wrapper.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/IO/OFF.h>

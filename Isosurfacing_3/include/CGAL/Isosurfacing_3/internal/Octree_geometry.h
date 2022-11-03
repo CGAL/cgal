@@ -16,6 +16,8 @@
 #include <CGAL/Octree_wrapper.h>
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <memory>
+
 namespace CGAL {
 namespace Isosurfacing {
 
@@ -25,19 +27,19 @@ public:
     typedef GeomTraits Geom_traits;
     typedef typename Geom_traits::Point_3 Point;
 
-    typedef Octree_wrapper<Geom_traits> Octree;
+    typedef std::shared_ptr<Octree_wrapper<Geom_traits>> Octree;
 
     typedef typename Octree_topology<Geom_traits>::Vertex_descriptor Vertex_descriptor;
 
 public:
-    Octree_geometry(const Octree& octree) : octree(&octree) {}
+    Octree_geometry(const Octree& octree) : octree(octree) {}
 
     Point operator()(const Vertex_descriptor& v) const {
         return octree->point(v);
     }
 
 private:
-    const Octree* octree;
+    const Octree octree;
 };
 
 }  // namespace Isosurfacing

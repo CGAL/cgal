@@ -28,10 +28,11 @@ template <class GeomTraits>  // TODO: should not be necessary
 class Octree_topology {
 public:
     typedef GeomTraits Geom_traits;
-    typedef Octree_wrapper<Geom_traits> Octree;
-    typedef typename Octree::Vertex_handle Vertex_descriptor;
-    typedef typename Octree::Edge_handle Edge_descriptor;
-    typedef typename Octree::Voxel_handle Cell_descriptor;
+    typedef Octree_wrapper<Geom_traits> Octree_;
+    typedef std::shared_ptr<Octree_wrapper<Geom_traits>> Octree;
+    typedef typename Octree_::Vertex_handle Vertex_descriptor;
+    typedef typename Octree_::Edge_handle Edge_descriptor;
+    typedef typename Octree_::Voxel_handle Cell_descriptor;
 
     static constexpr Cell_type CELL_TYPE = CUBICAL_CELL;
     static constexpr std::size_t VERTICES_PER_CELL = 8;
@@ -43,7 +44,7 @@ public:
     typedef std::array<Edge_descriptor, 12> Cell_edges;
 
 public:
-    Octree_topology(const Octree& octree) : octree(&octree) {}
+    Octree_topology(const Octree& octree) : octree(octree) {}
 
     Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const {
         return octree->edge_vertices(e);
@@ -124,7 +125,7 @@ public:
 #endif  // CGAL_LINKED_WITH_TBB
 
 private:
-    const Octree* octree;
+    const Octree octree;
 };
 
 }  // namespace Isosurfacing

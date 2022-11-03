@@ -14,17 +14,22 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <memory>
+
 namespace CGAL {
 namespace Isosurfacing {
 
-template <class GeomTraits, typename Geometry, typename Function>
+template <class GeomTraits, typename Geometry_, typename PointFunction>
 class Implicit_function_with_geometry {
 public:
     typedef GeomTraits Geom_traits;
     typedef typename Geom_traits::FT FT;
 
+    typedef std::shared_ptr<Geometry_> Geometry;
+    typedef std::shared_ptr<PointFunction> Point_function;
+
 public:
-    Implicit_function_with_geometry(const Geometry& geom, const Function& func) : geom(&geom), func(&func) {}
+    Implicit_function_with_geometry(const Geometry& geom, const Point_function& func) : geom(geom), func(func) {}
 
     template <typename VertexDescriptor>
     FT operator()(const VertexDescriptor& v) const {
@@ -32,8 +37,8 @@ public:
     }
 
 private:
-    const Geometry* geom;
-    const Function* func;
+    const Geometry geom;
+    const Point_function func;
 };
 
 }  // namespace Isosurfacing

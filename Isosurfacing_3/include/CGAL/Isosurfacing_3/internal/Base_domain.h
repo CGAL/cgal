@@ -15,6 +15,8 @@
 #include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <memory>
+
 namespace CGAL {
 namespace Isosurfacing {
 
@@ -26,27 +28,27 @@ public:
     typedef typename Geom_traits::Point_3 Point;
     typedef typename Geom_traits::Vector_3 Vector;
 
-    typedef Topology_ Topology;
-    typedef typename Topology::Vertex_descriptor Vertex_descriptor;
-    typedef typename Topology::Edge_descriptor Edge_descriptor;
-    typedef typename Topology::Cell_descriptor Cell_descriptor;
+    typedef std::shared_ptr<Topology_> Topology;
+    typedef typename Topology_::Vertex_descriptor Vertex_descriptor;
+    typedef typename Topology_::Edge_descriptor Edge_descriptor;
+    typedef typename Topology_::Cell_descriptor Cell_descriptor;
 
-    static constexpr Cell_type CELL_TYPE = Topology::CELL_TYPE;
-    static constexpr std::size_t VERTICES_PER_CELL = Topology::VERTICES_PER_CELL;
-    static constexpr std::size_t EDGES_PER_CELL = Topology::EDGES_PER_CELL;
+    static constexpr Cell_type CELL_TYPE = Topology_::CELL_TYPE;
+    static constexpr std::size_t VERTICES_PER_CELL = Topology_::VERTICES_PER_CELL;
+    static constexpr std::size_t EDGES_PER_CELL = Topology_::EDGES_PER_CELL;
 
-    typedef typename Topology::Vertices_incident_to_edge Vertices_incident_to_edge;
-    typedef typename Topology::Cells_incident_to_edge Cells_incident_to_edge;
-    typedef typename Topology::Cell_vertices Cell_vertices;
-    typedef typename Topology::Cell_edges Cell_edges;
+    typedef typename Topology_::Vertices_incident_to_edge Vertices_incident_to_edge;
+    typedef typename Topology_::Cells_incident_to_edge Cells_incident_to_edge;
+    typedef typename Topology_::Cell_vertices Cell_vertices;
+    typedef typename Topology_::Cell_edges Cell_edges;
 
-    typedef Geometry_ Geometry;
-    typedef Function_ Function;
-    typedef Gradient_ Gradient;
+    typedef std::shared_ptr<Geometry_> Geometry;
+    typedef std::shared_ptr<Function_> Function;
+    typedef std::shared_ptr<Gradient_> Gradient;
 
 public:
     Base_domain(const Topology& topo, const Geometry& geom, const Function& func, const Gradient& grad)
-        : topo(&topo), geom(&geom), func(&func), grad(&grad) {}
+        : topo(topo), geom(geom), func(func), grad(grad) {}
 
     Point position(const Vertex_descriptor& v) const {
         return geom->operator()(v);
@@ -92,10 +94,10 @@ public:
     }
 
 private:
-    const Topology* topo;
-    const Geometry* geom;
-    const Function* func;
-    const Gradient* grad;
+    const Topology topo;
+    const Geometry geom;
+    const Function func;
+    const Gradient grad;
 };
 
 }  // namespace Isosurfacing

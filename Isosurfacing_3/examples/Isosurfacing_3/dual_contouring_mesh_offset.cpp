@@ -3,7 +3,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dual_contouring_3.h>
-#include <CGAL/Isosurfacing_domains.h>
+#include <CGAL/Implicit_cartesian_grid_domain.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
