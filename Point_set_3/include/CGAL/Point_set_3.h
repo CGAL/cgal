@@ -1343,17 +1343,11 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
 
   static const Normal_map get_normal_map(const Point_set_3<Point, Vector>& ps, const NamedParameters& np)
   {
-    CGAL_assertion_code(
-      if (!(parameters::is_default_parameter<NamedParameters, internal_np::normal_t>::value)))
-        CGAL_assertion(!!ps.normal_map());
     return parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), ps.normal_map());
   }
 
   static Normal_map get_normal_map(Point_set_3<Point, Vector>& ps, const NamedParameters& np)
   {
-    CGAL_assertion_code(
-      if (!(parameters::is_default_parameter<NamedParameters, internal_np::normal_t>::value)))
-        CGAL_assertion(!!ps.normal_map());
     return parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), ps.normal_map());
   }
 
@@ -1362,11 +1356,9 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
     return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
   }
 
-  static constexpr bool has_normal_map(const Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  static constexpr bool has_normal_map(const Point_set_3<Point, Vector>&, const NamedParameters&)
   {
-    using CGAL::parameters::is_default_parameter;
-    const bool np_has_normals = !(is_default_parameter<NamedParameters, internal_np::normal_t>::value);
-    return np_has_normals || !!ps.normal_map();
+    return true;//either available in np, or in point set
   }
 
 };
