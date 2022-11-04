@@ -107,7 +107,10 @@ jobs:
             make -j2 doc_with_postprocessing 2>tmp.log
             if [ -s tmp.log ]; then
               content=`cat ./tmp.log`
-              echo "DoxygenError=$(cat tmp.log)" >> $GITHUB_OUTPUT
+              delimiter="$(openssl rand -hex 8)"
+              echo "DoxygenError<<${delimiter}" >> "${GITHUB_OUTPUT}"
+              cat tmp.log >> "${GITHUB_OUTPUT}"
+              echo "${delimiter}" >> "${GITHUB_OUTPUT}"
               exit 1
             fi
             cd ..
