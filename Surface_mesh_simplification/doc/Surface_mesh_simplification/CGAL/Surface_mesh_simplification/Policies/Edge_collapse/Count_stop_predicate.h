@@ -4,7 +4,7 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-\deprecated
+\deprecated This class is deprecated since \cgal 5.6, the class `Edge_count_stop_predicate` should be used instead.
 
 The class `Count_stop_predicate` is a model for the `StopPredicate` concept,
 which returns `true` when the number of current edges drops below a certain threshold.
