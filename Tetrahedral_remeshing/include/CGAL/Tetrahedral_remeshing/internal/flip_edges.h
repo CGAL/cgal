@@ -867,7 +867,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 
   //Subdomain index?
   typename C3t3::Subdomain_index subdomain = to_remove[0]->subdomain_index();
-  bool selected = get(m_cell_selector, to_remove[0]);
+  bool selected = get(cell_selector, to_remove[0]);
   visitor.before_flip(to_remove[0]);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -1015,12 +1015,13 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 }
 
 
-template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename CellSelector, typename Visitor>
 Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
                                   const std::vector<typename C3t3::Vertex_handle>& boundary_vertices,
                                   const Flip_Criterion& criterion,
                                   IncCellsVectorMap& inc_cells,
+                                  CellSelector& cell_selector,
                                   Visitor& visitor)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -1069,7 +1070,8 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
       if (curr_max_cosdh <= curr_cost_vpair.first)
         return NO_BEST_CONFIGURATION;
 
-      result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first, inc_cells, visitor);
+      result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first, inc_cells,
+                           cell_selector, visitor);
 
       if (result != NOT_FLIPPABLE)
         flip_performed = true;
@@ -1231,7 +1233,7 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
 template<typename C3T3, typename CellSelector, typename Visitor>
 void flip_edges(C3T3& c3t3,
                 const bool protect_boundaries,
-                CellSelector cell_selector,
+                CellSelector& cell_selector,
                 Visitor& visitor)
 {
   CGAL_USE(protect_boundaries);
