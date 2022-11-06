@@ -46,7 +46,7 @@ public:
   using Line_2      = typename Kernel::Line_2;
   using Line_3      = typename Kernel::Line_3;
   using Plane_3     = typename Kernel::Plane_3;
-  using Triangle_3  = typename Kernel::Triangle_3;
+  using Triangle_2  = typename Kernel::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
   using Intersection_graph = KSR_3::Intersection_graph<Kernel>;
@@ -84,7 +84,7 @@ public:
 private:
   struct Data {
     bool is_bbox;
-    Point_3 centroid;
+    Point_2 centroid;
     Plane_3 plane;
     Mesh mesh;
     V_vector_map direction;
@@ -121,7 +121,7 @@ public:
   }
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox, const FT distance_tolerance) :
+  Support_plane(const PointRange& polygon, const bool is_bbox, const FT distance_tolerance, std::size_t idx) :
   m_data(std::make_shared<Data>()) {
 
     std::vector<Point_3> points;
@@ -137,7 +137,6 @@ public:
 
     FT cx = FT(0), cy = FT(0), cz = FT(0);
     Vector_3 normal = CGAL::NULL_VECTOR;
-    std::vector<Triangle_3> tris(n - 2);
     for (std::size_t i = 0; i < n; ++i) {
       const std::size_t ip = (i + 1) % n;
       const auto& pa = points[i];
@@ -146,32 +145,23 @@ public:
       const FT y = normal.y() + (pa.z() - pb.z()) * (pa.x() + pb.x());
       const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
       normal = Vector_3(x, y, z);
-
-      if (i >= 2)
-        tris[i - 2] = Triangle_3(points[0], points[1], points[i]);
     }
     CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: BBOX IS FLAT!");
     CGAL_assertion(n != 0);
 
     m_data->k = 0;
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
-    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = distance_tolerance;
 
-    add_property_maps();
-  }
-
-  void update_polygon(const std::vector<Point_2>& pts) {
-    CGAL_assertion(pts.size() < 3);
-    std::vector<Triangle_3> tris(pts.size() - 2);
-    Point_3 first = to_3d(pts[0]);
-    Point_3 second = to_3d(pts[1]);
-    for (std::size_t i = 2; i < pts.size(); i++) {
-      tris[i - 2] = Triangle_3(first, second, to_3d(pts[i]));
+    std::vector<Triangle_2> tris(points.size() - 2);
+    for (std::size_t i = 2; i < points.size(); i++) {
+      tris[i - 2] = Triangle_2(to_2d(points[0]), to_2d(points[i - 1]), to_2d(points[i]));
     }
-
+    
     m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
+
+    add_property_maps();
   }
 
   void add_property_maps() {
@@ -363,6 +353,18 @@ public:
     }
   }
 
+  void centroid(Point_2& c) {
+    if (m_data->original_vertices.size() < 2)
+      return;
+    std::vector<Triangle_2> tris(m_data->original_vertices.size() - 2);
+
+    for (std::size_t i = 2; i < m_data->original_vertices.size(); i++) {
+      tris[i-2] = Triangle_2(m_data->original_vertices[0], m_data->original_vertices[i - 1], m_data->original_vertices[i]);
+    }
+
+    c = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
+  }
+
   void get_border(Intersection_graph& igraph, std::vector<IEdge>& border) {
     border.clear();
     auto m = mesh();
@@ -458,12 +460,20 @@ public:
   template<typename Pair>
   std::size_t add_input_polygon(
     const std::vector<Pair>& points,
-    const Point_2& centroid,
-    const std::vector<std::size_t>& input_indices) {
+    const std::vector<std::size_t>& input_indices, std::size_t idx) {
 
     CGAL_assertion(is_simple_polygon(points));
     CGAL_assertion(is_convex_polygon(points));
     CGAL_assertion(is_valid_polygon(points));
+
+    IK_to_EK to_exact;
+
+    CGAL_assertion(points.size() > 3);
+    std::vector<Triangle_2> tris(points.size() - 2);
+    for (std::size_t i = 2; i < points.size(); i++)
+      tris[i - 2] = Triangle_2(points[0].first, points[i - 1].first, points[i].first);
+
+    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
 
     std::vector<Vertex_index> vertices;
     const std::size_t n = points.size();
@@ -474,8 +484,6 @@ public:
     m_data->original_directions.resize(n);
     m_data->original_rays.resize(n);
 
-    m_data->centroid = to_3d(centroid);
-
     FT sum_length = FT(0);
     std::vector<Vector_2> directions;
     directions.reserve(n);
@@ -484,7 +492,7 @@ public:
 
     for (const auto& pair : points) {
       const auto& point = pair.first;
-      directions.push_back(Vector_2(centroid, point));
+      directions.push_back(Vector_2(m_data->centroid, point));
       const FT length = static_cast<FT>(
         CGAL::sqrt(CGAL::to_double(CGAL::abs(directions.back() * directions.back()))));
       sum_length += length;
@@ -502,18 +510,25 @@ public:
         return a.second < b.second;
       });
 
-    IK_to_EK to_exact;
-
     for (std::size_t i = 0; i < n; ++i) {
       const auto& point = points[dir_vec[i].first].first;
       const auto vi = m_data->mesh.add_vertex(point);
       m_data->direction[vi] = directions[dir_vec[i].first] / sum_length;
-      m_data->original_vertices[dir_vec[i].first] = point;
-      m_data->original_vectors[dir_vec[i].first] = directions[dir_vec[i].first] / sum_length;
-      m_data->original_directions[dir_vec[i].first] = Direction_2(directions[dir_vec[i].first]);
-      m_data->original_rays[dir_vec[i].first] = EK::Ray_2(to_exact(point), to_exact(m_data->original_directions[dir_vec[i].first]));
+      m_data->original_vertices[i] = point;
+      m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
+      m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
+      m_data->original_rays[i] = EK::Ray_2(to_exact(point), to_exact(m_data->original_directions[dir_vec[i].first]));
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
+    }
+
+    for (std::size_t i = 0; i < m_data->original_directions.size(); i++) {
+      for (std::size_t j = 0; j < m_data->original_directions.size(); j++) {
+        if (j < i)
+          assert(m_data->original_directions[j] < m_data->original_directions[i]);
+        if (j > i)
+          assert(m_data->original_directions[i] < m_data->original_directions[j]);
+      }
     }
 
     const auto fi = m_data->mesh.add_face(vertices);
@@ -572,7 +587,7 @@ public:
   }
 
   const Plane_3& plane() const { return m_data->plane; }
-  const Point_3& centroid() const { return m_data->centroid; }
+  const Point_2& centroid() const { return m_data->centroid; }
   bool is_bbox() const { return m_data->is_bbox; }
   std::map<IVertex, Vertex_index> &ivertex2pvertex() { return m_data->ivertex2pvertex; }
 
@@ -933,9 +948,9 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
   // TODO: We should put it as a parameter.
   // TODO: Can we make it work for a smaller parameter: e.g. 0.1?
   const FT ptol = a.distance_tolerance();
-  const auto pa1 = a.centroid();
+  const auto pa1 = a.to_3d(a.centroid());
   const auto pb1 = planeb.projection(pa1);
-  const auto pb2 = b.centroid();
+  const auto pb2 = b.to_3d(b.centroid());
   const auto pa2 = planea.projection(pb2);
 
   const FT bval1 = KSR::distance(pa1, pb1);
