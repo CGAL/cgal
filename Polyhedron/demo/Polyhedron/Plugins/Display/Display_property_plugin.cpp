@@ -338,7 +338,10 @@ class DisplayPropertyPlugin :
   typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh, CGAL::Heat_method_3::Intrinsic_Delaunay> Heat_method_idt;
   typedef CGAL::dynamic_vertex_property_t<bool>                        Vertex_source_tag;
   typedef boost::property_map<SMesh, Vertex_source_tag>::type Vertex_source_map;
-
+  enum CurvatureType {
+    MEAN_CURVATURE,
+    GAUSSIAN_CURVATURE,
+};
 public:
 
   bool applicable(QAction* action) const Q_DECL_OVERRIDE
@@ -613,11 +616,11 @@ private Q_SLOTS:
       sm_item->setRenderingMode(Gouraud);
       break;
     case 4: // Interpolated Corrected Mean Curvature
-        displayInterpolatedCurvatureMeasure(sm_item, PMP::MU1_MEAN_CURVATURE_MEASURE);
+        displayInterpolatedCurvatureMeasure(sm_item, MEAN_CURVATURE);
         sm_item->setRenderingMode(Gouraud);
         break;
     case 5: // Interpolated Corrected Gaussian Curvature
-        displayInterpolatedCurvatureMeasure(sm_item, PMP::MU2_GAUSSIAN_CURVATURE_MEASURE);
+        displayInterpolatedCurvatureMeasure(sm_item, GAUSSIAN_CURVATURE);
         sm_item->setRenderingMode(Gouraud);
         break;
     default:
@@ -843,9 +846,11 @@ private Q_SLOTS:
 
   }
 
-  void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item, PMP::Curvature_measure_index mu_index)
+  void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item, CurvatureType mu_index)
   {
-    std::string tied_string = (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)?
+    if (mu_index != MEAN_CURVATURE && mu_index != GAUSSIAN_CURVATURE) return;
+
+    std::string tied_string = (mu_index == MEAN_CURVATURE)?
         "v:interpolated_corrected_mean_curvature": "v:interpolated_corrected_gaussian_curvature";
     SMesh& smesh = *item->face_graph();
 
@@ -860,13 +865,13 @@ private Q_SLOTS:
     if (non_init)
     {
         if (vnm_exists) {
-            if (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)
+            if (mu_index == MEAN_CURVATURE)
                 PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
             else
                 PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius).vertex_normal_map(vnm));
         }
         else {
-            if (mu_index == PMP::MU1_MEAN_CURVATURE_MEASURE)
+            if (mu_index == MEAN_CURVATURE)
                 PMP::interpolated_corrected_mean_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
             else
                 PMP::interpolated_corrected_gaussian_curvature(smesh, mu_i_map, CGAL::parameters::ball_radius(expand_radius));
@@ -887,16 +892,13 @@ private Q_SLOTS:
                 min_index = v;
             }
         }
-        switch (mu_index)
-        {
-        case PMP::MU1_MEAN_CURVATURE_MEASURE:
+        if (mu_index == MEAN_CURVATURE){
             mean_curvature_max[item] = std::make_pair(res_max, max_index);
             mean_curvature_min[item] = std::make_pair(res_min, min_index);
-            break;
-        case PMP::MU2_GAUSSIAN_CURVATURE_MEASURE:
+        }
+        else {
             gaussian_curvature_max[item] = std::make_pair(res_max, max_index);
             gaussian_curvature_min[item] = std::make_pair(res_min, min_index);
-            break;
         }
 
         connect(item, &Scene_surface_mesh_item::itemChanged,
