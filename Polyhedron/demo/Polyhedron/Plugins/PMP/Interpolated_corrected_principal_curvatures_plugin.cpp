@@ -89,7 +89,7 @@ void compute(SMesh* sMesh,
   for (vertex_descriptor v : vertices(*sMesh))
   {
       const PrincipalCurvatureTuple pc = principal_curvature_map[v];
-      max_curvature_magnitude_on_mesh = max(max_curvature_magnitude_on_mesh, max(abs(get<0>(pc)), get<1>(pc)));
+      max_curvature_magnitude_on_mesh = std::max(max_curvature_magnitude_on_mesh, std::max(abs(get<0>(pc)), get<1>(pc)));
   }
 
   for(vertex_descriptor v : vertices(*sMesh))
