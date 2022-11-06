@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   boost::tie(gaussian_curvature_map, created) = g1.add_property_map<vertex_descriptor, Epic_Kernel::FT>("v:gaussian_curvature_map", 0);
   assert(created);
 
-  // we use a tuble of 2 scalar values and 2 vectors for principal curvatures and directions
+  // we use a tuple of 2 scalar values and 2 vectors for principal curvatures and directions
   Surface_Mesh::Property_map<vertex_descriptor, std::tuple<
       Epic_Kernel::FT,
       Epic_Kernel::FT,

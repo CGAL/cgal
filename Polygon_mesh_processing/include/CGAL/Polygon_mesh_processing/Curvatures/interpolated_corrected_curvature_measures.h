@@ -675,7 +675,7 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
 * \ingroup PMP_corrected_curvatures_grp
 *
 * Computes the interpolated corrected mean curvature across the mesh
-* and stores it in a veretex property map `vcm`.
+* and stores it in a vertex property map `vcm`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap model of `WritablePropertyMap` with
@@ -740,7 +740,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 * \ingroup PMP_corrected_curvatures_grp
 *
 * Computes the interpolated corrected gaussian curvature across the mesh
-* and stores it in a veretex property map `vcm`.
+* and stores it in a vertex property map `vcm`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap model of `WritablePropertyMap` with
@@ -804,7 +804,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 * \ingroup PMP_corrected_curvatures_grp
 *
 * Computes the interpolated corrected principal curvatures across the mesh
-* and stores it in a veretex property map `vcm`.
+* and stores it in a vertex property map `vcm`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap model of `WritablePropertyMap` with
