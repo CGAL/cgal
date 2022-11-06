@@ -591,7 +591,7 @@ private:
 
       // Check if the k value is sufficient for crossing the edge.
       unsigned int& k = m_data.support_plane(event.support_plane).k();
-      if (k < crossing)
+      if (k <= crossing)
         return;
 
       // The edge can be crossed.

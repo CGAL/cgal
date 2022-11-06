@@ -656,10 +656,12 @@ public:
 
       kinetic_interval.push_back(std::pair<FT, FT>(0, edge_time[1]));
       for (std::size_t i = upper; i >= lower && i <= upper; i--) {
-        kinetic_interval.push_back(std::pair<FT, FT>(intersections_bary[i - lower], time[i - lower]));
-        if (event.time > time[i - lower] && 0 <= intersections_bary[i - lower] && intersections_bary[i - lower] <= 1) {
-          event.time = time[i - lower];
-          event.intersection_bary = intersections_bary[i - lower];
+        if (0 <= intersections_bary[i - lower] && intersections_bary[i - lower] <= 1) {
+          kinetic_interval.push_back(std::pair<FT, FT>(intersections_bary[i - lower], time[i - lower]));
+          if (event.time > time[i - lower]) {
+            event.time = time[i - lower];
+            event.intersection_bary = intersections_bary[i - lower];
+          }
         }
       }
 
@@ -723,10 +725,12 @@ public:
 
       kinetic_interval.push_back(std::pair<FT, FT>(0, edge_time[0]));
       for (std::size_t i = lower; i <= upper; i++) {
-        kinetic_interval.push_back(std::pair<FT, FT>(intersections_bary[i - lower], time[i - lower]));
-        if (event.time > time[i - lower] && 0 <= intersections_bary[i - lower] && intersections_bary[i - lower] <= 1) {
-          event.time = time[i - lower];
-          event.intersection_bary = intersections_bary[i - lower];
+        if (0 <= intersections_bary[i - lower] && intersections_bary[i - lower] <= 1) {
+          kinetic_interval.push_back(std::pair<FT, FT>(intersections_bary[i - lower], time[i - lower]));
+          if (event.time > time[i - lower] && 0 <= intersections_bary[i - lower] && intersections_bary[i - lower] <= 1) {
+            event.time = time[i - lower];
+            event.intersection_bary = intersections_bary[i - lower];
+          }
         }
       }
 
