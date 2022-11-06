@@ -675,7 +675,7 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
 * \ingroup PMP_corrected_curvatures_grp
 *
 * Computes the interpolated corrected mean curvature across the mesh
-* and stores it in a veretex property map `vcm`.
+* and stores it in a vertex property map `vcm`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap model of `WritablePropertyMap` with
@@ -702,10 +702,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
 
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-    typedef std::unordered_map<face_descriptor, typename GT::FT> FaceMeasureMap_tag;
+    typedef typename boost::property_map<PolygonMesh,
+        CGAL::dynamic_face_property_t<typename GT::FT>>::const_type FaceMeasureMap;
 
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-    typedef std::unordered_map<vertex_descriptor, typename GT::FT> VertexMeasureMap_tag;
+    typedef typename boost::property_map<PolygonMesh,
+        CGAL::dynamic_vertex_property_t<typename GT::FT>>::const_type VertexMeasureMap;
 
     typename GT::FT
         r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0);
@@ -713,13 +715,11 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     if (r == 0)
         r = internal::average_edge_length<PolygonMesh, GT>(pmesh) * EXPANDING_RADIUS_EPSILON;
 
-    FaceMeasureMap_tag mu0_init, mu1_init;
-    boost::associative_property_map<FaceMeasureMap_tag>
-        mu0_map(mu0_init), mu1_map(mu1_init);
+    FaceMeasureMap mu0_map = get(CGAL::dynamic_face_property_t<typename GT::FT>(), pmesh);
+    FaceMeasureMap mu1_map = get(CGAL::dynamic_face_property_t<typename GT::FT>(), pmesh);
 
-    VertexMeasureMap_tag mu0_expand_init, mu1_expand_init;
-    boost::associative_property_map<VertexMeasureMap_tag>
-        mu0_expand_map(mu0_expand_init), mu1_expand_map(mu1_expand_init);
+    VertexMeasureMap mu0_expand_map = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
+    VertexMeasureMap mu1_expand_map = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
 
     internal::interpolated_corrected_measure_mesh(pmesh, mu0_map, internal::MU0_AREA_MEASURE, np);
     internal::interpolated_corrected_measure_mesh(pmesh, mu1_map, internal::MU1_MEAN_CURVATURE_MEASURE, np);
@@ -740,7 +740,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 * \ingroup PMP_corrected_curvatures_grp
 *
 * Computes the interpolated corrected gaussian curvature across the mesh
-* and stores it in a veretex property map `vcm`.
+* and stores it in a vertex property map `vcm`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap model of `WritablePropertyMap` with
@@ -766,10 +766,12 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
 
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-    typedef std::unordered_map<face_descriptor, typename GT::FT> FaceMeasureMap_tag;
+    typedef typename boost::property_map<PolygonMesh,
+        CGAL::dynamic_face_property_t<typename GT::FT>>::const_type FaceMeasureMap;
 
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-    typedef std::unordered_map<vertex_descriptor, typename GT::FT> VertexMeasureMap_tag;
+    typedef typename boost::property_map<PolygonMesh,
+        CGAL::dynamic_vertex_property_t<typename GT::FT>>::const_type VertexMeasureMap;
 
     typename GT::FT
         r = choose_parameter(get_parameter(np, internal_np::ball_radius), 0);
@@ -777,13 +779,11 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     if (r == 0)
         r = internal::average_edge_length<PolygonMesh, GT>(pmesh) * EXPANDING_RADIUS_EPSILON;
 
-    FaceMeasureMap_tag mu0_init, mu2_init;
-    boost::associative_property_map<FaceMeasureMap_tag>
-        mu0_map(mu0_init), mu2_map(mu2_init);
+    FaceMeasureMap mu0_map = get(CGAL::dynamic_face_property_t<typename GT::FT>(), pmesh);
+    FaceMeasureMap mu2_map = get(CGAL::dynamic_face_property_t<typename GT::FT>(), pmesh);
 
-    VertexMeasureMap_tag mu0_expand_init, mu2_expand_init;
-    boost::associative_property_map<VertexMeasureMap_tag>
-        mu0_expand_map(mu0_expand_init), mu2_expand_map(mu2_expand_init);
+    VertexMeasureMap mu0_expand_map = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
+    VertexMeasureMap mu2_expand_map = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
 
     internal::interpolated_corrected_measure_mesh(pmesh, mu0_map, internal::MU0_AREA_MEASURE, np);
     internal::interpolated_corrected_measure_mesh(pmesh, mu2_map, internal::MU2_GAUSSIAN_CURVATURE_MEASURE, np);
@@ -804,7 +804,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 * \ingroup PMP_corrected_curvatures_grp
 *
 * Computes the interpolated corrected principal curvatures across the mesh
-* and stores it in a veretex property map `vcm`.
+* and stores it in a vertex property map `vcm`.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
 * @tparam VertexCurvatureMap model of `WritablePropertyMap` with

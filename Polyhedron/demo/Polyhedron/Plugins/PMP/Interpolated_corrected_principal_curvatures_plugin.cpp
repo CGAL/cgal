@@ -72,23 +72,23 @@ void compute(SMesh* sMesh,
   typename boost::property_map<SMesh, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, *sMesh);
 
   bool created = false;
-  SMesh::Property_map<vertex_descriptor, PrincipalCurvatureTuple> principle_curvature_map;
+  SMesh::Property_map<vertex_descriptor, PrincipalCurvatureTuple> principal_curvature_map;
 
-  boost::tie(principle_curvature_map, created) = sMesh->add_property_map<vertex_descriptor, PrincipalCurvatureTuple>
-      ("v:principle_curvature_map", { 0, 0,
+  boost::tie(principal_curvature_map, created) = sMesh->add_property_map<vertex_descriptor, PrincipalCurvatureTuple>
+      ("v:principal_curvature_map", { 0, 0,
               Vector(0,0,0),
               Vector(0,0,0)});
       assert(created);
 
   PMP::interpolated_corrected_principal_curvatures(
       *sMesh,
-      principle_curvature_map
+      principal_curvature_map
   );
 
   typename EpicKernel::FT max_curvature_magnitude_on_mesh = 0;
   for (vertex_descriptor v : vertices(*sMesh))
   {
-      const PrincipalCurvatureTuple pc = principle_curvature_map[v];
+      const PrincipalCurvatureTuple pc = principal_curvature_map[v];
       max_curvature_magnitude_on_mesh = max(max_curvature_magnitude_on_mesh, max(abs(get<0>(pc)), get<1>(pc)));
   }
 
@@ -114,7 +114,7 @@ void compute(SMesh* sMesh,
         avg_edge_length /= n;
     }
 
-    const PrincipalCurvatureTuple pc = principle_curvature_map[v];
+    const PrincipalCurvatureTuple pc = principal_curvature_map[v];
 
     Vector umin = (std::get<0>(pc)/ max_curvature_magnitude_on_mesh) * std::get<2>(pc) * avg_edge_length;
     Vector umax = (std::get<1>(pc)/ max_curvature_magnitude_on_mesh) * std::get<3>(pc) * avg_edge_length;

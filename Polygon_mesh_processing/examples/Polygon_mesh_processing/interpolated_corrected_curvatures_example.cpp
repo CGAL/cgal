@@ -37,20 +37,20 @@ int main(int argc, char* argv[])
   boost::tie(gaussian_curvature_map, created) = g1.add_property_map<vertex_descriptor, Epic_Kernel::FT>("v:gaussian_curvature_map", 0);
   assert(created);
 
-  // we use a tuble of 2 scalar values and 2 vectors for principal curvatures and directions
+  // we use a tuple of 2 scalar values and 2 vectors for principal curvatures and directions
   Surface_Mesh::Property_map<vertex_descriptor, std::tuple<
       Epic_Kernel::FT,
       Epic_Kernel::FT,
       Epic_Kernel::Vector_3,
       Epic_Kernel::Vector_3
-      >> principle_curvature_map;
+      >> principal_curvature_map;
 
-  boost::tie(principle_curvature_map, created) = g1.add_property_map<vertex_descriptor, std::tuple<
+  boost::tie(principal_curvature_map, created) = g1.add_property_map<vertex_descriptor, std::tuple<
       Epic_Kernel::FT,
       Epic_Kernel::FT,
       Epic_Kernel::Vector_3,
       Epic_Kernel::Vector_3
-      >>("v:principle_curvature_map", { 0, 0,
+      >>("v:principal_curvature_map", { 0, 0,
           Epic_Kernel::Vector_3 (0,0,0),
           Epic_Kernel::Vector_3 (0,0,0)});
   assert(created);
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 
   // uncomment this to compute a curvature while specifying named parameters
   // Example: an expansion ball radius of 0.5 and a vertex normals map (does not have to depend on positions)
-  
+
   /*Surface_Mesh::Property_map<vertex_descriptor, Epic_Kernel::Vector_3> vnm;
   boost::tie(vnm, created) = g1.add_property_map<vertex_descriptor, Epic_Kernel::Vector_3>(
       "v:vnm", Epic_Kernel::Vector_3(0, 0, 0)
@@ -82,12 +82,12 @@ int main(int argc, char* argv[])
   );
   PMP::interpolated_corrected_principal_curvatures(
       g1,
-      principle_curvature_map
+      principal_curvature_map
   );
 
   for (vertex_descriptor v : vertices(g1))
   {
-    auto PC = principle_curvature_map[v];
+    auto PC = principal_curvature_map[v];
       std::cout << v.idx() << ": HC = " << mean_curvature_map[v]
                            << ", GC = " << gaussian_curvature_map[v] << "\n"
                            << ", PC = [ " << std::get<0>(PC) << " , " << std::get<1>(PC) << " ]\n";

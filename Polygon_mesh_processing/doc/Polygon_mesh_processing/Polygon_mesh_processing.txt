@@ -922,7 +922,7 @@ and store them in property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example.cpp}
 
-\subsubsection NormalsExampleNP Interpolated Corrected Curvature on a Polyhedron
+\subsubsection ICCExamplePH Interpolated Corrected Curvature on a Polyhedron
 
 The following example illustrates how to
 compute the curvatures on vertices
