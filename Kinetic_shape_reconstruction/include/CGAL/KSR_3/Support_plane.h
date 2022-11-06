@@ -158,7 +158,7 @@ public:
     for (std::size_t i = 2; i < points.size(); i++) {
       tris[i - 2] = Triangle_2(to_2d(points[0]), to_2d(points[i - 1]), to_2d(points[i]));
     }
-    
+
     m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
 
     add_property_maps();
@@ -517,7 +517,7 @@ public:
       m_data->original_vertices[i] = point;
       m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
       m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
-      m_data->original_rays[i] = EK::Ray_2(to_exact(point), to_exact(m_data->original_directions[dir_vec[i].first]));
+      m_data->original_rays[i] = EK::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
     }
