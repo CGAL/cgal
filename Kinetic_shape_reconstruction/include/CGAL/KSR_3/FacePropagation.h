@@ -552,9 +552,9 @@ private:
   }
 
   void apply(const FaceEvent& event) {
-    std::cout << "support plane: " << event.support_plane << " edge: " << event.crossed_edge << " t: " << event.time << std::endl;
+    //std::cout << "support plane: " << event.support_plane << " edge: " << event.crossed_edge << " t: " << event.time << std::endl;
     if (m_data.igraph().face(event.face).part_of_partition) {
-      std::cout << " face already crossed, skipping event" << std::endl;
+      //std::cout << " face already crossed, skipping event" << std::endl;
       return;
     }
 

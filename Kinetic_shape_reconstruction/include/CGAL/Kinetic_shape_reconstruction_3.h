@@ -182,6 +182,7 @@ public:
     std::tie(num_queue_calls, m_num_events) = propagation.propagate(time_step);
     timer.stop();
     const double time_to_propagate = timer.time();
+    std::cout << time_to_propagate << "s for propagation" << std::endl;
 
     if (m_parameters.verbose) {
       std::cout << "* propagation finished" << std::endl;
@@ -196,7 +197,9 @@ public:
     // Finalization.
     timer.reset();
     timer.start();
-    if (m_parameters.debug) dump(m_data, "jiter-final-a-result");
+    if (m_parameters.debug) dump(m_data, "final-" + m_parameters.k);
+
+    return true;
 
     Finalizer finalizer(m_data, m_parameters);
     //finalizer.clean();
@@ -235,7 +238,6 @@ public:
       std::cout << "* finalization: " << time_to_finalize << std::endl;
       std::cout << "* total time: " << total_time << std::endl;
     }
-    return true;
   }
 
 

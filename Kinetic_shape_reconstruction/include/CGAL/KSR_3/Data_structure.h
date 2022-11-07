@@ -506,16 +506,16 @@ public:
 
     //std::cout << "kinetic segments on intersection line" << std::endl;
 
-    std::cout << edge << std::endl;
-    std::cout << point_3(m_intersection_graph.source(edge)) << " ";
-    std::cout << point_3(m_intersection_graph.target(edge)) << std::endl;
-    std::cout << std::endl;
+    //std::cout << edge << std::endl;
+    //std::cout << point_3(m_intersection_graph.source(edge)) << " ";
+    //std::cout << point_3(m_intersection_graph.target(edge)) << std::endl;
+    //std::cout << std::endl;
 
-    std::cout << "centroid source" << std::endl;
-    std::cout << point_3(m_intersection_graph.source(edge)) << " " << sp.to_3d(sp.data().centroid) << std::endl;
-    std::cout << "centroid target" << std::endl;
-    std::cout << point_3(m_intersection_graph.target(edge)) << " " << sp.to_3d(sp.data().centroid) << std::endl;
-    std::cout << std::endl;
+    //std::cout << "centroid source" << std::endl;
+    //std::cout << point_3(m_intersection_graph.source(edge)) << " " << sp.to_3d(sp.data().centroid) << std::endl;
+    //std::cout << "centroid target" << std::endl;
+    //std::cout << point_3(m_intersection_graph.target(edge)) << " " << sp.to_3d(sp.data().centroid) << std::endl;
+    //std::cout << std::endl;
 
     // Just intersect all vertex rays with the line of the edge and interpolate? accurate? It is linear, so it should be accurate.
     Point_2 s = sp.to_2d(point_3(m_intersection_graph.source(edge)));
@@ -541,16 +541,9 @@ public:
     else
       event.face = faces.first;
 
-    //original_directions is ordered in ascending order
-
-    Vector_2 tos = s - centroid;
-    tos = tos * (1.0 / sqrt(tos * tos));
-    Vector_2 tot = t - centroid;
-    tot = tot * (1.0 / sqrt(tot * tot));
-
     for (std::size_t i = 0; i < sp.data().original_directions.size(); i++) {
       Vector_2 tmp = sp.data().original_directions[i].vector();
-      std::cout << "2 " << sp.to_3d(centroid + tmp) << " " << sp.to_3d(centroid) <<  std::endl;
+      //std::cout << "2 " << sp.to_3d(centroid + tmp) << " " << sp.to_3d(centroid) <<  std::endl;
       //std::cout << sp.to_3d(sp.data().original_vertices[i]) << " " << sp.data().centroid << std::endl;
       if (source_idx == -1 && sp.data().original_directions[i] > to_source)
         source_idx = i;
@@ -584,17 +577,15 @@ public:
       const EK::Point_2* p = nullptr;
       if (p = boost::get<EK::Point_2>(&*result)) {
         FT l = CGAL::sqrt(sp.data().original_vectors[idx].squared_length());
-        std::cout << "i " << sp.to_3d(to_inexact(sp.data().original_rays[idx].point(0))) << " " << sp.to_3d(to_inexact(*p)) << std::endl;
+        //std::cout << "i " << sp.to_3d(to_inexact(sp.data().original_rays[idx].point(0))) << " " << sp.to_3d(to_inexact(*p)) << std::endl;
         double l2 = CGAL::to_double((*p - sp.data().original_rays[idx].point(0)).squared_length());
         time[i] = l2 / l;
-        CGAL_assertion(0 < time[i]);
+        CGAL_assertion(0 <= time[i]);
         intersections[i] = to_inexact(*p);
         intersections_bary[i] = ((to_inexact(*p) - s) * segment) / segment_length;
         //std::cout << "intersection t:" << time[i] << " at " << intersections_bary[i] << " p: " << sp.to_3d(intersections[i]) << std::endl;
       }
-      else {
-        std::cout << "no intersection, NYI" << std::endl;
-      }
+      // If the intersection is a segment, it can be safely ignored as there are also two intersections with the adjacent edges.
     }
 
     // Calculate pedge vs ivertex collision
@@ -604,10 +595,10 @@ public:
     if (source_idx == upper) {
       // Moving direction of pedges is orthogonal to their direction
       // Direction of pedge 1
-      std::cout << "lower for source_idx == upper:" << std::endl;
-      std::cout << sp.to_3d(sp.data().original_vertices[lower]) << " ";
-      std::cout << sp.to_3d(sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()]) << std::endl;
-      std::cout << "target: " << point_3(m_intersection_graph.target(edge)) << " ";
+      //std::cout << "lower for source_idx == upper:" << std::endl;
+      //std::cout << sp.to_3d(sp.data().original_vertices[lower]) << " ";
+      //std::cout << sp.to_3d(sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()]) << std::endl;
+      //std::cout << "target: " << point_3(m_intersection_graph.target(edge)) << " ";
       Vector_2 dir = sp.data().original_vertices[lower] - sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()];
       // Normalize
       dir = dir / CGAL::sqrt(dir * dir);
@@ -622,16 +613,16 @@ public:
       // Distance from edge to endpoint of iedge
       FT dist = (t - sp.data().original_vertices[lower]) * dir;
       Point_3 vis = sp.to_3d(t - (dist * dir));
-      std::cout << vis << std::endl;
+      //std::cout << vis << std::endl;
       edge_time[0] = dist / speed;
-      CGAL_assertion(0 < edge_time[0]);
+      CGAL_assertion(0 <= edge_time[0]);
       //std::cout << "time: " << edge_time[0] << std::endl;
 
       // Same for the upper boundary edge.
-      std::cout << "upper for source_idx == upper:" << std::endl;
-      std::cout << sp.to_3d(sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()]) << " ";
-      std::cout << sp.to_3d(sp.data().original_vertices[upper]) << std::endl;
-      std::cout << "source: " << point_3(m_intersection_graph.source(edge)) << " ";
+      //std::cout << "upper for source_idx == upper:" << std::endl;
+      //std::cout << sp.to_3d(sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()]) << " ";
+      //std::cout << sp.to_3d(sp.data().original_vertices[upper]) << std::endl;
+      //std::cout << "source: " << point_3(m_intersection_graph.source(edge)) << " ";
       dir = sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()] - sp.data().original_vertices[upper];
       // Normalize
       dir = dir / CGAL::sqrt(dir * dir);
@@ -646,9 +637,9 @@ public:
       // Distance from edge to endpoint of iedge
       dist = (s - sp.data().original_vertices[upper]) * dir;
       vis = sp.to_3d(s - (dist * dir));
-      std::cout << vis << std::endl;
+      //std::cout << vis << std::endl;
       edge_time[1] = dist / speed;
-      CGAL_assertion(0 < edge_time[1]);
+      CGAL_assertion(0 <= edge_time[1]);
       //std::cout << "time: " << edge_time[1] << std::endl;
 
       event.time = edge_time[1];
@@ -673,10 +664,10 @@ public:
     }
     else {
       // Moving direction of pedges is orthogonal to their direction
-      std::cout << "lower for source_idx == lower:" << std::endl;
-      std::cout << sp.to_3d(sp.data().original_vertices[lower]) << " ";
-      std::cout << sp.to_3d(sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()]) << std::endl;
-      std::cout << "source: " << point_3(m_intersection_graph.source(edge)) << " ";
+      //std::cout << "lower for source_idx == lower:" << std::endl;
+      //std::cout << sp.to_3d(sp.data().original_vertices[lower]) << " ";
+      //std::cout << sp.to_3d(sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()]) << std::endl;
+      //std::cout << "source: " << point_3(m_intersection_graph.source(edge)) << " ";
       Vector_2 dir = sp.data().original_vertices[lower] - sp.data().original_vertices[(lower + 1) % sp.data().original_directions.size()];
       // Normalize
       dir = dir / CGAL::sqrt(dir * dir);
@@ -691,16 +682,16 @@ public:
       // Distance from edge to endpoint of iedge
       FT dist = (s - sp.data().original_vertices[lower]) * dir;
       Point_3 vis = sp.to_3d(s - (dist * dir));
-      std::cout << vis << std::endl;
+      //std::cout << vis << std::endl;
       edge_time[0] = dist / speed;
-      CGAL_assertion(0 < edge_time[0]);
+      CGAL_assertion(0 <= edge_time[0]);
       //std::cout << "time: " << edge_time[0] << std::endl;
 
       // Same for the upper boundary edge.
-      std::cout << "upper for source_idx == lower:" << std::endl;
-      std::cout << sp.to_3d(sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()]) << " ";
-      std::cout << sp.to_3d(sp.data().original_vertices[upper]) << std::endl;
-      std::cout << "target: " << point_3(m_intersection_graph.target(edge)) << " ";
+      //std::cout << "upper for source_idx == lower:" << std::endl;
+      //std::cout << sp.to_3d(sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()]) << " ";
+      //std::cout << sp.to_3d(sp.data().original_vertices[upper]) << std::endl;
+      //std::cout << "target: " << point_3(m_intersection_graph.target(edge)) << " ";
       dir = sp.data().original_vertices[(upper + sp.data().original_directions.size() - 1) % sp.data().original_directions.size()] - sp.data().original_vertices[upper];
       // Normalize
       dir = dir / CGAL::sqrt(dir * dir);
@@ -715,9 +706,9 @@ public:
       // Distance from edge to endpoint of iedge
       dist = (t - sp.data().original_vertices[upper]) * dir;
       vis = sp.to_3d(t - (dist * dir));
-      std::cout << vis << std::endl;
+      //std::cout << vis << std::endl;
       edge_time[1] = dist / speed;
-      CGAL_assertion(0 < edge_time[1]);
+      CGAL_assertion(0 <= edge_time[1]);
       //std::cout << "time: " << edge_time[1] << std::endl;
 
       event.time = edge_time[0];
@@ -741,7 +732,7 @@ public:
       }
     }
 
-    std::cout << "new event: sp " << event.support_plane << " f " << event.face << " edge " << event.crossed_edge << " t " << event.time << std::endl;
+    //std::cout << "new event: sp " << event.support_plane << " f " << event.face << " edge " << event.crossed_edge << " t " << event.time << std::endl;
 
     CGAL_assertion(0 <= event.intersection_bary && event.intersection_bary <= 1);
 
@@ -1080,7 +1071,7 @@ public:
     CGAL_assertion(points.size() == polygon.size());
 
     preprocess(points);
-    //const auto centroid = sort_points_by_direction(points);
+    sort_points_by_direction(points);
     support_plane(support_plane_idx).
       add_input_polygon(points, input_indices, support_plane_idx);
     for (const std::size_t input_index : input_indices) {
@@ -1202,21 +1193,6 @@ public:
 
   template<typename Pair>
   void sort_points_by_direction(std::vector<Pair>& points) const {
-
-    // Naive version.
-    // const auto centroid = CGAL::centroid(points.begin(), points.end());
-
-    // Better version.
-    // using TRI = CGAL::Delaunay_triangulation_2<Kernel>;
-    // TRI tri(points.begin(), points.end());
-    // std::vector<Triangle_2> triangles;
-    // triangles.reserve(tri.number_of_faces());
-    // for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-    //   triangles.push_back(Triangle_2(
-    //       fit->vertex(0)->point(), fit->vertex(1)->point(), fit->vertex(2)->point()));
-    // }
-    // const auto centroid = CGAL::centroid(triangles.begin(), triangles.end());
-
     FT x = FT(0), y = FT(0);
     for (const auto& pair : points) {
       const auto& point = pair.first;
@@ -1225,15 +1201,14 @@ public:
     }
     x /= static_cast<FT>(points.size());
     y /= static_cast<FT>(points.size());
-    const Point_2 centroid(x, y);
+    const Point_2 mid(x, y);
 
     std::sort(points.begin(), points.end(),
     [&](const Pair& a, const Pair& b) -> bool {
-      const Segment_2 sega(centroid, a.first);
-      const Segment_2 segb(centroid, b.first);
+      const Segment_2 sega(mid, a.first);
+      const Segment_2 segb(mid, b.first);
       return ( Direction_2(sega) < Direction_2(segb) );
     });
-    return centroid;
   }
 
   /*******************************

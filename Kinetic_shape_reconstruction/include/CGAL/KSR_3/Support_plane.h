@@ -399,7 +399,7 @@ public:
     if (n == Mesh::null_halfedge()) {
       std::cout << " NULL_HALFEDGE!";
     }
-    std::cout << "edges: " << border.size() << std::endl;
+    //std::cout << "edges: " << border.size() << std::endl;
   }
 
   void get_border(Intersection_graph& igraph, const Face_index &fi, std::vector<IEdge>& border) {
@@ -420,7 +420,7 @@ public:
     if (h == Mesh::null_halfedge()) {
       std::cout << " NULL_HALFEDGE!";
     }
-    std::cout << "edges: " << border.size() << std::endl;
+    //std::cout << "edges: " << border.size() << std::endl;
   }
 
   Data& data() { return *m_data; }

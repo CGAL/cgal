@@ -117,7 +117,7 @@ public:
     const bool should_be_removed = false;
     std::size_t num_hanging_pfaces = detect_hanging_pfaces(should_be_removed);
 
-    if (num_hanging_pfaces >= stop_value) {
+    if (false && num_hanging_pfaces >= stop_value) {
       if (m_parameters.verbose) {
         std::cout << "* number of hanging pfaces: " << num_hanging_pfaces << std::endl;
       }

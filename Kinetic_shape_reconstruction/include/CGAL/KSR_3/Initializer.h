@@ -90,7 +90,10 @@ public:
   typename PolygonMap>
   double initialize(const InputRange& input_range, const PolygonMap polygon_map) {
 
+    Timer timer;
     FT time_step;
+    timer.reset();
+    timer.start();
     std::array<Point_3, 8> bbox;
     create_bounding_box(
       input_range, polygon_map,
@@ -99,10 +102,13 @@ public:
     if (m_parameters.verbose) {
       std::cout << "* precomputed time_step: " << time_step << std::endl;
     }
+    const double time_to_bbox = timer.time();
 
     std::vector< std::vector<Point_3> > bbox_faces;
     bounding_box_to_polygons(bbox, bbox_faces);
+    const double time_to_bbox_poly = timer.time();
     add_polygons(input_range, polygon_map, bbox_faces);
+    const double time_to_add_polys = timer.time();
 
     m_data.igraph().finished_bbox();
 
@@ -114,17 +120,22 @@ public:
 
     CGAL_assertion(m_data.check_integrity(false));
     make_polygons_intersection_free();
+    const double time_to_intersection = timer.time();
 
     // Generation of ifaces
     create_ifaces();
+    const double time_to_ifaces = timer.time();
 
     initial_polygon_iedge_intersections();
+    const double time_to_initial_intersections = timer.time();
 
     map_polygon_to_ifaces();
+    const double time_to_map_ifaces = timer.time();
 
     // Starting from here the intersection graph is const, it won't change anymore.
     CGAL_assertion(m_data.check_integrity(false));
     set_k_intersections(m_parameters.k);
+    const double time_to_set_k = timer.time();
 
     if (m_parameters.verbose) std::cout << "done" << std::endl;
     if (m_parameters.debug) {
@@ -143,10 +154,21 @@ public:
     // }
 
     CGAL_assertion(m_data.check_bbox());
-    m_data.set_limit_lines();
+    //m_data.set_limit_lines();
     m_data.precompute_iedge_data();
+    const double time_to_precompute = timer.time();
     CGAL_assertion(m_data.check_integrity());
     CGAL_assertion(m_data.check_intersection_graph());
+
+    std::cout << time_to_bbox << "s for bbox" << std::endl;
+    std::cout << (time_to_bbox_poly - time_to_bbox) << "s for bbox poly" << std::endl;
+    std::cout << (time_to_add_polys - time_to_bbox_poly) << "s for add poly" << std::endl;
+    std::cout << (time_to_intersection - time_to_add_polys) << "s for intersection free" << std::endl;
+    std::cout << (time_to_ifaces - time_to_intersection) << "s for ifaces" << std::endl;
+    std::cout << (time_to_initial_intersections - time_to_ifaces) << "s for initial intersections" << std::endl;
+    std::cout << (time_to_map_ifaces - time_to_initial_intersections) << "s for map ifaces" << std::endl;
+    std::cout << (time_to_set_k - time_to_map_ifaces) << "s for set k" << std::endl;
+    std::cout << (time_to_precompute - time_to_set_k) << "s for precompute iedge data" << std::endl;
 
     return CGAL::to_double(time_step);
   }
@@ -1146,7 +1168,7 @@ void initial_polygon_iedge_intersections() {
       Polygon_splitter splitter(m_data, m_parameters);
       splitter.split_support_plane(i);
       // if (i >= 6 && m_parameters.export_all) {
-      KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
+      //KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
       // }
     }
     // exit(EXIT_SUCCESS);
@@ -1160,7 +1182,7 @@ void initial_polygon_iedge_intersections() {
 
     for (std::size_t i = 6; i < m_data.support_planes().size(); i++) {
       auto& sp = m_data.support_plane(i);
-      std::cout << "Support plane " << i << " has " << sp.mesh().faces().size() << " faces" << std::endl;
+      //std::cout << "Support plane " << i << " has " << sp.mesh().faces().size() << " faces" << std::endl;
       CGAL_assertion(sp.mesh().faces().size() == 1);
 
       // Turn single PFace into Polygon_2
@@ -1198,10 +1220,10 @@ void initial_polygon_iedge_intersections() {
         }
         j++;
       }
-      std::cout << "Support plane " << i << " has faces: ";
-      for (auto f : faces)
-        std::cout << f << " ";
-      std::cout << std::endl;
+      //std::cout << "Support plane " << i << " has faces: ";
+      //for (auto f : faces)
+      //  std::cout << f << " ";
+      //std::cout << std::endl;
 
       // Setting crossed edges
 /*
@@ -1225,7 +1247,7 @@ void initial_polygon_iedge_intersections() {
         }
       }*/
 
-      dump_2d_surface_mesh(m_data, i, "map-surface-mesh-" + std::to_string(i));
+      //dump_2d_surface_mesh(m_data, i, "map-surface-mesh-" + std::to_string(i));
     }
   }
 
