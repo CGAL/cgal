@@ -20,7 +20,7 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-// Stops when the ratio of initial to current number of edges is below some value.
+// Stops when the ratio of initial to current number of faces is below some value.
 template<class TM_>
 class Face_count_ratio_stop_predicate
 {
