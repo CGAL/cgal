@@ -1014,6 +1014,8 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   ok = true;
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
+
+  //read a nrrd file
   if (fileinfo.suffix() == "nrrd")
   {
 #ifdef CGAL_USE_VTK
@@ -1030,6 +1032,15 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     return QList<Scene_item*>();
 #endif
   }
+
+  //read a sep file
+  else if (fileinfo.suffix() == "H" || fileinfo.suffix() == "HH")
+  {
+    CGAL::SEP_to_ImageIO<float> reader(fileinfo.filePath().toUtf8().data());
+    *image = *reader.cgal_image();
+    is_gray = true;
+  }
+
   else if(fileinfo.suffix() != "H" && fileinfo.suffix() != "HH" &&
      !image->read(fileinfo.filePath().toUtf8()))
     {
@@ -1119,13 +1130,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
         return QList<Scene_item*>();
       }
     }
-  //read a sep file
-  else if(fileinfo.suffix() == "H" || fileinfo.suffix() == "HH")
-  {
-    CGAL::SEP_to_ImageIO<float> reader(fileinfo.filePath().toUtf8().data());
-    *image = *reader.cgal_image();
-    is_gray = true;
-  }
+
   // Get display precision
   QDialog dialog;
   ui.setupUi(&dialog);
