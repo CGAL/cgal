@@ -202,7 +202,7 @@ public:
     : sm_(pm.sm_)
     {}
 
-  reference operator[](key_type v)
+  reference operator[](key_type v) const
   {
 #if defined(CGAL_USE_OM_POINTS)
     return sm_->point(v);
