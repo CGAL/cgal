@@ -1356,7 +1356,7 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
     return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
   }
 
-  static constexpr bool has_normal_map(const Point_set_3<Point, Vector>&, const NamedParameters&)
+  static constexpr bool has_normal_map()
   {
     return true;//either available in np, or in point set
   }
