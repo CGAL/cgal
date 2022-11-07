@@ -454,7 +454,7 @@ private:
     double weight;
   };
 
-  NT determinant(Point_2& v0, Point_2& v1) const
+  NT determinant(const Point_2& v0, const Point_2& v1) const
   {
     return (v0.x() * v1.y() - v1.x() * v0.y());
   }
@@ -465,8 +465,8 @@ private:
     const NT det0 = determinant(uv1, uv2);
     const NT det1 = determinant(uv2, uv0);
     const NT det2 = determinant(uv0, uv1);
-    const NT det3 = CGAL::determinant(Vector_2<Kernel>(uv1.x()-uv0.x(), uv1.y()-uv0.y()),
-                                      Vector_2<Kernel>(uv2.x()-uv0.x(), uv2.y()-uv0.y()));
+    NT det3 = CGAL::determinant(Vector_2<Kernel>(uv1.x()-uv0.x(), uv1.y()-uv0.y()),
+                                Vector_2<Kernel>(uv2.x()-uv0.x(), uv2.y()-uv0.y()));
     CGAL_assertion(det3 > NT(0));
     if(det3 <= NT(0))
       det3 = NT(1);
@@ -503,7 +503,7 @@ private:
     {
       Neighbor_list NL;
       NL.vertex = *v_j;
-      NL.vector = Vector_3(get(ppmap, v), tmesh.point(*v_j));
+      NL.vector = Vector_3(get(ppmap, v), get(ppmap, *v_j));
       NL.length = sqrt(NL.vector.squared_length());
       neighbor_list.push_back(NL);
       ++neighborsCounter;
@@ -617,9 +617,6 @@ private:
     const PPM_ref position_v_i = get(ppmap, main_vertex_v_i);
     const PPM_ref position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    const Vector_3 edge = position_v_i - position_v_j;
-    const NT squared_length = edge * edge;
-
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     --previous_vertex_v_k;
     const PPM_ref position_v_k = get(ppmap, *previous_vertex_v_k);
@@ -628,14 +625,10 @@ private:
     ++next_vertex_v_l;
     const PPM_ref position_v_l = get(ppmap, *next_vertex_v_l);
 
-    NT weight = NT(0);
-    CGAL_assertion(squared_length > NT(0)); // two points are identical!
-    if(squared_length != NT(0)) {
-      // This version was commented out to be an alternative weight
-      // in the original code by authors.
-      // weight = CGAL::Weights::authalic_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
-      weight = CGAL::Weights::cotangent_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
-    }
+    // This version was commented out to be an alternative weight in the original code by authors.
+//    NT weight = CGAL::Weights::authalic_weight(position_v_l, position_v_j, position_v_k, position_v_i) / NT(2);
+    NT weight = CGAL::Weights::cotangent_weight(position_v_l, position_v_j, position_v_k, position_v_i) / NT(2);
+
     return weight;
   }
 
@@ -699,7 +692,7 @@ private:
                                               VertexIndexMap& vimap) const
   {
     auto vpm = get_const_property_map(CGAL::vertex_point, tmesh);
-    const CGAL::Weights::Edge_tangent_weight<Triangle_mesh, decltype(vpm)> compute_mvc(tmesh, vpm);
+    const CGAL::Weights::Edge_tangent_weight<Triangle_mesh, decltype(vpm), Kernel> weight_calc(tmesh, vpm, Kernel());
 
     const int i = get(vimap, v);
 
@@ -709,7 +702,7 @@ private:
 
     for(halfedge_descriptor h : CGAL::halfedges_around_target(v, tmesh))
     {
-      NT w_ij = NT(-1) * compute_mvc(h);
+      NT w_ij = NT(-1) * weight_calc(h);
       // w_ii = - sum of w_ijs
       w_ii -= w_ij;
 
