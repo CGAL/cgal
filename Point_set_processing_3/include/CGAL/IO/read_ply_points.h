@@ -262,8 +262,8 @@ bool read_PLY(std::istream& is,
   NormalMap normal_map = NP_helper::get_normal_map(np);
 
   return read_PLY_with_properties(is, output,
-                                    make_ply_point_reader(point_map),
-                                    make_ply_normal_reader(normal_map));
+                                  make_ply_point_reader(point_map),
+                                  make_ply_normal_reader(normal_map));
 }
 
 /**
