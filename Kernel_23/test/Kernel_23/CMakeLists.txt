@@ -31,7 +31,6 @@ create_single_source_cgal_program("test_kernel__.cpp")
 create_single_source_cgal_program("test_projection_traits.cpp")
 create_single_source_cgal_program("test_Projection_traits_xy_3_Intersect_2.cpp")
 
-set(CGAL_KERNEL_23_TEST_RT_FT_PREDICATE_FLAGS ON)
 if(CGAL_KERNEL_23_TEST_RT_FT_PREDICATE_FLAGS)
   # Templated operators:
   # - create a lot of possible combinations, which is expensive to test
