@@ -350,7 +350,7 @@ public:
         element.assign(r, "red");
         element.assign(g, "green");
         element.assign(b, "blue");
-        } else if(element.has_property("red", rf))
+      } else if(element.has_property("red", rf))
       {
         element.assign(rf, "red");
         element.assign(gf, "green");
