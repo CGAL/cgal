@@ -78,6 +78,28 @@ _test_new_3_sqrt(const R& rep, CGAL::Tag_true)
   return true;
 }
 
+template <bool b = false> struct Test_needs_FT
+{
+  template <typename ...T> void operator()(const T&...) const {}
+};
+
+template <> struct Test_needs_FT<true>
+{
+  template <typename Compare_distance_3,
+            typename Point_3, typename Segment_3, typename Line_3>
+  void operator()(const Compare_distance_3& compare_dist,
+                  const Point_3& p1, const Point_3 p2, const Point_3& p3,
+                  const Segment_3& s2, const Line_3& l1) const
+  {
+    assert(!compare_dist.needs_FT(p1, p2, p3));
+    assert(!compare_dist.needs_FT(p2, s2, s2));
+    assert(!compare_dist.needs_FT(p2, p2, s2));
+    assert(!compare_dist.needs_FT(p1, s2, p2));
+    assert(compare_dist.needs_FT(l1, p1, p1));
+    assert(compare_dist.needs_FT(p2, p3, p2, p3));
+    assert(compare_dist.needs_FT(p2, s2, l1, s2));
+  }
+};
 
 template <class R>
 bool
@@ -612,17 +634,10 @@ test_new_3(const R& rep)
   tmp34ab = compare_dist(p2,p3,p2,p3);
   tmp34ab = compare_dist(p1, p2, p3, p4);
   tmp34ab = compare_dist(l2, p1, p1);
-  if constexpr (R::Has_filtered_predicates &&
-                has_needs_FT<typename R::Compare_distance_3>::value)
-{
-    assert(!compare_dist.needs_FT(p1, p2, p3));
-    assert(!compare_dist.needs_FT(p2, s2, s2));
-    assert(!compare_dist.needs_FT(p2, p2, s2));
-    assert(!compare_dist.needs_FT(p1, s2, p2));
-    assert(compare_dist.needs_FT(l1, p1, p1));
-    assert(compare_dist.needs_FT(p2, p3, p2, p3));
-    assert(compare_dist.needs_FT(p2, s2, l1, s2));
-  }
+
+  Test_needs_FT<R::Has_filtered_predicates &&
+      has_needs_FT<typename R::Compare_distance_3>::value> test_needs_ft;
+  test_needs_ft(compare_dist, p1, p2, p3, s2, l1);
   (void) tmp34ab;
 
   typename R::Compare_squared_distance_3 compare_sq_dist
