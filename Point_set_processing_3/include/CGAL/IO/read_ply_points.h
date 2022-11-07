@@ -258,8 +258,6 @@ bool read_PLY(std::istream& is,
   typedef typename NP_helper::Point_map PointMap;
   typedef typename NP_helper::Normal_map NormalMap;
 
-  //the default value for normal map, if not provided in the np,
-  // is a dummy Constant_property_map
   PointMap point_map = NP_helper::get_point_map(np);
   NormalMap normal_map = NP_helper::get_normal_map(np);
 

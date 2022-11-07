@@ -90,8 +90,6 @@ bool read_XYZ(std::istream& is,
   typedef typename NP_helper::Normal_map NormalMap;
   typedef typename NP_helper::Geom_traits Kernel;
 
-  //the default value for normal map, if not provided in the np,
-  // is a dummy Constant_property_map
   PointMap point_map = NP_helper::get_point_map(np);
   NormalMap normal_map = NP_helper::get_normal_map(np);
 
