@@ -720,7 +720,7 @@ template<typename PolygonMesh, typename AreaFaceMeasureMap, typename Anisotropic
 *   \cgalParamNEnd
 *
 * \cgalNamedParamsEnd
-* 
+*
 * @see `interpolated_corrected_gaussian_curvature()`
 * @see `interpolated_corrected_principal_curvatures()`
 */
@@ -807,20 +807,20 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *     \cgalParamExtra{If this parameter is omitted, vertex normals will be
 *                     computed using compute_vertex_normals()}
 *   \cgalParamNEnd
-* 
+*
 *   \cgalParamNBegin{ball_radius}
 *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-*                           by summing measures of faces inside a ball of this radius centered at the 
-*                           vertex expanded from. The summed face measures are weighted by their 
+*                           by summing measures of faces inside a ball of this radius centered at the
+*                           vertex expanded from. The summed face measures are weighted by their
 *                           inclusion ratio inside this ball}
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of 
+*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
 *                     measures on faces around the vertex}
 *   \cgalParamNEnd
 *
 * \cgalNamedParamsEnd
-* 
+*
 * @see `interpolated_corrected_mean_curvature()`
 * @see `interpolated_corrected_principal_curvatures()`
 */
@@ -907,15 +907,15 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *     \cgalParamExtra{If this parameter is omitted, vertex normals will be
 *                     computed using compute_vertex_normals()}
 *   \cgalParamNEnd
-* 
+*
 *   \cgalParamNBegin{ball_radius}
 *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-*                           by summing measures of faces inside a ball of this radius centered at the 
-*                           vertex expanded from. The summed face measures are weighted by their 
+*                           by summing measures of faces inside a ball of this radius centered at the
+*                           vertex expanded from. The summed face measures are weighted by their
 *                           inclusion ratio inside this ball}
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of 
+*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
 *                     measures on faces around the vertex}
 *   \cgalParamNEnd
 *
