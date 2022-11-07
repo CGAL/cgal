@@ -466,7 +466,8 @@ public:
     are initialized to their default value.
 
     \note If not already added, a normal property is automatically
-    added to the point set when using this method.
+    added to the point set when using this method. The default value
+    for normal vectors is `CGAL::NULL_VECTOR`.
 
     \note If a reallocation happens, all iterators, pointers and
     references related to the container are invalidated.  Otherwise,
