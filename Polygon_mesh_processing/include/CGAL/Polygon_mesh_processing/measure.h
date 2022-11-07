@@ -112,7 +112,7 @@ edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  CGAL_precondition(boost::graph_traits<PolygonMesh>::null_halfedge() != h);
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pmesh));
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -132,6 +132,8 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
             const PolygonMesh& pmesh,
             const NamedParameters& np = parameters::default_values())
 {
+  CGAL_precondition(is_valid_edge_descriptor(e, pmesh));
+
   return edge_length(halfedge(e, pmesh), pmesh, np);
 }
 
@@ -187,7 +189,7 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descript
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  CGAL_precondition(boost::graph_traits<PolygonMesh>::null_halfedge() != h);
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pmesh));
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -208,6 +210,8 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
                     const PolygonMesh& pmesh,
                     const NamedParameters& np = parameters::default_values())
 {
+  CGAL_precondition(is_valid_edge_descriptor(e, pmesh));
+
   return squared_edge_length(halfedge(e, pmesh), pmesh, np);
 }
 
@@ -415,7 +419,7 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  CGAL_precondition(boost::graph_traits<TriangleMesh>::null_face() != f);
+  CGAL_precondition(is_valid_face_descriptor(f, tmesh));
 
   typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -486,7 +490,7 @@ squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  CGAL_precondition(boost::graph_traits<TriangleMesh>::null_face() != f);
+  CGAL_precondition(is_valid_face_descriptor(f, tmesh));
 
   typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -741,7 +745,7 @@ face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                   const TriangleMesh& tmesh,
                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  CGAL_precondition(f != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(is_valid_face_descriptor(f, tmesh));
   CGAL_precondition(is_triangle(halfedge(f, tmesh), tmesh));
 
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor           halfedge_descriptor;
