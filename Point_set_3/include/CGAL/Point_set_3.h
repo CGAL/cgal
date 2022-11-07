@@ -1358,7 +1358,7 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
 
   static constexpr bool has_normal_map()
   {
-    return true;//either available in np, or in point set
+    return true; // either available in named parameters, and always available in Point_set_3 otherwise
   }
 
 };
