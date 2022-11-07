@@ -172,25 +172,17 @@ void test_constructions(const G& g,
 
   // ---------------------------------------------------------------------------
   bar = PMP::barycentric_coordinates(p, q, r, p, K());
-  if (std::is_same<K, EPECK>()) {
-    assert(is_equal(bar[0], FT(1)) && is_equal(bar[1], FT(0)) && is_equal(bar[2], FT(0)));
-  }
+  assert(is_equal(bar[0], FT(1)) && is_equal(bar[1], FT(0)) && is_equal(bar[2], FT(0)));
 
   bar = PMP::barycentric_coordinates(p, q, r, q, K());
-  if (std::is_same<K, EPECK>()) {
-    assert(is_equal(bar[0], FT(0)) && is_equal(bar[1], FT(1)) && is_equal(bar[2], FT(0)));
-  }
+  assert(is_equal(bar[0], FT(0)) && is_equal(bar[1], FT(1)) && is_equal(bar[2], FT(0)));
 
   bar = PMP::barycentric_coordinates(p, q, r, r, K());
-  if (std::is_same<K, EPECK>()) {
-    assert(is_equal(bar[0], FT(0)) && is_equal(bar[1], FT(0)) && is_equal(bar[2], FT(1)));
-  }
+  assert(is_equal(bar[0], FT(0)) && is_equal(bar[1], FT(0)) && is_equal(bar[2], FT(1)));
 
   Point mp = Point(CGAL::midpoint(bp, bq));
   bar = PMP::barycentric_coordinates(p, q, r, mp);
-  if (std::is_same<K, EPECK>()) {
-    assert(is_equal(bar[0], FT(0.5)) && is_equal(bar[1], FT(0.5)) && is_equal(bar[2], FT(0)));
-  }
+  assert(is_equal(bar[0], FT(0.5)) && is_equal(bar[1], FT(0.5)) && is_equal(bar[2], FT(0)));
 
   int n = 100;
   while(n --> 0) // :)
@@ -202,9 +194,7 @@ void test_constructions(const G& g,
     // Point to location and inversely
     Bare_point barycentric_pt = CGAL::barycenter(bp, a, bq, b, br, c);
     bar = PMP::barycentric_coordinates(p, q, r, Point(barycentric_pt));
-    if (std::is_same<K, EPECK>()) {
-      assert(is_equal(bar[0], a) && is_equal(bar[1], b) && is_equal(bar[2], c));
-    }
+    assert(is_equal(bar[0], a) && is_equal(bar[1], b) && is_equal(bar[2], c));
 
     loc.second = bar;
     const Bare_point barycentric_pt_2 =
@@ -213,30 +203,22 @@ void test_constructions(const G& g,
                                                        .geom_traits(K())));
 
     const FT sq_dist = CGAL::squared_distance(barycentric_pt, barycentric_pt_2);
-    if (std::is_same<K, EPECK>()) {
-      assert(is_equal(sq_dist, FT(0)));
-    }
+    assert(is_equal(sq_dist, FT(0)));
   }
 
   // ---------------------------------------------------------------------------
   loc = std::make_pair(f, CGAL::make_array(FT(0.3), FT(0.4), FT(0.3)));
   descriptor_variant dv = PMP::get_descriptor_from_location(loc, g);
   const face_descriptor* fd = boost::get<face_descriptor>(&dv);
-  if (std::is_same<K, EPECK>()) {
-    assert(fd);
-  }
+  assert(fd);
 
   loc = std::make_pair(f, CGAL::make_array(FT(0.5), FT(0.5), FT(0)));
   dv = PMP::get_descriptor_from_location(loc, g);
   const halfedge_descriptor* hd = boost::get<halfedge_descriptor>(&dv);
-  if (std::is_same<K, EPECK>()) {
-    assert(hd);
-  }
+  assert(hd);
 
   loc = std::make_pair(f, CGAL::make_array(FT(1), FT(0), FT(0)));
-  if (std::is_same<K, EPECK>()) {
-    assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
-  }
+  assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
 
   dv = PMP::get_descriptor_from_location(loc, g);
   if(const vertex_descriptor* v = boost::get<vertex_descriptor>(&dv)) { } else { assert(false); }
@@ -270,20 +252,16 @@ void test_random_entities(const G& g, CGAL::Random& rnd)
   while(nn --> 0) // the infamous 'go to zero' operator
   {
     loc = PMP::random_location_on_mesh<FT>(g, rnd);
-    if (std::is_same<K, EPECK>()) {
-      assert(loc.first != boost::graph_traits<G>::null_face());
-      assert(loc.second[0] >= FT(0) && loc.second[0] <= FT(1) &&
-        loc.second[1] >= FT(0) && loc.second[1] <= FT(1) &&
-        loc.second[2] >= FT(0) && loc.second[2] <= FT(1));
-    }
+    assert(loc.first != boost::graph_traits<G>::null_face());
+    assert(loc.second[0] >= FT(0) && loc.second[0] <= FT(1) &&
+      loc.second[1] >= FT(0) && loc.second[1] <= FT(1) &&
+      loc.second[2] >= FT(0) && loc.second[2] <= FT(1));
 
     loc = PMP::random_location_on_face<FT>(f, g, rnd);
-    if (std::is_same<K, EPECK>()) {
-      assert(loc.first == f);
-      assert(loc.second[0] >= FT(0) && loc.second[0] <= FT(1) &&
-        loc.second[1] >= FT(0) && loc.second[1] <= FT(1) &&
-        loc.second[2] >= FT(0) && loc.second[2] <= FT(1));
-    }
+    assert(loc.first == f);
+    assert(loc.second[0] >= FT(0) && loc.second[0] <= FT(1) &&
+      loc.second[1] >= FT(0) && loc.second[1] <= FT(1) &&
+      loc.second[2] >= FT(0) && loc.second[2] <= FT(1));
 
     loc = PMP::random_location_on_halfedge<FT>(h, g, rnd);
     assert(loc.first == face(h, g));
@@ -459,38 +437,28 @@ void test_locate_in_face(const G& g,
 
   loc = PMP::locate_vertex<FT>(v, g);
 
-  if (std::is_same<K, EPECK>()) {
-    assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)], FT(1)));
-    assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 1) % 3], FT(0)));
-    assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 2) % 3], FT(0)));
-  }
+  assert(is_equal(loc.second[CGAL::vertex_index_in_face(v, loc.first, g)], FT(1)));
+  assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 1) % 3], FT(0)));
+  assert(is_equal(loc.second[(CGAL::vertex_index_in_face(v, loc.first, g) + 2) % 3], FT(0)));
 
   loc = PMP::locate_vertex<FT>(v, f, g);
-  if (std::is_same<K, EPECK>()) {
-    assert(loc.first == f);
-    assert(is_equal(loc.second[0], FT(0)) && is_equal(loc.second[1], FT(1)) && is_equal(loc.second[2], FT(0)));
-  }
+  assert(loc.first == f);
+  assert(is_equal(loc.second[0], FT(0)) && is_equal(loc.second[1], FT(1)) && is_equal(loc.second[2], FT(0)));
 
   loc = PMP::locate_on_halfedge<FT>(h, a, g);
   const int h_id = CGAL::halfedge_index_in_face(h, g);
-  if (std::is_same<K, EPECK>()) {
-    assert(loc.first == f && is_equal(loc.second[(h_id + 2) % 3], FT(0)));
-  }
+  assert(loc.first == f && is_equal(loc.second[(h_id + 2) % 3], FT(0)));
 
   loc = PMP::locate_in_face(p, f, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()));
   int v_id = CGAL::vertex_index_in_face(v, f, g);
-  if (std::is_same<K, EPECK>()) {
-    assert(loc.first == f && is_equal(loc.second[v_id], FT(1)));
-  }
+  assert(loc.first == f && is_equal(loc.second[v_id], FT(1)));
 
   // Internal vertex point pmap
   typedef typename boost::property_map_value<G, CGAL::vertex_point_t>::type     Point;
 
   Point p2 = get(CGAL::vertex_point, g, v);
   PMP::locate_in_face(p2, f, g);
-  if (std::is_same<K, EPECK>()) {
-    assert(loc.first == f && is_equal(loc.second[v_id], FT(1)));
-  }
+  assert(loc.first == f && is_equal(loc.second[v_id], FT(1)));
 
   // ---------------------------------------------------------------------------
   loc.second[0] = FT(0.2);
@@ -516,8 +484,8 @@ void test_locate_in_face(const G& g,
 
     if (std::is_same<K, EPECK>()) {
       assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K())));
-      assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()), 1e-7));
     }
+    assert(PMP::locate_in_common_face<FT>(loc, p, neigh_loc, g, CGAL::parameters::vertex_point_map(vpm).geom_traits(K()), 1e-7));
   }
 }
 
