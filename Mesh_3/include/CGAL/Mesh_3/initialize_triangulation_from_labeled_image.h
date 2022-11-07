@@ -120,7 +120,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   if(protect_features) {
     init_tr_from_labeled_image_call_init_features
       (c3t3, domain, criteria,
-       CGAL::Mesh_3::internal::Has_features<Mesh_domain>());
+       CGAL::internal::Has_features<Mesh_domain>());
   }
 
   const double max_v = (std::max)((std::max)(image.vx(),
