@@ -15,7 +15,7 @@
 
 #include <CGAL/config.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Cartesian/Is_a_trivial_construction.h>
+#include <CGAL/Cartesian/Is_trivial_construction.h>
 #include <type_traits>
 
 namespace CGAL {
@@ -30,13 +30,13 @@ struct Converting_construction
   CGAL_NO_UNIQUE_ADDRESS Backward_converter backward_convert;
 
   template <typename... Args,
-            std::enable_if_t<CartesianFunctors::Is_a_trivial_construction<Source_construction, Args...>::value>* = nullptr>
+            std::enable_if_t<CartesianFunctors::Is_trivial_construction<Source_construction, Args...>::value>* = nullptr>
   decltype(auto) operator()(Args&&... args) const {
     return source_construction(std::forward<Args>(args)...);
   }
 
   template <typename... Args,
-            std::enable_if_t<!CartesianFunctors::Is_a_trivial_construction<Source_construction, Args...>::value>* = nullptr>
+            std::enable_if_t<!CartesianFunctors::Is_trivial_construction<Source_construction, Args...>::value>* = nullptr>
   auto operator()(Args&&... args) const {
     return backward_convert(construct(convert(args)...));
   }

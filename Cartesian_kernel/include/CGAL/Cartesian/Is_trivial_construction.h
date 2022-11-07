@@ -23,7 +23,7 @@ namespace CGAL {
 namespace CartesianFunctors {
 
 template <class Construction, typename ...Args>
-struct Is_a_trivial_construction_base
+struct Is_trivial_construction_base
 {
   // If the return type of the construction, with the specified arguments, is a
   // reference or an iterator, them the construction is necessarily trivial.
@@ -34,21 +34,21 @@ struct Is_a_trivial_construction_base
 };
 
 template <class Construction, typename ...Args>
-struct Is_a_trivial_construction : public Is_a_trivial_construction_base<Construction, Args...>
+struct Is_trivial_construction : public Is_trivial_construction_base<Construction, Args...>
 {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CommonKernelFunctors::Assign_2<K>, Args...>
+struct Is_trivial_construction<CommonKernelFunctors::Assign_2<K>, Args...>
     : public Tag_true
 {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CommonKernelFunctors::Assign_3<K>, Args...>
+struct Is_trivial_construction<CommonKernelFunctors::Assign_3<K>, Args...>
     : public Tag_true
 {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_point_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_point_2<K>, Args...>
 {
   typedef typename K::RT         RT;
 
@@ -60,12 +60,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_point_
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_point_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_point_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_point_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_point_3<K>, Args...>
 {
   typedef typename K::RT         RT;
 
@@ -77,12 +77,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_point_
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_point_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_point_3<K>, Args...>::value
    };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_weighted_point_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_weighted_point_2<K>, Args...>
 {
   typedef typename K::FT         FT;
   typedef typename K::Point_2    Point_2;
@@ -97,12 +97,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_weight
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_weighted_point_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_weighted_point_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_weighted_point_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_weighted_point_3<K>, Args...>
 {
   typedef typename K::FT         FT;
   typedef typename K::Point_3    Point_3;
@@ -117,12 +117,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_weight
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_weighted_point_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_weighted_point_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_vector_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_vector_2<K>, Args...>
 {
   typedef typename K::RT         RT;
   typedef typename K::Point_2    Point_2;
@@ -137,12 +137,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_vector
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_vector_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_vector_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_vector_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_vector_3<K>, Args...>
 {
   typedef typename K::RT         RT;
   typedef typename K::Point_3    Point;
@@ -160,12 +160,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_vector
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_vector_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_vector_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_direction_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_direction_2<K>, Args...>
 {
   typedef typename K::RT         RT;
   typedef typename K::Vector_2      Vector;
@@ -178,12 +178,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_direct
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_direction_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_direction_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_direction_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_direction_3<K>, Args...>
 {
   typedef typename K::RT         RT;
   typedef typename K::Vector_3   Vector;
@@ -196,12 +196,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_direct
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_direction_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_direction_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_line_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_line_2<K>, Args...>
 {
   typedef typename K::RT         RT;
 
@@ -211,12 +211,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_line_2
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_line_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_line_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_line_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_line_3<K>, Args...>
 {
   typedef typename K::Point_3     Point;
   typedef typename K::Vector_3    Vector;
@@ -230,12 +230,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_line_3
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_line_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_line_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_2<K>, Args...>
 {
   typedef typename K::Point_2    Point;
 
@@ -245,12 +245,12 @@ struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_2
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_segment_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_segment_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_3<K>, Args...>
 {
   typedef typename K::Point_3    Point;
 
@@ -260,33 +260,33 @@ struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_3
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_segment_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_segment_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Compute_a_2<K>, Args...> : public Tag_true {};
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_a_2<K>, Args...> : public Tag_true {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Compute_b_2<K>, Args...> : public Tag_true {};
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_b_2<K>, Args...> : public Tag_true {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Compute_c_2<K>, Args...> : public Tag_true {};
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_c_2<K>, Args...> : public Tag_true {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Compute_a_3<K>, Args...> : public Tag_true {};
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_a_3<K>, Args...> : public Tag_true {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Compute_b_3<K>, Args...> : public Tag_true {};
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_b_3<K>, Args...> : public Tag_true {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Compute_c_3<K>, Args...> : public Tag_true {};
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_c_3<K>, Args...> : public Tag_true {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Compute_d_3<K>, Args...> : public Tag_true {};
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_d_3<K>, Args...> : public Tag_true {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_2<K>, Args...>
 {
   typedef typename K::FT         FT;
   typedef typename K::Point_2    Point;
@@ -299,12 +299,12 @@ struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_2<
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_circle_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_circle_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_radius_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_radius_2<K>, Args...>
 {
   typedef typename K::Point_2     Point_2;
   typedef typename K::Circle_2    Circle_2;
@@ -314,12 +314,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Compute_squared_radius_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Compute_squared_radius_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_radius_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_radius_3<K>, Args...>
 {
   typedef typename K::Point_3     Point_3;
   typedef typename K::Circle_3    Circle_3;
@@ -331,12 +331,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Compute_squared_radius_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Compute_squared_radius_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_iso_rectangle_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_iso_rectangle_2<K>, Args...>
 {
   typedef typename K::Point_2    Point;
   typedef typename K::RT         RT;
@@ -353,12 +353,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_iso_re
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_iso_rectangle_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_iso_rectangle_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_iso_cuboid_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_iso_cuboid_3<K>, Args...>
 {
   typedef typename K::Point_3    Point;
   typedef typename K::RT         RT;
@@ -375,12 +375,12 @@ struct Is_a_trivial_construction<CGAL::CartesianKernelFunctors::Construct_iso_cu
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_iso_cuboid_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_iso_cuboid_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_ray_2<K>, Args...>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_ray_2<K>, Args...>
 {
   typedef typename K::Point_2    Point;
 
@@ -390,12 +390,12 @@ struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_ray_2<K>,
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_ray_2<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_ray_2<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_ray_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_ray_3<K>, Args...>
 {
   typedef typename K::Point_3    Point;
 
@@ -405,20 +405,20 @@ struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_ray_3<K>,
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_ray_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_ray_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_triangle_2<K>, Args...> : public Tag_true
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_triangle_2<K>, Args...> : public Tag_true
 {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_triangle_3<K>, Args...> : public Tag_true
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_triangle_3<K>, Args...> : public Tag_true
 {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_plane_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_plane_3<K>, Args...>
 {
   typedef typename K::RT         RT;
   typedef typename K::Circle_3   Circle;
@@ -431,12 +431,12 @@ struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_plane_3<K
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_plane_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_plane_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_sphere_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_sphere_3<K>, Args...>
 {
   typedef typename K::FT         FT;
   typedef typename K::Point_3    Point_3;
@@ -452,12 +452,12 @@ struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_sphere_3<
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_sphere_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_sphere_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_3<K>, Args...>
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_3<K>, Args...>
 {
   typedef typename K::Plane_3      Plane_3;
   typedef typename K::Sphere_3     Sphere_3;
@@ -469,16 +469,16 @@ struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_3<
   static Tag_false trivial(...);
 
   enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
-    Is_a_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_circle_3<K>, Args...>::value
+    Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_circle_3<K>, Args...>::value
   };
 };
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_second_point_3<K>, Args...> : public Tag_true
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_second_point_3<K>, Args...> : public Tag_true
 {};
 
 template <typename K, typename... Args>
-struct Is_a_trivial_construction<CGAL::CommonKernelFunctors::Construct_tetrahedron_3<K>, Args...> : public Tag_true
+struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_tetrahedron_3<K>, Args...> : public Tag_true
 {};
 
 } // end namespace CartesianFunctors
