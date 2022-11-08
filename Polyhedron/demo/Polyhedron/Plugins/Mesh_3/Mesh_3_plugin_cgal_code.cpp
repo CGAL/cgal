@@ -366,7 +366,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       if (protect_features && polylines.empty())
       {
         p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
+          (Image_mesh_domain::create_labeled_image_mesh_domain
           (p::image = *pImage,
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
@@ -378,7 +378,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       else if (protect_borders && polylines.empty())//protect polylines on image Bbox
       {
         p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain_with_features
+          (Image_mesh_domain::create_labeled_image_mesh_domain
           (p::image = *pImage,
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
