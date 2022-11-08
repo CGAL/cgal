@@ -336,7 +336,7 @@ struct Point_set_processing_3_np_helper
     return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
   }
 
-  static constexpr bool has_normal_map()
+  static constexpr bool has_normal_map(const PointRange&, const NamedParameters&)
   {
     using CGAL::parameters::is_default_parameter;
     return !(is_default_parameter<NamedParameters, internal_np::normal_t>::value);

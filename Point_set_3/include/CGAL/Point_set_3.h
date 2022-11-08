@@ -1357,11 +1357,18 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
     return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
   }
 
-  static constexpr bool has_normal_map()
+  static bool has_normal_map(const Point_set_3<Point, Vector>& ps, const NamedParameters&)
+  {
+    if (ps.has_normal_map())
+      return true;
+    using CGAL::parameters::is_default_parameter;
+    return !(is_default_parameter<NamedParameters, internal_np::normal_t>::value);
+  }
+
+  static constexpr bool has_normal_map(Point_set_3<Point, Vector>& ps, const NamedParameters&)
   {
     return true; // either available in named parameters, and always available in Point_set_3 otherwise
   }
-
 };
 /// \endcond
 
