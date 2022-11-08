@@ -205,6 +205,10 @@ class Cotangent_weight
   using FT = typename GeomTraits::FT;
 
 private:
+  // These class members are used only when the constructor initializing them
+  // is used, but Surface_mesh_deformation has its own weight API locked
+  // by the concept SurfaceMeshDeformationWeights.
+  // A bit awkward, but better than duplicating code...
   PolygonMesh* const* m_pmesh_ptr;
   const VertexPointMap m_vpm;
   const GeomTraits m_traits;
@@ -213,15 +217,17 @@ private:
   bool m_bound_from_below;
 
 public:
-  // Surface_mesh_deformation has its own API locked by the concept SurfaceMeshDeformationWeights
   Cotangent_weight()
     : m_pmesh_ptr(nullptr), m_vpm(), m_traits(), m_use_clamped_version(false), m_bound_from_below(true)
   { }
 
-  template <typename VPM>
+  // Common API whether mesh/vpm/traits are initialized in the constructor,
+  // or passed in the operator()
+  template <typename VPM, typename GT>
   FT operator()(const halfedge_descriptor he,
                 const PolygonMesh& pmesh,
-                const VPM vpm) const
+                const VPM vpm,
+                const GT& traits) const
   {
     using Point_ref = typename boost::property_traits<VPM>::reference;
 
@@ -243,9 +249,9 @@ public:
 
       FT weight = 0;
       if (m_use_clamped_version)
-        weight = cotangent_3_clamped(p1, p2, p0, m_traits);
+        weight = cotangent_3_clamped(p1, p2, p0, traits);
       else
-        weight = cotangent_3(p1, p2, p0, m_traits);
+        weight = cotangent_3(p1, p2, p0, traits);
 
       if(m_bound_from_below)
         weight = (CGAL::max)(FT(0), weight);
@@ -257,7 +263,19 @@ public:
     return weight;
   }
 
+  // That is the API called by Surface_mesh_deformation
+  template <typename VPM>
+  FT operator()(const halfedge_descriptor he,
+                const PolygonMesh& pmesh,
+                const VPM vpm) const
+  {
+    using Point = typename boost::property_traits<VPM>::value_type;
+    using GT = typename Kernel_traits<Point>::type;
+    return this->operator()(he, pmesh, vpm, GT());
+  }
+
 public:
+  // This is the "normal" API: give all info to the constructor, and operator()(halfedge)
   Cotangent_weight(const PolygonMesh& pmesh,
                    const VertexPointMap vpm,
                    const GeomTraits& traits = GeomTraits(),
@@ -271,7 +289,7 @@ public:
   FT operator()(const halfedge_descriptor he) const
   {
     CGAL_precondition(m_pmesh_ptr != nullptr);
-    return this->operator()(he, *m_pmesh_ptr, m_vpm);
+    return this->operator()(he, *m_pmesh_ptr, m_vpm, m_traits);
   }
 };
 
