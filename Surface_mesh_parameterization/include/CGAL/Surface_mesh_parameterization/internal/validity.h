@@ -276,7 +276,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
                  (std::min)(p0[1], (std::min)(p1[1], p2[1])) };
     NT by[2] = { (std::max)(p0[0], (std::max)(p1[0], p2[0])),
                  (std::max)(p0[1], (std::max)(p1[1], p2[1])) };
-    boxes.push_back(Box(bx, by, fd));
+    boxes.emplace_back(bx, by, fd);
   }
 
   std::vector<const Box*> boxes_ptr;
