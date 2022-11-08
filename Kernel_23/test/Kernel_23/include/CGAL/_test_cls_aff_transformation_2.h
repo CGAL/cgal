@@ -285,8 +285,11 @@ _test_cls_aff_transformation_2(const R& )
  assert( (vec - vec.transform(co1)).squared_length() < 1e-10);
  assert( pnt == pnt.transform(co1) || nonexact );
  assert( (pnt - pnt.transform(co1)).squared_length() < 1e-10);
+
+auto unit = [](CGAL::Vector_2<R> v) { return v / CGAL::approximate_sqrt(v*v); };
  assert( dir == dir.transform(co1) || nonexact);
- assert( (dir.to_vector() - dir.transform(co1).to_vector()).squared_length() < 1e-10);
+ assert( (unit(dir.to_vector()) - unit(dir.transform(co1).to_vector())).squared_length() < 1e-5);
+ 
  assert( lin == lin.transform(co1) || nonexact );
 
  // even
