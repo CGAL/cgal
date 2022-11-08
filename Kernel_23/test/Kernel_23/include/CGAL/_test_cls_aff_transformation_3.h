@@ -97,7 +97,7 @@ _test_cls_aff_transformation_3(const R& )
                                      n5, n11, n10,  n4,
                                      n3,  n6, n12,  n2,
                                                     n3 );
- assert( p1 == (p1.transform(gat1)).transform(gat1.inverse() )  );
+ assert( p1 == (p1.transform(gat1)).transform(gat1.inverse() ) || nonexact );
 
  CGAL::Aff_transformation_3<R> gat2( n7,  n9,  n8,  n2,
                                      n5, n11, n10,  n4,

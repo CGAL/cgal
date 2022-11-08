@@ -19,6 +19,7 @@
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
 
 #include <CGAL/use.h>
+#include <CGAL/utils.h>
 
 template <class R>
 bool
@@ -280,10 +281,13 @@ _test_cls_aff_transformation_2(const R& )
  assert( pnt.transform(gat1) == pnt.transform(co1) );
  assert( lin.transform(gat1) == lin.transform(co1) );
  co1 = gat1 * gat1.inverse() ;
- assert( vec == vec.transform(co1) );
- assert( pnt == pnt.transform(co1) );
- assert( dir == dir.transform(co1) );
- assert( lin == lin.transform(co1) );
+ assert( vec == vec.transform(co1) || nonexact );
+ assert( (vec - vec.transform(co1)).squared_length() < 1e-10);
+ assert( pnt == pnt.transform(co1) || nonexact );
+ assert( (pnt - pnt.transform(co1)).squared_length() < 1e-10);
+ assert( dir == dir.transform(co1) || nonexact);
+ assert( (dir.to_vector() - dir.transform(co1).to_vector()).squared_length() < 1e-10);
+ assert( lin == lin.transform(co1) || nonexact );
 
  // even
  assert( translate.is_even() );
@@ -340,10 +344,10 @@ _test_cls_aff_transformation_2(const R& )
  assert( pnt == pnt.transform(co1) );
  assert( lin == lin.transform(co1) );
  co1 = rot3 * rot3 * rot3.inverse();
- assert( vec.transform(rot3) == vec.transform(co1) );
- assert( dir.transform(rot3) == dir.transform(co1) );
- assert( pnt.transform(rot3) == pnt.transform(co1) );
- assert( lin.transform(rot3) == lin.transform(co1) );
+ assert( vec.transform(rot3) == vec.transform(co1) || nonexact );
+ assert( dir.transform(rot3) == dir.transform(co1) || nonexact );
+ assert( pnt.transform(rot3) == pnt.transform(co1) || nonexact );
+ assert( lin.transform(rot3) == lin.transform(co1) || nonexact );
 
  //circle
  tp2 = p2.transform( translate );

@@ -71,8 +71,10 @@ main()
 
   std::cout << "Testing with Epeck:\n";
   test<Cls>();
-  std::cout << "Testing with Epick:\n";
-  test<CGAL::Epick>();
+  std::cout << "Testing with Double_precision_epick:\n";
+  test<CGAL::Double_precision_epick>();
+  std::cout << "Testing with Simple_precision_epick:\n";
+  test<CGAL::Single_precision_epick>();
 
   return 0;
 }
