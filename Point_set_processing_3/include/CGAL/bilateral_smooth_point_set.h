@@ -89,7 +89,7 @@ compute_denoise_projection(
   FT project_weight_sum = FT(0.0);
   Vector normal_sum = CGAL::NULL_VECTOR;
 
-  FT cos_sigma = cos((FT)(sharpness_angle * CGAL_PI / 180.0));
+  FT cos_sigma = cos(FT(sharpness_angle * CGAL_PI / 180.0));
   FT sharpness_bandwidth = CGAL::square((CGAL::max)(FT(1e-8), FT(1.) - cos_sigma));
 
   for (typename PointRange::iterator it : neighbor_pwns)

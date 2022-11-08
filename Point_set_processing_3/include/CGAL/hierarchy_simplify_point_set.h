@@ -279,7 +279,7 @@ namespace CGAL {
             // The plane which splits the point set into 2 point sets:
             //  * Normal to the eigenvector with highest eigenvalue
             //  * Passes through the centroid of the set
-            Vector v ((FT)eigenvectors[6], (FT)eigenvectors[7], (FT)eigenvectors[8]);
+            Vector v (FT(eigenvectors.at(6)), FT(eigenvectors.at(7)), FT(eigenvectors.at(8)));
 
             std::size_t current_cluster_size = 0;
             typename std::list<Input_type>::iterator it = current_cluster->first.begin ();

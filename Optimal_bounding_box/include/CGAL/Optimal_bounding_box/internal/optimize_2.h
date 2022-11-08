@@ -127,8 +127,8 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
   FT xmin, ymin, zmin, xmax, ymax, zmax;
   //cast from double to float looses data, so cast with {} is not allowed
   //cast from double to exact types also works
-  xmin = ymin = zmin = (FT)(std::numeric_limits<double>::max)();
-  xmax = ymax = zmax = (FT)std::numeric_limits<double>::lowest();
+  xmin = ymin = zmin = FT((std::numeric_limits<double>::max)());
+  xmax = ymax = zmax = FT(std::numeric_limits<double>::lowest());
 
   for(const Point& pt : points)
   {

@@ -85,9 +85,9 @@ namespace CGAL {
                                                      const Point &c)
                             {
                                 internal::covariance_matrix_tetrahedron(
-                                  (FT)a[0], (FT)a[1], (FT)a[2],
-                                  (FT)b[0], (FT)b[1], (FT)b[2],
-                                  (FT)c[0], (FT)c[1], (FT)c[2],
+                                  FT(a[0]), FT(a[1]), FT(a[2]),
+                                  FT(b[0]), FT(b[1]), FT(b[2]),
+                                  FT(c[0]), FT(c[1]), FT(c[2]),
                                   _result);
                             }
 
