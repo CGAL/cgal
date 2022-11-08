@@ -51,7 +51,7 @@ struct Cotangent_value_Meyer_impl
   double operator()(vertex_descriptor v0,
                     vertex_descriptor v1,
                     vertex_descriptor v2,
-                    const VertexPointMap& ppmap)
+                    VertexPointMap ppmap)
   {
     typedef typename Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type >::Kernel::Vector_3 Vector;
@@ -94,17 +94,17 @@ protected:
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3 Vector;
 
-  PolygonMesh& pmesh_;
+  const PolygonMesh&  pmesh_;
   Point_property_map ppmap_;
 
 public:
-  Cotangent_value_Meyer(PolygonMesh& pmesh_,
+  Cotangent_value_Meyer(const PolygonMesh& pmesh_,
                         VertexPointMap vpmap_)
     : pmesh_(pmesh_), ppmap_(vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return pmesh_; }
-  Point_property_map& ppmap() { return ppmap_; }
+  const PolygonMesh& pmesh() { return pmesh_; }
+  Point_property_map ppmap() { return ppmap_; }
 
   double operator()(vertex_descriptor v0,
                     vertex_descriptor v1,
@@ -128,13 +128,13 @@ class Cotangent_value_Meyer_secure
   Point_property_map ppmap_;
 
 public:
-  Cotangent_value_Meyer_secure(PolygonMesh& pmesh_,
+  Cotangent_value_Meyer_secure(const PolygonMesh& pmesh_,
                                VertexPointMap vpmap_)
     : pmesh_(pmesh_), ppmap_(vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return pmesh_; }
-  Point_property_map& ppmap() { return ppmap_; }
+  const PolygonMesh& pmesh() { return pmesh_; }
+  Point_property_map ppmap() { return ppmap_; }
 
   double operator()(vertex_descriptor v0,
                     vertex_descriptor v1,
@@ -165,13 +165,13 @@ class Cotangent_value_clamped : CotangentValue
   Cotangent_value_clamped() { }
 
 public:
-  Cotangent_value_clamped(PolygonMesh& pmesh_,
+  Cotangent_value_clamped(const PolygonMesh& pmesh_,
                           VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
-  VertexPointMap& ppmap() { return CotangentValue::ppmap(); }
+  const PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
+  VertexPointMap ppmap() { return CotangentValue::ppmap(); }
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
@@ -194,13 +194,13 @@ class Cotangent_value_clamped_2 : CotangentValue
   Cotangent_value_clamped_2() { }
 
 public:
-  Cotangent_value_clamped_2(PolygonMesh& pmesh_,
+  Cotangent_value_clamped_2(const PolygonMesh& pmesh_,
                             VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
-  VertexPointMap& ppmap() { return CotangentValue::ppmap(); }
+  const PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
+  VertexPointMap ppmap() { return CotangentValue::ppmap(); }
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
@@ -238,17 +238,16 @@ template<typename PolygonMesh,
 typename CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_minimum_zero : CotangentValue
 {
-  Cotangent_value_minimum_zero()
-  { }
-
 public:
-  Cotangent_value_minimum_zero(PolygonMesh& pmesh_,
+  Cotangent_value_minimum_zero() { }
+
+  Cotangent_value_minimum_zero(const PolygonMesh& pmesh_,
                                VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
-  VertexPointMap& ppmap() { return CotangentValue::ppmap(); }
+  const PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
+  VertexPointMap ppmap() { return CotangentValue::ppmap(); }
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
@@ -268,13 +267,13 @@ class Voronoi_area
   : CotangentValue
 {
 public:
-  Voronoi_area(PolygonMesh& pmesh_,
+  Voronoi_area(const PolygonMesh& pmesh_,
                VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
-  VertexPointMap& ppmap() { return CotangentValue::ppmap(); }
+  const PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
+  VertexPointMap ppmap() { return CotangentValue::ppmap(); }
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::in_edge_iterator in_edge_iterator;
@@ -348,13 +347,13 @@ class Cotangent_value_area_weighted
   Cotangent_value_area_weighted() { }
 
 public:
-  Cotangent_value_area_weighted(PolygonMesh& pmesh_,
+  Cotangent_value_area_weighted(const PolygonMesh& pmesh_,
                                 VertexPointMap vpmap_) :
     CotangentValue(pmesh_, vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
-  VertexPointMap& ppmap() { return CotangentValue::ppmap(); }
+  const PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
+  VertexPointMap ppmap() { return CotangentValue::ppmap(); }
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
@@ -385,7 +384,7 @@ struct Cotangent_weight_impl
   template<class VertexPointMap>
   double operator()(halfedge_descriptor he,
                     PolygonMesh& pmesh,
-                    const VertexPointMap& ppmap)
+                    VertexPointMap ppmap)
   {
     const vertex_descriptor v0 = target(he, pmesh);
     const vertex_descriptor v1 = source(he, pmesh);
@@ -422,20 +421,20 @@ template<typename PolygonMesh,
 class Cotangent_weight
   : CotangentValue
 {
+public:
   Cotangent_weight() { }
 
-public:
-  Cotangent_weight(PolygonMesh& pmesh_,
+  Cotangent_weight(const PolygonMesh& pmesh_,
                    VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   { }
 
-  Cotangent_weight(PolygonMesh& pmesh_)
+  Cotangent_weight(const PolygonMesh& pmesh_)
     : CotangentValue(pmesh_, get(CGAL::vertex_point, pmesh_))
   { }
 
-  PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
-  VertexPointMap& ppmap() { return CotangentValue::ppmap(); }
+  const PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
+  VertexPointMap ppmap() { return CotangentValue::ppmap(); }
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -512,13 +511,13 @@ class Single_cotangent_weight
   Single_cotangent_weight() { }
 
 public:
-  Single_cotangent_weight(PolygonMesh& pmesh_,
+  Single_cotangent_weight(const PolygonMesh& pmesh_,
                           VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
-  VertexPointMap& ppmap() { return CotangentValue::ppmap(); }
+  const PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
+  VertexPointMap ppmap() { return CotangentValue::ppmap(); }
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -557,13 +556,13 @@ class Cotangent_weight_with_triangle_area
   Cotangent_weight_with_triangle_area() { }
 
 public:
-  Cotangent_weight_with_triangle_area(PolygonMesh& pmesh_,
+  Cotangent_weight_with_triangle_area(const PolygonMesh& pmesh_,
                                       VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   { }
 
-  PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
-  VertexPointMap& ppmap() { return CotangentValue::ppmap(); }
+  const PolygonMesh& pmesh() { return CotangentValue::pmesh(); }
+  VertexPointMap ppmap() { return CotangentValue::ppmap(); }
 
   double operator()(halfedge_descriptor he)
   {
@@ -614,18 +613,16 @@ template<typename PolygonMesh,
          typename VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
 class Mean_value_weight
 {
-  // Mean_value_weight() {}
-
-  PolygonMesh& pmesh_;
+  const PolygonMesh& pmesh_;
   VertexPointMap vpmap_;
 
 public:
-  Mean_value_weight(PolygonMesh& pmesh_,
+  Mean_value_weight(const PolygonMesh& pmesh_,
                     VertexPointMap vpmap)
     : pmesh_(pmesh_), vpmap_(vpmap)
   { }
 
-  PolygonMesh& pmesh() { return pmesh_; }
+  const PolygonMesh& pmesh() { return pmesh_; }
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -722,11 +719,11 @@ class Hybrid_weight
   Hybrid_weight() { }
 
 public:
-  Hybrid_weight(PolygonMesh& pmesh_)
+  Hybrid_weight(const PolygonMesh& pmesh_)
     : primary(pmesh_), secondary(pmesh_)
   { }
 
-  PolygonMesh& pmesh() { return primary.pmesh(); }
+  const PolygonMesh& pmesh() { return primary.pmesh(); }
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
@@ -751,14 +748,14 @@ public:
 template<class PolygonMesh>
 class Scale_dependent_weight_fairing
 {
-  PolygonMesh& pmesh_;
+  const PolygonMesh& pmesh_;
 
 public:
-  Scale_dependent_weight_fairing(PolygonMesh& pmesh_)
+  Scale_dependent_weight_fairing(const PolygonMesh& pmesh_)
     : pmesh_(pmesh_)
   { }
 
-  PolygonMesh& pmesh() { return pmesh_; }
+  const PolygonMesh& pmesh() { return pmesh_; }
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -800,7 +797,7 @@ public:
 
   Cotangent_weight_with_voronoi_area_fairing(PM& pmesh_,
                                              VPMap vpmap_)
-    :  voronoi_functor(pmesh_, vpmap_),
+    : voronoi_functor(pmesh_, vpmap_),
       cotangent_functor(pmesh_, vpmap_)
   { }
 
@@ -867,7 +864,7 @@ public:
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  Uniform_weight_fairing(PolygonMesh&) { }
+  Uniform_weight_fairing(const PolygonMesh&) { }
 
   double w_ij(halfedge_descriptor /* e */) { return 1.0; }
   double w_i(vertex_descriptor /* v_i */) { return 1.0; }
