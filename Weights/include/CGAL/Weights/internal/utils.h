@@ -214,7 +214,6 @@ typename GeomTraits::Point_3 rotate_point_3(const double angle_rad,
                                             const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
-  using Point_3 = typename GeomTraits::Point_3;
 
   auto point_3 = traits.construct_point_3_object();
 
@@ -274,7 +273,6 @@ typename GeomTraits::Point_2 to_2d(const typename GeomTraits::Vector_3& b1,
                                    const GeomTraits& traits)
 {
   using FT = typename GeomTraits::FT;
-  using Point_2 = typename GeomTraits::Point_2;
   using Vector_3 = typename GeomTraits::Vector_3;
 
   auto dot_product_3 = traits.compute_scalar_product_3_object();
@@ -447,7 +445,6 @@ typename GeomTraits::FT area_3(const typename GeomTraits::Point_3& p,
                                const typename GeomTraits::Point_3& r,
                                const GeomTraits& traits)
 {
-  using FT = typename GeomTraits::FT;
   using Point_2 = typename GeomTraits::Point_2;
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
@@ -493,7 +490,6 @@ typename GeomTraits::FT positive_area_3(const typename GeomTraits::Point_3& p,
                                         const typename GeomTraits::Point_3& r,
                                         const GeomTraits& traits)
 {
-  using FT = typename GeomTraits::FT;
   using Get_sqrt = Get_sqrt<GeomTraits>;
   auto sqrt = Get_sqrt::sqrt_object(traits);
 
