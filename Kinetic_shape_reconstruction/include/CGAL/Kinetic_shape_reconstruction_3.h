@@ -35,7 +35,6 @@
 #include <CGAL/KSR_3/Reconstruction.h>
 #include <CGAL/KSR_3/Initializer.h>
 #include <CGAL/KSR_3/FacePropagation.h>
-#include <CGAL/KSR_3/Propagation.h>
 #include <CGAL/KSR_3/Finalizer.h>
 
 namespace CGAL {

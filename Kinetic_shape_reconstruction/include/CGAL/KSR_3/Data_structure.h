@@ -3018,8 +3018,8 @@ public:
 
   bool check_integrity(
     const bool is_initialized   = true,
-    const bool check_simplicity = false,
-    const bool check_convexity  = false) const {
+    const bool check_simplicity = true,
+    const bool check_convexity  = true) const {
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (!is_mesh_valid(check_simplicity, check_convexity, i)) {
@@ -3027,6 +3027,8 @@ public:
         CGAL_assertion_msg(false, msg.c_str());
         return false;
       }
+
+      continue;
 
       if (is_initialized) {
         const auto& iedges = this->iedges(i);

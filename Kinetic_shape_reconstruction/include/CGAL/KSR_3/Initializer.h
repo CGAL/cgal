@@ -30,7 +30,6 @@
 #include <CGAL/KSR/conversions.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
-#include <CGAL/KSR_3/Polygon_splitter.h>
 
 namespace CGAL {
 namespace KSR_3 {
@@ -55,7 +54,6 @@ private:
 
   using Data_structure     = KSR_3::Data_structure<Kernel>;
   using Support_plane      = typename Data_structure::Support_plane;
-  using Polygon_splitter   = KSR_3::Polygon_splitter<Data_structure, Kernel>;
   using IEdge              = typename Data_structure::IEdge;
   using IFace              = typename Data_structure::IFace;
   using Face_property      = typename Data_structure::Intersection_graph::Face_property;
@@ -114,7 +112,7 @@ public:
 
     if (m_parameters.verbose) std::cout << "* intersecting input polygons ... ";
     if (m_parameters.debug) {
-      KSR_3::dump(m_data, "init");
+      //KSR_3::dump(m_data, "init");
       // KSR_3::dump_segmented_edges(m_data, "init");
     }
 
@@ -139,7 +137,7 @@ public:
 
     if (m_parameters.verbose) std::cout << "done" << std::endl;
     if (m_parameters.debug) {
-      KSR_3::dump(m_data, "intersected");
+      //KSR_3::dump(m_data, "intersected");
       // KSR_3::dump_segmented_edges(m_data, "intersected");
     }
 
@@ -1163,15 +1161,6 @@ void initial_polygon_iedge_intersections() {
     }
     // Refine polygons.
     return;
-
-    for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
-      Polygon_splitter splitter(m_data, m_parameters);
-      splitter.split_support_plane(i);
-      // if (i >= 6 && m_parameters.export_all) {
-      //KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
-      // }
-    }
-    // exit(EXIT_SUCCESS);
   }
 
   void map_polygon_to_ifaces() {
