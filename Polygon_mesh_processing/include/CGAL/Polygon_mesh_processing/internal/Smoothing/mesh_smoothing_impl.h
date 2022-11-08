@@ -428,9 +428,9 @@ public:
 
     const FT S_av = compute_average_area_around(v);
 
-    const double initial_x = vp.x();
-    const double initial_y = vp.y();
-    const double initial_z = vp.z();
+    const double initial_x = CGAL::to_double(vp.x());
+    const double initial_y = CGAL::to_double(vp.y());
+    const double initial_z = CGAL::to_double(vp.z());
     double x = initial_x, y = initial_y, z = initial_z;
 
     ceres::Problem problem;
