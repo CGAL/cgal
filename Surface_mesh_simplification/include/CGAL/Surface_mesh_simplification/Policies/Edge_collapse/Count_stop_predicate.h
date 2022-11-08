@@ -26,7 +26,7 @@ namespace Surface_mesh_simplification {
 
 // Stops when the number of edges left falls below a given number.
 template<class TM_>
-using Count_stop_predicate = CGAL_DEPRECATED Edge_count_stop_predicate<TM_>;
+using Count_stop_predicate CGAL_DEPRECATED = Edge_count_stop_predicate<TM_>;
 
 } // namespace Surface_mesh_simplification
 } // namespace CGAL

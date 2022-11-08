@@ -26,7 +26,7 @@ namespace Surface_mesh_simplification {
 
 // Stops when the ratio of initial to current number of edges is below some value.
 template<class TM_>
-using Count_ratio_stop_predicate = CGAL_DEPRECATED Edge_count_ratio_stop_predicate<TM_>;
+using Count_ratio_stop_predicate CGAL_DEPRECATED = Edge_count_ratio_stop_predicate<TM_>;
 
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
