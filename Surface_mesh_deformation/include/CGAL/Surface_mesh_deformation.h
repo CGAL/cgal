@@ -86,8 +86,7 @@ struct Types_selectors;
 template<typename TriangleMesh, typename VertexPointMap>
 struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::SPOKES_AND_RIMS>
 {
-  typedef SC_on_the_fly_pmap<VertexPointMap> Wrapped_VertexPointMap;
-  typedef CGAL::Weights::Single_cotangent_weight<TriangleMesh, Wrapped_VertexPointMap> Weight_calculator;
+  typedef CGAL::Weights::Single_cotangent_weight<TriangleMesh> Weight_calculator;
 
   struct ARAP_visitor
   {
@@ -107,8 +106,7 @@ struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::SPOKES_AND_RIMS>
 template<class TriangleMesh, typename VertexPointMap>
 struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::ORIGINAL_ARAP>
 {
-  typedef SC_on_the_fly_pmap<VertexPointMap> Wrapped_VertexPointMap;
-  typedef CGAL::Weights::Cotangent_weight<TriangleMesh, Wrapped_VertexPointMap> Weight_calculator;
+  typedef CGAL::Weights::Cotangent_weight<TriangleMesh> Weight_calculator;
 
   typedef typename Types_selectors<TriangleMesh, VertexPointMap, CGAL::SPOKES_AND_RIMS>::ARAP_visitor ARAP_visitor;
 };
@@ -116,8 +114,7 @@ struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::ORIGINAL_ARAP>
 template<class TriangleMesh, typename VertexPointMap>
 struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::SRE_ARAP>
 {
-  typedef SC_on_the_fly_pmap<VertexPointMap> Wrapped_VertexPointMap;
-  typedef CGAL::Weights::Cotangent_weight<TriangleMesh, Wrapped_VertexPointMap> Weight_calculator;
+  typedef CGAL::Weights::Cotangent_weight<TriangleMesh> Weight_calculator;
 
   class ARAP_visitor
   {
@@ -384,7 +381,7 @@ public:
                                vertex_index_map,
                                hedge_index_map,
                                vertex_point_map,
-                               Weight_calculator(triangle_mesh, internal::SC_on_the_fly_pmap<Vertex_point_map>(vertex_point_map)))
+                               Weight_calculator())
   { }
 
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
@@ -437,9 +434,10 @@ public:
 private:
   void init()
   {
+    typedef internal::SC_on_the_fly_pmap<Vertex_point_map> Wrapper;
     hedge_weight.reserve(num_halfedges(m_triangle_mesh));
     for(halfedge_descriptor he : halfedges(m_triangle_mesh))
-      hedge_weight.push_back(this->weight_calculator(he));
+      hedge_weight.push_back(this->weight_calculator(he, m_triangle_mesh, Wrapper(vertex_point_map)));
 
     arap_visitor.init(m_triangle_mesh, vertex_point_map);
   }
@@ -823,6 +821,7 @@ public:
    */
   void overwrite_initial_geometry()
   {
+    typedef internal::SC_on_the_fly_pmap<Vertex_point_map> Wrapper;
     if(roi.empty()) { return; } // no ROI to overwrite
 
     region_of_solution(); // the roi should be preprocessed since we are using original_position vec
@@ -843,13 +842,13 @@ public:
         std::size_t id_e = id(he);
         if(is_weight_computed[id_e]) { continue; }
 
-        hedge_weight[id_e] = weight_calculator(he);
+        hedge_weight[id_e] = weight_calculator(he, m_triangle_mesh, Wrapper(vertex_point_map));
         is_weight_computed[id_e] = true;
 
         halfedge_descriptor e_opp = opposite(he, m_triangle_mesh);
         std::size_t id_e_opp = id(e_opp);
 
-        hedge_weight[id_e_opp] = weight_calculator(e_opp);
+        hedge_weight[id_e_opp] = weight_calculator(e_opp, m_triangle_mesh, Wrapper(vertex_point_map));
         is_weight_computed[id_e_opp] = true;
       }
     }
