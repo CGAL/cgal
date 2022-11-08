@@ -630,49 +630,34 @@ public:
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;
 
+    auto image_wrapper = weights_.is_valid()
+      ? create_weighted_labeled_image_wrapper(image_,
+                                              weights_,
+                                              image_values_to_subdomain_indices_,
+                                              value_outside_)
+      : create_labeled_image_wrapper(image_,
+                                     image_values_to_subdomain_indices_,
+                                     value_outside_);
+
     using Domain_type = std::conditional_t <
       CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value,
       Labeled_mesh_domain_3,
       Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
     >;
 
-    if (weights_.is_valid())
-    {
-      Domain_type domain
-              (p::function = create_weighted_labeled_image_wrapper
-                       (image_,
-                        weights_,
-                        image_values_to_subdomain_indices_,
-                        value_outside_),
-               p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
-               p::relative_error_bound = relative_error_bound_,
-               p::p_rng = p_rng_,
-               p::null_subdomain_index =
-                       create_null_subdomain_index(null_subdomain_index_),
-               p::construct_surface_patch_index =
-                       create_construct_surface_patch_index(construct_surface_patch_index_));
+    Domain_type domain
+      (p::function = image_wrapper,
+       p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
+       p::relative_error_bound = relative_error_bound_,
+       p::p_rng = p_rng_,
+       p::null_subdomain_index =
+               create_null_subdomain_index(null_subdomain_index_),
+       p::construct_surface_patch_index =
+               create_construct_surface_patch_index(construct_surface_patch_index_));
 
-      CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
-      return domain;
-    }
-    else
-    {
-      Domain_type domain
-              (p::function = create_labeled_image_wrapper
-                       (image_,
-                        image_values_to_subdomain_indices_,
-                        value_outside_),
-               p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
-               p::relative_error_bound = relative_error_bound_,
-               p::p_rng = p_rng_,
-               p::null_subdomain_index =
-                       create_null_subdomain_index(null_subdomain_index_),
-               p::construct_surface_patch_index =
-                       create_construct_surface_patch_index(construct_surface_patch_index_));
+    CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
 
-      CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
-      return domain;
-    }
+    return domain;
   }
 /// @}
 
