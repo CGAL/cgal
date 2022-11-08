@@ -37,7 +37,7 @@ struct Converting_construction
 
   template <typename... Args,
             std::enable_if_t<!CartesianFunctors::Is_trivial_construction<Source_construction, Args...>::value>* = nullptr>
-  auto operator()(Args&&... args) const {
+  decltype(auto) operator()(Args&&... args) const {
     return backward_convert(construct(convert(args)...));
   }
 };
