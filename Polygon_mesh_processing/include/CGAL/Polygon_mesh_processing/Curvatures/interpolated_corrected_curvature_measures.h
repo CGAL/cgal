@@ -26,7 +26,6 @@
 
 #include <numeric>
 #include <queue>
-#include <unordered_set>
 #include <functional>
 
 #define EXPANDING_RADIUS_EPSILON 1e-6
@@ -932,6 +931,18 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 {
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
 
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+    typedef typename boost::property_map<PolygonMesh,
+        CGAL::dynamic_face_property_t<typename GT::FT>>::const_type FaceScalarMeasureMap;
+    typedef typename boost::property_map<PolygonMesh,
+        CGAL::dynamic_face_property_t<std::array<typename GT::FT, 3 * 3>>>::const_type FaceArrayMeasureMap;
+
+    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::property_map<PolygonMesh,
+        CGAL::dynamic_vertex_property_t<typename GT::FT>>::const_type VertexScalarMeasureMap;
+    typedef typename boost::property_map<PolygonMesh,
+        CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GT::FT, 3, 3>>>::const_type VertexMatrixMeasureMap;
+
     typedef dynamic_vertex_property_t<typename GT::Vector_3> Vector_map_tag;
     typedef typename boost::property_map<PolygonMesh, Vector_map_tag>::const_type Default_vector_map;
     typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
@@ -958,34 +969,11 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
     if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
         compute_vertex_normals(pmesh, vnm, np);
 
+    FaceScalarMeasureMap mu0_map = get(CGAL::dynamic_face_property_t<typename GT::FT>(), pmesh);
+    FaceArrayMeasureMap muXY_map = get(CGAL::dynamic_face_property_t<std::array<typename GT::FT, 3 * 3>>(), pmesh);
 
-
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-    typedef std::unordered_map<face_descriptor, typename GT::FT> FaceScalarMeasureMap_tag;
-    // using std:: array to store FT values on the 9 combinations of the standard 3D basis
-    typedef std::unordered_map<face_descriptor, std::array<typename GT::FT, 3 * 3>> FaceArrayMeasureMap_tag;
-
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-    typedef std::unordered_map<vertex_descriptor, typename GT::FT> VertexScalarMeasureMap_tag;
-    // using Eigen matrix to store & Process FT values on the 9 combinations of the standard 3D basis
-    typedef std::unordered_map<vertex_descriptor, Eigen::Matrix<typename GT::FT, 3, 3>> VertexMatrixMeasureMap_tag;
-
-
-    FaceScalarMeasureMap_tag mu0_init;
-    boost::associative_property_map<FaceScalarMeasureMap_tag>
-        mu0_map(mu0_init);
-
-    FaceArrayMeasureMap_tag muXY_init;
-    boost::associative_property_map<FaceArrayMeasureMap_tag>
-        muXY_map(muXY_init);
-
-    VertexScalarMeasureMap_tag mu0_expand_init;
-    boost::associative_property_map<VertexScalarMeasureMap_tag>
-        mu0_expand_map(mu0_expand_init);
-
-    VertexMatrixMeasureMap_tag muXY_expand_init;
-    boost::associative_property_map<VertexMatrixMeasureMap_tag>
-        muXY_expand_map(muXY_expand_init);
+    VertexScalarMeasureMap mu0_expand_map = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
+    VertexMatrixMeasureMap muXY_expand_map = get(CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GT::FT, 3, 3>>(), pmesh);
 
     internal::interpolated_corrected_measure_mesh(pmesh, mu0_map, internal::MU0_AREA_MEASURE, np);
     internal::interpolated_corrected_anisotropic_measure_mesh(pmesh, muXY_map, np);
