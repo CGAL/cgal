@@ -20,6 +20,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/use.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -545,6 +546,8 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np = pa
   std::cerr << nb_scanlines << " scanline(s) identified (mean length = "
             << std::size_t(points.size() / double(nb_scanlines))
             << " point(s))" << std::endl;
+#else
+  CGAL_USE(nb_scanlines);
 #endif
 }
 

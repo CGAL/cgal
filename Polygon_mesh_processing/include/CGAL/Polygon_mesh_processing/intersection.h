@@ -23,7 +23,7 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>

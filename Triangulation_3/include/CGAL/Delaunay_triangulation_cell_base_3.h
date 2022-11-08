@@ -20,7 +20,6 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
 #include <type_traits>

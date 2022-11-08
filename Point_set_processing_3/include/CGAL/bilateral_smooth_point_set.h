@@ -21,7 +21,7 @@
 #include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
 #include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/squared_distance_3.h>
 #include <functional>
 
@@ -72,8 +72,8 @@ compute_denoise_projection(
   typename Kernel::FT sharpness_angle           ///< control sharpness(0-90)
 )
 {
-  CGAL_point_set_processing_precondition(radius > 0);
-  CGAL_point_set_processing_precondition(sharpness_angle > 0
+  CGAL_precondition(radius > 0);
+  CGAL_precondition(sharpness_angle > 0
                                          && sharpness_angle < 90);
 
   // basic geometric types
@@ -286,8 +286,8 @@ bilateral_smooth_point_set(
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
 
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
-  CGAL_point_set_processing_precondition(k > 1);
+  CGAL_precondition(points.begin() != points.end());
+  CGAL_precondition(k > 1);
 
   // types for K nearest neighbors search structure
   typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;

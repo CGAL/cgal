@@ -1200,8 +1200,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
       endif()
     endforeach() # loop on packages
     #Now check that a cpp file including all documented headers compiles
-    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp
-         "#define  BOOST_PARAMETER_MAX_ARITY 12 \n")
     foreach(header ${list_of_headers_to_test})
       file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "#include <${header}>\n")
     endforeach() #loop on headers to include in test file

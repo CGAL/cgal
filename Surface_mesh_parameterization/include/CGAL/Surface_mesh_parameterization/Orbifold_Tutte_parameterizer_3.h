@@ -26,7 +26,6 @@
 #include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/assertions.h>
 
-#include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 #include <CGAL/Timer.h>

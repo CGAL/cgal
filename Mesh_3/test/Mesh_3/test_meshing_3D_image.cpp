@@ -49,7 +49,7 @@ public:
       << CGAL::get_default_random().get_seed() << std::endl;
     Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
       (image,
-       1e-6,
+       CGAL::parameters::relative_error_bound = 1e-6,
        CGAL::parameters::p_rng = &CGAL::get_default_random());
 
     // Set mesh criteria

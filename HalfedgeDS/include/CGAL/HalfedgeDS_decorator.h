@@ -795,8 +795,7 @@ public:
         Assert_compile_time_tag(Supports_vertex_halfedge(), Tag_true());
         Assert_compile_time_tag(Supports_halfedge_vertex(), Tag_true());
 
-        unsigned int nb_erased_components = 0,
-                     nb_isolated_vertices = 0;
+        unsigned int nb_erased_components = 0;
 
         // Gets list of connected components, ordered by size (i.e. number of vertices)
         std::vector<Vertex_handle> components;
@@ -818,12 +817,8 @@ public:
           else // if isolated vertex
           {
             vertices_erase(vertex);
-            nb_isolated_vertices++;
           }
         }
-
-//         if (nb_isolated_vertices > 0)
-//           std::cerr << "  Erased " << nb_isolated_vertices << " isolated vertices\n";
 
         return nb_erased_components;
     }
