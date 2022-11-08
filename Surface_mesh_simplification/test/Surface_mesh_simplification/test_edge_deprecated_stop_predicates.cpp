@@ -1,4 +1,3 @@
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Simple_cartesian.h>
