@@ -31,6 +31,7 @@
 #include <CGAL/Origin.h>
 
 #include <functional>
+#include <type_traits>
 
 #include <CGAL/SMDS_3/internal/Handle_IO_for_pair_of_int.h>
 #include <CGAL/SMDS_3/internal/indices_management.h>
@@ -49,6 +50,7 @@
 #include <boost/optional.hpp>
 
 #include <CGAL/Mesh_3/Null_subdomain_index.h>
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -604,7 +606,13 @@ public:
    *
    */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
+  static
+  std::conditional_t<
+    CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value,
+    Labeled_mesh_domain_3,
+    Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
+  >
+  create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
@@ -622,13 +630,15 @@ public:
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;
 
-    //todo
-    // * change return type depending on whether detect_features is available or not
-    // * call CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
+    using Domain_type = std::conditional_t <
+      CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value,
+      Labeled_mesh_domain_3,
+      Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
+    >;
 
     if (weights_.is_valid())
     {
-      return Labeled_mesh_domain_3
+      Domain_type domain
               (p::function = create_weighted_labeled_image_wrapper
                        (image_,
                         weights_,
@@ -641,10 +651,13 @@ public:
                        create_null_subdomain_index(null_subdomain_index_),
                p::construct_surface_patch_index =
                        create_construct_surface_patch_index(construct_surface_patch_index_));
+
+      CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
+      return domain;
     }
     else
     {
-      return Labeled_mesh_domain_3
+      Domain_type domain
               (p::function = create_labeled_image_wrapper
                        (image_,
                         image_values_to_subdomain_indices_,
@@ -656,6 +669,9 @@ public:
                        create_null_subdomain_index(null_subdomain_index_),
                p::construct_surface_patch_index =
                        create_construct_surface_patch_index(construct_surface_patch_index_));
+
+      CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
+      return domain;
     }
   }
 /// @}
