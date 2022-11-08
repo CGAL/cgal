@@ -1042,7 +1042,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Line_2& l) const
     {
       return l.rep().a();
@@ -1058,7 +1058,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Plane_3& l) const
     {
       return l.rep().a();
@@ -1075,7 +1075,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Line_2& l) const
     {
       return l.rep().b();
@@ -1091,7 +1091,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Plane_3& l) const
     {
       return l.rep().b();
@@ -1108,7 +1108,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Line_2& l) const
     {
       return l.rep().c();
@@ -1124,7 +1124,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Plane_3& l) const
     {
       return l.rep().c();
@@ -1140,7 +1140,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Plane_3& l) const
     {
       return l.rep().d();

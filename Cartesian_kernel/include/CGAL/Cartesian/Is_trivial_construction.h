@@ -265,27 +265,6 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_3<K
 };
 
 template <typename K, typename... Args>
-struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_a_2<K>, Args...> : public Tag_true {};
-
-template <typename K, typename... Args>
-struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_b_2<K>, Args...> : public Tag_true {};
-
-template <typename K, typename... Args>
-struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_c_2<K>, Args...> : public Tag_true {};
-
-template <typename K, typename... Args>
-struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_a_3<K>, Args...> : public Tag_true {};
-
-template <typename K, typename... Args>
-struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_b_3<K>, Args...> : public Tag_true {};
-
-template <typename K, typename... Args>
-struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_c_3<K>, Args...> : public Tag_true {};
-
-template <typename K, typename... Args>
-struct Is_trivial_construction<CGAL::CommonKernelFunctors::Compute_d_3<K>, Args...> : public Tag_true {};
-
-template <typename K, typename... Args>
 struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_2<K>, Args...>
 {
   typedef typename K::FT         FT;
