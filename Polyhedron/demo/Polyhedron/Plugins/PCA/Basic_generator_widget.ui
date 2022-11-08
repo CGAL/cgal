@@ -934,7 +934,7 @@ QGroupBox::title {
                  <item>
                   <widget class="QLineEdit" name="grid_lineEdit">
                    <property name="text">
-                    <string>0 0 0 1 1 1</string>
+                    <string>0 0 0 1 1 0</string>
                    </property>
                   </widget>
                  </item>
