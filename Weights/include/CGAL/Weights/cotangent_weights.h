@@ -147,44 +147,38 @@ typename Kernel::FT cotangent_weight(const CGAL::Point_3<Kernel>& p0,
 // For border edges it returns zero.
 // This version is currently used in:
 // Surface_mesh_deformation -> Surface_mesh_deformation.h
-template<typename PolygonMesh,
-         typename VertexPointMap,
-         typename GeomTraits = typename Kernel_traits<
-                                 typename boost::property_traits<VertexPointMap>::value_type>::type>
+template<typename PolygonMesh>
 class Single_cotangent_weight
 {
   using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
-  using Point_ref = typename boost::property_traits<VertexPointMap>::reference;
-  using FT = typename GeomTraits::FT;
-
-private:
-  const PolygonMesh& m_pmesh;
-  const VertexPointMap m_vpm;
-  const GeomTraits m_traits;
-
 public:
-  Single_cotangent_weight(const PolygonMesh& pmesh,
-                          const VertexPointMap vpm,
-                          const GeomTraits& traits = GeomTraits())
-    : m_pmesh(pmesh), m_vpm(vpm), m_traits(traits)
-  { }
-
-  decltype(auto) operator()(const halfedge_descriptor he) const
+  // Returns the cotangent of the opposite angle of the edge
+  // 0 for border edges (which does not have an opposite angle).
+  template <typename VPM>
+  auto operator()(halfedge_descriptor he,
+                  PolygonMesh& pmesh,
+                  VPM vpm)
   {
-    if (is_border(he, m_pmesh))
+    using Point = typename boost::property_traits<VPM>::value_type;
+    using Point_ref = typename boost::property_traits<VPM>::reference;
+
+    using GeomTraits = typename Kernel_traits<Point>::type;
+    using FT = typename GeomTraits::FT;
+
+    if(is_border(he, pmesh))
       return FT{0};
 
-    const vertex_descriptor v0 = target(he, m_pmesh);
-    const vertex_descriptor v1 = source(he, m_pmesh);
-    const vertex_descriptor v2 = target(next(he, m_pmesh), m_pmesh);
+    const vertex_descriptor v0 = target(he, pmesh);
+    const vertex_descriptor v1 = source(he, pmesh);
+    const vertex_descriptor v2 = target(next(he, pmesh), pmesh);
 
-    const Point_ref p0 = get(m_vpm, v0);
-    const Point_ref p1 = get(m_vpm, v1);
-    const Point_ref p2 = get(m_vpm, v2);
+    const Point_ref p0 = get(vpm, v0);
+    const Point_ref p1 = get(vpm, v1);
+    const Point_ref p2 = get(vpm, v2);
 
-    return cotangent_3(p0, p2, p1, m_traits);
+    return cotangent(p0, p2, p1);
   }
 };
 
@@ -200,7 +194,7 @@ public:
 // Surface_mesh_parameterizer -> Orbifold_Tutte_parameterizer_3.h (default version)
 // Surface_mesh_skeletonization -> Mean_curvature_flow_skeletonization.h (clamped version)
 template<typename PolygonMesh,
-         typename VertexPointMap,
+         typename VertexPointMap = typename GetVertexPointMap<PolygonMesh>::type,
          typename GeomTraits = typename Kernel_traits<
                                  typename boost::property_traits<VertexPointMap>::value_type>::type>
 class Cotangent_weight
@@ -208,11 +202,10 @@ class Cotangent_weight
   using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
-  using Point_ref = typename boost::property_traits<VertexPointMap>::reference;
   using FT = typename GeomTraits::FT;
 
 private:
-  const PolygonMesh& m_pmesh;
+  PolygonMesh* const* m_pmesh_ptr;
   const VertexPointMap m_vpm;
   const GeomTraits m_traits;
 
@@ -220,33 +213,33 @@ private:
   bool m_bound_from_below;
 
 public:
-  Cotangent_weight(const PolygonMesh& pmesh,
-                   const VertexPointMap vpm,
-                   const GeomTraits& traits = GeomTraits(),
-                   const bool use_clamped_version = false,
-                   const bool bound_from_below = true)
-    : m_pmesh(pmesh), m_vpm(vpm), m_traits(traits),
-      m_use_clamped_version(use_clamped_version),
-      m_bound_from_below(bound_from_below)
+  // Surface_mesh_deformation has its own API locked by the concept SurfaceMeshDeformationWeights
+  Cotangent_weight()
+    : m_pmesh_ptr(nullptr), m_vpm(), m_traits(), m_use_clamped_version(false), m_bound_from_below(true)
   { }
 
-  decltype(auto) operator()(const halfedge_descriptor he) const
+  template <typename VPM>
+  FT operator()(const halfedge_descriptor he,
+                const PolygonMesh& pmesh,
+                const VPM vpm) const
   {
-    if(is_border(he, m_pmesh))
+    using Point_ref = typename boost::property_traits<VPM>::reference;
+
+    if(is_border(he, pmesh))
       return FT{0};
 
     auto half_weight = [&] (const halfedge_descriptor he) -> FT
     {
-      if(is_border(he, m_pmesh))
+      if(is_border(he, pmesh))
         return FT{0};
 
-      const vertex_descriptor v0 = target(he, m_pmesh);
-      const vertex_descriptor v1 = source(he, m_pmesh);
-      const vertex_descriptor v2 = target(next(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v0 = target(he, pmesh);
+      const vertex_descriptor v1 = source(he, pmesh);
+      const vertex_descriptor v2 = target(next(he, pmesh), pmesh);
 
-      const Point_ref p0 = get(m_vpm, v0);
-      const Point_ref p1 = get(m_vpm, v1);
-      const Point_ref p2 = get(m_vpm, v2);
+      const Point_ref p0 = get(vpm, v0);
+      const Point_ref p1 = get(vpm, v1);
+      const Point_ref p2 = get(vpm, v2);
 
       FT weight = 0;
       if (m_use_clamped_version)
@@ -260,8 +253,25 @@ public:
       return weight / FT(2);
     };
 
-    FT weight = half_weight(he) + half_weight(opposite(he, m_pmesh));
+    FT weight = half_weight(he) + half_weight(opposite(he, pmesh));
     return weight;
+  }
+
+public:
+  Cotangent_weight(const PolygonMesh& pmesh,
+                   const VertexPointMap vpm,
+                   const GeomTraits& traits = GeomTraits(),
+                   const bool use_clamped_version = false,
+                   const bool bound_from_below = true)
+    : m_pmesh_ptr(&pmesh), m_vpm(vpm), m_traits(traits),
+      m_use_clamped_version(use_clamped_version),
+      m_bound_from_below(bound_from_below)
+  { }
+
+  FT operator()(const halfedge_descriptor he) const
+  {
+    CGAL_precondition(m_pmesh_ptr != nullptr);
+    return this->operator()(he, *m_pmesh_ptr, m_vpm);
   }
 };
 
