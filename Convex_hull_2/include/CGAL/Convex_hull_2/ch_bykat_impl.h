@@ -20,7 +20,7 @@
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/algorithm.h>
@@ -116,11 +116,11 @@ ch_bykat(InputIterator first, InputIterator last,
           r = R.back(); R.pop_back();
       }
   }
-  CGAL_ch_postcondition( \
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
                                      ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_check_2( \
           P.begin(), P.end(), \
           res.output_so_far_begin(), res.output_so_far_end(), \
@@ -255,11 +255,11 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
           r = R.back(); R.pop_back();
       }
   }
-  CGAL_ch_postcondition( \
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
                                      ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_check_2( \
           Pbegin, Pend, \
           res.output_so_far_begin(), res.output_so_far_end(), \

@@ -18,6 +18,7 @@ typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor     face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace params = CGAL::parameters;
 
 typedef CGAL::Polyhedral_envelope<K> Envelope;
 
@@ -36,10 +37,10 @@ void general_test(std::string filename)
   if (PMP::does_self_intersect(mesh))
     std::cout << "  Input mesh has self-intersections\n";
 
-  PMP::experimental::remove_almost_degenerate_faces(mesh,
-                                                    std::cos(160. / 180 * CGAL_PI),
-                                                    4,
-                                                    0.14);
+  PMP::remove_almost_degenerate_faces(mesh,
+                                      params::cap_threshold(std::cos(160. / 180 * CGAL_PI))
+                                             .needle_threshold(4)
+                                             .collapse_length_threshold(0.14));
 
 
   CGAL::IO::write_polygon_mesh("cleaned_mesh.off", mesh, CGAL::parameters::stream_precision(17));
@@ -70,11 +71,11 @@ void test_with_envelope(std::string filename, double eps)
   };
   No_modification_allowed no_modif;
   const std::size_t nbv = vertices(mesh).size();
-  PMP::experimental::remove_almost_degenerate_faces(mesh,
-                                                    std::cos(160. / 180 * CGAL_PI),
-                                                    4,
-                                                    0.14,
-                                                    CGAL::parameters::filter(no_modif));
+  PMP::remove_almost_degenerate_faces(mesh,
+                                      params::cap_threshold(std::cos(160. / 180 * CGAL_PI))
+                                             .needle_threshold(4)
+                                             .collapse_length_threshold(0.14)
+                                             .filter(no_modif));
   assert(nbv == vertices(mesh).size());
 
   // now the real test with a fixed envelope
@@ -82,11 +83,11 @@ void test_with_envelope(std::string filename, double eps)
   std::cout << "  Input mesh has " << edges(mesh).size() << " edges\n";
   bk=mesh;
   Envelope envelope(mesh, eps);
-  PMP::experimental::remove_almost_degenerate_faces(mesh,
-                                                    std::cos(160. / 180 * CGAL_PI),
-                                                    4,
-                                                    0.14,
-                                                    CGAL::parameters::filter(std::ref(envelope)));
+  PMP::remove_almost_degenerate_faces(mesh,
+                                      params::cap_threshold(std::cos(160. / 180 * CGAL_PI))
+                                             .needle_threshold(4)
+                                             .collapse_length_threshold(0.14)
+                                             .filter(std::ref(envelope)));
 
   CGAL::IO::write_polygon_mesh("cleaned_mesh_with_envelope.off", mesh, CGAL::parameters::stream_precision(17));
 
@@ -104,11 +105,11 @@ void test_with_envelope(std::string filename, double eps)
                             return Envelope(frange, mesh, eps);
                           };
   std::function<Envelope(const std::vector<Mesh::Face_index>&)> filter(create_envelope);
-  PMP::experimental::remove_almost_degenerate_faces(mesh,
-                                                    std::cos(160. / 180 * CGAL_PI),
-                                                    4,
-                                                    0.14,
-                                                    CGAL::parameters::filter(filter));
+  PMP::remove_almost_degenerate_faces(mesh,
+                                      params::cap_threshold(std::cos(160. / 180 * CGAL_PI))
+                                             .needle_threshold(4)
+                                             .collapse_length_threshold(0.14)
+                                             .filter(filter));
 
   CGAL::IO::write_polygon_mesh("cleaned_mesh_with_iterative_envelope.off", mesh, CGAL::parameters::stream_precision(17));
 
@@ -137,26 +138,25 @@ void test_parameters_on_pig(std::string filename)
 
   bk=mesh;
 
-  PMP::experimental::remove_almost_degenerate_faces(mesh,
-                                                    std::cos(160. / 180 * CGAL_PI),
-                                                    4,
-                                                    9999 /*no_constraints*/);
+  PMP::remove_almost_degenerate_faces(mesh,
+                                      params::cap_threshold(std::cos(160. / 180 * CGAL_PI))
+                                             .needle_threshold(4));
   assert(vertices(mesh).size()!=vertices(bk).size());
 
   mesh=bk;
-  PMP::experimental::remove_almost_degenerate_faces(mesh,
-                                                    std::cos(160. / 180 * CGAL_PI),
-                                                    4,
-                                                    0.000000000000001); // no-collapse but flips
+  PMP::remove_almost_degenerate_faces(mesh,
+                                      params::cap_threshold(std::cos(160. / 180 * CGAL_PI))
+                                             .needle_threshold(4)
+                                             .collapse_length_threshold(0.000000000000001)); // no-collapse but flips
   assert(vertices(mesh).size()==vertices(bk).size());
   assert(!same_meshes(mesh,bk));
 
   mesh=bk;
-  PMP::experimental::remove_almost_degenerate_faces(mesh,
-                                                    std::cos(160. / 180 * CGAL_PI),
-                                                    4,
-                                                    0.000000000000001,
-                                                    CGAL::parameters::flip_triangle_height_threshold(0.000000000000001)); // no-collapse and no flip
+  PMP::remove_almost_degenerate_faces(mesh,
+                                      params::cap_threshold(std::cos(160. / 180 * CGAL_PI))
+                                             .needle_threshold(4)
+                                             .collapse_length_threshold(0.000000000000001)
+                                             .flip_triangle_height_threshold(0.000000000000001)); // no-collapse and no flip
   assert(vertices(mesh).size()==vertices(bk).size());
   assert(same_meshes(mesh,bk));
 }

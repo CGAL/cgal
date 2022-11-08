@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
   /// [Domain creation]
   Mesh_domain domain
-    = Mesh_domain::create_labeled_image_mesh_domain_with_features(image,
+    = Mesh_domain::create_labeled_image_mesh_domain(image,
          detect_features = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
 

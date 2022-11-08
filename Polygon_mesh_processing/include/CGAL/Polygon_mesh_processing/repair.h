@@ -218,7 +218,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     area_threshold = CGAL::square(threshold_value);
 
   if(is_default_volume_threshold)
-    volume_threshold = CGAL::square(threshold_value);
+    volume_threshold = CGAL::square(threshold_value) * threshold_value;
 
   const bool use_areas = (is_default_area_threshold || area_threshold > 0);
   const bool use_volumes = (is_default_volume_threshold || volume_threshold > 0);

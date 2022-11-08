@@ -23,8 +23,6 @@
 #include <CGAL/assertions.h>
 
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
 namespace CGAL{
@@ -106,19 +104,17 @@ public:
     // on the query point type. If the query point type is the same as
     // Point_with_info, we disable it.
 
-    template <typename Point> // boost::disable_if requires a template argument to work
+    template <typename Point> // enable_if_t requires a template argument to work
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point& p,
-                                                                typename boost::disable_if<
-                                                                boost::is_same<Point_with_info,
-                                                                Point> >::type* = 0
+                                                                std::enable_if_t<
+                                                                  !std::is_same<Point_with_info,Point>::value >* = 0
       ) const
     { return Base::operator() (p); }
 
-    template <typename Point> // boost::disable_if requires a template argument to work
+    template <typename Point> // std::enable_if_t requires a template argument to work
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point& p, int,
-                                                                typename boost::disable_if<
-                                                                boost::is_same<Point_with_info,
-                                                                Point> >::type* = 0
+                                                                std::enable_if_t<
+                                                                  !std::is_same<Point_with_info,Point>::value >* = 0
       ) const
     { return Base::operator() (p,0); }
   };
@@ -213,19 +209,18 @@ public:
     // on the query point type. If the query point type is the same as
     // Point_with_info, we disable it.
 
-    template <typename Point> // boost::disable_if requires a template argument to work
+    template <typename Point> // std::enable_if_t requires a template argument to work
     No_lvalue_iterator operator()(const Point& p,
-                                  typename boost::disable_if<
-                                  boost::is_same<Point_with_info,
-                                  Point> >::type* = 0
+                                  std::enable_if_t<!std::is_same<Point_with_info,
+                                    Point>::value >* = 0
       ) const
     { return No_lvalue_iterator(p); }
 
-    template <typename Point> // boost::disable_if requires a template argument to work
+    template <typename Point> // std::enable_if requires a template argument to work
     No_lvalue_iterator operator()(const Point& p, int,
-                                  typename boost::disable_if<
-                                  boost::is_same<Point_with_info,
-                                  Point> >::type* = 0
+                                  std::enable_if_t<
+                                    !std::is_same<Point_with_info,
+                                    Point>::value >* = 0
       ) const
     { return No_lvalue_iterator(p,0); }
   };

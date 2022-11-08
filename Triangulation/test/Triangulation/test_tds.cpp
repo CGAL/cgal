@@ -104,6 +104,7 @@ void test(const int d, const string & type)
         CGAL::IO::set_binary_mode(fi);
     TDS input_tds(d);
     fi >> input_tds;
+    assert( input_tds.is_valid(true) );
     fi.close();
 
     // TEST Copy Constructor

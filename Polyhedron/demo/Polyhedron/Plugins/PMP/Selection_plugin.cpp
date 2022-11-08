@@ -753,7 +753,6 @@ public Q_SLOTS:
         return;
       }
       std::unordered_map<fg_face_descriptor, bool> is_selected_map;
-      int index = 0;
       for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
         if(selection_item->selected_facets.find(fh)
@@ -763,7 +762,6 @@ public Q_SLOTS:
         {
           is_selected_map[fh]=true;
         }
-        ++index;
       }
       CGAL::expand_face_selection_for_removal(selection_item->selected_facets,
                                               *selection_item->polyhedron(),

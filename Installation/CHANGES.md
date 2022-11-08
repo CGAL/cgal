@@ -4,16 +4,26 @@ Release History
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
-Release date: December 2022
+Release date: June 2023
+
+### General Changes
+
+- **Breaking change**: The per package assertions, pre- and postconditions are no longer supported.
+
+### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps) [Generalized Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgGeneralizedMaps) [Linear Cell Complex](https://doc.cgal.org/5.6/Manual/packages.html#PkgLinearCellComplex)
+
+- Added a version that uses indices instead of handles as dart and attribute descriptors. As the indices are integers convertible from and to `std::size_t`, they can be used as index into vectors which store properties. To use the index version,  `Use_index` must be defined and be equal to `CGAL::Tag_true` in the item class.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.6/Manual/packages.html#PkgPolygonMeshProcessing)
 
 -   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh following the
 CGAL tetrahedral Delaunay refinement algorithm.
 
+-   Added the function `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` to remove badly shaped triangles faces in a mesh.
+
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
--   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshess, and makes the data structure independent from the tetrahedral mesh generation package.
+-   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
 
 ### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 
@@ -40,9 +50,22 @@ extracted from labeled images.
 
 ### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh2)
 
+-   Deprecated usage of boost parameters in favor of function named parameters in `CGAL::lloyd_optimize_mesh_2()`.
 -   Deprecated two overloads of Function `refine_Delaunay_mesh()` and replaced them with versions using function named parameters.
 -   Add overloads of function `write_VTU()` with property maps for specifying the domain.
 
+### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
+-   Deprecated usage of boost parameters in favor of function named parameters.
+
+### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
+-   Deprecated usage of boost parameters in favor of function named parameters.
+
+### [2D Hyperbolic Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgHyperbolicTriangulation2)
+
+-   **Breaking change**: the concept `HyperbolicTriangulationFaceBase_2` has been modified to
+    better reflect the triangulation's requirements and avoid a conflict with the requirements
+    described by the concept `TriangulationDataStructure_2::Face`. The model `CGAL::Hyperbolic_triangulation_face_base_2`
+    has been adapted correspondingly.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------

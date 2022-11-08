@@ -6,21 +6,17 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stéphane Tayeb, Laurent Rineau
 
-#ifndef CGAL_MESH_3_HAS_FEATURES_H
-#define CGAL_MESH_3_HAS_FEATURES_H
-
-#include <CGAL/license/SMDS_3.h>
-
+#ifndef CGAL_HAS_FEATURES_H
+#define CGAL_HAS_FEATURES_H
 
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/tags.h>
 
 namespace CGAL {
-namespace Mesh_3 {
 namespace internal {
 
   // A type has_Has_features to check if type 'Has_features' is a nested
@@ -40,7 +36,6 @@ namespace internal {
   {};
 
 } // end namespace internal
-} // end namespace Mesh_3
 } // end namespace CGAL
 
 #endif // CGAL_MESH_3_HAS_FEATURES_H

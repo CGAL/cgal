@@ -30,8 +30,8 @@ special construction for extensions of degree 2:
 \cgalRefines `DefaultConstructible`
 \cgalRefines `CopyConstructible`
 \cgalRefines `FromIntConstructible`
-\cgalRefines `ImplicitInteroperable` with RT
-\cgalRefines `ImplicitInteroperable` with FT
+\cgalRefines `ImplicitInteroperable` with `RT`
+\cgalRefines `ImplicitInteroperable` with `FT`
 
 \cgalHasModel `double` (not exact)
 \cgalHasModel `CGAL::Sqrt_extension`
@@ -76,4 +76,3 @@ bool operator< (const RootOf_2&a,const RootOf_2& b);
 /// @}
 
 }; /* end RootOf_2 */
-

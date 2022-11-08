@@ -24,7 +24,7 @@
 #include <CGAL/config.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Polygon_2/polygon_assertions.h>
+#include <CGAL/assertions.h>
 
 ///
 namespace CGAL {

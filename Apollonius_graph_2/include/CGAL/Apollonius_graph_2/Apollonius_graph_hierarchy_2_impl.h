@@ -332,8 +332,8 @@ void
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( v != Vertex_handle());
-  CGAL_triangulation_precondition( !is_infinite(v));
+  CGAL_precondition( v != Vertex_handle());
+  CGAL_precondition( !is_infinite(v));
 
   // get the hidden circles
   typename Apollonius_graph_base::Site_list wp_list;

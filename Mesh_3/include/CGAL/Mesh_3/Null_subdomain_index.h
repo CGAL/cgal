@@ -15,11 +15,15 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#ifndef DOXYGEN_RUNNING
+
 namespace CGAL {
   struct Null_subdomain_index {
     template <typename T>
     bool operator()(const T& x) const { return 0 == x; }
   };
 }
+
+#endif
 
 #endif //CGAL_MESH_3_NULL_SUBDOMAIN_INDEX

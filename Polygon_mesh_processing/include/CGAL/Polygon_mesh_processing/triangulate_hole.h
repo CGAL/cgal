@@ -23,7 +23,7 @@
 #include <CGAL/Polygon_mesh_processing/fair.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/boost/graph/helpers.h>
 
@@ -467,6 +467,8 @@ namespace Polygon_mesh_processing {
 
     using parameters::choose_parameter;
     using parameters::get_parameter_reference;
+
+    CGAL_precondition(is_valid_halfedge_descriptor(border_halfedge, pmesh));
 
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
     face_out = triangulate_and_refine_hole

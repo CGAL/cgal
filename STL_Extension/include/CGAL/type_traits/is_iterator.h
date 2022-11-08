@@ -14,8 +14,8 @@
 // Author(s)     : Marc Glisse
 
 
-#ifndef CGAL_IS_ITERATOR_H
-#define CGAL_IS_ITERATOR_H
+#ifndef CGAL_TYPE_TRAITS_IS_ITERATOR_H
+#define CGAL_TYPE_TRAITS_IS_ITERATOR_H
 
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_pointer.hpp>
@@ -68,10 +68,17 @@ struct is_iterator
   : public internal::is_iterator_<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type>
 { };
 
+template <class T>
+CGAL_CPP17_INLINE constexpr bool is_iterator_v = is_iterator<T>::value;
+
 template <class T, class Tag>
 struct is_iterator_type
   : public internal::is_iterator_type_<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type, Tag>
 { };
+
+template <class T, class Tag>
+CGAL_CPP17_INLINE constexpr bool is_iterator_type_v = is_iterator_type<T,Tag>::value;
+
 
 template <class T, class U, bool = is_iterator<T>::value>
 struct is_iterator_to
@@ -82,6 +89,10 @@ template <class T, class U>
 struct is_iterator_to<T, U, true>
   : public boost::is_convertible<typename std::iterator_traits<T>::value_type, U>
 { };
+
+template <class T, class U>
+CGAL_CPP17_INLINE constexpr bool is_iterator_to_v = is_iterator_to<T,U>::value;
+
 
 } // namespace CGAL
 

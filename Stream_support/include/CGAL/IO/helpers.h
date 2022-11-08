@@ -16,7 +16,7 @@
 #include <CGAL/Container_helper.h>
 #include <CGAL/Has_member.h>
 #include <CGAL/Point_3.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <boost/mpl/logical.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -80,11 +80,17 @@ struct is_Range
              boost::mpl::not_<boost::is_convertible<T, std::string> > > // or a std::string / char [x]
 { };
 
+template <class T>
+CGAL_CPP17_INLINE constexpr bool is_Range_v = is_Range<T>::value;
+
 // For polygon meshes
 template <typename T>
 struct is_Point_set_or_Range_or_Iterator
   : public boost::mpl::or_<is_Point_set_3<T>, is_Range<T>, is_iterator<T> >
 { };
+
+template <class T>
+CGAL_CPP17_INLINE constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
 
 } // end namespace internal
 } // end namespace IO

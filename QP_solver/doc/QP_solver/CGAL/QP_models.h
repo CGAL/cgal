@@ -54,7 +54,7 @@ namespace CGAL {
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -305,7 +305,7 @@ make_quadratic_program_from_iterators (
 
   \ref QP_solver/first_nonnegative_lp_from_iterators.cpp
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -390,7 +390,7 @@ public:
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -478,7 +478,7 @@ public:
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 

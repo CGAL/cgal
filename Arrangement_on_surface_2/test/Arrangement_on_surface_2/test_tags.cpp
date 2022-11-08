@@ -273,38 +273,38 @@ int main ()
   assert(ident12() == false);
 
   CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_left_side_category< Traits5 >::Category,
+      (std::is_same< CGAL::internal::Arr_complete_left_side_category< Traits5 >::Category,
        CGAL::Arr_oblivious_side_tag >::value)
   );
   CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_left_side_category< Traits1 >::Category,
+      (std::is_same< CGAL::internal::Arr_complete_left_side_category< Traits1 >::Category,
        CGAL::Arr_open_side_tag >::value)
   );
 
   CGAL_static_assertion(
-      (boost::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits5 >::Category,
+      (std::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits5 >::Category,
        CGAL::Arr_oblivious_side_tag >::value)
   );
   CGAL_static_assertion(
-      (boost::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits1 >::Category,
+      (std::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits1 >::Category,
        CGAL::Arr_open_side_tag >::value)
   );
 
   CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_top_side_category< Traits5 >::Category,
+      (std::is_same< CGAL::internal::Arr_complete_top_side_category< Traits5 >::Category,
        CGAL::Arr_oblivious_side_tag >::value)
   );
   CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_top_side_category< Traits1 >::Category,
+      (std::is_same< CGAL::internal::Arr_complete_top_side_category< Traits1 >::Category,
        CGAL::Arr_open_side_tag >::value)
   );
 
   CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_right_side_category< Traits5 >::Category,
+      (std::is_same< CGAL::internal::Arr_complete_right_side_category< Traits5 >::Category,
        CGAL::Arr_oblivious_side_tag >::value)
   );
   CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_right_side_category< Traits1 >::Category,
+      (std::is_same< CGAL::internal::Arr_complete_right_side_category< Traits1 >::Category,
        CGAL::Arr_open_side_tag >::value)
   );
 

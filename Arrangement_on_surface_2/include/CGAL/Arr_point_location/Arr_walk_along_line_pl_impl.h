@@ -776,7 +776,7 @@ _is_in_connected_component (const Point_2& p,
 //-----------------------------------------------------------------------------
 // Find the first halfedge around a given target vertex, when going clockwise
 // from "6 o'clock" around this vertex (when shooting up) or starting from
-// "12 o'clock (when shooting down).
+// "12 o'clock" (when shooting down).
 //
 template <class Arrangement>
 typename Arr_walk_along_line_point_location<Arrangement>::Halfedge_const_handle

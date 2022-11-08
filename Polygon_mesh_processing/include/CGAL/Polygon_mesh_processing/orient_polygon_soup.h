@@ -311,7 +311,7 @@ struct Polygon_soup_orienter
               V_ID i1 = polygons[index][(j+1)%size];
               edges[i0][i1].insert(index);
             }
-            // "inverse the orientation of polygon #index
+            // inverse the orientation of polygon #index
             oriented[index] = true;
             stack.push(index);
           }
@@ -323,7 +323,7 @@ struct Polygon_soup_orienter
               const P_ID index = *(it_other_orient->second.begin());
               if(oriented[index]) continue; //nothing todo already processed and correctly oriented
               oriented[index] = true;
-              // "keep the orientation of polygon #index
+              // keep the orientation of polygon #index
               stack.push(index);
             }
           }
