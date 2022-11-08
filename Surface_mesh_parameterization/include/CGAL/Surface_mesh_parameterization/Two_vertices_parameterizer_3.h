@@ -143,13 +143,13 @@ public:
     for(vertex_descriptor vd : vertices) {
       const Point_3& position = get(ppmap,vd);
 
-      xmin = (std::min)((double)position.x(), xmin);
-      ymin = (std::min)((double)position.y(), ymin);
-      zmin = (std::min)((double)position.z(), zmin);
+      xmin = (std::min)(CGAL::to_double(position.x()), xmin);
+      ymin = (std::min)(CGAL::to_double(position.y()), ymin);
+      zmin = (std::min)(CGAL::to_double(position.z()), zmin);
 
-      xmax = (std::max)((double)position.x(), xmax);
-      ymax = (std::max)((double)position.y(), ymax);
-      zmax = (std::max)((double)position.z(), zmax);
+      xmax = (std::max)(CGAL::to_double(position.x()), xmax);
+      ymax = (std::max)(CGAL::to_double(position.y()), ymax);
+      zmax = (std::max)(CGAL::to_double(position.z()), zmax);
     }
 
     // Find longest bounding box axes

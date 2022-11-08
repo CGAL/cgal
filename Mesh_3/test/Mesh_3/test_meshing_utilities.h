@@ -380,8 +380,8 @@ struct Tester
       if(!c3t3.is_in_complex(f))
         continue;
 
-      max_sqd = (std::max<double>)(max_sqd,
-        aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f))));
+      max_sqd = (std::max)(max_sqd,
+        CGAL::to_double(aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f)))));
     }
     double hdist = std::sqrt(max_sqd);
     std::cout << "\tHausdorff distance to polyhedron is " << hdist << std::endl;
