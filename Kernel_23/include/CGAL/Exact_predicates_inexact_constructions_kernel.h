@@ -21,6 +21,8 @@
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Converting_construction.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
+#include <CGAL/double.h>
+#include <CGAL/float.h>
 
 namespace CGAL {
 
