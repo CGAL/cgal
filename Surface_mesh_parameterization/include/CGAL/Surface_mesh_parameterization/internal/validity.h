@@ -18,7 +18,6 @@
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/box_intersection_d.h>
 
 #include <CGAL/boost/graph/properties.h>
