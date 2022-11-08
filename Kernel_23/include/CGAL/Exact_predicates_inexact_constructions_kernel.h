@@ -47,7 +47,8 @@ using Epick = Single_precision_epick;
 
 namespace internal {
 
-  // Basic objects, constructions, and predicates, using `double` for `FT`.
+  // Basic objects, constructions, and predicates, using the same base class as
+  // Simple_cartesian<NT>: Cartesian_base without reference counting.
   template <typename NT, typename Kernel>
   using Epick_base =
       typename Simple_cartesian<NT>::template Base<Kernel>::Type;
