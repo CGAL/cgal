@@ -320,8 +320,21 @@ public:
   void refine(const Split_predicate& split_predicate) {
 
     // If the tree has already been refined, reset it
-    if (!m_root.is_leaf())
+    if (!m_root.is_leaf()){
+      std::queue<Node> nodes;
+      for (std::size_t i = 0; i < Degree::value; ++ i)
+            nodes.push (m_root[i]);
+      while (!nodes.empty())
+      {
+        Node node = nodes.front();
+        nodes.pop();
+        if (!node.is_leaf())
+          for (std::size_t i = 0; i < Degree::value; ++ i)
+            nodes.push (node[i]);
+        node.free();
+      }
       m_root.unsplit();
+    }
 
     // Reset the side length map, too
     m_side_per_depth.resize(1);
