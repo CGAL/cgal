@@ -59,7 +59,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_point_2<
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_point_2<K>, Args...>::value
   };
 };
@@ -76,7 +76,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_point_3<
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_point_3<K>, Args...>::value
    };
 };
@@ -96,7 +96,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_weighted
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_weighted_point_2<K>, Args...>::value
   };
 };
@@ -116,7 +116,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_weighted
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_weighted_point_3<K>, Args...>::value
   };
 };
@@ -136,7 +136,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_vector_2
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_vector_2<K>, Args...>::value
   };
 };
@@ -159,7 +159,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_vector_3
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_vector_3<K>, Args...>::value
   };
 };
@@ -177,7 +177,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_directio
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_direction_2<K>, Args...>::value
   };
 };
@@ -195,7 +195,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_directio
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_direction_3<K>, Args...>::value
   };
 };
@@ -210,7 +210,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_line_2<K
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_line_2<K>, Args...>::value
   };
 };
@@ -229,7 +229,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_line_3<K
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_line_3<K>, Args...>::value
   };
 };
@@ -244,7 +244,7 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_2<K
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_segment_2<K>, Args...>::value
   };
 };
@@ -259,7 +259,7 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_segment_3<K
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_segment_3<K>, Args...>::value
   };
 };
@@ -277,7 +277,7 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_2<K>
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_circle_2<K>, Args...>::value
   };
 };
@@ -292,7 +292,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_ra
   static Tag_true trivial(Circle_2);
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Compute_squared_radius_2<K>, Args...>::value
   };
 };
@@ -309,7 +309,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Compute_squared_ra
   static Tag_true trivial(Sphere_3);
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Compute_squared_radius_3<K>, Args...>::value
   };
 };
@@ -331,7 +331,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_iso_rect
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_iso_rectangle_2<K>, Args...>::value
   };
 };
@@ -353,7 +353,7 @@ struct Is_trivial_construction<CGAL::CartesianKernelFunctors::Construct_iso_cubo
 \
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_iso_cuboid_3<K>, Args...>::value
   };
 };
@@ -368,7 +368,7 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_ray_2<K>, A
 \
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_ray_2<K>, Args...>::value
   };
 };
@@ -383,7 +383,7 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_ray_3<K>, A
 \
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_ray_3<K>, Args...>::value
   };
 };
@@ -409,7 +409,7 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_plane_3<K>,
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CommonKernelFunctors::Construct_plane_3<K>, Args...>::value
   };
 };
@@ -430,7 +430,7 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_sphere_3<K>
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_sphere_3<K>, Args...>::value
   };
 };
@@ -447,7 +447,7 @@ struct Is_trivial_construction<CGAL::CommonKernelFunctors::Construct_circle_3<K>
 
   static Tag_false trivial(...);
 
-  enum { value = decltype(trivial(std::declval<CGAL::remove_cvref_t<Args>>()...))::value ||
+  enum { value = decltype(trivial(std::declval<CGAL::cpp20::remove_cvref_t<Args>>()...))::value ||
     Is_trivial_construction_base<CGAL::CartesianKernelFunctors::Construct_circle_3<K>, Args...>::value
   };
 };
