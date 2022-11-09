@@ -308,7 +308,7 @@ int main(int argc, char** argv)
 
   options.add_options()
     ("help,h", "Display help message")
-    ("polyhedron,p", po::value<std::string>(), "Polyhedron input file")
+    ("polyhedron,p", po::value<std::string>()->default_value("./data/test_mesh_6.off"), "Polyhedron input file")
     ("debugmode,d", po::value<bool>()->default_value(false), "Enable debug output")
     ("randomseed,r", po::value<unsigned int>(), "Randomization seed value")
     ("trials,t", po::value<size_t>()->default_value(1), "Number of trials to run")
