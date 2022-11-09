@@ -38,19 +38,10 @@ int main(int argc, char* argv[])
   assert(created);
 
   // we use a tuple of 2 scalar values and 2 vectors for principal curvatures and directions
-  Surface_Mesh::Property_map<vertex_descriptor, std::tuple<
-      Epic_Kernel::FT,
-      Epic_Kernel::FT,
-      Epic_Kernel::Vector_3,
-      Epic_Kernel::Vector_3
-      >> principal_curvature_map;
+  Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvature<Epic_Kernel>> principal_curvature_map;
 
-  boost::tie(principal_curvature_map, created) = g1.add_property_map<vertex_descriptor, std::tuple<
-      Epic_Kernel::FT,
-      Epic_Kernel::FT,
-      Epic_Kernel::Vector_3,
-      Epic_Kernel::Vector_3
-      >>("v:principal_curvature_map", { 0, 0,
+  boost::tie(principal_curvature_map, created) = g1.add_property_map<vertex_descriptor, PMP::Principal_curvature<Epic_Kernel>>
+      ("v:principal_curvature_map", { 0, 0,
           Epic_Kernel::Vector_3 (0,0,0),
           Epic_Kernel::Vector_3 (0,0,0)});
   assert(created);
@@ -90,6 +81,6 @@ int main(int argc, char* argv[])
     auto PC = principal_curvature_map[v];
       std::cout << v.idx() << ": HC = " << mean_curvature_map[v]
                            << ", GC = " << gaussian_curvature_map[v] << "\n"
-                           << ", PC = [ " << std::get<0>(PC) << " , " << std::get<1>(PC) << " ]\n";
+                           << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
   }
 }
