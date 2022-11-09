@@ -1027,7 +1027,6 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
 #else
     CGAL::Three::Three::warning("You need VTK to read a NRRD file");
-    CGAL_USE(dirname);
     delete image;
     return QList<Scene_item*>();
 #endif
