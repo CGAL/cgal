@@ -209,7 +209,7 @@ private:
   // is used, but Surface_mesh_deformation has its own weight API locked
   // by the concept SurfaceMeshDeformationWeights.
   // A bit awkward, but better than duplicating code...
-  PolygonMesh* const* m_pmesh_ptr;
+  PolygonMesh const * const m_pmesh_ptr;
   const VertexPointMap m_vpm;
   const GeomTraits m_traits;
 
