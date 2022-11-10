@@ -718,7 +718,7 @@ public:
   }
 
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS& np)
+  static auto create_labeled_image_mesh_domain(const CGAL_NP_CLASS& np)
   {
     static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::image_3_param_t>::value, "Value for required parameter not found");
     using parameters::get_parameter_reference;
@@ -730,7 +730,7 @@ public:
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
+  static auto create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
                                                                 const CGAL_NP_CLASS_1&  np1,
                                                                 const CGAL_NP_CLASS_2&  np2,
                                                                 const NP& ... nps)
@@ -741,7 +741,7 @@ public:
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
-  static Labeled_mesh_domain_3 create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1&  np1,
+  static auto create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1&  np1,
                                                                 const CGAL_NP_CLASS_2&  np2,
                                                                 const NP& ... nps)
   {
