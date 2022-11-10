@@ -301,9 +301,9 @@ public:
         element.assign(rf, "red");
         element.assign(gf, "green");
         element.assign(bf, "blue");
-        r = std::floor(rf*255);
-        g = std::floor(gf*255);
-        b = std::floor(bf*255);
+        r = static_cast<unsigned char>(std::floor(rf*255));
+        g = static_cast<unsigned char>(std::floor(gf*255));
+        b = static_cast<unsigned char>(std::floor(bf*255));
       }
       m_vcolor_map[vi] = CGAL::IO::Color(r, g, b);
     }
