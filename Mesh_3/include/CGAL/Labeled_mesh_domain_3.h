@@ -611,7 +611,7 @@ public:
     CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value,
     Labeled_mesh_domain_3,
     Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
-  >
+  > // warning : keep return type consistent with Return_type inside the constructor code
   create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
   {
     using parameters::get_parameter;
@@ -639,13 +639,14 @@ public:
                                      image_values_to_subdomain_indices_,
                                      value_outside_);
 
-    using Domain_type = std::conditional_t <
+    // warning : keep Return_type consistent with actual return type
+    using Return_type = std::conditional_t <
       CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value,
       Labeled_mesh_domain_3,
       Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
     >;
 
-    Domain_type domain
+    Return_type domain
       (p::function = image_wrapper,
        p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
        p::relative_error_bound = relative_error_bound_,
