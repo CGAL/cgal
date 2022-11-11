@@ -9,13 +9,13 @@ the output arrangement `res` to represent the overlaid arrangement.
 Computes the overlay of two input arrangement
 objects, and returns the overlaid arrangement. All three arrangements
 can be instantiated with different geometric traits classes and different
-<span class="textsc">Dcel</span> classes (encapsulated in the various topology-traits classes).
+\dcel classes (encapsulated in the various topology-traits classes).
 The geometry traits of the resulting arrangement is used to construct the
 resulting arrangement. This means that all the types (e.g.,
 `Traits::Point_2`, `Traits::Curve_2`, and `Traits::Point_2`)
 of both input arrangements have to be convertible to the types in the
 resulting arrangement. A given overlay-traits object is used to properly
-construct the overlaid <span class="textsc">Dcel</span> that represents the resulting arrangement.
+construct the overlaid \dcel that represents the resulting arrangement.
 
 \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay" is not supported).
 
@@ -45,13 +45,13 @@ consolidated set of curves that induce `res`.
 Computes the overlay of two input arrangement
 objects, and returns the overlaid arrangement. All three arrangements
 can be instantiated with different geometric traits classes and different
-<span class="textsc">Dcel</span> classes (encapsulated in the various topology-traits classes).
+\dcel classes (encapsulated in the various topology-traits classes).
 The geometry traits of the resulting arrangement is used to construct the
 resulting arrangement. This means that all the types (e.g.,
 `Traits::Point_2`, `Traits::Curve_2`, and `Traits::Point_2`)
 of both input arrangements have to be convertible to the types in the
 resulting arrangement. A given overlay-traits object is used to properly
-construct the overlaid <span class="textsc">Dcel</span> that represents the resulting arrangement.
+construct the overlaid \dcel that represents the resulting arrangement.
 
 \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay" is not supported).
 

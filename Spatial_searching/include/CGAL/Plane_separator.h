@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
@@ -30,20 +30,20 @@ template < class FT> class Plane_separator {
   inline FT cutting_value() const { return cutting_val;}
 
   void set_cutting_dimension(int d) {
-	  cutting_dim=d;
+          cutting_dim=d;
   }
 
   void set_cutting_value(FT val) {
-	  cutting_val=val;
-  }  
+          cutting_val=val;
+  }
 //commented this is not used
-//  template <class Point>  
+//  template <class Point>
 //  inline bool has_on_negative_side(const Point& i) {
 //    return i[cutting_dimension()] < cutting_value();
 //  }
 
-  Plane_separator(const int d, const FT& v) : 
-		cutting_dim(d), cutting_val(v) {}
+  Plane_separator(const int d, const FT& v) :
+                cutting_dim(d), cutting_val(v) {}
 
   explicit Plane_separator() : cutting_dim(0), cutting_val(0) {}
 
@@ -59,7 +59,7 @@ template < class FT> class Plane_separator {
 };
 
 
- template < class FT> 
+ template < class FT>
  std::ostream& operator<< (std::ostream& s, Plane_separator<FT>& x) {
    s << "\n Separator coordinate: " << x.cutting_dimension() <<
      " value: " << x.cutting_value() << "\n";

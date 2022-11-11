@@ -20,7 +20,7 @@ int main(int argc, char** argv)
   if(argc < 2) {
     std::cout << "usage: " << argv[0] << " [number_of_points]" << std::endl;
     std::cout << "Defaulting to 100k points..." << std::endl;
-    N = 100000; 
+    N = 100000;
   } else {
     N = atoi(argv[1]);
   }

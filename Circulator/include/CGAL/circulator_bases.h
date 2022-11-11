@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 
@@ -30,18 +30,18 @@ struct Iterator_tag {};                     // any iterator.
 // into a multiple user-defined conversions, problem.
 
 struct Forward_circulator_tag
-  : public std::forward_iterator_tag 
+  : public std::forward_iterator_tag
 {};
 
 struct Bidirectional_circulator_tag
-  : public std::bidirectional_iterator_tag 
-{ 
+  : public std::bidirectional_iterator_tag
+{
   operator Forward_circulator_tag() const { return Forward_circulator_tag(); }
 };
 
 struct Random_access_circulator_tag
   : public std::random_access_iterator_tag
-{ 
+{
   operator Bidirectional_circulator_tag() const { return Bidirectional_circulator_tag(); }
   operator Forward_circulator_tag() const { return Forward_circulator_tag(); }
 };
@@ -49,7 +49,7 @@ struct Random_access_circulator_tag
 template <typename Tag, typename T, typename Distance = std::ptrdiff_t,
           /* size is so awkwardly placed to faciliate using the
            * default arguments from the derived classes */
-          typename Size = std::size_t, typename Pointer = T*, 
+          typename Size = std::size_t, typename Pointer = T*,
           typename Reference = T&>
 struct Circulator_base {
   typedef Tag       iterator_category;
@@ -61,11 +61,11 @@ struct Circulator_base {
 };
 
 template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
-struct Forward_circulator_base 
+struct Forward_circulator_base
   : Circulator_base<Forward_circulator_tag, T, Dist, Size> {};
 
 template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
-struct Bidirectional_circulator_base 
+struct Bidirectional_circulator_base
   : Circulator_base<Bidirectional_circulator_tag, T, Dist, Size> {};
 
 template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>

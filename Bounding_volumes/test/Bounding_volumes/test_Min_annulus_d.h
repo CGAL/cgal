@@ -53,7 +53,7 @@ test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
     CGAL::Verbose_ostream verr ( verbose >= 0);
     CGAL::Verbose_ostream verr0( verbose == 0);
     CGAL::Verbose_ostream verrX( verbose >  0);
-    CGAL::set_pretty_mode( verr.out());
+    CGAL::IO::set_pretty_mode( verr.out());
 
     bool  is_valid_verbose = ( verbose > 0);
 
@@ -103,12 +103,12 @@ test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
         verrX << min_annulus.number_of_inner_support_points() << endl;
         typename Min_annulus::Inner_support_point_iterator
             point_it = min_annulus.inner_support_points_begin();
-	typename Min_annulus::Inner_support_point_index_iterator
+        typename Min_annulus::Inner_support_point_index_iterator
             point_index = min_annulus.inner_support_points_indices_begin();
         for ( ; point_it != min_annulus.inner_support_points_end();
               ++point_it, ++point_index) {
             verrX << *point_it << endl;
-	    assert(*point_it == first[*point_index]);
+            assert(*point_it == first[*point_index]);
         }
         assert( ( min_annulus.inner_support_points_end()
                   - min_annulus.inner_support_points_begin())
@@ -124,7 +124,7 @@ test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
         for ( ; point_it != min_annulus.outer_support_points_end();
               ++point_it, ++point_index) {
             verrX << *point_it << endl;
-	    assert(*point_it == first[*point_index]);
+            assert(*point_it == first[*point_index]);
         }
         assert( ( min_annulus.outer_support_points_end()
                   - min_annulus.outer_support_points_begin())
@@ -195,7 +195,7 @@ test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
     )
 
     COVER( "I/O",
-	   verrX << min_annulus  << endl;
+           verrX << min_annulus  << endl;
     )
     verr0 << endl;
 }

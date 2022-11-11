@@ -22,7 +22,7 @@ class Cluster_classification : public Item_classification_base
  public:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
-  
+
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
 
@@ -50,16 +50,16 @@ class Cluster_classification : public Item_classification_base
     {
       return std::make_pair (point_set->point(idx), (*cluster_id)[idx]);
     }
-    
+
   };
 
  public:
-  
+
   Cluster_classification(Scene_points_with_normal_item* points);
   ~Cluster_classification();
 
   CGAL::Three::Scene_item* item() { return m_points; }
-  void erase_item() { m_points = NULL; }
+  void erase_item() { m_points = nullptr; }
 
   CGAL::Bbox_3 bbox()
   {
@@ -82,7 +82,7 @@ class Cluster_classification : public Item_classification_base
     double dx = bb.xmax() - bb.xmin();
     double dy = bb.ymax() - bb.ymin();
     double dz = bb.zmax() - bb.zmin();
-    
+
     dx *= 10.;
     dy *= 10.;
     dz *= 10.;
@@ -93,7 +93,7 @@ class Cluster_classification : public Item_classification_base
 
   void compute_features (std::size_t nb_scales, float voxel_size);
   void add_remaining_point_set_properties_as_features(Feature_set& feature_set);
-  
+
   void select_random_region();
 
   void add_cluster_features ()
@@ -108,7 +108,7 @@ class Cluster_classification : public Item_classification_base
     m_features.template add<CGAL::Classification::Feature::Eigenvalue> (m_clusters, *m_eigen, 0);
     m_features.template add<CGAL::Classification::Feature::Eigenvalue> (m_clusters, *m_eigen, 1);
     m_features.template add<CGAL::Classification::Feature::Eigenvalue> (m_clusters, *m_eigen, 2);
-    
+
     // m_features.template add<CGAL::Classification::Feature::Linearity> (m_clusters, *m_eigen);
     // m_features.template add<CGAL::Classification::Feature::Planarity> (m_clusters, *m_eigen);
     // m_features.template add<CGAL::Classification::Feature::Sphericity> (m_clusters, *m_eigen);
@@ -119,7 +119,7 @@ class Cluster_classification : public Item_classification_base
     // m_features.template add<CGAL::Classification::Feature::Surface_variation> (m_clusters, *m_eigen);
     // m_features.template add<CGAL::Classification::Feature::Verticality<Kernel> > (m_clusters, *m_eigen);
   }
-  
+
   template <typename Type>
   bool try_adding_simple_feature (Feature_set& feature_set, const std::string& name)
   {
@@ -133,7 +133,7 @@ class Cluster_classification : public Item_classification_base
 
     return okay;
   }
-  
+
   void add_selection_to_training_set (std::size_t label)
   {
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
@@ -200,15 +200,15 @@ class Cluster_classification : public Item_classification_base
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
-  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
+  void change_color (int index, float* vmin = nullptr, float* vmax = nullptr);
   CGAL::Three::Scene_item* generate_one_item (const char* name,
                                               int label) const
   {
     Scene_points_with_normal_item* points_item
       = new Scene_points_with_normal_item;
-    
+
     points_item->setName (QString("%1 (%2)").arg(name).arg(m_labels[label]->name().c_str()));
-    points_item->setColor (m_label_colors[label]);
+    points_item->setColor (label_qcolor (m_labels[label]));
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
@@ -226,12 +226,12 @@ class Cluster_classification : public Item_classification_base
                                    const char* name) const
   {
     std::vector<Scene_points_with_normal_item*> points_item
-      (m_labels.size(), NULL);
+      (m_labels.size(), nullptr);
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
     {
       points_item[i] = new Scene_points_with_normal_item;
       points_item[i]->setName (QString("%1 (%2)").arg(name).arg(m_labels[i]->name().c_str()));
-      points_item[i]->setColor (m_label_colors[i]);
+      points_item[i]->setColor (label_qcolor (m_labels[i]));
       items.push_back (points_item[i]);
     }
 
@@ -247,7 +247,7 @@ class Cluster_classification : public Item_classification_base
     }
 
   }
-  
+
   QColor add_new_label (const char* name)
   {
     QColor out = Item_classification_base::add_new_label (name);
@@ -258,14 +258,14 @@ class Cluster_classification : public Item_classification_base
   void remove_label (std::size_t position)
   {
     Item_classification_base::remove_label (position);
-    
+
     for (std::size_t i = 0; i < m_clusters.size(); ++ i)
     {
       if (m_clusters[i].training() == int(position))
         m_clusters[i].training() = -1;
       else if (m_clusters[i].training() > int(position))
         m_clusters[i].training() --;
-          
+
       if (m_clusters[i].label() == int(position))
         m_clusters[i].label() = -1;
       else if (m_clusters[i].label() > int(position))
@@ -274,7 +274,7 @@ class Cluster_classification : public Item_classification_base
 
     update_comments_of_point_set_item();
   }
-  
+
   void fill_display_combo_box (QComboBox* cb, QComboBox* cb1) const
   {
     cb->addItem ("Clusters");
@@ -291,10 +291,10 @@ class Cluster_classification : public Item_classification_base
   void update_comments_of_point_set_item()
   {
     std::string& comments = m_points->comments();
-    
+
     // Remove previously registered labels from comments
     std::string new_comment;
-      
+
     std::istringstream stream (comments);
     std::string line;
     while (getline(stream, line))
@@ -315,7 +315,7 @@ class Cluster_classification : public Item_classification_base
       comments += oss.str();
     }
   }
-  
+
   template <typename Classifier>
   bool run (int method, const Classifier& classifier,
             std::size_t subdivisions, double smoothing)
@@ -347,14 +347,14 @@ class Cluster_classification : public Item_classification_base
       m_clusters[i].label() = indices[i];
       ground_truth[i] = m_clusters[i].training();
     }
-  
+
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
 
     std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-    
+
     CGAL::Classification::Evaluation eval (m_labels, ground_truth, indices);
-  
+
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
     {
       std::cerr << " * " << m_labels[i]->name() << ": "
@@ -379,19 +379,19 @@ class Cluster_classification : public Item_classification_base
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;
-  Point_set::Property_map<CGAL::Color> m_color;
+  Point_set::Property_map<CGAL::IO::Color> m_color;
   Point_set::Property_map<int> m_cluster_id;
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;
-  
+
   std::vector<std::vector<float> > m_label_probabilities;
-  
+
   int m_index_color;
 
   boost::shared_ptr<Local_eigen_analysis> m_eigen;
 
   bool m_input_is_las;
-  
+
 }; // end class Cluster_classification
 
 

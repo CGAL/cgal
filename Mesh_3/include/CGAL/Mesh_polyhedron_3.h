@@ -85,7 +85,7 @@ public:
     return indices;
   }
 
-  Mesh_polyhedron_vertex() : Pdv_base(), nb_of_feature_edges(0) {}
+  Mesh_polyhedron_vertex() : Pdv_base(), time_stamp_(-1), nb_of_feature_edges(0) {}
   Mesh_polyhedron_vertex(const Point& p) : Pdv_base(p), time_stamp_(-1), nb_of_feature_edges(0) {}
 };
 

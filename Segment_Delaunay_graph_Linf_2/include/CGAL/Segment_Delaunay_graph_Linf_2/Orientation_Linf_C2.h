@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -50,9 +50,9 @@ private:
   typedef typename Base::Oriented_side        Oriented_side;
   typedef typename Base::Sign                 Sign;
 
-  // the orientation Linf predicate for three points 
+  // the orientation Linf predicate for three points
   typedef Orientation_Linf_2<K>               Orientation_Linf_points_2;
-  
+
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>   Are_same_points_2;
   typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
 
@@ -73,20 +73,20 @@ private:
   }
 
   bool have_common_support(const Site_2& p, const Site_2& q,
-			   Site_2& support) const
+                           Site_2& support) const
   {
     CGAL_precondition( !p.is_input() && !q.is_input() );
 
     if ( same_segments(p.supporting_site(0),
-		       q.supporting_site(0)) ||
-	 same_segments(p.supporting_site(0),
-		       q.supporting_site(1)) ) {
+                       q.supporting_site(0)) ||
+         same_segments(p.supporting_site(0),
+                       q.supporting_site(1)) ) {
       support = p.supporting_site(0);
       return true;
     } else if ( same_segments(p.supporting_site(1),
-			      q.supporting_site(0)) ||
-		same_segments(p.supporting_site(1),
-			      q.supporting_site(1)) ) {
+                              q.supporting_site(0)) ||
+                same_segments(p.supporting_site(1),
+                              q.supporting_site(1)) ) {
       support =  p.supporting_site(1);
       return true;
     }
@@ -102,14 +102,14 @@ private:
   //-------------------------------------------------------------
 
   OrientationLinf predicate(const Site_2& p, const Site_2& q,
-			const Site_2& r, const Tag_false&) const
+                        const Site_2& r, const Tag_false&) const
   {
     return Orientation_Linf_points_2()(
-	    p.point(), q.point(), r.point());
+            p.point(), q.point(), r.point());
   }
 
   OrientationLinf predicate(const Site_2& p, const Site_2& q,
-			const Site_2& r, const Tag_true&) const
+                        const Site_2& r, const Tag_true&) const
   {
 #if 1
     // do geometric filtering
@@ -119,44 +119,44 @@ private:
     Site_2 support;
     if ( !pe && !qe && !re ) {
       if ( have_common_support(p, q, support) &&
-	   have_common_support(support, r) ) {
-	return DEGENERATE;
+           have_common_support(support, r) ) {
+        return DEGENERATE;
       }
     } else if ( !pe && !qe ) {
       if ( have_common_support(p, q, support) &&
-	   is_endpoint(r, support) ) {
-	return DEGENERATE;
+           is_endpoint(r, support) ) {
+        return DEGENERATE;
       }
     } else if ( !pe && !re ) {
       if ( have_common_support(p, r, support) &&
-	   is_endpoint(q, support) ) {
-	return DEGENERATE;
+           is_endpoint(q, support) ) {
+        return DEGENERATE;
       }
     } else if ( !qe && !re ) {
       if ( have_common_support(q, r, support) &&
-	   is_endpoint(p, support) ) {
-	return DEGENERATE;
+           is_endpoint(p, support) ) {
+        return DEGENERATE;
       }
     } else if ( !pe ) {
       Site_2 s0 = p.supporting_site(0);
       Site_2 s1 = p.supporting_site(1);
       if ( (is_endpoint(q, s0) && is_endpoint(r, s0)) ||
-	   (is_endpoint(q, s1) && is_endpoint(r, s1)) ) {
-	return DEGENERATE;
+           (is_endpoint(q, s1) && is_endpoint(r, s1)) ) {
+        return DEGENERATE;
       }
     } else if ( !qe ) {
       Site_2 s0 = q.supporting_site(0);
       Site_2 s1 = q.supporting_site(1);
       if ( (is_endpoint(p, s0) && is_endpoint(r, s0)) ||
-	   (is_endpoint(p, s1) && is_endpoint(r, s1)) ) {
-	return DEGENERATE;
+           (is_endpoint(p, s1) && is_endpoint(r, s1)) ) {
+        return DEGENERATE;
       }
     } else if ( !re ) {
       Site_2 s0 = r.supporting_site(0);
       Site_2 s1 = r.supporting_site(1);
       if ( (is_endpoint(q, s0) && is_endpoint(p, s0)) ||
-	   (is_endpoint(q, s1) && is_endpoint(p, s1)) ) {
-	return DEGENERATE;
+           (is_endpoint(q, s1) && is_endpoint(p, s1)) ) {
+        return DEGENERATE;
       }
     }
 #endif

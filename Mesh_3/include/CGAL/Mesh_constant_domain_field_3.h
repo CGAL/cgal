@@ -11,7 +11,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_MESH_CONSTANT_DOMAIN_FIELD_3_H
@@ -22,7 +22,7 @@
 
 #include <map>
 #include <utility>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
 
@@ -39,11 +39,11 @@ public:
       boost::mpl::identity<typename Gt::Point_3>
     >::type                       Point_3;
   typedef Index_                  Index;
-  
+
 private:
   // Map to store field values
   typedef std::map<std::pair<int,Index>,FT> Values;
-  
+
 public:
   /// Constructor
   Mesh_constant_domain_field_3(const FT& d) : d_(d) {}
@@ -53,11 +53,11 @@ public:
   {
     typename Values::const_iterator it = values_.find(std::make_pair(dim,index));
     if ( it != values_.end() ) { return it->second; }
-    
+
     return d_;
   }
-  
-  /// Sets size at any point of dimension \c dim and index \c index
+
+  /// Sets size at any point of dimension `dim` and index `index`.
   void set_size(const FT& size, const int dim, const Index& index)
   {
     values_.insert(std::make_pair(std::make_pair(dim,index),size));

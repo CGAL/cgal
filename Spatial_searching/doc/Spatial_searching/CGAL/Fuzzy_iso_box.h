@@ -74,7 +74,7 @@ Test whether the fuzzy iso box contains `p`.
 bool contains(Point_d p) const;
 
 /*!
-Test whether the fuzzy iso box contains the point whose Cartesian 
+Test whether the fuzzy iso box contains the point whose Cartesian
 coordinates are contained in the range [`begin`, `end`).
 */
 template <typename Coord_iterator>

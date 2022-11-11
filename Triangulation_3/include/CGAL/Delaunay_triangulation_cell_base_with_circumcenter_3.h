@@ -21,7 +21,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 
 namespace CGAL {
@@ -86,12 +86,12 @@ public:
   }
 
   Delaunay_triangulation_cell_base_with_circumcenter_3(
-	                    Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3), circumcenter_(nullptr) {}
 
   Delaunay_triangulation_cell_base_with_circumcenter_3(
-	                    Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3,
                             Cell_handle   n0, Cell_handle   n1,
                             Cell_handle   n2, Cell_handle   n3)
@@ -122,6 +122,15 @@ public:
   {
       invalidate_circumcenter();
       Cb::set_vertices(v0, v1, v2, v3);
+  }
+
+  void set_circumcenter(const Point& p) const
+  {
+      if (circumcenter_ == nullptr) {
+        circumcenter_ = new Point(p);
+      } else {
+        *circumcenter_ = p;
+      }
   }
 
   const Point& circumcenter(const Geom_traits& gt = Geom_traits()) const

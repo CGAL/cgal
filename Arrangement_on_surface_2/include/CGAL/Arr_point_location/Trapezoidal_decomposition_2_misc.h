@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
 //                 Iddo Hanniel <hanniel@math.tau.ac.il>
@@ -34,21 +34,19 @@
 //#define CGAL_TD_ON_RIGHT_BOUNDARY    0x8
 //#define CGAL_TD_ON_BOTTOM_BOUNDARY   0x10
 //#define CGAL_TD_ON_TOP_BOUNDARY      0x20
-//#define CGAL_TD_ON_ALL_BOUNDARIES 
-//  (CGAL_TD_ON_LEFT_BOUNDARY | CGAL_TD_ON_RIGHT_BOUNDARY | 
+//#define CGAL_TD_ON_ALL_BOUNDARIES
+//  (CGAL_TD_ON_LEFT_BOUNDARY | CGAL_TD_ON_RIGHT_BOUNDARY |
 //   CGAL_TD_ON_BOTTOM_BOUNDARY| CGAL_TD_ON_TOP_BOUNDARY)
 //#define CGAL_TD_INTERIOR             0
 //
 //#define CGAL_TD_CV_MIN_END           0
-//#define CGAL_TD_CV_MAX_END           0x1 
+//#define CGAL_TD_CV_MAX_END           0x1
 
 #define CGAL_TD_DEFAULT_DEPTH_THRESHOLD 60
 #define CGAL_TD_DEFAULT_SIZE_THRESHOLD 12
 
 #ifndef _MSC_VER
-#if !defined __GNUC__ || __GNUC__> 3 || ((__GNUC__== 3) && (__GNUC_MINOR__> 4))
 #define CGAL_PM_FRIEND_CLASS
-#endif
 #endif
 
 #endif

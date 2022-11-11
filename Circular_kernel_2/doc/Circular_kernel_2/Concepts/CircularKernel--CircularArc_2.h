@@ -3,13 +3,13 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalConcept
 
-Concept for arcs of circles. 
+Concept for arcs of circles.
 
 \cgalRefines CopyConstructible
 \cgalRefines Assignable
-\cgalRefines DefaultConstructible 
+\cgalRefines DefaultConstructible
 
-\cgalHasModel `CGAL::Circular_arc_2<CircularKernel>` 
+\cgalHasModel `CGAL::Circular_arc_2<CircularKernel>`
 
 */
 

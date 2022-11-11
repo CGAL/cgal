@@ -762,6 +762,43 @@ table.doxtable th {
 	padding-top: 5px;
 }
 
+table.iotable caption {
+	caption-side: top;
+}
+
+table.iotable {
+        border-collapse:collapse;
+        margin-top: 4px;
+        margin-bottom: 4px;
+}
+
+table.iotable td, table.iotable th {
+	border: 1px solid #2D4068;
+	padding: 3px 7px 2px;
+}
+
+table.iotable th a,table.iotable th a:visited {
+color: #FFFFFF;
+text-decoration: underline;
+}
+
+table.iotable th {
+	background-color: #374F7F;
+	color: #FFFFFF;
+	font-size: 110%;
+	padding-bottom: 4px;
+	padding-top: 5px;
+}
+
+
+table.iotable th a, table.iotable th a:visited {
+
+font-weight: bold;
+color: #FFFFFF;
+text-decoration: underline;
+}
+
+
 table.fieldtable {
         width: 100%;
         margin-bottom: 10px;
@@ -1079,10 +1116,12 @@ dl.citelist dt {
         font-weight:bold;
         margin-right:10px;
         padding:5px;
+        text-align:right;
+        width:52px;
 }
 
 dl.citelist dd {
-        margin:2px 0;
+        margin:2px 0 2px 72px;
         padding:5px 0;
 }
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
 //                 Miguel Granados     <granados@mpi-sb.mpg.de>
@@ -41,7 +41,7 @@ public:
 
   template <typename Refs>
   class SVertex
-  { 
+  {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     typedef void*  GenPtr;
     #else
@@ -51,12 +51,12 @@ public:
     typedef typename Refs::Sphere_point            Sphere_point;
     typedef typename Refs::SVertex_handle          SVertex_handle;
     typedef typename Refs::SVertex_const_handle    SVertex_const_handle;
-    typedef typename Refs::SHalfedge_handle        SHalfedge_handle;    
+    typedef typename Refs::SHalfedge_handle        SHalfedge_handle;
     typedef typename Refs::SHalfedge_const_handle  SHalfedge_const_handle;
     typedef typename Refs::SFace_handle            SFace_handle;
     typedef typename Refs::SFace_const_handle      SFace_const_handle;
 
-    Sphere_point    point_; 
+    Sphere_point    point_;
     Mark            mark_;
     SHalfedge_handle out_sedge_;
     SFace_handle     incident_sface_;
@@ -64,11 +64,11 @@ public:
     // temporary information:
 
   public:
-    SVertex() : 
+    SVertex() :
       point_(), mark_(), out_sedge_(), incident_sface_(), info_() {}
-    SVertex(const Mark& m) : 
+    SVertex(const Mark& m) :
       point_(), mark_(m), out_sedge_(), incident_sface_(), info_() {}
-    SVertex(const Sphere_point& p) : 
+    SVertex(const Sphere_point& p) :
       point_(p), mark_(), out_sedge_(), incident_sface_(), info_() {}
 
     ~SVertex() {}
@@ -99,17 +99,17 @@ public:
     SHalfedge_handle& out_sedge() { return out_sedge_; }
     SHalfedge_const_handle out_sedge() const { return out_sedge_; }
 
-    SFace_handle& incident_sface() { return incident_sface_; } 
-    SFace_const_handle incident_sface() const { return incident_sface_; } 
+    SFace_handle& incident_sface() { return incident_sface_; }
+    SFace_const_handle incident_sface() const { return incident_sface_; }
 
     bool is_isolated() const { return (out_sedge() == SHalfedge_handle()); }
 
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }
-                          
+
     public:
     std::string debug() const
-    { std::ostringstream os; set_pretty_mode(os);
+    { std::ostringstream os; CGAL::IO::set_pretty_mode(os);
       os<<"V"<<point_
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
         <<' '<<info_
@@ -117,13 +117,13 @@ public:
       <<'\0';
       std::string res(os.str()); return res;
     }
- 
-  }; // SVertex    
+
+  }; // SVertex
 
 
   template <typename Refs>
   class SHalfedge
-  { 
+  {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     typedef void*  GenPtr;
     #else
@@ -133,7 +133,7 @@ public:
     typedef typename Refs::Sphere_circle    Sphere_circle;
     typedef typename Refs::SVertex_handle          SVertex_handle;
     typedef typename Refs::SVertex_const_handle    SVertex_const_handle;
-    typedef typename Refs::SHalfedge_handle        SHalfedge_handle;    
+    typedef typename Refs::SHalfedge_handle        SHalfedge_handle;
     typedef typename Refs::SHalfedge_const_handle  SHalfedge_const_handle;
     typedef typename Refs::SFace_handle            SFace_handle;
     typedef typename Refs::SFace_const_handle      SFace_const_handle;
@@ -148,7 +148,7 @@ public:
 
   public:
     SHalfedge() : circle_(), mark_(), twin_(), sprev_(), snext_(),
-		 source_(), incident_sface_(), info_() {}
+                 source_(), incident_sface_(), info_() {}
 
     ~SHalfedge() {}
 
@@ -178,7 +178,7 @@ public:
 
     bool is_twin() const { return (&*twin_ < this); }
 
-    Mark& mark() { 
+    Mark& mark() {
       return mark_;
     }
     const Mark& mark() const {
@@ -202,7 +202,7 @@ public:
 
     Sphere_circle& circle() { return circle_; }
     const Sphere_circle& circle() const { return circle_; }
-    
+
     SFace_handle& incident_sface() { return incident_sface_; }
     SFace_const_handle incident_sface() const { return incident_sface_; }
 
@@ -210,7 +210,7 @@ public:
     const GenPtr& info() const { return info_; }
 
     std::string debug() const
-    { std::ostringstream os; set_pretty_mode(os); 
+    { std::ostringstream os; CGAL::IO::set_pretty_mode(os);
       os <<"e["<<source_->debug()<<", "
          <<twin_->source_->debug()<<
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
@@ -222,7 +222,7 @@ public:
 
   }; // SHalfedge
 
-  template <typename Refs> 
+  template <typename Refs>
   class SHalfloop
   {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
@@ -232,7 +232,7 @@ public:
     #endif
     typedef typename Refs::Mark             Mark;
     typedef typename Refs::Sphere_circle    Sphere_circle;
-    typedef typename Refs::SHalfloop_handle        SHalfloop_handle;    
+    typedef typename Refs::SHalfloop_handle        SHalfloop_handle;
     typedef typename Refs::SHalfloop_const_handle  SHalfloop_const_handle;
     typedef typename Refs::SFace_handle            SFace_handle;
     typedef typename Refs::SFace_const_handle      SFace_const_handle;
@@ -249,7 +249,7 @@ public:
     SHalfloop() : circle_(), mark_(), twin_(), incident_sface_(), info_() {}
     ~SHalfloop() {}
     SHalfloop(const SHalfloop<Refs>& l)
-    { 
+    {
       circle_ = l.circle_;
       mark_ = l.mark_;
       twin_ = l.twin_;
@@ -257,7 +257,7 @@ public:
       info_ = 0;
     }
     SHalfloop<Refs>& operator=(const SHalfloop<Refs>& l)
-    { 
+    {
       circle_ = l.circle_;
       mark_ = l.mark_;
       twin_ = l.twin_;
@@ -268,11 +268,11 @@ public:
 
     bool is_twin() const { return (&*twin_ < this); }
 
-    Mark& mark() { 
+    Mark& mark() {
       return mark_;
     }
 
-    const Mark& mark() const { 
+    const Mark& mark() const {
       return mark_;
     }
 
@@ -289,7 +289,7 @@ public:
     const GenPtr& info() const { return info_; }
 
     std::string debug() const
-    { std::ostringstream os; set_pretty_mode(os); 
+    { std::ostringstream os; CGAL::IO::set_pretty_mode(os);
       os<<"l"<<circle_
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
         <<' '<<info_
@@ -302,7 +302,7 @@ public:
 
   template <typename Refs>
   class SFace
-  { 
+  {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     typedef void*  GenPtr;
     #else
@@ -312,11 +312,11 @@ public:
     typedef typename Refs::Object_handle         Object_handle;
     typedef typename Refs::Object_list           Object_list;
     typedef typename Refs::SFace_cycle_iterator  SFace_cycle_iterator;
-    typedef typename Refs::SFace_cycle_const_iterator 
+    typedef typename Refs::SFace_cycle_const_iterator
                            SFace_cycle_const_iterator;
 
     Mark             mark_;
-    Object_list      boundary_entry_objects_; 
+    Object_list      boundary_entry_objects_;
     // SHalfedges, SHalfloops, Vertices
     GenPtr           info_;
     // temporary needed:
@@ -338,7 +338,7 @@ public:
       return *this;
     }
 
-    SFace_cycle_iterator sface_cycles_begin() 
+    SFace_cycle_iterator sface_cycles_begin()
     { return boundary_entry_objects_.begin(); }
     SFace_cycle_iterator sface_cycles_end()
     { return boundary_entry_objects_.end(); }

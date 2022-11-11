@@ -3,7 +3,7 @@
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -20,7 +20,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/Polygon_2/polygon_assertions.h>
+#include <CGAL/assertions.h>
 #include <set>
 #include <vector>
 #include <algorithm>
@@ -74,6 +74,8 @@ struct Vertex_index {
     explicit Vertex_index(Index_t i): m_i(i) {}
     Index_t as_int() const {return m_i;}
     Vertex_index operator++() {++m_i; return *this; }
+    bool operator==(const Vertex_index& other) const { return (m_i == other.m_i); }
+
 private:
     Index_t m_i;
 };
@@ -110,10 +112,10 @@ struct Edge_data {
     Edge_data(typename Tree::iterator it) : tree_it(it), is_in_tree(false) {}
     typename Tree::iterator tree_it; // The iterator of the edge in the tree.
                                      // Needed for cross reference. If edge j
-				     // is in the tree: *edges[j].tree_it == j
+                                     // is in the tree: *edges[j].tree_it == j
     bool is_in_tree :1;              // Must be set -after- inserting the edge
                                      // in the tree. Plays a role in the
-				     // comparison function of the tree.
+                                     // comparison function of the tree.
     bool is_left_to_right :1;        // Direction of edge from vertex v to v+1
 };
 
@@ -136,16 +138,16 @@ public:
 
     bool ordered_left_to_right(Vertex_index v1, Vertex_index v2)
         { return  m_order_of[v1.as_int()].as_int() <
-	m_order_of[v2.as_int()].as_int();}
+        m_order_of[v2.as_int()].as_int();}
     Vertex_index index_at_rank(Vertex_order vo) const
         { return m_idx_at_rank[vo.as_int()];}
     Vertex_index next(Vertex_index k) const
         { ++k; return k.as_int() == m_size ? Vertex_index(0) : k;}
     Vertex_index prev(Vertex_index k) const
         { return k.as_int() == 0
-	       ?  Vertex_index(m_size-1)
-	       : Vertex_index(k.as_int()-1);
-	}
+               ?  Vertex_index(m_size-1)
+               : Vertex_index(k.as_int()-1);
+        }
     Point_2 point(Vertex_index i)
         { return *iterators[i.as_int()];}
 //    { return points_start[i.as_int()];}
@@ -218,9 +220,9 @@ template <class VertexData>
 bool Less_segments<VertexData>::
 less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
 {
-    CGAL_polygon_precondition(
+    CGAL_precondition(
        m_vertex_data->edges[tree_edge.as_int()].is_in_tree);
-    CGAL_polygon_precondition(
+    CGAL_precondition(
        !m_vertex_data->edges[new_edge.as_int()].is_in_tree);
     Vertex_index left, mid, right;
     m_vertex_data->left_and_right_index(left, right, tree_edge);
@@ -260,12 +262,12 @@ Vertex_data_base(ForwardIterator begin, ForwardIterator end,
     m_order_of.insert(m_order_of.end(), m_size, Vertex_order(0));
     for (Index_t i = 0; i< m_size; ++i, ++begin) {
         m_idx_at_rank.push_back(Vertex_index(i));
-	iterators.push_back(begin);
+        iterators.push_back(begin);
     }
     std::sort(m_idx_at_rank.begin(), m_idx_at_rank.end(),
               Less_vertex_data<Vertex_data_base>(this));
     for (Index_t j = 0; j < m_size; ++j) {
-	Vertex_order vo(j);
+        Vertex_order vo(j);
         m_order_of[index_at_rank(vo).as_int()] = vo;
     }
 }
@@ -308,7 +310,7 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
       case LEFT_TURN: left_turn = true; break;
       case RIGHT_TURN: left_turn = false; break;
       default: return false;
-      
+
     }
     Edge_data<Less_segs>
         &td_prev = edges[prev_vt.as_int()],
@@ -321,21 +323,21 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
     std::pair<typename Tree::iterator, bool> result;
     if (left_turn) {
         result = tree->insert(prev_vt);
-	// CGAL_polygon_assertion(result.second)
-	td_prev.tree_it = result.first;
+        // CGAL_assertion(result.second)
+        td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
         result = tree->insert(mid_vt);
-	// CGAL_polygon_assertion(result.second)
-	td_mid.tree_it = result.first;
+        // CGAL_assertion(result.second)
+        td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
     } else {
         result = tree->insert(mid_vt);
-	// CGAL_polygon_assertion(result.second)
-	td_mid.tree_it = result.first;
+        // CGAL_assertion(result.second)
+        td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
         result = tree->insert(prev_vt);
-	// CGAL_polygon_assertion(result.second)
-	td_prev.tree_it = result.first;
+        // CGAL_assertion(result.second)
+        td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
     }
     return true;
@@ -367,21 +369,21 @@ replacement_event(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
     // check if continuation point is on the right side of neighbor segments
     typedef typename Tree::iterator It;
     Edge_data<Less_segs> &td = edges[cur_edge.as_int()];
-    CGAL_polygon_assertion(td.is_in_tree);
+    CGAL_assertion(td.is_in_tree);
     It cur_seg = td.tree_it;
     Vertex_index cur_vt = (td.is_left_to_right) ? next_edge : cur_edge;
     if (cur_seg != tree->begin()) {
         It seg_below = cur_seg;
-	--seg_below;
-	if (!on_right_side(cur_vt, *seg_below, true)) {
-	    return false;
+        --seg_below;
+        if (!on_right_side(cur_vt, *seg_below, true)) {
+            return false;
         }
     }
     It seg_above = cur_seg;
     ++ seg_above;
     if (seg_above != tree->end()) {
         if (!on_right_side(cur_vt, *seg_above, false)) {
-	    return false;
+            return false;
         }
     }
     // replace the segment
@@ -427,12 +429,12 @@ deletion_event(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
     // Check if the vertex that is removed lies between the two tree edges.
     if (seg_above != tree->end()) {
         if (!on_right_side(cur_vt, *seg_above, false))
-	    return false;
+            return false;
     }
     if (seg_above != tree->begin()) {
         --seg_above; // which turns it in seg_below
         if (!on_right_side(cur_vt, *seg_above, true))
-	    return false;
+            return false;
     }
     return true;
 }
@@ -442,27 +444,27 @@ void Vertex_data<ForwardIterator, PolygonTraits>::
 sweep(Tree *tree)
 {
     if (this->m_size < 3)
-    	return;
+            return;
     bool succes = true;
     for (Index_t i=0; i< this->m_size; ++i) {
         Vertex_index cur = index_at_rank(Vertex_order(i));
-	    Vertex_index prev_vt = prev(cur), next_vt = next(cur);
-	    if (ordered_left_to_right(cur, next_vt)) {
-	        if (ordered_left_to_right(cur, prev_vt))
-	            succes = insertion_event(tree, prev_vt, cur, next_vt);
-	        else
-	            succes = replacement_event(tree, prev_vt, cur);
-	    } else {
-	        if (ordered_left_to_right(cur, prev_vt))
-	            succes = replacement_event(tree, cur, prev_vt);
-	        else
-	            succes = deletion_event(tree, prev_vt, cur);
-	    }
-	    if (!succes)
-	        break;
+            Vertex_index prev_vt = prev(cur), next_vt = next(cur);
+            if (ordered_left_to_right(cur, next_vt)) {
+                if (ordered_left_to_right(cur, prev_vt))
+                    succes = insertion_event(tree, prev_vt, cur, next_vt);
+                else
+                    succes = replacement_event(tree, prev_vt, cur);
+            } else {
+                if (ordered_left_to_right(cur, prev_vt))
+                    succes = replacement_event(tree, cur, prev_vt);
+                else
+                    succes = deletion_event(tree, prev_vt, cur);
+            }
+            if (!succes)
+                break;
     }
     if (!succes)
-    	this->is_simple_result = false;
+            this->is_simple_result = false;
 }
 }
 // ----- End of implementation of i_polygon functions. -----
@@ -482,14 +484,14 @@ bool is_simple_polygon(Iterator points_begin, Iterator points_end,
     std::vector<typename PolygonTraits::Point_2> points(points_begin,points_end);
     std::sort(points.begin(), points.end(), polygon_traits.less_xy_2_object());
 
-    typename std::vector<typename PolygonTraits::Point_2>::iterator 
+    typename std::vector<typename PolygonTraits::Point_2>::iterator
                                   succ(points.begin()) , it(succ++);
     for(;succ != points.end(); ++it,++succ){
       if(*it == *succ){
-	return false;
+        return false;
       }
     }
-    // end of fix    
+    // end of fix
     Vertex_data   vertex_data(points_begin, points_end, polygon_traits);
     Tree tree(&vertex_data);
     vertex_data.init(&tree);

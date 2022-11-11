@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -198,7 +198,7 @@ template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
 SphereH3<R>::oriented_side(const typename SphereH3<R>::Point_3& p) const
-{ return Oriented_side(bounded_side(p) * orientation()); }
+{ return Oriented_side(static_cast<int>(bounded_side(p)) * static_cast<int>(orientation())); }
 
 template <class R>
 CGAL_KERNEL_INLINE

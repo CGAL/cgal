@@ -16,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Dummy_tds_3.h>
+#include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 
 namespace CGAL {
 
@@ -31,17 +31,17 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_3<TDS2> Other; };
 
-  
+
   Triangulation_ds_vertex_base_3()
-    : _c(), visited_for_vertex_extractor(false) 
+    : _c(), visited_for_vertex_extractor(false)
   {}
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
-    : _c(c), visited_for_vertex_extractor(false) 
+    : _c(c), visited_for_vertex_extractor(false)
   {}
 
-  Cell_handle cell() const 
-  { return _c; }  
+  Cell_handle cell() const
+  { return _c; }
 
   void set_cell(Cell_handle c)
   {

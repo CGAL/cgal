@@ -8,7 +8,7 @@ git clone https://github.com/CGAL/cgal.git /path/to/cgal.git
 cd /path/to/cgal.git/Triangulation_2/examples/Triangulation_2
 mkdir -p build/debug
 cd build/debug
-cmake -DCMAKE_BUILD_TYPE=Debug -DCGAL_DIR=/path/to/cgal.git
+cmake -DCMAKE_BUILD_TYPE=Debug -DCGAL_DIR=/path/to/cgal.git ../..
 make
 ```
 

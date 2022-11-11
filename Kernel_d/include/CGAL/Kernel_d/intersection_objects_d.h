@@ -1,16 +1,16 @@
-// Copyright (c) 2002  
+// Copyright (c) 2002
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : ?
 
@@ -33,7 +33,7 @@ protected:
   Point_d _ip;
 public:
   Line_d_Line_d_pair() : _known(false) {}
-  Line_d_Line_d_pair(const Line_d& l1, const Line_d& l2) 
+  Line_d_Line_d_pair(const Line_d& l1, const Line_d& l2)
     : _l1(l1), _l2(l2), _known(false) {}
   Intersection_result intersection_type();
   bool intersection(Point_d& result);
@@ -43,22 +43,22 @@ public:
 template <class R>
 typename Line_d_Line_d_pair<R>::Intersection_result
 Line_d_Line_d_pair<R>::intersection_type()
-{ 
+{
   if (_known) return _result;
   _known = true;
 
   //CGAL_assertion(!_l1.is_degenerate()&&!_l2.is_degenerate());
   typedef typename R::Line_line_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT l1,l2; 
-  typename Int_obj_type::Intersection_result res = 
+  FT l1,l2;
+  typename Int_obj_type::Intersection_result res =
     Intersect(_l1.point(0),_l1.point(1),
               _l2.point(0),_l2.point(1),
               _ip,l1,l2);
 
   if (res == Int_obj_type::LINE)  { return _result = LINE; }
   if (res == Int_obj_type::POINT) { return _result = POINT; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
 }
 
 template <class R>
@@ -87,10 +87,10 @@ protected:
   Line_d _l; Ray_d _r;
   bool _known;
   Intersection_result _result;
-  Point_d _ip; 
+  Point_d _ip;
 public:
   Line_d_Ray_d_pair() : _known(false) {}
-  Line_d_Ray_d_pair(const Line_d& l, const Ray_d& r) 
+  Line_d_Ray_d_pair(const Line_d& l, const Ray_d& r)
     : _l(l), _r(r), _known(false) {}
   Intersection_result intersection_type();
   bool intersection(Point_d& result);
@@ -100,24 +100,24 @@ public:
 template <class R>
 typename Line_d_Ray_d_pair<R>::Intersection_result
 Line_d_Ray_d_pair<R>::intersection_type()
-{ 
+{
   if (_known) return _result;
   _known = true;
 
   //CGAL_assertion(!_l.is_degenerate()&&!_r.is_degenerate());
   typedef typename R::Line_line_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT l1,l2; 
-  typename Int_obj_type::Intersection_result res = 
+  FT l1,l2;
+  typename Int_obj_type::Intersection_result res =
     Intersect(_l.point(0),_l.point(1),
               _r.point(0),_r.point(1),
               _ip,l1,l2);
 
   if ( res == Int_obj_type::LINE )  { return _result = RAY; }
   if ( res == Int_obj_type::POINT &&
-       l2 >= FT(0) ) 
+       l2 >= FT(0) )
   { return _result = POINT; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
 }
 
 template <class R>
@@ -146,10 +146,10 @@ protected:
   Line_d _l; Segment_d _s;
   bool _known;
   Intersection_result _result;
-  Point_d _ip; 
+  Point_d _ip;
 public:
   Line_d_Segment_d_pair() : _known(false) {}
-  Line_d_Segment_d_pair(const Line_d& l, const Segment_d& s) 
+  Line_d_Segment_d_pair(const Line_d& l, const Segment_d& s)
     : _l(l), _s(s), _known(false) {}
   Intersection_result intersection_type();
   bool intersection(Point_d& result);
@@ -159,7 +159,7 @@ public:
 template <class R>
 typename Line_d_Segment_d_pair<R>::Intersection_result
 Line_d_Segment_d_pair<R>::intersection_type()
-{ 
+{
   if (_known) return _result;
   _known = true;
 
@@ -169,22 +169,22 @@ Line_d_Segment_d_pair<R>::intersection_type()
       _ip = _s.point(0);
       return _result = POINT;
     }
-    return _result = NO_INTERSECTION; 
+    return _result = NO_INTERSECTION;
   }
   // _s not degenerate
   typedef typename R::Line_line_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT l1,l2; 
-  typename Int_obj_type::Intersection_result res = 
+  FT l1,l2;
+  typename Int_obj_type::Intersection_result res =
     Intersect(_l.point(0),_l.point(1),
               _s.point(0),_s.point(1),
               _ip,l1,l2);
 
   if ( res == Int_obj_type::LINE )  { return _result = SEGMENT; }
   if ( res == Int_obj_type::POINT &&
-       FT(0) <= l2 && l2 <= FT(1) ) 
+       FT(0) <= l2 && l2 <= FT(1) )
   { return _result = POINT; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
 }
 
 template <class R>
@@ -229,7 +229,7 @@ public:
 template <class R>
 typename Ray_d_Ray_d_pair<R>::Intersection_result
 Ray_d_Ray_d_pair<R>::intersection_type()
-{ 
+{
   if (_known) return _result;
   _known = true;
 
@@ -238,22 +238,22 @@ Ray_d_Ray_d_pair<R>::intersection_type()
 
   typedef typename R::Line_line_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT l1,l2; 
-  typename Int_obj_type::Intersection_result res = 
+  FT l1,l2;
+  typename Int_obj_type::Intersection_result res =
     Intersect(_r1.point(0),_r1.point(1),
               _r2.point(0),_r2.point(1),_ip,l1,l2);
 
-  if (res == Int_obj_type::LINE)   
+  if (res == Int_obj_type::LINE)
   {
     if ( _r1.direction() == _r2.direction() ) {
       if ( _r1.has_on(_r2.source()) ) _ir = _r2;
-      else _ir = _r1; 
+      else _ir = _r1;
       return _result = RAY;
     }
     // now oppositely directed:
     if ( _r1.has_on(_r2.source()) ) {
-      if ( _r1.source() != _r2.source() ) 
-      { _is = Segment_d(_r1.source(),_r2.source()); 
+      if ( _r1.source() != _r2.source() )
+      { _is = Segment_d(_r1.source(),_r2.source());
         return _result = SEGMENT; }
       else
       { _ip = _r1.source(); return _result = POINT; }
@@ -262,10 +262,10 @@ Ray_d_Ray_d_pair<R>::intersection_type()
   }
 
 
-  if (res == Int_obj_type::POINT && 
-      FT(0) <= l1 && FT(0) <= l2) 
+  if (res == Int_obj_type::POINT &&
+      FT(0) <= l1 && FT(0) <= l2)
   { return _result = POINT; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
   // now not parallel
 }
 
@@ -306,7 +306,7 @@ protected:
   Ray_d _r; Segment_d _s;
   bool _known;
   Intersection_result _result;
-  Point_d _ip; Segment_d _is;  
+  Point_d _ip; Segment_d _is;
 public:
   Ray_d_Segment_d_pair() : _known(false) {}
   Ray_d_Segment_d_pair(const Ray_d& r, const Segment_d& s)
@@ -319,29 +319,29 @@ public:
 template <class R>
 typename Ray_d_Segment_d_pair<R>::Intersection_result
 Ray_d_Segment_d_pair<R>::intersection_type()
-{ 
+{
   if (_known) return _result;
   _known = true;
 
   //CGAL_assertion(!_r.is_degenerate());
   if ( _s.is_degenerate() ) {
-    if ( _r.has_on(_s.point(0)) ) 
+    if ( _r.has_on(_s.point(0)) )
     { _ip = _s.point(0); return _result = POINT; }
-    return _result = NO_INTERSECTION; 
+    return _result = NO_INTERSECTION;
   }
   // now s is not degenerate
   typedef typename R::Line_line_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT l1,l2; 
-  typename Int_obj_type::Intersection_result res = 
+  FT l1,l2;
+  typename Int_obj_type::Intersection_result res =
     Intersect(_r.point(0),_r.point(1),
               _s.point(0),_s.point(1),_ip,l1,l2);
 
-  if (res == Int_obj_type::LINE)   
+  if (res == Int_obj_type::LINE)
   {
     Point_d p1 = _s.point(0), p2 = _s.point(1);
     if ( _s.direction() != _r.direction() ) std::swap(p1,p2);
-    // now order p2 after p1 on r underlying line 
+    // now order p2 after p1 on r underlying line
     typename R::Position_on_line_d pos;
     pos(p1, _r.point(0),_r.point(1), l1);
     pos(p2, _r.point(0),_r.point(1), l2);
@@ -353,10 +353,10 @@ Ray_d_Segment_d_pair<R>::intersection_type()
   }
 
 
-  if (res == Int_obj_type::POINT && 
-      FT(0) <= l1 && FT(0) <= l2 && l2 <= FT(1)) 
+  if (res == Int_obj_type::POINT &&
+      FT(0) <= l1 && FT(0) <= l2 && l2 <= FT(1))
   { return _result = POINT; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
   // now not parallel
 }
 
@@ -389,7 +389,7 @@ protected:
   Segment_d _s1,_s2;
   bool _known;
   Intersection_result _result;
-  Point_d _ip; Segment_d _is;  
+  Point_d _ip; Segment_d _is;
 public:
   Segment_d_Segment_d_pair() : _known(false) {}
   Segment_d_Segment_d_pair(const Segment_d& s1, const Segment_d& s2)
@@ -402,37 +402,37 @@ public:
 template <class R>
 typename Segment_d_Segment_d_pair<R>::Intersection_result
 Segment_d_Segment_d_pair<R>::intersection_type()
-{ 
+{
   if (_known) return _result;
   _known = true;
 
   if ( _s1.is_degenerate() ) {
     if ( _s2.is_degenerate() ) {
-      if ( _s1.point(0) == _s2.point(0) ) 
+      if ( _s1.point(0) == _s2.point(0) )
       { _ip = _s1.point(0); return _result = POINT; }
       else { return _result = NO_INTERSECTION; }
     } else {
-      if ( _s2.has_on(_s1.point(0)) ) 
+      if ( _s2.has_on(_s1.point(0)) )
       { _ip = _s1.point(0); return _result = POINT; }
       else { return _result = NO_INTERSECTION; }
     }
   }
-  if ( _s2.is_degenerate() ) { 
+  if ( _s2.is_degenerate() ) {
     CGAL_assertion( !_s1.is_degenerate() );
-    if ( _s1.has_on(_s2.point(0)) ) 
+    if ( _s1.has_on(_s2.point(0)) )
     { _ip = _s2.point(0); return _result = POINT; }
     else { return _result = NO_INTERSECTION; }
-  }  
+  }
 
   // now s1,s2 not degenerate
   typedef typename R::Line_line_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT l1,l2; 
-  typename Int_obj_type::Intersection_result res = 
+  FT l1,l2;
+  typename Int_obj_type::Intersection_result res =
     Intersect(_s1.point(0),_s1.point(1),
               _s2.point(0),_s2.point(1),_ip,l1,l2);
 
-  if (res == Int_obj_type::LINE)   
+  if (res == Int_obj_type::LINE)
   { Point_d p1 = (_s1.min)(), p2 = (_s1.max)();
     Point_d q1 = (_s2.min)(), q2 = (_s2.max)();
     Point_d s,t;
@@ -452,11 +452,11 @@ Segment_d_Segment_d_pair<R>::intersection_type()
   }
 
 
-  if ( res == Int_obj_type::POINT && 
-       FT(0) <= l1 && l1 <= FT(1) && 
-       FT(0) <= l2 && l2 <= FT(1) ) 
+  if ( res == Int_obj_type::POINT &&
+       FT(0) <= l1 && l1 <= FT(1) &&
+       FT(0) <= l2 && l2 <= FT(1) )
   { return _result = POINT; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
 }
 
 template <class R>
@@ -492,7 +492,7 @@ protected:
   Point_d _ip;
 public:
   Line_d_Hyperplane_d_pair() : _known(false) {}
-  Line_d_Hyperplane_d_pair(const Line_d& l, const Hyperplane_d& h) 
+  Line_d_Hyperplane_d_pair(const Line_d& l, const Hyperplane_d& h)
    : _l(l), _h(h), _known(false) {}
 
   Intersection_result intersection_type();
@@ -506,16 +506,16 @@ Line_d_Hyperplane_d_pair<R>::intersection_type()
 { if (_known) return _result;
   _known = true;
 
-  // CGAL_assertion_msg((!_l.is_degenerate())); 
+  // CGAL_assertion_msg((!_l.is_degenerate()));
   typedef typename R::Line_hyperplane_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT lambda; 
-  typename Int_obj_type::Intersection_result res = 
+  FT lambda;
+  typename Int_obj_type::Intersection_result res =
     Intersect(_l.point(0),_l.point(1),_h,_ip,lambda);
 
   if (res == Int_obj_type::LINE)  { return _result = LINE; }
   if (res == Int_obj_type::POINT) { return _result = POINT; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
 }
 
 template <class R>
@@ -546,10 +546,10 @@ protected:
   Ray_d _r; Hyperplane_d _h;
   bool                    _known;
   Intersection_result     _result;
-  Point_d                 _ip;  
+  Point_d                 _ip;
 public:
   Ray_d_Hyperplane_d_pair() : _known(false) {}
-  Ray_d_Hyperplane_d_pair(const Ray_d& r, const Hyperplane_d& h) 
+  Ray_d_Hyperplane_d_pair(const Ray_d& r, const Hyperplane_d& h)
    : _r(r), _h(h), _known(false) {}
   Intersection_result intersection_type();
   bool intersection(Point_d& result);
@@ -559,7 +559,7 @@ public:
 template <class R>
 typename Ray_d_Hyperplane_d_pair<R>::Intersection_result
 Ray_d_Hyperplane_d_pair<R>::intersection_type()
-{ 
+{
   if (_known) return _result;
   _known = true;
 
@@ -567,14 +567,14 @@ Ray_d_Hyperplane_d_pair<R>::intersection_type()
   typedef typename R::Line_hyperplane_intersection_d Int_obj_type;
   Int_obj_type Intersect;
   FT lambda = 0; // initialize to stop compiler warning
-  typename Int_obj_type::Intersection_result res = 
+  typename Int_obj_type::Intersection_result res =
     Intersect(_r.point(0),_r.point(1),_h,_ip,lambda);
 
-  if ( res == Int_obj_type::POINT && FT(0) <= lambda ) 
+  if ( res == Int_obj_type::POINT && FT(0) <= lambda )
   { return _result = POINT; }
-  if ( res == Int_obj_type::LINE )  
+  if ( res == Int_obj_type::LINE )
   { return _result = RAY; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
 }
 
 template <class R>
@@ -607,7 +607,7 @@ protected:
   Hyperplane_d _h;
   bool                    _known;
   Intersection_result     _result;
-  Point_d                 _ip;  
+  Point_d                 _ip;
 public:
   /*{\Mcreation 4}*/
   Segment_d_Hyperplane_d_pair() : _known(false) {}
@@ -623,28 +623,28 @@ public:
 template <class R>
 typename Segment_d_Hyperplane_d_pair<R>::Intersection_result
 Segment_d_Hyperplane_d_pair<R>::intersection_type()
-{ 
+{
   if (_known) return _result;
   _known = true;
 
   if ( _s.is_degenerate() ) {
-    if ( _h.has_on(_s.point(0)) ) 
-    { _ip = _s.point(0); return _result = POINT; } 
+    if ( _h.has_on(_s.point(0)) )
+    { _ip = _s.point(0); return _result = POINT; }
     else { return _result = NO_INTERSECTION; }
   }
 
   typedef typename R::Line_hyperplane_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT lambda; 
-  typename Int_obj_type::Intersection_result res = 
+  FT lambda;
+  typename Int_obj_type::Intersection_result res =
     Intersect(_s.point(0),_s.point(1),_h,_ip,lambda);
 
   if ( res == Int_obj_type::LINE )
   { return _result = SEGMENT; }
-  if ( res == Int_obj_type::POINT && 
-       FT(0) <= lambda && lambda <= FT(1) ) 
+  if ( res == Int_obj_type::POINT &&
+       FT(0) <= lambda && lambda <= FT(1) )
   { return _result = POINT; }
-  return _result = NO_INTERSECTION; 
+  return _result = NO_INTERSECTION;
 }
 
 template <class R>

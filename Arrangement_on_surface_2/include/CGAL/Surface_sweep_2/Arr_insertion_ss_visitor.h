@@ -7,9 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Ron Wein <wein@post.tau.ac.il>
+//            Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_INSERTION_SS_VISITOR_H
 #define CGAL_ARR_INSERTION_SS_VISITOR_H
@@ -17,7 +17,6 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
- *
  * Definition of the Arr_insertion_ss_visitor class-template. This class can be
  * further split into two, where one derives from the other, such that the
  * derived class handles the case of inserting curves into a non-empty
@@ -61,11 +60,27 @@ public:
   typedef typename Gt2::Point_2                         Point_2;
 
   typedef typename Helper::Arrangement_2                Arrangement_2;
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
 
 private:
   X_monotone_curve_2 sub_cv1;         // Auxiliary variables
   X_monotone_curve_2 sub_cv2;         // (used for splitting curves).
+
+
+  // update halfedge pointing to events, case with overlaps
+  template <class Subcurve_>
+  void update_incident_halfedge_after_split(Subcurve_* sc,
+                                            Halfedge_handle he,
+                                            Halfedge_handle new_he,
+                                            Tag_true);
+
+  // update halfedge pointing to events, case without overlaps
+  template <class Subcurve_>
+  void update_incident_halfedge_after_split(Subcurve_* sc,
+                                            Halfedge_handle he,
+                                            Halfedge_handle new_he,
+                                            Tag_false);
 
 public:
   /*! A notification invoked when a new subcurve is created. */
@@ -87,11 +102,20 @@ public:
   /*! Split the given edge edge.
    * \param he The edge to split.
    * \param sc The associated subcurve.
-   * \param The split point.
+   * \param pt The split point.
    * \return A handle to the split edge.
    */
   virtual Halfedge_handle split_edge(Halfedge_handle he, Subcurve* sc,
                                      const Point_2& pt);
+
+  /*! Split the given edge edge.
+   * \param he The edge to split.
+   * \param sc The associated subcurve.
+   * \param v The vertex of the split point.
+   * \return A handle to the split edge.
+   */
+  virtual Halfedge_handle split_edge(Halfedge_handle he, Subcurve* sc,
+                                     Vertex_handle v);
   //@}
 };
 
@@ -100,14 +124,52 @@ public:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+// update halfedge pointing to events, case with overlaps
+//
+template <typename Hlpr, typename Vis>
+template <class Subcurve_>
+void Arr_insertion_ss_visitor<Hlpr, Vis>::
+update_incident_halfedge_after_split(Subcurve_* sc,
+                                     Halfedge_handle he,
+                                     Halfedge_handle new_he,
+                                     Tag_true)
+{
+  std::vector<Subcurve*> leaves;
+  sc->all_leaves( std::back_inserter(leaves) );
+  for(Subcurve* ssc : leaves)
+  {
+    Event* last_event_on_ssc = ssc->last_event();
+    if (last_event_on_ssc->halfedge_handle() == he)
+      last_event_on_ssc->set_halfedge_handle(new_he->next());
+  }
+}
+
+//-----------------------------------------------------------------------------
+// update halfedge pointing to events, case without overlaps
+//
+template <typename Hlpr, typename Vis>
+template <class Subcurve_>
+void Arr_insertion_ss_visitor<Hlpr, Vis>::
+update_incident_halfedge_after_split(Subcurve_* sc,
+                                     Halfedge_handle he,
+                                     Halfedge_handle new_he,
+                                     Tag_false)
+{
+  Event* last_event_on_sc = sc->last_event();
+  if (last_event_on_sc->halfedge_handle() == he)
+    last_event_on_sc->set_halfedge_handle(new_he->next());
+}
+
+//-----------------------------------------------------------------------------
 // Check if the halfedge associated with the given subcurve will be split
 // at the given event.
 //
 template <typename Hlpr, typename Vis>
-bool Arr_insertion_ss_visitor<Hlpr, Vis>::
-is_split_event(Subcurve* sc, Event* event)
+bool Arr_insertion_ss_visitor<Hlpr, Vis>::is_split_event(Subcurve* sc,
+                                                         Event* event)
 {
-  if (sc->last_curve().halfedge_handle() == Halfedge_handle(nullptr)) return false;
+  if (sc->last_curve().halfedge_handle() == Halfedge_handle(nullptr))
+    return false;
 
   if (! sc->originating_subcurve1())
     return (sc->left_event() != this->current_event());
@@ -132,6 +194,28 @@ Arr_insertion_ss_visitor<Hlpr, Vis>::split_edge(Halfedge_handle he, Subcurve* sc
   Halfedge_handle new_he =
     this->m_arr_access.split_edge_ex(he, pt.base(),
                                      sub_cv1.base(), sub_cv2.base());
+  // update the halfedge incident to events on the left of the split
+  update_incident_halfedge_after_split(sc, he, new_he, typename Subcurve::Handle_overlaps());
+
+  return new_he;
+}
+
+//-----------------------------------------------------------------------------
+// Split an edge.
+//
+template <typename Hlpr, typename Vis>
+typename Arr_insertion_ss_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_insertion_ss_visitor<Hlpr, Vis>::split_edge(Halfedge_handle he, Subcurve* sc,
+                                                Vertex_handle v)
+{
+  // Make sure that the halfedge associated with sc is the directed from
+  // right to left, since we always "look" above , and the incident face
+  // is on the left of the  halfedge
+  CGAL_assertion(he->direction() == ARR_RIGHT_TO_LEFT);
+
+  this->traits()->split_2_object()(he->curve(), v->point(), sub_cv2, sub_cv1);
+  Halfedge_handle new_he =
+    this->m_arr_access.split_edge_ex(he, v, sub_cv1.base(), sub_cv2.base());
   Event* last_event_on_sc = sc->last_event();
   if (last_event_on_sc->halfedge_handle() == he)
     last_event_on_sc->set_halfedge_handle(new_he->next());

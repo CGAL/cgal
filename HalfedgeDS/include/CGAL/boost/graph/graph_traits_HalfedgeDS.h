@@ -15,7 +15,7 @@
 #include <functional>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
@@ -155,7 +155,8 @@ struct HDS_graph_traits
 private:
   struct HDS_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                         public virtual boost::vertex_list_graph_tag,
-                                        public virtual boost::edge_list_graph_tag
+                                        public virtual boost::edge_list_graph_tag,
+                                        public virtual boost::adjacency_graph_tag
   {};
 
 public:
@@ -178,6 +179,8 @@ public:
   typedef Out_edge_iterator<HDS> out_edge_iterator;
 
   typedef In_edge_iterator<HDS> in_edge_iterator;
+
+  typedef Vertex_around_target_iterator<HDS> adjacency_iterator;
 
   typedef boost::undirected_tag             directed_category;
   typedef boost::disallow_parallel_edge_tag edge_parallel_category;
@@ -202,7 +205,7 @@ namespace std {
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash 
+#  pragma warning(disable:4099) // For VC10 it is class hash
 #endif
 
 #ifndef CGAL_CFG_NO_STD_HASH

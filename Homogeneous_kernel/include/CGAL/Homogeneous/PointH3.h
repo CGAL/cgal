@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -18,9 +18,10 @@
 #define CGAL_HOMOGENEOUS_POINT_3_H
 
 #include <CGAL/Origin.h>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -51,9 +52,9 @@ public:
 
   template < typename Tx, typename Ty, typename Tz >
   PointH3(const Tx & x, const Ty & y, const Tz & z,
-          typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
+          std::enable_if_t< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
                                                                          boost::is_convertible<Ty, RT> >,
-                                                       boost::is_convertible<Tz, RT> > >::type* = 0)
+                                                       boost::is_convertible<Tz, RT> >::value >* = 0)
     : base(x, y, z) {}
 
   PointH3(const FT& x, const FT& y, const FT& z)

@@ -18,7 +18,7 @@
 \cgalPkgDescriptionEnd
 
 This chapter describes three functions implemented using the
-sweep-line algorithm: given a collection \f$ {\mathcal C}\f$ of 
+sweep-line algorithm: given a collection \f$ {\mathcal C}\f$ of
 planar curves, compute all intersection points among them,
 obtain the set of maximal pairwise interior-disjoint subcurves
 of the curves in \f$ {\mathcal C}\f$, or check whether there is at

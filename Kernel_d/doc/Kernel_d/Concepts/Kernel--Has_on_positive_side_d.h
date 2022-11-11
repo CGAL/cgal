@@ -13,12 +13,12 @@ public:
 /// @{
 
 /*!
-returns true iff \f$ p\f$ 
-is on the positive side of \f$ o\f$. `Kernel_object` may be any of 
-`Kernel_d::Sphere_d`, `Kernel_d::Hyperplane_d`.\pre `p` and `o` have the same dimension. 
-*/ 
-template <class Kernel_object> bool operator()(const 
-Kernel_object& o, const Kernel_d::Point_d& p); 
+returns true iff \f$ p\f$
+is on the positive side of \f$ o\f$. `Kernel_object` may be any of
+`Kernel_d::Sphere_d`, `Kernel_d::Hyperplane_d`.\pre `p` and `o` have the same dimension.
+*/
+template <class Kernel_object> bool operator()(const
+Kernel_object& o, const Kernel_d::Point_d& p);
 
 /// @}
 

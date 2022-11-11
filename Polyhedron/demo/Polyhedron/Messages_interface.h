@@ -12,7 +12,7 @@ public:
   virtual void message_information(QString) = 0;
 };
 
-Q_DECLARE_INTERFACE(Messages_interface, 
+Q_DECLARE_INTERFACE(Messages_interface,
                     "com.geometryfactory.PolyhedronDemo.MessagesInterface/1.0")
 
 #endif // MESSAGES_INTERFACE_H

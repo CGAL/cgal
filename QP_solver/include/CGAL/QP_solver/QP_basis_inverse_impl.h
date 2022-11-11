@@ -6,12 +6,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
 //
-// Author(s)     : Sven Schoenherr 
+//
+// Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
-//                 Franz Wessendorp 
-//                 Kaspar Fischer 
+//                 Franz Wessendorp
+//                 Kaspar Fischer
 
 namespace CGAL {
 
@@ -33,13 +33,13 @@ set( int n, int m, int nr_equalities)
     l = (std::min)( n+nr_equalities+1, m);
     if ( ! M.empty()) M.clear();
     set( Is_LP());
-    
+
     if ( ! x_l.empty()) x_l.clear();
     if ( ! x_x.empty()) x_x.clear();
-       
+
     x_l.insert( x_l.end(), l, et0);
     x_x.insert( x_x.end(), l, et0); // has to grow later QP-case
-    
+
     if ( ! tmp_l.empty()) tmp_l.clear();
     if ( ! tmp_x.empty()) tmp_x.clear();
 
@@ -66,8 +66,8 @@ leave_original( )
 
     // update matrix in place
     update_inplace_QP( M[ l+b].begin(), M[ l+b].begin()+l,
-		       -z, ( z_neg ? d : -d));
-                                                                 
+                       -z, ( z_neg ? d : -d));
+
     // store new denominator
     d = ( z_neg ? -z : z);
     CGAL_qpe_assertion( d > et0);
@@ -132,9 +132,9 @@ enter_slack_leave_original( )
     // get last column of basis inverse (store it in 'x_x')
     --s; --b;
     for (   row = 0,   x_it = x_x.begin();
-	    row < s;
-	  ++row,     ++x_it,               ++matrix_it) {
-	*x_it = (*matrix_it)[ b];
+            row < s;
+          ++row,     ++x_it,               ++matrix_it) {
+        *x_it = (*matrix_it)[ b];
     }
     ET    z     = (*matrix_it)[ b];
     bool  z_neg = ( z < et0);
@@ -173,29 +173,26 @@ z_replace_original_by_original(ForwardIterator y_l_it,
 
     // prepare \hat{\rho} -vector in x_l, x_x
     copy_row_in_B_O(x_l.begin(), x_x.begin(), k_i);
-    
+
     // prepare \hat{v} -vector in tmp_l, tmp_x
-    
+
     // tmp_l -part
     std::transform(y_l_it, (y_l_it+s), x_l.begin(), tmp_l.begin(),
-        compose2_2(std::plus<ET>(), Identity<ET>(),
-        boost::bind1st(std::multiplies<ET>(), s_delta)));
-    
-    // tmp_x -part    
+        [&s_delta](const ET& v1, const ET& v2){ return std::plus<ET>()(v1, s_delta * v2); });
+    // tmp_x -part
     std::transform(y_x_it, (y_x_it+b), x_x.begin(), tmp_x.begin(),
-        compose2_2(std::plus<ET>(), Identity<ET>(),
-        boost::bind1st(std::multiplies<ET>(), s_delta)));
+        [&s_delta](const ET& v1, const ET& v2){ return std::plus<ET>()(v1, s_delta * v2); });
     tmp_x[k_i] -= d;
-    
+
     // prepare \hat{k}_{2} -scalar
     ET  hat_k_2 = s_nu - (et2 * s_delta * hat_k_1);
-    
+
     CGAL_qpe_assertion( d != et0);
-        
+
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
                       hat_k_1 * hat_k_1, -hat_k_2, -hat_k_1, d*d);
-    
+
     // store new denominator
     d = CGAL::integral_division(hat_k_1 * hat_k_1, d);
 
@@ -204,7 +201,7 @@ z_replace_original_by_original(ForwardIterator y_l_it,
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
     }
-    
+
 }
 
 
@@ -223,22 +220,22 @@ z_replace_original_by_slack( )
 
     // prepare \hat{\rho} -vector in x_l, x_x
     copy_row_in_B_O(x_l.begin(), x_x.begin(), b);
-    
+
     // prepare \hat{\varrho} -vector in tmp_l, tmp_x
     copy_row_in_C(tmp_l.begin(), tmp_x.begin(), s);
-    
+
     // prepare \hat{\kappa} -scalar
     ET  hat_kappa = M[l+b][s];
-    
+
     // prepare \hat{\xi} -scalar
     ET hat_xi = M[s][s];
-        
+
     CGAL_qpe_assertion( d != et0);
-    
+
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
                            hat_kappa * hat_kappa, hat_xi, -hat_kappa, d * d);
-		     
+
     // store new denominator
     d = CGAL::integral_division(hat_kappa * hat_kappa, d);
 
@@ -258,86 +255,86 @@ template < class ForwardIterator >
 void  QP_basis_inverse<ET_,Is_LP_>::
 z_replace_slack_by_original(ForwardIterator y_l_it,
                             ForwardIterator y_x_it,
-			                ForwardIterator u_x_it, const ET& hat_kappa,
-		                    const ET& hat_nu)
+                                        ForwardIterator u_x_it, const ET& hat_kappa,
+                                    const ET& hat_nu)
 {
     // assert QP case and phaseII
     CGAL_qpe_assertion(is_QP && is_phaseII);
-    
+
     // get copies of y_l_it and y_x_it for later use
     ForwardIterator y_l_it_copy = y_l_it;
     ForwardIterator y_x_it_copy = y_x_it;
 
     CGAL_qpe_assertion( d != et0);
-    
+
     // prepare \hat{\phi}
-     
+
     // prepare \hat{\varphi} -vector in x_l, x_x
     multiply(u_x_it, u_x_it, x_l.begin(), x_x.begin(), Tag_false(),
              Tag_false());
-	     
+
     // prepare \hat{\kappa} -scalar
-    
+
     // prepare \hat{\nu} -scalar
-   
+
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), y_l_it, y_x_it,
-                     hat_kappa * hat_kappa, -hat_nu, hat_kappa, d * d);    
-    
+                     hat_kappa * hat_kappa, -hat_nu, hat_kappa, d * d);
+
     // append new rows and columns
     // ---------------------------
     typename Row   ::iterator  row_it, x_l_it, x_x_it;
     typename Matrix::iterator  matrix_it;
     unsigned int               count;
-    
+
     // insert new row and column at the end of block P
     CGAL_qpe_assertion(M.size()>=s+1);
     if (M[s].size()==0) {
-	// row has to be filled first
+        // row has to be filled first
         M[s].insert(M[s].end(), s+1, et0);
     }
-     
-    
+
+
     // P-block: left of diagonal (including element on diagonal)
     y_l_it = y_l_it_copy;
     for (  row_it = M[s].begin(), x_l_it = x_l.begin();
            row_it != M[s].end() - 1;
-	 ++row_it,  ++x_l_it,  ++y_l_it                ) {
-        *row_it = 
-	  CGAL::integral_division((hat_nu * *x_l_it)-(hat_kappa * *y_l_it), d);  
-    } 
+         ++row_it,  ++x_l_it,  ++y_l_it                ) {
+        *row_it =
+          CGAL::integral_division((hat_nu * *x_l_it)-(hat_kappa * *y_l_it), d);
+    }
     *row_it = -hat_nu;
-     
+
     // Q-block
     y_x_it = y_x_it_copy;
     for (  matrix_it = M.begin()+l, count = 0, x_x_it = x_x.begin();
            count < b;
-	 ++matrix_it,  ++count, ++x_x_it, ++y_x_it                  ) {
-        (*matrix_it)[s] = 
-	  CGAL::integral_division((hat_nu * *x_x_it) - (hat_kappa * *y_x_it), d);
+         ++matrix_it,  ++count, ++x_x_it, ++y_x_it                  ) {
+        (*matrix_it)[s] =
+          CGAL::integral_division((hat_nu * *x_x_it) - (hat_kappa * *y_x_it), d);
     }
-          
+
     // insert new row and column at the end of blocks Q and R
     ensure_physical_row(l+b);
-    
+
     // Q-block
     for (  row_it = M[l+b].begin(), count = 0, x_l_it = x_l.begin();
            count < s;
-	 ++row_it,  ++count,  ++x_l_it                              ) {
+         ++row_it,  ++count,  ++x_l_it                              ) {
         *row_it = CGAL::integral_division(-hat_kappa * *x_l_it, d);
     }
     *row_it = hat_kappa;
-    
+
     // R-block
     for (  row_it = M[l+b].begin()+l, count = 0, x_x_it = x_x.begin();
            count < b;
-	 ++row_it,  ++count,  ++x_x_it                                ) {
+         ++row_it,  ++count,  ++x_x_it                                ) {
         *row_it = CGAL::integral_division(-hat_kappa * *x_x_it, d);
     }
     *row_it = et0;
-    
+
     //adapt s and b
-    ++s; ++b; 
+    ++s; ++b;
 
     // store new denominator
     d = CGAL::integral_division(hat_kappa * hat_kappa, d);
@@ -347,7 +344,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
     }
-		     
+
 }
 
 
@@ -366,22 +363,22 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
     multiply(u_x_it, u_x_it, x_l.begin(), x_x.begin(),Tag_false(),
              Tag_false());
     x_l[k_j] -= d;
-    
+
     // prepare \hat{\varrho} -vector in tmp_l, tmp_x
     copy_row_in_C(tmp_l.begin(), tmp_x.begin(), k_j);
-    
+
     // prepare \hat{k}_{1} -scalar
     ET  hat_k_1 = inner_product_x(tmp_x.begin(), u_x_it);
-    
+
     // prepare \hat{k}_{3} -scalar
     ET  hat_k_3 = -M[k_j][k_j];
-    
-    CGAL_qpe_assertion( d != et0);    
-    
+
+    CGAL_qpe_assertion( d != et0);
+
     // update matrix in place
     z_update_inplace(x_l.begin(), x_x.begin(), tmp_l.begin(), tmp_x.begin(),
                      hat_k_1 * hat_k_1, -hat_k_3, -hat_k_1, d * d);
-		     
+
     // store new denominator
     d = CGAL::integral_division(hat_k_1 * hat_k_1, d);
 
@@ -390,7 +387,7 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
     CGAL_qpe_debug {
         if ( vout.verbose()) print();
     }
-      
+
 }
 
 
@@ -403,28 +400,28 @@ copy_row_in_C(OutIt y_l_it, OutIt y_x_it, unsigned int r)
     typename Matrix::const_iterator  matrix_it;
     typename Row   ::const_iterator     row_it;
     unsigned int  count;
-    
+
     // P-block: left of diagonal (including element on diagonal)
     matrix_it = M.begin()+r;
     for (  row_it = matrix_it->begin();
-           row_it != matrix_it->end(); 
-	 ++row_it, ++y_l_it            ) {
-        *y_l_it = *row_it;    
+           row_it != matrix_it->end();
+         ++row_it, ++y_l_it            ) {
+        *y_l_it = *row_it;
     }
-    
+
     // P-block: right of diagonal (excluding element on diagonal)
     for (  matrix_it = M.begin()+r+1, count = r+1;
-           count < s; 
-	 ++matrix_it,  ++count,  ++y_l_it         ) {
+           count < s;
+         ++matrix_it,  ++count,  ++y_l_it         ) {
         *y_l_it = (*matrix_it)[r];
     }
-    
+
     // Q-block
     for (  matrix_it = M.begin()+l, count = 0;
            count < b;
-	 ++matrix_it,  ++count,  ++y_x_it     ) {
-	*y_x_it = (*matrix_it)[r]; 
-    } 
+         ++matrix_it,  ++count,  ++y_x_it     ) {
+        *y_x_it = (*matrix_it)[r];
+    }
 }
 
 
@@ -437,26 +434,26 @@ copy_row_in_B_O(OutIt y_l_it, OutIt y_x_it, unsigned int r)
     typename Matrix::const_iterator  matrix_it;
     typename Row   ::const_iterator     row_it;
     unsigned int  count;
-    
+
     // Q-block
     matrix_it = M.begin()+l+r;
     for (  row_it = matrix_it->begin(), count = 0;
            count < s;
-	 ++row_it,  ++count,  ++y_l_it           ) {
+         ++row_it,  ++count,  ++y_l_it           ) {
         *y_l_it = *row_it;
     }
-    
+
     // R-block: left of diagonal (including element on diagonal)
-    for (  row_it = matrix_it->begin()+l; 
+    for (  row_it = matrix_it->begin()+l;
            row_it != matrix_it->end();
-	 ++row_it,  ++y_x_it            ) {
+         ++row_it,  ++y_x_it            ) {
         *y_x_it = *row_it;
     }
-    
+
     // R-block: right of diagonal (excluding element on diagonal)
     for (  matrix_it = M.begin()+l+r+1, count = r+1;
            count < b;
-	 ++matrix_it,  ++count,  ++y_x_it           ) {
+         ++matrix_it,  ++count,  ++y_x_it           ) {
         *y_x_it = (*matrix_it)[l+r];
     }
 
@@ -467,68 +464,68 @@ template < class ForIt >
 void  QP_basis_inverse<ET_,Is_LP_>::
 z_update_inplace( ForIt psi1_l_it, ForIt psi1_x_it,
                   ForIt psi2_l_it, ForIt psi2_x_it,
-	             const ET& omega0, const ET& omega1,
-		         const ET& omega2, const ET& omega3)
+                     const ET& omega0, const ET& omega1,
+                         const ET& omega2, const ET& omega3)
 {
     typename Matrix::      iterator  matrix_it;
     typename Row   ::      iterator     row_it;
     typename Row   ::const_iterator      y_it1_r, y_it1_c, y_it2_r, y_it2_c;
-	
+
     unsigned int  row, col, k = l+b;
     ET           u_elem;
 
     // rows: 0..s-1  ( P )
     for (  row = 0, matrix_it = M.begin(),
            y_it1_r = psi1_l_it,  y_it2_r = psi2_l_it;
-	   row < s;
+           row < s;
          ++row, ++matrix_it, ++y_it1_r, ++y_it2_r  ) {
-	      
+
         // columns: 0..row  ( P )
         for (   row_it =  matrix_it->begin(),
-	        y_it1_c = psi1_l_it,  y_it2_c = psi2_l_it;
+                y_it1_c = psi1_l_it,  y_it2_c = psi2_l_it;
                 row_it != matrix_it->end();
               ++row_it,  ++y_it1_c,  ++y_it2_c            ) {
-                
-            u_elem = (*y_it1_r * *y_it2_c) + (*y_it2_r * *y_it1_c);
-	    u_elem *= omega2;
-	    u_elem += omega1 * *y_it1_r * *y_it1_c;
-            update_entry( *row_it, omega0, u_elem, omega3);
-        } 
-    }
-	
-    // rows: l..k-1  ( Q R )
-    for (  row = l, matrix_it = M.begin()+l,
-	   y_it1_r = psi1_x_it,  y_it2_r = psi2_x_it;
-	   row != k;
-	 ++row,  ++matrix_it,  ++y_it1_r,  ++y_it2_r ) {
-	    
-        // columns: 0..s-1  ( Q )
-        for (   col = 0,   row_it =  matrix_it->begin(),
-	        y_it1_c = psi1_l_it,  y_it2_c = psi2_l_it;
-                col < s;
-              ++col, ++row_it,  ++y_it1_c,  ++y_it2_c     ){
-    
-            u_elem = (*y_it1_r * *y_it2_c) + (*y_it2_r * *y_it1_c);
-	       u_elem *= omega2;
-	       u_elem += omega1 * *y_it1_r * *y_it1_c; 
-	       update_entry( *row_it, omega0, u_elem, omega3);
-        }
-    
-        // columns: l..k-1  ( R )
-        for (  row_it = matrix_it->begin()+l,
-	       y_it1_c = psi1_x_it,  y_it2_c = psi2_x_it;
-               row_it != matrix_it->end();
-             ++row_it,  ++y_it1_c,  ++y_it2_c            ){
-		 
+
             u_elem = (*y_it1_r * *y_it2_c) + (*y_it2_r * *y_it1_c);
             u_elem *= omega2;
-	        u_elem += omega1 * *y_it1_r * *y_it1_c;     
+            u_elem += omega1 * *y_it1_r * *y_it1_c;
             update_entry( *row_it, omega0, u_elem, omega3);
         }
-	    
-    } 
-	
-} 
+    }
+
+    // rows: l..k-1  ( Q R )
+    for (  row = l, matrix_it = M.begin()+l,
+           y_it1_r = psi1_x_it,  y_it2_r = psi2_x_it;
+           row != k;
+         ++row,  ++matrix_it,  ++y_it1_r,  ++y_it2_r ) {
+
+        // columns: 0..s-1  ( Q )
+        for (   col = 0,   row_it =  matrix_it->begin(),
+                y_it1_c = psi1_l_it,  y_it2_c = psi2_l_it;
+                col < s;
+              ++col, ++row_it,  ++y_it1_c,  ++y_it2_c     ){
+
+            u_elem = (*y_it1_r * *y_it2_c) + (*y_it2_r * *y_it1_c);
+               u_elem *= omega2;
+               u_elem += omega1 * *y_it1_r * *y_it1_c;
+               update_entry( *row_it, omega0, u_elem, omega3);
+        }
+
+        // columns: l..k-1  ( R )
+        for (  row_it = matrix_it->begin()+l,
+               y_it1_c = psi1_x_it,  y_it2_c = psi2_x_it;
+               row_it != matrix_it->end();
+             ++row_it,  ++y_it1_c,  ++y_it2_c            ){
+
+            u_elem = (*y_it1_r * *y_it2_c) + (*y_it2_r * *y_it1_c);
+            u_elem *= omega2;
+                u_elem += omega1 * *y_it1_r * *y_it1_c;
+            update_entry( *row_it, omega0, u_elem, omega3);
+        }
+
+    }
+
+}
 
 
 // swap functions
@@ -578,22 +575,22 @@ swap_variable( unsigned int j, Tag_false)
 
     if ( is_phaseII) {
 
-	// swap entries l..i-1 (row <-> row) [in R]
-	for (   count = l,   row_i_it += l-s,   row_k_it += l-s;
-		count < i;
-	      ++count,     ++row_i_it,        ++row_k_it       ) {
-	    std::iter_swap( row_i_it, row_k_it);
-	}
+        // swap entries l..i-1 (row <-> row) [in R]
+        for (   count = l,   row_i_it += l-s,   row_k_it += l-s;
+                count < i;
+              ++count,     ++row_i_it,        ++row_k_it       ) {
+            std::iter_swap( row_i_it, row_k_it);
+        }
 
-	// swap entries i+1..k-1 (column <-> row) [in R]
-	for ( ++count,                        ++row_k_it;
-		count < k;
-	      ++count,     ++matrix_it,       ++row_k_it) {
-	    std::swap( ( *matrix_it)[ i], *row_k_it);
-	}
+        // swap entries i+1..k-1 (column <-> row) [in R]
+        for ( ++count,                        ++row_k_it;
+                count < k;
+              ++count,     ++matrix_it,       ++row_k_it) {
+            std::swap( ( *matrix_it)[ i], *row_k_it);
+        }
 
-	// swap entries i,i with k,k (entry <-> entry) [in R]
-	std::iter_swap( row_i_it, row_k_it);
+        // swap entries i,i with k,k (entry <-> entry) [in R]
+        std::iter_swap( row_i_it, row_k_it);
     }
 }
 
@@ -622,7 +619,7 @@ template < class ET_, class Is_LP_ >                            // QP case
 void  QP_basis_inverse<ET_,Is_LP_>::
 swap_constraint( unsigned int i, Tag_false)
 {
- 
+
     if ( i == s-1) return;
 
     // swap rows and columns
@@ -634,29 +631,29 @@ swap_constraint( unsigned int i, Tag_false)
 
     if ( is_phaseI) {
 
-	// skip empty P
-	matrix_it =M.begin() + l;
+        // skip empty P
+        matrix_it =M.begin() + l;
 
     } else {
 
-	// swap entries 0..i-1 (row <-> row) [in P]
-	for (   count =  0;
-		count < i;
-	      ++count,      ++row_i_it, ++row_k_it) {
-	    std::iter_swap( row_i_it, row_k_it);
-	}
+        // swap entries 0..i-1 (row <-> row) [in P]
+        for (   count =  0;
+                count < i;
+              ++count,      ++row_i_it, ++row_k_it) {
+            std::iter_swap( row_i_it, row_k_it);
+        }
 
-	// swap entries i+1..s-2 (column <-> row) [in P]
-	for ( count = i + 1, ++matrix_it, ++row_k_it;
-		count < s-1;
-	      ++count,     ++matrix_it, ++row_k_it) {
-	    std::swap( ( *matrix_it)[ i], *row_k_it);
-	}
-	// the remaining two entries to be swapped on the main diagonal
-	std::swap(M[i][i], M[s-1][s-1]);
+        // swap entries i+1..s-2 (column <-> row) [in P]
+        for ( count = i + 1, ++matrix_it, ++row_k_it;
+                count < s-1;
+              ++count,     ++matrix_it, ++row_k_it) {
+            std::swap( ( *matrix_it)[ i], *row_k_it);
+        }
+        // the remaining two entries to be swapped on the main diagonal
+        std::swap(M[i][i], M[s-1][s-1]);
 
-	// advance to Q
-	matrix_it = M.begin() + l;
+        // advance to Q
+        matrix_it = M.begin() + l;
     }
 
     // swap entries l..l+b (column <-> column) [in Q]
@@ -675,27 +672,27 @@ print( )
 {
     // P
     if ( is_LP || is_phaseII) {
-	for ( unsigned int row = 0; row < s; ++row) {
-	    std::copy( M[ row].begin(),
-		       M[ row].begin() + ( is_LP ? s : row+1),
-		       std::ostream_iterator<ET>( vout.out(), " "));
-	    vout.out() << std::endl;
-	}
-	if ( is_QP) vout.out() << "= = = = = = = = = =" << std::endl;
+        for ( unsigned int row = 0; row < s; ++row) {
+            std::copy( M[ row].begin(),
+                       M[ row].begin() + ( is_LP ? s : row+1),
+                       std::ostream_iterator<ET>( vout.out(), " "));
+            vout.out() << std::endl;
+        }
+        if ( is_QP) vout.out() << "= = = = = = = = = =" << std::endl;
     }
 
     // Q & R
     if ( is_QP) {
-	for ( unsigned int row = l; row < l+b; ++row) {
-	    std::copy( M[ row].begin(), M[ row].begin()+s,
-		       std::ostream_iterator<ET>( vout.out(), " "));
-	    if ( is_phaseII) {
-		vout.out() << "|| ";
-		std::copy( M[ row].begin()+l, M[ row].end(),
-			   std::ostream_iterator<ET>( vout.out(), " "));
-	    }
-	    vout.out() << std::endl;
-	}
+        for ( unsigned int row = l; row < l+b; ++row) {
+            std::copy( M[ row].begin(), M[ row].begin()+s,
+                       std::ostream_iterator<ET>( vout.out(), " "));
+            if ( is_phaseII) {
+                vout.out() << "|| ";
+                std::copy( M[ row].begin()+l, M[ row].end(),
+                           std::ostream_iterator<ET>( vout.out(), " "));
+            }
+            vout.out() << std::endl;
+        }
     }
     vout.out() << "denominator = " << d << std::endl;
 }

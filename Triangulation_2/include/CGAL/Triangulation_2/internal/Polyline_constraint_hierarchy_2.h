@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Olivier Billet, Mariette Yvinec
 
@@ -19,10 +19,14 @@
 #include <CGAL/basic.h>
 #include <utility>
 #include <map>
-#include <set> 
-#include <list> 
+#include <set>
+#include <list>
 #include <CGAL/Skiplist.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
+
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+#  include <CGAL/Constrained_triangulation_2.h>
+#endif
 
 namespace CGAL {
 
@@ -42,14 +46,14 @@ private:
   class Node {
   public:
     explicit Node(Vertex_handle vh, bool input = false)
-      : vertex_(vh), id(-1), input(input)
+      : vertex_(vh), point_(vertex_->point()), input(input)
     {}
-    const Point& point() const { return vertex_->point(); }
+    const Point& point() const { return point_; }
     Vertex_handle vertex() const { return vertex_; }
   private:
     Vertex_handle vertex_;
+    Point point_;
   public:
-    int id;
     bool input;
   };
 
@@ -57,16 +61,16 @@ private:
   typedef std::list<Constraint> Constraint_list;
 
 public:
-  // the base line is always 
-  class Point_it 
+  // the base line is always
+  class Point_it
     : public boost::iterator_adaptor<
     Point_it
-    , typename Vertex_list::all_iterator 
+    , typename Vertex_list::all_iterator
     , const Point
     >
   {
   public:
-    Point_it() : Vertex_it::iterator_adaptor_() {}
+    Point_it() : Point_it::iterator_adaptor_() {}
     Point_it(typename Vertex_list::all_iterator it) : Point_it::iterator_adaptor_(it) {}
   private:
     friend class boost::iterator_core_access;
@@ -74,10 +78,10 @@ public:
   };
 
   // only nodes with a vertex_handle that is still in the triangulation
-  class Vertex_it 
+  class Vertex_it
     : public boost::iterator_adaptor<
     Vertex_it
-    , typename Vertex_list::skip_iterator 
+    , typename Vertex_list::skip_iterator
     , Vertex_handle
     , boost::use_default
     , Vertex_handle>
@@ -106,11 +110,11 @@ public:
     Vertex_list* vl_ptr() const {return second;}
 
     operator std::pair<std::pair<Vertex_handle, Vertex_handle>,Vertex_list*>()
-    { 
+    {
       if (second!=nullptr){
         return std::make_pair(std::make_pair(second->front().vertex(),
                                              second->back().vertex()),second);
-      } 
+      }
       return std::make_pair(std::make_pair(Vertex_handle(),Vertex_handle()),second);
     }
 
@@ -159,24 +163,24 @@ public:
     Vertex_it    vertices_end()const {return enclosing->skip_end();}
     Constraint_id  id() { return enclosing; }
     std::size_t    number_of_vertices() const {return enclosing->skip_size(); }
-  };                                           
+  };
 
   typedef std::list<Context>              Context_list;
   typedef typename Context_list::iterator Context_iterator;
 
   typedef std::set<Constraint_id>           Constraint_set;
   typedef std::map<Edge, Context_list*,
-		   Pair_compare>            Sc_to_c_map;
+                   Pair_compare>            Sc_to_c_map;
   typedef typename Constraint_set::iterator C_iterator;
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
   typedef Sc_iterator Subconstraint_iterator;
-  
+
 private:
   // data for the 1d hierarchy
   Compare          comp;
   Constraint_set   constraint_set;
   Sc_to_c_map      sc_to_c_map;
-  
+
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp)
     : comp(comp)
@@ -189,7 +193,7 @@ public:
   Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch);
   Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) = default;
 
-  // Query 
+  // Query
   bool is_subconstrained_edge(T va, T vb) const;
   bool is_constrained_edge(T va, T vb) const;
   bool is_constrained_vertex(T v) const;
@@ -218,7 +222,7 @@ public:
   Iterator_range<Context_iterator> contexts_range(T va, T vb) const;
   std::size_t number_of_constraints() const  { return constraint_set.size();}
   std::size_t number_of_subconstraints()const {return sc_to_c_map.size();}
-  
+
 
   // insert/remove
   void add_Steiner(T va, T vb, T vx);
@@ -247,31 +251,31 @@ public:
   // iterators
 
   Subconstraint_iterator subconstraint_begin() const
-  { 
-    return sc_to_c_map.begin(); 
+  {
+    return sc_to_c_map.begin();
   }
 
   Subconstraint_iterator subconstraint_end() const
-  { 
-    return sc_to_c_map.end();   
+  {
+    return sc_to_c_map.end();
   }
 
   Sc_iterator sc_begin() const{ return sc_to_c_map.begin(); }
   Sc_iterator sc_end()   const{ return sc_to_c_map.end();   }
   C_iterator  c_begin()  const{ return constraint_set.begin(); }
   C_iterator  c_end()    const{ return constraint_set.end();   }
-  
+
   // Helper functions
   void copy(const Polyline_constraint_hierarchy_2& ch);
   void copy(const Polyline_constraint_hierarchy_2& ch, std::map<Vertex_handle,Vertex_handle>& vmap);
   void swap(Polyline_constraint_hierarchy_2& ch);
 
-private: 
+private:
   Edge      make_edge(T va, T vb) const;
   Vertex_it get_pos(T va, T vb) const;
-  bool      get_contexts(T va, T vb, 
-			 Context_iterator& ctxt, 
-			 Context_iterator& past) const;
+  bool      get_contexts(T va, T vb,
+                         Context_iterator& ctxt,
+                         Context_iterator& past) const;
 
   bool      get_contexts(T va, T vb, Context_list*&) const;
 
@@ -348,8 +352,8 @@ copy(const Polyline_constraint_hierarchy_2& ch1, std::map<Vertex_handle,Vertex_h
       ctxt2.pos = ctxt2.enclosing->skip_begin();
       Vertex_it aux = cit1->enclosing->skip_begin();
       while( aux != cit1->pos) {
-	++aux;
-	++ctxt2.pos;
+        ++aux;
+        ++ctxt2.pos;
       }
       hcl2->push_back(ctxt2);
     }
@@ -420,7 +424,7 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
   va = *pos;
   pos = hcit->pos;
   ++pos;
-  CGAL_triangulation_assertion(vbb == *pos);
+  CGAL_assertion(vbb == *pos);
   while(!pos.input()){
     ++pos;
   }
@@ -436,8 +440,8 @@ enclosing_constraints(T vaa, T vbb , Constraint_list& hcl) const
   Context_iterator hcit, past;
   if ( !get_contexts(vaa,vbb, hcit ,past)) return false;
   for (; hcit!=past; hcit++) {
-    hcl.push_back(make_edge(hcit->enclosing->front(), 
-			    hcit->enclosing->back())); 
+    hcl.push_back(make_edge(hcit->enclosing->front(),
+                            hcit->enclosing->back()));
   }
   return true;
 }
@@ -448,18 +452,18 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::
 context(T va, T vb)
 {
   Context_iterator hcit, past;
-  if(!get_contexts(va,vb, hcit ,past)) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va,vb, hcit ,past)) CGAL_assertion(false);
   return *hcit;
 }
 
 template <class T, class Compare, class Point>
-std::size_t 
+std::size_t
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 number_of_enclosing_constraints(T va, T vb) const
 {
   Context_list* hcl = nullptr;
-  CGAL_triangulation_assertion_code( bool found = ) get_contexts(va,vb,hcl);
-  CGAL_triangulation_assertion(found);
+  CGAL_assertion_code( bool found = ) get_contexts(va,vb,hcl);
+  CGAL_assertion(found);
   return hcl->size();
 }
 
@@ -469,7 +473,7 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::
 contexts_begin(T va, T vb) const
 {
    Context_iterator first, last;
-   if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);
+   if( !get_contexts(va,vb,first,last))  CGAL_assertion(false);
    return first;
 }
 
@@ -477,11 +481,11 @@ template <class T, class Compare, class Point>
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Context_iterator
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 contexts_end(T va, T vb) const
-{   
+{
    Context_iterator first, last;
-   if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);
+   if( !get_contexts(va,vb,first,last))  CGAL_assertion(false);
    return last;
-} 
+}
 
 template <class T, class Compare, class Point>
 auto
@@ -497,50 +501,50 @@ void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 swap(Constraint_id first, Constraint_id second){
     // We have to look at all subconstraints
-  for(Vertex_it it = first.vl_ptr()->skip_begin(), succ = it, end = first.vl_ptr()->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = first.vl_ptr()->skip_begin(), succ = it, end = first.vl_ptr()->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == first.vl_ptr()){
-	ctit->enclosing = nullptr;
-	break;
+        ctit->enclosing = nullptr;
+        break;
       }
     }
   }
     // We have to look at all subconstraints
-  for(Vertex_it it = second.vl_ptr()->skip_begin(), succ = it, end = second.vl_ptr()->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = second.vl_ptr()->skip_begin(), succ = it, end = second.vl_ptr()->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == second.vl_ptr()){
-	ctit->enclosing = first.vl_ptr();
-	break;
+        ctit->enclosing = first.vl_ptr();
+        break;
       }
     }
-  }   
+  }
   // We have to look at all subconstraints
-  for(Vertex_it it = first.vl_ptr()->skip_begin(), succ = it, end = first.vl_ptr()->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = first.vl_ptr()->skip_begin(), succ = it, end = first.vl_ptr()->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == nullptr){
-	ctit->enclosing = second.vl_ptr();
-	break;
+        ctit->enclosing = second.vl_ptr();
+        break;
       }
     }
   }
@@ -553,20 +557,20 @@ void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 remove_constraint(Constraint_id cid){
   constraint_set.erase(cid);
-  
+
   // We have to look at all subconstraints
-  for(Vertex_it it = cid.vl_ptr()->skip_begin(), succ = it, end = cid.vl_ptr()->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = cid.vl_ptr()->skip_begin(), succ = it, end = cid.vl_ptr()->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and remove the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == cid.vl_ptr()){
-	    hcl->erase(ctit);
-		break;
+            hcl->erase(ctit);
+                break;
       }
     }
     // If the constraint passes several times through the same subconstraint,
@@ -591,45 +595,58 @@ void Polyline_constraint_hierarchy_2<T,Compare,Point>::simplify(Vertex_it uc,
                                                        Vertex_it wc)
 
 {
+  // TODO: How do we (want to) deal with u == w ???
   Vertex_handle u = *uc, v = *vc, w = *wc;
   typename Sc_to_c_map::iterator uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
-  CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
+  typename Sc_to_c_map::iterator vw_sc_iter = sc_to_c_map.find(make_edge(v, w));
   Context_list*  uv_hcl = uv_sc_iter->second;
-  CGAL_assertion_msg((u == w) || (uv_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
-
-  if(*(uv_hcl->front().current()) != u) {
-    std::swap(u,w);
-    uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
-    CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
-    uv_hcl = (*uv_sc_iter).second;
-    CGAL_assertion_msg((u == w) || (uv_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
-  }
-  // now u,v, and w are ordered along the polyline constraint
+  Context_list*  vw_hcl = vw_sc_iter->second;
+  // AF:  what is input() about???
   if(vc.input()){
     uc.input() = true;
     wc.input() = true;
   }
-  typename Sc_to_c_map::iterator vw_sc_iter = sc_to_c_map.find(make_edge(v, w));
-  CGAL_assertion_msg( vw_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
-  Context_list*  vw_hcl = vw_sc_iter->second;
-    CGAL_assertion_msg((u == w) || (vw_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
- 
-  Vertex_list* vertex_list = uv_hcl->front().id().vl_ptr();
-  CGAL_assertion_msg(vertex_list  == vw_hcl->front().id().vl_ptr(), "subconstraints from different polyline constraints" );
-  // Remove the list item which points to v
-  vertex_list->skip(vc.base());
-  
-  if(u != w){
-    // Remove the entries for [u,v] and [v,w]
-    sc_to_c_map.erase(uv_sc_iter);
-    sc_to_c_map.erase(vw_sc_iter);
-    delete vw_hcl;
-    // reuse other context list
-    sc_to_c_map[make_edge(u,w)] = uv_hcl;
-  }else{
-    sc_to_c_map.erase(uv_sc_iter);
-    delete vw_hcl;
+
+  // Take contexts from the two context lists depending on the orientation of the constraints
+  // These are the contexts where current is either u or w
+  // remove from uv_hcl the contexts where current is not u
+  // remove from vw_hcl the contexts where current is not w
+  // splice into uv_hcl
+  typename Context_list::iterator it = uv_hcl->begin();
+  while(it != uv_hcl->end()){
+    if((*it->current()) != u){
+      it = uv_hcl->erase(it);
+    }else{
+      // Remove the list item which points to v
+      Vertex_list* vertex_list = it->id().vl_ptr();
+      Vertex_it vc_in_context = it->current();
+      vc_in_context = boost::next(vc_in_context);
+      vertex_list->skip(vc_in_context.base());
+      ++it;
+    }
   }
+  it = vw_hcl->begin();
+  while(it != vw_hcl->end()){
+    if((*it->current()) != w){
+      it = vw_hcl->erase(it);
+    }else{
+      // Remove the list item which points to v
+      Vertex_list* vertex_list = it->id().vl_ptr();
+      Vertex_it vc_in_context = it->current();
+      vc_in_context = boost::next(vc_in_context);
+      vertex_list->skip(vc_in_context.base());
+      ++it;
+    }
+  }
+
+  uv_hcl->splice(uv_hcl->end(),*vw_hcl);
+  delete vw_hcl;
+
+  sc_to_c_map.erase(uv_sc_iter);
+  sc_to_c_map.erase(vw_sc_iter);
+
+  // reuse other context list
+  sc_to_c_map[make_edge(u,w)] = uv_hcl;
 }
 
 
@@ -638,11 +655,13 @@ std::size_t
 Polyline_constraint_hierarchy_2<T,Compare,Point>::remove_points_without_corresponding_vertex(Constraint_id cid)
 {
   std::size_t n = 0;
-  for(Point_it it = points_in_constraint_begin(cid); 
-      it != points_in_constraint_end(cid); ++it) { 
+  for(Point_it it = points_in_constraint_begin(cid);
+      it != points_in_constraint_end(cid);) {
     if(cid.vl_ptr()->is_skipped(it.base())) {
       it = cid.vl_ptr()->erase(it.base());
       ++n;
+    }else{
+      ++it;
     }
   }
   return n;
@@ -667,18 +686,18 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate(Constraint_id firs
   constraint_set.erase(first);
   constraint_set.erase(second);
   // We have to look at all subconstraints
-  for(Vertex_it it = second.vl_ptr()->skip_begin(), succ = it, end = second.vl_ptr()->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = second.vl_ptr()->skip_begin(), succ = it, end = second.vl_ptr()->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == second.vl_ptr()){
-	ctit->enclosing = first.vl_ptr();
-	break;
+        ctit->enclosing = first.vl_ptr();
+        break;
       }
     }
   }
@@ -692,18 +711,18 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate(Constraint_id firs
 
   // Note that for VC8 with iterator debugging the iterators pointing into second
   // are NOT valid      So we have to update them
-  for(Vertex_it it = back_it, succ = it, end = first.vl_ptr()->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = back_it, succ = it, end = first.vl_ptr()->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and update pos in the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == first.vl_ptr()){
-	ctit->pos = it;
-	break;
+        ctit->pos = it;
+        break;
       }
     }
     }
@@ -716,22 +735,22 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate(Constraint_id firs
 template <class T, class Compare, class Point>
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Constraint_id
 Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate2(Constraint_id first, Constraint_id second)
-{  
+{
   constraint_set.erase(first);
   constraint_set.erase(second);
   // We have to look at all subconstraints
-  for(Vertex_it it = first.vl_ptr()->skip_begin(), succ = it, end = first.vl_ptr()->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = first.vl_ptr()->skip_begin(), succ = it, end = first.vl_ptr()->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == first.vl_ptr()){
-	ctit->enclosing = second.vl_ptr();
-	break;
+        ctit->enclosing = second.vl_ptr();
+        break;
       }
     }
   }
@@ -744,18 +763,18 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate2(Constraint_id fir
 
   // Note that for VC8 with iterator debugging the iterators pointing into second
   // are NOT valid      So we have to update them
-  for(Vertex_it it = second.vl_ptr()->skip_begin(), succ = it, end = back_it; 
-      ++succ != end; 
+  for(Vertex_it it = second.vl_ptr()->skip_begin(), succ = it, end = back_it;
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and update pos in the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == second.vl_ptr()){
-	ctit->pos = it;
-	break;
+        ctit->pos = it;
+        break;
       }
     }
   }
@@ -768,7 +787,7 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate2(Constraint_id fir
 
   // split a constraint in two constraints, so that vcit becomes the first
   // vertex of the new constraint
-  // returns the new constraint 
+  // returns the new constraint
 template <class T, class Compare, class Point>
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Constraint_id
 Polyline_constraint_hierarchy_2<T,Compare,Point>::split(Constraint_id first, Vertex_it vcit)
@@ -785,18 +804,18 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::split(Constraint_id first, Ver
   constraint_set.insert(first);
   constraint_set.insert(second);
  // We have to look at all subconstraints
-  for(Vertex_it it = second->skip_begin(), succ = it, end = second->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = second->skip_begin(), succ = it, end = second->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == first.vl_ptr()){
-	ctit->enclosing = second;
-	break;
+        ctit->enclosing = second;
+        break;
       }
     }
   }
@@ -819,18 +838,18 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::split2(Constraint_id first, Ve
   constraint_set.insert(first);
   constraint_set.insert(second);
  // We have to look at all subconstraints
-  for(Vertex_it it = second->skip_begin(), succ = it, end = second->skip_end(); 
-      ++succ != end; 
+  for(Vertex_it it = second->skip_begin(), succ = it, end = second->skip_end();
+      ++succ != end;
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_assertion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == first.vl_ptr()){
-	ctit->enclosing = second;
-	break;
+        ctit->enclosing = second;
+        break;
       }
     }
   }
@@ -847,9 +866,17 @@ typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Vertex_list*
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 insert_constraint(T va, T vb){
   Edge        he = make_edge(va, vb);
-  Vertex_list*  children = new Vertex_list; 
+  Vertex_list*  children = new Vertex_list;
   Context_list* fathers;
 
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "C_hierachy.insert_constraint( #"
+              << va->time_stamp()
+              << ", #"
+              << vb->time_stamp()
+              << ")\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
     fathers = new Context_list;
@@ -869,16 +896,24 @@ insert_constraint(T va, T vb){
   return children;
 }
 
-  
+
 template <class T, class Compare, class Point>
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Vertex_list*
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 insert_constraint_old_API(T va, T vb){
   Edge        he = make_edge(va, vb);
 
-  Vertex_list*  children = new Vertex_list; 
+  Vertex_list*  children = new Vertex_list;
   Context_list* fathers;
 
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "C_hierachy.insert_constraint_old_API( #"
+              << va->time_stamp()
+              << ", #"
+              << vb->time_stamp()
+              << ")\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
     fathers = new Context_list;
@@ -906,6 +941,14 @@ append_constraint(Constraint_id cid, T va, T vb){
   Edge        he = make_edge(va, vb);
   Context_list* fathers;
 
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "C_hierachy.append_constraint( ..., #"
+              << va->time_stamp()
+              << ", #"
+              << vb->time_stamp()
+              << ")\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
     fathers = new Context_list;
@@ -952,7 +995,7 @@ next_along_sc(T va, T vb, T& w) const
   // find the next vertex after vb along any enclosing constrained
   // return false if there is no ....
   Context_iterator  ctxtit, past;
-  if(!get_contexts(va, vb, ctxtit, past)) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va, vb, ctxtit, past)) CGAL_assertion(false);
 
   Vertex_it pos;
   for( ; ctxtit != past; ctxtit++){
@@ -980,11 +1023,11 @@ remove_Steiner(T v, T va, T vb)
 {
   // remove a Steiner point
   CGAL_precondition(!is_constrained_vertex(v));
- 
+
   Context_list*  hcl1;
   Context_list*  hcl2;
-  if(!get_contexts(va,v,hcl1)) CGAL_triangulation_assertion(false);
-  if(!get_contexts(v,vb,hcl2)) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va,v,hcl1)) CGAL_assertion(false);
+  if(!get_contexts(v,vb,hcl2)) CGAL_assertion(false);
 
   Vertex_it      pos;
   for(Context_iterator ctit=hcl1->begin(); ctit != hcl1->end(); ctit++){
@@ -1004,7 +1047,7 @@ remove_Steiner(T v, T va, T vb)
 
 /*
   same as add_Steiner
-  precondition : va,vb est une souscontrainte. 
+  precondition : va,vb est une souscontrainte.
 */
 template <class T, class Compare, class Point>
 void Polyline_constraint_hierarchy_2<T,Compare,Point>::
@@ -1014,11 +1057,27 @@ split_constraint(T va, T vb, T vc){
 
 
 template <class T, class Compare, class Point>
-void 
+void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 add_Steiner(T va, T vb, T vc){
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "C_hierachy.add_Steinter( #"
+              << va->time_stamp()
+              << ", #"
+              << vb->time_stamp()
+              << ", #"
+              << vc->time_stamp()
+              << ")\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Context_list* hcl=nullptr;
-  if(!get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va,vb,hcl)) {
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+      std::cerr << CGAL::internal::cdt_2_indent_level
+                << "  -> the constraint is already split\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+    return;
+  }
 
   Context_list* hcl2 = new  Context_list;
 
@@ -1030,11 +1089,11 @@ add_Steiner(T va, T vb, T vc){
     ++pos;
     pos = ctit->enclosing->insert(pos.base(), Node(vc));
     --pos;
-    
+
     // set ctxt to the context of (vc,vb)
     // change *ctit in hcl to the context of (va,vc)
     // add ctxt to hcl2 list
-    ctxt.enclosing = ctit->enclosing;  
+    ctxt.enclosing = ctit->enclosing;
     if(*pos == va) {
       ctit->pos = pos;
       ctxt.pos = ++pos;
@@ -1059,8 +1118,8 @@ add_Steiner(T va, T vb, T vc){
     delete hcl2;
   }
   else  sc_to_c_map.insert(std::make_pair(make_edge(vc,vb), hcl2));
-    
-  
+
+
   sc_to_c_map.erase(make_edge(va,vb));
   return;
 }
@@ -1091,15 +1150,15 @@ template <class T, class Compare, class Point>
 inline
 bool
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
-get_contexts(T va, T vb, 
-	     Context_iterator& ctxt, 
-	     Context_iterator& past) const
+get_contexts(T va, T vb,
+             Context_iterator& ctxt,
+             Context_iterator& past) const
 {
   Context_list* hcl;
   if (!get_contexts(va,vb,hcl)) return false;
   ctxt = hcl->begin();
   past = hcl->end();
-  return true;    
+  return true;
 }
 
 
@@ -1120,7 +1179,7 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::
 oriented_end(T va, T vb, T& vc) const
 {
   Context_iterator ctxt, past;
-  if(!get_contexts(va,vb, ctxt, past) ) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va,vb, ctxt, past) ) CGAL_assertion(false);
   if(*(ctxt->pos) == va)
     vc = ctxt->enclosing->back();
   else
@@ -1132,7 +1191,7 @@ template <class T, class Compare, class Point>
 void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 print() const
-{ 
+{
   C_iterator hcit;
   std::map<T,int>  vertex_num;
   int num = 0;
@@ -1148,7 +1207,7 @@ print() const
 //  for(; vnit != vertex_num.end(); vnit++) {
 //    vnit->second = ++num;
 //    std::cerr << "vertex num " << num  << " " << vnit->first->point()
-//	      << std::endl;
+//              << std::endl;
 //  }
 
   C_iterator cit=c_begin();
@@ -1171,19 +1230,19 @@ print() const
   std::cout << std::endl ;
   for(;scit != sc_end(); scit++){
     std::cout << "subconstraint " ;
-    std::cout << vertex_num[scit->first.first] << " " 
-	      << vertex_num[scit->first.second];
+    std::cout << vertex_num[scit->first.first] << " "
+              << vertex_num[scit->first.second];
     Context_iterator cb, ce;
     get_contexts(scit->first.first, scit->first.second, cb, ce);
-    
+
     std::cout << "  enclosing " ;
-    for(; cb != ce; cb++) { 
+    for(; cb != ce; cb++) {
       std::cout << cb->id().vl_ptr();
       std::cout <<  "   " ;
     }
     std::cout << std::endl ;
   }
-  return; 
+  return;
 }
 
 

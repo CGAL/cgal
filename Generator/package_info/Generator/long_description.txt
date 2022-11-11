@@ -12,7 +12,7 @@ Generator Package
 -  CGAL/point_generators_2.h
 
      Random and synthetic point distributions over different domains
-     for two-dimensional points: disc, circle, in triangle, in square, on square, 
+     for two-dimensional points: disc, circle, in triangle, in square, on square,
      on segment, grid, random perturbation. Generators for degeneracies.
 
 -  CGAL/point_generators_3.h

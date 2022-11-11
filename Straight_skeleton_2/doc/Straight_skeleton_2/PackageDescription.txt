@@ -11,6 +11,85 @@
 /// \defgroup PkgStraightSkeleton2Functions Functions
 /// \ingroup PkgStraightSkeleton2Ref
 
+/// \defgroup PkgStraightSkeleton2SkeletonFunctions Straight Skeleton Construction Functions
+/// \ingroup PkgStraightSkeleton2Functions
+
+/// \defgroup PkgStraightSkeleton2OffsetFunctions Offset Construction Functions
+/// \ingroup PkgStraightSkeleton2Functions
+///
+/// The following functions are used to construct the inward or outward offsets of a polygon.
+///
+/// \section SLSKernelChoices Kernel Choices
+///
+/// Up to three different kernels can be used in the offset construction process:
+/// <ul>
+///   <li>
+///     <b>Input %Kernel (`InK`):</b> This is the kernel type of the input polygons.
+///   </li>
+///   <li>
+///     <b>Skeleton %Kernel (`SsK`):</b> This is the kernel used for the construction of the (partial) straight
+///                                      skeleton. It might differ from the Input Kernel for example
+///                                      if the input is based on exact number types, but you wish to speed up
+///                                      the construction of the straight skeleton, using a lighter kernel
+///                                      such as `CGAL::Exact_predicates_inexact_constructions_kernel`.
+///   </li>
+///   <li>
+///     <b>Offset (Output) %Kernel (`OfK`):</b> This is the kernel used for the construction of the offset polygons
+///                                     and is thus the kernel type for the output.
+///   </li>
+/// </ul>
+///
+/// When the kernel differs, `CGAL::Cartesian_converter` is used to convert from one kernel to the other.
+///
+/// By default, `SsK` and `OfK` are chosen as `CGAL::Exact_predicates_inexact_constructions_kernel`
+/// as a compromise between speed and robustness. See also Section \ref Straight_skeleton_2CreateOffsetPolygonsfrom_1.
+///
+/// \section SLSOffsetPolygonReturnType Polygon Return Type
+///
+/// There are two classes of offset construction functions: those that simply return all the offset
+/// polygons, and those that also create an arrangement of the polygons to create a polygon with
+/// holes. The latter contain <em>_with_holes</em> in the name.
+///
+/// The return type of the offset construction function is thus dediced by whether or not it is a simple
+/// polygon or a polygon with holes, and on the dictated output kernel (see Section \ref SLSKernelChoices).
+/// Thus, for an input polygon type `InKPolygon` in an offset construction that does <b>not</b>
+/// arrange polygons (e.g. `create_interior_skeleton_and_offset_polygons_2()`):
+/// <ul>
+///   <li>
+///     If the kernel type `InK` of the input polygon type is <b>different</b> from the output kernel type `OfK`,
+///     then the output polygon type is `CGAL::Polygon_2<OfK>`.
+///   </li>
+///   <li>
+///     If the kernel type `InK` is <b>equal</b> to the output kernel type `OfK`,
+///     but the input polygon is a polygon <b>with holes</b> (a model of `GeneralPolygonWithHoles_2`),
+///     then the return type is `InKPolygon::General_polygon_2`.
+///   </li>
+///   <li>
+///     If the kernel type  `InK` of the input polygon type is <b>equal</b> to the output kernel type `OfK`,
+///     and the input polygon is a polygon <b>without holes</b> (a model of `SequenceContainer` with `InK::Point_2` value type),
+///     then the return type is `InKPolygon`.
+///   </li>
+/// </ul>
+///
+/// Similarly, if the return type is a polygon with holes (e.g. `create_interior_skeleton_and_offset_polygons_with_holes_2()`,
+/// a similar dispatch exists:
+/// <ul>
+///   <li>
+///     If the kernel type `InK` of the input polygon type is <b>different</b> from the output kernel type `OfK`,
+///     then the output polygon type is `CGAL::Polygon_with_holes_2<OfK>`.
+///   </li>
+///   <li>
+///     If the kernel type `InK` is <b>equal</b> to the output kernel type `OfK`,
+///     but the input polygon is a polygon <b>with holes</b> (a model of `GeneralPolygonWithHoles_2`),
+///     then the return type is `InKPolygon`.
+///   </li>
+///   <li>
+///     If the kernel type  `InK` of the input polygon type is <b>equal</b> to the output kernel type `OfK`,
+///     and the input polygon is a polygon <b>without holes</b> (a model of `SequenceContainer` with `InK::Point_2` value type),
+///     then the return type is `CGAL::Polygon_with_holes_2<OfK>`.
+///   </li>
+/// </ul>
+
 /*!
 \addtogroup PkgStraightSkeleton2Ref
 \cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2}
@@ -39,15 +118,12 @@
 - `StraightSkeletonBuilderTraits_2`
 - `StraightSkeletonItemsConverter_2`
 - `PolygonOffsetBuilderTraits_2`
-- `VertexContainer_2`
 
 \cgalCRPSection{Classes}
 - `CGAL::Straight_skeleton_vertex_base_2`
 - `CGAL::Straight_skeleton_halfedge_base_2`
 - `CGAL::Straight_skeleton_face_base_2`
 - `CGAL::Straight_skeleton_2`
-- `CGAL::create_interior_straight_skeleton_2`
-- `CGAL::create_exterior_straight_skeleton_2`
 - `CGAL::Straight_skeleton_builder_traits_2`
 - `CGAL::Straight_skeleton_builder_2`
 - `CGAL::Straight_skeleton_items_converter_2`
@@ -55,6 +131,7 @@
 - `CGAL::Polygon_offset_builder_traits_2`
 - `CGAL::Polygon_offset_builder_2`
 - `CGAL::Dummy_straight_skeleton_builder_2_visitor`
+- `CGAL::Trisegment_2`
 
 \cgalCRPSection{Functions}
 - `CGAL::create_exterior_straight_skeleton_2()`
@@ -68,4 +145,3 @@
 - `CGAL::compute_outer_frame_margin()`
 - `CGAL::convert_straight_skeleton_2()`
 */
-

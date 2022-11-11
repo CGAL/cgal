@@ -1,7 +1,7 @@
 #ifndef CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H
 #define CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H
 
-#include <QGraphicsSceneMouseEvent> 
+#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
 #include <QEvent>
@@ -19,12 +19,12 @@ class TriangulationCircumcircle : public GraphicsViewInput
 public:
   TriangulationCircumcircle(QGraphicsScene* s, DT  * dt_, QObject* parent);
   ~TriangulationCircumcircle();
- 
+
   void setPen(const QPen& pen);
 
   void show();
   void hide();
-  
+
 protected:
 
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -82,7 +82,7 @@ TriangulationCircumcircle<DT>::hide()
 
 
 template <typename DT>
-void 
+void
 TriangulationCircumcircle<DT>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(dt->dimension() != 2){
@@ -90,7 +90,7 @@ TriangulationCircumcircle<DT>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
   typename DT::Point p = typename DT::Point(event->scenePos().x(), event->scenePos().y());
-  
+
   double dx = dt->domain().xmax() - dt->domain().xmin();
   double dy = dt->domain().ymax() - dt->domain().ymin();
   p = typename DT::Point(p.x()- std::floor(p.x()/dx), p.y()- std::floor(p.y()/dy));
@@ -98,8 +98,8 @@ TriangulationCircumcircle<DT>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   fh = dt->locate(p);
 
   typename DT::Triangle triangle = dt->triangle(dt->periodic_triangle(fh));
-  typename DT::Geom_traits::Circle_2 c(triangle[0], 
-                                       triangle[1], 
+  typename DT::Geom_traits::Circle_2 c(triangle[0],
+                                       triangle[1],
                                        triangle[2]);
   CGAL::Bbox_2 bb = c.bbox();
   circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
@@ -108,7 +108,7 @@ TriangulationCircumcircle<DT>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename DT>
-bool 
+bool
 TriangulationCircumcircle<DT>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMouseMove) {
@@ -119,7 +119,7 @@ TriangulationCircumcircle<DT>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 } // namespace Qt
 } // namespace CGAL

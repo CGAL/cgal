@@ -14,15 +14,15 @@ int main() {
   Nef_polyhedron N(P);
 
   std::cout << "Exact_predicates_exact_constructions_kernel + SNC_indexed_items"
-	    << std::endl
-	    << "  allows efficient handling of input "
-		 "using floating point coordinates"
-	    << std::endl;
+            << std::endl
+            << "  allows efficient handling of input "
+                 "using floating point coordinates"
+            << std::endl;
 
   if(N.is_simple()) {
     N.convert_to_polyhedron(P);
     std::cout << P;
-  } 
+  }
   else {
     std::cout << N;
   }

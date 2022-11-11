@@ -45,7 +45,7 @@ CGAL::Quotient<CGAL::MP_Float>
 lexical_cast<CGAL::Quotient<CGAL::MP_Float> >(std::string & str)
 {
   typedef CGAL::MP_Float        RT;
-  
+
   RT rt = lexical_cast<RT>(str);
   CGAL::Quotient<RT> result(rt, 1);
   return result;
@@ -86,7 +86,7 @@ CGAL::Quotient<CGAL::Gmpz>
 lexical_cast<CGAL::Quotient<CGAL::Gmpz> >(std::string & str)
 {
   typedef CGAL::Gmpz            RT;
-  
+
   RT rt = lexical_cast<RT>(str);
   CGAL::Quotient<RT> result(rt, 1);
   return result;

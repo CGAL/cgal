@@ -27,7 +27,7 @@ int main(int,char** argv)
   dt.insert(points.begin(), points.end());
   timer.stop();
   std::size_t N = dt.number_of_vertices();
-  
+
   std::cerr << N << std::endl;
   std::cout << timer.time() << " seconds (last"
 #ifdef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3

@@ -24,7 +24,7 @@ void load_xy_file(const std::string& filename, std::vector<Point>& points)
 }
 
 void indexed_output(Otr_2& otr2)
-{  
+{
   std::cout << "(-------------Off output---------- )" << std::endl;
 
   std::vector<Point> points;
@@ -40,7 +40,7 @@ void indexed_output(Otr_2& otr2)
 
   // points
   std::vector<Point>::iterator pit;
-  for (pit = points.begin(); pit != points.end(); pit++) 
+  for (pit = points.begin(); pit != points.end(); pit++)
     std::cout << *pit << std::endl;
 
   // isolated vertices

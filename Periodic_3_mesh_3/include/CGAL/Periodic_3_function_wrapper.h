@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/internal/canonicalize_helper.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/canonicalize_helper.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
 #include <boost/type_traits/is_function.hpp>

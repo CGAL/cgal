@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -41,24 +41,24 @@ void set_halfedgeds_items_id ( HalfedgeDS_with_id& hds )
   std::size_t vertex_id   = 0 ;
   std::size_t halfedge_id = 0 ;
   std::size_t face_id     = 0 ;
-  
+
   for ( typename HalfedgeDS_with_id::Vertex_iterator vit = hds.vertices_begin(), evit = hds.vertices_end()
       ; vit != evit
       ; ++  vit
       )
-    vit->id() = vertex_id ++ ;    
-    
+    vit->id() = vertex_id ++ ;
+
   for ( typename HalfedgeDS_with_id::Halfedge_iterator hit = hds.halfedges_begin(), ehit = hds.halfedges_end()
       ; hit != ehit
       ; ++  hit
       )
-    hit->id() = halfedge_id ++ ;    
-    
+    hit->id() = halfedge_id ++ ;
+
   for ( typename HalfedgeDS_with_id::Face_iterator fit = hds.facets_begin(), efit = hds.facets_end()
       ; fit != efit
       ; ++  fit
       )
-    fit->id() = face_id ++ ;    
+    fit->id() = face_id ++ ;
 }
 
 } //namespace CGAL

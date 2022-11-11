@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 //---------------------------------------------------------------------
@@ -26,7 +26,7 @@
 #define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_d.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "The Triangulation package (see https://doc.cgal.org/latest/Triangulation) should be used instead."
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 /*{\Manpage {Convex_hull_d}{R}{Convex Hulls}{C}}*/
 
@@ -64,8 +64,8 @@ to the $i$-th vertex of $f$.  The function |C.opposite_facet(f,i)|
 returns $g$.  Two neighboring facets $f$ and $g$ share |dcur - 1|
 vertices, namely all but the vertex with index $i$ of $f$ and the
 vertex with index |C.index_of_vertex_in_opposite_facet(f,i)| of $g$.
-Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then 
-|f = C.opposite_facet(g,j)| and 
+Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
+|f = C.opposite_facet(g,j)| and
 |i = C.index_of_vertex_in_opposite_facet(g,j)|.}*/
 
 #include <CGAL/basic.h>
@@ -84,7 +84,7 @@ template <typename HP, typename H> class Facet_iterator_rep_;
 template <typename HP, typename H> class Facet_iterator_;
 
 template <typename Hull_pointer, typename Handle>
-class Facet_iterator_rep_ 
+class Facet_iterator_rep_
 {
   CGAL::Unique_hash_map<Handle,bool>* pvisited_;
   std::list<Handle>* pcandidates_;
@@ -92,7 +92,7 @@ class Facet_iterator_rep_
   Handle current_;
   friend class Facet_iterator_<Hull_pointer,Handle>;
 
-  void add_candidates() 
+  void add_candidates()
   { CGAL_assertion(pvisited_ && pcandidates_ && hull_);
     for(int i = 1; i <= hull_->current_dimension(); ++i) {
       Handle f = hull_->opposite_simplex(current_,i);
@@ -100,15 +100,15 @@ class Facet_iterator_rep_
         pcandidates_->push_front(f);
         (*pvisited_)[f] = true;
       }
-    }    
+    }
   }
 public:
-  Facet_iterator_rep_() : 
+  Facet_iterator_rep_() :
     pvisited_(0), pcandidates_(0), hull_(0), current_() {}
-  Facet_iterator_rep_(Hull_pointer p, Handle h) : 
+  Facet_iterator_rep_(Hull_pointer p, Handle h) :
     pvisited_(0), pcandidates_(0), hull_(p), current_(h) {}
-  ~Facet_iterator_rep_() 
-  { if (pvisited_) delete pvisited_; 
+  ~Facet_iterator_rep_()
+  { if (pvisited_) delete pvisited_;
     if (pcandidates_) delete pcandidates_; }
 };
 
@@ -129,8 +129,8 @@ public:
   typedef std::forward_iterator_tag   iterator_category;
 
   Facet_iterator_() : Base( Rep() ) {}
-  Facet_iterator_(Hull_pointer p, Handle h) : Base( Rep(p,h) ) 
-  { ptr()->pvisited_ = new Unique_hash_map<Handle,bool>(false); 
+  Facet_iterator_(Hull_pointer p, Handle h) : Base( Rep(p,h) )
+  { ptr()->pvisited_ = new Unique_hash_map<Handle,bool>(false);
     ptr()->pcandidates_ = new std::list<Handle>;
     (*(ptr()->pvisited_))[ptr()->current_]=true;
     ptr()->add_candidates();
@@ -141,7 +141,7 @@ public:
   pointer operator->() const
   { return ptr()->current_.operator->(); }
 
-  Self& operator++() 
+  Self& operator++()
   { if ( ptr()->current_ == Handle() ) return *this;
     if ( ptr()->pcandidates_->empty() ) ptr()->current_ = Handle();
     else {
@@ -151,8 +151,8 @@ public:
     }
     return *this;
   }
-  Self  operator++(int) 
-  { Self tmp = *this; ++*this; return tmp; }      
+  Self  operator++(int)
+  { Self tmp = *this; ++*this; return tmp; }
   bool operator==(const Self& x) const
   { return ptr()->current_ == x.ptr()->current_; }
   bool operator!=(const Self& x) const
@@ -163,20 +163,20 @@ public:
 };
 
 
-template <typename HP, typename VH, typename FH> 
+template <typename HP, typename VH, typename FH>
 class Hull_vertex_iterator_rep_;
-template <typename HP, typename VH, typename FH> 
+template <typename HP, typename VH, typename FH>
 class Hull_vertex_iterator_;
 
 template <typename Hull_pointer, typename VHandle, typename FHandle>
-class Hull_vertex_iterator_rep_ 
+class Hull_vertex_iterator_rep_
 {
   CGAL::Unique_hash_map<VHandle,bool>* pvisited_;
   Hull_pointer hull_;
   VHandle v_; FHandle f_; int i_;
   friend class Hull_vertex_iterator_<Hull_pointer,VHandle,FHandle>;
 
-  void advance() 
+  void advance()
   { CGAL_assertion(pvisited_ &&  hull_);
     if ( f_ == FHandle() ) return;
     bool search_next = true; ++i_;
@@ -187,17 +187,17 @@ class Hull_vertex_iterator_rep_
         ++i_;
       }
       if ( search_next ) { i_=0; ++f_; }
-      if ( f_ == FHandle() ) 
+      if ( f_ == FHandle() )
       { search_next=false; v_ = VHandle(); }
     }
     (*pvisited_)[v_] = true;
   }
 public:
-  Hull_vertex_iterator_rep_() : 
+  Hull_vertex_iterator_rep_() :
     pvisited_(0), hull_(0), i_(0) {}
-  Hull_vertex_iterator_rep_(Hull_pointer p, FHandle f) : 
+  Hull_vertex_iterator_rep_(Hull_pointer p, FHandle f) :
     pvisited_(0), hull_(p), f_(f), i_(-1) {}
-  ~Hull_vertex_iterator_rep_() 
+  ~Hull_vertex_iterator_rep_()
   { if (pvisited_) delete pvisited_; }
 };
 
@@ -218,8 +218,8 @@ public:
   typedef std::forward_iterator_tag   iterator_category;
 
   Hull_vertex_iterator_() : Base( Rep() ) {}
-  Hull_vertex_iterator_(Hull_pointer p, FHandle f) : Base( Rep(p,f) ) 
-  { ptr()->pvisited_ = new Unique_hash_map<VHandle,bool>(false); 
+  Hull_vertex_iterator_(Hull_pointer p, FHandle f) : Base( Rep(p,f) )
+  { ptr()->pvisited_ = new Unique_hash_map<VHandle,bool>(false);
     ptr()->advance();
   }
 
@@ -228,13 +228,13 @@ public:
   pointer operator->() const
   { return ptr()->v_.operator->(); }
 
-  Self& operator++() 
+  Self& operator++()
   { if ( ptr()->v_ == VHandle() ) return *this;
     ptr()->advance();
     return *this;
   }
-  Self  operator++(int) 
-  { Self tmp = *this; ++*this; return tmp; }      
+  Self  operator++(int)
+  { Self tmp = *this; ++*this; return tmp; }
   bool operator==(const Self& x) const
   { return ptr()->v_ == x.ptr()->v_; }
   bool operator!=(const Self& x) const
@@ -248,9 +248,9 @@ template <class Vertex, class Point>
 struct Point_from_Vertex {
   typedef Vertex argument_type;
   typedef Point  result_type;
-  result_type& operator()(argument_type& x) const 
+  result_type& operator()(argument_type& x) const
   { return x.point(); }
-  const result_type& operator()(const argument_type& x) const 
+  const result_type& operator()(const argument_type& x) const
   { return x.point(); }
 };
 
@@ -266,7 +266,7 @@ struct list_collector {
 
 template <class R_>
 class Convex_hull_d : public Regular_complex_d<R_>
-{ 
+{
 typedef Regular_complex_d<R_> Base;
 typedef Convex_hull_d<R_>     Self;
 
@@ -314,7 +314,7 @@ typedef typename Base::Vertex_iterator Vertex_iterator;
 typedef Facet_iterator_<Self*,Facet_handle> Facet_iterator;
 /*{\Mtypemember iterator for facets.}*/
 
-typedef Hull_vertex_iterator_<Self*,Vertex_handle,Facet_iterator> 
+typedef Hull_vertex_iterator_<Self*,Vertex_handle,Facet_iterator>
   Hull_vertex_iterator;
 /*{\Mtypemember iterator for vertices that are part of the convex hull.}*/
 
@@ -322,7 +322,7 @@ typedef Hull_vertex_iterator_<Self*,Vertex_handle,Facet_iterator>
 can be used as handles. Note also that all iterator and handle types
 come also in a const flavor, e.g., |Vertex_const_iterator| is the
 constant version of |Vertex_iterator|. Thus use the const version
-whenever the the convex hull object is referenced as constant.}*/
+whenever the convex hull object is referenced as constant.}*/
 
 #define CGAL_USING(t) typedef typename Base::t t
 CGAL_USING(Simplex_const_iterator);CGAL_USING(Vertex_const_iterator);
@@ -367,16 +367,16 @@ public: // until there are template friend functions possible
   { return s->visited(); }
 
 protected:
-  std::size_t num_of_bounded_simplices; 
-  std::size_t num_of_unbounded_simplices; 
-  std::size_t num_of_visibility_tests; 
-  std::size_t num_of_vertices; 
+  std::size_t num_of_bounded_simplices;
+  std::size_t num_of_unbounded_simplices;
+  std::size_t num_of_visibility_tests;
+  std::size_t num_of_vertices;
 
   void compute_equation_of_base_facet(Simplex_handle s);
   /*{\Xop computes the equation of the base facet of $s$ and sets the
   |base_facet| member of $s$. The equation is normalized such
   that the origin simplex lies in the negative halfspace.}*/
-   
+
   bool is_base_facet_visible(Simplex_handle s, const Point_d& x) const
   { typename R::Has_on_positive_side_d has_on_positive_side =
       kernel().has_on_positive_side_d_object();
@@ -396,13 +396,13 @@ protected:
   /*{\Xop adds all unmarked unbounded simplices with $x$-visible base
           facet to |visible_simplices| and marks them. In |location| the
           procedure returns the position of |x| with respect to the
-          current hull: $-1$ for inside, $0$ for on the the boundary,
+          current hull: $-1$ for inside, $0$ for on the boundary,
           and $+1$ for outside; the initial value of |location| for the
           outermost call must be $-1$. If $x$ is contained in the
           boundary of |\Mvar| then a facet incident to $x$ is returned
           in $f$.}*/
 
-  void clear_visited_marks(Simplex_handle s) const; 
+  void clear_visited_marks(Simplex_handle s) const;
  /*{\Xop removes the mark bits from all marked simplices reachable from $s$.}*/
 
   void dimension_jump(Simplex_handle S, Vertex_handle x);
@@ -414,10 +414,10 @@ protected:
                              std::size_t& num_of_visited_facets) const;
 
 public:
-  
+
   /*{\Mcreation 3}*/
 
-  Convex_hull_d(int d, const R& Kernel = R()); 
+  Convex_hull_d(int d, const R& Kernel = R());
   /*{\Mcreate creates an instance |\Mvar| of type |\Mtype|. The
   dimension of the underlying space is $d$ and |S| is initialized to the
   empty point set. The traits class |R| specifies the models of
@@ -428,8 +428,8 @@ public:
   protected:
   /*{\Mtext The data type |\Mtype| offers neither copy constructor nor
   assignment operator.}*/
-    Convex_hull_d(const Self&); 
-    Convex_hull_d& operator=(const Self&); 
+    Convex_hull_d(const Self&);
+    Convex_hull_d& operator=(const Self&);
   public:
 
 
@@ -437,9 +437,9 @@ public:
   /*{\Mtext All operations below that take a point |x| as argument have
   the common precondition that |x| is a point of ambient space.}*/
 
-  int dimension() const { return Base::dimension(); } 
+  int dimension() const { return Base::dimension(); }
   /*{\Mop returns the dimension of ambient space}*/
-  int current_dimension() const { return Base::current_dimension(); } 
+  int current_dimension() const { return Base::current_dimension(); }
   /*{\Mop returns the affine dimension |dcur| of $S$.}*/
 
   Point_d  associated_point(Vertex_handle v) const
@@ -465,7 +465,7 @@ public:
   Simplex_handle opposite_simplex(Simplex_handle s,int i) const
   { return Base::opposite_simplex(s,i); }
   /*{\Mop returns the simplex opposite to the $i$-th vertex of $s$
-  (|Simplex_handle()| if there is no such simplex). 
+  (|Simplex_handle()| if there is no such simplex).
   \precond $0 \leq i \leq |dcur|$. }*/
   Simplex_const_handle opposite_simplex(Simplex_const_handle s,int i) const
   { return Base::opposite_simplex(s,i); }
@@ -507,13 +507,13 @@ public:
   { return opposite_simplex(f,i+1); }
   /*{\Mop returns the facet opposite to the $i$-th vertex of $f$
   (|Facet_handle()| if there is no such facet). \precond $0 \leq i <
-  |dcur|$ and |dcur > 1|. }*/ 
-  Facet_const_handle opposite_facet(Facet_const_handle f, int i) const 
+  |dcur|$ and |dcur > 1|. }*/
+  Facet_const_handle opposite_facet(Facet_const_handle f, int i) const
   { return opposite_simplex(f,i+1); }
 
   int index_of_vertex_in_opposite_facet(Facet_handle f, int i) const
   { return index_of_vertex_in_opposite_simplex(f,i+1) - 1; }
-  /*{\Mop returns the index of the vertex opposite to the $i$-th vertex of 
+  /*{\Mop returns the index of the vertex opposite to the $i$-th vertex of
   $f$. \precond $0 \leq i < |dcur|$ and |dcur > 1|.}*/
   int index_of_vertex_in_opposite_facet(Facet_const_handle f, int i) const
   { return index_of_vertex_in_opposite_simplex(f,i+1) - 1; }
@@ -534,7 +534,7 @@ public:
   lies outside the current hull, a new vertex |v| with associated point
   $x$ is added to the hull and returned. In all other cases, i.e., if
   $x$ lies in the interior of the hull or on the boundary but not on a
-  vertex, the current hull is not changed and |Vertex_handle()| is 
+  vertex, the current hull is not changed and |Vertex_handle()| is
   returned. If |CGAL_CHECK_EXPENSIVE| is defined then the validity
   check |is_valid(true)| is executed as a post condition.}*/
 
@@ -548,7 +548,7 @@ public:
 
   bool is_dimension_jump(const Point_d& x) const
   /*{\Mop returns true if $x$ is not contained in the affine hull of |S|.}*/
-  { 
+  {
     if (current_dimension() == dimension()) return false;
     typename R::Contained_in_affine_hull_d contained_in_affine_hull =
       kernel().contained_in_affine_hull_d_object();
@@ -562,9 +562,9 @@ public:
   \precond |x| is contained in the affine hull of |S|.}*/
 
   Bounded_side bounded_side(const Point_d& x);
-  /*{\Mop returns |ON_BOUNDED_SIDE| (|ON_BOUNDARY|,|ON_UNBOUNDED_SIDE|) 
-  if |x| is contained in the interior (lies on the boundary, is contained 
-  in the exterior) of |\Mvar|. \precond |x| is contained in the affine 
+  /*{\Mop returns |ON_BOUNDED_SIDE| (|ON_BOUNDARY|,|ON_UNBOUNDED_SIDE|)
+  if |x| is contained in the interior (lies on the boundary, is contained
+  in the exterior) of |\Mvar|. \precond |x| is contained in the affine
   hull of |S|.}*/
 
 
@@ -579,17 +579,17 @@ public:
 
   void clear(int d)
   /*{\Mop reinitializes |\Mvar| to an empty hull in $d$-dimensional space.}*/
-  { 
+  {
     typename R::Construct_vector_d create =
       kernel().construct_vector_d_object();
     quasi_center_ = create(d,NULL_VECTOR);
     anti_origin_ = Vertex_handle();
-    origin_simplex_ = Simplex_handle(); 
+    origin_simplex_ = Simplex_handle();
     all_pnts_.clear();
     Base::clear(d);
-    num_of_vertices = 0; 
-    num_of_unbounded_simplices = num_of_bounded_simplices = 0; 
-    num_of_visibility_tests = 0; 
+    num_of_vertices = 0;
+    num_of_unbounded_simplices = num_of_bounded_simplices = 0;
+    num_of_visibility_tests = 0;
   }
 
   std::size_t number_of_vertices() const
@@ -607,9 +607,9 @@ public:
   void print_statistics()
   /*{\Mop gives information about the size of the current hull and the
   number of visibility tests performed.}*/
-  { 
-    std::cout << "Convex_hull_d (" 
-              << current_dimension() << "/" << dimension() 
+  {
+    std::cout << "Convex_hull_d ("
+              << current_dimension() << "/" << dimension()
               << ") - statistic" << std::endl;
     std::cout<<" # points = " << all_pnts_.size() << std::endl;
     std::cout<<" # vertices = " << num_of_vertices << std::endl;
@@ -638,7 +638,7 @@ public:
 
   template <typename Forward_iterator>
   void initialize(Forward_iterator first, Forward_iterator last)
-  /*{\Xop initializes the complex with the set |S = set [first,last)|. 
+  /*{\Xop initializes the complex with the set |S = set [first,last)|.
   The initialization uses the quickhull approach.}*/
   { CGAL_assertion(current_dimension()==-1);
     Vertex_handle z;
@@ -648,17 +648,17 @@ public:
     while ( it != last ) {
       Point_d x = *it++;
       if ( current_dimension() == -1 ) {
-        
+
         Simplex_handle outer_simplex; // a pointer to the outer simplex
         dcur = 0;  // we jump from dimension - 1 to dimension 0
-        origin_simplex_ = new_simplex();  num_of_bounded_simplices ++; 
-        outer_simplex  = new_simplex();   num_of_unbounded_simplices ++; 
+        origin_simplex_ = new_simplex();  num_of_bounded_simplices ++;
+        outer_simplex  = new_simplex();   num_of_unbounded_simplices ++;
         start_facet_ = origin_simplex_;
-        z = new_vertex(x);                num_of_vertices ++; 
+        z = new_vertex(x);                num_of_vertices ++;
         associate_vertex_with_simplex(origin_simplex_,0,z);
-          // z is the only point and the peak 
-        associate_vertex_with_simplex(outer_simplex,0,anti_origin_); 
-        set_neighbor(origin_simplex_,0,outer_simplex,0); 
+          // z is the only point and the peak
+        associate_vertex_with_simplex(outer_simplex,0,anti_origin_);
+        set_neighbor(origin_simplex_,0,outer_simplex,0);
         typename R::Point_to_vector_d to_vector =
           kernel().point_to_vector_d_object();
         quasi_center_ = to_vector(x);
@@ -666,13 +666,13 @@ public:
 
       }
       else if ( is_dimension_jump(x) ) {
-        dcur++; 
-        z = new_vertex(x); num_of_vertices++; 
+        dcur++;
+        z = new_vertex(x); num_of_vertices++;
         typename R::Point_to_vector_d to_vector =
           kernel().point_to_vector_d_object();
         quasi_center_ = quasi_center_ + to_vector(x);
-        dimension_jump(origin_simplex_, z); 
-        clear_visited_marks(origin_simplex_); 
+        dimension_jump(origin_simplex_, z);
+        clear_visited_marks(origin_simplex_);
         Simplex_iterator S;
         forall_rc_simplices(S,*this) compute_equation_of_base_facet(S);
         num_of_unbounded_simplices += num_of_bounded_simplices;
@@ -682,7 +682,7 @@ public:
         }
 
 
-      } else { 
+      } else {
         OtherPoints.push_back(x);
       }
     }
@@ -709,7 +709,7 @@ public:
     OtherPoints.clear();
 
     while ( !FacetCandidates.empty() ) {
-      Facet_handle f = *FacetCandidates.begin(); 
+      Facet_handle f = *FacetCandidates.begin();
       FacetCandidates.pop_front();
       Hyperplane_d h = f->hyperplane_of_base_facet();
       std::list<Point_d>& L = PointsOf[f];
@@ -724,40 +724,40 @@ public:
       num_of_visibility_tests += L.size();
 
       std::size_t num_of_visited_facets = 0;
-      std::list<Facet_handle> VisibleFacets; 
-      VisibleFacets.push_back(f); 
-      visible_facets_search(f, p, VisibleFacets, num_of_visited_facets); 
+      std::list<Facet_handle> VisibleFacets;
+      VisibleFacets.push_back(f);
+      visible_facets_search(f, p, VisibleFacets, num_of_visited_facets);
       num_of_visibility_tests += num_of_visited_facets;
       num_of_bounded_simplices += VisibleFacets.size();
       clear_visited_marks(f);
 
-      ++num_of_vertices; 
+      ++num_of_vertices;
       Vertex_handle z = new_vertex(p);
       std::list<Simplex_handle> NewSimplices;
       typename std::list<Facet_handle>::iterator it;
       CGAL_assertion(OtherPoints.empty());
       for (it = VisibleFacets.begin(); it != VisibleFacets.end(); ++it) {
         OtherPoints.splice(OtherPoints.end(),PointsOf[*it]);
-        Facet_handle S = *it; 
-        associate_vertex_with_simplex(S,0,z); 
+        Facet_handle S = *it;
+        associate_vertex_with_simplex(S,0,z);
         for (int k = 1; k <= dcur; ++k) {
           if (!is_base_facet_visible(opposite_simplex(S,k),p)) {
-            Simplex_handle T = new_simplex(); 
+            Simplex_handle T = new_simplex();
             NewSimplices.push_back(T);
-             
+
             /* set the vertices of T as described above */
             for (int i = 1; i < dcur; i++) {
-              if ( i != k ) 
-                associate_vertex_with_simplex(T,i,vertex_of_simplex(S,i)); 
+              if ( i != k )
+                associate_vertex_with_simplex(T,i,vertex_of_simplex(S,i));
             }
-            if (k != dcur) 
-              associate_vertex_with_simplex(T,k,vertex_of_simplex(S,dcur)); 
-            associate_vertex_with_simplex(T,dcur,z); 
-            associate_vertex_with_simplex(T,0,anti_origin_); 
-            /* in the above, it is tempting to drop the tests ( i != k ) and 
+            if (k != dcur)
+              associate_vertex_with_simplex(T,k,vertex_of_simplex(S,dcur));
+            associate_vertex_with_simplex(T,dcur,z);
+            associate_vertex_with_simplex(T,0,anti_origin_);
+            /* in the above, it is tempting to drop the tests ( i != k ) and
                ( k != dcur ) since the subsequent lines after will correct the
                erroneous assignment.  This reasoning is fallacious as the
-               procedure assoc_vertex_with_simplex also the internal data of 
+               procedure assoc_vertex_with_simplex also the internal data of
                the third argument. */
 
             /* compute the equation of its base facet */
@@ -783,22 +783,22 @@ public:
           if (opposite_simplex(Af,k) == Simplex_handle()) {
             // we have not performed the walk in the opposite direction yet
             Simplex_handle T = opposite_simplex(Af,0);
-            int y1 = 0; 
-            while ( vertex_of_simplex(T,y1) != vertex_of_simplex(Af,k) ) 
-              y1++; 
-            // exercise: show that we can also start with y1 = 1 
-            int y2 = index_of_vertex_in_opposite_simplex(Af,0); 
+            int y1 = 0;
+            while ( vertex_of_simplex(T,y1) != vertex_of_simplex(Af,k) )
+              y1++;
+            // exercise: show that we can also start with y1 = 1
+            int y2 = index_of_vertex_in_opposite_simplex(Af,0);
 
             while ( vertex_of_simplex(T,0) == z ) {
               // while T has peak x do find new y_1 */
-              int new_y1 = 0; 
+              int new_y1 = 0;
               while (vertex_of_simplex(opposite_simplex(T,y1),new_y1) !=
                      vertex_of_simplex(T,y2))
                 new_y1++;
-                // exercise: show that we can also start with new_y1 = 1 
-              y2 = index_of_vertex_in_opposite_simplex(T,y1); 
-              T =  opposite_simplex(T,y1); 
-              y1 = new_y1; 
+                // exercise: show that we can also start with new_y1 = 1
+              y2 = index_of_vertex_in_opposite_simplex(T,y1);
+              T =  opposite_simplex(T,y1);
+              y1 = new_y1;
             }
             set_neighbor(Af,k,T,y1); // update adjacency information
           }
@@ -825,7 +825,7 @@ public:
     }
 
   #ifdef CGAL_CHECK_EXPENSIVE
-    CGAL_assertion(is_valid(true)); 
+    CGAL_assertion(is_valid(true));
   #endif
   }
 
@@ -839,7 +839,7 @@ public:
   Vertex_iterator vertices_end()   { return Base::vertices_end(); }
   /*{\Mop the past the end iterator for vertices.}*/
   Simplex_iterator simplices_begin() { return Base::simplices_begin(); }
-  /*{\Mop returns an iterator to start iteration over all simplices 
+  /*{\Mop returns an iterator to start iteration over all simplices
   of |\Mvar|.}*/
   Simplex_iterator simplices_end()   { return Base::simplices_end(); }
   /*{\Mop the past the end iterator for simplices.}*/
@@ -847,11 +847,11 @@ public:
   /*{\Mop returns an iterator to start iteration over all facets of |\Mvar|.}*/
   Facet_iterator facets_end() { return Facet_iterator(); }
   /*{\Mop the past the end iterator for facets.}*/
-  Hull_vertex_iterator hull_vertices_begin() 
+  Hull_vertex_iterator hull_vertices_begin()
   { return Hull_vertex_iterator(this,facets_begin()); }
-  /*{\Mop returns an iterator to start iteration over all hull vertex 
+  /*{\Mop returns an iterator to start iteration over all hull vertex
   of |\Mvar|. Remember that the hull is a simplicial complex.}*/
-  Hull_vertex_iterator hull_vertices_end() 
+  Hull_vertex_iterator hull_vertices_end()
   { return Hull_vertex_iterator(); }
   /*{\Mop the past the end iterator for hull vertices.}*/
 
@@ -863,20 +863,20 @@ public:
 
   Hull_point_const_iterator hull_points_begin() const
   { return Hull_point_const_iterator(hull_vertices_begin()); }
-  /*{\Mop returns an iterator to start iteration over all inserted 
-  points that are part of the convex hull |\Mvar|. Remember that the 
+  /*{\Mop returns an iterator to start iteration over all inserted
+  points that are part of the convex hull |\Mvar|. Remember that the
   hull is a simplicial complex.}*/
   Hull_point_const_iterator hull_points_end() const
   { return Hull_point_const_iterator(hull_vertices_end()); }
   /*{\Mop returns the past the end iterator for points of the hull.}*/
 
-  Vertex_const_iterator vertices_begin() const 
+  Vertex_const_iterator vertices_begin() const
   { return Base::vertices_begin(); }
-  Vertex_const_iterator vertices_end()   const 
+  Vertex_const_iterator vertices_end()   const
   { return Base::vertices_end(); }
-  Simplex_const_iterator simplices_begin() const 
+  Simplex_const_iterator simplices_begin() const
   { return Base::simplices_begin(); }
-  Simplex_const_iterator simplices_end()   const 
+  Simplex_const_iterator simplices_end()   const
   { return Base::simplices_end(); }
   Facet_const_iterator facets_begin() const
   { return Facet_const_iterator(this,start_facet_); }
@@ -943,7 +943,7 @@ public:
 
 
 
-  std::list<Facet_handle>  all_facets() 
+  std::list<Facet_handle>  all_facets()
   /*{\Mop returns a list of all facets of |\Mvar|.}*/
   { std::list<Facet_handle> L;
     list_collector<Facet_handle,Facet_handle> visitor(L);
@@ -959,22 +959,22 @@ public:
   }
 
   #define forall_ch_vertices(x,CH)\
-  for(x = (CH).vertices_begin(); x != (CH).vertices_end(); ++x) 
+  for(x = (CH).vertices_begin(); x != (CH).vertices_end(); ++x)
   #define forall_ch_simplices(x,CH)\
-  for(x = (CH).simplices_begin(); x != (CH).simplices_end(); ++x) 
+  for(x = (CH).simplices_begin(); x != (CH).simplices_end(); ++x)
   #define forall_ch_facets(x,CH)\
-  for(x = (CH).facets_begin(); x != (CH).facets_end(); ++x) 
+  for(x = (CH).facets_begin(); x != (CH).facets_end(); ++x)
 
-  /*{\Mtext 
+  /*{\Mtext
   \headerline{Iteration Statements}
 
-  {\bf forall\_ch\_vertices}($v,C$)       
+  {\bf forall\_ch\_vertices}($v,C$)
   $\{$ ``the vertices of $C$ are successively assigned to $v$'' $\}$
 
-  {\bf forall\_ch\_simplices}($s,C$)       
+  {\bf forall\_ch\_simplices}($s,C$)
   $\{$ ``the simplices of $C$ are successively assigned to $s$'' $\}$
 
-  {\bf forall\_ch\_facets}($f,C$)       
+  {\bf forall\_ch\_facets}($f,C$)
   $\{$ ``the facets of $C$ are successively assigned to $f$'' $\}$
 
   }*/
@@ -1029,12 +1029,12 @@ public:
 
 template <class R>
 Convex_hull_d<R>::Convex_hull_d(int d, const R& Kernel) : Base(d,Kernel)
-{ 
-  origin_simplex_ = Simplex_handle(); 
+{
+  origin_simplex_ = Simplex_handle();
   start_facet_ = Facet_handle();
   anti_origin_ = Vertex_handle();
-  num_of_vertices = 0; 
-  num_of_unbounded_simplices = num_of_bounded_simplices = 0; 
+  num_of_vertices = 0;
+  num_of_unbounded_simplices = num_of_bounded_simplices = 0;
   num_of_visibility_tests = 0;
   typename R::Construct_vector_d create =
     kernel().construct_vector_d_object();
@@ -1044,7 +1044,7 @@ Convex_hull_d<R>::Convex_hull_d(int d, const R& Kernel) : Base(d,Kernel)
 template <class R>
 bool Convex_hull_d<R>::
 contains_in_base_facet(Simplex_handle s, const Point_d& x) const
-{ 
+{
   typename R::Contained_in_simplex_d contained_in_simplex =
     kernel().contained_in_simplex_d_object();
   return contained_in_simplex(s->points_begin()+1,
@@ -1054,7 +1054,7 @@ contains_in_base_facet(Simplex_handle s, const Point_d& x) const
 template <class R>
 void Convex_hull_d<R>::
 compute_equation_of_base_facet(Simplex_handle S)
-{ 
+{
   typename R::Construct_hyperplane_d hyperplane_through_points =
     kernel().construct_hyperplane_d_object();
   S->set_hyperplane_of_base_facet( hyperplane_through_points(
@@ -1066,48 +1066,48 @@ compute_equation_of_base_facet(Simplex_handle S)
     typename R::Oriented_side_d side = kernel().oriented_side_d_object();
     for (int i = 1; i <= current_dimension(); i++)
       CGAL_assertion_msg(side(S->hyperplane_of_base_facet(),
-                              point_of_simplex(S,i)) == ON_ORIENTED_BOUNDARY, 
-        " hyperplane does not support base "); 
-    CGAL_assertion_msg(side(S->hyperplane_of_base_facet(),center()) == 
+                              point_of_simplex(S,i)) == ON_ORIENTED_BOUNDARY,
+        " hyperplane does not support base ");
+    CGAL_assertion_msg(side(S->hyperplane_of_base_facet(),center()) ==
                        ON_NEGATIVE_SIDE,
-      " hyperplane has quasi center on wrong side "); 
+      " hyperplane has quasi center on wrong side ");
   }
   #endif
 
- 
+
 }
 
 template <class R>
-typename Convex_hull_d<R>::Vertex_handle 
+typename Convex_hull_d<R>::Vertex_handle
 Convex_hull_d<R>::insert(const Point_d& x)
-{ 
+{
   Vertex_handle z = Vertex_handle();
   all_pnts_.push_back(x);
-  if (current_dimension() == -1) { 
-    
+  if (current_dimension() == -1) {
+
     Simplex_handle outer_simplex; // a pointer to the outer simplex
     dcur = 0;  // we jump from dimension - 1 to dimension 0
-    origin_simplex_ = new_simplex();  num_of_bounded_simplices ++; 
-    outer_simplex  = new_simplex();   num_of_unbounded_simplices ++; 
+    origin_simplex_ = new_simplex();  num_of_bounded_simplices ++;
+    outer_simplex  = new_simplex();   num_of_unbounded_simplices ++;
     start_facet_ = origin_simplex_;
-    z = new_vertex(x);                num_of_vertices ++; 
+    z = new_vertex(x);                num_of_vertices ++;
     associate_vertex_with_simplex(origin_simplex_,0,z);
-      // z is the only point and the peak 
-    associate_vertex_with_simplex(outer_simplex,0,anti_origin_); 
-    set_neighbor(origin_simplex_,0,outer_simplex,0); 
+      // z is the only point and the peak
+    associate_vertex_with_simplex(outer_simplex,0,anti_origin_);
+    set_neighbor(origin_simplex_,0,outer_simplex,0);
     typename R::Point_to_vector_d to_vector =
       kernel().point_to_vector_d_object();
     quasi_center_ = to_vector(x);
 
 
   } else if ( is_dimension_jump(x) ) {
-    dcur++; 
-    z = new_vertex(x); num_of_vertices++; 
+    dcur++;
+    z = new_vertex(x); num_of_vertices++;
     typename R::Point_to_vector_d to_vector =
       kernel().point_to_vector_d_object();
     quasi_center_ = quasi_center_ + to_vector(x);
-    dimension_jump(origin_simplex_, z); 
-    clear_visited_marks(origin_simplex_); 
+    dimension_jump(origin_simplex_, z);
+    clear_visited_marks(origin_simplex_);
     Simplex_iterator S;
     forall_rc_simplices(S,*this) compute_equation_of_base_facet(S);
     num_of_unbounded_simplices += num_of_bounded_simplices;
@@ -1117,40 +1117,40 @@ Convex_hull_d<R>::insert(const Point_d& x)
     }
 
 
-  } else { 
+  } else {
     if ( current_dimension() == 0 ) {
       z = vertex_of_simplex(origin_simplex_,0);
       associate_point_with_vertex(z,x);
       return z;
     }
-    std::list<Simplex_handle> visible_simplices; 
+    std::list<Simplex_handle> visible_simplices;
     int location = -1;
     Facet_handle f;
 
-    std::size_t num_of_visited_simplices = 0; 
+    std::size_t num_of_visited_simplices = 0;
 
     visibility_search(origin_simplex_, x, visible_simplices,
-                      num_of_visited_simplices, location, f); 
+                      num_of_visited_simplices, location, f);
 
-    num_of_visibility_tests += num_of_visited_simplices; 
+    num_of_visibility_tests += num_of_visited_simplices;
 
-    #ifdef COUNTS   
+    #ifdef COUNTS
       cout << "\nthe number of visited simplices in this iteration is ";
       cout << num_of_visited_simplices << endl;
     #endif
 
-    clear_visited_marks(origin_simplex_); 
-     
+    clear_visited_marks(origin_simplex_);
+
 
     #ifdef COUNTS
       cout << "\nthe number of bounded simplices constructed ";
-      cout << " in this iteration is  " << visible_simplices.size() << endl; 
+      cout << " in this iteration is  " << visible_simplices.size() << endl;
     #endif
 
-    num_of_bounded_simplices += visible_simplices.size(); 
+    num_of_bounded_simplices += visible_simplices.size();
 
     switch (location) {
-      case -1: 
+      case -1:
         return Vertex_handle();
       case 0:
         { for (int i = 0; i < current_dimension(); i++) {
@@ -1163,33 +1163,33 @@ Convex_hull_d<R>::insert(const Point_d& x)
           return Vertex_handle();
         }
       case 1:
-        { num_of_vertices++; 
+        { num_of_vertices++;
           z = new_vertex(x);
           std::list<Simplex_handle> NewSimplices; // list of new simplices
           typename std::list<Simplex_handle>::iterator it;
 
-          for (it = visible_simplices.begin(); 
+          for (it = visible_simplices.begin();
                it != visible_simplices.end(); ++it) {
-            Simplex_handle S = *it; 
-            associate_vertex_with_simplex(S,0,z); 
+            Simplex_handle S = *it;
+            associate_vertex_with_simplex(S,0,z);
             for (int k = 1; k <= dcur; k++) {
               if (!is_base_facet_visible(opposite_simplex(S,k),x)) {
-                Simplex_handle T = new_simplex(); 
+                Simplex_handle T = new_simplex();
                 NewSimplices.push_back(T);
-                 
+
                 /* set the vertices of T as described above */
                 for (int i = 1; i < dcur; i++) {
-                  if ( i != k ) 
-                    associate_vertex_with_simplex(T,i,vertex_of_simplex(S,i)); 
+                  if ( i != k )
+                    associate_vertex_with_simplex(T,i,vertex_of_simplex(S,i));
                 }
-                if (k != dcur) 
+                if (k != dcur)
                   associate_vertex_with_simplex(T,k,vertex_of_simplex(S,dcur));
-                associate_vertex_with_simplex(T,dcur,z); 
-                associate_vertex_with_simplex(T,0,anti_origin_); 
-                /* in the above, it is tempting to drop the tests ( i != k ) 
-                   and ( k != dcur ) since the subsequent lines after will 
-                   correct the erroneous assignment.  This reasoning is 
-                   fallacious as the procedure assoc_vertex_with_simplex also 
+                associate_vertex_with_simplex(T,dcur,z);
+                associate_vertex_with_simplex(T,0,anti_origin_);
+                /* in the above, it is tempting to drop the tests ( i != k )
+                   and ( k != dcur ) since the subsequent lines after will
+                   correct the erroneous assignment.  This reasoning is
+                   fallacious as the procedure assoc_vertex_with_simplex also
                    the internal data of the third argument. */
 
                 /* compute the equation of its base facet */
@@ -1204,7 +1204,7 @@ Convex_hull_d<R>::insert(const Point_d& x)
               }
             }
           }
-          num_of_unbounded_simplices -= visible_simplices.size(); 
+          num_of_unbounded_simplices -= visible_simplices.size();
           if ( vertex_of_simplex(start_facet_,0) != Vertex_handle() )
             start_facet_ = *(--NewSimplices.end());
           CGAL_assertion( vertex_of_simplex(start_facet_,0)==Vertex_handle() );
@@ -1215,22 +1215,22 @@ Convex_hull_d<R>::insert(const Point_d& x)
               if (opposite_simplex(Af,k) == Simplex_handle()) {
                 // we have not performed the walk in the opposite direction yet
                 Simplex_handle T = opposite_simplex(Af,0);
-                int y1 = 0; 
-                while ( vertex_of_simplex(T,y1) != vertex_of_simplex(Af,k) ) 
-                  y1++; 
-                // exercise: show that we can also start with y1 = 1 
-                int y2 = index_of_vertex_in_opposite_simplex(Af,0); 
+                int y1 = 0;
+                while ( vertex_of_simplex(T,y1) != vertex_of_simplex(Af,k) )
+                  y1++;
+                // exercise: show that we can also start with y1 = 1
+                int y2 = index_of_vertex_in_opposite_simplex(Af,0);
 
                 while ( vertex_of_simplex(T,0) == z ) {
                   // while T has peak x do find new y_1 */
-                  int new_y1 = 0; 
+                  int new_y1 = 0;
                   while (vertex_of_simplex(opposite_simplex(T,y1),new_y1) !=
                          vertex_of_simplex(T,y2))
                     new_y1++;
-                    // exercise: show that we can also start with new_y1 = 1 
-                  y2 = index_of_vertex_in_opposite_simplex(T,y1); 
-                  T =  opposite_simplex(T,y1); 
-                  y1 = new_y1; 
+                    // exercise: show that we can also start with new_y1 = 1
+                  y2 = index_of_vertex_in_opposite_simplex(T,y1);
+                  T =  opposite_simplex(T,y1);
+                  y1 = new_y1;
                 }
                 set_neighbor(Af,k,T,y1); // update adjacency information
               }
@@ -1240,10 +1240,10 @@ Convex_hull_d<R>::insert(const Point_d& x)
 
         }
     }
- 
+
   }
 #ifdef CGAL_CHECK_EXPENSIVE
-  CGAL_assertion(is_valid(true)); 
+  CGAL_assertion(is_valid(true));
 #endif
   return z;
 }
@@ -1255,34 +1255,34 @@ visibility_search(Simplex_handle S, const Point_d& x,
                   std::list< Simplex_handle >& visible_simplices,
                   std::size_t& num_of_visited_simplices, int& location,
                   Simplex_handle& f) const
-{ 
-  num_of_visited_simplices ++; 
+{
+  num_of_visited_simplices ++;
   S->visited() = true; // we have visited S and never come back ...
   for(int i = 0; i <= current_dimension(); ++i) {
     Simplex_handle T = opposite_simplex(S,i); // for all neighbors T of S
-    if ( !T->visited() ) { 
+    if ( !T->visited() ) {
       typename R::Oriented_side_d side_of =
         kernel().oriented_side_d_object();
       int side = side_of(T->hyperplane_of_base_facet(),x);
-      if ( is_unbounded_simplex(T) ) { 
+      if ( is_unbounded_simplex(T) ) {
         if ( side == ON_POSITIVE_SIDE ) {
           // T is an unbounded simplex with x-visible base facet
-          visible_simplices.push_back(T); 
-          location = 1; 
+          visible_simplices.push_back(T);
+          location = 1;
         }
-        if ( side == ON_ORIENTED_BOUNDARY && 
+        if ( side == ON_ORIENTED_BOUNDARY &&
              location == -1 && contains_in_base_facet(T,x) ) {
-          location = 0; f = T; 
+          location = 0; f = T;
           return;
         }
       }
-      if ( side == ON_POSITIVE_SIDE || 
+      if ( side == ON_POSITIVE_SIDE ||
            (side == ON_ORIENTED_BOUNDARY && location == -1) ) {
         visibility_search(T,x,visible_simplices,
-                          num_of_visited_simplices,location,f); 
+                          num_of_visited_simplices,location,f);
         // do the recursive search
-      }     
-    } // end visited 
+      }
+    } // end visited
     else {
     }
   } // end for
@@ -1290,33 +1290,33 @@ visibility_search(Simplex_handle S, const Point_d& x,
 
 template <class R>
 void Convex_hull_d<R>::clear_visited_marks(Simplex_handle S) const
-{ 
+{
   S->visited() = false; // clear the visit - bit
   for(int i = 0; i <= current_dimension(); i++) // for all neighbors of S
-    if (opposite_simplex(S,i)->visited()) 
+    if (opposite_simplex(S,i)->visited())
       // if the i - th neighbor has been visited
-      clear_visited_marks(opposite_simplex(S,i)); 
+      clear_visited_marks(opposite_simplex(S,i));
       // clear its bit recursively
 }
 
 template <class R>
-std::list< typename Convex_hull_d<R>::Simplex_handle > 
+std::list< typename Convex_hull_d<R>::Simplex_handle >
 Convex_hull_d<R>::facets_visible_from(const Point_d& x)
-{ 
+{
   std::list<Simplex_handle> visible_simplices;
   int location = -1;                       // intialization is important
   std::size_t num_of_visited_simplices = 0;     // irrelevant
   Facet_handle f;                          // irrelevant
 
   visibility_search(origin_simplex_, x, visible_simplices,
-                    num_of_visited_simplices, location, f); 
+                    num_of_visited_simplices, location, f);
   clear_visited_marks(origin_simplex_);
   return visible_simplices;
 }
 
 template <class R>
 Bounded_side Convex_hull_d<R>::bounded_side(const Point_d& x)
-{ 
+{
   if ( is_dimension_jump(x) ) return ON_UNBOUNDED_SIDE;
   std::list<Simplex_handle> visible_simplices;
   int location = -1;                       // intialization is important
@@ -1324,7 +1324,7 @@ Bounded_side Convex_hull_d<R>::bounded_side(const Point_d& x)
   Facet_handle f;
 
   visibility_search(origin_simplex_, x, visible_simplices,
-                    num_of_visited_simplices, location, f); 
+                    num_of_visited_simplices, location, f);
   clear_visited_marks(origin_simplex_);
   switch (location) {
     case -1: return ON_BOUNDED_SIDE;
@@ -1338,68 +1338,68 @@ Bounded_side Convex_hull_d<R>::bounded_side(const Point_d& x)
 template <class R>
 void Convex_hull_d<R>::
 dimension_jump(Simplex_handle S, Vertex_handle x)
-{ 
-  Simplex_handle S_new; 
-  S->visited() = true; 
-  associate_vertex_with_simplex(S,dcur,x); 
+{
+  Simplex_handle S_new;
+  S->visited() = true;
+  associate_vertex_with_simplex(S,dcur,x);
   if ( !is_unbounded_simplex(S) ) { // S is bounded
-    S_new = new_simplex(); 
-    set_neighbor(S,dcur,S_new,0); 
-    associate_vertex_with_simplex(S_new,0,anti_origin_); 
+    S_new = new_simplex();
+    set_neighbor(S,dcur,S_new,0);
+    associate_vertex_with_simplex(S_new,0,anti_origin_);
     for (int k = 1; k <= dcur; k++) {
-      associate_vertex_with_simplex(S_new,k,vertex_of_simplex(S,k-1)); 
+      associate_vertex_with_simplex(S_new,k,vertex_of_simplex(S,k-1));
     }
 
   }
   /* visit unvisited neighbors 0 to dcur - 1 */
   for (int k = 0; k <= dcur - 1; k++) {
     if ( !opposite_simplex(S,k) -> visited() ) {
-      dimension_jump(opposite_simplex(S,k), x); 
+      dimension_jump(opposite_simplex(S,k), x);
     }
   }
   /* the recursive calls ensure that all neighbors exist */
   if ( is_unbounded_simplex(S) ) {
     set_neighbor(S,dcur,opposite_simplex(opposite_simplex(S,0),dcur),
-                 index_of_vertex_in_opposite_simplex(S,0) + 1); 
- 
+                 index_of_vertex_in_opposite_simplex(S,0) + 1);
+
   } else {
     for (int k = 0; k < dcur; k++) {
       if ( is_unbounded_simplex(opposite_simplex(S,k)) ) {
         // if F' is unbounded
-        set_neighbor(S_new,k + 1,opposite_simplex(S,k),dcur); 
-        // the neighbor of S_new opposite to v is S' and 
+        set_neighbor(S_new,k + 1,opposite_simplex(S,k),dcur);
+        // the neighbor of S_new opposite to v is S' and
         // x is in position dcur
       } else { // F' is bounded
         set_neighbor(S_new,k + 1,opposite_simplex(opposite_simplex(S,k),dcur),
-                     index_of_vertex_in_opposite_simplex(S,k) + 1); 
+                     index_of_vertex_in_opposite_simplex(S,k) + 1);
         // neighbor of S_new opposite to v is S_new'
         // the vertex opposite to v remains the same but ...
         // remember the shifting of the vertices one step to the right
       }
     }
- 
+
   }
 }
 
 template <class R>
 bool Convex_hull_d<R>::is_valid(bool throw_exceptions) const
-{ 
-  this->check_topology(); 
-  if (current_dimension() < 1) return true; 
- 
+{
+  this->check_topology();
+  if (current_dimension() < 1) return true;
+
   /* Recall that center() gives us the center-point of the origin
      simplex. We check whether it is locally inside with respect to
      all hull facets.  */
 
   typename R::Oriented_side_d side =
     kernel().oriented_side_d_object();
-  Point_d centerpoint = center(); 
+  Point_d centerpoint = center();
   Simplex_const_iterator S;
   forall_rc_simplices(S,*this) {
-    if ( is_unbounded_simplex(S) && 
-         side(S->hyperplane_of_base_facet(),centerpoint) != 
+    if ( is_unbounded_simplex(S) &&
+         side(S->hyperplane_of_base_facet(),centerpoint) !=
          ON_NEGATIVE_SIDE) {
-      if (throw_exceptions) 
+      if (throw_exceptions)
         throw chull_has_center_on_wrong_side_of_hull_facet();
       return false;
     }
@@ -1412,11 +1412,11 @@ bool Convex_hull_d<R>::is_valid(bool throw_exceptions) const
   forall_rc_simplices(S,*this) {
     if ( is_unbounded_simplex(S) ) {
       for (int i = 1; i <= dcur; i++) {
-        int k = index_of_vertex_in_opposite_simplex(S,i); 
+        int k = index_of_vertex_in_opposite_simplex(S,i);
         if (side(S->hyperplane_of_base_facet(),
             point_of_simplex(opposite_simplex(S,i),k)) ==
             ON_POSITIVE_SIDE) {
-          if (throw_exceptions) 
+          if (throw_exceptions)
             throw chull_has_local_non_convexity();
           return false;
         }
@@ -1426,12 +1426,12 @@ bool Convex_hull_d<R>::is_valid(bool throw_exceptions) const
 
   /* next we select one hull facet */
 
-  Simplex_const_handle selected_hull_simplex; 
+  Simplex_const_handle selected_hull_simplex;
   forall_rc_simplices(S,*this) {
     if ( is_unbounded_simplex(S) ) { selected_hull_simplex = S; break; }
   }
 
-  /* we compute the center of gravity of the base facet of the 
+  /* we compute the center of gravity of the base facet of the
      hull simplex */
 
   typename R::Point_to_vector_d to_vector =
@@ -1445,15 +1445,15 @@ bool Convex_hull_d<R>::is_valid(bool throw_exceptions) const
     center_of_hull_facet = center_of_hull_facet +
     to_vector(point_of_simplex(selected_hull_simplex,i));
   }
-  Point_d center_of_hull_facet_point = 
-    to_point(center_of_hull_facet/RT(dcur)); 
+  Point_d center_of_hull_facet_point =
+    to_point(center_of_hull_facet/RT(dcur));
 
   /* we set up the ray from the center to the center of the hull facet */
 
-  Ray_d l(centerpoint, center_of_hull_facet_point); 
+  Ray_d l(centerpoint, center_of_hull_facet_point);
 
   /* and check whether it intersects the interior of any hull facet */
- 
+
   typename R::Contained_in_simplex_d contained_in_simplex =
     kernel().contained_in_simplex_d_object();
   typename R::Intersect_d intersect =
@@ -1466,7 +1466,7 @@ bool Convex_hull_d<R>::is_valid(bool throw_exceptions) const
       if ( (op = intersect(l,h), assign(p,op)) ) {
         if ( contained_in_simplex(S->points_begin()+1,
                S->points_begin()+1+current_dimension(),p) ) {
-          if ( throw_exceptions ) 
+          if ( throw_exceptions )
             throw chull_has_double_coverage();
           return false;
         }
@@ -1481,22 +1481,22 @@ void Convex_hull_d<R>::
 visible_facets_search(Simplex_handle S, const Point_d& x,
                       std::list< Facet_handle >& VisibleFacets,
                       std::size_t& num_of_visited_facets) const
-{ 
-  ++num_of_visited_facets; 
+{
+  ++num_of_visited_facets;
   S->visited() = true; // we have visited S and never come back ...
   for(int i = 1; i <= current_dimension(); ++i) {
     Simplex_handle T = opposite_simplex(S,i); // for all neighbors T of S
-    if ( !T->visited() ) { 
+    if ( !T->visited() ) {
       typename R::Oriented_side_d side_of =
         kernel().oriented_side_d_object();
       int side = side_of(T->hyperplane_of_base_facet(),x);
       CGAL_assertion( is_unbounded_simplex(T) );
       if ( side == ON_POSITIVE_SIDE ) {
         VisibleFacets.push_back(T);
-        visible_facets_search(T,x,VisibleFacets,num_of_visited_facets); 
+        visible_facets_search(T,x,VisibleFacets,num_of_visited_facets);
         // do the recursive search
-      }     
-    } // end visited 
+      }
+    } // end visited
   } // end for
 }
 

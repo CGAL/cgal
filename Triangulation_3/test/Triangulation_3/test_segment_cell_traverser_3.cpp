@@ -1,35 +1,25 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_segment_traverser_3.h>
 
 #include <assert.h>
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <boost/foreach.hpp>
 
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/Random.h>
-#include <CGAL/Timer.h>
-
-//#define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
 
 // Define the kernel.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef Kernel::Point_3                                         Point_3;
 
 // Define the structure.
-typedef CGAL::Delaunay_triangulation_3< Kernel >                DT;
+typedef CGAL::Delaunay_triangulation_3< Kernel >  DT;
+typedef DT::Cell_handle                           Cell_handle;
+typedef DT::Segment_cell_iterator                 Segment_cell_iterator;
 
-typedef DT::Cell_handle                                         Cell_handle;
-
-typedef CGAL::Triangulation_segment_cell_iterator_3< DT >       Cell_traverser;
-
-int main(int argc, char* argv[])
+int main()
 {
   const std::vector<Point_3> points = { { -2,  0,  0 },
-                                        {  2,  0,  0 }, 
+                                        {  2,  0,  0 },
                                         {  0,  1, -1 },
                                         {  0, -1, -1 },
                                         {  0,  0,  1 },
@@ -42,72 +32,63 @@ int main(int argc, char* argv[])
                                         {  10, 10, 10     },
                                         {  10, -10, 10    },
   };
+
   std::vector<DT::Vertex_handle> vertices;
   vertices.reserve(points.size());
+
   DT dt;
   for(auto p: points) vertices.push_back(dt.insert(p));
-  DT::Cell_handle c;
+
+  Cell_handle c;
   assert( dt.is_valid() );
-  assert(dt.is_cell(vertices[0], vertices[2], vertices[3], vertices[4], c));
-  assert(dt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
+  assert( dt.is_cell(vertices[0], vertices[2], vertices[3], vertices[4], c));
+  assert( dt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
 
   std::cerr << dt.number_of_finite_cells() << '\n';
-  Cell_traverser ct(dt, points[0], points[1]);
-  unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
+  Segment_cell_iterator ct = dt.segment_traverser_cells_begin(points[0], points[1]);
+  Segment_cell_iterator ctend = dt.segment_traverser_cells_end();
 
-// Count the number of finite cells traversed.
-      unsigned int inf = 0, fin = 0;
-      for( ; ct != ct.end(); ++ct )
-      {
-        std::cerr << "Cell ( ";
-        for(int i = 0; i < 4; ++i)
-          std::cerr << ct->vertex(i)->point() << "  ";
-        std::cerr << " )\n";
-        
+  // Count the number of finite cells traversed.
+  unsigned int inf = 0, fin = 0;
+  while(ct != ctend)
+  {
+    std::cerr << "Cell ( ";
+    for(int i = 0; i < 4; ++i)
+      std::cerr << ct->vertex(i)->point() << "  ";
+    std::cerr << " )\n";
 
-        if( dt.is_infinite(ct) )
-            ++inf;
-        else
-        {
-          ++fin;
+    if( dt.is_infinite(ct) )
+      ++inf;
+    else
+      ++fin;
 
-          DT::Locate_type lt;
-          int li, lj;
-          ct.entry(lt, li, lj);
+    ++ct;
+  }
 
-          switch (lt)
-          {
-          case DT::Locate_type::FACET:
-           ++nb_facets;
-           break;
-          case DT::Locate_type::EDGE:
-           ++nb_edges;
-           break;
-          case DT::Locate_type::VERTEX:
-           ++nb_vertex;
-           break;
-          default:
-           /*when source is in a cell*/
-            ++nb_cells;
-           CGAL_assertion(lt == DT::Locate_type::CELL);
-          }
-        }
-      }
+  std::cout << "While traversing from " << points[0]
+            << " to " << points[1] << std::endl;
+  std::cout << inf << " infinite and "
+            << fin << " finite cells were visited." << std::endl;
 
-#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
-      std::cout << "While traversing from " << ct.source()
-                << " to " << ct.target() << std::endl;
-      std::cout << inf << " infinite and "
-                << fin << " finite cells were visited." << std::endl;
-      std::cout << std::endl << std::endl;
-#endif
+  inf = 0;
+  fin = 0;
+  for (Cell_handle ch : dt.segment_traverser_cell_handles(vertices[2], vertices[3]))
+  {
+    std::cerr << "Cell ( ";
+    for (int i = 0; i < 4; ++i)
+      std::cerr << ch->vertex(i)->point() << "  ";
+    std::cerr << " )\n";
 
-    std::cout << "Triangulation has " << dt.number_of_vertices() << " vertices."
-      << std::endl;
-    std::cout << "\tnb cells     : " << nb_cells << std::endl;
-    std::cout << "\tnb facets    : " << nb_facets << std::endl;
-    std::cout << "\tnb edges     : " << nb_edges << std::endl;
-    std::cout << "\tnb vertices  : " << nb_vertex << std::endl;
+    if (dt.is_infinite(ch))
+      ++inf;
+    else
+      ++fin;
+  }
 
-     return 0;
+  std::cout << "While traversing from " << vertices[2]->point()
+            << " to " << vertices[3]->point() << std::endl;
+  std::cout << inf << " infinite and "
+            << fin << " finite cells were visited." << std::endl;
+
+  return 0;
 }

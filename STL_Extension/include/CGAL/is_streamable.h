@@ -12,12 +12,11 @@
 
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>
-#include <boost/static_assert.hpp>
 #include <iostream>
 
 namespace CGAL {
 namespace internal {
-namespace is_streamable 
+namespace is_streamable
 {
   // A tag type returned by operator == for the any struct in this namespace
   // when T does not support ==.
@@ -37,7 +36,7 @@ namespace is_streamable
 
   // Two overloads to distinguish whether T supports a certain operator expression.
   // The first overload returns a reference to a two-element character array and is chosen if
-  // T does not support the expression, such as ==, whereas the second overload returns a char 
+  // T does not support the expression, such as ==, whereas the second overload returns a char
   // directly and is chosen if T supports the expression. So using sizeof(check(<expression>))
   // returns 2 for the first overload and 1 for the second overload.
   typedef char yes;
@@ -53,8 +52,8 @@ namespace is_streamable
   {
     static typename boost::remove_cv<typename boost::remove_reference<T>::type>::type const & x;
     static typename boost::remove_cv<typename boost::remove_reference<T>::type>::type  & y;
-    
-    static const bool value = 
+
+    static const bool value =
       sizeof(is_streamable::check(std::cout << x)) == sizeof(is_streamable::yes) &&
       sizeof(is_streamable::check(std::cin >> y)) == sizeof(is_streamable::yes);
   };
@@ -64,7 +63,7 @@ namespace is_streamable
 
 
 /// is_streamable is a meta-function that checks if a type is streamable
-/// 
+///
 /// is_streamable<T>::value is true iff the type T has stream operators <<
 /// and >>. Otherwise it is false.
 template <class T>

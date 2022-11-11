@@ -44,7 +44,7 @@ bool load_data(const char *filename, Iso_rectangle &domain, std::vector<Point> &
     while (coords[1] < 0) coords[1] += dom[1];
     while (coords[0] >= dom[0]) coords[0] -= dom[0];
     while (coords[1] >= dom[1]) coords[1] -= dom[1];
-    
+
     pts.push_back(Point(coords[0], coords[1]));
   }
   return true;

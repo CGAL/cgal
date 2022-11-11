@@ -30,7 +30,7 @@ typedef CGAL::Cartesian<Rational>                       Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
                                                         Traits_2;
-  
+
 typedef Rat_kernel::Point_2                             Rat_point_2;
 typedef Traits_2::Curve_2                               Bezier_curve_2;
 typedef Traits_2::X_monotone_curve_2                    X_monotone_curve_2;
@@ -49,7 +49,7 @@ bool read_Bezier_polygon(const char* filename, Polygon_with_holes_2& P)
 
   if (! in_file.is_open())
     return false;
-  
+
   // Read the number of curves.
   unsigned int      n_curves;
   unsigned int      k;
@@ -76,12 +76,12 @@ bool read_Bezier_polygon(const char* filename, Polygon_with_holes_2& P)
 
     in_file >> B;
     mk_x_monotone(B, std::back_inserter(x_objs));
-    
+
     for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
       if (CGAL::assign(xcv, *xoit))
         xcvs.push_back(xcv);
     }
-    
+
     // Check if the current curve closes a polygon, namely whether it target
     // point (the last control point) equals the source of the first curve in
     // the current chain.
@@ -92,11 +92,11 @@ bool read_Bezier_polygon(const char* filename, Polygon_with_holes_2& P)
         // and clockwise oriented if it represents a hole.
         Polygon_2          pgn(xcvs.begin(), xcvs.end());
         CGAL::Orientation  orient = pgn.orientation();
-        
+
         if ((pgns.empty() && (orient == CGAL::CLOCKWISE)) ||
             (! pgns.empty() && (orient == CGAL::COUNTERCLOCKWISE)))
           pgn.reverse_orientation();
-        
+
         pgns.push_back(pgn);
         xcvs.clear();
         first = true;
@@ -114,7 +114,7 @@ bool read_Bezier_polygon(const char* filename, Polygon_with_holes_2& P)
 
   // Construct the polygon with holes.
   std::list<Polygon_2>::iterator     pit = pgns.begin();
-  
+
   ++pit;
   P = Polygon_with_holes_2(pgns.front(), pit, pgns.end());
 
@@ -146,9 +146,9 @@ int main(int argc, char* argv[])
   }
 
   timer.stop();
-  std::cout << "Constructed the input polygons in " << timer.time() 
+  std::cout << "Constructed the input polygons in " << timer.time()
             << " seconds." << std::endl << std::endl;
-  
+
   // Compute the intersection of the two polygons.
   Polygon_set                     R;
   Polygon_set::const_iterator     rit;
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
   timer.start();
   CGAL::intersection(P1, P2, std::back_inserter(R));
   timer.stop();
-  
+
   std::cout << "The intersection polygons are of sizes: {";
   for (rit = R.begin(); rit != R.end(); ++rit)
     std::cout << ' ' << rit->outer_boundary().size();

@@ -21,7 +21,7 @@ public:
    */
   Polyhedron_demo(int& argc, char **argv,
                   QString application_name = "Polyhedron_3 demo",
-                  QString main_window_title = "CGAL Polyhedron demo", 
+                  QString main_window_title = "CGAL Polyhedron demo",
                   QStringList input_keywords = QStringList());
 
   ~Polyhedron_demo();

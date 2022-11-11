@@ -14,7 +14,7 @@ means.
 
 In a Delaunay triangulation, each face has the so-called
 <I>Delaunay</I> or <I>empty-ball</I> property: there exists a
-circumscribing ball whose interior does not contain 
+circumscribing ball whose interior does not contain
 any vertex of the triangulation.
 A <I>circumscribing ball</I> of a simplex is a ball
 having all vertices of the simplex on its boundary.
@@ -25,7 +25,7 @@ and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits_`
 the concept `DelaunayTriangulationTraits`.
 
 \tparam TriangulationDataStructure_ must be a model of the concept
-`TriangulationDataStructure`. This model is used to store 
+`TriangulationDataStructure`. This model is used to store
 the faces of the triangulation. The parameter `TriangulationDataStructure_` defaults to
 `Triangulation_data_structure` whose template parameters are instantiated as
 follows:
@@ -37,7 +37,7 @@ follows:
 
 \tparam Delaunay_triangulation can
 be defined by specifying only the first parameter, or by using the
-tag `CGAL::Default` as the second parameter. 
+tag `CGAL::Default` as the second parameter.
 
 \sa `Regular_triangulation`
 \sa `Triangulation_data_structure`
@@ -81,7 +81,7 @@ Full_cell_handle remove(Vertex_handle v);
 Remove the vertices pointed by the vertex handles in the range `[start, end)`.
 \tparam ForwardIterator must be an input iterator with the value type `Vertex_handle`.
 */
-template< typename ForwardIterator > 
+template< typename ForwardIterator >
 void remove(ForwardIterator start, ForwardIterator end);
 
 /// @}
@@ -94,7 +94,7 @@ Inserts the points found in range `[s,e)` in the Delaunay triangulation
 and ensures that the empty-ball property is preserved.
 Returns the number of vertices actually inserted. (If more than one vertex share
 the same position in space, only one insertion is counted.)
-\tparam ForwardIterator must be an input iterator with the value type `Point`. 
+\tparam ForwardIterator must be an input iterator with the value type `Point`.
 */
 template< typename ForwardIterator >
 size_type insert(ForwardIterator s, ForwardIterator e);

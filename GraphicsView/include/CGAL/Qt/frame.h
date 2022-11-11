@@ -425,14 +425,6 @@ public:
   }
   //@}
 
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-  //@}
 
 private:
   // P o s i t i o n   a n d   o r i e n t a t i o n

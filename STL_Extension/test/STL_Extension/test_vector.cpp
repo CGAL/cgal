@@ -53,7 +53,7 @@ bool operator>=( const X& x1, const X& x2) { return x1.x() >= x2.x(); }
 
 std::ostream& operator<< ( std::ostream& s, const X& x) {
     s << x.x();
-    return s; 
+    return s;
 }
 
 int main() {
@@ -139,8 +139,8 @@ int main() {
 
     vector V2(V);
     vector V3 = V;
-    
-  
+
+
     assert( V3[0] == X(0));
     assert( V3[1] == X(1));
     assert( V3[2] == X(2));
@@ -155,7 +155,7 @@ int main() {
     V.pop_back();
     V.pop_back();
     assert( V.empty());
-  
+
     V2.clear();
     assert( V2.empty());
 
@@ -187,7 +187,7 @@ int main() {
     list L;
     L.push_back( X(0));
     L.push_back( X(1));
-  
+
     vector V4(L.begin(), L.end());
     assert( V4.size() == 2);
 

@@ -5,7 +5,6 @@
 #include <boost/functional/value_factory.hpp>
 #include <boost/array.hpp>
 
-#include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -25,14 +24,14 @@ typedef K::Segment_3 Segment;
 typedef K::Ray_3 Ray;
 typedef CGAL::Surface_mesh<CGAL::Point_3<CGAL::Epick> > Mesh;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
-CGAL::Default, 
+CGAL::Default,
 CGAL::Tag_false> T_Primitive;
 typedef CGAL::AABB_traits<K, T_Primitive> T_Traits;
 typedef CGAL::AABB_tree<T_Traits> T_Tree;
 typedef T_Tree::Primitive_id T_Primitive_id;
 
 typedef CGAL::AABB_halfedge_graph_segment_primitive<Mesh,
-CGAL::Default, 
+CGAL::Default,
 CGAL::Tag_false> E_Primitive;
 typedef CGAL::AABB_traits<K, E_Primitive> E_Traits;
 typedef CGAL::AABB_tree<E_Traits> E_Tree;
@@ -49,7 +48,7 @@ int main()
     return 1;
   }
   in.close();
-  in.open("data/tetrahedron.off");
+  in.open(CGAL::data_file_path("meshes/tetrahedron.off"));
   if(in)
     in >> m2;
   else{
@@ -61,8 +60,8 @@ int main()
   tree.insert(faces(m2).first, faces(m2).second, m2);
   tree.build();
   T_Tree::Bounding_box bbox = tree.bbox();
-  Point bbox_center((bbox.xmin() + bbox.xmax()) / 2, 
-                     (bbox.ymin() + bbox.ymax()) / 2, 
+  Point bbox_center((bbox.xmin() + bbox.xmax()) / 2,
+                     (bbox.ymin() + bbox.ymax()) / 2,
                      (bbox.zmin() + bbox.zmax()) / 2);
   std::vector< T_Primitive_id > intersections;
   Ray ray(bbox_center+Vector(3,-0.25,0),bbox_center+Vector(-3,+0.25,0));
@@ -75,8 +74,8 @@ int main()
   Ray e_ray(Point(0,0,0),Point(0,1,1));
   e_tree.all_intersected_primitives(e_ray,
                                   std::back_inserter(e_intersections));
-  
-  
-  
+
+
+
   return 0;
 }

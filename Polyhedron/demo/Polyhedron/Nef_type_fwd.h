@@ -14,8 +14,8 @@ namespace CGAL {
 }
 
 typedef CGAL::Nef_polyhedron_3<Exact_Kernel,
-			       CGAL::SNC_indexed_items,
-			       bool> Nef_polyhedron; 
+                               CGAL::SNC_indexed_items,
+                               bool> Nef_polyhedron;
 
 #else //  USE_FORWARD_DECL
 #include "Nef_type.h"

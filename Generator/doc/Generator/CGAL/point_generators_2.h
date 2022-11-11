@@ -31,7 +31,7 @@ are needed from `rnd` for each point.
 \sa `CGAL::points_on_square_grid_2()`
 \sa `CGAL::random_selection()`
 \sa `CGAL::random_selection()`
-\sa `std::random_shuffle`
+\sa `std::random_shuffle()`
 
 */
   template <class ForwardIterator, class Creator>
@@ -90,7 +90,7 @@ the \f$ n\f$ points.
 \sa `CGAL::points_on_cube_grid_3()`
 \sa `CGAL::random_collinear_points_2()`
 \sa `CGAL::random_selection()`
-\sa `std::random_shuffle`
+\sa `std::random_shuffle()`
 
 */
 template <class OutputIterator, class Creator>
@@ -126,7 +126,7 @@ Returns the value of `first2` after inserting the \f$ n\f$ points.
 \sa `CGAL::points_on_segment_2()`
 \sa `CGAL::points_on_square_grid_2()`
 \sa `CGAL::random_selection()`
-\sa `std::random_shuffle`
+\sa `std::random_shuffle()`
 
 */
   template <class RandomAccessIterator, class OutputIterator, class Creator>
@@ -286,7 +286,7 @@ distributed inside a triangle. The default `Creator` is
 template< typename Point_2, typename Creator >
 class Random_points_in_triangle_2 {
 public:
-	
+
 /// \name Types
 /// @{
 
@@ -685,7 +685,7 @@ endpoints are specified upon construction. The points are equally spaced.
 
 \cgalModels `PointGenerator`
 
-\sa `CGAL::points_on_segment<Point_2>`
+\sa `CGAL::points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_triangle_2<Point_2, Creator>`

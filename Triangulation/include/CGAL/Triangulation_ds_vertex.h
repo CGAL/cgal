@@ -17,7 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Compact_container.h>
-#include <CGAL/internal/Triangulation/Dummy_TDS.h>
+#include <CGAL/Triangulation/internal/Dummy_TDS.h>
 
 namespace CGAL {
 
@@ -26,7 +26,7 @@ namespace CGAL {
  * 'Triangulation_ds_vertex<TDS>'
  */
 template< class TDS = void >
-class Triangulation_ds_vertex 
+class Triangulation_ds_vertex
 {
     typedef Triangulation_ds_vertex<TDS>    Self;
 
@@ -112,7 +112,7 @@ template < class TDS >
 std::istream &
 operator>>(std::istream & is, Triangulation_ds_vertex<TDS> &) /* Concept */
 {
-    /*if( is_ascii(is) )
+    /*if( IO::is_ascii(is) )
     {}
     else {}*/
     return is;
@@ -122,7 +122,7 @@ template< class TDS >
 std::ostream &
 operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> &) /* Concept */
 {
-    /*if( is_ascii(os) )
+    /*if( IO::is_ascii(os) )
     {
         os << '\n';
     }

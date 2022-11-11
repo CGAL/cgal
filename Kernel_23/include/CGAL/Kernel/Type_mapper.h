@@ -1,16 +1,16 @@
-// Copyright (c) 2005, 2006  
+// Copyright (c) 2005, 2006
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -87,9 +87,13 @@ BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_VARIANT_TYPEMAP, _)
 //};
 
 // Then we specialize for all kernel objects.
+// More details on why it is like that are here: https://github.com/CGAL/cgal/pull/4878#discussion_r459986501
 #define CGAL_Kernel_obj(X) \
   template < typename K1, typename K2 > \
   struct Type_mapper_impl < typename K1::X, K1, K2 > \
+  { typedef typename K2::X type; }; \
+  template < typename K1, typename K2 > \
+  struct Type_mapper_impl < typename K1::X::Rep, K1, K2 > \
   { typedef typename K2::X type; };
 
 #include <CGAL/Kernel/interface_macros.h>
@@ -106,9 +110,9 @@ struct Type_mapper_impl < typename K1::FT, K1, K2 >
 // TODO : add more specializations ?  Use a different mechanism ?
 
 template < typename T, typename K1, typename K2 >
-struct Type_mapper : 
-    internal::Type_mapper_impl< typename boost::remove_cv< 
-                                  typename boost::remove_reference < T >::type 
+struct Type_mapper :
+    internal::Type_mapper_impl< typename boost::remove_cv<
+                                  typename boost::remove_reference < T >::type
                                   >::type, K1, K2 >
 { };
 

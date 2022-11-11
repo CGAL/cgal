@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_segment_traverser_3.h>
 
 #include <assert.h>
 #include <iostream>
@@ -12,30 +11,24 @@
 #include <CGAL/Random.h>
 
 #define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
-#define CGAL_T3_TEST_SIMPLEX_TRAVERSER
 
 // Define the kernel.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef Kernel::Point_3                                         Point_3;
 
 // Define the structure.
-typedef CGAL::Delaunay_triangulation_3< Kernel >                DT;
+typedef CGAL::Delaunay_triangulation_3<Kernel> DT;
+typedef DT::Cell_handle                        Cell_handle;
+typedef DT::Segment_simplex_iterator           Segment_simplex_iterator;
 
-typedef DT::Cell_handle                                         Cell_handle;
-
-#ifdef CGAL_T3_TEST_SIMPLEX_TRAVERSER
-typedef CGAL::Triangulation_segment_simplex_iterator_3<DT>      Traverser;
-#else                                                           
-typedef CGAL::Triangulation_segment_cell_iterator_3<DT>         Traverser;
-#endif
-
-template <typename Big_tuple>
-bool test(const DT dt, const Big_tuple& tuple);
+bool test(const DT& dt,
+          const std::pair<Point_3, Point_3>& query,
+          const std::array<unsigned, 4>& expected_result);
 
 int main(int, char* [])
 {
   const std::vector<Point_3> points = { { -2,  0,  0 },
-                                        {  2,  0,  0 }, 
+                                        {  2,  0,  0 },
                                         {  0,  1,  -1 },
                                         {  0, -1,  -1 },
                                         {  0,  0,  1 },
@@ -52,55 +45,69 @@ int main(int, char* [])
   vertices.reserve(points.size());
   DT dt;
   for(auto p: points) vertices.push_back(dt.insert(p));
-  DT::Cell_handle c;
-  assert( dt.is_valid() );
+  Cell_handle c;
+  assert(dt.is_valid());
   assert(dt.is_cell(vertices[0], vertices[2], vertices[3], vertices[4], c));
   assert(dt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
 
   std::cerr << dt.number_of_finite_cells() << '\n';
 
-  const std::vector < std::tuple<Point_3, Point_3, std::array<unsigned, 4>>> queries = {
-  //    {{-1, 0,  0}, { 1, 0,  0}, {0, 0, 1, 2}}, // CFC
-  //    {{-1, 0,  0}, { 2, 0,  0}, {1, 0, 1, 2}}, // CFCV
-  //    {{ 2, 0,  0}, {-1, 0,  0}, {1, 0, 1, 2}}, // reverse
-  //    {{-2, 0,  0}, { 2, 0,  0}, {2, 0, 1, 2}}, // VCFCV
-  //    {{ 2, 0,  0}, {-2, 0,  0}, {2, 0, 1, 2}}, // reverse case: VCFCV
-  //    {{-3, 0,  0}, { 3, 0,  0}, {2, 0, 3, 2}}, // FVCFCVF
-      {{-2, 0,  0}, { 2, 2, -2}, {2, 1, 1, 0}}, // VEVF
-      {{ 2, 2, -2}, {-2, 0,  0}, {2, 1, 1, 0}}, // reverse case: FVEV
+  const std::vector < std::pair<Point_3, Point_3>> queries = {
+      {{-1, 0,  0}, { 1, 0,  0}}, // CFC
+      {{-1, 0,  0}, { 2, 0,  0}}, // CFCV
+      {{ 2, 0,  0}, {-1, 0,  0}}, // reverse
+      {{-2, 0,  0}, { 2, 0,  0}}, // VCFCV
+      {{ 2, 0,  0}, {-2, 0,  0}}, // reverse case: VCFCV
+      {{-3, 0,  0}, { 3, 0,  0}}, // FVCFCVF
+      {{-2, 0,  0}, { 2, 2, -2}}, // VEVF
+      {{ 2, 2, -2}, {-2, 0,  0}} // reverse case: FVEV
   };
+
+  const std::vector< std::array<unsigned, 4> > expected_results ={
+      {0, 0, 1, 2}, // CFC
+      {1, 0, 1, 2}, // CFCV
+      {1, 0, 1, 2}, // reverse
+      {2, 0, 1, 2}, // VCFCV
+      {2, 0, 1, 2}, // reverse case: VCFCV
+      {2, 0, 3, 2}, // FVCFCVF
+      {2, 1, 1, 0}, // VEVF
+      {2, 1, 1, 0} // reverse case: FVEV
+  };
+
   bool ok = true;
-  for(const auto& tuple: queries) {
-    if(!test(dt, tuple)) ok = false;
+  for(std::size_t i=0; i<queries.size(); ++i) {
+    if(!test(dt, queries[i], expected_results[i])) ok = false;
   }
   std::cout << "Done (" << queries.size() << " queries)\n";
   return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-template <typename Big_tuple>
-bool test(const DT dt, const Big_tuple& tuple) {
+bool test(const DT& dt,
+          const std::pair<Point_3, Point_3>& query,
+          const std::array<unsigned, 4>& expected_result)
+{
   bool result = true;
   using std::get;
-  const auto& p1 = get<0>(tuple);
-  const auto& p2 = get<1>(tuple);
-  const auto& expected_results = get<2>(tuple);
+  const auto& p1 = query.first;
+  const auto& p2 = query.second;
+  unsigned int nb_cells = 0, nb_collinear = 0;
+  unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
 
   std::cout << "\n#\n# Query segment: ( " << p1 << " , "
             << p2 << " )\n#\n";
-  Traverser st(dt, p1, p2);
-  
-  unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-  unsigned int nb_collinear = 0;
+  Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
+  Segment_simplex_iterator stend = dt.segment_traverser_simplices_end();
 
   // Count the number of finite cells traversed.
   unsigned int inf = 0, fin = 0;
-  for (; st != st.end(); ++st) {
-    if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
+  for (; st != stend; ++st)
+  {
+    if (st->dimension() == 3
+      && dt.is_infinite(Cell_handle(*st)))
       ++inf;
     else {
       ++fin;
 
-#ifdef CGAL_T3_TEST_SIMPLEX_TRAVERSER
       switch (st->dimension()) {
       case 2: {
         ++nb_facets;
@@ -137,9 +144,8 @@ bool test(const DT dt, const Big_tuple& tuple) {
         break;
       }
       default:
-        CGAL_assume(false);
+        CGAL_unreachable();
       } // end switch
-#endif
   }
 }
 
@@ -154,7 +160,6 @@ bool test(const DT dt, const Big_tuple& tuple) {
       std::cout << std::endl << std::endl;
 #endif
 
-#ifdef CGAL_T3_TEST_SIMPLEX_TRAVERSER
     auto check_expected = [](unsigned value, unsigned expected) {
       if(value != expected) {
         std::cout << "\t  ERROR: expected " << expected << '\n';
@@ -163,14 +168,14 @@ bool test(const DT dt, const Big_tuple& tuple) {
       return true;
     };
     std::cout << "\tnb cells     : " << nb_cells << std::endl;
-    result = result && check_expected(nb_cells, expected_results[3]);
+    result = result && check_expected(nb_cells, expected_result[3]);
     std::cout << "\tnb facets    : " << nb_facets << std::endl;
-    result = result && check_expected(nb_facets, expected_results[2]);
+    result = result && check_expected(nb_facets, expected_result[2]);
     std::cout << "\tnb edges     : " << nb_edges << std::endl;
-    result = result && check_expected(nb_edges, expected_results[1]);
+    result = result && check_expected(nb_edges, expected_result[1]);
     std::cout << "\tnb vertices  : " << nb_vertex << std::endl;
-    result = result && check_expected(nb_vertex, expected_results[0]);
+    result = result && check_expected(nb_vertex, expected_result[0]);
     std::cout << "\tnb collinear : " << nb_collinear << std::endl;
-#endif
+
     return result;
 }

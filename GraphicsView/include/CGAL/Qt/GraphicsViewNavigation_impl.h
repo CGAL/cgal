@@ -6,11 +6,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
-   
+
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
 
@@ -24,7 +24,7 @@
 #include <CGAL/Qt/utility.h> // for mapToScene(QGraphicsView*, QRect)
 #include <cmath>
 #include <iostream>
-// #include <boost/format.hpp>
+#include <boost/format.hpp>
 
 #include <QEvent>
 #include <QMouseEvent>
@@ -59,7 +59,7 @@ namespace Qt {
   }
 
   CGAL_INLINE_FUNCTION
-  bool 
+  bool
   GraphicsViewNavigation::eventFilter(QObject *obj, QEvent *event)
   {
     QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
@@ -73,7 +73,7 @@ namespace Qt {
         return false;
       }
     }
-    switch(event->type()) 
+    switch(event->type())
     {
     case QEvent::KeyPress: {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -134,15 +134,12 @@ namespace Qt {
     } // end case KeyRelease
     case QEvent::Wheel: {
       QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
-      if(wheelEvent->orientation() != ::Qt::Vertical) {
-        return false;
-      }
       double zoom_ratio = 240.0;
       if( (wheelEvent->modifiers() & ::Qt::ShiftModifier)
           || (wheelEvent->modifiers() & ::Qt::ControlModifier) ) {
         zoom_ratio = 120.0;
       }
-      scaleView(v, pow((double)2, -wheelEvent->delta() / zoom_ratio));
+      scaleView(v, pow((double)2, -wheelEvent->angleDelta().y() / zoom_ratio));
 
       //         display_parameters();
       return true;
@@ -181,12 +178,12 @@ namespace Qt {
       QString xy = QString(" ") + QString::number(pos.x(),'g', 6) + " , " + QString::number(pos.y(),'g', 6) + " ";
       Q_EMIT mouseCoordinates(xy);
       if(rectItem->isVisible()) {
-	QPointF size = v->mapToScene(mouseEvent->pos());
-	size = size - rect_first_point;
+        QPointF size = v->mapToScene(mouseEvent->pos());
+        size = size - rect_first_point;
         rectItem->setRect(rect_first_point.x(),
-			  rect_first_point.y(),
-			  size.x(),
-			  size.y());
+                          rect_first_point.y(),
+                          size.x(),
+                          size.y());
       }
       if( dragging )
       {
@@ -233,7 +230,7 @@ namespace Qt {
 
 
   CGAL_INLINE_FUNCTION
-  void 
+  void
   GraphicsViewNavigation::scaleView(QGraphicsView* v, qreal scaleFactor)
   {
     QPointF center = v->mapToScene(v->viewport()->rect().center());
@@ -271,11 +268,11 @@ namespace Qt {
     int horizontalScrollBarValue = v->horizontalScrollBar()->value();
     int verticalScrollBarValue = v->verticalScrollBar()->value();
 
-    if( (horizontalScrollBarValue + dx <= 
+    if( (horizontalScrollBarValue + dx <=
          v->horizontalScrollBar()->maximum()) &&
         (horizontalScrollBarValue + dx >=
          v->horizontalScrollBar()->minimum()) &&
-        (verticalScrollBarValue + dy <= 
+        (verticalScrollBarValue + dy <=
          v->verticalScrollBar()->maximum()) &&
         (verticalScrollBarValue + dy >=
          v->verticalScrollBar()->minimum()) )
@@ -304,43 +301,43 @@ namespace Qt {
 //     display_parameters();
   }
 
-  // CGAL_INLINE_FUNCTION
-  // void GraphicsViewNavigation::display_parameters(QGraphicsView* v)
-  // {
-  //   std::cerr << 
-  //     boost::format("matrix translation=(%1%, %2%)\n"
-  //                   "       rotation=(%3% - %4% )\n"
-  //                   "                (%5% - %6% )\n")
-  //     % v->matrix().dx()
-  //     % v->matrix().dy()
-  //     % v->matrix().m11()
-  //     % v->matrix().m12()
-  //     % v->matrix().m21()
-  //     % v->matrix().m22();
+  CGAL_INLINE_FUNCTION
+  void GraphicsViewNavigation::display_parameters(QGraphicsView* v)
+  {
+    std::cerr <<
+      boost::format("matrix translation=(%1%, %2%)\n"
+                    "       rotation=(%3% - %4% )\n"
+                    "                (%5% - %6% )\n")
+      % v->transform().dx()
+      % v->transform().dy()
+      % v->transform().m11()
+      % v->transform().m12()
+      % v->transform().m21()
+      % v->transform().m22();
 
-  //   QRect vp_rect = v->viewport()->rect();
-  //   QPoint vp_top_left = vp_rect.topLeft();
-  //   QPoint vp_bottom_right = vp_rect.bottomRight();
-  //   QPointF top_left = v->mapToScene(vp_top_left);
-  //   QPointF bottom_right = v->mapToScene(vp_bottom_right);
+    QRect vp_rect = v->viewport()->rect();
+    QPoint vp_top_left = vp_rect.topLeft();
+    QPoint vp_bottom_right = vp_rect.bottomRight();
+    QPointF top_left = v->mapToScene(vp_top_left);
+    QPointF bottom_right = v->mapToScene(vp_bottom_right);
 
-  //   std::cerr <<
-  //     boost::format("view=(%1% - %2%) x (%3% - %4%)\n")
-  //     % top_left.x() % bottom_right.x()
-  //     % top_left.y() % bottom_right.y();
-  //   std::cerr <<
-  //     boost::format("viewport=(%1% - %2%) x (%3% - %4%)\n")
-  //     % vp_top_left.x() % vp_bottom_right.x()
-  //     % vp_top_left.y() % vp_bottom_right.y();
-  //   std::cerr <<
-  //     boost::format("scrollbars=(%1% <= %2% <= %3%) x (%4% <= %5% <= %6%)\n")
-  //     % v->horizontalScrollBar()->minimum() 
-  //     % v->horizontalScrollBar()->value()
-  //     % v->horizontalScrollBar()->maximum()
-  //     % v->verticalScrollBar()->minimum() 
-  //     % v->verticalScrollBar()->value()
-  //     % v->verticalScrollBar()->maximum();
-  // }
+    std::cerr <<
+      boost::format("view=(%1% - %2%) x (%3% - %4%)\n")
+      % top_left.x() % bottom_right.x()
+      % top_left.y() % bottom_right.y();
+    std::cerr <<
+      boost::format("viewport=(%1% - %2%) x (%3% - %4%)\n")
+      % vp_top_left.x() % vp_bottom_right.x()
+      % vp_top_left.y() % vp_bottom_right.y();
+    std::cerr <<
+      boost::format("scrollbars=(%1% <= %2% <= %3%) x (%4% <= %5% <= %6%)\n")
+      % v->horizontalScrollBar()->minimum()
+      % v->horizontalScrollBar()->value()
+      % v->horizontalScrollBar()->maximum()
+      % v->verticalScrollBar()->minimum()
+      % v->verticalScrollBar()->value()
+      % v->verticalScrollBar()->maximum();
+  }
 
 } // namespace Qt
 } // namespace CGAL

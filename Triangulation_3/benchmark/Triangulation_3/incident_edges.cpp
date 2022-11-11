@@ -18,10 +18,10 @@ int main()
 
   while(std::cin >> p){
     points.push_back(p);
-  } 
+  }
   DT dt;
   dt.insert(points.begin(), points.end());
-  
+
   Timer timer;
   timer.start();
   int N = 0;
@@ -34,7 +34,7 @@ int main()
     }
   }
   timer.stop();
-  
+
   std::cerr << N << std::endl << timer.time() << " sec" << std::endl;
   return 0;
 }

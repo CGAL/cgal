@@ -44,7 +44,7 @@
 #define GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS 11
 #define RATIONAL_ARC_GEOM_TRAITS           12
 #define ALGEBRAIC_GEOM_TRAITS              13
-#define POLYCURVE_CONIC_GEOM_TRAITS	   	   14
+#define POLYCURVE_CONIC_GEOM_TRAITS        14
 #define POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS 15
 #define POLYCURVE_BEZIER_GEOM_TRAITS       16
 #define FLAT_TORUS_GEOM_TRAITS             17
@@ -55,7 +55,7 @@
 
 // Default value based on dependencies:
 #if (TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) || \
- 	(TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS)
+  (TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS)
   #if !defined(TEST_NT)
   #define TEST_NT CORE_EXPR_NT
   #endif
@@ -88,7 +88,7 @@
 // Illegal combinations:
 #if (TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) || (TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS)
   #if(TEST_NT != CORE_EXPR_NT)
-		#error "Core conic traits implies Core Expr number type!"
+  #error "Core conic traits implies Core Expr number type!"
   #endif
 #endif
 

@@ -14,7 +14,7 @@
 // control word of the FPU, to:
 //   - set the precision to 53 bits of mantissa,
 //   - get/set the rounding mode.
-// 
+//
 // The goal of FPU_extension.h is to define inline functions similar to
 // feclearexcept and fetestexcept of C99.
 //
@@ -33,7 +33,7 @@
 #  endif
 #elif defined _MSC_VER
 #  include <CGAL/FPU_msvc.h>
-#else 
+#else
 
 // generic functions, using C99
 

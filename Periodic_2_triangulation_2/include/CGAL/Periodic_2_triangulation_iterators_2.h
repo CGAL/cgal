@@ -15,7 +15,7 @@
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 
@@ -95,7 +95,7 @@ public:
         increment_domain();
         break;
       default:
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
       };
     return *this;
   }
@@ -138,7 +138,7 @@ public:
   bool operator==(const Periodic_triangle_iterator& ti) const
   {
     // We are only allowed to compare iterators of the same type.
-    CGAL_triangulation_assertion(_it == ti._it);
+    CGAL_assertion(_it == ti._it);
     return _t == ti._t && pos == ti.pos && _off == ti._off;
   }
 
@@ -208,7 +208,7 @@ private:
   void increment_domain()
   {
     int off = get_drawing_offsets();
-    CGAL_triangulation_assertion(_off <= off);
+    CGAL_assertion(_off <= off);
     if (_off == off)
       {
         _off = 0;
@@ -290,18 +290,18 @@ private:
       get_edge_offsets(off0, off1, off2);
     else
       {
-        CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
+        CGAL_assertion(_it == T::STORED_COVER_DOMAIN);
         off0 = _t->int_to_off(pos->offset(0));
         off1 = _t->int_to_off(pos->offset(1));
         off2 = _t->int_to_off(pos->offset(2));
       }
 
-    CGAL_triangulation_assertion(off0.x() == 0 || off0.x() == 1);
-    CGAL_triangulation_assertion(off0.y() == 0 || off0.y() == 1);
-    CGAL_triangulation_assertion(off1.x() == 0 || off1.x() == 1);
-    CGAL_triangulation_assertion(off1.y() == 0 || off1.y() == 1);
-    CGAL_triangulation_assertion(off2.x() == 0 || off2.x() == 1);
-    CGAL_triangulation_assertion(off2.y() == 0 || off2.y() == 1);
+    CGAL_assertion(off0.x() == 0 || off0.x() == 1);
+    CGAL_assertion(off0.y() == 0 || off0.y() == 1);
+    CGAL_assertion(off1.x() == 0 || off1.x() == 1);
+    CGAL_assertion(off1.y() == 0 || off1.y() == 1);
+    CGAL_assertion(off2.x() == 0 || off2.x() == 1);
+    CGAL_assertion(off2.y() == 0 || off2.y() == 1);
 
     int offx = ( ((off0.x() == 0 && off1.x() == 0
                    && off2.x() == 0)
@@ -317,7 +317,7 @@ private:
 
   Periodic_triangle construct_periodic_triangle() const
   {
-    CGAL_triangulation_assertion(pos != typename T::Face_handle());
+    CGAL_assertion(pos != typename T::Face_handle());
     Offset off0, off1, off2;
     get_edge_offsets(off0, off1, off2);
     Offset transl_off = Offset((((_off >> 1) & 1) == 1 ? -1 : 0),
@@ -414,7 +414,7 @@ public:
         increment_domain();
         break;
       default:
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
       };
     return *this;
   }
@@ -457,7 +457,7 @@ public:
   bool operator==(const Periodic_segment_iterator& ti) const
   {
     // We are only allowed to compare iterators of the same type.
-    CGAL_triangulation_assertion(_it == ti._it);
+    CGAL_assertion(_it == ti._it);
     return _t == ti._t && pos == ti.pos && _off == ti._off;
   }
 
@@ -524,7 +524,7 @@ private:
   void increment_domain()
   {
     int off = get_drawing_offsets();
-    CGAL_triangulation_assertion(_off <= off);
+    CGAL_assertion(_off <= off);
     if (_off == off)
       {
         _off = 0;
@@ -601,14 +601,14 @@ private:
       get_edge_offsets(off0, off1);
     else
       {
-        CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
+        CGAL_assertion(_it == T::STORED_COVER_DOMAIN);
         off0 = _t->int_to_off(pos->first->offset(_t->cw(pos->second)));
         off1 = _t->int_to_off(pos->first->offset(_t->ccw(pos->second)));
       }
     Offset diff_off = off0 - off1;
 
-    CGAL_triangulation_assertion(diff_off.x() >= -1 || diff_off.x() <= 1);
-    CGAL_triangulation_assertion(diff_off.y() >= -1 || diff_off.y() <= 1);
+    CGAL_assertion(diff_off.x() >= -1 || diff_off.x() <= 1);
+    CGAL_assertion(diff_off.y() >= -1 || diff_off.y() <= 1);
 
     return( 2 * (diff_off.x() == 0 ? 0 : 1)
             + (diff_off.y() == 0 ? 0 : 1));
@@ -616,7 +616,7 @@ private:
 
   Periodic_segment construct_periodic_segment() const
   {
-    CGAL_triangulation_assertion(pos->first != typename T::Face_handle());
+    CGAL_assertion(pos->first != typename T::Face_handle());
     Offset off0, off1;
     get_edge_offsets(off0, off1);
     Offset transl_off = Offset((((_off >> 1) & 1) == 1 ? -1 : 0),
@@ -708,7 +708,7 @@ public:
         while (pos != _t->vertices_end() && !is_canonical());
         break;
       default:
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
       };
     return *this;
   }
@@ -730,7 +730,7 @@ public:
         while (pos != _t->vertices_begin() && !is_canonical());
         break;
       default:
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
       };
     return *this;
   }
@@ -752,7 +752,7 @@ public:
   bool operator==(const Periodic_point_iterator& pi) const
   {
     // We are only allowed to compare iterators of the same type.
-    CGAL_triangulation_assertion(_it == pi._it);
+    CGAL_assertion(_it == pi._it);
     return _t == pi._t && pos == pi.pos;
   }
 
@@ -795,7 +795,7 @@ private:
 
   Periodic_point construct_periodic_point() const
   {
-    CGAL_triangulation_assertion(pos != typename T::Vertex_handle());
+    CGAL_assertion(pos != typename T::Vertex_handle());
     Offset off = _t->get_offset(pos);
     return std::make_pair(pos->point(), off);
   }
@@ -807,11 +807,11 @@ template <class T>
 class Domain_tester
 {
     const T *t;
-    
+
   public:
     Domain_tester() {}
     Domain_tester(const T *tr) : t(tr) {}
-    
+
     bool operator()(const typename T::Vertex_iterator & v) const
     {
         return (t->get_offset(v) != typename T::Offset(0, 0));

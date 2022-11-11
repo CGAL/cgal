@@ -1,4 +1,4 @@
-#include <CGAL/internal/Surface_mesh_segmentation/Disk_samplers.h>
+#include <CGAL/Surface_mesh_segmentation/internal/Disk_samplers.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <vector>
@@ -11,7 +11,7 @@ void print(const std::vector<boost_tuple>& samples)
   const std::size_t map_size_2 = 45;
   std::vector<std::vector<bool> > sample_map(map_size, std::vector<bool>(map_size_2, false));
 
-  for(std::vector<boost_tuple>::const_iterator sample_it = samples.begin(); 
+  for(std::vector<boost_tuple>::const_iterator sample_it = samples.begin();
     sample_it != samples.end(); ++sample_it)
   {
     double x = (sample_it->get<0>() +1)/2;
@@ -51,8 +51,8 @@ int main(void)
   std::vector<boost_tuple> samples_3;
   std::vector<boost_tuple> samples_4;
 
-  sampling_1(64, std::back_inserter(samples_1));   
-  sampling_2(64, std::back_inserter(samples_2));  
+  sampling_1(64, std::back_inserter(samples_1));
+  sampling_2(64, std::back_inserter(samples_2));
   sampling_3(64, std::back_inserter(samples_3));
   sampling_4(64, std::back_inserter(samples_4));
 

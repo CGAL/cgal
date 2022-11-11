@@ -10,11 +10,19 @@ typedef Viewer_interface Vi;
 typedef Triangle_container Tc;
 typedef Edge_container Ec;
 
+QVector4D cgal_plane_to_vector4d(CGAL::Epick::Plane_3 plane) {
+  return {
+    static_cast<float>(-plane.a()),
+    static_cast<float>(-plane.b()),
+    static_cast<float>(-plane.c()),
+    static_cast<float>(-plane.d()) };
+}
+
 struct Scene_spheres_item_priv
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Sphere_3<Kernel> Sphere;
-  typedef std::pair<Sphere, CGAL::Color> Sphere_pair;
+  typedef std::pair<Sphere, CGAL::IO::Color> Sphere_pair;
   typedef std::vector<std::vector<Sphere_pair> > Spheres_container;
 
   Scene_spheres_item_priv(bool planed, std::size_t max_index, Scene_spheres_item* parent, bool pickable)
@@ -71,12 +79,12 @@ void Scene_spheres_item_priv::pick(int& id) const
 {
   if(!pickable)
     return;
-  
+
   if(id >= static_cast<int>(spheres.size()))
   {
     id = -1;
   }
-    
+
   int offset = 0;
   float color[4];
   for(std::size_t i=0; i<spheres.size(); ++i)
@@ -117,11 +125,11 @@ Scene_spheres_item::Scene_spheres_item(Scene_group_item* parent, std::size_t max
                                        ,false));
   }
   //for drawing
-  setTriangleContainer(0, 
+  setTriangleContainer(0,
                        new Tc(planed ? Vi::PROGRAM_CUTPLANE_SPHERES
                                      : Vi::PROGRAM_SPHERES
                                        ,false));
-  setEdgeContainer(0, 
+  setEdgeContainer(0,
                    new Ec(planed ? Vi::PROGRAM_CUTPLANE_SPHERES
                                  : Vi::PROGRAM_SPHERES
                                    ,false));
@@ -179,11 +187,9 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
     setBuffersFilled(true);
     setBuffersInit(viewer, true);
   }
-  int deviceWidth = viewer->camera()->screenWidth();
-  int deviceHeight = viewer->camera()->screenHeight();
     if(d->has_plane)
     {
-      QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
+      QVector4D cp = cgal_plane_to_vector4d(d->plane);
       getTriangleContainer(0)->setPlane(cp);
       if(d->pickable)
         getTriangleContainer(1)->setPlane(cp);
@@ -199,12 +205,8 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
     }
     if(d->pickable && (d->spheres.size() > 1 && viewer->inDrawWithNames()))
     {
-      int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
-      const static int dataLength = rowLength * deviceHeight;
-      GLubyte* buffer = new GLubyte[dataLength];
-      // Qt uses upper corner for its origin while GL uses the lower corner.
       QPoint picking_target = viewer->mapFromGlobal(QCursor::pos());
-      viewer->glReadPixels(picking_target.x(), deviceHeight-1-picking_target.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+      const auto buffer = read_pixel_as_ubyte_rgba(picking_target, viewer, viewer->camera());
       int ID = (buffer[0] + buffer[1] * 256 +buffer[2] * 256*256) ;
       if(buffer[0]*buffer[1]*buffer[2] < 255*255*255)
       {
@@ -230,18 +232,18 @@ void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
     setBuffersFilled(true);
     setBuffersInit(viewer, true);
   }
-  
+
   if(d->has_plane)
   {
-    QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
+    QVector4D cp = cgal_plane_to_vector4d(d->plane);
     getEdgeContainer(0)->setPlane(cp);
   }
   getEdgeContainer(0)->draw(viewer, false);
-  
+
 }
-void Scene_spheres_item::add_sphere(const Sphere &sphere, std::size_t index,  CGAL::Color color)
+void Scene_spheres_item::add_sphere(const Sphere &sphere, std::size_t index,  CGAL::IO::Color color)
 {
-  if(index > d->spheres.size()-1)
+  if((int)index > (int)d->spheres.size() - 1)
     d->spheres.resize(index+1);
 
   d->spheres[index].push_back(std::make_pair(sphere, color));
@@ -259,7 +261,7 @@ void Scene_spheres_item::add_sphere(const Sphere &sphere, std::size_t index,  CG
     float b = B/255.0;
     d->picking_colors.push_back(r);
     d->picking_colors.push_back(g);
-    d->picking_colors.push_back(b); 
+    d->picking_colors.push_back(b);
   }
   d->edges_colors.push_back((float)color.red()/255);
   d->edges_colors.push_back((float)color.green()/255);
@@ -322,16 +324,16 @@ void Scene_spheres_item::computeElements() const
   {
     getTriangleContainer(0)->allocate(Tc::Flat_vertices, d->vertices.data(),
                                       static_cast<int>(d->vertices.size()*sizeof(float)));
-    
+
     getTriangleContainer(0)->allocate(Tc::Flat_normals, d->normals.data(),
                                       static_cast<int>(d->normals.size()*sizeof(float)));
 
     if(d->pickable)
       getTriangleContainer(1)->allocate(Tc::Flat_vertices, d->vertices.data(),
                                         static_cast<int>(d->vertices.size()*sizeof(float)));
-    
+
     d->nb_vertices = d->vertices.size();
-    
+
   }
   getTriangleContainer(0)->allocate(Tc::FColors, d->colors.data(),
                                     static_cast<int>(d->colors.size()*sizeof(float)));
@@ -354,22 +356,22 @@ void Scene_spheres_item::computeElements() const
   {
     getEdgeContainer(0)->allocate(Ec::Vertices, d->edges.data(),
                                   static_cast<int>(d->edges.size()*sizeof(float)));
-    
-    getEdgeContainer(0)->allocate(Ec::Normals, d->normals.data(), 
+
+    getEdgeContainer(0)->allocate(Ec::Normals, d->normals.data(),
                                   static_cast<int>(d->normals.size()*sizeof(float)));
     d->model_sphere_is_up = true;
     d->nb_edges = d->edges.size();
   }
   getEdgeContainer(0)->allocate(Ec::Colors, d->edges_colors.data(),
                                 static_cast<int>(d->edges_colors.size()*sizeof(float)));
-  
+
   getEdgeContainer(0)->allocate(Ec::Radius, d->radius.data(),
                                 static_cast<int>(d->radius.size()*sizeof(float)));
-  
+
   getEdgeContainer(0)->allocate(Ec::Centers, d->centers.data(),
                                 static_cast<int>(d->centers.size()*sizeof(float)));
   d->nb_centers = d->centers.size();
-  
+
 }
 
 void Scene_spheres_item::gl_initialization(Vi* viewer)
@@ -421,3 +423,15 @@ bool Scene_spheres_item::save(const std::string& file_name)const
   return true;
 }
 
+bool Scene_spheres_item::eventFilter(QObject *, QEvent *e)
+{
+  if(e->type() == QEvent::ShortcutOverride)
+  {
+    QKeyEvent* k = static_cast<QKeyEvent*>(e);
+    if(k && k->key() == Qt::Key_Delete)
+    {
+      Q_EMIT destroyMe();
+    }
+  }
+  return false;
+}

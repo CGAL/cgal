@@ -4,8 +4,8 @@
 
 #include <CGAL/config.h>
 
-#if ((TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) ||	\
-     (TEST_GEOM_TRAITS == BEZIER_GEOM_TRAITS) ||	\
+#if ((TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) ||        \
+     (TEST_GEOM_TRAITS == BEZIER_GEOM_TRAITS) ||        \
      (TEST_GEOM_TRAITS == RATIONAL_ARC_GEOM_TRAITS)) && !defined(CGAL_USE_CORE)
 
 int main()
@@ -25,7 +25,7 @@ int main()
 {
 //  bool   UNTESTED_TRAITS_AS_LEDA_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: LEDA is not installed, "
+            << "NOTE: LEDA is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -40,7 +40,7 @@ int main()
 
 //  bool   UNTESTED_TRAITS_AS_GMP_OR_MPFI_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: GMP and/or MPFI are not installed, "
+            << "NOTE: GMP and/or MPFI are not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -54,7 +54,7 @@ int main()
 {
 //  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: CORE is not installed, "
+            << "NOTE: CORE is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -91,8 +91,8 @@ bool test1(const char* points_filename, const char* xcurves_filename,
 int main(int argc, char* argv[])
 {
 #if TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 #endif
 
   if (argc < 5) {

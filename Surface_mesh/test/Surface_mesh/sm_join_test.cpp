@@ -28,7 +28,7 @@ freelist(const Sm& sm, int vc, int fc, int ec)
     vd = vertex_descriptor((Sm::size_type)hd);
   }
   assert(vc == 0);
-  
+
   std::cout << "face freelist" << std::endl;
   face_descriptor fd = sm.face_freelist();
   while(fd != sm.null_face()){
@@ -55,14 +55,14 @@ int main()
 {
   Sm sm1, sm2;
   {
-    std::ifstream in("cube.off");
+    std::ifstream in(CGAL::data_file_path("meshes/cube.off"));
     in >> sm1;
     CGAL::Euler::remove_center_vertex(*(halfedges(sm1).first),sm1);
   }
   freelist(sm1,1,5,6);
-  
+
   {
-    std::ifstream in("cube.off");
+    std::ifstream in(CGAL::data_file_path("meshes/cube.off"));
     in >> sm2;
     CGAL::Euler::remove_center_vertex(*(halfedges(sm2).first),sm2);
   }
@@ -71,7 +71,7 @@ int main()
 
   sm1.join(sm2);
   freelist(sm1,2,10,12);
-  
+
   return 0;
 }
-  
+

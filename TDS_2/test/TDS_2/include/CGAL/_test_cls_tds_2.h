@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Triangulation/include/CGAL/_test_cls_tds_2.h
 // source        : $URL$
 // revision      : $Id$
@@ -51,7 +51,7 @@ _test_cls_tds_2( const Tds &)
 
   typedef typename Tds::Vertex_range      Vertex_range;
   typedef typename Tds::Face_range        Face_range;
-  
+
   typedef typename Tds::Vertex            Vertex;
   typedef typename Tds::Face              Face;
   typedef typename Tds::Edge              Edge;
@@ -61,7 +61,7 @@ _test_cls_tds_2( const Tds &)
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
   typedef typename Tds::Face_iterator     Face_iterator;
   typedef typename Tds::Edge_iterator     Edge_iterator;
-  
+
   typedef typename Tds::Vertex_circulator Vertex_circulator;
   typedef typename Tds::Face_circulator   Face_circulator;
   typedef typename Tds::Edge_circulator   Edge_circulator;
@@ -71,7 +71,7 @@ _test_cls_tds_2( const Tds &)
   CGAL_USE_TYPE(Edge);
   CGAL_USE_TYPE(Edge_iterator);
   CGAL_USE_TYPE(Edge_circulator);
-  
+
   // Test subclasses
   CGAL::_test_cls_tds_vertex( Tds());
   CGAL::_test_cls_tds_face( Tds());
@@ -80,17 +80,17 @@ _test_cls_tds_2( const Tds &)
   std::cout << "    constructors" << std::endl;
   Tds tds0;
   Tds tds1;
-  Tds tds2(tds1); 
+  Tds tds2(tds1);
   Tds tds3 = tds1;
   Tds tds4 ;
   tds4.swap(tds1);
   tds1.is_valid();
   tds1.clear();
   tds1.is_valid();
-  // (), = and  swap to be tested later again with non trivial tds 
+  // (), = and  swap to be tested later again with non trivial tds
 
 
- 
+
   // misc.
   std::cout << "    miscellaneous" << std::endl;
   assert( tds1.ccw(0) == 1 );
@@ -99,21 +99,21 @@ _test_cls_tds_2( const Tds &)
   assert( tds1.cw(0) == 2 );
   assert( tds1.cw(1) == 0 );
   assert( tds1.cw(2) == 1 );
- 
+
   // test insert, remove  and  flip
-  // tds1 , tds2 0 dim 
+  // tds1 , tds2 0 dim
   // tds3 1 dim
   // tds4 2dim
 
   std::cout << "    insert and flip" << std::endl;
   Vertex_handle w1 = tds1.insert_first();
-  assert(tds1.dimension()== -1); 
+  assert(tds1.dimension()== -1);
   assert(tds1.number_of_vertices() == 1);
   assert(tds1.is_valid() );
 
   Vertex_handle w2 = tds2.insert_first();
   Vertex_handle v2 = tds2.insert_second();
-  assert(tds2.dimension()== 0); 
+  assert(tds2.dimension()== 0);
   assert(tds2.number_of_vertices() == 2);
   assert(tds2.is_valid() );
 
@@ -161,7 +161,7 @@ _test_cls_tds_2( const Tds &)
     assert(tds12.is_valid());
     assert(tds12.dimension()==1);
   }
- 
+
   Vertex_handle w4 = tds4.insert_first();
   Vertex_handle v4_1 = tds4.insert_second();
   Vertex_handle v4_2 = tds4.insert_dim_up(w4,true);
@@ -184,7 +184,7 @@ _test_cls_tds_2( const Tds &)
   // Find the edge v4_1v4_2 for insertion
   fc = tds4.incident_faces(v4_1);
   int ic;
-  while(! (fc->has_vertex(v4_2, ic ) && ic == tds4.ccw(fc->index(v4_1)))) 
+  while(! (fc->has_vertex(v4_2, ic ) && ic == tds4.ccw(fc->index(v4_1))))
     fc++;
   Vertex_handle v4_5 = tds4.insert_in_edge(fc, ic);
   assert(tds4.is_valid() );
@@ -199,17 +199,17 @@ _test_cls_tds_2( const Tds &)
   Vertex_handle u4 = tds4.insert_in_face(v4_1->face());
   tds4.remove_degree_3(u4);
   assert(tds4.is_valid() );
-  
+
   Vertex_handle u3 = tds3.insert_in_edge(v3->face(),2);
   tds3.remove_1D(u3);
   assert(tds3.is_valid() );
-  
+
   //remove_second, remove first
   tds2.remove_second(v2);
   assert(tds2.is_valid() && tds2.number_of_vertices()==1);
   v2 = tds2.insert_second();
   tds1.remove_first(w1);
-  assert(tds1.is_valid()&& tds1.number_of_vertices()==0); 
+  assert(tds1.is_valid()&& tds1.number_of_vertices()==0);
   w1 = tds1.insert_first();
 
   //  make_hole, star_hole
@@ -221,7 +221,7 @@ _test_cls_tds_2( const Tds &)
 
 
   // insert_in_hole
-  // Count also the faces with the vertex at infinity! 
+  // Count also the faces with the vertex at infinity!
   //
   //  1 |------| 3     1 |------| 3
   //    |\     |         |\    /|
@@ -231,9 +231,9 @@ _test_cls_tds_2( const Tds &)
   //    |    \ |         | /  \ |
   //    |     \|         |/    \|
   //  2 |------| 0     2 |------| 0
-  // 
-  // 
-   
+  //
+  //
+
   std::cout << "    insert_in_hole" << std::endl;
   Tds td45;
   Vertex_handle v045 = td45.insert_first();
@@ -348,7 +348,7 @@ _test_cls_tds_2( const Tds &)
   assert(td5.dimension() == 1);
   assert(td5.is_valid());
   Vertex_handle v5_4 = td5.insert_dim_up();
-  Face_handle f5_1 = v5_4->face();	
+  Face_handle f5_1 = v5_4->face();
   i = f5_1->index(v5_4);
   td5.dim_down(f5_1, i);
   assert(td5.dimension() == 1);
@@ -357,20 +357,20 @@ _test_cls_tds_2( const Tds &)
  //access
   std::cout << "    test access" << std::endl;
   assert(tds0.dimension() <= -1     && tds0.number_of_vertices() == 0 &&
-	 tds0.number_of_faces()== 0 && tds0.number_of_edges()    == 0 &&
-	 tds0.number_of_full_dim_faces() == 0);
+         tds0.number_of_faces()== 0 && tds0.number_of_edges()    == 0 &&
+         tds0.number_of_full_dim_faces() == 0);
   assert(tds1.dimension() == -1     && tds1.number_of_vertices() == 1 &&
-	 tds1.number_of_faces()== 0 && tds1.number_of_edges()    == 0 &&
-	 tds1.number_of_full_dim_faces() == 1);
+         tds1.number_of_faces()== 0 && tds1.number_of_edges()    == 0 &&
+         tds1.number_of_full_dim_faces() == 1);
   assert(tds2.dimension() == 0      && tds2.number_of_vertices() == 2 &&
-	 tds2.number_of_faces()== 0 && tds2.number_of_edges()    == 0 &&
-	 tds2.number_of_full_dim_faces() == 2);
+         tds2.number_of_faces()== 0 && tds2.number_of_edges()    == 0 &&
+         tds2.number_of_full_dim_faces() == 2);
   assert(tds3.dimension() == 1      && tds3.number_of_vertices() == 4 &&
-	 tds3.number_of_faces()== 0 && tds3.number_of_edges()    == 4 &&
-	 tds3.number_of_full_dim_faces() == 4);
+         tds3.number_of_faces()== 0 && tds3.number_of_edges()    == 4 &&
+         tds3.number_of_full_dim_faces() == 4);
   assert(tds4.dimension() == 2      && tds4.number_of_vertices() == 6 &&
-	 tds4.number_of_faces()== 8 && tds4.number_of_edges()    == 12 &&
-	 tds4.number_of_full_dim_faces() == 8);
+         tds4.number_of_faces()== 8 && tds4.number_of_edges()    == 12 &&
+         tds4.number_of_full_dim_faces() == 8);
 
   // Containers
   Vertex_range & vertex_c = tds4.vertices();
@@ -378,7 +378,7 @@ _test_cls_tds_2( const Tds &)
 
   assert(vertex_c.size() == 6);
   assert(face_c.size() == 8);
- 
+
    //clear(), swap() and copy_constructor and copy
   std::cout << "    clear, swap, assign and copy " << std::endl;
   Tds tds1b(tds1);
@@ -447,7 +447,7 @@ _test_cls_tds_2( const Tds &)
   assert (tds4.is_vertex(v4_5));
   assert (tds3.is_vertex(v3));
   assert (tds2.is_vertex(v2));
-  
+
   // test compatibility of iterators and circulators with handle()
   Vertex_iterator vit=tds4.vertices_begin();
   assert(tds4.is_vertex(vit));
@@ -465,48 +465,48 @@ _test_cls_tds_2( const Tds &)
 
   std::cout << "    output to a file" << std::endl;
   std::ofstream of0("file_tds0");
-  CGAL::set_ascii_mode(of0); 
-  of0 << tds0 ; 
+  CGAL::IO::set_ascii_mode(of0);
+  of0 << tds0 ;
   of0.close();
   std::ofstream of1("file_tds1");
-  CGAL::set_ascii_mode(of1); 
-  of1 << tds1 ; 
+  CGAL::IO::set_ascii_mode(of1);
+  of1 << tds1 ;
   of1.close();
   std::ofstream of2("file_tds2");
-  CGAL::set_ascii_mode(of2); 
-  of2 << tds2 ; 
+  CGAL::IO::set_ascii_mode(of2);
+  of2 << tds2 ;
   of2.close();
   std::ofstream of3("file_tds3");
-  CGAL::set_ascii_mode(of3); 
-  of3 << tds3 ; 
+  CGAL::IO::set_ascii_mode(of3);
+  of3 << tds3 ;
   of3.close();
   std::ofstream  of4("file_tds4");
-  CGAL::set_ascii_mode(of4); 
-  of4 << tds4 ; 
+  CGAL::IO::set_ascii_mode(of4);
+  of4 << tds4 ;
   of4.close();
 
   std::cout << "    input from a file" << std::endl;
-  std::ifstream if0("file_tds0"); CGAL::set_ascii_mode(if0);
+  std::ifstream if0("file_tds0"); CGAL::IO::set_ascii_mode(if0);
   Tds tds0f; if0 >> tds0f ;   assert( tds0f.is_valid());
-  std::ifstream if1("file_tds1"); CGAL::set_ascii_mode(if1);
-  Tds tds1f; if1 >> tds1f;  
+  std::ifstream if1("file_tds1"); CGAL::IO::set_ascii_mode(if1);
+  Tds tds1f; if1 >> tds1f;
   assert( tds1f.is_valid());
-  std::ifstream if2("file_tds2"); 
-  CGAL::set_ascii_mode(if2);
-  Tds tds2f; if2 >> tds2f ;   
+  std::ifstream if2("file_tds2");
+  CGAL::IO::set_ascii_mode(if2);
+  Tds tds2f; if2 >> tds2f ;
   assert( tds2f.is_valid());
-  std::ifstream if3("file_tds3"); 
-  CGAL::set_ascii_mode(if3);
-  Tds tds3f; if3 >> tds3f ;   
+  std::ifstream if3("file_tds3");
+  CGAL::IO::set_ascii_mode(if3);
+  Tds tds3f; if3 >> tds3f ;
   assert( tds3f.is_valid());
-  std::ifstream if4("file_tds4"); 
-  CGAL::set_ascii_mode(if4);
-  Tds tds4f; if4 >> tds4f ;   
+  std::ifstream if4("file_tds4");
+  CGAL::IO::set_ascii_mode(if4);
+  Tds tds4f; if4 >> tds4f ;
   assert( tds4f.is_valid());
 
   // vrml input-output
   std::ofstream os("vrml_tds4");
-  CGAL::set_ascii_mode(os);
+  CGAL::IO::set_ascii_mode(os);
   tds4.vrml_output(os);
 
   // test destructor and return
@@ -542,17 +542,17 @@ _test_tds_circulators( const Tds&  tds)
   Vertex_handle vh;
 
   for( Vertex_iterator vit = tds.vertices_begin();
-	               vit != tds.vertices_end(); vit++) {
-    
+                       vit != tds.vertices_end(); vit++) {
+
     Face_circulator fc = tds.incident_faces(vit), fdone(fc);
     Face_circulator fc2 = tds.incident_faces(vit);
     assert(fc2 == fc);
     if (! fc.is_empty()) {
       do {
-	f = *fc;
-	fh = fc;
-	vh = fc->vertex(0);
-	countf +=1;
+        f = *fc;
+        fh = fc;
+        vh = fc->vertex(0);
+        countf +=1;
       } while (++fc != fdone);
     }
 
@@ -561,9 +561,9 @@ _test_tds_circulators( const Tds&  tds)
     if (! ec.is_empty()) assert( ec2 == ec);
     if (! ec.is_empty()) {
       do {
-	e = *ec;
-	fh = ec->first;
-	counte +=1;
+        e = *ec;
+        fh = ec->first;
+        counte +=1;
       } while (++ec != edone);
     }
 
@@ -573,21 +573,21 @@ _test_tds_circulators( const Tds&  tds)
     if (! vc.is_empty()) assert( vc == vc2);
     if (! vc.is_empty()) {
       do {
-	v = *vc;
-	vh = vc;
-	fh = vc->face();
-	countv +=1;
-	countvv +=1;
+        v = *vc;
+        vh = vc;
+        fh = vc->face();
+        countv +=1;
+        countvv +=1;
       } while (++vc != vdone);
     }
 
     assert( tds.degree(vit) == countvv);
-  }	       
-					     
+  }
+
   assert( countf == 3 * tds.number_of_faces());
   assert( counte == 2 * tds.number_of_edges());
   assert( countv == counte);
-	  
+
 }
 
 template< class Tds>
@@ -631,7 +631,7 @@ _test_tds_iterators( const Tds&  tds)
   }
   assert(nv == 0);
 
-  
+
   for (Face_iterator fitp = tds.faces_begin();
        fitp != tds.faces_end();
        ++fitp) {

@@ -1,16 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -56,9 +56,9 @@ enum  Bounded_side
 
 enum  Angle
       {
-	  OBTUSE = -1,
-	  RIGHT,
-	  ACUTE
+          OBTUSE = -1,
+          RIGHT,
+          ACUTE
       };
 
 
@@ -98,29 +98,11 @@ enum Box_parameter_space_2
         INTERIOR,
         EXTERIOR
      };
-    
-
-
-#ifdef CGAL_CFG_MATCHING_BUG_5
-
-template < typename T, typename U >
-inline
-T enum_cast_bug(const U& u, const T*)
-{ return static_cast<T>(u); }
-
-template < typename T, typename U >
-inline
-typename Same_uncertainty<T,U>::type enum_cast(const U& u)
-{ return enum_cast_bug(u, (const T*)0); }
-
-#else
 
 template < typename T, typename U >
 inline
 T enum_cast(const U& u)
 { return static_cast<T>(u); }
-
-#endif
 
 } //namespace CGAL
 

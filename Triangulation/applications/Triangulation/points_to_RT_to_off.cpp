@@ -25,7 +25,7 @@ void test(int dim)
   RT rt(dim_from_file);
   rt.insert(wpoints.begin(), wpoints.end());
   CGAL_assertion(rt.is_valid(true));
-  
+
   // Export
   std::stringstream output_filename;
   output_filename << "data/rt_dim" << dim << ".off";

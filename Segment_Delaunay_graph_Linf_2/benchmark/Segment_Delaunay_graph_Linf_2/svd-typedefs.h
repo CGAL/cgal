@@ -29,9 +29,9 @@ typedef CGAL::Field_with_sqrt_tag EMTag;
 typedef CGAL::Simple_cartesian<CORE::Expr> ERep;
 struct Gt
   : public CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep,
-							  MTag,
-							  ERep,
-							  EMTag>
+                                                          MTag,
+                                                          ERep,
+                                                          EMTag>
 {};
 #else
 struct Gt

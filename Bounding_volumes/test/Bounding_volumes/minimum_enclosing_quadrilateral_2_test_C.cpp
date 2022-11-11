@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
@@ -54,7 +54,7 @@ void compute(ForwardIterator f, ForwardIterator l)
 
 int main()
 {
-  CGAL::set_pretty_mode(cout);
+  CGAL::IO::set_pretty_mode(cout);
 
   // build a random convex 20-gon p
   {
@@ -76,7 +76,7 @@ int main()
 
 
   return 0;
-} 
+}
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

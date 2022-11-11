@@ -106,10 +106,10 @@ public:
                 decompose(ext.a1(),a1_num,a1_den);
                 common_den=common_factor(a0_den,a1_den);
                 typename CGAL::Coercion_traits<NUM,DEN>::Cast cast;
-                a0_num = cast(a0_num) * 
+                a0_num = cast(a0_num) *
                          cast(CGAL::integral_division(a1_den,common_den));
-                a1_num = cast(a1_num) * 
-                         cast(CGAL::integral_division(a0_den,common_den)); 
+                a1_num = cast(a1_num) *
+                         cast(CGAL::integral_division(a0_den,common_den));
                 den = CGAL::integral_division(a0_den,common_den)*a1_den;
                 num = Numerator_type(a0_num,a1_num,ext.root());
             }else{
@@ -147,7 +147,7 @@ template <class COEFF, class ROOT, class ACDE_TAG, class FP_TAG>
 class Sqrt_ext_Ftr_base_1< Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG>, CGAL::Tag_true >
     : public Sqrt_ext_Ftr_base_2<
     Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG>,
-    ::boost::is_same< typename CGAL::Coercion_traits<ROOT,typename CGAL::Fraction_traits<COEFF>::Numerator_type>::Type,
+    ::std::is_same< typename CGAL::Coercion_traits<ROOT,typename CGAL::Fraction_traits<COEFF>::Numerator_type>::Type,
                         typename CGAL::Fraction_traits<COEFF>::Numerator_type>::value >
 {
     //nothing new

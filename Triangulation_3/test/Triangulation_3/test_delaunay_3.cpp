@@ -6,11 +6,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Francois Rebufat
 
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include "test_dependencies.h"
 
@@ -33,7 +33,7 @@ int main()
 {
   typedef CGAL::Delaunay_triangulation_3<EPIC>  Cls;
   typedef CGAL::Delaunay_triangulation_3<EPEC>  Cls_with_epec;
-  
+
   _test_cls_delaunay_3( Cls() );
   _test_cls_delaunay_3( Cls_with_epec() );
 
@@ -51,7 +51,7 @@ int main()
   typedef CGAL::Triangulation_data_structure_3<
     CGAL::Triangulation_vertex_base_3<EPIC>,
     CGAL::Delaunay_triangulation_cell_base_3<EPIC>,
-    CGAL::Parallel_tag >	                            Tds_parallel;
+    CGAL::Parallel_tag >                                    Tds_parallel;
   typedef CGAL::Delaunay_triangulation_3<
     EPIC, Tds_parallel, CGAL::Default, Lock_ds>       Cls_parallel;
   // The following test won't do things in parallel since it doesn't provide

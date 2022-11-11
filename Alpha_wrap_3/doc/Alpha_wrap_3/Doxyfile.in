@@ -1,0 +1,20 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Alpha Wrapping"
+
+# custom options for this package
+EXTRACT_ALL                =  false
+HIDE_UNDOC_MEMBERS         =  true
+HIDE_UNDOC_CLASSES         =  true
+
+HTML_EXTRA_FILES       = ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_bike_lod.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_triangle_soup.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_non_manifold_cases.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_pencil.png \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_steps.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_church_lod.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_sharp_feature.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_steiner.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_alpha_offset_bike.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_double_sided.jpg \ 
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_thingi10k_benchmark.jpg

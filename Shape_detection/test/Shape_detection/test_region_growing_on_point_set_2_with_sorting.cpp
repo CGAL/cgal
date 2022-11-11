@@ -31,15 +31,29 @@ using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
 using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
 using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
-using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Sorting        = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
-using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+using Line_region    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+using Line_sorting   = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
+using Circle_region  = SD::Point_set::Least_squares_circle_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+using Circle_sorting = SD::Point_set::Least_squares_circle_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
 
-int main(int argc, char *argv[]) {
+template <typename Region_type, typename Sorting>
+bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr)
+{
+  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
-  CGAL::set_ascii_mode(in);
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/point_set_2.xyz"));
+  CGAL::IO::set_ascii_mode(in);
+
+  if (!in) {
+    std::cout <<
+    "Error: cannot read the file point_set_2.xyz!" << std::endl;
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
+    << std::endl << std::endl;
+    assert(false);
+    return EXIT_FAILURE;
+  }
 
   Input_range input_range;
   FT a, b, c, d, e, f;
@@ -57,21 +71,21 @@ int main(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, 
+    input_range,
     sphere_radius);
 
   Region_type region_type(
-    input_range, 
+    input_range,
     distance_threshold, angle_threshold, min_region_size);
 
   // Sort indices.
   Sorting sorting(
     input_range, neighbor_query);
   sorting.sort();
-    
+
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    input_range, neighbor_query, region_type, 
+    input_range, neighbor_query, region_type,
     sorting.seed_map());
 
   // Run the algorithm.
@@ -79,11 +93,19 @@ int main(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
 
   region_growing.release_memory();
-  assert(regions.size() >= 62 && regions.size() <= 66);
+  assert(regions.size() >= minr && regions.size() <= maxr);
 
-  const bool cartesian_double_test_success = (regions.size() >= 62 && regions.size() <= 66);
+  const bool cartesian_double_test_success = (regions.size() >= minr && regions.size() <= maxr);
   std::cout << "cartesian_double_test_success: " << cartesian_double_test_success << std::endl;
 
   const bool success = cartesian_double_test_success;
-  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
+  return success;
+}
+
+int main(int argc, char *argv[]) {
+
+  return ((
+    test<Line_region, Line_sorting>(argc, argv, 62, 66) &&
+    test<Circle_region, Circle_sorting>(argc, argv, 196, 200)
+  ) ? EXIT_SUCCESS : EXIT_FAILURE );
 }

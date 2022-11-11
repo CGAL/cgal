@@ -6,20 +6,20 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
-#ifndef CGAL_REGULAR_GRID_2_H_ 
+#ifndef CGAL_REGULAR_GRID_2_H_
 #define CGAL_REGULAR_GRID_2_H_
 
 #include <CGAL/license/Stream_lines_2.h>
 
 
 #include <CGAL/basic.h>
-#include <CGAL/streamlines_assertions.h>
+#include <CGAL/assertions.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <vector>
 
@@ -39,7 +39,7 @@ public:
   typedef typename StreamLinesTraits_2::Point_2 Point_2;
   typedef typename StreamLinesTraits_2::Vector_2 Vector_2;
 protected:
-  boost::shared_ptr< std::vector<FT> > vector_field;
+  std::shared_ptr< std::vector<FT> > vector_field;
   inline int get_index(int i,int j) const;
   int number_of_samples_x;
   int number_of_samples_y;
@@ -56,10 +56,10 @@ public:
 
   inline typename Geom_traits::Iso_rectangle_2 bbox() const;
 
-  std::pair<Vector_2,FT> 
+  std::pair<Vector_2,FT>
   get_field(const Point_2 & p) const
     {
-      CGAL_streamlines_precondition(is_in_domain(p));
+      CGAL_precondition(is_in_domain(p));
       Vector_2 v = get_vector_field(p);
       FT density = get_density_field(p);
       return std::pair<Vector_2, FT>(v,density);
@@ -78,10 +78,10 @@ public:
   inline std::pair<FT, FT> get_size()
     {
       return std::pair<FT,
-	FT>(domain_size_x,
-	    domain_size_y);
+        FT>(domain_size_x,
+            domain_size_y);
     }
-    
+
   inline FT container_value(int i) const
     {
       if (i < 2*number_of_samples_x*number_of_samples_y)
@@ -97,12 +97,12 @@ typename Regular_grid_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
 Regular_grid_2<StreamLinesTraits_2>::bbox() const
 {
   return typename Geom_traits::Iso_rectangle_2(0.0, 0.0,
-					       domain_size_x,
-					       domain_size_y);
+                                               domain_size_x,
+                                               domain_size_y);
 }
 
 template <class StreamLinesTraits_2>
-inline int 
+inline int
 Regular_grid_2<StreamLinesTraits_2>::get_index(int i, int j) const
 {
   return 2*(number_of_samples_x*j + i);
@@ -110,15 +110,15 @@ Regular_grid_2<StreamLinesTraits_2>::get_index(int i, int j) const
 
 template <class StreamLinesTraits_2>
 Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(int m,
-						    int
-						    n,const FT & x,
-						    const FT & y)
+                                                    int
+                                                    n,const FT & x,
+                                                    const FT & y)
 {
   number_of_samples_x = m;
   number_of_samples_y = n;
   domain_size_x = x;
   domain_size_y = y;
-  vector_field = boost::shared_ptr<std::vector<FT> >(new std::vector<FT>(number_of_samples_x*number_of_samples_y* 2));
+  vector_field = std::shared_ptr<std::vector<FT> >(new std::vector<FT>(number_of_samples_x*number_of_samples_y* 2));
 }
 
 
@@ -126,18 +126,18 @@ template <class StreamLinesTraits_2>
 inline typename Regular_grid_2<StreamLinesTraits_2>::Vector_2
 Regular_grid_2<StreamLinesTraits_2>::get_field(int i, int j) const
 {
-  CGAL_streamlines_precondition(is_in_samples(i,j));
+  CGAL_precondition(is_in_samples(i,j));
   int index = get_index(i,j);
   return Vector_2((*vector_field)[index], (*vector_field)[index+1]);
 }
 
 template <class StreamLinesTraits_2>
 inline void
-Regular_grid_2<StreamLinesTraits_2>::set_field(int i, 
-					       int j, const Vector_2
-					       & v)
+Regular_grid_2<StreamLinesTraits_2>::set_field(int i,
+                                               int j, const Vector_2
+                                               & v)
 {
-  CGAL_streamlines_precondition(is_in_samples(i,j));
+  CGAL_precondition(is_in_samples(i,j));
   int index = get_index(i,j);
   (*vector_field)[index++] = v.x();
   (*vector_field)[index] = v.y();
@@ -149,23 +149,23 @@ Regular_grid_2<StreamLinesTraits_2>::is_in_domain(const Point_2 & p)
   const
 {
   return ((p.x()>=0.0) && (p.x()<=domain_size_x) && (p.y()>=0.0) &&
-	  (p.y()<=domain_size_y));
+          (p.y()<=domain_size_y));
 }
 
 template <class StreamLinesTraits_2>
-bool 
+bool
 Regular_grid_2<StreamLinesTraits_2>::is_in_samples(int i,
-						   int j)
+                                                   int j)
   const
 {
   return ((i>=0) && (i<=number_of_samples_x-1) && (j>=0) &&
-	  (j<=number_of_samples_y-1));
+          (j<=number_of_samples_y-1));
 }
 
 template <class StreamLinesTraits_2>
-typename Regular_grid_2<StreamLinesTraits_2>::Vector_2 
+typename Regular_grid_2<StreamLinesTraits_2>::Vector_2
 Regular_grid_2<StreamLinesTraits_2>::get_vector_field(const Point_2 &
-						      p) const
+                                                      p) const
 {
   FT fXv,fYv;
   FT x = (p.x() / domain_size_x) *  (number_of_samples_x-1);
@@ -207,7 +207,7 @@ Regular_grid_2<StreamLinesTraits_2>::get_vector_field(const Point_2 &
 template <class StreamLinesTraits_2>
 typename Regular_grid_2<StreamLinesTraits_2>::FT
 Regular_grid_2<StreamLinesTraits_2>::get_density_field(const Point_2 & ) const
-						       
+
 {
   return 1.0;
 }

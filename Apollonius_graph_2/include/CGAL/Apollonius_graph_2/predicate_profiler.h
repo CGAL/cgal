@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -19,7 +19,7 @@
 
 
 #include <CGAL/Apollonius_graph_2/basic.h>
-#include <CGAL/atomic.h>
+#include <atomic>
 
 #define AG2_PROFILE_PREDICATES
 
@@ -33,7 +33,7 @@ public:
 #ifdef CGAL_NO_ATOMIC
   typedef unsigned long long_;
 #else
-  typedef CGAL::cpp11::atomic<unsigned long> long_;
+  typedef std::atomic<unsigned long> long_;
 #endif
 
   // high level predicates

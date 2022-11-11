@@ -15,16 +15,16 @@
 // File Description :
 //******************************************************************************
 
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include "test_meshing_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <boost/type_traits/is_same.hpp>
-
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 #include <CGAL/disable_warnings.h>
+
+#include <type_traits>
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
@@ -35,7 +35,7 @@ struct Polyhedron_tester : public Tester<K>
     typedef CGAL::Polyhedron_3<Gt> Polyhedron;
     typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
 
-    CGAL_static_assertion((boost::is_same<
+    CGAL_static_assertion((std::is_same<
                             typename Mesh_domain::Surface_patch_index,
                             std::pair<int, int>
                            >::value));
@@ -84,7 +84,7 @@ struct Polyhedron_tester : public Tester<K>
                         CGAL::parameters::no_perturb());
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
-    
+
     // Verify
     double vol = 0.479171765761454;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
@@ -93,13 +93,13 @@ struct Polyhedron_tester : public Tester<K>
     if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
       this->verify(c3t3, domain, criteria, Polyhedral_tag(),
-                   110, 140, 190, 235, 300, 450); 
+                   110, 140, 190, 235, 300, 450);
     }
     else
 #endif //CGAL_LINKED_WITH_TBB
     {
       this->verify(c3t3, domain, criteria, Polyhedral_tag(),
-                   119, 121, 200, 204, 350, 360);  
+                   119, 121, 200, 204, 350, 360);
     }
 
     // test the dump function

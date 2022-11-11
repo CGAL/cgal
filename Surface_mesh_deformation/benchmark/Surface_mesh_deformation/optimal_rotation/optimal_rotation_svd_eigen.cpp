@@ -13,16 +13,23 @@ int main() {
 
   std::ifstream file;
   file.open("SVD_benchmark");
-  if (!file) 
+  if (!file)
   {
     CGAL_TRACE_STREAM << "Error loading file!\n";
     return 0;
   }
 
   int ite = 200000;
+
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+  Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> svd;
+#else
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;
-  Eigen::Matrix3d u, v, cov, r;         
-  Eigen::Vector3d w;   
+#endif
+
+  Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> svd;
+  Eigen::Matrix3d u, v, cov, r;
+  Eigen::Vector3d w;
 
   int matrix_idx = rand()%200;
   for (int i = 0; i < matrix_idx; i++)
@@ -37,14 +44,19 @@ int main() {
   }
 
 
-  CGAL::Timer task_timer; 
+  CGAL::Timer task_timer;
 
   CGAL_TRACE_STREAM << "Start SVD decomposition...";
   task_timer.start();
   for (int i = 0; i < ite; i++)
   {
-    
-    svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+    svd.compute(cov);
+#else
+    svd.compute(cov, Eigen::ComputeFullU | Eigen::ComputeFullV);
+#endif
+
     u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
     r = v*u.transpose();
   }

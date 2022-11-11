@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Fernando Cacciola (fernando.cacciola@geometryfactry.com)
 
@@ -15,7 +15,7 @@
 #include <CGAL/config.h>
 
 #ifndef CGAL_NO_AUTOLINK_IMAGEIO
-#if ( ! defined( CGAL_EXPORTS ) ) && (! defined ( CGAL_ImageIO_EXPORTS ) ) 
+#if ( ! defined( CGAL_EXPORTS ) ) && (! defined ( CGAL_ImageIO_EXPORTS ) )
 
 // If CGAL_EXPORTS is defined it means that we are building the CGAL
 // library as a DLL. The CGAL.dll does not really depend on CGAL_ImageIO,

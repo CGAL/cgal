@@ -76,6 +76,7 @@ public:
   }
 
   ~Scene() {
+    ui->viewer->makeCurrent();
     for(int i=0; i<24; i++)
         buffers[i].destroy();
     for(int i=0; i<12; i++)
@@ -132,7 +133,7 @@ public Q_SLOTS:
   void grab_image() {
     ui->viewer->saveSnapshot();
   }
-  
+
   void toggle_dlocate(bool on) {
     dlocate = on;
     changed();
@@ -252,9 +253,9 @@ private:
 
   QColor color;
   // define material
-   QVector4D	ambient;
-   QVector4D	diffuse;
-   QVector4D	specular;
+   QVector4D        ambient;
+   QVector4D        diffuse;
+   QVector4D        specular;
    GLfloat      shininess ;
       int poly_vertexLocation[3];
       int normalsLocation[3];

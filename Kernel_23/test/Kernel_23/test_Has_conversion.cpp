@@ -10,6 +10,8 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
+#include <cassert>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_kth_root.h>
@@ -17,7 +19,7 @@
 
 #include <CGAL/Has_conversion.h>
 
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
@@ -42,26 +44,26 @@ int main()
   CGAL_USE_TYPE(FSH);
   CGAL_USE_TYPE(EPECK);
 
-  CGAL_assertion((CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_2>::value));
-  CGAL_assertion((CGAL::Has_conversion<SC, SC, SC::Object_2, SC::Object_2>::value));
+  assert((CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_2>::value));
+  assert((CGAL::Has_conversion<SC, SC, SC::Object_2, SC::Object_2>::value));
 
-  CGAL_assertion(!(CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_3>::value));
-  CGAL_assertion(!(CGAL::Has_conversion<SC, SC, SC::Iso_cuboid_3, SC::Circle_2>::value));
+  assert(!(CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_3>::value));
+  assert(!(CGAL::Has_conversion<SC, SC, SC::Iso_cuboid_3, SC::Circle_2>::value));
 
-  CGAL_assertion((CGAL::Has_conversion<SC, FSC, SC::Vector_2, FSC::Vector_2>::value));
-  CGAL_assertion((CGAL::Has_conversion<FSC, SC, FSC::Vector_3, SC::Vector_3>::value));
-  CGAL_assertion((CGAL::Has_conversion<SH, FSH, SH::Vector_3, FSH::Vector_3>::value));
+  assert((CGAL::Has_conversion<SC, FSC, SC::Vector_2, FSC::Vector_2>::value));
+  assert((CGAL::Has_conversion<FSC, SC, FSC::Vector_3, SC::Vector_3>::value));
+  assert((CGAL::Has_conversion<SH, FSH, SH::Vector_3, FSH::Vector_3>::value));
 
-  CGAL_assertion((CGAL::Has_conversion<SC, ASC, SC::Sphere_3, ASC::Sphere_3>::value));
-  CGAL_assertion((CGAL::Has_conversion<SC, EPECK, SC::Triangle_2, EPECK::Triangle_2>::value));
-  CGAL_assertion((CGAL::Has_conversion<EPECK, SC, EPECK::Circle_3, SC::Circle_3>::value));
+  assert((CGAL::Has_conversion<SC, ASC, SC::Sphere_3, ASC::Sphere_3>::value));
+  assert((CGAL::Has_conversion<SC, EPECK, SC::Triangle_2, EPECK::Triangle_2>::value));
+  assert((CGAL::Has_conversion<EPECK, SC, EPECK::Circle_3, SC::Circle_3>::value));
 
-  CGAL_assertion(!(CGAL::Has_conversion<SC, EPECK, SC::Weighted_point_2, EPECK::Weighted_point_3>::value));
-  CGAL_assertion(!(CGAL::Has_conversion<SC, ASC, SC::Point_2, ASC::Weighted_point_2>::value));
+  assert(!(CGAL::Has_conversion<SC, EPECK, SC::Weighted_point_2, EPECK::Weighted_point_3>::value));
+  assert(!(CGAL::Has_conversion<SC, ASC, SC::Point_2, ASC::Weighted_point_2>::value));
 
   // below will produce static assert failures
-//  CGAL_assertion((CGAL::Has_conversion<SC, SH, SC::Point_2, SH::Point_2>::value));
-//  CGAL_assertion((CGAL::Has_conversion<FSH, EPECK, FSH::Point_3, EPECK::Point_2>::value));
+//  assert((CGAL::Has_conversion<SC, SH, SC::Point_2, SH::Point_2>::value));
+//  assert((CGAL::Has_conversion<FSH, EPECK, FSH::Point_3, EPECK::Point_2>::value));
 
 
 }

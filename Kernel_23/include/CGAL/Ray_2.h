@@ -1,16 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -18,13 +18,13 @@
 #define CGAL_RAY_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -42,7 +42,7 @@ class Ray_2 : public R_::Kernel_base::Ray_2
   typedef typename R_::Kernel_base::Ray_2    RRay_2;
 
   typedef Ray_2                              Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Ray_2>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Ray_2>::value));
 
 public:
 
@@ -68,6 +68,9 @@ public:
   Ray_2(const RRay_2& r)
     : RRay_2(r) {}
 
+  Ray_2(RRay_2&& r)
+    : RRay_2(std::move(r)) {}
+
   Ray_2(const Point_2 &sp, const Point_2 &secondp)
     : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, secondp)) {}
 
@@ -81,13 +84,13 @@ public:
     : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, l)) {}
 
 
-  typename cpp11::result_of<typename R_::Construct_source_2( Ray_2)>::type
+  decltype(auto)
   source() const
   {
     return R().construct_source_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R_::Construct_second_point_2( Ray_2)>::type
+  decltype(auto)
   second_point() const
   {
     return R().construct_second_point_2_object()(*this);
@@ -108,7 +111,7 @@ public:
              construct_scaled_vector(construct_vector(source(), second_point()), i));
   }
 
-  typename cpp11::result_of<typename R_::Construct_source_2( Ray_2 )>::type
+  decltype(auto)
   start() const
   {
     return source();
@@ -186,7 +189,7 @@ public:
     return !(*this == r);
   }
 
-  Ray_2 
+  Ray_2
   transform(const Aff_transformation_2 &t) const
   {
     return Ray_2(t.transform(source()), t.transform(second_point()));
@@ -197,9 +200,9 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Ray_2<R>& r, const Cartesian_tag&) 
+insert(std::ostream& os, const Ray_2<R>& r, const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << r.source() << ' ' << r.second_point();
     case IO::BINARY :
@@ -213,7 +216,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Ray_2<R>& r, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << r.source() << ' ' << r.second_point();
@@ -234,7 +237,7 @@ operator<<(std::ostream& os, const Ray_2<R>& r)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Ray_2<R>& r, const Cartesian_tag&) 
+extract(std::istream& is, Ray_2<R>& r, const Cartesian_tag&)
 {
     typename R::Point_2 p, q;
     is >> p >> q;
@@ -246,7 +249,7 @@ extract(std::istream& is, Ray_2<R>& r, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Ray_2<R>& r, const Homogeneous_tag&) 
+extract(std::istream& is, Ray_2<R>& r, const Homogeneous_tag&)
 {
   typename R::Point_2 p, q;
   is >> p >> q;

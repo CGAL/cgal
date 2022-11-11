@@ -12,9 +12,9 @@ int main()
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
   // Regular T3
-  typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Regular_triangulation_vertex_base_3<K>, 
-    CGAL::Regular_triangulation_cell_base_3<K>, 
+  typedef CGAL::Triangulation_data_structure_3<
+    CGAL::Regular_triangulation_vertex_base_3<K>,
+    CGAL::Regular_triangulation_cell_base_3<K>,
     CGAL::Parallel_tag>                                       Tds;
 
   typedef CGAL::Regular_triangulation_3<K, Tds>               Rt;
@@ -32,7 +32,7 @@ int main()
   V.reserve(NUM_INSERTED_POINTS);
   for (int i = 0; i != NUM_INSERTED_POINTS; ++i)
     V.push_back(Weighted_point(*rnd++));
-  
+
   // Construct the locking data-structure, using the bounding-box of the points
   Rt::Lock_data_structure locking_ds(
     CGAL::Bbox_3(-1., -1., -1., 1., 1., 1.), 50);
@@ -50,7 +50,7 @@ int main()
     vertices_to_remove.push_back(vit++);
   // Parallel remove
   rtr.remove(vertices_to_remove.begin(), vertices_to_remove.end());
-  
+
   assert(rtr.is_valid());
 
 #endif //CGAL_LINKED_WITH_TBB

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -47,7 +47,7 @@ class Connected_components
  private:
   struct Halfedge_handle_less {
     bool operator()(const Halfedge_handle& e1,
-		    const Halfedge_handle& e2) const {
+                    const Halfedge_handle& e2) const {
       typename Halfedge::Delaunay_edge de1 = e1->dual();
       typename Halfedge::Delaunay_edge de2 = e2->dual();
 
@@ -66,13 +66,13 @@ class Connected_components
   }
 
   bool is_unmarked(const Halfedge_handle& e,
-		   const Halfedge_handle_map& e_map) const
+                   const Halfedge_handle_map& e_map) const
   {
     return e_map.find(e) == e_map.end();
   }
 
   void dfs(const Voronoi_diagram_2& vd, const Halfedge_handle& e,
-	   Halfedge_handle_map& e_map) const
+           Halfedge_handle_map& e_map) const
   {
     CGAL_precondition( !vd.dual().is_infinite(e->dual()) );
 
@@ -80,14 +80,14 @@ class Connected_components
     mark(e, e_map);
 
     if ( e->has_source() ) {
-      HAVC ec =	vd.incident_halfedges(e->source());
+      HAVC ec =        vd.incident_halfedges(e->source());
       HAVC ec_start = ec;
 
       do {
-	if ( e != ec && e_opp != ec && is_unmarked(ec, e_map) ) {
-	  dfs(vd, ec, e_map);
-	}
-	ec++;
+        if ( e != ec && e_opp != ec && is_unmarked(ec, e_map) ) {
+          dfs(vd, ec, e_map);
+        }
+        ec++;
       } while (ec != ec_start);
     }
 
@@ -96,10 +96,10 @@ class Connected_components
       HAVC ec_start = ec;
 
       do {
-	if ( e != ec && e_opp != ec && is_unmarked(ec, e_map) ) {
-	  dfs(vd, ec, e_map);
-	}
-	ec++;
+        if ( e != ec && e_opp != ec && is_unmarked(ec, e_map) ) {
+          dfs(vd, ec, e_map);
+        }
+        ec++;
       } while (ec != ec_start);
     }
   }
@@ -111,10 +111,10 @@ class Connected_components
 
     size_type n_components = 0;
     for(Halfedge_iterator eit = vd.halfedges_begin();
-	eit != vd.halfedges_end(); ++eit) {
+        eit != vd.halfedges_end(); ++eit) {
       if ( is_unmarked(eit, e_map) ) {
-	n_components++;
-	dfs(vd, eit, e_map);
+        n_components++;
+        dfs(vd, eit, e_map);
       }
     }
     return n_components;

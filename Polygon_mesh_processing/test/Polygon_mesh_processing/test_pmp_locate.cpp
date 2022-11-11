@@ -223,7 +223,7 @@ void test_constructions(const G& g,
   // ---------------------------------------------------------------------------
   // just to check the API
   PMP::construct_point(loc, g);
-  PMP::construct_point(loc, g, CGAL::parameters::all_default());
+  PMP::construct_point(loc, g, CGAL::parameters::default_values());
 }
 
 template<typename K, typename G>
@@ -605,7 +605,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
 
     typedef typename K::FT                                                     FT;
     typedef typename K::Ray_3                                                  Ray_3;
-    
+
     typedef typename boost::graph_traits<G>::vertex_descriptor                 vertex_descriptor;
     typedef typename boost::graph_traits<G>::halfedge_descriptor               halfedge_descriptor;
     typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;
@@ -620,7 +620,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     typedef CGAL::AABB_face_graph_triangle_primitive<G, VPM>                   AABB_face_graph_primitive;
     typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
-    CGAL_assertion_code(typedef typename K::Point_3                            Point_3;)
+    typedef typename K::Point_3                            Point_3;
     CGAL_static_assertion((std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value));
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_a;
@@ -707,7 +707,7 @@ void test_locate(const G& g, CGAL::Random& rnd)
 }
 
 template<typename K>
-void test_2D_triangulation(const char* fname, CGAL::Random& rnd)
+void test_2D_triangulation(const std::string fname, CGAL::Random& rnd)
 {
   typedef CGAL::Regular_triangulation_2<K>                    RT;
 
@@ -748,7 +748,7 @@ void test_2D_triangulation(const char* fname, CGAL::Random& rnd)
 }
 
 template<typename K>
-void test_2D_surface_mesh(const char* fname, CGAL::Random& rnd)
+void test_2D_surface_mesh(const std::string fname, CGAL::Random& rnd)
 {
   typedef typename K::Point_2                                 Point;
   typedef CGAL::Surface_mesh<Point>                           Mesh;
@@ -770,7 +770,7 @@ void test_2D_surface_mesh(const char* fname, CGAL::Random& rnd)
 }
 
 template<typename K>
-void test_surface_mesh_3D(const char* fname, CGAL::Random& rnd)
+void test_surface_mesh_3D(const std::string fname, CGAL::Random& rnd)
 {
   typedef typename K::Point_3                                 Point;
   typedef CGAL::Surface_mesh<Point>                           Mesh;
@@ -793,7 +793,7 @@ void test_surface_mesh_3D(const char* fname, CGAL::Random& rnd)
 }
 
 template<typename K>
-void test_surface_mesh_projection(const char* fname, CGAL::Random& rnd)
+void test_surface_mesh_projection(const std::string fname, CGAL::Random& rnd)
 {
   typedef typename K::Point_3                                       Point;
   typedef CGAL::Surface_mesh<Point>                                 Mesh;
@@ -825,7 +825,7 @@ void test_surface_mesh_projection(const char* fname, CGAL::Random& rnd)
 }
 
 template<typename K>
-void test_polyhedron(const char* fname, CGAL::Random& rnd)
+void test_polyhedron(const std::string fname, CGAL::Random& rnd)
 {
   typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
@@ -848,7 +848,7 @@ void test(CGAL::Random& rnd)
 {
   test_2D_triangulation<K>("data/stair.xy", rnd);
 //  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd); // temporarily disabled, until Surface_mesh's IO is "fixed"
-  test_surface_mesh_3D<K>("data/mech-holes-shark.off", rnd);
+  test_surface_mesh_3D<K>(CGAL::data_file_path("meshes/mech-holes-shark.off"), rnd);
   test_surface_mesh_projection<K>("data/unit-grid.off", rnd);
   test_polyhedron<K>("data-coref/elephant_split_2.off", rnd);
 }

@@ -9,7 +9,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> GT;
 
 typedef CGAL::Periodic_2_triangulation_vertex_base_2<GT>    Vb;
-typedef CGAL::Triangulation_vertex_base_with_info_2<CGAL::Color, GT, Vb> VbInfo;
+typedef CGAL::Triangulation_vertex_base_with_info_2<CGAL::IO::Color, GT, Vb> VbInfo;
 
 typedef CGAL::Periodic_2_triangulation_face_base_2<GT>      Fb;
 
@@ -32,7 +32,7 @@ int main()
   PDT::Vertex_iterator vit;
   for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
     if (T.degree(vit) == 6)
-      vit->info() = CGAL::red();
+      vit->info() = CGAL::IO::red();
 
   return 0;
 }

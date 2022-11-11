@@ -19,7 +19,7 @@ template <class Point>
 bool
 file_input(std::ifstream& is, std::list<Point>& L, int nb=0)
 {
-  CGAL::set_ascii_mode(is);
+  CGAL::IO::set_ascii_mode(is);
   int n;
   is >> n;
   if(nb != 0 && nb <= n) n=nb;
@@ -47,9 +47,9 @@ _test_cls_alpha_shape_3()
 
   std::list<Point> L;
   bool verbose = false;
-  
+
   // test a bigger alpha_shapes
-  std::ifstream is("./data/P3DT3_alpha_shape_test.pts", std::ios::in);
+  std::ifstream is("data/P3DT3_alpha_shape_test.pts", std::ios::in);
   assert(is);
   file_input(is, L);
 

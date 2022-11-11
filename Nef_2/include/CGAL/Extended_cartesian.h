@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_EXTENDED_CARTESIAN_H
@@ -17,7 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Point_2.h> 
+#include <CGAL/Point_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Nef_polynomial.h>
 
@@ -40,8 +40,8 @@ struct Is_extended_kernel<Extended_cartesian<T> > {
 /*{\Xanpage {Extended_cartesian}{}{An extended geometric kernel model}{K}}*/
 
 template <class pFT>
-class Extended_cartesian : public 
-  CGAL::Simple_cartesian< CGAL::Nef_polynomial<pFT> > { 
+class Extended_cartesian : public
+  CGAL::Simple_cartesian< CGAL::Nef_polynomial<pFT> > {
 public:
 typedef CGAL::Simple_cartesian< CGAL::Nef_polynomial<pFT> > Base;
 typedef Extended_cartesian<pFT> Self;
@@ -77,7 +77,7 @@ typedef typename Standard_kernel::Direction_2 Standard_direction_2;
 typedef typename Standard_kernel::Ray_2       Standard_ray_2;
 /*{\Xtypemember standard rays.}*/
 
-typedef typename Standard_kernel::Aff_transformation_2 
+typedef typename Standard_kernel::Aff_transformation_2
   Standard_aff_transformation_2;
 /*{\Xtypemember standard affine transformations.}*/
 
@@ -101,12 +101,12 @@ typedef typename Base::Line_2       Line_2;
 typedef typename Base::Direction_2  Direction_2;
 /*{\Xtypemember extended directions.}*/
 
-enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
+enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
                   BOTTOMFRAME, STANDARD, TOPFRAME,
                   SECORNER, RIGHTFRAME, NECORNER };
 /*{\Xenum a type descriptor for extended points.}*/
 
-Point_2 epoint(const Standard_FT& m1, const Standard_FT& n1, 
+Point_2 epoint(const Standard_FT& m1, const Standard_FT& n1,
                const Standard_FT& m2, const Standard_FT& n2) const
 { return Point_2(FT(n1,m1),FT(n2,m2)); }
 
@@ -115,40 +115,40 @@ public:
 /*{\Xtext \headerline{Interfacing the affine kernel types}}*/
 
 Point_2 construct_point(const Standard_point_2& p) const
-/*{\Xop creates an extended point |Point_2| and initializes it to the 
+/*{\Xop creates an extended point |Point_2| and initializes it to the
 standard point |p|.}*/
 { return Point_2(p.x(), p.y()); }
 
 Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
 /*{\Xop creates an extended point initialized to the equivalence
-class of all the rays underlying the oriented line |l|. 
+class of all the rays underlying the oriented line |l|.
 |t| returns the type of the new extended point.}*/
-{ 
+{
   t = (Point_type)Line_to_epoint<Standard_kernel>::determine_type(l);
   Point_2 res;
   switch (t) {
     case SWCORNER:   res = epoint(-1, 0, -1, 0); break;
     case NWCORNER:   res = epoint(-1, 0,  1, 0); break;
-    case SECORNER:   res = epoint( 1, 0, -1, 0); break; 
-    case NECORNER:   res = epoint( 1, 0,  1, 0); break;  
-    case LEFTFRAME:  
-      res = epoint(-1, 0,  l.a()/l.b(), -l.c()/l.b()); break; 
-    case RIGHTFRAME: 
-      res = epoint( 1, 0, -l.a()/l.b(), -l.c()/l.b()); break; 
-    case BOTTOMFRAME: 
-      res = epoint( l.b()/l.a(), -l.c()/l.a(), -1, 0); break; 
-    case TOPFRAME: 
-      res = epoint(-l.b()/l.a(), -l.c()/l.a(),  1, 0); break; 
+    case SECORNER:   res = epoint( 1, 0, -1, 0); break;
+    case NECORNER:   res = epoint( 1, 0,  1, 0); break;
+    case LEFTFRAME:
+      res = epoint(-1, 0,  l.a()/l.b(), -l.c()/l.b()); break;
+    case RIGHTFRAME:
+      res = epoint( 1, 0, -l.a()/l.b(), -l.c()/l.b()); break;
+    case BOTTOMFRAME:
+      res = epoint( l.b()/l.a(), -l.c()/l.a(), -1, 0); break;
+    case TOPFRAME:
+      res = epoint(-l.b()/l.a(), -l.c()/l.a(),  1, 0); break;
     default: CGAL_error_msg("EPoint type not correct!");
   }
   return res;
 }
 
-Point_2 construct_point(const Standard_point_2& p1, 
-                        const Standard_point_2& p2, 
+Point_2 construct_point(const Standard_point_2& p1,
+                        const Standard_point_2& p2,
                         Point_type& t) const
 /*{\Xop creates an extended point and initializes it to the equivalence
-class of all the rays underlying the oriented line |l(p1,p2)|. 
+class of all the rays underlying the oriented line |l(p1,p2)|.
 |t| returns the type of the new extended point.}*/
 { return construct_point(Standard_line_2(p1,p2),t); }
 
@@ -157,13 +157,13 @@ Point_2 construct_point(const Standard_line_2& l) const
 class of all the rays underlying the oriented line |l|. }*/
 { Point_type dummy; return construct_point(l,dummy); }
 
-Point_2 construct_point(const Standard_point_2& p1, 
+Point_2 construct_point(const Standard_point_2& p1,
                         const Standard_point_2& p2) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the oriented line |l(p1,p2)|.}*/
 { return construct_point(Standard_line_2(p1,p2)); }
 
-Point_2 construct_point(const Standard_point_2& p, 
+Point_2 construct_point(const Standard_point_2& p,
                         const Standard_direction_2& d) const
 /*{\Xop creates an extended point and initializes it to the equivalence
 class of all the rays underlying the ray starting in |p| in direction |d|.}*/
@@ -178,7 +178,7 @@ Point_type type(const Point_2& p) const
 /*{\Xop determines the type of |p| and returns it.}*/
 {
   CGAL_assertion(p.x().degree()>=0 && p.y().degree()>=0 );
-  if ( p.x().degree() == 0 && p.y().degree() == 0) 
+  if ( p.x().degree() == 0 && p.y().degree() == 0)
     return STANDARD;
   // now we are on the square frame
   FT rx = p.x();
@@ -195,7 +195,7 @@ Point_type type(const Point_2& p) const
     if (sy > 0) return TOPFRAME;
     else        return BOTTOMFRAME;
   }
-  // now (rx == ry) 
+  // now (rx == ry)
   if (sx==sy) {
     if (sx < 0) return SWCORNER;
     else        return NECORNER;
@@ -218,7 +218,7 @@ Standard_point_2 standard_point(const Point_2& p) const
 }
 
 Standard_line_2 standard_line(const Point_2& p) const
-/*{\Xop returns the oriented line representing the 
+/*{\Xop returns the oriented line representing the
 bundle of rays defining |p|.
 \precond |!\Mvar.is_standard(p)|.}*/
 { CGAL_assertion( type(p)!=STANDARD );
@@ -232,7 +232,7 @@ bundle of rays defining |p|.
 
 Standard_ray_2 standard_ray(const Point_2& p) const
 /*{\Xop a ray defining |p|. \precond |!\Mvar.is_standard(p)|.}*/
-{ 
+{
   CGAL_assertion( type(p)!=STANDARD );
   FT x = p.x(), y = p.y();
   Standard_FT dx = x.degree()>0 ? x[1] : Standard_FT(0);
@@ -298,7 +298,7 @@ Line_2 construct_line(const Point_2& p1, const Point_2& p2) const
     CGAL_NEF_TRACEN("eline("<<p1<<p2<<")="<<l);
   RT a=l.a(), b=l.b(), c=l.c();
   l =  Line_2(a,b,c);
-  return l; 
+  return l;
 }
 
 
@@ -307,23 +307,23 @@ int orientation(const Segment_2& s, const Point_2& p) const
 through |s|.}*/
 { typename Base::Orientation_2 _orientation =
     this->orientation_2_object();
-  return static_cast<int> ( _orientation(source(s),target(s),p) ); 
+  return static_cast<int> ( _orientation(source(s),target(s),p) );
 }
 
-int orientation(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
+int orientation(const Point_2& p1, const Point_2& p2, const Point_2& p3)
 const
 /*{\Xop returns the orientation of |p2| with respect to the line
 through |p1p2|.}*/
 { typename Base::Orientation_2 _orientation =
     this->orientation_2_object();
-  return static_cast<int> ( _orientation(p1,p2,p3) ); 
+  return static_cast<int> ( _orientation(p1,p2,p3) );
 }
 
-bool left_turn(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
+bool left_turn(const Point_2& p1, const Point_2& p2, const Point_2& p3)
 const
 /*{\Xop return true iff the |p3| is left of the line through |p1p2|.}*/
 { return orientation(p1,p2,p3) > 0; }
- 
+
 bool is_degenerate(const Segment_2& s) const
 /*{\Xop return true iff |s| is degenerate.}*/
 { typename Base::Is_degenerate_2 _is_degenerate =
@@ -354,13 +354,13 @@ int compare_y(const Point_2& p1, const Point_2& p2) const
 
 Point_2 intersection(
   const Segment_2& s1, const Segment_2& s2) const
-/*{\Xop returns the point of intersection of the lines supported by |s1| 
+/*{\Xop returns the point of intersection of the lines supported by |s1|
 and |s2|.}*/
 { typename Base::Intersect_2 _intersect =
     this->intersect_2_object();
   typename Base::Construct_line_2 _line =
     this->construct_line_2_object();
-  Point_2 p; 
+  Point_2 p;
   Line_2 l1 = _line(s1);
   Line_2 l2 = _line(s2);
 
@@ -378,11 +378,11 @@ Direction_2 construct_direction(
     this->construct_direction_2_object();
   return _direction(construct_line(p1,p2)); }
 
-bool strictly_ordered_ccw(const Direction_2& d1, 
+bool strictly_ordered_ccw(const Direction_2& d1,
   const Direction_2& d2, const Direction_2& d3) const
 /*{\Xop returns |true| iff |d2| is in the interior of the
 counterclockwise angular sector between |d1| and |d3|.}*/
-{ 
+{
   if ( d1 < d2 )  return ( d2 < d3 )||( d3 <= d1 );
   if ( d1 > d2 )  return ( d2 < d3 )&&( d3 <= d1 );
   return false;
@@ -404,7 +404,7 @@ segment |p1p3|.}*/
 }
 
 bool first_pair_closer_than_second(
-  const Point_2& p1, const Point_2& p2, 
+  const Point_2& p1, const Point_2& p2,
   const Point_2& p3, const Point_2& p4) const
 { return ( squared_distance(p1,p2) < squared_distance(p3,p4) ); }
 

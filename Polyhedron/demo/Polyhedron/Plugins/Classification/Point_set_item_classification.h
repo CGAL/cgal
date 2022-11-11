@@ -24,12 +24,12 @@ class Point_set_item_classification : public Item_classification_base
  public:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
-  
+
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
 
   typedef CGAL::Classification::Point_set_feature_generator<Kernel, Point_set, Point_map>               Generator;
-  
+
   struct Cluster
   {
     std::vector<Point_set::Index> inliers;
@@ -40,13 +40,13 @@ class Point_set_item_classification : public Item_classification_base
     std::size_t size() const { return inliers.size(); }
     const Point_set::Index& operator[] (std::size_t i) const { return inliers[i]; }
   };
-  
+
   struct Cluster_neighborhood
   {
     Point_set* point_set;
     Point_set::Property_map<int> cluster_id;
     std::vector<Cluster>* clusters;
-    
+
     Cluster_neighborhood (Point_set* point_set,
                           std::vector<Cluster>& clusters)
       : point_set (point_set)
@@ -54,7 +54,7 @@ class Point_set_item_classification : public Item_classification_base
     {
       cluster_id = point_set->property_map<int>("shape").first;
     }
-    
+
     template <typename OutputIterator>
     OutputIterator operator() (const Point_set::Index& idx,
                                OutputIterator output) const
@@ -71,14 +71,14 @@ class Point_set_item_classification : public Item_classification_base
       return output;
     }
   };
-  
+
  public:
-  
+
   Point_set_item_classification(Scene_points_with_normal_item* points);
   ~Point_set_item_classification();
 
   CGAL::Three::Scene_item* item() { return m_points; }
-  void erase_item() { m_points = NULL; }
+  void erase_item() { m_points = nullptr; }
 
   CGAL::Bbox_3 bbox()
   {
@@ -101,7 +101,7 @@ class Point_set_item_classification : public Item_classification_base
     double dx = bb.xmax() - bb.xmin();
     double dy = bb.ymax() - bb.ymin();
     double dz = bb.zmax() - bb.zmin();
-    
+
     dx *= 10.;
     dy *= 10.;
     dz *= 10.;
@@ -118,11 +118,11 @@ class Point_set_item_classification : public Item_classification_base
 
     for (std::size_t i = 0; i < m_features.size(); ++ i)
     {
-      float vmin = std::numeric_limits<float>::max();
-      float vmax = -std::numeric_limits<float>::max();
+      float vmin = (std::numeric_limits<float>::max)();
+      float vmax = -(std::numeric_limits<float>::max)();
       float vmean = 0.f;
       std::size_t nb = 0;
-      
+
       for (Point_set::const_iterator it = m_points->point_set()->begin_or_selection_begin();
            it != m_points->point_set()->end(); ++ it)
       {
@@ -138,9 +138,9 @@ class Point_set_item_classification : public Item_classification_base
 
     return oss.str();
   }
-  
+
   void add_remaining_point_set_properties_as_features();
-  
+
   void select_random_region();
 
   template <typename Type>
@@ -160,7 +160,7 @@ class Point_set_item_classification : public Item_classification_base
 
     return okay;
   }
-  
+
   void add_selection_to_training_set (std::size_t label)
   {
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
@@ -216,15 +216,16 @@ class Point_set_item_classification : public Item_classification_base
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
-  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
+  void change_color (int index, float* vmin = nullptr, float* vmax = nullptr);
   CGAL::Three::Scene_item* generate_one_item (const char* name,
                                               int label) const
   {
     Scene_points_with_normal_item* points_item
       = new Scene_points_with_normal_item;
-    
+
     points_item->setName (QString("%1 (%2)").arg(name).arg(m_labels[label]->name().c_str()));
-    points_item->setColor (m_label_colors[label]);
+    points_item->setColor (label_qcolor (m_labels[label]));
+
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
@@ -238,12 +239,12 @@ class Point_set_item_classification : public Item_classification_base
                                    const char* name) const
   {
     std::vector<Scene_points_with_normal_item*> points_item
-      (m_labels.size(), NULL);
+      (m_labels.size(), nullptr);
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       {
         points_item[i] = new Scene_points_with_normal_item;
         points_item[i]->setName (QString("%1 (%2)").arg(name).arg(m_labels[i]->name().c_str()));
-        points_item[i]->setColor (m_label_colors[i]);
+        points_item[i]->setColor (label_qcolor (m_labels[i]));
         items.push_back (points_item[i]);
       }
 
@@ -255,7 +256,7 @@ class Point_set_item_classification : public Item_classification_base
           points_item[c]->point_set()->insert (m_points->point_set()->point(*it));
       }
   }
-  
+
   QColor add_new_label (const char* name)
   {
     QColor out = Item_classification_base::add_new_label (name);
@@ -274,7 +275,7 @@ class Point_set_item_classification : public Item_classification_base
         m_training[*it] = -1;
       else if (m_training[*it] > int(position))
         m_training[*it] --;
-      
+
       if (m_classif[*it] == int(position))
         m_classif[*it] = -1;
       else if (m_classif[*it] > int(position))
@@ -282,7 +283,7 @@ class Point_set_item_classification : public Item_classification_base
     }
     update_comments_of_point_set_item();
   }
-  
+
   int real_index_color() const;
   void reset_indices();
   void backup_existing_colors_and_add_new();
@@ -293,10 +294,10 @@ class Point_set_item_classification : public Item_classification_base
   void update_comments_of_point_set_item()
   {
     std::string& comments = m_points->comments();
-    
+
     // Remove previously registered labels from comments
     std::string new_comment;
-      
+
     std::istringstream stream (comments);
     std::string line;
     while (getline(stream, line))
@@ -317,7 +318,7 @@ class Point_set_item_classification : public Item_classification_base
       comments += oss.str();
     }
   }
-  
+
   template <typename Classifier>
   bool run (int method, const Classifier& classifier,
             std::size_t subdivisions, double smoothing)
@@ -328,7 +329,7 @@ class Point_set_item_classification : public Item_classification_base
     m_label_probabilities.resize (m_labels.size());
     for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
       m_label_probabilities[i].resize (m_points->point_set()->size(), -1);
-    
+
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, classifier,
@@ -366,14 +367,14 @@ class Point_set_item_classification : public Item_classification_base
         m_classif[*it] = indices[*it];
         ground_truth[*it] = m_training[*it];
       }
-  
+
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
 
     std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-    
+
     CGAL::Classification::Evaluation eval (m_labels, ground_truth, indices);
-  
+
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       {
         std::cerr << " * " << m_labels[i]->name() << ": "
@@ -398,18 +399,18 @@ class Point_set_item_classification : public Item_classification_base
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;
-  Point_set::Property_map<CGAL::Color> m_color;
+  Point_set::Property_map<CGAL::IO::Color> m_color;
   std::vector<std::vector<float> > m_label_probabilities;
 
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;
 
   Generator* m_generator;
-  
+
   int m_index_color;
 
   bool m_input_is_las;
-  
+
 }; // end class Point_set_item_classification
 
 

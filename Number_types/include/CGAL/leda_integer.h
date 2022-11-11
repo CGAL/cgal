@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -62,39 +62,39 @@ template <> class Algebraic_structure_traits< leda_integer >
 
     // Unfortunately the behaviour of leda has changed here several times
     // The following Div_mod is invariant under these changes
-    // However, the Div and Mod defined below might be more efficient 
+    // However, the Div and Mod defined below might be more efficient
     // TODO: recover Div Mod implementation for all leda versions
     class Div_mod {
-    public: 
+    public:
         typedef Type first_argument_type;
-        typedef Type second_argument_type; 
-        typedef Type& third_argument_type; 
-        typedef Type& fourth_argument_type; 
+        typedef Type second_argument_type;
+        typedef Type& third_argument_type;
+        typedef Type& fourth_argument_type;
         typedef void result_type;
-        
+
         void operator()(const Type& x, const Type& y, Type& q, Type& r) const {
-            
-            q = x / y;             
+
+            q = x / y;
             r = x - q*y;
-            CGAL_postcondition(x == y*q + r);  
-            
-            if (r == 0) return;   
-             
-            // round q towards zero 
+            CGAL_postcondition(x == y*q + r);
+
+            if (r == 0) return;
+
+            // round q towards zero
             if ( r.sign() != x.sign() ){
                 q -= x.sign();
                 r -= x.sign()*y;
             }
 
-            CGAL_postcondition(x == y*q + r);            
+            CGAL_postcondition(x == y*q + r);
             CGAL_postcondition(r.sign() == x.sign());
-        }  
+        }
     };
     // Div defined via base using Div_mod
     // Mod defined via base using Div_mod
 
-    // This code results in an inconsisten div/mod for some leda versions 
-    // TODO: reactivate this code 
+    // This code results in an inconsisten div/mod for some leda versions
+    // TODO: reactivate this code
 
 //     typedef INTERN_AST::Div_per_operator< Type > Div;
 //     class Mod
@@ -120,7 +120,7 @@ template <> class Algebraic_structure_traits< leda_integer >
 template <> class Real_embeddable_traits< leda_integer >
   : public INTERN_RET::Real_embeddable_traits_base< leda_integer , CGAL::Tag_true > {
   public:
-  
+
     class Abs
       : public CGAL::cpp98::unary_function< Type, Type > {
       public:
@@ -161,10 +161,10 @@ template <> class Real_embeddable_traits< leda_integer >
       public:
       std::pair<double, double> operator()( const Type& x ) const {
         leda::bigfloat h(x);
-	double abs_err = 0;
-	double  low =h.to_double(abs_err, leda::TO_N_INF);
-	double high =h.to_double(abs_err, leda::TO_P_INF);
-	return std::make_pair(low,high);
+        double abs_err = 0;
+        double  low =h.to_double(abs_err, leda::TO_N_INF);
+        double high =h.to_double(abs_err, leda::TO_P_INF);
+        return std::make_pair(low,high);
       }
     };
 };
@@ -186,7 +186,7 @@ class Modular_traits< ::leda::integer > {
         NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }
-    };    
+    };
 };
 
 //
@@ -222,7 +222,7 @@ struct Split_double<leda_integer>
   }
 };
 
-// Benchmark_rep specialization 
+// Benchmark_rep specialization
 template<>
 class Benchmark_rep< leda_integer > {
     const leda_integer& t;
@@ -230,11 +230,11 @@ public:
     //! initialize with a const reference to \a t.
     Benchmark_rep( const leda_integer& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const { 
+    std::ostream& operator()( std::ostream& out) const {
             out << t;
             return out;
     }
-    
+
     static std::string get_benchmark_name() {
         return "Integer";
     }

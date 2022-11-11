@@ -65,7 +65,7 @@ class Node_2
 public:
 
   Node_2()
-  : p(NULL), rnd(CGAL::get_default_random().get_int(0, 100)) {}
+  : p(nullptr), rnd(CGAL::get_default_random().get_int(0, 100)) {}
 
   bool operator==(const Node_2 &n) const { return rnd == n.rnd; }
   bool operator!=(const Node_2 &n) const { return rnd != n.rnd; }
@@ -238,7 +238,7 @@ void test(const Cont &)
   c11.reserve(v1.size());
   for(typename Vect::const_iterator it = v1.begin(); it != v1.end(); ++it)
     c11.insert(*it);
-  
+
   assert(c11.size() == v1.size());
   assert(c10 == c11);
 

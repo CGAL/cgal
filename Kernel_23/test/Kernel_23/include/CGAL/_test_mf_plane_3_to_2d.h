@@ -1,24 +1,22 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_MF_PLANE_3_TO_2D_H
 #define CGAL__TEST_MF_PLANE_3_TO_2D_H
-
-#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -31,7 +29,7 @@ _test_mf_plane_3_to_2d(const R& )
  typedef CGAL::Point_3< R>   Point_3;
  typedef CGAL::Point_2< R>   Point_2;
 
- const bool nonexact = boost::is_same<RT, double>::value;
+ const bool nonexact = std::is_same<RT, double>::value;
 
  RT  n0 =  0;
  RT  n1 =  7;

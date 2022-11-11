@@ -4,10 +4,10 @@
 //
 // Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //           Sylvain Pion
-// 
+//
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
 
 // Test program for the Root_of_2 class (not other models of the concept yet).
 
@@ -90,7 +90,7 @@ struct bracket {
   template < typename T >
   RT operator()(const T& R, int i) const { return bracket<typename RT::ET>().operator()(R.exact(),i); }
   template <class FT,class Tag1,class Tag2>
-  RT operator()(const CGAL::Sqrt_extension<FT,FT,Tag1,Tag2>& R, int i) const { 
+  RT operator()(const CGAL::Sqrt_extension<FT,FT,Tag1,Tag2>& R, int i) const {
     typedef CGAL::Rational_traits< FT > Rational;
     assert((i>=0) & (i<3));
     Rational r;
@@ -136,7 +136,7 @@ CGAL::Sqrt_extension<T,T,Tag1,Tag2> create_root_helper(RT a, RT b, CGAL::Sqrt_ex
 template < class Root, class RT >
 Root create_root(RT a, RT b)
 {
-   return create_root_helper(a, b, (Root*) 0);
+   return create_root_helper(a, b, (Root*) nullptr);
 }
 
 // Generate random Root_of_2 of degree 1
@@ -184,9 +184,9 @@ test_compare(const Root &r1, const Root &r2)
   std::cout << " [approx = " << to_double(r1) << " ]\n" << " r2 = ";
   print(std::cout, r2);
   std::cout << " [approx = " << to_double(r2) << " ]\n"
-	    << " comparison gives : " << compare(r1, r2) << " for exact, but "
-	    << compare(to_double(r1), to_double(r2))
-	    << " for double approximation" << std::endl;
+            << " comparison gives : " << compare(r1, r2) << " for exact, but "
+            << compare(to_double(r1), to_double(r2))
+            << " for double approximation" << std::endl;
   return false;
 }
 
@@ -196,7 +196,7 @@ test_to_interval(const Root &r1)
 {
   std::pair<double, double> the_interval = CGAL_NTS to_interval(r1);
   if(!((to_double(r1) >= the_interval.first) && (to_double(r1) <= the_interval.second))) {
-    std::cout << bracket<RT>()(r1,2) << " " << bracket<RT>()(r1,1) << " " << bracket<RT>()(r1,0) << " " << is_smaller_helper(r1) << std::endl; 
+    std::cout << bracket<RT>()(r1,2) << " " << bracket<RT>()(r1,1) << " " << bracket<RT>()(r1,0) << " " << is_smaller_helper(r1) << std::endl;
     std::cout << std::setprecision (18) << to_double(r1) << std::endl;
     std::cout << "[" << std::setprecision (18) << the_interval.first << "," << std::setprecision (18) << the_interval.second << "]";
   }
@@ -210,7 +210,7 @@ template < typename Root,typename RT,typename FT >
 bool
 test_root_of_g()
 {
-  CGAL::test_real_embeddable<Root>();  
+  CGAL::test_real_embeddable<Root>();
 
   std::cout << "  Testing zeros" << std::endl;
   Root zero1=CGAL::make_root_of_2((RT) 1,(RT)0,(RT)0, true);
@@ -268,9 +268,9 @@ test_root_of_g()
   Root mone2 = Root(-1);
   Root one3  = create_root<Root>((RT) 1,(RT) 1);
   Root mone3 = create_root<Root>(-1, 1);
-  
+
   if (is_RO2_class(one1)) assert(conjugate(one1) == mone1);
-    
+
   //It is not true that those must hold
   //assert(one2.conjugate() == mone2);
   //assert(one3.conjugate() == mone3);
@@ -566,9 +566,9 @@ test_root_of(){
   return test_root_of_g<Root,RT,FT>();
 }
 
-// ALL THOSE TESTS ARE BASED ON COMPARING THE DOUBLE RESULT 
+// ALL THOSE TESTS ARE BASED ON COMPARING THE DOUBLE RESULT
 // WITH THE EXACT RESULT
-// THAT IS NOT NECESSARILY CORRECT 
+// THAT IS NOT NECESSARILY CORRECT
 
 int main(int argc, char **argv) {
 
@@ -582,7 +582,7 @@ int main(int argc, char **argv) {
 
   std::cout << "Testing Sqrt_extension with Quotient<MP_Float>" << std::endl;
   result = result && test_root_of<CGAL::Sqrt_extension<CGAL::Quotient<CGAL::MP_Float>,CGAL::Quotient<CGAL::MP_Float>,CGAL::Tag_true,CGAL::Tag_true> >();
-  
+
   std::cout << "Testing Lazy_exact_nt<MP_Float>'s RootOf_2 " << std::endl;
   result = result &&
       test_root_of_g<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::MP_Float> >
@@ -591,11 +591,11 @@ int main(int argc, char **argv) {
 #ifdef CGAL_USE_GMP
   std::cout << "Testing Sqrt_extension with Gmpq" << std::endl;
   result = result && test_root_of<CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true> >();
-  
+
   std::cout << "Testing Lazy_exact_nt<Gmpz>'s RootOf_2 " << std::endl;
   result = result &&
       test_root_of_g<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::Gmpz> >
-        ::RootOf_2,CGAL::Lazy_exact_nt<CGAL::Gmpz>,CGAL::Lazy_exact_nt<CGAL::Gmpq> >();  
+        ::RootOf_2,CGAL::Lazy_exact_nt<CGAL::Gmpz>,CGAL::Lazy_exact_nt<CGAL::Gmpq> >();
 #endif
 
 #ifdef CGAL_USE_GMPXX

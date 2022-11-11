@@ -33,7 +33,7 @@ public:
     Normal_3& normal() { return m_normal; }
     const Normal_3& normal() const { return m_normal; }
     // id
-    std::size_t& id() {	return m_id; }
+    std::size_t& id() {        return m_id; }
     const std::size_t& id() const { return m_id; }
 };
 
@@ -49,13 +49,13 @@ public:
     {
     }
     // u,v coordinates
-    double& u() {	return m_u; }
-    const double& u() const { return m_u;	}
-    double& v() {	return m_v; }
-    const double& v() const { return m_v;	}
+    double& u() {        return m_u; }
+    const double& u() const { return m_u;        }
+    double& v() {        return m_v; }
+    const double& v() const { return m_v;        }
     // id
-    std::size_t& id() {	return m_id; }
-    const std::size_t& id() const { return m_id;	}
+    std::size_t& id() {        return m_id; }
+    const std::size_t& id() const { return m_id;        }
 
 
 };
@@ -85,13 +85,13 @@ public:
     const Normal_3& normal() const { return m_normal; }
 
     // u,v coordinates
-    double& u() {	return m_u; }
-    const double& u() const { return m_u;	}
-    double& v() {	return m_v; }
-    const double& v() const { return m_v;	}
+    double& u() {        return m_u; }
+    const double& u() const { return m_u;        }
+    double& v() {        return m_v; }
+    const double& v() const { return m_v;        }
     // id
-    std::size_t& id() {	return m_id; }
-    const std::size_t& id() const { return m_id;	}
+    std::size_t& id() {        return m_id; }
+    const std::size_t& id() const { return m_id;        }
 };
 
 struct Textured_items : public CGAL::Polyhedron_items_3
@@ -130,7 +130,7 @@ struct Textured_items : public CGAL::Polyhedron_items_3
     };
 };
 
-// compute facet normal 
+// compute facet normal
 struct Facet_normal // (functor)
 {
     template<class Facet> void operator()(Facet& f)
@@ -153,7 +153,7 @@ struct Facet_normal // (functor)
     }
 };
 
-// compute vertex normal 
+// compute vertex normal
 struct Vertex_normal // (functor)
 {
     template<class Vertex> void operator()(Vertex& v)

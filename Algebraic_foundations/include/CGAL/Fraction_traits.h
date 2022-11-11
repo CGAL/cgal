@@ -17,29 +17,29 @@
 //         they may be wrong now.
 
 /*! \file NiX/Fraction_traits.h
-    \brief Defines class NiX::Fraction_traits. 
- 
+    \brief defines class NiX::Fraction_traits.
+
     Provides dependent types and function objects for all the functions
     beyond operators with specializations of the \c Fraction_traits<NT>
     class for each number type.
 */
 
 #ifndef CGAL_FRACTION_TRAITS_H
-#define CGAL_FRACTION_TRAITS_H 
+#define CGAL_FRACTION_TRAITS_H
 
 #include <CGAL/tags.h>
 
 namespace CGAL {
 
 /*! \ingroup NiX_Fraction_traits_spec
- *  \brief Traits class for accessing numerator and denominator.\n 
- *  It is a model of the concept TypeTraits. 
+ *  \brief Traits class for accessing numerator and denominator.\n
+ *  It is a model of the concept TypeTraits.
  *
- *  This is the default version of NiX::Fraction_traits. 
+ *  This is the default version of NiX::Fraction_traits.
  *  It typedefs NiX::Fraction_traits::Is_decomposable
  *  as Tag_false and all functors to LiS::Null_type.
- *  
- *  \see module NiX_Fraction_traits 
+ *
+ *  \see module NiX_Fraction_traits
  *  \see module NiX_Cofraction_traits
  */
 template <class Type_ >

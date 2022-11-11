@@ -3,18 +3,18 @@
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-A model of this concepts represents numbers that are embeddable on the real 
-axis. The type obeys the algebraic structure and compares two values according 
-to the total order of the real numbers. 
+A model of this concepts represents numbers that are embeddable on the real
+axis. The type obeys the algebraic structure and compares two values according
+to the total order of the real numbers.
 
-Moreover, `CGAL::Real_embeddable_traits< RealEmbeddable >` is a model of 
-`RealEmbeddableTraits` 
+Moreover, `CGAL::Real_embeddable_traits< RealEmbeddable >` is a model of
+`RealEmbeddableTraits`
 
-with: 
+with:
 
-- \link RealEmbeddableTraits::Is_real_embeddable `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_real_embeddable` \endlink set to `Tag_true` 
+- \link RealEmbeddableTraits::Is_real_embeddable `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_real_embeddable` \endlink set to `Tag_true`
 
-and functors : 
+and functors :
 
 - \link RealEmbeddableTraits::Is_zero `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_zero` \endlink which is a model of `RealEmbeddableTraits_::IsZero`
 
@@ -32,14 +32,14 @@ and functors :
 
 - \link RealEmbeddableTraits::To_interval `CGAL::Real_embeddable_traits< RealEmbeddable >::To_interval` \endlink which is a model of `RealEmbeddableTraits_::ToInterval`
 
-Remark: 
+Remark:
 
-If a number type is a model of both `IntegralDomainWithoutDivision` and 
-`RealEmbeddable`, it follows that the ring represented by such a number type 
-is a sub-ring of the real numbers and hence has characteristic zero. 
+If a number type is a model of both `IntegralDomainWithoutDivision` and
+`RealEmbeddable`, it follows that the ring represented by such a number type
+is a sub-ring of the real numbers and hence has characteristic zero.
 
 \cgalRefines `EqualityComparable`
-\cgalRefines `LessThanComparable` 
+\cgalRefines `LessThanComparable`
 
 \sa `RealEmbeddableTraits`
 
@@ -48,47 +48,47 @@ is a sub-ring of the real numbers and hence has characteristic zero.
 class RealEmbeddable {
 public:
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-*/ 
-bool operator==(const RealEmbeddable &a, 
-const RealEmbeddable &b); 
+*/
+bool operator==(const RealEmbeddable &a,
+const RealEmbeddable &b);
 
 
 /*!
 
-*/ 
-bool operator!=(const RealEmbeddable &a, 
-const RealEmbeddable &b); 
+*/
+bool operator!=(const RealEmbeddable &a,
+const RealEmbeddable &b);
 
 /*!
 
-*/ 
-bool operator< (const RealEmbeddable &a, 
-const RealEmbeddable &b); 
+*/
+bool operator< (const RealEmbeddable &a,
+const RealEmbeddable &b);
 
 /*!
 
-*/ 
-bool operator<=(const RealEmbeddable &a, 
-const RealEmbeddable &b); 
+*/
+bool operator<=(const RealEmbeddable &a,
+const RealEmbeddable &b);
 
 /*!
 
 
-*/ 
-bool operator> (const RealEmbeddable &a, 
-const RealEmbeddable &b); 
+*/
+bool operator> (const RealEmbeddable &a,
+const RealEmbeddable &b);
 
 /*!
 
-\relates RealEmbeddable 
-*/ 
-bool operator>=(const RealEmbeddable &a, 
-const RealEmbeddable &b); 
+\relates RealEmbeddable
+*/
+bool operator>=(const RealEmbeddable &a,
+const RealEmbeddable &b);
 
 /// @}
 

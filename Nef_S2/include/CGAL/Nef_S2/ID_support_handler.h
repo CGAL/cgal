@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     :     Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
@@ -30,77 +30,79 @@ class ID_support_handler {
 
   typedef typename Decorator::SVertex_handle SVertex_handle;
   typedef typename Decorator::SHalfedge_handle SHalfedge_handle;
-  
+
   typedef typename Decorator::SVertex_const_handle SVertex_const_handle;
   typedef typename Decorator::SHalfedge_const_handle SHalfedge_const_handle;
   typedef typename Decorator::SHalfloop_const_handle SHalfloop_const_handle;
-  
+
  public:
   ID_support_handler() {}
+
+  void reserve(std::size_t) {}
 
   int get_hash(int) { return 0; }
   template<typename Handle> void initialize_hash(Handle /*h*/) {}
   void initialize_hash(int /*i*/) {}
-  void handle_support(SVertex_handle , 
-		      SHalfedge_const_handle ,
-		      SHalfedge_const_handle ) {} 
-  
   void handle_support(SVertex_handle ,
-		      SHalfloop_const_handle ,
-		      SHalfloop_const_handle ) {}
-  
+                      SHalfedge_const_handle ,
+                      SHalfedge_const_handle ) {}
+
+  void handle_support(SVertex_handle ,
+                      SHalfloop_const_handle ,
+                      SHalfloop_const_handle ) {}
+
   void handle_support(SVertex_handle,
-		      SHalfloop_const_handle,
-		      SHalfedge_const_handle) {} 
-  
+                      SHalfloop_const_handle,
+                      SHalfedge_const_handle) {}
+
   void handle_support(SVertex_handle,
-		      SHalfedge_const_handle,
-		      SHalfloop_const_handle) {}
-  
+                      SHalfedge_const_handle,
+                      SHalfloop_const_handle) {}
+
   void handle_support(SVertex_handle,
-		      SHalfedge_const_handle,
-		      SVertex_const_handle) {}
-  
+                      SHalfedge_const_handle,
+                      SVertex_const_handle) {}
+
   void handle_support(SVertex_handle,
-		      SVertex_const_handle,
-		      SHalfedge_const_handle) {}
-  
+                      SVertex_const_handle,
+                      SHalfedge_const_handle) {}
+
   void handle_support(SVertex_handle,
-		      SVertex_const_handle,
-		      SVertex_const_handle) {}
-  
+                      SVertex_const_handle,
+                      SVertex_const_handle) {}
+
   void handle_support(SVertex_handle,
-		      SVertex_const_handle) {}
-  
+                      SVertex_const_handle) {}
+
   void handle_support(SVertex_handle,
-		      SVertex_const_handle,
-		      SHalfloop_const_handle) {}
-  
+                      SVertex_const_handle,
+                      SHalfloop_const_handle) {}
+
   void handle_support(SVertex_handle,
-		      SHalfloop_const_handle,
-		      SVertex_const_handle) {}
-  
+                      SHalfloop_const_handle,
+                      SVertex_const_handle) {}
+
   void handle_support(SHalfedge_handle,
-		      SHalfedge_const_handle,
-		      SHalfedge_const_handle) {}
-  
+                      SHalfedge_const_handle,
+                      SHalfedge_const_handle) {}
+
   void handle_support(SHalfedge_handle,
-		      SHalfedge_const_handle) {}
-  
+                      SHalfedge_const_handle) {}
+
   void handle_support(SHalfedge_handle,
-		      SHalfloop_const_handle) {}
-  
+                      SHalfloop_const_handle) {}
+
   void handle_support(SHalfedge_handle,
-		      SHalfedge_const_handle,
-		      SHalfloop_const_handle) {}
-  
+                      SHalfedge_const_handle,
+                      SHalfloop_const_handle) {}
+
   void handle_support(SHalfedge_handle,
-		      SHalfloop_const_handle,
-		      SHalfedge_const_handle) {}
-  
+                      SHalfloop_const_handle,
+                      SHalfedge_const_handle) {}
+
   void handle_support(SHalfedge_handle,
-		      SHalfloop_const_handle,
-		      SHalfloop_const_handle) {}
+                      SHalfloop_const_handle,
+                      SHalfloop_const_handle) {}
 };
 
 

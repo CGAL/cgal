@@ -268,9 +268,9 @@ Boost
 
 The following files are modified versions originating from Boost:
 
-   ./include/CGAL/internal/boost/mutable_heap.hpp
-   ./include/CGAL/internal/boost/array_binary_tree.hpp
-   ./include/CGAL/internal/boost/mutable_queue.hpp
+   ./include/CGAL/STL_Extension/internal/boost/mutable_heap.hpp
+   ./include/CGAL/STL_Extension/internal/boost/array_binary_tree.hpp
+   ./include/CGAL/STL_Extension/internal/boost/mutable_queue.hpp
       Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 
    ./include/CGAL/internal/container_fwd_fixed.hpp

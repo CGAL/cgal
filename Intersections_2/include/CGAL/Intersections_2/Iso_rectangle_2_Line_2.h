@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -28,7 +28,7 @@
 
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -36,11 +36,10 @@ namespace internal {
 template <class K>
 class Line_2_Iso_rectangle_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Line_2_Iso_rectangle_2_pair(typename K::Line_2 const *line,
                             typename K::Iso_rectangle_2 const *iso)
-      : _known(false),
-        _ref_point(line->point()),
+      : _ref_point(line->point()),
         _dir(line->direction().to_vector()),
         _isomin((iso->min)()),
         _isomax((iso->max)()) {}
@@ -50,8 +49,7 @@ public:
     typename K::Point_2    intersection_point() const;
     typename K::Segment_2  intersection_segment() const;
 protected:
-    mutable bool                        _known;
-    mutable Intersection_results        _result;
+    mutable Intersection_results        _result = UNKNOWN;
     mutable typename K::FT              _min, _max;
     typename K::Point_2             _ref_point;
     typename K::Vector_2            _dir;
@@ -61,8 +59,8 @@ protected:
 
 template <class K>
 inline bool do_intersect(const typename K::Line_2 &p1,
-			 const typename K::Iso_rectangle_2 &p2,
-			 const K&)
+                         const typename K::Iso_rectangle_2 &p2,
+                         const K&)
 {
     typedef Line_2_Iso_rectangle_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
@@ -71,8 +69,8 @@ inline bool do_intersect(const typename K::Line_2 &p1,
 
 template <class K>
 inline bool do_intersect(const typename K::Iso_rectangle_2 &p2,
-			 const typename K::Line_2 &p1,
-			 const K& k)
+                         const typename K::Line_2 &p1,
+                         const K& k)
 {
   return internal::do_intersect(p1, p2, k);
 }
@@ -84,10 +82,9 @@ typename Line_2_Iso_rectangle_2_pair<K>::Intersection_results
 Line_2_Iso_rectangle_2_pair<K>::intersection_type() const
 {
     //typedef typename K::Line_2 line_t;
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
 // The non const this pointer is used to cast away const.
-    _known = true;
     typedef typename K::FT FT;
     typedef typename K::RT RT;
     bool all_values = true;
@@ -156,7 +153,7 @@ intersection_point() const
   typename K::Construct_translated_point_2 translated_point;
   typename K::Construct_scaled_vector_2 construct_scaled_vector;
 
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return translated_point(_ref_point, construct_scaled_vector(_dir, _min));
@@ -170,11 +167,11 @@ intersection_segment() const
   typename K::Construct_segment_2 construct_segment_2;
   typename K::Construct_translated_point_2 translated_point;
   typename K::Construct_scaled_vector_2 construct_scaled_vector;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
-    return construct_segment_2(translated_point(_ref_point, construct_scaled_vector(_dir,_min)), 
-			       translated_point(_ref_point, construct_scaled_vector(_dir,_max)));
+    return construct_segment_2(translated_point(_ref_point, construct_scaled_vector(_dir,_min)),
+                               translated_point(_ref_point, construct_scaled_vector(_dir,_max)));
 }
 
 
@@ -182,9 +179,9 @@ intersection_segment() const
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Iso_rectangle_2>::result_type
-intersection(const typename K::Line_2 &line, 
-	     const typename K::Iso_rectangle_2 &iso,
-	     const K&)
+intersection(const typename K::Line_2 &line,
+             const typename K::Iso_rectangle_2 &iso,
+             const K&)
 {
     typedef Line_2_Iso_rectangle_2_pair<K> is_t;
     is_t ispair(&line, &iso);
@@ -204,8 +201,8 @@ inline
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
-	     const typename K::Line_2 &line, 
-	     const K& k)
+             const typename K::Line_2 &line,
+             const K& k)
 {
   return internal::intersection(line, iso, k);
 }

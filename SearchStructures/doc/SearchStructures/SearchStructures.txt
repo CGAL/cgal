@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_dD_Range_and_Segment_Trees
 \anchor Trees
 \cgalAutoToc
@@ -15,57 +15,57 @@ data structures.
 \section SearchStructuresDefinitions Definitions
 
 This section presents ` d`-dimensional range and segment trees.
-A one-dimensional range tree is a binary search tree on 
-<I>one-dimensional point data</I>. 
+A one-dimensional range tree is a binary search tree on
+<I>one-dimensional point data</I>.
 Here we call all one-dimensional data types having a strict ordering
-(like integer and double) <I>point data</I>. 
-<I>` d`-dimensional point data</I> are ` d`-tuples of one-dimensional 
+(like integer and double) <I>point data</I>.
+<I>` d`-dimensional point data</I> are ` d`-tuples of one-dimensional
 point data.
 
 A one-dimensional segment tree is a binary search tree as well, but with
 <I>one-dimensional interval data</I> as input data.
-One-dimensional interval data is a pair (i.e., 2-tuple) ` (a,b)`, where ` a` 
-and ` b` are one-dimensional point data of the same type and ` a< b`. 
+One-dimensional interval data is a pair (i.e., 2-tuple) ` (a,b)`, where ` a`
+and ` b` are one-dimensional point data of the same type and ` a< b`.
 The pair ` (a,b)` represents a half open interval ` [a,b)`.
 Analogously, a ` d`-dimensional interval is represented by a ` d`-tuple of
 one-dimensional intervals.
 
-The <I>input data type</I> for a ` d`-dimensional tree is a container 
-class consisting of a ` d`-dimensional point data type, interval data type 
-or a mixture of both, and optionally a <I>value type</I>, which 
-can be used to store arbitrary data. 
-E.g., the ` d`-dimensional bounding box of a ` d`-dimensional polygon 
+The <I>input data type</I> for a ` d`-dimensional tree is a container
+class consisting of a ` d`-dimensional point data type, interval data type
+or a mixture of both, and optionally a <I>value type</I>, which
+can be used to store arbitrary data.
+E.g., the ` d`-dimensional bounding box of a ` d`-dimensional polygon
 may define the interval data of a ` d`-dimensional segment tree and
-the polygon itself can be stored as its value. 
+the polygon itself can be stored as its value.
 An <I>input data item</I> is an instance of an input data type.
 
-The range and segment tree classes are fully generic in the sense that they 
-can be used to define <I>multilayer trees</I>. 
-A multilayer tree of dimension (number of layers) ` d` is a simple tree in 
-the ` d`-th layer, whereas the ` k`-th layer, ` 1 <= k <= d-1`, of the tree 
-defines a tree where each (inner) vertex contains a multilayer tree of 
+The range and segment tree classes are fully generic in the sense that they
+can be used to define <I>multilayer trees</I>.
+A multilayer tree of dimension (number of layers) ` d` is a simple tree in
+the ` d`-th layer, whereas the ` k`-th layer, ` 1 <= k <= d-1`, of the tree
+defines a tree where each (inner) vertex contains a multilayer tree of
 dimension ` d-k+1`.
-The ` k-1`-dimensional tree which is nested in the ` k`-dimensional tree 
+The ` k-1`-dimensional tree which is nested in the ` k`-dimensional tree
 (` T`) is called the <I>sublayer tree</I> (of ` T`).
-For example, a ` d`-dim tree can be a range tree on the first layer, 
-constructed with respect to the first dimension of ` d`-dimensional data 
+For example, a ` d`-dim tree can be a range tree on the first layer,
+constructed with respect to the first dimension of ` d`-dimensional data
 items.
 On all the data items in each subtree, a ` (d-1)`-dimensional tree is built,
-either a range or a segment tree, with respect to the second dimension of 
+either a range or a segment tree, with respect to the second dimension of
 the data items.
 And so on.
 
 The figures in Sections \ref secrange_trees and \ref secsegment_trees
 illustrate the means of a sublayer tree graphically.
 
-After creation of the tree, further insertions or deletions of data items 
-are disallowed. 
+After creation of the tree, further insertions or deletions of data items
+are disallowed.
 The tree class does neither depend on the type of data nor on the concrete
 physical representation of the data items.
 E.g., let a multilayer tree be a segment tree for which each vertex
-defines a range tree. 
-We can choose the data items to consist of intervals of type `double` 
-and the point data of type `integer`. 
+defines a range tree.
+We can choose the data items to consist of intervals of type `double`
+and the point data of type `integer`.
 As value type we can choose `string`.
 
 For this generality we have to
@@ -73,7 +73,7 @@ define what the tree of each dimension looks like and how the
 input data is organized.
 For dimension ` k`, ` 1 < k < 4`, \cgal provides ready-to-use
 range and segment trees that can store k-dimensional keys
-(intervals resp.). 
+(intervals resp.).
 Examples illustrating the use of these classes are given in
 Sections \ref secrange_tree_ex
 and \ref secsegment_tree_ex.
@@ -94,14 +94,14 @@ type information the sublayers could be created. This approach lead to nested
 template arguments, since the sublayer tree can again have a template
 argument defining the sublayer. Therefore, the internal class and function
 identifiers got longer than a compiler-dependent limit.
-This happend already for ` d=2`.
+This happened already for ` d=2`.
 
 Therefore, we chose another, object oriented,
 design. We defined a pure
 virtual base class called `Tree_base` from which we derived
 the classes `Range_tree_d` and `Segment_tree_d`.
 The constructor of these classes expects an argument called
-`sublayer_prototype` of type `Tree_base`. 
+`sublayer_prototype` of type `Tree_base`.
 Since class `Range_tree_d` and class
 `Segment_tree_d` are derived from class `Tree_base`, one can
 use an instantiation of class `Range_tree_d` or class
@@ -110,7 +110,7 @@ This argument defines the sublayer tree of the tree. E.g., you
 can construct a `Range_tree_d` with an
 instantiation of class `Segment_tree_d` as constructor
 argument. You then have defined a range tree with a segment tree
-as sublayer tree. Since both classes `Range_tree_d` and 
+as sublayer tree. Since both classes `Range_tree_d` and
 `Segment_tree_d` expect a sublayer tree in their constructor
 we had to derive a third class called `Tree_anchor` from
 class `Tree_base` which
@@ -139,12 +139,12 @@ an inverse range query in the segment tree class implies offering this
 function also in the range tree class and having an extra item in
 the traits class that accesses the inverse range query point.
 
-The trees are templatized with three arguments: `Data, Window` 
+The trees are templatized with three arguments: `Data, Window`
 and `Traits`. Type `Data` defines
 the input data type and type `Window` defines the query
 window type. The tree uses a well defined set of functions in
 order to access data. These functions have to be provided by
-class `Traits`. 
+class `Traits`.
 
 The design partly follows the <I>prototype design pattern</I>
 in \cgalCite{cgal:ghjv-dpero-95}. In comparison to our first approach
@@ -234,7 +234,7 @@ public:
   Key get_key(Data& d){return d.point;} // key accesso
   Key get_left(Window& w){return w.min_point;}
   Key get_right(Window& w){return w.max_point;}
-  bool comp(Key& key1, Key& key2){return (key1 < key2);} 
+  bool comp(Key& key1, Key& key2){return (key1 < key2);}
 };
 
 class Interval_traits{
@@ -244,11 +244,11 @@ public:
   Key get_right(Data& d){return d.max;}
   Key get_left_win(Window& w){return w.min;}
   Key get_right_win(Window& w){return w.max;}
-  static bool comp(Key& key1, Key& key2){return (key1 < key2);} 
+  static bool comp(Key& key1, Key& key2){return (key1 < key2);}
 };
 \endcode
 
-\section general Creating an Arbitrary Multilayer Tree 
+\section general Creating an Arbitrary Multilayer Tree
 
 Now let us have a closer look on how a multilayer tree is built.
 In case of creating a ` d`-dimensional tree, we handle a
@@ -270,16 +270,16 @@ access functions to a specified data slot of a data item.
 A ` d`-dimensional tree is then defined separately for each layer by
 defining a traits class for each layer.
 
-\section secrange_trees Range Trees 
+\section secrange_trees Range Trees
 
-A one-dimensional range tree is a binary search tree on one-dimensional 
-point data. 
-The point data of the tree is stored in the leaves. 
+A one-dimensional range tree is a binary search tree on one-dimensional
+point data.
+The point data of the tree is stored in the leaves.
 Each inner vertex stores the highest entry of its left subtree.
-The version of a range tree implemented here is static, which means that 
+The version of a range tree implemented here is static, which means that
 after construction of the tree, no elements be inserted or deleted.
-A ` d`-dimensional range tree is a binary leaf search tree according to the 
-first dimension of the ` d`-dimensional point data, where each vertex contains 
+A ` d`-dimensional range tree is a binary leaf search tree according to the
+first dimension of the ` d`-dimensional point data, where each vertex contains
 a ` (d-1)`-dimensional search tree of the points in the subtree (sublayer tree)
 with respect to the second dimension.
 See \cgalCite{bkos-cgaa-97} and \cgalCite{s-dasds-90} for more detailed information.
@@ -303,9 +303,9 @@ The tree can be built in \f$ O(n\log^{d-1} n)\f$ time and
 needs \f$ O(n\log^{d-1} n)\f$ space. The ` d`-dimensional points that lie in the
 ` d`-dimensional query interval can be reported in \f$ O(\log^dn+k)\f$ time,
 where ` n` is the total number of points and ` k` is the number of
-reported points. 
+reported points.
 
-\subsection secrange_tree_ex Example for Range Tree on Map-like Data 
+\subsection secrange_tree_ex Example for Range Tree on Map-like Data
 
 The following example program uses the predefined `Range_tree_2` data structure together with the predefined traits
 class `Range_tree_map_traits_2` which has two template
@@ -329,14 +329,14 @@ typedef CGAL::Range_tree_2<Traits> Range_tree_2_type;
 
 int main()
 {
-  typedef Traits::Key Key; 
-  typedef Traits::Interval Interval; 
+  typedef Traits::Key Key;
+  typedef Traits::Interval Interval;
 
   std::vector<Key> InputList, OutputList;
   InputList.push_back(Key(K::Point_2(8,5.1), 'a'));
   InputList.push_back(Key(K::Point_2(1,1.1), 'b'));
   InputList.push_back(Key(K::Point_2(3,2.1), 'c'));
-  
+
   Range_tree_2_type Range_tree_2(InputList.begin(),InputList.end());
   Interval win(Interval(K::Point_2(4,8.1),K::Point_2(5,8.2)));
   std::cout << "\n Window Query:\n ";
@@ -374,13 +374,13 @@ int main()
   typedef Traits::Interval Interval;
   std::vector<Key> InputList, OutputList;
   std::vector<Key>::iterator first, last, current;
-  
+
   InputList.push_back(Key(8,5.1));
   InputList.push_back(Key(1,1.1));
   InputList.push_back(Key(3,2.1));
-  
+
   Range_tree_2_type Range_tree_2(InputList.begin(),InputList.end());
-  
+
   Interval win=Interval(Key(4,8.1),Key(5,8.2));
   std::cout << std::endl << "Window Query: lower left point: (4.0,5.0),";
   std::cout << "upper right point: (8.1,8.2)" << std::endl;
@@ -393,7 +393,7 @@ int main()
 }
 \endcode
 
-\section secsegment_trees Segment Trees 
+\section secsegment_trees Segment Trees
 
 A segment tree is a static binary search tree for a given set of
 coordinates. The set of coordinates is defined by the endpoints
@@ -455,7 +455,7 @@ with a sequence of all data items, and a window query is
 performed. The polygons of the resulting data items are finally
 tested independently for intersections.
 
-\subsection secsegment_tree_ex Example for Segment Tree on Map-like Data 
+\subsection secsegment_tree_ex Example for Segment Tree on Map-like Data
 
 The following example program uses the predefined `Segment_tree_2` data structure together with the predefined traits
 class `Segment_tree_map_traits_2` which has two template arguments
@@ -484,35 +484,35 @@ int main()
   typedef Traits::Pure_interval Pure_interval;
   typedef Traits::Key Key;
   std::list<Interval> InputList, OutputList1, OutputList2;
-  
+
   InputList.push_back(Interval(Pure_interval(Key(1,5), Key(2,7)),'a'));
   InputList.push_back(Interval(Pure_interval(Key(2,7), Key(3,8)),'b'));
   InputList.push_back(Interval(Pure_interval(Key(6,9), Key(9,13)),'c'));
   InputList.push_back(Interval(Pure_interval(Key(1,3), Key(3,9)),'d'));
-  
+
   Segment_tree_2_type Segment_tree_2(InputList.begin(),InputList.end());
-  
+
   Interval a=Interval(Pure_interval(Key(3,6), Key(7,12)),'e');
   Segment_tree_2.window_query(a,std::back_inserter(OutputList1));
-  
+
   std::list<Interval>::iterator j = OutputList1.begin();
   std::cout << "\n window_query (3,6),(7,12)\n";
   while(j!=OutputList1.end()){
-    std::cout << (*j).first.first.x() << "-" << (*j).first.second.x() << " " 
-              << (*j).first.first.y() << "-" << (*j).first.second.y() << std::endl; 
+    std::cout << (*j).first.first.x() << "-" << (*j).first.second.x() << " "
+              << (*j).first.first.y() << "-" << (*j).first.second.y() << std::endl;
     j++;
   }
-  
+
   Interval b=Interval(Pure_interval(Key(6,10),Key(7,11)), 'f');
   Segment_tree_2.enclosing_query(b,std::back_inserter(OutputList2));
   j = OutputList2.begin();
   std::cout << "\n enclosing_query (6,10),(7,11)\n";
   while(j!=OutputList2.end()){
-    std::cout << (*j).first.first.x() << "-" << (*j).first.second.x() << " " 
-              << (*j).first.first.y() << "-" << (*j).first.second.y() << std::endl; 
+    std::cout << (*j).first.first.x() << "-" << (*j).first.second.x() << " "
+              << (*j).first.first.y() << "-" << (*j).first.second.y() << std::endl;
     j++;
   }
-  return 0; 
+  return 0;
 }
 
 \endcode
@@ -540,14 +540,14 @@ int main()
   typedef Traits::Interval Interval;
   typedef Traits::Key Key;
   std::list<Interval> InputList, OutputList;
-  
+
   InputList.push_back(Interval(Key(1,5,7), Key(2,7,9)));
   InputList.push_back(Interval(Key(2,7,6), Key(3,8,9)));
   InputList.push_back(Interval(Key(6,9,5), Key(9,13,8)));
   InputList.push_back(Interval(Key(1,3,4), Key(3,9,8)));
-  
+
   Segment_tree_3_type Segment_tree_3(InputList.begin(),InputList.end());
-  
+
   Interval a(Key(3,6,5), Key(7,12,8));
   Segment_tree_3.window_query(a,std::back_inserter(OutputList));
   std::list<Interval>::iterator j = OutputList1.begin();
@@ -555,12 +555,12 @@ int main()
   while(j!=OutputList.end()){
     std::cout << (*j).first.x() << "," << (*j).first.y() << ",";
     std::cout << (*j).first.z() <<", " << (*j).second.x() << ",";
-    std::cout << (*j).second.y() << "," << (*j).second.z() << std::endl; 
+    std::cout << (*j).second.y() << "," << (*j).second.z() << std::endl;
     j++;
   }
 }
 \endcode
 
-*/ 
+*/
 } /* namespace CGAL */
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -39,7 +39,7 @@ public:
 
   // BASIC TYPES
   //------------
-  
+
   typedef Segment_Delaunay_graph_traits_base_2<R, MTag, ITag> Base;
 
   typedef typename Base::Kernel Kernel;
@@ -87,7 +87,7 @@ public:
   // PREDICATES
   //-----------
 
-  // used by triangulation 
+  // used by triangulation
   //typedef
   //CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Orientation_Linf_C2<K>
   //Orientation_2;
@@ -120,7 +120,7 @@ public:
   // CONSTRUCTIONS
   //--------------
   Construct_svd_vertex_2
-  construct_svd_vertex_2_object() const { 
+  construct_svd_vertex_2_object() const {
     return Construct_svd_vertex_2();
   }
 

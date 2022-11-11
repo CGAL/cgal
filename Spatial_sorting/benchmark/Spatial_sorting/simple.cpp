@@ -1,7 +1,7 @@
 //#define CGAL_PROFILE
 //#define CGAL_USE_SSE2_FABS
 //#define CGAL_USE_SSE2_MAX
-//#define CGAL_MSVC_USE_STD_FABS  // use this one with precise 
+//#define CGAL_MSVC_USE_STD_FABS  // use this one with precise
 #define CGAL_DONT_USE_INDEPENDENT_SHUFFLE 1
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -34,7 +34,7 @@ int main()
     spatial_sort(points.begin(), points.end());
   }
   timer.stop();
-  
+
   std::cerr << timer.time() << " sec" << std::endl;
   return 0;
 }

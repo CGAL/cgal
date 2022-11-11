@@ -28,7 +28,7 @@ namespace CGAL {
       \ingroup PkgShapeDetectionRANSACShapes
       \brief Torus implements Shape_base. The torus is represented by the
       symmetry axis, its center on the axis, and the major and minor radii.
-     \tparam Traits must be a model of `EfficientRANSACTraits` with the additional 
+     \tparam Traits must be a model of `EfficientRANSACTraits` with the additional
              requirement for tori (see `EfficientRANSACTraits` documentation).
      */
   template <class Traits>
@@ -54,7 +54,7 @@ namespace CGAL {
     /// \endcond
 
     Torus() : Shape_base<Traits>() {}
-      
+
     /*!
       Direction of symmetry axis.
      */
@@ -68,14 +68,14 @@ namespace CGAL {
     Point_3 center() const {
       return m_center;
     }
-      
+
     /*!
       Major radius of the torus.
      */
     FT major_radius() const {
       return m_majorRad;
     }
-      
+
     /*!
       Minor radius of the torus.
       */
@@ -105,7 +105,7 @@ namespace CGAL {
       */
     FT squared_distance(const Point_3 &p) const {
       const Vector_3 d = this->constr_vec(m_center, p);
-      
+
       // height over symmetry plane
       const FT height = this->scalar_pdct(d, m_axis);
 
@@ -300,7 +300,7 @@ namespace CGAL {
       }
     }
 
-    virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
         Vector_3 d = this->constr_vec(m_center, this->point(indices[i]));
@@ -334,7 +334,7 @@ namespace CGAL {
                                            this->cross_pdct(m_axis, d));
       if (this->scalar_pdct(in_plane, d) < 0)
         in_plane = -in_plane;
-      
+
       float length = CGAL::sqrt(this->sqlen(in_plane));
 
       // If length is 0 the point is on the axis, maybe in the apex. We
@@ -350,7 +350,7 @@ namespace CGAL {
 
       return CGAL::abs(d * n);
     }
-      
+
     virtual std::size_t minimum_sample_size() const {
         return 4;
     }

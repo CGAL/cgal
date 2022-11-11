@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2003,2004  
+// Copyright (c) 1999,2003,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -43,7 +43,7 @@ struct Gmpz_rep
 // maybe the mpz_init_set* functions should move back to Gmpz_rep.
 // But then we should use the Storage_traits::construct/get...
 
-  mpz_t mpZ;
+  mpz_t mpZ; /* coverity[member_decl] */
 
   Gmpz_rep() {}
   ~Gmpz_rep() { mpz_clear(mpZ); }

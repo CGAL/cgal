@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
-    <height>313</height>
+    <width>386</width>
+    <height>231</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,23 +22,41 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="label">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="helpButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This function allows to clip all the selected polyhedra against a halfspace. What is on the blue side of the clipping plane will be clipped, and what is on the yellow side will be kept.&lt;br/&gt;&lt;br/&gt;If the option &lt;span style=&quot; font-style:italic;&quot;&gt;keep closed&lt;/span&gt; is checked, the clipped part of each polyhedron will be closed, if it has a closed contour on the clipping plane. Otherwise, it will be left open.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string/>
         </property>
-        <property name="wordWrap">
-         <bool>true</bool>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/help_button.png</normaloff>:/cgal/icons/resources/help_button.png</iconset>
         </property>
        </widget>
       </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QGroupBox" name="groupBox">
         <property name="sizePolicy">
@@ -50,17 +68,47 @@
         <property name="title">
          <string>Behavior</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0" columnstretch="1,0">
-         <item row="4" column="1">
-          <widget class="QPushButton" name="flip_Button">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+        <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0" columnstretch="1,0">
+         <item row="6" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="coplanarCheckBox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>If this is un-checked, the parts of the mesh that are coplanar with the plane will not be part of the output.
+Only available in Split mode.</string>
            </property>
            <property name="text">
-            <string>Flip plane</string>
+            <string>Keep Coplanar Parts</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="close_checkBox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Keep Closed</string>
            </property>
           </widget>
          </item>
@@ -81,7 +129,30 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="do_not_modify_CheckBox">
+           <property name="toolTip">
+            <string>Allow the use of a self-intersected clipper, but prevent the closing of the result.</string>
+           </property>
+           <property name="text">
+            <string>Allow self-intersections (not in clipper)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QPushButton" name="flip_Button">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Flip plane</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
           <widget class="QPushButton" name="clipButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -91,48 +162,6 @@
            </property>
            <property name="text">
             <string>&amp;Apply</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="close_checkBox">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="autoFillBackground">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>&amp;Keep Closed</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="4" column="0">
-          <widget class="QCheckBox" name="coplanarCheckBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;If this is un-checked, the parts of &lt;/span&gt;&lt;span style=&quot; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;the mesh that are&lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt; coplanar with the &lt;/span&gt;&lt;span style=&quot; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;plane&lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt; will not be part of the output.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;Only available in &lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; font-style:italic; color:#000000; background-color:#ffffff;&quot;&gt;Split&lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt; mode.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Keep Coplanar Parts</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -157,6 +186,9 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../Polyhedron_3.qrc"/>
+  <include location="../../Polyhedron_3.qrc"/>
+ </resources>
  <connections/>
 </ui>

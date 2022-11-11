@@ -3,12 +3,20 @@
 
 #include <CGAL/config.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 #include <vector>
 #include <utility>
 #include <iostream>
 
+#include <boost/version.hpp>
+#if BOOST_VERSION < 107200
 #include <boost/progress.hpp>
+using boost::progress_display;
+#else
+#include <boost/timer/progress_display.hpp>
+using boost::timer::progress_display;
+#endif
 
 namespace CGAL {
 
@@ -88,7 +96,7 @@ class Constraints_loader {
     typedef typename Points_container::const_iterator Points_iterator;
     typedef std::vector<Points_iterator> Indices;
     typedef std::vector<typename CDT::Vertex_handle> Vertices;
-    
+
     Sort_traits_2<typename CDT::Geom_traits, Points_iterator> sort_traits;
 
     Indices indices;
@@ -96,7 +104,7 @@ class Constraints_loader {
     for(Points_iterator it = points.begin(); it != points.end(); ++it) {
       indices.push_back(it);
     }
-    std::random_shuffle(indices.begin(), indices.end());
+    CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
     CGAL::spatial_sort(indices.begin(), indices.end(),
                        sort_traits);
 
@@ -106,7 +114,7 @@ class Constraints_loader {
     Vertices vertices;
     vertices.resize(points.size());
     typename CDT::Vertex_handle hint;
-    for(typename Indices::const_iterator 
+    for(typename Indices::const_iterator
           pt_it_it = indices.begin(), end = indices.end();
         pt_it_it != end; ++pt_it_it) {
       typename CDT::Vertex_handle vh = cdt.insert(**pt_it_it, hint);
@@ -117,12 +125,12 @@ class Constraints_loader {
     std::cerr << " done (" << timer.time() << "s)\n";
 
     std::cerr << "Inserting constraints...\n";
-    boost::progress_display show_progress(constraints.size(), 
-                                          std::cerr,
-                                          "");
+    progress_display show_progress(constraints.size(),
+                                   std::cerr,
+                                   "");
     timer.reset();
     timer.start();
-    for(typename Constraints_container::const_iterator 
+    for(typename Constraints_container::const_iterator
           cit = constraints.begin(), end = constraints.end();
         cit != end; ++cit) {
       ++show_progress;

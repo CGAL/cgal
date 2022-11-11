@@ -12,7 +12,7 @@
 #  include <CGAL/GLPK_mixed_integer_program_traits.h>
 #endif
 
-typedef	CGAL::Polygonal_surface_reconstruction<Kernel> Polygonal_surface_reconstruction;
+typedef        CGAL::Polygonal_surface_reconstruction<Kernel> Polygonal_surface_reconstruction;
 
 SMesh* polygonal_reconstruct (const Point_set& points,
                               double data_fitting,
@@ -25,11 +25,11 @@ SMesh* polygonal_reconstruct (const Point_set& points,
   CGAL_USE (data_coverage);
   CGAL_USE (model_complexity);
   CGAL_USE (solver_name);
-  
+
   Point_set::Property_map<int> shape_map
     = points.property_map<int>("shape").first;
 
-	Polygonal_surface_reconstruction poly
+        Polygonal_surface_reconstruction poly
     (points, points.point_map(), points.normal_map(), shape_map);
 
   SMesh* mesh = new SMesh;

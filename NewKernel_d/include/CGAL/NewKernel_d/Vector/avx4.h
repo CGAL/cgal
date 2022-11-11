@@ -12,7 +12,7 @@
 #ifndef CGAL_VECTOR_AVX4_H
 #define CGAL_VECTOR_AVX4_H
 
-#if !defined __AVX__ || (__GNUC__ * 100 + __GNUC_MINOR__ < 408)
+#if !defined __AVX__
 #error Requires AVX and gcc 4.8+
 #endif
 #include <x86intrin.h>
@@ -48,53 +48,53 @@ namespace CGAL {
     typedef __m256d Vector;
     struct Construct_vector {
       struct Dimension {
-	// Initialize with NaN?
-	Vector operator()(unsigned d) const {
-	  CGAL_assertion(d==4);
-	  return Vector();
-	}
+        // Initialize with NaN?
+        Vector operator()(unsigned d) const {
+          CGAL_assertion(d==4);
+          return Vector();
+        }
       };
 
       struct Iterator {
-	template<typename Iter>
-	  Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
-	    CGAL_assertion(d==4);
-	    double x0 = *f;
-	    double x1 = *++f;
-	    double x2 = *++f;
-	    double x3 = *++f;
-	    CGAL_assertion(++f==e);
-	    Vector a = { x0, x1, x2, x3 };
-	    return a;
-	  }
+        template<typename Iter>
+          Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
+            CGAL_assertion(d==4);
+            double x0 = *f;
+            double x1 = *++f;
+            double x2 = *++f;
+            double x3 = *++f;
+            CGAL_assertion(++f==e);
+            Vector a = { x0, x1, x2, x3 };
+            return a;
+          }
       };
 
       struct Iterator_and_last {
-	template<typename Iter,typename T>
-	  Vector operator()(unsigned d,Iter const& f,Iter const& e,double t) const {
-	    CGAL_assertion(d==4);
-	    double x0 = *f;
-	    double x1 = *++f;
-	    double x2 = *++f;
-	    CGAL_assertion(++f==e);
-	    Vector a = { x0, x1, x2, t };
-	    return a;
-	  }
+        template<typename Iter,typename T>
+          Vector operator()(unsigned d,Iter const& f,Iter const& e,double t) const {
+            CGAL_assertion(d==4);
+            double x0 = *f;
+            double x1 = *++f;
+            double x2 = *++f;
+            CGAL_assertion(++f==e);
+            Vector a = { x0, x1, x2, t };
+            return a;
+          }
       };
 
       struct Values {
-	  Vector operator()(double a,double b,double c,double d) const {
-	    Vector r = { a, b, c, d };
-	    return r;
-	  }
+          Vector operator()(double a,double b,double c,double d) const {
+            Vector r = { a, b, c, d };
+            return r;
+          }
       };
 
       struct Values_divide {
-	Vector operator()(double h,double a,double b,double c,double d) const {
-	  // {a,b,c,d}/{h,h,h,h} should be roughly the same
-	  Vector r = { a/h, b/h, c/h, d/h };
-	  return r;
-	}
+        Vector operator()(double h,double a,double b,double c,double d) const {
+          // {a,b,c,d}/{h,h,h,h} should be roughly the same
+          Vector r = { a/h, b/h, c/h, d/h };
+          return r;
+        }
       };
     };
 

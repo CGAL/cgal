@@ -16,14 +16,8 @@
 
 #include <CGAL/Bbox_3.h>
 
-#include <boost/bind.hpp>
-
 #include <atomic>
-#if TBB_IMPLEMENT_CPP0X
-# include <tbb/compat/thread>
-#else
-# include <thread>
-#endif
+#include <thread>
 #include <tbb/enumerable_thread_specific.h>
 
 #include <algorithm>
@@ -334,7 +328,7 @@ protected:
   Spatial_lock_grid_base_3(const Bbox_3 &bbox,
                                           int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
-      m_tls_grids(boost::bind(init_TLS_grid, num_grid_cells_per_axis))
+      m_tls_grids([num_grid_cells_per_axis](){ return init_TLS_grid(num_grid_cells_per_axis); })
   {
     set_bbox(bbox);
   }

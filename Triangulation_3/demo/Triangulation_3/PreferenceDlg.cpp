@@ -12,7 +12,7 @@ PreferenceDlg::PreferenceDlg(QWidget *parent) : QDialog(parent)
   QPushButton *btnVertex = new QPushButton( tr("Set Color") );
   // create color label
   m_labelVertex = new QLabel;
-  m_labelVertex->setFrameStyle(QFrame::Sunken | QFrame::Panel);
+  m_labelVertex->setFrameStyle(static_cast<int>(QFrame::Sunken) | static_cast<int>(QFrame::Panel));
   // create size label
   QLabel *labelSizeV = new QLabel( tr("Set Size") );
   // create lineedit
@@ -38,7 +38,7 @@ PreferenceDlg::PreferenceDlg(QWidget *parent) : QDialog(parent)
   QPushButton *btnDEdge = new QPushButton( tr("Set Color") );
   // create color label
   m_labelDEdge = new QLabel;
-  m_labelDEdge->setFrameStyle(QFrame::Sunken | QFrame::Panel);
+  m_labelDEdge->setFrameStyle(static_cast<int>(QFrame::Sunken) | static_cast<int>(QFrame::Panel));
   // create size label
   QLabel *labelSizeDE = new QLabel( tr("Set Size") );
   // create lineedit
@@ -64,7 +64,7 @@ PreferenceDlg::PreferenceDlg(QWidget *parent) : QDialog(parent)
   QPushButton *btnVEdge = new QPushButton( tr("Set Color") );
   // create color label
   m_labelVEdge = new QLabel;
-  m_labelVEdge->setFrameStyle(QFrame::Sunken | QFrame::Panel);
+  m_labelVEdge->setFrameStyle(static_cast<int>(QFrame::Sunken) | static_cast<int>(QFrame::Panel));
   // create size label
   QLabel *labelSizeVE = new QLabel( tr("Set Size") );
   // create lineedit
@@ -90,7 +90,7 @@ PreferenceDlg::PreferenceDlg(QWidget *parent) : QDialog(parent)
   QPushButton *btnFacet = new QPushButton( tr("Set Color") );
   // create color label
   m_labelFacet = new QLabel;
-  m_labelFacet->setFrameStyle(QFrame::Sunken | QFrame::Panel);
+  m_labelFacet->setFrameStyle(static_cast<int>(QFrame::Sunken) | static_cast<int>(QFrame::Panel));
   // create label and spinbox
   QLabel *labelFacetA = new QLabel( tr("Transparency") );
   m_spinAlphaF = new QSpinBox;
@@ -116,7 +116,7 @@ PreferenceDlg::PreferenceDlg(QWidget *parent) : QDialog(parent)
   QPushButton *btnBall = new QPushButton( tr("Set Color") );
   // create color label
   m_labelBall = new QLabel;
-  m_labelBall->setFrameStyle(QFrame::Sunken | QFrame::Panel);
+  m_labelBall->setFrameStyle(static_cast<int>(QFrame::Sunken) | static_cast<int>(QFrame::Panel));
   // create label and spinbox
   QLabel *labelBallA = new QLabel( tr("Transparency") );
   m_spinAlphaB = new QSpinBox;
@@ -147,7 +147,7 @@ PreferenceDlg::PreferenceDlg(QWidget *parent) : QDialog(parent)
   QGroupBox *groupS = new QGroupBox( tr("Empty Sphere") );
   // create color label
   m_labelSphere = new QLabel;
-  m_labelSphere->setFrameStyle(QFrame::Sunken | QFrame::Panel);
+  m_labelSphere->setFrameStyle(static_cast<int>(QFrame::Sunken) | static_cast<int>(QFrame::Panel));
   // create button
   QPushButton *btnSphere = new QPushButton( tr("Set Color") );
   // create label and spinbox

@@ -89,11 +89,11 @@ void checkCondition(bool c,const char *msg) {
 }
 
 void checkRelError(const double exact,
-		   const double approx,
-		   const double tol,
-		   const char *msg) {
+                   const double approx,
+                   const double tol,
+                   const char *msg) {
   using std::abs;
-  if (CGAL_MINIBALL_NTS abs(exact) <= tol) 
+  if (CGAL_MINIBALL_NTS abs(exact) <= tol)
     return;
 
   const double relerr = CGAL_MINIBALL_NTS abs(exact-approx) /
@@ -125,7 +125,7 @@ void compare(const FT& /* tol */, Sphere& m1, Sphere& m2,
 
 template<int D,typename Sphere,typename FT>
 void compare(const FT& tol, Sphere& m1, Sphere& m2,
-	     const CGAL::Tag_false /* get_is_exact_tag */) {
+             const CGAL::Tag_false /* get_is_exact_tag */) {
   typedef typename Sphere::Cartesian_const_iterator CIt;
 
   // check radii:
@@ -140,7 +140,7 @@ void compare(const FT& tol, Sphere& m1, Sphere& m2,
 }
 
 template<int D,
-	 typename FT,
+         typename FT,
          typename Sqrt,
          typename Alg>
 void test(const int n,const FT& tol) {
@@ -158,7 +158,7 @@ void test(const int n,const FT& tol) {
       coord[j] = static_cast<FT>(uniform());
     S.push_back(Sphere(coord,static_cast<FT>(uniform())));
   }
-  
+
   cout << " constructor with balls..." << endl;
   Min_sphere  ms1(S.begin(),S.end());
   checkCondition(ms1.is_valid(),"Minsphere not valid.");
@@ -234,7 +234,7 @@ int main () {
   ::test<2,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
   ::test<3,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
   ::test<5,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
-    
+
   cout << "test float farthest-first heuristic with sqrts:" << endl;
   ::test<2,float,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,tf);
   ::test<3,float,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,tf);

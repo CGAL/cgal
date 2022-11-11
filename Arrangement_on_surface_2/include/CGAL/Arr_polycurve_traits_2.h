@@ -7,10 +7,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel <efif@post.tau.ac.il>
-//                 Ron Wein  <wein@post.tau.ac.il>
-//                 Dror Atariah <dror.atariah@fu-berlin.de>
-//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
+// Author(s): Efi Fogel <efif@post.tau.ac.il>
+//            Ron Wein  <wein@post.tau.ac.il>
+//            Dror Atariah <dror.atariah@fu-berlin.de>
+//            Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_POLYCURVE_TRAITS_2_H
 #define CGAL_ARR_POLYCURVE_TRAITS_2_H
@@ -25,8 +25,9 @@
  */
 
 #include <iterator>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
+
+#include <boost/variant.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -60,8 +61,8 @@ public:
   typedef typename Base::Top_side_category            Top_side_category;
   typedef typename Base::Right_side_category          Right_side_category;
 
-  typedef typename Base::Are_all_sides_oblivious_tag
-    Are_all_sides_oblivious_tag;
+  typedef typename Base::All_sides_oblivious_category
+    All_sides_oblivious_category;
 
   typedef typename Base::X_monotone_subcurve_2        X_monotone_subcurve_2;
   typedef typename Base::Size                         Size;
@@ -87,9 +88,7 @@ public:
   typedef typename Base::Parameter_space_in_x_2       Parameter_space_in_x_2;
   typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
   typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
-  typedef typename Base::Compare_x_at_limit_2         Compare_x_at_limit_2;
   typedef typename Base::Compare_x_near_boundary_2    Compare_x_near_boundary_2;
-  typedef typename Base::Compare_x_near_limit_2       Compare_x_near_limit_2;
   typedef typename Base::Compare_y_on_boundary_2      Compare_y_on_boundary_2;
   typedef typename Base::Compare_y_near_boundary_2    Compare_y_near_boundary_2;
   typedef typename Base::Is_on_y_identification_2     Is_on_y_identification_2;
@@ -158,10 +157,8 @@ public:
 #ifndef DOXYGEN_RUNNING
   class Push_back_2;
 #endif
-  /*! \class
-   * A functor that divides an arc into x-monotone arcs. That are, arcs that
-   * do not cross the identification arc.
-   */
+
+  //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2 {
   protected:
     typedef Arr_polycurve_traits_2<Subcurve_traits_2>     Polycurve_traits_2;
@@ -174,62 +171,60 @@ public:
       m_poly_traits(traits)
     {}
 
-    /*! Cut the given curve into x-monotone sub-curves and insert them into the
-     * given output iterator.
+    /*! Subdivide a given curve into x-monotone sub-curves and insert them into
+     * a given output iterator.
      *
      * \pre if `cv` is not empty then it must be continuous and well-oriented.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The output
-     *           object is a wrapper of a X_monotone_curve_2.
-     * \return The past-the-end iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
   private:
     template <typename OutputIterator>
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
                                  Arr_all_sides_oblivious_tag) const
     {
-       typedef typename Curve_2::Subcurve_const_iterator const_seg_iterator;
+      typedef boost::variant<Point_2, X_monotone_subcurve_2>
+        Make_x_monotone_subresult;
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
 
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
 
-      Construct_x_monotone_curve_2 ctr_x_curve =
-        m_poly_traits.construct_x_monotone_curve_2_object();
+      auto ctr_x_curve = m_poly_traits.construct_x_monotone_curve_2_object();
 
-      typename Subcurve_traits_2::Make_x_monotone_2 make_seg_x_monotone =
+      auto make_seg_x_monotone =
         m_poly_traits.subcurve_traits_2()->make_x_monotone_2_object();
 
-      typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+      auto cmp_seg_endpts =
         m_poly_traits.subcurve_traits_2()->compare_endpoints_xy_2_object();
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-      typename Subcurve_traits_2::Construct_opposite_2 ctr_seg_opposite =
+      auto ctr_seg_opposite =
         m_poly_traits.subcurve_traits_2()->construct_opposite_2_object();
 #endif
 
-      // Convert the input polycurve to a sequence of CGAL objects, such
-      // that each Object wraps an x-monotone subcurve.
-      std::vector<Object> x_seg_objects;
-      const_seg_iterator it_segs;
-      for (it_segs = cv.subcurves_begin(); it_segs != cv.subcurves_end();
-           ++it_segs)
-        make_seg_x_monotone(*it_segs, std::back_inserter(x_seg_objects));
-      typename std::vector<Object>::iterator it = x_seg_objects.begin();
-      X_monotone_subcurve_2 x_seg;
-#if defined (CGAL_NO_ASSERTIONS)
-      CGAL::assign(x_seg, *it);
-#else
-      bool assign_res = CGAL::assign(x_seg, *it);
-      CGAL_assertion(assign_res);
+      // Convert the input polycurve to a sequence of variant objects, such
+      // that each object wraps an x-monotone subcurve.
+      std::vector<Make_x_monotone_subresult> x_seg_objects;
+      for (auto its = cv.subcurves_begin(); its != cv.subcurves_end(); ++its)
+        make_seg_x_monotone(*its, std::back_inserter(x_seg_objects));
+      auto it = x_seg_objects.begin();
+      const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(*it));
+#if ! defined (CGAL_NO_ASSERTIONS)
+      CGAL_assertion(x_seg_p != nullptr);
 #endif
 
       // If the polycurve consists of a single x-monotone subcurve, return.
       if (x_seg_objects.size() == 1) {
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
         if (cmp_seg_endpts(x_seg) == LARGER)
-          x_seg = ctr_seg_opposite(x_seg);
+          *oi++ = Make_x_monotone_result(ctr_x_curve(ctr_seg_opposite(*x_seg_p)));        else *oi++ = Make_x_monotone_result(ctr_x_curve(*x_seg_p));
+#else
+        *oi++ = Make_x_monotone_result(ctr_x_curve(*x_seg_p));
 #endif
-        *oi++ = make_object(ctr_x_curve(x_seg));
         x_seg_objects.clear();
         return oi;
       }
@@ -238,45 +233,43 @@ public:
         (
          // To be used in order to verify continuity and well-orientedness
          // of the input curve cv.
-         typename Subcurve_traits_2::Construct_min_vertex_2 min_seg_v =
+         auto min_seg_v =
            m_poly_traits.subcurve_traits_2()->construct_min_vertex_2_object();
-         typename Subcurve_traits_2::Construct_max_vertex_2 max_seg_v =
+         auto max_seg_v =
            m_poly_traits.subcurve_traits_2()->construct_max_vertex_2_object();
-         typename Subcurve_traits_2::Equal_2 equal =
-           m_poly_traits.subcurve_traits_2()->equal_2_object();
-         Point_2 last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
-           max_seg_v(x_seg) : min_seg_v(x_seg);
+         auto equal = m_poly_traits.subcurve_traits_2()->equal_2_object();
+         Point_2 last_target = (cmp_seg_endpts(*x_seg_p) == SMALLER) ?
+           max_seg_v(*x_seg_p) : min_seg_v(*x_seg_p);
          Point_2 next_src;
          );
 
       // The polycurve consists of at least 2 x-monotone subcurves:
       Push_back_2 push_back = m_poly_traits.push_back_2_object();
-      typename Subcurve_traits_2::Is_vertical_2 is_seg_vertical =
+      auto is_seg_vertical =
         m_poly_traits.subcurve_traits_2()->is_vertical_2_object();
 
-      bool is_start_vertical = is_seg_vertical(x_seg);
-      Comparison_result start_dir = cmp_seg_endpts(x_seg);
+      bool is_start_vertical = is_seg_vertical(*x_seg_p);
+      Comparison_result start_dir = cmp_seg_endpts(*x_seg_p);
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       Push_front_2 push_front = m_poly_traits.push_front_2_object();
-      if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
-#endif
-      X_monotone_curve_2 x_polycurve = ctr_x_curve(x_seg);
-
-      for (++it; it != x_seg_objects.end(); ++it){
-        X_monotone_subcurve_2 x_seg;
-#if defined (CGAL_NO_ASSERTIONS)
-        CGAL::assign(x_seg, *it);
+      X_monotone_curve_2 x_polycurve = (cmp_seg_endpts(x_seg) == LARGER) ?
+        ctr_x_curve(ctr_seg_opposite(*x_seg_p)) : ctr_x_curve(*x_seg_p);
 #else
-        bool assign_res = CGAL::assign(x_seg, *it);
-        CGAL_assertion(assign_res);
+      X_monotone_curve_2 x_polycurve = ctr_x_curve(*x_seg_p);
+#endif
+
+      for (++it; it != x_seg_objects.end(); ++it) {
+        const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(*it));
+#if ! defined (CGAL_NO_ASSERTIONS)
+        CGAL_assertion(x_seg_p != nullptr);
 #endif
 
         // Test that cv is continuous and well-oriented.
         CGAL_precondition_code
           (
-           next_src = (cmp_seg_endpts(x_seg) == SMALLER) ?
-             min_seg_v(x_seg) : max_seg_v(x_seg);
+           next_src = (cmp_seg_endpts(*x_seg_p) == SMALLER) ?
+             min_seg_v(*x_seg_p) : max_seg_v(*x_seg_p);
            );
         CGAL_precondition_msg
           (
@@ -285,92 +278,91 @@ public:
            );
         CGAL_precondition_code
           (
-           last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
-             max_seg_v(x_seg) : min_seg_v(x_seg);
+           last_target = (cmp_seg_endpts(*x_seg_p) == SMALLER) ?
+             max_seg_v(*x_seg_p) : min_seg_v(*x_seg_p);
            );
 
-        if ((cmp_seg_endpts(x_seg) != start_dir) ||
-            (is_seg_vertical(x_seg) != is_start_vertical))
+        if ((cmp_seg_endpts(*x_seg_p) != start_dir) ||
+            (is_seg_vertical(*x_seg_p) != is_start_vertical))
         {
             // Construct an x-monotone curve from the sub-range which was found
-          *oi++ = make_object(x_polycurve);
-          is_start_vertical = is_seg_vertical(x_seg);
-          start_dir = cmp_seg_endpts(x_seg);
+          *oi++ = Make_x_monotone_result(x_polycurve);
+          is_start_vertical = is_seg_vertical(*x_seg_p);
+          start_dir = cmp_seg_endpts(*x_seg_p);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-          if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
+          x_polycurve = (cmp_seg_endpts(*x_seg_p) == LARGER) ?
+            ctr_x_curve(ctr_seg_opposite(*x_seg_p)) : ctr_x_curve(*x_seg_p);
+#else
+          x_polycurve = ctr_x_curve(*x_seg_p);
 #endif
-          x_polycurve = ctr_x_curve(x_seg);
         }
         else {
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-          if (cmp_seg_endpts(x_seg) == LARGER) {
-            x_seg = ctr_seg_opposite(x_seg);
-              push_front(x_polycurve, x_seg);
-          }
+          if (cmp_seg_endpts(*x_seg_p) == LARGER)
+            push_front(x_polycurve, ctr_seg_opposite(*x_seg_p));
           else
-            push_back(x_polycurve, x_seg);
+            push_back(x_polycurve, *x_seg_p);
 #else
-          push_back(x_polycurve, x_seg);
+          push_back(x_polycurve, *x_seg_p);
 #endif
         }
 
       } // for loop
       if (x_polycurve.number_of_subcurves() != 0)
-        *oi++ = make_object(x_polycurve);
+        *oi++ = Make_x_monotone_result(x_polycurve);
       x_seg_objects.clear();
       return oi;
     }
+
     template <typename OutputIterator>
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
                                  Arr_not_all_sides_oblivious_tag) const
     {
-      typedef typename Curve_2::Subcurve_const_iterator const_seg_iterator;
+      typedef boost::variant<Point_2, X_monotone_subcurve_2>
+        Make_x_monotone_subresult;
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
 
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
 
-      Construct_x_monotone_curve_2 ctr_x_curve =
-        m_poly_traits.construct_x_monotone_curve_2_object();
+      auto ctr_x_curve = m_poly_traits.construct_x_monotone_curve_2_object();
 
-      typename Subcurve_traits_2::Make_x_monotone_2 make_seg_x_monotone =
+      auto make_seg_x_monotone =
         m_poly_traits.subcurve_traits_2()->make_x_monotone_2_object();
 
-      typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+      auto cmp_seg_endpts =
         m_poly_traits.subcurve_traits_2()->compare_endpoints_xy_2_object();
 
-      typename Subcurve_traits_2::Parameter_space_in_x_2 ps_x =
-           m_poly_traits.subcurve_traits_2()->parameter_space_in_x_2_object();
-      typename Subcurve_traits_2::Parameter_space_in_y_2 ps_y =
-           m_poly_traits.subcurve_traits_2()->parameter_space_in_y_2_object();
+      auto ps_x =
+        m_poly_traits.subcurve_traits_2()->parameter_space_in_x_2_object();
+      auto ps_y =
+        m_poly_traits.subcurve_traits_2()->parameter_space_in_y_2_object();
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       typename Subcurve_traits_2::Construct_opposite_2 ctr_seg_opposite =
         m_poly_traits.subcurve_traits_2()->construct_opposite_2_object();
 #endif
 
-      // Convert the input polycurve to a sequence of CGAL objects, such
-      // that each Object wraps an x-monotone subcurve.
-      std::vector<Object> x_seg_objects;
-      const_seg_iterator it_segs;
-      for (it_segs = cv.subcurves_begin(); it_segs != cv.subcurves_end();
-           ++it_segs)
-        make_seg_x_monotone(*it_segs, std::back_inserter(x_seg_objects));
-      typename std::vector<Object>::iterator it = x_seg_objects.begin();
-      X_monotone_subcurve_2 x_seg;
-#if defined (CGAL_NO_ASSERTIONS)
-      CGAL::assign(x_seg, *it);
-#else
-      bool assign_res = CGAL::assign(x_seg, *it);
-      CGAL_assertion(assign_res);
+      // Convert the input polycurve to a sequence of objects, such that
+      // each object wraps an x-monotone subcurve.
+      std::vector<Make_x_monotone_subresult> x_seg_objects;
+      for (auto its = cv.subcurves_begin(); its != cv.subcurves_end(); ++its)
+        make_seg_x_monotone(*its, std::back_inserter(x_seg_objects));
+      auto it = x_seg_objects.begin();
+      const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(*it));
+#if ! defined (CGAL_NO_ASSERTIONS)
+      CGAL_assertion(x_seg_p != nullptr);
 #endif
 
       // If the polycurve consists of a single x-monotone subcurve, return.
       if (x_seg_objects.size() == 1) {
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
         if (cmp_seg_endpts(x_seg) == LARGER)
-          x_seg = ctr_seg_opposite(x_seg);
+          *oi++ = Make_x_monotone_result(ctr_x_curve(ctr_seg_opposite(*x_seg_p)));        else *oi++ = Make_x_monotone_result(ctr_x_curve(*x_seg_p));
+#else
+        *oi++ = Make_x_monotone_result(ctr_x_curve(*x_seg_p));
 #endif
-        *oi++ = make_object(ctr_x_curve(x_seg));
         x_seg_objects.clear();
         return oi;
       }
@@ -379,45 +371,43 @@ public:
         (
          // To be used in order to verify continuity and well-orientedness
          // of the input curve cv.
-         typename Subcurve_traits_2::Construct_min_vertex_2 min_seg_v =
+         auto min_seg_v =
            m_poly_traits.subcurve_traits_2()->construct_min_vertex_2_object();
-         typename Subcurve_traits_2::Construct_max_vertex_2 max_seg_v =
+         auto max_seg_v =
            m_poly_traits.subcurve_traits_2()->construct_max_vertex_2_object();
-         typename Subcurve_traits_2::Equal_2 equal =
-           m_poly_traits.subcurve_traits_2()->equal_2_object();
-         Point_2 last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
-           max_seg_v(x_seg) : min_seg_v(x_seg);
+         auto equal = m_poly_traits.subcurve_traits_2()->equal_2_object();
+         Point_2 last_target = (cmp_seg_endpts(*x_seg_p) == SMALLER) ?
+           max_seg_v(*x_seg_p) : min_seg_v(*x_seg_p);
          Point_2 next_src;
          );
 
       // The polycurve consists of at least 2 x-monotone subcurves:
       Push_back_2 push_back = m_poly_traits.push_back_2_object();
-      typename Subcurve_traits_2::Is_vertical_2 is_seg_vertical =
+      auto is_seg_vertical =
         m_poly_traits.subcurve_traits_2()->is_vertical_2_object();
 
-      bool is_start_vertical = is_seg_vertical(x_seg);
-      Comparison_result start_dir = cmp_seg_endpts(x_seg);
+      bool is_start_vertical = is_seg_vertical(*x_seg_p);
+      Comparison_result start_dir = cmp_seg_endpts(*x_seg_p);
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       Push_front_2 push_front = m_poly_traits.push_front_2_object();
-      if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
-#endif
-      X_monotone_curve_2 x_polycurve = ctr_x_curve(x_seg);
-
-      for (++it; it != x_seg_objects.end(); ++it){
-        X_monotone_subcurve_2 x_seg;
-#if defined (CGAL_NO_ASSERTIONS)
-        CGAL::assign(x_seg, *it);
+      X_monotone_curve_2 x_polycurve = (cmp_seg_endpts(x_seg) == LARGER) ?
+        ctr_x_curve(ctr_seg_opposite(*x_seg_p)) : ctr_x_curve(*x_seg_p);
 #else
-        bool assign_res = CGAL::assign(x_seg, *it);
-        CGAL_assertion(assign_res);
+      X_monotone_curve_2 x_polycurve = ctr_x_curve(*x_seg_p);
+#endif
+
+      for (++it; it != x_seg_objects.end(); ++it) {
+        const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(*it));
+#if ! defined (CGAL_NO_ASSERTIONS)
+        CGAL_assertion(x_seg_p != nullptr);
 #endif
 
         // Test that cv is continuous and well-oriented.
         CGAL_precondition_code
           (
-           next_src = (cmp_seg_endpts(x_seg) == SMALLER) ?
-             min_seg_v(x_seg) : max_seg_v(x_seg);
+           next_src = (cmp_seg_endpts(*x_seg_p) == SMALLER) ?
+             min_seg_v(*x_seg_p) : max_seg_v(*x_seg_p);
            );
         CGAL_precondition_msg
           (
@@ -426,62 +416,64 @@ public:
            );
         CGAL_precondition_code
           (
-           last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
-             max_seg_v(x_seg) : min_seg_v(x_seg);
+           last_target = (cmp_seg_endpts(*x_seg_p) == SMALLER) ?
+             max_seg_v(*x_seg_p) : min_seg_v(*x_seg_p);
            );
 
-          Arr_curve_end polycurve_target =
-            (cmp_seg_endpts(x_polycurve[0]) == SMALLER) ?
-            ARR_MAX_END : ARR_MIN_END;
-          Arr_curve_end seg_source = (cmp_seg_endpts(x_seg) == SMALLER) ?
-            ARR_MIN_END : ARR_MAX_END;
-          unsigned int num_segs = x_polycurve.number_of_subcurves();
+        Arr_curve_end polycurve_target =
+          (cmp_seg_endpts(x_polycurve[0]) == SMALLER) ?
+          ARR_MAX_END : ARR_MIN_END;
+        Arr_curve_end seg_source = (cmp_seg_endpts(*x_seg_p) == SMALLER) ?
+          ARR_MIN_END : ARR_MAX_END;
+        auto num_segs = x_polycurve.number_of_subcurves();
 
-        if ((cmp_seg_endpts(x_seg) != start_dir) ||
-            (is_seg_vertical(x_seg) != is_start_vertical))
+        if ((cmp_seg_endpts(*x_seg_p) != start_dir) ||
+            (is_seg_vertical(*x_seg_p) != is_start_vertical))
         {
             // Construct an x-monotone curve from the sub-range which was found
-          *oi++ = make_object(x_polycurve);
-          is_start_vertical = is_seg_vertical(x_seg);
-          start_dir = cmp_seg_endpts(x_seg);
+          *oi++ = Make_x_monotone_result(x_polycurve);
+          is_start_vertical = is_seg_vertical(*x_seg_p);
+          start_dir = cmp_seg_endpts(*x_seg_p);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-          if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
+          x_polycurve (cmp_seg_endpts(*x_seg_p) == LARGER) ?
+            ctr_x_curve(ctr_seg_opposite(*x_seg_p)) : ctr_x_curve(*x_seg_p);
+#else
+          x_polycurve = ctr_x_curve(*x_seg_p);
 #endif
-          x_polycurve = ctr_x_curve(x_seg);
         }
         else if (ps_x(x_polycurve[num_segs-1], polycurve_target) !=
                  ARR_INTERIOR ||
-                 ps_x(x_seg, seg_source) != ARR_INTERIOR)
+                 (ps_x(*x_seg_p, seg_source) != ARR_INTERIOR))
         {
-          *oi++ = make_object(x_polycurve);
+          *oi++ = Make_x_monotone_result(x_polycurve);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-          if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
+          x_polycurve = (cmp_seg_endpts(*x_seg_p) == LARGER) ?
+            ctr_seg_opposite(*x_seg_p) : ctr_x_curve(*x_seg_p);
 #endif
-            x_polycurve = ctr_x_curve(x_seg);
+          x_polycurve = ctr_x_curve(*x_seg_p);
         }
 
         else {
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-          if (cmp_seg_endpts(x_seg) == LARGER) {
-            x_seg = ctr_seg_opposite(x_seg);
-            push_front(x_polycurve, x_seg);
-          }
+          if (cmp_seg_endpts(*x_seg_p) == LARGER)
+            push_front(x_polycurve, ctr_seg_opposite(*x_seg_p));
           else
-            push_back(x_polycurve, x_seg);
+            push_back(x_polycurve, *x_seg_p);
 #else
-          push_back(x_polycurve, x_seg);
+          push_back(x_polycurve, *x_seg_p);
 #endif
         }
       } // for loop
       if (x_polycurve.number_of_subcurves() != 0)
-        *oi++ = make_object(x_polycurve);
+        *oi++ = Make_x_monotone_result(x_polycurve);
       x_seg_objects.clear();
       return oi;
     }
-public:
+
+  public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
-    { return operator_impl(cv, oi, Are_all_sides_oblivious_tag()); }
+    { return operator_impl(cv, oi, All_sides_oblivious_category()); }
   };
 
   /*! Obtain a Make_x_monotone_2 functor object. */
@@ -498,9 +490,7 @@ public:
 
   public:
     /*! Constructor. */
-    Push_back_2(const Polycurve_traits_2& traits) :
-      Base::Push_back_2(traits)
-    {}
+    Push_back_2(const Polycurve_traits_2& traits) : Base::Push_back_2(traits) {}
 
     // Normally, the moment the compiler finds a name, it stops looking. In
     // other words, the compiler first finds the operator() in the current
@@ -584,20 +574,16 @@ public:
                     X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      typename Subcurve_traits_2::Construct_min_vertex_2 min_vertex =
-        geom_traits->construct_min_vertex_2_object();
-      typename Subcurve_traits_2::Construct_max_vertex_2 max_vertex =
-        geom_traits->construct_max_vertex_2_object();
-      typename Subcurve_traits_2::Equal_2 equal =
-        geom_traits->equal_2_object();
-      typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        geom_traits->compare_endpoints_xy_2_object();
+      auto min_vertex = geom_traits->construct_min_vertex_2_object();
+      auto max_vertex = geom_traits->construct_max_vertex_2_object();
+      auto equal = geom_traits->equal_2_object();
+      auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
 
       // Make sure the split point is not one of the curve endpoints.
-      CGAL_precondition((!equal(m_poly_traits.
-                                construct_min_vertex_2_object()(xcv), p)));
-      CGAL_precondition((!equal(m_poly_traits.
-                                construct_max_vertex_2_object()(xcv), p)));
+      CGAL_precondition((! equal(m_poly_traits.
+                                 construct_min_vertex_2_object()(xcv), p)));
+      CGAL_precondition((! equal(m_poly_traits.
+                                 construct_max_vertex_2_object()(xcv), p)));
 
       CGAL_precondition_msg(xcv.number_of_subcurves() > 0,
                             "Cannot split a polycurve of length zero.");
@@ -709,25 +695,30 @@ public:
                const X_monotone_curve_2& cv2,
                OutputIterator oi) const
     {
-      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      Compare_y_at_x_2 cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
-      typename Subcurve_traits_2::Equal_2 equal =
-        geom_traits->equal_2_object();
-      typename Subcurve_traits_2::Construct_min_vertex_2 min_vertex =
-        geom_traits->construct_min_vertex_2_object();
-      typename Subcurve_traits_2::Construct_max_vertex_2 max_vertex =
-        geom_traits->construct_max_vertex_2_object();
-      typename Subcurve_traits_2::Intersect_2 intersect =
-        geom_traits->intersect_2_object();
-      typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        geom_traits->compare_endpoints_xy_2_object();
-      typename Subcurve_traits_2::Construct_opposite_2 construct_opposite =
-        geom_traits->construct_opposite_2_object();
+      typedef std::pair<Point_2, Multiplicity>        Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_subcurve_2>
+                                                      Intersection_base_result;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                      Intersection_result;
 
-      typedef std::pair<Point_2,Multiplicity> Point_2_pair;
+      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
+      auto cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
+      auto equal = geom_traits->equal_2_object();
+      auto min_vertex = geom_traits->construct_min_vertex_2_object();
+      auto max_vertex = geom_traits->construct_max_vertex_2_object();
+      auto intersect = geom_traits->intersect_2_object();
+      auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
+      auto construct_opposite = geom_traits->construct_opposite_2_object();
 
       Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
       Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
+
+      std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
+      const bool invert_ocv = ((dir1 == LARGER) && (dir2 == LARGER));
+      const bool consistent = (dir1 == dir2);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      CGAL_assertion(consistent);
+#endif
 
       const std::size_t n1 = cv1.number_of_subcurves();
       const std::size_t n2 = cv2.number_of_subcurves();
@@ -735,9 +726,7 @@ public:
       std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
       std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
 
-      X_monotone_curve_2 ocv;           // Used to represent overlaps.
-
-      Compare_xy_2 compare_xy = m_poly_traits.compare_xy_2_object();
+      auto compare_xy = m_poly_traits.compare_xy_2_object();
       Comparison_result left_res =
         compare_xy(cv1[i1], ARR_MIN_END, cv2[i2], ARR_MIN_END);
 
@@ -746,7 +735,7 @@ public:
         // Locate the index i1 of the subcurve in cv1 which contains cv2's
         // left endpoint.
         i1 = m_poly_traits.locate_impl(cv1, cv2[i2], ARR_MIN_END,
-                                       Are_all_sides_oblivious_tag());
+                                       All_sides_oblivious_category());
         if (i1 == Polycurve_traits_2::INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
@@ -754,12 +743,13 @@ public:
               ((dir1 == LARGER) && (i1 == 0))){
             // cv1's right endpoint equals cv2's left endpoint
             // Thus we can return this single(!) intersection point
-            std::pair<Point_2, Multiplicity>  p(max_vertex(cv1[i1]), 0);
-            *oi++ = make_object(p);
+            Intersection_point p(max_vertex(cv1[i1]), 0);
+            *oi++ = Intersection_result(p);
             return oi;
           }
           dir1 == SMALLER ?
-            ++i1 : (i1 != 0) ? --i1 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
+            ++i1 :
+            (i1 != 0) ? --i1 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
           left_res = EQUAL;
         }
       }
@@ -768,7 +758,7 @@ public:
         // Locate the index i2 of the subcurve in cv2 which contains cv1's
         // left endpoint.
         i2 = m_poly_traits.locate_impl(cv2, cv1[i1], ARR_MIN_END,
-                                       Are_all_sides_oblivious_tag());
+                                       All_sides_oblivious_category());
         if (i2 == Polycurve_traits_2::INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {
@@ -776,18 +766,19 @@ public:
               ((dir2 == LARGER) && (i2 == 0))){
             // cv2's right endpoint equals cv1's left endpoint
             // Thus we can return this single(!) intersection point
-            std::pair<Point_2, Multiplicity>  p(max_vertex(cv2[i2]), 0);
-            *oi++ = make_object(p);
+            Intersection_point p(max_vertex(cv2[i2]), 0);
+            *oi++ = Intersection_result(p);
             return oi;
           }
 
           dir2 == SMALLER ?
-            ++i2 : (i2 != 0) ? --i2 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
+            ++i2 :
+            (i2 != 0) ? --i2 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
           left_res = EQUAL;
         }
       }
 
-      // Check if the the left endpoint lies on the other polycurve.
+      // Check if the left endpoint lies on the other polycurve.
       bool left_coincides = (left_res == EQUAL);
       bool left_overlap = false;
 
@@ -823,57 +814,77 @@ public:
 
         right_overlap = false;
 
-        if (!right_coincides && !left_coincides) {
+        //! EF: the following code is a bit suspicious. It may erroneously
+        //      assume that the subcurves cannot overlap more than once.
+        if (! right_coincides && ! left_coincides) {
           // Non of the endpoints of the current subcurve of one polycurve
           // coincides with the curent subcurve of the other polycurve:
           // Output the intersection if exists.
-          oi = intersect(cv1[i1], cv2[i2], oi);
+          std::vector<Intersection_base_result> xections;
+          intersect(cv1[i1], cv2[i2], std::back_inserter(xections));
+          for (const auto& xection : xections) {
+            const X_monotone_subcurve_2* subcv_p =
+              boost::get<X_monotone_subcurve_2>(&xection);
+            if (subcv_p != nullptr) {
+              ocv.push_back(*subcv_p);
+              oi = output_ocv (ocv, invert_ocv, oi);
+              continue;
+            }
+
+            const Intersection_point* p_p =
+              boost::get<Intersection_point>(&xection);
+            if (p_p != nullptr) *oi++ = Intersection_result(*p_p);
+          }
         }
         else if (right_coincides && left_coincides) {
           // An overlap exists between the current subcurves of the
           // polycurves: Output the overlapping subcurve.
           right_overlap = true;
 
-          std::vector<CGAL::Object> int_seg;
-          intersect(cv1[i1], cv2[i2], std::back_inserter(int_seg));
+          std::vector<Intersection_base_result> sub_xections;
+          intersect(cv1[i1], cv2[i2], std::back_inserter(sub_xections));
 
-          for (size_t i = 0; i < int_seg.size(); ++i) {
+          for (const auto& item : sub_xections) {
             const X_monotone_subcurve_2* x_seg =
-              CGAL::object_cast<X_monotone_subcurve_2> (&(int_seg[i]));
+              boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
-
-              // If for some reason the subcurve intersection
-              // results in left oriented curve.
-              if ( cmp_seg_endpts(seg) == LARGER)
+              // We maintain the variant that if the input curves have opposite
+              // directions (! consistent), the overalpping curves are directed
+              // left=>right. This, however, is not guaranteed for the
+              // subcurves. Therefore, we need to enforce it. That is, we make
+              // sure the subcurves are also directed left=>right in this case.
+              if (! consistent && (cmp_seg_endpts(seg) == LARGER))
                 seg = construct_opposite(seg);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+              CGAL_assertion(cmp_seg_endpts(seg) == SMALLER);
+#endif
               ocv.push_back(seg);
             }
 
-            const Point_2_pair* p_ptr =
-              CGAL::object_cast<Point_2_pair>(&(int_seg[i]));
+            const Intersection_point* p_ptr =
+              boost::get<Intersection_point>(&item);
             if (p_ptr != nullptr) {
               // Any point that is not equal to the max_vertex of the
               // subcurve should be inserted into oi.
               // The max_vertex of the current subcurve (if intersecting)
               // will be taken care of as the min_vertex of in the next
               // iteration.
-              if (!equal(p_ptr->first, max_vertex(cv1[i1])))
-                *oi++ = make_object(*p_ptr);
+              if (! equal(p_ptr->first, max_vertex(cv1[i1])))
+                *oi++ = Intersection_result(*p_ptr);
             }
           }
         }
 
-        else if (left_coincides && !right_coincides) {
+        else if (left_coincides && ! right_coincides) {
           // std::cout << "Left is coinciding but right is not." << std::endl;
           // The left point of the current subcurve of one polycurve
           // coincides with the current subcurve of the other polycurve.
           if (left_overlap) {
             // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
-            CGAL_assertion(ocv.number_of_subcurves() > 0);
-            *oi++ = make_object(ocv);
-            ocv.clear();
+            CGAL_assertion(ocv.size() > 0);
+            oi = output_ocv (ocv, invert_ocv, oi);
           }
           else {
             // The left point of the current subcurve of one
@@ -884,12 +895,12 @@ public:
             // polycurves is not defined at this point, so we give
             // it multiplicity 0.
             if (left_res == SMALLER) {
-              std::pair<Point_2, Multiplicity> p(min_vertex(cv2[i2]), 0);
-              *oi++ = make_object(p);
+              Intersection_point p(min_vertex(cv2[i2]), 0);
+              *oi++ = Intersection_result(p);
             }
             else {
-              std::pair<Point_2, Multiplicity> p(min_vertex(cv1[i1]), 0);
-              *oi++ = make_object(p);
+              Intersection_point p(min_vertex(cv1[i1]), 0);
+              *oi++ = Intersection_result(p);
             }
           }
         }
@@ -918,8 +929,8 @@ public:
       } // END of while loop
 
         // Output the remaining overlapping polycurve, if necessary.
-      if (ocv.number_of_subcurves() > 0) {
-        *oi++ = make_object(ocv);
+      if (ocv.size() > 0) {
+        oi = output_ocv (ocv, invert_ocv, oi);
       }
       else if (right_coincides) {
         typedef std::pair<Point_2,Multiplicity> return_point;
@@ -930,7 +941,7 @@ public:
             (i1 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv1[i1+1]), 0) :
             return_point(max_vertex(cv1[0]), 0);
-          *oi++ = make_object(ip);
+          *oi++ = Intersection_result(ip);
         }
         else if (right_res == LARGER) {
           ip = (dir2 == SMALLER) ?
@@ -938,7 +949,7 @@ public:
             (i2 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv2[i2+1]), 0) :
             return_point(max_vertex(cv2[0]), 0);
-          *oi++ = make_object(ip);
+          *oi++ = Intersection_result(ip);
         }
         else if (((i1 > 0) && (dir1 == SMALLER)) ||
                  ((i1 < n1) && (dir1 != SMALLER)) ||
@@ -950,7 +961,7 @@ public:
             (i1 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv1[i1+1]), 0) :
             return_point(max_vertex(cv1[0]), 0);
-          *oi++ = make_object(ip);
+          *oi++ = Intersection_result(ip);
         }
         else {
           CGAL_assertion_msg((dir2 == SMALLER && i2 > 0) ||
@@ -965,9 +976,30 @@ public:
             (i2 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv2[i2+1]), 0) :
             return_point(max_vertex(cv2[0]), 0);
-          *oi++ = make_object(ip);
+          *oi++ = Intersection_result(ip);
         }
       }
+
+      return oi;
+    }
+
+  private:
+
+    template <typename OutputIterator>
+    inline OutputIterator output_ocv
+    (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
+    {
+      typedef std::pair<Point_2, Multiplicity>        Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                      Intersection_result;
+      X_monotone_curve_2 curve;
+      if (invert_ocv)
+        std::reverse (ocv.begin(), ocv.end());
+      for (X_monotone_subcurve_2& sc : ocv)
+        curve.push_back (sc);
+      *(oi ++) = Intersection_result(curve);
+
+      ocv.clear();
 
       return oi;
     }
@@ -1141,7 +1173,7 @@ public:
     Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-      typedef typename boost::is_same<VT, Point_2>::type Is_point;
+      typedef typename std::is_same<VT, Point_2>::type Is_point;
       // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
@@ -1158,7 +1190,7 @@ public:
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator /* begin */,
                              ForwardIterator /* end */,
-                             boost::true_type) const
+                             std::true_type) const
     {  CGAL_error_msg("Cannot construct a polycurve from a range of points!"); }
 
     /*! Construction implementation from a range of subcurves.
@@ -1169,7 +1201,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::false_type) const
+                             std::false_type) const
     {
       // Range has to contain at least one subcurve
       CGAL_precondition(begin != end);

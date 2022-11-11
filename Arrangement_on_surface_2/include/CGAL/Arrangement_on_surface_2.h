@@ -17,6 +17,7 @@
 //                                      Ester Ezra,
 //                                      Shai Hirsch,
 //                                      and Eugene Lipovetsky)
+
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_H
 
@@ -45,6 +46,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
+#include <CGAL/Arr_point_location_result.h>
 
 namespace CGAL {
 
@@ -75,32 +77,29 @@ public:
   typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
-  BOOST_MPL_ASSERT(
-                   (typename
-                    Arr_sane_identified_tagging<Left_side_category,
-                    Bottom_side_category,
-                    Top_side_category,
-                    Right_side_category>::result)
-                   );
+  CGAL_static_assertion((Arr_sane_identified_tagging<Left_side_category,
+                        Bottom_side_category,
+                        Top_side_category,
+                        Right_side_category>::value));
 
 public:
   typedef Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
-  Self;
+                                                          Self;
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
   // maybe remove this in a future version (that supports complete handling
   // of all sides)
-  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
-                                                   Bottom_side_category,
-                                                   Top_side_category,
-                                                   Right_side_category>::result
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
     Are_all_sides_oblivious_category;
 
   typedef typename Arr_has_identified_sides<Left_side_category,
                                             Bottom_side_category>::result
-    Has_identified_sides_category;
+    Has_identified_sides;
 
   typedef typename Arr_two_sides_category<Bottom_side_category,
                                           Top_side_category>::result
@@ -308,6 +307,10 @@ public:
       Base(iter, iend, pred)
     {}
 
+    Edge_iterator(const Base& base) :
+      Base(base)
+    {}
+
     // Casting to a halfedge iterator.
     operator Halfedge_iterator() const
     {
@@ -340,6 +343,10 @@ public:
     Edge_const_iterator(DEdge_const_iter iter, DEdge_const_iter iend,
                         const _Is_valid_halfedge& pred) :
       Base(iter, iend, pred)
+    {}
+
+    Edge_const_iterator(const Base& base) :
+      Base(base)
     {}
 
     // Casting to a halfedge iterator.
@@ -430,6 +437,10 @@ public:
                                   DFace_const_iter iend,
                                   const _Is_unbounded_face& is_unbounded) :
       Base(iter, iend, is_unbounded)
+    {}
+
+    Unbounded_face_const_iterator(const Base& base) :
+      Base(base)
     {}
 
     // Casting to a face iterator.
@@ -753,57 +764,57 @@ public:
     /*! Default constrcutor. */
     Face() {}
 
-    /*! Get an iterator for the outer CCBs of the face (non-const version). */
+    /*! Obtain an iterator for the outer CCBs of the face (non-const version). */
     Outer_ccb_iterator outer_ccbs_begin()
     { return (DOuter_ccb_iter(Base::outer_ccbs_begin())); }
 
-    /*! Get an iterator for the outer CCBs the face (const version). */
+    /*! Obtain an iterator for the outer CCBs the face (const version). */
     Outer_ccb_const_iterator outer_ccbs_begin() const
     { return (DOuter_ccb_const_iter(Base::outer_ccbs_begin())); }
 
-    /*! Get a past-the-end iterator for the outer CCBs (non-const version). */
+    /*! Obtain a past-the-end iterator for the outer CCBs (non-const version). */
     Outer_ccb_iterator outer_ccbs_end()
     { return (DOuter_ccb_iter(Base::outer_ccbs_end())); }
 
-    /*! Get a past-the-end iterator for the outer CCBs (const version). */
+    /*! Obtain a past-the-end iterator for the outer CCBs (const version). */
     Outer_ccb_const_iterator outer_ccbs_end() const
     { return (DOuter_ccb_const_iter(Base::outer_ccbs_end())); }
 
-    /*! Get an iterator for the inner CCBs of the face (non-const version). */
+    /*! Obtain an iterator for the inner CCBs of the face (non-const version). */
     Inner_ccb_iterator inner_ccbs_begin()
     { return (DInner_ccb_iter(Base::inner_ccbs_begin())); }
 
-    /*! Get an iterator for the inner CCBs the face (const version). */
+    /*! Obtain an iterator for the inner CCBs the face (const version). */
     Inner_ccb_const_iterator inner_ccbs_begin() const
     { return (DInner_ccb_const_iter(Base::inner_ccbs_begin())); }
 
-    /*! Get a past-the-end iterator for the inner CCBs (non-const version). */
+    /*! Obtain a past-the-end iterator for the inner CCBs (non-const version). */
     Inner_ccb_iterator inner_ccbs_end()
     { return (DInner_ccb_iter(Base::inner_ccbs_end())); }
 
-    /*! Get a past-the-end iterator for the inner CCBs (const version). */
+    /*! Obtain a past-the-end iterator for the inner CCBs (const version). */
     Inner_ccb_const_iterator inner_ccbs_end() const
     { return (DInner_ccb_const_iter(Base::inner_ccbs_end())); }
 
-    /*! Get an iterator for the isolated_vertices inside the face
+    /*! Obtain an iterator for the isolated_vertices inside the face
      * (non-const version).
      */
     Isolated_vertex_iterator isolated_vertices_begin()
     { return (DIso_vertex_iter(Base::isolated_vertices_begin())); }
 
-    /*! Get an iterator for the isolated_vertices inside the face
+    /*! Obtain an iterator for the isolated_vertices inside the face
      * (const version).
      */
     Isolated_vertex_const_iterator isolated_vertices_begin() const
     { return (DIso_vertex_const_iter(Base::isolated_vertices_begin())); }
 
-    /*! Get a past-the-end iterator for the isolated_vertices
+    /*! Obtain a past-the-end iterator for the isolated_vertices
      * (non-const version).
      */
     Isolated_vertex_iterator isolated_vertices_end()
     { return (DIso_vertex_iter(Base::isolated_vertices_end())); }
 
-    /*! Get a past-the-end iterator for the isolated_vertices
+    /*! Obtain a past-the-end iterator for the isolated_vertices
      * (const version).
      */
     Isolated_vertex_const_iterator isolated_vertices_end() const
@@ -819,7 +830,7 @@ public:
     { return (Base::number_of_outer_ccbs() > 0); }
 
     /*!
-     * Get a circulator for the outer boundary (non-const version).
+     * Obtain a circulator for the outer boundary (non-const version).
      * \pre The face has a single outer CCB.
      */
     Ccb_halfedge_circulator outer_ccb()
@@ -832,7 +843,7 @@ public:
     }
 
     /*!
-     * Get a circulator for the outer boundary (const version).
+     * Obtain a circulator for the outer boundary (const version).
      * \pre The face has a single outer CCB.
      */
     Ccb_halfedge_const_circulator outer_ccb() const
@@ -844,23 +855,23 @@ public:
       return Ccb_halfedge_const_circulator(DHalfedge_const_iter(he));
     }
 
-    /*! Get the number of holes (inner CCBs) inside the face. */
+    /*! Obtain the number of holes (inner CCBs) inside the face. */
     Size number_of_holes() const
     { return (Base::number_of_inner_ccbs()); }
 
-    /*! Get an iterator for the holes inside the face (non-const version). */
+    /*! Obtain an iterator for the holes inside the face (non-const version). */
     Inner_ccb_iterator holes_begin()
     { return (this->inner_ccbs_begin()); }
 
-    /*! Get an iterator for the holes inside the face (const version). */
+    /*! Obtain an iterator for the holes inside the face (const version). */
     Inner_ccb_const_iterator holes_begin() const
     { return (this->inner_ccbs_begin()); }
 
-    /*! Get a past-the-end iterator for the holes (non-const version). */
+    /*! Obtain a past-the-end iterator for the holes (non-const version). */
     Inner_ccb_iterator holes_end()
     { return (this->inner_ccbs_end()); }
 
-    /*! Get a past-the-end iterator for the holes (const version). */
+    /*! Obtain a past-the-end iterator for the holes (const version). */
     Inner_ccb_const_iterator holes_end() const
     { return (this->inner_ccbs_end()); }
     //@}
@@ -897,6 +908,14 @@ protected:
   bool                    m_own_traits;    // inidicates whether the geometry
                                            // traits should be freed up.
 
+  bool                    m_sweep_mode = false;
+                                           // sweep mode efficiently
+                                           // merges inner CCB but
+                                           // keeps invalid inner CCB
+                                           // and memory overhead that
+                                           // should be cleaned
+                                           // afterwards
+
 public:
   /// \name Constructors.
   //@{
@@ -926,6 +945,9 @@ public:
 
   /*! Destructor. */
   virtual ~Arrangement_on_surface_2();
+
+  /*! Change mode. */
+  void set_sweep_mode (bool mode) { m_sweep_mode = mode; }
 
   /*! Clear the arrangement. */
   virtual void clear();
@@ -965,27 +987,27 @@ public:
    */
   bool is_valid() const;
 
-  /*! Get the number of arrangement vertices. */
+  /*! Obtain the number of arrangement vertices. */
   Size number_of_vertices() const
   { return (m_topol_traits.number_of_concrete_vertices()); }
 
-  /*! Get the number of isolated arrangement vertices. */
+  /*! Obtain the number of isolated arrangement vertices. */
   Size number_of_isolated_vertices() const
   { return (_dcel().size_of_isolated_vertices()); }
 
-  /*! Get the number of arrangement halfedges (the result is always even). */
+  /*! Obtain the number of arrangement halfedges (the result is always even). */
   Size number_of_halfedges() const
   { return (m_topol_traits.number_of_valid_halfedges()); }
 
-  /*! Get the number of arrangement edges. */
+  /*! Obtain the number of arrangement edges. */
   Size number_of_edges() const
   { return (m_topol_traits.number_of_valid_halfedges() / 2); }
 
-  /*! Get the number of arrangement faces. */
+  /*! Obtain the number of arrangement faces. */
   Size number_of_faces() const
   { return (m_topol_traits.number_of_valid_faces()); }
 
-  /*! Get the number of unbounded faces in the arrangement. */
+  /*! Obtain the number of unbounded faces in the arrangement. */
   Size number_of_unbounded_faces() const
   {
     Unbounded_face_const_iterator iter = unbounded_faces_begin();
@@ -1004,14 +1026,14 @@ public:
   /// \name Traversal functions for the arrangement vertices.
   //@{
 
-  /*! Get an iterator for the first vertex in the arrangement. */
+  /*! Obtain an iterator for the first vertex in the arrangement. */
   Vertex_iterator vertices_begin()
   {
     return (Vertex_iterator(_dcel().vertices_begin(), _dcel().vertices_end(),
                             _Is_concrete_vertex(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end iterator for the arrangement vertices. */
+  /*! Obtain a past-the-end iterator for the arrangement vertices. */
   Vertex_iterator vertices_end()
   {
     return (Vertex_iterator(_dcel().vertices_end(), _dcel().vertices_end(),
@@ -1027,7 +1049,7 @@ public:
     return make_prevent_deref_range(vertices_begin(), vertices_end());
   }
 
-  /*! Get a const iterator for the first vertex in the arrangement. */
+  /*! Obtain a const iterator for the first vertex in the arrangement. */
   Vertex_const_iterator vertices_begin() const
   {
     return (Vertex_const_iterator(_dcel().vertices_begin(),
@@ -1035,7 +1057,7 @@ public:
                                   _Is_concrete_vertex(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end const iterator for the arrangement vertices. */
+  /*! Obtain a past-the-end const iterator for the arrangement vertices. */
   Vertex_const_iterator vertices_end() const
   {
     return (Vertex_const_iterator(_dcel().vertices_end(),
@@ -1057,7 +1079,7 @@ public:
   /// \name Traversal functions for the arrangement halfedges.
   //@{
 
-  /*! Get an iterator for the first halfedge in the arrangement. */
+  /*! Obtain an iterator for the first halfedge in the arrangement. */
   Halfedge_iterator halfedges_begin()
   {
     return (Halfedge_iterator(_dcel().halfedges_begin(),
@@ -1065,7 +1087,7 @@ public:
                               _Is_valid_halfedge(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end iterator for the arrangement halfedges. */
+  /*! Obtain a past-the-end iterator for the arrangement halfedges. */
   Halfedge_iterator halfedges_end()
   {
     return (Halfedge_iterator(_dcel().halfedges_end(),
@@ -1082,7 +1104,7 @@ public:
     return make_prevent_deref_range(halfedges_begin(), halfedges_end());
   }
 
-  /*! Get a const iterator for the first halfedge in the arrangement. */
+  /*! Obtain a const iterator for the first halfedge in the arrangement. */
   Halfedge_const_iterator halfedges_begin() const
   {
     return (Halfedge_const_iterator(_dcel().halfedges_begin(),
@@ -1090,7 +1112,7 @@ public:
                                     _Is_valid_halfedge(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end const iterator for the arrangement halfedges. */
+  /*! Obtain a past-the-end const iterator for the arrangement halfedges. */
   Halfedge_const_iterator halfedges_end() const
   {
     return (Halfedge_const_iterator(_dcel().halfedges_end(),
@@ -1110,14 +1132,14 @@ public:
   /// \name Traversal functions for the arrangement edges.
   //@{
 
-  /*! Get an iterator for the first edge in the arrangement. */
+  /*! Obtain an iterator for the first edge in the arrangement. */
   Edge_iterator edges_begin()
   {
     return (Edge_iterator(_dcel().edges_begin(), _dcel().edges_end(),
                           _Is_valid_halfedge(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end iterator for the arrangement edges. */
+  /*! Obtain a past-the-end iterator for the arrangement edges. */
   Edge_iterator edges_end()
   {
     return (Edge_iterator(_dcel().edges_end(), _dcel().edges_end(),
@@ -1133,14 +1155,14 @@ public:
     return make_prevent_deref_range(edges_begin(), edges_end());
   }
 
-  /*! Get a const iterator for the first edge in the arrangement. */
+  /*! Obtain a const iterator for the first edge in the arrangement. */
   Edge_const_iterator edges_begin() const
   {
     return (Edge_const_iterator(_dcel().edges_begin(), _dcel().edges_end(),
                                 _Is_valid_halfedge(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end const iterator for the arrangement edges. */
+  /*! Obtain a past-the-end const iterator for the arrangement edges. */
   Edge_const_iterator edges_end() const
   {
     return (Edge_const_iterator(_dcel().edges_end(), _dcel().edges_end(),
@@ -1160,14 +1182,14 @@ public:
   /// \name Traversal functions for the arrangement faces.
   //@{
 
-  /*! Get an iterator for the first face in the arrangement. */
+  /*! Obtain an iterator for the first face in the arrangement. */
   Face_iterator faces_begin()
   {
     return (Face_iterator(_dcel().faces_begin(), _dcel().faces_end(),
                           _Is_valid_face(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end iterator for the arrangement faces. */
+  /*! Obtain a past-the-end iterator for the arrangement faces. */
   Face_iterator faces_end()
   {
     return (Face_iterator(_dcel().faces_end(), _dcel().faces_end(),
@@ -1182,14 +1204,14 @@ public:
   {
     return make_prevent_deref_range(faces_begin(), faces_end());
   }
-  /*! Get a const iterator for the first face in the arrangement. */
+  /*! Obtain a const iterator for the first face in the arrangement. */
   Face_const_iterator faces_begin() const
   {
     return (Face_const_iterator(_dcel().faces_begin(), _dcel().faces_end(),
                                 _Is_valid_face(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end const iterator for the arrangement faces. */
+  /*! Obtain a past-the-end const iterator for the arrangement faces. */
   Face_const_iterator faces_end() const
   {
     return (Face_const_iterator(_dcel().faces_end(), _dcel().faces_end(),
@@ -1229,21 +1251,21 @@ public:
   /// \name Traversal functions for the unbounded faces of the arrangement.
   //@{
 
-  /*! Get an iterator for the first unbounded face in the arrangement. */
+  /*! Obtain an iterator for the first unbounded face in the arrangement. */
   Unbounded_face_iterator unbounded_faces_begin()
   {
     return Unbounded_face_iterator(_dcel().faces_begin(), _dcel().faces_end(),
                                    _Is_unbounded_face(&m_topol_traits));
   }
 
-  /*! Get a past-the-end iterator for the unbounded arrangement faces. */
+  /*! Obtain a past-the-end iterator for the unbounded arrangement faces. */
   Unbounded_face_iterator unbounded_faces_end()
   {
     return Unbounded_face_iterator(_dcel().faces_end(), _dcel().faces_end(),
                                    _Is_unbounded_face(&m_topol_traits));
   }
 
-  /*! Get a const iterator for the first unbounded face in the arrangement. */
+  /*! Obtain a const iterator for the first unbounded face in the arrangement. */
   Unbounded_face_const_iterator unbounded_faces_begin() const
   {
     return Unbounded_face_const_iterator(_dcel().faces_begin(),
@@ -1251,7 +1273,7 @@ public:
                                          _Is_unbounded_face(&m_topol_traits));
   }
 
-  /*! Get a past-the-end const iterator for the unbounded arrangement faces. */
+  /*! Obtain a past-the-end const iterator for the unbounded arrangement faces. */
   Unbounded_face_const_iterator unbounded_faces_end() const
   {
     return Unbounded_face_const_iterator(_dcel().faces_end(),
@@ -1259,7 +1281,7 @@ public:
                                          _Is_unbounded_face(&m_topol_traits));
   }
 
-  /*! Get the fictitious face (non-const version). */
+  /*! Obtain the fictitious face (non-const version). */
   Face_handle fictitious_face()
   {
     // The fictitious contains all other faces in a single hole inside it.
@@ -1268,7 +1290,7 @@ public:
   }
 
   /*!
-   * Get the unbounded face (const version).
+   * Obtain the unbounded face (const version).
    * The fictitious contains all other faces in a single hole inside it.
    */
   Face_const_handle fictitious_face() const
@@ -1471,7 +1493,7 @@ public:
    * \pre cv1's source and cv2's target equal the endpoints of the curve
    *      currently assoicated with e (respectively), and cv1's target equals
    *      cv2's target, and this is the split point (ot vice versa).
-   * \return A handle for the halfedge whose source is the source of the the
+   * \return A handle for the halfedge whose source is the source of the
    *         original halfedge e, and whose target is the split point.
    */
   Halfedge_handle split_edge(Halfedge_handle e,
@@ -1503,6 +1525,39 @@ public:
                           bool remove_target = true);
 
   //@}
+
+  /*!
+   * Cleans the inner CCB if sweep mode was used, by removing all
+   * non-valid inner CCBs
+   */
+  void clean_inner_ccbs_after_sweep()
+  {
+    for (DHalfedge_iter he = _dcel().halfedges_begin();
+         he != _dcel().halfedges_end(); ++ he)
+    {
+      if (!he->is_on_inner_ccb())
+        continue;
+
+      DInner_ccb* ic1 = he->inner_ccb_no_redirect();
+      if (ic1->is_valid())
+        continue;
+
+      // Calling Halfedge::inner_ccb() reduces the path and makes the
+      // halfedge point to a correct CCB
+      DInner_ccb* ic2 = he->inner_ccb();
+      CGAL_USE(ic2);
+      CGAL_assertion (ic2->halfedge()->is_on_inner_ccb()
+                      && ic2->halfedge()->inner_ccb_no_redirect() == ic2);
+    }
+
+    typename Dcel::Inner_ccb_iterator it = _dcel().inner_ccbs_begin();
+    while (it != _dcel().inner_ccbs_end())
+    {
+      typename Dcel::Inner_ccb_iterator current = it ++;
+      if (!current->is_valid())
+        _dcel().delete_inner_ccb(&*current);
+    }
+  }
 
 protected:
   /// \name Determining the boundary-side conditions.
@@ -1783,7 +1838,7 @@ protected:
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index,  boost::mpl::bool_<true>) const;
+                   int& x_index, int& y_index,  Arr_true) const;
 
   /*!
    * Update the indices according to boundary locations (i.e. does nothing)
@@ -1791,7 +1846,7 @@ protected:
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index,  boost::mpl::bool_<false>) const;
+                   int& x_index, int& y_index,  Arr_false) const;
 
   /*!
    * Is the first given x-monotone curve above the second given?
@@ -1893,16 +1948,14 @@ protected:
    *     POSITIVE if the ccb is perimetric and oriented in positive direction,
    *     NEGATIVE if the ccb is perimetric and oriented in negative direction).
    */
-  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he,
-                                       boost::mpl::bool_<true>) const;
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he, Arr_true) const;
 
   /*! Compute the signs (in left/right and bottom/top) of a closed ccb (loop)
    * represented by a given halfedge for the case where non of the boundaries
    * is identified.
    * \return the pair (ZERO, ZERO)
    */
-  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he,
-                                       boost::mpl::bool_<false>) const;
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he, Arr_false) const;
 
   /*!
    * Given two predecessor halfedges that will be used for inserting a
@@ -1985,6 +2038,18 @@ protected:
 
   /*!
    * Create a new boundary vertex.
+   * \param p The point on the boundary.
+   * \param bx The boundary condition in x.
+   * \param by The boundary condition in y.
+   * \pre Either bx or by does not equal ARR_INTERIOR.
+   * \return A pointer to the newly created vertex.
+   */
+  DVertex* _create_boundary_vertex(const Point_2& p,
+                                   Arr_parameter_space bx,
+                                   Arr_parameter_space by);
+
+  /*!
+   * Create a new boundary vertex.
    * \param cv The curve incident to the boundary.
    * \param ind The relevant curve-end.
    * \param bx The boundary condition in x.
@@ -1996,6 +2061,20 @@ protected:
                                    Arr_curve_end ind,
                                    Arr_parameter_space bx,
                                    Arr_parameter_space by);
+
+  /*!
+   * Locate the DCEL features that will be used for inserting the given point,
+   * which has a boundary condition, and set a proper vertex there.
+   * \param f The face that contains the point.
+   * \param p The point.
+   * \param bx The boundary condition at the point x-coordinate.
+   * \param by The boundary condition at the point y-coordinate.
+   * \return The vertex that corresponds to the point.
+   */
+  DVertex* _place_and_set_point(DFace* f,
+                                const Point_2& p,
+                                Arr_parameter_space bx,
+                                Arr_parameter_space by);
 
   /*!
    * Locate the DCEL features that will be used for inserting the given curve
@@ -2333,6 +2412,17 @@ protected:
     Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_create_vertex(v);
+  }
+
+  void _notify_before_create_boundary_vertex(const Point_2& p,
+                                             Arr_parameter_space bx,
+                                             Arr_parameter_space by)
+  {
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
+
+    for (iter = m_observers.begin(); iter != end; ++iter)
+      (*iter)->before_create_boundary_vertex(p, bx, by);
   }
 
   void _notify_before_create_boundary_vertex(const X_monotone_curve_2& cv,
@@ -2760,7 +2850,7 @@ protected:
 // In some compilers there is a template deduction disambiguity between this
 // function and the following function receiving two InputIterator.
 // For now the solution is to add a dummy variable at the end (referring
-// to point-location). Maybe the proper solution is to use boost::enable_if
+// to point-location). Maybe the proper solution is to use std::enable_if
 // together with appropriate tag.
 /*!
  * Insert a curve or x-monotone curve into the arrangement (incremental
@@ -2818,7 +2908,8 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 template <typename GeomTraits, typename TopTraits>
 void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
             const typename GeomTraits::X_monotone_curve_2& c,
-            const Object& obj);
+            typename Arr_point_location_result<
+              Arrangement_on_surface_2<GeomTraits, TopTraits> >::type obj);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
@@ -2934,16 +3025,16 @@ remove_vertex(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 template <typename GeomTraits, typename TopTraits>
 bool is_valid(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr);
 
-/*!
- * Compute the zone of the given x-monotone curve in the existing arrangement.
+/*! Compute the zone of the given x-monotone curve in the existing arrangement.
  * Meaning, it output the arrangment's vertices, edges and faces that the
  * x-monotone curve intersects.
  * \param arr The arrangement.
- * \param c The x-monotone curve that its zone was computed.
- * \param oi Output iterator of CGAL::Object to insert the zone elements to.
- * \param pi The point location strategy that is used to locate the starting
- * point.
- * \return The output iterator that the curves were inserted to.
+ * \param c the x-monotone curve that its zone is computed.
+ * \param oi the output iterator for the resulting zone elements. Its
+ *           dereference type is a variant that wraps a \c Vertex_handle, a
+ *           \c Halfedge_handle, or a \c Face_handle.
+ * \param pl the point location strategy used to locate the starting point.
+ * \return the past-the-end output iterator.
  */
 template <typename GeomTraits, typename TopTraits,
           typename OutputIterator, typename PointLocation>
@@ -2957,9 +3048,11 @@ OutputIterator zone(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  * Overloaded version with no point location object - the walk point-location
  * strategy is used as default.
  * \param arr The arrangement.
- * \param c The x-monotone curve that its zone was computed.
- * \param oi Output iterator of CGAL::Object to insert the zone elements to.
- * \return The output iterator that the curves were inserted to.
+ * \param c the x-monotone curve that its zone was computed.
+ * \param oi the output iterator for the resulting zone elements. Its
+ *           dereference type is a variant that wraps a \c Vertex_handle, a
+ *           \c Halfedge_handle, or a \c Face_handle.
+ * \return the past-the-end output iterator.
  */
 template <typename GeomTraits, typename TopTraits, typename OutputIterator>
 OutputIterator zone(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,

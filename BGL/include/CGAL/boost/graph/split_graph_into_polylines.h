@@ -14,7 +14,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <map> 
+#include <map>
 #include <vector>
 #include <utility>
 #include <boost/graph/adjacency_list.hpp>
@@ -131,7 +131,7 @@ public:
   }
 }; // end class Less_on_G_copy_vertex_descriptors
 
-// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
+// splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
 // The vertices are duplicated, and new incident edges created.
 // `OrigGraph` must be undirected
 template <typename Graph,
@@ -153,7 +153,7 @@ void duplicate_terminal_vertices(Graph& graph,
   {
     typename boost::graph_traits<OrigGraph>::vertex_descriptor orig_v = graph[v];
     typename boost::graph_traits<Graph>::degree_size_type deg = degree(v, graph);
-    if ((deg != 0 && is_terminal(orig_v, orig)) || deg > 2)
+    if (deg != 2 || is_terminal(orig_v, orig))
       {
         out_edge_iterator b, e;
         boost::tie(b, e) = out_edges(v, graph);
@@ -170,7 +170,6 @@ void duplicate_terminal_vertices(Graph& graph,
             const std::pair<edge_descriptor, bool> pair = add_edge(vc, w, graph);
             graph[pair.first] = orig_e;
           }
-        CGAL_assertion(degree(v, graph) == 1);
       }
   }
 
@@ -189,9 +188,10 @@ void duplicate_terminal_vertices(Graph& graph,
                       }
                       ) // end of CGAL_assertion_code
 } // end of duplicate_terminal_vertices
-    
+
 } // namespace internal
 
+#ifndef DOXYGEN_RUNNING
 template <typename Graph,
           typename Visitor,
           typename IsTerminal,
@@ -201,9 +201,10 @@ split_graph_into_polylines(const Graph& graph,
                            Visitor& polyline_visitor,
                            IsTerminal is_terminal,
                            LessForVertexDescriptors less);
+#endif
 
 /*!
-\ingroup PkgBGLRef
+\ingroup PkgBGLPartition
 splits into polylines the graph `g` at vertices of degree greater than 2
 and at vertices for which `is_terminal(v,graph)==true`.
 The polylines are reported using a visitor.
@@ -251,9 +252,9 @@ split_graph_into_polylines(const Graph& graph,
   using boost::graph_traits;
   typedef typename graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
   typedef typename graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
-  
+
   typedef boost::adjacency_list <boost::setS, // this avoids parallel edges
-                                 boost::vecS, 
+                                 boost::vecS,
                                  boost::undirectedS,
                                  Graph_vertex_descriptor,
                                  Graph_edge_descriptor> G_copy;
@@ -261,18 +262,18 @@ split_graph_into_polylines(const Graph& graph,
   typedef typename graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits<G_copy>::edge_descriptor edge_descriptor;
   typedef typename graph_traits<G_copy>::out_edge_iterator out_edge_iterator;
-  
+
   // we make a copy of the input graph
   G_copy g_copy;
   {
     typedef std::map<typename graph_traits<Graph>::vertex_descriptor,
                      typename graph_traits<G_copy>::vertex_descriptor> V2vmap;
     V2vmap v2vmap;
-    
+
     for(Graph_vertex_descriptor v : make_range(vertices(graph))){
       vertex_descriptor vc = add_vertex(g_copy);
       g_copy[vc] = v;
-      v2vmap[v] = vc; 
+      v2vmap[v] = vc;
     }
 
     for(Graph_edge_descriptor e : make_range(edges(graph))){

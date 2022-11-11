@@ -24,6 +24,6 @@ int main()
   vh->info() = "London";
   vh = dt.insert(Point(0,1,0.2));
   vh->info() = "New York";
-  
+
   return 0;
 }

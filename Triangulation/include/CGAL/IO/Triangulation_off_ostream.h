@@ -42,11 +42,11 @@ output_point(std::ostream & os, const Traits &traits, const P & p)
 // TODO: test if the stream is binary or text?
 template<typename Traits, typename P>
 int
-output_weighted_point(std::ostream & os, const Traits &traits, const P & p, 
+output_weighted_point(std::ostream & os, const Traits &traits, const P & p,
                       bool output_weight = true)
 {
   typedef typename Traits::Compute_coordinate_d Ccd;
-  typename Traits::Construct_point_d cp = 
+  typename Traits::Construct_point_d cp =
     traits.construct_point_d_object();
   typename Traits::Compute_weight_d pt_weight = traits.compute_weight_d_object();
   const Ccd ccd = traits.compute_coordinate_d_object();
@@ -63,11 +63,11 @@ output_weighted_point(std::ostream & os, const Traits &traits, const P & p,
 // TODO: test if the stream is binary or text?
 template<typename Traits, typename FCH>
 void
-output_full_cell(std::ostream & os, const Traits &traits, const FCH & fch, 
+output_full_cell(std::ostream & os, const Traits &traits, const FCH & fch,
                       bool output_weights = false)
 {
   typename FCH::value_type::Vertex_handle_iterator vit = fch->vertices_begin();
-  for( ; vit != fch->vertices_end(); ++vit ) 
+  for( ; vit != fch->vertices_end(); ++vit )
   {
     int dim;
     if (output_weights)

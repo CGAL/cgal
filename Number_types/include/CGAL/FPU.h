@@ -75,8 +75,8 @@ extern "C" {
 // Pure and safe SSE2 mode (g++ -mfpmath=sse && (-msse2 || -march=pentium4))
 // can be detected by :
 // TODO : see what Intel and VC++ have to say about this.
-#if defined __FLT_EVAL_METHOD__ && defined __SSE2_MATH__ && \
-      (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1)
+#if defined _M_X64 || ( defined __FLT_EVAL_METHOD__ && defined __SSE2_MATH__ && \
+                        (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1) )
 #  define CGAL_SAFE_SSE2
 #  include <xmmintrin.h>
 #endif
@@ -90,7 +90,7 @@ extern "C" {
 #if !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT && \
   (((defined __i386__ || defined __x86_64__) && !defined CGAL_SAFE_SSE2) \
    || defined __ia64__ \
-   || defined _M_IX86 || defined _M_X64 || defined _M_IA64 \
+   || defined _M_IX86 || defined _M_IA64 \
    || (defined FLT_EVAL_METHOD && FLT_EVAL_METHOD != 0 && FLT_EVAL_METHOD != 1))
 #  define CGAL_FPU_HAS_EXCESS_PRECISION
 #endif
@@ -114,10 +114,11 @@ extern "C" {
 
 // Only define CGAL_USE_SSE2 for 64 bits where malloc has a suitable
 // alignment, 32 bits is too dangerous.
-#if defined(CGAL_HAS_SSE2) && (defined(__x86_64__) || defined(_M_X64))
+#if defined CGAL_HAS_SSE2 && \
+  (defined __x86_64__ || defined _M_X64) && \
+  !defined CGAL_ALWAYS_ROUND_TO_NEAREST
 #  define CGAL_USE_SSE2 1
 #endif
-
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 double& get_static_minimin(); // Defined in Interval_arithmetic_impl.h
 #endif
@@ -171,7 +172,7 @@ inline double IA_opacify(double x)
   // Intel has a bug where -mno-sse still defines __SSE__ and __SSE2__
   // (-mno-sse2 works though), no work-around for now.
 # if defined __SSE2_MATH__ || (defined __INTEL_COMPILER && defined __SSE2__)
-#  if __GNUC__ * 100 + __GNUC_MINOR__ >= 409
+#  if (__GNUC__ > 0)
   // ICEs in reload/LRA with older versions.
   asm volatile ("" : "+gx"(x) );
 #  else
@@ -247,6 +248,8 @@ inline __m128d IA_opacify128(__m128d x)
 #  ifdef _MSC_VER
   // With VS, __m128d is a union, where volatile doesn't disappear automatically
   // However, this version generates wrong code with clang, check before enabling it for more compilers.
+  // The usage here is safe as we write from a __m128d to a __m128d
+  // and we know that this type has 16 bytes
   std::memcpy(&x, (void*)&e, 16);
   return x;
 #  else
@@ -274,9 +277,8 @@ inline __m128d IA_opacify128_weak(__m128d x)
 inline __m128d swap_m128d(__m128d x){
 # ifdef __llvm__
   return __builtin_shufflevector(x, x, 1, 0);
-# elif defined __GNUC__ && !defined __INTEL_COMPILER \
-  && __GNUC__ * 100 + __GNUC_MINOR__ >= 407
-  return __builtin_shuffle(x, (__m128i){ 1, 0 });
+# elif defined __GNUC__ && !defined __INTEL_COMPILER
+  return __extension__ __builtin_shuffle(x, (__m128i){ 1, 0 });
 # else
   return _mm_shuffle_pd(x, x, 1);
 # endif
@@ -326,11 +328,6 @@ inline double IA_bug_sqrt(double d)
 }
 
 #  define CGAL_BUG_SQRT(d) IA_bug_sqrt(d)
-
-
-#elif defined __SSE2_MATH__
-// For SSE2, we need to call __builtin_sqrt() instead of libc's sqrt().
-#  define CGAL_BUG_SQRT(d) __builtin_sqrt(d)
 #elif defined __CYGWIN__
 inline double IA_bug_sqrt(double d)
 {
@@ -347,18 +344,27 @@ inline double IA_bug_sqrt(double d)
 // With GCC, we can do slightly better : test with __builtin_constant_p()
 // that both arguments are constant before stopping one of them.
 // Use inline functions instead ?
-#define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)-(b))
-#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)*CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)/CGAL_IA_STOP_CPROP(b))
+inline double IA_up(double d)
+{
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  // In round-to-nearest mode we find the successor instead.
+  // This preserves the interval invariants, but is more
+  // expensive and conservative.
+  return nextafter(d, std::numeric_limits<double>::infinity());
+#else
+  // In round-upward mode we can rely on the hardware
+  // to do the job.
+  return CGAL_IA_FORCE_TO_DOUBLE(d);
+#endif
+}
+#define CGAL_IA_ADD(a,b) IA_up((a)+CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_SUB(a,b) IA_up(CGAL_IA_STOP_CPROP(a)-(b))
+#define CGAL_IA_MUL(a,b) IA_up(CGAL_IA_STOP_CPROP(a)*CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_DIV(a,b) IA_up(CGAL_IA_STOP_CPROP(a)/CGAL_IA_STOP_CPROP(b))
 inline double CGAL_IA_SQUARE(double a){
   double b = CGAL_IA_STOP_CPROP(a); // only once
-  return CGAL_IA_FORCE_TO_DOUBLE(b*b);
+  return IA_up(b*b);
 }
-#define CGAL_IA_SQRT(a) \
-        CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
-
-
 #if defined CGAL_SAFE_SSE2
 
 #define CGAL_IA_SETFPCW(CW) _MM_SET_ROUNDING_MODE(CW)
@@ -450,7 +456,7 @@ typedef unsigned int FPU_CW_t;
 # elif defined  __aarch64__
 #define CGAL_IA_SETFPCW(CW) asm volatile ("MSR FPCR, %0" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("MRS %0, FPCR" : "=r" (CW))
-typedef unsigned int FPU_CW_t;
+typedef unsigned long FPU_CW_t;
 #define CGAL_FE_TONEAREST    (0x0)
 #define CGAL_FE_TOWARDZERO   (0xC00000)
 #define CGAL_FE_UPWARD       (0x400000)
@@ -476,9 +482,15 @@ inline
 FPU_CW_t
 FPU_get_cw (void)
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    CGAL_assertion_code(FPU_CW_t cw; CGAL_IA_GETFPCW(cw);)
+    CGAL_assertion(cw == CGAL_FE_TONEAREST);
+    return CGAL_FE_TONEAREST;
+#else
     FPU_CW_t cw;
     CGAL_IA_GETFPCW(cw);
     return cw;
+#endif
 }
 
 // User interface (cont):
@@ -487,28 +499,43 @@ inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  CGAL_assertion(cw == CGAL_FE_TONEAREST);
+#else
   CGAL_IA_SETFPCW(cw);
+#endif
 }
 
 inline
 FPU_CW_t
 FPU_get_and_set_cw (FPU_CW_t cw)
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    CGAL_assertion(cw == CGAL_FE_TONEAREST);
+    return CGAL_FE_TONEAREST;
+#else
     FPU_CW_t old = FPU_get_cw();
     FPU_set_cw(cw);
     return old;
+#endif
 }
 
 
 // A class whose constructor sets the FPU mode to +inf, saves a backup of it,
 // and whose destructor resets it back to the saved state.
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+#define CGAL_FE_PROTECTED CGAL_FE_TONEAREST
+#else
+#define CGAL_FE_PROTECTED CGAL_FE_UPWARD
+#endif
+
 template <bool Protected = true> struct Protect_FPU_rounding;
 
 template <>
 struct Protect_FPU_rounding<true>
 {
-  Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD)
+  Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_PROTECTED)
     : backup( FPU_get_and_set_cw(r) ) {}
 
   ~Protect_FPU_rounding()
@@ -524,7 +551,7 @@ template <>
 struct Protect_FPU_rounding<false>
 {
   Protect_FPU_rounding() {}
-  Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_UPWARD*/) {}
+  Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_PROTECTED */) {}
 };
 
 
@@ -538,13 +565,13 @@ struct Checked_protect_FPU_rounding
 {
   Checked_protect_FPU_rounding()
   {
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_PROTECTED);
   }
 
   Checked_protect_FPU_rounding(FPU_CW_t r)
     : Protect_FPU_rounding<Protected>(r)
   {
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_PROTECTED);
   }
 };
 
@@ -555,6 +582,8 @@ struct Checked_protect_FPU_rounding
 // Its destructor restores the FPU state as it was previously.
 // Note that this affects "long double" as well, and other potential side effects.
 // And note that it does not (cannot) "fix" the same problem for the exponent.
+//
+// (How should this interact with ALWAYS_ROUND_TO_NEAREST?)
 
 struct Set_ieee_double_precision
 #ifdef CGAL_FPU_HAS_EXCESS_PRECISION
@@ -576,6 +605,21 @@ inline void force_ieee_double_precision()
 {
 #ifdef CGAL_FPU_HAS_EXCESS_PRECISION
     FPU_set_cw(CGAL_FE_TONEAREST);
+#endif
+}
+
+inline double IA_sqrt_up(double a) {
+  return IA_up(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)));
+}
+
+inline double IA_sqrt_toward_zero(double d) {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  return (d > 0.0) ? nextafter(std::sqrt(d), 0.) : 0.0;
+#else
+  FPU_set_cw(CGAL_FE_DOWNWARD);
+  double i = (d > 0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(d))) : 0.0;
+  FPU_set_cw(CGAL_FE_UPWARD);
+  return i;
 #endif
 }
 

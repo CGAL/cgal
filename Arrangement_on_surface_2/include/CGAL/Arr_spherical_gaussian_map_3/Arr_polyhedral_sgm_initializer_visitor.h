@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
@@ -37,7 +37,7 @@ public:
 
   /*! Destructor */
   virtual ~Arr_polyhedral_sgm_initializer_visitor() {}
-  
+
   /*! Pass information from a polyhedron vertex to its dual - a sgm-face */
   virtual void update_dual_vertex(Polyhedron_vertex_const_handle /*src*/,
                                   Sgm_face_handle /*trg*/)

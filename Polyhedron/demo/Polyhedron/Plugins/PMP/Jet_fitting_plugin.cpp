@@ -37,7 +37,7 @@ public:
 
   }
 
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -122,7 +122,7 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   QString name = scene->item(index)->name();
-  Scene_surface_mesh_item* sm_item = 
+  Scene_surface_mesh_item* sm_item =
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
   if(! sm_item){
     return;
@@ -140,12 +140,12 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
 
   SMesh* pMesh = sm_item->polyhedron();
   compute(pMesh, min_curv, max_curv);
-  
+
   scene->addItem(max_curv);
   scene->addItem(min_curv);
   max_curv->invalidateOpenGLBuffers();
   min_curv->invalidateOpenGLBuffers();
-  
+
   // default cursor
   QApplication::restoreOverrideCursor();
 }

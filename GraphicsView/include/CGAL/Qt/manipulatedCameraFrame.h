@@ -199,15 +199,6 @@ protected Q_SLOTS:
   virtual void spin();
   //@}
 
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-//@}
-
 #ifndef DOXYGEN
 protected:
   virtual void startAction(

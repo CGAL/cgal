@@ -33,8 +33,7 @@ any class model of the concept `FaceGraph`. Each function or class of this packa
 details the requirements on the input polygon mesh.
 
 \ref BGLNamedParameters are used to deal with optional parameters.
-The page \ref pmp_namedparameters describes their usage
-and provides a list of the parameters that are used in this package.
+The page \ref bgl_namedparameters describes their usage.
 
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
@@ -52,6 +51,15 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
+
+\subsection PMPIO Reading and Writing Polygon Meshes
+
+In all functions of this package, the polygon meshes are required to be models
+of the graph concepts defined in the package \ref PkgBGLRef. Using common graph concepts
+enables having common input/output functions for all the models of these concepts.
+The page \ref PkgBGLIOFct provides an exhaustive description of the available I/O functions.
+In addition, this package offers the function `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`,
+which can perform some reparation if the input data do not represent a manifold surface.
 
 ****************************************
 \section PMPMeshing Meshing
@@ -97,6 +105,7 @@ maximizes the minimum angle of all the angles of the triangles in the triangulat
 
 \subsubsection Remeshing
 
+\paragraph Local Isotropic Incremental Remeshing
 The incremental triangle-based isotropic remeshing algorithm introduced by Botsch et al
  \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP} is implemented in this package.
 This algorithm incrementally performs simple operations such as edge splits, edge collapses,
@@ -123,6 +132,25 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (d) Surface mesh with the selection uniformly remeshed.
 \cgalFigureEnd
 
+\paragraph Delaunay-Based Surface Remeshing
+The mesh generation algorithm implemented in the \ref PkgMesh3 package can be used to remesh a given triangulated surface mesh.
+The algorithm, based on Delaunay refinement of a restricted Delaunay triangulation,
+generates a triangle surface mesh that provably has the required properties on simplices size,
+surface approximation, shape of facets, and topology of the surface.
+A set of edges from the input mesh can be given as constraints to build and protect a
+set of polylines features, that are resampled while preserving the topology of the
+input feature graph.
+
+This solution for triangle surface remeshing is available in this package with the function
+`CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`.
+All the meshing criteria defined for `CGAL::make_mesh_3()` can be used directly
+for size of simplices, shape of facets, surface approximation, topology,
+and one-dimensional features sampling.
+
+An example of how to remesh a given triangulated surface mesh with the Delaunay refinement
+algorithm while preserving the detected sharp edges
+is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
+
 \subsubsection Smoothing
 
 Smoothing of a triangulated mesh region can be achieved with algorithms that aim at either mesh smoothing or shape smoothing.
@@ -130,7 +158,8 @@ While mesh smoothing is achieved by improving the quality of triangles based on 
 shape smoothing is designed to be \e intrinsic, depending as little as possible on the discretization
 and smoothing the shape alone without optimizing the shape of the triangles.
 
-- Mesh smoothing: `CGAL::Polygon_mesh_processing::smooth_mesh()` moves vertices to optimize geometry around each vertex:
+- Mesh smoothing by angle and area optimization:
+`CGAL::Polygon_mesh_processing::angle_and_area_smoothing()` moves vertices to optimize geometry around each vertex:
 it can try to equalize the angles between incident edges, or (and) move vertices so that areas of adjacent triangles tend to equalize.
 Border vertices are considered constrained and do not move at any step of the procedure. No vertices are inserted at any time.
 Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}.
@@ -157,8 +186,15 @@ Mesh smoothing of the closed surface <i>blobby</i>, containing self-intersection
 Statistics for the various combinations of mesh smoothing.
 \cgalFigureEnd
 
+- Mesh smoothing by tangential relaxation: `CGAL::Polygon_mesh_processing::tangential_relaxation()`
+moves vertices following an area-based Laplacian smoothing scheme, performed
+at each vertex in an estimated tangent plane to the surface.
+The full algorithm is described in \cgalCite{botsch2010PMP}.
+The example \ref Polygon_mesh_processing/tangential_relaxation_example.cpp shows how this
+mesh relaxation function can be used.
+
 - Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_shape()`
-incrementally moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
+moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
 The curvature flow algorithm for shape smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al. \cgalCite{kazhdan2012can}.
 The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
 to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
@@ -177,6 +213,14 @@ Shape smoothing of the devil model, using the mean curvature flow with a time st
 constraining border vertices (located at the neck, where the mesh is open).
 \cgalFigureCaptionEnd
 
+
+\subsubsection Extrusion
+
+This package provides two functions to extrude a triangle mesh with boundaries. A first one extrudes by offsetting each vertex by a user provided vector.
+A second one is more general: It takes two users provided functors which extrude "up" and "down".  In both cases the boundaries are connected by a triangle strip.
+Note that the extrusion may generate self intersecting surfaces.
+
+
 \subsection MeshingExamples Meshing Examples
 
 \subsubsection MeshingExample_1 Refine and Fair a Region on a Triangle Mesh
@@ -194,6 +238,11 @@ as shown in the following example.
 
 \cgalExample{Polygon_mesh_processing/triangulate_faces_example.cpp}
 
+An additional parameter, named `visitor` can be used to track the how faces
+are triangulated into subfaces. The following examples shows how to use it.
+
+\cgalExample{Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp}
+
 
 \subsubsection RemeshingExample_1 Isotropic Remeshing of a Region on a Polygon Mesh
 
@@ -204,6 +253,17 @@ Since the boundary edges will be considered as constrained and protected in this
 Once this is done, remeshing is run on all the surface, with protection of constraints activated, for 3 iterations.
 
 \cgalExample{Polygon_mesh_processing/isotropic_remeshing_example.cpp}
+
+
+\subsubsection ExtrusionExample Extrusion of a Triangle Mesh
+
+The following example extrudes in both directions by projecting points along the vertex normal.
+In case the function `Bottom` was the identity this would have been a one-sided extrusion.
+
+\cgalExample{Polygon_mesh_processing/extrude.cpp}
+
+
+
 
 \section Coref_section Corefinement and Boolean Operations
 
@@ -312,18 +372,19 @@ the limited precision of floating point numbers.
 As a natural extension, some clipping functionalities with a volume bounded by a closed mesh
 and a halfspace (defined by the negative side of a plane to be consistent with
 the outward normal convention) are offered. The functions `CGAL::Polygon_mesh_processing::clip()`
+and `CGAL::Polygon_mesh_processing::split()`
 have some options to select whether the clipping should be done at the volume or surface
 level, and also if the clipper should be considered as compact or not. This is illustrated on
 \cgalFigureRef{coref_clip_close_open} and \cgalFigureRef{coref_clip_compact}.
 
 \cgalFigureBegin{coref_clip_close_open, clip_open_close.png}
 Clipping a cube with a halfspace. From left to right: (i) initial cube and the plane
-defining the clipping halfspace; (ii) `close_volumes=false`: clipping of the surface mesh (boundary edges
-depicted in red); (iii) `close_volumes=true`: clipping of the volume bounded by the surface mesh.
+defining the clipping halfspace; (ii) `clip_volume=false`: clipping of the surface mesh (boundary edges
+depicted in red); (iii) `clip_volume=true`: clipping of the volume bounded by the surface mesh.
 \cgalFigureEnd
 
 \cgalFigureBegin{coref_clip_compact, clip_compact.png}
-Clipping a cube with a halfspace: compacity of the clipper (`close_volumes=false` in both cases).
+Clipping a cube with a halfspace: compacity of the clipper (`clip_volume=false` in both cases).
 From left to right: (i) initial cube and the plane defining the clipping halfspace,
 note that a whole face of the cube (2 triangles) is exactly contained in the plane;
 (ii) `use_compact_clipper=true`: clipping of the surface mesh with a compact halfspace: coplanar faces are part of the output;
@@ -424,6 +485,10 @@ class and a few others are part of the code base.
  Holes in the fork model are filled with triangle patches.
  \cgalFigureEnd
 
+An additional parameter, named `visitor` can be used to track which phase of the algorithm is being run.
+This can allow a user to stop the algorithm if a timeout needs to be implemented. For an example, see
+\ref Polygon_mesh_processing/hole_filling_visitor_example.cpp .
+
 \subsection HFPerformance Performance
 
 The hole filling algorithm has a complexity which depends on the
@@ -506,6 +571,64 @@ input triangle mesh.
 \subsubsection InsideExample Inside Test Example
 \cgalExample{Polygon_mesh_processing/point_inside_example.cpp}
 
+
+\subsection PMPEnvelope Polyhedral Envelope Containment Check
+
+The class `CGAL::Polyhedral_envelope` provides functors to check if a query point, segment, or triangle
+is fully contained in a <em>polyhedral envelope</em> of a triangle mesh or of a triangle soup. In the
+following, input triangles will refer either to the triangles of a mesh or of a soup.
+
+The polyhedral envelope is a conservative approximation of the Minkowski sum envelope of a set of triangles with a sphere of radius \f$ \epsilon \f$.
+The latter has cylindrical and spherical patches at convex edges and vertices of the input triangles.
+
+Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$ we can associate  a <em>prism</em> to each triangle by intersecting two halfspaces
+parallel to the triangle, three halfspaces orthogonal to the triangle and parallel to the edges,
+and additionaly halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
+of the angle.  These halfspaces are at distance  \f$ \delta \f$ and
+such that they contain the triangle.
+
+The <em>polyhedral envelope</em> of a set of triangles with a tolerance \f$ \epsilon \f$ then is the union of the prisms of all faces
+with  \f$ \delta = \epsilon / \sqrt(3) \f$.
+
+\cgalFigureBegin{envelopeFig, envelope.png}
+The prism for a single triangle, the polyhedral envelope as well as the Minkowski sum envelope for a triangle mesh.
+\cgalFigureEnd
+
+The polyhedral envelope is guaranteed to be inside the Minkowski sum envelope.
+This containment test is exact for the polyhedral envelope, and conservative for the Minkowswi sum envelope:
+If a query is inside the polyhedral envelope, we can be sure
+that it is also in the Minkowski sum envelope, but if it is outside the polyhedral envelope
+we do not know where it is with respect to the Minkowski sum envelope.
+
+The algorithm of Wang et al. \cgalCite{cgal:Wwshap-eepec-20} for the polyhedral envelope containment check
+can be summarized as follows.
+The prisms of the faces of the input triangles are stored in an AABB tree, which is used to quickly
+identify the prisms whose bounding box overlaps with the query.
+
+For a query point the algorithm checks if it is inside one of these prisms.
+For a query segment or triangle the algorithms checks if the query is completely covered.
+The details of how to check this covering can be found in the paper.
+
+The polyhedral envelope containment check is used by the class `Surface_mesh_simplification::Polyhedral_envelope_filter`
+of the package \ref PkgSurfaceMeshSimplification, in order to simplify a triangle mesh within a given tolerance.
+
+
+\subsubsection PolyhedralEnvelopeExample Polyhedral Envelope Example
+
+The following example shows how to construct the polyhedral envelope for a `Surface_mesh` and perform queries.
+
+\cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
+
+As the polyhedral envelope does not need any connectivity information, the same check can be performed
+just with a triangle soup.
+
+\cgalExample{Polygon_mesh_processing/polyhedral_envelope_of_triangle_soup.cpp}
+
+A triangle mesh can also be used as query, to check if a remeshed version is within the polyhedral envelope of
+an input mesh.
+
+\cgalExample{Polygon_mesh_processing/polyhedral_envelope_mesh_containment.cpp}
+
 \subsection PMPShapePredicates Shape Predicates
 
 Badly shaped or, even worse, completely degenerate elements of a polygon mesh are problematic
@@ -544,10 +667,10 @@ The example \ref Polygon_mesh_processing/locate_example.cpp presents a few of th
 \section PMPOrientation Orientation
 
 This package offers multiple functions to compute consistent face orientations for set of faces
-(Section \ref PolygonSoups) and polygon meshes (Section \ref OrientingPolygonMeshes).
+(Section \ref PMPPolygonSoups) and polygon meshes (Section \ref OrientingPolygonMeshes).
 Section \ref PolygonSoupExample offers an example of combination of these functions.
 
-\subsection PolygonSoups Polygon Soups
+\subsection PMPPolygonSoups Polygon Soups
 
 When the faces of a polygon mesh are given but the connectivity is unknown,
 this set of faces is called a \e polygon \e soup.
@@ -578,6 +701,9 @@ to build a valid polygon mesh.
 The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 performs this mesh construction step.
 
+Inversely, a polygon soup can be constructed from a polygon mesh,
+using the function `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`.
+
 \subsection OrientingPolygonMeshes Polygon Meshes
 
 This package provides functions dealing with the orientation of faces in a closed polygon mesh.
@@ -594,8 +720,16 @@ outside of the domain bounded by the input polygon mesh.
 of halfedges around faces.
 As a consequence, the normal computed for each face (see Section
 \ref PMPNormalComp) is also reversed.
-
-\subsection PolygonSoupExample Orientation Example
+- The function `CGAL::Polygon_mesh_processing::volume_connected_components()` provides information about
+the 3D arrangement of the surface connected components in a given triangle mesh. It comes with many
+named parameter options making it also a more general version of `is_outward_oriented()`.
+- The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()`
+duplicates points and edges to make a soup orientable, without changing the orientation of the faces.
+- The function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
+takes an input mesh as a reference and orients the triangles of a soup according to it.
+- The function `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
+merges the connected components of a polygon mesh if possible.
+\subsection PolygonSoupExample Orientation Examples
 
 This example shows how to generate a mesh from a polygon soup.
 The first step is to get a soup of consistently oriented faces, before
@@ -606,12 +740,17 @@ Section \ref PMPOrientation.
 
 \cgalExample{Polygon_mesh_processing/orient_polygon_soup_example.cpp}
 
+This example shows how to correctly repair and orient a soup to get a mesh from a reference :
+
+\cgalExample{Polygon_mesh_processing/orientation_pipeline_example.cpp}
+
+
 ****************************************
 \section PMPRepairing Combinatorial Repairing
 
 *******************
 \subsection PSRepairing Polygon Soup Repairing
-To ensure that a polygon soup can be oriented (see Section \ref PolygonSoups) and transformed
+To ensure that a polygon soup can be oriented (see Section \ref PMPPolygonSoups) and transformed
 into a workable polygon mesh, it might be necessary to preprocess the data to remove combinatorial
 and geometrical errors. This package offers the following functions:
 - `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,
@@ -695,6 +834,15 @@ more than once (although, with different vertices) before reaching the initial b
 `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()` and
 `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`, which merge
 vertices at identical positions, can be used to repair this configuration.
+
+\subsection PMPRemoveCapsNeedles Removal of Almost Degenerate Triangle Faces
+Triangle faces of a mesh made up of almost collinear points are badly shaped elements that
+might not be desirable to have in a mesh. The function
+`CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` enables removing such elements,
+with user-defined parameters to qualify what <i>almost</i> means (`cap_threshold` and `needle_threshold`).
+As some badly shaped elements are inevitable (the triangulation of a long cylinder
+with only vertices on the top and bottom circles for example), extra parameters can be passed
+to prevent the removal of such elements (`collapse_length_threshold` and `flip_triangle_height_threshold`).
 
 ****************************************
 \section PMPNormalComp Computing Normals
@@ -786,6 +934,10 @@ enable the user to keep and remove only a selection of connected components,
 provided either as a range of faces that belong to the desired connected components
 or as a range of connected component ids (one or more per connected component).
 
+When a triangle mesh has no boundary, it partitions the 3D space in different volumes.
+The function `CGAL::Polygon_mesh_processing::volume_connected_components()` can be used to assign to
+each face an id per volume defined by the surface connected components.
+
 Finally, it can be useful to quickly remove some connected components, for example for noisy data
 where small connected components should be discarded in favor of major connected components.
 The function `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
@@ -797,6 +949,10 @@ is its area, for example.
 Similarly to the previous function, the function
 `CGAL::Polygon_mesh_processing::keep_large_connected_components()` can be used to discard all connected
 components whose size is below a user-defined threshold.
+
+Also, the function `CGAL::Polygon_mesh_processing::split_connected_components()`
+enables the user to split the connected components of a polygon mesh in as many
+polygon meshes.
 
 \subsection CCExample Connected Components Example
 
@@ -814,12 +970,13 @@ which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
 
-
-\section PMPDistance Approximate Hausdorff Distance
+\section PMPDistance Hausdorff Distance
 
 This package provides methods to compute (approximate) distances between meshes and point sets.
 
-The function \link approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
+\subsection ApproxHD Approximate Hausdorff Distance
+
+The function \link Polygon_mesh_processing::approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
 computes an approximation of the Hausdorff distance from a mesh `tm1` to a mesh `tm2`. Given a
 a sampling of `tm1`, it computes the distance to `tm2` of the farthest sample point to `tm2` \cgalCite{cignoni1998metro}.
 The symmetric version (\link CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance() `approximate_symmetric_Hausdorff_distance()`\endlink)
@@ -843,12 +1000,12 @@ computes an approximation of the Hausdorff distance from a mesh to a point set.
 For each triangle, a lower and upper bound of the Hausdorff distance to the point set are computed.
 Triangles are refined until the difference between the bounds is lower than a user-defined precision threshold.
 
-\subsection AHDExample Approximate Hausdorff Distance Example
+\subsubsection AHDExample Approximate Hausdorff Distance Example
 In the following example, a mesh is isotropically remeshed and the approximate distance between the input and the output is computed.
 
 \cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
 
-\subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
+\subsubsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
 In \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp,
 a triangulated surface mesh is constructed from a point set using the
 \link PkgPoissonSurfaceReconstruction3 Poisson reconstruction algorithm \endlink,
@@ -856,6 +1013,50 @@ and the distance between the point set and the reconstructed surface is computed
 with the following code:
 
 \snippet Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp PMP_distance_snippet
+
+\subsection BoundedHD Bounded Hausdorff Distance
+
+The function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
+computes an estimate of the Hausdorff distance of two triangle meshes which is
+bounded by a user-given error bound. Given two meshes `tm1` and `tm2`, it follows
+the procedure given by \cgalCite{tang2009interactive}. Namely, a bounded volume hierarchy (BVH) is
+built on `tm1` and `tm2` respectively. The BVH on `tm1` is used to iterate over all
+triangles in `tm1`. Throughout the traversal, the procedure keeps track of a global
+lower and upper bound on the Hausdorff distance respectively. For each triangle
+`t` in `tm1`, by traversing the BVH on `tm2`, it is estimated via the global bounds
+whether `t` can still contribute to the actual Hausdorff distance. From this
+process, a set of candidate triangles is selected.
+
+The candidate triangles are subsequently subdivided and for each smaller
+triangle, the BVH on `tm2` is traversed again. This is repeated until the
+triangle is smaller than the user-given error bound, all vertices of the
+triangle are projected onto the same triangle in `tm2`, or the triangle's upper
+bound is lower than the global lower bound. After creation, the subdivided
+triangles are added to the list of candidate triangles. Thereby, all candidate
+triangles are processed until a triangle is found in which the Hausdorff
+distance is realized or in which it is guaranteed to be realized within the
+user-given error bound.
+
+In the current implementation, the BVH used is an AABB-tree and not the swept sphere
+volumes as used in the original implementation. This should explain the runtime difference
+observed with the original implementation.
+
+The function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()` computes
+the one-sided Hausdorff distance from `tm1` to `tm2`. This component also provides
+the symmetric distance `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()`
+and an utility function called `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()`
+that returns `true` if the Hausdorff distance between two meshes is larger than the user-defined max distance.
+
+\subsubsection BHDExample Bounded Hausdorff Distance Example
+
+In the following examples: (a) the distance of a tetrahedron to a remeshed
+version of itself is computed, (b) the distance of two geometries is computed
+which is realized strictly in the interior of a triangle of the first geometry,
+(c) a perturbation of a user-given mesh is compared to the original user-given
+mesh, (d) two user-given meshes are compared, where the second mesh is gradually
+moved away from the first one.
+
+\cgalExample{Polygon_mesh_processing/hausdorff_bounded_error_distance_example.cpp}
 
 \section PMPDetectFeatures Feature Detection
 
@@ -883,8 +1084,15 @@ A prototype of mesh and shape smoothing was developed during the 2017 edition of
 by Konstantinos Katrioplas, under supervision of Jane Tournois. It was finalized by Mael Rouxel-Labbé and
 integrated in \cgal 5.0.
 
-Functionalities related to mesh and polygon soup reparation have been introduced steadily over multiple versions
+Functionalities related to mesh and polygon soup repair have been introduced steadily over multiple versions
 since \cgal 4.10, in joint work between Sébastien Loriot and Mael Rouxel-Labbé.
+
+The polyhedral envelope containment check was integrated in \cgal 5.3. The implementation makes use of the
+version of <a href="https://github.com/wangbolun300/fast-envelope">https://github.com/wangbolun300/fast-envelope</a>
+available on 7th of October 2020.  It only uses the high level algorithm of checking that a query
+is covered by a set of prisms, where each prism is an offset for an input triangle.
+That is, the implementation in \cgal does not use indirect predicates.
+
 
 */
 } /* namespace CGAL */

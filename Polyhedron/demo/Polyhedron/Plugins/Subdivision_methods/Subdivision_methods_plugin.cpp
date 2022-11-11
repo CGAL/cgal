@@ -95,7 +95,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_loop(FaceGraphItem* item,
 void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
+
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
   if(!sm_item)
@@ -167,7 +167,7 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionSqrt3_triggered()
                                       1,
                                       1);
   apply_sqrt3(sm_item, nb_steps);
-  
+
 }
 
 template<class FaceGraphItem>
@@ -200,7 +200,7 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionDooSabin_triggered()
                                       1,
                                       1);
   apply_doosabin(sm_item, nb_steps);
-  
+
 }
 
 #include "Subdivision_methods_plugin.moc"

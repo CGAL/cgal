@@ -30,15 +30,14 @@
 #include <CGAL/Double_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/functional.h>
-#include <CGAL/internal/Has_member_visited.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Real_timer.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
-#include <boost/bind.hpp>
 #include <boost/format.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -55,7 +54,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/task.h>
+# include <tbb/task_group.h>
 #endif
 
 
@@ -122,10 +121,10 @@ protected:
 
   Lock_data_structure * get_lock_data_structure()   const { return 0; }
   void unlock_all_elements()                        const {}
-  void create_root_task()                           const {}
+  void create_task_group()                          const {}
   bool flush_work_buffers()                         const { return true; }
   void wait_for_all()                               const {}
-  void destroy_root_task()                          const {}
+  void destroy_trask_group()                        const {}
   template <typename Func>
   void enqueue_work(Func, FT)                       const {}
 
@@ -158,7 +157,7 @@ protected:
   }
 
   /**
-   * A functor to remove one \c Cell_handle from a priority queue
+   * A functor to remove one `Cell_handle` from a priority queue
    */
   class Erase_from_queue
   {
@@ -173,7 +172,7 @@ protected:
   };
 
   /**
-   * Delete cells of \c cells from \c cells_queue
+   * Deletes cells of `cells` from `cells_queue`.
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
@@ -225,36 +224,34 @@ protected:
     m_lock_ds.unlock_all_points_locked_by_this_thread();
   }
 
-  void create_root_task() const
+  void create_task_group() const
   {
-    m_empty_root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
-    m_empty_root_task->set_ref_count(1);
+    m_task_group = new tbb::task_group;
   }
 
   bool flush_work_buffers() const
   {
-    m_empty_root_task->set_ref_count(1);
-    bool keep_flushing = m_worksharing_ds.flush_work_buffers(*m_empty_root_task);
+    bool keep_flushing = m_worksharing_ds.flush_work_buffers(*m_task_group);
     wait_for_all();
     return keep_flushing;
   }
 
   void wait_for_all() const
   {
-    m_empty_root_task->wait_for_all();
+    m_task_group->wait();
   }
 
-  void destroy_root_task() const
+  void destroy_trask_group() const
   {
-    tbb::task::destroy(*m_empty_root_task);
-    m_empty_root_task = 0;
+    delete m_task_group;
+    m_task_group = 0;
   }
 
   template <typename Func>
   void enqueue_work(Func f, FT value) const
   {
-    CGAL_assertion(m_empty_root_task != 0);
-    m_worksharing_ds.enqueue_work(f, value, *m_empty_root_task);
+    CGAL_assertion(m_task_group != 0);
+    m_worksharing_ds.enqueue_work(f, value, *m_task_group);
   }
 
 public:
@@ -291,7 +288,7 @@ protected:
   }
 
   /**
-   * A functor to remove one \c Cell_handle from a priority queue
+   * A functor to remove one `Cell_handle` from a priority queue
    */
   class Erase_from_queue
   {
@@ -303,7 +300,7 @@ protected:
   };
 
   /**
-   * Delete cells of \c cells from \c cells_queue
+   * Deletes cells of `cells` from `cells_queue`.
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
@@ -311,9 +308,14 @@ protected:
                   Erase_from_queue(cells_queue_));
   }
 
+  void cancel() {
+    CGAL_assertion(m_task_group != nullptr);
+    m_task_group->cancel();
+  }
+
   mutable Lock_data_structure                 m_lock_ds;
   mutable Mesh_3::Auto_worksharing_ds         m_worksharing_ds;
-  mutable tbb::task                          *m_empty_root_task;
+  mutable tbb::task_group                     *m_task_group;
 
 private:
   Tet_priority_queue cells_queue_;
@@ -523,7 +525,7 @@ private:
                                const Vertex_handle& new_vertex);
 
   /**
-   * Orders handles \c h1 & \c h2
+   * Orders handles `h1` & `h2`
    */
   template <typename Handle>
   static
@@ -592,8 +594,8 @@ private:
 
 
   /**
-   * Returns the \c Boundary_facets_from_outside object containing mirror facets
-   * of \c facets
+   * Returns the `Boundary_facets_from_outside` object containing mirror facets
+   * of `facets`.
    */
   Boundary_facets_from_outside
   get_boundary_facets_from_outside(const Facet_vector& facets) const
@@ -614,7 +616,7 @@ private:
   }
 
   /**
-   * Add a cell \c ch to \c cells_queue
+   * Adds a cell `ch` to `cells_queue`.
    */
   template <bool pump_vertices_on_surfaces>
   void add_cell_to_queue(Cell_handle ch, FT criterion_value)
@@ -649,7 +651,7 @@ private:
   };
 
   /**
-   * Removes objects of [begin,end[ range from \c c3t3_
+   * Removes objects of [begin,end[ range from `c3t3_`.
    */
   template<typename ForwardIterator>
   void remove_from_c3t3(ForwardIterator begin, ForwardIterator end)
@@ -781,7 +783,7 @@ private:
       }
 
       if ( m_sliver_exuder.is_time_limit_reached() )
-        tbb::task::self().cancel_group_execution();
+        m_sliver_exuder.cancel();
     }
   };
 #endif
@@ -850,8 +852,8 @@ private:
                       const Vertex_handle& vh) const;
 
   /**
-   * Checks if the sliver criterion values from \c criterion_values are the same as
-   * those that will be found if wp is inserted in the triangulation
+   * Checks if the sliver criterion values from `criterion_values` are the same as
+   * those that will be found if wp is inserted in the triangulation.
    */
   bool check_ratios(const Sliver_values& criterion_values,
                     const Weighted_point& wp,
@@ -920,7 +922,7 @@ pump_vertices(FT sliver_criterion_limit,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    this->create_root_task();
+    this->create_task_group();
 
     while (!this->cells_queue_empty())
     {
@@ -947,7 +949,7 @@ pump_vertices(FT sliver_criterion_limit,
 # endif
     }
 
-    this->destroy_root_task();
+    this->destroy_trask_group();
   }
   // Sequential
   else

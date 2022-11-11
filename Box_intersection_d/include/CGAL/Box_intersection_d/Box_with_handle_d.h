@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
@@ -25,7 +25,7 @@ namespace CGAL {
 namespace Box_intersection_d {
 
 // Generic template signature of boxes, specialized for ID_FROM_HANDLE policy
-template<class NT_, int N, class Handle_, class IdPolicy = ID_FROM_HANDLE> 
+template<class NT_, int N, class Handle_, class IdPolicy = ID_FROM_HANDLE>
 class Box_with_handle_d : public Box_d< NT_, N, IdPolicy> {
 protected:
     Handle_ m_handle;
@@ -43,7 +43,7 @@ public:
 };
 
 // Specialization for ID_FROM_HANDLE policy
-template<class NT_, int N, class Handle_> 
+template<class NT_, int N, class Handle_>
 class Box_with_handle_d<NT_, N, Handle_, ID_FROM_HANDLE>
     : public Box_d< NT_, N, ID_NONE> {
 protected:

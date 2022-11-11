@@ -3,5 +3,6 @@
 \example Mesh_2/mesh_class.cpp
 \example Mesh_2/mesh_global.cpp
 \example Mesh_2/mesh_with_seeds.cpp
+\example Mesh_2/mesh_marked_domain.cpp
 \example Mesh_2/mesh_optimization.cpp
 */

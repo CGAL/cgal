@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion, Andreas Fabri, Sebastien Loriot
 
@@ -65,21 +65,18 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(args)...);
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     if(! oep){
-      #if BOOST_VERSION < 105600
-      oep = EP(c2e(o1));
-      #else
       oep.emplace(c2e(o1));
-      #endif
     }
     return (*oep)(c2e(args)...);
 }

@@ -32,14 +32,14 @@ struct Check_FPU_rounding_mode_is_restored {
   {
     CGAL_assertion_msg( FPU_get_cw() == mode,
                         "The default FPU rounding mode has not been restored "
-                        " before the exit of the program. "
+                        "before the exit of the program. "
                         "That may be a bug in some CGAL kernel code.");
   }
 };
 
 #ifdef CGAL_HEADER_ONLY
 
-inline const Check_FPU_rounding_mode_is_restored& 
+inline const Check_FPU_rounding_mode_is_restored&
 get_static_check_fpu_rounding_mode_is_restored()
 {
   // A static object that emits a warning if the rounding mode at the
@@ -53,7 +53,7 @@ get_static_check_fpu_rounding_mode_is_restored()
 
 namespace {
   CGAL_UNUSED const Check_FPU_rounding_mode_is_restored &
-    check_fpu_rounding_mode_is_restored 
+    check_fpu_rounding_mode_is_restored
     = get_static_check_fpu_rounding_mode_is_restored();
 }
 

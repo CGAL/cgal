@@ -19,7 +19,7 @@
 namespace CGAL{
 
 namespace Qt {
-  
+
   template <typename K>
   class PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K, Hyperbolic_octagon_translation> > : public PainterOstream<K> {
 
@@ -101,9 +101,9 @@ public:
   QPainter* qp;
   Converter<K> convert;
 };
-  
+
 } //namespace Qt
-  
+
 } //namespace CGAL
 
 #endif // CGAL_HYPERBOLIC_PAINTER_OSTREAM_H

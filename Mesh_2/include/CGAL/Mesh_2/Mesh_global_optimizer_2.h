@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez, Stéphane Tayeb
 //
 
@@ -18,10 +18,10 @@
 
 
 #ifdef CGAL_MESH_2_VERBOSE
-  #define CGAL_MESH_2_OPTIMIZER_VERBOSE 
+  #define CGAL_MESH_2_OPTIMIZER_VERBOSE
 #endif
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
@@ -45,12 +45,12 @@ namespace Mesh_2 {
 template <typename CDT,
           typename MoveFunction>
 class Mesh_global_optimizer_2
-{  
+{
   // Types
   typedef CDT  Tr;
   typedef MoveFunction Mf;
   typedef typename Tr::Geom_traits      Gt;
-  
+
   typedef typename Tr::Point            Point_2;
   typedef typename Tr::Face_handle      Face_handle;
   typedef typename Tr::Vertex_handle    Vertex_handle;
@@ -60,7 +60,7 @@ class Mesh_global_optimizer_2
 
   typedef typename Gt::FT               FT;
   typedef typename Gt::Vector_2         Vector_2;
-  
+
   typedef typename std::vector<Face_handle>                 Face_vector;
   typedef typename std::set<Vertex_handle>                  Vertex_set;
   typedef typename std::list<FT>                            FT_list;
@@ -87,12 +87,12 @@ public:
     , seeds_mark_(false)
   {
   }
-  
+
   /// Time accessors
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
 
-  /** The value type of \a InputIterator should be \c Point, and represents
+  /** The value type of \a InputIterator should be `Point`, and represents
       seeds.
   */
   template<typename InputIterator>
@@ -108,7 +108,7 @@ public:
     }
   }
 
-  Mesh_optimization_return_code operator()(const int nb_iterations)
+  Mesh_optimization_return_code operator()(const std::size_t nb_iterations)
   {
     running_time_.reset();
     running_time_.start();
@@ -141,7 +141,7 @@ public:
     bool convergence_stop = false;
 
     // Iterate
-    int i = -1;
+    std::size_t i = -1;
     while ( ++i < nb_iterations && ! is_time_limit_reached() )
     {
       this->before_move();
@@ -154,8 +154,8 @@ public:
       if(sq_freeze_ratio_ > 0.
         && nb_vertices_moved < 0.01 * initial_vertices_nb
         && nb_vertices_moved == moving_vertices.size())
-      { 
-        // we should stop because we are 
+      {
+        // we should stop because we are
         // probably entering an infinite instable loop
         convergence_stop = true;
         break;
@@ -170,7 +170,7 @@ public:
       nb_vertices_moved = moving_vertices.size();
 
       this->after_move();
- 
+
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
       double time = running_time_.time();
       double moving_vertices_size = static_cast<double>(moving_vertices.size());
@@ -222,7 +222,7 @@ public:
 
 private:
   /**
-   * Returns moves for vertices of set \c moving_vertices
+   * Returns moves for vertices of set `moving_vertices`.
    */
   Moves_vector compute_moves(Vertex_set& moving_vertices)
   {
@@ -260,7 +260,7 @@ private:
   }
 
   /**
-   * Returns the move for vertex \c v
+   * Returns the move for vertex `v`.
    */
   Vector_2 compute_move(const Vertex_handle& v)
   {
@@ -284,7 +284,7 @@ private:
   }
 
   /**
-   * Returns the minimum cicumradius length of faces incident to \c v
+   * Returns the minimum cicumradius length of faces incident to `v`.
    */
   FT min_sq_circumradius(const Vertex_handle& v) const
   {
@@ -293,7 +293,7 @@ private:
     Face_circulator face = cdt_.incident_faces(v);
     Face_circulator end = face;
 
-    // Get first face sq_circumradius_length 
+    // Get first face sq_circumradius_length
     // Initialize min
     FT min_sqr = (std::numeric_limits<double>::max)();
     // Find the minimum value
@@ -352,7 +352,7 @@ private:
       sum += CGAL::sqrt(*it);
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
-    sum_moves_ = sum/big_moves_.size();
+    sum_moves_ = sum/FT(big_moves_.size());
 #endif
 
     return ( sum/FT(big_moves_.size()) < convergence_ratio_ );
@@ -395,8 +395,8 @@ private:
       seeds_.end(),
       seeds_mark_/*faces that are not in domain are tagged false*/);
     //Connected components of seeds are marked with the value of
-    //  \a mark. Other components are marked with \c !mark. The connected
-    //  component of infinite faces is always marked with \c false.
+    //  \a mark. Other components are marked with `!mark`. The connected
+    //  component of infinite faces is always marked with `false`.
   }
 
   void after_all_moves()
@@ -464,10 +464,10 @@ private:
   bool seeds_mark_;
 
   double time_limit_;
-  CGAL::Timer running_time_;
-  
+  CGAL::Real_timer running_time_;
+
   std::list<FT> big_moves_;
-  
+
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
   mutable FT sum_moves_;
 #endif

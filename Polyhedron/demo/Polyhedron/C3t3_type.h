@@ -1,9 +1,9 @@
 #ifndef CGAL_DEMO_MESH_3_C3T3_TYPE_H
 #define CGAL_DEMO_MESH_3_C3T3_TYPE_H
 
-// include this to get #define BOOST_PARAMETER_MAX_ARITY 12
+#include "config.h"
+#include "Plugins/Mesh_3/config_mesh_3.h"
 // as otherwise it gets set via inclusion of Polyhedron_3.h
-#include <CGAL/boost/parameter.h>
 #include <CGAL/Default.h>
 
 #include "SMesh_type.h"
@@ -25,6 +25,8 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
+#include <CGAL/Polyhedral_complex_mesh_domain_3.h>
+
 #include <CGAL/tags.h>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -33,13 +35,13 @@ struct Wrapper
 {
   typedef int return_type;
   typedef typename K::Point_3 Point_3;
-  
+
   Wrapper(const Implicit_function_interface& f) : f_(f) {}
   return_type operator()(const Point_3& p, const bool=true) const
   {
     return (f_(p.x(),p.y(),p.z()) < 0) ? 1 : 0;
   }
-  
+
 private:
   const Implicit_function_interface& f_;
 };
@@ -48,6 +50,8 @@ private:
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
           EPICK, SMesh, CGAL::Default, int> Polyhedral_mesh_domain;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
+
+typedef CGAL::Polyhedral_complex_mesh_domain_3<EPICK, SMesh> Polyhedral_complex_mesh_domain;
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 typedef CGAL::Labeled_mesh_domain_3<EPICK, int, int>            Image_domain;
@@ -69,7 +73,7 @@ typedef CGAL::Compact_mesh_cell_base_3<Robust_K, Polyhedral_mesh_domain>    Cell
 typedef CGAL::Triangulation_cell_base_with_info_3<int, Robust_K, Cell_base> Cell_base_with_info;
 
 #ifdef CGAL_CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain, 
+  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain,
                                      Robust_intersections_traits,
                                      CGAL::Parallel_tag,
                                      CGAL::Default,

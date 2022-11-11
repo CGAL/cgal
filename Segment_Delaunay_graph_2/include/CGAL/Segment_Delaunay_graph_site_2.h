@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -32,7 +32,7 @@ namespace CGAL {
    */
 
 template <class Gt>
-class Segment_Delaunay_graph_site_2 
+class Segment_Delaunay_graph_site_2
 {
 public:
   typedef Gt Geom_traits;
@@ -63,7 +63,7 @@ public:
   // constructs point site using the point of intersection of the
   // segments (p1,p2) and (q1,q2)
   static Self construct_site_2(const Point_2& p1, const Point_2& p2,
-			       const Point_2& q1, const Point_2& q2) {
+                               const Point_2& q1, const Point_2& q2) {
     Self t;
     t.initialize_site(p1, p2, q1, q2);
     return t;
@@ -73,8 +73,8 @@ public:
   // segment-pairs (p1,p2)-(q1,q2) and (p1,p2)-(q3,q4) as endpoints;
   // the segment (p1,p2) is a segment that supports the actual segment
   static Self construct_site_2(const Point_2& p1, const Point_2& p2,
-			       const Point_2& q1, const Point_2& q2,
-			       const Point_2& r1, const Point_2& r2) {
+                               const Point_2& q1, const Point_2& q2,
+                               const Point_2& r1, const Point_2& r2) {
     Self t;
     t.initialize_site(p1, p2, q1, q2, r1, r2);
     return t;
@@ -84,10 +84,10 @@ public:
   // (p1,p2) (that depends on the boolean is_first_exact) and the
   // intersection of (p1,p2) with (q1,q2) as the other endpoint
   static Self construct_site_2(const Point_2& p1, const Point_2& p2,
-			       const Point_2& q1, const Point_2& q2,
-			       bool is_first_exact) {
+                               const Point_2& q1, const Point_2& q2,
+                               bool is_first_exact) {
     Self t;
-    t.initialize_site(p1, p2, q1, q2, is_first_exact); 
+    t.initialize_site(p1, p2, q1, q2, is_first_exact);
     return t;
  }
 
@@ -132,7 +132,7 @@ public:
     return (i == 0) ? p_[3] : p_[5];
   }
 
-  Point_2 point() const { 
+  Point_2 point() const {
     CGAL_precondition ( is_point() );
     if ( !is_input() ) {
       return compute_intersection_point(p_[2], p_[3], p_[4], p_[5]);
@@ -142,17 +142,17 @@ public:
   }
 
   Segment_2 segment() const {
-    CGAL_precondition ( is_segment() ); 
+    CGAL_precondition ( is_segment() );
     return Segment_2( source(), target() );
   }
 
   Point_2 source() const {
-    CGAL_precondition ( is_segment() ); 
+    CGAL_precondition ( is_segment() );
     return compute_source();
   }
 
   Point_2 target() const {
-    CGAL_precondition ( is_segment() ); 
+    CGAL_precondition ( is_segment() );
     return compute_target();
   }
 
@@ -210,7 +210,7 @@ protected:
     p_[1] = p2;
   }
   void initialize_site(const Point_2& p1, const Point_2& p2,
-		       const Point_2& q1, const Point_2& q2)
+                       const Point_2& q1, const Point_2& q2)
   {
     // MK: Sort the segments s1 and s2 in lexicographical order so
     //     that the computation of the intersection point is always
@@ -224,8 +224,8 @@ protected:
 
 
   void initialize_site(const Point_2& p1, const Point_2& p2,
-		       const Point_2& q1, const Point_2& q2,
-		       const Point_2& r1, const Point_2& r2)
+                       const Point_2& q1, const Point_2& q2,
+                       const Point_2& r1, const Point_2& r2)
   {
     type_ = 14;
     p_[0] = p1;
@@ -237,8 +237,8 @@ protected:
   }
 
   void initialize_site(const Point_2& p1, const Point_2& p2,
-		       const Point_2& q1, const Point_2& q2,
-		       bool is_first_exact)
+                       const Point_2& q1, const Point_2& q2,
+                       bool is_first_exact)
   {
     type_ = (is_first_exact ? 10 : 6);
     p_[0] = p1;
@@ -273,7 +273,7 @@ protected:
   // computes the point of intersection of the segments p1p2 and p3p4
   static Point_2
   compute_intersection_point(const Point_2& p1, const Point_2& p2,
-			     const Point_2& p3, const Point_2& p4)
+                             const Point_2& p3, const Point_2& p4)
   {
     RT x1 = p1.x(), y1 = p1.y();
     RT x2 = p2.x(), y2 = p2.y();
@@ -297,8 +297,8 @@ protected:
 
 template <class R>
 std::ostream&
-operator<<(std::ostream& os, 
-	   const Segment_Delaunay_graph_site_2<R>& s)
+operator<<(std::ostream& os,
+           const Segment_Delaunay_graph_site_2<R>& s)
 {
   if (!s.is_defined())
     return os << "u";
@@ -310,7 +310,7 @@ operator<<(std::ostream& os,
 template <class R>
 std::istream &
 operator>>(std::istream &is,
-	   Segment_Delaunay_graph_site_2<R>& t)
+           Segment_Delaunay_graph_site_2<R>& t)
 {
   typedef Segment_Delaunay_graph_site_2<R>   Site_2;
   typedef typename Site_2::Point_2           Point_2;
@@ -341,7 +341,7 @@ operator<<(Stream& str, Segment_Delaunay_graph_site_2<R>& t)
       str << "p " << t.point();
     } else {
       str << "s " << t.segment().source() << "  "
-	  << t.segment().target();
+          << t.segment().target();
     }
   }
 

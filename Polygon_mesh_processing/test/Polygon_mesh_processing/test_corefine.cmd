@@ -1,8 +1,8 @@
-data-coref/sphere.off data-coref/elephant.off
-data-coref/cow.off data-coref/cross.off
+${CGAL_DATA_DIR}/meshes/sphere.off ${CGAL_DATA_DIR}/meshes/elephant.off
+${CGAL_DATA_DIR}/meshes/cow.off ${CGAL_DATA_DIR}/meshes/cross.off
 data-coref/broken_bound-1.off data-coref/broken_bound-2.off
 data-coref/P7.off  data-coref/Q7.off
-data-coref/testsuite/big_triangle.off data-coref/testsuite/sphere.off
+data-coref/testsuite/big_triangle.off ${CGAL_DATA_DIR}/meshes/sphere.off
 data-coref/testsuite/big_triangle.off data-coref/testsuite/t3bis.off
 data-coref/testsuite/big_triangle.off data-coref/testsuite/t3ter.off
 data-coref/testsuite/big_triangle_barycenter.off  data-coref/testsuite/on_vertex_c.off
@@ -101,4 +101,4 @@ data-coref/intersection_edge/ex2-1.off data-coref/intersection_edge/ex2-2.off
 data-coref/intersection_vertex/ex1-1.off  data-coref/intersection_vertex/ex1-2.off
 data-coref/intersection_vertex/ex2-1.off data-coref/intersection_vertex/ex2-2.off
 data-coref/test_sets/t1.off data-coref/test_sets/t2.off
-data-coref/big_triangle.off data-coref/elephant.off
+data-coref/big_triangle.off ${CGAL_DATA_DIR}/meshes/elephant.off

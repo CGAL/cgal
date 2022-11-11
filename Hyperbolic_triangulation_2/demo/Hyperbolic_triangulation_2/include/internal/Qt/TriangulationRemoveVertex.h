@@ -32,30 +32,25 @@ public:
   typedef typename DT::Vertex_handle Vertex_handle;
   typedef typename DT::Point Point;
 
-  TriangulationRemoveVertex(DT  * dt_, QObject* parent);
+  TriangulationRemoveVertex(DT* dt_, QObject* parent);
 
 protected:
-
   void mousePressEvent(QGraphicsSceneMouseEvent *event);
- 
   bool eventFilter(QObject *obj, QEvent *event);
 
-  DT * dt;
+  DT* dt;
 };
-
 
 template <typename T>
 TriangulationRemoveVertex<T>::TriangulationRemoveVertex(T * dt_,
-							  QObject* parent)
+                                                          QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_)
 {}
 
-
-
 template <typename T>
-void 
+void
 TriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{  
+{
   if((event->modifiers()  & ::Qt::ShiftModifier)
      && (! (event->modifiers() & ::Qt::ControlModifier))){
     if(dt->number_of_vertices() == 0){
@@ -65,14 +60,12 @@ TriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
       typename T::Vertex_handle selected_vertex = dt->nearest_vertex(convert(event->scenePos()));
       dt->remove(selected_vertex);
     }
-    emit (modelChanged());
+    Q_EMIT (modelChanged());
   }
 }
 
-
-
 template <typename T>
-bool 
+bool
 TriangulationRemoveVertex<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if(event->type() == QEvent::GraphicsSceneMousePress) {
@@ -83,7 +76,7 @@ TriangulationRemoveVertex<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

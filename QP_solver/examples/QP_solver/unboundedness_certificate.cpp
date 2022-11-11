@@ -18,13 +18,13 @@ typedef CGAL::Nonnegative_linear_program_from_iterators
 <int**,                                                // for A
  int*,                                                 // for b
  CGAL::Comparison_result*,                             // for r
- int*>                                                 // for c 
+ int*>                                                 // for c
 Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 // we demonstrate the unboundedness certificate: either the feasible
 // linear program
-// min c^T x 
+// min c^T x
 //       A x <= b
 //         x >= 0
 // is bounded, or there exists w such that
@@ -33,11 +33,11 @@ typedef CGAL::Quadratic_program_solution<ET> Solution;
 //     c^t w <  0,
 // in which case the objective function becomes arbitrarily small
 // along the ray {x* + tw | t >= 0}, x* any feasible solution.
-// 
+//
 // In the following instance, the linear program is unbounded, since
 // the ray {(t,t)| t>= 1} is feasible, and the objective function becomes
 // arbitrarily small on it:
-// min -x_1 - 2x_2 
+// min -x_1 - 2x_2
 //      x_1 - 2x_2  <=  -1
 //     -x_1 +  x_2  <=   2
 //      x_1,   x_2  >=   0
@@ -47,7 +47,7 @@ int main() {
   int  Ax2[] = {-2,  1};                        // column for x2
   int*   A[] = {Ax1, Ax2};                      // A comes columnwise
   int    b[] = {-1, 2};                         // right-hand side
-  CGAL::Comparison_result 
+  CGAL::Comparison_result
     r[] = {CGAL::SMALLER, CGAL::SMALLER};       // constraints are "<="
   int    c[] = {-1, -2};                        // objective function
 

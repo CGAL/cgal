@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 
@@ -22,7 +22,7 @@
 #include <CGAL/assertions.h>
 
 namespace CGAL {
-  
+
   template <class R> class Iso_rectangle_d {
   public:
     typedef typename R::FT FT;
@@ -33,7 +33,7 @@ namespace CGAL {
     int dim;
     FT *lower;
     FT *upper;
-    
+
   public:
 
     Iso_rectangle_d(const Point_d& p, const Point_d& q)
@@ -42,28 +42,28 @@ namespace CGAL {
       lower = new FT[dim];
       upper = new FT[dim];
       for (int i = 0; i < dim; ++i) {
-	  if (p[i] <= q[i]) {
-		lower[i]=p[i]; 
+          if (p[i] <= q[i]) {
+                lower[i]=p[i];
                 upper[i]=q[i];
-	  }
-	  else {
-		lower[i]=q[i]; 
+          }
+          else {
+                lower[i]=q[i];
                 upper[i]=p[i];
-	  }
-     }	  
+          }
+     }
     }
-  
+
   // copy constructor
   Iso_rectangle_d(const Iso_rectangle_d& b) : dim(b.dim) {
       lower = new FT[dim];
       upper = new FT[dim];
       for (int i = 0; i < dim; ++i) {
-		lower[i]=b.lower[i]; 
+                lower[i]=b.lower[i];
                 upper[i]=b.upper[i];
       }
   }
 
-  
+
   bool has_on_bounded_side(const Point_d& p) const
   {
     FT h;
@@ -72,10 +72,10 @@ namespace CGAL {
         if ( (h < lower[i]) || (h > upper[i]) ) return 0;
     }
     return 1;
-  } 
+  }
 
     inline int dimension() const { return dim;}
-    
+
     inline FT min_coord(int i) const {
       return lower[i];
     }

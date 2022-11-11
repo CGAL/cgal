@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -36,7 +36,7 @@ namespace internal {
 
     In_place_edge_list_iterator(const Edge& e, unsigned int idx)
       : e(e), idx(idx) {}
-    
+
     In_place_edge_list_iterator(const Self& other)
     {
       e = other.e;
@@ -154,7 +154,7 @@ public:
 
   inline bool is_first(const Edge& e) const {
     return ( (e.first == _front.first &&
-	      e.second == _front.second) );
+              e.second == _front.second) );
   }
 
 public:

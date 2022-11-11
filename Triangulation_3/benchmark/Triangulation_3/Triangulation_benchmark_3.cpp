@@ -4,7 +4,7 @@
 //
 // The data produced by this program is meant to be used
 // in the Benchmarks section of the User Manual.
-// 
+//
 // We measure :
 // - construction time
 // - point location time function of triangulation size
@@ -16,7 +16,7 @@
 // - Delaunay<Fast_location>
 // - Regular
 // - Regular<hidden points discarded>
-// 
+//
 // Notes :
 // - points are randomly generated using drand48()
 //
@@ -24,7 +24,7 @@
 // - impact of the choice of various kernels
 // - impact of the kind of data set ?  More or less degenerate...
 // - replace drand48() by CGAL Generators
-// - move/document Time_accumulator to CGAL/Profiling_tools (?) 
+// - move/document Time_accumulator to CGAL/Profiling_tools (?)
 
 #define CGAL_TRIANGULATION_3_PROFILING
 //#define CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
@@ -122,10 +122,10 @@ typedef CGAL::Regular_triangulation_3<K, RT_Tds_NoHP, Lock_ds>    RT3_NoHP;
 #else
   typedef CGAL::Delaunay_triangulation_3<K>                       DT3;
   typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location>  DT3_FastLoc;
-  
+
   // Regular T3 with hidden points kept
   typedef CGAL::Regular_triangulation_3<K>                        RT3_WithHP;
-  
+
   // Regular T3 with hidden points discarded
 typedef CGAL::Triangulation_cell_base_3<K>                        Cb;
   typedef CGAL::Triangulation_data_structure_3<
@@ -328,7 +328,7 @@ void benchmark_remove(std::vector<typename Tr::Point>& pts,
   } while (time < BENCH_MIN_TIME);
 
   std::cout << NUM_VERTICES_TO_REMOVE << "\t"
-        << (time/iterations) << "\t" 
+        << (time/iterations) << "\t"
         << (time/iterations)/NUM_VERTICES_TO_REMOVE << SHOW_ITERATIONS;
 }
 

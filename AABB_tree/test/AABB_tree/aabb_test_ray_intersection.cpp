@@ -89,8 +89,8 @@ int main()
 
   Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
   Tree::Bounding_box bbox = tree.bbox();
-  Vector bbox_center((bbox.xmin() + bbox.xmax()) / 2, 
-                     (bbox.ymin() + bbox.ymax()) / 2, 
+  Vector bbox_center((bbox.xmin() + bbox.xmax()) / 2,
+                     (bbox.ymin() + bbox.ymax()) / 2,
                      (bbox.zmin() + bbox.zmax()) / 2);
   boost::array<double, 3> extents;
   extents[0] = bbox.xmax() - bbox.xmin();
@@ -101,7 +101,7 @@ int main()
   std::cout << bbox << std::endl;
   std::cout << bbox_center << std::endl;
   std::cout << max_extent << std::endl;
-  
+
   const int NB_RAYS = 1000;
   std::vector<Point> v1, v2;
   v1.reserve(NB_RAYS); v2.reserve(NB_RAYS);
@@ -119,7 +119,7 @@ int main()
   for(std::vector<Point>::iterator it = v2.begin(); it != v2.end(); ++it) {
     *it = *it + bbox_center;
   }
-  
+
   // Generate NB_RAYS using v1 as source and v2 as target.
   std::vector<Ray> rays;
   rays.reserve(NB_RAYS);
@@ -138,12 +138,11 @@ int main()
   for(std::vector<Ray>::iterator it = rays.begin(); it != rays.end(); ++it) {
     primitives2.push_back(tree.first_intersection(*it));
   }
-  CGAL_assertion_msg(primitives1.size() == primitives2.size(), "Different amount of primitives intersected.");
-  CGAL_assertion_msg(std::equal(primitives1.begin(), primitives1.end(), primitives2.begin()),
-                     "Primitives mismatch.");
+  assert(primitives1.size() == primitives2.size()); //  Different amount of primitives intersected
+  assert(std::equal(primitives1.begin(), primitives1.end(), primitives2.begin())); //  Primitives mismatch
   std::size_t c = primitives1.size() - std::count(primitives1.begin(), primitives1.end(), boost::none);
   std::cout << "Intersected " << c << " primitives with " << NB_RAYS << " rays" << std::endl;
-  std::cout << "Primitive method had to sort " << accum/NB_RAYS 
+  std::cout << "Primitive method had to sort " << accum/NB_RAYS
             << " intersections on average." << std::endl;
   t.stop();
   std::cout << t.time() << std::endl;

@@ -1,16 +1,16 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Michael Seel
 
 #ifndef CGAL_HYPERPLANEHD_H
@@ -18,8 +18,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Kernel_d/PointHd.h> 
-#include <CGAL/Kernel_d/VectorHd.h> 
+#include <CGAL/Kernel_d/PointHd.h>
+#include <CGAL/Kernel_d/VectorHd.h>
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
 
 namespace CGAL {
@@ -28,17 +28,17 @@ namespace CGAL {
 template <class RT, class LA>
 std::istream& operator>>(std::istream&, HyperplaneHd<RT,LA>&);
 template <class RT, class LA>
-std::ostream& operator<<(std::ostream&, const HyperplaneHd<RT,LA>&); 
+std::ostream& operator<<(std::ostream&, const HyperplaneHd<RT,LA>&);
 
 /*{\Manpage{Hyperplane_d}{R}{Hyperplanes in d-space}{h}}*/
-/*{\Msubst 
+/*{\Msubst
 Hd<RT,LA>#_d<R>
 HyperplaneHd#Hyperplane_d
 Quotient<RT>#FT
 }*/
 
 template <class _RT, class _LA>
-class HyperplaneHd : public Handle_for< Tuple_d<_RT,_LA> > { 
+class HyperplaneHd : public Handle_for< Tuple_d<_RT,_LA> > {
   typedef Tuple_d<_RT,_LA> Tuple;
   typedef Handle_for<Tuple> Base;
   typedef HyperplaneHd<_RT,_LA> Self;
@@ -50,7 +50,7 @@ oriented hyperplane in $d$ - dimensional space. A hyperplane $h$ is
 represented by coefficients $(c_0,c_1,\ldots,c_d)$ of type |RT|. At
 least one of $c_0$ to $c_{ d - 1 }$ must be non-zero.  The plane
 equation is $\sum_{ 0 \le i < d } c_i x_i + c_d = 0$, where $x_0$ to
-$x_{d-1}$ are Cartesian point coordinates.  
+$x_{d-1}$ are Cartesian point coordinates.
 For a particular $x$ the sign of $\sum_{ 0 \le i < d } c_i x_i +
 c_d$ determines the position of a point $x$ with respect to the
 hyperplane (on the hyperplane, on the negative side, or on the
@@ -70,7 +70,7 @@ _RT& entry(int i) { return ptr()->v[i]; }
 const _RT& entry(int i) const { return ptr()->v[i]; }
 void invert_rep() { ptr()->invert(); }
 
-public: 
+public:
 /*{\Mtypes 4}*/
 
 typedef _RT RT;
@@ -90,7 +90,7 @@ HyperplaneHd(int d = 0) : Base( Tuple(d+1) ) {}
 initialized to some hyperplane in $d$ - dimensional space. }*/
 
 template <class InputIterator>
-HyperplaneHd(int d, InputIterator first, InputIterator last) 
+HyperplaneHd(int d, InputIterator first, InputIterator last)
   : Base( Tuple(d+1,first,last) ) {}
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname|
 initialized to the hyperplane with coefficients |set [first,last)|.
@@ -118,59 +118,59 @@ $|side| \neq 0$ and the task at hand is solvable there must be a $j$
 such that $o^T \cdot s_j \neq 0$.  We take $s_j$ as the normal vector
 of our hyperplane and use |o| to normalize the hyperplane equation. */
 
-template <class ForwardIterator> 
+template <class ForwardIterator>
 void
-construct_from_points(ForwardIterator first, ForwardIterator last, 
-		      const PointHd<RT,LA>& o, Oriented_side side)
-{ 
+construct_from_points(ForwardIterator first, ForwardIterator last,
+                      const PointHd<RT,LA>& o, Oriented_side side)
+{
   TUPLE_DIM_CHECK(first,last,hyperplane::construction);
-  CGAL_assertion_msg((first->dimension()==o.dimension()), 
+  CGAL_assertion_msg((first->dimension()==o.dimension()),
   "hyperplane::construction: dimensions disagree.");
 
   int d = first->dimension();   // we are in $d$ - dimensional space
   int m = static_cast<int>(std::distance(first,last)); // |P| has $m$ points
-  typename LA::Matrix A(m,d + 1); 
+  typename LA::Matrix A(m,d + 1);
 
   for (int i = 0; i < m; i++) {  /* define $i$-th equation */
-    for (int j = 0; j <= d; j++) 
+    for (int j = 0; j <= d; j++)
       A(i,j) = first->homogeneous(j); // $j$ - th coord of $i$-th point
     ++first;
   }
   typename LA::Matrix  spanning_vecs; // columns span solution
-  int dim = LA::homogeneous_linear_solver(A,spanning_vecs); 
+  int dim = LA::homogeneous_linear_solver(A,spanning_vecs);
 
   if (dim == 0)
     CGAL_error_msg("HyperplaneHd::constructor: \
-    set P is full dimensional."); 
+    set P is full dimensional.");
 
-  if (side == ON_ORIENTED_BOUNDARY) { 
-    ptr()->v = spanning_vecs.column(0); 
-    return; 
+  if (side == ON_ORIENTED_BOUNDARY) {
+    ptr()->v = spanning_vecs.column(0);
+    return;
   }
 
-  RT sum = 0; 
+  RT sum = 0;
   int j;
-  for (j = 0; j < dim; j++) { 
-    for (int i = 0; i <= d; i++) 
-      sum += spanning_vecs(i,j)*o.homogeneous(i); 
-    if (sum != 0) break; 
+  for (j = 0; j < dim; j++) {
+    for (int i = 0; i <= d; i++)
+      sum += spanning_vecs(i,j)*o.homogeneous(i);
+    if (sum != 0) break;
   }
 
-  if (j == dim)  
+  if (j == dim)
     CGAL_error_msg("HyperplaneHd::constructor: \
     cannot use o to determine side.");
 
   ptr()->v = spanning_vecs.column(j);
-  if ( ( CGAL_NTS sign(sum) > 0 && side == ON_NEGATIVE_SIDE ) || 
-       ( CGAL_NTS sign(sum) < 0 && side == ON_POSITIVE_SIDE ) )   
+  if ( ( CGAL_NTS sign(sum) > 0 && side == ON_NEGATIVE_SIDE ) ||
+       ( CGAL_NTS sign(sum) < 0 && side == ON_POSITIVE_SIDE ) )
     invert_rep();
 }
 
 
 template <class ForwardIterator>
-HyperplaneHd(ForwardIterator first, ForwardIterator last, 
-             const PointHd<RT,LA>& o, 
-             Oriented_side side = ON_ORIENTED_BOUNDARY) 
+HyperplaneHd(ForwardIterator first, ForwardIterator last,
+             const PointHd<RT,LA>& o,
+             Oriented_side side = ON_ORIENTED_BOUNDARY)
 /*{\Mcreate constructs some hyperplane that passes through the points
 in |set [first,last)|. If |side| is |ON_POSITIVE_SIDE| or
 |ON_NEGATIVE_SIDE| then |o| is on that side of the constructed
@@ -179,42 +179,42 @@ exist.  The value type of |ForwardIterator| is |PointHd<RT,LA>|. }*/
   : Base( Tuple(o.dimension()+1) )
 { construct_from_points(first,last,o,side); }
 
-HyperplaneHd(const PointHd<RT,LA>& p, const DirectionHd<RT,LA>& dir) 
+HyperplaneHd(const PointHd<RT,LA>& p, const DirectionHd<RT,LA>& dir)
 /*{\Mcreate constructs the hyperplane with normal direction |dir|
 that passes through $p$. The direction |dir| points into the positive
 side.  \precond |dir| is not the trivial direction.}*/
-  : Base( Tuple(p.dimension()+1) ) { 
-  int d = p.dimension(); 
+  : Base( Tuple(p.dimension()+1) ) {
+  int d = p.dimension();
   CGAL_assertion_msg((dir.dimension() == d), "HyperplaneHd::constructor: \
   parameter dimensions disagree.");
   CGAL_assertion_msg((dir.dimension() == d), "HyperplaneHd::constructor: \
   parameter dimensions disagree.");
 
-  RT sum = 0; 
-  for (int i = 0; i < d; i++) { 
-    sum += dir.delta(i)*p.homogeneous(i); 
-    entry(i) = dir.delta(i)*p.homogeneous(d); 
+  RT sum = 0;
+  for (int i = 0; i < d; i++) {
+    sum += dir.delta(i)*p.homogeneous(i);
+    entry(i) = dir.delta(i)*p.homogeneous(d);
   }
-  entry(d) = -sum; 
+  entry(d) = -sum;
 }
 
-HyperplaneHd(const RT& a, const RT& b, const RT& c) : 
-  Base( Tuple(a,b,c,MatchHelper()) ) {} 
-/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in 
+HyperplaneHd(const RT& a, const RT& b, const RT& c) :
+  Base( Tuple(a,b,c,MatchHelper()) ) {}
+/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
 $2$-dimensional space with equation $ax+by+c=0$. }*/
 
-HyperplaneHd(int a, int b, int c) : 
-  Base( Tuple(RT(a),RT(b),RT(c),MatchHelper()) ) {} 
+HyperplaneHd(int a, int b, int c) :
+  Base( Tuple(RT(a),RT(b),RT(c),MatchHelper()) ) {}
 
 HyperplaneHd(const RT& a, const RT& b, const RT& c, const RT& d) :
-  Base( Tuple(a,b,c,d) ) {} 
-/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in 
+  Base( Tuple(a,b,c,d) ) {}
+/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
 $3$-dimensional space with equation $ax+by+cz+d=0$. }*/
 
-HyperplaneHd(int a, int b, int c, int d) : 
-  Base( Tuple(RT(a),RT(b),RT(c),RT(d)) ) {} 
+HyperplaneHd(int a, int b, int c, int d) :
+  Base( Tuple(RT(a),RT(b),RT(c),RT(d)) ) {}
 
-~HyperplaneHd()  {}    
+~HyperplaneHd()  {}
 
 /*{\Moperations 4 2}*/
 
@@ -222,71 +222,71 @@ int dimension() const { return ptr()->size()-1; }
 /*{\Mop returns the dimension of |\Mvar|. }*/
 
 RT operator[](int i) const
-/*{\Marrop returns the $i$-th coefficient of |\Mvar|. 
+/*{\Marrop returns the $i$-th coefficient of |\Mvar|.
    \precond $0 \leq i \leq d$.}*/
 { CGAL_assertion_msg((0<=i && i<=(dimension())), "HyperplaneHd::op[]:\
   index out of range."); return entry(i); }
 
 RT coefficient(int i) const { return entry(i); }
-/*{\Mop returns the $i$-th coefficient of |\Mvar|. 
+/*{\Mop returns the $i$-th coefficient of |\Mvar|.
    \precond $0 \leq i \leq d$.}*/
 
 const typename LA::Vector& coefficient_vector() const
 /*{\Xop returns the coefficient vector $(c_0,\ldots,c_d)$ of |\Mvar|. }*/
 { return vector_rep(); }
 
-Coefficient_const_iterator coefficients_begin() const 
+Coefficient_const_iterator coefficients_begin() const
 /*{\Mop returns an iterator pointing to the first coefficient.}*/
 { return ptr()->begin(); }
 
-Coefficient_const_iterator coefficients_end() const 
+Coefficient_const_iterator coefficients_end() const
 /*{\Mop returns an iterator pointing beyond the last coefficient.}*/
 { return ptr()->end(); }
 
-VectorHd<RT,LA> orthogonal_vector() const; 
-/*{\Mop returns the orthogonal vector of |\Mvar|. It points from the 
-negative halfspace into the positive halfspace and its 
+VectorHd<RT,LA> orthogonal_vector() const;
+/*{\Mop returns the orthogonal vector of |\Mvar|. It points from the
+negative halfspace into the positive halfspace and its
 homogeneous coordinates are $(c_0, \ldots, c_{d - 1},1)$. }*/
-DirectionHd<RT,LA> orthogonal_direction() const 
-/*{\Mop returns the orthogonal direction of |\Mvar|. It points from the 
+DirectionHd<RT,LA> orthogonal_direction() const
+/*{\Mop returns the orthogonal direction of |\Mvar|. It points from the
 negative halfspace into the positive halfspace. }*/
 { return orthogonal_vector().direction(); }
 
 RT value_at(const PointHd<RT,LA>& p) const
-/*{\Xop returns the value of |\Mvar| at the point |p|, i.e., 
+/*{\Xop returns the value of |\Mvar| at the point |p|, i.e.,
 $\sum_{ 0 \le i \le d } h_i p_i$.\\
-Warning: this value depends on the particular representation 
+Warning: this value depends on the particular representation
 of |\Mvar| and |p|. }*/
 { CGAL_assertion_msg((dimension()==p.dimension()),"HyperplaneHd::value_at:\
   dimensions disagree.");
   return vector_rep()*p.vector_rep();
 }
 
-Oriented_side  oriented_side(const PointHd<RT,LA>& p) const 
+Oriented_side  oriented_side(const PointHd<RT,LA>& p) const
 /*{\Mop returns the side of the hyperplane |\Mvar| containing $p$. }*/
 /*{\Mtext \setopdims{2cm}{2cm}}*/
-{ 
-  CGAL_assertion_msg((dimension()==p.dimension()), 
-  "HyperplaneHd::oriented_side: dimensions do not agree."); 
+{
+  CGAL_assertion_msg((dimension()==p.dimension()),
+  "HyperplaneHd::oriented_side: dimensions do not agree.");
   return CGAL_NTS sign(value_at(p));
 }
 
-bool has_on(const PointHd<RT,LA>& p) const 
+bool has_on(const PointHd<RT,LA>& p) const
 /*{\Mop returns true iff point |p| lies on the hyperplane |\Mvar|. }*/
 { return (oriented_side(p) == ON_ORIENTED_BOUNDARY); }
 
-bool has_on_boundary(const PointHd<RT,LA>& p) const 
-/*{\Mop returns true iff point |p| lies on the boundary of 
+bool has_on_boundary(const PointHd<RT,LA>& p) const
+/*{\Mop returns true iff point |p| lies on the boundary of
 hyperplane |\Mvar|. }*/
 { return (oriented_side(p) == ON_ORIENTED_BOUNDARY); }
 
-bool has_on_positive_side(const PointHd<RT,LA>& p) const 
-/*{\Mop returns true iff point |p| lies on the positive side of 
+bool has_on_positive_side(const PointHd<RT,LA>& p) const
+/*{\Mop returns true iff point |p| lies on the positive side of
 hyperplane |\Mvar|. }*/
 { return (oriented_side(p) == ON_POSITIVE_SIDE); }
 
-bool has_on_negative_side(const PointHd<RT,LA>& p) const 
-/*{\Mop returns true iff point |p| lies on the negative side of 
+bool has_on_negative_side(const PointHd<RT,LA>& p) const
+/*{\Mop returns true iff point |p| lies on the negative side of
 hyperplane |\Mvar|. }*/
 { return (oriented_side(p) == ON_NEGATIVE_SIDE); }
 
@@ -310,26 +310,26 @@ static Comparison_result strong_cmp(
 bool operator==(const HyperplaneHd<RT,LA>& h2) const
 { if (this->identical(h2)) return true;
   if (dimension()!=h2.dimension()) return false;
-  return HyperplaneHd<RT,LA>::strong_cmp(*this,h2) == EQUAL; 
+  return HyperplaneHd<RT,LA>::strong_cmp(*this,h2) == EQUAL;
 }
 
 bool operator!=(const HyperplaneHd<RT,LA>& h2) const
 { return !operator==(h2); }
 
-friend std::istream& operator>> <> 
+friend std::istream& operator>> <>
   (std::istream&, HyperplaneHd<RT,LA>&);
-friend std::ostream& operator<< <> 
+friend std::ostream& operator<< <>
   (std::ostream&, const HyperplaneHd<RT,LA>&);
 
 }; // end of class HyperplaneHd
 
 template <class RT, class LA>
-bool weak_equality(const HyperplaneHd<RT,LA>& h1, 
+bool weak_equality(const HyperplaneHd<RT,LA>& h1,
                    const HyperplaneHd<RT,LA>& h2)
 /*{\Mfunc test for weak equality. }*/
 { if (h1.identical(h2)) return true;
   if (h1.dimension()!=h2.dimension()) return false;
-  return HyperplaneHd<RT,LA>::weak_cmp(h1,h2) == EQUAL; 
+  return HyperplaneHd<RT,LA>::weak_cmp(h1,h2) == EQUAL;
 }
 
 /*{\Mimplementation

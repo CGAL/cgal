@@ -29,19 +29,18 @@ namespace CGAL {
 template <typename Mesh, typename Descriptor, typename Value>
 class OM_pmap {
 public:
-  typedef typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::vertex_descriptor>,
+  typedef typename boost::mpl::if_<std::is_same<Descriptor, typename boost::graph_traits<Mesh>::vertex_descriptor>,
                                    OpenMesh::VPropHandleT<Value>,
-                                   typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::face_descriptor>,
+                                   typename boost::mpl::if_<std::is_same<Descriptor, typename boost::graph_traits<Mesh>::face_descriptor>,
                                                             OpenMesh::FPropHandleT<Value>,
-                                                            typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::halfedge_descriptor>,
+                                                            typename boost::mpl::if_<std::is_same<Descriptor, typename boost::graph_traits<Mesh>::halfedge_descriptor>,
                                                                                      OpenMesh::HPropHandleT<Value>,
                                                                                      OpenMesh::EPropHandleT<Value> >::type>::type>::type H;
 
-  typedef boost::read_write_property_map_tag category;
+  typedef boost::lvalue_property_map_tag category;
 
   typedef Descriptor key_type;
   typedef Value value_type;
-
   typedef value_type& reference;
 
   OM_pmap()
@@ -66,19 +65,19 @@ public:
   }
 
   inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm,
-                         typename boost::graph_traits<Mesh>::face_descriptor k)
+                              typename boost::graph_traits<Mesh>::face_descriptor k)
   {
     return pm.mesh->property(pm.h,k);
   }
 
   inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm,
-                         typename boost::graph_traits<Mesh>::halfedge_descriptor k)
+                              typename boost::graph_traits<Mesh>::halfedge_descriptor k)
   {
     return pm.mesh->property(pm.h,k);
   }
 
   inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm,
-                         typename boost::graph_traits<Mesh>::edge_descriptor k)
+                              typename boost::graph_traits<Mesh>::edge_descriptor k)
   {
     typename Mesh::EdgeHandle eh(k.idx());
     return pm.mesh->property(pm.h,eh);
@@ -133,7 +132,6 @@ public:
 
 template <typename OpenMesh>
 class OM_edge_weight_pmap
-  : public boost::put_get_helper<typename OpenMesh::Scalar , OM_edge_weight_pmap<OpenMesh> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -150,17 +148,19 @@ public:
     return sm_.calc_edge_length(e.halfedge());
   }
 
+  friend inline value_type get(const OM_edge_weight_pmap& m, const key_type& k) { return m[k]; }
+
 private:
   const OpenMesh& sm_;
 };
 
 template <typename K, typename VEF>
-class OM_index_pmap : public boost::put_get_helper<unsigned int, OM_index_pmap<K,VEF> >
+class OM_index_pmap
 {
 public:
   typedef boost::readable_property_map_tag category;
-  typedef unsigned int                      value_type;
-  typedef unsigned int                      reference;
+  typedef unsigned int                     value_type;
+  typedef unsigned int                     reference;
   typedef VEF                              key_type;
 
   OM_index_pmap()
@@ -170,18 +170,21 @@ public:
   {
     return vd.idx();
   }
+
+  friend inline value_type get(const OM_index_pmap& m, const key_type& k) { return m[k]; }
 };
 
 
 template<typename OpenMesh, typename P>
-class OM_point_pmap //: public boost::put_get_helper<bool, OM_point_pmap<OpenMesh> >
+class OM_point_pmap
 {
 public:
-  typedef boost::read_write_property_map_tag category;
 #if defined(CGAL_USE_OM_POINTS)
+  typedef boost::lvalue_property_map_tag       category;
   typedef typename OpenMesh::Point             value_type;
   typedef const typename OpenMesh::Point&      reference;
 #else
+  typedef boost::read_write_property_map_tag category;
   typedef P value_type;
   typedef P reference;
 #endif
@@ -199,7 +202,7 @@ public:
     : sm_(pm.sm_)
     {}
 
-  value_type operator[](key_type v)
+  reference operator[](key_type v) const
   {
 #if defined(CGAL_USE_OM_POINTS)
     return sm_->point(v);
@@ -423,7 +426,11 @@ template<typename K>
 void
 put(boost::vertex_point_t p, OPEN_MESH_CLASS& g,
     typename boost::graph_traits< OPEN_MESH_CLASS >::vertex_descriptor vd,
+#if defined(CGAL_USE_OM_POINTS)
     const typename K::Point& point)
+#else
+    const CGAL::Exact_predicates_inexact_constructions_kernel::Point_3& point)
+#endif
 {
   put(get(p,g), vd, point);
 }

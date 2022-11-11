@@ -17,24 +17,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     message( FATAL_ERROR "CMAKE_ROOT environment variable not set. It should point to the directory where CMake is installed.")
   endif()
 
-  # CMAKE_VERSION was introduced in 2.6.3 so we use it to detect the fact
-  if ( CMAKE_VERSION )
-    set( CMAKE_2_6_3_OR_ABOVE TRUE )
-  else()
-    set( CMAKE_2_6_3_OR_ABOVE FALSE )
-  endif()
-    
-  if ( CGAL_BUILDING_LIBS )
-    option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-    set(CGAL_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-
-    if ( BUILD_SHARED_LIBS )
-      message( STATUS "Building shared libraries" )
-    else()
-      message( STATUS "Building static libraries" )
-    endif()
-  endif()
-  
   if ( WIN32 )
     find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
     if(CMAKE_UNAME)
@@ -61,5 +43,4 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   # set use-file for Eigen3 (needed to have default solvers)
   set(EIGEN3_USE_FILE "UseEigen3")
 
-  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_TBB.cmake)
 endif()

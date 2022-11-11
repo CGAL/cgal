@@ -36,15 +36,16 @@ void create_path_3(Path_on_surface<SM>& p)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int main()
+int main(int argc, char* argv[])
 {
-  SM sm;
-  std::ifstream in("data/double-torus.off");
+  bool draw=(argc>1?std::string(argv[1])=="-draw":false);
+  std::ifstream in(CGAL::data_file_path("meshes/double-torus-example.off"));
   if (!in.is_open())
   {
     std::cout<<"ERROR reading file data/double-torus.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
+  SM sm;
   in>>sm;
 
   Curves_on_surface_topology<SM> cst(sm);
@@ -61,11 +62,9 @@ int main()
   std::cout<<"Path p2 (green) "<<(res2?"IS":"IS NOT")
            <<" base point homotopic with path p3 (orange)."<<std::endl;
 
-#ifdef CGAL_USE_BASIC_VIEWER
-  std::vector<Path_on_surface<SM> > paths={p1, p2, p3};
-  CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt5
-#endif // CGAL_USE_BASIC_VIEWER
-  
+  if (draw)
+  { CGAL::draw(sm, {p1, p2, p3}); }
+
   return EXIT_SUCCESS;
 }
 ///////////////////////////////////////////////////////////////////////////////

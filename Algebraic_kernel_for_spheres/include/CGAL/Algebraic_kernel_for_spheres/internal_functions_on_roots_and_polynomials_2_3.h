@@ -4,9 +4,9 @@
 // This file is part of CGAL (www.cgal.org).
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -29,20 +29,20 @@ namespace CGAL {
   namespace AlgebraicSphereFunctors {
 
   template < class AK, class OutputIterator >
-  inline 
+  inline
   OutputIterator
     solve( const typename AK::Polynomial_for_spheres_2_3 &e1,
            const typename AK::Polynomial_for_spheres_2_3 &e2,
-	   const typename AK::Polynomial_for_spheres_2_3 &e3,
-	   OutputIterator res )
+           const typename AK::Polynomial_for_spheres_2_3 &e3,
+           OutputIterator res )
   {
-	  typedef typename AK::FT FT;
+          typedef typename AK::FT FT;
     CGAL_kernel_precondition(!((e1 == e2) && (e2 == e3)));
     // we put as a precondition that the polynomial for spheres represents
     // a sphere and not an isolated point or an empty_space
-    CGAL_kernel_precondition(!(e1.empty_space() || e1.isolated_point())); 
-    CGAL_kernel_precondition(!(e2.empty_space() || e2.isolated_point())); 
-    CGAL_kernel_precondition(!(e3.empty_space() || e3.isolated_point())); 
+    CGAL_kernel_precondition(!(e1.empty_space() || e1.isolated_point()));
+    CGAL_kernel_precondition(!(e2.empty_space() || e2.isolated_point()));
+    CGAL_kernel_precondition(!(e3.empty_space() || e3.isolated_point()));
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
     // The degenerated cases are 2 tangent spheres
     // os 2 non-intersecting spheres
@@ -63,29 +63,29 @@ namespace CGAL {
       CGAL_kernel_precondition(!(intersect<AK>(e1,e2)));
       return res;
     }
-    
+
     // non degenerated case
     if(intersect<AK>(e1,e2)) {
       Polynomial_1_3 p1 = plane_from_2_spheres<AK>(e1,e2);
       if(intersect<AK>(e2,e3)) {
-        Polynomial_1_3 p2 = plane_from_2_spheres<AK>(e2,e3); 
+        Polynomial_1_3 p2 = plane_from_2_spheres<AK>(e2,e3);
         if(same_solutions<FT>(p1,p2)) {
-	        const FT sq_d1 = CGAL::square(p1.a()*e1.a() + p1.b()*e1.b() +
-	                                p1.c()*e1.c() + p1.d()) /
-							(square(p1.a()) + square(p1.b()) + square(p1.c()));
-					const FT r1_sqr = e1.r_sq() - sq_d1;
+                const FT sq_d1 = CGAL::square(p1.a()*e1.a() + p1.b()*e1.b() +
+                                        p1.c()*e1.c() + p1.d()) /
+                                                        (square(p1.a()) + square(p1.b()) + square(p1.c()));
+                                        const FT r1_sqr = e1.r_sq() - sq_d1;
 
-	        const FT sq_d2 = CGAL::square(p2.a()*e2.a() + p2.b()*e2.b() +
-	                                p2.c()*e2.c() + p2.d()) /
-							(square(p2.a()) + square(p2.b()) + square(p2.c()));
-					const FT r2_sqr = e2.r_sq() - sq_d2;
-					if(r1_sqr != r2_sqr) return res;
-	        // otherwise there are an infinite number of points
-	        // this is not allowed
-					CGAL_kernel_precondition(r1_sqr == 0);
-					return internal::solve_tangent<AK>(p1,e1,res);
-	      }        
-				return solve<AK>(p1,p2,e2,res);
+                const FT sq_d2 = CGAL::square(p2.a()*e2.a() + p2.b()*e2.b() +
+                                        p2.c()*e2.c() + p2.d()) /
+                                                        (square(p2.a()) + square(p2.b()) + square(p2.c()));
+                                        const FT r2_sqr = e2.r_sq() - sq_d2;
+                                        if(r1_sqr != r2_sqr) return res;
+                // otherwise there are an infinite number of points
+                // this is not allowed
+                                        CGAL_kernel_precondition(r1_sqr == 0);
+                                        return internal::solve_tangent<AK>(p1,e1,res);
+              }
+                                return solve<AK>(p1,p2,e2,res);
       } return res;
     } return res;
   }
@@ -95,7 +95,7 @@ namespace CGAL {
   x_critical_point(const typename AK::Polynomial_for_spheres_2_3 & s, bool i)
   {
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
 
     return Root_for_spheres_2_3(
             make_root_of_2(s.a(),typename AK::FT(i?-1:1),s.r_sq()),
@@ -108,9 +108,9 @@ namespace CGAL {
   x_critical_points(const typename AK::Polynomial_for_spheres_2_3 & s, OutputIterator res)
   {
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::FT FT;
-    
+
     *res++ =  Root_for_spheres_2_3(make_root_of_2(s.a(),FT(-1),s.r_sq()),
                                 Root_of_2(s.b()),
                                 Root_of_2(s.c()));
@@ -125,14 +125,14 @@ namespace CGAL {
   y_critical_point(const typename AK::Polynomial_for_spheres_2_3 &s, bool i)
   {
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
 
     return Root_for_spheres_2_3(
             Root_of_2(s.a()),
             make_root_of_2(s.b(),typename AK::FT(i?-1:1),s.r_sq()),
             Root_of_2(s.c()));
   }
-  
+
   template <class AK, class OutputIterator>
   OutputIterator
   y_critical_points(const typename AK::Polynomial_for_spheres_2_3 & s, OutputIterator res)
@@ -155,13 +155,13 @@ namespace CGAL {
   z_critical_point(const typename AK::Polynomial_for_spheres_2_3 &s, bool i)
   {
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
 
     return Root_for_spheres_2_3(Root_of_2(s.a()),
                                 Root_of_2(s.b()),
             make_root_of_2(s.c(),typename AK::FT(i?-1:1),s.r_sq()));
   }
-  
+
   template <class AK, class OutputIterator>
   OutputIterator
   z_critical_points(const typename AK::Polynomial_for_spheres_2_3 & s, OutputIterator res)
@@ -181,12 +181,12 @@ namespace CGAL {
 
   template <class AK>
   typename AK::Root_for_spheres_2_3
-  x_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
+  x_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3,
                                      typename AK::Polynomial_1_3 > &c, bool i)
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
 
@@ -195,7 +195,7 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() +
                                       p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.b()) && is_zero(p.c())));
 
@@ -215,13 +215,13 @@ namespace CGAL {
 
   template <class AK, class OutputIterator>
   OutputIterator
-  x_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
-                                     typename AK::Polynomial_1_3 > &c, 
+  x_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3,
+                                     typename AK::Polynomial_1_3 > &c,
                      OutputIterator res)
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
 
@@ -230,7 +230,7 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() +
                                            p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.b()) && is_zero(p.c())));
 
@@ -255,12 +255,12 @@ namespace CGAL {
 
   template <class AK>
   typename AK::Root_for_spheres_2_3
-  y_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
+  y_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3,
                                      typename AK::Polynomial_1_3 > &c, bool i)
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
 
@@ -269,7 +269,7 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() +
                                            p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.c())));
 
@@ -290,18 +290,18 @@ namespace CGAL {
         const Root_of_2 y = make_root_of_2(s.b(),FT(i?1:-1),delta);
         const Root_of_2 z = make_root_of_2(s.c(),FT(i?FT(-cz):(cz)),delta);
       return Root_for_spheres_2_3(x,y,z);
-    } 
+    }
   }
 
   template <class AK, class OutputIterator>
   OutputIterator
-  y_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
-                                     typename AK::Polynomial_1_3 > &c, 
+  y_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3,
+                                     typename AK::Polynomial_1_3 > &c,
                      OutputIterator res)
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
 
@@ -310,7 +310,7 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() +
                                            p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.c())));
 
@@ -334,18 +334,18 @@ namespace CGAL {
     } else {
       *res++ =  Root_for_spheres_2_3(x2,y2,z2);
       *res++ =  Root_for_spheres_2_3(x1,y1,z1);
-    } 
+    }
     return res;
   }
 
   template <class AK>
   typename AK::Root_for_spheres_2_3
-  z_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
+  z_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3,
                                      typename AK::Polynomial_1_3 > &c, bool i)
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
 
@@ -354,7 +354,7 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() +
                                            p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.b())));
 
@@ -387,18 +387,18 @@ namespace CGAL {
         const Root_of_2 y = make_root_of_2(s.b(),FT(i?FT(-cy):(cy)),delta);
         const Root_of_2 z = make_root_of_2(s.c(),FT(i?1:-1),delta);
       return Root_for_spheres_2_3(x,y,z);
-    } 
+    }
   }
 
   template <class AK, class OutputIterator>
   OutputIterator
-  z_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
-                                     typename AK::Polynomial_1_3 > &c, 
+  z_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3,
+                                     typename AK::Polynomial_1_3 > &c,
                      OutputIterator res)
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
 
@@ -407,7 +407,7 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() +
                                            p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.b())));
 

@@ -25,7 +25,7 @@ Triangle_container::Triangle_container(int program, bool indexed)
   : Primitive_container(program, indexed),
     d(new Tri_d())
 {
-  std::vector<Vbo*> vbos(NbOfVbos, NULL);
+  std::vector<Vbo*> vbos(NbOfVbos, nullptr);
   setVbos(vbos);
 }
 
@@ -36,14 +36,19 @@ void Triangle_container::initGL( Viewer_interface* viewer)
   if(viewer->isSharing())
   {
     if(!getVao(viewer))
-      setVao(viewer, new Vao(getVao(Three::mainViewer()), 
+      setVao(viewer, new Vao(getVao(Three::mainViewer()),
                              viewer->getShaderProgram(getProgram())));
   }
   else
   {
-    
     if(!getVao(viewer))
       setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+    //in both because of the soup item
+    if(!getVbo(VColors))
+      setVbo(VColors,
+             new Vbo("colors",
+                     Vbo::COLORS));
+    getVao(viewer)->addVbo(getVbo(VColors));
     if(isDataIndexed())
     {
       if(!getVbo(Smooth_vertices))
@@ -56,7 +61,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                        QOpenGLBuffer::IndexBuffer));
       getVao(viewer)->addVbo(getVbo(Smooth_vertices));
       getVao(viewer)->addVbo(getVbo(Vertex_indices));
-      
+
       if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
       {
         if(!getVbo(Smooth_normals))
@@ -65,11 +70,6 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          Vbo::NORMALS));
         getVao(viewer)->addVbo(getVbo(Smooth_normals));
       }
-      if(!getVbo(VColors))
-        setVbo(VColors,
-               new Vbo("colors",
-                       Vbo::COLORS));
-      getVao(viewer)->addVbo(getVbo(VColors));
       if(viewer->getShaderProgram(getProgram())->property("hasDistanceValues").toBool())
       {
         if(!getVbo(Distances))
@@ -79,6 +79,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
         getVao(viewer)->addVbo(getVbo(Distances));
       }
+
     }
     else
     {
@@ -103,18 +104,18 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                        Vbo::COLORS,
                        QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 3));
       getVao(viewer)->addVbo(getVbo(FColors));
-      
+
       if(viewer->getShaderProgram(getProgram())->property("hasCenter").toBool())
       {
         if(!getVbo(Facet_centers))
           setVbo(Facet_centers,
                  new Vbo("center",
-                  viewer->getShaderProgram(getProgram())->property("isInstanced").toBool() 
+                  viewer->getShaderProgram(getProgram())->property("isInstanced").toBool()
                          ? Vbo::NOT_INSTANCED
                          : Vbo::GEOMETRY));
         getVao(viewer)->addVbo(getVbo(Facet_centers));
       }
-      
+
       if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
       {
         if(!getVbo(Radius))
@@ -123,7 +124,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          Vbo::NOT_INSTANCED,
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
         getVao(viewer)->addVbo(getVbo(Radius));
-        
+
       }
       if(viewer->getShaderProgram(getProgram())->property("hasTexture").toBool())
       {
@@ -136,6 +137,27 @@ void Triangle_container::initGL( Viewer_interface* viewer)
         getVao(viewer)->addVbo(getVbo(Texture_map));
         if(!getTexture())
           setTexture(new Texture());
+      }
+      // This is passed as float because to pass an integer type to glsl the function is glVertexAttribIPointer(),
+      // but the qt system only calls glVertexAttribPointer(), whatever type is given. It is far less efforts to
+      // convert floats that to reimplement the whole system without Qt for this attribute.
+      if(viewer->getShaderProgram(getProgram())->property("hasSubdomainIndicesValues").toBool())
+      {
+        if(!getVbo(Subdomain_indices))
+          setVbo(Subdomain_indices,
+                 new Vbo("subdomain_in",
+                         Vbo::GEOMETRY,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 2, 4*sizeof(float)));
+        getVao(viewer)->addVbo(getVbo(Subdomain_indices));
+      }
+      if(viewer->getShaderProgram(getProgram())->property("hasDistanceValues").toBool())
+      {
+        if(!getVbo(Distances))
+          setVbo(Distances,
+                 new Vbo("distance",
+                         Vbo::COLORS,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+        getVao(viewer)->addVbo(getVbo(Distances));
       }
     }
   }
@@ -165,8 +187,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
       getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);
       getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);
-      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());
-      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("near", static_cast<float>(viewer->camera()->zNear()));
+      getVao(viewer)->program->setUniformValue("far", static_cast<float>(viewer->camera()->zFar()));
       getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)
@@ -175,11 +197,11 @@ void Triangle_container::draw(Viewer_interface* viewer,
     if(getVao(viewer)->program->property("drawLinesAdjacency").toBool())
     {
       viewer->glDrawElements(GL_LINES_ADJACENCY, static_cast<unsigned int>(getIdxSize()),
-                             GL_UNSIGNED_INT, 0 );
+                             GL_UNSIGNED_INT, nullptr );
     }
     else{
       viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(getIdxSize()),
-                             GL_UNSIGNED_INT, 0 );}
+                             GL_UNSIGNED_INT, nullptr );}
     getVbo(Vertex_indices)->release();
     getVao(viewer)->release();
   }
@@ -205,8 +227,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
       getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);
       getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);
-      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());
-      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("near", static_cast<float>(viewer->camera()->zNear()));
+      getVao(viewer)->program->setUniformValue("far", static_cast<float>(viewer->camera()->zFar()));
       getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)

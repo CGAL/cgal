@@ -45,7 +45,7 @@ public:
 
 private: // DATA MEMBERS
     Point       point_;
-    Data        data_;
+    CGAL_NO_UNIQUE_ADDRESS Data        data_;
 
 public:
     template< typename T >

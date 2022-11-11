@@ -38,10 +38,10 @@ public:
     , m_isMoving(false)
     , m_hasNewPt(false)
     , m_selMode(NORMAL)
-    , m_nearestNb(NULL)
+    , m_nearestNb(nullptr)
     , m_hasEmptyS(false)
     , m_showTrackball(true)
-    , m_pDlgPrefer(NULL)
+    , m_pDlgPrefer(nullptr)
     {
       pos_emptyFacet = new std::vector<float>();
       pos_emptySphere= new std::vector<float>();
@@ -99,7 +99,7 @@ public:
     m_curMode = m;
     m_isMoving = false;
     m_hasEmptyS = false;
-    m_nearestNb = NULL;
+    m_nearestNb = nullptr;
     update();
   }
 
@@ -167,7 +167,7 @@ public Q_SLOTS:
     m_conflictCells.clear();
     m_vidSeled.clear();
     m_isMoving = false;
-    m_nearestNb = NULL;
+    m_nearestNb = nullptr;
     m_hasEmptyS = false;
     if( !m_incrementalPts.isEmpty() ) {
       Q_EMIT( stopIncAnimation() );
@@ -185,7 +185,7 @@ public Q_SLOTS:
     m_conflictCells.clear();
     m_vidSeled.clear();
     m_isMoving = false;
-    m_nearestNb = NULL;
+    m_nearestNb = nullptr;
     m_hasEmptyS = false;
   }
   // stop incremental construction
@@ -347,9 +347,9 @@ private:
   static const int vaoSize = 29;
   static const int vboSize = 34;
   // define material
-   QVector4D	ambient;
-   QVector4D	diffuse;
-   QVector4D	specular;
+   QVector4D        ambient;
+   QVector4D        diffuse;
+   QVector4D        specular;
    GLfloat      shininess ;
       int poly_vertexLocation[3];
       int normalsLocation[3];
@@ -396,7 +396,7 @@ private:
       std::vector<float> *incremental_next_point;
       std::vector<float> *incremental_facet;
       std::vector<float> *incremental_conflict;
-      
+
       //picking
       QMap<float, int> picked_IDs;
       QPoint picking_pos;

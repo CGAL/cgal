@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPolynomialClasses
 
-A model of concept `PolynomialTraits_d` 
+A model of concept `PolynomialTraits_d`
 
 \cgalModels `PolynomialTraits_d`
 

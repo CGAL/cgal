@@ -13,15 +13,15 @@ public:
 /// @{
 
 /*!
-Compares the %Cartesian coordinates of 
-points `p` and `q` lexicographically in ascending 
-order of its %Cartesian components `p[i]` and `q[i]` for \f$ i = 
+Compares the %Cartesian coordinates of
+points `p` and `q` lexicographically in ascending
+order of its %Cartesian components `p[i]` and `q[i]` for \f$ i =
 0,\ldots,d-1\f$.
 
-\pre The objects are of the same dimension. 
-*/ 
-Comparison_result operator()(const Kernel_d::Point_d& 
-p, const Kernel_d::Point_d& q); 
+\pre The objects are of the same dimension.
+*/
+Comparison_result operator()(const Kernel_d::Point_d&
+p, const Kernel_d::Point_d& q);
 
 /// @}
 

@@ -20,7 +20,7 @@
 #include <CGAL/Poisson_implicit_surface_3.h>
 #include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
@@ -73,7 +73,7 @@ struct Counter {
       std::cerr << "Counter reached " << N << std::endl;
     }
   }
-  
+
 };
 
 struct InsertVisitor {
@@ -104,19 +104,18 @@ int main(int argc, char * argv[])
     //***************************************
 
     // usage
-    if (argc-1 < 2)
+    if(argc == 1)
     {
       std::cerr << "Reads a point set or a mesh's set of vertices, reconstructs a surface using Poisson,\n";
       std::cerr << "and saves the surface.\n";
       std::cerr << "\n";
-      std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
+      std::cerr << "Usage: " << argv[0] << " [file_in] [file_out] [options]\n";
       std::cerr << "Input file formats are .off (mesh) and .xyz or .pwn (point set).\n";
       std::cerr << "Output file format is .off.\n";
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
-      
-      return EXIT_FAILURE;
+      std::cerr << "Running " << argv[0] << "data/kitten.xyz kitten_poisson-20-100-0.5.off -sm_distance 0.5\n";
     }
 
     // Poisson options
@@ -128,8 +127,8 @@ int main(int argc, char * argv[])
     double average_spacing_ratio = 5;
 
     // decode parameters
-    std::string input_filename  = argv[1];
-    std::string output_filename = argv[2];
+    std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
+    std::string output_filename = (argc > 2) ? argv[2] : "kitten_poisson-20-100-0.5.off";
     for (int i=3; i+1<argc ; ++i)
     {
       if (std::string(argv[i])=="-sm_radius")
@@ -147,6 +146,8 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
     }
+
+    if (argc == 1) sm_distance = 0.5;
 
     CGAL::Timer task_timer; task_timer.start();
 
@@ -185,18 +186,13 @@ int main(int argc, char * argv[])
              extension == ".pwn" || extension == ".PWN")
     {
       // Reads the point set file in points[].
-      // Note: read_xyz_points_and_normals() requires an iterator over points
+      // Note: read_points() requires an iterator over points
       // + property maps to access each point's position and normal.
-      std::ifstream stream(input_filename.c_str());
-      if (!stream ||
-          !CGAL::read_xyz_points(
-                                stream,
-                                std::back_inserter(points),
-                                CGAL::parameters::point_map
-                                (CGAL::make_first_of_pair_property_map(Point_with_normal())).
-                                normal_map (CGAL::make_second_of_pair_property_map(Point_with_normal()))))
+      if (!CGAL::IO::read_points(input_filename.c_str(), std::back_inserter(points),
+                                  CGAL::parameters::point_map(CGAL::make_first_of_pair_property_map(Point_with_normal()))
+                                                    .normal_map(CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {
-        std::cerr << "Error: cannot read file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read input file!" << input_filename << std::endl;
         return EXIT_FAILURE;
       }
     }
@@ -232,10 +228,10 @@ int main(int argc, char * argv[])
 
     CGAL::Timer reconstruction_timer; reconstruction_timer.start();
 
-    
+
     Counter counter(std::distance(points.begin(), points.end()));
     InsertVisitor visitor(counter) ;
-    
+
 
     //***************************************
     // Computes implicit function
@@ -258,14 +254,14 @@ int main(int argc, char * argv[])
       {
         std::cerr << "Use Eigen 3\n";
         CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_symmetric_matrix<double>::EigenType> > solver;
-        if ( ! function.compute_implicit_function(solver, visitor, 
+        if ( ! function.compute_implicit_function(solver, visitor,
                                                 approximation_ratio,
                                                 average_spacing_ratio) )
         {
           std::cerr << "Error: cannot compute implicit function" << std::endl;
           return EXIT_FAILURE;
         }
-      }    
+      }
       else
       {
         std::cerr << "Error: invalid solver " << solver_name << "\n";
@@ -309,7 +305,7 @@ int main(int argc, char * argv[])
     FT radius = std::sqrt(bsphere.squared_radius());
 
     // Defines the implicit surface: requires defining a
-  	// conservative bounding sphere centered at inner point.
+          // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,

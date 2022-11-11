@@ -5,9 +5,9 @@ namespace AlgebraicStructureTraits_{
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-`AdaptableUnaryFunction`, returns true in case the argument is the zero element of the ring. 
+`AdaptableUnaryFunction`, returns true in case the argument is the zero element of the ring.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction`
 
 \sa `AlgebraicStructureTraits`
 \sa `RealEmbeddableTraits_::IsZero`
@@ -17,29 +17,29 @@ namespace AlgebraicStructureTraits_{
 class IsZero {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Is `AlgebraicStructureTraits::Boolean`. 
-*/ 
-typedef unspecified_type result_type; 
+Is `AlgebraicStructureTraits::Boolean`.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-returns true in case \f$ x\f$ is the zero element of the ring. 
-*/ 
-result_type operator()(argument_type x) const; 
+returns true in case \f$ x\f$ is the zero element of the ring.
+*/
+result_type operator()(argument_type x) const;
 
 /// @}
 

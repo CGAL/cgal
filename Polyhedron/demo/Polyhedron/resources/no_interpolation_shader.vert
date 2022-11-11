@@ -13,11 +13,12 @@ out VS_OUT
 
 uniform mat4 mvp_matrix;
 uniform mat4 mv_matrix;
+uniform mat4 norm_matrix;
 
 void main(void)
 {
    vs_out.out_color=colors;
    vs_out.fP = mv_matrix * vertex;
-   vs_out.fN = mat3(mv_matrix)* normals;
+   vs_out.fN = mat3(norm_matrix)* normals;
    gl_Position = mvp_matrix * vertex;
 }

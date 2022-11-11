@@ -37,7 +37,7 @@ template <typename T>
 struct Is_finite {
   const T* t_;
   Is_finite()
-    : t_(NULL)
+    : t_(nullptr)
   {}
   Is_finite(const T& t)
     : t_(&t)

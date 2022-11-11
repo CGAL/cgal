@@ -59,11 +59,11 @@ public:
   {
     return (m_decision != DAC_DECISION_NOT_SET);
   }
-  
+
   Dac_decision get_decision() const
   {
     return m_decision;
-  }                                                   
+  }
 
   void set_decision(Comparison_result comp)
   {
@@ -116,7 +116,7 @@ public:
   {
     return (m_is_set && number_of_data_objects() == 0);
   }
-  
+
   /*!
    * Get the first data object associated with the face.
    * \pre number_of_data_objects() is not 0.
@@ -283,7 +283,7 @@ public:
   bool get_aux_is_set(unsigned int id) const
   {
     CGAL_precondition(id < 2);
-	return (!m_aux_source[id].is_empty());
+        return (!m_aux_source[id].is_empty());
   }
 };
 
@@ -390,7 +390,7 @@ public:
     this->Base_info::operator=(ex_v);
     flags = ex_v.flags;
   }
-  
+
 protected:
   void set_bit(unsigned int ind, bool b)
   {
@@ -446,10 +446,10 @@ protected:
     // and is not part of the arrangement
     IS_FAKE = 15
   };
-  
+
 public:
   Envelope_pm_halfedge() : Dcel_info<Data>(), flags(0)
-  {} 
+  {}
 
  /* void set_is_fake(bool b)
   {
@@ -608,7 +608,7 @@ public:
 
   /*! Constructor */
   Envelope_pm_face() : Dcel_info<Data>()
-  {}  
+  {}
 
   /*! Assign from another face.
    * \param f the other face.

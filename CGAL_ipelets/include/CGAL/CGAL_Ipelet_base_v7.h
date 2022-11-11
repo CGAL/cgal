@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
@@ -40,7 +40,7 @@ namespace CGAL{
 
   template <class Kernel,int nbf>
   class Ipelet_base : public ipe::Ipelet {
-  private:  
+  private:
     const std::string* SubLab;
     const std::string* HMsg;
     std::string Name;
@@ -48,39 +48,39 @@ namespace CGAL{
     ipe::IpeletHelper* helper_;
 
   public:
-    
+
     typedef ipe::Vector IpeVector; //ipe6 compatibility
     typedef ipe::Curve  IpeSegmentSubPath;//ipe6 compatibility
     typedef ipe::Matrix IpeMatrix;//ipe6 compatibility
     typedef ipe::Path   IpePath;//ipe6 compatibility
     //indicates if the selection should be primary or secondary. Exactly one primary selection should exist
-    ipe::TSelect get_selection_type() const { return get_IpePage()->primarySelection()==-1 ? ipe::EPrimarySelected : ipe::ESecondarySelected;}  
+    ipe::TSelect get_selection_type() const { return get_IpePage()->primarySelection()==-1 ? ipe::EPrimarySelected : ipe::ESecondarySelected;}
     //ipe6 compatibility
     void transform_selected_objects_(const IpeMatrix& tfm) const {
       for (int i=0;i<static_cast<int>(get_IpePage()->count());++i)
         if (get_IpePage()->select(i)!=ipe::ENotSelected)
-          get_IpePage()->transform(i,tfm);      
+          get_IpePage()->transform(i,tfm);
     }
- 
+
     void delete_selected_objects_() const {
       for (unsigned i=static_cast<unsigned>(get_IpePage()->count());i>0;--i)
         if (get_IpePage()->select(i-1)!=ipe::ENotSelected)
           get_IpePage()->remove(i-1);
-    }  
-    
+    }
+
     void group_selected_objects_() const {
       ipe::Group* grp=new ipe::Group();
       for (unsigned i=static_cast<unsigned>(get_IpePage()->count());i>0;--i)
         if (get_IpePage()->select(i-1)!=ipe::ENotSelected){
-          grp->push_back( get_IpePage()->object(i-1)->clone() );      
-          //~ grp->push_back( get_IpePage()->object(i-1) );      
-          get_IpePage()->remove(i-1);      
+          grp->push_back( get_IpePage()->object(i-1)->clone() );
+          //~ grp->push_back( get_IpePage()->object(i-1) );
+          get_IpePage()->remove(i-1);
         }
-      get_IpePage()->append(get_selection_type(),CURRENTLAYER,grp);    
+      get_IpePage()->append(get_selection_type(),CURRENTLAYER,grp);
     }
-    
-  
-    
+
+
+
     //typedefs
     typedef typename Kernel::FT                                               FT;
     typedef typename CGAL::Point_2<Kernel>                                    Point_2;
@@ -92,15 +92,15 @@ namespace CGAL{
     typedef typename Kernel::Triangle_2                                       Triangle_2;
     //~ typedef typename CGAL::Polygon_2<Kernel,std::list<Point_2> >              Polygon_2;
     typedef CGAL::Polygon_2<Kernel>                                           Polygon_2;
-  
+
     typedef typename Kernel::Circle_2                                         Circle_2;
     typedef std::tuple<Circle_2,Point_2,Point_2,CGAL::Sign>           Circular_arc_2;
-  
-  
+
+
     Ipelet_base(const std::string NameS,const std::string SubLabS[],const std::string HMsgS[])
       :SubLab(&SubLabS[0]),HMsg(&HMsgS[0]),Name(NameS),data_(nullptr),helper_(nullptr){};
-    
-    
+
+
     ipe::Page* get_IpePage() const {return data_->iPage;}
     ipe::IpeletData* get_IpeletData() const {return data_;}
     ipe::IpeletHelper* get_IpeletHelper() const {return helper_;}
@@ -124,7 +124,7 @@ namespace CGAL{
     };
 
     virtual void protected_run(int)=0;
-    
+
     void show_help(bool gen=true) const{
       std::string hmsg;
       hmsg="<qt><h1>"+Name+"</h1><ul>";
@@ -137,54 +137,54 @@ namespace CGAL{
       return;
     }
 
-    
+
     //grabbers
-    
+
     template <class output_iterator>
     struct Point_grabber:public internal::Point_grabber<Kernel,output_iterator>{
       Point_grabber(output_iterator it):internal::Point_grabber<Kernel,output_iterator>(it){}
     };
-      
+
     template<class output_iterator>
     boost::function_output_iterator<Point_grabber<output_iterator> >
     point_grabber(output_iterator it){
       return boost::make_function_output_iterator(Point_grabber<output_iterator>(it));
     }
-    
+
 
     template <class output_iterator>
     struct Segment_grabber:public internal::Segment_grabber<Kernel,output_iterator>{
       Segment_grabber(output_iterator it):internal::Segment_grabber<Kernel,output_iterator>(it){}
     };
-      
+
     template<class output_iterator>
     boost::function_output_iterator<Segment_grabber<output_iterator> >
     segment_grabber(output_iterator it){
       return boost::make_function_output_iterator(Segment_grabber<output_iterator>(it));
     }
-    
+
     template <class output_iterator>
     struct Wpoint_grabber:public internal::Wpoint_grabber<Kernel,output_iterator>{
       Wpoint_grabber(output_iterator it):internal::Wpoint_grabber<Kernel,output_iterator>(it){}
     };
-      
+
     template<class output_iterator>
     boost::function_output_iterator<Wpoint_grabber<output_iterator> >
     wpoint_grabber(output_iterator it){
       return boost::make_function_output_iterator(Wpoint_grabber<output_iterator>(it));
-    }     
-    
+    }
+
     //Interaction functions
     //------------------------------
-    
-    void 
+
+    void
     print_error_message(const char* s) const
     {
       get_IpeletHelper()->message(s);
     }
-    
+
     template <class T>
-    std::pair<int,T> 
+    std::pair<int,T>
     request_value_from_user(std::string msg) const
     {
       ipe::String str;
@@ -203,7 +203,7 @@ namespace CGAL{
 
     //Conversion functions
     //------------------------------
-    Point_2 
+    Point_2
     segment_endpoint(const ipe::CurveSegment& segment,ipe::Path* obj_ipe,int i) const
     {
       CGAL_precondition(i<2);
@@ -211,15 +211,15 @@ namespace CGAL{
       return Point_2((double)(pt_ipe.x),(double)(pt_ipe.y));//conversion into CGAL point
     }
 
-    Point_2 
+    Point_2
     to_point_2(ipe::Object*  object) const
     {
       ipe::Vector pt_ipe = object-> matrix() * object-> asReference() -> position();
       return Point_2((double)(pt_ipe.x),(double)(pt_ipe.y));//conversion into CGAL point
-    }    
+    }
 
-    Circle_2 
-    to_circle_2(ipe::Path* obj_ipe,int subpath=0) const 
+    Circle_2
+    to_circle_2(ipe::Path* obj_ipe,int subpath=0) const
     {
       const ipe::Ellipse* ell_ipe = obj_ipe -> shape().subPath(subpath) -> asEllipse();
       ipe::Matrix mat_ipe = obj_ipe -> matrix() * ell_ipe -> matrix();
@@ -228,74 +228,74 @@ namespace CGAL{
       return Circle_2(Point_2(pt_ipe.x,pt_ipe.y),radius*radius);
     }
 
-    
+
     //Picking functions
     //------------------------------
 
-    bool 
-    is_only_rotated_or_scaled(const ipe::Matrix& m) const 
+    bool
+    is_only_rotated_or_scaled(const ipe::Matrix& m) const
     {
       return (m.a[0]==m.a[3] && m.a[1]==-m.a[2]);
     }
 
-    bool 
-    is_IPE_circle(ipe::Object* object,int subpath=0) const 
+    bool
+    is_IPE_circle(ipe::Object* object,int subpath=0) const
     {
-      return ( object -> asPath() && object -> asPath() -> shape().subPath(subpath) -> asEllipse() 
+      return ( object -> asPath() && object -> asPath() -> shape().subPath(subpath) -> asEllipse()
         && is_only_rotated_or_scaled(object ->asPath()->matrix()));
     }
 
-    
+
 public:
     //declaration
     template< class multi_output_iterator >
     bool read_one_active_object( ipe::Object* object,
       multi_output_iterator it_out) const;
 
-public:    
+public:
 
     template< class V,class O>
-    Iso_rectangle_2 
+    Iso_rectangle_2
     read_active_objects (
       CGAL::Dispatch_or_drop_output_iterator<V,O> it_out,
       bool deselect_all=true,
-      bool delete_selected_objects=false) const 
+      bool delete_selected_objects=false) const
     {
       ipe::Rect bbox_ipe;
-      
+
       if (!get_IpePage()->hasSelection()) {
         return Iso_rectangle_2();
       }
-      
+
       for (int i=0;i<static_cast<int>(get_IpePage()->count());++i){
         if (get_IpePage()->select(i)==ipe::ENotSelected)
           continue;
-        
+
         bbox_ipe.addRect(get_IpePage()->bbox(i));
-        
+
         //Test one function for segments, circles, circle arcs and polygons
         bool desel_it=read_one_active_object(get_IpePage()->object(i),it_out);
         if ( delete_selected_objects && desel_it  )
           get_IpePage()->setSelect(i,ipe::ENotSelected);
       }
-      
+
       if (delete_selected_objects)
         delete_selected_objects_();
-      
+
       if (deselect_all)
         get_IpePage()->deselectAll();
-      
+
       Iso_rectangle_2 bbox_cgal(
         static_cast<double>(bbox_ipe.bottomLeft().x),static_cast<double>(bbox_ipe.bottomLeft().y),
         static_cast<double>(bbox_ipe.topRight().x),static_cast<double>(bbox_ipe.topRight().y)
       );
-        
+
         return bbox_cgal;
     }
-    
+
     //drawing functions
     //------------------------------
-    void 
+    void
     create_polygon_with_holes(bool delete_underlying_polygons=false) const
     {
       std::list<ipe::SubPath*> SSPqu;
@@ -303,20 +303,20 @@ public:
         if (get_IpePage()->select(i)!=ipe::ENotSelected && get_IpePage()->object(i)->asPath()->shape().subPath(0)->closed() ){
           ipe::SubPath* ssp=new ipe::Curve(*get_IpePage()->object(i)->asPath()->shape().subPath(0)->asCurve());
           SSPqu.push_back(ssp);
-        }  
+        }
       }
       if (!delete_underlying_polygons)
         get_IpePage() -> deselectAll();
       ipe::Shape shape;// create new objects with current attributes
-      for (std::list<ipe::SubPath*>::iterator it=SSPqu.begin();it!=SSPqu.end();++it)  
+      for (std::list<ipe::SubPath*>::iterator it=SSPqu.begin();it!=SSPqu.end();++it)
         shape.appendSubPath(*it);
       if (delete_underlying_polygons)
         delete_selected_objects_();
-      get_IpePage()->append(get_selection_type(),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));    
+      get_IpePage()->append(get_selection_type(),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
     }
-    
-    void 
-    center_selection_in_page() const 
+
+    void
+    center_selection_in_page() const
     {
       ipe::Vector paper_size=get_paper_size();
       ipe::Matrix tfm (1,0,0,1,paper_size.x/2.,paper_size.y/2.);
@@ -324,10 +324,10 @@ public:
         if (get_IpePage()->select(i)!=ipe::ENotSelected )
           get_IpePage()->transform(i,tfm);
     }
-    
+
     template<class iterator>
-    ipe::Curve* 
-    create_polyline(const iterator first, const iterator last,bool setclose=false) const 
+    ipe::Curve*
+    create_polyline(const iterator first, const iterator last,bool setclose=false) const
     {
       if (boost::next(first)!=last){
         ipe::Curve* SSP_ipe = new ipe::Curve();
@@ -343,19 +343,19 @@ public:
       }
       return nullptr;
     }
-    
-    
+
+
     template<class iterator>
-    ipe::Path* 
+    ipe::Path*
     draw_polyline_in_ipe(const iterator first, const iterator last,
                          bool setclose=false,bool deselect_all=false,
                          bool blackfill=false,
-                         typename boost::enable_if<
-                                    boost::is_same<
+                         std::enable_if_t<
+                                    std::is_same<
                                       typename std::iterator_traits<iterator>::value_type,
                                       Point_2
-                                    > 
-                                  >::type* =nullptr) const 
+                                    >::value
+                                  >* =nullptr) const
     {
       ipe::Curve* SSP_ipe=create_polyline(first,last,setclose);
       if (SSP_ipe!=nullptr){
@@ -369,9 +369,9 @@ public:
         get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,obj_ipe);
         return obj_ipe;
       }
-      return nullptr;  
+      return nullptr;
     }
-    
+
     void draw_in_ipe(const Circle_2& C,bool deselect_all=false) const {
       ipe::Ellipse *ellipse = new ipe::Ellipse(ipe::Matrix(sqrt(CGAL::to_double(C.squared_radius())),0,
                                                      0,sqrt(CGAL::to_double(C.squared_radius())),
@@ -382,26 +382,26 @@ public:
       shape.appendSubPath(ellipse);
       get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
     }
- 
+
     void
-    draw_in_ipe(const Point_2& P,bool deselect_all=false) const 
+    draw_in_ipe(const Point_2& P,bool deselect_all=false) const
     {
       ipe::Reference *mark = new ipe::Reference(CURRENTATTRIBUTES,CURRENTATTRIBUTES.iMarkShape, ipe::Vector(CGAL::to_double(P.x()),CGAL::to_double(P.y())));
-      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,mark);      
+      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,mark);
     }
-    
-    void 
-    draw_in_ipe(const Segment_2& S,bool deselect_all=false) const 
+
+    void
+    draw_in_ipe(const Segment_2& S,bool deselect_all=false) const
     {
       ipe::Segment seg_ipe;
       seg_ipe.iP = ipe::Vector(CGAL::to_double(S.point(0).x()),CGAL::to_double(S.point(0).y()));
       seg_ipe.iQ = ipe::Vector(CGAL::to_double(S.point(1).x()),CGAL::to_double(S.point(1).y()));
-      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,ipe::Shape(seg_ipe)));      
+      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,ipe::Shape(seg_ipe)));
     }
-    
+
     template<class Container>
-    void 
-    draw_in_ipe(const CGAL::Polygon_2<Kernel,Container>& poly,bool deselect_all=false) const 
+    void
+    draw_in_ipe(const CGAL::Polygon_2<Kernel,Container>& poly,bool deselect_all=false) const
     {
       std::list<Point_2> LP;
       for (typename CGAL::Polygon_2<Kernel,Container>::iterator it=poly.vertices_begin();it!= poly.vertices_end();++it)
@@ -409,8 +409,8 @@ public:
       draw_polyline_in_ipe(LP.begin(),LP.end(),true,deselect_all,false);
     }
 
-    void 
-    draw_in_ipe(const Circular_arc_2& arc,bool deselect_all=false) const 
+    void
+    draw_in_ipe(const Circular_arc_2& arc,bool deselect_all=false) const
     {
       ipe::Curve* SSP_ipe = new ipe::Curve;
       ipe::Vector ipeS=ipe::Vector( CGAL::to_double(std::get<1>(arc).x()),
@@ -430,7 +430,7 @@ public:
 
 
     void
-    draw_in_ipe(const Triangle_2& t,bool deselect_all=false) const 
+    draw_in_ipe(const Triangle_2& t,bool deselect_all=false) const
     {
       ipe::Curve* SSP_ipe = new ipe::Curve();
       ipe::Vector P0=ipe::Vector(t[0].x(),t[0].y());
@@ -444,8 +444,8 @@ public:
       shape.appendSubPath(SSP_ipe);
       get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
     }
-    
-    void 
+
+    void
     draw_in_ipe(const Iso_rectangle_2& r,bool deselect_all=false)
     {
       ipe::Curve* SSP_ipe = new ipe::Curve();
@@ -462,12 +462,12 @@ public:
       shape.appendSubPath(SSP_ipe);
       get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
     }
-    
-    
+
+
     //Drawing function with bbox : global version
     template <class T>
-    void 
-    draw_in_ipe(const T& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
+    void
+    draw_in_ipe(const T& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const
     {
       Segment_2 s;
       bool success=cast_into_seg(object,bbox,&s);
@@ -476,9 +476,9 @@ public:
     }
   private:
     enum Type_circ_arc{SRC,TRG,OSRC,OTRG};
-  public:  
-    void 
-    draw_in_ipe(const Circular_arc_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
+  public:
+    void
+    draw_in_ipe(const Circular_arc_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const
     {
       std::vector<Circular_arc_2> arc_list;
       const Circle_2& circle=std::get<0>(object);
@@ -487,7 +487,7 @@ public:
         draw_in_ipe(object,deselect_all);
         return;
       }
-      
+
       const Point_2* source=(std::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
                             &std::get<1>(object):&std::get<2>(object);
       const Point_2* target=(std::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
@@ -499,16 +499,16 @@ public:
       /* Map_theta_iterator t_it=*/
                               map_theta.insert(
                                 std::make_pair(get_theta(*target,circle),std::make_pair(OTRG,target)));
-      
+
       for (typename std::vector<Circular_arc_2>::iterator it_arc=arc_list.begin();it_arc!=arc_list.end();++it_arc){
         const Point_2* arc_s=(std::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
                              &std::get<1>(*it_arc):&std::get<2>(*it_arc);
         const Point_2* arc_t=(std::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
-                             &std::get<2>(*it_arc):&std::get<1>(*it_arc);        
+                             &std::get<2>(*it_arc):&std::get<1>(*it_arc);
         map_theta.insert( std::make_pair(get_theta(*arc_s,circle),std::make_pair(SRC,arc_s) ) );
         map_theta.insert( std::make_pair(get_theta(*arc_t,circle),std::make_pair(TRG,arc_t) ) );
       }
-      
+
       Map_theta_iterator next_s=s_it;
       ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();
       switch (next_s->second.first){
@@ -516,7 +516,7 @@ public:
           draw_in_ipe(Circular_arc_2(circle,*source,*(next_s->second.second),CGAL::COUNTERCLOCKWISE));
           break;
         case OSRC:
-	  CGAL_error();
+          CGAL_error();
         case SRC:{
           Map_theta_iterator current=next_s;
           ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();
@@ -533,7 +533,7 @@ public:
           else
             return;
       }
-      
+
       ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();
       Map_theta_iterator current=next_s;
       ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();
@@ -547,12 +547,12 @@ public:
         current=next_s;
         ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();
       }while(true);
-      
+
     }
-    
-    
+
+
     void
-    draw_in_ipe(const Circle_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
+    draw_in_ipe(const Circle_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const
     {
       std::vector<Circular_arc_2> arc_list;
       restrict_circle_to_bbox(object,bbox,std::back_inserter(arc_list));
@@ -561,34 +561,34 @@ public:
       else
         draw_in_ipe(arc_list.begin(),arc_list.end(),false,deselect_all);
     }
-      
-    
-    void 
-    draw_in_ipe(const Triangle_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
+
+
+    void
+    draw_in_ipe(const Triangle_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const
     {
        for (unsigned int i=0;i!=3;++i)
         draw_in_ipe(Segment_2(object.vertex(i),object.vertex(i+1)),bbox,deselect_all);
     }
-      
-    void 
-    draw_in_ipe(const Iso_rectangle_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
+
+    void
+    draw_in_ipe(const Iso_rectangle_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const
     {
       for (unsigned int i=0;i!=4;++i)
-        draw_in_ipe(Segment_2(object.vertex(i),object.vertex(i+1)),bbox,deselect_all); 
+        draw_in_ipe(Segment_2(object.vertex(i),object.vertex(i+1)),bbox,deselect_all);
     }
-      
-    void 
-    draw_in_ipe(const Polygon_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
+
+    void
+    draw_in_ipe(const Polygon_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const
     {
       for (typename Polygon_2::Edge_const_iterator it=object.edges_begin();it!=object.edges_end();++it)
         draw_in_ipe(*it,bbox,deselect_all);
     }
-      
-      
-      
+
+
+
     template<class GT,class TDS>
-    void 
-    draw_in_ipe(const CGAL::Triangulation_2<GT,TDS>& tri,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
+    void
+    draw_in_ipe(const CGAL::Triangulation_2<GT,TDS>& tri,const Iso_rectangle_2& bbox,bool deselect_all=false) const
     {
       typedef CGAL::Triangulation_2<GT,TDS> Triangulation;
       typename Triangulation::Finite_edges_iterator first=tri.finite_edges_begin();
@@ -598,26 +598,26 @@ public:
       if (deselect_all)
         get_IpePage()->deselectAll();
     }
-    
+
     void
-    draw_in_ipe(const Line_2& line,bool deselect_all=false) const 
+    draw_in_ipe(const Line_2& line,bool deselect_all=false) const
     {
       ipe::Vector paper_size=get_paper_size();
       Iso_rectangle_2 bbox(0,0,paper_size.x,paper_size.y);
       draw_in_ipe(line,bbox,deselect_all);
     }
-      
+
     void
     draw_in_ipe(const Ray_2& ray,bool deselect_all=false)
     {
       ipe::Vector paper_size=get_paper_size();
       Iso_rectangle_2 bbox(0,0,paper_size.x,paper_size.y);
-      draw_in_ipe(ray,bbox,deselect_all);      
+      draw_in_ipe(ray,bbox,deselect_all);
     }
-    
+
     template<class GT,class TDS>
     void
-    draw_in_ipe(const CGAL::Triangulation_2<GT,TDS>& tri,bool deselect_all=false,bool make_grp=true) const 
+    draw_in_ipe(const CGAL::Triangulation_2<GT,TDS>& tri,bool deselect_all=false,bool make_grp=true) const
     {
       typedef CGAL::Triangulation_2<GT,TDS> Triangulation;
       typename Triangulation::Finite_edges_iterator first=tri.finite_edges_begin();
@@ -629,9 +629,9 @@ public:
       if (deselect_all)
         get_IpePage()->deselectAll();
     }
-    
+
     template<class iterator>
-    void 
+    void
     draw_in_ipe(const iterator begin,const iterator end,bool make_grp=true,bool deselect_all=false) const
     {
       for (iterator it=begin;it!=end;++it)
@@ -645,29 +645,29 @@ public:
     template<class iterator>
     void
     draw_in_ipe(const iterator begin,const iterator end,const Iso_rectangle_2& bbox,bool make_grp=true,bool deselect_all=false,
-     typename boost::enable_if<  boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Point_2> ,
-                                 boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Segment_2> ,
-                                 boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circle_2> ,
-                                 boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
-                                                  boost::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
-                                                > > > >
-                    >::type* = nullptr) const
+     std::enable_if_t<  boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Point_2> ,
+                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Segment_2> ,
+                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Circle_2> ,
+                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
+                                         std::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
+                                                > > > >::value
+                    >* = nullptr) const
     {
       for (iterator it=begin;it!=end;++it)
         draw_in_ipe(*it,bbox);
       if (make_grp and ++iterator(begin)!=end)
         group_selected_objects_();
       if (deselect_all)
-        get_IpePage()->deselectAll();      
+        get_IpePage()->deselectAll();
     }
-    
+
     private:
-    
-    ipe::Vector 
+
+    ipe::Vector
     get_paper_size() const {
         return data_->iDoc->cascade()->findLayout()->iPaperSize;
     }
-    
+
     struct Voronoi_from_tri{  //Class using stream to get the voronoi diagram
       std::list<Ray_2> ray_list;
       std::list<Line_2> line_list;
@@ -678,9 +678,9 @@ public:
       void operator<<(const Segment_2& p){seg_list.push_back(p);}
 
     };
-    
+
     template <class T,class output_iterator>
-    bool 
+    bool
     cast_into_seg(const T& obj,const Iso_rectangle_2& bbox,output_iterator out_it) const{
       CGAL::Object obj_cgal = CGAL::intersection(obj,bbox);
       Segment_2 s;
@@ -688,10 +688,10 @@ public:
       if (ret) *out_it++=s;
       return ret;
     }
-    
+
     //Convert infinite objects into drawable segments
     template<class iterator,class output_iterator>
-    void 
+    void
     cast_into_seg(const iterator first,const iterator end,
                   const Iso_rectangle_2& bbox, output_iterator out_it) const
     {
@@ -699,9 +699,9 @@ public:
         cast_into_seg(*it,bbox,out_it);
     }
 
-    
-    
-    void 
+
+
+    void
     draw_dual_(Voronoi_from_tri& v_recup,const Iso_rectangle_2& bbox,bool makegrp) const
     {
       std::vector<Segment_2> seg_cont;
@@ -711,16 +711,16 @@ public:
         if (itc->is_degenerate())
           v_recup.seg_list.erase(itc);
       }
-      
+
       cast_into_seg(v_recup.ray_list.begin(),v_recup.ray_list.end(),bbox,std::back_inserter(seg_cont));//cast rays into segments in bbox
       cast_into_seg(v_recup.line_list.begin(),v_recup.line_list.end(),bbox,std::back_inserter(seg_cont));//cast lines into segments in bbox
       cast_into_seg(v_recup.seg_list.begin(),v_recup.seg_list.end(),bbox,std::back_inserter(seg_cont));//cast lines into segments in bbox
       draw_in_ipe(seg_cont.begin(), seg_cont.end(),makegrp);
     }
-    
+
     public:
     template<class Triangulation>
-    void 
+    void
     draw_dual_in_ipe(Triangulation& T,const Iso_rectangle_2& bbox,bool makegrp=true,bool deselect_all=false) const
     {
     //~ template<class GT,class TDS>
@@ -737,19 +737,19 @@ public:
                          bool makegrp=true,bool deselect_all=false) const
     {
     //~ template<class GT,class TDS>
-    //~ void draw_skeleton_in_ipe(const CGAL::Triangulation_2<GT,TDS>& T,const Iso_rectangle_2& bbox) const{    
+    //~ void draw_skeleton_in_ipe(const CGAL::Triangulation_2<GT,TDS>& T,const Iso_rectangle_2& bbox) const{
       Voronoi_from_tri v_recup;
       T.draw_skeleton(v_recup);
       draw_dual_(v_recup,bbox,makegrp);
       if (deselect_all) get_IpePage()->deselectAll();
     }
-    
+
     //Circle restriction
   private:
     inline double get_theta(const Point_2& point, const Circle_2& circle) const {
       return atan2(CGAL::to_double(point.y()-circle.center().y()),CGAL::to_double(point.x()-circle.center().x()));
     }
-  
+
     //SK objects
     typedef CGAL::Exact_circular_kernel_2 SK;
     typedef SK::Circle_2                  Exact_circle_2;
@@ -759,15 +759,15 @@ public:
 
 
     //s and t are given such that if center of exact_circle is inside bbox then turn COUNTERCLOCKWISE
-    Circular_arc_2 
+    Circular_arc_2
     build_arc(const Exact_circle_2& exact_circle,const SK::Circular_arc_point_2& s,
-              const SK::Circular_arc_point_2& t,bool sign_known=false) const 
+              const SK::Circular_arc_point_2& t,bool sign_known=false) const
     {
       Point_2 sd=Point_2(CGAL::to_double(s.x()),CGAL::to_double(s.y()));
       Point_2 td=Point_2(CGAL::to_double(t.x()),CGAL::to_double(t.y()));
       Point_2 center(CGAL::to_double(exact_circle.center().x()),CGAL::to_double(exact_circle.center().y()));
       CGAL::Cartesian_converter<SK,Kernel> conv;
-      Circle_2 approx_circle=conv(exact_circle);  
+      Circle_2 approx_circle=conv(exact_circle);
       if (!sign_known){
         CGAL::Sign sign = (CGAL::orientation(sd,td,center)==CGAL::LEFT_TURN)?CGAL::POSITIVE:CGAL::NEGATIVE;
         return std::make_tuple(approx_circle,sd,td,sign);
@@ -775,20 +775,20 @@ public:
       return std::make_tuple(approx_circle,sd,td,CGAL::POSITIVE);
     }
 
-    void 
+    void
     get_pair_indices(int* array,int* pair) const {
       for (int i=0;i<8;++i)
         if (array[i]!=-1) *pair++=i;
     }
 
-    void 
+    void
     set_done(int* array,int index) const {
       for (int i =0;i<8;++i)
         if (array[i]==index) array[i]=-1;
     }
 
 
-    bool 
+    bool
     indices_are_on_opposite_side(int* array) const {
         if (array[0]!=-1 || array[5]!=-1)
           return array[2]!=-1 || array[7]!=-1;
@@ -797,7 +797,7 @@ public:
         return false;
     }
 
-    int 
+    int
     count_points(int* array) const {
       int ret=0;
       for (int i =0;i<8;++i)
@@ -815,7 +815,7 @@ public:
     // |                       |
     // .-----0---------5-------.
     template <class Output_iterator>
-    void 
+    void
     restrict_circle_to_bbox(const Circle_2& approx_circle,
                             const Iso_rectangle_2& bbox,Output_iterator out) const
     {
@@ -825,13 +825,13 @@ public:
       SK::Intersect_2 inter=SK().intersect_2_object();
       std::vector< std::pair<Circular_arc_point_2,unsigned> > points;
       points.reserve(8);
-      
+
       std::vector<CGAL::Object> ints;
       ints.reserve(2);
       std::pair<Circular_arc_point_2,unsigned> tmp_pt;
-      
+
       int indices[8]={-1,-1,-1,-1,-1,-1,-1,-1};
-      
+
       for (unsigned i=0;i!=4;++i){
         ints.clear();
         SK::Segment_2 S(conv(bbox[i]),conv(bbox[(i+1)%4]));
@@ -858,7 +858,7 @@ public:
             CGAL_assertion(ok); CGAL_USE(ok);
             points.push_back(tmp_pt);
             index=points.size()-1;
-            indices[(i+1)%4+4]=index;      
+            indices[(i+1)%4+4]=index;
             break;
         }
       }
@@ -868,7 +868,7 @@ public:
         if (indices[i]!=-1 && indices[i+4]!=-1){
           *out++=build_arc(exact_circle,points[ indices[i+4] ].first,points[ indices[i] ].first);
           if (points[ indices[i] ].second==1) set_done(indices,indices[i]);
-          else indices[i]=-1;      
+          else indices[i]=-1;
           if (points[ indices[i+4] ].second==1) set_done(indices,indices[i+4]);
           else indices[i+4]=-1;
         }
@@ -884,11 +884,11 @@ public:
         else{
           *out++=build_arc(exact_circle,points[ indices[6] ].first,points[ indices[3] ].first);
           if (indices[6]!=indices[1] && indices[3]!=indices[4])
-            *out++=build_arc(exact_circle,points[ indices[4] ].first,points[ indices[1] ].first);      
+            *out++=build_arc(exact_circle,points[ indices[4] ].first,points[ indices[1] ].first);
         }
-        return;  
+        return;
       }
-      
+
       if (rem_pt==2){
         int pair[2];
         get_pair_indices(indices,pair);
@@ -901,14 +901,14 @@ public:
       CGAL_assertion (rem_pt==0);
     }
   };
-  
-  
+
+
   //definition
   template <class Kernel,int nbf>
   template< class multi_output_iterator >
-  bool 
+  bool
   Ipelet_base<Kernel,nbf>::read_one_active_object(ipe::Object* object,
-                                                  multi_output_iterator it_out) const 
+                                                  multi_output_iterator it_out) const
   {
     if (object->asGroup()){
       bool deselect_grp=false;
@@ -922,10 +922,10 @@ public:
       }
       return deselect_grp;
     }
-    
+
     //detect Points
     if( object->asReference() ){
-      if ( !CGAL::Is_in_tuple<Point_2,typename multi_output_iterator::Value_type_tuple>::value ) 
+      if ( !CGAL::Is_in_tuple<Point_2,typename multi_output_iterator::Value_type_tuple>::value )
         return true;
       it_out++=to_point_2(object);
       return false;
@@ -939,7 +939,7 @@ public:
         if(object->asPath()-> shape().subPath(i)->asCurve()){
           std::list<Segment_2> seg_list;
           bool is_polygon=object-> asPath() -> shape().subPath(i)->closed();
-          
+
           const ipe::Curve* SSP_ipe = object -> asPath() -> shape().subPath(i) -> asCurve();
           for(int j=0; j< SSP_ipe->countSegments();++j){
             if (SSP_ipe -> segment(j).type()==ipe::CurveSegment::ESegment){
@@ -975,7 +975,7 @@ public:
                 to_deselect=true;
             }
           }
-          if (object->asPath() -> shape().subPath(i)->closed() && 
+          if (object->asPath() -> shape().subPath(i)->closed() &&
               (SSP_ipe -> segment(0).cp(0)-SSP_ipe -> segment(SSP_ipe->countSegments()-1).cp(1)).len()!=0 ){ //for close polygon, seg
             seg_list.push_back( Segment_2(
                               segment_endpoint(SSP_ipe -> segment(SSP_ipe->countSegments()-1),object-> asPath(),1),
@@ -984,7 +984,7 @@ public:
           }
           //~ if (seg_list.empty())
             //~ to_deselect=true;
-          
+
           if (is_polygon){
             if (  !CGAL::Is_in_tuple<Polygon_2,typename multi_output_iterator::Value_type_tuple>::value  )
               to_deselect=true;

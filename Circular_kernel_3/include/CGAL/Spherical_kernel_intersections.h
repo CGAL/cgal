@@ -9,12 +9,12 @@
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SPHERICAL_KERNEL_INTERNAL_FUNCTIONS_ON_INTERSECTION_3_H
-#define CGAL_SPHERICAL_KERNEL_INTERNAL_FUNCTIONS_ON_INTERSECTION_3_H 
+#define CGAL_SPHERICAL_KERNEL_INTERNAL_FUNCTIONS_ON_INTERSECTION_3_H
 
 #include <CGAL/license/Circular_kernel_3.h>
 

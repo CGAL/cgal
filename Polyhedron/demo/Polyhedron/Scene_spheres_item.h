@@ -30,7 +30,7 @@ class SCENE_BASIC_OBJECTS_EXPORT Scene_spheres_item
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Sphere_3<Kernel> Sphere;
-  typedef std::pair<Sphere, CGAL::Color> Sphere_pair;
+  typedef std::pair<Sphere, CGAL::IO::Color> Sphere_pair;
   typedef std::vector<std::vector<Sphere_pair> > Spheres_container;
 
   Scene_spheres_item(Scene_group_item* parent, std::size_t max_index = 0, bool planed = false, bool pickable = true);
@@ -39,13 +39,13 @@ public:
 
   bool isFinite() const Q_DECL_OVERRIDE{ return true; }
   bool isEmpty() const Q_DECL_OVERRIDE{ return false; }
-  Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
+  Scene_item* clone() const Q_DECL_OVERRIDE{return nullptr;}
   QString toolTip() const Q_DECL_OVERRIDE;
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
     return (m == Gouraud || m == Wireframe);
   }
   void compute_bbox() const Q_DECL_OVERRIDE;
-  void add_sphere(const Sphere &sphere, std::size_t index = 0, CGAL::Color = CGAL::Color(120,120,120));
+  void add_sphere(const Sphere &sphere, std::size_t index = 0, CGAL::IO::Color = CGAL::IO::Color(120,120,120));
   void clear_spheres();
   void setPrecision(int prec);
   void gl_initialization(CGAL::Three::Viewer_interface* viewer);
@@ -60,9 +60,11 @@ public:
 
   void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
   void computeElements() const Q_DECL_OVERRIDE;
+  bool eventFilter(QObject *watched, QEvent *event)Q_DECL_OVERRIDE;
 Q_SIGNALS:
   void on_color_changed();
   void picked(std::size_t id) const;
+  void destroyMe();
 protected:
   friend struct Scene_spheres_item_priv;
   Scene_spheres_item_priv* d;

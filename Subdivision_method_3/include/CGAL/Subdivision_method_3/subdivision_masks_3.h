@@ -1,5 +1,3 @@
-// ======================================================================
-//
 // Copyright (c) 2005-2017 GeometryFactory (France).  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -11,7 +9,6 @@
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
-// ======================================================================
 
 #ifndef CGAL_SUBDIVISION_MASKS_3_H
 #define CGAL_SUBDIVISION_MASKS_3_H
@@ -334,13 +331,14 @@ public:
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir(vertex, *(this->pmesh));
     size_t n = circulator_size(vcir);
+    CGAL_assume(n > 0);
 
     FT R[] = {0.0, 0.0, 0.0};
     Point_ref S = get(this->vpmap,vertex);
 
     for (size_t i = 0; i < n; i++, ++vcir) {
       Point_ref p = get(this->vpmap,target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
-      R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
+      R[0] += p[0];         R[1] += p[1];         R[2] += p[2];
     }
     if (n == 6) {
       pt = Point((10*S[0]+R[0])/16, (10*S[1]+R[1])/16, (10*S[2]+R[2])/16);
@@ -479,7 +477,7 @@ public:
 
   /// computes the Doo-Sabin point `pt` of the vertex pointed by the halfedge `he`.
   void corner_node(halfedge_descriptor he, Point& pt) {
-    size_t n = 0;
+    int n = 0;
     halfedge_descriptor hd = he;
     do{
       hd = next(hd, *(this->pmesh));
@@ -495,7 +493,7 @@ public:
       cv = cv/16;
     }  else {
       FT a;
-      for (size_t k = 0; k < n; ++k, he = next(he, *(this->pmesh))) {
+      for (int k = 0; k < n; ++k, he = next(he, *(this->pmesh))) {
         if (k == 0) a = (FT) ((5.0/n) + 1);
         else a = (FT) (3+2*std::cos(2*k*CGAL_PI/n))/n;
         cv = cv + (get(this->vpm, target(he, *(this->pmesh)))-CGAL::ORIGIN)*a;
@@ -573,12 +571,12 @@ public:
   /// computes the \f$ \sqrt{3}\f$ vertex-point `pt` of the vertex `vd`.
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_target_circulator<Mesh> vcir(vertex, *(this->pmesh));
-    const typename boost::graph_traits<Mesh>::degree_size_type n = degree(vertex, *(this->pmesh));
+    const int n = static_cast<int>(degree(vertex, *(this->pmesh)));
 
     const FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/(double)n))/9.0);
 
     Vector cv = ((FT)(1.0-a)) * (get(this->vpmap, vertex) - CGAL::ORIGIN);
-    for (typename boost::graph_traits<Mesh>::degree_size_type i = 1; i <= n; ++i, --vcir) {
+    for (int i = 1; i <= n; ++i, --vcir) {
       cv = cv + (a/FT(n))*(get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)))-CGAL::ORIGIN);
     }
 

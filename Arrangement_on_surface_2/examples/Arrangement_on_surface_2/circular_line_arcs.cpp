@@ -33,8 +33,7 @@ typedef CGAL::Arr_circular_line_arc_traits_2<Circular_k>    Traits;
 typedef CGAL::Arrangement_2<Traits>                         Arrangement;
 typedef CGAL::Arr_naive_point_location<Arrangement>         Point_location;
 
-int main()
-{
+int main() {
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -59,8 +58,11 @@ int main()
   }
 
   for (int i = 0; i < 10; i++) {
-    x1 = theRandom.get_int(random_min,random_max);
-    y1 = theRandom.get_int(random_min,random_max);
+    do{
+      x1 = theRandom.get_int(random_min,random_max);
+      y1 = theRandom.get_int(random_min,random_max);
+    }
+    while(x1==0 && y1==0);
     boost::variant< Circular_arc_2, Line_arc_2 > v =
       Circle_2( Point_2(x1,y1), x1*x1 + y1*y1);
     ac.push_back(v);

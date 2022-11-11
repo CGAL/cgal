@@ -2,69 +2,52 @@
 // Associating a name attribute with segments using the generic curve-data
 // traits.
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/basic.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Arrangement_2.h>
-#include <string>
 
-// Define a functor for concatenating name fields.
-typedef std::string   Name;
+#include "arr_polylines.h"
 
-struct Merge_names
-{
+typedef std::string Name;               // The name-field type.
+
+struct Merge_names {
   Name operator() (const Name& s1, const Name& s2) const
-  {
-    return (s1 + " " + s2);
-  }
+  { return (s1 + " " + s2); }
 };
 
-typedef CGAL::Cartesian<CGAL::Exact_rational>           Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
-typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>   Polyline_traits_2;
-typedef Polyline_traits_2::Curve_2                      Polyline_2;
-typedef CGAL::Arr_curve_data_traits_2<Polyline_traits_2, Name, Merge_names>
-                                                        Traits_2;
-typedef Traits_2::Point_2                               Point_2;
-typedef Traits_2::Curve_2                               Curve_2;
-typedef Traits_2::X_monotone_curve_2                    X_monotone_curve_2;
-typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
+typedef CGAL::Arr_curve_data_traits_2<Traits, Name, Merge_names>
+                                                    Ex_traits;
+typedef Ex_traits::Curve_2                          Ex_polyline;
+typedef Ex_traits::X_monotone_curve_2               Ex_x_monotone_polyline;
+typedef CGAL::Arrangement_2<Ex_traits>              Ex_arrangement;
 
-int main ()
-{
-  Polyline_traits_2 traits;
-  Polyline_traits_2::Construct_curve_2 poly_const =
-    traits.construct_curve_2_object();
-
+int main() {
   // Construct an arrangement of four polylines named A--D.
-  Arrangement_2    arr;
+  Ex_traits traits;
+  Ex_arrangement arr(&traits);
+  auto ctr_curve = traits.construct_curve_2_object();
 
-  Point_2          points1[5] = {Point_2(0,0), Point_2(2,4), Point_2(3,3),
-                                 Point_2(4,4), Point_2(6,0)};
-  insert (arr, Curve_2 (poly_const (points1, points1 + 5), "A"));
+  Point pts1[5] =
+    {Point(0, 0), Point(2, 4), Point(3, 3), Point(4, 4), Point(6, 0)};
+  insert(arr, Ex_polyline(ctr_curve(pts1, pts1 + 5), "A"));
 
-  Point_2          points2[3] = {Point_2(1,5), Point_2(3,3), Point_2(5,5)};
-  insert (arr, Curve_2 (poly_const (points2, points2 + 3), "B"));
+  Point pts2[3] = {Point(1, 5), Point(3, 3), Point(5, 5)};
+  insert(arr, Ex_polyline(ctr_curve(pts2, pts2 + 3), "B"));
 
-  Point_2          points3[4] = {Point_2(1,0), Point_2(2,2),
-                                 Point_2(4,2), Point_2(5,0)};
-  insert (arr, Curve_2 (poly_const (points3, points3 + 4), "C"));
+  Point pts3[4] = {Point(1, 0), Point(2, 2), Point(4, 2), Point(5, 0)};
+  insert(arr, Ex_polyline(ctr_curve(pts3, pts3 + 4), "C"));
 
-  Point_2          points4[2] = {Point_2(0,2), Point_2(6,2)};
-  insert (arr, Curve_2 (poly_const (points4, points4 + 2), "D"));
+  Point pts4[2] = {Point(0, 2), Point(6, 2)};
+  insert(arr, Ex_polyline(ctr_curve(pts4, pts4 + 2), "D"));
 
   // Print all edges that correspond to an overlapping polyline.
-  Arrangement_2::Edge_iterator    eit;
-
-  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
+  std::cout << "The overlapping subcurves:\n";
+  for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     if (eit->curve().data().length() > 1) {
-      std::cout << "[" << eit->curve() << "]  "
+      std::cout << "  [" << eit->curve() << "]  "
                 << "named: " << eit->curve().data() << std::endl;
 
-      // Rename the curve associated with the edge.
-      arr.modify_edge (eit, X_monotone_curve_2 (eit->curve(), "overlap"));
+      // Modify the curve associated with the edge.
+      arr.modify_edge(eit, Ex_x_monotone_polyline(eit->curve(), "overlap"));
     }
   }
   return 0;

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_dD_Geometry_Kernel
 \cgalAutoToc
 \author Michael Seel
@@ -86,17 +86,17 @@ framework, a point is represented by a \f$ (d+1)\f$-tuple \f$ (h_0,h_1,\ldots,h_
 Via the formulae \f$ c_i = h_i/h_d\f$,
 the corresponding point with %Cartesian coordinates
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$
-can be computed. Note that homogeneous coordinates are not unique. 
-For \f$ \lambda\ne 0\f$, the tuples \f$ (h_0,h_1,\ldots,h_d)\f$ and 
+can be computed. Note that homogeneous coordinates are not unique.
+For \f$ \lambda\ne 0\f$, the tuples \f$ (h_0,h_1,\ldots,h_d)\f$ and
 \f$ (\lambda\cdot h_0,\lambda\cdot h_1,\ldots,\lambda\cdot h_d)\f$
 represent the same point.
-For a point with %Cartesian coordinates 
+For a point with %Cartesian coordinates
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$ a
 possible homogeneous representation is
 \f$ (c_0,c_1,\ldots,c_{d-1},1)\f$.
-%Homogeneous coordinates in fact allow to represent 
+%Homogeneous coordinates in fact allow to represent
 objects in a more general space, the projective space \f$ \mathbb{P}^d\f$.
-In \cgal, we do not compute in projective geometry. Rather, we use 
+In \cgal, we do not compute in projective geometry. Rather, we use
 homogeneous coordinates to avoid division operations,
 since the additional coordinate can serve as a common denominator.
 
@@ -178,7 +178,7 @@ division operations in numerical computations, since the additional
 coordinate can serve as a common denominator. Avoiding divisions can
 be useful for exact geometric computation. With
 `Homogeneous_d<RingNumberType,LinearAlgebra>` you can choose
-homogeneous representation of coordinates with the kernel objects. 
+homogeneous representation of coordinates with the kernel objects.
 As for %Cartesian representation you have to declare
 at the same time the type used to store the homogeneous coordinates.
 Since the homogeneous representation allows one to avoid the
@@ -342,14 +342,14 @@ double coord[] = {1.0, 1.0, 1.0, 1.0};
 Cartesian_d<double>::Point_d p(4,coord,coord+4), q(4);
 Cartesian_d<double>::Vector_d v(4);
 v = p - ORIGIN;
-q = ORIGIN + v; 
+q = ORIGIN + v;
 assert( p == q );
 \endcode
 
 In order to obtain the point corresponding to a vector \f$ v\f$ you simply
 have to add \f$ v\f$ to `ORIGIN`. If you want to determine
-the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can 
-write\cgalFootnote{you might call `midpoint(p_1,p_2)` instead}
+the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can
+write\cgalFootnote{you might call  \cgalFootnoteCode{midpoint(p_1,p_2)} instead}
 
 \code{.cpp}
 q = p_1 + (p_2 - p_1) / 2.0;
@@ -386,10 +386,10 @@ allows to test for point set equality disregarding the orientation.
 
 Geometric objects in \cgal have member functions that test the
 position of a point relative to the object. Full dimensional objects
-and their boundaries are represented by the same type, e.g. 
+and their boundaries are represented by the same type, e.g.
 halfspaces and hyperplanes are not distinguished, neither are balls
 and spheres. Such objects split the ambient space into two
-full-dimensional parts, a bounded part and an unbounded part (e.g. 
+full-dimensional parts, a bounded part and an unbounded part (e.g.
 spheres), or two unbounded parts (e.g. hyperplanes). By default these
 objects are oriented, i.e., one of the resulting parts is called the
 positive side, the other one is called the negative side. Both of
@@ -480,17 +480,14 @@ that are part of flats (`R::Segment_d`, `R::Ray_d`,
 returns a `boost::optional< boost::variant< T... > >`
 where `T...` is a list of all possible resulting geometric objects.
 
-The exact result type of an intersection can be determined by using
-`cpp11::result_of<Kernel::Intersect_d(Type1, Type2)>::%type`
-where `Type1` and `Type2` are the types of the objects
-used in the intersection computation.
+The return type of intersecting two objects of the types `Type1` and `Type2` can be
+specified through the placeholder type specifier `auto`.
 
 
 \subsubsection Kernel_dExample Example
 
-In the following example, the object type is used as a return value for
-the intersection computation, as there are
-possibly different return values.
+In the following example, the `auto` is used for the intersection computation,
+as there are possibly different return values.
 
 \code{.cpp}
 typedef Cartesian_d<double> K;
@@ -500,9 +497,9 @@ typedef Segment_d<K> Segment;
 Segment s1, s2;
 std::cin >> s1 >> s2;
 
-cpp11::result_of<K::Intersect_d(Segment, Segment)>::type
-  v = intersection(s1, s2);
-if(v) {
+// use auto
+auto v = intersection(s1, s2);
+if (v) {
   // not empty
   if (const Point *p = boost::get<Point>(&*v) ) {
     // do something with *p
@@ -544,7 +541,7 @@ This higher-dimensional kernel is the result of a long evolving
 development. A first version of the kernel was offered as a LEDA
 extension package ddgeo by Kurt Mehlhorn and Michael Seel. The
 original design was driven by the realization of a d-dimensional
-convex hull data type developed at the 
+convex hull data type developed at the
 Max-Planck Institut f&uuml;r Informatik.
 
 The code base was discussed and reviewed within the \cgal kernel group
@@ -565,6 +562,6 @@ The Epick_d kernel was partially supported by the IST Programme of the EU
 (FET Open) Project under Contract No IST-25582 – (CGL - Computational
 Geometric Learning).
 
-*/ 
+*/
 } /* namespace CGAL */
 

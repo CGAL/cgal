@@ -29,7 +29,7 @@
 
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 namespace internal {
@@ -63,14 +63,14 @@ struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT>
 } //internal
 
 /*!
-\ingroup PkgSolverInterfaceRef
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
 \ref thirdpartyEigen "Eigen" version 3.1 (or later) must be available on the system.
 
 \cgalModels `SparseLinearAlgebraWithFactorTraits_d` and `NormalEquationSparseLinearAlgebraTraits_d`
 
-\tparam EigenSolverT A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`.
+\tparam EigenSolverT A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-conjugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`.
 
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
@@ -179,7 +179,7 @@ public:
     X = solver().solve(B);
     return solver().info() == Eigen::Success;
   }
-  
+
   /// Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
   /// provided in `factor()`.
   /// \return `true` if the solver is successful and `false` otherwise.
@@ -226,11 +226,11 @@ public:
 
 protected:
   const typename Matrix::EigenType* m_mat;
-  boost::shared_ptr<EigenSolverT> m_solver_sptr;
+  std::shared_ptr<EigenSolverT> m_solver_sptr;
 };
 
 // Specialization of the solver for BiCGSTAB as for surface parameterization,
-// the intializer should be a vector of one's (this was the case in 3.1-alpha
+// the initializer should be a vector of one's (this was the case in 3.1-alpha
 // but not in the official 3.1).
 template<>
 class Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
@@ -275,7 +275,7 @@ public:
   }
 
 protected:
-  boost::shared_ptr<EigenSolverT> m_solver_sptr;
+  std::shared_ptr<EigenSolverT> m_solver_sptr;
 };
 
 } // namespace CGAL

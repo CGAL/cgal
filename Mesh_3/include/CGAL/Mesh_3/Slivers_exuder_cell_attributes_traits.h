@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -58,7 +58,7 @@ struct Slivers_ex_att_t_aux<Cell, true>
   void restore_attributes(Cell* c, const Cell_attributes& attr)
   {
     return c->slivers_exuder_restore_attributes(attr);
-  } 
+  }
 }; // end partial specialisation Slivers_ex_att_t_aux<Cell, true>
 
 template <class Cell>

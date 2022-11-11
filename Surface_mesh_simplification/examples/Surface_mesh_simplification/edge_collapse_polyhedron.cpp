@@ -18,7 +18,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/cube.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/small_cube.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
   // of this surface mesh lack an "id()" field.
-  std::cout << "Collapsing edges of LCC: " << filename << ", aiming for " << edge_count_treshold << " final edges..." << std::endl;
+  std::cout << "Collapsing edges of Polyhedron: " << filename << ", aiming for " << edge_count_treshold << " final edges..." << std::endl;
   int r = SMS::edge_collapse(surface_mesh, stop,
                              CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
                                               .halfedge_index_map(get(CGAL::halfedge_external_index, surface_mesh)));

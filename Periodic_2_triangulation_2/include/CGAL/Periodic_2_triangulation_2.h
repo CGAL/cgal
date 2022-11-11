@@ -28,7 +28,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>
@@ -292,12 +292,12 @@ public:
   {
     return _gt;
   }
-  /// Returns the datastructure storing the triangulation.
+  /// Returns the data structure storing the triangulation.
   const Triangulation_data_structure & tds() const
   {
     return _tds;
   }
-  /// Returns the datastructure storing the triangulation.
+  /// Returns the data structure storing the triangulation.
   Triangulation_data_structure & tds()
   {
     return _tds;
@@ -357,17 +357,17 @@ public:
     else
       return _tds.number_of_faces() / 9;
   }
-  /// Returns the number of vertices stored in the datastructure.
+  /// Returns the number of vertices stored in the data structure.
   size_type number_of_stored_vertices() const
   {
     return _tds.number_of_vertices();
   }
-  /// Returns the number of edges stored in the datastructure.
+  /// Returns the number of edges stored in the data structure.
   size_type number_of_stored_edges() const
   {
     return _tds.number_of_edges();
   }
-  /// Returns the number of faces stored in the datastructure.
+  /// Returns the number of faces stored in the data structure.
   size_type number_of_stored_faces() const
   {
     return _tds.number_of_faces();
@@ -418,8 +418,8 @@ public:
   /// \pre i == {0,1,2}
   Periodic_segment periodic_segment(Face_handle f, int i) const
   {
-    CGAL_triangulation_precondition( number_of_vertices() != 0 );
-    CGAL_triangulation_precondition( i >= 0 && i <= 2);
+    CGAL_precondition( number_of_vertices() != 0 );
+    CGAL_precondition( i >= 0 && i <= 2);
     return make_array(periodic_point(f, ccw(i)),
                       periodic_point(f, cw(i)));
   }
@@ -665,7 +665,7 @@ public:
   /// begin iterator over the non-virtual vertices
   Unique_vertex_iterator unique_vertices_begin() const
   {
-    return CGAL::filter_iterator(vertices_end(), 
+    return CGAL::filter_iterator(vertices_end(),
                                  Periodic_2_triangulation_2_internal::Domain_tester<Self>(this),
                                  vertices_begin());
   }
@@ -941,9 +941,9 @@ public:
   Offset get_neighbor_offset(Face_handle fh, int i, Face_handle nb, int j) const
   {
     // Redundance in the signature
-    CGAL_triangulation_precondition(fh->neighbor(i) == nb);
-    CGAL_triangulation_precondition(nb->neighbor(j) == fh);
-    CGAL_triangulation_precondition(fh->vertex(cw(i)) == nb->vertex(ccw(j)));
+    CGAL_precondition(fh->neighbor(i) == nb);
+    CGAL_precondition(nb->neighbor(j) == fh);
+    CGAL_precondition(fh->vertex(cw(i)) == nb->vertex(ccw(j)));
 
     return int_to_off(nb->offset(ccw(j))) - int_to_off(fh->offset(cw(i)));
   }
@@ -975,8 +975,8 @@ public:
   /// Converts an offset to a bit pattern where bit1==offx and bit0==offy.
   int off_to_int(const Offset & off) const
   {
-    CGAL_triangulation_assertion( off.x() == 0 || off.x() == 1 );
-    CGAL_triangulation_assertion( off.y() == 0 || off.y() == 1 );
+    CGAL_assertion( off.x() == 0 || off.x() == 1 );
+    CGAL_assertion( off.y() == 0 || off.y() == 1 );
     int i = ((off.x() & 1) << 1) + (off.y() & 1);
     return i;
   }
@@ -1018,9 +1018,9 @@ public:
 
   const std::vector<Vertex_handle>& periodic_copies(const Vertex_handle v) const
   {
-    CGAL_triangulation_precondition(number_of_sheets() != make_array(1, 1) );
-    CGAL_triangulation_precondition(_virtual_vertices.find(v) == _virtual_vertices.end());
-    CGAL_triangulation_assertion(_virtual_vertices_reverse.find(v) != _virtual_vertices_reverse.end());
+    CGAL_precondition(number_of_sheets() != make_array(1, 1) );
+    CGAL_precondition(_virtual_vertices.find(v) == _virtual_vertices.end());
+    CGAL_assertion(_virtual_vertices_reverse.find(v) != _virtual_vertices_reverse.end());
     return _virtual_vertices_reverse.find(v)->second;
   }
 
@@ -1044,9 +1044,9 @@ protected:
     // than sqrt(0.166) is fulfilled.
     if (_too_long_edge_counter == 0 && !is_1_cover())
       {
-        CGAL_triangulation_expensive_assertion( is_valid() );
+        CGAL_expensive_assertion( is_valid() );
         this->convert_to_1_sheeted_covering();
-        CGAL_triangulation_expensive_assertion( is_valid() );
+        CGAL_expensive_assertion( is_valid() );
       }
   }
 
@@ -1218,7 +1218,7 @@ protected:
   /// Returns the offset such that (p, o) lies on the bounded side of the face f.
   Offset get_location_offset(Face_handle f, const Point &p, const Offset &o) const
   {
-    CGAL_triangulation_precondition( number_of_vertices() != 0 );
+    CGAL_precondition( number_of_vertices() != 0 );
 
     if (is_1_cover() && f->has_zero_offsets())
       {
@@ -1296,14 +1296,14 @@ protected:
           }
       }
 
-    CGAL_triangulation_assertion((std::min)((std::min)(off0[0], off1[0]), off2[0]) == 0);
-    CGAL_triangulation_assertion((std::min)((std::min)(off0[1], off1[1]), off2[1]) == 0);
-    CGAL_triangulation_assertion((0 <= off0[0]) && (off0[0] < 2));
-    CGAL_triangulation_assertion((0 <= off1[0]) && (off1[0] < 2));
-    CGAL_triangulation_assertion((0 <= off2[0]) && (off2[0] < 2));
-    CGAL_triangulation_assertion((0 <= off0[1]) && (off0[1] < 2));
-    CGAL_triangulation_assertion((0 <= off1[1]) && (off1[1] < 2));
-    CGAL_triangulation_assertion((0 <= off2[1]) && (off2[1] < 2));
+    CGAL_assertion((std::min)((std::min)(off0[0], off1[0]), off2[0]) == 0);
+    CGAL_assertion((std::min)((std::min)(off0[1], off1[1]), off2[1]) == 0);
+    CGAL_assertion((0 <= off0[0]) && (off0[0] < 2));
+    CGAL_assertion((0 <= off1[0]) && (off1[0] < 2));
+    CGAL_assertion((0 <= off2[0]) && (off2[0] < 2));
+    CGAL_assertion((0 <= off0[1]) && (off0[1] < 2));
+    CGAL_assertion((0 <= off1[1]) && (off1[1] < 2));
+    CGAL_assertion((0 <= off2[1]) && (off2[1] < 2));
 
     int o0i = ((off0[0] & 1) << 1) + (off0[1] & 1);
     int o1i = ((off1[0] & 1) << 1) + (off1[1] & 1);
@@ -1326,11 +1326,11 @@ protected:
   }
   bool has_self_edges(Face_handle fh) const
   {
-    CGAL_triangulation_assertion((fh->vertex(0) != fh->vertex(1)) ||
-                                 (fh->offset(0) != fh->offset(1)));
-    CGAL_triangulation_assertion((fh->vertex(0) != fh->vertex(2)) ||
-                                 (fh->offset(0) != fh->offset(2)));
-    CGAL_triangulation_assertion((fh->vertex(1) != fh->vertex(2)) ||
+    CGAL_assertion((fh->vertex(0) != fh->vertex(1)) ||
+                   (fh->offset(0) != fh->offset(1)));
+    CGAL_assertion((fh->vertex(0) != fh->vertex(2)) ||
+                   (fh->offset(0) != fh->offset(2)));
+    CGAL_assertion((fh->vertex(1) != fh->vertex(2)) ||
                                  (fh->offset(1) != fh->offset(2)));
     return ((fh->vertex(0) == fh->vertex(1)) ||
             (fh->vertex(0) == fh->vertex(2)) ||
@@ -1408,7 +1408,7 @@ Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
   , _domain(domain)
   , _too_long_edge_counter(0)
 {
-  CGAL_triangulation_precondition(_domain.xmax() - _domain.xmin() ==
+  CGAL_precondition(_domain.xmax() - _domain.xmin() ==
                                   _domain.ymax() - _domain.ymin());
   set_domain(_domain);
 }
@@ -1470,7 +1470,7 @@ copy_multiple_covering(const Periodic_2_triangulation_2<GT, Tds> & tr)
           vlist.push_back(vit);
           _virtual_vertices_reverse.insert(
             std::make_pair(vit, std::vector<Vertex_handle>(8)));
-          CGAL_triangulation_assertion(_virtual_vertices_reverse.find(vit)
+          CGAL_assertion(_virtual_vertices_reverse.find(vit)
                                        ->second.size() == 8);
         }
     }
@@ -1491,7 +1491,7 @@ copy_multiple_covering(const Periodic_2_triangulation_2<GT, Tds> & tr)
                                                   std::make_pair(*vlist_it, off)));
           _virtual_vertices_reverse.find(*vlist_it)
           ->second[3 * off[0] + off[1] - 1] = vit2;
-          CGAL_triangulation_assertion(get_offset(vit2) == off);
+          CGAL_assertion(get_offset(vit2) == off);
         }
     }
   // Cleanup vertex offsets
@@ -1533,7 +1533,7 @@ copy_multiple_covering(const Periodic_2_triangulation_2<GT, Tds> & tr)
       Vertex_handle v_no = eit->first->vertex(i);
       if (squared_distance(p1, p2) > _edge_length_threshold)
         {
-          CGAL_triangulation_assertion(
+          CGAL_assertion(
             find(_too_long_edges[v_no].begin(),
                  _too_long_edges[v_no].end(),
                  edge_to_add.second) == _too_long_edges[v_no].end());
@@ -1562,7 +1562,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::copy_triangulation(
       copy_multiple_covering(tr);
     }
   CGAL_assertion(_too_long_edge_counter == tr._too_long_edge_counter);
-  CGAL_triangulation_expensive_postcondition(*this == tr);
+  CGAL_expensive_postcondition(*this == tr);
 }
 
 template<class Gt, class Tds>
@@ -1628,7 +1628,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(Face_handle fh, bool /*verbos
           std::cerr << "Offset: " << o << std::endl;
         }
       std::cerr << std::endl;
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
     }
 
   return result;
@@ -1638,7 +1638,7 @@ template<class Gt, class Tds>
 bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) const
 {
   bool result = _tds.is_valid(verbose, level);
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   if (dimension() == 2)
     {
@@ -1667,36 +1667,36 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) cons
             }
         }
     }
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   // Check for the right number of simplices
   int copies = number_of_sheets()[0] * number_of_sheets()[1];
   result &= (number_of_stored_vertices() == copies * number_of_vertices());
   result &= (number_of_stored_edges() == copies * number_of_edges());
   result &= (number_of_stored_faces() == copies * number_of_faces());
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   // check number of euler characteristic. This cannot be done by the Tds
   // which does not know the genus
   result &= (number_of_stored_vertices() - number_of_stored_edges()
              + number_of_stored_faces() == 0);
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   result &= !has_self_edges();
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   // Edges should not be longer than 1 periodicity
   for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit)
     {
       result &= is_valid(fit, verbose, level);
     }
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   result &= is_1_cover() == _virtual_vertices.empty();
   result &= is_1_cover() == _virtual_vertices_reverse.empty();
   result &= (_virtual_vertices.size() == (number_of_sheets()[0]
                                           * number_of_sheets()[1] - 1) * _virtual_vertices_reverse.size());
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   for (Virtual_vertex_map_it it = _virtual_vertices.begin(); it
        != _virtual_vertices.end(); ++it)
@@ -1722,7 +1722,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) cons
           result &= false;
         }
     }
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   for (Virtual_vertex_reverse_map_it it = _virtual_vertices_reverse.begin(); it
        != _virtual_vertices_reverse.end(); ++it)
@@ -1755,20 +1755,20 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
   bool result = true;
 
   result &= is_1_cover() == _too_long_edges.empty();
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
   size_t too_long_edges = 0;
   for (Too_long_edges_map_it it = _too_long_edges.begin(); it
        != _too_long_edges.end(); ++it)
     {
       too_long_edges += it->second.size();
     }
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
   if (_too_long_edge_counter != too_long_edges)
     {
       if (verbose) std::cout << "Too long edge counter is incorrect: " << _too_long_edge_counter << " != " << too_long_edges << std::endl;
       result = false;
     }
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   /// Expensive check whether the right too long edges are in the list
   if (is_1_cover())
@@ -1781,7 +1781,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
           Point p2 = construct_point(vh2->point(), get_offset(eit->first, cw(eit->second)));
           result &= (!edge_is_too_long(p1, p2));
         }
-      CGAL_triangulation_assertion(result);
+      CGAL_assertion(result);
     }
   else
     {
@@ -1797,7 +1797,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
 
           if (&*vh2 < &*vh1)
             std::swap(vh1, vh2);
-          CGAL_triangulation_assertion(&*vh1 < &*vh2);
+          CGAL_assertion(&*vh1 < &*vh2);
 
           bool too_long = edge_is_too_long(p1, p2);
           if (too_long != edge_is_too_long(p2, p1))
@@ -1805,18 +1805,18 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
               if (verbose) std::cout << "Long edge criterion not symmetric c(v1,v2) != c(v2,v1)" << std::endl;
               result = false;
             }
-          CGAL_triangulation_assertion(result);
+          CGAL_assertion(result);
 
           Too_long_edges_map_it it = _too_long_edges.find(vh1);
           if (it == _too_long_edges.end())
             {
               if (too_long)
                 {
-                  if (verbose) std::cout << "1. Too long edge not in the datastructure" << std::endl;
+                  if (verbose) std::cout << "1. Too long edge not in the data structure" << std::endl;
                   result = false;
                 }
               result &= !too_long;
-              CGAL_triangulation_assertion(result);
+              CGAL_assertion(result);
             }
           else
             {
@@ -1826,19 +1826,19 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
                   too_long_edges++;
                   if (it2 == it->second.end())
                     {
-                      if (verbose) std::cout << "2. Too long edge not in the datastructure" << std::endl;
+                      if (verbose) std::cout << "2. Too long edge not in the data structure" << std::endl;
                       result = false;
                     }
-                  CGAL_triangulation_assertion(result);
+                  CGAL_assertion(result);
                 }
               else
                 {
                   if (it2 != it->second.end())
                     {
-                      if (verbose) std::cout << "Edge is not too long, but contained in the datastructure" << std::endl;
+                      if (verbose) std::cout << "Edge is not too long, but contained in the data structure" << std::endl;
                       result = false;
                     }
-                  CGAL_triangulation_assertion(result);
+                  CGAL_assertion(result);
                 }
             }
         }
@@ -1849,7 +1849,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
             std::cout << "Counts do not match: " << _too_long_edge_counter << " != " << too_long_edges << std::endl;
           result = false;
         }
-      CGAL_triangulation_assertion(result);
+      CGAL_assertion(result);
     }
 
   return result;
@@ -1926,9 +1926,9 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
       vh2_offset = it_vh2->second.second;
     }
 
-  CGAL_triangulation_assertion(
+  CGAL_assertion(
     virtual_vertices_reverse().find(vh1) != virtual_vertices_reverse().end());
-  CGAL_triangulation_assertion(
+  CGAL_assertion(
     virtual_vertices_reverse().find(vh2) != virtual_vertices_reverse().end());
   const std::vector<Vertex_handle> &v1s =
     virtual_vertices_reverse().find(vh1)->second;
@@ -1960,10 +1960,10 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
             vh2_copy = v2s[i2 - 1];
 
           bool found = is_edge(vh1_copy, vh2_copy, fh, index);
-	  CGAL_USE(found);
+          CGAL_USE(found);
           CGAL_assertion(found);
-	  if (found)
-	    flip_single_edge(fh, index);
+          if (found)
+            flip_single_edge(fh, index);
         }
     }
 
@@ -1972,11 +1972,11 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
 template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
 {
-  CGAL_triangulation_precondition(f != Face_handle());
-  CGAL_triangulation_precondition(i == 0 || i == 1 || i == 2);
-  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_precondition(f != Face_handle());
+  CGAL_precondition(i == 0 || i == 1 || i == 2);
+  CGAL_precondition(dimension() == 2);
 
-  CGAL_triangulation_precondition(flippable(f, i));
+  CGAL_precondition(flippable(f, i));
 
   if (!is_1_cover())
     remove_too_long_edge(f, i);
@@ -2012,7 +2012,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
         }
       else
         {
-          CGAL_triangulation_assertion(nb_offset.x() == -1);
+          CGAL_assertion(nb_offset.x() == -1);
           CGAL_assertion((offsets[3] & 2) == 0);
           offsets[3] |= 2;
         }
@@ -2028,20 +2028,20 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
         }
       else
         {
-          CGAL_triangulation_assertion(nb_offset.y() == -1);
+          CGAL_assertion(nb_offset.y() == -1);
           CGAL_assertion((offsets[3] & 1) == 0);
           offsets[3] |= 1;
         }
     }
   CGAL_assertion((offsets[0] & offsets[1] & offsets[2] & offsets[3]) == 0);
-  CGAL_triangulation_assertion_code(Vertex_handle vh = f->vertex(i));
-  CGAL_triangulation_assertion_code(Vertex_handle vh_ccw = f->vertex(ccw(i)));
+  CGAL_assertion_code(Vertex_handle vh = f->vertex(i));
+  CGAL_assertion_code(Vertex_handle vh_ccw = f->vertex(ccw(i)));
   _tds.flip(f, i);
   // Combinatorial checks
-  CGAL_triangulation_assertion(vh == f->vertex(i));
-  CGAL_triangulation_assertion(vh_ccw == f->vertex(ccw(i)));
-  CGAL_triangulation_assertion(f->vertex(i) == nb->vertex(cw(nb_index)));
-  CGAL_triangulation_assertion(f->vertex(cw(i)) == nb->vertex(nb_index));
+  CGAL_assertion(vh == f->vertex(i));
+  CGAL_assertion(vh_ccw == f->vertex(ccw(i)));
+  CGAL_assertion(f->vertex(i) == nb->vertex(cw(nb_index)));
+  CGAL_assertion(f->vertex(cw(i)) == nb->vertex(nb_index));
 
   // Restore the offsets
   int new_off[3];
@@ -2065,7 +2065,7 @@ void
 Periodic_2_triangulation_2<Gt, Tds>::remove_from_virtual_copies(Vertex_handle v)
 {
   typename Virtual_vertex_reverse_map::iterator rev_it = _virtual_vertices_reverse.find(v);
-  CGAL_triangulation_assertion(rev_it != _virtual_vertices_reverse.end());
+  CGAL_assertion(rev_it != _virtual_vertices_reverse.end());
 
   const std::vector<Vertex_handle> &virtual_copies = rev_it->second;
   for (size_t i = 0; i < virtual_copies.size(); ++i)
@@ -2176,16 +2176,14 @@ Gt, Tds >::insert_first(const Point& p)
   _tds.set_dimension(2);
 
   // create the base for too_long_edges;
-  CGAL_triangulation_assertion(_too_long_edges.empty() );
-  CGAL_triangulation_assertion(_too_long_edge_counter == 0);
+  CGAL_assertion(_too_long_edges.empty() );
+  CGAL_assertion(_too_long_edge_counter == 0);
 
   // Insert all vertices as the first vertex in the _too_long_edges list
-  int k = 0;
   std::list<Vertex_handle> empty_list;
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
     {
       _too_long_edges[vit] = empty_list;
-      k++;
     }
 
   // Insert all edges as all edges are too long
@@ -2224,14 +2222,14 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_edge(const Point& p, const Offset
   // Insert in edge calls an insert_in_face and a flip.
   // Therefore there is no need to update the too_long_edges bookkeeping directly.
 
-  CGAL_triangulation_assertion(number_of_vertices() != 0);
-  CGAL_triangulation_assertion((!is_1_cover()) || (o == Offset()));
+  CGAL_assertion(number_of_vertices() != 0);
+  CGAL_assertion((!is_1_cover()) || (o == Offset()));
 
   // Backup of the neighbor and its relative offset
   Face_handle nb = f->neighbor(i);
   int j = nb->index(f);
-  CGAL_triangulation_assertion_code(Offset current_offset = get_location_offset(f, p, o));
-  CGAL_triangulation_assertion
+  CGAL_assertion_code(Offset current_offset = get_location_offset(f, p, o));
+  CGAL_assertion
   (orientation(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
                get_offset(f, cw(i)), combine_offsets(o, current_offset), get_offset(f, ccw(i))) == COLLINEAR &&
    collinear_between(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
@@ -2256,9 +2254,9 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_face(const Point& p, const Offset
     Face_handle f,
     Vertex_handle vh)
 {
-  CGAL_triangulation_assertion(f != Face_handle());
-  CGAL_triangulation_assertion(number_of_vertices() != 0);
-  CGAL_triangulation_assertion((!is_1_cover()) || (o == Offset()));
+  CGAL_assertion(f != Face_handle());
+  CGAL_assertion(number_of_vertices() != 0);
+  CGAL_assertion((!is_1_cover()) || (o == Offset()));
 
   const bool simplicity_criterion = f->has_zero_offsets() && o.is_zero();
 
@@ -2269,21 +2267,21 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_face(const Point& p, const Offset
   Face_handle nb[3];
   int nb_index[3];
   int offsets[3];
-  CGAL_triangulation_assertion_code( Vertex_handle vertices[3]; )
+  CGAL_assertion_code( Vertex_handle vertices[3]; )
 
   if (!simplicity_criterion)
     {
       // Choose the periodic copy of tester.point() that is inside c.
       current_off = get_location_offset(f, p, o);
 
-      CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
+      CGAL_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
 
       for (int i = 0; i < 3; ++i)
         {
           nb[i] = f->neighbor(i);
           nb_index[i] = nb[i]->index(f);
           offsets[i] = f->offset(i);
-          CGAL_triangulation_assertion_code( vertices[i] = f->vertex(i); );
+          CGAL_assertion_code( vertices[i] = f->vertex(i); );
         }
     }
 
@@ -2301,8 +2299,8 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_face(const Point& p, const Offset
           Face_handle new_face = nb[i]->neighbor(nb_index[i]);
           int v_index = new_face->index(v);
 
-          CGAL_triangulation_assertion(new_face->vertex(ccw(v_index)) == vertices[ccw(i)]);
-          CGAL_triangulation_assertion(new_face->vertex(cw(v_index)) == vertices[cw(i)]);
+          CGAL_assertion(new_face->vertex(ccw(v_index)) == vertices[ccw(i)]);
+          CGAL_assertion(new_face->vertex(cw(v_index)) == vertices[cw(i)]);
 
           new_offsets[v_index] = v_offset;
           new_offsets[ccw(v_index)] = offsets[ccw(i)];
@@ -2330,9 +2328,9 @@ template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_triangulation_2<Gt, Tds>::insert(const Point &p, Face_handle start)
 {
-  CGAL_triangulation_assertion((_domain.xmin() <= p.x()) &&
+  CGAL_assertion((_domain.xmin() <= p.x()) &&
                                (p.x() < _domain.xmax()));
-  CGAL_triangulation_assertion((_domain.ymin() <= p.y()) &&
+  CGAL_assertion((_domain.ymin() <= p.y()) &&
                                (p.y() < _domain.ymax()));
 
   if (number_of_stored_vertices() == 0)
@@ -2383,9 +2381,9 @@ Periodic_2_triangulation_2<Gt, Tds>::insert(const Point& p,
         }
 
       // vstart should be non-virtual, but should have virtual copies
-      CGAL_triangulation_assertion(_virtual_vertices.find(vstart)
+      CGAL_assertion(_virtual_vertices.find(vstart)
                                    == _virtual_vertices.end());
-      CGAL_triangulation_assertion(_virtual_vertices_reverse.find(vstart)
+      CGAL_assertion(_virtual_vertices_reverse.find(vstart)
                                    != _virtual_vertices_reverse.end());
     }
 
@@ -2455,7 +2453,7 @@ Gt, Tds >::insert(const Point& p, const Offset &o, Locate_type lt,
     }
     default:
     {
-      CGAL_triangulation_assertion(false); // locate step failed
+      CGAL_assertion(false); // locate step failed
       return Vertex_handle();
     }
     }
@@ -2744,7 +2742,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::compare_walks(const Point& p,
       std::cerr << std::endl;
     }
 
-  CGAL_triangulation_assertion(b);
+  CGAL_assertion(b);
   return b;
 }
 
@@ -2959,9 +2957,9 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_triangulati
 Gt, Tds >::locate(const Point& p, const Offset &o, Locate_type& lt, int& li,
                   Face_handle start) const
 {
-  CGAL_triangulation_assertion((_domain.xmin() <= p.x()) &&
+  CGAL_assertion((_domain.xmin() <= p.x()) &&
                                (p.x() < _domain.xmax()));
-  CGAL_triangulation_assertion((_domain.ymin() <= p.y()) &&
+  CGAL_assertion((_domain.ymin() <= p.y()) &&
                                (p.y() < _domain.ymax()));
 
   if (dimension() <= 0)
@@ -3000,7 +2998,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering()
   {
     if (is_1_cover())
       return;
-    CGAL_triangulation_expensive_assertion(is_triangulation_in_1_sheet());
+    CGAL_expensive_assertion(is_triangulation_in_1_sheet());
 
     bool to_delete, has_simplifiable_offset;
     Virtual_vertex_map_it vvmit;
@@ -3087,16 +3085,16 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering()
             // The vector from nb to the "original" periodic copy of nb, that is
             // the copy that will not be deleted.
             Offset difference_offset(x, y);
-            CGAL_triangulation_assertion( !difference_offset.is_null() );
+            CGAL_assertion( !difference_offset.is_null() );
 
             // We now have to find the "original" periodic copy of nb from
             // its vertices. Therefore, we first have to find the vertices.
             for (int j = 0; j < 3; j++)
               {
-                CGAL_triangulation_assertion( (off[j] - difference_offset)[0] >= 0);
-                CGAL_triangulation_assertion( (off[j] - difference_offset)[1] >= 0);
-                CGAL_triangulation_assertion( (off[j] - difference_offset)[0] < 3);
-                CGAL_triangulation_assertion( (off[j] - difference_offset)[1] < 3);
+                CGAL_assertion( (off[j] - difference_offset)[0] >= 0);
+                CGAL_assertion( (off[j] - difference_offset)[1] >= 0);
+                CGAL_assertion( (off[j] - difference_offset)[0] < 3);
+                CGAL_assertion( (off[j] - difference_offset)[1] < 3);
 
                 // find the Vertex_handles of the vertices of the "original"
                 // periodic copy of nb. If the vertex is inside the original
@@ -3151,19 +3149,19 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering()
             off[i] = Offset();
             get_vertex(it, i, vert[i], off[i]);
             it->set_vertex(i, vert[i]);
-            CGAL_triangulation_assertion(vert[i]->point()[0] < _domain.xmax());
-            CGAL_triangulation_assertion(vert[i]->point()[1] < _domain.ymax());
-            CGAL_triangulation_assertion(vert[i]->point()[0] >= _domain.xmin());
-            CGAL_triangulation_assertion(vert[i]->point()[1] >= _domain.ymin());
+            CGAL_assertion(vert[i]->point()[0] < _domain.xmax());
+            CGAL_assertion(vert[i]->point()[1] < _domain.ymax());
+            CGAL_assertion(vert[i]->point()[0] >= _domain.xmin());
+            CGAL_assertion(vert[i]->point()[1] >= _domain.ymin());
 
             // redirect also the face pointer of the vertex.
             it->vertex(i)->set_face(it);
           }
         // Set the offsets.
         set_offsets(it, off[0], off[1], off[2]);
-        CGAL_triangulation_assertion( int_to_off(it->offset(0)) == off[0] );
-        CGAL_triangulation_assertion( int_to_off(it->offset(1)) == off[1] );
-        CGAL_triangulation_assertion( int_to_off(it->offset(2)) == off[2] );
+        CGAL_assertion( int_to_off(it->offset(0)) == off[0] );
+        CGAL_assertion( int_to_off(it->offset(1)) == off[1] );
+        CGAL_assertion( int_to_off(it->offset(2)) == off[2] );
       }
   }
 
@@ -3196,7 +3194,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering()
       {
         if (_virtual_vertices.count(vit) != 0)
           {
-            CGAL_triangulation_assertion( _virtual_vertices.count( vit ) == 1 );
+            CGAL_assertion( _virtual_vertices.count( vit ) == 1 );
             vertices_to_delete.push_back(vit);
           }
       }
@@ -3213,7 +3211,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering()
   _too_long_edge_counter = 0;
   _too_long_edges.clear();
 
-  CGAL_triangulation_assertion(is_1_cover());
+  CGAL_assertion(is_1_cover());
 }
 
 template<class Gt, class Tds>
@@ -3221,7 +3219,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
 {
   if (_cover == make_array(3, 3))
     return;
-  CGAL_triangulation_precondition(is_1_cover());
+  CGAL_precondition(is_1_cover());
 
   // Create 9 copies of each vertex and write virtual_vertices and
   // virtual_vertices_reverse
@@ -3299,7 +3297,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
       for (int i = 0; i < 3; i++)
         {
           vvrmit[i] = _virtual_vertices_reverse.find((*fit)->vertex(i));
-          CGAL_triangulation_assertion(
+          CGAL_assertion(
             vvrmit[i] != _virtual_vertices_reverse.end());
           vvoff[i] = int_to_off((*fit)->offset(i));
         }
@@ -3313,7 +3311,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
               int o_i = ((n + 1) / 3 + vvoff[i].x() + 3) % 3;
               int o_j = ((n + 1) + vvoff[i].y() + 3) % 3;
               int n_c = 3 * o_i + o_j - 1;
-              CGAL_triangulation_assertion(n_c >= -1);
+              CGAL_assertion(n_c >= -1);
               if (n_c == -1)
                 vvh[i] = (*fit)->vertex(i);
               else
@@ -3333,13 +3331,13 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
         {
           Virtual_vertex_reverse_map_it vvrmit = _virtual_vertices_reverse.find(
               (*fit)->vertex(i));
-          CGAL_triangulation_assertion(vvrmit != _virtual_vertices_reverse.end());
+          CGAL_assertion(vvrmit != _virtual_vertices_reverse.end());
           Offset vvoff = int_to_off((*fit)->offset(i));
           if (!vvoff.is_null())
             {
               int n_f = 3 * vvoff.x() + vvoff.y() - 1;
-              CGAL_triangulation_assertion(n_f >= 0);
-              CGAL_triangulation_assertion(static_cast<unsigned int>(n_f) < vvrmit->second.size());
+              CGAL_assertion(n_f >= 0);
+              CGAL_assertion(static_cast<unsigned int>(n_f) < vvrmit->second.size());
               (*fit)->set_vertex(i, vvrmit->second[n_f]);
             }
         }
@@ -3350,14 +3348,14 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
   for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
        != original_faces.end(); ++fit, ++oit)
     {
-      CGAL_triangulation_assertion( oit != off_nb.end() );
+      CGAL_assertion( oit != off_nb.end() );
       VCRMIT c_cp = virtual_faces_reverse.find(*fit);
-      CGAL_triangulation_assertion(c_cp != virtual_faces_reverse.end());
+      CGAL_assertion(c_cp != virtual_faces_reverse.end());
       for (int i = 0; i < 3; i++)
         {
           Face_handle fit_nb = (*fit)->neighbor(i);
           VCRMIT c_cp_nb = virtual_faces_reverse.find(fit_nb);
-          CGAL_triangulation_assertion(c_cp_nb != virtual_faces_reverse.end());
+          CGAL_assertion(c_cp_nb != virtual_faces_reverse.end());
           Offset nboff = (*oit)[i];
           for (int n = 0; n < 8; n++)
             {
@@ -3372,16 +3370,16 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
                 }
               if (n_nb == -1)
                 {
-                  CGAL_triangulation_assertion(fit_nb->has_vertex(c_cp->second[n]->vertex(ccw(i))) );
-                  CGAL_triangulation_assertion(fit_nb->has_vertex(c_cp->second[n]->vertex( cw(i))) );
+                  CGAL_assertion(fit_nb->has_vertex(c_cp->second[n]->vertex(ccw(i))) );
+                  CGAL_assertion(fit_nb->has_vertex(c_cp->second[n]->vertex( cw(i))) );
                   c_cp->second[n]->set_neighbor(i, fit_nb);
                 }
               else
                 {
-                  CGAL_triangulation_assertion(n_nb >= 0);
-                  CGAL_triangulation_assertion(static_cast<unsigned int>(n_nb) <= c_cp_nb->second.size());
-                  CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex(c_cp->second[n]->vertex(ccw(i))) );
-                  CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex(c_cp->second[n]->vertex( cw(i))) );
+                  CGAL_assertion(n_nb >= 0);
+                  CGAL_assertion(static_cast<unsigned int>(n_nb) <= c_cp_nb->second.size());
+                  CGAL_assertion(c_cp_nb->second[n_nb]->has_vertex(c_cp->second[n]->vertex(ccw(i))) );
+                  CGAL_assertion(c_cp_nb->second[n_nb]->has_vertex(c_cp->second[n]->vertex( cw(i))) );
                   c_cp->second[n]->set_neighbor(i, c_cp_nb->second[n_nb]);
                 }
             }
@@ -3393,7 +3391,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
   for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
        != original_faces.end(); ++fit, ++oit)
     {
-      CGAL_triangulation_assertion( oit != off_nb.end() );
+      CGAL_assertion( oit != off_nb.end() );
       for (int i = 0; i < 3; i++)
         {
           Offset nboff = (*oit)[i];
@@ -3401,14 +3399,14 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
             {
               Face_handle fit_nb = (*fit)->neighbor(i);
               VCRMIT c_cp_nb = virtual_faces_reverse.find(fit_nb);
-              CGAL_triangulation_assertion(c_cp_nb != virtual_faces_reverse.end());
+              CGAL_assertion(c_cp_nb != virtual_faces_reverse.end());
               int o_i = (3 - nboff.x()) % 3;
               int o_j = (3 - nboff.y()) % 3;
               int n_nb = 3 * o_i + o_j - 1;
-              CGAL_triangulation_assertion(n_nb >= 0);
-              CGAL_triangulation_assertion(static_cast<unsigned int>(n_nb) <= c_cp_nb->second.size());
-              CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex((*fit)->vertex(ccw(i))) );
-              CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex((*fit)->vertex( cw(i))) );
+              CGAL_assertion(n_nb >= 0);
+              CGAL_assertion(static_cast<unsigned int>(n_nb) <= c_cp_nb->second.size());
+              CGAL_assertion(c_cp_nb->second[n_nb]->has_vertex((*fit)->vertex(ccw(i))) );
+              CGAL_assertion(c_cp_nb->second[n_nb]->has_vertex((*fit)->vertex( cw(i))) );
               (*fit)->set_neighbor(i, c_cp_nb->second[n_nb]);
             }
         }
@@ -3428,7 +3426,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
        != original_faces.end(); ++fit)
     {
       VCRMIT c_cp = virtual_faces_reverse.find(*fit);
-      CGAL_triangulation_assertion( c_cp != virtual_faces_reverse.end());
+      CGAL_assertion( c_cp != virtual_faces_reverse.end());
       Offset off[3];
       for (int i = 0; i < 3; i++)
         off[i] = int_to_off((*fit)->offset(i));
@@ -3445,8 +3443,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
             {
               off_cp[i] = Offset((o_i == 2) ? off[i].x() : 0, (o_j == 2) ? off[i].y()
                                  : 0);
-              CGAL_triangulation_assertion(off_cp[i].x() == 0 || off_cp[i].x() == 1);
-              CGAL_triangulation_assertion(off_cp[i].y() == 0 || off_cp[i].y() == 1);
+              CGAL_assertion(off_cp[i].x() == 0 || off_cp[i].x() == 1);
+              CGAL_assertion(off_cp[i].y() == 0 || off_cp[i].y() == 1);
             }
           set_offsets(c_cp->second[n], off_cp[0], off_cp[1], off_cp[2]);
         }
@@ -3458,25 +3456,23 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
     {
       //This statement does not seem to have any effect
       set_offsets(*fit, 0, 0, 0);
-      CGAL_triangulation_assertion((*fit)->offset(0) == 0);
-      CGAL_triangulation_assertion((*fit)->offset(1) == 0);
-      CGAL_triangulation_assertion((*fit)->offset(2) == 0);
+      CGAL_assertion((*fit)->offset(0) == 0);
+      CGAL_assertion((*fit)->offset(1) == 0);
+      CGAL_assertion((*fit)->offset(2) == 0);
     }
 
   _cover = make_array(3, 3);
 
   // Set up too long edges data structure
-  int i = 0;
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
     {
       _too_long_edges[vit] = std::list<Vertex_handle>();
-      ++i;
     }
   _too_long_edge_counter = find_too_long_edges(_too_long_edges);
 
-  CGAL_triangulation_expensive_assertion(is_valid());
+  CGAL_expensive_assertion(is_valid());
 
-  CGAL_triangulation_assertion(!is_1_cover());
+  CGAL_assertion(!is_1_cover());
 }
 
 // iterate over all edges and store the ones that are longer than
@@ -3547,17 +3543,17 @@ inline void Periodic_2_triangulation_2<GT, Tds>::get_vertex(Vertex_handle vh_i,
       // if vh_i is not contained in virtual_vertices, then it is in the
       // original domain.
       vh = vh_i;
-      CGAL_triangulation_assertion(vh != Vertex_handle());
+      CGAL_assertion(vh != Vertex_handle());
     }
   else
     {
       // otherwise it has to be looked up as well as its offset.
       vh = it->second.first;
       off += it->second.second;
-      CGAL_triangulation_assertion(vh->point().x() < _domain.xmax());
-      CGAL_triangulation_assertion(vh->point().y() < _domain.ymax());
-      CGAL_triangulation_assertion(vh->point().x() >= _domain.xmin());
-      CGAL_triangulation_assertion(vh->point().y() >= _domain.ymin());
+      CGAL_assertion(vh->point().x() < _domain.xmax());
+      CGAL_assertion(vh->point().y() < _domain.ymax());
+      CGAL_assertion(vh->point().x() >= _domain.xmin());
+      CGAL_assertion(vh->point().y() >= _domain.ymin());
     }
 }
 
@@ -3575,7 +3571,7 @@ GT, Tds >::get_face(const Vertex_handle* vh) const
   Face_circulator done(fc);
   do
     {
-      CGAL_triangulation_assertion(
+      CGAL_assertion(
         fc->vertex(0) == vh[2] ||
         fc->vertex(1) == vh[2] ||
         fc->vertex(2) == vh[2]);
@@ -3591,7 +3587,7 @@ GT, Tds >::get_face(const Vertex_handle* vh) const
     }
   while (++fc != done);
 
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return Face_handle();
 }
 
@@ -3599,7 +3595,7 @@ template<class Gt, class Tds>
 Bounded_side Periodic_2_triangulation_2<Gt, Tds>::side_of_face(const Point &q,
     const Offset &off, Face_handle f, Locate_type &lt, int &li) const
 {
-  CGAL_triangulation_precondition(number_of_vertices() != 0);
+  CGAL_precondition(number_of_vertices() != 0);
 
   Orientation o0, o1, o2;
   o0 = o1 = o2 = ZERO;
@@ -3607,7 +3603,7 @@ Bounded_side Periodic_2_triangulation_2<Gt, Tds>::side_of_face(const Point &q,
 
   if ((cumm_off == 0) && is_1_cover())
     {
-      CGAL_triangulation_assertion(off == Offset());
+      CGAL_assertion(off == Offset());
 
       const Point &p0 = f->vertex(0)->point();
       const Point &p1 = f->vertex(1)->point();
@@ -3629,7 +3625,7 @@ Bounded_side Periodic_2_triangulation_2<Gt, Tds>::side_of_face(const Point &q,
           p[i] = &(f->vertex(i)->point());
           offs[i] = get_offset(f, i);
         }
-      CGAL_triangulation_assertion(orientation(*p[0], *p[1], *p[2],
+      CGAL_assertion(orientation(*p[0], *p[1], *p[2],
                                    offs[0], offs[1], offs[2]) == POSITIVE);
       bool found = false;
       for (int i = 0; (i < 4) && (!found); i++)
@@ -3681,7 +3677,7 @@ Bounded_side Periodic_2_triangulation_2<Gt, Tds>::side_of_face(const Point &q,
     default:
     {
       // impossible : cannot be on 3 edges for a real triangle
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
       return ON_BOUNDARY;
     }
     }
@@ -3753,7 +3749,7 @@ Bounded_side Periodic_2_triangulation_2<Gt, Tds>::bounded_side(const Point &p0, 
 {
 
   // return position of point p with respect to triangle p0p1p2
-  CGAL_triangulation_precondition( orientation(p0, p1, p2) != COLLINEAR);
+  CGAL_precondition( orientation(p0, p1, p2) != COLLINEAR);
 
   Orientation o1 = orientation(p0, p1, p);
   Orientation o2 = orientation(p1, p2, p);
@@ -3796,7 +3792,7 @@ Bounded_side Periodic_2_triangulation_2<Gt, Tds>::bounded_side(const Point &p0,
     const Offset &o1, const Offset &o2, const Offset &o) const
 {
   // return position of point p with respect to triangle p0p1p2
-  CGAL_triangulation_precondition( orientation(p0, p1, p2, o0, o1, o2) != COLLINEAR);
+  CGAL_precondition( orientation(p0, p1, p2, o0, o1, o2) != COLLINEAR);
   Orientation orient1 = orientation(p0, p1, p, o0, o1, o);
   Orientation orient2 = orientation(p1, p2, p, o1, o2, o);
   Orientation orient3 = orientation(p2, p0, p, o2, o0, o);
@@ -3995,7 +3991,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::insert_too_long_edge(Face_handle f, in
     }
   else
     {
-      CGAL_triangulation_precondition(&*vh2 < &*vh1);
+      CGAL_precondition(&*vh2 < &*vh1);
       if (edge_is_too_long(p2, p1) &&
           (find(_too_long_edges[vh2].begin(), _too_long_edges[vh2].end(), vh1) == _too_long_edges[vh2].end()))
         {
@@ -4039,7 +4035,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::remove_too_long_edges_in_star(
         }
       else
         {
-          CGAL_triangulation_precondition(&*vh2 < &*vh);
+          CGAL_precondition(&*vh2 < &*vh);
           if (edge_is_too_long(p1, p2) &&
               (find(_too_long_edges[vh2].begin(), _too_long_edges[vh2].end(), vh) !=
                _too_long_edges[vh2].end()))
@@ -4145,7 +4141,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
   size_type n = number_of_vertices();
 
 
-  if (is_ascii(os))
+  if (IO::is_ascii(os))
     os << domain() << std::endl
        << cover[0] << " " << cover[1] << std::endl
        << n*cover[0]*cover[1] << std::endl;
@@ -4164,7 +4160,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
     return os;
 
   // write the vertices
-  Unique_hash_map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, std::size_t > V(0, number_of_vertices());
   std::size_t i = 0;
   if (is_1_cover())
     {
@@ -4172,7 +4168,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
         {
           V[it] = i++;
           os << it->point();
-          if (is_ascii(os))
+          if (IO::is_ascii(os))
             os << std::endl;
         }
     }
@@ -4185,35 +4181,35 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
           vit = _virtual_vertices.find(it);
           if (vit != _virtual_vertices.end()) continue;
           V[it] = i++;
-          if (is_ascii(os))
+          if (IO::is_ascii(os))
             os << it->point() << std::endl
                << Offset(0, 0) << std::endl;
           else
             os << it->point() << Offset(0, 0);
-          CGAL_triangulation_assertion(_virtual_vertices_reverse.find(it)
+          CGAL_assertion(_virtual_vertices_reverse.find(it)
                                        != _virtual_vertices_reverse.end());
           vv = _virtual_vertices_reverse.find(it)->second;
-          CGAL_triangulation_assertion(vv.size() == 8);
+          CGAL_assertion(vv.size() == 8);
           for (std::size_t j = 0; j < vv.size(); j++)
             {
               vvit = _virtual_vertices.find(vv[j]);
-              CGAL_triangulation_assertion(vvit != _virtual_vertices.end());
+              CGAL_assertion(vvit != _virtual_vertices.end());
               V[vv[j]] = i++;
-              if (is_ascii(os))
+              if (IO::is_ascii(os))
                 os << vv[j]->point() << std::endl
                    << vvit->second.second << std::endl;
               else os << vv[j]->point() << vvit->second.second;
             }
         }
     }
-  CGAL_triangulation_postcondition(i == _cover[0]*_cover[1]*n);
+  CGAL_postcondition(i == _cover[0]*_cover[1]*n);
 
-  Unique_hash_map<Face_handle, std::size_t> F;
+  Unique_hash_map<Face_handle, std::size_t> F(0,  _tds.number_of_faces());
   int inum = 0;
   // asks the tds for the combinatorial information
   // vertices of the faces
   size_type m = _tds.number_of_faces();
-  if (is_ascii(os)) os << std::endl << m << std::endl;
+  if (IO::is_ascii(os)) os << std::endl << m << std::endl;
   else write(os, m);
   std::cout << "save, #Faces: " << m << std::endl;
 
@@ -4223,13 +4219,13 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       F[ib] = inum++;
       for(int j = 0; j < 3 ; ++j)
         {
-          if(is_ascii(os)) os << V[ib->vertex(j)] << " ";
+          if(IO::is_ascii(os)) os << V[ib->vertex(j)] << " ";
           else write(os, V[ib->vertex(j)]);
         }
       os << *ib ;
-      if(is_ascii(os)) os << "\n";
+      if(IO::is_ascii(os)) os << "\n";
     }
-  if(is_ascii(os)) os << "\n";
+  if(IO::is_ascii(os)) os << "\n";
 
   std::cout << "save, face check: " << inum << " == " << m << std::endl;
   CGAL_assertion(m == (size_type)inum);
@@ -4241,10 +4237,10 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       for(int j = 0; j < 3; ++j)
         {
           CGAL_assertion(F.is_defined(it->neighbor(j)));
-          if(is_ascii(os))  os << F[it->neighbor(j)] << " ";
+          if(IO::is_ascii(os))  os << F[it->neighbor(j)] << " ";
           else write(os, F[it->neighbor(j)]);
         }
-      if(is_ascii(os)) os << "\n";
+      if(IO::is_ascii(os)) os << "\n";
     }
 
   // write offsets
@@ -4255,7 +4251,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       Face_handle ch(it);
       for (int j = 0; j < 3; j++)
         {
-          if(is_ascii(os))
+          if(IO::is_ascii(os))
             {
               os << ch->offset(j);
               if ( j == 3 )
@@ -4276,7 +4272,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       for(Face_iterator it = faces_begin(); it != faces_end(); ++it)
         {
           os << *it; // other information
-          if(is_ascii(os))
+          if(IO::is_ascii(os))
             os << std::endl;
         }
     }
@@ -4299,7 +4295,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   // the faces by the indices of their vertices in the preceding list
   // of vertices, plus the non combinatorial information on each face
   // the neighbors of each face by their index in the preceding list of face
-  CGAL_triangulation_precondition(is.good());
+  CGAL_precondition(is.good());
 
   clear();
 
@@ -4307,7 +4303,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   int cx = 0, cy = 0;
   size_type n = 0;
 
-  if (is_ascii(is))
+  if (IO::is_ascii(is))
   {
     is >> domain;
     is >> cx >> cy >> n;
@@ -4321,7 +4317,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   }
   std::cout << "Line:" << __LINE__ << " cx:" << cx << " cy:" << cy << " n:" << n << std::endl;
 
-  CGAL_triangulation_assertion((n / (cx * cy))*cx*cy == n);
+  CGAL_assertion((n / (cx * cy))*cx*cy == n);
 
   tds().set_dimension((n == 0 ? -2 : 2));
   _domain = domain;
@@ -4372,7 +4368,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   // Creation of the faces
   std::size_t index;
   size_type m;
-  if (is_ascii(is)) is >> m;
+  if (IO::is_ascii(is)) is >> m;
   else read(is, m);
   std::vector<Face_handle> F(m);
   std::cout << "load, #Faces: " << m << std::endl;
@@ -4382,7 +4378,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
         F[i] = _tds.create_face() ;
         for(int j = 0; j < 3 ; ++j)
           {
-            if (is_ascii(is)) is >> index;
+            if (IO::is_ascii(is)) is >> index;
             else read(is, index);
             CGAL_assertion(index < V.size());
             F[i]->set_vertex(j, V[index]);
@@ -4401,7 +4397,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
       {
         for(int j = 0; j < 3; ++j)
           {
-            if (is_ascii(is)) is >> index;
+            if (IO::is_ascii(is)) is >> index;
             else read(is, index);
             if (index >= F.size()) {
               std::cout << __FILE__ << ", " << __FUNCTION__ << ", l:" << __LINE__ << "  f="
@@ -4419,7 +4415,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   int off[3] = {0, 0, 0};
   for (std::size_t j = 0 ; j < m; j++)
     {
-      if (is_ascii(is))
+      if (IO::is_ascii(is))
         is >> off[0] >> off[1] >> off[2];
       else
         {
@@ -4434,19 +4430,17 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   for (std::size_t j = 0 ; j < m; j++)
     is >> *(F[j]);
 
-  int i = 0;
   for (Vertex_iterator vi = vertices_begin();
        vi != vertices_end(); ++vi)
     {
       _too_long_edges[vi] = std::list<Vertex_handle>();
-      ++i;
     }
 
   _edge_length_threshold = FT(0.166) * (_domain.xmax() - _domain.xmin())
                            * (_domain.xmax() - _domain.xmin());
   _too_long_edge_counter = find_too_long_edges(_too_long_edges);
 
-  CGAL_triangulation_expensive_assertion( is_valid() );
+  CGAL_expensive_assertion( is_valid() );
   return is;
 }
 
@@ -4472,11 +4466,11 @@ test_next(const Periodic_2_triangulation_2<GT, Tds1> &t1,
   // Returns false if an inequality has been found.
 
   // Precondition: c1, c2 have been registered as well as their 4 vertices.
-  CGAL_triangulation_precondition(t1.number_of_vertices() != 0);
-  CGAL_triangulation_precondition(Cmap[c1] == c2);
-  CGAL_triangulation_precondition(Vmap.find(c1->vertex(0)) != Vmap.end());
-  CGAL_triangulation_precondition(Vmap.find(c1->vertex(1)) != Vmap.end());
-  CGAL_triangulation_precondition(Vmap.find(c1->vertex(2)) != Vmap.end());
+  CGAL_precondition(t1.number_of_vertices() != 0);
+  CGAL_precondition(Cmap[c1] == c2);
+  CGAL_precondition(Vmap.find(c1->vertex(0)) != Vmap.end());
+  CGAL_precondition(Vmap.find(c1->vertex(1)) != Vmap.end());
+  CGAL_precondition(Vmap.find(c1->vertex(2)) != Vmap.end());
 
   typedef Periodic_2_triangulation_2<GT, Tds1> Tr1;
   typedef Periodic_2_triangulation_2<GT, Tds2> Tr2;

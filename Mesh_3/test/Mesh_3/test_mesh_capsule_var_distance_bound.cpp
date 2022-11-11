@@ -40,41 +40,30 @@ FT capsule_function(const Point& p)
   else if(z < FT(-5)) return base+CGAL::square(z+5);
   else return base;
 }
-#if BOOST_VERSION >= 106600
 auto field = [](const Point& p, const int, const Mesh_domain::Index)
              {
                if(p.z() > 2) return 0.025;
                if(p.z() < -3) return 0.01;
                else return 1.;
              };
-#else
-struct Field {
-  typedef ::FT FT;
-  
-  FT operator()(const Point& p, const int, const Mesh_domain::Index) const {
-    if(p.z() > 2) return 0.025;
-    if(p.z() < -3) return 0.01;
-    else return 1;
-  }
-} field;
-#endif
 
 int main()
 {
   Mesh_domain domain =
-    Mesh_domain::create_implicit_mesh_domain(capsule_function,
-                                             K::Sphere_3(CGAL::ORIGIN, 49.));
+    Mesh_domain::create_implicit_mesh_domain(function = capsule_function,
+                                             bounding_object = K::Sphere_3(CGAL::ORIGIN, 49.));
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=0.5,
-			 facet_distance=field);
-  
+                         facet_distance=field);
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
-  // Output
-  std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+//  // Output
+//  std::ofstream medit_file("out.mesh");
+//  CGAL::IO::write_MEDIT(medit_file, c3t3);
+//  medit_file.close();
 
   return 0;
 }

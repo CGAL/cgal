@@ -3,10 +3,10 @@
 /// \defgroup PkgAlgebraicKernelDConcepts Concepts
 /// \ingroup PkgAlgebraicKernelDRef
 
-/// \defgroup PkgAlgebraicKernelDConceptsUni Univariate Algebraic Kernel 
+/// \defgroup PkgAlgebraicKernelDConceptsUni Univariate Algebraic Kernel
 /// \ingroup PkgAlgebraicKernelDConcepts
 
-/// \defgroup PkgAlgebraicKernelDConceptsBi Bivariate Algebraic Kernel 
+/// \defgroup PkgAlgebraicKernelDConceptsBi Bivariate Algebraic Kernel
 /// \ingroup PkgAlgebraicKernelDConcepts
 
 

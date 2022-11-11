@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 
 namespace my_triangulation{
 
@@ -32,21 +32,21 @@ void Triangulation_ipelet::protected_run(int fn)
       return;
     default:
     std::list<Point_2> pt_lst;
-    
+
     //Recovering points using output iterator of type
     //Dispatch_or_drop_output_iterator
     read_active_objects(
       CGAL::dispatch_or_drop_output<Point_2>(std::back_inserter(pt_lst))
     );
-    
+
     if (pt_lst.empty()) {
       print_error_message("No mark selected");
       return;
     }
-    
+
     Delaunay dt;
     dt.insert(pt_lst.begin(),pt_lst.end());
-    
+
     //draw the triangulation.
     draw_in_ipe(dt);
   };

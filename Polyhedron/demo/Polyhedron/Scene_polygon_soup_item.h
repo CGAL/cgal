@@ -20,16 +20,18 @@ struct Polygon_soup
     typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
     typedef boost::array<std::size_t, 2> Edge;
     typedef std::vector<Polygon_3> Polygons;
-    typedef std::vector<CGAL::Color> Colors;
+    typedef std::vector<CGAL::IO::Color> Colors;
     typedef std::set<Edge> Edges;
     typedef Polygons::size_type size_type;
-    Points points;
-    Polygons polygons;
+
+
     Edges_map edges;
     Colors fcolors;
     Colors vcolors;
     Edges non_manifold_edges;
     bool display_non_manifold_edges;
+    Points points;
+    Polygons polygons;
 
     Polygon_soup():
         display_non_manifold_edges(false){}
@@ -97,11 +99,11 @@ struct Polygon_soup
 
 class Scene_surface_mesh_item;
 
-class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
+class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item
         : public CGAL::Three::Scene_item_rendering_helper
 {
     Q_OBJECT
-public:  
+public:
     typedef EPICK::Point_3 Point_3;
     typedef Polygon_soup::Points Points;
     typedef Polygon_soup::Polygons Polygons;
@@ -113,21 +115,21 @@ public:
 
     Scene_polygon_soup_item* clone() const Q_DECL_OVERRIDE;
 
-    template <class Point, class Polygon>
+    template <class Point, typename Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
-    
+
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
-              const std::vector<CGAL::Color>& fcolors,
-              const std::vector<CGAL::Color>& vcolors);
+              const std::vector<CGAL::IO::Color>& fcolors,
+              const std::vector<CGAL::IO::Color>& vcolors);
 
     bool load(std::istream& in);
     void load(Scene_surface_mesh_item*);
     bool isDataColored();
 
     bool save(std::ostream& out) const;
-    std::vector<CGAL::Color> getVColors() const;
-    std::vector<CGAL::Color> getFColors() const;
+    std::vector<CGAL::IO::Color> getVColors() const;
+    std::vector<CGAL::IO::Color> getFColors() const;
     QString toolTip() const Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported
@@ -152,19 +154,25 @@ public:
     const Edges& non_manifold_edges() const;
     void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
     void computeElements() const Q_DECL_OVERRIDE;
+
     //statistics
-    enum STATS {
-      NB_VERTICES = 0,
-      NB_FACETS,
-      IS_PURE_TRIANGLE,
+    enum STATS
+    {
+      IS_PURE_TRIANGLE = 0,
       IS_PURE_QUAD,
-      NB_DEGENERATED_FACES,
+
+      NB_VERTICES,
+
+      NB_FACETS,
+      NB_DEGENERATE_FACES,
+
       NB_EDGES,
+      NB_DEGENERATE_EDGES,
       MIN_LENGTH,
       MAX_LENGTH,
-      MID_LENGTH,
+      MED_LENGTH,
       MEAN_LENGTH,
-      NB_NULL_LENGTH,
+
       MIN_ANGLE,
       MAX_ANGLE,
       MEAN_ANGLE
@@ -175,7 +183,7 @@ public:
     CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
 public Q_SLOTS:
     void shuffle_orientations();
-    bool orient();
+    bool orient(std::vector<std::size_t>& non_manifold_vertices);
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
     void repair(bool erase_dup, bool req_same_orientation);

@@ -12,7 +12,7 @@ template <class K>
 bool test_cylinder_parameters() {
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 1000;
-  
+
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef CGAL::Point_3<K>                                    Point;
@@ -38,12 +38,12 @@ bool test_cylinder_parameters() {
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
 
     // Fix case, sample_random...
-    sample_random_cylinder(NB_POINTS, center, axis, 
+    sample_random_cylinder(NB_POINTS, center, axis,
     radius, std::back_inserter(points));
 
     // Add outliers in second half of rounds.
     if (i >= NB_ROUNDS / 2)
-      for (std::size_t j = 0; j < NB_POINTS / 2; j++) 
+      for (std::size_t j = 0; j < NB_POINTS / 2; j++)
         points.push_back(random_pwn_in<K>(bbox));
 
     Efficient_ransac ransac;
@@ -82,12 +82,12 @@ bool test_cylinder_parameters() {
     Point pos = cyl->axis().point(0);
 
     // Check radius and alignment with axis.
-    if (CGAL::abs(radius - cyl->radius()) > 0.02 
+    if (CGAL::abs(radius - cyl->radius()) > 0.02
       || CGAL::abs(CGAL::abs(axis * cyl->axis().to_vector()) - 1.0) > 0.02)
       continue;
 
     pos = pos - ((pos - CGAL::ORIGIN) * axis) * axis;
-    
+
     FT center_pos_sqlen = traits.compute_squared_length_3_object()(
       traits.construct_vector_3_object()(center, pos));
     if (center_pos_sqlen > FT(0.0004))
@@ -112,7 +112,7 @@ int main() {
   bool success = true;
 
   std::cout << "test_cylinder_parameters<CGAL::Simple_cartesian<float>> ";
-  if (!test_cylinder_parameters<CGAL::Simple_cartesian<float> >()) 
+  if (!test_cylinder_parameters<CGAL::Simple_cartesian<float> >())
     success = false;
 
   std::cout << "test_cylinder_parameters<CGAL::Simple_cartesian<double>> ";
@@ -120,7 +120,7 @@ int main() {
     success = false;
 
   std::cout << "test_cylinder_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_cylinder_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  if (!test_cylinder_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>())
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

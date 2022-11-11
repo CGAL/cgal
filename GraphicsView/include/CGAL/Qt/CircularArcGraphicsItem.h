@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -43,9 +43,9 @@ public:
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& verticesPen() const
   {
@@ -66,7 +66,7 @@ public:
   {
     edges_pen = pen;
   }
-  
+
   void setArc(const Circular_arc_2& a);
 
   Circular_arc_2 arc() const
@@ -90,7 +90,7 @@ protected:
 
 
 template <typename CK>
-void 
+void
 CircularArcGraphicsItem<CK>::setArc(const Circular_arc_2& a)
 {
   arc_ = a;
@@ -107,7 +107,7 @@ CircularArcGraphicsItem<CK>::CircularArcGraphicsItem()
 }
 
 template <typename CK>
-QRectF 
+QRectF
 CircularArcGraphicsItem<CK>::boundingRect() const
 {
   return bounding_rect;
@@ -117,19 +117,19 @@ CircularArcGraphicsItem<CK>::boundingRect() const
 
 
 template <typename CK>
-void 
-CircularArcGraphicsItem<CK>::paint(QPainter *painter, 
+void
+CircularArcGraphicsItem<CK>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
   painter->setPen(this->edgesPen());
   painterostream = PainterOstream<CK>(painter);
-  
+
   painterostream << arc_;
 }
 
 template <typename CK>
-void 
+void
 CircularArcGraphicsItem<CK>::updateBoundingBox()
 {
   Converter<CK> convert;
@@ -140,7 +140,7 @@ CircularArcGraphicsItem<CK>::updateBoundingBox()
 
 
 template <typename CK>
-void 
+void
 CircularArcGraphicsItem<CK>::modelChanged()
 {
   updateBoundingBox();

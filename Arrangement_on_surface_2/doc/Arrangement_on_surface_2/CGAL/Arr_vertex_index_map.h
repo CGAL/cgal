@@ -18,7 +18,7 @@ As new vertices might be inserted into the attached arrangement, and
 existing vertices might be removed, the notification mechanism is used
 to dynamically maintain the mapping of vertex handles to indices.
 
-  
+
 \cgalModels DefaultConstructible
 \cgalModels CopyConstructible
 \cgalModels Assignable
@@ -32,12 +32,12 @@ template< typename Arrangement >
 class Arr_vertex_index_map: public Arr_observer<Arrangement> {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 the type of the attached arrangement.
-*/ 
+*/
 typedef Arrangement Arrangement_2;
 
 typedef boost::readable_property_map_tag category;
@@ -58,9 +58,9 @@ The type of mapping of vertices to indices.
 */
 typedef Unique_hash_map<Vertex_handle, value_type> Index_map;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -70,10 +70,10 @@ Arr_vertex_index_map();
 
 /*!
 constructs a map and attaches it to the given arrangement `arr`.
-*/    
+*/
 Arr_vertex_index_map(Arrangement_2& arr);
 
-/// @} 
+/// @}
 
 }; /* end Arr_accessor */
 } /* end namespace CGAL */

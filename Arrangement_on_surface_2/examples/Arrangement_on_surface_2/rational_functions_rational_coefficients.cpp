@@ -5,9 +5,8 @@
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
-int main ()
-{
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+int main() {
+  std::cout << "Sorry, this example needs CORE ...\n";
   return 0;
 }
 
@@ -21,7 +20,7 @@ int main ()
 
 typedef CORE::BigInt                               Integer;
 typedef CORE::BigRat                               Rational;
-typedef CGAL::Algebraic_kernel_d_1<Integer>	   AK1;
+typedef CGAL::Algebraic_kernel_d_1<Integer>           AK1;
 typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits_2;
 
 typedef std::vector<Rational>                      Rat_vec;
@@ -29,18 +28,17 @@ typedef Traits_2::Algebraic_real_1                 Alg_real_1;
 
 typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 
-int main ()
-{
-  CGAL::set_pretty_mode(std::cout);             // for nice printouts.
+int main () {
+  CGAL::IO::set_pretty_mode(std::cout);             // for nice printouts.
 
-  // Traits class object 
-  Traits_2 traits; 
+  // Traits class object
+  Traits_2 traits;
   Traits_2::Construct_x_monotone_curve_2 construct_arc
-    = traits.construct_x_monotone_curve_2_object(); 
+    = traits.construct_x_monotone_curve_2_object();
 
-  // container storing all arcs 
+  // container storing all arcs
   std::vector<Traits_2::X_monotone_curve_2>  arcs;
-  
+
   // Create an arc supported by the function y = 0.1x^4 - 0.6x^2 + 0.8 / 0.1,
   // defined over the interval [-2.1, 2.1]:
   Rat_vec P1,Q1;
@@ -49,9 +47,9 @@ int main ()
   P1.push_back(Rational(-6,10));
   P1.push_back(Rational(0));
   P1.push_back(Rational(1,10));
-  
+
   Q1.push_back(Rational(1,10));
-  
+
   Alg_real_1 l(Traits_2::Algebraic_kernel_d_1::Bound(-2.1));
   Alg_real_1 r(Traits_2::Algebraic_kernel_d_1::Bound(2.1));
   arcs.push_back(construct_arc(P1.begin(), P1.end(), Q1.begin(), Q1.end(), l, r));
@@ -61,11 +59,11 @@ int main ()
   Rat_vec P2,Q2;
   P2.push_back(Rational(0));
   P2.push_back(Rational(1,10));
-  
+
   Q2.push_back(Rational(1,10));
   Q2.push_back(Rational(0));
   Q2.push_back(Rational(1,10));
-  
+
   arcs.push_back(construct_arc(P2.begin(), P2.end(), Q2.begin(), Q2.end(),
                                Alg_real_1(-3), Alg_real_1(3)));
 
@@ -77,10 +75,10 @@ int main ()
   P3.push_back(Rational(-1,10));
 
   Q3.push_back(Rational(1,10));
-  
+
   arcs.push_back(construct_arc(P3.begin(), P3.end(), Q3.begin(), Q3.end(),
                                Alg_real_1(-2), Alg_real_1(3)));
-  
+
   // Create an arc supported by the line y = -0.2x / 0.1,
   // defined over the interval [-3, 0]:
   Rat_vec P4,Q4;
@@ -92,14 +90,14 @@ int main ()
 
   // Print the arcs.
   for (unsigned int i(0); i < arcs.size(); ++i)
-    std::cout << arcs[i]<<std::endl;
+    std::cout << arcs[i] << std::endl;
 
   // Construct the arrangement of the four arcs.
   Arrangement_2 arr(&traits);
   insert(arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
-  std::cout << "The arrangement size:" << std::endl
+  std::cout << "The arrangement size:\n"
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;

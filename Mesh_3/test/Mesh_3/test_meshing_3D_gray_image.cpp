@@ -55,7 +55,7 @@ public:
     // Data generation
     //-------------------------------------------------------
     Image image;
-    if (!image.read("data/skull_2.9.inr"))
+    if (!image.read(CGAL::data_file_path("images/skull_2.9.inr")))
     {
       std::cout << "Image reading error. Exit test.\n";
       return;

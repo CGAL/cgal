@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Halfedge_Data_Structures
 \anchor chapterHalfedgeDS
 \cgalAutoToc
@@ -165,7 +165,7 @@ point. Note that for the vector storage the size of the halfedge data
 structure should be reserved beforehand, either with the constructor
 as shown in the example or with the `reserve()` member function.
 One can later resize the data structure with further calls to the
-`reserve()` member function, but only if the data structure is 
+`reserve()` member function, but only if the data structure is
 in a consistent, i.e., <I>valid</I>, state.
 
 \cgalExample{HalfedgeDS/hds_prog_vector.cpp}
@@ -222,6 +222,6 @@ iterator used in counting the edges.
 
 \cgalExample{HalfedgeDS/hds_prog_edge_iterator.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

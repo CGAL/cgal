@@ -48,6 +48,7 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
     Radius,       //!< Designates the buffer that contains the radius of wire spheres.
     Centers,  //!< Designates the buffer that contains the center of c3t3 facets or the center of wire spheres, for example.
     Texture_map,        //!< Designates the buffer that contains the UV map for the texture.
+    Subdomain_indices, //!< Designates the buffer that contains the subdomains of both cells defining a c3t3 facet.
     NbOfVbos      //!< Designates the size of the VBOs vector for `Edge_container`s
   };
 
@@ -62,8 +63,8 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //! \brief initGL creates the `Vbo`s and `Vao`s of this `Edge_container`.
   //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
   //!
-  //! \todo Is it a good idea to call InitGL of each item in the scene so the developper doesn't have to worry about this in each draw() of each item ?
-  //!`.
+  //! \todo Is it a good idea to call InitGL of each item in the scene so the developer doesn't have to worry about this in each draw() of each item ?
+  //!
   //! \param viewer the active `Viewer_interface`.
   //!
   void initGL(Viewer_interface *viewer)  Q_DECL_OVERRIDE;
@@ -84,7 +85,7 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   /// If the shaders of this program doesn't need one, you can ignore it.
   /// The others should be filled at each `draw()` from the item.
   ///@{
-  
+
   //! getter for the "plane" parameter
   QVector4D getPlane()const;
   //! getter for the "f_matrix" parameter

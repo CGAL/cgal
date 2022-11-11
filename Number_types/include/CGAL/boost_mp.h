@@ -13,16 +13,18 @@
 #define CGAL_BOOST_MP_H
 
 #include <CGAL/config.h>
-// This could check BOOST_VERSION >= 105300, but before 1.56 there is no
-// implicit conversion from double, which makes it hard to use in CGAL.
+#include <CGAL/number_utils.h>
+
 // It is easier to disable this number type completely for old versions.
 // Before 1.63, I/O is broken.  Again, disabling the whole file is just the
 // easy solution.
-// TODO: MSVC has trouble with versions <= 1.69, reenable once 1.70 has been
-// tested. https://github.com/boostorg/multiprecision/issues/98
-#if !defined CGAL_DISABLE_GMP && !defined CGAL_DO_NOT_USE_BOOST_MP && BOOST_VERSION >= 106300 && !defined _MSC_VER
+// MSVC had trouble with versions <= 1.69:
+// https://github.com/boostorg/multiprecision/issues/98
+#if !defined CGAL_DO_NOT_USE_BOOST_MP && \
+    (!defined _MSC_VER || BOOST_VERSION >= 107000)
 #define CGAL_USE_BOOST_MP 1
 
+#include <CGAL/Quotient.h>
 #include <CGAL/functional.h> // *ary_function
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Modular_traits.h>
@@ -139,6 +141,236 @@ struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T
 
 // Real_embeddable_traits
 
+namespace Boost_MP_internal {
+
+  // here we know that `intv` contains int64 numbers such that their msb is std::numeric_limits<double>::digits-1
+  // TODO: possibly return denormals sometimes...
+  inline
+  std::pair<double,double> shift_positive_interval( const std::pair<double,double>& intv, const int e ) {
+    CGAL_assertion(intv.first > 0.0);
+    CGAL_assertion(intv.second > 0.0);
+
+#ifdef CGAL_LITTLE_ENDIAN
+    CGAL_assertion_code(
+    union {
+      struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
+      double d;
+    } conv;
+
+    conv.d = intv.first;
+    )
+#else
+    //WARNING: untested!
+    CGAL_assertion_code(
+    union {
+
+      struct { uint64_t sig:1; uint64_t exp:11; uint64_t man:52; } s;
+      double d;
+    } conv;
+
+    conv.d = intv.first;
+    )
+#endif
+    // Check that the exponent of intv.inf is 52, which corresponds to a 53 bit integer
+    CGAL_assertion(conv.s.exp - ((1 << (11 - 1)) - 1) == std::numeric_limits<double>::digits - 1);
+
+    typedef std::numeric_limits<double> limits;
+
+    // warning: min_exponent and max_exponent are 1 more than what the name suggests
+    if (e < limits::min_exponent - limits::digits)
+      return {0, (limits::min)()};
+    if (e > limits::max_exponent - limits::digits)
+      return {(limits::max)(), limits::infinity()}; // intv is positive
+
+    const double scale = std::ldexp(1.0, e); // ldexp call is exact
+    return { scale * intv.first, scale * intv.second }; // cases that would require a rounding mode have been handled above
+  }
+
+  // This function checks if the computed interval is correct and if it is tight.
+  template<typename Type>
+  bool are_bounds_correct( const double l, const double u, const Type& x ) {
+    typedef std::numeric_limits<double> limits;
+
+    const double inf = std::numeric_limits<double>::infinity();
+    if ( u!=l && (l==-inf || u==inf
+                          || (u==0 && l >=  -(limits::min)())
+                          || (l==0 && u <= (limits::min)())) )
+    {
+      return x >  Type((limits::max)()) ||
+             x < Type(-(limits::max)()) ||
+             (x > Type(-(limits::min)()) && x < Type((limits::min)()));
+    }
+
+    if (!(u == l || u == std::nextafter(l, +inf))) return false;
+    //TODO: Type(nextafter(l,inf))>x && Type(nextafter(u,-inf))<x
+
+    const Type lb(l), ub(u);
+    const bool are_bounds_respected = (lb <= x && x <= ub);
+    return are_bounds_respected;
+  }
+
+  // This one returns zero length interval that is inf = sup.
+  inline
+  std::pair<double, double> get_0ulp_interval( const int shift, const uint64_t p ) {
+
+    const double pp_dbl = static_cast<double>(p);
+    const std::pair<double,double> intv(pp_dbl, pp_dbl);
+
+    return shift_positive_interval(intv, -shift);
+  }
+
+  // This one returns 1 unit length interval.
+  inline
+  std::pair<double, double> get_1ulp_interval( const int shift, const uint64_t p ) {
+
+    const double pp_dbl = static_cast<double>(p);
+    const double qq_dbl = pp_dbl+1;
+    const std::pair<double,double> intv(pp_dbl, qq_dbl);
+    return shift_positive_interval(intv, -shift);
+  }
+
+  template<typename ET>
+  std::pair<double, double> to_interval( ET x, int extra_shift = 0 );
+
+  // This is a version of to_interval that converts a rational type into a
+  // double tight interval.
+  template<typename Type, typename ET>
+  std::pair<double, double> to_interval( ET xnum, ET xden ) {
+
+    CGAL_assertion(!CGAL::is_zero(xden));
+    CGAL_assertion_code(const Type input(xnum, xden));
+    double l = 0.0, u = 0.0;
+    if (CGAL::is_zero(xnum)) { // return [0.0, 0.0]
+      CGAL_assertion(are_bounds_correct(l, u, input));
+      return std::make_pair(l, u);
+    }
+    CGAL_assertion(!CGAL::is_zero(xnum));
+
+    // Handle signs.
+    bool change_sign = false;
+    const bool is_num_pos = CGAL::is_positive(xnum);
+    const bool is_den_pos = CGAL::is_positive(xden);
+    if (!is_num_pos && !is_den_pos) {
+      xnum = -xnum;
+      xden = -xden;
+    } else if (!is_num_pos && is_den_pos) {
+      change_sign = true;
+      xnum = -xnum;
+    } else if (is_num_pos && !is_den_pos) {
+      change_sign = true;
+      xden = -xden;
+    }
+    CGAL_assertion(CGAL::is_positive(xnum) && CGAL::is_positive(xden));
+
+    const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
+    const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(xnum));
+    const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(xden));
+
+#if 0 // Optimisation for the case of input that are double
+    // An alternative strategy would be to convert numerator and denominator to
+    // intervals, then divide. However, this would require setting the rounding
+    // mode (and dividing intervals is not completely free). An important
+    // special case is when the rational is exactly equal to a double
+    // (fit_in_double). Then the denominator is a power of 2, so we can skip
+    // the division and it becomes unnecessary to set the rounding mode, we
+    // just need to modify the exponent correction for the denominator.
+    if(msb_den == static_cast<int64_t>(lsb(xden))) {
+      std::tie(l,u)=to_interval(xnum, msb_den);
+      if (change_sign) {
+        CGAL_assertion(are_bounds_correct(-u, -l, input));
+        return {-u, -l};
+      }
+      CGAL_assertion(are_bounds_correct(l, u, input));
+      return {u, l};
+    }
+#endif
+
+    const int64_t msb_diff = msb_num - msb_den;
+    // Shift so the division result has at least 53 (and at most 54) bits
+    int shift = static_cast<int>(num_dbl_digits - msb_diff + 1);
+    CGAL_assertion(shift == num_dbl_digits - msb_diff + 1);
+
+    if (shift > 0) {
+      xnum <<= +shift;
+    } else if (shift < 0) {
+      xden <<= -shift;
+    }
+    CGAL_assertion(num_dbl_digits + 1 ==
+      static_cast<int64_t>(boost::multiprecision::msb(xnum)) -
+      static_cast<int64_t>(boost::multiprecision::msb(xden)));
+
+    ET p, r;
+    boost::multiprecision::divide_qr(xnum, xden, p, r);
+    uint64_t uip = static_cast<uint64_t>(p);
+    const int64_t p_bits = static_cast<int64_t>(boost::multiprecision::msb(p));
+    bool exact = r.is_zero();
+
+    if (p_bits > num_dbl_digits) { // case 54 bits
+      exact &= ((uip & 1) == 0);
+      uip>>=1;
+      --shift;
+    }
+    std::tie(l, u) = exact ? get_0ulp_interval(shift, uip) : get_1ulp_interval(shift, uip);
+
+    if (change_sign) {
+      const double t = l;
+      l = -u;
+      u = -t;
+    }
+
+    CGAL_assertion(are_bounds_correct(l, u, input));
+    return std::make_pair(l, u);
+  }
+
+  // This is a version of to_interval that converts an integer type into a
+  // double tight interval.
+  template<typename ET>
+  std::pair<double, double> to_interval( ET x, int extra_shift) {
+
+    CGAL_assertion_code(const ET input = x);
+    double l = 0.0, u = 0.0;
+    if (CGAL::is_zero(x)) { // return [0.0, 0.0]
+      CGAL_assertion(are_bounds_correct(l, u, input));
+      return std::make_pair(l, u);
+    }
+    CGAL_assertion(!CGAL::is_zero(x));
+
+    bool change_sign = false;
+    const bool is_pos = CGAL::is_positive(x);
+    if (!is_pos) {
+      change_sign = true;
+      x = -x;
+    }
+    CGAL_assertion(CGAL::is_positive(x));
+
+    const int64_t n = static_cast<int64_t>(boost::multiprecision::msb(x)) + 1;
+    const int64_t num_dbl_digits = std::numeric_limits<double>::digits;
+
+    if (n > num_dbl_digits) {
+      const int64_t mindig = static_cast<int64_t>(boost::multiprecision::lsb(x));
+      int e = static_cast<int>(n - num_dbl_digits);
+      x >>= e;
+      if (n - mindig > num_dbl_digits)
+        std::tie(l, u) = get_1ulp_interval(-e+extra_shift, static_cast<uint64_t>(x));
+      else
+        std::tie(l, u) = get_0ulp_interval(-e+extra_shift, static_cast<uint64_t>(x));
+    } else {
+      l = u = extra_shift==0 ? static_cast<double>(static_cast<uint64_t>(x))
+                             : std::ldexp(static_cast<double>(static_cast<uint64_t>(x)),-extra_shift);
+    }
+
+    if (change_sign) {
+      const double t = l;
+      l = -u;
+      u = -t;
+    }
+
+    CGAL_assertion(extra_shift != 0 || are_bounds_correct(l, u, input));
+    return std::make_pair(l, u);
+  }
+
+} // Boost_MP_internal
+
 template <class NT>
 struct RET_boost_mp_base
     : public INTERN_RET::Real_embeddable_traits_base< NT , CGAL::Tag_true > {
@@ -192,24 +424,41 @@ struct RET_boost_mp_base
 
     struct To_interval
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
+
         std::pair<double, double>
         operator()(const Type& x) const {
-            // See if https://github.com/boostorg/multiprecision/issues/108 suggests anything better
-            // assume the conversion is within 1 ulp
-            // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
-            double i = x.template convert_to<double>();
-            double s = i;
-            double inf = std::numeric_limits<double>::infinity();
-            int cmp = x.compare(i);
-            if (cmp > 0) {
-              s = nextafter(s, +inf);
-              CGAL_assertion(x.compare(s) < 0);
+
+          // See if https://github.com/boostorg/multiprecision/issues/108 suggests anything better
+          // assume the conversion is within 1 ulp
+          // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
+
+          // We must use to_nearest here.
+          double i;
+          const double inf = std::numeric_limits<double>::infinity();
+          {
+            Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+            i = static_cast<double>(x);
+            if (i == +inf) {
+              return std::make_pair((std::numeric_limits<double>::max)(), i);
+            } else if (i == -inf) {
+              return std::make_pair(i, std::numeric_limits<double>::lowest());
             }
-            else if (cmp < 0) {
-              i = nextafter(i, -inf);
-              CGAL_assertion(x.compare(i) > 0);
-            }
-            return std::pair<double, double> (i, s);
+          }
+          double s = i;
+          CGAL_assertion(CGAL::abs(i) != inf && CGAL::abs(s) != inf);
+
+          // Throws uncaught exception: Cannot convert a non-finite number to an integer.
+          // We can catch it earlier by using the CGAL_assertion() one line above.
+          const int cmp = x.compare(i);
+          if (cmp > 0) {
+            s = nextafter(s, +inf);
+            CGAL_assertion(x.compare(s) < 0);
+          }
+          else if (cmp < 0) {
+            i = nextafter(i, -inf);
+            CGAL_assertion(x.compare(i) > 0);
+          }
+          return std::pair<double, double>(i, s);
         }
     };
 };
@@ -219,11 +468,30 @@ struct RET_boost_mp;
 
 template <class NT>
 struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_integer> >
-    : RET_boost_mp_base <NT> {};
+    : RET_boost_mp_base <NT> {
+    typedef NT Type;
+    struct To_interval
+        : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
+
+        std::pair<double, double> operator()( const Type& x ) const {
+          return Boost_MP_internal::to_interval(x);
+        }
+    };
+};
 
 template <class NT>
 struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> >
-    : RET_boost_mp_base <NT> {};
+    : RET_boost_mp_base <NT> {
+    typedef NT Type;
+    struct To_interval
+        : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
+
+        std::pair<double, double> operator()( const Type& x ) const {
+          return Boost_MP_internal::to_interval<Type>(
+            boost::multiprecision::numerator(x), boost::multiprecision::denominator(x));
+        }
+    };
+};
 
 #ifdef CGAL_USE_MPFR
 // Because of these full specializations, things get instantiated more eagerly. Make them artificially partial if necessary.
@@ -438,7 +706,7 @@ struct Fraction_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>
 
 // Coercions
 
-namespace internal { namespace boost_mp { BOOST_MPL_HAS_XXX_TRAIT_DEF(type); } }
+namespace internal { namespace boost_mp { BOOST_MPL_HAS_XXX_TRAIT_DEF(type) } }
 
 template <class B1, boost::multiprecision::expression_template_option E1, class B2, boost::multiprecision::expression_template_option E2>
 struct Coercion_traits<boost::multiprecision::number<B1, E1>, boost::multiprecision::number<B2, E2> >
@@ -606,6 +874,25 @@ namespace internal {
   }
 #endif
 } // namespace internal
+
+#ifdef CGAL_USE_BOOST_MP
+
+template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_int> >
+    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<boost::multiprecision::cpp_int> > {
+
+  public:
+    typedef Quotient<boost::multiprecision::cpp_int> Type;
+
+    class To_interval
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Type& x ) const {
+          return Boost_MP_internal::to_interval<Type>(x.num, x.den);
+        }
+    };
+};
+
+#endif // CGAL_USE_BOOST_MP
 
 } //namespace CGAL
 

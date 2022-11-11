@@ -17,7 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Static_or_dynamic_array.h>
+#include <CGAL/Triangulation/internal/Static_or_dynamic_array.h>
 
 namespace CGAL {
 
@@ -37,14 +37,14 @@ protected:
 
 public:
     explicit Triangulation_face(Full_cell_handle s) /* Concept */
-    : full_cell_(s), indices_(s->maximal_dimension()+2) 
+    : full_cell_(s), indices_(s->maximal_dimension()+2)
     {
         CGAL_assertion( Full_cell_handle() != s );
         clear();
     }
 
     explicit Triangulation_face(const int maximal_dim) /* Concept */
-    : full_cell_(), indices_(maximal_dim+2) 
+    : full_cell_(), indices_(maximal_dim+2)
     {
         clear();
     }
@@ -79,10 +79,10 @@ public:
         return full_cell()->vertex(j);
     }
 
-// - - - - - - - - - - - - - - - - - -  UPDATE FUNCTIONS	
+// - - - - - - - - - - - - - - - - - -  UPDATE FUNCTIONS
 
     void clear() /* Concept */
-    {    
+    {
         const std::size_t d = indices_.size();
         for(std::size_t i = 0; i < d; ++i )
             indices_[i] = -1;

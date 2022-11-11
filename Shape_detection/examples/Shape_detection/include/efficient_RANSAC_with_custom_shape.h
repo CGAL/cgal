@@ -15,13 +15,13 @@ public:
   typedef typename Traits::Point_3 Point;   // point type
   typedef typename Traits::Vector_3 Vector; // vector type
 
-  My_Plane() : 
+  My_Plane() :
   CGAL::Shape_detection::Shape_base<Traits>()
   { }
 
   // Compute squared Euclidean distance from query point to the shape.
   virtual FT squared_distance(const Point& p) const {
-    
+
     const FT sd = (this->constr_vec(m_point_on_primitive, p)) * m_normal;
     return sd * sd;
   }
@@ -36,22 +36,22 @@ public:
 
   // Return a string with shape parameters.
   virtual std::string info() const {
-    
+
     std::stringstream sstr;
 
-    sstr << "Type: plane (" << this->get_x(m_normal) << ", " 
+    sstr << "Type: plane (" << this->get_x(m_normal) << ", "
     << this->get_y(m_normal) << ", " << this->get_z(m_normal) << ")x - " <<
-    
+
     m_d << " = 0" << " #Pts: " << this->m_indices.size();
 
     return sstr.str();
   }
 
 protected:
-  
+
   // Construct shape base on a minimal set of samples from the input data.
   virtual void create_shape(const std::vector<std::size_t>& indices) {
-    
+
     const Point p1 = this->point(indices[0]);
     const Point p2 = this->point(indices[1]);
     const Point p3 = this->point(indices[2]);
@@ -69,9 +69,9 @@ protected:
   virtual void squared_distance(
     const std::vector<std::size_t>& indices,
     std::vector<FT>& dists) const {
-      
+
     for (std::size_t i = 0; i < indices.size(); ++i) {
-      
+
       const FT sd = (this->point(indices[i]) - m_point_on_primitive) * m_normal;
       dists[i] = sd * sd;
     }
@@ -82,7 +82,7 @@ protected:
   virtual void cos_to_normal(
     const std::vector<std::size_t>& indices,
     std::vector<FT>& angles) const {
-    
+
     for (std::size_t i = 0; i < indices.size(); ++i)
       angles[i] = CGAL::abs(this->normal(indices[i]) * m_normal);
   }
@@ -93,7 +93,7 @@ protected:
   }
 
 private:
-  
+
   Point  m_point_on_primitive;
   Vector m_normal;
   FT     m_d;

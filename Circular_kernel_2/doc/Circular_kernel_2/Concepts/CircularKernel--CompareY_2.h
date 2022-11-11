@@ -15,15 +15,15 @@ class CircularKernel::CompareY_2 {
 public:
 
 /// \name Operations
-/// A model of this concept must provide: 
+/// A model of this concept must provide:
 /// @{
 
 /*!
-Compares the \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$. 
-*/ 
-Comparison_result operator() 
-(const CircularKernel::Circular_arc_point_2 &p, 
-const CircularKernel::Circular_arc_point_2 &q ); 
+Compares the \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+*/
+Comparison_result operator()
+(const CircularKernel::Circular_arc_point_2 &p,
+const CircularKernel::Circular_arc_point_2 &q );
 
 /// @}
 

@@ -28,12 +28,12 @@ void benchmark(int iteration_count = 1)
 
   std::vector<Matrix> matrices;
 
-  while( true ) {    
+  while( true ) {
     bool read_ok = true;
     for (int j = 0; j < 3; j++) {
       for (int k = 0; k < 3; k++) {
-        if( !(file >> m(j, k)) ) // Warning: this part violates concept (in concept we do not have access to matrix coeffs)// 
-        { read_ok = false; break; }       
+        if( !(file >> m(j, k)) ) // Warning: this part violates concept (in concept we do not have access to matrix coeffs)//
+        { read_ok = false; break; }
       }
     }
 
@@ -42,7 +42,7 @@ void benchmark(int iteration_count = 1)
   }
   std::cerr << "Reading matrices from file is completed ( "<< matrices.size() << " number of matrices )." << std::endl;
 
-  std::cerr << "Starting benchmark for " << matrices.size() << " matrices, and solving " << 
+  std::cerr << "Starting benchmark for " << matrices.size() << " matrices, and solving " <<
     iteration_count << " times..." << std::endl;
   CGAL::Timer task_timer; task_timer.start();
   for(int i = 0; i < iteration_count; ++i )

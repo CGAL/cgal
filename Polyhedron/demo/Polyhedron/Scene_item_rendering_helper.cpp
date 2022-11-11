@@ -18,7 +18,7 @@ struct PRIV{
       is_bbox_computed(false),
       is_diag_bbox_computed(false),
       _diag_bbox(0),
-      alphaSlider(0),
+      alphaSlider(nullptr),
       are_buffers_filled(false)
   {}
 
@@ -78,9 +78,9 @@ void PRIV::compute_diag_bbox()
 {
   const Scene_item::Bbox& b_box = item->bbox();
   _diag_bbox = CGAL::approximate_sqrt(
-          (b_box.xmax() - b_box.xmin())*(b_box.xmax() - b_box.xmin())
-        + (b_box.ymax() - b_box.ymin())*(b_box.ymax() - b_box.ymin())
-        + (b_box.zmax() - b_box.zmin())*(b_box.zmax() - b_box.zmin())
+          CGAL::square(b_box.xmax() - b_box.xmin())
+        + CGAL::square(b_box.ymax() - b_box.ymin())
+        + CGAL::square(b_box.zmax() - b_box.zmin())
         );
 }
 
@@ -88,7 +88,7 @@ float Scene_item_rendering_helper::alpha() const
 {
   if(!priv->alphaSlider)
     return 1.0f;
-  return (float)priv->alphaSlider->value() / 255.0f;
+  return static_cast<float>(priv->alphaSlider->value()) / 255.0f;
 }
 
 void Scene_item_rendering_helper::initGL(CGAL::Three::Viewer_interface* viewer) const
@@ -139,7 +139,7 @@ QMenu* Scene_item_rendering_helper::contextMenu()
   if(!prop)
   {
     QMenu *container = new QMenu(tr("Alpha value"));
-    QWidgetAction *sliderAction = new QWidgetAction(0);
+    QWidgetAction *sliderAction = new QWidgetAction(nullptr);
 
     sliderAction->setDefaultWidget(priv->alphaSlider);
     container->addAction(sliderAction);
@@ -169,10 +169,10 @@ Scene_item::Bbox Scene_item_rendering_helper::bbox() const {
   return priv->_bbox;
 }
 
-bool Scene_item_rendering_helper::isInit(CGAL::Three::Viewer_interface* viewer)const 
-{ 
+bool Scene_item_rendering_helper::isInit(CGAL::Three::Viewer_interface* viewer)const
+{
   if(priv->isinit.find(viewer) != priv->isinit.end())
-    return priv->isinit[viewer]; 
+    return priv->isinit[viewer];
   return false;
 }
 

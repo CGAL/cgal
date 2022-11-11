@@ -12,8 +12,6 @@
 #ifndef CGAL_COMBINATORIAL_MAP_2_TEST
 #define CGAL_COMBINATORIAL_MAP_2_TEST 1
 
-#include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Combinatorial_map_operations.h>
 #include "Combinatorial_map_test_iterators.h"
 
 #include <iostream>
@@ -26,7 +24,7 @@ void drawAllPoints( Map&amap )
 {
   amap.display_characteristics(std::cout);
   /*  for ( typename Map::Dart_range::iterator it=amap.darts().begin();
-	 it!=amap.darts().end(); ++it )
+         it!=amap.darts().end(); ++it )
     cout << &*it<< ",  ";
     cout<<endl;*/
 }
@@ -34,10 +32,10 @@ void drawAllPoints( Map&amap )
 template<class Map>
 bool test2D()
 {
-  typedef typename Map::Dart_handle Dart_handle;
+  typedef typename Map::Dart_descriptor Dart_descriptor;
 
     Map map;
-    Dart_handle dh, dh2, d1, d2, d3;
+    Dart_descriptor dh, dh2, d1, d2, d3;
     typename Map::size_type mark;
     unsigned int nbc, nb2;
 
@@ -74,14 +72,14 @@ bool test2D()
     map.display_darts(std::cout, true);
     std::cout<<"Faces:"<<std::endl;
     map.template display_cells<2>(std::cout);
-    
+
     cout << "Parcours de CC : ";
     for ( typename Map::template Dart_of_orbit_range<1,2>::iterator it ( map, dh );
             it.cont();++it )
     {
         if ( it.prev_operation() != CGAL::OP_BETAI &&
                 it.prev_operation() != CGAL::OP_BETAI_INV )  cout << "\nNew facet : ";
-	//        cout << &*it << ", ";
+        //        cout << &*it << ", ";
     }
     cout << endl;
 
@@ -155,13 +153,13 @@ bool test2D()
     mark = map.get_new_mark();
     nbc = 0;
     for ( typename Map::Dart_range::iterator it1=map.darts().begin();
-	  it1!=map.darts().end(); ++it1 )
+          it1!=map.darts().end(); ++it1 )
     {
         if ( !map.is_marked ( it1, mark ) )
         {
             ++nbc;
             for ( typename Map::template Dart_of_orbit_range<1,2>::iterator
-		    it2 ( map, it1 ); it2.cont(); ++it2 )
+                    it2 ( map, it1 ); it2.cont(); ++it2 )
             {
                 map.mark ( it2, mark );
             }
@@ -178,7 +176,7 @@ bool test2D()
     {
         cout << "Parcours orbite " << Map::ORBIT_NAME[i] << " : #cellules=" << flush;
         nbc = 0, nb2 = 0;
-	for ( typename Map::Dart_iterator it1=map.darts_begin();it1!=map.darts_end(); ++for )
+        for ( typename Map::Dart_iterator it1=map.darts_begin();it1!=map.darts_end(); ++for )
         {
             ++nb2;
             if ( !map.is_marked ( *it1, mark ) )
@@ -188,27 +186,27 @@ bool test2D()
                 for ( ;it2.cont(); ++it2 )
                     {}
             }
-	    }
+            }
         cout << nbc << "." << ", #brins=" << nb2 << "." << endl
              << "All the darts marked ? " << map.is_whole_map_marked ( mark )
              << endl;
-	     map.unmark_all ( mark );
+             map.unmark_all ( mark );
     }*/
 
     // Iterator stl like
-    { 
+    {
       nbc = 0; nb2 = 0;
       cout << "Iterator stl like: #cellules=" << flush;
       for ( typename Map::Dart_range::iterator it1= map.darts().begin();
-	    it1!=map.darts().end(); ++it1 )
+            it1!=map.darts().end(); ++it1 )
         {
-	  ++nb2;
-	  if ( !map.is_marked ( it1, mark ) )
+          ++nb2;
+          if ( !map.is_marked ( it1, mark ) )
             {
                 ++nbc;
                 for ( typename Map::template Dart_of_orbit_range<2>::iterator
                         it2 ( map.template darts_of_orbit<2>(it1).begin() );
-		      it2 != map.template darts_of_orbit<2>(it1).end(); ++it2 )
+                      it2 != map.template darts_of_orbit<2>(it1).end(); ++it2 )
                 {
                     map.mark ( it2, mark );
                 }
@@ -236,11 +234,11 @@ bool test2D()
     // Un parcours de cellule.
     {
       CGAL::mark_orbit<Map,CGAL::CMap_dart_const_iterator_basic_of_orbit<Map,1> >
-	( map, map.first_dart(), mark);
+        ( map, map.first_dart(), mark);
 
         nbc = 0;
-        for ( typename Map::template One_dart_per_incident_cell_range<0,3, Map::dimension>::iterator 
-		it1 ( map, map.first_dart() ); it1.cont(); ++it1 )
+        for ( typename Map::template One_dart_per_incident_cell_range<0,3, Map::dimension>::iterator
+                it1 ( map, map.first_dart() ); it1.cont(); ++it1 )
         {
             ++nbc;
         }
@@ -416,16 +414,16 @@ bool test2D()
     map.insert_cell_0_in_cell_2 ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    std::vector<Dart_handle> V;
+    std::vector<Dart_descriptor> V;
     {
       for ( typename Map::template Dart_of_cell_range<0, Map::dimension>::iterator it =
-	      map.template darts_of_cell<0>( d1 ).begin();
-	    it != map.template darts_of_cell<0>( d1 ).end(); ++it )
+              map.template darts_of_cell<0>( d1 ).begin();
+            it != map.template darts_of_cell<0>( d1 ).end(); ++it )
             V.push_back ( it );
     }
 
     {
-        typedef typename std::vector<Dart_handle>::iterator vector_iterator;
+        typedef typename std::vector<Dart_descriptor>::iterator vector_iterator;
         for ( vector_iterator it = V.begin(); it != V.end(); ++it )
         {
             cout << "remove edge15: " << flush;
@@ -453,7 +451,7 @@ bool test2D()
     d2 = map.make_combinatorial_polygon(4);
     map.template sew<2> ( d1, d2 );
     map.display_characteristics ( cout ) << ", valid=" << map.is_valid()
-				  << endl;
+                                  << endl;
     cout << "insert edge4: "
          << flush;
     map.insert_cell_1_in_cell_2 ( d1, map.beta(d1,1,1) );
@@ -464,6 +462,59 @@ bool test2D()
          << endl;
 
     return true;
+}
+
+template<typename Map>
+bool test_get_new_mark()
+{
+  cout << "***************************** TEST GET_NEW_MARK:"
+       << endl;
+
+  Map map;
+
+  typename Map::size_type marks[Map::NB_MARKS];
+  for (typename Map::size_type i=0; i<Map::NB_MARKS; ++i)
+  {
+    try
+    {
+      marks[i] = map.get_new_mark();
+    }
+    catch (typename Map::Exception_no_more_available_mark)
+    {
+      std::cerr<<"No more free mark, exit."<<std::endl;
+      return false;
+    }
+  }
+
+  cout << "Creation of NB_MARK marks: OK" << endl;
+
+  bool res = false;
+  typename Map::size_type mark=0;
+  try
+  {
+    mark = map.get_new_mark();
+  }
+  catch (typename Map::Exception_no_more_available_mark)
+  {
+    std::cout<<"The creation of an additional mark throw an exception: OK"<<std::endl;
+    res = true;
+  }
+
+  if ( !res )
+  {
+      std::cerr<<"PB we can reserve NB_MARK+1 !! mark, exit."<<std::endl;
+      map.free_mark(mark); // This is never supposed to occur.
+      return false;
+  }
+
+  for (typename Map::size_type i=0; i<Map::NB_MARKS; ++i)
+  {
+    map.free_mark(marks[i]);
+  }
+
+  cout << "***************************** TEST GET_NEW_MARK DONE" << endl;
+
+  return true;
 }
 
 #endif // CGAL_COMBINATORIAL_MAP_2_TEST

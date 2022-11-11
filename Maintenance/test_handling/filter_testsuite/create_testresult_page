@@ -1,0 +1,705 @@
+#!/usr/bin/env perl
+#
+# first author:  Geert-Jan Giezeman
+# recent maintainer: Laurent Rineau (2009-2011)
+#
+# This script creates a WWW page with a table of test suite results.
+#
+# Usage:
+#   create_testresult_page <directory>
+
+# Creates the following files :
+# - results-$version.shtml
+# - versions.inc (contains the version selector)
+# - index.shtml -> results-$version.shtml (symlink)
+
+use Cwd;
+use strict;
+use Date::Format;
+
+my $test_results_url="https://cgal.geometryfactory.com/~mgimeno/test_suite/TESTRESULTS/index.shtml";
+
+my ($PLATFORMS_BESIDE_RESULTS, $PLATFORMS_REF_BETWEEN_RESULTS)=(1,1);
+
+my $TEMPPAGE="tmp$$.html";
+my $TEMPPAGE2="tmp2$$.html";
+my $release_name;
+my @platforms_to_do;
+my @known_platforms;
+my %platform_short_names;
+my %platform_is_optimized;
+my %platform_is_64bits;
+my @available_platforms;
+my %test_directories = ();
+my @testresults;
+my $testresult_dir=cwd()."/TESTRESULTS";
+
+# Inspired from
+# http://cpansearch.perl.org/src/EDAVIS/Sort-Versions-1.5/Versions.pm
+sub sort_releases($$)
+{
+    # Take arguments in revert order: one wants to sort from the recent to
+    # the old releases.
+    my $b = $_[0];
+    my $a = $_[1];
+
+    #take only the numbers from release id, skipping the bug-fix
+    #number, and I and Ic
+    my @A = ($a =~ /(\d+)\.(\d+)\.?(:?\d+)?(:?-Ic?-)?(\d+)?/a);
+    my @B = ($b =~ /(\d+)\.(\d+)\.?(:?\d+)?(:?-Ic?-)?(\d+)?/a);
+
+    while(@A and @B) {
+        my $av = shift(@A);
+        my $bv = shift(@B);
+        #$av and $bv are integers
+        if($av == $bv) { next; }
+        return $av <=> $bv;
+    }
+    return @A <=> @B;
+}
+
+sub write_selects()
+{
+    print OUTPUTV "<p>You can browse the test results of a different version :</p>";
+    my %releases;
+    foreach $_  (glob("results-*.shtml")) {
+        $_ =~ /results-(\d+.\d+)([^I]*)((-Ic?)-([^I].*))\.shtml/a;
+        $releases{"$1"}=1;
+    }
+    print OUTPUTV "<table><tr>\n";
+    print OUTPUTV "  <th>All releases (<a href=\"${test_results_url}\">last one</a>)</th>\n";
+    my $count = 0;
+    foreach $_ (sort sort_releases (keys %releases)) {
+        print OUTPUTV "  <th>CGAL-$_</th>\n";
+        $count++ > 3 && last;
+    }
+    print OUTPUTV "</tr>\n";
+    print OUTPUTV "<tr>\n";
+    write_select("sel");
+    $count = 0;
+    foreach $_ (sort sort_releases (keys %releases)) {
+        write_select("sel" . $count, $_);
+        $count++ > 3 && last;
+    }
+    print OUTPUTV "</tr>\n</table>\n";
+}
+
+sub write_select()
+{
+  my $id = shift(@_);
+  my $pattern = ".*";
+  if (@_ != 0)  {
+      $pattern = quotemeta(shift(@_));
+  }
+  my($filename, @result);
+  print OUTPUTV "  <td><select id=\"$id\" onchange=\"sel=document.getElementById(\'$id\'); top.location.href=sel.options[sel.selectedIndex].value\">\n";
+
+  print OUTPUTV '<option disabled selected value="">(select a release)', "</option>\n";
+  my %results;
+  foreach $_ (glob("results-*.shtml")) {
+      my $ctime = (stat($_))[10];
+      $results{$_} = $ctime;
+  }
+  foreach $_ (sort { $results{$b} <=> $results{$a} } keys %results) {
+      $_ =~ /results-${pattern}(\.\d+)?(-.*|)\.shtml/ || next;
+      my $ctime = (stat($_))[10];
+      my $date = time2str('%a %Y/%m/%d', $ctime);
+     print OUTPUTV '<option value="', $_, '">';
+     ($filename) = m/results-(.*?)\.shtml\s*/;
+#     printf OUTPUTV "%-20s (last modified: %s)</option>\n", $filename, $date;
+     printf OUTPUTV '%1$s  (%2$s)</option>
+', $filename, $date;
+  }
+  print OUTPUTV "</select></td>";
+}
+
+sub list_platforms()
+{
+    my ($filename, @result);
+    foreach $_ (glob("results_*.txt")) {
+	($filename) =  m/results_(.*?)\.txt\s*/;
+	push(@result, $filename) if $filename;
+    }
+    return @result;
+}
+
+sub list_packages($)
+#
+# Fill %test_directories with the packages found in the argument platform.
+# Return false if that platform does not have a list of packages.
+{
+    my ($platform) = @_;
+    my $test_result="results_${platform}.txt";
+    open(TESTRESULT, $test_result) or return 0;
+    while (<TESTRESULT>) {
+	if (/^\s*(.*?)\s+(\w)\s*$/) {
+	    $test_directories{$1} = '';
+	}
+    }
+    close TESTRESULT or return 0;
+    return 1;
+}
+
+sub collect_results_of_platform($)
+{
+    my ($platform) = @_;
+# Create an anonymous hash that hashes packages to their result.
+    my $platform_results = {};
+    my $test_result="results_${platform}.txt";
+    my ($yeahs, $nays, $warnings,$reqs, $skips) = (0,0,0,0,0);
+    my $resulttext;
+    open(TESTRESULT, $test_result) or return $platform_results;
+    while (<TESTRESULT>) {
+	if (/^\s*(.*?)\s+(\w)\s*$/) {
+	    #($package,$succes) = ($1,$2);
+	    if ($2 eq 'y' or $2 eq 'Y') {
+		$resulttext = 'y';
+		++$yeahs;
+	    } elsif ($2 eq 'w' or $2 eq 'W') {
+		$resulttext = 'w';
+		++$warnings;
+	    } elsif ($2 eq 'n' or $2 eq 'N') {
+		$resulttext = 'n';
+		++$nays;
+	    } elsif ($2 eq 'r') {
+		$resulttext = 'r';
+		++$reqs;
+		} elsif ($2 eq 's') {
+		$resulttext = 's';
+		++$skips;
+	    } else {
+		$resulttext = ' ';
+	    }
+	    $platform_results->{$1} = $resulttext;
+	}
+    }
+    close TESTRESULT;
+    $platform_results->{"y"} = $yeahs;
+    $platform_results->{"n"} = $nays;
+    $platform_results->{"w"} = $warnings;
+    $platform_results->{"r"} = $reqs;
+    $platform_results->{"s"} = $skips;
+    return $platform_results;
+}
+
+sub collect_results()
+{
+    my $platform;
+    foreach $platform (@platforms_to_do) {
+	list_packages($platform);
+    }
+    foreach $platform (@platforms_to_do) {
+	push(@testresults, collect_results_of_platform($platform));
+    }
+}
+
+sub print_result_table()
+{
+    my $platform_count = scalar(@platforms_to_do);
+
+    print OUTPUT <<"EOF";
+<table class="result" border="1" cellspacing="2" cellpadding="5">
+<tr align="CENTER">
+<th rowspan="2">Package</th>
+<!-- <th rowspan="2">Version</th> -->
+<th colspan="$platform_count">Test Platform</th>
+</tr>
+<tr align="center">
+EOF
+
+    print_platforms_numbers();
+
+    print OUTPUT "</tr>\n";
+    my $test_directory;
+    my $test_num = 0;
+    foreach $test_directory (sort keys %test_directories) {
+    	if ($PLATFORMS_REF_BETWEEN_RESULTS) {
+	    $test_num++;
+	    if ($test_num == 15) {
+	    	$test_num = 0;
+	    	print OUTPUT "\n<tr>  <td align=\"center\">\n";
+	    	print OUTPUT '<a href="#platforms">Platform Description</a>';
+	    	print OUTPUT "\n";
+		print_platforms_numbers();
+	    	print OUTPUT "\n</tr>\n";
+	    }
+	}
+	# my $version;
+	# if ( -r "$test_directory/version" ) {
+	#     open(VERSION, "$test_directory/version");
+	#     while(<VERSION>) {
+	# 	($version) = /^\s*([^\s]*)\s/;
+	# 	last if $version;
+	#     }
+	#     close VERSION;
+	# }
+	print OUTPUT "\n<tr>\n";
+	print OUTPUT "<td><a class=\"package_name\" href=\"\#$test_directory\" name=\"$test_directory\">$test_directory</a></td>\n";
+	# if ( $version ) {
+	#     print OUTPUT "<TD ALIGN=CENTER>$version</TD>\n";
+	# } else {
+	#     print OUTPUT "<TD ALIGN=CENTER>?.?</TD>\n";
+	# }
+	my ($platform_num,$platform)=(0,"");
+	$platform_num=0;
+	foreach $platform (@platforms_to_do) {
+	    my ($result,$resulttext);
+	    $resulttext = $testresults[$platform_num]->{$test_directory};
+	    if (! defined($resulttext)) {
+		$resulttext = ' ';
+	    }
+	    print OUTPUT '<td align=center';
+	    if ($resulttext eq 'y') {
+		print OUTPUT ' class="ok"';
+	    } elsif ($resulttext eq 'w') {
+		print OUTPUT ' class="warning"';
+	    } elsif ($resulttext eq 'n') {
+		print OUTPUT ' class="error"';
+	    } elsif ($resulttext eq 'r') {
+		print OUTPUT ' class="requirements"';
+		} elsif ($resulttext eq 's') {
+		print OUTPUT ' class="skip"';
+	    }
+	    else {
+		print OUTPUT ' class="na"';
+	    }
+	    print OUTPUT '> <a href="',
+	    "$release_name/$test_directory/TestReport_$platform.gz\"";
+	    print OUTPUT '>', "$resulttext</a></td>\n";
+	    ++$platform_num;
+
+	}
+	print OUTPUT "</tr>\n";
+    }
+    print OUTPUT "</table>\n";
+}
+
+sub print_resultpage()
+{
+    my $platform_count = scalar(@platforms_to_do);
+
+    print OUTPUT '<h2><a name="testresults">Test Results</a></h2>'."\n";
+    print OUTPUT '<p>In the table below, each column is numbered, and corresponds to a platform. ';
+    print OUTPUT 'Each column number is a link to the platform description table.</p> ', "\n";
+    if ($PLATFORMS_BESIDE_RESULTS) {
+    	print OUTPUT <<"EOF";
+<table border="0" cellspacing="5" cellpadding="0">
+<tr align="center">
+<td>
+EOF
+    }
+
+    print_result_table();
+
+    if ($PLATFORMS_BESIDE_RESULTS) {
+    	print OUTPUT "<td>\n<table class=\"beside\" border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n";
+    	if ($platform_count > 0) {
+    	    my $repeat_count = (1 + 1.1/16.5)*scalar(keys %test_directories)/($platform_count+0.25);
+	    while ($repeat_count >= 1) {
+	    	$repeat_count--;
+	    	print OUTPUT "<tr><td>\n";
+                print_platforms();
+                print OUTPUT "</tr>\n";
+	    }
+	}
+	print OUTPUT "</table>\n</tr>\n</table>\n";
+    }
+}
+
+sub sort_pf
+{
+    # MSVS first
+    if($a =~ m/^MS/) {
+        if($b =~ m/^MS/) {
+            return $a cmp $b;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    if($b =~ m/^MS/) { return 1; }
+
+    # g++/gcc second
+    if($a =~ m/^g[c+][c+]/) {
+        if($b =~ m/^g[c+][c+]/) {
+            return $a cmp $b;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    if($b =~ m/^g[c+][c+]/) { return 1; }
+
+    # Intel third
+    if($a =~ m/^[iI]/) {
+        if($b =~ m/^[iI]/) {
+            return $a cmp $b;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    if($b =~ m/^[iI]/) { return 1; }
+
+    # SunPro last
+    if($a =~ m/^[Ss][uU[Nn]/) {
+        if($b =~ m/^[Ss][uU[Nn]/) {
+            return $a cmp $b;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+    if($b =~ m/^[Ss][uU[Nn]/) { return -1; }
+
+    return $a cmp $b;
+}
+
+sub parse_platform($)
+{
+    my ($pf) = @_;
+    $pf =~ s/_LEDA$//;
+    my @list = split /_/, $pf;
+    return @list;
+}
+
+sub parse_platform_2($)
+{
+    my ($pf) = @_;
+    my @list = parse_platform($pf);
+#    if (@list > 3) {
+#        splice(@list,0,@list-3);
+#    }
+    while (@list < 3) {
+    	push(@list,'?');
+    }
+    return @list;
+}
+
+sub short_pfname($)
+{
+    my @pflist = parse_platform_2($_[0]);
+    my $shortpf;
+    if(@pflist < 4) {
+	$shortpf = join('_', $pflist[1], $pflist[2]);
+    }
+    elsif($pflist[2] !~ /Linux/i) {
+	$shortpf = join('_', $pflist[3], $pflist[2]);
+	if(@pflist >= 5) {
+	    $shortpf = join('_', $shortpf, $pflist[4]);
+	}
+    }
+    else {
+	$shortpf = $pflist[3];
+	if(@pflist >= 5) {
+	    $shortpf = join('_', $shortpf, $pflist[4]);
+	}
+    }
+    return $shortpf;
+}
+
+sub choose_platforms()
+{
+    my (%platform_index, $pf);
+# List all platforms for which there are results
+    @available_platforms = list_platforms();
+    my $index = 0;
+# Put all known platforms in a hash table.
+    for ($index=0; $index < @known_platforms; $index += 1) {
+	$pf = $known_platforms[$index];
+	$platform_index{$pf} = 1;
+    }
+# Check if there are platforms listed that are not known. Warn about this
+# and add those platforms at the end of the list of known platforms.
+    foreach (@available_platforms) {
+	$pf = $_;
+	my $shortpf = short_pfname($pf);
+	$pf =~ s/^[^_]*_//;
+	$pf =~ s/_LEDA$//;
+	if (!exists $platform_index{$shortpf}) {
+	    # print STDERR "Warning: Platform $_ is unknown!\n";
+	    $platform_index{$shortpf} = 1;
+	    push(@known_platforms,$shortpf); # ???
+    	    $platform_short_names{$shortpf} = $shortpf;
+	}
+    }
+
+# Make a list of all the platforms that are to be treated, in the order they
+# appear in the list of known_platforms.
+    @platforms_to_do = ();
+    @known_platforms = sort sort_pf @known_platforms;
+    for ($index=0; $index < @known_platforms; $index += 1) {
+	$pf = $known_platforms[$index];
+	my $ind2 = 0;
+	foreach (@available_platforms) {
+	    my $apf = short_pfname($_);
+	    if ($apf eq $pf) {
+	    	push(@platforms_to_do, $_);
+	    }
+	}
+    }
+}
+
+sub print_platform_descriptions()
+{
+    my ($i,$pf_no,$pf) = (0,1);
+    print OUTPUT <<'EOF';
+<h2><a name="platforms">Platform Description and Summary</a></h2>
+<table border="1" cellspacing="2" cellpadding="5" class="summary">
+<tr align="center">
+<th colspan="2">OS and compiler</th>
+<th>Tester</th>
+<th class="ok">y</th>
+<th class="warning">w</th>
+<th class="error">n</th>
+<th class="requirements">r</th>
+<th class="skip">s</th>
+<th>CMake</th>
+<th>BOOST</th>
+<th>MPFR</th>
+<th>GMP</th>
+<th>QT5</th>
+<th>LEDA</th>
+<th>CXXFLAGS</th>
+<th>LDFLAGS</th>
+</tr>
+EOF
+    my ($platform_num)=(0);
+    foreach $pf (@platforms_to_do) {
+	my $pf_num_plus_one = $platform_num + 1;
+	print OUTPUT "<tr>\n<td><a name=\"platform$pf_num_plus_one\">$pf_no</a>\n";
+	$pf_no++;
+	# my $pf_short = join('_',parse_platform_2($pf));
+	(my $pf_short) = ($pf =~ m/_(.*)/);
+	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\"";
+
+        ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
+
+        if (open (PLATFORM_INFO, "results_${pf}.info")) {
+	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
+	    $_ = <PLATFORM_INFO>; # COMPILER
+            chomp;
+            my $compiler = $_;
+            print OUTPUT " title=\"$compiler\">$pf_short</a>";
+	    $_ = <PLATFORM_INFO>; # TESTER_NAME
+	    chomp;
+	    my $tester_name = $_;
+	    $_ = <PLATFORM_INFO>; # TESTER_ADDRESS
+	    chomp;
+	    my $tester_address = $_;
+
+	    my $county = $testresults[$platform_num]->{"y"};
+	    my $countw = $testresults[$platform_num]->{"w"};
+	    my $countn = $testresults[$platform_num]->{"n"};
+	    my $countr = $testresults[$platform_num]->{"r"};
+	    my $counts = $testresults[$platform_num]->{"s"};
+
+	    my $index = 8;
+	    my @tmp;
+	    while ($index) {
+	        $index--;
+		$_ = <PLATFORM_INFO>;
+		chomp;
+		$tmp[$index] = $_;
+	    }
+	    ($platform_is_optimized{$pf}) = ($tmp[1] =~ m|([-/]x?O[1-9])|);
+	    $_ = <PLATFORM_INFO>;
+	    chomp;
+	    print OUTPUT "</td>\n";
+	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
+	    print OUTPUT "<td>$county</td>\n";
+	    print OUTPUT "<td>$countw</td>\n";
+ 	    print OUTPUT "<td>$countn</td>\n";
+ 	    print OUTPUT "<td>$countr</td>\n";
+ 	    print OUTPUT "<td>$counts</td>\n";
+	    $index = 8;
+	    while ($index) {
+	        $index--;
+		$_ = $tmp[$index];
+                if($index > 2) {
+                    print OUTPUT "<td align=\"center\">$_</td>\n";
+                } else {
+                    print OUTPUT "<td>$_</td>\n";
+                }
+	    }
+	} else {
+            print OUTPUT ">$pf_short</a>";
+	    my $index = 12;
+	    while ($index) {
+		print OUTPUT "<td>?</td>\n";
+	    }
+	}
+	++$platform_num;
+    }
+    print OUTPUT "</table>\n<p>\n";
+}
+
+sub print_platforms_numbers()
+{
+    my ($platform_num,$platform)=(0,"");
+    foreach $platform (@platforms_to_do) {
+	++$platform_num;
+	my $pf_short = short_pfname($platform);
+	my $class = "";
+	my $tag = "";
+	if($platform_is_optimized{$platform} || $platform_is_64bits{$platform})
+	{
+	    $class = " class=\"";
+	    $tag = " ( ";
+            if($platform_is_64bits{$platform}) {
+                $class = "$class os64bits";
+                $tag = $tag . "64 bits ";
+            }
+            if($platform_is_optimized{$platform}) {
+                $class = "$class highlight";
+                $tag = $tag ." optimized: $platform_is_optimized{$platform}";
+            }
+            $class = $class . "\"";
+            $tag = $tag . " )";
+	}
+	print OUTPUT "<td$class><a href=\"#platform$platform_num\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
+    }
+}
+
+sub print_platforms()
+{
+    my ($pf_no,$pf) = (1,"");
+    print OUTPUT '<table border="1" cellspacing="2" cellpadding="5" >',"\n";
+    foreach $pf (@platforms_to_do) {
+	print OUTPUT "<tr>\n<td>$pf_no\n";
+	$pf_no++;
+	my $pf_short = short_pfname($pf);
+	print OUTPUT "<td>$platform_short_names{$pf_short}";
+	print OUTPUT "\n</td></tr>\n";
+    }
+    print OUTPUT "</table>\n";
+}
+
+sub result_filename($)
+{
+    return "results".substr($_[0],4).".shtml";
+#	$name =~ s/-Ic?-/-/;
+}
+
+
+sub print_little_header(){
+
+    my $release_version = substr($release_name, 5);
+    print OUTPUT<<"EOF";
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>${release_name} Test Results</title>
+  <link rel="shortcut icon" href="cgal.ico">
+  <link rel="stylesheet" type="text/css" href="testresult.css">
+<!-- This file is generated by a program. Do not edit manually!! -->
+</head>
+<body>
+<h1>Test Results of ${release_name}
+<a id="permalink" href="results-${release_version}.shtml">permalink</a>
+<a id="jump_to_results" href="#testresults">jump to results</a></h1>
+<!--#include virtual="versions.inc"-->
+<p>The results of the tests are presented in a table
+('y' = success, 'w' = warning, 'n' = failure, 'r' = a requirement is not found, 's' = package skipped by tester),
+and the error + compiler output from each test can be retrieved by clicking
+on it.</p>
+<p><b>N.B. The detection of warnings is not exact.
+Look at the output to be sure!</b></p>
+<ol>
+EOF
+    if ( -r "announce.html" ) {
+	print OUTPUT<<"EOF";
+<li><a href="$release_name/announce.html">Announcement of this release</a></li>
+EOF
+    }
+
+    print OUTPUT "</ol>\n";
+}
+
+
+sub main()
+{
+    if (scalar(@ARGV)  != 1 ) {
+	print STDERR "usage: $0 directory\n";
+	exit 1;
+    }
+
+    $release_name =shift(@ARGV);
+
+    $release_name =~ s<(\s+)$><>;
+    $release_name =~ s<(/)$><>;
+    chdir $testresult_dir or die;
+    if ( ! -d $release_name ) {
+	print STDERR "$release_name is not a valid directory\n";
+	exit 1;
+    }
+
+#    init_known_platforms();
+    chdir $testresult_dir or die;
+    chdir $release_name or die;
+    choose_platforms();
+    chdir "..";
+
+    umask 0022;
+    unlink $TEMPPAGE;
+    unlink $TEMPPAGE2;
+    open(OUTPUT,">$TEMPPAGE") or die;
+    open(OUTPUTV,">$TEMPPAGE2") or die;
+    chdir $testresult_dir or die;
+    chdir $release_name or die;
+    collect_results();
+    print_little_header();
+    print_platform_descriptions();
+    print_resultpage();
+
+    print OUTPUT << 'EOF';
+ <p style="width: 100%">This page has been created by the test results
+     collection scripts (in <a
+     href="https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Maintenance/test_handling?root=cgal"><tt>trunk/Maintenance/test_handling</tt></a>).
+     <a href="test_results.log">See the log here</a>.</p>
+
+ <p>
+    <a href="http://validator.w3.org/check?uri=https://cgal.geometryfactory.com<!--#echo var="DOCUMENT_URI" -->"><img
+        src="valid-html401-blue"
+        alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
+ </p>
+EOF
+    print OUTPUT "</body>\n</html>\n";
+
+    close OUTPUT;
+    chdir "..";
+
+    my $WWWPAGE = result_filename($release_name);
+    rename $TEMPPAGE, $WWWPAGE;
+    chmod 0644, $WWWPAGE;
+    unlink "index.shtml";
+    symlink $WWWPAGE, "index.shtml";
+
+    # Deal with the versions.inc file.
+    write_selects();
+    my $VERSIONS_WEBPAGE="versions.inc";
+    rename $TEMPPAGE2, $VERSIONS_WEBPAGE;
+    chmod 0644, $VERSIONS_WEBPAGE;
+}
+
+sub init_known_platforms()
+{
+    my ($short_name, $full_name);
+    open(PLATFORMS,'known_platforms') or die;
+    @known_platforms = ();
+    while(<PLATFORMS>) {
+        ($short_name, $full_name) =split;
+	$full_name = short_pfname($full_name);
+	push(@known_platforms,$full_name);
+    	$platform_short_names{$full_name} = $full_name;
+    }
+    close(PLATFORMS);
+}
+
+main();

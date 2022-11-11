@@ -1,25 +1,24 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_LINE_3_H
 #define CGAL__TEST_CLS_LINE_3_H
 
 #include <CGAL/use.h>
-#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -30,7 +29,7 @@ _test_cls_line_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- const bool nonexact = boost::is_same<RT, double>::value;
+ const bool nonexact = std::is_same<RT, double>::value;
 
  typename R::Line_3 il;
  CGAL::Line_3<R> l0( il ); CGAL_USE(l0);

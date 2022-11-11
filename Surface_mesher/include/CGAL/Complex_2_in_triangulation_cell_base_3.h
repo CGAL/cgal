@@ -60,20 +60,20 @@ namespace CGAL {
     {}
 
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
-					    Vertex_handle v1,
-					    Vertex_handle v2,
-					    Vertex_handle v3)
+                                            Vertex_handle v1,
+                                            Vertex_handle v2,
+                                            Vertex_handle v3)
       : Cb (v0, v1, v2, v3), bits()// , c_surface_facets(0)
     {}
 
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
-					    Vertex_handle v1,
-					    Vertex_handle v2,
-					    Vertex_handle v3,
-					    Cell_handle n0,
-					    Cell_handle n1,
-					    Cell_handle n2,
-					    Cell_handle n3)
+                                            Vertex_handle v1,
+                                            Vertex_handle v2,
+                                            Vertex_handle v3,
+                                            Cell_handle n0,
+                                            Cell_handle n1,
+                                            Cell_handle n2,
+                                            Cell_handle n3)
       : Cb (v0, v1, v2, v3, n0, n1, n2, n3), bits()// c_surface_facets(0)
     {}
 
@@ -120,7 +120,7 @@ operator>>(std::istream &is, Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
   is >> static_cast<Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> b;
     else
     {
@@ -142,7 +142,7 @@ operator<<(std::ostream &os,
   os << static_cast<const Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os << ' ' << c.is_facet_on_surface(i);
     else
       write(os, static_cast<int>(c.is_facet_on_surface(i)));

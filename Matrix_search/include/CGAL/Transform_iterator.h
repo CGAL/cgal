@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -16,7 +16,6 @@
 #include <CGAL/license/Matrix_search.h>
 
 
-#include <CGAL/Optimisation/assertions.h>
 #include <CGAL/circulator_bases.h>
 #include <iterator>
 
@@ -30,11 +29,10 @@ namespace CGAL {
 template < class OutputIterator, class Operation >
 struct Transform_iterator {
   // Workaround. Added this non standard iterator category for VC8.
-  // Strange that no other iterator complains about this "feature" missing  
+  // Strange that no other iterator complains about this "feature" missing
   typedef std::_Unchecked_iterator_tag _Checked_iterator_category;
   typedef std::output_iterator_tag             iterator_category;
   typedef Transform_iterator< OutputIterator, Operation >   self;
-  typedef typename Operation::argument_type        argument_type;
 
   typedef typename std::iterator_traits<OutputIterator>::difference_type difference_type;
   typedef typename std::iterator_traits<OutputIterator>::value_type      value_type;
@@ -54,6 +52,7 @@ struct Transform_iterator {
 
   self& operator++( int) { return *this; }
 
+  template <typename argument_type>
   self& operator=( const argument_type& a) {
     *(o_++) = op_( a);
     return *this;

@@ -25,7 +25,7 @@ where `K` is
 CGAL::Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel
 \endcode
 
-\pre first != beyond. 
+\pre first != beyond.
 */
 template < typename InputIterator >
 Deduced
@@ -37,7 +37,7 @@ computes the bounding box of a non-empty set of 2D or 3D points.
 \returns The return type is either `K::Iso_rectangle_2` or
 `K::Iso_cuboid_3`, depending on the dimension of the input values.
 
-\pre first != beyond. 
+\pre first != beyond.
 */
 template < typename InputIterator, typename K >
 Deduced

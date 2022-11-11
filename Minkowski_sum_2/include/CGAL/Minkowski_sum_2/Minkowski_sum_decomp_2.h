@@ -90,6 +90,12 @@ private:
   Compare_xy_2            f_compare_xy;
 
 public:
+  // The pointers and the corresponding flags that indicate ownerships should
+  // be replaced with smart pointers. Meanwhile, the copy constructor and
+  // copy assignment prevent double delition. Notice that once a copy
+  // constructor (assignment) is present, the move constructor (assignment)
+  // is implicitly not generated anyway.
+
   //! Default constructor.
   Minkowski_sum_by_decomposition_2() :
     m_decomposition_strategy1(nullptr),
@@ -99,6 +105,36 @@ public:
     m_traits(nullptr),
     m_own_traits(false)
   { init(); }
+
+  //! Copy constructor.
+  Minkowski_sum_by_decomposition_2
+  (const Minkowski_sum_by_decomposition_2& other) :
+    m_decomposition_strategy1((other.m_own_strategy1) ?
+                              new Decomposition_strategy1 :
+                              other.m_decomposition_strategy1),
+    m_decomposition_strategy2((other.m_own_strategy2) ?
+                              new Decomposition_strategy2 :
+                              other.m_decomposition_strategy2),
+    m_own_strategy1(other.m_own_strategy1),
+    m_own_strategy2(other.m_own_strategy2),
+    m_traits((other.m_own_traits) ? new Traits_2 : other.m_traits),
+    m_own_traits(other.m_own_traits)
+  { init(); }
+
+  //! Copy assignment.
+  Minkowski_sum_by_decomposition_2&
+  operator=(const Minkowski_sum_by_decomposition_2& other) {
+    m_decomposition_strategy1 = (other.m_own_strategy1) ?
+      new Decomposition_strategy1 : other.m_decomposition_strategy1;
+    m_decomposition_strategy2 = (other.m_own_strategy2) ?
+      new Decomposition_strategy2 : other.m_decomposition_strategy2;
+    m_own_strategy1 = other.m_own_strategy1;
+    m_own_strategy2 = other.m_own_strategy2;
+    m_traits = (other.m_own_traits) ? new Traits_2 : other.m_traits;
+    m_own_traits = other.m_own_traits;
+    init();
+    return *this;
+  }
 
   //! Constructor.
   Minkowski_sum_by_decomposition_2(const Decomposition_strategy1& strategy1,

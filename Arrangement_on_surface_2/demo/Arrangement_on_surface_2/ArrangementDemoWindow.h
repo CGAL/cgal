@@ -1,138 +1,109 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 //
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef ARRANGEMENT_DEMO_WINDOW_H
 #define ARRANGEMENT_DEMO_WINDOW_H
 
-#include "ArrangementGraphicsItem.h"
-#include "ArrangementTypes.h"
-#include "DeleteCurveCallback.h"
-#include "PointLocationCallback.h"
-#include "VerticalRayShootCallback.h"
-#include "MergeEdgeCallback.h"
-#include "SplitEdgeCallback.h"
-#include "EnvelopeCallback.h"
-#include "ArrangementDemoTab.h"
-
-#include <CGAL/Arr_overlay_2.h>
-#include <CGAL/Arr_default_overlay_traits.h>
+#include <CGAL/Object.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 
-extern const char * hand_xpm[];
-
 #include <Qt>
+#include <utility>
+#include <vector>
 
-#include "ui_ArrangementDemoWindow.h"
+namespace Ui
+{
+class ArrangementDemoWindow;
+}
 
-//#include <QFileDialog>
-//#include <QInputDialog>
-//#include <QMessageBox>
-//#include <QtGui>
+namespace CGAL
+{
+class Object;
+namespace Qt
+{
+class GraphicsViewNavigation;
+}
+} // namespace CGAL
 
-namespace Ui { class ArrangementDemoWindow; }
+namespace demo_types
+{
+enum class TraitsType;
+}
 
+class ArrangementDemoTab;
 class QActionGroup;
 
 class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
 {
   Q_OBJECT
-  public:
-#if 0
-  typedef Seg_traits::Point_2 Point;
-  typedef Seg_traits::Segment_2 Segment;
-#endif
-  typedef enum TraitsType {
-    SEGMENT_TRAITS,
-    POLYLINE_TRAITS,
-    CONIC_TRAITS,
-    LINEAR_TRAITS,
-    CIRCULAR_ARC_TRAITS
-    // ALGEBRAIC_TRAITS
-  } TraitsType;
 
-  ArrangementDemoWindow(QWidget* parent = 0);
+public:
+  ArrangementDemoWindow(QWidget* parent = nullptr);
   ~ArrangementDemoWindow();
 
-  ArrangementDemoTabBase* makeTab( TraitsType tt );
-  ArrangementDemoTabBase* getTab( unsigned int tabIndex ) const;
-  ArrangementDemoTabBase* getCurrentTab( ) const;
-
-  std::vector< QString > getTabLabels( ) const;
-  std::vector< CGAL::Object > getArrangements( ) const;
-
-  template < class ArrType >
-  void makeOverlayTab( ArrType* arr1, ArrType* arr2 );
+  ArrangementDemoTab* getCurrentTab();
 
 public Q_SLOTS:
-  void updateMode( QAction* a );
-  void updateEnvelope( QAction* a );
-  void updateSnapping( QAction* a );
-  void updateConicType( QAction* a );
-  void on_actionNewTab_triggered( );
-  void on_actionSaveAs_triggered( );
-  void on_actionOpen_triggered( );
-  void on_actionQuit_triggered( );
-  void on_tabWidget_currentChanged( );
-  void on_actionOverlay_triggered( );
-  void on_actionCloseTab_triggered( );
-  void on_actionPrintConicCurves_triggered( );
-  void on_actionZoomIn_triggered( );
-  void on_actionZoomOut_triggered( );
-  void on_actionPreferences_triggered( );
-  void on_actionFillColor_triggered( );
-
+  void updateEnvelope(QAction*);
+  void updateInputType(QAction*);
+  void on_actionNewTab_triggered();
+  void on_actionSaveAs_triggered();
+  void on_actionOpen_triggered();
+  void on_actionQuit_triggered();
+  void on_tabWidget_currentChanged(int);
+  void on_actionOverlay_triggered();
+  void on_actionCloseTab_triggered();
+  void on_actionZoomIn_triggered();
+  void on_actionZoomOut_triggered();
+  void on_actionZoomReset_triggered();
+  void on_actionPreferences_triggered();
+  void on_actionFillColor_triggered();
+  void on_actionInsert_toggled(bool);
+  void on_actionDrag_toggled(bool);
+  void on_actionDelete_toggled(bool);
+  void on_actionDelete_triggered();
+  void on_actionPointLocation_toggled(bool);
+  void on_actionRayShootingUp_toggled(bool);
+  void on_actionRayShootingDown_toggled(bool);
+  void on_actionShowGrid_toggled(bool);
+  void on_actionGridSnapMode_toggled(bool);
+  void on_actionArrangementSnapMode_toggled(bool);
+  void on_actionMerge_toggled(bool);
+  void on_actionSplit_toggled(bool);
+  void on_actionFill_toggled(bool);
+  void on_actionAddAlgebraicCurve_triggered();
+  void on_actionAddRationalCurve_triggered();
 
 Q_SIGNALS:
-  void modelChanged( );
+  void modelChanged();
 
 protected:
-  void setupUi( );
-  void resetCallbackState( unsigned int tabIndex );
-  void removeCallback( unsigned int tabIndex );
-  void updateFillColorSwatch( );
+  void setupUi();
+  ArrangementDemoTab* makeTab(
+    demo_types::TraitsType, QString label = {}, CGAL::Object arr_obj = {});
+  void addTab(ArrangementDemoTab*, QString);
+  void resetCallbackState(ArrangementDemoTab*);
+  void resetActionGroups(ArrangementDemoTab*, demo_types::TraitsType);
+  void hideInsertMethods();
+  void showInsertMethods(demo_types::TraitsType);
+  void updateFillColorSwatch(ArrangementDemoTab*);
+  QString makeTabLabel(demo_types::TraitsType);
+  ArrangementDemoTab* openArrFile(QString filename);
 
-  void openArrFile( QString filename );
-  void openDatFile( QString filename );
-
-  std::vector< ArrangementDemoTabBase* > tabs;
-  std::vector< CGAL::Object > arrangements;
-  std::vector< QAction* > activeModes; // for the current tab; always size 1
-  unsigned int lastTabIndex;
-
+private:
   Ui::ArrangementDemoWindow* ui;
+  std::vector<ArrangementDemoTab*> tabs;
   QActionGroup* modeGroup;
   QActionGroup* envelopeGroup;
-  QActionGroup* snapGroup;
-  QActionGroup* conicTypeGroup;
+  QActionGroup* inputTypeGroup;
+  int tabLabelCounter;
 };
-
-template < class ArrType >
-void
-ArrangementDemoWindow::
-makeOverlayTab( ArrType* arr1, ArrType* arr2 )
-{
-  QString tabLabel = QString( "Overlay Tab" );
-
-  ArrangementDemoTabBase* demoTab;
-  ArrType* overlayArr = new ArrType;
-  CGAL::Arr_default_overlay_traits< ArrType > defaultTraits;
-
-  CGAL::overlay( *arr1, *arr2, *overlayArr, defaultTraits );
-
-  demoTab = new ArrangementDemoTab< ArrType >( overlayArr, 0 );
-  this->arrangements.push_back( CGAL::make_object( overlayArr ) );
-  this->tabs.push_back( demoTab );
-
-  QGraphicsView* view = demoTab->getView( );
-  this->addNavigation( view );
-  this->ui->tabWidget->addTab( demoTab, tabLabel );
-  this->lastTabIndex = this->ui->tabWidget->currentIndex( );
-}
 
 #endif // ARRANGEMENT_DEMO_WINDOW_H

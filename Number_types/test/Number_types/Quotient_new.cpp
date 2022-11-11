@@ -34,12 +34,12 @@ void test_quotient() {
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(-NT(5,74),-NT(3,25),-NT(7,3));
 
     CGAL::test_real_embeddable<NT>();
-    CGAL::test_fraction_traits<NT>(); 
+    CGAL::test_fraction_traits<NT>();
     // backward compatiblity
-    CGAL::test_rational_traits<NT>();  
+    CGAL::test_rational_traits<NT>();
 
   }
-  /* // Quotient for inexact types not implemented 
+  /* // Quotient for inexact types not implemented
      {
       typedef CGAL::Quotient< leda_bigfloat > NT;
       typedef CGAL::Field_with_sqrt_tag Tag;
@@ -52,19 +52,19 @@ void test_quotient() {
       CGAL::test_algebraic_structure<NT,Tag>(-NT(5,74), NT(3,25),-NT(7,3));
       CGAL::test_algebraic_structure<NT,Tag>( NT(5,74),-NT(3,25),-NT(7,3));
       CGAL::test_algebraic_structure<NT,Tag>(-NT(5,74),-NT(3,25),-NT(7,3));
-      
+
       CGAL::test_real_embeddable<NT>();
       }
   */
-  
+
   {   // see also  Coercion_traits_test.C
       typedef typename AT::Integer                 I ;
       typedef CGAL::Quotient<typename AT::Integer> QI;
       typedef CGAL::Coercion_traits<I,QI>  CT;
       CGAL_USE_TYPE(CT);
-      CGAL_static_assertion((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
-      CGAL_static_assertion((boost::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
-      CGAL_static_assertion((boost::is_same< typename CT::Type,QI>::value));
+      CGAL_static_assertion((std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
+      CGAL_static_assertion((std::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
+      CGAL_static_assertion((std::is_same< typename CT::Type,QI>::value));
   }
 }
 

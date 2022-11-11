@@ -9,10 +9,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Triangulation/include/CGAL/_test_cls_const_Del_tr..
 // source        : $URL$
 // revision      : $Id$
@@ -27,7 +27,7 @@
 #include <iterator>
 
 template <class Triangul>
-void 
+void
 _test_cls_const_Del_triangulation(const Triangul&)
 {
   // The following assertion is commented, because, in CT_plus_2,
@@ -74,7 +74,7 @@ _test_cls_const_Del_triangulation(const Triangul&)
      Point(0,2), Point(1,2), Point(2,2), Point(3,2),Point(4,2),
      Point(4,3), Point(3,3), Point(2,3), Point(1,3),Point(0,3)
    };
-   for (int m=0; m<19;  m++) 
+   for (int m=0; m<19;  m++)
      l.push_back(Constraint(lpt[m],lpt[m+1]));
    Triangul T2(l);
    assert( T2.dimension() == 2 );
@@ -88,22 +88,22 @@ _test_cls_const_Del_triangulation(const Triangul&)
   std::back_insert_iterator<std::list<Face_handle> > c_inserter(conflicts);
   std::back_insert_iterator<std::list<Edge> > be_inserter(hole_bd);
   std::pair<std::back_insert_iterator<std::list<Face_handle> >,
-            std::back_insert_iterator<std::list<Edge> > > 
+            std::back_insert_iterator<std::list<Edge> > >
     pit(c_inserter,be_inserter);
   c_inserter = T2.get_conflicts(Point(1,1,2), std::back_inserter(conflicts));
   conflicts.clear();
-  pit = T2.get_conflicts_and_boundary(Point(1,1,2), 
-				      std::back_inserter(conflicts),
-				      std::back_inserter(hole_bd));
+  pit = T2.get_conflicts_and_boundary(Point(1,1,2),
+                                      std::back_inserter(conflicts),
+                                      std::back_inserter(hole_bd));
   c_inserter = pit.first;
   be_inserter = pit.second;
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
   hole_bd.clear();
-  T2.get_conflicts(Point(0,1,2), 
-		   std::back_inserter(conflicts));
-  T2.get_boundary_of_conflicts(Point(0,1,2),  
-			       std::back_inserter(hole_bd));
+  T2.get_conflicts(Point(0,1,2),
+                   std::back_inserter(conflicts));
+  T2.get_boundary_of_conflicts(Point(0,1,2),
+                               std::back_inserter(hole_bd));
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
   std::size_t nch = hole_bd.size();
@@ -119,14 +119,14 @@ _test_cls_const_Del_triangulation(const Triangul&)
   // test insertion through get_conflicts + star_hole
   conflicts.clear();
   hole_bd.clear();
-  T2.get_conflicts_and_boundary(Point(0,1,2), 
-				std::back_inserter(conflicts),
-				std::back_inserter(hole_bd));
-  T2.star_hole(Point(0,1,2), 
-	       hole_bd.begin(),
-	       hole_bd.end(),
-	       conflicts.begin(),
-	       conflicts.end());
+  T2.get_conflicts_and_boundary(Point(0,1,2),
+                                std::back_inserter(conflicts),
+                                std::back_inserter(hole_bd));
+  T2.star_hole(Point(0,1,2),
+               hole_bd.begin(),
+               hole_bd.end(),
+               conflicts.begin(),
+               conflicts.end());
   assert(T2.is_valid());
 
   //test remove_constrained_edge

@@ -27,8 +27,6 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     use_component( ${component} )
   endforeach()
 
-  use_essential_libs()
-
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" )
 
   if(TARGET CGAL::CGAL)
@@ -46,16 +44,8 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
   add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )
 
-  if (CGAL_HEADER_ONLY)
-    if(NOT CGAL_NO_BLANKET_LINKING)
-      link_directories    ( ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
-      link_libraries      ( ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}      )
-    endif()
-  else()
-    if(NOT CGAL_NO_BLANKET_LINKING)
-      link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
-      link_libraries      ( ${CGAL_LIBRARIES}     ${CGAL_3RD_PARTY_LIBRARIES}      )
-    endif()
+  if(NOT CGAL_NO_BLANKET_LINKING)
+    link_directories    ( ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+    link_libraries      ( ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}      )
   endif()
-
 endif()

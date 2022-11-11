@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include "test_meshing_utilities.h"
 
@@ -48,7 +48,7 @@ public:
     // Data generation
     //-------------------------------------------------------
     Image image;
-    if (!image.read("data/skull_2.9.inr"))
+    if (!image.read(CGAL::data_file_path("images/skull_2.9.inr")))
     {
       std::cout << "Image reading error. Exit test.\n";
       return;

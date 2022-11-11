@@ -24,7 +24,7 @@ namespace CGAL {
 
 /// \internal
 /// The Lightweight_vector_3 class represents a 3D vector (oriented).
-/// The purpose of this class is to save memory as the actual vector 
+/// The purpose of this class is to save memory as the actual vector
 /// is allocated only when needed.
 ///
 /// \cgalModels `Kernel::Vector_3`
@@ -76,7 +76,7 @@ public:
     /// Operator =()
     Lightweight_vector_3& operator=(const Lightweight_vector_3& that)
     {
-      if (m_pVector != nullptr && that.m_pVector != nullptr) 
+      if (m_pVector != nullptr && that.m_pVector != nullptr)
       {
         *m_pVector = *that.m_pVector;
       }
@@ -104,7 +104,7 @@ public:
       return ! (*this == that);
     }
 
-    /// Gets (a copy of) the actual vector. 
+    /// Gets (a copy of) the actual vector.
     operator Vector() const
     {
       if (m_pVector != nullptr)
@@ -120,7 +120,7 @@ public:
     FT x() const { return (m_pVector != nullptr) ? m_pVector->x() : 0; }
     FT y() const { return (m_pVector != nullptr) ? m_pVector->y() : 0; }
     FT z() const { return (m_pVector != nullptr) ? m_pVector->z() : 0; }
-   
+
     RT hx() const { return (m_pVector != nullptr) ? m_pVector->hx() : 0; }
     RT hy() const { return (m_pVector != nullptr) ? m_pVector->hy() : 0; }
     RT hz() const { return (m_pVector != nullptr) ? m_pVector->hz() : 0; }
@@ -191,7 +191,7 @@ public:
     {
       return vector * c;
     }
-    
+
     FT squared_length() const
     {
       if (m_pVector != nullptr)

@@ -20,15 +20,15 @@ int main() {
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-  
+
     CGAL::test_real_embeddable<NT>();
-    
+
     {
       CORE::BigInt m("-3295371043742771943824");
       CORE::BigFloat bf(m,16,-5);
       CGAL::to_interval(bf);
     }
-    
+
   return 0;
 }
 
@@ -37,4 +37,4 @@ int main() { return 0; }
 #endif // CGAL_USE_CORE
 
 //EOF
- 
+

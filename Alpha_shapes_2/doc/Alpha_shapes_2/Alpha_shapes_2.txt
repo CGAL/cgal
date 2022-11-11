@@ -2,14 +2,14 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Alpha_Shapes
 \anchor I1ChapterAlphashapes2D
 \cgalAutoToc
 \author Tran Kai Frank Da
 
-\image html alphashape.png 
-\image latex alphashape.png 
+\image html alphashape.png
+\image latex alphashape.png
 
 Assume we are given a set \f$ S\f$ of points in 2D or 3D and we would like to
 have something like "the shape formed by these points". This is
@@ -45,7 +45,7 @@ inside of the convex hull of \f$ S\f$. Hence, the alpha shape becomes
 the convex hull of \f$ S\f$ as \f$ \alpha \rightarrow \infty\f$.
 
 \cgal offers 2D and 3D alpha shapes. The GUDHI library offers a
-<a href="http://gudhi.gforge.inria.fr/doc/latest/group__alpha__complex.html"> dD Alpha complex</a>.
+<a href="https://gudhi.inria.fr/doc/latest/group__alpha__complex.html"> dD Alpha complex</a>.
 
 \section Alpha_shapes_2Definitions Definitions
 
@@ -81,7 +81,7 @@ easily. Furthermore, we can select an appropriate \f$ \alpha\f$-shape from a
 finite number of different \f$ \alpha\f$-shapes and corresponding
 \f$ \alpha\f$-values.
 
-\section I1_SectAlpha_Shape_2 Functionality 
+\section I1_SectAlpha_Shape_2 Functionality
 
 The class `Alpha_shape_2<Dt>` represents the family of
 \f$ \alpha\f$-shapes of points in a plane for <I>all</I> positive
@@ -116,7 +116,7 @@ the \f$ \alpha\f$-shape (no singular edges).
 The current implementation is static, that is after its construction
 points cannot be inserted or removed.
 
-\section I1_SectDtClass2D Concepts and Models 
+\section I1_SectDtClass2D Concepts and Models
 
 We currently do not specify concepts for the underlying triangulation
 type. Models that work for a basic alpha shape are the classes
@@ -134,9 +134,8 @@ All \cgal kernels are models of both concepts.
 
 The triangulation data structure of the triangulation
 has to be a model of the concept `TriangulationDataStructure_2`,
-and it must be parameterized with
-vertex and face classes which are models of the concepts
-`AlphaShapeVertex_2` and `AlphaShapeFace_2`.
+whose vertex and face classes are models of the concepts
+`AlphaShapeVertex_2` and `AlphaShapeFace_2`, respectively.
 The classes `Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt, Fb>`
 are models of these concepts and can be used for all type of alpha shapes,
 provided that the template parameters `Vb` and `Fb` are appropriately chosen,
@@ -219,6 +218,6 @@ results will suffer from round-off problems.
 
 \cgalExample{Alpha_shapes_2/ex_periodic_alpha_shapes_2.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

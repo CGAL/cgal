@@ -102,6 +102,7 @@ The function `Surface_mesh_deformation::preprocess()` returns `true` if the fact
 Rank deficiency is the main reason for failure. Typical failure cases are:
   - All the vertices are in the ROI and no control vertices are set
   - The weighting scheme used to fill the sparse matrix (model of `SurfaceMeshDeformationWeights`) features too many zeros and breaks the connectivity information
+.
 
 \cgalAdvancedBegin
 The choice of the weighting scheme provides a mean to adjust the way the control vertices
@@ -491,9 +492,9 @@ Using 1-ring elements, SR-ARAP adds a bending element to Eq. \f$\eqref{eq:arap_e
   \label{eq:sre_arap_energy}
 \f}
 
-where 
+where
 - \f$\alpha=0.02\f$ is a weighting coefficient.
-- \f$A\f$ is the surface area for scaling invariance. 
+- \f$A\f$ is the surface area for scaling invariance.
 
 Only the local step is influenced by the added term, and the optimal rotation now takes into account the rotation of neighbors.
 

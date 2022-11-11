@@ -345,7 +345,7 @@ class Gmpfr:
 #  pragma warning(push)
 #  pragma warning(disable: 4244)
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_d);
-#  pragma warning(pop)  
+#  pragma warning(pop)
 #else
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 #endif
@@ -1167,7 +1167,7 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
         if(a.is_inf())
                 return os<<(a<0?"-inf":"+inf");
         // The rest of the function was written by George Tzoumas.
-        if (!is_pretty(os)) {
+        if (!IO::is_pretty(os)) {
                 std::pair<Gmpz,long> ie=a.to_integer_exp();
                 os << ie.first << 'e' << ie.second;
                 return os;

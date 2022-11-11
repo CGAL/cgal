@@ -12,7 +12,7 @@
 
 typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<>           Gt;
 typedef CGAL::Hyperbolic_triangulation_face_base_2<Gt>                  Hyperbolic_face_base;
-typedef CGAL::Triangulation_face_base_with_info_2<CGAL::Color, Gt,
+typedef CGAL::Triangulation_face_base_with_info_2<CGAL::IO::Color, Gt,
                                                   Hyperbolic_face_base> Face_base_with_info;
 typedef CGAL::Triangulation_vertex_base_2<Gt>                           Vertex_base;
 typedef CGAL::Triangulation_data_structure_2<Vertex_base,
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
   {
     if(fit->has_vertex(vo))
     {
-      fit->info() = CGAL::red();
+      fit->info() = CGAL::IO::red();
       origin_faces++;
     }
   }
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
   int red_faces = 0;
   for(fit = dt.hyperbolic_faces_begin(); fit != dt.hyperbolic_faces_end(); ++fit)
   {
-    if(fit->info() == CGAL::red())
+    if(fit->info() == CGAL::IO::red())
     {
       red_faces++;
     }

@@ -13,7 +13,7 @@ int main ()
   int dim =5;
   double size = 100.0;
   std::cout << "Generating "<<nb_points<<" random points in a"
-	    <<" ball in "<<dim<<"D of center 0 and radius "<<size<<std::endl;
+            <<" ball in "<<dim<<"D of center 0 and radius "<<size<<std::endl;
   std::vector<Point> v;
   v.reserve (nb_points);
   CGAL::Random_points_in_ball_d<Point> gen (dim, 100.0);

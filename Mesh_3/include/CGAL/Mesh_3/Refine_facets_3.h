@@ -26,7 +26,7 @@
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/enumerable_thread_specific.h>
-  #include <tbb/parallel_do.h>
+  #include <tbb/parallel_for_each.h>
 #endif
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
@@ -38,9 +38,9 @@
 #ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 #include <CGAL/Object.h>
-#include <CGAL/atomic.h>
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
@@ -50,6 +50,7 @@
 #include <CGAL/tuple.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
+#include <atomic>
 
 namespace CGAL {
 
@@ -254,7 +255,7 @@ public:
                        const Criteria& criteria,
                        std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                       , CGAL::cpp11::atomic<bool>* stop_ptr
+                       , std::atomic<bool>* stop_ptr
 #endif
                        )
     : r_tr_(tr)
@@ -274,7 +275,7 @@ public:
   {
 #ifndef CGAL_NO_ATOMIC
     if(m_stop_ptr != 0 &&
-       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+       m_stop_ptr->load(std::memory_order_acquire) == true)
     {
       return true;
     }
@@ -408,19 +409,19 @@ protected:
     return ( (facet < mirror)?facet:mirror );
   }
 
-  /// Returns true if \c f has already been visited
+  /// Returns true if `f` has already been visited.
   bool is_facet_visited(const Facet& f) const
   {
     return f.first->is_facet_visited(f.second);
   }
 
-  /// Sets facet \c f to visited
+  /// Sets facet `f` to visited.
   void set_facet_visited(Facet& f) const
   {
     f.first->set_facet_visited(f.second);
   }
 
-  /// Sets the facet \c f and its mirrored facet's surface centers to \c p
+  /// Sets the facet `f` and its mirrored facet's surface centers to `p`.
   void set_facet_surface_center(const Facet& f,
                                 const Bare_point& p,
                                 const Index& index) const
@@ -434,32 +435,32 @@ protected:
     mirror.first->set_facet_surface_center_index(mirror.second,index);
   }
 
-  /// Returns facet surface center of \c f
+  /// Returns facet surface center of `f`.
   Bare_point get_facet_surface_center(const Facet& f) const
   {
     return f.first->get_facet_surface_center(f.second);
   }
 
-  /// Returns index of surface center of facet \c f
+  /// Returns index of surface center of facet `f`.
   Index get_facet_surface_center_index(const Facet& f) const
   {
     return f.first->get_facet_surface_center_index(f.second);
   }
 
-  /// Sets \c f to surface facets, with index \c index
+  /// Sets `f` to surface facets, with index `index`.
   void set_facet_on_surface(const Facet& f,
                             const Surface_patch_index& index)
   {
     r_c3t3_.add_to_complex(f, index);
   }
 
-  /// Returns index of facet \c f
+  /// Returns index of facet `f`.
   Surface_patch_index get_facet_surface_index(const Facet& f) const
   {
     return r_c3t3_.surface_patch_index(f.first, f.second);
   }
 
-  /// Sets index and dimension of vertex \c v
+  /// Sets index and dimension of vertex `v`.
   void set_vertex_properties(Vertex_handle& v, const Index& index)
   {
     r_c3t3_.set_index(v, index);
@@ -476,6 +477,12 @@ protected:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet facet, const Quality& quality)
   {
+#if CGAL_MESH_3_VERY_VERBOSE
+    std::stringstream s;
+    s << "insert_bad_facet(" << debug_info_element_impl(facet) << ", ...) by thread "
+      << std::this_thread::get_id() << '\n';
+    std::cerr << s.str();
+#endif
     // Insert the facet and its mirror
     this->add_bad_element(
       this->from_facet_to_refinement_queue_element(facet, mirror_facet(facet)),
@@ -547,13 +554,13 @@ protected:
     return stream.str();
   }
 
-  /// Returns to if \c f is on surface
+  /// Returns to if `f` is on surface
   bool is_facet_on_surface(const Facet& f) const
   {
     return r_c3t3_.is_in_complex(f) ;
   }
 
-  /// Removes \c f from surface facets
+  /// Removes `f` from surface facets.
   void remove_facet_from_surface(const Facet& f)
   {
     r_c3t3_.remove_from_complex(f);
@@ -570,6 +577,7 @@ protected:
     Facet canonical_facet = this->canonical_facet(facet);
     this->remove_element(canonical_facet);
 #endif
+    CGAL_USE(facet);
   }
 #ifdef CGAL_LINKED_WITH_TBB
   /// Removes facet from refinement queue
@@ -587,9 +595,9 @@ protected:
   void treat_new_facet(Facet& facet);
 
   /**
-   * Computes at once is_facet_on_surface and facet_surface_center.
+   * Computes simultaneously `is_facet_on_surface` and `facet_surface_center`.
    * @param facet The input facet
-   * @return \c true if \c facet is on surface, \c false otherwise
+   * @return `true` if `facet` is on surface, `false` otherwise
    */
   void compute_facet_properties(const Facet& facet, Facet_properties& fp,
                                 bool force_exact = false ) const;
@@ -607,7 +615,7 @@ protected:
   std::size_t m_maximal_number_of_vertices_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+  std::atomic<bool>* const m_stop_ptr;
 #endif
 }; // end class template Refine_facets_3_base
 
@@ -775,7 +783,7 @@ public:
                   int mesh_topology,
                   std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                  , CGAL::cpp11::atomic<bool>* stop_ptr
+                  , std::atomic<bool>* stop_ptr
 #endif
                   );
   // For parallel
@@ -788,7 +796,7 @@ public:
                   WorksharingDataStructureType *worksharing_ds,
                   std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                  , CGAL::cpp11::atomic<bool>* stop_ptr
+                  , std::atomic<bool>* stop_ptr
 #endif
                   );
 
@@ -827,12 +835,12 @@ public:
       Container_::get_next_local_element_impl());
   }
 
-  /// Tests if \c p encroaches facet from zone
+  /// Tests if `p` encroaches facet from `zone`.
   // For sequential
   Mesher_level_conflict_status
   test_point_conflict_from_superior_impl(const Weighted_point& p, Zone& zone);
 
-  /// Tests if \c p encroaches facet from zone
+  /// Tests if `p` encroaches facet from `zone`.
   // For parallel
   template <typename Mesh_visitor>
   Mesher_level_conflict_status
@@ -846,8 +854,12 @@ public:
     if( zone.locate_type == Tr::VERTEX )
     {
       std::stringstream sstr;
+      sstr.precision(17);
       sstr << "(" << p << ") is already inserted on surface.\n";
-      CGAL_error_msg(sstr.str().c_str());
+      CGAL_error_msg(([this,str=sstr.str()] {
+        dump_c3t3(this->r_c3t3_, "dump-bug");
+        return str.c_str();
+      }()));
       return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
     }
     else
@@ -863,7 +875,7 @@ public:
                            , bool &facet_is_in_its_cz
                            , bool &could_lock_zone);
 
-  /// Insert \c p into the triangulation
+  /// Inserts `p` into the triangulation.
   Vertex_handle insert_impl(const Weighted_point& p, const Zone& zone);
 
   bool try_lock_element(const Facet &f, int lock_radius = 0) const
@@ -904,7 +916,7 @@ Refine_facets_3(Tr& triangulation,
                 int mesh_topology,
                 std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 )
   : Rf_base(triangulation, c3t3, oracle, criteria, mesh_topology,
@@ -933,7 +945,7 @@ Refine_facets_3(Tr& triangulation,
                 WorksharingDataStructureType *worksharing_ds,
                 std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 )
   : Rf_base(triangulation, c3t3, oracle, criteria, maximal_number_of_vertices
@@ -981,8 +993,8 @@ scan_triangulation_impl()
 # endif
     add_to_TLS_lists(true);
 
-    // PARALLEL_DO
-    tbb::parallel_do(
+    // PARALLEL FOR_EACH
+    tbb::parallel_for_each(
       this->r_tr_.finite_facets_begin(), this->r_tr_.finite_facets_end(),
       typename Rf_base::template Scan_facet<Self>(*this)
     );
@@ -1824,8 +1836,8 @@ is_encroached_facet_refinable(Facet& facet) const
 }
 
 /**
-  * \c facet is an internal facet we are going to remove
-  * \c source_facet is the facet we want to refine by inserting a new point
+  * `facet` is an internal facet we are going to remove
+  * `source_facet` is the facet we want to refine by inserting a new point
   */
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 bool

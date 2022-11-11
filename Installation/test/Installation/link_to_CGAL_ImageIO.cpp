@@ -4,7 +4,7 @@
 
 int main()
 {
-  
+
   volatile _image* i = _initImage();
 
   bool ok = (i != 0);

@@ -95,7 +95,7 @@ void alpha_edges(InputIterator begin, InputIterator end,
 
 bool file_input(std::list<Weighted_point>& L)
 {
-  std::ifstream is("./data/fin_weighted", std::ios::in);
+  std::ifstream is("data/fin_weighted", std::ios::in);
 
   if(is.fail())
   {
@@ -142,6 +142,6 @@ int main()
           std::back_inserter(segments));
     std::cout << segments.size() << " alpha shape edges." << std::endl;
   }
-  
+
   return 0;
 }

@@ -9,224 +9,291 @@
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
-#ifndef CGAL_WRITE_XYZ_POINTS_H
-#define CGAL_WRITE_XYZ_POINTS_H
+#ifndef CGAL_POINT_SET_PROCESSING_WRITE_XYZ_POINTS_H
+#define CGAL_POINT_SET_PROCESSING_WRITE_XYZ_POINTS_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/IO/helpers.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Iterator_range.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iostream>
+#include <fstream>
 #include <iterator>
+#include <type_traits>
 
 namespace CGAL {
+namespace Point_set_processing_3 {
+namespace internal {
 
-
-/**
-   \ingroup PkgPointSetProcessing3IO
-   Saves the range of `points` (positions + normals, if available) to a .xyz ASCII stream.
-   The function writes for each point a line with the x y z position
-   followed by the nx ny nz normal (if available).
-
-   \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
-
-   \param stream output stream.
-   \param points input point range.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
-
-   \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd If this parameter is omitted, normals are not written to the
-     output stream.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
-   \cgalNamedParamsEnd
-
-   \return true on success.
-*/
-template <typename PointRange,
-          typename NamedParameters
->
-bool
-write_xyz_points(
-  std::ostream& stream,
-  const PointRange& points,
-  const NamedParameters& np)
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_XYZ_PSP(std::ostream& os,
+                   const PointRange& points,
+                   const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
 
-  bool has_normals = !(boost::is_same<NormalMap,
-                       typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
+  bool has_normals = NP_helper::has_normal_map();
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-  
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
-  if(!stream)
+  CGAL_precondition(points.begin() != points.end());
+
+  if(!os)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
 
+  set_stream_precision_from_NP(os, np);
+
   // Write positions + normals
   for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
   {
-    stream << get(point_map, *it);
-    if (has_normals)
-      stream << " " << get(normal_map, *it);
-    stream << std::endl;
+    os << get(point_map, *it);
+    if(has_normals)
+      os << " " << get(normal_map, *it);
+    os << "\n";
   }
 
-  return ! stream.fail();
+  os << std::flush;
+
+  return !os.fail();
 }
 
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-bool
-write_xyz_points(
-  std::ostream& stream, ///< output stream.
-  const PointRange& points)
+} // namespace internal
+} // Point_set_processing_3
+
+namespace IO {
+
+/**
+   \ingroup PkgPointSetProcessing3IOXyz
+
+   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamXYZ.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param os output stream
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{stream_precision}
+       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+       \cgalParamType{int}
+       \cgalParamDefault{the precision of the stream `os`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if writing was successful, `false` otherwise.
+*/
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_XYZ(std::ostream& os,
+               const PointRange& points,
+               const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+               )
 {
-  return write_xyz_points
-    (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+  return Point_set_processing_3::internal::write_XYZ_PSP(os, points, np);
 }
+
+/**
+   \ingroup PkgPointSetProcessing3IOXyz
+
+   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamXYZ.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param filename path to the output file
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{stream_precision}
+       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+       \cgalParamType{int}
+       \cgalParamDefault{`6`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if writing was successful, `false` otherwise.
+*/
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_XYZ(const std::string& filename,
+               const PointRange& points,
+               const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+               )
+{
+  std::ofstream os(filename);
+  return write_XYZ(os, points, np);
+}
+
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
+
+/// \cond SKIP_IN_MANUAL
+
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
-          typename Kernel
->
+          typename Kernel>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points_and_normals(), please update your code")
-bool
-write_xyz_points_and_normals(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-  NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-  const Kernel& /*kernel*/) ///< geometric traits.
+bool write_xyz_points_and_normals(std::ostream& os, ///< output stream.
+                                  ForwardIterator first,  ///< iterator over the first input point.
+                                  ForwardIterator beyond, ///< past-the-end iterator over the input points.
+                                  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
+                                  NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
+                                  const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     geom_traits(Kernel()));
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return IO::write_XYZ(os, points,
+                       parameters::point_map(point_map)
+                                  .normal_map(normal_map)
+                                  .geom_traits(Kernel()));
 }
 
-// deprecated API  
 template <typename ForwardIterator,
           typename PointMap,
-          typename NormalMap
->
+          typename NormalMap>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points_and_normals(), please update your code")
-bool
-write_xyz_points_and_normals(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
-  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
+bool write_xyz_points_and_normals(std::ostream& os, ///< output stream.
+                                  ForwardIterator first, ///< first input point.
+                                  ForwardIterator beyond, ///< past-the-end input point.
+                                  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
+                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map));
+  return IO::write_XYZ(os, points,
+                       parameters::point_map(point_map)
+                                  .normal_map(normal_map));
 }
 
-// deprecated API  
 template <typename ForwardIterator,
           typename NormalMap
 >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points_and_normals(), please update your code")
-bool
-write_xyz_points_and_normals(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  NormalMap normal_map) ///< property map: value_type of ForwardIterator -> Vector_3.
+bool write_xyz_points_and_normals(std::ostream& os, ///< output stream.
+                                  ForwardIterator first, ///< first input point.
+                                  ForwardIterator beyond, ///< past-the-end input point.
+                                  NormalMap normal_map) ///< property map: value_type of ForwardIterator -> Vector_3.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::normal_map(normal_map));
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return IO::write_XYZ(os, points, parameters::normal_map(normal_map));
 }
 
-// deprecated API  
 template <typename ForwardIterator,
           typename PointMap,
-          typename Kernel
->
+          typename Kernel>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points(), please update your code")
-bool
-write_xyz_points(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
-  const Kernel& kernel)
+bool write_xyz_points(std::ostream& os, ///< output stream.
+                      ForwardIterator first, ///< first input point.
+                      ForwardIterator beyond, ///< past-the-end input point.
+                      PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
+                      const Kernel& kernel)
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::point_map(point_map).
-     geom_traits (kernel));
-}
-// deprecated API  
-template <typename ForwardIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points(), please update your code")
-bool
-write_xyz_points(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::point_map(point_map));
+  return IO::write_XYZ(os, points, parameters::point_map(point_map)
+                                              .geom_traits (kernel));
 }
 
-// deprecated API  
-template <typename ForwardIterator
->
+template <typename ForwardIterator,
+          typename PointMap>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points(), please update your code")
-bool
-write_xyz_points(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond) ///< past-the-end input point.
+bool write_xyz_points(std::ostream& os, ///< output stream.
+                      ForwardIterator first, ///< first input point.
+                      ForwardIterator beyond, ///< past-the-end input point.
+                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
+{
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return IO::write_XYZ(os, points, parameters::point_map(point_map));
+}
+
+template <typename ForwardIterator>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points(), please update your code")
+bool write_xyz_points(std::ostream& os, ///< output stream.
+                      ForwardIterator first, ///< first input point.
+                      ForwardIterator beyond) ///< past-the-end input point.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points);
+  return IO::write_XYZ(os, points);
 }
-#endif // CGAL_NO_DEPRECATED_CODE
+
 /// \endcond
 
+/**
+  \ingroup PkgPointSetProcessing3IODeprecated
 
-} //namespace CGAL
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSetProcessing3IOXyz `CGAL::write_XYZ()` \endlink should be used instead.
+*/
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return IO::write_XYZ(os, points, np);
+}
 
-#endif // CGAL_WRITE_XYZ_POINTS_H
+#endif // CGAL_NO_DEPRECATED_CODE
+
+} // namespace CGAL
+
+#endif // CGAL_POINT_SET_PROCESSING_WRITE_XYZ_POINTS_H

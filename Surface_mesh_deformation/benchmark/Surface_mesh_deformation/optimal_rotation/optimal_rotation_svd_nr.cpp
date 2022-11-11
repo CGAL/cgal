@@ -6,10 +6,10 @@
 #include <fstream>
 
 int main() {
-	
+
   std::ifstream file;
   file.open("SVD_benchmark");
-  if (!file) 
+  if (!file)
   {
     CGAL_TRACE_STREAM << "Error loading file!\n";
     return 0;
@@ -57,7 +57,7 @@ int main() {
   double *w;
   w = new double[4];
 
-  CGAL::Timer task_timer; 
+  CGAL::Timer task_timer;
 
   CGAL_TRACE_STREAM << "Start SVD decomposition...";
   task_timer.start();
@@ -86,6 +86,6 @@ int main() {
   }
   delete [] u;
 
-	return 0;
+        return 0;
 }
 

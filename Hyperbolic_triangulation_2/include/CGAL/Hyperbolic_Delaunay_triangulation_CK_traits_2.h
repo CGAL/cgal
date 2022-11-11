@@ -20,13 +20,13 @@
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Circular_kernel_2/Intersection_traits.h>
 #include <CGAL/Circular_kernel_2.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/determinant.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/variant.hpp>
 
-#include <CGAL/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
 
 namespace CGAL {
 
@@ -35,7 +35,7 @@ namespace internal {
   template <typename Traits>
   class Construct_hyperbolic_circumcenter_CK_2
   {
-    typedef typename Traits::Hyperbolic_Voronoi_point_2     Hyperbolic_Voronoi_point_2;  
+    typedef typename Traits::Hyperbolic_Voronoi_point_2     Hyperbolic_Voronoi_point_2;
     typedef typename Traits::Hyperbolic_point_2             Hyperbolic_point_2;
     typedef typename Traits::Euclidean_circle_or_line_2     Euclidean_circle_or_line_2;
     typedef typename Traits::Euclidean_line_2               Euclidean_line_2;
@@ -56,7 +56,7 @@ namespace internal {
       Hyperbolic_point_2 po(CGAL::ORIGIN);
       Circle_2 l_inf(po, FT(1));
 
-      if( _gt.compare_distance_2_object()(po, p, q) == EQUAL && 
+      if( _gt.compare_distance_2_object()(po, p, q) == EQUAL &&
           _gt.compare_distance_2_object()(po, p, r) == EQUAL)
         return po;
 
@@ -77,13 +77,13 @@ namespace internal {
           std::vector< Intersection_result > inters;
           intersection(*c_pq, *c_qr, std::back_inserter(inters));
 
-          CGAL_triangulation_assertion(assign(pair, inters[0]));
+          CGAL_assertion(assign(pair, inters[0]));
           if(pair.second == 1)
           {
             if(_gt.has_on_bounded_side_2_object()(l_inf, pair.first))
               return pair.first;
 
-            CGAL_triangulation_assertion(assign(pair, inters[1]));
+            CGAL_assertion(assign(pair, inters[1]));
             return pair.first;
           }
           return pair.first;
@@ -104,13 +104,13 @@ namespace internal {
       std::vector< Intersection_result > inters;
       intersection(*l, *c, std::back_inserter(inters));
 
-      CGAL_triangulation_assertion(assign(pair,inters[0]));
+      CGAL_assertion(assign(pair,inters[0]));
       if(pair.second == 1)
       {
         if(_gt.has_on_bounded_side_2_object()(l_inf, pair.first))
           return pair.first;
 
-        CGAL_triangulation_assertion(assign(pair, inters[1]));
+        CGAL_assertion(assign(pair, inters[1]));
         return pair.first;
       }
       return pair.first;
@@ -177,9 +177,9 @@ namespace internal {
                                     const Hyperbolic_point_2& r,
                                     const Hyperbolic_point_2& s) const
     {
-      CGAL_triangulation_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
+      CGAL_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
                                       (_gt.orientation_2_object()(p, s, q) == ON_POSITIVE_SIDE));
-      CGAL_triangulation_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
+      CGAL_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
                                       (_gt.side_of_oriented_circle_2_object()(p, s, q, r) == ON_NEGATIVE_SIDE));
 
       Construct_circle_or_line_supporting_bisector<Traits>  cclsb(_gt);
@@ -218,7 +218,7 @@ namespace internal {
                                     const Hyperbolic_point_2& q,
                                     const Hyperbolic_point_2& r) const
     {
-      CGAL_triangulation_precondition(_gt.orientation_2_object()(p, q, r) == POSITIVE);
+      CGAL_precondition(_gt.orientation_2_object()(p, q, r) == POSITIVE);
 
       Construct_circle_or_line_supporting_bisector<Traits>  cclsb(_gt);
       Construct_hyperbolic_circumcenter_CK_2<Traits>        chc(_gt);
@@ -240,13 +240,13 @@ namespace internal {
         intersection(bis_pq, l_inf, std::back_inserter(inters));
         std::pair<Circular_arc_point_2, unsigned> pair;
 
-        CGAL_triangulation_assertion(assign(pair,inters[0]));
-        CGAL_triangulation_assertion(pair.second == 1);
+        CGAL_assertion(assign(pair,inters[0]));
+        CGAL_assertion(pair.second == 1);
         if(_gt.less_y_2_object()(p, q))
           return Line_arc_2(bis_pq,a,pair.first);
 
-        CGAL_triangulation_assertion(assign(pair,inters[1]));
-        CGAL_triangulation_assertion(pair.second == 1);
+        CGAL_assertion(assign(pair,inters[1]));
+        CGAL_assertion(pair.second == 1);
         return Line_arc_2(bis_pq,a,pair.first);
       }
 
@@ -261,8 +261,8 @@ namespace internal {
       intersection(*c_pq, l_inf, std::back_inserter(inters));
       std::pair<Circular_arc_point_2, unsigned> pair;
 
-      CGAL_triangulation_assertion(assign(pair,inters[0]));
-      CGAL_triangulation_assertion(pair.second == 1);
+      CGAL_assertion(assign(pair,inters[0]));
+      CGAL_assertion(pair.second == 1);
 
       Hyperbolic_point_2 approx_pinf(to_double(pair.first.x()), to_double(pair.first.y()));
       Hyperbolic_point_2 approx_c(to_double(c_pq->center().x()),
@@ -275,7 +275,7 @@ namespace internal {
         return Circular_arc_2(*c_pq, pair.first, a);
       }
 
-      CGAL_triangulation_assertion(assign(pair,inters[1]));
+      CGAL_assertion(assign(pair,inters[1]));
       if(_gt.orientation_2_object()(approx_c,approx_a,approx_pinf) == POSITIVE)
         return Circular_arc_2(*c_pq, pair.first, a);
 
@@ -366,7 +366,7 @@ public:
   Construct_hyperbolic_circumcenter_2
   construct_hyperbolic_circumcenter_2_object() const
   { return Construct_hyperbolic_circumcenter_2(*this); }
-  
+
   Construct_hyperbolic_bisector_2
   construct_hyperbolic_bisector_2_object() const
   { return Construct_hyperbolic_bisector_2(*this); }

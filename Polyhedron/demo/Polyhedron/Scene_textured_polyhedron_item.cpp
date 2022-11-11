@@ -1,6 +1,5 @@
 #include "Scene_textured_polyhedron_item.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <QApplication>
 #include "Textured_polyhedron_type.h"
@@ -246,8 +245,8 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
 
     }
     //Lines
-    typedef Kernel::Point_3		Point;
-    typedef Base::Edge_iterator	Edge_iterator;
+    typedef Kernel::Point_3                Point;
+    typedef Base::Edge_iterator        Edge_iterator;
 
     Edge_iterator he;
 
@@ -314,7 +313,7 @@ Scene_textured_polyhedron_item::~Scene_textured_polyhedron_item()
     delete d;
 }
 
-Scene_textured_polyhedron_item* 
+Scene_textured_polyhedron_item*
 Scene_textured_polyhedron_item::clone() const {
     return new Scene_textured_polyhedron_item(*d->poly);
 }
@@ -330,14 +329,14 @@ Scene_textured_polyhedron_item::load(std::istream& in)
 }
 
 // Write textured_polyhedron to .OFF file
-bool 
+bool
 Scene_textured_polyhedron_item::save(std::ostream& out) const
 {
     out << *d->poly;
     return (bool) out;
 }
 
-QString 
+QString
 Scene_textured_polyhedron_item::toolTip() const
 {
     if(!d->poly)
@@ -416,9 +415,9 @@ void Scene_textured_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* vi
     vaos[Scene_textured_polyhedron_item_priv::Border_edges]->release();
 }
 
-Textured_polyhedron* 
+Textured_polyhedron*
 Scene_textured_polyhedron_item::textured_polyhedron()       { return d->poly; }
-const Textured_polyhedron* 
+const Textured_polyhedron*
 Scene_textured_polyhedron_item::textured_polyhedron() const { return d->poly; }
 
 bool
@@ -463,7 +462,7 @@ void Scene_textured_polyhedron_item::add_border_edges(std::vector<float> border_
 {
   d->positions_border = border_edges;
   d->nb_border = border_edges.size();
-  d->program=is_opengl_4_3 
+  d->program=is_opengl_4_3
       ? getShaderProgram(PROGRAM_SOLID_WIREFRAME)
       : getShaderProgram(PROGRAM_NO_SELECTION);
   d->program->bind();

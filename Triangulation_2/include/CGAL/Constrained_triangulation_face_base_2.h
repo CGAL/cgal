@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -16,10 +16,10 @@
 #include <CGAL/license/Triangulation_2.h>
 
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template <class Gt, class Fb = Triangulation_face_base_2<Gt> >
 class Constrained_triangulation_face_base_2
@@ -42,7 +42,7 @@ public:
 
 protected:
   bool C[3];
- 
+
 public:
   Constrained_triangulation_face_base_2()
     : Base()
@@ -50,35 +50,35 @@ public:
     set_constraints(false,false,false);
   }
 
-  Constrained_triangulation_face_base_2(Vertex_handle v0, 
-					Vertex_handle v1, 
-					Vertex_handle v2)
+  Constrained_triangulation_face_base_2(Vertex_handle v0,
+                                        Vertex_handle v1,
+                                        Vertex_handle v2)
     : Base(v0,v1,v2)
   {
     set_constraints(false,false,false);
   }
 
-  Constrained_triangulation_face_base_2(Vertex_handle v0, 
-					Vertex_handle v1, 
-					Vertex_handle v2,
-					Face_handle n0, 
-					Face_handle n1, 
-					Face_handle n2)
+  Constrained_triangulation_face_base_2(Vertex_handle v0,
+                                        Vertex_handle v1,
+                                        Vertex_handle v2,
+                                        Face_handle n0,
+                                        Face_handle n1,
+                                        Face_handle n2)
     : Base(v0,v1,v2,n0,n1,n2)
   {
     set_constraints(false,false,false);
   }
 
 
-  Constrained_triangulation_face_base_2(Vertex_handle v0, 
-					Vertex_handle v1, 
-					Vertex_handle v2,
-					Face_handle n0, 
-					Face_handle n1, 
-					Face_handle n2,
-					bool c0, 
-					bool c1, 
-					bool c2 )
+  Constrained_triangulation_face_base_2(Vertex_handle v0,
+                                        Vertex_handle v1,
+                                        Vertex_handle v2,
+                                        Face_handle n0,
+                                        Face_handle n1,
+                                        Face_handle n2,
+                                        bool c0,
+                                        bool c1,
+                                        bool c2 )
     : Base(v0,v1,v2,n0,n1,n2)
   {
     set_constraints(c0,c1,c2);
@@ -91,7 +91,7 @@ public:
   void reorient();
   void ccw_permute();
   void cw_permute();
-  
+
 };
 
 template <class Gt, class Fb>
@@ -109,10 +109,10 @@ inline void
 Constrained_triangulation_face_base_2<Gt,Fb>::
 set_constraint(int i, bool b)
 {
-  CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
+  CGAL_precondition( i == 0 || i == 1 || i == 2);
   C[i] = b;
 }
-    
+
 template <class Gt, class Fb>
 inline bool
 Constrained_triangulation_face_base_2<Gt,Fb>::
@@ -147,7 +147,7 @@ cw_permute()
   Base::cw_permute();
   set_constraints(C[1],C[2],C[0]);
 }
-  
-} //namespace CGAL 
-  
+
+} //namespace CGAL
+
 #endif //CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_H

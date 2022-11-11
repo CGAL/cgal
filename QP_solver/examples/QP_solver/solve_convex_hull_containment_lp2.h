@@ -1,4 +1,4 @@
-// example: function to check whether a point is in the convex 
+// example: function to check whether a point is in the convex
 // hull of other points; this version uses a maker
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Kernel_traits.h>
@@ -19,8 +19,8 @@ struct Homogeneous_begin  {
 template <class Point_d, class RandomAccessIterator, class ET>
 CGAL::Quadratic_program_solution<ET>
 solve_convex_hull_containment_lp (const Point_d& p,
-				  RandomAccessIterator begin,
-				  RandomAccessIterator end, const ET& dummy)
+                                  RandomAccessIterator begin,
+                                  RandomAccessIterator end, const ET& dummy)
 {
   // construct program and solve it
   return CGAL::solve_nonnegative_linear_program

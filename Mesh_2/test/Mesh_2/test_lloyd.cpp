@@ -1,3 +1,5 @@
+#define CGAL_NO_DEPRECATION_WARNINGS
+
 #include "test_dependencies.h"
 #include <CGAL/config.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -39,25 +41,67 @@ struct Lloyd_tester
 
     std::cerr << "Reading fish-and-rectangle.poly...";
     std::ifstream poly_file("fish-and-rectangle.poly");
-    CGAL::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
-    CGAL_assertion( cdt.is_valid() );
+    CGAL::IO::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
+    assert( cdt.is_valid() );
 
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\nNumber of seeds: " << seeds.size() << "\n\n";
 
     std::cerr << "Meshing the triangulation with size 0.1...";
     CGAL::refine_Delaunay_mesh_2(cdt,
-                                 seeds.begin(), seeds.end(),
-                                 Criteria(0.125, 0.1));
+                                 CGAL::parameters::seeds(seeds).criteria(Criteria(0.125, 0.1)));
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
-    CGAL_assertion( cdt.is_valid() );
-    CGAL_assertion( 580 <= cdt.number_of_vertices() &&
+    assert( cdt.is_valid() );
+    assert( 580 <= cdt.number_of_vertices() &&
                     cdt.number_of_vertices() <= 640 );
 
-    CGAL_assertion_code(
-      const size_type number_of_constraints = number_of_constrained_edges(cdt));
-    CGAL_assertion_code(
-      const size_type number_of_vertices1 = cdt.number_of_vertices());
+
+    const size_type number_of_constraints = number_of_constrained_edges(cdt);
+    const size_type number_of_vertices1 = cdt.number_of_vertices();
+
+    CGAL::Mesh_optimization_return_code rc
+      = CGAL::lloyd_optimize_mesh_2(cdt,
+              CGAL::parameters::number_of_iterations(10).
+              convergence(0.001).
+              freeze_bound(0.001).
+              seeds(seeds));
+    const size_type number_of_vertices2 = cdt.number_of_vertices();
+    std::cerr << " done (return code = "<< rc <<").\n";
+    std::cerr << "Number of vertices: " << number_of_vertices2 << "\n\n";
+
+    assert( cdt.is_valid() );
+    assert( number_of_vertices1 == number_of_vertices2 );
+    assert( number_of_constraints == number_of_constrained_edges(cdt));
+  }
+};
+
+struct Lloyd_tester_original_BP_API
+{
+  void operator()(CDT& cdt) const
+  {
+    std::vector<Point> seeds;
+    seeds.reserve(32);
+
+    std::cerr << "Reading fish-and-rectangle.poly...";
+    std::ifstream poly_file("fish-and-rectangle.poly");
+    CGAL::IO::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
+    assert( cdt.is_valid() );
+
+    std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
+              << "\nNumber of seeds: " << seeds.size() << "\n\n";
+
+    std::cerr << "Meshing the triangulation with size 0.1...";
+    CGAL::refine_Delaunay_mesh_2(cdt,
+                                 CGAL::parameters::seeds(seeds).
+                                 criteria(Criteria(0.125, 0.1)));
+    std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
+    assert( cdt.is_valid() );
+    assert( 580 <= cdt.number_of_vertices() &&
+                    cdt.number_of_vertices() <= 640 );
+
+
+    const size_type number_of_constraints = number_of_constrained_edges(cdt);
+    const size_type number_of_vertices1 = cdt.number_of_vertices();
 
     CGAL::Mesh_optimization_return_code rc
       = CGAL::lloyd_optimize_mesh_2(cdt,
@@ -70,9 +114,9 @@ struct Lloyd_tester
     std::cerr << " done (return code = "<< rc <<").\n";
     std::cerr << "Number of vertices: " << number_of_vertices2 << "\n\n";
 
-    CGAL_assertion( cdt.is_valid() );
-    CGAL_assertion( number_of_vertices1 == number_of_vertices2 );
-    CGAL_assertion( number_of_constraints == number_of_constrained_edges(cdt));
+    assert( cdt.is_valid() );
+    assert( number_of_vertices1 == number_of_vertices2 );
+    assert( number_of_constraints == number_of_constrained_edges(cdt));
   }
 };
 
@@ -82,5 +126,11 @@ int main()
   CDT cdt;
   Lloyd_tester tester;
   tester(cdt);
+
+  std::cerr << "TESTING lloyd_optimize_mesh_2 with Epick (original Boost Parameter API)...\n\n";
+  cdt = CDT();
+  Lloyd_tester_original_BP_API tester_bis;
+  tester_bis(cdt);
+
   return 0;
 }

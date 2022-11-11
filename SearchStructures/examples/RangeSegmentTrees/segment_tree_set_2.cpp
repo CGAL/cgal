@@ -48,7 +48,7 @@ int main()
   while(j!=OutputList.end())
   {
     std::cerr << (*j).first.x() << "-" << (*j).second.x() << " "
-	 << (*j).first.y() << "-" << (*j).second.y() << std::endl;
+         << (*j).first.y() << "-" << (*j).second.y() << std::endl;
     j++;
   }
   std::cerr << "\n enclosing_query (6,10),(7,11) \n";
@@ -59,7 +59,7 @@ int main()
   while(j!=N.end())
   {
     std::cerr << (*j).first.x() << "-" << (*j).second.x() << " "
-	 << (*j).first.y() << "-" << (*j).second.y() << std::endl;
+         << (*j).first.y() << "-" << (*j).second.y() << std::endl;
     j++;
   }
   if(Segment_tree_2.segment_tree_2->is_valid())

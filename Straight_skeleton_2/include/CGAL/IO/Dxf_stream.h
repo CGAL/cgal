@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Fernando Cacciola
 //
@@ -31,21 +31,21 @@ class Dxf_layer
 public:
 
   Dxf_layer( std::string aStr ) : mStr(aStr) {}
-  
+
   std::string str() const { return mStr ; }
-  
+
 private:
-  
+
   std::string mStr ;
 } ;
- 
+
 template <class Kernel_>
 class Dxf_stream
 {
 public:
 
   typedef Kernel_                                Kernel;
-  
+
   // Define the kernel objects.
   typedef typename Kernel::FT                    NT;
   typedef typename Kernel::Point_2               Point_2;
@@ -63,26 +63,26 @@ protected:
   Dxf_writer          mWriter ;
   int                 mDefaultDxfColor;
   int                 mDxfColor;
-  Color               mCgalColor ; 
+  IO::Color           mCgalColor ;
   std::string         mLayer ;
-  
+
   struct Color_less
   {
-    bool operator() ( Color const& a, Color const& b ) const
+    bool operator() ( IO::Color const& a, IO::Color const& b ) const
     {
-      return Color_value(a) < Color_value(b);        
+      return Color_value(a) < Color_value(b);
     }
-    
-    static int Color_value ( Color const& c ) 
+
+    static int Color_value ( IO::Color const& c )
     {
-      return ( int(c.r()) << 16 ) + ( int(c.g()) << 8  ) + ( int(c.b()) ) ;  
+      return ( int(c.r()) << 16 ) + ( int(c.g()) << 8  ) + ( int(c.b()) ) ;
     }
   } ;
-  
-  typedef std::map<Color,int,Color_less>  Color_table ;
-  typedef typename Color_table::const_iterator Color_table_iterator ;  
+
+  typedef std::map<IO::Color,int,Color_less>  Color_table ;
+  typedef typename Color_table::const_iterator Color_table_iterator ;
   Color_table mColorTable ;
-   
+
 private:
 
   // Copy constructor and assignment operator - not supported.
@@ -103,11 +103,11 @@ public:
     mWriter          (out)
    ,mDefaultDxfColor (255)
    ,mDxfColor        (255)
-    ,mCgalColor       (white())
+    ,mCgalColor       (IO::white())
    ,mLayer           ("0")
   {
     setup_initial_color_table();
-  }  
+  }
 
   /*!
    * Destructor.
@@ -117,16 +117,16 @@ public:
 
   /// \name Accessing drawing properties.
   //@{
-  
+
   /*!
    * Get the current layer.
    */
   std::string layer() const { return mLayer ; }
-  
+
   /*!
    * Get the current CGAL color.
    */
-  Color color () const { return mCgalColor ; }
+  IO::Color color () const { return mCgalColor ; }
 
   /*!
    * Get the current DXF color.
@@ -137,9 +137,9 @@ public:
    * Get the current DXF color.
    */
   int default_dxf_color () const { return mDefaultDxfColor ; }
-  
+
   // @}
-  
+
   /// \name Set the drawing properties.
   //@{
 
@@ -147,15 +147,15 @@ public:
    * Set the current layer.
    */
   void set_layer ( std::string aLayer ) { mLayer = aLayer ; }
-  
+
   /*!
    * Set the current color.
    * \pre The color must be defined.
    */
-  void set_color ( Color aColor )
+  void set_color ( IO::Color aColor )
   {
     mCgalColor = aColor ;
-    
+
     Color_table_iterator f = mColorTable.find(aColor);
     if ( f != mColorTable.end() )
          mDxfColor = f->second ;
@@ -171,13 +171,13 @@ public:
   {
     mDefaultDxfColor = aDxfColor ;
   }
-  
+
   /*!
    * Adds a mapping between a CGAL Color and a DXF color.
    * \param aCgalColor The CGAL color.
    * \param aDxfColor  The DXF color.
    */
-  void define_color ( Color const& aCgalColor, int aDxfColor )
+  void define_color ( IO::Color const& aCgalColor, int aDxfColor )
   {
     mColorTable.insert( std::make_pair(aCgalColor,aDxfColor) ) ;
   }
@@ -217,7 +217,7 @@ public:
   {
     mWriter.add_polyline_2( begin, end, true, mLayer, mDxfColor ) ;
   }
-  
+
   /*!
    * Write a 2D polyline but as a sequence of line segments
    * \param begin An iterator of the control points (of type Point_2).
@@ -239,7 +239,7 @@ public:
   {
     mWriter.add_segments_2( begin, end, true, mLayer, mDxfColor ) ;
   }
-  
+
   /*!
    * Write a 2D (closed) polygon.
    */
@@ -261,11 +261,11 @@ public:
     set_layer ( aLayer.str() );
     return (*this);
   }
-  
+
   /*!
    * Set the current color.
    */
-  Dxf_stream& operator<< ( Color const& aColor )
+  Dxf_stream& operator<< ( IO::Color const& aColor )
   {
     set_color (aColor);
     return (*this);
@@ -300,17 +300,17 @@ protected:
 
   void setup_initial_color_table()
   {
-    define_color(black(),0);
-    define_color(red(),1);
-    define_color(yellow(),2);
-    define_color(green(),3);
-    define_color(purple(),4);
-    define_color(blue(),5);
-    define_color(violet(),6);
-    define_color(white(),7);
-    define_color(gray(),8);
+    define_color(IO::black(),0);
+    define_color(IO::red(),1);
+    define_color(IO::yellow(),2);
+    define_color(IO::green(),3);
+    define_color(IO::purple(),4);
+    define_color(IO::blue(),5);
+    define_color(IO::violet(),6);
+    define_color(IO::white(),7);
+    define_color(IO::gray(),8);
   }
-  
+
 };
 
 } // end namespace CGAL

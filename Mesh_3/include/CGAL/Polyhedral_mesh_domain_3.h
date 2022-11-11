@@ -38,11 +38,9 @@
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/format.hpp>
 #include <boost/variant.hpp>
 #include <boost/math/special_functions/round.hpp>
@@ -52,6 +50,7 @@
 #include <sstream>
 #include <string>
 #include <utility>
+#include <type_traits>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/enumerable_thread_specific.h>
@@ -59,9 +58,9 @@
 
 // To handle I/O for Surface_patch_index if that is a pair of `int` (the
 // default)
-#include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
+#include <CGAL/SMDS_3/internal/Handle_IO_for_pair_of_int.h>
 
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 namespace CGAL {
 
@@ -104,47 +103,6 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 
 }  // end namespace details
 }  // end namespace Mesh_3
-
-namespace Mesh_3 {
-namespace internal {
-
-template <typename Polyhedron_type,
-          bool = CGAL::graph_has_property<Polyhedron_type,
-                                           CGAL::face_index_t>::value>
-class Get_face_index_pmap {
-public:
-  typedef typename boost::property_map<Polyhedron_type,
-                                       CGAL::face_index_t>::const_type Pmap;
-  Get_face_index_pmap(const Polyhedron_type&) {}
-  Pmap operator()(const Polyhedron_type& polyhedron) {
-    return get(CGAL::face_index, polyhedron);
-  }
-};
-
-template <typename Polyhedron_type>
-class Get_face_index_pmap<Polyhedron_type, false> {
-  typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
-                                                              face_descriptor;
-  typedef std::map<face_descriptor, int> Map;
-public:
-  Get_face_index_pmap(const Polyhedron_type& polyhedron) {
-    int id = 0;
-    for(face_descriptor f : faces(polyhedron))
-    {
-      face_ids[f] = id++;
-    }
-  }
-  typedef boost::associative_property_map<Map> Pmap;
-
-  Pmap operator()(const Polyhedron_type&) {
-    return Pmap(face_ids);
-  }
-private:
-  Map face_ids;
-};
-
-} // end namespace internal
-} // end namespace Mesh_3
 
 /**
  * @class Polyhedral_mesh_domain_3
@@ -204,7 +162,7 @@ public:
 
   template <typename P>
   struct Primitive_type {
-      //setting OneFaceGraphPerTree to false transforms the id type into 
+      //setting OneFaceGraphPerTree to false transforms the id type into
       //std::pair<FD, const FaceGraph*>.
     typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::const_type, CGAL::Tag_false> type;
 
@@ -221,7 +179,7 @@ public:
     }
   }; // Primitive_type (for non-Polyhedron_3)
 
- 
+
 public:
   typedef typename Primitive_type<Polyhedron>::type       Ins_fctor_primitive;
   typedef CGAL::AABB_traits<IGT, Ins_fctor_primitive>     Ins_fctor_traits;
@@ -232,7 +190,7 @@ public:
                                 Default,
                                 Ins_fctor_AABB_tree>      Inside_functor;
   typedef typename Inside_functor::AABB_tree              AABB_tree_;
-  BOOST_STATIC_ASSERT((boost::is_same<AABB_tree_, Ins_fctor_AABB_tree>::value));
+  BOOST_STATIC_ASSERT((std::is_same<AABB_tree_, Ins_fctor_AABB_tree>::value));
   typedef typename AABB_tree_::AABB_traits                AABB_traits;
   typedef typename AABB_tree_::Primitive                  AABB_primitive;
   typedef typename AABB_tree_::Primitive_id               AABB_primitive_id;
@@ -423,9 +381,9 @@ public:
       : r_domain_(domain) {}
 
     template <typename Query>
-    typename boost::enable_if<typename boost::mpl::contains<Allowed_query_types,
-                                                            Query>::type,
-                              Surface_patch>::type
+    typename std::enable_if_t<boost::mpl::contains<Allowed_query_types,
+                                                   Query>::value,
+                              Surface_patch>
     operator()(const Query& q) const
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -464,9 +422,9 @@ public:
       : r_domain_(domain) {}
 
     template <typename Query>
-    typename boost::enable_if<typename boost::mpl::contains<Allowed_query_types,
-                                                            Query>::type,
-                              Intersection>::type
+    typename std::enable_if_t<boost::mpl::contains<Allowed_query_types,
+                                                   Query>::value,
+                              Intersection>
     operator()(const Query& q) const
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -480,9 +438,7 @@ public:
       if(r_domain_.query_is_cached(q))
       {
         const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id();
-        typename cpp11::result_of<
-          typename IGT::Intersect_3(typename Primitive::Datum, Query)>::type o
-            = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
+        const auto o = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
         intersection = o ?
           Intersection_and_primitive_id(*o, primitive_id) :
           AABB_intersection();
@@ -560,28 +516,28 @@ public:
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
-   * by \c index.
+   * by `index`.
    */
   Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return Index(index); }
 
   /**
    * Returns the index to be stored in a vertex lying in the subdomain
-   * identified by \c index.
+   * identified by `index`.
    */
   Index index_from_subdomain_index(const Subdomain_index& index) const
   { return Index(index); }
 
   /**
-   * Returns the \c Surface_patch_index of the surface patch
-   * where lies a vertex with dimension 2 and index \c index.
+   * Returns the `Surface_patch_index` of the surface patch
+   * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
   { return boost::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
-   *  with dimension 3 and index \c index.
+   *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }
@@ -693,7 +649,7 @@ public:
     Query_cache &qc = query_cache.local();
     return qc.has_cache && (qc.cached_query == Cached_query(q));
 #else
-    return query_cache.has_cache 
+    return query_cache.has_cache
       && (query_cache.cached_query == Cached_query(q));
 #endif
   }
@@ -801,5 +757,5 @@ Is_in_domain::operator()(const Point_3& p) const
 }  // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
-  
+
 #endif // POLYHEDRAL_MESH_TRAITS_3_H_

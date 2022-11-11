@@ -31,16 +31,16 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #include <CGAL/IO/File_binary_mesh_3.h>
 #endif
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
-#include <CGAL/Mesh_3/utilities.h>
+#include <CGAL/SMDS_3/utilities.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/internal/Has_member_visited.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
@@ -49,8 +49,7 @@
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
-#include <boost/bind.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
@@ -76,7 +75,7 @@ namespace Periodic_3_mesh_3 {
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
 class Protect_edges_sizing_field
-  : public CGAL::Mesh_3::internal::Debug_messages_tools
+  : public CGAL::SMDS_3::internal::Debug_messages_tools
 {
   typedef Protect_edges_sizing_field          Self;
 
@@ -204,8 +203,8 @@ private:
   Vertex_handle get_vertex_corner_from_point(const Bare_point& p,
                                              const Index& p_index) const;
 
-  /// Insert point(p,w) into the triangulation and set its dimension to \c dim
-  /// and its index to \c index.
+  /// Insert point(p,w) into the triangulation and set its dimension to `dim`
+  /// and its index to `index`.
   /// The handle of the newly created vertex is returned.
   template <typename Curve_index_container>
   Vertex_handle insert_point(const Bare_point& p,
@@ -216,8 +215,8 @@ private:
                              const bool special_ball);
 
   /**
-   * Insert point(p,w) into the triangulation and set its dimension to \c dim and
-   * its index to \c index.
+   * Insert point(p,w) into the triangulation and set its dimension to `dim` and
+   * its index to `index`.
    * The handle of the newly created vertex is returned.
    *
    * This function also ensures that `point(p,w)` will not be inside a
@@ -234,11 +233,11 @@ private:
                      const Curve_index_container& curve_indices,
                      ErasedVeOutIt out);
 
-  /// Insert balls between the points identified by the handles \c vp and \c vq
-  /// on the curve identified by \c curve_index.
+  /// Insert balls between the points identified by the handles `vp` and `vq`
+  /// on the curve identified by `curve_index`.
   ///
-  /// \param orientation Orientation of the curve segment between \c vp and
-  ///        \c vq, given the orientation of the curve of index \c curve_index
+  /// \param orientation Orientation of the curve segment between `vp` and
+  ///        `vq`, given the orientation of the curve of index `curve_index`
   template <typename ErasedVeOutIt>
   ErasedVeOutIt insert_balls(const Vertex_handle& vp,
                              const Vertex_handle& vq,
@@ -261,25 +260,25 @@ private:
                              const Curve_index& curve_index,
                              ErasedVeOutIt out);
 
-  /// Return `true` if the balls of \c va and \c vb intersect, and (va,vb) is not
+  /// Return `true` if the balls of `va` and `vb` intersect, and `(va,vb)` is not
   /// an edge of the complex.
   bool non_adjacent_but_intersect(const Vertex_handle& va,
                                   const Vertex_handle& vb) const;
 
-  /// Return `true` if the balls of \c va and \c vb intersect.
+  /// Return `true` if the balls of `va` and `vb` intersect.
   bool do_balls_intersect(const Vertex_handle& va,
                           const Vertex_handle& vb) const;
 
-  /// Change the size of the ball of the vertex \c v.
+  /// Change the size of the ball of the vertex `v`.
   bool change_ball_size(Vertex_handle& v,
                         const FT squared_size,
                         const bool special_ball = false);
 
 
   /// Return `true` if balls of v1 and v2 intersect "enough".
-  /// \param orientation Orientation of the curve segment between \c v1 and
-  ///        \c v2, given the orientation of the curve of index
-  ///        \c curve_index
+  /// \param orientation Orientation of the curve segment between `v1` and
+  ///        `v2`, given the orientation of the curve of index
+  ///        `curve_index`
   /// \pre `c3t3.curve_index(v1, v2) == curve_index`
   bool is_sampling_dense_enough(const Vertex_handle& v1,
                                 const Vertex_handle& v2,
@@ -290,17 +289,17 @@ private:
   /// of those vertices is ok. If not, fix it.
   void check_and_repopulate_edges();
 
-  /// Check if the vertex \c v is well sampled, and if its not the case, fix it.
+  /// Check if the vertex `v` is well sampled, and if its not the case, fix it.
   /// Fill `out` with deleted vertices during this process. The value type of `out`
   /// is `Vertex_handle`.
   template <typename ErasedVeOutIt>
   ErasedVeOutIt
   check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out);
 
-  /// Given two vertices \c start and \c next inserted on the curve with
-  /// index \c curve_index, return `CGAL::POSITIVE` if the curve arc from
-  /// \c start to \c next is oriented in the same orientation as the curve
-  /// segment with index \c curve_index, or `CGAL::NEGATIVE` otherwise.
+  /// Given two vertices `start` and `next inserted` on the curve with
+  /// index `curve_index`, return `CGAL::POSITIVE` if the curve arc from
+  /// `start` to `next` is oriented in the same orientation as the curve
+  /// segment with index `curve_index`, or `CGAL::NEGATIVE` otherwise.
   ///
   /// \pre `c3t3.curve_index(v1, v2) == curve_index`
   CGAL::Orientation
@@ -308,13 +307,13 @@ private:
                       const Vertex_handle& next,
                       Curve_index curve_index) const;
 
-  /// Walk along the edge from \c start, following the direction \c start to
-  /// \c next, and fills \c out with the vertices which do not fulfill
+  /// Walk along the edge from `start`, following the direction `start` to
+  /// `next`, and fills `out` with the vertices which do not fulfill
   /// the sampling conditions.
   ///
-  /// \param orientation Orientation of the curve segment between \c v1 and
-  ///        \c v2, given the orientation of the curve of index
-  ///        \c curve_index
+  /// \param orientation Orientation of the curve segment between `v1` and
+  ///        `v2`, given the orientation of the curve of index
+  ///        `curve_index`
   ///
   /// \pre `c3t3.curve_index(v1, v2) == curve_index`
   template <typename ErasedVeOutIt>
@@ -325,8 +324,8 @@ private:
                   const CGAL::Orientation orientation,
                   ErasedVeOutIt out) const;
 
-  /// Return the next vertex along edge, i.e the vertex after \c start, following
-  /// the direction from \c previous to \c start.
+  /// Return the next vertex along edge, i.e the vertex after `start`, following
+  /// the direction from `previous` to `start`.
   /// \pre (previous,start) is in c3t3
   /// \pre `c3t3.curve_index(start, previous) == curve_index`
   Vertex_handle
@@ -335,12 +334,12 @@ private:
                           const Curve_index& curve_index) const;
 
   /// Replace the vertices between ]begin,last[ with new vertices, along the curve
-  /// identified by \c curve_index.
+  /// identified by `curve_index`.
   /// The value type of `InputIterator` is `Vertex_handle`.
   ///
-  /// \param orientation Orientation of the curve segment between \c begin and
-  ///        \c last, given the orientation of the curve of index
-  ///        \c curve_index
+  /// \param orientation Orientation of the curve segment between `begin` and
+  ///        `last`, given the orientation of the curve of index
+  ///        `curve_index`
   ///
   template <typename InputIterator, typename ErasedVeOutIt>
   ErasedVeOutIt repopulate(InputIterator begin,
@@ -356,33 +355,33 @@ private:
                                        const CGAL::Orientation orientation,
                                        ErasedVeOutIt out);
 
-  /// Check if the size of \c v2 is compatible (i.e. greater) with the linear
-  /// interpolation of the sizes of \c v1 and \c v3.
+  /// Check if the size of `v2` is compatible (i.e. greater) with the linear
+  /// interpolation of the sizes of `v1` and `v3`.
   bool is_sizing_field_correct(const Vertex_handle& v1,
                                const Vertex_handle& v2,
                                const Vertex_handle& v3,
                                const Curve_index& index,
                                const CGAL::Orientation orientation) const;
 
-  /// Repopulate all incident curves around the corner \c v.
-  /// \pre \c v is a corner of c3t3
+  /// Repopulate all incident curves around the corner `v`.
+  /// \pre `v` is a corner of c3t3
   template <typename ErasedVeOutIt>
   ErasedVeOutIt
   repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out);
 
-  /// Return `true` if the edge with index \c curve_index is already treated.
+  /// Return `true` if the edge with index `curve_index` is already treated.
   bool is_treated(const Curve_index& curve_index) const
   {
     return (treated_edges_.find(curve_index) != treated_edges_.end());
   }
 
-  /// Set the edge with index \c curve_index as treated.
+  /// Set the edge with index `curve_index` as treated.
   void set_treated(const Curve_index& curve_index)
   {
     treated_edges_.insert(curve_index);
   }
 
-  /// Compute the Euclidean distance between the bare points \c and \c q.
+  /// Compute the Euclidean distance between the bare points `p` and `q`.
   FT compute_distance(const Bare_point& p, const Bare_point& q) const
   {
     // No need to call min_squared_distance() because 'p' and 'q' have been
@@ -399,7 +398,7 @@ private:
     return compute_distance(pa, pb);
   }
 
-  /// Compute the Euclidean distance between the bare points of \c va and \c vb.
+  /// Compute the Euclidean distance between the bare points of `va` and `vb`.
   FT compute_distance(const Vertex_handle& va, const Vertex_handle& vb) const
   {
     typename Gt::Construct_point_3 cp =
@@ -411,7 +410,7 @@ private:
     return CGAL::sqrt(c3t3_.triangulation().min_squared_distance(cp(wpa), cp(wpb)));
   }
 
-  /// Return the radius of the ball of vertex \c v.
+  /// Return the radius of the ball of vertex `v`.
   FT get_radius(const Vertex_handle& v) const
   {
     typename Gt::Compute_weight_3 cw =
@@ -557,7 +556,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 operator()(const bool refine)
 {
   // This class is only meant to be used with periodic triangulations
-  CGAL_assertion((boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+  CGAL_assertion((std::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
 
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Inserting protection balls..." << std::endl
@@ -757,7 +756,7 @@ get_positions_with_vertex_at_extremity(const Bare_point& known_point,
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2
   std::cerr << "get_positions_with_vertex_at_extremity()" << std::endl
-            << "known_point: " << known_point << " on curve " << CGAL::oformat(curve_index)
+            << "known_point: " << known_point << " on curve " << CGAL::IO::oformat(curve_index)
             << " orientation: " << orientation
             << " inverted order ? " << std::boolalpha << inverted_return_order << std::endl;
 #endif
@@ -1392,7 +1391,7 @@ insert_corners()
     Index p_index = domain_.index_from_corner_index(corner_index);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-    std::cerr << "** treat corner #" << CGAL::oformat(p_index) << std::endl;
+    std::cerr << "** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
 #endif
 
     // Get weight (the ball radius is given by the 'query_size' function)
@@ -1477,7 +1476,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "insert_point()" << std::endl;
   std::cerr << "pos: " << p << " weight: " << w
-            << " dim: " << dim << " index: " << CGAL::oformat(index) << std::endl;
+            << " dim: " << dim << " index: " << CGAL::IO::oformat(index) << std::endl;
 #endif
 
   using CGAL::Mesh_3::internal::weight_modifier;
@@ -1541,7 +1540,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
     std::cerr << " ERROR dim=" << dim << " index=";
   }
 
-  std::cerr << CGAL::oformat(index) << std::endl;
+  std::cerr << CGAL::IO::oformat(index) << std::endl;
   if(v == Vertex_handle())
     std::cerr << "  HIDDEN!\n";
   std::cerr << "The weight was " << w << std::endl;
@@ -1570,7 +1569,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   std::cerr << "smart_insert_point((" << p
             << "), w=" << w
             << ", dim=" << dim
-            << ", index=" << CGAL::oformat(index) << ")\n";
+            << ", index=" << CGAL::IO::oformat(index) << ")\n";
 #endif
   const Tr& tr = c3t3_.triangulation();
 
@@ -2114,8 +2113,10 @@ insert_balls(const Vertex_handle& vp,
                                                 curve_index, d_sign)
                 << ")\n";
 #endif
+      const FT sgn = (d_sign == CGAL::POSITIVE) ? 1.
+                   : (d_sign == CGAL::NEGATIVE ? -1. : 0.);
       const Bare_point new_point =
-        domain_.construct_point_on_curve(vpp, curve_index, d_sign * d / 2);
+        domain_.construct_point_on_curve(vpp, curve_index, sgn * d / 2);
       const int dim = 1; // new_point is on edge
       const Index index = domain_.index_from_curve_index(curve_index);
       const FT point_weight = CGAL::square(size_(new_point, dim, index));
@@ -2268,7 +2269,7 @@ refine_balls()
     std::ostringstream oss;
     oss << "dump_protecting_balls_" << refine_balls_iteration_nb << ".cgal";
     std::ofstream outfile(oss.str().c_str(), std::ios_base::binary | std::ios_base::out);
-    CGAL::Mesh_3::save_binary_file(outfile, c3t3_, true);
+    CGAL::IO::save_binary_file(outfile, c3t3_, true);
     outfile.close();
 #endif //CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 
@@ -2453,7 +2454,7 @@ change_ball_size(Vertex_handle& v, const FT squared_size, const bool special_bal
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "change_ball_size(v=" << disp_vert(v)
             << " dim=" << c3t3_.in_dimension(v)
-            << " index=" << CGAL::oformat(c3t3_.index(v))
+            << " index=" << CGAL::IO::oformat(c3t3_.index(v))
             << " ,\n"
             << "                 (squared) size=" << w
             << ", special_ball=" << std::boolalpha << special_ball << std::endl;
@@ -2623,7 +2624,7 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   std::cerr << "check_and_fix_vertex_along_edge("
             << disp_vert(v)
             << " dim=" << get_dimension(v)
-            << " index=" << CGAL::oformat(c3t3_.index(v))
+            << " index=" << CGAL::IO::oformat(c3t3_.index(v))
             << " special=" << std::boolalpha << is_special(v)
             << ")\n";
 #endif
@@ -2892,7 +2893,7 @@ next_vertex_along_curve(const Vertex_handle& start,
   adjacent_vertices.erase
     (std::remove_if(adjacent_vertices.begin(),
                     adjacent_vertices.end(),
-                    boost::bind(&Adjacent_vertices::value_type::second, _1) != curve_index),
+                    [curve_index](const auto& p){ return p.second != curve_index;}),
      adjacent_vertices.end());
 
 //  typename Adjacent_vertices::const_iterator iv = adjacent_vertices.begin();
@@ -2931,7 +2932,7 @@ repopulate(InputIterator begin, InputIterator last,
   std::cerr << "repopulate(begin=" << disp_vert(*begin) << "\n"
             << "           last=" << disp_vert(*last)  << "\n"
             << "           distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "           curve_index=" << CGAL::oformat(curve_index) << ",\n"
+            << "           curve_index=" << CGAL::IO::oformat(curve_index) << ",\n"
             << "           orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion(std::distance(begin,last) >= 0);
@@ -2973,7 +2974,7 @@ repopulate(InputIterator begin, InputIterator last,
     default:
       std::cerr << " ERROR dim=" << get_dimension(*current)  << " curve_index=";
     }
-    std::cerr  << CGAL::oformat(c3t3_.index(*current)) << std::endl;
+    std::cerr  << CGAL::IO::oformat(c3t3_.index(*current)) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     *out++ = *current;
     remove_from_correspondence_map(*current, curve_index);
@@ -2998,7 +2999,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
   std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin) << "\n"
             << "                       last=" << disp_vert(*last) << "\n"
             << "                       distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "                       curve_index=" << CGAL::oformat(curve_index) << ",\n"
+            << "                       curve_index=" << CGAL::IO::oformat(curve_index) << ",\n"
             << "                       orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion(std::distance(begin,last) >= 0);

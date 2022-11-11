@@ -117,11 +117,33 @@ private:
   Ccw_in_between_2        f_ccw_in_between;
 
 public:
+  // The pointer to the kernel and the flag that indicate ownership should be
+  // replaced with a smart pointer. Meanwhile, the copy constructor and
+  // copy assignment prevent double delition. Notice that once a copy
+  // constructor (assignment) is present, the move constructor (assignment)
+  // is implicitly not generated anyway.
+
   /*! Default constructor. */
   Minkowski_sum_by_convolution_2() :
     m_kernel(new Kernel),
     m_own_kernel(true)
   { init(); }
+
+  /*! Copy constructor. */
+  Minkowski_sum_by_convolution_2
+  (const Minkowski_sum_by_convolution_2& other) :
+    m_kernel((other.m_own_kernel) ? new Kernel : other.m_kernel),
+    m_own_kernel(other.m_own_kernel)
+  { init(); }
+
+  /*! Copy assignment. */
+  Minkowski_sum_by_convolution_2&
+  operator=(const Minkowski_sum_by_convolution_2& other) {
+    m_kernel = (other.m_own_kernel) ? new Kernel : other.m_kernel;
+    m_own_kernel = other.m_own_kernel;
+    init();
+    return *this;
+  }
 
   /*! Constructor. */
   Minkowski_sum_by_convolution_2(const Kernel& kernel) :
@@ -244,7 +266,6 @@ public:
 
     // Construct the segments of the convolution cycles.
     unsigned int curr_id = 0;
-    unsigned int cycles = 0;
     Segments_list conv_segments;
     Segments_list cycle;
     Labels_set used_labels;
@@ -318,7 +339,6 @@ public:
               CGAL_assertion(cycle.empty());
             }
           }
-          ++cycles;
         }
 
         curr1 = next1;

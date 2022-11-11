@@ -1,0 +1,146 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\definecolor{va}{rgb}{0.5,0.0,0.0}
+\definecolor{vb}{rgb}{0.0,0.0,0.5}
+\definecolor{ea}{rgb}{1.0,0.0,0.0}
+\definecolor{eb}{rgb}{0.0,0.0,1.0}
+\definecolor{fa}{rgb}{1.0,0.8,0.8}
+\definecolor{fb}{rgb}{0.8,0.8,1.0}
+
+\definecolor{vvv}{rgb}{0.25,0.00,0.25}
+\definecolor{vev}{rgb}{0.25,0.00,0.50}
+\definecolor{vfv}{rgb}{0.65,0.40,0.50}
+\definecolor{evv}{rgb}{0.50,0.00,0.25}
+\definecolor{fvv}{rgb}{0.50,0.40,0.65}
+\definecolor{eee}{rgb}{0.50,0.00,0.50}
+\definecolor{eev}{rgb}{0.50,0.00,0.50}
+\definecolor{efe}{rgb}{0.90,0.40,0.50}
+\definecolor{fee}{rgb}{0.50,0.40,0.90}
+\definecolor{fff}{rgb}{0.90,0.80,0.90}
+%
+\def\arrAnode{%
+  \pnode(1,3){02}
+  \pnode(1,5){04}
+  \pnode(3,1){20}
+  \pnode(3,3){22}
+  \pnode(3,5){24}
+  \pnode(5,1){40}
+  \pnode(5,3){42}
+  \pnode(5,5){44}
+}
+\def\arrAcirc#1#2{%
+  \pscircle*[linecolor=#1](1,3){\vertexradius}
+  \pscircle*[linecolor=#1](1,5){\vertexradius}
+  \pscircle*[linecolor=#1](3,1){\vertexradius}
+  \pscircle*[linecolor=#2](3,3){\vertexradius}
+  \pscircle*[linecolor=#2](3,5){\vertexradius}
+  \pscircle*[linecolor=#1](5,1){\vertexradius}
+  \pscircle*[linecolor=#2](5,3){\vertexradius}
+  \pscircle*[linecolor=#2](5,5){\vertexradius}
+}
+\def\arrBnode{%
+  \pnode(1,4){03}
+  \pnode(1,7){06}
+  \pnode(4,1){30}
+  \pnode(4,4){33}
+  \pnode(4,7){36}
+  \pnode(7,1){60}
+  \pnode(7,4){63}
+  \pnode(7,7){66}
+}
+\def\arrBcirc#1#2{%
+  \pscircle*[linecolor=#1](1,4){\vertexradius}
+  \pscircle*[linecolor=#2](1,7){\vertexradius}
+  \pscircle*[linecolor=#1](4,1){\vertexradius}
+  \pscircle*[linecolor=#2](4,4){\vertexradius}
+  \pscircle*[linecolor=#2](4,7){\vertexradius}
+  \pscircle*[linecolor=#2](7,1){\vertexradius}
+  \pscircle*[linecolor=#2](7,4){\vertexradius}
+  \pscircle*[linecolor=#2](7,7){\vertexradius}
+}
+\def\arrCnode{%
+  \pnode(1,1){00}
+}
+\def\arrCcirc#1{%
+  \pscircle*[linecolor=#1](1,1){\vertexradius}
+}
+\def\arrOnode{%
+  \pnode(3,4){23}
+  \pnode(4,3){32}
+  \pnode(4,5){34}
+  \pnode(5,4){43}
+}
+\def\arrOcirc#1{%
+  \pscircle*[linecolor=#1](3,4){\vertexradius}
+  \pscircle*[linecolor=#1](4,3){\vertexradius}
+  \pscircle*[linecolor=#1](4,5){\vertexradius}
+  \pscircle*[linecolor=#1](5,4){\vertexradius}
+}
+\def\arrFace#1{
+  \psframe*[linecolor=#1](0,0)(8,8)
+  \psframe[linewidth=0.25pt](0,0)(8,8)
+}
+\begin{document}
+\begin{tabular}{ccc}
+  \psscalebox{1.8}{\arrset{0.5}
+    \pspicture[](0,0)(8,8)
+    \psset{linewidth=1pt}
+    \arrAnode
+    \arrCnode
+    \arrFace{fa}
+    \ncline[linecolor=ea]{00}{04}
+    \ncline[linecolor=ea]{20}{24}
+    \ncline[linecolor=ea]{40}{44}
+    \ncline[linecolor=ea]{00}{40}
+    \ncline[linecolor=ea]{02}{42}
+    \ncline[linecolor=ea]{04}{44}
+    \arrAcirc{va}{va}
+    \arrCcirc{va}
+    \endpspicture
+  } &
+  \psscalebox{1.8}{\arrset{0.5}
+    \pspicture[](0,0)(8,8)
+    \psset{linewidth=1pt}
+    \arrBnode
+    \arrCnode
+    \arrFace{fb}
+    \ncline[linecolor=eb]{00}{06}
+    \ncline[linecolor=eb]{30}{36}
+    \ncline[linecolor=eb]{60}{66}
+    \ncline[linecolor=eb]{00}{60}
+    \ncline[linecolor=eb]{03}{63}
+    \ncline[linecolor=eb]{06}{66}
+    \arrBcirc{vb}{vb}
+    \arrCcirc{vb}
+    \endpspicture
+  } &
+  \psscalebox{1.8}{\arrset{0.5}
+    \pspicture[](0,0)(8,8)
+    \psset{linewidth=1pt}
+    \arrAnode
+    \arrBnode
+    \arrCnode
+    \arrOnode
+    \arrFace{fff}
+    \ncline[linecolor=eee]{00}{04}
+    \ncline[linecolor=eee]{00}{40}
+    \ncline[linecolor=fee]{20}{24}
+    \ncline[linecolor=fee]{40}{44}
+    \ncline[linecolor=fee]{02}{42}
+    \ncline[linecolor=fee]{04}{44}
+    \ncline[linecolor=efe]{04}{06}
+    \ncline[linecolor=efe]{40}{60}
+    \ncline[linecolor=efe]{03}{63}
+    \ncline[linecolor=efe]{06}{66}
+    \ncline[linecolor=efe]{30}{36}
+    \ncline[linecolor=efe]{60}{66}
+    \arrAcirc{evv}{fvv}
+    \arrBcirc{vev}{vfv}
+    \arrCcirc{vvv}
+    \arrOcirc{eev}
+    \endpspicture
+  }\\
+  (a) & (b) & (c)
+  \end{tabular}
+\end{document}

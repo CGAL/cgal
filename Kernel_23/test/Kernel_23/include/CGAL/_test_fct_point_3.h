@@ -1,19 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_FCT_POINT_3_H
 #define CGAL__TEST_FCT_POINT_3_H
@@ -77,7 +77,7 @@ _test_fct_point_3(const R& )
  assert( CGAL::compare_lexicographically(p2,p3) == CGAL::LARGER );
  assert( CGAL::compare_lexicographically(p4,p3) == CGAL::LARGER );
  assert( CGAL::compare_lexicographically(p4,p4) == CGAL::EQUAL );
- 
+
  assert( CGAL::lexicographically_xyz_smaller_or_equal(p1,p1) );
  assert( CGAL::lexicographically_xyz_smaller_or_equal(p3,p1) );
  assert( CGAL::lexicographically_xyz_smaller_or_equal(p3,p2) );
@@ -190,12 +190,12 @@ _test_fct_point_3(const R& )
 // CGAL::side_of_bounded_sphere() is further tested in
 // _test_fct_points_implicit_sphere(const R& )
 
- assert( CGAL::compare_distance_to_point(p3, p3 + v001, p3+v010) == 
+ assert( CGAL::compare_distance_to_point(p3, p3 + v001, p3+v010) ==
                                                         CGAL::EQUAL );
  assert( CGAL::compare_distance_to_point(p0, p1, p2) == CGAL::LARGER );
  assert( CGAL::compare_distance_to_point(p0, p3, p1) == CGAL::SMALLER );
  assert( CGAL::compare_distance_to_point(p1, p3, p5) == CGAL::SMALLER );
- assert( CGAL::compare_distance(p3, p3 + v001, p3+v010) == 
+ assert( CGAL::compare_distance(p3, p3 + v001, p3+v010) ==
                                                         CGAL::EQUAL );
  assert( CGAL::compare_distance(p0, p1, p2) == CGAL::LARGER );
  assert( CGAL::compare_distance(p0, p3, p1) == CGAL::SMALLER );
@@ -205,13 +205,13 @@ _test_fct_point_3(const R& )
  assert( CGAL::has_smaller_distance_to_point(p0, p2, p1) );
  assert( CGAL::has_smaller_distance_to_point(p3, p1, p5) );
 
- assert( CGAL::compare_distance(p3, p3 + v001, p3+v010,p3) == 
+ assert( CGAL::compare_distance(p3, p3 + v001, p3+v010,p3) ==
                                                         CGAL::EQUAL );
  assert( CGAL::compare_distance(p0, p1, p2,p0) == CGAL::LARGER );
  assert( CGAL::compare_distance(p0, p3, p1,p0) == CGAL::SMALLER );
  assert( CGAL::compare_distance(p1, p3, p5,p1) == CGAL::SMALLER );
 
- assert( CGAL::compare_squared_distance(p3, p3 + v001, CGAL::squared_distance(p3+v010,p3)) == 
+ assert( CGAL::compare_squared_distance(p3, p3 + v001, CGAL::squared_distance(p3+v010,p3)) ==
                                                         CGAL::EQUAL );
  assert( CGAL::compare_squared_distance(p0, p1, CGAL::squared_distance(p2,p0)) == CGAL::LARGER );
  assert( CGAL::compare_squared_distance(p0, p3, CGAL::squared_distance(p1,p0)) == CGAL::SMALLER );
@@ -239,7 +239,7 @@ _test_fct_point_3(const R& )
    assert( CGAL::compare_slope(p1, p2, p0, p2) == CGAL::SMALLER );
    assert( CGAL::compare_slope(p1, p2, p0, p3) == CGAL::SMALLER );
    assert( CGAL::compare_slope(p1, p2, p4, p0) == CGAL::LARGER );
-   
+
  }
 
 
@@ -247,9 +247,9 @@ _test_fct_point_3(const R& )
  assert(CGAL::l_infinity_distance(p1,p5) == FT(6));
  // More tests, that require sqrt().
  {
-     typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
-     static const bool has_sqrt = 
-         ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
+     typedef ::CGAL::Algebraic_structure_traits<FT> AST;
+     static const bool has_sqrt =
+         ! ::std::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
      _test_fct_point_sqrt_3(R(), ::CGAL::Boolean_tag<has_sqrt>());
  }
  std::cout << "done" << std::endl;

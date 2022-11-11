@@ -39,7 +39,7 @@ struct Scene_polylines_item_private {
     {
       nb_vertices = 0;
       nb_edges = 0;
-      min_length = std::numeric_limits<double>::max();
+      min_length = (std::numeric_limits<double>::max)();
       max_length = 0;
       mean_length = 0;
       computed_stats = false;
@@ -78,12 +78,12 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
     lineWidth[1] = 10;
   }
   line_Slider->setMaximum(lineWidth[1]);
-  
+
   item->getEdgeContainer(0)->initializeBuffers(viewer);
   item->getEdgeContainer(0)->setFlatDataSize(nb_lines);
   item->getPointContainer(0)->initializeBuffers(viewer);
-  item->getPointContainer(0)->setFlatDataSize(nb_lines);  
-  
+  item->getPointContainer(0)->setFlatDataSize(nb_lines);
+
   positions_lines.clear();
   positions_lines.shrink_to_fit();
 }
@@ -105,9 +105,9 @@ Scene_polylines_item_private::computeElements() const
       if(it->empty()) continue;
       if(it->front() == it->back())
         nb_vertices += it->size() - 1;
-      else 
+      else
         nb_vertices += it->size();
-      
+
       for(size_t i = 0, end = it->size()-1;
           i < end; ++i)
       {
@@ -144,14 +144,14 @@ Scene_polylines_item_private::computeElements() const
     if(!computed_stats)
       mean_length = mean/double(nb_edges);
     computed_stats = true;
-    
+
     item->getEdgeContainer(0)->allocate(
           Ec::Vertices, positions_lines.data(),
           static_cast<int>(positions_lines.size()*sizeof(float)));
     item->getPointContainer(0)->allocate(
           Pc::Vertices, positions_lines.data(),
           static_cast<int>(positions_lines.size()*sizeof(float)));
-    
+
     item->setBuffersFilled(true);
     nb_lines = positions_lines.size();
     QApplication::restoreOverrideCursor();
@@ -253,7 +253,7 @@ Scene_polylines_item_private::computeSpheres()
               colors[2] = 200;
           }
 
-          CGAL::Color c(colors[0], colors[1], colors[2]);
+          CGAL::IO::Color c(colors[0], colors[1], colors[2]);
           spheres->add_sphere(K::Sphere_3(center+offset, spheres_drawn_square_radius),s_id++, c);
       }
       spheres->setToolTip(
@@ -264,26 +264,26 @@ Scene_polylines_item_private::computeSpheres()
                     "<li>red: four incident polylines</li>"
                     "<li>fuchsia: five or more incident polylines</li>"
                     "</ul></p>"
-                    "<p>Tip: To erase this item, set its radius to 0 or less. </p>")
+                    "<p>Tip: To remove this item, set the corner radius of its corresponding polyline to 0, or simply delete it. </p>")
                             );
       spheres->computeElements();
       QApplication::restoreOverrideCursor();
 }
 
-Scene_polylines_item::Scene_polylines_item() 
+Scene_polylines_item::Scene_polylines_item()
     :CGAL::Three::Scene_group_item("unnamed")
     ,d(new Scene_polylines_item_private(this))
 {
     setRenderingMode(FlatPlusEdges);
     d->nb_lines = 0;
-    d->spheres = NULL;
-    setEdgeContainer(0, 
+    d->spheres = nullptr;
+    setEdgeContainer(0,
                      new Ec(Three::mainViewer()->isOpenGL_4_3() ? Vi::PROGRAM_SOLID_WIREFRAME
                                                                 : Vi::PROGRAM_NO_SELECTION
                                                                   , false));
-    setPointContainer(0, 
+    setPointContainer(0,
                       new Pc(Vi::PROGRAM_NO_SELECTION, false));
-    
+
 }
 
 Scene_polylines_item::~Scene_polylines_item()
@@ -334,7 +334,7 @@ Scene_item::Bbox Scene_polylines_item::bbox() const
 {
   return Scene_item_rendering_helper::bbox();
 }
-Scene_polylines_item* 
+Scene_polylines_item*
 Scene_polylines_item::clone() const {
     Scene_polylines_item* item = new Scene_polylines_item;
     item->polylines = polylines;
@@ -406,11 +406,11 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 // Wireframe OpenGL drawing
-void 
+void
 Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
-  
+
   if(renderingMode() == Wireframe
      || renderingMode() == FlatPlusEdges)
   {
@@ -430,7 +430,7 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(viewer->isOpenGL_4_3())
     {
       QVector2D vp(viewer->width(), viewer->height());
-      
+
       getEdgeContainer(0)->setViewport(vp);
       getEdgeContainer(0)->setWidth(GLfloat(d->line_Slider->value()));
     }
@@ -443,7 +443,7 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     }
 }
 
-void 
+void
 Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
@@ -465,7 +465,7 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
       computeElements();
       initializeBuffers(viewer);
     }
-    
+
     getPointContainer(0)->setColor(this->color());
     getPointContainer(0)->draw(viewer, true);
     viewer->setGlPointSize(point_size);
@@ -476,7 +476,7 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
    }
 }
 
-QMenu* Scene_polylines_item::contextMenu() 
+QMenu* Scene_polylines_item::contextMenu()
 {
     const char* prop_name = "Menu modified by Scene_polylines_item.";
 
@@ -499,7 +499,7 @@ QMenu* Scene_polylines_item::contextMenu()
         connect(actionSmoothPolylines, SIGNAL(triggered()),this, SLOT(smooth()));
 
         QMenu *container = new QMenu(tr("Line Width"));
-        QWidgetAction *sliderAction = new QWidgetAction(0);
+        QWidgetAction *sliderAction = new QWidgetAction(nullptr);
         connect(d->line_Slider, &QSlider::valueChanged, this, &Scene_polylines_item::itemChanged);
 
         sliderAction->setDefaultWidget(d->line_Slider);
@@ -509,7 +509,7 @@ QMenu* Scene_polylines_item::contextMenu()
 
         menu->setProperty(prop_name, true);
         container->menuAction()->setProperty("is_groupable", true);
-        QAction* actionCreatePointSet = 
+        QAction* actionCreatePointSet =
             menu->addAction(tr("Create Point Set from Polyline"));
         actionCreatePointSet->setObjectName("actionCreatePointSet");
         connect(actionCreatePointSet, &QAction::triggered,
@@ -542,7 +542,7 @@ void Scene_polylines_item::change_corner_radii() {
                                      proposed_radius);
         proposed_radius /= 100;
     }
-    double r = QInputDialog::getDouble(NULL,
+    double r = QInputDialog::getDouble(nullptr,
                                        tr("Display corners with new radius..."),
                                        tr("Radius:"),
                                        proposed_radius, // value
@@ -574,18 +574,20 @@ void Scene_polylines_item::change_corner_radii(double r) {
           }
           d->spheres->invalidateOpenGLBuffers();
           d->computeSpheres();
-          
+          CGAL::Three::Three::mainWindow()->installEventFilter(d->spheres);
+          connect(d->spheres, &Scene_spheres_item::destroyMe, this,
+                  [this](){
+            removeEventFilter(d->spheres);
+            unlockChild(d->spheres);
+            scene->erase(scene->item_id(d->spheres));
+          });
         }
         else if(r>0 && d->spheres)
         {
-//          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-//          {
-//            d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
-//          }
           d->spheres->invalidateOpenGLBuffers();
           d->computeSpheres();
         }
-        else if (r<=0 && d->spheres!=NULL)
+        else if (r<=0 && d->spheres!=nullptr)
         {
           unlockChild(d->spheres);
           scene->erase(scene->item_id(d->spheres));
@@ -600,12 +602,11 @@ void Scene_polylines_item::split_at_sharp_angles()
     typedef Polyline Bare_polyline;
     Polylines_container& bare_polylines = polylines;
 
-    int counter = 0;
     for(Bare_polyline_container::iterator
         bare_polyline_it = bare_polylines.begin();
         bare_polyline_it != bare_polylines.end(); // the end changes
-        // during the loop
-        ++counter /* bare_polyline_it is incremented in the loop */)
+                                                  // during the loop
+        /* bare_polyline_it is incremented in the loop */)
     {
         Bare_polyline_container::iterator current_polyline_it =
                 bare_polyline_it;
@@ -680,7 +681,7 @@ void Scene_polylines_item::split_at_sharp_angles()
 
 void
 Scene_polylines_item::merge(Scene_polylines_item* other_item) {
-    if(other_item == 0) return;
+    if(other_item == nullptr) return;
     std::copy(other_item->polylines.begin(),
               other_item->polylines.end(),
               std::back_inserter(polylines));
@@ -696,7 +697,7 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
 
 void Scene_polylines_item::reset_spheres()
 {
-  d->spheres = NULL;
+  d->spheres = nullptr;
 }
 
 void Scene_polylines_item::smooth(){
@@ -779,7 +780,7 @@ void Scene_polylines_item::computeElements() const
 
 void Scene_polylines_item::point_set_from_polyline()
 {
-  Scene_points_with_normal_item* new_ps_item 
+  Scene_points_with_normal_item* new_ps_item
       = new Scene_points_with_normal_item();
   for(auto it = polylines.begin();
       it != polylines.end();

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -36,7 +36,7 @@ namespace CGAL {
 
 namespace internal {
 
-/*! \brief Tries to find a SIMPLE rational q with a<q<b.
+/*! \brief tries to find a SIMPLE rational q with a<q<b.
  *
  * In this context, simple means that the denominator of <tt>q</tt>
  * is a power of two, and is not too big. There is no guarantee to find
@@ -51,7 +51,7 @@ simple_bound_between(const Algebraic_real& a,
     //srb.start();
     typedef typename Algebraic_real::Rational Rational;
     typename CGAL::Fraction_traits<Rational>::Compose compose;
-    typedef typename 
+    typedef typename
         CGAL::Get_arithmetic_kernel<Rational>::Arithmetic_kernel AK;
     typedef typename AK::Bigfloat_interval Bigfloat_interval;
     typedef typename CGAL::Bigfloat_interval_traits<Bigfloat_interval>
@@ -64,7 +64,7 @@ simple_bound_between(const Algebraic_real& a,
     if(a>b) {
       return simple_bound_between(b,a);
     }
-      
+
     //std::cout << "Intermediate1: " << CGAL::to_double(a) << " " << CGAL::to_double(b) << std::endl;
     /*
      * First, refine a and b until their isolating intervals are disjoint
@@ -89,7 +89,7 @@ simple_bound_between(const Algebraic_real& a,
     //srb_b.start();
     Bigfloat x=CGAL::upper(CGAL::convert_to_bfi(a.high()));
     Bigfloat y=CGAL::lower(CGAL::convert_to_bfi(b.low()));
-    
+
     if(x>=y) {
         Rational size_a=a.high() - a.low(),
             size_b=b.high() - b.low(),
@@ -110,7 +110,7 @@ simple_bound_between(const Algebraic_real& a,
                     y=CGAL::lower(CGAL::convert_to_bfi(b.low()));
                 } else {
                     a.refine();
-                    size_a=a.high()-a.low();    
+                    size_a=a.high()-a.low();
                     x=CGAL::upper(CGAL::convert_to_bfi(a.high()));
                 }
                 size_max = size_a>size_b ? size_a : size_b;
@@ -118,7 +118,7 @@ simple_bound_between(const Algebraic_real& a,
             }
         }
     }
-    CGAL_assertion(x<y); 
+    CGAL_assertion(x<y);
 
     //srb_b.stop();
     //std::cout << "Intermediate2: " << x << " " << y << std::endl;
@@ -130,8 +130,8 @@ simple_bound_between(const Algebraic_real& a,
     Integer x_m = mantissa(x), y_m=mantissa(y);
     long x_e = exponent(x), y_e = exponent(y);
     //std::cout << "Floats1: " << x_m << " " << x_e << " and " << y_m << " " << y_e << std::endl;
-    
-    
+
+
     if (((x_m > 0) && (y_m < 0)) || ((x_m < 0) && (y_m > 0))) {
         //srb.stop();
         return Rational(0);
@@ -173,7 +173,7 @@ simple_bound_between(const Algebraic_real& a,
     }
     //srb_d.stop();
     CGAL_assertion(y_e==x_e && x_e==min_e);
-    CGAL_assertion(x_m < y_m); 
+    CGAL_assertion(x_m < y_m);
     //std::cout << "Floats4: " << x_m << " " << x_e << " and " << y_m << " " << y_e << std::endl;
 
     // Avoid mantissas to have difference one
@@ -190,7 +190,7 @@ simple_bound_between(const Algebraic_real& a,
     long x_log = x_m==Integer(0) ? -1 : CGAL::internal::floor_log2_abs(x_m),
         y_log = y_m==Integer(0) ? -1 : CGAL::internal::floor_log2_abs(y_m),
         old_log = y_log;
-    //std::cout << x_log << " < " << y_log << std::endl;  
+    //std::cout << x_log << " < " << y_log << std::endl;
     while(x_log==y_log) {
         //std::cout << "here" << std::endl;
         while(old_log > y_log) {
@@ -250,7 +250,7 @@ simple_bound_between(const Algebraic_real& a,
     return rat_between;
 }
 
-	  
+
 } // namespace internal
 
 

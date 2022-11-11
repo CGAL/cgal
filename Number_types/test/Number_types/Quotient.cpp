@@ -37,8 +37,8 @@ void test_double_ctor()
   assert(q2.numerator() == 1);
   assert(q2.denominator() == 2);
 
-  // though not exact, implicit operations +,-,* with double 
-  // should be the exactly the same as via explicit ctor! 
+  // though not exact, implicit operations +,-,* with double
+  // should be the exactly the same as via explicit ctor!
   assert( (q1+0.3) == (q1+Qt(0.3)));
   assert( (q1-0.3) == (q1-Qt(0.3)));
   assert( (q1*0.3) == (q1*Qt(0.3)));

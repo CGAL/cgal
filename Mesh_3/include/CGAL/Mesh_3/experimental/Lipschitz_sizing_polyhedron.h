@@ -26,7 +26,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <list>
 #include <sstream>
@@ -66,7 +66,7 @@ public:
 
 private:
   const Tree* m_ptree;
-  boost::shared_ptr<Tree> m_own_ptree;
+  std::shared_ptr<Tree> m_own_ptree;
 
   const MeshDomain& m_domain;
   Parameters m_params;

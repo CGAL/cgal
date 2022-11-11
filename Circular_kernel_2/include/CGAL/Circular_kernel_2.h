@@ -10,9 +10,9 @@
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_CIRCULAR_KERNEL_2_H
@@ -62,11 +62,11 @@ struct Circular_kernel_base_ref_count: public LinearKernelBase
   struct Handle { typedef Handle_for<T>    type; };
 
   template < typename Kernel2 >
-  struct Base { 
+  struct Base {
     typedef typename LinearKernelBase::template Base<Kernel2>::Type ReboundLK;
-    typedef Circular_kernel_base_ref_count<Kernel2, 
+    typedef Circular_kernel_base_ref_count<Kernel2,
                                            ReboundLK,
-                                           AlgebraicKernel>  Type; 
+                                           AlgebraicKernel>  Type;
   };
 
   #define CGAL_Circular_Kernel_pred(Y,Z) \
@@ -87,9 +87,9 @@ struct Circular_kernel_2
   : public Circular_kernel_type_equality_wrapper
      < internal::Circular_kernel_base_ref_count
         < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
-          typename LinearKernel:: template 
+          typename LinearKernel:: template
           Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type,
-          AlgebraicKernel 
+          AlgebraicKernel
         >,
        Circular_kernel_2<LinearKernel,AlgebraicKernel>
      >
@@ -98,7 +98,7 @@ struct Circular_kernel_2
   // Please remove this if you consider it to be sloppy
   struct Circular_tag{};
   typedef Circular_tag Definition_tag;
-  //  
+  //
 };
 
 } //namespace CGAL

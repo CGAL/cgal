@@ -24,8 +24,9 @@
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/variant/apply_visitor.hpp>
+
+#include <unordered_map>
 
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_ss_visitor.h>
@@ -114,7 +115,7 @@ protected:
                                                         Halfedge_map;
 
   typedef std::pair<Cell_handle_red, Cell_handle_blue>  Handle_info;
-  typedef boost::unordered_map<Vertex_handle, Handle_info, Handle_hash_function>
+  typedef std::unordered_map<Vertex_handle, Handle_info, Handle_hash_function>
                                                         Vertex_map;
 
   // Side categoties:
@@ -185,11 +186,11 @@ public:
                     Arr_curve_end cv_end,
                     bool is_new);
 
-   void update_event(Event* /* e */,
-                     const X_monotone_curve_2& /* cv */,
-                     Arr_curve_end /* cv_end */,
-                     bool /* is_new */)
-   {}
+  void update_event(Event* /* e */,
+                    const X_monotone_curve_2& /* cv */,
+                    Arr_curve_end /* cv_end */,
+                    bool /* is_new */)
+  {}
 
   /*! Update an event that corresponds to an intersection between curves. */
   void update_event(Event* /* e */,
@@ -401,7 +402,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -552,6 +553,8 @@ Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::after_sweep()
 {
+  Base::after_sweep();
+
   // Notify boundary vertices:
   typename Vertex_map::iterator it;
   for (it = m_vertices_map.begin(); it != m_vertices_map.end(); ++it) {

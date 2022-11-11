@@ -21,12 +21,12 @@ int main()
   ps.finish_facet();
 
   ps.perforate_facet("f");
-  
+
   std::cout<<"Number of cells of the combinatorial maps: ";
   ps.display_characteristics(std::cout)<<std::endl;
-  
+
   CGAL::Surface_mesh_topology::Path_on_surface<PS> p(ps);
-  p.push_back_by_label("a b -a e -b d");  
+  p.push_back_by_label("a b -a e -b d");
 
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<PS> cst(ps);
   bool res=cst.is_contractible(p);

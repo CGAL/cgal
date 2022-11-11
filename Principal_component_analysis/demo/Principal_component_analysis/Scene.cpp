@@ -19,15 +19,16 @@
 Scene::Scene()
 {
   is_gl_init = false;
-    m_pPolyhedron = NULL;
+    m_pPolyhedron = nullptr;
 
     // view options
     m_view_polyhedron = true;
-    
+
 }
 
 Scene::~Scene()
 {
+
     delete m_pPolyhedron;
 }
 
@@ -47,7 +48,7 @@ int Scene::open(QString filename)
         return -1;
     }
 
-    if(m_pPolyhedron != NULL)
+    if(m_pPolyhedron != nullptr)
         delete m_pPolyhedron;
 
     // allocate new polyhedron
@@ -59,7 +60,7 @@ int Scene::open(QString filename)
         QApplication::restoreOverrideCursor();
 
         delete m_pPolyhedron;
-        m_pPolyhedron = NULL;
+        m_pPolyhedron = nullptr;
 
         return -1;
     }
@@ -73,7 +74,7 @@ void Scene::update_bbox()
     std::cout << "Compute bbox...";
     m_bbox = Bbox();
 
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "failed (no polyhedron)." << std::endl;
         return;
@@ -105,7 +106,7 @@ void Scene::draw(Viewer* viewer)
   for(int i=0; i<16; ++i)
     mvp_matrix.data()[i] = (GLfloat)mat[i];
   rendering_program.setUniformValue("mvp_matrix", mvp_matrix);
-  
+
   if(m_view_polyhedron){
     rendering_program.setUniformValue("color", QColor(Qt::black));
     render_polyhedron(viewer);
@@ -138,11 +139,11 @@ void Scene::render_plane(Viewer* viewer)
     rendering_program.setAttributeBuffer("vertex", GL_FLOAT, 0,3);
     rendering_program.enableAttributeArray("vertex");
     buffers[0].release();
-    
+
     viewer->glDrawArrays(GL_LINE_LOOP, 0, 4);
     vao[0].release();
- 
- 
+
+
 }
 
 void Scene::render_line(Viewer* viewer)
@@ -153,8 +154,8 @@ void Scene::render_line(Viewer* viewer)
     GLfloat verts[6];
     verts[0]=a.x();verts[1]=a.y();verts[2]=a.z();
     verts[3]=b.x();verts[4]=b.y();verts[5]=b.z();
-    
-    
+
+
     vao[1].bind();
     buffers[1].bind();
     buffers[1].allocate(verts, 6*sizeof(GLfloat));
@@ -166,10 +167,10 @@ void Scene::render_line(Viewer* viewer)
 }
 
 void Scene::render_centroid(Viewer* viewer)
-{ 
+{
     GLfloat verts[3];
     verts[0]=m_centroid.x();verts[1]=m_centroid.y();verts[2]=m_centroid.z();
-    
+
     vao[2].bind();
     buffers[2].bind();
     buffers[2].allocate(verts, 3*sizeof(GLfloat));
@@ -189,12 +190,12 @@ Vector Scene::normalize(const Vector& v)
 void Scene::render_polyhedron(Viewer *viewer)
 {
     // draw black edges
-    if(m_pPolyhedron != NULL)
+    if(m_pPolyhedron != nullptr)
     {
       typedef Kernel::Point_3 Point;
-    
+
       std::vector<GLfloat> verts;
-      
+
       Polyhedron::Edge_iterator he;
       for(he = m_pPolyhedron->edges_begin();
           he != m_pPolyhedron->edges_end();
@@ -205,7 +206,7 @@ void Scene::render_polyhedron(Viewer *viewer)
         verts.push_back(a.x());verts.push_back(a.y());verts.push_back(a.z());
         verts.push_back(b.x());verts.push_back(b.y());verts.push_back(b.z());
       }
-    
+
       vao[3].bind();
       buffers[3].bind();
       buffers[3].allocate(verts.data(), static_cast<int>(verts.size()*sizeof(GLfloat)));
@@ -219,7 +220,7 @@ void Scene::render_polyhedron(Viewer *viewer)
 
 void Scene::refine_loop()
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -254,9 +255,9 @@ void Scene::fit_triangles()
 
     m_centroid = CGAL::centroid(triangles.begin(),triangles.end());
     CGAL::linear_least_squares_fitting_3(triangles.begin(),
-        triangles.end(), m_line, CGAL::Dimension_tag<2>()); 
+        triangles.end(), m_line, CGAL::Dimension_tag<2>());
     CGAL::linear_least_squares_fitting_3(triangles.begin(),
-        triangles.end(), m_plane, CGAL::Dimension_tag<2>()); 
+        triangles.end(), m_plane, CGAL::Dimension_tag<2>());
 
     std::cout << "done" << std::endl;
 }
@@ -276,12 +277,12 @@ void Scene::fit_edges()
         Segment segment(a,b);
         segments.push_back(segment);
     }
-    
+
     m_centroid = CGAL::centroid(segments.begin(),segments.end());
     CGAL::linear_least_squares_fitting_3(segments.begin(),
-        segments.end(), m_line, CGAL::Dimension_tag<1>()); 
+        segments.end(), m_line, CGAL::Dimension_tag<1>());
     CGAL::linear_least_squares_fitting_3(segments.begin(),
-        segments.end(), m_plane, CGAL::Dimension_tag<1>()); 
+        segments.end(), m_plane, CGAL::Dimension_tag<1>());
 
     std::cout << "done" << std::endl;
 }
@@ -299,12 +300,12 @@ void Scene::fit_vertices()
         const Point& p = v->point();
         points.push_back(p);
     }
-    
+
     m_centroid = CGAL::centroid(points.begin(),points.end());
     CGAL::linear_least_squares_fitting_3(points.begin(),
-        points.end(), m_line, CGAL::Dimension_tag<0>()); 
+        points.end(), m_line, CGAL::Dimension_tag<0>());
     CGAL::linear_least_squares_fitting_3(points.begin(),
-        points.end(), m_plane, CGAL::Dimension_tag<0>()); 
+        points.end(), m_plane, CGAL::Dimension_tag<0>());
 
     std::cout << "done" << std::endl;
 }
@@ -357,7 +358,7 @@ void Scene::gl_init()
   {
       std::cerr<<"linking Program FAILED"<<std::endl;
   }
-  
+
   for(int i=0; i< 4; ++i)
   {
     buffers[i].create();

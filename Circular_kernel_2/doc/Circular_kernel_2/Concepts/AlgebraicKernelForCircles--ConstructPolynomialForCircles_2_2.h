@@ -16,12 +16,12 @@ public:
 /// @{
 
 /*!
-Constructs polynomial `(x-a)^2 + (y-b)^2 - rsq`. 
-*/ 
-AlgebraicKernelForCircles::PolynomialForCircles_2_2 
-operator()(const AlgebraicKernelForCircles::FT a, 
-const AlgebraicKernelForCircles::FT b, 
-const AlgebraicKernelForCircles::FT rsq); 
+Constructs polynomial `(x-a)^2 + (y-b)^2 - rsq`.
+*/
+AlgebraicKernelForCircles::PolynomialForCircles_2_2
+operator()(const AlgebraicKernelForCircles::FT a,
+const AlgebraicKernelForCircles::FT b,
+const AlgebraicKernelForCircles::FT rsq);
 
 /// @}
 

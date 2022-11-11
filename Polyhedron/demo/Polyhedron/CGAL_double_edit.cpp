@@ -1,5 +1,5 @@
 #include "CGAL_double_edit.h"
-
+#include <iostream>
 #include <QDoubleValidator>
 
 class DoubleValidator : public QDoubleValidator
@@ -57,9 +57,9 @@ public:
     this->validator->setTop(d);
   }
 
-  void DoubleEdit::setRange(double min, double max)
+  void DoubleEdit::setRange(double rmin, double rmax)
   {
-    this->validator->setRange(min, max);
+    this->validator->setRange(rmin, rmax, this->validator->decimals());
   }
 
   double DoubleEdit::getValue()

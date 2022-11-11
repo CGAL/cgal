@@ -64,12 +64,12 @@ public:
                            const Image_word_type value_outside = 0.,
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = nullptr)
-    : Base(Wrapper(image, 
+    : Base(parameters::function = Wrapper(image,
                    Transform(iso_value),
                    Transform(iso_value)(value_outside)),
-           Mesh_3::internal::compute_bounding_box(image),
-           error_bound,
-           p_rng)
+           parameters::bounding_object = Mesh_3::internal::compute_bounding_box(image),
+           parameters::relative_error_bound = error_bound,
+           parameters::p_rng = p_rng)
   {
     CGAL_assertion(Transform(iso_value)(value_outside) == 0);
   }
@@ -79,10 +79,10 @@ public:
                            const Image_word_type value_outside = 0.,
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = nullptr)
-    : Base(Wrapper(image, transform, transform(value_outside)),
-           Mesh_3::internal::compute_bounding_box(image),
-           error_bound,
-           p_rng)
+    : Base(parameters::function = Wrapper(image, transform, transform(value_outside)),
+           parameters::bounding_object = Mesh_3::internal::compute_bounding_box(image),
+           parameters::relative_error_bound = error_bound,
+           parameters::p_rng = p_rng)
   {
     CGAL_assertion(transform(value_outside) == 0);
   }

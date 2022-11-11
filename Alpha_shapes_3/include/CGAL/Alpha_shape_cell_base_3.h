@@ -17,13 +17,13 @@
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
-#include <CGAL/internal/Lazy_alpha_nt_3.h>
+#include <CGAL/Alpha_shapes_3/internal/Lazy_alpha_nt_3.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
 
 template < class NT_>
-class  Alpha_status 
+class  Alpha_status
 : public Compact_container_base
 {
   bool _is_Gabriel;
@@ -77,13 +77,13 @@ private:
   NT A;
 
 public:
-  Alpha_shape_cell_base_3() 
+  Alpha_shape_cell_base_3()
     : Cb() {}
-  
+
   Alpha_shape_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                           Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3) {}
-  
+
   Alpha_shape_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                           Vertex_handle v2, Vertex_handle v3,
                           Cell_handle n0, Cell_handle n1,

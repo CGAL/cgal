@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -24,7 +24,7 @@ struct Line_to_epoint {
   typedef typename Kernel::RT RT;
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Line_2 Line_2;
-  enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
+  enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
                     BOTTOMFRAME, STANDARD, TOPFRAME,
                     SECORNER, RIGHTFRAME, NECORNER };
 
@@ -32,7 +32,7 @@ struct Line_to_epoint {
   static RT dx(const Line_2& l) { return l.b(); }
   static RT dy(const Line_2& l) { return -l.a(); }
 
-  static FT ordinate_distance(const Line_2& l) { 
+  static FT ordinate_distance(const Line_2& l) {
     return FT(-l.c()) / l.b();
   }
 
@@ -41,18 +41,18 @@ struct Line_to_epoint {
     RT adx = CGAL_NTS abs(dx(l)), ady = CGAL_NTS abs(dy(l));
     int sdx = CGAL_NTS sign(dx(l)), sdy = CGAL_NTS sign(dy(l));
     int cmp_dx_dy = CGAL_NTS compare(adx,ady), s(1);
-    if ( (sdx < 0) && ( (cmp_dx_dy > 0) || ( (cmp_dx_dy == 0) && 
+    if ( (sdx < 0) && ( (cmp_dx_dy > 0) || ( (cmp_dx_dy == 0) &&
                                              (sdy != (s = CGAL_NTS sign(ordinate_distance(l))))))) {
       if (0 == s) return ( sdy < 0 ? SWCORNER : NWCORNER );
       else        return LEFTFRAME;
-    } else if ( (sdx > 0) && ( (cmp_dx_dy > 0) || ( (cmp_dx_dy == 0) && 
-                                                    (sdy != (s = CGAL_NTS sign(ordinate_distance(l))))))) { 
+    } else if ( (sdx > 0) && ( (cmp_dx_dy > 0) || ( (cmp_dx_dy == 0) &&
+                                                    (sdy != (s = CGAL_NTS sign(ordinate_distance(l))))))) {
       if (0 == s) return ( sdy < 0 ? SECORNER : NECORNER );
       else        return RIGHTFRAME;
-    } else if ( (sdy < 0) && ( (cmp_dx_dy < 0) || ( (cmp_dx_dy == 0) && 
+    } else if ( (sdy < 0) && ( (cmp_dx_dy < 0) || ( (cmp_dx_dy == 0) &&
                                                     (ordinate_distance(l) < FT(0))))) {
       return BOTTOMFRAME;
-    } else if ( (sdy > 0) && ( (cmp_dx_dy < 0) || ( (cmp_dx_dy == 0) && 
+    } else if ( (sdy > 0) && ( (cmp_dx_dy < 0) || ( (cmp_dx_dy == 0) &&
                                                     (ordinate_distance(l) > FT(0))))) {
       return TOPFRAME;
     }

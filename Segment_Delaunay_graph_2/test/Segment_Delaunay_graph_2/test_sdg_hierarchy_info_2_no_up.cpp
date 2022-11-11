@@ -25,9 +25,9 @@ typedef Multi_info_convert_info<int>  Convert_info;
 typedef Multi_info_merge_info<int>    Merge_info;
 
 typedef CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
-								Info,
-								Convert_info,
-								Merge_info>
+                                                                Info,
+                                                                Convert_info,
+                                                                Merge_info>
 ST;
 
 typedef CGAL::Tag_false STag;

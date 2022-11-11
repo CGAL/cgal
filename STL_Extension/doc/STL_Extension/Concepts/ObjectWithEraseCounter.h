@@ -3,7 +3,7 @@
 \ingroup PkgSTLExtensionConcepts
 \cgalConcept
 
-The concept `ObjectWithEraseCounter` describes the functionalities 
+The concept `ObjectWithEraseCounter` describes the functionalities
 an object must provide so that its erase counter is updated by
 a `CGAL::Compact_container` or a `CGAL::Concurrent_compact_container`.
 
@@ -12,7 +12,7 @@ a `CGAL::Compact_container` or a `CGAL::Concurrent_compact_container`.
 */
 class ObjectWithEraseCounter {
 public:
-/// \name Operations 
+/// \name Operations
 /// @{
   /// Gets the value of the erase counter
   unsigned int erase_counter() const;

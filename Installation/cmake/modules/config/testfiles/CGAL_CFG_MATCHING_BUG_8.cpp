@@ -20,7 +20,7 @@
 // VC++12 both says that the call to `wconv(p)` is ambiguous:
 //
 // config\testfiles\CGAL_CFG_MATCHING_BUG_7.cpp(61) : error C2666: 'WConv::operator ()' : 2 overloads have similar conversions
-// 
+//
 //         config\testfiles\CGAL_CFG_MATCHING_BUG_7.cpp(51): could be 'void WConv::operator ()(const WP &)'
-// 
+//
 //         unable to recover from previous error(s); stopping compilation

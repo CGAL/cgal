@@ -22,7 +22,7 @@ SOURCES_DIR="$PWD"       # Directory containing the sources, default is "$PWD"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 BETA=""                  #If set, will change the release number and version number accordingly.
 DESTINATION="$PWD"
-IS_MASTER="y"
+INTEGRATION=""
 
 SOURCES_DIR_HAS_BEEN_SET=
 
@@ -45,10 +45,10 @@ usage() {
     printerr '  --no-testsuite   : when used with --do-it, the tag is made, files are published,'
     printerr '                     but the LATEST file is not updated.'
     printerr '  --verbose        : print log to standard output, instead of the log file'
-    printerr '  --beta <n>       : followed by a number. When used with --public, will modify 
+    printerr '  --beta <n>       : followed by a number. When used with --public, will modify
     the release number and the release version name to include beta<n>'
     printerr '  --dest           : followed by the path to where the release should be created. Default is /tmp.'
-    printerr '  --is_master      : replace the Ic in the name by I.'
+    printerr '  --integration    : replace the I in the name by Ic.'
     printerr '  <packages dir>   : the directory containing the packages [default is trunk]'
 }
 
@@ -99,26 +99,26 @@ while [ $1 ]; do
             continue
         ;;
         --dest)
-            shift 
+            shift
             DESTINATION=$1
             shift;continue
         ;;
-        --is_master)
-            IS_MASTER="y"
+        --integration)
+            INTEGRATION="y"
             shift;continue
         ;;
         -*)
             printerr "Unrecognized option : $1"
             exit
         ;;
-        *) 
+        *)
             if [ -z "$SOURCES_DIR_HAS_BEEN_SET" ]; then
                 SOURCES_DIR="$1"
                 SOURCES_DIR_HAS_BEEN_SET=y
                 shift; continue
-            elif [ -n "$IS_MASTER" ]; then
+            elif [ -z "$INTEGRATION" ]; then
                 # Compatibility with the old syntax with candidates
-                IS_MASTER=""
+                INTEGRATION="y"
                 shift; continue
             else
                 printerr "Unrecognized option : $1"
@@ -159,7 +159,7 @@ if [ -z "$VERBOSE" ]; then
   exec 3>&1 >> ${LOGFILE}
 fi
 
-# Verbose: displays all executed commands 
+# Verbose: displays all executed commands
 #PS4='[${LINENO}]+ '
 #set -x
 
@@ -180,12 +180,16 @@ else
 fi
 # Set the major/minor/bugfix release numbers
 NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
-MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
-MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
-BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+if [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
+    MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
+    MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
+    BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+else
+    eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
+fi
 
 # Do not show the bugfix number if it is 0.
-if [ x"$BUGFIX_NUMBER" != "x0" ]; then 
+if [ x"$BUGFIX_NUMBER" != "x0" ]; then
     BUGFIX_STRING=".$BUGFIX_NUMBER"
 else
     BUGFIX_STRING=""
@@ -202,7 +206,7 @@ if [ -z "$INTERNAL_NUMBER" ]; then
   INTERNAL_NUMBER=1
 fi
 
-if [ -z "${IS_MASTER}" ]; then
+if [ -n "${INTEGRATION}" ]; then
     INTERNAL_STRING="-Ic-${INTERNAL_NUMBER}"
 else
     INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
@@ -302,6 +306,9 @@ if [ -n "$DO_PUBLIC" ]; then
     else
 	public_release_name="CGAL-${public_release_version}"
     fi
+    if ! [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
+        eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
+    fi
 
     cmake -DGIT_REPO=${SOURCES_DIR} -DGENERATE_TARBALLS="ON" -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${public_release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
     tar -xf ${public_release_name}.tar.xz
@@ -318,23 +325,4 @@ if [ -n "$DO_PUBLIC" ]; then
     mv ${public_release_name}*.zip "${HTML_DIR}/${release_name}-public/"
     rm -f "$HTML_DIR/CGAL-last-public"
     ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
-fi
-
-if [ -n "$DO_PUBLIC" ]; then
-  if docker version > /dev/null; then
-    # Re-extract the full version of CGAL, with examples/, and doc_html/
-    rm -rf ./${public_release_name}
-    tar -xf "${HTML_DIR}/${release_name}-public/${public_release_name}.tar.xz"
-    # Build the Windows installer
-    docker pull cgal/cgal-nsis-dockerfile
-    docker create -v `realpath ${DESTINATION}/${public_release_name}`:/mnt/cgal_release:ro,z \
-                  -v ${SOURCES_DIR}:/mnt/cgal_sources:ro,z                    \
-                  cgal/cgal-nsis-dockerfile
-    container_id=`docker ps -q -l`
-    docker start -a ${container_id}
-    docker cp ${container_id}:/nsis_release/${public_release_name}-Setup.exe "${HTML_DIR}/${release_name}-public/"
-    docker rm ${container_id}
-  else
-    echo "Cannot use Docker, the Windows installer will not be created" >&2
-  fi
 fi

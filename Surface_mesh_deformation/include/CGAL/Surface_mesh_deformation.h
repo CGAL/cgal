@@ -16,12 +16,13 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
-
-#include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 #include <vector>
 #include <list>
@@ -53,12 +54,15 @@ enum Deformation_algorithm_tag
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal {
+
 template<class TriangleMesh, Deformation_algorithm_tag deformation_algorithm_tag>
 struct Types_selectors;
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
-  typedef internal::Single_cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::Single_cotangent_weight<TriangleMesh> Weight_calculator;
 
   struct ARAP_visitor{
     template <class VertexPointMap>
@@ -79,7 +83,9 @@ struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
-  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::Cotangent_weight<TriangleMesh> Weight_calculator;
 
   typedef typename Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS>
     ::ARAP_visitor ARAP_visitor;
@@ -87,7 +93,9 @@ struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
-  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::Cotangent_weight<TriangleMesh> Weight_calculator;
 
   class ARAP_visitor{
     double m_nb_edges_incident;
@@ -140,7 +148,9 @@ struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
 // on the fly in order the deformation class to be used
 // with points with minimal requirements
 template <class Vertex_point_map>
-struct SC_on_the_fly_pmap: public Vertex_point_map{
+struct SC_on_the_fly_pmap
+  : public Vertex_point_map
+{
   typedef boost::readable_property_map_tag category;
   typedef CGAL::Simple_cartesian<double>::Point_3 value_type;
   typedef value_type reference;
@@ -215,13 +225,9 @@ public:
 // Index maps
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
-    VIM,
-    typename boost::property_map<Triangle_mesh, boost::vertex_index_t>::type
-  >::type Vertex_index_map;
+    VIM, typename CGAL::GetInitializedVertexIndexMap<Triangle_mesh>::type>::type Vertex_index_map;
   typedef typename Default::Get<
-    HIM,
-    typename boost::property_map<Triangle_mesh, boost::halfedge_index_t>::type
-  >::type Hedge_index_map;
+    HIM, typename CGAL::GetInitializedHalfedgeIndexMap<Triangle_mesh>::type>::type Hedge_index_map;
 #else
   /// vertex index map type
   typedef VIM Vertex_index_map;
@@ -356,9 +362,10 @@ public:
   //vertex_point_map set by default
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
                            Vertex_index_map vertex_index_map,
-                           Hedge_index_map hedge_index_map
-                          )
-    : m_triangle_mesh(triangle_mesh), vertex_index_map(vertex_index_map), hedge_index_map(hedge_index_map),
+                           Hedge_index_map hedge_index_map)
+    : m_triangle_mesh(triangle_mesh),
+      vertex_index_map(vertex_index_map),
+      hedge_index_map(hedge_index_map),
       ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
       is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
@@ -374,10 +381,10 @@ public:
 
   //vertex_point_map and hedge_index_map set by default
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
-                           Vertex_index_map vertex_index_map
-                          )
-    : m_triangle_mesh(triangle_mesh), vertex_index_map(vertex_index_map),
-      hedge_index_map(get(boost::halfedge_index, triangle_mesh)),
+                           Vertex_index_map vertex_index_map)
+    : m_triangle_mesh(triangle_mesh),
+      vertex_index_map(vertex_index_map),
+      hedge_index_map(CGAL::get_initialized_halfedge_index_map(triangle_mesh)),
       ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
       is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
@@ -393,8 +400,8 @@ public:
   //vertex_point_map, hedge_index_map and vertex_index_map set by default
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh)
     : m_triangle_mesh(triangle_mesh),
-      vertex_index_map(get(boost::vertex_index, triangle_mesh)),
-      hedge_index_map(get(boost::halfedge_index, triangle_mesh)),
+      vertex_index_map(CGAL::get_initialized_vertex_index_map(triangle_mesh)),
+      hedge_index_map(CGAL::get_initialized_halfedge_index_map(triangle_mesh)),
       ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
       is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
@@ -413,18 +420,19 @@ public:
                            Vertex_index_map vertex_index_map,
                            Hedge_index_map hedge_index_map,
                            Vertex_point_map vertex_point_map,
-                           Weight_calculator weight_calculator = Weight_calculator()
-                          )
-    : m_triangle_mesh(triangle_mesh), vertex_index_map(vertex_index_map), hedge_index_map(hedge_index_map),
-    ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
-    is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
-    is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
-    m_iterations(5), m_tolerance(1e-4),
-    need_preprocess_factorization(true),
-    need_preprocess_region_of_solution(true),
-    last_preprocess_successful(false),
-    weight_calculator(weight_calculator),
-    vertex_point_map(vertex_point_map)
+                           Weight_calculator weight_calculator = Weight_calculator())
+    : m_triangle_mesh(triangle_mesh),
+      vertex_index_map(vertex_index_map),
+      hedge_index_map(hedge_index_map),
+      ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
+      is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
+      is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
+      m_iterations(5), m_tolerance(1e-4),
+      need_preprocess_factorization(true),
+      need_preprocess_region_of_solution(true),
+      last_preprocess_successful(false),
+      weight_calculator(weight_calculator),
+      vertex_point_map(vertex_point_map)
   {
     init();
   }
@@ -433,21 +441,23 @@ public:
 /// \name Construction
 /// @{
     /**
-   * The constructor of a deformation object
+   * The constructor of a deformation object.
    *
    * @pre `triangle_mesh` consists of only triangular facets
    * @param triangle_mesh triangulated surface mesh to deform
-   * @param vertex_index_map property map which associates an id to each vertex, from `0` to `num_vertices(triangle_mesh)-1`.
-   * @param hedge_index_map property map which associates an id to each halfedge, from `0` to `2*num_edges(triangle_mesh)-1`.
+   * @param vertex_index_map a property map which associates a unique id to each vertex,
+   *                         between `0` to `num_vertices(triangle_mesh)-1`.
+   * @param hedge_index_map property map which associates a unique id to each halfedge,
+   *                        between `0` to `2*num_edges(triangle_mesh)-1`.
    * @param vertex_point_map property map which associates a point to each vertex of the triangle mesh.
    * @param weight_calculator function object or pointer for weight calculation
+   *
    */
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
-    Vertex_index_map vertex_index_map=get(boost::vertex_index, triangle_mesh),
-    Hedge_index_map hedge_index_map=get(boost::halfedge_index, triangle_mesh),
-    Vertex_point_map vertex_point_map=get(boost::vertex_point, triangle_mesh),
-    Weight_calculator weight_calculator = Weight_calculator()
-    );
+                           Vertex_index_map vertex_index_map = unspecified_internal_vertex_index_map,
+                           Hedge_index_map hedge_index_map = unspecified_internal_halfedge_index_map,
+                           Vertex_point_map vertex_point_map = get(boost::vertex_point, triangle_mesh),
+                           Weight_calculator weight_calculator = Weight_calculator());
 /// @}
   #endif
 

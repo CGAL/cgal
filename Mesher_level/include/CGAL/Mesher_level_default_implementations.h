@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -26,10 +26,10 @@ class Triangulation_ref_impl
 {
   Tr& tr;
 public:
-  Triangulation_ref_impl(Tr& t) : tr(t) 
+  Triangulation_ref_impl(Tr& t) : tr(t)
   {
   }
-  
+
   Tr& triangulation_ref_impl()
   {
     return tr;
@@ -43,11 +43,11 @@ public:
 
 /** This struct implements an empty private_test_point_conflict_impl()
     function. */
-struct No_private_test_point_conflict 
+struct No_private_test_point_conflict
 {
   template <typename Point, typename Zone>
   Mesher_level_conflict_status
-  private_test_point_conflict_impl(const Point&, const Zone&) const 
+  private_test_point_conflict_impl(const Point&, const Zone&) const
   {
     return NO_CONFLICT;
   }
@@ -59,7 +59,7 @@ struct No_test_point_conflict_from_superior
 {
   template <typename Point, typename Zone>
   Mesher_level_conflict_status
-  test_point_conflict_from_superior_impl(const Point&, const Zone&) const 
+  test_point_conflict_from_superior_impl(const Point&, const Zone&) const
   {
     return NO_CONFLICT;
   }
@@ -69,7 +69,7 @@ struct No_test_point_conflict_from_superior
       - private_test_point_conflict_impl() and
       - test_point_conflict_from_superior_impl().
 */
-struct No_test_point_conflict : 
+struct No_test_point_conflict :
   public No_private_test_point_conflict,
   public No_test_point_conflict_from_superior
 {
@@ -81,7 +81,7 @@ struct No_before_insertion
 {
   template <typename Cell_handle, typename Point, typename Zone>
   void before_insertion_impl(const Cell_handle&, const Point&,
-			     Zone& )
+                             Zone& )
   {
   }
 }; // end No_before_insertion
@@ -102,7 +102,7 @@ struct No_after_no_insertion
 {
   template <typename Cell_handle, typename Point, typename Zone>
   void after_no_insertion_impl(const Cell_handle&, const Point&,
-			       const Zone& )
+                               const Zone& )
   {
   }
 }; // end No_after_no_insertion

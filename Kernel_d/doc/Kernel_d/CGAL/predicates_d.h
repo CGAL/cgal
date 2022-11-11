@@ -9,7 +9,7 @@ namespace CGAL {
 returns true iff the points in `A = tuple [first,last)` are
 affinely independent.
 
-\pre The objects are of the same dimension. 
+\pre The objects are of the same dimension.
 \tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> bool
@@ -21,7 +21,7 @@ affinely_independent(ForwardIterator first, ForwardIterator last);
 
 computes
 the affine rank of the points in `A = tuple [first,last)`.
-\pre The objects in \f$ A\f$ are of the same dimension. 
+\pre The objects in \f$ A\f$ are of the same dimension.
 \tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> int
@@ -77,7 +77,7 @@ determines whether \f$ p\f$ is contained in the
 simplex of the points in `A = tuple [first,last)`.
 
 \pre The objects in \f$ A\f$ are of the same dimension and affinely
-independent. 
+independent.
 \tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> bool
@@ -117,7 +117,7 @@ p, const Point_d<R>& q);
 decides whether the vectors in `A = tuple [first,last)`
 are linearly independent.
 
-\pre The objects in `A` are of the same dimension. 
+\pre The objects in `A` are of the same dimension.
 \tparam ForwardIterator has `Vector_d<R>` as value type.
 */
 template <class ForwardIterator> bool
@@ -130,7 +130,7 @@ last);
 
 computes
 the linear rank of the vectors in `A = tuple [first,last)`.
-\pre The objects are of the same dimension. 
+\pre The objects are of the same dimension.
 \tparam ForwardIterator has `Vector_d<R>` as value type.
 */
 template <class ForwardIterator> int
@@ -146,7 +146,7 @@ determines the orientation of the points of the tuple `A = tuple [first,last)` w
 1 & 1 & 1 & 1 \\
 A[0] & A[1] & \dots& A[d]
 \end{array} \right| \f]
-where `A[i]` denotes the %Cartesian coordinate vector of 
+where `A[i]` denotes the %Cartesian coordinate vector of
 the \f$ i\f$-th point in \f$ A\f$.
 \pre `size [first,last) == d+1` and `A[i].dimension() == d` \f$ \forall0 \leq i \leq d\f$.
 
@@ -164,7 +164,7 @@ returns the relative position of point
 `p` to the sphere defined by `A = tuple [first,last)`. The
 order of the points of \f$ A\f$ does not matter.
 
-\pre `orientation(first,last)` is not `ZERO`. 
+\pre `orientation(first,last)` is not `ZERO`.
 \tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> Bounded_side
@@ -181,7 +181,7 @@ important, since it determines the orientation of the implicitly
 constructed sphere. If the points in \f$ A\f$ are positively oriented,
 the positive side is the bounded interior of the sphere.
 
-\pre `A` contains \f$ d+1\f$ points in \f$ d\f$-space. 
+\pre `A` contains \f$ d+1\f$ points in \f$ d\f$-space.
 \tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> Oriented_side

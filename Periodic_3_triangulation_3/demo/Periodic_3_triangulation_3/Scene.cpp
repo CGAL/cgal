@@ -711,7 +711,7 @@ void Scene::attrib_buffers(CGAL::QGLViewer* viewer)
     {
         mvMatrix.data()[i] = (float)mat[i];
     }
-    QVector4D	position(0.0f,0.0f,1.0f,1.0f );
+    QVector4D        position(0.0f,0.0f,1.0f,1.0f );
 
 
     rendering_program.bind();
@@ -828,7 +828,7 @@ void Scene::draw() {
         change_material(materials[VERTEX_COLOR]);
         attrib_buffers(ui->viewer);
         rendering_program.bind();
-        
+
         glEnable(GL_POINT_SMOOTH);
 
         rendering_program.setUniformValue(colorLocation[0], color);
@@ -1368,7 +1368,7 @@ void Scene::gl_draw_location() {
     if (in_plane) {
         int i=0;
         int count = 0;
-        // Figure out whether there is a facet that is completly contained
+        // Figure out whether there is a facet that is completely contained
         // in the z=0 plane
         for (int j=0 ; j<4 ; j++) {
             if (ch->vertex(j)->point().z() != 0.0 ||

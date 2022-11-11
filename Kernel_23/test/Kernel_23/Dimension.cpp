@@ -113,7 +113,7 @@ int main()
   test<CGAL::Homogeneous<int> >(CGAL::Dimension_tag<2>());
   test<CGAL::Homogeneous<int> >(CGAL::Dimension_tag<3>());
   test<CGAL::Homogeneous_d<int> >(CGAL::Dynamic_dimension_tag());
-  
+
   test<CGAL::Exact_predicates_inexact_constructions_kernel>(CGAL::Dimension_tag<2>());
   test<CGAL::Exact_predicates_inexact_constructions_kernel>(CGAL::Dimension_tag<3>());
 

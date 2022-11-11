@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -14,9 +14,6 @@
 #define CGAL_GPS_TRAITS_DECORATOR_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
-
-
-#include <boost/mpl/assert.hpp>
 
 namespace CGAL {
 
@@ -56,32 +53,16 @@ public:
   typedef typename Base::Right_side_category       Right_side_category;
 
   // a side is either oblivious or open (unbounded)
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
-       boost::is_same< Left_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Left_side_category, Arr_open_side_tag > >
-      )
-  );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
-       boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Bottom_side_category, Arr_open_side_tag > >
-      )
-  );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
-       boost::is_same< Top_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Top_side_category, Arr_open_side_tag > >
-      )
-  );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
-       boost::is_same< Right_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Right_side_category, Arr_open_side_tag > >
-      )
-  );
+  CGAL_static_assertion((std::is_same< Left_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Left_side_category, Arr_open_side_tag >::value));
+  CGAL_static_assertion((std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Bottom_side_category, Arr_open_side_tag >::value));
+  CGAL_static_assertion((std::is_same< Top_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Top_side_category, Arr_open_side_tag >::value));
+  CGAL_static_assertion((std::is_same< Right_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Right_side_category, Arr_open_side_tag >::value));
 
-  class Ex_point_2 
+  class Ex_point_2
   {
   protected:
     Base_Point_2 m_base;
@@ -138,7 +119,7 @@ public:
   protected:
     Base_X_monotone_curve_2    m_base;
     Curve_data                 m_data;
-    
+
     public:
     Ex_x_monotone_curve_2(): m_base(),
                              m_data()
@@ -148,7 +129,7 @@ public:
                                                                m_data()
     {}
 
-    Ex_x_monotone_curve_2(const Base_X_monotone_curve_2& pt, 
+    Ex_x_monotone_curve_2(const Base_X_monotone_curve_2& pt,
                           const Curve_data& data): m_base(pt),
                                                    m_data(data)
     {}
@@ -202,25 +183,27 @@ public:
   protected:
 
   //Data members
-  const Base * m_base_tr;
+  const Base* m_base_traits;
   bool m_traits_owner;
 
 public:
-  
+
   Gps_traits_decorator() :
-    m_base_tr(new Base()),
+    m_base_traits(new Base()),
     m_traits_owner(true)
   {}
 
-  Gps_traits_decorator(const Base & base_traits) :
-    m_base_tr(&base_traits),
+  Gps_traits_decorator(const Base& base_traits) :
+    m_base_traits(&base_traits),
     m_traits_owner(false)
   {}
 
   ~Gps_traits_decorator()
   {
-    if (m_traits_owner)
-      delete m_base_tr;
+    if (m_traits_owner) {
+      delete m_base_traits;
+      m_base_traits = nullptr;
+    }
   }
 
   class Compare_x_2
@@ -242,7 +225,7 @@ public:
   /*! Get a Compare_x_2 functor object. */
   Compare_x_2 compare_x_2_object () const
   {
-    return Compare_x_2(m_base_tr->compare_x_2_object());
+    return Compare_x_2(m_base_traits->compare_x_2_object());
   }
 
 
@@ -265,7 +248,7 @@ public:
   /*! Get a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object () const
   {
-    return Compare_xy_2(m_base_tr->compare_xy_2_object());
+    return Compare_xy_2(m_base_traits->compare_xy_2_object());
   }
 
   class Construct_min_vertex_2
@@ -288,7 +271,7 @@ public:
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
-    return Construct_min_vertex_2(m_base_tr->construct_min_vertex_2_object());
+    return Construct_min_vertex_2(m_base_traits->construct_min_vertex_2_object());
   }
 
   class Construct_max_vertex_2
@@ -311,7 +294,7 @@ public:
   /*! Get a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
-    return Construct_max_vertex_2(m_base_tr->construct_max_vertex_2_object());
+    return Construct_max_vertex_2(m_base_traits->construct_max_vertex_2_object());
   }
 
 
@@ -334,7 +317,7 @@ public:
   /*! Get a Is_vertical_2 functor object. */
   Is_vertical_2 is_vertical_2_object() const
   {
-    return Is_vertical_2(m_base_tr->is_vertical_2_object());
+    return Is_vertical_2(m_base_traits->is_vertical_2_object());
   }
 
 
@@ -358,7 +341,7 @@ public:
   /*! Get a compare_y_at_x_2_object functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   {
-    return Compare_y_at_x_2(m_base_tr->compare_y_at_x_2_object());
+    return Compare_y_at_x_2(m_base_traits->compare_y_at_x_2_object());
   }
 
 
@@ -384,7 +367,7 @@ public:
   /*! Get a Compare_y_at_x_right_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   {
-    return Compare_y_at_x_right_2(m_base_tr->compare_y_at_x_right_2_object());
+    return Compare_y_at_x_right_2(m_base_traits->compare_y_at_x_right_2_object());
   }
 
 
@@ -407,7 +390,7 @@ public:
   /*! Get a Equal_2 functor object. */
   Equal_2 equal_2_object() const
   {
-    return Equal_2(m_base_tr->equal_2_object());
+    return Equal_2(m_base_traits->equal_2_object());
   }
 
 
@@ -432,7 +415,7 @@ public:
   /*! Get a Split_2 functor object. */
   Split_2 split_2_object() const
   {
-    return Split_2(m_base_tr->split_2_object());
+    return Split_2(m_base_traits->split_2_object());
   }
 
 
@@ -469,7 +452,7 @@ public:
         oi_end = m_base(cv2.base(), cv1.base(), oi);
 
       // convert objects that are associated with Base_X_monotone_curve_2 to
-      // the extenede X_monotone_curve_2 
+      // the extenede X_monotone_curve_2
       for(; oi != oi_end; ++oi)
       {
         base_pt = object_cast<std::pair<Base_Point_2, Multiplicity> >(&(*oi));
@@ -477,7 +460,7 @@ public:
         if (base_pt != nullptr)
         {
           Point_2 point_plus (base_pt->first); // the extended point
-          *oi = CGAL::make_object(std::make_pair(point_plus, 
+          *oi = CGAL::make_object(std::make_pair(point_plus,
                                                  base_pt->second));
         }
         else
@@ -489,15 +472,15 @@ public:
       }
       //return past-end iterator
       return oi_end;
-    }    
+    }
   };
 
   /*! Get a Intersect_2 functor object. */
   Intersect_2 intersect_2_object() const
   {
-    return Intersect_2(m_base_tr->intersect_2_object(),
-                       m_base_tr->compare_xy_2_object(),
-                       m_base_tr->construct_min_vertex_2_object());
+    return Intersect_2(m_base_traits->intersect_2_object(),
+                       m_base_traits->compare_xy_2_object(),
+                       m_base_traits->construct_min_vertex_2_object());
   }
 
 
@@ -522,7 +505,7 @@ public:
   /*! Get a Compare_endpoints_xy_2 functor object. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   {
-    return Compare_endpoints_xy_2(m_base_tr->compare_endpoints_xy_2_object());
+    return Compare_endpoints_xy_2(m_base_traits->compare_endpoints_xy_2_object());
   }
 
 
@@ -545,7 +528,7 @@ public:
   /*! Get a Construct_opposite_2 functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   {
-    return Construct_opposite_2(m_base_tr->construct_opposite_2_object());
+    return Construct_opposite_2(m_base_traits->construct_opposite_2_object());
   }
 
 };

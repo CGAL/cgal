@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -28,7 +28,7 @@
 
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -36,10 +36,10 @@ namespace internal {
 template <class K>
 class Ray_2_Ray_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, RAY};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, RAY, UNKNOWN};
     Ray_2_Ray_2_pair(typename K::Ray_2 const *ray1,
-		     typename K::Ray_2 const *ray2)
-	    : _ray1(ray1), _ray2(ray2), _known(false) {}
+                     typename K::Ray_2 const *ray2)
+            : _ray1(ray1), _ray2(ray2) {}
 
     Intersection_results intersection_type() const;
 
@@ -49,8 +49,7 @@ public:
 protected:
     typename K::Ray_2 const*    _ray1;
     typename K::Ray_2 const *   _ray2;
-    mutable bool                    _known;
-    mutable Intersection_results    _result;
+    mutable Intersection_results    _result = UNKNOWN;
     mutable typename K::Point_2         _intersection_point, _other_point;
 };
 
@@ -71,10 +70,9 @@ template <class K>
 typename Ray_2_Ray_2_pair<K>::Intersection_results
 Ray_2_Ray_2_pair<K>::intersection_type() const
 {
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
     // The non const this pointer is used to cast away const.
-    _known = true;
 //    if (!do_overlap(_ray1->bbox(), _ray2->bbox()))
 //        return NO_INTERSECTION;
     const typename K::Line_2 &l1 = _ray1->supporting_line();
@@ -138,7 +136,7 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
                     return _result;
                 }
             }
-            
+
         } else {
             typedef typename K::FT FT;
             if (dir1.y() > FT(0)) {
@@ -182,9 +180,9 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
                     return _result;
                 }
             }
-            
+
         }
-        } 
+        }
     default:
         CGAL_kernel_assertion(false); // should not be reached:
         return _result;
@@ -196,7 +194,7 @@ template <class K>
 typename K::Point_2
 Ray_2_Ray_2_pair<K>::intersection_point() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -207,7 +205,7 @@ typename K::Segment_2
 Ray_2_Ray_2_pair<K>::intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return Segment_2(_ray1->source(), _ray2->source());
@@ -218,7 +216,7 @@ typename K::Ray_2
 Ray_2_Ray_2_pair<K>::intersection_ray() const
 {
   typedef typename K::Ray_2 Ray_2;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == RAY);
     return Ray_2(_intersection_point, _ray1->direction());
@@ -229,9 +227,9 @@ Ray_2_Ray_2_pair<K>::intersection_ray() const
 template <class K>
 typename CGAL::Intersection_traits
   <K, typename K::Ray_2, typename K::Ray_2>::result_type
-intersection(const typename K::Ray_2 &ray1, 
-	     const typename K::Ray_2 &ray2,
-	     const K&)
+intersection(const typename K::Ray_2 &ray1,
+             const typename K::Ray_2 &ray2,
+             const K&)
 {
     typedef Ray_2_Ray_2_pair<K> is_t;
     is_t ispair(&ray1, &ray2);

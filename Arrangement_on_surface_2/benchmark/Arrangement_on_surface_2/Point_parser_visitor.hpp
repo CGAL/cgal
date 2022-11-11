@@ -46,7 +46,7 @@ public:
   void make_point(FT & x, FT & y, Rat_point & p)
   {
     typename Rat_kernel::FT kx(x);
-    typename Rat_kernel::FT ky(y);      
+    typename Rat_kernel::FT ky(y);
     p = Rat_point(kx, ky);
     double dx = CGAL::to_double(x);
     double dy = CGAL::to_double(y);
@@ -59,7 +59,7 @@ public:
   void make_point(FT & x, FT & y, FT & w, Rat_point & p)
   {
     typename Rat_kernel::FT kx(x/w);
-    typename Rat_kernel::FT ky(y/w);      
+    typename Rat_kernel::FT ky(y/w);
     p = Rat_point(kx, ky);
   }
 
@@ -71,7 +71,7 @@ public:
   template <class RT, class FT>
   void make_ft(RT & num, RT & denom, FT & n, CGAL::Tag_false)
   { n = num / denom; }
-  
+
   /*! Parse a generic Cartesian point */
   virtual void accept_point_2(std::string x, std::string y)
   {
@@ -100,7 +100,7 @@ public:
   }
 
   /*! Parse a rational Cartesian point */
-  virtual void accept_point_2(std::string x_num, std::string x_denom, 
+  virtual void accept_point_2(std::string x_num, std::string x_denom,
                               std::string y_num, std::string y_denom)
   {
     typedef typename Number_type_traits<Rat_number_type>::RT            RT;

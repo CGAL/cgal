@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 
@@ -18,7 +18,7 @@
 
 #include <utility>
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/internal/Lazy_alpha_nt_2.h>
+#include <CGAL/Alpha_shapes_2/internal/Lazy_alpha_nt_2.h>
 
 //-------------------------------------------------------------------
 namespace CGAL {
@@ -58,11 +58,11 @@ public:
   Alpha_shape_vertex_base_2()
     : Vb()
   {}
-  
+
   Alpha_shape_vertex_base_2(const Point & p)
     : Vb(p)
   {}
-  
+
   Alpha_shape_vertex_base_2(const Point & p, Face_handle f)
     : Vb(p, f)
   {}

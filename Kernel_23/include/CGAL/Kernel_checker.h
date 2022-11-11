@@ -1,16 +1,16 @@
-// Copyright (c) 2001  
+// Copyright (c) 2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 //                 Mael Rouxel-Labbé
@@ -21,7 +21,6 @@
 // This file contains the definition of a kernel traits checker.
 
 #include <CGAL/basic.h>
-#include <CGAL/result_of.h>
 #include <CGAL/use.h>
 
 #include <utility>
@@ -79,164 +78,16 @@ public:
     : p1(pp1), p2(pp2), cmp(c)
   { }
 
-  template <class A1>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&)>::type,
-                   typename CGAL::cpp11::result_of<P2(const A1&)>::type>::result_type
-  operator()(const A1 &a1) const
+  template <class ... A>
+  decltype(auto)
+  operator()(const A&... a) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const A1&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const A1&)>::type result_type_2;
-    result_type_1 res1 = p1(a1.first);
-    result_type_2 res2 = p2(a1.second);
-    if (! cmp(res1, res2))
-    {
-      std::cerr << "Kernel_checker error : " << res1 << " != " << res2
-                << " for the inputs : " << std::endl;
-      std::cerr << a1.first << std::endl;
-      std::cerr << a1.second << std::endl;
-      std::cerr << "functor first kernel : "
-                << typeid(p1).name() << std::endl;
-      std::cerr << "functor second kernel: "
-                << typeid(p2).name() << std::endl;
-      std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
-      CGAL_kernel_assertion(false);
-    }
-    return Pairify<result_type_1, result_type_2>()(res1, res2);
+    auto res1 = p1(a.first...);
+    auto res2 = p2(a.second...);
+
+    CGAL_kernel_assertion(cmp(res1, res2));
+    return Pairify<decltype(res1), decltype(res2)>()(res1, res2);
   }
-
-  template <class A1, class A2>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&, const A2&)>::type,
-                   typename CGAL::cpp11::result_of<P2(const A1&, const A2&)>::type>::result_type
-  operator()(const A1 &a1, const A2 &a2) const
-  {
-    typedef typename CGAL::cpp11::result_of<P1(const A1&, const A2&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const A1&, const A2&)>::type result_type_2;
-    result_type_1 res1 = p1(a1.first, a2.first);
-    result_type_2 res2 = p2(a1.second, a2.second);
-    if (! cmp(res1, res2))
-    {
-      std::cerr << "Kernel_checker error : " << res1 << " != " << res2
-                << " for the inputs : " << std::endl;
-      std::cerr << a1.first << std::endl;
-      std::cerr << a1.second << std::endl;
-      std::cerr << a2.first << std::endl;
-      std::cerr << a2.second << std::endl;
-      std::cerr << "functor first kernel : "
-                << typeid(p1).name() << std::endl;
-      std::cerr << "functor second kernel: "
-                << typeid(p2).name() << std::endl;
-      std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
-      CGAL_kernel_assertion(false);
-    }
-    return Pairify<result_type_1, result_type_2>()(res1, res2);
-  }
-
-  template <class A1, class A2, class A3>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(
-                     const A1&, const A2&, const A3&)>::type,
-                   typename CGAL::cpp11::result_of<P2(
-                     const A1&, const A2&, const A3&)>::type>::result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
-  {
-    typedef typename CGAL::cpp11::result_of<P1(const A1&, const A2&, const A3&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const A1&, const A2&, const A3&)>::type result_type_2;
-    result_type_1 res1 = p1(a1.first, a2.first, a3.first);
-    result_type_2 res2 = p2(a1.second, a2.second, a3.second);
-    if (! cmp(res1, res2))
-    {
-      std::cerr << "Kernel_checker error : " << res1 << " != " << res2
-                << " for the inputs : " << std::endl;
-      std::cerr << a1.first << std::endl;
-      std::cerr << a1.second << std::endl;
-      std::cerr << a2.first << std::endl;
-      std::cerr << a2.second << std::endl;
-      std::cerr << a3.first << std::endl;
-      std::cerr << a3.second << std::endl;
-      std::cerr << "functor first kernel : "
-                << typeid(p1).name() << std::endl;
-      std::cerr << "functor second kernel: "
-                << typeid(p2).name() << std::endl;
-      std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
-      CGAL_kernel_assertion(false);
-    }
-    return Pairify<result_type_1, result_type_2>()(res1, res2);
-  }
-
-  template <class A1, class A2, class A3, class A4>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(
-                     const A1&, const A2&, const A3&, const A4&)>::type,
-                   typename CGAL::cpp11::result_of<P2(
-                     const A1&, const A2&, const A3&, const A4&)>::type>::result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
-  {
-    typedef typename CGAL::cpp11::result_of<P1(
-                       const A1&, const A2&, const A3&, const A4&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(
-                       const A1&, const A2&, const A3&, const A4&)>::type result_type_2;
-
-    result_type_1 res1 = p1(a1.first, a2.first, a3.first, a4.first);
-    result_type_2 res2 = p2(a1.second, a2.second, a3.second, a4.second);
-    if (! cmp(res1, res2))
-    {
-      std::cerr << "Kernel_checker error : " << res1 << " != " << res2
-                << " for the inputs : " << std::endl;
-      std::cerr << a1.first << std::endl;
-      std::cerr << a1.second << std::endl;
-      std::cerr << a2.first << std::endl;
-      std::cerr << a2.second << std::endl;
-      std::cerr << a3.first << std::endl;
-      std::cerr << a3.second << std::endl;
-      std::cerr << a4.first << std::endl;
-      std::cerr << a4.second << std::endl;
-      std::cerr << "functor first kernel : "
-                << typeid(p1).name() << std::endl;
-      std::cerr << "functor second kernel: "
-                << typeid(p2).name() << std::endl;
-      std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
-      CGAL_kernel_assertion(false);
-    }
-    return Pairify<result_type_1, result_type_2>()(res1, res2);
-  }
-
-  template <class A1, class A2, class A3, class A4, class A5>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(
-                     const A1&, const A2&, const A3&, const A4&, const A5&)>::type,
-                   typename CGAL::cpp11::result_of<P2(
-                     const A1&, const A2&, const A3&, const A4&, const A5&)>::type>::result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4, const A5 &a5) const
-  {
-    typedef typename CGAL::cpp11::result_of<P1(
-      const A1&, const A2&, const A3&, const A4&, const A5&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(
-      const A1&, const A2&, const A3&, const A4&, const A5&)>::type result_type_2;
-
-    result_type_1 res1 = p1(a1.first, a2.first, a3.first, a4.first, a5.first);
-    result_type_2 res2 = p2(a1.second, a2.second, a3.second, a4.second, a5.second);
-    if (! cmp(res1, res2))
-    {
-      std::cerr << "Kernel_checker error : " << res1 << " != " << res2
-                << " for the inputs : " << std::endl;
-      std::cerr << a1.first << std::endl;
-      std::cerr << a1.second << std::endl;
-      std::cerr << a2.first << std::endl;
-      std::cerr << a2.second << std::endl;
-      std::cerr << a3.first << std::endl;
-      std::cerr << a3.second << std::endl;
-      std::cerr << a4.first << std::endl;
-      std::cerr << a4.second << std::endl;
-      std::cerr << a5.first << std::endl;
-      std::cerr << a5.second << std::endl;
-      std::cerr << "functor first kernel : "
-                << typeid(p1).name() << std::endl;
-      std::cerr << "functor second kernel: "
-                << typeid(p2).name() << std::endl;
-      std::cerr << CGAL_PRETTY_FUNCTION << std::endl;
-      CGAL_kernel_assertion(false);
-    }
-    return Pairify<result_type_1, result_type_2>()(res1, res2);
-  }
-
-  // Same thing with more arguments...
 };
 
 struct dont_check_equal {

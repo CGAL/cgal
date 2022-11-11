@@ -71,6 +71,7 @@ public:
    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
    PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
    PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
+   PROGRAM_TETRA_FILTERING,     //! Used in Scene_tetrahedra_item with Tetrahedra_filtering_plugin
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -84,15 +85,15 @@ public:
 
 
 
-  //! \brief Tests if an id should be displayed or not.
+  //! \brief tests if an id should be displayed or not.
   //! \param x, y, z the coordinates of the id's position.
   //! \return true if the ID should be displayed.
   virtual bool testDisplayId(double x, double y, double z) = 0;
-  //! \brief Updates the item's displayed ids.
+  //! \brief updates the item's displayed ids.
   //!
   //! Call this after the mesh or its ids have changed.
   virtual void updateIds(CGAL::Three::Scene_item *) = 0;
-  //! \brief Specifies if the items ids are being displayed.
+  //! \brief specifies if the items ids are being displayed.
   //!
   //! \returns true if the primitive ids are currently displayed
   virtual bool hasText() const { return false; }
@@ -108,19 +109,19 @@ public:
   //! \param shared_widget the main viewer of the Application. This will share the
   //!  context and allow synchronized rendering of multiple views.
   //!
-  Viewer_interface(QWidget* parent, QOpenGLWidget* shared_widget) 
+  Viewer_interface(QWidget* parent, QOpenGLWidget* shared_widget)
     : QGLViewer(shared_widget->context(),parent){}
   virtual ~Viewer_interface() {}
 
-  //! \brief Sets the scene for the viewer.
+  //! \brief sets the scene for the viewer.
   virtual void setScene(CGAL::Three::Scene_draw_interface* scene) = 0;
   //! \brief The antialiasing state.
   //!
   //! @returns true if the antialiasing is activated.
   virtual bool antiAliasing() const = 0;
-  
+
   // Those two functions are defined in Viewer.cpp
-  //! \brief Sets the position and orientation of a frame using a QString.
+  //! \brief sets the position and orientation of a frame using a QString.
   //! \param s is usually gotten by dumpFrame() and is of the form "Px Py Pz O1 O2 O3 O4 ", with
   //! - Px to Py : the new position coordinates,
   //! - O1 to O3 : axis coordinate *sin(angle/2)
@@ -129,7 +130,7 @@ public:
   //! @returns true if it worked.
   //! @see moveCameraToCoordinates()
   static bool readFrame(QString s, CGAL::qglviewer::Frame& frame);
-  //! \brief Gives information about a frame.
+  //! \brief gives information about a frame.
   //! @see readFrame
   //! @see dumpCameraCoordinates()
   //!@returns a QString containing the position and orientation of a frame.
@@ -147,7 +148,7 @@ public:
   //! @returns true if the viewer is drawing with names.
   virtual bool inDrawWithNames() const = 0;
 
-  //! \brief Passes all the uniform data to the shaders.
+  //! \brief passes all the uniform data to the shaders.
   //!
   //! According to program_name, this data may change.
   //! This should be called in every Scene_item::draw() call.
@@ -166,7 +167,7 @@ public:
    */
   virtual void disableClippingBox()= 0;
 
-  //! \brief Returns a program according to name.
+  //! \brief returns a program according to name.
   //!
   //! If the program does not exist yet, it is created and stored in shader_programs.
   //! @see OpenGL_program_IDs
@@ -197,7 +198,7 @@ public:
   //! Sets the combination SHIFT+LEFT CLICK to perform a selection on the screen.
   //! This is used to perform picking.
   virtual void setBindingSelect() = 0;
-  //!\brief Disable the picking from the keyboard and mouse
+  //!\brief disable the picking from the keyboard and mouse
   //!
   //! Unbinds the combination SHIFT+LEFT CLICK. It allows to
   //! avoid conflicts in the selection_tool, for example.
@@ -241,7 +242,7 @@ public Q_SLOTS:
   //! If b is true, then a special color mask is applied to points and meshes to differenciate
   //! front-faced and back-faced elements.
   virtual void setBackFrontShading(bool b) =0;
-  //! \brief Sets the fast drawing mode
+  //! \brief sets the fast drawing mode
   //! @see inFastDrawing()
   virtual void setFastDrawing(bool b) = 0;
   //! Makes the camera turn around.
@@ -249,7 +250,7 @@ public Q_SLOTS:
   //! @returns a QString containing the position and orientation of the camera.
   //! @see dumpFrame()
   virtual QString dumpCameraCoordinates() = 0;
-//! \brief Moves the camera to the new coordinates.
+//! \brief moves the camera to the new coordinates.
 //!
 //! The movement is performed through an animation.
 //! \param target is usually gotten by dumpCameraCoordinates() and is of the form "Px Py Pz O1 O2 O3 O4 ", with
@@ -264,7 +265,7 @@ public Q_SLOTS:
   //!
   virtual void SetOrthoProjection( bool b) =0;
 public:
-  
+
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
@@ -277,13 +278,18 @@ public:
   virtual void setCurrentPass(int pass) = 0;
   virtual void setDepthWriting(bool writing_depth) = 0;
   virtual void setDepthPeelingFbo(QOpenGLFramebufferObject* fbo) = 0;
-  
+
   virtual int currentPass()const = 0;
   virtual bool isDepthWriting()const = 0;
   virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
   virtual void makeCurrent() = 0;
   virtual QVector4D* clipBox() const =0;
   virtual bool isClipping() const = 0;
+  //!  A vector indicating the scaling factors to apply to the scene when displaying it.
+  //!  It can be useful when a scene is very large along one of it's coordinates, making it hard to visualize it.
+  virtual const QVector3D& scaler() const = 0;
+
+  virtual void showEntireScene() = 0;
 }; // end class Viewer_interface
 }
 }

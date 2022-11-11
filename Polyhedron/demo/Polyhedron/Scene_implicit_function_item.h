@@ -13,30 +13,30 @@
 
 struct Scene_implicit_function_item_priv;
 
-class SCENE_IMPLICIT_FUNCTION_ITEM_EXPORT Scene_implicit_function_item 
+class SCENE_IMPLICIT_FUNCTION_ITEM_EXPORT Scene_implicit_function_item
   : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
-  
+
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
-  
+
 public:
   Scene_implicit_function_item(Implicit_function_interface*);
   virtual ~Scene_implicit_function_item();
-  
+
   Implicit_function_interface* function() const ;
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return false; }
   void compute_bbox() const;
 
-  Scene_implicit_function_item* clone() const { return NULL; }
+  Scene_implicit_function_item* clone() const { return nullptr; }
 
   // rendering mode
   virtual bool supportsRenderingMode(RenderingMode m) const;
   virtual bool manipulatable() const { return true; }
   virtual ManipulatedFrame* manipulatedFrame();
-  
+
 
 
   // actually draw() is also overloaded to detect when the cut plane is moved

@@ -58,6 +58,7 @@
     <addaction name="action_Save"/>
     <addaction name="actionSaveAs"/>
     <addaction name="actionSa_ve_Scene_as_Script"/>
+    <addaction name="actionLoad_a_Scene_from_a_Script_File"/>
     <addaction name="actionSaveSnapshot"/>
     <addaction name="separator"/>
     <addaction name="actionLoadScript"/>
@@ -461,6 +462,11 @@
   <action name="action_Save">
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionLoad_a_Scene_from_a_Script_File">
+   <property name="text">
+    <string>Load a Scene &amp;from a Script File...</string>
    </property>
   </action>
  </widget>

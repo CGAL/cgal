@@ -23,7 +23,7 @@ namespace internal {
 template<typename K1, typename K2, typename Rep = typename K1::Rep_tag /* Cartesian_tag */>
 struct Converter_selector
 {
-  CGAL_static_assertion_msg((boost::is_same<typename K1::Rep_tag,
+  CGAL_static_assertion_msg((std::is_same<typename K1::Rep_tag,
                                             typename K2::Rep_tag>::value),
                             "Kernels must have the same representation");
 
@@ -33,7 +33,7 @@ struct Converter_selector
 template<typename K1, typename K2>
 struct Converter_selector<K1, K2, Homogeneous_tag>
 {
-  CGAL_static_assertion_msg((boost::is_same<typename K1::Rep_tag,
+  CGAL_static_assertion_msg((std::is_same<typename K1::Rep_tag,
                                             typename K2::Rep_tag>::value),
                             "Kernels must have the same representation");
 

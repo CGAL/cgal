@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -87,7 +87,7 @@ class Face
     // testing for infinity):
     //           vda_->edge_rejector()(vda_->dual(), ec)
     while ( vda_->edge_rejector()(vda_->dual(), ec) ||
-	    vda_->dual().is_infinite(ec) ) {
+            vda_->dual().is_infinite(ec) ) {
       ++ec;
       CGAL_assertion( ec != ec_start );
     }
@@ -102,9 +102,9 @@ class Face
 #endif
 
     return
-      Halfedge_handle( 
-		      Halfedge(vda_, ec->first->neighbor(ec->second), i_mirror)
-		      );
+      Halfedge_handle(
+                      Halfedge(vda_, ec->first->neighbor(ec->second), i_mirror)
+                      );
   }
 
   Ccb_halfedge_circulator ccb() const {

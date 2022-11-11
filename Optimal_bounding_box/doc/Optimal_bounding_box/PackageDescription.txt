@@ -1,0 +1,53 @@
+/// \defgroup PkgOptimalBoundingBoxRef Optimal Bounding Box Reference
+
+/// \defgroup PkgOptimalBoundingBoxConcepts Concepts
+/// \ingroup PkgOptimalBoundingBoxRef
+
+/// \defgroup PkgOptimalBoundingBoxClasses Optimal Bounding Box Classes
+/// \ingroup PkgOptimalBoundingBoxRef
+
+/// \defgroup PkgOptimalBoundingBoxFunctions Optimal Bounding Box Functions
+/// \ingroup PkgOptimalBoundingBoxRef
+
+/// \defgroup PkgOptimalBoundingBox_Oriented_bounding_box Oriented Bounding Box Functions
+/// \ingroup PkgOptimalBoundingBoxFunctions
+
+/*!
+\addtogroup PkgOptimalBoundingBoxRef
+\cgalPkgDescriptionBegin{Optimal Bounding Box,PkgOptimalBoundingBox}
+\cgalPkgPicture{optimal_bounding_box.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Konstantinos Katrioplas, Mael Rouxel-Labbé}
+\cgalPkgDesc{This package provides functions to compute tight oriented bounding boxes around a point set or a polygon mesh.}
+\cgalPkgManuals{Chapter_Building_Optimal_Bounding_Box,PkgOptimalBoundingBoxRef}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.1}
+\cgalPkgDependsOn{\ref PkgConvexHull3}
+\cgalPkgBib{cgal:obb}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Parameters}
+
+Optional parameters of the functions of this package are implemented as \ref BGLNamedParameters.
+The page \ref bgl_namedparameters describes their usage and provides a list of the parameters
+that are used in this package.
+
+\cgalCRPSection{Concepts}
+
+- `OrientedBoundingBoxTraits_3`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Oriented_bounding_box_traits_3`
+
+\cgalCRPSection{Methods}
+
+- \link PkgOptimalBoundingBox_Oriented_bounding_box `CGAL::oriented_bounding_box()` \endlink
+
+*/

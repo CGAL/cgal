@@ -26,6 +26,6 @@ int main ()
     std::cerr << "All done." << std::endl;
   else
     std::cerr << "Premature ending." << std::endl;
-      
+
   otr2.print_stats_debug();
 }

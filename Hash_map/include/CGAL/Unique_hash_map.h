@@ -1,16 +1,16 @@
-// Copyright (c) 1997-2000  
+// Copyright (c) 1997-2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 //                 Lutz Kettner <kettner@inf.ethz.ch>
@@ -23,12 +23,12 @@
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
-#include <CGAL/Tools/chained_map.h>
+#include <CGAL/Hash_map/internal/chained_map.h>
 #include <cstddef>
 
 namespace CGAL {
 
-template <class Key_, class Data_, 
+template <class Key_, class Data_,
           class UniqueHashFunction = Handle_hash_function,
           class Allocator_ = CGAL_ALLOCATOR(Data_) >
 class Unique_hash_map {
@@ -47,36 +47,49 @@ public:
 
 private:
     typedef internal::chained_map<Data, Allocator>   Map;
-    typedef typename Map::item                       Item;
+    typedef typename Map::Item                       Item;
 
 private:
     Hash_function  m_hash_function;
     Map            m_map;
 
+    template <class It, class Iterator_category>
+    void reserve_impl(It, It, Iterator_category)
+    {}
+
+    template <class It>
+    void reserve_impl(It b, It e, std::forward_iterator_tag)
+    {
+      m_map.reserve(std::distance(b,e));
+    }
+
 public:
 
-    Unique_hash_map() { m_map.xdef() = Data(); }
+    Unique_hash_map() = default;
 
-    Unique_hash_map( const Data& deflt, std::size_t table_size = 1)
-        : m_map( table_size) { m_map.xdef() = deflt; }
-    
+    Unique_hash_map( const Data& deflt, std::size_t table_size = Map::default_size)
+        : m_map(table_size, deflt)
+    {}
+
     Unique_hash_map( const Data& deflt,
                      std::size_t table_size,
                      const Hash_function& fct)
-        : m_hash_function(fct), m_map( table_size) { m_map.xdef() = deflt; }
-    
+        : m_hash_function(fct), m_map( table_size, deflt)
+    {}
+
     Unique_hash_map( Key first1, Key beyond1, Data first2) {
-        m_map.xdef() = Data();
         insert( first1, beyond1, first2);
     }
     Unique_hash_map( Key first1, Key beyond1, Data first2,
                      const Data& deflt,
                      std::size_t table_size   = 1,
                      const Hash_function& fct = Hash_function())
-    : m_hash_function(fct), m_map( table_size) { 
-        m_map.xdef() = deflt;
+    : m_hash_function(fct), m_map(table_size, deflt) {
         insert( first1, beyond1, first2);
     }
+
+    void reserve(std::size_t n)
+    { m_map.reserve(n); }
 
     Data default_value() const { return m_map.cxdef(); }
 
@@ -88,8 +101,8 @@ public:
         m_map.clear();
         m_map.xdef() = deflt; }
 
-    bool is_defined( const Key& key) const { 
-        return m_map.lookup( m_hash_function(key)) != 0; 
+    bool is_defined( const Key& key) const {
+        return m_map.lookup( m_hash_function(key)) != 0;
     }
 
     const Data& operator[]( const Key& key) const {
@@ -100,10 +113,11 @@ public:
     }
 
     Data& operator[]( const Key& key) {
-        return m_map.access( m_hash_function(key)); 
+        return m_map.access( m_hash_function(key));
     }
 
     Data insert( Key first1, Key beyond1, Data first2) {
+        reserve_impl(first1, beyond1, typename std::iterator_traits<Key>::iterator_category());
         for ( ; first1 != beyond1; (++first1, ++first2)) {
             operator[]( first1) = first2;
         }
@@ -133,27 +147,29 @@ namespace boost {
   public:
     typedef KeyType key_type;
     typedef ValueType value_type;
-    typedef const value_type& reference;
+    typedef value_type& reference;
     typedef lvalue_property_map_tag category;
+
     associative_property_map() : m_c(0) { }
     associative_property_map(C& c) : m_c(&c) { }
-    value_type& operator[](const key_type& k) const {
+
+    reference operator[](const key_type& k) const {
       return (*m_c)[k];
     }
 
-  friend
-  const value_type&
-  get(const associative_property_map<C>& uhm, const key_type& key)
-  {
-    return uhm[key];
-  }
+    friend
+    reference
+    get(const associative_property_map<C>& uhm, const key_type& key)
+    {
+      return uhm[key];
+    }
 
-  friend
-  void
-  put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
-  {
-    uhm[key] = val;
-  }
+    friend
+    void
+    put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
+    {
+      uhm[key] = val;
+    }
 
   private:
     C* m_c;

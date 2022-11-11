@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
@@ -28,11 +28,11 @@ class Gps_bfs_scanner
   typedef Arrangement_     Arrangement;
 
   typedef typename Arrangement::Inner_ccb_iterator    Inner_ccb_iterator;
-  typedef typename Arrangement::Ccb_halfedge_circulator 
+  typedef typename Arrangement::Ccb_halfedge_circulator
                                                   Ccb_halfedge_circulator;
   typedef typename Arrangement::Face_iterator    Face_iterator;
   typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
-  
+
   typedef Visitor_         Visitor;
 
 protected:
@@ -57,7 +57,7 @@ public:
 
       ubf->set_visited(true);
       push_to_queue_holes_of_face(ubf);
-      
+
       while(!m_holes.empty())
       {
         Inner_ccb_iterator hole = m_holes.front();
@@ -82,7 +82,7 @@ public:
   {
     Ccb_halfedge_circulator ccb_circ = ccb;
     Ccb_halfedge_circulator ccb_end  = ccb;
-	  Face_iterator new_f;
+          Face_iterator new_f;
     do
     {
       Halfedge_iterator he  = ccb_circ;
@@ -91,8 +91,8 @@ public:
       {
         push_to_queue_holes_of_face(he->twin()->face());
         new_f->set_visited(true);
-        m_visitor->discovered_face(he->face(), new_f, he); 
-        
+        m_visitor->discovered_face(he->face(), new_f, he);
+
         //scan(he->twin());
         m_ccb_stack.push(he->twin());
       }
@@ -101,10 +101,10 @@ public:
     while(ccb_circ != ccb_end);
   }
 
-  
+
   void push_to_queue_holes_of_face(Face_iterator f)
   {
-    for(Inner_ccb_iterator hit = f->inner_ccbs_begin(); 
+    for(Inner_ccb_iterator hit = f->inner_ccbs_begin();
         hit!= f->inner_ccbs_end(); ++hit)
     {
       m_holes.push(hit);

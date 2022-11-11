@@ -81,10 +81,10 @@ public:
                                         const char* v_shader,
                                         const char* f_shader)const;
   QPainter* getPainter()Q_DECL_OVERRIDE;
-  
+
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
-  void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
+  void enableClippingBox(QVector4D box[6]) Q_DECL_OVERRIDE;
   void disableClippingBox() Q_DECL_OVERRIDE;
   void set2DSelectionMode(bool) Q_DECL_OVERRIDE;
   void setStaticImage(QImage image) Q_DECL_OVERRIDE;
@@ -92,9 +92,11 @@ public:
   //!Set total number of depth peeling passes.
    void setTotalPass(int);
    void resetFov();
+   const QVector3D& scaler() const override;
 Q_SIGNALS:
   void sendMessage(QString);
   void doneInitGL(CGAL::Three::Viewer_interface*);
+  void socketClosed();
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b) Q_DECL_OVERRIDE;
@@ -111,7 +113,7 @@ public Q_SLOTS:
   //! @returns a QString containing the position and orientation of the camera.
   QString dumpCameraCoordinates() Q_DECL_OVERRIDE;
   //!Moves the camera to the new coordinates (position and orientation) through an animation.
-  bool moveCameraToCoordinates(QString, 
+  bool moveCameraToCoordinates(QString,
                                float animation_duration = 0.5f) Q_DECL_OVERRIDE;
   //!Makes the Viewer display a message
   void printMessage(QString message, int ms_delay );
@@ -131,7 +133,13 @@ public Q_SLOTS:
   void setBackFrontColors();
 
   void messageLogged(QOpenGLDebugMessage);
-
+#ifdef CGAL_USE_WEBSOCKETS
+  void setShareCam(bool, QString);
+  void onSocketConnected();
+  void onTextMessageSocketReceived(QString message);
+#endif
+  void scaleScene();
+  void showEntireScene()Q_DECL_OVERRIDE;
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
   void paintGL()Q_DECL_OVERRIDE;

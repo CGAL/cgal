@@ -28,7 +28,7 @@ FAILURES=()
 for dir in $PATH_TO_DOC/*
 do
   OUTPUT=$(basename $dir)
-  python ../documentation_parser.py $dir/xml > ./"$OUTPUT.txt"
+  python3 ../documentation_parser.py $dir/xml > ./"$OUTPUT.txt"
   if [ $? -eq 0 ]; then
     echo "$dir OK"
   else

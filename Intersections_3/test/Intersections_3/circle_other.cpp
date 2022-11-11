@@ -66,7 +66,7 @@ void _test_intersection_construct(K k)
             assert(assign(sphere2, obj2));
             assert(assign(sphere3, obj3));
             assert(assign(sphere4, obj4));
-          } 
+          }
 
           // Tangent, 1 Intersection
           else if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) {
@@ -129,7 +129,7 @@ void _test_intersection_construct(K k)
             assert(!CGAL::do_intersect(p, sl));
             assert(obj.is_empty());
             assert(objl.is_empty());
-          } 
+          }
           // Tangent, 1 Intersection
           else if(d2 == sq_r) {
             assert(CGAL::do_intersect(p, sl));

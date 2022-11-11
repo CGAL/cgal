@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
@@ -49,7 +49,7 @@ public:
   {
     setSeedsPen(QPen(::Qt::black, 10.));
   }
-  
+
   void operator()(typename T::Face_handle fh);
 
   const QBrush& facesInDomainBrush() const
@@ -162,7 +162,7 @@ protected:
   bool visible_seeds;
   bool visible_inside_edges;
   typename std::list<Point>::iterator seeds_begin, seeds_end;
-  
+
   QBrush in_domain_brush;
   QBrush blind_brush;
   QPen voronoi_pen;
@@ -170,7 +170,7 @@ protected:
 };
 
 template <typename T>
-void 
+void
 DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   if(visibleFacesInDomain())
@@ -179,10 +179,10 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     painter->setBrush(facesInDomainBrush());
     painter->setPen(::Qt::NoPen);
     for(typename T::Finite_faces_iterator fit = this->t->finite_faces_begin();
-	fit != this->t->finite_faces_end();
-	++fit){
+        fit != this->t->finite_faces_end();
+        ++fit){
       if(fit->is_in_domain()){
-	this->painterostream << this->t->triangle(fit);
+        this->painterostream << this->t->triangle(fit);
       }
     }
     painter->setBrush(::Qt::NoBrush);
@@ -207,10 +207,10 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     painter->setBrush(blindFacesBrush());
     painter->setPen(::Qt::NoPen);
     for(typename T::Finite_faces_iterator fit = this->t->finite_faces_begin();
-	fit != this->t->finite_faces_end();
-	++fit){
+        fit != this->t->finite_faces_end();
+        ++fit){
       if(fit->is_blind()){
-	this->painterostream << this->t->triangle(fit);
+        this->painterostream << this->t->triangle(fit);
       }
     }
     painter->setBrush(::Qt::NoBrush);
@@ -268,7 +268,7 @@ DelaunayMeshTriangulationGraphicsItem<T>::paintSeeds(QPainter *painter)
 }
 
 template <typename T>
-void 
+void
 DelaunayMeshTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   if(visibleFacesInDomain()) {

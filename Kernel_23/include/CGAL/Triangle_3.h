@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -18,10 +18,11 @@
 #define CGAL_TRIANGLE_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -35,7 +36,7 @@ class Triangle_3 : public R_::Kernel_base::Triangle_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Triangle_3                         Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Triangle_3>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Triangle_3>::value));
 
 public:
 
@@ -82,13 +83,13 @@ public:
   }
 
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Triangle_3, int )>::type
+  decltype(auto)
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this, i);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Triangle_3, int )>::type
+  decltype(auto)
   operator[](int i) const
   {
     return vertex(i);
@@ -117,7 +118,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Triangle_3<R> &t)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << t[0] << ' ' << t[1] << ' ' << t[2];
     case IO::BINARY :

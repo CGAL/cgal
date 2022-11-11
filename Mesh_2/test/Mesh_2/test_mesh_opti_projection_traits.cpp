@@ -49,12 +49,12 @@ int main()
   Mesher mesher(cdt);
   mesher.set_criteria(Criteria(0.125, 0.05));
   mesher.refine_mesh();
-  
+
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 
   std::cout << "Run Lloyd optimization...";
   CGAL::lloyd_optimize_mesh_2(cdt,
-    CGAL::parameters::max_iteration_number = 10);
+    CGAL::parameters::number_of_iterations(10));
   std::cout << " done." << std::endl;
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;

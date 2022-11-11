@@ -1,7 +1,7 @@
 
 #include "Sqrt_extension.h"
 
-int main(){ 
+int main(){
 #ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
   sqrt_extension_test<CGAL::LEDA_arithmetic_kernel,CGAL::Tag_true>();
 #endif // CGAL_HAS_LEDA_ARITHMETIC_KERNEL

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
-    <height>928</height>
+    <width>568</width>
+    <height>1049</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -100,9 +100,23 @@
      <property name="title">
       <string>Sharp features</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0">
-      <item row="1" column="1">
-       <widget class="QComboBox" name="protectEdges"/>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
+      <item row="3" column="1">
+       <widget class="DoubleEdit" name="sharpEdgesAngle">
+        <property name="text">
+         <string>60.00</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="protect">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="sharpEdgesAngleLabel">
@@ -115,15 +129,8 @@
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="edgeLabel">
-        <property name="text">
-         <string>Edge &amp;size</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="buddy">
+         <cstring>sharpEdgesAngle</cstring>
         </property>
        </widget>
       </item>
@@ -133,6 +140,9 @@
          <string/>
         </property>
        </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="protectEdges"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="protectLabel">
@@ -147,27 +157,23 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="protect">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="DoubleEdit" name="sharpEdgesAngle">
-        <property name="text">
-         <string>60.00</string>
-        </property>
-       </widget>
-      </item>
       <item row="7" column="1">
        <widget class="DoubleEdit" name="edgeSizing">
         <property name="text">
          <string>0.0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="edgeLabel">
+        <property name="text">
+         <string>Edge &amp;size</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>edgeSizing</cstring>
         </property>
        </widget>
       </item>
@@ -201,6 +207,9 @@
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
+        <property name="buddy">
+         <cstring>approx</cstring>
+        </property>
        </widget>
       </item>
       <item row="1" column="2">
@@ -223,6 +232,9 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>facetAngle</cstring>
         </property>
        </widget>
       </item>
@@ -315,25 +327,32 @@
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
+        <property name="buddy">
+         <cstring>facetSizing</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="DoubleEdit" name="facetSizing">
+        <property name="text">
+         <string>0.065</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="DoubleEdit" name="facetAngle">
+        <property name="inputMask">
+         <string/>
+        </property>
+        <property name="text">
+         <string>25.00</string>
+        </property>
        </widget>
       </item>
       <item row="1" column="1">
        <widget class="DoubleEdit" name="approx">
         <property name="text">
-         <string>0.00</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="DoubleEdit" name="facetSizing"/>
-      </item>
-      <item row="3" column="1">
-       <widget class="DoubleEdit" name="facetAngle">
-        <property name="inputMask">
-         <string>25,00</string>
-        </property>
-        <property name="text">
-         <string>25,00</string>
+         <string>0.0017</string>
         </property>
        </widget>
       </item>
@@ -389,6 +408,9 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>tetSizing</cstring>
         </property>
        </widget>
       </item>
@@ -494,27 +516,69 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="labeledImgGroup">
+     <property name="title">
+      <string>Labeled Images</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0">
+       <widget class="QLabel" name="useWeights_label">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Use Weighted Image</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="useWeights_checkbox">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="tristate">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="weightsSigma_label">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>standard deviation parameter of the internal Gaussian filter</string>
+        </property>
+        <property name="text">
+         <string>Sigma </string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="weightsSigma">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QCheckBox" name="facegraphCheckBox">
      <property name="text">
       <string>Create as FaceGraph</string>
      </property>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::MinimumExpanding</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -532,17 +596,35 @@
   <customwidget>
    <class>DoubleEdit</class>
    <extends>QLineEdit</extends>
-   <header>CGAL_double_edit.h</header>
+   <header location="global">CGAL_double_edit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>detectComponents</tabstop>
+  <tabstop>protectEdges</tabstop>
+  <tabstop>protect</tabstop>
+  <tabstop>sharpEdgesAngle</tabstop>
+  <tabstop>edgeSizing</tabstop>
+  <tabstop>noEdgeSizing</tabstop>
+  <tabstop>approx</tabstop>
   <tabstop>noApprox</tabstop>
+  <tabstop>facetSizing</tabstop>
   <tabstop>noFacetSizing</tabstop>
+  <tabstop>facetAngle</tabstop>
   <tabstop>noAngle</tabstop>
+  <tabstop>tetSizing</tabstop>
   <tabstop>noTetSizing</tabstop>
+  <tabstop>tetShape</tabstop>
   <tabstop>noTetShape</tabstop>
+  <tabstop>value_outside_spinBox</tabstop>
+  <tabstop>iso_value_spinBox</tabstop>
+  <tabstop>inside_is_less_checkBox</tabstop>
+  <tabstop>useWeights_checkbox</tabstop>
+  <tabstop>weightsSigma</tabstop>
+  <tabstop>facegraphCheckBox</tabstop>
   <tabstop>checkBox</tabstop>
   <tabstop>manifoldCheckBox</tabstop>
+  <tabstop>facetTopology</tabstop>
  </tabstops>
  <resources/>
  <connections>

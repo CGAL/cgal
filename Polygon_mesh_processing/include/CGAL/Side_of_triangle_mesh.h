@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot and Ilker O. Yaz
 
@@ -28,8 +28,8 @@
 
 namespace CGAL {
 
-/** 
- * \ingroup PkgPolygonMeshProcessingRef
+/**
+ * \ingroup PMP_predicates_grp
  * This class provides an efficient point location functionality with respect to a domain bounded
  * by one or several disjoint closed triangle meshes.
  *
@@ -98,13 +98,15 @@ class Side_of_triangle_mesh
   //members
   typename GeomTraits::Construct_ray_3     ray_functor;
   typename GeomTraits::Construct_vector_3  vector_functor;
-  mutable const AABB_tree_* tree_ptr;
   const TriangleMesh* tm_ptr;
   boost::optional<VertexPointMap> opt_vpm;
   bool own_tree;
   CGAL::Bbox_3 box;
 #ifdef CGAL_HAS_THREADS
   mutable CGAL_MUTEX tree_mutex;
+  mutable std::atomic<const AABB_tree_*> atomic_tree_ptr;
+#else
+  mutable const AABB_tree_* tree_ptr;
 #endif
 
 public:
@@ -129,10 +131,14 @@ public:
                         const GeomTraits& gt=GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
-  , tree_ptr(nullptr)
   , tm_ptr(&tmesh)
   , opt_vpm(vpmap)
   , own_tree(true)
+#ifdef CGAL_HAS_THREADS
+  , atomic_tree_ptr(nullptr)
+#else
+  , tree_ptr(nullptr)
+#endif
   {
     CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
     CGAL_assertion(CGAL::is_closed(tmesh));
@@ -165,24 +171,62 @@ public:
                         const GeomTraits& gt = GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
-  , tree_ptr(&tree)
   , own_tree(false)
+#ifdef CGAL_HAS_THREADS
+  , atomic_tree_ptr(&tree)
+#else
+  , tree_ptr(&tree)
+#endif
   {
     box = tree.bbox();
   }
 
+  /**
+  * Constructor moving an instance of Side_of_triangle_mesh to a new memory
+  * location with minimal memory copy.
+  * @param other The instance to be moved
+  */
+  Side_of_triangle_mesh(Side_of_triangle_mesh&& other)
+  {
+    *this = std::move(other);
+  }
   ~Side_of_triangle_mesh()
   {
-    if (own_tree && tree_ptr!=nullptr)
+    if (own_tree)
+#ifdef CGAL_HAS_THREADS
+      delete atomic_tree_ptr.load();
+#else
       delete tree_ptr;
+#endif
   }
 
 public:
   /**
+  * Assign operator moving an instance of Side_of_triangle_mesh to this
+  * location with minimal memory copy.
+  * @param other The instance to be moved
+  * @return A reference to this
+  */
+  Side_of_triangle_mesh& operator=(Side_of_triangle_mesh&& other)
+  {
+    tm_ptr = std::move(other.tm_ptr);
+    opt_vpm = std::move(other.opt_vpm);
+    own_tree = std::move(other.own_tree);
+    box = std::move(other.box);
+    other.own_tree = false;
+    #ifdef CGAL_HAS_THREADS
+      atomic_tree_ptr = atomic_tree_ptr.load();
+    #else
+      tree_ptr = std::move(other.tree_ptr);
+    #endif
+    return *this;
+  }
+
+  /**
    * returns the location of a query point
    * @param point the query point to be located with respect to the input
             polyhedral surface
-   * @return 
+   * @return
    *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the volume bounded by the input triangle mesh
    *   - `CGAL::ON_BOUNDARY` if the point is on triangle mesh
    *   - `CGAL::ON_UNBOUNDED_SIDE` if the point is outside triangle mesh
@@ -200,11 +244,16 @@ public:
     }
     else
     {
+#ifdef CGAL_HAS_THREADS
+      AABB_tree_* tree_ptr =
+        const_cast<AABB_tree_*>(atomic_tree_ptr.load(std::memory_order_acquire));
+#endif
       // Lazily build the tree only when needed
       if (tree_ptr==nullptr)
       {
 #ifdef CGAL_HAS_THREADS
         CGAL_SCOPED_LOCK(tree_mutex);
+        tree_ptr = const_cast<AABB_tree_*>(atomic_tree_ptr.load(std::memory_order_relaxed));
 #endif
         CGAL_assertion(tm_ptr != nullptr && opt_vpm!=boost::none);
         if (tree_ptr==nullptr)
@@ -213,13 +262,89 @@ public:
                                    faces(*tm_ptr).second,
                                    *tm_ptr, *opt_vpm);
           const_cast<AABB_tree_*>(tree_ptr)->build();
+#ifdef CGAL_HAS_THREADS
+        atomic_tree_ptr.store(tree_ptr, std::memory_order_release);
+#endif
         }
       }
-
       return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
             point, *tree_ptr, ray_functor, vector_functor);
     }
   }
+
+#ifndef DOXYGEN_RUNNING
+  template <class K2>
+  Bounded_side operator()(const typename K2::Point_3& point, const K2& k2) const
+  {
+    if(point.x() < box.xmin()
+       || point.x() > box.xmax()
+       || point.y() < box.ymin()
+       || point.y() > box.ymax()
+       || point.z() < box.zmin()
+       || point.z() > box.zmax())
+    {
+      return CGAL::ON_UNBOUNDED_SIDE;
+    }
+
+#ifdef CGAL_HAS_THREADS
+    AABB_tree_* tree_ptr =
+      const_cast<AABB_tree_*>(atomic_tree_ptr.load(std::memory_order_acquire));
+#endif
+    // Lazily build the tree only when needed
+    if (tree_ptr==nullptr)
+    {
+#ifdef CGAL_HAS_THREADS
+      CGAL_SCOPED_LOCK(tree_mutex);
+      tree_ptr = const_cast<AABB_tree_*>(atomic_tree_ptr.load(std::memory_order_relaxed));
+#endif
+      CGAL_assertion(tm_ptr != nullptr && opt_vpm!=boost::none);
+      if (tree_ptr==nullptr)
+      {
+        tree_ptr = new AABB_tree(faces(*tm_ptr).first,
+                                 faces(*tm_ptr).second,
+                                 *tm_ptr, *opt_vpm);
+        const_cast<AABB_tree_*>(tree_ptr)->build();
+#ifdef CGAL_HAS_THREADS
+      atomic_tree_ptr.store(tree_ptr, std::memory_order_release);
+#endif
+      }
+    }
+
+    typedef typename Kernel_traits<Point>::Kernel K1;
+    typedef typename AABB_tree::AABB_traits AABB_traits;
+    typedef internal::Default_tree_helper<AABB_tree> Helper;
+    Helper helper;
+
+    static const unsigned int seed = 1340818006;
+    CGAL::Random rg(seed); // seed some value for make it easy to debug
+    Random_points_on_sphere_3<typename K2::Point_3> random_point(1.,rg);
+
+    typename K2::Construct_ray_3 ray = k2.construct_ray_3_object();
+    typename K2::Construct_vector_3 vector = k2.construct_vector_3_object();
+
+    do { //retry with a random ray
+      typename K2::Ray_3 query = ray(point, vector(CGAL::ORIGIN,*random_point++));
+
+       std::pair<boost::logic::tribool,std::size_t>
+          status( boost::logic::tribool(boost::logic::indeterminate), 0);
+
+      internal::K2_Ray_3_K1_Triangle_3_traversal_traits<AABB_traits, K1, K2, Helper>
+        traversal_traits(status, tree_ptr->traits(), helper);
+
+      tree_ptr->traversal(query, traversal_traits);
+
+      if ( !boost::logic::indeterminate(status.first) )
+      {
+        if (status.first)
+          return (status.second&1) == 1 ? ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
+        //otherwise the point is on the facet
+        return ON_BOUNDARY;
+      }
+    } while (true);
+    return ON_BOUNDARY; // should never be reached
+  }
+
+#endif
 
 };
 

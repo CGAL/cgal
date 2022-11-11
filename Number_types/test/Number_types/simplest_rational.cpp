@@ -30,7 +30,7 @@ void test_it()
   q = CGAL::simplest_rational_in_interval<Q>(l, h);
   assert(l <= CGAL_NTS to_double(q));
   assert(CGAL_NTS to_double(q) <= h);
-  
+
   double d = 1234.56789;
   q = CGAL:: to_rational<Q>(d);
   assert(CGAL_NTS to_double(q) == d);

@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -25,7 +25,8 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawPolygonWithHoles2
 
-opens a new window and draws `aph`, an instance of the `CGAL::Polygon_with_holes_2` class. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+opens a new window and draws `aph`, an instance of the `CGAL::Polygon_with_holes_2` class. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 \tparam PH an instance of the `CGAL::Polygon_with_holes_2` class.
 \param aph the polygon with holes to draw.
 
@@ -37,31 +38,40 @@ void draw(const PH& aph);
 #endif
 
 #ifdef CGAL_USE_BASIC_VIEWER
-
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
 {
-  
-// Viewer class for Polygon_2 
+
+// Viewer class for Polygon_with_holes_2
 template<class P2>
 class SimplePolygonWithHoles2ViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt      Base;
   typedef typename P2::General_polygon_2::Point_2 Point;
- 
+
 public:
+  /// Construct the viewer without drawing anything.
+  /// @param title the title of the window
+  SimplePolygonWithHoles2ViewerQt(QWidget* parent,
+                                  const char* title="Basic Polygon_with_holes_2 Viewer") :
+    Base(parent, title, true, true, true, false, false)
+  {
+      clear();
+  }
+
   /// Construct the viewer.
   /// @param ap2 the polygon to view
   /// @param title the title of the window
   SimplePolygonWithHoles2ViewerQt(QWidget* parent, const P2& ap2,
                                   const char* title="Basic Polygon_with_holes_2 Viewer") :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false), 
-    p2(ap2)
+    Base(parent, title, true, true, true, false, false)
   {
-    compute_elements();
+    clear();
+    compute_elements(ap2);
   }
 
 protected:
@@ -84,24 +94,22 @@ protected:
     // Add the last segment between the last point and the first one
     add_segment(*prev, *(p.vertices_begin()));
   }
-  
-  void compute_elements()  
-  {
-    clear();
 
+  void compute_elements(const P2& p2)
+  {
     if (p2.outer_boundary().is_empty()) return;
-    
-    CGAL::Color c(75,160,255);
+
+    CGAL::IO::Color c(75,160,255);
     face_begin(c);
 
     compute_one_loop_elements(p2.outer_boundary(), false);
-    
+
     for (typename P2::Hole_const_iterator it=p2.holes_begin(); it!=p2.holes_end(); ++it)
     {
       compute_one_loop_elements(*it, true);
       add_point_in_face(p2.outer_boundary().vertex(p2.outer_boundary().size()-1));
     }
-    
+
     face_end();
   }
 
@@ -110,7 +118,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -120,9 +128,6 @@ protected:
     // Call the base method to process others/classicals key
     Base::keyPressEvent(e);
   }
-
-protected:
-  const P2& p2;
 };
 
 // Specialization of draw function.
@@ -138,8 +143,9 @@ void draw(const CGAL::Polygon_with_holes_2<T, C>& ap2,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"t2_viewer","\0"};
+    const char* argv[2]={"t2_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     SimplePolygonWithHoles2ViewerQt<CGAL::Polygon_with_holes_2<T, C> >
       mainwindow(app.activeWindow(), ap2, title);

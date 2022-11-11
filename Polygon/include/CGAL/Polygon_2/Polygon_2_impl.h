@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
@@ -41,7 +41,6 @@ bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
     return true;
   typedef typename Traits_P::Equal_2 Equal_2;
   typedef typename Traits_P::Point_2 Point_2;
-//  CGAL_polygon_precondition( (x.size() != 0) || (y.size() != 0));
   if ((x.size() == 0) && (y.size() == 0)) return true;
 
   if (x.size() != y.size()) return false;
@@ -86,7 +85,7 @@ operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
   int n = 0; // number of vertices
   is >> n;
   typename Traits_P::Point_2 point;
-  
+
   if (is) {
     p.erase(p.vertices_begin(),p.vertices_end());
     for (int i=0; i<n; i++) {
@@ -112,7 +111,7 @@ operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p)
 {
   typename Polygon_2<Traits_P,Container_P>::Vertex_const_iterator i;
 
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       os << p.size() << ' ';
       for (i = p.vertices_begin(); i != p.vertices_end(); ++i) {

@@ -26,7 +26,7 @@ public:
     }
     int count;
     inp >> count;
-    
+
     int i;
     for (i = 0; i < count; ++i) {
       Number_type x, y;
@@ -37,16 +37,16 @@ public:
       } else if (format == Option_parser::FORMAT_INT) {
         Input_traits<Number_type>::Input_int_type ix, iy;
         inp >> ix >> iy;
-        x = (Number_type) ix; y = (Number_type) iy; 
+        x = (Number_type) ix; y = (Number_type) iy;
       } else if (format == Option_parser::FORMAT_FLOAT) {
         Input_traits<Number_type>::Input_float_type ix, iy;
         inp >> ix >> iy;
-        x = (Number_type) ix; y = (Number_type) iy; 
+        x = (Number_type) ix; y = (Number_type) iy;
       } else {
         std::cerr << "Illegal format!" << std::endl;
         return -1;
       }
-      
+
       Point_2 pnt(x, y);
       ++points_out = pnt;
     }

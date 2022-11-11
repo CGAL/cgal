@@ -61,16 +61,16 @@ typedef  CGAL::Optimisation_d_traits_d<HK2>             HTraits2;
 
 // overloaded function to create point from infile
 
-CK1::Point_d create_point (int d, std::ifstream& infile, const CK1&) 
+CK1::Point_d create_point (int d, std::ifstream& infile, const CK1&)
 {
   std::vector<double>  coords( d);
   for (int j = 0; j < d; ++j)
       infile >> coords[ j];
-  return 
-    CK1::Point_d (d, coords.begin(), coords.end()); 
+  return
+    CK1::Point_d (d, coords.begin(), coords.end());
 }
 
-HK1::Point_d create_point (int d, std::ifstream& infile, const HK1&) 
+HK1::Point_d create_point (int d, std::ifstream& infile, const HK1&)
 {
   // use some nontrivial homogeneous coordinates
   static double hom = 1.0;
@@ -80,20 +80,20 @@ HK1::Point_d create_point (int d, std::ifstream& infile, const HK1&)
     coords [ j] *= hom;
   }
   coords[d] = hom++;
-  return 
-    HK1::Point_d (d, coords.begin(), coords.end()); 
+  return
+    HK1::Point_d (d, coords.begin(), coords.end());
 }
 
-CK2::Point_d create_point (int d, std::ifstream& infile, const CK2&) 
+CK2::Point_d create_point (int d, std::ifstream& infile, const CK2&)
 {
   std::vector<FT>  coords( d);
   for (int j = 0; j < d; ++j)
       infile >> coords[ j];
-  return 
-    CK2::Point_d (d, coords.begin(), coords.end()); 
+  return
+    CK2::Point_d (d, coords.begin(), coords.end());
 }
 
-HK2::Point_d create_point (int d, std::ifstream& infile, const HK2&) 
+HK2::Point_d create_point (int d, std::ifstream& infile, const HK2&)
 {
   // use some nontrivial homogeneous coordinates
   static RT hom (1);
@@ -104,15 +104,15 @@ HK2::Point_d create_point (int d, std::ifstream& infile, const HK2&)
   }
   coords[d] = hom;
   hom += RT(1);
-  return 
-    HK2::Point_d (d, coords.begin(), coords.end()); 
+  return
+    HK2::Point_d (d, coords.begin(), coords.end());
 }
 
 #include "test_Polytope_distance_d.h"
 
 // processing of file
 template <class K, class Traits>
-void process (const std::string& filename) 
+void process (const std::string& filename)
 {
 
   std::cout << "Reading file: " << filename << "\n";
@@ -128,8 +128,8 @@ void process (const std::string& filename)
   infile >> n1 >> n2;
 
   std::vector<typename K::Point_d>  p_points, q_points;
-  
-  // read points in P 
+
+  // read points in P
   for (int i = 0; i < n1; ++i) {
     p_points.push_back(create_point (d, infile, K()));
   }
@@ -138,34 +138,34 @@ void process (const std::string& filename)
   for (int i = 0; i < n2; ++i) {
     q_points.push_back(create_point (d, infile, K()));
   }
-   
+
   std::cout << "Testing...\n";
   // call test function
   CGAL::test_Polytope_distance_d( p_points.begin(), p_points.end(),
                                   q_points.begin(), q_points.end(),
                                   Traits(), 1);
   std::cout << std::endl;
-    
+
 }
 
 int main(/* const int ac,const char **av */) {
   // we assume that av contains a list of files in the following
-  // format: 
+  // format:
   //     d n1 n2 p_1 p_2 ... p_n1 q_1 q_2 ... q_n2
   // where d is the dimension, n1 is the number of points in P,
   // n2 the number of points in Q, and p_1 p_2 ... p_n1, q_1 q_2 ... q_n2
   // are the actual points, stored coordinate-wise
-  
+
   // read from standard input
   std::istream in(std::cin.rdbuf());
 
-  // process input file(s): 
+  // process input file(s):
   std::string filename;
   while (in >> filename) {
     process<CK1, CTraits1>(filename);
     process<HK1, HTraits1>(filename);
     // the following takes "forever" due to Quotient<MP_Float>
-#ifdef CGAL_USE_GMP 
+#ifdef CGAL_USE_GMP
     process<CK2, CTraits2>(filename);
 #endif
     process<HK2, HTraits2>(filename);

@@ -3,9 +3,9 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Traits
 
-The class `Convex_hull_traits_2` serves as a traits class for all the two-dimensional 
-convex hull and extreme point calculation function. This class corresponds 
-to the default traits class for these functions. 
+The class `Convex_hull_traits_2` serves as a traits class for all the two-dimensional
+convex hull and extreme point calculation function. This class corresponds
+to the default traits class for these functions.
 
 \cgalModels `ConvexHullTraits_2`
 
@@ -20,95 +20,95 @@ template< typename R >
 class Convex_hull_traits_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef R::Point_2 Point_2; 
+*/
+typedef R::Point_2 Point_2;
 
 /*!
 
-*/ 
-typedef R::Less_xy Less_xy_2; 
+*/
+typedef R::Less_xy Less_xy_2;
 
 /*!
 
-*/ 
-typedef R::Less_yx Less_yx_2; 
+*/
+typedef R::Less_yx Less_yx_2;
 
 /*!
 
-*/ 
-typedef R::Less_signed_distance_to_line_2 
-Less_signed_distance_to_line_2; 
+*/
+typedef R::Compare_signed_distance_to_line_2
+Compare_signed_distance_to_line_2;
 
 /*!
 
-*/ 
-typedef R::Less_rotate_ccw_2 Less_rotate_ccw_2; 
+*/
+typedef R::Less_rotate_ccw_2 Less_rotate_ccw_2;
 
 /*!
 
-*/ 
-typedef R::Left_turn_2 Left_turn_2; 
+*/
+typedef R::Left_turn_2 Left_turn_2;
 
 /*!
 
-*/ 
-typedef R::Equal_2 Equal_2; 
+*/
+typedef R::Equal_2 Equal_2;
 
 /*!
 
 */
 typedef R::Orientation_2 Orientation_2;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-copy constructor. 
-*/ 
-Convex_hull_traits_2(Convex_hull_traits_2& t); 
+copy constructor.
+*/
+Convex_hull_traits_2(Convex_hull_traits_2& t);
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-*/ 
-Less_xy_2 less_xy_2_object(); 
+*/
+Less_xy_2 less_xy_2_object();
 
 /*!
 
-*/ 
-Less_yx_2 less_yx_2_object(); 
+*/
+Less_yx_2 less_yx_2_object();
 
 /*!
 
-*/ 
-Less_signed_distance_to_line_2 
-less_signed_distance_to_line_2_object(); 
+*/
+Compare_signed_distance_to_line_2
+compare_signed_distance_to_line_2_object();
 
 /*!
 
-*/ 
-Less_rotate_ccw_2 less_rotate_ccw_2_object(); 
+*/
+Less_rotate_ccw_2 less_rotate_ccw_2_object();
 
 /*!
 
-*/ 
-Left_turn_2 left_turn_2_object(); 
+*/
+Left_turn_2 left_turn_2_object();
 
 /*!
 
-*/ 
-Equal_2 equal_2_object(); 
+*/
+Equal_2 equal_2_object();
 
 /*!
 

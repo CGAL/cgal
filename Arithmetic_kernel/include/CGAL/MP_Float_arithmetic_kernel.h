@@ -6,12 +6,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Sebastien Loriot
 //
 // ============================================================================
 //
-//    \brief provide class Arithmetic_kernel, a collection of number types. 
+//    \brief provide class Arithmetic_kernel, a collection of number types.
 //
 
 #ifndef CGAL_MP_FLOAT_ARITHMETIC_KERNEL_H
@@ -21,7 +21,7 @@
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>
 
-#define CGAL_HAS_MP_FLOAT_ARITHMETIC_KERNEL 
+#define CGAL_HAS_MP_FLOAT_ARITHMETIC_KERNEL
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>

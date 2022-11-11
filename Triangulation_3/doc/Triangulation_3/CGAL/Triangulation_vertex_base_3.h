@@ -4,20 +4,20 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3VertexCellClasses
 
-The class `Triangulation_vertex_base_3` is a model of the concept 
-`TriangulationVertexBase_3`, the base vertex of a 3D-triangulation. 
-This class stores a point. 
+The class `Triangulation_vertex_base_3` is a model of the concept
+`TriangulationVertexBase_3`, the base vertex of a 3D-triangulation.
+This class stores a point.
 
-This class can be used directly or can serve as a base to derive other classes 
-with some additional attributes (a color for example) tuned for a specific 
-application. 
+This class can be used directly or can serve as a base to derive other classes
+with some additional attributes (a color for example) tuned for a specific
+application.
 
 
 \tparam Traits is the geometric traits class and must be a model of `TriangulationTraits_3`.
-Users of the geometric triangulations are strongly advised to use the same 
+Users of the geometric triangulations are strongly advised to use the same
 geometric traits class as the one used in `Triangulation_3`.
 This way, the point type defined by the base vertex is
-the same as the point type defined by the geometric traits class. 
+the same as the point type defined by the geometric traits class.
 
 \tparam TDSVb is a combinatorial vertex base class from which
 `Triangulation_vertex_base_3` derives.
@@ -26,21 +26,21 @@ It has the default value `Triangulation_ds_vertex_base_3<TDS>`.
 
 \cgalModels `TriangulationVertexBase_3`
 
-\sa `CGAL::Triangulation_cell_base_3` 
-\sa `CGAL::Triangulation_ds_vertex_base_3` 
-\sa `CGAL::Triangulation_vertex_base_with_info_3` 
+\sa `CGAL::Triangulation_cell_base_3`
+\sa `CGAL::Triangulation_ds_vertex_base_3`
+\sa `CGAL::Triangulation_vertex_base_with_info_3`
 
 */
 template< typename Traits, typename TDSVb >
 class Triangulation_vertex_base_3 : public TDSVb {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
+*/
 typedef Traits::Point_3 Point;
 
 /// @}

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
@@ -53,7 +53,7 @@ private:
 
   /*! The z coefficient */
   FT m_c;
-  
+
 public:
   /*! Default Constructor */
   Arr_plane_3() : m_a(0), m_b(0), m_c(0) {}
@@ -90,7 +90,7 @@ public:
 
   /*! Obtain the z coefficient */
   const FT & c() const { return m_c; }
-  
+
   /*! Obtain the i-th coefficient of the plane
    * \param i the index of the coefficient
    * \return the i-th coefficient
@@ -125,8 +125,8 @@ public:
   {
     Kernel kernel;
     typename Kernel::Plane_3 base_plane(m_a, m_b, m_c, 0);
-    Vector_3 v1 = kernel.construct_base_vector_3_object()(base_plane, 1);    
-    Vector_3 v2 = kernel.construct_base_vector_3_object()(base_plane, 2);    
+    Vector_3 v1 = kernel.construct_base_vector_3_object()(base_plane, 1);
+    Vector_3 v2 = kernel.construct_base_vector_3_object()(base_plane, 2);
     Vector_3 v3 = kernel.construct_orthogonal_vector_3_object()(base_plane);
 
     FT denom = v2[1]*v3[0]*v1[2] - v2[0]*v3[1]*v1[2] + v3[2]*v2[0]*v1[1] +
@@ -135,7 +135,7 @@ public:
               v2[0]*v3[1]*p[2] - v3[2]*v2[0]*p[1] - v2[2]*v3[1]*p[0]) / denom;
     FT y = (v1[1]*v3[2]*p[0] - v1[1]*v3[0]*p[2] - v3[1]*p[0]*v1[2] +
             v3[1]*v1[0]*p[2] + p[1]*v3[0]*v1[2] - p[1]*v3[2]*v1[0]) / denom;
-    
+
     return Point_2(x, y);
   }
 
@@ -155,7 +155,7 @@ public:
     std::cout << "(a, b, c): " << a() << "," << b() << "," << c()
               << std::endl;
 #endif
-    
+
     if (i == 0) {
       CGAL_assertion(m_a != 0);
       FT y = p_2.x();
@@ -197,49 +197,51 @@ public:
 /*! Intersect 2 planes
  * \param plane1 the first plane
  * \param plane2 the second plane
- * \return a geometric object that represents the intersection. Could be
- * the line of intersection, or a plane in case plane1 and plane2 coincide.
+ * \return a variant that represents the intersection. It wraps a line of
+ * intersection or a plane in case plane1 and plane2 coincide.
  */
-template <class Kernel>
-CGAL::Object intersect(const Arr_plane_3<Kernel> & plane1,
+template <typname Kernel>
+boost::variant<typename Kernel::Line_3, Arr_plane_3<Kernel> >
+intersect(const Arr_plane_3<Kernel> & plane1,
                        const Arr_plane_3<Kernel> & plane2)
 {
   typedef typename Kernel::Point_3      Point_3;
   typedef typename Kernel::Direction_3  Direction_3;
   typedef typename Kernel::Line_3       Line_3;
   typedef typename Kernel::FT           FT;
+  typedef boost::variant<Line_3, Arr_plane_3<Kernel> >  Intersection_result;
 
   // We know that the plane goes throgh the origin
-  const FT & a1 = plane1.a();
-  const FT & b1 = plane1.b();
-  const FT & c1 = plane1.c();
+  const FT& a1 = plane1.a();
+  const FT& b1 = plane1.b();
+  const FT& c1 = plane1.c();
 
-  const FT & a2 = plane2.a();
-  const FT & b2 = plane2.b();
-  const FT & c2 = plane2.c();
+  const FT& a2 = plane2.a();
+  const FT& b2 = plane2.b();
+  const FT& c2 = plane2.c();
 
   FT det = a1*b2 - a2*b1;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(b1*c2 - c1*b2, a2*c1 - a1*c2, det);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
 
   det = a1*c2 - a2*c1;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(c1*b2 - b1*c2, det, a2*b1 - a1*b2);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
   det = b1*c2 - c1*b2;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(det, c1*a2 - a1*c2, a1*b2 - b1*a2);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
 
   // degenerate case
-  return make_object(plane1);
+  return Intersection_result(plane1);
 }
 
 /*! Compute the image point of the projection of p under an affine
@@ -268,7 +270,7 @@ inline std::ostream & operator<<(std::ostream & os,
 {
   os << plane[0] << ", " << plane[1] << ", " << plane[2];
   return os;
-}  
+}
 
 } //namespace CGAL
 

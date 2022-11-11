@@ -1,19 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_RAY_NEW_2_H
 #define CGAL__TEST_CLS_RAY_NEW_2_H
@@ -32,7 +32,7 @@ _test_cls_ray_new_2(const R& )
  typedef typename  R::Direction_2 Direction_2;
 
  typedef typename  R::Line_2 Line_2;
- typedef typename  R::Ray_2 Ray_2; 
+ typedef typename  R::Ray_2 Ray_2;
 
  typename R::Construct_point_2 construct_point;
  typename R::Construct_vector_2 construct_vector;

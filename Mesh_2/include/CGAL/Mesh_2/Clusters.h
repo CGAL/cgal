@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -25,10 +25,10 @@
 
 namespace CGAL {
 
-namespace Mesh_2 
+namespace Mesh_2
 {
 
-  namespace details 
+  namespace details
   {
     template <class Tr>
     class Is_edge_constrained {
@@ -36,7 +36,7 @@ namespace Mesh_2
     public:
       typedef Is_edge_constrained<Tr> Self;
       typedef typename Tr::Edge_circulator Edge_circulator;
-      
+
       Is_edge_constrained(const Tr& tr) : tr_(&tr)
       {}
 
@@ -57,7 +57,7 @@ class Clusters
   typedef FT      Squared_length; /**<This typedef is used to remind that
                                      the length is squared. */
   typedef typename Tr::Edge_circulator Edge_circulator;
-  
+
   /**
    *  Special type: filtered circulator that returns only constrained
    *  edges.
@@ -70,7 +70,7 @@ public:
   /** \name Clusters public types */
 
   /**
-   * \c Cluster register several informations about clusters.
+   * `Cluster` register several informations about clusters.
    * A cluster is a set of vertices v_i incident to one vertice
    * v_0, so that angles between segments [v_0, v_i] is less than 60
    * degres.
@@ -78,7 +78,7 @@ public:
   struct Cluster {
     bool reduced ; /**< Is the cluster reduced? */
 
-    /** 
+    /**
      * Smallest_angle gives the two vertices defining the
      * smallest angle in the cluster.
      */
@@ -127,8 +127,8 @@ private:
   Tr& tr; /**< The triangulation itself. */
 
   /**
-   * Multimap \c Vertex_handle -> \c Cluster
-   * Each vertex can have several clusters. 
+   * Multimap `Vertex_handle -> Cluster`
+   * Each vertex can have several clusters.
    */
   Cluster_map cluster_map;
 
@@ -178,14 +178,14 @@ public:
 
 private:
   /**
-   * Computes clusters of the vertex \c v, using the auxiliary function
+   * Computes clusters of the vertex `v`, using the auxiliary function
    * construct_cluster().
    */
   void create_clusters_of_vertex(const Vertex_handle v);
 
   /**
-   * Adds the sequence [\c begin, \c end] to the cluster \c c and adds it 
-   * to the clusters of the vertex \c v.
+   * Adds the sequence `[begin, end]` to the cluster `c` and adds it
+   * to the clusters of the vertex `v`.
    */
   void construct_cluster(const Vertex_handle v,
                          const Constrained_edge_circulator& begin,
@@ -195,9 +195,9 @@ private:
 public:
   /** \name Functions to manage clusters during the refinement process. */
 
-  /** 
-   * Update the cluster of [\c va,\c vb], putting \c vm instead of \c vb.
-   * If reduction=false, the edge [va,vm] is not set reduced. 
+  /**
+   * Updates the cluster of `[va,vb]`, putting `vm` instead of `vb`.
+   * If reduction=false, the edge [va,vm] is not set reduced.
    */
   void update_cluster(Cluster& c, iterator it,
                       const Vertex_handle va, const Vertex_handle vb,
@@ -205,8 +205,8 @@ public:
                       bool reduction = true);
 
   /**
-   * Returns the cluster of [\c va,\c vb] in \c c and return true
-   * if it is in a cluster. Returns also a const_iterator in \c it.
+   * Returns the cluster of `[va,vb]` in `c` and return true
+   * if it is in a cluster. Returns also a const_iterator in `it`.
    */
   bool get_cluster(const Vertex_handle va, const Vertex_handle vb,
                    Cluster& c, iterator& it);
@@ -276,7 +276,7 @@ public:
     return Cluster_vertices_iterator(cluster_map.end());
   }
 
-  unsigned int number_of_clusters_at_vertex(const Vertex_handle& vh) const 
+  unsigned int number_of_clusters_at_vertex(const Vertex_handle& vh) const
   {
     typedef typename Cluster_map::const_iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
@@ -381,7 +381,7 @@ get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c,
 template <typename Tr>
 bool Clusters<Tr>::
 get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c,
-            iterator& it) 
+            iterator& it)
 {
   typedef std::pair<iterator, iterator> Range;
 
@@ -535,7 +535,7 @@ is_small_angle(const Point& pleft,
                const Point& pmiddle,
                const Point& pright) const
 {
-  typename Geom_traits::Angle_2 angle = 
+  typename Geom_traits::Angle_2 angle =
     tr.geom_traits().angle_2_object();
   typename Geom_traits::Orientation_2 orient =
     tr.geom_traits().orientation_2_object();
@@ -576,7 +576,7 @@ squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
 
   return (num*num)/(b*c);
 }
-  
+
 } // end namespace Mesh_2
 
 } // end namespace CGAL

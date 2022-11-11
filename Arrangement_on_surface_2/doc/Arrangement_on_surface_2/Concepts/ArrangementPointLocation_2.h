@@ -20,10 +20,10 @@ the old style without any overhead, the macro
 `CGAL_ARR_POINT_LOCATION_VERSION` can be defined to 1 before any
 \cgal header is included.
 
-\cgalHasModel `CGAL::Arr_naive_point_location<Arrangement>` 
-\cgalHasModel `CGAL::Arr_walk_along_line_point_location<Arrangement>` 
-\cgalHasModel `CGAL::Arr_trapezoid_ric_point_location<Arrangement>` 
-\cgalHasModel `CGAL::Arr_landmarks_point_location<Arrangement,Generator>` 
+\cgalHasModel `CGAL::Arr_naive_point_location<Arrangement>`
+\cgalHasModel `CGAL::Arr_walk_along_line_point_location<Arrangement>`
+\cgalHasModel `CGAL::Arr_trapezoid_ric_point_location<Arrangement>`
+\cgalHasModel `CGAL::Arr_landmarks_point_location<Arrangement,Generator>`
 
 \sa `CGAL::Arr_naive_point_location<Arrangement>`
 \sa `CGAL::Arr_walk_along_line_point_location<Arrangement>`
@@ -37,71 +37,71 @@ the old style without any overhead, the macro
 class ArrangementPointLocation_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-the associated arrangement type. 
-*/ 
-typedef unspecified_type Arrangement_2; 
+the associated arrangement type.
+*/
+typedef unspecified_type Arrangement_2;
 
 /*!
-equivalent to `Arrangement_2::Point_2`. 
-*/ 
-typedef unspecified_type Point_2; 
+equivalent to `Arrangement_2::Point_2`.
+*/
+typedef unspecified_type Point_2;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-default constructor. 
-*/ 
-ArrangementPointLocation_2(); 
+default constructor.
+*/
+ArrangementPointLocation_2();
 
 /*!
-constructs a point-location object `pl` attached to the given 
-arrangement `arr`. 
-*/ 
-ArrangementPointLocation_2 (const Arrangement_2& arr); 
+constructs a point-location object `pl` attached to the given
+arrangement `arr`.
+*/
+ArrangementPointLocation_2 (const Arrangement_2& arr);
 
-/// @} 
+/// @}
 
-/// \name Query Functions 
+/// \name Query Functions
 /// @{
 
 /*!
-locates the arrangement cell that contains the query point `q` 
+locates the arrangement cell that contains the query point `q`
 and returns a discriminated union container of the following bounded
 types:
 
-<UL> 
-<LI>`Arrangement_2::Face_const_handle`, in case `q` is 
-contained inside an arrangement face; 
-<LI>`Arrangement_2::Halfedge_const_handle`, in case `q` lies 
-on an arrangement edge; 
-<LI>`Arrangement_2::Vertex_const_handle`, in case `q` coincides 
-with an arrangement vertex. 
-</UL> 
-\pre `pl` is attached to a valid arrangement object. 
-*/ 
+<UL>
+<LI>`Arrangement_2::Face_const_handle`, in case `q` is
+contained inside an arrangement face;
+<LI>`Arrangement_2::Halfedge_const_handle`, in case `q` lies
+on an arrangement edge;
+<LI>`Arrangement_2::Vertex_const_handle`, in case `q` coincides
+with an arrangement vertex.
+</UL>
+\pre `pl` is attached to a valid arrangement object.
+*/
 Arr_point_location_result<Arrangement_2>::Type locate(const Point_2& q) const;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-attaches `pl` to the given arrangement `arr`. 
-*/ 
-void attach (const Arrangement_2& arr); 
+attaches `pl` to the given arrangement `arr`.
+*/
+void attach (const Arrangement_2& arr);
 
 /*!
-detaches `pl` from the arrangement it is currently attached to. 
-*/ 
-void detach (); 
+detaches `pl` from the arrangement it is currently attached to.
+*/
+void detach ();
 
 /// @}
 

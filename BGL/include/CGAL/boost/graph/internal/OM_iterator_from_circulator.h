@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Philipp Moeller
 
@@ -21,7 +21,6 @@
 #include <boost/concept_check.hpp>
 
 #include <boost/mpl/if.hpp>
-#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -46,19 +45,19 @@ public:
 
   typedef typename I__traits::iterator_category iterator_category;
 
-  typedef typename 
+  typedef typename
   boost::mpl::if_c<  Prevent_deref
                    , C
                    , typename C::value_type
                   >::type             value_type;
 
   typedef typename C::difference_type difference_type;
-  typedef typename 
+  typedef typename
   boost::mpl::if_c<  Prevent_deref
                    , C&
                    , typename C::reference
                   >::type             reference;
-  typedef typename 
+  typedef typename
   boost::mpl::if_c<  Prevent_deref
                    , C*
                    , typename C::reference
@@ -80,7 +79,7 @@ public:
     CGAL_assertion( m_anchor == i.m_anchor);  // same anchor?
     return (done() && i.done()) || (((!done()) && (!i.done())) && ( current == i.current));
   }
-  
+
   bool operator!=( const Self& i) const {
     return !(*this == i);
   }
@@ -92,12 +91,12 @@ public:
 // templates as a work-around.
 private:
   template <bool Prevent_deref_>
-  typename boost::enable_if_c<Prevent_deref_, reference>::type
+  std::enable_if_t<Prevent_deref_, reference>
   indirection() const {
     return const_cast<Self*>(this)->current;
   }
   template <bool Prevent_deref_>
-  typename boost::disable_if_c<Prevent_deref_, reference>::type
+  std::enable_if_t<!Prevent_deref_, reference>
   indirection() const {
     return *current;
   }
@@ -105,15 +104,15 @@ public:
   reference operator*() const {
     return indirection<Prevent_deref>();
   }
-  
+
 private:
   template <bool Prevent_deref_>
-  typename boost::disable_if_c<Prevent_deref_, pointer>::type
+  std::enable_if_t<!Prevent_deref_, pointer>
   structure_dereference() {
     return &(*current);
   }
   template <bool Prevent_deref_>
-  typename boost::enable_if_c<Prevent_deref_, pointer>::type
+  std::enable_if_t<Prevent_deref_, pointer>
   structure_dereference() {
     return &current;
   }

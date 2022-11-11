@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -22,7 +22,7 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -56,19 +56,19 @@ intersection(
         return intersection_return<typename K::Intersect_2, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>();
     if (rt.denominator(minx) == rt.denominator(miny)) {
         newmin = construct_point_2(rt.numerator(minx), rt.numerator(miny),
-				   rt.denominator(minx));
+                                   rt.denominator(minx));
     } else {
         newmin = construct_point_2(rt.numerator(minx)   * rt.denominator(miny),
-				   rt.numerator(miny)   * rt.denominator(minx),
-				   rt.denominator(minx) * rt.denominator(miny));
+                                   rt.numerator(miny)   * rt.denominator(minx),
+                                   rt.denominator(minx) * rt.denominator(miny));
     }
     if (rt.denominator(maxx) == rt.denominator(maxy)) {
         newmax = construct_point_2(rt.numerator(maxx), rt.numerator(maxy),
-				   rt.denominator(maxx));
+                                   rt.denominator(maxx));
     } else {
         newmax = construct_point_2(rt.numerator(maxx)   * rt.denominator(maxy),
-				   rt.numerator(maxy)   * rt.denominator(maxx),
-				   rt.denominator(maxx) * rt.denominator(maxy));
+                                   rt.numerator(maxy)   * rt.denominator(maxx),
+                                   rt.denominator(maxx) * rt.denominator(maxy));
     }
     return intersection_return<typename K::Intersect_2, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>(construct_iso_rectangle_2(newmin, newmax));
 }

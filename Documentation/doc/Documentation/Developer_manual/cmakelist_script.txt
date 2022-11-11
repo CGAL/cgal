@@ -26,7 +26,7 @@ source file</B>.
 libraries (i.e.\ "Core", "ImageIO", and "Qt5"). An example is `-c Core`.
 
 <DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
-"boost2") of \sc{Boost} to which the executable(s) should be
+"boost2") of \boost to which the executable(s) should be
 linked. Valid options are, for instance, "filesystem" or "program_options".
 
 </DL>
@@ -35,6 +35,6 @@ This options should suffice to create `CMakeLists.txt` script
 for most directories containing programs. However, in some special
 cases, it might still be required to create the script manually, for
 instance, if some source files/executables need a different linking than
-other source files.
+other source files. The Section \subpage devman_create_and_use_a_cmakelist provides more details.
 
 */

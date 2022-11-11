@@ -1,0 +1,55 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.8}
+  \pspicture[](-1,-1)(8,9)
+  \arraxes(0,0)(-1,-1)(8,9)
+  \arrMainVertex(1,3){1}
+  \arrMainVertex(1,6){2}
+  \arrEmptyIntersectionVertex(1,6)(4,1)(1,3)(4,8){3}
+  \arrEmptyIntersectionVertex(1,6)(4,1)(1,3)(7,3){4}
+  \arrEmptyIntersectionVertex(1,3)(4,8)(1,6)(7,6){5}
+  \arrMainVertex(4,1){6}
+  \arrMainVertex(4,8){7}
+  \arrEmptyIntersectionVertex(1,3)(7,3)(4,1)(7,6){8}
+  \arrEmptyIntersectionVertex(1,6)(7,6)(4,8)(7,3){9}
+  \arrEmptyIntersectionVertex(4,8)(7,3)(4,1)(7,6){10}
+  \arrMainVertex(7,3){11}
+  \arrMainVertex(7,6){12}
+  %
+  \ncline[linecolor=blue]{1}{3}
+  \ncline[linecolor=blue]{3}{5}
+  \ncline[linecolor=blue]{->}{5}{7}\Aput[1pt]{$s_5$}
+  %
+  \ncline[linecolor=blue]{<-}{2}{3}\Bput[1pt]{$s_3$}
+  \ncline[linecolor=blue]{3}{4}
+  \ncline[linecolor=blue]{4}{6}
+  %
+  \ncline[linecolor=blue]{1}{4}
+  \ncline[linecolor=blue]{4}{8}
+  \ncline[linecolor=blue]{->}{8}{11}\Bput[1pt]{$s_4$}
+  %
+  \ncline[linecolor=blue]{2}{5}
+  \ncline[linecolor=blue]{5}{9}
+  \ncline[linecolor=blue]{->}{9}{12}\Aput[1pt]{$s_2$}
+  %
+  \ncline[linecolor=blue]{6}{8}
+  \ncline[linecolor=blue]{8}{10}
+  \ncline[linecolor=blue]{->}{10}{12}\Bput[1pt]{$s_1$}
+  %
+  \ncline[linecolor=blue]{7}{9}
+  \ncline[linecolor=blue]{9}{10}
+  \ncline[linecolor=blue]{->}{10}{11}\Aput[1pt]{$s_6$}
+  %
+  \rput(1.5,1.5){[$0$]}
+  \rput(4,2.2){[$1$]}
+  \rput(4,4.5){[$2$]}
+  \rput(1.9,3.5){[$3$]}
+  \rput(1.9,5.5){[$4$]}
+  \rput(4,6.8){[$5$]}
+  \rput(6.1,5.5){[$6$]}
+  \rput(6.1,3.5){[$7$]}
+  \endpspicture
+}
+\end{document}

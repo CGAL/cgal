@@ -1,26 +1,25 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_SPHERE_3_H
 #define CGAL__TEST_CLS_SPHERE_3_H
 
 #include <CGAL/Bbox_3.h>
 #include <cassert>
-#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -33,7 +32,7 @@ _test_cls_sphere_3(const R& )
  typename R::Sphere_3  ic;
  CGAL::Sphere_3<R> c0;
 
- const bool nonexact = boost::is_same<FT, double>::value;
+ const bool nonexact = std::is_same<FT, double>::value;
  RT n0 =  0;
  RT n1 = 16;
  RT n2 = -4;

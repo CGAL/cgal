@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -94,18 +94,18 @@ struct Project_ag_dual
 
 template<class VDA, class Projector>
 void print_halfedge(const VDA& vda,
-		    const typename VDA::Halfedge_handle& he,
-		    const Projector& project,
-		    std::ostream& os = std::cout) {
+                    const typename VDA::Halfedge_handle& he,
+                    const Projector& project,
+                    std::ostream& os = std::cout) {
   typename VDA::Delaunay_graph::Edge e = he->dual_edge();
   print_dual_edge(vda, e, project, os);
 }
 
 template<class VDA, class Projector>
 void print_halfedge(const VDA& vda,
-		    const typename VDA::Halfedge& he,
-		    const Projector& project,
-		    std::ostream& os = std::cout) {
+                    const typename VDA::Halfedge& he,
+                    const Projector& project,
+                    std::ostream& os = std::cout) {
   typename VDA::Delaunay_graph::Edge e = he.dual_edge();
   print_dual_edge(vda, e, project, os);
 }
@@ -113,25 +113,25 @@ void print_halfedge(const VDA& vda,
 
 template<class VDA, class Projector>
 void print_dual_edge(const VDA& vda,
-		     const typename VDA::Delaunay_graph::Edge& e,
-		     const Projector& project,
-		     std::ostream& os = std::cout) {
+                     const typename VDA::Delaunay_graph::Edge& e,
+                     const Projector& project,
+                     std::ostream& os = std::cout) {
   typedef CGAL::Triangulation_cw_ccw_2  CW_CCW_2;
 
   print_dual_edge(vda,
-		  e.first->vertex( CW_CCW_2::ccw(e.second) ),
-		  e.first->vertex( CW_CCW_2::cw(e.second) ),
-		  project,
-		  os);
+                  e.first->vertex( CW_CCW_2::ccw(e.second) ),
+                  e.first->vertex( CW_CCW_2::cw(e.second) ),
+                  project,
+                  os);
 }
 
 
 template<class VDA, class Projector>
 void print_dual_edge(const VDA& vda,
-		     const typename VDA::Delaunay_graph::Vertex_handle& v_src,
-		     const typename VDA::Delaunay_graph::Vertex_handle& v_trg,
-		     const Projector& project,
-		     std::ostream& os = std::cout)
+                     const typename VDA::Delaunay_graph::Vertex_handle& v_src,
+                     const typename VDA::Delaunay_graph::Vertex_handle& v_trg,
+                     const Projector& project,
+                     std::ostream& os = std::cout)
 {
   if ( vda.dual().is_infinite(v_src) ) {
     os << "inf";
@@ -152,9 +152,9 @@ void print_dual_edge(const VDA& vda,
 
 template<class VDA, class Projector>
 void print_dual_vertex(const VDA& vda,
-		       const typename VDA::Delaunay_graph::Vertex_handle& v,
-		       const Projector& project,
-		       std::ostream& os = std::cout) {
+                       const typename VDA::Delaunay_graph::Vertex_handle& v,
+                       const Projector& project,
+                       std::ostream& os = std::cout) {
    if ( vda.dual().is_infinite(v) ) {
      os << "inf" << std::endl;
    } else {

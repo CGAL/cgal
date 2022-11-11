@@ -23,7 +23,6 @@
  */
 
 #include <CGAL/Arr_point_location_result.h>
-#include <CGAL/Object.h>
 #include <CGAL/Surface_sweep_2/Default_visitor_base.h>
 #include <CGAL/Default.h>
 
@@ -113,7 +112,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

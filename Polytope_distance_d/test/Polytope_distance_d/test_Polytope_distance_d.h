@@ -55,7 +55,7 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
     CGAL::Verbose_ostream verr0( verbose == 0);
     CGAL::Verbose_ostream verr1( verbose == 1);
     CGAL::Verbose_ostream verrX( verbose == 2);
-    CGAL::set_pretty_mode( verr.out());
+    CGAL::IO::set_pretty_mode( verr.out());
 
     bool  is_valid_verbose = ( verbose > 1);
 
@@ -105,24 +105,24 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
     COVER( "(number of) support points",
         verrX << poly_dist.number_of_support_points() << endl;
         verrX << endl << poly_dist.number_of_support_points_p() << endl;
-	typename Poly_dist::Support_point_index_iterator 
+        typename Poly_dist::Support_point_index_iterator
             point_p_index = poly_dist.support_points_p_indices_begin();
         typename Poly_dist::Support_point_iterator
             point_p_it = poly_dist.support_points_p_begin();
         for ( ; point_p_it != poly_dist.support_points_p_end();
               ++point_p_it, ++point_p_index) {
             verrX << *point_p_it << endl;
-	    assert(*point_p_it == p_first [*point_p_index]); 
+            assert(*point_p_it == p_first [*point_p_index]);
         }
         verrX << endl << poly_dist.number_of_support_points_q() << endl;
-	typename Poly_dist::Support_point_index_iterator 
+        typename Poly_dist::Support_point_index_iterator
             point_q_index = poly_dist.support_points_q_indices_begin();
         typename Poly_dist::Support_point_iterator
             point_q_it = poly_dist.support_points_q_begin();
         for ( ; point_q_it != poly_dist.support_points_q_end();
               ++point_q_it,++point_q_index ) {
             verrX << *point_q_it << endl;
-	    assert(*point_q_it == q_first [*point_q_index]); 
+            assert(*point_q_it == q_first [*point_q_index]);
         }
         assert( ( poly_dist.number_of_support_points_p()
                   + poly_dist.number_of_support_points_q())
@@ -133,7 +133,7 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
         assert( ( poly_dist.support_points_q_end()
                   - poly_dist.support_points_q_begin())
                 == poly_dist.number_of_support_points_q());
-	   
+
     )
 
     COVER( "realizing points",

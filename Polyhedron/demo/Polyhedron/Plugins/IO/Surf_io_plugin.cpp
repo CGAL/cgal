@@ -27,7 +27,7 @@ class Surf_io_plugin:
 public:
 
   QString name() const { return "surf_io_plugin"; }
-  QString nameFilters() const { return "Amira files (*.surf)"; }
+  QString nameFilters() const { return "Amira files (*.surf);;Amira binary files (*.surf.am)"; }
   bool canLoad(QFileInfo) const{ return true; }
   template<class FaceGraphItem>
   CGAL::Three::Scene_item* actual_load(QFileInfo fileinfo);
@@ -68,7 +68,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return NULL;
+    return nullptr;
   }
 
   if(fileinfo.size() == 0)
@@ -79,7 +79,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     return item;
   }
   std::vector<FaceGraph> patches;
-  std::vector<MaterialData> material_data;
+  std::vector<CGAL::IO::internal::MaterialData> material_data;
   CGAL::Bbox_3 grid_box;
   std::array<unsigned int, 3> grid_size = {{1, 1, 1}};
   boost::container::flat_set<Point_3> duplicated_points;
@@ -94,7 +94,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
   }
   if (!duplicated_points.empty())
     std::cout << duplicated_points.size() << " points have been duplicated." << std::endl;
-  
+
   std::vector<QColor> colors_;
   compute_color_map(QColor(100, 100, 255), static_cast<unsigned>(patches.size()),
                     std::back_inserter(colors_));
@@ -104,6 +104,14 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     FaceGraphItem *patch = new FaceGraphItem(patches[i]);
     patch->setName(QString("Patch #%1").arg(i));
     patch->setColor(colors_[i]);
+
+    patch->setProperty("inner material id", material_data[i].innerRegion.first);
+    patch->setProperty("inner material name",
+                       QString(material_data[i].innerRegion.second.data()));
+    patch->setProperty("outer material id", material_data[i].outerRegion.first);
+    patch->setProperty("outer material name",
+                       QString(material_data[i].outerRegion.second.data()));
+
     CGAL::Three::Three::scene()->addItem(patch);
     CGAL::Three::Three::scene()->changeGroup(patch, group);
   }

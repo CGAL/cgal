@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // ETH Zurich (Switzerland).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
@@ -42,12 +42,12 @@ class Min_ellipse_2 {
     typedef typename  Traits_::Ellipse                  Ellipse;
     typedef typename  std::list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                     Support_point_iterator;
-    
+
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
     outside the class template. Therefore, all member functions are implemented
     in the class interface.
-    
+
     // creation
     template < class InputIterator >
     Min_ellipse_2( InputIterator first,
@@ -55,7 +55,7 @@ class Min_ellipse_2 {
                    bool          randomize = false,
                    Random&       random    = get_default_random(),
                    const Traits& traits    = Traits());
-    
+
     Min_ellipse_2( const Traits& traits = Traits());
     Min_ellipse_2( const Point&  p,
                    const Traits& traits = Traits());
@@ -78,30 +78,30 @@ class Min_ellipse_2 {
                    const Point&  p5,
                    const Traits& traits = Traits());
     ~Min_ellipse_2( );
-    
+
     // access functions
     int  number_of_points        ( ) const;
     int  number_of_support_points( ) const;
-    
+
     Point_iterator  points_begin( ) const;
     Point_iterator  points_end  ( ) const;
-    
+
     Support_point_iterator  support_points_begin( ) const;
     Support_point_iterator  support_points_end  ( ) const;
-    
+
     const Point&  support_point( int i) const;
-    
+
     const Ellipse&  ellipse( ) const;
-    
+
     // predicates
     CGAL::Bounded_side  bounded_side( const Point& p) const;
     bool  has_on_bounded_side      ( const Point& p) const;
     bool  has_on_boundary          ( const Point& p) const;
     bool  has_on_unbounded_side    ( const Point& p) const;
-    
+
     bool  is_empty     ( ) const;
     bool  is_degenerate( ) const;
-    
+
     // modifiers
     void  insert( const Point& p);
     void  insert( const Point* first,
@@ -111,10 +111,10 @@ class Min_ellipse_2 {
     void  insert( std::istream_iterator<Point,std::ptrdiff_t> first,
                   std::istream_iterator<Point,std::ptrdiff_t> last );
     void  clear( );
-    
+
     // validity check
     bool  is_valid( bool verbose = false, int level = 0) const;
-    
+
     // miscellaneous
     const Traits&  traits( ) const;
     **************************************************************************/
@@ -125,7 +125,7 @@ class Min_ellipse_2 {
     std::list<Point>  points;                   // doubly linked list of points
     int          n_support_points;              // number of support points
     Point*       support_points;                // array of support points
-    
+
 
     // copying and assignment not allowed!
     Min_ellipse_2( const Min_ellipse_2<Traits_>&);
@@ -146,7 +146,7 @@ class Min_ellipse_2 {
     {
         return( points.size());
     }
-    
+
     inline
     std::size_t
     number_of_support_points( ) const
@@ -161,7 +161,7 @@ class Min_ellipse_2 {
     {
         return( number_of_support_points() == 0);
     }
-    
+
     inline
     bool
     is_degenerate( ) const
@@ -176,34 +176,34 @@ class Min_ellipse_2 {
     {
         return( points.begin());
     }
-    
+
     inline
     Point_iterator
     points_end( ) const
     {
         return( points.end());
     }
-    
+
     inline
     Support_point_iterator
     support_points_begin( ) const
     {
         return( support_points);
     }
-    
+
     inline
     Support_point_iterator
     support_points_end( ) const
     {
         return( support_points+n_support_points);
     }
-    
+
     // random access for support points
     inline
     const Point&
     support_point( std::size_t i) const
     {
-        CGAL_optimisation_precondition(i <  number_of_support_points());
+        CGAL_precondition(i <  number_of_support_points());
         return( support_points[ i]);
     }
     // ellipse
@@ -213,7 +213,7 @@ class Min_ellipse_2 {
     {
         return( tco.ellipse);
     }
-    
+
 
     // in-ellipse test predicates
     inline
@@ -222,21 +222,21 @@ class Min_ellipse_2 {
     {
         return( tco.ellipse.bounded_side( p));
     }
-    
+
     inline
     bool
     has_on_bounded_side( const Point& p) const
     {
         return( tco.ellipse.has_on_bounded_side( p));
     }
-    
+
     inline
     bool
     has_on_boundary( const Point& p) const
     {
         return( tco.ellipse.has_on_boundary( p));
     }
-    
+
     inline
     bool
     has_on_unbounded_side( const Point& p) const
@@ -281,7 +281,7 @@ class Min_ellipse_2 {
             tco.ellipse.set( );
             break;
           default:
-            CGAL_optimisation_assertion( ( n_support_points >= 0) &&
+            CGAL_assertion( ( n_support_points >= 0) &&
                                          ( n_support_points <= 5) ); }
     }
 
@@ -292,22 +292,22 @@ class Min_ellipse_2 {
         n_support_points = n_sp;
         compute_ellipse();
         if ( n_sp == 5) return;
-    
+
         // test first n points
         typename std::list<Point>::iterator  point_iter = points.begin();
         for ( ; last != point_iter; ) {
             const Point& p = *point_iter;
-    
+
             // p not in current ellipse?
             if ( has_on_unbounded_side( p)) {
-    
+
                 // recursive call with p as additional support point
                 support_points[ n_sp] = p;
                 me( point_iter, n_sp+1);
-    
+
                 // move current point to front
                 points.splice( points.begin(), points, point_iter++); }
-    
+
             else
                 ++point_iter; }
     }
@@ -330,13 +330,13 @@ class Min_ellipse_2 {
         {
             // allocate support points' array
             support_points = new Point[ 5];
-    
+
             // range of points not empty?
             if ( first != last) {
-    
+
                 // store points
                 if ( randomize) {
-    
+
                     // shuffle points at random
                     std::vector<Point> v( first, last);
                     CGAL::cpp98::random_shuffle( v.begin(), v.end(), random);
@@ -344,11 +344,11 @@ class Min_ellipse_2 {
                                std::back_inserter( points)); }
                 else
                     std::copy( first, last, std::back_inserter( points)); }
-    
+
             // compute me
             me( points.end(), 0);
         }
-    
+
     // default constructor
     inline
     Min_ellipse_2()
@@ -356,11 +356,11 @@ class Min_ellipse_2 {
     {
         // allocate support points' array
         support_points = new Point[ 5];
-    
+
         // initialize ellipse
         tco.ellipse.set();
-    
-        CGAL_optimisation_postcondition( is_empty());
+
+        CGAL_postcondition( is_empty());
     }
 
     inline
@@ -369,13 +369,13 @@ class Min_ellipse_2 {
     {
         // allocate support points' array
         support_points = new Point[ 5];
-    
+
         // initialize ellipse
         tco.ellipse.set();
-    
-        CGAL_optimisation_postcondition( is_empty());
+
+        CGAL_postcondition( is_empty());
     }
-    
+
     // constructor for one point
     inline
     Min_ellipse_2( const Point& p, const Traits& traits = Traits())
@@ -383,16 +383,16 @@ class Min_ellipse_2 {
     {
         // allocate support points' array
         support_points = new Point[ 5];
-    
+
         // initialize ellipse
         support_points[ 0] = p;
         tco.ellipse.set( p);
-    
-        CGAL_optimisation_postcondition( is_degenerate());
+
+        CGAL_postcondition( is_degenerate());
     }
-    
+
     // constructor for two points
-    // This was const Point& but then Intel 7.0/.net2003 messes it up 
+    // This was const Point& but then Intel 7.0/.net2003 messes it up
     // with the constructor taking an iterator range
     inline
     Min_ellipse_2( Point p1, Point p2,
@@ -401,17 +401,17 @@ class Min_ellipse_2 {
     {
         // allocate support points' array
         support_points = new Point[ 5];
-    
+
         // store points
         points.push_back( p1);
         points.push_back( p2);
-    
+
         // compute me
         me( points.end(), 0);
-    
-        CGAL_optimisation_postcondition( is_degenerate());
+
+        CGAL_postcondition( is_degenerate());
     }
-    
+
     // constructor for three points
     inline
     Min_ellipse_2( const Point& p1, const Point& p2, const Point& p3,
@@ -420,16 +420,16 @@ class Min_ellipse_2 {
     {
         // allocate support points' array
         support_points = new Point[ 5];
-    
+
         // store points
         points.push_back( p1);
         points.push_back( p2);
         points.push_back( p3);
-    
+
         // compute me
         me( points.end(), 0);
     }
-    
+
     // constructor for four points
     inline
     Min_ellipse_2( const Point& p1, const Point& p2,
@@ -439,17 +439,17 @@ class Min_ellipse_2 {
     {
         // allocate support points' array
         support_points = new Point[ 5];
-    
+
         // store points
         points.push_back( p1);
         points.push_back( p2);
         points.push_back( p3);
         points.push_back( p4);
-    
+
         // compute me
         me( points.end(), 0);
     }
-    
+
     // constructor for five points
     inline
     Min_ellipse_2( const Point& p1, const Point& p2, const Point& p3,
@@ -459,18 +459,18 @@ class Min_ellipse_2 {
     {
         // allocate support points' array
         support_points = new Point[ 5];
-    
+
         // store points
         points.push_back( p1);
         points.push_back( p2);
         points.push_back( p3);
         points.push_back( p4);
         points.push_back( p5);
-    
+
         // compute me
         me( points.end(), 0);
     }
-    
+
 
     // Destructor
     // ----------
@@ -488,17 +488,17 @@ class Min_ellipse_2 {
     {
         // p not in current ellipse?
         if ( has_on_unbounded_side( p)) {
-    
+
             // p new support point
             support_points[ 0] = p;
-    
+
             // recompute me
             me( points.end(), 1);
-    
+
             // store p as the first point in list
             points.push_front( p); }
         else
-    
+
             // append p to the end of the list
             points.push_back( p);
     }
@@ -517,7 +517,7 @@ class Min_ellipse_2 {
         n_support_points = 0;
         tco.ellipse.set();
     }
-    
+
 
     // Validity check
     // --------------
@@ -525,14 +525,14 @@ class Min_ellipse_2 {
     is_valid( bool verbose = false, int level = 0) const
     {
         using namespace std;
-    
+
         CGAL::Verbose_ostream verr( verbose);
         verr << endl;
         verr << "CGAL::Min_ellipse_2<Traits>::" << endl;
         verr << "is_valid( true, " << level << "):" << endl;
         verr << "  |P| = " << number_of_points()
              << ", |S| = " << number_of_support_points() << endl;
-    
+
         // containment check (a)
         verr << "  a) containment check..." << flush;
         Point_iterator point_iter;
@@ -543,9 +543,9 @@ class Min_ellipse_2 {
                 return( CGAL::_optimisation_is_valid_fail( verr,
                             "ellipse does not contain all points"));
         verr << "passed." << endl;
-    
+
         // support set checks (b)+(c) (not yet implemented)
-        
+
         // alternative support set check
         verr << "  +) support set check..." << flush;
         Support_point_iterator support_point_iter;
@@ -557,7 +557,7 @@ class Min_ellipse_2 {
                             "ellipse does not have all \
                              support points on the boundary"));
         verr << "passed." << endl;
-    
+
         verr << "  object is valid!" << endl;
         return( true);
     }

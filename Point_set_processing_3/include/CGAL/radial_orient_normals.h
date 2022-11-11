@@ -19,7 +19,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/IO/trace.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <deque>
 #include <math.h>
@@ -72,7 +72,7 @@ radial_orient_normals(
     typedef typename Kernel::FT FT;
 
     // Precondition: at least one element in the container.
-    CGAL_point_set_processing_precondition(first != beyond);
+    CGAL_precondition(first != beyond);
 
     // Find points barycenter.
     // Note: We should use CGAL::centroid() from PCA component.
@@ -99,7 +99,7 @@ radial_orient_normals(
 
       // Point's normal
       Vector_ref vec2 = get(normal_pmap, *it);
-      
+
       //         ->               ->
       // Orients vec2 parallel to vec1
       double dot = vec1 * vec2;
@@ -144,7 +144,7 @@ radial_orient_normals(
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     return radial_orient_normals(
       first,beyond,
-      point_pmap, normal_pmap, 
+      point_pmap, normal_pmap,
       Kernel());
 }
 /// @endcond

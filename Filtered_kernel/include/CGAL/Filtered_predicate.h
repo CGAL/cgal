@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -37,6 +37,10 @@ namespace CGAL {
 //   not, or we let all this up to the compiler optimizer to figure out ?
 // - Some caching could be done at the Point_2 level.
 
+// Protection is undocumented and currently always true, meaning that it
+// assumes a default rounding mode of round-to-nearest. false would correspond
+// to a default of round-towards-infinity, so interval arithmetic does not
+// require protection but regular code may.
 
 template <class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate
@@ -94,15 +98,16 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(args)...);
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return ep(c2e(args)...);
 }
 

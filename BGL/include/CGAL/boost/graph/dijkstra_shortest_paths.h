@@ -13,23 +13,18 @@
 #ifndef CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATHS_H
 #define CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATHS_H
 
-// This will push/pop a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+// This will push/pop a VC++ warning
+#include <CGAL/Named_function_parameters.h>
 
-#include <boost/version.hpp>
-#include <climits>
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4172) // Address warning inside boost named parameters
+#endif
 
-#if BOOST_VERSION == 105400
-  #ifdef BOOST_GRAPH_DIJKSTRA_HPP
-  #    pragma message \
-      "Warning: the header file boost/graph/dijkstra_shortest_paths.hpp "       \
-      "of boost 1.54 contains a bug that may impact some functions in CGAL. "   \
-      "Please consider including CGAL/boost/graph/dijkstra_shortest_paths.hpp "  \
-      "before boost header"
-  #endif
-  #include <CGAL/boost/graph/dijkstra_shortest_paths.hpp>
-#else
-  #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
 #endif
 
 #endif // CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATHS_H

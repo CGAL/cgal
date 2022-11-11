@@ -12,9 +12,9 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef K::Point_3                                           Point_3;
 
 typedef CGAL::Triangulation_data_structure_3<
-		  CGAL::Triangulation_vertex_base_3<K>,
-	      CGAL::Triangulation_cell_base_3<K>,
-		  CGAL::Parallel_tag>                                Tds;
+                  CGAL::Triangulation_vertex_base_3<K>,
+              CGAL::Triangulation_cell_base_3<K>,
+                  CGAL::Parallel_tag>                                Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>               PDT;
 
 // global variables used by bench_dt3

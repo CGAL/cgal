@@ -20,7 +20,7 @@
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "The kernel K can be used directly as traits since weighted points and "\
   "the associated function objects are now part of the concept Kernel."
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 namespace CGAL {
 

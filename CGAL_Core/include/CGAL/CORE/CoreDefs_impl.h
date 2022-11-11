@@ -7,9 +7,9 @@
  *
  * File: CoreDefs.cpp
  * Synopsis:
- *	 Useful parameters for Core Library which users may change
+ *         Useful parameters for Core Library which users may change
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -24,7 +24,9 @@
 
 #include "CGAL/CORE/CoreDefs.h"
 
-namespace CORE { 
+#include <atomic>
+
+namespace CORE {
 
 //  Default Values
 
@@ -38,7 +40,7 @@ namespace CORE {
  *  User's responsibility to check and reset value to 0. */
 // This is currently used in geom2d/points2d.cpp for I/O of points
 
-// Note from 2014: does not seem to be used anywhere, and it is not declared 
+// Note from 2014: does not seem to be used anywhere, and it is not declared
 // in CoreDefs.h so it is not accessible
 // Left here for compatibilty when CGAL_HEADER_ONLY is not defined
 
@@ -50,7 +52,7 @@ int IOErrorFlag = 0;
 #ifdef CGAL_NO_ATOMIC
 bool AbortFlag = true;
 #else
-CGAL::cpp11::atomic<bool> AbortFlag(true);
+std::atomic<bool> AbortFlag(true);
 #endif
 
 /**
@@ -61,11 +63,11 @@ CGAL::cpp11::atomic<bool> AbortFlag(true);
 #ifdef CGAL_NO_ATOMIC
 int InvalidFlag = 0;
 #else
-CGAL::cpp11::atomic<int> InvalidFlag(0);
+std::atomic<int> InvalidFlag(0);
 #endif
 
 /* ************************************************************
- * PRECISION PARAMETERS 
+ * PRECISION PARAMETERS
  * ************************************************************ */
 
 /**
@@ -83,7 +85,7 @@ extLong defBFdivRelPrec = 54;
 extLong defBFsqrtAbsPrec = 54;
 
 /**
- * Escape Precision 
+ * Escape Precision
  *   -- we will not compare a number to precision higher than this
  *   -- if this is infinity, there there is no escape precision */
 extLong EscapePrec  = CORE_posInfty;
@@ -97,11 +99,11 @@ long EscapePrecFlag = 0;
 #ifdef CGAL_NO_ATOMIC
 bool EscapePrecWarning = true;
 #else
-CGAL::cpp11::atomic<bool> EscapePrecWarning(true);
+std::atomic<bool> EscapePrecWarning(true);
 #endif
 
 /** The Composite Precision [defAbsPrec, defRelPrec]
- *  determines the precision to which an Expr evaluates its 
+ *  determines the precision to which an Expr evaluates its
  *  (exact, implicit) constant value. */
 
 /**  absolute precision  = 2^31 - 1 */
@@ -117,7 +119,7 @@ extLong defRelPrec = 60;
 #ifdef CGAL_NO_ATOMIC
 long defBigFloatOutputDigits = 10;
 #else
-CGAL::cpp11::atomic<long> defBigFloatOutputDigits(10);
+std::atomic<long> defBigFloatOutputDigits(10);
 #endif
 
 /**  NORMALLY, we like to make this equal to defBigFloatOutputDigits
@@ -125,15 +127,15 @@ CGAL::cpp11::atomic<long> defBigFloatOutputDigits(10);
 #ifdef CGAL_NO_ATOMIC
 long defOutputDigits = 10;
 #else
-CGAL::cpp11::atomic<long> defOutputDigits(10); // == defBigFloatOutputDigits;
+std::atomic<long> defOutputDigits(10); // == defBigFloatOutputDigits;
 #endif
 
 /** String Input Precision */
 
 /** Set this to 16 if you want machine precision. This controls the
  *  absolute error in string decimal inputs to Real or Expr.
- *  If defInputDigits is finite, then the absolute error will be 
- *  at most 10^{-defInputDigits}.  Otherwise, the input is exactly 
+ *  If defInputDigits is finite, then the absolute error will be
+ *  at most 10^{-defInputDigits}.  Otherwise, the input is exactly
  *  represented by some BigFloat or BigRat value. */
 extLong defInputDigits = CORE_posInfty;
 
@@ -142,7 +144,7 @@ extLong defInputDigits = CORE_posInfty;
 #ifdef CGAL_NO_ATOMIC
 long defBigFloatInputDigits = 16;
 #else
-CGAL::cpp11::atomic<long> defBigFloatInputDigits(16);
+std::atomic<long> defBigFloatInputDigits(16);
 #endif
 
 /* ************************************************************
@@ -154,7 +156,7 @@ CGAL::cpp11::atomic<long> defBigFloatInputDigits(16);
 #ifdef CGAL_NO_ATOMIC
 bool fpFilterFlag = true;
 #else
-CGAL::cpp11::atomic<bool> fpFilterFlag(true);
+std::atomic<bool> fpFilterFlag(true);
 #endif
 
 /** IncrementaL evaluation flag
@@ -163,7 +165,7 @@ CGAL::cpp11::atomic<bool> fpFilterFlag(true);
 #ifdef CGAL_NO_ATOMIC
 bool incrementalEvalFlag = true;
 #else
-CGAL::cpp11::atomic<bool> incrementalEvalFlag(true);
+std::atomic<bool> incrementalEvalFlag(true);
 #endif
 
 /** Progressive evaluation flag
@@ -171,7 +173,7 @@ CGAL::cpp11::atomic<bool> incrementalEvalFlag(true);
 #ifdef CGAL_NO_ATOMIC
 bool progressiveEvalFlag = true;
 #else
-CGAL::cpp11::atomic<bool> progressiveEvalFlag(true);
+std::atomic<bool> progressiveEvalFlag(true);
 #endif
 
 /** Initial progressive evaluation precision
@@ -179,7 +181,7 @@ CGAL::cpp11::atomic<bool> progressiveEvalFlag(true);
 #ifdef CGAL_NO_ATOMIC
 long defInitialProgressivePrec = 64;
 #else
-CGAL::cpp11::atomic<long> defInitialProgressivePrec(64);
+std::atomic<long> defInitialProgressivePrec(64);
 #endif
 
 /** RATIONAL REDUCTION FLAG
@@ -187,7 +189,7 @@ CGAL::cpp11::atomic<long> defInitialProgressivePrec(64);
 #ifdef CGAL_NO_ATOMIC
 bool rationalReduceFlag = false;
 #else
-CGAL::cpp11::atomic<bool> rationalReduceFlag(false);
+std::atomic<bool> rationalReduceFlag(false);
 #endif
 #endif // CGAL_HEADER_ONLY
 

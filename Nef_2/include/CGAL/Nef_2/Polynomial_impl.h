@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel
 //                 Andreas Fabri
@@ -39,14 +39,14 @@ void Polynomial<int>::euclidean_div(
 
 inline
 void Polynomial<int>::pseudo_div(
-  const Polynomial<int>& f, const Polynomial<int>& g, 
+  const Polynomial<int>& f, const Polynomial<int>& g,
   Polynomial<int>& q, Polynomial<int>& r, int& D)
 {
   CGAL_NEF_TRACEN("pseudo_div "<<f<<" , "<< g);
   int fd=f.degree(), gd=g.degree();
-  if ( fd<gd ) 
-  { q = Polynomial<int>(0); r = f; D = 1; 
-    CGAL_postcondition(Polynomial<int>(D)*f==q*g+r); return; 
+  if ( fd<gd )
+  { q = Polynomial<int>(0); r = f; D = 1;
+    CGAL_postcondition(Polynomial<int>(D)*f==q*g+r); return;
   }
   // now we know fd >= gd and f>=g
   int qd=fd-gd, delta=qd+1, rd=fd;
@@ -59,7 +59,7 @@ void Polynomial<int>::pseudo_div(
     int F = res[rd]; // highest order coeff of res
     int t = F/G;     // ensured to be integer by multiplication of D
     q.coeff(qd) = t;    // store q coeff
-    res.minus_offsetmult(g,t,qd); 
+    res.minus_offsetmult(g,t,qd);
     if (res.is_zero()) break;
     rd = res.degree();
     qd = rd - gd;
@@ -87,15 +87,23 @@ Polynomial<int> Polynomial<int>::gcd(
   int f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
   int F = CGAL::gcd(f1c,f2c);
-  Polynomial<int> q,r; int M=1,D;
+  Polynomial<int> q,r;
+  int D;
+#ifdef CGAL_USE_TRACE
+  int M=1;
   bool first = true;
-  while ( ! f2.is_zero() ) { 
+#endif
+  while ( ! f2.is_zero() ) {
     Polynomial<int>::pseudo_div(f1,f2,q,r,D);
+#ifdef CGAL_USE_TRACE
     if (!first) M*=D;
+#endif
     CGAL_NEF_TRACEV(f1);CGAL_NEF_TRACEV(f2);CGAL_NEF_TRACEV(q);CGAL_NEF_TRACEV(r);CGAL_NEF_TRACEV(M);
     r /= r.content();
     f1=f2; f2=r;
+#ifdef CGAL_USE_TRACE
     first=false;
+#endif
   }
   CGAL_NEF_TRACEV(f1.content());
   return Polynomial<int>(F)*f1.abs();
@@ -127,14 +135,14 @@ void Polynomial<double>::euclidean_div(
 
 inline
 void Polynomial<double>::pseudo_div(
-  const Polynomial<double>& f, const Polynomial<double>& g, 
+  const Polynomial<double>& f, const Polynomial<double>& g,
   Polynomial<double>& q, Polynomial<double>& r, double& D)
 {
   CGAL_NEF_TRACEN("pseudo_div "<<f<<" , "<< g);
   int fd=f.degree(), gd=g.degree();
-  if ( fd<gd ) 
-  { q = Polynomial<double>(0); r = f; D = 1; 
-    CGAL_postcondition(Polynomial<double>(D)*f==q*g+r); return; 
+  if ( fd<gd )
+  { q = Polynomial<double>(0); r = f; D = 1;
+    CGAL_postcondition(Polynomial<double>(D)*f==q*g+r); return;
   }
   // now we know fd >= gd and f>=g
   int qd=fd-gd, delta=qd+1, rd=fd;
@@ -147,7 +155,7 @@ void Polynomial<double>::pseudo_div(
     double F = res[rd]; // highest order coeff of res
     double t = F/G;     // ensured to be integer by multiplication of D
     q.coeff(qd) = t;    // store q coeff
-    res.minus_offsetmult(g,t,qd); 
+    res.minus_offsetmult(g,t,qd);
     if (res.is_zero()) break;
     rd = res.degree();
     qd = rd - gd;
@@ -172,15 +180,20 @@ Polynomial<double> Polynomial<double>::gcd(
   Polynomial<double> f2 = p2.abs();
   double f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
-  Polynomial<double> q,r; double M=1,D;
+  Polynomial<double> q,r; double D;
+#ifdef CGAL_USE_TRACE
+  double M=1;
   bool first = true;
-  while ( ! f2.is_zero() ) { 
+#endif
+  while ( ! f2.is_zero() ) {
     Polynomial<double>::pseudo_div(f1,f2,q,r,D);
+#ifdef CGAL_USE_TRACE
     if (!first) M*=D;
+    first=false;
+#endif
     CGAL_NEF_TRACEV(f1);CGAL_NEF_TRACEV(f2);CGAL_NEF_TRACEV(q);CGAL_NEF_TRACEV(r);CGAL_NEF_TRACEV(M);
     r /= r.content();
     f1=f2; f2=r;
-    first=false;
   }
   CGAL_NEF_TRACEV(f1.content());
   return Polynomial<double>(1)*f1.abs();

@@ -14,7 +14,7 @@ typedef std::vector<Point_3>::iterator point_iterator;
 int main() {
 
   std::vector<Point_3> points;
-  
+
   points.push_back(Point_3(1,2,3));
   points.push_back(Point_3(1,2,5));
 

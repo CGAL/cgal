@@ -6,16 +6,16 @@
  * This file is part of CGAL (www.cgal.org).
  *
  * File: Real.cpp
- * Synopsis: The Real class is a superclass for all the number 
+ * Synopsis: The Real class is a superclass for all the number
  *           systems in the Core Library (int, long, float, double,
  *           BigInt, BigRat, BigFloat, etc)
- *           
- * Written by 
+ *
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
@@ -33,6 +33,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <string>
 #include <ctype.h>
 #include <CGAL/CORE/Real.h>
 #include <CGAL/tss.h>
@@ -40,10 +41,11 @@
 #include <CGAL/CORE/BigFloat.h> // for FiveTo
 #endif
 
-namespace CORE { 
+namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const Real& Real::getZero() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(Real, Zero, 0);
   return Zero;
 }
@@ -92,38 +94,38 @@ extern BigInt FiveTo(unsigned long exp);
 
 // Construct Real from String
 // Note:
-// 	-- Zilin Du: 06/03/2003
-// 	-- Original it is the code for Real's constructor for "const char*".
-// 	   I change it to a function so that two constrcutors can share the code.
-// 	   now it is private and no default value.
+//         -- Zilin Du: 06/03/2003
+//         -- Original it is the code for Real's constructor for "const char*".
+//            I change it to a function so that two constrcutors can share the code.
+//            now it is private and no default value.
 //
 //   --Default value of the argument "prec" is get_static_defInputDigits()
 //   --If prec is CORE_posInfty, then the input is
-//	read in exactly.  Otherwise, we convert to a RealBigFloat
-//	with absolute error at most 10^{-prec}
+//        read in exactly.  Otherwise, we convert to a RealBigFloat
+//        with absolute error at most 10^{-prec}
 
 // Constructor Real( char *str, extLong& prec)
-//	is very similar to
-//		BigFloatRep::fromString( char *str, extLong& prec);
+//        is very similar to
+//                BigFloatRep::fromString( char *str, extLong& prec);
 // Differences:
-//	In BigFloat(str, prec), the value of prec cannot be infinity, and
-//		it defaults to defBigFloatInputDigits;
-//	In Real(str, prec), the value of prec is allowed to be infinity, and
-//		it defaults to defInputDigits.
+//        In BigFloat(str, prec), the value of prec cannot be infinity, and
+//                it defaults to defBigFloatInputDigits;
+//        In Real(str, prec), the value of prec is allowed to be infinity, and
+//                it defaults to defInputDigits.
 //
 // Why do we have the two versions?  It allows us to use the BigFloat class
-//	directly, without relying on Real class.
+//        directly, without relying on Real class.
 
 CGAL_INLINE_FUNCTION
 void Real::constructFromString(const char *str, const extLong& prec )
 // NOTE: prec defaults to get_static_defInputDigits() (see Real.h)
 {
-  //	8/8/01, Chee and Zilin: add a new rational string format:
-  //		this format is indicated by the presence of a slash "/"
-  //		Moreover, the value of prec is ignored (basically
-  //		assumed to be infinity).
+  //        8/8/01, Chee and Zilin: add a new rational string format:
+  //                this format is indicated by the presence of a slash "/"
+  //                Moreover, the value of prec is ignored (basically
+  //                assumed to be infinity).
 
-  if (std::strchr(str, '/') != nullptr) {	// this is a rational number
+  if (std::strchr(str, '/') != nullptr) {        // this is a rational number
     rep = new RealBigRat(BigRat(str));
     return;
   }
@@ -132,7 +134,7 @@ void Real::constructFromString(const char *str, const extLong& prec )
   int dot = 0;
   long e10 = 0;
   if (e != nullptr)
-    e10 = std::atol(e+1);	// e10 is decimal precision of the input string
+    e10 = std::atol(e+1);        // e10 is decimal precision of the input string
   // i.e., input is A/10^{e10}.
   else {
     e = str + std::strlen(str);
@@ -167,7 +169,7 @@ void Real::constructFromString(const char *str, const extLong& prec )
     rep = new RealBigInt(m);
   } else { // e10 < 0,  fractional numbers
     // HERE IS WHERE WE USE THE SYSTEM CONSTANT
-    //	       get_static_defInputDigits()
+    //               get_static_defInputDigits()
     // Note: get_static_defInputDigits() should be at least log_2(10).
     //       We default get_static_defInputDigits() to 4.
     //std::cout << "(m,ten)=" << m << "," << ten << std::endl;
@@ -188,8 +190,9 @@ void Real::constructFromString(const char *str, const extLong& prec )
 CGAL_INLINE_FUNCTION
 std::istream& operator >>(std::istream& i, Real& x) {
   int size = 20;
-  char *str = new char[size];
-  char *p = str;
+  std::string str;
+  str.reserve(size);
+
   char c;
   int d = 0, e = 0, s = 0;
   //  int done = 0;
@@ -203,20 +206,19 @@ std::istream& operator >>(std::istream& i, Real& x) {
   do {
     i.get(c);
   } while (!i.eof() && isspace(c)); /* loop if met end-of-file, or
-  			   char read in is white-space. */
+                             char read in is white-space. */
   // Chen Li,
   // original "if (c == EOF) ..." is unsafe since c is of char type and
   // EOF is of int tyep with a negative value -1
 
   if (i.eof()) {
     i.clear(std::ios::eofbit | std::ios::failbit);
-    delete [] str;
     return i;
   }
 
   // the current content in "c" should be the first non-whitespace char
   if (c == '-' || c == '+') {
-    *p++ = c;
+    str += c;
     i.get(c);
   }
 
@@ -229,23 +231,13 @@ std::istream& operator >>(std::istream& i, Real& x) {
     //  xxxx.xxxe+xxx.xxx:
     if (e && (c == '.'))
       break;
-    if (p - str == size) {
-      char *t = str;
-      str = new char[size*2];
-      std::memcpy(str, t, size);
-      delete [] t;
-      p = str + size;
-      size *= 2;
-    }
-#ifdef CORE_DEBUG
-    CGAL_assertion((p-str) < size);
-#endif
 
-    *p++ = c;
+    str += c;
+
     if (c == '.')
       d = 1;
     // Chen Li: fix a bug -- the sign of exponent can not happen before
-    // the character "e" appears! It must follow the "e' actually.
+    // the character "e" appears! It must follow the "e" actually.
     //    if (e || c == '-' || c == '+') s = 1;
     if (e)
       s = 1;
@@ -254,29 +246,13 @@ std::istream& operator >>(std::istream& i, Real& x) {
   }
 
   if (!i && !i.eof()) {
-    delete [] str;
     return i;
   }
-  // chenli: make sure that the p is still in the range
-  if (p - str >= size) {
-    std::ptrdiff_t len = p - str;
-    char *t = str;
-    str = new char[len + 1];
-    std::memcpy(str, t, len);
-    delete [] t;
-    p = str + len;
-  }
 
-#ifdef CORE_DEBUG
-  CGAL_assertion(p - str < size);
-#endif
-
-  *p = '\0';
   i.putback(c);
   i.clear();
   // old: x = Real(str, i.precision()); // use precision of input stream.
-  x = Real(str);  // default precision = get_static_defInputDigits()
-  delete [] str;
+  x = Real(str.c_str());  // default precision = get_static_defInputDigits()
   return i;
 }//operator >> (std::istream&, Real&)
 

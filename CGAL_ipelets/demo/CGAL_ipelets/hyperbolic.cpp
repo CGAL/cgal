@@ -6,20 +6,20 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Olivier Devillers
 
 
 #include <CGAL/Exact_circular_kernel_2.h>
 
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Object.h>
 
 #include "include/CGAL_ipelets/pencils.h"
 
 
- 
+
 #include <CGAL/Cartesian.h>
 namespace CGAL_hyperbolic{
 
@@ -33,7 +33,7 @@ const std::string sublabel[] = {
   "Segment through two points",
   "Bisector of two points",
   "Circle by center and point",
-  "Circle center", 
+  "Circle center",
   "Help"
 };
 
@@ -45,10 +45,10 @@ const std::string helpmsg[] = {
   "Draw the hyperbolic center given a circle (primary selection) in Poincare disk",
 };
 
-class hyperbolicIpelet 
+class hyperbolicIpelet
   : public CGAL::Ipelet_base<Kernel,6> {
 public:
-  hyperbolicIpelet() 
+  hyperbolicIpelet()
     :CGAL::Ipelet_base<Kernel,6>("Hyperbolic",sublabel,helpmsg){}
   void protected_run(int);
 };
@@ -59,16 +59,16 @@ void hyperbolicIpelet::protected_run(int fn)
   Circle_2 circ;     //constructed circle:
   Circle_2 p1,p2;
   Circle_2  poincare,selected;
-  
+
   if (fn==5) {
     show_help();
     return;
-  } 
-  
+  }
+
   std::list<Point_2> pt_list,pt_list1;
   std::list<Circle_2> cir_list,cir_list1;
 
-  int i=get_IpePage()->primarySelection(); 
+  int i=get_IpePage()->primarySelection();
 
   if (i<0) {
     print_error_message(("No mark or circle selected"));
@@ -77,17 +77,17 @@ void hyperbolicIpelet::protected_run(int fn)
 
   read_one_active_object(get_IpePage()->object(i),CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
        std::back_inserter(pt_list1),
-       std::back_inserter(cir_list1))); 
+       std::back_inserter(cir_list1)));
 
   Iso_rectangle_2 bbox=
   read_active_objects(
-		      CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
+                      CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
       std::back_inserter(pt_list),
       std::back_inserter(cir_list)
     )
   );
 
-  
+
   std::list<Point_2>::iterator it1=pt_list1.begin();
   std::list<Circle_2>::iterator cit1=cir_list1.begin();
   std::list<Point_2>::iterator it=pt_list.begin();
@@ -104,7 +104,7 @@ void hyperbolicIpelet::protected_run(int fn)
       return;
     }
   }
-  
+
   poincare=*cit;++cit;
   if(fn==4){
     if( (cit==cir_list.end()) || (cit1==cir_list1.end())){
@@ -119,12 +119,12 @@ void hyperbolicIpelet::protected_run(int fn)
     if (it!=pt_list.end())  {
       p2=Circle_2(*it,0);
       ++it;
-    }else{ 
-      print_error_message(("Two marks and a circle have to be selected")); 
+    }else{
+      print_error_message(("Two marks and a circle have to be selected"));
       return;
     }
     if( (it!=pt_list.end())||(cit!=cir_list.end())){
-      print_error_message(("Only two marks and a circle have to be selected")); 
+      print_error_message(("Only two marks and a circle have to be selected"));
       return;
     }
   }
@@ -133,7 +133,7 @@ void hyperbolicIpelet::protected_run(int fn)
     if (pt_list1.empty()){
       print_error_message(("Primary selection must be a mark (center)"));
       return;
-    }  
+    }
     if (*it1 != p1.center()) {
       //swap
       circ = p1;
@@ -143,7 +143,7 @@ void hyperbolicIpelet::protected_run(int fn)
     if (*it1 != p1.center()) {
       print_error_message(("Primary selection must be a mark (center)"));
       return;
-    }  
+    }
   }
 
   switch(fn){
@@ -158,7 +158,7 @@ void hyperbolicIpelet::protected_run(int fn)
       draw_in_ipe(Circular_arc_2(circ,p2.center(),p1.center(),circ.orientation()));
     else if (orientation(poincare.center(),p1.center(),p2.center())==0){
       print_error_message(
-	"degenerate case, hyperbolic line is on a diameter of Poincare disk");
+        "degenerate case, hyperbolic line is on a diameter of Poincare disk");
       draw_in_ipe(Segment_2(p1.center(),p2.center()));
     }else
       draw_in_ipe(Circular_arc_2(circ,p1.center(),p2.center(),circ.orientation()));
@@ -191,7 +191,7 @@ void hyperbolicIpelet::protected_run(int fn)
   }     //end of switch
 
   // detect degenerate case
-  if (circ==Circle_2()){ 
+  if (circ==Circle_2()){
     Kernel::Vector_2 v;
     if (fn==2) v= Kernel::Vector_2
        (p2.center().y()-p1.center().y(),p2.center().x()-p1.center().x());
@@ -202,13 +202,13 @@ void hyperbolicIpelet::protected_run(int fn)
     Point_2 q1=poincare.center()+ v;
     Point_2 q2=poincare.center()- v;
     print_error_message(
-	"degenerate case, hyperbolic line is a diameter of Poincare disk");
+        "degenerate case, hyperbolic line is a diameter of Poincare disk");
     Kernel::Segment_2 s(q1,q2);
     draw_in_ipe(s);
     return;
     }
 
-  // clip circ by poincare 
+  // clip circ by poincare
   std::vector< CGAL::Object > result;
   Kernel::Circular_arc_point_2 L,R;
   std::pair<Kernel::Circular_arc_point_2, unsigned > the_pair;

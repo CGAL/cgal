@@ -24,7 +24,7 @@ namespace CGAL {
 namespace Classification {
 
 namespace Feature {
-  
+
   /*!
     \ingroup PkgClassificationFeatures
 
@@ -46,7 +46,7 @@ namespace Feature {
     Its default name is "color_hue", "color_saturation" or
     "color_value", depending on which channel is chosen in the
     constructor.
-    
+
     \note The user only needs to provide a map to standard (and more common)
     RGB colors, the conversion to HSV is done internally.
 
@@ -56,7 +56,7 @@ namespace Feature {
     `ColorMap`.
     \tparam ColorMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `CGAL::Color`.
+    is `CGAL::IO::Color`.
   */
 template <typename GeomTraits, typename PointRange, typename ColorMap>
 class Color_channel : public Feature_base
@@ -72,15 +72,15 @@ public:
   };
 
 private:
-  
+
   const PointRange& input;
   ColorMap color_map;
   Channel m_channel;
-  
+
 public:
-  
+
   /*!
-    \brief Constructs a feature based on the given color channel.
+    \brief constructs a feature based on the given color channel.
 
     \param input point range.
     \param color_map property map to access the colors of the input points.

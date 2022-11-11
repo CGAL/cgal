@@ -27,7 +27,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cstdlib>
 #include <cstring>
@@ -1206,7 +1206,7 @@ protected:
 
   void deactivate_vertex (Dag_node& vtx_node) const;
 
-  void deactivate_edge (boost::shared_ptr<X_monotone_curve_2>& cv, Dag_node& edge_node) const;
+  void deactivate_edge (std::shared_ptr<X_monotone_curve_2>& cv, Dag_node& edge_node) const;
 
   //-----------------------------------------------------------------------------
   // Description:

@@ -25,7 +25,7 @@ Edge_container::Edge_container(int program, bool indexed)
   :Primitive_container(program, indexed),
     d(new Edge_d())
 {
-  std::vector<Vbo*> vbos(NbOfVbos, NULL);
+  std::vector<Vbo*> vbos(NbOfVbos, nullptr);
   setVbos(vbos);
 
 }
@@ -36,7 +36,7 @@ void Edge_container::initGL(Viewer_interface *viewer)
   if(viewer->isSharing())
   {
     if(!getVao(viewer))
-      setVao(viewer, new Vao(getVao(Three::mainViewer()), 
+      setVao(viewer, new Vao(getVao(Three::mainViewer()),
                              viewer->getShaderProgram(getProgram())));
   }
   else
@@ -70,7 +70,7 @@ void Edge_container::initGL(Viewer_interface *viewer)
       setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
       getVao(viewer)->addVbo(getVbo(Vertices));
       getVao(viewer)->addVbo(getVbo(Colors));
-      
+
       if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
       {
         if(!getVbo(Normals))
@@ -93,7 +93,7 @@ void Edge_container::initGL(Viewer_interface *viewer)
         if(!getVbo(Centers))
           setVbo(Centers,
                  new Vbo("center",
-                  viewer->getShaderProgram(getProgram())->property("isInstanced").toBool() 
+                  viewer->getShaderProgram(getProgram())->property("isInstanced").toBool()
                   ? Vbo::NOT_INSTANCED
                   : Vbo::GEOMETRY));
         getVao(viewer)->addVbo(getVbo(Centers));
@@ -109,6 +109,15 @@ void Edge_container::initGL(Viewer_interface *viewer)
         getVao(viewer)->addVbo(getVbo(Texture_map));
         if(!getTexture())
           setTexture(new Texture());
+      }
+      if(viewer->getShaderProgram(getProgram())->property("hasSubdomainIndicesValues").toBool())
+      {
+        if(!getVbo(Subdomain_indices))
+          setVbo(Subdomain_indices,
+                 new Vbo("subdomain_in",
+                         Vbo::GEOMETRY,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 2));
+        getVao(viewer)->addVbo(getVbo(Subdomain_indices));
       }
     }
   }
@@ -144,7 +153,7 @@ void Edge_container::draw(Viewer_interface *viewer,
       getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
     getVbo(Indices)->bind();
     viewer->glDrawElements(GL_LINES, static_cast<GLuint>(getIdxSize()),
-                           GL_UNSIGNED_INT, 0);
+                           GL_UNSIGNED_INT, nullptr);
     getVbo(Indices)->release();
     getVao(viewer)->release();
   }
@@ -163,16 +172,16 @@ void Edge_container::draw(Viewer_interface *viewer,
       getVao(viewer)->program->setUniformValue("is_surface", d->is_surface);
     if(getVao(viewer)->program->property("hasFMatrix").toBool())
       getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
-    
+
     if(getVao(viewer)->program->property("hasViewport").toBool())
     {
       getVao(viewer)->program->setUniformValue("viewport", getViewport());
-      getVao(viewer)->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
-      getVao(viewer)->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("near",static_cast<GLfloat>(viewer->camera()->zNear()));
+      getVao(viewer)->program->setUniformValue("far",static_cast<GLfloat>(viewer->camera()->zFar()));
     }
     if(getVao(viewer)->program->property("hasWidth").toBool())
       getVao(viewer)->program->setUniformValue("width", getWidth());
-    
+
     if(viewer->getShaderProgram(getProgram())->property("isInstanced").toBool())
     {
       viewer->glDrawArraysInstanced(GL_LINES, 0,

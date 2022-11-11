@@ -16,30 +16,30 @@ void test_constructor()
 
   T t;
   T t2(t);
-  CGAL_assertion(t == t2);
+  assert(t == t2);
   T t3 = t2;
-  CGAL_assertion(t == t3);
+  assert(t == t3);
   T t4(Iso_rectangle(0, 0, 2, 2));
   T t5(Iso_rectangle(0, 0, 2, 2), Geom_traits());
   t5.clear();
 
   t.insert(Point(0.5, 0.5));
-  CGAL_assertion(t != t2);
-  CGAL_assertion(t != t3);
+  assert(t != t2);
+  assert(t != t3);
 
   T t6(t);
-  CGAL_assertion(t == t6);
+  assert(t == t6);
   T t7 = t6;
-  CGAL_assertion(t == t7);
+  assert(t == t7);
 
   t.clear();
-  CGAL_assertion(t != t6);
-  CGAL_assertion(t != t7);
+  assert(t != t6);
+  assert(t != t7);
 
   t.swap(t7);
-  CGAL_assertion(t7.empty());
-  CGAL_assertion(!t.empty());
-  CGAL_assertion(t != t7);
+  assert(t7.empty());
+  assert(!t.empty());
+  assert(t != t7);
 }
 
 template <class T>
@@ -58,28 +58,28 @@ void test_global_access()
   t_const.dimension();
 
   size_t number_of_vertices = t_const.number_of_vertices();
-  CGAL_USE(number_of_vertices);
-  CGAL_assertion(number_of_vertices == t.number_of_vertices());
+
+  assert(number_of_vertices == t.number_of_vertices());
   size_t number_of_faces = t_const.number_of_faces();
-  CGAL_USE(number_of_faces);
-  CGAL_assertion(number_of_faces == t.number_of_faces());
+
+  assert(number_of_faces == t.number_of_faces());
   size_t number_of_stored_vertices = t_const.number_of_stored_vertices();
-  CGAL_USE(number_of_stored_vertices);
-  CGAL_assertion(number_of_stored_vertices == t.number_of_stored_vertices());
+
+  assert(number_of_stored_vertices == t.number_of_stored_vertices());
   size_t number_of_stored_faces = t_const.number_of_stored_faces();
-  CGAL_USE(number_of_stored_faces);
-  CGAL_assertion(number_of_stored_faces == t.number_of_stored_faces());
+
+  assert(number_of_stored_faces == t.number_of_stored_faces());
 
   size_t number_of_edges = t_const.number_of_edges();
-  CGAL_USE(number_of_edges);
-  CGAL_assertion(number_of_edges == t.number_of_edges());
+
+  assert(number_of_edges == t.number_of_edges());
   size_t number_of_stored_edges = t_const.number_of_stored_edges();
-  CGAL_USE(number_of_stored_edges);
-  CGAL_assertion(number_of_stored_edges == t.number_of_stored_edges());
+
+  assert(number_of_stored_edges == t.number_of_stored_edges());
 
   bool is_triang1 = t_const.is_triangulation_in_1_sheet();
-  CGAL_USE(is_triang1);
-  CGAL_assertion(is_triang1 == t.is_triangulation_in_1_sheet());
+
+  assert(is_triang1 == t.is_triangulation_in_1_sheet());
   t.convert_to_1_sheeted_covering();
   t.convert_to_9_sheeted_covering();
 }
@@ -91,11 +91,11 @@ void test_delaunay_global_access()
   const T &t_const = t;
 
   bool ext1 = t_const.is_extensible_triangulation_in_1_sheet_h1();
-  CGAL_USE(ext1);
-  CGAL_assertion(ext1 == t.is_extensible_triangulation_in_1_sheet_h1());
+
+  assert(ext1 == t.is_extensible_triangulation_in_1_sheet_h1());
   bool ext2 = t_const.is_extensible_triangulation_in_1_sheet_h2();
-  CGAL_USE(ext2);
-  CGAL_assertion(ext2 == t.is_extensible_triangulation_in_1_sheet_h2());
+
+  assert(ext2 == t.is_extensible_triangulation_in_1_sheet_h2());
 }
 
 template <class T>
@@ -215,21 +215,21 @@ void test_iterators()
     {
       ++size;
     }
-  CGAL_assertion(size == t_const.number_of_stored_vertices());
+  assert(size == t_const.number_of_stored_vertices());
   size = 0;
   for (typename T::Unique_vertex_iterator uvit = t_const.unique_vertices_begin();
        uvit != t_const.unique_vertices_end(); ++uvit)
     {
       ++size;
     }
-  CGAL_assertion(size == t_const.number_of_vertices());
+  assert(size == t_const.number_of_vertices());
   size = 0;
   for (typename T::Vertex_iterator vit = t_const.all_vertices_begin();
        vit != t_const.all_vertices_end(); ++vit)
     {
       ++size;
     }
-  CGAL_assertion(size == t_const.number_of_stored_vertices());
+  assert(size == t_const.number_of_stored_vertices());
 
   // edges
   size = 0;
@@ -238,14 +238,14 @@ void test_iterators()
     {
       ++size;
     }
-  CGAL_assertion(size == t_const.number_of_stored_edges());
+  assert(size == t_const.number_of_stored_edges());
   size = 0;
   for (typename T::Edge_iterator eit = t_const.all_edges_begin();
        eit != t_const.all_edges_end(); ++eit)
     {
       ++size;
     }
-  CGAL_assertion(size == t_const.number_of_stored_edges());
+  assert(size == t_const.number_of_stored_edges());
 
   // faces
   size = 0;
@@ -254,14 +254,14 @@ void test_iterators()
     {
       ++size;
     }
-  CGAL_assertion(size == t_const.number_of_stored_faces());
+  assert(size == t_const.number_of_stored_faces());
   size = 0;
   for (typename T::All_faces_iterator fit = t_const.all_faces_begin();
        fit != t_const.all_faces_end(); ++fit)
     {
       ++size;
     }
-  CGAL_assertion(size == t_const.number_of_stored_faces());
+  assert(size == t_const.number_of_stored_faces());
 
   /// Geometric iterators
   for (typename T::Periodic_point_iterator ppit = t_const.periodic_points_begin();
@@ -422,10 +422,10 @@ void test_modifiers()
   vh0 = t.insert_first(p0);
 
   fh = t_const.locate(p1, lt, li);
-  CGAL_assertion(lt == T::FACE);
+  assert(lt == T::FACE);
   t.insert_in_face(p1, fh);
   fh = t_const.locate(p2, lt, li);
-  CGAL_assertion(lt == T::EDGE);
+  assert(lt == T::EDGE);
   t.insert_in_edge(p2, fh, li);
 
   for (typename T::Vertex_iterator vit = t_const.vertices_begin();
@@ -465,9 +465,8 @@ void test_miscellaneous()
   t.set_domain(typename T::Iso_rectangle(0, 0, 2, 2));
   int i = t.ccw(0);
   int j = t.cw(0);
-  CGAL_USE(i);
-  CGAL_USE(j);
-  CGAL_assertion(i + j == 3);
+
+  assert(i + j == 3);
 
   t = T();
   vh0 = t.insert(p0);
@@ -488,7 +487,7 @@ template <class T>
 void test_io(T &pt1, bool ex)
 {
   std::cout << "I/O" << std::endl;
-  std::cout << "  ascii" << std::endl;
+  std::cout << "  ASCII" << std::endl;
 
   std::stringstream ss1;
   ss1 << pt1;
@@ -496,7 +495,7 @@ void test_io(T &pt1, bool ex)
   T pt1r;
   ss1 >> pt1r;
 
-  assert(CGAL::is_ascii(ss1));
+  assert(CGAL::IO::is_ascii(ss1));
   if (!ex)
   {
     assert(pt1 == pt1r);
@@ -508,12 +507,12 @@ void test_io(T &pt1, bool ex)
   if (!ex)
   {
     std::stringstream ss1b;
-    CGAL::set_binary_mode(ss1b);
+    CGAL::IO::set_binary_mode(ss1b);
     ss1b << pt1;
-    
+
     ss1b >> pt1r;
-    assert(CGAL::is_binary(ss1b));
-    
+    assert(CGAL::IO::is_binary(ss1b));
+
     assert(pt1 == pt1r);
   }
 
@@ -521,10 +520,10 @@ void test_io(T &pt1, bool ex)
 
   pt1r.clear();
   std::stringstream ss1p;
-  CGAL::set_pretty_mode(ss1p);
+  CGAL::IO::set_pretty_mode(ss1p);
   ss1p << pt1;
 
-  assert(CGAL::is_pretty(ss1p));
+  assert(CGAL::IO::is_pretty(ss1p));
 }
 
 template <class T>
@@ -551,7 +550,7 @@ void test_io(bool exact)
   for (int x = 0; x < 5; ++x)
     for (int y = 0; y < 5; ++y)
       t.insert(Point(x / 5.0, y / 5.0));
-  CGAL_assertion(t.number_of_vertices() == 25);
+  assert(t.number_of_vertices() == 25);
   test_io(t, exact);
 
   std::cout << __FILE__ << ", " << __LINE__ << std::endl;
@@ -613,18 +612,18 @@ void test_nearest()
   Vertex_handle vh0, vh1, vh2;
 
   T t;
-  CGAL_assertion(t.nearest_vertex(p0) == Vertex_handle());
+  assert(t.nearest_vertex(p0) == Vertex_handle());
 
   vh0 = t.insert(p0);
-  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p0)) == vh0);
-  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p1)) == vh0);
-  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p2)) == vh0);
+  assert(t.get_original_vertex(t.nearest_vertex(p0)) == vh0);
+  assert(t.get_original_vertex(t.nearest_vertex(p1)) == vh0);
+  assert(t.get_original_vertex(t.nearest_vertex(p2)) == vh0);
 
   vh1 = t.insert(p1);
   vh2 = t.insert(p2);
-  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p0)) == vh0);
-  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p1)) == vh1);
-  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p2)) == vh2);
+  assert(t.get_original_vertex(t.nearest_vertex(p0)) == vh0);
+  assert(t.get_original_vertex(t.nearest_vertex(p1)) == vh1);
+  assert(t.get_original_vertex(t.nearest_vertex(p2)) == vh2);
 }
 
 template <class T>
@@ -651,7 +650,7 @@ void test_locally_delaunay()
     {
       for (int i = 0; i < 3; ++i)
         {
-          CGAL_assertion(t.locally_Delaunay(fit, i, fit->neighbor(i)));
+          assert(t.locally_Delaunay(fit, i, fit->neighbor(i)));
         }
     }
 
@@ -662,7 +661,7 @@ void test_locally_delaunay()
     {
       for (int i = 0; i < 3; ++i)
         {
-          CGAL_assertion(t.locally_Delaunay(fit, i, fit->neighbor(i)));
+          assert(t.locally_Delaunay(fit, i, fit->neighbor(i)));
         }
     }
 

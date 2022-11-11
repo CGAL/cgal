@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,195 +7,148 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef ARRANGEMENT_DEMO_TAB_H
 #define ARRANGEMENT_DEMO_TAB_H
 
+#include "GraphicsSceneMixin.h"
+#include <CGAL/Object.h>
 #include <QWidget>
+#include <QColor>
+#include <memory>
 
-#include "ArrangementGraphicsItem.h"
-#include "ArrangementDemoGraphicsView.h"
-#include "ArrangementCurveInputCallback.h"
-#include "DeleteCurveCallback.h"
-#include "PointLocationCallback.h"
-#include "VerticalRayShootCallback.h"
-#include "MergeEdgeCallback.h"
-#include "SplitEdgeCallback.h"
-#include "EnvelopeCallback.h"
-#include "FillFaceCallback.h"
-
+class QGraphicsScene;
 class QGridLayout;
+class ArrangementDemoGraphicsView;
+class VerticalRayShootCallbackBase;
+class EnvelopeCallbackBase;
+class FillFaceCallbackBase;
+class SplitEdgeCallbackBase;
+class MergeEdgeCallbackBase;
+class DeleteCurveCallbackBase;
+class PointLocationCallbackBase;
+class GridGraphicsItem;
+class PointSnapperBase;
 
-class ArrangementDemoTabBase : public QWidget
+namespace CGAL
+{
+namespace Qt
+{
+class Callback;
+class ArrangementGraphicsItemBase;
+class ArrangementGraphicsItemBase;
+class GraphicsViewCurveInputBase;
+class GraphicsViewNavigation;
+enum class CurveType;
+} // namespace Qt
+} // namespace CGAL
+
+namespace demo_types
+{
+enum class TraitsType;
+}
+
+class ArrangementDemoTab : public QWidget, public GraphicsSceneMixin
 {
   Q_OBJECT
 
-  Q_SIGNALS:
+Q_SIGNALS:
   void modelChanged( );
 
 public:
-  ArrangementDemoTabBase( QWidget* parent );
-  virtual ~ArrangementDemoTabBase( );
+  ArrangementDemoTab(
+    QWidget* parent, demo_types::TraitsType tt, CGAL::Object arrangement_);
 
-  virtual QGraphicsScene* getScene( ) const;
-  virtual ArrangementDemoGraphicsView* getView( ) const;
+  virtual ~ArrangementDemoTab();
 
-  virtual CGAL::Qt::ArrangementGraphicsItemBase* getArrangementGraphicsItem( )
-    const;
-  virtual CGAL::Qt::GraphicsViewCurveInputBase* getCurveInputCallback( ) const;
-  virtual CGAL::Qt::Callback* getDeleteCurveCallback( ) const;
-  virtual CGAL::Qt::Callback* getPointLocationCallback( ) const;
-  virtual VerticalRayShootCallbackBase* getVerticalRayShootCallback( ) const;
-  virtual CGAL::Qt::Callback* getMergeEdgeCallback( ) const;
-  virtual SplitEdgeCallbackBase* getSplitEdgeCallback( ) const;
-  virtual EnvelopeCallbackBase* getEnvelopeCallback( ) const;
-  virtual FillFaceCallbackBase* getFillFaceCallback( ) const;
+  CGAL::Object getArrangement() const;
+  demo_types::TraitsType traitsType() const;
+
+  QGraphicsView* getView() const;
+  void showGrid(bool);
+  bool isGridVisible();
+  void setSnapToGrid(bool);
+  void setSnapToArrangement(bool);
+  bool isSnapToGridEnabled();
+  bool isSnapToArrangementEnabled();
+  void adjustViewport();
+
+  auto getArrangementGraphicsItem() const
+    -> CGAL::Qt::ArrangementGraphicsItemBase*;
+  auto getGridGraphicsItem() const -> GridGraphicsItem*;
+  auto getCurveInputCallback() const -> CGAL::Qt::GraphicsViewCurveInputBase*;
+  auto getDeleteCurveCallback() const -> CGAL::Qt::Callback*;
+  auto getPointLocationCallback() const -> PointLocationCallbackBase*;
+  auto getVerticalRayShootCallback() const -> VerticalRayShootCallbackBase*;
+  auto getMergeEdgeCallback() const -> MergeEdgeCallbackBase*;
+  auto getSplitEdgeCallback() const -> SplitEdgeCallbackBase*;
+  auto getEnvelopeCallback() const -> EnvelopeCallbackBase*;
+  auto getFillFaceCallback() const -> FillFaceCallbackBase*;
+  auto getGraphicsViewNavigation() const -> CGAL::Qt::GraphicsViewNavigation*;
+  auto getFillFaceColor() const -> QColor;
+  void setFillFaceColor(QColor);
+  void activateCurveInputCallback(CGAL::Qt::CurveType);
+  void activateDeleteCurveCallback();
+  void activatePointLocationCallback();
+  void activateVerticalRayShootCallback(bool);
+  void activateMergeEdgeCallback();
+  void activateSplitEdgeCallback();
+  void activateEnvelopeCallback();
+  void activateFillFaceCallback();
+  void activatePanCallback();
+  void showLowerEnvelope(bool);
+  void showUpperEnvelope(bool);
+  bool isUpperEnvelopeShown();
+  bool isLowerEnvelopeShown();
+  void unhookCallbacks();
+
+  struct Preferences
+  {
+    QColor edgeColor = {};
+    QColor vertexColor = {};
+    QColor envelopeEdgeColor = {};
+    QColor envelopeVertexColor = {};
+    QColor verticalRayEdgeColor = {};
+    QColor axesColor = {};
+    QColor gridColor = {};
+    uint32_t edgeWidth = 0;
+    uint32_t vertexRadius = 0;
+    uint32_t envelopeEdgeWidth = 0;
+    uint32_t envelopeVertexRadius = 0;
+    uint32_t verticalRayEdgeWidth = 0;
+  };
+  void updatePreferences(const Preferences&);
 
 protected:
+  void initArrangement();
+  void initComponents();
+  void setupCallbacks();
+
   virtual void setupUi( );
+  void unhookAndInstallEventFilter(CGAL::Qt::Callback*);
 
   ArrangementDemoGraphicsView* graphicsView;
-  QGraphicsScene* scene;
   QGridLayout* layout;
 
+  std::unique_ptr<CGAL::Qt::GraphicsViewCurveInputBase> curveInputCallback;
+  std::unique_ptr<DeleteCurveCallbackBase> deleteCurveCallback;
+  std::unique_ptr<PointLocationCallbackBase> pointLocationCallback;
+  std::unique_ptr<VerticalRayShootCallbackBase> verticalRayShootCallback;
+  std::unique_ptr<MergeEdgeCallbackBase> mergeEdgeCallback;
+  std::unique_ptr<SplitEdgeCallbackBase> splitEdgeCallback;
+  std::unique_ptr<EnvelopeCallbackBase> envelopeCallback;
+  std::unique_ptr<FillFaceCallbackBase> fillFaceCallback;
+  std::unique_ptr<PointSnapperBase> snapper;
+  std::unique_ptr<CGAL::Qt::GraphicsViewNavigation> navigation;
+
+  CGAL::Qt::Callback* activeCallback;
   CGAL::Qt::ArrangementGraphicsItemBase* arrangementGraphicsItem;
-  CGAL::Qt::GraphicsViewCurveInputBase* curveInputCallback;
-  CGAL::Qt::Callback* deleteCurveCallback;
-  CGAL::Qt::Callback* pointLocationCallback;
-  VerticalRayShootCallbackBase* verticalRayShootCallback;
-  CGAL::Qt::Callback* mergeEdgeCallback;
-  SplitEdgeCallbackBase* splitEdgeCallback;
-  EnvelopeCallbackBase* envelopeCallback;
-  FillFaceCallbackBase* fillFaceCallback;
+  GridGraphicsItem* gridGraphicsItem;
 
+  demo_types::TraitsType ttype;
+  CGAL::Object arrangement;
 }; // class ArrangementDemoTabBase
-
-template < class Arr_ >
-class ArrangementDemoTab : public ArrangementDemoTabBase
-{
-public:
-  typedef ArrangementDemoTabBase Superclass;
-  typedef Arr_ Arrangement;
-
-  ArrangementDemoTab( Arrangement* arrangement_, QWidget* parent = 0 ):
-    Superclass( parent ),
-    arrangement( arrangement_ )
-  {
-    // std::cout << this->scene->views( ).size( ) << std::endl;
-    // set up demo components
-    this->arrangementGraphicsItem =
-      new CGAL::Qt::ArrangementGraphicsItem<Arrangement>(this->arrangement);
-    this->curveInputCallback =
-      new ArrangementCurveInputCallback<Arrangement>(this->arrangement, this);
-    this->deleteCurveCallback =
-      new DeleteCurveCallback<Arrangement>( this->arrangement, this );
-    this->pointLocationCallback =
-      new PointLocationCallback<Arrangement>( this->arrangement, this );
-    this->verticalRayShootCallback =
-      new VerticalRayShootCallback<Arrangement>( this->arrangement, this );
-    this->mergeEdgeCallback =
-      new MergeEdgeCallback<Arrangement>( this->arrangement, this );
-    this->splitEdgeCallback =
-      new SplitEdgeCallback<Arrangement>( this->arrangement, this );
-    this->envelopeCallback =
-      new EnvelopeCallback<Arrangement>( this->arrangement, this );
-    this->fillFaceCallback =
-      new FillFaceCallback<Arrangement>( this->arrangement, this );
-
-    this->scene->addItem( this->arrangementGraphicsItem );
-    this->arrangementGraphicsItem->setScene( this->scene );
-    this->curveInputCallback->setScene( this->scene );
-    this->deleteCurveCallback->setScene( this->scene );
-    this->pointLocationCallback->setScene( this->scene );
-    this->verticalRayShootCallback->setScene( this->scene );
-    this->mergeEdgeCallback->setScene( this->scene );
-    this->splitEdgeCallback->setScene( this->scene );
-    this->envelopeCallback->setScene( this->scene );
-    this->fillFaceCallback->setScene( this->scene );
-
-    // set up callbacks
-    this->scene->installEventFilter( this->curveInputCallback );
-    QObject::connect(this->curveInputCallback, SIGNAL(modelChanged()), this,
-                     SIGNAL(modelChanged()));
-    QObject::connect(this->deleteCurveCallback, SIGNAL(modelChanged()), this,
-                     SIGNAL(modelChanged()));
-    QObject::connect(this->fillFaceCallback, SIGNAL(modelChanged()), this,
-                     SIGNAL(modelChanged()));
-    QObject::connect(this, SIGNAL(modelChanged()),
-                     this->arrangementGraphicsItem, SLOT(modelChanged()));
-    QObject::connect(this, SIGNAL(modelChanged()), this->envelopeCallback,
-                     SLOT(slotModelChanged()));
-    // TODO: Add a connection to update the demo window when the fill color
-    //       changes
-  }
-
-  void setArrangement( Arrangement* newArr )
-  {
-    this->scene->removeItem( this->arrangementGraphicsItem );
-    delete this->arrangementGraphicsItem;
-    delete this->curveInputCallback;
-    delete this->deleteCurveCallback;
-    delete this->pointLocationCallback;
-    delete this->verticalRayShootCallback;
-    delete this->mergeEdgeCallback;
-    delete this->splitEdgeCallback;
-    delete this->envelopeCallback;
-    delete this->fillFaceCallback;
-
-    this->arrangement = newArr;
-
-    this->arrangementGraphicsItem =
-      new CGAL::Qt::ArrangementGraphicsItem<Arrangement>( this->arrangement );
-
-    this->curveInputCallback =
-      new ArrangementCurveInputCallback<Arrangement>(this->arrangement, this);
-    this->deleteCurveCallback =
-      new DeleteCurveCallback<Arrangement>( this->arrangement, this );
-    this->pointLocationCallback =
-      new PointLocationCallback<Arrangement>( this->arrangement, this );
-    this->verticalRayShootCallback =
-      new VerticalRayShootCallback<Arrangement>( this->arrangement, this );
-    this->mergeEdgeCallback =
-      new MergeEdgeCallback<Arrangement>( this->arrangement, this );
-    this->splitEdgeCallback =
-      new SplitEdgeCallback<Arrangement>( this->arrangement, this );
-    this->envelopeCallback =
-      new EnvelopeCallback<Arrangement>( this->arrangement, this );
-    this->fillFaceCallback =
-      new FillFaceCallback<Arrangement>( this->arrangement, this );
-
-    this->scene->addItem( this->arrangementGraphicsItem );
-    this->arrangementGraphicsItem->setScene( this->scene );
-    this->curveInputCallback->setScene( this->scene );
-    this->deleteCurveCallback->setScene( this->scene );
-    this->pointLocationCallback->setScene( this->scene );
-    this->verticalRayShootCallback->setScene( this->scene );
-    this->mergeEdgeCallback->setScene( this->scene );
-    this->splitEdgeCallback->setScene( this->scene );
-    this->envelopeCallback->setScene( this->scene );
-    this->fillFaceCallback->setScene( this->scene );
-
-    this->scene->installEventFilter(this->curveInputCallback);
-    QObject::connect(this->curveInputCallback, SIGNAL(modelChanged()), this,
-                     SIGNAL(modelChanged()));
-    QObject::connect(this->deleteCurveCallback, SIGNAL(modelChanged()), this,
-                     SIGNAL(modelChanged()));
-    QObject::connect(this->fillFaceCallback, SIGNAL(modelChanged()), this,
-                     SIGNAL(modelChanged()));
-    QObject::connect(this, SIGNAL(modelChanged()),
-                     this->arrangementGraphicsItem, SLOT(modelChanged()));
-    QObject::connect(this, SIGNAL(modelChanged()), this->envelopeCallback,
-                     SLOT(slotModelChanged()));
-    // TODO: Add a connection to update the demo window when the fill color
-    //       changes
-
-    Q_EMIT modelChanged( );
-  }
-
-protected:
-  Arrangement* arrangement;
-
-}; // class ArrangementDemoTab
 
 #endif // ARRANGEMENT_DEMO_TAB_H

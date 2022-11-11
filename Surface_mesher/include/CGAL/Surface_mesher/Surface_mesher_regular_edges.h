@@ -64,38 +64,38 @@ namespace CGAL {
     protected:
       // computes and return an ordered pair of Vertex
       EdgeVV make_edgevv(const Vertex_handle vh1,
-			 const Vertex_handle vh2) const {
-	if (vh1 < vh2) {
-	  return std::make_pair(vh1, vh2);
-	}
-	else {
-	  return std::make_pair(vh2, vh1);
-	}
+                         const Vertex_handle vh2) const {
+        if (vh1 < vh2) {
+          return std::make_pair(vh1, vh2);
+        }
+        else {
+          return std::make_pair(vh2, vh1);
+        }
       }
 
       // computes and returns the Edge type object from the EdgeVV object
       // use tr.is_edge(...)
       Edge edgevv_to_edge(const EdgeVV& arete) const {
-    	Vertex_handle sommet1 = arete.first;
-    	Vertex_handle sommet2 = arete.second;
-    	Cell_handle c;
-	int index1 = -1, index2 = -1;
-	// Initialize the variables `index1` and `index2` to quiet a
-	// warning. Anyway, the function `tr.is_edge()` that is called
-	// after is really slow, so the initialization will be completely
-	// negligible in running time.
+            Vertex_handle sommet1 = arete.first;
+            Vertex_handle sommet2 = arete.second;
+            Cell_handle c;
+        int index1 = -1, index2 = -1;
+        // Initialize the variables `index1` and `index2` to quiet a
+        // warning. Anyway, the function `tr.is_edge()` that is called
+        // after is really slow, so the initialization will be completely
+        // negligible in running time.
 
-	CGAL_assume_code(bool is_edge = )
-	SMB::tr.is_edge(sommet1, sommet2, c, index1, index2);
-	CGAL_assume(is_edge);
+        CGAL_assume_code(bool is_edge = )
+        SMB::tr.is_edge(sommet1, sommet2, c, index1, index2);
+        CGAL_assume(is_edge);
 
-    	return make_triple( c, index1, index2 );
+            return make_triple( c, index1, index2 );
       }
 
       // computes and returns the EdgeVV type object from the Edge object
       EdgeVV edge_to_edgevv(const Edge& arete) const {
-	return make_edgevv(arete.first->vertex(arete.second),
-			   arete.first->vertex(arete.third) );
+        return make_edgevv(arete.first->vertex(arete.second),
+                           arete.first->vertex(arete.third) );
       }
 
 
@@ -103,90 +103,90 @@ namespace CGAL {
       // computes and returns the list of Edges in a given Facet side
       Edges edges_in_facet(const Facet& cote) const {
 
-	Edges loe;
-	Cell_handle c = cote.first;
-	int i = cote.second;
+        Edges loe;
+        Cell_handle c = cote.first;
+        int i = cote.second;
 
-	for (int j = 0; j < 3; j++) {
-	  for (int k = j + 1; k < 4; k++) {
-	    if ( (i != j) && (i != k) ){
-	      loe.push_back(make_triple(c, j, k));
-	    }
-	  }
-	}
-	return loe;
+        for (int j = 0; j < 3; j++) {
+          for (int k = j + 1; k < 4; k++) {
+            if ( (i != j) && (i != k) ){
+              loe.push_back(make_triple(c, j, k));
+            }
+          }
+        }
+        return loe;
       }
-    
+
     FT compute_distance_to_facet_center(const Facet& f,
-					const Vertex_handle v) const {
+                                        const Vertex_handle v) const {
       const Point& fcenter = f.first->get_facet_surface_center(f.second);
       const Point& vpoint = v->point();
 
       return SMB::tr.geom_traits().compute_squared_distance_3_object()(fcenter,
-								  vpoint );
+                                                                  vpoint );
     }
 
 
       Facet biggest_incident_facet_in_complex(const Edge& arete) const {
-	// Find the first facet in the incident facets
+        // Find the first facet in the incident facets
         // of the edge which is in the Complex
-	// use the list of incident facets in the complex
-	Facet_circulator fcirc = SMB::c2t3.incident_facets(arete);
-	Facet first_facet = *fcirc;
-	Facet biggest_facet = first_facet;
+        // use the list of incident facets in the complex
+        Facet_circulator fcirc = SMB::c2t3.incident_facets(arete);
+        Facet first_facet = *fcirc;
+        Facet biggest_facet = first_facet;
 
-	for (++fcirc;
-	     (*fcirc != first_facet) &&
-	       (*fcirc != SMB::mirror_facet(first_facet));
-	     ++fcirc) {
-	  Vertex_handle fev = edge_to_edgevv(arete).first;
-	  // is the current facet bigger than the current biggest one
-	  if ( compute_distance_to_facet_center(*fcirc, fev) >
-	       compute_distance_to_facet_center(biggest_facet,
+        for (++fcirc;
+             (*fcirc != first_facet) &&
+               (*fcirc != SMB::mirror_facet(first_facet));
+             ++fcirc) {
+          Vertex_handle fev = edge_to_edgevv(arete).first;
+          // is the current facet bigger than the current biggest one
+          if ( compute_distance_to_facet_center(*fcirc, fev) >
+               compute_distance_to_facet_center(biggest_facet,
                                                 fev) ) {
-	    biggest_facet = *fcirc;
-	  }
-	  else { // @TODO: il ne faut pas aller voir des deux cotes: c'est
-		 // le meme centre de facet!!!
-	    Facet autre_cote = SMB::mirror_facet(*fcirc);
-	    // is the current facet bigger than the current biggest one
-	    if ( compute_distance_to_facet_center(autre_cote, fev) >
-		 compute_distance_to_facet_center(biggest_facet, fev) ) {
-	      biggest_facet = autre_cote;
-	    }
-	  }
-	}
-	return biggest_facet;
+            biggest_facet = *fcirc;
+          }
+          else { // @TODO: il ne faut pas aller voir des deux cotes: c'est
+                 // le meme centre de facet!!!
+            Facet autre_cote = SMB::mirror_facet(*fcirc);
+            // is the current facet bigger than the current biggest one
+            if ( compute_distance_to_facet_center(autre_cote, fev) >
+                 compute_distance_to_facet_center(biggest_facet, fev) ) {
+              biggest_facet = autre_cote;
+            }
+          }
+        }
+        return biggest_facet;
       }
 
       ///////////////////////
       // For before_insertion
 
       // Actions to perform on a facet inside the conflict zone
-      void 
+      void
       before_insertion_handle_facet_inside_conflict_zone (const Facet& f) {
-	Facet cote = f;
-        //	Facet autre_cote = SMB::mirror_facet(cote);
+        Facet cote = f;
+        //        Facet autre_cote = SMB::mirror_facet(cote);
 
-	if ( SMB::c2t3.face_status(cote) !=
-	     C2t3::NOT_IN_COMPLEX ) {
+        if ( SMB::c2t3.face_status(cote) !=
+             C2t3::NOT_IN_COMPLEX ) {
 
-	  Edges loe = edges_in_facet(cote);
-	  // foreach edge of cote
-	  for ( typename Edges::iterator eit = loe.begin();
-		eit != loe.end();
-		++eit) {
-	    bad_edges.erase( edge_to_edgevv(*eit) );
-	  }
-	}
+          Edges loe = edges_in_facet(cote);
+          // foreach edge of cote
+          for ( typename Edges::iterator eit = loe.begin();
+                eit != loe.end();
+                ++eit) {
+            bad_edges.erase( edge_to_edgevv(*eit) );
+          }
+        }
       }
 
       // Action to perform on a facet on the boundary of the conflict zone
-      void 
+      void
       before_insertion_handle_facet_on_boundary_of_conflict_zone(const Facet& f)
       {
-	// perform the same operations as for an internal facet
-	before_insertion_handle_facet_inside_conflict_zone (f);
+        // perform the same operations as for an internal facet
+        before_insertion_handle_facet_inside_conflict_zone (f);
       }
 
     public:
@@ -213,22 +213,24 @@ namespace CGAL {
       if(withBoundary)
         std::cerr << "(boundaries allowed)";
       std::cerr << "...\n";
-#endif
       int n = 0;
+#endif
       for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit !=
-	     SMB::tr.finite_edges_end(); ++eit) {
-	if ( (SMB::c2t3.face_status(*eit)
-	      == C2t3::SINGULAR) ||
-	     ( (!withBoundary) &&
-	       (SMB::c2t3.face_status(*eit)
-		== C2t3::BOUNDARY) ) ) {
-	  bad_edges.insert( edge_to_edgevv(*eit) );
+             SMB::tr.finite_edges_end(); ++eit) {
+        if ( (SMB::c2t3.face_status(*eit)
+              == C2t3::SINGULAR) ||
+             ( (!withBoundary) &&
+               (SMB::c2t3.face_status(*eit)
+                == C2t3::BOUNDARY) ) ) {
+          bad_edges.insert( edge_to_edgevv(*eit) );
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
           ++n;
-	}
+#endif
+        }
       }
       bad_edges_initialized = true;
 #ifdef CGAL_SURFACE_MESHER_VERBOSE
-	std::cerr << "   -> found " << n << " bad edges\n";
+        std::cerr << "   -> found " << n << " bad edges\n";
 #endif
     }
 
@@ -254,17 +256,17 @@ namespace CGAL {
     Facet get_next_element_impl() {
 
       if (!SMB::no_longer_element_to_refine_impl()) {
-	return SMB::get_next_element_impl();
+        return SMB::get_next_element_impl();
       }
       else {
         CGAL_assertion(bad_edges_initialized);
-	Edge first_bad_edge = edgevv_to_edge(*(bad_edges.begin()));
-	return biggest_incident_facet_in_complex(first_bad_edge);
+        Edge first_bad_edge = edgevv_to_edge(*(bad_edges.begin()));
+        return biggest_incident_facet_in_complex(first_bad_edge);
       }
     }
 
     void before_insertion_impl(const Facet& f, const Point& s,
-			       Zone& zone) {
+                               Zone& zone) {
       if( bad_edges_initialized )
       {
         for (typename Zone::Facets_iterator fit =
@@ -293,37 +295,37 @@ namespace CGAL {
 
       // foreach f in star(v)
       for (typename Facets::iterator fit = facets.begin();
-	   fit != facets.end();
-	   ++fit) {
-	Facet cote = *fit;
-	Edges loe = edges_in_facet(cote);
+           fit != facets.end();
+           ++fit) {
+        Facet cote = *fit;
+        Edges loe = edges_in_facet(cote);
 
-	// foreach edge of cote
-	for ( typename Edges::iterator eit = loe.begin();
-	      eit != loe.end();
-	      ++eit ) {
-	  // test if edge is in Complex
-	  if ( SMB::c2t3.face_status(*eit)
-	       != C2t3::NOT_IN_COMPLEX ) {
-	    // test if edge is not regular to store it as a "bad_edge"
-	    // e.g. more than or equal to 3 incident facets (SINGULAR)
-	    // or less than or equal to 1
-	    // (BOUNDARY only, because ISOLATED is NA)
-	    // This test is not efficient because
-	    // edges are tried to be inserted several times
-	    // TODO one day: test if the edge is still singular
-	    if ( (SMB::c2t3.face_status(*eit)
-		  == C2t3::SINGULAR) ||
-		 ( (!withBoundary) &&
-		   (SMB::c2t3.face_status(*eit)
-		    == C2t3::BOUNDARY) ) ) {
-	      bad_edges.insert( edge_to_edgevv(*eit) );
-	    }
-	    else {
-	      bad_edges.erase( edge_to_edgevv(*eit) ); // @TODO: pourquoi?!
-	    }
-	  }
-	}
+        // foreach edge of cote
+        for ( typename Edges::iterator eit = loe.begin();
+              eit != loe.end();
+              ++eit ) {
+          // test if edge is in Complex
+          if ( SMB::c2t3.face_status(*eit)
+               != C2t3::NOT_IN_COMPLEX ) {
+            // test if edge is not regular to store it as a "bad_edge"
+            // e.g. more than or equal to 3 incident facets (SINGULAR)
+            // or less than or equal to 1
+            // (BOUNDARY only, because ISOLATED is NA)
+            // This test is not efficient because
+            // edges are tried to be inserted several times
+            // TODO one day: test if the edge is still singular
+            if ( (SMB::c2t3.face_status(*eit)
+                  == C2t3::SINGULAR) ||
+                 ( (!withBoundary) &&
+                   (SMB::c2t3.face_status(*eit)
+                    == C2t3::BOUNDARY) ) ) {
+              bad_edges.insert( edge_to_edgevv(*eit) );
+            }
+            else {
+              bad_edges.erase( edge_to_edgevv(*eit) ); // @TODO: pourquoi?!
+            }
+          }
+        }
       }
     }
 
@@ -332,9 +334,9 @@ namespace CGAL {
       std::stringstream s;
       s << SMB::debug_info() << ",";
       if(bad_edges_initialized)
-	s << bad_edges.size();
+        s << bad_edges.size();
       else
-	s << "non manifold edges not initialized";
+        s << "non manifold edges not initialized";
       return s.str();
     }
 

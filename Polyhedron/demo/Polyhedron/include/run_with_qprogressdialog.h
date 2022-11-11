@@ -3,16 +3,17 @@
 
 #include <QProgressDialog>
 #include <CGAL/Real_timer.h>
-#include <CGAL/thread.h>
 
 #include "Callback_signaler.h"
+
+#include <atomic>
 
 typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 class Signal_callback
 {
 private:
-  
+
   CGAL::Real_timer timer;
   double t_start;
   mutable double t_latest;
@@ -40,9 +41,9 @@ public:
   {
     if (!state)
       return false;
-    
+
     *latest_adv = advancement;
-    
+
     // Avoid calling time() at every single iteration, which could
     // impact performances very badly
     ++ nb;
@@ -56,11 +57,11 @@ public:
       signaler->emit_signal (int (100. * advancement));
 
       t_latest = t;
-      
+
       if (signaler->is_canceled)
         *state = false;
     }
-    
+
     return *state;
   }
 
@@ -74,7 +75,7 @@ protected:
 public:
 
   Signal_callback* callback() { return m_callback.get(); }
-  
+
   Functor_with_signal_callback()
     : m_callback (new Signal_callback(true)) { }
 
@@ -101,9 +102,9 @@ void run_with_qprogressdialog (Functor& functor,
                             0, 100,
                             mainWindow);
   progress.setMinimumDuration(0);
-  
+
   Signal_callback* signal_callback = functor.callback();
-    
+
   QEventLoop::connect (signal_callback->signaler.get(), SIGNAL(progressChanged(int)),
                        &progress, SLOT(setValue(int)));
   QEventLoop::connect (&progress, SIGNAL(canceled()),
@@ -112,15 +113,17 @@ void run_with_qprogressdialog (Functor& functor,
 #ifdef CGAL_HAS_STD_THREADS
   if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
   {
-    CGAL::cpp11::thread thread (functor);
+    std::thread thread (functor);
 
     while (*signal_callback->latest_adv != 1. &&
            *signal_callback->state)
     {
-      CGAL::cpp11::sleep_for (0.1);
+      typedef std::chrono::nanoseconds nanoseconds;
+      nanoseconds ns (nanoseconds::rep (1000000000.0 * 0.1));
+      std::this_thread::sleep_for(ns);
       QApplication::processEvents ();
     }
-    
+
     thread.join();
   }
   else
@@ -129,7 +132,7 @@ void run_with_qprogressdialog (Functor& functor,
     progress.setWindowModality(Qt::WindowModal);
     functor();
   }
-  
+
   mainWindow->setEnabled(true);
 }
 

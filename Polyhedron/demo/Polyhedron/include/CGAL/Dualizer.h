@@ -97,7 +97,7 @@ public:
       HV_circulator he = v->vertex_begin();
       HV_circulator end = he;
       CGAL_For_all(he,end)
-	B.add_vertex_to_facet(m_face_map[he->facet()]);
+        B.add_vertex_to_facet(m_face_map[he->facet()]);
       B.end_facet();
     }
   }

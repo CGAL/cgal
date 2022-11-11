@@ -22,7 +22,7 @@ class Polyhedron_demo_merge_point_sets_plugin :
 
 private:
   QAction* actionMergePointSets;
-  
+
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
@@ -34,11 +34,11 @@ public:
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionMergePointSets;
   }
-  
+
   bool applicable(QAction*) const {
     if (scene->selectionIndices().size() < 2)
       return false;
-    
+
     Q_FOREACH(int index, scene->selectionIndices())
       {
         if ( qobject_cast<Scene_points_with_normal_item*>(scene->item(index)) )
@@ -76,7 +76,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
           mainSelectionItem->setName(tr("%1 + %2").arg(mainSelectionItem->name()).arg(item->name()));
         }
     }
-  
+
 
   mainSelectionItem->invalidateOpenGLBuffers();
   scene->itemChanged(mainSelectionIndex);

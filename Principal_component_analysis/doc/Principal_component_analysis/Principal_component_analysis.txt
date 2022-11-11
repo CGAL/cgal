@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Principal_Component_Analysis
 
 \cgalAutoToc
@@ -12,7 +12,7 @@ This package provides functions to analyze sets of objects in 2D and 3D. It prov
 
 \section Principal_component_analysisDefinitions Definitions
 
-A <I>bounding box</I> for a set of objects is a cuboid that contains the set. An <I>axis-aligned bounding box</I> captures the maximum extents of all objects from the set within their coordinate system, i.e., a bounding box aligned with the axes of the coordinate system. Axis-aligned bounding boxes are frequently used in geometric algorithms as an indication of the general location of a data set, for either display, first-approximation spatial query, or spatial indexing purposes. 
+A <I>bounding box</I> for a set of objects is a cuboid that contains the set. An <I>axis-aligned bounding box</I> captures the maximum extents of all objects from the set within their coordinate system, i.e., a bounding box aligned with the axes of the coordinate system. Axis-aligned bounding boxes are frequently used in geometric algorithms as an indication of the general location of a data set, for either display, first-approximation spatial query, or spatial indexing purposes.
 
 A <I>centroid</I> of a set of objects is their center of mass, i.e., the point whose coordinates are computed by means of coordinates of all points composing the objects. Note that although the general definition of center of mass incorporates a density function (and hence weighted means), the current implementation assumes a uniform density (see barycenter below defined for weighted points). For a point set \f$ \{X_1,X_2,...,X_N\}\f$ the centroid \f$ \bar{X}\f$ is computed as \f[ \bar{X} = \frac{1}{N} \sum_{i=1}^{N}{ X_i}. \f] For a set of segments \f$ \{S_1,S_2,...,S_N\}\f$ the centroid \f$ \bar{X}\f$ is computed as \f[ \bar{X} = \frac{1}{\sum_{i=1}^{N}{\left|S_i\right|}} \sum_{i=1}^{N}{ \left|S_i\right| \bar{S_i}}, \f] where \f$ \left|S_i\right|\f$ stands for the length of a segment and \f$ \bar{S_i}\f$ stands for its uniform barycenter (midpoint). For a set of triangles \f$ \{T_1,T_2,...,T_N\}\f$ the centroid \f$ \bar{X}\f$ is computed as \f[ \bar{X} = \frac{1}{\sum_{i=1}^{N}{\left|T_i\right|}} \sum_{i=1}^{N}{ \left|T_i\right| \bar{T_i}}, \f] where \f$ \left|T_i\right|\f$ stands for the area of a triangle and \f$ \bar{T_i}\f$ stands for its uniform barycenter. Such definition still holds for more general objects where the Lebesgue measure (length in 1D, area in 2D, volume in 3D) is used for weighting the object barycenters. Centers of mass are used to summarize data sets for either approximation, spatial query or spatial indexing purposes.
 
@@ -24,13 +24,13 @@ Given a set of objects, <I>linear least squares fitting</I> amounts to finding t
 Left: fitting a line to a 2D point set (centroid dotted in red). Middle: fitting a line and a plane to a 3D point set. Right: fitting a plane to a set of 3D triangles.
 \cgalFigureEnd
 
-\section subsecpca_examples Examples 
+\section subsecpca_examples Examples
 
 
 
 \subsection Principal_component_analysisBoundingBoxof Bounding Box of 2D and 3D Point Sets
 
-In the following example we use \stl containers of 2D points and 3D points, and compute their axis-aligned bounding box. 
+In the following example we use \stl containers of 2D points and 3D points, and compute their axis-aligned bounding box.
 \cgalExample{Principal_component_analysis/bounding_box.cpp}
 
 
@@ -46,7 +46,7 @@ In the following example we use \stl containers of 2D and 3D weighted points, an
 
 \subsection Principal_component_analysisLeastSquares Least Squares Fitting of a Line to a 2D Point Set
 
-In the following example we use a \stl container of 2D points, and compute the best fitting line in the least squares sense. 
+In the following example we use a \stl container of 2D points, and compute the best fitting line in the least squares sense.
 \cgalExample{Principal_component_analysis/linear_least_squares_fitting_points_2.cpp}
 
 
@@ -56,6 +56,6 @@ In the following example we use a \stl container of 3D triangles, and compute th
 \cgalExample{Principal_component_analysis/linear_least_squares_fitting_triangles_3.cpp}
 
 
-*/ 
+*/
 } /* namespace CGAL */
 

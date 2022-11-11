@@ -12,8 +12,6 @@ using CGAL::compose1_2;
 using CGAL::compose2_1;
 using CGAL::compose2_2;
 using CGAL::compare_to_less;
-using boost::binder1st;
-using boost::bind1st;
 using std::accumulate;
 using std::plus;
 using std::multiplies;
@@ -30,9 +28,8 @@ struct Myf {
 int main()
 {
   plus< int >        pl;
-  multiplies< int >  mu;
-  binder1st< plus< int > >       op1 = bind1st(pl, 1);
-  binder1st< multiplies< int > > op2 = bind1st(mu, 2);
+  std::function<int(int)> op1 = [](int i){ return i+1; };
+  std::function<int(int)> op2 = [](int i){ return i * 2; };
 
   // compose1_2:
   int a[] = {3,5,7,2,4};
@@ -50,7 +47,7 @@ int main()
 
   // compose2_1:
   transform(b, b + 5, a, compose2_1(pl, op2, op2));
-  transform(b, b + 5, b, bind1st(mu, 4));
+  transform(b, b + 5, b, [](int i) { return 4 * i;} );
   assert(equal(a, a + 5, b));
 
   // compare_to_less

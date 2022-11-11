@@ -1,0 +1,65 @@
+/// \defgroup PkgOrthtreeRef Quadtree\, Octree and Orthtree Reference
+
+/// \defgroup PkgOrthtreeClasses Classes
+/// \ingroup PkgOrthtreeRef
+
+/// \defgroup PkgOrthtreeTraits Traits
+/// \ingroup PkgOrthtreeClasses
+
+/// \defgroup PkgOrthtreeSplitPredicates Split Predicates
+/// \ingroup PkgOrthtreeClasses
+
+/// \defgroup PkgOrthtreeTraversal Traversal
+/// \ingroup PkgOrthtreeClasses
+
+/// \defgroup PkgOrthtreeConcepts Concepts
+/// \ingroup PkgOrthtreeRef
+
+/*!
+\addtogroup PkgOrthtreeRef
+
+\cgalPkgDescriptionBegin{Quadtrees\, Octrees\, and Orthtrees,PkgOrthtree}
+\cgalPkgPicture{octree_thumbnail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, Pierre Alliez}
+\cgalPkgDesc{The Orthtree package provides a data structure that subdivides space, with specializations for 2D (Quadtree) and 3D (Octree), along with a collection of algorithms for operating on these structures.}
+\cgalPkgManuals{Chapter_Orthtree,PkgOrthtreeRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.3}
+\cgalPkgBib{cgal:cpz-o}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `OrthtreeTraits`
+- `OrthtreeTraversal`
+
+\cgalCRPSection{Classes}
+- `CGAL::Quadtree<GeomTraits, PointRange, PointMap>`
+- `CGAL::Octree<GeomTraits, PointRange, PointMap>`
+- `CGAL::Orthtree<Traits, PointRange, PointMap>`
+
+\cgalCRPSection{Traits}
+- `CGAL::Orthtree_traits_2<GeomTraits>`
+- `CGAL::Orthtree_traits_3<GeomTraits>`
+- `CGAL::Orthtree_traits_d<GeomTraits, Dimension>`
+
+\cgalCRPSection{Split Predicates}
+- `CGAL::Orthtrees::Maximum_number_of_inliers`
+- `CGAL::Orthtrees::Maximum_depth`
+- `CGAL::Orthtrees::Maximum_depth_and_maximum_number_of_inliers`
+
+\cgalCRPSection{%Traversal}
+- `CGAL::Orthtrees::Preorder_traversal`
+- `CGAL::Orthtrees::Postorder_traversal`
+- `CGAL::Orthtrees::Leaves_traversal`
+- `CGAL::Orthtrees::Level_traversal`
+
+*/

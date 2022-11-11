@@ -1,19 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 #ifndef CGAL_HOMOGENEOUS_DIRECTION_3_H
 #define CGAL_HOMOGENEOUS_DIRECTION_3_H
 
@@ -36,7 +36,7 @@ class DirectionH3
 
     typedef std::array<RT, 4>              Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
- 
+
     Base base;
 
 public:
@@ -49,16 +49,16 @@ public:
     //: base(p) {}
 
   DirectionH3(const Vector_3 & v )
-  { *this = v.direction(); }
+  { *this = v.rep().direction(); }
 
   DirectionH3(const Line_3 & l )
   { *this = l.rep().direction(); }
 
   DirectionH3(const Ray_3 & r )
-  { *this = r.direction(); }
+  { *this = r.rep().direction(); }
 
   DirectionH3(const Segment_3 & s )
-  { *this = s.direction(); }
+  { *this = s.rep().direction(); }
 
   // the fourth argument is not documented.  Should go away ?
   DirectionH3(const RT& x, const RT& y,

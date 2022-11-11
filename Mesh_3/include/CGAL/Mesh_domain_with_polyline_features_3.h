@@ -29,19 +29,17 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 #include <vector>
 #include <set>
 #include <map>
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 namespace CGAL {
 
@@ -229,7 +227,7 @@ public:
     return result;
   }
 
-  /// Returns signed geodesic distance between \c p and \c q
+  /// Returns signed geodesic distance between `p` and `q`.
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q) const
   {
     // Locate p & q on polyline
@@ -261,7 +259,7 @@ public:
   }
 
 
-  /// Returns a point at geodesic distance \c distance from p along the
+  /// Returns a point at geodesic distance `distance` from p along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
   Point_3 point_at(const Point_3& p, FT distance) const
@@ -374,16 +372,23 @@ private:
 
       if(nearest_is_a_segment)
       {
-        if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
-        {
-          nearest_segment = seg;
-          result = previous;
-        }
         if(compare_distance(p, *it, nearest_segment) == CGAL::SMALLER)
         {
           nearest_vertex = it;
           nearest_is_a_segment = false;
           result = it;
+          if (possibly(angle(*previous, *it, p) == CGAL::ACUTE) &&
+              compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+          {
+            nearest_segment = seg;
+            nearest_is_a_segment = true;
+            result = previous;
+          }
+        }
+        else if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
+        {
+          nearest_segment = seg;
+          result = previous;
         }
       }
       else {
@@ -392,7 +397,9 @@ private:
           nearest_vertex = it;
           result = it;
         }
-        if(compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+        if ((nearest_vertex != it ||
+             possibly(angle(*previous, *it, p) == CGAL::ACUTE)) &&
+            compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
         {
           nearest_segment = seg;
           nearest_is_a_segment = true;
@@ -568,27 +575,15 @@ public:
 /// of the base class.
 /// @{
 
-  Mesh_domain_with_polyline_features_3()
-    : MeshDomain_3()
+  template <typename ... T>
+  Mesh_domain_with_polyline_features_3(const T& ...o)
+    : MeshDomain_3(o...)
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-  template <typename T1>
-  Mesh_domain_with_polyline_features_3
-  (const T1& o1, typename boost::disable_if<boost::is_same<T1,Self>,
-                                            CGAL::Tag_false>::type* = 0)
-    : MeshDomain_3(o1)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
+  Mesh_domain_with_polyline_features_3(const Mesh_domain_with_polyline_features_3&) = default;
 
-  template <typename T1, typename T2, typename ... T>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, const T& ...o)
-    : MeshDomain_3(o1, o2, o...)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
 /// @}
 
 /// \name Operations
@@ -600,7 +595,7 @@ public:
   /// Add a 0-dimensional feature in the domain.
   Corner_index add_corner(const Point_3& p);
 
-  /// Overloads where the last parameter \c out is not `CGAL::Emptyset_iterator()`.
+  /// Overload where the last parameter `out` is not `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_corners(InputIterator first, InputIterator end,
@@ -618,7 +613,7 @@ public:
   Corner_index register_corner(const Point_3& p, const Curve_index& index);
   Corner_index add_corner_with_context(const Point_3& p, const Surface_patch_index& index);
 
-  /// Overloads where the last parameter \c out is not
+  /// Overload where the last parameter `out` is not
   /// `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
@@ -635,7 +630,7 @@ public:
    PolylinePMap polyline_pmap,
    IncidentPatchesIndicesPMap incident_paches_indices_pmap,
    IndicesOutputIterator out /* = CGAL::Emptyset_iterator() */);
-  
+
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_features_with_context(InputIterator first, InputIterator end,
@@ -644,7 +639,7 @@ public:
   /// @}
   /// \endcond
   /*!
-    Add 1-dimensional features in the domain. `InputIterator` value type must 
+    Add 1-dimensional features in the domain. `InputIterator` value type must
     be a model of the concept `MeshPolyline_3`.
   */
   template <typename InputIterator>
@@ -664,9 +659,9 @@ public:
   /*!
     Add 1-dimensional features (curves) from the range `[first, end)` in the domain with their incidences
     with 2-dimensional features (patches) of the domain.
- 
+
     \tparam InputIterator input iterator over curves
-    \tparam PolylinePMap is a model of `ReadablePropertyMap` with key type 
+    \tparam PolylinePMap is a model of `ReadablePropertyMap` with key type
       `std::iterator_traits<InputIterator>::%reference` and a value type
       that is a model of `MeshPolyline_3`.
     \tparam IncidentPatchesIndicesPMap is a model of `ReadablePropertyMap`
@@ -681,7 +676,7 @@ public:
     \param incident_patches_indices_pmap the property map that provides
       access to the set of indices of the surface patches that are incident to
       a given 1D-feature (curve)
-  */ 
+  */
   template <typename InputIterator,
             typename PolylinePMap,
             typename IncidentPatchesIndicesPMap>
@@ -696,7 +691,7 @@ public:
                                 CGAL::Emptyset_iterator());
   }
 /// @}
-  
+
 /// \name Implementation of the concept MeshDomainWithFeatures_3
 /// The following methods implement the requirement of the concept
 /// `MeshDomainWithFeatures_3`.
@@ -748,14 +743,14 @@ public:
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
-   * by \c index.
+   * by `index`.
    */
   Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return Index(index); }
 
   /**
    * Returns the index to be stored in a vertex lying in the subdomain
-   * identified by \c index.
+   * identified by `index`.
    */
   Index index_from_subdomain_index(const Subdomain_index& index) const
   { return Index(index); }
@@ -769,15 +764,15 @@ public:
   { return Index(index); }
 
   /**
-   * Returns the \c Surface_patch_index of the surface patch
-   * where lies a vertex with dimension 2 and index \c index.
+   * Returns the `Surface_patch_index` of the surface patch
+   * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
   { return boost::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
-   *  with dimension 3 and index \c index.
+   *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }
@@ -871,7 +866,7 @@ public:
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
 
 private:
-  mutable boost::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
+  mutable std::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
@@ -896,7 +891,7 @@ public:
     if(curves_aabb_tree_ptr_) {
       curves_aabb_tree_ptr_->clear();
     } else {
-      curves_aabb_tree_ptr_ = boost::make_shared<Curves_AABB_tree>();
+      curves_aabb_tree_ptr_ = std::make_shared<Curves_AABB_tree>();
     }
     for(typename Edges::const_iterator
           edges_it = edges_.begin(),
@@ -1117,25 +1112,29 @@ add_features(InputIterator first, InputIterator end,
 namespace details {
 
 template <typename PolylineWithContext>
-struct Get_content_from_polyline_with_context {
+struct Get_content_from_polyline_with_context
+{
   typedef Get_content_from_polyline_with_context Self;
-  typedef const PolylineWithContext& key_type;
-  typedef const typename PolylineWithContext::Bare_polyline& value_type;
-  typedef value_type reference;
+  typedef PolylineWithContext key_type;
+  typedef typename PolylineWithContext::Bare_polyline value_type;
+  typedef const value_type& reference;
   typedef boost::readable_property_map_tag category;
-  friend value_type get(const Self, key_type polyline) {
+
+  friend reference get(const Self&, const key_type& polyline) {
     return polyline.polyline_content;
   }
 }; // end Get_content_from_polyline_with_context<PolylineWithContext>
 
 template <typename PolylineWithContext>
-struct Get_patches_id_from_polyline_with_context {
+struct Get_patches_id_from_polyline_with_context
+{
   typedef Get_patches_id_from_polyline_with_context Self;
-  typedef const PolylineWithContext& key_type;
-  typedef const typename PolylineWithContext::Context::Patches_ids& value_type;
-  typedef value_type reference;
+  typedef PolylineWithContext key_type;
+  typedef typename PolylineWithContext::Context::Patches_ids value_type;
+  typedef const value_type& reference;
   typedef boost::readable_property_map_tag category;
-  friend value_type get(const Self, key_type polyline) {
+
+  friend reference get(const Self&, const key_type& polyline) {
     return polyline.context.adjacent_patches_ids;
   }
 }; // end Get_patches_id_from_polyline_with_context<PolylineWithContext>
@@ -1165,6 +1164,13 @@ add_features_and_incidences(InputIterator first, InputIterator end,
 
     Curve_index curve_id = insert_edge(polyline.begin(), polyline.end());
     edges_incidences_[curve_id].insert(patches_ids.begin(), patches_ids.end());
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+    std::cerr << "Curve #" << curve_id << " is incident to the following patches: {";
+    for(auto id: patches_ids) {
+      std::cerr << " " << id;
+    }
+    std::cerr << "}\n";
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 1
     *indices_out++ = curve_id;
   }
 
@@ -1410,7 +1416,7 @@ compute_corners_incidences()
                      std::inserter(incidences,
                                    incidences.begin()));
     }
-#ifdef CGAL_MESH_3_PROTECTION_DEBUG
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
     display_corner_incidences(std::cerr, cit->first, id);
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 

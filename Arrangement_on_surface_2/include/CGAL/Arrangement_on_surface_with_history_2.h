@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein         <wein@post.tau.ac.il>
 //                 Efi Fogel        <efif@post.tau.ac.il>
@@ -41,16 +41,16 @@ namespace CGAL {
  * with the arrangement edges.
  * The Arrangement_on_surface_with_history_2 class enables tracking the input
  * curve(s) that originated each such subcurve. It also enables keeping track
- * of the edges that resulted from each input curve. 
+ * of the edges that resulted from each input curve.
  * The Traits parameter corresponds to a traits class that defines the
  * Point_2, X_monotone_curve_2 and Curve_2 types and implements the geometric
  * predicates and constructions for the family of curves it defines.
  * The Dcel parameter should be a model of the ArrDcel concept and support
  * the basic topological operations on a doubly-connected edge-list.
  */
-template <class GeomTraits_, class TopTraits_> 
+template <class GeomTraits_, class TopTraits_>
 class Arrangement_on_surface_with_history_2 :
-  public Arrangement_on_surface_2 
+  public Arrangement_on_surface_2
   <Arr_consolidated_curve_data_traits_2
      <GeomTraits_, typename GeomTraits_::Curve_2 *>,
    typename TopTraits_::template rebind
@@ -91,11 +91,11 @@ protected:
 
   // Rebind the DCEL and the topology traits to the data-traits class.
   typedef typename Base_topology_traits::Dcel        Base_dcel;
-  typedef typename Base_dcel::template 
+  typedef typename Base_dcel::template
                  rebind<Data_traits_2>               Dcel_rebind;
   typedef typename Dcel_rebind::other                Data_dcel;
 
-  typedef typename Base_topology_traits::template 
+  typedef typename Base_topology_traits::template
                  rebind<Data_traits_2, Data_dcel>    Top_traits_rebind;
   typedef typename Top_traits_rebind::other          Data_top_traits;
 
@@ -106,7 +106,7 @@ protected:
 
 public:
   typedef Arr_traits_adaptor_2<Data_traits_2>          Traits_adaptor_2;
- 
+
 public:
 
   typedef Data_top_traits                              Topology_traits;
@@ -129,17 +129,17 @@ public:
   typedef typename Base_arr_2::Face_const_iterator     Face_const_iterator;
   typedef typename Base_arr_2::Halfedge_around_vertex_circulator
                                       Halfedge_around_vertex_circulator;
-  typedef typename Base_arr_2::Halfedge_around_vertex_const_circulator 
+  typedef typename Base_arr_2::Halfedge_around_vertex_const_circulator
                                       Halfedge_around_vertex_const_circulator;
   typedef typename Base_arr_2::Ccb_halfedge_circulator
                                       Ccb_halfedge_circulator;
   typedef typename Base_arr_2::Ccb_halfedge_const_circulator
                                       Ccb_halfedge_const_circulator;
-  typedef typename Base_arr_2::Outer_ccb_iterator       
+  typedef typename Base_arr_2::Outer_ccb_iterator
                                       Outer_ccb_iterator;
   typedef typename Base_arr_2::Outer_ccb_const_iterator
                                       Outer_ccb_const_iterator;
-  typedef typename Base_arr_2::Inner_ccb_iterator       
+  typedef typename Base_arr_2::Inner_ccb_iterator
                                       Inner_ccb_iterator;
   typedef typename Base_arr_2::Inner_ccb_const_iterator
                                       Inner_ccb_const_iterator;
@@ -156,7 +156,7 @@ public:
   typedef typename Base_arr_2::Face_const_handle       Face_const_handle;
 
 protected:
- 
+
   /*! \struct
    * Less functor for comparing two halfedge handles.
    */
@@ -222,7 +222,7 @@ protected:
     {
       return m_halfedges.begin();
     }
-    
+
     /*! Get a past-the-end iterator for the set edges (const version). */
     const_iterator _end () const
     {
@@ -242,14 +242,14 @@ protected:
       CGAL_assertion(res.second);
       return (res.first);
     }
-    
+
     /*! Erase an edge, given by its position, from the set. */
     void _erase(iterator pos)
     {
       m_halfedges.erase(pos);
       return;
     }
-    
+
     /*! Erase an edge from the set. */
     void _erase (Halfedge_handle he)
     {
@@ -311,7 +311,7 @@ protected:
     {
       _register_edge(e);
     }
-    
+
     /*!
      * Notification before the splitting of an edge into two.
      * \param e A handle to one of the existing halfedges.
@@ -319,7 +319,7 @@ protected:
      * \param c2 The x-monotone curve to be associated with the second edge.
      */
     virtual void before_split_edge (Halfedge_handle e,
-				    Vertex_handle /* v */,
+                                    Vertex_handle /* v */,
                                     const X_monotone_curve_2& /* c1 */,
                                     const X_monotone_curve_2& /* c2 */)
     {
@@ -369,7 +369,7 @@ protected:
     }
 
   private:
-    
+
     /*!
      * Register the given halfedge in the set(s) associated with its curve.
      */
@@ -405,7 +405,7 @@ protected:
   Curves_alloc              m_curves_alloc;
   Curve_halfedges_list      m_curves;
   Curve_halfedges_observer  m_observer;
-  
+
 public:
 
   typedef typename Curve_halfedges_list::iterator        Curve_iterator;
@@ -458,7 +458,7 @@ public:
   {
     return (&(this->m_topol_traits));
   }
-  
+
   /*! Access the topology-traits object (const version). */
   inline const Topology_traits* topology_traits () const
   {
@@ -493,7 +493,7 @@ public:
                                                                           Base;
 
   public:
- 
+
     Originating_curve_iterator () {}
 
     Originating_curve_iterator (Data_iterator iter) : Base (iter) {}
@@ -507,10 +507,10 @@ public:
 
     operator Curve_const_iterator () const
     {
-      const Curve_halfedges   
+      const Curve_halfedges
                         *p_cv = static_cast<Curve_halfedges*>(this->ptr());
       return (Curve_const_iterator  (p_cv));
-    }    
+    }
   };
 
   /// \name Traversal of the origin curves of an edge.
@@ -557,7 +557,7 @@ public:
    * \param e The edge to split (one of the pair of twin halfedges).
    * \param p The split point.
    * \pre p lies in the interior of the curve associated with e.
-   * \return A handle for the halfedge whose source is the source of the the
+   * \return A handle for the halfedge whose source is the source of the
    *         original halfedge e, and whose target is the split point.
    */
   Halfedge_handle split_edge (Halfedge_handle e, const Point_2& p);
@@ -618,7 +618,7 @@ protected:
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, cv);
     m_curves.push_back (*p_cv);
 
-    // Create a data-traits Curve_2 object, which is comprised of cv and
+    // Create a data-traits Curve_2 object, which comprises cv and
     // a pointer to the extended curve we have just created.
     // Insert this curve into the base arrangement. Note that the attached
     // observer will take care of updating the edges' set.
@@ -626,7 +626,7 @@ protected:
     Base_arr_2&        base_arr = *this;
 
     CGAL::insert (base_arr, data_curve, pl);
-    
+
     // Return a handle to the inserted curve (the last in the list).
     Curve_handle       ch = m_curves.end();
     return (--ch);
@@ -643,11 +643,11 @@ protected:
     // Allocate an extended curve (with an initially empty set of edges)
     // and store it in the curves' list.
     Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
-    
+
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, cv);
     m_curves.push_back (*p_cv);
 
-    // Create a data-traits Curve_2 object, which is comprised of cv and
+    // Create a data-traits Curve_2 object, which comprises cv and
     // a pointer to the extended curve we have just created.
     // Insert this curve into the base arrangement. Note that the attached
     // observer will take care of updating the edges' set.
@@ -655,12 +655,12 @@ protected:
     Base_arr_2&        base_arr = *this;
 
     CGAL::insert (base_arr, data_curve);
-    
+
     // Return a handle to the inserted curve (the last in the list).
     Curve_handle       ch = m_curves.end();
     return (--ch);
   }
-  
+
   /*!
    * Insert a range of curves into the arrangement.
    * \param begin An iterator pointing to the first curve in the range.
@@ -674,7 +674,7 @@ protected:
 
     while (begin != end) {
       Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
-    
+
       std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, *begin);
       m_curves.push_back (*p_cv);
 
@@ -696,7 +696,7 @@ protected:
   Size _remove_curve (Curve_handle ch)
   {
     // Go over all edges the given curve induces.
-    Curve_halfedges                           *p_cv = &(*ch); 
+    Curve_halfedges                           *p_cv = &(*ch);
     typename Curve_halfedges::const_iterator   it = ch->_begin();
     Halfedge_handle                            he;
     Size                                       n_removed = 0;
@@ -784,9 +784,9 @@ public:
     for (ocit1 = arr1.curves_begin(); ocit1 != arr1.curves_end(); ++ocit1) {
       // Create a duplicate of the current curve.
       dup_c = m_curves_alloc.allocate (1);
-    
+
       p_cv = &(*ocit1);
-      
+
       std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
       m_curves.push_back (*dup_c);
 
@@ -800,7 +800,7 @@ public:
     for (ocit2 = arr2.curves_begin(); ocit2 != arr2.curves_end(); ++ocit2) {
       // Create a duplicate of the current curve.
       dup_c = m_curves_alloc.allocate (1);
-    
+
       p_cv = &(*ocit2);
       std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
       m_curves.push_back (*dup_c);
@@ -899,8 +899,8 @@ insert (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
 
 
 /*!
- * Insert a range of curves into the arrangement (aggregated insertion). 
- * The inserted curves may intersect one another and may also intersect the 
+ * Insert a range of curves into the arrangement (aggregated insertion).
+ * The inserted curves may intersect one another and may also intersect the
  * existing arrangement.
  * \param arr The arrangement-with-history object.
  * \param begin An iterator for the first curve in the range.

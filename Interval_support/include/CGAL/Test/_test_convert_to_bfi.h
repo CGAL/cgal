@@ -1,5 +1,5 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany),
-// INRIA Sophia-Antipolis (France). 
+// INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -17,21 +17,22 @@
 
 #include <cstddef>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 
 #include <cassert>
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
 
-#include <CGAL/convert_to_bfi.h> 
-#include <CGAL/Sqrt_extension.h> 
+#include <CGAL/convert_to_bfi.h>
+#include <CGAL/Sqrt_extension.h>
+
+#include <type_traits>
 
 #ifndef CGAL_TEST_CONVERT_TO_BFI_H
 #define CGAL_TEST_CONVERT_TO_BFI_H
 
 namespace CGAL {
 
-// BFI = Bigfloat_interval 
+// BFI = Bigfloat_interval
 
 template <typename BFI>
 void test_convert_to_bfi_from(BFI,CGAL::Null_tag){return;}
@@ -40,7 +41,7 @@ template <typename BFI, typename From>
 void test_convert_to_bfi_from(BFI,From){
   typedef typename CGAL::Coercion_traits<BFI,From>::Type CT_type;
   CGAL_USE_TYPE(CT_type);
-  CGAL_static_assertion(( ::boost::is_same<CT_type, BFI>::value));
+  CGAL_static_assertion(( ::std::is_same<CT_type, BFI>::value));
   assert(CGAL::convert_to_bfi(From(0))  == BFI(0));
   assert(CGAL::convert_to_bfi(From(1))  == BFI(1));
   assert(CGAL::convert_to_bfi(From(2))  == BFI(2));
@@ -52,9 +53,9 @@ void test_convert_to_bfi_from(BFI,From){
 template <typename BFI>
 void test_convert_to_bfi(){
   typedef typename CGAL::Get_arithmetic_kernel<BFI>::Arithmetic_kernel AK;
-  typedef typename AK::Integer Integer; 
-  typedef typename AK::Rational Rational; 
-  typedef typename AK::Field_with_sqrt Field_with_sqrt; // may be Null_tag 
+  typedef typename AK::Integer Integer;
+  typedef typename AK::Rational Rational;
+  typedef typename AK::Field_with_sqrt Field_with_sqrt; // may be Null_tag
   typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
 
   test_convert_to_bfi_from( BFI() , Integer());

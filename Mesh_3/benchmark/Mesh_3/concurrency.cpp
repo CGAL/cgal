@@ -105,14 +105,7 @@ const int     TET_SHAPE                = 3;
 # define CGAL_CONCURRENT_MESH_3_PROFILING
 //# define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
 
-  // ==========================================================================
-  // TBB
-  // ==========================================================================
-# if TBB_IMPLEMENT_CPP0X
-#   include <tbb/compat/thread>
-# else
-#   include <thread>
-# endif
+#include  <thread>
 
 // ==========================================================================
 // SEQUENTIAL
@@ -825,7 +818,7 @@ int main()
 #if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
   _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-  
+
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   // Program options
   po::variables_map vm;

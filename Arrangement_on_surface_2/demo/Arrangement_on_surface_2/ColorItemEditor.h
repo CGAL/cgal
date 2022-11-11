@@ -56,7 +56,7 @@ class ColorItemEditor : public QPushButton
   Q_PROPERTY(QColor color READ color WRITE setColor USER true)
 
 public:
-  ColorItemEditor(QWidget *widget = 0);
+  ColorItemEditor(QWidget *widget = nullptr);
 
 public:
   QColor color( ) const;

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
@@ -46,8 +46,8 @@ Polyhedron_copy_3<Poly,HDS,clear_target_before>::operator()(HDS& target) {
     typedef typename Poly::Vertex_const_iterator  Vertex_const_iterator;
     typedef typename Poly::Facet_const_iterator   Facet_const_iterator;
     typedef Inverse_index< Vertex_const_iterator> Index;
-  
-    Cartesian_converter< 
+
+    Cartesian_converter<
       typename Kernel_traits<typename Poly::Vertex::Point>::Kernel,
       typename Kernel_traits<typename HDS::Vertex::Point>::Kernel
     > convert;

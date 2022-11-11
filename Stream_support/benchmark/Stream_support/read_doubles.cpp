@@ -1,7 +1,7 @@
 #define CGAL_GENERIC_EXTRACT 1
 
 #include <cstdio>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   CGAL::Timer t;
   int repeat = boost::lexical_cast<int>(argv[1]);
   int choice = boost::lexical_cast<int>(argv[2]);
- 
+
    double sum=0;
   for(int j=0; j<repeat;++j){
     std::ifstream in(argv[3]);
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     double d;
     in >> off >> n >> f >> z;
     n*=3;
-    
+
   if(choice == 0){
     std::cerr << "operator"<< std::endl;
     t.start();
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
       sum+= d;
     }
     t.stop();
-  } 
+  }
 
   if(choice == 2){
     std::cerr << "strtod"<< std::endl;
@@ -70,13 +70,13 @@ int main(int argc, char* argv[])
       sum+= d;
     }
     t.stop();
-  } 
+  }
 
   if(choice == 4){
     std::cerr << "iformat"<< std::endl;
     t.start();
     for(int i=0; i<n; i++){
-      in >> CGAL::iformat(d);
+      in >> CGAL::IO::iformat(d);
       sum+= d;
     }
     t.stop();
@@ -85,6 +85,6 @@ int main(int argc, char* argv[])
   std::cerr.precision(17);
   std::cerr << "sum = " << sum << std::endl;
   std::cerr << t.time() << "sec."<< std::endl;
-    
+
   return 0;
 }

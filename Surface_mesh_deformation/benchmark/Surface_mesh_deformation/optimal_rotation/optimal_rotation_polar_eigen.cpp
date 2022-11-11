@@ -55,9 +55,14 @@ void polar_eigen(const Mat& A, Mat& R, bool& SVD)
   if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)/100.0<th)
   {
     // The computation of the eigenvalues might have diverged.
-    // Fallback to an accurate SVD based decomposiiton method.
-    Eigen::JacobiSVD<Mat> svd;
-    svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
+    // Fallback to an accurate SVD based decomposition method.
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+    Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> svd;
+    svd.compute(A);
+#else
+    Eigen::JacobiSVD<Eigen::Matrix3d> svd;
+    svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV);
+#endif
     const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV(); const Vec& w = svd.singularValues();
     R = u*v.transpose();
     SVD = true;
@@ -74,13 +79,13 @@ void polar_eigen(const Mat& A, Mat& R, bool& SVD)
 int main() {
   std::ifstream file;
   file.open("Polar_benchmark");
-  if (!file) 
+  if (!file)
   {
     CGAL_TRACE_STREAM << "Error loading file!\n";
     return 0;
   }
 
-  Eigen::Matrix3d A, U, r;   
+  Eigen::Matrix3d A, U, r;
   bool SVD = false;
   int num_svd = 0;
   int num_mtr = 0;
@@ -112,12 +117,12 @@ int main() {
   }
   file.close();
 
-  CGAL_TRACE_STREAM << "done. " << num_svd << " SVD decompositions in " << num_mtr << " matrices\n"; 
+  CGAL_TRACE_STREAM << "done. " << num_svd << " SVD decompositions in " << num_mtr << " matrices\n";
   return 0;
 
   /*int ite = 200000;
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;
-  Eigen::Matrix3d A, U, H, r;           
+  Eigen::Matrix3d A, U, H, r;
 
   int matrix_idx = rand()%200;
   for (int i = 0; i < matrix_idx; i++)
@@ -138,7 +143,7 @@ int main() {
   A = A*10000;
   double det = A.determinant();
 
-  CGAL::Timer task_timer; 
+  CGAL::Timer task_timer;
 
   CGAL_TRACE_STREAM << "Start SVD decomposition...";
   task_timer.start();
@@ -153,10 +158,10 @@ int main() {
     }
   }
   task_timer.stop();
-  
+
 
   CGAL_TRACE_STREAM << "done: " << task_timer.time() << "s\n";
 
-	return 0;*/
+        return 0;*/
 }
 

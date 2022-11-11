@@ -1,112 +1,131 @@
-Subject: CGAL 5.0 Beta 2 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.3.2, 5.4.1, and 5.5 Beta 1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
-Body: 
+Body:
 
-The CGAL Open Source Project is pleased to announce the release 5.0 Beta 2
-of CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce today three new
+releases:
 
+-   CGAL-5.3.2 is the second and last bug-fix release for CGAL-5.3,
+-   CGAL-5.4.1 is the first bug-fix release for CGAL-5.4, and
+-   CGAL-5.5-beta1 is the first beta release for CGAL-5.5.
 
-CGAL version 5.0 Beta 2 is a public testing release. It should provide a
+CGAL version 5.5 Beta 1 is a public testing release. It should provide a
 solid ground to report bugs that need to be tackled before the release
-of the final version of CGAL 5.0 in November.
+of the final version of CGAL 5.5 in July 2022.
 
-The important changes since CGAL 5.0 Beta 1 are the fix of CMake
-issues, with header-only installations, and the update of the section
-“Getting Started with CGAL” of the documentation.
+Besides fixes and general enhancement to existing packages, the
+following has changed since CGAL 5.4:
 
+3D Alpha Wrapping (new package)
 
-Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 4.14:
+-   This component takes a 3D triangle mesh, soup, or point set as
+    input, and generates a valid (watertight, intersection-free, and
+    combinatorially 2-manifold) surface triangle mesh that contains the
+    input. The algorithm proceeds by shrink-wrapping and refining a 3D
+    Delaunay triangulation, starting from a loose bounding box of the
+    input. Two user-defined parameters, alpha and offset, offer control
+    over the maximum size of cavities where the shrink-wrapping process
+    can enter, and the tightness of the final surface mesh to the input,
+    respectively. Once combined, these parameters provide a means to
+    trade fidelity to the input for complexity of the output.
 
-General changes
+    See also https://www.cgal.org/2022/05/18/alpha_wrap/.
 
--   CGAL 5.0 is the first release of CGAL that requires a C++ compiler
-    with the support of C++14 or later. The new list of supported
-    compilers is:
-    -   Visual C++ 14.0 (from Visual Studio 2015 Update 3) or later,
-    -   Gnu g++ 6.3 or later (on Linux or MacOS),
-    -   LLVM Clang version 8.0 or later (on Linux or MacOS), and
-    -   Apple Clang compiler versions 7.0.2 and 10.0.1 (on MacOS).
--   Since CGAL 4.9, CGAL can be used as a header-only library, with
-    dependencies. Since CGAL 5.0, that is now the default, unless
-    specified differently in the (optional) CMake configuration.
--   The section “Getting Started with CGAL” of the documentation has
-    been updated and reorganized.
--   The minimal version of Boost is now 1.57.0.
+3D Convex Hulls
 
-Polygonal Surface Reconstruction (new package)
+-   Added an overload of the function CGAL::convex_hull_3(), which
+    writes the result in an indexed triangle set.
 
--   This package provides a method for piecewise planar object
-    reconstruction from point clouds. The method takes as input an
-    unordered point set sampled from a piecewise planar object and
-    outputs a compact and watertight surface mesh interpolating the
-    input point set. The method assumes that all necessary major planes
-    are provided (or can be extracted from the input point set using the
-    shape detection method described in Point Set Shape Detection, or
-    any other alternative methods).The method can handle arbitrary
-    piecewise planar objects and is capable of recovering sharp features
-    and is robust to noise and outliers. See also the associated blog
-    entry:
-    
-      https://www.cgal.org/2019/08/05/Polygonal_surface_reconstruction/
+2D Polygons
 
+-   Add vertex, edge, and hole ranges.
+-   The concept GeneralPolygonWithHoles_2 now requires the nested type
+    Polygon_2 instead of General_polygon_2.
 
-Shape Detection (major changes)
+2D Regularized Boolean Set-Operations
 
--   BREAKING CHANGE: The concept ShapeDetectionTraits has been renamed
-    to EfficientRANSACTraits.
--   BREAKING CHANGE: The Shape_detection_3 namespace has been renamed to
-    Shape_detection.
--   Added a new, generic implementation of region growing. This enables
-    for example applying region growing to inputs such as 2D and 3D
-    point sets, or models of the FaceGraph concept. Learn more about
-    this new algorithm with this blog entry:
-    
-      https://www.cgal.org/2019/07/30/Shape_detection/
+-   The concept GeneralPolygonSetTraits_2 now requires the nested type
+    Construct_polygon_with_holes_2 instead of
+    Construct_general_polygon_with_holes_2.
 
+Combinatorial Maps
 
-dD Geometry Kernel
+-   Removed old code deprecated in CGAL 4.9 and 4.10 (global functions,
+    and information associated with darts).
 
--   A new exact kernel, Epeck_d, is now available.
+2D Arrangements
 
+-   Fixed the intersect_2, compare_y_at_x_right, and compare_y_at_x_left
+    function objects of the traits class template
+    Arr_geodesic_arc_on_sphere_traits_2 that handles geodesic arcs on
+    sphere and applied a small syntactical fix to the tracing traits.
 
-2D and 3D Triangulations
+Tetrahedral Mesh Generation
 
--   BREAKING CHANGE: Several deprecated functions and classes have been
-    removed. See the full list of breaking changes in the release notes.
-
--   BREAKING CHANGE: The constructor and the insert() function of
-    CGAL::Triangulation_2 or CGAL::Triangulation_3 which take a range of
-    points as argument are now guaranteed to insert the points following
-    the order of InputIterator. Note that this change only affects the
-    base class CGAL::Triangulation_[23] and not any derived class, such
-    as CGAL::Delaunay_triangulation_[23].
+-   Added the function remove_isolated_vertices() as a post-processing
+    step for the tetrahedral mesh generation.
 
 Polygon Mesh Processing
 
--   Introduced a wide range of new functions related to location of
-    queries on a triangle mesh, such as
-    CGAL::Polygon_mesh_processing::locate(Point, Mesh). The location of
-    a point on a triangle mesh is expressed as the pair of a face and
-    the barycentric coordinates of the point in this face, enabling
-    robust manipulation of locations (for example, intersections of two
-    3D segments living within the same face).
--   Added the mesh smoothing function smooth_mesh(), which can be used
-    to improve the quality of triangle elements based on various
-    geometric characteristics.
--   Added the shape smoothing function smooth_shape(), which can be used
-    to smooth the surface of a triangle mesh, using the mean curvature
-    flow to perform noise removal.
+-   Added the function
+    CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup(),
+    which enables re-orienting the faces of a triangle soup based on the
+    orientation of the nearest face in a reference triangle soup.
+-   Added the function
+    CGAL::Polygon_mesh_processing::compatible_orientations(), which
+    enables to retrieve the (in)compatibility of orientations of faces
+    from different connected components.
+-   Added the function
+    CGAL::Polygon_mesh_processing::tangential_relaxation(), which
+    applies an area-based tangential mesh smoothing to the vertices of a
+    surface triangle mesh.
+-   Added the named parameter visitor to the function
+    triangulate_hole(), which enables to track progress with callbacks.
+-   Added more functions in the visitor of the corefinement based
+    methods to track progress.
 
+Surface Mesh Simplification
+
+-   Introduced four variations of the Garland-Heckbert simplification
+    algorithm based on the probabilistic approach of Trettner and
+    Kobbelt (Fast and Robust QEF Minimization using Probabilistic
+    Quadrics): GarlandHeckbert_plane_policies,
+    GarlandHeckbert_probabilistic_plane_policies,
+    GarlandHeckbert_triangle_policies, and
+    GarlandHeckbert_probabilistic_triangle_policies.
+-   The class GarlandHeckbert_policies has been deprecated,
+    GarlandHeckbert_plane_policies replaces it.
 
 Point Set Processing
 
--   BREAKING CHANGE: the API using iterators and overloads for optional
-    parameters (deprecated since CGAL 4.12) has been removed. The
-    current (and now only) API uses ranges and Named Parameters.
+-   A new optional named parameter, min_points_per_cell has been added
+    to grid_simplify_point_set(). By adding a minimal number of points
+    in a cell such that a point is retained, one can also filter out low
+    density areas and outliers: in the case of densely sampled point
+    clouds, this yields better results than using grid simplification
+    and then outlier removal, while being very vast. The default value
+    is 1 to keep the previous behavior as default.
 
-See https://www.cgal.org/2019/10/31/cgal50-beta2/ for a complete list of
-changes.
+dD Spatial Searching
+
+-   Added the member function write_graphviz() to the class Kd_tree that
+    writes the tree in a stream in the Graphviz format.
+
+CGAL and the Boost Graph Library (BGL)
+
+-   Added the function invert_selection() in the class
+    Face_filtered_graph, which toggles the selected status of a graph:
+    selected faces are deselected, and unselected faces are selected.
+
+
+See https://www.cgal.org/2022/06/06/cgal55-beta1/ for a
+complete list of changes.
+
+
+The development of CGAL will then now on the future CGAL-5.6 (planned
+for December 2022), with bug-fixes regularly backported to the branches
+for CGAL-5.4.x and CGAL-5.5.x.
+
 
 
 The CGAL project is a collaborative effort to develop a robust,

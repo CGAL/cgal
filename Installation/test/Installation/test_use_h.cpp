@@ -2,7 +2,7 @@
 
 template <typename T>
 struct Foo {
-  typedef typename T::fake fake; 
+  typedef typename T::fake fake;
   // Fake typedef to check that Foo<double> is not instantiated.
 };
 
@@ -19,7 +19,7 @@ int test_use_type()
 }
 
 int test_use() {
-  int unused;
+  int unused = 0;
 
   // If the following line is commented, g++-4.8 -Wall displays that
   // warning:

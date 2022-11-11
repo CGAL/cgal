@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author        : Andreas Fabri
 
@@ -27,6 +27,7 @@ template < class R_ >
 class VectorC3
 {
 // https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
+  typedef VectorC3<R_>                      Self;
   typedef typename R_::FT                   FT_;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
@@ -69,6 +70,15 @@ public:
   VectorC3(const FT_ &x, const FT_ &y, const FT_ &z, const FT_ &w)
     : base( w != FT_(1) ? CGAL::make_array<FT_>(x/w, y/w, z/w)
                        : CGAL::make_array(x, y, z) ) {}
+
+  friend void swap(Self& a, Self& b)
+#if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
+    noexcept(std::is_nothrow_swappable_v<Base>)
+#endif
+  {
+    using std::swap;
+    swap(a.base, b.base);
+  }
 
   const FT_ & x() const
   {
@@ -146,7 +156,7 @@ operator!=(const VectorC3<R> &v, const VectorC3<R> &w)
 template < class R >
 inline
 bool
-operator==(const VectorC3<R> &v, const Null_vector &) 
+operator==(const VectorC3<R> &v, const Null_vector &)
 {
   return CGAL_NTS is_zero(v.x()) && CGAL_NTS is_zero(v.y()) &&
          CGAL_NTS is_zero(v.z());
@@ -155,7 +165,7 @@ operator==(const VectorC3<R> &v, const Null_vector &)
 template < class R >
 inline
 bool
-operator==(const Null_vector &n, const VectorC3<R> &v) 
+operator==(const Null_vector &n, const VectorC3<R> &v)
 {
   return v == n;
 }

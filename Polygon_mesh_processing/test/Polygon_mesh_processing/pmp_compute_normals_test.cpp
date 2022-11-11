@@ -42,28 +42,28 @@ void test(const Mesh& mesh,
   const face_descriptor first_face = *(faces(mesh).begin());
 
   PMP::compute_face_normals(mesh, fnormals);
-  PMP::compute_face_normals(mesh, fnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_face_normals(mesh, fnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_face_normals(mesh, fnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                              .geom_traits(K()));
 
   Vector f0n = PMP::compute_face_normal(first_face, mesh);
   assert(f0n == get(fnormals, first_face));
-  PMP::compute_face_normal(first_face, mesh, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_face_normal(first_face, mesh, CGAL::parameters::vertex_point_map(vpmap));
 
   PMP::compute_vertex_normals(mesh, vnormals);
-  PMP::compute_vertex_normals(mesh, vnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_vertex_normals(mesh, vnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_vertex_normals(mesh, vnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                                .geom_traits(K()));
 
   Vector v0n = PMP::compute_vertex_normal(first_vertex, mesh);
   assert(v0n == get(vnormals, first_vertex));
-  v0n = PMP::compute_vertex_normal(first_vertex, mesh, PMP::parameters::vertex_point_map(vpmap)
-                                                                       .face_normal_map(fnormals));
+  v0n = PMP::compute_vertex_normal(first_vertex, mesh, CGAL::parameters::vertex_point_map(vpmap)
+                                                                        .face_normal_map(fnormals));
   std::cout.precision(17);
   assert(v0n == get(vnormals, first_vertex));
 
   PMP::compute_normals(mesh, vnormals, fnormals);
-  PMP::compute_normals(mesh, vnormals, fnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_normals(mesh, vnormals, fnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_normals(mesh, vnormals, fnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                                   .geom_traits(K()));
 
@@ -93,7 +93,7 @@ void test(const Mesh& mesh,
 #endif
 
   // Check sanity of output
-  for(const face_descriptor f : faces(mesh))
+  for(face_descriptor f : faces(mesh))
   {
     // tests on non triangular meshes are @todo
     if(CGAL::is_triangle(halfedge(f, mesh), mesh))
@@ -105,7 +105,7 @@ void test(const Mesh& mesh,
     }
   }
 
-  for(const vertex_descriptor v : vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
   {
     if(get(vnormals, v) == CGAL::NULL_VECTOR)
     {
@@ -123,7 +123,7 @@ void test(const Mesh& mesh,
 }
 
 template<typename K>
-void test_SM(const char* file_name)
+void test_SM(const std::string file_name)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                         SM;
   typedef typename boost::graph_traits<SM>::vertex_descriptor             vertex_descriptor;
@@ -150,7 +150,7 @@ void test_SM(const char* file_name)
 }
 
 template<typename K>
-void test_Polyhedron(const char* file_name)
+void test_Polyhedron(const std::string file_name)
 {
   typedef CGAL::Polyhedron_3<K>                                           Polyhedron;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor     vertex_descriptor;
@@ -187,7 +187,7 @@ void test_Polyhedron(const char* file_name)
   test<K>(mesh, vnormals, fnormals);
 }
 
-void test(const char* filename)
+void test(const std::string filename)
 {
   std::cout << "test " << filename << "..." << std::endl;
 
@@ -205,10 +205,10 @@ int main()
 
   CGAL::Set_ieee_double_precision pfr;
 
-  test("data/elephant.off");
+  test(CGAL::data_file_path("meshes/elephant.off"));
   test("data/folded_star.off");
   test("data/joint_refined.off");
-  test("data/mannequin-devil.off");
+  test(CGAL::data_file_path("meshes/mannequin-devil.off"));
   test("data/U.off");
 
   test("data_degeneracies/deg_on_border.off");

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -85,13 +85,13 @@ class Iterator_adaptor_base
     return tmp;
   }
 
-  bool operator==(const Iterator& other) const {
+  bool operator==(const Self& other) const {
     if ( vda_ == nullptr ) { return other.vda_ == nullptr; }
     if ( other.vda_ == nullptr ) { return vda_ == nullptr; }
     return ( vda_ == other.vda_ && cur_ == other.cur_ );
   }
 
-  bool operator!=(const Iterator& other) const {
+  bool operator!=(const Self& other) const {
     return !(*this == other);
   }
 
@@ -117,9 +117,9 @@ class Iterator_adaptor_base
 template<class VDA, class Base_it, class Tag = CGAL::Tag_true>
 class Edge_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
-				 Edge_iterator_adaptor<VDA,Base_it,Tag>,
-				 Base_it,
-				 typename VDA::Halfedge>
+                                 Edge_iterator_adaptor<VDA,Base_it,Tag>,
+                                 Base_it,
+                                 typename VDA::Halfedge>
 {
  protected:
   typedef Triangulation_cw_ccw_2   CW_CCW_2;
@@ -162,8 +162,8 @@ class Edge_iterator_adaptor
       int cw_i  = CW_CCW_2::cw( this->cur_->second );
       int ccw_i = CW_CCW_2::ccw( this->cur_->second );
       this->value_ =
-	Halfedge(this->vda_, this->cur_->first->vertex(ccw_i),
-		 this->cur_->first->vertex(cw_i));
+        Halfedge(this->vda_, this->cur_->first->vertex(ccw_i),
+                 this->cur_->first->vertex(cw_i));
       return;
     }
 
@@ -200,9 +200,9 @@ class Edge_iterator_adaptor
 template<class VDA, class Base_it>
 class Halfedge_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
-				 Halfedge_iterator_adaptor<VDA,Base_it>,
-				 Base_it,
-				 typename VDA::Halfedge>
+                                 Halfedge_iterator_adaptor<VDA,Base_it>,
+                                 Base_it,
+                                 typename VDA::Halfedge>
 {
 private:
   typedef Halfedge_iterator_adaptor<VDA,Base_it>   Self;
@@ -235,12 +235,12 @@ private:
     return *this;
   }
 
-  bool operator==(const Self& other) const {
-    return Base::operator==(other) && is_first_ == other.is_first_;
+  friend bool operator==(const Self& i, const Self& other) {
+    return i.Base::operator==(other) && i.is_first_ == other.is_first_;
   }
 
-  bool operator!=(const Self& other) const {
-    return !(*this == other);
+  friend bool operator!=(const Self& i, const Self& other) {
+    return !(i == other);
   }
 
  private:
@@ -300,9 +300,9 @@ private:
 template<class VDA, class Base_it>
 class Face_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
-				 Face_iterator_adaptor<VDA,Base_it>,
-				 Base_it,
-				 typename VDA::Face>
+                                 Face_iterator_adaptor<VDA,Base_it>,
+                                 Base_it,
+                                 typename VDA::Face>
 {
  private:
   typedef Face_iterator_adaptor<VDA,Base_it>    Self;
@@ -321,7 +321,7 @@ class Face_iterator_adaptor
   Face_iterator_adaptor(const VDA* vda = nullptr) : Base(vda) {}
 
   Face_iterator_adaptor(const VDA* vda,
-			const Base_iterator& cur)
+                        const Base_iterator& cur)
     : Base(vda, cur) {}
 
   operator Face_handle() const {
@@ -350,9 +350,9 @@ class Face_iterator_adaptor
 template<class VDA, class Base_it>
 class Vertex_iterator_adaptor :
   public Iterator_adaptor_base<VDA,
-			       Vertex_iterator_adaptor<VDA,Base_it>,
-			       Base_it,
-			       typename VDA::Vertex>
+                               Vertex_iterator_adaptor<VDA,Base_it>,
+                               Base_it,
+                               typename VDA::Vertex>
 {
  private:
   typedef Vertex_iterator_adaptor<VDA,Base_it>    Self;

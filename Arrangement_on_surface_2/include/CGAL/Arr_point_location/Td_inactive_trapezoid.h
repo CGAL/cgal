@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
+// Author(s)         : Oren Nechushtan <theoren@math.tau.ac.il>
 //               updated by: Michal Balas <balasmic@post.tau.ac.il>
 
 #ifndef CGAL_TD_INACTIVE_TRAPEZOID_H
@@ -34,7 +34,7 @@ namespace CGAL {
 
 /*! \class
  */
-class Td_inactive_trapezoid 
+class Td_inactive_trapezoid
 {
 public:
   /*! Operator==. */

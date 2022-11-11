@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 
@@ -52,6 +52,6 @@ OutputIterator random_selection( RandomAccessIterator first,
     return random_selection( first, last, n, result, get_default_random());
 }
 
-} //namespace CGAL    
+} //namespace CGAL
 
 #endif // CGAL_RANDOM_SELECTION_H //

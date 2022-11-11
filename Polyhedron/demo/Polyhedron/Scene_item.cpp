@@ -14,7 +14,7 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
     visible_(true),
     are_buffers_filled(false),
     rendering_mode(FlatPlusEdges),
-    defaultContextMenu(0),
+    defaultContextMenu(nullptr),
     buffersSize(buffers_size),
     vaosSize(vaos_size),
     vaos(vaos_size)
@@ -38,7 +38,7 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
   }
   nb_isolated_vertices = 0;
   has_group = 0;
-  parent_group = 0;
+  parent_group = nullptr;
   is_selected = false;
 }
 
@@ -91,7 +91,7 @@ const char* slotName(RenderingMode mode) {
 QString CGAL::Three::Scene_item::renderingModeName() const
 {
     return CGAL::Three::Three::modeName(renderingMode());
-} 
+}
 QMenu* CGAL::Three::Scene_item::contextMenu()
 {
     if(defaultContextMenu) {
@@ -187,7 +187,7 @@ void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewe
 
 QOpenGLShaderProgram* CGAL::Three::Scene_item::getShaderProgram(int name, CGAL::Three::Viewer_interface * viewer) const
 {
-    if(viewer == 0)
+    if(viewer == nullptr)
         viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
     return viewer->getShaderProgram(name);
 }
@@ -225,5 +225,5 @@ float Scene_item::alpha() const
 
 void Scene_item::setAlpha(int )
 {
- 
+
 }

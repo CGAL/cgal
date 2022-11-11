@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Lutz Kettner
 
@@ -57,7 +57,7 @@ class Aff_transformationC2
 
 public:
   typedef R_                                R;
-   
+
   Aff_transformationC2()
   {
     initialize_with(Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1)));
@@ -100,7 +100,7 @@ public:
     else
       initialize_with(Scaling_repC2<R>(s));
   }
-  
+
   Aff_transformationC2(const Reflection, const Line_2& l)
   {
       initialize_with(Reflection_repC2<R>(l));
@@ -126,18 +126,18 @@ public:
   {
     initialize_with(Aff_transformation_repC2<R>(m11/w, m12/w, m21/w, m22/w));
   }
-  
+
 
   Point_2
-  transform(const Point_2 &p) const 
-  { return this->Ptr()->transform(p); } 
+  transform(const Point_2 &p) const
+  { return this->Ptr()->transform(p); }
 
   Point_2
   operator()(const Point_2 &p) const
   { return transform(p); }
 
   Vector_2
-  transform(const Vector_2 &v) const 
+  transform(const Vector_2 &v) const
   { return this->Ptr()->transform(v); }
 
   Vector_2
@@ -165,6 +165,11 @@ public:
   bool is_even() const { return this->Ptr()->is_even(); }
   bool is_odd() const { return ! (this->Ptr()->is_even()); }
 
+  bool is_translation() const { return this->Ptr()->is_translation(); }
+  bool is_scaling() const { return this->Ptr()->is_scaling(); }
+  bool is_reflection() const { return this->Ptr()->is_reflection(); }
+  bool is_rotation() const { return this->Ptr()->is_rotation(); }
+
   FT cartesian(int i, int j) const { return this->Ptr()->cartesian(i,j); }
   FT homogeneous(int i, int j) const { return cartesian(i,j); }
   FT m(int i, int j) const { return cartesian(i,j); }
@@ -177,7 +182,7 @@ public:
 
   std::ostream &
   print(std::ostream &os) const;
-  
+
   bool operator==(const Aff_transformationC2 &t)const
   {
     for(int i=0; i<3; ++i)
@@ -186,12 +191,12 @@ public:
           return false;
     return true;
   }
-  
+
   bool operator!=(const Aff_transformationC2 &t)const
   {
     return !(*this == t);
   }
-  
+
 };
 
 template < class R >

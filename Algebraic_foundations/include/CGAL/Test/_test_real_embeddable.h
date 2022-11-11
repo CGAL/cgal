@@ -35,7 +35,7 @@
     typedef typename RET::Is_zero Is_zero;               \
     typedef typename RET::Compare Compare;               \
     typedef typename RET::To_double To_double;           \
-    typedef typename RET::To_interval To_interval;       
+    typedef typename RET::To_interval To_interval;
 
 #ifndef CGAL_TEST_REAL_EMBEDDABLE_H
 #define CGAL_TEST_REAL_EMBEDDABLE_H
@@ -48,9 +48,9 @@ namespace CGAL {
         void operator() (const ToDouble& to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
-            CGAL_static_assertion(( ::boost::is_same<Type, Argument_type>::value));
+            CGAL_static_assertion(( ::std::is_same<Type, Argument_type>::value));
             CGAL_USE_TYPE(Argument_type);
-            CGAL_static_assertion(( ::boost::is_same<double, Result_type>::value));
+            CGAL_static_assertion(( ::std::is_same<double, Result_type>::value));
             CGAL_USE_TYPE(Result_type);
             assert(42.0 == to_double(Type(42)));
         }
@@ -63,7 +63,7 @@ namespace CGAL {
             CGAL_error_msg("To_double functor not implemented");
         }
     };
-    
+
     template<class Type, class To_interval>
     class Test_to_interval {
     public:
@@ -71,9 +71,9 @@ namespace CGAL {
             typedef typename To_interval::argument_type Argument_type;
             typedef typename To_interval::result_type   Result_type;
             typedef std::pair<double,double>  Interval_type;
-            CGAL_static_assertion(( ::boost::is_same<Type, Argument_type>::value));
+            CGAL_static_assertion(( ::std::is_same<Type, Argument_type>::value));
             CGAL_USE_TYPE(Argument_type);
-            CGAL_static_assertion(( ::boost::is_same<Interval_type, Result_type>::value));
+            CGAL_static_assertion(( ::std::is_same<Interval_type, Result_type>::value));
             CGAL_USE_TYPE(Result_type); CGAL_USE_TYPE(Interval_type);
 
 //            assert(NiX::in(42.0,to_Interval(Type(42))));
@@ -83,31 +83,31 @@ namespace CGAL {
 
             assert(to_interval(Type(42)).first > 41.99);
             assert(to_interval(Type(42)).second < 42.01);
-            
-	    // test neagtive numbers as well to catch obvious sign
-	    // errors
-	    assert( -42.0 >= to_interval( -Type(42) ).first );
+
+            // test neagtive numbers as well to catch obvious sign
+            // errors
+            assert( -42.0 >= to_interval( -Type(42) ).first );
             assert( -42.0 <= to_interval( -Type(42) ).second );
 
             assert(to_interval(-Type(42)).first < -41.99);
             assert(to_interval(-Type(42)).second > -42.01);
-     
 
-	    /*
-	    Type notdouble = ipower(2,60);
+
+            /*
+            Type notdouble = ipower(2,60);
             notdouble = notdouble + Type(1);
             Interval test = to_Interval(notdouble);
             double lower = ipower(2.0,60);
             double upper = ipower(2.0,53);
             upper++;
             upper *= ipower(2.0,7);
-	    std::cout << lower << "," << upper << std::endl;
-	    std::cout << test.lower() << "," << test.upper() << std::endl;
+            std::cout << lower << "," << upper << std::endl;
+            std::cout << test.lower() << "," << test.upper() << std::endl;
             assert( (in(lower,test) == true) && (in(upper,test) == true) );
             */
         }
     };
-    
+
     template< class Type >
     class Test_to_interval< Type, CGAL::Null_tag> {
       public:
@@ -119,12 +119,12 @@ namespace CGAL {
 
 // Several libraries do not want to enforce the use of std::min/max
 // for the case that there is a special function for min/max
-// However, this may be a problem for template CGAL::min/max in case NT is a 
-// CGAL type. These types have to overload CGAL::min/max. 
+// However, this may be a problem for template CGAL::min/max in case NT is a
+// CGAL type. These types have to overload CGAL::min/max.
 template<typename NT>
 void test_min_max(){
   using std:: min BOOST_PREVENT_MACRO_SUBSTITUTION ;
-  using std:: max BOOST_PREVENT_MACRO_SUBSTITUTION ;  
+  using std:: max BOOST_PREVENT_MACRO_SUBSTITUTION ;
   NT x(1),y(2);
   assert(min BOOST_PREVENT_MACRO_SUBSTITUTION (x,y)==NT(1));
   assert(max BOOST_PREVENT_MACRO_SUBSTITUTION (x,y)==NT(2));
@@ -133,13 +133,13 @@ void test_min_max(){
 //! tests if \c Type is a model for the \c RealComparable concept
 //! and terminates the program with an error message if not.
 template <class Type>
-void test_real_embeddable() {    
-  test_min_max<Type>();  
+void test_real_embeddable() {
+  test_min_max<Type>();
     typedef CGAL::Real_embeddable_traits<Type> RET;
     CGAL_SNAP_RET_FUNCTORS(RET);
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_true;
-    CGAL_static_assertion(( ::boost::is_same< Is_real_embeddable, Tag_true>::value));
+    CGAL_static_assertion(( ::std::is_same< Is_real_embeddable, Tag_true>::value));
     CGAL_USE_TYPE(Is_real_embeddable);
 
     typedef typename RET::Boolean Boolean;
@@ -157,10 +157,10 @@ void test_real_embeddable() {
     assert(Boolean()              == bool());
     assert(Sign()                 == CGAL::Sign());
     assert(Comparison_result()    == CGAL::Comparison_result());
-    
+
     typename RET::Compare compare;
     const Sgn     sign = Sgn();
-    const Abs     abs=Abs(); 
+    const Abs     abs=Abs();
     const Is_finite  is_finite=Is_finite();
     const Is_positive is_positive=Is_positive();
     const Is_negative is_negative=Is_negative();
@@ -180,7 +180,7 @@ void test_real_embeddable() {
     assert( !is_negative(c) );
     assert( !is_zero(a) );
     assert( !is_zero(b) );
-    assert( is_zero(c) );    
+    assert( is_zero(c) );
     assert( a <  b);
     assert( b >  a);
     assert( a <= b);
@@ -202,7 +202,7 @@ void test_real_embeddable() {
     assert( sign(c) <  sign(b));
     assert( sign(b) >  sign(c));
     assert( sign(c) <= sign(b));
-    assert( sign(b) >= sign(c)); 
+    assert( sign(b) >= sign(c));
     assert( sign(c) <= sign(c));
     assert( sign(c) >= sign(c));
     assert( sign(a) <  sign(c));
@@ -211,21 +211,21 @@ void test_real_embeddable() {
     assert( sign(c) >= sign(a));
     assert( abs(a) == Type(2));
     assert( abs(b) == Type(1));
-    assert( abs(c) == Type(0));   
-    
+    assert( abs(c) == Type(0));
+
     // To_double --------------------------------------------------------------
     const To_double to_double = To_double();
     (void)to_double;
     Test_to_double<Type, To_double> ttd;
     ttd(to_double);
-    
+
     // To_Interval ------------------------------------------------------------
     const To_interval to_interval = To_interval();
     (void)to_interval;
     Test_to_interval<Type, To_interval> tti;
     tti(to_interval);
-    
-    // additional functions     
+
+    // additional functions
     assert( CGAL_NTS is_finite( Type(1) ) );
     assert( CGAL_NTS sign(Type(-5))==CGAL::NEGATIVE);
     assert( CGAL_NTS abs(Type(-5))==Type(5));
@@ -238,15 +238,15 @@ void test_real_embeddable() {
 
 }
 
-//! tests if \c Type says it is not a model for the \c RealComparable 
-//! concept and terminates the program with an error message if it 
+//! tests if \c Type says it is not a model for the \c RealComparable
+//! concept and terminates the program with an error message if it
 //! actually is.
 template <class Type>
 void test_not_real_embeddable() {
     typedef CGAL::Real_embeddable_traits<Type> RET;
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_false;
-    CGAL_static_assertion(( ::boost::is_same< Is_real_embeddable, Tag_false>::value));
+    CGAL_static_assertion(( ::std::is_same< Is_real_embeddable, Tag_false>::value));
     CGAL_USE_TYPE(Is_real_embeddable);
 }
 
@@ -254,13 +254,13 @@ void test_not_real_embeddable() {
 //template <class Type, class CeilLog2Abs>
 //void test_rounded_log2_abs(Type zero, CGAL::Null_functor, CeilLog2Abs) {
 //    typedef CGAL::Null_functor Null_functor;
-//    CGAL_static_assertion(( ::boost::is_same< CeilLog2Abs, Null_functor>::value));
+//    CGAL_static_assertion(( ::std::is_same< CeilLog2Abs, Null_functor>::value));
 //}
 //
 //template <class Type, class FloorLog2Abs, class CeilLog2Abs>
 //void test_rounded_log2_abs(Type zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
 //    typedef CGAL::Null_functor Null_functor;
-//    CGAL_static_assertion((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
+//    CGAL_static_assertion((!::std::is_same< CeilLog2Abs, Null_functor>::value));
 //
 //    assert( fl_log(Type( 7)) == 2 );
 //    assert( cl_log(Type( 7)) == 3 );

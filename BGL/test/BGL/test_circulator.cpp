@@ -32,30 +32,30 @@ typedef CGAL::Vertex_around_target_iterator<Polyhedron> vertex_around_target_ite
 int main(int argc, char* argv[])
 {
 
-  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_face_circulator>)) CGAL_UNUSED;
-  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_target_circulator>)) CGAL_UNUSED;
-  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<vertex_around_target_circulator>)) CGAL_UNUSED;
-  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<face_around_target_circulator>)) CGAL_UNUSED;
-  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_source_circulator>)) CGAL_UNUSED;
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_face_circulator>));
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_target_circulator>));
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<vertex_around_target_circulator>));
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<face_around_target_circulator>));
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_source_circulator>));
 
-  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_source_circulator>)) CGAL_UNUSED;
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_source_circulator>));
 
-   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<face_around_face_iterator>)) CGAL_UNUSED;
-   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<halfedge_around_face_iterator>)) CGAL_UNUSED;
-   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<halfedge_around_target_iterator>)) CGAL_UNUSED;
-   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<vertex_around_target_iterator>)) CGAL_UNUSED;
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<face_around_face_iterator>));
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<halfedge_around_face_iterator>));
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<halfedge_around_target_iterator>));
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<vertex_around_target_iterator>));
 
-   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<in_edge_iterator>)) CGAL_UNUSED;
-   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<out_edge_iterator>)) CGAL_UNUSED;
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<in_edge_iterator>));
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<out_edge_iterator>));
 
-  std::ifstream in((argc>1)?argv[1]:"data/cube.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube.off"));
   Polyhedron P;
   in >> P;
 
   halfedge_descriptor hd = *halfedges(P).first;
   {
     halfedge_around_face_circulator hafc(hd,P), done(hafc);
-    
+
     do {
       std::cout << get(CGAL::vertex_point, P, target(*hafc,P)) << std::endl;
       ++hafc;
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   }
   {
     vertex_around_target_circulator havc(hd,P), done(havc);
-    
+
     do {
       std::cout << get(CGAL::vertex_point, P, *havc) << std::endl;
       ++havc;
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
   }
   {
     face_around_target_circulator havc(hd,P), done(havc);
-    
+
     do {
       //std::cout << get(CGAL::vertex_point, P, *havc) << std::endl;
       ++havc;
@@ -114,14 +114,14 @@ int main(int argc, char* argv[])
    {
     halfedge_around_face_iterator vit, end;
     boost::tie(vit,end) = halfedges_around_face(hd,P);
-    
+
     while(vit!= end) {
       halfedge_descriptor hd = *vit;
       std::cout << get(CGAL::vertex_point, P, target(hd,P)) << std::endl;
       ++vit;
     }
   }
- 
+
 
   {
     out_edge_iterator ohi, end;
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
       halfedge_descriptor hd2 = halfedge(ed,P);
       std::cout << get(CGAL::vertex_point, P, target(hd2,P)) << std::endl;
     }
-  } 
+  }
 
   {
     for(edge_descriptor ed : out_edges(target(hd,P),P)){

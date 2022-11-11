@@ -18,7 +18,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_linear_traits_2.h>
-#include <CGAL/number_utils.h> 
+#include <CGAL/number_utils.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 #include <CGAL/Envelope_3/Env_plane_traits_3_functions.h>
 
@@ -47,7 +47,7 @@ public:
   typedef typename Base::Bottom_side_category  Bottom_side_category;
   typedef typename Base::Top_side_category     Top_side_category;
   typedef typename Base::Right_side_category   Right_side_category;
-  
+
   typedef Point_2                  Xy_monotone_surface_3;
   typedef Point_2                  Surface_3;
 
@@ -63,7 +63,7 @@ public:
   static Point_2 midpoint(const Point_2& p1, const Point_2& p2, std::size_t index) {
     const Point_2 *pp1;
     const Point_2 *pp2;
-    
+
     if (index % 2 == 0) {
       pp1 = &p1;
       pp2 = &p2;
@@ -75,7 +75,7 @@ public:
 
     FT delta_x = pp2->x() - pp1->x();
     FT delta_y = pp2->y() - pp1->y();
-    
+
     FT sign_x = (int)CGAL::sign(delta_x);
     FT sign_y = (int)CGAL::sign(delta_y);
 
@@ -85,17 +85,17 @@ public:
     FT dist = (abs_x + abs_y) / 2;
     FT mid_x = pp1->x();
     FT mid_y = pp1->y();
-    
+
     // Walk on the horizontal edge of the rectangle and then on the vertical.
 
-    // There is a chance that the width of the rectangle is smaller then the mid-dist.
+    // There is a chance that the width of the rectangle is smaller than the mid-dist.
     FT walk_x = (CGAL::min)(abs_x, dist);
     mid_x += sign_x * walk_x;
     dist -= walk_x;
-    
+
     CGAL_assertion(abs_y > dist);
     mid_y += sign_y * dist;
-    
+
     return Point_2(mid_x, mid_y);
   }
 
@@ -139,12 +139,12 @@ public:
         res = CGAL::compare_y_at_x(h2, l);
         if (res == side)
           return CGAL::LARGER;
-        
+
         return CGAL::EQUAL;
       }
-      
+
       CGAL_assertion(CGAL::compare_y_at_x(h2, l) == CGAL::opposite(res));
-      if (res == side) 
+      if (res == side)
         return CGAL::SMALLER;
       else
         return CGAL::LARGER;
@@ -160,11 +160,11 @@ public:
       return o;
     }
   };
-  
+
   Make_xy_monotone_3 make_xy_monotone_3_object() const {
     return Make_xy_monotone_3();
   }
-  
+
   class Compare_z_at_xy_3 {
   public:
     Comparison_result operator()(const Point_2& p,
@@ -187,9 +187,9 @@ public:
           CGAL_assertion(cv.is_line());
           p = k.construct_point_on_2_object()(cv.line(), 1);
         }
-      return this->operator()(p, h1, h2); 
+      return this->operator()(p, h1, h2);
     }
-    
+
     Comparison_result operator()(const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2) const {
       // should happen only if the points are equal.
@@ -232,7 +232,7 @@ public:
   Compare_z_at_xy_below_3 compare_z_at_xy_below_3_object() const {
     return Compare_z_at_xy_below_3();
   }
-  
+
   class Construct_projected_boundary_2 {
   public:
     template <class OutputIterator>
@@ -242,7 +242,7 @@ public:
     }
   };
 
-  Construct_projected_boundary_2 
+  Construct_projected_boundary_2
   construct_projected_boundary_2_object() const
   {
     return Construct_projected_boundary_2();
@@ -267,7 +267,7 @@ public:
 
       if (s_x == CGAL::ZERO && s_y == CGAL::ZERO)
         return o;
-      
+
       // The sites have the same x/y coordinate.
       if (s_x == CGAL::ZERO || s_y == CGAL::ZERO) {
         *o++ = CGAL::make_object(Intersection_curve(CGAL::bisector(s1, s2), 1));
@@ -288,7 +288,7 @@ public:
         left = &p2;
         right = &p1;
       }
-      
+
       if (CGAL::sign(p2.y() - p1.y()) == CGAL::POSITIVE) {
         bottom = &p1;
         top = &p2;
@@ -298,7 +298,7 @@ public:
         bottom = &p2;
         top = &p1;
       }
-      
+
       // We construct the diagonal line either way.
       *o++ = CGAL::make_object(Intersection_curve(Segment_2(p1, p2), 1));
 
@@ -318,7 +318,7 @@ public:
         *o++ = CGAL::make_object(Intersection_curve(Ray_2(*right, Direction_2(1, 0)), mult));
         *o++ = CGAL::make_object(Intersection_curve(Ray_2(*left, Direction_2(-1, 0)), mult));
       }
-      
+
       return o;
     }
   };

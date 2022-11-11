@@ -3,17 +3,17 @@
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion, Olivier Devillers
-//                
+//
 
 #ifndef CGAL_PREDICATES_KERNEL_FTC2_H
 #define CGAL_PREDICATES_KERNEL_FTC2_H
@@ -55,10 +55,10 @@ equal_lineC2(const FT &l1a, const FT &l1b, const FT &l1c,
         return false; // Not parallel.
     typename Sgn<FT>::result_type s1a = CGAL_NTS sign(l1a);
     if (s1a != ZERO)
-        return s1a == CGAL_NTS sign(l2a)
-	    && sign_of_determinant(l1a, l1c, l2a, l2c) == ZERO;
-    return CGAL_NTS sign(l1b) == CGAL_NTS sign(l2b)
-	&& sign_of_determinant(l1b, l1c, l2b, l2c) == ZERO;
+        return CGAL_AND(s1a == CGAL_NTS sign(l2a),
+                        sign_of_determinant(l1a, l1c, l2a, l2c) == ZERO);
+    return CGAL_AND(CGAL_NTS sign(l1b) == CGAL_NTS sign(l2b),
+                    sign_of_determinant(l1b, l1c, l2b, l2c) == ZERO);
 }
 
 template < class FT >
@@ -200,15 +200,15 @@ compare_y_at_xC2(const FT &px, const FT &py,
     CGAL_kernel_precondition(are_ordered(ssx, px, stx));
 
     if (ssx < stx)
-	return orientationC2(px, py, ssx, ssy, stx, sty);
+        return orientationC2(px, py, ssx, ssy, stx, sty);
     else if (ssx > stx)
-	return orientationC2(px, py, stx, sty, ssx, ssy);
+        return orientationC2(px, py, stx, sty, ssx, ssy);
     else {
-	if (py < (CGAL::min)(sty, ssy))
-	    return SMALLER;
-	if (py > (CGAL::max)(sty, ssy))
-	    return LARGER;
-	return EQUAL;
+        if (py < (CGAL::min)(sty, ssy))
+            return SMALLER;
+        if (py > (CGAL::max)(sty, ssy))
+            return LARGER;
+        return EQUAL;
     }
 }
 
@@ -230,32 +230,32 @@ compare_y_at_x_segment_C2(const FT &px,
     CGAL_kernel_precondition(are_ordered(s1sx, px, s1tx));
     CGAL_kernel_precondition(are_ordered(s2sx, px, s2tx));
 
-    if (s1sx != s1tx && s2sx != s2tx) {
-	FT s1stx = s1sx-s1tx;
-	FT s2stx = s2sx-s2tx;
+    if (CGAL_AND(s1sx != s1tx, s2sx != s2tx)) {
+        FT s1stx = s1sx-s1tx;
+        FT s2stx = s2sx-s2tx;
 
-	return CGAL_NTS compare(s1sx, s1tx) *
-	       CGAL_NTS compare(s2sx, s2tx) *
-	       CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
-		                (s2sy-s1sy)*s2stx*s1stx
-		                -(s2sx-px)*(s2sy-s2ty)*s1stx );
+        return CGAL_NTS compare(s1sx, s1tx) *
+               CGAL_NTS compare(s2sx, s2tx) *
+               CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+                                (s2sy-s1sy)*s2stx*s1stx
+                                -(s2sx-px)*(s2sy-s2ty)*s1stx );
     }
     else {
-	if (s1sx == s1tx) { // s1 is vertical
-	    typename Compare<FT>::result_type c1, c2;
-	    c1 = compare_y_at_xC2(px, s1sy, s2sx, s2sy, s2tx, s2ty);
-	    c2 = compare_y_at_xC2(px, s1ty, s2sx, s2sy, s2tx, s2ty);
-	    if (c1 == c2)
-		return c1;
-	    return EQUAL;
-	}
-	// s2 is vertical
-	typename Compare<FT>::result_type c3, c4;
-	c3 = compare_y_at_xC2(px, s2sy, s1sx, s1sy, s1tx, s1ty);
-	c4 = compare_y_at_xC2(px, s2ty, s1sx, s1sy, s1tx, s1ty);
-	if (c3 == c4)
-	    return -c3;
-	return EQUAL;
+        if (s1sx == s1tx) { // s1 is vertical
+            typename Compare<FT>::result_type c1, c2;
+            c1 = compare_y_at_xC2(px, s1sy, s2sx, s2sy, s2tx, s2ty);
+            c2 = compare_y_at_xC2(px, s1ty, s2sx, s2sy, s2tx, s2ty);
+            if (c1 == c2)
+                return c1;
+            return EQUAL;
+        }
+        // s2 is vertical
+        typename Compare<FT>::result_type c3, c4;
+        c3 = compare_y_at_xC2(px, s2sy, s1sx, s1sy, s1tx, s1ty);
+        c4 = compare_y_at_xC2(px, s2ty, s1sx, s1sy, s1tx, s1ty);
+        if (c3 == c4)
+            return -c3;
+        return EQUAL;
     }
 }
 
@@ -263,18 +263,18 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Equal_to<FT>::result_type
 equal_directionC2(const FT &dx1, const FT &dy1,
-                  const FT &dx2, const FT &dy2) 
+                  const FT &dx2, const FT &dy2)
 {
-  return CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2)
-      && CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2)
-      && sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO;
+  return CGAL_AND_3( CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2),
+                     CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2),
+                     sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO );
 }
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Compare<FT>::result_type
 compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
-                            const FT &dx2, const FT &dy2) 
+                            const FT &dx2, const FT &dy2)
 {
   // angles are in [-pi,pi], and the angle between Ox and d1 is compared
   // with the angle between Ox and d2
@@ -294,16 +294,16 @@ compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Compare<FT>::result_type
-compare_slopesC2(const FT &l1a, const FT &l1b, const FT &l2a, const FT &l2b) 
+compare_slopesC2(const FT &l1a, const FT &l1b, const FT &l2a, const FT &l2b)
 {
    typedef typename Compare<FT>::result_type result_type;
 
    if (CGAL_NTS is_zero(l1a))  // l1 is horizontal
     return CGAL_NTS is_zero(l2b) ? result_type(SMALLER)
-	                         : CGAL_NTS sign(l2a) * CGAL_NTS sign(l2b);
+                                 : CGAL_NTS sign(l2a) * CGAL_NTS sign(l2b);
    if (CGAL_NTS is_zero(l2a)) // l2 is horizontal
     return CGAL_NTS is_zero(l1b) ? result_type(LARGER)
-	                         : - CGAL_NTS sign(l1a) * CGAL_NTS sign(l1b);
+                                 : - CGAL_NTS sign(l1a) * CGAL_NTS sign(l1b);
    if (CGAL_NTS is_zero(l1b)) return CGAL_NTS is_zero(l2b) ? EQUAL : LARGER;
    if (CGAL_NTS is_zero(l2b)) return SMALLER;
    result_type l1_sign = - CGAL_NTS sign(l1a) * CGAL_NTS sign(l1b);
@@ -314,18 +314,18 @@ compare_slopesC2(const FT &l1a, const FT &l1b, const FT &l2a, const FT &l2b)
 
    if (l1_sign > ZERO)
      return CGAL_NTS compare ( CGAL_NTS abs(l1a * l2b),
-			       CGAL_NTS abs(l2a * l1b) );
+                               CGAL_NTS abs(l2a * l1b) );
 
    return CGAL_NTS compare ( CGAL_NTS abs(l2a * l1b),
-			     CGAL_NTS abs(l1a * l2b) );
+                             CGAL_NTS abs(l1a * l2b) );
 }
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Compare<FT>::result_type
-compare_slopesC2(const FT &s1_src_x, const FT &s1_src_y, const FT &s1_tgt_x, 
-                 const FT &s1_tgt_y, const FT &s2_src_x, const FT &s2_src_y, 
-                 const FT &s2_tgt_x, const FT &s2_tgt_y) 
+compare_slopesC2(const FT &s1_src_x, const FT &s1_src_y, const FT &s1_tgt_x,
+                 const FT &s1_tgt_y, const FT &s2_src_x, const FT &s2_src_y,
+                 const FT &s2_tgt_x, const FT &s2_tgt_y)
 {
    typedef typename Compare<FT>::result_type  Cmp;
    typedef typename Sgn<FT>::result_type      Sg;
@@ -391,7 +391,9 @@ typename Compare<FT>::result_type
 compare_lexicographically_xyC2(const FT &px, const FT &py,
                                const FT &qx, const FT &qy)
 {
-  typename Compare<FT>::result_type c = CGAL_NTS compare(px,qx);
+  typedef typename Compare<FT>::result_type Cmp;
+  Cmp c = CGAL_NTS compare(px,qx);
+  if (is_indeterminate(c)) return indeterminate<Cmp>();
   return (c != EQUAL) ? c : CGAL_NTS compare(py,qy);
 }
 
@@ -704,6 +706,28 @@ power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
   // If not possible, then on the (y) axis.
   Comparison_result cmpy = CGAL_NTS compare(py, qy);
   return cmpy * sign_of_determinant(dpy, dpz, dqy, dqz);
+}
+
+template <class FT>
+Oriented_side
+circumcenter_oriented_side_of_oriented_segmentC2(const FT& ax,  const FT& ay,
+                                                 const FT& bx,  const FT& by,
+                                                 const FT& p0x, const FT& p0y,
+                                                 const FT& p1x, const FT& p1y,
+                                                 const FT& p2x, const FT& p2y)
+{
+  const FT dX = bx - ax;
+  const FT dY = by - ay;
+  const FT R0 = p0x * p0x + p0y * p0y;
+  const FT R1 = p1x * p1x + p1y * p1y;
+  const FT R2 = p2x * p2x + p2y * p2y;
+  const FT denominator = (p1x - p0x) * (p2y - p0y) +
+                         (p0x - p2x) * (p1y - p0y);
+  const FT det = 2 * denominator * (ax * dY - ay * dX)
+                   - (R2 - R1) * (p0x * dX + p0y * dY)
+                   - (R0 - R2) * (p1x * dX + p1y * dY)
+                   - (R1 - R0) * (p2x * dX + p2y * dY);
+  return CGAL::sign(det);
 }
 
 } //namespace CGAL

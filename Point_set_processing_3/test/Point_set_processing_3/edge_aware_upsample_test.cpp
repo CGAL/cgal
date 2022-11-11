@@ -14,7 +14,7 @@
 
 // This package
 #include <CGAL/edge_aware_upsample_point_set.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <cstdlib>
 #include <fstream>
@@ -42,7 +42,7 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 // Tests
 // ----------------------------------------------------------------------------
 
-void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input point set                            
+void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input point set
                               double sharpness_sigma, //control sharpness
                               double edge_sensitivity,// more points will up-sample on edge
                               double neighbor_radius,  // initial neighbors size.
@@ -54,7 +54,7 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
             << sharpness_sigma << "%, number_of_output_points="
             << points.size() * times_of_output_points << ")...\n";
 
-   //Run algorithm 
+   //Run algorithm
   CGAL::edge_aware_upsample_point_set<Concurrency_tag>(
     points, std::back_inserter(points),
     CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
@@ -113,27 +113,21 @@ int main(int argc, char * argv[])
     // Loads point set
     //***************************************
 
-    // File name is:
-    std::string input_filename  = argv[i];
-
     // Reads the point set file in points[].
     std::vector<PointVectorPair> points;
-    std::cerr << "Opening " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Opening " << argv[i] << " for reading..." << std::endl;
 
     // If XYZ file format:
-    std::ifstream stream(input_filename.c_str());
-   if(stream &&
-       CGAL::read_xyz_points
-       (stream,                                     
-        std::back_inserter(points),
-        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-        normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+   if(CGAL::IO::read_points(argv[i],
+                            std::back_inserter(points),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                             .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }
     else
     {
-      std::cerr << "Error: cannot read file " << input_filename << std::endl;
+      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }
@@ -142,7 +136,7 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_edge_aware_upsample(points, 
+    test_edge_aware_upsample(points,
                              sharpness_sigma,
                              edge_sensitivity,
                              neighbor_radius,

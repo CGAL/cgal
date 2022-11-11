@@ -14,7 +14,7 @@ int main()
 #else
 
 #include <fstream>
-#include <boost/timer.hpp>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/offset_polygon_2.h>
@@ -43,9 +43,10 @@ int main(int argc, char* argv[])
   // Compute the inner offset of the polygon.
   Traits traits;
   std::list<Offset_polygon> inset_polygons;
-  boost::timer timer;
+  CGAL::Timer timer;
+  timer.start();
   inset_polygon_2(P, 1, traits, std::back_inserter(inset_polygons));
-  double secs = timer.elapsed();
+  double secs = timer.time();
 
   std::list<Offset_polygon>::iterator it;
   std::cout << "The inset comprises "

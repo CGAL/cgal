@@ -1,6 +1,6 @@
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include "Scene_c3t3_item.h"
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/IO/File_avizo.h>
@@ -18,19 +18,27 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "c3t3_io_plugin.json")
 
 public:
-  QString name() const { return "C3t3_io_plugin"; }
-  QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
-  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
-  QString loadNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
-  bool canLoad(QFileInfo) const;
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  QString name() const override { return "C3t3_io_plugin"; }
+  QString nameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.tetra.am)"; }
+  QString saveNameFilters() const override{
+    return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.tetra.am);;OFF files (*.off)"; }
+  QString loadNameFilters() const override {
+    return "binary files (*.cgal);;ascii (*.mesh);;avizo (*.tetra.am)"; }
+  bool canLoad(QFileInfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& );
+  bool canSave(const CGAL::Three::Scene_item*) override;
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) override;
+  bool isDefaultLoader(const Scene_item* item) const override{
+    if(qobject_cast<const Scene_c3t3_item*>(item))
+      return true;
+    return false;
+  }
 
 private:
   bool try_load_other_binary_format(std::istream& in, C3t3& c3t3);
   bool try_load_a_cdt_3(std::istream& in, C3t3& c3t3);
+  void update_c3t3(C3t3& c3t3);
 };
 
 
@@ -44,14 +52,21 @@ bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad(QFileInfo fi) const {
               << (const char*)fi.filePath().toUtf8() << std::endl;
     return false;
   }
-  std::string line;
-  std::istringstream iss;
-  std::getline (in,line);
-  iss.str(line);
-  std::string keyword;
-  if (iss >> keyword)
-    if (keyword == "binary")
-      return true;
+  if (fi.suffix().toLower() == "cgal")
+  {
+    std::string line;
+    std::istringstream iss;
+    std::getline(in, line);
+    iss.str(line);
+    std::string keyword;
+    if (iss >> keyword)
+      if (keyword == "binary")
+        return true;
+  }
+  else if (fi.suffix().toLower() == "am")
+  {
+    return true;
+  }
   return false;
 }
 
@@ -70,7 +85,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       return QList<Scene_item*>();
     }
     Scene_c3t3_item* item = new Scene_c3t3_item();
-    
+
     if(fileinfo.size() == 0)
     {
       CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
@@ -83,19 +98,20 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
     {
         item->setName(fileinfo.baseName());
 
-
         if(item->load_binary(in)) {
-          if(add_to_scene)
+          if(add_to_scene){
+            item->resetCutPlane();
             CGAL::Three::Three::scene()->addItem(item);
+          }
           return QList<Scene_item*>() << item;
         }
 
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_other_binary_format(in, item->c3t3())) {
+          item->resetCutPlane();
           item->c3t3_changed();
           item->changed();
-          item->resetCutPlane();
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>()<< item;
@@ -104,9 +120,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_a_cdt_3(in, item->c3t3())) {
+          item->resetCutPlane();
           item->c3t3_changed();
           item->changed();
-          item->resetCutPlane();
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>()<<item;
@@ -118,53 +134,16 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
       CGAL_assertion(!(!in));
 
-      Scene_c3t3_item* item = new Scene_c3t3_item();
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
-      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))
+      if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
+         /*verbose = */true, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
       {
-        for( C3t3::Triangulation::Finite_cells_iterator
-             cit = item->c3t3().triangulation().finite_cells_begin();
-             cit != item->c3t3().triangulation().finite_cells_end();
-             ++cit)
-        {
-            CGAL_assertion(cit->info() >= 0);
-            item->c3t3().add_to_complex(cit, cit->info());
-            for(int i=0; i < 4; ++i)
-            {
-              if(cit->surface_patch_index(i)>0)
-              {
-                item->c3t3().add_to_complex(cit, i, cit->surface_patch_index(i));
-              }
-            }
-        }
+        update_c3t3(item->c3t3());
 
-        //if there is no facet in the complex, we add the border facets.
-        if(item->c3t3().number_of_facets_in_complex() == 0)
-        {
-          for( C3t3::Triangulation::Finite_facets_iterator
-               fit = item->c3t3().triangulation().finite_facets_begin();
-               fit != item->c3t3().triangulation().finite_facets_end();
-               ++fit)
-          {
-            typedef C3t3::Triangulation::Cell_handle      Cell_handle;
-
-            Cell_handle c = fit->first;
-            Cell_handle nc = c->neighbor(fit->second);
-
-            // By definition, Subdomain_index() is supposed to be the id of the exterior
-            if(c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
-               nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
-            {
-              // Color the border facet with the index of its cell
-              item->c3t3().add_to_complex(c, fit->second, c->subdomain_index());
-            }
-          }
-        }
-
-        item->c3t3_changed();
         item->resetCutPlane();
+        item->c3t3_changed();
         if(add_to_scene)
           CGAL::Three::Three::scene()->addItem(item);
         return QList<Scene_item*>()<<item;
@@ -177,7 +156,28 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
                                         QMessageBox::Ok);
       }
     }
+    else if (fileinfo.suffix().toLower() == "am")
+    {
+      if (CGAL::IO::internal::is_avizo_tetra_format(in, "ascii"))
+      {
+        in.close();
+        in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
+        CGAL_assertion(!(!in));
+      }
 
+      item->setName(fileinfo.baseName());
+
+      if (CGAL::IO::read_AVIZO_TETRA(in, item->c3t3().triangulation()))
+      {
+        update_c3t3(item->c3t3());
+
+        item->resetCutPlane();
+        item->c3t3_changed();
+        if (add_to_scene)
+          CGAL::Three::Three::scene()->addItem(item);
+        return QList<Scene_item*>() << item;
+      }
+    }
 
     // if all loading failed...
     delete item;
@@ -227,7 +227,9 @@ save(QFileInfo fileinfo, QList<Scene_item *> &items)
   else  if (fileinfo.suffix() == "mesh")
   {
     std::ofstream medit_file (qPrintable(path));
-    c3t3_item->c3t3().output_to_medit(medit_file,true,true);
+    CGAL::IO::write_MEDIT(medit_file, c3t3_item->c3t3(),
+                          CGAL::parameters::rebind_labels(true)
+                          .show_patches(true));
     items.pop_front();
     return true;
   }
@@ -242,7 +244,7 @@ save(QFileInfo fileinfo, QList<Scene_item *> &items)
   else if (fileinfo.suffix() == "am")
   {
     std::ofstream avizo_file (qPrintable(path));
-    CGAL::output_to_avizo(avizo_file, c3t3_item->c3t3());
+    CGAL::IO::output_to_avizo(avizo_file, c3t3_item->c3t3());
     items.pop_front();
     return true;
   }
@@ -321,6 +323,11 @@ struct Update_vertex
   typedef typename Tr2::Vertex                  V2;
   typedef typename Tr2::Point                   Point;
 
+  V2 operator()(const V1&)
+  {
+    return V2();
+  }
+
   bool operator()(const V1& v1, V2& v2)
   {
     v2.set_point(Point(v1.point()));
@@ -333,7 +340,7 @@ struct Update_vertex
       const Sp_index sp_index = boost::get<Sp_index>(index);
       v2.set_index((std::max)(sp_index.first, sp_index.second));
     }
-    break;
+      break;
     default:// -1, 0, 1, 3
       v2.set_index(boost::get<int>(v1.index()));
     }
@@ -342,7 +349,9 @@ struct Update_vertex
 }; // end struct Update_vertex
 
 struct Update_cell {
+
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
+
   template <typename C1, typename C2>
   bool operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(c1.subdomain_index());
@@ -357,7 +366,6 @@ struct Update_cell {
   }
 }; // end struct Update_cell
 
-#include <CGAL/Triangulation_file_input.h>
 
 template <typename Tr1, typename Tr2>
 struct Update_vertex_from_CDT_3 {
@@ -367,23 +375,28 @@ struct Update_vertex_from_CDT_3 {
   typedef typename Tr2::Vertex          V2;
   typedef typename Tr2::Point           Point;
 
-  bool operator()(const V1& v1, V2& v2)
+   V2 operator()(const V1&)
+  {
+    return V2();
+  }
+  void operator()(const V1& v1, V2& v2)
   {
     v2.set_point(Point(v1.point()));
     v2.set_dimension(2);
     v2.set_special(false);
-    return true;
   }
 }; // end struct Update_vertex
 
 struct Update_cell_from_CDT_3 {
+
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
-  template <typename C1, typename C2>
-  bool operator()(const C1& c1, C2& c2) {
+
+  template <typename C1,typename C2>
+  void operator()(const C1& c1, C2& c2) {
+    c2.set_subdomain_index(1);
     for(int i = 0; i < 4; ++i) {
       c2.set_surface_patch_index(i, c1.face_id[i]+1);
     }
-    return true;
   }
 }; // end struct Update_cell
 
@@ -400,7 +413,7 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
   }
   if (s != "CGAL" ||
       !(is >> s) ||
-      s != "c3t3") 
+      s != "c3t3")
   {
     return false;
   }
@@ -413,12 +426,11 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
       return false;
     }
   }
-  if(binary) CGAL::set_binary_mode(is);
-  if(CGAL::file_input<
+  if(binary) CGAL::IO::set_binary_mode(is);
+  if(c3t3.triangulation().file_input<
        Fake_CDT_3,
-       C3t3::Triangulation,
        Update_vertex_from_CDT_3<Fake_CDT_3, C3t3::Triangulation>,
-       Update_cell_from_CDT_3>(is, c3t3.triangulation()))
+       Update_cell_from_CDT_3>(is))
   {
     c3t3.rescan_after_load_of_triangulation();
     std::cerr << "Try load a CDT_3... DONE";
@@ -428,12 +440,53 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
     return false;
   }
 }
+
+void
+Polyhedron_demo_c3t3_binary_io_plugin::
+update_c3t3(C3t3& c3t3)
+{
+  using Cell_handle = C3t3::Triangulation::Cell_handle;
+
+  c3t3.rescan_after_load_of_triangulation(); //fix counters for facets and cells
+  for (Cell_handle cit : c3t3.triangulation().finite_cell_handles())
+  {
+    CGAL_assertion(cit->subdomain_index() >= 0);
+    if (cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
+      c3t3.add_to_complex(cit, cit->subdomain_index());
+
+    for (int i = 0; i < 4; ++i)
+    {
+      if (cit->surface_patch_index(i) > 0)
+        c3t3.add_to_complex(cit, i, cit->surface_patch_index(i));
+    }
+  }
+
+  //if there is no facet in the complex, we add the border facets.
+  if (c3t3.number_of_facets_in_complex() == 0)
+  {
+    for (C3t3::Facet fit : c3t3.triangulation().finite_facets())
+    {
+      Cell_handle c = fit.first;
+      Cell_handle nc = c->neighbor(fit.second);
+
+      // By definition, Subdomain_index() is supposed to be the id of the exterior
+      if (c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
+          nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
+      {
+        // Color the border facet with the index of its cell
+        c3t3.add_to_complex(c, fit.second, c->subdomain_index());
+      }
+    }
+  }
+
+}
+
 //Generates a compilation error.
 bool
 Polyhedron_demo_c3t3_binary_io_plugin::
 try_load_other_binary_format(std::istream& is, C3t3& c3t3)
 {
-  CGAL::set_ascii_mode(is);
+  CGAL::IO::set_ascii_mode(is);
   std::string s;
   if(!(is >> s)) return false;
   bool binary = false;
@@ -456,13 +509,12 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
       return false;
     }
   }
-  if(binary) CGAL::set_binary_mode(is);
-  else CGAL::set_ascii_mode(is);
-  std::istream& f_is = CGAL::file_input<
+  if(binary) CGAL::IO::set_binary_mode(is);
+  else CGAL::IO::set_ascii_mode(is);
+  std::istream& f_is = c3t3.triangulation().file_input<
                          Fake_c3t3::Triangulation,
-                         C3t3::Triangulation,
                          Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
-                         Update_cell>(is, c3t3.triangulation());
+                         Update_cell>(is);
 
   c3t3.rescan_after_load_of_triangulation();
   return f_is.good();

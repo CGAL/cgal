@@ -53,18 +53,11 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/task.h>
+# include <tbb/task_group.h>
 #endif
 
 #include <boost/format.hpp>
-#ifdef CGAL_MESH_3_USE_RELAXED_HEAP
-#  error This option CGAL_MESH_3_USE_RELAXED_HEAP is no longer supported
-// The reason is that the Boost relaxed heap does not ensure a strict order
-// of the priority queue.
-#include <boost/pending/relaxed_heap.hpp>
-#else
 #include <CGAL/Modifiable_priority_queue.h>
-#endif //CGAL_MESH_3_USE_RELAXED_HEAP
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -335,10 +328,10 @@ protected:
   Lock_data_structure *
     get_lock_data_structure()                       const { return 0; }
   void unlock_all_elements()                        const {}
-  void create_root_task()                           const {}
+  void create_task_group()                          const {}
   bool flush_work_buffers()                         const { return true; }
   void wait_for_all()                               const {}
-  void destroy_root_task()                          const {}
+  void destroy_trask_group()                        const {}
   template <typename Func, typename PVertex>
   void enqueue_work(Func, const PVertex &)          const {}
 
@@ -373,36 +366,34 @@ protected:
     m_lock_ds.unlock_all_points_locked_by_this_thread();
   }
 
-  void create_root_task() const
+  void create_task_group() const
   {
-    m_empty_root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
-    m_empty_root_task->set_ref_count(1);
+    m_task_group = new tbb::task_group;
   }
 
   bool flush_work_buffers() const
   {
-    m_empty_root_task->set_ref_count(1);
-    bool keep_flushing = m_worksharing_ds.flush_work_buffers(*m_empty_root_task);
+    bool keep_flushing = m_worksharing_ds.flush_work_buffers(*m_task_group);
     wait_for_all();
     return keep_flushing;
   }
 
   void wait_for_all() const
   {
-    m_empty_root_task->wait_for_all();
+    m_task_group->wait();
   }
 
-  void destroy_root_task() const
+  void destroy_trask_group() const
   {
-    tbb::task::destroy(*m_empty_root_task);
-    m_empty_root_task = 0;
+    delete m_task_group;
+    m_task_group = 0;
   }
 
   template <typename Func, typename PVertex>
   void enqueue_work(Func f, const PVertex &pv) const
   {
-    CGAL_assertion(m_empty_root_task != 0);
-    m_worksharing_ds.enqueue_work(f, pv, *m_empty_root_task);
+    CGAL_assertion(m_task_group != 0);
+    m_worksharing_ds.enqueue_work(f, pv, *m_task_group);
   }
 
   void increment_erase_counter(const Vertex_handle &vh) const
@@ -410,12 +401,16 @@ protected:
     vh->increment_erase_counter();
   }
 
+  void cancel() const {
+    return m_task_group->cancel();
+  }
+
 public:
 
 protected:
   mutable Lock_data_structure           m_lock_ds;
   mutable Mesh_3::Auto_worksharing_ds   m_worksharing_ds;
-  mutable tbb::task                    *m_empty_root_task;
+  mutable tbb::task_group               *m_task_group;
 };
 #endif // CGAL_LINKED_WITH_TBB
 
@@ -487,8 +482,7 @@ private:
    * @class PVertex_id
    * relaxed heap
    */
-  class PVertex_id :
-  public boost::put_get_helper<typename PVertex::id_type, PVertex_id>
+  class PVertex_id
   {
   public:
     typedef boost::readable_property_map_tag category;
@@ -497,14 +491,17 @@ private:
     typedef PVertex key_type;
 
     value_type operator[] (const key_type& pv) const { return pv.id(); }
+
+    friend inline
+    value_type get(const PVertex_id& m, const key_type& k)
+    {
+      return m[k];
+    }
   };
 
   typedef std::less<PVertex> less_PVertex;
-  #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
-  typedef boost::relaxed_heap<PVertex, less_PVertex, PVertex_id> PQueue;
-  #else
-  typedef ::CGAL::internal::mutable_queue_with_remove<PVertex,std::vector<PVertex>, less_PVertex, PVertex_id> PQueue;
-  #endif //CGAL_MESH_3_USE_RELAXED_HEAP
+  typedef Modifiable_priority_queue<PVertex, less_PVertex, PVertex_id> PQueue;
+
 
 public:
   /**
@@ -556,7 +553,7 @@ private:
   int build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const;
 
   /**
-   * Updates priority queue for all vertices of \c vertices
+   * Updates priority queue for all vertices of `vertices`.
    */
   // Sequential
   int update_priority_queue(const Vertex_vector& vertices,
@@ -571,7 +568,7 @@ private:
 #endif
 
   /**
-   * Updates \c pv in priority queue
+   * Updates `pv` in priority queue.
    */
   int update_priority_queue(const PVertex& pv, PQueue& pqueue) const;
 
@@ -585,7 +582,7 @@ private:
                 ) const;
 
   /**
-   * Returns a pvertex from a vertex handle \c vh, using id \c pv_id
+   * Returns a pvertex from a vertex handle `vh`, using the id `pv_id`.
    */
   PVertex
   make_pvertex(const Vertex_handle& vh,
@@ -598,13 +595,13 @@ private:
                const typename PVertex::id_type& pv_id) const;
 
   /**
-   * Updates a pvertex \c pv
+   * Updates a pvertex `pv`.
    */
   void update_pvertex(PVertex& pv, const FT& sliver_bound) const;
   void update_pvertex__concurrent(PVertex& pv, const FT& sliver_bound) const;
 
   /**
-   * Returns \c vh pvertex id
+   * Returns `vh` pvertex id.
    */
   typename PVertex::id_type get_pvertex_id(const Vertex_handle& vh) const
   {
@@ -612,7 +609,7 @@ private:
   }
 
   /**
-   * Update bad vertices vector, wrt \c sliver_bound
+   * Updates bad vertices vector, wrt. `sliver_bound`.
    */
   // Sequential
   void update_bad_vertices(std::vector<Vertex_handle> &bad_vertices,
@@ -704,7 +701,7 @@ private:
       } while (!could_lock_zone);
 
       if ( m_sliver_perturber.is_time_limit_reached() )
-        tbb::task::self().cancel_group_execution();
+        m_sliver_perturber.cancel();
     }
   };
 #endif
@@ -933,12 +930,11 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    this->create_root_task();
+    this->create_task_group();
 
-    while (pqueue.size() > 0)
+    while (!pqueue.empty())
     {
-      PVertex pv = pqueue.top();
-      pqueue.pop();
+      PVertex pv = pqueue.top_and_pop();
       enqueue_task(pv, sliver_bound,
                    visitor, bad_vertices);
     }
@@ -957,7 +953,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 # endif
     }
 
-    this->destroy_root_task();
+    this->destroy_trask_group();
   }
   // Sequential
   else
@@ -970,8 +966,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
     while ( !is_time_limit_reached() && !pqueue.empty() )
     {
       // Get pqueue head
-      PVertex pv = pqueue.top();
-      pqueue.pop();
+      PVertex pv = pqueue.top_and_pop();
       --pqueue_size;
 
       CGAL_assertion(pv.is_perturbable());
@@ -1238,7 +1233,7 @@ update_priority_queue(const PVertex& pv, PQueue& pqueue) const
     }
     else
     {
-      pqueue.remove(pv);
+      pqueue.erase(pv);
       return -1;
     }
   }

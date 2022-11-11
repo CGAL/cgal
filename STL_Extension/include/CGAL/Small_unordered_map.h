@@ -18,7 +18,7 @@
 //#define CGAL_SMALL_UNORDERED_MAP_STATS
 namespace CGAL {
 
-  
+
 template <typename K, typename T, typename H, unsigned int M>
 class Small_unordered_map{
 #ifdef    CGAL_SMALL_UNORDERED_MAP_STATS
@@ -26,7 +26,7 @@ class Small_unordered_map{
 #endif
   int head = -2;
   mutable std::array<int, M>    occupied;
-  std::array<int, M>            unfreelist; 
+  std::array<int, M>            unfreelist;
   std::array<std::pair<K,T>, M> data;
   const H hash = {};
 
@@ -36,7 +36,7 @@ public:
     occupied.fill(-1);
   }
 
-#ifdef CGAL_SMALL_UNORDERED_MAP_STATS  
+#ifdef CGAL_SMALL_UNORDERED_MAP_STATS
   ~Small_unordered_map()
   {
     int total = 0;
@@ -47,18 +47,18 @@ public:
         std::cout << i << " " << collisions[i] << std::endl;
       }
     }
-    std::cout << "Total: " << total << " " << 100 * (double(total) / double(total + collisions[0])) << "%" << std::endl; 
+    std::cout << "Total: " << total << " " << 100 * (double(total) / double(total + collisions[0])) << "%" << std::endl;
   }
 #endif
-  
-  /// Set only once for a key and not more than N 
+
+  /// Set only once for a key and not more than N
   void set(const K& k, const T& t)
   {
     unsigned int h  = hash(k)%M;
     unsigned i = h;
-#ifdef CGAL_SMALL_UNORDERED_MAP_STATS    
+#ifdef CGAL_SMALL_UNORDERED_MAP_STATS
     int collision = 0;
-#endif     
+#endif
     do {
       if(occupied[i]== -1){
         occupied[i] = 1;
@@ -66,19 +66,19 @@ public:
         data[i].second = t;
         unfreelist[i] = head;
         head = i;
-#ifdef  CGAL_SMALL_UNORDERED_MAP_STATS        
+#ifdef  CGAL_SMALL_UNORDERED_MAP_STATS
         if(collision>19){
           std::cerr << collision << " collisions" << std::endl;
         }else{
           ++collisions[collision];
         }
-#endif        
+#endif
         return;
       }
       i = (i+1)%M;
-#ifdef CGAL_SMALL_UNORDERED_MAP_STATS   
+#ifdef CGAL_SMALL_UNORDERED_MAP_STATS
       ++collision;
-#endif      
+#endif
     }while(i != h);
     CGAL_error();
   }
@@ -130,7 +130,7 @@ public:
       pos = map.unfreelist[pos];
       return *this;
     }
-    
+
     const std::pair<K,T>& operator*()const
     {
       return map.data[pos];
@@ -151,7 +151,7 @@ public:
   {
     occupied[it.pos] = -1;
   }
-  
+
   friend struct iterator;
 };
 

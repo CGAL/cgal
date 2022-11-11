@@ -1,9 +1,9 @@
-// Copyright (c) 2002  
+// Copyright (c) 2002
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -34,9 +34,9 @@ to_rational(double x)
     typedef typename FT::Denominator_type Denominator_type;
     typename FT::Compose compose;
 
-    CGAL_static_assertion((::boost::is_same<Is_fraction,Tag_true>::value));
+    CGAL_static_assertion((::std::is_same<Is_fraction,Tag_true>::value));
     CGAL_USE_TYPE(Is_fraction);
-    CGAL_static_assertion((::boost::is_same<Numerator_type,Denominator_type>::value));
+    CGAL_static_assertion((::std::is_same<Numerator_type,Denominator_type>::value));
     CGAL_USE_TYPE(Denominator_type);
 
     Numerator_type num(0),den(1);

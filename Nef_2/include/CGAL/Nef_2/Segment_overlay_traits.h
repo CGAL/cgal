@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_SEGMENT_OVERLAY_TRAITS_H
@@ -39,7 +39,7 @@
 #include <sstream>
 
 namespace CGAL {
-#ifdef CGAL_NEF_DEBUG
+#ifdef CGAL_USE_TRACE
 #define PIS(s) (s->first())
 #endif
 
@@ -71,12 +71,12 @@ public:
     ISegment s_bottom, s_top; // sentinel segments
     const GEOMETRY& K;
   public:
-   cmp_segs_at_sweepline(const Point_2& pi, 
-     ISegment s1, ISegment s2, const GEOMETRY& k) : 
+   cmp_segs_at_sweepline(const Point_2& pi,
+     ISegment s1, ISegment s2, const GEOMETRY& k) :
      p(pi), s_bottom(s1), s_top(s2), K(k) {}
 
    int operator()(const ISegment& is1, const ISegment& is2) const
-   { // Precondition: p is identical to the left endpoint of s1 or s2. 
+   { // Precondition: p is identical to the left endpoint of s1 or s2.
      if ( is2 == s_top || is1 == s_bottom ) return -1;
      if ( is1 == s_top || is2 == s_bottom ) return 1;
      if ( is1 == is2 ) return 0;
@@ -86,9 +86,9 @@ public:
      if ( p == K.source(s1) )      s =   K.orientation(s2,p);
      else if ( p == K.source(s2) ) s = - K.orientation(s1,p);
      else CGAL_error_msg("compare error in sweep.");
-     if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) ) 
+     if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) )
        return s;
-    
+
      s = K.orientation(s2,K.target(s1));
      if (s==0) return static_cast<int>( is1 - is2 );
      // overlapping segments are not equal
@@ -107,16 +107,16 @@ public:
   //  typedef CGAL_LEDA_SCOPE::skiplist                              SearchTree;
   //  typedef typename SearchTree::item                              ST_item;
   typedef CGAL_LEDA_SCOPE::seq_item                         ST_item;
-  typedef leda_sortseq<Point_2, ST_item>             EventQueue; 
+  typedef leda_sortseq<Point_2, ST_item>             EventQueue;
   typedef leda_sortseq<ISegment, ST_item>            SweepStatus;
-  typedef leda_p_queue<Point_2,ISegment>                         SegQueue; 
+  typedef leda_p_queue<Point_2,ISegment>                         SegQueue;
   typedef leda_map<ST_item,Halfedge_handle>    AssocEdgeMap;
   typedef leda_slist<ITERATOR>                                   IsoList;
   typedef typename IsoList::item                        slist_item;
   typedef leda_map<ST_item, IsoList* >         AssocIsoMap;
   typedef leda_map2<ISegment,ISegment,ST_item> EventHash;
 
-    
+
     ST_item  event;
     Point_2                    p_sweep;
     cmp_pnts_xy                cmp;
@@ -131,32 +131,32 @@ public:
     AssocEdgeMap               Edge_of;
     AssocIsoMap                Isos_of;
 
-    leda_seg_overlay_traits(const INPUT& in, OUTPUT& G, 
-      const GEOMETRY& k) : 
+    leda_seg_overlay_traits(const INPUT& in, OUTPUT& G,
+      const GEOMETRY& k) :
       its(in.first), ite(in.second), GO(G), K(k),
       cmp(K), XS(cmp), SLcmp(p_sweep,&sl,&sh,K), YS(SLcmp), SQ(cmp),
       IEvent(0), Edge_of(0), Isos_of(0) {}
 
 
   leda_string dump_structures() const
-  { 
+  {
     std::ostringstream out;
     out << "SQ= ";
     CGAL_LEDA_SCOPE::pq_item pqit;
     forall_items(pqit,SQ) {
-      if (SQ.prio(pqit)==XS.key(XS.succ(XS.min_item()))) 
+      if (SQ.prio(pqit)==XS.key(XS.succ(XS.min_item())))
       { out << SQ.inf(pqit)->first(); }
       pqit = SQ.next_item(pqit);
     }
     ST_item sit;
     out << "\nXS=\n";
     forall_items(sit,XS)
-      out << "  " << XS.key(sit) << " " << XS.inf(sit) 
+      out << "  " << XS.key(sit) << " " << XS.inf(sit)
           <<std::endl;
     out << "YS=\n";
     for( sit = YS.max_item(); sit; sit=YS.pred(sit) )
       out << "  "<<YS.key(sit)->first()<<" "<<YS.inf(sit)<<std::endl;
-    leda_string res(out.str().c_str()); 
+    leda_string res(out.str().c_str());
     return res;
   }
 
@@ -171,7 +171,7 @@ public:
   int orientation(ST_item sit, const Point_2& p) const
   { return K.orientation(YS.key(sit)->first(),p); }
 
-  bool collinear(ST_item sit1, 
+  bool collinear(ST_item sit1,
                  ST_item sit2) const
   { Point_2 ps = source(YS.key(sit2)), pt = target(YS.key(sit2));
     return ( orientation(sit1,ps)==0 &&
@@ -180,14 +180,14 @@ public:
 
 
   void compute_intersection(ST_item sit0)
-  {    
+  {
     ST_item sit1 = YS.succ(sit0);
     if ( sit0 == YS.min_item() || sit1 == YS.max_item() ) return;
     ISegment s0 = YS.key(sit0);
     ISegment s1 = YS.key(sit1);
     int or0 = K.orientation(s0->first(),target(s1));
     int or1 = K.orientation(s1->first(),target(s0));
-    if ( or0 <= 0 && or1 >= 0  ) { 
+    if ( or0 <= 0 && or1 >= 0  ) {
       ST_item it = IEvent(YS.key(sit0),YS.key(sit1));
       if ( it==0 ) {
         Point_2 q = K.intersection(s0->first(),s1->first());
@@ -195,33 +195,33 @@ public:
       }
       YS.change_inf(sit0, it);
     }
-  } 
+  }
 
   void initialize_structures()
   {
     CGAL_NEF_TRACEN("initialize_structures");
-    ITERATOR it_s;  
+    ITERATOR it_s;
     for ( it_s=its; it_s != ite; ++it_s ) {
       Segment_2 s = *it_s;
-      ST_item it1 = 
+      ST_item it1 =
             XS.insert( K.source(s), ST_item(nil));
-      ST_item it2 = 
+      ST_item it2 =
             XS.insert( K.target(s), ST_item(nil));
       if (it1 == it2) {
         if ( Isos_of[it1] == 0 ) Isos_of[it1] = new IsoList;
         Isos_of[it1]->push(it_s);
         continue;  // ignore zero-length segments in SQ/YS
       }
-          
+
       Point_2 p = XS.key(it1);
       Point_2 q = XS.key(it2);
-          
-      Segment_2 s1; 
-      if ( K.compare_xy(p,q) < 0 ) 
+
+      Segment_2 s1;
+      if ( K.compare_xy(p,q) < 0 )
         s1 = K.construct_segment(p,q);
       else
         s1 = K.construct_segment(q,p);
-          
+
       Internal.append(seg_pair(s1,it_s));
       SQ.insert(K.source(s1),&Internal[Internal.last()]);
     }
@@ -232,35 +232,35 @@ public:
     CGAL_NEF_TRACEN("end of initialization\n"<<YS.size());
   }
 
-  bool event_exists() 
-  { 
-    if (!XS.empty()) { 
+  bool event_exists()
+  {
+    if (!XS.empty()) {
       // event is set at end of loop and in init
       event = (XS.min)();
       p_sweep = XS.key(event);
       return true;
     }
-    return false; 
+    return false;
   }
 
-  void procede_to_next_event() 
+  void procede_to_next_event()
   { XS.del_item(event); }
 
-  void process_event() 
+  void process_event()
   {
     CGAL_NEF_TRACEN("\n\n >>> process_event: "<<p_sweep<<" "<<XS[event]<<" "<<event);
 
     Vertex_handle v = GO.new_vertex(p_sweep);
     ST_item sit = XS.inf(event);
-        
+
       ST_item sit_succ(0), sit_pred(0), sit_pred_succ(0), sit_first(0);
-      if (sit == nil) 
+      if (sit == nil)
         {
           Segment_2 s_sweep = K.construct_segment(p_sweep,p_sweep);
           seg_pair sp(s_sweep, ite);
           sit_succ = YS.locate( &sp );
-          if ( sit_succ != YS.max_item() && 
-               orientation(sit_succ,p_sweep) == 0 ) 
+          if ( sit_succ != YS.max_item() &&
+               orientation(sit_succ,p_sweep) == 0 )
             sit = sit_succ;
           else  {
             sit_pred = YS.pred(sit_succ);
@@ -281,17 +281,17 @@ public:
         while ( YS.inf(sit) == event ||
                 YS.inf(sit) == YS.succ(sit) ) // overlapping
           sit = YS.succ(sit);
-        sit_succ = YS.succ(sit); 
+        sit_succ = YS.succ(sit);
         ST_item sit_last = sit;
 
         ST_item xit = YS.inf(sit_last);
-        if (xit) { 
+        if (xit) {
           ISegment s1 = YS.key(sit_last);
           ISegment s2 = YS.key(sit_succ);
           IEvent(s1,s2) = xit;
             CGAL_NEF_TRACEN("hashing "<<PIS(s1)<<PIS(s2)<<xit);
-        } 
-          
+        }
+
         bool overlapping;
         do {
           ISegment s = YS.key(sit);
@@ -305,21 +305,21 @@ public:
           GO.supporting_segment(e,original(s));
           if ( target(s) == p_sweep ) { // ending segment
               CGAL_NEF_TRACEN("ending segment "<<PIS(s));
-            if ( overlapping ) 
-	      YS.change_inf(sit_next,YS.inf(sit));
+            if ( overlapping )
+              YS.change_inf(sit_next,YS.inf(sit));
             YS.del_item(sit);
             GO.ending_segment(v,original(s));
           } else {  // passing segment
-	    CGAL_NEF_TRACEN("passing segment "<<PIS(s));
-            if ( YS.inf(sit) != YS.succ(sit) ) 
+            CGAL_NEF_TRACEN("passing segment "<<PIS(s));
+            if ( YS.inf(sit) != YS.succ(sit) )
               YS.change_inf(sit, ST_item(0));
             GO.passing_segment(v,original(s));
           }
           sit = sit_next;
-        } 
+        }
         while ( YS.inf(sit) == event || overlapping ||
                 YS.inf(sit) == YS.succ(sit) );
-                  
+
         sit_pred = sit;
         sit_first = sit_pred_succ = YS.succ(sit_pred); // first item of bundle
 
@@ -329,18 +329,18 @@ public:
         while ( sit != sit_succ ) {
           ST_item sub_first = sit;
           ST_item sub_last  = sub_first;
-                            
+
           while (YS.inf(sub_last) == YS.succ(sub_last))
             sub_last = YS.succ(sub_last);
-                            
+
           if (sub_last != sub_first)
             YS.reverse_items(sub_first, sub_last);
-                            
+
           sit = YS.succ(sub_first);
         }
-                        
+
         // reverse the entire bundle
-        if (sit_first != sit_succ) 
+        if (sit_first != sit_succ)
           YS.reverse_items(YS.succ(sit_pred),YS.pred(sit_succ));
 
 
@@ -351,7 +351,7 @@ public:
     if ( Isos_of[event] != 0 ) {
       const IsoList& IL = *(Isos_of[event]);
       slist_item iso_it;
-      for (iso_it = IL.first(); iso_it; iso_it=IL.succ(iso_it) ) 
+      for (iso_it = IL.first(); iso_it; iso_it=IL.succ(iso_it) )
         GO.trivial_segment(v,IL[iso_it] );
       delete (Isos_of[event]); // clean up the list
     }
@@ -359,17 +359,17 @@ public:
 
     ISegment next_seg;
     CGAL_LEDA_SCOPE::pq_item next_it = SQ.find_min();
-    while ( next_it && 
+    while ( next_it &&
             (next_seg = SQ.inf(next_it), p_sweep == source(next_seg)) ) {
       ST_item s_sit = YS.locate_succ(next_seg);
       ST_item p_sit = YS.pred(s_sit);
 
-      CGAL_NEF_TRACEN("inserting "<<PIS(next_seg)<<" at "<<PIS(YS.key(s_sit))); 
+      CGAL_NEF_TRACEN("inserting "<<PIS(next_seg)<<" at "<<PIS(YS.key(s_sit)));
       if ( YS.max_item() != s_sit &&
            orientation(s_sit, source(next_seg) ) == 0 &&
            orientation(s_sit, target(next_seg) ) == 0 )
         sit = YS.insert_at(s_sit, next_seg, s_sit);
-      else 
+      else
         sit = YS.insert_at(s_sit, next_seg, ST_item(nil));
       CGAL_assertion(YS.succ(sit)==s_sit);
 
@@ -378,16 +378,16 @@ public:
            orientation(p_sit, target(next_seg) ) == 0 )
         YS.change_inf(p_sit, sit);
       CGAL_assertion(YS.succ(p_sit)==sit);
-                 
+
       XS.insert(target(next_seg), sit);
       GO.starting_segment(v,original(next_seg));
-                 
+
       // delete minimum and assign new minimum to next_seg
-      SQ.del_min();    
+      SQ.del_min();
       next_it = SQ.find_min();
     }
 
-    for( ST_item sitl = YS.pred(sit_succ); sitl != sit_pred; 
+    for( ST_item sitl = YS.pred(sit_succ); sitl != sit_pred;
          sitl = YS.pred(sitl) ) {
       if ( YS.inf(sitl) != YS.succ(sitl) ) { // non-overlapping
         CGAL_NEF_TRACEN("non-overlapping "<<PIS(YS.key(sitl))<<" "<<sitl);
@@ -402,15 +402,15 @@ public:
 
     CGAL_assertion(sit_pred); CGAL_assertion(sit_pred_succ);
     ST_item xit = YS.inf(sit_pred);
-    if ( xit ) { 
+    if ( xit ) {
       ISegment s1 = YS.key(sit_pred);
       ISegment s2 = YS.key(sit_pred_succ);
       IEvent(s1,s2) = xit;
         CGAL_NEF_TRACEN("hashing "<<PIS(s1)<<PIS(s2)<<xit);
       YS.change_inf(sit_pred, ST_item(0));
     }
-          
-    compute_intersection(sit_pred); 
+
+    compute_intersection(sit_pred);
     sit = YS.pred(sit_succ);
     if (sit != sit_pred)
       compute_intersection(sit);
@@ -460,61 +460,8 @@ public:
   OUTPUT&  GO;
   const GEOMETRY& K;
 
-
-  class lt_segs_at_sweepline 
-  { 
-    const Point_2& p;
-    ISegment s_bottom, s_top; // sentinel segments
-    const GEOMETRY& K;
-
-  public:
-    lt_segs_at_sweepline(const Point_2& pi, 
-			 ISegment s1, ISegment s2, 
-			 const GEOMETRY& k) 
-     : p(pi), s_bottom(s1), s_top(s2), K(k) 
-    {}
-    
-    lt_segs_at_sweepline(const lt_segs_at_sweepline& lt) 
-      : p(lt.p), s_bottom(lt.s_bottom), s_top(lt.s_top), K(lt.K) 
-    {}
-    
-    template <typename ss_pair>
-    bool
-    operator()(const ISegment& is1, const ss_pair& ss2) const
-    {
-      return operator()(is1, ss2.first);
-    }
-
-    bool 
-    operator()(const ISegment& is1, const ISegment& is2) const
-    { 
-      if ( is2 == s_top || is1 == s_bottom ) return true;
-      if ( is1 == s_top || is2 == s_bottom ) return false;
-      if ( is1 == is2 ) return false;
-      // Precondition: p is contained in s1 or s2. 
-      const Segment_2& s1 = is1->first;
-      const Segment_2& s2 = is2->first;
-
-      CGAL_assertion_msg(( K.orientation(s1,p) == 0 ) ||  ( K.orientation(s2,p) == 0 ) ,"compare error in sweep.");
-
-      int s = 0;
-      if( p == K.source(s1) )
-	s = K.orientation(s2,p);
-      else
-	s = - K.orientation(s1,p);
-      if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) ) 
-	return ( s < 0 );
-      
-      s = K.orientation(s2,K.target(s1));
-      if (s==0) return ( is1 - is2 ) < 0;
-      // overlapping segments are not equal
-      return ( s < 0 );
-    }
-  };
-  
-
-  class compare_segs_at_sweepline 
-  { 
+  class compare_segs_at_sweepline
+  {
     const Point_2& p;
     ISegment s_bottom, s_top; // sentinel segments
     const GEOMETRY& K;
@@ -526,16 +473,16 @@ public:
     }
 
   public:
-    compare_segs_at_sweepline(const Point_2& pi, 
-			 ISegment s1, ISegment s2, 
-			      const GEOMETRY& k) 
-     : p(pi), s_bottom(s1), s_top(s2), K(k) 
+    compare_segs_at_sweepline(const Point_2& pi,
+                         ISegment s1, ISegment s2,
+                              const GEOMETRY& k)
+     : p(pi), s_bottom(s1), s_top(s2), K(k)
     {}
-    
-    compare_segs_at_sweepline(const compare_segs_at_sweepline& lt) 
-      : p(lt.p), s_bottom(lt.s_bottom), s_top(lt.s_top), K(lt.K) 
+
+    compare_segs_at_sweepline(const compare_segs_at_sweepline& lt)
+      : p(lt.p), s_bottom(lt.s_bottom), s_top(lt.s_top), K(lt.K)
     {}
-    
+
     template <typename ss_pair>
     bool
     operator()(const ISegment& is1, const ss_pair& ss2) const
@@ -545,95 +492,68 @@ public:
 
     CGAL::Comparison_result
     operator()(const ISegment& is1, const ISegment& is2) const
-    { 
+    {
       if ( is2 == s_top || is1 == s_bottom ) return CGAL::SMALLER;
       if ( is1 == s_top || is2 == s_bottom ) return CGAL::LARGER;
       if ( is1 == is2 ) return CGAL::EQUAL;
-      // Precondition: p is contained in s1 or s2. 
+      // Precondition: p is contained in s1 or s2.
       const Segment_2& s1 = is1->first;
       const Segment_2& s2 = is2->first;
 
-      CGAL_assertion_msg(( K.orientation(s1,p) == 0 ) ||  ( K.orientation(s2,p) == 0 ) ,"compare error in sweep.");
-
-      int s = 0;
-      if(K.is_degenerate(s1))
-	return o2c(K.orientation(s2,p));
-      if(K.is_degenerate(s2))
-	return o2c(-K.orientation(s1,p));
-      
-      s = - K.orientation(s1,p);
-      if(s!=0)
-	return o2c(s);
-      s = K.orientation(s2,p);
-      if(s!=0)
-	return o2c(s);
-      return o2c(K.orientation(s2,K.target(s1)));
-      /*
-      if( p == K.source(s1) )
-	s = K.orientation(s2,p);
+      int s = -K.orientation(s1,p);
+      if ( s == 0 )
+        s = K.orientation(s2,p);
       else
-	s = - K.orientation(s1,p);
-      if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) )
-	if(s < 0) return CGAL::SMALLER;
-	else if(s > 0) return CGAL::LARGER;
-	else return CGAL::EQUAL;
-      
-      s = K.orientation(s2,K.target(s1));
-      //	if (s==0) {
-      //	if(is1 < is2) return CGAL::SMALLER;
-      //	if (is1 > is2) return CGAL::LARGER;
-      //	return CGAL::EQUAL;
-      //      }
+        CGAL_assertion_msg( K.orientation(s2,p) == 0, "compare error in sweep.");
 
-      // overlapping segments are not equal
-      if(s < 0) return CGAL::SMALLER;
-      if(s > 0) return CGAL::LARGER;
-      return CGAL::EQUAL;
-*/
+      if( s || K.is_degenerate(s2) || K.is_degenerate(s1))
+        return o2c(s);
+
+      return o2c(K.orientation(s2,K.target(s1)));
     }
   };
 
   class compare_pnts_xy {
     const GEOMETRY& K;
-    
+
     public:
-    compare_pnts_xy(const GEOMETRY& k) 
-      : K(k) 
+    compare_pnts_xy(const GEOMETRY& k)
+      : K(k)
     {}
-    
-    compare_pnts_xy(const compare_pnts_xy& lt) 
-      : K(lt.K) 
+
+    compare_pnts_xy(const compare_pnts_xy& lt)
+      : K(lt.K)
     {}
-    
+
     CGAL::Comparison_result
     operator()(const Point_2& p1, const Point_2& p2) const
-    { 
+    {
       int c = K.compare_xy(p1,p2);
       if(c < 0) return CGAL::SMALLER;
       if(c > 0) return CGAL::LARGER;
       return CGAL::EQUAL;
     }
   };
-  
-  struct lt_pnts_xy { 
+
+  struct lt_pnts_xy {
     const GEOMETRY& K;
-    
+
   public:
-    lt_pnts_xy(const GEOMETRY& k) 
-      : K(k) 
+    lt_pnts_xy(const GEOMETRY& k)
+      : K(k)
     {}
-    
-    lt_pnts_xy(const lt_pnts_xy& lt) 
-      : K(lt.K) 
+
+    lt_pnts_xy(const lt_pnts_xy& lt)
+      : K(lt.K)
     {}
-    
-    bool 
+
+    bool
     operator()(const Point_2& p1, const Point_2& p2) const
-    { 
-      return K.compare_xy(p1,p2) < 0; 
+    {
+      return K.compare_xy(p1,p2) < 0;
     }
   };
-  
+
   typedef std::list<ITERATOR>                            IsoList;
   typedef CGAL::Multiset<Point_2, compare_pnts_xy>       EventQueue;
   typedef typename EventQueue::iterator                  event_iterator;
@@ -655,7 +575,7 @@ public:
     lt_ssi_pair() {}
     bool operator()(const is_pair& s0, const is_pair& s1) const {
       if(s0.second == s1.second)
-	return s0.first < s1.first;
+        return s0.first < s1.first;
       return s0.second < s1.second;
     }
   };
@@ -681,24 +601,24 @@ public:
   AssocEdgeMap      Edge_of;
   EventHash         IEvent;
 
-  stl_seg_overlay_traits(const INPUT& in, OUTPUT& G, const GEOMETRY& k) 
-    : its(in.first), ite(in.second), GO(G), K(k), 
-    XS(compare_pnts_xy(K)), SLcmp(p_sweep,&sl,&sh,K), YS(SLcmp), 
+  stl_seg_overlay_traits(const INPUT& in, OUTPUT& G, const GEOMETRY& k)
+    : its(in.first), ite(in.second), GO(G), K(k),
+    XS(compare_pnts_xy(K)), SLcmp(p_sweep,&sl,&sh,K), YS(SLcmp),
     y2x(XS.end()), x2y(YS.end()), x2iso(0), y2y(&sl),
     SQ(lt_pnts_xy(K)), Edge_of(0)
   {}
 
   std::string dump_structures()
-  { 
-    std::ostringstream out; 
+  {
+    std::ostringstream out;
     out << "EventQueue:\n";
     typename EventQueue::const_iterator sit1;
-    for(sit1 = XS.begin(); sit1 != XS.end(); ++sit1) 
+    for(sit1 = XS.begin(); sit1 != XS.end(); ++sit1)
       out << "  " << *sit1 << std::endl;
 
     out << "SegQueue:\n";
     typename SegQueue::const_iterator sit2;
-    for(sit2 = SQ.begin(); sit2 != SQ.end(); ++sit2) 
+    for(sit2 = SQ.begin(); sit2 != SQ.end(); ++sit2)
       out << "  " << sit2->first << " " << sit2->second
           << " " << sit2->first << std::endl;
 
@@ -712,41 +632,41 @@ public:
       else out << b;
       out << " " << *sit3 << ": ";
       //      if(y2x[*sit3] != XS.end())
-      //      	out << *y2x[*sit3];
+      //              out << *y2x[*sit3];
       //      out << " | ";
-      out << (*sit3)->first; 
+      out << (*sit3)->first;
       if(y2y[*sit3] != &sl)
-	out << " y2y: " << y2y[*sit3];
+        out << " y2y: " << y2y[*sit3];
       out << std::endl;
     }
     return out.str();
   }
 
   bool check_bundle(ss_iterator pred,
-		    ss_iterator succ) {
+                    ss_iterator succ) {
     CGAL_NEF_TRACEN("check bundle");
 
     check_invariants();
 
     CGAL_assertion(*pred == &sl ||
-		   orientation(pred, p_sweep) > 0);
+                   orientation(pred, p_sweep) > 0);
     ++pred;
     while(*pred != *succ) {
       CGAL_assertion(orientation(pred, p_sweep) == 0);
       ss_iterator next(pred);
       ++next;
       if(*pred != &sl &&
-	 *next != &sh) {
-	bool b1 = orientation(pred, K.source((*next)->first)) == 0;
-	b1 &= orientation(pred, K.target((*next)->first)) == 0;
-	b1 &= orientation(next, K.source((*pred)->first)) == 0;
-	b1 &= orientation(next, K.target((*pred)->first)) == 0;
-	CGAL_warning(b1 == (y2y[*pred] == *next));
+         *next != &sh) {
+        bool b1 = orientation(pred, K.source((*next)->first)) == 0;
+        b1 &= orientation(pred, K.target((*next)->first)) == 0;
+        b1 &= orientation(next, K.source((*pred)->first)) == 0;
+        b1 &= orientation(next, K.target((*pred)->first)) == 0;
+        CGAL_warning(b1 == (y2y[*pred] == *next));
       }
       ++pred;
     }
     CGAL_assertion(*succ == &sh ||
-		   orientation(succ, p_sweep) < 0);
+                   orientation(succ, p_sweep) < 0);
 
     return true;
   }
@@ -763,10 +683,10 @@ public:
   { return K.orientation((*sit)->first,p); }
 
   bool collinear(ss_iterator sit1, ss_iterator sit2) const
-  { if( *sit1 == &sl || 
-	*sit1 == &sh || 
-	*sit2 == &sl || 
-	*sit2 == &sh) return false;
+  { if( *sit1 == &sl ||
+        *sit1 == &sh ||
+        *sit2 == &sl ||
+        *sit2 == &sh) return false;
     Point_2 ps = source(*sit2), pt = target(*sit2);
     return ( orientation(sit1,ps)==0 &&
              orientation(sit1,pt)==0 );
@@ -783,9 +703,9 @@ public:
   }
 
   void compute_intersection(ss_iterator sit0)
-  {    
-    // Given an item |sit0| in the Y-structure compute the point of 
-    // intersection with its successor and (if existing) insert it into 
+  {
+    // Given an item |sit0| in the Y-structure compute the point of
+    // intersection with its successor and (if existing) insert it into
     // the event queue and do all necessary updates.
     ss_iterator sit1 = sit0; ++sit1;
     CGAL_NEF_TRACEN("compute_intersection "<< *sit0 <<" "<< *sit1);
@@ -794,21 +714,21 @@ public:
     const Segment_2& s1 = (*sit1)->first;
     int or0 = K.orientation(s0,K.target(s1));
     int or1 = K.orientation(s1,K.target(s0));
-    if ( or0 <= 0 && or1 >= 0  ) { 
-      event_iterator it = 
-	IEvent[std::make_pair(*sit0, *sit1)];
+    if ( or0 <= 0 && or1 >= 0  ) {
+      event_iterator it =
+        IEvent[std::make_pair(*sit0, *sit1)];
       if(it == event_iterator()) {
-	Point_2 q = K.intersection(s0,s1);
-	event_iterator  er = insertXS(q); // only done if none existed!!!
-	x2y[&*er] = sit0;
-	y2x[*sit0] = er;
-	CGAL_assertion(sit0 != YS.end());
+        Point_2 q = K.intersection(s0,s1);
+        event_iterator  er = insertXS(q); // only done if none existed!!!
+        x2y[&*er] = sit0;
+        y2x[*sit0] = er;
+        CGAL_assertion(sit0 != YS.end());
       } else {
-	CGAL_NEF_TRACEN("  intersection has been found previously");
-	y2x[*sit0] = it;
+        CGAL_NEF_TRACEN("  intersection has been found previously");
+        y2x[*sit0] = it;
       }
     }
-  } 
+  }
 
   void initialize_structures()
   {
@@ -827,26 +747,26 @@ public:
       event_iterator it1, it2, upper;
 
       if(XS.empty())
-	it1 = XS.insert(K.source(s));
+        it1 = XS.insert(K.source(s));
       else
-	it1 = insertXS(K.source(s));
+        it1 = insertXS(K.source(s));
       it2 = insertXS(K.target(s));
-      
+
       if (it1 == it2) {
         if ( x2iso[&*it1] == 0 ) x2iso[&*it1] = new IsoList;
         x2iso[&*it1]->push_front(it_s);
         continue;  // ignore zero-length segments regarding YS
       }
-          
+
       Point_2 p = *it1;
       Point_2 q = *it2;
-          
-      Segment_2 s1; 
-      if ( K.compare_xy(p,q) < 0 ) 
+
+      Segment_2 s1;
+      if ( K.compare_xy(p,q) < 0 )
         s1 = K.construct_segment(p,q);
       else
         s1 = K.construct_segment(q,p);
-          
+
       Internal.push_back(seg_pair(s1,it_s));
       SQ.insert(ps_pair(K.source(s1),&Internal.back()));
     }
@@ -859,21 +779,21 @@ public:
   }
 
 
-  bool event_exists() 
-  { 
-    if (!XS.empty()) { 
+  bool event_exists()
+  {
+    if (!XS.empty()) {
       // event is set at end of loop and in init
       event = XS.begin();
       p_sweep = *event;
       return true;
     }
-    return false; 
+    return false;
   }
 
-  void procede_to_next_event() 
+  void procede_to_next_event()
   { XS.erase(event); }
 
-  void process_event() 
+  void process_event()
   {
     CGAL_NEF_TRACEN("\n\n >>> process_event: "<<p_sweep);
 
@@ -883,98 +803,98 @@ public:
 
     if(sit == YS.end()) {
       CGAL_NEF_TRACEN("search for upper bound in YS");
-      Segment_2 s_sweep = K.construct_segment(p_sweep,p_sweep);	
+      Segment_2 s_sweep = K.construct_segment(p_sweep,p_sweep);
       seg_pair sp(s_sweep, ite);
       sit_succ = YS.upper_bound(&sp);
       sit = sit_succ;
       --sit;
       CGAL_NEF_TRACEN("upper bound: " << *sit_succ);
       if(*sit == &sl ||
-	 orientation(sit, p_sweep) != 0) {
+         orientation(sit, p_sweep) != 0) {
         sit_pred_succ = sit_succ;
-	sit_pred = sit;
-	sit = YS.end();
+        sit_pred = sit;
+        sit = YS.end();
       }
     }
-      
+
     /* |sit| is determined by upper bounding the search for the
        segment (p_sweep,p_sweep) and taking its predecessor.
        if the segment associated to |sit| contains |p_sweep| then
        there's a bundle of segments containing |p_sweep|.
-       We compute the successor (|sit_succ)|) and 
+       We compute the successor (|sit_succ)|) and
        predecessor (|sit_pred|) items. */
-    
+
 
     /* If no segments contain p_sweep then sit_pred and sit_succ are
        correctly set after the above locate operation, if a segment
        contains p_sweep sit_pred and sit_succ are set below when
        determining the bundle.*/
-    
+
     if (sit != YS.end() ) { // sit->first is ending or passing segment
       CGAL_NEF_TRACEN("ending/passing segs " << *sit);
       sit_succ = sit; ++sit_succ;
 
       while ( y2x[*sit] == event ||
-	      y2y[*sit] == *sit_succ ) { // overlapping
-	sit = sit_succ;
-	++sit_succ;
+              y2y[*sit] == *sit_succ ) { // overlapping
+        sit = sit_succ;
+        ++sit_succ;
       }
       CGAL_NEF_TRACEN("ending/passing segs " << *sit);
 
       ss_iterator sit_last = sit;
-      
+
       event_iterator xit = y2x[*sit_last];
       if (xit != XS.end() &&
-	  *sit_last != &sl &&
-	  *sit_succ != &sh) { 
-	IEvent[std::make_pair(*sit_last, *sit_succ)] = xit;
-      } 
+          *sit_last != &sl &&
+          *sit_succ != &sh) {
+        IEvent[std::make_pair(*sit_last, *sit_succ)] = xit;
+      }
 
       bool overlapping;
       do {
-	ISegment s = *sit;
-	ss_iterator sit_next(sit); --sit_next;
+        ISegment s = *sit;
+        ss_iterator sit_next(sit); --sit_next;
 
-	if(*sit_next == &sl)
-	  overlapping = false;
-	else
-	  overlapping = y2y[*sit_next] == *sit;
-	Halfedge_handle e = Edge_of[*sit];
-	if ( overlapping ) {
-	  CGAL_NEF_TRACEN("overlapping segment "<<s);
-	} else {
-	  CGAL_NEF_TRACEN("connecting edge to node "<<s);
-	  GO.link_as_target_and_append(v,e);
-	  /* in this case we close the output edge |e| associated to
-	     |sit| by linking |v| as its target and by appending the
-	     twin edge to |v|'s adjacency list. */
-	}
-	GO.supporting_segment(e,original(s));
-	if ( target(s) == p_sweep ) {
-	  CGAL_NEF_TRACEN("ending segment "<<s);
-	  if(overlapping)
-	    y2y[*sit_next] = y2y[*sit];
-	  YS.erase(sit);
-	  GO.ending_segment(v,original(s));
-	} else { // passing segment, take care of the node here!
-	  CGAL_NEF_TRACEN("passing segment "<<s);
-	  ss_iterator sst(sit); ++sst;
-	  if(y2y[*sit] != *sst)
-	    y2y[*sit] = &sl;
-	  y2x[*sit] = XS.end();
-	  GO.passing_segment(v,original(s));
-	}
+        if(*sit_next == &sl)
+          overlapping = false;
+        else
+          overlapping = y2y[*sit_next] == *sit;
+        Halfedge_handle e = Edge_of[*sit];
+        if ( overlapping ) {
+          CGAL_NEF_TRACEN("overlapping segment "<<s);
+        } else {
+          CGAL_NEF_TRACEN("connecting edge to node "<<s);
+          GO.link_as_target_and_append(v,e);
+          /* in this case we close the output edge |e| associated to
+             |sit| by linking |v| as its target and by appending the
+             twin edge to |v|'s adjacency list. */
+        }
+        GO.supporting_segment(e,original(s));
+        if ( target(s) == p_sweep ) {
+          CGAL_NEF_TRACEN("ending segment "<<s);
+          if(overlapping)
+            y2y[*sit_next] = y2y[*sit];
+          YS.erase(sit);
+          GO.ending_segment(v,original(s));
+        } else { // passing segment, take care of the node here!
+          CGAL_NEF_TRACEN("passing segment "<<s);
+          ss_iterator sst(sit); ++sst;
+          if(y2y[*sit] != *sst)
+            y2y[*sit] = &sl;
+          y2x[*sit] = XS.end();
+          GO.passing_segment(v,original(s));
+        }
 
-	ss_iterator sss(sit_next); ++sss;
-	if(*sit_next != &sl)
-	  overlapping |= (y2y[*sit_next] == *sss);
+        ss_iterator sss(sit_next); ++sss;
+        if(*sit_next != &sl)
+          overlapping |= (y2y[*sit_next] == *sss);
 
-	sit = sit_next;
+        sit = sit_next;
       }
-      while (*sit != &sl && 
-	     (y2x[*sit] == event || overlapping));
-	     
-      
+      while (*sit != &sl &&
+             (y2x[*sit] == event || overlapping));
+
+
       sit_pred = sit;
       sit_first = sit_pred;
       ++sit_first; // first item of the bundle
@@ -986,100 +906,100 @@ public:
       CGAL_assertion(check_bundle(sit_pred, sit_succ));
 
       while( *sit != *sit_succ) {
-	ss_iterator sub_first(sit), 
-	  sub_last(sub_first),
-	  succ_sub_last(sub_last);
-	++succ_sub_last;
-	
-	while(y2y[*sub_last] == *succ_sub_last) {
-	  ++sub_last; ++succ_sub_last;
-	}
-	
-	sit = sub_first;
-	while(*sub_first != *sub_last) {
-	  YS.swap(sub_first, sub_last);
-	  std::swap(sub_first, sub_last);
-	  ++sub_first;
-	  if(*sub_first == *sub_last) break;
-	  --sub_last;
-	}
-	++sit;
+        ss_iterator sub_first(sit),
+          sub_last(sub_first),
+          succ_sub_last(sub_last);
+        ++succ_sub_last;
+
+        while(y2y[*sub_last] == *succ_sub_last) {
+          ++sub_last; ++succ_sub_last;
+        }
+
+        sit = sub_first;
+        while(*sub_first != *sub_last) {
+          YS.swap(sub_first, sub_last);
+          std::swap(sub_first, sub_last);
+          ++sub_first;
+          if(*sub_first == *sub_last) break;
+          --sub_last;
+        }
+        ++sit;
       }
 
-      if(*sit_first != *sit_succ) {	
-	ss_iterator sfirst(sit_pred); ++sfirst;
-	ss_iterator slast(sit_succ); --slast;
-	while(*sfirst != *slast) {
-	  YS.swap(sfirst, slast);
-	  std::swap(sfirst, slast);
-	  ++sfirst;
-	  if(*sfirst == *slast) break;
-	  --slast;
-	}
+      if(*sit_first != *sit_succ) {
+        ss_iterator sfirst(sit_pred); ++sfirst;
+        ss_iterator slast(sit_succ); --slast;
+        while(*sfirst != *slast) {
+          YS.swap(sfirst, slast);
+          std::swap(sfirst, slast);
+          ++sfirst;
+          if(*sfirst == *slast) break;
+          --slast;
+        }
       }
     } // if (sit != ss_iterator() )
-    
+
     //    CGAL_assertion( sit_pred != YS.end() );
     GO.halfedge_below(v,Edge_of[*sit_pred]);
     if ( x2iso[&*event] != 0 ) {
       IsoList* IL = x2iso[&*event];
       typename IsoList::const_iterator iso_it;
-      for (iso_it = IL->begin(); iso_it != IL->end(); ++iso_it) 
-	GO.trivial_segment(v,*iso_it);
+      for (iso_it = IL->begin(); iso_it != IL->end(); ++iso_it)
+        GO.trivial_segment(v,*iso_it);
       delete IL;
       x2iso[&*event] = 0;
     }
-    
+
     ISegment next_seg = ISegment(); // to avoid /W4 warning
     seg_iterator next_it = SQ.begin();
-    while ( next_it != SQ.end() && 
-	    ( next_seg = next_it->second, p_sweep == source(next_seg)) ) {
+    while ( next_it != SQ.end() &&
+            ( next_seg = next_it->second, p_sweep == source(next_seg)) ) {
       CGAL_NEF_TRACEN("inserting "<<next_seg);
 
       ss_iterator s_sit = YS.upper_bound(next_seg);
       ss_iterator p_sit(s_sit); --p_sit;
-      
+
       sit = YS.insert_before(s_sit, next_seg);
-      
+
       ss_iterator ys2_tmp = sit;
       ++ys2_tmp;
       CGAL_assertion(*s_sit == *ys2_tmp);
 
       if(*s_sit != &sh &&
-	 orientation(s_sit, source(next_seg)) == 0 &&
-	 orientation(s_sit, target(next_seg)) == 0) {
-	y2y[*sit] = *s_sit;
+         orientation(s_sit, source(next_seg)) == 0 &&
+         orientation(s_sit, target(next_seg)) == 0) {
+        y2y[*sit] = *s_sit;
       }
 
       if ( &sl != *p_sit &&
-	   orientation(p_sit, source(next_seg) ) == 0 &&
-	   orientation(p_sit, target(next_seg) ) == 0 ) {
-	y2y[*p_sit] = *sit;
+           orientation(p_sit, source(next_seg) ) == 0 &&
+           orientation(p_sit, target(next_seg) ) == 0 ) {
+        y2y[*p_sit] = *sit;
       }
 
       x2y[&*XS.find(target(next_seg))] = sit;
       GO.starting_segment(v,original(next_seg));
-      
+
       // delete minimum and assign new minimum to next_seg
       SQ.erase(SQ.begin());
       next_it = SQ.begin();
     }
-    
+
     // we insert new edge stubs, non-linked at target
     ss_iterator sit_curr = sit_succ, sit_prev = sit_succ;
-    for( --sit_curr; *sit_curr != *sit_pred; 
-	 sit_prev = sit_curr, --sit_curr ) {
+    for( --sit_curr; *sit_curr != *sit_pred;
+         sit_prev = sit_curr, --sit_curr ) {
       CGAL_NEF_TRACEN("checking outedge "<< *sit_curr <<"\n   "<< *sit_prev);
       if (y2y[*sit_curr] == *sit_prev) { // overlapping
-	CGAL_assertion(collinear(sit_curr, sit_prev));
-	Edge_of[*sit_curr] = Edge_of[*sit_prev];
+        CGAL_assertion(collinear(sit_curr, sit_prev));
+        Edge_of[*sit_curr] = Edge_of[*sit_prev];
       } else {
-	CGAL_NEF_TRACEN("creating new edge ");
-	Edge_of[*sit_curr] = GO.new_halfedge_pair_at_source(v);
+        CGAL_NEF_TRACEN("creating new edge ");
+        Edge_of[*sit_curr] = GO.new_halfedge_pair_at_source(v);
       }
     }
     sit_first = sit_prev;
- 
+
    event_iterator xxit = y2x[*sit_pred];
     if(xxit != XS.end() &&
        *sit_pred != &sl &&
@@ -1087,13 +1007,13 @@ public:
       IEvent[std::make_pair(*sit_pred, *sit_pred_succ)] = xxit;
       y2y[*sit_pred] = &sl;
       y2x[*sit_pred] = XS.end();
-    } 
-    
+    }
+
     CGAL_NEF_TRACEN("pred,succ = "<< *sit_pred <<" "<< *sit_succ);
-    compute_intersection(sit_pred); 
+    compute_intersection(sit_pred);
     sit = sit_succ; --sit;
     if (*sit != *sit_pred)
-      compute_intersection(sit); 
+      compute_intersection(sit);
   }
 
   void complete_structures() {}

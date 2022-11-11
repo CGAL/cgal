@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Philipp Möller
 
@@ -31,15 +31,14 @@
 namespace CGAL {
 
 template <typename Point>
-class SM_edge_weight_pmap 
-  : public boost::put_get_helper<typename CGAL::Kernel_traits<Point>::type::FT, SM_edge_weight_pmap<Point> >
+class SM_edge_weight_pmap
 {
   typedef CGAL::Surface_mesh<Point> SM;
 public:
   typedef boost::readable_property_map_tag                category;
   typedef typename CGAL::Kernel_traits<Point>::type::FT   value_type;
   typedef value_type                                      reference;
-  typedef typename SM::Edge_index                        key_type;
+  typedef typename SM::Edge_index                         key_type;
 
   SM_edge_weight_pmap(const CGAL::Surface_mesh<Point>& sm)
     : pm_(sm. template property_map<
@@ -54,15 +53,21 @@ public:
                                                    pm_[target(e, sm_)]));
   }
 
+  friend inline
+  value_type get(const SM_edge_weight_pmap& m, const key_type& k)
+  {
+    return m[k];
+  }
+
 private:
-   typename SM::template Property_map< typename SM::Vertex_index,
-                                       typename SM::Point > pm_;
+  typename SM::template Property_map< typename SM::Vertex_index,
+                                      typename SM::Point > pm_;
   const SM& sm_;
 };
 
 
 template <typename K, typename VEF>
-class SM_index_pmap : public boost::put_get_helper<boost::uint32_t, SM_index_pmap<K,VEF> >
+class SM_index_pmap
 {
 public:
   typedef boost::readable_property_map_tag category;
@@ -73,6 +78,12 @@ public:
   value_type operator[](const key_type& vd) const
   {
     return vd;
+  }
+
+  friend inline
+  value_type get(const SM_index_pmap& m, const key_type& k)
+  {
+    return m[k];
   }
 };
 
@@ -205,7 +216,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_point_t >
     SM::template Property_map< typename SM::Vertex_index,
                                P
                                > type;
-  
+
   typedef type const_type;
 
 };

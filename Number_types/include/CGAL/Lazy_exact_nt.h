@@ -18,9 +18,7 @@
 
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <boost/operators.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/logical.hpp>
@@ -36,6 +34,8 @@
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/tss.h>
 #include <CGAL/type_traits.h>
+
+#include<type_traits>
 
 #include <CGAL/IO/io.h>
 
@@ -113,6 +113,10 @@ struct Lazy_exact_nt_rep : public Lazy_exact_nt<ET>::Self_rep
   Lazy_exact_nt_rep (const Interval_nt<false> & i)
       : Base(i) {}
 
+  template<class T>
+  Lazy_exact_nt_rep (const Interval_nt<false> & i, T&& e)
+      : Base(i, std::forward<T>(e)) {}
+
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
@@ -123,23 +127,33 @@ struct Lazy_exact_nt_rep : public Lazy_exact_nt<ET>::Self_rep
 };
 
 // int constant
+// Unused. This would make even more sense for a double constant but may not be worth the trouble.
+// Could be recycled as a partial specialization of Lazy_exact_Cst.
 template <typename ET>
-struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
+struct Lazy_exact_Int_Cst final : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_Int_Cst (int i)
       : Lazy_exact_nt_rep<ET>(double(i)) {}
 
-  void update_exact() const { this->et = new ET((int)this->approx().inf()); }
+  void update_exact() const {
+    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect((int)this->approx().sup());
+    this->keep_at(pet);
+    this->set_ptr(pet);
+  }
 };
 
 // double constant
 template <typename ET, typename X>
-struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
+struct Lazy_exact_Cst final : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_Cst (X x)
       : Lazy_exact_nt_rep<ET>(x), cste(x) {}
 
-  void update_exact() const { this->et = new ET(cste); }
+  void update_exact() const {
+    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(cste);
+    this->keep_at(pet);
+    this->set_ptr(pet);
+  }
 
   private:
   X cste;
@@ -147,25 +161,22 @@ struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 
 // Exact constant
 template <typename ET>
-struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
+struct Lazy_exact_Ex_Cst final : public Lazy_exact_nt_rep<ET>
 {
-  Lazy_exact_Ex_Cst (const ET & e)
-      : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
-  {
-    this->et = new ET(e);
-  }
-  Lazy_exact_Ex_Cst (ET&& e)
-      : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
-  {
-    this->et = new ET(std::move(e));
-  }
+  template<class T>
+  Lazy_exact_Ex_Cst (T&& e)
+      : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e), std::forward<T>(e))
+  { }
 
-  void update_exact() const { CGAL_error(); }
+  void update_exact() const {
+    // Currently we do not check is_lazy() before calling call_once, so this is called.
+    // CGAL_error();
+  }
 };
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
 template <typename ET, typename ET1>
-class Lazy_lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
+class Lazy_lazy_exact_Cst final : public Lazy_exact_nt_rep<ET>
 {
   mutable Lazy_exact_nt<ET1> l;
 
@@ -179,12 +190,13 @@ public:
 
   void update_exact() const
   {
-    this->et = new ET(l.exact());
-    this->at = l.approx();
-    prune_dag();
+    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(l.exact());
+    this->set_at(pet, l.approx());
+    this->set_ptr(pet);
+    this->prune_dag();
   }
 
-  void prune_dag() const { l = Lazy_exact_nt<ET1>(); }
+  void prune_dag() const { l.reset(); }
 };
 
 
@@ -203,7 +215,7 @@ struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
     this->set_depth(op1.depth() + 1);
   }
 
-  void prune_dag() const { op1 = Lazy_exact_nt<ET>(); }
+  void prune_dag() const { op1.reset(); }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -226,7 +238,7 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
   mutable Lazy_exact_nt<ET2> op2;
 
   Lazy_exact_binary (const Interval_nt<false> &i,
-		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
+                     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
       : Lazy_exact_nt_rep<ET>(i), op1(a), op2(b)
   {
     this->set_depth((std::max)(op1.depth(), op2.depth()) + 1);
@@ -234,8 +246,8 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 
   void prune_dag() const
   {
-    op1 = Lazy_exact_nt<ET1>();
-    op2 = Lazy_exact_nt<ET2>();
+    op1.reset();
+    op2.reset();
   }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -256,10 +268,12 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 // function objects plus, minus, multiplies, divides...).  But it would require
 // a template template parameter, and GCC 2.95 seems to crash easily with them.
 
+// Instead of having nodes only for simple operations, we should use expression templates to build nodes for arbitrary expressions, a*d-b*c should be a single node, that stores a tuple (a,b,c,d) and knows how to update_exact.
+
 // Macro for unary operations
 #define CGAL_LAZY_UNARY_OP(OP, NAME)                                     \
 template <typename ET>                                                   \
-struct NAME : public Lazy_exact_unary<ET>                                \
+struct NAME final : public Lazy_exact_unary<ET>                          \
 {                                                                        \
   typedef typename Lazy_exact_unary<ET>::AT::Protector P;                \
   NAME (const Lazy_exact_nt<ET> &a)                                      \
@@ -267,11 +281,12 @@ struct NAME : public Lazy_exact_unary<ET>                                \
                                                                          \
   void update_exact() const                                              \
   {                                                                      \
-    this->et = new ET(OP(this->op1.exact()));                            \
-    if (!this->approx().is_point())                                      \
-      this->at = CGAL_NTS to_interval(*(this->et));                      \
+    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(OP(this->op1.exact())); \
+    if (!this->approx().is_point())                                               \
+      this->set_at(pet);                                                 \
+    this->set_ptr(pet);                                                  \
     this->prune_dag();                                                   \
-   }                                                                     \
+  }                                                                      \
 };
 
 CGAL_LAZY_UNARY_OP(opposite,  Lazy_exact_Opp)
@@ -282,19 +297,20 @@ CGAL_LAZY_UNARY_OP(CGAL_NTS sqrt,   Lazy_exact_Sqrt)
 // A macro for +, -, * and /
 #define CGAL_LAZY_BINARY_OP(OP, NAME)                                    \
 template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
-struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
+struct NAME final : public Lazy_exact_binary<ET, ET1, ET2>               \
 {                                                                        \
-  typedef typename Lazy_exact_binary<ET,ET1,ET2>::AT::Protector P;	 \
+  typedef typename Lazy_exact_binary<ET,ET1,ET2>::AT::Protector P;       \
   NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
     : Lazy_exact_binary<ET, ET1, ET2>((P(), a.approx() OP b.approx()), a, b) {} \
                                                                          \
   void update_exact() const                                              \
   {                                                                      \
-    this->et = new ET(this->op1.exact() OP this->op2.exact());           \
-    if (!this->approx().is_point())                                      \
-      this->at = CGAL_NTS to_interval(*(this->et));                      \
+    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(this->op1.exact() OP this->op2.exact()); \
+    if (!this->approx().is_point())                                               \
+      this->set_at(pet);                                                 \
+    this->set_ptr(pet);                                                  \
     this->prune_dag();                                                   \
-   }                                                                     \
+  }                                                                      \
 };
 
 CGAL_LAZY_BINARY_OP(+, Lazy_exact_Add)
@@ -304,32 +320,35 @@ CGAL_LAZY_BINARY_OP(/, Lazy_exact_Div)
 
 // Minimum
 template <typename ET>
-struct Lazy_exact_Min : public Lazy_exact_binary<ET>
+struct Lazy_exact_Min final : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Min (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
     : Lazy_exact_binary<ET>((CGAL::min)(a.approx(), b.approx()), a, b) {}
 
   void update_exact() const
   {
-    this->et = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point()) 
-      this->at = CGAL_NTS to_interval(*(this->et));
+    // Should we test is_point earlier, and construct ET from double in that case? Constructing from double is not free, but if op1 or op2 is not exact yet, we may be able to skip a whole tree of exact constructions.
+    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect((CGAL::min)(this->op1.exact(), this->op2.exact()));
+    if (!this->approx().is_point())
+      this->set_at(pet);
+    this->set_ptr(pet);
     this->prune_dag();
   }
 };
 
 // Maximum
 template <typename ET>
-struct Lazy_exact_Max : public Lazy_exact_binary<ET>
+struct Lazy_exact_Max final : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Max (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
     : Lazy_exact_binary<ET>((CGAL::max)(a.approx(), b.approx()), a, b) {}
 
   void update_exact() const
   {
-    this->et = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point()) 
-      this->at = CGAL_NTS to_interval(*(this->et));
+    auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect((CGAL::max)(this->op1.exact(), this->op2.exact()));
+    if (!this->approx().is_point())
+      this->set_at(pet);
+    this->set_ptr(pet);
     this->prune_dag();
   }
 };
@@ -363,9 +382,9 @@ public :
 
   // Also check that ET and AT are constructible from T?
   template<class T>
-  Lazy_exact_nt (T i, typename boost::enable_if<boost::mpl::and_<
+  Lazy_exact_nt (T i, std::enable_if_t<boost::mpl::and_<
       boost::mpl::or_<boost::is_arithmetic<T>, std::is_enum<T> >,
-      boost::mpl::not_<boost::is_same<T,ET> > >,void*>::type=0)
+      boost::mpl::not_<std::is_same<T,ET> > >::value,void*> = 0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
   Lazy_exact_nt (const ET & e)
@@ -375,13 +394,16 @@ public :
 
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
-      typename boost::enable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
+      std::enable_if_t<is_implicit_convertible<ET1,ET>::value,int> = 0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
 
   template <class ET1>
   explicit Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
-  typename boost::disable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
+  typename std::enable_if_t<!is_implicit_convertible<ET1,ET>::value,int> = 0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
+
+  friend void swap(Lazy_exact_nt& a, Lazy_exact_nt& b) noexcept
+  { swap(static_cast<Base&>(a), static_cast<Base&>(b)); }
 
   Self operator+ () const
   { return *this; }
@@ -433,6 +455,69 @@ public :
   {
     CGAL_precondition(b != 0);
     return *this = new Lazy_exact_Div<ET>(*this, b);
+  }
+
+  // Mixed comparisons with int.
+  friend bool operator<(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = a.approx() < b;
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return a.exact() < b;
+  }
+
+  friend bool operator>(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b < a.approx();
+    if (is_certain(res))
+      return get_certain(res);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b < a.exact();
+  }
+
+  friend bool operator==(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b == a.approx();
+    if (is_certain(res))
+      return get_certain(res);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b == a.exact();
+  }
+
+
+  // Mixed comparisons with double.
+  friend bool operator<(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = a.approx() < b;
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return a.exact() < b;
+  }
+
+  friend bool operator>(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b < a.approx();
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b < a.exact();
+  }
+
+  friend bool operator==(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b == a.approx();
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b == a.exact();
   }
 
   // % kills filtering
@@ -557,84 +642,6 @@ operator%(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
   CGAL_precondition(b != 0);
   return Lazy_exact_nt<ET>(a) %= b;
 }
-
-
-
-// Mixed operators with int.
-template <typename ET>
-bool
-operator<(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = a.approx() < b;
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return a.exact() < b;
-}
-
-template <typename ET>
-bool
-operator>(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b < a.approx();
-  if (is_certain(res))
-    return get_certain(res);
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b < a.exact();
-}
-
-template <typename ET>
-bool
-operator==(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b == a.approx();
-  if (is_certain(res))
-    return get_certain(res);
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b == a.exact();
-}
-
-
-// Mixed operators with double.
-template <typename ET>
-bool
-operator<(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = a.approx() < b;
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return a.exact() < b;
-}
-
-template <typename ET>
-bool
-operator>(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b < a.approx();
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b < a.exact();
-}
-
-template <typename ET>
-bool
-operator==(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b == a.approx();
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b == a.exact();
-}
-
 
 
 template <typename ET1, typename ET2>
@@ -937,7 +944,7 @@ struct Div_mod_selector {
     void operator()( const NT1& x, const NT2& y,
                      NT& q,
                      NT& r ) const {
-      CGAL_static_assertion((::boost::is_same<
+      CGAL_static_assertion((::std::is_same<
         typename Coercion_traits< NT1, NT2 >::Type, NT
                                               >::value));
 
@@ -1007,9 +1014,9 @@ public:
 
     typedef typename INTERN_LAZY_EXACT_NT::Div_mod_selector
     <Lazy_exact_nt<ET>, typename AST_ET::Div_mod > ::Div_mod Div_mod;
-    
+
     typedef typename INTERN_LAZY_EXACT_NT::Inverse_selector
-    <Lazy_exact_nt<ET>, typename AST_ET::Inverse > ::Inverse Inverse;    
+    <Lazy_exact_nt<ET>, typename AST_ET::Inverse > ::Inverse Inverse;
 };
 
 
@@ -1022,7 +1029,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
   : public INTERN_RET::Real_embeddable_traits_base< Lazy_exact_nt<ET> , CGAL::Tag_true > {
 
   // Every type ET of Lazy_exact_nt<ET> has to be real embeddable.
-  CGAL_static_assertion((::boost::is_same< typename Real_embeddable_traits< ET >
+  CGAL_static_assertion((::std::is_same< typename Real_embeddable_traits< ET >
                                 ::Is_real_embeddable, Tag_true >::value));
 
   public:
@@ -1171,7 +1178,7 @@ struct Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
         Are_implicit_interoperable;                                     \
     private:                                                            \
         static const  bool interoperable                                \
-        =boost::is_same< Are_implicit_interoperable, Tag_false>::value; \
+        =std::is_same< Are_implicit_interoperable, Tag_false>::value; \
     public:                                                             \
         typedef typename boost::mpl::if_c <interoperable,Null_tag,NT>   \
         ::type  Type;                                          \
@@ -1284,13 +1291,13 @@ struct Max <Lazy_exact_nt<ET> >
     }
 };
 
-template<typename ET> inline 
+template<typename ET> inline
 Lazy_exact_nt<ET> min BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Lazy_exact_nt<ET> & x,
 const Lazy_exact_nt<ET> & y){
   return CGAL::Min<Lazy_exact_nt<ET> > ()(x,y);
 }
-template<typename ET> inline 
+template<typename ET> inline
 Lazy_exact_nt<ET> max BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Lazy_exact_nt<ET> & x,
 const Lazy_exact_nt<ET> & y){
@@ -1309,7 +1316,7 @@ operator>> (std::istream & is, Lazy_exact_nt<ET> & a)
   ET e;
   internal::read_float_or_quotient(is, e);
   if (is)
-    a = e;
+    a = std::move(e);
   return is;
 }
 
@@ -1383,8 +1390,8 @@ public:
   typedef Lazy_exact_nt<ET> NT;
   typedef ::CGAL::Tag_false Is_modularizable;
   typedef ::CGAL::Null_functor Residue_type;
-  typedef ::CGAL::Null_functor Modular_image;  
-  typedef ::CGAL::Null_functor Modular_image_representative;    
+  typedef ::CGAL::Null_functor Modular_image;
+  typedef ::CGAL::Null_functor Modular_image_representative;
 };
 
 template< typename ET >
@@ -1406,11 +1413,11 @@ public:
       typename MT_ET::Modular_image_representative modular_image_representative;
       return NT(modular_image_representative(x));
     }
-  };    
+  };
 };
 } // namespace INTERN_LAZY_EXACT_NT
 
-template < typename ET > 
+template < typename ET >
 class Modular_traits<Lazy_exact_nt<ET> >
   :public INTERN_LAZY_EXACT_NT::Modular_traits_base
 <ET,typename Modular_traits<ET>::Is_modularizable>{};

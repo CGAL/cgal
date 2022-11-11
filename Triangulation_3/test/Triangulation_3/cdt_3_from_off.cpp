@@ -14,6 +14,7 @@
 #include <vector>
 #include <cassert>
 #include <fstream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Triangulation_data_structure_3<
@@ -31,7 +32,7 @@ int main(int argc, char* argv[])
   std::cerr.precision(17);
   std::cout.precision(17);
 
-  const char* filename = (argc > 1) ? argv[1] : "data/fandisk.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
   std::ifstream input(filename);
   Mesh mesh;
   if (!input || !(input >> mesh))

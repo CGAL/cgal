@@ -1,38 +1,25 @@
-//A class that follows a straight line through a Delaunay triangulation structure.
-//Copyright (C) 2012  Utrecht University
+// Copyright (c) 2012  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Thijs van Lankveld
+// Author(s): Thijs van Lankveld, Jane Tournois
+
 
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 
-
-#include <CGAL/basic.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <iostream>
-#include <list>
-#include <set>
-#include <map>
 #include <utility>
-#include <stack>
+#include <tuple>
 
-#include <CGAL/Unique_hash_map.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -40,55 +27,12 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-#include <CGAL/tuple.h>
 
 // If defined, type casting is done statically,
 // reducing type-safety overhead.
 #define CGAL_TST_ASSUME_CORRECT_TYPES
 
 namespace CGAL {
-    
-/*
-add the following to Triangulation_segment_traverser_3.h to get a superclass of the Incrementer visitor.
-
-
-
-
-
-template < class Tr, class Inc >
-class Test_super_SCI;
-
-namespace internal {
-
-template < class Tr >
-struct Test_incrementer: public Incrementer<Tr> {
-    typedef Incrementer<Tr>             Base;
-    typedef Test_incrementer<Tr>        Self;
-    typedef Test_super_SCI<Tr,Self>     SCI;
-    Test_incrementer() {}
-    void increment( SCI& sci ) {
-        ++sci._superclass;
-        sci.increment();
-    }
-}; // struct Test_incrementer
-
-} // namespace internal
-
-template < class Tr_, class Inc = internal::Test_incrementer<Tr_> >
-class Test_super_SCI: public Triangulation_segment_cell_iterator_3<Tr_,Inc> {
-    typedef Tr_                                             Tr;
-    typedef Triangulation_segment_cell_iterator_3<Tr,Inc>   SCI;
-
-    int _superclass;
-
-    friend internal::Test_incrementer<Tr>;
-
-public:
-    Test_super_SCI( const Tr& tr, const Point& s, const Point& t, Cell_handle hint = Cell_handle() )
-        : SCI(tr,s,t,hint), _superclass(0) {}
-
-};
-*/
 
 template < class Tr, class Inc >
 class Triangulation_segment_cell_iterator_3;
@@ -101,50 +45,51 @@ struct Incrementer {
     Incrementer() {}
     void increment( SCI& sci ) { sci.walk_to_next(); }
 }; // struct Incrementer
-    
+
 } // namespace internal
 
 
 //  provides an iterator over the cells intersected by a line segment.
 /*
- *	The `Triangulation_segment_traverser_3` iterates over the cells
- *	of a `Triangulation_3` by following a straight line segment \f$ st \f$.
+ *        The `Triangulation_segment_traverser_3` iterates over the cells
+ *        of a `Triangulation_3` by following a straight line segment \f$ st \f$.
  *
- *	This class is closely related to `Triangulation_3::locate(...)`.
- *	However, unlike this `locate(...)` method, all the cells traversed
- *	by the `Triangulation_segment_traverser_3` intersect the interior of the line
- *	segment \f$ st \f$.
+ *        This class is closely related to `Triangulation_3::locate(...)`.
+ *        However, unlike this `locate(...)` method, all the cells traversed
+ *        by the `Triangulation_segment_traverser_3` intersect the interior of the line
+ *        segment \f$ st \f$.
  *
- *	Traversal starts from a cell containing \f$ s \f$ and it ends in a cell containing
- *	\f$ t \f$.
- *	If \f$ st \f$ is coplanar with a facet or collinear with an edge, at most one of the
- *	incident cells is traversed.
- *	If \f$ st \f$ intersects an edge or vertex, at most two incident cells are traversed:
- *	the cells intersecting \f$ st \f$ strictly in their interior.
+ *        Traversal starts from a cell containing \f$ s \f$ and it ends in a cell containing
+ *        \f$ t \f$.
+ *        If \f$ st \f$ is coplanar with a facet or collinear with an edge, at most one of the
+ *        incident cells is traversed.
+ *        If \f$ st \f$ intersects an edge or vertex, at most two incident cells are traversed:
+ *        the cells intersected by \f$ st \f$ strictly in their interior.
  *
- *	If \f$ s \f$ lies on the convex hull, traversal starts in an incident cell inside
- *	the convex hull. Similarly, if \f$ t \f$ lies on the convex hull, traversal ends in
- *	an adjacent cell inside the convex hull.
+ *        If \f$ s \f$ lies on the convex hull, traversal starts in an incident cell inside
+ *        the convex hull. Similarly, if \f$ t \f$ lies on the convex hull, traversal ends in
+ *        an adjacent cell inside the convex hull.
  *
- *	Both \f$ s \f$ and \f$ t \f$ may lie outside the convex hull of the triangulation,
- *	but they must lie within the affine hull of the triangulation. In either case, the
- *	finite facet of any infinite cells traversed must intersect \f$ st \f$.
+ *        Both \f$ s \f$ and \f$ t \f$ may lie outside the convex hull of the triangulation,
+ *        but they must lie within the affine hull of the triangulation. In either case, the
+ *        finite facet of any infinite cells traversed must intersect \f$ st \f$.
  *
- *	The traverser may be applied to any triangulation of dimension > 0.
- *	However, for triangulations of dimension 1, the functionality is somewhat trivial.
+ *        The traverser may be applied to any triangulation of dimension > 0.
+ *        However, for triangulations of dimension 1, the functionality is somewhat trivial.
  *
- *	The traverser becomes invalid whenever the triangulation is changed.
+ *        The traverser becomes invalid whenever the triangulation is changed.
  *
- *	\tparam Tr_ is the triangulation type to traverse.
+ *        \tparam Tr_ is the triangulation type to traverse.
  *
  *  \cgalModels{ForwardIterator}
  *
- *	\sa `Triangulation_3`
- *	\sa `Forward_circulator_base`
+ *        \sa `Triangulation_3`
+ *        \sa `Forward_circulator_base`
  */
 template < class Tr_, class Inc = internal::Incrementer<Tr_> >
-class Triangulation_segment_cell_iterator_3 {
-    typedef	Tr_                                         Tr;
+class Triangulation_segment_cell_iterator_3
+{
+    typedef Tr_                                         Tr;
     typedef typename Tr::Triangulation_data_structure   Tds;
     typedef typename Tr::Geom_traits                    Gt;
     typedef Inc                                         Incrementer;
@@ -168,8 +113,7 @@ public:
 
     typedef typename Tr::Locate_type                    Locate_type;            //< defines the simplex type returned from location.
 
-    typedef CGAL::cpp11::tuple<Cell_handle,Locate_type,int,int>
-                                                        Simplex;                //< defines the simplex type.
+    typedef std::tuple<Cell_handle,Locate_type,int,int> Simplex;                //< defines the simplex type.
 
     typedef Cell                                        value_type;             //< defines the value type the iterator refers to.
     typedef Cell&                                       reference;              //< defines the reference type of the iterator.
@@ -178,7 +122,7 @@ public:
     typedef std::ptrdiff_t                              difference_type;        //< defines the signed integral type that can hold the distance between two iterators.
     typedef std::forward_iterator_tag                   iterator_category;      //< defines the iterator category.
 // \}
-    
+
     // describes the iterator type when applied to another type of triangulation or incrementer.
     template < class Tr2, class Inc2 >
     struct Rebind { typedef Triangulation_segment_cell_iterator_3<Tr2,Inc2>  Other; };
@@ -192,7 +136,7 @@ protected:
 // \internal \name Protected Attributes
 // \{
     // \internal The triangulation to traverse.
-    const Tr&       _tr;
+    const Tr*       _tr;
 
 // \}
 
@@ -214,47 +158,51 @@ public:
 // \{
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
-     *	\param s the source vertex. This vertex must be initialized and cannot be the infinite vertex.
-     *	\param t the target vertex. This vertex must be initialized and cannot be the infinite vertex.
-     *	It cannot equal `s`.
+     *        \param s the source vertex. This vertex must be initialized and cannot be the infinite vertex.
+     *        \param t the target vertex. This vertex must be initialized and cannot be the infinite vertex.
+     *        It cannot equal `s`.
      */
-	Triangulation_segment_cell_iterator_3( const Tr& tr, Vertex_handle s, Vertex_handle t );
+        Triangulation_segment_cell_iterator_3( const Tr* tr, Vertex_handle s, Vertex_handle t );
 
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
-     *	\param s the source vertex. This vertex must be initialized and cannot be the infinite vertex.
-     *	\param t the target point. This point must be initialized and it cannot be be at the same location as `s`.
-     *	If `tr` has dimension < 3, `t` must lie inside the affine hull of `tr`.
+     *        \param s the source vertex. This vertex must be initialized and cannot be the infinite vertex.
+     *        \param t the target point. This point must be initialized and it cannot be be at the same location as `s`.
+     *        If `tr` has dimension < 3, `t` must lie inside the affine hull of `tr`.
      */
-	Triangulation_segment_cell_iterator_3( const Tr& tr, Vertex_handle s, const Point& t );
+        Triangulation_segment_cell_iterator_3( const Tr* tr, Vertex_handle s, const Point& t );
 
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
-     *	\param s the source point. This point must be initialized and it cannot be be at the same location as `t`.
-     *	\param t the target vertex. This vertex must be initialized and cannot be the infinite vertex.
-     *	If `tr` has dimension < 3, `s` must lie inside the affine hull of `tr`.
-     *	\param hint the starting point to search for `s`.
+     *        \param s the source point. This point must be initialized and it cannot be be at the same location as `t`.
+     *        \param t the target vertex. This vertex must be initialized and cannot be the infinite vertex.
+     *        If `tr` has dimension < 3, `s` must lie inside the affine hull of `tr`.
+     *        \param hint the starting point to search for `s`.
      */
-	Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, Vertex_handle t, Cell_handle hint = Cell_handle() );
+        Triangulation_segment_cell_iterator_3( const Tr* tr, const Point& s, Vertex_handle t, Cell_handle hint = Cell_handle() );
 
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
-     *	\param s the source point. This point must be initialized. If `tr` has dimension < 3, `s` must lie inside
-     *	the affine hull of `tr`.
-     *	\param t the target point. This point must be initialized and it cannot be be at the same location as `s`.
-     *	If `tr` has dimension < 3, `t` must lie inside the affine hull of `tr`.
-     *	\param hint the starting point to search for `s`.
+     *        \param s the source point. This point must be initialized. If `tr` has dimension < 3, `s` must lie inside
+     *        the affine hull of `tr`.
+     *        \param t the target point. This point must be initialized and it cannot be be at the same location as `s`.
+     *        If `tr` has dimension < 3, `t` must lie inside the affine hull of `tr`.
+     *        \param hint the starting point to search for `s`.
      */
-    Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, const Point& t, Cell_handle hint = Cell_handle() );
-    
+    Triangulation_segment_cell_iterator_3( const Tr* tr, const Point& s, const Point& t, Cell_handle hint = Cell_handle() );
+
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
-     *	\param S the segment to be traversed. If `tr` has dimension < 3, `S` must lie inside
-     *	the affine hull of `tr`. `S` must not be degenerate, i.e. its source and target must not be equal.
-     *	\param hint the starting point to search for `S`.
+     *        \param S the segment to be traversed. If `tr` has dimension < 3, `S` must lie inside
+     *        the affine hull of `tr`. `S` must not be degenerate, i.e. its source and target must not be equal.
+     *        \param hint the starting point to search for `S`.
      */
-    Triangulation_segment_cell_iterator_3( const Tr& tr, const Segment& S, Cell_handle hint = Cell_handle() );
+    Triangulation_segment_cell_iterator_3( const Tr* tr, const Segment& S, Cell_handle hint = Cell_handle() );
 // \}
+
+    // private constructor that does not initialize the source and target.
+    // used for the end()
+    Triangulation_segment_cell_iterator_3(const Tr* tr);
 
 #ifndef CGAL_TST_ASSUME_CORRECT_TYPES
     // The virtual destructor is mainly defined to indicate to the casting
@@ -262,16 +210,13 @@ public:
     virtual
 #endif
     ~Triangulation_segment_cell_iterator_3() {}
-    
-private:
-    //  private constructor that does not initialize the source and target.
-    Triangulation_segment_cell_iterator_3( const Tr& tr );
+
 
 public:
 // \name Accessors
 // \{
 
-    const Tr& triangulation() const     { return _tr; }
+    const Tr* triangulation() const     { return _tr; }
 
     //  gives the source point of the segment followed.
     /*  \return the source point.
@@ -280,106 +225,86 @@ public:
 
     //  gives the target point of the segment follwoed.
     /*  \return the target point.
-	 */
+         */
     const Point&    target() const      { return _target; }
-
-    //  gives the current cell.
-    /*  By invariance, this cell is intersected by the segment
-	 *	between `source()` and `target()`.
-	 *	\return the current cell.
-	 *	\sa `handle()`.
-	 */
-    const Cell      cell() const
-    {
-      using CGAL::cpp11::get;
-      return *get<0>(_cur);
-    }
 
     //  gives a handle to the current cell.
     /*  By invariance, this cell is intersected by the segment
-	 *	between `source()` and `target()`.
-	 *	\return a handle to the current cell.
-	 *	\sa `cell()`.
-	 */
+         *        between `source()` and `target()`.
+         *        \return a handle to the current cell.
+         *        \sa `cell()`.
+         */
     Cell_handle     handle()
     {
-      using CGAL::cpp11::get;
-      return get<0>(_cur);
+      return std::get<0>(_cur);
     }
 
     //  gives the previous cell.
     /*  This cell is uninitialized until the iterator leaves the initial
-	 *	cell.
-	 *	By invariance, once initialized, this cell must be intersected by the segment
-	 *	between `source()` and `target()`.
-	 *	\return the previous cell.
-	 *	\sa `handle()`.
-	 */
+         *        cell.
+         *        By invariance, once initialized, this cell must be intersected by the segment
+         *        between `source()` and `target()`.
+         *        \return the previous cell.
+         *        \sa `handle()`.
+         */
     Cell_handle     previous() const
     {
-      using CGAL::cpp11::get;
-      return get<0>(_prev);
+      return prev_cell();
     }
 
     //  provides a dereference operator.
-    /* 	\return a pointer to the current cell.
-	 */
+    /*         \return a pointer to the current cell.
+         */
     Cell*           operator->()
     {
-      using CGAL::cpp11::get;
-      return &*get<0>(_cur);
+      return &*std::get<0>(_cur);
     }
 
     //  provides an indirection operator.
     /*  \return the current cell.
-	 */
+         */
     Cell&           operator*()
     {
-      using CGAL::cpp11::get;
-      return *get<0>(_cur);
+      return *std::get<0>(_cur);
     }
 
     //  provides a conversion operator.
-    /* 	\return a handle to the current cell.
-	 */
-    operator const  Cell_handle() const
+    /*         \return a handle to the current cell.
+         */
+    operator Cell_handle() const
     {
-      using CGAL::cpp11::get;
-      return get<0>(_cur);
+      return std::get<0>(_cur);
     }
 
     //  provides a conversion operator.
-    /* 	\return the simplex through wich the current cell was entered.
-	 */
-    operator const  Simplex() const { return _cur; }
+    /*         \return the simplex through wich the current cell was entered.
+         */
+    operator Simplex() const { return _cur; }
 
     //  checks whether the iterator has reached the final cell, which contains the `target()`.
     /*  If the `target()` lies on a facet, edge, or vertex, the final cell is the cell containing
-	 *	the interior of the segment between `source()` and `target()`.
-	 *	\return true iff the current cell contains the `target()`.
-	 */
+         *        the interior of the segment between `source()` and `target()`.
+         *        \return true iff the current cell contains the `target()`.
+         */
     bool            has_next() const
     {
-      using CGAL::cpp11::get;
-      return get<0>(_cur) != Cell_handle();
+      return this->cell() != Cell_handle();
     }
 
     //  gives the simplex through which the current cell was entered.
-    /* 	For the first cell, containing the `source()` \f$ s \f$,
+    /*         For the first cell, containing the `source()` \f$ s \f$,
      *  this indicates the location of \f$ s \f$ in this cell.
-	 */
+         */
     void            entry( Locate_type& lt, int& li, int& lj ) const
     {
-      using CGAL::cpp11::get;
-      lt = get<1>(_cur); li = get<2>(_cur); lj = get<3>(_cur);
+      lt = this->lt(); li = this->li(); lj = this->lj();
     }
     //  gives the simplex through which the previous cell was exited.
-    /* 	\pre the current cell is not the initial cell.
-	 */
+    /*         \pre the current cell is not the initial cell.
+         */
     void            exit( Locate_type& lt, int& li, int& lj ) const
     {
-      using CGAL::cpp11::get;
-      lt = get<1>(_prev); li = get<2>(_prev); lj = get<3>(_prev);
+      lt = prev_lt(); li = prev_li(); lj = prev_lj();
     }
 
     //  gives the past-the-end iterator associated with this iterator.
@@ -390,87 +315,85 @@ public:
 // \name Mutators
 // \{
     //  provides the increment postfix operator.
-    /* 	After incrementing the iterator, the current cell intersects the segment
-     *	between `source()` and `target()` closer to the `target()` than the previous cell.
-     *	\sa `operator++(int)`.
+    /*         After incrementing the iterator, the current cell intersects the segment
+     *        between `source()` and `target()` closer to the `target()` than the previous cell.
+     *        \sa `operator++(int)`.
      *  \pre The current cell does not contain the `target()`.
      */
     SCI&            operator++();
-		
+
     //  provides the increment prefix operator.
-    /* 	After incrementing the iterator, the current cell intersects the segment
-     *	between `source()` and `target()` closer to the `target()` than the previous cell.
-     *	than the previous cell.
-     *	\sa `operator++()`.
+    /*         After incrementing the iterator, the current cell intersects the segment
+     *        between `source()` and `target()` closer to the `target()` than the previous cell.
+     *        than the previous cell.
+     *        \sa `operator++()`.
      *  \pre The current cell does not contain the `target()`.
      */
     SCI             operator++( int );
 
     //  iterates to the final cell, which contains the `target()`.
-    /* 	\return the final cell.
+    /*         \return the final cell.
      */
     Cell_handle     complete();
 // \}
-	
+
 public:
 // \name Comparison
 // \{
     //  compares this iterator with `sci`.
     /*  \param sci the other iterator.
-     *	\return true iff the other iterator iterates the same triangulation along the same line segment
-     *	and has the same current cell.
-     *	\sa `operator!=( const SCI& t )`.
+     *        \return true iff the other iterator iterates the same triangulation along the same line segment
+     *        and has the same current cell.
+     *        \sa `operator!=( const SCI& t )`.
      */
     bool            operator==( const SCI& sci ) const;
-		
+
     //  compares this iterator with `sci`.
     /*  \param sci the other iterator.
-     *	\return `false` iff the other iterator iterates the same triangulation along the same line segment
-     *	and has the same current cell.
-     *	\sa `operator==( const SCI& t ) const`.
+     *        \return `false` iff the other iterator iterates the same triangulation along the same line segment
+     *        and has the same current cell.
+     *        \sa `operator==( const SCI& t ) const`.
      */
     bool            operator!=( const SCI& sci ) const;
 
     //  compares the current cell with `ch`.
     /*  \param ch a handle to the other cell.
-     *	\return true iff the current cell is the same as the one pointed to by `ch`.
-     *	\sa `operator!=( const Cell_handle& ch ) const`.
-     *	\sa `operator==( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
+     *        \return true iff the current cell is the same as the one pointed to by `ch`.
+     *        \sa `operator!=( const Cell_handle& ch ) const`.
+     *        \sa `operator==( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
      */
     bool            operator==( const Cell_handle& ch ) const
     {
-      using CGAL::cpp11::get;
-      return ch == get<0>(_cur);
+      return ch == std::get<0>(_cur);
     }
-		
+
     //  compares the current cell with `ch`.
     /*  \param ch a handle to the other cell.
-     *	\return `false` iff the current cell is the same as the one pointed to by `ch`.
-     *	\sa `operator==( const Cell_handle& ch )`.
-     *	\sa `operator!=( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
+     *        \return `false` iff the current cell is the same as the one pointed to by `ch`.
+     *        \sa `operator==( const Cell_handle& ch )`.
+     *        \sa `operator!=( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
      */
     bool            operator!=( const Cell_handle& ch ) const
     {
-      using CGAL::cpp11::get;
-      return ch != get<0>(_cur);
+      return ch != std::get<0>(_cur);
     }
 // \}
 
-	bool            operator==( Nullptr_t CGAL_triangulation_assertion_code(n) ) const;
-	bool            operator!=( Nullptr_t n ) const;
+        bool            operator==( Nullptr_t CGAL_assertion_code(n) ) const;
+        bool            operator!=( Nullptr_t n ) const;
 
 protected:
 // \internal \name Protected Member Functions
 // \{
     //  walks to the next cell.
     /*  \sa `complete()`.
-	 */
+         */
     void            walk_to_next();
-    
+
     //  increments the iterator.
     /*  This method may perform more actions based on the superclass.
      *  \sa `complete()`.
-	 */
+         */
     void            increment() {
         typedef typename Incrementer::SCI    Expected;
 #ifdef CGAL_TST_ASSUME_CORRECT_TYPES
@@ -492,16 +415,16 @@ private:
     std::pair<Simplex, Simplex> walk_to_next_3(const Simplex& prev,
                                                const Simplex& cur) const;
     void            walk_to_next_3_inf( int inf );
-	
+
     //  walk_to_next(), if the triangulation is 2D.
     void            walk_to_next_2();
     void            walk_to_next_2_inf( int inf );
 
 private:
     inline int      edgeIndex( int i, int j ) const {
-        CGAL_triangulation_precondition( i>=0 && i<=3 );
-        CGAL_triangulation_precondition( j>=0 && j<=3 );
-        CGAL_triangulation_precondition( i != j );
+        CGAL_precondition( i>=0 && i<=3 );
+        CGAL_precondition( j>=0 && j<=3 );
+        CGAL_precondition( i != j );
         return ( i==0 || j==0 ) ? i+j-1 : i+j;
     }
 
@@ -516,24 +439,51 @@ private:
     Edge opposite_edge(Cell_handle c, int li, int lj) const;
     Edge opposite_edge(const Edge& e) const;
 
+    // ref-accessors to the simplex, for use in internal code
+    // access _cur
+    Cell_handle& cell()             { return std::get<0>(_cur); }
+    Cell_handle const& cell() const { return std::get<0>(_cur); }
+
+    Locate_type& lt()             { return std::get<1>(_cur); }
+    Locate_type const& lt() const { return std::get<1>(_cur); }
+
+    int& li()             { return std::get<2>(_cur); }
+    int const& li() const { return std::get<2>(_cur); }
+
+    int& lj()             { return std::get<3>(_cur); }
+    int const& lj() const { return std::get<3>(_cur); }
+
+    // access _prev
+    Cell_handle& prev_cell()             { return std::get<0>(_prev); }
+    Cell_handle const& prev_cell() const { return std::get<0>(_prev); }
+
+    Locate_type& prev_lt()             { return std::get<1>(_prev); }
+    Locate_type const& prev_lt() const { return std::get<1>(_prev); }
+
+    int& prev_li()             { return std::get<2>(_prev); }
+    int const& prev_li() const { return std::get<2>(_prev); }
+
+    int& prev_lj()             { return std::get<3>(_prev); }
+    int const& prev_lj() const { return std::get<3>(_prev); }
+
 }; // class Triangulation_segment_cell_iterator_3
-	
+
 //  compares a handle to a cell to a traverser.
 /*  \param ch the handle to a cell.
- *	\param t the traverser.
- *	\return true iff the cell currently traversed by `t` is the same as the one pointed to by `ch`.
- *	\sa `operator!=( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
- *	\sa `Triangulation_segment_cell_iterator_3::operator==( const Cell_handle& ch )`.
+ *        \param t the traverser.
+ *        \return true iff the cell currently traversed by `t` is the same as the one pointed to by `ch`.
+ *        \sa `operator!=( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
+ *        \sa `Triangulation_segment_cell_iterator_3::operator==( const Cell_handle& ch )`.
  */
 template < class Tr, class Inc >
 inline bool operator==( typename Tr::Cell_handle ch, Triangulation_segment_cell_iterator_3<Tr,Inc> tci ) { return tci == ch; }
 
 //  compares a handle to a cell to a traverser.
 /*  \param ch the handle to a cell.
- *	\param t the traverser.
- *	\return `false` iff the cell currently traversed by `t` is the same as the one pointed to by `ch`.
- *	\sa `operator==( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
- *	\sa `Triangulation_segment_cell_iterator_3::operator!=( const Cell_handle& ch )`.
+ *        \param t the traverser.
+ *        \return `false` iff the cell currently traversed by `t` is the same as the one pointed to by `ch`.
+ *        \sa `operator==( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
+ *        \sa `Triangulation_segment_cell_iterator_3::operator!=( const Cell_handle& ch )`.
  */
 template < class Tr, class Inc >
 inline bool operator!=( typename Tr::Cell_handle ch, Triangulation_segment_cell_iterator_3<Tr,Inc> tci ) { return tci != ch; }
@@ -568,12 +518,11 @@ public:
   typedef typename SCI::Triangulation::Facet Facet; //< defines the type of a facet in the triangulation.
   typedef typename SCI::Locate_type   Locate_type;  //< defines the simplex type returned from location.
 
-  //typedef boost::variant<Vertex_handle, Edge, Facet, Cell_handle> Simplex_type; //types sorted by dimension
-  typedef CGAL::Triangulation_simplex_3<Tds>  Simplex_type;
+  typedef CGAL::Triangulation_simplex_3<Tds>  Simplex_3;
 
-  typedef Simplex_type   value_type;       //< defines the value type  the iterator refers to.
-  typedef const Simplex_type&  reference;  //< defines the reference type of the iterator.
-  typedef const Simplex_type*  pointer;    //< defines the pointer type of the iterator.
+  typedef Simplex_3   value_type;       //< defines the value type  the iterator refers to.
+  typedef const Simplex_3&  reference;  //< defines the reference type of the iterator.
+  typedef const Simplex_3*  pointer;    //< defines the pointer type of the iterator.
   typedef std::size_t    size_type;        //< defines the integral type that can hold the size of a sequence.
   typedef std::ptrdiff_t difference_type;  //< defines the signed integral type that can hold the distance between two iterators.
   typedef std::forward_iterator_tag iterator_category;      //< defines the iterator category.
@@ -581,29 +530,33 @@ public:
 
 private:
   SCI _cell_iterator;
-  Simplex_type _curr_simplex;
+  Simplex_3 _curr_simplex;
 
 public:
-  Triangulation_segment_simplex_iterator_3(const Tr& tr
+  Triangulation_segment_simplex_iterator_3(const Tr* tr
     , Vertex_handle s, Vertex_handle t)
     : _cell_iterator(tr, s, t)
   { set_curr_simplex_to_entry(); }
-  Triangulation_segment_simplex_iterator_3(const Tr& tr
+  Triangulation_segment_simplex_iterator_3(const Tr* tr
     , Vertex_handle s, const Point& t)
     : _cell_iterator(tr, s, t)
   { set_curr_simplex_to_entry(); }
-  Triangulation_segment_simplex_iterator_3(const Tr& tr
+  Triangulation_segment_simplex_iterator_3(const Tr* tr
     , const Point& s, Vertex_handle t, Cell_handle hint = Cell_handle())
     : _cell_iterator(tr, s, t, hint)
   { set_curr_simplex_to_entry(); }
-  Triangulation_segment_simplex_iterator_3(const Tr& tr
+  Triangulation_segment_simplex_iterator_3(const Tr* tr
     , const Point& s, const Point& t, Cell_handle hint = Cell_handle())
     : _cell_iterator(tr, s, t, hint)
   { set_curr_simplex_to_entry(); }
-  Triangulation_segment_simplex_iterator_3(const Tr& tr
+  Triangulation_segment_simplex_iterator_3(const Tr* tr
     , const Segment& seg, Cell_handle hint = Cell_handle())
     : _cell_iterator(tr, seg, hint)
   { set_curr_simplex_to_entry(); }
+  Triangulation_segment_simplex_iterator_3(const Tr* tr)
+    : _cell_iterator(tr)
+    , _curr_simplex()
+  {}
 
   bool operator==(const Simplex_iterator& sit) const
   {
@@ -619,7 +572,7 @@ public:
   const Point&    source() const      { return _cell_iterator.source(); }
   const Point&    target() const      { return _cell_iterator.target(); }
 
-  const Tr& triangulation() const     { return _cell_iterator.triangulation(); }
+  const Tr* triangulation() const     { return _cell_iterator.triangulation(); }
 
 private:
   Triangulation_segment_simplex_iterator_3
@@ -638,7 +591,7 @@ private:
     //check what is the entry type of _cell_iterator
     if (Cell_handle(_cell_iterator) == Cell_handle())
     {
-      //where did the segment get out from previous cell
+      //where did the segment std::get out from previous cell
       cell = _cell_iterator.previous();
       _cell_iterator.exit(lt, li, lj);
     }
@@ -656,7 +609,7 @@ private:
     case Locate_type::EDGE:
       _curr_simplex = Edge(cell, li, lj);
       break;
-    case Locate_type::FACET: 
+    case Locate_type::FACET:
       _curr_simplex = Facet(cell, li);
       break;
       //the 3 cases below correspond to the case when _cell_iterator
@@ -665,7 +618,7 @@ private:
     case Locate_type::OUTSIDE_CONVEX_HULL:
     case Locate_type::OUTSIDE_AFFINE_HULL:
       if (Cell_handle(_cell_iterator) == Cell_handle())
-        _curr_simplex = Simplex_type();
+        _curr_simplex = Simplex_3();
       else
         _curr_simplex = cell;
       break;
@@ -690,9 +643,21 @@ public:
     {
     case 3 :/*Cell_handle*/
     {
-      if (!cell_iterator_is_ahead())
-        ++_cell_iterator;
-      set_curr_simplex_to_entry();
+      Cell_handle ch = Cell_handle(_cell_iterator);
+      if (ch == Cell_handle())
+      {
+        if(!triangulation()->is_infinite(Cell_handle(_curr_simplex)))
+          set_curr_simplex_to_entry();
+        else
+          _curr_simplex = Simplex_3();
+        break;
+      }
+      else
+      {
+        if (!cell_iterator_is_ahead())
+          ++_cell_iterator;
+        set_curr_simplex_to_entry();
+      }
       break;
     }
     case 2 :/*Facet*/
@@ -705,6 +670,11 @@ public:
         //taking cell_iterator one step forward
         CGAL_assertion(cell_has_facet(Cell_handle(_cell_iterator), get_facet()));
         ++_cell_iterator;
+        if (Cell_handle(_cell_iterator) == Cell_handle())
+        {
+          _curr_simplex = _cell_iterator.previous();
+          break;
+        }
       }
       else
         ch = _cell_iterator.previous();
@@ -719,17 +689,18 @@ public:
       {
         if (_cell_iterator == _cell_iterator.end())
         {
-          _curr_simplex = Simplex_type();
+          _curr_simplex = Simplex_3();
           break;
         }
         //if the entry vertex is a vertex of current facet
         int i;
-        if (triangulation().has_vertex(get_facet(), chnext->vertex(linext), i))
+        if (triangulation()->has_vertex(get_facet(), chnext->vertex(linext), i))
           set_curr_simplex_to_entry();
         else
           _curr_simplex = ch;
         break;
       }
+
       case Locate_type::EDGE:
         if (facet_has_edge(get_facet(), Edge(chnext, linext, ljnext)))
           set_curr_simplex_to_entry();
@@ -741,6 +712,10 @@ public:
         _curr_simplex = ch;
         break;
 
+      case Locate_type::OUTSIDE_AFFINE_HULL:
+        _curr_simplex = Simplex_3();
+        break;
+
       default:
         CGAL_assertion(false);
       };
@@ -749,13 +724,24 @@ public:
     case 1:/*Edge*/
     {
       Cell_handle ch = Cell_handle(_cell_iterator);
-
+      if (ch == _cell_iterator.previous())
+      {
+        _curr_simplex = Simplex_3();
+        break;
+      }
       Locate_type lt;
       int li, lj;
       _cell_iterator.entry(lt, li, lj);
 
       if (!cell_iterator_is_ahead())
+      {
         ++_cell_iterator;//cell_iterator needs to be ahead to detect degeneracies
+        if (Cell_handle(_cell_iterator) == Cell_handle())
+        {
+          _curr_simplex = _cell_iterator.previous();
+          break;
+        }
+      }
 
       Cell_handle chnext = Cell_handle(_cell_iterator);
       Locate_type ltnext;
@@ -773,22 +759,36 @@ public:
       case Locate_type::EDGE:
       {
         CGAL_assertion(_cell_iterator == _cell_iterator.end()
-          || triangulation().is_infinite(chnext)
-          || _curr_simplex != Simplex_type(Edge(chnext, linext, ljnext)));
+          || triangulation()->is_infinite(chnext)
+          || _curr_simplex != Simplex_3(Edge(chnext, linext, ljnext)));
 
         if (_cell_iterator == _cell_iterator.end())
-          _curr_simplex = Simplex_type();
-        else if (triangulation().is_infinite(chnext)
-          && _curr_simplex == Simplex_type(Edge(chnext, linext, ljnext)))
+          _curr_simplex = Simplex_3();
+        else if (triangulation()->is_infinite(chnext)
+          && _curr_simplex == Simplex_3(Edge(chnext, linext, ljnext)))
           _curr_simplex = chnext;
         else
           _curr_simplex = shared_facet(get_edge(), Edge(chnext, linext, ljnext));
         break;
       }
+
       case Locate_type::FACET:
         _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
         break;
 
+      case Locate_type::OUTSIDE_AFFINE_HULL:
+      {
+        Cell_handle chprev = _cell_iterator.previous();
+        Locate_type ltprev;
+        int liprev, ljprev;
+        _cell_iterator.exit(ltprev, liprev, ljprev);
+
+        if (ltprev == Locate_type::VERTEX) //edge-vertex-outside
+          _curr_simplex = chprev->vertex(liprev);
+        else
+          _curr_simplex = Simplex_3(); //edge-outside
+        break;
+      }
       default:
         CGAL_assertion(false);//should not happen
       };
@@ -797,9 +797,15 @@ public:
     case 0 :/*Vertex_handle*/
     {
       Cell_handle ch = Cell_handle(_cell_iterator);
-
+      if (ch == _cell_iterator.previous())
+      {
+        _curr_simplex = Simplex_3();
+        break;
+      }
       if (!cell_iterator_is_ahead()) //_curr_simplex does contain v
+      {
         ++_cell_iterator;//cell_iterator needs to be ahead to detect degeneracies
+      }
       else
         ch = _cell_iterator.previous();
 
@@ -811,21 +817,21 @@ public:
       int linext, ljnext;
       _cell_iterator.entry(ltnext, linext, ljnext);
 
+      Cell_handle prev;
+      Locate_type ltprev;
+      int liprev, ljprev;
+      prev = _cell_iterator.previous();
+      _cell_iterator.exit(ltprev, liprev, ljprev);
+
       switch (ltnext)
       {
       case Locate_type::VERTEX:
       {
         CGAL_assertion(_cell_iterator == _cell_iterator.end()
                      || get_vertex() != chnext->vertex(linext)
-                     || triangulation().is_infinite(chnext));
+                     || triangulation()->is_infinite(chnext));
         if (_cell_iterator == _cell_iterator.end())
         {
-          Cell_handle prev;
-          Locate_type ltprev;
-          int liprev, ljprev;
-          prev = _cell_iterator.previous();
-          _cell_iterator.exit(ltprev, liprev, ljprev);
-
           if (prev == ch && ltprev == Locate_type::VERTEX)
           {
             CGAL_assertion(prev->vertex(liprev) == get_vertex());
@@ -843,19 +849,20 @@ public:
         }
         else
         {
-          if (triangulation().is_infinite(chnext) && get_vertex() == chnext->vertex(linext))
+          if (triangulation()->is_infinite(chnext) && get_vertex() == chnext->vertex(linext))
             _curr_simplex = chnext;
           else
           {
             Cell_handle ec;
-            int ei, ej;
-            if (!triangulation().is_edge(get_vertex(), chnext->vertex(linext), ec, ei, ej))
+            int ei = -1, ej = -1;
+            if (!triangulation()->is_edge(get_vertex(), chnext->vertex(linext), ec, ei, ej))
               CGAL_assertion(false);
             _curr_simplex = Edge(ec, ei, ej);
           }
         }
         break;
       }
+
       case Locate_type::EDGE:
       {
         //facet shared by get_vertex() and the edge
@@ -863,12 +870,40 @@ public:
         _curr_simplex = shared_facet(Edge(chnext, linext, ljnext), get_vertex());
         break;
       }
-      default ://FACET
-        CGAL_assertion(ltnext == Locate_type::FACET);
-        if(chnext == Cell_handle())
-          _curr_simplex = Simplex_type();
+
+      case Locate_type::OUTSIDE_AFFINE_HULL:
+      {
+        CGAL_assertion(_cell_iterator == _cell_iterator.end());
+        if (ltprev == Locate_type::VERTEX) //vertex-edge-vertex-outside
+        {
+          if(prev->vertex(liprev) != get_vertex())//avoid infinite loop edge-vertex-same edge-...
+            _curr_simplex = Edge(prev, liprev, prev->index(get_vertex()));
+          else
+            _curr_simplex = Simplex_3();
+        }
+        else if (ltprev == Locate_type::EDGE)//vertex-facet-edge-outside
+          _curr_simplex = Facet(prev, prev->index(get_vertex()));
+        else if (ltprev == Locate_type::FACET) //vertex-facet-outside
+        {
+          if(prev->vertex(liprev) != get_vertex()) //vertex-facet-outside
+            _curr_simplex = Facet(prev, liprev);
+          else //vertex-cell-facet-outside
+            _curr_simplex = prev;
+        }
+        else
+        {
+          CGAL_assertion(ltprev == Locate_type::CELL);//vertex-cell-outside
+          _curr_simplex = prev;
+        }
+        break;
+      }
+
+      default://FACET
+        if (chnext == Cell_handle())
+          _curr_simplex = Simplex_3();
         else
           _curr_simplex = shared_cell(Facet(chnext, linext), get_vertex());
+        break;
       };
     }
     break;
@@ -887,19 +922,19 @@ public:
   }
 
   //  provides a dereference operator.
-  /* 	\return a pointer to the current cell.
+  /*         \return a pointer to the current cell.
   */
-  const Simplex_type*   operator->()        { return &_curr_simplex; }
+  const Simplex_3*   operator->()        { return &_curr_simplex; }
 
   //  provides an indirection operator.
   /*  \return the current cell.
   */
-  const Simplex_type&   operator*()         { return _curr_simplex; }
+  const Simplex_3&   operator*()         { return _curr_simplex; }
 
   //  provides a conversion operator.
-  /* 	\return a handle to the current cell.
+  /*  \return the current simplex
   */
-  operator const  Cell_handle() const { return Cell_handle(_cell_iterator); }
+  operator const Simplex_3() const { return _curr_simplex; }
 
   bool is_vertex() const { return _curr_simplex.dimension() == 0; }
   bool is_edge()   const { return _curr_simplex.dimension() == 1; }
@@ -911,7 +946,7 @@ public:
     return _cell_iterator.cell();
   }
 
-  const Simplex_type& get_simplex() const { return _curr_simplex; }
+  const Simplex_3& get_simplex() const { return _curr_simplex; }
   Vertex_handle get_vertex() const
   {
     CGAL_assertion(is_vertex());
@@ -1045,7 +1080,7 @@ private:
     Vertex_handle nsv2 = (sv == v2a) ? v2b : v2a;
 
     typename Tr::Facet_circulator circ
-      = triangulation().incident_facets(e1);
+      = triangulation()->incident_facets(e1);
     typename Tr::Facet_circulator end = circ;
     do
     {
@@ -1065,13 +1100,13 @@ private:
   Facet shared_facet(const Edge& e, const Vertex_handle v) const
   {
     typename Tr::Facet_circulator circ
-      = triangulation().incident_facets(e);
+      = triangulation()->incident_facets(e);
     typename Tr::Facet_circulator end = circ;
     do
     {
       Facet f = *circ;
       int i;
-      if (triangulation().has_vertex(f, v, i))
+      if (triangulation()->has_vertex(f, v, i))
         return f;
     } while (++circ != end);
 
@@ -1083,7 +1118,7 @@ private:
   Cell_handle shared_cell(const Edge& e, const Vertex_handle v) const
   {
     typename Tr::Cell_circulator circ
-      = triangulation().incident_cells(e);
+      = triangulation()->incident_cells(e);
     typename Tr::Cell_circulator end = circ;
     do
     {
@@ -1114,6 +1149,6 @@ private:
 
 } // namespace CGAL
 
-#include <CGAL/Triangulation_segment_traverser_3_impl.h>
+#include <CGAL/Triangulation_3/internal/Triangulation_segment_traverser_3_impl.h>
 
 #endif // CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H

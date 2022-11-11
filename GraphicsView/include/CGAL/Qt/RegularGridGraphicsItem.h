@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -46,9 +46,9 @@ public:
 public:
 
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& verticesPen() const
   {
@@ -122,7 +122,7 @@ protected:
 }
 
   template <typename K>
-QRectF 
+QRectF
   RegularGridGraphicsItem<K>::boundingRect() const
 {
   QRectF rect = CGAL::Qt::viewportsBbox(scene());
@@ -135,8 +135,8 @@ QRectF
 
 
   template <typename K>
-void 
-  RegularGridGraphicsItem<K>::paint(QPainter *painter, 
+void
+  RegularGridGraphicsItem<K>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
@@ -147,13 +147,13 @@ void
   double r = rect.right();
 
   if(b > t) std::swap(b,t); // because things are upside down in Qt
-  
+
   painterostream = PainterOstream<Geom_traits>(painter);
   painter->setPen(this->edgesPen());
 
   double ll = l;
   ll = dx * static_cast<int>(ll/dx);
-  
+
   for(; ll < r; ll += dx){
     painterostream << Segment_2(Point_2(ll,b),
                                 Point_2(ll,t));
@@ -162,7 +162,7 @@ void
 
   double bb = b;
   bb = dy * static_cast<int>(bb/dy);
-  
+
   for(; bb < t; bb += dy){
     painterostream << Segment_2(Point_2(l,bb),
                                 Point_2(r,bb));
@@ -182,13 +182,13 @@ void
 }
 
   template <typename K>
-void 
+void
   RegularGridGraphicsItem<K>::updateBoundingBox()
 {}
 
 
   template <typename K>
-void 
+void
   RegularGridGraphicsItem<K>::modelChanged()
 {
   update();

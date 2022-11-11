@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -34,77 +34,13 @@ struct Primitive_profiler
     Primitive_profiler(const P& p = P())
       : P(p) {}
 
-    template <class A1>
+    template <class ... A>
     result_type
-    operator()(const A1 &a1) const
+    operator()(A&& ... a) const
     {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(a1);
+        CGAL_KERNEL_PROFILER;
+        return P::operator()(std::forward<A>(a)...);
     }
-
-    template <class A1, class A2>
-    result_type
-    operator()(const A1 &a1, const A2 &a2) const
-    {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(a1, a2);
-    }
-
-    template <class A1, class A2, class A3>
-    result_type
-    operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
-    {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(a1, a2, a3);
-    }
-
-    template <class A1, class A2, class A3, class A4>
-    result_type
-    operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
-    {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(a1, a2, a3, a4);
-    }
-
-    template <class A1, class A2, class A3, class A4, class A5>
-    result_type
-    operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	       const A5 &a5) const
-    {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(a1, a2, a3, a4, a5);
-    }
-
-    template <class A1, class A2, class A3, class A4, class A5, class A6>
-    result_type
-    operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	       const A5 &a5, const A6 &a6) const
-    {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(a1, a2, a3, a4, a5, a6);
-    }
-
-    template <class A1, class A2, class A3, class A4,
-              class A5, class A6, class A7>
-    result_type
-    operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	       const A5 &a5, const A6 &a6, const A7 &a7) const
-    {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(a1, a2, a3, a4, a5, a6, a7);
-    }
-
-    template <class A1, class A2, class A3, class A4,
-              class A5, class A6, class A7, class A8>
-    result_type
-    operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	       const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8) const
-    {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(a1, a2, a3, a4, a5, a6, a7, a8);
-    }
-
-    // ...
 };
 
 // We inherit all geometric objects from K, and just replace the primitives.

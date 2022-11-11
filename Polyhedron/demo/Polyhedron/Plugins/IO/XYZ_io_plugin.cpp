@@ -45,7 +45,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     return QList<Scene_item*>();
   }
 
-  
+
   if(fileinfo.size() == 0)
   {
     CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
@@ -67,7 +67,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   }
   if(point_set_item->has_normals())
     point_set_item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
-    
+
   ok = true;
   if(add_to_scene)
     CGAL::Three::Three::scene()->addItem(point_set_item);

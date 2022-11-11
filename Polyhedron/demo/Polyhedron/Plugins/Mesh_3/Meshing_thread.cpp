@@ -11,7 +11,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include "config.h"
@@ -34,8 +34,8 @@ Meshing_thread(Mesh_function_interface* f, Scene_c3t3_item* item)
 {
   connect(timer_, SIGNAL(timeout()),
           this,   SLOT(emit_status()));
-  
-  timer_->start(static_cast<int>(timer_period_*1000));  
+
+  timer_->start(static_cast<int>(timer_period_*1000));
 }
 
 
@@ -57,7 +57,11 @@ run()
   CGAL::Three::Three::CursorScopeGuard guard(Qt::BusyCursor);
   f_->launch();
   time_ = double(timer.elapsed()) / 1000;
+  CGAL::Three::Three::getMutex()->lock();
+  CGAL::Three::Three::getWaitCondition()->wakeAll();
+  CGAL::Three::Three::getMutex()->unlock();
   Q_EMIT done(this);
+
 }
 
 

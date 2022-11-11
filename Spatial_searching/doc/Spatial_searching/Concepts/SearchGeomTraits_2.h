@@ -2,7 +2,7 @@
 \ingroup PkgSpatialSearchingDConcepts
 \cgalConcept
 
-The concept `SearchGeomTraits_2` defines the requirements for the template 
+The concept `SearchGeomTraits_2` defines the requirements for the template
 parameter of the search traits classes.
 
 \cgalHasModel Any \cgal Kernel
@@ -11,21 +11,21 @@ parameter of the search traits classes.
 class SearchGeomTraits_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 Point type.
-*/ 
-typedef unspecified_type Point_2; 
+*/
+typedef unspecified_type Point_2;
 
 /*!
-The number type of the %Cartesian coordinates of types `Point_2` 
-*/ 
-typedef unspecified_type FT; 
+The number type of the %Cartesian coordinates of types `Point_2`
+*/
+typedef unspecified_type FT;
 /*!
 Iso box type.
-*/ 
+*/
 typedef unspecified_type Iso_rectangle_2;
 /*!
 Circle type.
@@ -58,19 +58,19 @@ Functor model of `Kernel::ConstructIsoRectangle_2 `
 typedef unspecified_type Construct_iso_rectangle_2;
 
 /*!
-A random access iterator type to enumerate the 
-%Cartesian coordinates of a point. 
-*/ 
+A random access iterator type to enumerate the
+%Cartesian coordinates of a point.
+*/
 typedef unspecified_type Cartesian_const_iterator_2;
 
 /*!
-Functor with operators to construct iterators on the 
-first and the past-the-end iterator for the %Cartesian coordinates of a point. This functor must 
-provide the type `result_type` that must be the same a `Cartesian_const_iterator_2`. 
-*/ 
-typedef unspecified_type Construct_cartesian_const_iterator_2; 
+Functor with operators to construct iterators on the
+first and the past-the-end iterator for the %Cartesian coordinates of a point. This functor must
+provide the type `result_type` that must be the same a `Cartesian_const_iterator_2`.
+*/
+typedef unspecified_type Construct_cartesian_const_iterator_2;
 
-/// @} 
+/// @}
 
 
 

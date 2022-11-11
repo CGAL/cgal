@@ -36,11 +36,11 @@
 #include <CGAL/Advancing_front_surface_reconstruction_cell_base_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/internal/AFSR/Surface_vertex_base_2.h>
-#include <CGAL/internal/AFSR/Surface_face_base_2.h>
-#include <CGAL/internal/AFSR/construct_surface_2.h>
-#include <CGAL/internal/AFSR/construct_polyhedron.h>
-#include <CGAL/internal/AFSR/write_triple_indices.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/Surface_vertex_base_2.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/Surface_face_base_2.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/construct_surface_2.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/construct_polyhedron.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/write_triple_indices.h>
 
 namespace CGAL {
 
@@ -175,23 +175,42 @@ namespace CGAL {
   store handles to the vertices and faces of the 3D triangulation, which enables the user to explore the
   2D as well as 3D neighborhood of vertices and facets of the surface.
 
-  \tparam Dt must be a `Delaunay_triangulation_3` with
-  `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type.
-  The default uses the `Exact_predicates_inexact_constructions_kernel` as geometric traits class.
+  \tparam Dt must be a `Delaunay_triangulation_3` whose `Traits` template parameter must be a model of
+  `AdvancingFrontSurfaceReconstructionTraits_3` and whose `Tds` template parameter must be
+  a model of `TriangulationDataStructure_3` with `Advancing_front_surface_reconstruction_vertex_base_3` and
+  `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, respectively.
+  The default value is:
+  \code
+    CGAL::Delaunay_triangulation_3<CGAL::Exact_predicates_inexact_constructions_kernel,
+                                   CGAL::Triangulation_data_structure_3<
+                                     CGAL::Advancing_front_surface_reconstruction_vertex_base_3<
+                                       CGAL::Exact_predicates_inexact_constructions_kernel>,
+                                     CGAL::Advancing_front_surface_reconstruction_cell_base_3<
+                                       CGAL::Exact_predicates_inexact_constructions_kernel> > >`
+  \endcode
 
-  \tparam P must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
-  priority of the facet `(Cell_handle,int)`. This functor enables the user to choose how candidate
-  triangles are prioritized. If a facet should not appear in the output,
+  \tparam P must be a functor offering
+  \code
+    FT operator()(Advancing_front_surface_reconstruction::Cell_handle,int)
+  \endcode
+  returning the priority of the facet `(Cell_handle,int)`. This functor enables the user
+  to choose how candidate triangles are prioritized. If a facet should not appear in the output,
   `infinity()` must be returned. It defaults to a functor that returns the
   `smallest_radius_delaunay_sphere()`.
 
   */
-  template <
-    class Dt = Default,
-    class P = Default>
-  class Advancing_front_surface_reconstruction {
-
-    typedef typename Default::Get<Dt,Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
+  template <class Dt = Default,
+            class P = Default>
+  class Advancing_front_surface_reconstruction
+  {
+    typedef typename Default::Get<Dt,
+                                  Delaunay_triangulation_3<
+                                    Exact_predicates_inexact_constructions_kernel,
+                                    Triangulation_data_structure_3<
+                                      Advancing_front_surface_reconstruction_vertex_base_3<
+                                        Exact_predicates_inexact_constructions_kernel>,
+                                      Advancing_front_surface_reconstruction_cell_base_3<
+                                        Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
     typedef typename Default::Get<P,AFSR::Default_priority>::type Priority;
   public:
 
@@ -202,9 +221,9 @@ namespace CGAL {
   /*!
     The type of the 2D triangulation data structure describing the reconstructed surface, being a model of `TriangulationDataStructure_2`.
     - The type `Triangulation_data_structure_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the
-    method `vertex_3()` that returns a `#Vertex_handle` to the associated 3D vertex.
+    method `vertex_3()` that returns a `Vertex_handle` to the associated 3D vertex.
     - The type `Triangulation_data_structure_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
-    method `facet()` that returns the associated `#Facet`, and a method `bool is_on_surface()`
+    method `facet()` that returns the associated `Facet`, and a method `bool is_on_surface()`
     for testing if a face is part of the reconstructed surface or a face incident to a boundary edge.
 
     In case the surface has boundaries, the 2D surface has one vertex which is associated to the infinite
@@ -213,14 +232,19 @@ namespace CGAL {
     typedef unspecified_type Triangulation_data_structure_2;
 
   /*!
-  The type of the 3D triangulation.
+  The type of the 3D Delaunay triangulation (the first template parameter).
   */
     typedef unspecified_type Triangulation_3;
 
   /*!
-  The type of the facet priority functor.
+  The type of the facet priority functor (the second template parameter).
   */
     typedef unspecified_type Priority;
+
+  /*!
+  The number type.
+  */
+    typedef typename Triangulation_3::Geom_traits::FT FT;
 
   /*!
   The point type.
@@ -245,21 +269,21 @@ namespace CGAL {
   /*!
     A bidirectional iterator range which enables to enumerate all points that were removed
     from the 3D Delaunay triangulation during the surface reconstruction. The value type
-    of the iterator is `#Point`.
+    of the iterator is `Point`.
   */
     typedef unspecified_type Outlier_range;
+
+  /*!
+     A bidirectional iterator range which enables to visit all vertices on a boundary.
+     The value type of the iterator is `Vertex_handle`.
+   */
+     typedef unspecified_type Vertex_on_boundary_range;
 
   /*!
     A bidirectional iterator range which enables to visit all boundaries.
     The value type of the iterator is `Vertex_on_boundary_range`.
   */
     typedef unspecified_type Boundary_range;
-
- /*!
-    A bidirectional iterator range which enables to visit all vertices on a boundary.
-    The value type of the iterator is  `#Vertex_handle`
-  */
-    typedef unspecified_type Vertex_on_boundary_range;
   /// @}
 #endif
 
@@ -268,6 +292,7 @@ namespace CGAL {
     typedef Advancing_front_surface_reconstruction<Dt,P> Extract;
     typedef typename Triangulation_3::Geom_traits Geom_traits;
 
+    typedef typename Kernel::FT FT;
     typedef typename Kernel::FT coord_type;
 
     typedef typename Kernel::Point_3  Point;
@@ -369,7 +394,7 @@ namespace CGAL {
     bool deal_with_2d;
     Priority priority;
     int max_connected_component;
-    double K_init, K_step;
+    coord_type K_init, K_step;
     std::list<Vertex_handle> interior_edges;
     std::list< Incidence_request_elt > incidence_requests;
     typename std::list< Incidence_request_elt >::iterator sentinel;
@@ -377,7 +402,23 @@ namespace CGAL {
     std::list<Next_border_elt> nbe_pool;
     std::list<Intern_successors_type> ist_pool;
 
+  public:
+    Vector construct_vector(const Point& p, const Point& q) const
+    {
+      return T.geom_traits().construct_vector_3_object()(p, q);
+    }
 
+    Vector construct_cross_product(const Vector& v, const Vector& w) const
+    {
+      return T.geom_traits().construct_cross_product_vector_3_object()(v, w);
+    }
+
+    FT compute_scalar_product(const Vector& v, const Vector& w) const
+    {
+      return T.geom_traits().compute_scalar_product_3_object()(v, w);
+    }
+
+  private:
     Intern_successors_type* new_border()
     {
       nbe_pool.resize(nbe_pool.size()+1);
@@ -401,12 +442,12 @@ namespace CGAL {
     {
       if (vh->m_incident_border == nullptr) return false; //vh is interior
       if (vh->m_incident_border->first->first != nullptr)
-	{
-	  if (vh->m_incident_border->second->first != nullptr)
-	    return ((vh->m_incident_border->first->second.second == i)||
-		    (vh->m_incident_border->second->second.second == i));
-	  return (vh->m_incident_border->first->second.second == i);
-	}
+        {
+          if (vh->m_incident_border->second->first != nullptr)
+            return ((vh->m_incident_border->first->second.second == i)||
+                    (vh->m_incident_border->second->second.second == i));
+          return (vh->m_incident_border->first->second.second == i);
+        }
       return false; //vh is still exterior
     }
 
@@ -414,32 +455,32 @@ namespace CGAL {
     void remove_border_edge(Vertex_handle w, Vertex_handle v)
     {
       if (w->m_incident_border != nullptr)
-	{
-	  if (w->m_incident_border->second->first == v)
-	    {
-	      w->m_incident_border->second->first = nullptr;
-	      set_interior_edge(w,v);
-	      return;
-	    }
-	  if (w->m_incident_border->first->first == v)
-	    {
-	      if (w->m_incident_border->second->first != nullptr)
-		{
-		  Next_border_elt* tmp = w->m_incident_border->first;
-		  w->m_incident_border->first = w->m_incident_border->second;
-		  w->m_incident_border->second = tmp;
-		  w->m_incident_border->second->first = nullptr;
-		  set_interior_edge(w,v);
-		  return;
-		}
-	      else
-		{
-		  w->m_incident_border->first->first = nullptr;
-		  set_interior_edge(w,v);
-		  return;
-		}
-	    }
-	}
+        {
+          if (w->m_incident_border->second->first == v)
+            {
+              w->m_incident_border->second->first = nullptr;
+              set_interior_edge(w,v);
+              return;
+            }
+          if (w->m_incident_border->first->first == v)
+            {
+              if (w->m_incident_border->second->first != nullptr)
+                {
+                  Next_border_elt* tmp = w->m_incident_border->first;
+                  w->m_incident_border->first = w->m_incident_border->second;
+                  w->m_incident_border->second = tmp;
+                  w->m_incident_border->second->first = nullptr;
+                  set_interior_edge(w,v);
+                  return;
+                }
+              else
+                {
+                  w->m_incident_border->first->first = nullptr;
+                  set_interior_edge(w,v);
+                  return;
+                }
+            }
+        }
     }
 
 
@@ -448,12 +489,12 @@ namespace CGAL {
 
       bool r1;
       if(w->m_ie_first == ie_sentinel){
-	r1 = false;
+        r1 = false;
       }else {
-	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
-	e++;
-	typename std::list<Vertex_handle>::iterator r = std::find(b, e, v);
-	r1 = ( r != e);
+        typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
+        e++;
+        typename std::list<Vertex_handle>::iterator r = std::find(b, e, v);
+        r1 = ( r != e);
       }
 
       return r1;
@@ -467,17 +508,17 @@ namespace CGAL {
     inline void set_interior_edge(Vertex_handle w, Vertex_handle v)
     {
       if(w->m_ie_last == ie_sentinel){ // empty set
-	CGAL_assertion(w->m_ie_first == w->m_ie_last);
-	w->m_ie_last = interior_edges.insert(w->m_ie_last, v);
-	w->m_ie_first = w->m_ie_last;
+        CGAL_assertion(w->m_ie_first == w->m_ie_last);
+        w->m_ie_last = interior_edges.insert(w->m_ie_last, v);
+        w->m_ie_first = w->m_ie_last;
       } else {
-	typename std::list<Vertex_handle>::iterator e(w->m_ie_last);
-	e++;
+        typename std::list<Vertex_handle>::iterator e(w->m_ie_last);
+        e++;
 #ifdef DEBUG
-	typename std::list<Vertex_handle>::iterator r = std::find(w->m_ie_first, e, v);
-	CGAL_assertion(r == e);
+        typename std::list<Vertex_handle>::iterator r = std::find(w->m_ie_first, e, v);
+        CGAL_assertion(r == e);
 #endif
-	w->m_ie_last = interior_edges.insert(e, v);
+        w->m_ie_last = interior_edges.insert(e, v);
       }
     }
 
@@ -485,26 +526,26 @@ namespace CGAL {
     inline void remove_interior_edge(Vertex_handle w, Vertex_handle v)
     {
       if(w->m_ie_first == ie_sentinel){
-	CGAL_assertion(w->m_ie_last == w->m_ie_first);
+        CGAL_assertion(w->m_ie_last == w->m_ie_first);
       } else if(w->m_ie_first == w->m_ie_last){ // there is only one element
-	if(*(w->m_ie_first) == v){
-	  interior_edges.erase(w->m_ie_first);
-	  w->m_ie_last = ie_sentinel;
-	  w->m_ie_first = w->m_ie_last;
-	}
+        if(*(w->m_ie_first) == v){
+          interior_edges.erase(w->m_ie_first);
+          w->m_ie_last = ie_sentinel;
+          w->m_ie_first = w->m_ie_last;
+        }
       } else {
-	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
-	e++;
-	typename std::list<Vertex_handle>::iterator r = std::find(b, e, v);
-	if(r != e){
-	  if(r == w->m_ie_first){
-	    w->m_ie_first++;
-	  }
-	  if(r == w->m_ie_last){
-	    w->m_ie_last--;
-	  }
-	  interior_edges.erase(r);
-	}
+        typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
+        e++;
+        typename std::list<Vertex_handle>::iterator r = std::find(b, e, v);
+        if(r != e){
+          if(r == w->m_ie_first){
+            w->m_ie_first++;
+          }
+          if(r == w->m_ie_last){
+            w->m_ie_last--;
+          }
+          interior_edges.erase(r);
+        }
       }
     }
 
@@ -514,20 +555,20 @@ namespace CGAL {
     inline void set_incidence_request(Vertex_handle w, const Incidence_request_elt& ir)
     {
       if(w->m_ir_last == sentinel ){
-	CGAL_assertion(w->m_ir_first == w->m_ir_last);
-	w->m_ir_last = incidence_requests.insert(w->m_ir_last, ir);
-	w->m_ir_first = w->m_ir_last;
+        CGAL_assertion(w->m_ir_first == w->m_ir_last);
+        w->m_ir_last = incidence_requests.insert(w->m_ir_last, ir);
+        w->m_ir_first = w->m_ir_last;
       } else {
-	typename std::list<Incidence_request_elt>::iterator e(w->m_ir_last);
-	e++;
-	w->m_ir_last = incidence_requests.insert(e, ir);
+        typename std::list<Incidence_request_elt>::iterator e(w->m_ir_last);
+        e++;
+        w->m_ir_last = incidence_requests.insert(e, ir);
       }
     }
 
     inline bool is_incidence_requested(Vertex_handle w) const
     {
       if(w->m_ir_last == sentinel ){
-	CGAL_assertion(w->m_ir_first == sentinel );
+        CGAL_assertion(w->m_ir_first == sentinel );
       }
       return (w->m_ir_last != sentinel );
     }
@@ -540,10 +581,10 @@ namespace CGAL {
     inline Incidence_request_iterator incidence_request_end(Vertex_handle w)
     {
       if(w->m_ir_last != sentinel ){
-	CGAL_assertion(w->m_ir_first != sentinel );
-	Incidence_request_iterator it(w->m_ir_last);
-	it++;
-	return it;
+        CGAL_assertion(w->m_ir_first != sentinel );
+        Incidence_request_iterator it(w->m_ir_last);
+        it++;
+        return it;
       }
       return w->m_ir_last;
     }
@@ -551,11 +592,11 @@ namespace CGAL {
     inline void erase_incidence_request(Vertex_handle w)
     {
       if(w->m_ir_last != sentinel ){
-	CGAL_assertion(w->m_ir_first != sentinel );
-	w->m_ir_last++;
-	incidence_requests.erase(w->m_ir_first, w->m_ir_last);
-	w->m_ir_first = sentinel ;
-	w->m_ir_last = sentinel ;
+        CGAL_assertion(w->m_ir_first != sentinel );
+        w->m_ir_last++;
+        incidence_requests.erase(w->m_ir_first, w->m_ir_last);
+        w->m_ir_first = sentinel ;
+        w->m_ir_last = sentinel ;
       }
     }
 
@@ -563,17 +604,17 @@ namespace CGAL {
     void re_init(Vertex_handle w)
     {
       if (w->m_incident_border != nullptr)
-	{
-	  w->delete_border();
-	}
+        {
+          w->delete_border();
+        }
 
       if(w->m_ir_first != sentinel ){
-	CGAL_assertion(w->m_ir_last != sentinel );
-	typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
-	e++;
-	incidence_requests.erase(b, e);
-	w->m_ir_first = sentinel ;
-	w->m_ir_last = sentinel ;
+        CGAL_assertion(w->m_ir_last != sentinel );
+        typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
+        e++;
+        incidence_requests.erase(b, e);
+        w->m_ir_first = sentinel ;
+        w->m_ir_last = sentinel ;
       }
 
       w->m_incident_border = new_border();
@@ -587,10 +628,10 @@ namespace CGAL {
     {
       w->m_mark--;
       if(w->m_mark == 0)
-	{
-	  w->delete_border();
-	  erase_incidence_request(w);
-	}
+        {
+          w->delete_border();
+          erase_incidence_request(w);
+        }
     }
 
 
@@ -621,21 +662,21 @@ namespace CGAL {
     void clear_vertex(Vertex_handle w)
     {
       if (w->m_incident_border != nullptr)
-	{
-	  w->delete_border();
-	}
+        {
+          w->delete_border();
+        }
       if(w->m_ir_first != sentinel ){
-	CGAL_assertion(w->m_ir_last != sentinel );
-	typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
-	e++;
-	incidence_requests.erase(b, e);
+        CGAL_assertion(w->m_ir_last != sentinel );
+        typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
+        e++;
+        incidence_requests.erase(b, e);
       }
 
       if(w->m_ie_first != ie_sentinel){
-	CGAL_assertion(w->m_ie_last != ie_sentinel);
-	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
-	e++;
-	interior_edges.erase(b, e);
+        CGAL_assertion(w->m_ie_last != ie_sentinel);
+        typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
+        e++;
+        interior_edges.erase(b, e);
       }
     }
 
@@ -679,12 +720,14 @@ namespace CGAL {
           ++it;
         }while(collinear(p,q,it->point()));
         const Point& r = it->point();
-        Vector u = q-r;
-        Vector v = q-p;
-        Vector w = r-p;
-        Vector vw = cross_product(v,w);
-        double len = (std::max)(u*u,(std::max)(v*v,w*w));
-        Point s = p + 10* len * (vw/(vw*vw));
+        Vector u = construct_vector(r, q);
+        Vector v = construct_vector(p, q);
+        Vector w = construct_vector(p, r);
+        Vector vw = construct_cross_product(v,w);
+        double len = (std::max)(compute_scalar_product(u,u),
+                                (std::max)(compute_scalar_product(v,v),
+                                           compute_scalar_product(w,w)));
+        Point s = p + 10 * len * (vw/compute_scalar_product(vw,vw));
         added_vertex = T.insert(s);
       }
     }
@@ -736,9 +779,9 @@ namespace CGAL {
 
     \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
            are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
-           Described in Section \ref AFSR_Boundaries
+           Described in Section \ref AFSR_Boundaries.
     \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
-           Described in Section \ref AFSR_Selection
+           Described in Section \ref AFSR_Selection.
 
     */
     void run(double radius_ratio_bound=5, double beta= 0.52)
@@ -1186,7 +1229,7 @@ namespace CGAL {
     \param index index of the facet in `c`
 
     */
-    coord_type
+    FT
     smallest_radius_delaunay_sphere(const Cell_handle& c,
                                     const int& index) const
     {
@@ -1249,16 +1292,16 @@ namespace CGAL {
               const Point& pp2 = cc->vertex(i2)->point();
               const Point& pp3 = cc->vertex(i3)->point();
 
-              Sphere facet_sphere(pp1, pp2, pp3);
-              if (squared_distance(facet_sphere.center(), pp0) <
-                  facet_sphere.squared_radius())
+              Sphere facet_sphere = T.geom_traits().construct_sphere_3_object()(pp1, pp2, pp3);
+              if (squared_distance(T.geom_traits().construct_center_3_object()(facet_sphere), pp0) <
+                  T.geom_traits().compute_squared_radius_3_object()(facet_sphere))
                 {
 #ifdef AFSR_LAZY
                   value = lazy_squared_radius(cc);
 #else
                   // qualified with CGAL, to avoid a compilation error with clang
                   if(volume(pp0, pp1, pp2, pp3) != 0){
-                    value = CGAL::squared_radius(pp0, pp1, pp2, pp3);
+                    value = T.geom_traits().compute_squared_radius_3_object()(pp0, pp1, pp2, pp3);
                   } else {
                     typedef Exact_predicates_exact_constructions_kernel EK;
                     Cartesian_converter<Kernel, EK> to_exact;
@@ -1280,26 +1323,30 @@ namespace CGAL {
               cc = lazy_circumcenter(c);
               cn = lazy_circumcenter(n);
 #else
-              cc = CGAL::circumcenter(cp0, cp1, cp2, cp3);
-              cn = CGAL::circumcenter(np0, np1, np2, np3);
+              cc = T.geom_traits().construct_circumcenter_3_object()(cp0, cp1, cp2, cp3);
+              cn = T.geom_traits().construct_circumcenter_3_object()(np0, np1, np2, np3);
 #endif
               // computation of the distance of  cp1  to the  dual segment cc, cn...
-              Vector V(cc - cn), Vc(cc - cp1), Vn(cp1 - cn);
-              coord_type ac(V * Vc), an(V * Vn), norm_V(V * V);
+              Vector V = construct_vector(cn, cc),
+                     Vc = construct_vector(cp1, cc),
+                     Vn = construct_vector(cn, cp1);
+              coord_type ac = compute_scalar_product(V, Vc),
+                         an = compute_scalar_product(V, Vn),
+                         norm_V = compute_scalar_product(V, V);
               if ((ac > 0) && (an > 0))
                 {
-                  value = (Vc*Vc) - ac*ac/norm_V;
+                  value = compute_scalar_product(Vc, Vc) - ac*ac/norm_V;
                   if ((value < 0)||(norm_V > inv_eps_2)){
                     // qualified with CGAL, to avoid a compilation error with clang
-                    value = CGAL::squared_radius(cp1, cp2, cp3);
+                    value = T.geom_traits().compute_squared_radius_3_object()(cp1, cp2, cp3);
                   }
                 }
               else
                 {
                   if (ac <= 0)
-                    value = squared_distance(cc, cp1);
+                    value = T.geom_traits().compute_squared_distance_3_object()(cc, cp1);
                   else // (an <= 0)
-                    value = squared_distance(cn, cp1);
+                    value = T.geom_traits().compute_squared_distance_3_object()(cn, cp1);
                 }
             }
         }
@@ -1314,8 +1361,8 @@ namespace CGAL {
 
       returns the infinite floating value that prevents a facet to be used.
     */
-    coord_type infinity() const { return std::numeric_limits<coord_type>::infinity(); }
-    /// @}      
+    FT infinity() const { return std::numeric_limits<FT>::infinity(); }
+    /// @}
 
     //---------------------------------------------------------------------
     // For a border edge e we determine the incident facet which has the highest
@@ -1341,9 +1388,9 @@ namespace CGAL {
       const Point& p2 = c->vertex(i2)->point();
       const Point& pc = c->vertex(i3)->point();
 
-      Vector P2P1 = p1-p2, P2Pn, PnP1;
+      Vector P2P1 = construct_vector(p2, p1), P2Pn, PnP1;
 
-      Vector v2, v1 = cross_product(pc-p2, P2P1);
+      Vector v2, v1 = construct_cross_product(construct_vector(p2, pc), P2P1);
 
       coord_type norm, norm1 = v1*v1;
       coord_type norm12 = P2P1*P2P1;
@@ -1375,12 +1422,12 @@ namespace CGAL {
                 {
                   const Point& pn = neigh->vertex(n_i3)->point();
 
-                  P2Pn = pn-p2;
-                  v2 = cross_product(P2P1,P2Pn);
+                  P2Pn = construct_vector(p2, pn);
+                  v2 = construct_cross_product(P2P1,P2Pn);
 
                   //pas necessaire de normer pour un bon echantillon:
                   //            on peut alors tester v1*v2 >= 0
-                  norm =  sqrt(norm1 * (v2*v2));
+                  norm =  sqrt(norm1 * compute_scalar_product(v2,v2));
                   pscal = v1*v2;
                   // check if the triangle will produce a sliver on the surface
                   bool sliver_facet = (pscal <= COS_ALPHA_SLIVER*norm);
@@ -1394,10 +1441,9 @@ namespace CGAL {
                           // We skip triangles having an internal angle along e
                           // whose cosinus is smaller than -DELTA
                           // that is the angle is larger than arcos(-DELTA)
-                          border_facet = !((P2P1*P2Pn >=
-                                            -DELTA*sqrt(norm12*(P2Pn*P2Pn)))&&
-                                           (P2P1*PnP1 >=
-                                            -DELTA*sqrt(norm12*(PnP1*PnP1))));
+                          border_facet =
+                            !((P2P1*P2Pn >= -DELTA*sqrt(norm12*compute_scalar_product(P2Pn,P2Pn))) &&
+                              (P2P1*PnP1 >= -DELTA*sqrt(norm12*compute_scalar_product(PnP1,PnP1))));
                           // \todo investigate why we simply do not skip this triangle
                           // but continue looking for a better candidate
                           // if (!border_facet){
@@ -1569,9 +1615,11 @@ namespace CGAL {
       int n_i3 = (6 - n_ind - n_i1 - n_i2);
 
       const Point& pn = neigh->vertex(n_i3)->point();
-      Vector v1 = cross_product(pc-p2,p1-p2),
-        v2 = cross_product(p1-p2,pn-p2);
-      coord_type norm = sqrt((v1*v1)*(v2*v2));
+      Vector v1 = construct_cross_product(construct_vector(p2, pc),
+                                          construct_vector(p2, p1)),
+             v2 = construct_cross_product(construct_vector(p2, p1),
+                                          construct_vector(p2, pn));
+      coord_type norm = sqrt(compute_scalar_product(v1, v1) * compute_scalar_product(v2, v2));
 
       if (v1*v2 > COS_BETA*norm)
         return 1; // label bonne pliure sinon:
@@ -1801,150 +1849,150 @@ namespace CGAL {
                       return EXTERIOR_CASE;
                     }
                   else // c->vertex(i) is a border point (and now there's only 1
-		  // border incident to a point... _mark<1 even if th orientation
-		  // may be such as one vh has 2 successorson the same border...
-		  {
-		    // a ce niveau on peut tester si le recollement se fait en
-		    // maintenant la compatibilite d'orientation des bords (pour
-		    // surface orientable...) ou si elle est brisee...
-		    Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second),
+                  // border incident to a point... _mark<1 even if th orientation
+                  // may be such as one vh has 2 successorson the same border...
+                  {
+                    // a ce niveau on peut tester si le recollement se fait en
+                    // maintenant la compatibilite d'orientation des bords (pour
+                    // surface orientable...) ou si elle est brisee...
+                    Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second),
                                                       edge_Efacet.second);
-		    Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third),
+                    Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third),
                                                       edge_Efacet.second);
 
-		    e1 = compute_value(edge_Ifacet_1);
-		    e2 = compute_value(edge_Ifacet_2);
+                    e1 = compute_value(edge_Ifacet_1);
+                    e2 = compute_value(edge_Ifacet_2);
 
-		    if ((e1.first >= STANDBY_CANDIDATE)&&(e2.first >= STANDBY_CANDIDATE))
-		      return NOT_VALID_CONNECTING_CASE;
+                    if ((e1.first >= STANDBY_CANDIDATE)&&(e2.first >= STANDBY_CANDIDATE))
+                      return NOT_VALID_CONNECTING_CASE;
 
-		    // vu compute value: les candidats oreilles fournis sont sans
-		    // aretes interieures et le sommet oppose n'est pas non plus interieur
-		    Edge_incident_facet ear1 = e1.second.second;
-		    Edge_incident_facet ear2 = e2.second.second;
+                    // vu compute value: les candidats oreilles fournis sont sans
+                    // aretes interieures et le sommet oppose n'est pas non plus interieur
+                    Edge_incident_facet ear1 = e1.second.second;
+                    Edge_incident_facet ear2 = e2.second.second;
 
-		    int ear1_i = (6 - ear1.second
-				  - ear1.first.second
-				  - ear1.first.third);
-		    Cell_handle ear1_c =  ear1.first.first;
-		    Border_elt result_ear1;
+                    int ear1_i = (6 - ear1.second
+                                  - ear1.first.second
+                                  - ear1.first.third);
+                    Cell_handle ear1_c =  ear1.first.first;
+                    Border_elt result_ear1;
 
-		    int ear2_i = (6 - ear2.second
-				  - ear2.first.second
-				  - ear2.first.third);
-		    Cell_handle ear2_c =  ear2.first.first;
-		    Border_elt result_ear2;
+                    int ear2_i = (6 - ear2.second
+                                  - ear2.first.second
+                                  - ear2.first.third);
+                    Cell_handle ear2_c =  ear2.first.first;
+                    Border_elt result_ear2;
 
-		    Edge_like ear1_e, ear2_e;
-		    // pour maintenir la reconstruction d'une surface orientable :
-		    // on verifie que les bords se recollent dans des sens opposes
-		    if (ordered_key.first==v1)
-		      {
-			ear1_e = Edge_like(c->vertex(i), ear1_c ->vertex(ear1_i));
-			ear2_e = Edge_like(ear2_c ->vertex(ear2_i), c->vertex(i));
-		      }
-		    else
-		      {
-			ear1_e = Edge_like(ear1_c ->vertex(ear1_i), c->vertex(i));
-			ear2_e = Edge_like(c->vertex(i), ear2_c ->vertex(ear2_i));
-		      }
+                    Edge_like ear1_e, ear2_e;
+                    // pour maintenir la reconstruction d'une surface orientable :
+                    // on verifie que les bords se recollent dans des sens opposes
+                    if (ordered_key.first==v1)
+                      {
+                        ear1_e = Edge_like(c->vertex(i), ear1_c ->vertex(ear1_i));
+                        ear2_e = Edge_like(ear2_c ->vertex(ear2_i), c->vertex(i));
+                      }
+                    else
+                      {
+                        ear1_e = Edge_like(ear1_c ->vertex(ear1_i), c->vertex(i));
+                        ear2_e = Edge_like(c->vertex(i), ear2_c ->vertex(ear2_i));
+                      }
 
-		    //maintient la surface orientable
-		    bool is_border_ear1 = is_ordered_border_elt(ear1_e, result_ear1);
-		    bool is_border_ear2 = is_ordered_border_elt(ear2_e, result_ear2);
-		    bool ear1_valid(false), ear2_valid(false);
-		    if (is_border_ear1&&(e1.first < STANDBY_CANDIDATE)&&
-			(e1.first <=  value)&&
-			(result12.second==result_ear1.second))
-		      {
-			ear1_valid = test_merge(ear1_e, result_ear1, v1,
-						priority(*this, ear1_c, ear1.second)) != 0;
-		      }
-		    if (is_border_ear2&&(e2.first < STANDBY_CANDIDATE)&&
-			(e2.first <= value)&&
-			(result12.second==result_ear2.second))
-		      {
-			ear2_valid = test_merge(ear2_e, result_ear2, v2,
-						priority(*this, ear2_c, ear2.second)) != 0;
-		      }
-		    if ((!ear1_valid)&&(!ear2_valid))
-		      return NOT_VALID_CONNECTING_CASE;
+                    //maintient la surface orientable
+                    bool is_border_ear1 = is_ordered_border_elt(ear1_e, result_ear1);
+                    bool is_border_ear2 = is_ordered_border_elt(ear2_e, result_ear2);
+                    bool ear1_valid(false), ear2_valid(false);
+                    if (is_border_ear1&&(e1.first < STANDBY_CANDIDATE)&&
+                        (e1.first <=  value)&&
+                        (result12.second==result_ear1.second))
+                      {
+                        ear1_valid = test_merge(ear1_e, result_ear1, v1,
+                                                priority(*this, ear1_c, ear1.second)) != 0;
+                      }
+                    if (is_border_ear2&&(e2.first < STANDBY_CANDIDATE)&&
+                        (e2.first <= value)&&
+                        (result12.second==result_ear2.second))
+                      {
+                        ear2_valid = test_merge(ear2_e, result_ear2, v2,
+                                                priority(*this, ear2_c, ear2.second)) != 0;
+                      }
+                    if ((!ear1_valid)&&(!ear2_valid))
+                      return NOT_VALID_CONNECTING_CASE;
 
-		    IO_edge_type* p1;
-		    IO_edge_type* p2;
+                    IO_edge_type* p1;
+                    IO_edge_type* p2;
 
-		    border_extend(ordered_key, result12,
-				  v1, v2, c->vertex(i),
-				  e1, e2, p1, p2);
+                    border_extend(ordered_key, result12,
+                                  v1, v2, c->vertex(i),
+                                  e1, e2, p1, p2);
 
-		    if (ear1_valid&&ear2_valid&&(ear1_e==ear2_e))
-		      {
-			if (e1.first < e2.first)
-			  {
-			    Validation_case res = validate(ear1, e1.first);
-			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-			      std::cerr << "+++probleme de recollement : cas "
-					<< res << std::endl;
-			    e2 = compute_value(edge_Ifacet_2);
+                    if (ear1_valid&&ear2_valid&&(ear1_e==ear2_e))
+                      {
+                        if (e1.first < e2.first)
+                          {
+                            Validation_case res = validate(ear1, e1.first);
+                            if (!((res == EAR_CASE)||(res == FINAL_CASE)))
+                              std::cerr << "+++probleme de recollement : cas "
+                                        << res << std::endl;
+                            e2 = compute_value(edge_Ifacet_2);
 
-			    if (ordered_key.first == v1)
-			      p2 = set_again_border_elt(c->vertex(i), v2,
-							Border_elt(e2, result2.second));
-			    else
-			      p2 = set_again_border_elt(v2, c->vertex(i),
-							Border_elt(e2, result2.second));
+                            if (ordered_key.first == v1)
+                              p2 = set_again_border_elt(c->vertex(i), v2,
+                                                        Border_elt(e2, result2.second));
+                            else
+                              p2 = set_again_border_elt(v2, c->vertex(i),
+                                                        Border_elt(e2, result2.second));
 
-			    _ordered_border.insert(Radius_ptr_type(e2.first, p2));
-			  }
-			else
-			  {
-			    Validation_case res = validate(ear2, e2.first);
-			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-			      std::cerr << "+++probleme de recollement : cas "
-					<< res << std::endl;
-			    e1 = compute_value(edge_Ifacet_1);
+                            _ordered_border.insert(Radius_ptr_type(e2.first, p2));
+                          }
+                        else
+                          {
+                            Validation_case res = validate(ear2, e2.first);
+                            if (!((res == EAR_CASE)||(res == FINAL_CASE)))
+                              std::cerr << "+++probleme de recollement : cas "
+                                        << res << std::endl;
+                            e1 = compute_value(edge_Ifacet_1);
 
-			    if (ordered_key.first == v1)
-			      p1 = set_again_border_elt(v1, c->vertex(i),
-							Border_elt(e1, result1.second));
-			    else
-			      p1 = set_again_border_elt(c->vertex(i), v1,
-							Border_elt(e1, result1.second));
+                            if (ordered_key.first == v1)
+                              p1 = set_again_border_elt(v1, c->vertex(i),
+                                                        Border_elt(e1, result1.second));
+                            else
+                              p1 = set_again_border_elt(c->vertex(i), v1,
+                                                        Border_elt(e1, result1.second));
 
-			    _ordered_border.insert(Radius_ptr_type(e1.first, p1));
-			  }
-		      }
-		    else// les deux oreilles ne se recollent pas sur la meme arete...
-		      {
-			// on resoud la singularite.
-			if (ear1_valid)
-			  {
-			    Validation_case res = validate(ear1, e1.first);
-			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-			      std::cerr << "+++probleme de recollement : cas "
-					<< res << std::endl;
-			  }
-			if (ear2_valid)
-			  {
-			    Validation_case res = validate(ear2, e2.first);
-			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-			      std::cerr << "+++probleme de recollement : cas "
-					<< res << std::endl;
-			  }
-			// on met a jour la PQ s'il y a lieu... mais surtout pas
-			// avant la resolution de la singularite
-			if (!ear1_valid)
-			  {
-			    _ordered_border.insert(Radius_ptr_type(e1.first, p1));
-			  }
-			if (!ear2_valid)
-			  {
-			    _ordered_border.insert(Radius_ptr_type(e2.first, p2));
-			  }
-		      }
-		    select_facet(c, edge_Efacet.second);
-		    return CONNECTING_CASE;
-		  }
+                            _ordered_border.insert(Radius_ptr_type(e1.first, p1));
+                          }
+                      }
+                    else// les deux oreilles ne se recollent pas sur la meme arete...
+                      {
+                        // on resoud la singularite.
+                        if (ear1_valid)
+                          {
+                            Validation_case res = validate(ear1, e1.first);
+                            if (!((res == EAR_CASE)||(res == FINAL_CASE)))
+                              std::cerr << "+++probleme de recollement : cas "
+                                        << res << std::endl;
+                          }
+                        if (ear2_valid)
+                          {
+                            Validation_case res = validate(ear2, e2.first);
+                            if (!((res == EAR_CASE)||(res == FINAL_CASE)))
+                              std::cerr << "+++probleme de recollement : cas "
+                                        << res << std::endl;
+                          }
+                        // on met a jour la PQ s'il y a lieu... mais surtout pas
+                        // avant la resolution de la singularite
+                        if (!ear1_valid)
+                          {
+                            _ordered_border.insert(Radius_ptr_type(e1.first, p1));
+                          }
+                        if (!ear2_valid)
+                          {
+                            _ordered_border.insert(Radius_ptr_type(e2.first, p2));
+                          }
+                      }
+                    select_facet(c, edge_Efacet.second);
+                    return CONNECTING_CASE;
+                  }
                 }
             }
         }
@@ -2047,7 +2095,7 @@ namespace CGAL {
                         {
                           new_candidate = compute_value(mem_Ifacet);
                           if ((new_candidate != mem_e_it))
-                            // 			      &&(new_candidate.first < NOT_VALID_CANDIDATE))
+                            //                               &&(new_candidate.first < NOT_VALID_CANDIDATE))
                             {
                               IO_edge_type* pnew =
                                 set_again_border_elt(key_tmp.first, key_tmp.second,
@@ -2369,7 +2417,7 @@ namespace CGAL {
             {
               std::list<Vertex_handle> L_v_tmp;
               Vertex_handle vprev_it(v_it), done(vprev_it), vh_it;
-              // 	  Vertex_handle vsucc_it;
+              //           Vertex_handle vsucc_it;
               int v_count(0);
               // collect all vertices on the border
               do
@@ -2487,9 +2535,9 @@ namespace CGAL {
   \param out output iterator
   \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
          are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
-         Described in Section \ref AFSR_Boundaries
+         Described in Section \ref AFSR_Boundaries.
   \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
-         Described in Section \ref AFSR_Selection
+         Described in Section \ref AFSR_Selection.
 
   */
   template <typename PointInputIterator, typename IndicesOutputIterator>
@@ -2533,18 +2581,18 @@ namespace CGAL {
   be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
   \tparam IndicesOutputIterator must be an output iterator to which
   `std::array<std::size_t, 3>` can be assigned.
-  \tparam Priority must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
+  \tparam Priority must be a functor with `double operator()(Advancing_front_surface_reconstruction::Cell_handle,int)` returning the
   priority of the facet `(Cell_handle,int)`.
 
   \param b iterator on the first point of the sequence
   \param e past the end iterator of the point sequence
   \param out output iterator
+  \param priority enables the user to choose how candidate triangles are prioritized.
   \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
          are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
          Described in Section \ref AFSR_Boundaries
   \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
          Described in Section \ref AFSR_Selection
-  \param priority allows the user to choose how candidate triangles are prioritized.
 
   */
   template <typename PointInputIterator, typename IndicesOutputIterator, typename Priority>

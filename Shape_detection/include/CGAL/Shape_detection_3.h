@@ -25,8 +25,8 @@
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "CGAL::Shape_detection_3 namespace has been replaced by the namespace "\
   "CGAL::Shape_detection."
-  
-#include <CGAL/internal/deprecation_warning.h>
+
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 namespace CGAL {
   namespace Shape_detection_3 = Shape_detection;

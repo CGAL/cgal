@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // ETH Zurich (Switzerland).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
@@ -28,7 +28,7 @@ operator << ( std::ostream& os,
     typedef typename Min_ellipse_2<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>        Os_it;
 
-    switch ( CGAL::get_mode( os)) {
+    switch ( CGAL::IO::get_mode( os)) {
 
       case CGAL::IO::PRETTY:
         os << endl;
@@ -60,8 +60,8 @@ operator << ( std::ostream& os,
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
-                                         "CGAL::get_mode( os) invalid!");
+        CGAL_assertion_msg( false,
+                                         "CGAL::IO::get_mode( os) invalid!");
         break; }
 
     return( os);
@@ -73,11 +73,11 @@ operator >> ( std::istream& is, CGAL::Min_ellipse_2<Traits_>& min_ellipse)
 {
     using namespace std;
 
-    switch ( CGAL::get_mode( is)) {
+    switch ( CGAL::IO::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
         cerr << endl;
-        cerr << "Stream must be in ascii or binary mode" << endl;
+        cerr << "Stream must be in ASCII or binary mode" << endl;
         break;
 
       case CGAL::IO::ASCII:
@@ -89,7 +89,7 @@ operator >> ( std::istream& is, CGAL::Min_ellipse_2<Traits_>& min_ellipse)
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false, "CGAL::IO::mode invalid!");
+        CGAL_assertion_msg( false, "CGAL::IO::mode invalid!");
         break; }
 
     return( is);

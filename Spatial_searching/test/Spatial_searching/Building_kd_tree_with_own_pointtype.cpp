@@ -28,7 +28,7 @@ void run(const std::vector<Point>& points)
 {
   // Insert number_of_data_points in the tree
   typename K_search::Tree tree(
-    boost::make_transform_iterator(points.begin(),Create_point_with_info<typename K_search::Point_d>()), 
+    boost::make_transform_iterator(points.begin(),Create_point_with_info<typename K_search::Point_d>()),
     boost::make_transform_iterator(points.end(),Create_point_with_info<typename K_search::Point_d>())
   );
 
@@ -56,15 +56,15 @@ void run(const std::vector<Point>& points)
       assert(Distance().transformed_distance(query, *it) >= dist);
     }
   }
-  std::cout << "done" << std::endl;  
+  std::cout << "done" << std::endl;
 }
 
 int main() {
-  // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) ) 
+  // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) )
   Random_points_iterator rpit( 1.0);
-  
+
   std::vector<Point> points(N_Random_points_iterator(rpit,0),
-			    N_Random_points_iterator(N));
+                            N_Random_points_iterator(N));
 
   run<K_neighbor_search>(points);
   run<K_neighbor_search_with_info>(points);

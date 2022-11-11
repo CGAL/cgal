@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s) : Jane Tournois, Raul Gallegos
 //
 
@@ -17,7 +17,7 @@
 #include <CGAL/license/Mesh_2.h>
 
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 
 namespace CGAL {
@@ -95,7 +95,7 @@ public:
   void set_blind(const bool b){ m_blind = b; }
 
   // if blind, the constrained edge that prevents the face
-  // to see its circumcenter 
+  // to see its circumcenter
   Edge_cdt blinding_constraint() const
   {
     CGAL_precondition(this->is_blind());
@@ -111,6 +111,6 @@ public:
   }
 };
 
-} //namespace CGAL 
+} //namespace CGAL
 
 #endif //CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_FACE_BASE_2_2_H

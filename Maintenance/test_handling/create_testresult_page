@@ -151,7 +151,7 @@ sub collect_results_of_platform($)
 # Create an anonymous hash that hashes packages to their result.
     my $platform_results = {};
     my $test_result="results_${platform}.txt";
-    my ($yeahs, $nays, $warnings,$reqs) = (0,0,0,0);
+    my ($yeahs, $nays, $warnings,$third_party_warnings,$reqs) = (0,0,0,0,0);
     my $resulttext;
     open(TESTRESULT, $test_result) or return $platform_results;
     while (<TESTRESULT>) {
@@ -163,6 +163,9 @@ sub collect_results_of_platform($)
 	    } elsif ($2 eq 'w' or $2 eq 'W') {
 		$resulttext = 'w';
 		++$warnings;
+	    } elsif ($2 eq 't' or $2 eq 'T') {
+		$resulttext = 't';
+		++$third_party_warnings;
 	    } elsif ($2 eq 'n' or $2 eq 'N') {
 		$resulttext = 'n';
 		++$nays;
@@ -179,6 +182,7 @@ sub collect_results_of_platform($)
     $platform_results->{"y"} = $yeahs;
     $platform_results->{"n"} = $nays;
     $platform_results->{"w"} = $warnings;
+    $platform_results->{"t"} = $third_party_warnings;
     $platform_results->{"r"} = $reqs;
     return $platform_results;
 }
@@ -254,11 +258,13 @@ EOF
 		print OUTPUT ' class="ok"';
 	    } elsif ($resulttext eq 'w') {
 		print OUTPUT ' class="warning"';
+	    } elsif ($resulttext eq 't') {
+		print OUTPUT ' class="third_party_warning"';
 	    } elsif ($resulttext eq 'n') {
 		print OUTPUT ' class="error"';
 	    } elsif ($resulttext eq 'r') {
 		print OUTPUT ' class="requirements"';
-	    } 
+	    }
 	    else {
 		print OUTPUT ' class="na"';
 	    }
@@ -308,11 +314,11 @@ EOF
 sub sort_pf
 {
     # MSVS first
-    if($a =~ m/^MS/) { 
+    if($a =~ m/^MS/) {
         if($b =~ m/^MS/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -320,11 +326,11 @@ sub sort_pf
     if($b =~ m/^MS/) { return 1; }
 
     # g++/gcc second
-    if($a =~ m/^g[c+][c+]/) { 
+    if($a =~ m/^g[c+][c+]/) {
         if($b =~ m/^g[c+][c+]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -332,11 +338,11 @@ sub sort_pf
     if($b =~ m/^g[c+][c+]/) { return 1; }
 
     # Intel third
-    if($a =~ m/^[iI]/) { 
+    if($a =~ m/^[iI]/) {
         if($b =~ m/^[iI]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -344,11 +350,11 @@ sub sort_pf
     if($b =~ m/^[iI]/) { return 1; }
 
     # SunPro last
-    if($a =~ m/^[Ss][uU[Nn]/) { 
+    if($a =~ m/^[Ss][uU[Nn]/) {
         if($b =~ m/^[Ss][uU[Nn]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return 1;
         }
@@ -453,6 +459,7 @@ sub print_platform_descriptions()
 <th colspan="2">OS and compiler</th>
 <th>Tester</th>
 <th class="ok">y</th>
+<th class="third_party_warning">t</th>
 <th class="warning">w</th>
 <th class="error">n</th>
 <th class="requirements">r</th>
@@ -473,13 +480,16 @@ EOF
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
 	(my $pf_short) = ($pf =~ m/_(.*)/);
-	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
+	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\"";
 
         ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
 
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
-	    $_ = <PLATFORM_INFO>; # TESTER
+	    $_ = <PLATFORM_INFO>; # COMPILER
+            chomp;
+            my $compiler = $_;
+            print OUTPUT " title=\"$compiler\">$pf_short</a>";
 	    $_ = <PLATFORM_INFO>; # TESTER_NAME
 	    chomp;
 	    my $tester_name = $_;
@@ -488,6 +498,7 @@ EOF
 	    my $tester_address = $_;
 
 	    my $county = $testresults[$platform_num]->{"y"};
+	    my $countt = $testresults[$platform_num]->{"t"};
 	    my $countw = $testresults[$platform_num]->{"w"};
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
@@ -505,10 +516,11 @@ EOF
 	    chomp;
 	    print OUTPUT "</td>\n";
 	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
-	    print OUTPUT "<td>$county</td>\n"; 
-	    print OUTPUT "<td>$countw</td>\n"; 
- 	    print OUTPUT "<td>$countn</td>\n"; 
- 	    print OUTPUT "<td>$countr</td>\n"; 
+	    print OUTPUT "<td>$county</td>\n";
+	    print OUTPUT "<td>$countt</td>\n";
+	    print OUTPUT "<td>$countw</td>\n";
+ 	    print OUTPUT "<td>$countn</td>\n";
+ 	    print OUTPUT "<td>$countr</td>\n";
 	    $index = 8;
 	    while ($index) {
 	        $index--;
@@ -517,9 +529,10 @@ EOF
                     print OUTPUT "<td align=\"center\">$_</td>\n";
                 } else {
                     print OUTPUT "<td>$_</td>\n";
-                }                    
+                }
 	    }
 	} else {
+            print OUTPUT ">$pf_short</a>";
 	    my $index = 12;
 	    while ($index) {
 		print OUTPUT "<td>?</td>\n";
@@ -542,12 +555,12 @@ sub print_platforms_numbers()
 	{
 	    $class = " class=\"";
 	    $tag = " ( ";
-            if($platform_is_64bits{$platform}) { 
-                $class = "$class os64bits"; 
+            if($platform_is_64bits{$platform}) {
+                $class = "$class os64bits";
                 $tag = $tag . "64 bits ";
             }
-            if($platform_is_optimized{$platform}) { 
-                $class = "$class highlight"; 
+            if($platform_is_optimized{$platform}) {
+                $class = "$class highlight";
                 $tag = $tag ." optimized: $platform_is_optimized{$platform}";
             }
             $class = $class . "\"";
@@ -598,7 +611,7 @@ sub print_little_header(){
 <a id="jump_to_results" href="#testresults">jump to results</a></h1>
 <!--#include virtual="versions.inc"-->
 <p>The results of the tests are presented in a table
-('y' = success, 'w' = warning, 'n' = failure, 'r' = a requirement is not found),
+('y' = success, 'w' = warning, 't' = third party warning 'n' = failure, 'r' = a requirement is not found),
 and the error + compiler output from each test can be retrieved by clicking
 on it.</p>
 <p><b>N.B. The detection of warnings is not exact.

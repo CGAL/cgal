@@ -13,6 +13,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
+#include <CGAL/Weights/uniform_weights.h>
 
 #include <QElapsedTimer>
 #include <QAction>
@@ -39,9 +40,9 @@ class Polyhedron_demo_fairing_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "fairing_plugin.json")
 public:
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
-    || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));  
+    || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
   }
   void print_message(QString message) { CGAL::Three::Three::information(message);}
   QList<QAction*> actions() const { return QList<QAction*>() << actionFairing; }
@@ -69,8 +70,8 @@ public:
     dock_widget->setWindowTitle(tr(
                                   "Fairing "
                                   ));
-    
-    connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
+
+    connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));
     connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
   }
   virtual void closure()
@@ -98,12 +99,13 @@ public Q_SLOTS:
     if(weight_index == 1)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
-        CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<FaceGraph>(*selection_item->polyhedron())).
+        CGAL::parameters::
+        weight_calculator(CGAL::Weights::Uniform_weight<FaceGraph>()).
         fairing_continuity(continuity));
     if(weight_index == 0)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
-        CGAL::Polygon_mesh_processing::parameters::fairing_continuity(continuity));
+        CGAL::parameters::fairing_continuity(continuity));
     selection_item->polyhedron_item()->resetColors();
     selection_item->changed_with_poly_item();
     selection_item->invalidateOpenGLBuffers();
@@ -125,7 +127,7 @@ public Q_SLOTS:
       selection_item->selected_facets,
       std::back_inserter(new_facets),
       CGAL::Emptyset_iterator(),
-      CGAL::Polygon_mesh_processing::parameters::density_control_factor(alpha));
+      CGAL::parameters::density_control_factor(alpha));
     // add new facets to selection
     for(std::vector<boost::graph_traits<FaceGraph>::face_descriptor>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);

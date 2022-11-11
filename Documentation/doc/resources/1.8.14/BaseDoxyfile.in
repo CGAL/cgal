@@ -229,19 +229,59 @@ TAB_SIZE               = 4
 # newlines (in the resulting output). You can put ^^ in the value part of an
 # alias to insert a newline as if a physical newline was in the original file.
 
-ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</span>" \
-                         "cgal=\sc{%CGAL}" \
-                         "protocgal=\sc{C++gal}" \
-                         "plageo=\sc{Plageo}" \
-                         "stl=\sc{STL}" \
-                         "gmp=\sc{GMP}" \
-                         "mpir=\sc{MPIR}" \
-                         "mpfr=\sc{MPFR}" \
-                         "leda=\sc{LEDA}" \
-                         "gcc=\sc{GCC}" \
-                         "cpp=\sc{C++}" \
-                         "cpp11=\sc{C++11}" \
-                         "CC=\sc{C++}" \
+ALIASES                = "cgal=%CGAL" \
+                         "protocgal=C++gal" \
+                         "plageo=Plageo" \
+                         "stl=STL" \
+                         "gmp=GMP" \
+                         "gmpxx=GMPXX" \
+                         "iso=ISO" \
+                         "lisp=Lisp" \
+                         "ieee=IEEE" \
+                         "ascii=ASCII" \
+                         "exacus=Exacus" \
+                         "mpir=MPIR" \
+                         "mpfr=MPFR" \
+                         "leda=LEDA" \
+                         "gcc=GCC" \
+                         "dcel=DCEL" \
+                         "bgl=BGL" \
+                         "boost=Boost" \
+                         "gnu=GNU" \
+                         "ms=MS" \
+                         "qt=Qt" \
+                         "qt5=Qt5" \
+                         "eigen=Eigen" \
+                         "opengr=OpenGR" \
+                         "libpointmatcher=libpointmatcher" \
+                         "core=Core" \
+                         "mpfi=MPFI" \
+                         "ntl=NTL" \
+                         "pdb=PDB" \
+                         "esbtl=ESBTL" \
+                         "tbb=TBB" \
+                         "laslib=LASlib" \
+                         "opencv=OpenCV" \
+                         "tensorflow=TensorFlow" \
+                         "metis=METIS" \
+                         "zlib=zlib" \
+                         "ceres=Ceres" \
+                         "glpk=GLPK" \
+                         "scip=SCIP" \
+                         "osqp=OSQP" \
+                         "rs=RS" \
+                         "rs3=RS3" \
+                         "unix=Unix" \
+                         "api=API" \
+                         "vtk=VTK" \
+                         "visualstudio=Visual Studio" \
+                         "taucs=TAUCS" \
+                         "lapack=LAPACK" \
+                         "blas=BLAS" \
+                         "opennl=OpenNL" \
+                         "cpp=C++" \
+                         "cpp11=C++11" \
+                         "CC=C++" \
                          "cgalExample{1}=<br><b>File</b> \ref \1 \include \1" \
                          "cgalFigureAnchor{1}=\anchor fig__\1" \
                          "cgalFigureRef{1}=\ref fig__\1" \
@@ -292,6 +332,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly" \
                          "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../Manual/how_to_cite_cgal.html#\1-${CGAL_RELEASE_YEAR_ID}\">\1-${CGAL_RELEASE_YEAR_ID}</a><BR>" \
                          "cgalFootnote{1}=<span class=\"footnote\">\1</span>" \
+                         "cgalFootnoteCode{1}=<tt>\1</tt>" \
                          "cgalAutoToc=\htmlonly[block] <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly" \
                          "cgalTagTrue=\link CGAL::Tag_true `CGAL::Tag_true`\endlink" \
                          "cgalTagFalse=\link CGAL::Tag_false `CGAL::Tag_false`\endlink" \
@@ -300,13 +341,19 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalCRPSection{1}=<h2>\1</h2>" \
                          "cgalCRPSubsection{1}=<h3>\1</h3>" \
                          "cgalCite{1}=<!-- -->\cite \1" \
-                         "cgalPackageSection{2}=\htmlonly[block] <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 ^^ \htmlonly[block] </div>\endhtmlonly"
-
-# This tag can be used to specify a number of word-keyword mappings (TCL only).
-# A mapping has the form "name=value". For example adding "class=itcl::class"
-# will allow you to use the command class in the itcl::class meaning.
-
-TCL_SUBST              =
+                         "cgalPackageSection{2}=\htmlonly[block] <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 ^^ \htmlonly[block] </div>\endhtmlonly" \
+                         "cgalNamedParamsBegin=<dl class=\"params\"><dt>Optional Named Parameters</dt><dd> <table class=\"params\">" \
+                         "cgalNamedParamsBegin{1}=<dl class=\"params\"><dt>\1</dt><dd> <table class=\"params\">" \
+                         "cgalNamedParamsEnd=</table> </dd> </dl>" \
+                         "cgalParamNBegin{1}=<tr><td class> \htmlonly[block] <button class=\"collapsible\">\endhtmlonly <b>\1</b> \htmlonly[block]</button> <div class=\"content\">\endhtmlonly<ul>" \
+                         "cgalParamDescription{1}=<li>\1</li>" \
+                         "cgalParamType{1}=<li><b>Type: </b>\1</li>" \
+                         "cgalParamDefault{1}=<li><b>%Default: </b>\1</li>" \
+                         "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>" \
+                         "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>" \
+                         "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}" \
+                         "cgalParamSectionEnd=\cgalParamNEnd" \
+                         "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For
@@ -499,17 +546,13 @@ LOOKUP_CACHE_SIZE      = 0
 
 EXTRACT_ALL            = YES
 
-#---------------------------------------------------------------------------
-# Build related configuration options
-#---------------------------------------------------------------------------
-
 # When the EXTRACT_ALL tag is set to YES and a member or class as no
 # documentation, no detailed section will be produced if the
 # EXTRACT_ALL_NO_DETAILED_IF_EMPTY tag is set to YES. This tag has no effect if
 # the EXTRACT_ALL tag is set to NO.
 # The default value is: NO.
 
-EXTRACT_ALL_NO_DETAILED_IF_EMPTY                                        = YES
+${CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY}
 
 # If the EXTRACT_PRIVATE tag is set to YES, all private members of a class will
 # be included in the documentation.
@@ -942,7 +985,7 @@ EXCLUDE_SYMBOLS        = Tr \
                          Fb \
                          K \
                          Traits \
-                         internal 
+                         internal
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
@@ -1593,7 +1636,7 @@ MATHJAX_EXTENSIONS     = TeX/AMSmath \
 # example see the documentation.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_CODEFILE       =
+MATHJAX_CODEFILE       = ${CGAL_DOC_RESOURCE_DIR}/CGAL_mathjax.js
 
 # When the SEARCHENGINE tag is enabled doxygen will generate a search box for
 # the HTML output. The underlying search engine uses javascript and DHTML and
@@ -2081,7 +2124,7 @@ ENABLE_PREPROCESSING   = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES then
 # the macro expansion is limited to the macros specified with the PREDEFINED and
@@ -2089,7 +2132,7 @@ MACRO_EXPANSION        = NO
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES, the include files in the
 # INCLUDE_PATH will be searched if a #include is found.
@@ -2121,7 +2164,14 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = DOXYGEN_RUNNING
+PREDEFINED             = DOXYGEN_RUNNING \
+                         "CGAL_NP_TEMPLATE_PARAMETERS=NamedParameters = CGAL::parameters::Default_named_parameters" \
+                         "CGAL_NP_CLASS=NamedParameters" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS_1=NamedParameters1 = CGAL::parameters::Default_named_parameter" \
+                         "CGAL_NP_CLASS_1=NamedParameters1" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
+                         "CGAL_NP_CLASS_2=NamedParameters2" \
+                         CGAL_DEPRECATED
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
@@ -2188,12 +2238,6 @@ EXTERNAL_GROUPS        = NO
 
 EXTERNAL_PAGES         = NO
 
-# The PERL_PATH should be the absolute path and name of the perl script
-# interpreter (i.e. the result of 'which perl').
-# The default file (with absolute path) is: /usr/bin/perl.
-
-PERL_PATH              = /usr/bin/perl
-
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool
 #---------------------------------------------------------------------------
@@ -2206,15 +2250,6 @@ PERL_PATH              = /usr/bin/perl
 # The default value is: YES.
 
 CLASS_DIAGRAMS         = NO
-
-# You can define message sequence charts within doxygen comments using the \msc
-# command. Doxygen will then run the mscgen tool (see:
-# http://www.mcternan.me.uk/mscgen/)) to produce the chart and insert it in the
-# documentation. The MSCGEN_PATH tag allows you to specify the directory where
-# the mscgen tool resides. If left empty the tool is assumed to be found in the
-# default search path.
-
-MSCGEN_PATH            =
 
 # You can include diagrams made with dia in doxygen documentation. Doxygen will
 # then run dia to produce the diagram and insert it in the documentation. The

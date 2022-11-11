@@ -20,7 +20,7 @@
 #include <iostream>
 #include <iomanip>
 
-#if (defined(CGAL_NO_ASSERTIONS) || defined(NDEBUG))
+#if defined(CGAL_NO_ASSERTIONS)
   #undef CGAL_APPEL_ASSERTION_MODE
   #undef CGAL_APPEL_EXP_ASSERTION_MODE
   #undef CGAL_APPEL_LOG_MODE
@@ -126,7 +126,7 @@
     #define CGAL_APPEL_TIMER_PRINT(channel,timer,msg) \
       { \
         CGAL_APPEL_LOG(channel,msg \
-	  	          << std::setiosflags(std::ios::fixed) \
+                            << std::setiosflags(std::ios::fixed) \
                           << std::setprecision(5) \
                           << CGAL::Approximate_min_ellipsoid_d_impl:: \
                              Timer::instance().lapse(timer) \

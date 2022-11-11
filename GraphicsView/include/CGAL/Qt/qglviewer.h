@@ -70,14 +70,14 @@ implementation.
 class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
-public:  
+public:
   //todo check if this is used. If not remove it
-  explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
-  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
-  explicit QGLViewer(QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
+  explicit QGLViewer(QGLContext* context, QWidget *parent = nullptr,
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
+  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = nullptr,
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
+  explicit QGLViewer(QWidget *parent = nullptr,
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
 
   virtual ~QGLViewer();
 
@@ -117,9 +117,9 @@ public:
   qglviewer::Camera::drawAllPaths(). Actual camera and path edition will be
   implemented in the future. */
   bool cameraIsEdited() const { return cameraIsEdited_; }
-  
+
   /*!
-   * \brief isSharing returns true if the viewer was created from an existing one, 
+   * \brief isSharing returns true if the viewer was created from an existing one,
    * and therefore is sharing its context with it.
    */
   bool isSharing() const;
@@ -138,8 +138,8 @@ public Q_SLOTS:
   void setGridIsDrawn(bool draw = true) {
     if(!draw)
     {
-      grid_size=0;
-      g_axis_size=0;
+      grid_size = 0;
+      grid_axis_size = 0;
     }
     gridIsDrawn_ = draw;
     Q_EMIT gridIsDrawnChanged(draw);
@@ -179,9 +179,7 @@ public:
   /*! Returns the background color of the viewer.
 
   This method is provided for convenience since the background color is an
-  OpenGL state variable set with \c glClearColor(). However, this internal
-  representation has the advantage that it is saved (resp. restored) with
-  saveStateToFile() (resp. restoreStateFromFile()).
+  OpenGL state variable set with \c glClearColor().
 
   Use setBackgroundColor() to define and activate a background color.
 
@@ -378,26 +376,26 @@ public:
   Note that if the QGLViewer is embedded in an other QWidget, it returns \c true
   when the top level widget is in full screen mode. */
   bool isFullScreen() const { return fullScreen_; }
-  
+
   /*! Returns the recommended size for the QGLViewer. Default value is 600x400
    * pixels. */
   virtual QSize sizeHint() const { return QSize(600, 400); }
   /*!
-   * Sets the offset of the scene. The offset is the difference between the origin 
+   * Sets the offset of the scene. The offset is the difference between the origin
    * of the world and the origin of the scene. It is relevant when the whole scene is translated
    * of a big number, because there is a useless loss of precision when drawing.
-   * 
-   * The offset must be added to the drawn coordinates, and substracted from the computation 
+   *
+   * The offset must be added to the drawn coordinates, and substracted from the computation
    * \attention  the result of pointUnderPixel is the real item translated by the offset.
-   * 
+   *
    */
   void setOffset(qglviewer::Vec offset);
-  
+
   /*!
    * returns the offset of the scene.
    * \see `setOffset()`
    */
-  qglviewer::Vec offset()const;
+  const qglviewer::Vec& offset() const;
 
 public Q_SLOTS:
   void setFullScreen(bool fullScreen = true);
@@ -413,7 +411,8 @@ protected:
   //@{
 public:
   void drawArrow(double r, double R, int prec,
-                        qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, std::vector<float> &data);
+                 const qglviewer::Vec& from, const qglviewer::Vec& to,
+                 std::vector<float> &data);
   void drawAxis(qreal l = 1.0);
   void drawGrid(qreal size= 1.0, int nbSubdivisions = 10);
 
@@ -428,7 +427,7 @@ protected:
 
 protected:
   void displayFPS();
-  
+
 
 //@}
 
@@ -565,6 +564,21 @@ public:
    */
   void saveSnapshot();
 
+  /*!
+   * Takes a snapshot without any dialog
+   */
+  void saveSnapshot(const QString& fileName,
+                    const qreal finalWidth,
+                    const qreal finalHeight,
+                    const bool expand = false,
+                    const double oversampling = 1.,
+                    qglviewer::SnapShotBackground background_color = qglviewer::CURRENT_BACKGROUND);
+
+  void saveSnapshot(const QString& fileName)
+  {
+    return saveSnapshot(fileName, this->width(), this->height());
+  }
+
 public:
 Q_SIGNALS:
   /*! Signal emitted by the default init() method.
@@ -667,9 +681,8 @@ protected:
   initialize some of the OpenGL flags. The default implementation is empty. See
   initializeGL().
 
-  Typical usage include camera() initialization (showEntireScene()), previous
-  viewer state restoration (restoreStateFromFile()), OpenGL state modification
-  and display list creation.
+  Typical usage include camera() initialization (showEntireScene()),
+ OpenGL state modification and display list creation.
 
   Note that initializeGL() modifies the standard OpenGL context. These values
   can be restored back in this method.
@@ -719,7 +732,6 @@ protected:
   virtual void keyPressEvent(QKeyEvent *);
   virtual void keyReleaseEvent(QKeyEvent *);
   virtual void timerEvent(QTimerEvent *);
-  virtual void closeEvent(QCloseEvent *);
   //@}
 
   /*! @name Object selection */
@@ -837,8 +849,26 @@ public:
 
 public Q_SLOTS:
   void setShortcut(qglviewer::KeyboardAction action, unsigned int key);
+  void setShortcut(qglviewer::KeyboardAction action, ::Qt::Modifier modifier, ::Qt::Key key)
+  {
+    setShortcut(action,
+                static_cast<unsigned int>(modifier)+
+                static_cast<unsigned int>(key));
+  }
 
   void setKeyDescription(unsigned int key, QString description);
+  void setKeyDescription(::Qt::KeyboardModifier modifier, ::Qt::Key key, QString description)
+  {
+    setKeyDescription(static_cast<unsigned int>(modifier) +
+                      static_cast<unsigned int>(key),
+                      description);
+  }
+  void setKeyDescription(::Qt::Modifier modifier, ::Qt::Key key, QString description)
+  {
+    setKeyDescription(static_cast<unsigned int>(modifier) +
+                      static_cast<unsigned int>(key),
+                      description);
+  }
   void clearShortcuts();
 
 // Key Frames shortcut keys
@@ -921,35 +951,11 @@ protected:
   //@{
 public:
   QString stateFileName() const;
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
 Q_SIGNALS:
   void needNewContext();
 
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-  virtual void saveStateToFile(); // cannot be const because of QMessageBox
-  virtual bool restoreStateFromFile();
-
-  /*! Defines the stateFileName() used by saveStateToFile() and
-    restoreStateFromFile().
-
-    The file name can have an optional prefix directory (no prefix meaning
-    current directory). If the directory does not exist, it will be created by
-    saveStateToFile().
-
-    \code
-    // Name depends on the displayed 3D model. Saved in current directory.
-    setStateFileName(3DModelName() + ".xml");
-
-    // Files are stored in a dedicated directory under user's home directory.
-    setStateFileName(QDir::homeDirPath + "/.config/myApp.xml");
-    \endcode */
-  void setStateFileName(const QString &name) { stateFileName_ = name; }
-
 
 protected:
-  static void saveStateToFileForAllViewers();
   //@}
 
   /*! @name QGLViewer pool */
@@ -1167,44 +1173,45 @@ protected:
   QMap<WheelBindingPrivate, MouseActionPrivate> wheelBinding_;
   QMap<ClickBindingPrivate, qglviewer::ClickAction> clickBinding_;
   ::Qt::Key currentlyPressedKey_;
-  
-  // S t a t e   F i l e
-  QString stateFileName_;
 
   // H e l p   w i n d o w
   QTabWidget *helpWidget_;
-  
+
   //internal drawing buffers
   enum VBO
   {
     Grid = 0,
-    Grid_axis,
-    Axis,
+    Grid_axis_x, Grid_axis_y,
+    Axis_x, Axis_y, Axis_z,
     Pivot_point,
     VBO_size
   };
+
   enum VAO
   {
     GRID = 0,
-    GRID_AXIS,
-    AXIS,
+    GRID_AXIS_X, GRID_AXIS_Y,
+    AXIS_X, AXIS_Y, AXIS_Z,
     PIVOT_POINT,
     VAO_size
   };
+
   QOpenGLShaderProgram rendering_program;
-  QOpenGLShaderProgram rendering_program_light;
   QOpenGLVertexArrayObject vaos[VAO_size];
   QVector<QOpenGLBuffer> vbos;
+
   std::size_t grid_size;
-  std::size_t g_axis_size;
+  std::size_t grid_axis_size;
   std::size_t axis_size;
+
   QOpenGLFramebufferObject* stored_fbo;
+
   //S n a p s h o t
-  QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color, 
+  QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color,
                        QSize finalSize, double oversampling, bool expand);
-  
+
   //Internal Projection Matrix
-  
+
   // O f f s e t
   qglviewer::Vec _offset;
   //C o n t e x t
@@ -1212,12 +1219,15 @@ protected:
   bool is_sharing;
   bool is_linked;
   QOpenGLContext* shared_context;
+  // Zoom
+  bool _first_tick;
+
 public:
   //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is ES 2.0.  
+  //! @returns `false` if the context is ES 2.0.
   bool isOpenGL_4_3()const {return is_ogl_4_3; }
-  
+
 };
 
 } //end CGAL

@@ -13,7 +13,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include <CGAL/exceptions.h>
-#include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/use.h>

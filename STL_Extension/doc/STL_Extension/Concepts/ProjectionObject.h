@@ -5,12 +5,12 @@
 \ingroup PkgSTLExtensionConcepts
 \cgalConcept
 
-\anchor sectionProjectionFunctionObjects 
+\anchor sectionProjectionFunctionObjects
 
 
-The concept `ProjectionObject` is modeled after the STL 
-concept `UnaryFunction`, but takes also care of (const) 
-references. 
+The concept `ProjectionObject` is modeled after the STL
+concept `UnaryFunction`, but takes also care of (const)
+references.
 
 \cgalHasModel CGAL::Identity
 \cgalHasModel CGAL::Dereference
@@ -33,57 +33,57 @@ class ProjectionObject {
 public:
 
 
-/// \name Definition 
-/// @{ 
+/// \name Definition
+/// @{
 /*!
-argument type. 
-*/ 
-typedef unspecified_type argument_type; 
-/// @} 
+argument type.
+*/
+typedef unspecified_type argument_type;
+/// @}
 
 
-/// \name Definition 
-/// @{ 
+/// \name Definition
+/// @{
 /*!
-result type. 
-*/ 
-typedef unspecified_type result_type; 
-/// @} 
+result type.
+*/
+typedef unspecified_type result_type;
+/// @}
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-ProjectionObject(); 
+default constructor.
+*/
+ProjectionObject();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
-/*!
-
-*/ 
-result_type& operator()(argument_type &) const; 
-
-
-
-/// @} 
-
-
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
 
-*/ 
-const result_type& operator()(const argument_type &) const; 
+*/
+result_type& operator()(argument_type &) const;
 
 
 
-/// @} 
+/// @}
+
+
+/// \name Operations
+/// @{
+/*!
+
+*/
+const result_type& operator()(const argument_type &) const;
+
+
+
+/// @}
 
 
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
@@ -120,12 +120,12 @@ public:
   {
     // Allocate an extended curve (with an initially empty set of edges)
     // and store it in the curves' list.
-    typename Arrangement_with_history_2::Curve_halfedges  *p_cv = 
+    typename Arrangement_with_history_2::Curve_halfedges  *p_cv =
                                            p_arr->m_curves_alloc.allocate (1);
     typedef decltype(p_arr->m_curves_alloc) M_Curves_alloc;
     std::allocator_traits<M_Curves_alloc>::construct(p_arr->m_curves_alloc, p_cv, cv);
     p_arr->m_curves.push_back (*p_cv);
-    
+
     // Return a handle to the inserted curve (the last in the list).
     Curve_handle       ch = p_arr->m_curves.end();
     return (--ch);
@@ -142,9 +142,9 @@ public:
     typename Arrangement_with_history_2::Curve_halfedges&  cv = *ch;
     cv._insert (he);
 
-    // Add the curve to the set of he's inducing curves. 
+    // Add the curve to the set of he's inducing curves.
     he->curve().data().insert (&cv);
-  
+
     return;
   }
 

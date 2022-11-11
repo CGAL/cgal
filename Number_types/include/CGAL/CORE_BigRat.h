@@ -18,7 +18,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/CORE/BigRat.h>
 #include <CGAL/CORE_coercion_traits.h>
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
 
@@ -156,7 +155,7 @@ public:
     Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        switch (get_mode(out)) {
+        switch (IO::get_mode(out)) {
         case IO::PRETTY:{
             if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
                 return out <<CGAL_CORE_NUMERATOR(t);
@@ -197,13 +196,13 @@ public:
     std::ostream& operator()( std::ostream& out) const {
         Needs_parens_as_product< ::CORE::BigRat > needs_parens_as_product;
         if (needs_parens_as_product(t))
-            return out <<"("<< oformat(t) <<")";
+            return out <<"("<< IO::oformat(t) <<")";
         else
-            return out << oformat(t);
+            return out << IO::oformat(t);
     }
 };
 
-// Benchmark_rep specialization 
+// Benchmark_rep specialization
 template<>
 class Benchmark_rep< CORE::BigRat > {
     const CORE::BigRat& t;
@@ -211,11 +210,11 @@ public:
     //! initialize with a const reference to \a t.
     Benchmark_rep( const CORE::BigRat& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const { 
+    std::ostream& operator()( std::ostream& out) const {
             out << "Rational(" << numerator(t) << "," << denominator(t) << ")";
             return out;
     }
-    
+
     static std::string get_benchmark_name() {
         return "Rational";
     }
@@ -226,7 +225,6 @@ public:
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/CORE_BigInt.h>
-#include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 

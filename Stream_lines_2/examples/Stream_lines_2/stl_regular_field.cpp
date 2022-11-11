@@ -52,8 +52,8 @@ int main()
     {
       fw << "\n";
       for(Point_iterator pit = sit->first; pit != sit->second; pit++){
-	Point_2 p = *pit;
-	fw << p.x() << " " << p.y() << "\n";
+        Point_2 p = *pit;
+        fw << p.x() << " " << p.y() << "\n";
       }
     }
 

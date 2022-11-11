@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
@@ -31,14 +31,14 @@ namespace internal {
 } // namespace internal
 
 /*!
- * \brief Represents different strategies how to handle 
+ * \brief represents different strategies how to handle
  * degenerate cases during the analysis
  *
- * Currently, there are two possible strategies implemented. See the 
+ * Currently, there are two possible strategies implemented. See the
  * constructor of \c Curve_analysis_2 for more details.
  */
 enum Degeneracy_strategy {
-    
+
     SHEAR_STRATEGY = 0,
     EXCEPTION_STRATEGY = 1,
     SHEAR_ONLY_AT_IRRATIONAL_STRATEGY = 2

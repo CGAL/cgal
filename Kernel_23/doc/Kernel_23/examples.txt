@@ -13,4 +13,5 @@
 \example Kernel_23/points_and_segment.cpp
 \example Kernel_23/surprising.cpp
 \example Kernel_23/exact.cpp
+\example Triangulation_2/triangulation_projection_traits.cpp
 */

@@ -13,14 +13,8 @@
 #include <CGAL/config.h>
 
 #ifdef CGAL_HAS_THREADS
-#ifdef CGAL_CAN_USE_CXX11_MUTEX
 #include <mutex>
 #define CGAL_MUTEX std::mutex
 #define CGAL_SCOPED_LOCK(M) std::unique_lock<std::mutex> scoped_lock(M)
-#else
-#include <boost/thread/mutex.hpp>
-#define CGAL_MUTEX boost::mutex
-#define CGAL_SCOPED_LOCK(M) boost::mutex::scoped_lock scoped_lock(M)
-#endif
 #endif
 #endif // CGAL_MUTEX_H

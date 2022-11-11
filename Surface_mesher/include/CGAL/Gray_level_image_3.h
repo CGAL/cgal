@@ -19,7 +19,8 @@
 
 #include <CGAL/auto_link/ImageIO.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
 #include <boost/format.hpp>
@@ -36,7 +37,7 @@ class Gray_level_image_3 : public Image_3
   bool positive_inside;
   float value_outside;
 public:
-  Gray_level_image_3(const Image_3& image, float isoval) 
+  Gray_level_image_3(const Image_3& image, float isoval)
     : Image_3(image),
       isovalue(isoval),
       positive_inside(true),
@@ -44,14 +45,14 @@ public:
   {
   }
 
-  Gray_level_image_3(const char* file, float isoval, bool positive_inside_=true, float value_outside = 0.f)
+  Gray_level_image_3(const std::string& file, float isoval, bool positive_inside_=true, float value_outside = 0.f)
     : Image_3(),
       isovalue(isoval),
       positive_inside(positive_inside_),
       value_outside(value_outside)
   {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
-    std::cerr << 
+    std::cerr <<
       ::boost::format("Constructing a Gray_level_image_3(\"%1%\")... ") % file;
 #endif
     Image_3::read(file);
@@ -81,7 +82,7 @@ public:
     const float Y=static_cast<float>(to_double(p.y()));
     const float Z=static_cast<float>(to_double(p.z()));
 
-    float value = ::triLinInterp(this->image_ptr.get(), X, Y, Z, value_outside); 
+    float value = ::triLinInterp(this->image_ptr.get(), X, Y, Z, value_outside);
     if (positive_inside)
     {
       if (value > isovalue) // inside
@@ -92,7 +93,7 @@ public:
         return FT(0);
     }
     else
-    {      
+    {
       if (value < isovalue) // inside
         return FT(-1);
       else if (value > isovalue) // outside
@@ -102,7 +103,7 @@ public:
     }
   }
 }; // end Gray_level_image_3
- 
+
 } // end namespace CGAL
 
 #endif // CGAL_MESH_3_GRAY_LEVEL_IMAGE_3_H

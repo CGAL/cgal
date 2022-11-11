@@ -31,7 +31,7 @@
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/internal/Mesh_3/helpers.h>
+#include <CGAL/Mesh_3/internal/helpers.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -44,6 +44,8 @@
 
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/dynamic_bitset.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -229,6 +231,47 @@ public:
   void detect_borders(std::vector<Polyhedron>& p);
   void detect_borders() { detect_borders(stored_polyhedra); };
 
+  template <typename InputIterator>
+  void
+  add_features(InputIterator first, InputIterator end)
+  {
+    auto max = 0;
+    auto min = (std::numeric_limits<int>::max)();
+    for(const auto& polyhedron: stored_polyhedra) {
+      auto f_pid = get(face_patch_id_t<Patch_id>(), polyhedron);
+      for(auto fd : faces(polyhedron)) {
+        const auto patch_id = get(f_pid, fd);
+        min = (std::min)(patch_id, min);
+        max = (std::max)(patch_id, max);
+      }
+    }
+    boost::dynamic_bitset<> patch_ids_bitset;
+    patch_ids_bitset.resize(max - min + 1);
+    for(const auto& polyhedron: stored_polyhedra) {
+      auto f_pid = get(face_patch_id_t<Patch_id>(), polyhedron);
+      for(auto fd : faces(polyhedron)) {
+        const auto patch_id = get(f_pid, fd);
+        patch_ids_bitset.set(patch_id - min);
+      }
+    }
+    using Patch_ids_container = std::vector<int>;
+    Patch_ids_container all_patch_ids;
+    all_patch_ids.reserve(patch_ids_bitset.count());
+    for(auto i = patch_ids_bitset.find_first();
+        i != patch_ids_bitset.npos;
+        i = patch_ids_bitset.find_next(i))
+    {
+      all_patch_ids.push_back(static_cast<int>(i + min));
+    }
+    using Polyline = typename std::iterator_traits<InputIterator>::value_type;
+    auto identity_property_map = boost::typed_identity_property_map<Polyline>();
+    auto all_patch_ids_pmap =
+      boost::static_property_map<Patch_ids_container>(all_patch_ids);
+    Base::add_features_and_incidences(first, end,
+                                      identity_property_map,
+                                      all_patch_ids_pmap);
+  }
+
   // non-documented, provided to the FEniCS project
   const std::vector<Polyhedron>& polyhedra()const
   {
@@ -306,7 +349,7 @@ void dump_graph_edges(std::ostream& out, const Graph& g)
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
 
   out.precision(17);
-  for(edge_descriptor e : edges(g))
+  for(edge_descriptor e : make_range(edges(g)))
   {
     vertex_descriptor s = source(e, g);
     vertex_descriptor t = target(e, g);
@@ -348,9 +391,6 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
     typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;
 
-    using Mesh_3::internal::Get_face_index_pmap;
-    Get_face_index_pmap<Polyhedron> get_face_index_pmap(p);
-
     PIDMap pid_map = get(face_patch_id_t<Tag_>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
     EIFMap eif_map = get(CGAL::edge_is_feature, p);
@@ -359,9 +399,9 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     nb_of_patch_plus_one += PMP::sharp_edges_segmentation(p, angle_in_degree
       , eif_map
       , pid_map
-      , PMP::parameters::first_index(nb_of_patch_plus_one)
-      .face_index_map(get_face_index_pmap(p))
-      .vertex_incident_patches_map(vip_map));
+      , CGAL::parameters::first_index(nb_of_patch_plus_one)
+                         .face_index_map(get_initialized_face_index_map(p))
+                         .vertex_incident_patches_map(vip_map));
 
     Mesh_3::internal::Is_featured_edge<Polyhedron> is_featured_edge(p);
 
@@ -398,12 +438,14 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);
   Mesh_3::internal::Angle_tester<GT_> angle_tester;
-  split_graph_into_polylines(g_copy, visitor, angle_tester);
+  split_graph_into_polylines(
+      g_copy, visitor, angle_tester,
+      [&](auto v1, auto v2) { return g_copy[v1] < g_copy[v2]; });
 
   this->add_features_with_context(polylines.begin(),
                                   polylines.end());
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {//DEBUG
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
@@ -416,7 +458,7 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
     }
     og.close();
   }
-#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 2
 
 }
 
@@ -435,7 +477,6 @@ add_featured_edges_to_graph(const Polyhedron& p,
   Featured_edges_graph orig_graph(p, pred);
 
   typedef Featured_edges_graph Graph;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
   typedef Featured_edges_copy_graph G_copy;
   typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
@@ -445,22 +486,26 @@ add_featured_edges_to_graph(const Polyhedron& p,
 
   typedef typename boost::property_map<Polyhedron,vertex_point_t>::const_type Vpm;
   Vpm vpm = get(vertex_point, p);
-  for(Graph_vertex_descriptor v : make_range(vertices(graph))){
-    vertex_descriptor vc;
-    typename P2vmap::iterator it = p2vmap.find(get(vpm,v));
+
+  auto get_vertex = [&](auto point) {
+    typename P2vmap::iterator it = p2vmap.find(point);
+    vertex_descriptor v;
     if(it == p2vmap.end()) {
-      vc = add_vertex(g_copy);
-      g_copy[vc] = get(vpm, v);
-      p2vmap[get(vpm,v)] = vc;
+      v = add_vertex(g_copy);
+      g_copy[v] = point;
+      p2vmap[point] = v;
+    } else {
+      v = it->second;
     }
-  }
+    return v;
+  };
 
   typedef typename boost::property_map<Polyhedron,face_patch_id_t<Tag_> >::type Face_patch_id_pmap;
   Face_patch_id_pmap fpm = get(face_patch_id_t<Tag_>(),p);
 
   for(Graph_edge_descriptor e : make_range(edges(graph))){
-    vertex_descriptor vs = p2vmap[get(vpm,source(e,graph))];
-    vertex_descriptor vt = p2vmap[get(vpm,target(e,graph))];
+    vertex_descriptor vs = get_vertex(get(vpm,source(e,graph)));
+    vertex_descriptor vt = get_vertex(get(vpm,target(e,graph)));
     CGAL_warning_msg(vs != vt, "ignore self loop");
     if(vs != vt) {
       const std::pair<edge_descriptor, bool> pair = add_edge(vs,vt,g_copy);
@@ -475,7 +520,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
     }
   }
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {// DEBUG
     dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }

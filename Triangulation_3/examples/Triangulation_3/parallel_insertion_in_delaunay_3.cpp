@@ -15,7 +15,7 @@ int main()
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
   // Delaunay T3
-  typedef CGAL::Triangulation_data_structure_3< 
+  typedef CGAL::Triangulation_data_structure_3<
             CGAL::Triangulation_vertex_base_3<K>,
             CGAL::Delaunay_triangulation_cell_base_3<K>,
             CGAL::Parallel_tag>                               Tds;

@@ -12,14 +12,6 @@ when alpha is given as an int.
   Alpha_shape_3(Dt& dt, bool swap=true, NT alpha = 0, Mode m = REGULARIZED)
   The triangulation is swapped  if swap=true and copied otherwise.
 
-- suppress the traits classes Alpha_shape_euclidean_traits_3.h
-  and Weighted_alpha_shape_euclidean_traits_3.h
-  their purpose was to rename the Compute_squared_radius_3 constructor.
-  The same can be achieved in class Alpha_shapes_3 using the Weighted_tag
-  of the triangulation
-
-- same as previous for Alpha_shapes_2
-
 - test the  taking into account of paramater alpha in functions
 get_alpha_shape_edges
 get_alpha_shape_facets

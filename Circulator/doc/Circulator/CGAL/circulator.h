@@ -619,7 +619,7 @@ Iterator_tag query_circulator_or_iterator( const I& i);
 /*!
 \ingroup PkgHandlesAndCirculatorsFunctions
 
-This functiona matches for type `C` if the iterator category of `C` belongs to a circulator.
+This function matches for type `C` if the iterator category of `C` belongs to a circulator.
 
 \sa `Circulator_tag`
 \sa `Circulator_traits`

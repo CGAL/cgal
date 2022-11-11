@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
 //                 Miguel Granados     <granados@mpi-sb.mpg.de>
@@ -35,7 +35,7 @@
 namespace CGAL {
 
 template <typename Refs>
-class SFace_base { 
+class SFace_base {
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
   #else
@@ -50,17 +50,16 @@ class SFace_base {
   typedef typename Refs::Volume_const_handle  Volume_const_handle;
   typedef typename Refs::Object_list          Object_list;
   typedef typename Refs::SFace_cycle_iterator SFace_cycle_iterator;
-  typedef typename Refs::SFace_cycle_const_iterator 
+  typedef typename Refs::SFace_cycle_const_iterator
     SFace_cycle_const_iterator;
   Vertex_handle  center_vertex_;
   Volume_handle  volume_;
-  //    Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
+  Object_list    boundary_entry_objects_; // SEdges, SLoops, SVertices
   GenPtr         info_;
   // temporary needed:
   Mark           mark_;
 
  public:
-  Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
 
   SFace_base() : center_vertex_(), volume_(), info_(), mark_() {}
 
@@ -70,23 +69,23 @@ class SFace_base {
 
     SFace_base(const SFace_base<Refs>& f)
       { center_vertex_ = f.center_vertex_;
-	volume_ = f.volume_;
-	boundary_entry_objects_ = f.boundary_entry_objects_;
-	info_ = 0;
-	mark_ = f.mark_;
+        volume_ = f.volume_;
+        boundary_entry_objects_ = f.boundary_entry_objects_;
+        info_ = 0;
+        mark_ = f.mark_;
       }
 
     SFace_base<Refs>& operator=(const SFace_base<Refs>& f)
       { if (this == &f) return *this;
-	center_vertex_ = f.center_vertex_;
-	volume_ = f.volume_;
-	boundary_entry_objects_ = f.boundary_entry_objects_;
-	info_ = 0;
-	mark_ = f.mark_;
-	return *this;
+        center_vertex_ = f.center_vertex_;
+        volume_ = f.volume_;
+        boundary_entry_objects_ = f.boundary_entry_objects_;
+        info_ = 0;
+        mark_ = f.mark_;
+        return *this;
       }
 
-    SFace_cycle_iterator sface_cycles_begin() 
+    SFace_cycle_iterator sface_cycles_begin()
     { return boundary_entry_objects_.begin(); }
     SFace_cycle_iterator sface_cycles_end()
     { return boundary_entry_objects_.end(); }
@@ -111,21 +110,21 @@ class SFace_base {
     const GenPtr& info() const { return info_; }
 
     bool is_valid( bool verb = false, int level = 0) const {
-      
+
       Verbose_ostream verr(verb);
       verr << "begin CGAL::SNC_items<...>::SFace_base::is_valid( verb=true, "
-	"level = " << level << "):" << std::endl;
+        "level = " << level << "):" << std::endl;
 
       bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != nullptr);
       valid = valid && (volume_ != Volume_handle() &&
-			volume_ != nullptr);
+                        volume_ != nullptr);
 
       if(boundary_entry_objects_.empty()) {
-	valid = valid && 
-	  (center_vertex_->shalfedges_begin() == center_vertex_->shalfedges_end());
+        valid = valid &&
+          (center_vertex_->shalfedges_begin() == center_vertex_->shalfedges_end());
       }
       verr << "end of CGAL::SNC_items<...>::SFace_base::is_valid(): structure is "
-	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+           << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
       return valid;
     }

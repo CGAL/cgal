@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -27,6 +27,7 @@ namespace CGAL {
 template < class R_ >
 class VectorC2
 {
+  typedef VectorC2<R_>                      Self;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Vector_2             Vector_2;
@@ -47,13 +48,22 @@ public:
   typedef R_                                R;
 
   VectorC2() {}
- 
+
   VectorC2(const FT &x, const FT &y)
     : base(CGAL::make_array(x, y)) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
     : base( hw != FT(1) ? CGAL::make_array<FT>(hx/hw, hy/hw)
                         : CGAL::make_array(hx, hy) ) {}
+
+  friend void swap(Self& a, Self& b)
+#if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
+    noexcept(std::is_nothrow_swappable_v<Base>)
+#endif
+  {
+    using std::swap;
+    swap(a.base, b.base);
+  }
 
   const FT & x() const
   {
@@ -94,7 +104,7 @@ public:
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool 
+bool
 operator==(const VectorC2<R> &v, const VectorC2<R> &w)
 {
   return w.x() == v.x() && w.y() == v.y();
@@ -102,7 +112,7 @@ operator==(const VectorC2<R> &v, const VectorC2<R> &w)
 
 template < class R >
 inline
-bool 
+bool
 operator!=(const VectorC2<R> &v, const VectorC2<R> &w)
 {
   return !(v == w);

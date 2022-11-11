@@ -34,7 +34,7 @@ namespace Classification
 
   \cgalModels `ReadablePropertyMap`
 
-  \tparam FaceGraph model of `FaceGraph`. 
+  \tparam FaceGraph model of `FaceGraph`.
 
   \tparam VertexPointMap model of `ReadablePropertyMap` with with
   `boost::graph_traits<FaceGraph>::%vertex_descriptor` as key type
@@ -53,10 +53,10 @@ public:
 
 private:
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
-  
+
   const FaceGraph* m_mesh;
   VertexPointMap m_vpm;
-  
+
 public:
 
   Face_descriptor_to_center_of_mass_map ()
@@ -67,13 +67,13 @@ public:
     : m_mesh (mesh), m_vpm (vpm) { }
 
   /// \cond SKIP_IN_MANUAL
-  inline friend reference get (const Face_descriptor_to_center_of_mass_map& map, key_type f)
+  inline friend value_type get (const Face_descriptor_to_center_of_mass_map& map, key_type f)
   {
     std::vector<Point_3> points;
 
     for(vertex_descriptor v : vertices_around_face(halfedge(f, *(map.m_mesh)), *(map.m_mesh)))
       points.push_back (get (map.m_vpm, v));
-    
+
     return CGAL::centroid (points.begin(), points.end());
   }
   /// \endcond
@@ -87,7 +87,7 @@ public:
 
   \cgalModels `ReadablePropertyMap`
 
-  \tparam FaceGraph model of `FaceGraph`. 
+  \tparam FaceGraph model of `FaceGraph`.
 
   \tparam VertexPointMap model of `ReadablePropertyMap` with with
   `boost::graph_traits<FaceGraph>::%vertex_descriptor` as key type
@@ -107,7 +107,7 @@ public:
   {
     face_descriptor m_descriptor;
     CGAL::Bbox_3 m_bbox;
-      
+
   public:
     face_descriptor_with_bbox (const face_descriptor& descriptor,
                                const CGAL::Bbox_3& bbox)
@@ -125,10 +125,10 @@ public:
 
 private:
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
-  
+
   const FaceGraph* m_mesh;
   VertexPointMap m_vpm;
-  
+
 public:
 
   Face_descriptor_to_face_descriptor_with_bbox_map ()
@@ -139,10 +139,10 @@ public:
     : m_mesh (mesh), m_vpm (vpm) { }
 
   /// \cond SKIP_IN_MANUAL
-  inline friend reference get (const Face_descriptor_to_face_descriptor_with_bbox_map& map, key_type f)
+  inline friend value_type get (const Face_descriptor_to_face_descriptor_with_bbox_map& map, key_type f)
   {
     CGAL::Bbox_3 bbox;
-      
+
     for(vertex_descriptor v : vertices_around_face(halfedge(f, *(map.m_mesh)), *(map.m_mesh)))
       bbox = bbox + get(map.m_vpm, v).bbox();
 

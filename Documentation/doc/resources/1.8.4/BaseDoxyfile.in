@@ -197,19 +197,60 @@ TAB_SIZE               = 4
 # will result in a user-defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES = "sc{1}=<span style=\"font-variant: small-caps;\">\1</span>"
-ALIASES += "cgal=\sc{%CGAL}"
-ALIASES += "protocgal=\sc{C++gal}"
-ALIASES += "plageo=\sc{Plageo}"
-ALIASES += "gmp=\sc{GMP}"
-ALIASES += "mpir=\sc{MPIR}"
-ALIASES += "mpfr=\sc{MPFR}"
-ALIASES += "stl=\sc{STL}"
-ALIASES += "leda=\sc{LEDA}"
-ALIASES += "gcc=\sc{GCC}"
-ALIASES += "cpp=\sc{C++}"
-ALIASES += "cpp11=\sc{C++11}"
-ALIASES += "CC=\sc{C++}"
+ALIASES = "cgal=%CGAL"
+ALIASES += "protocgal=C++gal"
+ALIASES += "plageo=Plageo"
+ALIASES += "stl=STL"
+ALIASES += "gmp=GMP"
+ALIASES += "gmpxx=GMPXX"
+ALIASES += "mpir=MPIR"
+ALIASES += "mpfr=MPFR"
+ALIASES += "exacus=Exacus"
+ALIASES += "ascii=ASCII"
+ALIASES += "iso=ISO"
+ALIASES += "lisp=Lisp"
+ALIASES += "ieee=IEEE"
+ALIASES += "leda=LEDA"
+ALIASES += "gcc=GCC"
+ALIASES += "dcel=DCEL"
+ALIASES += "bgl=BGL"
+ALIASES += "boost=Boost"
+ALIASES += "gnu=GNU"
+ALIASES += "ms=MS"
+ALIASES += "qt=Qt"
+ALIASES += "qt5=Qt5"
+ALIASES += "eigen=Eigen"
+ALIASES += "opengr=OpenGR"
+ALIASES += "libpointmatcher=libpointmatcher"
+ALIASES += "core=Core"
+ALIASES += "mpfi=MPFI"
+ALIASES += "ntl=NTL"
+ALIASES += "pdb=PDB"
+ALIASES += "esbtl=ESBTL"
+ALIASES += "tbb=TBB"
+ALIASES += "laslib=LASlib"
+ALIASES += "opencv=OpenCV"
+ALIASES += "tensorflow=TensorFlow"
+ALIASES += "metis=METIS"
+ALIASES += "zlib=zlib"
+ALIASES += "ceres=Ceres"
+ALIASES += "glpk=GLPK"
+ALIASES += "scip=SCIP"
+ALIASES += "osqp=OSQP"
+ALIASES += "rs=RS"
+ALIASES += "rs3=RS3"
+ALIASES += "unix=Unix"
+ALIASES += "api=API"
+ALIASES += "vtk=VTK"
+ALIASES += "visualstudio=Visual Studio"
+ALIASES += "taucs=TAUCS"
+ALIASES += "lapack=LAPACK"
+ALIASES += "blas=BLAS"
+ALIASES += "opennl=OpenNL"
+ALIASES += "cpp=C++"
+ALIASES += "cpp11=C++11"
+ALIASES += "CC=C++"
+
 ALIASES += "cgalExample{1}=<br><b>File</b> \ref \1 \include \1"
 ALIASES += "cgalFigureAnchor{1}=\anchor fig__\1"
 ALIASES += "cgalFigureRef{1}=\ref fig__\1"
@@ -289,6 +330,7 @@ ALIASES+= "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIO
 ALIASES += "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../Manual/how_to_cite_cgal.html#\1-${CGAL_RELEASE_YEAR_ID}\">\1-${CGAL_RELEASE_YEAR_ID}</a><BR>"
 
 ALIASES += "cgalFootnote{1}=<span class=\"footnote\">\1</span>"
+ALIASES += "cgalFootnoteCode{1}=<tt>\1</tt>"
 ALIASES += "cgalAutoToc=\htmlonly <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly"
 
 ALIASES += "cgalTagTrue=\link CGAL::Tag_true `CGAL::Tag_true`\endlink"
@@ -304,6 +346,20 @@ ALIASES+= "cgalCRPSubsection{1}=<h3>\1</h3>"
 ALIASES+= "cgalCite{1}=<!-- -->\cite \1"
 
 ALIASES+= "cgalPackageSection{2}=\htmlonly <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 \n \htmlonly </div>\endhtmlonly"
+
+ALIASES+= "cgalNamedParamsBegin=<dl class=\"params\"><dt>Optional Named Parameters</dt><dd> <table class=\"params\">"
+ALIASES+= "cgalNamedParamsBegin{1}=<dl class=\"params\"><dt>\1</dt><dd> <table class=\"params\">"
+ALIASES+= "cgalNamedParamsEnd=</table> </dd> </dl>"
+ALIASES+= "cgalParamNBegin{1}=<tr><td class> \htmlonly[block] <button class=\"collapsible\">\endhtmlonly <b>\1</b> \htmlonly[block]</button> <div class=\"content\">\endhtmlonly<ul>"
+ALIASES+= "cgalParamDescription{1}=<li>\1</li>"
+ALIASES+= "cgalParamType{1}=<li><b>Type: </b>\1</li>"
+ALIASES+= "cgalParamDefault{1}=<li><b>%Default: </b>\1</li>"
+ALIASES+= "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>"
+ALIASES+= "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>"
+ALIASES+= "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}"
+ALIASES+= "cgalParamSectionEnd=\cgalParamNEnd"
+ALIASES+= "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>"
+
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
@@ -1036,7 +1092,7 @@ HTML_STYLESHEET        = ${CGAL_DOC_RESOURCE_DIR}/stylesheet.css
 # user-defined cascading style sheet that is included after the standard
 # style sheets created by doxygen. Using this option one can overrule
 # certain style aspects. This is preferred over using HTML_STYLESHEET
-# since it does not replace the standard style sheet and is therefor more
+# since it does not replace the standard style sheet and is therefore more
 # robust against future updates. Doxygen will copy the style sheet file to
 # the output directory.
 
@@ -1340,7 +1396,7 @@ MATHJAX_EXTENSIONS     =
 # The MATHJAX_CODEFILE tag can be used to specify a file with javascript
 # pieces of code that will be used on startup of the MathJax code.
 
-MATHJAX_CODEFILE       =
+MATHJAX_CODEFILE       = ${CGAL_DOC_RESOURCE_DIR}/CGAL_mathjax.js
 
 # When the SEARCHENGINE tag is enabled doxygen will generate a search box
 # for the HTML output. The underlying search engine uses javascript
@@ -1675,13 +1731,13 @@ ENABLE_PREPROCESSING   = YES
 # compilation will be performed. Macro expansion can be done in a controlled
 # way by setting EXPAND_ONLY_PREDEF to YES.
 
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES
 # then the macro expansion is limited to the macros specified with the
 # PREDEFINED and EXPAND_AS_DEFINED tags.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES (the default) the includes files
 # pointed to by INCLUDE_PATH will be searched when a #include is found.
@@ -1709,7 +1765,14 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator
 # instead of the = operator.
 
-PREDEFINED             = DOXYGEN_RUNNING
+PREDEFINED             = DOXYGEN_RUNNING \
+                         "CGAL_NP_TEMPLATE_PARAMETERS=NamedParameters = CGAL::parameters::Default_named_parameters" \
+                         "CGAL_NP_CLASS=NamedParameters" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS_1=NamedParameters1 = CGAL::parameters::Default_named_parameter" \
+                         "CGAL_NP_CLASS_1=NamedParameters1" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
+                         "CGAL_NP_CLASS_2=NamedParameters2" \
+                         CGAL_DEPRECATED
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.

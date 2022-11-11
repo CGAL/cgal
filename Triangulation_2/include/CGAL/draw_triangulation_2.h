@@ -15,19 +15,23 @@
 #include <CGAL/license/Triangulation_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/draw_constrained_triangulation_2.h>
 
 #include <CGAL/Triangulation_2.h>
+
+#ifdef CGAL_USE_BASIC_VIEWER
+
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
 {
-  
+
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorT2
 {
   template<typename T2>
-  static CGAL::Color run(const T2&,
+  static CGAL::IO::Color run(const T2&,
                          const typename T2::Finite_faces_iterator fh)
   {
     CGAL::Random random((unsigned int)(std::size_t)(&*fh));
@@ -35,7 +39,7 @@ struct DefaultColorFunctorT2
   }
 };
 
-// Viewer class for T2 
+// Viewer class for T2
 template<class T2, class ColorFunctor>
 class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
 {
@@ -44,7 +48,7 @@ class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
   typedef typename T2::Finite_edges_iterator Edge_const_handle;
   typedef typename T2::Finite_faces_iterator Facet_const_handle;
   typedef typename T2::Point                 Point;
- 
+
 public:
   /// Construct the viewer.
   /// @param at2 the t2 to view
@@ -56,7 +60,7 @@ public:
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false), 
+    Base(parent, title, true, true, true, false, false),
     t2(at2),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -67,13 +71,13 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::Color c=m_fcolor.run(t2, fh);
+    CGAL::IO::Color c=m_fcolor.run(t2, fh);
     face_begin(c);
 
     add_point_in_face(fh->vertex(0)->point());
     add_point_in_face(fh->vertex(1)->point());
     add_point_in_face(fh->vertex(2)->point());
-    
+
     face_end();
   }
 
@@ -94,16 +98,16 @@ protected:
     {
       for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
            it!=t2.finite_faces_end(); ++it)
-      { compute_face(it); } 
+      { compute_face(it); }
     }
-    
+
     for (typename T2::Finite_edges_iterator it=t2.finite_edges_begin();
          it!=t2.finite_edges_end(); ++it)
-    { compute_edge(it); } 
+    { compute_edge(it); }
 
     for (typename T2::Finite_vertices_iterator it=t2.finite_vertices_begin();
          it!=t2.finite_vertices_end(); ++it)
-    { compute_vertex(it); } 
+    { compute_vertex(it); }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -111,7 +115,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -130,22 +134,23 @@ protected:
 
 // Specialization of draw function.
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
-  
+
 template<class Gt, class Tds>
-void draw(const CGAL_T2_TYPE& at2,
-          const char* title="Triangulation_2 Basic Viewer",
-          bool nofill=false)
+void draw(const CGAL_T2_TYPE& at2)
 {
+  const char* title="Triangulation_2 Basic Viewer";
+  bool nofill=false;
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
   bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-  
+
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"t2_viewer","\0"};
+    const char* argv[2]={"t2_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     DefaultColorFunctorT2 fcolor;
     SimpleTriangulation2ViewerQt<CGAL_T2_TYPE, DefaultColorFunctorT2>

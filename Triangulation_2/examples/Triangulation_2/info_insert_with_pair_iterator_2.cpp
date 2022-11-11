@@ -20,11 +20,9 @@ int main()
   points.push_back( std::make_pair(Point(2,2),4)   );
   points.push_back( std::make_pair(Point(-4,0),5)  );
 
-  
+
   Delaunay T;
   T.insert( points.begin(),points.end() );
-
-  CGAL_assertion( T.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
   Delaunay::Finite_vertices_iterator vit;

@@ -1,52 +1,130 @@
-Subject: CGAL 4.14 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.5 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
-Body: 
+Body:
 
-The CGAL Open Source Project is pleased to announce the release 4.14
-of CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the release 5.5 of
+CGAL, the Computational Geometry Algorithms Library.
 
-This release will be the last one supporting C++98/C++03 compilers,
-and the next release, CGAL version 5.0, will require support for
-C++14.
 
 Besides fixes and general enhancement to existing packages, the
-following has changed since CGAL 4.13:
+following has changed since CGAL 5.4:
+
+3D Alpha Wrapping (new package)
+
+-   This component takes a 3D triangle mesh, soup, or point set as
+    input, and generates a valid (watertight, intersection-free, and
+    combinatorially 2-manifold) surface triangle mesh that contains the
+    input. The algorithm proceeds by shrink-wrapping and refining a 3D
+    Delaunay triangulation, starting from a loose bounding box of the
+    input. Two user-defined parameters, alpha and offset, offer control
+    over the maximum size of cavities where the shrink-wrapping process
+    can enter, and the tightness of the final surface mesh to the input,
+    respectively. Once combined, these parameters provide a means to
+    trade fidelity to the input for complexity of the output.
+
+    See also https://www.cgal.org/2022/05/18/alpha_wrap/.
+
+2D Straight Skeleton and Polygon Offsetting (breaking change)
+
+-   Fix the output of the function
+    CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2() to
+    not take into account the offset of the outer frame.
+-   Fix the computation of the exterior offset of a polygon with holes
+    that was not computing the offset of the holes
+
+3D Convex Hulls
+
+-   Added an overload of the function CGAL::convex_hull_3(), which
+    writes the result in an indexed triangle set.
+
+2D Polygons
+
+-   Add vertex, edge, and hole ranges.
+-   The concept GeneralPolygonWithHoles_2 now requires the nested type
+    Polygon_2 instead of General_polygon_2.
+
+2D Regularized Boolean Set-Operations
+
+-   The concept GeneralPolygonSetTraits_2 now requires the nested type
+    Construct_polygon_with_holes_2 instead of
+    Construct_general_polygon_with_holes_2.
+
+Combinatorial Maps
+
+-   Removed old code deprecated in CGAL 4.9 and 4.10 (global functions,
+    and information associated with darts).
+
+2D Arrangements
+
+-   Fixed the intersect_2, compare_y_at_x_right, and compare_y_at_x_left
+    function objects of the traits class template
+    Arr_geodesic_arc_on_sphere_traits_2 that handles geodesic arcs on
+    sphere and applied a small syntactical fix to the tracing traits.
+
+Tetrahedral Mesh Generation
+
+-   Added the function remove_isolated_vertices() as a post-processing
+    step for the tetrahedral mesh generation.
+
+Polygon Mesh Processing
+
+-   Added the function
+    CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup(),
+    which enables re-orienting the faces of a triangle soup based on the
+    orientation of the nearest face in a reference triangle soup.
+-   Added the function
+    CGAL::Polygon_mesh_processing::compatible_orientations(), which
+    enables to retrieve the (in)compatibility of orientations of faces
+    from different connected components.
+-   Added the function
+    CGAL::Polygon_mesh_processing::tangential_relaxation(), which
+    applies an area-based tangential mesh smoothing to the vertices of a
+    surface triangle mesh.
+-   Added the named parameter visitor to the function
+    triangulate_hole(), which enables to track progress with callbacks.
+-   Added more functions in the visitor of the corefinement based
+    methods to track progress.
+
+Surface Mesh Simplification
+
+-   Introduced four variations of the Garland-Heckbert simplification
+    algorithm based on the probabilistic approach of Trettner and
+    Kobbelt (Fast and Robust QEF Minimization using Probabilistic
+    Quadrics): GarlandHeckbert_plane_policies,
+    GarlandHeckbert_probabilistic_plane_policies,
+    GarlandHeckbert_triangle_policies, and
+    GarlandHeckbert_probabilistic_triangle_policies.
+-   The class GarlandHeckbert_policies has been deprecated,
+    GarlandHeckbert_plane_policies replaces it.
+
+Point Set Processing
+
+-   A new optional named parameter, min_points_per_cell has been added
+    to grid_simplify_point_set(). By adding a minimal number of points
+    in a cell such that a point is retained, one can also filter out low
+    density areas and outliers: in the case of densely sampled point
+    clouds, this yields better results than using grid simplification
+    and then outlier removal, while being very vast. The default value
+    is 1 to keep the previous behavior as default.
+
+dD Spatial Searching
+
+-   Added the member function write_graphviz() to the class Kd_tree that
+    writes the tree in a stream in the Graphviz format.
+
+CGAL and the Boost Graph Library (BGL)
+
+-   Added the function invert_selection() in the class
+    Face_filtered_graph, which toggles the selected status of a graph:
+    selected faces are deselected, and unselected faces are selected.
 
 
-### 2D Periodic Hyperbolic Triangulations (new package)
-
--   This package allows the computation of Delaunay triangulations of
-    the Bolza surface.  The Bolza surface is the most symmetric
-    hyperbolic surface of genus 2. Its fundamental domain is the
-    regular hyperbolic octagon with angles π/4 centered at the origin
-    of the Poincaré disk. Triangulations of the Bolza surface can be
-    seen as triangulations of the hyperbolic plane that are periodic
-    in the four directions defined by the sides of this regular
-    octagon.
-
-### 2D Hyperbolic Triangulations (new package)
-
--   This package allows the computation of Delaunay Triangulations of
-    sets of points in the Poincaré disk, which is one of the
-    conformal models for the hyperbolic plane.
-
-### The Heat Method (new package)
-
--   This package provides an algorithm that solves the single- or
-    multiple-source shortest path problem by returning an
-    approximation of the geodesic distance for all vertices of a
-    triangle mesh to the closest vertex in a given set of source
-    vertices.
-
-### Triangulated Surface Mesh Approximation (new package)
-
--   This package implements the Variational Shape Approximation method
-    to approximate an input surface triangle mesh by a simpler surface
-    triangle mesh.
+See https://www.cgal.org/2022/07/15/cgal55/ for a
+complete list of changes.
 
 
-See https://www.cgal.org/2019/03/29/cgal414/ for a complete list of
-changes.
+The same day, we also published CGAL-5.4.2 is the second bug-fix release for
+CGAL-5.4. See https://www.cgal.org/2022/07/15/cgal5.4.2/.
 
 
 The CGAL project is a collaborative effort to develop a robust,

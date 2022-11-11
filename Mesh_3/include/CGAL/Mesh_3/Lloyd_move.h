@@ -68,7 +68,7 @@ public:
   typedef SizingField                                         Sizing_field;
 
   /**
-   * @brief Return the move to apply on \c v according to Lloyd optimization
+   * @brief Returns the move to apply on `v` according to Lloyd optimization
    * function.
    */
   Vector_3 operator()(const Vertex_handle& v,
@@ -162,7 +162,7 @@ private:
 
 
   /**
-   * Return the move for the inside vertex \c v.
+   * Returns the move for the inside vertex `v`.
    */
   Vector_3 lloyd_move_inside_domain(const Vertex_handle& v,
                                     const Cell_vector& incident_cells,
@@ -210,7 +210,7 @@ private:
   }
 
   /**
-   * Return the move for the on-boundary vertex \c v.
+   * Returns the move for the on-boundary vertex `v`.
    */
   Vector_3 lloyd_move_on_boundary(const Vertex_handle& v,
                                   const C3T3& c3t3,
@@ -254,7 +254,7 @@ private:
 
   /**
    * Returns a vector containing the surface delaunay ball centers of the surface
-   * facets that are incident to vertex \c v.
+   * facets that are incident to vertex `v`.
    */
   std::vector<Bare_point> extract_lloyd_boundary_points(const Vertex_handle& v,
                                                         const C3T3& c3t3) const
@@ -298,7 +298,7 @@ private:
   }
 
   /**
-   * Return the move from \c v to the centroid of the segment [a,b].
+   * Returns the move from `v` to the centroid of the segment `[a,b]`.
    */
   Vector_3 centroid_segment_move(const Vertex_handle& v,
                                  const Bare_point& a,
@@ -320,7 +320,7 @@ private:
   }
 
   /**
-   * Return the move from \c v to the centroid of triangle [a,b,c].
+   * Returns the move from `v` to the centroid of triangle `[a,b,c]`.
    */
   Vector_3 centroid_triangle_move(const Vertex_handle& v,
                                   const Bare_point& a,
@@ -397,7 +397,7 @@ private:
   }
 
   /**
-   * Return the move from \c v to the centroid of polygon[first,last].
+   * Returns the move from `v` to the centroid of polygon `[first,last]`.
    * The polygon has to be convex.
    */
   template <typename ForwardIterator>
@@ -523,8 +523,8 @@ private:
   }
 
   /**
-   * Turn around the edge \c edge and add the values computed from tets made by
-   * `v` and the circumcenters of cells incident to \c edge.
+   * Turns around the edge `edge` and adds the values computed from tets made by
+   * `v` and the circumcenters of cells incident to `edge`.
    *
    * Note that this function abundantly uses dual() calls and using a cell base
    * which stores the circumcenter thus improves its efficiency.
@@ -551,7 +551,6 @@ private:
 
     Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;
-    CGAL_assertion(c3t3.is_in_complex(current_cell));
 
     // a & b are fixed points
     const Weighted_point& wa = tr.point(v);
@@ -561,7 +560,6 @@ private:
     const Weighted_point& a_b = tr.point(current_cell, current_cell->index(v));
     Vector_3 ba = Vector_3(cp(a_b), b);
     ++current_cell;
-    CGAL_assertion(c3t3.is_in_complex(current_cell));
     CGAL_assertion(current_cell != done);
 
     // c & d are moving points
@@ -573,7 +571,6 @@ private:
 
     while ( current_cell != done )
     {
-      CGAL_assertion(c3t3.is_in_complex(current_cell));
       Bare_point d = tr.dual(current_cell);
       const Weighted_point& a_d = tr.point(current_cell, current_cell->index(v));
       Vector_3 da = Vector_3(cp(a_d), d);

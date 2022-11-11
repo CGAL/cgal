@@ -1,16 +1,16 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas, Sylvain Pion
 
@@ -21,7 +21,7 @@
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 #ifndef CGAL_DONT_USE_LAZY_KERNEL
 #  include <CGAL/Lazy_kernel.h>
@@ -55,7 +55,7 @@ class Epeck
   : public Type_equality_wrapper<
              Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
                                Simple_cartesian<Interval_nt_advanced>,
-	                       Cartesian_converter< Simple_cartesian<Epeck_ft>,
+                               Cartesian_converter< Simple_cartesian<Epeck_ft>,
                                                     Simple_cartesian<Interval_nt_advanced> >,
                                Epeck>,
              Epeck >

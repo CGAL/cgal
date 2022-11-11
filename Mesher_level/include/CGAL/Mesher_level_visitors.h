@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -51,7 +51,7 @@ class Null_mesh_visitor
 public:
   typedef Null_mesh_visitor Previous_visitor;
 
-  const Null_mesh_visitor& previous_level() const 
+  const Null_mesh_visitor& previous_level() const
   {
     return *this;
   }
@@ -72,7 +72,7 @@ public:
 template <typename V1, typename V2>
 struct Combine_mesh_visitor {
   typedef Combine_mesh_visitor<typename V1::Previous_visitor,
-			       typename V2::Previous_visitor>
+                               typename V2::Previous_visitor>
                                                        Previous_visitor;
 
   V1 v1;
@@ -84,16 +84,16 @@ struct Combine_mesh_visitor {
   }
 
   Previous_visitor previous_level()
-  { 
+  {
     return Previous_visitor(v1.previous_level(),
-			    v2.previous_level());
+                            v2.previous_level());
   }
 
   template <typename E, typename P>
-  void before_conflicts(E e, P p) 
+  void before_conflicts(E e, P p)
   {
     v1.before_conflicts(e, p);
-    v2.before_conflicts(e, p);    
+    v2.before_conflicts(e, p);
   }
 
   template <typename E, typename P, typename Z>
@@ -108,7 +108,7 @@ struct Combine_mesh_visitor {
   {
     v1.after_insertion(v);
     v2.after_insertion(v);
-  } 
+  }
 
   template <typename E, typename P, typename Z>
   void after_no_insertion(E e, P p, Z z)

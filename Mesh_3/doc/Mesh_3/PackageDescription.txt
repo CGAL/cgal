@@ -29,7 +29,7 @@
 
 /// \defgroup PkgMesh3IOFunctions Input/Output Functions
 /// \ingroup PkgMesh3Ref
-/// The free functions that can be used to read and write meshes.
+/// See \ref PkgSMDS3IOFunctions from \ref PkgSMDS3
 
 /*!
 \addtogroup PkgMesh3Ref
@@ -57,8 +57,6 @@
 Here are the main concepts of this package:
 
 - `MeshTriangulationTraits_3`
-- `MeshComplex_3InTriangulation_3`
-- `MeshComplexWithFeatures_3InTriangulation_3`
 - `MeshDomain_3`
 - `MeshDomainWithFeatures_3`
 - `MeshCriteria_3`
@@ -80,7 +78,6 @@ related to the template parameters of some models of the main concepts:
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 - `CGAL::Mesh_triangulation_3<MD,Gt,Concurrency_tag,Vertex_base,Cell_base>`
 - `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>`
 - `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
@@ -114,7 +111,7 @@ and their associated classes:
 - `CGAL::perturb_mesh_3()`
 - `CGAL::lloyd_optimize_mesh_3()`
 - `CGAL::odt_optimize_mesh_3()`
-- `CGAL::facets_in_complex_3_to_triangle_mesh()`
+- `CGAL::Mesh_3::generate_label_weights()`
 
 \cgalCRPSection{CGAL::parameters Functions}
 
@@ -136,9 +133,4 @@ and their associated classes:
 
 - `CGAL::Mesh_optimization_return_code`
 - `CGAL::Mesh_facet_topology`
-
-\cgalCRPSection{Input/Output Functions}
-- `CGAL::output_to_medit()`
-- `CGAL::output_to_vtu()`
 */
-

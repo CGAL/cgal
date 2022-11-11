@@ -18,7 +18,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/CORE/BigInt.h>
 #include <CGAL/CORE/Expr.h>
 #include <CGAL/CORE_coercion_traits.h>
 
@@ -129,8 +128,8 @@ template <> class Real_embeddable_traits< CORE::BigInt >
 };
 
 /*! \ingroup NiX_Modular_traits_spec
- *  \brief a model of concept ModularTraits, 
- *  specialization of NiX::Modular_traits. 
+ *  \brief a model of concept ModularTraits,
+ *  specialization of NiX::Modular_traits.
  */
 template<>
 class Modular_traits< ::CORE::BigInt > {
@@ -155,7 +154,7 @@ class Modular_traits< ::CORE::BigInt > {
         NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }
-    };    
+    };
 };
 
 
@@ -166,7 +165,7 @@ struct Needs_parens_as_product<CORE::BigInt>{
     }
 };
 
-// Benchmark_rep specialization 
+// Benchmark_rep specialization
 template<>
 class Benchmark_rep< CORE::BigInt > {
     const CORE::BigInt& t;
@@ -174,11 +173,11 @@ public:
     //! initialize with a const reference to \a t.
     Benchmark_rep( const CORE::BigInt& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const { 
+    std::ostream& operator()( std::ostream& out) const {
             out << t;
             return out;
     }
-    
+
     static std::string get_benchmark_name() {
         return "Integer";
     }
@@ -189,7 +188,6 @@ public:
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>
-#include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>

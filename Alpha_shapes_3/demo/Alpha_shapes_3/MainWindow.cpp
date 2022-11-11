@@ -11,37 +11,37 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
 void
 MainWindow::connectActions()
 {
-  QObject::connect(this->actionLoad_New_File, SIGNAL(triggered()), 
-		   this, SLOT(open_file()));
+  QObject::connect(this->actionLoad_New_File, SIGNAL(triggered()),
+                   this, SLOT(open_file()));
 
-  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)), 
-		   this, SLOT(alphaChanged(int)));
+  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)),
+                   this, SLOT(alphaChanged(int)));
 
   QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)),
-		   this, SLOT(alphaChanged(int)));
+                   this, SLOT(alphaChanged(int)));
 
-  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)), 
-		   this->alphaBox, SLOT(setValue(int)));
+  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)),
+                   this->alphaBox, SLOT(setValue(int)));
 
-  QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)), 
-		   this->alphaSlider, SLOT(setValue(int)));
+  QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)),
+                   this->alphaSlider, SLOT(setValue(int)));
 
-  QObject::connect(this, SIGNAL(sceneChanged()), 
-		   this->viewer, SLOT(sceneChanged()));
+  QObject::connect(this, SIGNAL(sceneChanged()),
+                   this->viewer, SLOT(sceneChanged()));
 
-  QObject::connect(this, SIGNAL(alphaChanged()), 
-		   this->viewer, SLOT(update()));
+  QObject::connect(this, SIGNAL(alphaChanged()),
+                   this->viewer, SLOT(update()));
 
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   qApp, SLOT(quit()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   qApp, SLOT(quit()));
 }
 
 void
@@ -49,8 +49,8 @@ MainWindow::open_file()
 {
 
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points File"),
-						  "./data",
+                                                  tr("Open Points File"),
+                                                  "./data",
                                                   tr("pts files (*.pts)"));
 
   if(! fileName.isEmpty()){
@@ -59,7 +59,7 @@ MainWindow::open_file()
 }
 
 
-void 
+void
 MainWindow::alphaChanged(int i)
 {
   if (scene.alpha_shape.number_of_alphas() > 0){
@@ -74,7 +74,7 @@ MainWindow::alphaChanged(int i)
   } else {
     scene.alpha_shape.set_alpha(0);
   }
-  viewer->alphaChanged();  
+  viewer->alphaChanged();
   Q_EMIT(alphaChanged());
 }
 
@@ -97,7 +97,7 @@ MainWindow::open(QString fileName)
   scene.alpha_shape.make_alpha_shape(scene.points.begin(), scene.points.end());
   scene.alpha_shape.set_alpha(16);
   timer.stop();
-  
+
 
   alphaSlider->setRange(0,100);
   alphaSlider->setSliderPosition(50);

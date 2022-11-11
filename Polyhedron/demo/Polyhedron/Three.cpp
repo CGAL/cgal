@@ -5,20 +5,34 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <QMdiArea>
 #include <QMdiSubWindow>
+#include <QMessageBox>
 #include "Messages_interface.h"
 using namespace CGAL::Three;
 
-QMainWindow* Three::s_mainwindow = NULL;
-Viewer_interface* Three::s_mainviewer = NULL;
-Viewer_interface* Three::s_currentviewer = NULL;
-Scene_interface* Three::s_scene = NULL;
-QObject* Three::s_connectable_scene = NULL;
-Three* Three::s_three = NULL;
+QMainWindow* Three::s_mainwindow = nullptr;
+Viewer_interface* Three::s_mainviewer = nullptr;
+Viewer_interface* Three::s_currentviewer = nullptr;
+Scene_interface* Three::s_scene = nullptr;
+QObject* Three::s_connectable_scene = nullptr;
+Three* Three::s_three = nullptr;
 RenderingMode Three::s_defaultSMRM;
 RenderingMode Three::s_defaultPSRM;
 int Three::default_point_size;
 int Three::default_normal_length;
 int Three::default_lines_width;
+bool Three::s_is_locked;
+QMutex* Three::s_mutex;
+QWaitCondition* Three::s_wait_condition;
+
+QWaitCondition* Three::getWaitCondition()
+{
+  return s_wait_condition;
+}
+
+QMutex* Three::getMutex()
+{
+  return s_mutex;
+}
 
 QMainWindow* Three::mainWindow()
 {
@@ -175,6 +189,18 @@ void Three::error(QString s)
 {
   qobject_cast<Messages_interface*>(mainWindow())->message_error(s);
 }
+void Three::information(QString title, QString s)
+{
+  QMessageBox::information(mainWindow(), title, s);
+}
+void Three::warning(QString title, QString s)
+{
+  QMessageBox::warning(mainWindow(), title, s);
+}
+void Three::error(QString title, QString s)
+{
+  QMessageBox::critical(mainWindow(), title, s);
+}
 RenderingMode Three::defaultSurfaceMeshRenderingMode()
 {
   return s_defaultSMRM;
@@ -242,3 +268,9 @@ int Three::getDefaultLinesWidth()
 {
   return default_lines_width;
 }
+
+bool& Three::isLocked()
+{
+  return s_is_locked;
+}
+

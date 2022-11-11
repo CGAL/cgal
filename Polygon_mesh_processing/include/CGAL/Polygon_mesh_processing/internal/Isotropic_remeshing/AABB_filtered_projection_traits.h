@@ -11,7 +11,7 @@
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb, Laurent Rineau
 //
-// File adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
+// File adapted from <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 //
 
 #ifndef CGAL_AABB_FILTERED_PROJECTION_TRAITS_H
@@ -23,8 +23,8 @@
 #include <CGAL/property_map.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/internal/AABB_tree/AABB_node.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_node.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -76,7 +76,7 @@ public:
     set_of_indices.insert(index);
   }
 
-  bool go_further() const { return true; }
+  constexpr bool go_further() const { return true; }
 
   void intersection(const Point_3& query, const Primitive& primitive)
   {

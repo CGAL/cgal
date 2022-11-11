@@ -209,7 +209,7 @@ public:
                        int li, int lj)
   {
     auto v = insert_impl(p, lt, c, li, lj, insert_in_conflict_visitor);
-    restore_Delaunay();
+    restore_Delaunay(insert_in_conflict_visitor);
     return v;
   }
 
@@ -284,7 +284,7 @@ protected:
   {
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
-    CGAL_triangulation_assertion(va != vb);
+    CGAL_assertion(va != vb);
     if (!tr.tds().is_edge(va, vb)) {
       const auto& [steiner_pt, hint] = construct_Steiner_point(subconstraint);
       Locate_type lt;
@@ -299,8 +299,8 @@ protected:
         std::cerr << "New Steiner vertex: " << display_vert(v) << '\n';
 #endif // CGAL_DEBUG_CDT_3
       }
-      CGAL_triangulation_assertion(v != va);
-      CGAL_triangulation_assertion(v != vb);
+      CGAL_assertion(v != va);
+      CGAL_assertion(v != vb);
       constraint_hierarchy.add_Steiner(va, vb, v);
       add_to_subconstraints_to_conform(va, v, constraint);
       add_to_subconstraints_to_conform(v, vb, constraint);
@@ -381,7 +381,7 @@ protected:
     std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
               << display_vert(vb) << " )\n";
 #endif // CGAL_DEBUG_CDT_3
-    const CGAL::Triangulation_segment_cell_iterator_3<T_3> cell_traverser_begin{tr, va, vb};
+    const CGAL::Triangulation_segment_cell_iterator_3<T_3> cell_traverser_begin{&tr, va, vb};
     const auto cell_traverser_end = cell_traverser_begin.end();
 
     namespace bc = boost::container;
@@ -420,7 +420,7 @@ protected:
                     std::cerr << "    " << this->display_vert(v) << '\n';
                   });
 #endif
-    CGAL_triangulation_assertion(vector_of_encroaching_vertices.begin() != end);
+    CGAL_assertion(vector_of_encroaching_vertices.begin() != end);
 
     auto reference_point_it = std::max_element(
         vector_of_encroaching_vertices.begin(), end,
@@ -429,7 +429,7 @@ protected:
           return compare_angle_functor(pa, this->tr.point(v1), pb, pa,
                                        this->tr.point(v2), pb) == SMALLER;
         });
-    CGAL_triangulation_assertion(reference_point_it != end);
+    CGAL_assertion(reference_point_it != end);
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "  -> reference point: " << display_vert(*reference_point_it)
               << '\n';

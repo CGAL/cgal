@@ -7,10 +7,10 @@
  *
  * File: CoreAux.cpp
  * Synopsis:
- *       Auxiliary routines such as ceiling of log_2, etc. 
+ *       Auxiliary routines such as ceiling of log_2, etc.
  *       they are not specific to any Core classes.
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -33,7 +33,7 @@
 #include <CGAL/CORE/CoreAux.h>
 #include <CGAL/gmp.h>
 
-namespace CORE { 
+namespace CORE {
 
 ////////////////////////////////////////////////////////////
 //  More useful functions to implement:
@@ -48,7 +48,7 @@ namespace CORE {
 ////////////////////////////////////////////////////////////
 // flrLg(x)
 //      returns floor log base 2 of abs(x)
-// CONVENTION lg(0) = -1	(Slight improvement, Zilin/Chee 8/5/02)
+// CONVENTION lg(0) = -1        (Slight improvement, Zilin/Chee 8/5/02)
 ////////////////////////////////////////////////////////////
 CGAL_INLINE_FUNCTION
 int flrLg(long x) {
@@ -71,7 +71,7 @@ int flrLg(long x) {
 
 ////////////////////////////////////////////////////////////
 // floor log base 2 of unsigned long x
-// CONVENTION lg(0) = -1	(Slight improvement, Zilin/Chee 8/5/02)
+// CONVENTION lg(0) = -1        (Slight improvement, Zilin/Chee 8/5/02)
 ////////////////////////////////////////////////////////////
 CGAL_INLINE_FUNCTION
 int flrLg(unsigned long x) {
@@ -85,22 +85,22 @@ int flrLg(unsigned long x) {
 
 ////////////////////////////////////////////////////////////
 // ceiling log base 2 of abs(x)
-// CONVENTION lg(0) = -1	(Slight improvement, Zilin/Chee 8/5/02)
+// CONVENTION lg(0) = -1        (Slight improvement, Zilin/Chee 8/5/02)
 ////////////////////////////////////////////////////////////
 CGAL_INLINE_FUNCTION
 int clLg(long x) {
   if (x == LONG_MIN)
     return LONG_BIT - 1;
   if (x < 0)
-    x = -x; 		// use absolute value
-  if (x > (LONG_MAX >> 1)) 	// the leading data bit is 1
-    return (LONG_BIT - 1);	// exclude the sign bit
+    x = -x;                 // use absolute value
+  if (x > (LONG_MAX >> 1))         // the leading data bit is 1
+    return (LONG_BIT - 1);        // exclude the sign bit
   if (x >= 2)
     return flrLg((unsigned long)((x << 1) - 1));
   // SINCE ceilLog_2(x) = floorLog_2(2x-1) for x>=2
   if (x == 1)
     return 0;
-  return -1;			// x must be 0 here
+  return -1;                        // x must be 0 here
 }
 
 ////////////////////////////////////////////////////////////
@@ -109,14 +109,14 @@ int clLg(long x) {
 ////////////////////////////////////////////////////////////
 CGAL_INLINE_FUNCTION
 int clLg(unsigned long x) {
-  if (x > (ULONG_MAX >> 1))	// the leading bit is 1
+  if (x > (ULONG_MAX >> 1))        // the leading bit is 1
     return LONG_BIT;
   if (x >= 2)
     return flrLg((x << 1) - 1);
   // SINCE ceilLog_2(x) = floorLog_2(2x-1) for x>=2.
   if (x == 1)
     return 0;
-  return -1;	// x must be equal to 0
+  return -1;        // x must be equal to 0
 }
 
 /// gcd for machine type long
@@ -139,52 +139,31 @@ long gcd(long m, long n) {
   return p;
 }
 
-// char* core_itoa(int n, char* buffer, int buffer_size)
-//      returns a pointer to the null-terminated string in buffer
-// NOTES:
-// 0. Buffer size should be 17 bytes (resp., 33 bytes, 65 bytes) on 16-bit
-//      (resp., 32-bit, 64-bit) machines.  Formula: 1+sizeof(int)*8 bytes.
-// 1. itoa(...) is available on some stdlib.h, but it is
-//      not defined by ANSI-C and so not all compilers support it.
-// 2. Our use of sprintf(...) to do the job is known to
-//      be inefficient, but this is hardly critical for our usage.
-// 3. A more general program should take a 3rd argument (the radix of
-//      output number).  We assume radix 10.
-CGAL_INLINE_FUNCTION
-char * core_itoa(int n, char* buffer, int buffer_size) {
-#if   defined(_MSC_VER)
-  sprintf_s(buffer, buffer_size, "%d", n);
-#else
-  CGAL_USE(buffer_size);
-  std::sprintf(buffer, "%d", n);
-#endif
-	return buffer;
-}
 
 /// implements the "integer mantissa" function
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
 CGAL_INLINE_FUNCTION
 double IntMantissa(double d) {
-	int e;
-	return std::ldexp(std::frexp(d, &e), 53);
+        int e;
+        return std::ldexp(std::frexp(d, &e), 53);
 }
 
 /// implements the "integer exponent" function
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
 CGAL_INLINE_FUNCTION
 int IntExponent(double d) {
-	int e;
-	std::frexp(d, &e);
-	return e-53;
+        int e;
+        std::frexp(d, &e);
+        return e-53;
 }
 
 /// core_error is the method to write Core Library warning or error messages
-/** 	Both warnings and errors are written to a file called CORE_DIAGFILE.
- *	But errors are also written on std:cerr (similar to std::perror()).
+/**         Both warnings and errors are written to a file called CORE_DIAGFILE.
+ *        But errors are also written on std::cerr (similar to std::perror()).
  * */
 // Usage: core_error(message, file_with_error, line_number, err_type)
 //   where err_type=0 means WARNING, error_type=0 means ERROR
-CGAL_INLINE_FUNCTION 
+CGAL_INLINE_FUNCTION
 void core_error(std::string msg, std::string file, int lineno, bool err) {
   std::ofstream outFile(CORE_DIAGFILE, std::ios::app);  // open to append
   if (!outFile) {
@@ -197,11 +176,8 @@ void core_error(std::string msg, std::string file, int lineno, bool err) {
      << msg << std::endl;
   outFile.close();
   if (err) {
-     char buf[65];
-     // perror((std::string("CORE ERROR") + " (file " + file + ", line "
-     //        + core_itoa(lineno,buf, 65) +"):" + msg + "\n").c_str());
      std::cerr << (std::string("CORE ERROR") + " (file " + file + ", line "
-                   + core_itoa(lineno,buf, 65) +"):" + msg + "\n").c_str();
+                   + std::to_string(lineno) +"):" + msg + "\n").c_str();
      std::exit(1); //Note: do not call abort()
   }
 }

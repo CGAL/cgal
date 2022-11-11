@@ -24,14 +24,14 @@ test_triangulate_faces()
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
   Surface_mesh mesh;
-  std::ifstream input("data/cube_quad.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube_quad.off"));
 
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
     std::cerr << "Not a valid off file." << std::endl;
     return false;
   }
-  
+
   bool success = CGAL::Polygon_mesh_processing::triangulate_faces(mesh);
   assert(CGAL::is_triangle_mesh(mesh));
 
@@ -46,7 +46,7 @@ test_triangulate_faces_with_named_parameters()
   typedef CGAL::Surface_mesh<Epic::Point_3>      Surface_mesh;
 
   Surface_mesh mesh;
-  std::ifstream input("data/cube_quad.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube_quad.off"));
 
   typedef Surface_mesh::Property_map<Surface_mesh::Vertex_index, Point>  VertexPointMap;
   VertexPointMap custom_vpm = mesh.add_property_map<Surface_mesh::Vertex_index, Point>("exact_vpm", Point()).first;
@@ -83,7 +83,7 @@ test_triangulate_face_range()
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
   Surface_mesh mesh;
-  std::ifstream input("data/cube_quad.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube_quad.off"));
 
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
@@ -109,7 +109,7 @@ test_triangulate_face()
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
   Surface_mesh mesh;
-  std::ifstream input("data/cube_quad.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube_quad.off"));
 
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
@@ -143,7 +143,7 @@ test_triangulate_triangle_face()
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
   Surface_mesh mesh;
-  std::ifstream input("data/tetra3.off");
+  std::ifstream input(CGAL::data_file_path("meshes/reference_tetrahedron.off"));
 
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
@@ -186,7 +186,7 @@ struct Dual_vpm
   }
 
   friend
-  Point get(Dual_vpm& map, key_type& f)
+  value_type get(Dual_vpm& map, key_type f)
   {
     std::vector<Point> face_points;
 
@@ -215,7 +215,7 @@ test_dual_with_various_faces()
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
   Surface_mesh mesh;
-  std::ifstream input("data/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
 
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
@@ -230,10 +230,8 @@ test_dual_with_various_faces()
   // copy dual to a sm
   Surface_mesh sm_dual;
   CGAL::copy_face_graph(dual, sm_dual,
-                        CGAL::Emptyset_iterator(),
-                        CGAL::Emptyset_iterator(),
-                        CGAL::Emptyset_iterator(),
-                        Dual_vpm<Surface_mesh, Point, Pmap>(mesh, vpmap));
+                        CGAL::parameters::vertex_point_map(
+                          Dual_vpm<Surface_mesh, Point, Pmap>(mesh, vpmap)));
 
   for(typename boost::graph_traits<Surface_mesh>::face_descriptor fit : faces(sm_dual))
   {

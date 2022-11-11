@@ -348,7 +348,7 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   }
 
   Face_const_handle const_f;
-  // face should not be contained as the pgn is completly disjoint of the
+  // face should not be contained as the pgn is completely disjoint of the
   // arrangement.
   CGAL_assertion(CGAL::assign(const_f, obj_f) && !const_f->contained());
   CGAL::assign(const_f, obj_f);
@@ -469,7 +469,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   for( ; pwh_begin != pwh_end; ++pwh_begin)
   {
     ValidationPolicy::is_valid(*pwh_begin, *m_traits);
-    is_unbounded = (is_unbounded || m_traits->construct_is_unbounded_object()(*pwh_begin));
+    is_unbounded = (is_unbounded || m_traits->is_unbounded_object()(*pwh_begin));
     // is_unbounded = (is_unbounded || pwh_begin->is_unbounded());
     _construct_curves(*pwh_begin, std::back_inserter(xcurve_list));
   }
@@ -517,7 +517,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   for( ; p_begin != p_end; ++p_begin)
   {
     // is_unbounded = (is_unbounded || p_begin->is_unbounded());
-    is_unbounded = (is_unbounded || m_traits->construct_is_unbounded_object()(*p_begin));
+    is_unbounded = (is_unbounded || m_traits->is_unbounded_object()(*p_begin));
     _construct_curves(*p_begin, std::back_inserter(xcurve_list));
 
   }
@@ -557,7 +557,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   insert_non_intersecting_curves(arr, xcurve_list.begin(), xcurve_list.end());
 
   //if (pgn.is_unbounded())
-  if (m_traits->construct_is_unbounded_object()(pgn))
+  if (m_traits->is_unbounded_object()(pgn))
   {
     for (Face_iterator fit = arr.faces_begin();
          fit != arr.faces_end(); ++fit)
@@ -590,7 +590,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   _construct_curves(const Polygon_with_holes_2 & pgn, OutputIterator oi)
 {
   //if (!pgn.is_unbounded())
-  if (!m_traits->construct_is_unbounded_object()(pgn))
+  if (!m_traits->is_unbounded_object()(pgn))
   {
     const Polygon_2& pgn_boundary =
       m_traits->construct_outer_boundary_object()(pgn);
@@ -735,8 +735,8 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   if (f->number_of_outer_ccbs() > 1)
     CGAL_error_msg("Not implemented yet.");
 
-	// Some compilers (VC 9) do not like that we directly access the ccb_circ. So we have
-	// to pass through the iterator.
+        // Some compilers (VC 9) do not like that we directly access the ccb_circ. So we have
+        // to pass through the iterator.
   Outer_ccb_const_iterator oci_temp = f->outer_ccbs_begin();
   Ccb_halfedge_const_circulator ccb_end = *oci_temp;
   Ccb_halfedge_const_circulator ccb_circ = ccb_end;

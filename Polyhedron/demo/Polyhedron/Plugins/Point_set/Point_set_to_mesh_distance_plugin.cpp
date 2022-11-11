@@ -131,8 +131,8 @@ public:
   {
     if(scene->selectionIndices().size() != 2)
       return false;
-    Scene_surface_mesh_item* sm = NULL;
-    Scene_points_with_normal_item* pn = NULL;
+    Scene_surface_mesh_item* sm = nullptr;
+    Scene_points_with_normal_item* pn = nullptr;
     Q_FOREACH(Scene_interface::Item_id i,scene->selectionIndices())
     {
       if(!sm)
@@ -201,8 +201,8 @@ private Q_SLOTS:
   }
   void perform()
   {
-    Scene_surface_mesh_item* sm = NULL;
-    Scene_points_with_normal_item* pn = NULL;
+    Scene_surface_mesh_item* sm = nullptr;
+    Scene_points_with_normal_item* pn = nullptr;
     Q_FOREACH(Scene_interface::Item_id i,scene->selectionIndices())
     {
       if(!sm)

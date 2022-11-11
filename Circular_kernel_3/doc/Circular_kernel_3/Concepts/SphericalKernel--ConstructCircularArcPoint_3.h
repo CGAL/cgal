@@ -9,20 +9,20 @@ class SphericalKernel::ConstructCircularArcPoint_3 {
 public:
 
 /// \name Operations
-/// A model of this concept must provide: 
+/// A model of this concept must provide:
 /// @{
 
 /*!
 
-*/ 
-SphericalKernel::Circular_arc_point_3 operator() 
-(const SphericalKernel::Root_for_spheres_2_3 & r); 
+*/
+SphericalKernel::Circular_arc_point_3 operator()
+(const SphericalKernel::Root_for_spheres_2_3 & r);
 
 /*!
 
-*/ 
-SphericalKernel::Circular_arc_point_3 operator() 
-(const SphericalKernel::Point_3 & p); 
+*/
+SphericalKernel::Circular_arc_point_3 operator()
+(const SphericalKernel::Point_3 & p);
 
 /// @}
 

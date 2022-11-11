@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s) : Jane Tournois, Pierre Alliez
 //
@@ -40,11 +40,11 @@ class Mesh_sizing_field
   typedef typename Tr::Vertex_handle      Vertex_handle;
   typedef typename Tr::Face_handle        Face_handle;
   typedef typename Tr::Edge               Edge;
-  
+
 public:
-  // update vertices of mesh triangulation ? 
+  // update vertices of mesh triangulation ?
   static const bool is_vertex_update_needed = Need_vertex_update;
-  
+
 public:
   /**
    * Constructor
@@ -57,26 +57,26 @@ public:
   }
 
   /**
-   * Returns size at point \c p.
+   * Returns size at point `p`.
    */
   FT operator()(const Point_2& p) const
   { return this->operator()(p, last_face_); }
 
   /**
-   * Returns size at point \c p, using \c v to accelerate \c p location
+   * Returns size at point `p`, using `v` to accelerate `p` location
    * in triangulation
    */
   FT operator()(const Point_2& p, const Vertex_handle& v) const
   { return this->operator()(p, v->face()); }
-  
+
   /**
-   * Returns size at point \c p.
+   * Returns size at point `p`.
    */
   FT operator()(const Point_2& p, const Face_handle& c) const
   {
     const Face_handle fh = tr_.locate(p,c);
     last_face_ = fh;
-  
+
     if ( !tr_.is_infinite(fh) )
       return interpolate_on_face_vertices(p,fh);
     else
@@ -99,7 +99,7 @@ public:
 
 private:
   /**
-   * Returns size at point \c p, by interpolation inside facet
+   * Returns size at point `p`, by interpolation inside facet.
    */
   FT interpolate_on_face_vertices(const Point_2&
 #ifdef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
@@ -123,13 +123,13 @@ private:
 
     return alpha * sa + beta * sb + gamma * sc;
 #else
-    return ((sa + sb + sc) / 3.); 
+    return ((sa + sb + sc) / 3.);
 #endif
   }
 
   /**
-   * Returns size at point \c p, by interpolation inside edge
-   * (\c e f is assumed to be an infinite face)
+   * Returns size at point `p`, by interpolation inside edge
+   * (`f` is assumed to be an infinite face)
    */
   FT interpolate_on_edge_vertices(const Point_2&
 #ifdef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
@@ -169,7 +169,7 @@ private:
     typename Tr::Edge_circulator end = ec;
 
     FT sum_len(0.);
-    FT nb = 0.;
+    unsigned int nb = 0;
     do
     {
       Edge e = *ec;
@@ -187,7 +187,7 @@ private:
     while(++ec != end);
     // nb == 0 could happen if there is an isolated point.
     if( 0 != nb )
-      return sum_len/nb;
+      return sum_len/FT(nb);
     else
      // Use outside faces to compute size of point
       return 1.;//todo
@@ -199,7 +199,7 @@ private:
     Point_2 p2 = e.first->vertex(Tr::ccw(e.second))->point();
     return CGAL::sqrt(CGAL::squared_distance(p1, p2));
   }
-  
+
 private:
   /// The triangulation
   Tr& tr_;

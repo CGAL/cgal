@@ -61,12 +61,12 @@ int main(int argc, char** argv)
 
     tr.try_to_remove_dummy_vertices();
     assert(tr.is_valid());
-    
+
     cnt = 0;
     for(Iter it = tr.vertices_begin(); it != tr.vertices_end(); ++it) {
       tr.remove(it);
     }
-    
+
     std::cout << "Final count of vertices: " << tr.number_of_vertices() << std::endl;
     assert(tr.is_valid());
   }

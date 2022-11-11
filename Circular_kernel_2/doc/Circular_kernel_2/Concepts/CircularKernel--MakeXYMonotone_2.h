@@ -15,14 +15,14 @@ public:
 /// @{
 
 /*!
-Splits the arc `ca` into `y`-monotone arcs that are returned through the 
-output iterator. Note that, to ensure an easy interface with the 
-`Arrangement_2` package, the arcs are returned as `CGAL::Object`'s 
-(see the `ArrangementTraits_2` concept). 
-*/ 
-template < class OutputIterator > 
-OutputIterator 
-operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator oit); 
+Splits the arc `ca` into `y`-monotone arcs that are returned through the
+output iterator. Note that, to ensure an easy interface with the
+`Arrangement_2` package, the arcs are returned as `CGAL::Object`'s
+(see the `ArrangementTraits_2` concept).
+*/
+template < class OutputIterator >
+OutputIterator
+operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator oit);
 
 /// @}
 

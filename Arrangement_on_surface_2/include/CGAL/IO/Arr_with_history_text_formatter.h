@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 
@@ -26,7 +26,7 @@
 namespace CGAL {
 
 /*! \class
- * A class defining a textual (ASCII) input/output format for arrangements
+ * A class defining a textual (\ascii) input/output format for arrangements
  * with history and supports reading and writing an arrangement from or to
  * input/output streams.
  */
@@ -49,11 +49,11 @@ public:
   typedef typename Arr_with_history_2::Halfedge_handle    Halfedge_handle;
   typedef typename Arr_with_history_2::Face_handle        Face_handle;
 
-  typedef typename Arr_with_history_2::Vertex_const_handle 
+  typedef typename Arr_with_history_2::Vertex_const_handle
                                                       Vertex_const_handle;
   typedef typename Arr_with_history_2::Halfedge_const_handle
                                                       Halfedge_const_handle;
-  typedef typename Arr_with_history_2::Face_const_handle   
+  typedef typename Arr_with_history_2::Face_const_handle
                                                       Face_const_handle;
 
   /*! Default constructor.*/
@@ -94,7 +94,7 @@ public:
 
   void write_curve_end ()
   {}
-  
+
   void write_curve (const Curve_2& c)
   {
     this->out() << c << std::endl;
@@ -114,13 +114,13 @@ public:
   //@{
 
   /*! Start reading the curves. */
-  void read_curves_begin () 
+  void read_curves_begin ()
   {
     __skip_comments();
   }
 
   /*! Read the end-curves message. */
-  void read_curves_end() 
+  void read_curves_end()
   {
     __skip_comments();
   }
@@ -128,11 +128,11 @@ public:
   /*! Read a specific curve. */
   void read_curve_begin ()
   {}
-  
+
   void read_curve_end ()
   {}
 
-  void read_curve (Curve_2& c) 
+  void read_curve (Curve_2& c)
   {
     this->in() >> c;
     __skip_until_EOL();
@@ -159,15 +159,15 @@ private:
   }
 
   /*! Skip until end of line. */
-  void __skip_until_EOL () 
+  void __skip_until_EOL ()
   {
     int     c;
     while ((c = this->in().get()) != EOF && c != '\n') {};
     return;
   }
-  
+
   /*! Skip comment lines. */
-  void __skip_comments () 
+  void __skip_comments ()
   {
     int     c;
     while ((c = this->in().get()) != EOF && c == '#')

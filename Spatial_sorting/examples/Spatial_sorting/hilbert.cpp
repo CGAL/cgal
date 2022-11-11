@@ -13,7 +13,7 @@ int main ()
   std::size_t size = 16;
   std::vector<Point> v; v.reserve(size);
   CGAL::points_on_square_grid_2(3.0, size,            // generate points
-				std::back_inserter(v), Creator());
+                                std::back_inserter(v), Creator());
 
   CGAL::hilbert_sort (v.begin(), v.end());            // sort
 

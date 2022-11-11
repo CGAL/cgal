@@ -71,6 +71,7 @@
 - `CGAL::Simple_cartesian<FieldNumberType>`
 - `CGAL::Simple_homogeneous<RingNumberType>`
 - `CGAL::Projection_traits_xy_3<K>`
+- `CGAL::Projection_traits_3<K>`
 
 \cgalCRPSection{Predefined Kernels}
 
@@ -281,6 +282,7 @@
 - `Kernel::CompareSlope_3`
 - `Kernel::ComparePowerDistance_2`
 - `Kernel::ComparePowerDistance_3`
+- `Kernel::CompareSignedDistanceToLine_2`
 - `Kernel::CompareSquaredDistance_2`
 - `Kernel::CompareSquaredDistance_3`
 - `Kernel::CompareSquaredRadius_3`
@@ -487,6 +489,7 @@
 - `Kernel::LessY_2`
 - `Kernel::LessY_3`
 - `Kernel::LessZ_3`
+- `Kernel::NonZeroCoordinateIndex_3`
 - `Kernel::Orientation_2`
 - `Kernel::Orientation_3`
 - `Kernel::OrientedSide_2`

@@ -18,9 +18,9 @@
 namespace CGAL {
 
 template <class LA, class Dim_=typename LA::Dimension,
-	 class Max_dim_=typename LA::Max_dimension,
-	 bool = LA::template Property<Has_determinant_of_iterator_to_points_tag>::value,
-	 bool = LA::template Property<Has_determinant_of_points_tag>::value>
+         class Max_dim_=typename LA::Max_dimension,
+         bool = LA::template Property<Has_determinant_of_iterator_to_points_tag>::value,
+         bool = LA::template Property<Has_determinant_of_points_tag>::value>
 struct Add_determinant_of_iterator_to_points_from_points : LA {
   template< class D2, class D3=D2 >
     struct Rebind_dimension {

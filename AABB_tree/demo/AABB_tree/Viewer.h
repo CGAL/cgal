@@ -22,7 +22,7 @@ public:
 protected:
   virtual void mousePressEvent(QMouseEvent* e);
   virtual void mouseReleaseEvent(QMouseEvent* e);
-  
+
 private:
   Scene* m_pScene;
   bool m_custom_mouse;

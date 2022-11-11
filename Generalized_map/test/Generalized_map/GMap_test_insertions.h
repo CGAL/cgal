@@ -22,7 +22,7 @@ bool check_number_of_cells_3(GMAP& gmap, unsigned int nbv, unsigned int nbe,
 template<typename GMAP>
 bool test_vertex_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
+  typename GMAP::Dart_descriptor d1, d2, d3;
 
   trace_test_begin();
   d1 = gmap.create_dart();
@@ -145,7 +145,7 @@ bool test_vertex_insertion(GMAP& gmap)
 template<typename GMAP>
 bool test_edge_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
+  typename GMAP::Dart_descriptor d1, d2, d3;
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
@@ -228,8 +228,8 @@ bool test_edge_insertion(GMAP& gmap)
 template<typename GMAP>
 bool test_face_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
-  std::vector<typename GMAP::Dart_handle> v;
+  typename GMAP::Dart_descriptor d1, d2, d3;
+  std::vector<typename GMAP::Dart_descriptor> v;
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
@@ -297,42 +297,42 @@ bool test_face_insertion(GMAP& gmap)
     assert(false);
     return false;
   }
-  
+
   if (CGAL::degree<GMAP, 1>(gmap2, d1)!=3)
   {
     std::cout<<"Error: 1-degree is wrong: "<<CGAL::degree<GMAP, 1>(gmap2, d1)<<" instead of 3."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::degree<GMAP, 2>(gmap2, d1)!=2)
   {
     std::cout<<"Error: 2-degree is wrong: "<<CGAL::degree<GMAP, 2>(gmap2, d1)<<" instead of 2."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 1>(gmap2, d1)!=2)
   {
     std::cout<<"Error: 1-codegree is wrong: "<<CGAL::codegree<GMAP, 1>(gmap2, d1)<<" instead of 2."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 2>(gmap2, d1)!=4)
   {
     std::cout<<"Error: 2-codegree is wrong: "<<CGAL::codegree<GMAP, 2>(gmap2, d1)<<" instead of 4."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 3>(gmap2, d1)!=6)
   {
     std::cout<<"Error: 3-codegree is wrong: "<<CGAL::codegree<GMAP, 3>(gmap2, d1)<<" instead of 6."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   gmap.clear(); v.clear();
 
   return true;

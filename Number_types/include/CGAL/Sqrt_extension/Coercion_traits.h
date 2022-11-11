@@ -22,7 +22,7 @@ namespace CGAL {
 
 /////////// COERCION_TRAITS BEGIN
 
-// <EXT,int> and vice versa 
+// <EXT,int> and vice versa
 template <class COEFF, class ROOT, class ACDE_TAG,class FP_TAG>
 struct Coercion_traits_for_level<Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG>,CGAL_int(COEFF),CTL_SQRT_EXT>{
 public:
@@ -183,7 +183,7 @@ struct Coercion_traits_for_level<Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG>, B
               ::boost::is_base_and_derived<
                   Field_with_sqrt_tag,
 typename Algebraic_structure_traits<B>::Algebraic_category >::value ||
-              ::boost::is_same<
+              ::std::is_same<
                   Field_with_sqrt_tag,
 typename Algebraic_structure_traits<B>::Algebraic_category >::value
             ,

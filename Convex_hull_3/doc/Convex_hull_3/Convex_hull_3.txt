@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Convex_Hulls
 \anchor chapconvexhull3
 \cgalAutoToc
@@ -16,24 +16,24 @@ The convex hull of a model made of 192135 points.
 
 A subset \f$ S \subseteq \mathbb{R}^3\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
-in \f$ S\f$. The convex hull of a set \f$ S\f$ 
+in \f$ S\f$. The convex hull of a set \f$ S\f$
 is the smallest convex set containing
-\f$ S\f$. The convex hull of a set of points \f$ P \in \mathbb{R}^3\f$ is a convex 
-polytope with vertices in \f$ P\f$. A point in \f$ P\f$ is an extreme point 
-(with respect to \f$ P\f$) if it is a vertex of 
+\f$ S\f$. The convex hull of a set of points \f$ P \in \mathbb{R}^3\f$ is a convex
+polytope with vertices in \f$ P\f$. A point in \f$ P\f$ is an extreme point
+(with respect to \f$ P\f$) if it is a vertex of
 the convex hull of \f$ P\f$. A set of points is said to be strongly convex if it consists of only extreme points.
 
 This chapter describes the functions provided in
 \cgal for producing convex hulls in three dimensions as well as
-functions for checking if sets of points are strongly convex are not. 
+functions for checking if sets of points are strongly convex are not.
 One can compute the convex hull of a set of points in three dimensions
 in two ways in \cgal: using a static algorithm or using a
 triangulation to get a fully dynamic computation.
 
 \section secconvex_hull_3 Static Convex Hull Construction
 
-The function 
-`convex_hull_3()` provides an 
+The function
+`convex_hull_3()` provides an
 implementation of the quickhull algorithm \cgalCite{bdh-qach-96}.
 There are two versions of this
 function available, one that can be used when it is known that the output
@@ -53,9 +53,9 @@ computation.   As the function constructs 3D planes from three input
 points, we cannot simply pass a kernel with inexact constructions as
 optional argument for the traits class.
 
-If input points from a kernel with exact predicates 
+If input points from a kernel with exact predicates
 and non-exact constructions are used, and a certified result is expected,
-the class `Convex_hull_traits_3<R>` should be used 
+the class `Convex_hull_traits_3<R>` should be used
 (`R` being the input kernel).
 If the constructions from a kernel are exact this kernel can be used
 directly as a traits class.
@@ -115,7 +115,7 @@ second approach is slower due to the resolution of a linear program.
 \subsubsection Convex_hull_3HalfspaceInntersectionExample Example
 
 The following example computes the intersection of halfspaces defined by
-tangent planes to a sphere. 
+tangent planes to a sphere.
 
 \cgalExample{Convex_hull_3/halfspace_intersection_3.cpp}
 
@@ -123,8 +123,8 @@ tangent planes to a sphere.
 \subsection Convex_hull_3ConvexityChecking Convexity Checking
 
 The function `is_strongly_convex_3()`
-implements the algorithm of Mehlhorn <I>et al.</I> \cgalCite{mnssssu-cgpvg-96} 
-to determine if the vertices of a given polytope constitute a strongly convex 
+implements the algorithm of Mehlhorn <I>et al.</I> \cgalCite{mnssssu-cgpvg-96}
+to determine if the vertices of a given polytope constitute a strongly convex
 point set or not. This function is used in postcondition testing for
 `convex_hull_3()`.
 
@@ -133,13 +133,13 @@ point set or not. This function is used in postcondition testing for
 
 Fully dynamic maintenance of a convex hull can be achieved by using the
 class `Delaunay_triangulation_3`. This class supports insertion
-and removal of points (<I>i.e.</I>, vertices of the triangulation) and the 
-convex hull edges are simply the finite edges of infinite faces. 
+and removal of points (<I>i.e.</I>, vertices of the triangulation) and the
+convex hull edges are simply the finite edges of infinite faces.
 The following example illustrates the dynamic construction of a convex hull.
 First, random points from a sphere of a certain radius are generated and are
-inserted into a triangulation. Then the number of points of the convex hull 
-are obtained by counting the number of triangulation vertices incident to the 
-infinite vertex. Some of the points are removed and then the number of points 
+inserted into a triangulation. Then the number of points of the convex hull
+are obtained by counting the number of triangulation vertices incident to the
+infinite vertex. Some of the points are removed and then the number of points
 remaining on the hull are determined. Notice that the vertices incident to the
 infinite vertex of the triangulation are on the convex hull but it may be that
 not all of them are vertices of the hull.
@@ -149,7 +149,7 @@ not all of them are vertices of the hull.
 The following example shows how to compute a convex hull with a triangulation.
 The vertices incident to the infinite vertex are on the convex hull.
 
-The function `convex_hull_3_to_face_graph()` can be used to obtain a polyhedral surface 
+The function `convex_hull_3_to_face_graph()` can be used to obtain a polyhedral surface
 that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surface_mesh`.
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
@@ -161,14 +161,14 @@ For the static version (using `convex_hull_3()`) and the dynamic version
 (using `Delaunay_triangulation_3` and `convex_hull_3_to_face_graph()`), the kernel
 used was `Exact_predicates_inexact_constructions_kernel`.
 
-To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 
+To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while
 the dynamic approach needed 9.50s.
-To compute the convex hull of the model of \cgalFigureRef{figchbimba} featuring 192135 points, 
+To compute the convex hull of the model of \cgalFigureRef{figchbimba} featuring 192135 points,
 the static approach needed 0.18s, while the dynamic approach needed 1.90s.
 
-The measurements have been performed using \cgal 3.9, using the <span class="textsc">Gnu</span> \cpp compiler version 4.3.5, under Linux (Debian distribution),
+The measurements have been performed using \cgal 3.9, using the \gnu \cpp compiler version 4.3.5, under Linux (Debian distribution),
 with the compilation options <TT>-O3 -DCGAL_NDEBUG</TT>. The computer used was equipped with a 64bit Intel Xeon 2.27GHz processor and 12GB of RAM.
 
-*/ 
+*/
 } /* namespace CGAL */
 

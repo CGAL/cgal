@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -31,6 +31,7 @@ public:
   typedef typename R::Point_3              Point_3;
   typedef typename R::Vector_3             Vector_3;
   typedef typename R::Direction_3          Direction_3;
+  typedef typename R::Plane_3              Plane_3;
   typedef typename R::Aff_transformation_3 Aff_transformation_3;
 
   virtual ~Aff_transformation_rep_baseC3(){}
@@ -38,6 +39,7 @@ public:
   virtual Point_3     transform(const Point_3 &p) const = 0;
   virtual Vector_3    transform(const Vector_3 &v) const = 0;
   virtual Direction_3 transform(const Direction_3 &d) const = 0;
+  virtual Plane_3     transform(const Plane_3& p) const = 0;
 
   virtual Aff_transformation_3 operator*(
                        const Aff_transformation_rep_baseC3 &t) const = 0;
@@ -54,6 +56,9 @@ public:
   virtual Aff_transformation_3 inverse() const = 0;
   virtual Aff_transformation_3 transpose() const = 0;
   virtual bool                 is_even() const = 0;
+
+  virtual bool                 is_translation() const { return false; }
+  virtual bool                 is_scaling() const { return false; }
   virtual FT                   cartesian(int i, int j) const = 0;
   virtual std::ostream         &print(std::ostream &os) const = 0;
 };
@@ -75,8 +80,9 @@ public:
   typedef typename Transformation_base_3::Point_3       Point_3;
   typedef typename Transformation_base_3::Vector_3      Vector_3;
   typedef typename Transformation_base_3::Direction_3   Direction_3;
+  typedef typename Transformation_base_3::Plane_3       Plane_3;
   typedef typename Transformation_base_3::
-	                           Aff_transformation_3 Aff_transformation_3;
+                                   Aff_transformation_3 Aff_transformation_3;
 
   Aff_transformation_repC3()
   {}
@@ -106,8 +112,8 @@ public:
   {
     typename R::Construct_point_3 construct_point_3;
     return construct_point_3(t11 * p.x() + t12 * p.y() + t13 * p.z() + t14,
-			     t21 * p.x() + t22 * p.y() + t23 * p.z() + t24,
-			     t31 * p.x() + t32 * p.y() + t33 * p.z() + t34);
+                             t21 * p.x() + t22 * p.y() + t23 * p.z() + t24,
+                             t31 * p.x() + t32 * p.y() + t33 * p.z() + t34);
   }
 
   // note that a vector is not translated
@@ -127,6 +133,17 @@ public:
                        t31 * v.x() + t32 * v.y() + t33 * v.z());
   }
 
+  virtual Plane_3 transform(const Plane_3& p) const
+  {
+      if (is_even())
+      return Plane_3(transform(p.point()),
+                 transpose().inverse().transform(p.orthogonal_direction()));
+    else
+      return Plane_3(transform(p.point()),
+               - transpose().inverse().transform(p.orthogonal_direction()));
+  }
+
+
   // Note that Aff_transformation is not defined yet,
   // so the following 6 functions have to be implemented
   // outside class body
@@ -136,13 +153,14 @@ public:
   virtual Aff_transformation_3 compose(const Transformation_3 &t) const;
   virtual Aff_transformation_3 compose(const Translation_3 &t) const;
   virtual Aff_transformation_3 compose(const Scaling_3 &t) const;
-     
+
   virtual bool is_even() const
   {
     return sign_of_determinant(t11, t12, t13,
                                   t21, t22, t23,
                                   t31, t32, t33) == POSITIVE;
   }
+
 
   virtual FT cartesian(int i, int j) const
   {
@@ -183,8 +201,8 @@ public:
   virtual std::ostream &print(std::ostream &os) const
   {
     os <<"Aff_transformationC3("<<t11<<' '<<t12<<' '<<t13<<' '<<t14<<std::endl;
-    os <<"                    "<< t21<<' '<<t22<<' '<<t23<<' '<<t24<<std::endl;
-    os <<"                    "<< t31<<' '<<t32<<' '<<t33<<' '<<t34<<")";
+    os <<"                     "<<t21<<' '<<t22<<' '<<t23<<' '<<t24<<std::endl;
+    os <<"                     "<<t31<<' '<<t32<<' '<<t33<<' '<<t34<<")";
     return os;
   }
 
@@ -205,7 +223,7 @@ Aff_transformation_repC3<R>::inverse() const // FIXME : construction
       determinant( t12, t13, t22, t23),         // i 13
      -determinant( t12, t13, t14, t22, t23, t24, t32, t33, t34 ),
 
-     -determinant( t21, t23, t31, t33),         // i 21 
+     -determinant( t21, t23, t31, t33),         // i 21
       determinant( t11, t13, t31, t33),         // i 22
      -determinant( t11, t13, t21, t23),         // i 23
       determinant( t11, t13, t14, t21, t23, t24, t31, t33, t34 ),
@@ -281,13 +299,13 @@ compose(const Scaling_repC3<R> &t) const // FIXME : construction
                               t.scalefactor_ * t12,
                               t.scalefactor_ * t13,
                               t.scalefactor_ * t14,
-			      
+
                               t.scalefactor_ * t21,
                               t.scalefactor_ * t22,
                               t.scalefactor_ * t23,
                               t.scalefactor_ * t24,
-                              
-			      t.scalefactor_ * t31,
+
+                              t.scalefactor_ * t31,
                               t.scalefactor_ * t32,
                               t.scalefactor_ * t33,
                               t.scalefactor_ * t34);

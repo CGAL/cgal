@@ -103,10 +103,10 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
   Three::CursorScopeGuard scope(Qt::WaitCursor);
   if(sm_item){
     std::list<Triangle> triangles;
-    
+
     SMesh* pMesh = sm_item->polyhedron();
     ::triangles(*pMesh,std::back_inserter(triangles));
-    
+
     if(! triangles.empty()){
       QString item_name = sm_item->name();
       // fit plane to triangles
@@ -114,7 +114,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
       std::cout << "Fit plane...";
       CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
       std::cout << "ok" << std::endl;
-      
+
       // compute centroid
       Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
       Scene_plane_item* new_item = new Scene_plane_item(this->scene);
@@ -132,11 +132,11 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
   }
     Scene_points_with_normal_item* item =
         qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
-    
+
     if (item)
     {
       Point_set* points = item->point_set();
-      
+
       // fit plane to triangles
       Plane plane;
       Point center_of_mass;
@@ -145,7 +145,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
           (points->points().begin(),points->points().end(),plane, center_of_mass,
            CGAL::Dimension_tag<0>());
       std::cout << "ok" << std::endl;
-      
+
       // compute centroid
       Scene_plane_item* new_item = new Scene_plane_item(this->scene);
       new_item->setPosition(center_of_mass.x(),
@@ -168,16 +168,16 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
 
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-  
+
   if(sm_item)
   {
     CGAL::Bbox_3 bb;
-    
+
     SMesh* pMesh = sm_item->polyhedron();
     std::list<Triangle> triangles;
-    
+
     bb = ::triangles(*pMesh,std::back_inserter(triangles));
-    
+
     if(! triangles.empty()){
       QString item_name = sm_item->name();
       // fit line to triangles
@@ -185,46 +185,46 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
       std::cout << "Fit line...";
       CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,CGAL::Dimension_tag<2>());
       std::cout << "ok" << std::endl;
-      
+
       // compute centroid
       Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
-      
+
       // compute bounding box diagonal
       Iso_cuboid bbox(bb);
-      
+
       // compute scale for rendering using diagonal of bbox
       Point cmin = (bbox.min)();
       Point cmax = (bbox.max)();
       FT diag = std::sqrt(CGAL::squared_distance(cmin,cmax));
-      
+
       // construct a 3D bar
       Vector u = line.to_vector();
       u = u / std::sqrt(u*u);
-      
+
       Point a = center_of_mass + u * diag;
       Point b = center_of_mass - u * diag;
-      
+
       Plane plane_a = line.perpendicular_plane(a);
-      
+
       Vector u1 = plane_a.base1();
       u1 = u1 / std::sqrt(u1*u1);
       u1 = u1 * 0.01 * diag;
       Vector u2 = plane_a.base2();
       u2 = u2 / std::sqrt(u2*u2);
       u2 = u2 * 0.01 * diag;
-      
+
       Point points[8];
-      
+
       points[0] = a + u1;
       points[1] = a + u2;
       points[2] = a - u1;
       points[3] = a - u2;
-      
+
       points[4] = b + u1;
       points[5] = b + u2;
       points[6] = b - u1;
       points[7] = b - u2;
-      
+
       // add best fit line as new polyhedron bar
       SMesh* pFit = new SMesh;
       CGAL::make_hexahedron(

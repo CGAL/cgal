@@ -43,7 +43,7 @@ int main()
   while(current!=OutputList.end())
   {
     std::cerr << (*current).key_1<< "-" <<  (*current).key_2 << "-"
-	 <<  (*current).key_3 << (*current).key_4 << std::endl;
+         <<  (*current).key_3 << (*current).key_4 << std::endl;
     current++;
   }
 

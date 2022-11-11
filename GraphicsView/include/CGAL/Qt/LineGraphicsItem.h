@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -41,9 +41,9 @@ public:
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& Pen() const
   {
@@ -56,7 +56,7 @@ public:
     this->pen = pen_;
   }
 
-  
+
   void setLine(const Line_2& a);
 
   Line_2 line() const
@@ -77,7 +77,7 @@ protected:
 
 
 template <typename CK>
-void 
+void
 LineGraphicsItem<CK>::setLine(const Line_2& a)
 {
   line_ = a;
@@ -93,7 +93,7 @@ LineGraphicsItem<CK>::LineGraphicsItem()
 }
 
 template <typename CK>
-QRectF 
+QRectF
 LineGraphicsItem<CK>::boundingRect() const
 {
   if(scene()){
@@ -106,8 +106,8 @@ LineGraphicsItem<CK>::boundingRect() const
 
 
 template <typename CK>
-void 
-LineGraphicsItem<CK>::paint(QPainter *painter, 
+void
+LineGraphicsItem<CK>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
@@ -120,7 +120,7 @@ LineGraphicsItem<CK>::paint(QPainter *painter,
 
 
 template <typename CK>
-void 
+void
 LineGraphicsItem<CK>::modelChanged()
 {
   update();

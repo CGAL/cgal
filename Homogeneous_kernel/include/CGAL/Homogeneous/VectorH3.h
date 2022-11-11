@@ -1,19 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 #ifndef CGAL_HOMOGENEOUS_VECTOR_3_H
 #define CGAL_HOMOGENEOUS_VECTOR_3_H
 
@@ -69,9 +69,9 @@ public:
 
   template < typename Tx, typename Ty, typename Tz >
   VectorH3(const Tx & x, const Ty & y, const Tz & z,
-           typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
+           std::enable_if_t< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
                                                                           boost::is_convertible<Ty, RT> >,
-                                                        boost::is_convertible<Tz, RT> > >::type* = 0)
+                                                        boost::is_convertible<Tz, RT> >::value >* = 0)
     : base(CGAL::make_array<RT>(x, y, z, RT(1))) {}
 
   VectorH3(const FT& x, const FT& y, const FT& z)
@@ -227,10 +227,10 @@ typename VectorH3<R>::FT
 VectorH3<R>::squared_length() const
 {
   typedef typename R::FT FT;
-  return 
-    FT( CGAL_NTS square(hx()) + 
-	CGAL_NTS square(hy()) + 
-	CGAL_NTS square(hz()) ) / 
+  return
+    FT( CGAL_NTS square(hx()) +
+        CGAL_NTS square(hy()) +
+        CGAL_NTS square(hz()) ) /
     FT( CGAL_NTS square(hw()) );
 }
 
@@ -245,7 +245,7 @@ CGAL_KERNEL_INLINE
 typename R::Vector_3
 VectorH3<R>::operator/(const typename VectorH3<R>::FT& f) const
 { return typename R::Vector_3(hx()*f.denominator(), hy()*f.denominator(),
-		              hz()*f.denominator(), hw()*f.numerator() ); }
+                              hz()*f.denominator(), hw()*f.numerator() ); }
 
 } //namespace CGAL
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -44,7 +44,7 @@ public:
 
   Orientation
   operator()(const Voronoi_circle& vc, const Point_2& p1,
-	     const Point_2& p2, const Field_with_sqrt_tag&) const
+             const Point_2& p2, const Field_with_sqrt_tag&) const
     {
       FT a = vc.a1() + vc.a2() * CGAL::sqrt(vc.delta());
       FT b = vc.b1() + vc.b2() * CGAL::sqrt(vc.delta());
@@ -54,7 +54,7 @@ public:
 
   Orientation
   operator()(const Voronoi_circle& vc, const Point_2& p1,
-	     const Point_2& p2, const Integral_domain_without_division_tag&) const
+             const Point_2& p2, const Integral_domain_without_division_tag&) const
     {
       FT dx = p2.x() - p1.x();
       FT dy = p2.y() - p1.y();
@@ -79,11 +79,11 @@ public:
 private:
 
   Sign sign_of_P4(const FT& u, const FT& v,
-		  const FT& du, const FT& dv, const FT& dr,
-		  const FT& Du, const FT& Dv, const FT& Dr) const
+                  const FT& du, const FT& dv, const FT& dr,
+                  const FT& Du, const FT& Dv, const FT& Dr) const
     {
       std::pair<FT,FT> factors = factors_of_P4(u, v, du, dv, dr,
-					       Du, Dv, Dr);
+                                               Du, Dv, Dr);
       Sign s1 = CGAL::sign(factors.first);
       Sign s2 = CGAL::sign(factors.second);
       return s1 * s2;
@@ -91,8 +91,8 @@ private:
 
   std::pair<FT,FT>
   factors_of_P4(const FT& u, const FT& v,
-		const FT& du, const FT& dv, const FT& dr,
-		const FT& Du, const FT& Dv, const FT& Dr) const
+                const FT& du, const FT& dv, const FT& dr,
+                const FT& Du, const FT& Dv, const FT& Dr) const
     {
       FT u2 = CGAL::square(u);
       FT v2 = CGAL::square(v);
@@ -120,10 +120,10 @@ private:
 
       FT uV_P_Uv = du * Dv + Du * dv;
       FT uV_M_Uv = du * Dv - Du * dv;
-      
+
 
       FT F1 = du2_P_dv2 * Dr2 + Du2_P_Dv2 * dr2
-	- uU_P_vV * drDr - CGAL::square(uV_M_Uv);
+        - uU_P_vV * drDr - CGAL::square(uV_M_Uv);
 
       FT F2 = CGAL::square(u2_P_v2) * (du2_P_dv2 * Dr2 + Du2_P_Dv2 * dr2);
       F2 -= u2_P_v2 * (u2_M_v2 * uU_M_vV + uv * uV_P_Uv) * drDr;
@@ -136,7 +136,7 @@ private:
 public:
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     const Field_with_sqrt_tag&) const
+             const Field_with_sqrt_tag&) const
     {
       FT c1 = (vc1.c1() + vc1.c2() * CGAL::sqrt(vc1.delta())) / vc1.d();
       FT c2 = (vc2.c1() + vc2.c2() * CGAL::sqrt(vc2.delta())) / vc2.d();
@@ -150,7 +150,7 @@ public:
   /*
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     Integral_domain_without_division_tag)
+             Integral_domain_without_division_tag)
     {
       FT A = vc1.c1() * vc2.d() - vc2.c1() * vc1.d();
       FT B = vc1.c2() * vc2.d();
@@ -167,7 +167,7 @@ public:
 
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     const Integral_domain_without_division_tag&) const
+             const Integral_domain_without_division_tag&) const
     {
       bool is_first_root1 = vc1.is_first_root();
       bool is_first_root2 = vc2.is_first_root();
@@ -177,28 +177,28 @@ public:
 
       Comparison_result r;
       if ( is_first_root1 && is_first_root2 ) {
-	r = ke_compare_l1_l2(vc1.alpha(), vc1.beta(), vc1.gamma(),
-			     vc2.alpha(), vc2.beta(), vc2.gamma());
+        r = ke_compare_l1_l2(vc1.alpha(), vc1.beta(), vc1.gamma(),
+                             vc2.alpha(), vc2.beta(), vc2.gamma());
       } else if ( is_first_root1 && !is_first_root2 ) {
-	r = ke_compare_l1_r2(vc1.alpha(), vc1.beta(), vc1.gamma(),
-			     vc2.alpha(), vc2.beta(), vc2.gamma());
+        r = ke_compare_l1_r2(vc1.alpha(), vc1.beta(), vc1.gamma(),
+                             vc2.alpha(), vc2.beta(), vc2.gamma());
       } else if ( !is_first_root1 && is_first_root2 ) {
-	r = ke_compare_r1_l2(vc1.alpha(), vc1.beta(), vc1.gamma(),
-			     vc2.alpha(), vc2.beta(), vc2.gamma());
+        r = ke_compare_r1_l2(vc1.alpha(), vc1.beta(), vc1.gamma(),
+                             vc2.alpha(), vc2.beta(), vc2.gamma());
       } else {
-	r = ke_compare_r1_r2(vc1.alpha(), vc1.beta(), vc1.gamma(),
-			     vc2.alpha(), vc2.beta(), vc2.gamma());
+        r = ke_compare_r1_r2(vc1.alpha(), vc1.beta(), vc1.gamma(),
+                             vc2.alpha(), vc2.beta(), vc2.gamma());
       }
 
 #ifdef COMPARATOR_PROFILER
       if ( comparator_profiler::count_cases ) {
-	// count cases only for the tree r1-r2
-	if ( !is_first_root1 && !is_first_root2 ) {
-	  comparator_profiler::count_case(vc1.alpha(), vc1.beta(),
-					  vc1.gamma(),
-					  vc2.alpha(), vc2.beta(),
-					  vc2.gamma());
-	}
+        // count cases only for the tree r1-r2
+        if ( !is_first_root1 && !is_first_root2 ) {
+          comparator_profiler::count_case(vc1.alpha(), vc1.beta(),
+                                          vc1.gamma(),
+                                          vc2.alpha(), vc2.beta(),
+                                          vc2.gamma());
+        }
       }
 #endif
 
@@ -210,7 +210,7 @@ public:
   /*
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     Integral_domain_without_division_tag)
+             Integral_domain_without_division_tag)
     {
       bool is_first_root1 = vc1.is_first_root();
       bool is_first_root2 = vc2.is_first_root();
@@ -220,17 +220,17 @@ public:
 
       Comparison_result r;
       if ( is_first_root1 && is_first_root2 ) {
-	r = dfmt_compare_l1_l2(vc1.alpha(), vc1.beta(), vc1.gamma(),
-			  vc2.alpha(), vc2.beta(), vc2.gamma());
+        r = dfmt_compare_l1_l2(vc1.alpha(), vc1.beta(), vc1.gamma(),
+                          vc2.alpha(), vc2.beta(), vc2.gamma());
       } else if ( is_first_root1 && !is_first_root2 ) {
-	r = dfmt_compare_l1_r2(vc1.alpha(), vc1.beta(), vc1.gamma(),
-			  vc2.alpha(), vc2.beta(), vc2.gamma());
+        r = dfmt_compare_l1_r2(vc1.alpha(), vc1.beta(), vc1.gamma(),
+                          vc2.alpha(), vc2.beta(), vc2.gamma());
       } else if ( !is_first_root1 && is_first_root2 ) {
-	r = dfmt_compare_r1_l2(vc1.alpha(), vc1.beta(), vc1.gamma(),
-			  vc2.alpha(), vc2.beta(), vc2.gamma());
+        r = dfmt_compare_r1_l2(vc1.alpha(), vc1.beta(), vc1.gamma(),
+                          vc2.alpha(), vc2.beta(), vc2.gamma());
       } else {
-	r = dfmt_compare_r1_r2(vc1.alpha(), vc1.beta(), vc1.gamma(),
-			  vc2.alpha(), vc2.beta(), vc2.gamma());
+        r = dfmt_compare_r1_r2(vc1.alpha(), vc1.beta(), vc1.gamma(),
+                          vc2.alpha(), vc2.beta(), vc2.gamma());
       }
 
       if ( r == EQUAL ) { return EQUAL; }
@@ -256,47 +256,47 @@ public:
 
   typedef Orientation_wrt_symmetry_axis_2<K>
                                     Orientation_wrt_symmetry_axis;
-  
+
 public:
   template<class Method_tag>
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     const Site_2& p1, const Site_2& p2,
-	     const Method_tag& tag) const
+             const Site_2& p1, const Site_2& p2,
+             const Method_tag& tag) const
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::order_on_bisector_counter++;
 #endif
 
       Orientation o1 =
-	Orientation_wrt_symmetry_axis()(vc1, p1.point(), p2.point(), tag);
+        Orientation_wrt_symmetry_axis()(vc1, p1.point(), p2.point(), tag);
       Orientation o2 =
-	Orientation_wrt_symmetry_axis()(vc2, p1.point(), p2.point(), tag);
+        Orientation_wrt_symmetry_axis()(vc2, p1.point(), p2.point(), tag);
 
       Comparison_result cr;
       if ( o1 == LEFT_TURN ) {
-	if ( o2 != LEFT_TURN ) { return SMALLER; }
-	Comparison_result r = Compare_Voronoi_radii()(vc1, vc2, tag);
+        if ( o2 != LEFT_TURN ) { return SMALLER; }
+        Comparison_result r = Compare_Voronoi_radii()(vc1, vc2, tag);
 
-	if ( r == EQUAL ) {
-	  cr = EQUAL;
-	} else {
-	  cr = (r == LARGER ) ? SMALLER : LARGER;
-	}
+        if ( r == EQUAL ) {
+          cr = EQUAL;
+        } else {
+          cr = (r == LARGER ) ? SMALLER : LARGER;
+        }
       } else if ( o1 == COLLINEAR ) {
-	if ( o2 == COLLINEAR ) {
-	  cr = EQUAL;
-	} else {
-	  cr = (o2 == LEFT_TURN) ? LARGER : SMALLER;
-	}
+        if ( o2 == COLLINEAR ) {
+          cr = EQUAL;
+        } else {
+          cr = (o2 == LEFT_TURN) ? LARGER : SMALLER;
+        }
       } else {
-	if ( o2 != RIGHT_TURN ) {
-	  cr = LARGER;
-	} else {
-	  Comparison_result r =
-	    Compare_Voronoi_radii()(vc1, vc2, tag);
-	  cr = r;
-	}
+        if ( o2 != RIGHT_TURN ) {
+          cr = LARGER;
+        } else {
+          Comparison_result r =
+            Compare_Voronoi_radii()(vc1, vc2, tag);
+          cr = r;
+        }
       }
 
       return cr;
@@ -334,10 +334,10 @@ public:
   template<class Method_tag>
   bool
   operator()(const Site_2& p1,
-	     const Site_2& p2,
-	     const Site_2& p3,
-	     const Site_2& p4,
-	     const Site_2& q, bool b, const Method_tag& tag) const
+             const Site_2& p2,
+             const Site_2& p3,
+             const Site_2& p4,
+             const Site_2& q, bool b, const Method_tag& tag) const
   {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::shadow_region_type_counter++;
@@ -395,7 +395,7 @@ public:
 
 
       Comparison_result r =
-	Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
+        Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
 
       if ( r != SMALLER ) { return false; }
 
@@ -462,7 +462,7 @@ public:
   template<class Method_tag>
   bool
   operator()(const Site_2& p1, const Site_2& p2, const Site_2& p3,
-	     const Site_2& q, bool b, const Method_tag& tag) const
+             const Site_2& q, bool b, const Method_tag& tag) const
   {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::shadow_region_type_counter++;
@@ -518,7 +518,7 @@ public:
       Voronoi_circle vc_12q(vr_12q);
 
       Comparison_result r =
-	Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
+        Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
 
       return ( r == SMALLER );
     }
@@ -540,7 +540,7 @@ public:
   template<class Method_tag>
   bool
   operator()(const Site_2& p1, const Site_2& p2,
-	     const Site_2& q, bool b, const Method_tag& tag) const
+             const Site_2& q, bool b, const Method_tag& tag) const
   {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::shadow_region_type_counter++;
@@ -571,7 +571,7 @@ public:
     if ( !is_bs1 && is_bs2 ) { return false; }
 
     // both circles exist
-    
+
     // check whether the shadow region is connected, i.e., whether it is
     // of the form (a, b) or (-oo, a) U (b, +oo)
 
@@ -601,24 +601,24 @@ public:
 
   inline
   bool operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& q, bool b) const
+                  const Site_2& q, bool b) const
   {
     return Test_degenerated()(p1, p2, q, b, Method_tag());
   }
 
   inline
   bool operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& p3, const Site_2& q, bool b) const
+                  const Site_2& p3, const Site_2& q, bool b) const
   {
-    return Test_degenerated()(p1, p2, p3, q, b, Method_tag());    
+    return Test_degenerated()(p1, p2, p3, q, b, Method_tag());
   }
 
   inline
   bool operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& p3, const Site_2& p4,
-		  const Site_2& q, bool b) const
+                  const Site_2& p3, const Site_2& p4,
+                  const Site_2& q, bool b) const
   {
-    return Test()(p1, p2, p3, p4, q, b, Method_tag());    
+    return Test()(p1, p2, p3, p4, q, b, Method_tag());
   }
 };
 

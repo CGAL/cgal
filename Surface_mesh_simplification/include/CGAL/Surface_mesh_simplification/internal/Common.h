@@ -35,6 +35,21 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
+namespace internal {
+
+  struct Dummy_filter {
+  template <typename Profile>
+  inline
+  const boost::optional<typename Profile::Point>
+  operator()(const Profile&, const boost::optional<typename Profile::Point>& op) const
+  {
+    return op;
+  }
+
+};
+
+} // namesapce internal
+
 template<class Handle>
 inline bool handle_assigned(Handle h) { Handle null; return h != null; }
 
@@ -58,7 +73,7 @@ struct No_constrained_edge_map
   typedef bool                                                      value_type;
   typedef value_type                                                reference;
   typedef boost::readable_property_map_tag                          category;
-  friend bool get(No_constrained_edge_map, key_type) { return false; }
+  friend value_type get(No_constrained_edge_map, key_type) { return false; }
 };
 
 } // namespace Surface_mesh_simplification

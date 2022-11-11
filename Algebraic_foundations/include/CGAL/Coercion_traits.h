@@ -13,8 +13,8 @@
 // =============================================================================
 
 /*! \file NiX/Coercion_traits.h
- *  \brief Defines class NiX::Coercion_traits. 
- * 
+ *  \brief defines class NiX::Coercion_traits.
+ *
  *  Provides the general definition of the \c Coercion_traits<A,B> class, with
  *  specializations for the builtin number types.
  */
@@ -23,9 +23,9 @@
 #define CGAL_COERCION_TRAITS_H 1
 
 #include <iterator>
+#include <type_traits>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/tags.h>
 
@@ -35,7 +35,7 @@
 #define CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, Result_type  ) \
   template < class CT_Type_1, class CT_Type_2 >                         \
   Result_type operator()( const CT_Type_1& x, const CT_Type_2& y ) const { \
-    CGAL_static_assertion((::boost::is_same<                              \
+    CGAL_static_assertion((::std::is_same<                              \
             typename Coercion_traits< CT_Type_1, CT_Type_2 >::Type, NT  \
             >::value));                                                 \
                                                                         \
@@ -70,7 +70,7 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
             Type operator()(const FROM& x) const {             \
                 return Type(x);}                               \
         };                                                              \
-    };      
+    };
 
 #define CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM(FROM,TO,TEM)            \
     template <TEM>                                                      \
@@ -96,9 +96,9 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
             Type operator()(const FROM& x) const {             \
                 return Type(x);}                               \
         };                                                              \
-    };   
+    };
 
-                                                 
+
 
 #define CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(A)                         \
     template <>                                                         \
@@ -110,7 +110,7 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
             typedef Type result_type;                          \
             Type operator()(const A& x) const { return x;}     \
         };                                                              \
-    };    
+    };
 
 #define CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(A,TEM)                 \
     template <TEM>                                                      \
@@ -122,12 +122,12 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
             typedef Type result_type;                          \
             Type operator()(const A& x) const {return x;}      \
         };                                                              \
-    };    
+    };
 
 namespace CGAL {
 
 
-namespace INTERN_CT{ 
+namespace INTERN_CT{
 template< class FROM, class TO >struct Cast_from_to{
     typedef TO result_type;
     TO operator()(const TO& x) const {return x;}
@@ -143,80 +143,71 @@ struct Cast_from_to<TO,TO>{
 
 template<class A , class B> struct Coercion_traits;
 template<class A , class B, int > struct Coercion_traits_for_level;
-    
+
 
 
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,int)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,long)
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,long long)
-#endif
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,long long)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,float)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,double)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,long double)
-        
+
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,long)
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,long long)
-#endif
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,long long)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,float)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,double)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,long double)
 
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,long long)
-#endif
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,long long)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,float)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,double)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,long double)
 
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,float)
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,double)
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,long double)
-#endif
+
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,double)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,long double)
 
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float,double)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float,long double)
-      
+
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double,long double)
 
 //! Specialization for equal types.
-template <class A>    
-struct Coercion_traits<A,A>{ 
+template <class A>
+struct Coercion_traits<A,A>{
     typedef Tag_true Are_explicit_interoperable;
     typedef Tag_true Are_implicit_interoperable;
-    typedef A Type; 
-    struct Cast{                                        
-        typedef Type result_type;                             
-        Type inline operator()(const A& x) const { 
+    typedef A Type;
+    struct Cast{
+        typedef Type result_type;
+        Type inline operator()(const A& x) const {
             return x;
-        }       
+        }
     };
 };
-    
+
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(short)
-CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(int)  
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(int)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(long)
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(long long)
-#endif
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(long long)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(float)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(double)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(long double)
 
 enum COERCION_TRAITS_LEVEL {
     CTL_TOP          = 4,
-    CTL_POLYNOMIAL   = 4, 
+    CTL_POLYNOMIAL   = 4,
     CTL_COMPLEX      = 3,
     CTL_INTERVAL     = 2,
-    CTL_SQRT_EXT     = 1 
+    CTL_SQRT_EXT     = 1
 };
 
-template <class A, class B, int i > 
+template <class A, class B, int i >
 struct Coercion_traits_for_level: public Coercion_traits_for_level<A,B,i-1>{};
 
-template <class A, class B> 
+template <class A, class B>
 struct Coercion_traits_for_level<A,B,0> {
     typedef Tag_false Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
@@ -224,10 +215,10 @@ struct Coercion_traits_for_level<A,B,0> {
     typedef Null_functor Cast;
 };
 
-template<class A , class B> 
+template<class A , class B>
 struct Coercion_traits :public Coercion_traits_for_level<A,B,CTL_TOP>{};
 
- 
+
 } //namespace CGAL
 
 #endif //NiX_COERCION_TRAITS_H

@@ -23,14 +23,13 @@ int main(int argc, char* argv[])
   {
     while (ifs >> p)
     { T.insert(p); }
-    CGAL_assertion(T.is_valid());
-    
+
     if( T.is_triangulation_in_1_sheet())
     { T.convert_to_9_sheeted_covering(); }
-    
+
     // Draw the periodic triangulation
     CGAL::draw(T);
   }
-  
+
   return EXIT_SUCCESS;
 }

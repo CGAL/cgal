@@ -24,7 +24,7 @@ namespace CGAL {
   template<class T> \
   struct Is_pretty<T,true> : T::Is_pretty {}
 
-CGAL_STRAWBERRY(Is_exact);
+CGAL_STRAWBERRY(Uses_no_arithmetic);
 CGAL_STRAWBERRY(Is_fast);
 CGAL_STRAWBERRY(Is_stored);
 #undef CGAL_STRAWBERRY

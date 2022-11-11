@@ -34,7 +34,7 @@ struct Border_is_constrained_edge_map
 
   Border_is_constrained_edge_map(const Surface_mesh& sm) : sm_ptr(&sm) {}
 
-  friend bool get(Border_is_constrained_edge_map m, const key_type& edge) {
+  friend value_type get(const Border_is_constrained_edge_map& m, const key_type& edge) {
     return CGAL::is_border(edge, *m.sm_ptr);
   }
 };
@@ -46,7 +46,7 @@ typedef SMS::Constrained_placement<SMS::Midpoint_placement<Surface_mesh>,
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/mesh_with_border.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mesh_with_border.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {

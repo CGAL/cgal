@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 
@@ -74,19 +74,19 @@ namespace internal {
 
 // default to Iterator_tag, special case Circulator tags
 template<typename Tag>
-struct Get_category 
+struct Get_category
 { typedef Iterator_tag type; };
 
 template<>
-struct Get_category<CGAL::Forward_circulator_tag> 
+struct Get_category<CGAL::Forward_circulator_tag>
 { typedef Circulator_tag type; };
 
 template<>
-struct Get_category<CGAL::Bidirectional_circulator_tag> 
+struct Get_category<CGAL::Bidirectional_circulator_tag>
 { typedef Circulator_tag type; };
 
 template<>
-struct Get_category<CGAL::Random_access_circulator_tag> 
+struct Get_category<CGAL::Random_access_circulator_tag>
 { typedef Circulator_tag type; };
 
 } // internal
@@ -397,7 +397,7 @@ template <class C> inline
 typename C::size_type
 circulator_size( const C& c) {
   typedef typename std::iterator_traits<C>::iterator_category category;
-  return I_circulator_size( c, 
+  return I_circulator_size( c,
                             category());
 }
 template <class C>
@@ -435,7 +435,7 @@ template <class C> inline
 typename C::difference_type
 circulator_distance( const C& c, const C& d) {
   typedef typename std::iterator_traits<C>::iterator_category category;
-  return I_circulator_distance( c, d, 
+  return I_circulator_distance( c, d,
                                 category());
 }
 template <class C> inline
@@ -712,7 +712,7 @@ public:
     typedef typename I_Circulator_from_iterator_traits<
         typename iterator_traits::iterator_category
         >::iterator_category                          iterator_category;
-    
+
     typedef typename Container::size_type size_type;
 private:
     Container*     ctnr;
@@ -983,7 +983,7 @@ public:
     Circulator_from_iterator() : m_begin(),
                                  m_end(),
                                  current(),
-				 empty( true)
+                                 empty( true)
   {}
 
     Circulator_from_iterator( const I& bgn, const I& end)

@@ -43,7 +43,7 @@ namespace CGAL {
 \ingroup PkgOptimalTransportationReconstruction2Classes
 
 This class provides a means to reconstruct a 1-dimensional shape from a set of 2D points with masses.
-The algorithm computes an initial 2D Delaunay triangulation from the input points, 
+The algorithm computes an initial 2D Delaunay triangulation from the input points,
 and performs a simplification of the triangulation by performing half edge collapses, edge flips and vertex relocations.
 
 The edges are either processed in the order imposed by an priority queue, or
@@ -52,7 +52,7 @@ As the exhaustive priority queue guarantees a higher quality it is the default.
 The user can switch to the other method, for example for an initial
 simplification round, by calling `set_random_sample_size()`.
 
-By default edge flip operators are applied to ensure that every edge of the 
+By default edge flip operators are applied to ensure that every edge of the
 triangulation are candidate to be collapsed, while preserving a valid embedding
 of the triangulation. This option can be disabled by calling
 \link set_use_flip() `set_use_flip(false)`\endlink to reduce the running times.
@@ -61,7 +61,7 @@ By default the vertices are not relocated after each half edge collapse.
 This option can be changed by setting the number of vertex relocation steps
 performed between two edge collapse operators.
 
-The simplification is performed by calling either 
+The simplification is performed by calling either
 \link run_until() `run_until(n)`\endlink or \link run() `run(steps)`\endlink.
 The former simplifies the triangulation until n points remain, while the latter
 stops after `steps` edge collapse operators have been performed.
@@ -70,11 +70,11 @@ Furthermore, we can relocate the vertices by calling `relocate_all_points()`.
 \tparam Traits a model of the concept `OptimalTransportationReconstructionTraits_2`.
 
 \tparam PointPMap a model of `ReadablePropertyMap` with value type `Traits::Point_2`.
-        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a> 
+        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a>
         (for the case the input is points without mass).
 
 \tparam MassPMap a model of `ReadablePropertyMap` with value type `Traits::FT`
-        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/static_property_map.html">`boost::static_property_map<Traits::FT>`</a> 
+        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/static_property_map.html">`boost::static_property_map<Traits::FT>`</a>
         (for the case the input is points without mass).
 
  */
@@ -155,6 +155,7 @@ public:
 
   typedef typename Triangulation::MultiIndex            MultiIndex;
 
+  /// \endcond
   /// @}
 
 protected:
@@ -173,33 +174,31 @@ protected:
   PointPMap point_pmap;
   MassPMap  mass_pmap;
 
-  /// \endcond
-
 public:
 
   /// \name Initialization
   /// @{
 
   /*!
-  Constructor of the optimal transportation reconstruction class. 
-  It builds an initial simplicial complex 
+  Constructor of the optimal transportation reconstruction class.
+  It builds an initial simplicial complex
   for a given range of point-mass pairs.
 
-  \tparam InputRange is a model of `Range` with forward iterators, 
-          providing input points and point masses through the 
+  \tparam InputRange is a model of `Range` with forward iterators,
+          providing input points and point masses through the
           `PointPMap` and `MassPMap` property maps.
 
   \param input_range  Range of input data.
   \param point_map    A `ReadablePropertyMap` used to access the input points.
-  \param mass_map     A `ReadablePropertyMap` used to access the input 
+  \param mass_map     A `ReadablePropertyMap` used to access the input
                       points' masses.
-  \param sample_size  If `sample_size != 0`, the size of the random sample 
+  \param sample_size  If `sample_size != 0`, the size of the random sample
                       which replaces the exhaustive priority queue.
-  \param use_flip     If `true` the edge flipping procedure is used to ensure 
+  \param use_flip     If `true` the edge flipping procedure is used to ensure
                       that every edge can be made collapsible.
-  \param relocation   The number of point relocations that are performed 
+  \param relocation   The number of point relocations that are performed
                       between two edge collapses.
-  \param verbose      Controls how much console output is produced by 
+  \param verbose      Controls how much console output is produced by
                       the algorithm. The values are 0, 1, or > 1.
   \param traits       The traits class.
    */
@@ -215,7 +214,7 @@ public:
     Traits traits = Traits())
   : m_dt(traits),
     m_traits(m_dt.geom_traits()),
-    m_ignore(0), 
+    m_ignore(0),
     m_verbose(verbose),
     m_mchoice(sample_size),
     m_use_flip(use_flip),
@@ -236,7 +235,7 @@ public:
   /*!
           If `sample_size == 0`, the simplification is performed using an exhaustive priority queue.
           If `sample_size` is stricly positive the simplification is performed using a
-          multiple choice approach, ie, a best-choice selection in a random sample of 
+          multiple choice approach, ie, a best-choice selection in a random sample of
           edge collapse operators, of size `sample_size`. A typical value for the sample
           size is 15, but this value must be enlarged when targeting a very coarse simplification.
           \param sample_size If `sample_size != 0`, the size of the random sample replaces the priority queue.
@@ -257,11 +256,11 @@ public:
   }
 
 
-  
+
 
   /*!
         The use_flip parameter determines whether the edge flipping procedure
-        is used for the half-edge collapse. 
+        is used for the half-edge collapse.
    */
   void set_use_flip(const bool use_flip) {
     m_use_flip = use_flip;
@@ -288,8 +287,8 @@ public:
   An edge is relevant from the approximation point of view
   if it is long, covers a large mass (or equivalently the
   number of points when all masses are equal), and has a
-  small transport cost. This notion is defined as 
-  \f$ m(e) * |e|^2 / cost(e) \f$, where \f$ m(e) \f$ 
+  small transport cost. This notion is defined as
+  \f$ m(e) * |e|^2 / cost(e) \f$, where \f$ m(e) \f$
   denotes the mass of the points approximated by the edge,
   \f$ |e| \f$ denotes the edge length and \f$ cost(e) \f$
   its approximation error.
@@ -313,6 +312,7 @@ public:
   }
 
   FT tolerance() const { return m_tolerance; }
+  /// \endcond
 
   /// @}
 
@@ -479,7 +479,7 @@ public:
 
 private:
   Vertex_handle insert_point(
-    const Point& point, const bool pinned, const int id) 
+    const Point& point, const bool pinned, const int id)
   {
     Vertex_handle v = m_dt.insert(point);
     v->pinned() = pinned;
@@ -696,7 +696,7 @@ public:
 
     if (is_above_tolerance (pedge))
       return false;
-    
+
     return true;
   }
 
@@ -721,7 +721,7 @@ public:
 
   template<class Iterator> // value_type = Edge
   void collect_cost_stencil(
-    const Triangulation& mesh, Iterator begin, Iterator end, 
+    const Triangulation& mesh, Iterator begin, Iterator end,
     Edge_vector& edges) const
   {
     Edge_set done;
@@ -859,7 +859,7 @@ public:
   }
 
   template<class Iterator> // value_type = Edge
-  void remove_stencil_from_pqueue(Iterator begin, Iterator end) 
+  void remove_stencil_from_pqueue(Iterator begin, Iterator end)
   {
     if (m_mindex.empty())
       return;
@@ -888,7 +888,7 @@ public:
 
   template<class Iterator> // value_type = Edge
   void collect_pqueue_stencil(
-    const Triangulation& mesh, Iterator begin, Iterator end, 
+    const Triangulation& mesh, Iterator begin, Iterator end,
     Edge_vector& edges) const
   {
     Vertex_handle_set vertex_set;
@@ -998,7 +998,7 @@ public:
   }
 
   Face_handle copy_face(
-    Face_handle f0, Face_handle f1, Vertex_handle_map& vmap) const 
+    Face_handle f0, Face_handle f1, Vertex_handle_map& vmap) const
   {
     for (unsigned int i = 0; i < 3; ++i) {
       Vertex_handle v0i = f0->vertex(i);
@@ -1093,7 +1093,7 @@ public:
   }
 
   Edge get_copy_edge(
-    const Edge& edge, Vertex_handle_map& vmap, Face_handle_map& fmap) const 
+    const Edge& edge, Vertex_handle_map& vmap, Face_handle_map& fmap) const
   {
     Face_handle f = edge.first;
     Vertex_handle v = f->vertex(edge.second);
@@ -1160,10 +1160,6 @@ public:
     }
   }
 
-  /// \endcond
-
-
-  /// \cond SKIP_IN_MANUAL
   Vector compute_gradient(Vertex_handle vertex) const {
     Vector grad = m_traits.construct_vector_2_object()(FT(0), FT(0));
     Edge_circulator ecirc = m_dt.incident_edges(vertex);
@@ -1238,7 +1234,7 @@ public:
     if (sample) {
       const FT m = sample->mass();
       const Point& ps = sample->point();
-      rhs = m_traits.construct_sum_of_vectors_2_object()(rhs, 
+      rhs = m_traits.construct_sum_of_vectors_2_object()(rhs,
         m_traits.construct_scaled_vector_2_object()(
           m_traits.construct_vector_2_object()(CGAL::ORIGIN, ps), m));
       coef += m;
@@ -1273,7 +1269,7 @@ public:
   }
 
   void compute_relocation_for_plan0(
-    const Edge& edge, FT& coef, Vector& rhs) const 
+    const Edge& edge, FT& coef, Vector& rhs) const
   {
     Edge twin = m_dt.twin_edge(edge);
     const Point& pa = m_dt.source_vertex(edge)->point();
@@ -1293,7 +1289,7 @@ public:
       FT Db = m_traits.compute_squared_distance_2_object()(ps, pb);
 
       if (Da < Db) {
-        rhs = m_traits.construct_sum_of_vectors_2_object()(rhs, 
+        rhs = m_traits.construct_sum_of_vectors_2_object()(rhs,
           m_traits.construct_scaled_vector_2_object()(
             m_traits.construct_vector_2_object()(CGAL::ORIGIN, ps), m));
         coef += m;
@@ -1324,10 +1320,10 @@ public:
         CGAL::ORIGIN,
         m_traits.construct_sum_of_vectors_2_object()(
           m_traits.construct_scaled_vector_2_object()(
-            m_traits.construct_vector_2_object()(CGAL::ORIGIN, pa), 
+            m_traits.construct_vector_2_object()(CGAL::ORIGIN, pa),
             1.0 - coord),
           m_traits.construct_scaled_vector_2_object()(
-            m_traits.construct_vector_2_object()(CGAL::ORIGIN, pb), 
+            m_traits.construct_vector_2_object()(CGAL::ORIGIN, pb),
             coord)));
       grad = m_traits.construct_sum_of_vectors_2_object()(
         grad,
@@ -1348,7 +1344,7 @@ public:
   }
 
   void compute_relocation_for_plan1(
-    const Edge& edge, FT& coef, Vector& rhs) const 
+    const Edge& edge, FT& coef, Vector& rhs) const
   {
     //FT M = m_dt.get_mass(edge);
     const Point& pb = m_dt.target_vertex(edge)->point();
@@ -1480,13 +1476,13 @@ public:
 
 
   /*!
-    Returns the cost of the (solid) edges present in the 
+    Returns the cost of the (solid) edges present in the
     reconstructed triangulation.
    */
   FT total_edge_cost() const {
     FT total_cost = 0;
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
-         ei != m_dt.finite_edges_end(); ++ei) 
+         ei != m_dt.finite_edges_end(); ++ei)
     {
       Edge edge = *ei;
       if (m_dt.is_ghost(edge))
@@ -1500,8 +1496,8 @@ public:
   /// \endcond
 
 
-  /// \name Simplification 
-  /// You can freely mix calls of the following functions. 
+  /// \name Simplification
+  /// You can freely mix calls of the following functions.
   /// @{
   /*!
     Computes a shape consisting of `np` points, reconstructing the input
@@ -1532,7 +1528,7 @@ public:
                 << " iters, " << m_dt.number_of_vertices() - 4 << " V "
                 << timer.time() << " s)"
                 << std::endl;
-    
+
     return (m_dt.number_of_vertices() <= N);
   }
 
@@ -1579,7 +1575,7 @@ public:
     guaranteed to be less than `tolerance`. It means that the square
     root of transport cost per mass (homogeneous to a distance) is at
     most `tolerance`.
-    
+
     \param tolerance Tolerance on the Wasserstein distance.
    */
   void run_under_wasserstein_tolerance (const FT tolerance) {
@@ -1594,7 +1590,7 @@ public:
       performed++;
 
     if (m_verbose > 0)
-      std::cerr << " done" << " (" << performed 
+      std::cerr << " done" << " (" << performed
                 << " iters, " << m_dt.number_of_vertices() - 4
                 << " V, " << timer.time() << " s)"
                 << std::endl;
@@ -1602,7 +1598,7 @@ public:
 
 
   /*!
-    Since noise and missing data may prevent the reconstructed shape to have sharp corners well located, the algorithm offers the possibility to automatically relocate points after each edge collapse. The new location of the points is chosen such that the fitting of the output segments to the input points is improved. 
+    Since noise and missing data may prevent the reconstructed shape to have sharp corners well located, the algorithm offers the possibility to automatically relocate points after each edge collapse. The new location of the points is chosen such that the fitting of the output segments to the input points is improved.
    */
   void relocate_all_points() {
     CGAL::Real_timer timer;
@@ -1654,11 +1650,11 @@ public:
 
   /*!
     Writes the points and segments of the output simplex in an indexed format into output iterators.
-        \tparam PointOutputIterator An output iterator with value type 
+        \tparam PointOutputIterator An output iterator with value type
                 \link Optimal_transportation_reconstruction_2::Point Point \endlink.
-        \tparam IndexOutputIterator An output iterator with value type 
+        \tparam IndexOutputIterator An output iterator with value type
                 `std::size_t`.
-        \tparam IndexPairOutputIterator An output iterator with value type 
+        \tparam IndexPairOutputIterator An output iterator with value type
                 `std::pair<std::size_t, std::size_t>`.
 
         \param points The output iterator for all points.
@@ -1670,7 +1666,7 @@ public:
     typename IndexOutputIterator,
     typename IndexPairOutputIterator>
   std::tuple<
-    PointOutputIterator, 
+    PointOutputIterator,
     IndexOutputIterator,
     IndexPairOutputIterator>
   indexed_output(
@@ -1737,9 +1733,9 @@ public:
     \details It takes two output iterators, one for storing the
     isolated points and one for storing the edges of the reconstructed shape.
 
-    \tparam PointOutputIterator An output iterator with value type 
+    \tparam PointOutputIterator An output iterator with value type
             \link Optimal_transportation_reconstruction_2::Point Point \endlink.
-    \tparam SegmentOutputIterator An output iterator with value type 
+    \tparam SegmentOutputIterator An output iterator with value type
             \link Optimal_transportation_reconstruction_2::Segment Segment \endlink.
    */
   template<class PointOutputIterator, class SegmentOutputIterator>
@@ -1785,12 +1781,10 @@ public:
       e_it++;
     }
   }
-  /// \endcond
-
 
   /// \cond SKIP_IN_MANUAL
   const Triangulation& tds() const { return m_dt; }
-  
+
   void extract_tds_output(Triangulation& rt2) const {
     rt2 = m_dt;
     //mark vertices

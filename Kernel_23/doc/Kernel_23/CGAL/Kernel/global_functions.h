@@ -110,7 +110,7 @@ Kernel::FT approximate_angle(const CGAL::Vector_3<Kernel>& u,
 
 /// \defgroup approximate_dihedral_angle_grp CGAL::approximate_dihedral_angle()
 /// \ingroup kernel_global_function
-/// @{  
+/// @{
 /*!
 returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
 The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.
@@ -355,8 +355,10 @@ through the intersection of `l1` and `l2`.
 If `l1` and `l2` are parallel, then the bisector is defined as the line
 which has the same direction as `l1`, and which is at the same distance
 from `l1` and `l2`.
-This function requires that `Kernel::RT` supports the `sqrt()`
-operation.
+If `Kernel::FT` is not a model of `FieldWithSqrt`
+an approximation of the square root will be used in this function,
+impacting the exactness of the result even with an (exact) multiprecision
+number type.
 */
 template <typename Kernel>
 CGAL::Line_2<Kernel> bisector(const CGAL::Line_2<Kernel> &l1,
@@ -379,8 +381,10 @@ passes through the intersection of `h1` and `h2`.
 If `h1` and `h2` are parallel, then the bisector is defined as the
 plane which has the same oriented normal vector as `l1`, and which is at
 the same distance from `h1` and `h2`.
-This function requires that `Kernel::RT` supports the `sqrt()`
-operation.
+If `Kernel::FT` is not a model of `FieldWithSqrt`
+an approximation of the square root will be used in this function,
+impacting the exactness of the result even with an (exact) multiprecision
+number type.
 */
 template <typename Kernel>
 CGAL::Plane_3<Kernel> bisector(const CGAL::Plane_3<Kernel> &h1,
@@ -848,7 +852,7 @@ const CGAL::Point_3<Kernel>& t);
 
 
 
-/// \defgroup compare_slopes_grp CGAL::compare_slopes()
+/// \defgroup compare_slopes_grp CGAL::compare_slope()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -866,9 +870,20 @@ from the left to the right endpoint of the segments.
 */
 template <typename Kernel>
 Comparison_result compare_slope(const CGAL::Segment_2<Kernel> &s1,
-const CGAL::Segment_2<Kernel> &s2);
+                                const CGAL::Segment_2<Kernel> &s2);
 
 /*!
+compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
+where the slope is the variation of the `y`-coordinate
+from the left to the right endpoint of the segments.
+*/
+template <typename Kernel>
+Comparison_result compare_slope(const CGAL::Point_2<Kernel> &s1s,
+                                const CGAL::Point_2<Kernel> &s1t,
+                                const CGAL::Point_2<Kernel> &s2s,
+                                const CGAL::Point_2<Kernel> &s2t);
+
+  /*!
 compares the slopes of the segments `(p,q)` and `(r,s)`,
 where the slope is the variation of the `z`-coordinate from the first
 to the second point  of the segment divided by the length of the segment.
@@ -1785,7 +1800,7 @@ const CGAL::Vector_3<Kernel>& w);
 // This is there to keep the global functions in alphabetical order
 // instead of processing order.
 
-/// \defgroup do_intersect_grp CGAL::do_intersect()
+/// \defgroup do_intersect_grp Intersection Testing Functions - CGAL::do_intersect()
 /// \ingroup kernel_global_function
 /// \defgroup do_intersect_linear_grp CGAL::do_intersect() (2D/3D Linear Kernel)
 /// \ingroup do_intersect_grp
@@ -2041,7 +2056,7 @@ const CGAL::Point_3<Kernel>& t);
 
 // Same reason as in defgroup do_intersect.
 
-/// \defgroup intersection_grp CGAL::intersection()
+/// \defgroup intersection_grp Intersection Computation Functions - CGAL::intersection()
 /// \ingroup kernel_global_function
 /// \defgroup intersection_linear_grp CGAL::intersection() (2D/3D Linear Kernel)
 /// \ingroup intersection_grp
@@ -2238,11 +2253,24 @@ template <typename Kernel>
 CGAL::Point_2<Kernel> midpoint( const CGAL::Point_2<Kernel>& p,
 const CGAL::Point_2<Kernel>& q );
 
+
+  /*!
+computes the midpoint of the segment `s`.
+*/
+template <typename Kernel>
+CGAL::Point_2<Kernel> midpoint( const CGAL::Segment_2<Kernel>& s);
+
 /*!
 computes the midpoint of the segment `pq`.
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> midpoint( const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q );
+
+/*!
+computes the midpoint of the segment `s`.
+*/
+template <typename Kernel>
+CGAL::Point_3<Kernel> midpoint( const CGAL::Segment_3<Kernel>& s );
 
 /// @}
 

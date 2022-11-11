@@ -1,9 +1,9 @@
-// Copyright (c) 2019  
+// Copyright (c) 2019
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -34,13 +34,13 @@ namespace CGAL {
 `Exact_algebraic` is an exact algebraic number type, constructible from `double`.
 
 It is a typedef of another number type. Its exact definition depends on
-the availability the third-party libraries %CORE, and %LEDA. %CGAL must
+the availability the third-party libraries \core, and \leda. \cgal must
 be configured with at least one of those libraries.
 
-\cgalModels `FieldWithSqrt` 
-\cgalModels `RealEmbeddable` 
-\cgalModels `Fraction` 
-\cgalModels `FromDoubleConstructible` 
+\cgalModels `FieldWithSqrt`
+\cgalModels `RealEmbeddable`
+\cgalModels `Fraction`
+\cgalModels `FromDoubleConstructible`
 
 */
 #if DOXYGEN_RUNNING
@@ -49,14 +49,12 @@ typedef unspecified_type Exact_algebraic;
 
 #else // not DOXYGEN_RUNNING
 
-#ifdef CGAL_USE_CORE
-  typedef CORE::Expr Exact_algebraic;
-#endif
-  
 #ifdef CGAL_USE_LEDA
 typedef leda_real Exact_algebraic;
+#elif defined CGAL_USE_CORE
+  typedef CORE::Expr Exact_algebraic;
 #endif
 
 #endif
-  
+
 } /* end namespace CGAL */

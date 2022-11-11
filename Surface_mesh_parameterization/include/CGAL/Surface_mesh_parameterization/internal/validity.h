@@ -25,9 +25,10 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <boost/function_output_iterator.hpp>
-
+#include <boost/iterator/function_output_iterator.hpp>
+#include <boost/range/has_range_iterator.hpp>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -51,7 +52,7 @@ bool has_flips(const TriangleMesh& mesh,
   typedef typename Kernel::Vector_3                                   Vector_3;
 
   // Fill containers
-  boost::unordered_set<vertex_descriptor> vertices;
+  std::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
   internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
@@ -232,7 +233,7 @@ public:
   { }
 };
 
-/// Check if the 3D -> 2D mapping is one-to-one.
+/// returns whether the 3D -> 2D mapping is one-to-one.
 /// This function is stronger than "has_flips()" because the parameterized
 /// surface can loop over itself without creating any flips.
 template <typename TriangleMesh,
@@ -240,7 +241,10 @@ template <typename TriangleMesh,
           typename VertexUVMap>
 bool is_one_to_one_mapping(const TriangleMesh& mesh,
                            const Faces_Container& faces,
-                           const VertexUVMap uvmap)
+                           const VertexUVMap uvmap,
+                           std::enable_if_t<
+                              boost::has_range_iterator<Faces_Container>::value
+                           >* = nullptr)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
@@ -298,7 +302,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor    face_descriptor;
 
-  boost::unordered_set<vertex_descriptor> vertices;
+  std::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
   internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);

@@ -30,17 +30,14 @@
 #include <sstream>
 #endif
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
-* smooths the overall shape of the mesh by using the mean curvature flow.
+*
+* @brief smooths the overall shape of the mesh by using the mean curvature flow.
+*
 * The effect depends on the curvature of each area and on a time step which
 * represents the amount by which vertices are allowed to move.
 * The result conformally maps the initial surface to a sphere.
@@ -48,40 +45,65 @@ namespace Polygon_mesh_processing {
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
 *         model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param time a time step that corresponds to the speed by which the surface is smoothed.
-*        A larger time step results in faster convergence but details may be distorted to have a larger extent
+*        A larger time step results in faster convergence but details may be distorted to a larger extent
 *        compared to more iterations with a smaller step. Typical values scale in the interval (1e-6, 1].
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
-*  \cgalParamEnd
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
-*    cannot be modified at all during smoothing.
-*  \cgalParamEnd
-*  \cgalParamBegin{number_of_iterations} the number of iterations for the
-*    sequence of the smoothing iterations performed. Each iteration is performed
-*    with the given time step.
-*  \cgalParamEnd
-*  \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for smoothing \cgalParamEnd
-*  \cgalParamEnd
+*   \cgalParamNBegin{number_of_iterations}
+*     \cgalParamDescription{the number of iterations for the sequence of the smoothing iterations performed}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{`1`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `TriangleMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*     \cgalParamExtra{A constrained vertex cannot be modified at all during smoothing.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{sparse_linear_solver}
+*     \cgalParamDescription{an instance of the sparse linear solver used for smoothing}
+*     \cgalParamType{a class model of `SparseLinearAlgebraWithFactorTraits_d`}
+*     \cgalParamDefault{if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and
+*                       `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits`
+*                       is provided as default value:
+*                       `CGAL::Eigen_solver_traits<Eigen::BiCGSTAB<CGAL::Eigen_sparse_matrix<double>::%EigenType, Eigen::IncompleteLUT<double> > >`}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-*  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
+* @warning This function involves linear algebra, that is computed using non-exact, floating-point arithmetic.
+*
+* @see `smooth_mesh()`
 */
-template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void smooth_shape(const FaceRange& faces,
                   TriangleMesh& tmesh,
                   const double time,
-                  const NamedParameters& np)
+                  const NamedParameters& np = parameters::default_values())
 {
   if(std::begin(faces) == std::end(faces))
     return;
@@ -92,16 +114,16 @@ void smooth_shape(const FaceRange& faces,
   typedef typename internal_np::Lookup_named_param_def<
                      internal_np::vertex_is_constrained_t,
                      NamedParameters,
-                     Constant_property_map<vertex_descriptor, bool> >::type  VCMap;
+                     Static_boolean_property_map<vertex_descriptor, false> >::type  VCMap;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_property_map(CGAL::vertex_point, tmesh));
+                                          get_property_map(CGAL::vertex_point, tmesh));
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                             Constant_property_map<vertex_descriptor, bool>(false));
+                                 Static_boolean_property_map<vertex_descriptor, false>());
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -120,11 +142,11 @@ void smooth_shape(const FaceRange& faces,
 
 #if defined(CGAL_EIGEN3_ENABLED)
   CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
       "Eigen3 version 3.2 or later is required.");
 #else
   CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
       "Eigen3 version 3.2 or later is required.");
 #endif
 
@@ -132,7 +154,7 @@ void smooth_shape(const FaceRange& faces,
   typedef typename Sparse_solver::Matrix                                          Eigen_matrix;
   typedef typename Sparse_solver::Vector                                          Eigen_vector;
 
-  Sparse_solver solver = choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver());
+  Sparse_solver solver = choose_parameter<Default_solver>(get_parameter(np, internal_np::sparse_linear_solver));
 
   std::size_t n = vertices(tmesh).size();
   Eigen_matrix A(n, n);
@@ -149,7 +171,7 @@ void smooth_shape(const FaceRange& faces,
 
   for(unsigned int iter=0; iter<nb_iterations; ++iter)
   {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "iteration #" << iter << std::endl;
 #endif
 
@@ -161,7 +183,7 @@ void smooth_shape(const FaceRange& faces,
     }
     else
     {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
       std::cerr << "Failed to solve system!" << std::endl;
 #endif
       break;
@@ -178,28 +200,15 @@ void smooth_shape(const FaceRange& faces,
   }
 }
 
-template<typename TriangleMesh, typename FaceRange>
-void smooth_shape(const FaceRange& faces,
-                  TriangleMesh& tmesh,
-                  const double time)
-{
-  smooth_shape(faces, tmesh, time, parameters::all_default());
-}
-
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+/// \cond SKIP_IN_MANUAL
+template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void smooth_shape(TriangleMesh& tmesh,
                   const double time,
-                  const CGAL_PMP_NP_CLASS& np)
+                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   smooth_shape(faces(tmesh), tmesh, time, np);
 }
-
-template<typename TriangleMesh>
-void smooth_shape(TriangleMesh& tmesh,
-                  const double time)
-{
-  smooth_shape(faces(tmesh), tmesh, time, parameters::all_default());
-}
+/// \endcond
 
 } // Polygon_mesh_processing
 } // CGAL

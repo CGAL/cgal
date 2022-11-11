@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -21,7 +21,7 @@
 #include <CGAL/Nef_S2/SM_iteration.h>
 
 #define CGAL_forall_vertices(x,SNC)\
-for(x = (SNC).vertices_begin(); x != (SNC).vertices_end(); ++x) 
+for(x = (SNC).vertices_begin(); x != (SNC).vertices_end(); ++x)
 
 #define CGAL_forall_halfedges(x,SNC)\
 for(x = (SNC).halfedges_begin(); x != (SNC).halfedges_end(); ++x)
@@ -31,20 +31,20 @@ for(x = (SNC).halfedges_begin(); x != (SNC).halfedges_end(); ++x) \
 if ( x->is_twin() ) continue; else
 
 #define CGAL_forall_halffacets(x,SNC)\
-for(x = (SNC).halffacets_begin(); x != (SNC).halffacets_end(); ++x) 
- 
+for(x = (SNC).halffacets_begin(); x != (SNC).halffacets_end(); ++x)
+
 #define CGAL_forall_facets(x,SNC)\
 for(x = (SNC).halffacets_begin(); x != (SNC).halffacets_end(); ++x) \
 if ( x->is_twin() ) continue; else
 
 #define CGAL_forall_volumes(x,SNC)\
-for(x = (SNC).volumes_begin(); x != (SNC).volumes_end(); ++x) 
+for(x = (SNC).volumes_begin(); x != (SNC).volumes_end(); ++x)
 
 #define CGAL_forall_facet_cycles_of(x,F)\
-for(x = (F)->facet_cycles_begin(); x != (F)->facet_cycles_end(); ++x) 
+for(x = (F)->facet_cycles_begin(); x != (F)->facet_cycles_end(); ++x)
 
 #define CGAL_forall_shells_of(x,C)\
-for(x = (C)->shells_begin(); x != (C)->shells_end(); ++x) 
+for(x = (C)->shells_begin(); x != (C)->shells_end(); ++x)
 
 #define CGAL_forall_svertices_of(x,V)\
 for(x = (V)->svertices_begin(); x != (V)->svertices_end(); ++x)

@@ -15,13 +15,18 @@ class Polyhedron_demo_io_nef_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "nef_io_plugin.json")
 
 public:
-  QString nameFilters() const;
-  QString name() const { return "io_nef_plugin"; }
-  bool canLoad(QFileInfo) const;
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  QString nameFilters() const override;
+  QString name() const override { return "io_nef_plugin"; }
+  bool canLoad(QFileInfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items);
+  bool canSave(const CGAL::Three::Scene_item*) override;
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) override;
+  bool isDefaultLoader(const Scene_item* item) const override{
+    if(qobject_cast<const Scene_nef_polyhedron_item*>(item))
+      return true;
+    return false;
+  }
 };
 
 QString Polyhedron_demo_io_nef_plugin::nameFilters() const {
@@ -41,7 +46,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     ok = false;
     return QList<Scene_item*>();
   }
-  
+
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -49,7 +54,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     ok = false;
     return QList<Scene_item*>();
   }
-    
+
   // Try to read .nef3 in a polyhedron
   Scene_nef_polyhedron_item* item = new Scene_nef_polyhedron_item();
   item->setName(fileinfo.baseName());
@@ -84,7 +89,7 @@ bool Polyhedron_demo_io_nef_plugin::save(QFileInfo fileinfo,QList<CGAL::Three::S
 {
   Scene_item* item = items.front();
   // This plugin supports polyhedrons and polygon soups
-  const Scene_nef_polyhedron_item* nef_item = 
+  const Scene_nef_polyhedron_item* nef_item =
     qobject_cast<const Scene_nef_polyhedron_item*>(item);
 
   if(!nef_item)

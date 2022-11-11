@@ -28,12 +28,12 @@ int main() {
     // Select 100 points randomly and append them at the end of
     // the current vector of points.
     random_selection( points.begin(), points.end(), 100,
-		      std::back_inserter(points));
+                      std::back_inserter(points));
 
     // Create 100 points that are collinear to two randomly chosen
     // points and append them to the current vector of points.
     random_collinear_points_2( points.begin(), points.end(), 100,
-			       std::back_inserter( points));
+                               std::back_inserter( points));
 
     // Check that we have really created 1000 points.
     assert( points.size() == 1000);
@@ -44,10 +44,10 @@ int main() {
 
     // Check range of values.
     for ( Vector::iterator i = points.begin(); i != points.end(); i++){
-	assert( i->x() <=  251);
-	assert( i->x() >= -251);
-	assert( i->y() <=  251);
-	assert( i->y() >= -251);
+        assert( i->x() <=  251);
+        assert( i->x() >= -251);
+        assert( i->y() <=  251);
+        assert( i->y() >= -251);
     }
     return 0;
 }

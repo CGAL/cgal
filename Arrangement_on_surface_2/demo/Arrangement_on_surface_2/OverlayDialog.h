@@ -20,18 +20,29 @@ class ArrangementDemoWindow;
 class QListWidgetItem;
 namespace Ui { class OverlayDialog; }
 
+namespace demo_types
+{
+enum class TraitsType : int;
+}
+
 class OverlayDialog : public QDialog
 {
   Q_OBJECT
 
-  public:
+public:
   typedef enum OverlayDialogRole {
     ARRANGEMENT = 32
   } OverlayDialogRole;
 
-  OverlayDialog( ArrangementDemoWindow* parent, Qt::WindowFlags f = 0 );
+  struct ArrangementInfo
+  {
+    int id;
+    demo_types::TraitsType ttype;
+    QString label;
+  };
+  OverlayDialog(QWidget* parent, const std::vector<ArrangementInfo>&);
 
-  std::vector< CGAL::Object > selectedArrangements( ) const;
+  std::vector<int> selectedArrangements() const;
 
 public Q_SLOTS:
   void on_pickPushButton_pressed( );
@@ -40,6 +51,8 @@ public Q_SLOTS:
 protected:
   void restrictSelection( QListWidgetItem* item );
   void unrestrictSelection( );
+
+  std::vector<ArrangementInfo> arr_infos;
 
   Ui::OverlayDialog* ui;
 };

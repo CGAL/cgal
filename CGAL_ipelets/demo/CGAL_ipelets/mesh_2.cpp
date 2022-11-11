@@ -6,12 +6,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 #include <boost/format.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
@@ -27,7 +27,7 @@ namespace CGAL_mesh_2{
   typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel,Tds,Itag>    CDT;
   typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>                  Criteria;
   typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                    Mesher;
-    
+
 const std::string sublabel[] ={
   "Mesh_2", "Help"
 };
@@ -52,16 +52,16 @@ void IpeletMesh2::protected_run(int fn)
     show_help();
     return;
   }
-  
+
   std::list<Point_2> list_of_seeds;
-  
+
   std::list<Point_2> pt_list;
   std::list<Segment_2> sg_list;
   std::list<Circle_2> cir_list;
   std::list<Polygon_2> pol_list;
-  
+
   Iso_rectangle_2 bbox=
-    read_active_objects( 
+    read_active_objects(
       CGAL::dispatch_or_drop_output<Point_2,Polygon_2,Circle_2,Segment_2>(
         std::back_inserter(pt_list),
         std::back_inserter(pol_list),
@@ -76,7 +76,7 @@ void IpeletMesh2::protected_run(int fn)
   }
 
   CDT cdt;
-  
+
   for (std::list<Point_2>::iterator it=pt_list.begin();it!=pt_list.end();++it)
     cdt.insert(*it);
   for (std::list<Segment_2>::iterator it=sg_list.begin();it!=sg_list.end();++it)
@@ -87,21 +87,21 @@ void IpeletMesh2::protected_run(int fn)
   for (std::list<Circle_2>::iterator it=cir_list.begin();it!=cir_list.end();++it)
     list_of_seeds.push_back(it->center());
 
-  
+
   double alpha=0;
-  
-  int x=static_cast<int>( floor(bbox.max().x()-bbox.min().x()) );
-  int y=static_cast<int>( floor(bbox.max().y()-bbox.min().y()) );
-  
+
+  int x=static_cast<int>( floor((bbox.max)().x()-(bbox.min)().x()) );
+  int y=static_cast<int>( floor((bbox.max)().y()-(bbox.min)().y()) );
+
   int ret_val;
   boost::tie(ret_val,alpha)=request_value_from_user<double>((boost::format("Max edge length (BBox %1%x%2%)") % x % y).str() );
-  if (ret_val == -1) return;  
-  
+  if (ret_val == -1) return;
+
   if(alpha<0){
     print_error_message("Not a good value");
     return;
   }
-  
+
   if (list_of_seeds.empty()){
     Mesher mesher(cdt);
     mesher.set_criteria(Criteria(0.125, alpha));
@@ -110,12 +110,12 @@ void IpeletMesh2::protected_run(int fn)
   else
     CGAL::refine_Delaunay_mesh_2(cdt,list_of_seeds.begin(), list_of_seeds.end(),
       Criteria(0.125, alpha));
-  
-  
+
+
   for (CDT::Finite_edges_iterator it=cdt.finite_edges_begin(); it!=cdt.finite_edges_end();++it)
     if (it->first->is_in_domain() || it->first->neighbor(it->second)->is_in_domain())
       draw_in_ipe(cdt.segment(*it));
-    
+
   group_selected_objects_();
 }
 

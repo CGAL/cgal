@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -29,7 +29,7 @@
 
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -37,10 +37,10 @@ namespace internal {
 template <class K>
 class Ray_2_Segment_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Ray_2_Segment_2_pair(typename K::Ray_2 const *ray,
-			 typename K::Segment_2 const *seg)
-	    : _ray(ray), _seg(seg), _known(false) {}
+                         typename K::Segment_2 const *seg)
+            : _ray(ray), _seg(seg) {}
 
     Intersection_results intersection_type() const;
 
@@ -49,15 +49,14 @@ public:
 protected:
     typename K::Ray_2 const *   _ray;
     typename K::Segment_2 const *  _seg;
-    mutable bool                    _known;
-    mutable Intersection_results    _result;
+    mutable Intersection_results    _result = UNKNOWN;
     mutable typename K::Point_2         _intersection_point, _other_point;
 };
 
 template <class K>
 inline bool do_intersect(const typename K::Ray_2 &p1,
-			 const typename K::Segment_2 &p2,
-			 const K&)
+                         const typename K::Segment_2 &p2,
+                         const K&)
 {
     typedef Ray_2_Segment_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
@@ -66,8 +65,8 @@ inline bool do_intersect(const typename K::Ray_2 &p1,
 
 template <class K>
 inline bool do_intersect(const typename K::Segment_2 &p2,
-			 const typename K::Ray_2 &p1,
-			 const K& k)
+                         const typename K::Ray_2 &p1,
+                         const K& k)
 {
   return internal::do_intersect(p1, p2, k);
 }
@@ -76,10 +75,9 @@ template <class K>
 typename Ray_2_Segment_2_pair<K>::Intersection_results
 Ray_2_Segment_2_pair<K>::intersection_type() const
 {
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
     // The non const this pointer is used to cast away const.
-    _known = true;
 //    if (!do_overlap(_ray->bbox(), _seg->bbox()))
 //        return NO_INTERSECTION;
     const typename K::Line_2 &l1 = _ray->supporting_line();
@@ -198,7 +196,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                 _result = SEGMENT;
                 return _result;
             }
-        } 
+        }
         }
     default:
         CGAL_kernel_assertion(false); // should not be reached:
@@ -211,7 +209,7 @@ template <class K>
 typename K::Point_2
 Ray_2_Segment_2_pair<K>::intersection_point() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -222,7 +220,7 @@ typename K::Segment_2
 Ray_2_Segment_2_pair<K>::intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return Segment_2(_intersection_point, _other_point);
@@ -233,9 +231,9 @@ Ray_2_Segment_2_pair<K>::intersection_segment() const
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Segment_2>::result_type
-intersection(const typename K::Ray_2 &ray, 
-	     const typename K::Segment_2&seg,
-	     const K&)
+intersection(const typename K::Ray_2 &ray,
+             const typename K::Segment_2&seg,
+             const K&)
 {
     typedef Ray_2_Segment_2_pair<K> is_t;
     is_t ispair(&ray, &seg);
@@ -255,8 +253,8 @@ template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Segment_2>::result_type
 intersection(const typename K::Segment_2 &seg,
-	     const typename K::Ray_2 &ray, 
-	     const K& k)
+             const typename K::Ray_2 &ray,
+             const K& k)
 {
   return internal::intersection(ray, seg, k);
 }

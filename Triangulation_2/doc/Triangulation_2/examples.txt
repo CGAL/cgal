@@ -19,5 +19,9 @@
 \example Triangulation_2/voronoi.cpp
 \example Triangulation_2/copy_triangulation_2.cpp
 \example Triangulation_2/polylines_triangulation.cpp
+\example Triangulation_2/segment_soup_to_polylines.cpp
 \example Triangulation_2/draw_triangulation_2.cpp
+\example Triangulation_2/low_dimensional.cpp
+\example Triangulation_2/star_conflict_zone.cpp
+\example Triangulation_2/triangulation_projection_traits.cpp
 */

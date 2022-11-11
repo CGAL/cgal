@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
 //                 Bernd Gaertner
@@ -26,7 +26,7 @@
 
 #  include <CGAL/basic.h>
 
-#  include <CGAL/Optimisation/assertions.h>
+#  include <CGAL/assertions.h>
 
 #  include <CGAL/Optimisation/basic.h>
 
@@ -43,30 +43,30 @@ namespace CGAL {
 template <class Traits>
 class Min_sphere_d
 {
-    
-    
+
+
     public:
         typedef typename Traits::Rep_tag        Rep_tag;
         typedef typename Traits::RT             RT;
         typedef typename Traits::FT             FT;
         typedef typename Traits::Point_d        Point; // Point type
-    
+
         typedef  typename Traits::Access_dimension_d
           Access_dimension_d;
         typedef  typename Traits::Access_coordinates_begin_d
           Access_coordinates_begin_d;
         typedef  typename Traits::Construct_point_d
           Construct_point_d;
-    
+
         typedef typename std::list<Point>::const_iterator
                 Point_iterator;
         typedef typename std::list<Point>::const_iterator
                 Support_point_iterator;
-    
+
     private:
         typedef typename std::list<Point>::iterator             It;
-    
-    
+
+
     private:
         int                                     d;            // ambient dim
         std::list<Point>                        points;       // keeps P = Q_n
@@ -74,32 +74,32 @@ class Min_sphere_d
         Optimisation_sphere_d<Rep_tag, FT, RT, Point,Traits>
                                                 ms_basis; // keeps  miniball
         It                                      support_end;  // delimites S
-    
+
 public:
     Min_sphere_d ()
     : d(-1), tco( Traits()), ms_basis (tco),
       support_end(points.begin())
         {}
-    
-    
+
+
     Min_sphere_d (const Traits& traits)
     : d(-1), tco( traits), ms_basis (tco),
       support_end(points.begin())
         {}
-    
-    
 
- 
+
+
+
     // STL-like constructor (member template)
     template <class InputIterator>
     Min_sphere_d( InputIterator first,
                        InputIterator last)
-      : d(-1), 
+      : d(-1),
 #if ( _MSC_VER != 1300)
-      points( first, last), 
+      points( first, last),
 #endif
-      tco( Traits()), 
-      ms_basis (tco) 
+      tco( Traits()),
+      ms_basis (tco)
 #if ( _MSC_VER != 1300)
       ,support_end(points.begin())
 #endif
@@ -110,21 +110,21 @@ public:
 #endif
         if (points.size()>0) {
             d = tco.access_dimension_d_object() (points.front());
-            CGAL_optimisation_precondition ((d>=0) && all_points_have_dim(d));
+            CGAL_precondition ((d>=0) && all_points_have_dim(d));
             ms_basis.get_sphere(Rep_tag()).set_size (d);
             pivot_ms();
         }
     }
-    
+
     template <class InputIterator>
     Min_sphere_d( InputIterator first,
                        InputIterator last,
                        const Traits& traits)
       : d(-1),
 #if ( _MSC_VER != 1300)
-      points( first, last), 
+      points( first, last),
 #endif
-      tco( traits), 
+      tco( traits),
       ms_basis (tco)
 #if ( _MSC_VER != 1300)
       ,support_end(points.begin())
@@ -137,24 +137,24 @@ public:
 #endif
         if (points.size()>0) {
             d = tco.access_dimension_d_object() (points.front());
-            CGAL_optimisation_precondition ((d>=0) && all_points_have_dim(d));
+            CGAL_precondition ((d>=0) && all_points_have_dim(d));
             ms_basis.get_sphere(Rep_tag()).set_size (d);
             pivot_ms();
         }
     }
-    
+
     Min_sphere_d (const Min_sphere_d& msph)
     : d(msph.ambient_dimension()),
       points (msph.points_begin(), msph.points_end()), tco (msph.tco),
           ms_basis (tco), support_end (points.begin())
-    
+
     {
         if (d != -1) {
             ms_basis.get_sphere(Rep_tag()).set_size (d);
             pivot_ms();
         }
     }
-    
+
     Min_sphere_d& operator=(const Min_sphere_d& msph)
     {
         if (this != &msph) {
@@ -172,112 +172,112 @@ public:
         }
         return *this;
     }
-    
-    
+
+
     int number_of_points() const
     {
         return static_cast<int>(points.size());
     }
-    
+
     int number_of_support_points() const
     {
         return ms_basis.get_sphere(Rep_tag()).number_of_support_points();
     }
-    
+
     Point_iterator points_begin () const
     {
         return points.begin();
     }
-    
+
     Point_iterator points_end () const
     {
         return points.end();
     }
-    
+
     Support_point_iterator support_points_begin () const
     {
         return points.begin();
     }
-    
+
     Support_point_iterator support_points_end () const
     {
         return support_end;
     }
-    
+
     int ambient_dimension () const
     {
         return d;
     }
-    
+
     Point center () const
     {
-        CGAL_optimisation_precondition (!is_empty());
+        CGAL_precondition (!is_empty());
         return ms_basis.get_sphere(Rep_tag()).center();
     }
-    
+
     FT squared_radius () const
     {
-        CGAL_optimisation_precondition (!is_empty());
+        CGAL_precondition (!is_empty());
         return ms_basis.get_sphere(Rep_tag()).squared_radius();
     }
-    
-    
+
+
     Bounded_side bounded_side (const Point& p) const
     {
         if (d == -1)
            return ON_UNBOUNDED_SIDE;
         else {
-          CGAL_optimisation_precondition
+          CGAL_precondition
            (d == tco.access_dimension_d_object()(p));
            return (Bounded_side
                (-CGAL::sign (ms_basis.get_sphere(Rep_tag()).excess (p))));
         }
     }
-    
+
     bool has_on_bounded_side (const Point& p) const
     {
         if (d == -1)
            return false;
         else {
-          CGAL_optimisation_precondition
+          CGAL_precondition
            (d == tco.access_dimension_d_object()(p));
            return (CGAL_NTS is_negative (ms_basis.get_sphere(Rep_tag()).excess (p)));
         }
     }
-    
+
     bool has_on_unbounded_side (const Point& p) const
     {
         if (d == -1)
            return true;
         else {
-          CGAL_optimisation_precondition
+          CGAL_precondition
           (d == tco.access_dimension_d_object()(p));
            return (CGAL_NTS is_positive (ms_basis.get_sphere(Rep_tag()).excess (p)));
         }
     }
-    
+
     bool has_on_boundary (const Point& p) const
     {
         if (d == -1)
            return false;
         else {
-          CGAL_optimisation_precondition
+          CGAL_precondition
           (d == tco.access_dimension_d_object()(p));
            return (CGAL_NTS is_zero (ms_basis.get_sphere(Rep_tag()).excess (p)));
         }
     }
-    
+
     bool is_empty () const
     {
         return (d == -1);
     }
-    
+
     bool is_degenerate () const
     {
         return (ms_basis.get_sphere(Rep_tag()).number_of_support_points() < 2);
     }
-    
-    
+
+
     void clear ()
     {
          d = -1;
@@ -285,7 +285,7 @@ public:
          ms_basis.get_sphere(Rep_tag()).set_size (-1);
          support_end = points.begin();
     }
-    
+
     // STL-like set(member template)
     template <class InputIterator>
     void set ( InputIterator first,
@@ -296,7 +296,7 @@ public:
         support_end = points.begin();
         if (points.size()>0) {
             d = tco.access_dimension_d_object() (points.front());
-            CGAL_optimisation_precondition ((d>=0) && all_points_have_dim (d));
+            CGAL_precondition ((d>=0) && all_points_have_dim (d));
             ms_basis.get_sphere(Rep_tag()).set_size (d);
             pivot_ms();
         } else {
@@ -304,13 +304,13 @@ public:
             ms_basis.get_sphere(Rep_tag()).set_size (-1);
         }
     }
-    
+
     void insert (const Point& p)
     {
         if (has_on_unbounded_side (p)) {
             if (is_empty()) {
                 d = tco.access_dimension_d_object() (p);
-                CGAL_optimisation_precondition (d>=0);
+                CGAL_precondition (d>=0);
                 ms_basis.get_sphere(Rep_tag()).set_size (d);
             }
             // ensure precondition of pivot_ms
@@ -322,54 +322,54 @@ public:
             points.push_back (p);   // just append p
         if (support_end == points.end()) --support_end;
     }
-    
+
     template <class InputIterator>
     void insert (InputIterator first, InputIterator last)
     {
         for (InputIterator i=first; i!=last; ++i)
             insert (*i);
     }
-    
-    
+
+
   bool is_valid (bool verbose = false, int /* level */ = 0) const
     {
         Verbose_ostream verr (verbose);
-    
+
         // sphere verification
         verr << "  (a) sphere verification..." << std::flush;
         if (ms_basis.get_sphere(Rep_tag()).is_valid (verbose))
             verr << "passed." << std::endl;
         else
             return false;
-    
+
         // containment check
         verr << "  (b) containment check..." << std::flush;
-    
+
         // non-support-points
         Point_iterator i;
         for (i=support_end; i!=points.end(); ++i)
             if (has_on_unbounded_side (*i))
                 return (_optimisation_is_valid_fail (verr,
                   "sphere does not contain all points"));
-    
+
         // support points
         for (i=points.begin(); i!=support_end; ++i)
             if (!has_on_boundary (*i))
                 return (_optimisation_is_valid_fail (verr,
                   "sphere does not have all support points on boundary"));
-    
+
         verr << "passed." << std::endl;
         verr << "object is valid!" << std::endl;
         return true;
     }
-    
-    
+
+
     const Traits& traits() const
     {
          return tco;
     }
-    
-    
+
+
 private:
     void mtf_ms (It k)
     {
@@ -385,14 +385,14 @@ private:
             }
         }
     }
-    
-    
+
+
     void pivot_ms ()
     {
         It t = points.begin();
         std::advance (t, (std::min) (d+1, (int)points.size()));
         mtf_ms (t);
-    
+
         RT excess, e;
         do {
             excess = RT(0);
@@ -414,16 +414,16 @@ private:
             }
         } while (CGAL_NTS is_positive (excess));
     }
-    
-    
+
+
     void move_to_front (It j)
     {
         if (support_end == j)
            ++support_end;
         points.splice (points.begin(), points, j);
     }
-    
-    
+
+
     bool all_points_have_dim (int dim) const
     {
         for (Point_iterator i=points.begin(); i!=points.end(); ++i)
@@ -431,8 +431,8 @@ private:
                 return false;
         return true;
     }
-    
-    
+
+
 };
 
 // Function declarations

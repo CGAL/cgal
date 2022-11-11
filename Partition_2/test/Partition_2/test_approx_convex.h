@@ -5,7 +5,7 @@ void test_approx_convex()
 
    polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
    make_monotone_convex(polygon);
-   CGAL::approx_convex_partition_2(polygon.vertices_begin(), 
+   CGAL::approx_convex_partition_2(polygon.vertices_begin(),
                                    polygon.vertices_end(),
                                    std::back_inserter(partition_polys));
 

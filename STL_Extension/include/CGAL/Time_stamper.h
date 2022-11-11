@@ -13,7 +13,6 @@
 #define CGAL_TIME_STAMPER_H
 
 #include <CGAL/Has_timestamp.h>
-#include <CGAL/atomic.h>
 
 namespace CGAL {
 

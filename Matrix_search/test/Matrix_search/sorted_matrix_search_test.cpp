@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -94,32 +94,32 @@ main( int argc, char* argv[])
     exit(1);
   }
   if ( argc < 5 || (random_seed = atoi(argv[4])) <= 0) {
-  
+
     #ifdef OUTPUT
     cerr << "No random seed specified - generating it" << endl;
     #endif
-  
+
     // generate random seed
     random_seed = get_default_random().get_int( 0, (1 << 30));
   }
   else
     random_seed = atoi(argv[4]);
-  
+
   // define random source:
   Random r( random_seed);
-  
+
   #ifdef OUTPUT
   cout << "random seed is " << random_seed << endl;
   #endif
   // maximum entry of all matrices:
   Value max_entry( -1);
-  
+
   for ( int k = 0; k < num; ++k) {
     // generate two vectors a and b to build the cartesian
     // matrix from
     Vector a, b;
     assert( a.size() == 0 && b.size() == 0);
-  
+
     // fill a and b with random values and sort them:
     for ( int i = 0; i < dim; ++i) {
       a.push_back( r( upper_entry_bound));
@@ -129,10 +129,10 @@ main( int argc, char* argv[])
     // for ( i = 0; i < dim / 5; ++i) {
     //   b.push_back( r());
     // }
-  
+
     sort( a.begin(), a.end(), less< Value >());
     sort( b.begin(), b.end(), less< Value >());
-  
+
     /*
     cout << "a = (";
     for ( Vector_iterator pp( a.begin());
@@ -146,16 +146,16 @@ main( int argc, char* argv[])
       cout << (*pq) << ", ";
     cout << ")" << endl;
     */
-  
+
     // evt. update max_entry:
     max_entry = max( a[dim - 1] + b[dim - 1], max_entry);
-  
+
     // keep both vectors:
     vectors.push_back( a);
     vectors.push_back( b);
   } // for ( int k = 0; k < num; ++k)
-  
-  
+
+
   // construct matrices:
   for ( Vector_iterator i( vectors.begin());
         i != vectors.end();
@@ -172,7 +172,7 @@ main( int argc, char* argv[])
   do
     bound = r.get_int( 0, 2 * upper_entry_bound);
   while ( bound > max_entry);
-  
+
   #ifdef OUTPUT
   cout << "searching upper bound for " << bound << endl;
   #endif
@@ -181,9 +181,9 @@ main( int argc, char* argv[])
       matrices.begin(),
       matrices.end(),
       sorted_matrix_search_traits_adaptor(
-        boost::bind( greater_equal< Value >(), _1, bound),
+        [&bound](const auto& m){ return greater_equal< Value >()(m, bound); },
         *(matrices.begin()))));
-  
+
   #ifdef OUTPUT
   cout << "************* DONE *************\nresult: "
        << u << "\n********************************" << endl;

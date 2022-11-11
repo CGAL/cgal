@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <crtdbg.h>
+#include <iostream>
 
 
 namespace
@@ -27,33 +28,33 @@ namespace
   {
     if ( type == _CRT_ASSERT )
     {
-      std::fprintf(stderr,msg);
+      std::cerr << msg << std::endl;
       *retval = 0 ;
       std::exit(255);
     }
     return 1 ;
-  }  
+  }
 
-  void CGAL_handle_signal( int n ) 
-  { 
+  void CGAL_handle_signal( int n )
+  {
     switch(n)
     {
-      case SIGSEGV: std::fprintf(stderr,"In CGAL_handle_signal, Program received signal SIGSEGV: Segmentation Fault."); break ;
-      case SIGFPE : std::fprintf(stderr,"In CGAL_handle_signal, Program received signal SIGFPE: Floating Point Execption."); break ;
-      case SIGILL : std::fprintf(stderr,"In CGAL_handle_signal, Program received signal SIGILL: Illegal Instruction."); break ;
+      case SIGSEGV: std::cerr << "In CGAL_handle_signal, Program received signal SIGSEGV: Segmentation Fault." << std::endl; break ;
+      case SIGFPE : std::cerr << "In CGAL_handle_signal, Program received signal SIGFPE: Floating Point Execption." << std::endl; break ;
+      case SIGILL : std::cerr << "In CGAL_handle_signal, Program received signal SIGILL: Illegal Instruction." << std::endl; break ;
       default:
-        std::fprintf(stderr,"In CGAL_handle_signal, Program received signal %d", n); break ;
+        std::cerr << "In CGAL_handle_signal, Program received signal " << n << std::endl; break ;
     }
-    
-    std::exit(128+n); 
+
+    std::exit(128+n);
   }
-  
+
   struct CGAL_DebugHook
   {
     CGAL_DebugHook()
     {
       _CrtSetReportHook(CGAL_report_hook);
-      
+
       // This is OK for unattended runs but will prevent the IDE for trapping the signal
       std::signal(SIGSEGV,CGAL_handle_signal);
       std::signal(SIGFPE ,CGAL_handle_signal);

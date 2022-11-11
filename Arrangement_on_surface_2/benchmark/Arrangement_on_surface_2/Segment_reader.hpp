@@ -17,7 +17,7 @@
 
 namespace cb = CGAL::benchmark;
 
-/*! A reader of line segments */ 
+/*! A reader of line segments */
 template <class Traits>
 class Segment_reader {
 public:
@@ -39,9 +39,9 @@ public:
       m_output_iterator(oi)
     {}
 
-    /*! Accept only unbounded lines for Arrangements */ 
+    /*! Accept only unbounded lines for Arrangements */
     virtual void accept_classification(std::string problem,
-                                       std::string geom, 
+                                       std::string geom,
                                        std::string clas,
                                        std::string family,
                                        std::string instance,

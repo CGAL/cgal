@@ -6,7 +6,7 @@ int main()
 {
   std::cout << "Verifying the sizes of boost::[u]int{8,16,32,64}_t"
             << std::endl;
-  
+
   CGAL_static_assertion(sizeof(boost::int8_t)  == 1);
   CGAL_static_assertion(sizeof(boost::int16_t) == 2);
   CGAL_static_assertion(sizeof(boost::int32_t) == 4);

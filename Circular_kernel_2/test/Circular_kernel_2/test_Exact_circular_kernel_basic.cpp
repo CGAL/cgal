@@ -1,9 +1,9 @@
-// Copyright (c) 2001,2002  
+// Copyright (c) 2001,2002
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -12,7 +12,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 //
 // Author(s)     : Sylvain Pion
- 
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Circular_kernel_2.h>
@@ -37,14 +37,14 @@
 #include "CGAL/_test_cls_iso_cuboid_3.h"
 #include "CGAL/_test_angle.h"
 #include "CGAL/_test_cls_circle_3.h"
- 
+
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
 int
 main()
 {
-	typedef CGAL::Quotient<Precise_integer>                      NT1;
-	typedef double                                               NT2;
+        typedef CGAL::Quotient<Precise_integer>                      NT1;
+        typedef double                                               NT2;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;

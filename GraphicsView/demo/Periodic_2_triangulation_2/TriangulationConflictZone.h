@@ -52,12 +52,12 @@ template <typename T>
 TriangulationConflictZone<T>::TriangulationConflictZone(QGraphicsScene* s,
                                                             T * tr_,
                                                             QObject* parent)
-    :  GraphicsViewInput(parent), m_hint(NULL), m_tr(tr_), m_containing_face(Face_handle()), m_scene(s), m_triangle(NULL), m_animate(false)
+    :  GraphicsViewInput(parent), m_hint(nullptr), m_tr(tr_), m_containing_face(Face_handle()), m_scene(s), m_triangle(nullptr), m_animate(false)
 {
 }
 
 template <typename T>
-void 
+void
 TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
 {
   Point p(m_convert(qt_point));
@@ -65,7 +65,7 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
   double dy = m_tr->domain().ymax() - m_tr->domain().ymin();
   p = Point(p.x()- std::floor(p.x()/dx), p.y()- std::floor(p.y()/dy));
 
-  if (m_hint == NULL) {
+  if (m_hint == nullptr) {
       m_hint = m_tr->faces_begin();
   }
 
@@ -90,12 +90,12 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
       qfaces.push_back(item);
     }
   }
-}  
-  
+}
+
 
 
 template <typename T>
-void 
+void
 TriangulationConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   if(m_tr->number_of_vertices() == 0 ||
@@ -119,7 +119,7 @@ TriangulationConflictZone<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-void 
+void
 TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 {
   faces.clear();
@@ -130,13 +130,13 @@ TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
   }
   qfaces.clear();
   m_animate = false;
-  m_hint = NULL;
+  m_hint = nullptr;
 }
 
 
 
 template <typename T>
-bool 
+bool
 TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -155,7 +155,7 @@ TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

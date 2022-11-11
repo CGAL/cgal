@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Manuel Caroli
 
@@ -19,4 +19,4 @@ int main(int argc, char* argv[]) {
   Triang T;
   return bench_triang<Triang>(argc,argv,T,false);
 }
- 
+

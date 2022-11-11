@@ -8,16 +8,16 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
 typedef Kernel::Point_3 Point_3;
 typedef Point_3* point_iterator;
-typedef std::pair<point_iterator,point_iterator> 
+typedef std::pair<point_iterator,point_iterator>
   point_range;
 typedef std::list<point_range> polyline;
 
-int main() 
+int main()
 {
   Nef_polyhedron N0;
   std::cin >> N0;
-  Point_3 pl[6] = 
-    {Point_3(-100,0,0), 
+  Point_3 pl[6] =
+    {Point_3(-100,0,0),
      Point_3(40,-70,0),
      Point_3(40,50,40),
      Point_3(-90,-60,60),

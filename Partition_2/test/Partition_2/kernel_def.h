@@ -4,7 +4,7 @@
 #if TESTR==1
    typedef double               NT;
    typedef CGAL::Simple_cartesian<NT>  K;
-#endif 
+#endif
 
 #if TESTR==2
    typedef double                NT;

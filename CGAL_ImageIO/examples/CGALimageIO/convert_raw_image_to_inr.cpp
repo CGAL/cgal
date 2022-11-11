@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     std::ifstream input_aux_file(sub_filename.str().c_str());
     int xdim, ydim, zdim;
     input_aux_file >> xdim >> ydim >> zdim;
-    if(!input_aux_file) 
+    if(!input_aux_file)
     {
       cout << "\nERROR: cannot read the auxiliary file '" << sub_filename.str() << "'!\n";
       return 1;

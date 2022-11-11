@@ -33,16 +33,14 @@ std::size_t get(Polyhedron_face_time_stamp_pmap, Handle_type h)
 }
 
 template <typename Handle_type>
-void put(Polyhedron_face_time_stamp_pmap, Handle_type h,
-         std::size_t ts)
+void put(Polyhedron_face_time_stamp_pmap, Handle_type h, std::size_t ts)
 {
   h->set_time_stamp(ts);
 }
 
-template <>
-struct Polyhedron_property_map<CGAL::vertex_time_stamp_t>
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::vertex_time_stamp_t>
 {
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
   {
     typedef Polyhedron_face_time_stamp_pmap type;
@@ -50,14 +48,14 @@ struct Polyhedron_property_map<CGAL::vertex_time_stamp_t>
   };
 };
 
-template <>
-struct Polyhedron_property_map<CGAL::halfedge_time_stamp_t>
-  : public Polyhedron_property_map<CGAL::vertex_time_stamp_t>
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::halfedge_time_stamp_t>
+  : public HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::vertex_time_stamp_t>
 {};
 
-template <>
-struct Polyhedron_property_map<CGAL::face_time_stamp_t>
-  : public Polyhedron_property_map<CGAL::vertex_time_stamp_t>
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::face_time_stamp_t>
+  : public HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::vertex_time_stamp_t>
 {};
 
 

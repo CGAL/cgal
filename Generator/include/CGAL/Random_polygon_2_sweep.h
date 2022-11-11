@@ -3,7 +3,7 @@
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -21,7 +21,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/Polygon_2/polygon_assertions.h>
+#include <CGAL/assertions.h>
 #include <set>
 #include <vector>
 #include <algorithm>
@@ -87,7 +87,7 @@ class Less_segments {
 };
 
 template <class ForwardIterator, class PolygonTraits>
-class Vertex_data : 
+class Vertex_data :
        public i_polygon::Vertex_data_base<ForwardIterator, PolygonTraits>
 {
 public:
@@ -154,11 +154,11 @@ bool Less_segments<ForwardIterator, PolygonTraits>::
 less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
 {
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
-    std::cout << "less_than_in_tree" << std::endl;
+    std::cout << "less_than_in_tree; new: " << new_edge.as_int() << " tree edge: " << tree_edge.as_int() << std::endl;
 #endif
-    CGAL_polygon_precondition(
+    CGAL_precondition(
        m_vertex_data->edges[tree_edge.as_int()].is_in_tree);
-    CGAL_polygon_precondition(
+    CGAL_precondition(
        !m_vertex_data->edges[new_edge.as_int()].is_in_tree);
     Vertex_index left, mid, right;
     m_vertex_data->left_and_right_index(left, right, tree_edge);
@@ -172,13 +172,59 @@ less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
       case RIGHT_TURN: return false;
       case COLLINEAR: break;
     }
-    CGAL_polygon_assertion(m_vertex_data->less_xy_2(
+    CGAL_assertion(m_vertex_data->less_xy_2(
                                m_vertex_data->point(left),
                                m_vertex_data->point(mid)));
-    CGAL_polygon_assertion( m_vertex_data->less_xy_2(
+    CGAL_assertion( m_vertex_data->less_xy_2(
                                 m_vertex_data->point(mid),
                                 m_vertex_data->point(right)));
     m_vertex_data->is_simple_result = false;
+
+    // need to handle the specific combinations:
+    // as the standard x;x+k swap (see below) will not work
+    if (m_vertex_data->edges[tree_edge.as_int()].is_left_to_right)
+    {
+      // x+1 x x+2
+      // This is actually already handled in the insertion event, when the orientation returns "COPLANAR"
+      // but leaving the code below for completion.
+      if (m_vertex_data->next(mid) == left || m_vertex_data->next(mid) == right)
+      {
+        // swap mid & left
+        m_vertex_data->conflict1 = m_vertex_data->prev(mid);
+        m_vertex_data->conflict2 = left;
+        return true;
+      }
+      // x-2 x x-1
+      else if (m_vertex_data->prev(mid) == left || m_vertex_data->prev(mid) == right)
+      {
+        // swap mid & right
+        m_vertex_data->conflict1 = left;
+        m_vertex_data->conflict2 = mid;
+        return true;
+      }
+    }
+    else // right to left
+    {
+      // x+2 x x+1
+      if (m_vertex_data->next(mid) == left || m_vertex_data->next(mid) == right)
+      {
+        // swap mid & right
+        m_vertex_data->conflict1 = m_vertex_data->prev(mid);
+        m_vertex_data->conflict2 = right;
+        return true;
+      }
+      // x-1 x x-2
+      // This is actually already handled in the insertion event, when the orientation returns "COPLANAR"
+      // but leaving the code below for completion.
+      else if (m_vertex_data->prev(mid) == left || m_vertex_data->prev(mid) == right)
+      {
+        // swap mid & left
+        m_vertex_data->conflict1 = right;
+        m_vertex_data->conflict2 = mid;
+        return true;
+      }
+    }
+
     Vertex_index mid_succ = m_vertex_data->next(mid);
     if (mid_succ.as_int() <= (std::min)(left.as_int(), right.as_int()))
     {
@@ -260,9 +306,9 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
             std::cout << "conflict2 is next_vt" << std::endl;
 #endif
             conflict1 = prev_vt;
-	    conflict2 = next_vt;
+            conflict2 = next_vt;
             return false;
-      
+
     }
     Edge_data
         &td_prev = edges[prev_vt.as_int()],
@@ -275,24 +321,24 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
     std::pair<typename Tree::iterator, bool> result;
     if (left_turn) {
         result = tree->insert(prev_vt);
-	// CGAL_polygon_assertion(result.second)
-	td_prev.tree_it = result.first;
+        // CGAL_assertion(result.second)
+        td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
         if (!this->is_simple_result) return false;
         result = tree->insert(mid_vt);
-	// CGAL_polygon_assertion(result.second)
-	td_mid.tree_it = result.first;
+        // CGAL_assertion(result.second)
+        td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
         if (!this->is_simple_result) return false;
     } else {
         result = tree->insert(mid_vt);
-	// CGAL_polygon_assertion(result.second)
-	td_mid.tree_it = result.first;
+        // CGAL_assertion(result.second)
+        td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
         if (!this->is_simple_result) return false;
         result = tree->insert(prev_vt);
-	// CGAL_polygon_assertion(result.second)
-	td_prev.tree_it = result.first;
+        // CGAL_assertion(result.second)
+        td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
         if (!this->is_simple_result) return false;
     }
@@ -328,33 +374,33 @@ replacement_event(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
     // check if continuation point is on the right side of neighbor segments
     typedef typename Tree::iterator It;
     Edge_data &td = edges[cur_edge.as_int()];
-    CGAL_polygon_assertion(td.is_in_tree);
+    CGAL_assertion(td.is_in_tree);
     It cur_seg = td.tree_it;
     Vertex_index cur_vt = (td.is_left_to_right) ? next_edge : cur_edge;
     if (cur_seg != tree->begin()) {
         It seg_below = cur_seg;
-	--seg_below;
-	if (!on_right_side(cur_vt, *seg_below, true)) {
-	    // found conflict cur_seg - seg_below
+        --seg_below;
+        if (!on_right_side(cur_vt, *seg_below, true)) {
+            // found conflict cur_seg - seg_below
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
             std::cout << "conflict2 is seg_below" << std::endl;
 #endif
             conflict1 = *cur_seg;
-	    conflict2 = *seg_below;
-	    return false;
+            conflict2 = *seg_below;
+            return false;
         }
     }
     It seg_above = cur_seg;
     ++ seg_above;
     if (seg_above != tree->end()) {
         if (!on_right_side(cur_vt, *seg_above, false)) {
-	    // found conflict cur_seg - seg_above
+            // found conflict cur_seg - seg_above
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
             std::cout << "conflict2 is seg_above" << std::endl;
 #endif
             conflict1 = *cur_seg;
-	    conflict2 = *seg_above;
-	    return false;
+            conflict2 = *seg_above;
+            return false;
         }
     }
     // replace the segment
@@ -390,7 +436,7 @@ template <class ForwardIterator, class PolygonTraits>
 void
 Vertex_data<ForwardIterator, PolygonTraits>::
 find_conflict_between(Tree *, Vertex_index cur_vt,
-                      typename Tree::iterator seg1, 
+                      typename Tree::iterator seg1,
                       typename Tree::iterator seg2)
 {
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
@@ -400,19 +446,19 @@ find_conflict_between(Tree *, Vertex_index cur_vt,
     It between_seg = seg1;
     ++between_seg;
     if (!on_right_side(cur_vt, *between_seg, false)) {
-	// found conflict between_seg - seg1
+        // found conflict between_seg - seg1
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
         std::cout << "conflict1 is seg1" << std::endl;
 #endif
         conflict1 = *seg1;
-	conflict2 = *between_seg;
+        conflict2 = *between_seg;
     } else {
-	// found conflict between_seg - seg2
+        // found conflict between_seg - seg2
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
         std::cout << "conflict1 is seg2" << std::endl;
 #endif
         conflict1 = *seg2;
-	conflict2 = *between_seg;
+        conflict2 = *between_seg;
     }
 }
 
@@ -441,7 +487,7 @@ deletion_event(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
         It prev_seg_copy = mid_seg;
         ++prev_seg_copy;
         if (prev_seg_copy != prev_seg) {
-	    find_conflict(tree, cur_vt, prev_seg, mid_seg);
+            find_conflict(tree, cur_vt, prev_seg, mid_seg);
             return false;
         }
     }
@@ -453,25 +499,25 @@ deletion_event(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
     // Check if the vertex that is removed lies between the two tree edges.
     if (seg_above != tree->end()) {
         if (!on_right_side(cur_vt, *seg_above, false)) {
-	    // found conflicts prev_seg - seg_above and mid_seg - seg_above
+            // found conflicts prev_seg - seg_above and mid_seg - seg_above
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
             std::cout << "conflict2 is seg_above" << std::endl;
 #endif
             conflict1 = prev_vt;
-	    conflict2 = *seg_above;
-	    return false;
+            conflict2 = *seg_above;
+            return false;
         }
     }
     if (seg_above != tree->begin()) {
         --seg_above;  // which turns it into seg_below
         if (!on_right_side(cur_vt, *seg_above, true)) {
-	    // found conflicts prev_seg - seg_below and mid_seg - seg_below
+            // found conflicts prev_seg - seg_below and mid_seg - seg_below
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
             std::cout << "conflict2 is --seg_above" << std::endl;
 #endif
             conflict1 = prev_vt;
-	    conflict2 = *seg_above;
-	    return false;
+            conflict2 = *seg_above;
+            return false;
         }
     }
     return true;
@@ -482,27 +528,27 @@ void Vertex_data<ForwardIterator, PolygonTraits>::
 sweep(Tree *tree)
 {
     if (this->m_size < 3)
-    	return;
+            return;
     bool success = true;
     for (Index_t i=0; i< this->m_size; ++i) {
         Vertex_index cur = index_at_rank(Vertex_order(i));
-	    Vertex_index prev_vt = prev(cur), next_vt = next(cur);
-	    if (ordered_left_to_right(cur, next_vt)) {
-	        if (ordered_left_to_right(cur, prev_vt))
-	            success = insertion_event(tree, prev_vt, cur, next_vt);
-	        else
-	            success = replacement_event(tree, prev_vt, cur);
-	    } else {
-	        if (ordered_left_to_right(cur, prev_vt))
-	            success = replacement_event(tree, cur, prev_vt);
-	        else
-	            success = deletion_event(tree, prev_vt, cur);
-	    }
-	    if (!success)
-	        break;
+            Vertex_index prev_vt = prev(cur), next_vt = next(cur);
+            if (ordered_left_to_right(cur, next_vt)) {
+                if (ordered_left_to_right(cur, prev_vt))
+                    success = insertion_event(tree, prev_vt, cur, next_vt);
+                else
+                    success = replacement_event(tree, prev_vt, cur);
+            } else {
+                if (ordered_left_to_right(cur, prev_vt))
+                    success = replacement_event(tree, cur, prev_vt);
+                else
+                    success = deletion_event(tree, prev_vt, cur);
+            }
+            if (!success)
+                break;
     }
     if (!success)
-    	this->is_simple_result = false;
+            this->is_simple_result = false;
 }
 }
 // ----- End of implementation of i_generator_polygon functions. -----
@@ -515,6 +561,15 @@ check_simple_polygon(Iterator points_begin, Iterator points_end,
     typedef Iterator ForwardIterator;
     typedef std::set<i_generator_polygon::Vertex_index,
       i_generator_polygon::Less_segments<ForwardIterator,PolygonTraits> > Tree;
+
+#if defined(CGAL_POLY_GENERATOR_DEBUG)
+    Iterator it;
+    std::cout << "In check_simple_polygon the points are: " << std::endl;
+    for(it = points_begin; it != points_end; it++)
+      std::cout << *it << " ";
+    std::cout << std::endl;
+#endif
+
     i_generator_polygon::Vertex_data<ForwardIterator, PolygonTraits>
         vertex_data(points_begin, points_end, polygon_traits);
     Tree tree(&vertex_data);
@@ -523,15 +578,15 @@ check_simple_polygon(Iterator points_begin, Iterator points_end,
     std::pair<std::ptrdiff_t, std::ptrdiff_t> result;
     if (vertex_data.is_simple_result) {
         result.first = result.second = -1;
-	return result;
+        return result;
     }
     // swap with vertex_data.conflict1, vertex_data.conflict2;
     if (vertex_data.conflict1.as_int() < vertex_data.conflict2.as_int()) {
-	result.first = vertex_data.conflict1.as_int();
-	result.second = vertex_data.conflict2.as_int();
+        result.first = vertex_data.conflict1.as_int();
+        result.second = vertex_data.conflict2.as_int();
     } else {
         result.first = vertex_data.conflict2.as_int();
-	result.second = vertex_data.conflict1.as_int();
+        result.second = vertex_data.conflict1.as_int();
     }
     return result;
 }
@@ -554,11 +609,11 @@ void make_simple_polygon(Iterator points_begin, Iterator points_end,
 
     do {
         swap_interval = check_simple_polygon(points_begin,
-	                                     points_end, polygon_traits);
+                                             points_end, polygon_traits);
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
-        std::cout << swap_interval.first << " "
-                  << swap_interval.second << std::endl; 
-        CGAL_polygon_assertion(swap_interval.first >= -1 && 
+        std::cout << "To swap: " << swap_interval.first << " "
+                                 << swap_interval.second << std::endl;
+        CGAL_assertion(swap_interval.first >= -1 &&
                                swap_interval.second >= -1 &&
                                swap_interval.first < size &&
                                swap_interval.second < size);
@@ -567,13 +622,13 @@ void make_simple_polygon(Iterator points_begin, Iterator points_end,
         // or with -1 is given indicating that the polygon was simple.
         // For positive nonsense values, one needs to know the how
         // many points there are...
-	if (swap_interval.first <= -1 || swap_interval.second <= -1)
-	    break;
+        if (swap_interval.first <= -1 || swap_interval.second <= -1)
+            break;
         // swap with vertex_data.conflict1, vertex_data.conflict2;
-	Iterator b = points_begin;
-	std::advance(b, swap_interval.first+1);
-	Iterator e = b;
-	std::advance(e, swap_interval.second-swap_interval.first);
+        Iterator b = points_begin;
+        std::advance(b, swap_interval.first+1);
+        Iterator e = b;
+        std::advance(e, swap_interval.second-swap_interval.first);
         std::reverse(b, e);
     } while (true);
 }

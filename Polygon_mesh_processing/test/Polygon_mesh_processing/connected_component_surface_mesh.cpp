@@ -4,7 +4,8 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/property_map.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
+
+#include <boost/property_map/function_property_map.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -19,7 +20,6 @@ typedef CGAL::Surface_mesh<Point>          Mesh;
 
 template <typename G, typename GT>
 struct Constraint
-  : public boost::put_get_helper<bool, Constraint<G, GT> >
 {
   typedef typename GT::FT                                  FT;
 
@@ -42,6 +42,12 @@ struct Constraint
              rg.point(target(next(halfedge(e, rg), rg), rg)),
              rg.point(target(next(opposite(halfedge(e, rg), rg), rg), rg)),
           bound) == CGAL::SMALLER;
+  }
+
+  friend inline
+  value_type get(const Constraint& m, const key_type k)
+  {
+    return m[k];
   }
 
   const G* g;
@@ -120,18 +126,18 @@ void test_CC_with_default_size_map(Mesh sm,
 
   // default face size map, but explicitely passed
   PMP::keep_connected_components(copy1, ff,
-     PMP::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(copy1, k, bound))
-                     .face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
+     CGAL::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(copy1, k, bound))
+                      .face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
 
   // remove cc from copy2
   ff.clear();
   ff.push_back(one_face_per_cc[id_of_cc_to_remove]);
   PMP::remove_connected_components(copy2, ff,
-     PMP::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(copy2, k, bound)));
+     CGAL::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(copy2, k, bound)));
 
   std::cerr << "We keep the " << num-1 << " largest components" << std::endl;
   PMP::keep_largest_connected_components(sm, num-1,
-    PMP::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(sm, k, bound)));
+    CGAL::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(sm, k, bound)));
 
   sm.collect_garbage();
   copy1.collect_garbage();
@@ -167,13 +173,14 @@ void test_CC_with_area_size_map(Mesh sm,
 
   std::cout << "We keep the " << 2 << " largest components" << std::endl;
   std::size_t res = PMP::keep_largest_connected_components(sm, 2,
-                                                           PMP::parameters::face_size_map(CGAL::internal::boost_::make_function_property_map<face_descriptor>(f))
-                                                                           .dry_run(true)
-                                                                           .output_iterator(std::back_inserter(faces_to_remove)));
+                                                           CGAL::parameters::face_size_map(boost::make_function_property_map<face_descriptor>(f))
+                                                                            .dry_run(true)
+                                                                            .output_iterator(std::back_inserter(faces_to_remove)));
 
   // didn't actually remove anything
   assert(PMP::internal::number_of_connected_components(sm) == num);
   assert(num_vertices(sm) == nv);
+  assert(faces_to_remove.size() == 680);
 
   if(num > 2)
   {
@@ -182,8 +189,8 @@ void test_CC_with_area_size_map(Mesh sm,
   }
 
   PMP::keep_largest_connected_components(sm, 2,
-                                         PMP::parameters::face_size_map(
-                                           CGAL::internal::boost_::make_function_property_map<face_descriptor>(f)));
+                                         CGAL::parameters::face_size_map(
+                                           boost::make_function_property_map<face_descriptor>(f)));
   assert(vertices(sm).size() == 1459);
 
   {
@@ -199,7 +206,7 @@ void test_CC_with_area_size_map(Mesh sm,
     Face_descriptor_area_functor<Mesh, Kernel> f(m, k);
     PMP::keep_large_connected_components(m, 10,
                                          CGAL::parameters::face_size_map(
-                                           CGAL::internal::boost_::make_function_property_map<face_descriptor>(f)));
+                                           boost::make_function_property_map<face_descriptor>(f)));
     assert(vertices(m).size() == 3);
 
     PMP::keep_largest_connected_components(m, 1);
@@ -212,7 +219,7 @@ void test_CC_with_area_size_map(Mesh sm,
 
 int main(int /*argc*/, char** /*argv*/)
 {
-  const char* filename = "data/blobby_3cc.off";
+  const std::string filename = CGAL::data_file_path("meshes/blobby_3cc.off");
   Mesh sm;
   std::ifstream in(filename);
   assert(in.good());

@@ -33,6 +33,7 @@
 #include <CGAL/Time_stamper.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Has_member.h>
+#include <CGAL/assertions.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -344,10 +345,10 @@ public:
     a.swap(b);
   }
 
-  iterator begin() { return iterator(first_item, 0, 0); }
+  iterator begin() { return empty()?end():iterator(first_item, 0, 0); }
   iterator end()   { return iterator(last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(first_item, 0, 0); }
+  const_iterator begin() const { return empty()?end():const_iterator(first_item, 0, 0); }
   const_iterator end()   const { return const_iterator(last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -426,9 +427,7 @@ public:
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
     std::allocator_traits<allocator_type>::destroy(alloc, &*x);
-/*#ifndef CGAL_NO_ASSERTIONS
-    std::memset(&*x, 0, sizeof(T));
-#endif*/
+
     put_on_free_list(&*x);
     --size_;
   }
@@ -483,7 +482,7 @@ public:
     // We use the block structure to provide an efficient version :
     // we check if the address is in the range of each block.
 
-    assert(cit != end());
+    CGAL_assertion(cit != end());
 
     const_pointer c = &*cit;
     size_type res=0;
@@ -735,7 +734,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::merge(Self 
   size_ += d.size_;
   // Add the capacities.
   capacity_ += d.capacity_;
-  // It seems reasonnable to take the max of the block sizes.
+  // It seems reasonable to take the max of the block sizes.
   block_size = (std::max)(block_size, d.block_size);
   // Clear d.
   d.init();
@@ -876,10 +875,12 @@ namespace internal {
       m_ptr = nullptr;
     }
 
+    explicit CC_iterator(pointer ptr) : m_ptr(ptr) { }
+
     // Converting constructor from mutable to constant iterator
     template <bool OtherConst>
     CC_iterator(const CC_iterator<
-                typename std::enable_if<(!OtherConst && Const), DSC>::type,
+                std::enable_if_t<(!OtherConst && Const), DSC>,
                 OtherConst> &const_it)
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
         : ts(Time_stamper::time_stamp(const_it.operator->()))
@@ -891,7 +892,7 @@ namespace internal {
     // Assignment operator from mutable to constant iterator
     template <bool OtherConst>
     CC_iterator & operator= (const CC_iterator<
-                typename std::enable_if<(!OtherConst && Const), DSC>::type,
+                std::enable_if_t<(!OtherConst && Const), DSC>,
                 OtherConst> &const_it)
     {
       m_ptr = const_it.operator->();
@@ -902,12 +903,12 @@ namespace internal {
     }
 
     // Construction from nullptr
-    CC_iterator (std::nullptr_t CGAL_assertion_code(n))
+    CC_iterator (std::nullptr_t /*CGAL_assertion_code(n)*/)
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       : ts(0)
 #endif
     {
-      CGAL_assertion (n == nullptr);
+      //CGAL_assertion (n == nullptr);
       m_ptr = nullptr;
     }
 
@@ -1051,7 +1052,7 @@ namespace internal {
     bool operator<(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(m_ptr, other.m_ptr);
     }
@@ -1059,7 +1060,7 @@ namespace internal {
     bool operator>(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(other.m_ptr, m_ptr);
     }
@@ -1067,7 +1068,7 @@ namespace internal {
     bool operator<=(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(m_ptr, other.m_ptr)
           || (*this == other);
@@ -1076,7 +1077,7 @@ namespace internal {
     bool operator>=(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(other.m_ptr, m_ptr)
           || (*this == other);
@@ -1107,18 +1108,18 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator==(const CC_iterator<DSC, Const> &rhs,
-                  std::nullptr_t CGAL_assertion_code(n))
+                  std::nullptr_t /*CGAL_assertion_code(n)*/)
   {
-    CGAL_assertion( n == nullptr);
+    //CGAL_assertion( n == nullptr);
     return rhs.operator->() == nullptr;
   }
 
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-                  std::nullptr_t CGAL_assertion_code(n))
+                  std::nullptr_t /*CGAL_assertion_code(n)*/)
   {
-    CGAL_assertion( n == nullptr);
+    //CGAL_assertion( n == nullptr);
     return rhs.operator->() != nullptr;
   }
 
@@ -1126,8 +1127,24 @@ namespace internal {
   std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
   {
     typedef Time_stamper_impl<typename DSC::value_type> Stamper;
-    return Stamper::hash_value(&*i);
+    return Stamper::hash_value(i.operator->());
   }
+
+namespace handle {
+  // supply a specialization for Hash_functor
+
+  // forward declare base template
+  template <class H> struct Hash_functor;
+
+  template<class DSC, bool Const>
+  struct Hash_functor<CC_iterator<DSC, Const> >{
+    std::size_t
+    operator()(const CC_iterator<DSC, Const>& i)
+    {
+      return hash_value(i);
+    }
+  };
+} // namespace handle
 
 } // namespace internal
 

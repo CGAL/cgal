@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -23,7 +23,7 @@ namespace CGAL {
     /** This container is a filtered queue: front() and empty() use an
         object predicate to test if the element is ok. */
     template <typename Elt, typename Pred>
-    class Filtered_queue_container 
+    class Filtered_queue_container
     {
     public:
       typedef Elt Element;
@@ -92,7 +92,7 @@ namespace CGAL {
       {
         return d.begin();
       }
-      
+
       const_iterator end() const
       {
         return d.end();

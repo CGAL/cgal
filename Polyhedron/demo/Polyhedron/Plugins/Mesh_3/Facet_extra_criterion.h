@@ -80,7 +80,7 @@ protected:
       Surface_patch_index index2 = domain.surface_patch_index(v2->index());
       if(index2) { // (index2.first != 0 && index2.second != 0){
         //index2 = Surface_patch_index(1,1);
-      }      
+      }
       if ( is_index_initialized )
       {
         if ( !(index2 == index) )

@@ -16,11 +16,10 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
-
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -48,14 +47,14 @@ namespace Surface_mesh_parameterization {
 /// This class is a strategy called by the main
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
 /// - provides the template parameters `BorderParameterizer_` and `SolverTraits_`.
-/// - implements `compute_w_ij()` to compute w_ij = (i, j), coefficient of matrix A
-///   for j neighbor vertex of i, based on Discrete Conformal Map method.
+/// - implements `compute_w_ij()` to compute `w_ij`, the `(i,j)`-coefficient of matrix `A`,
+///   for `j` neighbor vertex of `i`, based on Discrete Conformal Map method.
 ///
 /// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`
 ///
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -112,23 +111,29 @@ public:
   #endif
   >::type                                                     Solver_traits;
 #else
+  /// Border parameterizer type
   typedef Border_parameterizer_                               Border_parameterizer;
+
+  /// Solver traits type
   typedef SolverTraits_                                       Solver_traits;
 #endif
+
+  /// Triangle mesh type
+  typedef TriangleMesh_                                       Triangle_mesh;
 
   typedef TriangleMesh_                                       TriangleMesh;
 
   // Private types
 private:
     // Superclass
-  typedef Fixed_border_parameterizer_3<TriangleMesh,
+  typedef Fixed_border_parameterizer_3<Triangle_mesh,
                                        Border_parameterizer,
                                        Solver_traits>    Base;
 
 // Private types
 private:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor vertex_descriptor;
+  typedef CGAL::Vertex_around_target_circulator<Triangle_mesh> vertex_around_target_circulator;
 
   // Traits subtypes:
   typedef typename Base::Kernel             Kernel;
@@ -148,7 +153,7 @@ public:
                                          ///< %Object that maps the surface's border to 2D space.
                                          Solver_traits sparse_la = Solver_traits())
                                          ///< Traits object to access a sparse linear system.
-  :   Fixed_border_parameterizer_3<TriangleMesh,
+  :   Fixed_border_parameterizer_3<Triangle_mesh,
                                    Border_parameterizer,
                                    Solver_traits>(border_param, sparse_la)
   { }
@@ -157,36 +162,28 @@ public:
 
 // Protected operations
 protected:
-  /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
+  /// computes `w_ij`, the `(i,j)`-coefficient of matrix `A`, for `j` neighbor vertex of `i`.
   ///
   /// \param mesh a triangulated surface.
   /// \param main_vertex_v_i the vertex of `mesh` with index `i`
   /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
-  virtual NT compute_w_ij(const TriangleMesh& mesh,
+  virtual NT compute_w_ij(const Triangle_mesh& mesh,
                           vertex_descriptor main_vertex_v_i,
-                          vertex_around_target_circulator neighbor_vertex_v_j) const // its target is main_vertex_v_i
+                          Vertex_around_target_circulator<Triangle_mesh> neighbor_vertex_v_j) const // its target is main_vertex_v_i
   {
     const PPM ppmap = get(vertex_point, mesh);
-
     const Point_3& position_v_i = get(ppmap, main_vertex_v_i);
     const Point_3& position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    // Compute cotangent of (v_i,v_k,v_j) corner (i.e. cotan of v_k corner)
-    // if v_k is the vertex before v_j when circulating around v_i
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
-    previous_vertex_v_k--;
+    --previous_vertex_v_k;
     const Point_3& position_v_k = get(ppmap, *previous_vertex_v_k);
-    NT cotg_beta_ij = internal::cotangent<Kernel>(position_v_i, position_v_k, position_v_j);
 
-    // Compute cotangent of (v_j,v_l,v_i) corner (i.e. cotan of v_l corner)
-    // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
-    next_vertex_v_l++;
+    ++next_vertex_v_l;
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
-    NT cotg_alpha_ij = internal::cotangent<Kernel>(position_v_j, position_v_l, position_v_i);
 
-    NT weight = cotg_beta_ij + cotg_alpha_ij;
-    return weight;
+    return CGAL::Weights::cotangent_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
   }
 };
 

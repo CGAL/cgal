@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -26,7 +26,7 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -34,10 +34,10 @@ namespace internal {
 template <class K>
 class Segment_2_Line_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Segment_2_Line_2_pair(typename K::Segment_2 const *seg,
                           typename K::Line_2 const *line)
-      : _seg(seg), _line(line), _known(false) {}
+      : _seg(seg), _line(line) {}
 
     Intersection_results intersection_type() const;
 
@@ -46,8 +46,7 @@ public:
 protected:
     typename K::Segment_2 const*_seg;
     typename K::Line_2 const *  _line;
-    mutable bool                    _known;
-    mutable Intersection_results     _result;
+    mutable Intersection_results     _result = UNKNOWN;
     mutable typename K::Point_2         _intersection_point;
 };
 
@@ -65,9 +64,9 @@ inline bool do_intersect(
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Segment_2, typename K::Line_2>::result_type
-intersection(const typename K::Segment_2 &seg, 
-	     const typename K::Line_2 &line,
-	     const K&)
+intersection(const typename K::Segment_2 &seg,
+             const typename K::Line_2 &line,
+             const K&)
 {
     typedef Segment_2_Line_2_pair<K> is_t;
 
@@ -87,8 +86,8 @@ template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Segment_2>::result_type
 intersection(const typename K::Line_2 &line,
-	     const typename K::Segment_2 &seg, 
-	     const K& k)
+             const typename K::Segment_2 &seg,
+             const K& k)
 {
   return internal::intersection(seg, line, k);
 }
@@ -108,10 +107,9 @@ template <class K>
 typename Segment_2_Line_2_pair<K>::Intersection_results
 Segment_2_Line_2_pair<K>::intersection_type() const
 {
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
     // The non const this pointer is used to cast away const.
-    _known = true;
     const typename K::Line_2 &l1 = _seg->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
@@ -127,7 +125,7 @@ Segment_2_Line_2_pair<K>::intersection_type() const
         _result = SEGMENT;
         break;
     default:
-      CGAL_assume(false);
+      CGAL_unreachable();
     }
     return _result;
 }
@@ -136,7 +134,7 @@ template <class K>
 typename K::Point_2
 Segment_2_Line_2_pair<K>::intersection_point() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -146,7 +144,7 @@ template <class K>
 typename K::Segment_2
 Segment_2_Line_2_pair<K>::intersection_segment() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return *_seg;

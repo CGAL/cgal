@@ -18,7 +18,7 @@ int main() {
 #endif
 
 #if __has_feature(cxx_thread_local) || \
-    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L )
+    ( __GNUC__ > 0 && __cplusplus >= 201103L )
   return 0;
 #else
   return 1;

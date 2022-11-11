@@ -224,7 +224,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const MySegmentC2<R> &s)
 {
-    switch(CGAL::get_mode(os)) {
+    switch(CGAL::IO::get_mode(os)) {
     case CGAL::IO::ASCII :
         return os << s.source() << ' ' << s.target();
     case CGAL::IO::BINARY :
@@ -245,7 +245,7 @@ operator>>(std::istream &is, MySegmentC2<R> &s)
     is >> p >> q;
 
     if (is)
-	s = MySegmentC2<R>(p, q);
+        s = MySegmentC2<R>(p, q);
     return is;
 }
 

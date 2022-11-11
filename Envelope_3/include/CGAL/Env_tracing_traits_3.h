@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s): Ophir Setter          <ophir.setter@post.tau.ac.il>
 //
@@ -15,7 +15,7 @@
   \file   Env_tracing_traits_3.h
   \brief  The file is used to trace envelope_3 trace classes
   \todo   Revise this file.
-  
+
 */
 
 
@@ -26,7 +26,7 @@
 
 
 /*! \file
- * This is the file containing a traits class used to trace other voronoi 
+ * This is the file containing a traits class used to trace other voronoi
  * diagram traits.
  */
 
@@ -35,7 +35,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/functions_on_enums.h>
-#include <CGAL/number_utils.h> 
+#include <CGAL/number_utils.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 
 namespace CGAL {
@@ -48,23 +48,23 @@ class Env_tracing_traits_3 : public Traits_
 {
 public:
   typedef Traits_                                         Base;
-  
+
   typedef typename Base::Multiplicity                     Multiplicity;
   typedef typename Base::Point_2                          Point_2;
   typedef typename Base::Curve_2                          Curve_2;
   typedef typename Base::X_monotone_curve_2               X_monotone_curve_2;
 
   typedef typename Base::Boundary_category                Boundary_category;
-    
+
   typedef typename Base::Xy_monotone_surface_3            Xy_monotone_surface_3;
   typedef typename Base::Surface_3                              Surface_3;
-  
+
   typedef std::pair<X_monotone_curve_2, Multiplicity>     Intersection_curve;
-    
+
   class Make_xy_monotone_3
   {
   public:
-        
+
     template <class OutputIterator>
     OutputIterator operator()(const Surface_3& s,
                               bool is_lower,
@@ -74,16 +74,16 @@ public:
       return base.make_xy_monotone_3_object() (s, is_lower, o);
     }
   };
-    
+
   Make_xy_monotone_3 make_xy_monotone_3_object() const
   {
     return Make_xy_monotone_3();
   }
-    
+
   class Compare_z_at_xy_3
   {
   public:
-        
+
     Comparison_result operator()(const Point_2& p,
                                  const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2) const
@@ -111,8 +111,8 @@ public:
       std::cerr << "Result: " << res << std::endl;
       return res;
     }
-        
-        
+
+
     Comparison_result operator()(const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2) const
 
@@ -125,9 +125,9 @@ public:
       std::cerr << "Result: " << res << std::endl;
       return res;
     }
-    
+
   };
-  
+
   Compare_z_at_xy_3 compare_z_at_xy_3_object() const
   {
     return Compare_z_at_xy_3();
@@ -205,13 +205,13 @@ public:
         else
           std::cerr << "First intersection is a point" << std::endl;
       }
-          
+
       std::copy(l.begin(), l.end(), o);
       return o;
     }
   };
 
-  Construct_projected_boundary_2 
+  Construct_projected_boundary_2
   construct_projected_boundary_2_object() const
   {
     return Construct_projected_boundary_2();
@@ -235,7 +235,7 @@ public:
       std::list<CGAL::Object> l;
       base.construct_projected_intersections_2_object() (s1, s2,
                                                          std::back_inserter(l));
-          
+
       if (l.size() > 0)
       {
         Intersection_curve i;
@@ -244,7 +244,7 @@ public:
         else
           std::cerr << "First intersection is not a point" << std::endl;
       }
-          
+
       std::copy(l.begin(), l.end(), o);
       return o;
     }
