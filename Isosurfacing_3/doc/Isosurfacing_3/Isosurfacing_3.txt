@@ -24,7 +24,7 @@ Depending on the isosurfacing method and the input data structure, the result is
 \section secmyalgorithms Algorithms
 
 There are multiple algorithms to extract isosurfaces.
-This package contains Marching Cubes, topologically correct Marching Cubes, Dual Contouring, and Octree Marching. (References?)
+This package contains Marching Cubes, topologically correct Marching Cubes, and Dual Contouring.
 
 \subsection subsecmc Marching Cubes (MC)
 MC processes all cells of the input domain individually.
@@ -50,9 +50,12 @@ Some example cases of Marching Cubes.
 \subsection subsectmc Topologically correct Marching Cubes (TMC)
 This algorithm is an extension to MC and provides additional guarantees.
 It generates a mesh that is homeomorphic to the trilinear interpolant of the input function inside each cube.
+This means that the mesh can accurately represent small complex features.
+For example a tunnel of the isosurface within a single cell can be topologically resolved.
 Furthermore, the mesh is guaranteed to be manifold and watertight, as long as the isosurface does not intersect the domain boundaries.
 
-TODO examples
+This algorithm is based on the following paper:
+Roberto Grosso: Construction of Topologically Correct and Manifold Isosurfaces. Computer Graphics Forum 35(5):187-196 · August 2016
 
 \subsection subsecdc Dual Contouring (DC)
 DC creates one vertex in every cell that is intersected by the isosurface.
@@ -102,8 +105,8 @@ Each algorithm is represented by a single functions. The function signature is t
 
 \code{.cpp}
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange>
-void make_triangle_mesh_using_marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
-                                             PointRange& points, PolygonRange& polygons);
+void marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
+                    PointRange& points, PolygonRange& polygons);
 \endcode
 
 The input is provided in the form of a `domain` (see \ref secmydomains).
@@ -126,21 +129,17 @@ A domain is an object that provides functions to access the input data, its geom
 There are some predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
 Users can also define new domains by implementing the `Isosurfacing_domain` concept.
 
-\subsection mysubsecimplicitdomain Implicit domain
-The `Implicit_domain` represents the input function in an implicit form without storing any values.
+\subsection mysubsecimplicitdomain Implicit cartesian grid domain
+The `Implicit_cartesian_grid_domain` represents the input function in an implicit form without storing any values.
 It takes a functor or lambda that computes the value of the function from the position of a vertex as parameter.
 Additionally, the bounding box and spacing between grid points have to be specified.
 
-\subsection mysubseccartesiandomain Cartesian grid domain
-The `Cartesian_grid_domain` only takes a `Cartesian_grid_3` as parameter.
+\subsection mysubseccartesiandomain Explicit cartesian grid domain
+The `Explicit_cartesian_grid_domain` only takes a `Cartesian_grid_3` as parameter.
 It represents a uniform grid of values that are either computed by the user or read from an `Image_3`.
 The constructor of `Cartesian_grid_3` needs the number of grid points in each dimension and the bounding box.
 The values are read and written with `value(x, y, z)` where x, y, and z are the coordinates of a grid point.
 Alternatively, all required data can be copied from an `Image_3`.
-
-\subsection mysubsecoctreedomain Octree domain
-The `Octree_domain` wraps an octree to be used by isosurfacing algorithms.
-The octree has to be already refined. ...
 
 
 \section secmybenchmarks Performance
@@ -184,13 +183,6 @@ With the use of `Side_of_triangle_mesh` the sign of the distance function is fli
 
 \cgalExample{Isosurfacing_3/marching_cubes_mesh_offset.cpp}
 
-\subsection myExampleOctree Octree Dual Contouring
-
-The following example shows how to extract an isosurface from an octree using Dual Contouring.
-The domain is an `Octree_domain` that describes a sphere by the distance to its origin stored in an octree.
-The octree is highly refined in one octant and only coarse in the others.
-
-\cgalExample{Isosurfacing_3/dual_contouring_octree.cpp}
 
 */
 } /* namespace CGAL */

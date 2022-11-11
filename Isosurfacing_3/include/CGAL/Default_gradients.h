@@ -19,6 +19,15 @@
 namespace CGAL {
 namespace Isosurfacing {
 
+/**
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \brief Template class for a gradient that is always zero.
+ *
+ * \details This gradient function can be used for Marching Cubes, which does not require a gradient.
+ *
+ * \tparam GeomTraits the traits for this gradient.
+ */
 template <class GeomTraits>
 class Zero_gradient {
 public:
@@ -32,6 +41,18 @@ public:
     }
 };
 
+/**
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \brief Template class for a gradient that is calculated using finite differences.
+ *
+ * \details This gradient function evaluates an implicit value function at six points
+ *          that are a given distance delta away from the queried point.
+ *
+ * \tparam GeomTraits the traits for this gradient.
+ *
+ * \tparam PointFunction the type of the value function
+ */
 template <class GeomTraits, typename PointFunction>
 class Finite_difference_gradient {
 public:
@@ -65,6 +86,15 @@ private:
     FT delta;
 };
 
+/**
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \brief Template class for a gradient that is stored in a Cartesian_grid_3.
+ *
+ * \details The gradient at any point is calculated using trilinear interpolation.
+ *
+ * \tparam GeomTraits the traits for this gradient.
+ */
 template <class GeomTraits>
 class Explicit_cartesian_grid_gradient {
 public:
