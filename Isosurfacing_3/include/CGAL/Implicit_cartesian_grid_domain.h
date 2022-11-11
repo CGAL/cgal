@@ -28,6 +28,21 @@ using Implicit_cartesian_grid_domain =
                 Implicit_function_with_geometry<GeomTraits, Cartesian_grid_geometry<GeomTraits>, PointFunction>,
                 Gradient_>;
 
+/**
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \brief Creates a domain from a Cartesian_grid_3 that can be used as input for isosurfacing algorithms.
+ *
+ * \details
+ *
+ * \tparam GeomTraits the traits type
+ * \tparam PointFunction the type of the implicit function
+ *
+ * \param bbox a bounding box that specifies the size of the functions domain
+ * \param spacing the distance between discretized points on the function
+ * \param point_function the function with a point as argument
+ * \param gradient a function that describes the gradient of the data
+ */
 template <class GeomTraits, typename PointFunction, typename Gradient_ = Zero_gradient<GeomTraits>>
 Implicit_cartesian_grid_domain<GeomTraits, PointFunction, Gradient_> create_implicit_cartesian_grid_domain(
     const Bbox_3& bbox, const typename GeomTraits::Vector_3& spacing, const PointFunction& point_function,

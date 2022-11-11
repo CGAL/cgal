@@ -38,6 +38,5 @@ Available algorithms include Marching Cubes, Dual Contouring, and others.
 - `CGAL::Isosurfacing::dual_contouring()`
 - `CGAL::Isosurfacing::create_explicit_cartesian_grid_domain()`
 - `CGAL::Isosurfacing::create_implicit_cartesian_grid_domain()`
-- `CGAL::Isosurfacing::create_implicit_octree_domain()`
 
 */

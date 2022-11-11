@@ -26,6 +26,18 @@ template <class GeomTraits, typename Gradient_>
 using Explicit_cartesian_grid_domain = Base_domain<GeomTraits, Grid_topology, Cartesian_grid_geometry<GeomTraits>,
                                                    Cartesian_grid_3<GeomTraits>, Gradient_>;
 
+/**
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \brief Creates a domain from a Cartesian_grid_3 that can be used as input for isosurfacing algorithms.
+ *
+ * \details
+ *
+ * \tparam GeomTraits the traits type
+ *
+ * \param grid the cartesian grid containing input data
+ * \param gradient a function that describes the gradient of the data
+ */
 template <class GeomTraits, typename Gradient_ = Zero_gradient<GeomTraits>>
 Explicit_cartesian_grid_domain<GeomTraits, Gradient_> create_explicit_cartesian_grid_domain(
     const std::shared_ptr<Cartesian_grid_3<GeomTraits>> grid, const Gradient_& gradient = Gradient_()) {
