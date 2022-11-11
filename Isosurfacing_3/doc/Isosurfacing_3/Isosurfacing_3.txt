@@ -55,7 +55,7 @@ For example a tunnel of the isosurface within a single cell can be topologically
 Furthermore, the mesh is guaranteed to be manifold and watertight, as long as the isosurface does not intersect the domain boundaries.
 
 This algorithm is based on the following paper:
-Roberto Grosso: Construction of Topologically Correct and Manifold Isosurfaces. Computer Graphics Forum 35(5):187-196 · August 2016
+Roberto Grosso: Construction of Topologically Correct and Manifold Isosurfaces. Computer Graphics Forum 35(5):187-196 - August 2016
 
 \subsection subsecdc Dual Contouring (DC)
 DC creates one vertex in every cell that is intersected by the isosurface.
