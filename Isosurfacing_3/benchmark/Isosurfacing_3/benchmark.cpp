@@ -3,7 +3,8 @@
 #include <CGAL/Default_gradients.h>
 #include <CGAL/Dual_contouring_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Isosurfacing_domains.h>
+#include <CGAL/Explicit_cartesian_grid_domain.h>
+#include <CGAL/Implicit_cartesian_grid_domain.h>
 #include <CGAL/Marching_cubes_3.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Simple_cartesian.h>
@@ -39,8 +40,8 @@ struct SphereGradient {
 template <class GeomTraits>
 struct Implicit_sphere {
 
-    typedef CGAL::Isosurfacing::Implicit_cartesian_grid_domain_with_gradient<GeomTraits, SphereValue<GeomTraits>,
-                                                                             SphereGradient<GeomTraits>>
+    typedef CGAL::Isosurfacing::Implicit_cartesian_grid_domain<GeomTraits, SphereValue<GeomTraits>,
+                                                               SphereGradient<GeomTraits>>
         Domain;
     typedef typename GeomTraits::Vector_3 Vector;
 
@@ -97,8 +98,8 @@ struct IWPGradient {
 template <class GeomTraits>
 struct Implicit_iwp {
 
-    typedef CGAL::Isosurfacing::Implicit_cartesian_grid_domain_with_gradient<GeomTraits, IWPValue<GeomTraits>,
-                                                                             IWPGradient<GeomTraits>>
+    typedef CGAL::Isosurfacing::Implicit_cartesian_grid_domain<GeomTraits, IWPValue<GeomTraits>,
+                                                               IWPGradient<GeomTraits>>
         Domain;
     typedef typename GeomTraits::Vector_3 Vector;
 
@@ -123,27 +124,30 @@ template <class GeomTraits>
 struct Grid_sphere {
 
     typedef CGAL::Isosurfacing::Explicit_cartesian_grid_gradient<GeomTraits> Gradient;
-    typedef CGAL::Isosurfacing::Explicit_cartesian_grid_domain_with_gradient<GeomTraits, Gradient> Domain;
+    typedef CGAL::Isosurfacing::Explicit_cartesian_grid_domain<GeomTraits, Gradient> Domain;
     typedef CGAL::Cartesian_grid_3<GeomTraits> Grid;
     typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point;
 
-    Grid_sphere(const std::size_t N) : grid(N, N, N, {-1, -1, -1, 1, 1, 1}) {
+    Grid_sphere(const std::size_t N) {
+        const CGAL::Bbox_3 bbox(-1, -1, -1, 1, 1, 1);
+        grid = std::make_shared<Grid>(N, N, N, bbox);
+
         const FT resolution = 2.0 / N;
         SphereValue<GeomTraits> val;
         SphereGradient<GeomTraits> grad;
 
-        for (std::size_t x = 0; x < grid.xdim(); x++) {
+        for (std::size_t x = 0; x < grid->xdim(); x++) {
             const FT xp = x * resolution - 1.0;
 
-            for (std::size_t y = 0; y < grid.ydim(); y++) {
+            for (std::size_t y = 0; y < grid->ydim(); y++) {
                 const FT yp = y * resolution - 1.0;
 
-                for (std::size_t z = 0; z < grid.zdim(); z++) {
+                for (std::size_t z = 0; z < grid->zdim(); z++) {
                     const FT zp = z * resolution - 1.0;
 
-                    grid.value(x, y, z) = val(Point(xp, yp, zp));
-                    grid.gradient(x, y, z) = grad(Point(xp, yp, zp));
+                    grid->value(x, y, z) = val(Point(xp, yp, zp));
+                    grid->gradient(x, y, z) = grad(Point(xp, yp, zp));
                 }
             }
         }
@@ -158,24 +162,24 @@ struct Grid_sphere {
     }
 
 private:
-    Grid grid;
+    std::shared_ptr<Grid> grid;
 };
 
 template <class GeomTraits>
 struct Skull_image {
 
     typedef CGAL::Isosurfacing::Explicit_cartesian_grid_gradient<GeomTraits> Gradient;
-    typedef CGAL::Isosurfacing::Explicit_cartesian_grid_domain_with_gradient<GeomTraits, Gradient> Domain;
+    typedef CGAL::Isosurfacing::Explicit_cartesian_grid_domain<GeomTraits, Gradient> Domain;
     typedef CGAL::Cartesian_grid_3<GeomTraits> Grid;
 
-    Skull_image(const std::size_t N) : grid(2, 2, 2, {-1, -1, -1, 1, 1, 1}) {
+    Skull_image(const std::size_t N) {
         const std::string fname = CGAL::data_file_path("images/skull_2.9.inr");
         CGAL::Image_3 image;
         if (!image.read(fname)) {
             std::cerr << "Error: Cannot read file " << fname << std::endl;
         }
 
-        grid = Grid(image);
+        grid = std::make_shared<Grid>(image);
     }
 
     Domain domain() const {
@@ -187,7 +191,7 @@ struct Skull_image {
     }
 
 private:
-    Grid grid;
+    std::shared_ptr<Grid> grid;
 };
 
 int main(int argc, char* argv[]) {

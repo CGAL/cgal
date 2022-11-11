@@ -32,7 +32,7 @@ public:
     }
 };
 
-template <class GeomTraits, typename Function>
+template <class GeomTraits, typename PointFunction>
 class Finite_difference_gradient {
 public:
     typedef GeomTraits Geom_traits;
@@ -41,7 +41,7 @@ public:
     typedef typename Geom_traits::Vector_3 Vector;
 
 public:
-    Finite_difference_gradient(const Function& func, const FT delta = 0.001) : func(&func), delta(delta) {}
+    Finite_difference_gradient(const PointFunction& func, const FT delta = 0.001) : func(func), delta(delta) {}
 
     Vector operator()(const Point& point) const {  // TODO
         // compute the gradient by sampling the function with finite differences
@@ -53,15 +53,15 @@ public:
         const Point p4 = point + Vector(0, 0, delta);
         const Point p5 = point - Vector(0, 0, delta);
 
-        const FT gx = (func->operator()(p0) - func->operator()(p1)) / (2 * delta);
-        const FT gy = (func->operator()(p2) - func->operator()(p3)) / (2 * delta);
-        const FT gz = (func->operator()(p4) - func->operator()(p5)) / (2 * delta);
+        const FT gx = (func(p0) - func(p1)) / (2 * delta);
+        const FT gy = (func(p2) - func(p3)) / (2 * delta);
+        const FT gz = (func(p4) - func(p5)) / (2 * delta);
 
         return Vector(gx, gy, gz);
     }
 
 private:
-    const Function* func;
+    const PointFunction func;
     FT delta;
 };
 
@@ -73,10 +73,10 @@ public:
     typedef typename Geom_traits::Point_3 Point;
     typedef typename Geom_traits::Vector_3 Vector;
 
-    typedef Cartesian_grid_3<Geom_traits> Grid;
+    typedef std::shared_ptr<Cartesian_grid_3<Geom_traits>> Grid;
 
 public:
-    Explicit_cartesian_grid_gradient(const Grid& grid) : grid(&grid) {}
+    Explicit_cartesian_grid_gradient(const Grid& grid) : grid(grid) {}
 
     Vector operator()(const Point& point) const {
         // trilinear interpolation of stored gradients
@@ -128,7 +128,7 @@ public:
     }
 
 private:
-    const Grid* grid;
+    const Grid grid;
 };
 
 }  // namespace Isosurfacing

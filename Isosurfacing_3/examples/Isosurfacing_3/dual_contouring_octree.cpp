@@ -62,10 +62,11 @@ struct Refine_one_eighth {
 };
 
 int main() {
-    Octree_wrapper_ octree_wrap({-1, -1, -1, 1, 1, 1});
+    const CGAL::Bbox_3 bbox(-1, -1, -1, 1, 1, 1);
+    std::shared_ptr<Octree_wrapper_> octree_wrap = std::make_shared<Octree_wrapper_>(bbox);
 
     Refine_one_eighth split_predicate(3, 4);
-    octree_wrap.refine(split_predicate);
+    octree_wrap->refine(split_predicate);
 
     auto sphere_function = [&](const Point& p) { return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z()); };
 

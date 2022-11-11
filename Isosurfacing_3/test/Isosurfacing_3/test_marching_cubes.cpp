@@ -49,16 +49,16 @@ void test_grid_sphere(const std::size_t n) {
 
     Sphere_function sphere_function;
 
-    Grid grid(n, n, n, bbox);
+    std::shared_ptr<Grid> grid = std::make_shared<Grid>(n, n, n, bbox);
 
-    for (std::size_t x = 0; x < grid.xdim(); x++) {
-        for (std::size_t y = 0; y < grid.ydim(); y++) {
-            for (std::size_t z = 0; z < grid.zdim(); z++) {
+    for (std::size_t x = 0; x < grid->xdim(); x++) {
+        for (std::size_t y = 0; y < grid->ydim(); y++) {
+            for (std::size_t z = 0; z < grid->zdim(); z++) {
 
                 const Point pos(x * spacing.x() + bbox.xmin(), y * spacing.y() + bbox.ymin(),
                                 z * spacing.z() + bbox.zmin());
 
-                grid.value(x, y, z) = sphere_function(pos);
+                grid->value(x, y, z) = sphere_function(pos);
             }
         }
     }

@@ -3,7 +3,8 @@
 
 #include <CGAL/Cartesian_grid_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Isosurfacing_domains.h>
+#include <CGAL/Explicit_cartesian_grid_domain.h>
+#include <CGAL/Implicit_cartesian_grid_domain.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
