@@ -28,7 +28,7 @@ using Explicit_cartesian_grid_domain = Base_domain<GeomTraits, Grid_topology, Ca
 
 template <class GeomTraits, typename Gradient_ = Zero_gradient<GeomTraits>>
 Explicit_cartesian_grid_domain<GeomTraits, Gradient_> create_explicit_cartesian_grid_domain(
-    const Cartesian_grid_3<GeomTraits>& grid, const Gradient_& gradient = Gradient_()) {
+    const std::shared_ptr<Cartesian_grid_3<GeomTraits>> grid, const Gradient_& gradient = Gradient_()) {
 
     typedef Explicit_cartesian_grid_domain<GeomTraits, Gradient_> Domain;
     typedef typename Domain::Topology Topology;
@@ -36,17 +36,17 @@ Explicit_cartesian_grid_domain<GeomTraits, Gradient_> create_explicit_cartesian_
     typedef typename Domain::Function Function;
     typedef typename Domain::Gradient Gradient;
 
-    const std::size_t size_i = grid.xdim();
-    const std::size_t size_j = grid.ydim();
-    const std::size_t size_k = grid.zdim();
+    const std::size_t size_i = grid->xdim();
+    const std::size_t size_j = grid->ydim();
+    const std::size_t size_k = grid->zdim();
 
-    const Bbox_3& bbox = grid.get_bbox();
+    const Bbox_3& bbox = grid->get_bbox();
     const typename GeomTraits::Vector_3 offset(bbox.xmin(), bbox.ymin(), bbox.zmin());
-    const typename GeomTraits::Vector_3 spacing = grid.get_spacing();
+    const typename GeomTraits::Vector_3 spacing = grid->get_spacing();
 
     const Topology topo = std::make_shared<Topology::element_type>(size_i, size_j, size_k);
     const Geometry geom = std::make_shared<Geometry::element_type>(offset, spacing);
-    const Function func = std::make_shared<Function::element_type>(grid);
+    const Function func = grid;
     const Gradient grad = std::make_shared<Gradient::element_type>(gradient);
 
     return Domain(topo, geom, func, grad);

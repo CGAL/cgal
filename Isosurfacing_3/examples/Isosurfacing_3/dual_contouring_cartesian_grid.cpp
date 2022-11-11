@@ -17,21 +17,22 @@ typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 int main() {
 
-    Grid grid(30, 30, 30, {-1, -1, -1, 1, 1, 1});
+    const CGAL::Bbox_3 bbox(-1, -1, -1, 1, 1, 1);
+    std::shared_ptr<Grid> grid = std::make_shared<Grid>(30, 30, 30, bbox);
 
-    for (std::size_t x = 0; x < grid.xdim(); x++) {
-        for (std::size_t y = 0; y < grid.ydim(); y++) {
-            for (std::size_t z = 0; z < grid.zdim(); z++) {
+    for (std::size_t x = 0; x < grid->xdim(); x++) {
+        for (std::size_t y = 0; y < grid->ydim(); y++) {
+            for (std::size_t z = 0; z < grid->zdim(); z++) {
 
-                const FT pos_x = x * grid.get_spacing()[0] + grid.get_bbox().xmin();
-                const FT pos_y = y * grid.get_spacing()[1] + grid.get_bbox().ymin();
-                const FT pos_z = z * grid.get_spacing()[2] + grid.get_bbox().zmin();
+                const FT pos_x = x * grid->get_spacing()[0] + bbox.xmin();
+                const FT pos_y = y * grid->get_spacing()[1] + bbox.ymin();
+                const FT pos_z = z * grid->get_spacing()[2] + bbox.zmin();
 
                 const Vector direction(pos_x, pos_y, pos_z);
                 const FT distance = CGAL::approximate_sqrt(direction.squared_length());
 
-                grid.value(x, y, z) = distance;
-                grid.gradient(x, y, z) = direction / distance;
+                grid->value(x, y, z) = distance;
+                grid->gradient(x, y, z) = direction / distance;
             }
         }
     }

@@ -24,7 +24,7 @@ int main() {
     }
 
     // convert it to a cartesian grid
-    const Grid grid(image);
+    std::shared_ptr<Grid> grid = std::make_shared<Grid>(image);
 
     // create a domain from the grid
     auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);

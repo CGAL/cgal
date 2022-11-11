@@ -31,7 +31,7 @@ using Implicit_octree_domain =
 
 template <class GeomTraits, typename PointFunction, typename Gradient_ = Zero_gradient<GeomTraits>>
 Implicit_octree_domain<GeomTraits, PointFunction, Gradient_> create_implicit_octree_domain(
-    const Octree_wrapper<GeomTraits>& octree, const PointFunction& point_function,
+    const std::shared_ptr<Octree_wrapper<GeomTraits>> octree, const PointFunction& point_function,
     const Gradient_& gradient = Gradient_()) {
 
     typedef Implicit_octree_domain<GeomTraits, PointFunction, Gradient_> Domain;
@@ -42,7 +42,7 @@ Implicit_octree_domain<GeomTraits, PointFunction, Gradient_> create_implicit_oct
     typedef typename Function::element_type::Point_function Point_function;
     typedef typename Topology::element_type::Octree Octree;
 
-    const Octree oct = std::make_shared<Octree::element_type>(octree);
+    const Octree oct = octree;
     const Topology topo = std::make_shared<Topology::element_type>(oct);
     const Geometry geom = std::make_shared<Geometry::element_type>(oct);
     const Point_function point_func = std::make_shared<Point_function::element_type>(point_function);
