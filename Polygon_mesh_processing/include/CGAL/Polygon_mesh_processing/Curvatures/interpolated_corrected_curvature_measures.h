@@ -835,8 +835,6 @@ private:
         gaussian_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_gaussian_curvature_map), Default_scalar_map());
         principal_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_principal_curvature_map), Default_principal_map());
 
-        std::cout << is_mean_curvature_selected << is_gaussian_curvature_selected << is_principal_curvature_selected << std::endl;
-
         set_ball_radius(radius);
     }
 
@@ -856,11 +854,15 @@ public:
     {
         set_named_params(np);
 
-        set_property_maps();
+        if (is_mean_curvature_selected || is_gaussian_curvature_selected || is_principal_curvature_selected)
+        {
+            set_property_maps();
 
-        compute_selected_curvatures();
-
+            compute_selected_curvatures();
+        }
     }
+
+private:
 
     void interpolated_corrected_all_measures_all_faces()
     {
@@ -1073,10 +1075,10 @@ public:
 template<typename PolygonMesh, typename VertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void interpolated_corrected_mean_curvature(const PolygonMesh& pmesh,
-        VertexCurvatureMap vcm,
-        const NamedParameters& np = parameters::default_values())
+        VertexCurvatureMap& vcm,
+        NamedParameters& np = parameters::default_values())
 {
-    internal::Interpolated_corrected_curvatures_computer<PolygonMesh, NamedParameters>(pmesh, np.vertex_mean_curvature_map(vcm));
+    interpolated_corrected_curvatures(pmesh, np.vertex_mean_curvature_map(vcm));
 }
 
 /**
@@ -1136,10 +1138,10 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 template<typename PolygonMesh, typename VertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void interpolated_corrected_gaussian_curvature(const PolygonMesh& pmesh,
-        VertexCurvatureMap vcm,
-        const NamedParameters& np = parameters::default_values())
+        VertexCurvatureMap& vcm,
+        NamedParameters& np = parameters::default_values())
 {
-    internal::Interpolated_corrected_curvatures_computer<PolygonMesh, NamedParameters>(pmesh, np.vertex_gaussian_curvature_map(vcm));
+    interpolated_corrected_curvatures(pmesh, np.vertex_gaussian_curvature_map(vcm));
 }
 
 /**
@@ -1200,10 +1202,10 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 template<typename PolygonMesh, typename VertexCurvatureMap,
     typename NamedParameters = parameters::Default_named_parameters>
     void interpolated_corrected_principal_curvatures(const PolygonMesh& pmesh,
-        VertexCurvatureMap vcm,
-        const NamedParameters& np = parameters::default_values())
+        VertexCurvatureMap& vcm,
+        NamedParameters& np = parameters::default_values())
 {
-    internal::Interpolated_corrected_curvatures_computer<PolygonMesh, NamedParameters>(pmesh, np.vertex_principal_curvature_map(vcm));
+    interpolated_corrected_curvatures(pmesh, np.vertex_principal_curvature_map(vcm));
 }
 
 // TODO: DOC
