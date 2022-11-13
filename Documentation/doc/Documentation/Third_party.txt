@@ -291,7 +291,7 @@ for more information.
 
 \attention \ceres indicates that `glog` is a recommended dependency. `glog` has `libunwind` as a recommended dependency.
 On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
-If you experience such an issue, we recommand to compile \ceres without `glog` support.
+If you experience such an issue, we recommend to compile \ceres without `glog` support.
 
 \subsection thirdpartyGLPK GLPK
 
