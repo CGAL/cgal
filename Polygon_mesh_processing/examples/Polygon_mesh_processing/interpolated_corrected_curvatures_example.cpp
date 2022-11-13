@@ -76,6 +76,14 @@ int main(int argc, char* argv[])
       principal_curvature_map
   );
 
+  PMP::interpolated_corrected_curvatures(
+      g1,
+      CGAL::parameters::ball_radius(0)
+      .vertex_mean_curvature_map(mean_curvature_map)
+      .vertex_gaussian_curvature_map(gaussian_curvature_map)
+      .vertex_principal_curvature_map(principal_curvature_map)
+  );
+
   for (vertex_descriptor v : vertices(g1))
   {
     auto PC = principal_curvature_map[v];
