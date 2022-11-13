@@ -848,7 +848,7 @@ private:
     }
 
 public:
-    
+
     Interpolated_corrected_curvatures_computer(const PolygonMesh& pmesh,
         const NamedParameters& np = parameters::default_values()
     ) :
@@ -911,7 +911,7 @@ public:
                     vertex_curvatures.anisotropic_measure[i] += face_anisotropic_measure[i];
             }
         }
-        
+
         return vertex_curvatures;
     }
 
@@ -981,8 +981,8 @@ public:
 
         for (Vertex_descriptor v : vertices(pmesh))
         {
-            Vertex_measures<GT> vertex_curvatures = (ball_radius < 0)? 
-                expand_interpolated_corrected_measure_vertex_no_radius(v) : 
+            Vertex_measures<GT> vertex_curvatures = (ball_radius < 0)?
+                expand_interpolated_corrected_measure_vertex_no_radius(v) :
                 expand_interpolated_corrected_measure_vertex(v);
 
             if (is_mean_curvature_selected) {
@@ -1241,7 +1241,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *     \cgalParamExtra{If this parameter is omitted, vertex normals will be
 *                     computed using compute_vertex_normals()}
 *   \cgalParamNEnd
-* 
+*
 *   \cgalParamNBegin{ball_radius}
 *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
 *                           by summing measures of faces inside a ball of this radius centered at the
