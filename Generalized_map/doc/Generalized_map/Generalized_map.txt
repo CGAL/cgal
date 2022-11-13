@@ -551,7 +551,7 @@ Let <I>d0</I> \f$ \in \f$ <I>D</I> be a dart. Given <I>i</I>, 0 \f$ \leq \f$ <I>
 
 \section Generalized_mapDesign Design and Implementation History
 
-The code of this package followed the code of Combinatorial maps and was inspired by Moka, a 3D topological modeler that uses 3D generalized maps (<A HREF="http://moka-modeller.sourceforge.net/">http://moka-modeller.sourceforge.net/</A>).
+The code of this package followed the code of Combinatorial maps and was inspired by Moka, a 3D topological modeler that uses 3D generalized maps (<A HREF="https://moka-modeller.sourceforge.net/">https://moka-modeller.sourceforge.net/</A>).
 
 */
 } /* namespace CGAL */
