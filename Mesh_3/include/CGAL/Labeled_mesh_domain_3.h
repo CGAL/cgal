@@ -594,7 +594,8 @@ public:
    *
    *   \cgalParamNBegin{detect_features}
    *    \cgalParamDescription{ a functor can be passed to
-   *      `std::function<void(const CGAL::Image_3&, Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>&)>`}
+   *      `std::function<void(const CGAL::Image_3&, Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>&)>`.
+   *      See \ref PkgMesh3FeatureDetection for available functors.}
    *    \cgalParamDefault{CGAL::Null_functor()}
    *    \cgalParamExtra{The return type of the function depends on whether this parameter is provided or not.}
    *    \cgalParamExtra{If `weights` is provided, this parameter is ignored}
