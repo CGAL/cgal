@@ -2505,7 +2505,7 @@ namespace CartesianKernelFunctors {
       FT rsy = psz*qsx-psx*qsz;
       FT rsz = psx*qsy-psy*qsx;
 
-      // The following determinants can be developped and simplified.
+      // The following determinants can be developed and simplified.
       //
       // FT num_x = determinant(psy,psz,ps2,
       //                              qsy,qsz,qs2,

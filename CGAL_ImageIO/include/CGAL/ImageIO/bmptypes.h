@@ -129,7 +129,7 @@ typedef struct Bitmapfileheader
  * BITMAPARRAYHEADER is used to establish a linked list of Bitmapfileheader
  * structures for a bitmap file with multiple images in it.  There is no
  * equivalent structure in the Windows SDK.  Its analogues in the OS/2 toolkit
- * are the BITMAPARRAYFILEHEADER and BITMAPARRAYFILEHEADER2 strucutres.
+ * are the BITMAPARRAYFILEHEADER and BITMAPARRAYFILEHEADER2 structures.
  *
  * A Bitmapfileheader structure is always concatenated to the end of a
  * BITMAPARRAYHEADER structure.

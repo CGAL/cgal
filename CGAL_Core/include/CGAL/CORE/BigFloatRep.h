@@ -91,7 +91,7 @@ public:
   void normal();
   void bigNormal(BigInt&);
 
-  //  arithmetics
+  //  arithmetic
 public:
   void add(const BigFloatRep&, const BigFloatRep&);
   void sub(const BigFloatRep&, const BigFloatRep&);
@@ -314,7 +314,7 @@ inline void BigFloatRep::eliminateTrailingZeroes() {
   }
 }
 
-//  bultin functions
+//  builtin functions
 inline extLong BigFloatRep::lMSB() const {
   if (!isZeroIn())
     return extLong(floorLg(abs(m) - err)) + bits(exp);

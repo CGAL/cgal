@@ -679,7 +679,7 @@ Returns the status of the management of the attributes of the generic map. <code
 bool are_attributes_automatically_managed() const;
 
 /*!
-Set the status of the managment of the attributes of the generic map.
+Set the status of the management of the attributes of the generic map.
 
 \cgalAdvancedBegin
 After calling `set_automatic_attributes_management(false)`, all high level operations will not update non void attributes, until the call of `set_automatic_attributes_management(true)`. The call of `set_automatic_attributes_management(true)` call the \link GenericMap::correct_invalid_attributes `correct_invalid_attributes()`\endlink function.
