@@ -218,7 +218,7 @@ private:
     //! returns \c true when the precision limit for a specified number type is
     //! reached
     typename Renderer_traits::Precision_limit limit;
-    //! maximum level of subdivision dependending on speficied number type
+    //! maximum level of subdivision dependending on specified number type
     static const unsigned MAX_SUBDIVISION_LEVEL =
             Renderer_traits::MAX_SUBDIVISION_LEVEL;
 
@@ -1223,7 +1223,7 @@ bool subdivide(Pixel_2& pix, int back_dir, int& new_dir) {
         throw internal::Insufficient_rasterize_precision_exception();
     }
 
-    // if several branches coincide withing this pixel we cannot perform
+    // if several branches coincide within this pixel we cannot perform
     // a subdivision
     if(branches_coincide)
         return false;

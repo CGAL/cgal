@@ -747,7 +747,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 #endif
 
   // Use the helper class to determine whether the order of predecessor
-  // halfedges should be swaped, to that the edge directed from prev1->target()
+  // halfedges should be swapped, to that the edge directed from prev1->target()
   // to prev2->target() is incident to the new face (in case a new face is
   // created).
   Halfedge_handle res;

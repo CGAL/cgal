@@ -18,7 +18,7 @@
 
 
 /*! \file
- * Defintion of the Td_X_trapezoid<Td_traits> class.
+ * Definition of the Td_X_trapezoid<Td_traits> class.
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
@@ -239,7 +239,7 @@ public:
     ptr()->e1 = (v_ce.ce() == ARR_MIN_END ) ? CGAL_TD_CV_MIN_END : CGAL_TD_CV_MAX_END;
 
     if (!is_on_boundaries())
-    { //if the trapezoid respresents an inner vertex
+    { //if the trapezoid represents an inner vertex
       ptr()->e0 = left()->point();
     }
   }

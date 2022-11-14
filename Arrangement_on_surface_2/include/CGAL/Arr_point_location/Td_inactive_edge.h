@@ -17,7 +17,7 @@
 
 
 /*! \file
- * Defintion of the Td_inactive_edge<Td_traits> class.
+ * Definition of the Td_inactive_edge<Td_traits> class.
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>

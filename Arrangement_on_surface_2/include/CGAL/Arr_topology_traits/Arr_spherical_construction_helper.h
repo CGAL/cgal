@@ -263,7 +263,7 @@ before_handle_event(Event* event)
 
   if (ps_x == ARR_RIGHT_BOUNDARY) {
     // Process a non-isolated event on the right identified boundary.
-    // Cannnot be vertical, only curves approaching the right side are possible.
+    // Cannot be vertical, only curves approaching the right side are possible.
     // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
     Vertex_handle v = (dv) ? Vertex_handle(dv) :

@@ -201,7 +201,7 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
     //the Halfedge_handle source is left_ee.
     // this way the face on it's left is the desired one
 
-    //MICHAL: maybe add a verification that the above occures
+    //MICHAL: maybe add a verification that the above occurs
     return he->face();
   }
   else if (!tr.is_on_right_boundary()) {
@@ -234,7 +234,7 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
     //the Halfedge_handle source is right_ee.
     // this way the face on it's left is the desired one
 
-    //MICHAL: maybe add a verification that the above occures
+    //MICHAL: maybe add a verification that the above occurs
     return he->face();
   }
 

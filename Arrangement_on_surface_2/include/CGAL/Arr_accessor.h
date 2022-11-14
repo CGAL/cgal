@@ -430,7 +430,7 @@ public:
    * Insert an x-monotone curve into the arrangement, such that one of its
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex. The other
-   * endpoint corrsponds to a free vertex (a newly created vertex or an
+   * endpoint corresponds to a free vertex (a newly created vertex or an
    * isolated vertex).
    * \param he_to The reference halfedge. We should represent cv as a pair
    *              of edges, one of them should become he_to's successor.
@@ -792,7 +792,7 @@ public:
   const Dcel& dcel() const { return (p_arr->_dcel()); }
 
   /*!
-   * Clear the entire arrangment.
+   * Clear the entire arrangement.
    */
   void clear_all()
   {

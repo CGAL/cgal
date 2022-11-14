@@ -168,7 +168,7 @@ build_vertex_map_item(Vertex_const_handle v,
 
 //-----------------------------------------------------------------------------
 // Description:
-//  the opposite operation for spliting the trapezoid with
+//  the opposite operation for splitting the trapezoid with
 //  vertical line through ce
 // Precondition:
 //  tr_node data is a td vertex and is active
@@ -259,7 +259,7 @@ deactivate_edge(std::shared_ptr<X_monotone_curve_2>& cv,
 //  trapezoidal tree with an input halfedge he
 // Precondition:
 //  The root trapezoid is active
-//  The root trapezoid is devided by he or is equal to it and is vertical.
+//  The root trapezoid is divided by he or is equal to it and is vertical.
 template <typename Td_traits>
 typename Trapezoidal_decomposition_2<Td_traits>::Dag_node &
 Trapezoidal_decomposition_2<Td_traits>::
@@ -609,7 +609,7 @@ search_using_dag(Dag_node& curr_node,
 
   while (true) {
     //curr_node is the current pointer to node in the data structure
-    //curr_item is the curent Td_map_item held in curr_node
+    //curr_item is the current Td_map_item held in curr_node
     Td_map_item curr_item(curr_node.get_data());
 
     if (traits->is_td_vertex(curr_item)) {
@@ -793,7 +793,7 @@ search_using_dag(Dag_node& curr_node,
 //  while(true)
 //  {
 //    //curr_node is the current pointer to node in the data structure
-//    //curr_item is the curent Td_map_item held in curr_node
+//    //curr_item is the current Td_map_item held in curr_node
 //    Td_map_item curr_item(curr_node.get_data());
 //
 //    if (traits->is_td_vertex(curr_item))
@@ -1017,7 +1017,7 @@ search_using_dag_with_cv(Dag_node& curr_node,
 {
   while (true) {
     //curr_node is the current pointer to node in the data structure
-    //curr_item is the curent Td_map_item held in curr_node
+    //curr_item is the current Td_map_item held in curr_node
     Td_map_item curr_item(curr_node.get_data());
 
     if (traits->is_td_vertex(curr_item)) {
@@ -1207,7 +1207,7 @@ search_using_dag_with_cv(Dag_node& curr_node,
 
   while (true) {
     //curr_node is the current pointer to node in the data structure
-    //curr_item is the curent Td_map_item held in curr_node
+    //curr_item is the current Td_map_item held in curr_node
     Td_map_item curr_item(curr_node.get_data());
 
     if (traits->is_td_vertex(curr_item)) {
@@ -1443,7 +1443,7 @@ is_last_edge(Halfedge_const_handle /* he */ , Td_map_item& vtx_item)
 // Remark:
 //  Given an edge-degenerate trapezoid representing a Halfedge,
 //  all the other trapezoids representing the Halfedge can be extracted
-//  via moving continously to the left and right neighbours.
+//  via moving continuously to the left and right neighbours.
 template <typename Td_traits>
 typename Trapezoidal_decomposition_2<Td_traits>::Td_map_item
 Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
@@ -2114,7 +2114,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  CGAL_warning(old_t.dag_node());
 //
 //#endif
-//  //the DAG node of the curve trapezoid where the spiltting point is
+//  //the DAG node of the curve trapezoid where the splitting point is
 //  Dag_node& old_split_node = *old_t.dag_node();
 //
 //  CGAL_assertion(traits->equal_curve_end_2_object()
@@ -2202,7 +2202,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  In_face_iterator& top_it = *m_before_split.m_p_top_it;
 //  //MICHAL: new end
 //
-//  //the DAG node of the curve trapezoid where the spiltting point is
+//  //the DAG node of the curve trapezoid where the splitting point is
 //  Dag_node& old_split_node = *old_t.dag_node();
 //
 //

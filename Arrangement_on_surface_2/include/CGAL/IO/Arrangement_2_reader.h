@@ -90,7 +90,7 @@ namespace CGAL {
     template <class Formatter>
     void operator()(Formatter& formatter)
     {
-      // Clear the exisiting arrangement so it contains no DCEL features.
+      // Clear the existing arrangement so it contains no DCEL features.
       m_arr_access.clear_all();
 
       // Read the arrangement dimensions.

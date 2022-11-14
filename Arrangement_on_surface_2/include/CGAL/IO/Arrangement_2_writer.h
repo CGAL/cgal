@@ -63,7 +63,7 @@ namespace CGAL {
     typedef std::map<const DVertex*, int>                 Vertex_index_map;
     typedef std::map<const DHalfedge*, int>               Halfedge_index_map;
 
-    // Data memebrs:
+    // Data members:
     const Arrangement_2&   m_arr;
     const Dcel*            m_dcel;
     int                    m_curr_v;

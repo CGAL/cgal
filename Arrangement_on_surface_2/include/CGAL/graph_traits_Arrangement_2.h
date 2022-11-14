@@ -119,7 +119,7 @@ public:
 
     /*!
      * Constructor.
-     * \param circ A ciruclator for the halfedges around a vertex.
+     * \param circ A circulator for the halfedges around a vertex.
      * \param out_edges Do we need the outgoing or the ingoing halfedges.
      * \param counter A counter associated with the iterator.
      * \param cend The past-the-end counter value.

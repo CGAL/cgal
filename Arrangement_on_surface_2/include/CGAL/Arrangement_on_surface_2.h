@@ -263,7 +263,7 @@ protected:
   };
 
 public:
-  // Forward declerations:
+  // Forward declarations:
   class Vertex;
   class Halfedge;
   class Face;
@@ -572,7 +572,7 @@ public:
     typedef DVertex                     Base;
 
   public:
-    /*! Default constrcutor. */
+    /*! Default constructor. */
     Vertex() {}
 
     /*! Check whether the vertex lies on an open boundary. */
@@ -661,7 +661,7 @@ public:
     typedef DHalfedge             Base;
 
   public:
-    /*! Default constrcutor. */
+    /*! Default constructor. */
     Halfedge() {}
 
     /*! Check whether the halfedge is fictitious. */
@@ -761,7 +761,7 @@ public:
     typedef DFace                 Base;
 
   public:
-    /*! Default constrcutor. */
+    /*! Default constructor. */
     Face() {}
 
     /*! Obtain an iterator for the outer CCBs of the face (non-const version). */
@@ -905,8 +905,8 @@ protected:
   Curves_alloc            m_curves_alloc;  // allocator for the curves.
   Observers_container     m_observers;     // pointers to existing observers.
   const Traits_adaptor_2* m_geom_traits;   // the geometry-traits adaptor.
-  bool                    m_own_traits;    // inidicates whether the geometry
-                                           // traits should be freed up.
+  bool                    m_own_traits;    // indicates whether the geometry
+                                           // traits should be freed.
 
   bool                    m_sweep_mode = false;
                                            // sweep mode efficiently
@@ -1491,8 +1491,8 @@ public:
    * \param cv2 The curve that should be associated with the second split edge.
 
    * \pre cv1's source and cv2's target equal the endpoints of the curve
-   *      currently assoicated with e (respectively), and cv1's target equals
-   *      cv2's target, and this is the split point (ot vice versa).
+   *      currently associated with e (respectively), and cv1's target equals
+   *      cv2's target, and this is the split point (or vice versa).
    * \return A handle for the halfedge whose source is the source of the
    *         original halfedge e, and whose target is the split point.
    */
@@ -1563,7 +1563,7 @@ protected:
   /// \name Determining the boundary-side conditions.
   //@{
 
-  /*! Determines whether a boundary-side categoty indicates an open side.
+  /*! Determines whether a boundary-side category indicates an open side.
    */
   inline bool is_open(Arr_boundary_side_tag) const { return false; }
   inline bool is_open(Arr_open_side_tag) const { return true; }
@@ -1584,12 +1584,12 @@ protected:
 
   }
 
-  /*! Determines whether a boundary-side categoty indicates a constracted side.
+  /*! Determines whether a boundary-side category indicates a constructed side.
    */
   inline bool is_contracted(Arr_boundary_side_tag) const { return false; }
   inline bool is_contracted(Arr_contracted_side_tag) const { return true; }
 
-  /*! Determines whether a boundary-side categoty indicates a constracted side.
+  /*! Determines whether a boundary-side category indicates a constructed side.
    */
   inline bool is_identified(Arr_boundary_side_tag) const { return false; }
   inline bool is_identified(Arr_identified_side_tag) const { return true; }
@@ -1902,7 +1902,7 @@ protected:
    * \param cv The x-monotone curve we use to connect he_to's target and
    *           he_away's source vertex.
    * \param cv_dir the direction of the curve between he_to and he_away
-   * \param he_away The succcessor halfedge.
+   * \param he_away The successor halfedge.
    * \param local_mins_it the outputiterator
    * (value_type = std::pair< DHalfedge*, int >, where the int denotes the
    * index) to report the halfedges pointing to local minima (<-shaped
@@ -1968,7 +1968,7 @@ protected:
    * \param cv The x-monotone curve we use to connect he_to's target and
    *           he_away's source vertex.
    * \param cv_dir the direction of the curve between he_to and he_away
-   * \param he_away The succcessor halfedge.
+   * \param he_away The successor halfedge.
    * \pre he_to and he_away belong to the same inner CCB.
    * \return true if he_to=>cv,cv_dir=>he_away lie in the interior of the face we
    *         are about to create (i.e.~are part of the new outer ccb),
@@ -2117,7 +2117,7 @@ protected:
    * Insert an x-monotone curve into the arrangement, such that one of its
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex. The other
-   * endpoint corrsponds to a free vertex (a newly created vertex or an
+   * endpoint corresponds to a free vertex (a newly created vertex or an
    * isolated vertex).
    * \param he_to The reference halfedge. We should represent cv as a pair
    *              of edges, one of them should become he_to's successor.
@@ -2914,7 +2914,7 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
  * interior does not intersect with any existing edge or vertex in the
- * arragement (incremental insertion).
+ * arrangement (incremental insertion).
  * \param arr The arrangement.
  * \param c The x-monotone curve to be inserted.
  * \param pl A point-location object associated with the arrangement.
@@ -2932,7 +2932,7 @@ insert_non_intersecting_curve
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
  * interior does not intersect with any existing edge or vertex in the
- * arragement (incremental insertion). The default point-location strategy
+ * arrangement (incremental insertion). The default point-location strategy
  * is used for the curve insertion.
  * \param arr The arrangement.
  * \param c The x-monotone curve to be inserted.
@@ -2949,7 +2949,7 @@ insert_non_intersecting_curve
 /*!
  * Insert a range of pairwise interior-disjoint x-monotone curves into
  * the arrangement, such that the curve interiors do not intersect with
- * any existing edge or vertex in the arragement (aggregated insertion).
+ * any existing edge or vertex in the arrangement (aggregated insertion).
  * \param arr The arrangement.
  * \param begin An iterator for the first x-monotone curve in the range.
  * \param end A past-the-end iterator for the x-monotone curve range.

@@ -809,7 +809,7 @@ _is_on_fictitious_edge(const X_monotone_curve_2& cv, Arr_curve_end ind,
     }
   }
   else {
-    // If we reched here, we have a "horizontal" fictitious halfedge.
+    // If we reached here, we have a "horizontal" fictitious halfedge.
     Arr_parameter_space he_ps_y = v1->parameter_space_in_y();
 
     CGAL_assertion((he_ps_y == ARR_BOTTOM_BOUNDARY ||

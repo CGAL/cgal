@@ -200,7 +200,7 @@ public:
   typedef typename Base::Event_ptr                      Event_ptr;
   typedef typename Base::Halfedge_indices_list          Halfedge_indices_list;
 
-  /*! Construct deafult. */
+  /*! Construct default. */
   Arr_construction_subcurve() {}
 
   /*! Constructor from an x-monotone curve. */

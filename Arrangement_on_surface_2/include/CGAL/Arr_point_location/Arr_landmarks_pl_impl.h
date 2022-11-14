@@ -47,7 +47,7 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
     return lm_location_obj;
 
   // Walk from the nearest_vertex to the point p, using walk algorithm,
-  // and find the location of the query point p. Note that the set fo edges
+  // and find the location of the query point p. Note that the set of edges
   // we have crossed so far is initially empty.
   Halfedge_set                   crossed_edges;
   result_type                    out_obj;
@@ -100,7 +100,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
   CGAL_assertion_msg(! vh->is_at_open_boundary(),
                      "_walk_from_vertex() from a vertex at infinity.");
 
-  // Check if the qurey point p conincides with the vertex.
+  // Check if the query point p coincides with the vertex.
   if (m_traits->equal_2_object()(vh->point(), p))
     return make_result(vh);
 
