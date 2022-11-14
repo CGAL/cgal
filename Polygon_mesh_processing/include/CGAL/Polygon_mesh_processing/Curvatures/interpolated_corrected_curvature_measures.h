@@ -37,14 +37,14 @@ namespace Polygon_mesh_processing {
 
 /**
 * \ingroup PMP_corrected_curvatures_grp
-* 
+*
 * \brief a struct for storing principal curvatures and directions.
 *
 * @tparam GT is the geometric traits class.
 */
 template<typename GT>
 struct Principal_curvature {
-    
+
     /// min curvature magnitude
     typename GT::FT min_curvature;
 
@@ -976,7 +976,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *     \cgalParamExtra{If this parameter is omitted, vertex normals will be
 *                     computed using compute_vertex_normals()}
 *   \cgalParamNEnd
-* 
+*
 *   \cgalParamNBegin{vertex_mean_curvature_map}
 *     \cgalParamDescription{a property map associating mean curvatures to the vertices of `pmesh`}
 *     \cgalParamType{a class model of `WritablePropertyMap` with
@@ -994,7 +994,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::FT>(), pmesh)`}
 *     \cgalParamExtra{If this parameter is omitted, gaussian curvatures won't be computed}
 *   \cgalParamNEnd
-* 
+*
 *
 *   \cgalParamNBegin{vertex_prinicipal_curvature_map}
 *     \cgalParamDescription{a property map associating mean curvatures to the vertices of `pmesh`}
