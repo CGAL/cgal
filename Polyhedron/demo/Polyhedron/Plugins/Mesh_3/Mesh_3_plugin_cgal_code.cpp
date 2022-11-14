@@ -13,8 +13,8 @@
 #include "Mesh_function.h"
 #include "Facet_extra_criterion.h"
 
-#include <CGAL/Mesh_3/detect_features_in_image.h>
-#include <CGAL/Mesh_3/detect_features_on_image_bbox.h>
+#include <CGAL/Mesh_3/Detect_features_in_image.h>
+#include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
 
 
 using namespace CGAL::Three;

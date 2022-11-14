@@ -13,7 +13,7 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 
-#include <CGAL/Mesh_3/detect_features_in_image.h>
+#include <CGAL/Mesh_3/Detect_features_in_image.h>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
