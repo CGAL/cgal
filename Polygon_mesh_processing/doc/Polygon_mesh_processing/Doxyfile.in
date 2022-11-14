@@ -21,4 +21,5 @@ EXCLUDE_SYMBOLS += experimental
 
 HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/selfintersections.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/mesh_smoothing.png \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/shape_smoothing.png
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/shape_smoothing.png \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/icc_diff_radius.png
