@@ -11,35 +11,43 @@
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_Kernel;
-typedef CGAL::Polyhedron_3<Epic_Kernel> Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
+typedef CGAL::Polyhedron_3<Epic_kernel> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
 int main(int argc, char* argv[])
 {
-  Polyhedron g1;
+  Polyhedron polyhedron;
   const std::string filename = (argc>1) ?
       argv[1] :
       CGAL::data_file_path("meshes/small_bunny.obj");
 
-  if(!CGAL::IO::read_polygon_mesh(filename, g1))
+  if(!CGAL::IO::read_polygon_mesh(filename, polyhedron))
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::unordered_map<vertex_descriptor, Epic_Kernel::FT> mean_curvature_map, gaussian_curvature_map;
-  std::unordered_map<vertex_descriptor, std::tuple<
-      Epic_Kernel::FT,
-      Epic_Kernel::FT,
-      Epic_Kernel::Vector_3,
-      Epic_Kernel::Vector_3
-      >> principal_curvature_map;
+  boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<Epic_kernel::FT>>::type
+      mean_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron),
+      gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
+  boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<PMP::Principal_curvature<Epic_kernel>>>::type
+      principal_curvature_map = get(CGAL::dynamic_vertex_property_t< PMP::Principal_curvature<Epic_kernel>>(), polyhedron);
 
   PMP::interpolated_corrected_mean_curvature(
-      g1,
-      boost::make_assoc_property_map(mean_curvature_map)
+      polyhedron,
+      mean_curvature_map
+  );
+
+  PMP::interpolated_corrected_gaussian_curvature(
+      polyhedron,
+      gaussian_curvature_map
+  );
+
+  PMP::interpolated_corrected_principal_curvatures(
+      polyhedron,
+      principal_curvature_map
   );
 
   // uncomment this to compute a curvature while specifying named parameters
@@ -48,27 +56,26 @@ int main(int argc, char* argv[])
   /*std::unordered_map<vertex_descriptor, Epic_Kernel::Vector_3> vnm;
 
   PMP::interpolated_corrected_mean_curvature(
-      g1,
-      boost::make_assoc_property_map(mean_curvature_map),
+      polyhedron,
+      mean_curvature_map,
       CGAL::parameters::ball_radius(0.5).vertex_normal_map(boost::make_assoc_property_map(vnm))
   );*/
 
-  PMP::interpolated_corrected_gaussian_curvature(
-      g1,
-      boost::make_assoc_property_map(gaussian_curvature_map)
-  );
-  PMP::interpolated_corrected_principal_curvatures(
-      g1,
-      boost::make_assoc_property_map(principal_curvature_map)
+  // This function can be used to compute multiple curvature types by specifiying them as named parameters
+  // This is more efficient than computing each one separately (shared computations).
+  PMP::interpolated_corrected_curvatures(
+      polyhedron,
+      CGAL::parameters::vertex_mean_curvature_map(mean_curvature_map)
+      .vertex_principal_curvature_map(principal_curvature_map)
   );
 
   int i = 0;
-  for (vertex_descriptor v : vertices(g1))
+  for (vertex_descriptor v : vertices(polyhedron))
   {
-    auto PC = principal_curvature_map[v];
-      std::cout << i << ": HC = " << mean_curvature_map[v]
-                     << ", GC = " << gaussian_curvature_map[v] << "\n"
-                     << ", PC = [ " << std::get<0>(PC) << " , " << std::get<1>(PC) << " ]\n";
+    auto PC = get(principal_curvature_map, v);
+    std::cout << i << ": HC = " << get(mean_curvature_map, v)
+                   << ", GC = " << get(gaussian_curvature_map, v) << "\n"
+                   << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
     i++;
   }
 }
