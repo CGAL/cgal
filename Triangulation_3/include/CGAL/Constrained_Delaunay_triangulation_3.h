@@ -27,7 +27,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
@@ -164,7 +164,7 @@ public:
   using Face_index = CDT_3_face_index;
 private:
   struct CDT_2_types {
-    using Projection_traits = Triangulation_2_projection_traits_3<Geom_traits>;
+    using Projection_traits = Projection_traits_3<Geom_traits>;
     static_assert(std::is_nothrow_move_constructible<Projection_traits>::value,
                   "move cstr is missing");
 
