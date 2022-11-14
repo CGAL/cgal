@@ -996,7 +996,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *   \cgalParamNEnd
 *
 *
-*   \cgalParamNBegin{vertex_prinicipal_curvature_map}
+*   \cgalParamNBegin{vertex_principal_curvature_map}
 *     \cgalParamDescription{a property map associating mean curvatures to the vertices of `pmesh`}
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%Vertex_descriptor`
