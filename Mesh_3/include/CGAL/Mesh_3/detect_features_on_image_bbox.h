@@ -60,6 +60,7 @@ void detect_features_on_bbox(const CGAL::Image_3& image, Mesh_domain& domain)
 
 struct Detect_features_on_image_bbox
 {
+public:
   template<typename Mesh_domain>
   void operator()(const CGAL::Image_3& image, Mesh_domain& domain)
   {

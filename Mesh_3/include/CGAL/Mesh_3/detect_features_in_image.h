@@ -253,6 +253,7 @@ bool detect_features_in_image(const CGAL::Image_3& image, Mesh_domain& domain)
 
 struct Detect_features_in_image
 {
+public:
   template<typename Mesh_domain>
   void operator()(const CGAL::Image_3& image, Mesh_domain& domain)
   {

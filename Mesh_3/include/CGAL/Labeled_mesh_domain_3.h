@@ -591,6 +591,14 @@ public:
    *                            bound, relative to the diameter of the box of the image.}
    *     \cgalParamDefault{FT(1e-3)}
    *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{detect_features}
+   *    \cgalParamDescription{ a functor can be passed to
+   *      `std::function<void(const CGAL::Image_3&, Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>&)>`}
+   *    \cgalParamDefault{CGAL::Null_functor()}
+   *    \cgalParamExtra{The return type of the function depends on whether this parameter is provided or not.}
+   *   \cgalParamNEnd
+   *
    * \cgalNamedParamsEnd
    *
    * \cgalHeading{Example}
@@ -604,6 +612,10 @@ public:
    *
    * \snippet Mesh_3/mesh_3D_weighted_image.cpp Domain creation
    *
+   * From the example (\ref Mesh_3/mesh_3D_image_with_detection_of_features.cpp)
+   * where the features are detected in `image_`:
+   *
+   * \snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
    */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static
