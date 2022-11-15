@@ -76,7 +76,7 @@ namespace internal {
   do not suffice to solve constructed linear system.
 
   Note that if the vertex range to which fairing is applied contains all the vertices of the triangle mesh,
-  fairing does not fail, but the mesh gets shrinked to `CGAL::ORIGIN`.
+  fairing does not fail, but the mesh gets shrunk to `CGAL::ORIGIN`.
 
   @tparam TriangleMesh a model of `FaceGraph` and `MutableFaceGraph`
   @tparam VertexRange a range of vertex descriptors of `TriangleMesh`, model of `Range`.

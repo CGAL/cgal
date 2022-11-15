@@ -57,7 +57,7 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::IO::Color c = get(ipm, fh)? CGAL::yellow() : CGAL::white();
+    CGAL::IO::Color c = get(ipm, fh)? CGAL::IO::yellow() : CGAL::IO::white();
     face_begin(c);
 
     add_point_in_face(fh->vertex(0)->point());
@@ -69,7 +69,7 @@ protected:
 
   void compute_edge(Edge_const_handle eh)
   {
-    CGAL::IO::Color  c = t2.is_constrained(*eh)? CGAL::green() : CGAL::black();
+    CGAL::IO::Color  c = t2.is_constrained(*eh)? CGAL::IO::green() : CGAL::IO::black();
     add_segment(eh->first->vertex(eh->first->cw(eh->second))->point(),
                 eh->first->vertex(eh->first->ccw(eh->second))->point(),
                 c);

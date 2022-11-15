@@ -1063,7 +1063,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor>             halfedges_pair;
 
-  CGAL_precondition(h != boost::graph_traits<PolygonMesh>::null_halfedge());
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pmesh));
   CGAL_precondition(is_border(h, pmesh));
   CGAL_precondition(is_valid(pmesh));
 

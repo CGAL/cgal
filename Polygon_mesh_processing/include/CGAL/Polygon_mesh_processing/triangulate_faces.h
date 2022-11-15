@@ -474,6 +474,8 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
+
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
