@@ -27,7 +27,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 ### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 
-- Added a mesh domain named constructor `CGAL::create_labeled_image_mesh_domain_with_features()`
+- Added a new named parameter to the named constructor `CGAL::create_labeled_image_mesh_domain()`
 for automatic detection and protection
 of 1D-curves that lie at the intersection of three or more subdomains,
 extracted from labeled images.
