@@ -61,18 +61,22 @@ void detect_features_on_bbox(const CGAL::Image_3& image, Mesh_domain& domain)
 /*!
 * \ingroup PkgMesh3FeatureDetection
 *
-* Functor that detects and constructs the polylines that lie at the
-* intersection of two subdomains and the bounding box of the input labeled image.
-* The constructed polylines are added to `domain` for further feature protection.
-*
-* \tparam Mesh_domain class model of `MeshDomainWithFeatures_3`
-*
-* \param image the input image
-* \param domain the mesh domain to be enriched with polyline features
+* Functor for feature detection in labeled images.
 */
 struct Detect_features_on_image_bbox
 {
 public:
+
+  /*!
+  * detects and constructs the polylines that lie at the
+  * intersection of two subdomains and the bounding box of the input labeled image.
+  * The constructed polylines are added to `domain` for further feature protection.
+  *
+  * \tparam Mesh_domain class model of `MeshDomainWithFeatures_3`
+  *
+  * \param image the input image
+  * \param domain the mesh domain to be enriched with polyline features
+  */
   template<typename Mesh_domain>
   void operator()(const CGAL::Image_3& image, Mesh_domain& domain)
   {
