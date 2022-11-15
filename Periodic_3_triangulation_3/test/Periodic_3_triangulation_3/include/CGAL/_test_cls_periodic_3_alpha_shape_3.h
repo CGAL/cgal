@@ -71,10 +71,10 @@ _test_cls_alpha_shape_3()
 
   if(verbose) {
     std::cerr << " optimal de 1 " << *opt
-              << "nb of componants " << a1.number_of_solid_components(*opt)
+              << "nb of components " << a1.number_of_solid_components(*opt)
               << std::endl;
     std::cerr << " previous " << *previous
-              << "nb of componants "
+              << "nb of components "
               << a1.number_of_solid_components(*previous) << std::endl;
   }
   assert(a1.number_of_solid_components(*opt) == 1);

@@ -254,7 +254,7 @@ public:
     insert(first,last);
   }
 
-  //Assignement
+  //Assignment
   Triangulation_2 &operator=(const Triangulation_2 &tr);
   Triangulation_2 &operator=(Triangulation_2 &&) = default;
 
@@ -787,7 +787,7 @@ Triangulation_2(const Triangulation_2 &tr)
   _infinite_vertex = _tds.copy_tds(tr._tds, tr.infinite_vertex());
 }
 
-//Assignement
+//Assignment
 template <class Gt, class Tds >
 Triangulation_2<Gt, Tds> &
 Triangulation_2<Gt, Tds>::

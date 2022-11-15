@@ -144,7 +144,7 @@ struct Custom_traits_Hausdorff
   Compute_squared_distance_3 compute_squared_distance_3_object() const {return Compute_squared_distance_3();}
   Do_intersect_3 do_intersect_3_object() const {return Do_intersect_3();}
   Equal_3 equal_3_object() const {return Equal_3();}
-// } end of requirments from AABBGeomTraits
+// } end of requirements from AABBGeomTraits
 
 
 // requirements from SearchGeomTraits_3 {

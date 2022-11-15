@@ -583,7 +583,7 @@ The latter has cylindrical and spherical patches at convex edges and vertices of
 
 Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$ we can associate  a <em>prism</em> to each triangle by intersecting two halfspaces
 parallel to the triangle, three halfspaces orthogonal to the triangle and parallel to the edges,
-and additionaly halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
+and additionally halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
 of the angle.  These halfspaces are at distance  \f$ \delta \f$ and
 such that they contain the triangle.
 
@@ -820,7 +820,7 @@ to the input non-manifold vertex.
 
 \subsubsection FixNMVerticeExample Manifoldness Repair Example
 
-In the following example, a non-manifold configuration is artifically created and
+In the following example, a non-manifold configuration is artificially created and
 fixed with the help of the functions described above.
 
 \cgalExample{Polygon_mesh_processing/manifoldness_repair_example.cpp}

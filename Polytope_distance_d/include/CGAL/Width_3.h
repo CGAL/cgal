@@ -294,7 +294,7 @@ class Width_3 {
   }
 
   //During the algorithm we have to build union and minus set
-  //of two sets and check wheater two sets are cutting each othe ror not
+  //of two sets and check whether two sets are cutting each other or not
 
   // *** SETMINUS ***
   //------------------

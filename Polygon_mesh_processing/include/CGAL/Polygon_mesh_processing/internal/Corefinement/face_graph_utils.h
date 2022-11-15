@@ -1363,7 +1363,7 @@ void fill_new_triangle_mesh(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
 
-  // this is the miminal number of edges that will be marked (intersection edge).
+  // this is the minimal number of edges that will be marked (intersection edge).
   // We cannot easily have the total number since some patch interior edges might be marked
   output_shared_edges.reserve(
                               std::accumulate(polylines.lengths.begin(),polylines.lengths.end(),std::size_t(0)) );

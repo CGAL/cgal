@@ -1270,7 +1270,7 @@ bool is_planar_2(
 
   const double n = static_cast<double>(points.size() - 1); // the first equals to the last
   if (n < 3) {
-    return false; // cant be a plane!
+    return false; // can't be a plane!
   }
 
   // Compute centroid.

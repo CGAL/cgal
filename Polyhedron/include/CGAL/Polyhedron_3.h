@@ -898,7 +898,7 @@ public:
         return make_prevent_deref_range(facets_begin(), facets_end());
     }
 
-    // Auxiliary iterators for convinience
+    // Auxiliary iterators for convenience
     Point_iterator       points_begin()       { return vertices_begin();}
     Point_iterator       points_end()         { return vertices_end();}
 
@@ -1473,7 +1473,7 @@ public:
         // removes all vertices, halfedges, and facets.
 
     void erase_all() { clear(); }
-        // equivalent to `clear()'. Depricated.
+        // equivalent to `clear()'. Deprecated.
 
 // Special Operations on Polyhedral Surfaces
 

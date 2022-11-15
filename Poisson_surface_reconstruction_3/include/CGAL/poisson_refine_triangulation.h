@@ -130,7 +130,7 @@ public:
 
 
 private:
-  /* --- private datas --- */
+  /* --- private data --- */
   unsigned int max_vertices; ///< number of vertices bound (ignored if zero)
 
 }; // end Poisson_mesher_level_impl_base

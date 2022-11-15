@@ -70,7 +70,7 @@ public:
     : Triangulation_mesher_level_traits_3<Tr>(t), criteria(crit) {}
 
 protected:
-  /* --- protected datas --- */
+  /* --- protected data --- */
   //  Tr& tr; /**< The triangulation itself. */
   Criteria criteria; /**< Meshing criteria for tetrahedra. */
 
@@ -256,7 +256,7 @@ public:
   }
 
 protected:
-  /* --- protected datas --- */
+  /* --- protected data --- */
   Surface& surface;
   Oracle& oracle;
 

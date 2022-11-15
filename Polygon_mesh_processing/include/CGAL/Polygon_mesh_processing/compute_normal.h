@@ -618,7 +618,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 *
 * computes the unit normal at vertex `v` as the average of the normals of incident faces.
 *
-* @note The function `compute_vertex_normals()` should be prefered if normals are intended to be
+* @note The function `compute_vertex_normals()` should be preferred if normals are intended to be
 *       computed at all vertices of the graph.
 *
 * @tparam PolygonMesh a model of `FaceGraph`

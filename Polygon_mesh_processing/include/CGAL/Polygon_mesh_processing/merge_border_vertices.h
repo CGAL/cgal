@@ -65,7 +65,7 @@ struct Less_on_point_of_target
 // Given a container of vectors of halfedges whose target are geometrically identical,
 // check that the intervals described by these pairs are either disjoint or nested.
 // This is done to ensure valid combinatorics when we merge the vertices.
-// If incompatible (overlapping) intervals are found, the pair representating the longest
+// If incompatible (overlapping) intervals are found, the pair representing the longest
 // interval (arbitrary choice) is removed from the candidate list.
 template <typename VPM, typename PolygonMesh>
 void sanitize_candidates(const std::vector<std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, std::size_t> >& cycle_hedges,

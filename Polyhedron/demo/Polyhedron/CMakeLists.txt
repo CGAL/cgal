@@ -70,7 +70,7 @@ set_package_properties(
   Eigen3 PROPERTIES
   DESCRIPTION "A library for mathematical tools."
   PURPOSE
-    "Requiered for the Polyhedron Edit, Parameterization, Jet fitting, Classification plugin, Surface reconstruction, Normal estimation, Smoothing, Average spacing, Feature detection, Hole Filling and Fairing plugins ."
+    "Required for the Polyhedron Edit, Parameterization, Jet fitting, Classification plugin, Surface reconstruction, Normal estimation, Smoothing, Average spacing, Feature detection, Hole Filling and Fairing plugins ."
 )
 include(CGAL_Eigen3_support)
 
@@ -79,7 +79,7 @@ include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
   DESCRIPTION "A library for partitioning."
-  PURPOSE "Requiered for the partition plugin.")
+  PURPOSE "Required for the partition plugin.")
 
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY "Enable concurrency" ON)
@@ -100,7 +100,7 @@ find_package(LibSSH)
 set_package_properties(
   LibSSH PROPERTIES
   DESCRIPTION "A library used to enable the SSH features. "
-  PURPOSE "Requiered for loading (saving) a scene to (from) a distant server.")
+  PURPOSE "Required for loading (saving) a scene to (from) a distant server.")
 
 if(NOT LIBSSH_FOUND)
   message("NOTICE : The SSH features will be disabled.")
@@ -135,7 +135,7 @@ set_package_properties(
   TBB PROPERTIES
   DESCRIPTION
     "A library for parallelism. Mesh_3, Bilateral smoothing and WLOP plugins are faster if TBB is linked."
-  PURPOSE "Requiered for running some algorithms in parallel.")
+  PURPOSE "Required for running some algorithms in parallel.")
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})

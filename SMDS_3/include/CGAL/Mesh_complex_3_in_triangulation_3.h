@@ -298,7 +298,7 @@ public:
   Mesh_complex_3_in_triangulation_3(Self&& rhs);
 
   /**
-  * Assignement operator, also serves as move-assignment
+  * Assignment operator, also serves as move-assignment
   */
   Self& operator=(Self rhs)
   {
@@ -1729,7 +1729,7 @@ Mesh_complex_3_in_triangulation_3()
   , manifold_info_initialized_(false) //TODO: parallel!
 {
   // We don't put it in the initialization list because
-  // std::atomic has no constructor
+  // std::atomic has no constructors
   number_of_facets_ = 0;
   number_of_cells_ = 0;
 }
