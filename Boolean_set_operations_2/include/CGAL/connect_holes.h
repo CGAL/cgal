@@ -213,7 +213,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
     else if (CGAL::assign (he, vrs_iter->second.second))
     {
       // v_top lies below the interior of the hafledge he_above:
-      // Find the intersection of this halfegde with a vertical ray
+      // Find the intersection of this halfedge with a vertical ray
       // emanating from v_top.
       he_above = arr.non_const_handle (he);
 

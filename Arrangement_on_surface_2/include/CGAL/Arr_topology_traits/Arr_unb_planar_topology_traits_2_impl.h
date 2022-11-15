@@ -323,12 +323,12 @@ place_boundary_vertex(Face* f,
       return Result(curr);
     }
 
-    // Move to the next halfegde along the CCB.
+    // Move to the next halfedge along the CCB.
     curr = curr->next();
 
   } while (curr != first);
 
-  // If we reached here, we did not find a suitable halfegde, which should
+  // If we reached here, we did not find a suitable halfedge, which should
   // never happen.
   CGAL_error();
   return boost::none;

@@ -74,7 +74,7 @@ typedef unspecified_type Construct_projected_point_3;
 /*!
 A functor object to compare the distance of two points wrt a third one. Provides the operator:
 
-`CGAL::Comparision_result operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3)`,
+`CGAL::Comparison_result operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3)`,
 
 which compares the distance between `p1 and `p2`, and between `p2` and `p3`.
 */

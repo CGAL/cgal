@@ -197,7 +197,7 @@ namespace CGAL {
         // Read the x-monotone curve associated with the edge.
         formatter.read_x_monotone_curve(m_curve);
 
-        // Allocate a pair of new DCEL halfegdes and associate them with the
+        // Allocate a pair of new DCEL halfedges and associate them with the
         // x-monotone curve we read.
         new_he = m_arr_access.new_edge(&m_curve);
       }

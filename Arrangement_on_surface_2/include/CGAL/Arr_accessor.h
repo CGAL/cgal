@@ -619,7 +619,7 @@ public:
   /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param p The split point.
    * \param cv1 The curve that should be associated with the first split edge,
    *            whose source equals e's source and its target is p.
@@ -641,7 +641,7 @@ public:
   /*!
    * Split a given edge into two at the given vertex, and associate the given
    * x-monotone curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
    * \param cv1 The curve that should be associated with the first split edge,
    *            whose source equals e's source and its target is v's point.
@@ -663,7 +663,7 @@ public:
 
   /*!
    * Split a fictitious edge at the given vertex.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
    * \return A handle for the first split halfedge, whose source equals the
    *         source of e, and whose target is the split vertex v.

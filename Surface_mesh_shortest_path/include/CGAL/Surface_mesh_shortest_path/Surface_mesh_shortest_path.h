@@ -144,7 +144,7 @@ public:
 
   /// \brief An ordered pair specifying a location on the surface of the `Triangle_mesh`.
   /// \details If `tm` is the input graph and given the pair (`f`, `bc`) such that `bc` is `(w0, w1, w2)`,
-  ///  the correspondance with the weights in `bc` and the vertices of the face `f` is the following:
+  ///  the correspondence with the weights in `bc` and the vertices of the face `f` is the following:
   /// - `w0 = source(halfedge(f,tm),tm)`
   /// - `w1 = target(halfedge(f,tm),tm)`
   /// - `w2 = target(next(halfedge(f,tm),tm),tm)`

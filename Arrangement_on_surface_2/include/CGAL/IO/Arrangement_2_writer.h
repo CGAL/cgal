@@ -307,7 +307,7 @@ namespace CGAL {
       return (pos->second);
     }
 
-    /*! Get the mapped index of a given halfegde. */
+    /*! Get the mapped index of a given halfedge. */
     int _index(const DHalfedge* he) const
     {
       typename Halfedge_index_map::const_iterator  pos = m_he_index.find(he);

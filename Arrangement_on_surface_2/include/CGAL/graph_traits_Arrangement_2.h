@@ -83,7 +83,7 @@ private:
   /*! \class
    * Iteratator over all outgoing halfedges around a given vertex., skipping
    * fictitious halfedges.
-   * This is by adapting the Halfegde_around_vertex_circulator type to an
+   * This is by adapting the Halfedge_around_vertex_circulator type to an
    * iterator. Moreover, as the circulator goes over all ingoing halfedges
    * of the vertex, the iterator adapter may return their twin halfedges, if
    * we need the outgoing halfedges.

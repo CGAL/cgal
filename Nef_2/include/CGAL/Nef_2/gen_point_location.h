@@ -345,7 +345,7 @@ public:
 /*{\Mtypes}*/
   // define additional types
   typedef GenericLocation<Node, Edge> Location;
-  /*{\Mtypedef usual return value for the point loaction.}*/
+  /*{\Mtypedef usual return value for the point loction.}*/
 
   enum Direction { downwards, upwards};
   /*{\Menum used to specify the direction for the point location.}*/

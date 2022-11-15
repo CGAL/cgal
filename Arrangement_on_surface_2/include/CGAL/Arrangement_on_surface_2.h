@@ -708,19 +708,19 @@ public:
     Halfedge_const_handle twin() const
     { return (DHalfedge_const_iter(Base::opposite())); }
 
-    /*! Get the previous halfegde in the chain (non-const version). */
+    /*! Get the previous halfedge in the chain (non-const version). */
     Halfedge_handle prev()
     { return (DHalfedge_iter(Base::prev())); }
 
-    /*! Get the previous halfegde in the chain (const version). */
+    /*! Get the previous halfedge in the chain (const version). */
     Halfedge_const_handle prev() const
     { return (DHalfedge_const_iter(Base::prev())); }
 
-    /*! Get the next halfegde in the chain (non-const version). */
+    /*! Get the next halfedge in the chain (non-const version). */
     Halfedge_handle next()
     { return (DHalfedge_iter(Base::next())); }
 
-    /*! Get the next halfegde in the chain (const version). */
+    /*! Get the next halfedge in the chain (const version). */
     Halfedge_const_handle next() const
     { return (DHalfedge_const_iter(Base::next())); }
 
@@ -1486,7 +1486,7 @@ public:
   /*!
    * Split a given edge into two, and associate the given x-monotone
    * curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param cv1 The curve that should be associated with the first split edge.
    * \param cv2 The curve that should be associated with the second split edge.
 
@@ -1503,8 +1503,8 @@ public:
   /*!
    * Merge two edges to form a single edge, and associate the given x-monotone
    * curve with the merged edge.
-   * \param e1 The first edge to merge (one of the pair of twin halfegdes).
-   * \param e2 The second edge to merge (one of the pair of twin halfegdes).
+   * \param e1 The first edge to merge (one of the pair of twin halfedges).
+   * \param e2 The second edge to merge (one of the pair of twin halfedges).
    * \param cv The curve that should be associated with merged edge.
    * \return A handle for the merged halfedge.
    */
@@ -1513,7 +1513,7 @@ public:
 
   /*!
    * Remove an edge from the arrangement.
-   * \param e The edge to remove (one of the pair of twin halfegdes).
+   * \param e The edge to remove (one of the pair of twin halfedges).
    * \param remove_source Should the source vertex of e be removed if it
    *                      becomes isolated (true by default).
    * \param remove_target Should the target vertex of e be removed if it
@@ -2213,7 +2213,7 @@ protected:
   /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param p The split point.
    * \param cv1 The curve that should be associated with the first split edge,
    *            whose source equals e's source and its target is p.
@@ -2229,7 +2229,7 @@ protected:
   /*!
    * Split a given edge into two at a given vertex, and associate the given
    * x-monotone curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
    * \param cv1 The curve that should be associated with the first split edge,
    *            whose source equals e's source and its target is v.
@@ -2967,7 +2967,7 @@ void insert_non_intersecting_curves
  * the edges incident to the end-vertices of the removed edge after its
  * deletion, the function performs these merges as well.
  * \param arr The arrangement.
- * \param e The edge to remove (one of the pair of twin halfegdes).
+ * \param e The edge to remove (one of the pair of twin halfedges).
  * \return A handle for the remaining face.
  */
 template <typename GeomTraits, typename TopTraits>

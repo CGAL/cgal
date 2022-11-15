@@ -192,7 +192,7 @@ SHalfedge_around_svertex_const_circulator
 
 SFace_cycle_const_iterator sface_cycles_begin(SFace_const_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
-The iterator is is convertable to |SVertex_const_handle|,
+The iterator is is convertible to |SVertex_const_handle|,
 |SHalfloop_const_handle|, or |SHalfedge_const_handle|.}*/
 { return f->boundary_entry_objects_.begin(); }
 
@@ -370,7 +370,7 @@ check_integrity_and_topological_planarity(bool faces) const
   /* this means all face cycles and all isolated vertices are
      indeed referenced from a face */
   /* every isolated vertex increases the component count
-       one face cycle per component is redundent except one
+       one face cycle per component is redundant except one
        finally check the Euler formula: */
   CGAL_assertion( v_num - e_num + f_num == 1 + c_num );
 }

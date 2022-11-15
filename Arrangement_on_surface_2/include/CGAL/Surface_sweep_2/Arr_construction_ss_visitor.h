@@ -637,7 +637,7 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 #endif
   }
 
-  // Update the last event with the inserted halfegde (if necessary)
+  // Update the last event with the inserted halfedge (if necessary)
   // and check if we have to update the auxiliary information on the location
   // of holes.
   if ((last_event->number_of_left_curves() == 0) &&

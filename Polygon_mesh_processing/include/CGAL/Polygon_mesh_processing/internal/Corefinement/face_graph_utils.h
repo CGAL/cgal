@@ -944,7 +944,7 @@ void import_polyline(
   halfedge_descriptor prev1=h1;
   halfedge_descriptor prev2=h2;
 
-  //set the correspondance
+  //set the correspondence
   pm1_to_output_edges.insert(
     std::make_pair(edge(prev1, pm1), edge(prev_out, output)) );
   pm2_to_output_edges.insert(

@@ -4709,7 +4709,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // RWRW: NEW!
       CGAL_assertion((oc1 != nullptr) && (oc2 != nullptr));
 
-      // In case both halfegdes he1 and he2 are incident to the same face
+      // In case both halfedges he1 and he2 are incident to the same face
       // but lie on different outer CCBs of this face, removing this pair of
       // halfedge causes the two components two merge and to become an
       // inner CCB in the face.

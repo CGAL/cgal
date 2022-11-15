@@ -595,7 +595,7 @@ _compute_next_intersection(Halfedge_handle he,
 
   // The intersections with the curve have not been computed yet, so we
   // have to compute them now. Note that the first curve we intersect is
-  // always the subcurve associated with the given halfegde and the second
+  // always the subcurve associated with the given halfedge and the second
   // curve is the one we insert. Even though the order seems unimportant, we
   // exploit this fact in some of the traits classes in order to optimize
   // computations.

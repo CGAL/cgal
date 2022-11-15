@@ -182,7 +182,7 @@ init_x_O_v_i()
   x_O_v_i.reserve(qp_n);
   x_O_v_i.resize (qp_n);
 
-  // constants for comparisions:
+  // constants for comparisons:
   const L_entry l0(0);
   const U_entry u0(0);
 

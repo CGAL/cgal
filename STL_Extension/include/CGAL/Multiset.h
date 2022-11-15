@@ -624,7 +624,7 @@ public:
   //@{
 
   /*!
-   * Get the comparsion object used by the tree (non-const version).
+   * Get the comparison object used by the tree (non-const version).
    */
   inline Compare& key_comp ()
   {
@@ -632,7 +632,7 @@ public:
   }
 
   /*!
-   * Get the comparsion object used by the tree (non-const version).
+   * Get the comparison object used by the tree (non-const version).
    */
   inline Compare& value_comp ()
   {
@@ -641,7 +641,7 @@ public:
 
 
   /*!
-   * Get the comparsion object used by the tree (const version).
+   * Get the comparison object used by the tree (const version).
    */
   inline const Compare& key_comp () const
   {
@@ -649,7 +649,7 @@ public:
   }
 
   /*!
-   * Get the comparsion object used by the tree (const version).
+   * Get the comparison object used by the tree (const version).
    */
   inline const Compare& value_comp () const
   {

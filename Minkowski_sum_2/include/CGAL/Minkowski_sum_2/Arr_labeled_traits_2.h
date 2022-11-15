@@ -21,7 +21,7 @@
 namespace CGAL {
 
 /*! \class
- * A meta-traits class that adds lables to points and to x-monotone curves,
+ * A meta-traits class that adds labels to points and to x-monotone curves,
  * such that the comparison of two points, as well as the computation of the
  * intersections between two segments can be easily filtered.
  */

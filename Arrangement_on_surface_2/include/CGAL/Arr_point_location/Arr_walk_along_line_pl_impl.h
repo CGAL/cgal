@@ -98,7 +98,7 @@ Arr_walk_along_line_point_location<Arrangement>::locate(const Point_2& p) const
           //     |              |
           //     +--------------+
           //
-          // In this case, we find the first halfegde whose target is x
+          // In this case, we find the first halfedge whose target is x
           // in a clockwise direction from "6 o'clock" around x and take
           // its incident face.
 

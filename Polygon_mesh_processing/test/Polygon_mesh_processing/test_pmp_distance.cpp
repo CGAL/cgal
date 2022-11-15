@@ -121,7 +121,7 @@ struct Custom_traits_Hausdorff
 
   struct Has_on_bounded_side_3
   {
-    //documented as Comparision_result
+    //documented as Comparison_result
     CGAL::Comparison_result operator()(const Point_3&, const Point_3&, const Point_3&) const
     {return CGAL::ZERO;}
     bool operator()(const Sphere_3&, const Point_3&)

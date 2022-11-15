@@ -465,7 +465,7 @@ private:
    typedef std::vector<Node_id>                                        Node_ids;
    typedef std::unordered_map<face_descriptor,Node_ids>             On_face_map;
    typedef std::unordered_map<edge_descriptor,Node_ids>             On_edge_map;
-   //to keep the correspondance between node_id and vertex_handle in each mesh
+   //to keep the correspondence between node_id and vertex_handle in each mesh
    typedef internal::Node_id_to_vertex<TriangleMesh,
                                        doing_autorefinement||
                                        handle_non_manifold_features>
@@ -1111,7 +1111,7 @@ public:
       Node_ids& node_ids=it2->second;
       CGAL_assertion( std::set<Node_id>(node_ids.begin(), node_ids.end())
                         .size()==node_ids.size() );
-      //sort nodes along the egde to allow consecutive splits
+      //sort nodes along the edge to allow consecutive splits
       sort_vertices_along_hedge(node_ids,hedge,tm,vpm,nodes);
 
       //save original face and nodes for face of hedge (1)

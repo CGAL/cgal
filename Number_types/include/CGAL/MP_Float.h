@@ -617,7 +617,7 @@ division(const MP_Float & n, const MP_Float & d)
 
   CGAL_precondition(divisor != 0);
 
-  // Rescale d to have a to_double() value with reasonnable exponent.
+  // Rescale d to have a to_double() value with reasonable exponent.
   exponent_type scale_d = divisor.find_scale();
   divisor.rescale(scale_d);
   const double dd = INTERN_MP_FLOAT::to_double(divisor);

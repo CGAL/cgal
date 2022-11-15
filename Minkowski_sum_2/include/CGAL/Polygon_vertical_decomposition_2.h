@@ -93,7 +93,7 @@ private:
 
   // Data members:
   const Traits_2* m_traits;
-  bool m_own_traits;    // inidicates whether the kernel should be freed up.
+  bool m_own_traits;    // indicates whether the kernel should be freed up.
 
   Compare_x_2 f_cmp_x;
   Intersect_2 f_intersect;
@@ -280,7 +280,7 @@ private:
     CGAL::decompose(arr, std::back_inserter(vd_list));
 
     // Go over the vertices (given in ascending lexicographical xy-order),
-    // and add segements to the feautres below and above it.
+    // and add segments to the feautres below and above it.
     typename Vert_decomp_list::iterator it, prev = vd_list.end();
     for (it = vd_list.begin(); it != vd_list.end(); ++it) {
       // If the feature above the previous vertex is not the current vertex,

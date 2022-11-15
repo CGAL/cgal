@@ -231,7 +231,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
     }
 
     // In case the curves are not equal, just return the incident face of
-    // the single halfegde (note that this is also the incident face of its
+    // the single halfedge (note that this is also the incident face of its
     // twin, as v is the tip of an "antenna").
     if (! equal_curr) {
       CGAL_assertion(curr->face() == curr->twin()->face());
@@ -251,7 +251,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
                            (next->direction() == ARR_RIGHT_TO_LEFT),
                            vp, eq_curr, eq_next))
     {
-      // Break the loop if seg equals one of the halfegdes next to v.
+      // Break the loop if seg equals one of the halfedges next to v.
       if (eq_curr) {
         equal_curr = true;
         break;
@@ -276,7 +276,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
     }
 
     // In case seg is not equal to curr's curve, just return the incident face
-    // of the halfegde we have located.
+    // of the halfedge we have located.
     if (! equal_curr)
       return make_result(curr->face());
   }

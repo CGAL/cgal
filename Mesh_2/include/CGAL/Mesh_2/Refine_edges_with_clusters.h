@@ -82,7 +82,7 @@ public:
   }
 
 
-  /** \name FUNCTIONS NEEDED BY Mesher_level OVERIDDEN BY THIS CLASS. */
+  /** \name FUNCTIONS NEEDED BY Mesher_level OVERRIDDEN BY THIS CLASS. */
 
   Point refinement_point_impl(const Edge& edge)
   {
@@ -104,7 +104,7 @@ public:
     vb_has_a_cluster = false;
     cluster_splitted = false;
 
-    // true bellow to remove ca and cb because they will
+    // true below to remove ca and cb because they will
     // be restored by update_cluster(...).
     if( clusters.get_cluster(this->va,this->vb,ca,ca_it) ) {
       if( clusters.get_cluster(this->vb,this->va,cb,cb_it) )
