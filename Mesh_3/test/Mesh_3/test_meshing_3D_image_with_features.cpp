@@ -18,6 +18,7 @@
 #include <CGAL/Image_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
+#include <CGAL/Mesh_3/Detect_features_in_image.h>
 #include <CGAL/use.h>
 
 template <typename Concurrency_tag = CGAL::Sequential_tag>
@@ -48,10 +49,11 @@ public:
       << CGAL::get_default_random().get_seed() << std::endl;
 
     namespace p = CGAL::parameters;
-    Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain_with_features
+    Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
       (p::image = image,
        p::relative_error_bound = 1e-9,
-       CGAL::parameters::p_rng = &CGAL::get_default_random());
+       CGAL::parameters::p_rng = &CGAL::get_default_random(),
+       CGAL::parameters::detect_features = CGAL::Mesh_3::Detect_features_in_image());
 
     // Set mesh criteria
     Mesh_criteria criteria(p::edge_size = 2 * image.vx(),
