@@ -1365,7 +1365,7 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
     return !(is_default_parameter<NamedParameters, internal_np::normal_t>::value);
   }
 
-  static constexpr bool has_normal_map(Point_set_3<Point, Vector>& ps, const NamedParameters&)
+  static constexpr bool has_normal_map(Point_set_3<Point, Vector>&, const NamedParameters&)
   {
     return true; // either available in named parameters, and always available in Point_set_3 otherwise
   }
