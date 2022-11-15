@@ -735,6 +735,24 @@ Surface of the output mesh generated with a very small `facet_distance`
 without the weights (left, 25563 vertices) and with the weights (right, 19936 vertices).
 \cgalFigureEnd
 
+\subsubsection Mesh_3DomainsFrom3DImagesWithFeatures Domains From Segmented 3D Images, with Feature Detection
+
+The example \ref Mesh_3/mesh_3D_image_with_detection_of_features.cpp shows how to use
+the feature detection functors `CGAL::Mesh_3::Detect_features_in_image` and
+`CGAL::Mesh_3::Detect_features_on_image_bbox`, in order to get a quality discretization
+of the curves lying at the intersection of three or more subdomains (including the outside).
+The original feature detection algorithm was described in \cgalCite{cgal:hssz-gmcabonbc-97},
+along with a list of possible voxel configurations. The detection implemented in \cgal
+generalizes this description and computes a graph of polyline features at the Intersection
+of three or more subdomains.
+
+\cgalExample{Mesh_3/mesh_3D_image_with_detection_of_features.cpp}
+
+\cgalFigureBegin{figure_detectFeaturesInImage, detect_features_in_image.jpg}
+Surface of the output mesh generated from a labeled image without (left)
+and with (right) feature detection and protection.
+\cgalFigureEnd
+
 
 \subsubsection Mesh_3DomainsFrom3DImagesWithCustomInitialization Domains From 3D Images, with a Custom Initialization
 
