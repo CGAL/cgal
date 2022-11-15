@@ -86,7 +86,7 @@ protected:
   }
 
 public:
-  /* Overriden functions of this level: */
+  /* Overridden functions of this level: */
   /* we override all methods that call test_if_cell_is_bad() */
 
   void scan_triangulation_impl()

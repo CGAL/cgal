@@ -1333,7 +1333,7 @@ protected:
       {
         return get_dart_id(dh2)-get_dart_id(dh1);
       }
-      // here we have to add the degree (i.e. substract the vertex info)
+      // here we have to add the degree (i.e. subtract the vertex info)
       return get_dart_id(dh2)-get_local_map().template info<0>(dh1)-get_dart_id(dh1);
     }
     // here we know there is a hole just before the dart 0 (plus maybe other ones)
@@ -1356,7 +1356,7 @@ protected:
       {
         return get_dart_id(dh1)-get_dart_id(dh2);
       }
-      // here we have to add the degree (i.e. substract the vertex info)
+      // here we have to add the degree (i.e. subtract the vertex info)
       return get_dart_id(dh1)-get_local_map().template info<0>(dh1)-get_dart_id(dh2);
     }
     // here we know there is a hole just before the dart 0 (plus maybe other ones)

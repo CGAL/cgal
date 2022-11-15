@@ -324,7 +324,7 @@ public:
     return exp + exponent_type(v.size());
   }
 
-  // Rescale the value by some factor (in limbs).  (substract the exponent)
+  // Rescale the value by some factor (in limbs).  (subtract the exponent)
   void rescale(exponent_type scale)
   {
     if (v.size() != 0)

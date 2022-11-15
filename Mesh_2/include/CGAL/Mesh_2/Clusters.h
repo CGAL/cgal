@@ -70,7 +70,7 @@ public:
   /** \name Clusters public types */
 
   /**
-   * `Cluster` register several informations about clusters.
+   * `Cluster` register information about clusters.
    * A cluster is a set of vertices v_i incident to one vertice
    * v_0, so that angles between segments [v_0, v_i] is less than 60
    * degres.

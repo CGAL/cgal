@@ -20,7 +20,7 @@ takes an filename.off file as input,
 it computes a fitting for each vertex
 
 it outputs the results in :
-1. filename.off.4ogl.txt  which records raw data (better for a vizualization
+1. filename.off.4ogl.txt  which records raw data (better for a visualization
    post-processing)
 2. if option -vtrue, filename.off.verb.txt contains human readable results
 
@@ -43,7 +43,7 @@ Allowed options:
 
 
 Note : if the nb of collected points is less than the required min number of 
-   points to make the approxiamtion possible (which is constrained by the deg)
+   points to make the approximation possible (which is constrained by the deg)
    then the vertex is skipped.
 
 ./Mesh_estimation

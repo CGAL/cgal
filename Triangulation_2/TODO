@@ -52,7 +52,7 @@ ou de la face infini
   par power_test_2(p,q,r)
 
 
-- Check if copy constructor and assignement operator of
+- Check if copy constructor and assignment operator of
   constrained triangulation transfers the contrained marks.
 - Something still tobe done for remove in Constrained
   Delaunay_constrained and  Constrained_triangulation_plus

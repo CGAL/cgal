@@ -618,7 +618,7 @@ When `verbose` is set to `true`, messages are printed to give
 a precise indication on the kind of invalidity encountered.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */
@@ -711,7 +711,7 @@ It must <I>at least</I> check that `v` has an incident full cell, which in
 turn must contain `v` as one of its vertices.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */
@@ -985,7 +985,7 @@ It must <I>at least</I> check that for each <I>existing</I> neighbor `n`,
 `c` is also a neighbor of `n`.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */

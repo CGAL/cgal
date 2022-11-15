@@ -457,7 +457,7 @@ remove_constraint(T va, T vb){
     CGAL_assertion(scit != sc_to_c_map.end());
     H_context_list* hcl = scit->second;
 
-    // and remove the contraint from the context list of the subcontraint
+    // and remove the constraint from the context list of the subcosntraints
     for(H_context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == hvl){
             hcl->erase(ctit);

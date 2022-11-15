@@ -42,7 +42,7 @@ namespace internal {
 
 };
 
-} // namesapce internal
+} // namespace internal
 
 template<typename GeomTraits,typename BaseFilter = internal::Dummy_filter2>
 class Polyhedral_envelope_filter

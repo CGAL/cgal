@@ -2,7 +2,7 @@
 # CGAL_SetupCGALDependencies
 # --------------------------
 #
-# The module searchs for the dependencies of the CGAL library:
+# The module searches for the dependencies of the CGAL library:
 #   - the `GMP/MPFR` couple,
 #   - `LEDA` (optional)
 #   - the `Boost` libraries (mostly the header-only libraries)

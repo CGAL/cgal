@@ -191,7 +191,7 @@ _test_cls_alpha_shape_3_exact()
   test_filtration(a1, verbose);
 
   std::cout << std::endl;
-  std::cout << "test additionnal creators and set mode" << std::endl;
+  std::cout << "test additional creators and set mode" << std::endl;
 
   Triangulation dt2(Lc.begin(), Lc.end());
   Alpha_shape_3 a2(dt2, 0, Alpha_shape_3::REGULARIZED);

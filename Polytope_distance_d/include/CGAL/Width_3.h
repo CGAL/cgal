@@ -264,7 +264,7 @@ class Width_3 {
 
   // *** NEIGHBORS_OF ***
   //----------------------
-  //To compute the neighbors of a vertex. The vertex is implicitely given
+  //To compute the neighbors of a vertex. The vertex is implicitly given
   //as the vertex the halfedge points to.
   template <class Halfedge_handle_, class Vertex_handle_>
     void neighbors_of(const Halfedge_handle_& h,

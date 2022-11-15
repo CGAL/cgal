@@ -400,7 +400,7 @@ note that a whole face of the cube (2 triangles) is exactly contained in the pla
 \subsubsection coref_ex_refine_subsec Boolean Operation and Local Remeshing
 
 This example is similar to the previous one, but here we
-substract a volume and update the first input triangulated surface mesh
+subtract a volume and update the first input triangulated surface mesh
 (in-place operation). The edges that are on the intersection of the input
 meshes are marked and the region around them is remeshed isotropically
 while preserving the intersection polyline.

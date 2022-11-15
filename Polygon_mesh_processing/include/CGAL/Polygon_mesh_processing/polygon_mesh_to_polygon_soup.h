@@ -84,7 +84,7 @@ struct PM_to_PS_point_converter<PM_Point, std::array<PS_FT, 3> >
 ///
 /// \cgalAdvancedBegin
 /// `PolygonRange` can also be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
-/// whose value type is an array, but it is the user's responsability to ensure that
+/// whose value type is an array, but it is the user's responsibility to ensure that
 /// all faces have the same number of vertices, and that this number is equal to the size of the array.
 /// \cgalAdvancedEnd
 ///

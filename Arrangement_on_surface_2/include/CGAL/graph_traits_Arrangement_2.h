@@ -37,7 +37,7 @@ namespace boost {
 
 /*! \class
  * Specialization of the BGL graph-traits template, which serves as a (primal)
- * adapter for Arrangment_on_surface_2, where the valid arrangement vertices
+ * adapter for Arrangement_on_surface_2, where the valid arrangement vertices
  * correspond to graph verices and arrangement halfedges correspond to
  * arrangement edges.
  * Note that non-fictitious vertices at infinity are also considered as graph
@@ -333,7 +333,7 @@ public:
 
 /*! \class
  * Specialization of the BGL graph-traits template, which serves as a (primal)
- * adapter for Arrangment_2, where the arrangement vertices correspond to graph
+ * adapter for Arrangement_2, where the arrangement vertices correspond to graph
  * verices and arrangement halfedges correspond to arrangement edges.
  */
 template <class Traits_, class Dcel_>

@@ -301,13 +301,13 @@ public:
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //!
-  //! Must be overriden;
+  //! Must be overridden;
   //!
   virtual void newViewer(CGAL::Three::Viewer_interface* viewer) = 0;
   //!
   //! \brief removeViewer removes the Vaos fo `viewer`.
   //!
-  //! Must be overriden;
+  //! Must be overridden;
   //!
   virtual void removeViewer(CGAL::Three::Viewer_interface* viewer) = 0;
 
@@ -384,7 +384,7 @@ public Q_SLOTS:
 
     //! Sets the value of the aplha Slider for this item.
     //!
-    //! Must be overriden;
+    //! Must be overridden;
     //! \param alpha must be between 0 and 255
     virtual void setAlpha(int alpha);
   //!Selects a point through raycasting.

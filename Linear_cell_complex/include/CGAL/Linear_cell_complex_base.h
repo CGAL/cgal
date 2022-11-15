@@ -834,7 +834,7 @@ namespace CGAL {
       return res;
     }
 
-    /** Set the status of the managment of the attributes of the Map
+    /** Set the status of the management of the attributes of the Map
      */
     void set_update_attributes(bool newval)
     {

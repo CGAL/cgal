@@ -187,7 +187,7 @@ public:
     : Base(t, crit), surface(s), oracle(o) {}
 
 public:
-  /* \name Overriden functions of this level */
+  /* \name Overridden functions of this level */
  Zone conflicts_zone_impl(const Point& p, Cell_handle c) const
   {
     Zone zone;

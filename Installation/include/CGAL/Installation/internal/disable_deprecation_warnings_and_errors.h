@@ -8,8 +8,8 @@
 //
 // Author: Mael Rouxel-Labbé
 
-// Some tests are explicitely used to check the sanity of deprecated code and should not
-// give warnings/errors on plateforms that defined CGAL_NO_DEPRECATED_CODE CGAL-wide
+// Some tests are explicitly used to check the sanity of deprecated code and should not
+// give warnings/errors on platforms that defined CGAL_NO_DEPRECATED_CODE CGAL-wide
 // (or did not disable deprecation warnings).
 
 #if !defined(CGAL_NO_DEPRECATION_WARNINGS)

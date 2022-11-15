@@ -165,7 +165,7 @@ void project_points(C3T3& c3t3,
  *
  * \attention Note that the triangulation must form at all times a simplicial complex within
  * a single copy of the domain (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
- * of the manual of 3D periodic triangulations). It is the responsability of the user to provide
+ * of the manual of 3D periodic triangulations). It is the responsibility of the user to provide
  * a triangulation that satisfies this condition when calling the refinement
  * function `refine_periodic_3_mesh_3`. The underlying triangulation of a mesh
  * complex obtained through `make_periodic_3_mesh_3()` or `refine_periodic_3_mesh_3()`

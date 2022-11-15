@@ -274,7 +274,7 @@ private:
   // Construct the vertical decomposition of the given arrangement.
   void vertical_decomposition(Arrangement_2& arr) const
   {
-    // For each vertex in the arrangment, locate the feature that lies
+    // For each vertex in the arrangement, locate the feature that lies
     // directly below it and the feature that lies directly above it.
     Vert_decomp_list vd_list;
     CGAL::decompose(arr, std::back_inserter(vd_list));

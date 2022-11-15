@@ -789,7 +789,7 @@ public:
 
   void skip_to_next_facet(std::size_t current_facet)
   {
-    // Take care of trailing informations like color triples.
+    // Take care of trailing information like color triples.
     if(binary())
     {
       boost::int32_t k;

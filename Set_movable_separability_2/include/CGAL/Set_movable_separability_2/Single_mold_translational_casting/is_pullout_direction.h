@@ -198,7 +198,7 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
 }
 
 } // namespace Single_mold_translational_casting
-} // namesapce Set_movable_separability_2
-} // namesapce CGAL
+} // namespace Set_movable_separability_2
+} // namespace CGAL
 
 #endif

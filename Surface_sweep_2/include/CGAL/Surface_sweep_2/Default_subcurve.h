@@ -299,7 +299,7 @@ public:
  *                    structure, and to construct/destroy the elements in that
  *                    memory. The type must meet the requirements of Allocator.
  * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
- *         overriden it implies that the type is
+ *         overridden it implies that the type is
  *         No_overlap_subcurve
  */
 template <typename GeometryTraits_2, typename Event_,

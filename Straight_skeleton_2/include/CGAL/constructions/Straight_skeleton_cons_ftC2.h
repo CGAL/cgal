@@ -254,7 +254,7 @@ construct_trisegment ( Segment_2_with_ID<K> const& e0,
 // If the lines intersect to the left, the returned distance is positive.
 // If the lines intersect to the right, the returned distance is negative.
 // If the lines do not intersect, for example, for collinear edges, or parallel edges but with the same orientation,
-// returns 0 (the actual distance is undefined in this case, but 0 is a usefull return)
+// returns 0 (the actual distance is undefined in this case, but 0 is a useful return)
 //
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)

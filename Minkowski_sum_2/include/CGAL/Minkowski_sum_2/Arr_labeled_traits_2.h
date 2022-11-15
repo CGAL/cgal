@@ -115,7 +115,7 @@ public:
                                                         Compare_y_at_x_right_2;
   typedef typename Base_traits_2::Equal_2               Equal_2;
 
-  /// \name Overriden functors.
+  /// \name Overridden functors.
   //@{
   class Compare_x_2 {
   private:
