@@ -18,11 +18,11 @@ typedef boost::graph_traits<Surface_Mesh>::vertex_descriptor vertex_descriptor;
 int main(int argc, char* argv[])
 {
   Surface_Mesh smesh;
-  const std::string filename = (argc>1) ?
-      argv[1] :
-      CGAL::data_file_path("meshes/small_bunny.obj");
+  const std::string filename = (argc > 1) ?
+    argv[1] :
+    CGAL::data_file_path("meshes/small_bunny.obj");
 
-  if(!CGAL::IO::read_polygon_mesh(filename, smesh))
+  if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -41,25 +41,25 @@ int main(int argc, char* argv[])
   Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvature<Epic_kernel>> principal_curvature_map;
 
   boost::tie(principal_curvature_map, created) = smesh.add_property_map<vertex_descriptor, PMP::Principal_curvature<Epic_kernel>>
-      ("v:principal_curvature_map", { 0, 0,
-          Epic_kernel::Vector_3(0,0,0),
-          Epic_kernel::Vector_3(0,0,0) });
+    ("v:principal_curvature_map", { 0, 0,
+        Epic_kernel::Vector_3(0,0,0),
+        Epic_kernel::Vector_3(0,0,0) });
   assert(created);
 
   // user can call these fucntions to compute a specfic curvature type on each vertex.
   PMP::interpolated_corrected_mean_curvature(
-      smesh,
-      mean_curvature_map
+    smesh,
+    mean_curvature_map
   );
 
   PMP::interpolated_corrected_gaussian_curvature(
-      smesh,
-      gaussian_curvature_map
+    smesh,
+    gaussian_curvature_map
   );
 
   PMP::interpolated_corrected_principal_curvatures(
-      smesh,
-      principal_curvature_map
+    smesh,
+    principal_curvature_map
   );
 
   // uncomment this to compute a curvature while specifying named parameters
@@ -81,16 +81,16 @@ int main(int argc, char* argv[])
   // This function can be used to compute multiple curvature types by specifiying them as named parameters
   // This is more efficient than computing each one separately (shared computations).
   PMP::interpolated_corrected_curvatures(
-      smesh,
-      CGAL::parameters::vertex_mean_curvature_map(mean_curvature_map)
-      .vertex_principal_curvature_map(principal_curvature_map)
+    smesh,
+    CGAL::parameters::vertex_mean_curvature_map(mean_curvature_map)
+    .vertex_principal_curvature_map(principal_curvature_map)
   );
 
   for (vertex_descriptor v : vertices(smesh))
   {
     auto PC = principal_curvature_map[v];
     std::cout << v.idx() << ": HC = " << mean_curvature_map[v]
-                         << ", GC = " << gaussian_curvature_map[v] << "\n"
-                         << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
+      << ", GC = " << gaussian_curvature_map[v] << "\n"
+      << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
   }
 }
