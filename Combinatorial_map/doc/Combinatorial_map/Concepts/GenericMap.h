@@ -450,28 +450,28 @@ template <unsigned int i>
 const Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_const_descriptor<i>::type ah) const;
 
 /*!
-A shorcut for \link GenericMap::info_of_attribute `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
+A shortcut for \link GenericMap::info_of_attribute `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
 \pre \link GenericMap::attribute `attribute<i>`\endlink`(adart)!=nullptr`.
 */
 template<unsigned int i>
 typename Attribute_type<i>::type::Info & info(Dart_descriptor adart);
 
 /*!
-A shorcut for \link GenericMap::info_of_attribute(typename Attribute_const_descriptor<i>::type)const `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
+A shortcut for \link GenericMap::info_of_attribute(typename Attribute_const_descriptor<i>::type)const `info_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
 \pre \link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart)!=nullptr`.
 */
 template<unsigned int i>
 const typename Attribute_type<i>::type::Info & info(Dart_const_descriptor adart) const;
 
 /*!
-A shorcut for \link GenericMap::dart_of_attribute `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
+A shortcut for \link GenericMap::dart_of_attribute `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
 \pre `attribute<i>(adart)!=nullptr`.
 */
 template<unsigned int i>
 Dart_descriptor & dart(Dart_descriptor adart);
 
 /*!
-A shorcut for \link GenericMap::dart_of_attribute(typename Attribute_const_descriptor<i>::type)const `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
+A shortcut for \link GenericMap::dart_of_attribute(typename Attribute_const_descriptor<i>::type)const `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
 \pre `attribute<i>(adart)!=nullptr`.
 */
 template<unsigned int i>

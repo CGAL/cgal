@@ -34,7 +34,7 @@ Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
   // intersect the two planes
   Object h_obj = k.intersect_3_object()(h1, h2);
   if(h_obj.is_empty())
-    return Object(); // no intersection at all (paralles planes)
+    return Object(); // no intersection at all (parallel planes)
 
   Plane_3 p;
   if(assign(p, h_obj))

@@ -255,7 +255,7 @@ namespace CGAL {
 
     class Eps_export_2 {
     // An instance of the following class accepts circles and ellipses
-    // and procudes an Enhanced-PostScript figure.
+    // and produces an Enhanced-PostScript figure.
     public:
       enum Stroke_mode { Solid=0, Solid_filled=1, Dashed=2 };
       enum Label_mode { None, Angle, Random_angle };
