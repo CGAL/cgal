@@ -223,7 +223,7 @@ class ConstructIsoRectangle_2
   public:
 
   /*!
-  introduces an iso-oriented rectangle fo whose minimal `x` coordinate
+  introduces an iso-oriented rectangle for whose minimal `x` coordinate
   is the one of `left`, the maximal `x` coordinate is the one of
   `right`, the minimal `y` coordinate is the one of `bottom`,
   the maximal `y` coordinate is the one of `top`.}

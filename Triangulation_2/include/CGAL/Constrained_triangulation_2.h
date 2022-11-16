@@ -46,7 +46,7 @@ struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
 // This was deprecated and replaced by ` No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`
-// due to an inconsistency between the code and the documenation.
+// due to an inconsistency between the code and the documentation.
 struct CGAL_DEPRECATED No_intersection_tag :
   public No_constraint_intersection_requiring_constructions_tag
 { };
@@ -608,7 +608,7 @@ public:
    return out;
  }
 
-  // the following fonctions are overloaded
+  // the following functions are overloaded
   // to take care of constraint marks
   template<class EdgeIt>
   Vertex_handle star_hole( const Point& p,

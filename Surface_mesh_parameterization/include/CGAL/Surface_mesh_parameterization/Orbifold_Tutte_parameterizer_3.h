@@ -64,7 +64,7 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// reads a serie of cones from an input stream. Cones are passed as an
+/// reads a series of cones from an input stream. Cones are passed as an
 /// integer value that is the index of a vertex handle in the mesh tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
@@ -501,7 +501,7 @@ private:
     // ( L A' ) ( Xf ) = ( C )
     // ( A 0  ) ( Xf ) = ( 0 )
 
-    // Iterate on both rows ot the 2x2 matrix T
+    // Iterate on both rows of the 2x2 matrix T
     for(int vert_ind=0; vert_ind<2; ++vert_ind) {
       // building up the equations by summing up the terms
 

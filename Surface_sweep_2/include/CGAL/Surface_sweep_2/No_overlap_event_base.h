@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the No_overlap_event_base class.
+ * Definition of the No_overlap_event_base class.
  */
 
 #include <list>
@@ -84,7 +84,7 @@ public:
 /*! \class No_overlap_event_base
  *
  * A class associated with an event in a surface-sweep algorithm.
- * An intersection point in the sweep line algorithm is refered to as an event.
+ * An intersection point in the sweep line algorithm is referred to as an event.
  * This class contains the information that is associated with any given
  * event point. This information contains the following:
  * - the actual point

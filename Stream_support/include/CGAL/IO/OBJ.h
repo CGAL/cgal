@@ -140,7 +140,7 @@ bool read_OBJ(std::istream& is,
             s == "scrv" || s == "sp" || s == "end" ||
             s == "con" || s == "surf_1" || s == "q0_1" || s == "q1_1" || s == "curv2d_1" ||
             s == "surf_2" || s == "q0_2" || s == "q1_2" || s == "curv2d_2" ||
-            // supersed statements
+            // superseded statements
             s == "bsp" || s == "bzp" || s == "cdc" || s == "cdp" || s == "res")
     {
       // valid, but unsupported

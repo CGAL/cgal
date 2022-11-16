@@ -6,10 +6,10 @@
 The vertex of a segment Delaunay graph
 included in a segment Delaunay graph hierarchy has to provide
 some pointers to the corresponding vertices in the
-graphs of the next and preceeding levels.
+graphs of the next and preceding levels.
 Therefore, the concept `SegmentDelaunayGraphHierarchyVertexBase_2`
 refines the concept `SegmentDelaunayGraphVertexBase_2`, by
-adding two vertex handles to the correponding vertices for the
+adding two vertex handles to the corresponding vertices for the
 next and previous level graphs.
 
 \cgalRefines `SegmentDelaunayGraphVertexBase_2`

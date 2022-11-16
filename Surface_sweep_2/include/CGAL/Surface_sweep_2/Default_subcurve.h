@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the Default_subcurve class, which is an extended curve
+ * Definition of the Default_subcurve class, which is an extended curve
  * type, referred to as Subcurve, used by the surface-sweep framework.
  *
  * The surface-sweep framework is implemented as a template that is
@@ -59,7 +59,7 @@ namespace Surface_sweep_2 {
  *
  * The information contained in this class is:
  * - two pointers to subcurves that are the originating subcurves in case of
- *   an overlap, otherwise thay are both nullptr.
+ *   an overlap, otherwise they are both nullptr.
  */
 template <typename GeometryTraits_2, typename Event_, typename Allocator_,
           typename Subcurve_>

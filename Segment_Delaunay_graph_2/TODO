@@ -1,5 +1,5 @@
 - For release:
-  * add example that demostrates how to get edge info
+  * add example that demonstrates how to get edge info
   * remove enumeration type Arrangement_type as an enum type and add small
     is_*() methods that query the type
   * add test suites for {insert,remove}_degree_2 in TDS_2

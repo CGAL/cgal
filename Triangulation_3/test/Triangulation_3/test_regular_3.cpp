@@ -186,7 +186,7 @@ void test_RT()
   T111.insert(wp1);
   T111.insert(wp2);
   T111.insert(wp3);
-  T111.insert(wp13); // it doesnot work inserting wp13 here
+  T111.insert(wp13); // it doesn't work inserting wp13 here
   T111.insert(wp4);
   T111.insert(wp5);
   T111.insert(wp6);

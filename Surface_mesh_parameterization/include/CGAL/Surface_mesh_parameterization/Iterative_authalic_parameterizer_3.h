@@ -1014,7 +1014,7 @@ public:
         if(CGAL_SMP_IA_DEBUG_L0)
           std::cout << " *****" << std::flush;
       }
-      else if(err[i] > 100) // @fixme is that reasonnable
+      else if(err[i] > 100) // @fixme is that reasonable
       {
         break;
       }

@@ -961,7 +961,7 @@ remove(Vertex_handle v)
 //   // insert  point p in edge(f,i)
 //   // bypass the precondition for point a to be in edge(f,i)
 //   // update constrained status
-//   // this member fonction is not robust with exact predicates
+//   // this member function is not robust with exact predicates
 //   // and approximate construction. Should be removed
 // {
 //   Vertex_handle vh=Ctr::special_insert_in_edge(a,f,i);

@@ -1696,7 +1696,7 @@ Triangulation_2<Gt, Tds>::
 fill_hole(Vertex_handle v, std::list< Edge > & hole)
 {
   // uses the fact that the hole is starshaped
-  // with repect to v->point()
+  // with respect to v->point()
   typedef std::list<Edge> Hole;
 
   Face_handle ff, fn;
@@ -1803,7 +1803,7 @@ fill_hole(Vertex_handle v, std::list< Edge > & hole)
   // now hole has three edges
   typename Hole::iterator hit;
   hit = hole.begin();
-//  // I don't know why the following yelds a segmentation fault
+//  // I don't know why the following yields a segmentation fault
 //  create_face( (*hit).first, (*hit).second,
 //               (* ++hit).first, (*hit).second,
 //               (* ++hit).first, (*hit).second);
@@ -1821,7 +1821,7 @@ Triangulation_2<Gt,Tds>::
 fill_hole(Vertex_handle v, std::list<Edge> & hole, OutputItFaces fit)
 {
   // uses the fact that the hole is starshaped
-  // with repect to v->point()
+  // with respect to v->point()
   typedef std::list<Edge> Hole;
 
   Face_handle ff, fn;
@@ -1928,7 +1928,7 @@ fill_hole(Vertex_handle v, std::list<Edge> & hole, OutputItFaces fit)
   // now hole has three edges
   typename Hole::iterator hit;
   hit = hole.begin();
-//  // I don't know why the following yelds a segmentation fault
+//  // I don't know why the following yields a segmentation fault
 //  create_face( (*hit).first, (*hit).second,
 //               (* ++hit).first, (*hit).second,
 //               (* ++hit).first, (*hit).second);

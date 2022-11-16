@@ -131,7 +131,7 @@ public:
 // -------------------------------------------------------------------
 // Tree Anchor: this class is used as a recursion anchor.
 // The derived tree classes can be nested. Use this class as the
-// most inner class. This class is doing nothin exept stopping the recursion
+// most inner class. This class is doing nothing except stopping the recursion
 
 template <class C_Data, class C_Window>
 class Tree_anchor: public Tree_base< C_Data,  C_Window>

@@ -401,7 +401,7 @@ namespace CGAL {
       next_neighbour_found = search_in_leaf(node, dummy, false);
     }
         }   // next_neighbour_found or priority queue is empty
-        // in the latter case also the item priority quee is empty
+        // in the latter case also the item priority queue is empty
       }
 
 
@@ -465,7 +465,7 @@ namespace CGAL {
             next_neighbour_found = search_in_leaf(node, dummy, true);
           }
         }   // next_neighbour_found or priority queue is empty
-        // in the latter case also the item priority quee is empty
+        // in the latter case also the item priority queue is empty
       }
     }; // class Iterator_implementaion
 

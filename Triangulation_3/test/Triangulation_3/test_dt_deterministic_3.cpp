@@ -40,7 +40,7 @@ int main()
       buffer >> computed;
 
       if ( original!=computed ){
-        std::cout <<"Error: triangulations are differents"<< std::endl;
+        std::cout <<"Error: triangulations are different"<< std::endl;
         std::cout << "|" << original <<"| vs |"<< computed << "|"<< std::endl;
         return EXIT_FAILURE;
       }

@@ -94,7 +94,7 @@ public:
    */
   virtual int erase(QList<int>) = 0;
 
-  /*! Creates a copy of the item whith the id `id`.
+  /*! Creates a copy of the item with the id `id`.
    * @returns the index of the new item (-1 on error).
    */
     virtual Item_id duplicate(Item_id id) = 0;
@@ -146,7 +146,7 @@ public:
   //! \brief ignore data updating.
   //!
   //! This will ignore all the individual calls to `itemChanged()` until
-  //! `setUpdatesEnabled()` is called whith `b` being `true`.
+  //! `setUpdatesEnabled()` is called with `b` being `true`.
   //!
   virtual void setUpdatesEnabled(bool b) =0;
   //!

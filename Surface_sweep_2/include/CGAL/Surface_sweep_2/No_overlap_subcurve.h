@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the No_overlap_subcurve class, which is an
+ * Definition of the No_overlap_subcurve class, which is an
  * extended curve type, referred to as Subcurve, used by the surface-sweep
  * framework.
  *
@@ -122,7 +122,7 @@ public:
  * No_overlap_subcurve_base class template.
  *
  * The information contained in this class (in addition to the information
- * contaisn in its base) is:
+ * contained in its base) is:
  * - the remaining x-monotone curve that is to the right of the current sweep
  *   line.
  * \tparam GeometryTraits_2 the geometry traits.

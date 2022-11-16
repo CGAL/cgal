@@ -1,20 +1,4 @@
-// Copyright (c) 2001, 2009, 2014 Tel-Aviv University (Israel), Max-Planck-Institute Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-//
-// author(s)     : Eli Packer <elip@post.tau.ac.il>,
-//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
-
-#ifndef CGAL_SNAP_ROUNDING_KD_2_H
-#define CGAL_SNAP_ROUNDING_KD_2_H
-
-#include <CGAL/license/Snap_rounding_2.h>
+include <CGAL/license/Snap_rounding_2.h>
 
 
 #include <list>
@@ -411,7 +395,7 @@ public:
     int * kd_counter = new int[number_of_trees];
     std::size_t number_of_segments = seg_list.size();
 
-    // auxilary directions
+    // auxiliary directions
     Direction_list directions;
     double buffer_angle;
     Line_2 li;

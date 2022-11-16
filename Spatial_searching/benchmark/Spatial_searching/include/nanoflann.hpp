@@ -97,7 +97,7 @@ namespace nanoflann
                 {
                         CountType i;
                         for (i=count; i>0; --i) {
-#ifdef NANOFLANN_FIRST_MATCH   // If defined and two poins have the same distance, the one with the lowest-index will be returned first.
+#ifdef NANOFLANN_FIRST_MATCH   // If defined and two points have the same distance, the one with the lowest-index will be returned first.
                                 if ( (dists[i-1]>dist) || ((dist==dists[i-1])&&(indices[i-1]>index)) ) {
 #else
                                 if (dists[i-1]>dist) {
@@ -577,7 +577,7 @@ namespace nanoflann
 
         // ----------------  CArray -------------------------
         /** A STL container (as wrapper) for arrays of constant size defined at compile time (class imported from the MRPT project)
-         * This code is an adapted version from Boost, modifed for its integration
+         * This code is an adapted version from Boost, modified for its integration
          *        within MRPT (JLBC, Dec/2009) (Renamed array -> CArray to avoid possible potential conflicts).
          * See
          *      http://www.josuttis.com/cppcode
