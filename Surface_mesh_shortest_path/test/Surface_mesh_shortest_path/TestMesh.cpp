@@ -72,6 +72,12 @@ struct TestMeshProgramInstance
     numIterations = 1;
   }
 
+  ~TestMeshProgramInstance()
+  {
+    if (randomizer)
+      delete randomizer;
+  }
+
   size_t numIterations;
   std::string meshName;
   bool debugMode;
