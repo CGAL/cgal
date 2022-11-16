@@ -807,14 +807,14 @@ private Q_SLOTS:
     if (maxEdgeLength < 0)
     {
       auto edge_range = CGAL::edges(smesh);
-      
+
       if (edge_range.begin() == edge_range.end())
       {
         expand_radius = 0;
         dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
         return;
       }
-      
+
       auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, smesh](auto l, auto r) {
         auto res = EPICK().compare_squared_distance_3_object()(
             get(vpm, source((l), smesh)),
@@ -823,7 +823,7 @@ private Q_SLOTS:
             get(vpm, target((r), smesh)));
         return res == CGAL::SMALLER;
       });
-      
+
       // if edge_reference is not derefrenceble
       if (edge_reference == edge_range.end())
       {
@@ -831,12 +831,12 @@ private Q_SLOTS:
         dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius : %1").arg(expand_radius));
         return;
       }
-      
+
       maxEdgeLength = sqrt(
           (get(vpm, source((*edge_reference), smesh)) - get(vpm, target((*edge_reference), smesh)))
           .squared_length()
       );
-      
+
     }
 
     double outMin = 0, outMax = 5 * maxEdgeLength, base = 1.2;
