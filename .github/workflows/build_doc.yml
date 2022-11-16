@@ -155,7 +155,7 @@ jobs:
         if: ${{ failure() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
-            const error = "${{steps.build_and_run.outputs.DoxygenError}}"
+            const error = `${{steps.build_and_run.outputs.DoxygenError}}`
             const msg = "There was an error while building the doc: \n"+error
             github.rest.issues.createComment({
               owner: "CGAL",
