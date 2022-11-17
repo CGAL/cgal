@@ -696,9 +696,12 @@ public:
   // to the fundamental domain) of the vertices v and c->vertex(idx),
   // respectively
   template <class ConstructPoint>
-  Point point(Vertex_handle v, ConstructPoint cp) const {
+  Point point(Vertex_handle v, ConstructPoint cp) const
+  {
     return point(periodic_point(v), cp);
   }
+
+  virtual Point point(Vertex_handle v) const = 0;
 
   template <class ConstructPoint>
   Point point(Cell_handle c, int idx, ConstructPoint cp) const
@@ -756,6 +759,8 @@ public:
     CGAL_assertion(false);
     return Point();
   }
+
+  virtual Point point(Cell_handle c, int idx) const = 0;
 
   Periodic_point periodic_point(const Vertex_handle v) const
   {
