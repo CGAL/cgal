@@ -360,7 +360,12 @@ protected:
     return Constraint_id{};
   }
 
-  auto construct_Steiner_point(Subconstraint subconstraint)
+  struct Construct_Steiner_point_return_type {
+    typename T_3::Geom_traits::Point_3 point;
+    Cell_handle hint;
+  };
+
+  auto construct_Steiner_point(Subconstraint subconstraint) -> Construct_Steiner_point_return_type
   {
     auto& gt = tr.geom_traits();
     auto angle_functor = gt.angle_3_object();
@@ -451,7 +456,7 @@ protected:
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_DEBUG_CDT_3
-    return std::make_pair(result_point, cell_incident_to_reference_point);
+    return { result_point, cell_incident_to_reference_point };
   }
 
 protected:
