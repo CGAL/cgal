@@ -547,9 +547,9 @@ private:
 
       for(int j=0; j<neighborsCounter; ++j)
       {
-        // Given the j-th neighbour of node i, find the two neighbours by intersecting the
-        // line through nodes i and j with all segments of the polygon made by the neighbours.
-        // Take the two neighbours on either side. Only one segment intersects this line.
+        // Given the j-th neighbor of node i, find the two neighbors by intersecting the
+        // line through nodes i and j with all segments of the polygon made by the neighbors.
+        // Take the two neighbors on either side. Only one segment intersects this line.
         for(int k=0; k<neighborsCounter; ++k)
         {
           int kk = (k == neighborsCounter-1 ? 0 : k+1);

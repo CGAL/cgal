@@ -2632,7 +2632,7 @@ namespace CGAL {
                   <Self, Map2, 0>::run(*this, map2, current, other);
             }
 
-            // We test if the injection is valid with its neighbours.
+            // We test if the injection is valid with its neighbors.
             // We go out as soon as it is not satisfied.
             for (i = 0; match && i <= dimension; ++i)
             {

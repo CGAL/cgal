@@ -356,7 +356,7 @@ public:
 
     /*
       destription:
-      advances m_cur_item to one of the right neighbours according to the relation
+      advances m_cur_item to one of the right neighbors according to the relation
       between the separating Halfedge (m_sep) and the right() trapezoid point.
       precoditions:
       m_sep doesn't intersect any existing edges except possibly on common end
@@ -1504,7 +1504,7 @@ public:
   // Remark:
   //  Given an edge-degenerate trapezoid representing a Halfedge,
   //  all the other trapezoids representing the Halfedge can be extracted
-  //  via moving continuously to the left and right neighbours.
+  //  via moving continuously to the left and right neighbors.
   Td_map_item insert(Halfedge_const_handle he);
 
 

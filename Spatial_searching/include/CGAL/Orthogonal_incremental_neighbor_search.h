@@ -232,7 +232,7 @@ namespace CGAL {
           << number_of_leaf_nodes_visited << std::endl;
             s << "Number of items visited:"
           << number_of_items_visited << std::endl;
-        s << "Number of neighbours computed:"
+        s << "Number of neighbors computed:"
           << number_of_neighbours_computed << std::endl;
         return s;
       }
@@ -295,7 +295,7 @@ namespace CGAL {
             multiplication_factor*rd < Item_PriorityQueue.top()->second
             : multiplication_factor*rd > Item_PriorityQueue.top()->second);
         }
-        else // priority queue empty => last neighbour found
+        else // priority queue empty => last neighbor found
         {
           next_neighbour_found = true;
         }

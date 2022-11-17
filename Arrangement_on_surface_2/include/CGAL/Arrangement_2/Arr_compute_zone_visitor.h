@@ -58,7 +58,7 @@ private:
                                            // Its value type is boost::variant.
   bool                       output_left;  // Determines whether we should
                                            // output the left end point of a
-                                           // subcurve (to avoid outputhing
+                                           // subcurve (to avoid outputting
                                            // the same feature twice).
 
 public:

@@ -140,7 +140,7 @@ public:
     /* Destructor.
      * Frees memory used for storing key-value pair, thus invalidating any
      * existing pointers to any keys and/or values in the tree. During and
-     * after destruction, neighbour nodes are not guaranteed to be consistent.
+     * after destruction, neighbor nodes are not guaranteed to be consistent.
      * Specifically, the linked list along the leaves of the B+ tree is
      * invalidated. */
     virtual ~_Leaf() {

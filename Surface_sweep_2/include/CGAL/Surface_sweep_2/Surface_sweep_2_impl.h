@@ -172,7 +172,7 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
     ++left_iter;
 
     //remove curve from the status line (also checks intersection
-    //between the neighbouring curves,only if the curve is removed for good)
+    //between the neighboring curves,only if the curve is removed for good)
     _remove_curve_from_status_line(leftCurve, remove_for_good);
   }
 
@@ -347,7 +347,7 @@ void Surface_sweep_2<Vis>::_handle_right_curves()
 
     CGAL_SS_PRINT_STATUS_LINE();
 
-    // If the two curves used to be neighbours before, we do not need to
+    // If the two curves used to be neighbors before, we do not need to
     // intersect them again.
     if (!this->m_currentEvent->are_left_neighbours(*currentOne, *prevOne))
       _intersect(*prevOne, *currentOne);
@@ -468,7 +468,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
 
   if (! remove_for_good) {
     // the subcurve is not removed for good, so we dont need to intersect
-    // its neighbours after its removal.
+    // its neighbors after its removal.
     CGAL_SS_PRINT_ERASE(*sliter);
     this->m_statusLine.erase(sliter);
     CGAL_SS_PRINT_END_EOL("Removing a curve from the status line");
@@ -476,7 +476,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
   }
 
   // the subcurve will be removed for good from the stauts line, we need
-  // to check for intersection between his two neighbours (below and above him)
+  // to check for intersection between his two neighbors (below and above him)
   // but we need to make sure that its not the first or last subcurve
   // at the status line.
   CGAL_assertion(sliter != this->m_statusLine.end());

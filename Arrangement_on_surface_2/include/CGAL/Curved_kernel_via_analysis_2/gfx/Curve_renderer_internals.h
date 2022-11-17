@@ -62,7 +62,7 @@ namespace internal {
 // derivative range analysis
 #define CGAL_RECURSIVE_DER_MAX_DEGREE  7
 
-// 8-pixel neighbourhood directions
+// 8-pixel neighborhood directions
 static const struct { int x; int y; } directions[] = {
     { 1, 0}, { 1, 1}, { 0, 1}, {-1, 1},
     {-1, 0}, {-1,-1}, { 0,-1}, { 1,-1}};

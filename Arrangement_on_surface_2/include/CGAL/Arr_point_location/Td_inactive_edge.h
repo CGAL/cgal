@@ -44,7 +44,7 @@ namespace CGAL {
  * when one of the four sides is on the parameter space boundary.
  * Trapezoids are created as active and become inactive when Remove() member
  * function called.
- * Each trapezoid has at most four neighbouring trapezoids.
+ * Each trapezoid has at most four neighboring trapezoids.
  * X_trapezoid structure can represent a real trapezoid, a Td-edge or an
  * edge-end (end point).
  */
