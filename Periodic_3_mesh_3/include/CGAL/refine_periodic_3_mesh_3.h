@@ -64,7 +64,8 @@ void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
     int ind = face_it->second;
     Cell_handle c = face_it->first;
 
-    for(int i = 1; i < 4; i++) {
+    for(int i = 1; i < 4; i++)
+    {
       Vertex_handle v = c->vertex((ind+i)&3);
 
       typename C3T3::Index index = c3t3.index(v);

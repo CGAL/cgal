@@ -2660,8 +2660,8 @@ update_mesh(const Vertex_handle& old_vertex,
   Vertex_handle new_vertex = move_point(old_vertex, move,
                                         std::back_inserter(outdated_cells),
                                         CGAL::Emptyset_iterator());
-  // move_point has invalidated caches
 
+  // move_point has invalidated caches
   restore_mesh(outdated_cells.begin(), outdated_cells.end());
 
   // Fill modified vertices

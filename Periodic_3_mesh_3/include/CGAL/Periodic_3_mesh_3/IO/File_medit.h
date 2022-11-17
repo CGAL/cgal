@@ -155,7 +155,7 @@ void output_to_medit(std::ostream& os,
 
   // On each axis, we repeat n+1 times the point, where 'n' is the number of
   // instances of the mesh that will be printed over that axis. This is because
-  // a cell 'c' might have point(c,i) that is equal to v with an offset 2
+  // a cell 'c' might have point(c,i) that lives in the +1 (in x, y, or z) offset
 
   boost::unordered_map<Vertex_handle, int> V;
   int inum = 1; // '1' because medit ids start at 1

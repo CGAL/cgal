@@ -62,7 +62,6 @@ void init_c3t3_with_features(C3T3& c3t3,
   CGAL::Periodic_3_mesh_3::Protect_edges_sizing_field<C3T3, MeshDomain, Sizing_field>
     protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
   protect_edges.set_nonlinear_growth_of_balls(nonlinear);
-
   protect_edges(true);
 }
 

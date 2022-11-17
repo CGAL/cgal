@@ -408,7 +408,7 @@ public:
     return Base::side_of_power_sphere(c, canonical_p, Offset(), perturb);
   }
 
-  // Warning : This is a periodic version that computes the smallest possible
+  // Warning: This is a periodic version that computes the smallest possible distance
   // between 'p' and 'q', for all possible combinations of offsets
   FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
@@ -434,7 +434,7 @@ public:
     return min_sq_dist;
   }
 
-  // Warning : This function finds which offset 'Oq' should be applied to 'q' so
+  // Warning: This function finds which offset 'Oq' should be applied to 'q' such
   // that the distance between 'p' and '(q, Oq)' is minimal.
   //
   // \pre 'p' lives in the canonical instance.
@@ -477,9 +477,8 @@ public:
     typename Geom_traits::Construct_translated_point_3 tr = geom_traits().construct_translated_point_3_object();
     typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
 
-    // It doesn't matter which point we use to canonicalize the triangle as P3M3 is necessarily
-    // in one cover and we have to look at all the neighboring copies anyway since we do not
-    // have control of 'p'.
+    // It doesn't matter which point we use to canonicalize the triangle since we have to look
+    // at all the neighboring copies anyway since we do not have control of 'p'.
     Bare_point canon_p0 = canonicalize_point(t[0]);
     Vector_3 move_to_canonical = cv(t[0], canon_p0);
     const std::array<Bare_point, 3> ct = { canon_p0,
@@ -574,8 +573,8 @@ public:
     return Base::nearest_power_vertex(canonicalize_point(p), start);
   }
 
-  /// Return the squared distance (note: _NOT_ the power distance) between the
-  /// 'p' and the closest vertex for the power distance.
+  /// Return the squared distance (note: _NOT_ the power distance)
+  /// between 'p' and the closest vertex for the power distance.
   std::pair<Vertex_handle, FT>
   nearest_power_vertex_with_sq_distance(const Bare_point& p, Cell_handle start) const
   {

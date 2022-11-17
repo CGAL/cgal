@@ -123,7 +123,7 @@ public:
 
   typedef typename GT::Periodic_3_offset_3     Offset;
   typedef typename GT::Iso_cuboid_3            Iso_cuboid;
-  typedef std::array<int, 3>           Covering_sheets;
+  typedef std::array<int, 3>                   Covering_sheets;
 
   // point types
   typedef typename TDS::Vertex::Point          Point;
@@ -487,6 +487,8 @@ public:
     return i;
   }
 
+  // The first 3 bits are a 0 or 1 offsets in the xyz directions
+  // For example, 6 = 4 + 2 + 0 <=> 110 in binary <=> Offset(1, 1, 0)
   Offset int_to_off(int i) const
   {
     return Offset((i>>2)&1,(i>>1)&1,i&1);
@@ -2577,6 +2579,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   //- Find the modified _insert_in_hole in the branch svn history of TDS
   std::vector<Cell_handle> nbs;
   incident_cells(v, std::back_inserter(nbs));
+
   // For all neighbors of the newly added vertex v: fetch their offsets from
   // the tester and reset them in the triangulation data structure.
   for(typename std::vector<Cell_handle>::iterator cit = nbs.begin();
