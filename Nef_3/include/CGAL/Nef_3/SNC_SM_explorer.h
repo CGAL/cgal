@@ -30,10 +30,7 @@ class SNC_SM_explorer : public SMCDEC {
 
  public:
   SNC_SM_explorer(const Base& E) : Base(E) {}
-  Self& operator=(const Self& E) {
-    Base::operator=(E);
-    return *this;
-  }
+  Self& operator=(const Self& E) = default;
 };
 
 } //namespace CGAL

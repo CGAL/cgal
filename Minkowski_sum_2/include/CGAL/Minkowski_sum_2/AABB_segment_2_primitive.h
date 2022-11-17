@@ -35,10 +35,7 @@ public:
   {
   }
 
-  AABB_segment_2_primitive(const AABB_segment_2_primitive &primitive)
-  {
-    m_it = primitive.id();
-  }
+  AABB_segment_2_primitive(const AABB_segment_2_primitive &primitive) = default;
 
   const Id &id() const
   {
