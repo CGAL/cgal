@@ -78,7 +78,7 @@ public:
       Greater greater (traits.less_xy_2_object());
       Equal equal;
       std::sort(this->begin(), this->end(), greater);
-      std::unique(this->begin(), this->end(),equal);
+      this->erase(std::unique(this->begin(), this->end(),equal), this->end());
 
       // front() is the point with the largest x coordinate
 
