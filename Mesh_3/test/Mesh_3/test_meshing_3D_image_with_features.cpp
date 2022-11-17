@@ -19,14 +19,12 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_3/Detect_features_in_image.h>
+#include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
 #include <CGAL/use.h>
 
 template <typename Concurrency_tag = CGAL::Sequential_tag>
 struct Image_tester : public Tester<K_e_i>
 {
-public:
-  void image() const
-  {
     typedef CGAL::Image_3 Image;
     typedef CGAL::Labeled_mesh_domain_3<K_e_i> Domain;
     typedef CGAL::Mesh_domain_with_polyline_features_3<Domain> Mesh_domain;
@@ -39,22 +37,9 @@ public:
 
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-    //-------------------------------------------------------
-    // Data generation
-    //-------------------------------------------------------
-    Image image;
-    image.read(CGAL::data_file_path("images/liver.inr.gz"));
-
-    std::cout << "\tSeed is\t"
-      << CGAL::get_default_random().get_seed() << std::endl;
-
+  void mesh_and_verify(Mesh_domain& domain, const Image& image, const double volume) const
+  {
     namespace p = CGAL::parameters;
-    Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
-      (p::image = image,
-       p::relative_error_bound = 1e-9,
-       CGAL::parameters::p_rng = &CGAL::get_default_random(),
-       CGAL::parameters::detect_features = CGAL::Mesh_3::Detect_features_in_image());
-
     // Set mesh criteria
     Mesh_criteria criteria(p::edge_size = 2 * image.vx(),
                            p::facet_angle = 30,
@@ -71,14 +56,56 @@ public:
     c3t3.remove_isolated_vertices();
 
     // Verify
-    this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
-    this->verify(c3t3,domain,criteria, Bissection_tag());
+    this->verify_c3t3_volume(c3t3, volume * 0.95, volume * 1.05);
+    this->verify(c3t3, domain, criteria, Bissection_tag());
 
     typedef typename Mesh_domain::Surface_patch_index Patch_id;
     CGAL_static_assertion(CGAL::Output_rep<Patch_id>::is_specialized);
     CGAL_USE_TYPE(Patch_id);
   }
 
+public:
+  void image() const
+  {
+    namespace p = CGAL::parameters;
+    std::cout << "\tSeed is\t"
+      << CGAL::get_default_random().get_seed() << std::endl;
+
+    //-------------------------------------------------------
+    // Data generation
+    //-------------------------------------------------------
+    Image image;
+    image.read(CGAL::data_file_path("images/liver.inr.gz"));
+
+    Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
+     (p::image = image,
+      p::relative_error_bound = 1e-9,
+      CGAL::parameters::p_rng = &CGAL::get_default_random(),
+      CGAL::parameters::detect_features = CGAL::Mesh_3::Detect_features_in_image());
+
+    mesh_and_verify(domain, image, 1772330.);
+  }
+
+  void image_in_bbox() const
+  {
+    namespace p = CGAL::parameters;
+    std::cout << "\tSeed is\t"
+      << CGAL::get_default_random().get_seed() << std::endl;
+
+    //-------------------------------------------------------
+    // Data generation
+    //-------------------------------------------------------
+    Image image;
+    image.read(CGAL::data_file_path("images/40420.inr"));
+
+    Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
+     (p::image = image,
+      p::relative_error_bound = 1e-9,
+      CGAL::parameters::p_rng = &CGAL::get_default_random(),
+      CGAL::parameters::detect_features = CGAL::Mesh_3::Detect_features_on_image_bbox());
+
+    mesh_and_verify(domain, image, 625044.);
+  }
 };
 
 
@@ -86,13 +113,23 @@ public:
 int main()
 {
   Image_tester<> test_epic;
-  std::cerr << "Mesh generation from a 3D image:\n";
+  std::cerr << "Mesh generation from a 3D image"
+            << " with detection of triple lines:\n";
   test_epic.image();
+
+  std::cerr << "Mesh generation from a 3D image"
+            << " with detection of triple lines on bbox only:\n";
+  test_epic.image_in_bbox();
 
 #ifdef CGAL_LINKED_WITH_TBB
   Image_tester<CGAL::Parallel_tag> test_epic_p;
-  std::cerr << "Parallel mesh generation from a 3D image:\n";
+  std::cerr << "Parallel mesh generation from a 3D image"
+            << " with detection of triple lines:\n";
   test_epic_p.image();
+
+  std::cerr << "Parallel mesh generation from a 3D image"
+            << " with detection of triple lines on bbox only:\n";
+  test_epic_p.image_in_bbox();
 #endif
 
   return EXIT_SUCCESS;
