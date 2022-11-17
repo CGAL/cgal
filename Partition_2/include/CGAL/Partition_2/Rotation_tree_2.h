@@ -47,7 +47,8 @@ public:
    typedef typename Traits::Point_2                Point_2;
 
    using internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
-      using internal::vector< Rotation_tree_node_2<Traits_> >::back;
+   using internal::vector< Rotation_tree_node_2<Traits_> >::back;
+   using internal::vector< Rotation_tree_node_2<Traits_> >::erase;
 
    class Greater {
       typename Traits::Less_xy_2 less;
