@@ -926,17 +926,8 @@ Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
 move_point(Vertex_handle v, const Point& p)
 {
   CGAL_triangulation_expensive_precondition(is_vertex(v));
-  // Remember an incident vertex to restart
-  // the point location after the removal.
-  // Cell_handle c = v->cell();
-  //Vertex_handle old_neighbor = c->vertex(c->index(v) == 0 ? 1 : 0);
-  //  CGAL_triangulation_assertion(old_neighbor != v);
-
   remove(v);
-
-  if(number_of_vertices() == 0)
-    return insert(p);
-  return insert(p);//, old_neighbor->cell());
+  return insert(p);
 }
 
 template < class Gt, class Tds >
