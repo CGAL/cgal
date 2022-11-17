@@ -2530,7 +2530,6 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
     Locate_type /*lt*/, Cell_handle c, const Conflict_tester& tester,
     Point_hider& hider, CoverManager& cover_manager, Vertex_handle vh)
 {
-  Vertex_handle v;
   CGAL_triangulation_precondition(number_of_vertices() != 0);
   CGAL_triangulation_assertion_code(
       Locate_type lt_assert; int i_assert; int j_assert;);
@@ -2575,7 +2574,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   // Insertion. Warning: facets[0].first MUST be in conflict!
   // Compute the star and put it into the data structure.
   // Store the new cells from the star in nbs.
-  v = _tds._insert_in_hole(cells.begin(), cells.end(), facet.first, facet.second);
+  Vertex_handle v = _tds._insert_in_hole(cells.begin(), cells.end(), facet.first, facet.second);
   v->set_point(p);
 
   //TODO: this could be done within the _insert_in_hole without losing any
@@ -2979,8 +2978,8 @@ is_valid(bool verbose, int level) const
   }
 
   bool error = false;
-  for(Cell_iterator cit = cells_begin();
-       cit != cells_end(); ++cit) {
+  for(Cell_iterator cit = cells_begin(); cit != cells_end(); ++cit) {
+    CGAL_assertion(cit != Cell_handle());
     for(int i=0; i<4; i++) {
       CGAL_triangulation_assertion(cit != cit->neighbor(i));
       for(int j=i+1; j<4; j++) {
@@ -2994,14 +2993,15 @@ is_valid(bool verbose, int level) const
       p[i] = &cit->vertex(i)->point();
       off[i] = get_offset(cit,i);
     }
+
     if(orientation(*p[0], *p[1], *p[2], *p[3],
                    off[0], off[1], off[2], off[3]) != POSITIVE) {
       if(verbose) {
-        std::cerr<<"Periodic_3_triangulation_3: wrong orientation:"<<std::endl;
-        std::cerr<<off[0]<<'\t'<<*p[0]<<'\n'
-                         <<off[1]<<'\t'<<*p[1]<<'\n'
-                         <<off[2]<<'\t'<<*p[2]<<'\n'
-                         <<off[3]<<'\t'<<*p[3]<<std::endl;
+        std::cerr << "Periodic_3_triangulation_3: wrong orientation:"<<std::endl;
+        std::cerr << off[0] << '\t' << *p[0] << '\n'
+                  << off[1] << '\t' << *p[1] << '\n'
+                  << off[2] << '\t' << *p[2] << '\n'
+                  << off[3] << '\t' << *p[3] << std::endl;
       }
       error = true;
     }

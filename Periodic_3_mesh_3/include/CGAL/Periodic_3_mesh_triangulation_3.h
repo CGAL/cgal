@@ -156,7 +156,7 @@ public:
   bool is_infinite(const Facet&) const { return false; }
   bool is_infinite(const Cell_handle) const { return false; }
   bool is_infinite(const Cell_handle, int) const { return false; }
-  bool is_infinite(const Cell_handle c, int i, int j) const;
+  bool is_infinite(const Cell_handle, int, int) const { return false; }
 
   Cell_handle infinite_cell() const
   {
@@ -297,7 +297,7 @@ public:
     this->v_offsets.clear();
   }
 
-  FT compute_power_distance_to_power_sphere(const Cell_handle& c, const int i) const
+  FT compute_power_distance_to_power_sphere(const Cell_handle c, const int i) const
   {
     typename Geom_traits::Compute_power_distance_to_power_sphere_3 cr =
       geom_traits().compute_power_distance_to_power_sphere_3_object();
@@ -319,10 +319,9 @@ public:
     return cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq);
   }
 
-  // The functions below are needed by Mesh_3 but need a specific implementation
-  // for the periodic case because we need to try with different offsets
-  // to get a result
-  FT compute_power_distance_to_power_sphere(const Cell_handle& c,
+  // The functions below are used in Mesh_3 and need a specific implementation
+  // for the periodic case because we need to try with different offsets to get the result
+  FT compute_power_distance_to_power_sphere(const Cell_handle c,
                                             const Vertex_handle v) const
   {
     typename Geom_traits::Compute_power_distance_to_power_sphere_3 cr =
@@ -385,7 +384,7 @@ public:
     return Tetrahedron();
   }
 
-  Bounded_side side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
+  Bounded_side side_of_power_sphere(const Cell_handle c, const Weighted_point& p,
                                     bool perturb = false) const
   {
     Weighted_point canonical_p = canonicalize_point(p);
