@@ -385,7 +385,8 @@ private:
         const Subdomain_index index = cit->subdomain_index();
         if(!input_is_c3t3())
           m_c3t3.remove_from_complex(cit);
-        m_c3t3.add_to_complex(cit, index);
+        if(Subdomain_index() != index)
+          m_c3t3.add_to_complex(cit, index);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbc;
