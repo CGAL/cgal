@@ -171,19 +171,6 @@ public:
     return CGAL::to_double(time_step);
   }
 
-  template<typename DS>
-  void transfer_to(DS& ds) {
-
-    CGAL_assertion_msg(false,
-    "USE THIS ONLY FOR CONVERTING EXACT DATA TO INEXACT DS!");
-    ds.clear();
-    m_data.transfer_to(ds);
-    m_data.clear();
-
-    CGAL_assertion(ds.check_integrity(false));
-    CGAL_assertion(ds.check_bbox());
-  }
-
   void clear() {
     // to be added
   }
@@ -1213,30 +1200,6 @@ void initial_polygon_iedge_intersections() {
       //for (auto f : faces)
       //  std::cout << f << " ";
       //std::cout << std::endl;
-
-      // Setting crossed edges
-/*
-      if (faces.size() > 1) {
-        for (auto f = faces.begin(); f != faces.end();f++) {
-          Face_property& face = m_data.igraph().face(*f);
-          auto g = f;
-          g++;
-          while (g != faces.end()) {
-            Face_property& face2 = m_data.igraph().face(*g);
-            std::vector<IEdge> intersection;
-            std::set_intersection(face.edges.begin(), face.edges.end(), face2.edges.begin(), face2.edges.end(), std::back_inserter(intersection));
-
-            //need to be fixed here, but I also need some timings for evaluation
-            // Todo: crossed edges
-            //for (auto s : intersection)
-            //  m_data.igraph().set_crossed(s, i);
-
-            g++;
-          }
-        }
-      }*/
-
-      //dump_2d_surface_mesh(m_data, i, "map-surface-mesh-" + std::to_string(i));
     }
   }
 
