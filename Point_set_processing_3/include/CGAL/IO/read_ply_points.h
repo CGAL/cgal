@@ -19,7 +19,6 @@
 #include <CGAL/IO/PLY.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/IO/io.h>
 

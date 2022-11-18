@@ -4,7 +4,11 @@ Release History
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
-Release date: December 2022
+Release date: June 2023
+
+### General Changes
+
+- **Breaking change**: The per package assertions, pre- and postconditions are no longer supported.
 
 ### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps) [Generalized Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgGeneralizedMaps) [Linear Cell Complex](https://doc.cgal.org/5.6/Manual/packages.html#PkgLinearCellComplex)
 
@@ -38,8 +42,15 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 ### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh2)
 
+-   Deprecated usage of boost parameters in favor of function named parameters in `CGAL::lloyd_optimize_mesh_2()`.
 -   Deprecated two overloads of Function `refine_Delaunay_mesh()` and replaced them with versions using function named parameters.
--   Add overloads of function `write_VTU()` with property maps for specifying the domain.    
+-   Add overloads of function `write_VTU()` with property maps for specifying the domain.
+
+### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
+-   Deprecated usage of boost parameters in favor of function named parameters.
+
+### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
+-   Deprecated usage of boost parameters in favor of function named parameters.
 
 ### [2D Hyperbolic Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgHyperbolicTriangulation2)
 

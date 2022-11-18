@@ -1390,7 +1390,6 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type                       Traits;
 
-  std::size_t nb_deg_faces = 0;
   bool all_removed = false;
   bool some_removed = true;
   bool preserve_genus = choose_parameter(get_parameter(np, internal_np::preserve_genus), true);
@@ -1425,7 +1424,6 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
         // remove edges that could also be set for removal
         if(face(h, tmesh) != GT::null_face())
         {
-          ++nb_deg_faces;
           const edge_descriptor prev_e = edge(prev(h, tmesh), tmesh);
           degenerate_edges_to_remove.erase(prev_e);
           local_edge_range.erase(prev_e);
@@ -1434,7 +1432,6 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 
         if(face(opposite(h, tmesh), tmesh) != GT::null_face())
         {
-          ++nb_deg_faces;
           const edge_descriptor prev_opp_e = edge(prev(opposite(h, tmesh), tmesh), tmesh);
           degenerate_edges_to_remove.erase(prev_opp_e);
           local_edge_range.erase(prev_opp_e);
@@ -1473,7 +1470,6 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
         // remove edges that could also be set for removal
         if(face(h, tmesh) != GT::null_face())
         {
-          ++nb_deg_faces;
           const edge_descriptor prev_e = edge(prev(h, tmesh), tmesh);
           degenerate_edges_to_remove.erase(prev_e);
           local_edge_range.erase(prev_e);
@@ -1482,7 +1478,6 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 
         if(face(opposite(h, tmesh), tmesh)!=GT::null_face())
         {
-          ++nb_deg_faces;
           const edge_descriptor prev_opp_e = edge(prev(opposite(h, tmesh), tmesh), tmesh);
           degenerate_edges_to_remove.erase(prev_opp_e);
           local_edge_range.erase(prev_opp_e);

@@ -94,7 +94,7 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 using Periodic_mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // An arbitrary, simple polyhedral shape
 void generate_periodic_diamond(const Point& origin, // bottom, front, left point of the canonical domain
@@ -173,12 +173,12 @@ int main(int argc, char** argv)
   // Insert the features in the domain
 // domain.add_features(polylines.begin(), polylines.end()); // @tmp
 
-  Periodic_mesh_criteria criteria(edge_size = 1 * min_span,
-                                  facet_angle = 30,
-                                  facet_size = 0.035 * min_span,
-                                  facet_distance = 0.025 * min_span,
-                                  cell_radius_edge_ratio = 2.,
-                                  cell_size = 0.05 * min_span);
+  Periodic_mesh_criteria criteria(params::edge_size(min_span)
+                                         .facet_angle(30)
+                                         .facet_size(0.035 * min_span)
+                                         .facet_distance(0.025 * min_span)
+                                         .cell_radius_edge_ratio(2.)
+                                         .cell_size(0.05 * min_span));
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);

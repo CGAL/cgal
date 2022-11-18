@@ -16,7 +16,7 @@
 
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>
@@ -454,7 +454,7 @@ void compute_ball_neighbors_one_self(
   CGAL::Bbox_3 bbox, ///< bounding box
   const typename Kernel::FT radius)
 {
-  CGAL_point_set_processing_precondition(radius > 0);
+  CGAL_precondition(radius > 0);
 
   for (unsigned int i = 0; i < points.size(); ++i)
   {

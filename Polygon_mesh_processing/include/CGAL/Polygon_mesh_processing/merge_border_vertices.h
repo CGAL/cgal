@@ -292,6 +292,8 @@ void merge_duplicated_vertices_in_boundary_cycle(typename boost::graph_traits<Po
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pm));
+
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pm));
 
