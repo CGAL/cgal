@@ -31,22 +31,49 @@
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 
 #include <boost/parameter/preprocessor.hpp>
+#include <boost/random/random_number_generator.hpp>
+#include <boost/random/linear_congruential.hpp>
 
 namespace CGAL {
 namespace Periodic_3_mesh_3 {
 namespace internal {
 
-template<typename C3T3>
-void mark_dummy_points(C3T3& c3t3)
+template<typename C3T3, typename MeshDomain>
+void insert_dummy_points(C3T3& c3t3,
+                         const MeshDomain& domain)
 {
-  CGAL_precondition(c3t3.triangulation().is_1_cover());
+  typedef typename C3T3::Triangulation::Vertex_handle                         Vertex_handle;
 
-  typedef typename C3T3::Triangulation::Vertex_iterator       Vertex_iterator;
+  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
+    c3t3.triangulation().geom_traits().construct_point_3_object();
 
-  for(Vertex_iterator vit = c3t3.triangulation().vertices_begin();
-                      vit != c3t3.triangulation().vertices_end(); ++vit)
+  std::vector<Vertex_handle> dummy_vertices = c3t3.triangulation().insert_generic_dummy_points();
+  CGAL_postcondition(c3t3.triangulation().is_1_cover());
+
+  for(Vertex_handle dvh : dummy_vertices)
   {
-    c3t3.set_index(vit, 0);
+    dvh->info().is_dummy_vertex = true;
+
+    // @fixme
+    // The real in-dimension of a dummy vertex is impossible to evaluate: it can fall
+    // on a surface or even a curve, but there is no way to know this because the concept (and models)
+    // of MeshDomain_3 do not have a `Patch_index Do_intersect()(Point_3)`.
+    //
+    // It seems that setting the dimension wrongly, to a too-low dimension does not cause
+    // problems, whereas on the other way is problematic: if setting it to '3' but the dummy vertex
+    // is part of the restricted Delaunay, then the refinement will refine until the vertex
+    // is no longer part of the restricted Delaunay, creating ugly spots in the mesh...
+    c3t3.set_dimension(dvh, 0);
+
+    // @fixme
+    // This should be setting patch indices if the dummy vertex is not in dim 3.
+    // Could maybe do it later, re-assigning indices of dummy vertices once the c3t3
+    // has been scanned, but still before refinement starts.
+    auto opt_si = domain.is_in_domain_object()(cp(c3t3.triangulation().point(dvh)));
+    if(opt_si.has_value())
+      c3t3.set_index(dvh, domain.index_from_subdomain_index(*opt_si));
+    else
+      c3t3.set_index(dvh, 0);
   }
 }
 
@@ -86,8 +113,9 @@ struct C3t3_initializer_base
                   const parameters::internal::Mesh_3_options& mesh_options)
   {
     c3t3.triangulation().set_domain(domain.bounding_box());
-    c3t3.triangulation().insert_dummy_points();
-    mark_dummy_points(c3t3);
+
+    // Enforce 1-cover by adding dummy points
+    insert_dummy_points(c3t3, domain);
 
     // Call the basic initialization from c3t3, which handles features and
     // adds a bunch of points on the surface

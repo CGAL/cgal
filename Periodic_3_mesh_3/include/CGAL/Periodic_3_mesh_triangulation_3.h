@@ -30,6 +30,7 @@
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 
 // vertex and cell bases
+#include <CGAL/Triangulation_vertex_base_with_info_3.h> // to mark dummy vertices
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
 
@@ -188,7 +189,7 @@ public:
     return P3T3::internal::robust_canonicalize_point(p, geom_traits());
   }
 
-  // @todo it might be dangerous to call robust_canonicalize without also changing
+  // @fixme it might be dangerous to call robust_canonicalize without also changing
   // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
@@ -979,6 +980,13 @@ template<class MD,
          class Cell_base_ = Default>
 class Periodic_3_mesh_triangulation_3
 {
+  // Triangulation_vertex_base_with_info_3 only does default initialization
+  // and not value initialization, but we cannot initialize info() during Mesh_3's refinement
+  struct Boolean_with_def_value
+  {
+    bool is_dummy_vertex = false;
+  };
+
   // default K
   typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
 
@@ -988,12 +996,13 @@ class Periodic_3_mesh_triangulation_3
   // Periodic vertex and cell bases
   typedef Periodic_3_triangulation_ds_vertex_base_3<> VbDS;
   typedef Regular_triangulation_vertex_base_3<Geom_traits, VbDS> PVb;
+  typedef Triangulation_vertex_base_with_info_3<Boolean_with_def_value, Geom_traits, PVb> Vb;
 
   typedef Periodic_3_triangulation_ds_cell_base_3<> CbDS;
   typedef Regular_triangulation_cell_base_3<Geom_traits, CbDS> RCb;
   typedef Regular_triangulation_cell_base_with_weighted_circumcenter_3<Geom_traits, RCb> PCb;
 
-  typedef Mesh_vertex_base_3<Geom_traits, MD, PVb> Default_Vb;
+  typedef Mesh_vertex_base_3<Geom_traits, MD, Vb> Default_Vb;
   typedef Mesh_cell_base_3<Geom_traits, MD, PCb> Default_Cb;
 
   // default Vb/Cb
