@@ -19,8 +19,7 @@ int main() {
     auto sphere_function = [&](const Point& p) { return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z()); };
 
     // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
-    auto domain =
-        CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, spacing, std::move(sphere_function));
+    auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, spacing, sphere_function);
 
     // prepare collections for the result
     Point_range points;
