@@ -43,10 +43,14 @@ void project_dummy_points_of_surface(C3T3& c3t3, const MeshDomain& domain)
   typedef CGAL::Hash_handles_with_or_without_timestamps    Hash_fct;
   typedef boost::unordered_set<Vertex_handle, Hash_fct>    Vertex_container;
 
-  Vertex_container vertex_container;
-  find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
-
-  project_points(c3t3, domain, vertex_container.begin(), vertex_container.end());
+  bool did_something = false;
+  do
+  {
+    Vertex_container vertex_container;
+    find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
+    did_something = project_points(c3t3, domain, vertex_container.begin(), vertex_container.end());
+  }
+  while(did_something);
 }
 
 template<class C3T3, class OutputIterator>
@@ -67,24 +71,20 @@ void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
     for(int i = 1; i < 4; i++)
     {
       Vertex_handle v = c->vertex((ind+i)&3);
-
-      typename C3T3::Index index = c3t3.index(v);
-      if(const int* i = boost::get<int>(&index))
-      {
-        if(*i == 0) // '0' is the index of dummies
-          *vertices++ = v;
-      }
+      if(v->info().is_dummy_vertex)
+        *vertices++ = v;
     }
   }
 }
 
 template<class C3T3, class MeshDomain, class InputIterator>
-void project_points(C3T3& c3t3,
+bool project_points(C3T3& c3t3,
                     const MeshDomain& domain,
                     InputIterator vertex_begin,
                     InputIterator vertex_end)
 {
   typedef typename C3T3::Vertex_handle         Vertex_handle;
+  typedef typename C3T3::Cell_handle           Cell_handle;
 
   typedef typename C3T3::Triangulation         Tr;
 
@@ -99,36 +99,70 @@ void project_points(C3T3& c3t3,
   CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
   CGAL::Mesh_3::Triangulation_helpers<Tr> tr_helpers;
 
+  bool did_something = false;
+
   for(InputIterator it = vertex_begin; it != vertex_end; ++it)
   {
-    Vertex_handle vh = *it;
+    Vertex_handle old_vertex = *it;
 
-    const Weighted_point& vh_wp = c3t3.triangulation().point(vh);
-    const Bare_point& vh_p = cp(vh_wp);
-    const Bare_point new_point = helper.project_on_surface(vh, vh_p);
+    const Weighted_point& weighted_old_position = c3t3.triangulation().point(old_vertex);
+    CGAL_assertion(weighted_old_position.weight() == FT(0)); // point projection happens before optimizers
 
-    const FT sq_d = CGAL::squared_distance(new_point, vh_p);
+    const Bare_point& old_position = cp(weighted_old_position);
+    const Bare_point new_position = helper.project_on_surface(old_vertex, old_position);
+    const FT sq_d = CGAL::squared_distance(new_position, old_position);
 
 #ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
-    std::cerr << "vh: " << &*vh << std::endl;
-    std::cerr << "vhp: " << vh_p << std::endl;
-    std::cerr << "projected: " << new_point << std::endl;
+    std::cerr << "\n\nMove dummy vertex" << std::endl;
+    std::cerr << "old_vertex: " << &*old_vertex << std::endl;
+    std::cerr << "old_position: " << old_position << std::endl;
+    std::cerr << "new_position: " << new_position << std::endl;
     std::cerr << "squared distance from dummy to surface: " << sq_d << std::endl;
 #endif
 
     // Skip tiny moves for efficiency
-    if(sq_d < 1e-10) // arbitrary value, maybe compare it to the surface distance criterium ?
+    // @todo arbitrary value, maybe compare it to the surface distance criterium ?
+    if(sq_d < 1e-4)
       continue;
 
     // Do not project if the projected point is in a protection ball
-    if(tr_helpers.inside_protecting_balls(c3t3.triangulation(), vh, new_point))
+    if(tr_helpers.inside_protecting_balls(c3t3.triangulation(), old_vertex, new_position))
       continue;
 
-    const Vector_3 move(vh_p, new_point);
-    Vertex_handle new_vertex = helper.update_mesh(vh, move);
-    if(new_vertex != vh) // if the move has successfully been performed
-      c3t3.set_dimension(new_vertex, 2);
+    // @todo figure out the over-refinements...
+    const Vector_3 move(old_position, new_position);
+
+    // For periodic triangulations, the move is always performed using insert+remove,
+    // so new_vertex cannot be old_vertex if the move has succeeded
+    Vertex_handle new_vertex = helper.update_mesh(old_vertex, move);
+
+    // if the move has successfully been performed
+    if(new_vertex != old_vertex && new_vertex != Vertex_handle())
+    {
+      new_vertex->info().is_dummy_vertex = false;
+      c3t3.set_dimension(new_vertex, 2); // on the surface
+
+      // @fixme
+      // This actually should be the index from the surface patch index...
+      // It can be obtained either by modifying project_on_surface to return the surface_patch index
+      auto opt_si = domain.is_in_domain_object()(cp(c3t3.triangulation().point(new_vertex)));
+      if(opt_si.has_value())
+        c3t3.set_index(new_vertex, domain.index_from_subdomain_index(*opt_si));
+      else
+        c3t3.set_index(new_vertex, 0);
+    }
+
+    // The vertex `old_vertex` can still exist in the P3RT3:
+    // - if the target already existed
+    // - if its removal would have compromised the 1-cover property of the periodic triangulation
+    // It's (almost) pointless to try and move it again, so fix it
+    if(c3t3.triangulation().tds().is_vertex(old_vertex))
+      old_vertex->info().is_dummy_vertex = false;
+
+    did_something = true;
   }
+
+  return did_something;
 }
 
 } // namespace internal
