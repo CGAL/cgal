@@ -67,7 +67,7 @@ The classical DC method requires the gradient of the scalar field.
 The provided domain therefore has to implement the concept `IsosurfacingDomainWithGradient`.
 All default domain implementations do this but assume the gradient to be zero if it is not provided as an additional parameter.
 Thus, for using the classical DC, the gradient has to be defined by the user.
-Alternatively, there are also some default gradient functions implemented, 
+Alternatively, there are also some default gradient functions implemented,
 such as `Finite_difference_gradient` and `Explicit_cartesian_grid_gradient`.
 
 Different versions of DC compute the vertex positions differently.
