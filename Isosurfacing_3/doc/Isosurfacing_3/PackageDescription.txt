@@ -8,7 +8,7 @@
 \cgalPkgPicture{isosurfacing3_ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Julian Stahl and Daniel Zint}
-\cgalPkgDesc{This package implements several variations of the marching cubes algorithm to generate a triangle meshes out of a voxel grid. }
+\cgalPkgDesc{This package implements isosurfacing algorithms to generate a mesh from a scalar field. The algorithms provide different guarantees for the output and should be chosen depending on the use-case. The representations of input data is flexible and includes explicit and implicit formats. }
 \cgalPkgManuals{Chapter_Isosurfacing3,PkgIsosurfacing3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
