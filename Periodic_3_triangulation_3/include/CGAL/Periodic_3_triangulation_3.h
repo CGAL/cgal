@@ -22,14 +22,17 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_triangulation_iterators_3.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/canonicalize_helper.h>
+
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Periodic_3_triangulation_3/internal/canonicalize_helper.h>
+#include <CGAL/Delaunay_triangulation_3.h>
 
 #include <CGAL/array.h>
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
@@ -259,17 +262,6 @@ public:
                              const Geometric_traits& gt = Geometric_traits())
     : _gt(gt), _tds()
   {
-    typedef typename internal::Exact_field_selector<FT>::Type EFT;
-    typedef NT_converter<FT,EFT> NTC;
-    CGAL_USE_TYPE(NTC);
-    CGAL_triangulation_precondition_code( NTC ntc; )
-    CGAL_triangulation_precondition(ntc(domain.xmax())-ntc(domain.xmin())
-                                    == ntc(domain.ymax())-ntc(domain.ymin()));
-    CGAL_triangulation_precondition(ntc(domain.ymax())-ntc(domain.ymin())
-                                    == ntc(domain.zmax())-ntc(domain.zmin()));
-    CGAL_triangulation_precondition(ntc(domain.zmax())-ntc(domain.zmin())
-                                    == ntc(domain.xmax())-ntc(domain.xmin()));
-
     _gt.set_domain(domain);
     _cover = CGAL::make_array(3,3,3);
     init_tds();
@@ -1294,6 +1286,8 @@ private:
 
 public:
   std::vector<Vertex_handle> insert_dummy_points();
+
+  std::vector<Vertex_handle> insert_generic_dummy_points();
 
 protected:
   // this is needed for compatibility reasons
@@ -2758,8 +2752,10 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
 
   return vir_vertices[0][0][0];
 }
+
 #define CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 #include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_triangulation_dummy_36.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_triangulation_dummy_generator.h>
 #undef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 
 /** finds all cells that are in conflict with the currently added point
