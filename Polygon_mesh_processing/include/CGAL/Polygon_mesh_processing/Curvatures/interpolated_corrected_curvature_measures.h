@@ -632,6 +632,9 @@ namespace internal {
       Vertex_measures<GT> vertex_measures;
 
       for (Face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
+        if (f == boost::graph_traits<PolygonMesh>::null_face())
+          continue;
+
         vertex_measures.area_measure += get(mu0_map, f);
 
         if (is_mean_curvature_selected)
