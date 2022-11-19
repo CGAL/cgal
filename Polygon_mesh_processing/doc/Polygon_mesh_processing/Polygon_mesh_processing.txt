@@ -879,10 +879,7 @@ not provide storage for the normals.
 ****************************************
 \section PMPICC Computing Curvatures
 
-This package provides methods to compute curvatures on polygonal meshes based on
-<a href="https://perso.liris.cnrs.fr/david.coeurjolly/publication/lachaud2020/">
-  Interpolated corrected curvature measures for polygonal surfaces
-</a>.
+This package provides methods to compute curvatures on polygonal meshes based on \cgalCite{lachaud2020}
 This includes mean curvature, gaussian curvature, principal curvatures and directions.
 These can be computed on triangle meshes, quad meshes, and meshes with n-gon faces.
 The algorithms used prove to work well in general. Also, on meshes with noise
@@ -895,7 +892,7 @@ Polyhedron_3 and other polygonal mesh structures based on the Face Graph Model.
 These computations are performed using :
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
 
 Where it is recommended to use the last function for computing multiple curvatures (example: mean and gaussian)
@@ -1145,6 +1142,10 @@ available on 7th of October 2020.  It only uses the high level algorithm of chec
 is covered by a set of prisms, where each prism is an offset for an input triangle.
 That is, the implementation in \cgal does not use indirect predicates.
 
+The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under
+supervision of Sebastien Loriot, Jaques-Olivier Lachaud and David Coeurjolly. The implementation is based \cgalCite{lachaud2020}.
+<a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
+used as a reference during the project.
 
 */
 } /* namespace CGAL */

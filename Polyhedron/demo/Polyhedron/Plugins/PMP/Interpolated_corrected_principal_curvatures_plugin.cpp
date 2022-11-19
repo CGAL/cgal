@@ -14,7 +14,7 @@
 #include <CGAL/Polygon_mesh_processing/Curvatures/interpolated_corrected_curvature_measures.h>
 
 using namespace CGAL::Three;
-class Polyhedron_demo_interpolated_corrected_principal_curvatures_plugin :
+class Polyhedron_demo_interpolated_corrected_principal_curvatures_and_directions_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
@@ -47,7 +47,7 @@ public Q_SLOTS:
 private :
   Scene_interface *scene;
   QList<QAction*> _actions;
-}; // end Polyhedron_demo_interpolated_corrected_principal_curvatures_plugin
+}; // end Polyhedron_demo_interpolated_corrected_principal_curvatures_and_directions_plugin
 
 
 void compute(SMesh* sMesh,
@@ -72,23 +72,23 @@ void compute(SMesh* sMesh,
   typename boost::property_map<SMesh, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, *sMesh);
 
   bool created = false;
-  SMesh::Property_map<vertex_descriptor, PrincipalCurvatureTuple> principal_curvature_map;
+  SMesh::Property_map<vertex_descriptor, PrincipalCurvatureTuple> principal_curvatures_and_directions_map;
 
-  boost::tie(principal_curvature_map, created) = sMesh->add_property_map<vertex_descriptor, PrincipalCurvatureTuple>
-      ("v:principal_curvature_map", { 0, 0,
+  boost::tie(principal_curvatures_and_directions_map, created) = sMesh->add_property_map<vertex_descriptor, PrincipalCurvatureTuple>
+      ("v:principal_curvatures_and_directions_map", { 0, 0,
               Vector(0,0,0),
               Vector(0,0,0)});
       assert(created);
 
-  PMP::interpolated_corrected_principal_curvatures(
+  PMP::interpolated_corrected_principal_curvatures_and_directions(
       *sMesh,
-      principal_curvature_map
+      principal_curvatures_and_directions_map
   );
 
   typename EpicKernel::FT max_curvature_magnitude_on_mesh = 0;
   for (vertex_descriptor v : vertices(*sMesh))
   {
-      const PrincipalCurvatureTuple pc = principal_curvature_map[v];
+      const PrincipalCurvatureTuple pc = principal_curvatures_and_directions_map[v];
       max_curvature_magnitude_on_mesh = std::max(max_curvature_magnitude_on_mesh, std::max(abs(get<0>(pc)), get<1>(pc)));
   }
 
@@ -114,7 +114,7 @@ void compute(SMesh* sMesh,
         avg_edge_length /= n;
     }
 
-    const PrincipalCurvatureTuple pc = principal_curvature_map[v];
+    const PrincipalCurvatureTuple pc = principal_curvatures_and_directions_map[v];
 
     Vector umin = (std::get<0>(pc)/ max_curvature_magnitude_on_mesh) * std::get<2>(pc) * avg_edge_length;
     Vector umax = (std::get<1>(pc)/ max_curvature_magnitude_on_mesh) * std::get<3>(pc) * avg_edge_length;
@@ -133,7 +133,7 @@ void compute(SMesh* sMesh,
   }
 }
 
-void Polyhedron_demo_interpolated_corrected_principal_curvatures_plugin::on_actionEstimateCurvature_triggered()
+void Polyhedron_demo_interpolated_corrected_principal_curvatures_and_directions_plugin::on_actionEstimateCurvature_triggered()
 {
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -183,4 +183,4 @@ void Polyhedron_demo_interpolated_corrected_principal_curvatures_plugin::on_acti
   QApplication::restoreOverrideCursor();
 }
 
-#include "Interpolated_corrected_principal_curvatures_plugin.moc"
+#include "Interpolated_corrected_principal_curvatures_and_directions_plugin.moc"

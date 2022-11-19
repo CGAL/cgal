@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
       mean_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron),
       gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
   boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<PMP::Principal_curvature<Epic_kernel>>>::type
-      principal_curvature_map = get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvature<Epic_kernel>>(), polyhedron);
+      principal_curvatures_and_directions_map = get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvature<Epic_kernel>>(), polyhedron);
 
   PMP::interpolated_corrected_mean_curvature(
       polyhedron,
@@ -41,9 +41,9 @@ int main(int argc, char *argv[])
       polyhedron,
       gaussian_curvature_map);
 
-  PMP::interpolated_corrected_principal_curvatures(
+  PMP::interpolated_corrected_principal_curvatures_and_directions(
       polyhedron,
-      principal_curvature_map);
+      principal_curvatures_and_directions_map);
 
   // uncomment this to compute a curvature while specifying named parameters
   // Example: an expansion ball radius of 0.5 and a vertex normals map (does not have to depend on positions)
@@ -61,12 +61,12 @@ int main(int argc, char *argv[])
   PMP::interpolated_corrected_curvatures(
       polyhedron,
       CGAL::parameters::vertex_mean_curvature_map(mean_curvature_map)
-          .vertex_principal_curvature_map(principal_curvature_map));
+          .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map));
 
   int i = 0;
   for (vertex_descriptor v : vertices(polyhedron))
   {
-    auto PC = get(principal_curvature_map, v);
+    auto PC = get(principal_curvatures_and_directions_map, v);
     std::cout << i << ": HC = " << get(mean_curvature_map, v)
               << ", GC = " << get(gaussian_curvature_map, v) << "\n"
               << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
