@@ -57,42 +57,38 @@ void compute(SMesh* sMesh,
              Scene_polylines_item* min_negative_curv)
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel EpicKernel;
-  typedef EpicKernel::Point_3 Point;
-  typedef EpicKernel::Point_3 Point;
-  typedef EpicKernel::Vector_3 Vector;
-  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-  typedef std::tuple<
-      EpicKernel::FT,
-      EpicKernel::FT,
-      Vector,
-      Vector
-  > PrincipalCurvatureTuple;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
+  typedef Epic_kernel::Point_3 Point;
+  typedef Epic_kernel::Point_3 Point;
+  typedef Epic_kernel::Vector_3 Vector;
+  typedef boost::graph_traits<SMesh>::vertex_descriptor Vertex_descriptor;
 
   typename boost::property_map<SMesh, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, *sMesh);
 
   bool created = false;
-  SMesh::Property_map<vertex_descriptor, PrincipalCurvatureTuple> principal_curvatures_and_directions_map;
+  SMesh::Property_map<Vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>> principal_curvatures_and_directions_map;
 
-  boost::tie(principal_curvatures_and_directions_map, created) = sMesh->add_property_map<vertex_descriptor, PrincipalCurvatureTuple>
-      ("v:principal_curvatures_and_directions_map", { 0, 0,
-              Vector(0,0,0),
-              Vector(0,0,0)});
-      assert(created);
+  boost::tie(principal_curvatures_and_directions_map, created) = sMesh->add_property_map<Vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
+    ("v:principal_curvatures_and_directions_map", { 0, 0,
+        Vector(0,0,0),
+        Vector(0,0,0) });
+  assert(created);
+
 
   PMP::interpolated_corrected_principal_curvatures_and_directions(
-      *sMesh,
-      principal_curvatures_and_directions_map
+    *sMesh,
+    principal_curvatures_and_directions_map,
+    CGAL::parameters::ball_radius(0)
   );
 
-  typename EpicKernel::FT max_curvature_magnitude_on_mesh = 0;
-  for (vertex_descriptor v : vertices(*sMesh))
+  typename Epic_kernel::FT max_curvature_magnitude_on_mesh = 0;
+  for (Vertex_descriptor v : vertices(*sMesh))
   {
-      const PrincipalCurvatureTuple pc = principal_curvatures_and_directions_map[v];
-      max_curvature_magnitude_on_mesh = std::max(max_curvature_magnitude_on_mesh, std::max(abs(get<0>(pc)), get<1>(pc)));
+    const PMP::Principal_curvatures_and_directions<Epic_kernel> pc = principal_curvatures_and_directions_map[v];
+    max_curvature_magnitude_on_mesh = std::max(max_curvature_magnitude_on_mesh, std::max(abs(pc.min_curvature), abs(pc.max_curvature)));
   }
 
-  for(vertex_descriptor v : vertices(*sMesh))
+  for(Vertex_descriptor v : vertices(*sMesh))
   {
     std::vector<Point> points;
 
@@ -107,17 +103,17 @@ void compute(SMesh* sMesh,
 
     const std::size_t n = CGAL::edges(*sMesh).size();
 
-    EpicKernel::FT avg_edge_length = 0;
+    Epic_kernel::FT avg_edge_length = 0;
     if (n > 0) {
-        for (auto e : CGAL::edges(*sMesh))
-            avg_edge_length += PMP::edge_length(e, *sMesh);
-        avg_edge_length /= n;
+      for (auto e : CGAL::edges(*sMesh))
+        avg_edge_length += PMP::edge_length(e, *sMesh);
+      avg_edge_length /= n;
     }
 
-    const PrincipalCurvatureTuple pc = principal_curvatures_and_directions_map[v];
+    const PMP::Principal_curvatures_and_directions<Epic_kernel> pc = principal_curvatures_and_directions_map[v];
 
-    Vector umin = (std::get<0>(pc)/ max_curvature_magnitude_on_mesh) * std::get<2>(pc) * avg_edge_length;
-    Vector umax = (std::get<1>(pc)/ max_curvature_magnitude_on_mesh) * std::get<3>(pc) * avg_edge_length;
+    Vector umin = (pc.min_curvature / max_curvature_magnitude_on_mesh) * pc.min_direction * avg_edge_length;
+    Vector umax = (pc.max_curvature / max_curvature_magnitude_on_mesh) * pc.max_direction * avg_edge_length;
 
     Scene_polylines_item::Polyline max_segment(2), min_segment(2);
 
@@ -128,8 +124,8 @@ void compute(SMesh* sMesh,
     max_segment[0] = central_point + du * umax;
     max_segment[1] = central_point - du * umax;
 
-    (std::get<0>(pc) > 0 ? min_curv : min_negative_curv)->polylines.push_back(min_segment);
-    (std::get<1>(pc) > 0 ? max_curv : max_negative_curv)->polylines.push_back(max_segment);
+    (pc.min_curvature > 0 ? min_curv : min_negative_curv)->polylines.push_back(min_segment);
+    (pc.max_curvature > 0 ? max_curv : max_negative_curv)->polylines.push_back(max_segment);
   }
 }
 
@@ -183,4 +179,4 @@ void Polyhedron_demo_interpolated_corrected_principal_curvatures_and_directions_
   QApplication::restoreOverrideCursor();
 }
 
-#include "Interpolated_corrected_principal_curvatures_and_directions_plugin.moc"
+#include "Interpolated_corrected_principal_curvatures_plugin.moc"
