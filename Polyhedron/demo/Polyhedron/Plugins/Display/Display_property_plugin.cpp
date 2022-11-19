@@ -1638,7 +1638,7 @@ private:
 
   std::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
-  double expand_radius;
+  double expand_radius = 0;
   double maxEdgeLength = -1;
   double minBox;
   double maxBox;
