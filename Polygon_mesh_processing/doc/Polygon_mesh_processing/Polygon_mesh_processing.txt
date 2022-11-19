@@ -879,11 +879,11 @@ not provide storage for the normals.
 ****************************************
 \section PMPICC Computing Curvatures
 
-This package provides methods to compute curvatures on polygonal meshes based on \cgalCite{lachaud2020}
-This includes mean curvature, gaussian curvature, principal curvatures and directions.
-These can be computed on triangle meshes, quad meshes, and meshes with n-gon faces.
-The algorithms used prove to work well in general. Also, on meshes with noise
-on vertex positions, they give accurate results, on the condition that the
+This package provides methods to compute curvatures on polygonal meshes based on Interpolated Corrected Curvatures
+on Polyhedral Surfaces \cgalCite{lachaud2020}. This includes mean curvature, gaussian curvature,
+principal curvatures and directions. These can be computed on triangle meshes, quad meshes,
+and meshes with n-gon faces. The algorithms used prove to work well in general. Also, on meshes
+with noise on vertex positions, they give accurate results, on the condition that the
 correct vertex normals are provided.
 
 The implementation is generic in terms of mesh data structure. It can be used on Surface_mesh,
@@ -912,13 +912,12 @@ The mean curvature distribution on a bear mesh with different values for the exp
 
 Property maps are used to record the computed curvatures as shown in examples.
 
-\subsection ICCExample Interpolated Corrected Curvature Examples
 
 Property maps are an API introduced in the boost library that allows associating
 values to keys. In the following examples, for each property map, we associate
 a curvature value to each vertex.
 
-\subsubsection ICCExampleSM Interpolated Corrected Curvature on a Surface Mesh.
+\subsection ICCExampleSM Interpolated Corrected Curvature on a Surface Mesh Example
 
 The following example illustrates how to
 compute the curvatures on vertices
@@ -926,7 +925,7 @@ and store them in property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example.cpp}
 
-\subsubsection ICCExamplePH Interpolated Corrected Curvature on a Polyhedron
+\subsection ICCExamplePH Interpolated Corrected Curvature on a Polyhedron Example
 
 The following example illustrates how to
 compute the curvatures on vertices
@@ -1143,7 +1142,7 @@ is covered by a set of prisms, where each prism is an offset for an input triang
 That is, the implementation in \cgal does not use indirect predicates.
 
 The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under
-supervision of Sebastien Loriot, Jaques-Olivier Lachaud and David Coeurjolly. The implementation is based \cgalCite{lachaud2020}.
+supervision of Sebastien Loriot, Jaques-Olivier Lachaud and David Coeurjolly. The implementation is based on \cgalCite{lachaud2020}.
 <a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
 used as a reference during the project.
 

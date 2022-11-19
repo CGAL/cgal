@@ -38,9 +38,9 @@ int main(int argc, char* argv[])
   assert(created);
 
   // we use a tuple of 2 scalar values and 2 vectors for principal curvatures and directions
-  Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvature<Epic_kernel>> principal_curvatures_and_directions_map;
+  Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>> principal_curvatures_and_directions_map;
 
-  boost::tie(principal_curvatures_and_directions_map, created) = smesh.add_property_map<vertex_descriptor, PMP::Principal_curvature<Epic_kernel>>
+  boost::tie(principal_curvatures_and_directions_map, created) = smesh.add_property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
     ("v:principal_curvatures_and_directions_map", { 0, 0,
         Epic_kernel::Vector_3(0,0,0),
         Epic_kernel::Vector_3(0,0,0) });

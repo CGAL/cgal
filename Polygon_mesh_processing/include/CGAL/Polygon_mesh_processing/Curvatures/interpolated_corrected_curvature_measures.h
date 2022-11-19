@@ -43,7 +43,7 @@ namespace Polygon_mesh_processing {
 * @tparam GT is the geometric traits class.
 */
 template<typename GT>
-struct Principal_curvature {
+struct Principal_curvatures_and_directions {
 
   /// min curvature magnitude
   typename GT::FT min_curvature;
@@ -57,14 +57,14 @@ struct Principal_curvature {
   /// max curvature direction vector
   typename GT::Vector_3 max_direction;
 
-  Principal_curvature() {
+  Principal_curvatures_and_directions() {
     min_curvature = 0;
     max_curvature = 0;
     min_direction = typename GT::Vector_3(0, 0, 0);
     max_direction = typename GT::Vector_3(0, 0, 0);
   }
 
-  Principal_curvature(
+  Principal_curvatures_and_directions(
     typename GT::FT min_curvature,
     typename GT::FT max_curvature,
     typename GT::Vector_3 min_direction,
@@ -440,7 +440,7 @@ namespace internal {
   }
 
   template<typename GT>
-  Principal_curvature<GT> principal_curvatures_and_directions_from_anisotropic_measures(
+  Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from_anisotropic_measures(
     const std::array<typename GT::FT, 3 * 3> anisotropic_measure,
     const typename GT::FT v_mu0,
     const typename GT::Vector_3 u_GT
@@ -462,7 +462,7 @@ namespace internal {
     eigensolver.computeDirect(v_muXY);
 
     if (eigensolver.info() != Eigen::Success)
-      return Principal_curvature<GT>();
+      return Principal_curvatures_and_directions<GT>();
 
     const Eigen::Matrix<typename GT::FT, 3, 1> eig_vals = eigensolver.eigenvalues();
     const Eigen::Matrix<typename GT::FT, 3, 3> eig_vecs = eigensolver.eigenvectors();
@@ -470,7 +470,7 @@ namespace internal {
     const typename GT::Vector_3 min_eig_vec(eig_vecs(0, 1), eig_vecs(1, 1), eig_vecs(2, 1));
     const typename GT::Vector_3 max_eig_vec(eig_vecs(0, 0), eig_vecs(1, 0), eig_vecs(2, 0));
 
-    return Principal_curvature<GT>(
+    return Principal_curvatures_and_directions<GT>(
       (v_mu0 != 0.0) ? -eig_vals[1] / v_mu0 : 0.0,
       (v_mu0 != 0.0) ? -eig_vals[0] / v_mu0 : 0.0,
       min_eig_vec,
@@ -509,7 +509,7 @@ namespace internal {
       NamedParameters,
       Default_scalar_map>::type Vertex_gaussian_curvature_map;
 
-    typedef Constant_property_map<Vertex_descriptor, Principal_curvature<GT>> Default_principal_map;
+    typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
     typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
       NamedParameters,
       Default_principal_map>::type Vertex_principal_curvatures_and_directions_map;
@@ -735,7 +735,7 @@ namespace internal {
 
         if (is_principal_curvatures_and_directions_selected) {
           const Vector_3  v_normal = get(vnm, v);
-          const Principal_curvature<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
+          const Principal_curvatures_and_directions<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
             vertex_measures.anisotropic_measure,
             vertex_measures.area_measure,
             v_normal
@@ -997,8 +997,8 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
 *     \cgalParamDescription{a property map associating mean curvatures to the vertices of `pmesh`}
 *     \cgalParamType{a class model of `WritablePropertyMap` with
 *                    `boost::graph_traits<PolygonMesh>::%Vertex_descriptor`
-*                    as key type and `%Principal_curvature` as value type}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<Principal_curvature<GT>>(), pmesh)`}
+*                    as key type and `%Principal_curvatures_and_directions` as value type}
+*     \cgalParamDefault{`get(dynamic_vertex_property_t<Principal_curvatures_and_directions<GT>>(), pmesh)`}
 *     \cgalParamExtra{If this parameter is omitted, mean principal won't be computed}
 *   \cgalParamNEnd
 *
