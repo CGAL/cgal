@@ -111,7 +111,7 @@ namespace internal {
 
   template<typename GT>
   typename GT::FT interpolated_corrected_area_measure_face(const std::vector<typename GT::Vector_3>& u,
-    const std::vector<typename GT::Vector_3>& x = {})
+    const std::vector<typename GT::Vector_3>& x)
   {
     const std::size_t n = x.size();
     CGAL_precondition(u.size() == n);
@@ -166,7 +166,7 @@ namespace internal {
 
   template<typename GT>
   typename GT::FT interpolated_corrected_mean_curvature_measure_face(const std::vector<typename GT::Vector_3>& u,
-    const std::vector<typename GT::Vector_3>& x = {})
+    const std::vector<typename GT::Vector_3>& x)
   {
     const std::size_t n = x.size();
     CGAL_precondition(u.size() == n);
@@ -617,7 +617,7 @@ namespace internal {
           put(mu1_map, f, interpolated_corrected_mean_curvature_measure_face<GT>(u, x));
 
         if (is_gaussian_curvature_selected)
-          put(mu2_map, f, interpolated_corrected_gaussian_curvature_measure_face<GT>(u, x));
+          put(mu2_map, f, interpolated_corrected_gaussian_curvature_measure_face<GT>(u));
 
         if (is_principal_curvatures_and_directions_selected)
           put(muXY_map, f, interpolated_corrected_anisotropic_measure_face<GT>(u, x));
