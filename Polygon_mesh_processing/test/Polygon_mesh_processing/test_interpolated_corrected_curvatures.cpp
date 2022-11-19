@@ -32,13 +32,13 @@ struct Average_test_info {
     Epic_kernel::FT principal_curvature_avg,
     Epic_kernel::FT expansion_radius = -1,
     Epic_kernel::FT tolerance = 0.9
-  ): 
+  ):
     expansion_radius(expansion_radius),
     mean_curvature_avg(mean_curvature_avg),
     gaussian_curvature_avg(gaussian_curvature_avg),
     principal_curvature_avg(principal_curvature_avg),
     tolerance(tolerance)
-  { 
+  {
   }
 
 };
