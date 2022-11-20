@@ -19,7 +19,7 @@ int main() {
     const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
     std::shared_ptr<Grid> grid = std::make_shared<Grid>(50, 50, 50, bbox);
 
-    // calculate function values at all grid points
+    // compute and store function values at all grid points
     for (std::size_t x = 0; x < grid->xdim(); x++) {
         for (std::size_t y = 0; y < grid->ydim(); y++) {
             for (std::size_t z = 0; z < grid->zdim(); z++) {
@@ -41,9 +41,9 @@ int main() {
     Point_range points;
     Polygon_range polygons;
 
-    // execute marching cubes with an isovalue of 0.8
-    CGAL::Isosurfacing::marching_cubes(domain, 0.8f, points, polygons);
+    // run marching cubes with an isovalue of 0.8
+    CGAL::Isosurfacing::marching_cubes(domain, 0.8, points, polygons);
 
-    // save the result to a file, in the OFF format
+    // save output indexed surface mesh to file, in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
 }

@@ -49,7 +49,7 @@ int main() {
     Point_range points;
     Polygon_range polygons;
 
-    // execute marching cubes with an isovalue of 0.0
+    // run marching cubes with an isovalue of 0.0
     CGAL::Isosurfacing::dual_contouring(domain, 0.0, points, polygons);
 
     // save the result in the OFF format
