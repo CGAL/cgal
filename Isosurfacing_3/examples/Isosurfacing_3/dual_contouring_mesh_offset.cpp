@@ -66,7 +66,7 @@ int main() {
     Point_range points;
     Polygon_range polygons;
 
-    // dual contouring
+    // run dual contouring
     CGAL::Isosurfacing::dual_contouring(domain, offset_value, points, polygons);
 
     // save output indexed mesh to a file, in the OFF format
