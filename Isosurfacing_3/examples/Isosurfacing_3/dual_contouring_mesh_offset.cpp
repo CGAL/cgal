@@ -23,7 +23,7 @@ typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 typedef std::vector<Point> Point_range;
-typedef std::vector<std::vector<std::size_t>> Polygon_range;
+typedef std::vector<std::vector<std::size_t> > Polygon_range;
 
 int main() {
     const std::string input_name = CGAL::data_file_path("meshes/cross.off");
@@ -32,7 +32,7 @@ int main() {
 
     Mesh mesh_input;
     if (!CGAL::IO::read_OFF(input_name, mesh_input)) {
-        std::cerr << "Could not read mesh" << std::endl;
+        std::cerr << "Could not read input mesh" << std::endl;
         exit(-1);
     }
 
@@ -47,7 +47,7 @@ int main() {
 
     CGAL::Side_of_triangle_mesh<Mesh, CGAL::GetGeomTraits<Mesh>::type> sotm(mesh_input);
 
-
+    // functors for addressing distance and normal queries
     auto mesh_distance = [&tree](const Point& p) {
         const Point& x = tree.closest_point(p);
         return std::sqrt((p - x).squared_length());
@@ -55,18 +55,20 @@ int main() {
 
     auto mesh_normal = [&tree](const Point& p) {
         const Point& x = tree.closest_point(p);
-        const Vector n = p - x;
-        return n / std::sqrt(n.squared_length());
+        const Vector n = p - x; // TODO: address case where norm = zero
+        return n / std::sqrt(n.squared_length()); // normalize output vector
     };
 
-    // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
+    // create a domain with given bounding box and grid spacing
     auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(aabb_grid, grid_spacing,
                                                                                     mesh_distance, mesh_normal);
-
+    // containers for output indexed surface mesh
     Point_range points;
     Polygon_range polygons;
 
+    // dual contouring
     CGAL::Isosurfacing::dual_contouring(domain, offset_value, points, polygons);
 
+    // save output indexed mesh to a file, in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
 }

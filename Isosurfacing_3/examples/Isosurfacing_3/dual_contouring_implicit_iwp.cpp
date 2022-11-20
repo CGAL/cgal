@@ -37,19 +37,20 @@ int main() {
         return Vector(gx, gy, gz);
     };
 
-    const CGAL::Bbox_3 bbox{-1, -1, -1, 1, 1, 1};
-    const Vector spacing(0.05f, 0.05f, 0.05f);
+    const CGAL::Bbox_3 bbox{-1.0, -1.0, -1.0, 1.0, 1.0, 1.0};
+    const FT spacing = 0.5;
+    const Vector vec_spacing(spacing, spacing, spacing);
 
-    // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
+    // create a domain with given bounding box and grid spacing
     auto domain =
-        CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, spacing, iwp_value, iwp_gradient);
+        CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, vec_spacing, iwp_value, iwp_gradient);
 
     // prepare collections for the result
     Point_range points;
     Polygon_range polygons;
 
-    // execute marching cubes with an isovalue of 0
-    CGAL::Isosurfacing::dual_contouring(domain, 0.0f, points, polygons);
+    // execute marching cubes with an isovalue of 0.0
+    CGAL::Isosurfacing::dual_contouring(domain, 0.0, points, polygons);
 
     // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
