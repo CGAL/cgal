@@ -15,13 +15,14 @@ typedef CGAL::Cartesian_grid_3<Kernel> Grid;
 typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
+// return 1.0 if value has positive sign, and -1.0 otherwise
 FT sign(FT value) {
-    return (value > 0) - (value < 0);
+    return (value > 0.0) - (value < 0.0);
 }
 
 int main() {
-    // create a cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
-    const CGAL::Bbox_3 bbox(-1, -1, -1, 1, 1, 1);
+    // create a cartesian grid with 7^3 grid points and the bounding box [-1, 1]^3
+    const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0,  1.0, 1.0, 1.0);
     std::shared_ptr<Grid> grid = std::make_shared<Grid>(7, 7, 7, bbox);
 
     // calculate the value at all grid points
@@ -39,19 +40,20 @@ int main() {
         }
     }
 
+    // compute function gradient
     auto cube_gradient = [](const Point& p) {
         // the normal depends on the side of the cube
         const FT max_value = std::max({std::abs(p.x()), std::abs(p.y()), std::abs(p.z())});
 
-        Vector g(0, 0, 0);
+        Vector g(0.0, 0.0, 0.0);
         if (max_value == std::abs(p.x())) {
-            g += Vector(sign(p.x()), 0, 0);
+            g += Vector(sign(p.x()), 0.0, 0.0);
         }
         if (max_value == std::abs(p.y())) {
-            g += Vector(0, sign(p.y()), 0);
+            g += Vector(0.0, sign(p.y()), 0.0);
         }
         if (max_value == std::abs(p.z())) {
-            g += Vector(0, 0, sign(p.z()));
+            g += Vector(0.0, 0.0, sign(p.z()));
         }
         const FT length_sq = g.squared_length();
         if (length_sq > 0.00001) {
@@ -60,18 +62,19 @@ int main() {
         return g;
     };
 
-    // create a domain from the grid
+    // create domain from given grid and gradient
     auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid, cube_gradient);
 
-    // prepare collections for the results
+    // containers for output indexed surface meshes
     Point_range points_mc, points_dc;
     Polygon_range polygons_mc, polygons_dc;
 
-    // execute topologically correct marching cubes and dual contouring with an isovalue of 0.8
-    CGAL::Isosurfacing::marching_cubes(domain, 0.88, points_mc, polygons_mc);
-    CGAL::Isosurfacing::dual_contouring(domain, 0.88, points_dc, polygons_dc);
+    // run topologically correct marching cubes and dual contouring with given isovalue
+    const FT isovalue = 0.88;
+    CGAL::Isosurfacing::marching_cubes(domain, isovalue, points_mc, polygons_mc, true);
+    CGAL::Isosurfacing::dual_contouring(domain, isovalue, points_dc, polygons_dc);
 
-    // save the results in the OFF format
+    // save output indexed meshes to files, in the OFF format
     CGAL::IO::write_OFF("result_mc.off", points_mc, polygons_mc);
     CGAL::IO::write_OFF("result_dc.off", points_dc, polygons_dc);
 }

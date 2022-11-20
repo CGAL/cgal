@@ -1,4 +1,3 @@
-
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Implicit_cartesian_grid_domain.h>
 #include <CGAL/Marching_cubes_3.h>
@@ -6,28 +5,31 @@
 #include <CGAL/boost/graph/IO/OFF.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
+typedef typename Kernel::FT FT;
 typedef typename Kernel::Vector_3 Vector;
 typedef typename Kernel::Point_3 Point;
 
 typedef std::vector<Point> Point_range;
-typedef std::vector<std::vector<std::size_t>> Polygon_range;
+typedef std::vector<std::vector<std::size_t> > Polygon_range;
 
 int main() {
-    const CGAL::Bbox_3 bbox{-1, -1, -1, 1, 1, 1};
-    const Vector spacing(0.04f, 0.04f, 0.04f);
+    const CGAL::Bbox_3 bbox{-1.0, -1.0, -1.0,  1.0, 1.0, 1.0};
+    const FT spacing = 0.04;
+    const Vector vec_spacing(spacing, spacing, spacing);
 
+    // Euclidean distance function to the origin
     auto sphere_function = [&](const Point& p) { return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z()); };
 
-    // create a domain with bounding box [-1, 1]^3 and grid spacing 0.02
-    auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, spacing, sphere_function);
+    // create a domain with given bounding box and grid spacing
+    auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, vec_spacing, sphere_function);
 
-    // prepare collections for the result
+    // prepare collections for the output indexed mesh
     Point_range points;
     Polygon_range polygons;
 
     // execute marching cubes with an isovalue of 0.8
-    CGAL::Isosurfacing::marching_cubes(domain, 0.8f, points, polygons);
+    CGAL::Isosurfacing::marching_cubes(domain, 0.8, points, polygons);
 
-    // save the result in the OFF format
+    // save ouput indexed mesh to a file, in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
 }

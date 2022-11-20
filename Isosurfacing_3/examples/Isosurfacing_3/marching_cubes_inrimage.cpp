@@ -6,7 +6,6 @@
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef typename Kernel::Point_3 Point;
-
 typedef CGAL::Cartesian_grid_3<Kernel> Grid;
 
 typedef std::vector<Point> Point_range;
@@ -16,26 +15,26 @@ int main() {
 
     const std::string fname = CGAL::data_file_path("images/skull_2.9.inr");
 
-    // load the image
+    // load volumetric image from a file
     CGAL::Image_3 image;
     if (!image.read(fname)) {
-        std::cerr << "Error: Cannot read file " << fname << std::endl;
+        std::cerr << "Error: Cannot read image file " << fname << std::endl;
         return EXIT_FAILURE;
     }
 
-    // convert it to a cartesian grid
+    // convert image to a cartesian grid
     std::shared_ptr<Grid> grid = std::make_shared<Grid>(image);
 
     // create a domain from the grid
     auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
 
-    // prepare collections for the result
+    // prepare collections for the output indexed mesh
     Point_range points;
     Polygon_range polygons;
 
     // execute marching cubes with an isovalue of 2.9
     CGAL::Isosurfacing::marching_cubes(domain, 2.9, points, polygons);
 
-    // save the result in the OFF format
+    // save output indexed mesh to a file, in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
 }

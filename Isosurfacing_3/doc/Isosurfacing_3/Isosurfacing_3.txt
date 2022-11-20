@@ -17,34 +17,38 @@ Different isovalues of a bunny.
 
 \section secmyintroduction Introduction
 
-This package provides methods to compute a surface mesh representing an isosurface of a 3-dimensional scalar field.
-An isosurface is defined as the surface on which the value of this field is equal to a given constant, i.e. the isovalue.
-Depending on the isosurfacing method and the input data structure, the result is either a triangular, quadrilateral, or higher order polygonal indexed face set.
-
+This package provides algorithms to compute a surface mesh approximating an isosurface of a 3-dimensional scalar field defined over an input 3D domain.
+An isosurface is defined as the surface on which the value of this scalar field equates a given constant, i.e. a user-defined isovalue.
+Depending on the isosurfacing method and the input data structure, the ouput is either a triangular, quadrilateral, 
+or higher order polygonal surface mesh represented as an indexed face set. The output can be empty when the isovalue is absent in the input domain.
 \section secmyalgorithms Algorithms
 
-There are multiple algorithms to extract isosurfaces.
-This package contains Marching Cubes, topologically correct Marching Cubes, and Dual Contouring.
+There is a variety of algorithms to extract isosurfaces.
+This package offers Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
 
 \subsection subsecmc Marching Cubes (MC)
-MC processes all cells of the input domain individually.
+MC runs over a 3D grid, i.e. a 3D domain partitioned into hexahedral cells.
+It processes all cells of the input domain individually.
 Each cell corner gets a sign (+/-) to indicate if it is above or below the isovalue.
-A new vertex is created on every cell edge where the sign changes, i.e. the isosurface is intersected.
-The vertex position is computed via linear interpolation of the scalar values of the incident corners.
-Depending on the configuration of signs at the corners the resulting vertices are connected to form triangles within the cell.
+A vertex is created on every cell edge where the sign changes, i.e. where the edge intersects the isosurface.
+The vertex position is computed via linear interpolation of the scalar values evaluated at the cell corners forming the edge.
+Depending on the configuration of signs at the cell corners, the resulting vertices are connected to form triangles within the cell.
 
-MC can process any input data structure that consists of hexahedral cells.
-In case of a conforming grid, MC produces a triangle mesh that is manifold in most scenarios.
-If the mesh is manifold and the isosurface does not intersect the domain boundaries, the mesh is also watertight.
-Compared to other approaches the algorithm often generates more and many thin triangles with acute angles.
-MC does not preserve sharp features of the input data.
+The proposed implementation is generic in that it can process any grid-based data structure that consists of hexahedral cells.
+In case of a conforming grid, MC generates as output a surface triangle mesh that is 2-manifold in most scenarios. [TODO: reformulate, as 
+it is either strict or not - precise in which cases it is not, and say whether you talk about just combinatorially 2-manifold, or truly 2-manifold]
+If the mesh is manifold and the isosurface does not intersect the domain boundaries, then the output mesh is also watertight.
+
+Compared to other approaches such a Delaunay refinement (TODO: add link to component), the MC algorithm often generates more triangles, 
+and triangles with small angles.
+MC does not preserve the sharp features present in the isovalue of the input scalar field.
 
 \cgalFigureAnchor{isosurfacing_mc_cases}
 <center>
 <img src="mc_cases.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{isosurfacing_mc_cases}
-Some example cases of Marching Cubes.
+Ouputs of Marching Cubes over a variety of input domains.
 \cgalFigureCaptionEnd
 
 \subsection subsectmc Topologically correct Marching Cubes (TMC)
