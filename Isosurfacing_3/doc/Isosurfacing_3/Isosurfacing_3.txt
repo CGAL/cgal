@@ -19,18 +19,16 @@ Different isovalues of a bunny.
 
 This package provides algorithms to compute a surface mesh approximating an isosurface of a 3-dimensional scalar field defined over an input 3D domain.
 An isosurface is defined as the surface on which the value of this scalar field equates a given constant, i.e. a user-defined isovalue.
-Depending on the isosurfacing method and the input data structure, the ouput is either a triangular, quadrilateral, 
-or higher order polygonal surface mesh represented as an indexed face set. The output can be empty when the isovalue is absent in the input domain.
+Depending on the isosurfacing method and the input data structure, the output is either a triangular, quadrilateral, or higher degree polygonal surface mesh represented as an indexed face set. The output can be empty when the isosurface is absent from the input domain.
 \section secmyalgorithms Algorithms
 
 There is a variety of algorithms to extract isosurfaces.
 This package offers Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
 
 \subsection subsecmc Marching Cubes (MC)
-MC runs over a 3D grid, i.e. a 3D domain partitioned into hexahedral cells.
-It processes all cells of the input domain individually.
+MC runs over a 3D grid, i.e. a 3D domain partitioned into hexahedral cells, and processes all cells of the input domain individually.
 Each cell corner gets a sign (+/-) to indicate if it is above or below the isovalue.
-A vertex is created on every cell edge where the sign changes, i.e. where the edge intersects the isosurface.
+A new vertex is created on every cell edge where the sign changes, i.e. where the edge intersects the isosurface.
 The vertex position is computed via linear interpolation of the scalar values evaluated at the cell corners forming the edge.
 Depending on the configuration of signs at the cell corners, the resulting vertices are connected to form triangles within the cell.
 
@@ -38,9 +36,9 @@ The proposed implementation is generic in that it can process any grid-based dat
 In case of a conforming grid, MC generates as output a surface triangle mesh that is 2-manifold in most scenarios. [TODO: reformulate, as 
 it is either strict or not - precise in which cases it is not, and say whether you talk about just combinatorially 2-manifold, or truly 2-manifold]
 If the mesh is manifold and the isosurface does not intersect the domain boundaries, then the output mesh is also watertight.
+As MC only proceeds by linear interpolation of the scalar field along the grid edges, it can miss details or components that are not captured by the said interpolation.
 
-Compared to other approaches such a Delaunay refinement (TODO: add link to component), the MC algorithm often generates more triangles, 
-and triangles with small angles.
+Compared to other approaches such a Delaunay refinement (TODO: add link to component), and depending on the parameters, the MC algorithm often generates more triangles, and triangles with small angles.
 MC does not preserve the sharp features present in the isovalue of the input scalar field.
 
 \cgalFigureAnchor{isosurfacing_mc_cases}
@@ -48,70 +46,70 @@ MC does not preserve the sharp features present in the isovalue of the input sca
 <img src="mc_cases.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{isosurfacing_mc_cases}
-Ouputs of Marching Cubes over a variety of input domains.
+Outputs of Marching Cubes in 2D.
 \cgalFigureCaptionEnd
 
 \subsection subsectmc Topologically correct Marching Cubes (TMC)
-This algorithm is an extension to MC and provides additional guarantees for the output.
-It generates a mesh that is homeomorphic to the trilinear interpolant of the input function inside each cube.
-This means that the mesh can accurately represent small complex features.
+This algorithm is an extension to MC and provides additional guarantees for the output [add reference].
+It generates as output a mesh that is homeomorphic to the trilinear interpolant of the input function inside each cube.
+This means that the output mesh can accurately represent small complex features.
 For example a tunnel of the isosurface within a single cell can be topologically resolved.
-Furthermore, the mesh is guaranteed to be manifold and watertight, as long as the isosurface does not intersect the domain boundaries.
+Furthermore, the mesh is guaranteed to be 2-manifold and watertight, as long as the isosurface does not intersect the domain boundaries.
 
 This algorithm is based on the following paper:
 
-Roberto Grosso: Construction of Topologically Correct and Manifold Isosurfaces. Computer Graphics Forum 35(5):187-196 - August 2016
+Roberto Grosso: Construction of Topologically Correct and Manifold Isosurfaces. Computer Graphics Forum 35(5):187-196 - 2016.
 
 \subsection subsecdc Dual Contouring (DC)
-DC creates one vertex in every cell that is intersected by the isosurface.
+DC creates one vertex for every cell that is intersected by the isosurface.
 Next, a face is created for each edge that intersects the isosurface, by connecting the vertices of the incident cells.
-For a uniform hexahedral grid, this results in a quadrilateral mesh.
+For a uniform hexahedral grid, this results into a quadrilateral mesh.
 
-The classical DC method requires the gradient of the scalar field.
-The provided domain therefore has to implement the concept `IsosurfacingDomainWithGradient`.
-All default domain implementations do this but assume the gradient to be zero if it is not provided as an additional parameter.
-Thus, for using the classical DC, the gradient has to be defined by the user.
-Alternatively, there are also some default gradient functions implemented,
-such as `Finite_difference_gradient` and `Explicit_cartesian_grid_gradient`.
+As the original DC method requires the gradient of the scalar field,
+the provided domain must implement the concept `IsosurfacingDomainWithGradient` in order to provide a gradient field, in addition to a scalar field.
+All default domain implementations also provide a gradient field, but assume the gradient to be null everywhere when it is not provided as an additional parameter.
+Alternatively, some default gradient functions are provided such as `Finite_difference_gradient` and `Explicit_cartesian_grid_gradient`.
 
-Different versions of DC compute the vertex positions differently.
-Therefore, the vertex positioning is configurable with an optional parameter passed to the function.
-Some of them do not require the gradient and therefore even work with the zero gradient.
+Variants of DC differ in the way they compute vertex positions.
+The vertex positioning is thus configurable with an optional parameter passed to the function.
+Some variants do not require the gradient and therefore work even when the default zero gradient is provided.
 
-Dual Contouring works on any domain but does not guarantee a manifold or watertight mesh.
-It creates less faces than Marching Cubes.
-Another advantage of DC over MC is the ability to represent sharp edges.
+Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh.
+It generates fewer faces than Marching Cubes, in general.
+Its advantage over MC is its ability to recover sharp creases. [what about corners? darts? tips? cusps?] TODO: add a figure.
 
 \cgalFigureAnchor{isosurfacing_iwp_dc}
 <center>
 <img src="iwp_dc.png" style="max-width:40%;"/>
 </center>
 \cgalFigureCaptionBegin{isosurfacing_iwp_dc}
-Isosurface of the IWP function generated by Dual Contouring.
+Isosurface of the IWP function generated by Dual Contouring. [TODO: do not assume that iwp is known to the reader - explicit first]
 \cgalFigureCaptionEnd
 
-\subsection subseccomparison Comparison
+\subsection subseccomparison Comparisons
 
-|  Algorithm        | Domains    | Faces       | Manifold  | Watertight*   | Topologically correct |
+The following table compares the algorithms in terms of constraints over the input 3D domain, the facets of the output surface mesh, and the 2-manifoldness of the output surface mesh.
+
+|  Algorithm        | Domains    | Facets       | 2-Manifold  | Watertight*   | Topologically correct |
 | ----              | ----       | ----        | ----      | ----          | ----                  |
   MC                | Hexahedral | Triangles   | no        | no            | no                    |
   TMC               | Hexahedral | Triangles   | yes       | yes           | yes                   |
   DC                | All        | Polygons    | no        | no            | no                    |
 
-(* assuming the isosurface does not leave the given bounding box of the domain)
+(* assuming the isosurface does not leave the specified bounding box of the input 3D domain)
 
 \cgalFigureAnchor{isosurfacing_compare_mc_dc}
 <center>
 <img src="cube_mc_dc.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{isosurfacing_compare_mc_dc}
-Comparison between a cube generated by Dual Contouring (left) and Marching Cubes (right).
+Comparison between a cube generated by Dual Contouring (left) or by Marching Cubes (right).
 \cgalFigureCaptionEnd
 
 
 \section secmyinterface Interface
 
-Each algorithm is represented by a single functions. The function signature is the same for all algorithms:
+Each algorithm is represented by a single templated functions. The function signature is the same for all algorithms:
 
 \code{.cpp}
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange>
@@ -121,34 +119,33 @@ void marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
 
 The input is provided in the form of a `domain` (see \ref secmydomains).
 
-The `iso_value` parameter describes the grid value the isosurface should represent.
+The `iso_value` scalar parameter describes the grid value the isosurface should represent.
 
-The output is in the form of an indexed face set that is written to the two collections `points` and `polygons`.
+The output surface mesh is provided in the form of an indexed face set,  which is written to the two collections `points` and `polygons`.
 The vertex positions are stored as `Point_3` in `points`. Each face in `polygons` is a list of indices pointing into the `points` collection.
-Depending on the algorithm, the indexed face set may either store a polygon soup or a topological mesh.
+Depending on the algorithm, the indexed face set may store either a polygon soup or a mesh with connectivity.
 
-Algorithms can run sequentially on one CPU core or in parallel.
-The Concurrency_tag is used to specify how the algorithm is executed and is either Sequential_tag or Parallel_tag.
-To enable parallelism, CGAL needs to be linked with the Intel TBB library.
-If the parallel version is not availible the sequential version will always be used as a fallback.
+The isosurfacing algorithms can run either sequentially on one CPU core or in parallel on multicore architectures with shared memory.
+The Concurrency_tag is used to specify how the algorithm is executed: either Sequential_tag or Parallel_tag.
+To enable parallelism, CGAL must be linked with the Intel TBB library.
+When the parallel version is not available due to absent link with the TBB library, then the sequential version is always used as a fallback.
 
 
 \section secmydomains Domains
-
-A domain is an object that provides functions to access the input data, its geometry, topology, and optionally its gradient.
-There are some predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
+An domain is an object that provides functions to access the input data, its geometry, topology, and optionally its gradient.
+For common representations, we offer a set of predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
 Users can also define new domains by implementing the `Isosurfacing_domain` or `IsosurfacingDomainWithGradient` concept.
 
 \subsection mysubsecimplicitdomain Implicit cartesian grid domain
 The `Implicit_cartesian_grid_domain` represents the input function in an implicit form without storing any values.
-It takes a functor or lambda that computes the value of the function from the position of a vertex as parameter.
-Additionally, the bounding box and spacing between grid points have to be specified.
+It takes a function-object (functor) or lambda function that computes the value of the function from the position of a vertex query.
+Additionally, the bounding box and spacing between the grid points must be provided.
 
-\subsection mysubseccartesiandomain Explicit cartesian grid domain
+\subsection mysubseccartesiandomain ExplicitCcartesian grid domain
 The `Explicit_cartesian_grid_domain` only takes a `Cartesian_grid_3` as parameter.
 It represents a uniform grid of values that are either computed by the user or read from an `Image_3`.
-The constructor of `Cartesian_grid_3` needs the number of grid points in each dimension and the bounding box.
-The values are read and written with `value(x, y, z)` where x, y, and z are the coordinates of a grid point.
+The constructor of `Cartesian_grid_3` requires the number of grid points in each dimension (x, y, z) and the bounding box.
+The values are read and written with `value(x, y, z)` where x, y, and z denote the coordinates of a grid point.
 Alternatively, all required data can be copied from an `Image_3`.
 
 
@@ -159,7 +156,7 @@ Alternatively, all required data can be copied from an `Image_3`.
 <img src="perf_threads_iwp_mc.svg" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{isosurfacing_perf_iwp_mc}
-Scaling of Marching Cubes with more threads.
+Scalability of the Marching Cubes algorithm. We plot the algorithm efficiency (number of thousand-cubes per second) against the number of CPU cores.
 \cgalFigureCaptionEnd
 
 
@@ -168,14 +165,13 @@ Scaling of Marching Cubes with more threads.
 \subsection myExampleImplicit_domain Implicit sphere
 
 The following example shows the usage of the Marching Cubes algorithm to extract an isosurface.
-The domain is an `Implicit_domain` that describes a sphere by the distance to its origin as an implicit function.
+The domain is an `Implicit_domain` that describes the unit sphere by the distance to its center (set to the origin) as an implicit function.
 
 \cgalExample{Isosurfacing_3/marching_cubes_implicit_sphere.cpp}
 
 \subsection myExampleAll_cube Cartesian_grid_3 cube comparison
 
-The following example compares all provided algorithms to extract an isosurface.
-The domain is an `Cartesian_grid_domain` that describes a cube by storing the manhattan distance to its origin in a `Cartesian_grid_3`.
+The following example runs all provided algorithms to extract an isosurface. The input 3D domain is a `Cartesian_grid_domain` that describes a cube by storing the Manhattan distance to its origin in a `Cartesian_grid_3`.
 
 \cgalExample{Isosurfacing_3/all_cartesian_cube.cpp}
 
@@ -187,9 +183,8 @@ The following example shows how to load data from an `Image_3`.
 
 \subsection myExampleMeshOffset Offset mesh
 
-The following example shows how to compute an offset mesh.
-The original mesh is passed to an `AABB_tree` to allow fast distance queries.
-With the use of `Side_of_triangle_mesh` the sign of the distance function is flipped inside the mesh.
+The following example shows how to compute a signed offset mesh.
+The input mesh is stored into an `AABB_tree` data structure to allow fast distance queries. Via the `Side_of_triangle_mesh` functor, the sign of the distance function is made negative inside the mesh.
 
 \cgalExample{Isosurfacing_3/dual_contouring_mesh_offset.cpp}
 
