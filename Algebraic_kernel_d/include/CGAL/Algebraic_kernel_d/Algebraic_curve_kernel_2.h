@@ -357,6 +357,7 @@ public:
          : _inner(inner), _outer(outer) {}
 
        Unary_compose(const Unary_compose& other) = default;
+       Unary_compose& operator=(const Unary_compose& other) = default;
 
        Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
 

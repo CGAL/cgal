@@ -35,7 +35,8 @@ public:
   {
   }
 
-  AABB_segment_2_primitive(const AABB_segment_2_primitive &primitive) = default;
+  AABB_segment_2_primitive(const AABB_segment_2_primitive& primitive) = default;
+  AABB_segment_2_primitive& operator=(const AABB_segment_2_primitive& primitive) = default;
 
   const Id &id() const
   {

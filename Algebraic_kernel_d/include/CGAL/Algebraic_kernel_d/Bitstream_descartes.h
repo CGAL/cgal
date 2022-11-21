@@ -1148,6 +1148,7 @@ public:
 
   //! Copy constructor
   Bitstream_descartes(const Self& other) = default;
+  Bitstream_descartes& operator=(const Self& other) = default;
 
   /*!
    * \brief Constructor for a polynomial \c f

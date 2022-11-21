@@ -558,6 +558,7 @@ private:
         log_C_eps_     = n.log_C_eps_;
     }
 
+    Bitstream_descartes_rndl_node(const Self&)=delete;
     Self& operator= (const Self&)=delete;
 }; // struct Bitstream_descartes_rndl_node
 
