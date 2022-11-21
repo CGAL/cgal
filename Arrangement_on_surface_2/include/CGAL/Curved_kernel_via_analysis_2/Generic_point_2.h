@@ -128,7 +128,7 @@ public:
     }
 #endif
     /*!\brief
-     * constructs an arc from a given represetnation
+     * constructs an arc from a given representation
      */
     Generic_point_2(Rep rep) :
         Base(rep) {

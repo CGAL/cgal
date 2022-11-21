@@ -1,5 +1,5 @@
 ## CMake file to locate SuiteSparse and its useful composite projects
-## The first development of this file was done by a Windows users who
+## The first development of this file was done by Windows users who
 ## used: 
 ##  https://github.com/jlblancoc/suitesparse-metis-for-windows
 ## Anyway, it could work also on linux (tested on fedora 17 when you installed suitesparse from yum)
@@ -20,14 +20,14 @@
 ##   * SuiteSparse_INCLUDE_DIRS  			Paths containing SuiteSparse needed headers (depend on which COMPONENTS you gave)
 ##   * SuiteSparse_LIBRARIES     			Absolute paths of SuiteSparse libs found (depend on which COMPONENTS you gave)
 ##   If SuiteSparse_USE_LAPACK_BLAS is set to ON : 
-##   	* SuiteSparse_LAPACK_BLAS_LIBRARIES 	Which contain the libblas and liblapack libraries
+##   	* SuiteSparse_LAPACK_BLAS_LIBRARIES     	Which contain the libblas and liblapack libraries
 ##   	On windows:
 ##   		* SuiteSparse_LAPACK_BLAS_DLL		Which contain all required binaries for use libblas and liblapack
 ##
 ##
 ## Detailed variables this file provide :
 ##   * SuiteSparse_<UPPPER_CASE_COMPONENT>_FOUND		True if the given component to look for is found (INCLUDE DIR and LIBRARY)
-##   * SuiteSparse_<UPPPER_CASE_COMPONENT>_INCLUDE_DIR	The path directory where we can be found all component header files
+##   * SuiteSparse_<UPPPER_CASE_COMPONENT>_INCLUDE_DIR  	The path directory where all component header files can be found
 ##   * SuiteSparse_<UPPPER_CASE_COMPONENT>_LIBRARY		The file path to the component library
 ##   Note: If a component is not found, a SuiteSparse_<UPPPER_CASE_COMPONENT>_DIR cache variable is set to allow user set the search directory.
 ##
