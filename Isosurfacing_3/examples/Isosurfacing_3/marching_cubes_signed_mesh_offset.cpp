@@ -49,7 +49,7 @@ int main() {
 
     // compute loose bounding box of the mesh
     CGAL::Bbox_3 aabb_grid = CGAL::Polygon_mesh_processing::bbox(mesh_input);
-    const FT loose_offset = offset_value + 0 .01;
+    const FT loose_offset = offset_value + 0.01;
     Vector aabb_increase_vec = Vector(loose_offset, loose_offset, loose_offset);
     aabb_grid += (Point(aabb_grid.xmax(), aabb_grid.ymax(), aabb_grid.zmax()) + aabb_increase_vec).bbox();
     aabb_grid += (Point(aabb_grid.xmin(), aabb_grid.ymin(), aabb_grid.zmin()) - aabb_increase_vec).bbox();
@@ -85,13 +85,13 @@ int main() {
     // create domain from the grid
     auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
 
-    // prepare collections for output indexed surface mesh
+    // containers for output indexed triangle soup
     Point_range points;
     Polygon_range polygons;
 
     // execute marching cubes with an isovalue equating offset
     CGAL::Isosurfacing::marching_cubes(domain, offset_value, points, polygons);
 
-    // save output indexed surface mesh to a file, in the OFF format
-    CGAL::IO::write_OFF("result.off", points, polygons);
+    // save output indexed triangle soup to a file, in the OFF format
+    CGAL::IO::write_OFF("output.off", points, polygons);
 }

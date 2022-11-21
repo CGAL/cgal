@@ -19,7 +19,7 @@ int main() {
 
     // create bounding box and grid
     const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0,  1.0, 1.0, 1.0);
-    std::shared_ptr<Grid> grid = std::make_shar ed<Grid>(30, 30, 30, bbox);
+    std::shared_ptr<Grid> grid = std::make_shared<Grid>(30, 30, 30, bbox);
 
     // compute field values and gradients
     for (std::size_t x = 0; x < grid->xdim(); x++) {
