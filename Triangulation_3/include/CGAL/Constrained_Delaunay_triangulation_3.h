@@ -55,7 +55,7 @@ class Constrained_Delaunay_triangulation_vertex_base_3
 {
   using Base = Conforming_Delaunay_triangulation_vertex_base_3<Gt, Vb>;
 public:
-  bool original_point = false;
+  bool original_point = false;  // currently not used
 
   // To get correct vertex type in TDS
   template < class TDS3 >
