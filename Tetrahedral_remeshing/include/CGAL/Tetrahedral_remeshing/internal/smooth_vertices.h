@@ -281,7 +281,8 @@ private:
     for (auto& kv : ons_map)
     {
       std::ostringstream oss;
-      oss << "dump_normals_normalized_" << kv.first << ".polylines.txt";
+      oss << "dump_normals_normalized_["
+        << kv.first.first << "_" << kv.first.second << "].polylines.txt";
       std::ofstream ons(oss.str());
       for (auto s : kv.second)
         ons << "2 " << s.source() << " " << s.target() << std::endl;
