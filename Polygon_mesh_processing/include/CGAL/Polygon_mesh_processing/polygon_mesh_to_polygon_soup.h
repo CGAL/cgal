@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_MESH_TO_POLYGON_SOUP_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_MESH_TO_POLYGON_SOUP_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/assertions.h>

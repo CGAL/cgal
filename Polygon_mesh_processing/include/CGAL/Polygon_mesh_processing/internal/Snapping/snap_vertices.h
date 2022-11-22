@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_VERTICES_H
 #define CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_VERTICES_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
  #ifndef CGAL_PMP_SNAP_DEBUG
