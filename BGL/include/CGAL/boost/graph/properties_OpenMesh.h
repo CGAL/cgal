@@ -13,6 +13,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Kernel_traits.h>
+
 #include <boost/mpl/if.hpp>
 
 #ifndef OPEN_MESH_CLASS
@@ -231,8 +233,8 @@ public:
 #if defined(CGAL_USE_OM_POINTS)
     const_cast<OpenMesh&>(*pm.sm_).set_point(v,p);
 #else
-    const_cast<OpenMesh&>(*pm.sm_).set_point
-      (v, typename OpenMesh::Point((float)p[0], (float)p[1], (float)p[2]));
+    typedef typename CGAL::Kernel_traits<typename OpenMesh::Point>::type FT;
+    const_cast<OpenMesh&>(*pm.sm_).set_point(v, typename OpenMesh::Point(FT(p[0]), FT(p[1]), FT(p[2])));
 #endif
   }
 
