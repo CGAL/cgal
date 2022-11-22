@@ -1140,7 +1140,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 
 namespace experimental {
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_geometric_repair_grp
 //
 // Attempts to snap the vertices in `halfedge_range_A` and `halfedge_range_B`.
 // A vertex from the first range and a vertex from the second range are only snapped

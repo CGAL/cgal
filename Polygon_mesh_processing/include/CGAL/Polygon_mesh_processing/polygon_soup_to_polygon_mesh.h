@@ -153,7 +153,7 @@ private:
 } // namespace internal
 
 /**
-* \ingroup PMP_repairing_grp
+* \ingroup PMP_combinatorial_repair_grp
 *
 * \brief returns `true` if the soup of polygons defines a valid polygon
 * mesh that can be handled by
@@ -231,7 +231,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 }
 
 /**
-* \ingroup PMP_repairing_grp
+* \ingroup PMP_combinatorial_repair_grp
 *
 * builds a polygon mesh from a soup of polygons.
 *

@@ -55,7 +55,7 @@ struct PM_to_PS_point_converter<PM_Point, std::array<PS_FT, 3> >
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// adds the vertices and faces of a mesh into a (possibly non-empty) polygon soup.
 ///
