@@ -937,7 +937,7 @@ public:
    * Warning: Here we don't check if cells are in c3t3
    */
   template <typename SliverCriterion>
-  double min_sliver_value(const Cell_vector& cells,
+  FT min_sliver_value(const Cell_vector& cells,
                       const SliverCriterion& criterion,
                       const bool use_cache = true) const;
 
@@ -3720,7 +3720,7 @@ number_of_incident_slivers(const Vertex_handle& v,
 
 template <typename C3T3, typename MD>
 template <typename SliverCriterion>
-double
+typename C3T3_helpers<C3T3,MD>::FT
 C3T3_helpers<C3T3,MD>::
 min_sliver_value(const Cell_vector& cells,
                  const SliverCriterion& criterion,
@@ -3741,12 +3741,12 @@ min_sliver_value(const Cell_vector& cells,
   //
   //return *(std::min_element(make_transform_iterator(cells.begin(),sc_value),
   //                          make_transform_iterator(cells.end(),sc_value)));
-  double min_value = criterion.get_max_value();
+  FT min_value = criterion.get_max_value();
   for(typename Cell_vector::const_iterator it = cells.begin();
       it != cells.end();
       ++it)
   {
-    min_value = (std::min)(criterion(*it), min_value);
+    min_value = (std::min<FT>)(criterion(*it), min_value);
   }
   return min_value;
 }
