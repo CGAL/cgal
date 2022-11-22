@@ -220,11 +220,11 @@ void tetrahedral_isotropic_remeshing(
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::cell_selector_t,
     NamedParameters,
-    Constant_property_map<Cell_handle, bool>//default
+    Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
   > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                       Constant_property_map<Cell_handle, bool>(true));
+                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
   typedef typename internal_np::Lookup_named_param_def <
