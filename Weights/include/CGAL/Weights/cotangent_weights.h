@@ -193,6 +193,9 @@ public:
 // Surface_mesh_deformation -> Surface_mesh_deformation.h (default version)
 // Surface_mesh_parameterizer -> Orbifold_Tutte_parameterizer_3.h (default version)
 // Surface_mesh_skeletonization -> Mean_curvature_flow_skeletonization.h (clamped version)
+//
+// The API is a bit awkward: the template parameters VertexPointMap and GeomTraits
+// are only meaningful in the API that calls the operator with a single parameter.
 template<typename PolygonMesh,
          typename VertexPointMap = typename GetVertexPointMap<PolygonMesh>::type,
          typename GeomTraits = typename Kernel_traits<
@@ -201,8 +204,6 @@ class Cotangent_weight
 {
   using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
-
-  using FT = typename GeomTraits::FT;
 
 private:
   // These class members are used only when the constructor initializing them
@@ -224,12 +225,14 @@ public:
   // Common API whether mesh/vpm/traits are initialized in the constructor,
   // or passed in the operator()
   template <typename VPM, typename GT>
-  FT operator()(const halfedge_descriptor he,
-                const PolygonMesh& pmesh,
-                const VPM vpm,
-                const GT& traits) const
+  typename GT::FT
+  operator()(const halfedge_descriptor he,
+             const PolygonMesh& pmesh,
+             const VPM vpm,
+             const GT& traits) const
   {
     using Point_ref = typename boost::property_traits<VPM>::reference;
+    using FT = typename GT::FT;
 
     if(is_border(he, pmesh))
       return FT{0};
@@ -265,9 +268,10 @@ public:
 
   // That is the API called by Surface_mesh_deformation
   template <typename VPM>
-  FT operator()(const halfedge_descriptor he,
-                const PolygonMesh& pmesh,
-                const VPM vpm) const
+  auto // kernel_traits<VPM::value_type>::type::FT
+  operator()(const halfedge_descriptor he,
+             const PolygonMesh& pmesh,
+             const VPM vpm) const
   {
     using Point = typename boost::property_traits<VPM>::value_type;
     using GT = typename Kernel_traits<Point>::type;
@@ -286,7 +290,7 @@ public:
       m_bound_from_below(bound_from_below)
   { }
 
-  FT operator()(const halfedge_descriptor he) const
+  typename GeomTraits::FT operator()(const halfedge_descriptor he) const
   {
     CGAL_precondition(m_pmesh_ptr != nullptr);
     return this->operator()(he, *m_pmesh_ptr, m_vpm, m_traits);

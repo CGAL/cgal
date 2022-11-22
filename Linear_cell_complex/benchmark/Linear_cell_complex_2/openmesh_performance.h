@@ -22,18 +22,9 @@ public:
     mesh.request_face_normals();
   }
 
-
 private:
-
-  struct MyTraits : public OpenMesh::DefaultTraits
-  {
-    typedef OpenMesh::Vec3d Point;
-    typedef OpenMesh::Vec3d Normal;
-  };
-
-  typedef OpenMesh::TriMesh_ArrayKernelT<MyTraits> Mesh;
+  typedef OpenMesh::TriMesh_ArrayKernelT<OpenMesh::DefaultTraitsDouble> Mesh;
   Mesh mesh;
-
 
 private:
   void display_info()
