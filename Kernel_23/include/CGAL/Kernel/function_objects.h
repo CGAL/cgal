@@ -3023,7 +3023,7 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Boolean     result_type;
 
-    // Needs FT because Line/Line (and variations) and Circle_2/X compute intersections
+    // Needs_FT because Line/Line (and variations) as well as Circle_2/X compute intersections
     template <class T1, class T2>
     Needs_FT<result_type>
     operator()(const T1& t1, const T2& t2) const
