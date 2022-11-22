@@ -25,7 +25,8 @@ bool do_intersect_coplanar(const typename K::Point_3& A,
                            const typename K::Point_3& B,
                            const typename K::Point_3& C,
                            const typename K::Point_3& p,
-                           const typename K::Point_3& q, const K& k)
+                           const typename K::Point_3& q,
+                           const K& k)
 {
   typedef typename K::Point_3 Point_3;
 

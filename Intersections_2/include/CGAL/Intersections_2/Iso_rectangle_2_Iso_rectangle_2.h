@@ -85,10 +85,9 @@ do_intersect(const typename K::Iso_rectangle_2& irect1,
 } // namespace internal
 } // namespace Intersections
 
-
 CGAL_INTERSECTION_FUNCTION_SELF(Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_rectangle_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_ISO_RECTANGLE_2_ISO_RECTANGLE_2_H

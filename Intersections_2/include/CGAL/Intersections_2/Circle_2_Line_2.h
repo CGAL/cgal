@@ -53,4 +53,4 @@ CGAL_DO_INTERSECT_FUNCTION(Circle_2, Line_2, 2)
 
 } // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_CIRCLE_2_LINE_2_H

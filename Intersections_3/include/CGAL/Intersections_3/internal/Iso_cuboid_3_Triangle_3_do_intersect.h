@@ -40,9 +40,6 @@ do_intersect(const typename K::Iso_cuboid_3& bbox,
 
 } // namespace internal
 } // namespace Intersections
-
-
-
 } // namespace CGAL
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_TRIANGLE_3_DO_INTERSECT_H

@@ -492,6 +492,6 @@ intersection(const typename K::Segment_2 &seg1,
 CGAL_INTERSECTION_FUNCTION_SELF(Segment_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_SEGMENT_2_SEGMENT_2_H

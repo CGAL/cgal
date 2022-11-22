@@ -47,4 +47,5 @@ do_intersect(const typename K::Ray_2& r,
 CGAL_DO_INTERSECT_FUNCTION(Circle_2, Ray_2, 2)
 
 } // namespace CGAL
+
 #endif // CGAL_INTERSECTIONS_2_CIRCLE_2_RAY_2_H

@@ -47,4 +47,5 @@ do_intersect(const typename K::Segment_2& s,
 CGAL_DO_INTERSECT_FUNCTION(Circle_2, Segment_2, 2)
 
 } // namespace CGAL
+
 #endif // CGAL_INTERSECTIONS_2_CIRCLE_2_SEGMENT_2_H

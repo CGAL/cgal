@@ -35,7 +35,7 @@ do_intersect(const typename K::Point_2& pt,
              const typename K::Iso_rectangle_2& iso,
              const K&)
 {
-    return !iso.has_on_unbounded_side(pt);
+  return !iso.has_on_unbounded_side(pt);
 }
 
 template <class K>
@@ -45,7 +45,7 @@ do_intersect(const typename K::Iso_rectangle_2& iso,
              const typename K::Point_2& pt,
              const K&)
 {
-    return !iso.has_on_unbounded_side(pt);
+  return !iso.has_on_unbounded_side(pt);
 }
 
 template <class K>
@@ -77,6 +77,6 @@ intersection(const typename K::Iso_rectangle_2 &iso,
 CGAL_INTERSECTION_FUNCTION(Point_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Point_2, Iso_rectangle_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_POINT_2_ISO_RECTANGLE_2_H

@@ -20,7 +20,6 @@
 
 namespace CGAL {
 
-
 template <class K>
 inline
 typename K::Boolean
@@ -43,7 +42,8 @@ do_intersect(const Bbox_2& box,
 template<typename K>
 typename Intersection_traits<K, typename K::Triangle_2, Bbox_2>::result_type
 intersection(const Bbox_2& box,
-             const Triangle_2<K>& tr) {
+             const Triangle_2<K>& tr)
+             {
   typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
   return intersection(rec, tr);
 }
@@ -51,9 +51,11 @@ intersection(const Bbox_2& box,
 template<typename K>
 typename Intersection_traits<K, typename K::Triangle_2, Bbox_2>::result_type
 intersection(const Triangle_2<K>& tr,
-             const Bbox_2& box) {
+             const Bbox_2& box)
+{
   return intersection(box, tr);
 }
 
-}
+} // namespace CGAL
+
 #endif // CGAL_INTERSECTIONS_BBOX_2_TRIANGLE_2_H

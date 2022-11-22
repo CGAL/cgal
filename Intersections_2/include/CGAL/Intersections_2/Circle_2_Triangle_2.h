@@ -62,4 +62,5 @@ do_intersect(const typename K::Triangle_2& t,
 CGAL_DO_INTERSECT_FUNCTION(Circle_2, Triangle_2, 2)
 
 } // namespace CGAL
+
 #endif // CGAL_INTERSECTIONS_2_CIRCLE_2_TRIANGLE_2_H

@@ -163,6 +163,6 @@ do_intersect(const typename K::Triangle_2& t1,
 
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
-#endif //CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H
+#endif // CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H

@@ -87,7 +87,8 @@ typename K::Boolean do_intersect_plane_box(const typename K::Plane_3& plane,
 
   Point_3 p_max, p_min;
   Uncertain<bool> b = get_min_max<K>(plane.orthogonal_vector(), bbox, p_min, p_max);
-  if(is_certain(b)){
+  if(is_certain(b))
+  {
     return ! (plane.oriented_side(p_max) == ON_NEGATIVE_SIDE ||
               plane.oriented_side(p_min) == ON_POSITIVE_SIDE);
   }

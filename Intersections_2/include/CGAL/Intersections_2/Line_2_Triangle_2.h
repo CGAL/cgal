@@ -190,6 +190,6 @@ intersection(const typename K::Triangle_2 &tr,
 CGAL_INTERSECTION_FUNCTION(Line_2, Triangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Line_2, Triangle_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_LINE_2_TRIANGLE_2_H

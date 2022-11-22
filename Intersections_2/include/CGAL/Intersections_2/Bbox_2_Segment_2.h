@@ -51,9 +51,11 @@ intersection(const CGAL::Bbox_2& box,
 template<typename K>
 typename Intersection_traits<K, typename K::Segment_2, Bbox_2>::result_type
 intersection(const Segment_2<K>& seg,
-             const CGAL::Bbox_2& box) {
+             const CGAL::Bbox_2& box)
+{
   return intersection(box, seg);
 }
 
-}
+} // namespace CGAL
+
 #endif // CGAL_INTERSECTIONS_BBOX_2_SEGMENT_2_H

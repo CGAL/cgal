@@ -454,10 +454,9 @@ template <typename FT,
           bool use_static_filters>
 inline
 typename Do_intersect_bbox_segment_aux_is_greater<FT, bounded_0, use_static_filters>::result_type
-do_intersect_bbox_segment_aux(
-    const FT& px, const FT& py, const FT& pz,
-    const FT& qx, const FT& qy, const FT& qz,
-    const Bbox_3& bb)
+do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
+                              const FT& qx, const FT& qy, const FT& qz,
+                              const Bbox_3& bb)
 
 {
   return do_intersect_bbox_segment_aux<FT,double,bounded_0,bounded_1,use_static_filters>(px, py, pz,

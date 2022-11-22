@@ -50,13 +50,12 @@ intersection(const typename K::Point_2 &pt1,
     return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Point_2>();
 }
 
-}// namespace internal
+} // namespace internal
 } // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION_SELF(Point_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Point_2, 2)
 
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif
+#endif // CGAL_INTERSECTIONS_2_POINT_2_POINT_2_H

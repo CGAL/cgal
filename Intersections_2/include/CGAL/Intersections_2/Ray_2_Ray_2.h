@@ -253,7 +253,6 @@ intersection(const typename K::Ray_2 &ray1,
 CGAL_INTERSECTION_FUNCTION_SELF(Ray_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Ray_2, 2)
 
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif
+#endif // CGAL_INTERSECTIONS_2_RAY_2_RAY_2_H

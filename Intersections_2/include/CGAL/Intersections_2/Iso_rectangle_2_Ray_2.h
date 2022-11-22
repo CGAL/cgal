@@ -204,9 +204,8 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_point() const
 CGAL_INTERSECTION_FUNCTION(Ray_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Ray_2, Iso_rectangle_2, 2)
 
-
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_RAY_2_iSO_RECTANGLE_2_INTERSECTION_H
+#endif // CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H

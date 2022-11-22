@@ -156,7 +156,6 @@ Segment_2_Line_2_pair<K>::intersection_segment() const
 CGAL_INTERSECTION_FUNCTION(Segment_2, Line_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Segment_2, Line_2, 2)
 
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif
+#endif // CGAL_INTERSECTIONS_2_SEGMENT_2_LINE_2_H

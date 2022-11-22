@@ -221,7 +221,7 @@ do_intersect(const typename K::Iso_rectangle_2& ir,
 CGAL_INTERSECTION_FUNCTION(Segment_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Segment_2, Iso_rectangle_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
