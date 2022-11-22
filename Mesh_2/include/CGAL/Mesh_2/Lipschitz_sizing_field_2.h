@@ -145,12 +145,12 @@ public:
     return *this;
   }
 
-  FT operator()(const Point& p) const
+  FT operator()(const Point& p) const override
   {
     if(points.empty() || points.size() == 1)
-      return K;
+      return FT(K);
     Site ns = (*ag.nearest_neighbor(p)).site();
-    return K * weighted_distance(p, ns);
+    return FT(K * weighted_distance(p, ns));
   }
 
   void set_K(double k)
