@@ -140,6 +140,20 @@ private:
     return n;
   }
 
+  template<typename Patch_index>
+  std::string debug_to_string(const Patch_index i)
+  {
+    return std::to_string(i);
+  }
+
+  template<typename Patch_index>
+  std::string debug_to_string(const std::pair<Patch_index, Patch_index>& pi)
+  {
+    std::string str = std::to_string(pi.first);
+    str.append("_").append(std::to_string(pi.second));
+    return str;
+  }
+
   template<typename VertexNormalsMap, typename CellSelector>
   void compute_vertices_normals(const C3t3& c3t3,
                                 VertexNormalsMap& normals_map,
@@ -282,7 +296,7 @@ private:
     {
       std::ostringstream oss;
       oss << "dump_normals_normalized_["
-        << kv.first.first << "_" << kv.first.second << "].polylines.txt";
+        << debug_to_string(kv.first) << "].polylines.txt";
       std::ofstream ons(oss.str());
       for (auto s : kv.second)
         ons << "2 " << s.source() << " " << s.target() << std::endl;
