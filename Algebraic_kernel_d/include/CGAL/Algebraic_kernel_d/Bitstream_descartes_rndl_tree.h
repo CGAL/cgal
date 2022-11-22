@@ -524,7 +524,7 @@ public:
 
     friend class internal::Bitstream_descartes_rndl_tree<TRAITS>;
     friend class internal::Bitstream_descartes_rndl_tree_rep<TRAITS>;
-    
+
     Bitstream_descartes_rndl_node(const Self&) = default;
     Self& operator= (const Self&) = delete;
 
