@@ -55,7 +55,8 @@ Polygon_mesh_processing/measure Polygon Mesh Processing - Geometric Measure
 Polygon_mesh_processing/meshing_hole_filling Polygon Mesh Processing - Meshing and Hole Filling
 Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation
 Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate
-Polygon_mesh_processing/repair Polygon Mesh Processing - Repair
+Polygon_mesh_processing/combinatorial_repair Polygon Mesh Processing - Combinatorial Repair
+Polygon_mesh_processing/geometric_repair Polygon Mesh Processing - Geometric Repair
 Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
 Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
