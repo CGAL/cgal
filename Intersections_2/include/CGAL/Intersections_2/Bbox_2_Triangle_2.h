@@ -43,7 +43,7 @@ template<typename K>
 typename Intersection_traits<K, typename K::Triangle_2, Bbox_2>::result_type
 intersection(const Bbox_2& box,
              const Triangle_2<K>& tr)
-             {
+{
   typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
   return intersection(rec, tr);
 }
