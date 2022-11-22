@@ -3465,7 +3465,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // In some cases point is not a real surface point
   if ( triangles.empty() )
-    return std::make_pair(boost::none, Bare_point());
+    return std::make_pair(boost::none, Bare_point(ORIGIN));
 
   // Compute least square fitting plane
   Plane_3 plane;
