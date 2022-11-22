@@ -22,18 +22,20 @@ namespace CGAL {
 
 
 template <class K>
-inline bool do_intersect(
-    const Triangle_2<K> &tr,
-    const Bbox_2 &box)
+inline
+typename K::Boolean
+do_intersect(const Triangle_2<K>& tr,
+             const Bbox_2& box)
 {
   typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
   return do_intersect(rec, tr);
 }
 
 template <class K>
-inline bool do_intersect(
-    const Bbox_2 &box,
-    const Triangle_2<K> &tr)
+inline
+typename K::Boolean
+do_intersect(const Bbox_2& box,
+             const Triangle_2<K>& tr)
 {
   return do_intersect(tr, box);
 }

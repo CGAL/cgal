@@ -24,8 +24,8 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool
-do_intersect(const typename K::Circle_2 & c,
+typename K::Boolean
+do_intersect(const typename K::Circle_2& c,
              const typename K::Segment_2& s,
              const K&)
 {
@@ -33,9 +33,9 @@ do_intersect(const typename K::Circle_2 & c,
 }
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Segment_2& s,
-             const typename K::Circle_2 & c,
+             const typename K::Circle_2& c,
              const K&)
 {
   return squared_distance(c.center(), s) <= c.squared_radius();

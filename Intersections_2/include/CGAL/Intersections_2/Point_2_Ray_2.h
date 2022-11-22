@@ -30,9 +30,9 @@ namespace internal {
 
 template <class K>
 inline
-bool
-do_intersect(const typename K::Point_2 &pt,
-             const typename K::Ray_2 &ray,
+typename K::Boolean
+do_intersect(const typename K::Point_2& pt,
+             const typename K::Ray_2& ray,
              const K&)
 {
   return ray.has_on(pt);
@@ -41,9 +41,9 @@ do_intersect(const typename K::Point_2 &pt,
 
 template <class K>
 inline
-bool
-do_intersect(const typename K::Ray_2 &ray,
-             const typename K::Point_2 &pt,
+typename K::Boolean
+do_intersect(const typename K::Ray_2& ray,
+             const typename K::Point_2& pt,
              const K&)
 {
   return ray.has_on(pt);

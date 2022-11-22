@@ -79,9 +79,9 @@ Uncertain<bool> get_min_max(const typename K::Vector_3& p,
 }
 
 template <class K, class Box3> // Iso_cuboid_3 or Bbox_3
-bool do_intersect_plane_box(const typename K::Plane_3& plane,
-                            const Box3& bbox,
-                            const K&)
+typename K::Boolean do_intersect_plane_box(const typename K::Plane_3& plane,
+                                           const Box3& bbox,
+                                           const K&)
 {
   typedef typename K::Point_3 Point_3;
 
@@ -114,17 +114,19 @@ bool do_intersect_plane_box(const typename K::Plane_3& plane,
 }
 
 template <class K>
-bool do_intersect(const typename K::Plane_3& plane,
-                  const typename K::Iso_cuboid_3& bbox,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Plane_3& plane,
+             const typename K::Iso_cuboid_3& bbox,
+             const K& k)
 {
   return do_intersect_plane_box(plane, bbox, k);
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& bbox,
-                  const typename K::Plane_3& plane,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& bbox,
+             const typename K::Plane_3& plane,
+             const K& k)
 {
   return do_intersect_plane_box(plane, bbox, k);
 }

@@ -54,14 +54,15 @@ protected:
 };
 
 template <class K>
-inline bool do_intersect(
-    const typename K::Ray_2 &p1,
-    const typename K::Ray_2 &p2,
-    const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Ray_2& r1,
+             const typename K::Ray_2& r2,
+             const K&)
 {
-    typedef Ray_2_Ray_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  typedef Ray_2_Ray_2_pair<K> pair_t;
+  pair_t pair(&r1, &r2);
+  return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 

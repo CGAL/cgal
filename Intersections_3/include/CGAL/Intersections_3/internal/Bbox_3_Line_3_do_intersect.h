@@ -25,9 +25,9 @@ namespace CGAL {
 namespace Intersections {
 namespace internal {
 
-template <typename LFT, typename BFT>
+template <typename K, typename LFT, typename BFT>
 inline
-bool
+typename K::Boolean
 bbox_line_do_intersect_aux(const LFT px, const LFT py, const LFT pz,
                            const LFT vx, const LFT vy, const LFT vz,
                            const BFT bxmin, const BFT bymin, const BFT bzmin,
@@ -135,9 +135,10 @@ bbox_line_do_intersect_aux(const LFT px, const LFT py, const LFT pz,
 }
 
 template <class K>
-bool do_intersect(const typename K::Line_3& line,
-                  const CGAL::Bbox_3& bbox,
-                  const K&)
+typename K::Boolean
+do_intersect(const typename K::Line_3& line,
+             const CGAL::Bbox_3& bbox,
+             const K&)
 {
   typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
@@ -145,16 +146,17 @@ bool do_intersect(const typename K::Line_3& line,
   const Point_3& point = line.point();
   const Vector_3& v = line.to_vector();
 
-  return bbox_line_do_intersect_aux(point.x(), point.y(), point.z(),
-                                    v.x(), v.y(), v.z(),
-                                    bbox.xmin(), bbox.ymin(), bbox.zmin(),
-                                    bbox.xmax(), bbox.ymax(), bbox.zmax());
+  return bbox_line_do_intersect_aux<K>(point.x(), point.y(), point.z(),
+                                       v.x(), v.y(), v.z(),
+                                       bbox.xmin(), bbox.ymin(), bbox.zmin(),
+                                       bbox.xmax(), bbox.ymax(), bbox.zmax());
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-                  const typename K::Line_3& line,
-                  const K& k)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& bbox,
+             const typename K::Line_3& line,
+             const K& k)
 {
   return do_intersect(line, bbox, k);
 }

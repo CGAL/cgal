@@ -467,9 +467,10 @@ do_intersect_bbox_segment_aux(
 }
 
 template <class K>
-bool do_intersect(const typename K::Segment_3& segment,
-                  const CGAL::Bbox_3& bbox,
-                  const K&)
+typename K::Boolean
+do_intersect(const typename K::Segment_3& segment,
+             const CGAL::Bbox_3& bbox,
+             const K&)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
@@ -483,9 +484,10 @@ bool do_intersect(const typename K::Segment_3& segment,
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-                  const typename K::Segment_3& segment,
-                  const K& k)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& bbox,
+             const typename K::Segment_3& segment,
+             const K& k)
 {
   return do_intersect(segment, bbox, k);
 }

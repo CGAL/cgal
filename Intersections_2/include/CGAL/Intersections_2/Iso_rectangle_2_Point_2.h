@@ -30,9 +30,9 @@ namespace internal {
 
 template <class K>
 inline
-bool
-do_intersect(const typename K::Point_2 &pt,
-             const typename K::Iso_rectangle_2 &iso,
+typename K::Boolean
+do_intersect(const typename K::Point_2& pt,
+             const typename K::Iso_rectangle_2& iso,
              const K&)
 {
     return !iso.has_on_unbounded_side(pt);
@@ -40,9 +40,9 @@ do_intersect(const typename K::Point_2 &pt,
 
 template <class K>
 inline
-bool
-do_intersect(const typename K::Iso_rectangle_2 &iso,
-             const typename K::Point_2 &pt,
+typename K::Boolean
+do_intersect(const typename K::Iso_rectangle_2& iso,
+             const typename K::Point_2& pt,
              const K&)
 {
     return !iso.has_on_unbounded_side(pt);

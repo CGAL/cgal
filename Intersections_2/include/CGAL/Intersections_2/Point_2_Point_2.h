@@ -28,10 +28,11 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-inline bool
-do_intersect(const typename K::Point_2 &pt1,
-             const typename K::Point_2 &pt2,
-             const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Point_2& pt1,
+             const typename K::Point_2& pt2,
+             const K& k)
 {
     return pt1 == pt2;
 }

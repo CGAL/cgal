@@ -25,20 +25,19 @@ namespace internal {
 
 template <class K>
 inline
-bool
-do_intersect(const typename K::Point_2 &pt,
-             const typename K::Circle_2 &circle,
+typename K::Boolean
+do_intersect(const typename K::Point_2& pt,
+             const typename K::Circle_2& circle,
              const K&)
 {
   return circle.has_on_boundary(pt);
 }
 
-
 template <class K>
 inline
-bool
-do_intersect(const typename K::Circle_2 &circle,
-             const typename K::Point_2 &pt,
+typename K::Boolean
+do_intersect(const typename K::Circle_2& circle,
+             const typename K::Point_2& pt,
              const K&)
 {
   return circle.has_on_boundary(pt);

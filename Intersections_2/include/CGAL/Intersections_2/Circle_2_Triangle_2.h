@@ -25,7 +25,7 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Circle_2 & c,
              const typename K::Triangle_2& t,
              const K&)
@@ -48,9 +48,9 @@ do_intersect(const typename K::Circle_2 & c,
 }
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Triangle_2& t,
-             const typename K::Circle_2 & c,
+             const typename K::Circle_2& c,
              const K&)
 {
   return do_intersect(c,t);

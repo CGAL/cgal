@@ -326,7 +326,7 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
 
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Segment_2 &seg1,
              const typename K::Segment_2 &seg2,
              const K& k)

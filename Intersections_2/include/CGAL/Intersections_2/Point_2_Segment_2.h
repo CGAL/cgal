@@ -30,7 +30,7 @@ namespace internal {
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Point_2 &pt,
              const typename K::Segment_2 &seg,
              const K&)
@@ -40,7 +40,7 @@ do_intersect(const typename K::Point_2 &pt,
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Segment_2 &seg,
              const typename K::Point_2 &pt,
              const K&)
