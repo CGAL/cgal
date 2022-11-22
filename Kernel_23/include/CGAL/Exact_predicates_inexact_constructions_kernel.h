@@ -33,17 +33,10 @@ constexpr bool epick_use_static_filter =
     true;
 #endif
 
-#ifndef CGAL_EPICK_SINGLE_PRECISION
 // Here Epick is a class, and Double_precision_epick an alias to it.
 class Epick;
 class Single_precision_epick;
 using Double_precision_epick = Epick;
-#else // CGAL_EPICK_SINGLE_PRECISION
-// Here, Epick is an alias to Single_precision_epick.
-class Single_precision_epick;
-class Double_precision_epick;
-using Epick = Single_precision_epick;
-#endif // CGAL_EPICK_SINGLE_PRECISION
 
 namespace internal {
 
@@ -64,15 +57,10 @@ namespace internal {
       Filtered_kernel_adaptor<Epick_base_with_type_equality<NT, Kernel>, epick_use_static_filter>;
 };
 
-#ifndef CGAL_EPICK_SINGLE_PRECISION
 // The following is equivalent to Filtered_kernel< Simple_cartesian<double> >,
 // but it's shorter in terms of template name length (for error messages, mangling...).
 class Epick : public internal::Epick_with_filtered_predicates<double, Epick>
 {};
-#else // CGAL_EPICK_SINGLE_PRECISION
-class Double_precision_epick : public internal::Epick_with_filtered_predicates<double, Double_precision_epick>
-{};
-#endif // CGAL_EPICK_SINGLE_PRECISION
 
 template <>
 struct Triangulation_structural_filtering_traits<Double_precision_epick> {
