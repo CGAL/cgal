@@ -224,10 +224,10 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
 
   CGAL_assertion(! is_negative(dmin));
   CGAL_assertion(! is_negative(dmax));
-  if(bounded_0) {
+  CGAL_assertion_code(if(bounded_0) {)
     CGAL_assertion(! is_negative(tmin));
     CGAL_assertion(! is_negative(tmax));
-  }
+  CGAL_assertion_code(})
 
   // -----------------------------------
   // treat y coord
@@ -365,11 +365,10 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
 
   CGAL_assertion(! is_negative(dzmin));
   CGAL_assertion(! is_negative(dzmax));
-  if(bounded_0)
-  {
+  CGAL_assertion_code(if(bounded_0) {)
     CGAL_assertion(! is_negative(tzmin));
     CGAL_assertion(! is_negative(tzmax));
-  }
+  CGAL_assertion_code(})
 
   typedef Do_intersect_bbox_segment_aux_is_greater<CFT, bounded_0, use_static_filters> Is_greater;
   typedef typename Is_greater::result_type Is_greater_value;
