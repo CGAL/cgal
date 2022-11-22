@@ -25,7 +25,6 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
-#include <CGAL/Uncertain.h>
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
