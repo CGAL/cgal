@@ -38,9 +38,9 @@ namespace CGAL {
 namespace KSR_3 {
 
 const std::tuple<unsigned char, unsigned char, unsigned char>
-get_idx_color(const std::size_t idx) {
+get_idx_color(std::size_t idx) {
 
-  CGAL::Random rand(idx );
+  CGAL::Random rand(idx);
   return std::make_tuple(
     static_cast<unsigned char>(rand.get_int(32, 192)),
     static_cast<unsigned char>(rand.get_int(32, 192)),
@@ -663,7 +663,7 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
     }
 
     const std::string file_name =
-      (tag != std::string() ? tag + "-" : "") + "volume-" + std::to_string(i);
+      (tag != std::string() ? tag + "-" : "") + std::to_string(i);
     saver.export_polygon_soup_3(polygons, colors, file_name);
   }
 }
@@ -684,7 +684,7 @@ void dump_polygon(
   }
   polygons.push_back(polygon);
   Saver<Kernel> saver;
-  saver.export_polygon_soup_3(polygons, "volumes/" + name);
+  saver.export_polygon_soup_3(polygons, name);
 }
 
 template<typename DS>
@@ -724,7 +724,7 @@ void dump_pface(
   CGAL_assertion(polygon.size() >= 3);
   polygons.push_back(polygon);
   Saver<Kernel> saver;
-  saver.export_polygon_soup_3(polygons, "volumes/" + name);
+  saver.export_polygon_soup_3(polygons, name);
 }
 
 template<typename DS, typename PEdge>
@@ -737,7 +737,7 @@ void dump_pedge(
   using Segment_3 = typename Kernel::Segment_3;
   const std::vector<Segment_3> segments = { data.segment_3(pedge) };
   Saver<Kernel> saver;
-  saver.export_segments_3(segments, "volumes/" + name);
+  saver.export_segments_3(segments, name);
 }
 
 template<typename DS, typename PFace, typename PEdge>
