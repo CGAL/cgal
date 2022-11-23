@@ -12,9 +12,10 @@
 #ifndef CGAL_OCTREE_GEOMETRY_H
 #define CGAL_OCTREE_GEOMETRY_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/Isosurfacing_3/internal/Octree_topology.h>
 #include <CGAL/Octree_wrapper.h>
-#include <CGAL/license/Isosurfacing_3.h>
 
 #include <memory>
 

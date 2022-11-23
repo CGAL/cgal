@@ -12,13 +12,14 @@
 #ifndef CGAL_IMPLICIT_OCTREE_DOMAIN_H
 #define CGAL_IMPLICIT_OCTREE_DOMAIN_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/Default_gradients.h>
 #include <CGAL/Isosurfacing_3/internal/Base_domain.h>
 #include <CGAL/Isosurfacing_3/internal/Implicit_function_with_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_topology.h>
 #include <CGAL/Octree_wrapper.h>
-#include <CGAL/license/Isosurfacing_3.h>
 
 namespace CGAL {
 namespace Isosurfacing {

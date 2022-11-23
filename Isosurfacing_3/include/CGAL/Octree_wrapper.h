@@ -13,10 +13,11 @@
 #ifndef CGAL_OCTREE_WRAPPER_H
 #define CGAL_OCTREE_WRAPPER_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
-#include <CGAL/license/Isosurfacing_3.h>
 
 namespace CGAL {
 namespace Isosurfacing {

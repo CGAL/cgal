@@ -13,10 +13,11 @@
 #ifndef CGAL_DUAL_CONTOURING_3_INTERNAL_DUAL_CONTOURING_3_H
 #define CGAL_DUAL_CONTOURING_3_INTERNAL_DUAL_CONTOURING_3_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/centroid.h>
-#include <CGAL/license/Isosurfacing_3.h>
 
 #include <Eigen/SVD>
 #include <array>

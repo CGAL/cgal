@@ -12,8 +12,9 @@
 #ifndef CGAL_CARTESIAN_GRID_GEOMETRY_H
 #define CGAL_CARTESIAN_GRID_GEOMETRY_H
 
-#include <CGAL/Isosurfacing_3/internal/Grid_topology.h>
 #include <CGAL/license/Isosurfacing_3.h>
+
+#include <CGAL/Isosurfacing_3/internal/Grid_topology.h>
 
 namespace CGAL {
 namespace Isosurfacing {
