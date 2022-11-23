@@ -41,7 +41,7 @@ namespace Isosurfacing {
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is `std::size_t`.
  *
  * \tparam Positioning is a functor containing the operator() that takes `domain`, `iso_value`, `cell`, and `position`
- * as input and returns a boolean that is true if the isosurface intersects the cell.
+ * as input and returns a boolean that is `true` if the isosurface intersects the cell.
  *
  * \param domain the domain providing input data and its topology
  * \param iso_value value of the isosurface

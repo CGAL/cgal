@@ -20,7 +20,7 @@
 \cgalPkgDescriptionEnd
 
 This package provides algorithms to extract isosurfaces from different inputs.
-The input is represented as a 3D domain and can be an implicit function, a Cartesian grid or an octree.
+The input is represented as a 3D domain and can be an implicit function, a %Cartesian grid or an octree.
 The output is an indexed face set that stores an isosurface in the form of a surface mesh.
 The provided algorithms include Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
 
@@ -31,10 +31,10 @@ The provided algorithms include Marching Cubes, topologically correct Marching C
 - `IsosurfacingDomainWithGradient`
 
 \cgalCRPSection{Classes}
-- `Cartesian_grid_3`
-- `Zero_gradient`
-- `Finite_difference_gradient`
-- `Explicit_cartesian_grid_gradient`
+- `CGAL::Isosurfacing::Cartesian_grid_3`
+- `CGAL::Isosurfacing::Zero_gradient`
+- `CGAL::Isosurfacing::Finite_difference_gradient`
+- `CGAL::Isosurfacing::Explicit_cartesian_grid_gradient`
 
 \cgalCRPSection{Free Functions}
 
