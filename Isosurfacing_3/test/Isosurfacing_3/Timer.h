@@ -1,5 +1,5 @@
-#ifndef CGAL_TIMER_H
-#define CGAL_TIMER_H
+#ifndef SCOPE_TIMER_H
+#define SCOPE_TIMER_H
 
 #include <chrono>
 #include <iostream>
@@ -35,4 +35,4 @@ private:
     bool running;
 };
 
-#endif  // CGAL_TIMER_H
+#endif  // SCOPE_TIMER_H

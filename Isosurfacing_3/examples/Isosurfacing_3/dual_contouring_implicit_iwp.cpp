@@ -54,4 +54,6 @@ int main() {
 
     // save the result in the OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
+
+    return 0;
 }

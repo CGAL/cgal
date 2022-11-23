@@ -53,4 +53,6 @@ int main() {
 
     // write output indexed surface mesh to file, in OFF format
     CGAL::IO::write_OFF("result.off", points, polygons);
+
+    return 0;
 }

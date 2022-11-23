@@ -78,4 +78,6 @@ int main() {
 
     // CGAL::IO::write_OFF("result.off", mesh);
     CGAL::IO::write_OFF("result.off", points, polygons);
+
+    return 0;
 }
