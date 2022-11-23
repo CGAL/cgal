@@ -91,4 +91,6 @@ int main() {
     test_grid_sphere(100);
 
     std::cout << "All tests passed" << std::endl;
+
+    return 0;
 }

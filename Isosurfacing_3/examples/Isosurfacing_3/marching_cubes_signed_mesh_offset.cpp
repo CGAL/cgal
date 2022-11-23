@@ -28,7 +28,7 @@ typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
 
-// computes the Euclidean distance from query point p to the mesh 
+// computes the Euclidean distance from query point p to the mesh
 // via the AABB tree data structure
 inline Kernel::FT distance_to_mesh(const Tree& tree, const Point& p) {
     const Point& x = tree.closest_point(p);
@@ -94,4 +94,6 @@ int main() {
 
     // save output indexed triangle soup to a file, in the OFF format
     CGAL::IO::write_OFF("output.off", points, polygons);
+
+    return 0;
 }

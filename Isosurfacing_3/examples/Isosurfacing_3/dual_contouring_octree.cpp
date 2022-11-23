@@ -83,4 +83,6 @@ int main() {
     CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
 
     CGAL::IO::write_OFF("result.off", points, polygons);
+
+    return 0;
 }

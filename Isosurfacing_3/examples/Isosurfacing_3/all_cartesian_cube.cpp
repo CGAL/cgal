@@ -77,4 +77,6 @@ int main() {
     // save output indexed meshes to files, in the OFF format
     CGAL::IO::write_OFF("result_mc.off", points_mc, polygons_mc);
     CGAL::IO::write_OFF("result_dc.off", points_dc, polygons_dc);
+
+    return 0;
 }
