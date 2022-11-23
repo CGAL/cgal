@@ -42,6 +42,7 @@
 #define CGAL_MARCHING_CUBES_3_INTERNAL_MARCHING_CUBES_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_vector.h>

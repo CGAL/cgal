@@ -12,9 +12,10 @@
 #ifndef CGAL_DEFAULT_GRADIENT_H
 #define CGAL_DEFAULT_GRADIENT_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/license/Isosurfacing_3.h>
 
 namespace CGAL {
 namespace Isosurfacing {

@@ -41,9 +41,10 @@
 #ifndef CGAL_TMC_INTERNAL_TMC_H
 #define CGAL_TMC_INTERNAL_TMC_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/Isosurfacing_3/internal/Marching_cubes_3_internal.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
-#include <CGAL/license/Isosurfacing_3.h>
 
 #include <cmath>
 #include <array>

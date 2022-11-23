@@ -12,8 +12,9 @@
 #ifndef CGAL_BASE_DOMAIN_H
 #define CGAL_BASE_DOMAIN_H
 
-#include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 #include <CGAL/license/Isosurfacing_3.h>
+
+#include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 
 #include <memory>
 

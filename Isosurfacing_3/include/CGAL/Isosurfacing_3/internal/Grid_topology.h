@@ -12,9 +12,10 @@
 #ifndef CGAL_GRID_TOPOLOGY_H
 #define CGAL_GRID_TOPOLOGY_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
-#include <CGAL/license/Isosurfacing_3.h>
 #include <CGAL/tags.h>
 
 #include <array>
