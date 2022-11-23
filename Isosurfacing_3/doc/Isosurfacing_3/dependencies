@@ -4,3 +4,6 @@ STL_Extension
 Algebraic_foundations
 Circulator
 Stream_support
+AABB_tree
+CGAL_ImageIO
+Polygon_mesh_processing

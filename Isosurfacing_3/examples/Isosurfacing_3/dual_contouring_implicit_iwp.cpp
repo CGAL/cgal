@@ -12,28 +12,25 @@ typedef typename Kernel::Point_3 Point;
 typedef std::vector<Point> Point_range;
 typedef std::vector<std::vector<std::size_t>> Polygon_range;
 
-#ifndef M_PI
-#define M_PI 3.141592653589793238462643383279502884L
-#endif
 
 int main() {
     const FT alpha = 5.01;
 
     auto iwp_value = [alpha](const Point& point) {
-        const FT x = alpha * (point.x() + 1) * M_PI;
-        const FT y = alpha * (point.y() + 1) * M_PI;
-        const FT z = alpha * (point.z() + 1) * M_PI;
+        const FT x = alpha * (point.x() + 1) * CGAL_PI;
+        const FT y = alpha * (point.y() + 1) * CGAL_PI;
+        const FT z = alpha * (point.z() + 1) * CGAL_PI;
         return cos(x) * cos(y) + cos(y) * cos(z) + cos(z) * cos(x) - cos(x) * cos(y) * cos(z);  // iso-value = 0
     };
 
     auto iwp_gradient = [alpha](const Point& point) {
-        const FT x = alpha * (point.x() + 1) * M_PI;
-        const FT y = alpha * (point.y() + 1) * M_PI;
-        const FT z = alpha * (point.z() + 1) * M_PI;
+        const FT x = alpha * (point.x() + 1) * CGAL_PI;
+        const FT y = alpha * (point.y() + 1) * CGAL_PI;
+        const FT z = alpha * (point.z() + 1) * CGAL_PI;
 
-        const FT gx = M_PI * alpha * sin(x) * (cos(y) * (cos(z) - 1.0) - cos(z));
-        const FT gy = M_PI * alpha * sin(y) * (cos(x) * (cos(z) - 1.0) - cos(z));
-        const FT gz = M_PI * alpha * sin(z) * (cos(x) * (cos(y) - 1.0) - cos(y));
+        const FT gx = CGAL_PI * alpha * sin(x) * (cos(y) * (cos(z) - 1.0) - cos(z));
+        const FT gy = CGAL_PI * alpha * sin(y) * (cos(x) * (cos(z) - 1.0) - cos(z));
+        const FT gz = CGAL_PI * alpha * sin(z) * (cos(x) * (cos(y) - 1.0) - cos(y));
         return Vector(gx, gy, gz);
     };
 
