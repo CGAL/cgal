@@ -112,8 +112,8 @@ public:
 
     if (m_parameters.verbose) std::cout << "* intersecting input polygons ... ";
     if (m_parameters.debug) {
-      //KSR_3::dump(m_data, "init");
-      // KSR_3::dump_segmented_edges(m_data, "init");
+      KSR_3::dump(m_data, "init");
+      KSR_3::dump_segmented_edges(m_data, "init");
     }
 
     CGAL_assertion(m_data.check_integrity(false));
@@ -129,6 +129,15 @@ public:
 
     map_polygon_to_ifaces();
     const double time_to_map_ifaces = timer.time();
+
+    if (m_parameters.debug) {
+      for (std::size_t i = 6; i < m_data.number_of_support_planes(); i++) {
+        dump_2d_surface_mesh(m_data, i, "mesh-" + std::to_string(i) + ".ply");
+        std::cout << "sp " << i << " has " << m_data.pfaces(i).size() << " faces" << std::endl;
+      }
+    }
+
+    create_bbox_meshes();
 
     // Starting from here the intersection graph is const, it won't change anymore.
     CGAL_assertion(m_data.check_integrity(false));
@@ -222,13 +231,73 @@ private:
     IK_to_EK to_exact;
 
     for (std::size_t sp_idx = 0; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
-      const std::set<IEdge> &uiedges = m_data.support_plane(sp_idx).unique_iedges();
+      const std::set<IEdge>& uiedges = m_data.support_plane(sp_idx).unique_iedges();
+      const std::vector<IEdge>& iedges = m_data.support_plane(sp_idx).iedges();
+
+      // Special case bbox without splits
+      if (sp_idx < 6 && uiedges.size() == 4) {
+        // Get first edge
+        IEdge first = *uiedges.begin();
+        IEdge edge = first;
+        IVertex s = m_data.source(edge);
+        IVertex t = m_data.target(edge);
+
+        // Create single IFace for unsplit bbox face
+        IFace face_idx = m_data.add_iface(sp_idx);
+        Face_property& face = m_data.igraph().face(face_idx);
+
+        // Add first edge, vertices and points to face properties
+        face.pts.push_back(m_data.support_plane(sp_idx).to_2d(m_data.igraph().point_3(s)));
+        face.pts.push_back(m_data.support_plane(sp_idx).to_2d(m_data.igraph().point_3(t)));
+        face.vertices.push_back(s);
+        face.vertices.push_back(t);
+        face.edges.push_back(edge);
+
+        // Link edge and face
+        m_data.igraph().add_face(sp_idx, edge, face_idx);
+
+        // Walk around bbox face
+        while (s != t) {
+          auto inc_iedges = m_data.incident_iedges(t);
+          for (auto next : inc_iedges) {
+            // Filter edges that are not in this bbox face
+            const auto iplanes = m_data.intersected_planes(next);
+            if (iplanes.find(sp_idx) == iplanes.end()) {
+              continue;
+            }
+
+            // Skip current edge
+            if (edge == next)
+              continue;
+
+            // The only left edge is the next one.
+            edge = next;
+            break;
+          }
+          t = (m_data.target(edge) == t) ? m_data.source(edge) : m_data.target(edge);
+          face.vertices.push_back(t);
+          face.pts.push_back(m_data.support_plane(sp_idx).to_2d(m_data.igraph().point_3(t)));
+          face.edges.push_back(edge);
+          m_data.igraph().add_face(sp_idx, edge, face_idx);
+        }
+
+        // create polygon in proper order
+      }
 
       for (auto edge : uiedges) {
-        if (m_data.igraph().iedge_is_on_bbox(edge))
-          continue;
+        bool on_edge = m_data.igraph().iedge_is_on_bbox(edge);
+        //if (m_data.igraph().iedge_is_on_bbox(edge))
+        //  continue;
+        //
         //Note the number of bbox lines during creation and skip all those.
-        //Right not IT does not WORK for non--bbox support planes, there is always 1 or more messed up planes
+
+        // If non-bbox support plane is treated, skip all edges on bbox as they only have one face.
+        if (sp_idx >= 6 && on_edge)
+          continue;
+
+        // If bbox support plane is treated, skip edges on bbox edge.
+        if (sp_idx < 6 && m_data.igraph().line_is_bbox_edge(m_data.line_idx(edge)))
+          continue;
 
         IFace n1 = m_data.support_plane(sp_idx).iface(edge);
         IFace n2 = m_data.support_plane(sp_idx).other(edge, n1);
@@ -458,7 +527,7 @@ private:
     }
   }
 
-void initial_polygon_iedge_intersections() {
+  void initial_polygon_iedge_intersections() {
     IK_to_EK to_exact;
     EK_to_IK to_inexact;
     std::cout << "initial_polygon_iedge_intersections" << std::endl;
@@ -1067,6 +1136,17 @@ void initial_polygon_iedge_intersections() {
     bbox.push_back(p4);
   }
 
+  void create_bbox_meshes() {
+    for (std::size_t i = 0; i < 6; i++) {
+      m_data.clear_pfaces(i);
+      std::set<IFace> ifaces = m_data.support_plane(i).ifaces();
+      std::size_t num = ifaces.size();
+      for (auto iface : ifaces) {
+        auto pface = m_data.add_iface_to_mesh(i, iface);
+      }
+    }
+  }
+
   void make_polygons_intersection_free() {
 
     if (m_parameters.debug) {
@@ -1146,7 +1226,7 @@ void initial_polygon_iedge_intersections() {
     for (auto& t : todo) {
       m_data.add_iedge(t.first, t.second);
     }
-    // Refine polygons.
+
     return;
   }
 

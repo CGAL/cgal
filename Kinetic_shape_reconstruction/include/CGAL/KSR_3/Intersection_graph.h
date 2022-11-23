@@ -289,6 +289,10 @@ public:
     return m_ifaces[idx];
   }
 
+  const Edge_property& edge(Edge_descriptor idx) const {
+    return m_graph[idx];
+  }
+
   void set_line(const Edge_descriptor& edge, const std::size_t line_idx) {
     m_graph[edge].line = line_idx;
   }

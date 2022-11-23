@@ -198,8 +198,6 @@ public:
     timer.start();
     if (m_parameters.debug) dump(m_data, "final-" + m_parameters.k);
 
-    return true;
-
     Finalizer finalizer(m_data, m_parameters);
     //finalizer.clean();
 
@@ -218,11 +216,11 @@ public:
     if (m_parameters.verbose) {
       std::cout << "* found all together " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
     }
-    // std::cout << std::endl << "CREATING VOLUMES SUCCESS!" << std::endl << std::endl;
-    // exit(EXIT_SUCCESS);
 
-    for (std::size_t i = 0; i < m_data.number_of_support_planes(); i++) {
-      dump_2d_surface_mesh(m_data, i, "final-surface-mesh-" + std::to_string(i));
+    if (m_parameters.verbose) {
+      for (std::size_t i = 0; i < m_data.number_of_support_planes(); i++) {
+        dump_2d_surface_mesh(m_data, i, "final-surface-mesh-" + std::to_string(i));
+      }
     }
 
     // Timing.

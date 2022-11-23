@@ -1211,6 +1211,19 @@ public:
       std::cout << "ERROR: end of invalid face" << std::endl;
     }
 
+    // Link pedges to iedges
+    auto h = sp.mesh().halfedge(fi);
+    auto first = h;
+    do {
+      Edge_index e = sp.mesh().edge(h);
+      PVertex t = PVertex(support_plane, sp.mesh().target(h));
+      PVertex s = PVertex(support_plane, sp.mesh().source(h));
+      IVertex it = ivertex(t);
+      IVertex is = ivertex(s);
+      sp.set_iedge(e, m_intersection_graph.edge(is, it));
+      h = sp.mesh().next(h);
+    } while (h != first);
+
     f.part_of_partition = true;
 
     return PFace(support_plane, fi);
