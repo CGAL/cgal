@@ -46,7 +46,7 @@ namespace Isosurfacing {
  * \param domain the domain providing input data and its topology
  * \param iso_value value of the isosurface
  * \param points points making the polygons of the indexed face set
- * \param polygons each element in the vector describes a polygon using the indices of the points in points
+ * \param polygons each element in the vector describes a polygon using the indices of the points in `points`
  * \param positioning the functor dealing with vertex positioning inside a voxel
  */
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange,

@@ -8,7 +8,7 @@ namespace CGAL {
 \author Julian Stahl and Daniel Zint
 
 
-[PA] : I recommend to select a more complex example (medical?), use a white background instead of default Meshlab one and superimpose the mesh edges in black. 
+[PA] : I recommend to select a more complex example (medical?), use a white background instead of default Meshlab one and superimpose the mesh edges in black.
 \cgalFigureAnchor{isosurfacing_bunny_offset}
 <center>
 <img src="bunny_offset.gif" style="max-width:50%;"/>
@@ -25,7 +25,7 @@ TODO: add a context and motivation: when do you need MC or dual contouring? what
 TODO: stick to 'field' throughout the whole documentation, and leave the term 'function' for C++ function. This is valid for all terms: introduce them and do not interchange with others throughout the documentation.
 TODO: Make sure you you clearly state that the input field is sampled.
 
-This package provides isosurfacing algorithms that compute a surface mesh approximating an isosurface of a scalar field defined over an input 3D domain. 
+This package provides isosurfacing algorithms that compute a surface mesh approximating an isosurface of a scalar field defined over an input 3D domain.
 An isosurface is defined as the points of constant value of this scalar field, i.e. a level-set. Such a constant value, referred to as isovalue, is user-defined. For well-behaved scalar fields (e.g., non-zero gradient), the above level-set is a surface.
 Depending on the isosurfacing method and the input data structure, the output is either a triangular, a quadrilateral, or a higher degree polygonal surface mesh represented as an indexed face set. The output may also be empty when the isosurface is absent from the sampled input scalar field.
 
@@ -195,7 +195,6 @@ The following example shows how to compute a signed offset mesh.
 The input mesh is stored into an `AABB_tree` data structure to allow fast distance queries. Via the `Side_of_triangle_mesh` functor, the sign of the distance function is made negative inside the mesh.
 
 \cgalExample{Isosurfacing_3/dual_contouring_mesh_offset.cpp}
-
 
 */
 } /* namespace CGAL */

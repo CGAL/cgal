@@ -32,7 +32,7 @@ using Implicit_cartesian_grid_domain =
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Creates a domain from a Cartesian_grid_3 that can be used as input for isosurfacing algorithms.
+ * \brief Creates a domain from a `Cartesian_grid_3` that can be used as input for isosurfacing algorithms.
  *
  * \details
  *
