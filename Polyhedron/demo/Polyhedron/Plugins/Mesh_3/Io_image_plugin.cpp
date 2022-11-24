@@ -49,6 +49,7 @@
 
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
+#include <boost/filesystem.hpp>
 
 #include <QSettings>
 #include <QUrl>
@@ -60,8 +61,10 @@
 #include <CGAL/IO/read_vtk_image_data.h>
 
 #include <vtkNew.h>
+#include <vtkStringArray.h>
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
+#include <vtkBMPReader.h>
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkDemandDrivenPipeline.h>
@@ -1314,24 +1317,67 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
 {
   Image* image = nullptr;
 #ifdef CGAL_USE_VTK
-  vtkNew<vtkDICOMImageReader> dicom_reader;
-  dicom_reader->SetDirectoryName(dirname.toUtf8());
 
-  auto executive =
-    vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
-  if (executive)
-  {
-    executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
+  bool is_dcm = false;
+  bool is_bmp = false;
+
+  vtkStringArray* files = vtkStringArray::New();
+  boost::filesystem::path p(dirname.toUtf8().data());
+  for(boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p)){
+    std::string s(x.path().extension().string());
+    if(s == std::string(".dcm") || (s == std::string(".DCM"))){ is_dcm = true;}
+    if(s == std::string(".bmp") || (s == std::string(".BMP"))){ is_bmp = true;}
+    std::cout << x.path().string() << std::endl;
+    files->InsertNextValue(x.path().string());
   }
 
-  vtkNew<vtkImageGaussianSmooth> smoother;
-  smoother->SetStandardDeviations(1., 1., 1.);
-  smoother->SetInputConnection(dicom_reader->GetOutputPort());
-  smoother->Update();
-  auto vtk_image = smoother->GetOutput();
-  vtk_image->Print(std::cerr);
-  image = new Image;
-  *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+  if(is_dcm){
+    vtkNew<vtkDICOMImageReader> dicom_reader;
+    dicom_reader->SetDirectoryName(dirname.toUtf8());
+
+    auto executive =
+      vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
+    if (executive)
+      {
+        executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
+      }
+
+    vtkNew<vtkImageGaussianSmooth> smoother;
+    smoother->SetStandardDeviations(1., 1., 1.);
+    smoother->SetInputConnection(dicom_reader->GetOutputPort());
+    smoother->Update();
+    auto vtk_image = smoother->GetOutput();
+    vtk_image->Print(std::cerr);
+    image = new Image;
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the
+                                                       // image data
+  }
+
+  if(is_bmp){
+   vtkNew<vtkBMPReader> bmp_reader;
+    bmp_reader->SetFileNames(files);
+
+    auto executive =
+      vtkDemandDrivenPipeline::SafeDownCast(bmp_reader->GetExecutive());
+    if (executive)
+      {
+        executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
+      }
+    vtkNew<vtkImageGaussianSmooth> smoother;
+    smoother->SetStandardDeviations(1., 1., 1.);
+    smoother->SetInputConnection(bmp_reader->GetOutputPort());
+    smoother->Update();
+    auto vtk_image = smoother->GetOutput();
+    vtk_image->Print(std::cerr);
+    image = new Image;
+
+    std::cout << "A" << std::endl;
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the
+                                                       // image data
+
+    std::cout << "B" << std::endl;
+  }
+
 #else
   CGAL::Three::Three::warning("You need VTK to read a DCM file");
   CGAL_USE(dirname);
