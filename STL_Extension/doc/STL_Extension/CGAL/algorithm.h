@@ -42,7 +42,7 @@ Computes the minimal and the
 maximal element of a range. It is modeled after the \stl functions
 <a href="https://en.cppreference.com/w/cpp/algorithm/min_element">`std::min_element`</a>
 and <a
-href="https://en.cppreference.com/w/cpp/algorithm/maxelement">`std::max_element`</a>.
+href="https://en.cppreference.com/w/cpp/algorithm/max_element">`std::max_element`</a>.
 The advantage of `min_max_element()` compared to calling both \stl functions is that
 one only iterates once over the sequence. This is more efficient
 especially for large and/or complex sequences.

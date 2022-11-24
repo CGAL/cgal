@@ -47,15 +47,7 @@ jobs:
            //get pullrequest url
            const pr_number = context.payload.issue.number
            return pr_number
-      - uses: actions/checkout@v3
-        name: "checkout branch"
-        if: steps.get_round.outputs.result != 'stop'
-        with:
-           repository: ${{ github.repository }}
-           ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
-           token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
-           fetch-depth: 2
-
+           
       - name: Emoji-comment
         uses: actions/github-script@v6
         if: steps.get_round.outputs.result != 'stop'
@@ -67,6 +59,16 @@ jobs:
               repo: context.repo.repo,
               content: 'rocket'
             })
+            
+      - uses: actions/checkout@v3
+        name: "checkout branch"
+        if: steps.get_round.outputs.result != 'stop'
+        with:
+           repository: ${{ github.repository }}
+           ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
+           token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
+           fetch-depth: 2
+
       - name: install dependencies
         if: steps.get_round.outputs.result != 'stop'
         run: |
@@ -151,11 +153,13 @@ jobs:
             });
 
       - name: Post error
+        env:
+          ERRORMSG: ${{steps.build_and_run.outputs.DoxygenError}}
         uses: actions/github-script@v6
         if: ${{ failure() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
-            const error = "${{steps.build_and_run.outputs.DoxygenError}}"
+            const error = process.env.ERRORMSG
             const msg = "There was an error while building the doc: \n"+error
             github.rest.issues.createComment({
               owner: "CGAL",

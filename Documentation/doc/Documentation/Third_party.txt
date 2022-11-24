@@ -213,7 +213,7 @@ the handling of \pdb data.
 
 In \cgal, the \esbtl is used in an example of the \ref PkgSkinSurface3 package.
 
-It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.sourceforge.net/`</A>.
+It can be downloaded from <A HREF="https://esbtl.sourceforge.net/">`https://esbtl.sourceforge.net/`</A>.
 
 \subsection thirdpartyTBB Intel TBB
 

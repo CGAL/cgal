@@ -5,20 +5,18 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-\deprecated This class is deprecated since \cgal 5.6, the class `Edge_count_ratio_stop_predicate` should be used instead.
+\cgalModels `StopPredicate`
 
-The class `Count_ratio_stop_predicate` is a model for the `StopPredicate` concept
+The class `Edge_count_ratio_stop_predicate` is a model for the `StopPredicate` concept
 which returns `true` when the relation between the initial and current number of edges drops below a certain ratio.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `StopPredicate`
-
-\sa `CGAL::Surface_mesh_simplification::Edge_count_ratio_stop_predicate<TriangleMesh>`
+\sa `CGAL::Surface_mesh_simplification::Edge_count_stop_predicate<TriangleMesh>`
 \sa `CGAL::Surface_mesh_simplification::Face_count_ratio_stop_predicate<TriangleMesh>`
 */
 template< typename TriangleMesh>
-class Count_ratio_stop_predicate
+class Edge_count_ratio_stop_predicate
 {
 public:
 
@@ -28,7 +26,7 @@ public:
   /*!
   Initializes the predicate establishing the `ratio`.
   */
-  Count_ratio_stop_predicate(const double ratio);
+  Edge_count_ratio_stop_predicate(const double ratio);
 
   /// @}
 

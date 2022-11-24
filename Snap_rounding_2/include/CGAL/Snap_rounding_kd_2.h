@@ -19,7 +19,6 @@
 
 #include <list>
 #include <CGAL/basic.h>
-#include <CGAL/predicates_on_points_2.h>
 #include <iostream>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
