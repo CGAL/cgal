@@ -5975,8 +5975,8 @@ public:
 
     \note It is advised to return a const reference to `p` to avoid useless copies.
 
-    \note This peculiar requirement is necessary because some CGAL structures such as triangulations
-    internally manipulate points whose type might `Point_2` or `Weighted_point_2`.
+    \note This peculiar requirement is necessary because some \cgal structures such as triangulations
+    internally manipulate points whose type might be `Point_2` or `Weighted_point_2`.
   */
   Kernel::Point_2 operator()(const Kernel::Point_2& p);
 
@@ -6015,8 +6015,8 @@ public:
 
     \note It is advised to return a const reference to `p` to avoid useless copies.
 
-    \note This peculiar requirement is necessary because some CGAL structures such as triangulations
-    internally manipulate points whose type might `Point_3` or `Weighted_point_3`.
+    \note This peculiar requirement is necessary because some \cgal structures such as triangulations
+    internally manipulate points whose type might be `Point_3` or `Weighted_point_3`.
   */
   Kernel::Point_3 operator()(const Kernel::Point_3& p);
 
