@@ -620,7 +620,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 *
 * The implementation is inspired by Aubry et al. "On the most 'normal' normal" \cgalCite{cgal:al-otmnn-08}.
 * Alternatively, if the most visible normal does not exist or is not found, the normal is computed
-* as a sin-weighted sum of the normals of the incident faces.
+* as a sine-weighted sum of the normals of the incident faces.
 *
 * @note The function `compute_vertex_normals()` should be prefered if normals are intended to be
 *       computed at all vertices of the graph.
