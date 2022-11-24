@@ -693,7 +693,13 @@ public:
     return point(periodic_point(v), cp);
   }
 
-  virtual Point point(Vertex_handle v) const = 0;
+  virtual Point point(Vertex_handle v) const
+  {
+    // This is a purely virtual function, but it cannot be made "= 0;" otherwise
+    // one cannot use P3T3 by itself (which never happens except in tests...)
+    CGAL_assertion(false);
+    return Point();
+  };
 
   template <class ConstructPoint>
   Point point(Cell_handle c, int idx, ConstructPoint cp) const
