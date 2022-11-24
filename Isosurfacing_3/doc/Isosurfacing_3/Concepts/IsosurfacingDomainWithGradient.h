@@ -24,11 +24,11 @@ public:
     /// @}
 
     /// \name Operations
-    /// The following member functions must exist.
+    /// The following member function must exist.
     /// @{
 
     /*!
-    Returns the gradient at the position p
+    Returns the gradient at the position `p`
     */
     Vector gradient(const Point& p) const;
 
