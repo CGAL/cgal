@@ -354,7 +354,7 @@ public:
     return support_plane(pvertex).last_event_time(pvertex.second, current_time());
   }
 
-  FT calculate_edge_intersection_time(std::size_t sp_idx, IEdge edge, FaceEvent &event) {
+  EK::FT calculate_edge_intersection_time(std::size_t sp_idx, IEdge edge, FaceEvent &event) {
     // Not need to calculate for border edges.
     if (m_intersection_graph.iedge_is_on_bbox(edge))
       return 0;
@@ -613,7 +613,7 @@ public:
           continue;
 
         FaceEvent fe;
-        FT t = calculate_edge_intersection_time(sp_idx, edge, fe);
+        EK::FT t = calculate_edge_intersection_time(sp_idx, edge, fe);
         if (t > 0)
           queue.push(fe);
       }

@@ -48,7 +48,7 @@ public:
     Vertex_property(const Point_3& point) : point(point), active(true) {}
   };
 
-  using Kinetic_interval = std::vector<std::pair<FT, FT> >;
+  using Kinetic_interval = std::vector<std::pair<EK::FT, EK::FT> >;
 
   struct Edge_property {
     std::size_t line;

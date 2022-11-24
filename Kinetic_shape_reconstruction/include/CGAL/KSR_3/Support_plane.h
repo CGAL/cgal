@@ -75,8 +75,8 @@ public:
     FaceEvent() {}
     FaceEvent(std::size_t sp_idx, FT time, IEdge edge, IFace face) : support_plane(sp_idx), time(time), crossed_edge(edge), face(face) {}
     std::size_t support_plane;
-    FT time;
-    FT intersection_bary;
+    EK::FT time;
+    EK::FT intersection_bary;
     IEdge crossed_edge;
     IFace face;
   };
@@ -468,7 +468,7 @@ public:
 
     IK_to_EK to_exact;
 
-    CGAL_assertion(points.size() > 3);
+    CGAL_assertion(points.size() >= 3);
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++)
       tris[i - 2] = Triangle_2(points[0].first, points[i - 1].first, points[i].first);

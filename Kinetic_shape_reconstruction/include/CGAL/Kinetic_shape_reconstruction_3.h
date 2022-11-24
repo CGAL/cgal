@@ -145,11 +145,12 @@ public:
     timer.reset();
     timer.start();
     m_data.clear();
+
     Initializer initializer(m_data, m_parameters);
-    const FT time_step = static_cast<FT>(initializer.initialize(input_range, polygon_map));
+    initializer.initialize(input_range, polygon_map);
+
     timer.stop();
     const double time_to_initialize = timer.time();
-    std::cout << time_to_initialize << "s for initialization" << std::endl;
 
     // if (m_parameters.verbose) {
     //   std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
@@ -177,11 +178,12 @@ public:
     timer.reset();
     timer.start();
     std::size_t num_queue_calls = 0;
+
     Propagation propagation(m_data, m_parameters);
-    std::tie(num_queue_calls, m_num_events) = propagation.propagate(time_step);
+    std::tie(num_queue_calls, m_num_events) = propagation.propagate();
+
     timer.stop();
     const double time_to_propagate = timer.time();
-    std::cout << time_to_propagate << "s for propagation" << std::endl;
 
     if (m_parameters.verbose) {
       std::cout << "* propagation finished" << std::endl;
@@ -196,28 +198,35 @@ public:
     // Finalization.
     timer.reset();
     timer.start();
-    if (m_parameters.debug) dump(m_data, "final-" + m_parameters.k);
+    if (m_parameters.debug)
+      dump(m_data, "final-" + m_parameters.k);
 
     Finalizer finalizer(m_data, m_parameters);
     //finalizer.clean();
 
-    if (m_parameters.verbose) std::cout << "* checking final mesh integrity ...";
-    CGAL_assertion(m_data.check_integrity(true, true, true));
-    if (m_parameters.verbose) std::cout << " done" << std::endl;
+    if (m_parameters.verbose)
+      std::cout << "* checking final mesh integrity ...";
 
-    if (m_parameters.debug) dump(m_data, "jiter-final-b-result");
+    CGAL_assertion(m_data.check_integrity(true, true, true));
+
+    if (m_parameters.verbose)
+      std::cout << " done" << std::endl;
+
+    if (m_parameters.debug)
+      dump(m_data, "jiter-final-b-result");
     // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
 
-    if (m_parameters.verbose) std::cout << "* getting volumes ..." << std::endl;
+    if (m_parameters.verbose)
+      std::cout << "* getting volumes ..." << std::endl;
+
     finalizer.create_polyhedra();
     timer.stop();
     const double time_to_finalize = timer.time();
-    if (m_parameters.verbose) {
-      std::cout << "* found all together " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
-    }
 
     if (m_parameters.verbose) {
+      std::cout << "* found all together " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
+
       for (std::size_t i = 0; i < m_data.number_of_support_planes(); i++) {
         dump_2d_surface_mesh(m_data, i, "final-surface-mesh-" + std::to_string(i));
       }
@@ -229,12 +238,13 @@ public:
     }
     const double total_time =
       time_to_initialize + time_to_propagate + time_to_finalize;
-    if (m_parameters.verbose) {
-      std::cout << "* initialization: " << time_to_initialize << std::endl;
-      std::cout << "* propagation: " << time_to_propagate << std::endl;
-      std::cout << "* finalization: " << time_to_finalize << std::endl;
-      std::cout << "* total time: " << total_time << std::endl;
-    }
+
+    std::cout << "* initialization: " << time_to_initialize << std::endl;
+    std::cout << "* propagation: " << time_to_propagate << std::endl;
+    std::cout << "* finalization: " << time_to_finalize << std::endl;
+    std::cout << "* total time: " << total_time << std::endl;
+
+    return true;
   }
 
 
@@ -304,21 +314,17 @@ public:
     timer.reset();
     timer.start();
     m_data.clear();
+
     Initializer initializer(m_data, m_parameters);
-    const FT time_step = static_cast<FT>(initializer.initialize(input_range, polygon_map));
+    initializer.initialize(input_range, polygon_map);
+
     timer.stop();
     const double time_to_initialize = timer.time();
 
-    // if (m_parameters.verbose) {
-    //   std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
-    //   std::cout << "INITIALIZATION SUCCESS!" << std::endl << std::endl;
-    // }
-    // exit(EXIT_SUCCESS);
-
-    // Output planes.
-    // for (std::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
-    //   std::cout << m_data.support_plane(i).plane() << std::endl;
-    // }
+    if (m_parameters.verbose) {
+      std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
+      std::cout << "INITIALIZATION SUCCESS!" << std::endl << std::endl;
+    }
 
     if (m_parameters.k == 0) { // for k = 0, we skip propagation
       CGAL_warning_msg(m_parameters.k > 0,
@@ -336,7 +342,7 @@ public:
     timer.start();
     std::size_t num_queue_calls = 0;
     FacePropagation propagation(m_data, m_parameters);
-    std::tie(num_queue_calls, m_num_events) = propagation.propagate(time_step);
+    std::tie(num_queue_calls, m_num_events) = propagation.propagate();
     timer.stop();
     const double time_to_propagate = timer.time();
 

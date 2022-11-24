@@ -31,6 +31,7 @@ class FacePropagation {
 
 public:
   using Kernel = GeomTraits;
+  using EK = Exact_predicates_exact_constructions_kernel;
 
 private:
   using FT          = typename Kernel::FT;
@@ -70,7 +71,7 @@ public:
   m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
 
-  const std::pair<std::size_t, std::size_t> propagate(const FT) {
+  const std::pair<std::size_t, std::size_t> propagate() {
     std::size_t num_queue_calls = 0;
     std::size_t num_events = 0;
 
@@ -132,7 +133,7 @@ private:
 
       const FaceEvent event = m_face_queue.top();
       m_face_queue.pop();
-      const FT current_time = event.time;
+      const typename Data_structure::EK::FT current_time = event.time;
 
       // const std::size_t sp_debug_idx = 20;
       /*if (m_parameters.export_all / * && event.pvertex().first == sp_debug_idx * /) {
@@ -202,8 +203,8 @@ private:
 
           // Within an interval
           if (ki->second[i].first > event.intersection_bary && ki->second[i - 1].first < event.intersection_bary) {
-            FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
-            FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
+            EK::FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
+            EK::FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
 
             if (event.time > interval_time)
               crossing++;
@@ -235,7 +236,7 @@ private:
 
     for (IEdge edge : border) {
       FaceEvent fe;
-      FT t = m_data.calculate_edge_intersection_time(event.support_plane, edge, fe);
+      EK::FT t = m_data.calculate_edge_intersection_time(event.support_plane, edge, fe);
       if (t > 0)
         m_face_queue.push(fe);
     }
