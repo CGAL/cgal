@@ -738,6 +738,9 @@ public:
   size_type index(const_iterator cit) const
   { return static_cast<size_type>(cit); }
 
+  size_type index(Index idx) const
+  { return static_cast<size_type>(idx); }
+
   // Returns whether the iterator "cit" is in the range [begin(), end()].
   // This function is mostly useful for purposes of efficient debugging at
   // higher levels.
