@@ -1321,14 +1321,23 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
   bool is_dcm = false;
   bool is_bmp = false;
 
+  std::vector<boost::filesystem::path> paths;
   vtkStringArray* files = vtkStringArray::New();
   boost::filesystem::path p(dirname.toUtf8().data());
   for(boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p)){
     std::string s(x.path().extension().string());
-    if(s == std::string(".dcm") || (s == std::string(".DCM"))){ is_dcm = true;}
-    if(s == std::string(".bmp") || (s == std::string(".BMP"))){ is_bmp = true;}
-    std::cout << x.path().string() << std::endl;
-    files->InsertNextValue(x.path().string());
+    if(s == std::string(".dcm") || (s == std::string(".DCM"))){ is_dcm = true; CGAL_assertion(!is_bmp); }
+    if(s == std::string(".bmp") || (s == std::string(".BMP"))){ is_bmp = true; CGAL_assertion(!is_dcm); }
+    paths.push_back(x.path());
+  }
+
+  // directory_iterator does not guarantee a sorted order
+  std::sort(std::begin(paths), std::end(paths));
+
+  for(const boost::filesystem::path& p : paths)
+  {
+    std::cout << p.string() << std::endl;
+    files->InsertNextValue(p.string());
   }
 
   if(is_dcm){
@@ -1369,17 +1378,14 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
     smoother->Update();
     auto vtk_image = smoother->GetOutput();
     vtk_image->Print(std::cerr);
-    image = new Image;
 
-    std::cout << "A" << std::endl;
+    image = new Image;
     *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the
                                                        // image data
-
-    std::cout << "B" << std::endl;
   }
 
 #else
-  CGAL::Three::Three::warning("You need VTK to read a DCM file");
+  CGAL::Three::Three::warning("You need VTK to read DCM/BMP files");
   CGAL_USE(dirname);
 #endif
   return image;
