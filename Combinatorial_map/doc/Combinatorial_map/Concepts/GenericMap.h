@@ -876,6 +876,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 
 \sa `insert_cell_0_in_cell_2`
 \sa `insert_cell_1_in_cell_2`
+\sa `insert_cell_1_between_two_cells_2`
 \sa `insert_dangling_cell_1_in_cell_2`
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `remove_cell<i>`
@@ -896,6 +897,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 
 \sa `insert_cell_0_in_cell_2`
 \sa `insert_cell_1_in_cell_2`
+\sa `insert_cell_1_between_two_cells_2`
 \sa `insert_dangling_cell_1_in_cell_2`
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `remove_cell<i>`
@@ -917,11 +919,39 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `is_insertable_cell_1_in_cell_2`
 \sa `insert_cell_0_in_cell_1`
 \sa `insert_cell_0_in_cell_2`
+\sa `insert_cell_1_between_two_cells_2`
 \sa `insert_dangling_cell_1_in_cell_2`
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `remove_cell<i>`
 */
 Dart_descriptor insert_cell_1_in_cell_2(Dart_descriptor d1, Dart_descriptor d2);
+
+/*!
+Inserts a 1-cell between the 2-cell containing `d1` and the one containing `d2`. Returns `previous(d1)`, a descriptor on one dart belonging to the new 1-cell.
+\pre `is_insertable_cell_1_between_two_cells_2(d1,d2)`.
+
+If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, call \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink(<I>a</I>,<I>a'</I>) is called for all enabled i-attributes, for i>=2, with <I>a</I> the original 2-attribute associated with `d` and <I>a'</I> the new 2-attribute created during the operation. If set, the dynamic onmerge function of i-attributes is also called on <I>a</I> and <I>a'</I>.
+
+\cgalAdvancedBegin
+If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
+\cgalAdvancedEnd
+
+\sa `is_insertable_cell_1_between_two_cells_2`
+\sa `insert_cell_0_in_cell_1`
+\sa `insert_cell_0_in_cell_2`
+\sa `insert_cell_1_in_cell_2`
+\sa `insert_dangling_cell_1_in_cell_2`
+\sa `insert_cell_2_in_cell_3<InputIterator>`
+\sa `remove_cell<i>`
+*/
+Dart_descriptor insert_cell_1_between_two_cells_2(Dart_descriptor d1, Dart_descriptor d2);
+
+/*! Call `insert_cell_1_in_cell_2` if `is_insertable_cell_1_in_cell_2(d1, d2)`, otherwise call `insert_cell_1_between_two_cells_2`.
+\sa `insert_cell_1_in_cell_2`
+\sa `insert_cell_1_between_two_cells_2`
+\sa `is_insertable_cell_1_in_cell_2`
+*/
+Dart_descriptor insert_cell_1(Dart_descriptor d1, Dart_descriptor d2);
 
 /*!
 Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns `opposite<2>(*afirst)`, a descriptor on one dart belonging to the new 2-cell.
@@ -939,6 +969,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `insert_cell_0_in_cell_1`
 \sa `insert_cell_0_in_cell_2`
 \sa `insert_cell_1_in_cell_2`
+\sa `insert_cell_1_between_two_cells_2`
 \sa `insert_dangling_cell_1_in_cell_2`
 \sa `remove_cell<i>`
 */
@@ -958,6 +989,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `insert_cell_0_in_cell_1`
 \sa `insert_cell_0_in_cell_2`
 \sa `insert_cell_1_in_cell_2`
+\sa `insert_cell_1_between_two_cells_2`
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `remove_cell<i>`
 
@@ -975,6 +1007,17 @@ This is possible if `d1`\f$ \neq \f$ `d2` and `d1` can be reached from `d2` by u
 
 */
 bool is_insertable_cell_1_in_cell_2(Dart_const_descriptor d1, Dart_const_descriptor d2);
+
+/*!
+Returns true iff it is possible to insert a 1-cell in the generic map between `d1` and `d2`.
+
+This is possible if `d1`\f$ \neq \f$ `d2` and `d1` can not be reached from `d2` by using some `previous` and `next` calls.
+\pre \link GenericMap::dimension `dimension`\endlink \f$ \geq\f$ 2, `d1`\f$ \in \f$ \link GenericMap::darts `darts()`\endlink, and `d2`\f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
+
+\sa `insert_cell_1_between_two_cells_2`
+
+*/
+bool is_insertable_cell_1_between_two_cells_2(Dart_const_descriptor d1, Dart_const_descriptor d2);
 
 /*!
 Returns true iff it is possible to insert a 2-cell in the generic map along the path of darts given by the range `[afirst,alast)`. The 2-cell can be inserted iff the ordered list of darts form a closed path of edges inside a same volume.
@@ -1016,6 +1059,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `insert_cell_0_in_cell_1`
 \sa `insert_cell_0_in_cell_2`
 \sa `insert_cell_1_in_cell_2`
+\sa `insert_cell_1_between_two_cells_2`
 \sa `insert_dangling_cell_1_in_cell_2`
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 */
