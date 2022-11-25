@@ -609,13 +609,13 @@ namespace CGAL
       struct Attribute_const_range<d, CGAL::Void>
       { typedef CGAL::Void type; };
 
-      // To iterate onto each enabled attributes
-      template <class Functor>
+      // To iterate onto each enabled attributes, starting from n-attributes (0 by default)
+      template <class Functor, int n=0>
       struct Foreach_enabled_attributes
       {
         template <class ...Ts>
         static void run(Ts& ... t)
-        { Foreach_static_restricted<Functor, Attributes>::run(t...); }
+        { Foreach_static_restricted<Functor, Attributes, n>::run(t...); }
       };
       // To iterate onto each enabled attributes, except j-attributes
       template <class Functor, unsigned int j>
