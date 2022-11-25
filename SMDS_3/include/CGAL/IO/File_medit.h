@@ -1111,7 +1111,6 @@ void write_MEDIT(std::ostream& os,
 template<typename T3>
 bool read_MEDIT(std::istream& in, T3& t3)
 {
-  CGAL_assertion(!(!in));
   bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3);
   if(!b)
     t3.clear();

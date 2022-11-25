@@ -324,11 +324,11 @@ bool build_infinite_cells(Tr& tr,
   {
     if (fp.second != 2)
     {
-      std::cout << "Warning : non manifold edge" << std::endl;
+      std::cout << "Warning: non manifold edge" << std::endl;
       std::cout << "fp.second = " << fp.second << std::endl;
-      std::cout << fp.first[0]->point() << " "
-        << fp.first[1]->point() << " "
-        << fp.first[2]->point() << std::endl;
+      std::cout << tr.point(fp.first[0]) << " "
+                << tr.point(fp.first[1]) << " "
+                << tr.point(fp.first[2]) << std::endl;
       success = false;
     }
 //    CGAL_assertion(fp.second == 2);
@@ -574,6 +574,9 @@ bool build_triangulation_from_file(std::istream& is,
   using Facet        = std::array<int, 3>; // 3 = id
   using Tet_with_ref = std::array<int, 4>; // 4 = id
 
+  if(!is)
+    return false;
+
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
@@ -620,7 +623,12 @@ bool build_triangulation_from_file(std::istream& is,
       for(int i=0; i<nv; ++i)
       {
         double x,y,z;
-        is >> x >> y >> z >> ref;
+        if(!(is >> x >> y >> z >> ref))
+        {
+          if(verbose)
+            std::cerr << "Issue while reading vertices" << std::endl;
+          return false;
+        }
         points.emplace_back(x,y,z);
       }
     }
@@ -630,28 +638,39 @@ bool build_triangulation_from_file(std::istream& is,
       is >> nf;
       for(int i=0; i<nf; ++i)
       {
-        int n1, n2, n3;
+        int n[3];
         typename Tr::Cell::Surface_patch_index surface_patch_id;
-        is >> n1 >> n2 >> n3 >> surface_patch_id;
-        Facet facet;
-        facet[0] = n1 - 1;
-        facet[1] = n2 - 1;
-        facet[2] = n3 - 1;
+        if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
+        {
+          if(verbose)
+            std::cerr << "Issue while reading triangles" << std::endl;
+          return false;
+        }
 
-        //find the circular permutation that puts the smallest index in the first place.
-        int n0 = (std::min)((std::min)(facet[0],facet[1]), facet[2]);
-        int k=0;
-        Facet f;
+        Facet facet;
+        facet[0] = n[0] - 1;
+        facet[1] = n[1] - 1;
+        facet[2] = n[2] - 1;
+
+        if(verbose)
+          std::cout << "Looking at face #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << std::endl;
+
+        CGAL_warning_code(
+        for(int j=0; j<3; ++j)
+          for(int k=0; k<3; ++k)
+            if(j != k)
+              CGAL_warning(n[j] != n[k]);
+        )
+
+        // find the circular permutation that puts the smallest index in the first place.
+        int n0 = (std::min)({facet[0],facet[1], facet[2]});
         do
         {
-          f[0] = facet[(0+k)%3];
-          f[1] = facet[(1+k)%3];
-          f[2] = facet[(2+k)%3];
-          ++k;
+          std::rotate(std::begin(facet), std::next(std::begin(facet)), std::end(facet));
         }
-        while(f[0] != n0);
+        while(facet[0] != n0);
 
-        border_facets.emplace(f, surface_patch_id);
+        border_facets.emplace(facet, surface_patch_id);
       }
     }
 
@@ -660,13 +679,32 @@ bool build_triangulation_from_file(std::istream& is,
       is >> ntet;
       for(int i=0; i<ntet; ++i)
       {
-        int n0, n1, n2, n3, reference;
-        is >> n0 >> n1 >> n2 >> n3 >> reference;
+        int n[4];
+        int reference;
+
+        if(!(is >> n[0] >> n[1] >> n[2] >> n[3] >> reference))
+        {
+          if(verbose)
+            std::cerr << "Issue while reading tetrahedra" << std::endl;
+          return false;
+        }
+
+        if(verbose)
+          std::cout << "Looking at tet #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << " " << n[3] << std::endl;
+
+        CGAL_warning_code(
+        for(int j=0; j<4; ++j)
+          for(int k=0; k<4; ++k)
+            if(j != k)
+              CGAL_warning(n[j] != n[k]);
+        )
+
         Tet_with_ref t;
-        t[0] = n0 - 1;
-        t[1] = n1 - 1;
-        t[2] = n2 - 1;
-        t[3] = n3 - 1;
+        t[0] = n[0] - 1;
+        t[1] = n[1] - 1;
+        t[2] = n[2] - 1;
+        t[3] = n[3] - 1;
+
         finite_cells.push_back(t);
         subdomains.push_back(reference);
       }
