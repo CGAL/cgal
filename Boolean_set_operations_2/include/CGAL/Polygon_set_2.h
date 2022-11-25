@@ -58,7 +58,7 @@ public:
   {}
 
   /*! Constructor with traits object. */
-  Polygon_set_2 (Traits_2& tr) :
+  Polygon_set_2 (const Traits_2& tr) :
     Base(tr)
   {}
 
