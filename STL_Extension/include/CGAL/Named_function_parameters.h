@@ -426,14 +426,6 @@ inline all_default()
 }
 #endif
 
-template <typename T, typename Tag, typename Base>
-Named_function_parameters<T,Tag,Base>
-inline no_parameters(Named_function_parameters<T,Tag,Base>)
-{
-  typedef Named_function_parameters<T,Tag,Base> Params;
-  return Params();
-}
-
 template <class Tag, bool ref_only = false>
 struct Boost_parameter_compatibility_wrapper
 {
