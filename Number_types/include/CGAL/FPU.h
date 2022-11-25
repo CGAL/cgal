@@ -500,6 +500,7 @@ void
 FPU_set_cw (FPU_CW_t cw)
 {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  CGAL_USE(cw);
   CGAL_assertion(cw == CGAL_FE_TONEAREST);
 #else
   CGAL_IA_SETFPCW(cw);
@@ -511,6 +512,7 @@ FPU_CW_t
 FPU_get_and_set_cw (FPU_CW_t cw)
 {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    CGAL_USE(cw);
     CGAL_assertion(cw == CGAL_FE_TONEAREST);
     return CGAL_FE_TONEAREST;
 #else
