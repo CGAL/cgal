@@ -13,10 +13,17 @@
 
 #include <CGAL/Timer.h>
 
-typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraitsDouble> Mesh;
-typedef Mesh::Point                                                    Point;
-typedef boost::graph_traits<Mesh>::vertex_descriptor                   vertex_descriptor;
-typedef boost::graph_traits<Mesh>::vertex_iterator                     vertex_iterator;
+struct DoubleTraits : public OpenMesh::DefaultTraits
+{
+  typedef OpenMesh::Vec3d Point;
+  typedef OpenMesh::Vec3d Normal;
+};
+
+
+typedef OpenMesh::PolyMesh_ArrayKernelT<DoubleTraits>               Mesh;
+typedef Mesh::Point                                                 Point;
+typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_iterator        vertex_iterator;
 
 typedef CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP>  Deform_mesh_arap;
 typedef CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
