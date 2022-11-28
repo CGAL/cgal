@@ -543,6 +543,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                              .arg(bbox.ymax() - bbox.ymin(),0,'g',3)
                              .arg(bbox.zmax() - bbox.zmin(),0,'g',3) );
 
+  const bool input_is_labeled_img = (image_item != nullptr && !image_item->isGray());
+  const bool input_is_gray_img = (image_item != nullptr && image_item->isGray());
+
   set_defaults();
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   ui.facetSizing->setRange(diag * 10e-6, // min
@@ -561,11 +564,13 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
   ui.protectEdges->setEnabled(features_protection_available);
+  if(input_is_gray_img)
+    ui.sharpFeaturesGroup->setEnabled(false);
 
   ui.facegraphCheckBox->setVisible(mesh_type == Mesh_type::SURFACE_ONLY);
-  ui.initializationGroup->setVisible(image_item != nullptr &&
-                                     !image_item->isGray());
-  ui.grayImgGroup->setVisible(image_item != nullptr && image_item->isGray());
+  ui.initializationGroup->setVisible(input_is_labeled_img);
+  ui.grayImgGroup->setVisible(input_is_gray_img);
+
   if (items->which() == POLYHEDRAL_MESH_ITEMS)
     ui.volumeGroup->setVisible(mesh_type == Mesh_type::VOLUME &&
                                nullptr != bounding_sm_item);
@@ -609,7 +614,6 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
           ui.weightsSigma_label, SLOT(setEnabled(bool)));
   ui.weightsSigma->setValue(1.);
-  bool input_is_labeled_img = (image_item != nullptr && !image_item->isGray());
   ui.labeledImgGroup->setVisible(input_is_labeled_img);
 
 #ifndef CGAL_USE_ITK
