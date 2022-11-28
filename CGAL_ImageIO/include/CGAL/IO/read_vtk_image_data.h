@@ -103,6 +103,7 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
       vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
     } else {
       std::cerr << "Warning: input has " << cn << " components; only the value of the first component will be used." << std::endl;
+      CGAL_assertion(cn >= 3); // if it's more than 1, it needs to be more than 3
 
       // cast the data void pointers to make it possible to do pointer arithmetic
       char* src = static_cast<char*>(vtk_image->GetPointData()->GetScalars()->GetVoidPointer(0));
