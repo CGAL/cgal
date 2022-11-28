@@ -111,11 +111,11 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
       for(int i=0; i<dims_n; ++i)
       {
         // multiply by image->wdim because we casted to char* and not the actual data type
-        memcpy(dest + image->wdim*i, src + cn*image->wdim*i, image->wdim * sizeof(char));
+        memcpy(dest + image->wdim*i, src + cn*image->wdim*i, image->wdim);
 
-        // Check that we are not discarding useful data
-        CGAL_assertion(*(src + cn*image->wdim*i) == *(src + cn*image->wdim*i + 1));
-        CGAL_assertion(*(src + cn*image->wdim*i) == *(src + cn*image->wdim*i + 2));
+        // Check that we are not discarding useful data (i.e., green & blue are identical to red)
+        CGAL_assertion(memcmp(src + cn*image->wdim*i, src + cn*image->wdim*i + image->wdim, image->wdim) == 0);
+        CGAL_assertion(memcmp(src + cn*image->wdim*i, src + cn*image->wdim*i + 2*image->wdim, image->wdim) == 0);
       }
     }
   } else {
