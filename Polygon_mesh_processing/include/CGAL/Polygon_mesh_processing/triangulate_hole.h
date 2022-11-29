@@ -151,7 +151,8 @@ namespace Polygon_mesh_processing {
 
   \cgalNamedParamsEnd
 
-  @return `out`
+  @return if an output iterator `out` has been passed to `np` in `face_output_iterator()`, then `out` is returned,
+          otherwise `Emptyset_iterator()` is returned.
 
   \todo handle islands
   @todo Replace border_halfedge by a range of border halfedges.
@@ -163,7 +164,7 @@ namespace Polygon_mesh_processing {
   */
   template<typename PolygonMesh,
            typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void // @todo was OutputIterator
+  auto
   triangulate_hole(PolygonMesh& pmesh,
               typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
               const CGAL_NP_CLASS& np = parameters::default_values())
@@ -174,12 +175,11 @@ namespace Polygon_mesh_processing {
 
     typedef typename GetGeomTraits<PolygonMesh,CGAL_NP_CLASS>::type         GeomTraits;
 
-    Emptyset_iterator default_face_output_iterator;
     typedef typename internal_np::Lookup_named_param_def<internal_np::face_output_iterator_t,
                                                          CGAL_NP_CLASS,
-                                                         Emptyset_iterator>::reference Face_output_iterator;
+                                                         Emptyset_iterator>::type Face_output_iterator;
 
-    Face_output_iterator out = choose_parameter(get_parameter_reference(np, internal_np::face_output_iterator), default_face_output_iterator);
+    Face_output_iterator out = choose_parameter<Emptyset_iterator>(get_parameter(np, internal_np::face_output_iterator));
 
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
@@ -221,18 +221,18 @@ namespace Polygon_mesh_processing {
 
     Hole_filling::Default_visitor default_visitor;
 
-    // @todo was return
-    internal::triangulate_hole_polygon_mesh(
-      pmesh,
-      border_halfedge,
-      out,
-      choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
-      use_dt3,
-      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
-      use_cdt,
-      choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
-      choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
-      max_squared_distance).first;
+    return
+      internal::triangulate_hole_polygon_mesh(
+        pmesh,
+        border_halfedge,
+        out,
+        choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
+        use_dt3,
+        choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
+        use_cdt,
+        choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
+        choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
+        max_squared_distance).first;
   }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -264,7 +264,7 @@ namespace Polygon_mesh_processing {
     // As soon as the other one returns something
     // return triangulate_hole(pmesh, border_halfedge,np.face_output_iterator(out));
 
-       using parameters::choose_parameter;
+    using parameters::choose_parameter;
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
 
