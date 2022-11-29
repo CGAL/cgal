@@ -3452,17 +3452,10 @@ get_least_square_surface_plane(const Vertex_handle& v,
          (patch_index == Surface_patch_index() ||
           c3t3_.surface_patch_index(f) == patch_index) )
     {
-      ref_facet = f;
+      if(ref_facet.first == Cell_handle())
+        ref_facet = f;
 
-      // In the case of a periodic triangulation, the incident facets of a point
-      // do not necessarily have the same offsets. Worse, the surface centers
-      // might not have the same offset as their facet. Thus, no solution except
-      // calling a function 'get_closest_triangle(p, t)' that simply returns t
-      // for a non-periodic triangulation, and checks all possible offsets for
-      // periodic triangulations
-
-      Triangle t = c3t3_.triangulation().triangle(f);
-      Triangle ct = tr_.get_closest_triangle(cp(position), t);
+      const Triangle& ct = tr_.get_incident_triangle(f, v);
       triangles.push_back(ct);
     }
   }
@@ -3474,7 +3467,6 @@ get_least_square_surface_plane(const Vertex_handle& v,
   // Compute least square fitting plane
   Plane_3 plane;
   Bare_point point;
-
   CGAL::linear_least_squares_fitting_3(triangles.begin(),
                                        triangles.end(),
                                        plane,
@@ -3483,11 +3475,12 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                        tr_.geom_traits(),
                                        Default_diagonalize_traits<FT, 3>());
 
-   return std::make_pair(plane,
-     ref_facet.first->get_facet_surface_center(ref_facet.second));
+
+  // The surface center of a facet might have an offset in periodic triangulations
+  const Bare_point& ref_facet_scp = ref_facet.first->get_facet_surface_center(ref_facet.second);
+  const Bare_point& ref_point = tr_.get_closest_point(cp(position), ref_facet_scp);
+  return std::make_pair(plane, ref_point);
 }
-
-
 
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Bare_point
@@ -3510,6 +3503,7 @@ project_on_surface_if_possible(const Vertex_handle& v,
                                const Bare_point& p,
                                Surface_patch_index index) const
 {
+  // @todo should call below if it's available...
   // return domain_.project_on_surface(p);
 
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();

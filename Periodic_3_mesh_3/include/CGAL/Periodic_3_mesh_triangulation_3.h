@@ -468,45 +468,25 @@ public:
     return cwp(get_closest_point(cp(wp), cp(wq)), cw(wq));
   }
 
-  Triangle get_closest_triangle(const Bare_point& p, const Triangle& t) const
+  // returns the triangle corresponding to f, with a geometric shift
+  // so that it is incident to ref_v's canonical position
+  Triangle get_incident_triangle(const Facet& f, const Vertex_handle ref_v) const
   {
-    typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_point_3 cp = geom_traits().construct_point_3_object();
     typename Geom_traits::Construct_translated_point_3 tr = geom_traits().construct_translated_point_3_object();
-    typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
+    typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_triangle_3 ct = geom_traits().construct_triangle_3_object();
 
-    // It doesn't matter which point we use to canonicalize the triangle since we have to look
-    // at all the neighboring copies anyway since we do not have control of 'p'.
-    Bare_point canon_p0 = canonicalize_point(t[0]);
-    Vector_3 move_to_canonical = cv(t[0], canon_p0);
-    const std::array<Bare_point, 3> ct = { canon_p0,
-                                           tr(t[1], move_to_canonical),
-                                           tr(t[2], move_to_canonical) };
+    CGAL_precondition(f.first->has_vertex(ref_v));
+    const int ref_v_pos = f.first->index(ref_v);
+    const Bare_point& ref_p = cp(point(ref_v));
+    const Bare_point& ref_p_in_f = cp(point(f.first, ref_v_pos));
+    Vector_3 move_to_canonical = cv(ref_p_in_f, ref_p);
 
-    FT min_sq_dist = std::numeric_limits<FT>::infinity();
-    Triangle rt;
-    for(int i = -1; i < 2; ++i) {
-      for(int j = -1; j < 2; ++j) {
-        for(int k = -1; k < 2; ++k) {
-
-          const Triangle tt(
-            construct_point(std::make_pair(ct[0], Offset(i, j, k))),
-            construct_point(std::make_pair(ct[1], Offset(i, j, k))),
-            construct_point(std::make_pair(ct[2], Offset(i, j, k))));
-
-          const FT sq_dist = csd(p, tt);
-
-          if(sq_dist == FT(0))
-            return rt;
-
-          if(sq_dist < min_sq_dist) {
-            rt = tt;
-            min_sq_dist = sq_dist;
-          }
-        }
-      }
-    }
-
-    return rt;
+    const int s = f.second;
+    return ct(tr(cp(point(f.first, (s+1)%4)), move_to_canonical),
+              tr(cp(point(f.first, (s+2)%4)), move_to_canonical),
+              tr(cp(point(f.first, (s+3)%4)), move_to_canonical));
   }
 
   // Warning: This is a periodic version that computes the smallest possible
