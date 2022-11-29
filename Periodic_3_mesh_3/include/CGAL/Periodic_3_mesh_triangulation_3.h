@@ -623,6 +623,38 @@ public:
     return std::make_pair(nearest, min_sq_dist);
   }
 
+  std::pair<Vertex_handle, FT>
+  nearest_power_vertex_with_sq_distance(const Vertex_handle v) const
+  {
+    typename Geom_traits::Construct_point_3 cp = geom_traits().construct_point_3_object();
+    typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
+
+    Vertex_handle min_v {};
+    FT min_sq_dist = -1;
+
+    std::vector<Cell_handle> inc_cells;
+    std::unordered_set<Vertex_handle> visited_vertices;
+    incident_cells(v, std::back_inserter(inc_cells));
+    for(Cell_handle ch : inc_cells)
+    {
+      CGAL_assertion(ch->has_vertex(v));
+      int v_pos = ch->index(v);
+      for(int i=1; i<4; ++i)
+      {
+        int vi_pos = (v_pos + i) % 4;
+        Vertex_handle vi = ch->vertex(vi_pos);
+        if(!visited_vertices.insert(vi).second) // already visited
+          continue;
+
+        FT sq_dist_i = csd(cp(point(ch, v_pos)), cp(point(ch, vi_pos)));
+        if(min_sq_dist == FT(-1) || sq_dist_i < min_sq_dist)
+          min_sq_dist = sq_dist_i;
+      }
+    }
+
+    return { min_v, min_sq_dist };
+  }
+
   Cell_handle locate(const Weighted_point& p,
                      Cell_handle start = Cell_handle(),
                      bool* CGAL_assertion_code(could_lock_zone) = nullptr) const

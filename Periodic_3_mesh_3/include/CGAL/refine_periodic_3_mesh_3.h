@@ -36,23 +36,6 @@
 namespace CGAL {
 namespace internal {
 
-template<class C3T3, class MeshDomain>
-void project_dummy_points_of_surface(C3T3& c3t3, const MeshDomain& domain)
-{
-  typedef typename C3T3::Vertex_handle                     Vertex_handle;
-  typedef CGAL::Hash_handles_with_or_without_timestamps    Hash_fct;
-  typedef boost::unordered_set<Vertex_handle, Hash_fct>    Vertex_container;
-
-  bool did_something = false;
-  do
-  {
-    Vertex_container vertex_container;
-    find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
-    did_something = project_points(c3t3, domain, vertex_container.begin(), vertex_container.end());
-  }
-  while(did_something);
-}
-
 template<class C3T3, class OutputIterator>
 void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
 {
@@ -72,7 +55,12 @@ void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
     {
       Vertex_handle v = c->vertex((ind+i)&3);
       if(v->info().is_dummy_vertex)
+      {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+        std::cout << c3t3.triangulation().point(v) << " must be projected" << std::endl;
+#endif
         *vertices++ = v;
+      }
     }
   }
 }
@@ -95,6 +83,8 @@ bool project_points(C3T3& c3t3,
 
   typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
     c3t3.triangulation().geom_traits().construct_point_3_object();
+  typename C3T3::Triangulation::Geom_traits::Compute_squared_distance_3 csd =
+    c3t3.triangulation().geom_traits().compute_squared_distance_3_object();
 
   CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
   CGAL::Mesh_3::Triangulation_helpers<Tr> tr_helpers;
@@ -110,7 +100,7 @@ bool project_points(C3T3& c3t3,
 
     const Bare_point& old_position = cp(weighted_old_position);
     const Bare_point new_position = helper.project_on_surface(old_vertex, old_position);
-    const FT sq_d = CGAL::squared_distance(new_position, old_position);
+    const FT sq_d = csd(new_position, old_position);
 
 #ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
     std::cerr << "\n\nMove dummy vertex" << std::endl;
@@ -121,19 +111,29 @@ bool project_points(C3T3& c3t3,
 #endif
 
     // Skip tiny moves for efficiency
-    // @todo arbitrary value, maybe compare it to the surface distance criterium ?
-    if(sq_d < 1e-4)
+    auto min_v_and_sqd = c3t3.triangulation().nearest_power_vertex_with_sq_distance(old_vertex);
+    CGAL_postcondition(min_v_and_sqd.first != Vertex_handle() && min_v_and_sqd.second != FT(-1));
+
+    if(sq_d < 0.01 * min_v_and_sqd.second)
+    {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+      std::cout << "REJECTED because dummy point is close enough to the surface" << std::endl;
+#endif
       continue;
+    }
 
     // Do not project if the projected point is in a protection ball
     if(tr_helpers.inside_protecting_balls(c3t3.triangulation(), old_vertex, new_position))
+    {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+      std::cout << "REJECTED because new pos is within protection ball" << std::endl;
+#endif
       continue;
-
-    // @todo figure out the over-refinements...
-    const Vector_3 move(old_position, new_position);
+    }
 
     // For periodic triangulations, the move is always performed using insert+remove,
     // so new_vertex cannot be old_vertex if the move has succeeded
+    const Vector_3 move(old_position, new_position);
     Vertex_handle new_vertex = helper.update_mesh(old_vertex, move);
 
     // if the move has successfully been performed
@@ -151,18 +151,47 @@ bool project_points(C3T3& c3t3,
       else
         c3t3.set_index(new_vertex, 0);
     }
+    else
+    {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+      std::cerr << "Warning: failed to create projection" << std::endl;
+#endif
+    }
 
     // The vertex `old_vertex` can still exist in the P3RT3:
     // - if the target already existed
     // - if its removal would have compromised the 1-cover property of the periodic triangulation
     // It's (almost) pointless to try and move it again, so fix it
     if(c3t3.triangulation().tds().is_vertex(old_vertex))
+    {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+      std::cerr << "Warning: failed to remove pre-projection: " << c3t3.triangulation().point(old_vertex) << std::endl;
+#endif
       old_vertex->info().is_dummy_vertex = false;
+    }
 
     did_something = true;
   }
 
   return did_something;
+}
+
+template<class C3T3, class MeshDomain>
+void project_dummy_points_of_surface(C3T3& c3t3,
+                                     const MeshDomain& domain)
+{
+  typedef typename C3T3::Vertex_handle                     Vertex_handle;
+  typedef CGAL::Hash_handles_with_or_without_timestamps    Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>    Vertex_container;
+
+  bool did_something = false;
+  do
+  {
+    Vertex_container vertex_container;
+    find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
+    did_something = project_points(c3t3, domain, vertex_container.begin(), vertex_container.end());
+  }
+  while(did_something);
 }
 
 } // namespace internal
