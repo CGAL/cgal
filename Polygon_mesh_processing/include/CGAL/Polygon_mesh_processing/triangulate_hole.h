@@ -82,7 +82,7 @@ namespace Polygon_mesh_processing {
 
   \cgalNamedParamsBegin
 
-    \cgalParamNBegin{face_output_iterator_t}
+    \cgalParamNBegin{face_output_iterator}
       \cgalParamDescription{iterator over patch faces}
       \cgalParamType{a model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces}
