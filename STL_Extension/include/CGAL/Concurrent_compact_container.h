@@ -542,11 +542,15 @@ public:
     return false;
   }
 
-  bool owns_dereferencable(const_iterator cit) const
+  bool owns_dereferenceable(const_iterator cit) const
   {
     return cit != end() && owns(cit);
   }
 
+  CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
+  {
+    return cit != end() && owns(cit);
+  }
   /** Reserve method to ensure that the capacity of the Concurrent_compact_container be
    * greater or equal than a given value n.
    */
