@@ -1649,8 +1649,8 @@ void merge_reversible_connected_components(PolygonMesh& pm,
  *   \cgalParamNBegin{face_partition_id_map}
  *     \cgalParamDescription{a property map filled by this function and that will contain for each face
  *                           the id of its surface component after reversal and stitching in the range `[0, n - 1]`,
- *                           with `n` the number of such components.
- *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::face_descriptor` as key type and `std::size_t` as value type}
+ *                           with `n` the number of such components.}
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
