@@ -134,7 +134,7 @@ void test_triangulate_hole(const std::string file_name) {
 
   for(typename std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch));
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, CGAL::parameters::face_output_iterator(back_inserter(patch)));
     if(patch.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
       assert(false);
