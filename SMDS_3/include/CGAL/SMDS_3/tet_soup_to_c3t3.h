@@ -19,15 +19,15 @@
 
 #include <CGAL/license/SMDS_3.h>
 
-#include <CGAL/disable_warnings.h>
 #include <CGAL/assertions.h>
 #include <CGAL/IO/File_medit.h>
 
-#include <array>
-#include <vector>
-#include <utility>
-#include <map>
 #include <boost/unordered_map.hpp>
+
+#include <array>
+#include <map>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 namespace SMDS_3 {
@@ -190,30 +190,23 @@ bool build_finite_cells(Tr& tr,
         facet[2] = tet[(j+3) % 4];
 
         // find the circular permutation that puts the smallest index in the first place.
-        int n0 = (std::min)((std::min)(facet[0], facet[1]), facet[2]);
-        int k = 0;
-        std::array<int,3> f;
+        int n0 = (std::min)({facet[0], facet[1], facet[2]});
         do
         {
-          f[0]=facet[(0+k)%3];
-          f[1]=facet[(1+k)%3];
-          f[2]=facet[(2+k)%3];
-          ++k;
+          std::rotate(std::begin(facet), std::next(std::begin(facet)), std::end(facet));
         }
-        while(f[0] != n0);
+        while(facet[0] != n0);
 
-        typename FacetPatchMap::const_iterator it = border_facets.find(f);
+        typename FacetPatchMap::const_iterator it = border_facets.find(facet);
         if(it != border_facets.end())
         {
           c->set_surface_patch_index(j, it->second);
         }
         else
         {
-          int temp = f[2];
-          f[2] = f[1];
-          f[1] = temp;
+          std::swap(facet[1], facet[2]); // facet[0] is still the smallest, no need to rotate again
 
-          it = border_facets.find(f);
+          it = border_facets.find(facet);
           if(it != border_facets.end())
             c->set_surface_patch_index(j, it->second);
           else
@@ -732,7 +725,5 @@ bool build_triangulation_from_file(std::istream& is,
 
 } // namespace SMDS_3
 } // namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SMDS_3_TET_SOUP_TO_C3T3_H

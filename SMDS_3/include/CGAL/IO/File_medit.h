@@ -22,11 +22,10 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
-
-#include <boost/unordered_map.hpp>
-
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/unordered_map.hpp>
 
 #include <iomanip>
 #include <iostream>
