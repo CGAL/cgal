@@ -151,8 +151,7 @@ namespace Polygon_mesh_processing {
 
   \cgalNamedParamsEnd
 
-  @return if an output iterator `out` has been passed to `np` in `face_output_iterator()`, then `out` is returned,
-          otherwise `Emptyset_iterator()` is returned.
+  @return the face output iterator
 
   \todo handle islands
   @todo Replace border_halfedge by a range of border halfedges.
@@ -243,7 +242,7 @@ namespace Polygon_mesh_processing {
   overload with the named parameter `face_output_iterator` should be
   used instead.
 
-  \briefTriangulates a hole in a polygon mesh.
+  \brief Triangulates a hole in a polygon mesh.
 
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
