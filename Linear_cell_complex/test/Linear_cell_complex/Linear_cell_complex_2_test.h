@@ -142,20 +142,6 @@ void create_attributes_2(Map& map)
   InitDartInfo<Map>::run(map);
 }
 
-template<typename LCC,
-         typename Map=typename LCC::Combinatorial_data_structure>
-struct Alpha1
-{
-  static typename LCC::Dart_descriptor run(LCC&, typename LCC::Dart_descriptor dh)
-  { return dh; }
-};
-template<typename LCC>
-struct Alpha1<LCC, CGAL::Generalized_map_tag>
-{
-  static typename LCC::Dart_descriptor run(LCC& lcc, typename LCC::Dart_descriptor dh)
-  { return lcc.template alpha<1>(dh); }
-};
-
 // Test orientation specialized below only for CMap. For GMap return true.
 template<typename LCC, typename Map=typename LCC::Combinatorial_data_structure>
 struct Test_change_orientation_LCC_2
