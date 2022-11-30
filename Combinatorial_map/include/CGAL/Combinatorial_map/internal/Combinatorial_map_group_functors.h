@@ -238,7 +238,8 @@ struct Group_nonvoid_attribute_functor_run
 {
   static void run(CMap& amap,
                   typename CMap::Dart_descriptor adart1,
-                  typename CMap::Dart_descriptor adart2)
+                  typename CMap::Dart_descriptor adart2,
+                  bool dart1_deleted=true)
   {
     CGAL_static_assertion( 1<=i && i<=CMap::dimension );
     CGAL_static_assertion( i!=j );
@@ -251,8 +252,13 @@ struct Group_nonvoid_attribute_functor_run
         a2=amap.template attribute<i>(adart2);
 
     // If the two attributes are equal, nothing to do.
-    if ( a1 == a2 ) return;
-
+    if (a1==a2)
+    {
+      if(a1!=CMap::null_descriptor && dart1_deleted &&
+         amap.template dart_of_attribute<i>(a1)==adart1)
+      { amap.template set_dart_of_attribute<i>(a1, adart2); }
+      return;
+    }
     typename CMap::Dart_descriptor toSet = amap.null_descriptor;
 
     // If the attribute associated to adart1 is nullptr, set it with
@@ -268,6 +274,8 @@ struct Group_nonvoid_attribute_functor_run
       }
     }
     amap.template set_attribute<i>(toSet, a1);
+    if(dart1_deleted && toSet==adart1)
+    { amap.template set_dart_of_attribute<i>(a1, adart2); }
   }
 };
 // Specialization for i=0 and 2<=j. We update 0-attributes for beta_j j>=2.
@@ -277,7 +285,8 @@ struct Group_nonvoid_attribute_functor_run<CMap, 0, j, T>
 {
   static void run( CMap& amap,
                    typename CMap::Dart_descriptor dh1,
-                   typename CMap::Dart_descriptor dh2 )
+                   typename CMap::Dart_descriptor dh2,
+                   bool dart1_deleted=true)
   {
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<0>::value>=0,
@@ -306,6 +315,8 @@ struct Group_nonvoid_attribute_functor_run<CMap, 0, j, T>
           }
         }
         amap.template set_attribute<0>(toSet, a1);
+        if(dart1_deleted && toSet==dh1)
+        { amap.template set_dart_of_attribute<0>(a1, od); }
       }
     }
     // Second extremity
@@ -338,7 +349,8 @@ struct Group_nonvoid_attribute_functor_run<CMap, 0, 0, T>
 {
   static void run( CMap& amap,
                    typename CMap::Dart_descriptor dh1,
-                   typename CMap::Dart_descriptor dh2 )
+                   typename CMap::Dart_descriptor dh2,
+                   bool dart1_deleted=true)
   {
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<0>::value>=0,
@@ -364,6 +376,8 @@ struct Group_nonvoid_attribute_functor_run<CMap, 0, 0, T>
           }
         }
         amap.template set_attribute<0>(toSet, a1);
+        if(dart1_deleted && toSet==dh1)
+        { amap.template set_dart_of_attribute<0>(a1, od); }
       }
     }
   }
@@ -375,7 +389,8 @@ struct Group_nonvoid_attribute_functor_run<CMap, 0, 1, T>
 {
   static void run( CMap& amap,
                    typename CMap::Dart_descriptor dh1,
-                   typename CMap::Dart_descriptor dh2 )
+                   typename CMap::Dart_descriptor dh2,
+                   bool=true)
   {
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<0>::value>=0,
@@ -411,7 +426,8 @@ struct Group_nonvoid_attribute_functor_run<CMap,i,i,T>
 {
   static void run(CMap&,
                   typename CMap::Dart_descriptor,
-                  typename CMap::Dart_descriptor)
+                  typename CMap::Dart_descriptor,
+                  bool=true)
   {}
 };
 // Specialization for i=1 and j=0. Do nothing as edges attributes are not
@@ -421,7 +437,8 @@ struct Group_nonvoid_attribute_functor_run<CMap,1,0,T>
 {
   static void run(CMap&,
                   typename CMap::Dart_descriptor,
-                  typename CMap::Dart_descriptor)
+                  typename CMap::Dart_descriptor,
+                  bool=true)
   {}
 };
 //------------------------------------------------------------------------------
@@ -432,8 +449,10 @@ struct Group_attribute_functor_run
 {
   static void run( CMap& amap,
                    typename CMap::Dart_descriptor d1,
-                   typename CMap::Dart_descriptor d2)
-  { Group_nonvoid_attribute_functor_run<CMap, i, j, T>::run(amap, d1, d2); }
+                   typename CMap::Dart_descriptor d2,
+                   bool dart1_deleted=true)
+  { Group_nonvoid_attribute_functor_run<CMap, i, j, T>::
+        run(amap, d1, d2, dart1_deleted); }
 };
 // Specialization for void attributes.
 template<typename CMap, unsigned int i, unsigned int j>
@@ -441,7 +460,8 @@ struct Group_attribute_functor_run<CMap, i, j, CGAL::Void>
 {
   static void run( CMap&,
                    typename CMap::Dart_descriptor,
-                   typename CMap::Dart_descriptor )
+                   typename CMap::Dart_descriptor,
+                   bool=true)
   {}
 };
 // ************************************************************************
