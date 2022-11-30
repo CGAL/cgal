@@ -410,7 +410,7 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
-      \cgalParamDescription{factor to control density of the otuput mesh,
+      \cgalParamDescription{factor to control density of the output mesh,
                             where larger values cause denser refinements, as in `refine()`}
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}

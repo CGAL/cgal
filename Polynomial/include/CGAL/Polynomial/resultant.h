@@ -46,7 +46,7 @@ namespace CGAL {
 // The implementation uses interpolatation for multivariate polynomials
 // Due to the recursive structuture of CGAL::Polynomial<Coeff> it is better
 // to write the function such that the inner most variable is eliminated.
-// However,  CGAL::internal::resultant(F,G) eliminates the outer most variabl.
+// However,  CGAL::internal::resultant(F,G) eliminates the outer most variable.
 // This is due to backward compatibility issues with code base on EXACUS.
 // In turn CGAL::internal::resultant_(F,G) eliminates the innermost variable.
 
