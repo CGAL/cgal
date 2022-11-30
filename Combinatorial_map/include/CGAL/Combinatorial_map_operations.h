@@ -107,8 +107,10 @@ namespace CGAL
       {
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
+        {
           CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
-              run(amap, dg1, dg2);
+              run(amap, dg1, dg2, true); // true because dg1 will be removed
+        }
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -353,7 +355,7 @@ namespace CGAL
         // We group the two edges incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::Group_attribute_functor_run<CMap, 1>::
-              run(amap, dg1, dg2);
+              run(amap, dg1, dg2, true); // true because dg1 will be removed
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -523,7 +525,7 @@ namespace CGAL
         // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::Group_attribute_functor_run<CMap,i-1>::
-            run(amap, dg1, dg2);
+            run(amap, dg1, dg2, true); // true because dg1 will be removed
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -677,7 +679,7 @@ namespace CGAL
         // We group the two vertices incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::Group_attribute_functor_run<CMap, 0, 1>::
-            run(amap, dg1, dg2);
+            run(amap, dg1, dg2, true); // true because dg1 will be removed
       }
 
       // During the operation, we store in modified_darts the darts modified

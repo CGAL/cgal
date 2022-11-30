@@ -102,7 +102,7 @@ namespace CGAL
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::GMap_group_attribute_functor_run<GMap, i+1>::
-              run(amap, dg1, dg2);
+            run(amap, dg1, dg2, true); // true because dg1 will be deleted
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -320,7 +320,7 @@ namespace CGAL
          // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
            CGAL::internal::GMap_group_attribute_functor_run<GMap,i-1>::
-               run(amap, dg1, dg2);
+               run(amap, dg1, dg2, true); // true because dg1 will be deleted
       }
 
       // During the operation, we store in modified_darts the darts modified
