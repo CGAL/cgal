@@ -545,7 +545,7 @@ public:
 
   CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
   {
-    return cit != end() && owns(cit);
+    return owns_dereferenceable(cit);
   }
 
   /** Reserve method to ensure that the capacity of the Compact_container be
