@@ -242,7 +242,7 @@ namespace Polygon_mesh_processing {
   overload with the named parameter `face_output_iterator` should be
   used instead.
 
-  \brief Triangulates a hole in a polygon mesh.
+  \brief triangulates a hole in a polygon mesh.
 
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
@@ -610,7 +610,7 @@ namespace Polygon_mesh_processing {
   overload with the named parameters `face_output_iterator` and
   `vertex_output_iterator` should be used instead.
 
-  \brief Triangulates, refines, and fairs a hole in a polygon mesh.
+  \brief triangulates, refines, and fairs a hole in a polygon mesh.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam FaceOutputIterator model of `OutputIterator`
