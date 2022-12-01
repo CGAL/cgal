@@ -2303,14 +2303,10 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
   }
 
   CGAL_postcondition(start!=Cell_handle());
-  CGAL_assertion(start->neighbor(0)->neighbor(
-      start->neighbor(0)->index(start))==start);
-  CGAL_assertion(start->neighbor(1)->neighbor(
-      start->neighbor(1)->index(start))==start);
-  CGAL_assertion(start->neighbor(2)->neighbor(
-      start->neighbor(2)->index(start))==start);
-  CGAL_assertion(start->neighbor(3)->neighbor(
-      start->neighbor(3)->index(start))==start);
+  CGAL_assertion(start->neighbor(0)->neighbor(start->neighbor(0)->index(start)) == start);
+  CGAL_assertion(start->neighbor(1)->neighbor(start->neighbor(1)->index(start)) == start);
+  CGAL_assertion(start->neighbor(2)->neighbor(start->neighbor(2)->index(start)) == start);
+  CGAL_assertion(start->neighbor(3)->neighbor(start->neighbor(3)->index(start)) == start);
 
   // We implement the remembering visibility/stochastic walk.
 
@@ -2863,13 +2859,11 @@ template < class Conflict_tester, class Point_hider, class CoverManager >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
 Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point& p,
     Locate_type lt, Cell_handle c, int li, int lj,
-    const Conflict_tester& tester, Point_hider& hider, CoverManager& cover_manager) {
-  CGAL_assertion((domain().xmin() <= p.x())
-                               && (p.x() < domain().xmax()));
-  CGAL_assertion((domain().ymin() <= p.y())
-                               && (p.y() < domain().ymax()));
-  CGAL_assertion((domain().zmin() <= p.z())
-                               && (p.z() < domain().zmax()));
+    const Conflict_tester& tester, Point_hider& hider, CoverManager& cover_manager)
+{
+  CGAL_assertion((domain().xmin() <= p.x()) && (p.x() < domain().xmax()));
+  CGAL_assertion((domain().ymin() <= p.y()) && (p.y() < domain().ymax()));
+  CGAL_assertion((domain().zmin() <= p.z()) && (p.z() < domain().zmax()));
 
   if(number_of_vertices() == 0) {
     Vertex_handle vh = create_initial_triangulation(p);
@@ -2889,10 +2883,8 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point& p,
       vstart = c->vertex(0);
     else
       vstart = vvmit->second.first;
-    CGAL_assertion(virtual_vertices.find(vstart)
-                                 == virtual_vertices.end());
-    CGAL_assertion(virtual_vertices_reverse.find(vstart)
-                                 != virtual_vertices_reverse.end());
+    CGAL_assertion(virtual_vertices.find(vstart) == virtual_vertices.end());
+    CGAL_assertion(virtual_vertices_reverse.find(vstart) != virtual_vertices_reverse.end());
   }
 
   CGAL_assertion( number_of_vertices() != 0 );

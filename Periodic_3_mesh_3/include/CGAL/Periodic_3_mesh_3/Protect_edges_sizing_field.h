@@ -10,10 +10,6 @@
 //
 // Author(s)     : Stephane Tayeb, Laurent Rineau, Mael Rouxel-Labbé
 //
-//******************************************************************************
-// File Description :
-//******************************************************************************
-
 #ifndef CGAL_PERIODIC_3_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_PERIODIC_3_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 

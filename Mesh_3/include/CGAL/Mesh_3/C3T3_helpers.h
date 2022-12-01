@@ -3423,6 +3423,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                Surface_patch_index patch_index) const
 {
   typedef typename C3T3::Triangulation::Triangle Triangle;
+
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   // Get incident facets

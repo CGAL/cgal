@@ -89,10 +89,12 @@ construct_periodic_point_exact(const typename Gt_::Point_3& p,
 }
 
 // Given a point `p` in space, compute its offset `o` with respect
-// to the canonical instance and returns (p, o)
+// to the canonical instance and returns `(p, o)`
 template <typename Gt_>
 std::pair<typename Gt_::Point_3, typename Gt_::Periodic_3_offset_3>
-construct_periodic_point(const typename Gt_::Point_3& p, bool& encountered_issue, const Gt_& gt)
+construct_periodic_point(const typename Gt_::Point_3& p,
+                         bool& encountered_issue,
+                         const Gt_& gt)
 {
   typedef Gt_                                                  Geom_traits;
   typedef typename Geom_traits::Point_3                        Point;
@@ -120,9 +122,10 @@ construct_periodic_point(const typename Gt_::Point_3& p, bool& encountered_issue
   //
   // If this is happening the 'Last_change' enum will break this infinite
   // loop and return the wrong point and the 'encountered_issue' bool will be
-  // set to 'true'. An exact version of this function should then be called.
+  // set to 'true'. An exact version of this function is then be called.
 
-  enum Last_change {
+  enum Last_change
+  {
     NO_LAST_CHANGE,
     INCREASED_X, DECREASED_X, INCREASED_Y, DECREASED_Y, INCREASED_Z, DECREASED_Z
   };
@@ -301,7 +304,8 @@ snap_to_domain_border(const typename Gt_::Weighted_point_3& p,
 /// instance of the same bare point that lives inside the base domain
 template <typename Gt_>
 typename Gt_::Point_3
-robust_canonicalize_point(const typename Gt_::Point_3& p, const Gt_& gt)
+robust_canonicalize_point(const typename Gt_::Point_3& p,
+                          const Gt_& gt)
 {
   typedef Gt_                                         Geom_traits;
   typedef typename Geom_traits::Point_3               Bare_point;
@@ -352,7 +356,8 @@ robust_canonicalize_point(const typename Gt_::Point_3& p, const Gt_& gt)
 /// instance of the same weighted point that lives inside the base domain
 template <typename Gt_>
 typename Gt_::Weighted_point_3
-robust_canonicalize_point(const typename Gt_::Weighted_point_3& wp, const Gt_& gt)
+robust_canonicalize_point(const typename Gt_::Weighted_point_3& wp,
+                          const Gt_& gt)
 {
   typedef Gt_                                         Geom_traits;
   typedef typename Geom_traits::Point_3               Bare_point;
