@@ -531,6 +531,11 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
   TriangleMesh local_mesh;
   CGAL::copy_face_graph(ffg, local_mesh, CP::vertex_point_map(vpm));
 
+  // smoothing cannot be applied if the input has degenerate faces
+  for(face_descriptor fd : faces(local_mesh))
+    if(is_degenerate_triangle_face(fd, local_mesh))
+      return false;
+
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
   CGAL::IO::write_polygon_mesh("results/local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
 #endif
