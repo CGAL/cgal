@@ -568,46 +568,43 @@ public:
     , dont_go_further_(false)
   {}
 
-//  Is_cell_bad is_bad() const
-//  {
-////    if (dont_go_further_)
-////      return Is_cell_bad();
-////    else
-//      return Base::is_bad();
-//  }
-//
-//  bool go_further() const
-//  {
-////    if (dont_go_further_)
-////      return false;
-////    else
-//      return Base::go_further();
-//  }
+  Is_cell_bad is_bad() const
+  {
+    if (dont_go_further_)
+      return Is_cell_bad();
+    else
+    return Base::is_bad();
+  }
 
-//  // visit functions
-//  template<typename Criterion>
-//  void visit(const Criterion& criterion)
-//  {
-//    Base::visit(criterion);
-//  }
+  bool go_further() const
+  {
+    if (dont_go_further_)
+      return false;
+    else
+      return Base::go_further();
+  }
 
-//  template<typename T, typename V>
-//  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
-//  {
-//    Base::visit(criterion);
-//  }
+  // visit functions
+  template<typename Criterion>
+  void visit(const Criterion& criterion)
+  {
+    Base::visit(criterion);
+  }
 
-//  template<typename T, typename V>
-//  void visit(const Mesh_3::Cell_uniform_size_criterion<T, V>& criterion)
-//  {
-//    Base::visit(criterion);
-//
-//    if (criterion.is_lower_bound() && Base::is_bad())
-//    {
-//      dont_go_further_ = true;
-//      dont_go_further_cells++;
-//    }
-//  }
+  template<typename T, typename V>
+  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
+  {
+    Base::visit(criterion);
+  }
+
+  template<typename T, typename V>
+  void visit(const Mesh_3::Cell_uniform_size_criterion<T, V>& criterion)
+  {
+    Base::visit(criterion);
+
+    if (criterion.is_lower_bound() && Base::is_bad())
+      dont_go_further_ = true;
+  }
 
 private:
   bool dont_go_further_;

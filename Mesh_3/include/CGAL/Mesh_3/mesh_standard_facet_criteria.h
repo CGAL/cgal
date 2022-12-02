@@ -826,46 +826,43 @@ public:
     , dont_go_further_(false)
   {}
 
-//  Is_facet_bad is_bad() const
-//  {
-////    if (dont_go_further_)
-////      return Is_facet_bad();
-////    else
-//      return Base::is_bad();
-//  }
-//
-//  bool go_further() const
-//  {
-////    if (dont_go_further_)
-////      return false;
-////    else
-//      return Base::go_further();
-//  }
-//
-//  // visit functions
-//  template<typename Criterion>
-//  void visit(const Criterion& criterion)
-//  {
-//    Base::visit(criterion);
-//  }
+  Is_facet_bad is_bad() const
+  {
+    if (dont_go_further_)
+      return Is_facet_bad();
+    else
+      return Base::is_bad();
+  }
 
-//  template<typename T, typename V>
-//  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
-//  {
-//    Base::visit(criterion);
-//  }
+  bool go_further() const
+  {
+    if (dont_go_further_)
+      return false;
+    else
+      return Base::go_further();
+  }
 
-//  template<typename T, typename V>
-//  void visit(const Mesh_3::Uniform_size_criterion<T, V>& criterion)
-//  {
-//    Base::visit(criterion);
-//
-//    if (criterion.is_lower_bound() && Base::is_bad())
-//    {
-//      dont_go_further_ = true;
-//      dont_go_further_facets++;
-//    }
-//  }
+  // visit functions
+  template<typename Criterion>
+  void visit(const Criterion& criterion)
+  {
+    Base::visit(criterion);
+  }
+
+  template<typename T, typename V>
+  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
+  {
+    Base::visit(criterion);
+  }
+
+  template<typename T, typename V>
+  void visit(const Mesh_3::Uniform_size_criterion<T, V>& criterion)
+  {
+    Base::visit(criterion);
+
+    if (criterion.is_lower_bound() && Base::is_bad())
+      dont_go_further_ = true;
+  }
 
 private:
   bool dont_go_further_;
