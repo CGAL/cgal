@@ -37,8 +37,10 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
@@ -118,6 +120,8 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.tet_shape = tet_shape;
   param.edge_sizing =  edge_size;
   param.manifold = manifold;
@@ -136,8 +140,10 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
@@ -212,6 +218,8 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.manifold = manifold;
@@ -231,8 +239,10 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
                                  const double tet_shape,
                                  const int manifold,
@@ -287,8 +297,10 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const Polylines_container& polylines,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
@@ -313,6 +325,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.edge_sizing = edge_size;
   param.tet_shape = tet_shape;
   param.manifold = manifold;

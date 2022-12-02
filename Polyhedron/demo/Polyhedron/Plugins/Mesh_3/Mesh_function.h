@@ -44,10 +44,12 @@ struct Mesh_parameters
 {
   double facet_angle;
   double facet_sizing;
+  double facet_min_sizing;
   double facet_approx;
 
   double tet_shape;
   double tet_sizing;
+  double tet_min_sizing;
   double edge_sizing;
   bool protect_features;
   bool detect_connected_components;
@@ -139,9 +141,11 @@ log() const
   << QString("edge max size: %1").arg(edge_sizing)
   << QString("facet min angle: %1").arg(facet_angle)
   << QString("facet max size: %1").arg(facet_sizing)
+  << QString("facet min size: %1").arg(facet_min_sizing)
   << QString("facet approx error: %1").arg(facet_approx)
   << QString("tet shape (radius-edge): %1").arg(tet_shape)
   << QString("tet max size: %1").arg(tet_sizing)
+  << QString("tet min size: %1").arg(tet_min_sizing)
   << QString("detect connected components: %1")
     .arg(detect_connected_components)
   << QString("protect features: %1").arg(protect_features);
@@ -296,9 +300,12 @@ launch()
   Mesh_criteria criteria(edge_criteria(p_.edge_sizing, Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
-                                        p_.facet_approx),
+                                        p_.facet_approx,
+                                        CGAL::FACET_VERTICES_ON_SURFACE,
+                                        p_.facet_min_sizing),
                          Cell_criteria(p_.tet_shape,
-                                       p_.tet_sizing));
+                                       p_.tet_sizing,
+                                       p_.tet_min_sizing));
 
   tweak_criteria(criteria, Tag());
   initialize(criteria, Tag());
