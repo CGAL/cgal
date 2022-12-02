@@ -20,8 +20,8 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/assertions.h>
 
 #include <iostream>
 #include <fstream>
@@ -50,7 +50,7 @@ bool write_OFF_PSP(std::ostream& os,
   PointMap point_map = NP_helper::get_const_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {

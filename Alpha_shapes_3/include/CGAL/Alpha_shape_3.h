@@ -319,7 +319,7 @@ private :
   }
 
  // the version to be used with Tag_true is templated to avoid
- // instanciation through explicit instantiation of the whole class
+ // instantiation through explicit instantiation of the whole class
   void set_alpha_min_of_vertices(Tag_false)
   {
     for( Finite_vertices_iterator vit = finite_vertices_begin();
@@ -401,7 +401,7 @@ public:
     // Returns the n-th alpha-value.
     // n < size()
     {
-      CGAL_triangulation_assertion( n > 0 &&
+      CGAL_assertion( n > 0 &&
                       n <= static_cast<int>(alpha_spectrum.size()) );
       return alpha_spectrum[n-1];
     }
@@ -1713,7 +1713,7 @@ Alpha_shape_3<Dt,EACT>::number_of_solid_components(const NT& alpha) const
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it)
     {
       Cell_handle pCell = cell_it;
-      CGAL_triangulation_assertion(pCell != nullptr);
+      CGAL_assertion(pCell != nullptr);
 
       if (classify(pCell, alpha) == INTERIOR){
         Data& data = marked_cell_set[pCell];
@@ -1745,7 +1745,7 @@ void Alpha_shape_3<Dt,EACT>::traverse(Cell_handle pCell,
     for (int i=0; i<=3; i++)
       {
         pNeighbor = pCell->neighbor(i);
-        CGAL_triangulation_assertion(pNeighbor != nullptr);
+        CGAL_assertion(pNeighbor != nullptr);
         if (classify(pNeighbor, alpha) == INTERIOR){
           Data& data = marked_cell_set[pNeighbor];
           if(data == false){

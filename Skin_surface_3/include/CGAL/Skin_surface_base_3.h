@@ -655,8 +655,8 @@ locate_in_tmc(const Bare_point &p0, TMC_Cell_handle start) const
   if (start->has_vertex(_tmc.infinite_vertex(), ind_inf) )
     start = start->neighbor(ind_inf);
 
-  CGAL_triangulation_precondition(start != TMC_Cell_handle());
-  CGAL_triangulation_precondition(!start->has_vertex(_tmc.infinite_vertex()));
+  CGAL_precondition(start != TMC_Cell_handle());
+  CGAL_precondition(!start->has_vertex(_tmc.infinite_vertex()));
 
   // We implement the remembering visibility/stochastic walk.
 

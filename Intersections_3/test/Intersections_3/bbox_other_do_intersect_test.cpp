@@ -378,7 +378,7 @@ bool test(bool exact_kernel = false)
   typedef typename K::Triangle_3 Triangle;
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
 
-  CGAL::Bbox_3 bbox(1.0,1.0,1.0,10.0,50.0,100.0);
+  CGAL::Bbox_3 bbox(1.0,1.0,1.0, 10.0,50.0,100.0);
 
   Point p1(FT(0.), FT(0.), FT(0.));
   Point p2(FT(0.), FT(100.), FT(100.));
@@ -559,7 +559,10 @@ bool test(bool exact_kernel = false)
   Triangle tABC(pA,pB,pC);
   Triangle t1(Point(1,1,1),Point(0,0,0),Point(0,0,1));
   Triangle t2(Point(4,1,7),Point(8,1,99),Point(7,1,11));
-  Triangle t3(Point(0,1,1),Point(0,0,0),Point(0,0,1));
+  // triangles completely to the left side of the cube
+  Triangle t3(Point(0, 1, 1), Point(0, 0, 0), Point(0, 0, 1));   // parallel to the left side
+  Triangle t4(Point(-1, 3, 2), Point(0, 2, 2), Point(0, 3, 2));  // projection inside the left side
+  Triangle t5(Point(-1, 3, 2), Point(0, 1, 2), Point(0, 3, -1)); // projection with one point outside of the left side
 
   b &= test_aux(t123,"t123",bbox,true);
   b &= test_aux(t124,"t124",bbox,true);
@@ -569,6 +572,9 @@ bool test(bool exact_kernel = false)
   b &= test_aux(t1,"t1",bbox,true);
   b &= test_aux(t2,"t2",bbox,true);
   b &= test_aux(t3,"t3",bbox,false);
+  b &= test_aux(t4,"t4",bbox,false);
+  b &= test_aux(t5,"t5",bbox, false);
+
 
   b &= test_aux(t123,"t123",Iso_cuboid_3(bbox),true);
   b &= test_aux(t124,"t124",Iso_cuboid_3(bbox),true);

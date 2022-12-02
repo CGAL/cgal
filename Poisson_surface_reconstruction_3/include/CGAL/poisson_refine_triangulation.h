@@ -20,7 +20,7 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>
-#include <CGAL/surface_reconstruction_points_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Surface_mesh_traits_generator_3.h>
 
 namespace CGAL {
@@ -212,7 +212,7 @@ unsigned int poisson_refine_triangulation(
 {
 
   // Convergence is guaranteed if radius_edge_ratio_bound >= 1.0
-  CGAL_surface_reconstruction_points_precondition(radius_edge_ratio_bound >= 1.0);
+  CGAL_precondition(radius_edge_ratio_bound >= 1.0);
 
   // Mesher_level types
   typedef Poisson_mesh_cell_criteria_3<

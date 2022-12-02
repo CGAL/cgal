@@ -19,7 +19,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Weights/cotangent_weights.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -76,7 +76,7 @@ namespace internal {
   do not suffice to solve constructed linear system.
 
   Note that if the vertex range to which fairing is applied contains all the vertices of the triangle mesh,
-  fairing does not fail, but the mesh gets shrinked to `CGAL::ORIGIN`.
+  fairing does not fail, but the mesh gets shrunk to `CGAL::ORIGIN`.
 
   @tparam TriangleMesh a model of `FaceGraph` and `MutableFaceGraph`
   @tparam VertexRange a range of vertex descriptors of `TriangleMesh`, model of `Range`.

@@ -166,7 +166,7 @@ ForwardIterator left_vertex_2(ForwardIterator first,
                                    ForwardIterator last,
                                    const PolygonTraits&traits)
 {
-    CGAL_polygon_precondition(first != last);
+    CGAL_precondition(first != last);
     internal::Polygon_2::Compare_vertices<PolygonTraits>
         less(traits.less_xy_2_object());
     return std::min_element(first, last, less);
@@ -182,7 +182,7 @@ ForwardIterator right_vertex_2(ForwardIterator first,
                                     ForwardIterator last,
                                     const PolygonTraits &traits)
 {
-    CGAL_polygon_precondition(first != last);
+    CGAL_precondition(first != last);
     internal::Polygon_2::Compare_vertices<PolygonTraits>
         less(traits.less_xy_2_object());
     return std::max_element(first, last, less);
@@ -198,7 +198,7 @@ ForwardIterator top_vertex_2(ForwardIterator first,
                                   ForwardIterator last,
                                   const PolygonTraits&traits)
 {
-    CGAL_polygon_precondition(first != last);
+    CGAL_precondition(first != last);
     return std::max_element(first, last, traits.less_yx_2_object());
 }
 
@@ -212,7 +212,7 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
                                      ForwardIterator last,
                                      const PolygonTraits&traits)
 {
-    CGAL_polygon_precondition(first != last);
+    CGAL_precondition(first != last);
     return std::min_element(first, last, traits.less_yx_2_object());
 }
 
@@ -325,7 +325,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
                                         const Traits& traits)
 {
   Orientation o = orientation_2(first, last, traits);
-  CGAL_polygon_assertion(o != COLLINEAR);
+  CGAL_assertion(o != COLLINEAR);
 
   Bounded_side b = bounded_side_2(first, last, point, traits);
   switch (b) {
@@ -507,7 +507,7 @@ Orientation orientation_2(ForwardIterator first,
                                     ForwardIterator last,
                                     const Traits& traits)
 {
-  CGAL_polygon_precondition(is_simple_2(first, last, traits));
+  CGAL_precondition(is_simple_2(first, last, traits));
 
   ForwardIterator i = left_vertex_2(first, last, traits);
 

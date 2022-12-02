@@ -1359,9 +1359,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   case PROGRAM_CUTPLANE_SPHERES:
   {
     QOpenGLShaderProgram* program = isOpenGL_4_3()
-        ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.vert" , ":/cgal/Polyhedron_3/resources/shader_c3t3.frag")
+        ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.vert" , ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.frag")
         : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_spheres.vert" ,
-                          ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3.frag");
+                          ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_spheres.frag");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
     program->setProperty("hasCenter", true);

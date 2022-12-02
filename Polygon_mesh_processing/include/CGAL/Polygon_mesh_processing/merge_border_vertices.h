@@ -20,7 +20,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
 #include <algorithm>
@@ -291,6 +291,8 @@ void merge_duplicated_vertices_in_boundary_cycle(typename boost::graph_traits<Po
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
+
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pm));
 
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pm));

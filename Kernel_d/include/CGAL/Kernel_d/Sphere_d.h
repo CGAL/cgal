@@ -47,6 +47,7 @@ class  Sphere_d_rep  {
 public:
   Sphere_d_rep() : cp(0) {}
   Sphere_d_rep(int d)  : P(d), cp(0) {}
+  Sphere_d_rep(int d, Orientation orient)  : P(d), orient(orient), cp(0) {}
 
   template <class ForwardIterator>
   Sphere_d_rep(int d, ForwardIterator first, ForwardIterator last) :
@@ -109,14 +110,13 @@ typedef typename std::vector< Point_d >::const_iterator point_iterator;
 
 /*{\Mcreation 4}*/
 
-Sphere_d(int d = 0) : Base( Rep(d+1) )
+  Sphere_d(int d = 0) : Base( Rep(d+1, ZERO) )
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname|. |\Mvar|
 is initialized to the empty sphere centered at the origin of
 $d$-dimensional space. }*/
 {
   Point_d p(d);
   for (int i = 0; i <= d; i++) ptr()->P[i] = p;
-  ptr()->orient = ZERO;
   ptr()->cp = new Point_d(p);
 }
 

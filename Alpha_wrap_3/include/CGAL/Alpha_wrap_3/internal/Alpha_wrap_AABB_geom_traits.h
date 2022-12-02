@@ -13,8 +13,8 @@
 //                 Andreas Fabri
 //                 Michael Hemmer
 //
-#ifndef CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_TRAITS_H
-#define CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_TRAITS_H
+#ifndef CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_GEOM_TRAITS_H
+#define CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_GEOM_TRAITS_H
 
 #include <CGAL/license/Alpha_wrap_3.h>
 
@@ -89,14 +89,14 @@ public:
 };
 
 template <typename GT>
-class Alpha_wrap_AABB_traits
+class Alpha_wrap_AABB_geom_traits
   : public GT
 {
 public:
   using Ball_3 = internal::Ball_3<GT>;
 
 public:
-  Alpha_wrap_AABB_traits(const GT& gt = GT()) : GT(gt) { }
+  Alpha_wrap_AABB_geom_traits(const GT& gt = GT()) : GT(gt) { }
 
 public:
   class Construct_ball_3
@@ -295,4 +295,4 @@ public:
 } // namespace Alpha_wraps_3
 } // namespace CGAL
 
-#endif // CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_TRAITS_H
+#endif // CGAL_ALPHA_WRAP_3_INTERNAL_ALPHA_WRAP_AABB_GEOM_TRAITS_H

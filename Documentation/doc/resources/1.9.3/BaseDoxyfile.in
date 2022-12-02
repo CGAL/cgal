@@ -372,7 +372,10 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalParamType{1}=<li><b>Type: </b>\1</li>" \
                          "cgalParamDefault{1}=<li><b>%Default: </b>\1</li>" \
                          "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>" \
-                         "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>"
+                         "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>" \
+                         "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}" \
+                         "cgalParamSectionEnd=\cgalParamNEnd" \
+                         "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For

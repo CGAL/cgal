@@ -27,10 +27,9 @@ void test_print(const std::string filename) {
   std::ifstream in(filename);
   CGAL::IO::set_ascii_mode(in);
 
-  Point_3 p; std::size_t count = 0;
+  Point_3 p;
   while (in >> p) {
     points.push_back(p);
-    ++count;
   }
   assert(points.size() > 0);
 

@@ -858,7 +858,6 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
   Ccb_halfedge_const_circulator curr;
   Face_const_iterator fit;
 
-  int cnt(0);
   for (fit = arr_in.faces_begin() ; fit != arr_in.faces_end() ; fit++) {
     if (fit->has_outer_ccb()) {
       Ccb_halfedge_const_circulator circ = fit->outer_ccb();
@@ -868,7 +867,6 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
         curr_max_circ = circ;
       }
     }
-    cnt++;
   }
 
   std::vector<Segment_2> segments;

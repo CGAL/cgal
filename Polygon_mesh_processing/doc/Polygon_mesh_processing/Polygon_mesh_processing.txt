@@ -59,7 +59,7 @@ of the graph concepts defined in the package \ref PkgBGLRef. Using common graph 
 enables having common input/output functions for all the models of these concepts.
 The page \ref PkgBGLIOFct provides an exhaustive description of the available I/O functions.
 In addition, this package offers the function `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`,
-which can perform some reparation if the input data do not represent a manifold surface.
+which can perform some repairing if the input data do not represent a manifold surface.
 
 ****************************************
 \section PMPMeshing Meshing
