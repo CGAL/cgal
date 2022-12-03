@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Default_gradients.h>
+#include <CGAL/Zero_gradient.h>
 #include <CGAL/Isosurfacing_3/internal/Base_domain.h>
 #include <CGAL/Isosurfacing_3/internal/Implicit_function_with_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_geometry.h>
