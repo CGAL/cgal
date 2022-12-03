@@ -15,7 +15,7 @@
 #include <CGAL/license/Isosurfacing_3.h>
 
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Default_gradients.h>
+#include <CGAL/Zero_gradient.h>
 #include <CGAL/Isosurfacing_3/internal/Base_domain.h>
 #include <CGAL/Isosurfacing_3/internal/Cartesian_grid_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Grid_topology.h>
@@ -23,6 +23,15 @@
 namespace CGAL {
 namespace Isosurfacing {
 
+/**
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \brief A domain that respesents an explicitly stored cartesian grid. It is a model of the concept
+ * `IsosurfacingDomainWithGradient`.
+ *
+ * \tparam GeomTraits the traits type
+ * \tparam Gradient_ the type of the gradient functor. It must implement `GeomTraits::Vector operator()(const GeomTraits::Point& point) const`.
+ */
 template <class GeomTraits, typename Gradient_>
 using Explicit_cartesian_grid_domain = Base_domain<GeomTraits, Grid_topology, Cartesian_grid_geometry<GeomTraits>,
                                                    Cartesian_grid_3<GeomTraits>, Gradient_>;
@@ -38,6 +47,8 @@ using Explicit_cartesian_grid_domain = Base_domain<GeomTraits, Grid_topology, Ca
  *
  * \param grid the %Cartesian grid containing input data
  * \param gradient a function that describes the gradient of the data
+ *
+ * \return a new `Explicit_cartesian_grid_domain`
  */
 template <class GeomTraits, typename Gradient_ = Zero_gradient<GeomTraits>>
 Explicit_cartesian_grid_domain<GeomTraits, Gradient_> create_explicit_cartesian_grid_domain(
@@ -57,6 +68,7 @@ Explicit_cartesian_grid_domain<GeomTraits, Gradient_> create_explicit_cartesian_
     const typename GeomTraits::Vector_3 offset(bbox.xmin(), bbox.ymin(), bbox.zmin());
     const typename GeomTraits::Vector_3 spacing = grid->get_spacing();
 
+    // create copies as shared_ptr for safe memory management
     const Topology topo = std::make_shared<Topology::element_type>(size_i, size_j, size_k);
     const Geometry geom = std::make_shared<Geometry::element_type>(offset, spacing);
     const Function func = grid;
