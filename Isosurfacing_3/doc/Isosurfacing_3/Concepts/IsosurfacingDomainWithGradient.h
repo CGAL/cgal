@@ -7,7 +7,6 @@ fulfilled by any class used as input data for some isosurfacing algorithms.
 
 \cgalHasModel `CGAL::Isosurfacing::Explicit_cartesian_grid_domain`
 \cgalHasModel `CGAL::Isosurfacing::Implicit_cartesian_grid_domain`
-\cgalHasModel `CGAL::Isosurfacing::Implicit_octree_domain`
 
 */
 
@@ -28,7 +27,11 @@ public:
     /// @{
 
     /*!
-    Returns the gradient at the position `p`
+    Get the gradient at a position
+
+    \param p the point at which the gradient is evaluated
+
+    \return the gradient vector
     */
     Vector gradient(const Point& p) const;
 
