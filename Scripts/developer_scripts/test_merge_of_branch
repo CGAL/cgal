@@ -117,6 +117,30 @@ if [ -n "${project_name_demo}" ]; then
   exit 1
 fi
 
+# check minimal version is the first instruction in cmake scripts
+echo '.. Checking if all CMakeLists.txt starts with cmake_minimum_required...'
+cmr_tests=$(for i in ^build*/test/*/CMakeLists.txt;     do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^\s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+cmr_examples=$(for i in ^build*/examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+cmr_demo=$(for i in ^build*/demo/*/CMakeLists.txt;     do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+
+if [ -n "${cmr_tests}" ]; then
+  echo "CMakeLists in test with issues:"
+  echo ${cmr_tests}
+  exit 1
+fi
+
+if [ -n "${cmr_examples}" ]; then
+  echo "CMakeLists in examples with issues:"
+  echo ${cmr_examples}
+  exit 1
+fi
+
+if [ -n "${cmr_demo}" ]; then
+  echo "CMakeLists in demo with issues:"
+  echo ${cmr_demo}
+  exit 1
+fi
+
 #check header files without SPDX license identifier
 echo '.. Checking SPDX license identifier presence in header files...'
 file_without_SPDX_identifiers=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f \( -name '*.h' -o -name '*.hpp' \) | xargs -r grep -L "SPDX-License-Identifier"; fi; done)
