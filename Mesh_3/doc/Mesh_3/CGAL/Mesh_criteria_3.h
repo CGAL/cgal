@@ -121,6 +121,11 @@ surface mesh facets.
 - `facet_size`: a scalar field (resp. a constant) describing
 a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.
 
+- `facet_min_size`: a constant describing a uniform upper-bound
+for the radii of the surface Delaunay balls. Only facets with a radius larger than
+this bound will be refined. If a facet is too small with respect to this criterion,
+it will not be refined however the other criteria are met or not.
+
 - `facet_distance`: a scalar field (resp. a constant) describing a space varying (resp. a uniform)
 upper bound for the distance between the facet circumcenter and the center of its surface
 Delaunay ball.
@@ -135,7 +140,13 @@ get all possible values.
 - `cell_size`: a scalar field (resp. a constant) describing
 a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.
 
-Note that each size or distance parameter can be specified using two ways: either as
+- `cell_min_size`: a constant describing a uniform upper-bound
+for the radii of the circumradii of the mesh tetrahedra.
+Only tetrahedra with a circumradius larger than this bound will be refined.
+If a cell is too small with respect to this criterion,
+it will not be refined however the other criteria are met or not.
+
+Note that size or distance parameters can be specified using two ways: either as
 a scalar field or as a numerical value when the field is uniform.
 
 Each parameter has a special default value `ignored` which means that the
@@ -150,10 +161,12 @@ typename ...Fieldi>
 Mesh_criteria_3(Field1 parameters::edge_size = ignored,
                 FT parameters::facet_angle = ignored,
                 Field2 parameters::facet_size = ignored,
+                FT::parameters::facet_min_size = ignored,
                 Field3 parameters::facet_distance = ignored,
                 Mesh_facet_topology parameters::facet_topology = CGAL::FACET_VERTICES_ON_SURFACE,
                 FT parameters::cell_radius_edge_ratio = ignored,
-                Field4 parameters::cell_size = ignored);
+                Field4 parameters::cell_size = ignored,
+                FT::parameters::cell_min_size = ignored);
 
 /// @}
 
