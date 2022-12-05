@@ -24,9 +24,10 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Segment_3& seg,
-                  const typename K::Iso_cuboid_3& ic,
-                  const K&)
+typename K::Boolean
+do_intersect(const typename K::Segment_3& seg,
+             const typename K::Iso_cuboid_3& ic,
+             const K&)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
@@ -48,9 +49,10 @@ bool do_intersect(const typename K::Segment_3& seg,
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& ic,
-                  const typename K::Segment_3& seg,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& ic,
+             const typename K::Segment_3& seg,
+             const K& k)
 {
   return do_intersect(seg, ic, k);
 }
