@@ -73,11 +73,11 @@ public:
 
   static std::string io_signature() { return Get_io_signature<Base>()(); }
 
-  // The undocumented functions below are required for Mesh_3 because of Periodic_3_mesh_3:
-  // they are functions for which both triangulations
-  // have fundamentally different implementations (for example, Periodic_3_mesh_3
-  // might not know the offset of the closest point and must brute-force check for all
-  // possibilities). To enable Periodic_3_mesh_3 to use Mesh_3's files,
+  // The undocumented, straightforward functions below are required for Mesh_3
+  // because of Periodic_3_mesh_3: they are functions for which both triangulations
+  // have fundamentally different implementations (usually, Periodic_3_mesh_3
+  // does not know the offset of a point and must brute-force check for all
+  // possibilities). To allow Periodic_3_mesh_3 to use Mesh_3's files,
   // each mesh triangulation implements its own version.
 
   const Bare_point& get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
@@ -108,6 +108,7 @@ public:
     return critical_radius(point(c, 0), point(c, 1), point(c, 2), point(c, 3), point(v));
   }
 
+  // \pre c->neighbor(i) is finite
   FT compute_power_distance_to_power_sphere(const Cell_handle c, const int i) const
   {
     Cell_handle nc = c->neighbor(i);
@@ -120,172 +121,6 @@ public:
   typename Geom_traits::FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
     return geom_traits().compute_squared_distance_3_object()(p, q);
-  }
-
-  // Duals
-  template < class Gt, class Tds, class Lds >
-  void
-  Regular_triangulation_3<Gt,Tds,Lds>::
-  dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const
-  {
-    Cell_handle n = c->neighbor(i);
-    CGAL_assertion(! is_infinite(c) && ! is_infinite(n));
-
-    p = dual(c);
-    q = dual(n);
-  }
-
-  template < class Gt, class Tds, class Lds >
-  void
-  Regular_triangulation_3<Gt,Tds,Lds>::
-  dual_segment(const Facet& facet, Bare_point& p, Bare_point&q) const
-  {
-    return dual_segment(facet.first, facet.second, p, q);
-  }
-
-  template < class Gt, class Tds, class Lds >
-  void
-  Regular_triangulation_3<Gt,Tds,Lds>::
-  dual_ray(Cell_handle c, int i, Ray& ray) const
-  {
-    Cell_handle n = c->neighbor(i);
-    CGAL_precondition((!is_infinite(c) != !is_infinite(n))); // xor
-    // either n or c is infinite
-    int in;
-    if(is_infinite(c))
-    {
-      in = n->index(c);
-    }
-    else
-    {
-      n = c;
-      in = i;
-    }
-
-    // n now denotes a finite cell, either c or c->neighbor(i)
-    int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
-    if((in&1) == 1)
-      std::swap(ind[0], ind[1]);
-
-    const Weighted_point& p = n->vertex(ind[0])->point();
-    const Weighted_point& q = n->vertex(ind[1])->point();
-    const Weighted_point& r = n->vertex(ind[2])->point();
-    const Bare_point& bp = construct_point(p);
-    const Bare_point& bq = construct_point(q);
-    const Bare_point& br = construct_point(r);
-
-    Line l = construct_perpendicular_line(construct_plane(bp, bq, br),
-                                          construct_weighted_circumcenter(p,q,r));
-
-    ray = construct_ray(dual(n), l);
-  }
-
-  template < class Gt, class Tds, class Lds >
-  void
-  Regular_triangulation_3<Gt,Tds,Lds>::
-  dual_ray(const Facet& facet, Ray& ray) const
-  {
-    return dual_ray(facet.first, facet.second, ray);
-  }
-
-  // Exact versions of dual_segment() and dual_ray() for Mesh_3.
-  // These functions are really dirty: they assume that the point type is nice enough
-  // such that EPECK can manipulate it (e.g. convert it to EPECK::Point_3) AND
-  // that the result of these manipulations will make sense.
-  template < class Gt, class Tds, class Lds >
-  void
-  Regular_triangulation_3<Gt,Tds,Lds>::
-  dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const
-  {
-    typedef typename Kernel_traits<Bare_point>::Kernel           K;
-    typedef Exact_predicates_exact_constructions_kernel          EK;
-    typedef Cartesian_converter<K, EK>                           To_exact;
-    typedef Cartesian_converter<EK,K>                            Back_from_exact;
-
-    typedef EK                                                   Exact_Rt;
-
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-        Exact_Rt().construct_weighted_circumcenter_3_object();
-
-    Cell_handle c = facet.first;
-    int i = facet.second;
-    Cell_handle n = c->neighbor(i);
-
-    const typename Exact_Rt::Weighted_point_3& cp = to_exact(c->vertex(0)->point());
-    const typename Exact_Rt::Weighted_point_3& cq = to_exact(c->vertex(1)->point());
-    const typename Exact_Rt::Weighted_point_3& cr = to_exact(c->vertex(2)->point());
-    const typename Exact_Rt::Weighted_point_3& cs = to_exact(c->vertex(3)->point());
-
-    const typename Exact_Rt::Weighted_point_3& np = to_exact(n->vertex(0)->point());
-    const typename Exact_Rt::Weighted_point_3& nq = to_exact(n->vertex(1)->point());
-    const typename Exact_Rt::Weighted_point_3& nr = to_exact(n->vertex(2)->point());
-    const typename Exact_Rt::Weighted_point_3& ns = to_exact(n->vertex(3)->point());
-
-    p = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs));
-    q = back_from_exact(exact_weighted_circumcenter(np, nq, nr, ns));
-  }
-
-  template < class Gt, class Tds, class Lds >
-  void
-  Regular_triangulation_3<Gt,Tds,Lds>::
-  dual_ray_exact(const Facet& facet, Ray& ray) const
-  {
-    Cell_handle c = facet.first;
-    int i = facet.second;
-    Cell_handle n = c->neighbor(i);
-    CGAL_precondition(!is_infinite(c) != !is_infinite(n)); // xor
-    // either n or c is infinite
-    int in;
-    if(is_infinite(c))
-    {
-      in = n->index(c);
-    }
-    else
-    {
-      n = c;
-      in = i;
-    }
-
-    // n now denotes a finite cell, either c or c->neighbor(i)
-    int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
-    if((in&1) == 1)
-      std::swap(ind[0], ind[1]);
-
-    // exact part
-    typedef typename Kernel_traits<Bare_point>::Kernel           K;
-    typedef Exact_predicates_exact_constructions_kernel          EK;
-    typedef Cartesian_converter<K, EK>                           To_exact;
-    typedef Cartesian_converter<EK,K>                            Back_from_exact;
-
-    typedef EK                                                   Exact_Rt;
-
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-
-    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-        Exact_Rt().construct_weighted_circumcenter_3_object();
-    Exact_Rt::Construct_perpendicular_line_3 exact_perpendicular_line =
-        Exact_Rt().construct_perpendicular_line_3_object();
-    Exact_Rt::Construct_plane_3 exact_plane_3 = Exact_Rt().construct_plane_3_object();
-    Exact_Rt::Construct_ray_3 exact_ray_3 = Exact_Rt().construct_ray_3_object();
-    Exact_Rt::Construct_point_3 exact_point_3 = Exact_Rt().construct_point_3_object();
-
-    const typename Exact_Rt::Weighted_point_3& p = to_exact(n->vertex(ind[0])->point());
-    const typename Exact_Rt::Weighted_point_3& q = to_exact(n->vertex(ind[1])->point());
-    const typename Exact_Rt::Weighted_point_3& r = to_exact(n->vertex(ind[2])->point());
-    const typename Exact_Rt::Weighted_point_3& s = to_exact(n->vertex(in)->point());
-
-    const typename Exact_Rt::Point_3& bp = exact_point_3(p);
-    const typename Exact_Rt::Point_3& bq = exact_point_3(q);
-    const typename Exact_Rt::Point_3& br = exact_point_3(r);
-
-    typename Exact_Rt::Line_3 l = exact_perpendicular_line(
-                                    exact_plane_3(bp, bq, br),
-                                    exact_weighted_circumcenter(p, q, r));
-
-    ray = back_from_exact(exact_ray_3(exact_weighted_circumcenter(p, q, r, s), l));
   }
 };
 
