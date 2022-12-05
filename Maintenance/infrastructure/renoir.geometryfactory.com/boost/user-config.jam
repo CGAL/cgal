@@ -2,13 +2,13 @@
 # Copyright 2004 John Maddock
 # Copyright 2002, 2003, 2004, 2007 Vladimir Prus
 # Distributed under the Boost Software License, Version 1.0.
-# (See accompanying file LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
+# (See accompanying file LICENSE_1_0.txt or https://www.boost.org/LICENSE_1_0.txt)
 
 #   This file is used to configure your Boost.Build installation. You can modify
 # this file in place, or you can place it in a permanent location so that it
 # does not get overwritten should you get a new version of Boost.Build. See:
 #
-#   http://www.boost.org/boost-build2/doc/html/bbv2/overview/configuration.html
+#   https://www.boost.org/build/doc/html/bbv2/overview/configuration.html
 #
 # for documentation about possible permanent locations.
 
@@ -17,7 +17,7 @@
 # example lines and adjust them to taste. The complete list of supported tools,
 # and configuration instructions can be found at:
 #
-#   http://boost.org/boost-build2/doc/html/bbv2/reference/tools.html
+#   https://www.boost.org/build/doc/html/bbv2/reference/tools.html
 #
 
 #   This file uses Jam language syntax to describe available tools. Mostly,
@@ -31,7 +31,7 @@
 #
 # More details about the syntax can be found at:
 #
-#   http://boost.org/boost-build2/doc/html/bbv2/advanced.html#bbv2.advanced.jam_language
+#   https://www.boost.org/build/doc/html/jam/language.html
 #
 
 # ------------------
@@ -96,7 +96,7 @@ using gcc : : /usr/local/packages/gcc-4.5/bin/g++ ;
 using gcc
    : cxxdebug
    : "/usr/lib64/ccache/g++" # your path to the C++ compiler
-   : <cxxflags>-D_GLIBCXX_DEBUG 
+   : <cxxflags>-D_GLIBCXX_DEBUG
    ;
 
 using gcc

@@ -22,7 +22,7 @@
 
 #include <type_traits>
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 // This algorithm intersects the line with the x-, y-, and z-slabs of the
 // bounding box, and computes the interval [t1, t2], in the
