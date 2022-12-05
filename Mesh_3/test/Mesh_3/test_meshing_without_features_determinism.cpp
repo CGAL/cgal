@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_polyhedron_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -36,12 +37,11 @@ void test()
   // Domain
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-  typedef CGAL::Polyhedral_mesh_domain_3<K> Mesh_domain;
+  typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron,K> Mesh_domain;
 
   // Triangulation
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, K, Concurrency_tag>::type Tr;
-  typedef CGAL::Mesh_complex_3_in_triangulation_3<
-    Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Mesh Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
