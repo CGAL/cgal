@@ -51,3 +51,16 @@ if(OpenMesh_FOUND)
   create_single_source_cgal_program("edge_collapse_OpenMesh.cpp")
   target_link_libraries(edge_collapse_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
 endif()
+
+find_package(METIS)
+include(CGAL_METIS_support)
+
+find_package(TBB)
+include(CGAL_TBB_support)
+
+if(TARGET CGAL::TBB_support AND TARGET CGAL::METIS_support)
+  create_single_source_cgal_program("collapse_small_edges_in_parallel.cpp")
+  target_link_libraries(collapse_small_edges_in_parallel PUBLIC CGAL::TBB_support CGAL::METIS_support)
+else()
+  message(STATUS "collapse_small_edges_in_parallel, which use the METIS and TBB libraries will not be compiled.")
+endif()

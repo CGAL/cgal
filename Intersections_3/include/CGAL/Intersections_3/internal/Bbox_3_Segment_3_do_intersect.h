@@ -20,9 +20,9 @@
 #include <CGAL/Kernel/Same_uncertainty.h>
 #include <CGAL/kernel_assertions.h>
 
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 // This algorithm intersects the line with the x-, y-, and z-slabs of the
 // bounding box, and computes the interval [t1, t2], in the
@@ -66,7 +66,7 @@ class Do_intersect_bbox_segment_aux_is_greater<FT, bounded_0, true>
   double dmax;
 
 public:
-  CGAL_static_assertion((boost::is_same<FT, double>::value));
+  CGAL_static_assertion((std::is_same<FT, double>::value));
 
   Do_intersect_bbox_segment_aux_is_greater() : error(0.), tmax(0.), dmax(0.) {}
 

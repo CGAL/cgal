@@ -194,7 +194,7 @@ private:
 
     template <class Point>
     Plane(const Point& p, const Point& q, const Point& r,
-          typename std::enable_if<!std::is_same<Point,ePoint_3>::value>::type* = 0)
+          std::enable_if_t<!std::is_same<Point,ePoint_3>::value>* = 0)
       : ep(p.x(),p.y(),p.z()), eq(q.x(),q.y(),q.z()), er(r.x(),r.y(),r.z()), eplane(ep,eq,er)
     {}
     ePoint_3 ep, eq, er;
@@ -467,7 +467,7 @@ public:
                       double epsilon,
                       const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                      , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+                      , std::enable_if_t<!boost::has_range_const_iterator<TriangleMesh>::value>* = 0
 #endif
   )
   {
@@ -572,7 +572,7 @@ public:
                       double epsilon,
                       const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                      , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
+                      , std::enable_if_t<boost::has_range_const_iterator<TriangleRange>::value>* = 0
 #endif
                       )
   {
@@ -2230,7 +2230,7 @@ public:
   operator()(const TriangleMesh& tmesh,
              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+             , std::enable_if_t<!boost::has_range_const_iterator<TriangleMesh>::value>* = 0
 #endif
     ) const
   {
@@ -2322,7 +2322,7 @@ public:
   bool
   operator()(const TriangleRange& triangle_range
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
+             , std::enable_if_t<boost::has_range_const_iterator<TriangleRange>::value>* = 0
 #endif
     ) const
   {

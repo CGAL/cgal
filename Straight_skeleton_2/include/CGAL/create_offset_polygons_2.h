@@ -325,8 +325,8 @@ create_interior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const APolygon& aPoly,
                                                const OfK& ofk,
                                                const SsK& ssk,
-                                               typename std::enable_if<
-                                                 ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>::type* = nullptr)
+                                               std::enable_if_t<
+                                                 ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>* = nullptr)
 {
   std::vector<APolygon> no_holes;
   return create_interior_skeleton_and_offset_polygons_2(aOffset, aPoly,
@@ -375,8 +375,8 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const APolygon& aPoly,
                                                const OfK& ofk,
                                                const SsK& ssk,
-                                               typename std::enable_if<
-                                                 ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>::type* = nullptr)
+                                               std::enable_if_t<
+                                                 ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>* = nullptr)
 {
   return create_offset_polygons_2<OutPolygon>(
            aOffset,
@@ -389,7 +389,7 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
            ofk);
 }
 
-// Overloads common to both polygons with and without holes, a simple polygon is returned in any case
+// Overloads common to both polygons with and without holes, a simple polygons are returned in any case
 template<class FT, class APolygon, class OfK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<APolygon, OfK>::type>
 std::vector< boost::shared_ptr<OutPolygon> >

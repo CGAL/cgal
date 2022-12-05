@@ -161,8 +161,9 @@ public:
       put(marks, e, false);
     for(edge_descriptor e : edge_range)
       put(marks, e, true);
-
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     int flipped_n = 0;
+#endif
     while(!edge_range.empty())
     {
       edge_descriptor e = edge_range.back();
@@ -172,8 +173,9 @@ public:
 
       if(should_be_flipped(e))
       {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
         ++flipped_n;
-
+#endif
         halfedge_descriptor h = halfedge(e, mesh_);
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG_PP

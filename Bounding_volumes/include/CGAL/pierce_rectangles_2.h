@@ -16,7 +16,7 @@
 #include <CGAL/license/Bounding_volumes.h>
 
 
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/algorithm.h>
 #include <algorithm>
@@ -75,7 +75,7 @@ struct Loc_domain {
   void
   update(int j, Citerator i)
   {
-    CGAL_optimisation_precondition(j >= 0 && j < 4);
+    CGAL_precondition(j >= 0 && j < 4);
     if (j < 2)
       if (j == 0) {
         if (traits.less_x_2_object()(*i, minx)) minx = *i;
@@ -106,9 +106,9 @@ struct Loc_domain {
     maxy(pts.front()),
     traits(t)
   {
-    CGAL_optimisation_precondition(b != e);
+    CGAL_precondition(b != e);
     Iterator i = pts.begin();
-    CGAL_optimisation_assertion(i != pts.end());
+    CGAL_assertion(i != pts.end());
     while (++i != pts.end()) {
       if (traits.less_x_2_object()(*i, minx)) minx = *i;
       if (traits.less_x_2_object()(maxx, *i)) maxx = *i;
@@ -124,7 +124,7 @@ struct Loc_domain {
   operator[](int i) const
   // return corner points (0 <-> bottom-left, 1 <-> bottom-right)
   {
-    CGAL_optimisation_precondition(i >= 0 && i < 4);
+    CGAL_precondition(i >= 0 && i < 4);
     if (i == 0)
       return traits.construct_point_2_above_right_implicit_point_2_object()(
         minx, miny, r);
@@ -142,7 +142,7 @@ struct Loc_domain {
   extreme(int i) const
   // return extreme points (0 <-> left, 1 <-> bottom)
   {
-    CGAL_optimisation_precondition(i >= 0 && i < 4);
+    CGAL_precondition(i >= 0 && i < 4);
     if (i > 1) return i == 2 ? maxx : maxy;
     return i == 0 ? minx : miny;
   }
@@ -151,7 +151,7 @@ struct Loc_domain {
   extreme(int i)
   // return extreme points (0 <-> left, 1 <-> bottom)
   {
-    CGAL_optimisation_precondition(i >= 0 && i < 4);
+    CGAL_precondition(i >= 0 && i < 4);
     if (i > 1) return i == 2 ? maxx : maxy;
     return i == 0 ? minx : miny;
   }
@@ -177,13 +177,13 @@ struct Loc_domain {
 
   void
   check() const {
-    CGAL_optimisation_expensive_assertion_code(
+    CGAL_expensive_assertion_code(
       Iterator i = pts.begin();
       do {
-        CGAL_optimisation_assertion(!traits.less_x_2_object()(*i, minx));
-        CGAL_optimisation_assertion(!traits.less_x_2_object()(maxx, *i));
-        CGAL_optimisation_assertion(!traits.less_y_2_object()(*i, miny));
-        CGAL_optimisation_assertion(!traits.less_y_2_object()(maxy, *i));
+        CGAL_assertion(!traits.less_x_2_object()(*i, minx));
+        CGAL_assertion(!traits.less_x_2_object()(maxx, *i));
+        CGAL_assertion(!traits.less_y_2_object()(*i, miny));
+        CGAL_assertion(!traits.less_y_2_object()(maxy, *i));
       } while (++i != end);
       )
   }
@@ -463,7 +463,7 @@ inline OutputIterator
 two_cover_points(
   InputIC f, InputIC l, OutputIterator o, bool& ok, const Traits& t)
 {
-  CGAL_optimisation_precondition(f != l);
+  CGAL_precondition(f != l);
 
   // compute location domain:
   Loc_domain< Traits > d(f, l, t);
@@ -475,7 +475,7 @@ inline OutputIterator
 three_cover_points(
   InputIC f, InputIC l, OutputIterator o, bool& ok, const Traits& t)
 {
-  CGAL_optimisation_precondition(f != l);
+  CGAL_precondition(f != l);
 
   // compute location domain:
   Loc_domain< Traits > d(f, l, t);
@@ -487,7 +487,7 @@ inline OutputIterator
 four_cover_points(
   InputIC f, InputIC l, OutputIterator o, bool& ok, const Traits& t)
 {
-  CGAL_optimisation_precondition(f != l);
+  CGAL_precondition(f != l);
 
   // compute location domain:
   Loc_domain< Traits > d(f, l, t);
@@ -562,7 +562,7 @@ three_cover_points(
   using std::less;
   using std::iter_swap;
 
-  CGAL_optimisation_precondition(!d.empty());
+  CGAL_precondition(!d.empty());
 
   // typedefs:
   typedef typename Traits::Point_2                 Point_2;
@@ -583,7 +583,7 @@ three_cover_points(
 
     // are all points already covered?
     if (i == d.end()) {
-      CGAL_optimisation_assertion(k == 0);
+      CGAL_assertion(k == 0);
       *o++ = d[0];
       ok = true;
       return o;
@@ -620,11 +620,11 @@ three_cover_points(
 
     // check disjoint for two-pierceability:
 
-    CGAL_optimisation_expensive_assertion(
+    CGAL_expensive_assertion(
       save_end == find_if(d.end(), save_end,
                          [&d, &dist, &corner](const Point_2& p)
                          { return d.r < dist(corner, p); }));
-    CGAL_optimisation_expensive_assertion(
+    CGAL_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
                          [&d,&dist, &corner](const Point_2& p)
                          { return d.r >= dist(corner, p); }));
@@ -721,7 +721,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 
     // are all points already covered?
     if (i == d.end()) {
-      CGAL_optimisation_assertion(k == 0);
+      CGAL_assertion(k == 0);
       *o++ = d[0];
       ok = true;
       return o;
@@ -758,11 +758,11 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 
     // check disjoint for two-pierceability:
 
-    CGAL_optimisation_expensive_assertion(
+    CGAL_expensive_assertion(
       save_end == find_if(d.end(), save_end,
                           [&d,&dist,&corner](const Point_2& p)
                           { return d.r < dist(corner, p); }));
-    CGAL_optimisation_expensive_assertion(
+    CGAL_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
                          [&d,&dist,&corner](const Point_2& p)
                          { return d.r >= dist(corner, p); }));

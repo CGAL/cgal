@@ -1,5 +1,5 @@
 #include <CGAL/assertions.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/use.h>
 #include <vector>
 #include <list>

@@ -132,7 +132,7 @@ function(cgal_add_compilation_test exe_name)
       set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
         APPEND PROPERTY LABELS "CGAL_build_system")
       set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
-        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
+        PROPERTY FIXTURES_SETUP "CGAL_Qt5_moc_and_resources_Fixture")
       set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
         APPEND PROPERTY DEPENDS "check_build_system")
     endif()

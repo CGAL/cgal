@@ -29,7 +29,7 @@
 #include <utility>
 #include <unordered_set>
 
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/utility.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
@@ -67,8 +67,8 @@ public:
     , v0_init(e.first->vertex(e.second))
     , v1_init(e.first->vertex(e.third))
   {
-    typedef std::array<int, 3> Facet; // 3 = id
-    typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
+    typedef std::array<int, 3> Facet;
+    typedef std::array<int, 4> Tet;
 
     std::unordered_set<Vertex_handle> vertices_to_insert;
     for (Cell_handle ch : cells_to_insert)
@@ -96,23 +96,25 @@ public:
       }
     }
 
-    std::vector<Tet_with_ref> finite_cells;
+    std::vector<Tet> finite_cells;
+    std::vector<int> subdomains;
     for (Cell_handle ch : cells_to_insert)
     {
-      Tet_with_ref t = { { v2i.at(ch->vertex(0)),
-                           v2i.at(ch->vertex(1)),
-                           v2i.at(ch->vertex(2)),
-                           v2i.at(ch->vertex(3)),
-                           ch->subdomain_index() } };
-      finite_cells.push_back(t);
+      finite_cells.push_back( { v2i.at(ch->vertex(0)),
+                                v2i.at(ch->vertex(1)),
+                                v2i.at(ch->vertex(2)),
+                                v2i.at(ch->vertex(3)) } );
+      subdomains.push_back(ch->subdomain_index());
     }
 
     // finished
     std::vector<Vertex_handle> new_vertices;
     std::map<Facet, typename C3t3::Surface_patch_index> border_facets;
-     if (CGAL::build_triangulation<Tr, false>(triangulation,
-                                              points, finite_cells, border_facets,
-                                              new_vertices, false/*verbose*/))
+    if (CGAL::SMDS_3::build_triangulation_impl(
+            triangulation, points, finite_cells, subdomains, border_facets,
+            new_vertices, /*verbose*/ false,
+            /*replace_domain_0*/ false,
+            /*allow_non_manifold*/false))
     {
       CGAL_assertion(triangulation.tds().is_valid());
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
@@ -745,10 +747,11 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   }
 }
 
-template<typename C3t3>
+template<typename C3t3, typename CellSelector>
 typename C3t3::Vertex_handle
 collapse(const typename C3t3::Cell_handle ch,
          const int to, const int from,
+         CellSelector& cell_selector,
          C3t3& c3t3)
 {
   typedef typename C3t3::Triangulation Tr;
@@ -914,8 +917,7 @@ collapse(const typename C3t3::Cell_handle ch,
   for (Cell_handle cell_to_remove : cells_to_remove)
   {
     // remove cell
-    if (c3t3.is_in_complex(cell_to_remove))
-      c3t3.remove_from_complex(cell_to_remove);
+    treat_before_delete(cell_to_remove, cell_selector, c3t3);
     c3t3.triangulation().tds().delete_cell(cell_to_remove);
   }
 
@@ -928,9 +930,10 @@ collapse(const typename C3t3::Cell_handle ch,
 }
 
 
-template<typename C3t3>
+template<typename C3t3, typename CellSelector>
 typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
+                                      CellSelector& cell_selector,
                                       C3t3& c3t3)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -954,7 +957,7 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     vh0->set_point(new_position);
     vh1->set_point(new_position);
 
-    vh = collapse(edge.first, edge.second, edge.third, c3t3);
+    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3);
     c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   }
   else //Collapse at vertex
@@ -962,7 +965,7 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     if (collapse_type == TO_V1)
     {
       vh0->set_point(p1);
-      vh = collapse(edge.first, edge.third, edge.second, c3t3);
+      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3);
       c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
     }
     else //Collapse at v0
@@ -970,7 +973,7 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
       if (collapse_type == TO_V0)
       {
         vh1->set_point(p0);
-        vh = collapse(edge.first, edge.second, edge.third, c3t3);
+        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3);
         c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
       }
       else
@@ -1134,7 +1137,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
       if (in_cx)
         nb_valid_collapse++;
 #endif
-      return collapse(edge, collapse_type, c3t3);
+      return collapse(edge, collapse_type, cell_selector, c3t3);
     }
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN

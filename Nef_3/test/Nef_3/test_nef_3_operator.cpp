@@ -25,5 +25,11 @@ int main(int /* argc */, char** /* argv[] */)
     assert(a1 < a2);
     assert(a2 > a1);
 
+    const Polygon_mesh const_A1 = A1;
+    const Polygon_mesh& const_A2 = A2;
+    Nef_polyhedron a1_bis(const_A1), a2_bis(const_A2);
+    assert(a1_bis==a1);
+    assert(a2_bis==a2);
+
     return 0;
 }

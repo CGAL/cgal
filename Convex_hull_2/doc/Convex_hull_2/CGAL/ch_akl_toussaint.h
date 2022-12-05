@@ -9,6 +9,7 @@ The resulting sequence is placed starting at position
 `result`, and the past-the-end iterator for the resulting
 sequence is returned. It is not specified at which point the
 cyclic sequence of extreme points is cut into a linear sequence.
+
 \pre The source range [`first`,`beyond`) does not contain `result`.
 The default traits class `Default_traits` is the kernel in which the
 value type of `ForwardIterator` is defined.
@@ -36,6 +37,8 @@ functions that return instances of these types:
 \sa `CGAL::ch_graham_andrew()`
 \sa `CGAL::ch_jarvis()`
 \sa `CGAL::ch_melkman()`
+\sa `CGAL::lower_hull_points_2()`
+\sa `CGAL::upper_hull_points_2()`
 \sa `CGAL::convex_hull_2()`
 
 \cgalHeading{Implementation}
@@ -49,7 +52,7 @@ points.
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 ch_akl_toussaint(ForwardIterator first, ForwardIterator beyond,
-OutputIterator result,
-const Traits& ch_traits = Default_traits());
+                 OutputIterator result,
+                 const Traits& ch_traits = Default_traits());
 
 } /* namespace CGAL */

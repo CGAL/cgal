@@ -214,9 +214,9 @@ struct Face_filtered_graph
                       FacePatchIndexMap face_patch_index_map,
                       const CGAL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-                    , typename boost::enable_if<
-                        typename boost::has_range_const_iterator<FacePatchIndexRange>::type
-                      >::type* = 0
+                    , std::enable_if_t<
+                        boost::has_range_const_iterator<FacePatchIndexRange>::value
+                      >* = 0
 #endif
                       )
     : _graph(const_cast<Graph&>(graph)),
@@ -231,9 +231,9 @@ struct Face_filtered_graph
   Face_filtered_graph(const Graph& graph,
                       const FacePatchIndexRange& selected_face_patch_indices,
                       FacePatchIndexMap face_patch_index_map
-                      , typename boost::enable_if<
-                      typename boost::has_range_const_iterator<FacePatchIndexRange>::type
-                      >::type* = 0
+                      , std::enable_if_t<
+                          boost::has_range_const_iterator<FacePatchIndexRange>::value
+                      >* = 0
                       )
     : _graph(const_cast<Graph&>(graph)),
       fimap(CGAL::get_initialized_face_index_map(graph)),
@@ -471,9 +471,9 @@ struct Face_filtered_graph
   void set_selected_faces(const FacePatchIndexRange& selected_face_patch_indices,
                           FacePatchIndexMap face_patch_index_map
 #ifndef DOXYGEN_RUNNING
-                          , typename boost::enable_if<
-                              typename boost::has_range_const_iterator<FacePatchIndexRange>::type
-                            >::type* = 0
+                          , std::enable_if_t<
+                              boost::has_range_const_iterator<FacePatchIndexRange>::value
+                            >* = 0
 #endif
                           )
   {

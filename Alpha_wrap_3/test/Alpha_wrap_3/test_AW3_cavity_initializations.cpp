@@ -55,7 +55,8 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
   namespace AW3 = CGAL::Alpha_wraps_3;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  using Oracle = AW3::internal::Triangle_mesh_oracle<Mesh>;
+  using Geom_traits = typename CGAL::GetGeomTraits<Mesh>::type;
+  using Oracle = AW3::internal::Triangle_mesh_oracle<Geom_traits>;
 
   std::cout << "Input: " << num_vertices(input_mesh) << " vertices, " << num_faces(input_mesh) << " faces" << std::endl;
 

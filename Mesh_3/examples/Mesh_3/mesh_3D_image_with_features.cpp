@@ -32,8 +32,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 /// [Add 1D features]
 #include "read_polylines.h"
@@ -92,9 +91,9 @@ int main(int argc, char* argv[])
   /// [Call add_1D_features]
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
-  Mesh_criteria criteria(edge_size=6,
-                         facet_angle=30, facet_size=6, facet_distance=4,
-                         cell_radius_edge_ratio=3, cell_size=8);
+  Mesh_criteria criteria(params::edge_size(6).
+                                 facet_angle(30).facet_size(6).facet_distance(4).
+                                 cell_radius_edge_ratio(3).cell_size(8));
   /// [Mesh criteria]
 
   // Meshing
@@ -102,7 +101,8 @@ int main(int argc, char* argv[])
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

@@ -1,0 +1,12 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Simplicial Mesh Data Structures"
+
+#custom options
+EXTRACT_ALL                     =  false
+HIDE_UNDOC_CLASSES      =  true
+HIDE_UNDOC_MEMBERS     =  true
+WARN_IF_UNDOCUMENTED =  false
+
+EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/internal/SMDS_3
+

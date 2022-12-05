@@ -122,7 +122,7 @@ class Handle
     int
     refs()  const noexcept { return PTR->count.load(std::memory_order_relaxed); }
 
-    Id_type id() const noexcept { return PTR - static_cast<Rep*>(0); }
+    Id_type id() const noexcept { return std::distance(static_cast<Rep*>(0), PTR); }
 
     bool identical(const Handle& h) const noexcept { return PTR == h.PTR; }
 

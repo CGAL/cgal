@@ -48,23 +48,23 @@ namespace CGAL {
   two particular properties that are hard coded by this class: the
   coordinates of the points and the normal vectors.
 
-  The coordinates of a point can be access using the index of the
+  The coordinates of a point can be accessed using the index of the
   point and the member function `point()`. This property is always
   present. The normal vector of a point can be accessed using the
   index of the point and the `normal()` method. This property must
   be explicitly created.
 
   All properties can be accessed as a range using the methods
-  `points()`, `normals()`, and `range()` for points coordinates,
+  `points()`, `normals()`, and `range()` for point coordinates,
   normal vectors, and other properties respectively.
 
-  Removing a point with properties is achieved by moving its `Index`
+  Removing a point with properties is achieved by moving its index
   at the end of the container and keeping track of the number of
   removed elements. A garbage collection method must be called to
   really remove it from memory.
 
   For convenience, all functions of the package \ref
-  PkgPointSetProcessing3 automatically creates the right named
+  PkgPointSetProcessing3 automatically create the right named
   parameters if called with a `CGAL::Point_set_3` object as argument.
 
 

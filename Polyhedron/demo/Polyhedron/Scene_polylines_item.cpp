@@ -602,12 +602,11 @@ void Scene_polylines_item::split_at_sharp_angles()
     typedef Polyline Bare_polyline;
     Polylines_container& bare_polylines = polylines;
 
-    int counter = 0;
     for(Bare_polyline_container::iterator
         bare_polyline_it = bare_polylines.begin();
         bare_polyline_it != bare_polylines.end(); // the end changes
-        // during the loop
-        ++counter /* bare_polyline_it is incremented in the loop */)
+                                                  // during the loop
+        /* bare_polyline_it is incremented in the loop */)
     {
         Bare_polyline_container::iterator current_polyline_it =
                 bare_polyline_it;

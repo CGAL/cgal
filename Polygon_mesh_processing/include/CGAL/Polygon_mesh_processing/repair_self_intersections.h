@@ -13,17 +13,17 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_SELF_INTERSECTIONS_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_SELF_INTERSECTIONS_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
 #include <CGAL/Polyhedral_envelope.h>
 #endif
@@ -251,7 +251,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
   Vertex_pair_halfedge_map halfedge_map;
 
   // register border halfedges
-  int i = 0;
   for(halfedge_descriptor h : border_hedges)
   {
     const vertex_descriptor vs = source(h, pmesh);
@@ -259,7 +258,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
     halfedge_map.emplace(std::make_pair(vs, vt), h);
 
     set_halfedge(target(h, pmesh), h, pmesh); // update vertex halfedge pointer
-    ++i;
   }
 
   face_descriptor f = boost::graph_traits<PolygonMesh>::null_face();
@@ -1581,7 +1579,6 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
   std::set<face_descriptor> visited_faces;
   std::vector<std::vector<Point> > patch;
 
-  int cc_counter = 0;
   for(face_descriptor f : cc_faces)
   {
     if(!visited_faces.insert(f).second) // already visited that face
@@ -1593,7 +1590,6 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
                                                  CGAL::parameters::edge_is_constrained_map(eif));
 
     visited_faces.insert(sub_cc.begin(), sub_cc.end());
-    ++cc_counter;
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
     dump_cc("results/current_cc.off", sub_cc, tmesh, vpm);
@@ -2160,7 +2156,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #else
     struct Return_true
     {
-      bool is_empty() const { return true; }
+      constexpr bool is_empty() const { return true; }
       bool operator()(const std::vector<std::vector<typename GeomTraits::Point_3> >&) const { return true; }
       bool operator()(const TriangleMesh&) const { return true; }
     };
@@ -2331,7 +2327,7 @@ namespace experimental {
 template <class TriangleMesh>
 struct Remove_self_intersection_default_visitor
 {
-  bool stop() const { return false; }
+  constexpr bool stop() const { return false; }
   template <class FaceContainer>
   void status_update(const FaceContainer&) {}
   void start_main_loop() {}

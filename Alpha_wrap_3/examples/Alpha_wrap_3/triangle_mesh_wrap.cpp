@@ -45,6 +45,7 @@ int main(int argc, char** argv)
 
   const double alpha = diag_length / relative_alpha;
   const double offset = diag_length / relative_offset;
+  std::cout << "alpha: " << alpha << ", offset: " << offset << std::endl;
 
   // Construct the wrap
   CGAL::Real_timer t;
@@ -64,6 +65,7 @@ int main(int argc, char** argv)
   std::string output_name = input_name
                             + "_" + std::to_string(static_cast<int>(relative_alpha))
                             + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
