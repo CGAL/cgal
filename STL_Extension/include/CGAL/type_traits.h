@@ -27,6 +27,10 @@ struct is_same_or_derived :
   >::type
 {};
 
+namespace cpp17 {
+  template< class... > using void_t = void;
+} // end namespace cpp17
+
 }
 
 #endif // CGAL_TYPE_TRAITS_H

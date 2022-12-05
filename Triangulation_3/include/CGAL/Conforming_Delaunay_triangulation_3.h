@@ -66,6 +66,7 @@ public:
 
 template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {
+public:
   using Vertex_handle = typename T_3::Vertex_handle;
   using Cell_handle = typename T_3::Cell_handle;
   using Point = typename T_3::Point;

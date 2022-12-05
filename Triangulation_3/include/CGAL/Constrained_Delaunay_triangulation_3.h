@@ -162,6 +162,11 @@ public:
   using Geom_traits = typename T_3::Geom_traits;
 
   using Face_index = CDT_3_face_index;
+
+  static std::string io_signature() {
+  return Get_io_signature<Conforming_Dt>()();
+}
+
 private:
   struct CDT_2_types {
     using Projection_traits = Projection_traits_3<Geom_traits>;

@@ -27,6 +27,7 @@
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
+#include <CGAL/type_traits.h>
 
 #ifdef CGAL_PERIODIC_3_MESH_3_CONFIG_H
 #include <CGAL/Periodic_3_triangulation_3.h>
@@ -40,17 +41,12 @@
 namespace CGAL {
 
 // SFINAE test
-template <typename T, typename U>
-class has_io_signature
-{
-private:
-  template <U> struct helper;
-  template <typename V> static char check(helper<&V::io_signature> *);
-  template <typename V> static char (&check(...))[2];
+template <typename T, class = void>
+struct has_io_signature : public std::false_type {};
 
-public:
-  enum { value = (sizeof(check<T>(0)) == sizeof(char)) };
-};
+template <typename T>
+struct has_io_signature<T, CGAL::cpp17::void_t<decltype(T::io_signature())>>
+: public std::true_type {};
 
 template <class T, bool has_io_signature>
 struct Get_io_signature_aux
@@ -76,10 +72,7 @@ template <class T>
 struct Get_io_signature
   : public Get_io_signature_aux<
   T,
-  (has_io_signature<T, std::string (T::*)() >::value ||
-   has_io_signature<T, std::string (T::*)() const >::value ||
-   has_io_signature<T, std::string (*)() >::value )  // signature for
-                                                     // static mem func
+  has_io_signature<T>::value
   >
 {
 };
