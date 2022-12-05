@@ -440,11 +440,9 @@ public:
     }
     CGAL_assertion(vertex_count == 18);
 
-    int edge_count = 0;
     for (std::vector<Segment>::iterator it = edges.begin();
       it != edges.end(); it++) {
       std::cout << *it << std::endl;
-      edge_count++;
     }
   }
 

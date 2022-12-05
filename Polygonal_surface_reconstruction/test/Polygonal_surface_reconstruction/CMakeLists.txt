@@ -1,9 +1,9 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project(Polygonal_surface_reconstruction_Tests)
-
 cmake_minimum_required(VERSION 3.1...3.23)
+
+project(Polygonal_surface_reconstruction_Tests)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)

@@ -11,11 +11,11 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">\cgalFootnoteCode{http://gcc.gnu.org/}</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">\cgalFootnoteCode{http://clang.llvm.org/}</A>} compiler version 13.0.1 |
-| \ms Windows      | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">\cgalFootnoteCode{http://gcc.gnu.org/}</A>} |
+| Linux            | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 13.0.1 |
+| \ms Windows      | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
 |                  | \ms Visual `C++` 14.0, 15.9, 16.10, 17.0 (\visualstudio 2015, 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
-| MacOS X          | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">\cgalFootnoteCode{http://gcc.gnu.org/}</A>} |
+| MacOS X          | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
 |                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 13.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
@@ -131,7 +131,7 @@ Overview</a> page. In order to use Eigen in \cgal programs, the
 executables should be linked with the CMake imported target
 `CGAL::Eigen3_support` provided in `CGAL_Eigen3_support.cmake`.
 
-The \eigen web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
+The \eigen web site is <A HREF="https://eigen.tuxfamily.org/index.php?title=Main_Page">`https://eigen.tuxfamily.org`</A>.
 
 \subsection thirdpartyOpenGR OpenGR
 
@@ -213,7 +213,7 @@ the handling of \pdb data.
 
 In \cgal, the \esbtl is used in an example of the \ref PkgSkinSurface3 package.
 
-It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.sourceforge.net/`</A>.
+It can be downloaded from <A HREF="https://esbtl.sourceforge.net/">`https://esbtl.sourceforge.net/`</A>.
 
 \subsection thirdpartyTBB Intel TBB
 
@@ -309,7 +309,7 @@ The \glpk web site is <A HREF="https://www.gnu.org/software/glpk/">`https://www.
 In \cgal, \scip provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
 In order to use \scip in \cgal programs, the executables should be linked with the CMake imported target `CGAL::SCIP_support` provided in `CGAL_SCIP_support.cmake`.
 
-The \scip web site is <A HREF="http://scip.zib.de/">`http://scip.zib.de/`</A>.
+The \scip web site is <A HREF="https://www.scipopt.org/">`https://www.scipopt.org/`</A>.
 
 \subsection thirdpartyOSQP OSQP
 

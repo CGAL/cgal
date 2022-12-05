@@ -65,7 +65,9 @@
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkDemandDrivenPipeline.h>
+#include <vtkNrrdReader.h>
 #endif
+
 #include <CGAL/Three/Three.h>
 
 // Covariant return types don't work for scalar types and we cannot
@@ -978,7 +980,8 @@ private Q_SLOTS:
 QString Io_image_plugin::nameFilters() const {
   return QString("Inrimage files (*.inr *.inr.gz) ;; "
                  "Analyze files (*.hdr *.img *img.gz) ;; "
-                 "Stanford Exploration Project files (*.H *.HH)");
+                 "Stanford Exploration Project files (*.H *.HH) ;; "
+                 "NRRD image files (*.nrrd)");
 }
 
 
@@ -1011,7 +1014,33 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   ok = true;
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
-  if(fileinfo.suffix() != "H" && fileinfo.suffix() != "HH" &&
+
+  //read a nrrd file
+  if (fileinfo.suffix() == "nrrd")
+  {
+#ifdef CGAL_USE_VTK
+    vtkNew<vtkNrrdReader> reader;
+    reader->SetFileName(fileinfo.filePath().toUtf8());
+    reader->Update();
+    auto vtk_image = reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+#else
+    CGAL::Three::Three::warning("You need VTK to read a NRRD file");
+    delete image;
+    return QList<Scene_item*>();
+#endif
+  }
+
+  //read a sep file
+  else if (fileinfo.suffix() == "H" || fileinfo.suffix() == "HH")
+  {
+    CGAL::SEP_to_ImageIO<float> reader(fileinfo.filePath().toUtf8().data());
+    *image = *reader.cgal_image();
+    is_gray = true;
+  }
+
+  else if(fileinfo.suffix() != "H" && fileinfo.suffix() != "HH" &&
      !image->read(fileinfo.filePath().toUtf8()))
     {
       QMessageBox qmb(QMessageBox::NoIcon,
@@ -1100,13 +1129,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
         return QList<Scene_item*>();
       }
     }
-  //read a sep file
-  else if(fileinfo.suffix() == "H" || fileinfo.suffix() == "HH")
-  {
-    CGAL::SEP_to_ImageIO<float> reader(fileinfo.filePath().toUtf8().data());
-    *image = *reader.cgal_image();
-    is_gray = true;
-  }
+
   // Get display precision
   QDialog dialog;
   ui.setupUi(&dialog);

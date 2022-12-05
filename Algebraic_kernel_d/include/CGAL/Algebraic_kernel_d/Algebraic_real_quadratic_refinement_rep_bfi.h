@@ -45,7 +45,7 @@ namespace internal {
  * @Unpublished{abbott-quadratic,
  *    author =          {John Abbott},
  *    title =          {Quadratic Interval Refinement for Real Roots},
- *    url =      {http://www.dima.unige.it/~abbott/},
+ *    url =      {https://www.dima.unige.it/~abbott/},
  *  note =       {Poster presented at the 2006 Internat. Sympos. on Symbolic
  and Algebraic Computation (ISSAC 2006)}
  * }

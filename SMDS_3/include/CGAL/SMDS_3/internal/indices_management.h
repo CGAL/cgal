@@ -24,7 +24,7 @@
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/variant/apply_visitor.hpp>
-#include <CGAL/SMDS_3/Has_features.h>
+#include <CGAL/STL_Extension/internal/Has_features.h>
 #include <CGAL/IO/io.h>
 
 #include <tuple>
@@ -52,7 +52,7 @@ struct Index_generator<T, T>
   typedef Index   type;
 };
 
-template <typename MD, bool has_feature = Has_features<MD>::value>
+template <typename MD, bool has_feature = ::CGAL::internal::Has_features<MD>::value>
 struct Indices_tuple_generator
 {
   using type = std::tuple<typename MD::Subdomain_index,
@@ -151,7 +151,7 @@ template <typename T>
 const T& get_index(const T& x) { return x; }
 
 template <typename Mesh_domain,
-          bool has_feature = Has_features<Mesh_domain>::value>
+          bool has_feature = ::CGAL::internal::Has_features<Mesh_domain>::value>
 struct Read_mesh_domain_index {
   // here we have has_feature==true
 
@@ -180,7 +180,7 @@ struct Read_mesh_domain_index {
    // Read_mesh_domain_index<Mesh_domain, true>
 
 template <typename Mesh_domain,
-          bool has_feature = Has_features<Mesh_domain>::value>
+          bool has_feature = ::CGAL::internal::Has_features<Mesh_domain>::value>
 struct Write_mesh_domain_index {
   // here we have has_feature==true
 

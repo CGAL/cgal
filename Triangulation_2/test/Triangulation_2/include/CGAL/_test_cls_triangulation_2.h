@@ -132,12 +132,10 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1.number_of_vertices() == 0 );
 
   Triangul T3(T1);
-  assert(T3.tds().vertices().size() == T1.tds().vertices().size());
-  assert(T3.tds().faces().size() == T1.tds().faces().size());
+  assert(T3 == T1);
 
   Triangul T4 = T1;
-  assert(T4.tds().vertices().size() == T1.tds().vertices().size());
-  assert(T4.tds().faces().size() == T1.tds().faces().size());
+  assert(T4 == T1);
 
   T3.swap(T1);
 
@@ -159,6 +157,7 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T0_0.number_of_vertices() == 0 );
   assert( T0_0.number_of_faces() == 0);
   assert( T0_0.is_valid() );
+  assert( T0_0 == T0_0 );
 
   Triangul T0_1;
   Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != nullptr );
@@ -166,10 +165,18 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.number_of_faces() == 0);
   assert( T0_1.is_valid() );
+  assert( T0_0 != T0_1 );
 
   Triangul T0_1b(T0_1);
-  assert(T0_1b.tds().vertices().size() == T0_1.tds().vertices().size());
-  assert(T0_1b.tds().faces().size() == T0_1.tds().faces().size());
+  assert(T0_1b == T0_1);
+
+  Triangul T0_1c;
+  v0_1_0 = T0_1c.insert(p1); assert( v0_1_0 != nullptr );
+  assert( T0_1c.dimension() == 0 );
+  assert( T0_1c.number_of_vertices() == 1 );
+  assert( T0_1c.number_of_faces() == 0);
+  assert( T0_1c.is_valid() );
+  assert( T0_1 != T0_1c );
 
   // test insert_first()
   Triangul T0_2;
@@ -192,10 +199,10 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1_2.number_of_vertices() == 2 );
   assert( T1_2.number_of_faces() == 0 );
   assert( T1_2.is_valid() );
+  assert( T1_2 != T0_1 );
 
   Triangul T1_2b(T1_2);
-  assert(T1_2b.tds().vertices().size() == T1_2.tds().vertices().size());
-  assert(T1_2b.tds().faces().size() == T1_2.tds().faces().size());
+  assert(T1_2b == T1_2);
 
   // p1,p3,p2  [endpoints first]
   Triangul T1_3_0;
@@ -206,6 +213,7 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1_3_0.number_of_vertices() == 3 );
   assert( T1_3_0.number_of_faces() == 0 );
   assert( T1_3_0.is_valid() );
+  assert( T1_3_0 != T1_2 );
 
   // p1,p2,p3  [middle point first]
   Triangul T1_3_1;
@@ -216,6 +224,7 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1_3_1.number_of_vertices() == 3 );
   assert( T1_3_1.number_of_faces() == 0 );
   assert( T1_3_1.is_valid() );
+  assert( T1_3_1 == T1_3_0 );
 
   Triangul T1_5;
   Vertex_handle v1_5_1 = T1_5.insert(p1);
@@ -227,6 +236,7 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1_5.number_of_vertices() == 5 );
   assert( T1_5.number_of_faces() == 0 );
   assert( T1_5.is_valid() );
+  assert( T1_5 != T1_3_1 );
 
   // test insert_second()
   Triangul T1_6 = T0_2;
@@ -298,11 +308,13 @@ _test_cls_triangulation_2( const Triangul & )
 
   // test generic iterator insert
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-  Triangul T2_4; T2_4.insert( Point_iterator(T2_1.finite_vertices_begin()),
-                         Point_iterator(T2_1.finite_vertices_end()) );
+  Triangul T2_4;
+  T2_4.insert( Point_iterator(T2_1.finite_vertices_begin()),
+               Point_iterator(T2_1.finite_vertices_end()) );
   assert( T2_4.dimension() == 2 );
   assert( T2_4.number_of_vertices() == 11 );
   assert( T2_4.is_valid() );
+  assert( T2_4 == T2_1 );
 #endif
 
   // test list iterator insert
@@ -320,6 +332,7 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T2_6.dimension() == 2 );
   assert( T2_6.number_of_vertices() == 10 );
   assert( T2_6.is_valid() );
+  assert( T2_5 == T2_6 );
 
   // test grid insert
   Triangul T2_7;
@@ -496,21 +509,25 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1_5_2.dimension() == 1 );
   assert( T1_5_2.number_of_vertices() == 5 );
   assert( T1_5_2.is_valid() );
+  assert( T1_5_2 == T1_5 );
 
   // test copy_constructor with non-empty 2-triangulation
   Triangul T2_8_1(T2_8);
   assert( T2_8_1.is_valid());
+  assert( T2_8 == T2_8);
+
   Triangul T2_1_1( T2_1 );
   assert( T2_1_1.dimension() == 2 );
   assert( T2_1_1.number_of_vertices() == 11 );
   assert( T2_1_1.is_valid() );
+  assert( T2_1_1 == T2_1 );
 
   // test assignment operator
   Triangul T2_1_4 = T2_1;
   assert( T2_1_4.dimension() == 2 );
   assert( T2_1_4.number_of_vertices() == 11 );
   assert( T2_1_4.is_valid() );
-
+  assert( T2_1_4 == T2_1 );
 
   /*********************************************/
   /****** FINITE/INFINITE VERTICES/FACES *******/

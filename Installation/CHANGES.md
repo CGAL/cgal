@@ -4,7 +4,11 @@ Release History
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
-Release date: December 2022
+Release date: June 2023
+
+### General Changes
+
+- **Breaking change**: The per package assertions, pre- and postconditions are no longer supported.
 
 ### [Combinatorial Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgCombinatorialMaps) [Generalized Maps](https://doc.cgal.org/5.6/Manual/packages.html#PkgGeneralizedMaps) [Linear Cell Complex](https://doc.cgal.org/5.6/Manual/packages.html#PkgLinearCellComplex)
 
@@ -19,7 +23,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 ### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.6/Manual/packages.html#PkgSMDS3) (new package)
 
--   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshess, and makes the data structure independent from the tetrahedral mesh generation package.
+-   This new package wraps all the existing code that deals with a `MeshComplex_3InTriangulation_3` to describe 3D simplicial meshes, and makes the data structure independent from the tetrahedral mesh generation package.
 
 ### [2D Arrangements](https://doc.cgal.org/5.6/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed some code that handles geodesic-curves on spheres that compare x- and y-coordinates on the boundary of the parameter space. It mainly effected the naive point-location.
@@ -38,8 +42,26 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 ### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh2)
 
+-   Deprecated usage of boost parameters in favor of function named parameters in `CGAL::lloyd_optimize_mesh_2()`.
 -   Deprecated two overloads of Function `refine_Delaunay_mesh()` and replaced them with versions using function named parameters.
--   Add overloads of function `write_VTU()` with property maps for specifying the domain.    
+-   Add overloads of function `write_VTU()` with property maps for specifying the domain.
+
+### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
+-   Deprecated usage of boost parameters in favor of function named parameters.
+
+### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
+-   Deprecated usage of boost parameters in favor of function named parameters.
+
+### [2D Hyperbolic Triangulations](https://doc.cgal.org/5.6/Manual/packages.html#PkgHyperbolicTriangulation2)
+
+-   **Breaking change**: the concept `HyperbolicTriangulationFaceBase_2` has been modified to
+    better reflect the triangulation's requirements and avoid a conflict with the requirements
+    described by the concept `TriangulationDataStructure_2::Face`. The model `CGAL::Hyperbolic_triangulation_face_base_2`
+    has been adapted correspondingly.
+
+### [Surface Mesh Simplification](https://doc.cgal.org/5.6/Manual/packages.html#PkgSurfaceMeshSimplification)
+-   The stop predicates `Count_stop_predicate` and `Count_ratio_stop_predicate` are renamed to `Edge_count_stop_predicate` and `Edge_count_ratio_stop_predicate`. Older versions have been deprecated.
+-   Introduce `Face_count_stop_predicate` and `Face_count_ratio_stop_predicate` that can be used to stop the simplification algorithm based on a desired number of faces in the output, or a ratio between input and output face numbers.
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
@@ -3169,7 +3191,7 @@ Release date: October 2012
 -   Added more general script to create CMakeLists.txt files:
     `cgal_create_CMakeLists`
 -   Availability tests for C++11 features are now performed with the
-    help of [Boost.Config](http://www.boost.org/libs/config). A Boost
+    help of [Boost.Config](https://www.boost.org/libs/config). A Boost
     version of 1.40.0 or higher is needed to use C++11 features.
 
 ### 2D Arrangement
@@ -3661,7 +3683,7 @@ CGAL 3.7 offers the following improvements and new functionality :
 -   Some demos now require a version of Qt4 &gt;= 4.3.
 -   CGAL\_PDB is no longer provided with CGAL. An alternative solution
     for people interested in reading PDB files is to use ESBTL
-    (http://esbtl.sourceforge.net/).
+    (https://esbtl.sourceforge.net/).
 -   Fix issues of the CGAL wrappers around the CORE library, on 64 bits
     platforms.
 

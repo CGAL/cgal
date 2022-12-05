@@ -19,7 +19,7 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 
@@ -65,6 +65,8 @@ triangle(typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
+
+  CGAL_precondition(is_valid_face_descriptor(fd, tmesh));
 
   typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
     vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),

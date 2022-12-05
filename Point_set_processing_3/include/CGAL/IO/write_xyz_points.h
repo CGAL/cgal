@@ -17,7 +17,7 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Iterator_range.h>
 
@@ -51,7 +51,7 @@ bool write_XYZ_PSP(std::ostream& os,
   PointMap point_map = NP_helper::get_const_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {

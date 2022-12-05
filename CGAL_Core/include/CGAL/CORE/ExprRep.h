@@ -18,7 +18,7 @@
  *       Sylvain Pion <pion@cs.nyu.edu>
  *       Vikram Sharma<sharma@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -1340,7 +1340,7 @@ inline int ExprRep::getExactSign() {
 }
 
 // Chee, 7/17/02: degreeBound() function is now
-// taken out of "computeExactFlags()
+// taken out of "computeExactFlags()"
 inline int ExprRep::getSign() {
   if (ffVal.isOK())
     return ffVal.sign();

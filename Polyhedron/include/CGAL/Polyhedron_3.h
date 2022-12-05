@@ -855,6 +855,10 @@ public:
 
     Facet_iterator facets_end() { return hds_.faces_end();}
 
+    // added for convenience
+    Facet_iterator faces_begin() { return hds_.faces_begin();}
+    Facet_iterator faces_end() { return hds_.faces_end();}
+
     Facet_handles facet_handles() {
         return make_prevent_deref_range(facets_begin(), facets_end());
     }
@@ -885,6 +889,10 @@ public:
 
     Facet_const_iterator facets_begin() const { return hds_.faces_begin();}
     Facet_const_iterator facets_end()   const { return hds_.faces_end();}
+
+    // added for convenience
+    Facet_const_iterator faces_begin() const { return hds_.faces_begin();}
+    Facet_const_iterator faces_end()   const { return hds_.faces_end();}
 
     Facet_const_handles facet_handles() const {
         return make_prevent_deref_range(facets_begin(), facets_end());

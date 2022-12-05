@@ -73,7 +73,7 @@ namespace CGAL {
  * in turn required by the \c CurvedKernelViaAnalysis_2 concept
  * (see the documentation of the corresponding package). Therefore,
  * some types and methods of the class have both an "algebraic" name
- * (demanded by \c CurveKernelWithAnalysis_d_2) and an "non-algebraic name
+ * (demanded by \c CurveKernelWithAnalysis_d_2) and a "non-algebraic" name
  * (demanded by \c CurveKernel_2).
  *
  * \b Algebraic_curve_kernel_2 is a template class, and needs a model
@@ -356,10 +356,10 @@ public:
                      const OuterFunctor& outer)
          : _inner(inner), _outer(outer) {}
 
-       Unary_compose(const Unary_compose& other)
-         : _inner(other._inner), _outer(other._outer) {}
+       Unary_compose(const Unary_compose& other) = default;
+       Unary_compose& operator=(const Unary_compose& other) = default;
 
-         Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
+       Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
 
        typedef typename InnerFunctor::argument_type argument_type;
        typedef typename OuterFunctor::result_type result_type;

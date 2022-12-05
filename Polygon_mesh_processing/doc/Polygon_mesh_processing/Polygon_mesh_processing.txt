@@ -46,7 +46,8 @@ and smoothing algorithms.
 - \ref PMPPredicates : predicates that can be evaluated on the processed polygon.
 mesh, which includes point location and self intersection tests.
 - \ref PMPOrientation : checking or fixing the orientation of a polygon soup.
-- \ref PMPRepairing :  repair of polygon meshes and polygon soups.
+- \ref PMPCombinatorialRepair :  repair of polygon meshes and polygon soups.
+- \ref PMPGeometricRepair :  repair of the geometry of polygon meshes.
 - \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
@@ -59,7 +60,7 @@ of the graph concepts defined in the package \ref PkgBGLRef. Using common graph 
 enables having common input/output functions for all the models of these concepts.
 The page \ref PkgBGLIOFct provides an exhaustive description of the available I/O functions.
 In addition, this package offers the function `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`,
-which can perform some reparation if the input data do not represent a manifold surface.
+which can perform some repairing if the input data do not represent a manifold surface.
 
 ****************************************
 \section PMPMeshing Meshing
@@ -746,7 +747,7 @@ This example shows how to correctly repair and orient a soup to get a mesh from 
 
 
 ****************************************
-\section PMPRepairing Combinatorial Repairing
+\section PMPCombinatorialRepair Combinatorial Repair
 
 *******************
 \subsection PSRepairing Polygon Soup Repairing
@@ -785,31 +786,7 @@ with duplicated border edges.
 
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
-\if READY_TO_PUBLISH
-
-\subsection DegenerateFaces Removing Degenerate Faces
-
-Some degenerate faces may be part of a given triangle mesh.
-A face is considered \e degenerate if two of its vertices
-share the same location, or more generally if its three vertices are collinear.
-The function `CGAL::Polygon_mesh_processing::remove_degenerate_faces()`
-removes those faces and fixes the connectivity of the newly cleaned up mesh.
-It is also possible to remove isolated vertices from any polygon mesh, using the function
-`CGAL::Polygon_mesh_processing::remove_isolated_vertices()`.
-
-\subsubsection RemoveDegenerateExample Example
-
-In the following example, the degenerate faces of a triangle mesh
-are removed, the connectivity is fixed, and the number of removed faces
-is output.
-
-\cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
-\endif
-
 \subsection PMPManifoldness Polygon Mesh Manifoldness
-This package offers repairing methods to clean ill-formed polygon soups,
-see Section \ref PMPRepairing.
-
 Non-manifold vertices can be detected using the function `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`.
 The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()` can be used
 to attempt to create a combinatorially manifold surface mesh by splitting any non-manifold vertex
@@ -835,6 +812,9 @@ more than once (although, with different vertices) before reaching the initial b
 `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`, which merge
 vertices at identical positions, can be used to repair this configuration.
 
+\section PMPGeometricRepair Geometric Repair
+****************************************
+
 \subsection PMPRemoveCapsNeedles Removal of Almost Degenerate Triangle Faces
 Triangle faces of a mesh made up of almost collinear points are badly shaped elements that
 might not be desirable to have in a mesh. The function
@@ -843,6 +823,27 @@ with user-defined parameters to qualify what <i>almost</i> means (`cap_threshold
 As some badly shaped elements are inevitable (the triangulation of a long cylinder
 with only vertices on the top and bottom circles for example), extra parameters can be passed
 to prevent the removal of such elements (`collapse_length_threshold` and `flip_triangle_height_threshold`).
+
+\if READY_TO_PUBLISH
+
+\subsection DegenerateFaces Removing Degenerate Faces
+
+Some degenerate faces may be part of a given triangle mesh.
+A face is considered \e degenerate if two of its vertices
+share the same location, or more generally if its three vertices are collinear.
+The function `CGAL::Polygon_mesh_processing::remove_degenerate_faces()`
+removes those faces and fixes the connectivity of the newly cleaned up mesh.
+It is also possible to remove isolated vertices from any polygon mesh, using the function
+`CGAL::Polygon_mesh_processing::remove_isolated_vertices()`.
+
+\subsubsection RemoveDegenerateExample Example
+
+In the following example, the degenerate faces of a triangle mesh
+are removed, the connectivity is fixed, and the number of removed faces
+is output.
+
+\cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
+\endif
 
 ****************************************
 \section PMPNormalComp Computing Normals
