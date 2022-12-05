@@ -63,7 +63,7 @@ void compute_statistics(const Triangulation& tr,
   {
     const Cell_handle cell = fit->first;
     const int& index = fit->second;
-    if (!cell_selector(cell) || !cell_selector(cell->neighbor(index)))
+    if (!get(cell_selector, cell) || !get(cell_selector, cell->neighbor(index)))
       continue;
 
     const Point& pa = point(cell->vertex((index + 1) & 3)->point());
@@ -96,7 +96,7 @@ void compute_statistics(const Triangulation& tr,
        ++cit)
   {
     const Subdomain_index& si = cit->subdomain_index();
-    if (si == Subdomain_index() || !cell_selector(cit))
+    if (si == Subdomain_index() || !get(cell_selector, cit))
       continue;
 
     ++nb_tets;
