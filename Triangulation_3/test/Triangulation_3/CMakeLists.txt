@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Triangulation_3_Tests)
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
@@ -35,11 +35,8 @@ target_compile_features(cdt_3 PRIVATE cxx_std_20) # Structured bindings
 create_single_source_cgal_program( "cdt_3_from_off.cpp" )
 target_compile_features(cdt_3_from_off PRIVATE cxx_std_20) # Structured bindings
 if(CGAL_Qt5_FOUND)
-  target_link_libraries(cdt_3 PRIVATE CGAL::CGAL_Qt5)
-  target_compile_definitions(cdt_3 PRIVATE -DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-
-  target_link_libraries(cdt_3_from_off PRIVATE CGAL::CGAL_Qt5)
-  target_compile_definitions(cdt_3_from_off PRIVATE -DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+  target_link_libraries(cdt_3 PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(cdt_3_from_off PRIVATE CGAL::CGAL_Basic_viewer)
 
   if(BUILD_TESTING) # @TODO Remove this special treatment of `execution___of__cdt_3`
     set_property(TEST execution___of__cdt_3 PROPERTY ENVIRONMENT)
