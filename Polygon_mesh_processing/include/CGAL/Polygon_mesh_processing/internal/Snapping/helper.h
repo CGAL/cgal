@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAPPING_HELPER_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAPPING_HELPER_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/number_utils.h>
