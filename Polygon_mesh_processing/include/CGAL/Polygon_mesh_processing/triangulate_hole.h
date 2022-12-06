@@ -390,7 +390,7 @@ namespace Polygon_mesh_processing {
     Vertex_output_iterator vertex_out = choose_parameter<Emptyset_iterator>(get_parameter(np, internal_np::vertex_output_iterator));
 
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
-    triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
+    triangulate_hole(pmesh, border_halfedge, np.face_output_iterator(std::back_inserter(patch)));
     face_out = std::copy(patch.begin(), patch.end(), face_out);
 
     Hole_filling::Default_visitor default_visitor;
@@ -584,7 +584,7 @@ namespace Polygon_mesh_processing {
 
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
     face_out = triangulate_and_refine_hole
-      (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
+      (pmesh, border_halfedge, np.face_output_iterator(face_out).vertex_output_iterator(std::back_inserter(patch))).first;
 
     CGAL_postcondition(CGAL::is_triangle_mesh(pmesh));
 

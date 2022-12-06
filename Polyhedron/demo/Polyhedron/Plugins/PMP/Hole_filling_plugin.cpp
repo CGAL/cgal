@@ -701,9 +701,10 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   CGAL::Timer timer; timer.start();
   std::vector<fg_face_descriptor> patch;
   if(action_index == 0) {
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly,
-             it, std::back_inserter(patch),
-             CGAL::parameters::use_delaunay_triangulation(use_DT));
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, it,
+             CGAL::parameters::
+             face_output_iterator(std::back_inserter(patch)).
+             use_delaunay_triangulation(use_DT));
   }
   else if(action_index == 1) {
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly, it,
