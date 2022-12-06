@@ -35,6 +35,7 @@ create_single_source_cgal_program("mesh_implicit_multi_domain.cpp")
 create_single_source_cgal_program("mesh_implicit_shape_with_subdomains.cpp")
 create_single_source_cgal_program("mesh_implicit_shape_with_optimizers.cpp")
 create_single_source_cgal_program("mesh_implicit_shape_with_features.cpp")
+create_single_source_cgal_program("mesh_periodic_polyhedral_domain.cpp")
 
 foreach(
   target
