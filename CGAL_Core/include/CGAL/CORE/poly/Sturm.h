@@ -37,7 +37,7 @@
  *  Author:  Chee Yap and Sylvain Pion, Vikram Sharma
  *  Date:    July 20, 2002
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$

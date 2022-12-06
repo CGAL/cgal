@@ -11,7 +11,7 @@ if(CGAL_ImageIO_FOUND)
   create_single_source_cgal_program("mesh_an_implicit_function.cpp")
 
 else()
-  if(RUNNING_CGAL_AUTO_TEST)
+  if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     # Just to avoid a warning from CMake if that variable is set on the command line...
   endif()
 

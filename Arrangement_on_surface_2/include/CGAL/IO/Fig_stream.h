@@ -164,7 +164,7 @@ enum Fig_depth
 
 /*!
  * \class A class for writing geometric objects in a FIG format (version 3.2).
- * For more details, see: http://www.xfig.org/userman/fig-format.html
+ * For more details, see: https://mcj.sourceforge.net/
  */
 template <class Kernel_>
 class Fig_stream

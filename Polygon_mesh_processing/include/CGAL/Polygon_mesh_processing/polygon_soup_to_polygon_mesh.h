@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
@@ -153,7 +153,7 @@ private:
 } // namespace internal
 
 /**
-* \ingroup PMP_repairing_grp
+* \ingroup PMP_combinatorial_repair_grp
 *
 * \brief returns `true` if the soup of polygons defines a valid polygon
 * mesh that can be handled by
@@ -231,7 +231,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 }
 
 /**
-* \ingroup PMP_repairing_grp
+* \ingroup PMP_combinatorial_repair_grp
 *
 * builds a polygon mesh from a soup of polygons.
 *

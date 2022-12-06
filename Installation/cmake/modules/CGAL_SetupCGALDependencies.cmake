@@ -97,8 +97,7 @@ function(CGAL_setup_CGAL_dependencies target)
     target_compile_definitions(${target} INTERFACE CGAL_TEST_SUITE=1)
   endif()
 
-  # CGAL now requires C++14. `decltype(auto)` is used as a marker of
-  # C++14.
+  # CGAL now requires C++14. `decltype(auto)` is used as a marker of C++14.
   target_compile_features(${target} INTERFACE cxx_decltype_auto)
 
   use_CGAL_Boost_support(${target} INTERFACE)
@@ -152,7 +151,7 @@ function(CGAL_setup_CGAL_dependencies target)
       "-features=extensions;-library=stlport4;-D_GNU_SOURCE")
     target_link_libraries(${target} INTERFACE "-library=stlport4")
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    if ( RUNNING_CGAL_AUTO_TEST )
+    if ( RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
       target_compile_options(${target} INTERFACE "-Wall")
     endif()
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3)

@@ -46,7 +46,7 @@ uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS_DEBUG      ${CGAL_EXE_LINKER_FLAGS_DE
 
 # Set a default build type if none is given
 if ( NOT CMAKE_BUILD_TYPE )
-  if( RUNNING_CGAL_AUTO_TEST )
+  if( RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
     typed_cache_set ( STRING "Build type: Release, Debug, RelWithDebInfo or MinSizeRel" CMAKE_BUILD_TYPE Debug   )
   else ()
     typed_cache_set ( STRING "Build type: Release, Debug, RelWithDebInfo or MinSizeRel" CMAKE_BUILD_TYPE Release )

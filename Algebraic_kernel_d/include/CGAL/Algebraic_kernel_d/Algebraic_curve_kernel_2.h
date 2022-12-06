@@ -356,10 +356,10 @@ public:
                      const OuterFunctor& outer)
          : _inner(inner), _outer(outer) {}
 
-       Unary_compose(const Unary_compose& other)
-         : _inner(other._inner), _outer(other._outer) {}
+       Unary_compose(const Unary_compose& other) = default;
+       Unary_compose& operator=(const Unary_compose& other) = default;
 
-         Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
+       Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
 
        typedef typename InnerFunctor::argument_type argument_type;
        typedef typename OuterFunctor::result_type result_type;

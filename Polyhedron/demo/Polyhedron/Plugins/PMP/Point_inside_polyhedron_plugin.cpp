@@ -192,7 +192,7 @@ public Q_SLOTS:
     boost::optional<CGAL::Three::Scene_interface::Bbox> bbox
       = boost::make_optional(false, CGAL::Three::Scene_interface::Bbox());
     // Workaround a bug in g++-4.8.3:
-    //   http://stackoverflow.com/a/21755207/1728537
+    //   https://stackoverflow.com/a/21755207/1728537
     // Using boost::make_optional to copy-initialize 'bbox' hides the
     //   warning about '*bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30

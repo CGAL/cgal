@@ -233,7 +233,7 @@ public:
     typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
     typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
-    CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
+    CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
     CGAL_static_assertion_msg((!is_default_parameter<NamedParameters, internal_np::plane_index_t>::value),
                               "Error: no plane index map");
 

@@ -14,7 +14,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_STITCH_BORDERS_H
 #define CGAL_POLYGON_MESH_PROCESSING_STITCH_BORDERS_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
@@ -1119,7 +1119,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 
 } //end of namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief stitches together, whenever possible, two halfedges belonging to the boundary cycle
 /// described by the halfedge `h`.
@@ -1191,7 +1191,7 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief stitches together, whenever possible, two halfedges belonging to the same boundary cycle.
 ///
@@ -1265,7 +1265,7 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
 // The VPM is only used here for debugging info purposes as in this overload, the halfedges
 // to stitch are already provided and all further checks are combinatorial and not geometrical.
 /*!
-* \ingroup PMP_repairing_grp
+* \ingroup PMP_combinatorial_repair_grp
 *
 * \brief stitches together border halfedges in a polygon mesh.
 *
@@ -1389,7 +1389,7 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief Same as the other overload, but the pairs of halfedges to be stitched
 /// are automatically found amongst all border halfedges.
@@ -1448,7 +1448,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
   return stitch_borders(boundary_cycle_representatives, pmesh, dummy_maintainer, np);
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief Same as the other overload, but the pairs of halfedges to be stitched
 /// are automatically found amongst halfedges in cycles described by `boundary_cycle_representatives`.

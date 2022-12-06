@@ -90,7 +90,7 @@ int main()
     return EXIT_FAILURE;
   }
   else {
-       const std::string& output_file = "data/building_result-0.05.off";
+       const std::string& output_file = "building_result-0.05.off";
        if (CGAL::IO::write_OFF(output_file, model)) {
            std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
        }
@@ -108,7 +108,7 @@ int main()
     return EXIT_FAILURE;
   }
   else {
-       const std::string& output_file = "data/building_result-0.5.off";
+       const std::string& output_file = "building_result-0.5.off";
        if (CGAL::IO::write_OFF(output_file, model))
            std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
        else {
@@ -125,7 +125,7 @@ int main()
     return EXIT_FAILURE;
   }
   else {
-    const std::string& output_file = "data/building_result-0.7.off";
+    const std::string& output_file = "building_result-0.7.off";
     if (CGAL::IO::write_OFF(output_file, model)){
       std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
                 }

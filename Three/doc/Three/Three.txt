@@ -392,7 +392,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 
 
 \section example Examples
-All the examples are de-activated in the cmake list outside of our testsuite. To tesr them, one must add `-DRUNNING_CGAL_AUTO_TEST=ON` to the cmake call.
+All the examples are de-activated in the cmake list outside of our testsuite. To test them, one must add `-DCGAL_TEST_SUITE=ON` to the cmake call.
 \subsection example1 Creating a Basic Plugin
 \cgalExample{Three_examples/Basic_plugin.cpp}
 

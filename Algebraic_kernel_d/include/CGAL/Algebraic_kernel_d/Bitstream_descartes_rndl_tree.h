@@ -525,6 +525,9 @@ public:
     friend class internal::Bitstream_descartes_rndl_tree<TRAITS>;
     friend class internal::Bitstream_descartes_rndl_tree_rep<TRAITS>;
 
+    Bitstream_descartes_rndl_node(const Self&) = default;
+    Self& operator= (const Self&) = delete;
+
 private:
     // "node data" (set individually in subdivision)
     Integer lower_num_, upper_num_; // TODO use lower_num_, width_num_ instead
@@ -557,8 +560,6 @@ private:
         log_eps_       = n.log_eps_;
         log_C_eps_     = n.log_C_eps_;
     }
-
-    Self& operator= (const Self&)=delete;
 }; // struct Bitstream_descartes_rndl_node
 
 

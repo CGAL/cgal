@@ -322,7 +322,7 @@ namespace internal {
     {
       halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
-      CGAL_assertion_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
+      CGAL_warning_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
       CGAL_warning_msg(input_mesh_is_valid_,
         "The input mesh is not a valid polygon mesh. "
         "It could lead PMP::isotropic_remeshing() to fail.");

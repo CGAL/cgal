@@ -24,7 +24,7 @@
 
 #ifdef CGAL_USE_ZLIB
 #include <zlib.h>
-/* see http://www.gzip.org/zlib/
+/* see https://zlib.net/
    for details and documentation
 */
 #endif
@@ -342,8 +342,8 @@ CGAL_IMAGEIO_EXPORT _image *_createImage(std::size_t x, std::size_t y, std::size
     GIS (CEA, IRISA, ENST 3D image format).
 
     See also:
-    http://www.dcs.ed.ac.uk/home/mxr/gfx/2d-hi.html and
-    http://www.gzip.org/zlib/
+    https://www.martinreddy.net/gfx/2d-hi.html and
+    https://zlib.net/
 
 
    @param name image file name or nullptr for stdin */

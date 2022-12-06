@@ -528,7 +528,10 @@ The following example:
 
 \section Classification_history History
 
-This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/) that was generalized, extended and packaged by [Simon Giraudot](http://geometryfactory.com/who-we-are/) in \cgal 4.12. %Classification of surface meshes and of clusters were introduced in \cgal 4.13. The Neural Network classifier was introduced in \cgal 4.14.
+This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/)
+that was generalized, extended and packaged by [Simon Giraudot](https://geometryfactory.com/who-we-are/)
+in \cgal 4.12. %Classification of surface meshes and of clusters were introduced in \cgal 4.13.
+The Neural Network classifier was introduced in \cgal 4.14.
 
 
 

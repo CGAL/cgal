@@ -293,8 +293,8 @@ complexity. No exception is thrown.
 /// @{
   /// returns whether `pos` is in the range `[ccc.begin(),  ccc.end()]` (`ccc.end()` included).
   bool owns(const_iterator pos);
-  /// returns whether `pos` is in the range `[ccc.begin(), ccc`.end())` (`ccc.end()` excluded).
-  bool owns_dereferencable(const_iterator pos);
+  /// returns whether `pos` is in the range `[ccc.begin(), ccc.end())` (`ccc.end()` excluded).
+  bool owns_dereferenceable(const_iterator pos);
 
 /// @}
 

@@ -1646,6 +1646,12 @@ void merge_reversible_connected_components(PolygonMesh& pm,
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     should be available for the vertices of `pm`.}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{face_partition_id_map}
+ *     \cgalParamDescription{a property map filled by this function and that will contain for each face
+ *                           the id of its surface component after reversal and stitching in the range `[0, n - 1]`,
+ *                           with `n` the number of such components.}
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \sa reverse_face_orientations()
@@ -1666,6 +1672,15 @@ bool compatible_orientations(const PolygonMesh& pm,
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                          get_const_property_map(vertex_point, pm));
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::face_partition_id_t,
+    NamedParameters,
+    Constant_property_map<face_descriptor, std::size_t> // default
+  >::type Partition_map;
+
+  // cc id map if compatible edges were stitched
+  Partition_map partition_map = parameters::choose_parameter<Partition_map>(parameters::get_parameter(np, internal_np::face_partition_id));
 
   typedef std::size_t F_cc_id; // Face cc-id
   typedef std::size_t E_id; // Edge id
@@ -1753,6 +1768,8 @@ bool compatible_orientations(const PolygonMesh& pm,
     sorted_ids.insert(cc_id);
 
   // consider largest CC first, default and set its bit to 0
+  std::size_t partition_id = 0;
+  std::vector<std::size_t> partition_ids(nb_cc);
   for(F_cc_id cc_id : sorted_ids)
   {
     if (cc_handled[cc_id]) continue;
@@ -1821,6 +1838,8 @@ bool compatible_orientations(const PolygonMesh& pm,
           continue;
       }
       cc_handled[id]=true;
+      CGAL_assertion(cc_bits[id]==false);
+      partition_ids[id] = partition_id;
     }
 
     // set bit of incompatible patches
@@ -1839,13 +1858,19 @@ bool compatible_orientations(const PolygonMesh& pm,
           continue;
       }
       cc_handled[id]=true;
+      partition_ids[id] = partition_id;
       cc_bits[id]=true;
     }
+    ++partition_id;
   }
 
   // set the bit per face
   for (face_descriptor f : faces(pm))
-    put(fbm, f, cc_bits[get(f_cc_ids,f)]);
+  {
+    std::size_t f_cc_id = get(f_cc_ids,f);
+    put(fbm, f, cc_bits[f_cc_id]);
+    put(partition_map, f, partition_ids[f_cc_id]);
+  }
 
   return true;
 }
