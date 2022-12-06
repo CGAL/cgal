@@ -48,26 +48,33 @@ construct_periodic_point_exact(const typename Gt_::Point_3& p,
   typedef typename Geom_traits::Periodic_3_offset_3            Offset;
   typedef typename Geom_traits::Iso_cuboid_3                   Iso_cuboid;
 
-  const Iso_cuboid& domain = gt.get_domain();
-
   typedef typename Geom_traits::Kernel                         K;
   typedef typename Exact_kernel_selector<K>::Exact_kernel      EK;
   typedef typename Exact_kernel_selector<K>::C2E               C2E;
 
+  typedef typename EK::Point_3                                 EPoint_3;
+
+  typedef Periodic_3_triangulation_traits_3<EK>                Exact_traits;
+
   C2E to_exact;
 
-  typedef Periodic_3_triangulation_traits_3<EK> Exact_traits;
+  const Iso_cuboid& domain = gt.get_domain();
   Exact_traits etraits(to_exact(domain));
 
+  typename Exact_traits::Construct_point_3 cep = etraits.construct_point_3_object();
+
+  EPoint_3 ep = to_exact(p);
   Offset transl(0, 0, 0);
-  typename EK::Point_3 ep = to_exact(p);
-  typename EK::Point_3 dp;
 
   const typename EK::Iso_cuboid_3& exact_domain = etraits.get_domain();
 
+  EPoint_3 dp;
   while(true) /* while not in */
   {
-    dp = etraits.construct_point_3_object()(ep, transl);
+    // Here we actually construct because we are using a kernel with exact constructions
+    // so it is faster than using <Object, Offset> APIs which have to perform constructions
+    // within the predicates every single time
+    dp = cep(ep, transl);
 
     if(dp.x() < exact_domain.xmin())
       transl.x() += 1;
@@ -88,8 +95,8 @@ construct_periodic_point_exact(const typename Gt_::Point_3& p,
   return std::make_pair(p, transl);
 }
 
-// Given a point `p` in space, compute its offset `o` with respect
-// to the canonical instance and returns `(p, o)`
+// Given a point `p` in space, compute its offset `o` with respect to the canonical
+// domain (i.e., p + o * d is in the canonical domain) and returns `(p, o)`
 template <typename Gt_>
 std::pair<typename Gt_::Point_3, typename Gt_::Periodic_3_offset_3>
 construct_periodic_point(const typename Gt_::Point_3& p,
@@ -103,13 +110,18 @@ construct_periodic_point(const typename Gt_::Point_3& p,
 
   const Iso_cuboid& domain = gt.get_domain();
 
+  // Use these rather than Construct_point_3 to avoid construction inaccuracies
+  typename Geom_traits::Compare_x_3 cmp_x3 = gt.compare_x_3_object();
+  typename Geom_traits::Compare_y_3 cmp_y3 = gt.compare_y_3_object();
+  typename Geom_traits::Compare_z_3 cmp_z3 = gt.compare_z_3_object();
+
   // Check if p lies within the domain. If not, translate.
   if(!(p.x() < domain.xmin()) && p.x() < domain.xmax() &&
      !(p.y() < domain.ymin()) && p.y() < domain.ymax() &&
      !(p.z() < domain.zmin()) && p.z() < domain.zmax())
+  {
     return std::make_pair(p, Offset());
-
-  typename Geom_traits::Construct_point_3 cp = gt.construct_point_3_object();
+  }
 
   // Numerical approximations might create inconsistencies between the constructions
   // and the comparisons. For example in a cubic domain of size 2:
@@ -134,13 +146,14 @@ construct_periodic_point(const typename Gt_::Point_3& p,
   bool in = false;
 
   Offset transl(0, 0, 0);
-  Point dp;
+  const Offset null_off(0, 0, 0);
+
+  Point domain_m(domain.xmin(), domain.ymin(), domain.zmin());
+  Point domain_M(domain.xmax(), domain.ymax(), domain.zmax());
 
   while(!in)
   {
-    dp = cp(p, transl);
-
-    if(dp.x() < domain.xmin())
+    if(cmp_x3(p, domain_m, transl, null_off) == SMALLER)
     {
       if(lc == DECREASED_X) // stuck in a loop
         break;
@@ -148,7 +161,7 @@ construct_periodic_point(const typename Gt_::Point_3& p,
       lc = INCREASED_X;
       transl.x() += 1;
     }
-    else if(dp.y() < domain.ymin())
+    else if(cmp_y3(p, domain_m, transl, null_off) == SMALLER)
     {
       if(lc == DECREASED_Y) // stuck in a loop
         break;
@@ -156,7 +169,7 @@ construct_periodic_point(const typename Gt_::Point_3& p,
       lc = INCREASED_Y;
       transl.y() += 1;
     }
-    else if(dp.z() < domain.zmin())
+    else if(cmp_z3(p, domain_m, transl, null_off) == SMALLER)
     {
       if(lc == DECREASED_Z) // stuck in a loop
         break;
@@ -164,7 +177,7 @@ construct_periodic_point(const typename Gt_::Point_3& p,
       lc = INCREASED_Z;
       transl.z() += 1;
     }
-    else if(!(dp.x() < domain.xmax()))
+    else if(!(cmp_x3(p, domain_M, transl, null_off) == SMALLER))
     {
       if(lc == INCREASED_X) // stuck in a loop
         break;
@@ -172,7 +185,7 @@ construct_periodic_point(const typename Gt_::Point_3& p,
       lc = DECREASED_X;
       transl.x() -= 1;
     }
-    else if(!(dp.y() < domain.ymax()))
+    else if(!(cmp_y3(p, domain_M, transl, null_off) == SMALLER))
     {
       if(lc == INCREASED_Y) // stuck in a loop
         break;
@@ -180,7 +193,7 @@ construct_periodic_point(const typename Gt_::Point_3& p,
       lc = DECREASED_Y;
       transl.y() -= 1;
     }
-    else if(!(dp.z() < domain.zmax()))
+    else if(!(cmp_z3(p, domain_M, transl, null_off) == SMALLER))
     {
       if(lc == INCREASED_Z) // stuck in a loop
         break;
@@ -196,9 +209,12 @@ construct_periodic_point(const typename Gt_::Point_3& p,
 
   std::pair<Point, Offset> pp(p, transl);
 
-  if(dp.x() < domain.xmin() || !(dp.x() < domain.xmax()) ||
-     dp.y() < domain.ymin() || !(dp.y() < domain.ymax()) ||
-     dp.z() < domain.zmin() || !(dp.z() < domain.zmax()))
+  if(cmp_x3(p, domain_m, transl, null_off) == SMALLER || // < min
+     cmp_y3(p, domain_m, transl, null_off) == SMALLER ||
+     cmp_z3(p, domain_m, transl, null_off) == SMALLER ||
+     !(cmp_x3(p, domain_M, transl, null_off) == SMALLER) || // >= max
+     !(cmp_y3(p, domain_M, transl, null_off) == SMALLER) ||
+     !(cmp_z3(p, domain_M, transl, null_off) == SMALLER))
   {
     encountered_issue = true;
     pp = construct_periodic_point_exact(p, gt);
@@ -321,6 +337,9 @@ robust_canonicalize_point(const typename Gt_::Point_3& p,
   bool should_snap = false;
   std::pair<Bare_point, Offset> pbp = construct_periodic_point(p, should_snap, gt);
 
+  // Disable snapping because it could create (more) inconsistencies between canonicalized points
+  // and the pair <Euclidean Point, Offset> given by construct_periodic_point()
+#ifdef CGAL_P3T3_ENABLE_POINT_SNAPPING_DURING_CANONICALIZATION
   if(!should_snap)
   {
     // Even if there is no issue while constructing the canonical point,
@@ -338,16 +357,15 @@ robust_canonicalize_point(const typename Gt_::Point_3& p,
     // not have to use exact computations too often)
     return robust_canonicalize_point(sp, gt);
   }
+#endif
 
   typename Geom_traits::Construct_point_3 cp = gt.construct_point_3_object();
 
   Bare_point canonical_p = cp(pbp.first /*point*/, pbp.second /*offset*/);
-  CGAL_postcondition( !(canonical_p.x() < domain.xmin()) &&
-                       (canonical_p.x() < domain.xmax()) );
-  CGAL_postcondition( !(canonical_p.y() < domain.ymin()) &&
-                       (canonical_p.y() < domain.ymax()) );
-  CGAL_postcondition( !(canonical_p.z() < domain.zmin()) &&
-                       (canonical_p.z() < domain.zmax()) );
+
+  CGAL_postcondition( !(canonical_p.x() < domain.xmin()) && (canonical_p.x() < domain.xmax()));
+  CGAL_postcondition( !(canonical_p.y() < domain.ymin()) && (canonical_p.y() < domain.ymax()));
+  CGAL_postcondition( !(canonical_p.z() < domain.zmin()) && (canonical_p.z() < domain.zmax()));
 
   return canonical_p;
 }
