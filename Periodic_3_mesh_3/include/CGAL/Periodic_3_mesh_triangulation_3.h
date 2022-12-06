@@ -638,7 +638,7 @@ public:
     std::vector<Vertex_handle> vs;
     vs.reserve(32);
 
-    while(true)
+    for(;;)
     {
       Vertex_handle tmp = nearest;
 
@@ -695,8 +695,11 @@ public:
           continue;
 
         FT sq_dist_i = csd(cp(point(ch, v_pos)), cp(point(ch, vi_pos)));
-        if(min_sq_dist == FT(-1) || sq_dist_i < min_sq_dist)
+        if(min_v == Vertex_handle() || sq_dist_i < min_sq_dist)
+        {
+          min_v = vi;
           min_sq_dist = sq_dist_i;
+        }
       }
     }
 

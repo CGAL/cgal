@@ -38,7 +38,7 @@ namespace Periodic_3_mesh_3 {
 namespace internal {
 
 template<typename C3T3, typename MeshDomain>
-void insert_dummy_points(C3T3& c3t3,
+bool insert_dummy_points(C3T3& c3t3,
                          const MeshDomain& domain)
 {
   typedef typename C3T3::Triangulation::Vertex_handle                         Vertex_handle;
@@ -55,6 +55,7 @@ void insert_dummy_points(C3T3& c3t3,
   {
     std::cerr << "Error: dummy points do not create a 1-cover" << std::endl;
     CGAL_postcondition(false);
+    return false;
   }
 
   for(Vertex_handle dvh : dummy_vertices)
@@ -82,6 +83,8 @@ void insert_dummy_points(C3T3& c3t3,
     else
       c3t3.set_index(dvh, 0);
   }
+
+  return true;
 }
 
 template <typename C3T3, typename MeshDomain, typename MeshCriteria>
@@ -122,7 +125,8 @@ struct C3t3_initializer_base
     c3t3.triangulation().set_domain(domain.bounding_box());
 
     // Enforce 1-cover by adding dummy points
-    insert_dummy_points(c3t3, domain);
+    if(!insert_dummy_points(c3t3, domain))
+      return;
 
     // Call the basic initialization from c3t3, which handles features and
     // adds a bunch of points on the surface
