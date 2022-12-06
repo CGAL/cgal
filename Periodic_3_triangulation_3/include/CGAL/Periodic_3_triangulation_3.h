@@ -3288,6 +3288,8 @@ periodic_remove(Vertex_handle v,
                         vh_off_map[vmap[i_ch->vertex(2)]],
                         vh_off_map[vmap[i_ch->vertex(3)]]);
 
+    // cells created above are deleted in update_cover_data_during_management() even if we abort
+
     // Update the edge length management
     if(cover_manager.update_cover_data_during_management(new_ch, new_cells,
                                                          abort_if_cover_change))
