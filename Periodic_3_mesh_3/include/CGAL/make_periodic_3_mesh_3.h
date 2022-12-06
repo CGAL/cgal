@@ -49,6 +49,14 @@ void insert_dummy_points(C3T3& c3t3,
   std::vector<Vertex_handle> dummy_vertices = c3t3.triangulation().insert_generic_dummy_points();
   CGAL_postcondition(c3t3.triangulation().is_1_cover());
 
+  // Abuse the multi cover function to check if cells have a small-enough orthoradius
+  c3t3.triangulation().update_cover_data_after_converting_to_27_sheeted_covering();
+  if(!c3t3.triangulation().can_be_converted_to_1_sheet())
+  {
+    std::cerr << "Error: dummy points do not create a 1-cover" << std::endl;
+    CGAL_postcondition(false);
+  }
+
   for(Vertex_handle dvh : dummy_vertices)
   {
     dvh->info().is_dummy_vertex = true;
