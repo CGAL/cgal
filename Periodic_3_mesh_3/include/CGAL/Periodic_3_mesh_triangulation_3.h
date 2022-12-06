@@ -141,12 +141,18 @@ public:
 
   /// Concurrency related
   template <typename Cell_handle>
-  bool try_lock_cell(const Cell_handle &, int = 0) const { return true; }
+  bool try_lock_cell(const Cell_handle &, int = 0) const
+  {
+    std::cerr << "ERROR: P3M3 does not yet support parallel execution" << std::endl;
+    CGAL_assertion(false);
+    return true;
+  }
 
   bool try_lock_and_get_incident_cells(Vertex_handle /* v */,
                                        std::vector<Cell_handle>& /* cells */) const
   {
-    std::cerr << "ERROR: implement try_lock_and_get_incident_cells()"<< std::endl;
+    std::cerr << "ERROR: P3M3 does not yet support parallel execution" << std::endl;
+    CGAL_assertion(false);
     return true;
   }
 
