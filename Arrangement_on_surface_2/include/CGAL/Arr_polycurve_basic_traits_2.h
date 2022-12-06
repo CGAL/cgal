@@ -1114,7 +1114,7 @@ public:
   // model of this concept.
   //
   // The following implementation is inspired by
-  // http://stackoverflow.com/a/11816999/1915421
+  // https://stackoverflow.com/a/11816999/1915421
 
   template <typename T>
   struct Void {

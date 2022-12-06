@@ -1,6 +1,6 @@
 * Number-type: floating-point
-* Description: http://www.netlib.org/lp/data/
-* Generated-by: 
+* Description: https://www.netlib.org/lp/data/
+* Generated-by:
 * Derivatives: none
 NAME          SCSD1
 ROWS

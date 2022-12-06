@@ -45,7 +45,7 @@ bool write_OFF_PSP(std::ostream& os,
   typedef typename NP_helper::Const_point_map PointMap;
   typedef typename NP_helper::Normal_map NormalMap;
 
-  const bool has_normals = !(is_default_parameter<CGAL_NP_CLASS, internal_np::normal_t>::value);
+  const bool has_normals = NP_helper::has_normal_map(points, np);
 
   PointMap point_map = NP_helper::get_const_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);

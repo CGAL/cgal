@@ -3191,7 +3191,7 @@ Release date: October 2012
 -   Added more general script to create CMakeLists.txt files:
     `cgal_create_CMakeLists`
 -   Availability tests for C++11 features are now performed with the
-    help of [Boost.Config](http://www.boost.org/libs/config). A Boost
+    help of [Boost.Config](https://www.boost.org/libs/config). A Boost
     version of 1.40.0 or higher is needed to use C++11 features.
 
 ### 2D Arrangement
@@ -3683,7 +3683,7 @@ CGAL 3.7 offers the following improvements and new functionality :
 -   Some demos now require a version of Qt4 &gt;= 4.3.
 -   CGAL\_PDB is no longer provided with CGAL. An alternative solution
     for people interested in reading PDB files is to use ESBTL
-    (http://esbtl.sourceforge.net/).
+    (https://esbtl.sourceforge.net/).
 -   Fix issues of the CGAL wrappers around the CORE library, on 64 bits
     platforms.
 

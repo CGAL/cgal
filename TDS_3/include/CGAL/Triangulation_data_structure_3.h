@@ -2049,7 +2049,7 @@ bool
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 is_vertex(Vertex_handle v) const
 {
-    return vertices().owns_dereferencable(v);
+    return vertices().owns_dereferenceable(v);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2102,7 +2102,7 @@ is_edge(Cell_handle c, int i, int j) const
   if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
   if ((i>3) || (j>3)) return false;
 
-  return cells().owns_dereferencable(c);
+  return cells().owns_dereferenceable(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2149,7 +2149,7 @@ is_facet(Cell_handle c, int i) const
     if ( (dimension() == 2) && (i!=3) )
         return false;
 
-    return cells().owns_dereferencable(c);
+    return cells().owns_dereferenceable(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2161,7 +2161,7 @@ is_cell( Cell_handle c ) const
     if (dimension() < 3)
         return false;
 
-    return cells().owns_dereferencable(c);
+    return cells().owns_dereferenceable(c);
 }
 
 template <class Vb, class Cb, class Ct>
