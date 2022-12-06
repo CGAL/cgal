@@ -236,6 +236,7 @@ public:
       connect(CGAL::Three::Three::connectableScene(),SIGNAL(itemIndexSelected(int)),
               this, SLOT(connect_controls(int)));
     }
+
     Viewer_interface* v = CGAL::Three::Three::mainViewer();
     CGAL_assertion(v != nullptr);
     pxr_.setViewer(v);
@@ -527,6 +528,7 @@ private:
 
   CGAL::Three::Scene_group_item* group;
   std::vector<Volume_plane_thread*> threads;
+
   struct Controls{
     CGAL::Three::Scene_item* group;
     CGAL::Three::Scene_item* x_item;
@@ -536,11 +538,14 @@ private:
     int y_value;
     int z_value;
   };
+
   Controls *current_control;
   QMap<CGAL::Three::Scene_item*, Controls> group_map;
   unsigned int intersection_id;
+
   bool loadDCM(QString filename);
   Image* createDCMImage(QString dirname);
+
   QLayout* createOrGetDockLayout() {
     QLayout* layout = nullptr;
     QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");;
@@ -1228,7 +1233,6 @@ bool Io_image_plugin::loadDCM(QString dirname)
     connect(ui.imageType, SIGNAL(currentIndexChanged(int)),
             this, SLOT(on_imageType_changed(int)));
 
-
     // Add precision values to the dialog
     for ( int i=1 ; i<9 ; ++i )
     {
@@ -1240,7 +1244,6 @@ bool Io_image_plugin::loadDCM(QString dirname)
     ui.imageType->addItem(QString("Segmented image"));
     ui.imageType->addItem(QString("Gray-level image"));
 
-
     // Open window
     QApplication::restoreOverrideCursor();
     int return_code = dialog.exec();
@@ -1248,64 +1251,51 @@ bool Io_image_plugin::loadDCM(QString dirname)
     {
       return false;
     }
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QApplication::processEvents();
 
-    // Get selected precision
-    int voxel_scale = ui.precisionList->currentIndex() + 1;
-
-    //Get the image type
-    QString type = ui.imageType->currentText();
-    Scene_image_item* image_item;
-    if(type == "Gray-level image")
+    Image *image = createDCMImage(dirname);
+    if(image->image() == nullptr)
     {
-
-      Image *image = createDCMImage(dirname);
-      if(image->image() == nullptr)
-      {
-        QMessageBox::warning(mw, mw->windowTitle(),
-                             tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
-        CGAL::Three::Three::warning(tr("Opening of file %1/ failed!").arg(dirname));
-        result = false;
-      }
-      else
-      {
-        CGAL::Three::Three::information(tr("File %1/ successfully opened.").arg(dirname));
-      }
-      if(result)
-      {
-      //Create planes
-      image_item = new Scene_image_item(image,125, true);
-      msgBox.setText("Planes created : 0/3");
-      msgBox.setStandardButtons(QMessageBox::NoButton);
-      msgBox.show();
-      createPlanes(image_item);
-      image_item->setName(fileinfo.baseName());
-      scene->addItem(image_item);
-      }
+      QMessageBox::warning(mw, mw->windowTitle(),
+                            tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
+      CGAL::Three::Three::warning(tr("Opening of file %1/ failed!").arg(dirname));
+      result = false;
     }
     else
     {
-      Image *image = createDCMImage(dirname);
-      if(image->image() == nullptr)
+      CGAL::Three::Three::information(tr("File %1/ successfully opened.").arg(dirname));
+    }
+
+    if(result)
+    {
+      // Get the image type
+      QString type = ui.imageType->currentText();
+      Scene_image_item* image_item;
+      if(type == "Gray-level image")
       {
-        QMessageBox::warning(mw, mw->windowTitle(),
-                             tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
-        CGAL::Three::Three::warning(tr("Opening of file %1/ failed!").arg(dirname));
-        result = false;
+        // Create planes
+        image_item = new Scene_image_item(image,125, true);
+        msgBox.setText("Planes created : 0/3");
+        msgBox.setStandardButtons(QMessageBox::NoButton);
+        msgBox.show();
+        createPlanes(image_item);
+        image_item->setName(fileinfo.baseName());
+        scene->addItem(image_item);
       }
       else
       {
-        CGAL::Three::Three::information(tr("File %1/ successfully opened.").arg(dirname));
-      }
-      if(result)
-      {
+        // Get selected precision
+        int voxel_scale = ui.precisionList->currentIndex() + 1;
+
         image_item = new Scene_image_item(image,voxel_scale, false);
         image_item->setName(fileinfo.baseName());
         scene->addItem(image_item);
       }
     }
   }
+
   return result;
 #else
   CGAL::Three::Three::warning("You need VTK to read a DCM file");
