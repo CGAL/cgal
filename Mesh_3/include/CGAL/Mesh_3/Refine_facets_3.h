@@ -348,6 +348,7 @@ public:
   std::string debug_info_element_impl(const Facet &facet) const
   {
     std::stringstream sstr;
+    sstr.precision(17);
     sstr << "Facet { " << std::endl
     << "  " << *facet.first->vertex((facet.second+1)%4) << std::endl
     << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
