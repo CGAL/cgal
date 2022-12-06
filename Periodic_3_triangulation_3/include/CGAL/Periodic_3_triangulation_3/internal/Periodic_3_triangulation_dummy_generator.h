@@ -65,7 +65,13 @@ insert_generic_dummy_points()
   std::array<FT, 3> steps;
 
   // Min:
+  // this doesn't work for P3M3 + sharp features due to weights having a hard constraint of 1/64th domain_size²
+// #define CGAL_P3T3_USE_EXPERIMENTAL_LARGE_STEP_IN_DUMMY_GENERATION
+#ifdef CGAL_P3T3_USE_EXPERIMENTAL_LARGE_STEP_IN_DUMMY_GENERATION
+  nums_steps[min_pos] = 3;
+#else
   nums_steps[min_pos] = 6;
+#endif
   steps[min_pos] = spans[min_pos] / nums_steps[min_pos];
 
   // Mid: do not use the min step, but redistribute the error between nums_steps[mid_pos] * min_step and the actual span
@@ -73,7 +79,11 @@ insert_generic_dummy_points()
   steps[mid_pos] = spans[mid_pos] / nums_steps[mid_pos];
 
   // Max: smaller step in the max span direction as to avoid cospherical configurations
+#ifdef CGAL_P3T3_USE_EXPERIMENTAL_LARGE_STEP_IN_DUMMY_GENERATION
+  const FT minor_step = spans[min_pos] / FT(4); // a ratio of 3:4 makes for nicely shaped tetrahedra
+#else
   const FT minor_step = spans[min_pos] / FT(8); // a ratio of 6:8 makes for nicely shaped tetrahedra
+#endif
   nums_steps[max_pos] = spans[max_pos] / minor_step; // implicit floor()
   CGAL_assertion(nums_steps[max_pos] >= steps[min_pos]);
 
