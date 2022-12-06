@@ -196,6 +196,14 @@ protected:
       std::cerr << "bad cell " << (void*)(ch.operator->()) << " (radius bound): size[" << size
                 << "] bound[" << sq_radius_bound_ << "]\n" ;
 #endif
+      return Is_bad(Quality(sq_radius_bound_/ size));
+    }
+    else if(is_lower_bound() && size <= sq_radius_bound_)
+    {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "Cell too small (uniform size): sq_radius[" << size
+        << "] bound[" << B_ << "]\n";
+#endif
       return Is_bad(Quality(sq_radius_bound_/size));
     }
     else

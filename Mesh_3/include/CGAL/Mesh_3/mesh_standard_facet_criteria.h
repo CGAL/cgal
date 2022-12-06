@@ -446,8 +446,14 @@ protected:
 #endif
       return Is_bad(Quality(B_/sq_radius));
     }
-    else if(is_lower_bound() && sq_radius < B_)
-      return Is_bad(Quality(B_ / sq_radius));
+    else if(is_lower_bound() && sq_radius <= B_)
+    {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "Facet too small (uniform size): sq_radius[" << sq_radius
+      << "] bound[" << B_ << "]\n";
+#endif
+      return Is_bad(Quality(B_/sq_radius));
+    }
     else
       return Is_bad();
   }
