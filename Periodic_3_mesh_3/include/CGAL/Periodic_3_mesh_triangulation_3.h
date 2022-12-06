@@ -195,7 +195,7 @@ public:
     return P3T3::internal::robust_canonicalize_point(p, geom_traits());
   }
 
-  // @fixme it might be dangerous to call robust_canonicalize without also changing
+  // @fixme it might be dangerous to call robust_canonicalize() without also changing
   // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
@@ -307,18 +307,18 @@ public:
       geom_traits().compute_power_distance_to_power_sphere_3_object();
 
     Offset o_nb = this->neighbor_offset(c, i, c->neighbor(i));
-    Offset o_vt = this->get_offset(c->neighbor(i), c->neighbor(i)->index(c));
+    Offset o_vt = get_offset(c->neighbor(i), c->neighbor(i)->index(c));
 
-    const Weighted_point& wp0 = this->point(c->vertex(0)); // need the canonical point
-    const Weighted_point& wp1 = this->point(c->vertex(1));
-    const Weighted_point& wp2 = this->point(c->vertex(2));
-    const Weighted_point& wp3 = this->point(c->vertex(3));
-    const Weighted_point& wq = this->point(c->neighbor(i)->vertex(c->neighbor(i)->index(c)));
-    const Offset& op0 = this->get_offset(c, 0);
-    const Offset& op1 = this->get_offset(c, 1);
-    const Offset& op2 = this->get_offset(c, 2);
-    const Offset& op3 = this->get_offset(c, 3);
-    const Offset& oq = o_vt - o_nb;
+    const Weighted_point& wp0 = point(c->vertex(0)); // need the canonical point
+    const Weighted_point& wp1 = point(c->vertex(1));
+    const Weighted_point& wp2 = point(c->vertex(2));
+    const Weighted_point& wp3 = point(c->vertex(3));
+    const Weighted_point& wq = point(c->neighbor(i)->vertex(c->neighbor(i)->index(c)));
+    const Offset& op0 = get_offset(c, 0);
+    const Offset& op1 = get_offset(c, 1);
+    const Offset& op2 = get_offset(c, 2);
+    const Offset& op3 = get_offset(c, 3);
+    const Offset oq = o_vt - o_nb;
 
     return cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq);
   }
@@ -328,23 +328,25 @@ public:
   FT compute_power_distance_to_power_sphere(const Cell_handle c,
                                             const Vertex_handle v) const
   {
+    // @fixme need to introduce Compare_power_distances_to_power_sphere_3(4 points, query)
     typename Geom_traits::Compute_power_distance_to_power_sphere_3 cr =
       geom_traits().compute_power_distance_to_power_sphere_3_object();
 
     FT min_power_dist = std::numeric_limits<FT>::infinity();
 
+    const Weighted_point& wp0 = point(c->vertex(0)); // need the canonical point
+    const Weighted_point& wp1 = point(c->vertex(1));
+    const Weighted_point& wp2 = point(c->vertex(2));
+    const Weighted_point& wp3 = point(c->vertex(3));
+    const Weighted_point& wq = point(v);
+    const Offset& op0 = get_offset(c, 0);
+    const Offset& op1 = get_offset(c, 1);
+    const Offset& op2 = get_offset(c, 2);
+    const Offset& op3 = get_offset(c, 3);
+
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < 3; ++j) {
         for(int k = 0; k < 3; ++k) {
-          const Weighted_point& wp0 = this->point(c->vertex(0)); // need the canonical point
-          const Weighted_point& wp1 = this->point(c->vertex(1));
-          const Weighted_point& wp2 = this->point(c->vertex(2));
-          const Weighted_point& wp3 = this->point(c->vertex(3));
-          const Weighted_point& wq = this->point(v);
-          const Offset& op0 = this->get_offset(c, 0);
-          const Offset& op1 = this->get_offset(c, 1);
-          const Offset& op2 = this->get_offset(c, 2);
-          const Offset& op3 = this->get_offset(c, 3);
           const Offset oq(i-1, j-1, k-1);
 
           FT power_dist = cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq);
@@ -374,11 +376,14 @@ public:
           const Offset off(i-1, j-1, k-1);
           if(tester(c, off))
           {
-            return construct_tetrahedron(
-                       canonic_wp, this->point(c->vertex((index+1)&3)),
-                       this->point(c->vertex((index+2)&3)), this->point(c->vertex((index+3)&3)),
-                       off, this->get_offset(c, (index+1)&3),
-                       this->get_offset(c, (index+2)&3), this->get_offset(c, (index+3)&3));
+            return construct_tetrahedron(canonic_wp,
+                                         point(c->vertex((index+1)&3)),
+                                         point(c->vertex((index+2)&3)),
+                                         point(c->vertex((index+3)&3)),
+                                         off,
+                                         get_offset(c, (index+1)&3),
+                                         get_offset(c, (index+2)&3),
+                                         get_offset(c, (index+3)&3));
           }
         }
       }
@@ -407,34 +412,41 @@ public:
     }
 
     return bs;
-
-    return Base::side_of_power_sphere(c, canonical_p, Offset(), perturb);
   }
 
   // Warning: This is a periodic version that computes the smallest possible distance
   // between 'p' and 'q', for all possible combinations of offsets
   FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
-    typename Geom_traits::Compute_squared_distance_3 csd =
+    typename Geom_traits::Compare_squared_distance_3 compare_sd =
+      geom_traits().compare_squared_distance_3_object();
+    typename Geom_traits::Compute_squared_distance_3 compute_sd =
       geom_traits().compute_squared_distance_3_object();
 
-    const Bare_point cp = canonicalize_point(p);
-    const Bare_point cq = canonicalize_point(q);
+    bool used_exact = false;
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
 
-    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+    Offset min_off;
 
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k) {
-          FT sq_dist = csd(cq, construct_point(std::make_pair(cp, Offset(i-1, j-1, k-1))));
+        for(int k = 0; k < 3; ++k)
+        {
+          const Offset o(i-1, j-1, k-1);
 
-          if(sq_dist < min_sq_dist)
-            min_sq_dist = sq_dist;
+          if((i == 0 && j == 0 && k == 0) ||
+              compare_sd(q, p, q, p,
+                         pp_q.second, pp_p.second + o,
+                         pp_q.second, pp_p.second + min_off) == SMALLER)
+          {
+            min_off = o;
+          }
         }
       }
     }
 
-    return min_sq_dist;
+    return compute_sd(q, p, pp_q.second, pp_p.second + min_off);
   }
 
   // Warning: This function finds which offset 'Oq' should be applied to 'q' such
@@ -443,26 +455,42 @@ public:
   // \pre 'p' lives in the canonical instance.
   Bare_point get_closest_point(const Bare_point& p, const Bare_point& q) const
   {
-    Bare_point rq;
-    const Bare_point cq = canonicalize_point(q);
-    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+    CGAL_precondition(p.x() < domain().xmax());
+    CGAL_precondition(p.y() < domain().ymax());
+    CGAL_precondition(p.z() < domain().zmax());
+    CGAL_precondition(p.x() >= domain().xmin());
+    CGAL_precondition(p.y() >= domain().ymin());
+    CGAL_precondition(p.z() >= domain().zmin());
 
-    for(int i = -1; i < 2; ++i) {
-      for(int j = -1; j < 2; ++j) {
-        for(int k = -1; k < 2; ++k) {
-          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i, j, k)));
-          FT sq_dist = geom_traits().compute_squared_distance_3_object()(p, tcq);
+    typename Geom_traits::Compare_squared_distance_3 compare_sd =
+      geom_traits().compare_squared_distance_3_object();
+    typename Geom_traits::Construct_point_3 cp =
+      geom_traits().construct_point_3_object();
 
-          if(sq_dist < min_sq_dist)
+    bool used_exact = false;
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
+
+    Offset min_off;
+    Offset null_offset(0,0,0);
+
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k)
+        {
+          const Offset o(i-1, j-1, k-1);
+
+          if((i == 0 && j == 0 && k == 0) ||
+             compare_sd(p, q, p, q,
+                        null_offset, pp_q.second + o,
+                        null_offset, pp_q.second + min_off) == SMALLER)
           {
-            rq = tcq;
-            min_sq_dist = sq_dist;
+            min_off = o;
           }
         }
       }
     }
 
-    return rq;
+    return cp(q, pp_q.second + min_off);
   }
 
   Weighted_point get_closest_point(const Weighted_point& wp, const Weighted_point& wq) const
@@ -504,37 +532,51 @@ public:
                                        const Weighted_point& q,
                                        const Weighted_point& r) const
   {
-    typename Geom_traits::Compute_power_product_3 power_distance =
-      geom_traits().compute_power_product_3_object();
+    CGAL_precondition(this->is_1_cover());
 
-    // canonicalize the points
-    const Weighted_point cp =
-      geom_traits().construct_weighted_point_3_object()(canonicalize_point(p));
-    const Weighted_point cq = canonicalize_point(q);
-    const Weighted_point cr = canonicalize_point(r);
+    typename Geom_traits::Construct_point_3 cp =
+      geom_traits().construct_point_3_object();
+    typename Geom_traits::Compare_power_distance_3 compare_power_distance =
+      geom_traits().compare_power_distance_3_object();
 
-    FT min_power_distance_to_q = std::numeric_limits<FT>::infinity();
-    FT min_power_distance_to_r = std::numeric_limits<FT>::infinity();
+    // Compute the offsets that would bring p, q, and r into the canonical domain
+    bool used_exact = false;
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(cp(q), used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_r = P3T3::internal::construct_periodic_point(cp(r), used_exact, geom_traits());
 
-    for(int i = 0; i < 3; ++i) {
-      for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k) {
-          const Weighted_point cp_copy =
-            construct_weighted_point(std::make_pair(cp, Offset(i-1, j-1, k-1)));
-
-          const FT power_distance_to_q = power_distance(cp_copy, cq);
-          if(power_distance_to_q < min_power_distance_to_q)
-            min_power_distance_to_q = power_distance_to_q;
-
-          const FT power_distance_to_r = power_distance(cp_copy, cr);
-          if (power_distance_to_r < min_power_distance_to_r)
-            min_power_distance_to_r = power_distance_to_r;
+    // To compare pp(p, q) to pp(p, r), we first need to know the best offsets that minimize these distances
+    auto get_offset_minimizing_power_product = [&](const Weighted_point& wp,
+                                                   const Offset& base_wp_offset) -> Offset
+    {
+      Offset min_wp_offset;
+      for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j < 3; ++j) {
+          for(int k = 0; k < 3; ++k)
+          {
+            const Offset off(i-1, j-1, k-1);
+            if((i == 0 && j == 0 && k == 0) ||
+               compare_power_distance(p, wp, wp,
+                                      pp_p.second,
+                                      base_wp_offset + off,
+                                      base_wp_offset + min_wp_offset) == SMALLER)
+            {
+              min_wp_offset = off;
+            }
+          }
         }
       }
-    }
 
-    CGAL_postcondition(min_power_distance_to_r < 0.5 && min_power_distance_to_q < 0.5);
-    return min_power_distance_to_q >= min_power_distance_to_r;
+      return min_wp_offset;
+    };
+
+    Offset min_q_off = get_offset_minimizing_power_product(q, pp_q.second);
+    Offset min_r_off = get_offset_minimizing_power_product(r, pp_r.second);
+
+    return !(compare_power_distance(p, q, r,
+                                    pp_p.second,
+                                    pp_q.second + min_q_off,
+                                    pp_r.second + min_r_off) == SMALLER);
   }
 
   /// \name Locate functions
@@ -589,7 +631,7 @@ public:
     query_offset = this->combine_offsets(Offset(), -query_offset);
 
     Vertex_handle nearest = Base::nearest_vertex_in_cell(c, canonical_p, query_offset);
-    const Weighted_point& nearest_wp = this->point(nearest);
+    const Weighted_point& nearest_wp = point(nearest);
     Offset offset_of_nearest = Base::get_min_dist_offset(canonical_p, query_offset, nearest);
     FT min_sq_dist = csd(canonical_p, cp(nearest_wp), query_offset, offset_of_nearest);
 
@@ -604,7 +646,7 @@ public:
       for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin();
                                                               vsit != vs.end(); ++vsit)
       {
-        // Can happen in 27-sheeted triangulations composed of few points
+        // Can happen in periodic triangulations composed of few points
         if(point(*vsit) == point(nearest))
           continue;
 
@@ -614,7 +656,7 @@ public:
         {
           tmp = *vsit;
           offset_of_nearest = min_dist_offset;
-          const Weighted_point& vswp = this->point(tmp);
+          const Weighted_point& vswp = point(tmp);
           min_sq_dist = csd(canonical_p, cp(vswp), query_offset, min_dist_offset);
         }
       }
@@ -977,12 +1019,14 @@ public:
                            to_exact(point(n->vertex(2))), to_exact(point(n->vertex(3))),
                            get_offset(n, 0), get_offset(n, 1),
                            get_offset(n, 2), get_offset(n, 3));
+
     typename EKernel::Point_3 dp;
 
     // get the offset of the first weighted circumcenter
     Offset transl_wc1;
-    while(true) /* while not in */
+    for(;;) /* while not in */
     {
+      // can safely perform a construction here because the kernel has exact constructions
       dp = etraits.construct_point_3_object()(exact_wc1, transl_wc1);
 
       if(dp.x() < dom.xmin())
@@ -1003,7 +1047,7 @@ public:
 
     // get the offset of the second weighted circumcenter
     Offset transl_wc2;
-    while(true) /* while not in */
+    for(;;) /* while not in */
     {
       dp = etraits.construct_point_3_object()(exact_wc2, transl_wc2);
 
@@ -1029,6 +1073,7 @@ public:
     Offset cumm_off((std::min)(o1.x(), o2.x()),
                     (std::min)(o1.y(), o2.y()),
                     (std::min)(o1.z(), o2.z()));
+
     EPoint_3 ewc1 = exact_construct_point(exact_wc1, transl_wc1);
     EPoint_3 ewc2 = exact_construct_point(exact_wc2, transl_wc2);
     p = back_from_exact(exact_construct_point(ewc1, o1 - cumm_off));
