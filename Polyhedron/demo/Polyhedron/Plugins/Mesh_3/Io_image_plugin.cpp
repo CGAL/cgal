@@ -1408,8 +1408,9 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
         msgBox.setText("Planes created : 0/3");
         msgBox.setStandardButtons(QMessageBox::NoButton);
         msgBox.show();
-        createPlanes(image_item);
+
         scene->addItem(image_item);
+        createPlanes(image_item);
       }
       else
       {
