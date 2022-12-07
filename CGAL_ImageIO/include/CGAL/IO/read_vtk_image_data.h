@@ -94,16 +94,17 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   if(owning == Image_3::OWN_THE_DATA) {
     int dims_n = dims[0]*dims[1]*dims[2];
     image->data = ::ImageIO_alloc(dims_n * image->wdim);
-    std::cerr << "GetNumberOfTuples() = " << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() << "\n"
-              << "components = " << cn << "\n"
-              << "wdim = " << image->wdim << "\n"
-              << "image->size() = " << dims_n << std::endl;
+
+    // std::cerr << "GetNumberOfTuples() = " << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() << "\n"
+    //           << "components = " << cn << "\n"
+    //           << "wdim = " << image->wdim << "\n"
+    //           << "image->size() = " << dims_n << std::endl;
 
     if(cn == 1) {
       vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
     } else {
       std::cerr << "Warning: input has " << cn << " components; only the value of the first component will be used." << std::endl;
-      CGAL_assertion(cn >= 3); // if it's more than 1, it needs to be more than 3
+      CGAL_assertion(cn >= 3); // if it's more than 1, it needs to be at least 3
 
       // cast the data void pointers to make it possible to do pointer arithmetic
       char* src = static_cast<char*>(vtk_image->GetPointData()->GetScalars()->GetVoidPointer(0));

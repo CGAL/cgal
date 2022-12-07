@@ -1136,7 +1136,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     vtk_image->Print(std::cerr);
     *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
 #else
-    CGAL::Three::Three::warning("You need VTK to read a NRRD file");
+    CGAL::Three::Three::warning("VTK is required to read NRRD files");
     delete image;
     return QList<Scene_item*>();
 #endif
@@ -1366,7 +1366,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
       ui.precisionList->addItem(s);
     }
 
-    //Adds Image type
+    // Adds Image type
     ui.imageType->addItem(QString("Segmented image"));
     ui.imageType->addItem(QString("Gray-level image"));
 
