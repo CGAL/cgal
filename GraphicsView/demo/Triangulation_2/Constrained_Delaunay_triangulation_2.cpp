@@ -559,9 +559,20 @@ MainWindow::loadWKT(QString filename)
   {
     typedef CGAL::Polygon_with_holes_2<K> Polygon;
     typedef CGAL::Point_2<K> Point;
-    std::vector<Polygon> mps;
-    CGAL::IO::read_multi_polygon_WKT(ifs, mps);
-    for(const Polygon& p : mps)
+
+    std::deque<Point> points;
+    std::deque<std::vector<Point>> linestrings;
+    std::deque<Polygon> polygons;
+
+    CGAL::IO::read_WKT(ifs, points, linestrings, polygons);
+
+    cdt.insert(points.begin(),points.end());
+
+    for(const std::vector<Point>& line){
+      cdt.insert_constraint(line.begin(), line.end());
+    }
+
+    for(const Polygon& p : polygons)
     {
       if(p.outer_boundary().is_empty())
         continue;
