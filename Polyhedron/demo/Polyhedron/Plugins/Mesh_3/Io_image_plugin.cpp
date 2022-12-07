@@ -73,6 +73,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <locale>
 
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
@@ -220,6 +221,12 @@ private:
 
 const unsigned int Plane_slider::scale = 100;
 
+enum class Directory_extension_type
+{
+  DCM = 0,
+  BMP
+};
+
 class Io_image_plugin :
   public QObject,
   public CGAL::Three::Polyhedron_demo_plugin_helper,
@@ -255,6 +262,9 @@ public:
 
     QAction *actionLoadDCM = new QAction("Open Directory (DCM files)", mw);
     connect(actionLoadDCM, SIGNAL(triggered()), this, SLOT(on_actionLoadDCM_triggered()));
+
+    QAction *actionLoadBMP = new QAction("Open Directory (BMP files)", mw);
+    connect(actionLoadBMP, SIGNAL(triggered()), this, SLOT(on_actionLoadBMP_triggered()));
 
     if(planeSwitch)
     {
@@ -297,7 +307,8 @@ public:
       // Insert "Load implicit function" action
       if(nullptr != actionAfterLoad)
       {
-        menuFile->insertAction(actionAfterLoad,actionLoadDCM);
+        menuFile->insertAction(actionAfterLoad, actionLoadDCM);
+        menuFile->insertAction(actionAfterLoad, actionLoadBMP);
       }
     }
   }
@@ -529,7 +540,7 @@ public Q_SLOTS:
 
   }
 
-  void on_actionLoadDCM_triggered()
+  void loadDirectory(const Directory_extension_type ext)
   {
     QSettings settings;
     QString start_dir = settings.value("Open directory", QDir::current().dirName()).toString();
@@ -544,10 +555,20 @@ public Q_SLOTS:
         settings.setValue("Open directory", fileinfo.absoluteDir().absolutePath());
         QApplication::setOverrideCursor(Qt::WaitCursor);
         QApplication::processEvents();
-        loadDCM(dir);
-        QApplication::restoreOverrideCursor();
+
+        loadDirectory(dir, ext);
       }
     }
+  }
+
+  void on_actionLoadDCM_triggered()
+  {
+    return loadDirectory(Directory_extension_type::DCM);
+  }
+
+  void on_actionLoadBMP_triggered()
+  {
+    return loadDirectory(Directory_extension_type::BMP);
   }
 
   void connectNewViewer(QObject* o)
@@ -593,8 +614,8 @@ private:
   QMap<CGAL::Three::Scene_item*, Controls> group_map;
   unsigned int intersection_id;
 
-  bool loadDCM(QString filename);
-  Image* createDCMImage(QString dirname);
+  bool loadDirectory(const QString& filename, const Directory_extension_type ext);
+  Image* createDirectoryImage(const QString& dirname, const Directory_extension_type ext, const bool smooth);
 
   QLayout* createOrGetDockLayout()
   {
@@ -1308,10 +1329,15 @@ bool Io_image_plugin::canSave(const CGAL::Three::Scene_item* item)
   return qobject_cast<const Scene_image_item*>(item);
 }
 
-bool Io_image_plugin::loadDCM(QString dirname)
+bool Io_image_plugin::loadDirectory(const QString& dirname,
+                                    const Directory_extension_type ext)
 {
+#ifndef CGAL_USE_VTK
   QApplication::restoreOverrideCursor();
-#ifdef CGAL_USE_VTK
+  CGAL::Three::Three::warning("VTK is required to read DCM and BMP files");
+  CGAL_USE(dirname);
+  return false;
+#else
   QFileInfo fileinfo;
   fileinfo.setFile(dirname);
   bool result = true;
@@ -1355,17 +1381,18 @@ bool Io_image_plugin::loadDCM(QString dirname)
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QApplication::processEvents();
 
-    Image *image = createDCMImage(dirname);
+    bool smooth = ui.smoothImage->isChecked();
+
+    Image *image = createDirectoryImage(dirname, ext, smooth);
     if(image->image() == nullptr)
     {
-      QMessageBox::warning(mw, mw->windowTitle(),
-                            tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
-      CGAL::Three::Three::warning(tr("Opening of file %1/ failed!").arg(dirname));
+      QMessageBox::warning(mw, mw->windowTitle(), tr("Error opening directory <tt>%1/</tt>!").arg(dirname));
+      CGAL::Three::Three::warning(tr("Opening of directory %1/ failed!").arg(dirname));
       result = false;
     }
     else
     {
-      CGAL::Three::Three::information(tr("File %1/ successfully opened.").arg(dirname));
+      CGAL::Three::Three::information(tr("Directory %1/ successfully opened.").arg(dirname));
     }
 
     if(result)
@@ -1396,86 +1423,87 @@ bool Io_image_plugin::loadDCM(QString dirname)
     }
   }
 
+  QApplication::restoreOverrideCursor();
   return result;
-#else
-  CGAL::Three::Three::warning("You need VTK to read a DCM file");
-  CGAL_USE(dirname);
-  return false;
 #endif
 }
 
-Image* Io_image_plugin::createDCMImage(QString dirname)
+Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
+                                             const Directory_extension_type ext,
+                                             const bool smooth)
 {
   Image* image = nullptr;
-#ifdef CGAL_USE_VTK
 
-  bool is_dcm = false;
-  bool is_bmp = false;
-
-  std::vector<boost::filesystem::path> paths;
-  vtkStringArray* files = vtkStringArray::New();
-  boost::filesystem::path p(dirname.toUtf8().data());
-  for(boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p)){
-    std::string s(x.path().extension().string());
-    if(s == std::string(".dcm") || (s == std::string(".DCM"))){ is_dcm = true; CGAL_assertion(!is_bmp); }
-    if(s == std::string(".bmp") || (s == std::string(".BMP"))){ is_bmp = true; CGAL_assertion(!is_dcm); }
-    paths.push_back(x.path());
-  }
-
-  // directory_iterator does not guarantee a sorted order
-  std::sort(std::begin(paths), std::end(paths));
-
-  for(const boost::filesystem::path& p : paths)
+#ifndef CGAL_USE_VTK
+  CGAL::Three::Three::warning("VTK is required to read DCM and BMP files");
+  CGAL_USE(dirname);
+  CGAL_USE(ext);
+#else
+  auto create_image = [&](auto&& reader) -> void
   {
-    std::cout << p.string() << std::endl;
-    files->InsertNextValue(p.string());
-  }
-
-  if(is_dcm){
-    vtkNew<vtkDICOMImageReader> dicom_reader;
-    dicom_reader->SetDirectoryName(dirname.toUtf8());
-
-    auto executive = vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
-    if (executive)
-      {
-        executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
-      }
-
-    vtkNew<vtkImageGaussianSmooth> smoother;
-    smoother->SetStandardDeviations(1., 1., 1.);
-    smoother->SetInputConnection(dicom_reader->GetOutputPort());
-    smoother->Update();
-    auto vtk_image = smoother->GetOutput();
-    vtk_image->Print(std::cerr);
-    image = new Image;
-    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the
-                                                       // image data
-  }
-
-  if(is_bmp)
-  {
-   vtkNew<vtkBMPReader> bmp_reader;
-    bmp_reader->SetFileNames(files);
-
-    auto executive = vtkDemandDrivenPipeline::SafeDownCast(bmp_reader->GetExecutive());
+    auto executive = vtkDemandDrivenPipeline::SafeDownCast(reader->GetExecutive());
     if(executive)
       executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
 
-    vtkNew<vtkImageGaussianSmooth> smoother;
-    smoother->SetStandardDeviations(1., 1., 1.);
-    smoother->SetInputConnection(bmp_reader->GetOutputPort());
-    smoother->Update();
+    vtkImageData* vtk_image = nullptr;
+    vtkNew<vtkImageGaussianSmooth> smoother; // must be here because it will own the vtk image
 
-    auto vtk_image = smoother->GetOutput();
+    if(smooth)
+    {
+      smoother->SetStandardDeviations(1., 1., 1.);
+      smoother->SetInputConnection(reader->GetOutputPort());
+      smoother->Update();
+      vtk_image = smoother->GetOutput();
+    }
+    else
+    {
+      reader->Update();
+      vtk_image = reader->GetOutput();
+    }
+
     vtk_image->Print(std::cerr);
 
-    image = new Image;
     *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
-  }
+  };
 
-#else
-  CGAL::Three::Three::warning("You need VTK to read DCM/BMP files");
-  CGAL_USE(dirname);
+  image = new Image;
+  if(ext == Directory_extension_type::DCM)
+  {
+    vtkNew<vtkDICOMImageReader> dicom_reader;
+    dicom_reader->SetDirectoryName(dirname.toUtf8());
+    create_image(dicom_reader);
+  }
+  else
+  {
+    CGAL_assertion(ext == Directory_extension_type::BMP);
+
+    // vtkBMPReader does not provide SetDirectoryName()...
+    std::vector<boost::filesystem::path> paths;
+    vtkStringArray* files = vtkStringArray::New();
+    boost::filesystem::path p(dirname.toUtf8().data());
+    for(boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p))
+    {
+      std::string s = x.path().extension().string();
+      std::transform(s.begin(), s.end(), s.begin(), tolower);
+      if(s != ".bmp")
+        continue;
+
+      paths.push_back(x.path());
+    }
+
+    // boost::filesystem::directory_iterator does not guarantee a sorted order
+    std::sort(std::begin(paths), std::end(paths));
+
+    for(const boost::filesystem::path& p : paths)
+      files->InsertNextValue(p.string());
+
+    if(files->GetSize() == 0)
+      return image;
+
+    vtkNew<vtkBMPReader> bmp_reader;
+    bmp_reader->SetFileNames(files);
+    create_image(bmp_reader);
+  }
 #endif
 
   return image;
