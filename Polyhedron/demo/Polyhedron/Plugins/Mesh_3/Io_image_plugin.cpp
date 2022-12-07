@@ -1377,11 +1377,11 @@ bool Io_image_plugin::loadDCM(QString dirname)
       {
         // Create planes
         image_item = new Scene_image_item(image,125, true);
+        image_item->setName(fileinfo.baseName());
         msgBox.setText("Planes created : 0/3");
         msgBox.setStandardButtons(QMessageBox::NoButton);
         msgBox.show();
         createPlanes(image_item);
-        image_item->setName(fileinfo.baseName());
         scene->addItem(image_item);
       }
       else
