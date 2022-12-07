@@ -26,6 +26,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/config.h>
 #include <CGAL/use.h>
+#include <CGAL/IO/helpers.h>
 #include <QAction>
 #include <QMenu>
 #include <QMouseEvent>
@@ -1484,9 +1485,8 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
     boost::filesystem::path p(dirname.toUtf8().data());
     for(boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p))
     {
-      std::string s = x.path().extension().string();
-      std::transform(s.begin(), s.end(), s.begin(), tolower);
-      if(s != ".bmp")
+      std::string s = x.path().string();
+      if(CGAL::IO::internal::get_file_extension(s) != "bmp")
         continue;
 
       paths.push_back(x.path());
