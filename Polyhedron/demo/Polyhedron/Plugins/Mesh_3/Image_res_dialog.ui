@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>529</width>
+    <width>561</width>
     <height>347</height>
    </rect>
   </property>
@@ -19,31 +19,8 @@
   <property name="windowTitle">
    <string>Load a 3D image</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0">
-   <item row="0" column="0" alignment="Qt::AlignRight">
-    <widget class="QLabel" name="imageTypeLabel">
-     <property name="text">
-      <string>Image &amp;type</string>
-     </property>
-     <property name="buddy">
-      <cstring>imageType</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="19" column="0" colspan="2">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="24" column="0" colspan="2">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0">
+   <item row="25" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -52,23 +29,6 @@
       <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
-   </item>
-   <item row="20" column="0" alignment="Qt::AlignRight">
-    <widget class="QLabel" name="smoothImageLabel">
-     <property name="text">
-      <string>Smooth image data</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="imageType"/>
    </item>
    <item row="3" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
@@ -93,7 +53,7 @@
         <property name="verticalSpacing">
          <number>6</number>
         </property>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="drawingPrecisionCommentLabel">
           <property name="font">
            <font>
@@ -102,20 +62,23 @@
            </font>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;1:x means that x voxels of the original image are represented by 1 cube in the drawn image&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;1:x means that x voxels of the original image are represented by 1 cube in the drawn image&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="drawingPrecisionLabel">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="lineWidth">
            <number>1</number>
           </property>
           <property name="text">
-           <string>Segmented image drawing &amp;precision  </string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Segmented image drawing &amp;amp;precision  &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -125,7 +88,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="1" column="1">
          <widget class="QComboBox" name="precisionList">
           <property name="editable">
            <bool>false</bool>
@@ -137,17 +100,7 @@
      </layout>
     </widget>
    </item>
-   <item row="20" column="1" alignment="Qt::AlignLeft">
-    <widget class="QCheckBox" name="smoothImage">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
+   <item row="5" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -159,6 +112,56 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="20" column="0" colspan="2">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="imageTypeLabel">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Image &amp;amp;type&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="buddy">
+      <cstring>imageType</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="0" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="smoothImageLabel">
+     <property name="text">
+      <string>Smooth image data</string>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="1" alignment="Qt::AlignLeft">
+    <widget class="QCheckBox" name="smoothImage">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="imageType"/>
    </item>
   </layout>
  </widget>
