@@ -72,14 +72,14 @@ private:
     typedef unsigned int uint;
 
 public:
-    TMC_functor(const Domain& domain, const FT iso_value, Point_range& points, Polygon_range& polygons)
-        : domain(domain), iso_value(iso_value), points(points), polygons(polygons) {}
+    TMC_functor(const Domain& domain, const FT isovalue, Point_range& points, Polygon_range& polygons)
+        : domain(domain), isovalue(isovalue), points(points), polygons(polygons) {}
 
     void operator()(const Cell_descriptor& cell) {
 
         FT values[8];
         Point corners[8];
-        const int i_case = get_cell_corners(domain, cell, iso_value, corners, values);
+        const int i_case = get_cell_corners(domain, cell, isovalue, corners, values);
 
         const int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
         if (Cube_table::intersected_edges[i_case] == 0 || Cube_table::intersected_edges[i_case] == all_bits_set) {
@@ -89,12 +89,12 @@ public:
         // this is the only difference to mc
         int tcm = (int)Cube_table::t_ambig[i_case];
         if (tcm == 105) {
-            p_slice(cell, iso_value, values, corners, i_case);
+            p_slice(cell, isovalue, values, corners, i_case);
             return;
         }
 
         std::array<Point, 12> vertices;
-        mc_construct_vertices(domain.cell_edges(cell), iso_value, i_case, corners, values, vertices);
+        mc_construct_vertices(domain.cell_edges(cell), isovalue, i_case, corners, values, vertices);
 
         // TODO: improve triangle generation
         // construct triangles
@@ -199,7 +199,7 @@ public:
 
         // compute oriented contours
         // A countour consists of segment at the faces connecting the intersection of the
-        // iso-surface with the edges. For each edge we store the edge to which the segment
+        // isosurface with the edges. For each edge we store the edge to which the segment
         // is outgoing and the edge from which the segment in comming. Therefore a contour
         // cab be reconstructed by connecting the edges in the direccion of the outgoing.
         // The contour is oriented in such a way, that the positive vertices are outside.
@@ -954,7 +954,7 @@ public:
 
 private:
     const Domain& domain;
-    FT iso_value;
+    FT isovalue;
 
     Point_range& points;
     Polygon_range& polygons;

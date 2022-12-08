@@ -60,9 +60,9 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-// Interpolate linearly between two vertex positions v0, v1 with values d0 and d1 according to the iso_value
+// Interpolate linearly between two vertex positions v0, v1 with values d0 and d1 according to the isovalue
 template <class Point_3, typename FT>
-Point_3 vertex_interpolation(const Point_3& p0, const Point_3& p1, const FT d0, const FT d1, const FT iso_value) {
+Point_3 vertex_interpolation(const Point_3& p0, const Point_3& p1, const FT d0, const FT d1, const FT isovalue) {
 
     FT mu;
 
@@ -70,7 +70,7 @@ Point_3 vertex_interpolation(const Point_3& p0, const Point_3& p1, const FT d0, 
     if (abs(d1 - d0) < 0.000001) {
         mu = 0.5;  // if both points have the same value, assume isolevel is in the middle
     } else {
-        mu = (iso_value - d0) / (d1 - d0);
+        mu = (isovalue - d0) / (d1 - d0);
     }
 
     assert(mu >= 0.0 || mu <= 1.0);
@@ -82,7 +82,7 @@ Point_3 vertex_interpolation(const Point_3& p0, const Point_3& p1, const FT d0, 
 // Retrieve the corner vertices and their values of a cell and return the lookup index
 template <class Domain_, typename Corners_, typename Values_>
 std::size_t get_cell_corners(const Domain_& domain, const typename Domain_::Cell_descriptor& cell,
-                             const typename Domain_::FT iso_value, Corners_& corners, Values_& values) {
+                             const typename Domain_::FT isovalue, Corners_& corners, Values_& values) {
 
     typedef typename Domain_::Vertex_descriptor Vertex_descriptor;
 
@@ -94,7 +94,7 @@ std::size_t get_cell_corners(const Domain_& domain, const typename Domain_::Cell
         corners[v_id] = domain.position(v);
         values[v_id] = domain.value(v);
 
-        if (values[v_id] >= iso_value) {
+        if (values[v_id] >= isovalue) {
             index.set(v_id);
         }
         // next cell vertex
@@ -106,7 +106,7 @@ std::size_t get_cell_corners(const Domain_& domain, const typename Domain_::Cell
 
 // Create the vertices on the edges of one cell
 template <class CellEdges, typename FT, typename Corners_, typename Values_, typename Vertices_>
-void mc_construct_vertices(const CellEdges& cell_edges, const FT iso_value, const std::size_t i_case,
+void mc_construct_vertices(const CellEdges& cell_edges, const FT isovalue, const std::size_t i_case,
                            const Corners_& corners, const Values_& values, Vertices_& vertices) {
 
     // compute for this case the vertices
@@ -123,7 +123,7 @@ void mc_construct_vertices(const CellEdges& cell_edges, const FT iso_value, cons
             const int v0 = Cube_table::edge_to_vertex[e_id][0];
             const int v1 = Cube_table::edge_to_vertex[e_id][1];
 
-            vertices[e_id] = vertex_interpolation(corners[v0], corners[v1], values[v0], values[v1], iso_value);
+            vertices[e_id] = vertex_interpolation(corners[v0], corners[v1], values[v0], values[v1], isovalue);
         }
         flag <<= 1;
         e_id++;
@@ -181,7 +181,7 @@ private:
 
 public:
     // Create a Marching Cubes functor for a domain and iso value
-    Marching_cubes_3(const Domain& domain, const FT iso_value) : domain(domain), iso_value(iso_value) {}
+    Marching_cubes_3(const Domain& domain, const FT isovalue) : domain(domain), isovalue(isovalue) {}
 
     // Compute one cell
     void operator()(const Cell_descriptor& cell) {
@@ -192,7 +192,7 @@ public:
 
         FT values[8];
         Point corners[8];
-        const int i_case = get_cell_corners(domain, cell, iso_value, corners, values);
+        const int i_case = get_cell_corners(domain, cell, isovalue, corners, values);
 
         const int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
         if (i_case == 0 || i_case == all_bits_set) {
@@ -200,7 +200,7 @@ public:
         }
 
         std::array<Point, 12> vertices;
-        mc_construct_vertices(domain.cell_edges(cell), iso_value, i_case, corners, values, vertices);
+        mc_construct_vertices(domain.cell_edges(cell), isovalue, i_case, corners, values, vertices);
 
         mc_construct_triangles(i_case, vertices, triangle_list);
     }
@@ -212,7 +212,7 @@ public:
 
 private:
     const Domain& domain;
-    FT iso_value;
+    FT isovalue;
 
     Triangle_list triangle_list;
 };

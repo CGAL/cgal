@@ -39,26 +39,26 @@ namespace Isosurfacing {
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is itself a model of the concepts
  * `RandomAccessContainer` and `BackInsertionSequence` whose value type is `std::size_t`.
  *
- * \tparam Positioning is a functor containing the function `position` that takes `domain`, `iso_value`, `cell`, and `position`
+ * \tparam Positioning is a functor containing the function `position` that takes `domain`, `isovalue`, `cell`, and `position`
  * as input and returns a boolean that is `true` if the isosurface intersects the cell.
  *
  * \param domain the domain providing input data and its topology
- * \param iso_value value of the isosurface
+ * \param isovalue value of the isosurface
  * \param points points of the polzgons in the created indexed face set
  * \param polygons each element in the vector describes a polygon using the indices of the points in `points`
  * \param positioning the functor dealing with vertex positioning inside a cell
  */
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange,
           class Positioning = internal::Positioning::QEM_SVD<true>>
-void dual_contouring(const Domain_& domain, const typename Domain_::FT iso_value, PointRange& points,
+void dual_contouring(const Domain_& domain, const typename Domain_::FT isovalue, PointRange& points,
                      PolygonRange& polygons, const Positioning& positioning = Positioning()) {
 
     // create vertices in each relevant cell
-    internal::Dual_contouring_vertex_positioning<Domain_, Positioning> pos_func(domain, iso_value, positioning);
+    internal::Dual_contouring_vertex_positioning<Domain_, Positioning> pos_func(domain, isovalue, positioning);
     domain.template iterate_cells<Concurrency_tag>(pos_func);
 
     // connect vertices around an edge to form a face
-    internal::Dual_contouring_face_generation<Domain_> face_generation(domain, iso_value);
+    internal::Dual_contouring_face_generation<Domain_> face_generation(domain, isovalue);
     domain.template iterate_edges<Concurrency_tag>(face_generation);
 
     // copy vertices to point range
