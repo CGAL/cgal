@@ -31,7 +31,7 @@ struct DefaultColorFunctorFaceGraph
     return get_random_color(CGAL::get_default_random());
   }
 
-  // edge and vertices are black by default
+  // edges and vertices are black by default
   template<typename Graph>
   CGAL::IO::Color operator()(const Graph& /*g*/,
                              typename boost::graph_traits<Graph>::edge_descriptor /*e*/) const
