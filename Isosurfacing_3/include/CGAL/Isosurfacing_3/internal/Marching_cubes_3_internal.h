@@ -60,6 +60,7 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
+// Interpolate linearly between two vertex positions v0, v1 with values d0 and d1 according to the iso_value
 template <class Point_3, typename FT>
 Point_3 vertex_interpolation(const Point_3& p0, const Point_3& p1, const FT d0, const FT d1, const FT iso_value) {
 
@@ -78,6 +79,7 @@ Point_3 vertex_interpolation(const Point_3& p0, const Point_3& p1, const FT d0, 
     return Point_3(p1.x() * mu + p0.x() * (1 - mu), p1.y() * mu + p0.y() * (1 - mu), p1.z() * mu + p0.z() * (1 - mu));
 }
 
+// Retrieve the corner vertices and their values of a cell and return the lookup index
 template <class Domain_, typename Corners_, typename Values_>
 std::size_t get_cell_corners(const Domain_& domain, const typename Domain_::Cell_descriptor& cell,
                              const typename Domain_::FT iso_value, Corners_& corners, Values_& values) {
@@ -102,6 +104,7 @@ std::size_t get_cell_corners(const Domain_& domain, const typename Domain_::Cell
     return static_cast<std::size_t>(index.to_ullong());
 }
 
+// Create the vertices on the edges of one cell
 template <class CellEdges, typename FT, typename Corners_, typename Values_, typename Vertices_>
 void mc_construct_vertices(const CellEdges& cell_edges, const FT iso_value, const std::size_t i_case,
                            const Corners_& corners, const Values_& values, Vertices_& vertices) {
@@ -127,6 +130,7 @@ void mc_construct_vertices(const CellEdges& cell_edges, const FT iso_value, cons
     }
 }
 
+// Connect the vertices of one cell to form triangles
 template <typename Vertices_, class TriangleList>
 void mc_construct_triangles(const int i_case, const Vertices_& vertices, TriangleList& triangles) {
     // construct triangles
@@ -145,6 +149,7 @@ void mc_construct_triangles(const int i_case, const Vertices_& vertices, Triangl
     }
 }
 
+// Convert the triangle list to an indexed face set
 template <class TriangleList, class PointRange, class PolygonRange>
 void to_indexed_face_set(const TriangleList& triangle_list, PointRange& points, PolygonRange& polygons) {
     for (auto& triangle : triangle_list) {
@@ -154,12 +159,14 @@ void to_indexed_face_set(const TriangleList& triangle_list, PointRange& points, 
         points.push_back(triangle[1]);
         points.push_back(triangle[2]);
 
+        // simply use increasing indices
         polygons.push_back({id + 2, id + 1, id + 0});
     }
 }
 
+// Marching Cubes implemented as a functor that runs on every cell of the grid
 template <class Domain_>
-class Marching_cubes_functor {
+class Marching_cubes_3 {
 private:
     typedef Domain_ Domain;
     typedef typename Domain::FT FT;
@@ -173,11 +180,13 @@ private:
 #endif
 
 public:
-    Marching_cubes_functor(const Domain& domain, const FT iso_value) : domain(domain), iso_value(iso_value) {}
+    // Create a Marching Cubes functor for a domain and iso value
+    Marching_cubes_3(const Domain& domain, const FT iso_value) : domain(domain), iso_value(iso_value) {}
 
-
+    // Compute one cell
     void operator()(const Cell_descriptor& cell) {
 
+        // TODO: maybe better checks if the domain can be processed?
         assert(domain.cell_vertices(cell).size() == 8);
         assert(domain.cell_edges(cell).size() == 12);
 
@@ -187,7 +196,7 @@ public:
 
         const int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
         if (i_case == 0 || i_case == all_bits_set) {
-            return;
+            return;  // skip empty cells
         }
 
         std::array<Point, 12> vertices;
@@ -196,7 +205,8 @@ public:
         mc_construct_triangles(i_case, vertices, triangle_list);
     }
 
-    const Triangle_list& get_triangles() const {
+    // Get the created triangle list
+    const Triangle_list& triangles() const {
         return triangle_list;
     }
 

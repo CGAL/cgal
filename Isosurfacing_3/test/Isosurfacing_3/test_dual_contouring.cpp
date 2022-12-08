@@ -8,6 +8,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/Finite_difference_gradient.h>
 
 #include "Timer.h"
 

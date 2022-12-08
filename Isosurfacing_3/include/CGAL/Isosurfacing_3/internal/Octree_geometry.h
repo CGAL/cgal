@@ -21,6 +21,7 @@
 
 namespace CGAL {
 namespace Isosurfacing {
+namespace internal {
 
 template <class GeomTraits>
 class Octree_geometry {
@@ -43,6 +44,7 @@ private:
     const Octree octree;
 };
 
+}  // namespace internal
 }  // namespace Isosurfacing
 }  // namespace CGAL
 

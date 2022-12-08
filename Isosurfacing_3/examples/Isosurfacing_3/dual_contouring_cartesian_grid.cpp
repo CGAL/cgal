@@ -1,5 +1,5 @@
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Default_gradients.h>
+#include <CGAL/Explicit_cartesian_grid_gradient.h>
 #include <CGAL/Dual_contouring_3.h>
 #include <CGAL/Explicit_cartesian_grid_domain.h>
 #include <CGAL/Simple_cartesian.h>

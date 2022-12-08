@@ -15,10 +15,10 @@
 #include <CGAL/license/Isosurfacing_3.h>
 
 #include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Zero_gradient.h>
 #include <CGAL/Isosurfacing_3/internal/Base_domain.h>
 #include <CGAL/Isosurfacing_3/internal/Cartesian_grid_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Grid_topology.h>
+#include <CGAL/Zero_gradient.h>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -30,11 +30,13 @@ namespace Isosurfacing {
  * `IsosurfacingDomainWithGradient`.
  *
  * \tparam GeomTraits the traits type
- * \tparam Gradient_ the type of the gradient functor. It must implement `GeomTraits::Vector operator()(const GeomTraits::Point& point) const`.
+ * \tparam Gradient_ the type of the gradient functor. It must implement `GeomTraits::Vector operator()(const
+ * GeomTraits::Point& point) const`.
  */
 template <class GeomTraits, typename Gradient_>
-using Explicit_cartesian_grid_domain = Base_domain<GeomTraits, Grid_topology, Cartesian_grid_geometry<GeomTraits>,
-                                                   Cartesian_grid_3<GeomTraits>, Gradient_>;
+using Explicit_cartesian_grid_domain =
+    internal::Base_domain<GeomTraits, internal::Grid_topology, internal::Cartesian_grid_geometry<GeomTraits>,
+                          Cartesian_grid_3<GeomTraits>, Gradient_>;
 
 /**
  * \ingroup PkgIsosurfacing3Ref
