@@ -19,6 +19,7 @@
 #include <CGAL/Isosurfacing_3/internal/Grid_topology.h>
 #include <CGAL/Isosurfacing_3/internal/Implicit_function_with_geometry.h>
 #include <CGAL/Zero_gradient.h>
+#include <CGAL/Bbox_3.h>
 
 namespace CGAL {
 namespace Isosurfacing {
