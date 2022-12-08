@@ -28,9 +28,6 @@ struct DefaultColorFunctorFaceGraph
   CGAL::IO::Color operator()(const Graph& mesh,
                              typename boost::graph_traits<Graph>::face_descriptor fh) const
   {
-    if (fh == boost::graph_traits<Graph>::null_face()) // use to get the mono color
-      return CGAL::IO::Color(100, 125, 200); // R G B between 0-255
-
     return get_random_color(CGAL::get_default_random());
   }
 
@@ -152,21 +149,18 @@ protected:
       {
         for (auto fh: faces(g))
         {
-          if (fh!=boost::graph_traits<Graph>::null_face()) // @fixme useless
-          {
-            const CGAL::IO::Color& c = fcolor(g, fh);
-            face_begin(c);
-            auto hd=halfedge(fh, g);
-            const auto first_hd = hd;
-            do
-              {
-                auto v = source(hd, g);
-                add_point_in_face(get(point_pmap, v), get(vnormals, v));
-                hd=next(hd, g);
-              }
-            while(hd!=first_hd);
-            face_end();
-          }
+          const CGAL::IO::Color& c = fcolor(g, fh);
+          face_begin(c);
+          auto hd=halfedge(fh, g);
+          const auto first_hd = hd;
+          do
+            {
+              auto v = source(hd, g);
+              add_point_in_face(get(point_pmap, v), get(vnormals, v));
+              hd=next(hd, g);
+            }
+          while(hd!=first_hd);
+          face_end();
         }
       }
 
