@@ -120,12 +120,12 @@ Each algorithm can be called by a single templated function, and the function si
 
 \code{.cpp}
 template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange>
-void marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value, PointRange& points, PolygonRange& polygons);
+void marching_cubes(const Domain_& domain, const typename Domain_::FT isovalue, PointRange& points, PolygonRange& polygons);
 \endcode
 
 The input is provided in the form of a `domain` (see \ref secmydomains).
 
-The `iso_value` scalar parameter denotes the value used for sampling the input scalar field for generating the isosurface.
+The `isovalue` scalar parameter denotes the value used for sampling the input scalar field for generating the isosurface.
 
 [why using the term collection below ? how about containers? ]
 

@@ -54,14 +54,14 @@ public:
      * \tparam Domain_ must be a model of `IsosurfacingDomainWithGradient`.
      *
      * \param domain the domain providing input data and its topology
-     * \param iso_value value of the isosurface
+     * \param isovalue value of the isosurface
      * \param cell the cell within the domain for which the vertex position ins computed
      * \param point the point position of the vertex that belongs to that cell
      *
      * \return true, if the voxel intersects the isosurface
      */
     template <class Domain_>
-    bool position(const Domain_& domain, const typename Domain_::FT iso_value,
+    bool position(const Domain_& domain, const typename Domain_::FT isovalue,
                   const typename Domain_::Cell_descriptor& cell, typename Domain_::Point& point) const {
         typedef typename Domain_::Point Point;
         typedef typename Domain_::Geom_traits::Vector_3 Vector;
@@ -90,8 +90,8 @@ public:
             const auto& p0 = domain.position(v0);
             const auto& p1 = domain.position(v1);
 
-            if ((val0 <= iso_value) != (val1 <= iso_value)) {  // this edge is intersected by the isosurface
-                const FT u = (val0 - iso_value) / (val0 - val1);
+            if ((val0 <= isovalue) != (val1 <= isovalue)) {  // this edge is intersected by the isosurface
+                const FT u = (val0 - isovalue) / (val0 - val1);
                 const Point p_lerp = CGAL::ORIGIN + ((1 - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
                 edge_intersections.push_back(p_lerp);
                 edge_intersection_normals.push_back(domain.gradient(p_lerp));
@@ -164,14 +164,14 @@ public:
      * \tparam Domain_ must be a model of `IsosurfacingDomainWithGradient`.
      *
      * \param domain the domain providing input data and its topology
-     * \param iso_value value of the isosurface
+     * \param isovalue value of the isosurface
      * \param cell the cell within the domain for which the vertex position ins computed
      * \param point the point position of the vertex that belongs to that cell
      *
      * \return true, if the voxel intersects the isosurface
      */
     template <class Domain_>
-    bool position(const Domain_& domain, const typename Domain_::FT iso_value,
+    bool position(const Domain_& domain, const typename Domain_::FT isovalue,
                   const typename Domain_::Cell_descriptor& vh, typename Domain_::Point& point) const {
         typedef typename Domain_::Point Point;
         typedef typename Domain_::Geom_traits::Vector_3 Vector;
@@ -188,7 +188,7 @@ public:
         bool allSmaller = true;
         bool allGreater = true;
         for (const auto& v : vertices) {
-            const bool& b = domain.value(v) <= iso_value;
+            const bool& b = domain.value(v) <= isovalue;
             allSmaller = allSmaller && b;
             allGreater = allGreater && !b;
         }
@@ -218,14 +218,14 @@ public:
      * \tparam Domain_ must be a model of `IsosurfacingDomainWithGradient`.
      *
      * \param domain the domain providing input data and its topology
-     * \param iso_value value of the isosurface
+     * \param isovalue value of the isosurface
      * \param cell the cell within the domain for which the vertex position ins computed
      * \param point the point position of the vertex that belongs to that cell
      *
      * \return true, if the voxel intersects the isosurface
      */
     template <class Domain_>
-    bool position(const Domain_& domain, const typename Domain_::FT iso_value,
+    bool position(const Domain_& domain, const typename Domain_::FT isovalue,
                   const typename Domain_::Cell_descriptor& cell, typename Domain_::Point& point) const {
         typedef typename Domain_::Point Point;
         typedef typename Domain_::Geom_traits::Vector_3 Vector;
@@ -247,8 +247,8 @@ public:
             const auto& p0 = domain.position(v0);
             const auto& p1 = domain.position(v1);
 
-            if ((val0 <= iso_value) != (val1 <= iso_value)) {  // this edge is intersected by the isosurface
-                const FT u = (val0 - iso_value) / (val0 - val1);
+            if ((val0 <= isovalue) != (val1 <= isovalue)) {  // this edge is intersected by the isosurface
+                const FT u = (val0 - isovalue) / (val0 - val1);
                 const Point p_lerp = CGAL::ORIGIN + ((1 - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
                 edge_intersections.push_back(p_lerp);
             }
@@ -277,13 +277,13 @@ private:
     typedef typename Domain::Cell_descriptor Cell_descriptor;
 
 public:
-    Dual_contouring_vertex_positioning(const Domain& domain, FT iso_value, const Positioning& positioning)
-        : domain(domain), iso_value(iso_value), positioning(positioning), points_counter(0) {}
+    Dual_contouring_vertex_positioning(const Domain& domain, FT isovalue, const Positioning& positioning)
+        : domain(domain), isovalue(isovalue), positioning(positioning), points_counter(0) {}
 
     void operator()(const Cell_descriptor& v) {
         // compute dc-vertices
         Point p;
-        if (positioning.position(domain, iso_value, v, p)) {
+        if (positioning.position(domain, isovalue, v, p)) {
 
             std::lock_guard<std::mutex> lock(mutex);
             map_voxel_to_point[v] = p;
@@ -293,7 +293,7 @@ public:
 
     // private:
     const Domain& domain;
-    FT iso_value;
+    FT isovalue;
     const Positioning& positioning;
 
     std::map<Cell_descriptor, std::size_t> map_voxel_to_point_id;
@@ -313,7 +313,7 @@ private:
     typedef typename Domain_::Cell_descriptor Cell_descriptor;
 
 public:
-    Dual_contouring_face_generation(const Domain& domain, FT iso_value) : domain(domain), iso_value(iso_value) {}
+    Dual_contouring_face_generation(const Domain& domain, FT isovalue) : domain(domain), isovalue(isovalue) {}
 
     void operator()(const Edge_descriptor& e) {
         // save all faces
@@ -321,13 +321,13 @@ public:
         const FT s0 = domain.value(vertices[0]);
         const FT s1 = domain.value(vertices[1]);
 
-        if (s0 <= iso_value && s1 > iso_value) {
+        if (s0 <= isovalue && s1 > isovalue) {
             const auto& voxels = domain.cells_incident_to_edge(e);
 
             std::lock_guard<std::mutex> lock(mutex);
             faces[e].insert(faces[e].begin(), voxels.begin(), voxels.end());
 
-        } else if (s1 <= iso_value && s0 > iso_value) {
+        } else if (s1 <= isovalue && s0 > isovalue) {
             const auto& voxels = domain.cells_incident_to_edge(e);
 
             std::lock_guard<std::mutex> lock(mutex);
@@ -339,7 +339,7 @@ public:
     std::map<Edge_descriptor, std::vector<Cell_descriptor>> faces;
 
     const Domain& domain;
-    FT iso_value;
+    FT isovalue;
 
     std::mutex mutex;
 };

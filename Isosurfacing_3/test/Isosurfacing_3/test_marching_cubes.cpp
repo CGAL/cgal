@@ -12,8 +12,8 @@ struct Sphere_function {
 };
 
 template <class Domain_>
-void run(const Domain_& domain, const FT iso_value, Point_range& points, Polygon_range& polygons) {
-    CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_tag>(domain, iso_value, points, polygons);
+void run(const Domain_& domain, const FT isovalue, Point_range& points, Polygon_range& polygons) {
+    CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_tag>(domain, isovalue, points, polygons);
 }
 
 void test_implicit_sphere() {

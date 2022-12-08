@@ -72,7 +72,7 @@ struct IWPValue {
         const FT x = alpha * (point.x() + 1) * M_PI;
         const FT y = alpha * (point.y() + 1) * M_PI;
         const FT z = alpha * (point.z() + 1) * M_PI;
-        return cos(x) * cos(y) + cos(y) * cos(z) + cos(z) * cos(x) - cos(x) * cos(y) * cos(z);  // iso-value = 0
+        return cos(x) * cos(y) + cos(y) * cos(z) + cos(z) * cos(x) - cos(x) * cos(y) * cos(z);  // isovalue = 0
     }
 };
 
