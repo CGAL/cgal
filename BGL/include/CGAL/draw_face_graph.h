@@ -25,23 +25,23 @@ namespace CGAL {
 struct DefaultColorFunctorFaceGraph
 {
   template<typename Graph>
-  CGAL::IO::Color operator()(const Graph& mesh,
-                             typename boost::graph_traits<Graph>::face_descriptor fh) const
+  CGAL::IO::Color operator()(const Graph& /*g*/,
+                             typename boost::graph_traits<Graph>::face_descriptor /*f*/) const
   {
     return get_random_color(CGAL::get_default_random());
   }
 
   // edge and vertices are black by default
   template<typename Graph>
-  CGAL::IO::Color operator()(const Graph& mesh,
-                             typename boost::graph_traits<Graph>::edge_descriptor) const
+  CGAL::IO::Color operator()(const Graph& /*g*/,
+                             typename boost::graph_traits<Graph>::edge_descriptor /*e*/) const
   {
     return IO::black();
   }
 
   template<typename Graph>
-  CGAL::IO::Color operator()(const Graph& mesh,
-                             typename boost::graph_traits<Graph>::vertex_descriptor) const
+  CGAL::IO::Color operator()(const Graph& /*g*/,
+                             typename boost::graph_traits<Graph>::vertex_descriptor /*v*/) const
   {
     return IO::black();
   }

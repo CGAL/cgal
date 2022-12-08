@@ -36,6 +36,7 @@ void draw(const SM& asm);
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -61,6 +62,7 @@ struct Surface_mesh_basic_viewer_color_map
     std::tie(vcolors, found) = amesh.template property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
     std::tie(ecolors, found) = amesh.template property_map<edge_descriptor, CGAL::IO::Color>("e:color");
     std::tie(fcolors, found) = amesh.template property_map<face_descriptor, CGAL::IO::Color>("f:color");
+    CGAL_USE(found);
   }
 
   CGAL::IO::Color operator()(const Surface_mesh<K>& amesh,
