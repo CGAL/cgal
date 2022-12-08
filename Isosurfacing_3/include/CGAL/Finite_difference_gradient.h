@@ -20,7 +20,7 @@ namespace Isosurfacing {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Template class for a gradient that is calculated using finite differences.
+ * \brief Class template for a gradient that is calculated using finite differences.
  *
  * \details This gradient function evaluates an implicit value function at six points
  *          that are a given distance `delta` away from the queried point.

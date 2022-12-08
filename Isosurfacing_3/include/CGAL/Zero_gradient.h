@@ -20,7 +20,7 @@ namespace Isosurfacing {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Template class for a gradient that is always zero.
+ * \brief Class template for a gradient that is always zero.
  *
  * \details This gradient function can be used for Marching Cubes, which does not require a gradient.
  *

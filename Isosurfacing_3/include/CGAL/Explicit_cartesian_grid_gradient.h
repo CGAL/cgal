@@ -23,7 +23,7 @@ namespace Isosurfacing {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Template class for a gradient that is stored in a `Cartesian_grid_3`.
+ * \brief Class template for a gradient that is stored in a `Cartesian_grid_3`.
  *
  * \details The gradient at any point is calculated using trilinear interpolation.
  *
