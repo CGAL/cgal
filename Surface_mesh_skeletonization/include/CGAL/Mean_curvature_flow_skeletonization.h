@@ -235,7 +235,7 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
 
   // Get weight from the weight interface.
-  typedef CGAL::Weights::Cotangent_weight<mTriangleMesh>                       Weight_calculator;
+  typedef CGAL::Weights::Cotangent_weight<mTriangleMesh, mVertexPointMap, Traits> Weight_calculator;
 
   typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
@@ -383,17 +383,19 @@ public:
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
+    :
+      m_tmesh(),
+      m_tmesh_point_pmap(get(CGAL::vertex_point, m_tmesh)),
+      m_traits(traits),
+      m_weight_calculator(m_tmesh, m_tmesh_point_pmap, m_traits, true /* use_clamped_version */)
   {
     init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
-  {
-    init(tmesh, get(vertex_point, tmesh));
-  }
+    : Mean_curvature_flow_skeletonization(tmesh, get(vertex_point, tmesh), traits)
+  { }
   #endif
   /// @} Constructor
 
@@ -871,8 +873,8 @@ private:
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
     copy_face_graph(tmesh, m_tmesh,
-                    CGAL::parameters::vertex_to_vertex_output_iterator(
-                      std::back_inserter(v2v)).vertex_point_map(vpm));
+                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v))
+                                     .vertex_point_map(vpm));
 
     // copy input vertices to keep correspondence
     for(const Vertex_pair& vp : v2v)
@@ -919,11 +921,9 @@ private:
   void compute_edge_weight()
   {
     m_edge_weight.clear();
-    m_edge_weight.reserve(2 * num_edges(m_tmesh));
+    m_edge_weight.reserve(num_halfedges(m_tmesh));
     for(halfedge_descriptor hd : halfedges(m_tmesh))
-    {
-      m_edge_weight.push_back(m_weight_calculator(hd, m_tmesh, m_tmesh_point_pmap));
-    }
+      m_edge_weight.push_back(m_weight_calculator(hd));
   }
 
   /// Assemble the left hand side.

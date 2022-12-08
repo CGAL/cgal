@@ -465,8 +465,9 @@ public:
     \note Properties of the added point other than its normal vector
     are initialized to their default value.
 
-    \note A normal property must have been added to the point set
-    before using this method.
+    \note If not already added, a normal property is automatically
+    added to the point set when using this method. The default value
+    for normal vectors is `CGAL::NULL_VECTOR`.
 
     \note If a reallocation happens, all iterators, pointers and
     references related to the container are invalidated.  Otherwise,
@@ -479,8 +480,7 @@ public:
   iterator insert (const Point& p, const Vector& n)
   {
     iterator out = insert (p);
-    CGAL_assertion(has_normal_map());
-    m_normals[size()-1] = n;
+    normal_map()[size()-1] = n;
     return out;
   }
 
@@ -550,17 +550,17 @@ public:
   /*!
     \brief returns a reference to the normal corresponding to `index`.
 
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_map()`).
+    \note If not already added, a normal property is automatically
+    added to the point set (see `add_normal_map()`).
   */
-  Vector& normal (const Index& index) { return m_normals[index]; }
+  Vector& normal (const Index& index) { return normal_map()[index]; }
   /*!
     \brief returns a constant reference to the normal corresponding to `index`.
 
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_map()`).
+    \note If not already added, a normal property is automatically
+    added to the point set (see `add_normal_map()`).
   */
-  const Vector& normal (const Index& index) const { return m_normals[index]; }
+  const Vector& normal (const Index& index) const { return normal_map()[index]; }
 
   /// @}
 
@@ -869,11 +869,14 @@ public:
   /*!
     \brief returns the property map of the normal property.
 
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_map()`).
+    \note If the normal property has not been added yet to the point set
+    before calling this method, the property map is automatically added
+    with `add_normal_map()`.
   */
   Vector_map normal_map ()
   {
+    if (!m_normals)
+      add_normal_map();
     return m_normals;
   }
   /*!
@@ -982,7 +985,7 @@ public:
   inline parameters() const
   {
     return CGAL::parameters::point_map (m_points).
-      normal_map (m_normals).
+      normal_map (normal_map()).
       geom_traits (typename Kernel_traits<Point>::Kernel());
   }
 
@@ -1036,7 +1039,7 @@ public:
   */
   Vector_range normals () const
   {
-    return this->range<Vector> (m_normals);
+    return this->range<Vector> (normal_map());
   }
 
   /// @}
@@ -1354,11 +1357,18 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
     return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
   }
 
-  static constexpr bool has_normal_map()
+  static bool has_normal_map(const Point_set_3<Point, Vector>& ps, const NamedParameters&)
   {
-    return true;
+    if (ps.has_normal_map())
+      return true;
+    using CGAL::parameters::is_default_parameter;
+    return !(is_default_parameter<NamedParameters, internal_np::normal_t>::value);
   }
 
+  static constexpr bool has_normal_map(Point_set_3<Point, Vector>&, const NamedParameters&)
+  {
+    return true; // either available in named parameters, and always available in Point_set_3 otherwise
+  }
 };
 /// \endcond
 

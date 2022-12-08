@@ -125,7 +125,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  const std::string& output_file("data/cube_result.off");
+  const std::string& output_file("without_input_planes_result.off");
   if (CGAL::IO::write_OFF(output_file, model))
     std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
   else {
@@ -138,7 +138,7 @@ int main()
   // Also stores the candidate faces as a surface mesh to a file
   Surface_mesh candidate_faces;
   algo.output_candidate_faces(candidate_faces);
-  const std::string& candidate_faces_file("data/cube_candidate_faces.off");
+  const std::string& candidate_faces_file("without_input_planes_cube_candidate_faces.off");
   std::ofstream candidate_stream(candidate_faces_file.c_str());
   if (CGAL::IO::write_OFF(candidate_stream, candidate_faces))
     std::cout << "Candidate faces saved to " << candidate_faces_file << "." << std::endl;

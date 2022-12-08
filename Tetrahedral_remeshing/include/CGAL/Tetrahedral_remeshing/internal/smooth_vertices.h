@@ -142,6 +142,20 @@ private:
     return n;
   }
 
+  template<typename Patch_index>
+  std::string debug_to_string(const Patch_index i)
+  {
+    return std::to_string(i);
+  }
+
+  template<typename Patch_index>
+  std::string debug_to_string(const std::pair<Patch_index, Patch_index>& pi)
+  {
+    std::string str = std::to_string(pi.first);
+    str.append("_").append(std::to_string(pi.second));
+    return str;
+  }
+
   template<typename VertexNormalsMap, typename CellSelector>
   void compute_vertices_normals(const C3t3& c3t3,
                                 VertexNormalsMap& normals_map,
@@ -283,7 +297,8 @@ private:
     for (auto& kv : ons_map)
     {
       std::ostringstream oss;
-      oss << "dump_normals_normalized_" << kv.first << ".polylines.txt";
+      oss << "dump_normals_normalized_["
+        << debug_to_string(kv.first) << "].polylines.txt";
       std::ofstream ons(oss.str());
       for (auto s : kv.second)
         ons << "2 " << s.source() << " " << s.target() << std::endl;
@@ -452,7 +467,7 @@ public:
     inc_cells(nbv, boost::container::small_vector<Cell_handle, 40>());
     for (const Cell_handle c : tr.finite_cell_handles())
     {
-      const bool cell_is_selected = cell_selector(c);
+      const bool cell_is_selected = get(cell_selector, c);
 
       for (int i = 0; i < 4; ++i)
       {

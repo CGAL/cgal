@@ -187,7 +187,7 @@ void test_real_root_isolator() {
         assert( n == number_of_roots);
     }{
         //std::cout << "Kameny 3\n";
-        // from http://www-sop.inria.fr/saga/POL/BASE/1.unipol
+        // from https://www-sop.inria.fr/saga/POL/BASE/1.unipol/
 
         NT c = CGAL::ipower(NT(10),12);
         Polynomial P(NT(-3),NT(0),c);
@@ -202,7 +202,7 @@ void test_real_root_isolator() {
         assert(3 == internal::check_intervals_real_root_isolator<Isolator>(P));
     }{
         //std::cout << "Kameny 4\n";
-        // from http://www-sop.inria.fr/saga/POL/BASE/1.unipol
+        // from https://www-sop.inria.fr/saga/POL/BASE/1.unipol
 
         NT z(0);
         NT a = CGAL::ipower(NT(10),24); // a = 10^{24}
@@ -218,7 +218,7 @@ void test_real_root_isolator() {
         assert( 4 == internal::check_intervals_real_root_isolator<Isolator>(P));
     }{
         //std::cout << "Polynomial with large and small clustered roots\n";
-        // from http://www-sop.inria.fr/saga/POL/BASE/1.unipol
+        // from https://www-sop.inria.fr/saga/POL/BASE/1.unipol
         // there seems to be some error or misunderstanding
 
         NT z(0);

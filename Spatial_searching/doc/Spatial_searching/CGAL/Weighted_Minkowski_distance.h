@@ -52,7 +52,8 @@ Constructor implementing \f$ l_2\f$ metric for \f$ d\f$-dimensional points.
 Weighted_Minkowski_distance(int d,Traits t=Traits());
 
 /*!
-Constructor implementing the \f$ l_{power}(weights)\f$ metric. \f$ power \leq0\f$ denotes the \f$ l_{\infty}(weights)\f$ metric.
+Constructor implementing the \f$ l_{power}(weights)\f$ metric. `power=0`
+denotes the \f$ l_{\infty}(weights)\f$ metric.
 The values in the iterator range `[wb,we)` are the weight.
 */
 template <class InputIterator>

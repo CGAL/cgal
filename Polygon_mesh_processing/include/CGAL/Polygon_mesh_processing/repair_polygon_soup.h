@@ -12,7 +12,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_POLYGON_SOUP
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_POLYGON_SOUP
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -140,7 +140,7 @@ bool simplify_polygon(PointRange& points,
   return (removed_points_n != 0);
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // For each polygon of the soup, removes consecutive identical (in a geometric sense) points.
 //
@@ -194,7 +194,7 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
   return simplified_polygons_n;
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // splits "pinched" polygons, that is polygons for which a point appears more than once,
 // into multiple non-pinched polygons.
@@ -291,7 +291,7 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
   return new_polygons_n;
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // removes polygons with fewer than 2 points from the soup.
 //
@@ -334,7 +334,7 @@ std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
   return removed_polygons_n;
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // Removes invalid array-based polygons, i.e. polygons which have two equal consecutive points.
 //
@@ -397,7 +397,7 @@ std::size_t remove_invalid_polygons_in_array_polygon_soup(PointRange& points,
 
 } // end namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// removes the isolated points from a polygon soup.
 /// A point is considered <i>isolated</i> if it does not appear in any polygon of the soup.
@@ -500,7 +500,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
   return removed_points_n;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief merges the duplicate points in a polygon soup.
 ///
@@ -817,7 +817,7 @@ struct Duplicate_collector<ValueType, CGAL::Emptyset_iterator>
   void dump(CGAL::Emptyset_iterator) { }
 };
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // collects duplicate polygons in a polygon soup, that is polygons that share the same vertices in the same
 // order.
@@ -897,7 +897,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 
 } // end namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// merges the duplicate polygons in a polygon soup. Two polygons are duplicate if they share the same
 /// vertices in the same order. Note that the first vertex of the polygon does not matter, that is
@@ -1104,7 +1104,7 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief cleans a given polygon soup through various repairing operations.
 ///
