@@ -153,25 +153,32 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
         // check that the collapse does not create a new degenerate face
         bool call_continue = false;
-        for (halfedge_descriptor he : halfedges_around_target(h, tm))
-          if ( he!=h &&
-               !is_border(he, tm) &&
-               collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
+        for(halfedge_descriptor he : halfedges_around_target(h, tm))
+        {
+          if(he != h &&
+             !is_border(he, tm) &&
+             collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
           {
             call_continue = true;
             break;
           }
-        if (call_continue)
+        }
+
+        if(call_continue)
           continue;
-        for (halfedge_descriptor he : halfedges_around_target(opposite(h,tm), tm))
-          if (he!=opposite(h,tm) &&
-              !is_border(he, tm) &&
-              collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
+
+        for(halfedge_descriptor he : halfedges_around_target(opposite(h,tm), tm))
+        {
+          if(he != opposite(h,tm) &&
+             !is_border(he, tm) &&
+             collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
           {
             call_continue = true;
             break;
           }
-        if (call_continue)
+        }
+
+        if(call_continue)
           continue;
 
         if(!CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
@@ -711,16 +718,15 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
       bool do_split = true;
 
-      // Some splits can create degenerate faces, avoid that
+      // In case of self-snapping, avoid degenerate caps
+      const bool is_same_mesh = (&tm_T == &tm_S);
+      if(is_same_mesh && target(next(opposite(h_to_split, tm_T), tm_T), tm_T) == splitter_v)
+        do_split = false;
+
+      // Do not split if it would create a degenerate needle
       if((new_position == get(vpm_T, target(h_to_split, tm_T))) ||
          (new_position == get(vpm_T, source(h_to_split, tm_T))))
         do_split = false;
-
-      //in case of self_snapping avoid pinching
-      if(&tm_T==&tm_S && target(next(opposite(h_to_split, tm_T), tm_T), tm_T)==splitter_v)
-      {
-        do_split = false;
-      }
 
       if(!first_split && new_position == previous_split_position)
         do_split = false;
@@ -733,30 +739,30 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       std::cout << "Actually split? " << do_split << std::endl;
 #endif
 
-      // check the new faces after split will not be degenerated
-      Point p0 = new_position;
+      // check if the new faces after split will not be degenerated
+      const Point& p0 = new_position;
       Point_ref p1 = get(vpm_T, source(h_to_split, tm_T));
       Point_ref p2 = get(vpm_T, target(next(opposite(h_to_split, tm_T), tm_T), tm_T));
       Point_ref p3 = get(vpm_T, target(h_to_split, tm_T));
 
-      /* Chooses the diagonal that will split the quad in two triangles that maximize
+      /* Chooses the diagonal that will split the quad in two triangles that maximizes
        * the scalar product of of the un-normalized normals of the two triangles.
+       *
        * The lengths of the un-normalized normals (computed using cross-products of two vectors)
-       *  are proportional to the area of the triangles.
-       * Maximize the scalar product of the two normals will avoid skinny triangles,
-       * and will also taken into account the cosine of the angle between the two normals.
+       * are proportional to the area of the triangles.
+       * Maximizing the scalar product of the two normals will avoid skinny triangles,
+       * and will also take into account the cosine of the angle between the two normals.
+       *
        * In particular, if the two triangles are oriented in different directions,
        * the scalar product will be negative.
        */
-      auto p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
-      auto p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
-      bool first_split_face = (p0p2>p1p3);
+      auto p1p3 = CGAL::cross_product(p2-p1, p3-p2) * CGAL::cross_product(p0-p3, p1-p0);
+      auto p0p2 = CGAL::cross_product(p1-p0, p1-p2) * CGAL::cross_product(p3-p2, p3-p0);
+      bool first_split_face = (p0p2 > p1p3);
 
-      bool is_deg = first_split_face
-                  ? collinear(p0,p1,p2) && collinear(p0,p3,p2)
-                  : collinear(p0,p1,p3) && collinear(p1,p2,p3);
-
-      if (is_deg)
+      bool is_deg = first_split_face ? collinear(p0,p1,p2) && collinear(p0,p3,p2)
+                                     : collinear(p0,p1,p3) && collinear(p1,p2,p3);
+      if(is_deg)
         do_split = false;
 
       // Split and update positions
@@ -775,14 +781,15 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       if(!is_source_mesh_fixed)
       {
         bool skip = false;
-        for (halfedge_descriptor h : halfedges_around_target(splitter_v, tm_S))
+        for(halfedge_descriptor h : halfedges_around_target(splitter_v, tm_S))
         {
-          if (!is_border(h,tm_S) && collinear(get(vpm_S, source(h,tm_S)), new_position, get(vpm_S, target(next(h,tm_S),tm_S))))
+          if(!is_border(h,tm_S) && collinear(get(vpm_S, source(h,tm_S)), new_position, get(vpm_S, target(next(h,tm_S),tm_S))))
           {
-            skip=true;
+            skip = true;
             break;
           }
         }
+
         if(!skip)
           put(vpm_S, splitter_v, new_position);
       }
@@ -791,8 +798,6 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       previous_split_position = new_position;
       ++snapped_n;
 
-      // Everything below is choosing the diagonal to triangulate the quad formed by the edge split
-      // So, it's only relevant if splitting has been performed
       if(!do_split)
         continue;
 
@@ -804,10 +809,9 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       const halfedge_descriptor h_to_split_opp = opposite(h_to_split, tm_T);
       halfedge_descriptor h2 = prev(prev(h_to_split_opp, tm_T), tm_T);
       const halfedge_descriptor res = prev(h_to_split, tm_T);
-      halfedge_descriptor new_hd = first_split_face
-                                 ?  CGAL::Euler::split_face(v0, v2, tm_T)
-                                 :  CGAL::Euler::split_face(v1, v3, tm_T);
-      if (first_split_face)
+      halfedge_descriptor new_hd = first_split_face ? CGAL::Euler::split_face(v0, v2, tm_T)
+                                                    : CGAL::Euler::split_face(v1, v3, tm_T);
+      if(first_split_face)
       {
         h_to_split = opposite(prev(new_hd, tm_T), tm_T);
         visitor.after_split_face(h_to_split_opp, h2, tm_T);

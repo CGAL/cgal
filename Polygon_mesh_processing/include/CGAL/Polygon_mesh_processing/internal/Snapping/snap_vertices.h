@@ -706,6 +706,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters_A>::type         GT;
   typedef typename GT::FT                                                      FT;
   typedef typename boost::property_traits<VPM_B>::value_type                   Point;
+  typedef typename boost::property_traits<VPM_B>::reference                    Point_ref;
 
   typedef std::vector<halfedge_descriptor>                                     Vertex_container;
   typedef std::pair<Vertex_container, FT>                                      Unique_vertex;
@@ -955,17 +956,21 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     {
       if(is_second_mesh_fixed)
       {
-        const Point& new_p = get(vpm_B, vb);
+        const Point_ref new_p = get(vpm_B, vb);
         for(const halfedge_descriptor ha : vs_a)
         {
           bool skip = false;
-          for (halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
-            if (!is_border(haa,tm_A) && collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
+          for(halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
+          {
+            if(!is_border(haa,tm_A) &&
+               collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
             {
-              skip=true;
+              skip = true;
               break;
             }
-          if (!skip)
+          }
+
+          if(!skip)
             put(vpm_A, target(ha, tm_A), new_p);
         }
       }
@@ -985,26 +990,34 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
         for(const halfedge_descriptor ha : vs_a)
         {
           bool skip = false;
-          for (halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
-            if (!is_border(haa,tm_A) && collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
+          for(halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
+          {
+            if(!is_border(haa,tm_A) &&
+               collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
             {
-              skip=true;
+              skip = true;
               break;
             }
-          if (!skip)
+          }
+
+          if(!skip)
             put(vpm_A, target(ha, tm_A), new_p);
         }
 
         for(const halfedge_descriptor hb : vs_b)
         {
           bool skip = false;
-          for (halfedge_descriptor hbb : halfedges_around_target(hb, tm_B))
-            if (!is_border(hbb,tm_B) && collinear(get(vpm_B, source(hbb,tm_B)), new_p, get(vpm_B, target(next(hbb,tm_B),tm_B))))
+          for(halfedge_descriptor hbb : halfedges_around_target(hb, tm_B))
+          {
+            if(!is_border(hbb,tm_B) &&
+               collinear(get(vpm_B, source(hbb,tm_B)), new_p, get(vpm_B, target(next(hbb,tm_B),tm_B))))
             {
-              skip=true;
+              skip = true;
               break;
             }
-          if (!skip)
+          }
+
+          if(!skip)
             put(vpm_B, target(hb, tm_B), new_p);
         }
       }
