@@ -72,7 +72,7 @@ class Algebraic_real_d_1 :
 
   // currently Rational is the only supported Bound type.
   CGAL_static_assertion(
-      (   ::boost::is_same <Rational_,
+      (   ::std::is_same <Rational_,
           typename Get_arithmetic_kernel<Coefficient_>::Arithmetic_kernel::Rational>::value));
 
 
@@ -579,7 +579,7 @@ struct Coercion_traits<
     typedef Type result_type;
     Type operator()(const Type& a) const { return a; }
     Type operator()(const Coefficient& a) const {
-      static const bool b = boost::is_same<Rational,typename CTCR::Type>::value;
+      static const bool b = std::is_same<Rational,typename CTCR::Type>::value;
       return (*this)(a,Boolean_tag<b>());
     }
   };

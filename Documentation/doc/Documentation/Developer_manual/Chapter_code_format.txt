@@ -257,29 +257,6 @@ The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
   ...
   #endif // CGAL_THIS_IS_AN_EXAMPLE_H
   \endcode
-- Support the
-  <A HREF="https://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</A>
-  protocol whenever your functors have more than one return type
-  otherwise provide a `result_type` member typedef.
-  An example for this is a C++03 style `identity` functor:
-  \code{.cpp}
-        struct Identity {
-          template<typename T>
-          T& operator()(T& t) { return t; }
-          template<typename T>
-          const T& operator()(const T& t) { return t; }
-          template<typename>
-          struct result;
-          template<typename F, typename T>
-          struct result<F(T&)> {
-            typedef T& type;
-          };
-          template<typename F, typename T>
-          struct result<F(const T&)> {
-            typedef const T& type;
-          };
-        };
-  \endcode
 
 The following items can be seen as recommendations
 in contrast to the rules of previous paragraph.

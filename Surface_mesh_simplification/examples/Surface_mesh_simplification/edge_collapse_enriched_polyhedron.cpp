@@ -4,7 +4,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
 
 #include <iostream>
 #include <fstream>
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
   // In this example, the simplification stops when the number of undirected edges
   // drops below xx% of the initial count
   const double ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
+  SMS::Edge_count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
   // The index maps are not explicitelty passed as in the previous
   // example because the surface mesh items have a proper id() field.

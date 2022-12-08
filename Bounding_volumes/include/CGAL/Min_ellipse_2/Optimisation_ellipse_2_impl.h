@@ -43,7 +43,7 @@ operator << ( std::ostream& os, const CGAL::Optimisation_ellipse_2<K_>& e)
       case CGAL::IO::BINARY:
         break;
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::get_mode( os) invalid!");
         break; }
 
@@ -106,7 +106,7 @@ operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<K_>& e)
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::get_mode( is) invalid!");
         break; }
 

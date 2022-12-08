@@ -75,7 +75,7 @@ int main(int argc, char** argv)
     std::cerr << "Invalid point set input: " << ps_filename << std::endl;
     return EXIT_FAILURE;
   }
-  std::cout << ps_points.size() << " points (Point Set)" << std::endl;
+  std::cout << ps_points.size() << " points (point set)" << std::endl;
 
   const double relative_alpha = (argc > 4) ? std::stod(argv[4]) : 15.;
   const double relative_offset = (argc > 5) ? std::stod(argv[5]) : 450.;
@@ -93,9 +93,9 @@ int main(int argc, char** argv)
   CGAL::Real_timer t;
   t.start();
 
-  using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Points, Faces>;
-  using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<Segments, CGAL::Default /*GT*/, TS_Oracle>;
-  using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<Points, CGAL::Default /*GT*/, SS_Oracle>;
+  using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<K>;
+  using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<K, TS_Oracle>;
+  using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<K, SS_Oracle>;
 
   TS_Oracle ts_oracle(K{});
   SS_Oracle ss_oracle(ts_oracle);
@@ -124,6 +124,7 @@ int main(int argc, char** argv)
   ps_name = ps_name.substr(0, ps_name.find_last_of("."));
   std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_" + std::to_string(static_cast<int>(relative_alpha))
                             + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, output_mesh, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;

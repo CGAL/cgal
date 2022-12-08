@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_VERTICES_H
 #define CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_VERTICES_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
  #ifndef CGAL_PMP_SNAP_DEBUG
@@ -23,7 +23,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/assertions.h>
@@ -1171,7 +1171,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 
 namespace experimental {
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_geometric_repair_grp
 //
 // Attempts to snap the vertices in `halfedge_range_A` and `halfedge_range_B`.
 // A vertex from the first range and a vertex from the second range are only snapped

@@ -14,7 +14,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_H
 #define CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
  #ifndef CGAL_PMP_SNAP_DEBUG
@@ -26,7 +26,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap_vertices.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
@@ -174,17 +174,21 @@ void simplify_range(HalfedgeRange& halfedge_range,
         if (call_continue)
           continue;
 
+        if(!CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
+          continue;
+
         const halfedge_descriptor opoh = opposite(prev(opposite(h, tm), tm), tm);
-        if (is_border(opoh, tm))
-          edges_to_test.erase( opoh );
+        if(is_border(opoh, tm))
+          edges_to_test.erase(opoh);
 
         vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
+
         put(vpm, v, new_p);
         put(tolerance_map, v, new_tolerance);
 
         if(get(range_halfedges, prev_h))
           edges_to_test.insert(prev_h);
-        if(get(range_halfedges, next_h))
+        if(next_h != opoh && get(range_halfedges, next_h))
           edges_to_test.insert(next_h);
 
         ++collapsed_n;
@@ -1038,7 +1042,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
   }
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_geometric_repair_grp
 //
 // Attempts to snap the vertices in `halfedge_range_A` onto edges of `halfedge_range_B`, and reciprocally.
 // A vertex from the first range is only snapped to an edge of the second range if the distance to

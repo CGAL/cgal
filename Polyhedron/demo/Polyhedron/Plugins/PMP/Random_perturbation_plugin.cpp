@@ -7,8 +7,6 @@
 #include "Scene_polyhedron_selection_item.h"
 
 #include <CGAL/iterator.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/utility.h>
 
 #include <CGAL/Polygon_mesh_processing/random_perturbation.h>

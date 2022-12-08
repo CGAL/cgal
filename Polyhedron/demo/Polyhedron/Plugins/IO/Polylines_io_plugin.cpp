@@ -27,7 +27,7 @@ class Polyhedron_demo_polylines_io_plugin :
 
 public:
     // To silent a warning -Woverloaded-virtual
-    // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
+    // See https://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
 
     using Polyhedron_demo_io_plugin_interface::init;
     //! Configures the widget
@@ -62,7 +62,7 @@ public:
 
     }
   QString name() const override{ return "polylines_io_plugin"; }
-  QString nameFilters() const override{ return "Polylines files (*.polylines.txt *.cgal)"; }
+  QString nameFilters() const override{ return "Polylines files (*.polylines.txt);; CGAL Polylines files (*.cgal)"; }
   bool canLoad(QFileInfo fileinfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 

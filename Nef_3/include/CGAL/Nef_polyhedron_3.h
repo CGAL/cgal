@@ -50,7 +50,6 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/assertions.h>
 
@@ -61,9 +60,7 @@
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <list>
-
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 // RO: includes for "vertex cycle to Nef" constructor
 #include <CGAL/Nef_3/vertex_cycle_to_nef_3.h>
@@ -612,22 +609,6 @@ protected:
    simplify();
  }
 
- template <class T1, class T2,
-           template <class T31, class T32, class T33>
-           class T3, class T4 >
- Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P)
-   : Nef_polyhedron_3(Private_tag{})
- {
-    CGAL_NEF_TRACEN("construction from Polyhedron_3");
-    reserve_for_vertices(P.size_of_vertices());
-    initialize_infibox_vertices(EMPTY);
-    polyhedron_3_to_nef_3
-      <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
-    build_external_structure();
-    mark_bounded_volumes();
-    simplify();
-  }
-
  template <class PolygonMesh>
  explicit Nef_polyhedron_3(const PolygonMesh& pm)
    : Nef_polyhedron_3(Private_tag{})
@@ -635,7 +616,7 @@ protected:
     CGAL_NEF_TRACEN("construction from PolygonMesh with internal index maps");
     reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
-    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(pm, snc());
     build_external_structure();
     mark_bounded_volumes();
     simplify();
@@ -645,15 +626,15 @@ protected:
  explicit Nef_polyhedron_3(const PolygonMesh& pm,
                            const HalfedgeIndexMap& him,
                            const FaceIndexMap& fim,
-                           typename boost::disable_if <
-                              boost::is_same<FaceIndexMap, bool>
-                           >::type* = nullptr // disambiguate with another constructor
+                           typename std::enable_if <
+                              !std::is_same<FaceIndexMap, bool>::value
+                           >* = nullptr // disambiguate with another constructor
   ) : Nef_polyhedron_3(Private_tag{})
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");
     reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
-    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(pm, snc(), fim, him);
     build_external_structure();
     mark_bounded_volumes();
     simplify();

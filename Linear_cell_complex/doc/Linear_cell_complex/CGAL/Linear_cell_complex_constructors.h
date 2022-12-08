@@ -29,7 +29,7 @@ Here a small example:
 
 */
 template<class LCC>
-typename LCC::Dart_handle import_from_plane_graph(LCC& lcc,
+typename LCC::Dart_descriptor import_from_plane_graph(LCC& lcc,
 std::istream& ais);
 
 } /* namespace CGAL */

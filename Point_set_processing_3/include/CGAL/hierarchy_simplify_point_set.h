@@ -25,7 +25,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Object.h>
 #include <CGAL/centroid.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/PCA_util.h>
 #include <CGAL/squared_distance_3.h>
@@ -210,8 +210,8 @@ namespace CGAL {
     typedef typename std::list<cluster>::iterator cluster_iterator;
 
     CGAL_precondition (points.begin() != points.end());
-    CGAL_point_set_processing_precondition (size > 0);
-    CGAL_point_set_processing_precondition (var_max > 0.0);
+    CGAL_precondition (size > 0);
+    CGAL_precondition (var_max > 0.0);
 
     // The first cluster is the whole input point set
     clusters_stack.push_front (cluster (std::list<Input_type>(), Point (0., 0., 0.)));

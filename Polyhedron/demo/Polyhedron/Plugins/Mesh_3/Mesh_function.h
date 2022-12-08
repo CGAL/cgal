@@ -226,13 +226,13 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
     C3t3,
     Domain,
     Mesh_criteria,
-    CGAL::Mesh_3::internal::has_Has_features<Domain>::value >()
+    CGAL::internal::has_Has_features<Domain>::value >()
     (c3t3_,
      *domain_,
      criteria,
      p_.protect_features,
      p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
-                       p::nonlinear_growth_of_balls = true));
+                       p::nonlinear_growth_of_balls = true).v);
 }
 
 template < typename D_, typename Tag >

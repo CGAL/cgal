@@ -10,12 +10,13 @@
 //
 // Author(s)        :  Marc Glisse
 
+#ifndef CGAL_MPZF_H
+#define CGAL_MPZF_H
+
 #ifndef CGAL_NO_MPZF_DIVISION_OPERATOR
 #define CGAL_MPZF_DIVISION_OPERATOR 1
 #endif
 
-#ifndef CGAL_MPZF_H
-#define CGAL_MPZF_H
 #include <cstdlib>
 #include <algorithm>
 #include <climits>

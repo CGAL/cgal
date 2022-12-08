@@ -29,17 +29,16 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Mesh_3/internal/indices_management.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 #include <vector>
 #include <set>
 #include <map>
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <memory>
 
 namespace CGAL {
@@ -228,7 +227,7 @@ public:
     return result;
   }
 
-  /// Returns signed geodesic distance between \c p and \c q
+  /// Returns signed geodesic distance between `p` and `q`.
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q) const
   {
     // Locate p & q on polyline
@@ -260,7 +259,7 @@ public:
   }
 
 
-  /// Returns a point at geodesic distance \c distance from p along the
+  /// Returns a point at geodesic distance `distance` from p along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
   Point_3 point_at(const Point_3& p, FT distance) const
@@ -373,16 +372,23 @@ private:
 
       if(nearest_is_a_segment)
       {
-        if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
-        {
-          nearest_segment = seg;
-          result = previous;
-        }
         if(compare_distance(p, *it, nearest_segment) == CGAL::SMALLER)
         {
           nearest_vertex = it;
           nearest_is_a_segment = false;
           result = it;
+          if (possibly(angle(*previous, *it, p) == CGAL::ACUTE) &&
+              compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+          {
+            nearest_segment = seg;
+            nearest_is_a_segment = true;
+            result = previous;
+          }
+        }
+        else if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
+        {
+          nearest_segment = seg;
+          result = previous;
         }
       }
       else {
@@ -391,7 +397,9 @@ private:
           nearest_vertex = it;
           result = it;
         }
-        if(compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+        if ((nearest_vertex != it ||
+             possibly(angle(*previous, *it, p) == CGAL::ACUTE)) &&
+            compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
         {
           nearest_segment = seg;
           nearest_is_a_segment = true;
@@ -587,7 +595,7 @@ public:
   /// Add a 0-dimensional feature in the domain.
   Corner_index add_corner(const Point_3& p);
 
-  /// Overloads where the last parameter \c out is not `CGAL::Emptyset_iterator()`.
+  /// Overload where the last parameter `out` is not `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_corners(InputIterator first, InputIterator end,
@@ -605,7 +613,7 @@ public:
   Corner_index register_corner(const Point_3& p, const Curve_index& index);
   Corner_index add_corner_with_context(const Point_3& p, const Surface_patch_index& index);
 
-  /// Overloads where the last parameter \c out is not
+  /// Overload where the last parameter `out` is not
   /// `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
@@ -735,14 +743,14 @@ public:
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
-   * by \c index.
+   * by `index`.
    */
   Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return Index(index); }
 
   /**
    * Returns the index to be stored in a vertex lying in the subdomain
-   * identified by \c index.
+   * identified by `index`.
    */
   Index index_from_subdomain_index(const Subdomain_index& index) const
   { return Index(index); }
@@ -756,15 +764,15 @@ public:
   { return Index(index); }
 
   /**
-   * Returns the \c Surface_patch_index of the surface patch
-   * where lies a vertex with dimension 2 and index \c index.
+   * Returns the `Surface_patch_index` of the surface patch
+   * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
   { return boost::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
-   *  with dimension 3 and index \c index.
+   *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }

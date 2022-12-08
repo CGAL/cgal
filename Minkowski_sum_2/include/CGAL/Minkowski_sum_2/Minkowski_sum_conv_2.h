@@ -266,7 +266,6 @@ public:
 
     // Construct the segments of the convolution cycles.
     unsigned int curr_id = 0;
-    unsigned int cycles = 0;
     Segments_list conv_segments;
     Segments_list cycle;
     Labels_set used_labels;
@@ -340,7 +339,6 @@ public:
               CGAL_assertion(cycle.empty());
             }
           }
-          ++cycles;
         }
 
         curr1 = next1;

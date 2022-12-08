@@ -20,6 +20,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/use.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -478,7 +479,7 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np = pa
     <internal_np::scanline_id_t, NamedParameters, No_map>::type;
   using Fallback_scanline_ID = Boolean_tag<std::is_same<ScanlineIDMap, No_map>::value>;
 
-  CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
+  CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
 
   PointMap point_map = NP_helper::get_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);
@@ -545,6 +546,8 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np = pa
   std::cerr << nb_scanlines << " scanline(s) identified (mean length = "
             << std::size_t(points.size() / double(nb_scanlines))
             << " point(s))" << std::endl;
+#else
+  CGAL_USE(nb_scanlines);
 #endif
 }
 

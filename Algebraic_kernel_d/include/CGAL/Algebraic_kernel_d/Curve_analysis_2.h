@@ -20,13 +20,12 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <type_traits>
 
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
-#include <boost/type_traits/is_same.hpp>
-
 
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>

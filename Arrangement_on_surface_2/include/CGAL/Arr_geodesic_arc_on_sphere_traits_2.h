@@ -1127,7 +1127,7 @@ public:
      * \return SMALLER - y(p) < xc(x(p)), i.e. the point is below the curve;
      *         EQUAL   - p lies on the curve.
      *         LARGER  - y(p) > xc(x(p)), i.e. the point is above the curve;
-     * \pre p is not a construction point.
+     * \pre p is not a contraction point.
      * \pre p is in the x-range of xc.
      */
     Comparison_result operator()(const Point_2& p,

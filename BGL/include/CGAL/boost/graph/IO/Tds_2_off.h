@@ -109,7 +109,7 @@ off_file_input( std::istream& is, Triangulation_data_structure_2<Vb,Fb>& tds, bo
      tds.set_adjacency(fn, 2, inf_edge_map);
      edge_map.erase(edge_map.begin());
    }
-   CGAL_triangulation_assertion(inf_edge_map.empty());
+   CGAL_assertion(inf_edge_map.empty());
   }
 
 

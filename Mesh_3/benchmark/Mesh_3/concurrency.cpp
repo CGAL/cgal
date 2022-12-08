@@ -7,7 +7,7 @@
 #endif
 
 // Without TBB_USE_THREADING_TOOL Intel Inspector XE will report false positives in Intel TBB
-// (http://software.intel.com/en-us/articles/compiler-settings-for-threading-error-analysis-in-intel-inspector-xe/)
+// (https://www.intel.com/content/www/us/en/developer/articles/technical/compiler-settings-for-threading-error-analysis-in-intel-inspector-xe.html)
 #ifdef _DEBUG
 # define TBB_USE_THREADING_TOOL
 #endif

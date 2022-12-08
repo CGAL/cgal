@@ -189,7 +189,7 @@ class ConstructVertex_2
   public:
   /*!
   returns the source or target of `seg`. If `i` modulo 2 is 0,
-  the source is returned, otherwise the target is returned.}
+  the source is returned, otherwise the target is returned.
   */
   Point_2 operator()(Segment_2 seg, int i);
 };
@@ -223,7 +223,7 @@ class ConstructIsoRectangle_2
   public:
 
   /*!
-  introduces an iso-oriented rectangle fo whose minimal `x` coordinate
+  introduces an iso-oriented rectangle whose minimal `x` coordinate
   is the one of `left`, the maximal `x` coordinate is the one of
   `right`, the minimal `y` coordinate is the one of `bottom`,
   the maximal `y` coordinate is the one of `top`.}

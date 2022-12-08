@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -347,7 +347,7 @@ inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator==(Nullptr_t CGAL_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion(n == NULL);
+  CGAL_assertion(n == NULL);
   return pos == Face_handle();
 }
 
@@ -356,7 +356,7 @@ inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator!=(Nullptr_t n) const
 {
-  CGAL_triangulation_assertion(n == NULL);
+  CGAL_assertion(n == NULL);
   return !(*this == n);
 }
 

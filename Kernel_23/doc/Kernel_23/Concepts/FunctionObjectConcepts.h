@@ -5964,12 +5964,21 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-
   /*!
     introduces a variable with Cartesian coordinates
     \f$ (0,0)\f$.
   */
   Kernel::Point_2 operator()(const CGAL::Origin &CGAL::ORIGIN);
+
+  /*!
+    returns `p`.
+
+    \note It is advised to return a const reference to `p` to avoid useless copies.
+
+    \note This peculiar requirement is necessary because some \cgal structures such as triangulations
+    internally manipulate points whose type might be `Point_2` or `Weighted_point_2`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Point_2& p);
 
  /*!
     extracts the bare point from the weighted point.
@@ -6000,6 +6009,16 @@ public:
     introduces a point with Cartesian coordinates\f$ (0,0,0)\f$.
   */
   Kernel::Point_3 operator()(const CGAL::Origin &CGAL::ORIGIN);
+
+  /*!
+    returns `p`.
+
+    \note It is advised to return a const reference to `p` to avoid useless copies.
+
+    \note This peculiar requirement is necessary because some \cgal structures such as triangulations
+    internally manipulate points whose type might be `Point_3` or `Weighted_point_3`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Point_3& p);
 
  /*!
     extracts the bare point from the weighted point.
