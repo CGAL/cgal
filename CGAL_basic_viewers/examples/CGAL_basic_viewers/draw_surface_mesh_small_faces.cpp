@@ -4,22 +4,39 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_surface_mesh.h>
+#include "CGAL/draw_surface_mesh_small_faces.h"
+
 #include <fstream>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Surface_mesh<Point>                            Mesh;
+typedef Kernel::FT                                             FT;
 
 struct Drawing_functor_small_face: public CGAL::Drawing_functor
-<Mesh, Mesh::vertex_descriptor, Mesh::edge_descriptor, Mesh::face_descriptor>
+<Mesh, Mesh::Vertex_index, Mesh::Edge_index, Mesh::Face_index>
 {
-   drawing_functor.colored_face = [](const FG&,
-             typename boost::graph_traits<FG>::face_descriptor fg) -> bool
+ Drawing_functor_small_face() {
+
+  // TODO: change threshold in realtime.
+  m_threshold = 2000;
+
+  // Return false if face value less than threshold.
+  is_small = [=] (typename boost::graph_traits<Mesh>::face_descriptor fg) -> bool {
+    return fg <= m_threshold;
+  };
+
+  colored_face = [=](const Mesh&,
+             typename boost::graph_traits<Mesh>::face_descriptor fg) -> bool
    { return is_small(fg); };
 
-  drawing_functor.face_color = [] (const FG&,
-             typename boost::graph_traits<FG>::face_descriptor) -> CGAL::IO::Color
+  face_color = [] (const Mesh&,
+             typename boost::graph_traits<Mesh>::face_descriptor) -> CGAL::IO::Color
   { return CGAL::IO::Color(200, 60, 60); }; // Red
+
+  }
+
+  std::function<bool(typename boost::graph_traits<Mesh>::face_descriptor)> is_small;
 
   unsigned int m_threshold;
   FT m_min_size, m_max_size;
