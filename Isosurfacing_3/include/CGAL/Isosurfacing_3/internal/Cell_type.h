@@ -19,6 +19,8 @@
 namespace CGAL {
 namespace Isosurfacing {
 
+
+// Was supposed to check if an algorithm can handle a specific domain. Not used right now.
 typedef std::size_t Cell_type;
 
 static constexpr Cell_type ANY_CELL = (std::numeric_limits<Cell_type>::max)();

@@ -149,7 +149,7 @@ The `Implicit_cartesian_grid_domain` represents the input scalar field in an imp
 It takes a function-object (functor) or lambda function that computes the value of the scalar field from the position of a vertex query.
 Additionally, the bounding box and spacing between the grid points must be provided.
 
-\subsection mysubseccartesiandomain ExplicitCcartesian grid domain
+\subsection mysubseccartesiandomain Explicit cartesian grid domain
 The `Explicit_cartesian_grid_domain` only takes a `Cartesian_grid_3` as parameter.
 It represents a uniform grid of scalar field values that are either computed by the user or read from an `Image_3`.
 The constructor of `Cartesian_grid_3` requires the number of grid points in each dimension (x, y, z) and the bounding box.

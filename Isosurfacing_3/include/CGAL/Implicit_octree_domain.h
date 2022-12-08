@@ -14,21 +14,22 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Zero_gradient.h>
 #include <CGAL/Isosurfacing_3/internal/Base_domain.h>
 #include <CGAL/Isosurfacing_3/internal/Implicit_function_with_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_topology.h>
 #include <CGAL/Octree_wrapper.h>
+#include <CGAL/Zero_gradient.h>
 
 namespace CGAL {
 namespace Isosurfacing {
 
 
 template <class GeomTraits, typename PointFunction, typename Gradient_>
-using Implicit_octree_domain =
-    Base_domain<GeomTraits, Octree_topology<GeomTraits>, Octree_geometry<GeomTraits>,
-                Implicit_function_with_geometry<GeomTraits, Octree_geometry<GeomTraits>, PointFunction>, Gradient_>;
+using Implicit_octree_domain = internal::Base_domain<
+    GeomTraits, internal::Octree_topology<GeomTraits>, internal::Octree_geometry<GeomTraits>,
+    internal::Implicit_function_with_geometry<GeomTraits, internal::Octree_geometry<GeomTraits>, PointFunction>,
+    Gradient_>;
 
 template <class GeomTraits, typename PointFunction, typename Gradient_ = Zero_gradient<GeomTraits>>
 Implicit_octree_domain<GeomTraits, PointFunction, Gradient_> create_implicit_octree_domain(

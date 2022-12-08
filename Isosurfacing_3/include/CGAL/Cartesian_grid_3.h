@@ -38,7 +38,7 @@ public:
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Vector_3 Vector;
 
-    typedef internal::Grid_topology::Vertex_descriptor VertexDescriptor;
+    typedef Isosurfacing::internal::Grid_topology::Vertex_descriptor VertexDescriptor;
 
 public:
     /**

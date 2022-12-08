@@ -53,19 +53,19 @@ public:
 
     /*!
     A container for the cells incident to an edge.
-    Must be a model of the concept `RandomAccessContainer` whose value type is `Cell_descriptor`.
+    Must be a model of the concept `Container` whose value type is `Cell_descriptor`.
     */
     typedef unspecified_type Cells_incident_to_edge;
 
     /*!
     A container for the vertices of a cell.
-    Must be a model of the concept `RandomAccessContainer` whose value type is `Vertex_descriptor`.
+    Must be a model of the concept `Container` whose value type is `Vertex_descriptor`.
     */
     typedef unspecified_type Cell_vertices;
 
     /*!
     A container for the edges of a cell.
-    Must be a model of the concept `RandomAccessContainer` whose value type is `Edge_descriptor`.
+    Must be a model of the concept `Container` whose value type is `Edge_descriptor`.
     */
     typedef unspecified_type Cell_edges;
 
@@ -131,52 +131,47 @@ public:
     Cell_edges cell_edges(const Cell_descriptor& c) const;
 
     /*!
-    Iterate sequentially over all vertices and call a functor on each one
+    Iterate over all vertices and call a functor on each one
 
-    \param f the functor called with every vertex. Must implement `void operator()(const Vertex_descriptor& vertex)`.
+    /tparam Concurrency_tag decides if the vertices are iterated sequentially or in parallel.
+    Can be either `CGAL::Sequential_tag` or `CGAL::Parallel_tag`.
+    Only the sequential version has to be implemented. The parallel version is optional.
+
+    /tparam Functor must implement `void operator()(const Vertex_descriptor& vertex)`
+
+    \param f the functor called with every vertex
     */
-    template <typename Functor>
-    void iterate_vertices(Functor& f, Sequential_tag) const;
+    template <typename Concurrency_tag, typename Functor>
+    void iterate_vertices(Functor& f) const;
 
     /*!
-    Iterate sequentially over all edges and call the functor f on each one
+    Iterate over all edges and call the functor f on each one
 
-    \param f the functor called with every edge. Must implement `void operator()(const Edge_descriptor& edge)`.
+    /tparam Concurrency_tag decides if the edges are iterated sequentially or in parallel.
+    Can be either `CGAL::Sequential_tag` or `CGAL::Parallel_tag`.
+    Only the sequential version has to be implemented. The parallel version is optional.
+
+    /tparam Functor must implement `void operator()(const Edge_descriptor& edge)`.
+
+    \param f the functor called with every edge
     */
-    template <typename Functor>
-    void iterate_edges(Functor& f, Sequential_tag) const;
+    template <typename Concurrency_tag, typename Functor>
+    void iterate_edges(Functor& f) const;
 
     /*!
     Iterate sequentially over all cells and call the functor f on each one
 
-    \param f the functor called with every cell. Must implement `void operator()(const Cell_descriptor& cell)`.
+    /tparam Concurrency_tag decides if the cells are iterated sequentially or in parallel.
+    Can be either `CGAL::Sequential_tag` or `CGAL::Parallel_tag`.
+    Only the sequential version has to be implemented. The parallel version is optional.
+
+    /tparam Functor must implement `void operator()(const Cell_descriptor& cell)`.
+
+    \param f the functor called with every cell
     */
-    template <typename Functor>
-    void iterate_cells(Functor& f, Sequential_tag) const;
+    template <typename Concurrency_tag, typename Functor>
+    void iterate_cells(Functor& f) const;
 
-    /*!
-    (Optional) Iterate in parallel over all vertices and call a functor on each one
-
-    \param f the functor called with every vertex. Must implement `void operator()(const Vertex_descriptor& vertex)`.
-    */
-    template <typename Functor>
-    void iterate_vertices(Functor& f, Parallel_tag) const;
-
-    /*!
-    (Optional) Iterate in parallel over all edges and call the functor f on each one
-
-    \param f the functor called with every edge. Must implement `void operator()(const Edge_descriptor& edge)`.
-    */
-    template <typename Functor>
-    void iterate_edges(Functor& f, Parallel_tag) const;
-
-    /*!
-    (Optional) Iterate in parallel over all cells and call the functor f on each one
-
-    \param f the functor called with every cell. Must implement `void operator()(const Cell_descriptor& cell)`.
-    */
-    template <typename Functor>
-    void iterate_cells(Functor& f, Parallel_tag) const;
 
     /// @}
 };

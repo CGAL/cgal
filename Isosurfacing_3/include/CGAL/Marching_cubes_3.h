@@ -54,10 +54,10 @@ void marching_cubes(const Domain_& domain, const typename Domain_::FT iso_value,
         domain.template iterate_cells<Concurrency_tag>(functor);
     } else {
         // run MC
-        internal::Marching_cubes_functor<Domain_> functor(domain, iso_value);
+        internal::Marching_cubes_3<Domain_> functor(domain, iso_value);
         domain.template iterate_cells<Concurrency_tag>(functor);
         // copy the result to points and triangles
-        internal::to_indexed_face_set(functor.get_triangles(), points, triangles);
+        internal::to_indexed_face_set(functor.triangles(), points, triangles);
     }
 }
 
