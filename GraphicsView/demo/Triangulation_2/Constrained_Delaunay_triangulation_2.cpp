@@ -578,7 +578,7 @@ MainWindow::loadWKT(QString filename)
     cdt.insert_constraint(p.outer_boundary().vertices_begin(), p.outer_boundary().vertices_end(),true);
 
     for(Polygon::Hole_const_iterator h_it = p.holes_begin(); h_it != p.holes_end(); ++h_it){
-      cdt.insert_constraint(h_it->vertices_begin(); e_it != h_it->vertices_end(),true);
+      cdt.insert_constraint(h_it->vertices_begin(), h_it->vertices_end(),true);
     }
   }
 
