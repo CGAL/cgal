@@ -42,8 +42,11 @@ public:
      * \param point the point at which the gradient is computed
      */
     Vector operator()(const Point& point) const {
-        return Vector(0, 0, 0);
+        return zero;
     }
+
+private:
+    const Vector zero = Vector(0, 0, 0);
 };
 
 }  // namespace Isosurfacing
