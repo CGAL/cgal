@@ -3456,7 +3456,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
       if(ref_facet.first == Cell_handle())
         ref_facet = f;
 
-      const Triangle& ct = tr_.get_incident_triangle(f, v);
+      const Triangle ct = tr_.get_incident_triangle(f, v);
       triangles.push_back(ct);
     }
   }
