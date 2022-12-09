@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 #include <cassert>
-#include "draw_surface_mesh_small_faces.h"
+#include "CGAL/draw_surface_mesh_small_faces.h"
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
