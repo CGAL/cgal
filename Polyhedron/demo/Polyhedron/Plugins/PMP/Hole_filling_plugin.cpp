@@ -730,13 +730,12 @@ bool Polyhedron_demo_hole_filling_plugin::fill
       auto vpm = get_property_map(CGAL::vertex_point, poly);
       auto weight_calc = CGAL::Weights::Secure_cotangent_weight_with_voronoi_area<Face_graph, decltype(vpm), EPICK>(poly, vpm, EPICK());
 
-      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
-              it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::parameters::face_output_iterator(std::back_inserter(patch)).
-                                weight_calculator(weight_calc).
-                                density_control_factor(alpha).
-                                fairing_continuity(continuity).
-                                use_delaunay_triangulation(use_DT)));
+      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,it,
+                CGAL::parameters::face_output_iterator(std::back_inserter(patch)).
+                weight_calculator(weight_calc).
+                density_control_factor(alpha).
+                fairing_continuity(continuity).
+                use_delaunay_triangulation(use_DT)));
     }
 
     if(!success) { print_message("Error: fairing is not successful, only triangulation and refinement are applied!"); }
