@@ -124,7 +124,12 @@ void dump_c3t3_edges(const C3t3& c3t3, std::string prefix)
   }
 }
 template <typename C3t3>
-void dump_c3t3(const C3t3& c3t3, std::string prefix, bool verbose = false)
+void dump_c3t3(const C3t3& c3t3, std::string prefix,
+#ifdef CGAL_MESH_3_VERBOSE
+               bool verbose = true)
+#else
+               bool verbose = false)
+#endif
 {
   if(!prefix.empty()) {
     Dump_c3t3<C3t3> dump;
