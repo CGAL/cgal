@@ -12,6 +12,8 @@
 #ifndef CGAL_MESH_3_CONFIG_H
 #define CGAL_MESH_3_CONFIG_H 1
 
+#warning Mesh_3/config.h
+
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/config.h>
