@@ -10,20 +10,20 @@
 //
 // Author(s)     : Francois Rebufat
 
+#include "_test_cls_iterator.h"
+#include "_test_cls_circulator.h"
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
+#include <CGAL/Testsuite/use.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/use.h>
+
 #include <cassert>
 #include <iostream>
 #include <fstream>
 #include <list>
 #include <vector>
 #include <type_traits>
-
-#include "_test_cls_iterator.h"
-#include "_test_cls_circulator.h"
-
-#include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
-#include <CGAL/use.h>
-#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 template <class Triangulation, class Container>
 bool check_all_are_finite(Triangulation* tr, const Container& cont)
@@ -119,6 +119,9 @@ _test_cls_triangulation_3(const Triangulation &)
   CGAL_USE_TYPE(difference_type);
   CGAL_USE_TYPE(Vertex_iterator);
   CGAL_USE_TYPE(Cell_iterator);
+
+  CGAL_USE_TYPE(typename Cls::Periodic_tag);
+  CGAL_USE_TYPE(typename Cls::Weighted_tag);
 
   // +++ We define now some points for building triangulations +++++//
 
