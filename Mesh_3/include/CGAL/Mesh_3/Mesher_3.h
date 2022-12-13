@@ -690,7 +690,7 @@ initialize()
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
 #  endif
-      Random_points_on_sphere_3<Bare_point> random_point(radius);
+      Random_points_on_sphere_3<Bare_point> random_point(radius, CGAL::Random(0));
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
