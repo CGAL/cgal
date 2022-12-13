@@ -393,7 +393,7 @@ namespace nanoflann
         /** @addtogroup param_grp Parameter structs
           * @{ */
 
-        /**  Parameters (see http://code.google.com/p/nanoflann/ for help choosing the parameters)
+        /**  Parameters (see https://github.com/jlblancoc/nanoflann for help choosing the parameters)
           */
         struct KDTreeSingleIndexAdaptorParams
         {
@@ -580,10 +580,10 @@ namespace nanoflann
          * This code is an adapted version from Boost, modifed for its integration
          *        within MRPT (JLBC, Dec/2009) (Renamed array -> CArray to avoid possible potential conflicts).
          * See
-         *      http://www.josuttis.com/cppcode
+         *      https://www.josuttis.com/cppcode/
          * for details and the latest version.
          * See
-         *      http://www.boost.org/libs/array for Documentation.
+         *      https://www.boost.org/libs/array for Documentation.
          * for documentation.
          *
          * (C) Copyright Nicolai M. Josuttis 2001.
@@ -851,7 +851,7 @@ namespace nanoflann
                  *
                  * Params:
                  *          inputData = dataset with the input features
-                 *          params = parameters passed to the kdtree algorithm (see http://code.google.com/p/nanoflann/ for help choosing the parameters)
+                 *          params = parameters passed to the kdtree algorithm (see https://github.com/jlblancoc/nanoflann for help choosing the parameters)
                  */
                 KDTreeSingleIndexAdaptor(const int dimensionality, const DatasetAdaptor& inputData, const KDTreeSingleIndexAdaptorParams& params = KDTreeSingleIndexAdaptorParams() ) :
                         dataset(inputData), index_params(params), root_node(NULL), distance(inputData)

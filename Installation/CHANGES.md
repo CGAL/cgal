@@ -59,6 +59,10 @@ CGAL tetrahedral Delaunay refinement algorithm.
     described by the concept `TriangulationDataStructure_2::Face`. The model `CGAL::Hyperbolic_triangulation_face_base_2`
     has been adapted correspondingly.
 
+### [Surface Mesh Simplification](https://doc.cgal.org/5.6/Manual/packages.html#PkgSurfaceMeshSimplification)
+-   The stop predicates `Count_stop_predicate` and `Count_ratio_stop_predicate` are renamed to `Edge_count_stop_predicate` and `Edge_count_ratio_stop_predicate`. Older versions have been deprecated.
+-   Introduce `Face_count_stop_predicate` and `Face_count_ratio_stop_predicate` that can be used to stop the simplification algorithm based on a desired number of faces in the output, or a ratio between input and output face numbers.
+
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
 
@@ -3187,7 +3191,7 @@ Release date: October 2012
 -   Added more general script to create CMakeLists.txt files:
     `cgal_create_CMakeLists`
 -   Availability tests for C++11 features are now performed with the
-    help of [Boost.Config](http://www.boost.org/libs/config). A Boost
+    help of [Boost.Config](https://www.boost.org/libs/config). A Boost
     version of 1.40.0 or higher is needed to use C++11 features.
 
 ### 2D Arrangement
@@ -3679,7 +3683,7 @@ CGAL 3.7 offers the following improvements and new functionality :
 -   Some demos now require a version of Qt4 &gt;= 4.3.
 -   CGAL\_PDB is no longer provided with CGAL. An alternative solution
     for people interested in reading PDB files is to use ESBTL
-    (http://esbtl.sourceforge.net/).
+    (https://esbtl.sourceforge.net/).
 -   Fix issues of the CGAL wrappers around the CORE library, on 64 bits
     platforms.
 

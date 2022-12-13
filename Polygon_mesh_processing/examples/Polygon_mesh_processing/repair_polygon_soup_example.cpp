@@ -84,9 +84,9 @@ int main(int, char**)
   polygons.push_back({0,1,2,3,4,3,2,1});
 #endif
 
-  std::cout << "Before reparation, the soup has " << points.size() << " vertices and " << polygons.size() << " faces" << std::endl;
+  std::cout << "Before repairing, the soup has " << points.size() << " vertices and " << polygons.size() << " faces" << std::endl;
   PMP::repair_polygon_soup(points, polygons, CGAL::parameters::geom_traits(Array_traits()));
-  std::cout << "After reparation, the soup has " << points.size() << " vertices and " << polygons.size() << " faces" << std::endl;
+  std::cout << "After repairing, the soup has " << points.size() << " vertices and " << polygons.size() << " faces" << std::endl;
 
   Mesh mesh;
   PMP::orient_polygon_soup(points, polygons);

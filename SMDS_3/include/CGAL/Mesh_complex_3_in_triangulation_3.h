@@ -1462,7 +1462,7 @@ public:
 private:
   // Sequential: non-atomic
   // "dummy" is here to allow the specialization (see below)
-  // See http://groups.google.com/group/comp.lang.c++.moderated/browse_thread/thread/285ab1eec49e1cb6
+  // See https://groups.google.com/group/comp.lang.c++.moderated/browse_thread/thread/285ab1eec49e1cb6
   template<typename Concurrency_tag2, typename dummy = void>
   struct Number_of_elements
   {

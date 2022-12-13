@@ -11,7 +11,7 @@
 #include <QMessageBox>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
@@ -25,7 +25,7 @@ typedef Scene_facegraph_item::Face_graph FaceGraph;
 class Custom_stop_predicate
 {
   bool m_and;
-  CGAL::Surface_mesh_simplification::Count_stop_predicate<FaceGraph> m_count_stop;
+  CGAL::Surface_mesh_simplification::Edge_count_stop_predicate<FaceGraph> m_count_stop;
   CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<double> m_length_stop;
 
 public:

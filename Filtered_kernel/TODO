@@ -140,7 +140,7 @@ except we could merge stuff with Olivier's Fixed !
   So the good choice seems to be to have data stored in each predicate object,
   and having the kernel store a predicate object for each predicate.
   Then the orientation_2_object() simply returns a reference to it.
-  
+
   Then it means algorithms should use one "global" object per predicate (e.g.
   one orientation object for a whole Triangulation).  Except for cases where
   they actually want different contexts.

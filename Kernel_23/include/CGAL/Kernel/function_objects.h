@@ -20,6 +20,7 @@
 #ifndef CGAL_KERNEL_FUNCTION_OBJECTS_H
 #define CGAL_KERNEL_FUNCTION_OBJECTS_H
 
+#include <CGAL/tags.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
@@ -29,7 +30,6 @@
 #include <CGAL/intersection_3.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/global_functions_3.h>
-
 
 #include <cmath> // for Compute_dihedral_angle
 
@@ -779,11 +779,12 @@ namespace CommonKernelFunctors {
 
     typedef Comparison_result                             result_type;
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const Weighted_point_3 & r,
-                           const Weighted_point_3 & s,
-                           const FT& w) const
+    Needs_FT<result_type>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const Weighted_point_3 & r,
+               const Weighted_point_3 & s,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -793,10 +794,11 @@ namespace CommonKernelFunctors {
                            w);
     }
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const Weighted_point_3 & r,
-                           const FT& w) const
+    Needs_FT<result_type>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const Weighted_point_3 & r,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_smallest_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -805,9 +807,10 @@ namespace CommonKernelFunctors {
                            w);
     }
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const FT& w) const
+    Needs_FT<result_type>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_smallest_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -860,17 +863,18 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     template <class T1, class T2>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL::compare(squared_distance(p, q), d2);
+      return CGAL::compare(internal::squared_distance(p, q, K()), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(internal::squared_distance(p, q, K()),
+                           internal::squared_distance(r, s, K()));
     }
   };
 
@@ -882,17 +886,18 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     template <class T1, class T2>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL::compare(squared_distance(p, q), d2);
+      return CGAL::compare(internal::squared_distance(p, q, K()), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(internal::squared_distance(p, q, K()),
+                           internal::squared_distance(r, s, K()));
     }
   };
 
@@ -3061,10 +3066,11 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Boolean     result_type;
 
+    // Needs_FT because Line/Line (and variations) as well as Circle_2/X compute intersections
     template <class T1, class T2>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& t1, const T2& t2) const
-    { return Intersections::internal::do_intersect(t1, t2, K()); }
+    { return { Intersections::internal::do_intersect(t1, t2, K())}; }
   };
 
   template <typename K>
@@ -3078,10 +3084,12 @@ namespace CommonKernelFunctors {
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::do_intersect(t1, t2, K()); }
 
-    result_type
-    operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
-    { return Intersections::internal::do_intersect(pl1, pl2, pl3, K() ); }
-
+    result_type operator()(const typename K::Plane_3& pl1,
+                           const typename K::Plane_3& pl2,
+                           const typename K::Plane_3& pl3) const
+    {
+      return Intersections::internal::do_intersect(pl1, pl2, pl3, K());
+    }
   };
 
   template <typename K>
@@ -3371,8 +3379,10 @@ namespace CommonKernelFunctors {
       return c.rep().has_on_bounded_side(p);
     }
 
-    result_type operator()(const Sphere_3& s1, const Sphere_3& s2,
-                           const Point_3& a, const Point_3& b) const
+    // returns true iff the line segment ab is inside the union of the bounded sides of s1 and s2.
+    Needs_FT<result_type>
+    operator()(const Sphere_3& s1, const Sphere_3& s2,
+               const Point_3& a, const Point_3& b) const
     {
       typedef typename K::Circle_3  Circle_3;
       typedef typename K::Point_3   Point_3;
@@ -3384,27 +3394,23 @@ namespace CommonKernelFunctors {
       const bool a_in_s1 = has_on_bounded_side(s1, a);
       const bool a_in_s2 = has_on_bounded_side(s2, a);
 
-      if(!(a_in_s1 || a_in_s2)) return false;
+      if(!(a_in_s1 || a_in_s2)) return {false};
 
       const bool b_in_s1 = has_on_bounded_side(s1, b);
       const bool b_in_s2 = has_on_bounded_side(s2, b);
 
-      if(!(b_in_s1 || b_in_s2)) return false;
+      if(!(b_in_s1 || b_in_s2)) return {false};
 
-      if(a_in_s1 && b_in_s1) return true;
-      if(a_in_s2 && b_in_s2) return true;
+      if(a_in_s1 && b_in_s1) return {true};
+      if(a_in_s2 && b_in_s2) return {true};
 
-      if(!K().do_intersect_3_object()(s1, s2)) return false;
+      if(!K().do_intersect_3_object()(s1, s2)) return {false};
       const Circle_3 circ(s1, s2);
       const Plane_3& plane = circ.supporting_plane();
       const auto optional = K().intersect_3_object()(plane, Segment_3(a, b));
-      CGAL_kernel_assertion_msg(bool(optional) == true,
-                                "the segment does not intersect the supporting"
-                                " plane");
+      CGAL_kernel_assertion_msg(bool(optional) == true, "the segment does not intersect the supporting plane");
       const Point_3* p = boost::get<Point_3>(&*optional);
-      CGAL_kernel_assertion_msg(p != 0,
-                                "the segment intersection with the plane is "
-                                "not a point");
+      CGAL_kernel_assertion_msg(p != 0, "the segment intersection with the plane is not a point");
       return squared_distance(circ.center(), *p) < circ.squared_radius();
     }
 
