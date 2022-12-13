@@ -149,8 +149,11 @@ void test()
 
 int main(int, char*[])
 {
+  std::cout << "Sequential test" << std::endl;
   test<CGAL::Sequential_tag>();
+
 #ifdef CGAL_LINKED_WITH_TBB
+  std::cout << "\n\nParallel with 1 thread test" << std::endl;
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test<CGAL::Parallel_tag>();
 #endif
