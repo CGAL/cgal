@@ -59,6 +59,10 @@ int main(int argc, char* argv[])
     std::ofstream missing_faces("missing_faces.polylines.txt");
     cdt.write_missing_subfaces_file(missing_faces);
   }
+  {
+    std::ofstream missing_edges("missing_segments.polylines.txt");
+    cdt.write_missing_segments_file(missing_edges);
+  }
   // auto edge_is_feature_map = get(CGAL::edge_is_feature, mesh);
   // auto face_patch_id_map = get(CGAL::face_patch_id_t<int>(), mesh);
 
