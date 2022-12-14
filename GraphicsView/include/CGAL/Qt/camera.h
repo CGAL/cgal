@@ -13,6 +13,7 @@
 
 #ifndef QGLVIEWER_CAMERA_H
 #define QGLVIEWER_CAMERA_H
+#include <array>
 #include <QMap>
 #include <CGAL/Qt/vec.h>
 #include <CGAL/Qt/quaternion.h>
