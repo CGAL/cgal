@@ -864,7 +864,11 @@ private:
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(const ePoint_3 &ip,
                                                           const std::vector<unsigned int> &prismindex, const unsigned int &jump, int &id) const
   {
-    Oriented_side ori;
+    Oriented_side ori = ON_POSITIVE_SIDE; // The compiler sees the
+                                          // possibility that the
+                                          // nested for loop body is
+                                          // not executed and warns that
+                                          // ori may not be initialized
 
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
