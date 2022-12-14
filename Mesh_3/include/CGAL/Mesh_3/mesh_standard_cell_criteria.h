@@ -151,7 +151,7 @@ public:
   // Destructor
   ~Cell_uniform_size_criterion() {}
 
-  const bool is_lower_bound() const
+  bool is_lower_bound() const
   {
     return is_lower_bound_;
   }

@@ -404,7 +404,7 @@ public:
    , is_lower_bound_(is_lower_bound)
    {}
 
-  const bool is_lower_bound() const
+  bool is_lower_bound() const
   {
     return is_lower_bound_;
   }
