@@ -72,7 +72,7 @@ public:
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
                        const FT& min_radius_bound = 0.,
-                       std::enable_if<
+                       std::enable_if_t<
                          Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
                        >* = 0
                        )
