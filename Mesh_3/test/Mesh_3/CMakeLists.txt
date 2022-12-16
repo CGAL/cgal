@@ -80,7 +80,8 @@ if ( CGAL_FOUND )
       test_mesh_3_issue_1554
       test_mesh_polyhedral_domain_with_features_deprecated
       test_mesh_cell_base_3
-      test_meshing_with_one_step.cpp)
+      test_meshing_with_one_step
+      test_min_size_criteria)
     if(TARGET ${target})
       target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
     endif()
