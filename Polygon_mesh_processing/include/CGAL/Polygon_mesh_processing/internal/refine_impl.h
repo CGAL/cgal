@@ -259,8 +259,7 @@ private:
       Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd,pmesh),pmesh), done(circ);
       do {
         vertex_descriptor v = target(*circ,pmesh);
-        std::pair<typename std::map<vertex_descriptor, double>::iterator, bool> v_insert
-          = scale_attribute.insert(std::make_pair(v, 0));
+        auto v_insert = scale_attribute.emplace(v, 0);
         if(!v_insert.second) { continue; } // already calculated
         v_insert.first->second = average_length(v, interior_map, accept_internal_facets);
       } while(++circ != done);
