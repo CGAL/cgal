@@ -226,11 +226,11 @@ private:
           : self(self), conforming_dt_visitor(self) {}
 
       template <class InputIterator>
-      void process_cells_in_conflict(InputIterator cell_it, InputIterator end) {
+      void process_cells_in_conflict(const InputIterator cell_it_begin, const InputIterator end) {
         switch (self.dimension())
         {
         case 2:
-          for(; cell_it != end; ++cell_it) {
+          for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
             auto c = *cell_it;
             if(c->is_facet_constrained(3)) {
               const auto face_id = c->face_constraint_index(3);
@@ -241,7 +241,7 @@ private:
           }
           break;
         case 3:
-          for(; cell_it != end; ++cell_it) {
+          for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
             auto c = *cell_it;
             for(int li = 0; li < 4; ++li) {
               if(c->is_facet_constrained(li)) {
@@ -256,10 +256,7 @@ private:
         default:
           CGAL_error();
         }
-        for (; cell_it != end; ++cell_it)
-          for (int i = 0; i < self.tr.dimension(); ++i)
-
-            conforming_dt_visitor.process_cells_in_conflict(cell_it, end);
+        conforming_dt_visitor.process_cells_in_conflict(cell_it_begin, end);
       }
       void after_insertion(Vertex_handle new_vertex) {
 
