@@ -54,6 +54,9 @@ int main()
     cdt.insert_constrained_edge(vertices[0], vertices[1]);
     cdt.insert_constrained_edge(vertices[5], vertices[1]);
     cdt.insert_constrained_edge(vertices[5], vertices[11]);
+    std::cerr << "test1: "
+              << (cdt.is_conforming() ? "OK" : "ERROR: NOT CONFORMING")
+              << std::endl;
     return cdt.is_conforming() ? 0 : 1;
   };
 
@@ -67,7 +70,7 @@ int main()
 #endif
 
     std::ifstream input(filename);
-    if(!input) return 1;
+    if(!input) throw "file not found";
     int n;
     input >> n;
     std::cerr << n << " lines in the file\n";
@@ -104,13 +107,17 @@ int main()
       std::cout << "  on " << v->nb_of_incident_constraints
                 << " constraint(s): " << v->c_id << "\n";
     }
+    std::cerr << "test2: " << filename << "  "
+              << (cdt.is_conforming() ? "OK" : "ERROR: NOT CONFORMING")
+              << std::endl;
     return cdt.is_conforming() ? 0 : 1;
   };
 
-  return test1() + test2("clusters.edg") + test2("clusters2.edg")
+  return test1() + test2(CGAL::data_file_path("2d_segments/clusters.edg")) +
+         test2(CGAL::data_file_path("2d_segments/clusters2.edg"))
   //  // For the moment, Triangulation_segment_traverser_3 does not work in 1D:
   //  //     Expr: _tr->dimension() >= 2
   //  //     File: .../CGAL/Triangulation_3/internal/Triangulation_segment_traverser_3_impl.h
   //  + test2("clusters.edg", DIM_2D) + test2("clusters2.edg", DIM_2D)
-   ;
+      ;
 }
