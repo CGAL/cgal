@@ -69,7 +69,7 @@ void test()
   std::vector<std::string> output_c3t3;
   std::vector<std::string> output_surfaces;
 
-  const int nb_operations = 5;
+  const std::size_t nb_operations = 5;
 
   output_c3t3.reserve(nb_operations * nb_runs);
   for(std::size_t i = 0; i < nb_runs; ++i)
@@ -138,8 +138,8 @@ void test()
     //else check
     for(std::size_t j = 0; j < nb_operations; ++j)
     {
-      int id1 = nb_operations * (i - 1) + j;
-      int id2 = nb_operations * i + j;
+      std::size_t id1 = nb_operations * (i - 1) + j;
+      std::size_t id2 = nb_operations * i + j;
       if(0 != output_c3t3[id1].compare(output_c3t3[id2]))
       {
         std::cerr << "Meshing operation " << j << " is not deterministic.\n";
