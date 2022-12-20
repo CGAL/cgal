@@ -28,6 +28,7 @@ create_single_source_cgal_program("test_segment_simplex_traverser_3.cpp" )
 create_single_source_cgal_program("test_static_filters.cpp")
 create_single_source_cgal_program("test_triangulation_3.cpp")
 create_single_source_cgal_program("test_io_triangulation_3.cpp")
+create_single_source_cgal_program("debug_segment_traverser_in_2D.cpp")
 
  # CDT_3: C++20 for structured bindings
 create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_EDG_file.cpp" CXX_FEATURES cxx_std_20)

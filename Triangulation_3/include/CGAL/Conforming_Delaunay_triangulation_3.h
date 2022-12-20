@@ -396,6 +396,10 @@ protected:
     const auto& pa = tr.point(va);
     const auto& pb = tr.point(vb);
 
+    if(this->dimension() < 2) {
+      return {midpoint_functor(pa, pb), va->cell()};
+    }
+
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
               << display_vert(vb) << " )\n";

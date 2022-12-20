@@ -118,6 +118,7 @@ int main()
   //  // For the moment, Triangulation_segment_traverser_3 does not work in 1D:
   //  //     Expr: _tr->dimension() >= 2
   //  //     File: .../CGAL/Triangulation_3/internal/Triangulation_segment_traverser_3_impl.h
-  //  + test2("clusters.edg", DIM_2D) + test2("clusters2.edg", DIM_2D)
-      ;
+  //   + test2(CGAL::data_file_path("2d_segments/clusters.edg"), DIM_2D) +
+  //     test2(CGAL::data_file_path("2d_segments/clusters2.edg"), DIM_2D)
+  ;
 }
