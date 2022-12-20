@@ -48,6 +48,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 
 ### [3D Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgMesh3)
 -   Deprecated usage of boost parameters in favor of function named parameters.
+-   Added new meshing criteria `facet_min_size` and `cell_min_size` to prevent Delaunay refinement from creating simplices smaller than the prescribed bound.
 
 ### [3D Periodic Mesh Generation](https://doc.cgal.org/5.6/Manual/packages.html#PkgPeriodic3Mesh3)
 -   Deprecated usage of boost parameters in favor of function named parameters.
