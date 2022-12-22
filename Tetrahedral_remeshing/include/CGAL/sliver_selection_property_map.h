@@ -28,7 +28,7 @@ namespace CGAL
 *
 *
 * \sa `CGAL::tetrahedral_isotropic_remeshing()`
-* 
+*
 * \todo use sliver_value() from Mesh_cell_base_3.h when available
 */
 template<typename Triangulation>
