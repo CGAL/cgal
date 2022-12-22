@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Mesh_3/min_dihedral_angle.h> //todo : remove dependency on Mesh_3
+#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <CGAL/property_map.h>
 
@@ -83,16 +83,19 @@ private:
 
   void collect_slivers(const FT& sliver_bound)
   {
-    using CGAL::Mesh_3::minimum_dihedral_angle;
+    using CGAL::Tetrahedral_remeshing::min_dihedral_angle;
+    using Subdomain_index = typename Tr::Cell::Subdomain_index;
     auto cp = m_tr.geom_traits().construct_point_3_object();
 
     for (Cell_handle c : m_tr.finite_cell_handles())
     {
-      FT a = minimum_dihedral_angle(cp(c->vertex(0)->point()),
-                                    cp(c->vertex(1)->point()),
-                                    cp(c->vertex(2)->point()),
-                                    cp(c->vertex(3)->point()),
-                                    m_tr.geom_traits());
+      if (Subdomain_index() == c->subdomain_index())
+        continue;
+      FT a = min_dihedral_angle(cp(c->vertex(0)->point()),
+                                cp(c->vertex(1)->point()),
+                                cp(c->vertex(2)->point()),
+                                cp(c->vertex(3)->point()),
+                                m_tr.geom_traits());
       if (a < sliver_bound)
         m_slivers.insert(c);
     }
@@ -100,7 +103,14 @@ private:
     std::unordered_set<Cell_handle> neighbors;
     for (Cell_handle c : m_slivers)
       insert_neighbors(c, neighbors);
+
+    for (Cell_handle c : neighbors)
+      m_slivers.insert(c);
     //todo : we probably need to enlarge the selected region
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cout << "Sliver selection : " << m_slivers.size() << " cells." << std::endl;
+#endif
   }
 
 
