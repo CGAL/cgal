@@ -94,23 +94,20 @@ public:
   typedef typename Sample_::FT FT;
 
 private:
-  Sample_* m_sample;
+  int m_sample;
   FT m_priority;
 
 public:
-  Sample_with_priority(Sample_* sample, const FT priority = FT(0))
-  {
-    m_sample   = sample;
-    m_priority = priority;
-  }
+  Sample_with_priority(int sample, const FT priority = FT(0))
+    : m_sample(sample), m_priority(priority)
+  {}
 
   Sample_with_priority(const Sample_with_priority& psample)
-  {
-    m_sample   = psample.sample();
-    m_priority = psample.priority();
-  }
+    : m_sample(psample.sample()), m_priority(psample.priority())
+  {}
 
-  ~Sample_with_priority() { }
+  ~Sample_with_priority()
+  {}
 
   Sample_with_priority& operator = (const Sample_with_priority& psample)
   {
@@ -119,7 +116,7 @@ public:
     return *this;
   }
 
-  Sample_* sample() const { return m_sample; }
+  int sample() const { return m_sample; }
 
   const FT priority() const { return m_priority; }
 };
