@@ -403,7 +403,7 @@ public:
     insert_loose_bbox(bbox);
     init(vertices_start, vertices_beyond);
 
-    m_samples.reserve(std::distance(start,beyond));
+    m_samples.reserve(std::distance(samples_start, samples_beyond));
     for (InputIterator it = samples_start; it != samples_beyond; it++) {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point point = get(point_pmap, it);
@@ -412,7 +412,7 @@ public:
       Point point = get(point_pmap, *it);
       FT    mass  = get( mass_pmap, *it);
 #endif
-      Sample_s(point, mass);
+      Sample_ s(point, mass);
       m_samples.push_back(s);
     }
     Sample_vector sv(m_samples.size());
