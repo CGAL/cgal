@@ -2395,7 +2395,7 @@ bool remove_self_intersections(const FaceRange& face_range,
   // detect_feature_pp NP (unused for now)
   const double weak_dihedral_angle = 0.; // choose_parameter(get_parameter(np, internal_np::weak_dihedral_angle), 20.);
 
-  const double use_smoothing = choose_parameter(get_parameter(np, internal_np::use_smoothing), false);
+  const bool use_smoothing = choose_parameter(get_parameter(np, internal_np::use_smoothing), false);
 
   struct Return_false
   {
