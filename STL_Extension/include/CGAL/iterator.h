@@ -43,8 +43,6 @@ class Prevent_deref
   Prevent_deref<I>
   , I // base
   , I // value
-  , boost::use_default
-  , I
   >
 {
 public:
@@ -52,8 +50,6 @@ public:
   Prevent_deref<I>
   , I // base
   , I // value
-  , boost::use_default
-  , I
   > Base;
   typedef typename Base::reference reference;
   typedef typename std::pair<I, I> range;
