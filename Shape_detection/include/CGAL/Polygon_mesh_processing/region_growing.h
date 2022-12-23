@@ -20,6 +20,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Segment_set.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -40,6 +41,8 @@ namespace Polygon_mesh_processing {
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   @return the number of regions detected
+
+  @todo check that the bug of faces with all vertices in a patch and the face in another patch is gone
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
@@ -119,6 +122,209 @@ region_growing_of_planes_on_faces(
     put(region_map, f, get(region_growing.region_map(), f));
 
   return region_growing.number_of_regions_detected();
+}
+
+/*!
+ @TODO add doc + update np doc text
+ doc: requires a partition + consecutive ids
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{edge_is_constrained_map}
+      \cgalParamDescription{a property map filled by this function such that an edge is marked as constrained
+                            if it is at the interface of two different regions}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+                     as key type and `bool` as value type}
+      \cgalParamDefault{If not provided an internal dynamic map will be created and removed when leaving the function}
+    \cgalParamNEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `PolygonMesh`.}
+    \cgalParamNEnd
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+    \cgalParamNBegin{maximum_distance}
+      \cgalParamDescription{the maximum distance from a point to a line}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{1}
+    \cgalParamNEnd
+    \cgalParamNBegin{maximum_angle}
+      \cgalParamDescription{the maximum angle in degrees between
+      the normal of a point and the normal of a line}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{25 degrees}
+    \cgalParamNEnd
+    \cgalParamNBegin{cosine_value}
+      \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
+      this parameter can be used instead of the `maximum_angle`}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{`cos(25 * PI / 180)`}
+    \cgalParamNEnd
+    \cgalParamNBegin{minimum_region_size}
+      \cgalParamDescription{the minimum number of points a region must have}
+      \cgalParamType{`std::size_t`}
+      \cgalParamDefault{1}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+ */
+
+template <class TriangleMesh,
+          class RegionMap,
+          class CornerIdMap,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+std::size_t
+detect_corners_of_regions(
+  const TriangleMesh& tm,
+  RegionMap region_map,
+  std::size_t nb_regions,
+  CornerIdMap corner_id_map,
+  const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::is_default_parameter;
+
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type  Traits;
+
+  typedef boost::graph_traits<TriangleMesh> Graph_traits;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Graph_traits::edge_descriptor edge_descriptor;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+
+  typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type Default_ecm;
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::edge_is_constrained_t,
+    CGAL_NP_CLASS,
+    Default_ecm
+  > ::type Ecm;
+
+  Default_ecm dynamic_ecm;
+  if(!(is_default_parameter<CGAL_NP_CLASS, internal_np::edge_is_constrained_t>::value))
+    dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), tm);
+  Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
+
+  using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<TriangleMesh>;
+  using Segment_map        = typename Polyline_graph::Segment_map;
+  using Item               = typename Polyline_graph::Item;
+
+  using Line_region  = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<Traits, Item, Segment_map>;
+  using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Traits, Item, Polyline_graph, Segment_map>;
+  using RG_lines     = CGAL::Shape_detection::Region_growing<Polyline_graph, Line_region>;
+
+  // mark as constrained edges at the interface of two regions
+  for (edge_descriptor e : edges(tm))
+  {
+    halfedge_descriptor h = halfedge(e, tm);
+    face_descriptor f1 = face(h, tm);
+    face_descriptor f2 = face(opposite(h, tm), tm);
+    if (f1 == Graph_traits::null_face() || f2 == Graph_traits::null_face() || get(region_map,f1)!=get(region_map,f2))
+      put(ecm, e, true);
+  }
+
+  // filter trivial edges: incident to a plane with only one face
+  // such an edge cannot be removed and its vertices are corners
+  std::vector<int> nb_faces_per_patch(nb_regions,0);
+  for(face_descriptor f : faces(tm))
+  {
+    std::size_t pid = get(region_map, f);
+    nb_faces_per_patch[pid]+=1;
+  }
+
+  std::vector<edge_descriptor> filtered_edges, trivial_edges;
+  for (edge_descriptor e : edges(tm))
+  {
+    halfedge_descriptor h=halfedge(e,tm);
+    std::size_t r1 = is_border(h, tm)?std::size_t(-1):get(region_map, face(h, tm));
+    h=opposite(h, tm);
+    std::size_t r2 = is_border(h, tm)?std::size_t(-1):get(region_map, face(h, tm));
+    if ( (r1!=std::size_t(-1) && nb_faces_per_patch[r1]==1) || (r2!=std::size_t(-1) && nb_faces_per_patch[r2]==1) )
+    {
+      trivial_edges.push_back(e);
+//      put(eimap, edge, std::size_t(-1)); TODO backport
+    }
+    else
+      filtered_edges.push_back(e);
+  }
+
+  Polyline_graph pgraph(tm, filtered_edges, region_map);
+  const auto& segment_range = pgraph.segment_range();
+
+  Line_region line_region(np.segment_map(pgraph.segment_map()));
+
+  Line_sorting line_sorting(
+    segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
+  line_sorting.sort();
+
+  RG_lines rg_lines(
+    segment_range, pgraph, line_region);
+
+  std::vector< std::pair<typename Line_region::Primitive, std::vector<edge_descriptor> > > subregions;
+  rg_lines.detect(std::back_inserter(subregions));
+
+#ifdef DEBUG_EXAMPLE
+  std::ofstream debug_corners("corners.xyz");
+  debug_corners.precision(17);
+  std::ofstream debug_edges("contraints.polylines.txt");
+  debug_edges.precision(17);
+#endif
+
+  // detect vertex corner id
+  std::size_t cid=0;
+  for (const std::pair<typename Line_region::Primitive, std::vector<edge_descriptor>>& r : subregions)
+  {
+    std::vector<std::size_t> vertex_count(num_vertices(tm), 0);
+    std::vector<vertex_descriptor> line_vertices;
+    auto register_vertex = [&vertex_count, &line_vertices]
+                           (vertex_descriptor v)
+    {
+      if (vertex_count[v]==0)
+        line_vertices.push_back(v);
+      vertex_count[v]+=1;
+    };
+    for (edge_descriptor e : r.second)
+    {
+      put(ecm, e, true);
+      register_vertex(source(e, tm));
+      register_vertex(target(e, tm));
+#ifdef DEBUG_EXAMPLE
+      debug_edges << "2 " << tm.point(source(e, tm)) << " " << tm.point(target(e, tm)) << "\n";
+#endif
+    }
+
+    for (vertex_descriptor v : line_vertices)
+      if (vertex_count[v]==1)
+      {
+#ifdef DEBUG_EXAMPLE
+        debug_corners << tm.point(v) << "\n";
+#endif
+        if (get(corner_id_map, v) == std::size_t(-1))
+          put(corner_id_map, v, cid++);
+      }
+  }
+
+  // process trivial edges (could be done before if needed)
+  for(edge_descriptor e : trivial_edges)
+  {
+#ifdef DEBUG_EXAMPLE
+    debug_edges << "2 " << tm.point(source(e, tm)) << " " << tm.point(target(e, tm)) << "\n";
+#endif
+    put(ecm, e, true);
+    if (get(corner_id_map, source(e, tm))==std::size_t(-1))
+      put(corner_id_map, source(e, tm), cid++);
+    if (get(corner_id_map, target(e, tm))==std::size_t(-1))
+      put(corner_id_map, target(e, tm), cid++);
+  }
+
+  return cid;
 }
 
 } } // end of CGAL::Polygon_mesh_processing namespace
