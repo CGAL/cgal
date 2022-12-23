@@ -19,9 +19,7 @@
 // STL includes.
 #include <queue>
 #include <vector>
-
-// Boost includes.
-#include <unordered_map>
+#include <unordered_set>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
