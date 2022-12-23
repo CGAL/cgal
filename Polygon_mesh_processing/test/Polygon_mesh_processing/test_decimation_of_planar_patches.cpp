@@ -232,7 +232,7 @@ int main()
   for (int i=0; i<nb_meshes_range; ++i)
     assert(is_valid_polygon_mesh(meshes[i]));
 
-#ifndef CGAL_DO_NOT_USE_PCA
+#if 0 // tests to be re-enable when using region growing
 // testing decimate function with almost coplanar/collinear tests using PCA
   for (int i=1; i<=nb_meshes; ++i)
   {

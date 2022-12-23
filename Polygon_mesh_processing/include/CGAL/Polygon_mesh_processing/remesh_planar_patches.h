@@ -22,41 +22,21 @@
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
-#ifndef CGAL_DO_NOT_USE_PCA
-#include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#endif
+
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
 #include <unordered_map>
 #include <boost/dynamic_bitset.hpp>
 
-#ifdef DEBUG_PCA
-#include <fstream>
-#endif
-
 #include <algorithm>
 
 /// @TODO remove Kernel_traits
 /// @TODO function to move in PMP: retriangulate_planar_patches(in, out, vci, ecm, fccid, np) (pca is a np option)
-/// @TODO check if PCA performance is improved when using Eigen
+
 
 namespace CGAL{
 
 namespace Polygon_mesh_processing {
-
-#ifndef CGAL_DO_NOT_USE_PCA
-// forward declaration
-template <typename TriangleMesh,
-          typename FaceCCIdMap,
-          typename VertexPointMap>
-std::size_t
-coplanarity_segmentation_with_pca(TriangleMesh& tm,
-                                  double max_frechet_distance,
-                                  double coplanar_cos_threshold,
-                                  FaceCCIdMap& face_cc_ids,
-                                  const VertexPointMap& vpm);
-#endif
 
 namespace Planar_segmentation{
 
@@ -831,140 +811,11 @@ void propagate_corner_status(
   }
 }
 
-#ifndef CGAL_DO_NOT_USE_PCA
-template <typename TriangleMesh,
-          typename EdgeIsConstrainedMap,
-          typename CornerIdMap,
-          typename VertexPointMap>
-std::size_t
-mark_extra_corners_with_pca(TriangleMesh& tm,
-                            double max_frechet_distance,
-                            std::size_t nb_corners,
-                            EdgeIsConstrainedMap& edge_is_constrained,
-                            CornerIdMap& vertex_corner_id,
-                            const VertexPointMap& vpm)
-{
-  typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel IK; // input kernel
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel PCA_K;
-  typedef typename boost::graph_traits<TriangleMesh> graph_traits;
-  typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
-  typedef typename graph_traits::vertex_descriptor vertex_descriptor;
-
-  CGAL::Cartesian_converter<IK, PCA_K> to_pca_k;
-
-  const double max_squared_frechet_distance = max_frechet_distance * max_frechet_distance;
-
-  for(halfedge_descriptor h : halfedges(tm))
-  {
-    if (!get(edge_is_constrained, edge(h, tm)) || is_border(h, tm)) continue;
-
-    std::size_t i1 = get(vertex_corner_id, source(h, tm));
-    if ( is_corner_id(i1) )
-    {
-      std::size_t i2 = get(vertex_corner_id, target(h, tm));
-      if ( is_corner_id(i2)) continue;
-
-      std::vector<vertex_descriptor> edge_boundary_vertices;
-
-      edge_boundary_vertices.push_back(source(h, tm));
-
-      halfedge_descriptor h_init = h;
-      do{
-        if ( is_corner_id(i2))
-          break;
-        do{
-          h_init=opposite(next(h_init, tm), tm);
-        } while( !get(edge_is_constrained, edge(h_init, tm)) );
-        h_init=opposite(h_init, tm);
-        edge_boundary_vertices.push_back(target(h_init, tm));
-        i2 = get(vertex_corner_id, target(h_init, tm));
-      }
-      while(true);
-
-      //create the set of segments from the chain of vertices
-      std::vector<typename PCA_K::Segment_3> edge_boundary_segments;
-      std::size_t nb_segments=edge_boundary_vertices.size()-1;
-      CGAL_assertion(nb_segments>0);
-      edge_boundary_segments.reserve(nb_segments);
-      for (std::size_t i=0; i<nb_segments; ++i)
-      {
-        edge_boundary_segments.push_back(
-          typename PCA_K::Segment_3(
-            to_pca_k(get(vpm, edge_boundary_vertices[i])),
-            to_pca_k(get(vpm, edge_boundary_vertices[i+1]) )) );
-      }
-      typename PCA_K::Line_3 line;
-      typename PCA_K::Point_3 centroid;
-
-      auto does_fitting_respect_distance_bound = [&to_pca_k, &vpm, max_squared_frechet_distance](
-        typename std::vector<vertex_descriptor>::const_iterator begin,
-        typename std::vector<vertex_descriptor>::const_iterator end,
-        const PCA_K::Line_3& line)
-      {
-        typename PCA_K::Compare_squared_distance_3 compare_squared_distance;
-        while ( begin != end)
-        {
-          if (compare_squared_distance(to_pca_k(get(vpm, *begin++)), line, max_squared_frechet_distance) == LARGER)
-            return false;
-        }
-        return true;
-      };
-
-      // first look if the whole vertex chain is a good fit
-      linear_least_squares_fitting_3(edge_boundary_segments.begin(),
-                                     edge_boundary_segments.end(),
-                                     line,
-                                     centroid,
-                                     Dimension_tag<0>()); /// @TODO: use dimension 1 when the bug in CGAL is fixed
-
-      if ( !does_fitting_respect_distance_bound(edge_boundary_vertices.begin(),
-                                                edge_boundary_vertices.end(),
-                                                line)) continue;
-#ifdef DEBUG_PCA
-      std::cout << "  The whole chain cannot be fit, nb_segments=" << nb_segments << " line: " << line << "\n";
-#endif
-      // iteratively increase the boundary edge length while it is a good fit, then
-      // continue with the next part
-      std::size_t b=0, e=2;
-      while(e<=nb_segments)
-      {
-#ifdef DEBUG_PCA
-      std::cout << "  b=" << b << " and e="<< e << "\n";
-#endif
-        linear_least_squares_fitting_3(edge_boundary_segments.begin()+b,
-                                       edge_boundary_segments.begin()+e,
-                                       line,
-                                       centroid,
-                                       Dimension_tag<0>());  /// @TODO: use dimension 1 when the bug in CGAL is fixed
-        CGAL_assertion(edge_boundary_vertices.size() >= e+1 );
-
-        if (does_fitting_respect_distance_bound(edge_boundary_vertices.begin()+b,
-                                                edge_boundary_vertices.begin()+e+1,
-                                                line))
-        {
-          ++e;
-        }
-        else
-        {
-          CGAL_assertion( !is_corner_id(get(vertex_corner_id, edge_boundary_vertices[e-1])) );
-          put(vertex_corner_id, edge_boundary_vertices[e-1], nb_corners++);
-          b=e;
-          e+=2;
-        }
-      }
-    }
-  }
-
-  return nb_corners;
-}
-#endif
-
 template <typename TriangleMeshRange,
           typename MeshMap,
           typename VertexPointMap>
 bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                                                  MeshMap mesh_map,
-                                                 double max_frechet_distance, // !=0 if pca should be used
                                                  double coplanar_cos_threshold,
                                                  const std::vector<VertexPointMap>& vpms)
 {
@@ -976,13 +827,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
   CGAL_assertion(coplanar_cos_threshold<0);
-  const bool use_PCA = max_frechet_distance!=0;
-#ifdef CGAL_DO_NOT_USE_PCA
-  if (use_PCA)
-    std::cerr << "Warning: ask for using PCA while it was disabled at compile time!\n";
-#else
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
-#endif
 
   // declare and init all property maps
   typedef typename boost::property_map<Triangle_mesh, CGAL::dynamic_face_property_t<std::size_t> >::type Face_cc_map;
@@ -1060,32 +905,6 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
     ++mesh_id;
   }
-#ifndef CGAL_DO_NOT_USE_PCA
-  if (use_PCA)
-  {
-    mesh_id=0;
-    for(Triangle_mesh* tm_ptr : mesh_ptrs)
-    {
-      Triangle_mesh& tm = *tm_ptr;
-
-      // mark constrained edges of coplanar regions detected with PCA
-      coplanarity_segmentation_with_pca(tm, max_frechet_distance, coplanar_cos_threshold, face_cc_ids_maps[mesh_id],vpms[mesh_id]);
-
-      for(edge_descriptor e : edges(tm))
-      {
-        halfedge_descriptor h = halfedge(e, tm);
-        if (is_border(e, tm) ||
-            get(face_cc_ids_maps[mesh_id],face(h, tm))!=get(face_cc_ids_maps[mesh_id],face(opposite(h, tm), tm)))
-        {
-          put(edge_is_constrained_maps[mesh_id], e, true);
-        }
-      }
-      ++mesh_id;
-    }
-    /// @TODO in this version there is no guarantee that an edge internal to a shared patch will
-    ///       be constrained in all the meshes sharing the patch. I think this is a bug!
-  }
-#endif
 
   //then detect edge on the boundary of shared patches and mark them as constrained
   mark_boundary_of_shared_patches_as_constrained_edges(mesh_ptrs, point_to_vertex_maps, edge_is_constrained_maps, vertex_shared_maps, vpms);
@@ -1123,25 +942,6 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     }
     ++mesh_id;
   }
-#ifndef CGAL_DO_NOT_USE_PCA
-  if (use_PCA)
-  {
-    mesh_id=0;
-    for(Triangle_mesh* tm_ptr : mesh_ptrs)
-    {
-      Triangle_mesh& tm = *tm_ptr;
-
-      if (!mesh_has_non_manifold_vertices[mesh_id])
-        nb_corners_and_nb_cc_all[mesh_id].first = mark_extra_corners_with_pca(tm,
-                                                    max_frechet_distance,
-                                                    nb_corners_and_nb_cc_all[mesh_id].first,
-                                                    edge_is_constrained_maps[mesh_id],
-                                                    vertex_corner_id_maps[mesh_id],
-                                                    vpms[mesh_id]);
-      ++mesh_id;
-    }
-  }
-#endif
 
   // extra step to propagate is_corner to all meshes to make sure shared vertices are kept
   propagate_corner_status(vertex_corner_id_maps, point_to_vertex_maps, nb_corners_and_nb_cc_all);
@@ -1310,116 +1110,6 @@ bool remesh_planar_patches(TriangleMesh& tm,
   return res;
 }
 
-#ifndef CGAL_DO_NOT_USE_PCA
-template <typename TriangleMesh,
-          typename FaceCCIdMap,
-          typename VertexPointMap>
-std::size_t
-coplanarity_segmentation_with_pca(TriangleMesh& tm,
-                                  double max_frechet_distance,
-                                  double coplanar_cos_threshold,
-                                  FaceCCIdMap& face_cc_ids,
-                                  const VertexPointMap& vpm)
-{
-  typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel IK; // input kernel
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel PCA_K;
-  typedef boost::graph_traits<TriangleMesh> graph_traits;
-
-  std::size_t nb_faces = std::distance(faces(tm).first, faces(tm).second);
-  std::size_t faces_tagged = 0;
-  std::size_t cc_id(-1);
-  typename graph_traits::face_iterator fit_seed = boost::begin(faces(tm));
-
-  CGAL::Cartesian_converter<IK, PCA_K> to_pca_k;
-
-  const double max_squared_frechet_distance = max_frechet_distance * max_frechet_distance;
-
-  auto get_triangle = [&tm, &vpm, &to_pca_k](typename graph_traits::face_descriptor f)
-  {
-    typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
-      h = halfedge(f, tm);
-    return typename PCA_K::Triangle_3(to_pca_k(get(vpm, source(h, tm))),
-                                      to_pca_k(get(vpm, target(h, tm))),
-                                      to_pca_k(get(vpm, target(next(h, tm), tm))));
-  };
-
-  while(faces_tagged!=nb_faces)
-  {
-    CGAL_assertion(faces_tagged<=nb_faces);
-
-    while( get(face_cc_ids, *fit_seed)!=std::size_t(-1) )
-    {
-      ++fit_seed;
-      CGAL_assertion( fit_seed!=faces(tm).end() );
-    }
-    typename graph_traits::face_descriptor seed = *fit_seed;
-
-    std::vector<typename graph_traits::halfedge_descriptor> queue; /// not sorted for now @TODO
-    queue.push_back( halfedge(seed, tm) );
-    queue.push_back( next(queue.back(), tm) );
-    queue.push_back( next(queue.back(), tm) );
-
-    std::vector<typename PCA_K::Triangle_3> current_selection; /// @TODO compare lls-fitting with only points
-    current_selection.push_back(get_triangle(seed));
-    put(face_cc_ids, seed, ++cc_id);
-    ++faces_tagged;
-
-    auto does_fitting_respect_distance_bound = [&to_pca_k, &vpm, max_squared_frechet_distance](
-      std::unordered_set<typename graph_traits::vertex_descriptor>& vertices,
-      const PCA_K::Plane_3& plane)
-    {
-      typename PCA_K::Compare_squared_distance_3 compare_squared_distance;
-      for (typename graph_traits::vertex_descriptor v : vertices)
-      {
-        if (compare_squared_distance(to_pca_k(get(vpm, v)), plane, max_squared_frechet_distance) == LARGER)
-          return false;
-      }
-      return true;
-    };
-
-    std::unordered_set<typename graph_traits::vertex_descriptor> vertex_selection;
-    vertex_selection.insert(target(queue[0], tm));
-    vertex_selection.insert(target(queue[1], tm));
-    vertex_selection.insert(target(queue[2], tm));
-    while(!queue.empty())
-    {
-      typename graph_traits::halfedge_descriptor h = queue.back(),
-                                               opp = opposite(h, tm);
-      queue.pop_back();
-      if (is_border(opp, tm) || get(face_cc_ids, face(opp, tm))!=std::size_t(-1)) continue;
-      if (!Planar_segmentation::is_edge_between_coplanar_faces(edge(h, tm), tm, coplanar_cos_threshold, vpm) )
-        continue;
-      current_selection.push_back(get_triangle(face(opp, tm)));
-
-      bool new_vertex_added = vertex_selection.insert(target(next(opp, tm), tm)).second;
-
-      typename PCA_K::Plane_3 plane;
-      typename PCA_K::Point_3 centroid;
-
-      linear_least_squares_fitting_3(current_selection.begin(),
-                                     current_selection.end(),
-                                     plane,
-                                     centroid,
-                                     Dimension_tag<2>());
-
-      if (!new_vertex_added || does_fitting_respect_distance_bound(vertex_selection, plane))
-      {
-        put(face_cc_ids, face(opp, tm), cc_id);
-        ++faces_tagged;
-        queue.push_back(next(opp, tm));
-        queue.push_back(prev(opp, tm));
-      }
-      else{
-        /// @TODO add an opti to avoid testing several time a face rejected
-        current_selection.pop_back();
-        vertex_selection.erase(target(next(opp, tm), tm));
-      }
-    }
-  }
-
-  return cc_id+1;
-}
-#endif
 // MeshMap must be a mutable lvalue pmap with Triangle_mesh as value_type
 template <typename TriangleMeshRange, typename MeshMap>
 bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double coplanar_cos_threshold, MeshMap mesh_map)
@@ -1434,7 +1124,7 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
 
   for(Mesh_descriptor& md : meshes)
     vpms.push_back( get(boost::vertex_point, mesh_map[md]) );
-  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl(meshes, mesh_map, 0, coplanar_cos_threshold, vpms);
+  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl(meshes, mesh_map, coplanar_cos_threshold, vpms);
 }
 
 template <class TriangleMesh>
@@ -1442,106 +1132,6 @@ bool decimate_meshes_with_common_interfaces(std::vector<TriangleMesh>& meshes, d
 {
   return decimate_meshes_with_common_interfaces(meshes, coplanar_cos_threshold, CGAL::Identity_property_map<TriangleMesh>());
 }
-
-#ifndef CGAL_DO_NOT_USE_PCA
-template <typename TriangleMeshRange, typename MeshMap>
-bool decimate_meshes_with_common_interfaces_and_pca_for_coplanarity(
-  TriangleMeshRange& meshes,
-  double max_frechet_distance,
-  double coplanar_cos_threshold,
-  MeshMap mesh_map)
-{
-  CGAL_assertion(coplanar_cos_threshold<0);
-  typedef typename boost::property_traits<MeshMap>::value_type Triangle_mesh;
-  typedef typename std::iterator_traits<typename TriangleMeshRange::iterator>::value_type Mesh_descriptor;
-
-  /// @TODO turn into a range of named parameter
-  std::vector<typename boost::property_map<Triangle_mesh, boost::vertex_point_t>::type > vpms;
-  vpms.reserve(meshes.size());
-  for(Mesh_descriptor& md : meshes)
-    vpms.push_back( get(boost::vertex_point, mesh_map[md]) );
-  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl(meshes, mesh_map, max_frechet_distance, coplanar_cos_threshold, vpms);
-}
-
-template <typename TriangleMesh>
-bool decimate_meshes_with_common_interfaces_and_pca_for_coplanarity(
-  std::vector<TriangleMesh>& meshes,
-  double max_frechet_distance,
-  double coplanar_cos_threshold)
-{
-  return decimate_meshes_with_common_interfaces_and_pca_for_coplanarity(
-    meshes, max_frechet_distance, coplanar_cos_threshold, CGAL::Identity_property_map<TriangleMesh>());
-}
-
-///@TODO remove debug
-template <typename TriangleMesh>
-bool decimate_with_pca_for_coplanarity(TriangleMesh& tm,
-                                       double max_frechet_distance,
-                                       double coplanar_cos_threshold)
-{
-  typedef typename boost::graph_traits<TriangleMesh> graph_traits;
-  typedef typename graph_traits::edge_descriptor edge_descriptor;
-  typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
-  typedef typename graph_traits::face_descriptor face_descriptor;
-  typedef typename graph_traits::vertex_descriptor vertex_descriptor;
-
-  ///@TODO turn it into a named parameter XXX
-  typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type vpm =
-    get(boost::vertex_point, tm);
-
-  CGAL_assertion(coplanar_cos_threshold<0);
-  // initialize property maps
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type edge_is_constrained = get(CGAL::dynamic_edge_property_t<bool>(), tm);
-  for(edge_descriptor e : edges(tm))
-    put(edge_is_constrained, e, false);
-
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<std::size_t> >::type vertex_corner_id = get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm);
-  for(vertex_descriptor v : vertices(tm))
-    put(vertex_corner_id, v, Planar_segmentation::init_id());
-
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t> >::type face_cc_ids = get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
-  for(face_descriptor f : faces(tm))
-    put(face_cc_ids, f, -1);
-
-  std::size_t nb_cc = coplanarity_segmentation_with_pca(tm, max_frechet_distance, coplanar_cos_threshold, face_cc_ids, vpm);
-
-  for(edge_descriptor e : edges(tm))
-  {
-    halfedge_descriptor h = halfedge(e, tm);
-    if (is_border(e, tm) || get(face_cc_ids, face(h, tm))!=get(face_cc_ids, face(opposite(h, tm), tm)))
-    {
-      put(edge_is_constrained, e, true);
-    }
-  }
-
-  // initial set of corner vertices
-  std::size_t nb_corners =
-    Planar_segmentation::mark_corner_vertices(tm, edge_is_constrained, vertex_corner_id, coplanar_cos_threshold, vpm);
-
-#ifdef DEBUG_PCA
-  std::cout << "found " << nb_cc << " components\n";
-  std::ofstream tmp_out("/tmp/csts.cgal");
-  for(edge_descriptor e : edges(tm))
-    if (get(edge_is_constrained, e))
-      tmp_out << "2 " << get(vpm, source(halfedge(e, tm), tm)) << " "
-              << get(vpm, target(halfedge(e, tm), tm)) << "\n";
-  tmp_out.close();
-  std::cout << "  initial nb_corners: " << nb_corners << "\n";
-#endif
-
-  // apply pca also for patch boundaries: This will lead to the tagging of new corner vertices
-  nb_corners = Planar_segmentation::mark_extra_corners_with_pca(tm, max_frechet_distance, nb_corners, edge_is_constrained, vertex_corner_id, vpm);
-
-#ifdef DEBUG_PCA
-  std::cout << "  nb_corners after constraint graph simplification: " << nb_corners << "\n";
-#endif
-
-  // now run the main decimation function
-  bool res=Planar_segmentation::decimate_impl(tm, std::make_pair(nb_corners, nb_cc), vertex_corner_id, edge_is_constrained, face_cc_ids, vpm);
-
-  return res;
-}
-#endif
 
 } } // end of CGAL::Polygon_mesh_processing
 
