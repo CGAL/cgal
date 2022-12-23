@@ -52,8 +52,5 @@ main()
   CGAL::ch__batch_test( ch_H_gmp );
 #endif
 
-  CGAL::Homogeneous<double>           ch_H_double;
-  std::cout << "Homogeneous<double>:   ";
-  CGAL::ch__batch_test( ch_H_double );
   return 0;
 }
