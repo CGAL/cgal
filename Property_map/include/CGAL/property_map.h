@@ -181,7 +181,7 @@ struct Dereference_property_map
   ///
   /// @tparam Iter Type convertible to `key_type`.
   template <class Iter_> // template kept for backward compatibility
-  reference operator[](Iter_ it) const { return *it; }
+  reference operator[](const Iter_& it) const { return *it; }
 };
 
 /// Free function to create a `Dereference_property_map` property map.
