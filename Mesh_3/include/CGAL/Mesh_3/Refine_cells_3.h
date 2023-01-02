@@ -750,8 +750,9 @@ int
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 number_of_bad_elements_impl()
 {
-  typedef typename MD::Subdomain Subdomain;
-  typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
+  typedef typename MD::Subdomain_index        Subdomain_index;
+  typedef boost::optional<Subdomain_index>    Subdomain;
+  typedef typename Tr::Finite_cells_iterator  Finite_cell_iterator;
 
   int count = 0;
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
