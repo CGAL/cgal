@@ -266,67 +266,12 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, const std::vec
 }
 
 } // end of autorefine_impl
-#endif
 
-/**
- * \ingroup PMP_corefinement_grp
- * \link coref_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
- * so that no triangles intersects in their interior.
- * Self-intersection edges will be marked as constrained. If an edge that was marked as
- * constrained is split, its sub-edges will be marked as constrained as well.
- *
- * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
- *
- * @param tm input triangulated surface mesh
- * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
- *
- * \cgalParamNBegin{geom_traits}
- *   \cgalParamDescription{an instance of a geometric traits class}
- *   \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
- *   \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *   \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- * \cgalParamNEnd
- *
- * \cgalNamedParamsBegin
- *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
- *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
- *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `TriangleMesh`.}
- *  \cgalParamNEnd
- *
- *   \cgalParamNBegin{edge_is_constrained_map}
- *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
- *                    as key type and `bool` as value type}
- *     \cgalParamDefault{a constant property map returning `false` for any edge}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{face_index_map}
- *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
- *                    as key type and `std::size_t` as value type}
- *     \cgalParamDefault{an automatically indexed internal map}
- *     \cgalParamExtra{If the property map is writable, the indices of the faces of `tm1` and `tm2`
- *                     will be set after the corefinement is done.}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{visitor}
- *     \cgalParamDescription{a visitor used to track the creation of new faces}
- *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
- *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
- *   \cgalParamNEnd
- * \cgalNamedParamsEnd
- *
- */
-template <class TriangleMesh,
-          class NamedParameters = parameters::Default_named_parameters>
-void
-autorefine(      TriangleMesh& tm,
-           const NamedParameters& np = parameters::default_values())
+template <class TriangleMesh, class Point_3, class NamedParameters = parameters::Default_named_parameters>
+void autorefine_soup_output(const TriangleMesh& tm,
+                            std::vector<Point_3>& soup_points,
+                            std::vector<std::array<std::size_t, 3> >& soup_triangles,
+                            const NamedParameters& np = parameters::default_values())
 {
   //TODO: what about degenerate faces?
 
@@ -336,9 +281,9 @@ autorefine(      TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPM;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, tm));
+                             get_const_property_map(vertex_point, tm));
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::concurrency_tag_t,
@@ -362,7 +307,7 @@ autorefine(      TriangleMesh& tm,
   // assign an id per triangle involved in an intersection
   // + the faces involved in the intersection
   typedef CGAL::dynamic_face_property_t<int> Face_property_tag;
-  typedef typename boost::property_map<TriangleMesh, Face_property_tag>::type Triangle_id_map;
+  typedef typename boost::property_map<TriangleMesh, Face_property_tag>::const_type Triangle_id_map;
 
   Triangle_id_map tid_map = get(Face_property_tag(), tm);
   for (face_descriptor f : faces(tm))
@@ -458,8 +403,6 @@ autorefine(      TriangleMesh& tm,
 
   // brute force output: create a soup, orient and to-mesh
   // WARNING: there is no reason when using double that identical exact points are identical in double
-  std::vector<typename GT::Point_3> soup_points;
-  std::vector<std::array<std::size_t, 3> > soup_triangles;
   Cartesian_converter<EK, GT> to_input;
   std::map<EK::Point_3, std::size_t> point_id_map;
 
@@ -497,10 +440,86 @@ autorefine(      TriangleMesh& tm,
       }
     }
   }
+
+}
+#endif
+
+/**
+ * \ingroup PMP_corefinement_grp
+ * \link coref_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
+ * so that no triangles intersects in their interior.
+ * Self-intersection edges will be marked as constrained. If an edge that was marked as
+ * constrained is split, its sub-edges will be marked as constrained as well.
+ *
+ * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param tm input triangulated surface mesh
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalParamNBegin{geom_traits}
+ *   \cgalParamDescription{an instance of a geometric traits class}
+ *   \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *   \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *   \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ * \cgalParamNEnd
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *  \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *     \cgalParamExtra{If the property map is writable, the indices of the faces of `tm1` and `tm2`
+ *                     will be set after the corefinement is done.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{visitor}
+ *     \cgalParamDescription{a visitor used to track the creation of new faces}
+ *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+ *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ */
+template <class TriangleMesh,
+          class NamedParameters = parameters::Default_named_parameters>
+void
+autorefine(      TriangleMesh& tm,
+           const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
+  std::vector<typename GT::Point_3> soup_points;
+  std::vector<std::array<std::size_t, 3> > soup_triangles;
+
+  autorefine_soup_output(tm, soup_points, soup_triangles, np);
+
   clear(tm);
   orient_polygon_soup(soup_points, soup_triangles);
   polygon_soup_to_polygon_mesh(soup_points, soup_triangles, tm);
 }
+
 
 } } // end of CGAL::Polygon_mesh_processing
 
