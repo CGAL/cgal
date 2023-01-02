@@ -173,13 +173,6 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
   Exact_mesh etm;
   orient_polygon_soup(soup_points, soup_triangles);
   polygon_soup_to_polygon_mesh(soup_points, soup_triangles, etm);
-  typename Exact_mesh::Property_map<typename Exact_mesh::Vertex_index, bool> is_border_map =
-    etm.template add_property_map<typename Exact_mesh::Vertex_index, bool>("v:is_border", false).first;
-  for(typename Exact_mesh::Halfedge_index h : etm.halfedges())
-  {
-    if (CGAL::is_border(h, etm))
-      is_border_map[target(h, etm)] = true;
-  }
 
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
   std::cerr << std::setprecision(17);
@@ -197,41 +190,27 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
   {
     typename Exact_mesh::Halfedge_index h1 = etm.halfedge(p.first), h2=etm.halfedge(p.second);
 
-    boost::container::small_vector<typename Exact_mesh::Halfedge_index, 3> bv1;
-    if (is_border_map[source(h1, etm)]) bv1.push_back(prev(h1, etm));
-    if (is_border_map[target(h1, etm)]) bv1.push_back(h1);
-    if (is_border_map[target(next(h1, etm), etm)]) bv1.push_back(next(h1, etm));
-    if (bv1.empty())
-    {
-#ifdef CGAL_DEBUG_PMP_AUTOREFINE
-      verbose_fail_msg(1, p);
-#endif
-      return false;
-    }
+    boost::container::small_vector<typename Exact_mesh::Halfedge_index, 3> v1;
+    v1.push_back(prev(h1, etm));
+    v1.push_back(h1);
+    v1.push_back(next(h1, etm));
 
-    boost::container::small_vector<typename Exact_mesh::Halfedge_index, 3> bv2;
-    if (is_border_map[source(h2, etm)]) bv2.push_back(prev(h2, etm));
-    if (is_border_map[target(h2, etm)]) bv2.push_back(h2);
-    if (is_border_map[target(next(h2, etm), etm)]) bv2.push_back(next(h2, etm));
-    if (bv2.empty())
-    {
-#ifdef CGAL_DEBUG_PMP_AUTOREFINE
-      verbose_fail_msg(2, p);
-#endif
-      return false;
-    }
+    boost::container::small_vector<typename Exact_mesh::Halfedge_index, 3> v2;
+    v2.push_back(prev(h2, etm));
+    v2.push_back(h2);
+    v2.push_back(next(h2, etm));
 
-    //collect identical border vertices
+    //collect identical vertices
     boost::container::small_vector<std::pair<typename Exact_mesh::Halfedge_index, typename Exact_mesh::Halfedge_index>, 3> common;
-    for(typename Exact_mesh::Halfedge_index h1 : bv1)
-      for(typename Exact_mesh::Halfedge_index h2 : bv2)
+    for(typename Exact_mesh::Halfedge_index h1 : v1)
+      for(typename Exact_mesh::Halfedge_index h2 : v2)
         if (etm.point(target(h1, etm))==etm.point(target(h2,etm)))
           common.push_back(std::make_pair(h1,h2));
 
     if (common.empty())
     {
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
-      verbose_fail_msg(3, p);
+      verbose_fail_msg(1, p);
 #endif
       return false;
     }
@@ -254,7 +233,7 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
         if(do_intersect(t1, s2) || do_intersect(t2, s1))
         {
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
-          verbose_fail_msg(4, p);
+          verbose_fail_msg(2, p);
 #endif
           return false;
         }
@@ -266,33 +245,21 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
         h1 = next(common[0].first, etm) == common[1].first ? common[1].first : common[0].first;
         h2 = next(common[0].second, etm) == common[1].second ? common[1].second : common[0].second;
 
-        if ( is_border(etm.opposite(h1), etm) &&
-             is_border(etm.opposite(h2), etm) )
+        if( CGAL::coplanar(etm.point(source(h1,etm)),
+                           etm.point(target(h1,etm)),
+                           etm.point(target(etm.next(h1),etm)),
+                           etm.point(source(h1,etm))) &&
+            CGAL::coplanar_orientation(etm.point(source(h1,etm)),
+                           etm.point(target(h1,etm)),
+                           etm.point(target(etm.next(h1),etm)),
+                           etm.point(source(h1,etm))) == CGAL::POSITIVE)
         {
-          if( CGAL::coplanar(etm.point(source(h1,etm)),
-                             etm.point(target(h1,etm)),
-                             etm.point(target(etm.next(h1),etm)),
-                             etm.point(source(h1,etm))) &&
-              CGAL::coplanar_orientation(etm.point(source(h1,etm)),
-                             etm.point(target(h1,etm)),
-                             etm.point(target(etm.next(h1),etm)),
-                             etm.point(source(h1,etm))) == CGAL::POSITIVE)
-          {
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
-            verbose_fail_msg(5, p);
-#endif
-            return false;
-          }
-          return true;
-        }
-        else
-        {
-          // TODO: 2 identical border vertices, no common edge on the boundary. Not sure what to do
-#ifdef CGAL_DEBUG_PMP_AUTOREFINE
-          verbose_fail_msg(6, p);
+          verbose_fail_msg(3, p);
 #endif
           return false;
         }
+        return true;
       }
       default: // size == 3
         return true;
