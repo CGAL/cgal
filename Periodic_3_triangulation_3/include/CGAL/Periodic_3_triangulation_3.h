@@ -693,7 +693,7 @@ public:
     return point(periodic_point(v), cp);
   }
 
-  virtual Point point(Vertex_handle v) const
+  virtual Point point(Vertex_handle) const
   {
     // This is a purely virtual function, but it cannot be made "= 0;" otherwise
     // one cannot use P3T3 by itself (which never happens except in tests...)
@@ -758,7 +758,7 @@ public:
     return Point();
   }
 
-  virtual Point point(Cell_handle c, int idx) const
+  virtual Point point(Cell_handle, int) const
   {
     // This is a purely virtual function, but it cannot be made "= 0;" otherwise
     // one cannot use P3T3 by itself (which never happens except in tests...)
