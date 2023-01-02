@@ -302,9 +302,7 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename Traits::FT                                             FT;
   typedef typename boost::property_traits<VPM>::reference                 Point_ref;
-  typedef typename Traits::Vector_3                                       Vector_3;
 
   CGAL_precondition(!is_border(e, tmesh));
 
