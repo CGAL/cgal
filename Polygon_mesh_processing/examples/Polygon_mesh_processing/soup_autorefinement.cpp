@@ -5,6 +5,7 @@
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
 #include <iostream>
@@ -30,6 +31,7 @@ int main(int argc, char** argv)
   Mesh mesh;
   PMP::orient_polygon_soup(input_points, input_triangles);
   PMP::polygon_soup_to_polygon_mesh(input_points, input_triangles, mesh);
+  PMP::triangulate_faces(mesh);
 
   PMP::autorefine(mesh);
 
