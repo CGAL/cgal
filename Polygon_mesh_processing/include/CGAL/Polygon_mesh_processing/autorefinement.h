@@ -17,6 +17,7 @@
 #include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -125,8 +126,8 @@ struct Intersection_visitor
   }
 };
 
-template <class EK, class TriangleMesh, class VPM, class TID_Map>
-bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, const std::vector< std::vector<Triangle_3<EK>>>& triangles)
+template <class EK, class TriangleMesh, class VPM, class TID_Map, class Is_degen_map>
+bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map is_degen, const std::vector< std::vector<Triangle_3<EK>>>& triangles)
 {
   typedef typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type IK;
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
@@ -148,6 +149,7 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, const std::vec
 
   for (face_descriptor f : faces(tm))
   {
+    if (get(is_degen, f)) continue; // skip degenerate faces
     int tid = get(tid_map, f);
     if (tid == -1)
     {
@@ -273,8 +275,6 @@ void autorefine_soup_output(const TriangleMesh& tm,
                             std::vector<std::array<std::size_t, 3> >& soup_triangles,
                             const NamedParameters& np = parameters::default_values())
 {
-  //TODO: what about degenerate faces?
-
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -304,12 +304,20 @@ void autorefine_soup_output(const TriangleMesh& tm,
 
   if (si_pairs.empty()) return;
 
+  // mark degenerate faces so that we can ignore them
+  typedef CGAL::dynamic_face_property_t<bool> Degen_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Degen_property_tag>::const_type Is_degen_map;
+  Is_degen_map is_degen = get(Degen_property_tag(), tm);
+
+  for(face_descriptor f : faces(tm))
+    put(is_degen, f, is_degenerate_triangle_face(f, tm, np));
+
   // assign an id per triangle involved in an intersection
   // + the faces involved in the intersection
-  typedef CGAL::dynamic_face_property_t<int> Face_property_tag;
-  typedef typename boost::property_map<TriangleMesh, Face_property_tag>::const_type Triangle_id_map;
+  typedef CGAL::dynamic_face_property_t<int> TID_property_tag;
+  typedef typename boost::property_map<TriangleMesh, TID_property_tag>::const_type Triangle_id_map;
 
-  Triangle_id_map tid_map = get(Face_property_tag(), tm);
+  Triangle_id_map tid_map = get(TID_property_tag(), tm);
   for (face_descriptor f : faces(tm))
     put(tid_map, f, -1);
 
@@ -317,12 +325,12 @@ void autorefine_soup_output(const TriangleMesh& tm,
   int tid=-1;
   for (const Pair_of_faces& p : si_pairs)
   {
-    if (get(tid_map, p.first)==-1)
+    if (get(tid_map, p.first)==-1 && !get(is_degen, p.first))
     {
       put(tid_map, p.first, ++tid);
       intersected_faces.push_back(p.first);
     }
-    if (get(tid_map, p.second)==-1)
+    if (get(tid_map, p.second)==-1 && !get(is_degen, p.second))
     {
       put(tid_map, p.second, ++tid);
       intersected_faces.push_back(p.second);
@@ -349,6 +357,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
     int i1 = get(tid_map, p.first),
         i2 = get(tid_map, p.second);
 
+    if (i1==-1 || i2==-1) continue; //skip degenerate faces
 
     std::size_t nbt_1 = triangles[i1].size(),
                 nbt_2 = triangles[i2].size();
@@ -399,7 +408,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
     triangles[i2].swap(new_triangles);
   }
 
-  CGAL_assertion( autorefine_impl::is_output_valid(tm, vpm, tid_map, triangles) );
+  CGAL_assertion( autorefine_impl::is_output_valid(tm, vpm, tid_map, is_degen, triangles) );
 
   // brute force output: create a soup, orient and to-mesh
   // WARNING: there is no reason when using double that identical exact points are identical in double
@@ -422,6 +431,8 @@ void autorefine_soup_output(const TriangleMesh& tm,
 
   for (face_descriptor f : faces(tm))
   {
+    if (get(is_degen, f)) continue; //skip degenerate faces
+
     int tid = get(tid_map, f);
     if (tid == -1)
     {
@@ -440,7 +451,6 @@ void autorefine_soup_output(const TriangleMesh& tm,
       }
     }
   }
-
 }
 #endif
 
