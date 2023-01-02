@@ -172,9 +172,9 @@ void R_s_k_2::draw_edge_footpoints(const Triangulation& mesh,
   Sample_vector::const_iterator it;
   for (it = samples.begin(); it != samples.end(); ++it)
   {
-    Sample_* sample = *it;
-    Point p = sample->point();
-    FT m = 0.5*(1.0 - sample->mass());
+    const Sample_& sample = this->m_samples[* it];
+    Point p = sample.point();
+    FT m = 0.5*(1.0 - sample.mass());
 
     Point q;
     if (mesh.get_plan(edge) == 0)
@@ -188,7 +188,7 @@ void R_s_k_2::draw_edge_footpoints(const Triangulation& mesh,
     else
     {
       viewer->glColor3f(red + m, green + m, blue + m);
-      FT t = sample->coordinate();
+      FT t = sample.coordinate();
       q = CGAL::ORIGIN + (1.0 - t)*(a - CGAL::ORIGIN) + t*(b - CGAL::ORIGIN);
     }
     draw_segment(p, q);
@@ -396,8 +396,8 @@ void R_s_k_2::draw_bins_plan0(const Edge& edge)
   Sample_vector_const_iterator it;
   for (it = samples.begin(); it != samples.end(); ++it)
   {
-    Sample_* sample = *it;
-    const Point& ps = sample->point();
+    const Sample_& sample = this->m_samples[* it];
+    const Point& ps = sample.point();
 
     Point q = pa;
     FT Da = CGAL::squared_distance(ps, pa);
@@ -423,8 +423,8 @@ void R_s_k_2::draw_bins_plan1(const Edge& edge)
     PSample psample = queue.top();
     queue.pop();
 
-    const FT m = psample.sample()->mass();
-    const Point& ps = psample.sample()->point();
+    const FT m = this->m_samples[psample.sample()].mass();
+    const Point& ps = this->m_samples[psample.sample()].point();
 
     FT bin = m/M;
     FT alpha = start + 0.5*bin;
@@ -511,7 +511,7 @@ void R_s_k_2::draw_one_ring(const float point_size, const float line_width, cons
   bool ok = locate_edge(query, edge);
   if (!ok) return;
 
-  Triangulation copy;
+  Triangulation copy(this->m_samples);
   Edge copy_edge = copy_star(edge, copy);
   draw_mesh_one_ring(point_size, line_width, copy, copy_edge);
 }
@@ -550,7 +550,7 @@ void R_s_k_2::draw_blocking_edges(const float point_size, const float line_width
   bool ok = locate_edge(query, edge);
   if (!ok) return;
 
-  Triangulation copy;
+  Triangulation copy(this->m_samples);
   Edge copy_edge = copy_star(edge, copy);
   draw_mesh_blocking_edges(point_size, line_width, copy, copy_edge);
 }
@@ -590,7 +590,7 @@ void R_s_k_2::draw_collapsible_edge(const float point_size,
   bool ok = locate_edge(query, edge);
   if (!ok) return;
 
-  Triangulation copy;
+  Triangulation copy(this->m_samples);
   Edge copy_edge = copy_star(edge, copy);
   Vertex_handle copy_src = copy.source_vertex(copy_edge);
 
@@ -612,7 +612,7 @@ void R_s_k_2::draw_cost_stencil(const float point_size,
   bool ok = locate_edge(query, edge);
   if (!ok) return;
 
-  Triangulation copy;
+  Triangulation copy(this->m_samples);
   Edge copy_edge = copy_star(edge, copy);
   Vertex_handle copy_src = copy.source_vertex(copy_edge);
 
@@ -709,7 +709,7 @@ void R_s_k_2::draw_push_queue_stencil(const float point_size,
       it++;
   }
 
-  Triangulation copy;
+  Triangulation copy(this->m_samples);
   Edge_vector copy_hull;
   Edge_vector copy_stencil;
   Edge copy_edge = copy_star(edge, copy);

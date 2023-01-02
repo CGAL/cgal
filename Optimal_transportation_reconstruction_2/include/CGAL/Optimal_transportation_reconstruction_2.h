@@ -175,7 +175,6 @@ protected:
   MassPMap  mass_pmap;
 
 public:
-
   /// \name Initialization
   /// @{
 
@@ -319,8 +318,9 @@ public:
 
   /// \cond SKIP_IN_MANUAL
 
+
   Optimal_transportation_reconstruction_2()
-  : m_traits(m_dt.geom_traits())
+    : m_samples(), m_dt(m_samples), m_traits(m_dt.geom_traits())
   {
     initialize_parameters();
   }
@@ -1312,8 +1312,8 @@ public:
       PSample psample = queue.top();
       queue.pop();
 
-      const FT m = psample.sample()->mass();
-      const Point& ps = psample.sample()->point();
+      const FT m = this->m_samples[psample.sample()].mass();
+      const Point& ps = this->m_samples[psample.sample()].point();
 
       // normal + tangnetial
       const FT coord = psample.priority();

@@ -39,6 +39,9 @@ private:
   FT m_backup_coord;
 
 public:
+  Sample()
+  {}
+
   Sample(const Point& point,
       const FT mass = FT(1))
   : m_point(point),
