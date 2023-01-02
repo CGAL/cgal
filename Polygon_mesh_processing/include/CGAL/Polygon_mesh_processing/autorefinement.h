@@ -181,6 +181,17 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
       is_border_map[target(h, etm)] = true;
   }
 
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
+  std::cerr << std::setprecision(17);
+  auto verbose_fail_msg = [&](int i, const std::pair<typename Exact_mesh::Face_index, typename Exact_mesh::Face_index>& p)
+  {
+    typename Exact_mesh::Halfedge_index h1 = halfedge(p.first, etm), h2 = halfedge(p.second, etm);
+    std::cerr << "DEBUG: failing at check #" << i << "\n";
+    std::cerr << "DEBUG: " << etm.point(source(h1, etm)) << " " <<  etm.point(target(h1, etm)) << " " <<  etm.point(target(next(h1, etm), etm)) << " " << etm.point(source(h1, etm)) << "\n";
+    std::cerr << "DEBUG: " << etm.point(source(h2, etm)) << " " <<  etm.point(target(h2, etm)) << " " <<  etm.point(target(next(h2, etm), etm)) << " " << etm.point(source(h2, etm)) << "\n";
+  };
+#endif
+
   //TODO: double check me
   auto skip_faces = [&](const std::pair<typename Exact_mesh::Face_index, typename Exact_mesh::Face_index>& p)
   {
@@ -190,13 +201,25 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
     if (is_border_map[source(h1, etm)]) bv1.push_back(prev(h1, etm));
     if (is_border_map[target(h1, etm)]) bv1.push_back(h1);
     if (is_border_map[target(next(h1, etm), etm)]) bv1.push_back(next(h1, etm));
-    if (bv1.empty()) return false;
+    if (bv1.empty())
+    {
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
+      verbose_fail_msg(1, p);
+#endif
+      return false;
+    }
 
     boost::container::small_vector<typename Exact_mesh::Halfedge_index, 3> bv2;
     if (is_border_map[source(h2, etm)]) bv2.push_back(prev(h2, etm));
     if (is_border_map[target(h2, etm)]) bv2.push_back(h2);
     if (is_border_map[target(next(h2, etm), etm)]) bv2.push_back(next(h2, etm));
-    if (bv2.empty()) return false;
+    if (bv2.empty())
+    {
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
+      verbose_fail_msg(2, p);
+#endif
+      return false;
+    }
 
     //collect identical border vertices
     boost::container::small_vector<std::pair<typename Exact_mesh::Halfedge_index, typename Exact_mesh::Halfedge_index>, 3> common;
@@ -205,7 +228,13 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
         if (etm.point(target(h1, etm))==etm.point(target(h2,etm)))
           common.push_back(std::make_pair(h1,h2));
 
-    if (common.empty()) return false;
+    if (common.empty())
+    {
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
+      verbose_fail_msg(3, p);
+#endif
+      return false;
+    }
 
     switch (common.size())
     {
@@ -223,7 +252,12 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
         const typename EK::Segment_3 s2(etm.point(source(common[0].second,etm)), etm.point(target(next(common[0].second,etm),etm)));
 
         if(do_intersect(t1, s2) || do_intersect(t2, s1))
+        {
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
+          verbose_fail_msg(4, p);
+#endif
           return false;
+        }
         return true;
       }
       case 2:
@@ -244,6 +278,9 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
                              etm.point(target(etm.next(h1),etm)),
                              etm.point(source(h1,etm))) == CGAL::POSITIVE)
           {
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
+            verbose_fail_msg(5, p);
+#endif
             return false;
           }
           return true;
@@ -251,6 +288,9 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
         else
         {
           // TODO: 2 identical border vertices, no common edge on the boundary. Not sure what to do
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
+          verbose_fail_msg(6, p);
+#endif
           return false;
         }
       }
