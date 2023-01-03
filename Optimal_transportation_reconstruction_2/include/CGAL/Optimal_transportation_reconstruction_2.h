@@ -378,7 +378,7 @@ public:
       m_samples.push_back(s);
     }
     Sample_vector sv(m_samples.size());
-    for(int i = 0; i < sv.size(); ++i){
+    for(int i = 0; i < static_cast<int>(sv.size()); ++i){
       sv[i] = i;
     }
     assign_samples(sv.begin(), sv.end());
@@ -416,7 +416,7 @@ public:
       m_samples.push_back(s);
     }
     Sample_vector sv(m_samples.size());
-    for(int i = 0; i < sv.size(); ++i){
+    for(int i = 0; i < static_cast<int>(sv.size()); ++i){
       sv[i] = i;
     }
     assign_samples(sv.begin(), sv.end());
