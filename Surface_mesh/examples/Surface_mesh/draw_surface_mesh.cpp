@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
   // Internal color property maps are used if they exist and are called "v:color", "e:color" and "f:color".
   auto vcm = sm.add_property_map<Mesh::Vertex_index, CGAL::IO::Color>("v:color").first;
   auto ecm = sm.add_property_map<Mesh::Edge_index, CGAL::IO::Color>("e:color").first;
-  /*auto fcm =*/ sm.add_property_map<Mesh::Face_index>("f:color", CGAL::IO::white() /*default*/).first;
+  auto fcm = sm.add_property_map<Mesh::Face_index>("f:color", CGAL::IO::white() /*default*/).first;
 
   for(auto v : vertices(sm))
   {
@@ -35,6 +35,8 @@ int main(int argc, char* argv[])
 
   for(auto e : edges(sm))
     put(ecm, e, CGAL::IO::gray());
+
+  CGAL_USE(fcm);
 
   // Draw!
   CGAL::draw(sm);
