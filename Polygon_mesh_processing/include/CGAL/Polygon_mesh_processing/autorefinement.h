@@ -19,6 +19,7 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
@@ -26,7 +27,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
-#ifndef NDEBUG
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
 // debug
 #include <CGAL/Surface_mesh.h>
 #endif
@@ -46,12 +47,42 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
                            std::vector<typename EK::Triangle_3>& new_triangles)
 {
   typedef CGAL::Projection_traits_3<EK> P_traits;
-  // typedef CGAL::Exact_intersections_tag Itag;
-  typedef CGAL::No_constraint_intersection_requiring_constructions_tag Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, Default, Itag> CDT;
+  typedef CGAL::Exact_intersections_tag Itag;
+  //typedef CGAL::No_constraint_intersection_requiring_constructions_tag Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, Default, Itag> CDT_base;
+  typedef CGAL::Constrained_triangulation_plus_2<CDT_base> CDT;
 
+  typename EK::Vector_3 n = normal(t[0], t[1], t[2]);
+  //~ bool orientation_flipped = false;
+  //~ if (n.x() < 0)
+  //~ {
+    //~ orientation_flipped = true;
+    //~ n = -n;
+  //~ }
+  //~ else
+  //~ {
+    //~ if (n.x()==0)
+    //~ {
+      //~ if (n.y() < 0)
+      //~ {
+        //~ orientation_flipped = true;
+        //~ n = -n;
+      //~ }
+      //~ else
+      //~ {
+        //~ if (n.y()==0)
+        //~ {
+          //~ if (n.z() < 0)
+          //~ {
+            //~ orientation_flipped = true;
+            //~ n = -n;
+          //~ }
+        //~ }
+      //~ }
+    //~ }
+  //~ }
 
-  P_traits cdt_traits(normal(t[0], t[1], t[2]));
+  P_traits cdt_traits(n);
   CDT cdt(cdt_traits);
 
   cdt.insert_outside_affine_hull(t[0]);
@@ -65,12 +96,41 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
   for (const typename EK::Point_3& p : points)
     cdt.insert(p);
 
-  for (typename CDT::Face_handle fh : cdt.finite_face_handles())
-  {
-    new_triangles.emplace_back(fh->vertex(0)->point(),
-                               fh->vertex(cdt.ccw(0))->point(),
-                               fh->vertex(cdt.cw(0))->point());
-  }
+  //~ if (orientation_flipped)
+    //~ for (typename CDT::Face_handle fh : cdt.finite_face_handles())
+    //~ {
+      //~ new_triangles.emplace_back(fh->vertex(0)->point(),
+                                 //~ fh->vertex(cdt.cw(0))->point(),
+                                 //~ fh->vertex(cdt.ccw(0))->point());
+    //~ }
+  //~ else
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE_DUMP_TRIANGULATIONS
+    static int k = 0;
+    std::stringstream buffer;
+    buffer.precision(17);
+    int nbt=0;
+#endif
+    for (typename CDT::Face_handle fh : cdt.finite_face_handles())
+    {
+      new_triangles.emplace_back(fh->vertex(0)->point(),
+                                 fh->vertex(cdt.ccw(0))->point(),
+                                 fh->vertex(cdt.cw(0))->point());
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE_DUMP_TRIANGULATIONS
+      ++nbt;
+      buffer << fh->vertex(0)->point() << "\n";
+      buffer << fh->vertex(cdt.ccw(0))->point() << "\n";
+      buffer << fh->vertex(cdt.cw(0))->point() << "\n";
+#endif
+    }
+
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE_DUMP_TRIANGULATIONS
+    std::ofstream dump("triangulation_"+std::to_string(k)+".off");
+    dump << "OFF\n" << 3*nbt << " " << nbt << " 0\n";
+    dump << buffer.str();
+    for (int i=0; i<nbt; ++i)
+      dump << "3 " << 3*i << " " << 3*i+1 << " " << 3*i+2 << "\n";
+    ++k;
+#endif
 }
 
 template <class EK>
@@ -106,69 +166,31 @@ struct Intersection_visitor
 
   void operator()(const typename EK::Triangle_3& t)
   {
-    for (std::size_t i=1; i<3; ++i)
+    for (std::size_t i=0; i<3; ++i)
     {
-      typename EK::Segment_3 s(t[i-1], t[i]);
+      typename EK::Segment_3 s(t[i], t[(i+1)%3]);
       all_segments_1.push_back(s);
       all_segments_2.push_back(s);
     }
+
   }
 
   void operator()(const std::vector<typename EK::Point_3>& poly)
   {
     std::size_t nbp = poly.size();
-    for (std::size_t i=1; i<nbp; ++i)
+    for (std::size_t i=0; i<nbp; ++i)
     {
-      typename EK::Segment_3 s(poly[i-1], poly[i]);
+      typename EK::Segment_3 s(poly[i], poly[(i+1)%nbp]);
       all_segments_1.push_back(s);
       all_segments_2.push_back(s);
     }
   }
 };
 
-template <class EK, class TriangleMesh, class VPM, class TID_Map, class Is_degen_map>
-bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map is_degen, const std::vector< std::vector<Triangle_3<EK>>>& triangles)
+template <class EK>
+bool is_output_valid(std::vector<Point_3<EK>> soup_points,
+                     std::vector<std::array<std::size_t, 3> > soup_triangles)
 {
-  typedef typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type IK;
-  typedef boost::graph_traits<TriangleMesh> Graph_traits;
-  typedef typename Graph_traits::face_descriptor face_descriptor;
-  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
-
-  std::vector<typename EK::Point_3> soup_points;
-  std::vector<std::array<std::size_t, 3> > soup_triangles;
-  Cartesian_converter<IK, EK> to_exact;
-  std::map<typename EK::Point_3, std::size_t> point_id_map;
-
-  auto get_point_id = [&](const typename EK::Point_3& pt)
-  {
-    auto insert_res = point_id_map.insert(std::make_pair(pt, soup_points.size()));
-    if (insert_res.second)
-      soup_points.push_back(pt);
-    return insert_res.first->second;
-  };
-
-  for (face_descriptor f : faces(tm))
-  {
-    if (get(is_degen, f)) continue; // skip degenerate faces
-    int tid = get(tid_map, f);
-    if (tid == -1)
-    {
-      halfedge_descriptor h = halfedge(f, tm);
-      soup_triangles.emplace_back(
-        CGAL::make_array(get_point_id(to_exact(get(vpm,source(h, tm)))),
-                         get_point_id(to_exact(get(vpm,target(h, tm)))),
-                         get_point_id(to_exact(get(vpm,target(next(h, tm), tm)))))
-      );
-    }
-    else
-    {
-      for (const typename EK::Triangle_3& t : triangles[tid])
-      {
-        soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
-      }
-    }
-  }
-
   typedef Surface_mesh<typename EK::Point_3> Exact_mesh;
   Exact_mesh etm;
   orient_polygon_soup(soup_points, soup_triangles);
@@ -248,11 +270,11 @@ bool is_output_valid(TriangleMesh& tm , VPM vpm, TID_Map tid_map, Is_degen_map i
         if( CGAL::coplanar(etm.point(source(h1,etm)),
                            etm.point(target(h1,etm)),
                            etm.point(target(etm.next(h1),etm)),
-                           etm.point(source(h1,etm))) &&
+                           etm.point(target(etm.next(h2),etm))) &&
             CGAL::coplanar_orientation(etm.point(source(h1,etm)),
                            etm.point(target(h1,etm)),
                            etm.point(target(etm.next(h1),etm)),
-                           etm.point(source(h1,etm))) == CGAL::POSITIVE)
+                           etm.point(target(etm.next(h2),etm))) == CGAL::POSITIVE)
         {
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
           verbose_fail_msg(3, p);
@@ -346,17 +368,21 @@ void autorefine_soup_output(const TriangleMesh& tm,
 
   // init the vector of triangles used for the autorefinement of triangles
   typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
-  std::vector< std::vector<EK::Triangle_3> > triangles(tid+1);
+  std::vector< EK::Triangle_3 > triangles(tid+1);
   Cartesian_converter<GT, EK> to_exact;
 
   for(face_descriptor f : intersected_faces)
   {
     halfedge_descriptor h = halfedge(f, tm);
-    triangles[get(tid_map, f)].emplace_back(
+    triangles[get(tid_map, f)]= EK::Triangle_3(
       to_exact( get(vpm, source(h, tm)) ),
       to_exact( get(vpm, target(h, tm)) ),
       to_exact( get(vpm, target(next(h, tm), tm)) ) );
   }
+
+  std::vector< std::vector<EK::Segment_3> > all_segments(triangles.size());
+  std::vector< std::vector<EK::Point_3> > all_points(triangles.size());
+
 
   typename EK::Intersect_3 intersection = EK().intersect_3_object();
   for (const Pair_of_faces& p : si_pairs)
@@ -366,73 +392,59 @@ void autorefine_soup_output(const TriangleMesh& tm,
 
     if (i1==-1 || i2==-1) continue; //skip degenerate faces
 
-    std::size_t nbt_1 = triangles[i1].size(),
-                nbt_2 = triangles[i2].size();
+    const EK::Triangle_3& t1 = triangles[i1];
+    const EK::Triangle_3& t2 = triangles[i2];
 
-    std::vector< std::vector<EK::Segment_3> > all_segments_1(nbt_1);
-    std::vector< std::vector<EK::Segment_3> > all_segments_2(nbt_2);
-    std::vector< std::vector<EK::Point_3> > all_points_1(nbt_1);
-    std::vector< std::vector<EK::Point_3> > all_points_2(nbt_2);
+    auto inter = intersection(t1, t2);
 
-    std::vector <EK::Triangle_3> t1_subtriangles, t2_subtriangles;
-    for (std::size_t it1=0; it1<nbt_1; ++it1)
+    if (inter != boost::none)
     {
-      for (std::size_t it2=0; it2<nbt_2; ++it2)
-      {
-        const EK::Triangle_3& t1 = triangles[i1][it1];
-        const EK::Triangle_3& t2 = triangles[i2][it2];
+      autorefine_impl::Intersection_visitor<EK> intersection_visitor(all_segments[i1],  all_segments[i2],
+                                                                     all_points[i1], all_points[i2]);
 
-        auto inter = intersection(t1, t2);
-
-        if (inter != boost::none)
-        {
-          autorefine_impl::Intersection_visitor<EK> intersection_visitor(all_segments_1[it1],  all_segments_2[it2],
-                                                                         all_points_1[it1], all_points_2[it2]);
-
-          boost::apply_visitor(intersection_visitor, *inter);
-        }
-      }
+      boost::apply_visitor(intersection_visitor, *inter);
     }
-
-    // now refine triangles
-    std::vector<EK::Triangle_3> new_triangles;
-    for(std::size_t it1=0; it1<nbt_1; ++it1)
-    {
-      if (all_segments_1[it1].empty() && all_points_1[it1].empty())
-        new_triangles.push_back(triangles[i1][it1]);
-      else
-        autorefine_impl::generate_subtriangles<EK>(triangles[i1][it1], all_segments_1[it1], all_points_1[it1], new_triangles);
-    }
-    triangles[i1].swap(new_triangles);
-    new_triangles.clear();
-    for(std::size_t it2=0; it2<nbt_2; ++it2)
-    {
-      if (all_segments_2[it2].empty() && all_points_2[it2].empty())
-        new_triangles.push_back(triangles[i2][it2]);
-      else
-        autorefine_impl::generate_subtriangles<EK>(triangles[i2][it2], all_segments_2[it2], all_points_2[it2], new_triangles);
-    }
-    triangles[i2].swap(new_triangles);
   }
 
-  CGAL_assertion( autorefine_impl::is_output_valid(tm, vpm, tid_map, is_degen, triangles) );
+  // now refine triangles
+  std::vector<EK::Triangle_3> new_triangles;
+  for(std::size_t ti=0; ti<triangles.size(); ++ti)
+  {
+    if (all_segments[ti].empty() && all_points[ti].empty())
+      new_triangles.push_back(triangles[ti]);
+    else
+      autorefine_impl::generate_subtriangles<EK>(triangles[ti], all_segments[ti], all_points[ti], new_triangles);
+  }
+
 
   // brute force output: create a soup, orient and to-mesh
-  // WARNING: there is no reason when using double that identical exact points are identical in double
   Cartesian_converter<EK, GT> to_input;
   std::map<EK::Point_3, std::size_t> point_id_map;
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+  std::vector<EK::Point_3> exact_soup_points;
+#endif
 
   for (vertex_descriptor v : vertices(tm))
   {
     if (point_id_map.insert(std::make_pair(to_exact(get(vpm,v)), soup_points.size())).second)
+    {
       soup_points.push_back(get(vpm,v));
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+      exact_soup_points.push_back(to_exact(get(vpm,v)));
+#endif
+    }
   }
 
   auto get_point_id = [&](const typename EK::Point_3& pt)
   {
     auto insert_res = point_id_map.insert(std::make_pair(pt, soup_points.size()));
     if (insert_res.second)
+    {
       soup_points.push_back(to_input(pt));
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+      exact_soup_points.push_back(pt);
+#endif
+    }
     return insert_res.first->second;
   };
 
@@ -450,14 +462,22 @@ void autorefine_soup_output(const TriangleMesh& tm,
                          get_point_id(to_exact(get(vpm,target(next(h, tm), tm)))))
       );
     }
-    else
-    {
-      for (const typename EK::Triangle_3& t : triangles[tid])
-      {
-        soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
-      }
-    }
   }
+  for (const typename EK::Triangle_3& t : new_triangles)
+  {
+    soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
+  }
+
+
+#ifndef CGAL_NDEBUG
+  CGAL_assertion( autorefine_impl::is_output_valid(exact_soup_points, soup_triangles) );
+#endif
+
+#ifdef CGAL_DEBUG_PMP_AUTOREFINE
+  autorefine_impl::is_output_valid(exact_soup_points, soup_triangles);
+    throw std::runtime_error("invalid output");
+#endif
+
 }
 #endif
 
