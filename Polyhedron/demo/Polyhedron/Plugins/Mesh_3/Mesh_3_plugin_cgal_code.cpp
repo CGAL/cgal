@@ -269,8 +269,10 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.protect_features = false;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.manifold = manifold;
@@ -323,8 +325,10 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.detect_connected_components = detect_connected_components;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.facet_min_sizing = facet_min_sizing;
   param.tet_min_sizing = tet_min_sizing;
   param.edge_sizing = edge_size;
