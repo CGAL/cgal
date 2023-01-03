@@ -474,7 +474,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
 #endif
 
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
-  autorefine_impl::is_output_valid(exact_soup_points, soup_triangles);
+  if (!autorefine_impl::is_output_valid(exact_soup_points, soup_triangles))
     throw std::runtime_error("invalid output");
 #endif
 
