@@ -32,6 +32,10 @@
 #include <CGAL/Surface_mesh.h>
 #endif
 
+#ifndef CGAL_PMP_AUTOREFINE_VERBOSE
+#define CGAL_PMP_AUTOREFINE_VERBOSE(MSG)
+#endif
+
 #include <vector>
 
 namespace CGAL {
@@ -49,8 +53,12 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
   typedef CGAL::Projection_traits_3<EK> P_traits;
   typedef CGAL::Exact_intersections_tag Itag;
   //typedef CGAL::No_constraint_intersection_requiring_constructions_tag Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, Default, Itag> CDT_base;
-  typedef CGAL::Constrained_triangulation_plus_2<CDT_base> CDT;
+
+
+  //typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, Default, Itag> CDT_base;
+  //typedef CGAL::Constrained_triangulation_plus_2<CDT_base> CDT;
+
+  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, Default, Itag> CDT;
 
   typename EK::Vector_3 n = normal(t[0], t[1], t[2]);
   //~ bool orientation_flipped = false;
@@ -329,6 +337,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
   std::vector<Pair_of_faces> si_pairs;
 
   // collect intersecting pairs of triangles
+  CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
   self_intersections<Concurrency_tag>(tm, std::back_inserter(si_pairs), np);
 
   if (si_pairs.empty()) return;
@@ -384,6 +393,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
   std::vector< std::vector<EK::Point_3> > all_points(triangles.size());
 
 
+  CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
   typename EK::Intersect_3 intersection = EK().intersect_3_object();
   for (const Pair_of_faces& p : si_pairs)
   {
@@ -406,6 +416,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
     }
   }
 
+  CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
   // now refine triangles
   std::vector<EK::Triangle_3> new_triangles;
   for(std::size_t ti=0; ti<triangles.size(); ++ti)
@@ -418,6 +429,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
 
 
   // brute force output: create a soup, orient and to-mesh
+  CGAL_PMP_AUTOREFINE_VERBOSE("create output soup");
   Cartesian_converter<EK, GT> to_input;
   std::map<EK::Point_3, std::size_t> point_id_map;
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
@@ -468,16 +480,17 @@ void autorefine_soup_output(const TriangleMesh& tm,
     soup_triangles.emplace_back(CGAL::make_array(get_point_id(t[0]), get_point_id(t[1]), get_point_id(t[2])));
   }
 
-
 #ifndef CGAL_NDEBUG
+  CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
   CGAL_assertion( autorefine_impl::is_output_valid(exact_soup_points, soup_triangles) );
 #endif
 
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
+  CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
   if (!autorefine_impl::is_output_valid(exact_soup_points, soup_triangles))
     throw std::runtime_error("invalid output");
 #endif
-
+  CGAL_PMP_AUTOREFINE_VERBOSE("done");
 }
 #endif
 
