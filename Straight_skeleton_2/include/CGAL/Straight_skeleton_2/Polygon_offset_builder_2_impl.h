@@ -66,7 +66,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
     Halfedge_const_handle lNext = aBisector->next();
 
     CGAL_POLYOFFSET_TRACE(2,"Testing hook on " << e2str(*aBisector) ) ;
-    CGAL_POLYOFFSET_TRACE(4, "Next: " << e2str(*lNext) << " - Prev: " << e2str(*lPrev) ) ;
+    CGAL_POLYOFFSET_TRACE(4, "Next: " << e2str(*lNext) << " ; Prev: " << e2str(*lPrev) ) ;
 
     if ( !IsVisited(aBisector) )
     {
@@ -82,6 +82,9 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
 
         Comparison_result lTimeWrtSrcTime = lPrev->is_bisector() ? Compare_offset_against_event_time(aTime,lPrev    ->vertex()) : LARGER ;
         Comparison_result lTimeWrtTgtTime = lNext->is_bisector() ? Compare_offset_against_event_time(aTime,aBisector->vertex()) : LARGER ;
+        CGAL_POLYOFFSET_TRACE(3,"  lPrev->is_bisector(): " << lPrev->is_bisector() << " lNext->is_bisector(): " << lNext->is_bisector());
+        CGAL_POLYOFFSET_TRACE(3,"  lPrev->vertex()->time(): " << lPrev->vertex()->time());
+        CGAL_POLYOFFSET_TRACE(3,"  aBisector->vertex()->time(): " << aBisector->vertex()->time());
         CGAL_POLYOFFSET_TRACE(3,"  TimeWrtSrcTime: " << lTimeWrtSrcTime << " TimeWrtTgtTime: " << lTimeWrtTgtTime ) ;
 
         //

@@ -30,7 +30,8 @@ namespace CGAL {
 
 namespace CGAL_SS_i {
 
-template<class K> struct Has_inexact_constructions
+template<class K>
+struct Has_inexact_constructions
 {
   typedef typename K::FT FT ;
 
@@ -176,10 +177,7 @@ public:
 
 inline void intrusive_ptr_add_ref( Ref_counted_base const* p ) { p->AddRef(); }
 inline void intrusive_ptr_release( Ref_counted_base const* p ) { p->Release(); }
+
 } // namespace CGAL
 
-
-
-#endif // CGAL_STRAIGHT_SKELETON_AUX_H //
-// EOF //
-
+#endif // CGAL_STRAIGHT_SKELETON_AUX_H

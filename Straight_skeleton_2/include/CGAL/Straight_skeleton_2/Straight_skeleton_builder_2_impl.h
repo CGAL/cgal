@@ -113,9 +113,9 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
 
       if ( GetEdgeEndingAt(lPrevNode) == lTriedge.e2() )
       {
-        // Note that this can be a contour node and in that case GetTrisegment is null and we get
-        // the middle point, but in that case e2 and e0 are consecutive in the input
-        // and the middle point is the common extremity and things are fine.
+        // Note that this can be a contour node and in that case GetTrisegment returns null
+        // and we get the middle point as a seed, but in that case e2 and e0 are consecutive
+        // in the input and the middle point is the common extremity thus things are fine.
         lTrisegment->set_child_t( GetTrisegment(lPrevNode) ) ;
       }
       else
