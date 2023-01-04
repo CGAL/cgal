@@ -11,6 +11,7 @@
 #include <boost/accumulators/statistics/min.hpp>
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/median.hpp>
+#include <boost/algorithm/clamp.hpp>
 #include <boost/property_map/property_map.hpp>
 
 #include <cmath>
@@ -71,7 +72,7 @@ void compute_angles(Mesh* poly,Tester tester , double& mini, double& maxi, doubl
     typename Traits::Vector_3 bc(b, c);
     double cos_angle = (ba * bc)
       / std::sqrt(ba.squared_length() * bc.squared_length());
-
+    cos_angle = boost::algorithm::clamp<double>(cos_angle, -1.0, 1.0);
     acc(std::acos(cos_angle) * rad_to_deg);
   }
 
@@ -281,4 +282,3 @@ void faces_aspect_ratio(Mesh* poly,
   faces_aspect_ratio(poly, faces(*poly), min_altitude,  mini, maxi, mean);
 }
 #endif // POLYHEDRON_DEMO_STATISTICS_HELPERS_H
-
