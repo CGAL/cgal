@@ -367,7 +367,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
 
 // Handles the special case of two simultaneous edge events, that is, two edges
 // collapsing along the line/point were they meet at the same time.
-// This ocurrs when the bisector emerging from vertex 'aA' is defined by the same pair of
+// This occurs when the bisector emerging from vertex 'aA' is defined by the same pair of
 // contour edges as the bisector emerging from vertex 'aB' (but in opposite order).
 //
 template<class Gt, class Ss, class V>
