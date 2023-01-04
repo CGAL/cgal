@@ -581,7 +581,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CreateContourBisectors()
 
     Vertex_handle lInfNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++ ) ) ;
     InitVertexData(lInfNode);
-    CGAL_assertion(lInfNode->has_null_point());
+    CGAL_assertion(lInfNode->has_infinite_time());
 
     lRBisector->HBase_base::set_next( lLBisector  );
     lLBisector->HBase_base::set_prev( lRBisector );
@@ -1212,7 +1212,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Vertex_handle lNewFicNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++ ) ) ;
 
     InitVertexData(lNewFicNode);
-    CGAL_assertion(lNewFicNode->has_null_point());
+    CGAL_assertion(lNewFicNode->has_infinite_time());
     CrossLink(lNOBisector_R,lNewFicNode);
 
     SetBisectorSlope(lNOBisector_L,POSITIVE);

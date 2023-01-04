@@ -197,8 +197,6 @@ public:
 
   bool has_infinite_time() const { return ( mFlags & HasInfiniteTimeBit ) == HasInfiniteTimeBit ; }
 
-  bool has_null_point() const { return has_infinite_time(); }
-
   bool is_split() const { return ( mFlags & IsSplitBit ) == IsSplitBit ; }
 
   Halfedge_const_handle primary_bisector() const { return halfedge()->next(); }
@@ -285,14 +283,9 @@ public:
 
   Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP ) : Base(aID,aP) {}
 
-  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit, bool aHasInfiniteTime ) : Base(aID,aP,aTime,aIsSplit,aHasInfiniteTime) {}
-
-private:
-
-  void set_halfedge     ( Halfedge_handle aHE )     { Base::set_halfedge(aHE) ; }
-  void set_event_triedge( Triedge const& aTriedge ) { Base::set_event_triedge( aTriedge); }
-  void reset_id         ( int aID )                 { Base::reset_id(aID) ; }
-
+  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit, bool aHasInfiniteTime )
+    : Base(aID, aP, aTime, aIsSplit, aHasInfiniteTime)
+  {}
 } ;
 
 } // end namespace CGAL
