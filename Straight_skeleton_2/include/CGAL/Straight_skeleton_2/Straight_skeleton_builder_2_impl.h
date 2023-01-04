@@ -1045,10 +1045,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
     Halfedge_handle lDefiningBorderB = lNewNode->halfedge()->opposite()->prev()->opposite()->defining_contour_edge();
     Halfedge_handle lDefiningBorderC = lNewNode->halfedge()->opposite()->prev()->defining_contour_edge();
 
-    lNewNode->VBase::set_event_triedge( lEvent.triedge() ) ;
-
     Triedge lTri(lDefiningBorderA,lDefiningBorderB,lDefiningBorderC);
-
     SetVertexTriedge( lNewNode, lTri ) ;
 
     SetBisectorSlope(lLSeed,lNewNode);
@@ -1228,9 +1225,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Halfedge_handle lNewNode_R_DefiningBorderA = lNewNode_R->halfedge()->defining_contour_edge();
     Halfedge_handle lNewNode_R_DefiningBorderB = lNewNode_R->halfedge()->opposite()->prev()->opposite()->defining_contour_edge();
     Halfedge_handle lNewNode_R_DefiningBorderC = lNewNode_R->halfedge()->opposite()->prev()->defining_contour_edge();
-
-    lNewNode_L->VBase::set_event_triedge( lEvent.triedge() ) ;
-    lNewNode_R->VBase::set_event_triedge( lEvent.triedge() ) ;
 
     Triedge lTriL( lNewNode_L_DefiningBorderA,lNewNode_L_DefiningBorderB,lNewNode_L_DefiningBorderC ) ;
     Triedge lTriR( lNewNode_R_DefiningBorderA,lNewNode_R_DefiningBorderB,lNewNode_R_DefiningBorderC ) ;
@@ -1456,9 +1450,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandlePseudoSplitEvent( EventPtr aEve
     Halfedge_handle lNewNode_R_DefiningBorderA = lNewNode_R->halfedge()->defining_contour_edge();
     Halfedge_handle lNewNode_R_DefiningBorderB = lNewNode_R->halfedge()->next()->opposite()->defining_contour_edge();
     Halfedge_handle lNewNode_R_DefiningBorderC = lNewNode_R->halfedge()->opposite()->prev()->defining_contour_edge();
-
-    lNewNode_L->VBase::set_event_triedge( lEvent.triedge() ) ;
-    lNewNode_R->VBase::set_event_triedge( lEvent.triedge() ) ;
 
     Triedge lTriL( lNewNode_L_DefiningBorderA, lNewNode_L_DefiningBorderB, lNewNode_L_DefiningBorderC ) ;
     Triedge lTriR( lNewNode_R_DefiningBorderA, lNewNode_R_DefiningBorderB, lNewNode_R_DefiningBorderC ) ;
