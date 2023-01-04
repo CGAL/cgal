@@ -16,6 +16,10 @@ Release date: June 2023
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.6/Manual/packages.html#PkgPolygonMeshProcessing)
 
+- **Breaking change**: Deprecated the overloads of functions `CGAL::Polygon_mesh_processing::triangulate_hole()`,
+  `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()`
+  which have output iterators for vertices and faces as parameter. They are replaced by overloads with two additional named parameters.
+
 -   Added the function `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`, that remeshes a surface triangle mesh following the
 CGAL tetrahedral Delaunay refinement algorithm.
 

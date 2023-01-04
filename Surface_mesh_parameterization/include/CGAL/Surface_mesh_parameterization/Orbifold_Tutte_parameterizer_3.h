@@ -782,9 +782,13 @@ private:
       const int i = get(vimap, vi);
       const int j = get(vimap, vj);
 
-      if (i > j) continue;
-      const CGAL::Weights::Cotangent_weight<SeamMesh> cotangent_weight;
-      const NT w_ij = NT(2) * cotangent_weight(hd, mesh, pmap);
+      if (i > j)
+        continue;
+
+      const CGAL::Weights::Cotangent_weight<SeamMesh, PPM> cotangent_weight(mesh, pmap);
+
+      // x2 because Cotangent_weight returns 0.5 * (cot alpha + cot beta)...
+      const NT w_ij = NT(2) * cotangent_weight(hd);
 
       // ij
       M.set_coef(2*i, 2*j, w_ij, true /* new coef */);

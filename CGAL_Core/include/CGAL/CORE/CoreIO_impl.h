@@ -103,7 +103,7 @@ int skip_comment_line (std::istream & in) {
     }
   } while (c == ' ' || c == '\t' || c == '\n');
 
-  if (c == EOF)
+  if (in.eof())
     core_io_error_handler("CoreIO::read_from_file()","unexpected end of file.");
 
   in.putback(c);
@@ -191,7 +191,11 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
 
   buffer = new char[size+2];
   // read digits
-  for (int i=0; (i<size)&&((c=skip_backslash_new_line(in)) != EOF ); i++) {
+  for (int i=0; i<size; i++) {
+    c=skip_backslash_new_line(in);
+    if(in.eof()){
+      break;
+    }
     if (c != ' ' && c != '\t' && c != '\n')
       append_char(buffer, size, pos++, c);
   }
