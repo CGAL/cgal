@@ -340,12 +340,12 @@ private:
                  const Point_2& next) const
   { return f_orientation(prev, curr, next) == LEFT_TURN; }
 
-  // Returns the point corresponding to a state (i,j).
+  //! \brief obtains the point corresponding to a state (i,j).
   Point_2 get_point(int i1, int i2, const std::vector<Point_2>& pgn1,
                     const std::vector<Point_2>& pgn2) const
   { return f_add(pgn1[i1], Vector_2(Point_2(ORIGIN), pgn2[i2])); }
 
-  // Put the outer loop of the arrangement in 'outer_boundary'
+  //! \brief puts the outer loop of the arrangement in 'outer_boundary'
   void get_outer_loop(const Arrangement_history_2& arr,
                       Polygon_2& outer_boundary) const {
     Inner_ccb_const_iterator icit = arr.unbounded_face()->inner_ccbs_begin();
@@ -356,7 +356,7 @@ private:
     while (--circ != circ_start);
   }
 
-  // Determine whether the face orientation is consistent.
+  //! \brief determines whether the face orientation is consistent.
   bool test_face_orientation(const Arrangement_history_2& arr,
                              const Face_const_handle face) const {
     // The face needs to be orientable
@@ -368,7 +368,7 @@ private:
     return true;
   }
 
-  // Add a face to 'holes'.
+  //! \brief adds a face to 'holes'.
   template <typename OutputIterator>
   void add_face(Face_const_handle face, OutputIterator holes) const {
     Polygon_2 pgn_hole;
@@ -380,8 +380,9 @@ private:
     ++holes;
   }
 
-  // Check whether the convolution's original edge(s) had the same direction as
-  // the arrangement's half edge
+  /*! \brief checks whether the convolution's original edge(s) had the same
+   * direction as the arrangement's half edge.
+   */
   bool do_original_edges_have_same_direction(const Arrangement_history_2& arr,
                                              Halfedge_const_handle he) const {
     for (auto segment_itr = arr.originating_curves_begin(he);
@@ -397,7 +398,7 @@ private:
     return true;
   }
 
-  // Return a point in the face's interior by finding a diagonal
+  //! \brief obtains a point in the face's interior by finding a diagonal
   Point_2 get_point_in_face(Face_const_handle face) const {
     Ccb_halfedge_const_circulator next = face->outer_ccb();
     Ccb_halfedge_const_circulator curr = next++;
