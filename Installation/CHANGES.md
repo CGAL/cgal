@@ -68,7 +68,7 @@ CGAL tetrahedral Delaunay refinement algorithm.
 -   Introduce `Face_count_stop_predicate` and `Face_count_ratio_stop_predicate` that can be used to stop the simplification algorithm based on a desired number of faces in the output, or a ratio between input and output face numbers.
 
 ### [2D Minkowski Sums](https://doc.cgal.org/5.6/Manual/packages.html#PkgMinkowskiSum2)
--   Fixed a bug that mae holes in the Minkowski sum disappear
+-   Fixed a bug that made holes in the Minkowski sum disappear
 
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
