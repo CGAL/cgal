@@ -11,7 +11,6 @@
 #include <boost/accumulators/statistics/min.hpp>
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/median.hpp>
-#include <boost/algorithm/clamp.hpp>
 #include <boost/property_map/property_map.hpp>
 
 #include <cmath>
@@ -68,12 +67,8 @@ void compute_angles(Mesh* poly,Tester tester , double& mini, double& maxi, doubl
     typename Traits::Point_3 b = get(vpmap, target(h, *poly));
     typename Traits::Point_3 c = get(vpmap, target(next(h, *poly), *poly));
 
-    typename Traits::Vector_3 ba(b, a);
-    typename Traits::Vector_3 bc(b, c);
-    double cos_angle = (ba * bc)
-      / std::sqrt(ba.squared_length() * bc.squared_length());
-    cos_angle = boost::algorithm::clamp<double>(cos_angle, -1.0, 1.0);
-    acc(std::acos(cos_angle) * rad_to_deg);
+    typename Traits::FT ang = CGAL::approximate_angle(b,a,c);
+    acc(CGAL::to_double(ang));
   }
 
   mini = extract_result< tag::min >(acc);
