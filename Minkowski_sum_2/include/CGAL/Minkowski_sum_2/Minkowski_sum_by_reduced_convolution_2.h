@@ -73,7 +73,7 @@ private:
   typename Kernel::Counterclockwise_in_between_2 f_ccw_in_between;
 
 public:
-  //!
+  //! \brief constructs.
   Minkowski_sum_by_reduced_convolution_2() {
     // Obtain kernel functors
     Kernel ker;
@@ -85,7 +85,7 @@ public:
     f_ccw_in_between = ker.counterclockwise_in_between_2_object();
   }
 
-  //!
+  //! \brief applies the Minkowski sum reduced-convolution operator.
   template <typename OutputIterator>
   void operator()(const Polygon_2& pgn1, const Polygon_2& pgn2,
                   Polygon_2& outer_boundary, OutputIterator holes) const {
@@ -100,16 +100,14 @@ public:
     common_operator(pwh1, pwh2, outer_boundary, holes);
   }
 
-  //!
+  //! \brief applies the Minkowski sum reduced-convolution operator.
   template <typename OutputIterator>
   void operator()(const Polygon_with_holes_2& pgn1,
                   const Polygon_with_holes_2& pgn2,
                   Polygon_2& outer_boundary, OutputIterator holes) const
-  {
-    common_operator(pgn1, pgn2, outer_boundary, holes);
-  }
+  { common_operator(pgn1, pgn2, outer_boundary, holes); }
 
-  //!
+  //! \brief applies the Minkowski sum reduced-convolution operator.
   template <typename OutputIterator>
   void operator()(const Polygon_2& pgn1, const Polygon_with_holes_2& pgn2,
                   Polygon_2& outer_boundary, OutputIterator holes) const {
@@ -120,7 +118,7 @@ public:
   }
 
 private:
-  //!
+  //! \brief applies the Minkowski sum reduced-convolution operator.
   template <typename OutputIterator>
   void common_operator(const Polygon_with_holes_2& pgn1,
                        const Polygon_with_holes_2& pgn2,
@@ -177,8 +175,9 @@ private:
     }
   }
 
-  // Builds the reduced convolution for each pair of loop in the two
-  // polygons-with-holes.
+  /*! \brief builds the reduced convolution for each pair of loops in the two
+   * polygons-with-holes.
+   */
   void build_reduced_convolution(const Polygon_with_holes_2& pgnwh1,
                                  const Polygon_with_holes_2& pgnwh2,
                                  Segment_list& reduced_convolution) const {
@@ -214,11 +213,12 @@ private:
     }
   }
 
-  // Builds the reduced convolution using a fiber grid approach. For each
-  // starting vertex, try to add two outgoing next states. If a visited
-  // vertex is reached, then do not explore further. This is a BFS-like
-  // iteration beginning from each vertex in the first column of the fiber
-  // grid.
+  /*! \brief builds the reduced convolution using a fiber grid approach. For
+   * each starting vertex, try to add two outgoing next states. If a visited
+   * vertex is reached, then do not explore further. This is a BFS-like
+   * iteration beginning from each vertex in the first column of the fiber
+   * grid.
+   */
   void build_reduced_convolution(const Polygon_2& pgn1, const Polygon_2& pgn2,
                                  Segment_list& reduced_convolution) const {
     int n1 = static_cast<int>(pgn1.size());
@@ -333,7 +333,9 @@ private:
     return directions;
   }
 
-  //!
+  /*! \brief determines whether three vertices on the outer CCB of a face are
+   * locally convex.
+   */
   bool is_convex(const Point_2& prev, const Point_2& curr,
                  const Point_2& next) const
   { return f_orientation(prev, curr, next) == LEFT_TURN; }
@@ -434,7 +436,7 @@ private:
     return (min_q == 0) ? centroid(ear) : midpoint(v, *min_q);
   }
 
-  //!
+  //! \brief transforms a polygon with holes.
   template <typename Transformation>
   Polygon_with_holes_2 transform(const Transformation& t,
                                  const Polygon_with_holes_2& p) const {
