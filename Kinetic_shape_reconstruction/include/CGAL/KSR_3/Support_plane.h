@@ -928,7 +928,7 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
   // }
 
   const FT vtol = FT(5); // degrees // TODO: We should put it as a parameter.
-  FT aval = KSR::angle_3d(va, vb);
+  FT aval = approximate_angle(va, vb);
   CGAL_assertion(aval >= FT(0) && aval <= FT(180));
   if (aval >= FT(90)) aval = FT(180) - aval;
 

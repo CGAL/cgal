@@ -16,6 +16,7 @@
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // CGAL includes.
+#include <CGAL/Timer.h>
 #include <CGAL/optimal_bounding_box.h>
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

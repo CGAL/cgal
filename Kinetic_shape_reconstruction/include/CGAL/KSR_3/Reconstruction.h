@@ -742,7 +742,7 @@ private:
       CGAL_assertion(idx < m_input_range.size());
       const auto& normal = get(m_normal_map_3, idx);
 
-      FT angle = KSR::angle_3d(normal, ref);
+      FT angle = approximate_angle(normal, ref);
       if (angle > FT(90)) angle = FT(180) - angle;
       angle = FT(90) - angle;
       if (angle <= max_accepted_angle) wall_points.push_back(idx);

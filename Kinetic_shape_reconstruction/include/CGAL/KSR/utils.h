@@ -115,26 +115,6 @@ inline const Vector_d normalize(const Vector_d& v) {
   return v / static_cast<FT>(CGAL::sqrt(CGAL::to_double(dot_product)));
 }
 
-// Compute angle between two 3D vectors.
-template<typename Vector_3>
-typename Kernel_traits<Vector_3>::Kernel::FT
-angle_3d(const Vector_3& v1, const Vector_3& v2) {
-
-  using Traits = typename Kernel_traits<Vector_3>::Kernel;
-  using FT = typename Traits::FT;
-
-  const double a = CGAL::to_double(v1 * v2) / (
-    CGAL::sqrt(CGAL::to_double(v1.squared_length())) *
-    CGAL::sqrt(CGAL::to_double(v2.squared_length())) );
-
-  if (a < -1.0) {
-    return static_cast<FT>(std::acos(-1.0) / CGAL_PI * 180.0);
-  } else if (a > 1.0) {
-    return static_cast<FT>(std::acos(+1.0) / CGAL_PI * 180.0);
-  } else {
-    return static_cast<FT>(std::acos(   a) / CGAL_PI * 180.0);
-  }
-}
 
 // Intersections. Used only in the 2D version.
 // For the 3D version, see conversions.h!
