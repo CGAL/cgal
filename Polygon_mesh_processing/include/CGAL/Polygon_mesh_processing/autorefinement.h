@@ -1,3 +1,5 @@
+//TODO: add for soup face the id of the input face. not sure it is easy to report intersection edge as a pair of vertex id
+
 // Copyright (c) 2023 GeometryFactory (France).
 // All rights reserved.
 //
@@ -347,6 +349,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
   typedef typename boost::property_map<TriangleMesh, Degen_property_tag>::const_type Is_degen_map;
   Is_degen_map is_degen = get(Degen_property_tag(), tm);
 
+// TODO: we already have this test in bbox inter when it report (f,f)
   for(face_descriptor f : faces(tm))
     put(is_degen, f, is_degenerate_triangle_face(f, tm, np));
 
@@ -496,10 +499,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
 
 /**
  * \ingroup PMP_corefinement_grp
- * \link coref_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
- * so that no triangles intersects in their interior.
- * Self-intersection edges will be marked as constrained. If an edge that was marked as
- * constrained is split, its sub-edges will be marked as constrained as well.
+ * refines a triangle mesh so that no triangles intersects in their interior.
  *
  * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
@@ -523,29 +523,6 @@ void autorefine_soup_output(const TriangleMesh& tm,
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     must be available in `TriangleMesh`.}
  *  \cgalParamNEnd
- *
- *   \cgalParamNBegin{edge_is_constrained_map}
- *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
- *                    as key type and `bool` as value type}
- *     \cgalParamDefault{a constant property map returning `false` for any edge}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{face_index_map}
- *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
- *                    as key type and `std::size_t` as value type}
- *     \cgalParamDefault{an automatically indexed internal map}
- *     \cgalParamExtra{If the property map is writable, the indices of the faces of `tm1` and `tm2`
- *                     will be set after the corefinement is done.}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{visitor}
- *     \cgalParamDescription{a visitor used to track the creation of new faces}
- *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
- *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
- *   \cgalParamNEnd
- * \cgalNamedParamsEnd
  *
  */
 template <class TriangleMesh,
