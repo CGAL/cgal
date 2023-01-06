@@ -50,6 +50,10 @@ int main(int argc, char* argv[])
     }
     std::cerr << "NEW POLYGON\n";
     cdt.insert_constrained_polygon(polygon);
+    // std::ofstream dump("dump.binary.cgal");
+    // CGAL::Mesh_3::save_binary_file(dump, cdt);
+  }
+  {
     std::ofstream dump("dump.binary.cgal");
     CGAL::Mesh_3::save_binary_file(dump, cdt);
   }
