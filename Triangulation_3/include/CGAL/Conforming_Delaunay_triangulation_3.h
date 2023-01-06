@@ -236,17 +236,20 @@ public:
                        });
   }
 
-  void write_missing_segments_file(std::ostream &out) {
-    return std::for_each(
+  bool write_missing_segments_file(std::ostream &out) {
+    bool any_missing_segment = false;
+    std::for_each(
         constraint_hierarchy.sc_begin(), constraint_hierarchy.sc_end(),
-        [this, &out](const auto &sc) {
+        [this, &out, &any_missing_segment](const auto &sc) {
           if (!tr.tds().is_edge(sc.first.first, sc.first.second)) {
             const auto v0 = sc.first.first;
             const auto v1 = sc.first.second;
             out << "2 " << this->tr.point(v0) << " " << this->tr.point(v1)
                 << '\n';
+            any_missing_segment = true;
           }
         });
+    return any_missing_segment;
   }
 
   /// @{

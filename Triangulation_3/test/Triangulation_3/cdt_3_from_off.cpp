@@ -59,7 +59,9 @@ int main(int argc, char* argv[])
   }
   {
     std::ofstream missing_edges("missing_segments.polylines.txt");
-    cdt.write_missing_segments_file(missing_edges);
+    if(cdt.write_missing_segments_file(missing_edges)) {
+      std::cerr << "ERROR: Missing segments!\n";
+    }
   }
   assert(cdt.is_conforming());
 }
