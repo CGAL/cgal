@@ -1,7 +1,10 @@
 
-#include <CGAL/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
 
 #include "test_util.h"
+
+#include <iostream>
+#include <string>
 
 #define WRITE_OFF
 

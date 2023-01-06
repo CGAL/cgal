@@ -1,10 +1,13 @@
 #include <CGAL/Simple_cartesian.h>
 
+#include <CGAL/Isosurfacing_3/Implicit_cartesian_grid_domain.h>
+#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Implicit_cartesian_grid_domain.h>
-#include <CGAL/Marching_cubes_3.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
+
+#include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;

@@ -1,9 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Bbox_3.h>
-#include <CGAL/Dual_contouring_3.h>
-#include <CGAL/Implicit_cartesian_grid_domain.h>
+#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Implicit_cartesian_grid_domain.h>
 
+#include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;

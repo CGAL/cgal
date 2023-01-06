@@ -9,8 +9,8 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_ZERO_GRADIENT_H
-#define CGAL_ZERO_GRADIENT_H
+#ifndef CGAL_ISOSURFACING_3_ZERO_GRADIENT_H
+#define CGAL_ISOSURFACING_3_ZERO_GRADIENT_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -54,4 +54,4 @@ private:
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_ZERO_GRADIENT_H
+#endif // CGAL_ISOSURFACING_3_ZERO_GRADIENT_H

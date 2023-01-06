@@ -9,8 +9,8 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_CARTESIAN_GRID_3_H
-#define CGAL_CARTESIAN_GRID_3_H
+#ifndef CGAL_ISOSURFACING_3_CARTESIAN_GRID_3_H
+#define CGAL_ISOSURFACING_3_CARTESIAN_GRID_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -295,4 +295,4 @@ to_image() const
 
 } // namespace CGAL
 
-#endif // CGAL_CARTESIAN_GRID_3_H
+#endif // CGAL_ISOSURFACING_3_CARTESIAN_GRID_3_H

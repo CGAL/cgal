@@ -1,10 +1,13 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Explicit_cartesian_grid_domain.h>
-#include <CGAL/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_domain.h>
+#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
+
+#include <memory>
+#include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = typename Kernel::Point_3;

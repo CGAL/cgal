@@ -9,8 +9,8 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_IMPLICIT_OCTREE_DOMAIN_H
-#define CGAL_IMPLICIT_OCTREE_DOMAIN_H
+#ifndef CGAL_ISOSURFACING_3_IMPLICIT_OCTREE_DOMAIN_H
+#define CGAL_ISOSURFACING_3_IMPLICIT_OCTREE_DOMAIN_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -18,8 +18,8 @@
 #include <CGAL/Isosurfacing_3/internal/Implicit_function_with_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_topology.h>
-#include <CGAL/Octree_wrapper.h>
-#include <CGAL/Zero_gradient.h>
+#include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
+#include <CGAL/Isosurfacing_3/Zero_gradient.h>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -40,7 +40,7 @@ template <typename GeomTraits,
           typename PointFunction,
           typename Gradient_ = Zero_gradient<GeomTraits> >
 Implicit_octree_domain<GeomTraits, PointFunction, Gradient_>
-create_implicit_octree_domain(const std::shared_ptr<Octree_wrapper<GeomTraits> > octree,
+create_implicit_octree_domain(const std::shared_ptr<internal::Octree_wrapper<GeomTraits> > octree,
                               const PointFunction& point_function,
                               const Gradient_& gradient = Gradient_())
 {
@@ -66,4 +66,4 @@ create_implicit_octree_domain(const std::shared_ptr<Octree_wrapper<GeomTraits> >
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_IMPLICIT_OCTREE_DOMAIN_H
+#endif // CGAL_ISOSURFACING_3_IMPLICIT_OCTREE_DOMAIN_H
