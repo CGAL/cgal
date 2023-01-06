@@ -10,8 +10,8 @@
 // Author(s)     : Daniel Zint
 //                 Julian Stahl
 
-#ifndef CGAL_OCTREE_WRAPPER_H
-#define CGAL_OCTREE_WRAPPER_H
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_OCTREE_WRAPPER_H
+#define CGAL_ISOSURFACING_3_INTERNAL_OCTREE_WRAPPER_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -21,6 +21,7 @@
 
 namespace CGAL {
 namespace Isosurfacing {
+namespace internal {
 
 template <typename GeomTraits>
 class Octree_wrapper
@@ -605,7 +606,8 @@ public:
   }
 };
 
+} // namespace internal
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_OCTREE_WRAPPER_H
+#endif // CGAL_ISOSURFACING_3_INTERNAL_OCTREE_WRAPPER_H

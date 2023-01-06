@@ -15,7 +15,7 @@
 #include <CGAL/license/Isosurfacing_3.h>
 
 #include <CGAL/Isosurfacing_3/internal/Octree_topology.h>
-#include <CGAL/Octree_wrapper.h>
+#include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
 
 #include <memory>
 

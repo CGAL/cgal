@@ -9,13 +9,16 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_EXPLICIT_CARTESIAN_GRID_GRADIENT_H
-#define CGAL_EXPLICIT_CARTESIAN_GRID_GRADIENT_H
+#ifndef CGAL_ISOSURFACING_3_EXPLICIT_CARTESIAN_GRID_GRADIENT_H
+#define CGAL_ISOSURFACING_3_EXPLICIT_CARTESIAN_GRID_GRADIENT_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
+
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Cartesian_grid_3.h>
+
+#include <memory>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -121,4 +124,4 @@ private:
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_EXPLICIT_CARTESIAN_GRID_GRADIENT_H
+#endif // CGAL_ISOSURFACING_3_EXPLICIT_CARTESIAN_GRID_GRADIENT_H

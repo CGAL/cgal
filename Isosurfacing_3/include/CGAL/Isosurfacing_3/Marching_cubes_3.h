@@ -9,8 +9,8 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_MARCHING_CUBES_3_H
-#define CGAL_MARCHING_CUBES_3_H
+#ifndef CGAL_ISOSURFACING_3_MARCHING_CUBES_3_H
+#define CGAL_ISOSURFACING_3_MARCHING_CUBES_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -74,4 +74,4 @@ void marching_cubes(const Domain_& domain,
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_MARCHING_CUBES_3_H
+#endif // CGAL_ISOSURFACING_3_MARCHING_CUBES_3_H

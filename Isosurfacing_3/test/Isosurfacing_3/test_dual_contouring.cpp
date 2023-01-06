@@ -1,16 +1,17 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Cartesian_grid_3.h>
-#include <CGAL/Dual_contouring_3.h>
-#include <CGAL/Explicit_cartesian_grid_domain.h>
-#include <CGAL/Implicit_cartesian_grid_domain.h>
-#include <CGAL/Marching_cubes_3.h>
-#include <CGAL/Octree_wrapper.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
 
+#include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
+#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_domain.h>
+#include <CGAL/Isosurfacing_3/Finite_difference_gradient.h>
+#include <CGAL/Isosurfacing_3/Implicit_cartesian_grid_domain.h>
+#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-#include <CGAL/Finite_difference_gradient.h>
 
 #include "Timer.h"
 
@@ -19,7 +20,7 @@ using Vector = typename Kernel::Vector_3;
 using Point = typename Kernel::Point_3;
 
 using Mesh = CGAL::Surface_mesh<Point>;
-using Grid CGAL::Cartesian_grid_3<Kernel>;
+using Grid = CGAL::Cartesian_grid_3<Kernel>;
 
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;

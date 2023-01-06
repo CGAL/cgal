@@ -1,13 +1,15 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Dual_contouring_3.h>
-#include <CGAL/Implicit_octree_domain.h>
-#include <CGAL/Octree_wrapper.h>
+#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Implicit_octree_domain.h>
+#include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
 
 #include <iostream>
 #include <math.h>
+#include <memory>
+#include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;
@@ -17,7 +19,7 @@ using Point = typename Kernel::Point_3;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-using Octree_wrapper_ = CGAL::Isosurfacing::Octree_wrapper<Kernel>;
+using Octree_wrapper_ = CGAL::Isosurfacing::internal::Octree_wrapper<Kernel>;
 
 struct Refine_one_eighth
 {

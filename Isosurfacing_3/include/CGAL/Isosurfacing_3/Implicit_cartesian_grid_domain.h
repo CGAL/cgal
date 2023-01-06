@@ -9,8 +9,8 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_IMPLICIT_CARTESIAN_GRID_DOMAIN_H
-#define CGAL_IMPLICIT_CARTESIAN_GRID_DOMAIN_H
+#ifndef CGAL_ISOSURFACING_3_IMPLICIT_CARTESIAN_GRID_DOMAIN_H
+#define CGAL_ISOSURFACING_3_IMPLICIT_CARTESIAN_GRID_DOMAIN_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -18,7 +18,8 @@
 #include <CGAL/Isosurfacing_3/internal/Cartesian_grid_geometry.h>
 #include <CGAL/Isosurfacing_3/internal/Grid_topology.h>
 #include <CGAL/Isosurfacing_3/internal/Implicit_function_with_geometry.h>
-#include <CGAL/Zero_gradient.h>
+#include <CGAL/Isosurfacing_3/Zero_gradient.h>
+
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
@@ -105,4 +106,4 @@ create_implicit_cartesian_grid_domain(const Bbox_3& bbox,
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_IMPLICIT_CARTESIAN_GRID_DOMAIN_H
+#endif // CGAL_ISOSURFACING_3_IMPLICIT_CARTESIAN_GRID_DOMAIN_H

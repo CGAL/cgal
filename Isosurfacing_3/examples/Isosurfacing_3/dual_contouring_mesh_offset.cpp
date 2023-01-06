@@ -1,8 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Dual_contouring_3.h>
-#include <CGAL/Implicit_cartesian_grid_domain.h>
+#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Implicit_cartesian_grid_domain.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
@@ -13,6 +13,8 @@
 #include <CGAL/boost/graph/IO/OFF.h>
 
 #include <iostream>
+#include <string>
+#include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;

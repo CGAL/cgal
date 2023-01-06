@@ -10,12 +10,13 @@
 // Author(s)     : Julian Stahl
 //                 Daniel Zint
 
-#ifndef CGAL_DUAL_CONTOURING_3_H
-#define CGAL_DUAL_CONTOURING_3_H
+#ifndef CGAL_ISOSURFACING_3_DUAL_CONTOURING_3_H
+#define CGAL_ISOSURFACING_3_DUAL_CONTOURING_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
 #include <CGAL/Isosurfacing_3/internal/Dual_contouring_internal.h>
+
 #include <CGAL/tags.h>
 
 namespace CGAL {
@@ -93,4 +94,4 @@ void dual_contouring(const Domain_& domain,
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_DUAL_CONTOURING_3_H
+#endif // CGAL_ISOSURFACING_3_DUAL_CONTOURING_3_H
