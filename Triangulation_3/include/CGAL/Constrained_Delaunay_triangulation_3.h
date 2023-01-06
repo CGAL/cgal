@@ -227,34 +227,23 @@ private:
 
       template <class InputIterator>
       void process_cells_in_conflict(const InputIterator cell_it_begin, const InputIterator end) {
-        switch (self.dimension())
-        {
-        case 2:
-          for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
-            auto c = *cell_it;
-            if(c->is_facet_constrained(3)) {
-              const auto face_id = c->face_constraint_index(3);
+        CGAL_assertion(self.dimension() >= 2);
+        const int first_li = self.dimension() == 2 ? 3 : 0;
+        for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
+          auto c = *cell_it;
+          for(int li = first_li; li < 4; ++li) {
+            if(c->is_facet_constrained(li)) {
+              const auto face_id = c->face_constraint_index(li);
               self.face_constraint_misses_subfaces.set(face_id);
-              auto fh_2 = c->face_2(self.face_constraints[face_id], 3);
+              auto fh_2 = c->face_2(self.face_constraints[face_id], li);
+#if CGAL_DEBUG_CDT_3
+              std::cerr << "Add missing triangle (from visitor): \n";
+              self.write_2d_triangle(std::cerr, fh_2);
+#endif // CGAL_DEBUG_CDT_3
+
               fh_2->info().missing_subface = true;
             }
           }
-          break;
-        case 3:
-          for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
-            auto c = *cell_it;
-            for(int li = 0; li < 4; ++li) {
-              if(c->is_facet_constrained(li)) {
-                const auto face_id = c->face_constraint_index(li);
-                self.face_constraint_misses_subfaces.set(face_id);
-                auto fh_2 = c->face_2(self.face_constraints[face_id], li);
-                fh_2->info().missing_subface = true;
-              }
-            }
-          }
-          break;
-        default:
-          CGAL_error();
         }
         conforming_dt_visitor.process_cells_in_conflict(cell_it_begin, end);
       }
@@ -443,13 +432,10 @@ public:
         face_constraint_misses_subfaces.set(polygon_contraint_id);
 #if CGAL_DEBUG_CDT_3
         std::cerr << "Missing triangle: \n";
-        std::cerr << "4"
-                  << " " << tr.point(v0)
-                  << " " << tr.point(v1)
-                  << " " << tr.point(v2)
-                  << " " << tr.point(v0) << '\n';
+        write_triangle(std::cerr, v0, v1, v2);
 #endif // CGAL_DEBUG_CDT_3
       } else {
+        fh->info().missing_subface = false;
         const int facet_index = 6 - i - j - k;
         c->set_facet_constraint(facet_index, polygon_contraint_id, fh);
         if(tr.dimension() > 2) {
@@ -462,6 +448,22 @@ public:
     return polygon_contraint_id;
   }
 
+  void write_triangle(std::ostream &out,
+                      Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
+  {
+    out << "4"
+        << " " << tr.point(v0) << " " << tr.point(v1) << " " << tr.point(v2)
+        << " " << tr.point(v0) << '\n';
+  }
+
+  void write_2d_triangle(std::ostream &out, const typename CDT_2::Face_handle fh)
+  {
+    const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
+    const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
+    const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
+    write_triangle(out, v0, v1, v2);
+  }
+
   void write_missing_subfaces_file(std::ostream& out) {
     const auto npos = face_constraint_misses_subfaces.npos;
     auto i = face_constraint_misses_subfaces.find_first();
@@ -471,14 +473,7 @@ public:
         if (false == fh->info().is_outside_the_face &&
             true == fh->info().missing_subface)
         {
-          const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
-          const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
-          const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-          out << "4"
-              << " " << tr.point(v0)
-              << " " << tr.point(v1)
-              << " " << tr.point(v2)
-              << " " << tr.point(v0) << '\n';
+          write_2d_triangle(out, fh);
         }
       }
       i = face_constraint_misses_subfaces.find_next(i);
