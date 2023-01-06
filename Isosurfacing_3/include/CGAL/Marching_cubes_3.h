@@ -44,24 +44,34 @@ namespace Isosurfacing {
  * \param triangles each element in the vector describes a triangle using the indices of the points in `points`
  * \param topologically_correct decides whether the topologically correct variant of Marching Cubes should be used
  */
-template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class TriangleRange>
-void marching_cubes(const Domain_& domain, const typename Domain_::FT isovalue, PointRange& points,
-                    TriangleRange& triangles, bool topologically_correct = true) {
+template <typename Concurrency_tag = Sequential_tag,
+          typename Domain_,
+          typename PointRange,
+          typename TriangleRange>
+void marching_cubes(const Domain_& domain,
+                    const typename Domain_::FT isovalue,
+                    PointRange& points,
+                    TriangleRange& triangles,
+                    bool topologically_correct = true)
+{
+  if(topologically_correct)
+  {
+    // run TMC and directly write the result to points and triangles
+    internal::TMC_functor<Domain_, PointRange, TriangleRange> functor(domain, isovalue, points, triangles);
+    domain.template iterate_cells<Concurrency_tag>(functor);
+  }
+  else
+  {
+    // run MC
+    internal::Marching_cubes_3<Domain_> functor(domain, isovalue);
+    domain.template iterate_cells<Concurrency_tag>(functor);
 
-    if (topologically_correct) {
-        // run TMC and directly write the result to points and triangles
-        internal::TMC_functor<Domain_, PointRange, TriangleRange> functor(domain, isovalue, points, triangles);
-        domain.template iterate_cells<Concurrency_tag>(functor);
-    } else {
-        // run MC
-        internal::Marching_cubes_3<Domain_> functor(domain, isovalue);
-        domain.template iterate_cells<Concurrency_tag>(functor);
-        // copy the result to points and triangles
-        internal::to_indexed_face_set(functor.triangles(), points, triangles);
-    }
+    // copy the result to points and triangles
+    internal::to_indexed_face_set(functor.triangles(), points, triangles);
+  }
 }
 
-}  // namespace Isosurfacing
-}  // namespace CGAL
+} // namespace Isosurfacing
+} // namespace CGAL
 
-#endif  // CGAL_MARCHING_CUBES_3_H
+#endif // CGAL_MARCHING_CUBES_3_H

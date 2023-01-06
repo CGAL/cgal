@@ -9,8 +9,8 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_DOMAIN_CELL_TYPE
-#define CGAL_DOMAIN_CELL_TYPE
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_DOMAIN_CELL_TYPE
+#define CGAL_ISOSURFACING_3_INTERNAL_DOMAIN_CELL_TYPE
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -19,17 +19,16 @@
 namespace CGAL {
 namespace Isosurfacing {
 
-
 // Was supposed to check if an algorithm can handle a specific domain. Not used right now.
-typedef std::size_t Cell_type;
+using Cell_type = std::size_t;
 
 static constexpr Cell_type ANY_CELL = (std::numeric_limits<Cell_type>::max)();
 
-static constexpr Cell_type POLYHERDAL_CELL = ((Cell_type)1) << 0;
-static constexpr Cell_type TETRAHEDRAL_CELL = ((Cell_type)1) << 1;
-static constexpr Cell_type CUBICAL_CELL = ((Cell_type)1) << 2;
+static constexpr Cell_type POLYHERDAL_CELL = (Cell_type(1) << 0);
+static constexpr Cell_type TETRAHEDRAL_CELL = (Cell_type(1) << 1);
+static constexpr Cell_type CUBICAL_CELL = (Cell_type(1) << 2);
 
-}  // namespace Isosurfacing
-}  // namespace CGAL
+} // namespace Isosurfacing
+} // namespace CGAL
 
-#endif  // CGAL_DOMAIN_CELL_TYPE
+#endif // CGAL_ISOSURFACING_3_INTERNAL_DOMAIN_CELL_TYPE
