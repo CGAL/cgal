@@ -392,7 +392,7 @@ public:
         // `black_color()` to 4 (and thus to a true Boolean).
         auto cdt_2_dual_graph = dual(cdt_2.tds());
         using pred_type = bool (*)(typename CDT_2::Edge);
-        pred_type no_constrained_edge = [](typename CDT_2::Edge edge) mutable {
+        pred_type no_constrained_edge = [](typename CDT_2::Edge edge) {
           return !edge.first->is_constrained(edge.second);
         };
         boost::filtered_graph<decltype(cdt_2_dual_graph),
