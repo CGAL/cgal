@@ -26,7 +26,7 @@ template <typename Tr, typename Crit>
 class Delaunay_mesher_no_edge_refinement_2
 {
 
-  /** \name \c Tr types */
+  /** \name `Tr` types */
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Face_handle Face_handle;
   typedef typename Tr::Edge Edge;
@@ -109,10 +109,10 @@ private:
 public:
   /** \name MARKING FUNCTIONS */
 
-  /** The value type of \a InputIterator should be \c Point, and represents
+  /** The value type of \a InputIterator should be `Point`, and represents
       seeds. Connected components of seeds are marked with the value of
-      \a mark. Other components are marked with \c !mark. The connected
-      component of infinite faces is always marked with \c false.
+      \a mark. Other components are marked with `!mark`. The connected
+      component of infinite faces is always marked with `false`.
   */
   template <class InputIterator>
   void set_seeds(InputIterator b, InputIterator e,
@@ -181,7 +181,7 @@ public:
     propagate_marks(tr.infinite_face(), false);
   }
 
-  /** Propagates the mark \c mark recursivly. */
+  /** Propagates the mark `mark` recursivly. */
   static void propagate_marks(const Face_handle fh, bool mark)
   {
     // std::queue only works with std::list on VC++6, and not with

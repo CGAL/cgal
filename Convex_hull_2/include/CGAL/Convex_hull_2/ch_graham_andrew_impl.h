@@ -21,7 +21,7 @@
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
 #include <vector>
@@ -42,11 +42,11 @@ ch_graham_andrew_scan( BidirectionalIterator first,
   BidirectionalIterator              alpha;
   BidirectionalIterator              beta;
   BidirectionalIterator              iter;
-  CGAL_ch_precondition( first != last );
-  CGAL_ch_precondition( std::next(first) != last );
+  CGAL_precondition( first != last );
+  CGAL_precondition( std::next(first) != last );
 
   --last;
-  CGAL_ch_precondition( *first != *last );
+  CGAL_precondition( *first != *last );
   S.push_back( last  );
   S.push_back( first );
   Left_turn    left_turn = ch_traits.left_turn_2_object();
@@ -78,7 +78,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
                   alpha = beta;
                   stack_rev_iter = S.rbegin();
                   beta  = *++stack_rev_iter;
-                  CGAL_ch_assertion(S.size() >= 2);
+                  CGAL_assertion(S.size() >= 2);
               }
               S.push_back( iter  );
               beta = alpha;
@@ -98,11 +98,11 @@ ch_graham_andrew_scan( BidirectionalIterator first,
   #endif // no postconditions ...
   for ( ++stack_iter;  stack_iter != S.end(); ++stack_iter)
   { *res =  **stack_iter;  ++res; }
-  CGAL_ch_postcondition( \
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
                                      ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_chain_check_2( \
           first, last, \
           res.output_so_far_begin(), res.output_so_far_end(), \
@@ -123,7 +123,7 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
 {
   typedef  typename Traits::Left_turn_2  Left_turn;
 
-  CGAL_ch_precondition_code(
+  CGAL_precondition_code(
   typedef  typename Traits::Equal_2      Equal_2;
   Equal_2      equal_points = ch_traits.equal_2_object();
   )
@@ -134,11 +134,11 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
   BidirectionalIterator              alpha;
   BidirectionalIterator              beta;
   BidirectionalIterator              iter;
-  CGAL_ch_precondition( first != last );
-  CGAL_ch_precondition( std::next(first) != last );
+  CGAL_precondition( first != last );
+  CGAL_precondition( std::next(first) != last );
 
   --last;
-  CGAL_ch_precondition(! equal_points(*first,*last) );
+  CGAL_precondition(! equal_points(*first,*last) );
   S.push_back( last  );
   S.push_back( first );
 
@@ -168,7 +168,7 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
                   alpha = beta;
                   stack_rev_iter = S.rbegin();
                   beta  = *++stack_rev_iter;
-                  CGAL_ch_assertion(S.size() >= 2);
+                  CGAL_assertion(S.size() >= 2);
               }
               S.push_back( iter  );
               beta = alpha;
@@ -213,11 +213,11 @@ ch_graham_andrew( InputIterator  first,
   #endif // no postconditions ...
   ch__ref_graham_andrew_scan( V.begin(), V.end(),  res, ch_traits);
   ch__ref_graham_andrew_scan( V.rbegin(), V.rend(), res, ch_traits);
-  CGAL_ch_postcondition( \
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
                                      ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_check_2( \
           V.begin(), V.end(), \
           res.output_so_far_begin(), res.output_so_far_end(), \

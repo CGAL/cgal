@@ -26,8 +26,6 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Triangulation_utils_3.h>
 
-#include <boost/type_traits/is_same.hpp>
-
 #include <algorithm>
 #include <iostream>
 #include <map>
@@ -35,6 +33,7 @@
 #include <set>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 //-------------------------------------------------------------------
 namespace CGAL {
@@ -99,8 +98,8 @@ public:
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
   CGAL_static_assertion(
-   (boost::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
-   (boost::is_same<typename Dt::Periodic_tag, Tag_false>::value));
+   (std::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
+   (std::is_same<typename Dt::Periodic_tag, Tag_false>::value));
 
   //extra the type used for representing alpha according to ExactAlphaComparisonTag
   typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
@@ -109,8 +108,8 @@ public:
   typedef typename Gt::FT Coord_type;
 
   //checks whether tags are correctly set in Vertex and Cell classes
-  CGAL_static_assertion( (boost::is_same<NT,typename Dt::Cell::NT>::value) );
-  CGAL_static_assertion( (boost::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
+  CGAL_static_assertion( (std::is_same<NT,typename Dt::Cell::NT>::value) );
+  CGAL_static_assertion( (std::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
 
   typedef typename Dt::Point Point;
 
@@ -320,7 +319,7 @@ private :
   }
 
  // the version to be used with Tag_true is templated to avoid
- // instanciation through explicit instantiation of the whole class
+ // instantiation through explicit instantiation of the whole class
   void set_alpha_min_of_vertices(Tag_false)
   {
     for( Finite_vertices_iterator vit = finite_vertices_begin();
@@ -402,7 +401,7 @@ public:
     // Returns the n-th alpha-value.
     // n < size()
     {
-      CGAL_triangulation_assertion( n > 0 &&
+      CGAL_assertion( n > 0 &&
                       n <= static_cast<int>(alpha_spectrum.size()) );
       return alpha_spectrum[n-1];
     }
@@ -1714,7 +1713,7 @@ Alpha_shape_3<Dt,EACT>::number_of_solid_components(const NT& alpha) const
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it)
     {
       Cell_handle pCell = cell_it;
-      CGAL_triangulation_assertion(pCell != nullptr);
+      CGAL_assertion(pCell != nullptr);
 
       if (classify(pCell, alpha) == INTERIOR){
         Data& data = marked_cell_set[pCell];
@@ -1746,7 +1745,7 @@ void Alpha_shape_3<Dt,EACT>::traverse(Cell_handle pCell,
     for (int i=0; i<=3; i++)
       {
         pNeighbor = pCell->neighbor(i);
-        CGAL_triangulation_assertion(pNeighbor != nullptr);
+        CGAL_assertion(pNeighbor != nullptr);
         if (classify(pNeighbor, alpha) == INTERIOR){
           Data& data = marked_cell_set[pNeighbor];
           if(data == false){

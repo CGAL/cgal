@@ -26,7 +26,6 @@
 #include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/assertions.h>
 
-#include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 #include <CGAL/Timer.h>
@@ -41,7 +40,6 @@
 
 #include <boost/array.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <unordered_map>
 #include <unordered_set>
@@ -51,6 +49,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <type_traits>
 
 /// \file Orbifold_Tutte_parameterizer_3.h
 
@@ -385,7 +384,7 @@ class Orbifold_Tutte_parameterizer_3
 public:
 #ifndef DOXYGEN_RUNNING
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -783,9 +782,13 @@ private:
       const int i = get(vimap, vi);
       const int j = get(vimap, vj);
 
-      if (i > j) continue;
-      const CGAL::Weights::Cotangent_weight<SeamMesh> cotangent_weight;
-      const NT w_ij = NT(2) * cotangent_weight(hd, mesh, pmap);
+      if (i > j)
+        continue;
+
+      const CGAL::Weights::Cotangent_weight<SeamMesh, PPM> cotangent_weight(mesh, pmap);
+
+      // x2 because Cotangent_weight returns 0.5 * (cot alpha + cot beta)...
+      const NT w_ij = NT(2) * cotangent_weight(hd);
 
       // ij
       M.set_coef(2*i, 2*j, w_ij, true /* new coef */);
@@ -888,8 +891,8 @@ public:
   /// \param cmap a mapping of the `vertex_descriptor`s of `mesh` that are cones
   ///             to their respective \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink
   ///             classification.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The underlying mesh of `mesh` is a topological ball.

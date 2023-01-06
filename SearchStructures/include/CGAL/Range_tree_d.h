@@ -222,18 +222,18 @@ protected:
       link_type  vleft = new Range_tree_node2( 0, 0,
                                   (*current), m_interface.get_key(*current) );
       //CGAL_NIL CGAL_NIL first two arguments
-      CGAL_Tree_assertion( vleft != 0);
+      CGAL_assertion( vleft != 0);
 
       ++current;
       link_type  vright = new Range_tree_node2( 0,0,
                                   (*current), m_interface.get_key(*current) );
       //CGAL_NIL CGAL_NIL first two arguments
-      CGAL_Tree_assertion( vright != 0);
+      CGAL_assertion( vright != 0);
       current++;
       sublevel_last = current;
 
       link_type  vparent = new Range_tree_node2( vleft, vright, vleft->key );
-      CGAL_Tree_assertion( vparent != 0);
+      CGAL_assertion( vparent != 0);
 
       vleft->parent_link = vparent;
       vright->parent_link = vparent;
@@ -260,7 +260,7 @@ protected:
         link_type vright = new Range_tree_node2( 0, 0,
                                    (*current), m_interface.get_key(*current) );
         //CGAL_NIL CGAL_NIL first two arguments
-        CGAL_Tree_assertion( vright != 0); //CGAL_NIL
+        CGAL_assertion( vright != 0); //CGAL_NIL
         current++;
         sublevel_last = current;
         prevchild = vright;
@@ -276,7 +276,7 @@ protected:
         link_type vparent = new Range_tree_node2( prevchild, 0,
                                         rightchild->key );
         //CGAL_NIL argument
-        CGAL_Tree_assertion( vparent != 0);
+        CGAL_assertion( vparent != 0);
 
         prevchild->parent_link = vparent;
 

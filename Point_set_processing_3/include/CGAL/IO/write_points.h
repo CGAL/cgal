@@ -93,7 +93,7 @@ bool write_points(const std::string& fname,
                   const PointRange& points,
                   const CGAL_NP_CLASS& np = parameters::default_values(),
 #ifndef DOXYGEN_RUNNING
-                  typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+                  std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                   )
 {

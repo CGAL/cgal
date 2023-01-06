@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.1...3.23)
 project( Polyhedron_Demo )
 include(FeatureSummary)
 
+
+add_definitions ( -DCGAL_NO_DEPRECATED_CODE )
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

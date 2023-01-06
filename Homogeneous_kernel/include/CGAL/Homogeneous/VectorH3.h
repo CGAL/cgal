@@ -69,9 +69,9 @@ public:
 
   template < typename Tx, typename Ty, typename Tz >
   VectorH3(const Tx & x, const Ty & y, const Tz & z,
-           typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
+           std::enable_if_t< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
                                                                           boost::is_convertible<Ty, RT> >,
-                                                        boost::is_convertible<Tz, RT> > >::type* = 0)
+                                                        boost::is_convertible<Tz, RT> >::value >* = 0)
     : base(CGAL::make_array<RT>(x, y, z, RT(1))) {}
 
   VectorH3(const FT& x, const FT& y, const FT& z)

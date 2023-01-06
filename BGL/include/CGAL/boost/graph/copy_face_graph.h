@@ -23,7 +23,6 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
-#include <boost/utility/enable_if.hpp>
 
 #include <unordered_map>
 

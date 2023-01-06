@@ -39,7 +39,7 @@
 #include <CGAL/Partition_2/Partitioned_polygon_2.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
-#include <CGAL/Partition_2/partition_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/partition_is_valid_2.h>
 #include <CGAL/Partition_traits_2.h>
 #include <map>
@@ -426,7 +426,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
 #endif // no postcondition
 
    P_Polygon_2 polygon(first, beyond, traits);
-   CGAL_partition_precondition(
+   CGAL_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
    Circulator circ(polygon.begin(), polygon.end()), done = circ;
@@ -484,7 +484,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
 #endif
    polygon.partition(res, 0);
 
-   CGAL_partition_postcondition(
+   CGAL_postcondition(
        y_monotone_partition_is_valid_2(polygon.begin(), polygon.end(),
                                        res.output_so_far_begin(),
                                        res.output_so_far_end(), traits));

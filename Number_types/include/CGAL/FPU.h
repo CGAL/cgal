@@ -143,8 +143,8 @@ inline double IA_opacify(double x)
 {
 #ifdef __llvm__
   // LLVM's support for inline asm is completely messed up:
-  // http://llvm.org/bugs/show_bug.cgi?id=17958
-  // http://llvm.org/bugs/show_bug.cgi?id=17959
+  // https://bugs.llvm.org/show_bug.cgi?id=17958
+  // https://bugs.llvm.org/show_bug.cgi?id=17959
   // etc.
   // This seems to produce code that is ok (not optimal but better than
   // volatile). In case of trouble, use volatile instead.
@@ -166,7 +166,7 @@ inline double IA_opacify(double x)
   // Intel used not to emulate this perfectly, we'll see.
   // If we create a version of IA_opacify for vectors, note that gcc < 4.8
   // fails with "+g" and we need to use "+mx" instead.
-  // "+X" ICEs ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
+  // "+X" ICEs ( https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
   // may not be safe?
   // The constraint 'g' doesn't include floating point registers ???
   // Intel has a bug where -mno-sse still defines __SSE__ and __SSE2__
@@ -180,10 +180,10 @@ inline double IA_opacify(double x)
 #  endif
 # elif (defined __i386__ || defined __x86_64__)
   // "+f" doesn't compile on x86(_64)
-  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
-  // Don't mix "t" with "g": http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59180
+  // ( https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
+  // Don't mix "t" with "g": https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59180
   // We can't put "t" with "x" either, prefer "x" for -mfpmath=sse,387.
-  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59181 )
+  // ( https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59181 )
   asm volatile ("" : "+mt"(x) );
 # elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
   // ARM
@@ -217,7 +217,7 @@ inline double IA_force_to_double(double x)
 #if defined __GNUG__
 #  ifdef CGAL_HAS_SSE2
   // For an explanation of volatile:
-  // http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56027
+  // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56027
   asm volatile ("" : "+mx"(x) );
 #  else
   // Similar to writing to a volatile and reading back, except that calling
@@ -500,6 +500,7 @@ void
 FPU_set_cw (FPU_CW_t cw)
 {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  CGAL_USE(cw);
   CGAL_assertion(cw == CGAL_FE_TONEAREST);
 #else
   CGAL_IA_SETFPCW(cw);
@@ -511,6 +512,7 @@ FPU_CW_t
 FPU_get_and_set_cw (FPU_CW_t cw)
 {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    CGAL_USE(cw);
     CGAL_assertion(cw == CGAL_FE_TONEAREST);
     return CGAL_FE_TONEAREST;
 #else

@@ -27,7 +27,7 @@ class Polyhedron_demo_polylines_io_plugin :
 
 public:
     // To silent a warning -Woverloaded-virtual
-    // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
+    // See https://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
 
     using Polyhedron_demo_io_plugin_interface::init;
     //! Configures the widget

@@ -378,7 +378,7 @@ bool Test (string aName)
 
           set_halfedgeds_items_id(lSurface);
 
-          SMS::Count_stop_predicate<Surface> stop(sStop);
+          SMS::Edge_count_stop_predicate<Surface> stop(sStop);
 
           Real_timer t; t.start();
 

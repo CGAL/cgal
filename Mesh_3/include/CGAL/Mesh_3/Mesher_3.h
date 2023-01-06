@@ -568,7 +568,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining surface time: " << timer.time() << "s" << std::endl;
   std::cerr << std::endl;
 
-  CGAL_triangulation_postcondition(r_tr.is_valid());
+  CGAL_postcondition(r_tr.is_valid());
 
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
@@ -613,7 +613,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
 
-  CGAL_triangulation_postcondition(r_tr.is_valid());
+  CGAL_postcondition(r_tr.is_valid());
 #endif
 
   (void)(forced_stop()); // sets *error_code

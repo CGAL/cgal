@@ -18,9 +18,9 @@ INSTALLATION:
 1) Install all the following libraries:
 
 CGAL: https://www.cgal.org/
-CGoGN: http://cgogn.u-strasbg.fr/
-OpenMesh: http://www.openmesh.org/
-OpenVolumeMesh: http://www.openvolumemesh.org/
+CGoGN: https://cgogn.github.io/
+OpenMesh: https://www.openmesh.org/
+OpenVolumeMesh: https://www.openvolumemesh.org/
 
 2) create links (or copy directory):
 * in the 2D directory:
@@ -41,7 +41,7 @@ CGAL_BUILD_DIR being the build directory of the CGAL library.
 * In 2D, the programs take off files as input.
 * In 3D, lcc and cgogn take tetmesh and OpenVolumeMesh takes ovm.
 
-You can create a tetmesh file using tetgen programm with an off file as input (http://tetgen.berlios.de/) with option -g to generate XXX.mesh file. Rename this file into XXX.tetmesh. Modify the file to keep only the two following sections:
+You can create a tetmesh file using tetgen programm with an off file as input (https://www.berlios.de/software/tetgen/) with option -g to generate XXX.mesh file. Rename this file into XXX.tetmesh. Modify the file to keep only the two following sections:
 
 **********************
 Vertices
