@@ -48,43 +48,49 @@ namespace Isosurfacing {
  * \param polygons each element in the vector describes a polygon using the indices of the points in `points`
  * \param positioning the functor dealing with vertex positioning inside a cell
  */
-template <typename Concurrency_tag = Sequential_tag, class Domain_, class PointRange, class PolygonRange,
-          class Positioning = internal::Positioning::QEM_SVD<true>>
-void dual_contouring(const Domain_& domain, const typename Domain_::FT isovalue, PointRange& points,
-                     PolygonRange& polygons, const Positioning& positioning = Positioning()) {
+template <typename Concurrency_tag = Sequential_tag,
+          typename Domain_,
+          typename PointRange,
+          typename PolygonRange,
+          typename Positioning = internal::Positioning::QEM_SVD<true> >
+void dual_contouring(const Domain_& domain,
+                     const typename Domain_::FT isovalue,
+                     PointRange& points,
+                     PolygonRange& polygons,
+                     const Positioning& positioning = Positioning())
+{
+  // create vertices in each relevant cell
+  internal::Dual_contouring_vertex_positioning<Domain_, Positioning> pos_func(domain, isovalue, positioning);
+  domain.template iterate_cells<Concurrency_tag>(pos_func);
 
-    // create vertices in each relevant cell
-    internal::Dual_contouring_vertex_positioning<Domain_, Positioning> pos_func(domain, isovalue, positioning);
-    domain.template iterate_cells<Concurrency_tag>(pos_func);
+  // connect vertices around an edge to form a face
+  internal::Dual_contouring_face_generation<Domain_> face_generation(domain, isovalue);
+  domain.template iterate_edges<Concurrency_tag>(face_generation);
 
-    // connect vertices around an edge to form a face
-    internal::Dual_contouring_face_generation<Domain_> face_generation(domain, isovalue);
-    domain.template iterate_edges<Concurrency_tag>(face_generation);
+  // copy vertices to point range
+  points.resize(pos_func.points_counter);
+  for(const auto& vtop : pos_func.map_voxel_to_point)
+    points[pos_func.map_voxel_to_point_id[vtop.first]] = vtop.second;
 
-    // copy vertices to point range
-    points.resize(pos_func.points_counter);
-    for (const auto& vtop : pos_func.map_voxel_to_point) {
-        points[pos_func.map_voxel_to_point_id[vtop.first]] = vtop.second;
+  // copy faces to polygon range
+  polygons.reserve(face_generation.faces.size());
+  for(const auto& q : face_generation.faces)
+  {
+    std::vector<std::size_t> vertex_ids;
+    for(const auto& v_id : q.second)
+    {
+      // ignore voxels that are outside the valid region and are not stored in the map
+      if(pos_func.map_voxel_to_point_id.count(v_id) > 0)
+        vertex_ids.push_back(pos_func.map_voxel_to_point_id[v_id]);
     }
 
-    // copy faces to polygon range
-    polygons.reserve(face_generation.faces.size());
-    for (const auto& q : face_generation.faces) {
-        std::vector<std::size_t> vertex_ids;
-        for (const auto& v_id : q.second) {
-            // ignore voxels that are outside the valid region and are not stored in the map
-            if (pos_func.map_voxel_to_point_id.count(v_id) > 0) {
-                vertex_ids.push_back(pos_func.map_voxel_to_point_id[v_id]);
-            }
-        }
-        // ignore degenerated faces
-        if (vertex_ids.size() > 2) {
-            polygons.push_back(vertex_ids);
-        }
-    }
+    // ignore degenerated faces
+    if(vertex_ids.size() > 2)
+      polygons.push_back(vertex_ids);
+  }
 }
 
-}  // namespace Isosurfacing
-}  // namespace CGAL
+} // namespace Isosurfacing
+} // namespace CGAL
 
-#endif  // CGAL_DUAL_CONTOURING_3_H
+#endif // CGAL_DUAL_CONTOURING_3_H

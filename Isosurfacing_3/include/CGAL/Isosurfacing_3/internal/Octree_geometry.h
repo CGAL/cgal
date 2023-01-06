@@ -9,8 +9,8 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_OCTREE_GEOMETRY_H
-#define CGAL_OCTREE_GEOMETRY_H
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_OCTREE_GEOMETRY_H
+#define CGAL_ISOSURFACING_3_INTERNAL_OCTREE_GEOMETRY_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -23,29 +23,33 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-template <class GeomTraits>
-class Octree_geometry {
+template <typename GeomTraits>
+class Octree_geometry
+{
 public:
-    typedef GeomTraits Geom_traits;
-    typedef typename Geom_traits::Point_3 Point;
+  using Geom_traits = GeomTraits;
+  using Point = typename Geom_traits::Point_3;
 
-    typedef std::shared_ptr<Octree_wrapper<Geom_traits>> Octree;
+  using Octree = std::shared_ptr<Octree_wrapper<Geom_traits> >;
 
-    typedef typename Octree_topology<Geom_traits>::Vertex_descriptor Vertex_descriptor;
+  using Vertex_descriptor = typename Octree_topology<Geom_traits>::Vertex_descriptor;
 
 public:
-    Octree_geometry(const Octree& octree) : octree(octree) {}
+  Octree_geometry(const Octree& octree)
+    : octree(octree)
+  { }
 
-    Point operator()(const Vertex_descriptor& v) const {
-        return octree->point(v);
-    }
+  Point operator()(const Vertex_descriptor& v) const
+  {
+    return octree->point(v);
+  }
 
 private:
-    const Octree octree;
+  const Octree octree;
 };
 
-}  // namespace internal
-}  // namespace Isosurfacing
-}  // namespace CGAL
+} // namespace internal
+} // namespace Isosurfacing
+} // namespace CGAL
 
-#endif  // CGAL_OCTREE_GEOMETRY_H
+#endif // CGAL_ISOSURFACING_3_INTERNAL_OCTREE_GEOMETRY_H

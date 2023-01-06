@@ -22,7 +22,7 @@ public:
     }
 
     ~ScopeTimer() {
-        if (running) {
+        if(running) {
             TimePoint end = Clock::now();
             int64_t duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             std::cout << msg << ": " << duration << " ms" << std::endl;
@@ -35,4 +35,4 @@ private:
     bool running;
 };
 
-#endif  // SCOPE_TIMER_H
+#endif // SCOPE_TIMER_H

@@ -26,30 +26,32 @@ namespace Isosurfacing {
  *
  * \tparam GeomTraits the traits for this gradient.
  */
-template <class GeomTraits>
-class Zero_gradient {
+template <typename GeomTraits>
+class Zero_gradient
+{
 public:
-    typedef GeomTraits Geom_traits;
-    typedef typename Geom_traits::Point_3 Point;
-    typedef typename Geom_traits::Vector_3 Vector;
+  using Geom_traits = GeomTraits;
+  using Point = typename Geom_traits::Point_3;
+  using Vector = typename Geom_traits::Vector_3;
 
 public:
-    /**
-     * \ingroup PkgIsosurfacing3Ref
-     *
-     * \brief Evaluate the gradient at a point in space.
-     *
-     * \param point the point at which the gradient is computed
-     */
-    Vector operator()(const Point& point) const {
-        return zero;
-    }
+  /**
+   * \ingroup PkgIsosurfacing3Ref
+   *
+   * \brief Evaluate the gradient at a point in space.
+   *
+   * \param point the point at which the gradient is computed
+   */
+  Vector operator()(const Point& point) const
+  {
+    return zero;
+  }
 
 private:
-    const Vector zero = Vector(0, 0, 0);
+  const Vector zero = Vector(0, 0, 0);
 };
 
-}  // namespace Isosurfacing
-}  // namespace CGAL
+} // namespace Isosurfacing
+} // namespace CGAL
 
-#endif  // CGAL_ZERO_GRADIENT_H
+#endif // CGAL_ZERO_GRADIENT_H

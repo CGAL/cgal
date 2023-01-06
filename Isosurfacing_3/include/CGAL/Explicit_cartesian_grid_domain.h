@@ -30,13 +30,17 @@ namespace Isosurfacing {
  * `IsosurfacingDomainWithGradient`.
  *
  * \tparam GeomTraits the traits type
- * \tparam Gradient_ the type of the gradient functor. It must implement `GeomTraits::Vector operator()(const
- * GeomTraits::Point& point) const`.
+ * \tparam Gradient_ the type of the gradient functor. It must implement
+ *                   `GeomTraits::Vector operator()(const GeomTraits::Point& point) const`.
  */
-template <class GeomTraits, typename Gradient_>
+template <typename GeomTraits,
+          typename Gradient_>
 using Explicit_cartesian_grid_domain =
-    internal::Base_domain<GeomTraits, internal::Grid_topology, internal::Cartesian_grid_geometry<GeomTraits>,
-                          Cartesian_grid_3<GeomTraits>, Gradient_>;
+  internal::Base_domain<GeomTraits,
+                        internal::Grid_topology,
+                        internal::Cartesian_grid_geometry<GeomTraits>,
+                        Cartesian_grid_3<GeomTraits>,
+                        Gradient_>;
 
 /**
  * \ingroup PkgIsosurfacing3Ref
@@ -52,34 +56,37 @@ using Explicit_cartesian_grid_domain =
  *
  * \return a new `Explicit_cartesian_grid_domain`
  */
-template <class GeomTraits, typename Gradient_ = Zero_gradient<GeomTraits>>
-Explicit_cartesian_grid_domain<GeomTraits, Gradient_> create_explicit_cartesian_grid_domain(
-    const std::shared_ptr<Cartesian_grid_3<GeomTraits>> grid, const Gradient_& gradient = Gradient_()) {
+template <typename GeomTraits,
+          typename Gradient_ = Zero_gradient<GeomTraits> >
+Explicit_cartesian_grid_domain<GeomTraits, Gradient_>
+create_explicit_cartesian_grid_domain(const std::shared_ptr<Cartesian_grid_3<GeomTraits> > grid,
+                                      const Gradient_& gradient = Gradient_())
+{
+  using Domain = Explicit_cartesian_grid_domain<GeomTraits, Gradient_>;
 
-    typedef Explicit_cartesian_grid_domain<GeomTraits, Gradient_> Domain;
-    typedef typename Domain::Topology Topology;
-    typedef typename Domain::Geometry Geometry;
-    typedef typename Domain::Function Function;
-    typedef typename Domain::Gradient Gradient;
+  using Topology = typename Domain::Topology ;
+  using Geometry = typename Domain::Geometry;
+  using Function = typename Domain::Function;
+  using Gradient = typename Domain::Gradient;
 
-    const std::size_t size_i = grid->xdim();
-    const std::size_t size_j = grid->ydim();
-    const std::size_t size_k = grid->zdim();
+  const std::size_t size_i = grid->xdim();
+  const std::size_t size_j = grid->ydim();
+  const std::size_t size_k = grid->zdim();
 
-    const Bbox_3& bbox = grid->get_bbox();
-    const typename GeomTraits::Vector_3 offset(bbox.xmin(), bbox.ymin(), bbox.zmin());
-    const typename GeomTraits::Vector_3 spacing = grid->get_spacing();
+  const Bbox_3& bbox = grid->get_bbox();
+  const typename GeomTraits::Vector_3 offset(bbox.xmin(), bbox.ymin(), bbox.zmin());
+  const typename GeomTraits::Vector_3 spacing = grid->get_spacing();
 
-    // create copies as shared_ptr for safe memory management
-    const Topology topo = std::make_shared<Topology::element_type>(size_i, size_j, size_k);
-    const Geometry geom = std::make_shared<Geometry::element_type>(offset, spacing);
-    const Function func = grid;
-    const Gradient grad = std::make_shared<Gradient::element_type>(gradient);
+  // create copies as shared_ptr for safe memory management
+  const Topology topo = std::make_shared<Topology::element_type>(size_i, size_j, size_k);
+  const Geometry geom = std::make_shared<Geometry::element_type>(offset, spacing);
+  const Function func = grid;
+  const Gradient grad = std::make_shared<Gradient::element_type>(gradient);
 
-    return Domain(topo, geom, func, grad);
+  return Domain(topo, geom, func, grad);
 }
 
-}  // namespace Isosurfacing
-}  // namespace CGAL
+} // namespace Isosurfacing
+} // namespace CGAL
 
-#endif  // CGAL_EXPLICIT_CARTESIAN_GRID_DOMAIN_H
+#endif // CGAL_EXPLICIT_CARTESIAN_GRID_DOMAIN_H

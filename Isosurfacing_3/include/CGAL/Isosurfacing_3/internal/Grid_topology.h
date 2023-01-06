@@ -9,8 +9,8 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_GRID_TOPOLOGY_H
-#define CGAL_GRID_TOPOLOGY_H
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_H
+#define CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -22,197 +22,214 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
-#endif  // CGAL_LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
 // The topology of a cartesian grid. All elements are created with the help of the cube tables.
-class Grid_topology {
+class Grid_topology
+{
 public:
-    // identify a vertex by its (i, j, k) indices
-    typedef std::array<std::size_t, 3> Vertex_descriptor;
-    // identify an edge by its starting vertex (i, j, k) and the direction x -> 0, y -> 1, z -> 2
-    typedef std::array<std::size_t, 4> Edge_descriptor;
-    // identify a cell by its corner vertex with the smallest (i, j, k) index
-    typedef std::array<std::size_t, 3> Cell_descriptor;
+  // identify a vertex by its (i, j, k) indices
+  using Vertex_descriptor = std::array<std::size_t, 3>;
+  // identify an edge by its starting vertex (i, j, k) and the direction x -> 0, y -> 1, z -> 2
+  using Edge_descriptor = std::array<std::size_t, 4>;
+  // identify a cell by its corner vertex with the smallest (i, j, k) index
+  using Cell_descriptor = std::array<std::size_t, 3>;
 
-    static constexpr Cell_type CELL_TYPE = CUBICAL_CELL;
-    static constexpr std::size_t VERTICES_PER_CELL = 8;
-    static constexpr std::size_t EDGES_PER_CELL = 12;
+  static constexpr Cell_type CELL_TYPE = CUBICAL_CELL;
+  static constexpr std::size_t VERTICES_PER_CELL = 8;
+  static constexpr std::size_t EDGES_PER_CELL = 12;
 
-    typedef std::array<Vertex_descriptor, 2> Vertices_incident_to_edge;
-    typedef std::array<Cell_descriptor, 4> Cells_incident_to_edge;
-    typedef std::array<Vertex_descriptor, VERTICES_PER_CELL> Cell_vertices;
-    typedef std::array<Edge_descriptor, EDGES_PER_CELL> Cell_edges;
+  using Vertices_incident_to_edge = std::array<Vertex_descriptor, 2>;
+  using Cells_incident_to_edge = std::array<Cell_descriptor, 4>;
+  using Cell_vertices = std::array<Vertex_descriptor, VERTICES_PER_CELL>;
+  using Cell_edges = std::array<Edge_descriptor, EDGES_PER_CELL>;
 
 public:
-    // Create the topology of a grid with size_i, size_j, and size_k vertices in the respective dimensions.
-    Grid_topology(const std::size_t size_i, const std::size_t size_j, const std::size_t size_k)
-        : size_i(size_i), size_j(size_j), size_k(size_k) {}
+  // Create the topology of a grid with size_i, size_j, and size_k vertices in the respective dimensions.
+  Grid_topology(const std::size_t size_i,
+                const std::size_t size_j,
+                const std::size_t size_k)
+    : size_i(size_i),
+      size_j(size_j),
+      size_k(size_k)
+  { }
 
-    // Get a container with the two vertices incident to the edge e
-    Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const {
-        Vertices_incident_to_edge ev;
-        ev[0] = {e[0], e[1], e[2]};  // start vertex
-        ev[1] = {e[0], e[1], e[2]};  // end vertex
-        ev[1][e[3]] += 1;            // one position further in the direction of the edge
-        return ev;
+  // Get a container with the two vertices incident to the edge e
+  Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const
+  {
+    Vertices_incident_to_edge ev;
+    ev[0] = { e[0], e[1], e[2] };  // start vertex
+    ev[1] = { e[0], e[1], e[2] };  // end vertex
+    ev[1][e[3]] += 1;              // one position further in the direction of the edge
+    return ev;
+  }
+
+  // Get a container with all cells incident to the edge e
+  Cells_incident_to_edge cells_incident_to_edge(const Edge_descriptor& e) const
+  {
+    // lookup the neighbor cells relative to the edge
+    const int local = internal::Cube_table::edge_store_index[e[3]];
+    auto neighbors = internal::Cube_table::edge_to_voxel_neighbor[local];
+
+    Cells_incident_to_edge cite;
+    for(std::size_t i=0; i<cite.size(); ++i)
+    {
+      for(std::size_t j=0; j<cite[i].size(); ++j)
+      {
+        cite[i][j] = e[j] + neighbors[i][j];  // offset the relative indices by the edge position
+      }
     }
 
-    // Get a container with all cells incident to the edge e
-    Cells_incident_to_edge cells_incident_to_edge(const Edge_descriptor& e) const {
-        // lookup the neighbor cells relative to the edge
-        const int local = internal::Cube_table::edge_store_index[e[3]];
-        auto neighbors = internal::Cube_table::edge_to_voxel_neighbor[local];
+    return cite;
+  }
 
-        Cells_incident_to_edge cite;
-        for (std::size_t i = 0; i < cite.size(); i++) {
-            for (std::size_t j = 0; j < cite[i].size(); j++) {
-                cite[i][j] = e[j] + neighbors[i][j];  // offset the relative indices by the edge position
-            }
+  // Get a container with all vertices of the cell c
+  Cell_vertices cell_vertices(const Cell_descriptor& c) const
+  {
+    Cell_vertices cv;
+    for(std::size_t i=0; i<cv.size(); ++i)
+    {
+      for(std::size_t j=0; j<c.size(); ++j)
+      {
+        // lookup the relative vertex indices and offset them by the cell position
+        cv[i][j] = c[j] + internal::Cube_table::local_vertex_position[i][j];
+      }
+    }
+
+    return cv;
+  }
+
+  // Get a container with all edges of the cell c
+  Cell_edges cell_edges(const Cell_descriptor& c) const
+  {
+    Cell_edges ce;
+    for(std::size_t i=0; i<ce.size(); ++i)
+    {
+      for(std::size_t j=0; j<c.size(); ++j)
+      {
+        // lookup the relative edge indices and offset them by the cell position
+        ce[i][j] = c[j] + internal::Cube_table::global_edge_id[i][j];
+      }
+      // set the direction of the edge
+      ce[i][3] = internal::Cube_table::global_edge_id[i][3];
+    }
+
+    return ce;
+  }
+
+  // Iterate sequentially over all vertices v calling f(v) on every one
+  template <typename Functor>
+  void iterate_vertices(Functor& f, Sequential_tag) const
+  {
+    for(std::size_t i=0; i<size_i; ++i)
+      for(std::size_t j=0; j<size_j; ++j)
+        for(std::size_t k=0; k<size_k; ++k)
+          f({i, j, k});
+  }
+
+  // Iterate sequentially over all edges e calling f(e) on every one
+  template <typename Functor>
+  void iterate_edges(Functor& f, Sequential_tag) const
+  {
+    for(std::size_t i=0; i<size_i-1; ++i) {
+      for(std::size_t j=0; j<size_j-1; ++j) {
+        for(std::size_t k=0; k<size_k-1; ++k)
+        {
+          // all three edges starting at vertex (i, j, k)
+          f({i, j, k, 0});
+          f({i, j, k, 1});
+          f({i, j, k, 2});
         }
-        return cite;
+      }
     }
+  }
 
-    // Get a container with all vertices of the cell c
-    Cell_vertices cell_vertices(const Cell_descriptor& c) const {
-        Cell_vertices cv;
-        for (std::size_t i = 0; i < cv.size(); i++) {
-            for (std::size_t j = 0; j < c.size(); j++) {
-                // lookup the relative vertex indices and offset them by the cell position
-                cv[i][j] = c[j] + internal::Cube_table::local_vertex_position[i][j];
-            }
-        }
-        return cv;
-    }
-
-    // Get a container with all edges of the cell c
-    Cell_edges cell_edges(const Cell_descriptor& c) const {
-        Cell_edges ce;
-        for (std::size_t i = 0; i < ce.size(); i++) {
-            for (std::size_t j = 0; j < c.size(); j++) {
-                // lookup the relative edge indices and offset them by the cell position
-                ce[i][j] = c[j] + internal::Cube_table::global_edge_id[i][j];
-            }
-            // set the direction of the edge
-            ce[i][3] = internal::Cube_table::global_edge_id[i][3];
-        }
-        return ce;
-    }
-
-    // Iterate sequentially over all vertices v calling f(v) on every one
-    template <typename Functor>
-    void iterate_vertices(Functor& f, Sequential_tag) const {
-        for (std::size_t i = 0; i < size_i; i++) {
-            for (std::size_t j = 0; j < size_j; j++) {
-                for (std::size_t k = 0; k < size_k; k++) {
-                    f({i, j, k});
-                }
-            }
-        }
-    }
-
-    // Iterate sequentially over all edges e calling f(e) on every one
-    template <typename Functor>
-    void iterate_edges(Functor& f, Sequential_tag) const {
-        for (std::size_t i = 0; i < size_i - 1; i++) {
-            for (std::size_t j = 0; j < size_j - 1; j++) {
-                for (std::size_t k = 0; k < size_k - 1; k++) {
-                    // all three edges starting at vertex (i, j, k)
-                    f({i, j, k, 0});
-                    f({i, j, k, 1});
-                    f({i, j, k, 2});
-                }
-            }
-        }
-    }
-
-    // Iterate sequentially over all cells c calling f(c) on every one
-    template <typename Functor>
-    void iterate_cells(Functor& f, Sequential_tag) const {
-        for (std::size_t i = 0; i < size_i - 1; i++) {
-            for (std::size_t j = 0; j < size_j - 1; j++) {
-                for (std::size_t k = 0; k < size_k - 1; k++) {
-                    f({i, j, k});
-                }
-            }
-        }
-    }
+  // Iterate sequentially over all cells c calling f(c) on every one
+  template <typename Functor>
+  void iterate_cells(Functor& f, Sequential_tag) const
+  {
+    for(std::size_t i=0; i<size_i-1; ++i)
+      for(std::size_t j=0; j<size_j-1; ++j)
+        for(std::size_t k=0; k<size_k-1; ++k)
+          f({i, j, k});
+  }
 
 #ifdef CGAL_LINKED_WITH_TBB
-    // Iterate in parallel over all vertices v calling f(v) on every one
-    template <typename Functor>
-    void iterate_vertices(Functor& f, Parallel_tag) const {
-        const std::size_t sj = size_j;
-        const std::size_t sk = size_k;
+  // Iterate in parallel over all vertices v calling f(v) on every one
+  template <typename Functor>
+  void iterate_vertices(Functor& f, Parallel_tag) const
+  {
+    const std::size_t sj = size_j;
+    const std::size_t sk = size_k;
 
-        // for now only parallelize outer loop
-        auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r) {
-            for (std::size_t i = r.begin(); i != r.end(); i++) {
-                for (std::size_t j = 0; j < sj; j++) {
-                    for (std::size_t k = 0; k < sk; k++) {
-                        f({i, j, k});
-                    }
-                }
-            }
-        };
+    // for now only parallelize outer loop
+    auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r)
+    {
+      for(std::size_t i = r.begin(); i != r.end(); ++i)
+        for(std::size_t j=0; j<sj; ++j)
+          for(std::size_t k=0; k<sk; ++k)
+            f({i, j, k});
+    };
 
-        tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i), iterator);
-    }
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i), iterator);
+  }
 
-    // Iterate in parallel over all edges e calling f(e) on every one
-    template <typename Functor>
-    void iterate_edges(Functor& f, Parallel_tag) const {
-        const std::size_t sj = size_j;
-        const std::size_t sk = size_k;
+  // Iterate in parallel over all edges e calling f(e) on every one
+  template <typename Functor>
+  void iterate_edges(Functor& f, Parallel_tag) const
+  {
+    const std::size_t sj = size_j;
+    const std::size_t sk = size_k;
 
-        // for now only parallelize outer loop
-        auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r) {
-            for (std::size_t i = r.begin(); i != r.end(); i++) {
-                for (std::size_t j = 0; j < sj - 1; j++) {
-                    for (std::size_t k = 0; k < sk - 1; k++) {
-                        f({i, j, k, 0});
-                        f({i, j, k, 1});
-                        f({i, j, k, 2});
-                    }
-                }
-            }
-        };
+    // for now only parallelize outer loop
+    auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r)
+    {
+      for(std::size_t i = r.begin(); i != r.end(); ++i) {
+        for(std::size_t j=0; j<sj - 1; ++j) {
+          for(std::size_t k=0; k<sk - 1; ++k)
+          {
+            f({i, j, k, 0});
+            f({i, j, k, 1});
+            f({i, j, k, 2});
+          }
+        }
+      }
+    };
 
-        tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i - 1), iterator);
-    }
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i - 1), iterator);
+  }
 
-    // Iterate in parallel over all cells c calling f(c) on every one
-    template <typename Functor>
-    void iterate_cells(Functor& f, Parallel_tag) const {
-        const std::size_t sj = size_j;
-        const std::size_t sk = size_k;
+  // Iterate in parallel over all cells c calling f(c) on every one
+  template <typename Functor>
+  void iterate_cells(Functor& f, Parallel_tag) const
+  {
+    const std::size_t sj = size_j;
+    const std::size_t sk = size_k;
 
-        // for now only parallelize outer loop
-        auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r) {
-            for (std::size_t i = r.begin(); i != r.end(); i++) {
-                for (std::size_t j = 0; j < sj - 1; j++) {
-                    for (std::size_t k = 0; k < sk - 1; k++) {
-                        f({i, j, k});
-                    }
-                }
-            }
-        };
+    // for now only parallelize outer loop
+    auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r) {
+      for(std::size_t i = r.begin(); i != r.end(); ++i)
+        for(std::size_t j=0; j<sj - 1; ++j)
+          for(std::size_t k=0; k<sk - 1; ++k)
+            f({i, j, k});
+    };
 
-        tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i - 1), iterator);
-    }
-#endif  // CGAL_LINKED_WITH_TBB
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i - 1), iterator);
+  }
+#endif // CGAL_LINKED_WITH_TBB
 
 private:
-    std::size_t size_i;
-    std::size_t size_j;
-    std::size_t size_k;
+  std::size_t size_i;
+  std::size_t size_j;
+  std::size_t size_k;
 };
 
-}  // namespace internal
-}  // namespace Isosurfacing
-}  // namespace CGAL
+} // namespace internal
+} // namespace Isosurfacing
+} // namespace CGAL
 
-#endif  // CGAL_GRID_TOPOLOGY_H
+#endif // CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_H
