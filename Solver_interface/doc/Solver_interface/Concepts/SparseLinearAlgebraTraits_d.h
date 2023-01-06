@@ -127,6 +127,7 @@ NT& operator[](Index row);
 
 `SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class.
 
+\cgalRefines Assignable
 \cgalRefines DefaultConstructible
 
 \cgalHasModel `CGAL::Eigen_sparse_matrix<T>`

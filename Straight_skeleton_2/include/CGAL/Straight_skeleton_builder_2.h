@@ -665,16 +665,16 @@ private :
 
   template <typename GT> // actually just equal to 'Traits', but gotta template for SFINAE to work
   Segment_2 CreateSegment ( Halfedge_const_handle aH,
-                            typename std::enable_if<
-                              ! CGAL_SS_i::has_Segment_2_with_ID<GT>::value>::type* = nullptr ) const
+                            std::enable_if_t<
+                              ! CGAL_SS_i::has_Segment_2_with_ID<GT>::value>* = nullptr ) const
   {
     return Segment_2(CreateRawSegment(aH)) ;
   }
 
   template <typename GT> // actually just equal to 'Traits', but gotta template for SFINAE to work
   Segment_2 CreateSegment ( Halfedge_const_handle aH,
-                            typename std::enable_if<
-                              CGAL_SS_i::has_Segment_2_with_ID<GT>::value>::type* = nullptr ) const
+                            std::enable_if_t<
+                              CGAL_SS_i::has_Segment_2_with_ID<GT>::value>* = nullptr ) const
   {
     return Segment_2(CreateRawSegment(aH), aH->id());
   }

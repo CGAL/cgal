@@ -52,7 +52,7 @@
 #endif // CGAL_TEST_SUITE and NDEBUG
 
 // See [[Small features/Visual_Leak_Detector]] in CGAL developers wiki
-// See also: http://vld.codeplex.com/
+// See also: https://kinddragon.github.io/vld/
 #if defined(CGAL_ENABLE_VLD)
 #  include <vld.h>
 #endif // CGAL_ENABLE_VLD
@@ -111,17 +111,6 @@
 #undef CGAL_LINKED_WITH_TBB
 #endif
 #endif
-
-// Macro used by Boost Parameter. Mesh_3 needs at least 12, before the
-// Boost Parameter headers are included: <boost/parameter/config.hpp>
-// defines the value to 8, if it is not yet defined.
-// The CGAL BGL properties mechanism includes
-// <boost/graph/named_function_params.hpp>, that includes
-// <boost/parameter/name.hpp>, and maybe other Boost libraries may use
-// Boost Parameter as well.
-// That is why that is important to define that macro as early as possible,
-// in <CGAL/config.h>
-#define BOOST_PARAMETER_MAX_ARITY 12
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION
 #include <boost/config.hpp>
@@ -307,7 +296,7 @@ using std::max;
 
 // Macros to detect features of clang. We define them for the other
 // compilers.
-// See http://clang.llvm.org/docs/LanguageExtensions.html
+// See https://clang.llvm.org/docs/LanguageExtensions.html
 // See also https://en.cppreference.com/w/cpp/experimental/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
@@ -484,7 +473,7 @@ namespace cpp11{
 
 // The fallthrough attribute
 // See for clang:
-//   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
+//   https://clang.llvm.org/docs/AttributeReference.html#statement-attributes
 // See for gcc:
 //   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 #if __cplusplus > 201402L && __has_cpp_attribute(fallthrough)

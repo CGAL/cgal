@@ -2,7 +2,6 @@
 // Needed for lloyd_optimize_mesh_2 which does it too late
 // (and we don't want to spend the time on finding out who
 // includes the header file that sets it too a value too low
-#define  BOOST_PARAMETER_MAX_ARITY 12
 
 #include <stdexcept>
 
@@ -326,7 +325,7 @@ private:
       ltime.restart();
       std::cout << " Running lloyd_optimize_mesh_2..." << std::flush;
       CGAL::lloyd_optimize_mesh_2(cdt,
-        CGAL::parameters::max_iteration_number = nb_iter);
+        CGAL::parameters::number_of_iterations(nb_iter));
       std::cout << " done (" << ltime.elapsed() << " ms)" << std::endl;
     }
 

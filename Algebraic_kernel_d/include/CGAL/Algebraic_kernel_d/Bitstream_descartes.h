@@ -1147,8 +1147,8 @@ public:
   Bitstream_descartes() : Base(new Rep()) {}
 
   //! Copy constructor
-  Bitstream_descartes(const Self& other) : Base(static_cast<const Base&>(other))
-  {}
+  Bitstream_descartes(const Self& other) = default;
+  Bitstream_descartes& operator=(const Self& other) = default;
 
   /*!
    * \brief Constructor for a polynomial \c f

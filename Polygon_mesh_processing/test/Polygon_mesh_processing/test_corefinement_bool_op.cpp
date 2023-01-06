@@ -272,22 +272,43 @@ int main(int argc,char** argv)
     return 1;
   }
 
-  Result_checking rc;
-
-  if (argc==8)
+  if (argc>8 && (argc-1)%7==0)
   {
-    rc.check=true;
-    rc.union_res = atoi(argv[4])!=0;
-    rc.inter_res = atoi(argv[5])!=0;
-    rc.P_minus_Q_res = atoi(argv[6])!=0;
-    rc.Q_minus_P_res = atoi(argv[7])!=0;
+    // cmd mode
+    for (int i=0;i<argc-1;i+=7)
+    {
+      std::cout << "Running test #" << (i/7)+1 << "\n";
+      Result_checking rc;
+      rc.check=true;
+      rc.union_res = atoi(argv[i+4])!=0;
+      rc.inter_res = atoi(argv[i+5])!=0;
+      rc.P_minus_Q_res = atoi(argv[i+6])!=0;
+      rc.Q_minus_P_res = atoi(argv[i+7])!=0;
+          int scenario = -1;
+      if (std::string(argv[i+3])!=std::string("ALL"))
+        scenario = atoi(argv[i+3]);
+      run<Surface_mesh>(argv[i+1], argv[i+2], scenario, rc);
+    }
   }
+  else
+  {
+    Result_checking rc;
 
-  int scenario = -1;
-  if (argc>=5 && std::string(argv[3])!=std::string("ALL"))
-    scenario = atoi(argv[4]);
+    if (argc==8)
+    {
+      rc.check=true;
+      rc.union_res = atoi(argv[4])!=0;
+      rc.inter_res = atoi(argv[5])!=0;
+      rc.P_minus_Q_res = atoi(argv[6])!=0;
+      rc.Q_minus_P_res = atoi(argv[7])!=0;
+    }
 
-  run<Surface_mesh>(argv[1], argv[2], scenario, rc);
+    int scenario = -1;
+    if (argc>=5 && std::string(argv[3])!=std::string("ALL"))
+      scenario = atoi(argv[3]);
+
+    run<Surface_mesh>(argv[1], argv[2], scenario, rc);
+  }
 
   return 0;
 }

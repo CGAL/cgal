@@ -359,6 +359,12 @@ and offset set to 1/30 of alpha (i.e., 1/600 of the bounding box diagonal edge l
 
 \cgalExample{Alpha_wrap_3/triangle_mesh_wrap.cpp}
 
+Some triangle soups might not be representable as a mesh due to non-manifoldness or incompatible orientations.
+Such triangle soup is nevertheless a valid input for the wrapping algorithm, as illustrated
+in the following example.
+
+\cgalExample{Alpha_wrap_3/triangle_soup_wrap.cpp}
+
 Here is an example with a point cloud.
 
 \cgalExample{Alpha_wrap_3/point_set_wrap.cpp}

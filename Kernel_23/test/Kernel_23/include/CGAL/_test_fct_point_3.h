@@ -249,7 +249,7 @@ _test_fct_point_3(const R& )
  {
      typedef ::CGAL::Algebraic_structure_traits<FT> AST;
      static const bool has_sqrt =
-         ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
+         ! ::std::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
      _test_fct_point_sqrt_3(R(), ::CGAL::Boolean_tag<has_sqrt>());
  }
  std::cout << "done" << std::endl;

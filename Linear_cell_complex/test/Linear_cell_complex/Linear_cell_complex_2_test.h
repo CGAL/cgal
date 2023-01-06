@@ -37,12 +37,9 @@ void trace_test_end()
 #endif
 }
 
-void trace_display_msg(const char*
-#ifdef LCC_TRACE_TEST_BEGIN
-                       msg
-#endif
-                       )
+void trace_display_msg(const char* msg)
 {
+  CGAL_USE(msg);
 #ifdef LCC_TRACE_TEST_BEGIN
   std::cout<<"***************** "<<msg<<"***************** "<<std::endl;
 #endif
@@ -52,13 +49,13 @@ template<typename LCC,
          typename Map=typename LCC::Combinatorial_data_structure>
 struct Alpha1
 {
-  static typename LCC::Dart_handle run(LCC&, typename LCC::Dart_handle dh)
+  static typename LCC::Dart_descriptor run(LCC&, typename LCC::Dart_descriptor dh)
   { return dh; }
 };
 template<typename LCC>
 struct Alpha1<LCC, CGAL::Generalized_map_tag>
 {
-  static typename LCC::Dart_handle run(LCC& lcc, typename LCC::Dart_handle dh)
+  static typename LCC::Dart_descriptor run(LCC& lcc, typename LCC::Dart_descriptor dh)
   { return lcc.template alpha<1>(dh); }
 };
 
@@ -135,14 +132,14 @@ bool test_LCC_2()
 {
   LCC lcc;
 
-  typedef typename LCC::Dart_handle Dart_handle;
+  typedef typename LCC::Dart_descriptor Dart_descriptor;
   typedef typename LCC::Point Point;
 
   // Construction operations
   trace_test_begin();
-  Dart_handle dh1=lcc.make_segment(Point(0,0),Point(1,0), true);
-  Dart_handle dh2=lcc.make_segment(Point(2,0),Point(2,1), true);
-  Dart_handle dh3=lcc.make_segment(Point(2,2),Point(3,1), true);
+  Dart_descriptor dh1=lcc.make_segment(Point(0,0),Point(1,0), true);
+  Dart_descriptor dh2=lcc.make_segment(Point(2,0),Point(2,1), true);
+  Dart_descriptor dh3=lcc.make_segment(Point(2,2),Point(3,1), true);
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
 
@@ -169,7 +166,7 @@ bool test_LCC_2()
       return false;
   }
 
-  typename LCC::Vertex_attribute_handle vh=lcc.template attribute<0>(dh1);
+  typename LCC::Vertex_attribute_descriptor vh=lcc.template attribute<0>(dh1);
   if (!lcc.template is_attribute_used<0>(vh)) return false;
 
   trace_test_begin();
@@ -179,8 +176,8 @@ bool test_LCC_2()
     return false;
 
   trace_test_begin();
-  Dart_handle dh5=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
-  Dart_handle dh6=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));
+  Dart_descriptor dh5=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
+  Dart_descriptor dh6=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));
   if ( !check_number_of_cells_2(lcc, 10, 9, 6, 3) )
     return false;
 
@@ -190,27 +187,27 @@ bool test_LCC_2()
     return false;
 
   trace_test_begin();
-  Dart_handle dh7=lcc.template insert_barycenter_in_cell<1>(dh1);
+  Dart_descriptor dh7=lcc.template insert_barycenter_in_cell<1>(dh1);
   if ( !check_number_of_cells_2(lcc, 9, 9, 6, 2) )
     return false;
 
   trace_test_begin();
-  Dart_handle dh8=lcc.template insert_barycenter_in_cell<2>(dh5);
+  Dart_descriptor dh8=lcc.template insert_barycenter_in_cell<2>(dh5);
   if ( !check_number_of_cells_2(lcc, 10, 12, 8, 2) )
     return false;
 
   trace_test_begin();
-  Dart_handle dh9=lcc.template insert_point_in_cell<1>(dh2,Point(1,0));
+  Dart_descriptor dh9=lcc.template insert_point_in_cell<1>(dh2,Point(1,0));
   if ( !check_number_of_cells_2(lcc, 11, 13, 8, 2) )
     return false;
 
   trace_test_begin();
-  Dart_handle dh10=lcc.template insert_point_in_cell<2>(dh6,Point(6,5));
+  Dart_descriptor dh10=lcc.template insert_point_in_cell<2>(dh6,Point(6,5));
   if ( !check_number_of_cells_2(lcc, 12, 16, 10, 2) )
     return false;
 
   trace_test_begin();
-  Dart_handle dh11=lcc.insert_dangling_cell_1_in_cell_2(dh8,Point(6,5.2));
+  Dart_descriptor dh11=lcc.insert_dangling_cell_1_in_cell_2(dh8,Point(6,5.2));
   if ( !check_number_of_cells_2(lcc, 13, 17, 10, 2) )
     return false;
 
@@ -221,14 +218,14 @@ bool test_LCC_2()
     return false;
 
   trace_test_begin();
-  std::vector<Dart_handle> toremove;
+  std::vector<Dart_descriptor> toremove;
   for ( typename LCC::template Dart_of_cell_range<0,2>::iterator
           it=lcc.template darts_of_cell<0,2>(dh10).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh10).end();
           it!=itend; ++it )
     toremove.push_back( it );
 
-  for ( typename std::vector<Dart_handle>::iterator
+  for ( typename std::vector<Dart_descriptor>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     if (lcc.is_dart_used(*it)) // For GMap because we have 2 dart per edge incident to the vertex
       lcc.template remove_cell<1>(*it);
@@ -249,7 +246,7 @@ bool test_LCC_2()
         it!=itend; ++it )
     toremove.push_back( it );
 
-  for ( typename std::vector<Dart_handle>::iterator
+  for ( typename std::vector<Dart_descriptor>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     if (lcc.is_dart_used(*it)) // For GMap because we have 2 dart per edge incident to the vertex
     lcc.template remove_cell<1>(*it);

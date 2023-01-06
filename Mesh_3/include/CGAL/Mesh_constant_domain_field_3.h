@@ -57,7 +57,7 @@ public:
     return d_;
   }
 
-  /// Sets size at any point of dimension \c dim and index \c index
+  /// Sets size at any point of dimension `dim` and index `index`.
   void set_size(const FT& size, const int dim, const Index& index)
   {
     values_.insert(std::make_pair(std::make_pair(dim,index),size));

@@ -21,6 +21,7 @@
 #include <stack>
 #include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Kernel/global_functions_2.h>
 
 namespace CGAL {
@@ -415,8 +416,8 @@ template<typename Tr>
 Cvd_cell_2<Tr> dual(const Tr& tr,
                     const typename Tr::Vertex_handle& v)
 {
-  CGAL_triangulation_precondition( v != typename Tr::Vertex_handle());
-  CGAL_triangulation_precondition( !tr.is_infinite(v));
+  CGAL_precondition( v != typename Tr::Vertex_handle());
+  CGAL_precondition( !tr.is_infinite(v));
 
   Constrained_voronoi_diagram_2<Tr> diagram(tr);
   return diagram.cvd_cell(v);
@@ -436,8 +437,8 @@ Cvd_cell_2<Tr> dual(const Tr& tr,
 //  typedef Tr::Geom_traits::Ray_2    Ray;
 //  typedef Tr::Geom_traits::Vector_2 Vector_2;
 //
-//  CGAL_triangulation_precondition( v != Vertex_handle());
-//  CGAL_triangulation_precondition( !tr.is_infinite(v));
+//  CGAL_precondition( v != Vertex_handle());
+//  CGAL_precondition( !tr.is_infinite(v));
 //
 //  // The Circulator moves ccw.
 //  std::vector<Segment> segments;

@@ -45,6 +45,7 @@ int main(int argc, char** argv)
 
   const double alpha = diag_length / relative_alpha;
   const double offset = diag_length / relative_offset;
+  std::cout << "alpha: " << alpha << ", offset: " << offset << std::endl;
 
   // Construct the wrap
   CGAL::Real_timer t;

@@ -39,10 +39,8 @@ template<class Point>
 int load_polylines(std::ifstream& input,
                    std::vector<std::vector<Point> >& points)
 {
-  int counter = 0;
   std::size_t n;
   while(input >> n) {
-    ++counter;
     std::vector<Point> new_polyline;
     points.push_back(new_polyline);
     std::vector<Point>&polyline = points.back();

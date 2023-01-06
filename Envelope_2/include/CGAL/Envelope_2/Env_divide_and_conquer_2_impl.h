@@ -451,43 +451,33 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
 {
   CGAL_precondition(traits->is_in_x_range_2_object()(xcv1, xcv2));
 
-  typedef typename Traits_adaptor_2::Compare_xy_2     Compare_xy_2;
-  typedef typename Traits::Compare_y_at_x_2           Compare_y_at_x_2;
-  typedef typename Traits::Construct_min_vertex_2     Construct_min_vertex_2;
-  typedef typename Traits::Construct_max_vertex_2     Construct_max_vertex_2;
-
-  Compare_y_at_x_2  compare_y_at_x = traits->compare_y_at_x_2_object();
-  Construct_min_vertex_2 min_vertex =
-    traits->construct_min_vertex_2_object();
-  Construct_max_vertex_2 max_vertex =
-    traits->construct_max_vertex_2_object();
+  const auto compare_y_at_x = traits->compare_y_at_x_2_object();
+  const auto min_vertex = traits->construct_min_vertex_2_object();
+  const auto max_vertex = traits->construct_max_vertex_2_object();
+  const auto parm_space_in_x = traits->parameter_space_in_x_2_object();
 
   // First check whether any of the curves is defined at x boundary.
-  const Arr_parameter_space ps_x1 =
-    traits->parameter_space_in_x_2_object()(xcv1, curve_end);
-  const Arr_parameter_space ps_x2 =
-    traits->parameter_space_in_x_2_object()(xcv2, curve_end);
-  Comparison_result         res;
+  const Arr_parameter_space ps_x1 = parm_space_in_x(xcv1, curve_end);
+  const Arr_parameter_space ps_x2 = parm_space_in_x(xcv2, curve_end);
 
   if (ps_x1 != ARR_INTERIOR) {
     if (ps_x2 != ARR_INTERIOR) {
+      const auto cmp_y_near_boundary =
+        traits->compare_y_near_boundary_2_object();
       // Compare the relative position of the curves at x boundary.
-      return (traits->compare_y_near_boundary_2_object()(xcv1, xcv2,
-                                                         curve_end));
+      return cmp_y_near_boundary(xcv1, xcv2, curve_end);
     }
 
     // Check if the left end of xcv2 lies at y boundary.
-    const Arr_parameter_space ps_y2 =
-      traits->parameter_space_in_y_2_object()(xcv2, curve_end);
+    const auto parm_space_in_y = traits->parameter_space_in_y_2_object();
+    const Arr_parameter_space ps_y2 = parm_space_in_y(xcv2, curve_end);
 
-    if (ps_y2 == ARR_BOTTOM_BOUNDARY)
-      return (LARGER);          // xcv2 is obviously below xcv1.
-    else if (ps_y2 == ARR_TOP_BOUNDARY)
-      return (SMALLER);         // xcv2 is obviously above xcv1.
+    if (ps_y2 == ARR_BOTTOM_BOUNDARY) return LARGER;
+    else if (ps_y2 == ARR_TOP_BOUNDARY) return SMALLER;
 
     // Compare the position of the left end of xcv2 (which is a normal
     // point) to xcv1.
-    res = (curve_end == ARR_MIN_END) ?
+    Comparison_result res = (curve_end == ARR_MIN_END) ?
       compare_y_at_x(min_vertex(xcv2), xcv1) :
       compare_y_at_x(max_vertex(xcv2), xcv1);
 
@@ -496,28 +486,24 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
   }
   else if (ps_x2 != ARR_INTERIOR) {
     // Check if the left end of xcv1 lies at y boundary.
-    const Arr_parameter_space ps_y1 =  traits->parameter_space_in_y_2_object()
-      (xcv1, curve_end);
+    const auto parm_space_in_y = traits->parameter_space_in_y_2_object();
+    const Arr_parameter_space ps_y1 = parm_space_in_y(xcv1, curve_end);
 
-    if (ps_y1 == ARR_BOTTOM_BOUNDARY)
-      return (SMALLER);         // xcv1 is obviously below xcv2.
-    else if (ps_y1 == ARR_TOP_BOUNDARY)
-      return (LARGER);          // xcv1 is obviously above xcv2.
+    if (ps_y1 == ARR_BOTTOM_BOUNDARY) return SMALLER;
+    else if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
 
     // Compare the position of the left end of xcv1 (which is a normal
     // point) to xcv2.
-    res = (curve_end == ARR_MIN_END) ?
+    Comparison_result res = (curve_end == ARR_MIN_END) ?
       compare_y_at_x(min_vertex(xcv1), xcv2) :
       compare_y_at_x(max_vertex(xcv1), xcv2);
-    return (res);
+    return res;
   }
 
   // Check if the left curve end lies at y = +/- oo.
-  const Arr_parameter_space ps_y1 =
-    traits->parameter_space_in_y_2_object()(xcv1, curve_end);
-  const Arr_parameter_space ps_y2 =
-    traits->parameter_space_in_y_2_object()(xcv2, curve_end);
-  Comparison_result         l_res;
+  const auto parm_space_in_y = traits->parameter_space_in_y_2_object();
+  const Arr_parameter_space ps_y1 = parm_space_in_y(xcv1, curve_end);
+  const Arr_parameter_space ps_y2 = parm_space_in_y(xcv2, curve_end);
 
   if (ps_y1 != ARR_INTERIOR) {
     if (ps_y2 != ARR_INTERIOR) {
@@ -525,21 +511,20 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
       // we readily know their relative position (recall that they do not
       // instersect).
       if ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY))
-        return (SMALLER);
+        return SMALLER;
       else if ((ps_y1 == ARR_TOP_BOUNDARY) && (ps_y2 == ARR_BOTTOM_BOUNDARY))
-        return (LARGER);
+        return LARGER;
 
       // Both curves have vertical asymptotes with the same sign in y.
       // Check which asymptote is the rightmost. Note that in this case
       // the vertical asymptotes cannot be equal.
-      l_res = traits->compare_x_curve_ends_2_object()(xcv1, curve_end,
-                                                      xcv2, curve_end);
+      const auto cmp_x_curve_ends = traits->compare_x_curve_ends_2_object();
+      Comparison_result l_res =
+        cmp_x_curve_ends(xcv1, curve_end, xcv2, curve_end);
       CGAL_assertion(l_res != EQUAL);
 
-      if (ps_y1 == ARR_TOP_BOUNDARY)
-        return (l_res);
-      else
-        return CGAL::opposite(l_res);
+      if (ps_y1 == ARR_TOP_BOUNDARY) return l_res;
+      else return CGAL::opposite(l_res);
     }
 
     // xcv1 has a vertical asymptote and xcv2 has a normal left endpoint.
@@ -547,12 +532,13 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
     const Point_2& left2 =
       (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
 
-    l_res =
-      traits->compare_x_point_curve_end_2_object()(left2, xcv1, curve_end);
+    const auto cmp_x_point_curve_end =
+      traits->compare_x_point_curve_end_2_object();
+   Comparison_result l_res = cmp_x_point_curve_end(left2, xcv1, curve_end);
 
     if (l_res == LARGER) {
       // left2 lies in the x-range of xcv1, so it is safe to compare:
-      res = compare_y_at_x(left2, xcv1);
+      Comparison_result res = compare_y_at_x(left2, xcv1);
       return CGAL::opposite(res);
     }
     else
@@ -562,11 +548,12 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
   else if (ps_y2 != ARR_INTERIOR) {
     // xcv2 has a vertical asymptote and xcv1 has a normal left endpoint.
     // Compare the x-positions of this endpoint and the asymptote.
-    const Point_2&  left1 =
+    const Point_2& left1 =
       (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
 
-    l_res =
-      traits->compare_x_point_curve_end_2_object()(left1, xcv2, curve_end);
+    const auto cmp_x_point_curve_end =
+      traits->compare_x_point_curve_end_2_object();
+    Comparison_result l_res = cmp_x_point_curve_end(left1, xcv2, curve_end);
 
     return ((l_res == LARGER) ?
             // left1 lies in the x-range of xcv2, so it is safe to compare:
@@ -575,22 +562,22 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
   }
 
   // In this case we compare two normal points.
-  Compare_xy_2 compare_xy = traits->compare_xy_2_object();
+  const auto compare_xy = traits->compare_xy_2_object();
 
   // Get the left endpoints of xcv1 and xcv2.
-  const Point_2&  left1 =
+  const Point_2& left1 =
     (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
-  const Point_2&  left2 =
+  const Point_2& left2 =
     (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
 
   // Locate the rightmost point of left1 and left2 and compare its position
   // to the other curve.
-  l_res = compare_xy(left1, left2);
+  Comparison_result l_res = compare_xy(left1, left2);
 
   return ((l_res != SMALLER) ?
-    // left1 is in the x-range of xcv2:
+          // left1 is in the x-range of xcv2:
           compare_y_at_x(left1, xcv2) :
-    // left2 is in the x-range of xcv1:
+          // left2 is in the x-range of xcv1:
           CGAL::opposite(compare_y_at_x(left2, xcv1)));
 }
 /*@}*/

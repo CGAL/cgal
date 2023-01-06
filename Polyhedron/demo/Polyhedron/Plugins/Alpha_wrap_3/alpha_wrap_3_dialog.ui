@@ -23,20 +23,24 @@
       <string>3D Alpha Wrapping</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="11" column="1">
-       <widget class="QCheckBox" name="wrapEdges">
+      <item row="6" column="0">
+       <widget class="QLabel" name="offsetValue_Label">
         <property name="text">
-         <string/>
+         <string>Offset value (absolute):</string>
         </property>
-        <property name="checked">
-         <bool>true</bool>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="relativeOffsetValue_Label">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Offset value (relative):&lt;br/&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;As ratio of the length of the bbox's diagonal&lt;br/&gt;(i.e., value &lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt;x &lt;/span&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;means &lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt;offset := bbox_diag_l / x)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QDoubleSpinBox" name="alphaValue">
         <property name="decimals">
-         <number>5</number>
+         <number>10</number>
         </property>
         <property name="minimum">
          <double>0.000000000000000</double>
@@ -45,90 +49,14 @@
          <double>100000000.000000000000000</double>
         </property>
         <property name="singleStep">
-         <double>0.000001000000000</double>
+         <double>1.000000000000000</double>
         </property>
         <property name="value">
-         <double>20.000000000000000</double>
+         <double>0.000000000000000</double>
         </property>
        </widget>
       </item>
-      <item row="15" column="0">
-       <widget class="QLabel" name="runManifoldness_Label">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enforce 2-manifold output&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="18" column="0">
-       <spacer name="verticalSpacer_7">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="alphaValue_Label">
-        <property name="text">
-         <string>Alpha value:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0">
-       <spacer name="verticalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="12" column="0">
-       <spacer name="verticalSpacer_6">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="19" column="0">
-       <widget class="QLabel" name="visualizeIterations_Label">
-        <property name="text">
-         <string>Visualize iterations</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="relativeOffset_Label">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use relative-to-bbox offset&lt;br/&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;As ratio of the length of the bbox's diagonal&lt;br/&gt;(i.e., value &lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt;x &lt;/span&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;means &lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt;offset := bbox_diag_l / x)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item row="16" column="0">
+      <item row="23" column="0">
        <spacer name="verticalSpacer_4">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -141,58 +69,41 @@
         </property>
        </spacer>
       </item>
-      <item row="4" column="1">
-       <widget class="QDoubleSpinBox" name="offsetValue">
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="relativeAlphaValue">
         <property name="decimals">
-         <number>5</number>
+         <number>10</number>
         </property>
         <property name="minimum">
          <double>0.000000000000000</double>
         </property>
         <property name="maximum">
-         <double>100000000.000000000000000</double>
+         <double>10000000.000000000000000</double>
         </property>
         <property name="singleStep">
-         <double>0.000001000000000</double>
+         <double>1.000000000000000</double>
         </property>
         <property name="value">
-         <double>600.000000000000000</double>
+         <double>0.000000000000000</double>
         </property>
        </widget>
       </item>
-      <item row="17" column="0" colspan="2">
-       <widget class="Line" name="line_4">
+      <item row="27" column="0">
+       <widget class="QLabel" name="snapshotIterations_Label">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Snapshot iterations&lt;br/&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;For each iteration, save a snapshot of the viewer &lt;br/&gt;to a file named &lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt;Wrap-iteration_i.png&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="20" column="0" colspan="2">
+       <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="10" column="0">
-       <widget class="QLabel" name="wrapFaces_Label">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wrap faces&lt;br/&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;If deactivated, only edges of the faces are taken into account&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="0">
-       <widget class="QLabel" name="wrapEdges_Label">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wrap edges&lt;br/&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;If deactivated, only extremities of the edges are taken into account&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="relativeAlpha">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <spacer name="verticalSpacer_5">
+      <item row="25" column="0">
+       <spacer name="verticalSpacer_7">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -204,29 +115,22 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="relativeAlpha_Label">
+      <item row="26" column="0">
+       <widget class="QLabel" name="visualizeIterations_Label">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use relative-to-bbox alpha&lt;br/&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;As ratio of the length of the bbox's diagonal&lt;br/&gt;(i.e., value &lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt;x &lt;/span&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;means alpha&lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt; := bbox_diag_l / x)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Visualize iterations</string>
         </property>
        </widget>
       </item>
-      <item row="21" column="0">
-       <widget class="Line" name="line_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="19" column="1">
-       <widget class="QCheckBox" name="visualizeIterations">
+      <item row="0" column="0">
+       <widget class="QLabel" name="alphaValue_Label">
         <property name="text">
-         <string/>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alpha value (absolute):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
-      <item row="10" column="1">
-       <widget class="QCheckBox" name="wrapFaces">
+      <item row="12" column="1">
+       <widget class="QCheckBox" name="wrapTriangles">
         <property name="text">
          <string/>
         </property>
@@ -235,7 +139,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="5" column="0">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -248,38 +152,7 @@
         </property>
        </spacer>
       </item>
-      <item row="6" column="1">
-       <widget class="QCheckBox" name="relativeOffset">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="13" column="0" colspan="2">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="offsetValue_Label">
-        <property name="text">
-         <string>Offset value:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0" colspan="2">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="15" column="1">
+      <item row="22" column="1">
        <widget class="QCheckBox" name="runManifoldness">
         <property name="text">
          <string/>
@@ -289,7 +162,66 @@
         </property>
        </widget>
       </item>
-      <item row="14" column="0">
+      <item row="10" column="0" colspan="2">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1">
+       <widget class="QCheckBox" name="wrapSegments">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="8" column="1">
+       <widget class="QDoubleSpinBox" name="relativeOffsetValue">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>10000000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="27" column="1">
+       <widget class="QCheckBox" name="snapshotIterations">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="21" column="0">
        <spacer name="verticalSpacer_2">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -302,27 +234,123 @@
         </property>
        </spacer>
       </item>
-      <item row="20" column="0">
-       <widget class="QLabel" name="snapshotIterations_Label">
+      <item row="16" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Snapshot iterations&lt;br/&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;For each iteration, save a snapshot of the viewer &lt;br/&gt;to a file named &lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt;Wrap-iteration_i.png&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Wrap points / vertices</string>
         </property>
        </widget>
       </item>
-      <item row="20" column="1">
-       <widget class="QCheckBox" name="snapshotIterations">
+      <item row="24" column="0" colspan="2">
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="22" column="0">
+       <widget class="QLabel" name="runManifoldness_Label">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enforce 2-manifold output&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="26" column="1">
+       <widget class="QCheckBox" name="visualizeIterations">
         <property name="text">
          <string/>
         </property>
-        <property name="checkable">
-         <bool>false</bool>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="wrapTriangles_Label">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wrap faces / triangles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
+      </item>
+      <item row="16" column="1">
+       <widget class="QCheckBox" name="wrapPoints">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QDoubleSpinBox" name="offsetValue">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>100000000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="relativeAlphaValue_Label">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Alpha value (relative):&lt;br/&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;As the ratio of the length of the bbox's diagonal&lt;br/&gt;(i.e., value &lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt;x &lt;/span&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;means alpha&lt;/span&gt;&lt;span style=&quot; font-size:9pt; font-style:italic;&quot;&gt; := bbox_diag_l / x)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <spacer name="verticalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="13" column="0">
+       <widget class="QLabel" name="wrapSegments_Label">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wrap edges / segments&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="17" column="0">
+       <spacer name="verticalSpacer_8">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -332,10 +360,31 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0">
+    <spacer name="verticalSpacer_6">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>buttonBox</tabstop>
+  <tabstop>alphaValue</tabstop>
+  <tabstop>relativeAlphaValue</tabstop>
+  <tabstop>offsetValue</tabstop>
+  <tabstop>relativeOffsetValue</tabstop>
+  <tabstop>wrapTriangles</tabstop>
+  <tabstop>wrapSegments</tabstop>
+  <tabstop>runManifoldness</tabstop>
+  <tabstop>visualizeIterations</tabstop>
+  <tabstop>snapshotIterations</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -346,8 +395,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>388</x>
-     <y>288</y>
+     <x>394</x>
+     <y>666</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -362,8 +411,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>388</x>
-     <y>288</y>
+     <x>394</x>
+     <y>666</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

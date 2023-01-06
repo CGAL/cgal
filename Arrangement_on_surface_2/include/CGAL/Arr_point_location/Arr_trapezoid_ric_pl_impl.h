@@ -316,7 +316,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 // face) we check the isolated vertices inside the face to check whether there
 // is an isolated vertex right above/below the query point.
 //
-template <class Arrangement>
+template <typename Arrangement>
 typename Arr_trapezoid_ric_point_location<Arrangement>::result_type
 Arr_trapezoid_ric_point_location<Arrangement>::
 _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
@@ -324,40 +324,36 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
                                         bool shoot_up,
                                         const Td_map_item& tr) const
 {
+  const auto* gt = this->arrangement()->geometry_traits();
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
-  typename Geometry_traits_2::Compare_x_2          compare_x =
-    this->arrangement()->traits()->compare_x_2_object();
-  typename Geometry_traits_2::Compare_xy_2         compare_xy =
-    this->arrangement()->traits()->compare_xy_2_object();
-  typename Geometry_traits_2::Compare_y_at_x_2     compare_y_at_x =
-    this->arrangement()->traits()->compare_y_at_x_2_object();
+  auto compare_x = gt->compare_x_2_object();
+  auto compare_xy = gt->compare_xy_2_object();
+  auto compare_y_at_x = gt->compare_y_at_x_2_object();
 
-  Isolated_vertex_const_iterator   iso_verts_it;
-  Vertex_const_handle              closest_iso_v;
-  const Vertex_const_handle        invalid_v;
-  const Halfedge_const_handle      invalid_he;
-  Face_const_handle                face;
+  Vertex_const_handle closest_iso_v;
+  const Vertex_const_handle invalid_v;
+  const Halfedge_const_handle invalid_he;
 
   // If the closest feature is a valid halfedge, take its incident face.
   // Otherwise, take the unbounded face.
-  if (halfedge_found == invalid_he)
-    face = _get_unbounded_face(tr, p, All_sides_oblivious_category());
-  else
-    face = halfedge_found->face();
+  Face_const_handle face = (halfedge_found == invalid_he) ?
+    _get_unbounded_face(tr, p, All_sides_oblivious_category()) :
+    halfedge_found->face();
 
   // Go over the isolated vertices in the face.
+  // The following statement pacifies MSVC. Without it the implicit conversion
+  // from the iterator to the corresponding handle fails!
+  Isolated_vertex_const_iterator iso_verts_it;
   for (iso_verts_it = face->isolated_vertices_begin();
        iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
   {
     // The current isolated vertex should have the same x-coordinate as the
     // query point in order to be below or above it.
-    if (compare_x (p, iso_verts_it->point()) != EQUAL)
-      continue;
+    if (compare_x (p, iso_verts_it->point()) != EQUAL) continue;
 
     // Make sure the isolated vertex is above the query point (if we shoot up)
     // or below it (if we shoot down).
-    if (compare_xy (p, iso_verts_it->point()) != point_above_under)
-      continue;
+    if (compare_xy (p, iso_verts_it->point()) != point_above_under) continue;
 
     // Check if the current isolated vertex lies closer to the query point than
     // the closest feature so far.
@@ -379,12 +375,10 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
 
   // If we found an isolated vertex above (or under) the query point, return
   // a handle to this vertex.
-  if (closest_iso_v != invalid_v)
-    return make_result(closest_iso_v);
+  if (closest_iso_v != invalid_v) return make_result(closest_iso_v);
 
   // If we are inside the unbounded face, return this face.
-  if (halfedge_found == invalid_he)
-    return make_result(face);
+  if (halfedge_found == invalid_he) return make_result(face);
 
   // Return the halfedge lying above (or below) the query point.
   return make_result(halfedge_found);
