@@ -30,7 +30,7 @@ using Tree = CGAL::AABB_tree<Traits>;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-int main()
+int main(int, char**)
 {
   const std::string input_name = CGAL::data_file_path("meshes/cross.off");
   const Vector grid_spacing(0.1, 0.1, 0.1);
@@ -40,14 +40,14 @@ int main()
   if(!CGAL::IO::read_OFF(input_name, mesh_input))
   {
     std::cerr << "Could not read input mesh" << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
   }
 
   // compute bounding box
-  CGAL::Bbox_3 aabb_grid = CGAL::Polygon_mesh_processing::bbox(mesh_input);
+  CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(mesh_input);
   Vector aabb_increase_vec = Vector(offset_value + 0.01, offset_value + 0.01, offset_value + 0.01);
-  aabb_grid += (Point(aabb_grid.xmax(), aabb_grid.ymax(), aabb_grid.zmax()) + aabb_increase_vec).bbox();
-  aabb_grid += (Point(aabb_grid.xmin(), aabb_grid.ymin(), aabb_grid.zmin()) - aabb_increase_vec).bbox();
+  bbox += (Point(bbox.xmax(), bbox.ymax(), bbox.zmax()) + aabb_increase_vec).bbox();
+  bbox += (Point(bbox.xmin(), bbox.ymin(), bbox.zmin()) - aabb_increase_vec).bbox();
 
   // construct AABB tree
   Tree tree(mesh_input.faces_begin(), mesh_input.faces_end(), mesh_input);
@@ -69,7 +69,7 @@ int main()
   };
 
   // create a domain with given bounding box and grid spacing
-  auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(aabb_grid, grid_spacing,
+  auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, grid_spacing,
                                                                                   mesh_distance, mesh_normal);
   // containers for output indexed surface mesh
   Point_range points;
@@ -81,5 +81,5 @@ int main()
   // save output indexed mesh to a file, in the OFF format
   CGAL::IO::write_OFF("result.off", points, polygons);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

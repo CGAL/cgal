@@ -70,7 +70,7 @@ struct Refine_one_eighth
   }
 };
 
-int main()
+int main(int, char**)
 {
   const CGAL::Bbox_3 bbox(-1., -1., -1., 1., 1., 1.);
   std::shared_ptr<Octree_wrapper_> octree_wrap = std::make_shared<Octree_wrapper_>(bbox);
@@ -98,5 +98,5 @@ int main()
 
   CGAL::IO::write_OFF("result.off", points, polygons);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
