@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <CGAL/Origin.h>
+
 namespace CGAL {
 namespace Isosurfacing {
 
@@ -23,32 +25,19 @@ namespace Isosurfacing {
  * \brief Class template for a gradient that is always zero.
  *
  * \details This gradient function can be used for Marching Cubes, which does not require a gradient.
- *
- * \tparam GeomTraits the traits for this gradient.
  */
-template <typename GeomTraits>
-class Zero_gradient
+struct Zero_gradient
 {
-public:
-  using Geom_traits = GeomTraits;
-  using Point = typename Geom_traits::Point_3;
-  using Vector = typename Geom_traits::Vector_3;
-
-public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Evaluate the gradient at a point in space.
-   *
-   * \param point the point at which the gradient is computed
+   * \return the null vector
    */
-  Vector operator()(const Point& point) const
+  template <typename P>
+  Null_vector operator()(const P&) const
   {
-    return zero;
+    return NULL_VECTOR;
   }
-
-private:
-  const Vector zero = Vector(0, 0, 0);
 };
 
 } // namespace Isosurfacing
