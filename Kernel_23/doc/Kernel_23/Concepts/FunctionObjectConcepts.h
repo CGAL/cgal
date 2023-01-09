@@ -7009,7 +7009,7 @@ public:
   /*!
     introduces a null vector.
   */
-  Kernel::Vector_2 operator()(const Null_vector &NULL_VECTOR);
+  Kernel::Vector_2 operator()(const CGAL::Null_vector &v);
 
   /// @}
 
@@ -7068,7 +7068,7 @@ public:
   /*!
     introduces a null vector.
   */
-  Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR);
+  Kernel::Vector_3 operator()(const CGAL::Null_vector &v);
 
 
   /// @}
