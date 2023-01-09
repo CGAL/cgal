@@ -38,7 +38,7 @@ int main(int, char**)
         const FT pos_y = y * grid->get_spacing()[1] + bbox.ymin();
         const FT pos_z = z * grid->get_spacing()[2] + bbox.zmin();
 
-        // manhattan distance to the origin
+        // L_inf distance to the origin
         grid->value(x, y, z) = std::max({std::abs(pos_x), std::abs(pos_y), std::abs(pos_z)});
       }
     }
