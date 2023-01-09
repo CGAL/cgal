@@ -71,7 +71,7 @@ using Implicit_octree_domain =
  */
 template <typename GeomTraits,
           typename PointFunction,
-          typename Gradient_ = Zero_gradient<GeomTraits> >
+          typename Gradient_ = Zero_gradient>
 Implicit_octree_domain<GeomTraits, PointFunction, Gradient_>
 create_implicit_octree_domain(const std::shared_ptr<internal::Octree_wrapper<GeomTraits> > octree,
                               const PointFunction& point_function,

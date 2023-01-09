@@ -74,7 +74,7 @@ using Implicit_cartesian_grid_domain =
  */
 template <typename GeomTraits,
           typename PointFunction,
-          typename Gradient_ = Zero_gradient<GeomTraits> >
+          typename Gradient_ = Zero_gradient>
 Implicit_cartesian_grid_domain<GeomTraits, PointFunction, Gradient_>
 create_implicit_cartesian_grid_domain(const Bbox_3& bbox,
                                       const typename GeomTraits::Vector_3& spacing,
