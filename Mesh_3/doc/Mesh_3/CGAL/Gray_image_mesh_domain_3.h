@@ -76,5 +76,5 @@ value higher than the input isovalue.
 
 /// @}
 
-}; /* end Labeled_image_mesh_domain_3 */
+}; /* end Gray_image_mesh_domain_3 */
 } /* end namespace CGAL */
