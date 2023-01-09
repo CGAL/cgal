@@ -228,6 +228,7 @@ public:
     }
 
     // compute oriented contours
+    //
     // A countour consists of segment at the faces connecting the intersection of the
     // isosurface with the edges. For each edge we store the edge to which the segment
     // is outgoing and the edge from which the segment in comming. Therefore a contour
@@ -495,6 +496,7 @@ public:
     }
 
     // connect oriented segments into oriented contours
+    //
     // closed contours are coded in 64 bit unsigned long long
     // 1) Each entry has 4 bits
     // 2) The first 4 entries are reserved for the size of the contours
@@ -564,6 +566,7 @@ public:
     }
 
     // compute intersection of opposite faces
+    //
     // It is enough to compute a pair of solutions for one face
     // The other solutions are obtained by evaluating the equations
     // for the common variable
@@ -676,7 +679,7 @@ public:
         q_sol |= 32;
     }
 
-    // count the number of set bits
+    // counts the number of set bits
     auto numberOfSetBits = [](const unsigned char n)
     {
         // C or C++: use uint32_t
@@ -709,6 +712,7 @@ public:
     };
 
     // triangulate contours
+    //
     // if all bits are set, then there are three pairs of nontrivial solutions
     // to the quadratic equations. In this case, there is a tunnel or a contour
     // with 12 vertices. If there are three contours, then there is a tunnel and

@@ -35,13 +35,10 @@ namespace Positioning {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Computes the vertex position for a point in Dual Contouring
+ * \brief computes the vertex position for a point in Dual Contouring
  *        using Quadric Error Metrics and the SVD pseudo inverse.
  *
- * \details
- *
  * \tparam use_bbox clamp vertex position to the bounding box of the cell
- *
  */
 template <bool use_bbox = false>
 class QEM_SVD
@@ -50,9 +47,7 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Computes the vertex position for a point in Dual Contouring.
-   *
-   * \details
+   * \brief computes the vertex position for a point in Dual Contouring.
    *
    * \tparam Domain_ must be a model of `IsosurfacingDomainWithGradient`.
    *
@@ -61,7 +56,7 @@ public:
    * \param cell the cell within the domain for which the vertex position ins computed
    * \param point the point position of the vertex that belongs to that cell
    *
-   * \return true, if the voxel intersects the isosurface
+   * \return `true` if the voxel intersects the isosurface, `false` otherwise
    */
   template <typename Domain_>
   bool position(const Domain_& domain,
@@ -163,7 +158,7 @@ public:
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Returns cell center.
+ * \brief returns the cell's center.
  */
 class Cell_center
 {
@@ -171,9 +166,7 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Computes the vertex position for a point in Dual Contouring.
-   *
-   * \details
+   * \brief computes the vertex position for a point in Dual Contouring.
    *
    * \tparam Domain_ must be a model of `IsosurfacingDomainWithGradient`.
    *
@@ -182,7 +175,7 @@ public:
    * \param cell the cell within the domain for which the vertex position ins computed
    * \param point the point position of the vertex that belongs to that cell
    *
-   * \return true, if the voxel intersects the isosurface
+   * \return `true` if the voxel intersects the isosurface, `false` otherwise
    */
   template <typename Domain_>
   bool position(const Domain_& domain,
@@ -223,7 +216,7 @@ public:
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Computes the centroid of all cell edge intersections with the isosurface.
+ * \brief computes the centroid of all cell edge intersections with the isosurface.
  */
 class Centroid_of_edge_intersections
 {
@@ -231,9 +224,7 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Computes the vertex position for a point in Dual Contouring.
-   *
-   * \details
+   * \brief computes the vertex position for a point in Dual Contouring.
    *
    * \tparam Domain_ must be a model of `IsosurfacingDomainWithGradient`.
    *
@@ -242,7 +233,7 @@ public:
    * \param cell the cell within the domain for which the vertex position ins computed
    * \param point the point position of the vertex that belongs to that cell
    *
-   * \return true, if the voxel intersects the isosurface
+   * \return `true` if the voxel intersects the isosurface, `false` otherwise
    */
   template <typename Domain_>
   bool position(const Domain_& domain,

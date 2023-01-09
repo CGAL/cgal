@@ -25,10 +25,9 @@ namespace Isosurfacing {
  * \details This gradient function evaluates an implicit value function at six points
  *          that are a given distance `delta` away from the queried point.
  *
- * \tparam GeomTraits the traits for this gradient.
- *
- * \tparam PointFunction the type of the implicit function. It must implement `GeomTraits::FT operator()(const
- * GeomTraits::Point& point) const`.
+ * \tparam GeomTraits must be a model of ``.
+ * \tparam PointFunction the type of the implicit function. It must implement
+ *                       `GeomTraits::FT operator()(const GeomTraits::Point& point) const`.
  */
 template <typename GeomTraits,
           typename PointFunction>
@@ -44,8 +43,9 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Create a new instance of this gradient.
+   * \brief creates a new instance of this gradient.
    *
+
    * \param point_function the function with a point as argument
    * \param delta the distance for calculating the finite differences
    */
@@ -58,9 +58,9 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Evaluate the gradient at a point in space.
+   * \brief evaluates the gradient at a point in space.
    *
-   * \param point the point at which the gradient is computed
+   * \param point the position at which the gradient is computed
    */
   Vector operator()(const Point& point) const
   {

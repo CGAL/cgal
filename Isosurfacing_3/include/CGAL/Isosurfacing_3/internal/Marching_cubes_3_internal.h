@@ -86,7 +86,7 @@ Point_3 vertex_interpolation(const Point_3& p0,
            p1.z() * mu + p0.z() * (1 - mu) };
 }
 
-// Retrieve the corner vertices and their values of a cell and return the lookup index
+// retrieves the corner vertices and their values of a cell and return the lookup index
 template <typename Domain_,
           typename Corners_,
           typename Values_>
@@ -117,7 +117,7 @@ std::size_t get_cell_corners(const Domain_& domain,
   return static_cast<std::size_t>(index.to_ullong());
 }
 
-// Create the vertices on the edges of one cell
+// creates the vertices on the edges of one cell
 template <typename CellEdges,
           typename FT,
           typename Corners_,
@@ -129,7 +129,7 @@ void mc_construct_vertices(const CellEdges& cell_edges,
                            const Corners_& corners,
                            const Values_& values,
                            Vertices_& vertices)
-  {
+{
   // compute for this case the vertices
   std::size_t flag = 1;
   std::size_t e_id = 0;
@@ -153,7 +153,7 @@ void mc_construct_vertices(const CellEdges& cell_edges,
   }
 }
 
-// Connect the vertices of one cell to form triangles
+// connects the vertices of one cell to form triangles
 template <typename Vertices_,
           typename TriangleList>
 void mc_construct_triangles(const int i_case,
@@ -178,7 +178,7 @@ void mc_construct_triangles(const int i_case,
   }
 }
 
-// Convert the triangle list to an indexed face set
+// converts the triangle list to an indexed face set
 template <typename TriangleList,
           typename PointRange,
           typename PolygonRange>
@@ -216,14 +216,14 @@ private:
 #endif
 
 public:
-  // Create a Marching Cubes functor for a domain and iso value
+  // creates a Marching Cubes functor for a domain and isovalue
   Marching_cubes_3(const Domain& domain,
                    const FT isovalue)
     : domain(domain),
       isovalue(isovalue)
   { }
 
-  // Compute one cell
+  // computes one cell
   void operator()(const Cell_descriptor& cell)
   {
     // @todo: maybe better checks if the domain can be processed?
@@ -244,7 +244,7 @@ public:
     mc_construct_triangles(i_case, vertices, triangle_list);
   }
 
-  // Get the created triangle list
+  // gets the created triangle list
   const Triangle_list& triangles() const
   {
     return triangle_list;

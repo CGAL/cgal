@@ -382,15 +382,12 @@ public:
     return std::make_tuple(lex_index % dim, (lex_index / dim) % dim, lex_index / (dim * dim));
   }
 
-  /// <summary>
-  /// compute unique edge global index.
-  /// </summary>
-  /// <param name="e">local edge index</param>
-  /// <param name="i_idx">i-index of cell</param>
-  /// <param name="j_idx">j-index of cell</param>
-  /// <param name="k_idx">k-index of cell</param>
-  /// <param name="depth">depth of cell</param>
-  /// <returns></returns>
+  // computes unique edge global index.
+  // \param e local edge index
+  // \param i_idx i-index of cell
+  // \param j_idx j-index of cell
+  // \param k_idx k-index of cell
+  // \param depth of cell
   std::size_t e_glIndex(const std::size_t& e,
                         const std::size_t& i_idx,
                         const std::size_t& j_idx,
@@ -502,12 +499,8 @@ public:
     return node_points(node);
   }
 
-  /// <summary>
-  /// Get the values at the incident two vertices. Vertices are sorted in
-  /// ascending order.
-  /// </summary>
-  /// <param name="e_id"></param>
-  /// <returns></returns>
+  // gets the values at the incident two vertices.
+  // Vertices are sorted in ascending order.
   std::array<FT, 2> edge_values(const Edge_handle& e_id) const
   {
     namespace Tables = internal::Cube_table;
@@ -560,13 +553,9 @@ public:
     return { v0, v1 };
   }
 
-  /// <summary>
-  /// Get the 4 voxels incident to an edge. If an edge has only three incident
+  /// gets the 4 voxels incident to an edge. If an edge has only three incident
   /// voxels, one will appear twice. The voxels are given with the uniform
   /// lexicographical index.
-  /// </summary>
-  /// <param name="e_id"></param>
-  /// <returns></returns>
   std::array<std::size_t, 4> edge_voxels(const Edge_handle& e_id) const
   {
     namespace Tables = internal::Cube_table;

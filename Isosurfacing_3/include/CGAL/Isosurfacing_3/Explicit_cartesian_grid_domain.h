@@ -27,10 +27,11 @@ namespace Isosurfacing {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief A domain that respesents an explicitly stored cartesian grid. It is a model of the concept
- * `IsosurfacingDomainWithGradient`.
+ * \cgalModels `IsosurfacingDomainWithGradient`
  *
- * \tparam GeomTraits the traits type
+ * \brief A domain that represents an explicitly stored Cartesian grid.
+ *
+ * \tparam GeomTraits must be a model of ``.
  * \tparam Gradient_ the type of the gradient functor. It must implement
  *                   `GeomTraits::Vector operator()(const GeomTraits::Point& point) const`.
  */
@@ -46,26 +47,28 @@ using Explicit_cartesian_grid_domain =
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
+ * @todo maybe the grid should be a template and a concept
+ *
  * \brief Creates a domain from a `Cartesian_grid_3` that can be used as input for isosurfacing algorithms.
  *
- * \details
+ * \tparam GeomTraits must be a model of ``.
+ * \tparam Gradient_ the type of the gradient functor. It must implement
+ *                   `GeomTraits::Vector operator()(const GeomTraits::Point& point) const`.
  *
- * \tparam GeomTraits the traits type
- *
- * \param grid the %Cartesian grid containing input data
+ * \param grid the Cartesian grid containing input data
  * \param gradient a function that describes the gradient of the data
  *
  * \return a new `Explicit_cartesian_grid_domain`
  */
 template <typename GeomTraits,
-          typename Gradient_ = Zero_gradient<GeomTraits> >
+          typename Gradient_ = Zero_gradient>
 Explicit_cartesian_grid_domain<GeomTraits, Gradient_>
 create_explicit_cartesian_grid_domain(const std::shared_ptr<Cartesian_grid_3<GeomTraits> > grid,
                                       const Gradient_& gradient = Gradient_())
 {
   using Domain = Explicit_cartesian_grid_domain<GeomTraits, Gradient_>;
 
-  using Topology = typename Domain::Topology ;
+  using Topology = typename Domain::Topology;
   using Geometry = typename Domain::Geometry;
   using Function = typename Domain::Function;
   using Gradient = typename Domain::Gradient;

@@ -57,7 +57,7 @@ public:
   static constexpr std::size_t EDGES_PER_CELL = Topology_::EDGES_PER_CELL;
 
 public:
-  // Create a base_domain from a topology, geometry, input function, and gradient
+  // creates a base_domain from a topology, geometry, input function, and gradient
   Base_domain(const Topology& topo,
               const Geometry& geom,
               const Function& func,
@@ -68,63 +68,63 @@ public:
         grad(grad)
   { }
 
-  // Get the position of vertex v
+  // gets the position of vertex `v`
   Point position(const Vertex_descriptor& v) const
   {
     return geom->operator()(v);
   }
 
-  // Get the value of the function at vertex v
+  // gets the value of the function at vertex `v`
   FT value(const Vertex_descriptor& v) const
   {
     return func->operator()(v);
   }
 
-  // Get the gradient at vertex v
+  // gets the gradient at vertex `v`
   Vector gradient(const Point& p) const
   {
     return grad->operator()(p);
   }
 
-  // Get a container with the two vertices incident to the edge e
+  // gets a container with the two vertices incident to the edge `e`
   Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const
   {
     return topo->edge_vertices(e);
   }
 
-  // Get a container with all cells incident to the edge e
+  // gets a container with all cells incident to the edge `e`
   Cells_incident_to_edge cells_incident_to_edge(const Edge_descriptor& e) const
   {
     return topo->cells_incident_to_edge(e);
   }
 
-  // Get a container with all vertices of the cell c
+  // gets a container with all vertices of the cell `c`
   Cell_vertices cell_vertices(const Cell_descriptor& c) const
   {
     return topo->cell_vertices(c);
   }
 
-  // Get a container with all edges of the cell c
+  // gets a container with all edges of the cell `c`
   Cell_edges cell_edges(const Cell_descriptor& c) const
   {
     return topo->cell_edges(c);
   }
 
-  // Iterate over all vertices v calling f(v) on every one
+  // iterates over all vertices `v`, calling `f(v)` on each of them
   template <typename Concurrency_tag, typename Functor>
   void iterate_vertices(Functor& f) const
   {
     topo->iterate_vertices(f, Concurrency_tag());
   }
 
-  // Iterate over all edges e calling f(e) on every one
+  // iterates over all edges `e`, calling `f(e)` on each of them
   template <typename Concurrency_tag, typename Functor>
   void iterate_edges(Functor& f) const
   {
     topo->iterate_edges(f, Concurrency_tag());
   }
 
-  // Iterate over all cells c calling f(c) on every one
+  // iterates over all cells `c`, calling `f(c)` on each of them
   template <typename Concurrency_tag, typename Functor>
   void iterate_cells(Functor& f) const
   {

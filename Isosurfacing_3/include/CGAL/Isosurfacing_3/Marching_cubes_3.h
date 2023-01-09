@@ -23,26 +23,24 @@ namespace Isosurfacing {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Creates a triangular indexed face set that represents an isosurface using the marching cubes algorithm.
+ * \brief creates a triangular indexed face set that represents an isosurface using the Marching Cubes algorithm.
  *
- * \details
+ * @todo summary; citation; link to user manual.
  *
- * \tparam ConcurrencyTag determines if the algorithm is executed sequentially or in parallel. Default is sequential.
- *
+ * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Parallel_if_available_tag`, `Parallel_tag`, or `Sequential_tag`.
  * \tparam Domain_ must be a model of `IsosurfacingDomain`.
- *
- * \tparam PointRange is a model of the concept `RandomAccessContainer` and `BackInsertionSequence` whose value type can
- * be constructed from the point type of the domain.
- *
- * \tparam PolygonRange a model of the concept
- * `RandomAccessContainer` and `BackInsertionSequence` whose value type is itself a model of the concepts
- * `RandomAccessContainer` and `BackInsertionSequence` whose value type is `std::size_t`.
+ * \tparam PointRange must be a model of the concept `RandomAccessContainer` and `BackInsertionSequence`
+ *                    whose value type can be constructed from the point type of the domain.
+ * \tparam PolygonRange must be a model of the concept `RandomAccessContainer` and `BackInsertionSequence`
+ *                      whose value type is itself a model of the concepts `RandomAccessContainer`
+ *                      and `BackInsertionSequence` whose value type is `std::size_t`.
  *
  * \param domain the domain providing input data and its topology
  * \param isovalue value of the isosurface
  * \param points points of the triangles in the created indexed face set
  * \param triangles each element in the vector describes a triangle using the indices of the points in `points`
- * \param topologically_correct decides whether the topologically correct variant of Marching Cubes should be used
+ * \param topologically_correct whether the topologically correct variant of Marching Cubes should be used
  */
 template <typename Concurrency_tag = Sequential_tag,
           typename Domain_,

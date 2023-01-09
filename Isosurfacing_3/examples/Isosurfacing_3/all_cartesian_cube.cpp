@@ -17,7 +17,7 @@ using Grid = CGAL::Cartesian_grid_3<Kernel>;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-// return 1.0 if value has positive sign, and -1.0 otherwise
+// return 1.0 if `value` has positive sign, and -1.0 otherwise
 FT sign(FT value)
 {
   return (value > 0.0) - (value < 0.0);
@@ -25,7 +25,7 @@ FT sign(FT value)
 
 int main()
 {
-  // create a cartesian grid with 7^3 grid points and the bounding box [-1, 1]^3
+  // create a Cartesian grid with 7^3 grid points and the bounding box [-1, 1]^3
   const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0,  1.0, 1.0, 1.0);
   std::shared_ptr<Grid> grid = std::make_shared<Grid>(7, 7, 7, bbox);
 
@@ -74,7 +74,7 @@ int main()
   Point_range points_mc, points_dc;
   Polygon_range polygons_mc, polygons_dc;
 
-  // run topologically correct marching cubes and dual contouring with given isovalue
+  // run topologically correct Marching Cubes and Dual Contouring with given isovalue
   const FT isovalue = 0.88;
   CGAL::Isosurfacing::marching_cubes(domain, isovalue, points_mc, polygons_mc, true);
   CGAL::Isosurfacing::dual_contouring(domain, isovalue, points_dc, polygons_dc);

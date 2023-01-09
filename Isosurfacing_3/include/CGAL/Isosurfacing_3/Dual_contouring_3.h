@@ -25,23 +25,22 @@ namespace Isosurfacing {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Creates an indexed face set that represents an isosurface using the Dual Contouring algorithm.
+ * \brief creates an indexed face set that represents an isosurface using the Dual Contouring algorithm.
  *
- * \details
+ * @todo summary; citation; link to user manual.
+ * @todo Positioning requirements are not clear, need a concept or not be documented
  *
- * \tparam ConcurrencyTag determines if the algorithm is executed sequentially or in parallel. Default is sequential.
- *
+ * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Parallel_if_available_tag`, `Parallel_tag`, or `Sequential_tag`.
  * \tparam Domain_ must be a model of `IsosurfacingDomainWithGradient`.
- *
- * \tparam PointRange is a model of the concept `RandomAccessContainer` and `BackInsertionSequence` whose value type can
- * be constructed from the point type of the domain.
- *
- * \tparam PolygonRange a model of the concept
- * `RandomAccessContainer` and `BackInsertionSequence` whose value type is itself a model of the concepts
- * `RandomAccessContainer` and `BackInsertionSequence` whose value type is `std::size_t`.
- *
- * \tparam Positioning is a functor containing the function `position` that takes `domain`, `isovalue`, `cell`, and `position`
- * as input and returns a boolean that is `true` if the isosurface intersects the cell.
+ * \tparam PointRange must be a model of the concept `RandomAccessContainer` and `BackInsertionSequence`
+ *                    whose value type can be constructed from the point type of the domain.
+ * \tparam PolygonRange must be a model of the concept `RandomAccessContainer` and `BackInsertionSequence`
+ *                      whose value type is itself a model of the concepts `RandomAccessContainer`
+ *                      and `BackInsertionSequence` whose value type is `std::size_t`.
+ * \tparam Positioning is a functor containing the function `position` that takes `domain`, `isovalue`,
+ *                     `cell`, and `position` as input and returns a boolean that is `true`
+ *                     if the isosurface intersects the cell.
  *
  * \param domain the domain providing input data and its topology
  * \param isovalue value of the isosurface

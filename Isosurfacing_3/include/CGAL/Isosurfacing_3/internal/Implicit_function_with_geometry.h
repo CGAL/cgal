@@ -36,14 +36,14 @@ public:
   using Point_function = std::shared_ptr<PointFunction>;
 
 public:
-  // Create a function that uses the geometry to evaluate the function at vertex positions.
+  // creates a function that uses the geometry to evaluate the function at vertex positions.
   Implicit_function_with_geometry(const Geometry& geom,
                                   const Point_function& func)
     : geom(geom),
       func(func)
   { }
 
-  // Get the value of the function at vertex v
+  // gets the value of the function at vertex `v`
   template <typename VertexDescriptor>
   FT operator()(const VertexDescriptor& v) const
   {
