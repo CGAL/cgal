@@ -38,7 +38,7 @@ public:
   using Point = typename Geom_traits::Point_3;
   using Vector = typename Geom_traits::Vector_3;
 
-  using Topology = std::shared_ptr<Topology_>;
+  using Topology = Topology_;
   using Vertex_descriptor = typename Topology_::Vertex_descriptor;
   using Edge_descriptor = typename Topology_::Edge_descriptor;
   using Cell_descriptor = typename Topology_::Cell_descriptor;
@@ -48,9 +48,9 @@ public:
   using Cell_vertices = typename Topology_::Cell_vertices;
   using Cell_edges = typename Topology_::Cell_edges;
 
-  using Geometry = std::shared_ptr<Geometry_>;
-  using Function = std::shared_ptr<Function_>;
-  using Gradient = std::shared_ptr<Gradient_>;
+  using Geometry = Geometry_;
+  using Function = Function_;
+  using Gradient = Gradient_;
 
   static constexpr Cell_type CELL_TYPE = Topology_::CELL_TYPE;
   static constexpr std::size_t VERTICES_PER_CELL = Topology_::VERTICES_PER_CELL;
@@ -71,64 +71,64 @@ public:
   // gets the position of vertex `v`
   Point position(const Vertex_descriptor& v) const
   {
-    return geom->operator()(v);
+    return geom.operator()(v);
   }
 
   // gets the value of the function at vertex `v`
   FT value(const Vertex_descriptor& v) const
   {
-    return func->operator()(v);
+    return func.operator()(v);
   }
 
   // gets the gradient at vertex `v`
   Vector gradient(const Point& p) const
   {
-    return grad->operator()(p);
+    return grad.operator()(p);
   }
 
   // gets a container with the two vertices incident to the edge `e`
   Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const
   {
-    return topo->edge_vertices(e);
+    return topo.edge_vertices(e);
   }
 
   // gets a container with all cells incident to the edge `e`
   Cells_incident_to_edge cells_incident_to_edge(const Edge_descriptor& e) const
   {
-    return topo->cells_incident_to_edge(e);
+    return topo.cells_incident_to_edge(e);
   }
 
   // gets a container with all vertices of the cell `c`
   Cell_vertices cell_vertices(const Cell_descriptor& c) const
   {
-    return topo->cell_vertices(c);
+    return topo.cell_vertices(c);
   }
 
   // gets a container with all edges of the cell `c`
   Cell_edges cell_edges(const Cell_descriptor& c) const
   {
-    return topo->cell_edges(c);
+    return topo.cell_edges(c);
   }
 
   // iterates over all vertices `v`, calling `f(v)` on each of them
   template <typename Concurrency_tag, typename Functor>
   void iterate_vertices(Functor& f) const
   {
-    topo->iterate_vertices(f, Concurrency_tag());
+    topo.iterate_vertices(f, Concurrency_tag());
   }
 
   // iterates over all edges `e`, calling `f(e)` on each of them
   template <typename Concurrency_tag, typename Functor>
   void iterate_edges(Functor& f) const
   {
-    topo->iterate_edges(f, Concurrency_tag());
+    topo.iterate_edges(f, Concurrency_tag());
   }
 
   // iterates over all cells `c`, calling `f(c)` on each of them
   template <typename Concurrency_tag, typename Functor>
   void iterate_cells(Functor& f) const
   {
-    topo->iterate_cells(f, Concurrency_tag());
+    topo.iterate_cells(f, Concurrency_tag());
   }
 
 private:

@@ -67,30 +67,30 @@ int main(int, char**)
   CGAL::Side_of_triangle_mesh<Mesh, CGAL::GetGeomTraits<Mesh>::type> sotm(mesh_input);
 
   // create grid
-  std::shared_ptr<Grid> grid = std::make_shared<Grid>(n_voxels, n_voxels, n_voxels, aabb_grid);
+  Grid grid { n_voxels, n_voxels, n_voxels, aabb_grid };
 
-  for(std::size_t z=0; z<grid->zdim(); ++z) {
-    for(std::size_t y=0; y<grid->ydim(); ++y) {
-      for(std::size_t x=0; x<grid->xdim(); ++x)
+  for(std::size_t z=0; z<grid.zdim(); ++z) {
+    for(std::size_t y=0; y<grid.ydim(); ++y) {
+      for(std::size_t x=0; x<grid.xdim(); ++x)
       {
-        const FT pos_x = x * grid->get_spacing()[0] + grid->get_bbox().xmin();
-        const FT pos_y = y * grid->get_spacing()[1] + grid->get_bbox().ymin();
-        const FT pos_z = z * grid->get_spacing()[2] + grid->get_bbox().zmin();
+        const FT pos_x = x * grid.get_spacing()[0] + grid.get_bbox().xmin();
+        const FT pos_y = y * grid.get_spacing()[1] + grid.get_bbox().ymin();
+        const FT pos_z = z * grid.get_spacing()[2] + grid.get_bbox().zmin();
         const Point p(pos_x, pos_y, pos_z);
 
         // compute unsigned distance to input mesh
-        grid->value(x, y, z) = distance_to_mesh(tree, p);
+        grid.value(x, y, z) = distance_to_mesh(tree, p);
 
         // sign distance so that it is negative inside the mesh
         const bool is_inside = (sotm(p) == CGAL::ON_BOUNDED_SIDE);
         if(is_inside)
-          grid->value(x, y, z) *= -1.0;
+          grid.value(x, y, z) *= -1.0;
       }
     }
   }
 
   // create domain from the grid
-  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
+  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain(grid);
 
   // containers for output indexed triangle soup
   Point_range points;

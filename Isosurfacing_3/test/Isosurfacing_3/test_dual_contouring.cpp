@@ -44,17 +44,17 @@ int main(int, char**)
   const std::size_t ny = static_cast<std::size_t>(2.0 / spacing.y());
   const std::size_t nz = static_cast<std::size_t>(2.0 / spacing.z());
 
-  std::shared_ptr<Grid> grid = std::make_shared<Grid>(nx, ny, nz, bbox);
+  Grid grid { nx, ny, nz, bbox };
 
-  for(std::size_t x=0; x<grid->xdim(); ++x) {
-    for(std::size_t y=0; y<grid->ydim(); ++y) {
-      for(std::size_t z=0; z<grid->zdim(); ++z)
+  for(std::size_t x=0; x<grid.xdim(); ++x) {
+    for(std::size_t y=0; y<grid.ydim(); ++y) {
+      for(std::size_t z=0; z<grid.zdim(); ++z)
       {
         const Point pos(x * spacing.x() + bbox.xmin(),
                         y * spacing.y() + bbox.ymin(),
                         z * spacing.z() + bbox.zmin());
 
-        grid->value(x, y, z) = sphere_function(pos);
+        grid.value(x, y, z) = sphere_function(pos);
       }
     }
   }

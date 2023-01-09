@@ -29,10 +29,10 @@ int main(int, char**)
   }
 
   // convert image to a Cartesian grid
-  std::shared_ptr<Grid> grid = std::make_shared<Grid>(image);
+  Grid grid { image };
 
   // create a domain from the grid
-  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
+  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain(grid);
 
   // prepare collections for the output indexed mesh
   Point_range points;

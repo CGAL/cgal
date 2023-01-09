@@ -32,8 +32,8 @@ public:
   using Geom_traits = GeomTraits;
   using FT = typename Geom_traits::FT;
 
-  using Geometry = std::shared_ptr<Geometry_>;
-  using Point_function = std::shared_ptr<PointFunction>;
+  using Geometry = Geometry_;
+  using Point_function = PointFunction;
 
 public:
   // creates a function that uses the geometry to evaluate the function at vertex positions.
@@ -47,7 +47,7 @@ public:
   template <typename VertexDescriptor>
   FT operator()(const VertexDescriptor& v) const
   {
-    return func->operator()(geom->operator()(v));
+    return func.operator()(geom.operator()(v));
   }
 
 private:

@@ -23,25 +23,25 @@ int main(int, char**)
 {
   // create a Cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
   const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
-  std::shared_ptr<Grid> grid = std::make_shared<Grid>(50, 50, 50, bbox);
+  Grid grid { 50, 50, 50, bbox };
 
   // compute and store function values at all grid points
-  for(std::size_t x=0; x<grid->xdim(); ++x) {
-    for(std::size_t y=0; y<grid->ydim(); ++y) {
-      for(std::size_t z=0; z<grid->zdim(); ++z)
+  for(std::size_t x=0; x<grid.xdim(); ++x) {
+    for(std::size_t y=0; y<grid.ydim(); ++y) {
+      for(std::size_t z=0; z<grid.zdim(); ++z)
       {
-        const FT pos_x = x * grid->get_spacing()[0] + bbox.xmin();
-        const FT pos_y = y * grid->get_spacing()[1] + bbox.ymin();
-        const FT pos_z = z * grid->get_spacing()[2] + bbox.zmin();
+        const FT pos_x = x * grid.get_spacing()[0] + bbox.xmin();
+        const FT pos_y = y * grid.get_spacing()[1] + bbox.ymin();
+        const FT pos_z = z * grid.get_spacing()[2] + bbox.zmin();
 
         // Euclidean distance to the origin
-        grid->value(x, y, z) = std::sqrt(pos_x * pos_x + pos_y * pos_y + pos_z * pos_z);
+        grid.value(x, y, z) = std::sqrt(pos_x * pos_x + pos_y * pos_y + pos_z * pos_z);
       }
     }
   }
 
   // create a domain from the grid
-  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
+  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain(grid);
 
   // prepare collections for the result
   Point_range points;

@@ -63,7 +63,7 @@ using Explicit_cartesian_grid_domain =
 template <typename GeomTraits,
           typename Gradient_ = Zero_gradient>
 Explicit_cartesian_grid_domain<GeomTraits, Gradient_>
-create_explicit_cartesian_grid_domain(const std::shared_ptr<Cartesian_grid_3<GeomTraits> > grid,
+create_explicit_cartesian_grid_domain(const Cartesian_grid_3<GeomTraits>& grid,
                                       const Gradient_& gradient = Gradient_())
 {
   using Domain = Explicit_cartesian_grid_domain<GeomTraits, Gradient_>;
@@ -73,21 +73,20 @@ create_explicit_cartesian_grid_domain(const std::shared_ptr<Cartesian_grid_3<Geo
   using Function = typename Domain::Function;
   using Gradient = typename Domain::Gradient;
 
-  const std::size_t size_i = grid->xdim();
-  const std::size_t size_j = grid->ydim();
-  const std::size_t size_k = grid->zdim();
+  const std::size_t size_i = grid.xdim();
+  const std::size_t size_j = grid.ydim();
+  const std::size_t size_k = grid.zdim();
 
-  const Bbox_3& bbox = grid->get_bbox();
+  const Bbox_3& bbox = grid.get_bbox();
   const typename GeomTraits::Vector_3 offset(bbox.xmin(), bbox.ymin(), bbox.zmin());
-  const typename GeomTraits::Vector_3 spacing = grid->get_spacing();
+  const typename GeomTraits::Vector_3 spacing = grid.get_spacing();
 
-  // create copies as shared_ptr for safe memory management
-  const Topology topo = std::make_shared<Topology::element_type>(size_i, size_j, size_k);
-  const Geometry geom = std::make_shared<Geometry::element_type>(offset, spacing);
-  const Function func = grid;
-  const Gradient grad = std::make_shared<Gradient::element_type>(gradient);
+  const Topology topo { size_i, size_j, size_k };
+  const Geometry geom { offset, spacing };
+  const Function func { grid };
+  const Gradient grad { gradient };
 
-  return Domain(topo, geom, func, grad);
+  return { topo, geom, func, grad };
 }
 
 } // namespace Isosurfacing

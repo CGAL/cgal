@@ -87,7 +87,7 @@ create_implicit_cartesian_grid_domain(const Bbox_3& bbox,
   using Geometry = typename Domain::Geometry;
   using Function = typename Domain::Function;
   using Gradient = typename Domain::Gradient;
-  using Point_function = typename Function::element_type::Point_function;
+  using Point_function = PointFunction;
 
   // calculate grid dimensions
   const std::size_t size_i = std::ceil(bbox.x_span() / spacing.x()) + 1;
@@ -96,14 +96,13 @@ create_implicit_cartesian_grid_domain(const Bbox_3& bbox,
 
   const typename GeomTraits::Vector_3 offset(bbox.xmin(), bbox.ymin(), bbox.zmin());
 
-  // create copies as shared_ptr for safe memory management
-  const Topology topo = std::make_shared<Topology::element_type>(size_i, size_j, size_k);
-  const Geometry geom = std::make_shared<Geometry::element_type>(offset, spacing);
-  const Point_function point_func = std::make_shared<Point_function::element_type>(point_function);
-  const Function func = std::make_shared<Function::element_type>(geom, point_func);
-  const Gradient grad = std::make_shared<Gradient::element_type>(gradient);
+  const Topology topo { size_i, size_j, size_k };
+  const Geometry geom { offset, spacing };
+  const Point_function point_func { point_function };
+  const Function func { geom, point_func };
+  const Gradient grad { gradient };
 
-  return Domain(topo, geom, func, grad);
+  return { topo, geom, func, grad };
 }
 
 } // namespace Isosurfacing
