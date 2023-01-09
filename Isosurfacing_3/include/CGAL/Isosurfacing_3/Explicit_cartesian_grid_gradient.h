@@ -41,7 +41,7 @@ public:
   using Point = typename Geom_traits::Point_3;
   using Vector = typename Geom_traits::Vector_3;
 
-  using Grid = std::shared_ptr<Cartesian_grid_3<Geom_traits> >;
+  using Grid = Cartesian_grid_3<Geom_traits>;
 
 public:
   /**
@@ -65,20 +65,20 @@ public:
   Vector operator()(const Point& point) const
   {
     // trilinear interpolation of stored gradients
-    const Bbox_3& bbox = grid->get_bbox();
-    const Vector& spacing = grid->get_spacing();
+    const Bbox_3& bbox = grid.get_bbox();
+    const Vector& spacing = grid.get_spacing();
 
     // calculate min index including border case
     std::size_t min_i = (point.x() - bbox.xmin()) / spacing.x();
     std::size_t min_j = (point.y() - bbox.ymin()) / spacing.y();
     std::size_t min_k = (point.z() - bbox.zmin()) / spacing.z();
-    if(min_i == grid->xdim() - 1)
+    if(min_i == grid.xdim() - 1)
       --min_i;
 
-    if(min_j == grid->ydim() - 1)
+    if(min_j == grid.ydim() - 1)
       --min_j;
 
-    if(min_k == grid->zdim() - 1)
+    if(min_k == grid.zdim() - 1)
       --min_k;
 
     // calculate coordinates of min index
@@ -92,14 +92,14 @@ public:
     const FT f_k = (point.z() - min_z) / spacing.z();
 
     // read the gradient at all 8 corner points
-    const Vector g000 = grid->gradient(min_i + 0, min_j + 0, min_k + 0);
-    const Vector g001 = grid->gradient(min_i + 0, min_j + 0, min_k + 1);
-    const Vector g010 = grid->gradient(min_i + 0, min_j + 1, min_k + 0);
-    const Vector g011 = grid->gradient(min_i + 0, min_j + 1, min_k + 1);
-    const Vector g100 = grid->gradient(min_i + 1, min_j + 0, min_k + 0);
-    const Vector g101 = grid->gradient(min_i + 1, min_j + 0, min_k + 1);
-    const Vector g110 = grid->gradient(min_i + 1, min_j + 1, min_k + 0);
-    const Vector g111 = grid->gradient(min_i + 1, min_j + 1, min_k + 1);
+    const Vector g000 = grid.gradient(min_i + 0, min_j + 0, min_k + 0);
+    const Vector g001 = grid.gradient(min_i + 0, min_j + 0, min_k + 1);
+    const Vector g010 = grid.gradient(min_i + 0, min_j + 1, min_k + 0);
+    const Vector g011 = grid.gradient(min_i + 0, min_j + 1, min_k + 1);
+    const Vector g100 = grid.gradient(min_i + 1, min_j + 0, min_k + 0);
+    const Vector g101 = grid.gradient(min_i + 1, min_j + 0, min_k + 1);
+    const Vector g110 = grid.gradient(min_i + 1, min_j + 1, min_k + 0);
+    const Vector g111 = grid.gradient(min_i + 1, min_j + 1, min_k + 1);
 
     // interpolate along all axes by weighting the corner points
     const Vector g0 = g000 * (1 - f_i) * (1 - f_j) * (1 - f_k);
@@ -116,7 +116,7 @@ public:
   }
 
 private:
-  const Grid grid;
+  const Grid& grid;
 };
 
 } // namespace Isosurfacing

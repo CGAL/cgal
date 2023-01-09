@@ -32,11 +32,10 @@ class Octree_topology
 {
 public:
   using Geom_traits = GeomTraits;
-  using Octree_ = Octree_wrapper<Geom_traits>;
-  using Octree = std::shared_ptr<Octree_wrapper<Geom_traits> >;
-  using Vertex_descriptor = typename Octree_::Vertex_handle;
-  using Edge_descriptor = typename Octree_::Edge_handle;
-  using Cell_descriptor = typename Octree_::Voxel_handle;
+  using Octree = Octree_wrapper<Geom_traits>;
+  using Vertex_descriptor = typename Octree::Vertex_handle;
+  using Edge_descriptor = typename Octree::Edge_handle;
+  using Cell_descriptor = typename Octree::Voxel_handle;
 
   static constexpr Cell_type CELL_TYPE = CUBICAL_CELL;
   static constexpr std::size_t VERTICES_PER_CELL = 8;
@@ -54,42 +53,42 @@ public:
 
   Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const
   {
-    return octree->edge_vertices(e);
+    return octree.edge_vertices(e);
   }
 
   Cells_incident_to_edge cells_incident_to_edge(const Edge_descriptor& e) const
   {
-    return octree->edge_voxels(e);
+    return octree.edge_voxels(e);
   }
 
   Cell_vertices cell_vertices(const Cell_descriptor& c) const
   {
-    return octree->voxel_vertices(c);
+    return octree.voxel_vertices(c);
   }
 
   Cell_edges cell_edges(const Cell_descriptor& c) const
   {
-    return octree->voxel_edges(c);
+    return octree.voxel_edges(c);
   }
 
   template <typename Functor>
   void iterate_vertices(Functor& f, Sequential_tag) const
   {
-    for(const Vertex_descriptor& v : octree->leaf_vertices())
+    for(const Vertex_descriptor& v : octree.leaf_vertices())
       f(v);
   }
 
   template <typename Functor>
   void iterate_edges(Functor& f, Sequential_tag) const
   {
-    for(const Edge_descriptor& e : octree->leaf_edges())
+    for(const Edge_descriptor& e : octree.leaf_edges())
       f(e);
   }
 
   template <typename Functor>
   void iterate_cells(Functor& f, Sequential_tag) const
   {
-    for(const Cell_descriptor& v : octree->leaf_voxels())
+    for(const Cell_descriptor& v : octree.leaf_voxels())
       f(v);
   }
 
@@ -97,7 +96,7 @@ public:
   template <typename Functor>
   void iterate_vertices(Functor& f, Parallel_tag) const
   {
-    const auto& vertices = octree->leaf_vertices();
+    const auto& vertices = octree.leaf_vertices();
 
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
     {
@@ -111,7 +110,7 @@ public:
   template <typename Functor>
   void iterate_edges(Functor& f, Parallel_tag) const
   {
-    const auto& edges = octree->leaf_edges();
+    const auto& edges = octree.leaf_edges();
 
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
     {
@@ -125,7 +124,7 @@ public:
   template <typename Functor>
   void iterate_cells(Functor& f, Parallel_tag) const
   {
-    const auto& cells = octree->leaf_voxels();
+    const auto& cells = octree.leaf_voxels();
 
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
     {
@@ -138,7 +137,7 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
 
 private:
-  const Octree octree;
+  const Octree& octree;
 };
 
 } // namespace internal

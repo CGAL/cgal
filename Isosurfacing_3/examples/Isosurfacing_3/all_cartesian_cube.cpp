@@ -27,19 +27,19 @@ int main(int, char**)
 {
   // create a Cartesian grid with 7^3 grid points and the bounding box [-1, 1]^3
   const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0,  1.0, 1.0, 1.0);
-  std::shared_ptr<Grid> grid = std::make_shared<Grid>(7, 7, 7, bbox);
+  Grid grid { 7, 7, 7, bbox };
 
   // calculate the value at all grid points
-  for(std::size_t x=0; x<grid->xdim(); ++x) {
-    for(std::size_t y=0; y<grid->ydim(); ++y) {
-      for(std::size_t z=0; z<grid->zdim(); ++z)
+  for(std::size_t x=0; x<grid.xdim(); ++x) {
+    for(std::size_t y=0; y<grid.ydim(); ++y) {
+      for(std::size_t z=0; z<grid.zdim(); ++z)
       {
-        const FT pos_x = x * grid->get_spacing()[0] + bbox.xmin();
-        const FT pos_y = y * grid->get_spacing()[1] + bbox.ymin();
-        const FT pos_z = z * grid->get_spacing()[2] + bbox.zmin();
+        const FT pos_x = x * grid.get_spacing()[0] + bbox.xmin();
+        const FT pos_y = y * grid.get_spacing()[1] + bbox.ymin();
+        const FT pos_z = z * grid.get_spacing()[2] + bbox.zmin();
 
         // L_inf distance to the origin
-        grid->value(x, y, z) = std::max({std::abs(pos_x), std::abs(pos_y), std::abs(pos_z)});
+        grid.value(x, y, z) = (std::max)({std::abs(pos_x), std::abs(pos_y), std::abs(pos_z)});
       }
     }
   }
@@ -48,7 +48,7 @@ int main(int, char**)
   auto cube_gradient = [](const Point& p)
   {
     // the normal depends on the side of the cube
-    const FT max_value = std::max({std::abs(p.x()), std::abs(p.y()), std::abs(p.z())});
+    const FT max_value = (std::max)({std::abs(p.x()), std::abs(p.y()), std::abs(p.z())});
 
     Vector g(0.0, 0.0, 0.0);
     if(max_value == std::abs(p.x()))

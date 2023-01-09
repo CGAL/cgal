@@ -30,7 +30,7 @@ public:
   using Geom_traits = GeomTraits;
   using Point = typename Geom_traits::Point_3;
 
-  using Octree = std::shared_ptr<Octree_wrapper<Geom_traits> >;
+  using Octree = Octree_wrapper<Geom_traits>;
 
   using Vertex_descriptor = typename Octree_topology<Geom_traits>::Vertex_descriptor;
 
@@ -41,11 +41,11 @@ public:
 
   Point operator()(const Vertex_descriptor& v) const
   {
-    return octree->point(v);
+    return octree.point(v);
   }
 
 private:
-  const Octree octree;
+  const Octree& octree;
 };
 
 } // namespace internal

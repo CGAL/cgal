@@ -18,11 +18,11 @@
 #include <CGAL/Isosurfacing_3/internal/Tables.h>
 #include <CGAL/tags.h>
 
-#include <array>
-
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #endif // CGAL_LINKED_WITH_TBB
+
+#include <array>
 
 namespace CGAL {
 namespace Isosurfacing {

@@ -73,7 +73,7 @@ template <typename GeomTraits,
           typename PointFunction,
           typename Gradient_ = Zero_gradient>
 Implicit_octree_domain<GeomTraits, PointFunction, Gradient_>
-create_implicit_octree_domain(const std::shared_ptr<internal::Octree_wrapper<GeomTraits> > octree,
+create_implicit_octree_domain(const internal::Octree_wrapper<GeomTraits>& octree,
                               const PointFunction& point_function,
                               const Gradient_& gradient = Gradient_())
 {
@@ -83,17 +83,16 @@ create_implicit_octree_domain(const std::shared_ptr<internal::Octree_wrapper<Geo
   using Geometry = typename Domain::Geometry;
   using Function = typename Domain::Function;
   using Gradient = typename Domain::Gradient;
-  using Point_function = typename Function::element_type::Point_function;
-  using Octree = typename Topology::element_type::Octree;
+  using Point_function = PointFunction;
+  using Octree = internal::Octree_wrapper<GeomTraits>;
 
-  const Octree oct = octree;
-  const Topology topo = std::make_shared<Topology::element_type>(oct);
-  const Geometry geom = std::make_shared<Geometry::element_type>(oct);
-  const Point_function point_func = std::make_shared<Point_function::element_type>(point_function);
-  const Function func = std::make_shared<Function::element_type>(geom, point_func);
-  const Gradient grad = std::make_shared<Gradient::element_type>(gradient);
+  const Topology topo { octree };
+  const Geometry geom { octree };
+  const Point_function point_func { point_function };
+  const Function func { geom, point_func };
+  const Gradient grad { gradient };
 
-  return Domain(topo, geom, func, grad);
+  return { topo, geom, func, grad };
 }
 
 } // namespace Isosurfacing

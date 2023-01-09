@@ -19,7 +19,7 @@ using Point = typename Kernel::Point_3;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-using Octree_wrapper_ = CGAL::Isosurfacing::internal::Octree_wrapper<Kernel>;
+using Octree_wrapper = CGAL::Isosurfacing::internal::Octree_wrapper<Kernel>;
 
 struct Refine_one_eighth
 {
@@ -28,11 +28,11 @@ struct Refine_one_eighth
 
   std::size_t octree_dim_;
 
-  Octree_wrapper_::Uniform_coords uniform_coordinates(const Octree_wrapper_::Octree::Node& node) const
+  Octree_wrapper::Uniform_coords uniform_coordinates(const Octree_wrapper::Octree::Node& node) const
   {
     auto coords = node.global_coordinates();
     const std::size_t depth_factor = std::size_t(1) << (max_depth_ - node.depth());
-    for(int i=0; i < Octree_wrapper_::Octree::Node::Dimension::value; ++i)
+    for(int i=0; i < Octree_wrapper::Octree::Node::Dimension::value; ++i)
       coords[i] *= uint32_t(depth_factor);
 
     return coords;
@@ -46,7 +46,7 @@ struct Refine_one_eighth
     octree_dim_ = std::size_t(1) << max_depth_;
   }
 
-  bool operator()(const Octree_wrapper_::Octree::Node& n) const
+  bool operator()(const Octree_wrapper::Octree::Node& n) const
   {
     // n.depth()
     if(n.depth() < min_depth_)
@@ -73,10 +73,10 @@ struct Refine_one_eighth
 int main(int, char**)
 {
   const CGAL::Bbox_3 bbox(-1., -1., -1., 1., 1., 1.);
-  std::shared_ptr<Octree_wrapper_> octree_wrap = std::make_shared<Octree_wrapper_>(bbox);
+  Octree_wrapper octree_wrap { bbox };
 
   Refine_one_eighth split_predicate(3, 4);
-  octree_wrap->refine(split_predicate);
+  octree_wrap.refine(split_predicate);
 
   auto sphere_function = [&](const Point& p)
   {
