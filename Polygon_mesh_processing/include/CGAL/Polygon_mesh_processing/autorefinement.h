@@ -54,13 +54,10 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
 {
   typedef CGAL::Projection_traits_3<EK> P_traits;
   typedef CGAL::Exact_intersections_tag Itag;
-  //typedef CGAL::No_constraint_intersection_requiring_constructions_tag Itag;
 
-
-  //typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, Default, Itag> CDT_base;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, Default, Itag> CDT_2;
   //typedef CGAL::Constrained_triangulation_plus_2<CDT_base> CDT;
-
-  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, Default, Itag> CDT;
+  typedef CDT_2 CDT;
 
   typename EK::Vector_3 n = normal(t[0], t[1], t[2]);
   //~ bool orientation_flipped = false;
@@ -100,11 +97,9 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
   typename CDT::Vertex_handle v = cdt.tds().insert_dim_up(cdt.infinite_vertex(), false);
   v->set_point(t[2]);
 
-  for (const typename EK::Segment_3& s : segments)
-    cdt.insert_constraint(s[0], s[1]);
+  cdt.insert_constraints(segments.begin(), segments.end());
+  cdt.insert(points.begin(), points.end());
 
-  for (const typename EK::Point_3& p : points)
-    cdt.insert(p);
 
   //~ if (orientation_flipped)
     //~ for (typename CDT::Face_handle fh : cdt.finite_face_handles())
