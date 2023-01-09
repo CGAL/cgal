@@ -49,8 +49,8 @@ namespace internal {
 
 namespace Cube_table {
 /*
- * Naming convention from "A parallel dual marching cubes approach to quad only surface reconstruction - Grosso &
- * Zint"
+ * Naming convention from "A parallel dual marching cubes approach
+ * to quad only surface reconstruction - Grosso & Zint"
  *
  *        ^ y
  *        |
@@ -126,7 +126,7 @@ constexpr int local_vertex_position[N_VERTICES][3] =
   {1, 1, 1}   // v7
 };
 
-// edges are uniquely characterized by the two end vertices, which have a unique vertex id
+// Edges are uniquely characterized by the two end vertices, which have a unique vertex id
 // the end vertices of the edge are computed in the cell by giving the indices (i,j,k).
 // These indices are obtained from the cell index by adding 0 or 1 to i, j or k respectively
 // Example: edge 0: (i,j,k) - (i+1,j,k)

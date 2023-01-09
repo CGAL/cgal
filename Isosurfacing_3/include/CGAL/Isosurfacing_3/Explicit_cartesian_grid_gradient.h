@@ -30,7 +30,7 @@ namespace Isosurfacing {
  *
  * \details The gradient at any point is calculated using trilinear interpolation.
  *
- * \tparam GeomTraits the traits for this gradient.
+ * \tparam GeomTraits must be a model of ``.
  */
 template <typename GeomTraits>
 class Explicit_cartesian_grid_gradient
@@ -47,9 +47,9 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Create a new instance of this gradient.
+   * \brief creates a new instance of this gradient.
    *
-   * \param grid the cartesian grid that stores the gradient
+   * \param grid the Cartesian grid that stores the gradient
    */
   Explicit_cartesian_grid_gradient(const Grid& grid)
     : grid(grid)
@@ -58,14 +58,13 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Evaluate the gradient at a point in space.
+   * \brief evaluates the gradient at a point in space.
    *
-   * \param point the point at which the gradient is computed
+   * \param point the position at which the gradient is computed
    */
   Vector operator()(const Point& point) const
   {
     // trilinear interpolation of stored gradients
-
     const Bbox_3& bbox = grid->get_bbox();
     const Vector& spacing = grid->get_spacing();
 
@@ -81,7 +80,6 @@ public:
 
     if(min_k == grid->zdim() - 1)
       --min_k;
-
 
     // calculate coordinates of min index
     const FT min_x = min_i * spacing.x() + bbox.xmin();

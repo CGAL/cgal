@@ -20,8 +20,8 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-// Describes the geometry of a regular cartesian grid. Positions are not stored but calculated
-// from an offset and grid spacing.
+// describes the geometry of a regular Cartesian grid.
+// Positions are not stored but calculated from an offset and grid spacing.
 template <typename GeomTraits>
 class Cartesian_grid_geometry
 {
@@ -33,15 +33,15 @@ public:
   using Vertex_descriptor = typename Grid_topology::Vertex_descriptor;
 
 public:
-  // Create a regular grid geometry where offset is the position of the vertex with index (0, 0, 0)
-  // and spacing the distance between two connected vertices in each dimension.
+  // creates a regular grid geometry where `offset` is the position of the vertex with index `(0, 0, 0)`
+  // and `spacing` the distance between two connected vertices in each dimension.
   Cartesian_grid_geometry(const Vector& offset,
                           const Vector& spacing)
     : offset(offset),
       spacing(spacing)
   { }
 
-  // Get the position of vertex v
+  // gets the position of vertex `v`
   Point operator()(const Vertex_descriptor& v) const
   {
     return Point(v[0] * spacing[0],

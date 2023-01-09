@@ -21,7 +21,7 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 
 int main()
 {
-  // create a cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
+  // create a Cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
   const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
   std::shared_ptr<Grid> grid = std::make_shared<Grid>(50, 50, 50, bbox);
 

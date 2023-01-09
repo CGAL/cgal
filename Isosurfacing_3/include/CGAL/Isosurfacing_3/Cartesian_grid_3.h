@@ -27,9 +27,9 @@ namespace CGAL {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Stores scalar values and gradients at points of a cartesian grid.
+ * \brief stores scalar values and gradients at the vertices of a Cartesian grid.
  *
- * \tparam GeomTraits the traits type
+ * \tparam GeomTraits must be a model of ``.
  */
 template <typename GeomTraits>
 class Cartesian_grid_3
@@ -45,13 +45,16 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Create a grid with `xdim * ydim * zdim` grid points.
+   * \brief creates a grid with `xdim * ydim * zdim` grid vertices.
+   *
    * The grid covers the space described by a bounding box.
    *
-   * \param xdim the number of grid points in x direction
-   * \param ydim the number of grid points in y direction
-   * \param zdim the number of grid points in z direction
+   * \param xdim the number of grid vertices in the `x` direction
+   * \param ydim the number of grid vertices in the `y` direction
+   * \param zdim the number of grid vertices in the `z` direction
    * \param bbox the bounding box
+   *
+   * \pre `xdim`, `ydim`, and `zdim` are (strictly) positive.
    */
   Cartesian_grid_3(const std::size_t xdim,
                    const std::size_t ydim,
@@ -74,9 +77,10 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Create a grid from an `Image_3`.
-   * The dimensions and bounding box are read from the image.
-   * The values stored in the image must be of type `Geom_traits::FT` or implicitly convertible to it.
+   * \brief creates a grid from an `Image_3`.
+   *
+   * The dimensions and bounding box are read from the image. The values stored
+   * in the image must be of type `Geom_traits::FT` or implicitly convertible to it.
    *
    * \param image the image providing the data
    */
@@ -88,11 +92,58 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Get the value stored in the grid at the grid point described by the vertex.
+   * \return the number of grid vertices in the `x` direction
+   */
+  std::size_t xdim() const
+  {
+    return sizes[0];
+  }
+
+  /**
+   * \ingroup PkgIsosurfacing3Ref
    *
-   * \param v the vertex descriptor of the vertex
+   * \return the number of grid vertices in the `y` direction
+   */
+  std::size_t ydim() const
+  {
+    return sizes[1];
+  }
+
+  /**
+   * \ingroup PkgIsosurfacing3Ref
    *
-   * \return the stored value
+   * \return the number of grid vertices in the `z` direction
+   */
+  std::size_t zdim() const
+  {
+    return sizes[2];
+  }
+
+  /**
+   * \ingroup PkgIsosurfacing3Ref
+   *
+   * \return the bounding box of the Cartesian grid.
+   */
+  const Bbox_3& get_bbox() const
+  {
+    return bbox;
+  }
+
+  /**
+   * \ingroup PkgIsosurfacing3Ref
+   *
+   * \return the spacing of the Cartesian grid, that is a vector whose coordinates are
+   *         the grid steps in the `x`, `y`, and `z` directions, respectively
+   */
+  const Vector& get_spacing() const
+  {
+    return spacing;
+  }
+
+    /**
+   * \ingroup PkgIsosurfacing3Ref
+   *
+   * \brief gets the scalar value stored at a grid vertex.
    */
   FT operator()(const VertexDescriptor& v) const
   {
@@ -102,11 +153,11 @@ public:
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Get the value stored in the grid at the given indices.
+   * \brief gets the scalar value stored at the grid vertex described by a set of indices.
    *
-   * \param x the index in x direction
-   * \param y the index in y direction
-   * \param z the index in z direction
+   * \param x the index in the `x` direction
+   * \param y the index in the `y` direction
+   * \param z the index in the `z` direction
    *
    * \return the stored value
    */
@@ -114,18 +165,19 @@ public:
            const std::size_t y,
            const std::size_t z) const
   {
-      return values[linear_index(x, y, z)];
+    return values[linear_index(x, y, z)];
   }
 
   /**
    * \ingroup PkgIsosurfacing3Ref
    *
-   * \brief Get a reference to the value stored in the grid at the given indices.
-   * Can be used to set values of the grid.
+   * \brief gets the scalar value stored at the grid vertex described by a set of indices.
    *
-   * \param x the index in x direction
-   * \param y the index in y direction
-   * \param z the index in z direction
+   * \note This function can be used to set the value at a grid vertex.
+   *
+   * \param x the index in the `x` direction
+   * \param y the index in the `y` direction
+   * \param z the index in the `z` direction
    *
    * \return a reference to the stored value
    */
@@ -136,6 +188,15 @@ public:
     return values[linear_index(x, y, z)];
   }
 
+  /**
+   * \ingroup PkgIsosurfacing3Ref
+   *
+   * \brief gets the gradient stored at the grid vertex described by a set of indices.
+   *
+   * \param x the index in the `x` direction
+   * \param y the index in the `y` direction
+   * \param z the index in the `z` direction
+   */
   Vector gradient(const std::size_t x,
                   const std::size_t y,
                   const std::size_t z) const
@@ -143,6 +204,19 @@ public:
     return gradients[linear_index(x, y, z)];
   }
 
+  /**
+   * \ingroup PkgIsosurfacing3Ref
+   *
+   * \brief gets the gradient stored at the grid vertex described by a set of indices.
+   *
+   * \note This function can be used to set the gradient at a grid vertex.
+   *
+   * \param x the index in the `x` direction
+   * \param y the index in the `y` direction
+   * \param z the index in the `z` direction
+   *
+   * \return a reference to the stored gradient
+   */
   Vector& gradient(const std::size_t x,
                    const std::size_t y,
                    const std::size_t z)
@@ -150,52 +224,12 @@ public:
     return gradients[linear_index(x, y, z)];
   }
 
-  /**
-   * \ingroup PkgIsosurfacing3Ref
-   *
-   * \return the number of grid points in x direction
-   */
-  std::size_t xdim() const
-  {
-    return sizes[0];
-  }
-
-  /**
-   * \ingroup PkgIsosurfacing3Ref
-   *
-   * \return the number of grid points in y direction
-   */
-  std::size_t ydim() const
-  {
-    return sizes[1];
-  }
-
-  /**
-   * \ingroup PkgIsosurfacing3Ref
-   *
-   * \return the number of grid points in z direction
-   */
-  std::size_t zdim() const
-  {
-    return sizes[2];
-  }
-
-  const Bbox_3& get_bbox() const
-  {
-    return bbox;
-  }
-
-  const Vector& get_spacing() const
-  {
-    return spacing;
-  }
-
 private:
   std::size_t linear_index(const std::size_t x,
                            const std::size_t y,
                            const std::size_t z) const
   {
-    // convert x, y, z into a linear index to access the vector
+    // convert (x, y, z) into a linear index to access the scalar value / gradient vectors
     return (z * ydim() + y) * xdim() + x;
   }
 

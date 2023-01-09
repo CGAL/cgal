@@ -28,10 +28,11 @@ namespace Isosurfacing {
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief A domain that respesents a cartesian grid that discretizes an implicit function. It is a model of the concept
- * `IsosurfacingDomainWithGradient`.
+ * \cgalModels `IsosurfacingDomainWithGradient`
  *
- * \tparam GeomTraits the traits type
+ * \brief A domain that represents a Cartesian grid that discretizes an implicit function.
+ *
+ * \tparam GeomTraits must be a model of ``.
  * \tparam PointFunction the type of the implicit function. It must implement
  *                       `GeomTraits::FT operator()(const GeomTraits::Point& point) const`.
  * \tparam Gradient_ the type of the gradient functor. It must implement
@@ -52,15 +53,17 @@ using Implicit_cartesian_grid_domain =
 /**
  * \ingroup PkgIsosurfacing3Ref
  *
- * \brief Creates a domain from an implicit function that can be used as input for isosurfacing algorithms.
+ * \brief creates a domain from an implicit function that can be used as input for isosurfacing algorithms.
  *
- * \details The implicit function will be evaluated on the grid points of the virtual grid
- * defined by the bounding box and spacing. By not storing any function values implicitly
- * less memory accesses are required in comparison to an `Explicit_cartesian_grid_domain`.
+ * \details The implicit function will be evaluated on the grid vertices of the virtual grid
+ * defined by the bounding box and spacing. By not storing any function values implicitly,
+ * fewer memory accesses are required in comparison to an `Explicit_cartesian_grid_domain`.
  *
- * \tparam GeomTraits the traits type
- * \tparam PointFunction the type of the implicit function. It must implement `GeomTraits::FT operator()(const
- * GeomTraits::Point& point) const`.
+ * \tparam GeomTraits must be a model of ``.
+ * \tparam PointFunction the type of the implicit function. It must implement
+ *                       `GeomTraits::FT operator()(const GeomTraits::Point& point) const`.
+ * \tparam Gradient_ the type of the gradient functor. It must implement
+ *                   `GeomTraits::Vector operator()(const GeomTraits::Point& point) const`.
  *
  * \param bbox a bounding box that specifies the size of the functions domain
  * \param spacing the distance between discretized points on the function

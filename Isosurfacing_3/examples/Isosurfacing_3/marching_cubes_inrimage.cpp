@@ -28,7 +28,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // convert image to a cartesian grid
+  // convert image to a Cartesian grid
   std::shared_ptr<Grid> grid = std::make_shared<Grid>(image);
 
   // create a domain from the grid

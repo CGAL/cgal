@@ -24,6 +24,19 @@
 namespace CGAL {
 namespace Isosurfacing {
 
+/*
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \cgalModels `IsosurfacingDomainWithGradient`
+ *
+ * \brief A domain that respesents an octree that discretizes an implicit function.
+ *
+ * \tparam GeomTraits must be a model of ``.
+ * \tparam PointFunction the type of the implicit function. It must implement
+ *                       `GeomTraits::FT operator()(const GeomTraits::Point& point) const`.
+ * \tparam Gradient_ the type of the gradient functor. It must implement
+ *                   `GeomTraits::Vector operator()(const GeomTraits::Point& point) const`.
+ */
 template <typename GeomTraits,
           typename PointFunction,
           typename Gradient_>
@@ -36,6 +49,26 @@ using Implicit_octree_domain =
                                                                   PointFunction>,
                         Gradient_>;
 
+/*
+ * \ingroup PkgIsosurfacing3Ref
+ *
+ * \brief creates a domain from an octree that can be used as input for isosurfacing algorithms.
+ *
+ * \details The implicit function will be evaluated on the octree vertices.
+ *
+ * \tparam GeomTraits must be a model of ``.
+ * \tparam PointFunction the type of the implicit function. It must implement
+ *                       `GeomTraits::FT operator()(const GeomTraits::Point& point) const`.
+ * \tparam Gradient_ the type of the gradient functor. It must implement
+ *                   `GeomTraits::Vector operator()(const GeomTraits::Point& point) const`.
+ *
+ * \param bbox a bounding box that specifies the size of the functions domain
+ * \param spacing the distance between discretized points on the function
+ * \param point_function the function with a point as argument
+ * \param gradient a function that describes the gradient of the data
+ *
+ * \return a new `Implicit_cartesian_grid_domain`
+ */
 template <typename GeomTraits,
           typename PointFunction,
           typename Gradient_ = Zero_gradient<GeomTraits> >
