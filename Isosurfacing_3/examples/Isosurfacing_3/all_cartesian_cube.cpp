@@ -23,7 +23,7 @@ FT sign(FT value)
   return (value > 0.0) - (value < 0.0);
 }
 
-int main()
+int main(int, char**)
 {
   // create a Cartesian grid with 7^3 grid points and the bounding box [-1, 1]^3
   const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0,  1.0, 1.0, 1.0);
@@ -83,5 +83,5 @@ int main()
   CGAL::IO::write_OFF("result_mc.off", points_mc, polygons_mc);
   CGAL::IO::write_OFF("result_dc.off", points_dc, polygons_dc);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

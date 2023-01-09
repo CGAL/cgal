@@ -94,7 +94,7 @@ void test_grid_sphere(const std::size_t n)
   std::cout << "Test passed: " << test_name << std::endl;
 }
 
-int main()
+int main(int, char**)
 {
   test_implicit_sphere();
   test_grid_sphere(2);
@@ -105,5 +105,5 @@ int main()
 
   std::cout << "All tests passed" << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

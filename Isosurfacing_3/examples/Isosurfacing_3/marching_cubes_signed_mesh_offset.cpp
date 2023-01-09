@@ -41,7 +41,7 @@ inline Kernel::FT distance_to_mesh(const Tree& tree,
   return std::sqrt((p - x).squared_length());
 }
 
-int main()
+int main(int, char**)
 {
   const std::string input_name = CGAL::data_file_path("meshes/cross.off");
   const int n_voxels = 20;
@@ -52,7 +52,7 @@ int main()
   if(!CGAL::IO::read_OFF(input_name, mesh_input))
   {
     std::cerr << "Could not read input mesh" << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
   }
 
   // compute loose bounding box of the mesh
@@ -102,5 +102,5 @@ int main()
   // save output indexed triangle soup to a file, in the OFF format
   CGAL::IO::write_OFF("output.off", points, polygons);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

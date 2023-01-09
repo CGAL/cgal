@@ -14,7 +14,7 @@ using Point = typename Kernel::Point_3;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-int main()
+int main(int, char**)
 {
   const FT alpha = 5.01;
 
@@ -55,5 +55,5 @@ int main()
   // save the result in the OFF format
   CGAL::IO::write_OFF("result.off", points, polygons);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

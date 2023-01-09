@@ -19,7 +19,7 @@ using Grid = CGAL::Cartesian_grid_3<Kernel>;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-int main()
+int main(int, char**)
 {
   // create a Cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
   const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
@@ -53,5 +53,5 @@ int main()
   // save output indexed surface mesh to file, in the OFF format
   CGAL::IO::write_OFF("result.off", points, polygons);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

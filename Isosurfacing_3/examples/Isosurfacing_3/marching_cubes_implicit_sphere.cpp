@@ -17,7 +17,7 @@ using Point = typename Kernel::Point_3;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-int main()
+int main(int, char**)
 {
   const CGAL::Bbox_3 bbox { -1.0, -1.0, -1.0,  1.0, 1.0, 1.0 };
   const FT spacing = 0.04;
@@ -42,5 +42,5 @@ int main()
   // save ouput indexed mesh to a file, in the OFF format
   CGAL::IO::write_OFF("result.off", points, polygons);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
