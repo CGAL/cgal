@@ -60,55 +60,26 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
   typedef CDT_2 CDT;
 
   typename EK::Vector_3 n = normal(t[0], t[1], t[2]);
-  //~ bool orientation_flipped = false;
-  //~ if (n.x() < 0)
-  //~ {
-    //~ orientation_flipped = true;
-    //~ n = -n;
-  //~ }
-  //~ else
-  //~ {
-    //~ if (n.x()==0)
-    //~ {
-      //~ if (n.y() < 0)
-      //~ {
-        //~ orientation_flipped = true;
-        //~ n = -n;
-      //~ }
-      //~ else
-      //~ {
-        //~ if (n.y()==0)
-        //~ {
-          //~ if (n.z() < 0)
-          //~ {
-            //~ orientation_flipped = true;
-            //~ n = -n;
-          //~ }
-        //~ }
-      //~ }
-    //~ }
-  //~ }
+  typename EK::Point_3 o(0,0,0);
+
+  bool orientation_flipped = false;
+  if ( typename EK::Less_xyz_3()(o+n,o) )
+  {
+    n=-n;
+    orientation_flipped = true;
+  }
 
   P_traits cdt_traits(n);
   CDT cdt(cdt_traits);
 
   cdt.insert_outside_affine_hull(t[0]);
   cdt.insert_outside_affine_hull(t[1]);
-  typename CDT::Vertex_handle v = cdt.tds().insert_dim_up(cdt.infinite_vertex(), false);
+  typename CDT::Vertex_handle v = cdt.tds().insert_dim_up(cdt.infinite_vertex(), orientation_flipped);
   v->set_point(t[2]);
 
   cdt.insert_constraints(segments.begin(), segments.end());
   cdt.insert(points.begin(), points.end());
 
-
-  //~ if (orientation_flipped)
-    //~ for (typename CDT::Face_handle fh : cdt.finite_face_handles())
-    //~ {
-      //~ new_triangles.emplace_back(fh->vertex(0)->point(),
-                                 //~ fh->vertex(cdt.cw(0))->point(),
-                                 //~ fh->vertex(cdt.ccw(0))->point());
-    //~ }
-  //~ else
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE_DUMP_TRIANGULATIONS
     static int k = 0;
     std::stringstream buffer;
@@ -117,9 +88,14 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
 #endif
     for (typename CDT::Face_handle fh : cdt.finite_face_handles())
     {
-      new_triangles.emplace_back(fh->vertex(0)->point(),
-                                 fh->vertex(cdt.ccw(0))->point(),
-                                 fh->vertex(cdt.cw(0))->point());
+      if (orientation_flipped)
+        new_triangles.emplace_back(fh->vertex(0)->point(),
+                                   fh->vertex(cdt.cw(0))->point(),
+                                   fh->vertex(cdt.ccw(0))->point());
+      else
+        new_triangles.emplace_back(fh->vertex(0)->point(),
+                                   fh->vertex(cdt.ccw(0))->point(),
+                                   fh->vertex(cdt.cw(0))->point());
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE_DUMP_TRIANGULATIONS
       ++nbt;
       buffer << fh->vertex(0)->point() << "\n";
