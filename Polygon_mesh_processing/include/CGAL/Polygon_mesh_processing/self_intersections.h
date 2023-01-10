@@ -43,6 +43,7 @@
 #endif
 
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/range/irange.hpp>
 
 #include <exception>
 #include <sstream>
@@ -94,8 +95,8 @@ struct Triangle_mesh_and_triangle_soup_wrapper
 
 template <class PointRange, class TriangleRange>
 struct Triangle_mesh_and_triangle_soup_wrapper<
-    std::pair<std::reference_wrapper<const PointRange>,
-              std::reference_wrapper<const TriangleRange>>>
+    std::pair<const PointRange&,
+              const TriangleRange&>>
 {
   typedef std::size_t face_descriptor;
   typedef std::size_t vertex_descriptor;
@@ -116,14 +117,14 @@ struct Triangle_mesh_and_triangle_soup_wrapper<
     const auto& f = soup.second.get()[fd];
     const auto& g = soup.second.get()[gd];
 
-    for(unsigned int i=0; i<3; ++i)
+    for(unsigned int i=0; i<2; ++i) // no need to check f[2] if neither f[0] nor f[1] are shared
     {
       for(unsigned int j=0; j<3; ++j)
       {
         if (f[i]==g[j])
         {
           vh[0]=f[i];
-          vh[1]=f[(i+1)%3];
+          vh[1]=f[i+1];
           vh[2]=f[(i+2)%3];
 
           if (vh[1]==g[(j+1)%3])
@@ -340,9 +341,9 @@ self_intersections_impl(const FaceRange& face_range,
   typedef typename GetGeomTraits<TM, NamedParameters>::type                              GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  typedef typename GetVertexPointMap<TM, NamedParameters>::const_type                    VPM;
-  VPM vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                               get_const_property_map(boost::vertex_point, tmesh));
+  typedef GetVertexPointMap<TM, NamedParameters>                                  VPM_helper;
+  typedef typename VPM_helper::const_type                                                VPM;
+  VPM vpmap = VPM_helper::get_const_map(np, tmesh);
 
   const bool do_limit = !(is_default_parameter<NamedParameters, internal_np::maximum_number_t>::value);
   const unsigned int maximum_number = choose_parameter(get_parameter(np, internal_np::maximum_number), 0);
@@ -752,6 +753,103 @@ bool does_self_intersect(const TriangleMesh& tmesh,
 {
   return does_self_intersect<ConcurrencyTag>(faces(tmesh), tmesh, np);
 }
+
+
+#ifndef DOXYGEN_RUNNING
+
+template <class PointRange, class VPM>
+struct Property_map_for_soup
+{
+  typedef std::size_t key_type;
+  typedef typename boost::property_traits<VPM>::value_type value_type;
+  //typedef typename boost::property_traits<VPM>::category category;
+  typedef boost::readable_property_map_tag category;
+  typedef typename boost::property_traits<VPM>::reference reference;
+
+  const PointRange& points;
+  VPM vpm;
+
+  Property_map_for_soup(const PointRange& points, VPM vpm)
+    : points(points)
+    , vpm(vpm)
+  {}
+
+  inline friend
+  reference get(const Property_map_for_soup<PointRange, VPM>& map, key_type k)
+  {
+    return get(map.vpm, map.points[k]);
+  }
+};
+
+template <class ConcurrencyTag = Sequential_tag,
+          class PointRange,
+          class TriangleRange,
+          class FacePairOutputIterator,
+          class CGAL_NP_TEMPLATE_PARAMETERS>
+FacePairOutputIterator
+triangle_soup_self_intersections(const PointRange& points,
+                                 const TriangleRange& triangles,
+                                 FacePairOutputIterator out,
+                                 const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::const_type Point_map_base;
+  Point_map_base pm_base = choose_parameter<Point_map_base>(get_parameter(np, internal_np::point_map));
+  typedef Property_map_for_soup<PointRange, Point_map_base> Point_map;
+
+  return self_intersections<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
+                                            std::make_pair(std::cref(points), std::cref(triangles)),
+                                            out,
+                                            parameters::vertex_point_map(Point_map(points,pm_base)));
+}
+
+template <class ConcurrencyTag = Sequential_tag,
+          class PointRange,
+          class TriangleRange,
+          class CGAL_NP_TEMPLATE_PARAMETERS>
+bool does_triangle_soup_self_intersect(const PointRange& points,
+                                       const TriangleRange& triangles,
+                                       const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  try
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    CGAL::Emptyset_iterator unused_out;
+    typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::const_type Point_map_base;
+    Point_map_base pm_base = choose_parameter<Point_map_base>(get_parameter(np, internal_np::point_map));
+    typedef Property_map_for_soup<PointRange, Point_map_base> Point_map;
+
+    typename Kernel_traits<typename boost::property_traits<Point_map>::value_type>::Kernel k;
+
+    internal::self_intersections_impl<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
+                                                      std::make_pair(std::cref(points), std::cref(triangles)),
+                                                      unused_out, true /*throw*/,
+                                                      parameters::vertex_point_map(Point_map(points,pm_base))
+                                                                 .geom_traits(k));
+  }
+  catch (const CGAL::internal::Throw_at_output_exception&)
+  {
+    return true;
+  }
+  #if defined(CGAL_LINKED_WITH_TBB) && TBB_USE_CAPTURED_EXCEPTION
+  catch (const tbb::captured_exception& e)
+  {
+    const char* ti1 = e.name();
+    const char* ti2 = typeid(const CGAL::internal::Throw_at_output_exception&).name();
+    const std::string tn1(ti1);
+    const std::string tn2(ti2);
+    if (tn1 == tn2) return true;
+    else throw;
+  }
+  #endif
+  return false;
+}
+
+#endif
 
 }// namespace Polygon_mesh_processing
 }// namespace CGAL
