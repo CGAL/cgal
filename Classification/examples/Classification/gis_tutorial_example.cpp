@@ -736,7 +736,7 @@ int main (int argc, char** argv)
                                             points.range(label_map)).mean_intersection_over_union() << std::endl;
 
     // Save the classified point set
-    std::ofstream classified_ofile ("classified.ply");
+    std::ofstream classified_ofile ("classified_gis_tutorial.ply");
     CGAL::IO::set_binary_mode (classified_ofile);
     classified_ofile << points;
     classified_ofile.close();
