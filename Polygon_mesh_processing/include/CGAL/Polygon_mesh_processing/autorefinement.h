@@ -206,9 +206,11 @@ void autorefine_soup_output(const TriangleMesh& tm,
   typedef typename boost::property_map<TriangleMesh, Degen_property_tag>::const_type Is_degen_map;
   Is_degen_map is_degen = get(Degen_property_tag(), tm);
 
-// TODO: we already have this test in bbox inter when it report (f,f)
   for(face_descriptor f : faces(tm))
-    put(is_degen, f, is_degenerate_triangle_face(f, tm, np));
+    put(is_degen, f, false);
+  for (const Pair_of_faces& p : si_pairs)
+    if (p.first==p.second) // bbox inter reports (f,f) for degenerate faces
+      put(is_degen, p.first, true);
 
   // assign an id per triangle involved in an intersection
   // + the faces involved in the intersection
