@@ -657,6 +657,8 @@ int main (int argc, char** argv)
   for (const std::vector<Point_3>& poly : polylines)
     ctp.insert_constraint (poly.begin(), poly.end());
 
+  std::cout << "before simplify" << std::endl;
+
   // Simplification algorithm with limit on distance
   PS::simplify (ctp, PS::Squared_distance_cost(), PS::Stop_above_cost_threshold (16 * spacing * spacing));
 
