@@ -29,11 +29,6 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
-#ifdef CGAL_DEBUG_PMP_AUTOREFINE
-// debug
-#include <CGAL/Surface_mesh.h>
-#endif
-
 #ifndef CGAL_PMP_AUTOREFINE_VERBOSE
 #define CGAL_PMP_AUTOREFINE_VERBOSE(MSG)
 #endif
@@ -167,115 +162,6 @@ struct Intersection_visitor
     }
   }
 };
-
-template <class EK>
-bool is_output_valid(std::vector<Point_3<EK>> soup_points,
-                     std::vector<std::array<std::size_t, 3> > soup_triangles)
-{
-  typedef Surface_mesh<typename EK::Point_3> Exact_mesh;
-  Exact_mesh etm;
-  orient_polygon_soup(soup_points, soup_triangles);
-  polygon_soup_to_polygon_mesh(soup_points, soup_triangles, etm);
-
-#ifdef CGAL_DEBUG_PMP_AUTOREFINE
-  std::cerr << std::setprecision(17);
-  auto verbose_fail_msg = [&](int i, const std::pair<typename Exact_mesh::Face_index, typename Exact_mesh::Face_index>& p)
-  {
-    typename Exact_mesh::Halfedge_index h1 = halfedge(p.first, etm), h2 = halfedge(p.second, etm);
-    std::cerr << "DEBUG: failing at check #" << i << "\n";
-    std::cerr << "DEBUG: " << etm.point(source(h1, etm)) << " " <<  etm.point(target(h1, etm)) << " " <<  etm.point(target(next(h1, etm), etm)) << " " << etm.point(source(h1, etm)) << "\n";
-    std::cerr << "DEBUG: " << etm.point(source(h2, etm)) << " " <<  etm.point(target(h2, etm)) << " " <<  etm.point(target(next(h2, etm), etm)) << " " << etm.point(source(h2, etm)) << "\n";
-  };
-#endif
-
-  //TODO: double check me
-  auto skip_faces = [&](const std::pair<typename Exact_mesh::Face_index, typename Exact_mesh::Face_index>& p)
-  {
-    typename Exact_mesh::Halfedge_index h1 = etm.halfedge(p.first), h2=etm.halfedge(p.second);
-
-    boost::container::small_vector<typename Exact_mesh::Halfedge_index, 3> v1;
-    v1.push_back(prev(h1, etm));
-    v1.push_back(h1);
-    v1.push_back(next(h1, etm));
-
-    boost::container::small_vector<typename Exact_mesh::Halfedge_index, 3> v2;
-    v2.push_back(prev(h2, etm));
-    v2.push_back(h2);
-    v2.push_back(next(h2, etm));
-
-    //collect identical vertices
-    boost::container::small_vector<std::pair<typename Exact_mesh::Halfedge_index, typename Exact_mesh::Halfedge_index>, 3> common;
-    for(typename Exact_mesh::Halfedge_index h1 : v1)
-      for(typename Exact_mesh::Halfedge_index h2 : v2)
-        if (etm.point(target(h1, etm))==etm.point(target(h2,etm)))
-          common.push_back(std::make_pair(h1,h2));
-
-    if (common.empty())
-    {
-#ifdef CGAL_DEBUG_PMP_AUTOREFINE
-      verbose_fail_msg(1, p);
-#endif
-      return false;
-    }
-
-    switch (common.size())
-    {
-      case 1:
-      {
-        // geometric check if the opposite segments intersect the triangles
-        const typename EK::Triangle_3 t1(etm.point(source(h1,etm)),
-                                         etm.point(target(h1,etm)),
-                                         etm.point(target(next(h1,etm),etm)));
-        const typename EK::Triangle_3 t2(etm.point(source(h2,etm)),
-                                         etm.point(target(h2,etm)),
-                                         etm.point(target(next(h2,etm),etm)));
-
-        const typename EK::Segment_3 s1(etm.point(source(common[0].first,etm)), etm.point(target(next(common[0].first,etm),etm)));
-        const typename EK::Segment_3 s2(etm.point(source(common[0].second,etm)), etm.point(target(next(common[0].second,etm),etm)));
-
-        if(do_intersect(t1, s2) || do_intersect(t2, s1))
-        {
-#ifdef CGAL_DEBUG_PMP_AUTOREFINE
-          verbose_fail_msg(2, p);
-#endif
-          return false;
-        }
-        return true;
-      }
-      case 2:
-      {
-        // shared edge
-        h1 = next(common[0].first, etm) == common[1].first ? common[1].first : common[0].first;
-        h2 = next(common[0].second, etm) == common[1].second ? common[1].second : common[0].second;
-
-        if( CGAL::coplanar(etm.point(source(h1,etm)),
-                           etm.point(target(h1,etm)),
-                           etm.point(target(etm.next(h1),etm)),
-                           etm.point(target(etm.next(h2),etm))) &&
-            CGAL::coplanar_orientation(etm.point(source(h1,etm)),
-                           etm.point(target(h1,etm)),
-                           etm.point(target(etm.next(h1),etm)),
-                           etm.point(target(etm.next(h2),etm))) == CGAL::POSITIVE)
-        {
-#ifdef CGAL_DEBUG_PMP_AUTOREFINE
-          verbose_fail_msg(3, p);
-#endif
-          return false;
-        }
-        return true;
-      }
-      default: // size == 3
-        return true;
-    }
-  };
-
-  std::vector< std::pair<typename Exact_mesh::Face_index, typename Exact_mesh::Face_index> > si_faces;
-  self_intersections(etm,
-                     CGAL::filter_output_iterator(std::back_inserter(si_faces),
-                     skip_faces));
-
-  return si_faces.empty();
-}
 
 } // end of autorefine_impl
 
@@ -456,13 +342,13 @@ void autorefine_soup_output(const TriangleMesh& tm,
 
 #ifndef CGAL_NDEBUG
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
-  CGAL_assertion( autorefine_impl::is_output_valid(exact_soup_points, soup_triangles) );
-#endif
-
+  CGAL_assertion( !does_triangle_soup_self_intersect(exact_soup_points, soup_triangles) );
+#else
 #ifdef CGAL_DEBUG_PMP_AUTOREFINE
   CGAL_PMP_AUTOREFINE_VERBOSE("check soup");
-  if (!autorefine_impl::is_output_valid(exact_soup_points, soup_triangles))
+  if (does_triangle_soup_self_intersect(exact_soup_points, soup_triangles))
     throw std::runtime_error("invalid output");
+#endif
 #endif
   CGAL_PMP_AUTOREFINE_VERBOSE("done");
 }
