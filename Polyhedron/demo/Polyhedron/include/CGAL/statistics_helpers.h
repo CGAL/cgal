@@ -50,7 +50,6 @@ void compute_angles(Mesh* poly,Tester tester , double& mini, double& maxi, doubl
   typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
   typedef typename CGAL::Kernel_traits< typename boost::property_traits<VPMap>::value_type >::Kernel Traits;
-  double rad_to_deg = 180. / CGAL_PI;
 
   accumulator_set< double,
     features< tag::min, tag::max, tag::mean > > acc;
