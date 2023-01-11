@@ -57,7 +57,7 @@ def write_out_html(d, fn):
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
     f.write('<html xmlns=\"https://www.w3.org/1999/xhtml\">')
     if d.html() is not None:
-      f.write(d.html())
+      f.write(d.html(method='html'))
     f.write('\n')
     f.write('</html>\n')
     f.close()
