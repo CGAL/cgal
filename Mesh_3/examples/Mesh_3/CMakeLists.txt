@@ -137,6 +137,9 @@ if(TARGET CGAL::CGAL_ImageIO)
   create_single_source_cgal_program("mesh_3D_image_with_features.cpp")
   target_link_libraries(mesh_3D_image_with_features PUBLIC CGAL::Eigen3_support)
 
+  create_single_source_cgal_program("mesh_3D_image_with_input_features.cpp")
+  target_link_libraries(mesh_3D_image_with_features PUBLIC CGAL::Eigen3_support)
+
   create_single_source_cgal_program("mesh_3D_image_with_detection_of_features.cpp")
   target_link_libraries(mesh_3D_image_with_detection_of_features PUBLIC CGAL::Eigen3_support)
 
