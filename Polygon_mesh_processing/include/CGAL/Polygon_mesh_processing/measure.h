@@ -310,7 +310,7 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   *   - `first`: a halfedge on the longest border.
   *     The return type `halfedge_descriptor` is a halfedge descriptor. It is
   *     deduced from the graph traits corresponding to the type `PolygonMesh`.
-  *     `first` and it is among the halfedges reported by `extract_boundary_cycles()`.
+  *     `first` is among the halfedges reported by `extract_boundary_cycles()`.
   *   - `second`: the length of the longest border
   *     The return type `FT` is a number type either deduced from the `geom_traits`
   *     \ref bgl_namedparameters "Named Parameters" if provided,
