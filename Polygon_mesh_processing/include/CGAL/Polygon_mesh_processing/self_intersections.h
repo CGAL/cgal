@@ -91,6 +91,11 @@ struct Triangle_mesh_and_triangle_soup_wrapper
     }
     return false;
   }
+
+  static bool is_pure_triangle(const TM& tm)
+  {
+    return is_triangle_mesh(tm);
+  }
 };
 
 template <class PointRange, class TriangleRange>
@@ -101,12 +106,11 @@ struct Triangle_mesh_and_triangle_soup_wrapper<
   typedef std::size_t face_descriptor;
   typedef std::size_t vertex_descriptor;
 
-  typedef std::pair<std::reference_wrapper<const PointRange>,
-                    std::reference_wrapper<const TriangleRange> > Soup;
+  typedef std::pair<const PointRange&, const TriangleRange& > Soup;
 
   static void get_face_vertices(face_descriptor fd, std::array<vertex_descriptor,3>& vh, const Soup& soup)
   {
-    const auto& face = soup.second.get()[fd];
+    const auto& face = soup.second[fd];
     vh[0]=face[0];
     vh[1]=face[1];
     vh[2]=face[2];
@@ -114,8 +118,8 @@ struct Triangle_mesh_and_triangle_soup_wrapper<
 
   static bool faces_have_a_shared_edge(face_descriptor fd, face_descriptor gd, std::array<vertex_descriptor, 4>& vh, const Soup& soup)
   {
-    const auto& f = soup.second.get()[fd];
-    const auto& g = soup.second.get()[gd];
+    const auto& f = soup.second[fd];
+    const auto& g = soup.second[gd];
 
     for(unsigned int i=0; i<2; ++i) // no need to check f[2] if neither f[0] nor f[1] are shared
     {
@@ -161,6 +165,14 @@ struct Triangle_mesh_and_triangle_soup_wrapper<
     }
 
     return false;
+  }
+
+  static bool is_pure_triangle(const Soup& soup)
+  {
+    for (const typename std::iterator_traits<typename TriangleRange::const_iterator>::value_type& t : soup.second)
+      if (t.size()!=3)
+        return false;
+    return true;
   }
 };
 
@@ -324,14 +336,15 @@ self_intersections_impl(const FaceRange& face_range,
                         const bool throw_on_SI,
                         const NamedParameters& np)
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
+  typedef TriangleMesh                                                                   TM;
+  typedef Triangle_mesh_and_triangle_soup_wrapper<TM>                                    Wrapper;
+
+  CGAL_precondition(Wrapper::is_pure_triangle(tmesh));
 
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
   using CGAL::parameters::is_default_parameter;
 
-  typedef TriangleMesh                                                                   TM;
-  typedef Triangle_mesh_and_triangle_soup_wrapper<TM>                                    Wrapper;
   typedef typename Wrapper::face_descriptor                                              face_descriptor;
   typedef typename Wrapper::vertex_descriptor                                            vertex_descriptor;
 
@@ -682,8 +695,6 @@ bool does_self_intersect(const FaceRange& face_range,
                          const TriangleMesh& tmesh,
                          const NamedParameters& np = parameters::default_values())
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
-
   try
   {
     CGAL::Emptyset_iterator unused_out;
