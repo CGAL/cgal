@@ -80,7 +80,7 @@ namespace CGAL {
         // we can optimize the computations of the sign (for the has_on functor),
         // by computing the vector s-c and t-s, in order to use them directly on
         // another compute_sign_of_cross_product function
-        // we can save time computing the substractions
+        // we can save time computing the subtractions
         // the problem is: more memory space is needed
         _sign_cross_product =
           CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());

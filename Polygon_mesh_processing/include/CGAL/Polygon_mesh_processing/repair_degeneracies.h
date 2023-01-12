@@ -1410,7 +1410,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
     std::cout << "Found " << degenerate_edges_to_remove.size() << " null edges.\n";
 #endif
 
-    // first try to remove all collapsable edges
+    // first try to remove all collapsible edges
     typename std::set<edge_descriptor>::iterator it = degenerate_edges_to_remove.begin();
     while(it != degenerate_edges_to_remove.end())
     {
@@ -1741,7 +1741,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           while(true);
 
           // @todo use the area criteria? this means maybe continue exploration of larger cc
-          // mark faces of completetly explored cc
+          // mark faces of completely explored cc
           for(index=0; index<nb_cc; ++index)
           {
             if(exploration_finished[index])
@@ -2611,7 +2611,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           put(vpmap, target(Euler::split_edge(side_one[hi], tmesh), tmesh), *it);
 
           // split_edge updates the halfedge of the source vertex of h,
-          // since we reuse later the halfedge of the first refernce vertex
+          // since we reuse later the halfedge of the first reference vertex
           // we must set it as we need.
           if(source(h1, tmesh) == *ref_vertices.first)
             set_halfedge(*ref_vertices.first, prev(prev(side_one[hi], tmesh), tmesh), tmesh);
@@ -2639,7 +2639,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           put(vpmap, target(h2, tmesh), *it);
 
           // split_edge updates the halfedge of the source vertex of h,
-          // since we reuse later the halfedge of the first refernce vertex
+          // since we reuse later the halfedge of the first reference vertex
           // we must set it as we need.
           if(source(h2, tmesh) == *ref_vertices.first)
             set_halfedge(*ref_vertices.first, opposite(h2, tmesh), tmesh);

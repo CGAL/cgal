@@ -11,7 +11,7 @@
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 //
-// Implementaion of the algorithm from pp 49--55 of "Computational Geometry
+// Implementation of the algorithm from pp 49--55 of "Computational Geometry
 // Algorithms and  Applications" by de Berg, van Kreveld, Overmars, and
 // Schwarzkopf for producing a partitioning of a polygon into y-monotone
 // pieces.

@@ -347,7 +347,7 @@ namespace CGAL {
     using boost::property_tree::ptree;
     ptree pt;
 
-    // update pt adding nodes containing attributes informations
+    // update pt adding nodes containing attributes information
     CMap::Helper::template Foreach_enabled_attributes
       <My_functor_cmap_save_attrib<CMap> >::run(const_cast<CMap&>(amap), pt, myDarts);
 
@@ -371,7 +371,7 @@ namespace CGAL {
     tree.put("data", "");
 
     /** First we save general information of the map (by default nothing,
-        the fuction can be specialized by users). */
+        the function can be specialized by users). */
     f(tree);
 
     // map dart => number
@@ -818,7 +818,7 @@ namespace CGAL {
     read_xml(input, pt);
 
     /** First we load general information of the map (by default nothing,
-        the fuction can be specialized by users). */
+        the function can be specialized by users). */
     f(pt);
 
     // Then we load darts and attributes.

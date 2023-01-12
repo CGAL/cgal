@@ -410,7 +410,7 @@ public:
     int * kd_counter = new int[number_of_trees];
     std::size_t number_of_segments = seg_list.size();
 
-    // auxilary directions
+    // auxiliary directions
     Direction_list directions;
     double buffer_angle;
     Line_2 li;

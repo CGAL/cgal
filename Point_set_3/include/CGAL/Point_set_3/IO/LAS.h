@@ -52,7 +52,7 @@ void check_if_property_is_used(PointSet& point_set,
 /*!
   \ingroup PkgPointSet3IOLAS
 
-  \brief reads the content of an intput stream in the \ref IOStreamLAS into a point set.
+  \brief reads the content of an input stream in the \ref IOStreamLAS into a point set.
 
   \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
@@ -147,7 +147,7 @@ bool read_LAS(std::istream& is,
 /*!
   \ingroup PkgPointSet3IOLAS
 
-  \brief reads the content of an intput file in the \ref IOStreamLAS into a point set.
+  \brief reads the content of an input file in the \ref IOStreamLAS into a point set.
 
   \param fname the path to the input file
   \param point_set the point set

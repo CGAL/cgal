@@ -358,7 +358,7 @@ public:
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
-   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   * \note The triangle mesh gets copied internally, that is it can be modified after having passed as argument,
    *       while the queries are performed
    */
   template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -458,7 +458,7 @@ public:
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
-   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   * \note The triangle mesh gets copied internally, that is it can be modified after having passed as argument,
    *       while the queries are performed
    */
   template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -1295,7 +1295,7 @@ private:
                       const int &prismid, const unsigned int &faceid)const
   {
     for (unsigned int i = 0; i < halfspace[prismid].size(); i++) {
-      /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
+      /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbor facets are coplanar
         if (neib == false) continue;*/
       if (i == faceid) continue;
       if(oriented_side(halfspace[prismid][i].eplane, ip) == ON_POSITIVE_SIDE){

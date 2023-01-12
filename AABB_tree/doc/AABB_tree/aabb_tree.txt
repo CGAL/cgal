@@ -390,7 +390,7 @@ query and location of query in space.
   number of primitive data (greater than 2M faces in our experiments)
   however we noticed that it is not necessary (and sometimes even
   slower) to use all reference points when constructing the
-  KD-tree. In these cases we recommend to specify trough the function
+  KD-tree. In these cases we recommend to specify through the function
   ` AABB_tree::accelerate_distance_queries()` fewer reference
   points (typically not more than 100K) evenly distributed over the
   input primitives.

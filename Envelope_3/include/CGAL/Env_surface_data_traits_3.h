@@ -48,10 +48,10 @@ public:
   typedef typename Base_traits_3::Xy_monotone_surface_3
                                                    Base_xy_monotone_surface_3;
 
-  // Representation of a surface with an addtional data field:
+  // Representation of a surface with an additional data field:
   typedef _Curve_data_ex<Base_surface_3, Surface_data>  Surface_3;
 
-  // Representation of an xy-monotone surface with an addtional data field:
+  // Representation of an xy-monotone surface with an additional data field:
   typedef _Curve_data_ex<Base_xy_monotone_surface_3,
                          Xy_monotone_surface_data>      Xy_monotone_surface_3;
 
@@ -70,7 +70,7 @@ public:
   {}
   //@}
 
-  /// \name Overriden functors.
+  /// \name Overridden functors.
   //@{
 
   class Make_xy_monotone_3

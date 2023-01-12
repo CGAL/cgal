@@ -226,7 +226,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
         polygonal_reconstruction (dialog);
         break;
       default:
-        std::cerr << "Error: unkown method." << std::endl;
+        std::cerr << "Error: unknown method." << std::endl;
         return;
     }
     std::cerr << "Reconstruction achieved in " << t.time() << "s" << std::endl;

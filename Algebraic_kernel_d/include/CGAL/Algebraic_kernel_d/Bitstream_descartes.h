@@ -1217,7 +1217,7 @@ public:
    *
    * The polynomial \c f must have exactly \c m real roots, counted without
    * multiplicity, and the degree of <tt>gcd(f,f')</tt> must be \c k. In this
-   * case, the constructor either isolates the real roots of \c f sucessfully
+   * case, the constructor either isolates the real roots of \c f successfully
    * or a Non_generic_position_exception is thrown. Such an exception
    * certainly occurs if \c f has more than one multiple real root. If \c f
    * has at most one multiple root over the complex numbers, the roots are

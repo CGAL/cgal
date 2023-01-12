@@ -131,7 +131,7 @@ std::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name) {
         tu = std::make_tuple(intersect(lines.begin(), lines.end(), tree, counter),
                                intersect(rays.begin(), rays.end(), tree, counter),
                                intersect(segments.begin(), segments.end(), tree, counter),
-                               // cant use counter here
+                               // can't use counter here
                                0);
         std::get<3>(tu) = counter;
       }

@@ -71,7 +71,7 @@ namespace Mesh_3 {
 
 /**
 * @class PVertex
-* Vertex with associated perturbation datas
+* Vertex with associated perturbation data
 */
 // Sequential
 template< typename FT
@@ -171,7 +171,7 @@ void update_saved_erase_counter() {}
 bool is_zombie() { return false; }
 
 private:
-/// Private datas
+/// Private data
 Vertex_handle vertex_handle_;
 unsigned int incident_sliver_nb_;
 FT min_value_;
@@ -294,7 +294,7 @@ bool operator<(const Self& pv) const
 }
 
 private:
-/// Private datas
+/// Private data
 Vertex_handle vertex_handle_;
 unsigned int vh_erase_counter_when_added_;
 int in_dimension_;
@@ -1032,7 +1032,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
         }
       }
 
-      // Update pqueue in every cases, because pv was poped
+      // Update pqueue in every cases, because pv was popped
       pqueue_size += update_priority_queue(pv, pqueue);
       visitor.end_of_perturbation_iteration(pqueue_size);
 
@@ -1378,7 +1378,7 @@ perturb_vertex( PVertex pv
       ++bcounter;
 #endif
 
-      // Update pqueue in every cases, because pv was poped
+      // Update pqueue in every cases, because pv was popped
       if (pv.is_perturbable())
       {
         enqueue_task(pv, sliver_bound, visitor, bad_vertices);

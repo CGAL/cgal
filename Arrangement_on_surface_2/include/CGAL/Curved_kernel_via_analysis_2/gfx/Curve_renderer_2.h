@@ -218,7 +218,7 @@ private:
     //! returns \c true when the precision limit for a specified number type is
     //! reached
     typename Renderer_traits::Precision_limit limit;
-    //! maximum level of subdivision dependending on speficied number type
+    //! maximum level of subdivision dependending on specified number type
     static const unsigned MAX_SUBDIVISION_LEVEL =
             Renderer_traits::MAX_SUBDIVISION_LEVEL;
 
@@ -397,7 +397,7 @@ private:
                        //! with correct parameters
     const Integer one; //! just "one"
     bool branches_coincide; //! indicates that there are several branches
-                           //! passing through one neighbourhood pixel
+                           //! passing through one neighborhood pixel
     int direction_taken;  //! stores a direction taken from the seed point
                           //! during tracking, if it's possible to determine
                           //! 0 - towards lower point, 1 - towards upper
@@ -1223,7 +1223,7 @@ bool subdivide(Pixel_2& pix, int back_dir, int& new_dir) {
         throw internal::Insufficient_rasterize_precision_exception();
     }
 
-    // if several branches coincide withing this pixel we cannot perform
+    // if several branches coincide within this pixel we cannot perform
     // a subdivision
     if(branches_coincide)
         return false;
@@ -1863,7 +1863,7 @@ bool recursive_check(int var, const NT& beg_, const NT& end_,
     return recursive_check(var, key_2, mid, key, poly, depth+1);
 }
 
-//! computes lower/upper boundaries for pixel's neighbourhood
+//! computes lower/upper boundaries for pixel's neighborhood
 void get_boundaries(int var, const Pixel_2& pix, Stripe& stripe) {
 
     int level = pix.level, val = pix.y;
@@ -1906,8 +1906,8 @@ inline void get_polynomials(int var, Stripe& stripe) {
 }
 
 /*!
- * checks 8-pixel neighbourhood of a pixel, returns \c true if
- * only one curve branch intersects pixel's neighbourhood, \c dir
+ * checks 8-pixel neighborhood of a pixel, returns \c true if
+ * only one curve branch intersects pixel's neighborhood, \c dir
  * defines backward direction, \c new_dir is a new tracking direction
  *
  * if \c CGAL_CKVA_RENDER_WITH_REFINEMENT is set, in case of success \c pix

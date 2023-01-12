@@ -88,7 +88,7 @@ void _test_circle_construct(CK ck)
                 assert(cp_y_min.y() < cp_y_max.y());
   }
 
-  //Constuct_intersections_2 with 2 intersection's points
+  //Construct_intersections_2 with 2 intersection's points
   std::cout << std::endl << "construct_intersection_2" << std::endl;
   Do_intersect_2 theDo_intersect_2 = ck.do_intersect_2_object();
   Intersect_2 theConstruct_intersect_2
@@ -131,7 +131,7 @@ void _test_circle_construct(CK ck)
   Compare_xy_2 theCompare_xy_2 = ck.compare_xy_2_object();
   assert(theCompare_xy_2(first, second) == CGAL::SMALLER);
 
-  //Constuct_intersections_2 with 1 intersection's point
+  //Construct_intersections_2 with 1 intersection's point
   Point_2 center_circ_intersections_2_3(center_circ_intersection_2_1_x
                                         + 2 * circ_intersection_2_1_r,
                                         center_circ_intersection_2_1_y);

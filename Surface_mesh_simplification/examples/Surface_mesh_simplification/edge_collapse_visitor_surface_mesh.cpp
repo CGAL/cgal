@@ -120,12 +120,12 @@ int main(int argc, char** argv)
   // The index maps are not explicitelty passed as in the previous
   // example because the surface mesh items have a proper id() field.
   // On the other hand, we pass here explicit cost and placement
-  // function which differ from the default policies, ommited in
+  // function which differ from the default policies, omitted in
   // the previous example.
   int r = SMS::edge_collapse(surface_mesh, stop, CGAL::parameters::visitor(vis));
 
   std::cout << "\nEdges collected: "  << stats.collected
-            << "\nEdges proccessed: " << stats.processed
+            << "\nEdges processed: "  << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
             << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable

@@ -173,7 +173,7 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
 
   The important invariant to be preserved by all methods is that
   the coefficient sequence does not contain leading zero coefficients
-  (where leading means at the high-degree end), with the excpetion that
+  (where leading means at the high-degree end), with the exception that
   the zero polynomial is represented by a single zero coefficient.
   An empty coefficient sequence denotes an undefined value.
 

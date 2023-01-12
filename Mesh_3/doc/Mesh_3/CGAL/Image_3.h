@@ -16,7 +16,7 @@ public:
 
   /// Open a 3D image file.
   ///
-  /// Returns `true` if the file was sucessfully loaded.
+  /// Returns `true` if the file was successfully loaded.
   bool read(const char* file);
 
 };

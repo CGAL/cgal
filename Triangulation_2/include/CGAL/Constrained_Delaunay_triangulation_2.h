@@ -690,7 +690,7 @@ flip (Face_handle& f, int i)
   Face_handle g = f->neighbor(i);
   int j = mirror_index(f,i);
 
-  // save wings neighbors to be able to restore contraint status
+  // save wings neighbors to be able to restore constraint status
   Face_handle f1 = f->neighbor(cw(i));
   int i1 = mirror_index(f,cw(i));
   Face_handle f2 = f->neighbor(ccw(i));
@@ -961,7 +961,7 @@ remove(Vertex_handle v)
 //   // insert  point p in edge(f,i)
 //   // bypass the precondition for point a to be in edge(f,i)
 //   // update constrained status
-//   // this member fonction is not robust with exact predicates
+//   // this member function is not robust with exact predicates
 //   // and approximate construction. Should be removed
 // {
 //   Vertex_handle vh=Ctr::special_insert_in_edge(a,f,i);

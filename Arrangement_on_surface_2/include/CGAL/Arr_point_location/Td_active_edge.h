@@ -17,7 +17,7 @@
 
 
 /*! \file
- * Defintion of the Td_active_edge<Td_traits> class.
+ * Definition of the Td_active_edge<Td_traits> class.
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
@@ -44,7 +44,7 @@ namespace CGAL {
  * when one of the four sides is on the parameter space boundary.
  * Trapezoids are created as active and become inactive when Remove() member
  * function called.
- * Each trapezoid has at most four neighbouring trapezoids.
+ * Each trapezoid has at most four neighboring trapezoids.
  * X_trapezoid structure can represent a real trapezoid, a Td-edge or an
  * edge-end (end point).
  */
@@ -144,7 +144,7 @@ public:
 
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
-  /*! Initialize the trapezoid's neighbours. */
+  /*! Initialize the trapezoid's neighbors. */
   inline void init_neighbours(boost::optional<Td_map_item&> next)
   {
     set_next((next) ? *next : Td_map_item(0));

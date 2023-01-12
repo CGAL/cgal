@@ -92,7 +92,7 @@ public:
   /*! Read the segments from the input file
    * \param filename the name of the input file
    * \param curves_out the iterator of the container of the read curves
-   * \param bbox the counding box of the read curves
+   * \param bbox the bounding box of the read curves
    */
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator curves_out,

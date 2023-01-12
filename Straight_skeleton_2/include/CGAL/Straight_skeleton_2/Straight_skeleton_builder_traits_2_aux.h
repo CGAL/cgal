@@ -482,7 +482,7 @@ struct Get_protector<GT, true>
 
 
 //
-// This macro defines a global functor adapter which allows users to use it in the followig ways:
+// This macro defines a global functor adapter which allows users to use it in the following ways:
 //
 // Given a 'Functor' provided by a given 'Traits' (or Kernel):
 //

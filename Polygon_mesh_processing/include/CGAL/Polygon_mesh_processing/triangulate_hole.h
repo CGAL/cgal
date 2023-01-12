@@ -346,7 +346,7 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
-      \cgalParamDescription{factor to control density of the ouput mesh,
+      \cgalParamDescription{factor to control density of the output mesh,
                             where larger values cause denser refinements, as in `refine()`}
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
@@ -515,15 +515,15 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
-      \cgalParamDescription{factor to control density of the ouput mesh,
+      \cgalParamDescription{factor to control density of the output mesh,
                             where larger values cause denser refinements, as in `refine()`}
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
     \cgalParamNEnd
 
     \cgalParamNBegin{fairing_continuity}
-      \cgalParamDescription{A value controling the tangential continuity of the output surface patch.
-                            The possible values are 0, 1 and 2, refering to the  C<sup>0</sup>, C<sup>1</sup>
+      \cgalParamDescription{A value controlling the tangential continuity of the output surface patch.
+                            The possible values are 0, 1 and 2, referring to the  C<sup>0</sup>, C<sup>1</sup>
                             and C<sup>2</sup> continuity.}
       \cgalParamType{unsigned int}
       \cgalParamDefault{`1`}

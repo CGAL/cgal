@@ -137,7 +137,7 @@ public:
     }
 
 
-    /// assign a scalar to all componenets
+    /// assign a scalar to all components
     Vector<Scalar,N>& operator=(const Scalar s)
     {
         for (int i=0; i<N; ++i)

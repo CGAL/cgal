@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
   // Insert number_of_data_points in the tree
   Tree tree(vertices(mesh).begin(), vertices(mesh).end(), Splitter(), Traits(vppmap));
 
-  // search K nearest neighbours
+  // search K nearest neighbors
   Point_3 query(0.0, 0.0, 0.0);
   Distance tr_dist(vppmap);
 

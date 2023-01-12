@@ -809,7 +809,7 @@ public:
 
     SFace_iterator f;
     // First, we classify all the Shere Faces per Shell.  For each Shell we
-    //     determine its minimum lexicographyly vertex and we check wheter the
+    //     determine its minimum lexicographyly vertex and we check whether the
     //     Shell encloses a region (closed surface) or not.
     CGAL_forall_sfaces(f,*this->sncp()) {
       //    progress++;
@@ -926,7 +926,7 @@ public:
     // The ray here has an special property since it is shooted from the lowest
     // vertex in a shell, so it would be expected that the ray goes along the
     // interior of a volume before it hits a 2-skeleton element.
-    // Unfortunatelly, it seems to be possible that several shells are incident
+    // Unfortunately, it seems to be possible that several shells are incident
     // to this lowest vertex, and in consequence, the ray could also go along
     // an edge or a facet belonging to a different shell.
     // This fact invalidates the precondition of the get_visible_facet method,

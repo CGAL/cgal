@@ -231,7 +231,7 @@ protected:
 
 public:
   /*! Compare two endpoint directions by v.
-   * \param d1 the first enpoint direction.
+   * \param d1 the first endpoint direction.
    * \param d2 the second endpoint direction.
    * \return SMALLER - v(d1) < v(d2);
    *         EQUAL   - v(d1) = v(d2);
@@ -283,7 +283,7 @@ public:
   }
 
   /*! Compare two endpoint directions by u.
-   * \param d1 the first enpoint direction.
+   * \param d1 the first endpoint direction.
    * \param d2 the second endpoint direction.
    * \return SMALLER - u(d1) < u(d2);
    *         EQUAL   - u(d1) = u(d2);
@@ -301,7 +301,7 @@ public:
   }
 
   /*! Compare two endpoint directions lexigoraphically: by u, then by v.
-   * \param d1 the first enpoint direction.
+   * \param d1 the first endpoint direction.
    * \param d2 the second endpoint direction.
    * \return SMALLER - u(d1) < u(d2);
    *         SMALLER - u(d1) = u(d2) and v(d1) < v(d2);
@@ -640,7 +640,7 @@ public:
         return;
       }
 
-      // None of the enpoints coincide with a pole:
+      // None of the endpoints coincide with a pole:
       Direction_2 s = Traits::project_xy(source);
       Direction_2 t = Traits::project_xy(target);
 
@@ -763,7 +763,7 @@ public:
         return cv;
       }
 
-      // None of the enpoints coincide with a pole:
+      // None of the endpoints coincide with a pole:
       if (z_sign(normal) == ZERO) {
         // The arc is vertical
         cv.set_is_vertical(true);
@@ -992,8 +992,8 @@ public:
   };
 
 protected:
-  /*! Obtain the possitive (north) pole
-   * \return the possitive (north) pole
+  /*! Obtain the positive (north) pole
+   * \return the positive (north) pole
    */
   inline static const Point_2& pos_pole()
   {
@@ -1033,7 +1033,7 @@ public:
 
   public:
     /*! Compare two directional points lexigoraphically: by x, then by y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
@@ -2140,7 +2140,7 @@ public:
           return oi;
         }
 
-        // None of the enpoints coincide with a pole.
+        // None of the endpoints coincide with a pole.
         bool s_is_positive, t_is_positive, plane_is_positive;
         CGAL::Sign xsign = Traits::x_sign(normal);
         if (xsign == ZERO) {
@@ -2172,7 +2172,7 @@ public:
         return oi;
       }
 
-      // The curve is not vertical, (none of the enpoints coincide with a pole)
+      // The curve is not vertical, (none of the endpoints coincide with a pole)
       Direction_3 dp;
       m_traits.intersection_with_identification(c, dp, Zero_atan_y());
       Point_2 p(dp, Point_2::MID_BOUNDARY_LOC);
@@ -2589,7 +2589,7 @@ public:
             return oi;
           }
 
-          /*! If the endpoints of one arc coinside with the 2 poles resp,
+          /*! If the endpoints of one arc coincide with the 2 poles resp,
            * the other arc is completely overlapping.
            */
           if (xc1.left().is_min_boundary() && xc1.right().is_max_boundary()) {
@@ -3166,7 +3166,7 @@ public:
       return;
     }
 
-    // None of the enpoints coincide with a pole:
+    // None of the endpoints coincide with a pole:
     Direction_2 s = Traits::project_xy(m_source);
     Direction_2 t = Traits::project_xy(m_target);
 

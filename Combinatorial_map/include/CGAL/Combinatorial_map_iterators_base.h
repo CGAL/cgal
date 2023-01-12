@@ -28,7 +28,7 @@ namespace CGAL {
    * Basic classes that serve as tools for definition of iterators.
    There are 3 classes:
    *  - CMap_dart_iterator<Map,Const> is the basic generic class defining
-   *    what is an interator on darts.
+   *    what is an iterator on darts.
    *  - CMap_extend_iterator<Map,Ite,Bi> to extend the given iterator by adding
    *    the involution Bi.
    *  - CMap_non_basic_iterator<Map_,Ite> to transform the basic iterator Ite

@@ -7,7 +7,7 @@
  *
  * File: CoreAux.h
  * Synopsis:
- *      Auxilliary functions
+ *      Auxiliary functions
  *
  * Written by
  *       Chee Yap <yap@cs.nyu.edu>

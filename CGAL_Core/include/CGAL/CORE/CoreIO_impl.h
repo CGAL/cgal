@@ -274,7 +274,7 @@ CGAL_INLINE_FUNCTION
 void writeToFile(const BigInt& z, std::ostream& out, int base, int charsPerLine) {
   BigInt c = abs(z);
 
-  // get the absoulte value string
+  // get the absolute value string
   char* buffer = new char[mpz_sizeinbase(c.get_mp(), base) + 2];
   mpz_get_str(buffer, base, c.get_mp());
   std::size_t length = std::strlen(buffer);
@@ -336,7 +336,7 @@ CGAL_INLINE_FUNCTION
 void writeToFile(const BigFloat& bf, std::ostream& out, int base, int charsPerLine) {
   BigInt c(CORE::abs(bf.m()));
 
-  // get the absoulte value string
+  // get the absolute value string
   char* buffer = new char[mpz_sizeinbase(c.get_mp(), base) + 2];
   mpz_get_str(buffer, base, c.get_mp());
   std::size_t length = std::strlen(buffer);

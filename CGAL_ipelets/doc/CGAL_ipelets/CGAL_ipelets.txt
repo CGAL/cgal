@@ -123,7 +123,7 @@ Draws an half-Yao-graph with the even of k cones.
 Draws an half-theta-graph with the odd of k cones.
 <li><b>Half-Yao-k-graph with odd cones:</b>
 Draws an half-Yao-graph with the odd of k cones.
-<li><b>k cones:</b> For earch selected point.
+<li><b>k cones:</b> For each selected point.
 Draws the k cones around the point.
 </ul>
 

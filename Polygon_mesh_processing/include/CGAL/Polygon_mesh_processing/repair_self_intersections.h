@@ -816,7 +816,7 @@ void dump_cc(const std::string filename,
 // Similarly if the edge is an internal sharp edge, we don't really want to use the opposite face because
 // there is by definition a strong discontinuity and it might thus mislead the hole filling algorithm.
 //
-// Rather, we construct an artifical third point that is in the same plane as the face incident to `h`,
+// Rather, we construct an artificial third point that is in the same plane as the face incident to `h`,
 // defined as the third point of the imaginary equilateral triangle incident to opp(h, tmesh)
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 typename boost::property_traits<VertexPointMap>::value_type
