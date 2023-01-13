@@ -73,7 +73,7 @@ using Explicit_Cartesian_grid_domain_3 =
 template <typename GeomTraits,
           typename Gradient = Zero_gradient>
 Explicit_Cartesian_grid_domain_3<Grid, Gradient>
-create_explicit_Cartesian_grid_domain(const CGAL::Cartesian_grid_3<GeomTraits>& grid,
+create_explicit_Cartesian_grid_domain(const CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>& grid,
                                       const Gradient& grad = Gradient())
 #else
 // Actual code enables passing more than just a Cartesian_grid_3
