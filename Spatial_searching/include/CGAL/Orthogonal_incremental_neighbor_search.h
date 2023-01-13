@@ -403,7 +403,7 @@ namespace CGAL {
         }   // next_neighbor_found or priority queue is empty
         // in the latter case also the item priority queue is empty
       }
-      
+
       CGAL_DEPRECATED void Compute_the_next_nearest_neighbour()
       { Compute_the_next_nearest_neighbor(); }
 

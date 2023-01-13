@@ -603,7 +603,7 @@ namespace CGAL {
           // in the latter case also the item priority queue is empty
 
         }
-        
+
         CGAL_DEPRECATED void Compute_the_next_nearest_neighbour()
         { void Compute_the_next_nearest_neighbor(); }
       }; // class Iterator_implementation
