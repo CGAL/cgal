@@ -28,6 +28,7 @@
 // output
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 
 #ifndef CGAL_PMP_AUTOREFINE_VERBOSE
 #define CGAL_PMP_AUTOREFINE_VERBOSE(MSG)
@@ -166,8 +167,9 @@ struct Intersection_visitor
 
 } // end of autorefine_impl
 
-template <class TriangleMesh, class Point_3, class NamedParameters = parameters::Default_named_parameters>
-void autorefine_soup_output(const TriangleMesh& tm,
+template <class PointRange, class TriIdsRange, class Point_3, class NamedParameters = parameters::Default_named_parameters>
+void autorefine_soup_output(const PointRange& input_points,
+                            const TriIdsRange& id_triples,
                             std::vector<Point_3>& soup_points,
                             std::vector<std::array<std::size_t, 3> >& soup_triangles,
                             const NamedParameters& np = parameters::default_values())
@@ -175,12 +177,9 @@ void autorefine_soup_output(const TriangleMesh& tm,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
-  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
-  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(vertex_point, tm));
+  typedef typename GetPolygonSoupGeomTraits<PointRange, NamedParameters>::type GT;
+  typedef typename GetPointMap<PointRange, NamedParameters>::const_type    Point_map;
+  Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::concurrency_tag_t,
@@ -188,68 +187,54 @@ void autorefine_soup_output(const TriangleMesh& tm,
     Sequential_tag
   > ::type Concurrency_tag;
 
-  typedef boost::graph_traits<TriangleMesh> Graph_traits;
-  typedef typename Graph_traits::face_descriptor face_descriptor;
-  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
-  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
-  typedef std::pair<face_descriptor, face_descriptor> Pair_of_faces;
+  typedef std::size_t Input_TID;
+  typedef std::pair<Input_TID, Input_TID> Pair_of_triangle_ids;
 
-  std::vector<Pair_of_faces> si_pairs;
+  std::vector<Pair_of_triangle_ids> si_pairs;
 
   // collect intersecting pairs of triangles
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
-  self_intersections<Concurrency_tag>(tm, std::back_inserter(si_pairs), np);
+  triangle_soup_self_intersections<Concurrency_tag>(input_points, id_triples, std::back_inserter(si_pairs), np);
 
   if (si_pairs.empty()) return;
 
   // mark degenerate faces so that we can ignore them
-  typedef CGAL::dynamic_face_property_t<bool> Degen_property_tag;
-  typedef typename boost::property_map<TriangleMesh, Degen_property_tag>::const_type Is_degen_map;
-  Is_degen_map is_degen = get(Degen_property_tag(), tm);
+  std::vector<bool> is_degen(id_triples.size(), false);
 
-  for(face_descriptor f : faces(tm))
-    put(is_degen, f, false);
-  for (const Pair_of_faces& p : si_pairs)
+  for (const Pair_of_triangle_ids& p : si_pairs)
     if (p.first==p.second) // bbox inter reports (f,f) for degenerate faces
-      put(is_degen, p.first, true);
+      is_degen[p.first] = true;
 
   // assign an id per triangle involved in an intersection
   // + the faces involved in the intersection
-  typedef CGAL::dynamic_face_property_t<int> TID_property_tag;
-  typedef typename boost::property_map<TriangleMesh, TID_property_tag>::const_type Triangle_id_map;
-
-  Triangle_id_map tid_map = get(TID_property_tag(), tm);
-  for (face_descriptor f : faces(tm))
-    put(tid_map, f, -1);
-
-  std::vector<face_descriptor> intersected_faces;
-  int tid=-1;
-  for (const Pair_of_faces& p : si_pairs)
+  std::vector<int> tri_inter_ids(id_triples.size(), -1);
+  std::vector<Input_TID> intersected_faces;
+  int tiid=-1;
+  for (const Pair_of_triangle_ids& p : si_pairs)
   {
-    if (get(tid_map, p.first)==-1 && !get(is_degen, p.first))
+    if (tri_inter_ids[p.first]==-1 && !is_degen[p.first])
     {
-      put(tid_map, p.first, ++tid);
+      tri_inter_ids[p.first]=++tiid;
       intersected_faces.push_back(p.first);
     }
-    if (get(tid_map, p.second)==-1 && !get(is_degen, p.second))
+    if (tri_inter_ids[p.second]==-1 && !is_degen[p.second])
     {
-      put(tid_map, p.second, ++tid);
+      tri_inter_ids[p.second]=++tiid;
       intersected_faces.push_back(p.second);
     }
   }
 
   // init the vector of triangles used for the autorefinement of triangles
   typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
-  std::vector< EK::Triangle_3 > triangles(tid+1);
+  std::vector< EK::Triangle_3 > triangles(tiid+1);
   Cartesian_converter<GT, EK> to_exact;
 
-  for(face_descriptor f : intersected_faces)
+  for(Input_TID f : intersected_faces)
   {
-    halfedge_descriptor h = halfedge(f, tm);
-    triangles[get(tid_map, f)]= EK::Triangle_3(
-      to_exact( get(vpm, source(h, tm)) ),
-      to_exact( get(vpm, target(h, tm)) ),
-      to_exact( get(vpm, target(next(h, tm), tm)) ) );
+    triangles[tri_inter_ids[f]]= EK::Triangle_3(
+      to_exact( get(pm, input_points[id_triples[f][0]]) ),
+      to_exact( get(pm, input_points[id_triples[f][1]]) ),
+      to_exact( get(pm, input_points[id_triples[f][2]]) ) );
   }
 
   std::vector< std::vector<EK::Segment_3> > all_segments(triangles.size());
@@ -259,10 +244,10 @@ void autorefine_soup_output(const TriangleMesh& tm,
   typename EK::Intersect_3 intersection = EK().intersect_3_object();
   autorefine_impl::Intersection_visitor<EK> intersection_visitor(all_segments, all_points);
 
-  for (const Pair_of_faces& p : si_pairs)
+  for (const Pair_of_triangle_ids& p : si_pairs)
   {
-    int i1 = get(tid_map, p.first),
-        i2 = get(tid_map, p.second);
+    int i1 = tri_inter_ids[p.first],
+        i2 = tri_inter_ids[p.second];
 
     if (i1==-1 || i2==-1) continue; //skip degenerate faces
 
@@ -298,17 +283,6 @@ void autorefine_soup_output(const TriangleMesh& tm,
   std::vector<EK::Point_3> exact_soup_points;
 #endif
 
-  for (vertex_descriptor v : vertices(tm))
-  {
-    if (point_id_map.insert(std::make_pair(to_exact(get(vpm,v)), soup_points.size())).second)
-    {
-      soup_points.push_back(get(vpm,v));
-#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-      exact_soup_points.push_back(to_exact(get(vpm,v)));
-#endif
-    }
-  }
-
   auto get_point_id = [&](const typename EK::Point_3& pt)
   {
     auto insert_res = point_id_map.insert(std::make_pair(pt, soup_points.size()));
@@ -322,18 +296,22 @@ void autorefine_soup_output(const TriangleMesh& tm,
     return insert_res.first->second;
   };
 
-  for (face_descriptor f : faces(tm))
-  {
-    if (get(is_degen, f)) continue; //skip degenerate faces
+  std::vector <std::size_t> input_point_ids;
+  input_point_ids.reserve(input_points.size());
+  for (const auto& p : input_points)
+    input_point_ids.push_back(get_point_id(to_exact(get(pm,p))));
 
-    int tid = get(tid_map, f);
-    if (tid == -1)
+  for (Input_TID f=0; f<id_triples.size(); ++f)
+  {
+    if (is_degen[f]) continue; //skip degenerate faces
+
+    int tiid = tri_inter_ids[f];
+    if (tiid == -1)
     {
-      halfedge_descriptor h = halfedge(f, tm);
       soup_triangles.emplace_back(
-        CGAL::make_array(get_point_id(to_exact(get(vpm,source(h, tm)))),
-                         get_point_id(to_exact(get(vpm,target(h, tm)))),
-                         get_point_id(to_exact(get(vpm,target(next(h, tm), tm)))))
+        CGAL::make_array(input_point_ids[id_triples[f][0]],
+                         input_point_ids[id_triples[f][1]],
+                         input_point_ids[id_triples[f][2]])
       );
     }
   }
@@ -396,14 +374,19 @@ autorefine(      TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  std::vector<typename GT::Point_3> soup_points;
-  std::vector<std::array<std::size_t, 3> > soup_triangles;
+  std::vector<typename GT::Point_3> in_soup_points;
+  std::vector<std::array<std::size_t, 3> > in_soup_triangles;
+  std::vector<typename GT::Point_3> out_soup_points;
+  std::vector<std::array<std::size_t, 3> > out_soup_triangles;
 
-  autorefine_soup_output(tm, soup_points, soup_triangles, np);
+  polygon_mesh_to_polygon_soup(tm, in_soup_points, in_soup_triangles);
+
+  autorefine_soup_output(in_soup_points, in_soup_triangles,
+                         out_soup_points, out_soup_triangles);
 
   clear(tm);
-  orient_polygon_soup(soup_points, soup_triangles);
-  polygon_soup_to_polygon_mesh(soup_points, soup_triangles, tm);
+  orient_polygon_soup(out_soup_points, out_soup_triangles);
+  polygon_soup_to_polygon_mesh(out_soup_points, out_soup_triangles, tm);
 }
 
 
