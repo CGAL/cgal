@@ -126,8 +126,8 @@ struct binop_intersection_test_segment_tree {
   template<class Callback>
   void operator()(Callback& cb0,
                   Callback& cb1,
-                  const SNC_structure& sncp,
-                  const SNC_structure& snc1i)
+                  const SNC_structure& snc0,
+                  const SNC_structure& snc1)
   {
     Halfedge_iterator e0, e1;
     Halffacet_iterator f0, f1;
@@ -135,8 +135,8 @@ struct binop_intersection_test_segment_tree {
 
     CGAL_NEF_TRACEN("start edge0 edge1");
     Bop_edge0_edge1_callback<Callback> callback_edge0_edge1( cb0 );
-    CGAL_forall_edges( e0, sncp)  a.push_back( Nef_box( e0 ) );
-    CGAL_forall_edges( e1, snc1i) b.push_back( Nef_box( e1 ) );
+    CGAL_forall_edges( e0, snc0) a.push_back( Nef_box( e0 ) );
+    CGAL_forall_edges( e1, snc1) b.push_back( Nef_box( e1 ) );
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_edge1);
     a.clear();
@@ -144,8 +144,8 @@ struct binop_intersection_test_segment_tree {
 
     CGAL_NEF_TRACEN("start edge0 face1");
     Bop_edge0_face1_callback<Callback> callback_edge0_face1( cb0 );
-    CGAL_forall_edges( e0, sncp ) a.push_back( Nef_box( e0 ) );
-    CGAL_forall_facets( f1, snc1i)    b.push_back( Nef_box( f1 ) );
+    CGAL_forall_edges( e0, snc0)  a.push_back( Nef_box( e0 ) );
+    CGAL_forall_facets( f1, snc1) b.push_back( Nef_box( f1 ) );
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_face1);
     a.clear();
@@ -153,8 +153,8 @@ struct binop_intersection_test_segment_tree {
 
     CGAL_NEF_TRACEN("start edge1 face0");
     Bop_edge1_face0_callback<Callback> callback_edge1_face0( cb1 );
-    CGAL_forall_edges( e1, snc1i)  a.push_back( Nef_box( e1 ) );
-    CGAL_forall_facets( f0, sncp ) b.push_back( Nef_box( f0 ) );
+    CGAL_forall_edges( e1, snc1)  a.push_back( Nef_box( e1 ) );
+    CGAL_forall_facets( f0, snc0) b.push_back( Nef_box( f0 ) );
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge1_face0);
   }
