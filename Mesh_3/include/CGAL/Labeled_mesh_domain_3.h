@@ -121,6 +121,7 @@ namespace internal {
     }
   };
 
+  // Detect_features_in_domain
   template<typename MeshDomain, typename DetectFunctor>
   struct Detect_features_in_domain {
     void operator()(const CGAL::Image_3& image,
@@ -146,6 +147,27 @@ namespace internal {
   {
     return Detect_features_in_domain<MeshDomain, DetectFunctor>()
             (image, domain, functor);
+  }
+
+  // Add_input_features
+  template<typename MeshDomain, typename DetectFunctor>
+  struct Add_input_features_in_domain {
+    void operator()(MeshDomain& domain, DetectFunctor functor) const {
+      return functor(domain);
+    }
+  };
+  // specialization for `Null_functor`: create the default functor
+  template<typename MeshDomain>
+  struct Add_input_features_in_domain<MeshDomain, Null_functor> {
+    void operator()(MeshDomain&, Null_functor) const {
+      return;
+    }
+  };
+
+  template<typename MeshDomain, typename DetectFunctor>
+  void add_input_features(MeshDomain& domain, DetectFunctor functor)
+  {
+    return Add_input_features_in_domain<MeshDomain, DetectFunctor>()(domain, functor);
   }
 
 } // end namespace CGAL::Mesh_3::internal
@@ -638,8 +660,10 @@ public:
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
     auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
-    const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), CGAL::Image_3());
+    CGAL::Image_3 no_weights;
+    const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights);
     auto detect_features_ = choose_parameter(get_parameter(np, internal_np::detect_features_param), Null_functor());
+    auto input_features_ = choose_parameter(get_parameter(np, internal_np::input_features_param), Null_functor());
 
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;
@@ -654,8 +678,11 @@ public:
                                      value_outside_);
 
     // warning : keep Return_type consistent with actual return type
+    const bool no_features_provided
+      =  CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value
+      && CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::input_features_param_t>::value;
     using Return_type = std::conditional_t <
-      CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value,
+      no_features_provided,
       Labeled_mesh_domain_3,
       Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
     >;
@@ -670,9 +697,15 @@ public:
        p::construct_surface_patch_index =
                create_construct_surface_patch_index(construct_surface_patch_index_));
 
-    if(!weights_.is_valid())
+    if (!weights_.is_valid())
+    {
+      std::cout << "detect_features..." << std::endl;
       CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
-
+      std::cout << "detect_features done" << std::endl;
+      std::cout << "add_input_features..." << std::endl;
+      CGAL::Mesh_3::internal::add_input_features(domain, input_features_);
+      std::cout << "add_input_features done" << std::endl;
+    }
     return domain;
   }
 /// @}

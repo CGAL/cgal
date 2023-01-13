@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
   // Domain
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image,
-    params::detect_features = CGAL::Mesh_3::feature_range(features_inside));
+    params::input_features = CGAL::Mesh_3::feature_range(features_inside));
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
   Mesh_criteria criteria(params::edge_size(6).

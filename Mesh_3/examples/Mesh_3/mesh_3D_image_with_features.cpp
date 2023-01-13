@@ -12,6 +12,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
+#include <CGAL/Mesh_3/Feature_range.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
@@ -36,38 +38,6 @@ namespace params = CGAL::parameters;
 
 /// [Add 1D features]
 #include "read_polylines.h"
-#include <CGAL/Mesh_3/polylines_to_protect.h> // undocumented header
-
-// Protect the intersection of the object with the box of the image,
-// by declaring 1D-features. Note that `CGAL::polylines_to_protect` is
-// not documented.
-bool add_1D_features(const CGAL::Image_3& image,
-                     Mesh_domain& domain,
-                     const std::string lines_fname)
-{
-  typedef K::Point_3 Point_3;
-  typedef unsigned char Word_type;
-
-  std::vector<std::vector<Point_3> > features_inside;
-  if(!read_polylines(lines_fname, features_inside)) // see file "read_polylines.h"
-  {
-    std::cerr << "Error: Cannot read file " <<  lines_fname << std::endl;
-    return false;
-  }
-
-  std::vector<std::vector<Point_3> > polylines_on_bbox;
-  CGAL::polylines_to_protect<Point_3, Word_type>(image, polylines_on_bbox,
-                                                 features_inside.begin(),
-                                                 features_inside.end());
-
-  domain.add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
-
-  // It is very important that the polylines from the file `lines_fname`
-  // contain only polylines in the inside of the box of the image.
-  domain.add_features(features_inside.begin(), features_inside.end());
-  return true;
-}
-/// [Add 1D features]
 
 int main(int argc, char* argv[])
 {
@@ -79,16 +49,19 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  // Domain
-  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
-
-  /// Declare 1D-features, see above [Call add_1D_features]
-  const std::string lines_fname = (argc>2)?argv[2]:CGAL::data_file_path("images/420.polylines.txt");
-
-  if(!add_1D_features(image, domain, lines_fname)) {
-    return EXIT_FAILURE;
+  /// Load 1D-features
+  const std::string lines_fname = (argc > 2) ? argv[2] : CGAL::data_file_path("images/420.polylines.txt");
+  std::vector<std::vector<K::Point_3> > features_inside;
+  if (!read_polylines(lines_fname, features_inside)) // see file "read_polylines.h"
+  {
+    std::cerr << "Error: Cannot read file " << lines_fname << std::endl;
+    return false;
   }
-  /// [Call add_1D_features]
+
+  // Domain
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image,
+    params::detect_features = CGAL::Mesh_3::Detect_features_on_image_bbox(),
+    params::input_features = CGAL::Mesh_3::Feature_range(features_inside));
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
   Mesh_criteria criteria(params::edge_size(6).

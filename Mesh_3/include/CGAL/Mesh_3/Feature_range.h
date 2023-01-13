@@ -36,10 +36,10 @@ template<typename PolylineRange>
 struct Feature_range
 {
 private:
-  PolylineRange polylines_;
+  const PolylineRange& polylines_;
 
 public:
-  Feature_range(const PolylineRange polylines)
+  Feature_range(const PolylineRange& polylines)
     : polylines_(polylines)
   {}
 
@@ -49,8 +49,8 @@ public:
   * \tparam Mesh_domain class model of `MeshDomainWithFeatures_3`
   * \param domain the mesh domain to be enriched with polyline features
   */
-  template<typename Img, typename Mesh_domain>
-  void operator()(const Img&, Mesh_domain& domain)
+  template<typename Mesh_domain>
+  void operator()(Mesh_domain& domain)
   {
     using Point = typename Mesh_domain::Point_3;
 
