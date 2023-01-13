@@ -126,8 +126,8 @@ struct binop_intersection_test_segment_tree {
   template<class Callback>
   void operator()(Callback& cb0,
                   Callback& cb1,
-                  SNC_structure& sncp,
-                  SNC_structure& snc1i)
+                  const SNC_structure& sncp,
+                  const SNC_structure& snc1i)
   {
     Halfedge_iterator e0, e1;
     Halffacet_iterator f0, f1;
