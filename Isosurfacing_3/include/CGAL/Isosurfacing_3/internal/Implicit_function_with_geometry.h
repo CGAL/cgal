@@ -14,8 +14,6 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <memory>
-
 namespace CGAL {
 namespace Isosurfacing {
 namespace internal {

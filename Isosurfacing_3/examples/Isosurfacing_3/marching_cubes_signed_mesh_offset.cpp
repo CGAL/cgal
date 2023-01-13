@@ -10,10 +10,9 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
-#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 #include <iostream>
-#include <memory>
 #include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -37,8 +36,8 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 inline Kernel::FT distance_to_mesh(const Tree& tree,
                                    const Point& p)
 {
-  const Point& x = tree.closest_point(p);
-  return std::sqrt((p - x).squared_length());
+  const Point x = tree.closest_point(p);
+  return sqrt((p - x).squared_length());
 }
 
 int main(int, char**)
@@ -92,15 +91,15 @@ int main(int, char**)
   // create domain from the grid
   auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
 
-  // containers for output indexed triangle soup
+  // containers for the triangle soup output
   Point_range points;
   Polygon_range polygons;
 
   // execute marching cubes with an isovalue equating offset
   CGAL::Isosurfacing::marching_cubes(domain, offset_value, points, polygons);
 
-  // save output indexed triangle soup to a file, in the OFF format
-  CGAL::IO::write_OFF("output.off", points, polygons);
+  // save the output
+  CGAL::IO::write_polygon_soup("output.off", points, polygons);
 
   return EXIT_SUCCESS;
 }

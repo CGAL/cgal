@@ -6,9 +6,8 @@
 
 #include <CGAL/boost/graph/IO/OFF.h>
 
+#include <cmath>
 #include <iostream>
-#include <math.h>
-#include <memory>
 #include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -72,24 +71,26 @@ struct Refine_one_eighth
 
 int main(int, char**)
 {
-  const CGAL::Bbox_3 bbox(-1., -1., -1., 1., 1., 1.);
+  const CGAL::Bbox_3 bbox{-1., -1., -1., 1., 1., 1.};
   Octree_wrapper octree_wrap { bbox };
 
   Refine_one_eighth split_predicate(3, 4);
   octree_wrap.refine(split_predicate);
 
-  auto sphere_function = [&](const Point& p)
+  auto sphere_function = [&](const Point& p) -> FT
   {
-    return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
+    return sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
   };
 
-  auto sphere_gradient = [&](const Point& p)
+  auto sphere_gradient = [&](const Point& p) -> Vector
   {
     const Vector g = p - CGAL::ORIGIN;
-    return g / std::sqrt(g.squared_length());
+    return g / sqrt(g.squared_length());
   };
 
-  auto domain = CGAL::Isosurfacing::create_implicit_octree_domain(octree_wrap, sphere_function, sphere_gradient);
+  auto domain = CGAL::Isosurfacing::create_implicit_octree_domain(octree_wrap,
+                                                                  sphere_function,
+                                                                  sphere_gradient);
 
   Point_range points;
   Polygon_range polygons;

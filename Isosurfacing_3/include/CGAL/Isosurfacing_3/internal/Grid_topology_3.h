@@ -94,8 +94,7 @@ public:
   Cell_vertices cell_vertices(const Cell_descriptor& c) const
   {
     Cell_vertices cv;
-    for(std::size_t i=0; i<cv.size(); ++i)
-    {
+    for(std::size_t i=0; i<cv.size(); ++i) {
       for(std::size_t j=0; j<c.size(); ++j)
       {
         // lookup the relative vertex indices and offset them by the cell position
@@ -110,8 +109,7 @@ public:
   Cell_edges cell_edges(const Cell_descriptor& c) const
   {
     Cell_edges ce;
-    for(std::size_t i=0; i<ce.size(); ++i)
-    {
+    for(std::size_t i=0; i<ce.size(); ++i) {
       for(std::size_t j=0; j<c.size(); ++j)
       {
         // lookup the relative edge indices and offset them by the cell position

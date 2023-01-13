@@ -7,7 +7,6 @@
 
 #include <CGAL/boost/graph/IO/OFF.h>
 
-#include <memory>
 #include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -22,7 +21,7 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 int main(int, char**)
 {
   // create a Cartesian grid with 100^3 grid points and the bounding box [-1, 1]^3
-  const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
+  const CGAL::Bbox_3 bbox{-1., -1., -1., 1., 1., 1.};
   Grid grid { 50, 50, 50, bbox };
 
   // compute and store function values at all grid points
@@ -35,7 +34,7 @@ int main(int, char**)
         const FT pos_z = z * grid.spacing()[2] + bbox.zmin();
 
         // Euclidean distance to the origin
-        grid.value(x, y, z) = std::sqrt(pos_x * pos_x + pos_y * pos_y + pos_z * pos_z);
+        grid.value(x, y, z) = sqrt(pos_x * pos_x + pos_y * pos_y + pos_z * pos_z);
       }
     }
   }

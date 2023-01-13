@@ -31,9 +31,9 @@ int main(int, char**)
   const Vector spacing(0.002, 0.002, 0.02);
   const CGAL::Bbox_3 bbox = {-1, -1, -1, 1, 1, 1};
 
-  auto sphere_function = [](const Point& point)
+  auto sphere_function = [](const Point& point) -> FT
   {
-    return std::sqrt(point.x() * point.x() + point.y() * point.y() + point.z() * point.z());
+    return sqrt(point.x() * point.x() + point.y() * point.y() + point.z() * point.z());
   };
 
   using Gradient = CGAL::Isosurfacing::Finite_difference_gradient_3<Kernel, decltype(sphere_function)>;

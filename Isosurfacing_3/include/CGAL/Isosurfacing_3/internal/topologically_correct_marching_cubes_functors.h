@@ -193,7 +193,7 @@ private:
     // save global edge and global vertex index of isosurface
     std::vector<std::size_t> vertices(12);
 
-    // save loca coordinate along the edge of intersection point
+    // save local coordinate along the edge of intersection point
     std::vector<FT> ecoord{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     // collect vertices

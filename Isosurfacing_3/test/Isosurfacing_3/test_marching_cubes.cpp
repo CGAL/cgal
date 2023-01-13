@@ -12,7 +12,7 @@ struct Sphere_function
 {
   FT operator()(const Point& point) const
   {
-      return std::sqrt(point.x() * point.x() + point.y() * point.y() + point.z() * point.z());
+    return sqrt(point.x() * point.x() + point.y() * point.y() + point.z() * point.z());
   }
 };
 

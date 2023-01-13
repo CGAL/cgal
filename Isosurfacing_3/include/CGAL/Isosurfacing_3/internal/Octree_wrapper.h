@@ -97,7 +97,8 @@ public:
       offset_y_(bbox.ymin()),
       offset_z_(bbox.zmin()),
       bbox_(bbox),
-      point_range_({{bbox.xmin(), bbox.ymin(), bbox.zmin()}, {bbox.xmax(), bbox.ymax(), bbox.zmax()}}),
+      point_range_({{bbox.xmin(), bbox.ymin(), bbox.zmin()},
+                    {bbox.xmax(), bbox.ymax(), bbox.zmax()}}),
       octree_(point_range_)
   { }
 
@@ -291,7 +292,7 @@ public:
     const FT y0 = offset_y_ + vertex_coordinates[1] * hx_;
     const FT z0 = offset_z_ + vertex_coordinates[2] * hx_;
 
-    return {x0, y0, z0};
+    return { x0, y0, z0 };
   }
 
   Point_3 point(const Vertex_handle& v) const
@@ -303,7 +304,7 @@ public:
     const FT y0 = offset_y_ + j * hx_;
     const FT z0 = offset_z_ + k * hx_;
 
-    return {x0, y0, z0};
+    return { x0, y0, z0 };
   }
 
   Uniform_coords vertex_uniform_coordinates(const Node& node,
@@ -600,7 +601,7 @@ public:
     std::size_t n2_lex = lex_index(n2_uniform_coords[0], n2_uniform_coords[1], n2_uniform_coords[2], max_depth_);
     std::size_t n3_lex = lex_index(n3_uniform_coords[0], n3_uniform_coords[1], n3_uniform_coords[2], max_depth_);
 
-    return {n0_lex, n1_lex, n2_lex, n3_lex};
+    return { n0_lex, n1_lex, n2_lex, n3_lex };
 
     // return { value( i0, j0, k0 ), value( i1, j1, k1 ) };
   }
