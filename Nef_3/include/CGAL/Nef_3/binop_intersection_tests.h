@@ -40,21 +40,6 @@ struct binop_intersection_test_segment_tree {
   struct Bop_edge0_face1_callback {
     Callback           &cb;
 
-    struct Pair_hash_function {
-      typedef std::size_t result_type;
-
-      template <class H>
-      std::size_t
-      operator() (const H& h) const {
-        return
-          std::size_t(&*(h.first)) / sizeof
-          (typename std::iterator_traits<typename H::first_type>::value_type)
-              +
-          std::size_t(&*(h.second)) / sizeof
-          (typename std::iterator_traits<typename H::second_type>::value_type);
-      }
-    };
-
     Bop_edge0_face1_callback(Callback &cb)
     : cb(cb)
     {}
