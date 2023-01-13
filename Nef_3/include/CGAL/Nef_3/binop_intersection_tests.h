@@ -17,9 +17,8 @@
 
 #include <CGAL/Nef_3/Nef_box.h>
 #include <CGAL/Nef_3/Infimaximal_box.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <vector>
-#include <iostream>
-#include <CGAL/Timer.h>
 
 namespace CGAL {
 
@@ -75,7 +74,6 @@ struct binop_intersection_test_segment_tree {
       }
     }
   };
-
 
   template<class Callback>
   struct Bop_edge1_face0_callback {
