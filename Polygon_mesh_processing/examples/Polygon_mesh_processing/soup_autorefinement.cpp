@@ -23,19 +23,14 @@ int main(int argc, char** argv)
                                          : std::string(argv[1]);
 
   std::vector<Point> input_points;
-  std::vector<std::vector<std::size_t> > input_triangles;
-
+  std::vector<std::array<std::size_t, 3>> input_triangles;
   CGAL::IO::read_polygon_soup(filename, input_points, input_triangles);
-  PMP::repair_polygon_soup(input_points, input_triangles);
 
-  Mesh mesh;
-  PMP::orient_polygon_soup(input_points, input_triangles);
-  PMP::polygon_soup_to_polygon_mesh(input_points, input_triangles, mesh);
-  PMP::triangulate_faces(mesh);
+  std::vector<Point> output_points;
+  std::vector<std::array<std::size_t, 3>> output_triangles;
+  PMP::autorefine_soup_output(input_points, input_triangles, output_points, output_triangles);
 
-  PMP::autorefine(mesh);
-
-  CGAL::IO::write_polygon_mesh("autorefined.off", mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_soup("autorefined.off", output_points, output_triangles, CGAL::parameters::stream_precision(17));
 
   return 0;
 }
