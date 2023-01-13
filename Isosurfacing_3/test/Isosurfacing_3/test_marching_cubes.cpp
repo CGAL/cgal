@@ -1,5 +1,5 @@
 
-#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 
 #include "test_util.h"
 
@@ -32,7 +32,7 @@ void test_implicit_sphere()
   const Vector spacing(0.2, 0.2, 0.2);
   const CGAL::Bbox_3 bbox = {-1, -1, -1, 1, 1, 1};
 
-  auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, spacing, Sphere_function());
+  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>(bbox, spacing, Sphere_function());
 
   Point_range points;
   Polygon_range polygons;
@@ -60,7 +60,7 @@ void test_grid_sphere(const std::size_t n)
 
   Sphere_function sphere_function;
 
-  std::shared_ptr<Grid> grid = std::make_shared<Grid>(n, n, n, bbox);
+  Grid grid{n, n, n, bbox};
 
   for(std::size_t x=0; x<grid.xdim(); ++x) {
     for(std::size_t y=0; y<grid.ydim(); ++y) {
@@ -75,7 +75,7 @@ void test_grid_sphere(const std::size_t n)
     }
   }
 
-  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
+  auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
 
   Point_range points;
   Polygon_range polygons;

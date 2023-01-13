@@ -2,8 +2,8 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
 
@@ -14,7 +14,7 @@ using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
 
-using Grid = CGAL::Cartesian_grid_3<Kernel>;
+using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
 
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
@@ -30,9 +30,9 @@ int main(int, char**)
     for(std::size_t y=0; y<grid.ydim(); ++y) {
       for(std::size_t z=0; z<grid.zdim(); ++z)
       {
-        const FT pos_x = x * grid.get_spacing()[0] + bbox.xmin();
-        const FT pos_y = y * grid.get_spacing()[1] + bbox.ymin();
-        const FT pos_z = z * grid.get_spacing()[2] + bbox.zmin();
+        const FT pos_x = x * grid.spacing()[0] + bbox.xmin();
+        const FT pos_y = y * grid.spacing()[1] + bbox.ymin();
+        const FT pos_z = z * grid.spacing()[2] + bbox.zmin();
 
         // Euclidean distance to the origin
         grid.value(x, y, z) = std::sqrt(pos_x * pos_x + pos_y * pos_y + pos_z * pos_z);
@@ -41,7 +41,7 @@ int main(int, char**)
   }
 
   // create a domain from the grid
-  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain(grid);
+  auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
 
   // prepare collections for the result
   Point_range points;

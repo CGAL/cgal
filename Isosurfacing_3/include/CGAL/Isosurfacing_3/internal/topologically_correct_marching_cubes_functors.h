@@ -38,17 +38,17 @@
 // https://github.com/rogrosso/tmc available on 15th of September 2022.
 //
 
-#ifndef CGAL_ISOSURFACING_3_INTERNAL_TMC_INTERNAL_H
-#define CGAL_ISOSURFACING_3_INTERNAL_TMC_INTERNAL_H
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_TMC_FUNCTORS_H
+#define CGAL_ISOSURFACING_3_INTERNAL_TMC_FUNCTORS_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Isosurfacing_3/internal/Marching_cubes_3_internal.h>
-#include <CGAL/Isosurfacing_3/internal/Tables.h>
+#include <CGAL/Isosurfacing_3/internal/marching_cubes_functors.h>
+#include <CGAL/Isosurfacing_3/internal/tables.h>
 
-#include <cmath>
 #include <array>
 #include <atomic>
+#include <cmath>
 #include <map>
 #include <mutex>
 
@@ -66,30 +66,40 @@ private:
   using Point_range = PointRange;
   using Polygon_range = PolygonRange;
 
-  using FT = typename Domain::FT;
-  using Point = typename Domain::Point;
-  using Vector = typename Domain::Vector;
+  using Geom_traits = typename Domain::Geom_traits;
+  using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
+
   using Edge_descriptor = typename Domain::Edge_descriptor;
   using Cell_descriptor = typename Domain::Cell_descriptor;
 
   using uint = unsigned int;
+
+private:
+  const Domain& m_domain;
+  FT m_isovalue;
+
+  Point_range& m_points;
+  Polygon_range& m_polygons;
+
+  std::mutex mutex;
 
 public:
   TMC_functor(const Domain& domain,
               const FT isovalue,
               Point_range& points,
               Polygon_range& polygons)
-    : domain(domain),
-      isovalue(isovalue),
-      points(points),
-      polygons(polygons)
+    : m_domain(domain),
+      m_isovalue(isovalue),
+      m_points(points),
+      m_polygons(polygons)
   { }
 
   void operator()(const Cell_descriptor& cell)
   {
-    FT values[8];
-    Point corners[8];
-    const int i_case = get_cell_corners(domain, cell, isovalue, corners, values);
+    std::array<FT, 8> values;
+    std::array<Point_3, 8> corners;
+    const int i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
 
     const int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
     if(Cube_table::intersected_edges[i_case] == 0 ||
@@ -102,12 +112,12 @@ public:
     int tcm = int(Cube_table::t_ambig[i_case]);
     if(tcm == 105)
     {
-      p_slice(cell, isovalue, values, corners, i_case);
+      p_slice(cell, m_isovalue, values, corners, i_case);
       return;
     }
 
-    std::array<Point, 12> vertices;
-    mc_construct_vertices(domain.cell_edges(cell), isovalue, i_case, corners, values, vertices);
+    std::array<Point_3, 12> vertices;
+    mc_construct_vertices(cell, i_case, corners, values, m_isovalue, m_domain, vertices);
 
     // @todo improve triangle generation
 
@@ -120,19 +130,20 @@ public:
       if(Cube_table::triangle_cases[t_index] == -1)
         break;
 
-      const int eg0 = Cube_table::triangle_cases[t_index + 0];  // TODO: move more of this stuff into the table
+      // @todo move more of this stuff into the table
+      const int eg0 = Cube_table::triangle_cases[t_index + 0];
       const int eg1 = Cube_table::triangle_cases[t_index + 1];
       const int eg2 = Cube_table::triangle_cases[t_index + 2];
 
-      const std::size_t p0_idx = points.size();
+      const std::size_t p0_idx = m_points.size();
 
-      points.push_back(vertices[eg0]);
-      points.push_back(vertices[eg1]);
-      points.push_back(vertices[eg2]);
+      m_points.push_back(vertices[eg0]);
+      m_points.push_back(vertices[eg1]);
+      m_points.push_back(vertices[eg2]);
 
       // insert new triangle in list
-      polygons.push_back({});
-      auto& triangle = polygons.back();
+      m_polygons.emplace_back();
+      auto& triangle = m_polygons.back();
 
       triangle.push_back(p0_idx + 2);
       triangle.push_back(p0_idx + 1);
@@ -140,14 +151,15 @@ public:
     }
   }
 
+private:
   void add_triangle(const std::size_t p0,
                     const std::size_t p1,
                     const std::size_t p2)
   {
     std::lock_guard<std::mutex> lock(mutex);
 
-    polygons.push_back({});
-    auto& triangle = polygons.back();
+    m_polygons.emplace_back();
+    auto& triangle = m_polygons.back();
 
     triangle.push_back(p0);
     triangle.push_back(p1);
@@ -155,11 +167,16 @@ public:
   }
 
   void p_slice(const Cell_descriptor& cell,
-               const double i0,
-               FT* values,
-               Point* corners,
+               const FT i0,
+               const std::array<FT, 8>& values,
+               const std::array<Point_3, 8>& corners,
                const int i_case)
   {
+    typename Geom_traits::Compute_x_3 x_coord = m_domain.geom_traits().compute_x_3_object();
+    typename Geom_traits::Compute_y_3 y_coord = m_domain.geom_traits().compute_y_3_object();
+    typename Geom_traits::Compute_z_3 z_coord = m_domain.geom_traits().compute_z_3_object();
+    typename Geom_traits::Construct_point_3 point = m_domain.geom_traits().construct_point_3_object();
+
     // there are 12 edges, assign to each vertex three edges, the global edge numbering
     // consist of 3*global_vertex_id + edge_offset.
     const unsigned long long gei_pattern_ = 670526590282893600ull;
@@ -194,27 +211,27 @@ public:
 
         // int g_edg = int(m_cell_shift_factor * m_ugrid.global_index(ix, iy, iz) + off_val);
 
-        // generate vertex here, do not care at this point if vertex already exist
+        // generate vertex here, do not care at this point if vertex already exists
         uint v0, v1;
         get_edge_vertex(eg, v0, v1, l_edges_);
 
-        double l = (i0 - values[v0]) / (values[v1] - values[v0]);
+        FT l = (i0 - values[v0]) / (values[v1] - values[v0]);
         ecoord[eg] = l;
 
         // interpolate vertex
-        const FT px = (1 - l) * corners[v0][0] + l * corners[v1][0];
-        const FT py = (1 - l) * corners[v0][1] + l * corners[v1][1];
-        const FT pz = (1 - l) * corners[v0][2] + l * corners[v1][2];
+        const FT px = (1 - l) * x_coord(corners[v0]) + l * x_coord(corners[v1]);
+        const FT py = (1 - l) * y_coord(corners[v0]) + l * y_coord(corners[v1]);
+        const FT pz = (1 - l) * z_coord(corners[v0]) + l * z_coord(corners[v1]);
 
         // set vertex in map
         // set vertex index
         // auto s_index = m_vertices.find(vertices[eg].g_edg);
         // if(s_index == m_vertices.end())
         // {
-          const int g_idx = (int)points.size();
+          const int g_idx = static_cast<int>(m_points.size());
           vertices[eg] = g_idx;
         //   m_vertices[vertices[eg].g_edg] = g_idx;
-          points.push_back(Point(px, py, pz));
+          m_points.push_back(point(px, py, pz));
         //} else {
         //   vertices[eg] = s_index->second;
         //}
@@ -253,7 +270,7 @@ public:
       }
     };
 
-    auto get_segm = [](const int e, const int pos, unsigned char segm_[12])
+    auto get_segm = [](const int e, const int pos, unsigned char segm_[12]) -> int
     {
       if(pos == 0)
         return int(segm_[e] & 0xF);
@@ -285,7 +302,7 @@ public:
     const unsigned int BIT_2 = 2;
     const unsigned int BIT_3 = 4;
     const unsigned int BIT_4 = 8;
-    auto asymptotic_decider = [](const double f0, const double f1, const double f2, const double f3)
+    auto asymptotic_decider = [](const FT f0, const FT f1, const FT f2, const FT f3) -> FT
     {
       return (f0 * f3 - f1 * f2) / (f0 + f3 - f1 - f2);
     };
@@ -303,10 +320,10 @@ public:
       uint e1 = get_face_e(f, 1);
       uint e2 = get_face_e(f, 2);
       uint e3 = get_face_e(f, 3);
-      double f0 = values[v0];
-      double f1 = values[v1];
-      double f2 = values[v2];
-      double f3 = values[v3];
+      FT f0 = values[v0];
+      FT f1 = values[v1];
+      FT f2 = values[v2];
+      FT f3 = values[v3];
       if(f0 >= i0) f_case |= BIT_1;
       if(f1 >= i0) f_case |= BIT_2;
       if(f2 >= i0) f_case |= BIT_3;
@@ -336,7 +353,7 @@ public:
         break;
         case 6:
         {
-          const double val = asymptotic_decider(f0, f1, f2, f3);
+          const FT val = asymptotic_decider(f0, f1, f2, f3);
           if(val > i0)
           {
             set_segm(e3, 0, e0, segm_);
@@ -356,13 +373,13 @@ public:
             f_flag[f] = true;
             // singular case val == i0, there are no asymptotes
             // check if there is a reasonable triangulation of the face
-            unsigned short e_flag = 0x218;
-            unsigned short bit_1 = 0x1;
-            unsigned short bit_2 = 0x2;
-            double ec0 = ecoord[e0];
-            double ec1 = ecoord[e1];
-            double ec2 = ecoord[e2];
-            double ec3 = ecoord[e3];
+            const unsigned short e_flag = 0x218;
+            const unsigned short bit_1 = 0x1;
+            const unsigned short bit_2 = 0x2;
+            FT ec0 = ecoord[e0];
+            FT ec1 = ecoord[e1];
+            FT ec2 = ecoord[e2];
+            FT ec3 = ecoord[e3];
 
             if((e_flag >> (f * 2)) & bit_1)
             {
@@ -408,7 +425,7 @@ public:
         break;
         case 9:
         {
-          const double val = asymptotic_decider(f0, f1, f2, f3);
+          const FT val = asymptotic_decider(f0, f1, f2, f3);
           if(val > i0)
           {
             set_segm(e0, 0, e1, segm_);
@@ -428,13 +445,13 @@ public:
             f_flag[f] = true;
             // singular case val == i0, there are no asymptotes
             // check if there is a reasonable triangulation of the face
-            unsigned short e_flag = 0x218;
-            unsigned short bit_1 = 0x1;
-            unsigned short bit_2 = 0x2;
-            double ec0 = ecoord[e0];
-            double ec1 = ecoord[e1];
-            double ec2 = ecoord[e2];
-            double ec3 = ecoord[e3];
+            const unsigned short e_flag = 0x218;
+            const unsigned short bit_1 = 0x1;
+            const unsigned short bit_2 = 0x2;
+            FT ec0 = ecoord[e0];
+            FT ec1 = ecoord[e1];
+            FT ec2 = ecoord[e2];
+            FT ec3 = ecoord[e3];
 
             if((e_flag >> (f * 2)) & bit_1)
             {
@@ -505,9 +522,9 @@ public:
     unsigned long long c_ = 0xFFFFFFFFFFFF0000;
 
     // in the 4 first bits store size of contours
-    auto get_cnt_size = [](const int cnt, unsigned long long& c_)
+    auto get_cnt_size = [](const int cnt, unsigned long long& c_) -> size_t
     {
-      return (size_t)((c_ & (0xF << 4 * cnt)) >> 4 * cnt);
+      return size_t((c_ & (0xF << 4 * cnt)) >> 4 * cnt);
     };
 
     auto set_cnt_size = [](const int cnt, const int size, unsigned long long& c_)
@@ -528,12 +545,12 @@ public:
     };
 
     // read edge from contour
-    auto get_c = [](const int cnt, const int pos, unsigned long long c_)
+    auto get_c = [](const int cnt, const int pos, unsigned long long c_) -> int
     {
       const uint mask[4] = {0x0, 0xF, 0xFF, 0xFFF};
       const uint c_sz = (uint)(c_ & mask[cnt]);
       const uint e = 16 + 4 * ((c_sz & 0xF) + ((c_sz & 0xF0) >> 4) + ((c_sz & 0xF00) >> 8) + pos);
-      return (int)((c_ >> e) & 0xF);
+      return int((c_ >> e) & 0xF);
     };
 
     // connect oriented contours
@@ -570,30 +587,30 @@ public:
     // It is enough to compute a pair of solutions for one face
     // The other solutions are obtained by evaluating the equations
     // for the common variable
-    double ui[2]{};
-    double vi[2]{};
-    double wi[2]{};
+    FT ui[2]{};
+    FT vi[2]{};
+    FT wi[2]{};
     unsigned char q_sol{0};
-    const double a = (values[0] - values[1]) * (-values[6] + values[7] + values[4] - values[5]) -
-                     (values[4] - values[5]) * (-values[2] + values[3] + values[0] - values[1]);
-    const double b = (i0 - values[0]) * (-values[6] + values[7] + values[4] - values[5]) +
-                     (values[0] - values[1]) * (values[6] - values[4]) -
-                     (i0 - values[4]) * (-values[2] + values[3] + values[0] - values[1]) -
-                     (values[4] - values[5]) * (values[2] - values[0]);
-    const double c = (i0 - values[0]) * (values[6] - values[4]) - (i0 - values[4]) * (values[2] - values[0]);
+    const FT a = (values[0] - values[1]) * (-values[6] + values[7] + values[4] - values[5]) -
+                 (values[4] - values[5]) * (-values[2] + values[3] + values[0] - values[1]);
+    const FT b = (i0 - values[0]) * (-values[6] + values[7] + values[4] - values[5]) +
+                   (values[0] - values[1]) * (values[6] - values[4]) -
+                 (i0 - values[4]) * (-values[2] + values[3] + values[0] - values[1]) -
+                   (values[4] - values[5]) * (values[2] - values[0]);
+    const FT c = (i0 - values[0]) * (values[6] - values[4]) - (i0 - values[4]) * (values[2] - values[0]);
 
-    double d = b * b - 4 * a * c;
+    FT d = b * b - 4 * a * c;
     if(d > 0)
     {
-      d = std::sqrt(d);
+      d = sqrt(d);
 
       // compute u-coord of solutions
       ui[0] = (-b - d) / (2 * a);
       ui[1] = (-b + d) / (2 * a);
 
       // compute v-coord of solutions
-      double g1 = values[0] * (1 - ui[0]) + values[1] * ui[0];
-      double g2 = values[2] * (1 - ui[0]) + values[3] * ui[0];
+      FT g1 = values[0] * (1 - ui[0]) + values[1] * ui[0];
+      FT g2 = values[2] * (1 - ui[0]) + values[3] * ui[0];
       vi[0] = (i0 - g1) / (g2 - g1);
       if(std::isnan(vi[0]) || std::isinf(vi[0]))
         vi[0] = -1.f;
@@ -617,42 +634,42 @@ public:
 
       // correct values for roots of quadratic equations
       // in case the asymptotic decider has failed
-      if(f_flag[0] == true) {  // face 1, w = 0;
+      if(f_flag[0]) {  // face 1, w = 0;
         if(wi[0] < wi[1])
           wi[0] = 0;
         else
           wi[1] = 0;
       }
 
-      if(f_flag[1] == true) {  // face 2, w = 1
+      if(f_flag[1]) {  // face 2, w = 1
         if(wi[0] > wi[1])
           wi[1] = 1;
         else
           wi[1] = 1;
       }
 
-      if(f_flag[2] == true) {  // face 3, v = 0
+      if(f_flag[2]) {  // face 3, v = 0
         if(vi[0] < vi[1])
           vi[0] = 0;
         else
           vi[1] = 0;
       }
 
-      if(f_flag[3] == true) {  // face 4, v = 1
+      if(f_flag[3]) {  // face 4, v = 1
         if(vi[0] > vi[1])
           vi[0] = 1;
         else
           vi[1] = 1;
       }
 
-      if(f_flag[4] == true) {  // face 5, u = 0
+      if(f_flag[4]) {  // face 5, u = 0
         if(ui[0] < ui[1])
           ui[0] = 0;
         else
           ui[1] = 0;
       }
 
-      if(f_flag[5] == true) {  // face 6, u = 1
+      if(f_flag[5]) {  // face 6, u = 1
         if(ui[0] > ui[1])
           ui[0] = 1;
         else
@@ -682,11 +699,11 @@ public:
     // counts the number of set bits
     auto numberOfSetBits = [](const unsigned char n)
     {
-        // C or C++: use uint32_t
-        uint b = (uint)n;
-        b = b - ((b >> 1) & 0x55555555);
-        b = (b & 0x33333333) + ((b >> 2) & 0x33333333);
-        return (((b + (b >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+      // C or C++: use uint32_t
+      uint b = uint{n};
+      b = b - ((b >> 1) & 0x55555555);
+      b = (b & 0x33333333) + ((b >> 2) & 0x33333333);
+      return (((b + (b >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
     };
 
     // compute the number of solutions to the quadratic equation for a given face
@@ -726,7 +743,7 @@ public:
       //  3) three contours, one has only 3 vertices and does not belong to the tunnel
 
       // construct the six vertices of the inner hexagon
-      double hvt[6][3];
+      FT hvt[6][3];
       hvt[0][0] = ui[0];
       hvt[0][1] = vi[0];
       hvt[0][2] = wi[0];
@@ -747,14 +764,14 @@ public:
       hvt[5][2] = wi[0];
 
       // construct vertices at intersections with the edges
-      auto e_vert = [&ecoord](const int e, const int i)
+      auto e_vert = [&ecoord](const int e, const int i) -> FT
       {
         const unsigned int l_coord[3]{1324855, 5299420, 16733440};
-        unsigned char flag = (l_coord[i] >> (2 * e)) & 3;
+        const unsigned char flag = (l_coord[i] >> (2 * e)) & 3;
         if(flag == 3)
           return ecoord[e];
         else
-          return (FT)(flag);
+          return FT(flag);
       };
 
       // if there are three contours, then there is a tunnel and one
@@ -765,20 +782,20 @@ public:
         // loop over the contorus
         // triangulate the contour which is not part of
         // the tunnel
-        const double uc_min = (ui[0] < ui[1]) ? ui[0] : ui[1];
-        const double uc_max = (ui[0] < ui[1]) ? ui[1] : ui[0];
+        const FT uc_min = (ui[0] < ui[1]) ? ui[0] : ui[1];
+        const FT uc_max = (ui[0] < ui[1]) ? ui[1] : ui[0];
         for(int t=0; t < (int)cnt_; ++t)
         {
           if(get_cnt_size(t, c_) == 3)
           {
-            double umin = 2;
-            double umax = -2;
-            uint e0 = get_c(t, 0, c_);
-            uint e1 = get_c(t, 1, c_);
-            uint e2 = get_c(t, 2, c_);
-            const double u_e0 = e_vert(e0, 0);
-            const double u_e1 = e_vert(e1, 0);
-            const double u_e2 = e_vert(e2, 0);
+            FT umin = 2;
+            FT umax = -2;
+            const uint e0 = get_c(t, 0, c_);
+            const uint e1 = get_c(t, 1, c_);
+            const uint e2 = get_c(t, 2, c_);
+            const FT u_e0 = e_vert(e0, 0);
+            const FT u_e1 = e_vert(e1, 0);
+            const FT u_e2 = e_vert(e2, 0);
             umin = (u_e0 < umin) ? u_e0 : umin;
             umin = (u_e1 < umin) ? u_e1 : umin;
             umin = (u_e2 < umin) ? u_e2 : umin;
@@ -797,28 +814,28 @@ public:
       }
 
       // compute vertices of inner hexagon, save new vertices in list and compute and keep
-      // global vertice index to build triangle connectivity later on.
+      // global vertices index to build triangle connectivity later on.
       uint tg_idx[6];
       for(int i=0; i<6; ++i)
       {
-        const double u = hvt[i][0];
-        const double v = hvt[i][1];
-        const double w = hvt[i][2];
-        const FT px = (1 - w) * ((1 - v) * (corners[0][0] + u * (corners[1][0] - corners[0][0])) +
-                                  v * (corners[2][0] + u * (corners[3][0] - corners[2][0]))) +
-                      w * ((1 - v) * (corners[4][0] + u * (corners[5][0] - corners[4][0])) +
-                            v * (corners[6][0] + u * (corners[7][0] - corners[6][0])));
-        const FT py = (1 - w) * ((1 - v) * (corners[0][1] + u * (corners[1][1] - corners[0][1])) +
-                                  v * (corners[2][1] + u * (corners[3][1] - corners[2][1]))) +
-                      w * ((1 - v) * (corners[4][1] + u * (corners[5][1] - corners[4][1])) +
-                            v * (corners[6][1] + u * (corners[7][1] - corners[6][1])));
-        const FT pz = (1 - w) * ((1 - v) * (corners[0][2] + u * (corners[1][2] - corners[0][2])) +
-                                  v * (corners[2][2] + u * (corners[3][2] - corners[2][2]))) +
-                      w * ((1 - v) * (corners[4][2] + u * (corners[5][2] - corners[4][2])) +
-                            v * (corners[6][2] + u * (corners[7][2] - corners[6][2])));
+        const FT u = hvt[i][0];
+        const FT v = hvt[i][1];
+        const FT w = hvt[i][2];
+        const FT px = (1 - w) * ((1 - v) * (x_coord(corners[0]) + u * (x_coord(corners[1]) - x_coord(corners[0]))) +
+                                       v * (x_coord(corners[2]) + u * (x_coord(corners[3]) - x_coord(corners[2])))) +
+                            w * ((1 - v) * (x_coord(corners[4]) + u * (x_coord(corners[5]) - x_coord(corners[4]))) +
+                                       v * (x_coord(corners[6]) + u * (x_coord(corners[7]) - x_coord(corners[6]))));
+        const FT py = (1 - w) * ((1 - v) * (y_coord(corners[0]) + u * (y_coord(corners[1]) - y_coord(corners[0]))) +
+                                       v * (y_coord(corners[2]) + u * (y_coord(corners[3]) - y_coord(corners[2])))) +
+                            w * ((1 - v) * (y_coord(corners[4]) + u * (y_coord(corners[5]) - y_coord(corners[4]))) +
+                                       v * (y_coord(corners[6]) + u * (y_coord(corners[7]) - y_coord(corners[6]))));
+        const FT pz = (1 - w) * ((1 - v) * (z_coord(corners[0]) + u * (z_coord(corners[1]) - z_coord(corners[0]))) +
+                                       v * (z_coord(corners[2]) + u * (z_coord(corners[3]) - z_coord(corners[2])))) +
+                            w * ((1 - v) * (z_coord(corners[4]) + u * (z_coord(corners[5]) - z_coord(corners[4]))) +
+                                       v * (z_coord(corners[6]) + u * (z_coord(corners[7]) - z_coord(corners[6]))));
 
-        tg_idx[i] = (uint)points.size();
-        points.push_back(Point(px, py, pz));
+        tg_idx[i] = uint{m_points.size()};
+        m_points.push_back(point(px, py, pz));
       }
 
       // triangulate contours with inner hexagon
@@ -832,17 +849,17 @@ public:
           for(int r=0; r<cnt_sz; ++r)
           {
             uint index = -1;
-            double dist = 1000.;
+            FT dist = 1000.;
             uint ci = get_c(i, r, c_);
-            const double u_edge = e_vert(ci, 0);
-            const double v_edge = e_vert(ci, 1);
-            const double w_edge = e_vert(ci, 2);
+            const FT u_edge = e_vert(ci, 0);
+            const FT v_edge = e_vert(ci, 1);
+            const FT w_edge = e_vert(ci, 2);
             for(int s=0; s<6; ++s)
             {
-              const double uval = u_edge - hvt[s][0];
-              const double vval = v_edge - hvt[s][1];
-              const double wval = w_edge - hvt[s][2];
-              double val = uval * uval + vval * vval + wval * wval;
+              const FT uval = u_edge - hvt[s][0];
+              const FT vval = v_edge - hvt[s][1];
+              const FT wval = w_edge - hvt[s][2];
+              FT val = uval * uval + vval * vval + wval * wval;
               if(dist > val)
               {
                 index = s;
@@ -877,7 +894,7 @@ public:
             const uint cid2 = tcon_[tid2];
             // compute index distance
             const int dst = distanceRingIntsModulo(cid1, cid2);
-            switch (dst)
+            switch(dst)
             {
               case 0:
                 add_triangle(vertices[tid1], vertices[tid2], tg_idx[cid1]);
@@ -886,18 +903,18 @@ public:
               {
                 // measure diagonals
                 // triangulate along shortest diagonal
-                double u_edge = e_vert(tid1, 0);
-                double v_edge = e_vert(tid1, 1);
-                double w_edge = e_vert(tid1, 2);
-                const double l1 = (u_edge - hvt[cid2][0]) * (u_edge - hvt[cid2][0]) +
-                                  (v_edge - hvt[cid2][1]) * (v_edge - hvt[cid2][1]) +
-                                  (w_edge - hvt[cid2][2]) * (w_edge - hvt[cid2][2]);
+                FT u_edge = e_vert(tid1, 0);
+                FT v_edge = e_vert(tid1, 1);
+                FT w_edge = e_vert(tid1, 2);
+                const FT l1 = (u_edge - hvt[cid2][0]) * (u_edge - hvt[cid2][0]) +
+                              (v_edge - hvt[cid2][1]) * (v_edge - hvt[cid2][1]) +
+                              (w_edge - hvt[cid2][2]) * (w_edge - hvt[cid2][2]);
                 u_edge = e_vert(tid2, 0);
                 v_edge = e_vert(tid2, 1);
                 w_edge = e_vert(tid2, 2);
-                const double l2 = (u_edge - hvt[cid1][0]) * (u_edge - hvt[cid1][0]) +
-                                  (v_edge - hvt[cid1][1]) * (v_edge - hvt[cid1][1]) +
-                                  (w_edge - hvt[cid1][2]) * (w_edge - hvt[cid1][2]);
+                const FT l2 = (u_edge - hvt[cid1][0]) * (u_edge - hvt[cid1][0]) +
+                              (v_edge - hvt[cid1][1]) * (v_edge - hvt[cid1][1]) +
+                              (w_edge - hvt[cid1][2]) * (w_edge - hvt[cid1][2]);
 
                 if(l1 < l2)
                 {
@@ -1014,16 +1031,16 @@ public:
         using uchar = unsigned char;  // @todo
 
         unsigned char fs[3][2]{{(uchar)(q_sol & 1), (uchar)((q_sol >> 1) & 1)},
-                                {(uchar)((q_sol >> 2) & 1), (uchar)((q_sol >> 3) & 1)},
-                                {(uchar)((q_sol >> 4) & 1), (uchar)((q_sol >> 5) & 1)}};
+                               {(uchar)((q_sol >> 2) & 1), (uchar)((q_sol >> 3) & 1)},
+                               {(uchar)((q_sol >> 4) & 1), (uchar)((q_sol >> 5) & 1)}};
 
         const unsigned char fc1 = fs[0][0] * fs[1][0] + fs[0][1] * fs[1][1];
         const unsigned char fc2 = fs[0][0] * fs[2][0] + fs[0][1] * fs[2][1];
         const unsigned char fc3 = fs[1][0] * fs[2][1] + fs[1][1] * fs[2][0];
         const unsigned char c_faces = fc1 + fc2 + fc3;
-        double ucoord{};
-        double vcoord{};
-        double wcoord{};
+        FT ucoord{};
+        FT vcoord{};
+        FT wcoord{};
         switch(c_faces)
         {
           case 2:
@@ -1083,25 +1100,22 @@ public:
         } // switch(c_faces)
 
         // create inner vertex
-        const FT px =
-            (1 - wcoord) * ((1 - vcoord) * (corners[0][0] + ucoord * (corners[1][0] - corners[0][0])) +
-                            vcoord * (corners[2][0] + ucoord * (corners[3][0] - corners[2][0]))) +
-            wcoord * ((1 - vcoord) * (corners[4][0] + ucoord * (corners[5][0] - corners[4][0])) +
-                      vcoord * (corners[6][0] + ucoord * (corners[7][0] - corners[6][0])));
-        const FT py =
-            (1 - wcoord) * ((1 - vcoord) * (corners[0][1] + ucoord * (corners[1][1] - corners[0][1])) +
-                            vcoord * (corners[2][1] + ucoord * (corners[3][1] - corners[2][1]))) +
-            wcoord * ((1 - vcoord) * (corners[4][1] + ucoord * (corners[5][1] - corners[4][1])) +
-                      vcoord * (corners[6][1] + ucoord * (corners[7][1] - corners[6][1])));
-        const FT pz =
-            (1 - wcoord) * ((1 - vcoord) * (corners[0][2] + ucoord * (corners[1][2] - corners[0][2])) +
-                            vcoord * (corners[2][2] + ucoord * (corners[3][2] - corners[2][2]))) +
-            wcoord * ((1 - vcoord) * (corners[4][2] + ucoord * (corners[5][2] - corners[4][2])) +
-                      vcoord * (corners[6][2] + ucoord * (corners[7][2] - corners[6][2])));
+        const FT px = (1 - wcoord) * ((1 - vcoord) * (x_coord(corners[0]) + ucoord * (x_coord(corners[1]) - x_coord(corners[0]))) +
+                                            vcoord * (x_coord(corners[2]) + ucoord * (x_coord(corners[3]) - x_coord(corners[2])))) +
+                            wcoord * ((1 - vcoord) * (x_coord(corners[4]) + ucoord * (x_coord(corners[5]) - x_coord(corners[4]))) +
+                                            vcoord * (x_coord(corners[6]) + ucoord * (x_coord(corners[7]) - x_coord(corners[6]))));
+        const FT py = (1 - wcoord) * ((1 - vcoord) * (y_coord(corners[0]) + ucoord * (y_coord(corners[1]) - y_coord(corners[0]))) +
+                                            vcoord * (y_coord(corners[2]) + ucoord * (y_coord(corners[3]) - y_coord(corners[2])))) +
+                            wcoord * ((1 - vcoord) * (y_coord(corners[4]) + ucoord * (y_coord(corners[5]) - y_coord(corners[4]))) +
+                                            vcoord * (y_coord(corners[6]) + ucoord * (y_coord(corners[7]) - y_coord(corners[6]))));
+        const FT pz = (1 - wcoord) * ((1 - vcoord) * (z_coord(corners[0]) + ucoord * (z_coord(corners[1]) - z_coord(corners[0]))) +
+                                            vcoord * (z_coord(corners[2]) + ucoord * (z_coord(corners[3]) - z_coord(corners[2])))) +
+                            wcoord * ((1 - vcoord) * (z_coord(corners[4]) + ucoord * (z_coord(corners[5]) - z_coord(corners[4]))) +
+                                            vcoord * (z_coord(corners[6]) + ucoord * (z_coord(corners[7]) - z_coord(corners[6]))));
 
-        const uint g_index = uint(points.size());
+        const uint g_index = uint(m_points.size());
 
-        // loop over the contorus
+        // loop over the contours
         bool pt_used = false;
         for(int i=0; i<int(cnt_); ++i)
         {
@@ -1121,27 +1135,14 @@ public:
         }
 
         if(pt_used)
-          points.push_back(Point(px, py, pz));
+          m_points.emplace_back(px, py, pz);
       }
     }
   }
-
-private:
-  const Domain& domain;
-  FT isovalue;
-
-  Point_range& points;
-  Polygon_range& polygons;
-
-  // compute a unique global index for vertices
-  // use as key the unique edge number
-  std::map<Edge_descriptor, std::size_t> vertex_map;
-
-  std::mutex mutex;
 };
 
 } // namespace internal
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_ISOSURFACING_3_INTERNAL_TMC_INTERNAL_H
+#endif // CGAL_ISOSURFACING_3_INTERNAL_TMC_FUNCTORS_H

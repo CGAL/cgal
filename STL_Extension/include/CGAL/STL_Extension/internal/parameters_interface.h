@@ -218,6 +218,7 @@ CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_cho
 CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedral_angle)
 CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
+CGAL_add_named_parameter(use_topologically_correct_marching_cubes_t, use_topologically_correct_marching_cubes, use_topologically_correct_marching_cubes)
 
 // tetrahedral remeshing parameters
 CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)

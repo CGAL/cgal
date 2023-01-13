@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Isosurfacing_3/Implicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/Implicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 
 #include <CGAL/Bbox_3.h>
 
@@ -30,7 +30,7 @@ int main(int, char**)
   };
 
   // create a domain with given bounding box and grid spacing
-  auto domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(bbox, vec_spacing, sphere_function);
+  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>(bbox, vec_spacing, sphere_function);
 
   // prepare collections for the output indexed mesh
   Point_range points;

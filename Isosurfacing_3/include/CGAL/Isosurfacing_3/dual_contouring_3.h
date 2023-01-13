@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Isosurfacing_3/internal/Dual_contouring_internal.h>
+#include <CGAL/Isosurfacing_3/internal/dual_contouring_functors.h>
 
 #include <CGAL/tags.h>
 
@@ -23,49 +23,53 @@ namespace CGAL {
 namespace Isosurfacing {
 
 /**
- * \ingroup PkgIsosurfacing3Ref
+ * \ingroup IS_Methods_grp
  *
- * \brief creates an indexed face set that represents an isosurface using the Dual Contouring algorithm.
- *
- * @todo summary; citation; link to user manual.
- * @todo Positioning requirements are not clear, need a concept or not be documented
+ * \brief creates an indexed face set that represents an isosurface using the %Dual Contouring algorithm.
  *
  * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
- *                        Possible values are `Parallel_if_available_tag`, `Parallel_tag`, or `Sequential_tag`.
- * \tparam Domain_ must be a model of `IsosurfacingDomainWithGradient`.
- * \tparam PointRange must be a model of the concept `RandomAccessContainer` and `BackInsertionSequence`
+ *                        Possible values are `Sequential_tag`, `Parallel_if_available_tag`, or `Parallel_tag`.
+ * \tparam Domain must be a model of `IsosurfacingDomainWithGradient_3`.
+ * \tparam PointRange must be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose value type can be constructed from the point type of the domain.
- * \tparam PolygonRange must be a model of the concept `RandomAccessContainer` and `BackInsertionSequence`
+ * \tparam PolygonRange must be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                      whose value type is itself a model of the concepts `RandomAccessContainer`
  *                      and `BackInsertionSequence` whose value type is `std::size_t`.
- * \tparam Positioning is a functor containing the function `position` that takes `domain`, `isovalue`,
- *                     `cell`, and `position` as input and returns a boolean that is `true`
- *                     if the isosurface intersects the cell.
  *
  * \param domain the domain providing input data and its topology
  * \param isovalue value of the isosurface
- * \param points points of the polzgons in the created indexed face set
+ * \param points points of the polygons in the created indexed face set
  * \param polygons each element in the vector describes a polygon using the indices of the points in `points`
- * \param positioning the functor dealing with vertex positioning inside a cell
  */
-template <typename Concurrency_tag = Sequential_tag,
-          typename Domain_,
+#ifdef DOXYGEN_RUNNING // Do not document Positioning
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename Domain,
+          typename PointRange,
+          typename PolygonRange>
+void dual_contouring(const Domain& domain,
+                     const typename Domain::Geom_traits::FT isovalue,
+                     PointRange& points,
+                     PolygonRange& polygons)
+#else
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename Domain,
           typename PointRange,
           typename PolygonRange,
           typename Positioning = internal::Positioning::QEM_SVD<true> >
-void dual_contouring(const Domain_& domain,
-                     const typename Domain_::FT isovalue,
+void dual_contouring(const Domain& domain,
+                     const typename Domain::Geom_traits::FT isovalue,
                      PointRange& points,
                      PolygonRange& polygons,
                      const Positioning& positioning = Positioning())
+#endif
 {
   // create vertices in each relevant cell
-  internal::Dual_contouring_vertex_positioning<Domain_, Positioning> pos_func(domain, isovalue, positioning);
-  domain.template iterate_cells<Concurrency_tag>(pos_func);
+  internal::Dual_contouring_vertex_positioning<Domain, Positioning> pos_func(domain, isovalue, positioning);
+  domain.template iterate_cells<ConcurrencyTag>(pos_func);
 
   // connect vertices around an edge to form a face
-  internal::Dual_contouring_face_generation<Domain_> face_generation(domain, isovalue);
-  domain.template iterate_edges<Concurrency_tag>(face_generation);
+  internal::Dual_contouring_face_generation<Domain> face_generation(domain, isovalue);
+  domain.template iterate_edges<ConcurrencyTag>(face_generation);
 
   // copy vertices to point range
   points.resize(pos_func.points_counter);

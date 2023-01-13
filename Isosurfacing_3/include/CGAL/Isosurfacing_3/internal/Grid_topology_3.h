@@ -9,13 +9,13 @@
 //
 // Author(s)     : Julian Stahl
 
-#ifndef CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_H
-#define CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_H
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_3_H
+#define CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
 #include <CGAL/Isosurfacing_3/internal/Cell_type.h>
-#include <CGAL/Isosurfacing_3/internal/Tables.h>
+#include <CGAL/Isosurfacing_3/internal/tables.h>
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -28,8 +28,9 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-// The topology of a Cartesian grid. All elements are created with the help of the cube tables.
-class Grid_topology
+// The topology of a Cartesian grid.
+// All elements are created with the help of the cube tables.
+class Grid_topology_3
 {
 public:
   // identifies a vertex by its (i, j, k) indices
@@ -52,16 +53,16 @@ public:
 
 public:
   // creates the topology of a grid with size_i, size_j, and size_k vertices in the respective dimensions.
-  Grid_topology(const std::size_t size_i,
-                const std::size_t size_j,
-                const std::size_t size_k)
-    : size_i(size_i),
-      size_j(size_j),
-      size_k(size_k)
+  Grid_topology_3(const std::size_t size_i,
+                  const std::size_t size_j,
+                  const std::size_t size_k)
+    : size_i{size_i},
+      size_j{size_j},
+      size_k{size_k}
   { }
 
   // gets a container with the two vertices incident to the edge e
-  Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const
+  Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const
   {
     Vertices_incident_to_edge ev;
     ev[0] = { e[0], e[1], e[2] };  // start vertex
@@ -71,18 +72,18 @@ public:
   }
 
   // gets a container with all cells incident to the edge e
-  Cells_incident_to_edge cells_incident_to_edge(const Edge_descriptor& e) const
+  Cells_incident_to_edge incident_cells(const Edge_descriptor& e) const
   {
     // lookup the neighbor cells relative to the edge
     const int local = internal::Cube_table::edge_store_index[e[3]];
     auto neighbors = internal::Cube_table::edge_to_voxel_neighbor[local];
 
     Cells_incident_to_edge cite;
-    for(std::size_t i=0; i<cite.size(); ++i)
-    {
+    for(std::size_t i=0; i<cite.size(); ++i) {
       for(std::size_t j=0; j<cite[i].size(); ++j)
       {
-        cite[i][j] = e[j] + neighbors[i][j];  // offset the relative indices by the edge position
+        // offset the relative indices by the edge position
+        cite[i][j] = e[j] + neighbors[i][j];
       }
     }
 
@@ -235,4 +236,4 @@ private:
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_H
+#endif // CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_3_H

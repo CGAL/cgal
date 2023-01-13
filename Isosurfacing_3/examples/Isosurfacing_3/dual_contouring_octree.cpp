@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/dual_contouring_3.h>
 #include <CGAL/Isosurfacing_3/Implicit_octree_domain.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
 

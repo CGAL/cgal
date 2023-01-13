@@ -1,9 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
-#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
 
@@ -12,7 +12,7 @@ using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
 using Vector = typename Kernel::Vector_3;
 
-using Grid = CGAL::Cartesian_grid_3<Kernel>;
+using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
 
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
@@ -34,9 +34,9 @@ int main(int, char**)
     for(std::size_t y=0; y<grid.ydim(); ++y) {
       for(std::size_t z=0; z<grid.zdim(); ++z)
       {
-        const FT pos_x = x * grid.get_spacing()[0] + bbox.xmin();
-        const FT pos_y = y * grid.get_spacing()[1] + bbox.ymin();
-        const FT pos_z = z * grid.get_spacing()[2] + bbox.zmin();
+        const FT pos_x = x * grid.spacing()[0] + bbox.xmin();
+        const FT pos_y = y * grid.spacing()[1] + bbox.ymin();
+        const FT pos_z = z * grid.spacing()[2] + bbox.zmin();
 
         // L_inf distance to the origin
         grid.value(x, y, z) = (std::max)({std::abs(pos_x), std::abs(pos_y), std::abs(pos_z)});
@@ -68,7 +68,7 @@ int main(int, char**)
   };
 
   // create domain from given grid and gradient
-  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid, cube_gradient);
+  auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid, cube_gradient);
 
   // containers for output indexed surface meshes
   Point_range points_mc, points_dc;
@@ -76,7 +76,7 @@ int main(int, char**)
 
   // run topologically correct Marching Cubes and Dual Contouring with given isovalue
   const FT isovalue = 0.88;
-  CGAL::Isosurfacing::marching_cubes(domain, isovalue, points_mc, polygons_mc, true);
+  CGAL::Isosurfacing::marching_cubes(domain, isovalue, points_mc, polygons_mc);
   CGAL::Isosurfacing::dual_contouring(domain, isovalue, points_dc, polygons_dc);
 
   // save output indexed meshes to files, in the OFF format

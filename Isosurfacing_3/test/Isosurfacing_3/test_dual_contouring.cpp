@@ -4,11 +4,11 @@
 #include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
-#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Finite_difference_gradient.h>
-#include <CGAL/Isosurfacing_3/Implicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/Finite_difference_gradient_3.h>
+#include <CGAL/Isosurfacing_3/Implicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>
@@ -16,11 +16,12 @@
 #include "Timer.h"
 
 using Kernel = CGAL::Simple_cartesian<double>;
-using Vector = typename Kernel::Vector_3;
+using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
+using Vector = typename Kernel::Vector_3;
 
 using Mesh = CGAL::Surface_mesh<Point>;
-using Grid = CGAL::Cartesian_grid_3<Kernel>;
+using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
 
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
@@ -35,9 +36,9 @@ int main(int, char**)
     return std::sqrt(point.x() * point.x() + point.y() * point.y() + point.z() * point.z());
   };
 
-  using Gradient = CGAL::Isosurfacing::Finite_difference_gradient<Kernel, decltype(sphere_function)>;
+  using Gradient = CGAL::Isosurfacing::Finite_difference_gradient_3<Kernel, decltype(sphere_function)>;
 
-  auto implicit_domain = CGAL::Isosurfacing::create_implicit_cartesian_grid_domain<Kernel>(
+  auto implicit_domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>(
       bbox, spacing, sphere_function, Gradient(sphere_function, 0.0001));
 
   const std::size_t nx = static_cast<std::size_t>(2.0 / spacing.x());
@@ -69,7 +70,7 @@ int main(int, char**)
   //}
   // Grid grid(image);
 
-  auto grid_domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain<Kernel>(grid);
+  auto grid_domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
 
   Point_range points;
   Polygon_range polygons;

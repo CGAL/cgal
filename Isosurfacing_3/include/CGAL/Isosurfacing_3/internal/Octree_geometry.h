@@ -23,23 +23,17 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-template <typename GeomTraits>
+template <typename Octree>
 class Octree_geometry
 {
-public:
-  using Geom_traits = GeomTraits;
-  using Point = typename Geom_traits::Point_3;
-
-  using Octree = Octree_wrapper<Geom_traits>;
-
-  using Vertex_descriptor = typename Octree_topology<Geom_traits>::Vertex_descriptor;
+  using Vertex_descriptor = typename Octree_topology<Octree>::Vertex_descriptor;
 
 public:
   Octree_geometry(const Octree& octree)
     : octree(octree)
   { }
 
-  Point operator()(const Vertex_descriptor& v) const
+  decltype(auto) /*Point_3*/ operator()(const Vertex_descriptor& v) const
   {
     return octree.point(v);
   }

@@ -15,9 +15,14 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Isosurfacing_3/internal/Tables.h>
+#include <CGAL/Isosurfacing_3/internal/tables.h>
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
+
+#include <array>
+#include <map>
+#include <tuple>
+#include <vector>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -48,12 +53,12 @@ class Octree_wrapper
     */
 
 public:
-  using Kernel = GeomTraits;
-  using FT = typename GeomTraits::FT;
-  using Point_3 = typename GeomTraits::Point_3;
-  using Vector_3 = typename GeomTraits::Vector_3;
+  using Geom_traits = GeomTraits;
+  using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
+  using Vector_3 = typename Geom_traits::Vector_3;
 
-  using Octree = CGAL::Octree<Kernel, std::vector<Point_3> >;
+  using Octree = CGAL::Octree<Geom_traits, std::vector<Point_3> >;
 
   using Vertex_handle = std::size_t;
   using Edge_handle = std::tuple<std::size_t, std::size_t>;
@@ -77,6 +82,7 @@ private:
 
   std::vector<Point_3> point_range_;
   Octree octree_;
+  GeomTraits gt_;
 
   // std::set<Uniform_coords> leaf_node_uniform_coordinates_;
   std::vector<Voxel_handle> leaf_voxels_;
@@ -163,9 +169,14 @@ public:
       }
     }
 
-    leaf_voxels_ = std::vector<Voxel_handle>(leaf_voxels_set.begin(), leaf_voxels_set.end());
-    leaf_edges_ = std::vector<Edge_handle>(leaf_edges_set.begin(), leaf_edges_set.end());
-    leaf_vertices_ = std::vector<Vertex_handle>(leaf_vertices_set.begin(), leaf_vertices_set.end());
+    leaf_voxels_ = std::vector<Voxel_handle>{leaf_voxels_set.begin(), leaf_voxels_set.end()};
+    leaf_edges_ = std::vector<Edge_handle>{leaf_edges_set.begin(), leaf_edges_set.end()};
+    leaf_vertices_ = std::vector<Vertex_handle>{leaf_vertices_set.begin(), leaf_vertices_set.end()};
+  }
+
+  const Geom_traits& geom_traits() const
+  {
+    return gt_;
   }
 
   std::size_t dim() const
@@ -223,7 +234,7 @@ public:
     return vertex_values_[v];
   }
 
-  Vector_3 gradient(const Vertex_handle& v) const
+  const Vector_3& gradient(const Vertex_handle& v) const
   {
     return vertex_gradients_.at(v);
   }
