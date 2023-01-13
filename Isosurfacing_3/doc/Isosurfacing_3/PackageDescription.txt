@@ -16,12 +16,12 @@
 \cgalPkgDescriptionBegin{3D Isosurfacing,PkgIsosurfacing3}
 \cgalPkgPicture{isosurfacing3_ico.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Julian Stahl and Daniel Zint}
+\cgalPkgAuthor{Julian Stahl, Daniel Zint, and Pierre Alliez}
 \cgalPkgDesc{This package implements isosurfacing algorithms to generate a surface mesh from a 3D scalar field. The algorithms provide different guarantees for the output and should hence be chosen depending on each use case. The possible format for the input data is flexible and includes explicit as well as implicit representations. }
 \cgalPkgManuals{Chapter_Isosurfacing3,PkgIsosurfacing3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.7}
+\cgalPkgSince{5.6}
 \cgalPkgBib{cgal:sz-mc}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
