@@ -376,7 +376,7 @@ to_image() const
     }
   }
 
-  return Image_3(im, Image_3::OWN_THE_DATA);
+  return Image_3{ im, Image_3::OWN_THE_DATA };
 }
 
 } // namespace Isosurfacing

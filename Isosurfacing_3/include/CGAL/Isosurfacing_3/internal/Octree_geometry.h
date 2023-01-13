@@ -17,8 +17,6 @@
 #include <CGAL/Isosurfacing_3/internal/Octree_topology.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
 
-#include <memory>
-
 namespace CGAL {
 namespace Isosurfacing {
 namespace internal {

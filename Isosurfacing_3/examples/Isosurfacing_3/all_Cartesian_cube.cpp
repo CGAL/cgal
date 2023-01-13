@@ -26,7 +26,7 @@ FT sign(FT value)
 int main(int, char**)
 {
   // create a Cartesian grid with 7^3 grid points and the bounding box [-1, 1]^3
-  const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0,  1.0, 1.0, 1.0);
+  const CGAL::Bbox_3 bbox{-1., -1., -1.,  1., 1., 1.};
   Grid grid { 7, 7, 7, bbox };
 
   // calculate the value at all grid points

@@ -16,8 +16,6 @@
 
 #include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 
-#include <memory>
-
 namespace CGAL {
 namespace Isosurfacing {
 namespace internal {

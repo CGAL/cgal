@@ -54,9 +54,7 @@
 #endif
 
 #include <array>
-#include <atomic>
 #include <bitset>
-#include <cassert>
 #include <mutex>
 
 namespace CGAL {

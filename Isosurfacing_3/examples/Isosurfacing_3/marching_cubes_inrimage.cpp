@@ -6,7 +6,6 @@
 
 #include <CGAL/boost/graph/IO/OFF.h>
 
-#include <memory>
 #include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -29,7 +28,7 @@ int main(int, char**)
   }
 
   // convert image to a Cartesian grid
-  Grid grid { image };
+  Grid grid{image};
 
   // create a domain from the grid
   auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
@@ -38,8 +37,8 @@ int main(int, char**)
   Point_range points;
   Polygon_range polygons;
 
-  // execute marching cubes with an isovalue of 2.9
-  CGAL::Isosurfacing::marching_cubes(domain, 2.9, points, polygons);
+  // execute marching cubes
+  CGAL::Isosurfacing::marching_cubes(domain, 2.9 /*isovalue*/, points, polygons);
 
   // save output indexed mesh to a file, in the OFF format
   CGAL::IO::write_OFF("result.off", points, polygons);

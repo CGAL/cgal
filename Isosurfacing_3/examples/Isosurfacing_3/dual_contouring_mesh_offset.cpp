@@ -57,15 +57,15 @@ int main(int, char**)
   // functors for addressing distance and normal queries
   auto mesh_distance = [&tree](const Point& p)
   {
-    const Point& x = tree.closest_point(p);
-    return std::sqrt((p - x).squared_length());
+    const Point x = tree.closest_point(p);
+    return sqrt((p - x).squared_length());
   };
 
   auto mesh_normal = [&tree](const Point& p)
   {
-    const Point& x = tree.closest_point(p);
+    const Point x = tree.closest_point(p);
     const Vector n = p - x; // @todo address case where norm = zero
-    return n / std::sqrt(n.squared_length()); // normalize output vector
+    return n / sqrt(n.squared_length()); // normalize output vector
   };
 
   // create a domain with given bounding box and grid spacing

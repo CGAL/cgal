@@ -20,7 +20,7 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 int main(int, char**)
 {
   // create bounding box and grid
-  const CGAL::Bbox_3 bbox(-1.0, -1.0, -1.0,  1.0, 1.0, 1.0);
+  const CGAL::Bbox_3 bbox{-1., -1., -1.,  1., 1., 1.};
   Grid grid { 30, 30, 30, bbox };
 
   // compute field values and gradients

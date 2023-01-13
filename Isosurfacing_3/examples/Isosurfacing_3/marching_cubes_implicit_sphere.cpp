@@ -24,9 +24,9 @@ int main(int, char**)
   const Vector vec_spacing(spacing, spacing, spacing);
 
   // Euclidean distance function to the origin
-  auto sphere_function = [&](const Point& p)
+  auto sphere_function = [&](const Point& p) -> FT
   {
-    return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
+    return sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
   };
 
   // create a domain with given bounding box and grid spacing
