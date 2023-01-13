@@ -4,11 +4,11 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_gradient.h>
-#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Implicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_gradient_3.h>
+#include <CGAL/Isosurfacing_3/dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/Implicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>

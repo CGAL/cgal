@@ -20,7 +20,7 @@ namespace CGAL {
 namespace Isosurfacing {
 
 /**
- * \ingroup PkgIsosurfacing3Ref
+ * \ingroup IS_Domain_helpers_grp
  *
  * \brief Class template for a gradient that is always zero.
  *
@@ -29,8 +29,6 @@ namespace Isosurfacing {
 struct Zero_gradient
 {
   /**
-   * \ingroup PkgIsosurfacing3Ref
-   *
    * \return the null vector
    */
   template <typename P>

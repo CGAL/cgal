@@ -2,6 +2,15 @@
 /// \defgroup PkgIsosurfacing3Concepts Concepts
 /// \ingroup PkgIsosurfacing3Ref
 
+/// \defgroup IS_Domains_grp Isosurfacing Domains
+/// \ingroup PkgIsosurfacing3Ref
+
+/// \defgroup IS_Domain_helpers_grp Isosurfacing Domain Helpers
+/// \ingroup IS_Domains_grp
+
+/// \defgroup IS_Methods_grp Isosurfacing Methods
+/// \ingroup PkgIsosurfacing3Ref
+
 /*!
 \addtogroup PkgIsosurfacing3Ref
 \cgalPkgDescriptionBegin{3D Isosurfacing,PkgIsosurfacing3}
@@ -27,22 +36,23 @@ The provided algorithms include Marching Cubes, topologically correct Marching C
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-- `IsosurfacingDomain`
-- `IsosurfacingDomainWithGradient`
+- `IsosurfacingTraits_3`
+- `IsosurfacingDomain_3`
+- `IsosurfacingDomainWithGradient_3`
 
-\cgalCRPSection{Classes}
-- `CGAL::Cartesian_grid_3`
-- `CGAL::Isosurfacing::Explicit_cartesian_grid_domain`
-- `CGAL::Isosurfacing::Implicit_cartesian_grid_domain`
+\cgalCRPSection{Isosurfacing Domains}
+- `CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain()`
+- `CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain()`
+- `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
+- `CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3`
+- `CGAL::Isosurfacing::Cartesian_grid_3`
 - `CGAL::Isosurfacing::Zero_gradient`
-- `CGAL::Isosurfacing::Finite_difference_gradient`
-- `CGAL::Isosurfacing::Explicit_cartesian_grid_gradient`
+- `CGAL::Isosurfacing::Finite_difference_gradient_3`
+- `CGAL::Isosurfacing::Explicit_Cartesian_grid_gradient_3`
 
-\cgalCRPSection{Free Functions}
+\cgalCRPSection{Isosurfacing Methods}
 
 - `CGAL::Isosurfacing::marching_cubes()`
 - `CGAL::Isosurfacing::dual_contouring()`
-- `CGAL::Isosurfacing::create_explicit_cartesian_grid_domain()`
-- `CGAL::Isosurfacing::create_implicit_cartesian_grid_domain()`
 
 */

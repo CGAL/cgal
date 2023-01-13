@@ -27,12 +27,10 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-template <typename GeomTraits> // @todo should not be necessary
+template <typename Octree>
 class Octree_topology
 {
 public:
-  using Geom_traits = GeomTraits;
-  using Octree = Octree_wrapper<Geom_traits>;
   using Vertex_descriptor = typename Octree::Vertex_handle;
   using Edge_descriptor = typename Octree::Edge_handle;
   using Cell_descriptor = typename Octree::Voxel_handle;
@@ -51,12 +49,12 @@ public:
     : octree(octree)
   { }
 
-  Vertices_incident_to_edge edge_vertices(const Edge_descriptor& e) const
+  Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const
   {
     return octree.edge_vertices(e);
   }
 
-  Cells_incident_to_edge cells_incident_to_edge(const Edge_descriptor& e) const
+  Cells_incident_to_edge incident_cells(const Edge_descriptor& e) const
   {
     return octree.edge_voxels(e);
   }

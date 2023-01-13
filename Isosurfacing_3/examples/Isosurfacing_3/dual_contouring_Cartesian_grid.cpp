@@ -1,9 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_gradient.h>
-#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_gradient_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/dual_contouring_3.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
 
@@ -12,7 +12,7 @@ using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
 using Vector = typename Kernel::Vector_3;
 
-using Grid = CGAL::Cartesian_grid_3<Kernel>;
+using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
 
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
@@ -28,9 +28,9 @@ int main(int, char**)
     for(std::size_t y=0; y<grid.ydim(); ++y) {
       for(std::size_t z=0; z<grid.zdim(); ++z)
       {
-        const FT pos_x = x * grid.get_spacing()[0] + bbox.xmin();
-        const FT pos_y = y * grid.get_spacing()[1] + bbox.ymin();
-        const FT pos_z = z * grid.get_spacing()[2] + bbox.zmin();
+        const FT pos_x = x * grid.spacing()[0] + bbox.xmin();
+        const FT pos_y = y * grid.spacing()[1] + bbox.ymin();
+        const FT pos_z = z * grid.spacing()[2] + bbox.zmin();
 
         const Vector direction(pos_x, pos_y, pos_z);
         const FT distance = CGAL::approximate_sqrt(direction.squared_length());
@@ -42,10 +42,10 @@ int main(int, char**)
   }
 
   // gradient field
-  CGAL::Isosurfacing::Explicit_cartesian_grid_gradient<Kernel> gradient(grid);
+  CGAL::Isosurfacing::Explicit_Cartesian_grid_gradient_3<Grid> gradient(grid);
 
   // create domain from scalar and gradient fields
-  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain(grid, gradient);
+  auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid, gradient);
 
   Point_range points;
   Polygon_range polygons;

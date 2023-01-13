@@ -38,12 +38,14 @@
 // https://github.com/rogrosso/tmc available on 15th of September 2022.
 //
 
-#ifndef CGAL_ISOSURFACING_3_INTERNAL_MARCHING_CUBES_3_INTERNAL_H
-#define CGAL_ISOSURFACING_3_INTERNAL_MARCHING_CUBES_3_INTERNAL_H
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_MARCHING_CUBES_FUNCTORS_H
+#define CGAL_ISOSURFACING_3_INTERNAL_MARCHING_CUBES_FUNCTORS_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Isosurfacing_3/internal/Tables.h>
+#include <CGAL/Isosurfacing_3/internal/tables.h>
+
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_vector.h>
@@ -62,49 +64,56 @@ namespace Isosurfacing {
 namespace internal {
 
 // Interpolate linearly between two vertex positions v0, v1 with values d0 and d1 according to the isovalue
-template <typename Point_3,
-          typename FT>
-Point_3 vertex_interpolation(const Point_3& p0,
-                             const Point_3& p1,
-                             const FT d0,
-                             const FT d1,
-                             const FT isovalue)
+template <typename GeomTraits>
+typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Point_3& p0,
+                                                  const typename GeomTraits::Point_3& p1,
+                                                  const typename GeomTraits::FT d0,
+                                                  const typename GeomTraits::FT d1,
+                                                  const typename GeomTraits::FT isovalue,
+                                                  const GeomTraits& gt)
 {
+  using FT = typename GeomTraits::FT;
+
+  typename GeomTraits::Compute_x_3 x_coord = gt.compute_x_3_object();
+  typename GeomTraits::Compute_y_3 y_coord = gt.compute_y_3_object();
+  typename GeomTraits::Compute_z_3 z_coord = gt.compute_z_3_object();
+  typename GeomTraits::Construct_point_3 point = gt.construct_point_3_object();
+
   FT mu;
 
   // don't divide by 0
-  if(abs(d1 - d0) < 0.000001) // @todo
+  if(abs(d1 - d0) < 0.000001) // @fixme hardcoded bound
     mu = 0.5;  // if both points have the same value, assume isolevel is in the middle
   else
     mu = (isovalue - d0) / (d1 - d0);
 
-  assert(mu >= 0.0 || mu <= 1.0);
+  CGAL_assertion(mu >= FT(0) || mu <= FT(1));
 
   // linear interpolation
-  return { p1.x() * mu + p0.x() * (1 - mu),
-           p1.y() * mu + p0.y() * (1 - mu),
-           p1.z() * mu + p0.z() * (1 - mu) };
+  return point(x_coord(p1) * mu + x_coord(p0) * (1 - mu),
+               y_coord(p1) * mu + y_coord(p0) * (1 - mu),
+               z_coord(p1) * mu + z_coord(p0) * (1 - mu));
 }
 
 // retrieves the corner vertices and their values of a cell and return the lookup index
-template <typename Domain_,
-          typename Corners_,
-          typename Values_>
-std::size_t get_cell_corners(const Domain_& domain,
-                             const typename Domain_::Cell_descriptor& cell,
-                             const typename Domain_::FT isovalue,
-                             Corners_& corners,
-                             Values_& values)
+template <typename Domain,
+          typename Corners,
+          typename Values>
+std::size_t get_cell_corners(const Domain& domain,
+                             const typename Domain::Cell_descriptor& cell,
+                             const typename Domain::Geom_traits::FT isovalue,
+                             Corners& corners,
+                             Values& values)
 {
-  using Vertex_descriptor = typename Domain_::Vertex_descriptor;
+  using Vertex_descriptor = typename Domain::Vertex_descriptor;
 
   // collect function values and build index
   std::size_t v_id = 0;
-  std::bitset<Domain_::VERTICES_PER_CELL> index = 0;
+  std::bitset<Domain::VERTICES_PER_CELL> index = 0;
   for(const Vertex_descriptor& v : domain.cell_vertices(cell))
   {
     // collect scalar values and computex index
-    corners[v_id] = domain.position(v);
+    corners[v_id] = domain.point(v);
     values[v_id] = domain.value(v);
 
     if(values[v_id] >= isovalue)
@@ -118,34 +127,40 @@ std::size_t get_cell_corners(const Domain_& domain,
 }
 
 // creates the vertices on the edges of one cell
-template <typename CellEdges,
-          typename FT,
-          typename Corners_,
-          typename Values_,
-          typename Vertices_>
-void mc_construct_vertices(const CellEdges& cell_edges,
-                           const FT isovalue,
+template <typename Corners,
+          typename Values,
+          typename Domain,
+          typename Vertices>
+void mc_construct_vertices(const typename Domain::Cell_descriptor cell,
                            const std::size_t i_case,
-                           const Corners_& corners,
-                           const Values_& values,
-                           Vertices_& vertices)
+                           const Corners& corners,
+                           const Values& values,
+                           const typename Domain::Geom_traits::FT isovalue,
+                           const Domain& domain,
+                           Vertices& vertices)
 {
+  using Cell_edges = typename Domain::Cell_edges;
+  using Edge_descriptor = typename Domain::Edge_descriptor;
+
+  const Cell_edges& cell_edges = domain.cell_edges(cell);
+
   // compute for this case the vertices
   std::size_t flag = 1;
   std::size_t e_id = 0;
 
-  for(const auto& edge : cell_edges)
+  for(const Edge_descriptor& edge : cell_edges)
   {
-    (void)edge;  // @todo
+    (void)edge; // @todo
 
     if(flag & Cube_table::intersected_edges[i_case])
     {
-      // generate vertex here, do not care at this point if vertex already exist
-
+      // generate vertex here, do not care at this point if vertex already exists
       const int v0 = Cube_table::edge_to_vertex[e_id][0];
       const int v1 = Cube_table::edge_to_vertex[e_id][1];
 
-      vertices[e_id] = vertex_interpolation(corners[v0], corners[v1], values[v0], values[v1], isovalue);
+      vertices[e_id] = vertex_interpolation(corners[v0], corners[v1],
+                                            values[v0], values[v1],
+                                            isovalue, domain.geom_traits());
     }
 
     flag <<= 1;
@@ -154,10 +169,10 @@ void mc_construct_vertices(const CellEdges& cell_edges,
 }
 
 // connects the vertices of one cell to form triangles
-template <typename Vertices_,
+template <typename Vertices,
           typename TriangleList>
 void mc_construct_triangles(const int i_case,
-                            const Vertices_& vertices,
+                            const Vertices& vertices,
                             TriangleList& triangles)
 {
   // construct triangles
@@ -178,15 +193,14 @@ void mc_construct_triangles(const int i_case,
   }
 }
 
-// converts the triangle list to an indexed face set
-template <typename TriangleList,
+template <typename TriangleRange,
           typename PointRange,
           typename PolygonRange>
-void to_indexed_face_set(const TriangleList& triangle_list,
-                         PointRange& points,
-                         PolygonRange& polygons)
+void triangles_to_polygon_soup(const TriangleRange& triangles,
+                               PointRange& points,
+                               PolygonRange& polygons)
 {
-  for(auto& triangle : triangle_list)
+  for(auto& triangle : triangles)
   {
     const std::size_t id = points.size();
 
@@ -203,62 +217,67 @@ void to_indexed_face_set(const TriangleList& triangle_list,
 template <typename Domain_>
 class Marching_cubes_3
 {
-private:
+public:
   using Domain = Domain_;
-  using FT = typename Domain::FT;
-  using Point = typename Domain::Point;
+
+  using Geom_traits = typename Domain::Geom_traits;
+  using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
+
   using Cell_descriptor = typename Domain::Cell_descriptor;
 
 #ifdef CGAL_LINKED_WITH_TBB
-  using Triangle_list = tbb::concurrent_vector<std::array<Point, 3> >;
+  using Triangles = tbb::concurrent_vector<std::array<Point_3, 3> >;
 #else
-  using Triangle_list = std::vector<std::array<Point, 3> >;
+  using Triangles = std::vector<std::array<Point_3, 3> >;
 #endif
+
+private:
+  const Domain& m_domain;
+  const FT m_isovalue;
+
+  Triangles m_triangles;
 
 public:
   // creates a Marching Cubes functor for a domain and isovalue
   Marching_cubes_3(const Domain& domain,
                    const FT isovalue)
-    : domain(domain),
-      isovalue(isovalue)
+    : m_domain(domain),
+      m_isovalue(isovalue)
   { }
 
+  // gets the created triangle list
+  const Triangles& triangles() const
+  {
+    return m_triangles;
+  }
+
+public:
   // computes one cell
   void operator()(const Cell_descriptor& cell)
   {
     // @todo: maybe better checks if the domain can be processed?
-    assert(domain.cell_vertices(cell).size() == 8);
-    assert(domain.cell_edges(cell).size() == 12);
+    CGAL_precondition(m_domain.cell_vertices(cell).size() == 8);
+    CGAL_precondition(m_domain.cell_edges(cell).size() == 12);
 
-    FT values[8];
-    Point corners[8];
-    const int i_case = get_cell_corners(domain, cell, isovalue, corners, values);
+    std::array<FT, 8> values;
+    std::array<Point_3, 8> corners;
+    const int i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
 
-    const int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
+    // skip empty cells
+    const int all_bits_set = (1 << (8 + 1)) - 1; // last 8 bits are 1
     if(i_case == 0 || i_case == all_bits_set)
-      return;  // skip empty cells
+      return;
 
-    std::array<Point, 12> vertices;
-    mc_construct_vertices(domain.cell_edges(cell), isovalue, i_case, corners, values, vertices);
+    std::array<Point_3, 12> vertices;
+    mc_construct_vertices(cell, i_case, corners, values, m_isovalue, m_domain, vertices);
 
-    mc_construct_triangles(i_case, vertices, triangle_list);
+    mc_construct_triangles(i_case, vertices, m_triangles);
   }
-
-  // gets the created triangle list
-  const Triangle_list& triangles() const
-  {
-    return triangle_list;
-  }
-
-private:
-  const Domain& domain;
-  FT isovalue;
-
-  Triangle_list triangle_list;
 };
 
 } // namespace internal
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_ISOSURFACING_3_INTERNAL_MARCHING_CUBES_3_INTERNAL_H
+#endif // CGAL_ISOSURFACING_3_INTERNAL_MARCHING_CUBES_FUNCTORS_H

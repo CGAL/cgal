@@ -23,36 +23,30 @@ namespace internal {
 // Wrapper for an implicit function that can only be evaluated at a position and not at a vertex.
 // Evaluates the geometry to get the vertex position and passes that to the function.
 // Works for all VertexDescriptor types.
-template <typename GeomTraits,
-          typename Geometry_,
+template <typename Geometry,
           typename PointFunction>
 class Implicit_function_with_geometry
 {
-public:
-  using Geom_traits = GeomTraits;
-  using FT = typename Geom_traits::FT;
-
-  using Geometry = Geometry_;
   using Point_function = PointFunction;
 
 public:
   // creates a function that uses the geometry to evaluate the function at vertex positions.
   Implicit_function_with_geometry(const Geometry& geom,
                                   const Point_function& func)
-    : geom(geom),
-      func(func)
+    : m_geom(geom),
+      m_func(func)
   { }
 
   // gets the value of the function at vertex `v`
   template <typename VertexDescriptor>
-  FT operator()(const VertexDescriptor& v) const
+  decltype(auto) /*FT*/ operator()(const VertexDescriptor& v) const
   {
-    return func.operator()(geom.operator()(v));
+    return m_func.operator()(m_geom.operator()(v));
   }
 
 private:
-  const Geometry geom;
-  const Point_function func;
+  const Geometry m_geom;
+  const Point_function m_func;
 };
 
 } // namespace internal

@@ -2,8 +2,8 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_cartesian_grid_domain.h>
-#include <CGAL/Isosurfacing_3/Marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
+#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
@@ -21,7 +21,7 @@ using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
 using Vector = typename Kernel::Vector_3;
 
-using Grid = CGAL::Cartesian_grid_3<Kernel>;
+using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
 
 using Mesh = CGAL::Surface_mesh<Point>;
 
@@ -73,9 +73,9 @@ int main(int, char**)
     for(std::size_t y=0; y<grid.ydim(); ++y) {
       for(std::size_t x=0; x<grid.xdim(); ++x)
       {
-        const FT pos_x = x * grid.get_spacing()[0] + grid.get_bbox().xmin();
-        const FT pos_y = y * grid.get_spacing()[1] + grid.get_bbox().ymin();
-        const FT pos_z = z * grid.get_spacing()[2] + grid.get_bbox().zmin();
+        const FT pos_x = x * grid.spacing()[0] + grid.bbox().xmin();
+        const FT pos_y = y * grid.spacing()[1] + grid.bbox().ymin();
+        const FT pos_z = z * grid.spacing()[2] + grid.bbox().zmin();
         const Point p(pos_x, pos_y, pos_z);
 
         // compute unsigned distance to input mesh
@@ -90,7 +90,7 @@ int main(int, char**)
   }
 
   // create domain from the grid
-  auto domain = CGAL::Isosurfacing::create_explicit_cartesian_grid_domain(grid);
+  auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
 
   // containers for output indexed triangle soup
   Point_range points;
