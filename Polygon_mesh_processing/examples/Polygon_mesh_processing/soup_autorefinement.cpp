@@ -3,7 +3,6 @@
 
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/IO/polygon_soup_io.h>
@@ -25,6 +24,7 @@ int main(int argc, char** argv)
   std::vector<Point> input_points;
   std::vector<std::array<std::size_t, 3>> input_triangles;
   CGAL::IO::read_polygon_soup(filename, input_points, input_triangles);
+  PMP::repair_polygon_soup(input_points, input_triangles);
 
   std::vector<Point> output_points;
   std::vector<std::array<std::size_t, 3>> output_triangles;
