@@ -54,6 +54,7 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
   //typedef CGAL::Constrained_triangulation_plus_2<CDT_base> CDT;
   typedef CDT_2 CDT;
 
+  // positive triangle normal
   typename EK::Vector_3 n = normal(t[0], t[1], t[2]);
   typename EK::Point_3 o(0,0,0);
 
@@ -112,32 +113,32 @@ void generate_subtriangles(const typename EK::Triangle_3& t,
 template <class EK>
 struct Intersection_visitor
 {
-  std::vector<typename EK::Segment_3>& all_segments_1;
-  std::vector<typename EK::Segment_3>& all_segments_2;
-  std::vector<typename EK::Point_3>& all_points_1;
-  std::vector<typename EK::Point_3>& all_points_2;
+  std::vector< std::vector<typename EK::Segment_3> >& all_segments;
+  std::vector< std::vector<typename EK::Point_3> >& all_points;
+  std::pair<int, int> ids;
 
-  Intersection_visitor(std::vector<typename EK::Segment_3>& all_segments_1,
-                       std::vector<typename EK::Segment_3>& all_segments_2,
-                       std::vector<typename EK::Point_3>& all_points_1,
-                       std::vector<typename EK::Point_3>& all_points_2)
-    : all_segments_1(all_segments_1)
-    , all_segments_2(all_segments_2)
-    , all_points_1(all_points_1)
-    , all_points_2(all_points_2)
+  Intersection_visitor(std::vector< std::vector<typename EK::Segment_3> >& all_segments,
+                       std::vector< std::vector<typename EK::Point_3> >& all_points)
+    : all_segments (all_segments)
+    , all_points(all_points)
   {}
+
+  void set_triangle_ids(int i1, int i2)
+  {
+    ids = {i1, i2};
+  }
 
   typedef void result_type;
   void operator()(const typename EK::Point_3& p)
   {
-    all_points_1.push_back(p);
-    all_points_2.push_back(p);
+    all_points[ids.first].push_back(p);
+    all_points[ids.second].push_back(p);
   }
 
   void operator()(const typename EK::Segment_3& s)
   {
-    all_segments_1.push_back(s);
-    all_segments_2.push_back(s);
+    all_segments[ids.first].push_back(s);
+    all_segments[ids.second].push_back(s);
   }
 
   void operator()(const typename EK::Triangle_3& t)
@@ -145,8 +146,8 @@ struct Intersection_visitor
     for (std::size_t i=0; i<3; ++i)
     {
       typename EK::Segment_3 s(t[i], t[(i+1)%3]);
-      all_segments_1.push_back(s);
-      all_segments_2.push_back(s);
+      all_segments[ids.first].push_back(s);
+      all_segments[ids.second].push_back(s);
     }
 
   }
@@ -157,8 +158,8 @@ struct Intersection_visitor
     for (std::size_t i=0; i<nbp; ++i)
     {
       typename EK::Segment_3 s(poly[i], poly[(i+1)%nbp]);
-      all_segments_1.push_back(s);
-      all_segments_2.push_back(s);
+      all_segments[ids.first].push_back(s);
+      all_segments[ids.second].push_back(s);
     }
   }
 };
@@ -254,9 +255,10 @@ void autorefine_soup_output(const TriangleMesh& tm,
   std::vector< std::vector<EK::Segment_3> > all_segments(triangles.size());
   std::vector< std::vector<EK::Point_3> > all_points(triangles.size());
 
-
   CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
   typename EK::Intersect_3 intersection = EK().intersect_3_object();
+  autorefine_impl::Intersection_visitor<EK> intersection_visitor(all_segments, all_points);
+
   for (const Pair_of_faces& p : si_pairs)
   {
     int i1 = get(tid_map, p.first),
@@ -271,9 +273,7 @@ void autorefine_soup_output(const TriangleMesh& tm,
 
     if (inter != boost::none)
     {
-      autorefine_impl::Intersection_visitor<EK> intersection_visitor(all_segments[i1],  all_segments[i2],
-                                                                     all_points[i1], all_points[i2]);
-
+      intersection_visitor.set_triangle_ids(i1, i2);
       boost::apply_visitor(intersection_visitor, *inter);
     }
   }
