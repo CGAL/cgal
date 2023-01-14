@@ -26,10 +26,15 @@ namespace Isosurfacing {
  *
  * \details The gradient at any point is calculated using trilinear interpolation.
  *
- * \tparam Grid must be a model of `CartesianGrid_3`.
+ * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
  */
+#ifdef DOXYGEN_RUNNING // Allow more than just Cartesian_grid_3
+template <template <typename GeomTraits> class Cartesian_grid_3>
+class Explicit_Cartesian_grid_gradient_3
+#else
 template <typename Grid>
 class Explicit_Cartesian_grid_gradient_3
+#endif
 {
 public:
   using Geom_traits = typename Grid::Geom_traits;
