@@ -43,8 +43,6 @@ public:
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
 
-  using Vertex_descriptor = Isosurfacing::internal::Grid_topology_3::Vertex_descriptor;
-
 private:
   Bbox_3 m_bbox;
   Vector_3 m_spacing;
@@ -187,11 +185,6 @@ public:
               m_bbox.zmin() + z * x_coord(m_spacing));
   }
 
-  const Point_3& point(const Vertex_descriptor& v) const
-  {
-    return point(v[0], v[1], v[2]);
-  }
-
   /**
    * \brief gets the scalar value stored at the grid vertex described by a set of indices.
    *
@@ -206,11 +199,6 @@ public:
            const std::size_t z) const
   {
     return m_values[linear_index(x, y, z)];
-  }
-
-  FT value(const Vertex_descriptor& v) const
-  {
-    return value(v[0], v[1], v[2]);
   }
 
   /**
@@ -231,11 +219,6 @@ public:
     return m_values[linear_index(x, y, z)];
   }
 
-  FT& value(const Vertex_descriptor& v)
-  {
-    return value(v[0], v[1], v[2]);
-  }
-
   /**
    * \brief gets the gradient stored at the grid vertex described by a set of indices.
    *
@@ -248,11 +231,6 @@ public:
                            const std::size_t z) const
   {
     return m_gradients[linear_index(x, y, z)];
-  }
-
-  const Vector_3& gradient(const Vertex_descriptor& v) const
-  {
-    return gradient(v[0], v[1], v[2]);
   }
 
   /**
@@ -271,11 +249,6 @@ public:
                      const std::size_t z)
   {
     return m_gradients[linear_index(x, y, z)];
-  }
-
-  Vector_3& gradient(const Vertex_descriptor& v)
-  {
-    return gradient(v[0], v[1], v[2]);
   }
 
 private:

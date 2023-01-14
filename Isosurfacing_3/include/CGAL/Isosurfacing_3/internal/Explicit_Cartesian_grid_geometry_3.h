@@ -33,7 +33,7 @@ public:
   // gets the position of vertex `v`
   decltype(auto) /*Point_3*/ operator()(const Vertex_descriptor& v) const
   {
-    return m_grid.point(v);
+    return m_grid.point(v[0], v[1], v[2]);
   }
 
 private:
