@@ -10,7 +10,6 @@
 #include <map>
 // #include <cstdlib>
 
-#include <boost/lexical_cast.hpp>
 
 #include <CGAL/exceptions.h>
 #include <CGAL/Arr_tags.h>
@@ -123,8 +122,8 @@ protected:
     typename Traits::Equal_2 equal = this->m_geom_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
 
-    std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
-    std::string real_answer_str = boost::lexical_cast<std::string>(real_answer);
+    std::string exp_answer_str = std::to_string(exp_answer);
+    std::string real_answer_str = std::to_string(real_answer);
     this->print_answer(exp_answer_str, real_answer_str, "point");
     return false;
   }
@@ -136,8 +135,8 @@ protected:
     typename Traits::Equal_2 equal = this->m_geom_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
 
-    std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
-    std::string real_answer_str = boost::lexical_cast<std::string>(real_answer);
+    std::string exp_answer_str = std::to_string(exp_answer);
+    std::string real_answer_str = std::to_string(real_answer);
     this->print_answer(exp_answer_str, real_answer_str, "x-monotone curve");
     return false;
   }
@@ -149,8 +148,8 @@ protected:
                const char* str = "result")
   {
     if (exp_answer == real_answer) return true;
-    std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
-    std::string real_answer_str = boost::lexical_cast<std::string>(real_answer);
+    std::string exp_answer_str = std::to_string(exp_answer);
+    std::string real_answer_str = std::to_string(real_answer);
     this->print_answer(exp_answer_str, real_answer_str, str);
     return false;
   }
