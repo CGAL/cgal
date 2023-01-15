@@ -333,7 +333,7 @@ bool Sphere_segment<R>::
 has_in_relative_interior(const CGAL::Sphere_point<R>& p, bool check_has_on) const
 { if (check_has_on &&( !sphere_circle().has_on(p) ) ) return false;
   const Sphere_point<R>& pole = orthogonal_pole();
-  return has_in_relative_interior(p, pole, is_long(pole), check_has_on);
+  return has_in_relative_interior(p, pole, is_long(pole), false);
 }
 
 template <typename R>
