@@ -232,7 +232,7 @@ bool operator==(const Sphere_segment<R>& so) const
 bool operator!=(const Sphere_segment<R>& so) const
 { return !operator==(so); }
 
-Point_3 orthogonal_pole() const
+Sphere_point<R> orthogonal_pole() const
 { return CGAL::ORIGIN + sphere_circle().orthogonal_vector(); }
 
 private:
