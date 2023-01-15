@@ -93,8 +93,12 @@ struct Exact_ring_selector : Exact_field_selector < T > { };
 
 template <>
 struct Exact_ring_selector<double>
-#ifdef CGAL_HAS_MPZF
+#if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
+{ typedef boost::multiprecision::cpp_int Type; };
+#elif CGAL_HAS_MPZF
 { typedef Mpzf Type; };
+ #elif defined(CGAL_USE_BOOST_MP)
+{ typedef boost::multiprecision::cpp_int Type; };
 #elif defined(CGAL_HAS_THREADS) || !defined(CGAL_USE_GMP)
 { typedef MP_Float Type; };
 #else
