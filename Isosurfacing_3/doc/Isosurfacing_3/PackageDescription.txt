@@ -30,7 +30,7 @@
 
 This package provides algorithms to extract isosurfaces from different inputs.
 The input is represented as a 3D domain and can be an implicit function, a %Cartesian grid or an octree.
-The output is an indexed face set that stores an isosurface in the form of a surface mesh.
+The output is an indexed face set that stores an isosurface in the form of a surface mesh. @fixme
 The provided algorithms include Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
 
 \cgalClassifedRefPages
