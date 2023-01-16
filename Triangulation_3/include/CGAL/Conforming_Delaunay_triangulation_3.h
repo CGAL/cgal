@@ -313,7 +313,8 @@ protected:
         v->nb_of_incident_constraints = 1;
         v->c_id = constraint.vl_ptr();
 #if CGAL_DEBUG_CDT_3
-        std::cerr << "New Steiner vertex: " << display_vert(v) << '\n';
+        std::cerr << "New Steiner vertex (#" << tr.number_of_vertices() << "): "
+                  << display_vert(v) << '\n';
 #endif // CGAL_DEBUG_CDT_3
       }
       CGAL_assertion(v != va);
@@ -340,17 +341,20 @@ protected:
     return c_id;
   }
 
-  Constraint_id constraint_around(Vertex_handle va, Vertex_handle vb, bool expensive) const {
+  Constraint_id constraint_around(Vertex_handle va, Vertex_handle vb, bool expensive = true) const {
     auto constraint_id_goes_to_vb = [this, va, vb](Constraint_id c_id) {
       CGAL_assertion(std::find(this->constraint_hierarchy.c_begin(),
                                this->constraint_hierarchy.c_end(), c_id) != this->constraint_hierarchy.c_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
                      this->constraint_hierarchy.vertices_in_constraint_end(c_id));
+#ifdef CGAL_DEBUG_CDT_3
       std::cerr << "constraint " << (void*) c_id.vl_ptr() << " has "
                 << c_id.vl_ptr()->skip_size() << " vertices\n";
+#endif
       auto it = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+      const auto end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
       const auto c_va = *it;
-      while(std::next(it) != this->constraint_hierarchy.vertices_in_constraint_end(c_id))
+      while(std::next(it) != end)
         ++it;
       const auto c_vb = *it;
       if (va == c_va && vb == c_vb)
@@ -358,8 +362,8 @@ protected:
       if (vb == c_va && va == c_vb)
         return true;
       return false;
-    };
-    if (expensive == false && va->nb_of_incident_constraints == 1)
+    }; // end lambda constraint_id_goes_to_vb
+    if (va->nb_of_incident_constraints == 1)
     {
       const Constraint_id c_id = va->constraint_id(*this);
       CGAL_assertion(c_id != Constraint_id{});
