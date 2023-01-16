@@ -343,10 +343,10 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
 
     if (std::get<1>(cur) == Tr::FACET) {
       regular_case = 1;
-      int i = std::get<2>(cur);
-      int j0 = Tr::vertex_triple_index(i, 0);
-      int j1 = Tr::vertex_triple_index(i, 1);
-      int j2 = Tr::vertex_triple_index(i, 2);
+      const int i = std::get<2>(cur);
+      const int j0 = Tr::vertex_triple_index(i, 0);
+      const int j1 = Tr::vertex_triple_index(i, 1);
+      const int j2 = Tr::vertex_triple_index(i, 2);
       Orientation o0 = _tr->orientation(_source, *vert[i], *vert[j0], _target);
       if (o0 == POSITIVE) {
         Orientation o1 = _tr->orientation(_source, *vert[i], *vert[j1], _target);
@@ -749,7 +749,7 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2()
 {
-    std::array<Point*, 3> vert
+    const std::array<const Point*, 3> vert
               = { &(cell()->vertex(0)->point()),
                   &(cell()->vertex(1)->point()),
                   &(cell()->vertex(2)->point()) };
