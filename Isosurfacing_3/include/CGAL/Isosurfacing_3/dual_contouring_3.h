@@ -17,6 +17,7 @@
 
 #include <CGAL/Isosurfacing_3/internal/dual_contouring_functors.h>
 
+#include <CGAL/Container_helper.h>
 #include <CGAL/tags.h>
 
 namespace CGAL {
@@ -30,7 +31,7 @@ namespace Isosurfacing {
  * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                        Possible values are `Sequential_tag`, `Parallel_if_available_tag`, or `Parallel_tag`.
  * \tparam Domain must be a model of `IsosurfacingDomainWithGradient_3`.
- * \tparam PointRange must be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ * \tparam PointRange must be a model of the concept `AssociativeContainer`
  *                    whose value type can be constructed from the point type of the domain.
  * \tparam PolygonRange must be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                      whose value type is itself a model of the concepts `RandomAccessContainer`
@@ -72,7 +73,7 @@ void dual_contouring(const Domain& domain,
   domain.template iterate_edges<ConcurrencyTag>(face_generation);
 
   // copy vertices to point range
-  points.resize(pos_func.points_counter);
+  CGAL::internal::resize(points, pos_func.points_counter);
   for(const auto& vtop : pos_func.map_voxel_to_point)
     points[pos_func.map_voxel_to_point_id[vtop.first]] = vtop.second;
 
