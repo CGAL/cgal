@@ -315,9 +315,9 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
   const Point_ref p2 = get(vpm, source(h, tmesh));
   const Point_ref p3 = get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh));
 
-  const double ap1 = angle(p0,p1,p2);
-  const double ap3 = angle(p2,p3,p0);
-  return (ap1 + ap3 > 180);
+  const typename Traits::FT ap1 = to_double(angle(p0,p1,p2));
+  const typename Traits::FT ap3 = to_double(angle(p2,p3,p0));
+  return (ap1 + ap3 > typename Traits::FT(180.));
 }
 
 template <class TriangleMesh, class VPM, class Traits, class Functor>
