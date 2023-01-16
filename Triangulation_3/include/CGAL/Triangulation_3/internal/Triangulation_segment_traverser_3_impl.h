@@ -748,7 +748,7 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2()
 {
-    std::array<Point*, 3> vert
+    const std::array<const Point*, 3> vert
               = { &(cell()->vertex(0)->point()),
                   &(cell()->vertex(1)->point()),
                   &(cell()->vertex(2)->point()) };
