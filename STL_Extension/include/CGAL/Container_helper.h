@@ -18,8 +18,9 @@
 #include <CGAL/assertions.h>
 #include <boost/mpl/logical.hpp>
 
+#include <array>
 #include <cstddef>
-#include<type_traits>
+#include <type_traits>
 
 namespace CGAL {
 namespace internal {
@@ -35,13 +36,8 @@ void resize(Container& c, std::size_t size,
   c.resize(size);
 }
 
-// Container without a resize() function, but with a size() function (e.g. an array)
-template <class Container>
-void resize(Container& CGAL_assertion_code(array), std::size_t CGAL_assertion_code(size),
-            std::enable_if_t<
-              boost::mpl::and_<
-                boost::mpl::not_<has_resize<Container> >,
-                                 has_size<Container> >::value >* = nullptr)
+template <class T, int s>
+void resize(std::array<T, s>& CGAL_assertion_code(array), std::size_t CGAL_assertion_code(size))
 {
   CGAL_assertion(array.size() == size);
 }
