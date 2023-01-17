@@ -90,24 +90,24 @@ public:
   // Constructor
   using Base::Base;
 
-  bool is_facet_constrained(int i) const { return face_id[i] >= 0; }
+  bool is_facet_constrained(int i) const { return face_id[unsigned(i)] >= 0; }
 
   template <typename Facet_handle>
   void set_facet_constraint(int i, CDT_3_face_index face_id,
                             Facet_handle facet_2d)
   {
-    this->face_id[i] = face_id;
-    this->facet_2d[i] = static_cast<void*>(std::addressof(*facet_2d));
+    this->face_id[unsigned(i)] = face_id;
+    this->facet_2d[unsigned(i)] = static_cast<void*>(std::addressof(*facet_2d));
   }
 
   CDT_3_face_index face_constraint_index(int i) const {
-    return face_id[i];
+    return face_id[unsigned(i)];
   }
 
   template <typename CDT_2>
   auto face_2 (const CDT_2& cdt, int i) const {
     using Face = typename CDT_2::Face;
-    auto ptr = static_cast<Face*>(facet_2d[i]);
+    auto ptr = static_cast<Face*>(facet_2d[unsigned(i)]);
     return cdt.tds().faces().iterator_to(*ptr);
   }
 
@@ -121,7 +121,7 @@ public:
              const Constrained_Delaunay_triangulation_cell_base_3& c)
   {
     os << static_cast<const Base&>(c);
-    for( int li = 0; li < 4; ++li ) {
+    for( unsigned li = 0; li < 4; ++li ) {
       if(is_ascii(os)) {
         os << " " << c.face_id[li];
       } else {
@@ -233,7 +233,7 @@ private:
           auto c = *cell_it;
           for(int li = first_li; li < 4; ++li) {
             if(c->is_facet_constrained(li)) {
-              const auto face_id = c->face_constraint_index(li);
+              const auto face_id = static_cast<std::size_t>(c->face_constraint_index(li));
               self.face_constraint_misses_subfaces.set(face_id);
               auto fh_2 = c->face_2(self.face_constraints[face_id], li);
 #if CGAL_DEBUG_CDT_3
@@ -247,7 +247,7 @@ private:
         }
         conforming_dt_visitor.process_cells_in_conflict(cell_it_begin, end);
       }
-      void after_insertion(Vertex_handle new_vertex) {
+      void after_insertion(Vertex_handle) {
 
       }
 
@@ -429,7 +429,7 @@ public:
       int i, j, k;
       if(!tr.is_facet(v0, v1, v2, c, i, j, k)) {
         fh->info().missing_subface = true;
-        face_constraint_misses_subfaces.set(polygon_contraint_id);
+        face_constraint_misses_subfaces.set(static_cast<std::size_t>(polygon_contraint_id));
 #if CGAL_DEBUG_CDT_3
         std::cerr << "Missing triangle: \n";
         write_triangle(std::cerr, v0, v1, v2);
