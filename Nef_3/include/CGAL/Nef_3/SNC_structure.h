@@ -761,11 +761,6 @@ public:
     CGAL_NEF_TRACEN("  new vertex only "<<&*(--vertices_end()));
     return --vertices_end();
   }
-  Halfedge_handle new_halfedge_only(Halfedge_handle e)  {
-    Halfedge_handle ne = halfedges_.insert(e, * get_node(halfedge_allocator));
-    CGAL_NEF_TRACEN("  after "<<&*e<<" new halfedge only "<<&*ne);
-    return ne;
-  }
   Halfedge_handle new_halfedge_only()  {
     CGAL_NEF_TRACEN("  new halfedge only "<<&*(--halfedges_end()));
     halfedges_.push_back( * get_node(halfedge_allocator));
@@ -786,11 +781,6 @@ public:
     CGAL_NEF_TRACEN("  new shalfedge only "<<&*(--shalfedges_end()));
     return --shalfedges_end();
   }
-  SHalfedge_handle new_shalfedge_only(SHalfedge_handle se) {
-    SHalfedge_handle nse = shalfedges_.insert(se, * get_node(shalfedge_allocator));
-    CGAL_NEF_TRACEN("  after " << &*se << " new shalfedge only " << &*nse);
-    return nse;
-  }
   SHalfloop_handle new_shalfloop_only()  {
     shalfloops_.push_back( * get_node(shalfloop_allocator));
     CGAL_NEF_TRACEN("  new shalfloop only "<<&*(--shalfloops_end()));
@@ -800,11 +790,6 @@ public:
     sfaces_.push_back( * get_node(sface_allocator));
     CGAL_NEF_TRACEN("  new sface only "<<&*(--sfaces_end()));
     return --sfaces_end();
-  }
-  SFace_handle new_sface_only(SFace_handle sf) {
-    SFace_handle nsf = sfaces_.insert(sf, * get_node(sface_allocator));
-    CGAL_NEF_TRACEN("  after " << &*sf << " new sface only " << &*nsf);
-    return nsf;
   }
 
   void delete_vertex_only(Vertex_handle h) {

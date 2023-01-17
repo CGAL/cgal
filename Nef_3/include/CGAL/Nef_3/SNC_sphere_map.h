@@ -312,14 +312,10 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
 
   SVertex_handle new_svertex(const Sphere_point& p,
                            Mark m = Mark()) {
-    SVertex_iterator sv;
+    SVertex_iterator sv = this->sncp()->new_halfedge_only();
     if (this->svertices_begin() == this->sncp()->svertices_end()) {
-      sv = this->sncp()->new_halfedge_only();
       init_range(sv);
-    }
-    else {
-      SVertex_iterator svn = this->svertices_end();
-      sv =  this->sncp()->new_halfedge_only(svn);
+    } else {
       this->svertices_last() = sv;
     }
     sv->point() = p;
@@ -328,53 +324,26 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
     CGAL_NEF_TRACEN("new_svertex "<<&*sv);
     return sv;
   }
-  /*
+
   SFace_handle new_sface() {
-    SFace_iterator sf =  this->sncp()->new_sface_only();
-    if ( this->sfaces_begin() == this->sncp()->sfaces_end()) init_range(sf);
-    else this->sfaces_last() = sf;
-    sf->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
-    return sf;
-  }
-  */
-  SFace_handle new_sface() {
-    SFace_iterator sf;
+    SFace_iterator sf = this->sncp()->new_sface_only();
     if ( this->sfaces_begin() == this->sncp()->sfaces_end()) {
-      sf =  this->sncp()->new_sface_only();
       init_range(sf);
     } else {
-      SFace_iterator sfn = this->sfaces_end();
-      sf =  this->sncp()->new_sface_only(sfn);
       this->sfaces_last() = sf;
     }
     sf->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
     return sf;
   }
 
-  /*
   SHalfedge_handle new_shalfedge_pair() {
     SHalfedge_iterator se = this->sncp()->new_shalfedge_only();
     SHalfedge_iterator set = this->sncp()->new_shalfedge_only();
-    if(this->shalfedges_begin() == this->sncp()->shalfedges_end())
-      init_range(se);
-    this->shalfedges_last() = set;
-    make_twins(se,set);
-    return se;
-  }
-  */
-
-  SHalfedge_handle new_shalfedge_pair() {
-    SHalfedge_iterator se, set;
     if(this->shalfedges_begin() == this->sncp()->shalfedges_end()) {
-      se = this->sncp()->new_shalfedge_only();
-      set = this->sncp()->new_shalfedge_only();
       init_range(se);
     } else {
-      SHalfedge_iterator sen = this->shalfedges_end();
-      se = this->sncp()->new_shalfedge_only(sen);
-      set = this->sncp()->new_shalfedge_only(sen);
+      this->shalfedges_last() = set;
     }
-    this->shalfedges_last() = set;
     make_twins(se,set);
     return se;
   }
