@@ -2261,7 +2261,7 @@ Lexit:
 /*! \copydoc test_neighborhood
  *  \deprecated please use #test_neighborhood */
 CGAL_DEPRECATED bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
-{ return test_neighborhood(pix, new_dir)' }
+{ return test_neighborhood(pix, new_dir); }
 
 #endif // CGAL_CKVA_RENDER_WITH_REFINEMENT
 
