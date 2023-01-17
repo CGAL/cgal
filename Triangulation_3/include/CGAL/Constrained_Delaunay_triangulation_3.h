@@ -235,7 +235,7 @@ private:
             if(c->is_facet_constrained(li)) {
               const auto face_id = static_cast<std::size_t>(c->face_constraint_index(li));
               self.face_constraint_misses_subfaces.set(face_id);
-              auto fh_2 = c->face_2(self.face_constraints[face_id], li);
+              auto fh_2 = c->face_2(self.face_cdt_2[face_id], li);
 #if CGAL_DEBUG_CDT_3
               std::cerr << "Add missing triangle (from visitor): \n";
               self.write_2d_triangle(std::cerr, fh_2);
@@ -342,9 +342,9 @@ public:
     }();
 
     { // create and fill the 2D triangulation
-      face_constraints.emplace_back(CDT_2_traits{accumulated_normal});
-      face_constraint_misses_subfaces.resize(face_constraints.size());
-      CDT_2& cdt_2 = face_constraints.back();
+      face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
+      face_constraint_misses_subfaces.resize(face_cdt_2.size());
+      CDT_2& cdt_2 = face_cdt_2.back();
       CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>>
           circ{&vertex_handles}, circ_end{circ};
       const auto first_2d  = cdt_2.insert(tr.point(*circ));
@@ -399,8 +399,8 @@ public:
       std::cerr << counter << " triangles(s) in the face\n";
 #endif // CGAL_DEBUG_CDT_3
     } // end of the construction of the CDT_2
-    const int polygon_contraint_id = face_constraints.size() - 1;
-    CDT_2& cdt_2 = face_constraints.back();
+    const auto polygon_contraint_id = static_cast<CDT_3_face_index>(face_cdt_2.size() - 1);
+    CDT_2& cdt_2 = face_cdt_2.back();
     for(auto constr_edge_2: cdt_2.constrained_edges()) {
       const auto va_2 = constr_edge_2.first->vertex(cdt_2.cw(constr_edge_2.second));
       const auto vb_2 = constr_edge_2.first->vertex(cdt_2.ccw(constr_edge_2.second));
@@ -468,7 +468,7 @@ public:
     const auto npos = face_constraint_misses_subfaces.npos;
     auto i = face_constraint_misses_subfaces.find_first();
     while(i != npos) {
-      const CDT_2& cdt = face_constraints[i];
+      const CDT_2& cdt = face_cdt_2[i];
       for(const auto fh: cdt.finite_face_handles()) {
         if (false == fh->info().is_outside_the_face &&
             true == fh->info().missing_subface)
@@ -494,7 +494,7 @@ protected:
   Conforming_Dt &conforming_dt = *this;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
 
-  std::vector<CDT_2> face_constraints;
+  std::vector<CDT_2> face_cdt_2;
   set_of_face_ids x;
   boost::unordered_map<Constraint_id, set_of_face_ids> incident_faces;
   boost::dynamic_bitset<> face_constraint_misses_subfaces;
