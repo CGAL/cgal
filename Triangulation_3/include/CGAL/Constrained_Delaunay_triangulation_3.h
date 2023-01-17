@@ -176,8 +176,9 @@ private:
     struct Vertex_info {
       Vertex_handle vertex_handle_3d = {};
     };
+    using Color_value_type = std::int8_t;
     struct Face_info {
-      int is_outside_the_face = 0;
+      Color_value_type is_outside_the_face = 0;
       bool missing_subface = true;
     };
     using Vb = Triangulation_vertex_base_with_info_2<Vertex_info,
@@ -191,19 +192,22 @@ private:
         Constrained_Delaunay_triangulation_2<Projection_traits, TDS, Itag>;
     using CDT = Constrained_triangulation_plus_2<CDT_base>;
 
+    template <Color_value_type Face_info::* member_ptr>
     struct CDT_2_dual_color_map {
       using category = boost::read_write_property_map_tag;
-      using reference = int&;
-      using value_type = int;
+      using reference = Color_value_type&;
+      using value_type = Color_value_type;
       using key_type = typename CDT::Face_handle;
 
       friend reference get(CDT_2_dual_color_map, key_type fh) {
-        return fh->info().is_outside_the_face;
+        return fh->info().*member_ptr;
       }
-      friend void put(CDT_2_dual_color_map, key_type fh, int value) {
-        fh->info().is_outside_the_face = value;
+      friend void put(CDT_2_dual_color_map, key_type fh, value_type value) {
+        fh->info().*member_ptr = value;
       }
     };
+    using Color_map_is_outside_the_face =
+        CDT_2_dual_color_map<&Face_info::is_outside_the_face>;
   }; // CDT_2_types
   using CDT_2 = typename CDT_2_types::CDT;
   using CDT_2_traits = typename CDT_2_types::Projection_traits;
@@ -387,7 +391,7 @@ public:
         boost::filtered_graph<decltype(cdt_2_dual_graph),
                               pred_type>
             dual(cdt_2_dual_graph, no_constrained_edge);
-        using Color_map = typename CDT_2_types::CDT_2_dual_color_map;
+        using Color_map = typename CDT_2_types::Color_map_is_outside_the_face;
         boost::breadth_first_search(dual, cdt_2.infinite_vertex()->face(),
                                     boost::color_map(Color_map()));
       } // end of Boost BFS
