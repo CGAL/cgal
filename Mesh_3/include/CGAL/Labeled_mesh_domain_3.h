@@ -177,6 +177,34 @@ namespace internal {
     return Add_input_features_in_domain<MeshDomain, DetectFunctor>()(domain, functor);
   }
 
+  template<bool WithFeatures>
+  struct Add_features_in_domain {
+    template<typename MeshDomain, typename InputFunctor, typename DetectFunctor>
+    void operator()(const CGAL::Image_3&, MeshDomain&, InputFunctor, DetectFunctor)
+    {}
+  };
+
+  template<>
+  struct Add_features_in_domain<true>
+  {
+    template<typename MeshDomain, typename InputFunctor, typename DetectFunctor>
+    void operator()(const CGAL::Image_3& image,
+                    MeshDomain& domain,
+                    InputFunctor input_features,
+                    DetectFunctor detect_features)
+    {
+      const auto user_feature_range
+        = std::move(CGAL::Mesh_3::internal::add_input_features(domain, input_features));
+      auto detected_feature_range
+        = std::move(CGAL::Mesh_3::internal::detect_features(image, domain, detect_features));
+
+      CGAL::merge_and_snap_polylines(image, detected_feature_range, user_feature_range);
+
+      domain.add_features(user_feature_range.begin(), user_feature_range.end());
+      domain.add_features(detected_feature_range.begin(), detected_feature_range.end());
+    }
+  };
+
 } // end namespace CGAL::Mesh_3::internal
 } // end namespace CGAL::Mesh_3
 
@@ -686,11 +714,11 @@ public:
                                      value_outside_);
 
     // warning : keep Return_type consistent with actual return type
-    const bool no_features_provided
+    const bool no_features
       =  CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value
       && CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::input_features_param_t>::value;
     using Return_type = std::conditional_t <
-      no_features_provided,
+      no_features,
       Labeled_mesh_domain_3,
       Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
     >;
@@ -709,15 +737,8 @@ public:
       return domain;
 
     // features
-    const auto user_feature_range
-      = std::move(CGAL::Mesh_3::internal::add_input_features(domain, input_features_));
-    auto detected_feature_range
-      = std::move(CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_));
-
-    CGAL::merge_and_snap_polylines(image_, detected_feature_range, user_feature_range);
-
-    domain.add_features(user_feature_range.begin(), user_feature_range.end());
-    domain.add_features(detected_feature_range.begin(), detected_feature_range.end());
+    Mesh_3::internal::Add_features_in_domain<!no_features>()
+      (image_, domain, input_features_, detect_features_);
 
     return domain;
   }

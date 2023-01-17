@@ -219,7 +219,8 @@ detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
                                                  polylines_inside.begin(),
                                                  polylines_inside.end());
 
-  polylines_inside.insert(polylines_on_bbox.begin(),
+  polylines_inside.insert(polylines_inside.end(),
+                          polylines_on_bbox.begin(),
                           polylines_on_bbox.end());
 
 #ifdef CGAL_DEBUG_TRIPLE_LINES
@@ -269,7 +270,8 @@ public:
   * \param domain the mesh domain to be enriched with polyline features
   */
   template<typename Mesh_domain>
-  void operator()(const CGAL::Image_3& image, Mesh_domain& domain)
+  std::vector<std::vector<typename Mesh_domain::Point_3>>
+  operator()(const CGAL::Image_3& image, Mesh_domain& domain)
   {
     internal::detect_features_in_image(image, domain);
   }
