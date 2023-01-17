@@ -273,7 +273,7 @@ public:
   std::vector<std::vector<typename Mesh_domain::Point_3>>
   operator()(const CGAL::Image_3& image, Mesh_domain& domain)
   {
-    internal::detect_features_in_image(image, domain);
+    return internal::detect_features_in_image(image, domain);
   }
 };
 
