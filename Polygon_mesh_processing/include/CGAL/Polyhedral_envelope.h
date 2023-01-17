@@ -1048,7 +1048,7 @@ private:
   }
   CGAL_DEPRECATED bool
   is_two_facets_neighbouring(const unsigned int & pid, const unsigned int &i, const unsigned int &j)const
-  { is_two_facets_neighboring(pid, i, j); }
+  { return is_two_facets_neighboring(pid, i, j); }
 
 
   int
