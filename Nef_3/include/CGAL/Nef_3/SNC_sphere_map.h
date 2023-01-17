@@ -24,6 +24,7 @@
 #include <CGAL/Nef_S2/Generic_handle_map.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <CGAL/Nef_3/Infimaximal_box.h>
+#include <CGAL/Nef_3/SNC_list.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <list>
 #undef CGAL_NEF_DEBUG
@@ -78,7 +79,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef Infimaximal_box<typename Is_extended_kernel<Standard_kernel>::value_type, Standard_kernel> No_box;
 
   typedef Self                                              Vertex_base;
-  typedef SNC_in_place_list_sm<Vertex_base>                 Vertex;
+  typedef SNC_in_place_list<Vertex_base>                    Vertex;
   typedef CGAL::In_place_list<Vertex,false>                 Vertex_list;
   typedef CGAL_ALLOCATOR(Vertex)                            Vertex_alloc;
   typedef typename Vertex_list::iterator                    Vertex_handle;
@@ -87,7 +88,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename Vertex_list::const_iterator              Vertex_const_iterator;
 
   typedef typename Items::template SVertex<SNC_structure>   SVertex_base;
-  typedef SNC_in_place_list_svertex<SVertex_base>           SVertex;
+  typedef SNC_in_place_list<SVertex_base>                   SVertex;
   typedef CGAL::In_place_list<SVertex,false>                SVertex_list;
   typedef CGAL_ALLOCATOR(SVertex)                           SVertex_alloc;
   typedef typename SVertex_list::iterator                   SVertex_handle;
@@ -96,7 +97,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename SVertex_list::const_iterator             SVertex_const_iterator;
 
   typedef typename Items::template SHalfedge<SNC_structure> SHalfedge_base;
-  typedef SNC_in_place_list_shalfedge<SHalfedge_base>       SHalfedge;
+  typedef SNC_in_place_list<SHalfedge_base>                 SHalfedge;
   typedef CGAL::In_place_list<SHalfedge,false>              SHalfedge_list;
   typedef CGAL_ALLOCATOR(SHalfedge)                         SHalfedge_alloc;
   typedef typename SHalfedge_list::iterator                 SHalfedge_handle;
@@ -105,7 +106,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename SHalfedge_list::const_iterator           SHalfedge_const_iterator;
 
   typedef typename Items::template SHalfloop<SNC_structure> SHalfloop_base;
-  typedef SNC_in_place_list_shalfloop<SHalfloop_base>       SHalfloop;
+  typedef SNC_in_place_list<SHalfloop_base>                 SHalfloop;
   typedef CGAL::In_place_list<SHalfloop,false>              SHalfloop_list;
   typedef CGAL_ALLOCATOR(SHalfloop)                         SHalfloop_alloc;
   typedef typename SHalfloop_list::iterator                 SHalfloop_handle;
@@ -114,7 +115,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename SHalfloop_list::const_iterator           SHalfloop_const_iterator;
 
   typedef typename Items::template SFace<SNC_structure>     SFace_base;
-  typedef SNC_in_place_list_sface<SFace_base>               SFace;
+  typedef SNC_in_place_list<SFace_base>                     SFace;
   typedef CGAL::In_place_list<SFace,false>                  SFace_list;
   typedef CGAL_ALLOCATOR(SFace)                             SFace_alloc;
   typedef typename SFace_list::iterator                     SFace_handle;
@@ -320,7 +321,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
     }
     sv->point() = p;
     sv->mark() = m;
-    sv->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
+    sv->center_vertex() = Vertex_handle((SNC_in_place_list<Self>*) this);
     CGAL_NEF_TRACEN("new_svertex "<<&*sv);
     return sv;
   }
@@ -332,7 +333,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
     } else {
       this->sfaces_last() = sf;
     }
-    sf->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
+    sf->center_vertex() = Vertex_handle((SNC_in_place_list<Self>*) this);
     return sf;
   }
 

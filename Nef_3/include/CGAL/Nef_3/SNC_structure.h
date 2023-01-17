@@ -129,7 +129,7 @@ public:
 
  public:
   typedef Sphere_map                                        Vertex_base;
-  typedef SNC_in_place_list_sm<Vertex_base>                 Vertex;
+  typedef SNC_in_place_list<Vertex_base>                    Vertex;
   typedef CGAL::In_place_list<Vertex,false>                 Vertex_list;
   typedef CGAL_ALLOCATOR(Vertex)                            Vertex_alloc;
   typedef typename Vertex_list::iterator                    Vertex_handle;
@@ -138,7 +138,7 @@ public:
   typedef typename Vertex_list::const_iterator              Vertex_const_iterator;
 
   typedef typename Items::template Halffacet<SNC_structure> Halffacet_base;
-  typedef SNC_in_place_list_halffacet<Halffacet_base>       Halffacet;
+  typedef SNC_in_place_list<Halffacet_base>                 Halffacet;
   typedef CGAL::In_place_list<Halffacet,false>              Halffacet_list;
   typedef CGAL_ALLOCATOR(Halffacet)                         Halffacet_alloc;
   typedef typename Halffacet_list::iterator                 Halffacet_handle;
@@ -147,7 +147,7 @@ public:
   typedef typename Halffacet_list::const_iterator           Halffacet_const_iterator;
 
   typedef typename Items::template Volume<SNC_structure>    Volume_base;
-  typedef SNC_in_place_list_volume<Volume_base>             Volume;
+  typedef SNC_in_place_list<Volume_base>                    Volume;
   typedef CGAL::In_place_list<Volume,false>                 Volume_list;
   typedef CGAL_ALLOCATOR(Volume)                            Volume_alloc;
   typedef typename Volume_list::iterator                    Volume_handle;
@@ -156,7 +156,7 @@ public:
   typedef typename Volume_list::const_iterator              Volume_const_iterator;
 
   typedef typename Items::template SVertex<SNC_structure>   SVertex_base;
-  typedef SNC_in_place_list_svertex<SVertex_base>           SVertex;
+  typedef SNC_in_place_list<SVertex_base>                   SVertex;
   typedef CGAL::In_place_list<SVertex,false>                SVertex_list;
   typedef CGAL_ALLOCATOR(SVertex)                           SVertex_alloc;
   typedef typename SVertex_list::iterator                   SVertex_handle;
@@ -165,7 +165,7 @@ public:
   typedef typename SVertex_list::const_iterator             SVertex_const_iterator;
 
   typedef typename Items::template SVertex<SNC_structure>   Halfedge_base;
-  typedef SNC_in_place_list_svertex<SVertex_base>           Halfedge;
+  typedef SNC_in_place_list<SVertex_base>                   Halfedge;
   typedef CGAL::In_place_list<SVertex,false>                Halfedge_list;
   typedef CGAL_ALLOCATOR(SVertex)                           Halfedge_alloc;
   typedef typename SVertex_list::iterator                   Halfedge_handle;
@@ -174,7 +174,7 @@ public:
   typedef typename SVertex_list::const_iterator             Halfedge_const_iterator;
 
   typedef typename Items::template SHalfedge<SNC_structure> SHalfedge_base;
-  typedef SNC_in_place_list_shalfedge<SHalfedge_base>       SHalfedge;
+  typedef SNC_in_place_list<SHalfedge_base>                 SHalfedge;
   typedef CGAL::In_place_list<SHalfedge,false>              SHalfedge_list;
   typedef CGAL_ALLOCATOR(SHalfedge)                         SHalfedge_alloc;
   typedef typename SHalfedge_list::iterator                 SHalfedge_handle;
@@ -183,7 +183,7 @@ public:
   typedef typename SHalfedge_list::const_iterator           SHalfedge_const_iterator;
 
   typedef typename Items::template SHalfloop<SNC_structure> SHalfloop_base;
-  typedef SNC_in_place_list_shalfloop<SHalfloop_base>       SHalfloop;
+  typedef SNC_in_place_list<SHalfloop_base>                 SHalfloop;
   typedef CGAL::In_place_list<SHalfloop,false>              SHalfloop_list;
   typedef CGAL_ALLOCATOR(SHalfloop)                         SHalfloop_alloc;
   typedef typename SHalfloop_list::iterator                 SHalfloop_handle;
@@ -192,7 +192,7 @@ public:
   typedef typename SHalfloop_list::const_iterator           SHalfloop_const_iterator;
 
   typedef typename Items::template SFace<SNC_structure>     SFace_base;
-  typedef SNC_in_place_list_sface<SFace_base>               SFace;
+  typedef SNC_in_place_list<SFace_base>                     SFace;
   typedef CGAL::In_place_list<SFace,false>                  SFace_list;
   typedef CGAL_ALLOCATOR(SFace)                             SFace_alloc;
   typedef typename SFace_list::iterator                     SFace_handle;

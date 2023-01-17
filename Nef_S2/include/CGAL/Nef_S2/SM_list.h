@@ -15,88 +15,24 @@
 
 #include <CGAL/license/Nef_S2.h>
 
-
 #include <CGAL/In_place_list.h>
-#include <CGAL/Nef_S2/SM_items.h>
-#include <CGAL/Nef_S2/Sphere_geometry.h>
-#include <CGAL/Nef_2/Object_handle.h>
-#include <CGAL/Nef_S2/Generic_handle_map.h>
-#include <CGAL/Nef_2/iterator_tools.h>
-#include <list>
 
 namespace CGAL {
 
-/*
-template <typename HE>
-class move_edge_around_svertex {
+template < class T>
+class SM_in_place_list
+    : public T,
+      public In_place_list_base<SM_in_place_list<T> > {
 public:
-  void forward(HE& e) const  { e = (e->sprev()->twin()); }
-  void backward(HE& e) const { e = (e->twin()->snext()); }
-};
-
-template <typename HE>
-struct move_edge_around_sface {
-  void forward(HE& e)  const { e = (e->snext()); }
-  void backward(HE& e) const { e = (e->sprev()); }
-};
-*/
-
-template < class SVertex>
-class SNC_in_place_list_svertex
-    : public SVertex,
-      public In_place_list_base<SNC_in_place_list_svertex<SVertex> > {
-public:
-    typedef SNC_in_place_list_svertex<SVertex> Self;
-    //    typedef typename SVertex::SVertex_handle       SVertex_handle;
-    //    typedef typename SVertex::SVertex_const_handle SVertex_const_handle;
-    SNC_in_place_list_svertex() {}
-  SNC_in_place_list_svertex(const SNC_in_place_list_svertex& other)=default;
-    SNC_in_place_list_svertex(const SVertex& v)   // down cast
-        : SVertex(v) {}
+    typedef SM_in_place_list<T> Self;
+    SM_in_place_list() {}
+    SM_in_place_list(const SM_in_place_list& other)=default;
+    SM_in_place_list(const T& v)   // down cast
+        : T(v) {}
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
-        *((SVertex*)this) = ((const SVertex&)v);
-        return *this;
-    }
-};
-
-template < class SHalfedge>
-class SNC_in_place_list_shalfedge
-    : public SHalfedge,
-      public In_place_list_base<SNC_in_place_list_shalfedge<SHalfedge> > {
-public:
-    typedef SNC_in_place_list_shalfedge<SHalfedge> Self;
-    //    typedef typename SHalfedge::SHalfedge_handle       SHalfedge_handle;
-    //    typedef typename SHalfedge::SHalfedge_const_handle SHalfedge_const_handle;
-    SNC_in_place_list_shalfedge() {}
-    SNC_in_place_list_shalfedge(const SNC_in_place_list_shalfedge& other)=default;
-    SNC_in_place_list_shalfedge(const SHalfedge& v)   // down cast
-        : SHalfedge(v) {}
-    Self& operator=( const Self& v) {
-        // This self written assignment avoids that assigning vertices will
-        // overwrite the list linking of the target vertex.
-        *((SHalfedge*)this) = ((const SHalfedge&)v);
-        return *this;
-    }
-};
-
-template < class SFace>
-class SNC_in_place_list_sface
-    : public SFace,
-      public In_place_list_base<SNC_in_place_list_sface<SFace> > {
-public:
-    typedef SNC_in_place_list_sface<SFace> Self;
-    //    typedef typename SFace::SFace_handle       SFace_handle;
-    //    typedef typename SFace::SFace_const_handle SFace_const_handle;
-    SNC_in_place_list_sface() {}
-    SNC_in_place_list_sface(const SNC_in_place_list_sface& other)=default;
-    SNC_in_place_list_sface(const SFace& v)   // down cast
-        : SFace(v) {}
-    Self& operator=( const Self& v) {
-        // This self written assignment avoids that assigning vertices will
-        // overwrite the list linking of the target vertex.
-        *((SFace*)this) = ((const SFace&)v);
+        *((T*)this) = ((const T&)v);
         return *this;
     }
 };
