@@ -338,12 +338,11 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
 
   SHalfedge_handle new_shalfedge_pair() {
     SHalfedge_iterator se = this->sncp()->new_shalfedge_only();
-    SHalfedge_iterator set = this->sncp()->new_shalfedge_only();
     if(this->shalfedges_begin() == this->sncp()->shalfedges_end()) {
       init_range(se);
-    } else {
-      this->shalfedges_last() = set;
     }
+    SHalfedge_iterator set = this->sncp()->new_shalfedge_only();
+    this->shalfedges_last() = set;
     make_twins(se,set);
     return se;
   }
