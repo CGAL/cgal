@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   std::cerr.precision(17);
   std::cout.precision(17);
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
   std::ifstream input(filename);
   Mesh mesh;
   if (!input || !(input >> mesh))
