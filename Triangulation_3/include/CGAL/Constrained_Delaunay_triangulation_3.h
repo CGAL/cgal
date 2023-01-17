@@ -186,7 +186,7 @@ private:
                                                     Projection_traits>;
     using Fb = Constrained_triangulation_face_base_2<Projection_traits, Fb1>;
     using TDS = Triangulation_data_structure_2<Vb,Fb>;
-    using Itag = Exact_predicates_tag;
+    using Itag = No_constraint_intersection_tag;
     using CDT_base =
         Constrained_Delaunay_triangulation_2<Projection_traits, TDS, Itag>;
     using CDT = Constrained_triangulation_plus_2<CDT_base>;
