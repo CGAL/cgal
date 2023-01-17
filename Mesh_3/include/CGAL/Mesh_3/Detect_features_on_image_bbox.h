@@ -31,22 +31,23 @@ namespace Mesh_3
 namespace internal
 {
 template<typename Word_type, typename Mesh_domain>
-void detect_features_on_bbox_with_know_word_type(const CGAL::Image_3& image,
-                                                 Mesh_domain& domain)
+std::vector<std::vector<typename Mesh_domain::Point_3>>
+detect_features_on_bbox_with_know_word_type(const CGAL::Image_3& image,
+                                            Mesh_domain& domain)
 {
-  using Gt = typename Mesh_domain::R;
-  using Point_3 = typename Gt::Point_3;
+  using Point_3 = typename Mesh_domain::Point_3;
   using Polyline_type = std::vector<Point_3>;
   using Polylines = std::vector<Polyline_type>;
 
   Polylines polylines_on_bbox;
   CGAL::polylines_to_protect<Point_3, Word_type>(image, polylines_on_bbox);
 
-  domain.add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+  return polylines_on_bbox;
 }
 
 template<typename Mesh_domain>
-void detect_features_on_bbox(const CGAL::Image_3& image, Mesh_domain& domain)
+std::vector<std::vector<typename Mesh_domain::Point_3>>
+detect_features_on_bbox(const CGAL::Image_3& image, Mesh_domain& domain)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
     return detect_features_on_bbox_with_know_word_type<Word>(image, domain)
@@ -54,6 +55,7 @@ void detect_features_on_bbox(const CGAL::Image_3& image, Mesh_domain& domain)
   CGAL_error_msg("This place should never be reached, because it would mean "
                  "the image word type is a type that is not handled by "
                  "CGAL_ImageIO.");
+  return std::vector<std::vector<typename Mesh_domain::Point_3>>();
 }
 
 }// namespace internal
@@ -78,9 +80,10 @@ public:
   * \param domain the mesh domain to be enriched with polyline features
   */
   template<typename Mesh_domain>
-  void operator()(const CGAL::Image_3& image, Mesh_domain& domain)
+  std::vector<std::vector<typename Mesh_domain::Point_3>>
+  operator()(const CGAL::Image_3& image, Mesh_domain& domain)
   {
-    internal::detect_features_on_bbox(image, domain);
+    return internal::detect_features_on_bbox(image, domain);
   }
 };
 

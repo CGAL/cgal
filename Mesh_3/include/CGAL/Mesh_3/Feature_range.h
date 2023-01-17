@@ -50,15 +50,17 @@ public:
   * \param domain the mesh domain to be enriched with polyline features
   */
   template<typename Mesh_domain>
-  void operator()(Mesh_domain& domain)
+  std::vector<std::vector<typename Mesh_domain::Point_3>> operator()(Mesh_domain& domain)
   {
     using Point = typename Mesh_domain::Point_3;
 
     std::vector<std::vector<Point>> polyline_graph;
     CGAL::polylines_to_protect(polyline_graph, std::begin(polylines_), std::end(polylines_));
 
-    domain.add_features(polyline_graph.begin(), polyline_graph.end());
+    return polyline_graph;
   }
+
+  const PolylineRange& polylines() { return polylines_; }
 };
 
 template<typename PolylineRange>

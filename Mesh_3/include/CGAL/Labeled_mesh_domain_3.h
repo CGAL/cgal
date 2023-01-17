@@ -51,6 +51,7 @@
 
 #include <CGAL/Mesh_3/Null_subdomain_index.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
+#include <CGAL/Mesh_3/Feature_range.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -124,26 +125,29 @@ namespace internal {
   // Detect_features_in_domain
   template<typename MeshDomain, typename DetectFunctor>
   struct Detect_features_in_domain {
-    void operator()(const CGAL::Image_3& image,
-                    MeshDomain& domain,
-                    DetectFunctor functor) const {
+    std::vector<std::vector<typename MeshDomain::Point_3>>
+    operator()(const CGAL::Image_3& image,
+               MeshDomain& domain,
+               DetectFunctor functor) const {
       return functor(image, domain);
     }
   };
   // specialization for `Null_functor`: create the default functor
   template<typename MeshDomain>
   struct Detect_features_in_domain<MeshDomain, Null_functor> {
-    void operator()(const CGAL::Image_3&,
-                    MeshDomain&,
-                    Null_functor) const {
-      return;
+    std::vector<std::vector<typename MeshDomain::Point_3>>
+    operator()(const CGAL::Image_3&,
+               MeshDomain&,
+               Null_functor) const {
+      return std::vector<std::vector<typename MeshDomain::Point_3>>();
     }
   };
 
   template<typename MeshDomain, typename DetectFunctor>
-  void detect_features(const CGAL::Image_3& image,
-                       MeshDomain& domain,
-                       DetectFunctor functor)
+  std::vector<std::vector<typename MeshDomain::Point_3>>
+  detect_features(const CGAL::Image_3& image,
+                  MeshDomain& domain,
+                  DetectFunctor functor)
   {
     return Detect_features_in_domain<MeshDomain, DetectFunctor>()
             (image, domain, functor);
@@ -152,20 +156,23 @@ namespace internal {
   // Add_input_features
   template<typename MeshDomain, typename DetectFunctor>
   struct Add_input_features_in_domain {
-    void operator()(MeshDomain& domain, DetectFunctor functor) const {
-      return functor(domain);
+    std::vector<std::vector<typename MeshDomain::Point_3>>
+    operator()(MeshDomain& domain, DetectFunctor functor) const {
+       return functor(domain);
     }
   };
   // specialization for `Null_functor`: create the default functor
   template<typename MeshDomain>
   struct Add_input_features_in_domain<MeshDomain, Null_functor> {
-    void operator()(MeshDomain&, Null_functor) const {
-      return;
+    std::vector<std::vector<typename MeshDomain::Point_3>>
+    operator()(MeshDomain&, Null_functor) const {
+      return std::vector<std::vector<typename MeshDomain::Point_3>>();
     }
   };
 
   template<typename MeshDomain, typename DetectFunctor>
-  void add_input_features(MeshDomain& domain, DetectFunctor functor)
+  std::vector<std::vector<typename MeshDomain::Point_3>>
+  add_input_features(MeshDomain& domain, DetectFunctor functor)
   {
     return Add_input_features_in_domain<MeshDomain, DetectFunctor>()(domain, functor);
   }
@@ -644,7 +651,8 @@ public:
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static
   std::conditional_t<
-    CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value,
+      (   CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value
+       && CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::input_features_param_t>::value),
     Labeled_mesh_domain_3,
     Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
   > // warning : keep return type consistent with Return_type inside the constructor code
@@ -697,15 +705,20 @@ public:
        p::construct_surface_patch_index =
                create_construct_surface_patch_index(construct_surface_patch_index_));
 
-    if (!weights_.is_valid())
-    {
-      std::cout << "detect_features..." << std::endl;
-      CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_);
-      std::cout << "detect_features done" << std::endl;
-      std::cout << "add_input_features..." << std::endl;
-      CGAL::Mesh_3::internal::add_input_features(domain, input_features_);
-      std::cout << "add_input_features done" << std::endl;
-    }
+    if (weights_.is_valid())
+      return domain;
+
+    // features
+    const auto user_feature_range
+      = std::move(CGAL::Mesh_3::internal::add_input_features(domain, input_features_));
+    auto detected_feature_range
+      = std::move(CGAL::Mesh_3::internal::detect_features(image_, domain, detect_features_));
+
+    CGAL::merge_and_snap_polylines(image_, detected_feature_range, user_feature_range);
+
+    domain.add_features(user_feature_range.begin(), user_feature_range.end());
+    domain.add_features(detected_feature_range.begin(), detected_feature_range.end());
+
     return domain;
   }
 /// @}

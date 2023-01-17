@@ -1131,6 +1131,60 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      existing_polylines_end);
 }
 
+
+template <typename PolylineRange>
+void
+merge_and_snap_polylines(const CGAL::Image_3& image,
+                         PolylineRange& polylines_to_snap,
+                         const PolylineRange& existing_polylines)
+{
+  using P = typename PolylineRange::value_type::value_type;
+  using K = typename Kernel_traits<P>::Kernel;
+
+  using CGAL::internal::polylines_to_protect_namespace::Vertex_info;
+  using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS,
+                                      Vertex_info<P> >;
+  using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
+
+  // build graph of polylines_to_snap
+  Graph graph;
+  typedef Mesh_3::internal::Returns_midpoint<K, int> Midpoint_fct;
+  Mesh_3::internal::Graph_manipulations<Graph,
+    P,
+    int,
+    Midpoint_fct> g_manip(graph);
+
+  for (const auto& polyline : polylines_to_snap)
+  {
+    if (polyline.size() < 2)
+      continue;
+
+    auto pit = polyline.begin();
+    while (boost::next(pit) != polyline.end())
+    {
+      vertex_descriptor v = g_manip.get_vertex(*pit, false);
+      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      g_manip.try_add_edge(v, w);
+      ++pit;
+    }
+  }
+
+  // snap graph to existing_polylines
+  snap_graph_vertices(graph,
+    image.vx(), image.vy(), image.vz(),
+    boost::begin(existing_polylines), boost::end(existing_polylines),
+    K());
+
+  // rebuild polylines_to_snap
+  polylines_to_snap.clear();
+  Mesh_3::Polyline_visitor<P, Graph> visitor(polylines_to_snap, graph);
+  Less_for_Graph_vertex_descriptors<Graph> less(graph);
+  const Graph& const_graph = graph;
+  Mesh_3::Angle_tester<K> angle_tester(90.);
+  split_graph_into_polylines(const_graph, visitor, angle_tester, less);
+}
+
+
 } // namespace CGAL
 
 #endif // CGAL_MESH_3_POLYLINES_TO_PROTECT_H

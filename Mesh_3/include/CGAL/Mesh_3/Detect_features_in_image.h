@@ -50,8 +50,9 @@ namespace internal
 // by declaring 1D-features. Note that `CGAL::polylines_to_protect` is
 // not documented.
 template<typename Word_type, typename Mesh_domain>
-bool detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
-                                                  Mesh_domain& domain)
+std::vector<std::vector<typename Mesh_domain::Point_3>>
+detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
+                                             Mesh_domain& domain)
 {
   using Gt = typename Mesh_domain::R;
   using Point_3 = typename Gt::Point_3;
@@ -208,37 +209,35 @@ bool detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
 
   // call the split_graph_into_polylines, to create long polylines from the
   // short polylines that were generated per voxel.
-  Polylines new_polylines_inside;
-  CGAL::polylines_to_protect(new_polylines_inside,
+  Polylines polylines_inside;
+  CGAL::polylines_to_protect(polylines_inside,
                              features_inside.begin(),
                              features_inside.end());
 
-  std::vector<std::vector<Point_3> > polylines_on_bbox;
+  Polylines polylines_on_bbox;
   CGAL::polylines_to_protect<Point_3, Word_type>(image, polylines_on_bbox,
-    new_polylines_inside.begin(),
-    new_polylines_inside.end());
+                                                 polylines_inside.begin(),
+                                                 polylines_inside.end());
 
-  domain.add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
-
-  // It is very important that the polylines from the file `lines_fname`
-  // contain only polylines in the inside of the box of the image.
-  domain.add_features(new_polylines_inside.begin(), new_polylines_inside.end());
+  polylines_inside.insert(polylines_on_bbox.begin(),
+                          polylines_on_bbox.end());
 
 #ifdef CGAL_DEBUG_TRIPLE_LINES
   std::ofstream output_polylines("out-generated.polylines.txt");
   output_polylines.precision(17);
-  for (auto poly : boost::range::join(polylines_on_bbox, new_polylines_inside)) {
+  for (auto poly : boost::range::join(polylines_on_bbox, polylines_inside)) {
     output_polylines << poly.size();
     for (auto p : poly) output_polylines << " " << p;
     output_polylines << std::endl;
   }
 #endif
 
-  return true;
+  return polylines_inside;
 }
 
 template<typename Mesh_domain>
-bool detect_features_in_image(const CGAL::Image_3& image, Mesh_domain& domain)
+std::vector<std::vector<typename Mesh_domain::Point_3>>
+detect_features_in_image(const CGAL::Image_3& image, Mesh_domain& domain)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
     return detect_features_in_image_with_know_word_type<Word>(image, domain)
@@ -246,7 +245,7 @@ bool detect_features_in_image(const CGAL::Image_3& image, Mesh_domain& domain)
   CGAL_error_msg("This place should never be reached, because it would mean "
                  "the image word type is a type that is not handled by "
                  "CGAL_ImageIO.");
-  return false;
+  return std::vector<std::vector<typename Mesh_domain::Point_3>>();
 }
 
 }// namespace internal
