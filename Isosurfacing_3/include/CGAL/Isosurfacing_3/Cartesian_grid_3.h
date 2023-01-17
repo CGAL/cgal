@@ -95,7 +95,7 @@ public:
   }
 
   /**
-   * \brief creates a grid from an `Image_3`.
+   * \brief creates a grid from a `CGAL::Image_3`.
    *
    * The dimensions and bounding box are read from the image. The values stored
    * in the image must be of type `Geom_traits::FT` or implicitly convertible to it.

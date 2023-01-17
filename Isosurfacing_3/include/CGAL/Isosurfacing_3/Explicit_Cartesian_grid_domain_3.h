@@ -33,11 +33,13 @@ namespace Isosurfacing {
  * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
  *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
+ *
+ * \sa `CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain()`
  */
 #ifdef DOXYGEN_RUNNING // Allow more than a Cartesian_grid_3
-template <template <typename GeomTraits> class Cartesian_grid_3,
+template <template <typename GeomTraits> class CGAL::Isosurfacing::Cartesian_grid_3,
           typename Gradient = Zero_gradient>
-class Explicit_Cartesian_grid_domain_3;
+using Explicit_Cartesian_grid_domain_3 = unspecified_type;
 #else
 template <typename Grid,
           typename Gradient = Zero_gradient,

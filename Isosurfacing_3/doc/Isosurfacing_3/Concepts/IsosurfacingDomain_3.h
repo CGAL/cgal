@@ -81,6 +81,11 @@ public:
   /// @{
 
   /*!
+  gets the geometric traits
+  */
+  Geom_traits geom_traits();
+
+  /*!
   gets the position of a vertex in 3D space
   */
   Point_3 point(const Vertex_descriptor& v) const;
