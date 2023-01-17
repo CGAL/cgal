@@ -38,12 +38,14 @@ namespace Isosurfacing {
  *                          `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
  *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
+ *
+ * \sa `CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain()`
  */
 #ifdef DOXYGEN_RUNNING // Otherwise it shows what is behind "using" in the doc...
 template <typename GeomTraits,
           typename ImplicitFunction,
           typename Gradient = Zero_gradient>
-class Implicit_Cartesian_grid_domain_3;
+using Implicit_Cartesian_grid_domain_3 = unspecified_type;
 #else
 template <typename GeomTraits,
           typename ImplicitFunction,
