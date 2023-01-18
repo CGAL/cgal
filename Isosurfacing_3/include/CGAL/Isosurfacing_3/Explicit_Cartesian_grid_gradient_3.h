@@ -65,8 +65,7 @@ public:
     typename Geom_traits::Compute_x_3 x_coord = m_grid.geom_traits().compute_x_3_object();
     typename Geom_traits::Compute_y_3 y_coord = m_grid.geom_traits().compute_y_3_object();
     typename Geom_traits::Compute_z_3 z_coord = m_grid.geom_traits().compute_z_3_object();
-    typename Geom_traits::Construct_scaled_vector_3 scale = m_grid.geom_traits().construct_scaled_vector_3_object();
-    typename Geom_traits::Construct_sum_of_vectors_3 sum = m_grid.geom_traits().construct_sum_of_vectors_3_object();
+    typename Geom_traits::Construct_vector_3 vector = m_grid.geom_traits().construct_vector_3_object();
 
     // trilinear interpolation of stored gradients
     const Bbox_3& bbox = m_grid.bbox();
@@ -107,17 +106,28 @@ public:
     const Vector_3& g111 = m_grid.gradient(min_i + 1, min_j + 1, min_k + 1);
 
     // interpolate along all axes by weighting the corner points
-    const Vector_3 g0 = scale(g000, (1 - f_i) * (1 - f_j) * (1 - f_k));
-    const Vector_3 g1 = scale(g001, (1 - f_i) * (1 - f_j) * f_k);
-    const Vector_3 g2 = scale(g010, (1 - f_i) * f_j * (1 - f_k));
-    const Vector_3 g3 = scale(g011, (1 - f_i) * f_j * f_k);
-    const Vector_3 g4 = scale(g100, f_i * (1 - f_j) * (1 - f_k));
-    const Vector_3 g5 = scale(g101, f_i * (1 - f_j) * f_k);
-    const Vector_3 g6 = scale(g110, f_i * f_j * (1 - f_k));
-    const Vector_3 g7 = scale(g111, f_i * f_j * f_k);
+    const FT lambda000 = (1 - f_i) * (1 - f_j) * (1 - f_k);
+    const FT lambda001 = (1 - f_i) * (1 - f_j) * f_k;
+    const FT lambda010 = (1 - f_i) * f_j * (1 - f_k);
+    const FT lambda011 = (1 - f_i) * f_j * f_k;
+    const FT lambda100 = f_i * (1 - f_j) * (1 - f_k);
+    const FT lambda101 = f_i * (1 - f_j) * f_k;
+    const FT lambda110 = f_i * f_j * (1 - f_k);
+    const FT lambda111 = f_i * f_j * f_k;
 
     // add weighted corners
-    return sum(g0, sum(g1, sum(g2, sum(g3, sum(g4, sum(g5, sum(g6, g7)))))));
+    return vector( x_coord(g000) * lambda000 + x_coord(g001) * lambda001 +
+                   x_coord(g010) * lambda010 + x_coord(g011) * lambda011 +
+                   x_coord(g100) * lambda100 + x_coord(g101) * lambda101 +
+                   x_coord(g110) * lambda110 + x_coord(g111) * lambda111,
+                   y_coord(g000) * lambda000 + y_coord(g001) * lambda001 +
+                   y_coord(g010) * lambda010 + y_coord(g011) * lambda011 +
+                   y_coord(g100) * lambda100 + y_coord(g101) * lambda101 +
+                   y_coord(g110) * lambda110 + y_coord(g111) * lambda111,
+                   z_coord(g000) * lambda000 + z_coord(g001) * lambda001 +
+                   z_coord(g010) * lambda010 + z_coord(g011) * lambda011 +
+                   z_coord(g100) * lambda100 + z_coord(g101) * lambda101 +
+                   z_coord(g110) * lambda110 + z_coord(g111) * lambda111 );
   }
 };
 

@@ -89,24 +89,6 @@ public:
   */
   typedef unspecified_type Construct_vector_3;
 
-  /*!
-  A construction object that must provide the function operator:
-
-  `Vector_3 operator()(Vector_3 v, FT s)`
-
-  which returns the vector `v` scaled by a factor `s`.
-  */
-  typedef unspecified_type Construct_scaled_vector_3;
-
-  /*!
-  A construction object that must provide the function operator:
-
-  `Vector_3 operator()(Vector_3 v1, Vector_3 v2)`
-
-  which returns the vector `v1 + v2`.
-  */
-  typedef unspecified_type Construct_sum_of_vectors_3;
-
   /// @}
 
   /// \name Operations
@@ -137,16 +119,6 @@ public:
 
   */
   Construct_vector_3 construct_vector_3_object();
-
-  /*!
-
-  */
-  Construct_scaled_vector_3 construct_scaled_vector_3_object();
-
-  /*!
-
-  */
-  Construct_sum_of_vectors_3 construct_sum_of_vectors_3_object();
 
   /// @}
 
