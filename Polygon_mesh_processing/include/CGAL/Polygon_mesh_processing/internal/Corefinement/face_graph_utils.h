@@ -306,7 +306,7 @@ struct Side_of_helper
 
     typedef CGAL::Pointer_property_map<CGAL::Bbox_3>::type Id_to_box;
     Id_to_box id_to_box = CGAL::make_property_map(face_bboxes);
-    typedef Property_map_binder<FaceIdMap, Id_to_box> BPM;
+    typedef Compose_property_map<FaceIdMap, Id_to_box> BPM;
     BPM bpm(fid, id_to_box);
     Compute_bbox<BPM> compute_bbox(bpm);
 

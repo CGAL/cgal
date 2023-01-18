@@ -101,9 +101,149 @@ make_OR_property_map(const PM1& pm1, const PM2& pm2)
   return OR_property_map<PM1, PM2>(pm1, pm2);
 }
 
-// A property map that uses the result of a property map as key.
+#ifdef DOXYGEN_RUNNING
+/// \ingroup PkgPropertyMapRef
+/// Property map that composes two property maps,
+/// that is `get(compose_property_map, k)` returns `get(value_map, get(key_map, k))`.
 template <class KeyMap, class ValueMap>
-struct Property_map_binder
+struct Compose_property_map
+{
+  ///< Use the key type of `KeyMap` as keytype
+  typedef typename boost::property_traits<KeyMap>::key_type key_type;
+  ///< Use the value type of `ValueMap` as value type
+  typedef typename boost::property_traits<ValueMap>::value_type value_type;
+  ///< Use the reference type of `ValueMap` as reference
+  typedef typename boost::property_traits<ValueMap>::reference reference;
+  typedef typename boost::property_traits<ValueMap>::category category;
+};
+#else
+/// \ingroup PkgPropertyMapRef
+/// Property map that composes two property maps,
+/// that is `get(compose_property_map, k)` returns `get(value_map, get(key_map, k))`.
+template <class KeyMap, class ValueMap, class Category = typename boost::property_traits<ValueMap>::category>
+struct Compose_property_map;
+
+
+template <class KeyMap, class ValueMap>
+struct Compose_property_map<KeyMap, ValueMap, boost::readable_property_map_tag>
+{
+  typedef typename boost::property_traits<KeyMap>::key_type key_type;
+  typedef typename boost::property_traits<ValueMap>::value_type value_type;
+  typedef typename boost::property_traits<ValueMap>::reference reference;
+  typedef typename boost::property_traits<ValueMap>::category category;
+
+  KeyMap key_map;
+  ValueMap value_map;
+
+  Compose_property_map(KeyMap key_map = KeyMap(),
+                       ValueMap value_map = ValueMap())
+    : key_map(key_map), value_map(value_map)
+  {}
+
+  friend
+  reference get(Compose_property_map map, const key_type& k)
+  {
+    return get(map.value_map, get(map.key_map,k));
+  }
+};
+
+template <class KeyMap, class ValueMap>
+struct Compose_property_map<KeyMap, ValueMap, boost::writable_property_map_tag>
+{
+  typedef typename boost::property_traits<KeyMap>::key_type key_type;
+  typedef typename boost::property_traits<ValueMap>::value_type value_type;
+  typedef typename boost::property_traits<ValueMap>::reference reference;
+  typedef typename boost::property_traits<ValueMap>::category category;
+
+  KeyMap key_map;
+  ValueMap value_map;
+
+  Compose_property_map(KeyMap key_map = KeyMap(),
+                       ValueMap value_map = ValueMap())
+    : key_map(key_map), value_map(value_map)
+  {}
+
+  friend
+  void put(Compose_property_map map, const key_type& k, const value_type& v)
+  {
+    put(map.value_map, get(map.key_map,k), v);
+  }
+};
+
+template <class KeyMap, class ValueMap>
+struct Compose_property_map<KeyMap, ValueMap, boost::read_write_property_map_tag>
+{
+  typedef typename boost::property_traits<KeyMap>::key_type key_type;
+  typedef typename boost::property_traits<ValueMap>::value_type value_type;
+  typedef typename boost::property_traits<ValueMap>::reference reference;
+  typedef typename boost::property_traits<ValueMap>::category category;
+
+  KeyMap key_map;
+  ValueMap value_map;
+
+  Compose_property_map(KeyMap key_map = KeyMap(),
+                       ValueMap value_map = ValueMap())
+    : key_map(key_map), value_map(value_map)
+  {}
+
+  friend
+  reference get(Compose_property_map map, const key_type& k)
+  {
+    return get(map.value_map, get(map.key_map,k));
+  }
+
+  friend
+  void put(const Compose_property_map& map, const key_type& k, const value_type& v)
+  {
+    put(map.value_map, get(map.key_map,k), v);
+  }
+};
+
+template <class KeyMap, class ValueMap>
+struct Compose_property_map<KeyMap, ValueMap, boost::lvalue_property_map_tag>
+{
+  typedef typename boost::property_traits<KeyMap>::key_type key_type;
+  typedef typename boost::property_traits<ValueMap>::value_type value_type;
+  typedef typename boost::property_traits<ValueMap>::reference reference;
+  typedef typename boost::property_traits<ValueMap>::category category;
+
+  KeyMap key_map;
+  ValueMap value_map;
+
+  Compose_property_map(KeyMap key_map = KeyMap(),
+                       ValueMap value_map = ValueMap())
+    : key_map(key_map), value_map(value_map)
+  {}
+
+  friend
+  reference get(Compose_property_map map, const key_type& k)
+  {
+    return get(map.value_map, get(map.key_map,k));
+  }
+
+  friend
+  void put(Compose_property_map map, key_type k, const value_type& v)
+  {
+    put(map.value_map, get(map.key_map,k), v);
+  }
+
+  decltype(auto)
+  operator[](const key_type& k) const
+  {
+    return value_map[get(key_map, k)];
+  }
+};
+
+template <class KeyMap, class ValueMap>
+Compose_property_map<KeyMap, ValueMap>
+compose_property_maps(const KeyMap& src, const ValueMap& tgt)
+{
+  return Compose_property_map<KeyMap, ValueMap>(src, tgt);
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <class KeyMap, class ValueMap>
+struct CGAL_DEPRECATED Property_map_binder
 {
   typedef typename boost::property_traits<KeyMap>::key_type key_type;
   typedef typename boost::property_traits<ValueMap>::value_type value_type;
@@ -137,12 +277,14 @@ struct Property_map_binder
 };
 
 template <class KeyMap, class ValueMap>
+CGAL_DEPRECATED
 Property_map_binder<KeyMap, ValueMap>
 bind_property_maps(const KeyMap& src, const ValueMap& tgt)
 {
   return Property_map_binder<KeyMap, ValueMap>(src, tgt);
 }
-
+#endif
+#endif
 
 /// Property map that accesses a value from an iterator
 ///

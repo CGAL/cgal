@@ -15,9 +15,9 @@ using Vector_2 = typename Kernel::Vector_2;
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Point_set_2       = std::vector<Point_with_normal>;
 
-using Point_map      = CGAL::Property_map_binder<CGAL::Pointer_property_map<Point_with_normal>::type,
+using Point_map      = CGAL::Compose_property_map<CGAL::Pointer_property_map<Point_with_normal>::type,
                                                  CGAL::First_of_pair_property_map<Point_with_normal> >;
-using Normal_map     = CGAL::Property_map_binder<CGAL::Pointer_property_map<Point_with_normal>::type,
+using Normal_map     = CGAL::Compose_property_map<CGAL::Pointer_property_map<Point_with_normal>::type,
                                                  CGAL::Second_of_pair_property_map<Point_with_normal> >;
 
 using Neighbor_query = CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, std::size_t, Point_map>;

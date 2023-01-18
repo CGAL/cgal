@@ -24,9 +24,9 @@ using Vector_2 = typename Kernel::Vector_2;
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Input_range       = std::vector<Point_with_normal>;
 using Deref_map         = CGAL::Dereference_property_map<const Point_with_normal, Input_range::const_iterator>;
-using Point_map         = CGAL::Property_map_binder<Deref_map,
+using Point_map         = CGAL::Compose_property_map<Deref_map,
                                                     CGAL::First_of_pair_property_map<Point_with_normal>>;
-using Normal_map        = CGAL::Property_map_binder<Deref_map,
+using Normal_map        = CGAL::Compose_property_map<Deref_map,
                                                     CGAL::Second_of_pair_property_map<Point_with_normal>>;
 using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range::const_iterator, Point_map>;
 using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range::const_iterator, Point_map, Normal_map>;

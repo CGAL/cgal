@@ -34,8 +34,8 @@ using Item           = Point_set::const_iterator;
 using Deref_map         = CGAL::Dereference_property_map<const Pwn, Item>;
 using Point_map = CGAL::First_of_pair_property_map<Pwn>;
 using Normal_map = CGAL::Second_of_pair_property_map<Pwn>;
-using RG_Point_map         = CGAL::Property_map_binder<Deref_map, Point_map>;
-using RG_Normal_map        = CGAL::Property_map_binder<Deref_map, Normal_map>;
+using RG_Point_map         = CGAL::Compose_property_map<Deref_map, Point_map>;
+using RG_Normal_map        = CGAL::Compose_property_map<Deref_map, Normal_map>;
 
 using RG_query = SD::Point_set::Sphere_neighbor_query<Kernel, Item, RG_Point_map>;
 using RG_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Item, RG_Point_map, RG_Normal_map>;

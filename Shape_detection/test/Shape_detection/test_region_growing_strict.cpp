@@ -49,9 +49,9 @@ bool test_lines_points_with_normals() {
   std::vector< std::pair< typename Kernel::Line_2, std::vector<Item> > > regions;
 
   using Deref_map      = CGAL::Dereference_property_map<const Point_with_normal, typename Input_range::const_iterator>;
-  using Point_map      = CGAL::Property_map_binder<Deref_map,
+  using Point_map      = CGAL::Compose_property_map<Deref_map,
                                                    CGAL::First_of_pair_property_map<Point_with_normal> >;
-  using Normal_map     = CGAL::Property_map_binder<Deref_map,
+  using Normal_map     = CGAL::Compose_property_map<Deref_map,
                                                    CGAL::Second_of_pair_property_map<Point_with_normal> >;
 
   using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Item, Point_map>;
@@ -305,9 +305,9 @@ bool test_planes_points_with_normals() {
   std::vector< std::pair< typename Kernel::Plane_3, std::vector<Item> > > regions;
 
   using Deref_map      = CGAL::Dereference_property_map<const Point_with_normal, typename Input_range::const_iterator>;
-  using Point_map      = CGAL::Property_map_binder<Deref_map,
+  using Point_map      = CGAL::Compose_property_map<Deref_map,
                                                    CGAL::First_of_pair_property_map<Point_with_normal> >;
-  using Normal_map     = CGAL::Property_map_binder<Deref_map,
+  using Normal_map     = CGAL::Compose_property_map<Deref_map,
                                                    CGAL::Second_of_pair_property_map<Point_with_normal> >;
 
   using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Item, Point_map>;
