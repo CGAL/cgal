@@ -68,16 +68,15 @@ int main(int argc, char** argv) {
     blue  = point_set.add_property_map<unsigned char>("blue" , 0).first;
 
   // Run the algorithm.
-  CGAL::Random random;
   std::size_t num_spheres = 0;
   region_growing.detect(
     boost::make_function_output_iterator(
       [&](const std::pair< Region_type::Primitive, typename Region_growing::Region>& region) {
 
         // Assign a random color to each region.
-        const unsigned char r = static_cast<unsigned char>(random.get_int(64, 192));
-        const unsigned char g = static_cast<unsigned char>(random.get_int(64, 192));
-        const unsigned char b = static_cast<unsigned char>(random.get_int(64, 192));
+        const unsigned char r = static_cast<unsigned char>(CGAL::get_default_random().get_int(64, 192));
+        const unsigned char g = static_cast<unsigned char>(CGAL::get_default_random().get_int(64, 192));
+        const unsigned char b = static_cast<unsigned char>(CGAL::get_default_random().get_int(64, 192));
         for (auto item : region.second) {
           red[item]   = r;
           green[item] = g;
