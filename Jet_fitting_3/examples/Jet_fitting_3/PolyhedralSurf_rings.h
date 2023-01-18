@@ -82,8 +82,8 @@ push_neighbors_of(Vertex * start, int ith,
   }
 }
 
-CGAL_DEPRECATED template < class TPoly , class VertexPropertyMap>
-void T_PolyhedralSurf_rings <TPoly, VertexPropertyMap>::
+template < class TPoly , class VertexPropertyMap>
+CGAL_DEPRECATED void T_PolyhedralSurf_rings <TPoly, VertexPropertyMap>::
 push_neighbours_of(Vertex * start, int ith,
                    std::vector < Vertex * >&nextRing,
                    std::vector < Vertex * >&all,
