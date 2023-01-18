@@ -67,7 +67,7 @@ private:
 
 public:
   FacePropagation(Data_structure& data, const Parameters& parameters) :
-  m_data(data), m_parameters(parameters), m_kinetic_traits(parameters.use_hybrid_mode),
+  m_data(data), m_parameters(parameters), m_kinetic_traits(),
   m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
 
@@ -135,39 +135,9 @@ private:
       m_face_queue.pop();
       const typename Data_structure::EK::FT current_time = event.time;
 
-      // const std::size_t sp_debug_idx = 20;
-      /*if (m_parameters.export_all / * && event.pvertex().first == sp_debug_idx * /) {
-        if (iteration < 10) {
-          dump(m_data, "iter-0" + std::to_string(iteration));
-
-          dump_event(m_data, event, "iter-0" + std::to_string(iteration));
-        } else {
-          // if (iteration > 5590 && iteration < 5690) {
-            dump(m_data, "iter-" + std::to_string(iteration));
-            // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
-            //   "-surface-mesh-" + std::to_string(sp_debug_idx));
-            dump_event(m_data, event, "iter-" + std::to_string(iteration));
-          // }
-        }
-      }*/
-
-      //m_data.dump_loop(15);
-
-      //dump_2d_surface_mesh(m_data, 15, "iter-" + std::to_string(iteration) + "-surface-mesh-" + std::to_string(15));
-
-      //m_data.update_positions(current_time);
-/*
-      if (m_parameters.debug) {
-        std::cout << std::endl << "* APPLYING " << iteration << ": " << event << std::endl;
-      }*/
       ++iteration;
 
       apply(event);
-      //dump_2d_surface_mesh(m_data, event.support_plane, "iter-" + std::to_string(iteration) + "-surface-mesh-" + std::to_string(event.support_plane));
-      /*if (!m_data.check_integrity()) {
-        std::cout << "data integrity check failed" << std::endl;
-        exit(-1);
-      }*/
     }
     return iteration;
   }
@@ -186,7 +156,7 @@ private:
     std::size_t line = m_data.line_idx(event.crossed_edge);
     if (!m_data.support_plane(event.support_plane).has_crossed_line(line)) {
       // Check intersection against kinetic intervals from other support planes
-      std::size_t crossing = 0;
+      int crossing = 0;
       auto kis = m_data.igraph().kinetic_intervals(event.crossed_edge);
       for (auto ki = kis.first; ki != kis.second; ki++) {
         if (ki->first == event.support_plane)
@@ -215,7 +185,7 @@ private:
       }
 
       // Check if the k value is sufficient for crossing the edge.
-      unsigned int& k = m_data.support_plane(event.support_plane).k();
+      int& k = m_data.support_plane(event.support_plane).k();
       if (k <= crossing)
         return;
 

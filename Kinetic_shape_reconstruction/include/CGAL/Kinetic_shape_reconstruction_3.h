@@ -56,6 +56,8 @@ private:
 
   using EK = CGAL::Exact_predicates_exact_constructions_kernel;
 
+  using From_EK = CGAL::Cartesian_converter<EK, Kernel>;
+
   using Initializer = KSR_3::Initializer<Kernel>;
   using Propagation = KSR_3::FacePropagation<Kernel>;
   using Finalizer   = KSR_3::Finalizer<Kernel>;
@@ -74,7 +76,7 @@ public:
   Kinetic_shape_reconstruction_3(
     const bool verbose = true,
     const bool debug   = false) :
-  m_parameters(verbose, debug, true), // use true here to export all steps
+  m_parameters(verbose, debug, false), // use true here to export all steps
   m_data(m_parameters),
   m_num_events(0)
   { }
@@ -99,8 +101,6 @@ public:
       parameters::get_parameter(np, internal_np::distance_tolerance), FT(5) / FT(10));
     m_parameters.reorient = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::reorient), false);
-    m_parameters.use_hybrid_mode = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::use_hybrid_mode), false);
 
     std::cout.precision(20);
     if (input_range.size() == 0) {
@@ -125,7 +125,7 @@ public:
     }
 
     if (m_parameters.verbose) {
-      const unsigned int num_blocks = std::pow(m_parameters.n + 1, 3);
+      const unsigned int num_blocks = static_cast<unsigned int>(std::pow(m_parameters.n + 1, 3));
       const std::string is_reorient = (m_parameters.reorient ? "true" : "false");
 
       std::cout << std::endl << "--- PARTITION OPTIONS: " << std::endl;
@@ -134,7 +134,6 @@ public:
       std::cout << "* number of subdivision blocks: " << num_blocks << std::endl;
       std::cout << "* enlarge bbox ratio: " << m_parameters.enlarge_bbox_ratio << std::endl;
       std::cout << "* reorient: " << is_reorient << std::endl;
-      std::cout << "* hybrid mode: " << m_parameters.use_hybrid_mode << std::endl;
     }
 
     if (m_parameters.verbose) {
@@ -202,7 +201,6 @@ public:
       dump(m_data, "final-" + m_parameters.k);
 
     Finalizer finalizer(m_data, m_parameters);
-    //finalizer.clean();
 
     if (m_parameters.verbose)
       std::cout << "* checking final mesh integrity ...";
@@ -212,11 +210,6 @@ public:
     if (m_parameters.verbose)
       std::cout << " done" << std::endl;
 
-    if (m_parameters.debug)
-      dump(m_data, "jiter-final-b-result");
-    // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
-    // exit(EXIT_SUCCESS);
-
     if (m_parameters.verbose)
       std::cout << "* getting volumes ..." << std::endl;
 
@@ -225,7 +218,7 @@ public:
     const double time_to_finalize = timer.time();
 
     if (m_parameters.verbose) {
-      std::cout << "* found all together " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
+      std::cout << "* found all together " << m_data.number_of_volumes() << " volumes" << std::endl;
 
       for (std::size_t i = 0; i < m_data.number_of_support_planes(); i++) {
         dump_2d_surface_mesh(m_data, i, "final-surface-mesh-" + std::to_string(i));
@@ -246,7 +239,6 @@ public:
 
     return true;
   }
-
 
   template<
     typename InputRange,
@@ -508,12 +500,8 @@ public:
     return num_faces;
   }
 
-  int number_of_volume_levels() const {
-    return m_data.number_of_volume_levels();
-  }
-
-  std::size_t number_of_volumes(const int volume_level = -1) const {
-    return m_data.number_of_volumes(volume_level);
+  std::size_t number_of_volumes() const {
+    return m_data.volumes().size();
   }
 
   int support_plane_index(const std::size_t polygon_index) const {
@@ -644,26 +632,8 @@ public:
 
   template<typename VolumeOutputIterator>
   VolumeOutputIterator output_partition_volumes(
-    VolumeOutputIterator volumes, const int volume_level = -1) const {
-
-    CGAL_assertion(volume_level < number_of_volume_levels());
-    if (volume_level >= number_of_volume_levels()) return volumes;
-    if (volume_level < 0) {
-      for (int i = 0; i < number_of_volume_levels(); ++i) {
-        output_partition_volumes(volumes, i);
-      }
-      return volumes;
-    }
-
-    CGAL_assertion(volume_level >= 0);
-    std::size_t begin = 0;
-    if (volume_level > 0) {
-      for (int i = 0; i < volume_level; ++i) {
-        begin += number_of_volumes(i);
-      }
-    }
-    const std::size_t end = begin + number_of_volumes(volume_level);
-    for (std::size_t i = begin; i < end; ++i) {
+    VolumeOutputIterator volumes) const {
+    for (std::size_t i = 0; i < m_data.number_of_volumes(); ++i) {
       output_partition_volume(volumes, i);
     }
     return volumes;
@@ -673,10 +643,10 @@ public:
   VolumeOutputIterator output_partition_volume(
     VolumeOutputIterator volumes, const std::size_t volume_index) const {
 
-    CGAL_assertion(volume_index < number_of_volumes(-1));
-    if (volume_index >= number_of_volumes(-1)) return volumes;
+    CGAL_assertion(volume_index < number_of_volumes());
+    if (volume_index >= number_of_volumes()) return volumes;
 
-    std::vector<Point_3> vertices;
+    std::vector<EK::Point_3> vertices;
     std::vector< std::vector<std::size_t> > faces;
     output_partition_volume(
       std::back_inserter(vertices), std::back_inserter(faces), volume_index);
@@ -694,9 +664,9 @@ public:
     VertexOutputIterator vertices, FaceOutputIterator faces,
     const std::size_t volume_index) const {
 
-    CGAL_assertion(volume_index < number_of_volumes(-1));
-    if (volume_index >= number_of_volumes(-1)) return;
-    CGAL_assertion(m_data.volumes().size() == number_of_volumes(-1));
+    CGAL_assertion(volume_index < number_of_volumes());
+    if (volume_index >= number_of_volumes()) return;
+
     const auto& volume = m_data.volumes()[volume_index];
 
     std::size_t num_vertices = 0;

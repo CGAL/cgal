@@ -31,9 +31,9 @@ class Support_plane {
 
 public:
   using Kernel = GeomTraits;
-  using IK = Exact_predicates_inexact_constructions_kernel;
-  using EK = Exact_predicates_exact_constructions_kernel;
-  using IK_to_EK = CGAL::Cartesian_converter<IK, EK>;
+  using EPECK = Exact_predicates_exact_constructions_kernel;
+  using To_EK = CGAL::Cartesian_converter<Kernel, EPECK>;
+  using From_EK = CGAL::Cartesian_converter<EPECK, Kernel>;
 
   using FT          = typename Kernel::FT;
   using Point_2     = typename Kernel::Point_2;
@@ -49,12 +49,14 @@ public:
   using Triangle_2  = typename Kernel::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
-  using Intersection_graph = KSR_3::Intersection_graph<Kernel>;
+  using Intersection_graph = KSR_3::Intersection_graph<EPECK>;
   using Bbox_2 = CGAL::Bbox_2;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
   using IEdge   = typename Intersection_graph::Edge_descriptor;
   using IFace   = typename Intersection_graph::Face_descriptor;
+
+  using IEdge_set = typename Intersection_graph::IEdge_set;
 
   using Vertex_index   = typename Mesh::Vertex_index;
   using Face_index     = typename Mesh::Face_index;
@@ -75,8 +77,8 @@ public:
     FaceEvent() {}
     FaceEvent(std::size_t sp_idx, FT time, IEdge edge, IFace face) : support_plane(sp_idx), time(time), crossed_edge(edge), face(face) {}
     std::size_t support_plane;
-    EK::FT time;
-    EK::FT intersection_bary;
+    EPECK::FT time;
+    EPECK::FT intersection_bary;
     IEdge crossed_edge;
     IFace face;
   };
@@ -86,29 +88,29 @@ private:
     bool is_bbox;
     Point_2 centroid;
     Plane_3 plane;
+    EPECK::Plane_3 exact_plane;
     Mesh mesh;
-    V_vector_map direction;
+    V_vector_map direction; // needed?
     V_ivertex_map v_ivertex_map;
     V_iedge_map v_iedge_map;
-    V_bool_map v_active_map;
+    V_bool_map v_active_map; // not needed?
     E_iedge_map e_iedge_map;
     F_index_map input_map;
-    F_uint_map k_map;
+    F_uint_map k_map; // not needed?
     V_original_map v_original_map;
-    V_time_map v_time_map;
+    V_time_map v_time_map; // not needed?
     std::map<IEdge, std::pair<IFace, IFace> > iedge2ifaces;
     std::set<IFace> ifaces;
     std::map<IVertex, Vertex_index> ivertex2pvertex;
-    std::set<IEdge> unique_iedges;
+    IEdge_set unique_iedges;
     std::set<std::size_t> crossed_lines;
+
     std::vector<IEdge> iedges;
-    std::vector<Segment_2> isegments;
-    std::vector<Bbox_2> ibboxes;
     std::vector<Point_2> original_vertices;
     std::vector<Vector_2> original_vectors;
     std::vector<Direction_2> original_directions;
-    std::vector<EK::Ray_2> original_rays;
-    unsigned int k;
+    std::vector<EPECK::Ray_2> original_rays;
+    int k;
     FT distance_tolerance;
   };
 
@@ -123,6 +125,7 @@ public:
   template<typename PointRange>
   Support_plane(const PointRange& polygon, const bool is_bbox, const FT distance_tolerance, std::size_t idx) :
   m_data(std::make_shared<Data>()) {
+    To_EK to_EK;
 
     std::vector<Point_3> points;
     points.reserve(polygon.size());
@@ -135,7 +138,6 @@ public:
     const std::size_t n = points.size();
     CGAL_assertion(n == polygon.size());
 
-    FT cx = FT(0), cy = FT(0), cz = FT(0);
     Vector_3 normal = CGAL::NULL_VECTOR;
     for (std::size_t i = 0; i < n; ++i) {
       const std::size_t ip = (i + 1) % n;
@@ -151,6 +153,7 @@ public:
 
     m_data->k = 0;
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
+    m_data->exact_plane = to_EK(m_data->plane);
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = distance_tolerance;
 
@@ -195,162 +198,6 @@ public:
     std::vector<FT> time_vector(1, FT(0));
     m_data->v_time_map     = m_data->mesh.template add_property_map<Vertex_index, std::vector<FT> >(
       "v:time", time_vector).first;
-  }
-
-  template<typename IG, typename SP>
-  void convert(const IG& ig, SP& sp) {
-
-    using CFT       = typename SP::Kernel::FT;
-    using CPoint_2  = typename SP::Kernel::Point_2;
-    using CPoint_3  = typename SP::Kernel::Point_3;
-    using CPlane_3  = typename SP::Kernel::Plane_3;
-    using CVector_2 = typename SP::Kernel::Vector_2;
-
-    // using Converter = CGAL::Cartesian_converter<Kernel, typename SP::Kernel>;
-    // Converter converter;
-
-    const auto& vmap = ig.vmap();
-    const auto& emap = ig.emap();
-
-    std::set<CPoint_2> pts;
-    std::map<Vertex_index, Vertex_index> map_vi;
-    sp.data().k = m_data->k;
-    sp.data().is_bbox = m_data->is_bbox;
-    sp.data().centroid = CPoint_3(
-      static_cast<CFT>(CGAL::to_double(m_data->centroid.x())),
-      static_cast<CFT>(CGAL::to_double(m_data->centroid.y())),
-      static_cast<CFT>(CGAL::to_double(m_data->centroid.z())));
-    // sp.data().plane = converter(m_data->plane);
-    sp.data().plane = CPlane_3(
-      static_cast<CFT>(CGAL::to_double(m_data->plane.a())),
-      static_cast<CFT>(CGAL::to_double(m_data->plane.b())),
-      static_cast<CFT>(CGAL::to_double(m_data->plane.c())),
-      static_cast<CFT>(CGAL::to_double(m_data->plane.d())));
-    for (const auto& vertex : m_data->mesh.vertices()) {
-      // const auto converted = converter(m_data->mesh.point(vertex));
-      const CPoint_2 converted = CPoint_2(
-        static_cast<CFT>(CGAL::to_double(m_data->mesh.point(vertex).x())),
-        static_cast<CFT>(CGAL::to_double(m_data->mesh.point(vertex).y())));
-      const bool is_inserted = pts.insert(converted).second;
-      const auto vi = sp.data().mesh.add_vertex();
-      map_vi[vertex] = vi;
-
-      if (is_inserted) {
-        sp.data().mesh.point(vi) = converted;
-      } else {
-        sp.data().mesh.point(vi) = converted;
-
-        // using CFT = typename SP::Kernel::FT;
-        // const CFT b1 = CFT(9) / CFT(10);
-        // const CFT b2 = CFT(1) / CFT(10);
-
-        // const auto pi = this->prev(vertex);
-        // const auto pc = converter(m_data->mesh.point(pi));
-        // const auto ni = this->next(vertex);
-        // const auto nc = converter(m_data->mesh.point(ni));
-
-        // if (nc != converted) {
-        //   const auto x = b1 * converted.x() + b2 * nc.x();
-        //   const auto y = b1 * converted.y() + b2 * nc.y();
-        //   const CPoint_2 new_point(x, y);
-        //   sp.data().mesh.point(vi) = new_point;
-        //   // std::cout << "or: " << to_3d(Point_2(converted.x(), converted.y())) << std::endl;
-        //   // std::cout << "nc: " << to_3d(Point_2(new_point.x(), new_point.y())) << std::endl;
-        // } else if (pc != converted) {
-        //   const auto x = b1 * converted.x() + b2 * pc.x();
-        //   const auto y = b1 * converted.y() + b2 * pc.y();
-        //   const CPoint_2 new_point(x, y);
-        //   sp.data().mesh.point(vi) = new_point;
-        //   // std::cout << "or: " << to_3d(Point_2(converted.x(), converted.y())) << std::endl;
-        //   // std::cout << "pc: " << to_3d(Point_2(new_point.x(), new_point.y())) << std::endl;
-        // } else {
-        //   CGAL_assertion_msg(false, "ERROR: WE HAVE THREE EQUAL POINTS!");
-        // }
-      }
-    }
-    CGAL_assertion(sp.data().mesh.number_of_vertices() == m_data->mesh.number_of_vertices());
-
-    std::map<Face_index, Face_index> map_fi;
-    std::vector<Vertex_index> mapped_vertices;
-    for (const auto& face : m_data->mesh.faces()) {
-      const auto vertices = CGAL::vertices_around_face(
-        m_data->mesh.halfedge(face), m_data->mesh);
-
-      mapped_vertices.clear();
-      mapped_vertices.reserve(vertices.size());
-      for (const auto vertex : vertices) {
-        mapped_vertices.push_back(map_vi.at(vertex));
-      }
-      CGAL_assertion(mapped_vertices.size() == vertices.size());
-      const auto fi = sp.data().mesh.add_face(mapped_vertices);
-      map_fi[face] = fi;
-    }
-    CGAL_assertion(sp.data().mesh.number_of_faces() == m_data->mesh.number_of_faces());
-
-    for (const auto& vertex : m_data->mesh.vertices()) {
-      const auto vi = map_vi.at(vertex);
-      // sp.data().direction[vi] = converter(m_data->direction[vertex]);
-      sp.data().direction[vi] = CVector_2(
-        static_cast<CFT>(CGAL::to_double(m_data->direction[vertex].x())),
-        static_cast<CFT>(CGAL::to_double(m_data->direction[vertex].y())));
-
-      const auto ivertex = m_data->v_ivertex_map[vertex];
-      if (ivertex != IG::null_ivertex()) {
-        sp.data().v_ivertex_map[vi] = vmap.at(ivertex);
-      } else {
-        sp.data().v_ivertex_map[vi] = ivertex;
-      }
-
-      const auto iedge = m_data->v_iedge_map[vertex];
-      if (iedge != IG::null_iedge()) {
-        sp.data().v_iedge_map[vi] = emap.at(iedge);
-      } else {
-        sp.data().v_iedge_map[vi] = iedge;
-      }
-
-      sp.data().v_active_map[vi]   = m_data->v_active_map[vertex];
-      sp.data().v_original_map[vi] = m_data->v_original_map[vertex];
-
-      // sp.data().v_time_map[vi] = converter(m_data->v_time_map[vertex]);
-      // sp.data().v_time_map[vi] = static_cast<CFT>(CGAL::to_double(m_data->v_time_map[vertex]));
-
-      sp.data().v_time_map[vi].clear();
-      sp.data().v_time_map[vi].reserve(m_data->v_time_map[vertex].size());
-      for (const auto vtime : m_data->v_time_map[vertex]) {
-        sp.data().v_time_map[vi].push_back(static_cast<CFT>(CGAL::to_double(vtime)));
-      }
-      CGAL_assertion(
-        sp.data().v_time_map[vi].size() == m_data->v_time_map[vertex].size());
-    }
-
-    for (const auto& edge : m_data->mesh.edges()) {
-      const auto source = m_data->mesh.source(m_data->mesh.halfedge(edge));
-      const auto target = m_data->mesh.target(m_data->mesh.halfedge(edge));
-
-      const auto s = map_vi[source];
-      const auto t = map_vi[target];
-      const auto he = sp.data().mesh.halfedge(s, t);
-      const auto ei = sp.data().mesh.edge(he);
-
-      const auto iedge = m_data->e_iedge_map[edge];
-      if (iedge != IG::null_iedge()) {
-        sp.data().e_iedge_map[ei] = emap.at(iedge);
-      } else {
-        sp.data().e_iedge_map[ei] = iedge;
-      }
-    }
-
-    for (const auto& face : m_data->mesh.faces()) {
-      const auto fi = map_fi.at(face);
-      sp.data().input_map[fi] = m_data->input_map[face];
-      sp.data().k_map[fi]     = m_data->k_map[face];
-    }
-
-    sp.data().unique_iedges.clear();
-    for (const auto& iedge : m_data->unique_iedges) {
-      CGAL_assertion(iedge != IG::null_iedge());
-      sp.data().unique_iedges.insert(emap.at(iedge));
-    }
   }
 
   void centroid(Point_2& c) {
@@ -466,7 +313,7 @@ public:
     CGAL_assertion(is_convex_polygon(points));
     CGAL_assertion(is_valid_polygon(points));
 
-    IK_to_EK to_exact;
+    To_EK to_exact;
 
     CGAL_assertion(points.size() >= 3);
     std::vector<Triangle_2> tris(points.size() - 2);
@@ -517,7 +364,7 @@ public:
       m_data->original_vertices[i] = point;
       m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
       m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
-      m_data->original_rays[i] = EK::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
+      m_data->original_rays[i] = EPECK::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
     }
@@ -551,14 +398,11 @@ public:
 
   template<typename Pair>
   bool is_valid_polygon(const std::vector<Pair>& polygon) const {
-
-    const FT ptol = KSR::point_tolerance<FT>();
     for (std::size_t i = 0; i < polygon.size(); ++i) {
       const std::size_t ip = (i + 1) % polygon.size();
       const auto& p = polygon[i].first;
       const auto& q = polygon[ip].first;
-      const FT distance = KSR::distance(p, q);
-      const bool is_equal_zero = (distance < ptol);
+      const bool is_equal_zero = (KSR::distance(p, q) == 0);
       CGAL_assertion_msg(!is_equal_zero,
       "ERROR: WE HAVE EQUAL POINTS IN THE INPUT POLYGON!");
       if (is_equal_zero) return false;
@@ -587,6 +431,7 @@ public:
   }
 
   const Plane_3& plane() const { return m_data->plane; }
+  const EPECK::Plane_3& exact_plane() const { return m_data->exact_plane; }
   const Point_2& centroid() const { return m_data->centroid; }
   bool is_bbox() const { return m_data->is_bbox; }
   std::map<IVertex, Vertex_index> &ivertex2pvertex() { return m_data->ivertex2pvertex; }
@@ -703,26 +548,22 @@ public:
     return std::make_pair(Face_index(), Face_index());
   }
 
-  const Point_2 point_2(const Vertex_index& vi, const FT time) const {
-    CGAL_assertion(time >= FT(0));
-    return m_data->mesh.point(vi) + time * m_data->direction[vi];
+  const Point_2 point_2(const Vertex_index& vi) const {
+    return m_data->mesh.point(vi);
   }
 
-  const Point_3 point_3(const Vertex_index& vi, const FT time) const {
-    return to_3d(point_2(vi, time));
+  const Point_3 point_3(const Vertex_index& vi) const {
+    return to_3d(m_data->mesh.point(vi));
   }
 
-  const Segment_2 segment_2(const Edge_index& ei, const FT time) const {
-
-    return Segment_2(
-      point_2(m_data->mesh.source(m_data->mesh.halfedge(ei)), time),
-      point_2(m_data->mesh.target(m_data->mesh.halfedge(ei)), time));
+  const Segment_2 segment_2(const Edge_index& ei) const {
+    return Segment_2(m_data->mesh.point(mesh.source(m_data->mesh.halfedge(ei))), m_data->mesh.point(mesh.target(m_data->mesh.halfedge(ei))));
   }
 
-  const Segment_3 segment_3(const Edge_index& ei, const FT time) const {
+  const Segment_3 segment_3(const Edge_index& ei) const {
     return Segment_3(
-      point_3(m_data->mesh.source(m_data->mesh.halfedge(ei)), time),
-      point_3(m_data->mesh.target(m_data->mesh.halfedge(ei)), time));
+      point_3(m_data->mesh.source(m_data->mesh.halfedge(ei))),
+      point_3(m_data->mesh.target(m_data->mesh.halfedge(ei))));
   }
 
   void set_iedge(
@@ -794,41 +635,33 @@ public:
 
   bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
 
-  const unsigned int& k() const { return m_data->k; }
-  unsigned int& k() { return m_data->k; }
+  const int& k() const { return m_data->k; }
+  int& k() { return m_data->k; }
 
-  const unsigned int& k(const Face_index& /* fi */) const {
+  const int& k(const Face_index& /* fi */) const {
     return m_data->k;
     // return m_data->k_map[fi];
   }
-  unsigned int& k(const Face_index& /* fi */) {
+  int& k(const Face_index& /* fi */) {
     return m_data->k;
     // return m_data->k_map[fi];
-  }
-
-  bool is_active(const Vertex_index& vi) const { return m_data->v_active_map[vi]; }
-  void set_active(const Vertex_index& vi, const bool value) { m_data->v_active_map[vi] = value; }
-
-  bool is_frozen(const Vertex_index& vi) const {
-    return (m_data->direction[vi] == CGAL::NULL_VECTOR);
   }
 
   const std::set<IFace>& ifaces() const { return m_data->ifaces; }
 
-  const std::set<IEdge>& unique_iedges() const { return m_data->unique_iedges; }
-  std::set<IEdge>& unique_iedges() { return m_data->unique_iedges; }
+  const IEdge_set& unique_iedges() const { return m_data->unique_iedges; }
+  IEdge_set& unique_iedges() { return m_data->unique_iedges; }
+
 
   const std::vector<IEdge>& iedges() const { return m_data->iedges; }
   std::vector<IEdge>& iedges() { return m_data->iedges; }
 
-  const std::vector<Segment_2>& isegments() const { return m_data->isegments; }
-  std::vector<Segment_2>& isegments() { return m_data->isegments; }
-
-  const std::vector<Bbox_2>& ibboxes() const { return m_data->ibboxes; }
-  std::vector<Bbox_2>& ibboxes() { return m_data->ibboxes; }
-
   const Point_2 to_2d(const Point_3& point) const {
     return m_data->plane.to_2d(point);
+  }
+
+  const EPECK::Point_2 to_2d(const EPECK::Point_3& point) const {
+    return m_data->exact_plane.to_2d(point);
   }
 
   const Line_2 to_2d(const Line_3& line) const {
@@ -837,10 +670,22 @@ public:
       m_data->plane.to_2d(line.point() + line.to_vector()));
   }
 
+  const EPECK::Line_2 to_2d(const EPECK::Line_3& line) const {
+    return EPECK::Line_2(
+      m_data->exact_plane.to_2d(line.point()),
+      m_data->exact_plane.to_2d(line.point() + line.to_vector()));
+  }
+
   const Segment_2 to_2d(const Segment_3& segment) const {
     return Segment_2(
       m_data->plane.to_2d(segment.source()),
       m_data->plane.to_2d(segment.target()));
+  }
+
+  const EPECK::Segment_2 to_2d(const EPECK::Segment_3& segment) const {
+    return EPECK::Segment_2(
+      m_data->exact_plane.to_2d(segment.source()),
+      m_data->exact_plane.to_2d(segment.target()));
   }
 
   const Vector_3 to_3d(const Vector_2& vec) const {
@@ -851,6 +696,10 @@ public:
 
   const Point_3 to_3d(const Point_2& point) const {
     return m_data->plane.to_3d(point);
+  }
+
+  const EPECK::Point_3 to_3d(const EPECK::Point_2& point) const {
+    return m_data->exact_plane.to_3d(point);
   }
 
   const Edge_index edge(const Vertex_index& v0, const Vertex_index& v1) {

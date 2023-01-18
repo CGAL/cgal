@@ -14,6 +14,7 @@
 #define CGAL_KSR_3_FINALIZER_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -33,43 +34,47 @@ public:
   using Kernel = GeomTraits;
 
 private:
-  using FT          = typename Kernel::FT;
-  using Point_2     = typename Kernel::Point_2;
-  using Point_3     = typename Kernel::Point_3;
-  using Vector_2    = typename Kernel::Vector_2;
-  using Vector_3    = typename Kernel::Vector_3;
-  using Segment_3   = typename Kernel::Segment_3;
-  using Line_3      = typename Kernel::Line_3;
-  using Plane_3     = typename Kernel::Plane_3;
+  using FT = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
+  using Point_3 = typename Kernel::Point_3;
+  using Vector_2 = typename Kernel::Vector_2;
+  using Vector_3 = typename Kernel::Vector_3;
+  using Segment_3 = typename Kernel::Segment_3;
+  using Line_3 = typename Kernel::Line_3;
+  using Plane_3 = typename Kernel::Plane_3;
   using Direction_2 = typename Kernel::Direction_2;
+  using Tetrahedron_3 = typename Kernel::Tetrahedron_3;
 
   using Data_structure = KSR_3::Data_structure<Kernel>;
 
   using IVertex = typename Data_structure::IVertex;
-  using IEdge   = typename Data_structure::IEdge;
+  using IEdge = typename Data_structure::IEdge;
 
   using PVertex = typename Data_structure::PVertex;
-  using PEdge   = typename Data_structure::PEdge;
-  using PFace   = typename Data_structure::PFace;
+  using PEdge = typename Data_structure::PEdge;
+  using PFace = typename Data_structure::PFace;
 
-  using Support_plane      = typename Data_structure::Support_plane;
+  using Support_plane = typename Data_structure::Support_plane;
   using Intersection_graph = typename Data_structure::Intersection_graph;
-  using Volume_cell        = typename Data_structure::Volume_cell;
+  using Volume_cell = typename Data_structure::Volume_cell;
 
-  using Mesh           = typename Data_structure::Mesh;
-  using Vertex_index   = typename Data_structure::Vertex_index;
-  using Face_index     = typename Data_structure::Face_index;
-  using Edge_index     = typename Data_structure::Edge_index;
+  using Mesh = typename Data_structure::Mesh;
+  using Vertex_index = typename Data_structure::Vertex_index;
+  using Face_index = typename Data_structure::Face_index;
+  using Edge_index = typename Data_structure::Edge_index;
   using Halfedge_index = typename Data_structure::Halfedge_index;
+
+  using F_component_map = typename Mesh::template Property_map<typename Support_plane::Face_index, boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>;
+  using E_constraint_map = typename Mesh::template Property_map<typename Support_plane::Edge_index, bool>;
 
   struct Vertex_info {
     bool tagged;
     PVertex pvertex;
     IVertex ivertex;
     Vertex_info() :
-    tagged(false),
-    pvertex(Data_structure::null_pvertex()),
-    ivertex(Data_structure::null_ivertex())
+      tagged(false),
+      pvertex(Data_structure::null_pvertex()),
+      ivertex(Data_structure::null_ivertex())
     { }
   };
 
@@ -77,17 +82,17 @@ private:
     std::size_t index;
     std::size_t input;
     Face_info() :
-    index(KSR::uninitialized()),
-    input(KSR::uninitialized())
+      index(KSR::uninitialized()),
+      input(KSR::uninitialized())
     { }
   };
 
-  using Parameters     = KSR::Parameters_3<FT>;
+  using Parameters = KSR::Parameters_3<FT>;
   using Kinetic_traits = KSR::Kinetic_traits_3<Kernel>;
 
 public:
   Finalizer(Data_structure& data, const Parameters& parameters) :
-  m_data(data), m_parameters(parameters), m_kinetic_traits(parameters.use_hybrid_mode)
+    m_data(data), m_parameters(parameters), m_kinetic_traits()
   { }
 
   void create_polyhedra() {
@@ -97,6 +102,9 @@ public:
     CGAL_assertion(m_data.check_interior());
     CGAL_assertion(m_data.check_vertices());
     CGAL_assertion(m_data.check_edges());
+
+    merge_facets_connected_components();
+
     create_volumes();
     CGAL_assertion(m_data.check_faces());
   }
@@ -114,15 +122,56 @@ private:
   **     EXTRACTING VOLUMES     **
   ********************************/
 
-  void create_volumes() {
+  void calculate_centroid(Volume_cell& volume) {
+    // First find a point in the interior of the volume cell.
+    FT x = 0, y = 0, z = 0;
+    for (const PVertex &v : volume.pvertices) {
+      Point_3 p = m_data.point_3(v);
+      x += p.x();
+      y += p.y();
+      z += p.z();
+    }
+    Point_3 inside(x / volume.pvertices.size(), y / volume.pvertices.size(), z / volume.pvertices.size());
 
+    // Now create a vector of tetrahedrons.
+    std::vector<Tetrahedron_3> tets;
+    tets.reserve(volume.pvertices.size());
+
+    for (const PFace& f : volume.pfaces) {
+      // Orientation of the tetrahedron depends on the orientation of the support plane of the polygon.
+      Support_plane sp = m_data.support_plane(f.first);
+      Vector_3 n = sp.plane().orthogonal_vector();
+      const Mesh& m = sp.mesh();
+      Halfedge_index first = m.halfedge(f.second);
+      Point_3 p = m_data.point_3(PVertex(f.first, m.target(first)));
+
+      bool positive_side = (inside - p) * n > 0;
+
+      Halfedge_index h = m.next(first);
+      Point_3 a = m_data.point_3(PVertex(f.first, m.target(h)));
+      h = m.next(h);
+      do {
+        Point_3 b = m_data.point_3(PVertex(f.first, m.target(h)));
+
+        if (positive_side)
+          tets.push_back(Tetrahedron_3(p, a, b, inside));
+        else
+          tets.push_back(Tetrahedron_3(p, b, a, inside));
+
+        a = b;
+        h = m.next(h);
+      } while (h != first);
+    }
+
+    volume.centroid = CGAL::centroid(tets.begin(), tets.end(), CGAL::Dimension_tag<3>());
+  }
+
+  void create_volumes() {
     // Initialize an empty volume map.
-    auto& volumes = m_data.volumes();
-    auto& map_volumes = m_data.pface_neighbors();
-    auto& volume_level_map = m_data.volume_level_map();
+    auto& volumes = m_data.volumes();//std::vector<Volume_cell>
+    auto& map_volumes = m_data.pface_neighbors();//std::map<PFace, std::pair<int, int>
 
     volumes.clear();
-    std::map<int, Point_3> centroids;
     map_volumes.clear();
     for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       const auto pfaces = m_data.pfaces(i);
@@ -130,246 +179,512 @@ private:
         map_volumes[pface] = std::make_pair(-1, -1);
     }
 
-    // First, traverse only boundary volumes.
-    bool is_found_new_volume = false;
-    std::size_t volume_size = 0;
-    int num_volumes  = 0;
-    int volume_index = 0;
-    int volume_level = 0;
-    for (std::size_t i = 0; i < 6; ++i) {
-      const auto pfaces = m_data.pfaces(i);
-      for (const auto pface : pfaces) {
-        CGAL_assertion(pface.first < 6);
-        std::tie(is_found_new_volume, volume_size) = traverse_boundary_volume(
-          pface, volume_index, num_volumes, map_volumes, centroids);
-        if (is_found_new_volume) {
-          CGAL_assertion(m_data.check_volume(volume_index, volume_size, map_volumes));
-          ++volume_index;
+    for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
+      for (auto pface : m_data.pfaces(sp)) {
+        segment_adjacent_volumes(pface, volumes, map_volumes);
+      }
+    }
+
+    // Adjust neighbor information in volumes
+    for (std::size_t i = 0; i < volumes.size(); i++) {
+      volumes[i].index = i;
+      for (std::size_t j = 0; j < volumes[i].neighbors.size(); j++) {
+        const auto& pair = map_volumes.at(volumes[i].pfaces[j]);
+        volumes[i].neighbors[j] = (pair.first == i) ? pair.second : pair.first;
+      }
+    }
+
+    for (auto& volume : volumes) {
+      create_cell_pvertices(volume);
+      calculate_centroid(volume);
+      volume.pface_oriented_outwards.resize(volume.pfaces.size());
+      for (std::size_t i = 0; i < volume.pfaces.size(); i++) {
+        PVertex vtx = *m_data.pvertices_of_pface(volume.pfaces[i]).begin();
+        volume.pface_oriented_outwards[i] = ((m_data.point_3(vtx) - volume.centroid) * m_data.support_plane(volume.pfaces[i]).plane().orthogonal_vector() < 0);
+      }
+    }
+  }
+
+  void segment_adjacent_volumes(const PFace& pface,
+    std::vector<typename Volume_cell>& volumes,
+    std::map<PFace, std::pair<int, int> >& map_volumes) {
+
+    // Check whether this face is already part of one or two volumes
+    auto& pair = map_volumes.at(pface);
+    if (pair.first != -1 && pair.second != -1) return;
+
+    std::size_t volume_indices[] = { static_cast<std::size_t>(-1), static_cast<std::size_t>(-1) };
+    std::size_t other[] = { static_cast<std::size_t>(-1), static_cast<std::size_t>(-1) };
+
+    // Start new volume cell
+    // First of pair is positive side, second is negative
+    if (pair.first == -1) {
+      volume_indices[0] = volumes.size();
+      pair.first = static_cast<int>(volumes.size());
+      volumes.push_back(Volume_cell());
+      volumes.back().add_pface(pface, pair.second);
+    }
+    else {
+      other[0] = pair.first;
+      if (pface.first < 6)
+        // Thus for a bbox pair.second is always -1. Thus if pair.first is already set, there is nothing to do.
+        return;
+    }
+
+    if (pair.second == -1 && pface.first >= 6) {
+      volume_indices[1] = volumes.size();
+      pair.second = static_cast<int>(volumes.size());
+      volumes.push_back(Volume_cell());
+      volumes.back().add_pface(pface, pair.first);
+    }
+    else other[1] = pair.second;
+
+    // 0 is queue on positive side, 1 is queue on negative side
+    std::queue<std::pair<PFace, Oriented_side> > queue[2];
+
+    // Get neighbors with smallest dihedral angle
+    const auto pedges = m_data.pedges_of_pface(pface);
+    std::vector<PFace> neighbor_faces, adjacent_faces;
+    for (const auto pedge : pedges) {
+      CGAL_assertion(m_data.has_iedge(pedge));
+      IEdge edge = m_data.iedge(pedge);
+      m_data.incident_faces(m_data.iedge(pedge), neighbor_faces);
+
+      if (neighbor_faces.size() == 2) {
+        // If there is only one neighbor, the edge is on the corner of the bbox.
+        // Thus the only neighbor needs to be a bbox face.
+        PFace neighbor = (neighbor_faces[0] == pface) ? neighbor_faces[1] : neighbor_faces[0];
+        CGAL_assertion(neighbor.first < 6 && pface.first < 6);
+        Oriented_side side = oriented_side(pface, neighbor);
+        Oriented_side inverse_side = oriented_side(neighbor, pface);
+        CGAL_assertion(side != COPLANAR && inverse_side != COPLANAR);
+
+        if (side == ON_POSITIVE_SIDE && volume_indices[0] != -1) {
+          if (associate(neighbor, volume_indices[0], inverse_side, volumes, map_volumes))
+            queue[0].push(std::make_pair(neighbor, inverse_side));
         }
+        else if (side == ON_NEGATIVE_SIDE && volume_indices[1] != -1)
+          if (associate(neighbor, volume_indices[1], inverse_side, volumes, map_volumes))
+            queue[1].push(std::make_pair(neighbor, inverse_side));
+
+        continue;
+      }
+
+      PFace positive_side, negative_side;
+
+      find_adjacent_faces(pface, pedge, neighbor_faces, positive_side, negative_side);
+      CGAL_assertion(positive_side != negative_side);
+
+      Oriented_side ni = oriented_side(negative_side, pface);
+
+      if (volume_indices[0] != -1) {
+        Oriented_side inverse_side = (positive_side.first == pface.first) ? ON_POSITIVE_SIDE : oriented_side(positive_side, pface);
+        if (associate(positive_side, volume_indices[0], inverse_side, volumes, map_volumes))
+          queue[0].push(std::make_pair(positive_side, inverse_side));
+      }
+
+      if (volume_indices[1] != -1) {
+        Oriented_side inverse_side = (negative_side.first == pface.first) ? ON_NEGATIVE_SIDE : oriented_side(negative_side, pface);
+        if (associate(negative_side, volume_indices[1], inverse_side, volumes, map_volumes))
+          queue[1].push(std::make_pair(negative_side, inverse_side));
       }
     }
-    if (m_parameters.verbose) {
-      std::cout << "* found boundary volumes: "<< volume_index << std::endl;
-    }
-    num_volumes = volume_index;
-    CGAL_assertion(num_volumes > 0);
-    volume_level_map[volume_level] = static_cast<std::size_t>(num_volumes);
-    ++volume_level;
 
-    // Then traverse all other volumes if any.
-    std::vector<PFace> other_pfaces;
-    for (std::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
-      const auto pfaces = m_data.pfaces(i);
-      for (const auto pface : pfaces) {
-        CGAL_assertion(pface.first >= 6);
-        other_pfaces.push_back(pface);
+    // Propagate both queues if volumes on either side of the pface are not segmented.
+    for (std::size_t i = 0; i < 2; i++) {
+      if (volume_indices[i] != -1) {
+        while (!queue[i].empty()) {
+          propagate_volume(queue[i], volume_indices[i], volumes, map_volumes);
+        }
+        //dump_volume(m_data, volumes[volume_indices[i]].pfaces, "volumes/" + std::to_string(volume_indices[i]), true, volume_indices[i]);
       }
     }
+  }
 
-    std::sort(other_pfaces.begin(), other_pfaces.end(),
-      [&](const PFace& pface1, const PFace& pface2) -> bool {
-        const auto pedges1 = m_data.pedges_of_pface(pface1);
-        const auto pedges2 = m_data.pedges_of_pface(pface2);
-        return pedges1.size() > pedges2.size();
+  void propagate_volume(
+    std::queue<std::pair<PFace, Oriented_side> >& queue,
+    std::size_t volume_index,
+    std::vector<typename Volume_cell>& volumes,
+    std::map<PFace, std::pair<int, int> >& map_volumes) {
+    PFace pface;
+    Oriented_side seed_side;
+    std::tie(pface, seed_side) = queue.front();
+    queue.pop();
+
+    // Get neighbors with smallest dihedral angle
+    const auto pedges = m_data.pedges_of_pface(pface);
+    std::vector<PFace> neighbor_faces, adjacent_faces;
+    for (const auto pedge : pedges) {
+      CGAL_assertion(m_data.has_iedge(pedge));
+      m_data.incident_faces(m_data.iedge(pedge), neighbor_faces);
+
+      if (neighbor_faces.size() == 2) {
+        // If there is only one neighbor, the edge is on the corner of the bbox.
+        // Thus the only neighbor needs to be a bbox face.
+        PFace neighbor = (neighbor_faces[0] == pface) ? neighbor_faces[1] : neighbor_faces[0];
+        CGAL_assertion(neighbor.first < 6 && pface.first < 6);
+        Oriented_side side = oriented_side(pface, neighbor);
+        CGAL_assertion(side == seed_side);
+
+        Oriented_side inverse_side = oriented_side(neighbor, pface);
+
+        CGAL_assertion(inverse_side == ON_POSITIVE_SIDE);
+
+        if (associate(neighbor, volume_index, inverse_side, volumes, map_volumes))
+          queue.push(std::make_pair(neighbor, inverse_side));
+        continue;
+      }
+
+      PFace positive_side, negative_side;
+
+      find_adjacent_faces(pface, pedge, neighbor_faces, positive_side, negative_side);
+      CGAL_assertion(positive_side != negative_side);
+
+      if (seed_side == ON_POSITIVE_SIDE) {
+        Oriented_side inverse_side = (pface.first == positive_side.first) ? seed_side : oriented_side(positive_side, pface);
+        if (associate(positive_side, volume_index, inverse_side, volumes, map_volumes))
+          queue.push(std::make_pair(positive_side, inverse_side));
+      }
+      else {
+        Oriented_side inverse_side = (pface.first == negative_side.first) ? seed_side : oriented_side(negative_side, pface);
+        if (associate(negative_side, volume_index, inverse_side, volumes, map_volumes))
+          queue.push(std::make_pair(negative_side, inverse_side));
+      }
+    }
+  }
+
+  bool associate(const PFace& pface, std::size_t volume_index, Oriented_side side,
+    std::vector<typename Volume_cell>& volumes,
+    std::map<PFace, std::pair<int, int> >& map_volumes) {
+    auto& pair = map_volumes.at(pface);
+
+    CGAL_assertion(side != COPLANAR);
+
+    if (side == ON_POSITIVE_SIDE) {
+      if (pair.first == static_cast<int>(volume_index))
+        return false;
+
+      pair.first = static_cast<int>(volume_index);
+      volumes[volume_index].add_pface(pface, pair.second);
+      return true;
+    }
+    else if (side == ON_NEGATIVE_SIDE) {
+      if (pair.second == static_cast<int>(volume_index))
+        return false;
+
+      pair.second = static_cast<int>(volume_index);
+      volumes[volume_index].add_pface(pface, pair.first);
+      return true;
+    }
+
+    CGAL_assertion(false);
+    return false;
+  }
+
+  void find_adjacent_faces(
+    const PFace& pface,
+    const PEdge& pedge,
+    const std::vector<PFace>& neighbor_faces,
+    PFace &positive_side,
+    PFace &negative_side) const {
+
+    CGAL_assertion(neighbor_faces.size() > 2);
+
+    // for each face, find vertex that is not collinear with the edge
+    // take 2d directions orthogonal to edge
+    // sort and take neighbors to current face
+
+    const Segment_3 segment = m_data.segment_3(pedge);
+    Vector_3 norm(segment.source(), segment.target());
+    norm = KSR::normalize(norm);
+    const Plane_3 plane(segment.source(), norm);
+    Point_2 source2d = plane.to_2d(segment.source());
+
+    std::vector< std::pair<Direction_2, PFace> > dir_edges;
+    // Get orientation towards edge of current face
+    Point_2 v2d = plane.to_2d(m_data.centroid_of_pface(pface));
+    dir_edges.push_back(std::make_pair(Direction_2(source2d - v2d), pface));
+
+    // Get orientation towards edge of other faces
+    for (const PFace& face : neighbor_faces) {
+      if (face == pface)
+        continue;
+      Point_2 v2d = plane.to_2d(m_data.centroid_of_pface(face));
+      dir_edges.push_back(std::make_pair(Direction_2(source2d - v2d), face));
+    }
+
+    CGAL_assertion(dir_edges.size() == neighbor_faces.size());
+
+    // Sort directions
+    std::sort(dir_edges.begin(), dir_edges.end(), [&](
+      const std::pair<Direction_2, PFace>& p,
+      const std::pair<Direction_2, PFace>& q) -> bool {
+        return p.first < q.first;
       }
     );
 
-    bool quit = true;
-    do {
-      quit = true;
-      const int before = volume_index;
-      for (const auto& other_pface : other_pfaces) {
-        std::tie(is_found_new_volume, volume_size) = traverse_interior_volume(
-          other_pface, volume_index, num_volumes, map_volumes, centroids);
-        if (is_found_new_volume) {
-          quit = false;
-          CGAL_assertion(m_data.check_volume(volume_index, volume_size, map_volumes));
-          ++volume_index;
+    std::size_t n = dir_edges.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      if (dir_edges[i].second == pface) {
+
+        const std::size_t im = (i + n - 1) % n;
+        const std::size_t ip = (i + 1) % n;
+
+        // Check which side the faces are on
+        Orientation im_side = oriented_side(pface, dir_edges[im].second);
+        Orientation ip_side = oriented_side(pface, dir_edges[ip].second);
+
+        //The angles decide where to push them, not necessarily the side.
+        //At least in case of a bbox corner intersected with a third plane breaks this.
+
+        // Both on the negative side is not possible
+        CGAL_assertion(im_side != ON_NEGATIVE_SIDE || ip_side != ON_NEGATIVE_SIDE);
+        CGAL_assertion(im_side != COPLANAR || ip_side != COPLANAR);
+
+        // If two are positive it has to be a bbox corner situation.
+        if (im_side == ON_POSITIVE_SIDE && ip_side == ON_POSITIVE_SIDE) {
+          CGAL_assertion(pface.first < 6);
+          if (dir_edges[im].second.first < 6) {
+            positive_side = dir_edges[ip].second;
+            negative_side = dir_edges[im].second;
+          }
+          else if (dir_edges[ip].second.first < 6) {
+            positive_side = dir_edges[im].second;
+            negative_side = dir_edges[ip].second;
+          }
+          else CGAL_assertion(false);
+        }
+/*
+        else if (im_side == COPLANAR) {
+          if (ip_side == ON_POSITIVE_SIDE) {
+            positive_side = dir_edges[ip].second;
+            negative_side = dir_edges[im].second;
+          }
+          else {
+            positive_side = dir_edges[im].second;
+            negative_side = dir_edges[ip].second;
+          }
+          else CGAL_assertion(false);
+        }
+        else if (ip_side == COPLANAR) {
+          if (im_side == ON_POSITIVE_SIDE) {
+            positive_side = dir_edges[im].second;
+            negative_side = dir_edges[ip].second;
+          }
+          else {
+            positive_side = dir_edges[ip].second;
+            negative_side = dir_edges[im].second;
+          }
+         else CGAL_assertion(false);
+        }*/
+        else if (ip_side == ON_POSITIVE_SIDE || im_side == ON_NEGATIVE_SIDE) {
+          positive_side = dir_edges[ip].second;
+          negative_side = dir_edges[im].second;
+        }
+        else {
+          positive_side = dir_edges[im].second;
+          negative_side = dir_edges[ip].second;
+        }
+
+        return;
+      }
+    }
+
+    CGAL_assertion_msg(false, "ERROR: NEXT PFACE IS NOT FOUND!");
+  }
+
+  Oriented_side oriented_side(const PFace& a, const PFace& b) const {
+    FT max_dist = 0;
+    if (a.first == b.first)
+      return COPLANAR;
+    Oriented_side side;
+    const Plane_3 &p = m_data.support_plane(a.first).plane();
+    for (auto v : m_data.pvertices_of_pface(b)) {
+      Point_3 pt = m_data.point_3(v);
+      FT dist = (p.point() - pt) * p.orthogonal_vector();
+      if (CGAL::abs(dist) > max_dist) {
+        side = p.oriented_side(m_data.point_3(v));
+        max_dist = CGAL::abs(dist);
+      }
+    }
+
+    return side;
+  }
+
+  void merge_facets_connected_components() {
+    // Purpose: merge facets between the same volumes. Every pair of volumes can have at most one contact polygon (which also has to be convex)
+    // Precondition: all volumes are convex, the contact area between each pair of volumes is empty or convex
+
+    std::vector<E_constraint_map> edge_constraint_maps(m_data.number_of_support_planes());
+
+    for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
+      dump_2d_surface_mesh(m_data, sp, "face_merge/" + std::to_string(sp) + "-before");
+      typename Support_plane::Mesh& mesh = m_data.support_plane(sp).mesh();
+
+      edge_constraint_maps[sp] = mesh.template add_property_map<typename Support_plane::Edge_index, bool>("e:keep", true).first;
+      F_component_map fcm = mesh.template add_property_map<typename Support_plane::Face_index, boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>("f:component", 0).first;
+
+      for (auto e : mesh.edges()) {
+        IEdge iedge = m_data.iedge(PEdge(sp, e));
+        edge_constraint_maps[sp][e] = is_occupied(iedge, sp);
+      }
+
+      CGAL::Polygon_mesh_processing::connected_components(mesh, fcm, CGAL::parameters::edge_is_constrained_map(edge_constraint_maps[sp]));
+
+      merge_connected_components(sp, mesh, fcm, edge_constraint_maps[sp]);
+
+      mesh.collect_garbage();
+
+      // Use a face property map? easier to copy to 3d mesh
+      dump_2d_surface_mesh(m_data, sp, "face_merge/" + std::to_string(sp) + "-after");
+    }
+  }
+
+  void merge_connected_components(std::size_t sp, typename Support_plane::Mesh& mesh, F_component_map& fcm, E_constraint_map ecm) {
+    using Halfedge = typename Support_plane::Halfedge_index;
+    using Vertex = typename Support_plane::Vertex_index;
+    using Face = typename Support_plane::Face_index;
+
+    //std::vector<Halfedge> remove_edges;
+    std::vector<bool> remove_vertices(mesh.vertices().size(), true);
+    std::vector<bool> remove_faces(mesh.faces().size(), true);
+
+    std::vector<bool> visited_halfedges(mesh.halfedges().size(), false);
+    for (auto h : mesh.halfedges()) {
+      Point_3 s = m_data.support_plane(sp).to_3d(mesh.point(mesh.source(h)));
+      Point_3 t = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
+      std::vector<Point_3> pts;
+      pts.push_back(s);
+      pts.push_back(t);
+      if (visited_halfedges[h])
+        continue;
+
+      visited_halfedges[h] = true;
+      // Skip the outside edges.
+      if (mesh.face(h) == mesh.null_face())
+        continue;
+
+      Face f0 = mesh.face(h);
+
+      boost::graph_traits<typename Support_plane::Mesh>::faces_size_type c0 = fcm[f0], c_other;
+      Face f_other = mesh.face(mesh.opposite(h));
+
+      // Check whether the edge is between different components.
+      if (f_other != mesh.null_face()) {
+        if (c0 == fcm[f_other]) {
+          continue;
         }
       }
-      const int after = volume_index;
-      if (m_parameters.verbose) {
-        std::cout << "* found interior volumes: "<< after - before << std::endl;
+
+      set_halfedge(f0, h, mesh);
+      remove_faces[f0] = false;
+
+      // Find halfedge loop around component.
+      std::vector<Halfedge> loop;
+      loop.push_back(h);
+      remove_vertices[mesh.target(h)] = false;
+      Halfedge first = h;
+      do {
+        Halfedge n = h;
+        Point_3 tn = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
+
+        do {
+          if (n == h)
+            n = mesh.next(n);
+          else
+            n = mesh.next(mesh.opposite(n));
+
+          Point_3 tn2 = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
+          visited_halfedges[n] = true;
+
+          f_other = mesh.face(mesh.opposite(n));
+          if (f_other == mesh.null_face())
+            break;
+          c_other = fcm[f_other];
+        } while (c0 == c_other && n != h);
+
+        if (n == h) {
+          // Should not happen.
+          std::cout << "Searching for next edge of connected component failed" << std::endl;
+        }
+        loop.push_back(n);
+        set_face(n, f0, mesh);
+        set_next(h, n, mesh);
+        set_halfedge(mesh.target(h), h, mesh);
+        remove_vertices[mesh.target(n)] = false;
+        h = n;
+      } while (h != first);
+      // Loop complete
+
+      const std::string vfilename = "face_merge/" + std::to_string(sp) + "-" + std::to_string(c0) + ".polylines.txt";
+      std::ofstream vout(vfilename);
+      vout.precision(20);
+      vout << std::to_string(loop.size());
+      for (Halfedge n : loop) {
+        vout << " " << m_data.support_plane(sp).to_3d(mesh.point(mesh.target(n)));
       }
-      num_volumes = volume_index;
-      CGAL_assertion(after >= before);
-      if (after > before) {
-        volume_level_map[volume_level] = static_cast<std::size_t>(after - before);
-        ++volume_level;
-      }
-
-    } while (!quit);
-
-    // Now, set final volumes and their neighbors.
-    for (const auto& item : map_volumes) {
-      const auto& pface = item.first;
-      const auto& pair  = item.second;
-
-      if (pair.first == -1) {
-        dump_pface(m_data, pface, "face-debug");
-        std::cout << "DEBUG face: " << m_data.str(pface) << " "   << std::endl;
-        std::cout << "DEBUG  map: " << pair.first << " : " << pair.second << std::endl;
-      }
-
-      CGAL_assertion(pair.first != -1);
-      if (volumes.size() <= static_cast<std::size_t>(pair.first))
-        volumes.resize(pair.first + 1);
-      volumes[pair.first].add_pface(pface, pair.second);
-
-      if (pface.first < 6 && pair.second == -1) continue;
-      CGAL_assertion(pair.second != -1);
-      if (volumes.size() <= static_cast<std::size_t>(pair.second))
-        volumes.resize(pair.second + 1);
-      volumes[pair.second].add_pface(pface, pair.first);
+      vout << std::endl;
+      vout.close();
     }
-    for (auto& volume : volumes)
-      create_cell_pvertices(volume);
 
-    if (m_parameters.verbose) {
-      std::cout << "* created volumes: " << volumes.size() << std::endl;
-      if (m_parameters.export_all) dump_volumes(m_data, "final");
-      for (std::size_t i = 0; i < volumes.size(); ++i) {
-        const auto& volume = volumes[i];
-        CGAL_assertion(volume.pfaces.size() > 3);
-        if (m_parameters.debug) {
-          std::cout <<
-          " VOLUME "     << std::to_string(i) << ": "
-          " pvertices: " << volume.pvertices.size() <<
-          " pfaces: "    << volume.pfaces.size()    << std::endl;
+    bool empty = true;
+    for (std::size_t i = 0; i < remove_vertices.size(); i++)
+      if (remove_vertices[i]) {
+        empty = false;
+        break;
+      }
+
+    if (!empty) {
+      const std::string vfilename2 = "face_merge/" + std::to_string(sp) + "-remove.xyz";
+      std::ofstream vout2(vfilename2);
+      vout2.precision(20);
+      std::size_t i = 0;
+      for (auto v : mesh.vertices()) {
+        if (remove_vertices[i++])
+          vout2 << m_data.support_plane(sp).to_3d(mesh.point(v)) << std::endl;
+      }
+      vout2.close();
+    }
+
+    // Remove all vertices in remove_vertices and all edges marked in constrained list
+    for (auto f : mesh.faces()) {
+      if (remove_faces[f])
+        remove_face(f, mesh);
+    }
+
+    for (auto e : mesh.edges()) {
+      // If edge is not marked as constrained it can be removed.
+      if (!ecm[e]) {
+        remove_edge(e, mesh);
+      }
+    }
+
+    for (auto v : mesh.vertices()) {
+      if (remove_vertices[v])
+        remove_vertex(v, mesh);
+    }
+
+    if (!mesh.is_valid(true)) {
+      std::cout << "mesh is not valid after merging faces" << std::endl;
+    }
+  }
+
+  bool is_occupied(IEdge iedge, std::size_t sp) {
+    const std::set<std::size_t> planes = m_data.intersected_planes(iedge);
+    for (std::size_t j : planes) {
+      if (sp == j)
+        continue;
+
+      m_data.support_plane(j).mesh().is_valid(true);
+
+      for (auto e2 : m_data.support_plane(j).mesh().edges()) {
+        if (iedge == m_data.iedge(PEdge(j, e2))) {
+          return true;
         }
       }
     }
 
-    CGAL_assertion(volumes.size() == centroids.size());
-    for (std::size_t i = 0; i < volumes.size(); ++i) {
-      auto& volume = volumes[i];
-      volume.set_index(i);
-      volume.set_centroid(centroids.at(i));
-    }
-  }
-
-  const std::pair<bool, std::size_t> traverse_boundary_volume(
-    const PFace& pface,
-    const int volume_index,
-    const int num_volumes,
-    std::map<PFace, std::pair<int, int> >& map_volumes,
-    std::map<int, Point_3>& centroids) const {
-
-    CGAL_assertion(num_volumes  == 0);
-    CGAL_assertion(volume_index >= 0);
-    if (pface.first >= 6) return std::make_pair(false, 0);
-    CGAL_assertion(pface.first < 6);
-    const auto& pair = map_volumes.at(pface);
-    CGAL_assertion(pair.second == -1);
-    if (pair.first != -1) return std::make_pair(false, 0);
-    CGAL_assertion(pair.first == -1);
-
-    std::deque<PFace> queue;
-    queue.push_front(pface);
-
-    Point_3 volume_centroid;
-    std::size_t volume_size = 0;
-
-    while (!queue.empty()) {
-      // print_queue(volume_index, queue);
-      const auto query = queue.front();
-      queue.pop_front();
-      propagate_pface(
-        false, query, volume_index, num_volumes, centroids,
-        volume_size, volume_centroid, map_volumes, queue);
-    }
-
-    if (m_parameters.debug) {
-      std::cout << "- FOUND VOLUME " << volume_index << ", (SIZE/BARYCENTER): "
-      << volume_size << " / " << volume_centroid << std::endl;
-    }
-
-    centroids[volume_index] = volume_centroid;
-    return std::make_pair(true, volume_size);
-  }
-
-  const std::pair<bool, std::size_t> traverse_interior_volume(
-    const PFace& pface,
-    const int volume_index,
-    const int num_volumes,
-    std::map<PFace, std::pair<int, int> >& map_volumes,
-    std::map<int, Point_3>& centroids) const {
-
-    CGAL_assertion(volume_index > 0);
-    CGAL_assertion(volume_index >= num_volumes);
-
-    if (pface.first < 6) return std::make_pair(false, 0);
-    CGAL_assertion(pface.first >= 6);
-    const auto& pair = map_volumes.at(pface);
-    if (pair.second != -1) {
-      CGAL_assertion(pair.first != -1);
-      return std::make_pair(false, 0);
-    }
-    CGAL_assertion(pair.second == -1);
-    if (pair.first == -1) {
-      CGAL_assertion(pair.second == -1);
-      return std::make_pair(false, 0);
-    }
-    CGAL_assertion(pair.first != -1);
-    if (pair.first >= num_volumes) return std::make_pair(false, 0);
-    CGAL_assertion(pair.first < num_volumes);
-
-    std::deque<PFace> queue;
-    queue.push_front(pface);
-
-    Point_3 volume_centroid;
-    std::size_t volume_size = 0;
-
-    while (!queue.empty()) {
-      // print_queue(volume_index, queue);
-      const auto query = queue.front();
-      queue.pop_front();
-      propagate_pface(
-        false, query, volume_index, num_volumes, centroids,
-        volume_size, volume_centroid, map_volumes, queue);
-    }
-    if (m_parameters.debug) {
-      std::cout << "- FOUND VOLUME " << volume_index << ", (SIZE/BARYCENTER): "
-      << volume_size << " / " << volume_centroid << std::endl;
-    }
-    centroids[volume_index] = volume_centroid;
-    return std::make_pair(true, volume_size);
-  }
-
-  void print_queue(
-    const int volume_index,
-    const std::deque<PFace>& queue) const {
-
-    // if (volume_index != -1) return;
-    std::cout << "QUEUE: " << std::endl;
-    for (const auto& pface : queue) {
-      std::cout << volume_index << " "
-      << pface.first << " " << pface.second << std::endl;
-    }
-  }
-
-  void propagate_pface(
-    const bool verbose,
-    const PFace& pface,
-    const int volume_index,
-    const int num_volumes,
-    const std::map<int, Point_3>& centroids,
-    std::size_t& volume_size,
-    Point_3& volume_centroid,
-    std::map<PFace, std::pair<int, int> >& map_volumes,
-    std::deque<PFace>& queue) const {
-
-    const bool is_boundary = is_boundary_pface(
-      pface, volume_index, num_volumes, map_volumes);
-    if (is_boundary) {
-      propagate_boundary_pface(
-        verbose, pface, volume_index, num_volumes, centroids,
-        volume_size, volume_centroid, map_volumes, queue);
-    } else {
-      propagate_interior_pface(
-        verbose, pface, volume_index, num_volumes, centroids,
-        volume_size, volume_centroid, map_volumes, queue);
-    }
+    return false;
   }
 
   bool is_boundary_pface(
@@ -382,7 +697,7 @@ private:
     if (pface.first < 6) return true;
     CGAL_assertion(pface.first >= 6);
     if (num_volumes == 0) return false;
-    CGAL_assertion(num_volumes  > 0);
+    CGAL_assertion(num_volumes > 0);
     CGAL_assertion(volume_index > 0);
     CGAL_assertion(volume_index >= num_volumes);
 
@@ -395,389 +710,6 @@ private:
     if (pair.first < num_volumes) return true;
     CGAL_assertion(pair.first >= num_volumes);
     return false;
-  }
-
-  void propagate_boundary_pface(
-    const bool verbose,
-    const PFace& pface,
-    const int volume_index,
-    const int num_volumes,
-    const std::map<int, Point_3>& centroids,
-    std::size_t& volume_size,
-    Point_3& volume_centroid,
-    std::map<PFace, std::pair<int, int> >& map_volumes,
-    std::deque<PFace>& queue) const {
-
-    auto& pair = map_volumes.at(pface);
-    if (pair.first >= num_volumes) return;
-    CGAL_assertion(pair.first < num_volumes);
-    if (pair.second != -1) {
-      CGAL_assertion(pair.first != -1);
-      return;
-    }
-    CGAL_assertion(pair.second == -1);
-
-    if (pair.first == -1) {
-      pair.first  = volume_index;
-    } else {
-      pair.second = volume_index;
-    }
-
-    Point_3 centroid = m_data.centroid_of_pface(pface);
-    if (num_volumes > 0) {
-      // std::cout << "SHIFTING CENTROID" << std::endl;
-
-      CGAL_assertion(pair.first < num_volumes);
-      CGAL_assertion(centroids.find(pair.first) != centroids.end());
-      const auto& other_centroid = centroids.at(pair.first);
-      const auto plane = m_data.plane_of_pface(pface);
-      auto vec1 = plane.orthogonal_vector();
-      vec1 = KSR::normalize(vec1);
-      auto vec2 = Vector_3(centroid, other_centroid);
-      vec2 = KSR::normalize(vec2);
-
-      // TODO: CAN WE AVOID THIS VALUE?
-      const FT tol = KSR::tolerance<FT>();
-      const FT dot_product = vec1 * vec2;
-
-      if (dot_product < FT(0)) {
-        centroid += tol * vec1;
-      } else {
-        centroid -= tol * vec1;
-      }
-      volume_centroid = CGAL::barycenter(
-        volume_centroid, static_cast<FT>(volume_size), centroid, FT(1));
-
-    } else {
-      volume_centroid = CGAL::barycenter(
-        volume_centroid, static_cast<FT>(volume_size), centroid, FT(1));
-    }
-
-    // std::cout << "volume centroid: " << volume_centroid << std::endl;
-    ++volume_size;
-
-    if (verbose) {
-      // std::cout << "BND PFACE MAP: (" <<
-      // pair.first << ", " << pair.second << ")" << std::endl;
-      std::cout << "DUMPING BND PFACE: " <<
-        std::to_string(volume_index) + "-" +
-        std::to_string(pface.first) + "-" +
-        std::to_string(pface.second) << std::endl;
-
-      dump_pface(m_data, pface, "bnd-pface-" +
-        std::to_string(volume_index) + "-" +
-        std::to_string(pface.first) + "-" +
-        std::to_string(pface.second));
-    }
-
-    std::vector<PFace> nfaces, bnd_nfaces, int_nfaces, all_nfaces;
-    const auto pedges = m_data.pedges_of_pface(pface);
-    for (const auto pedge : pedges) {
-      CGAL_assertion(m_data.has_iedge(pedge));
-      m_data.incident_faces(m_data.iedge(pedge), nfaces);
-
-      split_pfaces(
-        pface, volume_index, num_volumes, map_volumes, nfaces,
-        bnd_nfaces, int_nfaces, all_nfaces);
-
-      if (num_volumes == 0) {
-        CGAL_assertion(bnd_nfaces.size() == 1);
-        CGAL_assertion(int_nfaces.size() == 0 || int_nfaces.size() == 1);
-      }
-
-      if (int_nfaces.size() == 1) {
-        queue.push_back(int_nfaces[0]);
-        continue;
-      }
-
-      if (int_nfaces.size() == 0 && bnd_nfaces.size() == 1) {
-        queue.push_front(bnd_nfaces[0]);
-        continue;
-      }
-
-      if (all_nfaces.size() == 0) {
-        dump_info(m_data, pface, pedge, nfaces);
-        std::cout << "DEBUG: num nfaces: " << nfaces.size() << std::endl;
-      }
-      CGAL_assertion(all_nfaces.size() > 0);
-
-      const auto found_nface = find_using_2d_directions(
-      volume_index, volume_centroid, pface, pedge, all_nfaces);
-      if (found_nface == m_data.null_pface()) continue;
-
-      if (is_boundary_pface(
-        found_nface, volume_index, num_volumes, map_volumes)) {
-        queue.push_front(found_nface);
-      } else {
-        queue.push_back(found_nface);
-      }
-    }
-  }
-
-  void propagate_interior_pface(
-    const bool verbose,
-    const PFace& pface,
-    const int volume_index,
-    const int num_volumes,
-    const std::map<int, Point_3>& /* centroids */,
-    std::size_t& volume_size,
-    Point_3& volume_centroid,
-    std::map<PFace, std::pair<int, int> >& map_volumes,
-    std::deque<PFace>& queue) const {
-
-    CGAL_assertion(num_volumes >= 0);
-    auto& pair = map_volumes.at(pface);
-    if (pair.first != -1 && pair.second != -1) return;
-    CGAL_assertion(pair.second == -1);
-    if (pair.first == volume_index) return;
-    CGAL_assertion(pair.first != volume_index);
-    if (pair.first != -1) {
-      pair.second = volume_index;
-    } else {
-      pair.first  = volume_index;
-    }
-
-    if (verbose) {
-      std::cout << "pface: " << m_data.str(pface) << std::endl;
-      std::cout << "pair: " <<
-      std::to_string(pair.first) << "/" << std::to_string(pair.second) << std::endl;
-    }
-
-    const Point_3 centroid = m_data.centroid_of_pface(pface);
-    volume_centroid = CGAL::barycenter(
-      volume_centroid, static_cast<FT>(volume_size), centroid, FT(1));
-    // std::cout << "volume centroid: " << volume_centroid << std::endl;
-    ++volume_size;
-
-    if (verbose) {
-      // std::cout << "INT PFACE MAP: (" <<
-      // pair.first << ", " << pair.second << ")" << std::endl;
-      std::cout << "DUMPING INT PFACE: " <<
-        std::to_string(volume_index) + "-" +
-        std::to_string(pface.first) + "-" +
-        std::to_string(pface.second) << std::endl;
-      dump_pface(m_data, pface, "int-pface-" +
-        std::to_string(volume_index) + "-" +
-        std::to_string(pface.first) + "-" +
-        std::to_string(pface.second));
-    }
-
-    std::vector<PFace> nfaces, bnd_nfaces, int_nfaces, all_nfaces;
-    const auto pedges = m_data.pedges_of_pface(pface);
-    for (const auto pedge : pedges) {
-      CGAL_assertion(m_data.has_iedge(pedge));
-      m_data.incident_faces(m_data.iedge(pedge), nfaces);
-      split_pfaces(
-        pface, volume_index, num_volumes, map_volumes, nfaces,
-        bnd_nfaces, int_nfaces, all_nfaces);
-
-      if (all_nfaces.size() == 0) {
-        dump_info(m_data, pface, pedge, nfaces);
-        std::cout << "DEBUG: num nfaces: " << nfaces.size() << std::endl;
-      }
-      CGAL_assertion(all_nfaces.size() > 0);
-
-      const auto found_nface = find_using_2d_directions(
-      volume_index, volume_centroid, pface, pedge, all_nfaces);
-      if (found_nface == m_data.null_pface()) continue;
-
-      if (is_boundary_pface(
-        found_nface, volume_index, num_volumes, map_volumes)) {
-        queue.push_front(found_nface);
-      } else {
-        queue.push_back(found_nface);
-      }
-    }
-  }
-
-  void split_pfaces(
-    const PFace& current,
-    const int volume_index,
-    const int num_volumes,
-    const std::map<PFace, std::pair<int, int> >& map_volumes,
-    const std::vector<PFace>& pfaces,
-    std::vector<PFace>& bnd_pfaces,
-    std::vector<PFace>& int_pfaces,
-    std::vector<PFace>& all_pfaces) const {
-
-    bnd_pfaces.clear();
-    int_pfaces.clear();
-    all_pfaces.clear();
-    for (const auto& pface : pfaces) {
-      if (pface == current) continue;
-      CGAL_assertion(pface != current);
-      all_pfaces.push_back(pface);
-
-      const auto& pair = map_volumes.at(pface);
-      if (num_volumes > 0 && pair.first != -1) {
-        if (pair.first < num_volumes && pair.second != -1) {
-          if (pair.second < num_volumes) {
-            continue;
-          }
-          CGAL_assertion(pair.second >= num_volumes);
-        }
-      }
-      if (is_boundary_pface(
-        pface, volume_index, num_volumes, map_volumes))  {
-        bnd_pfaces.push_back(pface);
-      } else {
-        int_pfaces.push_back(pface);
-      }
-    }
-  }
-
-  const PFace find_using_2d_directions(
-    const int /* volume_index */,
-    const Point_3& volume_centroid,
-    const PFace& pface,
-    const PEdge& pedge,
-    const std::vector<PFace>& nfaces) const {
-
-    CGAL_assertion(nfaces.size() > 0);
-    if (nfaces.size() == 1) return nfaces[0];
-    const bool debug = false;
-      // ( volume_index == 31 &&
-      //   pface.first == 8 &&
-      //   static_cast<std::size_t>(pface.second) == 7);
-
-    if (debug) {
-      dump_info(m_data, pface, pedge, nfaces);
-    }
-    CGAL_assertion(nfaces.size() > 1);
-
-    Point_3 center = m_data.centroid_of_pface(pface);
-    const Segment_3 segment = m_data.segment_3(pedge);
-    const Line_3 line(segment.source(), segment.target());
-    Point_3 midp = CGAL::midpoint(segment.source(), segment.target());
-    // std::cout << "midp: " << midp << std::endl;
-    Vector_3 norm(segment.source(), segment.target());
-    norm = KSR::normalize(norm);
-    const Plane_3 plane(midp, norm);
-
-    std::vector<Point_3> points;
-    points.reserve(nfaces.size() + 2);
-
-    points.push_back(midp);
-    points.push_back(center);
-    for (const auto& nface : nfaces) {
-      center = m_data.centroid_of_pface(nface);
-      points.push_back(center);
-    }
-    CGAL_assertion(points.size() >= 3);
-
-    for (auto& point : points) {
-      point = plane.projection(point);
-    }
-
-    if (debug) {
-      dump_frame(points, "volumes/directions-init");
-    }
-
-    const FT cx = volume_centroid.x();
-    const FT cy = volume_centroid.y();
-    const FT cz = volume_centroid.z();
-    FT d = (norm.x() * cx + norm.y() * cy + norm.z() * cz + plane.d());
-
-    // std::cout << "1 d: " << d << std::endl;
-    // std::cout << "1 norm: " << norm << std::endl;
-    const Plane_3 tr_plane(midp + norm * d, norm);
-    Point_3 inter;
-    const bool is_intersection_found =
-      m_kinetic_traits.intersection(line, tr_plane, inter);
-    if (!is_intersection_found) {
-      std::cout << "d = " << d << std::endl;
-    }
-    CGAL_assertion(is_intersection_found);
-    // std::cout << "inter: " << inter << std::endl;
-
-    d = KSR::distance(midp, inter);
-    norm = Vector_3(midp, inter);
-    // std::cout << "2 d: " << d << std::endl;
-    // std::cout << "2 norm: " << norm << std::endl;
-
-    if (d != FT(0)) {
-      CGAL_assertion(norm != Vector_3(FT(0), FT(0), FT(0)));
-      norm = KSR::normalize(norm);
-      for (auto& point : points) {
-        point += norm * d;
-      }
-    }
-
-    if (debug) {
-      auto extended = points;
-      extended.push_back(volume_centroid);
-      dump_frame(extended, "volumes/directions");
-    }
-
-    std::vector< std::pair<Direction_2, PFace> > dir_edges;
-    dir_edges.reserve(nfaces.size() + 1);
-
-    const Point_2 proj_0 = plane.to_2d(points[0]);
-    for (std::size_t i = 1; i < points.size(); ++i) {
-      const Point_2 proj_i = plane.to_2d(points[i]);
-      const Vector_2 vec(proj_0, proj_i);
-      if (i == 1) {
-        dir_edges.push_back(std::make_pair(Direction_2(vec), pface));
-      } else {
-        dir_edges.push_back(std::make_pair(Direction_2(vec), nfaces[i - 2]));
-      }
-    }
-    CGAL_assertion(dir_edges.size() == nfaces.size() + 1);
-
-    const Point_2 proj_vc = plane.to_2d(volume_centroid);
-    const Vector_2 vec(proj_0, proj_vc);
-    const Direction_2 ref_dir(vec);
-
-    std::sort(dir_edges.begin(), dir_edges.end(), [&](
-      const std::pair<Direction_2, PFace>& p,
-      const std::pair<Direction_2, PFace>& q) -> bool {
-        return p.first < q.first;
-      }
-    );
-
-    const std::size_t n = dir_edges.size();
-    for (std::size_t i = 0; i < n; ++i) {
-      if (dir_edges[i].second == pface) {
-
-        const std::size_t im = (i + n - 1) % n;
-        const std::size_t ip = (i + 1) % n;
-
-        const auto& dir_prev = dir_edges[im].first;
-        const auto& dir_curr = dir_edges[i].first;
-        const auto& dir_next = dir_edges[ip].first;
-
-        if (debug) {
-          dump_pface(m_data, dir_edges[im].second, "prev");
-          dump_pface(m_data, dir_edges[ip].second, "next");
-        }
-
-        if (ref_dir.counterclockwise_in_between(dir_prev, dir_curr)) {
-          if (debug) {
-            std::cout << "found prev" << std::endl;
-            exit(EXIT_SUCCESS);
-          }
-          return dir_edges[im].second;
-        } else if (ref_dir.counterclockwise_in_between(dir_curr, dir_next)) {
-          if (debug) {
-            std::cout << "found next" << std::endl;
-            exit(EXIT_SUCCESS);
-          }
-          return dir_edges[ip].second;
-        } else {
-          // return m_data.null_pface();
-          std::cout << "ERROR: WRONG ORIENTATIONS!" << std::endl;
-          dump_info(m_data, pface, pedge, nfaces);
-          dump_frame(points, "volumes/directions-init");
-          auto extended = points;
-          extended.push_back(volume_centroid);
-          dump_frame(extended, "volumes/directions");
-          CGAL_assertion_msg(false, "ERROR: WRONG ORIENTATIONS!");
-        }
-      }
-    }
-
-    CGAL_assertion_msg(false, "ERROR: NEXT PFACE IS NOT FOUND!");
-    return m_data.null_pface();
   }
 
   void create_cell_pvertices(Volume_cell& cell) {

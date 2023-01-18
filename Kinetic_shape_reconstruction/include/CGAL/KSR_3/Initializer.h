@@ -32,15 +32,17 @@
 
 #include <CGAL/KSR_3/Data_structure.h>
 
+#include <CGAL/Real_timer.h>
+
 namespace CGAL {
 namespace KSR_3 {
 
-// TODO: DOES NOT WORK WITH INEXACT KERNEL!
 template<typename GeomTraits>
 class Initializer {
 
 public:
   using Kernel = GeomTraits;
+  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
 
 private:
   using FT          = typename Kernel::FT;
@@ -59,16 +61,15 @@ private:
   using IFace              = typename Data_structure::IFace;
   using Face_property      = typename Data_structure::Intersection_graph::Face_property;
   using Intersection_graph = typename Data_structure::Intersection_graph;
+  using IEdge_set          = typename Data_structure::IEdge_set;
 
   using IVertex  = typename Data_structure::IVertex;
   using IK       = Kernel;
   using IFT      = typename IK::FT;
   using IPoint_3 = typename IK::Point_3;
 
-  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
-
-  using IK_to_EK = CGAL::Cartesian_converter<IK, EK>;
-  using EK_to_IK = CGAL::Cartesian_converter<EK, IK>;
+  using To_EK = CGAL::Cartesian_converter<IK, EK>;
+  using From_EK = CGAL::Cartesian_converter<EK, IK>;
 
   using Bbox_3     = CGAL::Bbox_3;
   using OBB_traits = CGAL::Oriented_bounding_box_traits_3<IK>;
@@ -77,11 +78,13 @@ private:
   using Parameters        = KSR::Parameters_3<FT>;
   using Kinetic_traits    = KSR::Kinetic_traits_3<Kernel>;
 
+  using Timer = CGAL::Real_timer;
+
 public:
   Initializer(Data_structure& data, const Parameters& parameters) :
   m_data(data), m_parameters(parameters),
   m_merge_type(Planar_shape_type::CONVEX_HULL),
-  m_kinetic_traits(parameters.use_hybrid_mode)
+  m_kinetic_traits()
   { }
 
   template<
@@ -114,7 +117,6 @@ public:
       KSR_3::dump_segmented_edges(m_data, "init");
     }
 
-    CGAL_assertion(m_data.check_integrity(false));
     make_polygons_intersection_free();
     const double time_to_intersection = timer.time();
 
@@ -138,7 +140,6 @@ public:
     create_bbox_meshes();
 
     // Starting from here the intersection graph is const, it won't change anymore.
-    CGAL_assertion(m_data.check_integrity(false));
     set_k_intersections(m_parameters.k);
     const double time_to_set_k = timer.time();
 
@@ -223,7 +224,6 @@ private:
   }
 
   void add_iface_from_iedge(std::size_t sp_idx, IEdge edge, IEdge next, bool cw) {
-    IK_to_EK to_exact;
     IVertex s = m_data.source(edge);
     IVertex t = m_data.target(edge);
 
@@ -243,7 +243,7 @@ private:
 
     int dir = (cw) ? -1 : 1;
 
-    int inext;
+    std::size_t inext;
     while (s != m_data.target(next) && iterations < 10000) {
       face.vertices.push_back(m_data.target(next));
       face.pts.push_back(m_data.support_plane(sp_idx).to_2d(m_data.igraph().point_3(m_data.target(next))));
@@ -277,12 +277,12 @@ private:
       CGAL_assertion(f1 == face_idx || f2 == face_idx);
     }
 
-    std::vector<EK::Point_2> ptsEK;
-    ptsEK.reserve(face.pts.size());
+    std::vector<EK::Point_2> pts;
+    pts.reserve(face.pts.size());
     for (auto p : face.pts)
-      ptsEK.push_back(to_exact(p));
+      pts.push_back(p);
 
-    face.poly = Polygon_2<EK>(ptsEK.begin(), ptsEK.end());
+    face.poly = Polygon_2<EK>(pts.begin(), pts.end());
 
     if (face.poly.orientation() != CGAL::COUNTERCLOCKWISE) {
       face.poly.reverse_orientation();
@@ -295,12 +295,14 @@ private:
     CGAL_assertion(face.poly.is_convex());
     CGAL_assertion(face.poly.is_simple());
 
+
     // Debug visualization
     if (m_parameters.debug) {
+      From_EK from_EK;
       std::vector<Point_3> pts;
       pts.reserve(face.vertices.size());
       for (auto v : face.vertices)
-        pts.push_back(m_data.igraph().point_3(v));
+        pts.push_back(from_EK(m_data.igraph().point_3(v)));
 
       Saver<Kernel> saver;
       std::vector<std::vector<Point_3> > pts_vec;
@@ -333,7 +335,7 @@ private:
 
   void create_ifaces() {
     for (std::size_t sp_idx = 0; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
-      const std::set<IEdge>& uiedges = m_data.support_plane(sp_idx).unique_iedges();
+      const IEdge_set& uiedges = m_data.support_plane(sp_idx).unique_iedges();
       const std::vector<IEdge>& iedges = m_data.support_plane(sp_idx).iedges();
 
       // Special case bbox without splits
@@ -462,8 +464,8 @@ private:
   }
 
   void initial_polygon_iedge_intersections() {
-    IK_to_EK to_exact;
-    EK_to_IK to_inexact;
+    To_EK to_exact;
+    From_EK to_inexact;
     //std::cout << "initial_polygon_iedge_intersections" << std::endl;
     std::size_t idx = 5;
     for (Support_plane& sp : m_data.support_planes()) {
@@ -486,7 +488,9 @@ private:
         // Get line
         //Line_2 l(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))),sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
 
-        EK::Line_2 exact_line(to_exact(sp.to_2d(m_data.point_3(m_data.source(pair.second[0])))), to_exact(sp.to_2d(m_data.point_3(m_data.target(pair.second[0])))));
+        EK::Point_2 a(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))));
+        EK::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
+        EK::Line_2 exact_line(a, b);
         Line_2 l = to_inexact(exact_line);
         Vector_2 dir = l.to_vector();
         dir = (1.0 / CGAL::sqrt(dir * dir)) * dir;
@@ -543,8 +547,8 @@ private:
               upper = lower;
               lower = tmp;
             }
-            FT s = (sp.to_2d(m_data.point_3(lower)) - l.point()) * l.to_vector();
-            FT t = (sp.to_2d(m_data.point_3(upper)) - l.point()) * l.to_vector();
+            FT s = (sp.to_2d(to_inexact(m_data.point_3(lower))) - l.point()) * l.to_vector();
+            FT t = (sp.to_2d(to_inexact(m_data.point_3(upper))) - l.point()) * l.to_vector();
 
             if (s < t) {
               if (s < max && min < t) {
@@ -702,7 +706,7 @@ private:
     CGAL_assertion(bbox_length_3 >= FT(0));
     const FT tol = KSR::tolerance<FT>();
     if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
-      const FT d = FT(40) * tol; // 40 is a magic number but it is not a big deal in this case
+      const FT d = 0.1;
 
       if (bbox_length_1 < tol) { // yz case
         CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
@@ -794,37 +798,12 @@ private:
     bbox_faces.reserve(6);
 
     bbox_faces.push_back({bbox[0], bbox[1], bbox[2], bbox[3]});
-    bbox_faces.push_back({bbox[0], bbox[1], bbox[6], bbox[5]});
-    bbox_faces.push_back({bbox[1], bbox[2], bbox[7], bbox[6]});
-    bbox_faces.push_back({bbox[2], bbox[3], bbox[4], bbox[7]});
-    bbox_faces.push_back({bbox[3], bbox[0], bbox[5], bbox[4]});
-    bbox_faces.push_back({bbox[5], bbox[6], bbox[7], bbox[4]});
+    bbox_faces.push_back({bbox[0], bbox[5], bbox[6], bbox[1]});
+    bbox_faces.push_back({bbox[1], bbox[6], bbox[7], bbox[2]});
+    bbox_faces.push_back({bbox[2], bbox[7], bbox[4], bbox[3]});
+    bbox_faces.push_back({bbox[3], bbox[4], bbox[5], bbox[0]});
+    bbox_faces.push_back({bbox[5], bbox[4], bbox[7], bbox[6]});
     CGAL_assertion(bbox_faces.size() == 6);
-
-    // Simon's bbox. The faces are different.
-    // const FT xmin = bbox[0].x();
-    // const FT ymin = bbox[0].y();
-    // const FT zmin = bbox[0].z();
-    // const FT xmax = bbox[7].x();
-    // const FT ymax = bbox[7].y();
-    // const FT zmax = bbox[7].z();
-    // const std::vector<Point_3> sbbox = {
-    //   Point_3(xmin, ymin, zmin),
-    //   Point_3(xmin, ymin, zmax),
-    //   Point_3(xmin, ymax, zmin),
-    //   Point_3(xmin, ymax, zmax),
-    //   Point_3(xmax, ymin, zmin),
-    //   Point_3(xmax, ymin, zmax),
-    //   Point_3(xmax, ymax, zmin),
-    //   Point_3(xmax, ymax, zmax) };
-
-    // bbox_faces.push_back({sbbox[0], sbbox[1], sbbox[3], sbbox[2]});
-    // bbox_faces.push_back({sbbox[4], sbbox[5], sbbox[7], sbbox[6]});
-    // bbox_faces.push_back({sbbox[0], sbbox[1], sbbox[5], sbbox[4]});
-    // bbox_faces.push_back({sbbox[2], sbbox[3], sbbox[7], sbbox[6]});
-    // bbox_faces.push_back({sbbox[1], sbbox[5], sbbox[7], sbbox[3]});
-    // bbox_faces.push_back({sbbox[0], sbbox[4], sbbox[6], sbbox[2]});
-    // CGAL_assertion(bbox_faces.size() == 6);
   }
 
   template<
@@ -837,6 +816,7 @@ private:
 
     m_data.reserve(input_range.size());
     add_bbox_faces(bbox_faces);
+
     add_input_polygons(input_range, polygon_map);
   }
 
@@ -875,6 +855,7 @@ private:
       const Polygon_2& polygon = pair.first;
       const Indices& input_indices = pair.second;
       m_data.add_input_polygon(support_plane_idx, input_indices, polygon);
+      dump_polygons(m_data, polygons, "inserted-polygons");
     }
 
     CGAL_assertion(m_data.number_of_support_planes() > 6);
@@ -1038,6 +1019,8 @@ private:
     const std::size_t support_plane_idx,
     std::vector<Point_2>& bbox) const {
 
+    From_EK from_EK;
+
     CGAL_assertion(support_plane_idx >= 6);
     const auto& iedges = m_data.support_plane(support_plane_idx).unique_iedges();
     CGAL_assertion(iedges.size() > 0);
@@ -1051,8 +1034,8 @@ private:
       // std::cout << "2 " <<
       // m_data.point_3(source) << " " <<
       // m_data.point_3(target) << std::endl;
-      points.push_back(m_data.to_2d(support_plane_idx, source));
-      points.push_back(m_data.to_2d(support_plane_idx, target));
+      points.push_back(from_EK(m_data.to_2d(support_plane_idx, source)));
+      points.push_back(from_EK(m_data.to_2d(support_plane_idx, target)));
     }
     CGAL_assertion(points.size() == iedges.size() * 2);
 
@@ -1139,12 +1122,12 @@ private:
             continue;
           }
 
-          Point_2 point;
+          EK::Point_2 point;
+          EK::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
+          EK::Segment_3 seg_b(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second));
           if (!m_kinetic_traits.intersection(
-            m_data.to_2d(common_plane_idx,
-              Segment_3(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second))),
-            m_data.to_2d(common_plane_idx,
-              Segment_3(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second))),
+            m_data.to_2d(common_plane_idx, seg_a),
+            m_data.to_2d(common_plane_idx, seg_b),
             point)) {
 
             continue;
@@ -1168,7 +1151,7 @@ private:
     using Face_property = typename Data_structure::Intersection_graph::Face_property;
     using IFace = typename Data_structure::Intersection_graph::Face_descriptor;
     using IEdge = typename Data_structure::Intersection_graph::Edge_descriptor;
-    IK_to_EK to_exact;
+    To_EK to_exact;
 
     for (std::size_t i = 6; i < m_data.support_planes().size(); i++) {
       auto& sp = m_data.support_plane(i);

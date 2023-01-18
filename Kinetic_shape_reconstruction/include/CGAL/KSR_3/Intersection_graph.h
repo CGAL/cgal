@@ -35,7 +35,10 @@ public:
   using Kernel = GeomTraits;
   using EK = CGAL::Exact_predicates_exact_constructions_kernel;
 
+  using to_EK = CGAL::Cartesian_converter<Kernel, EK>;
+
   using FT        = typename Kernel::FT;
+  using Point_2   = typename Kernel::Point_2;
   using Point_3   = typename Kernel::Point_3;
   using Segment_3 = typename Kernel::Segment_3;
   using Line_3    = typename Kernel::Line_3;
@@ -48,16 +51,31 @@ public:
     Vertex_property(const Point_3& point) : point(point), active(true) {}
   };
 
-  using Kinetic_interval = std::vector<std::pair<EK::FT, EK::FT> >;
+  using Kinetic_interval = std::vector<std::pair<FT, FT> >;
 
   struct Edge_property {
     std::size_t line;
+    std::size_t order;
     std::map<std::size_t, std::pair<std::size_t, std::size_t> > faces; // For each intersecting support plane there is one pair of adjacent faces (or less if the edge is on the bbox)
     std::set<std::size_t> planes;
     std::set<std::size_t> crossed;
     std::map<std::size_t, Kinetic_interval> intervals; // Maps support plane index to the kinetic interval. std::pair<FT, FT> is the barycentric coordinate and intersection time.
     bool active;
-    Edge_property() : line(KSR::no_element()), active(true) { }
+    Edge_property() : line(KSR::no_element()), active(true), order(edge_counter++) { }
+
+    const Edge_property& operator=(const Edge_property& other) {
+      line = other.line;
+      faces = other.faces;
+      planes = other.planes;
+      crossed = other.crossed;
+      intervals = other.intervals;
+      active = other.active;
+
+      return *this;
+    }
+
+  private:
+    static std::size_t edge_counter;
   };
 
   using Kinetic_interval_iterator = typename std::map<std::size_t, Kinetic_interval>::const_iterator;
@@ -70,13 +88,23 @@ public:
   using Edge_descriptor = typename boost::graph_traits<Graph>::edge_descriptor;
   using Face_descriptor = std::size_t;
 
+  struct lex {
+    bool operator()(const Edge_descriptor& a, const Edge_descriptor& b) const {
+      Edge_property* pa = (Edge_property*)a.get_property();
+      Edge_property* pb = (Edge_property*)b.get_property();
+      return pa->order < pb->order;
+    }
+  };
+
+  using IEdge_set = std::set<Edge_descriptor, lex>;
+
   struct Face_property {
     Face_property() : support_plane(-1), part_of_partition(false) {}
     Face_property(std::size_t support_plane_idx) : support_plane(support_plane_idx), part_of_partition(false) {}
     std::size_t support_plane;
     bool part_of_partition;
-    CGAL::Polygon_2<EK> poly;
-    std::vector<typename Kernel::Point_2> pts;
+    CGAL::Polygon_2<Kernel> poly;
+    std::vector<Point_2> pts;
     std::vector<Edge_descriptor> edges;
     std::vector<Vertex_descriptor> vertices;
     bool is_part(Edge_descriptor a, Edge_descriptor b) {
@@ -204,7 +232,11 @@ public:
   std::size_t add_line() { return ( m_nb_lines++ ); }
   std::size_t nb_lines() const { return m_nb_lines; }
   void set_nb_lines(const std::size_t value) { m_nb_lines = value; }
-  Graph& graph() { return m_graph; }
+
+  Graph& graph() {
+    __debugbreak();
+    return m_graph;
+  }
 
   const std::pair<Vertex_descriptor, bool> add_vertex(const Point_3& point) {
 
@@ -235,6 +267,7 @@ public:
 
     const auto out = boost::add_edge(source, target, m_graph);
     m_graph[out.first].planes.insert(support_plane_idx);
+
     return out;
   }
 
@@ -344,7 +377,9 @@ public:
   }
 
   decltype(auto) vertices() const { return CGAL::make_range(boost::vertices(m_graph)); }
-  decltype(auto) edges() const { return CGAL::make_range(boost::edges(m_graph)); }
+  decltype(auto) edges() const {
+    return CGAL::make_range(boost::edges(m_graph));
+  }
 
   std::vector<Face_descriptor>& faces() { return m_ifaces; }
   const std::vector<Face_descriptor>& faces() const { return m_ifaces; }
@@ -386,13 +421,11 @@ public:
       m_graph[boost::target(edge, m_graph)].point);
   }
 
-  const bool& is_active(const Vertex_descriptor& vertex) const { return m_graph[vertex].active; }
-  bool& is_active(const Vertex_descriptor& vertex) { return m_graph[vertex].active; }
-  const bool& is_active(const Edge_descriptor& edge) const { return m_graph[edge].active; }
-  bool& is_active(const Edge_descriptor& edge) { return m_graph[edge].active; }
   bool has_crossed(const Edge_descriptor& edge, std::size_t sp_idx) { return m_graph[edge].crossed.count(sp_idx) == 1; }
   void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) { m_graph[edge].crossed.insert(sp_idx); }
 };
+
+template<typename GeomTraits> std::size_t Intersection_graph<GeomTraits>::Edge_property::edge_counter = 0;
 
 } // namespace KSR_3
 } // namespace CGAL
