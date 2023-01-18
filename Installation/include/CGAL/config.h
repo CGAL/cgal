@@ -52,7 +52,7 @@
 #endif // CGAL_TEST_SUITE and NDEBUG
 
 // See [[Small features/Visual_Leak_Detector]] in CGAL developers wiki
-// See also: http://vld.codeplex.com/
+// See also: https://kinddragon.github.io/vld/
 #if defined(CGAL_ENABLE_VLD)
 #  include <vld.h>
 #endif // CGAL_ENABLE_VLD
@@ -111,17 +111,6 @@
 #undef CGAL_LINKED_WITH_TBB
 #endif
 #endif
-
-// Macro used by Boost Parameter. Mesh_3 needs at least 12, before the
-// Boost Parameter headers are included: <boost/parameter/config.hpp>
-// defines the value to 8, if it is not yet defined.
-// The CGAL BGL properties mechanism includes
-// <boost/graph/named_function_params.hpp>, that includes
-// <boost/parameter/name.hpp>, and maybe other Boost libraries may use
-// Boost Parameter as well.
-// That is why that is important to define that macro as early as possible,
-// in <CGAL/config.h>
-#define BOOST_PARAMETER_MAX_ARITY 12
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION
 #include <boost/config.hpp>
@@ -285,12 +274,6 @@ using std::min;
 using std::max;
 #endif
 
-//-------------------------------------------------------------------//
-// Is Geomview usable ?
-//#if !defined(_MSC_VER) && !defined(__MINGW32__)
-//#  define CGAL_USE_GEOMVIEW
-//#endif
-
 
 //-------------------------------------------------------------------//
 // Compilers provide different macros to access the current function name
@@ -313,7 +296,7 @@ using std::max;
 
 // Macros to detect features of clang. We define them for the other
 // compilers.
-// See http://clang.llvm.org/docs/LanguageExtensions.html
+// See https://clang.llvm.org/docs/LanguageExtensions.html
 // See also https://en.cppreference.com/w/cpp/experimental/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
@@ -490,19 +473,25 @@ namespace cpp11{
 
 // The fallthrough attribute
 // See for clang:
-//   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
+//   https://clang.llvm.org/docs/AttributeReference.html#statement-attributes
 // See for gcc:
 //   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-#if __cpp_attributes >= 200809 && __has_cpp_attribute(fallthrough)
+#if __cplusplus > 201402L && __has_cpp_attribute(fallthrough)
 #  define CGAL_FALLTHROUGH [[fallthrough]]
-#elif __cpp_attributes >= 200809 && __has_cpp_attribute(gnu::fallthrough)
+#elif __has_cpp_attribute(gnu::fallthrough)
 #  define CGAL_FALLTHROUGH [[gnu::fallthrough]]
-#elif __cpp_attributes >= 200809 && __has_cpp_attribute(clang::fallthrough)
+#elif __has_cpp_attribute(clang::fallthrough)
 #  define CGAL_FALLTHROUGH [[clang::fallthrough]]
 #elif __has_attribute(fallthrough) && ! __clang__
 #  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
 #else
 #  define CGAL_FALLTHROUGH while(false){}
+#endif
+
+#if CGAL_CXX17
+#  define CGAL_CPP17_INLINE inline
+#else
+#  define CGAL_CPP17_INLINE
 #endif
 
 #ifndef CGAL_NO_ASSERTIONS
@@ -529,7 +518,7 @@ namespace cpp11{
 /// Macro `CGAL_WARNING`.
 /// Must be used with `#pragma`, this way:
 ///
-///     #pragma CGAL_WARNING(This line should trigger a warning)
+///     #pragma CGAL_WARNING("This line should trigger a warning")
 ///
 /// @{
 #ifdef BOOST_MSVC
@@ -560,7 +549,7 @@ namespace cpp11{
 namespace CGAL {
 
 // Returns filename prefixed by the directory of CGAL containing data.
-// This directory is either defined in the environement variable CGAL_DATA_DIR,
+// This directory is either defined in the environment variable CGAL_DATA_DIR,
 // otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
 // otherwise it is empty (and thus returns filename unmodified).
 inline std::string data_file_path(const std::string& filename)

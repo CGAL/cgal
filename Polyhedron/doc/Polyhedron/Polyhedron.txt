@@ -319,9 +319,7 @@ CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 Additional formats supported for writing are OpenInventor (<TT>.iv</TT>)
 \cgalCite{cgal:w-impoo-94}, VRML 1.0 and 2.0 (<TT>.wrl</TT>)
 \cgalCite{cgal:bpp-vrml-95}, \cgalCite{cgal:vrmls-97}, \cgalCite{cgal:hw-vrml2h-96},
-and \ref IOStreamOBJ (<TT>.obj</TT>). Another convenient output
-function writes a polyhedral surface to a Geomview process spawned
-from the \cgal program. These output functions are provided as
+and \ref IOStreamOBJ (<TT>.obj</TT>). These output functions are provided as
 stream operators, now acting on the stream type of the respective
 format.
 
@@ -329,7 +327,6 @@ format.
 #include <CGAL/IO/Polyhedron_inventor_ostream.h>
 #include <CGAL/IO/Polyhedron_VRML_1_ostream.h>
 #include <CGAL/IO/Polyhedron_VRML_2_ostream.h>
-#include <CGAL/IO/Polyhedron_geomview_ostream.h>
 
 template <class PolyhedronTraits_3>
 Inventor_ostream& operator<<( Inventor_ostream& out,
@@ -341,10 +338,6 @@ const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 template <class PolyhedronTraits_3>
 VRML_2_ostream& operator<<( VRML_2_ostream& out,
-const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
-
-template <class PolyhedronTraits_3>
-Geomview_stream& operator<<( Geomview_stream& out,
 const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 \endcode
@@ -457,7 +450,7 @@ When we use our new items class with the polyhedral surface, our new
 face class is used in the halfedge data structure and the color
 attribute is available in the type `Polyhedron_3::Facet`. However,
 `Polyhedron_3::Facet` is not the same type as our local face
-typedef for `My_face`, but it is derived therefrom. Thus,
+typedef for `My_face`, but it is derived there from. Thus,
 everything that we put in the local face type except constructors is
 then available in the `Polyhedron_::Facet` type. For more
 details, see the Chapter \ref chapterHalfedgeDS "Halfedge Data Structures"
@@ -563,4 +556,3 @@ create the triangle in the halfedge data structure.
 
 */
 } /* namespace CGAL */
-

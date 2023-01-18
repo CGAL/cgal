@@ -32,7 +32,7 @@ provides exact predicates.
 \cgalModels `ConvexHullTraits_2`
 \cgalModels `DelaunayMeshTraits_2`
 \cgalModels `AnalyticWeightTraits_2`
-\cgalModels `BarycentricTraits_2`
+\cgalModels `Barycentric_coordinates::BarycentricTraits_2`
 
 \sa `CGAL::Projection_traits_3`
 */

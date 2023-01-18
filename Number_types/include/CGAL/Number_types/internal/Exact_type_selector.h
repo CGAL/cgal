@@ -40,7 +40,7 @@
 #  include <CGAL/leda_real.h>
 #endif
 #ifdef CGAL_USE_CORE
-// #  include <CGAL/CORE_Expr.h>
+// # include <CGAL/CORE_Expr.h>
 namespace CORE {
 class Expr;
 }
@@ -54,23 +54,38 @@ namespace CGAL { namespace internal {
 // It should support the built-in types.
 template < typename >
 struct Exact_field_selector
+
+#if BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)
+// use boost-mp by default
+// Boost
+{ typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
+#else // BOOST_VERSION > 107900
 #ifdef CGAL_USE_GMPXX
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
-# if defined(CGAL_USE_BOOST_MP)
-{ typedef boost::multiprecision::mpq_rational Type; };
-# else
+#if defined(CGAL_USE_BOOST_MP)
+{ typedef BOOST_gmp_arithmetic_kernel::Rational Type; };
+#else
 { typedef Gmpq Type; };
-# endif
+#endif
 #elif defined(CGAL_USE_LEDA)
 { typedef leda_rational Type; };
-#elif 0 && defined(CGAL_USE_BOOST_MP)
+#elif defined(CGAL_USE_BOOST_MP)
 // See the discussion in https://github.com/CGAL/cgal/pull/3614
 // This is disabled for now because cpp_rational is even slower than Quotient<MP_Float>. Quotient<cpp_int> will be a good candidate after some polishing.
+// In fact, the new version of cpp_rational from here: https://github.com/boostorg/multiprecision/pull/366
+// is much better than Quotient<cpp_int> because it is using smart gcd and is well-supported
+// while Quotient does not. Though, we can still use it if needed.
+#if BOOST_VERSION <= 107800
+// See this comment: https://github.com/CGAL/cgal/pull/5937#discussion_r721533675
+{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
+#else
 { typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
+#endif
 #else
 { typedef Quotient<MP_Float> Type; };
 #endif
+#endif // BOOST_VERSION > 107900
 
 // By default, a field is a safe choice of ring.
 template < typename T >

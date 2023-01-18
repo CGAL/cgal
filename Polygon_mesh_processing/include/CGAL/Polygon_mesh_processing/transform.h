@@ -13,8 +13,8 @@
 #define CGAL_POLYGON_MESH_PROCESSING_TRANSFORM_H
 #include <CGAL/license/Polygon_mesh_processing/core.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL{
 namespace Polygon_mesh_processing{
@@ -44,10 +44,10 @@ namespace Polygon_mesh_processing{
  * \cgalNamedParamsEnd
  *
  */
-template<class Transformation, class PolygonMesh,class NamedParameters>
+template<class Transformation, class PolygonMesh,class NamedParameters = parameters::Default_named_parameters>
 void transform(const Transformation& transformation,
                PolygonMesh& mesh,
-               const NamedParameters& np)
+               const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
   VPMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -59,14 +59,6 @@ void transform(const Transformation& transformation,
   }
 }
 
-/// \cond SKIP_IN_MANUAL
-template<class Transformation, class PolygonMesh>
-void transform(const Transformation& transformation,
-               PolygonMesh& mesh)
-{
-  transform(transformation, mesh, parameters::all_default());
-}
-/// \endcond
 }
 }
 

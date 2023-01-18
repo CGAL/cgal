@@ -1,0 +1,374 @@
+namespace CGAL {
+
+/*!
+
+\mainpage User Manual
+\anchor Chapter_3D_Alpha_wrapping
+\cgalAutoToc
+
+\authors Pierre Alliez, David Cohen-Steiner, Michael Hemmer, Cédric Portaneri, Mael Rouxel-Labbé
+
+<center>
+<img src="aw3_bike_lod.jpg" style="max-width:70%;"/>
+</center>
+
+\section aw3_introduction Introduction
+
+Various tasks in geometric modeling and processing require 3D objects represented as valid surface meshes,
+where "valid" refers to meshes that are watertight, intersection-free, orientable, and 2-manifold.
+Such representations offer well-defined notions of interior/exterior and geodesic neighborhoods.
+
+3D data are usually acquired through measurements followed by reconstruction, designed by humans,
+or generated through imperfect automated processes.
+As a result, they can exhibit a wide variety of defects including gaps, missing data,
+self-intersections, degeneracies such as zero-volume structures, and non-manifold features.
+
+Given the large repertoire of possible defects, many methods and data structures have been proposed
+to repair specific defects, usually with the goal of guaranteeing specific properties in the repaired 3D model.
+Reliably repairing all types of defects is notoriously difficult and is often an ill-posed problem
+as many valid solutions exist for a given 3D model with defects.
+In addition, the input model can be overly complex with unnecessary geometric details,
+spurious topological structures, nonessential inner components, or excessively fine discretizations.
+For applications such as collision avoidance, path planning, or simulation,
+getting an approximation of the input can be more relevant than repairing it.
+Approximation herein refers to an approach capable of filtering out inner structures,
+fine details and cavities, as well as wrapping the input within a user-defined offset margin.
+
+Given an input 3D geometry, we address the problem of computing a conservative approximation,
+where conservative means that the output is guaranteed to strictly enclose the input.
+We seek unconditional robustness in the sense that the output mesh should be valid (oriented,
+2-manifold, and without self-intersections), even for raw input with many defects
+and degeneracies.
+The default input is a soup of 3D triangles, but the generic interface leaves the door open
+to other types of finite 3D primitives such as triangle soups and point sets.
+
+\cgalFigureAnchor{1}
+<center>
+<img src="aw3_triangle_soup.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{1}
+Shrink-wrapping output from a triangle soup, with many intersections and gaps.
+From left to right, input model, output wrap, and superposition.
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{2}
+<center>
+<img src="aw3_non_manifold_cases.jpg" style="max-width:75%;"/>
+</center>
+\cgalFigureCaptionBegin{2}
+Dealing with non-manifold features and degeneracies.
+From left to right, a non-manifold vertex, self-intersecting faces and two adjacent triangles
+representing a zero-volume structure.
+The algorithm handles these cases by wrapping an offset of the input.
+\cgalFigureCaptionEnd
+
+\section aw3_definition Approach
+
+Many approaches have been devised to enclose a 3D model within a volume, featuring different balances
+between the runtime and quality (i.e., tightness) of the approximation.
+Within the simplest cases, an axis-aligned or oriented bounding box clearly satisfies some desired properties;
+however, the approximation error is uncontrollable and often very large.
+Computing the convex hull of the input also matches some of the desired properties
+and improves the quality of the result, albeit at the price of increasing the runtime.
+However, the approximation remains crude, especially in the case of several components.
+
+The convex hull is, in fact, a special case of alpha shapes (\ref Chapter_3D_Alpha_Shapes).
+Mathematically, the alpha shape is a subcomplex of the Delaunay triangulation, with simplicies
+being part of the complex depending on the size of their minimal (empty) Delaunay ball.
+Intuitively, constructing 3D alpha shapes can be thought of as carving 3D space with an empty ball
+of user-defined radius alpha.
+Alpha shapes yield provable, good piecewise-linear approximations of a shape \cgalCite{bb-srmua-97t},
+but are defined on point sets, whereas we wish to deal with more general input data, such as triangle soups.
+Even after sampling the triangle soup, alpha shapes do not guarantee to be conservative for any alpha.
+Finally, inner structures are also carved within the volumes, instead of being filtered out.
+
+Inspired by alpha shapes, we replace the above notion of carving by <em>shrink-wrapping</em>:
+we iteratively construct a subcomplex of a 3D Delaunay triangulation by starting from
+a simple 3D Delaunay triangulation enclosing the input, and then iteratively removing eligible tetrahedra
+that lie on the boundary of the complex.
+In addition, the underlying triangulation---and thus the complex incidentally---is refined
+as shrinking proceeds.
+Thus, instead of carving from the convex hull of the input data as in alpha shapes, we construct
+an entirely new mesh through a Delaunay refinement-like algorithm. The refinement algorithm inserts Steiner points
+on the boundary of an offset volume, defined as a level set of the unsigned distance field to the input.
+
+This process both prevents the creation of inner structures within the output and avoids superfluous computations.
+In addition, detaching our mesh construction from the geometry and discretization of the input has several advantages:
+(1) the underlying data is not restricted to a specific format (triangle soups, polygon soups, point clouds, etc.)
+as all that is required is answering three basic geometric queries: (a) the distance between a point
+and the input, (b) the projection of a query point onto the input, (c) an intersection test
+between a tetrahedron and the input, and (2) The user has more freedom to trade tightness
+to the input for final mesh complexity, as constructing a conservative approximation on a large offset
+of the input requires fewer mesh elements.
+
+\subsection aw3_algorithm Algorithm
+
+<b>Initialization</b>. The algorithm is initialized by inserting the eight corner vertices
+of a loose bounding box into a 3D Delaunay triangulation.
+In the 3D Delaunay triangulation of \cgal, all triangle facets are adjacent to two tetrahedron cells.
+Each facet of the boundary of the Delaunay triangulation, which coincides with one facet
+of the convex hull of the triangulation vertices, is adjacent to a so-called <em>infinite</em> tetrahedron cell,
+an abstract cell connected to the so-called <em>infinite vertex</em> to ensure the aforementioned double-facet adjacency.
+Initially, all infinite cells are tagged as outside, and all finite tetrahedron cells are tagged as inside.
+
+<b>Shrink-wrapping</b>. The shrink-wrapping algorithm proceeds by traversing the cells
+of the Delaunay triangulation from outside to inside, flood-filling from one cell to its adjacent cell,
+and tagging the adjacent cell as outside whenever possible (the term possible is specified later).
+Flood filling is implemented via a priority queue of Delaunay triangle facets representing
+the traversal between the two adjacent cells of the facet, from outside to inside.
+These triangle facets are referred to as <em>gates</em> in the following.
+
+Given an outside cell and its adjacent inside cell, the common facet (i.e., a gate) is said
+to be <em>alpha-traversable</em> if its circumradius is larger than the user-defined parameter alpha,
+where circumradius refers to the radius of the relating triangle's Delaunay ball.
+Intuitively, cavities smaller than alpha are not accessible as their gates are not alpha-traversable.
+
+Initialized by the alpha-traversable gates on the convex hull, the priority queue contains only
+alpha-traversable gates and is sorted by decreasing order
+of the circumradius of the gate.
+Traversal can be seen as a continuous process that advances along dual Voronoi edges of the gates,
+with a pencil of empty balls circumscribing the gate.
+
+\cgalFigureAnchor{3}
+<center>
+<img src="aw3_pencil.png" style="max-width:40%;"/>
+</center>
+\cgalFigureCaptionBegin{3}
+(Left) Pencil of empty circles (blue) circumscribing a Delaunay edge (green) in a 2D Delaunay triangulation (black).
+From the top triangle circumcenter <em>c1</em> to the bottom triangle circumcenter <em>c2</em>, the dual Voronoi edge denoted by <em>e</em> (doted red) is the trace of centers of the largest circles that are empty of Delaunay vertex.
+(Right) The graph corresponding to the left example. The x-axis corresponds to the position of empty circle centers located on the Voronoi edge <em>e</em>, from <em>c1</em> to <em>c2</em>. The y-axis is the radius value of the corresponding empty circles. In this case, the minimum radius of this pencil of empty circle is located at the midpoint of the green Delaunay edge.
+In our algorithm, a gate (green Delaunay edge) is said to be not alpha-traversable when the minimum radius of the pencil of empty circle is smaller than alpha.
+\cgalFigureCaptionEnd
+
+When traversing from an outside cell \f$ c_o \f$ to an inside cell \f$ c_i \f$ through an alpha-traversable facet \f$ f \f$,
+two criteria are tested to prevent the wrapping process from colliding with the input:
+
+(1) We check for an intersection between the dual Voronoi edge of \f$ f \f$, i.e. the segment between
+the circumcenters of the two incident cells, and the <em>offset surface</em>, defined as the level set
+of unsigned isosurface to the input.
+If one or several intersections exists, the first intersection point, along the dual Voronoi edge
+oriented from outside to inside is inserted into the triangulation as a Steiner point.
+
+(2) If the dual Voronoi edge does not intersect the offset surface but the neighboring cell \f$ c_i \f$
+intersects the input, we compute the projection of the circumcenter of \f$ c_i \f$
+onto the offset surface, and insert it into the triangulation as a Steiner point (which destroys \f$ c_i \f$).
+
+After each of the above Steiner point insertions, all new incident cells are tagged as inside,
+and the newly alpha-traversable gates are pushed into the priority queue.
+
+If none of the above two criteria are met, the neighboring cell \f$ c_i \f$ is traversed and tagged as outside.
+Alpha-Traversable facets of \f$ c_i \f$ that are separating inside from outside cells are pushed as new gates into the priority queue.
+
+Once the queue empties---a process that is guaranteed as facets (and their circumradii) become smaller
+due to the insertion of new Steiner points---the construction phase terminates.
+The output triangle surface mesh is extracted from the Delaunay triangulation as the set of facets
+separating inside from outside cells.
+
+The figure below depicts the steps of the algorithm in 2D.
+
+\cgalFigureAnchor{4}
+<center>
+<img src="aw3_steps.jpg" style="max-width:95%;"/>
+</center>
+\cgalFigureCaptionBegin{4}
+Steps of the shrink-wrapping algorithm in 2D.
+The algorithm is initialized by inserting the corners of the loose bounding box of the input (red)
+into a Delaunay triangulation, and all finite triangles are tagged inside (grey).
+The current gate (green edge) popped out from the queue is alpha-traversable. The triangle adjacent
+to the gate is tagged outside when it does not intersect the input, and new alpha-traversable gates
+are pushed to the queue. When the adjacent triangle intersects the input, a new Steiner point (large green disc)
+is computed and inserted into the triangulation, all neighboring triangles are tagged inside,
+new alpha-traversable gates are pushed to the queue, and traversal is resumed.
+Grey edges depict the Delaunay triangulation. Blue edges depict the Voronoi diagram.
+Pink circles depict the empty circle of radius alpha. The output edges (dark blue) separate inside from outside triangles.
+\cgalFigureCaptionEnd
+
+\subsection aw3_guarantees Guarantees
+
+The algorithm is proven to terminate and to produce a 2-manifold triangulated surface mesh
+that strictly encloses the input data.
+The key element to the proof is that we wrap from outside to inside and never allow a cell
+that intersects the input to be flagged inside.
+Furthermore, both criteria that lead to refinement of the triangulation insert Steiner points
+that are guaranteed to break the cells in need of refinement and reduce the neighbor facets circumradii.
+
+Because the main refinement criterion is the insertion of an intersection between a dual Voronoi edge
+and an offset of the input, or the projection of a Voronoi vertex onto the offset of the input,
+the algorithm has similarities to popular meshing algorithms based on Delaunay filtering
+and refinement (see \ref Chapter_3D_Mesh_Generation).
+
+\section aw3_interface Interface
+
+Our algorithm takes as input a set of triangles in 3D, provided either as a triangle soup or
+as a triangle surface mesh, and two user-defined scalar parameters: the <em>alpha</em> and the <em>offset</em> values.
+It proceeds by shrink-wrapping and refining a 3D Delaunay triangulation starting from a loose bounding box of the input.
+The parameter <em>alpha</em> refers to the size of cavities or holes that cannot be traversed during wrapping,
+and hence to the final level of detail, as alpha acts like a sizing field in a common Delaunay
+refinement algorithm (\ref Chapter_3D_Mesh_Generation).
+The parameter <em>offset</em> refers to the distance between the vertices of the refined triangulation
+and the input, so that a large offset translates into a loose enclosing of the input.
+This second parameter offers a means to control the trade-off between tightness and complexity.
+
+The main entry point of the component is the global function `CGAL::alpha_wrap_3()` that generates the alpha wrap;
+this function takes as input a polygon soup or a polygon mesh.
+There is no prerequisite on the input connectivity so that it can take an arbitrary triangle soup,
+with islands, self-intersections, or overlaps, as well as combinatorial or geometrical degeneracies.
+
+The underlying traits class must be a model of the `Kernel` concept. It should use
+a floating point number type as inexactness is inherent to the algorithm since there is no closed
+form description of new vertices on the offset surface.
+
+The output is a triangle surface mesh whose type is chosen by the user, under the constraint
+that it must be a model of the `MutableFaceGraph` concept.
+
+\section aw3_parameters Choosing Parameters
+
+The two parameters of the algorithm impact both the level of detail and complexity of the output mesh.
+
+\subsection aw3_alpha Alpha
+
+The main parameter, alpha, controls whether a Delaunay facet is traversable during shrink-wrapping.
+Alpha's main purpose is to control the size
+of the empty balls used during wrapping, and thus to determine which features will appear in the output:
+indeed, a facet is alpha-traversable if its circumradius is larger than alpha; hence, the algorithm
+can only shrink-wrap through straits or holes with diameters larger than alpha.
+A second, less direct consequence is that as long as a facet has a circumradius larger than alpha,
+the incident inside cell will be visited and possibly refined.
+Therefore, when the algorithm terminates, all facets have a circumradius smaller than alpha.
+This parameter thus also behaves like a sizing criterion on the triangle facets of the output.
+
+\cgalFigureAnchor{5}
+<center>
+<img src="aw3_church_lod.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{5}
+Impact of the alpha parameter on the output.
+(Left) The input triangle mesh, generated by surface reconstruction from a raw point cloud,
+has many non-manifold edges and vertices, superfluous geometric details and spurious topological structures.
+(Right) This component approximates the input conservatively and produces valid meshes with different
+complexity and fidelity to the input, depending on the alpha parameter.
+The smaller the alpha, the deeper the shrink-wrapping process will enter cavities.
+The alpha parameter is decreasing from left to right, to respectively 1/50, 1/100 and 1/300 of the longest diagonal of the input bounding box.
+A large alpha will produce an output less complex but less faithful to the input.
+\cgalFigureCaptionEnd
+
+\subsection aw3_offset Offset
+
+The second parameter, the offset distance, controls the distance from the input and thus the definition
+of the offset isosurface onto which the vertices of the output mesh are located.
+This parameter controls the tightness of the result, which has, in turn, a few consequences.
+Firstly, locating vertices away from the input enables the algorithm to generate
+a less complex mesh, especially in convex areas. A trivial example of this behavior would be a very dense mesh
+of a sphere, for which an as-tight-as-possible envelope would also be very dense.
+Secondly, the farther the isosurface is from the input, the more new points are inserted
+through the first criterion (i.e., through intersection with dual Voronoi edge, see Section \ref aw3_algorithm);
+thus, the quality of the output improves in terms of angles of the triangle elements.
+Finally, and depending on the value of the alpha parameter, a large offset can also offer defeaturing capabilities.
+However using a small offset parameter will tend to better preserve sharp features as projection
+Steiner points tend to project onto convex sharp features.
+
+\cgalFigureAnchor{6}
+<center>
+<img src="aw3_sharp_feature.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{6}
+Impact of the offset parameter on the output.
+(Left) Input mesh generated by meshing a NURBS CAD model in parameter space.
+(Right) The smaller the offset, the closest sample points are to the input.
+The offset parameter is decreasing from left to right, to respectively 1/50, 1/200 and 1/1000 of the longest diagonal of the input bounding box.
+The alpha parameter is equal to 1/50 of the longest diagonal of the input bounding box for all level of details.
+A larger offset will produce an output less complex with better triangle quality.
+However the sharp features (red edges) are well preserved when the offset parameter is small.
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{7}
+<center>
+<img src="aw3_steiner.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{7}
+Steiner points.
+The projection Steiner points (green) are computed by projecting the triangle circumcenter onto the offset.
+The intersection Steiner points (blue) are computed as the first intersection point between the Voronoi edge and the offset.
+(Left) When the offset parameter is small, the algorithm produces more projection Steiner points,
+which tends to improve the preservation of convex sharp features.
+(Right) When the offset parameter is large, the algorithm produces more intersection Steiner points,
+which tends to generate triangles with better quality in terms of angles, in 3D.
+\cgalFigureCaptionEnd
+
+By default, we recommend to set the offset parameter to a small fraction of alpha, so that alpha
+becomes the main parameter that controls the final level of detail.
+
+The image below illustrates the impact of both parameters.
+
+\cgalFigureAnchor{8}
+<center>
+<img src="aw3_alpha_offset_bike.jpg" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{8}
+Different alpha and offset values on the bike model (533,000 triangles).
+The x-axis represents the offset value equal to 1/5000, 1/2000, 1/500, 1/200, 1/50, 1/20 and 1/5 of the longest diagonal of the input bounding box, from left to right.
+The y-axis represents the alpha value equal to 1/300, 1/100, 1/50, 1/20 and 1/5 of the longest diagonal of the input bounding box, from bottom to top.
+The numbers below each level of detail represents their number of triangles.
+Depending on the alpha value, an offset too small or too large will produce output mesh with higher complexity.
+For each alpha, the models with lower complexity can be used as a scale-space representations for collision detection, from near to far distances.
+\cgalFigureCaptionEnd
+
+\subsection aw3_two_side A Note on "Two-Sided" Wraps
+
+The offset parameter is crucial to our approach because it guarantees that the output is a closed,
+2-manifold surface mesh.
+Indeed, and even when the input is a zero-volume structure such as a single 3D triangle,
+the output wrap is a thin volume enclosing the said triangle \cgalFigureRef{2}.
+
+Users should keep in mind that the wrapping algorithm has no means of determining whether it is acting on the inside or the outside
+of the unsigned distance field, and will thus produce two-sided wraps in the case of holes in the input
+and values of alpha smaller than the size of the holes.
+
+\cgalFigureAnchor{9}
+<center>
+<img src="aw3_double_sided.jpg" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{9}
+Two-sided wrap.
+(Left) Wrapping a Bunny in 2D, with decreasing values for alpha.
+(Right) Wrapping a defect-laden Bunny in 3D. The rightmost column depicts a clipped visualization
+of the inside. When alpha is small enough with respect the diameter of the holes, the algorithm generates a two-sided wrap.
+\cgalFigureCaptionEnd
+
+\section aw3_performance Performance
+
+The charts below plots the computation times of the wrapping algorithm on the Thingi10k dataset, as well as the complexity of the output triangle mesh.
+
+\cgalFigureAnchor{10}
+<center>
+<img src="aw3_thingi10k_benchmark.jpg" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{9}
+Execution times and output complexity for different values of alpha on the Thingi10k data set.
+Alpha increases from 1/20 to 1/200 of the length of bounding box diagonal.
+The x axis represents the complexity of the output wrap mesh in number of triangle facets.
+The y axis represents the total computation time, in seconds.
+The color and diameter of the dots represent the number of faces in the input triangle soup,
+ranging from 10 (green) to 3154000 (blue).
+\cgalFigureCaptionEnd
+
+\section aw3_examples Examples
+
+Here is an example with an input triangle mesh, with alpha set to 1/20 of the bounding box longest diagonal edge length,
+and offset set to 1/30 of alpha (i.e., 1/600 of the bounding box diagonal edge length).
+
+\cgalExample{Alpha_wrap_3/triangle_mesh_wrap.cpp}
+
+Some triangle soups might not be representable as a mesh due to non-manifoldness or incompatible orientations.
+Such triangle soup is nevertheless a valid input for the wrapping algorithm, as illustrated
+in the following example.
+
+\cgalExample{Alpha_wrap_3/triangle_soup_wrap.cpp}
+
+Here is an example with a point cloud.
+
+\cgalExample{Alpha_wrap_3/point_set_wrap.cpp}
+
+*/
+
+}

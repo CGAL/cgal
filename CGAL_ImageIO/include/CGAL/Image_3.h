@@ -21,7 +21,6 @@
 
 #include <memory>
 #include <boost/format.hpp>
-#include <boost/unordered_set.hpp>
 #include <CGAL/ImageIO.h>
 #include <CGAL/function_objects.h>
 
@@ -88,7 +87,7 @@ public:
 protected:
   Image_shared_ptr image_ptr;
 
-   // implementation in src/CGAL_ImageIO/Image_3.cpp
+   // implementation in Image_3_impl.h
   bool private_read(_image* im, Own own_the_data = OWN_THE_DATA);
 
 public:

@@ -23,12 +23,12 @@
 #endif
 
 #include <boost/range/value_type.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 #if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
 
@@ -504,7 +504,7 @@ bool write_3MF(const std::string& fname,
 
 template<typename PointRange, typename TriangleRange>
 bool write_3MF(const std::string& fname, const PointRange& points, const TriangleRange& triangles,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
+               std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr)
 {
   return write_triangle_soup_to_3mf(fname, points, triangles, "anonymous");
 }

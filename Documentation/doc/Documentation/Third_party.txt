@@ -11,12 +11,12 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 11.1.0 |
-| \ms Windows      | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                  | \ms Visual `C++` 14.0, 15.9, 16.10 (\visualstudio 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
-| MacOS X          | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                  | Apple `Clang` compiler versions 10.0.1 and 12.0.0 |
+| Linux            | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 13.0.1 |
+| \ms Windows      | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | \ms Visual `C++` 14.0, 15.9, 16.10, 17.0 (\visualstudio 2015, 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
+| MacOS X          | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 13.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
@@ -117,7 +117,7 @@ The exhaustive list of \qt5 components used in demos is:
 `qcollectiongenerator` (with `sqlite` driver plugin), and `Xml`.
 
 \subsection thirdpartyEigen Eigen
-<b>Version 3.1 or later</b>
+<b>Version 3.3.4 or later</b>
 
 \eigen is a `C++` template library for linear algebra. \eigen supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
@@ -131,11 +131,11 @@ Overview</a> page. In order to use Eigen in \cgal programs, the
 executables should be linked with the CMake imported target
 `CGAL::Eigen3_support` provided in `CGAL_Eigen3_support.cmake`.
 
-The \eigen web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
+The \eigen web site is <A HREF="https://eigen.tuxfamily.org/index.php?title=Main_Page">`https://eigen.tuxfamily.org`</A>.
 
 \subsection thirdpartyOpenGR OpenGR
 
-\opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 licence.
+\opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 license.
 
 \cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3Ref
 packages. In order to use \opengr in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OpenGR_support` provided in `CGAL_OpenGR_support.cmake`.
@@ -180,7 +180,7 @@ In the setting of \cgal, this library is
 optional: it is used by some models of the
 \ref PkgAlgebraicKernelD "Algebraic Kernel".
 
-\mpfi can be downloaded from <A HREF="https://mpfi.gforge.inria.fr/">`https://mpfi.gforge.inria.fr/`</A>.
+\mpfi can be downloaded from <A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
 \subsection thirdpartyRS3 RS and RS3
 
@@ -194,7 +194,7 @@ from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actual
 successor of \rs, which is used in conjunction with it.
 
 The libraries \rs and \rs3 need \mpfi, which can be downloaded from
-<A HREF="https://mpfi.gforge.inria.fr/">`https://mpfi.gforge.inria.fr/`</A>.
+<A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
 \subsection thirdpartyNTL NTL
 <b>Version 5.1 or later</b>
@@ -213,7 +213,7 @@ the handling of \pdb data.
 
 In \cgal, the \esbtl is used in an example of the \ref PkgSkinSurface3 package.
 
-It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.sourceforge.net/`</A>.
+It can be downloaded from <A HREF="https://esbtl.sourceforge.net/">`https://esbtl.sourceforge.net/`</A>.
 
 \subsection thirdpartyTBB Intel TBB
 
@@ -291,7 +291,7 @@ for more information.
 
 \attention \ceres indicates that `glog` is a recommended dependency. `glog` has `libunwind` as a recommended dependency.
 On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
-If you experience such an issue, we recommand to compile \ceres without `glog` support.
+If you experience such an issue, we recommend to compile \ceres without `glog` support.
 
 \subsection thirdpartyGLPK GLPK
 
@@ -309,7 +309,7 @@ The \glpk web site is <A HREF="https://www.gnu.org/software/glpk/">`https://www.
 In \cgal, \scip provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
 In order to use \scip in \cgal programs, the executables should be linked with the CMake imported target `CGAL::SCIP_support` provided in `CGAL_SCIP_support.cmake`.
 
-The \scip web site is <A HREF="http://scip.zib.de/">`http://scip.zib.de/`</A>.
+The \scip web site is <A HREF="https://www.scipopt.org/">`https://www.scipopt.org/`</A>.
 
 \subsection thirdpartyOSQP OSQP
 

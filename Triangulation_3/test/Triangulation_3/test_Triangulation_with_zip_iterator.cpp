@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>    Vb;
@@ -36,7 +37,7 @@ int main()
   Triangulation T(boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin() )),
                   boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end() ) )  );
 
-  CGAL_assertion( T.number_of_vertices() == 6 );
+  assert( T.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
   Triangulation::Finite_vertices_iterator vit;

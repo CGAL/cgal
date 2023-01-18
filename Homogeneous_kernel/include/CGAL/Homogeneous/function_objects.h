@@ -30,7 +30,7 @@ namespace HomogeneousKernelFunctors {
 
   using namespace CommonKernelFunctors;
 
-  // For lazyness...
+  // For laziness...
   using CartesianKernelFunctors::Are_parallel_2;
   using CartesianKernelFunctors::Are_parallel_3;
   using CartesianKernelFunctors::Compute_squared_area_3;
@@ -4090,7 +4090,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Segment_3& s, const Point_3& p) const
-    { return s.has_on(p); }
+    { return s.rep().has_on(p); }
 
     result_type
     operator()( const Plane_3& pl, const Point_3& p) const

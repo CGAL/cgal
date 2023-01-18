@@ -64,7 +64,7 @@ struct r3t3_do_intersect_endpoint_position_visitor
   void end_point_in_triangle(){ m_intersection_type = 4; }
 };
 
-//the template parameter Visitor here is used to offer the posibility to use
+//the template parameter Visitor here is used to offer the possibility to use
 //r3t3_do_intersect_endpoint_position_visitor to track whether the endpoint of
 //the ray lies inside the plane of the triangle or not. It is used for example
 //in the function that checks whether a point is inside a polyhedron; if the ray
@@ -328,18 +328,20 @@ do_intersect(const typename K::Triangle_3& t,
 }
 
 template <class K>
-bool do_intersect(const typename K::Triangle_3& t,
-                 const typename K::Ray_3& r,
-                 const K& k)
+typename K::Boolean
+do_intersect(const typename K::Triangle_3& t,
+             const typename K::Ray_3& r,
+             const K& k)
 {
   return do_intersect(t, r, k, r3t3_do_intersect_empty_visitor());
 }
 
 template <class K>
 inline
-bool do_intersect(const typename K::Ray_3& r,
-                  const typename K::Triangle_3& t,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Ray_3& r,
+             const typename K::Triangle_3& t,
+             const K& k)
 {
   return do_intersect(t, r, k);
 }

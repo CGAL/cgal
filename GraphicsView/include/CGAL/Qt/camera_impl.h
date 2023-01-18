@@ -160,10 +160,11 @@ frustrum coherence.
 If your Camera is used without a CGAL::QGLViewer (offscreen rendering, shadow maps),
 use setAspectRatio() instead to define the projection matrix. */
 CGAL_INLINE_FUNCTION
-void Camera::setScreenWidthAndHeight(int width, int height) {
+void Camera::setScreenWidthAndHeight(int width, int height, qreal devicePixelRatio) {
   // Prevent negative and zero dimensions that would cause divisions by zero.
   screenWidth_ = width > 0 ? width : 1;
   screenHeight_ = height > 0 ? height : 1;
+  devicePixelRatio_ = devicePixelRatio;
   projectionMatrixIsUpToDate_ = false;
 }
 
@@ -884,8 +885,7 @@ Vec Camera::pointUnderPixel(const QPoint &pixel, bool &found) const {
   // Qt uses upper corner for its origin while GL uses the lower corner.
   if(auto p = dynamic_cast<QOpenGLFunctions*>(parent()))
   {
-    p->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
-                    GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    depth = read_depth_under_pixel(pixel, p, this);
   }
   found = depth < 1.0;
   Vec point(pixel.x(), pixel.y(), depth);
@@ -1301,7 +1301,7 @@ void Camera::setFromProjectionMatrix(const qreal matrix[12]) {
   // divide the first 3 coordinates by the 4th one.
 
   // We derive the 4 dimensional vectorial product formula from the
-  // computation of a 4x4 determinant that is developped according to
+  // computation of a 4x4 determinant that is developed according to
   // its 4th column. This implies some 3x3 determinants.
   const Vec cam_pos =
       Vec(det(matrix[ind(0, 1)], matrix[ind(0, 2)], matrix[ind(0, 3)],

@@ -19,6 +19,10 @@
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 
+#include <array>
+#include <iterator>
+#include <vector>
+
 namespace CGAL {
 namespace Euler {
 
@@ -191,6 +195,11 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
           typename boost::graph_traits<Graph>::vertex_descriptor v3,
           Graph& g)
 {
+  CGAL_precondition(is_valid_vertex_descriptor(v0, g) &&
+                    is_valid_vertex_descriptor(v1, g) &&
+                    is_valid_vertex_descriptor(v2, g) &&
+                    is_valid_vertex_descriptor(v3, g));
+
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
   halfedge_descriptor h0 = halfedge(add_edge(g), g);
@@ -640,8 +649,9 @@ template<class Graph, class P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_icosahedron(Graph& g,
                  const P& center = P(0,0,0),
-                 typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1.0)
+                 typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1)
 {
+  typedef typename CGAL::Kernel_traits<P>::Kernel::FT FT;
   typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   Point_property_map vpmap = get(CGAL::vertex_point, g);
@@ -652,70 +662,71 @@ make_icosahedron(Graph& g,
   for(int i=0; i<12; ++i)
     v_vertices[i] = add_vertex(g);
 
-  typename CGAL::Kernel_traits<P>::Kernel::FT t = radius * (1.0 + CGAL::approximate_sqrt(5.0)) / 2.0;
+  const FT phi = (FT(1) + CGAL::approximate_sqrt(FT(5))) / FT(2);
+  const FT t = radius / CGAL::approximate_sqrt(1 + square(phi));
+  const FT t_phi = t * phi;
 
-  put(vpmap, v_vertices[0], P(-radius + center.x(),  t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[1], P( radius + center.x(),  t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[2], P(-radius + center.x(), -t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[3], P( radius + center.x(), -t + center.y(), 0.0 + center.z()));
+  put(vpmap, v_vertices[0], P(center.x(), center.y() + t, center.z() + t_phi));
+  put(vpmap, v_vertices[1], P(center.x(), center.y() + t, center.z() - t_phi));
+  put(vpmap, v_vertices[2], P(center.x(), center.y() - t, center.z() + t_phi));
+  put(vpmap, v_vertices[3], P(center.x(), center.y() - t, center.z() - t_phi));
 
-  put(vpmap, v_vertices[4], P( 0.0 + center.x(), -radius + center.y(),  t + center.z()));
-  put(vpmap, v_vertices[5], P( 0.0 + center.x(),  radius + center.y(),  t + center.z()));
-  put(vpmap, v_vertices[6], P( 0.0 + center.x(), -radius + center.y(), -t + center.z()));
-  put(vpmap, v_vertices[7], P( 0.0 + center.x(),  radius + center.y(), -t + center.z()));
+  put(vpmap, v_vertices[4], P(center.x() + t,  center.y() + t_phi, center.z()));
+  put(vpmap, v_vertices[5], P(center.x() + t,  center.y() - t_phi, center.z()));
+  put(vpmap, v_vertices[6], P(center.x() - t,  center.y() + t_phi, center.z()));
+  put(vpmap, v_vertices[7], P(center.x() - t,  center.y() - t_phi, center.z()));
 
-  put(vpmap, v_vertices[8], P(  t + center.x(), 0.0 + center.y(), -radius + center.z()));
-  put(vpmap, v_vertices[9], P(  t + center.x(), 0.0 + center.y(),  radius + center.z()));
-  put(vpmap, v_vertices[10], P(-t + center.x(), 0.0 + center.y(), -radius + center.z()));
-  put(vpmap, v_vertices[11], P(-t + center.x(), 0.0 + center.y(),  radius + center.z()));
+  put(vpmap, v_vertices[8],  P(center.x() + t_phi, center.y(), center.z() + t));
+  put(vpmap, v_vertices[9],  P(center.x() + t_phi, center.y(), center.z() - t));
+  put(vpmap, v_vertices[10], P(center.x() - t_phi, center.y(), center.z() + t));
+  put(vpmap, v_vertices[11], P(center.x() - t_phi, center.y(), center.z() - t));
 
-  std::vector<vertex_descriptor> face;
-  face.resize(3);
-  face[1] = v_vertices[0]; face[0] = v_vertices[5]; face[2] = v_vertices[11];
+  std::array<vertex_descriptor, 3> face;
+  face[0] = v_vertices[0]; face[1] = v_vertices[2]; face[2] = v_vertices[8];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[1]; face[2] = v_vertices[5];
+  face[0] = v_vertices[0]; face[1] = v_vertices[8]; face[2] = v_vertices[4];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[7]; face[2] = v_vertices[1];
+  face[0] = v_vertices[0]; face[1] = v_vertices[4]; face[2] = v_vertices[6];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[10]; face[2] = v_vertices[7];
+  face[0] = v_vertices[0]; face[1] = v_vertices[6]; face[2] = v_vertices[10];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[11]; face[2] = v_vertices[10];
-  Euler::add_face(face, g);
-
-  face[1] = v_vertices[1]; face[0] = v_vertices[9]; face[2] = v_vertices[5];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[5]; face[0] = v_vertices[4]; face[2] = v_vertices[11];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[11]; face[0] = v_vertices[2]; face[2] = v_vertices[10];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[10]; face[0] = v_vertices[6]; face[2] = v_vertices[7];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[7]; face[0] = v_vertices[8]; face[2] = v_vertices[1];
+  face[0] = v_vertices[0]; face[1] = v_vertices[10]; face[2] = v_vertices[2];
   Euler::add_face(face, g);
 
-  face[1] = v_vertices[3]; face[0] = v_vertices[4]; face[2] = v_vertices[9];
+  face[0] = v_vertices[1]; face[1] = v_vertices[9]; face[2] = v_vertices[3];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3]; face[0] = v_vertices[2]; face[2] = v_vertices[4];
+  face[0] = v_vertices[1]; face[1] = v_vertices[3]; face[2] = v_vertices[11];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3]; face[0] = v_vertices[6]; face[2] = v_vertices[2];
+  face[0] = v_vertices[1]; face[1] = v_vertices[11]; face[2] = v_vertices[6];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3]; face[0] = v_vertices[8]; face[2] = v_vertices[6];
+  face[0] = v_vertices[1]; face[1] = v_vertices[6]; face[2] = v_vertices[4];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3]; face[0] = v_vertices[9]; face[2] = v_vertices[8];
-  Euler::add_face(face, g);
-
-  face[1] = v_vertices[4]; face[0] = v_vertices[5]; face[2] = v_vertices[9];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[2]; face[0] = v_vertices[11]; face[2] = v_vertices[4];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[6]; face[0] = v_vertices[10]; face[2] = v_vertices[2];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[8]; face[0] = v_vertices[7]; face[2] = v_vertices[6];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[9]; face[0] = v_vertices[1]; face[2] = v_vertices[8];
+  face[0] = v_vertices[1]; face[1] = v_vertices[4]; face[2] = v_vertices[9];
   Euler::add_face(face, g);
 
-  return halfedge(v_vertices[1], v_vertices[0], g).first;
+  face[0] = v_vertices[5]; face[1] = v_vertices[8]; face[2] = v_vertices[2];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[5]; face[1] = v_vertices[2]; face[2] = v_vertices[7];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[5]; face[1] = v_vertices[7]; face[2] = v_vertices[3];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[5]; face[1] = v_vertices[3]; face[2] = v_vertices[9];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[5]; face[1] = v_vertices[9]; face[2] = v_vertices[8];
+  Euler::add_face(face, g);
+
+  face[0] = v_vertices[8]; face[1] = v_vertices[9]; face[2] = v_vertices[4];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[3]; face[1] = v_vertices[7]; face[2] = v_vertices[11];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[11]; face[1] = v_vertices[7]; face[2] = v_vertices[10];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[10]; face[1] = v_vertices[7]; face[2] = v_vertices[2];
+  Euler::add_face(face, g);
+  face[0] = v_vertices[6]; face[1] = v_vertices[11]; face[2] = v_vertices[10];
+  Euler::add_face(face, g);
+
+  return halfedge(v_vertices[5], v_vertices[0], g).first;
 }
 
 /*!

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Polygon_mesh_processing_Tests)
 
 # CGAL and its components
@@ -42,7 +42,8 @@ if(TARGET CGAL::Eigen3_support)
                         PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("test_shape_smoothing.cpp")
   target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen3_support)
-
+  create_single_source_cgal_program("delaunay_remeshing_test.cpp")
+  target_link_libraries(delaunay_remeshing_test PUBLIC CGAL::Eigen3_support)
 endif()
 
 find_package(OpenMesh QUIET)
@@ -52,6 +53,7 @@ else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
+create_single_source_cgal_program("test_pmp_triangle.cpp")
 create_single_source_cgal_program("test_hausdorff_bounded_error_distance.cpp")
 create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
 create_single_source_cgal_program("connected_component_polyhedron.cpp")
@@ -106,6 +108,8 @@ create_single_source_cgal_program("test_remove_caps_needles.cpp")
 create_single_source_cgal_program("test_simplify_polylines_pmp.cpp")
 create_single_source_cgal_program("triangulate_hole_with_cdt_2_test.cpp")
 create_single_source_cgal_program("test_pmp_polyhedral_envelope.cpp")
+create_single_source_cgal_program("test_pmp_np_function.cpp")
+create_single_source_cgal_program("test_degenerate_pmp_clip_split_corefine.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 find_package(METIS)

@@ -222,7 +222,7 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
 
   item->setRenderingMode(Flat);
 
-  if(item->name() == "unamed")
+  if(item->name() == "unnamed")
   {
     item->setName(tr("%1 (shortest path computation item)").arg(item->polyhedron_item()->name()));
   }

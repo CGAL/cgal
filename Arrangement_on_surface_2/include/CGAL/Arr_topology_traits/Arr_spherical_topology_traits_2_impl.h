@@ -188,6 +188,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
   auto cmp_x_op = m_geom_traits->compare_x_2_object();
   auto cmp_y_at_x_op = m_geom_traits->compare_y_at_x_2_object();
   auto cmp_x_pt_ce = m_geom_traits->compare_x_point_curve_end_2_object();
+  auto cmp_x_ce_ce = m_geom_traits->compare_x_curve_ends_2_object();
   auto is_vertical = m_geom_traits->is_vertical_2_object();
   auto is_on_y_identification = m_geom_traits->is_on_y_identification_2_object();
 
@@ -216,14 +217,14 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
      * 1. The vertical ray intersects the boundary at a halfedge. In this
      * case the x-possition of p is strictly larger than the x-possition of
      * the current-curve source, and strictly smaller than x-possition of
-     * the current-curve target, or vise versa.
+     * the current-curve target, or vice versa.
      * 2. The vertical ray intersects the boundary at a vertex. In this case:
      * a. the x-possition of p is strictly smaller than the x-position of the
      * current-curve source, and equal to the x-position of the current-curve
      * target, and
      * b. the x-possition of p is equal to the x-position of the next-curve
      * source (not counting vertical curves in between), and strictly larger
-     * than the x-possition of the next-curve target, or vise verase (that is,
+     * than the x-possition of the next-curve target, or vice verase (that is,
      * the "smaller" and "larger" interchanged).
      */
 
@@ -251,7 +252,6 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
     Arr_parameter_space ps_y_target;
 
     do {
-
       /* Compare p to the target vertex of the current halfedge. If the
        * vertex v is on the boundary of the component, p is not in the interior
        * the face.
@@ -265,14 +265,15 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
          * the north pole, increase the intersection counter
          */
         if (curr->direction() == ARR_LEFT_TO_RIGHT) {
-          auto ps_y_1 = ps_y_op(curr->curve(), ARR_MAX_END);
-          auto ps_y_2 = ps_y_op(curr->next()->curve(), ARR_MAX_END);
+          const auto& cv1 = curr->curve();
+          const auto& cv2 = curr->next()->curve();
+          auto ps_y_1 = ps_y_op(cv1, ARR_MAX_END);
+          auto ps_y_2 = ps_y_op(cv2, ARR_MAX_END);
           if ((ps_y_1 == ARR_TOP_BOUNDARY) && (ps_y_2 == ARR_TOP_BOUNDARY)) {
             // Compare the x-coordinates:
-            const auto& cv1 = curr->curve();
-            const auto& cv2 = curr->next()->curve();
             Comparison_result rc1, rc2;
             if (is_on_y_identification(cv1)) {
+              if (is_on_y_identification(p)) return false;
               // -----------
               // |     |  |<---- cv1 go
               // |     |  ||
@@ -285,6 +286,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
               rc2 = cmp_x_pt_ce(p, cv2, ARR_MAX_END);
             }
             else if (is_on_y_identification(cv2)) {
+              if (is_on_y_identification(p)) return false;
               //       -----------
               // cv2--->|  |     |
               //       ||  |     |
@@ -296,7 +298,14 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
               rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
               rc2 = LARGER;
             }
+            else if (is_on_y_identification(p)) {
+              // If the max end of cv1 is smaller than the max end of cv2,
+              // the identification x-coordinate is in the x-range.
+              rc1 = cmp_x_ce_ce(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
+              rc2 = LARGER;
+            }
             else {
+              // None of p, cv1, or cv2 lie on the identification curve.
               rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
               rc2 = cmp_x_pt_ce(p, cv2, ARR_MAX_END);
             }
@@ -893,7 +902,7 @@ _locate_around_pole(Vertex* v,
     next = curr->next()->opposite();
   } while (curr != first);
 
-  // We sould never reach here:
+  // We should never reach here:
   CGAL_error();
   return nullptr;
 }

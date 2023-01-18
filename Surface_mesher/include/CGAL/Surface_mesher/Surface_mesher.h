@@ -39,6 +39,8 @@
 #include <CGAL/Surface_mesher/Profile_counter.h>
 #include <CGAL/Surface_mesher/Profile_timer.h>
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
   namespace Surface_mesher {
@@ -298,6 +300,7 @@ namespace CGAL {
 
           for(bool exit = false; ; exit = true)
           {
+            CGAL_USE(exit);
             // this for loop is a trick to pass in the following "if" once
             // with center="surface center", and once with
             // center="circumcenter"
@@ -384,7 +387,7 @@ namespace CGAL {
           error_msg <<
             boost::format("Surface_mesher ERROR: "
                           "A facet is not in conflict with its refinement point!\n"
-                          "Debugging informations:\n"
+                          "Debugging information:\n"
                           "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
                           "  Dual: (%3%, %4%)\n"
                           "  Refinement point: %5%\n")

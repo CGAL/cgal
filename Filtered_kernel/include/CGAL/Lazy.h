@@ -27,7 +27,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/tss.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 
 #include <boost/optional.hpp>
@@ -88,7 +88,7 @@ exact(const Lazy<AT,ET,E2A>& l)
 
 template <typename AT, typename ET, typename E2A>
 inline
-unsigned
+int
 depth(const Lazy<AT,ET,E2A>& l)
 {
   return l.depth();
@@ -98,7 +98,7 @@ depth(const Lazy<AT,ET,E2A>& l)
 #define CGAL_LAZY_FORWARD(T) \
   inline const T & approx(const T& d) { return d; } \
   inline const T & exact (const T& d) { return d; } \
-  inline unsigned  depth (const T&  ) { return 0; }
+  inline int       depth (const T&  ) { return 0; }
 
 CGAL_LAZY_FORWARD(Bbox_2)
 CGAL_LAZY_FORWARD(Bbox_3)
@@ -106,12 +106,12 @@ CGAL_LAZY_FORWARD(Bbox_3)
 
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> approx(T d){return d;}
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> exact (T d){return d;}
-template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, unsigned> depth(T){return 0;}
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, int> depth(T){return -1;}
 
 // For tag classes: Return_base_tag, Homogeneous_tag, Null_vector, Origin
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> exact(T){return {};}
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> approx(T){return {};}
-template<class T>inline std::enable_if_t<std::is_empty<T>::value, unsigned> depth(T){return 0;}
+template<class T>inline std::enable_if_t<std::is_empty<T>::value, int> depth(T){return -1;}
 
 // For an iterator, exact/approx applies to the objects it points to
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
@@ -119,7 +119,7 @@ auto exact(T const& t) {return make_transforming_iterator(t,[](auto const&u)->de
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
 auto approx(T const& t) {return make_transforming_iterator(t,[](auto const&u)->decltype(auto){return CGAL::approx(u);});}
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
-unsigned depth(T const&) {return 1;} // FIXME: depth(*t) would be better when t is valid, but not for end iterators, and the true answer would iterate on the range, but we can't do that with only one iterator... We need to replace iterators with ranges to solve that.
+int depth(T const&) {return 1;} // FIXME: depth(*t) would be better when t is valid, but not for end iterators, and the true answer would iterate on the range, but we can't do that with only one iterator... We need to replace iterators with ranges to solve that.
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
 template <class T>
@@ -208,18 +208,22 @@ print_dag(const Return_base_tag&, std::ostream& os, int level)
 
 struct Depth_base {
 #ifdef CGAL_PROFILE
-  unsigned depth_;
-  Depth_base() { set_depth(0); }
-  unsigned depth() const { return depth_; }
-  void set_depth(unsigned i)
+  int depth_;
+
+  Depth_base()
+    : depth_(0)
+  {}
+
+  int depth() const { return depth_; }
+  void set_depth(int i)
   {
     depth_ = i;
     CGAL_HISTOGRAM_PROFILER(std::string("[Lazy_kernel DAG depths]"), i);
                             //(unsigned) ::log2(double(i)));
   }
 #else
-  unsigned depth() const { return 0; }
-  void set_depth(unsigned) {}
+  int depth() const { return 0; }
+  void set_depth(int) {}
 #endif
 };
 
@@ -524,9 +528,7 @@ public:
   mutable std::atomic<ET*> ptr_ { nullptr };
   mutable std::once_flag once;
 
-  Lazy_rep () {}
-
-  Lazy_rep (AT a)
+  Lazy_rep (AT a = AT())
       : x(-a.inf()), y(a.sup()) {}
 
   template<class E>
@@ -535,7 +537,13 @@ public:
 
   AT approx() const
   {
-    return AT(-x.load(std::memory_order_relaxed), y.load(std::memory_order_relaxed));
+    // Do not check that the interval is valid. Indeed, using IO/WKT/traits_point.h for instance,
+    // one can default-construct a point, then set X, and then Y, which amounts to
+    // Point_2(Point_2(X, Point_2().y()).x(), Y).
+    // With Epeck, we have a default constructed array of Interval_nt in Point_2(),
+    // then .y() returns a Lazy_exact_nt containing an invalid interval,
+    // and when we read that interval we end up here.
+    return AT(-x.load(std::memory_order_relaxed), y.load(std::memory_order_relaxed), typename AT::no_check_t());
   }
 
   void set_at(ET*, AT a) const {
@@ -757,21 +765,30 @@ public:
   // actually use a different class from the lazy default construction.
   template<class A, class E>
   Lazy_rep_0(A&& a, E&& e)
-    : Lazy_rep<AT,ET,E2A>(std::forward<A>(a), std::forward<E>(e)) {}
+    : Lazy_rep<AT,ET,E2A>(std::forward<A>(a), std::forward<E>(e))
+  {
+    this->set_depth(0);
+  }
 
 #if 0
   // unused. Find a less ambiguous placeholder if necessary
   Lazy_rep_0(const AT& a, void*)
-    : Lazy_rep<AT,ET,E2A>(a) {}
+    : Lazy_rep<AT,ET,E2A>(a)
+  {
+    this->set_depth(0);
+  }
 #endif
 
   // E2A()(e) and std::forward<E>(e) could be evaluated in any order, but
   // that's ok, "forward" itself does not modify e, it may only mark it as
-  // modifyable by the outer call, which is obviously sequenced after the inner
+  // modifiable by the outer call, which is obviously sequenced after the inner
   // call E2A()(e).
   template<class E>
   Lazy_rep_0(E&& e)
-    : Lazy_rep<AT,ET,E2A>(E2A()(e), std::forward<E>(e)) {}
+    : Lazy_rep<AT,ET,E2A>(E2A()(e), std::forward<E>(e))
+  {
+    this->set_depth(0);
+  }
 
   void
   print_dag(std::ostream& os, int level) const
@@ -799,7 +816,7 @@ struct Approx_converter
   template < typename T >
   decltype(auto)
   operator()(const T&t) const
-  { return t.approx(); }
+  { return approx(t); }
 
   const Null_vector&
   operator()(const Null_vector& n) const
@@ -824,7 +841,7 @@ struct Exact_converter
   template < typename T >
   decltype(auto)
   operator()(const T&t) const
-  { return t.exact(); }
+  { return exact(t); }
 
   const Null_vector&
   operator()(const Null_vector& n) const
@@ -976,6 +993,7 @@ public:
   Lazy_rep_2_1(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
     : Lazy_rep<AT,ET,E2A>(), l1_(l1), l2_(l2)
   {
+    this->set_depth((std::max)(CGAL::depth(l1), CGAL::depth(l2)));
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at_orig.at_);
   }
 
@@ -1029,6 +1047,7 @@ public:
   Lazy_rep_2_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
     : Lazy_rep<AT,ET,E2A>(), l1_(l1), l2_(l2)
   {
+    this->set_depth((std::max)(CGAL::depth(l1), CGAL::depth(l2)));
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at_orig.at_.first, this->at_orig.at_.second);
   }
 

@@ -20,7 +20,6 @@
 
 #include <CGAL/Bbox_3.h>
 #include <cassert>
-#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -33,7 +32,7 @@ _test_cls_sphere_3(const R& )
  typename R::Sphere_3  ic;
  CGAL::Sphere_3<R> c0;
 
- const bool nonexact = boost::is_same<FT, double>::value;
+ const bool nonexact = std::is_same<FT, double>::value;
  RT n0 =  0;
  RT n1 = 16;
  RT n2 = -4;

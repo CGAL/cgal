@@ -28,7 +28,7 @@ A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`
 It must be created in the corresponding folder named after its package, and containing all the files created for the plugin, and a CMakeLists.txt file.
 Its name must be of the form Xxxx_yyyy_plugin. \n
 
-  [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *, Messages_interface*)
+  [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow*,CGAL::Three::Scene_interface*,Messages_interface*)
   [applicable()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#applicable()
   [actions()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#actions()
   The class must contain the following lines :\n
@@ -115,7 +115,7 @@ It is really simple to add a pop-up box with Qt. Use a QMessageBox and give it s
 \subsection examplePluginDockWidget Adding a Dock Widget
 
 This section describes how to add a dock widget to the application.\n
-You can make your plugin inherit from CGAL::Three::Polyhedron_demo_plugin_helper, which gives acces to the function CGAL::Three::Polyhedron_demo_plugin_helper#addDockWidget.
+You can make your plugin inherit from CGAL::Three::Polyhedron_demo_plugin_helper, which gives access to the function CGAL::Three::Polyhedron_demo_plugin_helper#addDockWidget.
 This will manage automatically the position and tabification of a dock widget. \n
 Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget in Widgets
 *  \image html menu_6.png
@@ -221,14 +221,14 @@ One way to store the data you computed is to use member std::vector. It must be 
 The application uses OpenGL VBOs to display the geometry. Those are buffers that will stream their data to the GPU. This step consists to put the data stored in the std::vector in those buffers.
 This mechanism is wrapped using a bunch of classes called Geometry_containers. There is one type for each basic type of geometry in OpenGL(triangles, lines and points). They embark a SHaderProgram
 and everything that can be bound to it (one VAO and vbos).
-In this exemple, we only need one Triangle_container, as we are only storing one kind of data. If we wanted to store normals and colors, for instance, we could provide it the same way the points are given to the Triangle_container.
+In this example, we only need one Triangle_container, as we are only storing one kind of data. If we wanted to store normals and colors, for instance, we could provide it the same way the points are given to the Triangle_container.
 If we wanted to define different king of lighting, we would need a Triangle_container for each, and if we wanted to draw the edges of the triangle, we would need an Edge_container, etc.
 
 \snippet Three_examples/Example_plugin.cpp creation
 The code above creates a Triangle_container, that holds the characteristics of the display (here a basic lighting), as a non-indexed data container. It means the vertices will be duplicated.
 
 \snippet Three_examples/Example_plugin.cpp allocateelements
-Once the Triangle_container exists, we must feed it the previously computed data. This step initializes the embeded VAO with the correct size.
+Once the Triangle_container exists, we must feed it the previously computed data. This step initializes the embedded VAO with the correct size.
 
 \snippet Three_examples/Example_plugin.cpp fillbuffers
 And here, the data previously given to the Triangle_container is actually bound. It is like a green light to the program, letting it embark the data previously prepared for it.
@@ -328,7 +328,7 @@ Configure CMake as you desire and fetch the right Qt5 packages :
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 3.1)
+    cmake_minimum_required(VERSION 3.1...3.23)
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt5)
@@ -367,7 +367,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 3.1)
+    cmake_minimum_required(VERSION 3.1...3.23)
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt5)
@@ -392,7 +392,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 
 
 \section example Examples
-All the examples are de-activated in the cmake list outside of our testsuite. To tesr them, one must add `-DRUNNING_CGAL_AUTO_TEST=ON` to the cmake call.
+All the examples are de-activated in the cmake list outside of our testsuite. To test them, one must add `-DCGAL_TEST_SUITE=ON` to the cmake call.
 \subsection example1 Creating a Basic Plugin
 \cgalExample{Three_examples/Basic_plugin.cpp}
 

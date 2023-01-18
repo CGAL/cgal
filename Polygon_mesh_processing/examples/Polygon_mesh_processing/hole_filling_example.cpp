@@ -4,8 +4,10 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <iterator>
+#include <string>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
@@ -39,10 +41,10 @@ int main(int argc, char* argv[])
       std::vector<Vertex_handle> patch_vertices;
       bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(poly,
                                                                        h,
-                                                                       std::back_inserter(patch_facets),
-                                                                       std::back_inserter(patch_vertices),
-                                                                       PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly))
-                                                                                       .geom_traits(Kernel())));
+                                                                       CGAL::parameters::face_output_iterator(std::back_inserter(patch_facets))
+                                                                                        .vertex_output_iterator(std::back_inserter(patch_vertices))
+                                                                                        .vertex_point_map(get(CGAL::vertex_point, poly))
+                                                                                        .geom_traits(Kernel())));
 
       std::cout << " Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << " Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;

@@ -46,7 +46,8 @@ and smoothing algorithms.
 - \ref PMPPredicates : predicates that can be evaluated on the processed polygon.
 mesh, which includes point location and self intersection tests.
 - \ref PMPOrientation : checking or fixing the orientation of a polygon soup.
-- \ref PMPRepairing :  repair of polygon meshes and polygon soups.
+- \ref PMPCombinatorialRepair :  repair of polygon meshes and polygon soups.
+- \ref PMPGeometricRepair :  repair of the geometry of polygon meshes.
 - \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
@@ -59,7 +60,7 @@ of the graph concepts defined in the package \ref PkgBGLRef. Using common graph 
 enables having common input/output functions for all the models of these concepts.
 The page \ref PkgBGLIOFct provides an exhaustive description of the available I/O functions.
 In addition, this package offers the function `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`,
-which can perform some reparation if the input data do not represent a manifold surface.
+which can perform some repairing if the input data do not represent a manifold surface.
 
 ****************************************
 \section PMPMeshing Meshing
@@ -105,6 +106,7 @@ maximizes the minimum angle of all the angles of the triangles in the triangulat
 
 \subsubsection Remeshing
 
+\paragraph Local Isotropic Incremental Remeshing
 The incremental triangle-based isotropic remeshing algorithm introduced by Botsch et al
  \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP} is implemented in this package.
 This algorithm incrementally performs simple operations such as edge splits, edge collapses,
@@ -131,6 +133,25 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (d) Surface mesh with the selection uniformly remeshed.
 \cgalFigureEnd
 
+\paragraph Delaunay-Based Surface Remeshing
+The mesh generation algorithm implemented in the \ref PkgMesh3 package can be used to remesh a given triangulated surface mesh.
+The algorithm, based on Delaunay refinement of a restricted Delaunay triangulation,
+generates a triangle surface mesh that provably has the required properties on simplices size,
+surface approximation, shape of facets, and topology of the surface.
+A set of edges from the input mesh can be given as constraints to build and protect a
+set of polylines features, that are resampled while preserving the topology of the
+input feature graph.
+
+This solution for triangle surface remeshing is available in this package with the function
+`CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`.
+All the meshing criteria defined for `CGAL::make_mesh_3()` can be used directly
+for size of simplices, shape of facets, surface approximation, topology,
+and one-dimensional features sampling.
+
+An example of how to remesh a given triangulated surface mesh with the Delaunay refinement
+algorithm while preserving the detected sharp edges
+is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
+
 \subsubsection Smoothing
 
 Smoothing of a triangulated mesh region can be achieved with algorithms that aim at either mesh smoothing or shape smoothing.
@@ -138,7 +159,8 @@ While mesh smoothing is achieved by improving the quality of triangles based on 
 shape smoothing is designed to be \e intrinsic, depending as little as possible on the discretization
 and smoothing the shape alone without optimizing the shape of the triangles.
 
-- Mesh smoothing: `CGAL::Polygon_mesh_processing::smooth_mesh()` moves vertices to optimize geometry around each vertex:
+- Mesh smoothing by angle and area optimization:
+`CGAL::Polygon_mesh_processing::angle_and_area_smoothing()` moves vertices to optimize geometry around each vertex:
 it can try to equalize the angles between incident edges, or (and) move vertices so that areas of adjacent triangles tend to equalize.
 Border vertices are considered constrained and do not move at any step of the procedure. No vertices are inserted at any time.
 Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}.
@@ -165,8 +187,15 @@ Mesh smoothing of the closed surface <i>blobby</i>, containing self-intersection
 Statistics for the various combinations of mesh smoothing.
 \cgalFigureEnd
 
+- Mesh smoothing by tangential relaxation: `CGAL::Polygon_mesh_processing::tangential_relaxation()`
+moves vertices following an area-based Laplacian smoothing scheme, performed
+at each vertex in an estimated tangent plane to the surface.
+The full algorithm is described in \cgalCite{botsch2010PMP}.
+The example \ref Polygon_mesh_processing/tangential_relaxation_example.cpp shows how this
+mesh relaxation function can be used.
+
 - Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_shape()`
-incrementally moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
+moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
 The curvature flow algorithm for shape smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al. \cgalCite{kazhdan2012can}.
 The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
 to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
@@ -184,6 +213,14 @@ A simple example can be found in \ref Polygon_mesh_processing/shape_smoothing_ex
 Shape smoothing of the devil model, using the mean curvature flow with a time step equal to 0.05 and
 constraining border vertices (located at the neck, where the mesh is open).
 \cgalFigureCaptionEnd
+
+
+\subsubsection Extrusion
+
+This package provides two functions to extrude a triangle mesh with boundaries. A first one extrudes by offsetting each vertex by a user provided vector.
+A second one is more general: It takes two users provided functors which extrude "up" and "down".  In both cases the boundaries are connected by a triangle strip.
+Note that the extrusion may generate self intersecting surfaces.
+
 
 \subsection MeshingExamples Meshing Examples
 
@@ -217,6 +254,17 @@ Since the boundary edges will be considered as constrained and protected in this
 Once this is done, remeshing is run on all the surface, with protection of constraints activated, for 3 iterations.
 
 \cgalExample{Polygon_mesh_processing/isotropic_remeshing_example.cpp}
+
+
+\subsubsection ExtrusionExample Extrusion of a Triangle Mesh
+
+The following example extrudes in both directions by projecting points along the vertex normal.
+In case the function `Bottom` was the identity this would have been a one-sided extrusion.
+
+\cgalExample{Polygon_mesh_processing/extrude.cpp}
+
+
+
 
 \section Coref_section Corefinement and Boolean Operations
 
@@ -353,7 +401,7 @@ note that a whole face of the cube (2 triangles) is exactly contained in the pla
 \subsubsection coref_ex_refine_subsec Boolean Operation and Local Remeshing
 
 This example is similar to the previous one, but here we
-substract a volume and update the first input triangulated surface mesh
+subtract a volume and update the first input triangulated surface mesh
 (in-place operation). The edges that are on the intersection of the input
 meshes are marked and the region around them is remeshed isotropically
 while preserving the intersection polyline.
@@ -437,6 +485,10 @@ class and a few others are part of the code base.
  \cgalFigureBegin{Triangulated_fork, fork.jpg}
  Holes in the fork model are filled with triangle patches.
  \cgalFigureEnd
+
+An additional parameter, named `visitor` can be used to track which phase of the algorithm is being run.
+This can allow a user to stop the algorithm if a timeout needs to be implemented. For an example, see
+\ref Polygon_mesh_processing/hole_filling_visitor_example.cpp .
 
 \subsection HFPerformance Performance
 
@@ -532,7 +584,7 @@ The latter has cylindrical and spherical patches at convex edges and vertices of
 
 Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$ we can associate  a <em>prism</em> to each triangle by intersecting two halfspaces
 parallel to the triangle, three halfspaces orthogonal to the triangle and parallel to the edges,
-and additionaly halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
+and additionally halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
 of the angle.  These halfspaces are at distance  \f$ \delta \f$ and
 such that they contain the triangle.
 
@@ -695,7 +747,7 @@ This example shows how to correctly repair and orient a soup to get a mesh from 
 
 
 ****************************************
-\section PMPRepairing Combinatorial Repairing
+\section PMPCombinatorialRepair Combinatorial Repair
 
 *******************
 \subsection PSRepairing Polygon Soup Repairing
@@ -734,6 +786,44 @@ with duplicated border edges.
 
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
+\subsection PMPManifoldness Polygon Mesh Manifoldness
+Non-manifold vertices can be detected using the function `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`.
+The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()` can be used
+to attempt to create a combinatorially manifold surface mesh by splitting any non-manifold vertex
+into as many vertices as there are manifold sheets at this geometric position.
+Note however that the mesh will still not be manifold from a geometric
+point of view, as the positions of the new vertices introduced at a non-manifold vertex are identical
+to the input non-manifold vertex.
+
+\subsubsection FixNMVerticeExample Manifoldness Repair Example
+
+In the following example, a non-manifold configuration is artificially created and
+fixed with the help of the functions described above.
+
+\cgalExample{Polygon_mesh_processing/manifoldness_repair_example.cpp}
+
+\subsection PMPDuplicateVertexBoundaryCycle Duplicated Vertices in Boundary Cycles
+
+Similarly to the problematic configuration described in the previous section, another issue that can be present
+in a polygon mesh is the occurrence of a "pinched" hole, that is the configuration where, when
+starting from a border halfedge and walking the halfedges of this border, a geometric position appears
+more than once (although, with different vertices) before reaching the initial border halfedge again. The functions
+`CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()` and
+`CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`, which merge
+vertices at identical positions, can be used to repair this configuration.
+
+\section PMPGeometricRepair Geometric Repair
+****************************************
+
+\subsection PMPRemoveCapsNeedles Removal of Almost Degenerate Triangle Faces
+Triangle faces of a mesh made up of almost collinear points are badly shaped elements that
+might not be desirable to have in a mesh. The function
+`CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` enables removing such elements,
+with user-defined parameters to qualify what <i>almost</i> means (`cap_threshold` and `needle_threshold`).
+As some badly shaped elements are inevitable (the triangulation of a long cylinder
+with only vertices on the top and bottom circles for example), extra parameters can be passed
+to prevent the removal of such elements (`collapse_length_threshold` and `flip_triangle_height_threshold`).
+
 \if READY_TO_PUBLISH
 
 \subsection DegenerateFaces Removing Degenerate Faces
@@ -754,35 +844,6 @@ is output.
 
 \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
 \endif
-
-\subsection PMPManifoldness Polygon Mesh Manifoldness
-This package offers repairing methods to clean ill-formed polygon soups,
-see Section \ref PMPRepairing.
-
-Non-manifold vertices can be detected using the function `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`.
-The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()` can be used
-to attempt to create a combinatorially manifold surface mesh by splitting any non-manifold vertex
-into as many vertices as there are manifold sheets at this geometric position.
-Note however that the mesh will still not be manifold from a geometric
-point of view, as the positions of the new vertices introduced at a non-manifold vertex are identical
-to the input non-manifold vertex.
-
-\subsubsection FixNMVerticeExample Manifoldness Repair Example
-
-In the following example, a non-manifold configuration is artifically created and
-fixed with the help of the functions described above.
-
-\cgalExample{Polygon_mesh_processing/manifoldness_repair_example.cpp}
-
-\subsection PMPDuplicateVertexBoundaryCycle Duplicated Vertices in Boundary Cycles
-
-Similarly to the problematic configuration described in the previous section, another issue that can be present
-in a polygon mesh is the occurrence of a "pinched" hole, that is the configuration where, when
-starting from a border halfedge and walking the halfedges of this border, a geometric position appears
-more than once (although, with different vertices) before reaching the initial border halfedge again. The functions
-`CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()` and
-`CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`, which merge
-vertices at identical positions, can be used to repair this configuration.
 
 ****************************************
 \section PMPNormalComp Computing Normals
@@ -916,7 +977,7 @@ This package provides methods to compute (approximate) distances between meshes 
 
 \subsection ApproxHD Approximate Hausdorff Distance
 
-The function \link approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
+The function \link Polygon_mesh_processing::approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
 computes an approximation of the Hausdorff distance from a mesh `tm1` to a mesh `tm2`. Given a
 a sampling of `tm1`, it computes the distance to `tm2` of the farthest sample point to `tm2` \cgalCite{cignoni1998metro}.
 The symmetric version (\link CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance() `approximate_symmetric_Hausdorff_distance()`\endlink)

@@ -143,7 +143,7 @@ before_handle_event(Event* event)
  */
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
-before_handle_event_imp(Event* event, Arr_all_sides_oblivious_tag)
+before_handle_event_imp(Event* /* event */, Arr_all_sides_oblivious_tag)
 { return; }
 
 /* A notification invoked before the surface-sweep starts handling a given
@@ -163,7 +163,7 @@ before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
   if (event->is_isolated()) return;
 
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    // Process bootom contraction boundary:
+    // Process bottom contraction boundary:
     // The event has only one right curve, as there is exactly one curve
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() == 0) &&

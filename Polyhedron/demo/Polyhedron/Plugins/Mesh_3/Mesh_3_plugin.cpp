@@ -4,6 +4,7 @@
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/Three/Scene_group_item.h>
 #include "Messages_interface.h"
 
 #include <QObject>
@@ -16,6 +17,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QVariant>
 #include <fstream>
 
 #include <gsl/pointers>
@@ -63,18 +65,18 @@ class Mesh_3_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "mesh_3_plugin.json")
 
-  Q_PROPERTY(double angle READ get_angle WRITE set_angle);
+  Q_PROPERTY(double angle READ get_angle WRITE set_angle)
   Q_PROPERTY(double sharp_edges_angle_bound
              READ get_sharp_edges_angle_bound
-             WRITE set_sharp_edges_angle_bound);
-  Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing);
-  Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing);
-  Q_PROPERTY(double approx READ get_approx WRITE set_approx);
-  Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing);
-  Q_PROPERTY(double tets_shape READ get_tets_shape WRITE set_tets_shape);
-  Q_PROPERTY(bool protect_features READ get_protect_features WRITE set_protect_features);
-  Q_PROPERTY(bool protect_borders READ get_protect_borders WRITE set_protect_borders);
-  Q_PROPERTY(bool manifold_criterion READ get_manifold_criterion WRITE set_manifold_criterion);
+             WRITE set_sharp_edges_angle_bound)
+  Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing)
+  Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing)
+  Q_PROPERTY(double approx READ get_approx WRITE set_approx)
+  Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing)
+  Q_PROPERTY(double tets_shape READ get_tets_shape WRITE set_tets_shape)
+  Q_PROPERTY(bool protect_features READ get_protect_features WRITE set_protect_features)
+  Q_PROPERTY(bool protect_borders READ get_protect_borders WRITE set_protect_borders)
+  Q_PROPERTY(bool manifold_criterion READ get_manifold_criterion WRITE set_manifold_criterion)
 
   typedef CGAL::Mesh_facet_topology Mesh_facet_topology;
   Q_ENUMS(Mesh_facet_topology)
@@ -214,6 +216,7 @@ private:
     QList<gsl::not_null<Scene_surface_mesh_item*>> sm_items;
     Scene_surface_mesh_item* bounding_sm_item;
     Scene_polylines_item* polylines_item;
+    QList<std::pair<QVariant, QVariant>> incident_subdomains;
   };
   struct Image_mesh_items {
     Image_mesh_items(gsl::not_null<Scene_image_item*> ptr) : image_item(ptr) {}
@@ -328,7 +331,12 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
             image_items.polylines_item = polylines_item;
           }
         }
-      } else {
+      }
+      else if (nullptr !=
+        qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(ind))) {
+        continue;
+      }
+      else {
         return tr("Wrong selection of items");
       }
     } catch (const boost::bad_get&) { return tr("Wrong selection of items"); }
@@ -366,27 +374,6 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
     auto& image_item = image_mesh_items->image_item;
     item = image_item;
     features_protection_available = true;
-
-    bool fit_wrdtp = true;
-    std::size_t img_wdim = image_item->image()->image()->wdim;
-    WORD_KIND img_wordKind = image_item->image()->image()->wordKind;
-    // check if the word type fits the hardcoded values in the plugin
-    if (image_item->isGray()) {
-      if (img_wordKind != WK_FLOAT)
-        fit_wrdtp = false;
-      else if (img_wdim != 4)
-        fit_wrdtp = false;
-    } else {
-      if (img_wordKind != WK_FIXED)
-        fit_wrdtp = false;
-      else if (img_wdim != 1)
-        fit_wrdtp = false;
-    }
-    if (!fit_wrdtp) {
-      return tr(
-          "Selected object can't be meshed because the image's word type is "
-          "not supported by this plugin.");
-    }
   }
 #  endif
 
@@ -535,6 +522,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                              .arg(bbox.ymax() - bbox.ymin(),0,'g',3)
                              .arg(bbox.zmax() - bbox.zmin(),0,'g',3) );
 
+  const bool input_is_labeled_img = (image_item != nullptr && !image_item->isGray());
+  const bool input_is_gray_img = (image_item != nullptr && image_item->isGray());
+
   set_defaults();
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   ui.facetSizing->setRange(diag * 10e-6, // min
@@ -553,11 +543,13 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
   ui.protectEdges->setEnabled(features_protection_available);
+  if(input_is_gray_img)
+    ui.sharpFeaturesGroup->setEnabled(false);
 
   ui.facegraphCheckBox->setVisible(mesh_type == Mesh_type::SURFACE_ONLY);
-  ui.initializationGroup->setVisible(image_item != nullptr &&
-                                     !image_item->isGray());
-  ui.grayImgGroup->setVisible(image_item != nullptr && image_item->isGray());
+  ui.initializationGroup->setVisible(input_is_labeled_img);
+  ui.grayImgGroup->setVisible(input_is_gray_img);
+
   if (items->which() == POLYHEDRAL_MESH_ITEMS)
     ui.volumeGroup->setVisible(mesh_type == Mesh_type::VOLUME &&
                                nullptr != bounding_sm_item);
@@ -601,7 +593,6 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
           ui.weightsSigma_label, SLOT(setEnabled(bool)));
   ui.weightsSigma->setValue(1.);
-  bool input_is_labeled_img = (image_item != nullptr && !image_item->isGray());
   ui.labeledImgGroup->setVisible(input_is_labeled_img);
 
 #ifndef CGAL_USE_ITK
@@ -663,20 +654,44 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     const auto bounding_sm_item = poly_items.bounding_sm_item;
     const auto polylines_item = poly_items.polylines_item;
     QList<const SMesh*> polyhedrons;
-    if(mesh_type != Mesh_type::SURFACE_ONLY) {
+    QList<std::pair<int, int> > incident_sub;
+
+    bool material_ids_valid = true;
+    for (auto sm_item : sm_items)
+    {
+      if(!sm_item->property("inner material id").isValid()
+         || !sm_item->property("outer material id").isValid())
+      {
+        material_ids_valid = false;
+        break;
+      }
+      else
+      {
+        incident_sub.append(std::make_pair<int, int>(
+            sm_item->property("inner material id").toInt(),
+            sm_item->property("outer material id").toInt()));
+      }
+    }
+
+    if(mesh_type != Mesh_type::SURFACE_ONLY && !material_ids_valid)
+    {
       sm_items.removeAll(make_not_null(bounding_sm_item));
     }
-    std::transform(sm_items.begin(), sm_items.end(),
-                   std::back_inserter(polyhedrons),
-                   [](Scene_surface_mesh_item* item) {
-                     return item->polyhedron();
-                   });
+
     Scene_polylines_item::Polylines_container plc;
     SMesh* bounding_polyhedron = (bounding_sm_item == nullptr)
                                      ? nullptr
                                      : bounding_sm_item->polyhedron();
 
-    thread = cgal_code_mesh_3(
+    std::transform(sm_items.begin(), sm_items.end(),
+      std::back_inserter(polyhedrons),
+      [](Scene_surface_mesh_item* item) {
+        return item->polyhedron();
+      });
+
+    if(bounding_polyhedron != nullptr)
+    {
+      thread = cgal_code_mesh_3(
         polyhedrons,
         (polylines_item == nullptr) ? plc : polylines_item->polylines,
         bounding_polyhedron,
@@ -692,8 +707,27 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         sharp_edges_angle_bound,
         manifold,
         mesh_type == Mesh_type::SURFACE_ONLY);
+    }
+    else if(!incident_sub.empty())
+    {
+      thread = cgal_code_mesh_3(
+        polyhedrons,
+        incident_sub,
+        item_name,
+        angle,
+        facets_sizing,
+        approx,
+        tets_sizing,
+        edges_sizing,
+        tets_shape,
+        protect_features,
+        protect_borders,
+        sharp_edges_angle_bound,
+        manifold,
+        mesh_type == Mesh_type::SURFACE_ONLY);
+     }
     break;
-  }
+  }//end case POLYHEDRAL_MESH_ITEMS
   // Image
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   case IMPLICIT_MESH_ITEMS: {

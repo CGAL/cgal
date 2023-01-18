@@ -9,7 +9,7 @@
 
 typedef CGAL::Simple_cartesian<double>::Point_3 Point_3;
 
-int main(int argc, char* argv[])
+int main(int /* argc */, char* argv[])
 {
 #if 0
   std::cerr << "ASCII to binary\n";

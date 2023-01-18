@@ -129,7 +129,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     VIP vip = get(CGAL::vertex_incident_patches_t<int>(), *pMesh);
 
     first_patch+=PMP::sharp_edges_segmentation(*pMesh, angle, eif, pid,
-                                               PMP::parameters::first_index(first_patch)
+                                               CGAL::parameters::first_index(first_patch)
                                                .vertex_incident_patches_map(vip));
     //update item
     item->setItemIsMulticolor(true);

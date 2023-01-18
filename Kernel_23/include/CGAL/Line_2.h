@@ -18,11 +18,12 @@
 #define CGAL_LINE_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Kernel/mpl.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -40,7 +41,7 @@ class Line_2 : public R_::Kernel_base::Line_2
   typedef typename R_::Kernel_base::Line_2   RLine_2;
 
   typedef Line_2                             Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Line_2>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Line_2>::value));
 
 public:
 

@@ -255,7 +255,7 @@ found in other \cgal components:
 
 Point sets are often used to sample objects with a higher dimension,
 typically a curve in 2D or a surface in 3D. In such cases, finding the
-scale of the objet is crucial, that is to say finding the minimal
+scale of the object is crucial, that is to say finding the minimal
 number of points (or the minimal local range) such that the subset of
 points has the appearance of a curve in 2D or a surface in 3D
 \cgalCite{cgal:gcsa-nasr-13}.
@@ -654,13 +654,15 @@ Four simplification functions are devised to reduce an input point set.
 
 Function `random_simplify_point_set()` randomly deletes a
 user-specified fraction of points from the input point set. This
-algorithm is fast.
+algorithm is the fastest.
 
-Function `grid_simplify_point_set()` considers a regular grid
-covering the bounding box of the input point set, and clusters all
-points sharing the same cell of the grid by picking as representant
-one arbitrarily chosen point. This algorithm is slower than
-`random_simplify_point_set()`.
+Function `grid_simplify_point_set()` considers a regular grid covering
+the bounding box of the input point set, and clusters all points
+sharing the same cell of the grid by picking as representative one
+arbitrarily chosen point: representatives may only be retained in cells
+that have more than a user-defined minimum number of points in order
+to also filter out low density areas and outliers. This algorithm is
+still fast, although slower than `random_simplify_point_set()`.
 
 Function `hierarchy_simplify_point_set()` provides an adaptive
 simplification of the point set through local clusters
@@ -675,7 +677,9 @@ the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
 
 \subsection Point_set_processing_3Example_grid_simplification Grid Simplification Example
 
-The following example reads a point set and simplifies it by clustering.
+The following example reads a point set and simplifies it by
+clustering. To filter out outliers, at least 3 points must lie in a
+cell so that a point from this cell is kept.
 \cgalExample{Point_set_processing_3/grid_simplification_example.cpp}
 
 \cgalFigureBegin{Point_set_processing_3figgrid_simplification,grid_simplification.jpg}

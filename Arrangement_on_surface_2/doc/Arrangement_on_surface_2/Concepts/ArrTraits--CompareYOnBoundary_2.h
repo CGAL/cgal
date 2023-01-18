@@ -8,6 +8,7 @@ namespace ArrTraits {
  * \cgalHasModel ArrangementClosedLeftTraits_2::Compare_y_on_boundary_2
  * \cgalHasModel ArrangementClosedRightTraits_2::Compare_y_on_boundary_2
  * \cgalHasModel ArrangementIdentifiedVerticalTraits_2::Compare_y_on_boundary_2
+ * \cgalHasModel ArrangementSphericalBoundaryTraits_2::Compare_y_on_boundary_2
  */
 class CompareYOnBoundary_2 {
 public:
@@ -16,9 +17,10 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! Given two points `p1` and `p2` returns `CGAL::SMALLER`, `CGAL::EQUAL`, or
-   * `CGAL::LARGER` according to the lexicographic \f$xy\f$-order of the points
-   * `p1` and `p2`.
+  /*! Given two points `p1` and `p2`, such that either `p1` or `p2` (or both)
+   * lie on the bottom or top boundary of the parameter space, compares the \f$
+   * y\f$-coordinate of `p1` and the \f$y\f$-coordinate of `p2`. Returns
+   * `CGAL::SMALLER`, `CGAL::EQUAL`, or `CGAL::LARGER` accordingly.
    *
    * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
    * `Parameter_space_in_x_2`\endlink (`p1`) \f$\neq\f$ `CGAL::ARR_INTERIOR` or

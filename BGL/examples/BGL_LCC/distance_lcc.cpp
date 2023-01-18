@@ -3,7 +3,7 @@
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
-#include <boost/graph/breadth_first_search.hpp>
+#include <CGAL/boost/graph/breadth_first_search.h> // wrapper to suppress a warning
 
 #include <fstream>
 

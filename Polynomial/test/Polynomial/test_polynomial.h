@@ -34,7 +34,7 @@ inline
 void convert_to(const NT& x, RT& r){
     typedef CGAL::Coercion_traits<NT,RT> CT;
     typedef typename CT::Coercion_type RET;
-    CGAL_static_assertion((::boost::is_same<RET,RT>::value));
+    CGAL_static_assertion((::std::is_same<RET,RT>::value));
     r = typename CT::Cast()(x);
 }
 } //namespace CGAL
@@ -285,12 +285,20 @@ void division(CGAL::Integral_domain_tag) {
 
 template <class NT>
 void io() {
+
+    // https://github.com/CGAL/cgal/issues/6272#issuecomment-1022005703
+    // VCbug:  Setting the rounding mode influences output of double
+    // The rounding mode is set to CGAL_FE_UPWARD in the test ccp files
+    // in order to test Modular Arithmetic
+    // Without this change which is local to the function  p == q will fail
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
     typedef CGAL::Polynomial<NT> POLY;
 
     {
         // successful re-reading of output
         POLY p(NT(-3), NT(5), NT(0), NT(0), NT(-7), NT(9)), q;
         std::ostringstream os;
+        os.precision(17);
         os << p;
         std::istringstream is(os.str());
         is >> q;
@@ -437,7 +445,7 @@ void unigcdres(CGAL::Integral_domain_tag) {
     assert( v*d == (-c)*a*fh + c*b*gh );
 
     // Michael Kerber's example for the hgdelta_update() bug:
-    // These polynomials cretate a situation where h does not divide g,
+    // These polynomials create a situation where h does not divide g,
     // but h^(delta-1) divides g^delta (as predicted by subresultant theory).
     // TODO: Uncomment following code
     /*CGAL::Creator_1<int, NT> int2nt;
@@ -879,7 +887,7 @@ void test_scalar_factor_traits(){
         typedef CGAL::Scalar_factor_traits<Polynomial> SFT;
         typedef typename AT::Integer Scalar;
         typedef typename SFT::Scalar Scalar_;
-        CGAL_static_assertion((::boost::is_same<Scalar_, Scalar>::value));
+        CGAL_static_assertion((::std::is_same<Scalar_, Scalar>::value));
 
         typename SFT::Scalar_factor sfac;
 
@@ -905,7 +913,7 @@ void test_scalar_factor_traits(){
         typedef CGAL::Scalar_factor_traits<Poly_2_ext_1> SFT;
         typedef typename AT::Integer Scalar;
         typedef typename SFT::Scalar Scalar_;
-        CGAL_static_assertion((::boost::is_same<Scalar_, Scalar>::value));
+        CGAL_static_assertion((::std::is_same<Scalar_, Scalar>::value));
 
         typename SFT::Scalar_factor sfac;
 

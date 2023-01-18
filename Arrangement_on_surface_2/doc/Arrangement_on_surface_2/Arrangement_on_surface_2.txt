@@ -1739,7 +1739,7 @@ expected to either coincide with an existing vertex or lie inside a
 face.  It is possible to invoke one of the specialized insertion
 functions (see Section \ref aos_ssec-basic-arr_class), based on the
 query results, and insert \f$c\f$ at its proper
-location.\cgalFootnote{The `CGAL::insert_non_intersecting_curve<>()`
+location.\cgalFootnote{The \cgalFootnoteCode{CGAL::insert_non_intersecting_curve<>()}
 function template, as all other functions reviewed in this section, is
 parameterized by an arrangement type and a point-location type (The
 latter must be substituted with a model of the
@@ -1832,7 +1832,7 @@ consider vertical line-segments to be weakly \f$x\f$-monotone).
 
 Consider an arrangement of circles. A circle is obviously not
 \f$x\f$-monotone, so `CGAL::insert<>()` cannot be used in this
-case.\cgalFootnote{A key operation performed by `CGAL::insert<>()` is
+case.\cgalFootnote{A key operation performed by \cgalFootnoteCode{CGAL::insert<>()} is
 to locate the left endpoint of the curve in the arrangement. A circle,
 however, does not have any endpoints!} , it is necessary to subdivide
 each circle into two \f$x\f$-monotone circular arcs, namely, its upper
@@ -1937,8 +1937,8 @@ perform a point-location query on the resulting arrangement. The query
 point \f$q\f$ is drawn as a plus sign. The face that contains it is
 drawn with a shaded texture. The program calls an instance of the
 function template `print_arrangement_size()`, which prints
-quantitative measures of the arrangement; see \ref lst_paz "code
-example" for its listing in Section \ref aos_ssec-basic-arr_class.
+quantitative measures of the arrangement; see \ref lst_paz
+"code example" for its listing in Section \ref aos_ssec-basic-arr_class.
 
 \cgalExample{Arrangement_on_surface_2/incremental_insertion.cpp}
 
@@ -2213,11 +2213,9 @@ vertex and the remaining one is vertical.
 \cgalFigureBegin{aos_fig-bounded_vd,bounded_vertical_decomposition.png}
 An arrangement of four line segments and its vertical decomposition
 into pseudo trapezoids, as constructed in \ref
-Arrangement_on_surface_2/bounded_vertical_decomposition.cpp.  The
-segments of \f$\mathcal{S}_1\f$ are drawn in solid lines and the
-segments of \f$\mathcal{S}_2\f$ are drawn in dark dashed lines. Note
-that the segment \f$ s\f$ (light dashed line) overlaps one of the
-segments in \f$\mathcal{S}_1\f$.
+Arrangement_on_surface_2/bounded_vertical_decomposition.cpp. The
+segments of the arrangement are drawn in solid blue lines and the
+segments of the vertical decomposition are drawn in dark dotted lines.
 \cgalFigureEnd
 <!-- ------------------------------------------------------------------------- -->
 
@@ -3381,7 +3379,7 @@ additional type called `Multiplicity`.  An object of this type
 indicates the multiplicity of the intersection point of two curves,
 also referred to as the <em>intersection
 number</em>.\cgalFootnote{See, e.g.,
-http://en.wikipedia.org/wiki/Intersection_number for more information
+https://en.wikipedia.org/wiki/Intersection_number for more information
 about intersection numbers.} Loosely speaking, if two curves intersect
 at a point \f$p\f$ but have different tangents (first derivatives) at
 \f$p\f$, The point \f$p\f$ is of multiplicity 1. If the curve tangents
@@ -3528,6 +3526,29 @@ an \f$x\f$-monotone curve connecting \f$p_1\f$ and \f$p_2\f$.
 
 Most traits classes model the `ArrangementTraits_2` concept, and some
 also model the `ArrangementLandmarkTraits_2` concept.
+
+<!-- ------------------------------------------------------------------------- -->
+\subsubsection aos_sssec-tr_additional_concepts The Construct Curve Concept
+<!-- ------------------------------------------------------------------------- -->
+
+The concept `ArrangementConstructCurveTraits_2` refines the concept
+`ArrangementTraits_2`. A model of the
+`ArrangementConstructCurveTraits_2` concept must support the operation
+below (in addition to fulfilling the requirements listed by the
+`ArrangementTraits_2` concept).
+
+<DL>
+<DT>\link ArrangementConstructCurveTraits_2::Construct_curve_2 <B>`Construct_curve_2`</B>\endlink:
+<DD> Given two points \f$p_1\f$ and \f$p_2\f$, construct
+a curve connecting \f$p_1\f$ and \f$p_2\f$.
+</DL>
+
+The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
+polylines; see Section ~\ref arr_sssectr_polylines.
+The type that substitutes the template parameter `SubcurveTraits_2`
+when `Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be
+a geometry-traits class that models the concept `ArrangementConstructCurveTraits_2`
+to enable the construction of polylines from a sequence of two or more points.
 
 <!-- ------------------------------------------------------------------------- -->
 \subsubsection aos_ssec-traits-curved Supporting Unbounded Curves or Curved Surfaces
@@ -3799,12 +3820,14 @@ asymmetry is also reflected in the predicates listed below. They help
 determining the order of curve-ends lying on the boundary of the
 parameter space with respect to regular points and among each other.
 
-The concept `ArrangementVerticalSideTraits_2` requires the following
+The concepts `ArrangementClosedLeftTraits_2`,
+`ArrangementClosedRightTraits_2`, and
+`ArrangementIdentifiedVerticalTraits_2` require the following
 additional predicate:
 
 <DL>
 
-<DT>\link ArrangementVerticalSideTraits_2::Compare_y_on_boundary_2 <B>`Compare_y_on_boundary_2`</B>\endlink:
+<DT>\link ArrangementIdentifiedVerticalTraits_2::Compare_y_on_boundary_2 <B>`Compare_y_on_boundary_2`</B>\endlink:
 
 <DD>Given two points \f$p_1=(x_{p_1},y_{p_1})\f$ and
 \f$p_2=(x_{p_2},y_{p_2})\f$, such that at least one of them lies on a
@@ -3817,6 +3840,12 @@ max}\}\f$), then the vertical boundary side containing \f$p_1\f$
 this overloaded version is required only for the concepts
 `ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`, and
 `ArrangementIdentifiedVerticalTraits_2`.
+
+</DL>
+
+The concept `ArrangementVerticalSideTraits_2` requires the following additional predicate:
+
+<DL>
 
 <DT>\link ArrangementVerticalSideTraits_2::Compare_y_near_boundary_2 <B>`Compare_y_near_boundary_2`</B>\endlink:
 
@@ -3950,7 +3979,7 @@ boundary-side, \f$p\f$ is located far to the top in a similar manner.
 </DL>
 
 The concept `ArrangementIdentifiedVerticalTraits_2` requires the following
-predicate:
+additional predicate:
 
 <DL>
 
@@ -3970,7 +3999,7 @@ boundary.
 </DL>
 
 Similarly, the concept `ArrangementIdentifiedHorizontalTraits_2`
-requires the following predicate:
+requires the following additional predicate:
 
 <DL>
 
@@ -4113,7 +4142,7 @@ class template and the `Arr_segment_traits_2<Kernel>` class template
 are both parameterized by a geometric kernel and model the concepts
 `ArrangementTraits_2` and `ArrangementLandmarkTraits_2`.
 \cgalFootnote{They also model the refined concept
-`ArrangementDirectionalXMonotoneTraits_2`, which enables Boolean set
+\cgalFootnoteCode{ArrangementDirectionalXMonotoneTraits_2}, which enables Boolean set
 operations; see Package \ref PkgBooleanSetOperations2Ref.} The class
 template `Arr_non_caching_segment_traits_2<Kernel>` derives from the
 instance `Arr_non_caching_segment_basic_traits_2<Kernel>`, which
@@ -4208,18 +4237,19 @@ arr_sssectr_polycurves.
 <!-- ------------------------------------------------------------------------- -->
 
 The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
-polylines. It models the following three concepts:
+polylines. It models the following four concepts:
 
 - `ArrangementTraits_2`,
 
-- `ArrangementDirectionalXMonotoneTraits_2`, and
+- `ArrangementDirectionalXMonotoneTraits_2`
 
-- `ArrangementConstructXMonotoneCurveTraits_2`; see Package \ref
-PkgBooleanSetOperations2Ref.
+- `ArrangementConstructXMonotoneCurveTraits_2`, and
+
+- `ArrangementConstructCurveTraits_2`.
 
 The type that substitutes the template parameter `SubcurveTraits_2`
 when `Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be
-a geometry-traits class that models the same three concepts.  We refer
+a geometry-traits class that models the same four concepts.  We refer
 to the type that substitutes the template parameter `SubcurveTraits_2`
 as the <em>subcurve traits</em> hereafter.  If, in addition, the
 subcurve traits also models the concept
@@ -4383,7 +4413,6 @@ typedef CGAL::Arrangement_2<Traits>                        Arrangement;
 \paragraph arr_sssectr_polycurves The Polycurve Traits Class
 <!-- ------------------------------------------------------------------------- -->
 
-<!--
 The traits class `Arr_polycurve_traits_2<SubcurveTraits_2>` handles
 piecewise curves that are not necessarily linear, such as conic arcs,
 circular arcs, B&eacute;zier curves, or line segments. We call such a
@@ -4394,13 +4423,13 @@ is continuous. As a matter of fact, most characteristics of the
 `Arr_polyline_traits_2<SubcurveTraits_2>` traits class template apply
 also to the `Arr_polycurve_traits_2<SubcurveTraits_2>` traits class
 template. The only difference between the two, is that the latter is
-not a model of the concept
-`ArrangementConstructXMonotoneCurveTraits_2`, and as such, it is not
+not a model of the concepts
+`ArrangementConstructXMonotoneCurveTraits_2` nor
+`ArrangementConstructCurveTraits_2`, and as such, it is not
 able to construct a subcurve from only two points. As a consequence,
 it does not support the operations that (i) construct a polycurve from
 a sequence of points, and (ii) push a point at the back or at the
 front of a non-empty polycurve.
- -->
 
 <!-- ------------------------------------------------------------------------- -->
 \subsubsection arr_ssectr_algebraic Traits Classes for Algebraic Curves
@@ -4468,7 +4497,7 @@ subset that has a particular extension is closed under arithmetic
 operations and order relations; hence, it is a valid algebraic
 structure.\cgalFootnote{The term algebraic structure refers to the set
 closed under one or more operations satisfying some axioms; see, e.g.,
-http://en.wikipedia.org/wiki/Algebraic_structure.  For example, all
+https://en.wikipedia.org/wiki/Algebraic_structure.  For example, all
 numbers that can be expressed as \f$\alpha + \beta\sqrt{K}\f$, where
 \f$\alpha\f$ and \f$\beta\f$ are rational and \f$K\f$ is a rational
 constant, compose an algebraic structure.}  The class template
@@ -4911,9 +4940,9 @@ template parameter is defined as the `Coefficient` type. This type
 cannot be algebraic. Moreover, it is recommended that this type is not
 made rational either, since using rational (as opposed to integral)
 coefficients does not extend the range of the rational arcs and is
-typically less efficient.\cgalFootnote{The `Algebraic_kernel_d_1`
+typically less efficient.\cgalFootnote{The \cgalFootnoteCode{Algebraic_kernel_d_1}
 class template uses the types provided by the \ref PkgPolynomial
-package to define its nested `Polynomial_1` type and conveniently
+package to define its nested \cgalFootnoteCode{Polynomial_1} type and conveniently
 expose it to the user.} The `Bound` type, however, can be algebraic. A
 point of type \link Arr_rational_function_traits_2::Point_2
 `Point_2`\endlink nested in the `Arr_rational_function_traits_2` class
@@ -6212,7 +6241,7 @@ face, respectively, \f$v_b\f$, \f$e_b\f$, and \f$f_b\f$ denote input
 <span style="color:blue;">blue</span> features, and \f$v\f$, \f$e\f$,
 and \f$f\f$ denote output features.
 
-<OL compact>
+<OL>
 
 <LI> A new vertex \f$v\f$ is induced by coinciding vertices
 \f$v_r\f$ and \f$v_b\f$.</LI>
@@ -6720,7 +6749,7 @@ and defines a simple textual input/output format.
 <!-- ========================================================================= -->
 
 \boost\cgalFootnote{See also \boost's homepage at:
-<TT>www.boost.org</TT>.}  is a collection of portable \cpp libraries
+\cgalFootnoteCode{www.boost.org}.}  is a collection of portable \cpp libraries
 that extend the \cpp Standard Library. The \boost Graph Library
 (\bgl), which one of the libraries in the collection, offers an
 extensive set of generic graph algorithms parameterized through

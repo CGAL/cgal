@@ -18,12 +18,11 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_2/internal/CTP2_subconstraint_graph.h>
 #include <boost/tuple/tuple.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -31,6 +30,7 @@
 #include <CGAL/Triangulation_2/insert_constraints.h>
 #include <boost/container/flat_set.hpp>
 
+#include <type_traits>
 
 namespace CGAL {
 
@@ -232,7 +232,7 @@ public:
      , hierarchy(Vh_less_xy(this))
   {
     insert_constraints(first, last);
-    CGAL_triangulation_postcondition( this->is_valid() );
+    CGAL_postcondition( this->is_valid() );
   }
 
 
@@ -242,7 +242,7 @@ public:
      , hierarchy(Vh_less_xy(this))
   {
     insert_constraints(constraints.begin(), constraints.end());
-    CGAL_triangulation_postcondition( this->is_valid() );
+    CGAL_postcondition( this->is_valid() );
   }
   //Helping
   void clear() { Base::clear(); hierarchy.clear(); }
@@ -633,7 +633,7 @@ public:
   file_output(std::ostream& os) const
   {
     os << static_cast<const Tr&>(*this);
-    Unique_hash_map<Vertex_handle,int> V;
+    Unique_hash_map<Vertex_handle,int> V(0, number_of_vertices());
     int inum = 0;
     for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
       if(! is_infinite(vit)){
@@ -898,7 +898,7 @@ insert_subconstraint(Vertex_handle vaa,
   while(! stack.empty()){
     boost::tie(vaa,vbb) = stack.top();
     stack.pop();
-    CGAL_triangulation_precondition( vaa != vbb);
+    CGAL_precondition( vaa != vbb);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
     std::cerr << CGAL::internal::cdt_2_indent_level
               << "CT_plus_2::insert_subconstraint, stack pop=( #" << vaa->time_stamp() << "= " << vaa->point()
@@ -1055,7 +1055,7 @@ copy_triangulation(const Constrained_triangulation_plus_2 &ctp)
   Vertex_iterator vit = ctp.vertices_begin();
   Vertex_iterator vvit = this->vertices_begin();
   for( ; vit != ctp.vertices_end(); ++vit, ++vvit) {
-    CGAL_triangulation_assertion(vit->point() == vvit->point());
+    CGAL_assertion(vit->point() == vvit->point());
     vmap[vit] = vvit;
   }
   hierarchy.copy(ctp.hierarchy, vmap);
@@ -1092,7 +1092,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(boost::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
+    if(std::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
       throw typename Tr::Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
@@ -1167,12 +1167,12 @@ intersect(Face_handle f, int i,
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));
   vdd = f->vertex(ccw(i));
-  CGAL_triangulation_assertion_code( bool b1 = )
+  CGAL_assertion_code( bool b1 = )
   hierarchy.enclosing_constraint(vcc,vdd,vc,vd);
-  CGAL_triangulation_assertion_code( bool b2 = )
+  CGAL_assertion_code( bool b2 = )
   hierarchy.enclosing_constraint(vaa,vbb,va,vb);
-  CGAL_triangulation_assertion(b1);
-  CGAL_triangulation_assertion(b2);
+  CGAL_assertion(b1);
+  CGAL_assertion(b2);
 
   const Point& pa = va->point();
   const Point& pb = vb->point();
@@ -1186,11 +1186,12 @@ intersect(Face_handle f, int i,
             << " , #" << vd->time_stamp() << "= " << vd->point()
             << " , Exact_intersections_tag)\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
-  Point pi;
+  Point pi(ORIGIN); // initialize although we are sure that it will be
+                    // set by the intersection, but to quiet a warning
   Intersection_tag itag = Intersection_tag();
-  CGAL_triangulation_assertion_code( bool ok = )
+  CGAL_assertion_code( bool ok = )
   intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
-  CGAL_triangulation_assertion(ok);
+  CGAL_assertion(ok);
 
   Vertex_handle vi = insert(pi, Triangulation::EDGE, f, i);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
@@ -1207,7 +1208,7 @@ Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i,
           Vertex_handle vaa,
           Vertex_handle vbb,
-          Exact_predicates_tag)
+          Exact_predicates_tag itag)
 {
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));
@@ -1226,32 +1227,8 @@ intersect(Face_handle f, int i,
             << " , Exact_predicates_tag)\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
-  Point pi; //creator for point is required here
-  Intersection_tag itag = Intersection_tag();
-  bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
-
-  Vertex_handle vi;
-  if ( !ok) {  //intersection detected but not computed
-    int i = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
-    switch(i){
-    case 0 : vi = vaa; break;
-    case 1 : vi = vbb; break;
-    case 2 : vi = vcc; break;
-    case 3 : vi = vdd; break;
-    }
-    if(vi == vaa || vi == vbb) {
-      Triangulation::remove_constrained_edge(f, i);
-    }
-  }
-  else{ //computed
-    Triangulation::remove_constrained_edge(f, i);
-    vi = insert(pi, f);
-  }
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-  std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_plus_2::intersect, `vi` is ( #" << vi->time_stamp() << "= " << vi->point()
-            << " )\n";
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+  Vertex_handle vi = Triangulation::insert_intersection(
+      f, i, vaa, vbb, vcc, vdd, pa, pb, pc, pd, itag);
 
   // vi == vc or vi == vd may happen even if intersection==true
   // due to approximate construction of the intersection

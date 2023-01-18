@@ -139,6 +139,12 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
   return engine->undefinedValue();
 }
 
+inline
+QKeySequence combine(Qt::Modifier m, Qt::Key k)
+{
+  return QKeySequence(static_cast<int>(m)+static_cast<int>(k));
+}
+
 MainWindow::~MainWindow()
 {
   searchAction->deleteLater();
@@ -185,7 +191,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   CGAL::Three::Three::s_scene = scene;
   CGAL::Three::Three::s_connectable_scene = scene;
   {
-    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT,Qt::Key_Q), this);
+    QShortcut* shortcut = new QShortcut(combine(Qt::ALT,Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(setFocusToQuickSearch()));
     shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
@@ -194,10 +200,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
     shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(toggleFullScreen()));
-    shortcut = new QShortcut(QKeySequence(Qt::CTRL,Qt::Key_R), this);
+    shortcut = new QShortcut(combine(Qt::CTRL,Qt::Key_R), this);
     connect(shortcut, &QShortcut::activated,
             this, &MainWindow::recenterScene);
-    shortcut = new QShortcut(QKeySequence(Qt::CTRL,Qt::Key_T), this);
+    shortcut = new QShortcut(combine(Qt::CTRL,Qt::Key_T), this);
     connect(shortcut, &QShortcut::activated,
             this,
             [](){
@@ -226,6 +232,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
+
+ connect(scene, &Scene::dataChanged,
+         this, [this]() { filterOperations(false); });
+
 
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateDisplayInfo()));
@@ -1796,7 +1806,7 @@ void MainWindow::updateInfo() {
     QString item_filename = item->property("source filename").toString();
     CGAL::Bbox_3 bbox = item->bbox();
     if(bbox !=CGAL::Bbox_3())
-      item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6), dimensions (%7, %8, %9)</div>")
+      item_text += QString("<div>Bounding box:<br>&nbsp;min (%1, %2, %3),<br>&nbsp;max (%4, %5, %6),<br>&nbsp;dimensions (%7, %8, %9)</div>")
           .arg(bbox.xmin(),0, 'g', 17)
           .arg(bbox.ymin(),0, 'g', 17)
           .arg(bbox.zmin(),0, 'g', 17)
@@ -2534,7 +2544,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::recenterScene()
 {
-  //force the recomputaion of the bbox
+  //force the recomputation of the bbox
   bbox_need_update = true;
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
@@ -2611,7 +2621,7 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
   if(id.isValid())
   {
     // mapFromSource is necessary to convert the QModelIndex received
-    // from the Scene into a valid QModelIndex in the view, beacause of
+    // from the Scene into a valid QModelIndex in the view, because of
     // the proxymodel
     sceneView->scrollTo(proxyModel->mapFromSource(id));
   }

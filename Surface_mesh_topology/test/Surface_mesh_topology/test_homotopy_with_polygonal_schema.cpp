@@ -4,9 +4,10 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <cassert>
 
 typedef CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<> PS;
-typedef typename PS::Dart_handle  Dart_handle;
+typedef typename PS::Dart_descriptor  Dart_descriptor;
 
 using namespace CGAL::Surface_mesh_topology;
 
@@ -20,7 +21,7 @@ bool test_two_random_paths(const PS& ps,
                            int lmin=5,
                            int lmax=20)
 {
-  CGAL_assertion(lmin>0 && lmin<lmax);
+  assert(lmin>0 && lmin<lmax);
   CGAL::Random random(seed++);
   Path_on_surface<PS> p1(ps), p2(ps);
   internal::generate_random_closed_path

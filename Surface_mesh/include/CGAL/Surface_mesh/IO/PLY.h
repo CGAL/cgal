@@ -18,16 +18,10 @@
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/IO/PLY.h>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 namespace IO {
@@ -295,10 +289,22 @@ public:
 
     if(m_vcolors == 3)
     {
-      unsigned char r, g, b;
-      element.assign(r, "red");
-      element.assign(g, "green");
-      element.assign(b, "blue");
+      unsigned char r=0, g=0, b=0;
+      float rf=0, gf=0, bf=0;
+      if(element.has_property("red",r))
+      {
+        element.assign(r, "red");
+        element.assign(g, "green");
+        element.assign(b, "blue");
+      }else if(element.has_property("red", rf))
+      {
+        element.assign(rf, "red");
+        element.assign(gf, "green");
+        element.assign(bf, "blue");
+        r = static_cast<unsigned char>(std::floor(rf*255));
+        g = static_cast<unsigned char>(std::floor(gf*255));
+        b = static_cast<unsigned char>(std::floor(bf*255));
+      }
       m_vcolor_map[vi] = CGAL::IO::Color(r, g, b);
     }
   }
@@ -337,10 +343,22 @@ public:
 
     if(m_fcolors == 3)
     {
-      unsigned char r, g, b;
-      element.assign(r, "red");
-      element.assign(g, "green");
-      element.assign(b, "blue");
+      unsigned char r=0, g=0, b=0;
+      float rf=0, gf=0, bf=0;
+      if(element.has_property("red",r))
+      {
+        element.assign(r, "red");
+        element.assign(g, "green");
+        element.assign(b, "blue");
+      } else if(element.has_property("red", rf))
+      {
+        element.assign(rf, "red");
+        element.assign(gf, "green");
+        element.assign(bf, "blue");
+        r = static_cast<unsigned char>(std::floor(rf*255));
+        g = static_cast<unsigned char>(std::floor(gf*255));
+        b = static_cast<unsigned char>(std::floor(bf*255));
+      }
       m_fcolor_map[fi] = CGAL::IO::Color(r, g, b);
     }
   }
@@ -427,7 +445,7 @@ bool fill_simplex_specific_header(std::ostream& os,
 
   if(prop == "v:point")
   {
-    if(boost::is_same<FT, float>::value)
+    if(std::is_same<FT, float>::value)
     {
       os << "property float x" << std::endl
          << "property float y" << std::endl
@@ -450,7 +468,7 @@ bool fill_simplex_specific_header(std::ostream& os,
     boost::tie(pmap, okay) = sm.template property_map<VIndex, Vector>(prop);
     if(okay)
     {
-      if(boost::is_same<FT, float>::value)
+      if(std::is_same<FT, float>::value)
       {
         os << "property float nx" << std::endl
            << "property float ny" << std::endl
@@ -493,9 +511,9 @@ bool fill_simplex_specific_header(std::ostream& os,
                                   typename Surface_mesh<Point>::Face_index>*>& printers,
                                   const std::string& prop)
 {
-  typedef Surface_mesh<Point>                                   SMesh;
-  typedef typename SMesh::Face_index                            FIndex;
-  typedef typename SMesh::template Property_map<FIndex, Color>  Fcolor_map;
+  typedef typename Surface_mesh<Point>::Face_index                            FIndex;
+  typedef CGAL::IO::Color Color;
+  typedef typename Surface_mesh<Point>::template Property_map<FIndex, Color>  Fcolor_map;
 
   if(prop == "f:connectivity" || prop == "f:removed")
     return true;
@@ -581,9 +599,45 @@ std::string get_property_raw_name(const std::string& prop, typename Surface_mesh
   return name;
 }
 
-template <typename Point, typename Simplex>
+template <typename Point, typename Simplex, typename Simplex2, bool = std::is_same<Simplex, Simplex2>::value >
+struct add_color_map {
+  add_color_map() {}
+  void operator()(std::vector<Abstract_property_printer<Simplex>*>&,
+    typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color>&) {
+  }
+};
+
+template <typename Point, typename Simplex, typename Simplex2>
+struct add_color_map<Point, Simplex, Simplex2, true> {
+  add_color_map() {}
+
+  void operator()(std::vector<Abstract_property_printer<Simplex>*>& printers,
+    typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color>& pmap) {
+    printers.push_back(new Property_printer<Simplex, typename Surface_mesh<Point>::template Property_map<Simplex, CGAL::IO::Color>>(pmap));
+  }
+
+  void operator()(std::vector<Abstract_property_printer<Simplex>*>& printers,
+    CGAL::internal::Dynamic<Surface_mesh<Point>, typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color> >& pmap) {
+    printers.push_back(new Property_printer<Simplex, typename Surface_mesh<Point>::template Property_map<Simplex, CGAL::IO::Color>>(*pmap.map_));
+  }
+};
+
+template <typename Point, typename Simplex, typename Simplex2>
+struct add_color_map<Point, Simplex, Simplex2, false> {
+  add_color_map() {}
+  void operator()(std::vector<Abstract_property_printer<Simplex>*>&,
+    typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color>&) {
+  }
+  void operator()(std::vector<Abstract_property_printer<Simplex>*>&,
+    CGAL::internal::Dynamic<Surface_mesh<Point>, typename Surface_mesh<Point>::template Property_map<Simplex2, CGAL::IO::Color> >&) {
+  }
+};
+
+template <typename Point, typename Simplex,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
-                 std::vector<Abstract_property_printer<Simplex>*>& printers)
+                 std::vector<Abstract_property_printer<Simplex>*>& printers,
+                 const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef Surface_mesh<Point>                                             SMesh;
   typedef typename SMesh::template Property_map<Simplex, boost::int8_t>   Int8_map;
@@ -597,10 +651,57 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
   typedef typename SMesh::template Property_map<Simplex, float>           Float_map;
   typedef typename SMesh::template Property_map<Simplex, double>          Double_map;
 
+  typedef typename SMesh::Face_index                            FIndex;
+  typedef typename SMesh::Vertex_index                          VIndex;
+
+  using VCM = typename internal_np::Lookup_named_param_def<
+    internal_np::vertex_color_map_t,
+    CGAL_NP_CLASS,
+    typename Surface_mesh<Point>::template Property_map<VIndex, CGAL::IO::Color> >::type;
+
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+
+  VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
+  bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
+
+  using FCM = typename internal_np::Lookup_named_param_def<
+    internal_np::face_color_map_t,
+    CGAL_NP_CLASS,
+    typename Surface_mesh<Point>::template Property_map<FIndex, CGAL::IO::Color> >::type;
+  FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+  bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
+
   std::vector<std::string> prop = sm.template properties<Simplex>();
+
+  if (std::is_same<Simplex, FIndex>::value && has_fcolor) {
+    os << "property uchar red" << std::endl
+      << "property uchar green" << std::endl
+      << "property uchar blue" << std::endl
+      << "property uchar alpha" << std::endl;
+    add_color_map<Point, Simplex, FIndex>()(printers, fcm);
+  }
+
+  if (std::is_same<Simplex, VIndex>::value && has_vcolor)
+  {
+    os << "property uchar red" << std::endl
+      << "property uchar green" << std::endl
+      << "property uchar blue" << std::endl
+      << "property uchar alpha" << std::endl;
+
+    add_color_map<Point, Simplex, VIndex>()(printers, vcm);
+  }
 
   for(std::size_t i = 0; i < prop.size(); ++i)
   {
+    // Override internal color maps if additional ones are provided via named parameters.
+    if (has_vcolor && prop[i] == "v:color")
+      continue;
+
+    if (has_fcolor && prop[i] == "f:color")
+      continue;
+
     if(fill_simplex_specific_header(os, sm, printers, prop[i]))
       continue;
 
@@ -913,11 +1014,11 @@ namespace IO {
 ///
 /// \returns `true` if writing was successful, `false` otherwise.
 template <typename P,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const Surface_mesh<P>& sm,
                const std::string& comments,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef Surface_mesh<P> SMesh;
   typedef typename SMesh::Vertex_index VIndex;
@@ -948,19 +1049,19 @@ bool write_PLY(std::ostream& os,
   os << "element vertex " << sm.number_of_vertices() << std::endl;
 
   std::vector<internal::Abstract_property_printer<VIndex>*> vprinters;
-  internal::fill_header(os, sm, vprinters);
+  internal::fill_header(os, sm, vprinters, np);
 
   os << "element face " << sm.number_of_faces() << std::endl;
   os << "property list uchar int vertex_indices" << std::endl;
   std::vector<internal::Abstract_property_printer<FIndex>*> fprinters;
-  internal::fill_header(os, sm, fprinters);
+  internal::fill_header(os, sm, fprinters, np);
 
 
   std::vector<internal::Abstract_property_printer<EIndex>*> eprinters;
   if(sm.template properties<EIndex>().size() > 1)
   {
     std::ostringstream oss;
-    internal::fill_header(oss, sm, eprinters);
+    internal::fill_header(oss, sm, eprinters, np);
 
     if(!eprinters.empty())
     {
@@ -975,7 +1076,7 @@ bool write_PLY(std::ostream& os,
   if(sm.template properties<HIndex>().size() > 1)
   {
     std::ostringstream oss;
-    internal::fill_header(oss, sm, hprinters);
+    internal::fill_header(oss, sm, hprinters, np);
 
     if(!hprinters.empty())
     {
@@ -1112,24 +1213,11 @@ bool write_PLY(std::ostream& os,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename P>
-bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments)
-{
-  return write_PLY(os, sm, comments, parameters::all_default());
-}
-
-template <typename P, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const CGAL_BGL_NP_CLASS& np)
+template <typename P, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::string unused_comment;
   return write_PLY(os, sm, unused_comment, np);
-}
-
-template <typename P>
-bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm)
-{
-  std::string unused_comment;
-  return write_PLY(os, sm, unused_comment, parameters::all_default());
 }
 
 /// \endcond

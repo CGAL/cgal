@@ -100,12 +100,12 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 \sa `CGAL::Mesh_polyhedron_3<IGT_>`
 */
 template < class IGT_,
-           class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
+           class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
            class TriangleAccessor=CGAL::Default
            >
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
-      Polyhedral_mesh_domain_3< Polyhedron,
+      Polyhedral_mesh_domain_3< Polyhedron_,
                                 IGT_,
                                 CGAL::Default,
                                 int,   //Use_patch_id_tag
@@ -113,6 +113,7 @@ class Polyhedral_complex_mesh_domain_3
 {
 public:
   /// The base class
+  typedef Polyhedron_ Polyhedron;
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
       Polyhedron, IGT_, CGAL::Default,
@@ -123,21 +124,6 @@ private:
   typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
                                    int, Tag_true >       BaseBase;
   typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron>  Self;
-
-protected:
-  typedef typename Base::Surface_patch_index Patch_id;
-  typedef typename boost::property_map<Polyhedron,
-                                       CGAL::vertex_incident_patches_t<Patch_id>
-                                       >::type VIPMap;
-  typedef typename boost::property_traits<VIPMap>::value_type Set_of_indices;
-
-  typedef boost::adjacency_list<
-    boost::setS, // this avoids parallel edges
-    boost::vecS,
-    boost::undirectedS,
-    typename IGT::Point_3,
-    Set_of_indices> Featured_edges_copy_graph;
-
   /// @endcond
 
 public:
@@ -167,6 +153,7 @@ public:
   typedef typename Base::AABB_tree            AABB_tree;
   typedef typename Base::AABB_primitive       AABB_primitive;
   typedef typename Base::AABB_primitive_id    AABB_primitive_id;
+  typedef typename Base::Surface_patch_index  Patch_id;
   // Backward compatibility
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index                 Surface_index;
@@ -180,8 +167,23 @@ public:
   typedef std::vector<Point_3> Bare_polyline;
   typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_index,
                                         Bare_polyline > Polyline_with_context;
+
+protected:
+  typedef typename boost::property_map<Polyhedron,
+    CGAL::vertex_incident_patches_t<Patch_id>
+  >::type VIPMap;
+  typedef typename boost::property_traits<VIPMap>::value_type Set_of_indices;
+
+  typedef boost::adjacency_list<
+    boost::setS, // this avoids parallel edges
+    boost::vecS,
+    boost::undirectedS,
+    typename IGT::Point_3,
+    Set_of_indices> Featured_edges_copy_graph;
+
   /// @endcond
 
+public:
   /// Constructor
   /*! Constructs a domain defined by a set of polyhedral surfaces,
   describing a polyhedral complex.
@@ -766,10 +768,10 @@ detect_features(FT angle_in_degree,
     nb_of_patch_plus_one +=PMP::sharp_edges_segmentation(p, angle_in_degree
       , eif
       , pid_map
-      , PMP::parameters::first_index(nb_of_patch_plus_one)
-                        .face_index_map(get_initialized_face_index_map(p))
-                        .vertex_incident_patches_map(vip_map)
-                        .vertex_feature_degree_map(vertex_feature_degree_map));
+      , CGAL::parameters::first_index(nb_of_patch_plus_one)
+                         .face_index_map(get_initialized_face_index_map(p))
+                         .vertex_incident_patches_map(vip_map)
+                         .vertex_feature_degree_map(vertex_feature_degree_map));
 
     Mesh_3::internal::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 

@@ -48,12 +48,10 @@ ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits>>&
 ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits>>::
 operator<<(const X_monotone_curve_2& curve)
 {
-  int cnt = 0;
   for (typename X_monotone_curve_2::Subcurve_const_iterator it =
          curve.subcurves_begin();
        it != curve.subcurves_end(); ++it)
   {
-    cnt++;
     this->painterOstream << *it;
   }
 
@@ -188,7 +186,7 @@ ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
   QGraphicsView* view = this->scene->views().first();
   int xmin = view->mapFromScene(bb.xmin(), bb.ymin()).x();
   int xmax = view->mapFromScene(bb.xmax(), bb.ymin()).x();
-  // can be negitive due to rotation trasnformation
+  // can be negative due to rotation transformation
   size_t n = static_cast<size_t>(std::abs(xmax - xmin));
   if (n == 0) { return *this; }
 
@@ -200,7 +198,6 @@ ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
     auto p_curr = app_pts.begin();
     auto end_pts = app_pts.end();
     auto p_next = p_curr + 1;
-    int count = 0;
     do
     {
       QPointF p1(p_curr->first, p_curr->second);
@@ -208,7 +205,6 @@ ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
       this->qp->drawLine(p1, p2);
       p_curr++;
       p_next++;
-      ++count;
     } while (p_next != end_pts);
   };
 
@@ -289,7 +285,7 @@ ArrangementPainterOstream<CGAL::Arr_linear_traits_2<Kernel_>>::operator<<(
     QRectF seg_bb = this->convert(seg.bbox());
     if (
       this->clippingRect.isValid() &&
-      !this->clippingRect.intersects(seg_bb) &
+      !this->clippingRect.intersects(seg_bb) &&
         (!seg.is_horizontal() && !seg.is_vertical()))
     { return *this; }
 

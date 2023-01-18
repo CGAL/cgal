@@ -73,7 +73,7 @@ Called after all initial events have been discovered.
 void on_initialization_finished() const;
 
 /*!
-Called before the propagation stage (when events are poped off the queue and processed)
+Called before the propagation stage (when events are popped off the queue and processed)
 is started.
 */
 void on_propagation_started() const;

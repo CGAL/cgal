@@ -32,9 +32,6 @@
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/iterator.h>
-#ifdef CGAL_USE_GEOMVIEW
-#include <CGAL/IO/Geomview_stream.h>  // TBC
-#endif
 
 #include <CGAL/Alpha_shapes_3/internal/Classification_type.h>
 
@@ -119,7 +116,7 @@ class Fixed_alpha_shape_3 : public Dt
   // or INTERIOR with respect to the alpha shape.
   // A $k$ simplex is REGULAR if it is on the boundary
   // of the alpha_complex and belongs to a $k+1$ simplex in the complex
-  // and it is SINGULAR simplex if it is  a boundary simplex tht is not
+  // and it is SINGULAR simplex if it is a boundary simplex that is not
   // included in a $k+1$ simplex of the complex.
 
   // Roughly, the Fixed_alpha_shape data structure computes and stores,
@@ -283,7 +280,7 @@ public:
       }
     }
     // Erase from edge_status_map, edges that will disappear:
-    // they are not on the boudary of the hole
+    // they are not on the boundary of the hole
     std::set<Edge,Compare_edge> hole_edges;
     std::pair<typename std::set<Edge,Compare_edge>::iterator,bool> it_hedge_and_not_already_seen;
     for (typename std::vector<Cell_handle>::iterator it=cells.begin();it!=cells.end();++it){
@@ -601,7 +598,7 @@ private :
   }
 
 private :
-  // prevent default copy constructor and default assigment
+  // prevent default copy constructor and default assignment
   Fixed_alpha_shape_3(const Fixed_alpha_shape_3&);
   void operator=(const Fixed_alpha_shape_3&);
 
@@ -727,10 +724,6 @@ private:
 
   //---------------------------------------------------------------------
 public:
-#ifdef CGAL_USE_GEOMVIEW
-  void show_alpha_shape_faces(Geomview_stream &gv) const;
-#endif
-
 
   //Iterators
 

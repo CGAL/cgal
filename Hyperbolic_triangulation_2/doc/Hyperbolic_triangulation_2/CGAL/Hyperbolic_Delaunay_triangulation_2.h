@@ -72,7 +72,7 @@ public:
     typedef Triangulation_data_structure::Vertex_circulator Vertex_circulator;
   /// @}
 
-  /// \name
+  /// \name Enums
   /// The enumeration `Locate_type` is defined to specify which case occurs when locating a
   /// point in the triangulation.
   /// @{
@@ -213,15 +213,6 @@ public:
       to initialize the location of `p`.
     */
     Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
-
-    /*!
-      Inserts the point p at the location given by `(lt,loc,li)`.
-      The handle to the new vertex is returned.
-
-      \sa locate()
-    */
-    Vertex_handle insert(const Point& p, typename Locate_type lt, Face_handle loc, int li);
-
 
     /*!
       Inserts the points in the range [first,last) into the triangulation.

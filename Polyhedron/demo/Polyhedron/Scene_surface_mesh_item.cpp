@@ -51,6 +51,7 @@
 #include "id_printing.h"
 #include <unordered_map>
 #include <functional>
+#include <utility>
 #endif
 
 typedef CGAL::Three::Triangle_container Tri;
@@ -350,9 +351,14 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
   standard_constructor(sm);
 }
 
-Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh sm)
+Scene_surface_mesh_item::Scene_surface_mesh_item(const SMesh& sm)
 {
   standard_constructor(new SMesh(sm));
+}
+
+Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh&& sm)
+{
+  standard_constructor(new SMesh(std::move(sm)));
 }
 
 Scene_surface_mesh_item*
@@ -883,7 +889,7 @@ QString Scene_surface_mesh_item::toolTip() const
       .arg(num_faces(*d->smesh_))
       .arg(this->renderingModeName())
       .arg(this->color().name());
-  str += QString("<br />Number of isolated vertices: %1<br />").arg(getNbIsolatedvertices());
+
   return str;
 }
 
@@ -1144,7 +1150,6 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       sm->collect_garbage();
       Input_facets_AABB_tree* tree =
           new Input_facets_AABB_tree();
-      int index =0;
       for(face_descriptor f : faces(*sm))
       {
         //if face is degenerate, skip it
@@ -1155,7 +1160,6 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
         {
           EPICK::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, *sm);
-          index +=3;
           Q_FOREACH(EPICK::Triangle_3 triangle, triangulate_primitive(f,normal))
           {
             Primitive primitive(triangle, f);
@@ -1551,7 +1555,7 @@ Scene_surface_mesh_item::save(std::ostream& out) const
   }
   else
   {
-    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::all_default());
+    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::default_values());
   }
   QApplication::restoreOverrideCursor();
   return (bool) out;
@@ -1573,6 +1577,8 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
     {
       CGAL::Polygon_mesh_processing::repair_polygon_soup(points, faces);
       CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
+
+      clear(*(d->smesh_));
       CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, *(d->smesh_));
     }
   }
@@ -1619,9 +1625,9 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
   case MIN_LENGTH:
   case MAX_LENGTH:
-  case MID_LENGTH:
+  case MED_LENGTH:
   case MEAN_LENGTH:
-  case NB_NULL_LENGTH:
+  case NB_DEGENERATE_EDGES:
     edges_length(d->smesh_, minl, maxl, meanl, midl, d->number_of_null_length_edges);
   }
 
@@ -1677,6 +1683,8 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
   case NB_VERTICES:
     return QString::number(num_vertices(*d->smesh_));
+  case NB_ISOLATED_VERTICES:
+    return QString::number(this->getNbIsolatedvertices());
   case HAS_NM_VERTICES:
   {
     if(d->has_nm_vertices)
@@ -1708,7 +1716,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   case NB_EDGES:
     return QString::number(num_halfedges(*d->smesh_) / 2);
 
-  case NB_DEGENERATED_FACES:
+  case NB_DEGENERATE_FACES:
   {
     if(is_triangle_mesh(*d->smesh_))
     {
@@ -1780,11 +1788,11 @@ QString Scene_surface_mesh_item::computeStats(int type)
     return QString::number(minl);
   case MAX_LENGTH:
     return QString::number(maxl);
-  case MID_LENGTH:
+  case MED_LENGTH:
     return QString::number(midl);
   case MEAN_LENGTH:
     return QString::number(meanl);
-  case NB_NULL_LENGTH:
+  case NB_DEGENERATE_EDGES:
     return QString::number(d->number_of_null_length_edges);
 
   case MIN_ANGLE:
@@ -1793,7 +1801,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     return QString::number(maxi);
   case MEAN_ANGLE:
     return QString::number(ave);
-  case HOLES:
+  case NB_HOLES:
     return QString::number(nb_holes(d->smesh_));
 
   case MIN_AREA:
@@ -1831,25 +1839,29 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   CGAL::Three::Scene_item::Header_data data;
   //categories
 
-  data.categories.append(std::pair<QString,int>(QString("Properties"),11));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),9));
+  data.categories.append(std::pair<QString,int>(QString("Vertices"),2));
   data.categories.append(std::pair<QString,int>(QString("Faces"),10));
-  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),7));
   data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
 
   //titles
-  data.titles.append(QString("#Vertices"));
-  data.titles.append(QString("Has Non-manifold Vertices"));
   data.titles.append(QString("#Connected Components"));
-  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("#Connected Components of the Boundary"));
+  data.titles.append(QString("Genus"));
   data.titles.append(QString("Pure Triangle"));
   data.titles.append(QString("Pure Quad"));
-  data.titles.append(QString("#Degenerate Faces"));
-  data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));
   data.titles.append(QString("Volume"));
   data.titles.append(QString("Self-Intersecting"));
+  data.titles.append(QString("Has Non-manifold Vertices"));
+
+  data.titles.append(QString("#Vertices"));
+  data.titles.append(QString("#Isolated Vertices"));
+
   data.titles.append(QString("#Faces"));
+  data.titles.append(QString("#Degenerate Faces"));
   data.titles.append(QString("Min Area"));
   data.titles.append(QString("Max Area"));
   data.titles.append(QString("Median Area"));
@@ -1858,16 +1870,19 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   data.titles.append(QString("Min Aspect-Ratio"));
   data.titles.append(QString("Max Aspect-Ratio"));
   data.titles.append(QString("Mean Aspect-Ratio"));
-  data.titles.append(QString("Genus"));
+
   data.titles.append(QString("#Edges"));
+  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("#Degenerate Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
   data.titles.append(QString("Median Length"));
   data.titles.append(QString("Mean Length"));
-  data.titles.append(QString("#Degenerate Edges"));
+
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
+
   return data;
 }
 
@@ -1935,8 +1950,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
         //compute new position and orientation
         EPICK::Vector_3 face_normal = CGAL::Polygon_mesh_processing::
             compute_face_normal(selected_fh,
-                                *d->smesh_,
-                                CGAL::Polygon_mesh_processing::parameters::all_default());
+                                *d->smesh_);
 
 
         double x(0), y(0), z(0),

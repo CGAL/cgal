@@ -3,10 +3,7 @@
 
 #include "config.h"
 #include "Plugins/Mesh_3/config_mesh_3.h"
-
-// include this to get #define BOOST_PARAMETER_MAX_ARITY 12
 // as otherwise it gets set via inclusion of Polyhedron_3.h
-#include <CGAL/boost/parameter.h>
 #include <CGAL/Default.h>
 
 #include "SMesh_type.h"
@@ -27,6 +24,8 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
+
+#include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 
 #include <CGAL/tags.h>
 
@@ -51,6 +50,8 @@ private:
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
           EPICK, SMesh, CGAL::Default, int> Polyhedral_mesh_domain;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
+
+typedef CGAL::Polyhedral_complex_mesh_domain_3<EPICK, SMesh> Polyhedral_complex_mesh_domain;
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 typedef CGAL::Labeled_mesh_domain_3<EPICK, int, int>            Image_domain;

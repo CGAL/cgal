@@ -7,8 +7,6 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
 
-#include <boost/lexical_cast.hpp>
-
 #include <cstdlib>
 #include <iostream>
 #include <fstream>

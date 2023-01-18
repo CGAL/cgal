@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
+#include <type_traits>
 
 #include <CGAL/IO/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
@@ -37,16 +38,15 @@
 #endif
 #include <CGAL/centroid.h>
 #include <CGAL/property_map.h>
-#include <CGAL/surface_reconstruction_points_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/poisson_refine_triangulation.h>
-#include <CGAL/Robust_circumcenter_filtered_traits_3.h>
+#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 
 #include <memory>
 #include <boost/array.hpp>
 #include <boost/type_traits/is_convertible.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 
 /*!
@@ -380,9 +380,9 @@ public:
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
-    typename boost::enable_if<
-      boost::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>
-    >::type* = 0
+    std::enable_if_t<
+      boost::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>::value
+    >* = 0
   )
     : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
   , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6))
@@ -763,8 +763,7 @@ private:
   /// Poisson reconstruction.
   /// Returns false on error.
   ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  /// @tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   template <class SparseLinearAlgebraTraits_d>
   bool solve_poisson(
     SparseLinearAlgebraTraits_d solver, ///< sparse linear solver
@@ -824,7 +823,7 @@ private:
     double D;
     if(!solver.linear_solver(A, B, X, D))
       return false;
-    CGAL_surface_reconstruction_points_assertion(D == 1.0);
+    CGAL_assertion(D == 1.0);
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
 
     CGAL_TRACE_STREAM << "  Solve sparse linear system: done (" << duration_solve << "sec.)\n";
@@ -1130,7 +1129,7 @@ private:
 
     if(voronoi_points.size() < 3)
     {
-      CGAL_surface_reconstruction_points_assertion(false);
+      CGAL_assertion(false);
       return 0.0;
     }
 
@@ -1203,8 +1202,7 @@ private:
 
   /// Assemble vi's row of the linear system A*X=B
   ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  /// @tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   template <class SparseLinearAlgebraTraits_d>
   void assemble_poisson_row(typename SparseLinearAlgebraTraits_d::Matrix& A,
                             Vertex_handle vi,

@@ -481,6 +481,27 @@ struct Test
     check_intersection     (S(p( -1,-1), p( -2,-2)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
     check_intersection     (S(p( -2,-2), p( -1,-1)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
     check_intersection     (S(p( -2,-2), p( -1,-1)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+
+    //check determinism of crossing point
+    P p1a(-122.37323046264295, 37.7435274415764);
+    P p1b(-122.3711959178425,  37.74348027376899);
+    P p2a(-122.37130249711004, 37.74203327688176);
+    P p2b(-122.3722247426892,  37.74401427059434);
+    std::set<double> ds;
+    auto test = [&ds](S s1, S s2)
+    {
+      P i = boost::get<P>(*CGAL::intersection(s1,s2));
+      ds.insert(CGAL::to_double(i.x())); ds.insert(CGAL::to_double(i.y()));
+      assert(ds.size()==2);
+    };
+    test(S(p1a,p1b), S(p2a,p2b));
+    test(S(p1a,p1b), S(p2b,p2a));
+    test(S(p1b,p1a), S(p2b,p2a));
+    test(S(p1b,p1a), S(p2a,p2b));
+    test(S(p2a,p2b), S(p1a,p1b));
+    test(S(p2b,p2a), S(p1a,p1b));
+    test(S(p2b,p2a), S(p1b,p1a));
+    test(S(p2a,p2b), S(p1b,p1a));
   }
 
   void R_R()
@@ -751,9 +772,9 @@ struct Test
     check_no_intersection  (Rec(p(-2, -6), p( 6, 3)), p(-2, -7));
 
     // point intersection
-    check_intersection     (Rec(p(-1,  4), p(-1, 4)), p(-1, 4), p(-1, 4)); // degenerate rectange (0d)
-    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 6), p(-2, 6)); // degenerate rectange (1d)
-    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 7), p(-2, 7)); // degenerate rectange (1d)
+    check_intersection     (Rec(p(-1,  4), p(-1, 4)), p(-1, 4), p(-1, 4)); // degenerate rectangle (0d)
+    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 6), p(-2, 6)); // degenerate rectangle (1d)
+    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 7), p(-2, 7)); // degenerate rectangle (1d)
     check_intersection     (Rec(p(-3,  0), p( 4, 2)), p(-3, 2), p(-3, 2)); // on vertex
     check_intersection     (Rec(p( 7,  8), p( 9, 9)), p( 8, 9), p( 8, 9)); // on edge
     check_intersection     (Rec(p(-2,  0), p( 6, 7)), p( 1, 1), p( 1, 1)); // within

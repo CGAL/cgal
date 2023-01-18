@@ -323,12 +323,12 @@ place_boundary_vertex(Face* f,
       return Result(curr);
     }
 
-    // Move to the next halfegde along the CCB.
+    // Move to the next halfedge along the CCB.
     curr = curr->next();
 
   } while (curr != first);
 
-  // If we reached here, we did not find a suitable halfegde, which should
+  // If we reached here, we did not find a suitable halfedge, which should
   // never happen.
   CGAL_error();
   return boost::none;
@@ -809,7 +809,7 @@ _is_on_fictitious_edge(const X_monotone_curve_2& cv, Arr_curve_end ind,
     }
   }
   else {
-    // If we reched here, we have a "horizontal" fictitious halfedge.
+    // If we reached here, we have a "horizontal" fictitious halfedge.
     Arr_parameter_space he_ps_y = v1->parameter_space_in_y();
 
     CGAL_assertion((he_ps_y == ARR_BOTTOM_BOUNDARY ||

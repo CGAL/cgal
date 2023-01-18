@@ -18,10 +18,11 @@
 #define CGAL_PLANE_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -40,7 +41,7 @@ class Plane_3 : public R_::Kernel_base::Plane_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Plane_3                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Plane_3>::value));
+  CGAL_static_assertion((std::is_same<Self, typename R_::Plane_3>::value));
 
 public:
 
@@ -77,6 +78,9 @@ public:
 
   Plane_3(const Point_3& p, const Vector_3& v)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, v)) {}
+
+  Plane_3(Origin o, const Vector_3& v)
+    : Rep(typename R::Construct_plane_3()(Return_base_tag(), o, v)) {}
 
   Plane_3(const RT& a, const RT& b, const RT& c, const RT& d)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), a, b, c, d)) {}

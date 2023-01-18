@@ -106,7 +106,7 @@ protected:
 
 public:
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!
@@ -177,58 +177,27 @@ public:
     _set();
   }
 
-  /*!
-   * Construct a special segment connecting to given endpoints (for the usage
+  /*! Construct a special segment connecting to given endpoints (for the usage
    * of the landmarks point-location strategy).
    * \param source The source point.
    * \param target The target point.
    */
   _Conic_x_monotone_arc_2(const Point_2& source, const Point_2& target) :
-    Base()
+    Base(source, target)
   {
-    // Set the basic properties and clear the _info bits.
-    this->_source = source;
-    this->_target = target;
-    this->_orient = COLLINEAR;
-    this->_info = 0;
+    this->_info |= static_cast<int>(DEGREE_1);
 
-    // Check if the arc is directed right (the target is lexicographically
-    // greater than the source point), or to the left.
     Alg_kernel ker;
-    Comparison_result dir_res =
-      ker.compare_xy_2_object()(this->_source, this->_target);
-
-    CGAL_precondition (dir_res != EQUAL);
-    // Invalid arc:
-    if (dir_res == EQUAL) return;
-
-    this->_info = (static_cast<int>(Conic_arc_2::IS_VALID) | static_cast<int>(DEGREE_1));
-    if (dir_res == SMALLER)
-      this->_info = (this->_info | IS_DIRECTED_RIGHT);
-
-    // Compose the equation of the underlying line.
-    const Algebraic x1 = source.x(), y1 = source.y();
-    const Algebraic x2 = target.x(), y2 = target.y();
-
-    // The supporting line is A*x + B*y + C = 0, where:
-    //
-    //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
-    //
-    // We use the extra data field to store the equation of this line.
-    this->_extra_data_P = new typename Base::Extra_data;
-    this->_extra_data_P->a = y2 - y1;
-    this->_extra_data_P->b = x1 - x2;
-    this->_extra_data_P->c = x2*y1 - x1*y2;
-    this->_extra_data_P->side = ZERO;
+    auto cmp_xy = ker.compare_xy_2_object();
+    Comparison_result dir_res = cmp_xy(this->_source, this->_target);
+    if (dir_res == SMALLER) this->_info |= IS_DIRECTED_RIGHT;
 
     // Check if the segment is vertical.
-    if (CGAL::sign (this->_extra_data_P->b) == ZERO)
-      this->_info = (this->_info | IS_VERTICAL_SEGMENT);
+    if (CGAL::sign(this->_extra_data_P->b) == ZERO)
+      this->_info |= IS_VERTICAL_SEGMENT;
 
     // Mark that this is a special segment.
-    this->_info = (this->_info | IS_SPECIAL_SEGMENT);
-
-    return;
+    this->_info |= IS_SPECIAL_SEGMENT;
   }
 
   /*!
@@ -608,7 +577,7 @@ public:
     if (_has_same_supporting_conic (arc)) {
       if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return LARGER;
-      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP) != 0)
+      else if ((this->_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
         return SMALLER;
 
       // In this case the two arcs overlap.
@@ -680,7 +649,7 @@ public:
     // comparison result is trivial.
     if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
       return (LARGER);
-    else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
+    else if ((this->_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
       return SMALLER;
 
     // Compute the second-order derivative by y and act according to it.
@@ -729,7 +698,7 @@ public:
     if (_has_same_supporting_conic (arc)) {
       if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return LARGER;
-      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
+      else if ((this->_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
         return SMALLER;
 
       // In this case the two arcs overlap.
@@ -801,7 +770,7 @@ public:
     // comparison result is trivial.
     if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
       return LARGER;
-    else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
+    else if ((this->_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
       return SMALLER;
 
     // Compute the second-order derivative by y and act according to it.
@@ -976,7 +945,7 @@ public:
 
   /*!
    * Flip the arc.
-   * \return An arc with swapped source and target and a reverse orienation.
+   * \return An arc with swapped source and target and a reverse orientation.
    */
   Self flip() const
   {
@@ -1249,7 +1218,7 @@ private:
 
     // Check whether the conic is facing up or facing down:
     // Check whether the arc (which is x-monotone of degree 2) lies above or
-    // below the segement that contects its two end-points (x1,y1) and (x2,y2).
+    // below the segment that connects its two end-points (x1,y1) and (x2,y2).
     // To do that, we find the y coordinate of a point on the arc whose x
     // coordinate is (x1+x2)/2 and compare it to (y1+y2)/2.
     Comparison_result res = ker.compare_y_2_object() (p_arc_mid, p_mid);
@@ -1270,7 +1239,7 @@ private:
 
   /*!
    * Check if the arc is a special segment connecting two algebraic endpoints
-   * (and has no undelying integer conic coefficients).
+   * (and has no underlying integer conic coefficients).
    */
   bool _is_special_segment () const
   {
@@ -1710,7 +1679,7 @@ private:
   }
 
   /*!
-   * Intersect the supporing conic curves of this arc and the given arc.
+   * Intersect the supporting conic curves of this arc and the given arc.
    * \param arc The arc to intersect with.
    * \param inter_list The list of intersection points.
    */
@@ -1734,7 +1703,7 @@ private:
     if (arc._is_special_segment()) {
       // The second arc is a special segment (a*x + b*y + c = 0).
       if (_is_special_segment()) {
-        // Both arc are sepcial segment, so they have at most one intersection
+        // Both arc are special segment, so they have at most one intersection
         // point.
         Algebraic denom = this->_extra_data_P->a * arc._extra_data_P->b -
           this->_extra_data_P->b * arc._extra_data_P->a;

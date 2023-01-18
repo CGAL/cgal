@@ -23,8 +23,10 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <CGAL/property_map.h>
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
 #include <sstream>
@@ -159,11 +161,11 @@ namespace CGAL
 * @todo implement non-uniform sizing field instead of uniform target edge length
 */
 template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const double& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
   tetrahedral_isotropic_remeshing(
@@ -174,11 +176,11 @@ void tetrahedral_isotropic_remeshing(
 }
 
 template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const float& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
   tetrahedral_isotropic_remeshing(
@@ -196,7 +198,7 @@ void tetrahedral_isotropic_remeshing(
   const SizingFunction& sizing,
   const NamedParameters& np)
 {
-  CGAL_assertion(tr.is_valid(true));
+  CGAL_assertion(tr.is_valid());
 
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Tr;
 
@@ -224,24 +226,22 @@ void tetrahedral_isotropic_remeshing(
                        Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
-  typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Edge_vv> No_edge;
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
-    No_edge//default
+    Constant_property_map<Edge_vv, bool>//default
   > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 No_edge());
+                                 Constant_property_map<Edge_vv, bool>(false));
 
   typedef typename Tr::Facet Facet;
-  typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Facet> No_facet;
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::facet_is_constrained_t,
     NamedParameters,
-    No_facet//default
+    Constant_property_map<Facet, bool>//default
   > ::type FCMap;
   FCMap fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
-                                 No_facet());
+                                 Constant_property_map<Facet, bool>(false));
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
@@ -272,6 +272,8 @@ void tetrahedral_isotropic_remeshing(
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "done." << std::endl;
+#endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   Tetrahedral_remeshing::internal::compute_statistics(
     remesher.tr(), cell_select, "statistics_begin.txt");
 #endif
@@ -280,22 +282,13 @@ void tetrahedral_isotropic_remeshing(
   std::size_t nb_extra_iterations = 3;
   remesher.remesh(max_it, nb_extra_iterations);
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   const double angle_bound = 5.0;
   Tetrahedral_remeshing::debug::dump_cells_with_small_dihedral_angle(tr,
     angle_bound, cell_select, "bad_cells.mesh");
   Tetrahedral_remeshing::internal::compute_statistics(tr,
     cell_select, "statistics_end.txt");
 #endif
-}
-
-template<typename Traits, typename TDS, typename SLDS>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
-  const double& target_edge_length)
-{
-  tetrahedral_isotropic_remeshing(tr, target_edge_length,
-                                 CGAL::parameters::all_default());
 }
 
 /*!
@@ -348,11 +341,11 @@ convert_to_triangulation_3(
 ///////
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const double& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
@@ -363,11 +356,11 @@ void tetrahedral_isotropic_remeshing(
 
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const float& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values)
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
@@ -377,25 +370,15 @@ void tetrahedral_isotropic_remeshing(
 }
 
 template<typename Tr,
-         typename CornerIndex, typename CurveIndex>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-  const double& target_edge_length)
-{
-  return tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
-                                        CGAL::parameters::all_default());
-}
-
-template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename SizingFunction,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const SizingFunction& sizing,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
-  CGAL_assertion(c3t3.triangulation().tds().is_valid(true));
+  CGAL_assertion(c3t3.triangulation().tds().is_valid());
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -409,34 +392,33 @@ void tetrahedral_isotropic_remeshing(
     = choose_parameter(get_parameter(np, internal_np::smooth_constrained_edges),
       false);
 
+  typedef typename Tr::Cell_handle Cell_handle;
   typedef typename internal_np::Lookup_named_param_def <
   internal_np::cell_selector_t,
               NamedParameters,
-              Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
+              Constant_property_map<Cell_handle, bool>//default
               > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+                       Constant_property_map<Cell_handle, bool>(true));
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
-  typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Edge_vv> No_edge;
   typedef typename internal_np::Lookup_named_param_def <
   internal_np::edge_is_constrained_t,
               NamedParameters,
-              No_edge//default
+              Constant_property_map<Edge_vv, bool>//default
               > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 No_edge());
+                                 Constant_property_map<Edge_vv, bool>(false));
 
   typedef typename Tr::Facet Facet;
-  typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Facet> No_facet;
   typedef typename internal_np::Lookup_named_param_def <
   internal_np::facet_is_constrained_t,
               NamedParameters,
-              No_facet//default
+              Constant_property_map<Facet, bool>//default
               > ::type FCMap;
   FCMap fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
-                                 No_facet());
+                                 Constant_property_map<Facet, bool>(false));
 
   typedef typename internal_np::Lookup_named_param_def <
               internal_np::visitor_t,

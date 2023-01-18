@@ -118,15 +118,347 @@ public:
   // Inherited functors:
   typedef typename Base::Compare_x_2            Compare_x_2;
   typedef typename Base::Compare_xy_2           Compare_xy_2;
-  typedef typename Base::Compare_y_at_x_2       Compare_y_at_x_2;
   typedef typename Base::Construct_min_vertex_2 Construct_min_vertex_2;
   typedef typename Base::Construct_max_vertex_2 Construct_max_vertex_2;
   typedef typename Base::Is_vertical_2          Is_vertical_2;
   typedef typename Base::Compare_y_at_x_right_2 Compare_y_at_x_right_2;
   typedef typename Base::Equal_2                Equal_2;
 
-  /// \name Overriden functors for bounded boundaries.
+  /// \name Overridden functors for bounded boundaries.
   //@{
+
+  /*! A functor that compares the y-coordinates of (i) a given point and (ii)
+   * a point on a given x-monotone curve at the x-coordinate of the point.
+   */
+  class Compare_y_at_x_2 {
+  public:
+    /*! Return the location of the given point with respect to the input curve.
+     * \param cv the curve.
+     * \param p the point.
+     * \pre p is in the x-range of cv.
+     * \return SMALLER if y(p) < cv(x(p)), i.e. the point is below the curve;
+     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
+     *         EQUAL if p lies on the curve.
+     */
+    Comparison_result operator()(const Point_2& p,
+                                 const X_monotone_curve_2& xcv) const {
+      return compare_y_at_x(p, xcv,
+                            Left_or_right_sides_category(),
+                            Bottom_or_top_sides_category());
+    }
+
+  protected:
+    //! The base traits.
+    const Self& m_self;
+
+    /*! Constructor.
+     * \param base The base traits class. It must be passed, to handle non
+     *             stateless traits objects, (which stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_y_at_x_2(const Self& self) : m_self(self) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_traits_basic_adaptor_2<Base>;
+
+  private:
+    /*! 1. Implementation of the operator in case the bottom, top, right, and
+     * left sides do not have boundary conditions.
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_all_sides_oblivious_tag,
+                                     Arr_all_sides_oblivious_tag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+      return cmp_y_at_x(p, xcv);
+    }
+
+    /*! 2. Implementation of the operator in case the left and right sides are
+     * identified, and the bottom and top sides do not have boundary conditions.
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_has_identified_side_tag,
+                                     Arr_all_sides_oblivious_tag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+
+      auto ps_in_x = m_self.parameter_space_in_x_2_object();
+      const Arr_parameter_space ps_x = ps_in_x(p);
+      if (ps_x == ARR_INTERIOR) return cmp_y_at_x(p, xcv);
+
+      auto cmp_y_bnd = m_self.compare_y_on_boundary_2_object();
+      auto ctr_min = m_self.construct_min_vertex_2_object();
+      auto res = cmp_y_bnd(p, ctr_min(xcv));
+      if (res != LARGER) return res;
+      auto is_on_y_identification = m_self.is_on_y_identification_2_object();
+      if (is_on_y_identification(xcv) ||
+          (ps_in_x(xcv, ARR_MAX_END) == ps_in_x(xcv, ARR_MIN_END))) {
+        auto ctr_max = m_self.construct_max_vertex_2_object();
+        res = cmp_y_bnd(p, ctr_max(xcv));
+        if (res != SMALLER) return res;
+        return EQUAL;
+      }
+      return LARGER;
+    }
+
+    /*! 3. Implementation of the operator in case the left and right sides have
+     * boundary conditions (but are not identified) and the bottom and top sides
+     * do not.
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_boundary_cond_tag,
+                                     Arr_all_sides_oblivious_tag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+
+      auto ps_in_x = m_self.parameter_space_in_x_2_object();
+      const Arr_parameter_space ps_x = ps_in_x(p);
+      if (ps_x == ARR_INTERIOR) return cmp_y_at_x(p, xcv);
+
+      auto cmp_y_bnd = m_self.compare_y_on_boundary_2_object();
+      auto ctr_min = m_self.construct_min_vertex_2_object();
+      auto res = cmp_y_bnd(p, ctr_min(xcv));
+      if (res != LARGER) return res;
+      if (ps_in_x(xcv, ARR_MAX_END) == ps_in_x(xcv, ARR_MIN_END)) {
+        auto ctr_max = m_self.construct_max_vertex_2_object();
+        res = cmp_y_bnd(p, ctr_max(xcv));
+        if (res != SMALLER) return res;
+        return EQUAL;
+      }
+      return LARGER;
+    }
+
+    /*! 4. Implementation of the operator in case the left and right sides do
+     * not have boundary condition, and the bottom and top sides are identified.
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_all_sides_oblivious_tag,
+                                     Arr_has_identified_side_tag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+
+      auto ps_in_y = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_y = ps_in_y(p);
+      if (ps_y == ARR_INTERIOR) return cmp_y_at_x(p, xcv);
+
+      // The point must lie on the x-identification curve.
+      auto is_on_x_identification = m_self.is_on_x_identification_2_object();
+      CGAL_assertion(is_on_x_identification(p));
+
+      // If the curve also lies on the x-boundary curve, return EQUAL
+      if (is_on_x_identification(xcv)) return EQUAL;
+
+      // The curve does not lie entirely on the identification curve.
+      // Therefore, there are 3 options:
+      // (i) The point coincides with the left endpoint of xcv.
+      // (ii) The point coincides with the right endpoint of xcv.
+      // (iii) Return SMALLER as an arbitrary but consistent choice.
+      auto cmp_x = m_self.compare_x_2_object();
+
+      auto ctr_min = m_self.construct_min_vertex_2_object();
+      Comparison_result res_min = cmp_x(p, ctr_min(xcv));
+      CGAL_assertion(res_min != SMALLER);
+      if (res_min == EQUAL) {
+        if (ps_in_y(xcv, ARR_MIN_END) != ARR_INTERIOR) return EQUAL;
+      }
+
+      auto ctr_max = m_self.construct_max_vertex_2_object();
+      Comparison_result res_max = cmp_x(p, ctr_max(xcv));
+      CGAL_assertion(res_max != LARGER);
+      if (res_max == EQUAL) {
+        if (ps_in_y(xcv, ARR_MAX_END) != ARR_INTERIOR) return EQUAL;
+      }
+
+      // Return SMALLER as an arbitrary but consistent choice.
+      return SMALLER;
+    }
+
+    /*! 5. Implementation of the operator in case the left and right sides are
+     * identified, and the bottom and top sides are also identified.
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_has_identified_side_tag xtag,
+                                     Arr_has_identified_side_tag ytag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+
+      auto ps_in_x = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_x = ps_in_x(p);
+      auto ps_in_y = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_y = ps_in_y(p);
+      if (ps_y == ARR_INTERIOR) {
+        if (ps_x == ARR_INTERIOR) return cmp_y_at_x(p, xcv);
+
+        return compare_y_at_x(p, xcv, xtag, Arr_all_sides_oblivious_tag());
+      }
+
+      if (ps_x == ARR_INTERIOR)
+        return compare_y_at_x(p, xcv, Arr_all_sides_oblivious_tag(), ytag);
+
+      // All 4 corners are identified. Therefore, if a curve end is on the
+      // horizontal boundary, it must be equal to p, as it must also be in the
+      // x-range of p.
+      if (ps_in_y(xcv, ARR_MIN_END) != ARR_INTERIOR) return EQUAL;
+      if (ps_in_y(xcv, ARR_MAX_END) != ARR_INTERIOR) return EQUAL;
+
+      return SMALLER;
+    }
+
+    /*! 6. Implementation of the operator in case the left and right sides have
+     * boundary conditions (but they are nopt identified) and the bottom and top
+     * sides are identied.
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_boundary_cond_tag xtag,
+                                     Arr_has_identified_side_tag ytag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+
+      auto ps_in_x = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_x = ps_in_x(p);
+      auto ps_in_y = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_y = ps_in_y(p);
+      if (ps_y == ARR_INTERIOR) {
+        if (ps_x == ARR_INTERIOR) return cmp_y_at_x(p, xcv);
+
+        return compare_y_at_x(p, xcv, xtag, Arr_all_sides_oblivious_tag());
+      }
+
+      if (ps_x == ARR_INTERIOR)
+        return compare_y_at_x(p, xcv, Arr_all_sides_oblivious_tag(), ytag);
+
+      // The point p coincides with a corner.
+      // The top left is identified with the bottom left. Therefore, if the
+      // curve min end is on the horizontal identified boundary, it must be
+      // equal to p, as it must also be in the x-range of p.
+      if (ps_x == ARR_LEFT_BOUNDARY) {
+        if (ps_in_y(xcv, ARR_MIN_END) != ARR_INTERIOR) return EQUAL;
+      }
+
+      // The top right is identified with the bottom right. Therefore, if the
+      // curve min end is on the horizontal identified boundary, it must be
+      // equal to p, as it must also be in the x-range of p.
+      if (ps_x == ARR_RIGHT_BOUNDARY) {
+        if (ps_in_y(xcv, ARR_MAX_END) != ARR_INTERIOR) return EQUAL;
+      }
+
+      return SMALLER;
+    }
+
+    /*! 7. Implementation of the operator in case the left and right sides do
+     * not have boundary condition, and the bottom and top sides do have (but
+     * they are not identified).
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_all_sides_oblivious_tag,
+                                     Arr_boundary_cond_tag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+
+      auto ps_in_y = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_y = ps_in_y(p);
+      if (ps_y == ARR_INTERIOR) return cmp_y_at_x(p, xcv);
+
+      auto cmp_x = m_self.compare_x_2_object();
+      auto ctr_min = m_self.construct_min_vertex_2_object();
+      auto res_min = cmp_x(p, ctr_min(xcv));
+      if (res_min == EQUAL) {
+        if (ps_in_y(xcv, ARR_MIN_END) == ps_y) return EQUAL;
+        return (ps_y == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+      }
+
+      auto ctr_max = m_self.construct_max_vertex_2_object();
+      auto res_max = cmp_x(p, ctr_max(xcv));
+      if (res_max == EQUAL) {
+        if (ps_in_y(xcv, ARR_MAX_END) == ps_y) return EQUAL;
+        return (ps_y == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+      }
+
+      // The endpoints of xcv do not coincide with p.
+      if ((ps_in_y(xcv, ARR_MIN_END) != ps_y) ||
+          (ps_in_y(xcv, ARR_MAX_END) != ps_y))
+        return (ps_y == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+
+      // The endpoints of xcv lie on the same boundary as p.
+      // There is no way to determine whether xcv completely resides on the same
+      // boundary of p. Lacking a better choice, we call the base operator.
+      CGAL_assertion(ps_y == ARR_TOP_BOUNDARY);
+      return cmp_y_at_x(p, xcv);
+    }
+
+   /*! 8. Implementation of the operator in case the left and right sides are
+    * identified, and the bottom and top sides have boundary conditions (but
+    * they are not identied).
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_has_identified_side_tag xtag,
+                                     Arr_boundary_cond_tag ytag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+
+      auto ps_in_x = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_x = ps_in_x(p);
+      auto ps_in_y = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_y = ps_in_y(p);
+      if (ps_y == ARR_INTERIOR) {
+        if (ps_x == ARR_INTERIOR) return cmp_y_at_x(p, xcv);
+
+        return compare_y_at_x(p, xcv, xtag, Arr_all_sides_oblivious_tag());
+      }
+
+      if (ps_x == ARR_INTERIOR)
+        return compare_y_at_x(p, xcv, Arr_all_sides_oblivious_tag(), ytag);
+
+      // The point p coincides with a corner.
+      if (ps_in_y(xcv, ARR_MIN_END) == ps_y) return EQUAL;
+      if (ps_in_y(xcv, ARR_MAX_END) == ps_y) return EQUAL;
+      return (ps_y == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+    }
+
+    /*! 9. Implementation of the operator in case the left and right sides have
+     * boundary conditions, but they are not identified, and the bottom and
+     * top sides also have boundary conditions, but they are not identified.
+     */
+    Comparison_result compare_y_at_x(const Point_2& p,
+                                     const X_monotone_curve_2& xcv,
+                                     Arr_boundary_cond_tag xtag,
+                                     Arr_boundary_cond_tag ytag) const {
+      const Base& base = m_self;
+      auto cmp_y_at_x = base.compare_y_at_x_2_object();
+
+      auto ps_in_x = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_x = ps_in_x(p);
+      auto ps_in_y = m_self.parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_y = ps_in_y(p);
+      if (ps_y == ARR_INTERIOR) {
+        if (ps_x == ARR_INTERIOR) return cmp_y_at_x(p, xcv);
+
+        return compare_y_at_x(p, xcv, xtag, Arr_all_sides_oblivious_tag());
+      }
+
+      if (ps_x == ARR_INTERIOR)
+        return compare_y_at_x(p, xcv, Arr_all_sides_oblivious_tag(), ytag);
+
+      // The point p coincides with a corner.
+      if (ps_in_y(xcv, ARR_MIN_END) == ps_y) return EQUAL;
+      if (ps_in_y(xcv, ARR_MAX_END) == ps_y) return EQUAL;
+      return (ps_y == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+    }
+  };
+
+  /*! Obtain an Compare_y_at_x_2 function object. */
+  Compare_y_at_x_2 compare_y_at_x_2_object() const
+  { return Compare_y_at_x_2(*this); }
 
   /*! A functor that compares the y-coordinates of two x-monotone curves
    * immediately to the left of their intersection point.
@@ -324,7 +656,7 @@ public:
 
   //@}
 
-  /// \name Overriden functors for boundaries.
+  /// \name Overridden functors for boundaries.
   //@{
 
   // left-right
@@ -1475,7 +1807,6 @@ public:
   //@{
   class Is_in_x_range_2 {
   public:
-  public:
     /*! Check whether a given point is in the x-range of the given x-monotone
      * curve.
      * \param xcv The x-monotone curve.
@@ -1529,7 +1860,7 @@ public:
       auto compare_x = m_self->compare_x_2_object();
       auto min_res = compare_x(p, m_self->construct_min_vertex_2_object()(xcv));
       if (min_res == SMALLER) return false;   // p is to the left of the x-range
-      else if (min_res == EQUAL) return true; // p coinsides with the left end
+      else if (min_res == EQUAL) return true; // p coincides with the left end
 
       auto max_res = compare_x(p, m_self->construct_max_vertex_2_object()(xcv));
       return (max_res != LARGER);
@@ -1841,9 +2172,8 @@ public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2) const
     {
-      CGAL_precondition_code(
-        Is_in_x_range_2  is_in_x_range = m_self->is_in_x_range_2_object();
-      );
+      CGAL_precondition_code
+        (Is_in_x_range_2 is_in_x_range = m_self->is_in_x_range_2_object());
       CGAL_precondition(is_in_x_range(xcv1, xcv2));
 
       /* The traits class which the basic traits adaptor accepts as a template
@@ -1857,22 +2187,19 @@ public:
        * gain in checking the precondition, and it is left unimplemented.
        */
 
-      Parameter_space_in_x_2 ps_x = m_self->parameter_space_in_x_2_object();
-      Parameter_space_in_y_2 ps_y = m_self->parameter_space_in_y_2_object();
-      Compare_y_at_x_2       compare_y_at_x = m_self->compare_y_at_x_2_object();
-      Construct_min_vertex_2 min_vertex =
-        m_self->construct_min_vertex_2_object();
-      Compare_x_point_curve_end_2
-        compare_x_point_curve_end = m_self->compare_x_point_curve_end_2_object();
-      Compare_x_curve_ends_2
-        compare_x_curve_ends = m_self->compare_x_curve_ends_2_object();
-      Compare_y_near_boundary_2
-        compare_y_near_bnd = m_self->compare_y_near_boundary_2_object();
+      auto ps_x = m_self->parameter_space_in_x_2_object();
+      auto ps_y = m_self->parameter_space_in_y_2_object();
+      auto compare_y_at_x = m_self->compare_y_at_x_2_object();
+      auto min_vertex = m_self->construct_min_vertex_2_object();
+      auto compare_x_point_curve_end =
+        m_self->compare_x_point_curve_end_2_object();
+      auto compare_x_curve_ends = m_self->compare_x_curve_ends_2_object();
+      auto compare_y_near_bnd = m_self->compare_y_near_boundary_2_object();
 
       // First check whether any of the curves is defined at x boundary.
       const Arr_parameter_space ps_x1 = ps_x(xcv1, ARR_MIN_END);
       const Arr_parameter_space ps_x2 = ps_x(xcv2, ARR_MIN_END);
-      Comparison_result         res;
+      Comparison_result res;
 
       CGAL_assertion((ps_x1 != ARR_RIGHT_BOUNDARY) &&
                      (ps_x2 != ARR_RIGHT_BOUNDARY));
@@ -1921,7 +2248,7 @@ public:
 
       if (ps_y1 != ARR_INTERIOR) {
         if (ps_y2 != ARR_INTERIOR) {
-          // The curve ends have special boundary with oposite signs in y,
+          // The curve ends have special boundary with opposite signs in y,
           // we readily know their relative position (recall that they do not
           // instersect).
           if ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY))
@@ -2816,7 +3143,7 @@ public:
       auto cmp_x_on_bd = m_self->compare_x_on_boundary_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      auto psy = ps_in_y(cv, ARR_MIN_END);
+      auto psy = ps_in_y(cv, ARR_MAX_END);
       CGAL_assertion(psy != ARR_BOTTOM_BOUNDARY);
 
       auto on_y_idnt = is_on_y_identification(cv);
@@ -3033,11 +3360,11 @@ public:
   typedef typename Base_traits_2::Split_2            Split_2;
   typedef typename Base_traits_2::Intersect_2        Intersect_2;
 
-  /// \name Overriden functors.
+  /// \name Overridden functors.
   //@{
 
   /*! A functor that compares two points or two x-monotone curves
-   * lexigoraphically. Twp points are compared firest by their x-coordinates,
+   * lexigoraphically. Two points are compared first by their x-coordinates,
    * then by their y-coordinates. Two curves are compared first their left-most
    * endpoint, then by the graphs, and finally by their right-most endpoint.
    */

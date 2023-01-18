@@ -8,9 +8,10 @@
 #include <boost/lexical_cast.hpp>
 
 #include <iostream>
-#include <fstream>
+#include <iterator>
+#include <string>
+#include <tuple>
 #include <vector>
-#include <set>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
@@ -78,8 +79,8 @@ int main(int argc, char* argv[])
     std::vector<vertex_descriptor> patch_vertices;
     bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
                                                                      h,
-                                                                     std::back_inserter(patch_facets),
-                                                                     std::back_inserter(patch_vertices)));
+                                                                     CGAL::parameters::face_output_iterator(std::back_inserter(patch_facets))
+                                                                                      .vertex_output_iterator(std::back_inserter(patch_vertices))));
 
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
     std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;

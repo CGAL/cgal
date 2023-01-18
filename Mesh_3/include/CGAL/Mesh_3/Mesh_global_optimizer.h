@@ -81,7 +81,7 @@ protected:
   typedef unsigned int                                      Nb_frozen_points_type;
 
   Mesh_global_optimizer_base(const Bbox_3 &, int)
-    : big_moves_size_(0) {}
+    : nb_frozen_points_(0), big_moves_size_(0) {}
 
   void update_big_moves(const FT& new_sq_move)
   {
@@ -106,7 +106,16 @@ protected:
   Lock_data_structure *get_lock_data_structure() { return 0; }
   void unlock_all_elements() {}
 
+
+  // Workaround for problem with VC and /permissive
+  // See: https://gist.github.com/afabri/0416bebec1c32fb4efd6632446698972
+  void increment_frozen_points() const
+  {
+    ++nb_frozen_points_;
+  }
+
 protected:
+  mutable unsigned int nb_frozen_points_;
   std::size_t big_moves_size_;
   std::multiset<FT> big_moves_;
 };
@@ -116,6 +125,7 @@ protected:
 template <typename Tr>
 class Mesh_global_optimizer_base<Tr, Parallel_tag>
 {
+
 protected:
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
@@ -126,7 +136,7 @@ protected:
   typedef std::atomic<unsigned int>                         Nb_frozen_points_type ;
 
   Mesh_global_optimizer_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
-    : big_moves_size_(0)
+    : nb_frozen_points_(0), big_moves_size_(0)
     , m_lock_ds(bbox, num_grid_cells_per_axis)
   {
     big_moves_current_size_ = 0;
@@ -183,9 +193,14 @@ protected:
     m_lock_ds.unlock_all_points_locked_by_this_thread();
   }
 
+  void increment_frozen_points() const
+  {
+    ++nb_frozen_points_;
+  }
 public:
 
 protected:
+  mutable std::atomic<unsigned int> nb_frozen_points_;
   std::atomic<std::size_t>  big_moves_current_size_;
   std::atomic<FT>           big_moves_smallest_;
   std::size_t               big_moves_size_;
@@ -221,6 +236,8 @@ class Mesh_global_optimizer
   using Base::get_lock_data_structure;
   using Base::big_moves_;
   using Base::big_moves_size_;
+  using Base::nb_frozen_points_;
+  using Base::increment_frozen_points;
 
   typedef typename C3T3::Triangulation  Tr;
   typedef typename Tr::Geom_traits      Gt;
@@ -240,7 +257,6 @@ class Mesh_global_optimizer
   typedef Hash_handles_with_or_without_timestamps                Hash_fct;
   typedef typename boost::unordered_set<Vertex_handle, Hash_fct> Vertex_set;
   typedef typename Base::Moves_vector                            Moves_vector;
-  typedef typename Base::Nb_frozen_points_type                   Nb_frozen_points_type;
 
 #ifdef CGAL_INTRUSIVE_LIST
   typedef Intrusive_list<Cell_handle>   Outdated_cell_set;
@@ -297,19 +313,19 @@ public:
 
 private:
   /**
-   * Returns moves for vertices of set \c moving_vertices
+   * Returns moves for vertices of set `moving_vertices`.
    */
   Moves_vector compute_moves(Moving_vertices_set& moving_vertices);
 
   /**
-   * Returns the move for vertex \c v
+   * Returns the move for vertex `v`.
    * \warning This function should be called only on moving vertices
    *          even for frozen vertices, it could return a non-zero vector
    */
   Vector_3 compute_move(const Vertex_handle& v);
 
   /**
-   * Updates mesh using moves of \c moves vector. Updates moving_vertices with
+   * Updates mesh using moves of `moves` vector. Updates moving_vertices with
    * the new set of moving vertices after the move.
    */
   void update_mesh(const Moves_vector& moves,
@@ -327,17 +343,17 @@ private:
   bool check_convergence() const;
 
   /**
-   * Returns the average circumradius length of cells incident to \c v
+   * Returns the average circumradius length of cells incident to `v`.
    */
   FT average_circumradius_length(const Vertex_handle& v) const;
 
   /**
-   * Returns the minimum cicumradius length of cells incident to \c v
+   * Returns the minimum cicumradius length of cells incident to `v`.
    */
   FT min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const;
 
   /**
-   * Returns the squared circumradius length of cell \c cell
+   * Returns the squared circumradius length of cell `cell`.
    */
   FT sq_circumradius_length(const Cell_handle& cell,
                             const Vertex_handle& v) const;
@@ -566,7 +582,6 @@ private:
   CGAL::Real_timer running_time_;
 
   bool do_freeze_;
-  mutable Nb_frozen_points_type nb_frozen_points_;
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   mutable FT sum_moves_;
@@ -602,8 +617,6 @@ Mesh_global_optimizer(C3T3& c3t3,
 , sum_moves_(0)
 #endif // CGAL_MESH_3_OPTIMIZER_VERBOSE
 {
-  nb_frozen_points_ = 0; // We put it here in case it's an "atomic"
-
   // If we're multi-thread
   tr_.set_lock_data_structure(get_lock_data_structure());
 
@@ -906,7 +919,7 @@ compute_move(const Vertex_handle& v)
   // Move point only if the displacement is big enough w.r.t. the local size
   if ( local_move_sq_ratio < sq_freeze_ratio_ )
   {
-    ++nb_frozen_points_;
+    increment_frozen_points();
     return CGAL::NULL_VECTOR;
   }
 
@@ -962,7 +975,7 @@ update_mesh(const Moves_vector& moves,
         FT size = std::get<2>(*it);
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-        std::cout << "Moving #" << it - moves.begin()
+        std::cerr << "Moving #" << it - moves.begin()
                   << " addr: " << &*v
                   << " pt: " << tr_.point(v)
                   << " move: " << move << std::endl;

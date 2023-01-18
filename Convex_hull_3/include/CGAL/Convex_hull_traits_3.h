@@ -15,18 +15,16 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
-
 #include <CGAL/Polyhedron_3_fwd.h>
-#include <CGAL/Convex_hull_face_base_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
-#include <list>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
+
 template < class R_ >
 class Point_triple
 {

@@ -45,7 +45,7 @@ public:
 public Q_SLOTS:
   void on_actionDeformation_triggered();
   /////// Dock window signal handlers //////
-  // what they do is simply transmiting required 'action' to selected scene_edit_polyhedron_item object
+  // what they do is simply transmitting required 'action' to selected scene_edit_polyhedron_item object
   void on_AddCtrlVertPushButton_clicked();
   void on_PrevCtrlVertPushButton_clicked();
   void on_NextCtrlVertPushButton_clicked();
@@ -79,11 +79,11 @@ private:
   void updateSelectionItems(Scene_facegraph_item* target);
 
   Ui::DeformMesh ui_widget;
-  QDockWidget* dock_widget;
+  QDockWidget* dock_widget = nullptr;
 
-  QAction* actionDeformation;
+  QAction* actionDeformation = nullptr;
   RenderingMode last_RM;
-  QShortcut* e_shortcut;
+  QShortcut* e_shortcut = nullptr;
 }; // end Polyhedron_demo_edit_polyhedron_plugin
 
 QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {

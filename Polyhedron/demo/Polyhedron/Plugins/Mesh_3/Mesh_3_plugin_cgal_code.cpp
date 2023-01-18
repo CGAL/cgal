@@ -131,6 +131,101 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   return new Meshing_thread(p_mesh_function, p_new_item);
 }
 
+Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
+                                 const QList<std::pair<int, int> >& incident_subdomains,
+                                 QString filename,
+                                 const double facet_angle,
+                                 const double facet_sizing,
+                                 const double facet_approx,
+                                 const double tet_sizing,
+                                 const double edge_size,
+                                 const double tet_shape,
+                                 bool protect_features,
+                                 bool protect_borders,
+                                 const double sharp_edges_angle,
+                                 const int manifold,
+                                 const bool surface_only)
+{
+  if (pMeshes.empty() && incident_subdomains.empty()) return 0;
+
+  std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
+  std::cerr << "  angle: " << facet_angle << std::endl
+    << "  edge size bound: " << edge_size << std::endl
+    << "  facets size bound: " << facet_sizing << std::endl
+    << "  approximation bound: " << facet_approx << std::endl;
+  if (!surface_only)
+    std::cerr << "  tetrahedra size bound: " << tet_sizing << std::endl;
+
+  CGAL::Real_timer timer;
+  timer.start();
+
+  std::vector<SMesh> patches;
+  std::transform(pMeshes.begin(), pMeshes.end(),
+    std::back_inserter(patches),
+    [](const SMesh* sm) {
+      return *sm;
+    });
+
+  // Create domain
+  Polyhedral_complex_mesh_domain* p_domain
+    = new Polyhedral_complex_mesh_domain(patches.begin(),
+                                         patches.end(),
+                                         incident_subdomains.begin(),
+                                         incident_subdomains.end());
+
+  // Features
+  if (protect_features) {
+      //includes detection of borders in the surface case
+    p_domain->detect_features(sharp_edges_angle);
+  }
+  else if (protect_borders) {
+    p_domain->detect_borders();
+  }
+
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
+  if (protect_features) {
+    p_new_item->set_sharp_edges_angle(sharp_edges_angle);
+  }
+  else if (protect_borders) {
+    p_new_item->set_detect_borders(true);
+  }
+
+  QString tooltip = QString("<div>From \"") + filename +
+    QString("\" with the following mesh parameters"
+      "<ul>"
+      "<li>Angle: %1</li>"
+      "<li>Edge size bound: %2</li>"
+      "<li>Facets size bound: %3</li>"
+      "<li>Approximation bound: %4</li>")
+    .arg(facet_angle)
+    .arg(edge_size)
+    .arg(facet_sizing)
+    .arg(facet_approx);
+  if (!surface_only)
+    tooltip += QString("<li>Tetrahedra size bound: %1</li>")
+    .arg(tet_sizing);
+  tooltip += "</ul></div>";
+
+  p_new_item->setProperty("toolTip", tooltip);
+  Mesh_parameters param;
+  param.facet_angle = facet_angle;
+  param.facet_sizing = facet_sizing;
+  param.facet_approx = facet_approx;
+  param.tet_sizing = tet_sizing;
+  param.tet_shape = tet_shape;
+  param.edge_sizing = edge_size;
+  param.manifold = manifold;
+  param.protect_features = protect_features || protect_borders;
+  param.use_sizing_field_with_aabb_tree = protect_features;
+
+  typedef ::Mesh_function<Polyhedral_complex_mesh_domain,
+                          Mesh_fnt::Polyhedral_domain_tag> Mesh_function;
+  Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
+                                                     p_domain,
+                                                     param);
+  return new Meshing_thread(p_mesh_function, p_new_item);
+}
+
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
@@ -153,7 +248,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                            pfunction->bbox().zmax());
   namespace p = CGAL::parameters;
   Function_mesh_domain* p_domain =
-    new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7,
+    new Function_mesh_domain(p::function = Function_wrapper(*pfunction), p::bounding_object = domain_bbox, p::relative_error_bound = 1e-7,
                              p::construct_surface_patch_index =
                                [](int i, int j) { return (i * 1000 + j); }
                              );

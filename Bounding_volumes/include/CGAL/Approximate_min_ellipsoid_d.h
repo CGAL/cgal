@@ -65,7 +65,7 @@ namespace CGAL {
     // When the input points do not affinely span the whole space
     // (i.e., if dim(aff(P)) < d), then the smallest enclosing
     // ellipsoid of P has no volume in R^d and so the points are
-    // called "degnerate" (see is_degenerate()) below.
+    // called "degenerate" (see is_degenerate()) below.
 
     // As discussed below (before (*)), the centrally symmetric ellipsoid
     // E':= sqrt{(1+a_eps)(d+1)} E contains (under exact arithmetic) the
@@ -140,7 +140,7 @@ namespace CGAL {
       CGAL_APPEL_ASSERT(is_deg == E->is_degenerate());
       CGAL_APPEL_LOG("appel",
                      "  Input points are " << (is_deg? "" : "not ") <<
-                     "degnerate." << std::endl);
+                     "degenerate." << std::endl);
 
       if (is_deg)
         find_lower_dimensional_approximation();
@@ -294,10 +294,13 @@ namespace CGAL {
       double tmp = sum;
       for (int i=0; i<d; ++i)
         tmp *= sum;
-      const double eps = std::sqrt(tmp)-1.0;
+      double eps = std::sqrt(tmp)-1.0;
       FPU_set_cw(old);                                   // restore
 
-      CGAL_APPEL_ASSERT(eps >= 0.0);
+      if (CGAL::is_negative(eps)) {
+        CGAL_APPEL_LOG("appel", "Clamp negative approximate eps to zero" << "\n");
+        eps = 0;
+      }
       return eps;
     }
 
@@ -362,7 +365,7 @@ namespace CGAL {
     // the computed ellipsoid's axes. The d lengths are floating-point
     // approximations to the exact axes-lengths of the computed ellipsoid; no
     // guarantee is given w.r.t. the involved relative error. (See also method
-    // axes_direction_cartesian_begin().)  The elements of the iterator are
+    // `axis_direction_cartesian_begin()`.)  The elements of the iterator are
     // sorted descending.
     //
     // Precondition: !is_degenerate() && (d==2 || d==3)

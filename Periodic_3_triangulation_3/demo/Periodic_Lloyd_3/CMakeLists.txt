@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Periodic_Lloyd_3_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -33,7 +33,7 @@ if(CGAL_Qt5_FOUND
 
   include_directories(BEFORE ./)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)

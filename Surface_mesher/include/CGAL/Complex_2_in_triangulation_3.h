@@ -767,7 +767,7 @@ operator>> (std::istream& is, Complex_2_in_triangulation_3<Tr, Edge_info>& c2t3)
   c2t3.clear();
   is >> c2t3.triangulation();
 
-  // restore datas of c2t3
+  // restore data of c2t3
   for(typename Tr::Finite_facets_iterator fit =
         c2t3.triangulation().finite_facets_begin();
       fit != c2t3.triangulation().finite_facets_end();

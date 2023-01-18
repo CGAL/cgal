@@ -59,7 +59,7 @@ public:
 
   // Returns the midpoint (under the L1 metric) that is on the rectangle
   // defined by the two points (the rectangle can be degenerate).
-  // As there are to enpoints, the index determines which is returned
+  // As there are two endpoints, the index determines which one is returned
   static Point_2 midpoint(const Point_2& p1, const Point_2& p2, std::size_t index) {
     const Point_2 *pp1;
     const Point_2 *pp2;

@@ -4,12 +4,16 @@ on:
   issue_comment:
       types: [created]
 
+permissions: {}
 jobs:
   build:
+    permissions:
+      pull-requests: write # to create comment
+
     if: (github.event.comment.user.login == 'sloriot' || github.event.comment.user.login == 'lrineau') && contains(github.event.comment.body, '/testme')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v6
         id: get_label
         with:
          result-encoding: string
@@ -58,7 +62,7 @@ jobs:
             ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE $PR_NUMBER"
           done
       - name: Post address
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           script: |
             const address = "Testsuite launched. Results will appear on the following page: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/index.shtml "

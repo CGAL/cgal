@@ -107,7 +107,7 @@ which offers combinatorial repairing while reading bad inputs.
 The `OBJ` file format, using the file extension `.obj`, is a simple \ascii data format that represents 3D geometry.
 Vertices are stored in a counter-clockwise order by default, making explicit declaration of face normals unnecessary.
 
-A precise specification of the format is available <a href="http://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
+A precise specification of the format is available <a href="https://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
 
 <table class="iotable">
   <tr>
@@ -148,7 +148,7 @@ The `STL` file format, using the file extension `.stl`, is an \ascii or binary f
 to the stereolithography CAD software created by 3D Systems.
 STL files describe the surface geometry of a three-dimensional object.
 
-A precise specification of those formats is available <a href="http://www.fabbers.com/tech/STL_Format">here</a>.
+A precise specification of those formats is available <a href="https://www.fabbers.com/tech/STL_Format">here</a>.
 
 <table class="iotable">
   <tr>
@@ -432,8 +432,10 @@ A precise specification of the format is available <a href="http://gun.teipir.gr
 
 The VTK libraries use different file formats to handle data structures, but we only support two:
 - The `VTU` format can be used to store a collection of 3D cells, like tetrahedra,
-  but also points, triangles, lines, etc. In the <a href="https://vtk.org/"> VTK Libraries</a>,
-  it is the format reserved to store `Unstructured Grids`, and in \cgal,
+  but also points, triangles, lines, etc. In the <a href="https://vtk.org/"> VTK Libraries</a>.
+  It is the format reserved to store
+  <a href="https://kitware.github.io/vtk-examples/site/VTKFileFormats/#unstructuredgrid">`Unstructured Grids`</a>,
+  and in \cgal,
   we use it to store triangulations (2D and 3D).
 
 - The `VTP` format can be used to store collections of points, lines, and triangles.
@@ -473,8 +475,8 @@ A precise specification of those formats is available at
 
 The following \cgal data structures can be exported into the `.VTU` file format:
 
-- `CGAL::Mesh_complex_3_in_triangulation_3`, using \link PkgMesh3IOFunctions `CGAL::IO::output_to_vtu()` \endlink
-- `CGAL::Constrained_Delaunay_triangulation_2`, using the function \link PkgMesh2IO `CGAL::IO::write_VTU()` \endlink
+- `CGAL::Mesh_complex_3_in_triangulation_3`, using \link CGAL::IO::output_to_vtu() `CGAL::IO::output_to_vtu()` \endlink
+- `CGAL::Constrained_Delaunay_triangulation_2`, using the function \link CGAL::IO::write_VTU `CGAL::IO::write_VTU()` \endlink
 
 
 \section IOStreamAvizo Avizo File Format
@@ -483,7 +485,7 @@ The AmiraMesh format, using file extension `.am`, is used
 by the <a href="https://www.fei.com/software/avizo3d">Avizo</a> software to read 3D geometry.
 
 A single \cgal data structure, `CGAL::Mesh_complex_3_in_triangulation_3`, can be exported into `.am` files.
-This can be done using the function `CGAL::IO::output_to_avizo()`.
+This can be done using the function \link CGAL::IO::output_to_avizo() `CGAL::IO::output_to_avizo()`\endlink.
 
 A precise specification of the format is available
 <a href="https://assets.thermofisher.com/TFS-Assets/MSD/Product-Guides/users-guide-avizo-software-2019.pdf">in this guide</a>.
@@ -497,7 +499,7 @@ A precise specification of the format is available <a href="https://hal.inria.fr
 in the appendices (section 7.2.1, page 36).
 
 Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.mesh`
-This can be done using the function `CGAL::IO::output_to_medit()`.
+This can be done using the function \link CGAL::IO::write_MEDIT `CGAL::IO::write_MEDIT()`\endlink.
 
 
 \section IOStreamTetgen Tetgen File Format
@@ -507,7 +509,7 @@ A precise specification of the format is available at <a href="https://wias-berl
 
 Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into
 some of the Tetgen file formats, namely `.node`, `.ele` and `.face`.
-This can be done using the function `CGAL::IO::output_to_tetgen()`.
+This can be done using the function \link CGAL::IO::output_to_tetgen `CGAL::IO::output_to_tetgen()`\endlink.
 
 
 \section IOStreamWKT Well-Known Text (WKT) File Format

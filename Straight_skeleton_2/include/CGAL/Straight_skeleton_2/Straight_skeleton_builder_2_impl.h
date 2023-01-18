@@ -15,7 +15,6 @@
 
 #include <CGAL/number_type_config.h>
 #include <CGAL/Real_timer.h>
-#include <CGAL/Unique_hash_map.h>
 
 #include <boost/utility.hpp>
 #include <boost/version.hpp>
@@ -71,7 +70,7 @@ template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::InsertEventInPQ( EventPtr aEvent )
 {
   mPQ.push(aEvent);
-  CGAL_STSKEL_BUILDER_TRACE(4, "Enque: " << *aEvent);
+  CGAL_STSKEL_BUILDER_TRACE(4, "Enqueue: " << *aEvent);
 }
 
 template<class Gt, class Ss, class V>
@@ -319,10 +318,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
   //
   // An 'Event' is the collision of 2 wavefronts.
   // Each event changes the topology of the shrinking polygon; that is, at the event, the current polygon differs from the
-  // inmediately previous polygon in the number of vertices.
+  // immediately previous polygon in the number of vertices.
   //
   // If 2 vertex wavefronts sharing a common edge collide, the event is called an edge event. At the time of the event, the current
-  // polygon doex not have the common edge anynmore, and the two vertices become one. This new 'skeleton' vertex generates a new
+  // polygon doex not have the common edge anymore, and the two vertices become one. This new 'skeleton' vertex generates a new
   // vertex wavefront which can further collide with other wavefronts, producing for instance, more edge events.
   //
   // If a refex vertex wavefront collide with an edge wavefront, the event is called a split event. At the time of the event, the current
@@ -368,7 +367,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
 
 // Handles the special case of two simultaneous edge events, that is, two edges
 // collapsing along the line/point were they meet at the same time.
-// This ocurrs when the bisector emerging from vertex 'aA' is defined by the same pair of
+// This occurs when the bisector emerging from vertex 'aA' is defined by the same pair of
 // contour edges as the bisector emerging from vertex 'aB' (but in opposite order).
 //
 template<class Gt, class Ss, class V>
@@ -1002,7 +1001,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidEdgeEvent( EdgeEvent const& aE
   }
   else
   {
-    // Triangle collapse. No need to test explicitely.
+    // Triangle collapse. No need to test explicitly.
     rResult = true ;
   }
   return rResult ;
@@ -1146,7 +1145,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     CGAL_assertion(lOppIBisector_L->prev() == lOppOBisector_R ) ;
     CGAL_assertion(lOppFicNode->has_infinite_time());
 
-    CGAL_STSKEL_BUILDER_TRACE(2,"Splitted face: N" << lOppR->id()
+    CGAL_STSKEL_BUILDER_TRACE(2,"Split face: N" << lOppR->id()
                                 << "->B" << lOppOBisector_R->id()
                                 << "->N" << lOppFicNode->id()
                                 << "->B" << lOppIBisector_L->id()
@@ -1893,7 +1892,7 @@ template<class Gt, class Ss, class V>
 bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
 {
   //
-  // NOTE: This code might be executed on a topologically incosistent HDS, thus the need to check
+  // NOTE: This code might be executed on a topologically inconsistent HDS, thus the need to check
   // the structure along the way.
   //
 
@@ -1903,16 +1902,16 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
   //
   // While circulating the bisectors along the face for edge Ei we find all those edges E* which
   // are or become consecutive to Ei during the wavefront propagation. Each bisector along the face:
-  // (Ei,Ea), (Ei,Eb), (Ei,Ec), etcc pairs Ei with such other edge.
+  // (Ei,Ea), (Ei,Eb), (Ei,Ec), etc pairs Ei with such other edge.
   // Between one bisector (Ei,Ea) and the next (Ei,Eb) there is skeleton node which represents
   // the collision between the 3 edges (Ei,Ea,Eb).
-  // It follows from the pairing that any skeleton node Ni, for example (Ei,Ea,Eb), neccesarily
+  // It follows from the pairing that any skeleton node Ni, for example (Ei,Ea,Eb), necessarily
   // shares two edges (Ei and Eb precisely) with any next skeleton node Ni+1 around the face.
   // That is, the triedge of defining edges that correspond to each skeleton node around the face follow this
   // sequence: (Ei,Ea,Eb), (Ei,Eb,Ec), (Ei,Ec,Ed), ...
   //
   // Any 2_ consecutive_ skeleton nodes around a face share 2 out of the 3 defining edges, which is one of the
-  // neccesary conditions for "coincidence". Therefore, coincident nodes can only come as consecutive along a face
+  // necessary conditions for "coincidence". Therefore, coincident nodes can only come as consecutive along a face
   //
 
   MultinodeVector lMultinodes ;
@@ -2024,7 +2023,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
   // MergeCoincidentNodes() locks all extremities of halfedges that have a vertex involved in a multinode.
   // However, both extremities might have different (combinatorially and geometrically) vertices.
   // With a single pass, it would prevent one of the extremities from being properly simplified.
-  // The simpliest is to just run it again as the skeleton structure is small compared to the rest
+  // The simplest is to just run it again as the skeleton structure is small compared to the rest
   // of the algorithm.
   for(;;)
   {

@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Surface_mesher_Examples)
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
@@ -11,7 +11,7 @@ if(CGAL_ImageIO_FOUND)
   create_single_source_cgal_program("mesh_an_implicit_function.cpp")
 
 else()
-  if(RUNNING_CGAL_AUTO_TEST)
+  if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     # Just to avoid a warning from CMake if that variable is set on the command line...
   endif()
 

@@ -723,29 +723,39 @@ public:
     return Approximate_2();
   }
 
-  class Construct_x_monotone_curve_2
-  {
+  //! Functor
+  class Construct_x_monotone_curve_2 {
   public:
-
-    /*!
-     * Return an x-monotone curve connecting the two given endpoints.
+    /*! Return an x-monotone curve connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
      */
-    X_monotone_curve_2 operator() (const Point_2& p,
-                                   const Point_2& q) const
-    {
-      return (X_monotone_curve_2 (p, q));
-    }
+    X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
+    { return (X_monotone_curve_2(p, q)); }
   };
 
   /*! Get a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
-  {
-    return Construct_x_monotone_curve_2();
-  }
+  { return Construct_x_monotone_curve_2(); }
+
+  //! Functor
+  class Construct_curve_2 {
+  public:
+    /*! Return a curve connecting the two given endpoints.
+     * \param p The first point.
+     * \param q The second point.
+     * \pre p and q must not be the same.
+     * \return A segment connecting p and q.
+     */
+    Curve_2 operator()(const Point_2& p, const Point_2& q) const
+    { return (Curve_2(p, q)); }
+  };
+
+  /*! Get a Construct_curve_2 functor object. */
+  Construct_curve_2 construct_curve_2_object () const
+  { return Construct_curve_2(); }
   //@}
 
   /// \name Functor definitions for the Boolean set-operation traits.
@@ -833,7 +843,7 @@ public:
                              m_traits.compare_y_at_x_2_object());
       CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
       Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
-      // Check  whether source and taget are two distinct points and they lie
+      // Check  whether source and target are two distinct points and they lie
       // on the line.
       CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
       CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);

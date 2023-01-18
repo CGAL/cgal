@@ -180,37 +180,9 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       snc0(s0), snc1(s1), bop(_bop), result(r),
       inverse_order(invert_order), A(Ain) {}
 
-      void operator()(Halfedge_handle e0, Object_handle o1, const Point_3& ip)
-      const {
-
-#ifdef CGAL_NEF3_DUMP_STATISTICS
-      ++number_of_intersections;
-#endif
-
-      Halfedge_handle e;
-      Halffacet_handle f;
-
-      Point_3 p(normalized(ip));
-#ifdef CGAL_USE_TRACE
-      CGAL_NEF_TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
-      CGAL_NEF_TRACEN("edge 0 has source " << e0->source()->point() << " and direction " << e0->vector());
-      if( CGAL::assign( e, o1)) {
-        CGAL_NEF_TRACEN("edge 1 has source " << e->source()->point() << " and direction " << e->vector());
-      }
-      else if( CGAL::assign( f, o1)) {
-        CGAL_NEF_TRACEN("face 1 has plane equation " << f->plane());
-      }
-      else
-              CGAL_error_msg( "wrong handle");
-#endif
-
-#if defined (CGAL_NEF3_TIMER_OVERLAY) || (CGAL_NEF3_TIMER_INTERSECTION)
-      timer_overlay.start();
-#endif
-
-      if( CGAL::assign( e, o1)) {
-        //        std::cerr << "inverse order " << inverse_order << std::endl;
-
+      void operator()(Halfedge_handle e0, Halfedge_handle e, const Point_3& ip) const override
+      {
+        Point_3 p(normalized(ip));
 #ifdef CGAL_NEF_EXPERIMENTAL_CODE
         typename CGAL::Edge_edge_overlay<SNC_structure> eeo(result, e0, e);
         Sphere_map* M0 = eeo.create_edge_edge_overlay(p, bop, inverse_order, A);
@@ -228,7 +200,10 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
         result.delete_vertex(v1);
 #endif
       }
-      else if( CGAL::assign( f, o1)) {
+
+      void operator()(Halfedge_handle e0, Halffacet_handle f, const Point_3& ip) const override
+      {
+        Point_3 p(normalized(ip));
 #ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
         Binary_operation D(result);
         Vertex_handle v0, v1;
@@ -246,14 +221,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
         O.simplify(A);
 #endif // CGAL_NEF3_OVERLAY_BY_HAND_OFF
       }
-      else
-        CGAL_error_msg( "wrong handle");
 
-#if defined (CGAL_NEF3_TIMER_OVERLAY) || (CGAL_NEF3_TIMER_INTERSECTION)
-      timer_overlay.stop();
-#endif
-
-    }
   private:
     const SNC_structure& snc0;
     const SNC_structure& snc1;
@@ -306,7 +274,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       number_of_intersection_candidates=0;
 #endif
 
-    Unique_hash_map<Vertex_const_handle, bool> ignore(false);
+    Unique_hash_map<Vertex_const_handle, bool> ignore(false, snc1.number_of_vertices());
     Vertex_const_iterator v0;
 
     //    CGAL_NEF_SETDTHREAD(19*43*131);
@@ -319,6 +287,9 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     CGAL_NEF_TRACEN("=> for all v0 in snc1, qualify v0 with respect snc2");
     //    int i=2;
     Association A;
+    A.reserve(snc1.number_of_shalfedges() + snc1.number_of_shalfloops() +
+              snc2.number_of_shalfedges() + snc2.number_of_shalfloops());
+
     SHalfedge_const_iterator sei;
     CGAL_forall_shalfedges(sei, snc1)
       A.initialize_hash(sei);
@@ -479,7 +450,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     // SNC structure finds an intersection between the segment defined
     // by an edge on the other SNC structure, the call back method is
     // called with the intersecting objects and the intersection point.
-    // The responsability of the call back functor is to construct the
+    // The responsibility of the call back functor is to construct the
     // local view on the intersection point on both SNC structures,
     // overlay them and add the resulting sphere map to the result.
 

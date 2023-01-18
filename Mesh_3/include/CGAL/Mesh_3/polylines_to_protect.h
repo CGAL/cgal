@@ -19,12 +19,15 @@
 #include <vector>
 #include <map>
 #include <utility> // std::swap
+#include <algorithm> // std::min
+
 #include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Labeled_mesh_domain_3.h> // for CGAL::Null_subdomain_index
+#include <CGAL/number_utils.h>
 #include <boost/utility.hpp> // for boost::prior
 #include <boost/optional.hpp>
 
@@ -301,6 +304,16 @@ struct Polyline_visitor
 template <typename Kernel>
 struct Angle_tester
 {
+  const double m_angle_sq_cosine;// squared cosine of `std:max(90, angle_deg)`
+
+  Angle_tester()
+    : m_angle_sq_cosine(0)
+  {}
+
+  Angle_tester(const double angle_deg)//angle given in degrees for readability
+    : m_angle_sq_cosine(CGAL::square(std::cos((std::max)(90.,angle_deg) * CGAL_PI / 180.)))
+  {}
+
   template <typename vertex_descriptor, typename Graph>
   bool operator()(vertex_descriptor& v, const Graph& g) const
   {
@@ -320,15 +333,22 @@ struct Angle_tester
       const typename Kernel::Point_3& p1 = g[v1].point;
       const typename Kernel::Point_3& p2 = g[v2].point;
 
-      if(CGAL::angle(p1, p, p2) == CGAL::ACUTE) {
-        // const typename Kernel::Vector_3 e1 = p1 - p;
-        // const typename Kernel::Vector_3 e2 = p2 - p;
-        // std::cerr << "At point " << p << ": the angle is "
-        //           << ( std::acos(e1 * e2
-        //                          / CGAL::sqrt(e1*e1)
-        //                          / CGAL::sqrt(e2*e2))
-        //                * 180 / CGAL_PI ) << std::endl;
+      //if angle at v is acute, v must be considered as a terminal vertex
+      // to ensure termination
+      if (CGAL::angle(p1, p, p2) == CGAL::ACUTE)
         return true;
+      else if (m_angle_sq_cosine > 0.)//check angle only if angle is > 90.
+      {
+        const typename Kernel::Vector_3 e1 = p1 - p;
+        const typename Kernel::Vector_3 e2 = p2 - p;
+
+        const auto scalar_product = e1 * e2;
+        if (CGAL::is_positive(scalar_product))
+          return true;
+
+        const auto sq_scalar_product = CGAL::square(scalar_product);
+        if (sq_scalar_product <= m_angle_sq_cosine * (e1 * e1) * (e2 * e2))
+          return true;
       }
     }
     return false;
@@ -997,7 +1017,8 @@ template <typename P,
 void
 polylines_to_protect(std::vector<std::vector<P> >& polylines,
                      PolylineInputIterator existing_polylines_begin,
-                     PolylineInputIterator existing_polylines_end)
+                     PolylineInputIterator existing_polylines_end,
+                     const double& angle = 90.)//when not provided, check only for acute angles
 {
   typedef P Point_3;
   typedef typename Kernel_traits<P>::Kernel K;
@@ -1017,11 +1038,11 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   for (PolylineInputIterator poly_it = existing_polylines_begin;
        poly_it != existing_polylines_end; ++poly_it)
   {
-    Polyline polyline = *poly_it;
+    const Polyline& polyline = *poly_it;
     if (polyline.size() < 2)
       continue;
 
-    typename Polyline::iterator pit = polyline.begin();
+    typename Polyline::const_iterator pit = polyline.begin();
     while (boost::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);
@@ -1035,8 +1056,9 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   Less_for_Graph_vertex_descriptors<Graph> less(graph);
   const Graph& const_graph = graph;
   typedef typename Kernel_traits<P>::Kernel K;
+  Mesh_3::Angle_tester<K> angle_tester(angle);
   split_graph_into_polylines(const_graph, visitor,
-                             Mesh_3::Angle_tester<K>(), less);
+                             angle_tester, less);
 }
 
 template <typename P, typename Image_word_type, typename Null_subdomain_index>

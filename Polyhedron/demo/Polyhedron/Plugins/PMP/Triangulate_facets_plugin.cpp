@@ -103,7 +103,7 @@ public Q_SLOTS:
         if (!CGAL::Polygon_mesh_processing::triangulate_faces(
                  selection_item->selected_facets,
                  *pMesh,
-                 CGAL::Polygon_mesh_processing::parameters::visitor(visitor)))
+                 CGAL::parameters::visitor(visitor)))
           CGAL::Three::Three::warning(tr("Some facets could not be triangulated."));
 
         sm_item = selection_item->polyhedron_item();

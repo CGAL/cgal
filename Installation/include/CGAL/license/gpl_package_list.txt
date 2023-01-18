@@ -2,6 +2,7 @@ AABB_tree 3D Fast Intersection and Distance Computation
 Advancing_front_surface_reconstruction Advancing Front Surface Reconstruction
 Alpha_shapes_2 2D Alpha Shapes
 Alpha_shapes_3 3D Alpha Shapes
+Alpha_wrap_3 3D Alpha Wrapping
 Apollonius_graph_2 2D Apollonius Graphs (Delaunay Graphs of Disks)
 Arrangement_on_surface_2 2D Arrangements
 Barycentric_coordinates_2 2D Generalized Barycentric Coordinates
@@ -54,7 +55,8 @@ Polygon_mesh_processing/measure Polygon Mesh Processing - Geometric Measure
 Polygon_mesh_processing/meshing_hole_filling Polygon Mesh Processing - Meshing and Hole Filling
 Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation
 Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate
-Polygon_mesh_processing/repair Polygon Mesh Processing - Repair
+Polygon_mesh_processing/combinatorial_repair Polygon Mesh Processing - Combinatorial Repair
+Polygon_mesh_processing/geometric_repair Polygon Mesh Processing - Geometric Repair
 Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
 Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
@@ -90,6 +92,7 @@ Surface_sweep_2 2D Intersection of Curves
 TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
 Three Three
+SMDS_3 3D Simplicial Mesh Data Structure
 Triangulation_2 2D Triangulation
 Triangulation_on_sphere_2 2D Triangulation on Sphere
 Triangulation_3 3D Triangulations

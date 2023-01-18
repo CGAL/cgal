@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Alpha_shapes_3_Demo)
 
 # Find includes in corresponding build directories
@@ -27,7 +27,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   # include(${QT_USE_FILE})
   include_directories(BEFORE ./)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)

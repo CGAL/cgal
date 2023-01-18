@@ -26,7 +26,7 @@
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_interior_point_3.h>
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include <list>
 #include <vector>
 
@@ -51,7 +51,7 @@ namespace CGAL
         typename boost::property_map<Polyhedron, vertex_point_t>::type vpm_dual = get(CGAL::vertex_point, dual);
         // compute coordinates of extreme vertices in the dual polyhedron
         // from primal faces
-        boost::unordered_map<face_descriptor, vertex_descriptor> extreme_points;
+        std::unordered_map<face_descriptor, vertex_descriptor> extreme_points;
 
         for(face_descriptor fd : faces( primal)){
           halfedge_descriptor h = halfedge(fd,primal);
@@ -101,7 +101,7 @@ namespace CGAL
             // find a point inside the intersection
             origin = halfspace_intersection_interior_point_3(pbegin, pend);
 
-            CGAL_assertion_msg(origin!=boost::none, "halfspace_intersection_with_constructions_3: problem when determing a point inside the intersection");
+            CGAL_assertion_msg(origin!=boost::none, "halfspace_intersection_with_constructions_3: problem when determining a point inside the intersection");
             if (origin==boost::none)
               return;
           }

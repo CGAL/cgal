@@ -4,7 +4,7 @@ option(CGAL_DEV_MODE
   "Activate the CGAL developers mode. See https://github.com/CGAL/cgal/wiki/CGAL_DEV_MODE"
   $ENV{CGAL_DEV_MODE})
 
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
 # Just to avoid a warning from CMake if that variable is set on the command line...
 endif()
 
@@ -15,13 +15,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   # CMAKE_ROOT must be properly configured, but is not by the CMake windows installer, so check here
   if (NOT CMAKE_ROOT)
     message( FATAL_ERROR "CMAKE_ROOT environment variable not set. It should point to the directory where CMake is installed.")
-  endif()
-
-  # CMAKE_VERSION was introduced in 2.6.3 so we use it to detect the fact
-  if ( CMAKE_VERSION )
-    set( CMAKE_2_6_3_OR_ABOVE TRUE )
-  else()
-    set( CMAKE_2_6_3_OR_ABOVE FALSE )
   endif()
 
   if ( WIN32 )

@@ -52,9 +52,14 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
 #include <CGAL/Random.h>
+#include <CGAL/assertions.h>
+
+#define CGAL_BASIC_VIEWER_INIT_SIZE_X 500
+#define CGAL_BASIC_VIEWER_INIT_SIZE_Y 450
 
 namespace CGAL
 {
+
 //------------------------------------------------------------------------------
 inline CGAL::IO::Color get_random_color(CGAL::Random& random)
 {
@@ -201,7 +206,7 @@ public:
     else
       setWindowTitle(title);
 
-    resize(500, 450);
+    resize(CGAL_BASIC_VIEWER_INIT_SIZE_X, CGAL_BASIC_VIEWER_INIT_SIZE_Y);
 
     if (inverse_normal)
     { negate_all_normals(); }
@@ -604,6 +609,7 @@ protected:
 
   void initialize_buffers()
   {
+    set_camera_mode();
     rendering_program_p_l.bind();
 
     // 1) POINT SHADER
@@ -612,7 +618,7 @@ protected:
     vao[VAO_MONO_POINTS].bind();
 
     unsigned int bufn = 0;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_POINTS].data(),
                            static_cast<int>(arrays[POS_MONO_POINTS].size()*sizeof(float)));
@@ -629,7 +635,7 @@ protected:
     vao[VAO_COLORED_POINTS].bind();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_POINTS].data(),
                            static_cast<int>(arrays[POS_COLORED_POINTS].size()*sizeof(float)));
@@ -638,7 +644,7 @@ protected:
     buffers[bufn].release();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[COLOR_POINTS].data(),
                            static_cast<int>(arrays[COLOR_POINTS].size()*sizeof(float)));
@@ -654,7 +660,7 @@ protected:
     vao[VAO_MONO_SEGMENTS].bind();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_SEGMENTS].data(),
                            static_cast<int>(arrays[POS_MONO_SEGMENTS].size()*sizeof(float)));
@@ -671,7 +677,7 @@ protected:
     vao[VAO_COLORED_SEGMENTS].bind();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_SEGMENTS].data(),
                            static_cast<int>(arrays[POS_COLORED_SEGMENTS].size()*sizeof(float)));
@@ -681,7 +687,7 @@ protected:
     buffers[bufn].release();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[COLOR_SEGMENTS].data(),
                            static_cast<int>(arrays[COLOR_SEGMENTS].size()*sizeof(float)));
@@ -699,7 +705,7 @@ protected:
     vao[VAO_MONO_RAYS].bind();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_RAYS].data(),
                            static_cast<int>(arrays[POS_MONO_RAYS].size()*sizeof(float)));
@@ -717,7 +723,7 @@ protected:
     vao[VAO_COLORED_RAYS].bind();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_RAYS].data(),
                            static_cast<int>(arrays[POS_COLORED_RAYS].size()*sizeof(float)));
@@ -727,7 +733,7 @@ protected:
     buffers[bufn].release();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[COLOR_RAYS].data(),
                            static_cast<int>(arrays[COLOR_RAYS].size()*sizeof(float)));
@@ -744,7 +750,7 @@ protected:
     vao[VAO_MONO_LINES].bind();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_LINES].data(),
                            static_cast<int>(arrays[POS_MONO_LINES].size()*sizeof(float)));
@@ -762,7 +768,7 @@ protected:
     vao[VAO_COLORED_LINES].bind();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_LINES].data(),
                            static_cast<int>(arrays[POS_COLORED_LINES].size()*sizeof(float)));
@@ -772,7 +778,7 @@ protected:
     buffers[bufn].release();
 
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[COLOR_LINES].data(),
                            static_cast<int>(arrays[COLOR_LINES].size()*sizeof(float)));
@@ -792,7 +798,7 @@ protected:
 
     // 5.1.1) points of the mono faces
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_FACES].data(),
                            static_cast<int>(arrays[POS_MONO_FACES].size()*sizeof(float)));
@@ -803,7 +809,7 @@ protected:
 
     // 5.1.2) normals of the mono faces
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     if (m_flatShading)
     {
@@ -831,7 +837,7 @@ protected:
 
     // 5.2.1) points of the color faces
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_FACES].data(),
                            static_cast<int>(arrays[POS_COLORED_FACES].size()*sizeof(float)));
@@ -842,7 +848,7 @@ protected:
 
     // 5.2.2) normals of the color faces
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     if (m_flatShading)
     {
@@ -863,7 +869,7 @@ protected:
 
     // 5.2.3) colors of the faces
     ++bufn;
-    assert(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[COLOR_FACES].data(),
                            static_cast<int>(arrays[COLOR_FACES].size()*sizeof(float)));
@@ -886,7 +892,7 @@ protected:
 
       vao[VAO_CLIPPING_PLANE].bind();
       ++bufn;
-      assert(bufn < NB_VBO_BUFFERS);
+      CGAL_assertion(bufn < NB_VBO_BUFFERS);
       buffers[bufn].bind();
       buffers[bufn].allocate(arrays[POS_CLIPPING_PLANE].data(),
                             static_cast<int>(arrays[POS_CLIPPING_PLANE].size() * sizeof(float)));
@@ -988,19 +994,8 @@ protected:
             (has_zero_x() || has_zero_y() || has_zero_z()));
   }
 
-  virtual void draw()
+  void set_camera_mode()
   {
-    glEnable(GL_DEPTH_TEST);
-
-    QMatrix4x4 clipping_mMatrix;
-    clipping_mMatrix.setToIdentity();
-    for(int i=0; i< 16 ; i++)
-    { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
-    QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, 0.0);
-    QVector4D plane_point = clipping_mMatrix * QVector4D(0,0,0,1);
-    if(!m_are_buffers_initialized)
-    { initialize_buffers(); }
-
     if (is_two_dimensional())
     {
       camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
@@ -1022,6 +1017,20 @@ protected:
       camera()->setType(CGAL::qglviewer::Camera::PERSPECTIVE);
       camera()->frame()->setConstraint(nullptr);
     }
+  }
+
+  virtual void draw()
+  {
+    glEnable(GL_DEPTH_TEST);
+
+    QMatrix4x4 clipping_mMatrix;
+    clipping_mMatrix.setToIdentity();
+    for(int i=0; i< 16 ; i++)
+    { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
+    QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, 0.0);
+    QVector4D plane_point = clipping_mMatrix * QVector4D(0,0,0,1);
+    if(!m_are_buffers_initialized)
+    { initialize_buffers(); }
 
     QColor color;
     attrib_buffers(this);
@@ -1355,6 +1364,7 @@ protected:
 
   virtual void init()
   {
+    set_camera_mode();
     initializeOpenGLFunctions();
 
     // Light default parameters
@@ -1771,7 +1781,7 @@ protected:
 
   QGLBuffer buffers[NB_VBO_BUFFERS];
 
-  // The following enum gives the indices of the differents vao.
+  // The following enum gives the indices of the different vao.
   enum
     { VAO_MONO_POINTS=0,
       VAO_COLORED_POINTS,

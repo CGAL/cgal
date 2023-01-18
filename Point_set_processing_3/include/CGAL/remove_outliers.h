@@ -20,10 +20,10 @@
 #include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
 #include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <functional>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/zip_iterator.hpp>
@@ -170,22 +170,23 @@ compute_avg_knn_sq_distance_3(
 */
 template <typename ConcurrencyTag,
           typename PointRange,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 typename PointRange::iterator
 remove_outliers(
   PointRange& points,
   unsigned int k,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // geometric types
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  PointMap point_map = NP_helper::get_point_map(points, np);
   typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                          typename Kernel::FT(0));
   double threshold_percent = choose_parameter(get_parameter(np, internal_np::threshold_percent), 10.);
@@ -205,12 +206,12 @@ remove_outliers(
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   // precondition: at least 2 nearest neighbors
-  CGAL_point_set_processing_precondition(k >= 2);
+  CGAL_precondition(k >= 2);
 
-  CGAL_point_set_processing_precondition(threshold_percent >= 0 && threshold_percent <= 100);
+  CGAL_precondition(threshold_percent >= 0 && threshold_percent <= 100);
 
   Neighbor_query neighbor_query (points, point_map);
 
@@ -247,33 +248,37 @@ remove_outliers(
 
   if (threshold_distance != FT(0))
     f2r = std::partition (sorted_points.begin(), sorted_points.end(),
-                          [&threshold_distance](const std::pair<FT, value_type>& p) -> bool
+                          [sq_threshold_distance = CGAL::square(threshold_distance)](const std::pair<FT, value_type>& p) -> bool
                           {
-                            return p.first < threshold_distance * threshold_distance;
+                            return p.first < sq_threshold_distance;
                           });
 
-  if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
-  {
-    std::nth_element (f2r,
-                      sorted_points.begin() + first_index_to_remove,
-                      sorted_points.end(),
-                      [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
-                      {
-                        return v1.first<v2.first;
-                      });
-    f2r = sorted_points.begin() + first_index_to_remove;
-  }
+  iterator out = points.end();
 
-  // Replaces [points.begin(), points.end()) range by the sorted content.
-  iterator pit = points.begin();
-  iterator out = points.begin();
-
-  for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+  if (f2r != sorted_points.end())
   {
-    *pit = sit->second;
-    if (sit == f2r)
-      out = pit;
-    ++ pit;
+    if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
+    {
+      std::nth_element (f2r,
+                        sorted_points.begin() + first_index_to_remove,
+                        sorted_points.end(),
+                        [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
+                        {
+                          return v1.first<v2.first;
+                        });
+      f2r = sorted_points.begin() + first_index_to_remove;
+    }
+
+    // Replaces [points.begin(), points.end()) range by the sorted content.
+    iterator pit = points.begin();
+
+    for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+    {
+      *pit = sit->second;
+      if (sit == f2r)
+        out = pit;
+      ++ pit;
+    }
   }
 
   callback_wrapper.join();
@@ -281,19 +286,6 @@ remove_outliers(
   // Returns the iterator on the first point to remove
   return out;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename ConcurrencyTag, typename PointRange>
-typename PointRange::iterator
-remove_outliers(
-  PointRange& points,
-  unsigned int k) ///< number of neighbors.
-{
-  return remove_outliers<ConcurrencyTag> (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

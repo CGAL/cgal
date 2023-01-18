@@ -90,9 +90,11 @@
 \package_listing{Mesh_2}
 \package_listing{Surface_mesher}
 \package_listing{Skin_surface_3}
+\package_listing{SMDS_3}
 \package_listing{Mesh_3}
 \package_listing{Tetrahedral_remeshing}
 \package_listing{Periodic_3_mesh_3}
+\package_listing{Alpha_wrap_3}
 
 \cgalPackageSection{PartReconstruction,Shape Reconstruction}
 
@@ -164,7 +166,6 @@
 
 \cgalPackageSection{PartVisualization,Visualization}
 
-\package_listing{Geomview}
 \package_listing{GraphicsView}
 \package_listing{CGAL_ipelets}
 

@@ -4,7 +4,7 @@
 # ${CGAL_SOURCE_DIR} and to the root binary directory of the project as
 # ${CGAL_BINARY_DIR} or ${CGAL_BINARY_DIR}.
 if(NOT PROJECT_NAME)
-  cmake_minimum_required(VERSION 3.12...3.20)
+  cmake_minimum_required(VERSION 3.1...3.23)
   project(CGAL CXX C)
 endif()
 
@@ -354,7 +354,7 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   message(STATUS "Operating system:")
   execute_process(
     COMMAND uname -a
@@ -390,11 +390,9 @@ if(MSVC)
                      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
   uniquely_add_flags(CGAL_CXX_FLAGS "/fp:strict")
   uniquely_add_flags(CGAL_CXX_FLAGS "/fp:except-")
-  uniquely_add_flags(CGAL_CXX_FLAGS "/wd4503"
-  )# Suppress warnings C4503 about "decorated name length exceeded"
   uniquely_add_flags(CGAL_CXX_FLAGS "/bigobj") # Use /bigobj by default
 
-  if(RUNNING_CGAL_AUTO_TEST)
+  if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     set(CMAKE_CXX_WARNING_LEVEL
         2
         CACHE STRING "MSVC C++ compiler warning level" FORCE)
@@ -447,7 +445,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
   if(GCC_FOUND)
 
-    if(RUNNING_CGAL_AUTO_TEST)
+    if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
       uniquely_add_flags(CGAL_CXX_FLAGS "-Wall")
       # Remove -g from the relevant CMAKE_CXX_FLAGS. This will also
       # propagate to the rest of the tests, since we overwrite those
@@ -484,7 +482,7 @@ message("== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
-if(CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST)
+if(CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   message("== Set up flags ==")
 
   # Ugly hack to be compatible with current CGAL testsuite process (as of
@@ -1202,8 +1200,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
       endif()
     endforeach() # loop on packages
     #Now check that a cpp file including all documented headers compiles
-    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp
-         "#define  BOOST_PARAMETER_MAX_ARITY 12 \n")
     foreach(header ${list_of_headers_to_test})
       file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "#include <${header}>\n")
     endforeach() #loop on headers to include in test file
@@ -1258,4 +1254,4 @@ if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   if(Qt5_FOUND)
     message(STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'")
   endif()#Qt5_FOUND
-endif()#RUNNING_CGAL_AUTO_TEST
+endif()#RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE

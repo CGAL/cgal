@@ -58,7 +58,6 @@ It returns `true`, iff the point elements in
 form a clockwise-oriented strongly convex polygon.
 
 A set of points is said to be strongly convex
-<A NAME="Index_anchor_76"></A>
 if it consists of only extreme points
 (<I>i.e.</I>, vertices of the convex hull).
 

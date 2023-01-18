@@ -18,6 +18,7 @@
 #include <utility>
 #include <array>
 #include <iterator>
+#include <unordered_set>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
@@ -440,7 +441,7 @@ bool is_boundary(const C3T3& c3t3,
                  const CellSelector& cell_selector)
 {
   return c3t3.is_in_complex(f)
-         || cell_selector(f.first) != cell_selector(f.first->neighbor(f.second));
+    || get(cell_selector, f.first) != get(cell_selector, f.first->neighbor(f.second));
 }
 
 template<typename C3T3, typename CellSelector>
@@ -496,7 +497,7 @@ bool is_boundary_vertex(const typename C3t3::Vertex_handle& v,
   {
     if (c3t3.is_in_complex(f))
       return true;
-    if (cell_selector(f.first) ^ cell_selector(f.first->neighbor(f.second)))
+    if (get(cell_selector, f.first) ^ get(cell_selector, f.first->neighbor(f.second)))
       return true;
   }
   return false;
@@ -616,7 +617,7 @@ std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  boost::unordered_set<Subdomain_index> indices;
+  std::unordered_set<Subdomain_index> indices;
   incident_subdomains(v, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -628,7 +629,7 @@ std::size_t nb_incident_subdomains(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  boost::unordered_set<Subdomain_index> indices;
+  std::unordered_set<Subdomain_index> indices;
   incident_subdomains(e, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -640,7 +641,7 @@ std::size_t nb_incident_surface_patches(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
-  boost::unordered_set<Surface_patch_index> indices;
+  std::unordered_set<Surface_patch_index, boost::hash<Surface_patch_index>> indices;
   incident_surface_patches(e, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -651,7 +652,7 @@ std::size_t nb_incident_complex_edges(const typename C3t3::Vertex_handle v,
                                       const C3t3& c3t3)
 {
   typedef typename C3t3::Edge Edge;
-  boost::unordered_set<Edge> edges;
+  std::unordered_set<Edge> edges;
   c3t3.triangulation().finite_incident_edges(v, std::inserter(edges, edges.begin()));
 
   std::size_t count = 0;
@@ -766,7 +767,7 @@ bool is_outside(const typename C3t3::Edge & edge,
     if (c3t3.is_in_complex(circ))
       return false;
     // does circ belong to the selection?
-    if (cell_selector(circ))
+    if (get(cell_selector, circ))
       return false;
 
     ++circ;
@@ -788,7 +789,7 @@ bool is_selected(const typename C3t3::Vertex_handle v,
 
   for(Cell_handle c : cells)
   {
-    if (cell_selector(c))
+    if (get(cell_selector, c))
       return true;
   }
   return false;
@@ -813,7 +814,7 @@ bool is_internal(const typename C3t3::Edge& edge,
       return false;
     if (si != circ->subdomain_index())
       return false;
-    if (!cell_selector(circ))
+    if (!get(cell_selector, circ))
       return false;
     if (c3t3.is_in_complex(
           circ,
@@ -835,7 +836,7 @@ bool is_selected(const typename C3T3::Triangulation::Edge& e,
   Cell_circulator done = circ;
   do
   {
-    if (cell_selector(circ))
+    if (get(cell_selector, circ))
       return true;
   } while (++circ != done);
 
@@ -1134,6 +1135,38 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
+namespace internal
+{
+  template<typename C3t3, typename CellSelector>
+  void treat_before_delete(typename C3t3::Cell_handle c,
+                           CellSelector& cell_selector,
+                           C3t3& c3t3)
+  {
+    if (c3t3.is_in_complex(c))
+      c3t3.remove_from_complex(c);
+    if (get(cell_selector, c))
+      put(cell_selector, c, false);
+  }
+
+  template<typename C3t3, typename CellSelector>
+  void treat_new_cell(typename C3t3::Cell_handle c,
+                      const typename C3t3::Subdomain_index& subdomain,
+                      CellSelector& cell_selector,
+                      const bool selected,
+                      C3t3& c3t3)
+  {
+    //update C3t3
+    using Subdomain_index = typename C3t3::Subdomain_index;
+    if (Subdomain_index() != subdomain)
+      c3t3.add_to_complex(c, subdomain);
+    else
+      c->set_subdomain_index(Subdomain_index());
+
+    //update cell_selector property map
+    put(cell_selector, c, selected);
+  }
+}
+
 namespace debug
 {
 
@@ -1309,7 +1342,7 @@ void dump_cells_off(const CellRange& cells, const Tr& /*tr*/, const char* filena
 
   Bimap_t vertices;
   int index = 0;
-  boost::unordered_set<std::array<Vertex_handle, 3> > facets;
+  std::unordered_set<std::array<Vertex_handle, 3>, boost::hash<std::array<Vertex_handle, 3>> > facets;
 
   for (Cell_handle c : cells)
   {
@@ -1591,11 +1624,9 @@ void dump_cells_with_small_dihedral_angle(const Tr& tr,
   std::vector<Cell_handle>     cells;
   std::vector<Subdomain_index> indices;
 
-  for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-       cit != tr.finite_cells_end(); ++cit)
+  for (Cell_handle c : tr.finite_cell_handles())
   {
-    Cell_handle c = cit;
-    if (c->subdomain_index() != Subdomain_index() && cell_select(c))
+    if (c->subdomain_index() != Subdomain_index() && get(cell_select, c))
     {
       double dh = min_dihedral_angle(tr, c);
       if (dh < angle_bound)

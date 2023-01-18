@@ -44,7 +44,7 @@ the basic `Cartesian_converter`, for example when a custom point is used.
 In this case, a partial specialization of `Cartesian_converter`
 must be provided by the user. An example of such specialization is given in the
 two-dimensional Alpha Shapes example \ref Alpha_shapes_2/ex_alpha_projection_traits.cpp "ex_alpha_projection_traits.cpp".
-<li>The tag `ExactAlphaComparisonTag` cannot be used in conjonction with periodic triangulations.
+<li>The tag `ExactAlphaComparisonTag` cannot be used in conjunction with periodic triangulations.
 When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
 the evaluations of predicates such as `Side_of_oriented_sphere_3` are done lazily.
 Consequently, the predicates store pointers to the geometrical positions of the
@@ -480,15 +480,6 @@ Defined in `CGAL/IO/io.h`
 std::ostream& operator<<(std::ostream& os,
 const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 
-/*!
-Inserts the alpha shape `A` for the current alpha value into the Geomview stream `W`.
-\pre The insert operator must be defined for `GT::Point` and `GT::Triangle`.
 
-Defined in `CGAL/IO/Geomview_stream.h` and `CGAL/IO/alpha_shape_geomview_ostream_3.h`
-
-\relates Alpha_shape_3
-*/
-Geomview_stream& operator<<(Geomview_stream& W,
-const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 
 } /* end namespace CGAL */

@@ -1,10 +1,9 @@
 # Created by the script cgal_create_cmake_script.
 # This is the CMake script for compiling a CGAL application.
 
-project(Barycentric_coordinates_2_Examples)
+cmake_minimum_required(VERSION 3.1...3.23)
 
-cmake_minimum_required(VERSION 3.1...3.22)
-set(CMAKE_CXX_STANDARD 14)
+project(Barycentric_coordinates_2_Examples)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 

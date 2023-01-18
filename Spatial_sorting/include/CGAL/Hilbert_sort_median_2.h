@@ -38,7 +38,7 @@ struct Hilbert_cmp_2<K,x,true>
 {
   typedef typename K::Point_2 Point;
   K k;
-  Hilbert_cmp_2 (const K &_k = K()) : k(_k) {}
+  Hilbert_cmp_2 (const K &_k) : k(_k) {}
   bool operator() (const Point &p, const Point &q) const
   {
     return Hilbert_cmp_2<K,x,false> (k) (q, p);
@@ -51,7 +51,7 @@ struct Hilbert_cmp_2<K,0,false>
 {
   typedef typename K::Point_2 Point;
   K k;
-  Hilbert_cmp_2 (const K &_k = K()) : k(_k) {}
+  Hilbert_cmp_2 (const K &_k) : k(_k) {}
   bool operator() (const Point &p, const Point &q) const
   {
     return k.less_x_2_object() (p, q);
@@ -64,7 +64,7 @@ struct Hilbert_cmp_2<K,1,false>
 {
   typedef typename K::Point_2 Point;
   K k;
-  Hilbert_cmp_2 (const K &_k = K()) : k(_k) {}
+  Hilbert_cmp_2 (const K &_k) : k(_k) {}
   bool operator() (const Point &p, const Point &q) const
   {
     return k.less_y_2_object() (p, q);
@@ -93,7 +93,7 @@ private:
   };
 
 public:
-  Hilbert_sort_median_2 (const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
+  Hilbert_sort_median_2 (const Kernel &k, std::ptrdiff_t limit = 1)
     : _k(k), _limit (limit)
   {}
 

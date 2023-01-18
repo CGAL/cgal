@@ -88,4 +88,4 @@ int main (int, char**)
   print_point_set (ps1, "PS1 with PS3 properties + PS3 item copied = ");
 
   return EXIT_SUCCESS;
-};
+}

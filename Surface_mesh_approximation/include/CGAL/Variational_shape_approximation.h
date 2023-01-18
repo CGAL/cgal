@@ -31,11 +31,11 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <boost/graph/subgraph.hpp>
 #include <boost/optional.hpp>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
@@ -1152,7 +1152,9 @@ private:
         target_px = max_nb_proxies;
       else
         target_px *= 2;
-      add_proxies_error_diffusion(target_px - m_proxies.size());
+      // if no proxies could be added, stop
+      if( add_proxies_error_diffusion(target_px - m_proxies.size()) == 0)
+        break;
       const FT err = run(nb_relaxations);
       error_drop = err / initial_err;
     }
@@ -1207,7 +1209,8 @@ private:
    * @param t concurrency tag
    */
   template<typename ProxyWrapperIterator>
-  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag &) {
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag & t) {
+    CGAL_USE(t);
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     for(face_descriptor f : faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
@@ -1228,7 +1231,8 @@ private:
    * @param t concurrency tag
    */
   template<typename ProxyWrapperIterator>
-  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag &) {
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag & t) {
+    CGAL_USE(t);
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     for(face_descriptor f : faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
@@ -1332,7 +1336,7 @@ private:
    * 3. Update the proxy error.
    * 4. Update proxy map.
    * @pre current face proxy map is valid
-   * @param face_descriptor face
+   * @param f face
    * @param px_idx proxy index
    * @return fitted wrapped proxy
    */
@@ -1650,7 +1654,7 @@ private:
     typedef typename SubGraph::vertex_descriptor sg_vertex_descriptor;
     typedef std::vector<sg_vertex_descriptor> VertexVector;
 
-    typedef boost::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
+    typedef std::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
     typedef boost::associative_property_map<VertexMap> ToSGVertexMap;
     VertexMap vmap;
     ToSGVertexMap to_sgv_map(vmap);
@@ -1788,7 +1792,7 @@ private:
   /*!
    * @brief walks along the region boundary cycle to the first halfedge
    * pointing to a vertex associated with an anchor.
-   * @param[in/out] he_start region boundary halfedge
+   * @param[in,out] he_start region boundary halfedge
    */
   void walk_to_first_anchor(halfedge_descriptor &he_start) {
     const halfedge_descriptor start_mark = he_start;
@@ -1803,7 +1807,7 @@ private:
   /*!
    * @brief walks along the region boundary cycle to the next anchor
    * and records the path as a `Boundary_chord`.
-   * @param[in/out] he_start starting region boundary halfedge
+   * @param[in,out] he_start starting region boundary halfedge
    * pointing to a vertex associated with an anchor
    * @param[out] chord recorded path chord
    */
@@ -1816,7 +1820,7 @@ private:
 
   /*!
    * @brief walks to the next boundary cycle halfedge.
-   * @param[in/out] he_start region boundary halfedge
+   * @param[in,out] he_start region boundary halfedge
    */
   void walk_to_next_border_halfedge(halfedge_descriptor &he_start) const {
     const std::size_t px_idx = get(m_fproxy_map, face(he_start, *m_ptm));

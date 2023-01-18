@@ -286,14 +286,15 @@ SMesh* cgal_off_meshing(QWidget*,
 
   Mesh_domain domain =
     Mesh_domain::create_implicit_mesh_domain
-    (offset_function(tm_ptr, offset_value),
-     Sphere_3(center, sqrad),
+    (p::function = offset_function(tm_ptr, offset_value),
+     p::bounding_object = Sphere_3(center, sqrad),
      p::relative_error_bound = 1e-7,
      p::construct_surface_patch_index = [](int i, int j) { return (i * 1000 + j); });
 
-  CGAL::Mesh_facet_topology topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
-  if(tag == 1) topology = CGAL::Mesh_facet_topology(topology | CGAL::MANIFOLD_WITH_BOUNDARY);
-  if(tag == 2) topology = CGAL::Mesh_facet_topology(topology | CGAL::MANIFOLD);
+  const CGAL::Mesh_facet_topology topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
+  auto manifold_option = p::non_manifold();
+  if(tag == 1) manifold_option = p::manifold_with_boundary();
+  if(tag == 2) manifold_option = p::manifold();
   Mesh_criteria criteria(p::facet_angle = angle,
                          p::facet_size = sizing,
                          p::facet_distance = approx,
@@ -314,7 +315,8 @@ SMesh* cgal_off_meshing(QWidget*,
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       p::no_perturb(),
-                                      p::no_exude());
+                                      p::no_exude(),
+                                      manifold_option);
 
   const Tr& tr = c3t3.triangulation();
 
@@ -463,12 +465,22 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_item* item = scene->item(index);
+  if(item == nullptr){
+    return;
+  }
+
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(item);
 
-  SMesh* sMesh = sm_item->face_graph();
-  if(!sMesh)
+  if(sm_item == nullptr){
     return;
+  }
+
+  SMesh* sMesh = sm_item->face_graph();
+
+  if(sMesh == nullptr){
+    return;
+  }
 
   double diag = sm_item->diagonalBbox();
   double offset_value = QInputDialog::getDouble(mw,
@@ -477,11 +489,12 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
                                                 0.1*diag,
                                                 -(std::numeric_limits<double>::max)(),
                                                 (std::numeric_limits<double>::max)(), 10);
-  SMesh* smesh = sm_item->face_graph();
-  auto vpm = get(CGAL::vertex_point,*smesh);
+
+  auto vpm = get(CGAL::vertex_point,*sMesh);
   auto vnm =
-      smesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
-  for(const auto& v : vertices(*smesh))
+      sMesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
+
+  for(const auto& v : vertices(*sMesh))
   {
     Point_3 p = get(vpm, v);
     EPICK::Vector_3 n = get(vnm, v);

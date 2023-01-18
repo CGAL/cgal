@@ -236,7 +236,7 @@ std::pair<OutputItFaces,OutputItBoundaryEdges>
 get_conflicts_and_boundary(const Point &p,
 OutputItFaces fit,
 OutputItBoundaryEdges eit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /*!
 outputs the faces of the conflict zone of point `p` into an output iterator.
@@ -248,7 +248,7 @@ template <class OutputItFaces>
 OutputItFaces
 get_conflicts (const Point &p,
 OutputItFaces fit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /*!
 outputs the boundary edges of the conflict zone of point `p` into an output iterator.
@@ -266,7 +266,7 @@ template <class OutputItBoundaryEdges>
 OutputItBoundaryEdges
 get_boundary_of_conflicts(const Point &p,
 OutputItBoundaryEdges eit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /// @}
 

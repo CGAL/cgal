@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Three_examples)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -17,7 +17,7 @@ find_package(
   COMPONENTS OpenGL Script Svg
   OPTIONAL_COMPONENTS ScriptTools WebSockets)
 
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   if(Qt5_FOUND)
     include(${CGAL_USE_FILE})
   endif()

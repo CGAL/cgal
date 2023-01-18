@@ -82,13 +82,13 @@ public:
         : c(), k(), result_point_(20) {}
 
     Origin
-    operator()(const Origin& o) const
+    operator()(Origin o) const
     {
         return o;
     }
 
     Null_vector
-    operator()(const Null_vector& n) const
+    operator()(Null_vector n) const
     {
         return n;
     }
@@ -97,6 +97,14 @@ public:
     operator()(const typename K1::FT &a) const
     {
         return c(a);
+    }
+
+    template <typename T>
+    T
+    operator()(const T t,
+               std::enable_if_t<std::is_fundamental<T>::value>* = nullptr) const
+    {
+        return t;
     }
 
     std::vector<Object>
@@ -108,11 +116,6 @@ public:
         res.push_back(operator()(v[i]));
       }
       return res;
-    }
-
-    int operator()(const int &a)
-    {
-        return a;
     }
 
     typename K2::Point_d

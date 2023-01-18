@@ -30,17 +30,14 @@
 #include <sstream>
 #endif
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
-* smooths the overall shape of the mesh by using the mean curvature flow.
+*
+* @brief smooths the overall shape of the mesh by using the mean curvature flow.
+*
 * The effect depends on the curvature of each area and on a time step which
 * represents the amount by which vertices are allowed to move.
 * The result conformally maps the initial surface to a sphere.
@@ -98,13 +95,15 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-*  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
+* @warning This function involves linear algebra, that is computed using non-exact, floating-point arithmetic.
+*
+* @see `smooth_mesh()`
 */
-template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void smooth_shape(const FaceRange& faces,
                   TriangleMesh& tmesh,
                   const double time,
-                  const NamedParameters& np)
+                  const NamedParameters& np = parameters::default_values())
 {
   if(std::begin(faces) == std::end(faces))
     return;
@@ -143,11 +142,11 @@ void smooth_shape(const FaceRange& faces,
 
 #if defined(CGAL_EIGEN3_ENABLED)
   CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
       "Eigen3 version 3.2 or later is required.");
 #else
   CGAL_static_assertion_msg(
-      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
+      (!std::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
       "Eigen3 version 3.2 or later is required.");
 #endif
 
@@ -202,27 +201,12 @@ void smooth_shape(const FaceRange& faces,
 }
 
 /// \cond SKIP_IN_MANUAL
-template<typename TriangleMesh, typename FaceRange>
-void smooth_shape(const FaceRange& faces,
-                  TriangleMesh& tmesh,
-                  const double time)
-{
-  smooth_shape(faces, tmesh, time, parameters::all_default());
-}
-
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void smooth_shape(TriangleMesh& tmesh,
                   const double time,
-                  const CGAL_PMP_NP_CLASS& np)
+                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   smooth_shape(faces(tmesh), tmesh, time, np);
-}
-
-template<typename TriangleMesh>
-void smooth_shape(TriangleMesh& tmesh,
-                  const double time)
-{
-  smooth_shape(faces(tmesh), tmesh, time, parameters::all_default());
 }
 /// \endcond
 

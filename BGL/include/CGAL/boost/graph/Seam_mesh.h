@@ -19,10 +19,11 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/assertions.h>
 
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -176,7 +177,7 @@ public:
 
 /// \ingroup PkgBGLAdaptors
 ///
-/// This class is a data structure that takes a triangle mesh, further refered
+/// This class is a data structure that takes a triangle mesh, further referred
 /// to as `underlying mesh` and turns some marked edges of that mesh into
 /// virtual boundary edges.
 ///
@@ -934,7 +935,7 @@ public:
 
   void build_TM_vertices_vector(std::vector<TM_vertex_descriptor>& tm_vds) const
   {
-    assert(tm_vds.empty());
+    CGAL_precondition(tm_vds.empty());
 
     // If the input is a list of integers, we need to build a correspondence
     // between vertices and integers.
@@ -1008,7 +1009,7 @@ public:
   TM_halfedge_descriptor add_seams(InputIterator first, InputIterator last)
   {
     // must have an even number of input vertices
-    assert(std::distance(first, last) % 2 == 0);
+    CGAL_precondition(std::distance(first, last) % 2 == 0);
 
     TM_halfedge_descriptor tmhd = boost::graph_traits<TM>::null_halfedge();
     InputIterator it = first;

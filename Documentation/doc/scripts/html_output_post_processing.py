@@ -55,7 +55,7 @@ def write_out_html(d, fn):
     f = codecs.open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
-    f.write('<html xmlns=\"http://www.w3.org/1999/xhtml\">')
+    f.write('<html xmlns=\"https://www.w3.org/1999/xhtml\">')
     if d.html() is not None:
       f.write(d.html())
     f.write('\n')
@@ -85,7 +85,7 @@ def clean_doc():
     for fn in duplicate_files:
         os.remove(fn)
 
-# from http://stackoverflow.com/a/1597755/105672
+# from https://stackoverflow.com/a/1597755/105672
 def re_replace_in_file(pat, s_after, fname):
     # first, see if the pattern is even in the file.
     with codecs.open(fname, encoding='utf-8') as f:
@@ -236,6 +236,7 @@ def automagically_number_figures():
     d = pq(file_content.read(), parser="html")
     d('a.el').each( lambda i: update_figure_ref(i,global_anchor_map) )
     d('a.elRef').each( lambda i: update_figure_ref(i,global_anchor_map) )
+    file_content.close()
     write_out_html(d, fname)
 
 ###############################################################################
@@ -253,6 +254,11 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     args = parser.parse_args()
     resources_absdir=args.resources
     os.chdir(args.output)
+
+    #workaround issue with operator<< in pyquery
+    all_pages=glob.glob('*/*.html')
+    for f in all_pages:
+      re_replace_in_file("operator<<\(\)", "operator&lt;&lt;()", f)
 
     # number figure
     automagically_number_figures()
@@ -273,6 +279,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
       span_tags = d('table.directory tr span')
       span_tags.each(lambda i: rearrange_icon(i, dir_name))
+      file_content.close()
       write_out_html(d,fn)
     class_files=list(package_glob('./*/class*.html'))
     class_files.extend(package_glob('./*/struct*.html'))
@@ -288,6 +295,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         ident = d('#nav-path .navelem').eq(0).children().eq(0)
         if ident and ident.attr('href') == 'namespaceCGAL.html':
             ident.attr('href', '../Manual/namespaceCGAL.html')
+        file_content.close()
         write_out_html(d, fn)
 
     namespace_files=package_glob('./*/namespace*.html')
@@ -298,6 +306,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         if ident.size() == 1:
             conceptify_ns(d);
             d.remove("#CGALConceptNS")
+        file_content.close()
         write_out_html(d, fn)
 
     # in a group we only need to change the nested-classes
@@ -306,6 +315,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         file_content = codecs.open(fn, 'r', encoding='utf-8')
         d = pq(file_content.read(), parser="html")
         conceptify_nested_classes(d)
+        file_content.close()
         write_out_html(d, fn)
 
     # fix up Files
@@ -318,6 +328,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         if row_id != None:
             # figure out the rowid and then drop everything from the table that matches
             table("tr").filter(lambda i: re.match(row_id + '*', pq(this).attr('id'))).remove()
+            file_content.close()
             write_out_html(d, fn)
 
     #Rewrite the code for index trees images
@@ -350,6 +361,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         # in hasModels.html, generalizes.html and refines.html, it is always Class. If this changes in
         # future versions of doxygen, the regular expression will be ready
         dts.each(lambda i: pq(this).html(re.sub("((Class )|(Struct ))", "Concept ", pq(this).html())))
+        file_content.close()
         write_out_html(d, fn)
 
     # throw out nav-sync
@@ -359,6 +371,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         d = pq(file_content.read(), parser="html")
         d('#nav-sync').hide()
         # TODO count figures
+        file_content.close()
         write_out_html(d, fn)
 
     # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
@@ -385,6 +398,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
           text = pq(el).text()
           if text[0:9]=="template<" and text.find('=')==-1:
             pq(el).remove()
+        file_content.close()
         write_out_html(d, fn)
 
     #add a canonical link to all pages

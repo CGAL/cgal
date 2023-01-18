@@ -26,7 +26,6 @@
 #include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/assertions.h>
 
-#include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 #include <CGAL/Timer.h>
@@ -41,16 +40,16 @@
 
 #include <boost/array.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <utility>
+#include <type_traits>
 
 /// \file Orbifold_Tutte_parameterizer_3.h
 
@@ -65,7 +64,7 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// reads a serie of cones from an input stream. Cones are passed as an
+/// reads a series of cones from an input stream. Cones are passed as an
 /// integer value that is the index of a vertex handle in the mesh tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
@@ -152,7 +151,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputItera
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator   TM_vertex_iterator;
 
-  boost::unordered_map<TM_vertex_descriptor, int> m;
+  std::unordered_map<TM_vertex_descriptor, int> m;
   int counter = 0;
 
   TM_vertex_iterator vit, end;
@@ -385,7 +384,7 @@ class Orbifold_Tutte_parameterizer_3
 public:
 #ifndef DOXYGEN_RUNNING
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -502,7 +501,7 @@ private:
     // ( L A' ) ( Xf ) = ( C )
     // ( A 0  ) ( Xf ) = ( 0 )
 
-    // Iterate on both rows ot the 2x2 matrix T
+    // Iterate on both rows of the 2x2 matrix T
     for(int vert_ind=0; vert_ind<2; ++vert_ind) {
       // building up the equations by summing up the terms
 
@@ -783,9 +782,13 @@ private:
       const int i = get(vimap, vi);
       const int j = get(vimap, vj);
 
-      if (i > j) continue;
-      const CGAL::Weights::Cotangent_weight<SeamMesh> cotangent_weight;
-      const NT w_ij = NT(2) * cotangent_weight(hd, mesh, pmap);
+      if (i > j)
+        continue;
+
+      const CGAL::Weights::Cotangent_weight<SeamMesh, PPM> cotangent_weight(mesh, pmap);
+
+      // x2 because Cotangent_weight returns 0.5 * (cot alpha + cot beta)...
+      const NT w_ij = NT(2) * cotangent_weight(hd);
 
       // ij
       M.set_coef(2*i, 2*j, w_ij, true /* new coef */);
@@ -888,8 +891,8 @@ public:
   /// \param cmap a mapping of the `vertex_descriptor`s of `mesh` that are cones
   ///             to their respective \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink
   ///             classification.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The underlying mesh of `mesh` is a topological ball.

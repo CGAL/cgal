@@ -723,7 +723,11 @@ fitting_plane_3(typename DiagonalizeTraits::Covariance_matrix& covariance, // co
                   eigen_vectors[1],
                   eigen_vectors[2]);
     plane = Plane(c,normal);
-    return FT(1) - eigen_values[0] / eigen_values[1];
+
+    if (eigen_values[1] == 0)
+        return FT(0); // line case
+    else
+        return FT(1) - eigen_values[0] / eigen_values[1]; // regular case
   } // end regular case
 }
 

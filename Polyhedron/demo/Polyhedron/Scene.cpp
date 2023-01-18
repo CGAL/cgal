@@ -27,6 +27,7 @@
 #include <QMimeData>
 #include <QOpenGLFramebufferObject>
 
+#include <unordered_set>
 
 Scene::Scene(QObject* parent)
     : QStandardItemModel(parent),
@@ -220,7 +221,7 @@ Scene::erase(QList<int> indices)
 {
   if(indices.empty())
     return -1;
-  QList<CGAL::Three::Scene_item*> to_be_removed;
+  std::unordered_set<CGAL::Three::Scene_item*> to_be_removed;
   int max_index = -1;
   Q_FOREACH(int index, indices) {
     if(index < 0 || index >= m_entries.size())
@@ -238,15 +239,13 @@ Scene::erase(QList<int> indices)
       Q_FOREACH(Item_id id, group->getChildren())
       {
         CGAL::Three::Scene_item* child = group->getChild(id);
-        if(!to_be_removed.contains(child))
-          to_be_removed.push_back(child);
+        to_be_removed.insert(child);
       }
     }
-    if(!to_be_removed.contains(item))
-      to_be_removed.push_back(item);
+    to_be_removed.insert(item);
   }
 
-  Q_FOREACH(Scene_item* item, to_be_removed) {
+  for(Scene_item* item : to_be_removed) {
     Item_id removed_item = item_id(item);
     if(removed_item == -1) //case of the selection_item, for example.
       continue;
@@ -564,9 +563,8 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
         if(with_names) {
 
           //    read depth buffer at pick location;
-          float depth = 1.0;
-          viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-          if (depth != 1.0)
+          float depth = read_depth_under_pixel(picked_pixel, viewer, viewer->camera());
+          if (depth < 2.0)
           {
             //add object to list of picked objects;
             picked_item_IDs[depth] = index;
@@ -635,7 +633,7 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
 
          //    read depth buffer at pick location;
          float depth = 1.0;
-         viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+         depth = read_depth_under_pixel(picked_pixel, viewer, viewer->camera());
          if (depth != 1.0)
          {
            //add object to list of picked objects;
@@ -677,7 +675,7 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
       if(item.renderingMode() == Points && with_names) {
         //    read depth buffer at pick location;
         float depth = 1.0;
-        viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+        depth = read_depth_under_pixel(picked_pixel, viewer, viewer->camera());
         if (depth != 1.0)
         {
           //add object to list of picked objects;
@@ -741,7 +739,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       // we distinguish the case were there is no alpha, to let the viewer
       //perform it, and the case where the pixel is not found. In the first case,
       //we erase the property, in the latter we return an empty list.
-      //According ot that, in the viewer, either we perform the picking, either we do nothing.
+      //According to that, in the viewer, either we perform the picking, either we do nothing.
       if(has_alpha()) {
         bool found = false;
         CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(picked_pixel, found) - viewer->offset();

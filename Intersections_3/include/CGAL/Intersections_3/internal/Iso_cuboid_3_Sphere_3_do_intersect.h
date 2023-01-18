@@ -22,13 +22,14 @@ namespace Intersections {
 namespace internal {
 
 template <class K, class BFT> // Iso_cuboid_3 or Bbox_3
-bool do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
-                               const BFT bxmin, const BFT bymin, const BFT bzmin,
-                               const BFT bxmax, const BFT bymax, const BFT bzmax,
-                               const K&)
+typename K::Boolean
+do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
+                          const BFT bxmin, const BFT bymin, const BFT bzmin,
+                          const BFT bxmax, const BFT bymax, const BFT bzmax,
+                          const K&)
 {
   typedef typename K::FT SFT;
-  typedef typename Coercion_traits<double, SFT>::Type FT;
+  typedef typename Coercion_traits<SFT, BFT>::Type FT;
   typedef typename K::Point_3 Point;
 
   typename Coercion_traits<SFT, BFT>::Cast to_FT;
@@ -94,9 +95,10 @@ bool do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
 }
 
 template <class K>
-bool do_intersect(const typename K::Sphere_3& sphere,
-                  const typename K::Iso_cuboid_3& ic,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Sphere_3& sphere,
+             const typename K::Iso_cuboid_3& ic,
+             const K& k)
 {
   return do_intersect_sphere_box_3(sphere,
                                    (ic.min)().x(), (ic.min)().y(), (ic.min)().z(),
@@ -105,9 +107,10 @@ bool do_intersect(const typename K::Sphere_3& sphere,
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& ic,
-                  const typename K::Sphere_3& sphere,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& ic,
+             const typename K::Sphere_3& sphere,
+             const K& k)
 {
   return do_intersect(sphere, ic, k);
 }

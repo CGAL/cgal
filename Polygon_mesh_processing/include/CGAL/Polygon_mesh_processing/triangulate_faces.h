@@ -31,8 +31,8 @@
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/range/size.hpp>
 
@@ -51,7 +51,7 @@ namespace Triangulate_faces
 *   %Default new face visitor model of `PMPTriangulateFaceVisitor`.
 *   All its functions have an empty body. This class can be used as a
 *   base class if only some of the functions of the concept require to be
-*   overriden.
+*   overridden.
 */
 template<class PolygonMesh>
 struct Default_visitor {
@@ -107,8 +107,8 @@ public:
 
     typename Traits::Vector_3 normal =
       Polygon_mesh_processing::compute_face_normal(
-        f, pmesh, CGAL::Polygon_mesh_processing::parameters::geom_traits(_traits)
-                                                            .vertex_point_map(_vpmap));
+        f, pmesh, CGAL::parameters::geom_traits(_traits)
+                                   .vertex_point_map(_vpmap));
 
     if(normal == typename Traits::Vector_3(0,0,0))
       return false;
@@ -317,7 +317,7 @@ public:
     typedef CGAL::Triple<int, int, int> Face_indices;
     std::vector<Face_indices> patch;
     PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch),
-                                   PMP::parameters::geom_traits(_traits));
+                                   parameters::geom_traits(_traits));
 
     if(patch.empty())
       return false;
@@ -426,7 +426,9 @@ public:
 
 /**
 * \ingroup PMP_meshing_grp
-* triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2
+*
+* triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
+*
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -461,14 +463,18 @@ public:
 * \cgalNamedParamsEnd
 *
 * @return `true` if the face has been triangulated.
+*
+* @see `triangulate_faces()`
 */
-template<typename PolygonMesh, typename NamedParameters>
+template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                       PolygonMesh& pmesh,
-                      const NamedParameters& np)
+                      const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
@@ -495,20 +501,13 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   return modifier.triangulate_face(f, pmesh, use_cdt, visitor);
 }
 
-template<typename PolygonMesh>
-bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
-                      PolygonMesh& pmesh)
-{
-  return triangulate_face(f, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
 /**
 * \ingroup PMP_meshing_grp
-* triangulates given faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2
 *
-* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
-          model of `Range`.
-          Its iterator type is `InputIterator`.
+* triangulates given faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
+*
+* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
+*         Its iterator type is `InputIterator`.
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -544,12 +543,12 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *
 * @return `true` if all the faces have been triangulated.
 *
-* @see triangulate_face()
+* @see `triangulate_face()`
 */
-template <typename FaceRange, typename PolygonMesh, typename NamedParameters>
+template <typename FaceRange, typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(FaceRange face_range,
                        PolygonMesh& pmesh,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -579,15 +578,11 @@ bool triangulate_faces(FaceRange face_range,
   return modifier(face_range, pmesh, use_cdt, visitor);
 }
 
-template <typename FaceRange, typename PolygonMesh>
-bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
-{
-  return triangulate_faces(face_range, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
 /**
 * \ingroup PMP_meshing_grp
-* triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2
+*
+* triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
+*
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -622,19 +617,13 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 *
 * @return `true` if all the faces have been triangulated.
 *
-* @see triangulate_face()
+* @see `triangulate_face()`
 */
-template <typename PolygonMesh, typename NamedParameters>
+template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(PolygonMesh& pmesh,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   return triangulate_faces(faces(pmesh), pmesh, np);
-}
-
-template <typename PolygonMesh>
-bool triangulate_faces(PolygonMesh& pmesh)
-{
-  return triangulate_faces(faces(pmesh), pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 } // end namespace Polygon_mesh_processing

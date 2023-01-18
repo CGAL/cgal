@@ -33,7 +33,7 @@ int main() {
   Point q(4, 1);
   auto obj = pl.locate(q);
   auto* f = boost::get<Arrangement::Face_const_handle>(&obj);
-  CGAL_assertion(f != nullptr);
+
   std::cout << "The query point (" << q << ") is located in: ";
   print_face<Arrangement>(*f);
 

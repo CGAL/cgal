@@ -24,8 +24,9 @@
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/variant/apply_visitor.hpp>
+
+#include <unordered_map>
 
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_ss_visitor.h>
@@ -114,7 +115,7 @@ protected:
                                                         Halfedge_map;
 
   typedef std::pair<Cell_handle_red, Cell_handle_blue>  Handle_info;
-  typedef boost::unordered_map<Vertex_handle, Handle_info, Handle_hash_function>
+  typedef std::unordered_map<Vertex_handle, Handle_info, Handle_hash_function>
                                                         Vertex_map;
 
   // Side categoties:
@@ -288,8 +289,8 @@ protected:
   /*!
    * Update the boundary vertices map.
    * This function is used when the parameter space has an identified (or
-   * contructed) boundary side. We assume that if the parameter space has a
-   * contructed boundary side, it also must have an identified boundary side.
+   * constructed) boundary side. We assume that if the parameter space has a
+   * constructed boundary side, it also must have an identified boundary side.
    * \param event The event.
    * \param v The vertex.
    * \param tag The tag used for dispatching.
@@ -300,7 +301,7 @@ protected:
   /*!
    * Update the boundary vertices map.
    * This function is used when the parameter space does not have an identified
-   * boundary side, and thus, neither it has a contructed boundary side.
+   * boundary side, and thus, neither it has a constructed boundary side.
    * \param event The event.
    * \param v The vertex.
    * \param tag The tag used for dispatching.
@@ -311,8 +312,8 @@ protected:
   /*!
    * Update a newly created vertex using the overlay traits.
    * This function is used when the parameter space has an identified (or
-   * contructed) boundary side. We assume that if the parameter space has a
-   * contructed boundary side, it also must have an identified boundary side.
+   * constructed) boundary side. We assume that if the parameter space has a
+   * constructed boundary side, it also must have an identified boundary side.
    * \param event The event associated with the new vertex.
    * \param res_v The new vertex in the overlaid arrangement.
    * \param sc The subcurve incident to the event.
@@ -324,7 +325,7 @@ protected:
   /*!
    * Update a newly created vertex using the overlay traits.
    * This function is used when the parameter space does not have an identified
-   * boundary side, and thus, neither it has a contructed boundary side.
+   * boundary side, and thus, neither it has a constructed boundary side.
    * \param event The event associated with the new vertex.
    * \param res_v The new vertex in the overlaid arrangement.
    * \param sc The subcurve incident to the event.

@@ -8,7 +8,7 @@ class Construct_hyperbolic_bisector_2
 Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
 at the end
 the following lines are giving the wrong arc (wrong orientation), aren't they?
-      CGAL_triangulation_assertion(assign(pair,inters[1]));
+      CGAL_assertion(assign(pair,inters[1]));
       if ( Orientation_2()(approx_c,approx_a,approx_pinf) == POSITIVE )
 	return Circular_arc_2( *c_pq, pair.first, a);
       return Circular_arc_2( *c_pq, a, pair.first);

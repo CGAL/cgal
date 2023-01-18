@@ -39,7 +39,6 @@ struct binop_intersection_test_segment_tree {
 
   template<class Callback>
   struct Bop_edge0_face1_callback {
-    SNC_intersection   &is;
     Callback           &cb;
 
     struct Pair_hash_function {
@@ -57,8 +56,8 @@ struct binop_intersection_test_segment_tree {
       }
     };
 
-    Bop_edge0_face1_callback(SNC_intersection &is, Callback &cb)
-    : is(is), cb(cb)
+    Bop_edge0_face1_callback(Callback &cb)
+    : cb(cb)
     {}
 
     void operator()( Nef_box& box0, Nef_box& box1 ) {
@@ -71,8 +70,8 @@ struct binop_intersection_test_segment_tree {
       if( Infi_box::degree( f1->plane().d() ) > 0 )
         return;
       Point_3 ip;
-      if( is.does_intersect_internally( Const_decorator::segment(e0), f1, ip )) {
-        cb(e0,make_object(f1),ip);
+      if( SNC_intersection::does_intersect_internally( Const_decorator::segment(e0), f1, ip )) {
+        cb(e0,f1,ip);
       }
     }
   };
@@ -80,11 +79,10 @@ struct binop_intersection_test_segment_tree {
 
   template<class Callback>
   struct Bop_edge1_face0_callback {
-    SNC_intersection &is;
     Callback         &cb;
 
-    Bop_edge1_face0_callback(SNC_intersection &is, Callback &cb)
-    : is(is), cb(cb)
+    Bop_edge1_face0_callback(Callback &cb)
+    : cb(cb)
     {}
 
     void operator()( Nef_box& box0, Nef_box& box1 ) {
@@ -97,19 +95,18 @@ struct binop_intersection_test_segment_tree {
       if( Infi_box::degree( f0->plane().d() ) > 0 )
         return;
       Point_3 ip;
-      if( is.does_intersect_internally( Const_decorator::segment( e1 ),
-                                        f0, ip ) )
-        cb(e1,make_object(f0),ip);
+      if( SNC_intersection::does_intersect_internally( Const_decorator::segment( e1 ),
+                                                       f0, ip ) )
+        cb(e1,f0,ip);
     }
   };
 
   template<class Callback>
   struct Bop_edge0_edge1_callback  {
-    SNC_intersection &is;
     Callback         &cb;
 
-    Bop_edge0_edge1_callback(SNC_intersection &is, Callback &cb)
-    : is(is), cb(cb)
+    Bop_edge0_edge1_callback(Callback &cb)
+    : cb(cb)
     {}
 
     void operator()( Nef_box& box0, Nef_box& box1 ) {
@@ -120,9 +117,9 @@ struct binop_intersection_test_segment_tree {
       Halfedge_iterator e0 = box0.get_halfedge();
       Halfedge_iterator e1 = box1.get_halfedge();
       Point_3 ip;
-      if( is.does_intersect_internally( Const_decorator::segment( e0 ),
-                                        Const_decorator::segment( e1 ), ip ))
-        cb(e0,make_object(e1),ip);
+      if( SNC_intersection::does_intersect_internally( Const_decorator::segment( e0 ),
+                                                       Const_decorator::segment( e1 ), ip ))
+        cb(e0,e1,ip);
     }
   };
 
@@ -135,10 +132,9 @@ struct binop_intersection_test_segment_tree {
     Halfedge_iterator e0, e1;
     Halffacet_iterator f0, f1;
     std::vector<Nef_box> a, b;
-    SNC_intersection is( sncp );
 
     CGAL_NEF_TRACEN("start edge0 edge1");
-    Bop_edge0_edge1_callback<Callback> callback_edge0_edge1( is, cb0 );
+    Bop_edge0_edge1_callback<Callback> callback_edge0_edge1( cb0 );
     CGAL_forall_edges( e0, sncp)  a.push_back( Nef_box( e0 ) );
     CGAL_forall_edges( e1, snc1i) b.push_back( Nef_box( e1 ) );
 #ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
@@ -153,7 +149,7 @@ struct binop_intersection_test_segment_tree {
     b.clear();
 
     CGAL_NEF_TRACEN("start edge0 face1");
-    Bop_edge0_face1_callback<Callback> callback_edge0_face1( is, cb0 );
+    Bop_edge0_face1_callback<Callback> callback_edge0_face1( cb0 );
     CGAL_forall_edges( e0, sncp ) a.push_back( Nef_box( e0 ) );
     CGAL_forall_facets( f1, snc1i)    b.push_back( Nef_box( f1 ) );
 #ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
@@ -168,7 +164,7 @@ struct binop_intersection_test_segment_tree {
     b.clear();
 
     CGAL_NEF_TRACEN("start edge1 face0");
-    Bop_edge1_face0_callback<Callback> callback_edge1_face0( is, cb1 );
+    Bop_edge1_face0_callback<Callback> callback_edge1_face0( cb1 );
     CGAL_forall_edges( e1, snc1i)  a.push_back( Nef_box( e1 ) );
     CGAL_forall_facets( f0, sncp ) b.push_back( Nef_box( f0 ) );
 #ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF

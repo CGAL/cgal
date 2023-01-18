@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(BGL_Tests)
 
 # CGAL and its components
@@ -71,8 +71,6 @@ create_single_source_cgal_program("test_Has_member_clear.cpp")
 
 create_single_source_cgal_program("test_Has_member_id.cpp")
 
-create_single_source_cgal_program("test_cgal_bgl_named_params.cpp")
-
 create_single_source_cgal_program("test_bgl_read_write.cpp")
 
 create_single_source_cgal_program("graph_concept_Face_filtered_graph.cpp")
@@ -88,6 +86,8 @@ create_single_source_cgal_program("test_Euler_operations.cpp")
 create_single_source_cgal_program( "test_test_face.cpp" )
 
 create_single_source_cgal_program( "test_Collapse_edge.cpp" )
+
+create_single_source_cgal_program( "test_Collapse_edge_with_constraints.cpp" )
 
 create_single_source_cgal_program("test_graph_traits.cpp")
 

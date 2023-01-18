@@ -18,7 +18,7 @@
 
 #include <vector>
 #include <utility>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -56,8 +56,8 @@ public:
   Value
   operator()( int r, int c) const
   {
-    CGAL_optimisation_precondition( r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition( c >= 0 && c < number_of_columns());
+    CGAL_precondition( r >= 0 && r < number_of_rows());
+    CGAL_precondition( c >= 0 && c < number_of_columns());
     return (*matrix)( r << row_power, column_indices[c]);
   }
 
@@ -70,18 +70,18 @@ public:
   void
   replace_column( int o, int n)
   {
-    CGAL_optimisation_precondition( o >= 0 && o < number_of_columns());
-    CGAL_optimisation_precondition( n >= 0 && n < number_of_columns());
+    CGAL_precondition( o >= 0 && o < number_of_columns());
+    CGAL_precondition( n >= 0 && n < number_of_columns());
     column_indices[o] = column_indices[n];
   }
 
   void
   shrink_to_quadratic_size()
   {
-    CGAL_optimisation_precondition( number_of_columns() >= number_of_rows());
+    CGAL_precondition( number_of_columns() >= number_of_rows());
     column_indices.erase( column_indices.begin() + number_of_rows(),
                           column_indices.end());
-    CGAL_optimisation_postcondition( number_of_columns() == number_of_rows());
+    CGAL_postcondition( number_of_columns() == number_of_rows());
   }
 
 private:

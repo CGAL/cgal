@@ -278,7 +278,7 @@ public Q_SLOTS:
     filter_operations();
   }
   // If the selection_item or the polyhedron_item associated to the k-ring_selector is currently selected,
-  // set the k-ring_selector as currently selected. (A k-ring_selector tha tis not "currently selected" will
+  // set the k-ring_selector as currently selected. (A k-ring_selector that is not "currently selected" will
   // not process selection events)
   void isCurrentlySelected(Scene_facegraph_item_k_ring_selection* item)
   {
@@ -394,7 +394,7 @@ public Q_SLOTS:
     if (dialog.exec() != QDialog::Accepted)
       return;
 
-    boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
+    std::unordered_map<fg_face_descriptor, bool> is_selected_map;
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
     {
       if(selection_item->selected_facets.find(fh)
@@ -752,8 +752,7 @@ public Q_SLOTS:
         print_message("Error: Please select a selection item with a selection of faces.");
         return;
       }
-      boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
-      int index = 0;
+      std::unordered_map<fg_face_descriptor, bool> is_selected_map;
       for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
         if(selection_item->selected_facets.find(fh)
@@ -763,7 +762,6 @@ public Q_SLOTS:
         {
           is_selected_map[fh]=true;
         }
-        ++index;
       }
       CGAL::expand_face_selection_for_removal(selection_item->selected_facets,
                                               *selection_item->polyhedron(),
@@ -1069,7 +1067,7 @@ public Q_SLOTS:
     selection_item->set_is_insert(is_insert);
     selection_item->set_k_ring(k_ring);
     selection_item->setRenderingMode(Flat);
-    if(selection_item->name() == "unamed") {
+    if(selection_item->name() == "unnamed") {
       selection_item->setName(tr("%1 (selection)").arg(poly_item->name()));
     }
 
@@ -1171,7 +1169,7 @@ private:
   Ui::Selection ui_widget;
   std::map<QString, int> operations_map;
   std::vector<QString> operations_strings;
-typedef boost::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
+  typedef std::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
   int last_mode;
   bool from_plugin;
@@ -1189,7 +1187,7 @@ bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_trait
   // compute self-intersections
   CGAL::Polygon_mesh_processing::self_intersections
     (*mesh, std::back_inserter(faces),
-    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, *mesh)));
+    CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, *mesh)));
 
   std::cout << "ok (" << faces.size() << " triangle pair(s))" << std::endl;
   return !faces.empty();

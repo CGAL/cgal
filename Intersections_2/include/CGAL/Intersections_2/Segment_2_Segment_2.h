@@ -25,7 +25,6 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
-#include <CGAL/Uncertain.h>
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
@@ -33,6 +32,22 @@ namespace CGAL {
 namespace Intersections {
 
 namespace internal {
+
+// indices of lexicographically smallest endpoints
+// depending on config parameter of S2S2_inter_info.
+// {s1_id0,s1_id1,s2_id0,s2_id1}
+constexpr int s2s2_id[8][4] =
+{
+//  seg1   seg2
+  { 0,1,   0,1 },
+  { 0,1,   1,0 },
+  { 1,0,   0,1 },
+  { 1,0,   1,0 },
+  { 0,1,   0,1 },
+  { 1,0,   0,1 },
+  { 0,1,   1,0 },
+  { 1,0,   1,0 }
+};
 
 // struct used to report the combinaric of the intersection
 // of 2 2D segments.
@@ -43,9 +58,20 @@ struct S2S2_inter_info
   bool inter = false;
   bool dim = 0;
   std::array<int, 2> pt_ids = {-1,-1};
+  // integer in [0,7] indicating segment endpoint ordering for determinism
+  // 0: p0 < p1 - p2 < p3 - p0 < p2
+  // 1: p0 < p1 - p3 < p2 - p0 < p3
+  // 2: p1 < p0 - p2 < p3 - p1 < p2
+  // 3: p1 < p0 - p3 < p2 - p1 < p3
+  // 4: p2 < p3 - p0 < p1 - p2 < p0
+  // 5: p2 < p3 - p1 < p0 - p2 < p1
+  // 6: p3 < p2 - p0 < p1 - p3 < p0
+  // 7: p3 < p2 - p1 < p0 - p3 < p1
+  int config;
 
-  S2S2_inter_info(bool inter)
+  S2S2_inter_info(bool inter, int c=-1)
   : inter(inter)
+  , config(c)
   {}
 
   // intersection is an input endpoint
@@ -77,7 +103,7 @@ seg_seg_do_intersect_crossing(
         const typename K::Point_2& p1, const typename K::Point_2& p2,
         const typename K::Point_2& p3, const typename K::Point_2& p4,
         int /* i1 */, int i2, int i3, int /* i4 */,
-        const K& k, bool extra_test)
+        const K& k, bool extra_test, int config)
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
@@ -89,7 +115,7 @@ seg_seg_do_intersect_crossing(
         case RIGHT_TURN:
           return S2S2_inter_info(false);
         case LEFT_TURN:
-          return S2S2_inter_info(true);
+          return S2S2_inter_info(true, config);
         default:
           CGAL_unreachable();
       }
@@ -101,7 +127,7 @@ seg_seg_do_intersect_crossing(
         case COLLINEAR:
           return S2S2_inter_info(i2);
         case RIGHT_TURN:
-          return S2S2_inter_info(true);
+          return S2S2_inter_info(true, config);
         case LEFT_TURN:
           return S2S2_inter_info(false);
         default:
@@ -127,7 +153,7 @@ seg_seg_do_intersect_crossing(
         const typename K::Point_2& p3, const typename K::Point_2& p4,
         const K& k)
 {
-  return seg_seg_do_intersect_crossing(p1,p2,p3,p4,0,0,0,0,k,false).inter;
+  return seg_seg_do_intersect_crossing(p1,p2,p3,p4,0,0,0,0,k,false,-1).inter;
 }
 
 
@@ -138,7 +164,7 @@ seg_seg_do_intersect_contained(
         const typename K::Point_2& p1, const typename K::Point_2& p2,
         const typename K::Point_2& p3, const typename K::Point_2& p4,
         int /* i1 */, int /* i2 */, int i3, int i4,
-        const K& k, bool extra_test)
+        const K& k, bool extra_test, int config)
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
@@ -148,7 +174,7 @@ seg_seg_do_intersect_contained(
         case COLLINEAR:
           return S2S2_inter_info(i4);
         case RIGHT_TURN:
-          return S2S2_inter_info(true);
+          return S2S2_inter_info(true, config);
         case LEFT_TURN:
           return S2S2_inter_info(false);
         default:
@@ -164,7 +190,7 @@ seg_seg_do_intersect_contained(
         case RIGHT_TURN:
           return S2S2_inter_info(false);
         case LEFT_TURN:
-          return S2S2_inter_info(true);
+          return S2S2_inter_info(true, config);
         default:
           CGAL_unreachable();
       }
@@ -188,7 +214,7 @@ seg_seg_do_intersect_contained(
         const typename K::Point_2& p3, const typename K::Point_2& p4,
         const K& k)
 {
-  return seg_seg_do_intersect_contained(p1,p2,p3,p4,0,0,0,0,k,false).inter;
+  return seg_seg_do_intersect_contained(p1,p2,p3,p4,0,0,0,0,k,false,-1).inter;
 }
 
 template <class K>
@@ -229,14 +255,14 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
         case LARGER:
             switch(make_certain(compare_xy(A2,B2))) {
             case SMALLER:
-                return seg_seg_do_intersect_crossing(A1,A2,B1,B2, A1_id,A2_id,B1_id+2,B2_id+2, k, extra_test);
+                return seg_seg_do_intersect_crossing(A1,A2,B1,B2, A1_id,A2_id,B1_id+2,B2_id+2, k, extra_test, (seg1_is_left_to_right ? 0:2) + (seg2_is_left_to_right ? 0:1) );
             case EQUAL:
                 // A1 < B1 < B2 = A1
                 if (extra_test && k.collinear_2_object()(A1, A2, B1))
                   return S2S2_inter_info(B1_id+2, B2_id+2); // DI_MORE_INFO_TAG: A2==B2 but only B2 is reported
                 return S2S2_inter_info(A2_id); // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
             case LARGER:
-                return seg_seg_do_intersect_contained(A1,A2,B1,B2, A1_id,A2_id,B1_id+2,B2_id+2, k, extra_test);
+                return seg_seg_do_intersect_contained(A1,A2,B1,B2, A1_id,A2_id,B1_id+2,B2_id+2, k, extra_test, (seg1_is_left_to_right ? 0:2) + (seg2_is_left_to_right ? 0:1));
             default:
               CGAL_unreachable();
             }
@@ -275,14 +301,14 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
         case LARGER:
             switch(make_certain(compare_xy(B2,A2))) {
             case SMALLER:
-                return seg_seg_do_intersect_crossing(B1,B2,A1,A2, B1_id+2,B2_id+2,A1_id,A2_id, k, extra_test);
+                return seg_seg_do_intersect_crossing(B1,B2,A1,A2, B1_id+2,B2_id+2,A1_id,A2_id, k, extra_test, 4 + (seg1_is_left_to_right ? 0:1) + (seg2_is_left_to_right ? 0:2));
             case EQUAL:
                 // B1 < A1 < A2 = B2
                 if (extra_test && k.collinear_2_object()(B1, A1, B2))
                   return S2S2_inter_info(A1_id, A2_id); // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
                 return S2S2_inter_info(A2_id); // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
             case LARGER:
-                return seg_seg_do_intersect_contained(B1,B2,A1,A2, B1_id+2,B2_id+2,A1_id,A2_id, k, extra_test);
+                return seg_seg_do_intersect_contained(B1,B2,A1,A2, B1_id+2,B2_id+2,A1_id,A2_id, k, extra_test, 4 + (seg1_is_left_to_right ? 0:1) + (seg2_is_left_to_right ? 0:2));
             default:
               CGAL_unreachable();
             }
@@ -299,7 +325,7 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
 
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Segment_2 &seg1,
              const typename K::Segment_2 &seg2,
              const K& k)
@@ -325,6 +351,42 @@ protected:
     mutable Intersection_results       _result = UNKNOWN;
     mutable typename K::Point_2            _intersection_point, _other_point;
 };
+
+
+inline
+double s2s2_alpha(double x0, double y0,
+                  double x1, double y1,
+                  double x2, double y2,
+                  double x3, double y3)
+{
+  const double s1_dx = x0 - x1,
+               s1_dy = y0 - y1,
+               s2_dx = x3 - x2,
+               s2_dy = y3 - y2,
+               lx    = x3 - x1,
+               ly    = y3 - y1;
+  double val = std::fma(lx,s2_dy,-ly*s2_dx)/std::fma(s1_dx,s2_dy,-s1_dy*s2_dx);
+  if (val!=val) return 0.5;
+  if (val<0) return 0;
+  if (val>1) return 1;
+  return val;
+}
+
+template <class FT>
+FT s2s2_alpha(const FT& x0, const FT& y0,
+              const FT& x1, const FT& y1,
+              const FT& x2, const FT& y2,
+              const FT& x3, const FT& y3)
+{
+  FT s1_dx = x0 - x1,
+     s1_dy = y0 - y1,
+     s2_dx = x3 - x2,
+     s2_dy = y3 - y2,
+     lx    = x3 - x1,
+     ly    = y3 - y1;
+  return (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
+}
+
 
 template <class K>
 typename Segment_2_Segment_2_pair<K>::Intersection_results
@@ -366,15 +428,16 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     }
 
     // segments intersect in their interiors
-    typename K::FT s1_dx = _seg1->point(0).x() - _seg1->point(1).x(),
-                   s1_dy = _seg1->point(0).y() - _seg1->point(1).y(),
-                   s2_dx = _seg2->point(1).x() - _seg2->point(0).x(),
-                   s2_dy = _seg2->point(1).y() - _seg2->point(0).y(),
-                   lx    = _seg2->point(1).x() - _seg1->point(1).x(),
-                   ly    = _seg2->point(1).y() - _seg1->point(1).y();
+    int c = inter_info.config;
+    std::array<typename K::Point_2, 4> pts = c < 4
+                                           ? CGAL::make_array( _seg1->point(s2s2_id[c][0]), _seg1->point(s2s2_id[c][1]),
+                                                               _seg2->point(s2s2_id[c][2]), _seg2->point(s2s2_id[c][3]) )
+                                           : CGAL::make_array( _seg2->point(s2s2_id[c][2]), _seg2->point(s2s2_id[c][3]),
+                                                               _seg1->point(s2s2_id[c][0]), _seg1->point(s2s2_id[c][1]) );
 
-    typename K::FT alpha =  (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
-    _intersection_point = K().construct_barycenter_2_object()(_seg1->point(0), alpha, _seg1->point(1));
+    typename K::FT alpha =  s2s2_alpha(pts[0].x(), pts[0].y(), pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
+
+    _intersection_point = K().construct_barycenter_2_object()(pts[0], alpha, pts[1]);
 
     return _result;
 }
@@ -428,6 +491,6 @@ intersection(const typename K::Segment_2 &seg1,
 CGAL_INTERSECTION_FUNCTION_SELF(Segment_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_SEGMENT_2_SEGMENT_2_H

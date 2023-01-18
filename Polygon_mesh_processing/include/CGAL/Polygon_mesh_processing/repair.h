@@ -14,7 +14,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
@@ -29,17 +29,17 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-/// \ingroup PMP_repairing_grp
-/// removes the isolated vertices from any polygon mesh.
-/// A vertex is considered isolated if it is not incident to any simplex
-/// of higher dimension.
+/// \ingroup PMP_geometric_repair_grp
+///
+/// \brief removes the isolated vertices from any polygon mesh.
+///
+/// A vertex is considered isolated if it is not incident to a simplex of higher dimension.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///
 /// @param pmesh the polygon mesh to be repaired
 ///
-/// @return number of removed isolated vertices
-///
+/// @return the number of removed isolated vertices
 template <class PolygonMesh>
 std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 {
@@ -60,9 +60,9 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
   return nb_removed;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_geometric_repair_grp
 ///
-/// removes connected components whose area or volume is under a certain threshold value.
+/// \brief removes connected components whose area or volume is under a certain threshold value.
 ///
 /// Thresholds are provided via \ref bgl_namedparameters "Named Parameters". (see below).
 /// If thresholds are not provided by the user, default values are computed as follows:
@@ -147,10 +147,12 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///
 /// \return the number of connected components removed (ignoring isolated vertices).
 ///
+/// \sa `keep_connected_components()`
+/// \sa `remove_connected_components()`
 template <typename TriangleMesh,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
-                                                           const NamedParameters& np)
+                                                           const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -175,8 +177,8 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), FT(-1));
 
   // If no threshold is provided, compute it as a % of the bbox
-  const bool is_default_area_threshold = is_default_parameter(get_parameter(np, internal_np::area_threshold));
-  const bool is_default_volume_threshold = is_default_parameter(get_parameter(np, internal_np::volume_threshold));
+  const bool is_default_area_threshold = is_default_parameter<NamedParameters, internal_np::area_threshold_t>::value;
+  const bool is_default_volume_threshold = is_default_parameter<NamedParameters, internal_np::volume_threshold_t>::value;
 
   const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
 
@@ -216,7 +218,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     area_threshold = CGAL::square(threshold_value);
 
   if(is_default_volume_threshold)
-    volume_threshold = CGAL::square(threshold_value);
+    volume_threshold = CGAL::square(threshold_value) * threshold_value;
 
   const bool use_areas = (is_default_area_threshold || area_threshold > 0);
   const bool use_volumes = (is_default_volume_threshold || volume_threshold > 0);
@@ -245,7 +247,9 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     {
       const FT fa = face_area(f, tmesh, np);
       component_areas[face_cc[f]] += fa;
+      exact(component_areas[face_cc[f]]);
       total_area += fa;
+      exact(total_area);
     }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
@@ -281,6 +285,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
                         get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
 
       component_volumes[i] += fv;
+      exact(component_volumes[i]);
     }
 
     // negative volume means the CC was oriented inward
@@ -289,6 +294,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     {
       component_volumes[i] = CGAL::abs(component_volumes[i]);
       total_volume += component_volumes[i];
+      exact(total_volume);
     }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
@@ -337,12 +343,6 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   }
 
   return res;
-}
-
-template <typename TriangleMesh>
-std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh)
-{
-  return remove_connected_components_of_negligible_size(tmesh, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing

@@ -39,15 +39,13 @@ namespace CGAL {
 
 /// A boolean property map return a const value at compile time
 template <typename Key, bool default_value>
-class Static_boolean_property_map
+struct Static_boolean_property_map
 {
-public:
   typedef Key key_type;
   typedef bool value_type;
   typedef bool reference;
   typedef boost::read_write_property_map_tag category;
 
-public:
   inline friend
   value_type
   get(Static_boolean_property_map, const key_type&)
@@ -64,15 +62,16 @@ public:
 
 template <typename PM1, typename PM2>
 class OR_property_map {
+  PM1 pm1;
+  PM2 pm2;
+
+ public:
+
   typedef typename PM1::key_type key_type;
   typedef typename PM1::value_type value_type;
   typedef typename PM1::reference reference;
   typedef boost::read_write_property_map_tag category;
 
-  PM1 pm1;
-  PM2 pm2;
-
- public:
   OR_property_map() {} // required by boost::connected_components
 
   OR_property_map(PM1 pm1, PM2 pm2)
@@ -121,7 +120,7 @@ struct Property_map_binder
 
   template <typename VM>
   Property_map_binder(const VM& value_map,
-                      typename std::enable_if<!std::is_same<KeyMap, VM>::value>::type* = nullptr)
+                      std::enable_if_t<!std::is_same<KeyMap, VM>::value>* = nullptr)
     : value_map(value_map)
   { }
 
@@ -411,7 +410,11 @@ struct Property_map_to_unary_function{
   {}
 
   template <class KeyType>
+  #if defined(__INTEL_COMPILER) && defined(__INTEL_COMPILER_BUILD_DATE) && (__INTEL_COMPILER_BUILD_DATE < 20210000)
+  result_type
+  #else
   decltype(auto)
+  #endif
   operator()(const KeyType& a) const
   {
     return get(map,a);
@@ -434,7 +437,7 @@ struct Pointer_property_map{
 
 /// \ingroup PkgPropertyMapRef
 /// Starting from boost 1.55, the use of raw pointers as property maps has been deprecated.
-/// This function is a shortcut to the recommanded replacement:
+/// This function is a shortcut to the recommended replacement:
 /// `boost::make_iterator_property_map(<pointer>, boost::typed_identity_property_map<std::size_t>())`
 /// Note that the property map is a mutable `LvaluePropertyMap` with `std::size_t` as key.
 template <class T>
@@ -663,13 +666,13 @@ struct Random_index_access_property_map
     : m_begin(begin), m_map(map) {}
 
   friend reference get (const Random_index_access_property_map& map, const key_type& index,
-                        typename std::enable_if<std::is_convertible<category, boost::readable_property_map_tag>::value>::type* = 0)
+                        std::enable_if_t<std::is_convertible<category, boost::readable_property_map_tag>::value>* = 0)
   {
     return get(map.m_map, *std::next(map.m_begin, index));
   }
 
   friend void put (Random_index_access_property_map& map, const key_type& index, const value_type& value,
-                   typename std::enable_if<std::is_convertible<category, boost::writable_property_map_tag>::value>::type* = 0)
+                   std::enable_if_t<std::is_convertible<category, boost::writable_property_map_tag>::value>* = 0)
   {
     put (map.m_map, *std::next(map.m_begin, index), value);
   }

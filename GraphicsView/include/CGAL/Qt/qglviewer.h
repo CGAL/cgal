@@ -138,8 +138,8 @@ public Q_SLOTS:
   void setGridIsDrawn(bool draw = true) {
     if(!draw)
     {
-      grid_size=0;
-      g_axis_size=0;
+      grid_size = 0;
+      grid_axis_size = 0;
     }
     gridIsDrawn_ = draw;
     Q_EMIT gridIsDrawnChanged(draw);
@@ -385,7 +385,7 @@ public:
    * of the world and the origin of the scene. It is relevant when the whole scene is translated
    * of a big number, because there is a useless loss of precision when drawing.
    *
-   * The offset must be added to the drawn coordinates, and substracted from the computation
+   * The offset must be added to the drawn coordinates, and subtracted from the computation
    * \attention  the result of pointUnderPixel is the real item translated by the offset.
    *
    */
@@ -395,7 +395,7 @@ public:
    * returns the offset of the scene.
    * \see `setOffset()`
    */
-  qglviewer::Vec offset()const;
+  const qglviewer::Vec& offset() const;
 
 public Q_SLOTS:
   void setFullScreen(bool fullScreen = true);
@@ -411,7 +411,8 @@ protected:
   //@{
 public:
   void drawArrow(double r, double R, int prec,
-                        qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, std::vector<float> &data);
+                 const qglviewer::Vec& from, const qglviewer::Vec& to,
+                 std::vector<float> &data);
   void drawAxis(qreal l = 1.0);
   void drawGrid(qreal size= 1.0, int nbSubdivisions = 10);
 
@@ -562,6 +563,21 @@ public:
    * Prompt a configuration dialog and takes a snapshot.
    */
   void saveSnapshot();
+
+  /*!
+   * Takes a snapshot without any dialog
+   */
+  void saveSnapshot(const QString& fileName,
+                    const qreal finalWidth,
+                    const qreal finalHeight,
+                    const bool expand = false,
+                    const double oversampling = 1.,
+                    qglviewer::SnapShotBackground background_color = qglviewer::CURRENT_BACKGROUND);
+
+  void saveSnapshot(const QString& fileName)
+  {
+    return saveSnapshot(fileName, this->width(), this->height());
+  }
 
 public:
 Q_SIGNALS:
@@ -1165,27 +1181,31 @@ protected:
   enum VBO
   {
     Grid = 0,
-    Grid_axis,
-    Axis,
+    Grid_axis_x, Grid_axis_y,
+    Axis_x, Axis_y, Axis_z,
     Pivot_point,
     VBO_size
   };
+
   enum VAO
   {
     GRID = 0,
-    GRID_AXIS,
-    AXIS,
+    GRID_AXIS_X, GRID_AXIS_Y,
+    AXIS_X, AXIS_Y, AXIS_Z,
     PIVOT_POINT,
     VAO_size
   };
+
   QOpenGLShaderProgram rendering_program;
-  QOpenGLShaderProgram rendering_program_light;
   QOpenGLVertexArrayObject vaos[VAO_size];
   QVector<QOpenGLBuffer> vbos;
+
   std::size_t grid_size;
-  std::size_t g_axis_size;
+  std::size_t grid_axis_size;
   std::size_t axis_size;
+
   QOpenGLFramebufferObject* stored_fbo;
+
   //S n a p s h o t
   QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color,
                        QSize finalSize, double oversampling, bool expand);

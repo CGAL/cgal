@@ -38,7 +38,7 @@ if(TARGET CGAL::Eigen3_support)
         demo_framework
         CGAL::Eigen3_support)
       # The smoothing plugin can still do some things, even if Ceres is not found
-      qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
+      qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui Smoothing_tangential_relaxation.ui)
       polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
       target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item CGAL::Eigen3_support)
       find_package(Ceres QUIET)
@@ -123,7 +123,7 @@ target_link_libraries(
   PUBLIC scene_surface_mesh_item scene_polylines_item
          scene_points_with_normal_item)
 
-qt5_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui)
+qt5_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui SelfSnapDialog.ui)
 polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
 target_link_libraries(repair_polyhedron_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item)
 

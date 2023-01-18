@@ -22,24 +22,16 @@
 #include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
 #include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
 #include <functional>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/zip_iterator.hpp>
 
 #include <iterator>
 #include <list>
-
-
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 
@@ -152,27 +144,28 @@ compute_average_spacing(const typename NeighborQuery::Kernel::Point_3& query, //
 */
 template <typename ConcurrencyTag,
           typename PointRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          typename CGAL_NP_TEMPLATE_PARAMETERS
 >
 #ifdef DOXYGEN_RUNNING
   FT
 #else
-  typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel::FT
+  typename Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS>::FT
 #endif
 compute_average_spacing(
   const PointRange& points,
   unsigned int k,
-  const CGAL_BGL_NP_CLASS& np)
+  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // basic geometric types
   typedef typename PointRange::const_iterator iterator;
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
 
@@ -183,12 +176,12 @@ compute_average_spacing(
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   // precondition: at least 2 nearest neighbors
-  CGAL_point_set_processing_precondition(k >= 2);
+  CGAL_precondition(k >= 2);
 
-  // Instanciate a KD-tree search.
+  // Instantiate a KD-tree search.
   Neighbor_query neighbor_query (points, point_map);
 
   // iterate over input points, compute and output normal
@@ -230,21 +223,6 @@ compute_average_spacing(
   // return average spacing
   return sum_spacings / (FT)(nb);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-// variant with default NP
-template <typename ConcurrencyTag, typename PointRange>
-typename Point_set_processing_3::GetFT<PointRange>::type
-compute_average_spacing(
-  const PointRange& points,
-  unsigned int k) ///< number of neighbors.
-{
-  return compute_average_spacing<ConcurrencyTag>
-    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

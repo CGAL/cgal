@@ -1043,7 +1043,7 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
       CGAL_assertion(n<3);
 
       CGAL_NEF_TRACEN("n " << n);
-      CGAL_NEF_TRACEN("number of coordinats =0:" << n);
+      CGAL_NEF_TRACEN("number of coordinates =0:" << n);
       if(n==0) {
         if((chsp&60)!=60 &&
            it->sphere_circle().orthogonal_vector().x()!=0) chsp|=60;
@@ -1954,11 +1954,13 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       int i = start->intersection(xycircle,s1,s2);
       CGAL_NEF_TRACEN("segment " << start->source() << " " << start->target());
       if (i>1) {
-        L.push_back(s2); M[--L.end()] = M[start];
+        auto value = M[start];
+        L.push_back(s2); M[--L.end()] = std::move(value);
         CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
       }
       if (i>0) {
-        L.push_back(s1); M[--L.end()] = M[start];
+        auto value = M[start];
+        L.push_back(s1); M[--L.end()] = std::move(value);
         CGAL_NEF_TRACEN(">0 " << s1.source() << " " << s1.target());
       }
       ++start;
@@ -1967,7 +1969,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   else {
     while(start != beyond) {
       L.push_back(*start);
-      M[--L.end()] = M[start];
+      auto value = M[start]; M[--L.end()] = std::move(value);
       ++start;
     }
   }
@@ -1987,23 +1989,23 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       bool added=false;
       int n1 =  it->intersection(yzcircle,s1,s2);
       if (n1 > 1 && !s2.is_degenerate()) {
-        M[ L.insert(it,s2) ] = M[it];
+        auto value = M[it]; M[ L.insert(it,s2) ] = std::move(value);
         added=true;
         CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
       }
       if (n1 > 0 && !s1.is_degenerate()) {
-        M[ L.insert(it,s1) ] = M[it];
+        auto value = M[it]; M[ L.insert(it,s1) ] = std::move(value);
         added = true;
         CGAL_NEF_TRACEN(">1 " << s1.source() << " " << s1.target());
       }
       int n2 =  it->intersection(yzcircle.opposite(),s1,s2);
       if (n2 > 1 && !s2.is_degenerate()) {
-        M[ L.insert(it,s2) ] = M[it];
+        auto value = M[it]; M[ L.insert(it,s2) ] = std::move(value);
         added=true;
         CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
       }
       if (n2 > 0 && !s1.is_degenerate()) {
-        M[ L.insert(it,s1) ] = M[it];
+        auto value = M[it]; M[ L.insert(it,s1) ] = std::move(value);
         added=true;
         CGAL_NEF_TRACEN(">1 " << s1.source() << " " << s1.target());
       }
@@ -2022,7 +2024,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       CGAL_NEF_TRACEN("    into " << s1);
       CGAL_NEF_TRACEN("    into " << s2);
       *it = s2;
-      M[ L.insert(it,s1) ] = M[it];
+      auto value = M[it]; M[ L.insert(it,s1) ] = std::move(value);
     }
   }
 

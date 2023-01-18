@@ -473,8 +473,7 @@ int main (int argc, char** argv)
   // Fill all holes except the bigest (which is the outer hull of the mesh)
   for (Mesh::Halfedge_index hi : holes)
     if (hi != outer_hull)
-      CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
-        (dtm_mesh, hi, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator());
+      CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole (dtm_mesh, hi);
 
   // Save DTM with holes filled
   std::ofstream dtm_filled_ofile ("dtm_filled.ply", std::ios_base::binary);
@@ -670,7 +669,7 @@ int main (int argc, char** argv)
   }
 
   std::size_t nb_vertices
-    = std::accumulate (polylines.begin(), polylines.end(), 0u,
+    = std::accumulate (polylines.begin(), polylines.end(), std::size_t(0),
                        [](std::size_t size, const std::vector<Point_3>& poly) -> std::size_t
                        { return size + poly.size(); });
 
