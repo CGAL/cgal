@@ -557,6 +557,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
   std::size_t number_of_labels = get(vertex_label_cost_map, *(vertices(input_graph).first)).size();
 
   bool success;
+  bool full_loop = false;
   do {
     success = false;
 
@@ -635,6 +636,8 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
       cut_time += timer.time();
 #endif
+      if (full_loop && flow >= min_cut)
+        continue;
 
       if(min_cut - flow <= flow * tolerance) {
         continue;
@@ -647,6 +650,20 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
         std::size_t vertex_i = get (vertex_index_map, vd);
         alpha_expansion.update(vertex_label_map, inserted_vertices, vd, vertex_i, alpha);
       }
+      }
+    full_loop = true;
+    } while (success);
+
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
+    CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
+      std::endl;
+    CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
+    CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
+#endif
+
+    return min_cut;
+  }
+
 
   template <typename InputGraph,
   typename EdgeCostMap,
