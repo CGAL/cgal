@@ -41,6 +41,8 @@ int main(int argc, char* argv[])
 
   CGAL::Constrained_Delaunay_triangulation_3<Delaunay> cdt;
 
+  int exit_code = EXIT_SUCCESS;
+
   auto pmap = get(CGAL::vertex_point, mesh);
   for(auto face_descriptor: faces(mesh)) {
     std::vector<Point_3> polygon;
@@ -49,9 +51,21 @@ int main(int argc, char* argv[])
       polygon.push_back(get(pmap, vertex_it));
     }
     std::cerr << "NEW POLYGON\n";
-    cdt.insert_constrained_polygon(polygon);
+    try {
+      cdt.insert_constrained_polygon(polygon);
+    } catch (int error) {
+      exit_code = error;
+    }
     // std::ofstream dump("dump.binary.cgal");
     // CGAL::Mesh_3::save_binary_file(dump, cdt);
+  }
+  assert(cdt.is_conforming());
+  if(exit_code == EXIT_SUCCESS) {
+    try {
+      cdt.restore_constrained_Delaunay();
+    } catch(int error) {
+      exit_code = error;
+    }
   }
   {
     std::ofstream dump("dump.binary.cgal");
@@ -59,13 +73,17 @@ int main(int argc, char* argv[])
   }
   {
     std::ofstream missing_faces("missing_faces.polylines.txt");
+    missing_faces.precision(17);
     cdt.write_missing_subfaces_file(missing_faces);
   }
   {
     std::ofstream missing_edges("missing_segments.polylines.txt");
+    missing_edges.precision(17);
     if(cdt.write_missing_segments_file(missing_edges)) {
       std::cerr << "ERROR: Missing segments!\n";
     }
   }
   assert(cdt.is_conforming());
+
+  return exit_code;
 }

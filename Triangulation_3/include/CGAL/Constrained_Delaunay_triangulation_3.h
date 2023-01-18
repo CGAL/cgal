@@ -176,9 +176,12 @@ private:
     struct Vertex_info {
       Vertex_handle vertex_handle_3d = {};
     };
+
     using Color_value_type = std::int8_t;
     struct Face_info {
       Color_value_type is_outside_the_face = 0;
+      Color_value_type is_in_region = 0;
+      std::bitset<3> is_edge_also_in_3d_triangulation;
       bool missing_subface = true;
     };
     using Vb = Triangulation_vertex_base_with_info_2<Vertex_info,
@@ -208,9 +211,12 @@ private:
     };
     using Color_map_is_outside_the_face =
         CDT_2_dual_color_map<&Face_info::is_outside_the_face>;
+    using Color_map_is_in_region =
+        CDT_2_dual_color_map<&Face_info::is_in_region>;
   }; // CDT_2_types
   using CDT_2 = typename CDT_2_types::CDT;
   using CDT_2_traits = typename CDT_2_types::Projection_traits;
+  using CDT_2_face_handle = typename CDT_2::Face_handle;
   static_assert(std::is_nothrow_move_constructible<CDT_2>::value,
                 "move cstr is missing");
   static_assert(std::is_nothrow_move_assignable<CDT_2>::value,
@@ -403,18 +409,15 @@ public:
         cdt_2.insert_constraint(previous_2d, vh_2d);
         previous_2d = vh_2d;
       } while (circ != circ_end);
+      const auto cdt_2_dual_graph = dual(cdt_2.tds());
       { // Now, use BGL BFS algorithm to mark the faces reachable from
         // an infinite face as `is_outside_the_face`.
         // I use the fact that `white_color()` evaluates to 0, and
         // `black_color()` to 4 (and thus to a true Boolean).
-        auto cdt_2_dual_graph = dual(cdt_2.tds());
-        using pred_type = bool (*)(typename CDT_2::Edge);
-        pred_type no_constrained_edge = [](typename CDT_2::Edge edge) {
-          return !edge.first->is_constrained(edge.second);
-        };
-        boost::filtered_graph<decltype(cdt_2_dual_graph),
-                              pred_type>
-            dual(cdt_2_dual_graph, no_constrained_edge);
+        const boost::filtered_graph dual(cdt_2_dual_graph,
+                                         [](typename CDT_2::Edge edge) {
+                                           return false == edge.first->is_constrained(edge.second);
+                                         });
         using Color_map = typename CDT_2_types::Color_map_is_outside_the_face;
         boost::breadth_first_search(dual, cdt_2.infinite_vertex()->face(),
                                     boost::color_map(Color_map()));
@@ -437,7 +440,16 @@ public:
         this->insert_constrained_edge(va, vb);
       }
     } while(circ != circ_end);
-    for(auto fh: cdt_2.all_face_handles())
+    search_for_missing_subfaces(polygon_contraint_id);
+    //restore_constrained_Delaunay();
+    return polygon_contraint_id;
+  }
+
+  void search_for_missing_subfaces(CDT_3_face_index polygon_contraint_id)
+  {
+    const CDT_2& cdt_2 = face_cdt_2[polygon_contraint_id];
+
+    for(const auto fh: cdt_2.all_face_handles())
     {
       if(fh->info().is_outside_the_face) continue;
       const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
@@ -462,8 +474,145 @@ public:
         }
       }
     }
+  }
 
-    return polygon_contraint_id;
+  static auto region(const CDT_2& cdt_2, CDT_2_face_handle fh)
+  {
+    std::vector<CDT_2_face_handle> fh_region;
+    const auto cdt_2_dual_graph = dual(cdt_2.tds());
+    const boost::filtered_graph dual(
+        cdt_2_dual_graph,
+        [](auto edge) {
+          const auto face = edge.first;
+          const auto i = unsigned(edge.second);
+          return false == face->info().is_edge_also_in_3d_triangulation.test(i);
+        },
+        [](auto face_handle) { return false == face_handle->info().is_outside_the_face; });
+    boost::breadth_first_search(dual, fh,
+                                boost::color_map(typename CDT_2_types::Color_map_is_in_region())
+                                    .visitor(boost::make_bfs_visitor(boost::write_property(
+                                        boost::typed_identity_property_map<CDT_2_face_handle>(),
+                                        std::back_inserter(fh_region), boost::on_finish_vertex()))));
+    return fh_region;
+  }
+
+  auto brute_force_border_3_of_region(const std::vector<CDT_2_face_handle>& fh_region) {
+    std::set<std::pair<Vertex_handle, Vertex_handle>> border_edges;
+    for(auto fh: fh_region) {
+      for(int i = 0; i < 3; ++i) {
+        const auto va = fh->vertex(CDT_2::cw(i))->info().vertex_handle_3d;
+        const auto vb = fh->vertex(CDT_2::ccw(i))->info().vertex_handle_3d;
+        if(this->tds().is_edge(va, vb)) {
+          border_edges.insert(CGAL::make_sorted_pair(va, vb));
+        }
+      }
+    }
+    return border_edges;
+  }
+
+  void restore_constrained_Delaunay()
+  {
+    const auto npos = face_constraint_misses_subfaces.npos;
+    auto i = face_constraint_misses_subfaces.find_first();
+    while(i != npos) {
+      const CDT_2& cdt_2 = face_cdt_2[i];
+      search_for_missing_subfaces(i);
+#if CGAL_DEBUG_CDT_3
+        std::cerr << "cdt_2 has " << cdt_2.number_of_vertices() << " vertices\n";
+#endif // CGAL_DEBUG_CDT_3
+      for(auto edge : cdt_2.finite_edges()) {
+        const auto fh = edge.first;
+        const auto i = edge.second;
+        const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
+        const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
+        const bool is_3d = this->tds().is_edge(va_3d, vb_3d);
+#if CGAL_DEBUG_CDT_3
+        std::cerr << "Edge is 3D: " << std::boolalpha << is_3d << "\n";
+#endif // CGAL_DEBUG_CDT_3
+        fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;
+        const auto reverse_edge = cdt_2.mirror_edge(edge);
+        reverse_edge.first->info().is_edge_also_in_3d_triangulation[unsigned(reverse_edge.second)] = is_3d;
+      }
+
+      for(CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
+        if(false == fh->info().is_outside_the_face && true == fh->info().missing_subface) {
+          auto fh_region = region(cdt_2, fh);
+          assert(!fh_region.empty());
+          assert(fh == fh_region[0]);
+          auto border_edges = brute_force_border_3_of_region(fh_region);
+#if CGAL_DEBUG_CDT_3
+          std::cerr << "region size is: " << fh_region.size() << "\n";
+          std::cerr << "region border size is: " << border_edges.size() << "\n";
+          if(border_edges.size() < 3) {
+            std::ofstream dump_region("dump_region_with_size_2.polylines.txt");
+            dump_region.precision(17);
+            write_region(dump_region, fh_region);
+          }
+#endif // CGAL_DEBUG_CDT_3
+          const bool found_seg = [&]() {
+            for(auto fh_2d : fh_region) {
+              CGAL_assertion(true == fh_2d->info().missing_subface);
+              CGAL_assertion(false == fh_2d->info().is_outside_the_face);
+              for(int index = 0; index < 3; ++index) {
+                const auto va_3d = fh_2d->vertex(cdt_2.cw(index))->info().vertex_handle_3d;
+                const auto vb_3d = fh_2d->vertex(cdt_2.ccw(index))->info().vertex_handle_3d;
+                Cell_handle c;
+                int i, j;
+                const bool is_3d = this->tds().is_edge(va_3d, vb_3d, c, i, j);
+                CGAL_assertion(fh_2d->info().is_edge_also_in_3d_triangulation[unsigned(index)] == is_3d);
+                if(is_3d) {
+                  auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
+                  CGAL_assertion(cell_circ != nullptr);
+                  do {
+                    if(this->is_infinite(cell_circ)) {
+                      continue;
+                    }
+                    const auto index_va = cell_circ->index(va_3d);
+                    const auto index_vb = cell_circ->index(vb_3d);
+                    const auto index_vc = this->next_around_edge(index_va, index_vb);
+                    const auto index_vd = this->next_around_edge(index_vb, index_va);
+                    const auto vc = cell_circ->vertex(index_vd);
+                    const auto vd = cell_circ->vertex(index_vc);
+                    CGAL_assertion(cell_circ->has_vertex(vc));
+                    CGAL_assertion(cell_circ->has_vertex(vd));
+                    const auto pc = this->point(vc);
+                    const auto pd = this->point(vd);
+                    const typename Geom_traits::Segment_3 seg{pc, pd};
+                    for(auto fh_2d : fh_region) {
+                      const auto triangle = cdt_2.triangle(fh_2d);
+                      if(do_intersect(seg, triangle)) {
+                        std::cerr << "Segment " << seg << " intersects triangle " << triangle << "\n";
+                        return true;
+                      }
+                    }
+                  } while(++cell_circ != end);
+                }
+              }
+            }
+            return false;
+          }();
+          if(!found_seg) {
+            std::cerr << "No segment found\n";
+            {
+              std::ofstream dump("dump.binary.cgal");
+              CGAL::Mesh_3::save_binary_file(dump, *this);
+              std::ofstream dump_region("dump_region.polylines.txt");
+              dump_region.precision(17);
+              write_region(dump_region, fh_region);
+            }
+          }
+          CGAL_assertion(found_seg);
+        }
+      }
+      i = face_constraint_misses_subfaces.find_next(i);
+    }
+  }
+
+  void write_region(std::ostream& out, auto region)
+  {
+    for(auto fh_2d : region) {
+      write_2d_triangle(out, fh_2d);
+    }
   }
 
   void write_triangle(std::ostream &out,
@@ -474,7 +623,7 @@ public:
         << " " << tr.point(v0) << '\n';
   }
 
-  void write_2d_triangle(std::ostream &out, const typename CDT_2::Face_handle fh)
+  void write_2d_triangle(std::ostream &out, const CDT_2_face_handle fh)
   {
     const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
     const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
