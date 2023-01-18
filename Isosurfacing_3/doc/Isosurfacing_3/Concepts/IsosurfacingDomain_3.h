@@ -3,8 +3,13 @@
 
 \cgalConcept
 
-The concept `IsosurfacingDomain_3` describes the set of requirements to be
-fulfilled by any class used as input data for any isosurfacing algorithms.
+\brief The concept `IsosurfacingDomain_3` describes the set of requirements to be
+fulfilled by any class used as input data for isosurfacing algorithms.
+
+A model of the concept `IsosurfacingDomain_3` provides a discrete representation
+of an implicit function through a partition of the Euclidean space in cells.
+The isosurfacing algorithms will traverse these cells and query the domain class
+at the vertices of each cell, using the functions `point()` and `value()`.
 
 \cgalHasModel `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
 \cgalHasModel `CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3`
@@ -57,19 +62,19 @@ public:
 
   /*!
   A container for the cells incident to an edge.
-  Must be a model of the concept `Container` whose value type is `Cell_descriptor`.
+  Must be a model of the concept `Range` whose value type is `Cell_descriptor`.
   */
   typedef unspecified_type Cells_incident_to_edge;
 
   /*!
   A container for the vertices of a cell.
-  Must be a model of the concept `Container` whose value type is `Vertex_descriptor`.
+  Must be a model of the concept `Range` whose value type is `Vertex_descriptor`.
   */
   typedef unspecified_type Cell_vertices;
 
   /*!
   A container for the edges of a cell.
-  Must be a model of the concept `Container` whose value type is `Edge_descriptor`.
+  Must be a model of the concept `Range` whose value type is `Edge_descriptor`.
   */
   typedef unspecified_type Cell_edges;
 
@@ -91,7 +96,7 @@ public:
   Point_3 point(const Vertex_descriptor& v) const;
 
   /*!
-  gets the value of the function at a vertex
+  gets the value of the implicit function at a vertex
   */
   FT value(const Vertex_descriptor& v) const;
 
