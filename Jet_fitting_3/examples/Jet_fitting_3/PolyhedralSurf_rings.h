@@ -29,7 +29,7 @@ protected:
                           std::vector < Vertex * >&nextRing,
                           std::vector < Vertex * >&all,
                           VertexPropertyMap& vpm);
-  CGAL_DEPRECATED static void push_neighbours_of(Vertex * start, int ith,
+  static void push_neighbours_of(Vertex * start, int ith,
                           std::vector < Vertex * >&nextRing,
                           std::vector < Vertex * >&all,
                           VertexPropertyMap& vpm);
