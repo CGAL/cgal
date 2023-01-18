@@ -92,8 +92,8 @@ push_neighbors_of(const Vertex_const_handle start, const int ith,
   }
 }
 
-CGAL_DEPRECATED template < class TPoly >
-void T_PolyhedralSurf_rings <TPoly>::
+template < class TPoly >
+CGAL_DEPRECATED void T_PolyhedralSurf_rings <TPoly>::
 push_neighbours_of(const Vertex_const_handle start, const int ith,
                    std::vector < Vertex_const_handle > &nextRing,
                    std::vector < Vertex_const_handle > &all)
