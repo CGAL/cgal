@@ -742,7 +742,7 @@ void dump_visi(
       polygon.push_back(data.point_3(pvertex));
     }
 
-    colors.push_back(Color((1 - color) * low[0] + color * high[0], (1 - color) * low[1] + color * high[1], (1 - color) * low[2] + color * high[2], ((color > 0.5) ? 150 : 25)));
+    colors.push_back(Color(static_cast<unsigned char>((1 - color) * low[0] + color * high[0]), static_cast<unsigned char>((1 - color) * low[1] + color * high[1]), static_cast<unsigned char>((1 - color) * low[2] + color * high[2]), ((color > 0.5) ? 150 : 25)));
 
     CGAL_assertion(polygon.size() >= 3);
     polygons.push_back(polygon);
@@ -981,7 +981,7 @@ void dump(const InputRange input_range, PointMap point_map, NormalMap normal_map
   for (std::size_t r = 0; r < regions.size(); r++) {
     for (std::size_t i = 0; i < regions[r].size(); i++) {
       CGAL_assertion(regions[r][i] < input_range.size());
-      region_index[regions[r][i]] = r;
+      region_index[regions[r][i]] = static_cast<int>(r);
     }
   }
 

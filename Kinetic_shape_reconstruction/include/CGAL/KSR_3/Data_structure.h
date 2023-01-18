@@ -226,8 +226,6 @@ private:
   From_EK from_EK;
 
   const Parameters& m_parameters;
-  FT m_previous_time;
-  FT m_current_time;
   Kinetic_traits m_kinetic_traits;
 
   std::vector<Volume_cell> m_volumes;
