@@ -29,10 +29,6 @@ protected:
                           std::vector < Vertex * >&nextRing,
                           std::vector < Vertex * >&all,
                           VertexPropertyMap& vpm);
-  static void push_neighbours_of(Vertex * start, int ith,
-                          std::vector < Vertex * >&nextRing,
-                          std::vector < Vertex * >&all,
-                          VertexPropertyMap& vpm);
 
   //i >= 1, from a currentRing i-1, collect all neighbors, set indices
   //to i and store them in nextRing and all.
@@ -81,14 +77,6 @@ push_neighbors_of(Vertex * start, int ith,
     all.push_back(v);
   }
 }
-
-template < class TPoly , class VertexPropertyMap>
-CGAL_DEPRECATED void T_PolyhedralSurf_rings <TPoly, VertexPropertyMap>::
-push_neighbours_of(Vertex * start, int ith,
-                   std::vector < Vertex * >&nextRing,
-                   std::vector < Vertex * >&all,
-                   VertexPropertyMap& vpm)
-{ push_neighbors_of(start, ith, nextRing, all, vpm); }
 
 template <class TPoly, class VertexPropertyMap>
 void T_PolyhedralSurf_rings <TPoly, VertexPropertyMap>::

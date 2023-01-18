@@ -33,9 +33,6 @@ protected:
   void push_neighbors_of(const Vertex_const_handle start, const int ith,
                          std::vector < Vertex_const_handle > &nextRing,
                          std::vector < Vertex_const_handle > &all);
-  void push_neighbours_of(const Vertex_const_handle start, const int ith,
-                          std::vector < Vertex_const_handle > &nextRing,
-                          std::vector < Vertex_const_handle > &all);
 
   //i >= 1, from a currentRing i-1, collect all neighbors, set indices
   //to i and store them in nextRing and all.
@@ -91,13 +88,6 @@ push_neighbors_of(const Vertex_const_handle start, const int ith,
     all.push_back(v);
   }
 }
-
-template < class TPoly >
-void T_PolyhedralSurf_rings <TPoly>::
-push_neighbours_of(const Vertex_const_handle start, const int ith,
-                   std::vector < Vertex_const_handle > &nextRing,
-                   std::vector < Vertex_const_handle > &all)
-{ push_neighbors_of(start, ith, nextRing, all); }
 
 template <class TPoly>
 void T_PolyhedralSurf_rings <TPoly>::
