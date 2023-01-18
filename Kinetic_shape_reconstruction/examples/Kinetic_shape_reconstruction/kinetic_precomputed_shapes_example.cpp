@@ -132,15 +132,11 @@ int main(const int argc, const char** argv) {
     std::back_inserter(output_faces), support_plane_idx, 6);
   assert(num_faces >= output_faces.size());
 
-  int volume_level = -1;
-  const int num_volume_levels = ksr.number_of_volume_levels();
-  assert(num_volume_levels > 0);
-
   // Volumes.
-  const std::size_t num_volumes = ksr.number_of_volumes(volume_level);
+  const std::size_t num_volumes = ksr.number_of_volumes();
   std::vector<Surface_mesh> output_volumes;
   ksr.output_partition_volumes(
-    std::back_inserter(output_volumes), volume_level);
+    std::back_inserter(output_volumes));
   assert(num_volumes == output_volumes.size());
 
   // Support planes.
@@ -163,7 +159,6 @@ int main(const int argc, const char** argv) {
   std::cout << "* number of faces: "          << num_faces          << std::endl;
   std::cout << "* number of volumes: "        << num_volumes        << std::endl;
   std::cout << "* number of support planes: " << num_support_planes << std::endl;
-  std::cout << "* number of volume levels: "  << num_volume_levels  << std::endl;
   std::cout << "* number of events: "         << num_events         << std::endl;
 
   // Export.

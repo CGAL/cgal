@@ -202,6 +202,7 @@ public:
 
   template<typename NamedParameters>
   bool detect_planar_shapes(
+    const std::string& file_name,
     const NamedParameters& np) {
 
     if (m_verbose) {
@@ -216,18 +217,50 @@ public:
       create_approximate_walls(np);
       create_approximate_roofs(np);
     } else {
-      create_all_planar_shapes(np);
+      create_all_planar_shapes(np, file_name);
     }
 
     CGAL_assertion(m_planes.size() == m_polygons.size());
     CGAL_assertion(m_polygons.size() == m_region_map.size());
-    if (m_debug) dump_polygons("detected-planar-shapes");
+    //if (m_debug)
+    dump_polygons("detected-planar-shapes");
 
     if (m_polygons.size() == 0) {
       if (m_verbose) std::cout << "* no planar shapes found" << std::endl;
       return false;
     }
     return true;
+  }
+
+  template<typename RegionMap, typename NamedParameters>
+  bool planar_shapes_from_map(
+    RegionMap &region_map,
+    const NamedParameters& np
+  ) {
+
+    if (m_verbose) {
+      std::cout << std::endl << "--- PLANAR SHAPES from map: " << std::endl;
+    }
+    m_planes.clear();
+    m_polygons.clear();
+    m_region_map.clear();
+
+    std::vector<std::vector<std::size_t> > regions;
+
+    for (std::size_t i = 0; i < m_input_range.size(); i++) {
+     if (region_map[i] < 0)
+       continue;
+      if (regions.size() <= region_map[i])
+        regions.resize(region_map[i] + 1);
+      regions[region_map[i]].push_back(i);
+    }
+
+    for (const auto& region : regions) {
+      const auto plane = fit_plane(region);
+      const std::size_t shape_idx = add_planar_shape(region, plane);
+      CGAL_assertion(shape_idx != std::size_t(-1));
+      m_region_map[shape_idx] = region;
+    }
   }
 
   template<typename NamedParameters>
@@ -310,7 +343,7 @@ public:
       std::cout << std::endl << "--- COMPUTING THE MODEL: " << std::endl;
     }
 
-    if (m_data.number_of_volumes(-1) == 0) {
+    if (m_data.number_of_volumes() == 0) {
       if (m_verbose) std::cout << "* no volumes found, skipping" << std::endl;
       return false;
     }
@@ -323,7 +356,7 @@ public:
 
     CGAL_assertion(m_data.volumes().size() > 0);
     visibility.compute(m_data.volumes());
-    // if (m_debug) dump_volumes("visibility/visibility");
+    dump_visibility("visibility/visibility", pface_points);
 
     if (m_verbose) {
       std::cout << "done" << std::endl;
@@ -334,8 +367,8 @@ public:
       parameters::get_parameter(np, internal_np::graphcut_beta), FT(1) / FT(2));
 
     Graphcut graphcut(m_data, beta);
-    graphcut.compute(m_data.volumes());
-    // if (m_debug) dump_volumes("graphcut/graphcut");
+    graphcut.compute(m_data.volumes(), visibility.inliers());
+    dump_volumes("graphcut/graphcut");
 
     if (m_verbose) {
       std::cout << "done" << std::endl;
@@ -596,14 +629,14 @@ private:
   }
 
   template<typename NamedParameters>
-  void create_all_planar_shapes(const NamedParameters& np) {
+  void create_all_planar_shapes(const NamedParameters& np, const std::string& file_name) {
 
     if (m_free_form_points.size() < 3) {
       if (m_verbose) std::cout << "* no points found, skipping" << std::endl;
       return;
     }
     if (m_verbose) std::cout << "* getting planar shapes using region growing" << std::endl;
-    const std::size_t num_shapes = compute_planar_shapes_with_rg(np, m_free_form_points);
+    const std::size_t num_shapes = compute_planar_shapes_with_rg(np, m_free_form_points, file_name);
     if (m_verbose) std::cout << "* found " << num_shapes << " approximate walls" << std::endl;
   }
 
@@ -615,7 +648,7 @@ private:
       return;
     }
     if (m_verbose) std::cout << "* getting walls using region growing" << std::endl;
-    const std::size_t num_shapes = compute_planar_shapes_with_rg(np, m_boundary_points);
+    const std::size_t num_shapes = compute_planar_shapes_with_rg(np, m_boundary_points, "");
     if (m_verbose) std::cout << "* found " << num_shapes << " approximate walls" << std::endl;
   }
 
@@ -627,17 +660,22 @@ private:
       return;
     }
     if (m_verbose) std::cout << "* getting roofs using region growing" << std::endl;
-    const std::size_t num_shapes = compute_planar_shapes_with_rg(np, m_interior_points);
+    const std::size_t num_shapes = compute_planar_shapes_with_rg(np, m_interior_points, "");
     if (m_verbose) std::cout << "* found " << num_shapes << " approximate roofs" << std::endl;
   }
 
   template<typename NamedParameters>
   std::size_t compute_planar_shapes_with_rg(
     const NamedParameters& np,
-    const std::vector<std::size_t>& input_range) {
+    const std::vector<std::size_t>& input_range,
+    const std::string& file_name) {
 
     std::vector< std::vector<std::size_t> > regions;
     apply_region_growing_3(np, input_range, regions);
+
+    if (file_name.size() > 0)
+      dump(m_input_range, m_point_map_3, m_normal_map_3, regions, file_name);
+
     for (const auto& region : regions) {
       const auto plane = fit_plane(region);
       const std::size_t shape_idx = add_planar_shape(region, plane);
@@ -717,7 +755,7 @@ private:
 
     std::size_t num_shapes = 0;
     if (wall_points.size() >= 3) {
-      num_shapes += compute_planar_shapes_with_rg(np, wall_points);
+      num_shapes += compute_planar_shapes_with_rg(np, wall_points, "");
       // dump_polygons("walls-1");
     }
 
@@ -1235,6 +1273,19 @@ private:
         dump_volume(m_data, volume.pfaces,
         file_name + "-" + std::to_string(volume.index), false);
       }
+    }
+  }
+
+  void dump_visibility(const std::string file_name, const std::map<PFace, Indices> &pface_points) {
+    for (const auto& volume : m_data.volumes()) {
+      std::size_t sample_count = 0;
+      for (auto pface : volume.pfaces) {
+        const auto indices = pface_points.at(pface);
+        sample_count += indices.size();
+      }
+      dump_visi<Data_structure, PFace, FT>(m_data, volume.pfaces,
+        file_name + "-" + std::to_string(volume.index) + "-" + std::to_string(volume.inside_count) + "-"
+        + std::to_string(volume.outside_count) + "-" + std::to_string(sample_count), (volume.inside_count)/(volume.inside_count + volume.outside_count));
     }
   }
 

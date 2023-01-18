@@ -40,7 +40,7 @@ namespace KSR_3 {
 const std::tuple<unsigned char, unsigned char, unsigned char>
 get_idx_color(std::size_t idx) {
 
-  CGAL::Random rand(idx);
+  CGAL::Random rand(static_cast<unsigned int>(idx));
   return std::make_tuple(
     static_cast<unsigned char>(rand.get_int(32, 192)),
     static_cast<unsigned char>(rand.get_int(32, 192)),
@@ -118,24 +118,33 @@ void dump_2d_surface_mesh(
   std::vector<Vertex_index> map_vertices;
 
   map_vertices.clear();
+  auto pvertices = data.pvertices(support_plane_idx);
+  //std::vector<Point_3> pts;
+
   for (const auto pvertex : data.pvertices(support_plane_idx)) {
     if (map_vertices.size() <= pvertex.second) {
       map_vertices.resize(pvertex.second + 1);
     }
+    //pts.push_back(data.point_3(pvertex));
     map_vertices[pvertex.second] = mesh.add_vertex(data.point_3(pvertex));
   }
 
+  auto pfaces = data.pfaces(support_plane_idx);
   for (const auto pface : data.pfaces(support_plane_idx)) {
     vertices.clear();
+    auto pvertices_of_pface = data.pvertices_of_pface(pface);
     for (const auto pvertex : data.pvertices_of_pface(pface)) {
       vertices.push_back(map_vertices[pvertex.second]);
     }
 
     CGAL_assertion(vertices.size() >= 3);
     const auto face = mesh.add_face(vertices);
-    CGAL_assertion(face != Mesh::null_face());
+    if (face == Mesh::null_face()) {
+      std::cout << "could not dump mesh " << tag << std::endl;
+      return;
+    }
     std::tie(red[face], green[face], blue[face]) =
-      get_idx_color(support_plane_idx * (pface.second + 1));
+      get_idx_color((support_plane_idx + 1) * (pface.second + 1));
   }
 
   const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygons.ply";
@@ -312,6 +321,7 @@ public:
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Point_3   = typename Traits::Point_3;
+  using Vector_3  = typename Traits::Vector_3;
   using Segment_2 = typename Traits::Segment_2;
   using Segment_3 = typename Traits::Segment_3;
 
@@ -371,6 +381,54 @@ public:
     for (const auto& point : points)
       stream << point << std::endl;
     save(stream, file_name + ".xyz");
+  }
+
+  void export_regions_3(
+    const std::vector<Point_3>& points,
+    const std::vector<Vector_3>& normals,
+    const std::vector<int>& region,
+    const std::string file_name) const {
+
+    if (points.size() != normals.size()) {
+      std::cout << "export_regions_3: number of points and normals are not equal" << std::endl;
+      return;
+    }
+
+    if (points.size() != region.size()) {
+      std::cout << "export_regions_3: number of points and region indices are not equal" << std::endl;
+      return;
+    }
+
+    std::stringstream stream;
+    initialize(stream);
+
+    add_ply_header_regions(stream, points.size());
+
+    for (std::size_t i = 0; i < points.size(); ++i) {
+      stream << points[i] << " " << normals[i] << " " << region[i] << std::endl;
+    }
+    save(stream, file_name);
+  }
+
+  void export_points_3(
+    const std::vector<Point_3>& points,
+    const std::vector<Vector_3>& normals,
+    const std::string file_name) const {
+
+    if (points.size() != normals.size()) {
+      std::cout << "export_regions_3: number of points and normals are not equal" << std::endl;
+      return;
+    }
+
+    std::stringstream stream;
+    initialize(stream);
+
+    add_ply_header_normals(stream, points.size());
+
+    for (std::size_t i = 0; i < points.size(); ++i) {
+      stream << points[i] << " " << normals[i] << " " << std::endl;
+    }
+    save(stream, file_name);
   }
 
   void export_segments_2(
@@ -516,7 +574,7 @@ public:
   }
 
   const Color get_idx_color(const std::size_t idx) const {
-    Random rand(idx);
+    Random rand(static_cast<unsigned int>(idx));
     const unsigned char r = rand.get_int(32, 192);
     const unsigned char g = rand.get_int(32, 192);
     const unsigned char b = rand.get_int(32, 192);
@@ -566,16 +624,34 @@ private:
     const std::size_t size) const {
 
     stream <<
-    "ply"                  +  std::string(_NL_) + ""                      <<
-    "format ascii 1.0"     +  std::string(_NL_) + ""                      <<
-    "element vertex "      << size        << "" + std::string(_NL_) + "" <<
-    "property double x"    +  std::string(_NL_) + ""                     <<
-    "property double y"    +  std::string(_NL_) + ""                     <<
-    "property double z"    +  std::string(_NL_) + ""                      <<
-    "property double nx"   +  std::string(_NL_) + ""                     <<
-    "property double ny"   +  std::string(_NL_) + ""                     <<
-    "property double nz"   +  std::string(_NL_) + ""                      <<
-    "end_header"           +  std::string(_NL_) + "";
+      "ply" + std::string(_NL_) + "" <<
+      "format ascii 1.0" + std::string(_NL_) + "" <<
+      "element vertex " << size << "" + std::string(_NL_) + "" <<
+      "property double x" + std::string(_NL_) + "" <<
+      "property double y" + std::string(_NL_) + "" <<
+      "property double z" + std::string(_NL_) + "" <<
+      "property double nx" + std::string(_NL_) + "" <<
+      "property double ny" + std::string(_NL_) + "" <<
+      "property double nz" + std::string(_NL_) + "" <<
+      "end_header" + std::string(_NL_) + "";
+  }
+
+  void add_ply_header_regions(
+    std::stringstream& stream,
+    const std::size_t size) const {
+
+    stream <<
+      "ply" << std::endl <<
+      "format ascii 1.0" << std::endl <<
+      "element vertex " << size << std::endl <<
+      "property double x" << std::endl <<
+      "property double y" << std::endl <<
+      "property double z" << std::endl <<
+      "property double nx" << std::endl <<
+      "property double ny" << std::endl <<
+      "property double nz" << std::endl <<
+      "property int region" << std::endl <<
+      "end_header" << std::endl;
   }
 
   void add_ply_header_mesh(
@@ -605,7 +681,8 @@ void dump_volume(
   const DS& data,
   const std::vector<PFace>& pfaces,
   const std::string file_name,
-  const bool use_colors = true) {
+  const bool use_colors = true,
+  const std::size_t volume_index = 0) {
 
   using Point_3 = typename DS::Kernel::Point_3;
   std::vector<Point_3> polygon;
@@ -616,18 +693,57 @@ void dump_volume(
   polygons.reserve(pfaces.size());
 
   Saver<typename DS::Kernel> saver;
+  std::size_t i = 1;
   for (const auto& pface : pfaces) {
     const auto pvertices = data.pvertices_of_pface(pface);
-    const auto color = saver.get_idx_color(static_cast<int>(pface.second));
+    const auto color = saver.get_idx_color(volume_index);
     polygon.clear();
     for (const auto pvertex : pvertices) {
       polygon.push_back(data.point_3(pvertex));
     }
     if (use_colors) {
       colors.push_back(color);
-    } else {
+    }
+    else {
       colors.push_back(saver.get_idx_color(0));
     }
+    CGAL_assertion(polygon.size() >= 3);
+    polygons.push_back(polygon);
+  }
+  CGAL_assertion(colors.size() == pfaces.size());
+  CGAL_assertion(polygons.size() == pfaces.size());
+
+  saver.export_polygon_soup_3(polygons, colors, file_name);
+}
+
+template<typename DS, typename PFace, typename FT>
+void dump_visi(
+  const DS& data,
+  const std::vector<PFace>& pfaces,
+  const std::string &file_name,
+  const FT color) {
+
+  using Point_3 = typename DS::Kernel::Point_3;
+  std::vector<Point_3> polygon;
+  std::vector< std::vector<Point_3> > polygons;
+  std::vector<Color> colors;
+
+  colors.reserve(pfaces.size());
+  polygons.reserve(pfaces.size());
+
+  const Color low(255, 255, 255);
+  const Color high(0, 0, 255);
+
+  Saver<typename DS::Kernel> saver;
+  for (const auto& pface : pfaces) {
+    const auto pvertices = data.pvertices_of_pface(pface);
+    polygon.clear();
+    for (const auto pvertex : pvertices) {
+      polygon.push_back(data.point_3(pvertex));
+    }
+
+    colors.push_back(Color((1 - color) * low[0] + color * high[0], (1 - color) * low[1] + color * high[1], (1 - color) * low[2] + color * high[2], ((color > 0.5) ? 150 : 25)));
+
     CGAL_assertion(polygon.size() >= 3);
     polygons.push_back(polygon);
   }
@@ -687,6 +803,26 @@ void dump_polygon(
   saver.export_polygon_soup_3(polygons, name);
 }
 
+template<typename DS, typename Polygon_2>
+void dump_polygons(
+  const DS& data,
+  const Polygon_2& input,//    std::map< std::size_t, std::pair<Polygon_2, Indices> > polygons;
+  const std::string name) {
+
+  using Kernel = typename DS::Kernel;
+  using Point_3 = typename Kernel::Point_3;
+  std::vector<Point_3> polygon;
+  std::vector< std::vector<Point_3> > polygons;
+  for (const auto& pair : input) {
+    for (const auto &point2d : pair.second.first)
+      polygon.push_back(data.to_3d(pair.first, point2d));
+    polygons.push_back(polygon);
+    polygon.clear();
+  }
+  Saver<Kernel> saver;
+  saver.export_polygon_soup_3(polygons, name);
+}
+
 template<typename DS>
 void dump_ifaces(const DS& data, const std::string tag = std::string()) {
   // write all polygons into a separate ply with support plane index and iface index
@@ -727,6 +863,27 @@ void dump_pface(
   saver.export_polygon_soup_3(polygons, name);
 }
 
+template<typename DS, typename PFace>
+void dump_pfaces(
+  const DS& data,
+  const std::vector<PFace>& pfaces,
+  const std::string name) {
+
+  using Kernel = typename DS::Kernel;
+  using Point_3 = typename Kernel::Point_3;
+  std::vector< std::vector<Point_3> > polygons;
+  for (auto pface : pfaces) {
+    std::vector<Point_3> polygon;
+    for (const auto pvertex : data.pvertices_of_pface(pface)) {
+      polygon.push_back(data.point_3(pvertex));
+    }
+    CGAL_assertion(polygon.size() >= 3);
+    polygons.push_back(polygon);
+  }
+  Saver<Kernel> saver;
+  saver.export_polygon_soup_3(polygons, name);
+}
+
 template<typename DS, typename PEdge>
 void dump_pedge(
   const DS& data,
@@ -745,13 +902,14 @@ void dump_info(
   const DS& data,
   const PFace& pface,
   const PEdge& pedge,
-  const std::vector<PFace>& nfaces) {
+  const std::vector<PFace>& nfaces,
+  const std::string &suffix) {
 
   std::cout << "DEBUG: number of found nfaces: " << nfaces.size() << std::endl;
-  dump_pface(data, pface, "face-curr");
-  dump_pedge(data, pedge, "face-edge");
+  dump_pface(data, pface, "face-curr-" + suffix);
+  dump_pedge(data, pedge, "face-edge-" + suffix);
   for (std::size_t i = 0; i < nfaces.size(); ++i) {
-    dump_pface(data, nfaces[i], "nface-" + std::to_string(i));
+    dump_pface(data, nfaces[i], "nface-" + std::to_string(i) + "-" + suffix);
   }
 }
 
@@ -814,6 +972,29 @@ void dump_cdt(
   out.precision(20);
   CGAL::IO::write_PLY(out, mesh);
   out.close();
+}
+
+template<typename InputRange, typename PointMap, typename NormalMap, typename Regions>
+void dump(const InputRange input_range, PointMap point_map, NormalMap normal_map, Regions regions, const std::string &file_name) {
+  std::vector<int> region_index(input_range.size(), -1);
+
+  for (std::size_t r = 0; r < regions.size(); r++) {
+    for (std::size_t i = 0; i < regions[r].size(); i++) {
+      CGAL_assertion(regions[r][i] < input_range.size());
+      region_index[regions[r][i]] = r;
+    }
+  }
+
+  std::vector<boost::property_traits<PointMap>::value_type> pts(input_range.size());
+  std::vector<boost::property_traits<NormalMap>::value_type> normals(input_range.size());
+
+  for (std::size_t i = 0; i < input_range.size(); i++) {
+    pts[i] = get(point_map, i);
+    normals[i] = get(normal_map, i);
+  }
+
+  Saver<boost::property_traits<PointMap>::value_type::R> saver;
+  saver.export_regions_3(pts, normals, region_index, file_name);
 }
 
 } // namespace KSR_3

@@ -242,168 +242,16 @@ public:
 
   template<
     typename InputRange,
-    typename PolygonMap,
+    typename PointMap,
+    typename VectorMap,
+    typename SemanticMap,
     typename NamedParameters>
-  bool partition_by_faces(
-    const InputRange& input_range,
-    const PolygonMap polygon_map,
-    const NamedParameters& np) {
-
-    Timer timer;
-    m_parameters.k = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::k_intersections), 1);
-    m_parameters.n = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::n_subdivisions), 0);
-    m_parameters.enlarge_bbox_ratio = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::enlarge_bbox_ratio), FT(11) / FT(10));
-    m_parameters.distance_tolerance = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::distance_tolerance), FT(5) / FT(10));
-    m_parameters.reorient = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::reorient), false);
-    m_parameters.use_hybrid_mode = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::use_hybrid_mode), false);
-
-    std::cout.precision(20);
-    if (input_range.size() == 0) {
-      CGAL_warning_msg(input_range.size() > 0,
-        "WARNING: YOUR INPUT IS EMPTY! RETURN WITH NO CHANGE!");
-      return false;
-    }
-
-    if (m_parameters.n != 0) {
-      CGAL_assertion_msg(false, "TODO: IMPLEMENT KINETIC SUBDIVISION!");
-      if (m_parameters.n > 3) {
-        CGAL_warning_msg(m_parameters.n <= 3,
-          "WARNING: DOES IT MAKE SENSE TO HAVE MORE THAN 64 INPUT BLOCKS? SETTING N TO 3!");
-        m_parameters.n = 3;
-      }
-    }
-
-    if (m_parameters.enlarge_bbox_ratio < FT(1)) {
-      CGAL_warning_msg(m_parameters.enlarge_bbox_ratio >= FT(1),
-        "WARNING: YOU SET ENLARGE_BBOX_RATIO < 1.0! THE VALID RANGE IS [1.0, +INF). SETTING TO 1.0!");
-      m_parameters.enlarge_bbox_ratio = FT(1);
-    }
-
-    if (m_parameters.verbose) {
-      const unsigned int num_blocks = std::pow(m_parameters.n + 1, 3);
-      const std::string is_reorient = (m_parameters.reorient ? "true" : "false");
-
-      std::cout << std::endl << "--- PARTITION OPTIONS: " << std::endl;
-      std::cout << "* number of intersections k: " << m_parameters.k << std::endl;
-      std::cout << "* number of subdivisions per bbox side: " << m_parameters.n << std::endl;
-      std::cout << "* number of subdivision blocks: " << num_blocks << std::endl;
-      std::cout << "* enlarge bbox ratio: " << m_parameters.enlarge_bbox_ratio << std::endl;
-      std::cout << "* reorient: " << is_reorient << std::endl;
-      std::cout << "* hybrid mode: " << m_parameters.use_hybrid_mode << std::endl;
-    }
-
-    if (m_parameters.verbose) {
-      std::cout << std::endl << "--- INITIALIZING PARTITION:" << std::endl;
-    }
-
-    // Initialization.
-    timer.reset();
-    timer.start();
-    m_data.clear();
-
-    Initializer initializer(m_data, m_parameters);
-    initializer.initialize(input_range, polygon_map);
-
-    timer.stop();
-    const double time_to_initialize = timer.time();
-
-    if (m_parameters.verbose) {
-      std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
-      std::cout << "INITIALIZATION SUCCESS!" << std::endl << std::endl;
-    }
-
-    if (m_parameters.k == 0) { // for k = 0, we skip propagation
-      CGAL_warning_msg(m_parameters.k > 0,
-        "WARNING: YOU SET K TO 0! THAT MEANS NO PROPAGATION! THE VALID VALUES ARE {1,2,...}. INTERSECT AND RETURN!");
-      return false;
-    }
-
-    if (m_parameters.verbose) {
-      std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
-      std::cout << "* propagation started" << std::endl;
-    }
-
-    // FacePropagation.
-    timer.reset();
-    timer.start();
-    std::size_t num_queue_calls = 0;
-    FacePropagation propagation(m_data, m_parameters);
-    std::tie(num_queue_calls, m_num_events) = propagation.propagate();
-    timer.stop();
-    const double time_to_propagate = timer.time();
-
-    if (m_parameters.verbose) {
-      std::cout << "* propagation finished" << std::endl;
-      std::cout << "* number of queue calls: " << num_queue_calls << std::endl;
-      std::cout << "* number of events handled: " << m_num_events << std::endl;
-    }
-
-    if (m_parameters.verbose) {
-      std::cout << std::endl << "--- FINALIZING PARTITION:" << std::endl;
-    }
-
-    // Finalization.
-    timer.reset();
-    timer.start();
-    if (m_parameters.debug) dump(m_data, "jiter-final-a-result");
-
-    Finalizer finalizer(m_data, m_parameters);
-    finalizer.clean();
-
-    if (m_parameters.verbose) std::cout << "* checking final mesh integrity ...";
-    CGAL_assertion(m_data.check_integrity(true, true, true));
-    if (m_parameters.verbose) std::cout << " done" << std::endl;
-
-    if (m_parameters.debug) dump(m_data, "jiter-final-b-result");
-    // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
-    // exit(EXIT_SUCCESS);
-
-    if (m_parameters.verbose) std::cout << "* getting volumes ..." << std::endl;
-    finalizer.create_polyhedra();
-    timer.stop();
-    const double time_to_finalize = timer.time();
-    if (m_parameters.verbose) {
-      std::cout << "* found all together " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
-    }
-    // std::cout << std::endl << "CREATING VOLUMES SUCCESS!" << std::endl << std::endl;
-    // exit(EXIT_SUCCESS);
-
-    for (std::size_t i = 0; i < m_data.number_of_support_planes(); i++) {
-      dump_2d_surface_mesh(m_data, i, "final-surface-mesh-" + std::to_string(i));
-    }
-
-    // Timing.
-    if (m_parameters.verbose) {
-      std::cout << std::endl << "--- TIMING (sec.):" << std::endl;
-    }
-    const double total_time =
-      time_to_initialize + time_to_propagate + time_to_finalize;
-    if (m_parameters.verbose) {
-      std::cout << "* initialization: " << time_to_initialize << std::endl;
-      std::cout << "* propagation: " << time_to_propagate << std::endl;
-      std::cout << "* finalization: " << time_to_finalize << std::endl;
-      std::cout << "* total time: " << total_time << std::endl;
-    }
-    return true;
-  }
-
-  template<
-  typename InputRange,
-  typename PointMap,
-  typename VectorMap,
-  typename SemanticMap,
-  typename NamedParameters>
   bool reconstruct(
     const InputRange& input_range,
     const PointMap point_map,
     const VectorMap normal_map,
     const SemanticMap semantic_map,
+    const std::string file_name,
     const NamedParameters& np) {
 
     using Reconstruction = KSR_3::Reconstruction<
@@ -411,7 +259,8 @@ public:
 
     Reconstruction reconstruction(
       input_range, point_map, normal_map, semantic_map, m_data, m_parameters.verbose, m_parameters.debug);
-    bool success = reconstruction.detect_planar_shapes(np);
+
+    bool success = reconstruction.detect_planar_shapes(file_name, np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");
       return false;
@@ -419,6 +268,57 @@ public:
     // exit(EXIT_SUCCESS);
 
     success = reconstruction.regularize_planar_shapes(np);
+    if (!success) {
+      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, REGULARIZATION FAILED!");
+      return false;
+    }
+    // exit(EXIT_SUCCESS);
+
+    success = partition(
+      reconstruction.planar_shapes(), reconstruction.polygon_map(), np);
+    if (!success) {
+      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, PARTITION FAILED!");
+      return false;
+    }
+    // exit(EXIT_SUCCESS);
+
+    success = reconstruction.compute_model(np);
+    if (!success) {
+      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, COMPUTING MODEL FAILED!");
+      return false;
+    }
+    return success;
+  }
+
+  template<
+    typename InputRange,
+    typename PointMap,
+    typename VectorMap,
+    typename SemanticMap,
+    typename RegionMap,
+    typename NamedParameters>
+  bool reconstruct(
+    const InputRange& input_range,
+    const PointMap point_map,
+    const VectorMap normal_map,
+    const SemanticMap semantic_map,
+    const RegionMap region_map,
+    const NamedParameters& np) {
+
+    using Reconstruction = KSR_3::Reconstruction<
+      InputRange, PointMap, VectorMap, SemanticMap, Kernel>;
+
+    Reconstruction reconstruction(
+      input_range, point_map, normal_map, semantic_map, m_data, m_parameters.verbose, m_parameters.debug);
+
+    bool success = reconstruction.planar_shapes_from_map(region_map, np);
+    if (!success) {
+      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");
+      return false;
+    }
+    // exit(EXIT_SUCCESS);
+
+    //success = reconstruction.regularize_planar_shapes(np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, REGULARIZATION FAILED!");
       return false;

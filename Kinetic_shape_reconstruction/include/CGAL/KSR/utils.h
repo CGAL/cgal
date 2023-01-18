@@ -92,17 +92,17 @@ point_3_from_point_2(const Point_2& point_2) {
 // Global tolerance.
 template<typename FT>
 static FT tolerance() {
-  return FT(1) / FT(100000);
+  return 0;// FT(1) / FT(100000);
 }
 
 template<typename FT>
 static FT point_tolerance() {
-  return tolerance<FT>();
+  return 0;// tolerance<FT>();
 }
 
 template<typename FT>
 static FT vector_tolerance() {
-  return FT(99999) / FT(100000);
+  return 0;// FT(99999) / FT(100000);
 }
 
 // Normalize vector.
@@ -111,7 +111,7 @@ inline const Vector_d normalize(const Vector_d& v) {
   using Traits = typename Kernel_traits<Vector_d>::Kernel;
   using FT = typename Traits::FT;
   const FT dot_product = CGAL::abs(v * v);
-  CGAL_assertion(dot_product != FT(0));
+  //CGAL_assertion(dot_product != FT(0));
   return v / static_cast<FT>(CGAL::sqrt(CGAL::to_double(dot_product)));
 }
 

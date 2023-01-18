@@ -181,6 +181,7 @@ public:
 
   struct Volume_cell {
     std::vector<PFace> pfaces;
+    std::vector<bool> pface_oriented_outwards;
     std::vector<int> neighbors;
     std::set<PVertex> pvertices;
     std::size_t index = std::size_t(-1);
@@ -190,6 +191,9 @@ public:
     FT inside  = FT(1);
     FT outside = FT(0);
     FT weight  = FT(0);
+
+    FT inside_count = FT(0);
+    FT outside_count = FT(0);
 
     void add_pface(const PFace& pface, const int neighbor) {
       pfaces.push_back(pface);
@@ -252,6 +256,7 @@ public:
     m_input_polygon_map.clear();
     m_reconstructed_model.clear();
   }
+
 
   void precompute_iedge_data() {
 

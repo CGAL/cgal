@@ -70,18 +70,44 @@ namespace KSR_3 {
     m_pface_points(pface_points),
     m_point_map_3(point_map_3),
     m_normal_map_3(normal_map_3),
-    m_num_samples(100),
+    m_num_samples(0),
     m_random(0) {
       CGAL_assertion(m_pface_points.size() > 0);
+      m_inliers = 0;
+      for (const auto pair : m_pface_points) {
+        m_inliers += pair.second.size();
+      }
+      std::cout << "inliers: " << m_inliers << std::endl;
     }
 
     void compute(std::vector<Volume_cell>& volumes) const {
 
       CGAL_assertion(volumes.size() > 0);
       if (volumes.size() == 0) return;
+      std::size_t i = 0;
+      FT xmin, ymin, zmin;
+      xmin = ymin = zmin = 10000000;
+      FT xmax, ymax, zmax;
+      xmax = ymax = zmax = -xmin;
       for (auto& volume : volumes) {
         estimate_volume_label(volume);
+        const Point_3& c = volume.centroid;
+        xmin = (std::min<FT>)(xmin, c.x());
+        xmax = (std::max<FT>)(xmax, c.x());
+        ymin = (std::min<FT>)(ymin, c.y());
+        ymax = (std::max<FT>)(ymax, c.y());
+        zmin = (std::min<FT>)(zmin, c.z());
+        zmax = (std::max<FT>)(zmax, c.z());
+        i++;
       }
+      std::cout << "Sampled " << m_num_samples << " for data term" << std::endl;
+      std::cout << "x: " << xmin << " " << xmax << std::endl;
+      std::cout << "y: " << ymin << " " << ymax << std::endl;
+      std::cout << "z: " << zmin << " " << zmax << std::endl;
+    }
+
+    std::size_t inliers() const {
+      return m_inliers;
     }
 
   private:
@@ -89,7 +115,8 @@ namespace KSR_3 {
     const std::map<PFace, Indices>& m_pface_points;
     const Point_map_3& m_point_map_3;
     const Vector_map_3& m_normal_map_3;
-    const std::size_t m_num_samples;
+    mutable std::size_t m_num_samples;
+    mutable std::size_t m_inliers;
     Random m_random;
 
     void estimate_volume_label(Volume_cell& volume) const {
@@ -97,10 +124,8 @@ namespace KSR_3 {
       const auto stats = estimate_in_out_values(volume);
       CGAL_assertion(stats.first  >= FT(0) && stats.first  <= FT(1));
       CGAL_assertion(stats.second >= FT(0) && stats.second <= FT(1));
-      CGAL_assertion(
-        CGAL::abs(stats.first + stats.second - FT(1)) < KSR::tolerance<FT>());
 
-      if (stats.first >= FT(1) / FT(2)) {
+      if (volume.inside_count > volume.outside_count) {
         volume.visibility = Visibility_label::INSIDE;
       } else {
         volume.visibility = Visibility_label::OUTSIDE;
@@ -113,12 +138,14 @@ namespace KSR_3 {
     }
 
     const std::pair<FT, FT> estimate_in_out_values(
-      const Volume_cell& volume) const {
+      Volume_cell& volume) const {
 
       std::size_t in = 0, out = 0;
       std::vector<Point_3> samples;
       create_samples(volume, samples);
       compute_stats( volume, samples, in, out);
+      volume.inside_count = in;
+      volume.outside_count = out;
       if (in == 0 && out == 0) {
         in = 1; out = 1;
       }
@@ -194,6 +221,9 @@ namespace KSR_3 {
       const Point_3& query,
       std::size_t& in, std::size_t& out) const {
 
+      std::vector<Point_3> inside, outside;
+      std::vector<Vector_3> insideN, outsideN;
+
       bool found = false;
       const auto& pfaces = volume.pfaces;
       for (const auto& pface : pfaces) {
@@ -202,6 +232,8 @@ namespace KSR_3 {
         if (indices.size() == 0) continue;
         found = true;
 
+        m_num_samples += indices.size();
+
         for (const std::size_t index : indices) {
           const auto& point  = get(m_point_map_3 , index);
           const auto& normal = get(m_normal_map_3, index);
@@ -209,15 +241,27 @@ namespace KSR_3 {
           const Vector_3 vec(point, query);
           const FT dot_product = vec * normal;
           if (dot_product < FT(0)) {
+            inside.push_back(point);
+            insideN.push_back(normal);
             in  += 1;
-          } else {
+          }
+          else {
+            outside.push_back(point);
+            outsideN.push_back(normal);
             out += 1;
           }
         }
       }
 
-      if (!found) {
-        out += 1; return false;
+      if (volume.index != -1) {
+        std::ofstream vout("visibility/" + std::to_string(volume.index) + "-query.xyz");
+        vout.precision(20);
+        vout << query << std::endl;
+        vout.close();
+
+        Saver<Kernel> saver;
+        saver.export_points_3(inside, insideN, "visibility/" + std::to_string(volume.index) + "-inside.ply");
+        saver.export_points_3(outside, outsideN, "visibility/" + std::to_string(volume.index) + "-outside.ply");
       }
       return true;
     }

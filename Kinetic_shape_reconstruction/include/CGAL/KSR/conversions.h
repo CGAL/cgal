@@ -46,8 +46,8 @@ class Kinetic_traits_3 {
   using EK_to_IK = CGAL::Cartesian_converter<EK, IK>;
 
 public:
-  Kinetic_traits_3(const bool use_hybrid_mode) :
-  m_use_hybrid_mode(use_hybrid_mode) { }
+  Kinetic_traits_3() :
+  m_use_hybrid_mode(false) { }
 
   inline const Point_2 intersection(const Line_2& t1, const Line_2& t2) const {
 
