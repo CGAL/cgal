@@ -153,8 +153,7 @@ namespace Polygon_mesh {
     m_face_graph(pmesh),
     m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
-    m_traits(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::geom_traits), GeomTraits())),
+    m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))),
     m_squared_length_3(m_traits.compute_squared_length_3_object()),
     m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
     m_scalar_product_3(m_traits.compute_scalar_product_3_object()),

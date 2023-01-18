@@ -130,10 +130,9 @@ namespace Point_set {
       NeighborQuery& neighbor_query,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
       m_neighbor_query(neighbor_query),
-      m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap())),
-      m_normal_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), NormalMap())),
-      m_traits(parameters::choose_parameter(parameters::get_parameter(
-        np, internal_np::geom_traits), GeomTraits())) {
+      m_point_map(parameters::choose_parameter<PointMap>(parameters::get_parameter(np, internal_np::point_map))),
+      m_normal_map(parameters::choose_parameter<NormalMap>(parameters::get_parameter(np, internal_np::normal_map))),
+      m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))) {
 
       CGAL_precondition(input_range.size() > 0);
 

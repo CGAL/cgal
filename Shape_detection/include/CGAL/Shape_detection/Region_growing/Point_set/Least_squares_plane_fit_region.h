@@ -152,10 +152,9 @@ namespace Point_set {
     template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_plane_fit_region(
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-      m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap())),
-      m_normal_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), NormalMap())),
-      m_traits(parameters::choose_parameter(parameters::get_parameter(
-        np, internal_np::geom_traits), GeomTraits())),
+      m_point_map(parameters::choose_parameter<PointMap>(parameters::get_parameter(np, internal_np::point_map))),
+      m_normal_map(parameters::choose_parameter<NormalMap>(parameters::get_parameter(np, internal_np::normal_map))),
+      m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))),
       m_squared_length_3(m_traits.compute_squared_length_3_object()),
       m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
       m_scalar_product_3(m_traits.compute_scalar_product_3_object()) {

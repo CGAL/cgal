@@ -118,8 +118,7 @@ namespace Polygon_mesh {
     m_neighbor_query(neighbor_query),
     m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
-    m_traits(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::geom_traits), GeomTraits())) {
+    m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))) {
 
       CGAL_precondition(faces(pmesh).size() > 0);
 

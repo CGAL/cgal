@@ -138,7 +138,7 @@ public:
   Sphere_neighbor_query(
     const InputRange& input_range,
     const CGAL_NP_CLASS& np = parameters::default_values()) :
-  m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap()))
+  m_point_map(parameters::choose_parameter<PointMap>(parameters::get_parameter(np, internal_np::point_map)))
   {
     using NP_helper = internal::Default_property_map_helper<CGAL_NP_CLASS, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
     using Item_map = typename NP_helper::type;

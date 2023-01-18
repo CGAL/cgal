@@ -234,13 +234,6 @@ struct Compose_property_map<KeyMap, ValueMap, boost::lvalue_property_map_tag>
   }
 };
 
-template <class KeyMap, class ValueMap>
-Compose_property_map<KeyMap, ValueMap>
-compose_property_maps(const KeyMap& src, const ValueMap& tgt)
-{
-  return Compose_property_map<KeyMap, ValueMap>(src, tgt);
-}
-
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class KeyMap, class ValueMap>
 struct CGAL_DEPRECATED Property_map_binder
@@ -284,6 +277,15 @@ bind_property_maps(const KeyMap& src, const ValueMap& tgt)
   return Property_map_binder<KeyMap, ValueMap>(src, tgt);
 }
 #endif
+
+/// \ingroup PkgPropertyMapRef
+/// returns `compose_property_maps<KeyMap, ValueMap>(km,vm)`
+template <class KeyMap, class ValueMap>
+Compose_property_map<KeyMap, ValueMap>
+make_compose_property_maps(const KeyMap& km, const ValueMap& vm)
+{
+  return Compose_property_map<KeyMap, ValueMap>(km, vm);
+}
 #endif
 
 /// Property map that accesses a value from an iterator
@@ -743,6 +745,57 @@ Cartesian_converter_property_map<GeomObject, Vpm>
 make_cartesian_converter_property_map(Vpm vpm)
 {
   return Cartesian_converter_property_map<GeomObject, Vpm>(vpm);
+}
+
+/// \ingroup PkgPropertyMapRef
+/// A property map with `std::size_t` as key-type that can be used
+/// to access the i'th element in a container with random access.
+/// \cgalModels `LvaluePropertyMap`
+template<typename Container>
+class Random_access_property_map
+{
+  using Iterator =  std::conditional_t<std::is_const<Container>::value,
+                                       typename Container::const_iterator,
+                                       typename Container::iterator>;
+
+  Container& m_container;
+
+public:
+  typedef std::size_t key_type;
+  typedef typename std::iterator_traits<Iterator>::value_type value_type;
+  typedef typename std::iterator_traits<Iterator>::reference reference;
+  typedef boost::lvalue_property_map_tag category;
+
+
+  Random_access_property_map(Container& container)
+    : m_container(container){}
+
+  friend reference get (Random_access_property_map map, key_type index)
+  {
+    return map.m_container[index];
+  }
+
+  template <class Key>
+  friend void put (Random_access_property_map map, Key index, const value_type& value,
+                   std::enable_if_t<!std::is_const<Container>::value>* = 0)
+  {
+    map.m_container[index]=value;
+  }
+
+  decltype(auto)
+  operator[](key_type index) const
+  {
+    return m_container[index];
+  }
+};
+
+/// \ingroup PkgPropertyMapRef
+/// returns `Random_access_property_map<Container>(container)`
+template <class Container>
+Random_access_property_map<Container>
+make_random_access_property_map(Container& container)
+{
+  return Random_access_property_map<Container>(container);
 }
 
 /// \cond SKIP_IN_MANUAL

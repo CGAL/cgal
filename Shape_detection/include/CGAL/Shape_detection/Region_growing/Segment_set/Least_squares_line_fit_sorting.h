@@ -127,10 +127,9 @@ namespace Segment_set {
       NeighborQuery& neighbor_query,
       const NamedParameters& np = parameters::default_values())
     : m_neighbor_query(neighbor_query)
-    , m_segment_map(parameters::choose_parameter(parameters::get_parameter(
-        np, internal_np::segment_map), SegmentMap()))
-    , m_traits(parameters::choose_parameter(parameters::get_parameter(
-        np, internal_np::geom_traits), GeomTraits()))
+    , m_segment_map(parameters::choose_parameter<SegmentMap>(parameters::get_parameter(
+        np, internal_np::segment_map)))
+    , m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits)))
     , m_segment_set_traits(m_traits)
     {
       CGAL_precondition(input_range.size() > 0);

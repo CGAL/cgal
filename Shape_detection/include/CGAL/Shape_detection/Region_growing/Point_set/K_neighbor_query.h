@@ -144,7 +144,7 @@ namespace Point_set {
     K_neighbor_query(
       const InputRange& input_range,
       const CGAL_NP_CLASS& np = parameters::default_values()) :
-    m_point_map(parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), PointMap())),
+    m_point_map(parameters::choose_parameter<PointMap>(parameters::get_parameter(np, internal_np::point_map))),
     m_distance(m_point_map)
     {
       CGAL_precondition(input_range.size() > 0);

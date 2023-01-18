@@ -158,10 +158,9 @@ namespace Segment_set {
     template<typename NamedParameters = parameters::Default_named_parameters>
     Least_squares_line_fit_region(
       const NamedParameters& np = parameters::default_values()) :
-    m_segment_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::segment_map), SegmentMap())),
-    m_traits(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::geom_traits), GeomTraits())),
+    m_segment_map(parameters::choose_parameter<SegmentMap>(parameters::get_parameter(
+      np, internal_np::segment_map))),
+    m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))),
     m_segment_set_traits(m_traits),
     m_squared_length(m_segment_set_traits.compute_squared_length_object()),
     m_squared_distance(m_segment_set_traits.compute_squared_distance_object()),

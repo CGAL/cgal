@@ -15,10 +15,12 @@ using Vector_2 = typename Kernel::Vector_2;
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Point_set_2       = std::vector<Point_with_normal>;
 
-using Point_map      = CGAL::Compose_property_map<CGAL::Pointer_property_map<Point_with_normal>::type,
-                                                 CGAL::First_of_pair_property_map<Point_with_normal> >;
-using Normal_map     = CGAL::Compose_property_map<CGAL::Pointer_property_map<Point_with_normal>::type,
-                                                 CGAL::Second_of_pair_property_map<Point_with_normal> >;
+// we use Compose_property_map as the property maps are expected to operate on the item type
+// std::size_t passed as parameter to Sphere_neighbor_query and Least_squares_line_fit_region
+using Point_map      = CGAL::Compose_property_map<CGAL::Random_access_property_map<Point_set_2>,
+                                                  CGAL::First_of_pair_property_map<Point_with_normal> >;
+using Normal_map     = CGAL::Compose_property_map<CGAL::Random_access_property_map<Point_set_2>,
+                                                  CGAL::Second_of_pair_property_map<Point_with_normal> >;
 
 using Neighbor_query = CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, std::size_t, Point_map>;
 using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<Kernel, std::size_t, Point_map, Normal_map>;
@@ -52,8 +54,8 @@ int main(int argc, char *argv[]) {
   const FT          max_angle       = FT(45);
   const std::size_t min_region_size = 5;
 
-  Point_map point_map(CGAL::make_property_map(point_set_2));
-  Normal_map normal_map(CGAL::make_property_map(point_set_2));
+  Point_map point_map(CGAL::make_random_access_property_map(point_set_2));
+  Normal_map normal_map(CGAL::make_random_access_property_map(point_set_2));
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
