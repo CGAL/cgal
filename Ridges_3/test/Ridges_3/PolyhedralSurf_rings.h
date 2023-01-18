@@ -33,7 +33,7 @@ protected:
   void push_neighbors_of(const Vertex_const_handle start, const int ith,
                          std::vector < Vertex_const_handle > &nextRing,
                          std::vector < Vertex_const_handle > &all);
-  CGAL_DEPRECATED void push_neighbours_of(const Vertex_const_handle start, const int ith,
+  void push_neighbours_of(const Vertex_const_handle start, const int ith,
                           std::vector < Vertex_const_handle > &nextRing,
                           std::vector < Vertex_const_handle > &all);
 
