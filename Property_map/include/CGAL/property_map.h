@@ -302,7 +302,7 @@ struct Input_iterator_property_map{
   /// Free function to use a get the value from an iterator using Input_iterator_property_map.
   inline friend
   reference
-  get(Input_iterator_property_map<InputIterator>,InputIterator it){ return *it; }
+  get(Input_iterator_property_map<InputIterator>, const InputIterator& it){ return *it; }
 };
 
 /// \ingroup PkgPropertyMapRef
