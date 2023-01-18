@@ -58,6 +58,7 @@ namespace KSR_3 {
     using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel>;
     using Delaunay_3 = CGAL::Delaunay_triangulation_3<IK>;
     using Converter  = CGAL::Cartesian_converter<Kernel, IK>;
+    using From_EK = CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, IK>;
 
     struct Wrapper {
       PFace pface;
@@ -181,7 +182,7 @@ namespace KSR_3 {
       std::vector<Volume_cell>& volumes) const {
 
       FT sum = FT(0);
-      const Converter converter;
+      From_EK from_EK;
 
       std::size_t index = 0;
 
@@ -193,7 +194,7 @@ namespace KSR_3 {
         for (const auto& pvertex : pvertices) {
           CGAL_assertion(m_data.has_ivertex(pvertex));
           const auto ivertex = m_data.ivertex(pvertex);
-          tri.insert(converter(m_data.point_3(ivertex)));
+          tri.insert(from_EK(m_data.point_3(ivertex)));
         }
 
         weight = FT(0);
@@ -371,10 +372,10 @@ namespace KSR_3 {
           max_out = (std::max<FT>)(max_out, cost_out);
           mean_out += cost_out;
 
-          min_in_count = (std::min<int>)(min_in_count, volume.inside_count);
-          max_in_count = (std::max<int>)(max_in_count, volume.inside_count);
-          min_out_count = (std::min<int>)(min_out_count, volume.outside_count);
-          max_out_count = (std::max<int>)(max_out_count, volume.outside_count);
+          min_in_count = (std::min<int>)(min_in_count, static_cast<int>(volume.inside_count));
+          max_in_count = (std::max<int>)(max_in_count, static_cast<int>(volume.inside_count));
+          min_out_count = (std::min<int>)(min_out_count, static_cast<int>(volume.outside_count));
+          max_out_count = (std::max<int>)(max_out_count, static_cast<int>(volume.outside_count));
 
           //std::cout << volume.index << " in: " << cost_in << " before: " << in << " " << volume.inside_count << std::endl;
           //std::cout << " out: " << cost_out << " before " << out << " " << volume.outside_count << std::endl;

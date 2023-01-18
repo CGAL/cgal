@@ -85,6 +85,7 @@ private:
   using IPlane_3 = typename IK::Plane_3;
 
   using Converter = CGAL::Cartesian_converter<Kernel, IK>;
+  using From_EK = CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, IK>;
 
   struct Vertex_info { FT z = FT(0); };
   struct Face_info { };
@@ -261,6 +262,8 @@ public:
       CGAL_assertion(shape_idx != std::size_t(-1));
       m_region_map[shape_idx] = region;
     }
+
+    return true;
   }
 
   template<typename NamedParameters>
@@ -356,7 +359,7 @@ public:
 
     CGAL_assertion(m_data.volumes().size() > 0);
     visibility.compute(m_data.volumes());
-    dump_visibility("visibility/visibility", pface_points);
+    //dump_visibility("visibility/visibility", pface_points);
 
     if (m_verbose) {
       std::cout << "done" << std::endl;
@@ -368,7 +371,7 @@ public:
 
     Graphcut graphcut(m_data, beta);
     graphcut.compute(m_data.volumes(), visibility.inliers());
-    dump_volumes("graphcut/graphcut");
+    //dump_volumes("graphcut/graphcut");
 
     if (m_verbose) {
       std::cout << "done" << std::endl;
@@ -1291,6 +1294,8 @@ private:
 
   void dump_model(const std::string file_name) {
 
+    From_EK from_EK;
+
     std::vector<Point_3> polygon;
     std::vector< std::vector<Point_3> > polygons;
     const auto& model = m_data.reconstructed_model();
@@ -1304,7 +1309,7 @@ private:
       for (const auto pvertex : pvertices) {
         CGAL_assertion(m_data.has_ivertex(pvertex));
         const auto ivertex = m_data.ivertex(pvertex);
-        const auto point = m_data.point_3(ivertex);
+        const auto point = from_EK(m_data.point_3(ivertex));
         polygon.push_back(point);
       }
       polygons.push_back(polygon);

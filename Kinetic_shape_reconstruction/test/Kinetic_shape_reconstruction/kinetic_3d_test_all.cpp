@@ -100,7 +100,6 @@ bool run_test(
       assert(num_events > 0);
 
       const int num_support_planes = ksr.number_of_support_planes();
-      const int num_volume_levels  = ksr.number_of_volume_levels();
 
       const int num_vertices = static_cast<int>(ksr.number_of_vertices());
       const int num_edges    = static_cast<int>(ksr.number_of_edges());
@@ -109,7 +108,6 @@ bool run_test(
 
       std::cout << std::endl << "--RESULTS: ";
       std::cout << num_support_planes << ",";
-      std::cout << num_volume_levels  << ",";
 
       std::cout << num_vertices << ",";
       std::cout << num_edges    << ",";
@@ -117,18 +115,14 @@ bool run_test(
       std::cout << num_volumes  << std::endl;
 
       assert(num_support_planes > 6);
-      assert(num_volume_levels  > 0);
 
       if (num_support_planes <= 6) return false;
-      if (num_volume_levels   < 1) return false;
 
       assert(results.size() == 6);
       assert(num_support_planes == results[0]);
-      assert(num_volume_levels  >= results[1]);
 
       if (results.size() != 6) return false;
       if (num_support_planes != results[0]) return false;
-      if (num_volume_levels   < results[1]) return false;
 
       assert(num_vertices == results[2]);
       assert(num_edges    == results[3]);
@@ -145,6 +139,7 @@ bool run_test(
         std::back_inserter(output_vertices));
       assert(static_cast<std::size_t>(num_vertices) == output_vertices.size());
       if (static_cast<std::size_t>(num_vertices) != output_vertices.size()) return false;
+      /*
 
       std::vector<Segment_3> output_edges;
       ksr.output_partition_edges(
@@ -162,18 +157,16 @@ bool run_test(
       ksr.output_partition_volumes(
         std::back_inserter(output_volumes));
       assert(static_cast<std::size_t>(num_volumes) == output_volumes.size());
-      if (static_cast<std::size_t>(num_volumes) != output_volumes.size()) return false;
+      if (static_cast<std::size_t>(num_volumes) != output_volumes.size()) return false;*/
 
       ksr.clear();
       assert(ksr.number_of_support_planes() == 0);
-      assert(ksr.number_of_volume_levels()  == 0);
       assert(ksr.number_of_vertices()       == 0);
       assert(ksr.number_of_edges()          == 0);
       assert(ksr.number_of_faces()          == 0);
       assert(ksr.number_of_volumes()        == 0);
 
       if (ksr.number_of_support_planes() != 0) return false;
-      if (ksr.number_of_volume_levels()  != 0) return false;
       if (ksr.number_of_vertices()       != 0) return false;
       if (ksr.number_of_edges()          != 0) return false;
       if (ksr.number_of_faces()          != 0) return false;

@@ -59,6 +59,8 @@ namespace KSR_3 {
     using Generator  = CGAL::Random_points_in_tetrahedron_3<IPoint_3>;
     using Converter  = CGAL::Cartesian_converter<Kernel, IK>;
 
+    using From_EK = CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, IK>;
+
     using Visibility_label = KSR::Visibility_label;
 
     Visibility(
@@ -144,8 +146,8 @@ namespace KSR_3 {
       std::vector<Point_3> samples;
       create_samples(volume, samples);
       compute_stats( volume, samples, in, out);
-      volume.inside_count = in;
-      volume.outside_count = out;
+      volume.inside_count = static_cast<double>(in);
+      volume.outside_count = static_cast<double>(out);
       if (in == 0 && out == 0) {
         in = 1; out = 1;
       }
@@ -164,18 +166,18 @@ namespace KSR_3 {
     void create_samples(
       const Volume_cell& volume,
       std::vector<Point_3>& samples) const {
+      From_EK from_EK;
 
       samples.push_back(volume.centroid);
       if (true) return;
 
       // If we need more samples, we use Delaunay.
-      const Converter converter;
       const auto& pvertices = volume.pvertices;
       Delaunay_3 delaunay_3;
       for (const auto& pvertex : pvertices) {
         CGAL_assertion(m_data.has_ivertex(pvertex));
         const auto ivertex = m_data.ivertex(pvertex);
-        delaunay_3.insert(converter(m_data.point_3(ivertex)));
+        delaunay_3.insert(from_EK(m_data.point_3(ivertex)));
       }
 
       std::vector<IPoint_3> points;
@@ -253,6 +255,7 @@ namespace KSR_3 {
         }
       }
 
+/*
       if (volume.index != -1) {
         std::ofstream vout("visibility/" + std::to_string(volume.index) + "-query.xyz");
         vout.precision(20);
@@ -262,7 +265,7 @@ namespace KSR_3 {
         Saver<Kernel> saver;
         saver.export_points_3(inside, insideN, "visibility/" + std::to_string(volume.index) + "-inside.ply");
         saver.export_points_3(outside, outsideN, "visibility/" + std::to_string(volume.index) + "-outside.ply");
-      }
+      }*/
       return true;
     }
   };

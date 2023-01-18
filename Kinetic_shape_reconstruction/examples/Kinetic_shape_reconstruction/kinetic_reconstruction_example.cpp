@@ -4,6 +4,7 @@
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/PLY.h>
+#include <sstream>
 
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"
@@ -11,6 +12,7 @@
 using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT        = typename Kernel::FT;
 using Point_3   = typename Kernel::Point_3;
+using Vector_3  = typename Kernel::Vector_3;
 using Segment_3 = typename Kernel::Segment_3;
 
 using Point_set    = CGAL::Point_set_3<Point_3>;
@@ -18,12 +20,22 @@ using Point_map    = typename Point_set::Point_map;
 using Vector_map   = typename Point_set::Vector_map;
 using Label_map    = typename Point_set:: template Property_map<int>;
 using Semantic_map = CGAL::KSR::Semantic_from_label_map<Label_map>;
+using Region_map = typename Point_set:: template Property_map<int>;
 
 using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
 
 using Parameters      = CGAL::KSR::All_parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
-using Timer           = CGAL::Real_timer;
+using Timer = CGAL::Real_timer;
+
+template <typename T>
+std::string to_stringp(const T a_value, const int n = 6)
+{
+  std::ostringstream out;
+  out.precision(n);
+  out << std::fixed << a_value;
+  return out.str();
+}
 
 void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   // Set all parameters that can be loaded from the terminal.
@@ -80,15 +92,37 @@ int main(const int argc, const char** argv) {
   Parameters parameters;
   parse_terminal(parser, parameters);
 
+  // Check if segmented point cloud already exists.
+  std::string filename = parameters.data.substr(parameters.data.find_last_of("/\\") + 1);
+  std::string base = filename.substr(0, filename.find_last_of("."));
+  base = base + "_" + to_stringp(parameters.distance_threshold, 2) + "_" + to_stringp(parameters.angle_threshold, 2) + "_" + std::to_string(parameters.min_region_size) + ".ply";
+
   // Input.
   Point_set point_set(parameters.with_normals);
-  std::ifstream input_file(parameters.data, std::ios_base::binary);
-  input_file >> point_set;
-  input_file.close();
+  std::ifstream segmented_file(base);
+  if (segmented_file.is_open()) {
+    segmented_file >> point_set;
+    segmented_file.close();
+  }
+  else {
+    std::ifstream input_file(parameters.data, std::ios_base::binary);
+    bool f = input_file.is_open();
+    input_file >> point_set;
+    input_file.close();
+  }
+
+  for (std::size_t i = 0; i < point_set.size(); i++) {
+    Vector_3 n = point_set.normal(i);
+    if (abs(n * n) < 0.05)
+      std::cout << "point " << i << " does not have a proper normal" << std::endl;
+  }
 
   std::cout << std::endl;
   std::cout << "--- INPUT STATS: " << std::endl;
   std::cout << "* number of points: " << point_set.size() << std::endl;
+
+  std::cout << "verbose " << parameters.verbose << std::endl;
+  std::cout << "debug " << parameters.debug << std::endl;
 
   // Define a map from a user-defined label to the semantic label.
   const Label_map label_map = point_set. template property_map<int>("label").first;
@@ -105,13 +139,34 @@ int main(const int argc, const char** argv) {
   // Algorithm.
   KSR ksr(parameters.verbose, parameters.debug);
 
+  const Region_map region_map = point_set. template property_map<int>("region").first;
+  const bool is_segmented = point_set. template property_map<int>("region").second;
+
   Timer timer;
   timer.start();
-  const bool is_ksr_success = ksr.reconstruct(
+  bool is_ksr_success;
+  if (is_segmented)
+    is_ksr_success = ksr.reconstruct(
+      point_set,
+      point_set.point_map(),
+      point_set.normal_map(),
+      semantic_map,
+      region_map,
+      CGAL::parameters::
+      k_neighbors(parameters.k_neighbors).
+      distance_threshold(parameters.distance_threshold).
+      angle_threshold(parameters.angle_threshold).
+      min_region_size(parameters.min_region_size).
+      regularize(parameters.regularize).
+      k_intersections(parameters.k_intersections).
+      graphcut_beta(parameters.graphcut_beta));
+  else
+    is_ksr_success = ksr.reconstruct(
     point_set,
     point_set.point_map(),
     point_set.normal_map(),
     semantic_map,
+    base,
     CGAL::parameters::
     k_neighbors(parameters.k_neighbors).
     distance_threshold(parameters.distance_threshold).

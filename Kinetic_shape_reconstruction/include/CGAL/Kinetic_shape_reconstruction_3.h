@@ -418,12 +418,14 @@ public:
   VertexOutputIterator output_partition_vertices(
     VertexOutputIterator vertices, const int support_plane_idx = -1) const {
 
+    From_EK from_EK;
+
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx >= number_of_support_planes()) return vertices;
     if (support_plane_idx < 0) {
       const auto all_ivertices = m_data.ivertices();
       for (const auto ivertex : all_ivertices) {
-        *(vertices++) = m_data.point_3(ivertex);
+        *(vertices++) = from_EK(m_data.point_3(ivertex));
       }
       return vertices;
     }
@@ -434,7 +436,7 @@ public:
     for (const auto pvertex : all_pvertices) {
       CGAL_assertion(m_data.has_ivertex(pvertex));
       const auto ivertex = m_data.ivertex(pvertex);
-      *(vertices++) = m_data.point_3(ivertex);
+      *(vertices++) = from_EK(m_data.point_3(ivertex));
     }
     return vertices;
   }
@@ -443,12 +445,14 @@ public:
   EdgeOutputIterator output_partition_edges(
     EdgeOutputIterator edges, const int support_plane_idx = -1) const {
 
+    From_EK from_EK;
+
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx >= number_of_support_planes()) return edges;
     if (support_plane_idx < 0) {
       const auto all_iedges = m_data.iedges();
       for (const auto iedge : all_iedges) {
-        *(edges++) = m_data.segment_3(iedge);
+        *(edges++) = from_EK(m_data.segment_3(iedge));
       }
       return edges;
     }
@@ -459,7 +463,7 @@ public:
     for (const auto pedge : all_pedges) {
       CGAL_assertion(m_data.has_iedge(pedge));
       const auto iedge = m_data.iedge(pedge);
-      *(edges++) = m_data.segment_3(iedge);
+      *(edges++) = from_EK(m_data.segment_3(iedge));
     }
     return edges;
   }
@@ -602,6 +606,8 @@ public:
   void output_reconstructed_model(
     VertexOutputIterator vertices, FaceOutputIterator faces) const {
 
+    From_EK from_EK;
+
     const auto& model = m_data.reconstructed_model();
     CGAL_assertion(model.pfaces.size() > 0);
 
@@ -620,7 +626,7 @@ public:
         const std::size_t idx = indexer(ivertex);
 
         if (idx == num_vertices) {
-          *(vertices++) = m_data.point_3(ivertex);
+          *(vertices++) = from_EK(m_data.point_3(ivertex));
           ++num_vertices;
         }
         face.push_back(idx);
