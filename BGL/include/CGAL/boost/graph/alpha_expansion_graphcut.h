@@ -786,15 +786,23 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
     cut_time += timer.time();
 #endif
 
-    graph.get_labels(vertex_index_map, vertex_label_map, inserted_vertices, CGAL::make_range(vertices(input_graph)));
+/*
+    //update labeling
+    for (input_vertex_descriptor vd : CGAL::make_range(vertices(input_graph)))
+    {
+      std::size_t vertex_i = get(vertex_index_map, vd);
+      alpha_expansion.update(vertex_label_map, inserted_vertices, vd, vertex_i, alpha);
+    }*/
 
+    graph.get_labels(vertex_index_map, vertex_label_map, inserted_vertices, CGAL::make_range(vertices(input_graph)));
+/*
     //update labeling
     for (auto vd : vertices(input_graph)) {
       std::size_t idx = get(vertex_index_map, vd);
       int label = graph.get_label(inserted_vertices[idx]);
       put(vertex_label_map, vd, label);
     }
-/*
+
     for (input_vertex_descriptor vd : CGAL::make_range(vertices(input_graph)))
     {
       std::size_t vertex_i = get(vertex_index_map, vd);

@@ -35,6 +35,9 @@
 namespace CGAL {
 namespace KSR_3 {
 
+#ifdef DOXYGEN_RUNNING
+#else
+
   template<typename GeomTraits>
   class Graphcut {
 
@@ -453,22 +456,11 @@ namespace KSR_3 {
       std::cout << "min: " << min << std::endl;
       std::cout << "max: " << max << std::endl;
 
-/*
-      CGAL::min_cut(
-          edges, edge_costs, cost_matrix, labels, CGAL::parameters::implementation_tag(CGAL::Alpha_expansion_MaxFlow_tag()));
-
-      bool difference = false;
-      for (std::size_t i = 0; i < labels.size(); i++) {
-        if (tmp[i] != labels[i]) {
-          difference = true;
-          break;
-        }
-      }
-      std::cout << "Labels changed: " << difference << std::endl;
-      */
-
       CGAL::alpha_expansion_graphcut(
-            edges, edge_costs, cost_matrix, labels, CGAL::parameters::implementation_tag(CGAL::Alpha_expansion_MaxFlow_tag()));
+          edges, edge_costs, cost_matrix, labels, CGAL::parameters::implementation_tag(CGAL::Alpha_expansion_MaxFlow_tag()));
+      /*
+      CGAL::min_cut(
+            edges, edge_costs, cost_matrix, labels, CGAL::parameters::implementation_tag(CGAL::Alpha_expansion_MaxFlow_tag()));*/
 
       bool difference = false;
       for (std::size_t i = 0; i < labels.size(); i++) {
@@ -498,6 +490,8 @@ namespace KSR_3 {
       }
     }
   };
+
+#endif //DOXYGEN_RUNNING
 
 } // KSR_3
 } // CGAL

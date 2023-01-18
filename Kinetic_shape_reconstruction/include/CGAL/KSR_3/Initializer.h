@@ -37,6 +37,9 @@
 namespace CGAL {
 namespace KSR_3 {
 
+#ifdef DOXYGEN_RUNNING
+#else
+
 template<typename GeomTraits>
 class Initializer {
 
@@ -1209,6 +1212,8 @@ private:
     }
   }
 };
+
+#endif //DOXYGEN_RUNNING
 
 } // namespace KSR_3
 } // namespace CGAL

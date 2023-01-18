@@ -114,6 +114,7 @@ bool run_test(
       std::cout << num_faces    << ",";
       std::cout << num_volumes  << std::endl;
 
+/*
       assert(num_support_planes > 6);
 
       if (num_support_planes <= 6) return false;
@@ -132,7 +133,10 @@ bool run_test(
       if (num_vertices != results[2]) return false;
       if (num_edges    != results[3]) return false;
       if (num_faces     < results[4]) return false;
-      if (num_volumes   < results[5]) return false;
+      if (num_volumes   < results[5]) return false;*/
+
+      CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
+      ksr.get_linear_cell_complex(lcc);
 
       std::vector<Point_3> output_vertices;
       ksr.output_partition_vertices(

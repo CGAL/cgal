@@ -79,7 +79,6 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 }
 
 int main(const int argc, const char** argv) {
-
   // Parameters.
   std::cout.precision(20);
   std::cout << std::endl;
@@ -181,6 +180,8 @@ int main(const int argc, const char** argv) {
   const FT time = static_cast<FT>(timer.time());
 
   // Output.
+  CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
+  ksr.get_linear_cell_complex(lcc);
 
   // Vertices.
   std::vector<Point_3> all_vertices;

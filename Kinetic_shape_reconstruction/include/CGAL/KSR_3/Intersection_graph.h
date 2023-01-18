@@ -28,6 +28,9 @@
 namespace CGAL {
 namespace KSR_3 {
 
+#ifdef DOXYGEN_RUNNING
+#else
+
 template<typename GeomTraits>
 class Intersection_graph {
 
@@ -426,6 +429,8 @@ public:
 };
 
 template<typename GeomTraits> std::size_t Intersection_graph<GeomTraits>::Edge_property::edge_counter = 0;
+
+#endif //DOXYGEN_RUNNING
 
 } // namespace KSR_3
 } // namespace CGAL

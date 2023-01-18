@@ -32,6 +32,9 @@
 namespace CGAL {
 namespace KSR_3 {
 
+#ifdef DOXYGEN_RUNNING
+#else
+
 template<typename GeomTraits>
 class Data_structure {
 
@@ -2050,6 +2053,8 @@ public:
   }
 
 };
+
+#endif //DOXYGEN_RUNNING
 
 } // namespace KSR_3
 } // namespace CGAL

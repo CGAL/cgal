@@ -32,6 +32,9 @@ namespace KSR_3 {
 template<typename Data_structure>
 class Event_queue {
 
+#ifdef DOXYGEN_RUNNING
+#else
+
 public:
   // Data structure types.
   using FT      = typename Data_structure::Kernel::FT;
@@ -274,6 +277,8 @@ private:
   const bool m_verbose;
   std::vector<Event> m_temporary_queue;
 };
+
+#endif //DOXYGEN_RUNNING
 
 } // namespace KSR_3
 } // namespace CGAL

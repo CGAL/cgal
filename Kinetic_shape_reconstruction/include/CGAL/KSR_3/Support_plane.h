@@ -26,6 +26,9 @@
 namespace CGAL {
 namespace KSR_3 {
 
+#ifdef DOXYGEN_RUNNING
+#else
+
 template<typename GeomTraits>
 class Support_plane {
 
@@ -792,10 +795,7 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
   // const auto pb = planeb.projection(pa);
   // const FT bval = KSR::distance(pa, pb);
 
-  // TODO: Should we rotate the planes here before computing the distance?
-
   // TODO: We should put it as a parameter.
-  // TODO: Can we make it work for a smaller parameter: e.g. 0.1?
   const FT ptol = a.distance_tolerance();
   const auto pa1 = a.to_3d(a.centroid());
   const auto pb1 = planeb.projection(pa1);
@@ -817,6 +817,8 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
   // std::cout << "- found coplanar planes" << std::endl;
   return true;
 }
+
+#endif //DOXYGEN_RUNNING
 
 } // namespace KSR_3
 } // namespace CGAL

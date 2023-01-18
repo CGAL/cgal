@@ -33,6 +33,9 @@
 namespace CGAL {
 namespace KSR_3 {
 
+#ifdef DOXYGEN_RUNNING
+#else
+
   template<
   typename  GeomTraits,
   typename  PointMap_3,
@@ -269,6 +272,8 @@ namespace KSR_3 {
       return true;
     }
   };
+
+#endif //DOXYGEN_RUNNING
 
 } // KSR_3
 } // CGAL
