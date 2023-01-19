@@ -35,20 +35,21 @@
 #include <CGAL/KSR_3/Graphcut.h>
 
 namespace CGAL {
-namespace KSR_3 {
 
-#ifdef DOXYGEN_RUNNING
+#ifdef DOXYGEN_NS
 /*!
+* \ingroup PkgKineticPartition
   \brief Piece-wise linear reconstruction via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam Kernel
-    must be a model of `Kernel`.
+    must be a model of `Kernel`. Is used for non-critical calculations.
 
   \tparam IntersectionKernel
     must be a model of `Kernel`. Is used for the creation of the intersection graph. An exact kernel is suggested.
 */
 template<Kernel, Intersection_Kernel>
 class Kinetic_reconstruction_3 {
+public:
   /*!
     \brief Creates the kinetic partitioning of the bounding box.
 
@@ -210,7 +211,7 @@ class Kinetic_reconstruction_3 {
   \pre `successful initialization`
   */
   template<typename NamedParameters>
-  bool setup_energyterms(const NamedParameters& np);
+  bool setup_energyterms();
 
   /*!
   \brief Provides the data and regularity energy terms for reconstruction via graph-cut.
@@ -233,8 +234,7 @@ class Kinetic_reconstruction_3 {
   bool setup_energyterms(
     const std::vector< std::pair<std::size_t, std::size_t> >& edges,
     const std::vector<double>& edge_costs,
-    const std::vector< std::vector<double> >& cost_matrix,
-    const NamedParameters& np);
+    const std::vector< std::vector<double> >& cost_matrix);
 
   /*!
   \brief Propagates the kinetic polygons in the initialized partition.
@@ -264,6 +264,7 @@ class Kinetic_reconstruction_3 {
 }
 #else
 
+namespace KSR_3 {
 template<
 typename InputRange,
 typename PointMap,

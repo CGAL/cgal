@@ -43,8 +43,9 @@
 
 namespace CGAL {
 
-#ifdef DOXYGEN_RUNNING
+#ifdef DOXYGEN_NS
 /*!
+* \ingroup PkgKineticPartition
   \brief Creates the kinetic partitioning of the bounding box.
 
   \tparam Kernel
@@ -55,6 +56,9 @@ namespace CGAL {
 */
 template<Kernel, Intersection_Kernel = CGAL::Exact_predicates_exact_constructions_kernel>
 class Kinetic_partitioning_3 {
+public:
+  /// \name Initialization
+  /// @{
   /*!
   \brief Initializes the kinetic partitioning of the bounding box.
 
@@ -125,7 +129,12 @@ class Kinetic_partitioning_3 {
 
     \pre `successful initialization`
   */
+  /// @}
+
   bool partition(std::size_t k);
+
+  /// \name Access
+  /// @{
 
   /*!
   \brief Number of vertices in the kinetic partitioning.
@@ -229,14 +238,19 @@ class Kinetic_partitioning_3 {
   /*!
    \brief Creates a linear cell complex from the kinetic partitioning.
 
-    \param lcc
-    an instance of a Linear_cell_complex_for_combinatorial_map<3, 3,...>
+    \tparam LCC
+    Linear_cell_complex_for_combinatorial_map<3, 3,...>
     The dimension of the combinatorial map and the dimension of the ambient space have to be 3.
+
+    \param lcc
+    an instance of LCC
 
     \pre `successful partitioning`
    */
   template<typename LCC>
-  void get_linear_cell_complex(LCC& lcc) const
+  void get_linear_cell_complex(LCC& lcc) const;
+
+  /// @}
 }
 #else
 

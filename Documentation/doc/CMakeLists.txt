@@ -29,6 +29,13 @@ endif()
 find_package(Doxygen)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
+if (NOT Python3_EXECUTABLE)
+  message(FATAL_ERROR "Cannot build the documentation without Python3!")
+  return()
+endif()
+
+message(STATUS  ${Python3_EXECUTABLE})
+
 if(NOT DOXYGEN_FOUND)
   message(WARNING "Cannot build the documentation without Doxygen!")
   return()

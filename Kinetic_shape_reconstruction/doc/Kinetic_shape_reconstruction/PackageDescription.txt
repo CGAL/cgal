@@ -1,12 +1,16 @@
 /*!
 \defgroup PkgKineticShapeReconstructionRef Kinetic Shape Reconstruction Reference
 
+\defgroup PkgKineticPartition Kinetic Partitioning
+
+\addtogroup PkgKineticPartition
+
 \cgalPkgDescriptionBegin{Kinetic Shape Reconstruction, PkgKineticShapeReconstruction}
 \cgalPkgPicture{kinetic_logo.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot and Dmitry Anisimov}
-\cgalPkgDesc{}
+\cgalPkgAuthors{Simon Giraudot, Dmitry Anisimov and Sven Oesau}
+\cgalPkgDesc{Empty}
 \cgalPkgManuals{Chapter_Kinetic_Shape_Reconstruction, PkgKineticShapeReconstructionRef}
 \cgalPkgSummaryEnd
 
