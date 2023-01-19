@@ -66,7 +66,7 @@ using Implicit_Cartesian_grid_domain_3 =
  *
  * \brief creates a domain from an implicit function that can be used as input for isosurfacing algorithms.
  *
- * \details The implicit function will be evaluated on the grid vertices of the virtual grid
+ * \details The implicit function is evaluated on the grid vertices of the virtual grid
  * defined by the bounding box and the spacing value. By not storing any function values implicitly,
  * fewer memory accesses are required in comparison to an `Explicit_Cartesian_grid_domain_3`.
  *

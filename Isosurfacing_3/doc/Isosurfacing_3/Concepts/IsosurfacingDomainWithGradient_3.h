@@ -9,8 +9,8 @@
 fulfilled by any class used as input data for some isosurfacing algorithms.
 
 This concept refines `IsosurfacingDomain_3` to add a `gradient()` function which is used
-by isosurfacing domains to query the domain for the gradient of the implicit function
-at a 3D point (not necessarily a vertex) in space.
+by isosurfacing domains to query the domain for the gradient of the implicit field
+at a 3D query point (not necessarily a vertex) in space.
 
 \cgalHasModel `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
 \cgalHasModel `CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3`

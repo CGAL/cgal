@@ -22,9 +22,9 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Domain_helpers_grp
  *
- * \brief Class template for a gradient that is always zero.
+ * \brief Class template for a gradient that equates zero everywhere.
  *
- * \details This gradient function can be used for Marching Cubes, which does not require a gradient.
+ * \details This gradient function can be used for Marching Cubes that does not require a gradient.
  */
 struct Zero_gradient
 {
