@@ -103,7 +103,7 @@ private:
   {
     for(face_descriptor fd : faces)
     {
-      CGAL_assertion(fd  != boost::graph_traits<PolygonMesh>::null_face());
+      CGAL_assertion(is_valid_face_descriptor(fd, pmesh));
 
       vertex_descriptor vi = target(halfedge(fd,pmesh),pmesh);
       vertex_descriptor vj = target(next(halfedge(fd,pmesh),pmesh),pmesh);

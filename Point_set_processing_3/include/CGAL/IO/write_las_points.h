@@ -21,8 +21,8 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/assertions.h>
 
 #include <boost/cstdint.hpp>
 #include <boost/version.hpp>
@@ -164,7 +164,7 @@ namespace LAS {
    handlers. A `PropertyHandle` is a `std::pair<PropertyMap,
    LAS_property::Tag >` used to write a scalar value
    `LAS_property::Tag::type` as a %LAS property (for example,
-   writing an `int` vairable as an `int` %LAS property). An exception
+   writing an `int` variable as an `int` %LAS property). An exception
    is used for points that are written using a `std::tuple` object.
 
    See documentation of `read_LAS_with_properties()` for the
@@ -193,7 +193,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
                                LAS_property::Z> point_property, ///< property handler for points
                                PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {

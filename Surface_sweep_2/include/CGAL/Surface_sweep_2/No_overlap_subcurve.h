@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the No_overlap_subcurve class, which is an
+ * Definition of the No_overlap_subcurve class, which is an
  * extended curve type, referred to as Subcurve, used by the surface-sweep
  * framework.
  *
@@ -122,7 +122,7 @@ public:
  * No_overlap_subcurve_base class template.
  *
  * The information contained in this class (in addition to the information
- * contaisn in its base) is:
+ * contained in its base) is:
  * - the remaining x-monotone curve that is to the right of the current sweep
  *   line.
  * \tparam GeometryTraits_2 the geometry traits.
@@ -132,7 +132,7 @@ public:
  *                    structure, and to construct/destroy the elements in that
  *                    memory. The type must meet the requirements of Allocator.
  * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
- *                   overriden it implies that the type is No_overlap_subcurve.
+ *                   overridden it implies that the type is No_overlap_subcurve.
  */
 template <typename GeometryTraits_2, typename Event_,
           typename Allocator_ = CGAL_ALLOCATOR(int),

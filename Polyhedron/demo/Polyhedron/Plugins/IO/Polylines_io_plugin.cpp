@@ -27,7 +27,7 @@ class Polyhedron_demo_polylines_io_plugin :
 
 public:
     // To silent a warning -Woverloaded-virtual
-    // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
+    // See https://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
 
     using Polyhedron_demo_io_plugin_interface::init;
     //! Configures the widget
@@ -262,7 +262,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 void Polyhedron_demo_polylines_io_plugin::split()
 {
   Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
-  Scene_group_item* group = new Scene_group_item("Splitted Polylines");
+  Scene_group_item* group = new Scene_group_item("Split Polylines");
   scene->addItem(group);
   group->setColor(item->color());
   int i=0;
@@ -273,7 +273,7 @@ void Polyhedron_demo_polylines_io_plugin::split()
     Scene_polylines_item *new_polyline = new Scene_polylines_item();
     new_polyline->polylines = container;
     new_polyline->setColor(item->color());
-    new_polyline->setName(QString("Splitted %1 #%2").arg(item->name()).arg(i++));
+    new_polyline->setName(QString("Split %1 #%2").arg(item->name()).arg(i++));
     scene->addItem(new_polyline);
     scene->changeGroup(new_polyline, group);
   }

@@ -216,7 +216,19 @@ class Polyhedron_demo_alpha_wrap_3_plugin
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
+  using Triangles = std::vector<Kernel::Triangle_3>;
+  using Segments = std::vector<Kernel::Segment_3>;
+  using Points = std::vector<Kernel::Point_3>;
+
+  using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Kernel>;
+  using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<Kernel, TS_Oracle>;
+  using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<Kernel, SS_Oracle>;
+
 private:
+  CGAL::Bbox_3 wrap_bbox;
+  double wrap_bbox_diag_length;
+
+  QAction* actionAlpha_wrap_3_;
   Ui::alpha_wrap_3_dialog ui;
 
 public:
@@ -262,33 +274,29 @@ private:
     CGAL::Three::Three::information(message);
   }
 
-  Ui::alpha_wrap_3_dialog create_dialog(QDialog* dialog)
-  {
-    ui.setupUi(dialog);
-
-    connect(ui.wrapEdges, SIGNAL(clicked(bool)), this, SLOT(toggle_wrap_faces()));
-    connect(ui.wrapFaces, SIGNAL(clicked(bool)), this, SLOT(toggle_wrap_edges()));
-
-    connect(ui.visualizeIterations, SIGNAL(clicked(bool)),
-            this, SLOT(update_iteration_snapshot_checkbox()));
-
-    connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
-    connect(ui.buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
-
-    return ui;
-  }
-
 public Q_SLOTS:
-  void toggle_wrap_faces()
+  void on_alphaValue_changed(double)
   {
-    if(!ui.wrapEdges->isChecked()) // if edges are disabled, so are faces
-      ui.wrapFaces->setChecked(false);
+    QSignalBlocker block(ui.relativeAlphaValue);
+    ui.relativeAlphaValue->setValue(wrap_bbox_diag_length / ui.alphaValue->value());
   }
 
-  void toggle_wrap_edges()
+  void on_relativeAlphaValue_changed(double)
   {
-    if(ui.wrapFaces->isChecked()) // if faces are enabled, so are edges
-      ui.wrapEdges->setChecked(true);
+    QSignalBlocker block(ui.alphaValue);
+    ui.alphaValue->setValue(wrap_bbox_diag_length / ui.relativeAlphaValue->value());
+  }
+
+  void on_offsetValue_changed(double)
+  {
+    QSignalBlocker block(ui.relativeOffsetValue);
+    ui.relativeOffsetValue->setValue(wrap_bbox_diag_length / ui.offsetValue->value());
+  }
+
+  void on_relativeOffsetValue_changed(double)
+  {
+    QSignalBlocker block(ui.offsetValue);
+    ui.offsetValue->setValue(wrap_bbox_diag_length / ui.relativeOffsetValue->value());
   }
 
   void update_iteration_snapshot_checkbox()
@@ -298,47 +306,30 @@ public Q_SLOTS:
 
   void on_actionAlpha_wrap_3_triggered()
   {
-    using Triangles = std::vector<Kernel::Triangle_3>;
-    using Segments = std::vector<Kernel::Segment_3>;
-    using Points = std::vector<Kernel::Point_3>;
-
-    using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Kernel>;
-    using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<Kernel, TS_Oracle>;
-    using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<Kernel, SS_Oracle>;
-
     QDialog dialog(mw);
-    ui = create_dialog(&dialog);
+
+    ui.setupUi(&dialog);
+
+    connect(ui.alphaValue, SIGNAL(valueChanged(double)), this, SLOT(on_alphaValue_changed(double)));
+    connect(ui.relativeAlphaValue, SIGNAL(valueChanged(double)), this, SLOT(on_relativeAlphaValue_changed(double)));
+    connect(ui.offsetValue, SIGNAL(valueChanged(double)), this, SLOT(on_offsetValue_changed(double)));
+    connect(ui.relativeOffsetValue, SIGNAL(valueChanged(double)), this, SLOT(on_relativeOffsetValue_changed(double)));
+
+    connect(ui.visualizeIterations, SIGNAL(clicked(bool)), this, SLOT(update_iteration_snapshot_checkbox()));
+
+    connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+    connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
     dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
-
-    int i = dialog.exec();
-    if(i == QDialog::Rejected)
-      return;
-
-    const bool is_relative_alpha = ui.relativeAlpha->isChecked();
-    const bool is_relative_offset = ui.relativeOffset->isChecked();
-    const bool enforce_manifoldness = ui.runManifoldness->isChecked();
-    double alpha = ui.alphaValue->value();
-    double offset = ui.offsetValue->value();
-    const bool visualize_iterations = ui.visualizeIterations->isChecked();
-    const bool do_snapshot_iterations = ui.snapshotIterations->isChecked();
-
-    if(alpha <= 0. || offset <= 0.)
-      return;
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    TS_Oracle ts_oracle;
-    SS_Oracle ss_oracle(ts_oracle);
-    Oracle oracle(ss_oracle);
 
     Triangles triangles;
     Segments segments;
     Points points;
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    Q_FOREACH(int index, this->scene->selectionIndices())
     {
       // ---
-      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
       if(sm_item != nullptr)
       {
         SMesh* pMesh = sm_item->polyhedron();
@@ -357,9 +348,9 @@ public Q_SLOTS:
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
-        }
 
-        sm_item->setRenderingMode(Flat);
+          wrap_bbox += triangles.back().bbox();
+        }
 
         continue;
       }
@@ -381,9 +372,9 @@ public Q_SLOTS:
           triangles.emplace_back(soup_item->points()[p[0]],
                                  soup_item->points()[p[1]],
                                  soup_item->points()[p[2]]);
-        }
 
-        soup_item->setRenderingMode(Flat);
+          wrap_bbox += triangles.back().bbox();
+        }
 
         continue;
       }
@@ -409,6 +400,8 @@ public Q_SLOTS:
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
+
+          wrap_bbox += triangles.back().bbox();
         }
 
         segments.reserve(segments.size() + selection_item->selected_edges.size());
@@ -416,12 +409,16 @@ public Q_SLOTS:
         {
           segments.emplace_back(get(vpm, target(halfedge(e, *pMesh), *pMesh)),
                                 get(vpm, target(opposite(halfedge(e, *pMesh), *pMesh), *pMesh)));
+
+          wrap_bbox += segments.back().bbox();
         }
 
         points.reserve(points.size() + selection_item->selected_vertices.size());
         for(const auto& v : selection_item->selected_vertices)
         {
           points.push_back(get(vpm, v));
+
+          wrap_bbox += points.back().bbox();
         }
 
         continue;
@@ -456,40 +453,92 @@ public Q_SLOTS:
       }
     }
 
-    const bool wrap_triangles = ui.wrapFaces->isChecked();
-    const bool wrap_segments = ui.wrapEdges->isChecked();
-
-    if(!wrap_triangles)
-    {
-      segments.reserve(segments.size() + 3 * triangles.size());
-      for(const auto& tr : triangles)
-      {
-        segments.emplace_back(tr[0], tr[1]);
-        segments.emplace_back(tr[1], tr[2]);
-        segments.emplace_back(tr[2], tr[0]);
-      }
-    }
-
-    if(!wrap_segments)
-    {
-      points.reserve(points.size() + 2 * segments.size());
-      for(const auto& s : segments)
-      {
-        points.push_back(s[0]);
-        points.push_back(s[1]);
-      }
-    }
-
     std::cout << triangles.size() << " triangles" << std::endl;
     std::cout << segments.size() << " edges" << std::endl;
     std::cout << points.size() << " points" << std::endl;
+
+    // The relative value uses the bbox of the full scene and not that of selected items to wrap
+    // This is intentional, both because it's tedious to make it otherwise, and because it seems
+    // to be simpler to compare between "all wrapped" / "some wrapped"
+    wrap_bbox_diag_length = std::sqrt(CGAL::square(wrap_bbox.xmax() - wrap_bbox.xmin()) +
+                                      CGAL::square(wrap_bbox.ymax() - wrap_bbox.ymin()) +
+                                      CGAL::square(wrap_bbox.zmax() - wrap_bbox.zmin()));
+
+    ui.relativeAlphaValue->setValue(20.);
+    ui.relativeOffsetValue->setValue(600.);
+    ui.alphaValue->setValue(wrap_bbox_diag_length / ui.relativeAlphaValue->value());
+    ui.offsetValue->setValue(wrap_bbox_diag_length / ui.relativeOffsetValue->value());
+
+    // EXECUTION
+    int i = dialog.exec();
+    if(i == QDialog::Rejected)
+      return;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    Q_FOREACH(int index, this->scene->selectionIndices())
+    {
+      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
+      if(sm_item != nullptr)
+        sm_item->setRenderingMode(Flat);
+      Scene_polygon_soup_item* soup_item = qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+      if(soup_item != nullptr)
+        soup_item->setRenderingMode(Flat);
+    }
+
+    const bool wrap_triangles = ui.wrapTriangles->isChecked();
+    const bool wrap_segments = ui.wrapSegments->isChecked();
+    const bool wrap_points = ui.wrapPoints->isChecked();
+
+    double alpha = ui.alphaValue->value();
+    double offset = ui.offsetValue->value();
+
+    const bool enforce_manifoldness = ui.runManifoldness->isChecked();
+    const bool visualize_iterations = ui.visualizeIterations->isChecked();
+    const bool do_snapshot_iterations = ui.snapshotIterations->isChecked();
+
     std::cout << "do wrap edges/faces: " << wrap_segments << " " << wrap_triangles << std::endl;
+
+    if(!wrap_triangles)
+    {
+      if(wrap_segments) // add faces' edges
+      {
+        segments.reserve(segments.size() + 3 * triangles.size());
+        for(const auto& tr : triangles)
+        {
+          segments.emplace_back(tr[0], tr[1]);
+          segments.emplace_back(tr[1], tr[2]);
+          segments.emplace_back(tr[2], tr[0]);
+        }
+      }
+      else // triangles & segments are not wrapped, but points are -> add faces' vertices
+      {
+        points.reserve(points.size() + 2 * segments.size() + 3 * triangles.size());
+        for(const auto& s : segments)
+        {
+          points.push_back(s[0]);
+          points.push_back(s[1]);
+        }
+
+        for(const auto& tr : triangles)
+        {
+          points.push_back(tr[0]);
+          points.push_back(tr[1]);
+          points.push_back(tr[2]);
+        }
+      }
+    }
+
+    TS_Oracle ts_oracle;
+    SS_Oracle ss_oracle(ts_oracle);
+    Oracle oracle(ss_oracle);
 
     if(wrap_triangles)
       oracle.add_triangle_soup(triangles);
     if(wrap_segments)
       oracle.add_segment_soup(segments);
-    oracle.add_point_set(points);
+    if(wrap_points)
+      oracle.add_point_set(points);
 
     if(!oracle.do_call())
     {
@@ -498,18 +547,14 @@ public Q_SLOTS:
       return;
     }
 
-    // Oracles set up, time to wrap
+    if(alpha <= 0. || offset <= 0.)
+    {
+      print_message("Warning: alpha/offset must be strictly positive - nothing to wrap");
+      QApplication::restoreOverrideCursor();
+      return;
+    }
 
-    CGAL::Bbox_3 bbox = oracle.bbox();
-    const double diag_length = std::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
-                                         CGAL::square(bbox.ymax() - bbox.ymin()) +
-                                         CGAL::square(bbox.zmax() - bbox.zmin()));
-
-    if(is_relative_alpha)
-      alpha = diag_length / alpha;
-    if(is_relative_offset)
-      offset = diag_length / offset;
-
+    // Oracles are now set up, main function call
     CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
 
     Iterative_AW3_visualization_visitor visitor(scene,
@@ -528,9 +573,6 @@ public Q_SLOTS:
 
     QApplication::restoreOverrideCursor();
   }
-
-private:
-  QAction* actionAlpha_wrap_3_;
 };
 
 #include "Alpha_wrap_3_plugin.moc"

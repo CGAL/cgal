@@ -62,7 +62,7 @@ public:
   /// @param g the face graph to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  ///        useful for very big objects where this time could be long)
   template <typename Graph>
   SimpleFaceGraphViewerQt(QWidget* parent,
                           const Graph& g,

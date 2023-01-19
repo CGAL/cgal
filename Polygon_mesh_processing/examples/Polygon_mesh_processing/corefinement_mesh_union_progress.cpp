@@ -105,6 +105,7 @@ struct Visitor :
   public PMP::Corefinement::Default_visitor<Mesh>
 {
   std::shared_ptr<Visitor_rep> sptr;
+  mutable std::size_t tf_counter = 0;
 
   Visitor()
     : sptr(std::make_shared<Visitor_rep>())
@@ -124,15 +125,16 @@ struct Visitor :
     std::cout << "Visitor::end_filtering_intersections() at " << sptr->time() << " sec."  << std::endl;
   }
 
-  void start_triangulating_faces(std::size_t tf)const
+  void start_triangulating_faces(std::size_t tf) const
   {
     std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->time() << " sec."  << std::endl;
     sptr->start_triangulating_faces(tf);
+    tf_counter = 0;
   }
 
-  void face_triangulation(std::size_t i) const
+  void triangulating_faces_step() const
   {
-    sptr->face_triangulation(i);
+    sptr->face_triangulation(tf_counter++);
   }
 
   void end_triangulating_faces()const
@@ -140,7 +142,7 @@ struct Visitor :
     std::cout << "Visitor::end_triangulating_faces() at " << sptr->time() << " sec."  << std::endl;
   }
 
-  void start_coplanar_faces(std::size_t i) const
+  void start_handling_intersection_of_coplanar_faces(std::size_t i) const
   {
     sptr->start_coplanar_faces(i);
   }
@@ -150,12 +152,12 @@ struct Visitor :
     sptr->intersection_of_coplanar_faces_step();
   }
 
-  void end_coplanar_faces() const
+  void end_handling_intersection_of_coplanar_faces() const
   {
     std::cout << "Visitor::end_coplanar_faces() at " << sptr->time() << " sec." << std::endl;
   }
 
-  void start_intersection_points(std::size_t i) const
+  void start_handling_edge_face_intersections(std::size_t i) const
   {
     sptr->start_intersection_points(i);
   }
@@ -165,7 +167,7 @@ struct Visitor :
     sptr->edge_face_intersections_step();
   }
 
-  void end_intersection_points() const
+  void end_handling_edge_face_intersections() const
   {
     std::cout << "Visitor::end_intersection_points() at " << sptr->time() << " sec." << std::endl;
   }

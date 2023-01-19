@@ -24,7 +24,7 @@ namespace Mesh_2 {
 /**
  * This class is the visitor needed when Refine_edges<Tr> if called from
  * Refine_faces<Tr>.
- * \param Faces_mesher should be instanciated with Refine_face_base<Tr>.
+ * \param Faces_mesher should be instantiated with Refine_face_base<Tr>.
  */
 template <typename Faces_mesher>
 class Refine_edges_visitor : public ::CGAL::Null_mesh_visitor
@@ -65,7 +65,7 @@ public:
   Null_mesh_visitor previous_level() const { return null_mesh_visitor; }
 
   /**
-   * Store vertex handles and markers at left and right of the edge \c e.
+   * Store vertex handles and markers at left and right of the edge `e`.
    */
   void before_conflicts(const Edge& e, const Point&)
   {
@@ -84,7 +84,7 @@ public:
     faces_mesher.before_insertion_impl(Face_handle(), p, z);
   }
 
-  /** Restore markers in the star of \c v. */
+  /** Restore markers in the star of `v`. */
   void after_insertion(const Vertex_handle& v)
   {
     Tr& tr = faces_mesher.triangulation_ref_impl();

@@ -52,7 +52,7 @@ namespace internal {
 // sign_at_low_ = polynomial_.evaluate(low_)
 // x is the only root of polynomial_ in the open interval ]low_,high_[
 // low_ != x != high
-// ******************* EXEPTION *******************
+// ******************* EXCEPTION *******************
 // x is rational: in this case low=high=x
 
 

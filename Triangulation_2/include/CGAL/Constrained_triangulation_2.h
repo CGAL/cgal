@@ -22,7 +22,7 @@
 #include <exception>
 #include <type_traits>
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/iterator.h>
@@ -46,7 +46,7 @@ struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
 // This was deprecated and replaced by ` No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`
-// due to an inconsistency between the code and the documenation.
+// due to an inconsistency between the code and the documentation.
 struct CGAL_DEPRECATED No_intersection_tag :
   public No_constraint_intersection_requiring_constructions_tag
 { };
@@ -204,7 +204,7 @@ public:
     for( ;lcit != lc.end(); lcit++) {
       insert( (*lcit).first, (*lcit).second);
     }
-     CGAL_triangulation_postcondition( is_valid() );
+     CGAL_postcondition( is_valid() );
   }
 
   template<class InputIterator>
@@ -216,7 +216,7 @@ public:
     for ( ; it != last; it++) {
               insert_constraint((*it).first, (*it).second);
       }
-      CGAL_triangulation_postcondition( is_valid() );
+      CGAL_postcondition( is_valid() );
   }
 
   //TODO Is that destructor correct ?
@@ -335,7 +335,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
 // if a vertex vc of t lies on segment ab
 // of if ab intersect some constrained edges
 {
-  CGAL_triangulation_precondition( vaa != vbb);
+  CGAL_precondition( vaa != vbb);
   Vertex_handle vi;
 
   Face_handle fr;
@@ -608,7 +608,7 @@ public:
    return out;
  }
 
-  // the following fonctions are overloaded
+  // the following functions are overloaded
   // to take care of constraint marks
   template<class EdgeIt>
   Vertex_handle star_hole( const Point& p,
@@ -810,7 +810,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
   while(! stack.empty()){
     boost::tie(vaa,vbb) = stack.top();
     stack.pop();
-    CGAL_triangulation_precondition( vaa != vbb);
+    CGAL_precondition( vaa != vbb);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
     std::cerr << CGAL::internal::cdt_2_indent_level
               << "CT_2::insert_constraint, stack pop=( #" << vaa->time_stamp() << "= " << vaa->point()
@@ -1073,9 +1073,9 @@ intersect(Face_handle f, int i,
   const Point& pc = f->vertex(cw(i))->point();
   const Point& pd = f->vertex(ccw(i))->point();
   Point pi;
-  CGAL_triangulation_assertion_code( bool ok = )
+  CGAL_assertion_code( bool ok = )
   intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
-  CGAL_triangulation_assertion(ok);
+  CGAL_assertion(ok);
   Vertex_handle vi = virtual_insert(pi, Triangulation::EDGE, f, i);
   return vi;
 }
@@ -1308,7 +1308,7 @@ update_constraints_incident(Vertex_handle va,
     //dimension() ==2
     int cwi, ccwi, indf;
     Face_circulator fc=incident_faces(va), done(fc);
-    CGAL_triangulation_assertion(fc != nullptr);
+    CGAL_assertion(fc != nullptr);
     do {
       indf = fc->index(va);
       cwi=cw(indf);
@@ -1356,7 +1356,7 @@ update_constraints_opposite(Vertex_handle va)
   // update status of edges opposite to a
   // after insertion of a
 {
-  CGAL_triangulation_assertion(dimension()==2);
+  CGAL_assertion(dimension()==2);
   Face_handle f=va->face(), start=f;
   int indf;
   do {
@@ -1463,9 +1463,9 @@ remove(Vertex_handle  v)
   // remove a vertex and updates the constrained edges of the new faces
   // precondition : there is no incident constraints
 {
-  CGAL_triangulation_precondition( v != Vertex_handle() );
-  CGAL_triangulation_precondition( ! is_infinite(v));
-  CGAL_triangulation_precondition( ! are_there_incident_constraints(v));
+  CGAL_precondition( v != Vertex_handle() );
+  CGAL_precondition( ! is_infinite(v));
+  CGAL_precondition( ! are_there_incident_constraints(v));
 
   if  (number_of_vertices() == 1)     remove_first(v);
   else if (number_of_vertices() == 2) remove_second(v);

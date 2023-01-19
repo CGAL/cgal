@@ -62,19 +62,19 @@
 
 #define CGAL_DO_INTERSECT_FUNCTION(A, B, DIM)              \
   template<typename K>                                     \
-  inline bool                                              \
+  inline typename K::Boolean                               \
   do_intersect(const A<K>& a, const B<K>& b) {             \
     return BOOST_PP_CAT(K().do_intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
   }                                                        \
   template<typename K>                                     \
-  inline bool                                              \
+  inline typename K::Boolean                               \
   do_intersect(const B<K>& b, const A<K>& a) {             \
     return BOOST_PP_CAT(K().do_intersect_, BOOST_PP_CAT(DIM, _object()(b, a))); \
   }
 
 #define CGAL_DO_INTERSECT_FUNCTION_SELF(A, DIM)                         \
   template<typename K>                                                  \
-  inline bool                                                           \
+  inline typename K::Boolean                                            \
   do_intersect(const A<K> & a, const A<K> & b) {                          \
     return BOOST_PP_CAT(K().do_intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
   }
@@ -152,21 +152,21 @@ intersection_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 }
 
 template<typename A, typename B>
-inline bool
+inline auto // K::Boolean
 do_intersect_impl(const A& a, const B& b, CGAL::Dimension_tag<2>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().do_intersect_2_object()(a, b);
 }
 
 template<typename A, typename B>
-inline bool
+inline auto // K::Boolean
 do_intersect_impl(const A& a, const B& b, Dimension_tag<3>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().do_intersect_3_object()(a, b);
 }
 
 template<typename A, typename B>
-inline bool
+inline auto // K::Boolean
 do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().do_intersect_d_object()(a, b);
@@ -188,7 +188,7 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 
 // template<typename A, typename B>
 // inline
-// bool
+// auto // K::Boolean
 // do_intersect(const A& a, const B& b) {
 //   CGAL_static_assertion_msg((std::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
 //                         "do_intersect with objects of different dimensions not supported");

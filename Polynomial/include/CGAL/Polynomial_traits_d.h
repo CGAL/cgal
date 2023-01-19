@@ -389,7 +389,7 @@ public:
   struct Substitute_homogeneous{
   public:
     // this is the end of the recursion
-    // begin contains the homogeneous variabel
+    // begin contains the homogeneous variable
     // hdegree is the remaining degree
     template <class Input_iterator>
     typename

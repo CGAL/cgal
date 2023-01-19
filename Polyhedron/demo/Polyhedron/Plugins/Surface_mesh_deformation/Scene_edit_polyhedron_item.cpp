@@ -120,7 +120,7 @@ struct Scene_edit_polyhedron_item_priv
 
   double length_of_axis; // for drawing axis at a group of control vertices
 
-  // by interleaving 'viewer's events (check constructor), keep followings:
+  // by interleaving 'viewer's events (check constructor), keep following:
   Mouse_keyboard_state_deformation state;
 
   //For constraint rotation

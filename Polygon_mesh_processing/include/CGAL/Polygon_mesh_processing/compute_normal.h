@@ -17,7 +17,7 @@
 #include <CGAL/license/Polygon_mesh_processing/Compute_normal.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
@@ -88,6 +88,8 @@ void sum_normals(const PM& pmesh,
   typedef typename boost::graph_traits<PM>::halfedge_descriptor         halfedge_descriptor;
 
   typedef typename boost::property_traits<VertexPointMap>::reference    Point_ref;
+
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
 
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
@@ -171,6 +173,8 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type               GT;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -614,7 +618,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 *
 * computes the unit normal at vertex `v` as the average of the normals of incident faces.
 *
-* @note The function `compute_vertex_normals()` should be prefered if normals are intended to be
+* @note The function `compute_vertex_normals()` should be preferred if normals are intended to be
 *       computed at all vertices of the graph.
 *
 * @tparam PolygonMesh a model of `FaceGraph`
@@ -664,6 +668,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_vertex_descriptor(v, pmesh));
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;

@@ -21,7 +21,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Lightweight_vector_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/surface_reconstruction_points_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>

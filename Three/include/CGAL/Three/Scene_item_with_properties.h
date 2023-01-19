@@ -26,7 +26,7 @@ namespace Three {
   class Scene_item;
 
 //! Base class to allow an item to copy properties from another.
-//! Properties reprensent the current state of an item : its color,
+//! Properties represent the current state of an item : its color,
 //! the position of its manipulated frame, ...
 class DEMO_FRAMEWORK_EXPORT Scene_item_with_properties {
 public:

@@ -11,7 +11,7 @@
 // Author(s)     : Stefan Schirra
 
 // This file's name must begin with a lower-case letter for backward
-// compatability.  Unfortunately, you can't have a file that differs only
+// compatibility.  Unfortunately, you can't have a file that differs only
 // in capitalization on the Windows platforms.
 
 #ifndef CGAL_CONVEX_HULL_CONSTRUCTIVE_TRAITS_2_H
@@ -108,7 +108,7 @@ public:
   { return Equal_2(); }
 };
 
-// for backward compatability
+// for backward compatibility
 template <class K>
 class convex_hull_constructive_traits_2
   : public Convex_hull_constructive_traits_2<K>

@@ -781,7 +781,7 @@ public:
 
   // E2A()(e) and std::forward<E>(e) could be evaluated in any order, but
   // that's ok, "forward" itself does not modify e, it may only mark it as
-  // modifyable by the outer call, which is obviously sequenced after the inner
+  // modifiable by the outer call, which is obviously sequenced after the inner
   // call E2A()(e).
   template<class E>
   Lazy_rep_0(E&& e)

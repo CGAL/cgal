@@ -34,7 +34,7 @@ namespace CGAL {
 
   // Storage of darts with compact container, alpha using index
   // Copy of Combinatorial_map_storage_with_index and add new types related
-  // to geometry (not possible to inherith because we use Self type
+  // to geometry (not possible to inherit because we use Self type
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type).
   template<unsigned int d_, unsigned int ambient_dim, class Traits_,

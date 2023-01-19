@@ -729,10 +729,10 @@ public:
   }
 
   /// Reduce the length of the flat part starting at 'it' from its beginning
-  /// 'it' moves to the previous flat if the current flat disapeared.
+  /// 'it' moves to the previous flat if the current flat disappeared.
   /// The path could be not valid after this operation (consistency with next
   /// element should be ensure, by possibly updating the next flat part).
-  /// @return true iff the flat disapeared after its reduction.
+  /// @return true iff the flat disappeared after its reduction.
   bool reduce_flat_from_beginning(List_iterator& it,
                                   Set_of_it& modified_flats)
   {
@@ -755,10 +755,10 @@ public:
   }
 
   /// Reduce the length of the flat part starting at 'it' from its end.
-  /// 'it' moves to the previous flat if the current flat disapeared.
+  /// 'it' moves to the previous flat if the current flat disappeared.
   /// The path could be not valid after this operation (consistency with next
   /// element should be ensure, by possibly updating the next flat part).
-  /// @return true iff the flat disapeared after its reduction.
+  /// @return true iff the flat disappeared after its reduction.
   bool reduce_flat_from_end(List_iterator& it,
                             Set_of_it& modified_flats)
   {
@@ -1167,7 +1167,7 @@ public:
     if (!m_use_only_positive && m_MQ.negative_turn(end_of_flat(ittemp), dh)==2)
     { negative_flat=true; }
 
-    if (flat_length(ittemp)==0) // Case of flat lengh 0
+    if (flat_length(ittemp)==0) // Case of flat length 0
     { return positive_flat || negative_flat; }
 
     return (flat_length(ittemp)>0 && positive_flat) ||
@@ -1200,7 +1200,7 @@ public:
      if (!m_use_only_positive && m_MQ.negative_turn(dh, begin_of_flat(ittemp))==2)
      { negative_flat=true; }
 
-     if (flat_length(ittemp)==0)  // Case of flat lengh 0
+     if (flat_length(ittemp)==0)  // Case of flat length 0
      { return positive_flat || negative_flat; }
 
      return (flat_length(ittemp)>0 && positive_flat) ||

@@ -46,7 +46,7 @@ struct Has_type_different_from <T, No, true>
         // tell a function f(a,b,c) that its real argument is a(b,c)
         struct Eval_functor {};
 
-        // forget the first argument. Useful to make something dependant
+        // forget the first argument. Useful to make something dependent
         // (and thus usable in SFINAE), although that's not a great design.
         template<class A,class B> struct Second_arg {
                 typedef B type;
@@ -138,7 +138,7 @@ struct Has_type_different_from <T, No, true>
 }
 
 // TODO: make a Cartesian-only variant
-// WARNING: do not use the Req* parameters too much, they can cause circular instanciations and are only useful for dispatching.
+// WARNING: do not use the Req* parameters too much, they can cause circular instantiations and are only useful for dispatching.
 #define CGAL_STRIP_PAREN_(...) __VA_ARGS__
 #define CGAL_STRIP_PAREN(...) CGAL_STRIP_PAREN_ __VA_ARGS__
 // What to do with O? pass it down to other functors or drop it?

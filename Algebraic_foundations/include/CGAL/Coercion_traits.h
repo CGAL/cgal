@@ -29,7 +29,7 @@
 
 #include <CGAL/tags.h>
 
-// Makro to define an additional operator for binary functors which takes
+// Macro to define an additional operator for binary functors which takes
 // two number types as parameters that are interoperable with the
 // number type
 #define CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, Result_type  ) \

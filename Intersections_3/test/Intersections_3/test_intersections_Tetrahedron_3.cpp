@@ -143,6 +143,8 @@ public:
     // edge shared, 3rd point outside
     check_intersection(tet, Tr(p(0,1,0), p(1,0,0), P(0.5,0,-100)),
                        S(p(0,1,0), p(1,0,0)));
+    check_intersection(tet, Tr(P(0.75,0.25,0), p(10,10,10), P(0.25,0.75,0)),
+                       S(P(0.75,0.25,0), P(0.25,0.75,0)));
 
     // shared edge, 3rd point inside
     check_intersection(tet, Tr(p(0,1,0), p(1,0,0), P(0.25,0.25,0.25)),
@@ -166,7 +168,7 @@ public:
 
     // face inside tr
     check_intersection(tet, Tr(p(0,2,0), p(0,-2,0), p(0,0,2)),
-                       Tr(p(0,0,1), p(0,0,0), p(0,1,0)));
+                       Tr(p(0,1,0), p(0,0,0), p(0,0,1)));
 
     // on the same plane, polygonal intersection
     Base::template check_intersection<Poly>(tet, Tr(p(0,-2,0), p(1,1,0), p(1,2,0)));
@@ -188,6 +190,14 @@ public:
 
     // vertex on edge & triangle inside, double segment non-incident
     Base::template check_intersection<Poly>(tet, Tr(P(0.25,0,0.25), P(-1,0.5,0.25), P(1.5,0.5,0.25)));
+
+    // vertex on face, triangle outside & point intersection
+    Base::check_intersection(tet, Tr(P(-1,1,0.25), P(-1,0,0.25), P(0,0.25,0.25)),
+                             P(0, 0.25, 0.25));
+    Base::check_intersection(tet, Tr(P(-1,0,0.25), P(-1,1,0.25), P(0,0.25,0.25)),
+                             P(0, 0.25, 0.25));
+    Base::check_intersection(tet, Tr(P(0,0.25,0.25), P(-1,1,0.25), P(-1,0,0.25)),
+                             P(0, 0.25, 0.25));
 
     // vertex on face, triangle outside & segment intersection
     Base::check_intersection(tet, Tr(P(0.5,0,-0.25), P(0.5,0,0.25), P(0.5,-0.5,0)),
@@ -307,12 +317,23 @@ public:
     }
   }
 
+  void issue_6777()
+  {
+    Tr tri(P(0.191630, -0.331630, -0.370000), P(-0.124185, -0.385815, -0.185000), P(-0.0700000, -0.0700000, 0.00000));
+    Tet tet(P(0, -1, 0), P(-1, 0, 0), P(0, 0, 0), P(0, 0, -1));
+    auto res = intersection(tri, tet);
+    assert(res != boost::none);
+    const std::vector<P> *vps = boost::get<std::vector<P>>(&*res);
+    assert(vps!=nullptr);
+  }
+
   void run()
   {
     std::cout << "3D Tetrahedron Intersection tests\n";
 
     Tet_Tet();
     Tet_Tr();
+    issue_6777();
   }
 };
 

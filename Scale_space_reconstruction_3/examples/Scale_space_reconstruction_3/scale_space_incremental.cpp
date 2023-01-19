@@ -81,6 +81,6 @@ int main(int argc, char* argv[])
       }
     }
 
-    std::cout << "Reconstructions are ready to be examinated in your favorite viewer" << std::endl;
+    std::cout << "Reconstructions are ready to be examined in your favorite viewer" << std::endl;
     return EXIT_SUCCESS;
 }
