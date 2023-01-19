@@ -29,6 +29,7 @@
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_halfedge_key.h>
 #include <CGAL/Nef_3/SNC_sphere_map.h>
+#include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #ifdef SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
@@ -40,9 +41,6 @@
 #include <CGAL/Nef_2/debug.h>
 
 namespace CGAL {
-
-template <typename T>
-class SNC_io_parser;
 
 template <typename Infi_box, typename Vertex_handle>
 struct Frame_point_lt {
