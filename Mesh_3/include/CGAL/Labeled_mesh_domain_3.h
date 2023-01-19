@@ -51,7 +51,8 @@
 
 #include <CGAL/Mesh_3/Null_subdomain_index.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include <CGAL/Mesh_3/Feature_range.h>
+
+#include <CGAL/Mesh_3/polylines_to_protect.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -179,28 +180,27 @@ namespace internal {
 
   template<bool WithFeatures>
   struct Add_features_in_domain {
-    template<typename MeshDomain, typename InputFunctor, typename DetectFunctor>
-    void operator()(const CGAL::Image_3&, MeshDomain&, InputFunctor, DetectFunctor)
+    template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
+    void operator()(const CGAL::Image_3&, MeshDomain&, InputFeatureRange, DetectFunctor)
     {}
   };
 
   template<>
   struct Add_features_in_domain<true>
   {
-    template<typename MeshDomain, typename InputFunctor, typename DetectFunctor>
+    template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
     void operator()(const CGAL::Image_3& image,
                     MeshDomain& domain,
-                    InputFunctor input_features,
+                    const InputFeatureRange& input_features,
                     DetectFunctor detect_features)
     {
-      const auto user_feature_range
-        = std::move(CGAL::Mesh_3::internal::add_input_features(domain, input_features));
       auto detected_feature_range
         = std::move(CGAL::Mesh_3::internal::detect_features(image, domain, detect_features));
 
-      CGAL::merge_and_snap_polylines(image, detected_feature_range, user_feature_range);
+      CGAL::merge_and_snap_polylines(image, detected_feature_range, input_features);
 
-      domain.add_features(user_feature_range.begin(), user_feature_range.end());
+      if (!input_features.empty())
+        domain.add_features(input_features.begin(), input_features.end());
       domain.add_features(detected_feature_range.begin(), detected_feature_range.end());
     }
   };
@@ -699,7 +699,8 @@ public:
     CGAL::Image_3 no_weights;
     const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights);
     auto detect_features_ = choose_parameter(get_parameter(np, internal_np::detect_features_param), Null_functor());
-    auto input_features_ = choose_parameter(get_parameter(np, internal_np::input_features_param), Null_functor());
+    std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>> empty_vec;
+    auto input_features_ = choose_parameter(get_parameter_reference(np, internal_np::input_features_param), empty_vec);
 
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;

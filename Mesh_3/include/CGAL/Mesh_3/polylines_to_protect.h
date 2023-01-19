@@ -37,6 +37,8 @@
 
 #include <CGAL/Mesh_3/Null_subdomain_index.h>
 
+#include <type_traits>
+
 namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
@@ -1132,13 +1134,16 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
 }
 
 
-template <typename PolylineRange>
+template <typename PolylineRange1, typename PolylineRange2>
 void
 merge_and_snap_polylines(const CGAL::Image_3& image,
-                         PolylineRange& polylines_to_snap,
-                         const PolylineRange& existing_polylines)
+                         PolylineRange1& polylines_to_snap,
+                         const PolylineRange2& existing_polylines)
 {
-  using P = typename PolylineRange::value_type::value_type;
+  static_assert(std::is_same<typename PolylineRange1::value_type::value_type,
+                             typename PolylineRange2::value_type::value_type>::value,
+                "Polyline ranges should have same point type");
+  using P = typename PolylineRange1::value_type::value_type;
   using K = typename Kernel_traits<P>::Kernel;
 
   using CGAL::internal::polylines_to_protect_namespace::Vertex_info;

@@ -473,6 +473,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       get<Polyhedral_mesh_items>(&*items)
           ? get<Polyhedral_mesh_items>(&*items)->polylines_item
           : nullptr;
+  if (polylines_item == nullptr && get<Image_mesh_items>(&*items) != nullptr)
+    polylines_item = get<Image_mesh_items>(&*items)->polylines_item;
   Scene_implicit_function_item* function_item =
       get<Implicit_mesh_items>(&*items)
           ? get<Implicit_mesh_items>(&*items)->function_item.get()
@@ -611,19 +613,28 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
 
+  const QString sharp_and_boundary("Sharp and Boundary edges");
+  const QString boundary_only("Boundary edges only");
+  const QString sharp_edges("Sharp edges");
+  const QString input_polylines("Input polylines");
+  const QString on_cube("Polylines on cube");
+  const QString triple_lines("Triple+ lines");
   if (features_protection_available) {
     if (items->which() == POLYHEDRAL_MESH_ITEMS) {
       if (mesh_type == Mesh_type::SURFACE_ONLY) {
-        ui.protectEdges->addItem(QString("Sharp and Boundary edges"));
-        ui.protectEdges->addItem(QString("Boundary edges only"));
+        ui.protectEdges->addItem(sharp_and_boundary);
+        ui.protectEdges->addItem(boundary_only);
       } else
-        ui.protectEdges->addItem(QString("Sharp edges"));
+        ui.protectEdges->addItem(sharp_edges);
     } else if (items->which() == IMAGE_MESH_ITEMS) {
-      if (polylines_item != nullptr)
-        ui.protectEdges->addItem(QString("Input polylines"));
+      if (polylines_item != nullptr) {
+        ui.protectEdges->addItem(QString(input_polylines).append(" only"));
+        ui.protectEdges->addItem(QString(on_cube).append(" and input polylines"));
+        ui.protectEdges->addItem(QString(triple_lines).append(" and input polylines"));
+      }
       else {
-        ui.protectEdges->addItem(QString("Polylines on cube"));
-        ui.protectEdges->addItem(QString("Triple+ lines detected"));
+        ui.protectEdges->addItem(on_cube);
+        ui.protectEdges->addItem(triple_lines);
       }
     }
   }
@@ -671,10 +682,15 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
   tets_shape = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
-  protect_borders =
-      ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 0);
-  protect_features =
-      ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 1);
+
+  const int pe_ci = ui.protectEdges->currentIndex();
+  protect_borders = ui.protect->isChecked()
+    && (  pe_ci == ui.protectEdges->findText(on_cube, Qt::MatchContains)
+       || pe_ci == ui.protectEdges->findText(boundary_only, Qt::MatchContains));
+  protect_features = ui.protect->isChecked()
+    && (  pe_ci == ui.protectEdges->findText(triple_lines, Qt::MatchContains)
+       || pe_ci == ui.protectEdges->findText(sharp_and_boundary, Qt::MatchContains));
+
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = (ui.manifoldCheckBox->isChecked() ? 1 : 0) +
                        (ui.facetTopology->isChecked() ? 2 : 0);

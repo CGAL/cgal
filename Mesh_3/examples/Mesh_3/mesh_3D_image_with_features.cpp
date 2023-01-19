@@ -13,7 +13,6 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
-#include <CGAL/Mesh_3/Feature_range.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
@@ -61,7 +60,7 @@ int main(int argc, char* argv[])
   // Domain
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image,
     params::detect_features = CGAL::Mesh_3::Detect_features_on_image_bbox(),
-    params::input_features = CGAL::Mesh_3::Feature_range(features_inside));
+    params::input_features = std::cref(features_inside));
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
   Mesh_criteria criteria(params::edge_size(6).
