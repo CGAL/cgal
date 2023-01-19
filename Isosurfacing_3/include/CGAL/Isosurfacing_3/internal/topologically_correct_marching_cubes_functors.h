@@ -141,7 +141,7 @@ public:
       m_points.push_back(vertices[eg1]);
       m_points.push_back(vertices[eg2]);
 
-      // insert new triangle in list
+      // insert new triangle into list
       m_polygons.emplace_back();
       auto& triangle = m_polygons.back();
 
@@ -178,7 +178,7 @@ private:
     typename Geom_traits::Construct_point_3 point = m_domain.geom_traits().construct_point_3_object();
 
     // there are 12 edges, assign to each vertex three edges, the global edge numbering
-    // consist of 3*global_vertex_id + edge_offset.
+    // consists of 3*global_vertex_id + edge_offset.
     const unsigned long long gei_pattern_ = 670526590282893600ull;
 
     // code edge end vertices for each of the 12 edges
@@ -246,11 +246,11 @@ private:
 
     // compute oriented contours
     //
-    // A countour consists of segment at the faces connecting the intersection of the
-    // isosurface with the edges. For each edge we store the edge to which the segment
-    // is outgoing and the edge from which the segment in comming. Therefore a contour
-    // cab be reconstructed by connecting the edges in the direccion of the outgoing.
-    // The contour is oriented in such a way, that the positive vertices are outside.
+    // A contour consists of segment at the faces connecting the intersection of the
+    // isosurface with the edges. For each edge, we store the edge to which the segment
+    // is outgoing and the edge from which the segment in coming. Therefore, a contour
+    // can be reconstructed by connecting the edges in the direction of the outgoing.
+    // The contour is oriented in such a way that the positive vertices are outside.
     // 1. build segments
     // 2. connect segments
     // build up segments
@@ -281,10 +281,10 @@ private:
     auto is_segm_set = [](const int e, unsigned char segm_[12]) { return (segm_[e] != 0xFF); };
     auto unset_segm = [](const int e, unsigned char segm_[12]) { segm_[e] = 0xFF; };
 
-    // In order to compute oriented segments, the hexahedron has to be flatten.
-    // The insides of the faces of the hexahedron have to be all at the same
-    // side of the flattend hexa. This requires changing the order of the
-    // edges when reading from the faces
+    // In order to compute oriented segments, the hexahedron must be flattened.
+    // The inside of the faces of the hexahedron must be all on the same
+    // side of the flattened hexahedron. This requires changing the order of 
+    // the edges when reading from the faces
     // code edges at face
     // unsigned short face_e_[6] = { 12816, 30292, 33936, 46754, 34739, 38305 };
     std::array<unsigned short, 6> e_face_{{291, 18277, 18696, 10859, 33719, 38305}};
@@ -584,7 +584,7 @@ private:
 
     // compute intersection of opposite faces
     //
-    // It is enough to compute a pair of solutions for one face
+    // It is sufficient to compute a pair of solutions for one face
     // The other solutions are obtained by evaluating the equations
     // for the common variable
     FT ui[2]{};
@@ -779,7 +779,7 @@ private:
       unsigned char _not_tunnel = 0xF;
       if(cnt_ == 3)
       {
-        // loop over the contorus
+        // loop over the contours
         // triangulate the contour which is not part of
         // the tunnel
         const FT uc_min = (ui[0] < ui[1]) ? ui[0] : ui[1];

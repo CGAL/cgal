@@ -7,8 +7,8 @@
 fulfilled by any class used as input data for isosurfacing algorithms.
 
 A model of the concept `IsosurfacingDomain_3` provides a discrete representation
-of an implicit function through a partition of the Euclidean space in cells.
-The isosurfacing algorithms will traverse these cells and query the domain class
+of an implicit field through a partition of the Euclidean space in cells.
+The isosurfacing algorithms traverse these cells and query the domain class
 at the vertices of each cell, using the functions `point()` and `value()`.
 
 \cgalHasModel `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
@@ -96,7 +96,7 @@ public:
   Point_3 point(const Vertex_descriptor& v) const;
 
   /*!
-  gets the value of the implicit function at a vertex
+  gets the value of the implicit field at a vertex
   */
   FT value(const Vertex_descriptor& v) const;
 

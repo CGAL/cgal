@@ -61,7 +61,7 @@ public:
       size_k{size_k}
   { }
 
-  // gets a container with the two vertices incident to the edge e
+  // gets a container with the two vertices incident to edge e
   Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const
   {
     Vertices_incident_to_edge ev;
@@ -71,7 +71,7 @@ public:
     return ev;
   }
 
-  // gets a container with all cells incident to the edge e
+  // gets a container with all cells incident to edge e
   Cells_incident_to_edge incident_cells(const Edge_descriptor& e) const
   {
     // lookup the neighbor cells relative to the edge
@@ -90,7 +90,7 @@ public:
     return cite;
   }
 
-  // gets a container with all vertices of the cell c
+  // gets a container with all vertices of cell c
   Cell_vertices cell_vertices(const Cell_descriptor& c) const
   {
     Cell_vertices cv;
@@ -105,7 +105,7 @@ public:
     return cv;
   }
 
-  // gets a container with all edges of the cell c
+  // gets a container with all edges of cell c
   Cell_edges cell_edges(const Cell_descriptor& c) const
   {
     Cell_edges ce;

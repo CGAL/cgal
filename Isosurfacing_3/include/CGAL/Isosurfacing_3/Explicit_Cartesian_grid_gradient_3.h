@@ -24,7 +24,7 @@ namespace Isosurfacing {
  *
  * \brief Class template for a gradient that is stored in a %Cartesian grid.
  *
- * \details The gradient at any point is calculated using trilinear interpolation.
+ * \details The gradient at a query point is calculated by trilinear interpolation.
  *
  * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
  */

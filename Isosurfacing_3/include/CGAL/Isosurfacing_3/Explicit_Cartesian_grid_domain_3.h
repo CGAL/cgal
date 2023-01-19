@@ -59,7 +59,7 @@ using Explicit_Cartesian_grid_domain_3 =
  *
  * \brief Creates a domain that can be used as input for isosurfacing algorithms.
  *
- * \warning The domain will keep a pointer to the `grid` object and users must thus ensure that
+ * \warning As the domain will keep a pointer to the `grid` object, users must ensure that
  *          the lifetime of the `grid` object exceeds that of the object returned by this function.
  *
  * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.

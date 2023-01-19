@@ -77,7 +77,7 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
   typename GeomTraits::Compute_z_3 z_coord = gt.compute_z_3_object();
   typename GeomTraits::Construct_point_3 point = gt.construct_point_3_object();
 
-  FT mu;
+  FT mu = (FT)0.0;
 
   // don't divide by 0
   if(abs(d1 - d0) < 0.000001) // @fixme hardcoded bound

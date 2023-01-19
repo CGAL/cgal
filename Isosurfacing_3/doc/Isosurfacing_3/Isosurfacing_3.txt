@@ -7,8 +7,8 @@ namespace CGAL {
 \cgalAutoToc
 \author Julian Stahl, Daniel Zint, and Pierre Alliez
 
-[PA] : I recommend to select a more complex example (medical?), use a white background instead
-of default Meshlab one and superimpose the mesh edges in black.
+% [PA] : I recommend to select a more complex example (medical?), use a white background instead 
+% of default Meshlab one and superimpose the mesh edges in black.
 
 \cgalFigureAnchor{isosurfacing_bunny_offset}
 <center>
@@ -20,13 +20,10 @@ Isosurfacing with different isovalues for the bunny model.
 
 \section secmyintroduction Introduction
 
-TODO: add a context and motivation: when do you need MC or dual contouring? what can represent
-the input scalar field ? illustrate this from eg density fields in medical imaging, or distance fields, etc.
-
-
-TODO: stick to 'field' throughout the whole documentation, and leave the term 'function' for C++ function.
-This is valid for all terms: introduce them and do not interchange with others throughout the documentation.
-TODO: Make sure you you clearly state that the input field is sampled.
+% TODO: add a context and motivation: when do you need MC or dual contouring? what can represent
+% the input scalar field ? illustrate this from eg density fields in medical imaging, or distance fields, etc.
+% TODO: Introduce the terms and stick to them - do not interchange with others throughout the documentation.
+% TODO: Make sure you you clearly state that the input field is sampled.
 
 This package provides isosurfacing algorithms that compute a surface mesh approximating an isosurface
 of a scalar field defined over an input 3D domain.
@@ -39,7 +36,7 @@ The output may also be empty when the isosurface is absent from the sampled inpu
 
 \section secmyalgorithms Algorithms
 
-There is a wide range of algorithms for extracting isosurfaces.
+There is a wide range of existing algorithms for extracting isosurfaces.
 This package offers Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
 
 \subsection subsecmc Marching Cubes (MC)
@@ -50,8 +47,10 @@ MC creates a vertex for each grid edge with a sign change, i.e. where the edge i
 More specifically, the vertex position is computed via linear interpolation of the scalar field values
 evaluated at the cell corners forming the edge. Depending on the configuration of signs at the cell corners,
 the resulting vertices are connected to form triangles within the cell. The figure below illustrates
-the configurations in 2D. [it would be better to show a subset of 3D cases, too, even if the figure
-is taken from a paper - it is probably possible to contact the authors and add a statement - figure courtesy from xxx]
+the configurations in 2D. 
+% [it would be better to show a subset of 3D cases, too, even if the figure 
+% is taken from a paper - it is probably possible to contact the authors and 
+% add a statement - figure courtesy from xxx]
 
 \cgalFigureAnchor{isosurfacing_mc_cases}
 <center>
@@ -64,18 +63,19 @@ Different configurations of Marching Cubes in 2D.
 
 The proposed implementation is generic in that it can process any grid-based data structure that consists of hexahedral cells.
 In case of a conforming grid, MC generates as output a surface triangle mesh that is 2-manifold in most scenarios.
-[TODO: reformulate, as it is either strict or not - precise in which cases it is not, and say
-whether you talk about just combinatorially 2-manifold, or truly 2-manifold with 3D embedding taken into account]
-If the mesh is 2-manifold and the isosurface does not intersect the domain boundaries, then the output mesh
-is also watertight. [add a figure showing the two cases]
+% [TODO: reformulate, as it is either strict or not - precise in which cases it is not, and say
+% whether you talk about just combinatorially 2-manifold, or truly 2-manifold with 3D embedding taken into account]
+% If the mesh is 2-manifold and the isosurface does not intersect the domain boundaries, then the output mesh
+% is also watertight. [add a figure showing the two cases]
 As MC only proceeds by linear interpolation of the sampled scalar field along the grid edges,
 it can miss details or components that are not captured by the said sampling and interpolation.
 
-Compared to other approaches such as Delaunay refinement (TODO: add link to component), and depending
-on the parameters, the MC algorithm often generates more triangles, and triangles with small angles.
-[The statement is too strong - I would largely reformulate it as this depends too much on the parameters.
-I recommend to add instead a figure with different parameters and methods, depicting the mesh edges in black in addition to the shaded facets]
-MC does not preserve the sharp features present in the isovalue of the input scalar field [add a figure].
+Compared to other approaches such as Delaunay refinement, and depending on the parameters, 
+the MC algorithm often generates more triangles, and more skinny triangles with small or large angles.
+% [The statement is too strong - I would largely reformulate it as this depends too much on the parameters.
+% I recommend to add instead a figure with different parameters and methods, 
+% depicting the mesh edges in black in addition to the shaded facets]
+MC does not preserve the sharp features present in the isovalue of the input scalar field % [add a figure].
 
 
 \subsection subsectmc Topologically Correct Marching Cubes (TMC)
@@ -84,10 +84,11 @@ It generates as output a mesh that is homeomorphic to the trilinear interpolant 
 This means that the output mesh can accurately represent small complex features.
 For example, a tunnel of the isosurface within a single cell is topologically resolved.
 Furthermore, the mesh is guaranteed to be 2-manifold and watertight, as long as the isosurface does
-not intersect the domain boundaries. [add a figure comparing without and with the option activated]
+not intersect the domain boundaries. 
+% [add a figure comparing without and with the option activated]
 
-[TODO: add following to CGAL list of references]
-Roberto Grosso: Construction of Topologically Correct and Manifold Isosurfaces. Computer Graphics Forum 35(5):187-196 - 2016.
+% [TODO: add following to CGAL list of references]
+% Roberto Grosso: Construction of Topologically Correct and Manifold Isosurfaces. Computer Graphics Forum 35(5):187-196 - 2016.
 
 \subsection subsecdc Dual Contouring (DC)
 DC creates one vertex for each cell that is intersected by the isosurface.
@@ -107,7 +108,8 @@ Some variants do not require the gradient and therefore run successfully even wh
 
 Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh.
 It generates fewer faces than Marching Cubes, in general.
-Its advantage over MC is its ability to recover sharp creases. [what about tips, darts, cusps and corners? respectively adjacent to 0, 1, 2 and 3+ creases] TODO: add a figure.
+Its advantage over MC is its ability to recover sharp creases and corners. 
+% [what about tips, darts, cusps and corners? respectively adjacent to 0, 1, 2 and 3+ creases] TODO: add a figure.
 
 \cgalFigureAnchor{isosurfacing_iwp_dc}
 <center>
@@ -127,7 +129,7 @@ The following table compares the algorithms in terms of constraints over the inp
   TMC               | Hexahedral | Triangles   | yes       | yes           | yes                   |
   DC                | All        | Polygons    | no        | no            | no                    |
 
-(* assuming the isosurface does not leave the specified bounding box of the input 3D domain)
+(* assuming the isosurface does not exit the specified bounding box of the input 3D domain)
 
 \cgalFigureAnchor{isosurfacing_compare_mc_dc}
 <center>
@@ -151,7 +153,7 @@ The input is provided in the form of a `domain` (see \ref secmydomains).
 
 The `isovalue` scalar parameter denotes the value used for sampling the input scalar field for generating the isosurface.
 
-[why using the term collection below ? how about containers? ]
+% [why using the term collection below ? how about containers? ]
 
 The output surface mesh is provided in the form of a indexed face set, which is written to the two collections `points` and `polygons`.
 The vertex positions are stored as `Point_3` in `points`. Each face in `polygons` is a list of indices pointing into the `points` collection.
@@ -163,7 +165,9 @@ To enable parallelism, CGAL must be linked with the Intel TBB library.
 When the parallel version is not available due to unsuccessful link with the TBB library, then the sequential version is utilized as a fallback.
 
 \section secmydomains Domains
-A domain is an object that provides functions to access the input data, its geometry, topology, and optionally its gradient. [I fail to understand how you specify the topology - for me the domain is the support of the scalar field, whose sampling/interpolation will yield the output mesh topology]
+A domain is an object that provides functions to access the input data, its geometry, topology, and optionally its gradient. 
+% [I fail to understand how you specify the topology - for me the domain is the support of the scalar field, whose 
+% sampling/interpolation will yield the output mesh topology]
 For common representations, we offer a set of predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
 Users can also define new domains by implementing the `IsosurfacingDomain_3` or `IsosurfacingDomainWithGradient_3` concepts.
 
@@ -196,7 +200,7 @@ Scalability of the Marching Cubes algorithm. We plot the algorithm efficiency (n
 \subsection myExampleImplicit_domain Implicit sphere
 
 The following example shows the usage of the Marching Cubes algorithm to extract an isosurface.
-The domain is an `Implicit_domain` that describes the unit sphere by the distance to its center (set to the origin) as an implicit function.
+The domain is an `Implicit_domain` that describes the unit sphere by the distance to its center (set to the origin) as an implicit field.
 
 \cgalExample{Isosurfacing_3/marching_cubes_implicit_sphere.cpp}
 
@@ -215,7 +219,7 @@ The following example shows how to load data from an `Image_3`.
 \subsection myExampleMeshOffset Offset Mesh
 
 The following example shows how to compute a signed offset mesh.
-The input mesh is stored into an `AABB_tree` data structure to allow fast distance queries. Via the `Side_of_triangle_mesh` functor, the sign of the distance function is made negative inside the mesh.
+The input mesh is stored into an `AABB_tree` data structure to allow fast distance queries. Via the `Side_of_triangle_mesh` functor, the sign of the distance field is made negative inside the mesh.
 
 \cgalExample{Isosurfacing_3/dual_contouring_mesh_offset.cpp}
 

@@ -258,7 +258,7 @@ private:
   {
     CGAL_precondition(x < xdim() && y < ydim() && z < zdim());
 
-    // convert (x, y, z) into a linear index to access the scalar value / gradient vectors
+    // convert (x, y, z) into a linear index to access the scalar values / gradient vectors
     return (z * ydim() + y) * xdim() + x;
   }
 };
@@ -301,7 +301,7 @@ Image_3
 Cartesian_grid_3<GeomTraits>::
 to_image() const
 {
-  // select the number type
+  // select number type
   WORD_KIND wordkind;
   if(std::is_floating_point<FT>::value)
     wordkind = WK_FLOAT;

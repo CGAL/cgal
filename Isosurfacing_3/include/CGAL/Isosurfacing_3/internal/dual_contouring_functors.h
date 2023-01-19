@@ -102,7 +102,7 @@ public:
 
       if((val0 <= isovalue) != (val1 <= isovalue))
       {
-        // this edge is intersected by the isosurface
+        // current edge is intersected by the isosurface
         const FT u = (val0 - isovalue) / (val0 - val1);
         const Point_3 p_lerp = point((1 - u) * x_coord(p0) + u * x_coord(p1),
                                      (1 - u) * y_coord(p0) + u * y_coord(p1),
@@ -149,7 +149,7 @@ public:
     Eigen::VectorXd v_svd = x_hat + svd.solve(rhs - A * x_hat);
     p = point(v_svd[0], v_svd[1], v_svd[2]);
 
-    // bbox
+    // bounding box
     if(use_bbox)
     {
       CGAL::Bbox_3 bbox = pos[0].bbox() + pos[7].bbox();  // @todo remove[0],[7]
@@ -268,9 +268,9 @@ public:
 
       if((val0 <= isovalue) != (val1 <= isovalue))
       {
-        // this edge is intersected by the isosurface
+        // current edge is intersected by the isosurface
         const FT u = (val0 - isovalue) / (val0 - val1);
-        const Point_3 p_lerp = CGAL::ORIGIN + ((1 - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
+        const Point_3 p_lerp = CGAL::ORIGIN + ((1.0 - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
         edge_intersections.push_back(p_lerp);
       }
     }
@@ -310,7 +310,7 @@ public:
   void operator()(const Cell_descriptor& v)
   {
     // compute dc-vertices
-    Point_3 p;
+    Point_3 p; // fixme: initialize?
     if(positioning.position(domain, isovalue, v, p))
     {
       std::lock_guard<std::mutex> lock(mutex);
