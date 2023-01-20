@@ -21,6 +21,31 @@
 #include <CGAL/Mesh_3/Detect_features_in_image.h>
 #include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
 #include <CGAL/use.h>
+#include <vector>
+
+#include <cstddef>
+#include <fstream>
+
+template <typename Point_3>
+bool read_polylines(const std::string fname,
+                    std::vector<std::vector<Point_3> >& polylines)
+{
+  std::ifstream ifs(fname);
+  if(ifs.bad()) return false;
+  std::size_t n;
+  while(ifs >> n) {
+    polylines.resize(polylines.size()+1);
+    std::vector<Point_3>& polyline = polylines.back();
+    while(n-- != 0) {
+      Point_3 p;
+      ifs >> p;
+      if(ifs.fail()) return false;
+      polyline.push_back(p);
+    }
+  }
+  if(ifs.bad()) return false;
+  else return ifs.eof();
+}
 
 template <typename Concurrency_tag = CGAL::Sequential_tag>
 struct Image_tester : public Tester<K_e_i>
@@ -106,6 +131,34 @@ public:
 
     mesh_and_verify(domain, image, 625044.);
   }
+
+  void image_with_input_features() const
+  {
+    namespace p = CGAL::parameters;
+    std::cout << "\tSeed is\t"
+      << CGAL::get_default_random().get_seed() << std::endl;
+
+    //-------------------------------------------------------
+    // Data generation
+    //-------------------------------------------------------
+    Image image;
+    image.read(CGAL::data_file_path("images/40420.inr"));
+
+    const std::string lines_fname = CGAL::data_file_path("images/420.polylines.txt");
+    using Point_3 = Domain::Point_3;
+    std::vector<std::vector<Point_3> > features_input;
+    if (!read_polylines(lines_fname, features_input)) // see file "read_polylines.h"
+      assert(false);
+
+    Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
+     (p::image = image,
+      p::relative_error_bound = 1e-9,
+      CGAL::parameters::p_rng = &CGAL::get_default_random(),
+      CGAL::parameters::detect_features = CGAL::Mesh_3::Detect_features_on_image_bbox(),
+      CGAL::parameters::input_features = std::cref(features_input));
+
+    mesh_and_verify(domain, image, 632091.);
+  }
 };
 
 
@@ -121,6 +174,11 @@ int main()
             << " with detection of triple lines on bbox only:\n";
   test_epic.image_in_bbox();
 
+  std::cerr << "Mesh generation from a 3D image"
+            << " with detection of triple lines on bbox"
+            << " and input feature polylines:\n";
+  test_epic.image_with_input_features();
+
 #ifdef CGAL_LINKED_WITH_TBB
   Image_tester<CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation from a 3D image"
@@ -130,6 +188,11 @@ int main()
   std::cerr << "Parallel mesh generation from a 3D image"
             << " with detection of triple lines on bbox only:\n";
   test_epic_p.image_in_bbox();
+
+  std::cerr << "Parallel mesh generation from a 3D image"
+            << " with detection of triple lines on bbox"
+            << " and input feature polylines:\n";
+  test_epic_p.image_with_input_features();
 #endif
 
   return EXIT_SUCCESS;
