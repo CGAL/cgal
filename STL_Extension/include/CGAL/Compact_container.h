@@ -33,6 +33,7 @@
 #include <CGAL/Time_stamper.h>
 #include <CGAL/Has_member.h>
 #include <CGAL/assertions.h>
+#include <CGAL/IO/io.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -1152,6 +1153,20 @@ namespace handle {
 } // namespace handle
 
 } // namespace internal
+
+template <class DSC, bool Const >
+class Output_rep<CGAL::internal::CC_iterator<DSC, Const> > {
+protected:
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Compact_container = typename CC_iterator::CC;
+  using Time_stamper = typename Compact_container::Time_stamper;
+  CC_iterator it;
+public:
+  Output_rep( const CC_iterator it) : it(it) {}
+  std::ostream& operator()( std::ostream& out) const {
+    return (out << Time_stamper::display_id(it.operator->()));
+  }
+};
 
 } //namespace CGAL
 
