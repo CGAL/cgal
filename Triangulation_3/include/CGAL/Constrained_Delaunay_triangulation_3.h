@@ -370,19 +370,23 @@ public:
         if(c_id != Constraint_id{}) {
           auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
           auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+          CGAL_assertion_code(const auto constraint_size = std::distance(vit, v_end);)
           if(vit != v_end) {
             const bool constraint_c_id_is_reversed = (*vit != va);
             CGAL_assertion(*vit == (constraint_c_id_is_reversed ? vb : va));
             if(++vit != v_end && vit != --v_end) {
+              CGAL_assertion(constraint_size == std::distance(vit, v_end) + 2);
               CGAL_assertion(*v_end == (constraint_c_id_is_reversed ? va : vb));
               if(constraint_c_id_is_reversed) {
                 using std::swap;
                 swap(vit, v_end);
+                --vit;
+                --v_end;
               };
               while(vit != v_end) {
                 auto vh_2d = cdt_2.insert(tr.point(*vit));
                 vh_2d->info().vertex_handle_3d = *vit;
-                std::cerr << "insert constraint ("
+                std::cerr << "cdt_2.insert_constraint ("
                           << tr.point(previous_2d->info().vertex_handle_3d)
                           << " , "
                           << tr.point(vh_2d->info().vertex_handle_3d)
