@@ -346,14 +346,14 @@ longest_border(const PolygonMesh& pmesh,
   {
     FT len = 0;
     for(halfedge_descriptor haf : halfedges_around_face(h, pmesh))
-      {
-        len += edge_length(haf, pmesh, np);
-      }
+    {
+      len += edge_length(haf, pmesh, np);
+    }
     if(result_len < len)
-      {
-        result_len = len;
-        result_halfedge = h;
-      }
+    {
+      result_len = len;
+      result_halfedge = h;
+    }
   }
   return std::make_pair(result_halfedge, result_len);
 }
