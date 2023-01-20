@@ -299,7 +299,7 @@ struct Fake_CDT_3_cell_base : public Cb
   operator>>( std::istream& is, Fake_CDT_3_cell_base& c) {
     is >> static_cast<Cb&>(c);
     for( int li = 0; li < 4; ++li ) {
-      if( CGAL::is_ascii(is) )
+      if( CGAL::IO::is_ascii(is) )
         is >> c.face_id[li];
       else
         CGAL::read( is, c.face_id[li] );
