@@ -4,7 +4,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Constrained_Delaunay_triangulation_3.h>
-
+#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
@@ -14,16 +14,17 @@
 #include <fstream>
 #include <string>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
-typedef CGAL::Triangulation_data_structure_3<
-  CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>,
-  CGAL::Constrained_Delaunay_triangulation_cell_base_3<K> >     Tds;
-typedef CGAL::Delaunay_triangulation_3<K, Tds>                  Delaunay;
-typedef Delaunay::Point                                         Point;
+
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Vb = CGAL::Base_with_time_stamp<CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>>;
+using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
+using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
+using Delaunay = CGAL::Delaunay_triangulation_3<K, Tds>;
+using Point = Delaunay::Point;
 using Point_3 = K::Point_3;
 
-typedef CGAL::Surface_mesh<Point>                      Mesh;
-typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
+using Mesh = CGAL::Surface_mesh<Point>;
+using face_descriptor =boost::graph_traits<Mesh>::face_descriptor;
 
 int main(int argc, char* argv[])
 {

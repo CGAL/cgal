@@ -24,6 +24,7 @@
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
@@ -184,8 +185,9 @@ private:
       std::bitset<3> is_edge_also_in_3d_triangulation;
       bool missing_subface = true;
     };
-    using Vb = Triangulation_vertex_base_with_info_2<Vertex_info,
-                                                     Projection_traits>;
+    using Vb1 = Triangulation_vertex_base_with_info_2<Vertex_info,
+                                                      Projection_traits>;
+    using Vb = Base_with_time_stamp<Vb1>;
     using Fb1 = Triangulation_face_base_with_info_2<Face_info,
                                                     Projection_traits>;
     using Fb = Constrained_triangulation_face_base_2<Projection_traits, Fb1>;
