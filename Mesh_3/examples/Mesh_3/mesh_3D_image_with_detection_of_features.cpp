@@ -13,13 +13,12 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 
-#include <CGAL/Mesh_3/Detect_features_in_image.h>
-
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
 /// [Domain definition]
+
+#include <CGAL/Mesh_3/Detect_features_in_image.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3
 typedef CGAL::Parallel_tag Concurrency_tag;
@@ -37,6 +36,7 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   /// [Domain creation]
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
-         detect_features = CGAL::Mesh_3::Detect_features_in_image());
+         params::detect_features = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();

@@ -691,9 +691,14 @@ public:
    * \snippet Mesh_3/mesh_3D_weighted_image.cpp Domain creation
    *
    * From the example (\ref Mesh_3/mesh_3D_image_with_detection_of_features.cpp)
-   * where the features are detected in `image_`:
+   * where the features are detected in `image`:
    *
    * \snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
+   *
+   * From the example (\ref Mesh_3/mesh_3D_image_with_input_features.cpp)
+   * where the features are provided by the user:
+   *
+   * \snippet Mesh_3/mesh_3D_image_with_input_features.cpp Domain creation
    */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static auto
