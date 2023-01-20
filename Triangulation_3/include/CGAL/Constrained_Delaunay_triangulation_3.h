@@ -195,7 +195,7 @@ private:
     using Itag = No_constraint_intersection_tag;
     using CDT_base =
         Constrained_Delaunay_triangulation_2<Projection_traits, TDS, Itag>;
-    using CDT = Constrained_triangulation_plus_2<CDT_base>;
+    using CDT = CDT_base;
 
     template <Color_value_type Face_info::* member_ptr>
     struct CDT_2_dual_color_map {
@@ -538,6 +538,7 @@ public:
                                   oformat(this->point(va_3d)),
                                   oformat(this->point(vb_3d)));
 #endif // CGAL_DEBUG_CDT_3
+        CGAL_assertion(is_3d || !cdt_2.is_constrained(edge));
         fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;
         const auto reverse_edge = cdt_2.mirror_edge(edge);
         reverse_edge.first->info().is_edge_also_in_3d_triangulation[unsigned(reverse_edge.second)] = is_3d;
