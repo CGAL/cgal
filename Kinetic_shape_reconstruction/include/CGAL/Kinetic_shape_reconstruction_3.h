@@ -254,7 +254,7 @@ public:
 }
 #else
 
-template<typename GeomTraits>
+template<typename GeomTraits, typename Intersection_Kernel>
 class Kinetic_shape_reconstruction_3 {
 
 public:
@@ -265,18 +265,16 @@ private:
   using FT      = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
 
-  using Data_structure = KSR_3::Data_structure<Kernel>;
+  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
 
-  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+  using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
-  using From_EK = CGAL::Cartesian_converter<EK, Kernel>;
-
-  using Initializer = KSR_3::Initializer<Kernel>;
-  using Propagation = KSR_3::FacePropagation<Kernel>;
-  using Finalizer   = KSR_3::Finalizer<Kernel>;
+  using Initializer = KSR_3::Initializer<Kernel, Intersection_Kernel>;
+  using Propagation = KSR_3::FacePropagation<Kernel, Intersection_Kernel>;
+  using Finalizer   = KSR_3::Finalizer<Kernel, Intersection_Kernel>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Vertex_index = typename Polygon_mesh::Vertex_index;
@@ -471,7 +469,7 @@ public:
     const NamedParameters& np) {
 
     using Reconstruction = KSR_3::Reconstruction<
-      InputRange, PointMap, VectorMap, SemanticMap, Kernel>;
+      InputRange, PointMap, VectorMap, SemanticMap, Kernel, Intersection_Kernel>;
 
     Reconstruction reconstruction(
       input_range, point_map, normal_map, semantic_map, m_data, m_parameters.verbose, m_parameters.debug);
@@ -522,7 +520,7 @@ public:
     const NamedParameters& np) {
 
     using Reconstruction = KSR_3::Reconstruction<
-      InputRange, PointMap, VectorMap, SemanticMap, Kernel>;
+      InputRange, PointMap, VectorMap, SemanticMap, Kernel, Intersection_Kernel>;
 
     Reconstruction reconstruction(
       input_range, point_map, normal_map, semantic_map, m_data, m_parameters.verbose, m_parameters.debug);
@@ -630,7 +628,7 @@ public:
   void get_linear_cell_complex(LCC &lcc) const {
     lcc.clear();
 
-    From_EK from_EK;
+    From_exact from_exact;
     std::vector<bool> used_vertices(m_data.igraph().number_of_vertices(), false);
     std::vector<int> remap(m_data.igraph().number_of_vertices(), -1);
     std::vector<Point_3> mapped_vertices;
@@ -642,7 +640,7 @@ public:
         IVertex ivertex = m_data.ivertex(vertex);
         if (remap[ivertex] == -1) {
           remap[ivertex] = static_cast<int>(mapped_vertices.size());
-          mapped_vertices.push_back(from_EK(m_data.point_3(ivertex)));
+          mapped_vertices.push_back(from_exact(m_data.point_3(ivertex)));
         }
       }
     }
@@ -691,7 +689,7 @@ public:
   template<typename VertexOutputIterator>
   VertexOutputIterator output_partition_vertices(
     VertexOutputIterator vertices, const int support_plane_idx = -1) const {
-    From_EK from_EK;
+    From_exact from_EK;
 
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx >= number_of_support_planes()) return vertices;
@@ -717,7 +715,7 @@ public:
   template<typename EdgeOutputIterator>
   EdgeOutputIterator output_partition_edges(
     EdgeOutputIterator edges, const int support_plane_idx = -1) const {
-    From_EK from_EK;
+    From_exact from_EK;
 
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx >= number_of_support_planes()) return edges;
@@ -772,7 +770,7 @@ public:
 
   void output_support_plane(
     Polygon_mesh& polygon_mesh, const int support_plane_idx) const {
-    From_EK from_EK;
+    From_exact from_EK;
 
     polygon_mesh.clear();
     CGAL_assertion(support_plane_idx >= 0);
@@ -873,7 +871,7 @@ public:
   template<typename VertexOutputIterator, typename FaceOutputIterator>
   void output_reconstructed_model(
     VertexOutputIterator vertices, FaceOutputIterator faces) const {
-    From_EK from_EK;
+    From_exact from_EK;
 
     const auto& model = m_data.reconstructed_model();
     CGAL_assertion(model.pfaces.size() > 0);

@@ -40,12 +40,12 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits>
+template<typename GeomTraits, typename Intersection_Traits>
 class Initializer {
 
 public:
   using Kernel = GeomTraits;
-  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Intersection_Kernel = Intersection_Traits;
 
 private:
   using FT          = typename Kernel::FT;
@@ -58,7 +58,7 @@ private:
   using Transform_3 = typename Kernel::Aff_transformation_3;
   using Direction_2 = typename Kernel::Direction_2;
 
-  using Data_structure     = KSR_3::Data_structure<Kernel>;
+  using Data_structure     = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
   using Support_plane      = typename Data_structure::Support_plane;
   using IEdge              = typename Data_structure::IEdge;
   using IFace              = typename Data_structure::IFace;
@@ -67,15 +67,12 @@ private:
   using IEdge_set          = typename Data_structure::IEdge_set;
 
   using IVertex  = typename Data_structure::IVertex;
-  using IK       = Kernel;
-  using IFT      = typename IK::FT;
-  using IPoint_3 = typename IK::Point_3;
 
-  using To_EK = CGAL::Cartesian_converter<IK, EK>;
-  using From_EK = CGAL::Cartesian_converter<EK, IK>;
+  using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_Kernel>;
+  using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
   using Bbox_3     = CGAL::Bbox_3;
-  using OBB_traits = CGAL::Oriented_bounding_box_traits_3<IK>;
+  using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
 
   using Planar_shape_type = KSR::Planar_shape_type;
   using Parameters        = KSR::Parameters_3<FT>;
@@ -280,12 +277,12 @@ private:
       CGAL_assertion(f1 == face_idx || f2 == face_idx);
     }
 
-    std::vector<EK::Point_2> pts;
+    std::vector<typename Intersection_Kernel::Point_2> pts;
     pts.reserve(face.pts.size());
     for (auto p : face.pts)
       pts.push_back(p);
 
-    face.poly = Polygon_2<EK>(pts.begin(), pts.end());
+    face.poly = Polygon_2<Intersection_Kernel>(pts.begin(), pts.end());
 
     if (face.poly.orientation() != CGAL::COUNTERCLOCKWISE) {
       face.poly.reverse_orientation();
@@ -301,7 +298,7 @@ private:
 
     // Debug visualization
     if (m_parameters.debug) {
-      From_EK from_EK;
+      From_exact from_EK;
       std::vector<Point_3> pts;
       pts.reserve(face.vertices.size());
       for (auto v : face.vertices)
@@ -467,8 +464,8 @@ private:
   }
 
   void initial_polygon_iedge_intersections() {
-    To_EK to_exact;
-    From_EK to_inexact;
+    To_exact to_exact;
+    From_exact to_inexact;
     //std::cout << "initial_polygon_iedge_intersections" << std::endl;
     std::size_t idx = 5;
     for (Support_plane& sp : m_data.support_planes()) {
@@ -491,14 +488,14 @@ private:
         // Get line
         //Line_2 l(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))),sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
 
-        EK::Point_2 a(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))));
-        EK::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
-        EK::Line_2 exact_line(a, b);
+        typename Intersection_Kernel::Point_2 a(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))));
+        typename Intersection_Kernel::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
+        typename Intersection_Kernel::Line_2 exact_line(a, b);
         Line_2 l = to_inexact(exact_line);
         Vector_2 dir = l.to_vector();
         dir = (1.0 / CGAL::sqrt(dir * dir)) * dir;
 
-        std::vector<EK::Segment_2> crossing_polygon_segments;
+        std::vector<typename Intersection_Kernel::Segment_2> crossing_polygon_segments;
         std::vector<IEdge> crossing_iedges;
         FT min = std::numeric_limits<double>::max();
         FT max = -std::numeric_limits<double>::max();
@@ -515,10 +512,10 @@ private:
             // Fetch former point to add segment.
             const Point_2& prev = sp.data().original_vertices[(v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()];
             const Vector_2 edge_dir = sp.original_edge_direction((v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size(), v);
-            EK::Segment_2 seg(to_exact(prev), to_exact(p));
+            typename Intersection_Kernel::Segment_2 seg(to_exact(prev), to_exact(p));
             const auto result = CGAL::intersection(seg, exact_line);
             if (result) {
-              const EK::Point_2* intersection = boost::get<EK::Point_2>(&*result);
+              const typename Intersection_Kernel::Point_2* intersection = boost::get<typename Intersection_Kernel::Point_2>(&*result);
               if (intersection) {
                 FT proj = to_inexact((*intersection - exact_line.point()) * exact_line.to_vector());
                 if (proj < min) {
@@ -624,16 +621,16 @@ private:
     }
 
     // Set points.
-    std::vector<IPoint_3> ipoints;
-    ipoints.reserve(num_points);
+    std::vector<Point_3> points;
+    points.reserve(num_points);
     for (const auto& item : input_range) {
       const auto& polygon = get(polygon_map, item);
       for (const auto& point : polygon) {
-        const IPoint_3 ipoint(
-          static_cast<IFT>(CGAL::to_double(point.x())),
-          static_cast<IFT>(CGAL::to_double(point.y())),
-          static_cast<IFT>(CGAL::to_double(point.z())));
-        ipoints.push_back(ipoint);
+        const Point_3 ipoint(
+          static_cast<FT>(CGAL::to_double(point.x())),
+          static_cast<FT>(CGAL::to_double(point.y())),
+          static_cast<FT>(CGAL::to_double(point.z())));
+        points.push_back(ipoint);
       }
     }
 
@@ -641,9 +638,9 @@ private:
     // The order of faces corresponds to the standard order from here:
     // https://doc.cgal.org/latest/BGL/group__PkgBGLHelperFct.html#gad9df350e98780f0c213046d8a257358e
     const OBB_traits obb_traits;
-    std::array<IPoint_3, 8> ibbox;
+    std::array<Point_3, 8> ibbox;
     CGAL::oriented_bounding_box(
-      ipoints, ibbox,
+      points, ibbox,
       CGAL::parameters::use_convex_hull(true).
       geom_traits(obb_traits));
 
@@ -1022,7 +1019,7 @@ private:
     const std::size_t support_plane_idx,
     std::vector<Point_2>& bbox) const {
 
-    From_EK from_EK;
+    From_exact from_EK;
 
     CGAL_assertion(support_plane_idx >= 6);
     const auto& iedges = m_data.support_plane(support_plane_idx).unique_iedges();
@@ -1125,9 +1122,9 @@ private:
             continue;
           }
 
-          EK::Point_2 point;
-          EK::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
-          EK::Segment_3 seg_b(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second));
+          typename Intersection_Kernel::Point_2 point;
+          typename Intersection_Kernel::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
+          typename Intersection_Kernel::Segment_3 seg_b(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second));
           if (!m_kinetic_traits.intersection(
             m_data.to_2d(common_plane_idx, seg_a),
             m_data.to_2d(common_plane_idx, seg_b),
@@ -1154,7 +1151,7 @@ private:
     using Face_property = typename Data_structure::Intersection_graph::Face_property;
     using IFace = typename Data_structure::Intersection_graph::Face_descriptor;
     using IEdge = typename Data_structure::Intersection_graph::Edge_descriptor;
-    To_EK to_exact;
+    To_exact to_exact;
 
     for (std::size_t i = 6; i < m_data.support_planes().size(); i++) {
       auto& sp = m_data.support_plane(i);
@@ -1162,14 +1159,14 @@ private:
       CGAL_assertion(sp.mesh().faces().size() == 1);
 
       // Turn single PFace into Polygon_2
-      std::vector<EK::Point_2> pts2d;
+      std::vector<typename Intersection_Kernel::Point_2> pts2d;
       pts2d.reserve(sp.mesh().vertices().size());
 
       for (auto v : sp.mesh().vertices()) {
         pts2d.push_back(to_exact(sp.mesh().point(v)));
       }
 
-      Polygon_2<EK> p(pts2d.begin(), pts2d.end());
+      Polygon_2<Intersection_Kernel> p(pts2d.begin(), pts2d.end());
 
       if (p.orientation() != CGAL::COUNTERCLOCKWISE)
         p.reverse_orientation();

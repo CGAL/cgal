@@ -270,7 +270,8 @@ typename InputRange,
 typename PointMap,
 typename VectorMap,
 typename SemanticMap,
-typename GeomTraits>
+typename GeomTraits,
+typename Intersection_Kernel>
 class Reconstruction {
 
 public:
@@ -291,7 +292,7 @@ private:
   using Segment_2 = typename Kernel::Segment_2;
   using Segment_3 = typename Kernel::Segment_3;
 
-  using Data_structure = KSR_3::Data_structure<Kernel>;
+  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
   using PFace          = typename Data_structure::PFace;
 
   using Point_map_3        = KSR::Item_property_map<Input_range, Point_map>;
@@ -306,14 +307,7 @@ private:
   using Polygon_3   = std::vector<Point_3>;
   using Polygon_map = CGAL::Identity_property_map<Polygon_3>;
 
-  using IK       = CGAL::Exact_predicates_inexact_constructions_kernel;
-  using IPoint_2 = typename IK::Point_2;
-  using ILine_2  = typename IK::Line_2;
-  using IPoint_3 = typename IK::Point_3;
-  using IPlane_3 = typename IK::Plane_3;
-
-  using Converter = CGAL::Cartesian_converter<Kernel, IK>;
-  using From_EK = CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, IK>;
+  using From_EK = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
   struct Vertex_info { FT z = FT(0); };
   struct Face_info { };
@@ -364,8 +358,8 @@ private:
     Region_growing<Points_2, Neighbor_query_2, Linear_region, typename Linear_sorting::Seed_map>;
 
   using Visibility_label = KSR::Visibility_label;
-  using Visibility       = KSR_3::Visibility<Kernel, Point_map_3, Vector_map_3>;
-  using Graphcut         = KSR_3::Graphcut<Kernel>;
+  using Visibility       = KSR_3::Visibility<Kernel, Intersection_Kernel, Point_map_3, Vector_map_3>;
+  using Graphcut         = KSR_3::Graphcut<Kernel, Intersection_Kernel>;
 
 public:
 
@@ -644,7 +638,6 @@ private:
   const bool m_debug;
   const bool m_verbose;
   const Planar_shape_type m_planar_shape_type;
-  const Converter m_converter;
 
   std::vector<std::size_t> m_ground_points;
   std::vector<std::size_t> m_boundary_points;
@@ -782,16 +775,16 @@ private:
 
   const Plane_3 fit_plane(const std::vector<std::size_t>& region) const {
 
-    std::vector<IPoint_3> points;
+    std::vector<Point_3> points;
     points.reserve(region.size());
     for (const std::size_t idx : region) {
       CGAL_assertion(idx < m_input_range.size());
-      points.push_back(m_converter(get(m_point_map_3, idx)));
+      points.push_back(get(m_point_map_3, idx));
     }
     CGAL_assertion(points.size() == region.size());
 
-    IPlane_3 fitted_plane;
-    IPoint_3 fitted_centroid;
+    Plane_3 fitted_plane;
+    Point_3 fitted_centroid;
     CGAL::linear_least_squares_fitting_3(
       points.begin(), points.end(),
       fitted_plane, fitted_centroid,
@@ -1184,16 +1177,16 @@ private:
     const std::vector<Point_2>& input_range,
     const std::vector<std::size_t>& region) const {
 
-    std::vector<IPoint_2> points;
+    std::vector<Point_2> points;
     points.reserve(region.size());
     for (const std::size_t idx : region) {
       CGAL_assertion(idx < input_range.size());
-      points.push_back(m_converter(input_range[idx]));
+      points.push_back(input_range[idx]);
     }
     CGAL_assertion(points.size() == region.size());
 
-    ILine_2 fitted_line;
-    IPoint_2 fitted_centroid;
+    Line_2 fitted_line;
+    Point_2 fitted_centroid;
     CGAL::linear_least_squares_fitting_2(
       points.begin(), points.end(),
       fitted_line, fitted_centroid,

@@ -35,39 +35,40 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits>
+template<typename GeomTraits, typename Intersection_Traits>
 class Data_structure {
 
 public:
   using Kernel = GeomTraits;
-  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Intersection_Kernel = Intersection_Traits;
 
-  using Support_plane = KSR_3::Support_plane<Kernel>;
-  using Intersection_graph = KSR_3::Intersection_graph<EK>;
+  using Support_plane = KSR_3::Support_plane<Kernel, Intersection_Kernel>;
+  using Intersection_graph = KSR_3::Intersection_graph<Kernel, Intersection_Kernel>;
   using FaceEvent = typename Support_plane::FaceEvent;
 
 private:
   using FT = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
-  using IgPoint_2 = typename Intersection_graph::Kernel::Point_2;
+  using IkPoint_2 = typename Intersection_Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
-  using IgPoint_3 = typename Intersection_graph::Point_3;
+  using IkPoint_3 = typename Intersection_Kernel::Point_3;
   using Segment_2 = typename Kernel::Segment_2;
-  using IgSegment_2 = typename Intersection_graph::Kernel::Segment_2;
+  using IkSegment_2 = typename Intersection_Kernel::Segment_2;
   using Segment_3 = typename Kernel::Segment_3;
-  using IgSegment_3 = typename Intersection_graph::Segment_3;
+  using IkSegment_3 = typename Intersection_Kernel::Segment_3;
   using Vector_2 = typename Kernel::Vector_2;
   using Direction_2 = typename Kernel::Direction_2;
-  using IgDirection_2 = typename Intersection_graph::Kernel::Direction_2;
+  using IkDirection_2 = typename Intersection_Kernel::Direction_2;
   using Triangle_2  = typename Kernel::Triangle_2;
   using Line_2      = typename Kernel::Line_2;
+  using IkLine_2    = typename Intersection_Kernel::Line_2;
   using Plane_3     = typename Kernel::Plane_3;
 
   using Polygon_2  = CGAL::Polygon_2<Kernel>;
   using Parameters = KSR::Parameters_3<FT>;
 
-  using To_EK = CGAL::Cartesian_converter<Kernel, EK>;
-  using From_EK = CGAL::Cartesian_converter<EK, Kernel>;
+  using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_Kernel>;
+  using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
 public:
   using Mesh           = typename Support_plane::Mesh;
@@ -225,8 +226,8 @@ private:
   std::vector<Support_plane> m_support_planes;
   Intersection_graph m_intersection_graph;
 
-  To_EK to_EK;
-  From_EK from_EK;
+  To_exact to_exact;
+  From_exact from_exact;
 
   const Parameters& m_parameters;
   Kinetic_traits m_kinetic_traits;
@@ -315,7 +316,7 @@ public:
     m_support_planes.reserve(number_of_polygons + 6);
   }
 
-  EK::FT calculate_edge_intersection_time(std::size_t sp_idx, IEdge edge, FaceEvent &event) {
+  FT calculate_edge_intersection_time(std::size_t sp_idx, IEdge edge, FaceEvent &event) {
     // Not need to calculate for border edges.
     if (m_intersection_graph.iedge_is_on_bbox(edge))
       return 0;
@@ -326,8 +327,8 @@ public:
 
     Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
 
-    Point_2 s = sp.to_2d(from_EK(point_3(m_intersection_graph.source(edge))));
-    Point_2 t = sp.to_2d(from_EK(point_3(m_intersection_graph.target(edge))));
+    Point_2 s = sp.to_2d(from_exact(point_3(m_intersection_graph.source(edge))));
+    Point_2 t = sp.to_2d(from_exact(point_3(m_intersection_graph.target(edge))));
     Vector_2 segment = t - s;
     FT segment_length = sqrt(segment * segment);
     CGAL_assertion(segment_length > 0);
@@ -371,9 +372,9 @@ public:
     std::vector<FT> intersections_bary(num);
 
     // Shooting rays to find intersection with line of IEdge
-    Line_2 ln = sp.to_2d(from_EK(m_intersection_graph.line_3(edge)));
+    Line_2 ln = sp.to_2d(from_exact(m_intersection_graph.line_3(edge)));
     //std::cout << sp.to_3d(ln.point(0)) << " " << sp.to_3d(ln.point(5)) << std::endl;
-    EK::Line_2 l = sp.to_2d(m_intersection_graph.line_3(edge));
+    typename Intersection_Kernel::Line_2 l = sp.to_2d(m_intersection_graph.line_3(edge));
     for (std::size_t i = 0; i < num; i++) {
       std::size_t idx = (i + lower) % sp.data().original_directions.size();
       const auto result = CGAL::intersection(l, sp.data().original_rays[idx]);
@@ -381,15 +382,15 @@ public:
         time[i] = std::numeric_limits<double>::max();
         continue;
       }
-      const EK::Point_2* p = nullptr;
-      if (p = boost::get<EK::Point_2>(&*result)) {
+      const IkPoint_2* p = nullptr;
+      if (p = boost::get<IkPoint_2>(&*result)) {
         FT l = CGAL::sqrt(sp.data().original_vectors[idx].squared_length());
         //std::cout << "i " << sp.to_3d(to_inexact(sp.data().original_rays[idx].point(0))) << " " << sp.to_3d(to_inexact(*p)) << std::endl;
         double l2 = CGAL::to_double((*p - sp.data().original_rays[idx].point(0)).squared_length());
         time[i] = l2 / l;
         CGAL_assertion(0 <= time[i]);
-        intersections[i] = from_EK(*p);
-        intersections_bary[i] = ((from_EK(*p) - s) * segment) / segment_length;
+        intersections[i] = from_exact(*p);
+        intersections_bary[i] = ((from_exact(*p) - s) * segment) / segment_length;
         //std::cout << "intersection t:" << time[i] << " at " << intersections_bary[i] << " p: " << sp.to_3d(intersections[i]) << std::endl;
       }
       // If the intersection is a segment, it can be safely ignored as there are also two intersections with the adjacent edges.
@@ -557,7 +558,7 @@ public:
           continue;
 
         FaceEvent fe;
-        EK::FT t = calculate_edge_intersection_time(sp_idx, edge, fe);
+        FT t = calculate_edge_intersection_time(sp_idx, edge, fe);
         if (t > 0)
           queue.push(fe);
       }
@@ -626,14 +627,14 @@ public:
     if (is_bbox_support_plane(sp_idx)) return;
 
     // Intersect current plane with all bbox iedges.
-    IgPoint_3 point;
+    IkPoint_3 point;
     Point_3 p1;
     const auto& sp = support_plane(sp_idx);
     const auto& plane = sp.exact_plane();
 
     using IEdge_vec = std::vector<IEdge>;
     using IPair = std::pair<IVertex, IEdge_vec>;
-    using Pair = std::pair<IgPoint_3, IPair>;
+    using Pair = std::pair<IkPoint_3, IPair>;
 
     std::vector<Pair> polygon;
     polygon.reserve(3);
@@ -682,15 +683,15 @@ public:
     // std::cout << "num intersections: " << polygon.size() << std::endl;
 
     // Sort the points to get an oriented polygon.
-    boost::function<IgPoint_3(Pair&)> f = boost::bind(&Pair::first, _1);
-    IgPoint_2 mid = sp.to_2d(CGAL::centroid(boost::make_transform_iterator(polygon.begin(), f), boost::make_transform_iterator(polygon.end(), f), CGAL::Dimension_tag<0>()));
+    boost::function<IkPoint_3(Pair&)> f = boost::bind(&Pair::first, _1);
+    IkPoint_2 mid = sp.to_2d(CGAL::centroid(boost::make_transform_iterator(polygon.begin(), f), boost::make_transform_iterator(polygon.end(), f), CGAL::Dimension_tag<0>()));
     std::sort(polygon.begin(), polygon.end(),
     [&](const Pair& a, const Pair& b) {
       const auto a2 = sp.to_2d(a.first);
       const auto b2 = sp.to_2d(b.first);
-      const IgSegment_2 sega(mid, a2);
-      const IgSegment_2 segb(mid, b2);
-      return (IgDirection_2(sega) < IgDirection_2(segb));
+      const IkSegment_2 sega(mid, a2);
+      const IkSegment_2 segb(mid, b2);
+      return (IkDirection_2(sega) < IkDirection_2(segb));
     });
 
     remove_equal_points(polygon, ptol);
@@ -826,7 +827,7 @@ public:
     std::array<Point_2, 4> points;
     for (std::size_t i = 0; i < 4; ++i) {
       points[i] = support_plane(support_plane_idx).to_2d(polygon[i]);
-      ivertices[i] = m_intersection_graph.add_vertex(to_EK(polygon[i])).first;
+      ivertices[i] = m_intersection_graph.add_vertex(to_exact(polygon[i])).first;
     }
 
     const auto vertices =
@@ -894,8 +895,6 @@ public:
   template<typename Pair>
   void remove_equal_points(std::vector<Pair>& points, const FT min_dist) const {
 
-    From_EK from_EK;
-
     // std::cout << std::endl;
     std::vector<Pair> polygon;
     const std::size_t n = points.size();
@@ -907,7 +906,7 @@ public:
         const auto& p = points[i].first;
         const std::size_t ip = (i + 1) % n;
         const auto& q = points[ip].first;
-        const FT distance = from_EK(KSR::distance(p, q));
+        const FT distance = from_exact(KSR::distance(p, q));
         const bool is_small = (distance < min_dist);
         if (ip == 0 && is_small) break;
         if (is_small) {
@@ -1337,7 +1336,7 @@ public:
   std::size_t line_idx(const IEdge& iedge) const { return m_intersection_graph.line(iedge); }
   std::size_t line_idx(const PVertex& pvertex) const { return line_idx(iedge(pvertex)); }
 
-  const IVertex add_ivertex(const IgPoint_3& point, const std::set<std::size_t>& support_planes_idx) {
+  const IVertex add_ivertex(const IkPoint_3& point, const std::set<std::size_t>& support_planes_idx) {
 
     std::vector<std::size_t> vec_planes;
     std::copy(
@@ -1550,7 +1549,7 @@ public:
   **        CONVERSIONS         **
   ********************************/
 
-  IgPoint_2 to_2d(const std::size_t support_plane_idx, const IVertex& ivertex) const {
+  IkPoint_2 to_2d(const std::size_t support_plane_idx, const IVertex& ivertex) const {
     return support_plane(support_plane_idx).to_2d(point_3(ivertex));
   }
 
@@ -1558,7 +1557,7 @@ public:
     return support_plane(support_plane_idx).to_2d(segment_3);
   }
 
-  IgSegment_2 to_2d(const std::size_t support_plane_idx, const IgSegment_3& segment_3) const {
+  IkSegment_2 to_2d(const std::size_t support_plane_idx, const IkSegment_3& segment_3) const {
     return support_plane(support_plane_idx).to_2d(segment_3);
   }
 
@@ -1566,7 +1565,7 @@ public:
     return support_plane(support_plane_idx).to_2d(point_3);
   }
 
-  IgPoint_2 to_2d(const std::size_t support_plane_idx, const IgPoint_3& point_3) const {
+  IkPoint_2 to_2d(const std::size_t support_plane_idx, const IkPoint_3& point_3) const {
     return support_plane(support_plane_idx).to_2d(point_3);
   }
 
@@ -1575,10 +1574,10 @@ public:
   }
 
   Point_2 point_2(const std::size_t support_plane_idx, const IVertex& ivertex) const {
-    return support_plane(support_plane_idx).to_2d(from_EK(point_3(ivertex)));
+    return support_plane(support_plane_idx).to_2d(from_exact(point_3(ivertex)));
   }
 
-  IgSegment_2 segment_2(const std::size_t support_plane_idx, const IEdge& iedge) const {
+  IkSegment_2 segment_2(const std::size_t support_plane_idx, const IEdge& iedge) const {
     return support_plane(support_plane_idx).to_2d(segment_3(iedge));
   }
 
@@ -1586,7 +1585,7 @@ public:
     return support_plane(support_plane_idx).to_3d(point_2);
   }
 
-  IgPoint_3 to_3d(const std::size_t support_plane_idx, const IgPoint_2& point_2) const {
+  IkPoint_3 to_3d(const std::size_t support_plane_idx, const IkPoint_2& point_2) const {
     return support_plane(support_plane_idx).to_3d(point_2);
   }
 
@@ -1594,7 +1593,7 @@ public:
     return support_plane(pvertex).point_3(pvertex.second);
   }
 
-  IgPoint_3 point_3(const IVertex& vertex) const {
+  IkPoint_3 point_3(const IVertex& vertex) const {
     return m_intersection_graph.point_3(vertex);
   }
 
@@ -1602,7 +1601,7 @@ public:
     return support_plane(pedge).segment_3(pedge.second);
   }
 
-  IgSegment_3 segment_3(const IEdge& edge) const {
+  IkSegment_3 segment_3(const IEdge& edge) const {
     return m_intersection_graph.segment_3(edge);
   }
 
@@ -1700,7 +1699,7 @@ public:
     const std::size_t sp_idx,
     const std::vector<Pair>& points) const {
 
-    std::vector< std::pair<IgPoint_2, bool> > polygon;
+    std::vector< std::pair<IkPoint_2, bool> > polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points) {
       const auto& p = pair.first;
@@ -1829,7 +1828,7 @@ public:
       const auto itarget = target(iedge);
       const auto source_p = point_3(isource);
       const auto target_p = point_3(itarget);
-      const FT distance = from_EK(KSR::distance(source_p, target_p));
+      const FT distance = from_exact(KSR::distance(source_p, target_p));
       if (distance < ptol) {
         std::cout << "ERROR: FOUND ZERO-LENGTH IEDGE: "
         << str(iedge) << ", " << distance << ", " << segment_3(iedge) << std::endl;

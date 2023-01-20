@@ -37,13 +37,15 @@ namespace KSR_3 {
 #else
 
   template<
-  typename  GeomTraits,
-  typename  PointMap_3,
+  typename GeomTraits,
+  typename Intersection_Traits,
+  typename PointMap_3,
   typename VectorMap_3>
   class Visibility {
 
   public:
     using Kernel       = GeomTraits;
+    using Intersection_Kernel = Intersection_Traits;
     using Point_map_3  = PointMap_3;
     using Vector_map_3 = VectorMap_3;
 
@@ -52,17 +54,14 @@ namespace KSR_3 {
     using Vector_3 = typename Kernel::Vector_3;
     using Indices  = std::vector<std::size_t>;
 
-    using Data_structure = KSR_3::Data_structure<Kernel>;
+    using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
     using PFace          = typename Data_structure::PFace;
     using Volume_cell    = typename Data_structure::Volume_cell;
 
-    using IK         = CGAL::Exact_predicates_inexact_constructions_kernel;
-    using IPoint_3   = typename IK::Point_3;
-    using Delaunay_3 = CGAL::Delaunay_triangulation_3<IK>;
-    using Generator  = CGAL::Random_points_in_tetrahedron_3<IPoint_3>;
-    using Converter  = CGAL::Cartesian_converter<Kernel, IK>;
+    using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
+    using Generator  = CGAL::Random_points_in_tetrahedron_3<Point_3>;
 
-    using From_EK = CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, IK>;
+    using From_EK = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
     using Visibility_label = KSR::Visibility_label;
 
@@ -183,7 +182,7 @@ namespace KSR_3 {
         delaunay_3.insert(from_EK(m_data.point_3(ivertex)));
       }
 
-      std::vector<IPoint_3> points;
+      std::vector<Point_3> points;
       for (auto cit = delaunay_3.finite_cells_begin();
       cit != delaunay_3.finite_cells_end(); ++cit) {
         const auto& tet = delaunay_3.tetrahedron(cit);

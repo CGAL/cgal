@@ -29,14 +29,14 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits>
+template<typename GeomTraits, typename Intersection_Traits>
 class Support_plane {
 
 public:
   using Kernel = GeomTraits;
-  using EPECK = Exact_predicates_exact_constructions_kernel;
-  using To_EK = CGAL::Cartesian_converter<Kernel, EPECK>;
-  using From_EK = CGAL::Cartesian_converter<EPECK, Kernel>;
+  using Intersection_Kernel = Intersection_Traits;
+  using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_Kernel>;
+  using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
   using FT          = typename Kernel::FT;
   using Point_2     = typename Kernel::Point_2;
@@ -52,7 +52,7 @@ public:
   using Triangle_2  = typename Kernel::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
-  using Intersection_graph = KSR_3::Intersection_graph<EPECK>;
+  using Intersection_graph = KSR_3::Intersection_graph<Kernel, Intersection_Kernel>;
   using Bbox_2 = CGAL::Bbox_2;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
@@ -80,8 +80,8 @@ public:
     FaceEvent() {}
     FaceEvent(std::size_t sp_idx, FT time, IEdge edge, IFace face) : support_plane(sp_idx), time(time), crossed_edge(edge), face(face) {}
     std::size_t support_plane;
-    EPECK::FT time;
-    EPECK::FT intersection_bary;
+    FT time;
+    FT intersection_bary;
     IEdge crossed_edge;
     IFace face;
   };
@@ -91,7 +91,7 @@ private:
     bool is_bbox;
     Point_2 centroid;
     Plane_3 plane;
-    EPECK::Plane_3 exact_plane;
+    typename Intersection_Kernel::Plane_3 exact_plane;
     Mesh mesh;
     V_vector_map direction; // needed?
     V_ivertex_map v_ivertex_map;
@@ -112,7 +112,7 @@ private:
     std::vector<Point_2> original_vertices;
     std::vector<Vector_2> original_vectors;
     std::vector<Direction_2> original_directions;
-    std::vector<EPECK::Ray_2> original_rays;
+    std::vector<typename Intersection_Kernel::Ray_2> original_rays;
     int k;
     FT distance_tolerance;
   };
@@ -128,7 +128,7 @@ public:
   template<typename PointRange>
   Support_plane(const PointRange& polygon, const bool is_bbox, const FT distance_tolerance, std::size_t idx) :
   m_data(std::make_shared<Data>()) {
-    To_EK to_EK;
+    To_exact to_EK;
 
     std::vector<Point_3> points;
     points.reserve(polygon.size());
@@ -316,7 +316,7 @@ public:
     CGAL_assertion(is_convex_polygon(points));
     CGAL_assertion(is_valid_polygon(points));
 
-    To_EK to_exact;
+    To_exact to_exact;
 
     CGAL_assertion(points.size() >= 3);
     std::vector<Triangle_2> tris(points.size() - 2);
@@ -367,7 +367,7 @@ public:
       m_data->original_vertices[i] = point;
       m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
       m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
-      m_data->original_rays[i] = EPECK::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
+      m_data->original_rays[i] = Intersection_Kernel::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
     }
@@ -434,7 +434,7 @@ public:
   }
 
   const Plane_3& plane() const { return m_data->plane; }
-  const EPECK::Plane_3& exact_plane() const { return m_data->exact_plane; }
+  const typename Intersection_Kernel::Plane_3& exact_plane() const { return m_data->exact_plane; }
   const Point_2& centroid() const { return m_data->centroid; }
   bool is_bbox() const { return m_data->is_bbox; }
   std::map<IVertex, Vertex_index> &ivertex2pvertex() { return m_data->ivertex2pvertex; }
@@ -663,7 +663,7 @@ public:
     return m_data->plane.to_2d(point);
   }
 
-  const EPECK::Point_2 to_2d(const EPECK::Point_3& point) const {
+  const typename Intersection_Kernel::Point_2 to_2d(const typename Intersection_Kernel::Point_3& point) const {
     return m_data->exact_plane.to_2d(point);
   }
 
@@ -673,8 +673,8 @@ public:
       m_data->plane.to_2d(line.point() + line.to_vector()));
   }
 
-  const EPECK::Line_2 to_2d(const EPECK::Line_3& line) const {
-    return EPECK::Line_2(
+  const typename Intersection_Kernel::Line_2 to_2d(const typename Intersection_Kernel::Line_3& line) const {
+    return Intersection_Kernel::Line_2(
       m_data->exact_plane.to_2d(line.point()),
       m_data->exact_plane.to_2d(line.point() + line.to_vector()));
   }
@@ -685,8 +685,8 @@ public:
       m_data->plane.to_2d(segment.target()));
   }
 
-  const EPECK::Segment_2 to_2d(const EPECK::Segment_3& segment) const {
-    return EPECK::Segment_2(
+  const typename Intersection_Kernel::Segment_2 to_2d(const typename Intersection_Kernel::Segment_3& segment) const {
+    return typename Intersection_Kernel::Segment_2(
       m_data->exact_plane.to_2d(segment.source()),
       m_data->exact_plane.to_2d(segment.target()));
   }
@@ -701,7 +701,7 @@ public:
     return m_data->plane.to_3d(point);
   }
 
-  const EPECK::Point_3 to_3d(const EPECK::Point_2& point) const {
+  const typename Intersection_Kernel::Point_3 to_3d(const typename Intersection_Kernel::Point_2& point) const {
     return m_data->exact_plane.to_3d(point);
   }
 
@@ -756,8 +756,8 @@ public:
   }
 };
 
-template<typename Kernel>
-bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) {
+template<typename Kernel, typename Intersection_Kernel>
+bool operator==(const Support_plane<Kernel, Intersection_Kernel>& a, const Support_plane<Kernel, Intersection_Kernel>& b) {
 
   if (a.is_bbox() || b.is_bbox()) {
     return false;

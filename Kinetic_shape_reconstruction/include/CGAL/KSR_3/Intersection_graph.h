@@ -31,21 +31,21 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits>
+template<typename GeomTraits, typename Intersection_Traits>
 class Intersection_graph {
 
 public:
   using Kernel = GeomTraits;
-  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Interxsection_Kernel = Intersection_Traits;
 
-  using to_EK = CGAL::Cartesian_converter<Kernel, EK>;
+  using FT        = typename Intersection_Traits::FT;
+  using Point_2   = typename Intersection_Traits::Point_2;
+  using Point_3   = typename Intersection_Traits::Point_3;
+  using Segment_3 = typename Intersection_Traits::Segment_3;
+  using Line_3    = typename Intersection_Traits::Line_3;
+  using Polygon_2 = typename CGAL::Polygon_2<Intersection_Traits>;
 
-  using FT        = typename Kernel::FT;
-  using Point_2   = typename Kernel::Point_2;
-  using Point_3   = typename Kernel::Point_3;
-  using Segment_3 = typename Kernel::Segment_3;
-  using Line_3    = typename Kernel::Line_3;
-  using Polygon_2 = typename CGAL::Polygon_2<Kernel>;
+  using Inexact_FT = typename Kernel::FT;
 
   struct Vertex_property {
     Point_3 point;
@@ -54,7 +54,7 @@ public:
     Vertex_property(const Point_3& point) : point(point), active(true) {}
   };
 
-  using Kinetic_interval = std::vector<std::pair<FT, FT> >;
+  using Kinetic_interval = std::vector<std::pair<Inexact_FT, Inexact_FT> >;
 
   struct Edge_property {
     std::size_t line;
@@ -106,7 +106,7 @@ public:
     Face_property(std::size_t support_plane_idx) : support_plane(support_plane_idx), part_of_partition(false) {}
     std::size_t support_plane;
     bool part_of_partition;
-    CGAL::Polygon_2<Kernel> poly;
+    CGAL::Polygon_2<Interxsection_Kernel> poly;
     std::vector<Point_2> pts;
     std::vector<Edge_descriptor> edges;
     std::vector<Vertex_descriptor> vertices;
@@ -160,58 +160,6 @@ public:
     return static_cast<std::size_t>(boost::num_edges(m_graph));
   }
 
-  template<typename IG>
-  void convert(IG& ig) {
-
-    using CFT      = typename IG::Kernel::FT;
-    using CPoint_3 = typename IG::Kernel::Point_3;
-
-    // using Converter = CGAL::Cartesian_converter<Kernel, typename IG::Kernel>;
-    // Converter converter;
-
-    ig.set_nb_lines(m_nb_lines);
-    const auto vpair = boost::vertices(m_graph);
-    const auto vertex_range = CGAL::make_range(vpair);
-    for (const auto vertex : vertex_range) {
-      const auto vd = boost::add_vertex(ig.graph());
-      // ig.graph()[vd].point = converter(m_graph[vertex].point);
-      ig.graph()[vd].point = CPoint_3(
-        static_cast<CFT>(CGAL::to_double(m_graph[vertex].point.x())),
-        static_cast<CFT>(CGAL::to_double(m_graph[vertex].point.y())),
-        static_cast<CFT>(CGAL::to_double(m_graph[vertex].point.z())));
-      ig.graph()[vd].active = m_graph[vertex].active;
-      CGAL_assertion(m_graph[vertex].active);
-      m_vmap[vertex] = vd;
-    }
-    CGAL_assertion(boost::num_vertices(ig.graph()) == boost::num_vertices(m_graph));
-
-    const auto epair = boost::edges(m_graph);
-    const auto edge_range = CGAL::make_range(epair);
-    for (const auto edge : edge_range) {
-      const auto ed = boost::add_edge(
-        boost::source(edge, m_graph), boost::target(edge, m_graph), ig.graph()).first;
-
-      CGAL_assertion(m_graph[edge].line >= 0);
-      ig.graph()[ed].line   = m_graph[edge].line;
-
-      CGAL_assertion(m_graph[edge].planes.size() >= 1);
-      ig.graph()[ed].planes = m_graph[edge].planes;
-
-      CGAL_assertion(m_graph[edge].active);
-      ig.graph()[ed].active = m_graph[edge].active;
-
-      m_emap[edge] = ed;
-    }
-    CGAL_assertion(boost::num_edges(ig.graph()) == boost::num_edges(m_graph));
-
-    // for (const auto& mp : m_map_points) {
-    //   ig.mapped_points()[converter(mp.first)] = m_vmap.at(mp.second);
-    // }
-    // for (const auto& mv : m_map_vertices) {
-    //   ig.mapped_vertices()[mv.first] = m_vmap.at(mv.second);
-    // }
-  }
-
   const std::map<Vertex_descriptor, Vertex_descriptor>& vmap() const {
     return m_vmap;
   }
@@ -235,11 +183,6 @@ public:
   std::size_t add_line() { return ( m_nb_lines++ ); }
   std::size_t nb_lines() const { return m_nb_lines; }
   void set_nb_lines(const std::size_t value) { m_nb_lines = value; }
-
-  Graph& graph() {
-    __debugbreak();
-    return m_graph;
-  }
 
   const std::pair<Vertex_descriptor, bool> add_vertex(const Point_3& point) {
 
@@ -428,7 +371,7 @@ public:
   void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) { m_graph[edge].crossed.insert(sp_idx); }
 };
 
-template<typename GeomTraits> std::size_t Intersection_graph<GeomTraits>::Edge_property::edge_counter = 0;
+template<typename GeomTraits, typename Intersection_Traits> std::size_t Intersection_graph<GeomTraits, Intersection_Traits>::Edge_property::edge_counter = 0;
 
 #endif //DOXYGEN_RUNNING
 

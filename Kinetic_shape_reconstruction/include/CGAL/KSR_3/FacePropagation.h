@@ -29,12 +29,11 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits>
+template<typename GeomTraits, typename Intersection_Kernel>
 class FacePropagation {
 
 public:
   using Kernel = GeomTraits;
-  using EK = Exact_predicates_exact_constructions_kernel;
 
 private:
   using FT          = typename Kernel::FT;
@@ -44,7 +43,7 @@ private:
   using Direction_2 = typename Kernel::Direction_2;
   using Line_2      = typename Kernel::Line_2;
 
-  using Data_structure = KSR_3::Data_structure<Kernel>;
+  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
@@ -136,7 +135,7 @@ private:
 
       const FaceEvent event = m_face_queue.top();
       m_face_queue.pop();
-      const typename Data_structure::EK::FT current_time = event.time;
+      const FT current_time = event.time;
 
       ++iteration;
 
@@ -176,8 +175,8 @@ private:
 
           // Within an interval
           if (ki->second[i].first > event.intersection_bary && ki->second[i - 1].first < event.intersection_bary) {
-            EK::FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
-            EK::FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
+            FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
+            FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
 
             if (event.time > interval_time)
               crossing++;
@@ -209,7 +208,7 @@ private:
 
     for (IEdge edge : border) {
       FaceEvent fe;
-      EK::FT t = m_data.calculate_edge_intersection_time(event.support_plane, edge, fe);
+      FT t = m_data.calculate_edge_intersection_time(event.support_plane, edge, fe);
       if (t > 0)
         m_face_queue.push(fe);
     }

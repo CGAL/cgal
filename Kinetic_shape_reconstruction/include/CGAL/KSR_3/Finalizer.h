@@ -30,7 +30,7 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-template<typename GeomTraits>
+template<typename GeomTraits, typename Intersection_Kernel>
 class Finalizer {
 
 public:
@@ -48,7 +48,7 @@ private:
   using Direction_2 = typename Kernel::Direction_2;
   using Tetrahedron_3 = typename Kernel::Tetrahedron_3;
 
-  using Data_structure = KSR_3::Data_structure<Kernel>;
+  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge = typename Data_structure::IEdge;

@@ -38,11 +38,12 @@ namespace KSR_3 {
 #ifdef DOXYGEN_RUNNING
 #else
 
-  template<typename GeomTraits>
+  template<typename GeomTraits, typename Intersection_Traits>
   class Graphcut {
 
   public:
     using Kernel = GeomTraits;
+    using Intersection_Kernel = Intersection_Traits;
 
     using FT          = typename Kernel::FT;
     using Point_3    = typename Kernel::Point_3;
@@ -50,18 +51,17 @@ namespace KSR_3 {
     using Triangle_3 = typename Kernel::Triangle_3;
     using Indices    = std::vector<std::size_t>;
 
-    using Data_structure = KSR_3::Data_structure<Kernel>;
+    using Data_structure = KSR_3::Data_structure<Kernel, Intersection_Kernel>;
     using Mesh           = typename Data_structure::Mesh;
     using Volume_cell    = typename Data_structure::Volume_cell;
     using PFace          = typename Data_structure::PFace;
 
     using Visibility_label = KSR::Visibility_label;
 
-    using IK         = CGAL::Exact_predicates_inexact_constructions_kernel;
     using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel>;
-    using Delaunay_3 = CGAL::Delaunay_triangulation_3<IK>;
-    using Converter  = CGAL::Cartesian_converter<Kernel, IK>;
-    using From_EK = CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, IK>;
+    using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
+    //using Converter  = CGAL::Cartesian_converter<Kernel, IK>;
+    using From_exact = CGAL::Cartesian_converter<Intersection_Kernel, Kernel>;
 
     struct Wrapper {
       PFace pface;
@@ -185,7 +185,7 @@ namespace KSR_3 {
       std::vector<Volume_cell>& volumes) const {
 
       FT sum = FT(0);
-      From_EK from_EK;
+      From_exact from_EK;
 
       std::size_t index = 0;
 
