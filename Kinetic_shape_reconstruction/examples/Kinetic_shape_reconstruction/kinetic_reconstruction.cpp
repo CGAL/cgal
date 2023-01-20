@@ -22,7 +22,7 @@ using Label_map    = typename Point_set:: template Property_map<int>;
 using Semantic_map = CGAL::KSR::Semantic_from_label_map<Label_map>;
 using Region_map = typename Point_set:: template Property_map<int>;
 
-using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
+using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel, CGAL::Exact_predicates_exact_constructions_kernel>;
 
 using Parameters      = CGAL::KSR::All_parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
