@@ -78,6 +78,9 @@ public:
   *
   * \param image the input image
   * \param domain the mesh domain to be enriched with polyline features
+  *
+  * \returns a `std::vector<std::vector<typename Mesh_domain::Point_3>>`
+  * containing the constructed polylines
   */
   template<typename Mesh_domain>
   std::vector<std::vector<typename Mesh_domain::Point_3>>

@@ -622,6 +622,11 @@ public:
    * domain to be discretized is the union of voxels that have non-zero
    * values.
    *
+   * \returns either a `Labeled_mesh_domain_3`,
+   *   or a `Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>`
+   *   depending on whether one or more of the named parameters
+   *   `detect_features` and `input_features` are provided.
+   *
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \param image_ the input 3D image.
    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
@@ -650,11 +655,25 @@ public:
    *   \cgalParamNEnd
    *
    *   \cgalParamNBegin{detect_features}
-   *    \cgalParamDescription{ a functor can be passed to
-   *      `std::function<void(const CGAL::Image_3&, Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>&)>`.
+   *    \cgalParamDescription{ a functor that can be passed to
+   *      `std::function<
+   *        std::vector<std::vector<Point_3>>
+   *        (const CGAL::Image_3&, Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>&)>`
+   *      and that returns a range of detected polyline features for feature protection.
+   *      Polyline features are added to the domain for further feature protection.
    *      See \ref PkgMesh3FeatureDetection for available functors.}
    *    \cgalParamDefault{CGAL::Null_functor()}
-   *    \cgalParamExtra{The return type of the function depends on whether this parameter is provided or not.}
+   *    \cgalParamExtra{The return type of the function depends on whether this parameter
+                        or `input_features` are provided or not.}
+   *    \cgalParamExtra{If `weights` is provided, this parameter is ignored}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{input_features}
+   *    \cgalParamDescription{ a `Range` of polyline features, represented as `Range`s of `Point_3`.
+   *         Polyline features are added to the domain for further feature protection.}
+   *    \cgalParamDefault{`std::vector<std::vector<Point_3>>()`}
+   *    \cgalParamExtra{The return type of the function depends on whether this parameter
+                        or `input_features` are provided or not.}
    *    \cgalParamExtra{If `weights` is provided, this parameter is ignored}
    *   \cgalParamNEnd
    *
