@@ -924,6 +924,26 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 
 } // namespace CGAL
 
+#if __has_include(<format>) //__cpp_lib_format > 201907L
+#  include <format>
+#  include <sstream>
+
+namespace std {
+template <typename T, typename F, typename CharT>
+struct formatter<CGAL::Output_rep<T, F>, CharT> : public std::formatter<std::basic_string<CharT>>
+{
+  template <typename Context>
+  auto format(const CGAL::Output_rep<T, F> &rep, Context& ctx) const
+  {
+    std::basic_stringstream<CharT> ss;
+    ss << rep;
+    return std::formatter<std::basic_string<CharT>>::format(ss.str(), ctx);
+  }
+};
+
+} // namespace std
+#endif // __cpp_lib_format > 201907L
+
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_H

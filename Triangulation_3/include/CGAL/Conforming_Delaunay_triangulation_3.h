@@ -231,8 +231,16 @@ public:
     return std::all_of(constraint_hierarchy.sc_begin(),
                        constraint_hierarchy.sc_end(),
                        [this](const auto &sc) {
-                         return this->tr.tds().is_edge(sc.first.first,
-                                                       sc.first.second);
+                         const auto va = sc.first.first;
+                         const auto vb = sc.first.second;
+                         const auto is_edge = this->tr.tds().is_edge(va, vb);
+#if CGAL_DEBUG_CDT_3 && __has_include(<format>)
+                         std::cerr << std::format("is_conforming>> Edge is 3D: {:6}  ({} , {})\n",
+                                                  is_edge,
+                                                  oformat(this->point(va)),
+                                                  oformat(this->point(vb)));
+#endif // CGAL_DEBUG_CDT_3
+                         return is_edge;
                        });
   }
 

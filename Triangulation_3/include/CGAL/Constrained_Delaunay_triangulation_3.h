@@ -403,7 +403,7 @@ public:
         if(circ != circ_end) {
           vh_2d->info().vertex_handle_3d = vb;
         }
-        std::cerr << "insert constraint ("
+        std::cerr << "cdt_2.insert_constraint ("
                   << tr.point(previous_2d->info().vertex_handle_3d)
                   << " , "
                   << tr.point(vh_2d->info().vertex_handle_3d)
@@ -528,8 +528,11 @@ public:
         const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
         const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
         const bool is_3d = this->tds().is_edge(va_3d, vb_3d);
-#if CGAL_DEBUG_CDT_3
-        std::cerr << "Edge is 3D: " << std::boolalpha << is_3d << "\n";
+#if CGAL_DEBUG_CDT_3 && __has_include(<format>)
+        std::cerr << std::format("Edge is 3D: {:6}  ({} , {})\n",
+                                  is_3d,
+                                  oformat(this->point(va_3d)),
+                                  oformat(this->point(vb_3d)));
 #endif // CGAL_DEBUG_CDT_3
         fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;
         const auto reverse_edge = cdt_2.mirror_edge(edge);
