@@ -677,13 +677,7 @@ public:
    * \snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
    */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static
-  std::conditional_t<
-      (   CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value
-       && CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::input_features_param_t>::value),
-    Labeled_mesh_domain_3,
-    Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
-  > // warning : keep return type consistent with Return_type inside the constructor code
+  static auto
   create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
   {
     using parameters::get_parameter;
