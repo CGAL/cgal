@@ -669,7 +669,7 @@ public:
     std::vector<Vertex_handle> isolated;
     for (Vertex_handle v : tr.finite_vertex_handles())
     {
-      if (v->meshing_info() == 0.)
+      if (v->meshing_info() == 0. && v->in_dimension() > 1)
         isolated.push_back(v);
     }
 
