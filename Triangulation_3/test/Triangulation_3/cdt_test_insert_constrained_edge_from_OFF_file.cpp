@@ -60,6 +60,11 @@ int main(int argc, char* argv[])
     cdt_edge.insert_constrained_edge(get(dt_vertex_handle_map, s),
                                      get(dt_vertex_handle_map, t));
   }
+  {
+    std::ofstream all_edges("all_segments.polylines.txt");
+    all_edges.precision(17);
+    cdt_edge.write_all_segments_file(all_edges);
+  }
   assert(cdt_edge.is_conforming());
 
   return EXIT_SUCCESS;
