@@ -117,6 +117,7 @@ public:
       KSR_3::dump_segmented_edges(m_data, "init");
     }
 
+    // Fills in the ivertices on support plane intersections inside the bbox.
     make_polygons_intersection_free();
     const double time_to_intersection = timer.time();
 
@@ -124,6 +125,7 @@ public:
     create_ifaces();
     const double time_to_ifaces = timer.time();
 
+    // Splitting the input polygons along intersection lines.
     initial_polygon_iedge_intersections();
     const double time_to_initial_intersections = timer.time();
 
@@ -528,6 +530,7 @@ private:
         // Is there any intersection?
         // As the polygon is convex there can only be one line segment on the inside of the polygon
         if (min < max) {
+          m_data.support_plane(idx).set_crossed_line(pair.first);
           // Collect crossing edges by overlapping min/max barycentric coordinates on line
           for (IEdge e : pair.second) {
             IVertex lower = m_data.source(e);

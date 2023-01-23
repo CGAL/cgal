@@ -784,6 +784,14 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
   }
 }
 
+void dump_polygon(const std::vector<CGAL::Epick::Point_3> &pts, const std::string &filename) {
+  Saver<CGAL::Epick> saver;
+  std::vector<std::vector<CGAL::Epick::Point_3> > pts2;
+  pts2.push_back(pts);
+
+  saver.export_polygon_soup_3(pts2, filename);
+}
+
 template<typename DS, typename Polygon_2>
 void dump_polygon(
   const DS& data,
