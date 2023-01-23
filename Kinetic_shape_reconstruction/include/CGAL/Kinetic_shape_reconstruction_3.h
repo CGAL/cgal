@@ -626,9 +626,10 @@ public:
 
   template<typename LCC>
   void get_linear_cell_complex(LCC &lcc) const {
+    using LCC_Kernel = typename LCC::Traits;
+    CGAL::Cartesian_converter<Intersection_Kernel, LCC_Kernel> conv;
     lcc.clear();
 
-    From_exact from_exact;
     std::vector<bool> used_vertices(m_data.igraph().number_of_vertices(), false);
     std::vector<int> remap(m_data.igraph().number_of_vertices(), -1);
     std::vector<Point_3> mapped_vertices;
@@ -640,7 +641,7 @@ public:
         IVertex ivertex = m_data.ivertex(vertex);
         if (remap[ivertex] == -1) {
           remap[ivertex] = static_cast<int>(mapped_vertices.size());
-          mapped_vertices.push_back(from_exact(m_data.point_3(ivertex)));
+          mapped_vertices.push_back(conv(m_data.point_3(ivertex)));
         }
       }
     }
