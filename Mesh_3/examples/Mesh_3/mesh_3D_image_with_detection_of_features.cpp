@@ -35,7 +35,6 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
 namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
@@ -62,10 +61,13 @@ int main(int argc, char* argv[])
 
   /// [Mesh criteria]
   /// Note that `edge_size` is needed with 1D-features
-  Mesh_criteria criteria(edge_size = sizing_default,
-      facet_angle = 30, facet_size = sizing_default, facet_distance = sizing_default / 10,
-      facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH,
-      cell_radius_edge_ratio = 0, cell_size = 0
+  Mesh_criteria criteria(params::edge_size = sizing_default,
+    params::facet_angle = 30,
+    params::facet_size = sizing_default,
+    params::facet_distance = sizing_default / 10,
+    params::facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH,
+    params::cell_radius_edge_ratio = 0,
+    params::cell_size = 0
   );
   /// [Mesh criteria]
 
