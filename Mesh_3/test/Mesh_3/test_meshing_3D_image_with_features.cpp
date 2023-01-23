@@ -50,17 +50,17 @@ bool read_polylines(const std::string fname,
 template <typename Concurrency_tag = CGAL::Sequential_tag>
 struct Image_tester : public Tester<K_e_i>
 {
-    typedef CGAL::Image_3 Image;
-    typedef CGAL::Labeled_mesh_domain_3<K_e_i> Domain;
-    typedef CGAL::Mesh_domain_with_polyline_features_3<Domain> Mesh_domain;
+  typedef CGAL::Image_3 Image;
+  typedef CGAL::Labeled_mesh_domain_3<K_e_i> Domain;
+  typedef CGAL::Mesh_domain_with_polyline_features_3<Domain> Mesh_domain;
 
-    typedef typename CGAL::Mesh_triangulation_3<
-      Mesh_domain,
-      CGAL::Kernel_traits<Mesh_domain>::Kernel,
-      Concurrency_tag>::type Tr;
-    typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+  typedef typename CGAL::Mesh_triangulation_3<
+    Mesh_domain,
+    CGAL::Kernel_traits<Mesh_domain>::Kernel,
+    Concurrency_tag>::type Tr;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
-    typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
   void mesh_and_verify(Mesh_domain& domain, const Image& image, const double volume) const
   {
