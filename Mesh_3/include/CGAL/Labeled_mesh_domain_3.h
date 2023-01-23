@@ -707,6 +707,7 @@ public:
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
     using parameters::choose_parameter;
+
     auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
     auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
     FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
@@ -717,8 +718,14 @@ public:
     CGAL::Image_3 no_weights;
     const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights);
     auto detect_features_ = choose_parameter(get_parameter(np, internal_np::detect_features_param), Null_functor());
-    std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>> empty_vec;
-    auto input_features_ = choose_parameter(get_parameter_reference(np, internal_np::input_features_param), empty_vec);
+
+    using Default_input_features = std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>>;
+    using Input_features_ref_type = typename internal_np::Lookup_named_param_def<internal_np::input_features_param_t,
+                                                                                 CGAL_NP_CLASS,
+                                                                                Default_input_features>::reference;
+    Default_input_features empty_vec;
+    Input_features_ref_type input_features_
+          = choose_parameter(get_parameter_reference(np, internal_np::input_features_param), empty_vec);
 
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;
