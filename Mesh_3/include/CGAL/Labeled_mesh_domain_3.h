@@ -181,7 +181,7 @@ namespace internal {
   template<bool WithFeatures>
   struct Add_features_in_domain {
     template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
-    void operator()(const CGAL::Image_3&, MeshDomain&, InputFeatureRange, DetectFunctor)
+    void operator()(const CGAL::Image_3&, MeshDomain&, const InputFeatureRange&, DetectFunctor)
     {}
   };
 

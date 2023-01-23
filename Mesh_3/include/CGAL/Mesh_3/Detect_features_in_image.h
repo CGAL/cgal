@@ -266,6 +266,7 @@ public:
   * The constructed polylines are added to `domain` for further feature protection.
   *
   * \tparam Mesh_domain class model of `MeshDomainWithFeatures_3`
+  *
   * \param image the input image
   * \param domain the mesh domain to be enriched with polyline features
   *
