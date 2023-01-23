@@ -71,8 +71,8 @@ int main(int argc, char* argv[])
 
   /// [Meshing]
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      CGAL::parameters::no_exude(),
-                                      CGAL::parameters::no_perturb());
+                                      params::no_exude(),
+                                      params::no_perturb());
   /// [Meshing]
 
   // Output
