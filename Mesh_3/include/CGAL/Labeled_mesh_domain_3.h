@@ -839,9 +839,9 @@ public:
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
   static auto create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
-                                                                const CGAL_NP_CLASS_1&  np1,
-                                                                const CGAL_NP_CLASS_2&  np2,
-                                                                const NP& ... nps)
+                                               const CGAL_NP_CLASS_1&  np1,
+                                               const CGAL_NP_CLASS_2&  np2,
+                                               const NP& ... nps)
   {
     return create_labeled_image_mesh_domain(image_, internal_np::combine_named_parameters(np1, np2, nps...));
   }
@@ -849,9 +849,9 @@ public:
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
-  static auto create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1&  np1,
-                                                                const CGAL_NP_CLASS_2&  np2,
-                                                                const NP& ... nps)
+  static auto create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1& np1,
+                                               const CGAL_NP_CLASS_2& np2,
+                                               const NP& ... nps)
   {
     return create_labeled_image_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
   }
