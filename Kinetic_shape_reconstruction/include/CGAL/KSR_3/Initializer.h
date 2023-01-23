@@ -145,19 +145,9 @@ public:
 
     if (m_parameters.verbose) std::cout << "done" << std::endl;
     if (m_parameters.debug) {
-      //KSR_3::dump(m_data, "intersected");
-      // KSR_3::dump_segmented_edges(m_data, "intersected");
+      KSR_3::dump(m_data, "intersected");
+      KSR_3::dump_segmented_edges(m_data, "intersected");
     }
-
-    // for (std::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
-    //   const auto& sp = m_data.support_plane(i);
-    //   std::cout << "plane index: " << i << std::endl;
-    //   std::cout << "plane: " <<
-    //   sp.plane().a() << ", " <<
-    //   sp.plane().b() << ", " <<
-    //   sp.plane().c() << ", " <<
-    //   sp.plane().d() << std::endl;
-    // }
 
     CGAL_assertion(m_data.check_bbox());
     //m_data.set_limit_lines();

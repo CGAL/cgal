@@ -670,9 +670,9 @@ public:
             CGAL_assertion(m_data.has_ivertex(*it));
             IVertex ivertex = m_data.ivertex(*it);
             ib.add_vertex_to_facet(static_cast<std::size_t>(remap[ivertex]));
+            it--;
             if (it == vertex_range.begin())
               break;
-            it--;
           } while (true);
         }
         ib.end_facet();
