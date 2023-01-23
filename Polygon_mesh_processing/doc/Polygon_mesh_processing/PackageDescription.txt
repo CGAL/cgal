@@ -205,6 +205,10 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_at_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_at_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_at_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_at_vertex()`
 - `CGAL::Polygon_mesh_processing::Principal_curvatures_and_directions`
 
 \cgalCRPSection{Normal Computation Functions}
