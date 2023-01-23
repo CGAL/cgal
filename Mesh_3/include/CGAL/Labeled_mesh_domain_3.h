@@ -128,7 +128,7 @@ namespace internal {
   struct Detect_features_in_domain {
     std::vector<std::vector<typename MeshDomain::Point_3>>
     operator()(const CGAL::Image_3& image,
-               MeshDomain& domain,
+               const MeshDomain& domain,
                DetectFunctor functor) const {
       return functor(image, domain);
     }
@@ -138,7 +138,7 @@ namespace internal {
   struct Detect_features_in_domain<MeshDomain, Null_functor> {
     std::vector<std::vector<typename MeshDomain::Point_3>>
     operator()(const CGAL::Image_3&,
-               MeshDomain&,
+               const MeshDomain&,
                Null_functor) const {
       return std::vector<std::vector<typename MeshDomain::Point_3>>();
     }
@@ -147,35 +147,11 @@ namespace internal {
   template<typename MeshDomain, typename DetectFunctor>
   std::vector<std::vector<typename MeshDomain::Point_3>>
   detect_features(const CGAL::Image_3& image,
-                  MeshDomain& domain,
+                  const MeshDomain& domain,
                   DetectFunctor functor)
   {
     return Detect_features_in_domain<MeshDomain, DetectFunctor>()
             (image, domain, functor);
-  }
-
-  // Add_input_features
-  template<typename MeshDomain, typename DetectFunctor>
-  struct Add_input_features_in_domain {
-    std::vector<std::vector<typename MeshDomain::Point_3>>
-    operator()(MeshDomain& domain, DetectFunctor functor) const {
-       return functor(domain);
-    }
-  };
-  // specialization for `Null_functor`: create the default functor
-  template<typename MeshDomain>
-  struct Add_input_features_in_domain<MeshDomain, Null_functor> {
-    std::vector<std::vector<typename MeshDomain::Point_3>>
-    operator()(MeshDomain&, Null_functor) const {
-      return std::vector<std::vector<typename MeshDomain::Point_3>>();
-    }
-  };
-
-  template<typename MeshDomain, typename DetectFunctor>
-  std::vector<std::vector<typename MeshDomain::Point_3>>
-  add_input_features(MeshDomain& domain, DetectFunctor functor)
-  {
-    return Add_input_features_in_domain<MeshDomain, DetectFunctor>()(domain, functor);
   }
 
   template<bool WithFeatures>
