@@ -1,9 +1,3 @@
-// #define CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
-#define CGAL_PERIODIC_3_MESH_3_VERBOSE
-// #define CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-// #define CGAL_MESH_3_EXUDER_VERBOSE
-#define CGAL_MESH_3_PROTECTION_DEBUG 31
-
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -17,8 +11,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
 #include <cmath>
@@ -82,7 +75,7 @@ using Periodic_polyhedral_domain = CGAL::Polyhedral_to_periodic_labeling_functio
 
 // Optional: add polyline features to be protected (i.e., preserved in the output)
 // using Periodic_mesh_domain = CGAL::Labeled_mesh_domain_3<K>; // no feature protection
-using Periodic_mesh_domain = CGAL::Mesh_domain_with_polyline_features_3<CGAL::Labeled_mesh_domain_3<K> >;
+using Periodic_mesh_domain = CGAL::Labeled_mesh_domain_3<K>;
 using Polyline_3 = std::vector<Point>;
 using Polylines = std::list<Polyline_3>;
 
@@ -99,11 +92,9 @@ namespace params = CGAL::parameters;
 // An arbitrary, simple polyhedral shape
 void generate_periodic_diamond(const Point& origin, // bottom, front, left point of the canonical domain
                                const FT xs, const FT ys, const FT zs,
-                               Mesh& sm,
-                               Polylines& polylines)
+                               Mesh& sm)
 {
   using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
-  using edge_descriptor = boost::graph_traits<Mesh>::edge_descriptor;
 
   auto vpm = get(CGAL::vertex_point, sm);
 
@@ -132,25 +123,6 @@ void generate_periodic_diamond(const Point& origin, // bottom, front, left point
 
   CGAL::IO::write_OFF("periodic_spike.off", sm, CGAL::parameters::stream_precision(17));
   assert(is_valid_polygon_mesh(sm));
-
-  // Get the sharp edges to protect, in a generic way
-  using EIFMap = boost::property_map<Mesh, CGAL::edge_is_feature_t>::type;
-  EIFMap eif = get(CGAL::edge_is_feature, sm);
-  CGAL::Polygon_mesh_processing::detect_sharp_edges(sm, 60 /*angle*/, eif);
-
-  std::cout << "Protect:" << std::endl;
-  int sharp_counter = 0;
-  for(edge_descriptor e : edges(sm))
-  {
-    if(get(eif, e))
-    {
-      ++sharp_counter;
-      polylines.emplace_back(std::initializer_list<Point>{get(vpm, source(e, sm)), get(vpm, target(e, sm))});
-      std::cout << get(vpm, source(e, sm)) << " " << get(vpm, target(e, sm)) << std::endl;
-    }
-  }
-
-  std::cout << sharp_counter << " sharp edges to protect" << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -163,15 +135,11 @@ int main(int argc, char** argv)
   const int number_of_copies_in_output = (argc > 4) ? atoi(argv[4]) : 4; // can be 1, 2, 4, or 8
 
   Mesh sm;
-  Polylines polylines;
-  generate_periodic_diamond(CGAL::ORIGIN, x_span, y_span, z_span, sm, polylines);
+  generate_periodic_diamond(CGAL::ORIGIN, x_span, y_span, z_span, sm);
   Iso_cuboid canonical_cube(0, 0, 0, x_span, y_span, z_span);
 
   Periodic_polyhedral_domain ppd(sm, canonical_cube);
   Periodic_mesh_domain domain(ppd, canonical_cube);
-
-  // Insert the features in the domain
-// domain.add_features(polylines.begin(), polylines.end()); // @tmp
 
   Periodic_mesh_criteria criteria(params::edge_size(min_span)
                                          .facet_angle(30)
