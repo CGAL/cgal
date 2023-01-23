@@ -21,26 +21,25 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Triangle_3& triangle,
-                  const typename K::Iso_cuboid_3& bbox,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Triangle_3& triangle,
+             const typename K::Iso_cuboid_3& bbox,
+             const K& k)
 {
   return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& bbox,
-                  const typename K::Triangle_3& triangle,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& bbox,
+             const typename K::Triangle_3& triangle,
+             const K& k)
 {
   return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
 }
 
 } // namespace internal
 } // namespace Intersections
-
-
-
 } // namespace CGAL
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_TRIANGLE_3_DO_INTERSECT_H

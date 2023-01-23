@@ -404,7 +404,7 @@ namespace CGAL {
             number_of_leaf_nodes_visited << std::endl;
           s << "Number of points visited:" <<
             number_of_items_visited << std::endl;
-          s << "Number of neighbours computed:" <<
+          s << "Number of neighbors computed:" <<
             number_of_neighbours_computed << std::endl;
           return s;
         }

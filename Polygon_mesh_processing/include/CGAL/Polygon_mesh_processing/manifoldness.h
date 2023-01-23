@@ -13,10 +13,10 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MANIFOLDNESS_H
 #define CGAL_POLYGON_MESH_PROCESSING_MANIFOLDNESS_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/assertions.h>
@@ -34,7 +34,7 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief returns whether a vertex of a polygon mesh is non-manifold.
 ///
@@ -285,7 +285,7 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
 
 } // end namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief collects the combinatorial non-manifold vertices (if any) present in the mesh.
 ///
@@ -627,7 +627,7 @@ OutputIterator geometrically_non_manifold_edges(const PolygonMesh& pmesh,
   return out;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// duplicates all the non-manifold vertices of the input mesh.
 ///

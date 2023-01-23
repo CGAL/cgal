@@ -65,7 +65,7 @@ sets the edge that makes this face blind.
 \pre is_blind() returns `true`
 \pre e is a constrained edge
 */
-void set_blinding_constraint(const Egde& e);
+void set_blinding_constraint(const Edge& e);
 
 
 /// @}

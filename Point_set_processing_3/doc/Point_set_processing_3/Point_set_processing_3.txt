@@ -255,7 +255,7 @@ found in other \cgal components:
 
 Point sets are often used to sample objects with a higher dimension,
 typically a curve in 2D or a surface in 3D. In such cases, finding the
-scale of the objet is crucial, that is to say finding the minimal
+scale of the object is crucial, that is to say finding the minimal
 number of points (or the minimal local range) such that the subset of
 points has the appearance of a curve in 2D or a surface in 3D
 \cgalCite{cgal:gcsa-nasr-13}.

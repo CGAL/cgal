@@ -879,7 +879,7 @@ bool test_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>         Agds;
@@ -904,7 +904,7 @@ bool test_hierarchy_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
   typedef Triangulation_face_base_2<Traits>             Fb;
@@ -934,7 +934,7 @@ bool test_filtered_traits_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>         Agds;
@@ -961,7 +961,7 @@ bool test_filtered_traits_hierarchy_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
   typedef Triangulation_face_base_2<Traits>             Fb;

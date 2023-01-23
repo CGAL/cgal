@@ -319,7 +319,7 @@ public:
               // if insertion is OK, then check its level
               facet_queue.push(
                 new_pair);                                      // if its level is equal to max_level do not put it in
-            }                                                                    // queue since we do not want to traverse its childs
+            }                                                                    // queue since we do not want to traverse its children
           }
         } while(++vertex_circulator != done);
       } while((edge = next(edge,polyhedron)) != halfedge(facet_front,polyhedron));

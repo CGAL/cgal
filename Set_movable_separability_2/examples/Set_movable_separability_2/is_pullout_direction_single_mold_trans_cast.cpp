@@ -40,7 +40,7 @@ int main(int  argc, char* argv[])
     auto res = casting::is_pullout_direction(polygon, e_it, d);
     std::cout << "The polygon is " << (res ? "" : "not ")
               << "castable using edge "
-              << index << " in vartical translation (" << d << ")" << std::endl;
+              << index << " in vertical translation (" << d << ")" << std::endl;
 
   }
 

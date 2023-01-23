@@ -16,7 +16,7 @@
 #include <CGAL/license/Triangulation_2.h>
 
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
 
@@ -163,7 +163,7 @@ public:
     : Ctr(gt)
     {
       insert_constraints(lc.begin(), lc.end());
-      CGAL_triangulation_postcondition( is_valid() );
+      CGAL_postcondition( is_valid() );
     }
 
   template<class InputIterator>
@@ -173,7 +173,7 @@ public:
     : Ctr(gt)
     {
       insert_constraints(it, last);
-      CGAL_triangulation_postcondition( is_valid() );
+      CGAL_postcondition( is_valid() );
     }
 
   virtual ~Constrained_Delaunay_triangulation_2() {}
@@ -448,7 +448,7 @@ public:
                              OutputItFaces fit,
                              OutputItBoundaryEdges eit,
                              Face_handle start = Face_handle()) const {
-    CGAL_triangulation_precondition( dimension() == 2);
+    CGAL_precondition( dimension() == 2);
     int li;
     Locate_type lt;
     Face_handle fh = locate(p,lt,li, start);
@@ -467,7 +467,7 @@ public:
       pit = propagate_conflicts(p,fh,2,pit);
       return pit;
     }
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return std::make_pair(fit,eit);
   }
 
@@ -690,7 +690,7 @@ flip (Face_handle& f, int i)
   Face_handle g = f->neighbor(i);
   int j = mirror_index(f,i);
 
-  // save wings neighbors to be able to restore contraint status
+  // save wings neighbors to be able to restore constraint status
   Face_handle f1 = f->neighbor(cw(i));
   int i1 = mirror_index(f,cw(i));
   Face_handle f2 = f->neighbor(ccw(i));
@@ -702,7 +702,7 @@ flip (Face_handle& f, int i)
 
   // The following precondition prevents the test suit
   // of triangulation to work on constrained Delaunay triangulation
-  //CGAL_triangulation_precondition(is_flipable(f,i));
+  //CGAL_precondition(is_flipable(f,i));
   this->_tds.flip(f, i);
 
   // restore constraint status
@@ -945,9 +945,9 @@ remove(Vertex_handle v)
   // remove a vertex and updates the constrained edges of the new faces
   // precondition : there is no incident constraints
 {
-  CGAL_triangulation_precondition( v != Vertex_handle() );
-  CGAL_triangulation_precondition( ! is_infinite(v));
-  CGAL_triangulation_precondition( ! are_there_incident_constraints(v));
+  CGAL_precondition( v != Vertex_handle() );
+  CGAL_precondition( ! is_infinite(v));
+  CGAL_precondition( ! are_there_incident_constraints(v));
   if  (dimension() <= 1)    Ctr::remove(v);
   else  remove_2D(v);
   return;
@@ -961,7 +961,7 @@ remove(Vertex_handle v)
 //   // insert  point p in edge(f,i)
 //   // bypass the precondition for point a to be in edge(f,i)
 //   // update constrained status
-//   // this member fonction is not robust with exact predicates
+//   // this member function is not robust with exact predicates
 //   // and approximate construction. Should be removed
 // {
 //   Vertex_handle vh=Ctr::special_insert_in_edge(a,f,i);
@@ -1016,13 +1016,13 @@ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 is_valid(bool verbose, int level) const
 {
   bool result = Ctr::is_valid(verbose, level);
-  CGAL_triangulation_assertion( result );
+  CGAL_assertion( result );
 
     Finite_faces_iterator fit= finite_faces_begin();
     for (; fit != finite_faces_end(); fit++) {
       for(int i=0;i<3;i++) {
         result = result && !is_flipable(fit,i, false);
-        CGAL_triangulation_assertion( result );
+        CGAL_assertion( result );
       }
     }
     return result;

@@ -631,7 +631,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, Counting_output_iterator>
     Arr_bfs_scanner;
-  //counting_output_operator CTOR reqires a parameter
+  //counting_output_operator CTOR requires a parameter
   std::size_t cc = 0;
   Arr_bfs_scanner scanner(this->m_traits, Counting_output_iterator(&cc));
   scanner.scan(*(this->m_arr));

@@ -184,7 +184,7 @@ $O(n^3)$, and all other operations take time $O(nm)$. These time
 bounds ignore the cost for multiprecision arithmetic operations.
 
 All functions on integer matrices compute the exact result, i.e.,
-there is no rounding error. The implemenation follows a proposal of
+there is no rounding error. The implementation follows a proposal of
 J. Edmonds (J. Edmonds, Systems of distinct representatives and linear
 algebra, Journal of Research of the Bureau of National Standards, (B),
 71, 241 - 245). Most functions of linear algebra are { \em checkable

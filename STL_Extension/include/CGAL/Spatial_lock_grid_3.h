@@ -556,7 +556,7 @@ public:
         }
         else if (old_value > this_thread_priority)
         {
-          // Another "more prioritary" thread owns the lock, we back off
+          // Another "more priority" thread owns the lock, we back off
           return false;
         }
         else

@@ -98,7 +98,7 @@ public:
       for(std::size_t i = 0; i < number_of_points; ++i) {
         double Q = i * golden_ratio * CGAL_PI;
         double R = std::pow(static_cast<double>(i) / number_of_points, custom_power);
-        // use uniform weigths, since we already give importance to locations that are close to center.
+        // use uniform weights, since we already give importance to locations that are close to center.
         *out_it++ = Tuple(R * cos(Q), R * sin(Q), 1.0);
       }
     }

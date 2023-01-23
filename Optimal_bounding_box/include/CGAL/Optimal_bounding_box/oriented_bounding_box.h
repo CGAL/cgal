@@ -26,6 +26,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
+#include <CGAL/Default.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Random.h>
@@ -333,14 +334,14 @@ void oriented_bounding_box(const PointRange& points,
   typedef typename CGAL::Kernel_traits<Point>::type                                     K;
   typedef Oriented_bounding_box_traits_3<K>                                             Default_traits;
 #else
-  typedef void                                                                          Default_traits;
+  typedef CGAL::Default                                                                 Default_traits;
 #endif
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
                                                        NamedParameters,
                                                        Default_traits>::type            Geom_traits;
 
-  CGAL_static_assertion_msg(!(std::is_same<Geom_traits, void>::value),
+  CGAL_static_assertion_msg(!(std::is_same<Geom_traits, CGAL::Default>::value),
                             "You must provide a traits class or have Eigen enabled!");
 
   Geom_traits traits = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));

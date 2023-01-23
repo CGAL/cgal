@@ -20,7 +20,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Convex_hull_traits_3.h>
-#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Convex_hull_face_base_2.h>
 #include <CGAL/Convex_hull_vertex_base_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
@@ -565,7 +565,7 @@ farthest_outside_point(Face_handle f, std::list<Point>& outside_set,
 {
 
    typedef typename std::list<Point>::iterator Outside_set_iterator;
-   CGAL_ch_assertion(!outside_set.empty());
+   CGAL_assertion(!outside_set.empty());
 
    typename Traits::Plane_3 plane =
        traits.construct_plane_3_object()(f->vertex(0)->point(),
@@ -682,7 +682,7 @@ ch_quickhull_3_scan(TDS_2& tds,
      border.erase(it);
      while(! border.empty()){
        it = border.find(e.first->vertex(TDS_2::ccw(e.second)));
-       CGAL_ch_assertion(it != border.end());
+       CGAL_assertion(it != border.end());
        e = it->second;
        e.first->info() = 0;
        edges.push_back(e);
@@ -758,9 +758,9 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   ch_quickhull_3_scan(tds, pending_facets, traits);
 
   //std::cout << "|V(tds)| = " << tds.number_of_vertices() << std::endl;
-//  CGAL_ch_expensive_postcondition(all_points_inside(points.begin(),
+//  CGAL_expensive_postcondition(all_points_inside(points.begin(),
 //                                                    points.end(),P,traits));
-//  CGAL_ch_postcondition(is_strongly_convex_3(P, traits));
+//  CGAL_postcondition(is_strongly_convex_3(P, traits));
 }
 
 template <class InputIterator, class PolygonMesh, class Traits>

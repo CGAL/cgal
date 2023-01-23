@@ -35,7 +35,7 @@ typedef Traits::Point_3 Point;
 
 As a model of the concept `DelaunayTriangulationCellBase_3`,
 `Delaunay_triangulation_cell_base_3`
-provides a `circumcenter()` member fonction.
+provides a `circumcenter()` member function.
 */
 
 /// @{

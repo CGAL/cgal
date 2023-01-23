@@ -154,7 +154,7 @@ protected:
   //! The geometry-traits adaptor.
   const Gt_adaptor_2* m_geom_traits;
 
-  //! Inidicates whether the traits object should evetually be freed.
+  //! Indicates whether the traits object should eventually be freed.
   bool m_own_geom_traits;
 
   // Copy constructor and assignment operator - not supported.
@@ -289,7 +289,7 @@ public:
     return (it != m_boundary_vertices.end()) ? it->second : nullptr;
   }
 
-  // TODO remove if all occurences have been replaced with the new signature that queries for a point
+  // TODO remove if all occurrences have been replaced with the new signature that queries for a point
   /*! Obtain a vertex on the line of discontinuity that corresponds to
    *  the given curve-end (or return NULL if no such vertex exists).
    */

@@ -150,20 +150,6 @@ public:
                         Deletes all faces and vertices of the triangulation.
                 */
                 void clear();
-
-                /*!
-                        Equality operator.
-                        \todo implement
-                */
-                bool operator==(const Periodic_4_hyperbolic_triangulation_2<GT, TDS>& tr1,
-                                                const Periodic_4_hyperbolic_triangulation_2<GT, TDS>& tr2);
-
-                /*!
-                        Inequality operator.
-                        \todo implement
-                */
-                bool operator!=(const Periodic_4_hyperbolic_triangulation_2<GT, TDS>& tr1,
-                                                const Periodic_4_hyperbolic_triangulation_2<GT, TDS>& tr2);
         /// @}
 
 

@@ -17,7 +17,7 @@
 
 
 #include <CGAL/Conic_2.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Kernel/global_functions_2.h>
 
 
@@ -131,7 +131,7 @@ class Optimisation_ellipse_2 {
     set( const Point& p, const Point& q)
     {
         n_boundary_points = 2;
-        CGAL_optimisation_precondition(boundary_point1 == p); CGAL_USE(p);
+        CGAL_precondition(boundary_point1 == p); CGAL_USE(p);
         boundary_point2 = q;
     }
 
@@ -139,20 +139,20 @@ class Optimisation_ellipse_2 {
     set( const Point& p1, const Point& p2, const Point& p3)
     {
         n_boundary_points = 3;
-        CGAL_optimisation_precondition(boundary_point1 == p1);
-        CGAL_optimisation_precondition(boundary_point2 == p2);
+        CGAL_precondition(boundary_point1 == p1);
+        CGAL_precondition(boundary_point2 == p2);
         boundary_point3 = p3;
         helper_conic.set_ellipse( p1, p2, p3);
-        CGAL_optimisation_assertion(helper_conic.is_ellipse());
+        CGAL_assertion(helper_conic.is_ellipse());
     }
 
     void
     set( const Point& p1, const Point& p2, const Point& p3, const Point& p4)
     {
         n_boundary_points = 4;
-        CGAL_optimisation_precondition(boundary_point1 == p1);
-        CGAL_optimisation_precondition(boundary_point2 == p2);
-        CGAL_optimisation_precondition(boundary_point3 == p3);
+        CGAL_precondition(boundary_point1 == p1);
+        CGAL_precondition(boundary_point2 == p2);
+        CGAL_precondition(boundary_point3 == p3);
         boundary_point4 = p4;
         Conic::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
 
@@ -195,7 +195,7 @@ class Optimisation_ellipse_2 {
       if (!helper_ellipse_set) {
         helper_ellipse.set_ellipse( conic1, conic2);
         helper_ellipse.analyse();
-        CGAL_optimisation_assertion (helper_ellipse.is_ellipse());
+        CGAL_assertion (helper_ellipse.is_ellipse());
         helper_ellipse_set= true;
       }
     }
@@ -211,14 +211,14 @@ class Optimisation_ellipse_2 {
         // In that case, helper_conic is already correct,
         // but in general, this optimization is NOT valid.
         n_boundary_points = 5;
-        CGAL_optimisation_assertion(helper_conic.is_ellipse());
+        CGAL_assertion(helper_conic.is_ellipse());
         // the following assertion is too strict if we run under
         // double (which is sometimes the case, e.g. in demos)
-        // CGAL_optimisation_assertion(helper_conic.has_on_boundary(p5));
-        CGAL_optimisation_precondition(boundary_point1 == p1);
-        CGAL_optimisation_precondition(boundary_point2 == p2);
-        CGAL_optimisation_precondition(boundary_point3 == p3);
-        CGAL_optimisation_precondition(boundary_point4 == p4);
+        // CGAL_assertion(helper_conic.has_on_boundary(p5));
+        CGAL_precondition(boundary_point1 == p1);
+        CGAL_precondition(boundary_point2 == p2);
+        CGAL_precondition(boundary_point3 == p3);
+        CGAL_precondition(boundary_point4 == p4);
         CGAL_USE(p1); CGAL_USE(p2); CGAL_USE(p3); CGAL_USE(p4);
         boundary_point5 = p5;
     }
@@ -247,7 +247,7 @@ class Optimisation_ellipse_2 {
                          double &u, double &v, double &w) const
     {
       // just like double_conic, but we only get the coefficients
-      CGAL_optimisation_precondition( ! is_degenerate());
+      CGAL_precondition( ! is_degenerate());
 
       if ( n_boundary_points == 4) {
         set_e_values();
@@ -297,7 +297,7 @@ class Optimisation_ellipse_2 {
                     || (    ( conic1 == e.conic2)
                          && ( conic2 == e.conic1)));
           default:
-            CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+            CGAL_assertion(    ( n_boundary_points >= 0)
                                          && ( n_boundary_points <= 5)); }
         // keeps g++ happy
         return( false);
@@ -343,7 +343,7 @@ class Optimisation_ellipse_2 {
                   helper_conic.vol_derivative( dr, ds, dt, du, dv, dw);
                 return( CGAL::Bounded_side( CGAL_NTS sign( tau_star))); } }
           default:
-            CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+            CGAL_assertion( ( n_boundary_points >= 0) &&
                                          ( n_boundary_points <= 5) ); }
         // keeps g++ happy
         return( CGAL::Bounded_side( 0));
@@ -416,7 +416,7 @@ class Optimisation_ellipse_2 {
            return (CGAL::ZERO ==  (c.vol_derivative(dr, ds, dt, du, dv, dw)));
          }
        default:
-         CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+         CGAL_assertion( ( n_boundary_points >= 0) &&
                                       ( n_boundary_points <= 5) );
          return false;
        }

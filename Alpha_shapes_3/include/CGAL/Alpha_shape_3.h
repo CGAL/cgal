@@ -69,7 +69,7 @@ class Alpha_shape_3 : public Dt
   // or INTERIOR with respect to the alpha shape.
   // In GENERAL mode a $k$ simplex is REGULAR if it is on the boundary
   // of the alpha_complex and belongs to a $k+1$ simplex in the complex
-  // and it is SINGULAR simplex if it is  a boundary simplex tht is not
+  // and it is SINGULAR simplex if it is a boundary simplex that is not
   // included in a $k+1$ simplex of the complex.
 
   // In REGULARIZED mode each k-dimensional simplex of the triangulation
@@ -93,7 +93,7 @@ public:
   typedef typename Dt::Geom_traits                  Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
-  // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
+  // The Exact Comparison Tag cannot be used in conjunction with periodic triangulations
   // because the periodic triangulations' point() function returns a temporary
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
@@ -401,7 +401,7 @@ public:
     // Returns the n-th alpha-value.
     // n < size()
     {
-      CGAL_triangulation_assertion( n > 0 &&
+      CGAL_assertion( n > 0 &&
                       n <= static_cast<int>(alpha_spectrum.size()) );
       return alpha_spectrum[n-1];
     }
@@ -422,7 +422,7 @@ public:
 private:
 
   // the dynamic version is not yet implemented
-  // desactivate the tetrahedralization member functions
+  // deactivate the tetrahedralization member functions
   void insert(const Point& /*p*/) {}
   // Inserts point `p' in the alpha shape and returns the
   // corresponding vertex of the underlying Delaunay tetrahedralization.
@@ -735,7 +735,7 @@ public:
   // (2) the nb of solid components is equal or less than nb_component
 
   NT find_alpha_solid() const;
-  // compute the minumum alpha such that all data points
+  // compute the minimum alpha such that all data points
   // are either on the boundary or in the interior
   // not necessarily connected
   // starting point for searching
@@ -776,7 +776,7 @@ private:
   //---------------------------------------------------------------------
 
 private:
-  // prevent default copy constructor and default assigment
+  // prevent default copy constructor and default assignment
   Alpha_shape_3(const Alpha_shape_3&);
   void operator=(const Alpha_shape_3&);
 
@@ -1292,7 +1292,7 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_vertex_maps(bool reinitialize)
                      back_inserter(incidents));
       typename std::list<Cell_handle>::iterator chit=incidents.begin();
       if (is_infinite(*chit)) as->set_is_on_chull(true);
-      while (is_infinite(*chit)) ++chit; //skip infinte cells
+      while (is_infinite(*chit)) ++chit; //skip infinite cells
       alpha = (*chit)->get_alpha();
       as->set_alpha_mid(alpha);
       as->set_alpha_max(alpha);
@@ -1330,7 +1330,7 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_vertex_maps(bool reinitialize)
       incident_cells(static_cast<Vertex_handle>(vit),
                      back_inserter(incidents));
       typename std::list<Cell_handle>::iterator chit=incidents.begin();
-      while (is_infinite(*chit)) ++chit; //skip infinte cells
+      while (is_infinite(*chit)) ++chit; //skip infinite cells
       alpha = (*chit)->get_alpha();
       as->set_alpha_mid(alpha);
       for( ; chit != incidents.end(); ++chit) {
@@ -1713,7 +1713,7 @@ Alpha_shape_3<Dt,EACT>::number_of_solid_components(const NT& alpha) const
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it)
     {
       Cell_handle pCell = cell_it;
-      CGAL_triangulation_assertion(pCell != nullptr);
+      CGAL_assertion(pCell != nullptr);
 
       if (classify(pCell, alpha) == INTERIOR){
         Data& data = marked_cell_set[pCell];
@@ -1745,7 +1745,7 @@ void Alpha_shape_3<Dt,EACT>::traverse(Cell_handle pCell,
     for (int i=0; i<=3; i++)
       {
         pNeighbor = pCell->neighbor(i);
-        CGAL_triangulation_assertion(pNeighbor != nullptr);
+        CGAL_assertion(pNeighbor != nullptr);
         if (classify(pNeighbor, alpha) == INTERIOR){
           Data& data = marked_cell_set[pNeighbor];
           if(data == false){
@@ -1835,7 +1835,7 @@ Alpha_shape_3<Dt,EACT>::find_optimal_alpha(size_type nb_components) const
 template <class Dt,class EACT>
 typename Alpha_shape_3<Dt,EACT>::NT
 Alpha_shape_3<Dt,EACT>::find_alpha_solid() const
-  // compute the minumum alpha such that all data points
+  // compute the minimum alpha such that all data points
   // are either on the boundary or in the interior
   // not necessarily connected
 {

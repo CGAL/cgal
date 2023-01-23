@@ -156,7 +156,7 @@ public:
 
   // The two following functions prevent the stream to only extract
   // ONE character (= what the types char imply) by requiring
-  // explicitely an integer object when reading the stream
+  // explicitly an integer object when reading the stream
   void read_ascii(std::istream& stream, char& c) const
   {
     short s;

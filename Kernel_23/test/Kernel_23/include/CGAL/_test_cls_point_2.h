@@ -183,7 +183,7 @@ _test_cls_point_2(const R& )
  assert(bb.ymin() <= 50.0);
  assert(bb.ymax() >= 50.0);
 
-  // test compound assignement operator
+  // test compound assignment operator
   CGAL::Point_2<R>  p_1(1,2);
   const CGAL::Point_2<R>  p_1_const = p_1;
   CGAL::Vector_2<R> v_1(3,4);

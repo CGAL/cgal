@@ -20,7 +20,6 @@
 #include <CGAL/Periodic_2_offset_2.h>
 
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
-#include <CGAL/triangulation_assertions.h>
 
 namespace CGAL {
 

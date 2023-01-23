@@ -64,7 +64,7 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool
+typename K::Boolean
 inline
 do_intersect(const CGAL::Bbox_3& c,
              const CGAL::Bbox_3& bbox,

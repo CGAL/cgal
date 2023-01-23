@@ -71,7 +71,7 @@ In the (mandatory) <TT>ROW</TT> section, you find one line for every
 constraint, where the letter <TT>L</TT> indicates relation \f$ \leq\f$,
 letter <TT>G</TT> stands for \f$ \geq\f$, and <TT>E</TT> for \f$ =\f$. In
 addition, there is a row for the linear objective function (indicated
-by letter <TT>N</TT>). In that section, names are asigned to the
+by letter <TT>N</TT>). In that section, names are assigned to the
 constraints (here: <TT>c0, c1</TT>) and the objective function (here:
 <TT>obj</TT>). An MPS file may encode several linear objective
 functions by using several rows starting with <TT>N</TT>, but we ignore
@@ -123,7 +123,7 @@ having an identifier different from that of the first line. The first
 token \f$ t\f$ itself determines the type of the bound, and the token \f$ j\f$
 after the bound identifier names the variable to which the bound applies
 In case of bound types <TT>FX</TT>, <TT>LO</TT>, and
-<TT>UP</TT>, there is another token \f$ val\f$ that specifices the bound
+<TT>UP</TT>, there is another token \f$ val\f$ that specifies the bound
 value. Here is how bound type and value determine a bound for variable
 \f$ x_j\f$. There may be several bound specifications for a single variable, and
 they are processed in order of appearance.

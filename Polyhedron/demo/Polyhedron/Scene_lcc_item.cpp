@@ -164,7 +164,7 @@ struct lcc_priv{
 
       P_traits cdt_traits(f.normal);
       CDT cdt(cdt_traits);
-        // (1) We insert all the edges as contraint in the CDT.
+        // (1) We insert all the edges as constraint in the CDT.
         typename CDT::Vertex_handle previous=nullptr, first=nullptr;
         for (unsigned int i=0; i<f.size(); ++i)
         {

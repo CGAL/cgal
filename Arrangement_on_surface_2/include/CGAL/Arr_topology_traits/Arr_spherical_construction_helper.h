@@ -151,7 +151,7 @@ public:
   bool swap_predecessors(Event* event) const
   {
     // If we insert an edge whose right end lies on the north pole, we have
-    // to flip the order of predecessor halfegdes.
+    // to flip the order of predecessor halfedges.
     // TODO what about the corner?
     return (event->parameter_space_in_x() == ARR_INTERIOR &&
             event->parameter_space_in_y() == ARR_TOP_BOUNDARY);
@@ -263,7 +263,7 @@ before_handle_event(Event* event)
 
   if (ps_x == ARR_RIGHT_BOUNDARY) {
     // Process a non-isolated event on the right identified boundary.
-    // Cannnot be vertical, only curves approaching the right side are possible.
+    // Cannot be vertical, only curves approaching the right side are possible.
     // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
     Vertex_handle v = (dv) ? Vertex_handle(dv) :

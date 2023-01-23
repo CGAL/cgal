@@ -55,7 +55,7 @@ class QP_solver;
 template <class ET>
 class QP_solution;
 
-namespace QP_solver_impl {   // namespace for implemenation details
+namespace QP_solver_impl {   // namespace for implementation details
   // --------------
   // Tags generator
   // --------------
@@ -266,7 +266,7 @@ private:
   A_row_by_index_iterator;
 
   // Access to the matrix D sometimes converts to ET, and
-  // sometimes retruns the original input type
+  // sometimes returns the original input type
   typedef  QP_matrix_pairwise_accessor< D_iterator, ET >
   D_pairwise_accessor;
   typedef boost::transform_iterator
@@ -671,7 +671,7 @@ public: // only the pricing strategies (including user-defined ones
     // - UPPER: the variable is sitting on its upper bound.
     // - FIXED: the variable is sitting on its lower and upper bound.
     // - ZERO: the variable has value zero and is sitting on its lower
-    //   bound, its upper bound, or betweeen the two bounds.
+    //   bound, its upper bound, or between the two bounds.
     //
     // Note: in the latter case you can call state_of_zero_nonbasic_variable()
     // to find out which bound is active, if any.

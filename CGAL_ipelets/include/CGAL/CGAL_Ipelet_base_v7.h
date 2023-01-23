@@ -414,9 +414,9 @@ public:
     {
       ipe::Curve* SSP_ipe = new ipe::Curve;
       ipe::Vector ipeS=ipe::Vector( CGAL::to_double(std::get<1>(arc).x()),
-                                CGAL::to_double(std::get<1>(arc).y()));//convert ot ipe format
+                                CGAL::to_double(std::get<1>(arc).y()));//convert to ipe format
       ipe::Vector ipeT=ipe::Vector( CGAL::to_double(std::get<2>(arc).x()),
-                                CGAL::to_double(std::get<2>(arc).y()));//convert ot ipe format
+                                CGAL::to_double(std::get<2>(arc).y()));//convert to ipe format
       SSP_ipe->appendArc(ipe::Matrix(sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),0,
                                    0,(std::get<3>(arc)==CGAL::COUNTERCLOCKWISE?1:-1)*
                                      sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),
@@ -951,7 +951,7 @@ public:
               //retrieve circle arcs
               if(SSP_ipe -> segment(j).type()==ipe::CurveSegment::EArc &&
                  is_only_rotated_or_scaled(object->asPath()->matrix()))
-              {//retreve circle arcs
+              {//retrieve circle arcs
                 if ( !CGAL::Is_in_tuple<Circular_arc_2,typename multi_output_iterator::Value_type_tuple>::value ){
                   to_deselect=true;
                   continue;
