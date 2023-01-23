@@ -1192,7 +1192,7 @@ private:
     {
       Point p1 = get(vpmap_, target(he, mesh_));
       Point p2 = get(vpmap_, source(he, mesh_));
-      return CGAL::midpoint(p1, p2);
+      return gt_.construct_midpoint_3_object()(p1, p2);
     }
 
     void dump(const char* filename) const
