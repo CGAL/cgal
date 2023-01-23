@@ -36,11 +36,42 @@
 
 #include <vector>
 
+#define TEST_RESOLVE_INTERSECTION
+#define DEDUPLICATE_SEGMENTS
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
 #ifndef DOXYGEN_RUNNING
 namespace autorefine_impl {
+
+template <class K>
+bool do_coplanar_segments_intersect(const typename K::Segment_3& s1,
+                                    const typename K::Segment_3& s2,
+                                    const K& k = K())
+{
+  // supporting_line intersects: points are coplanar
+  typename K::Coplanar_orientation_3 cpl_orient=k.coplanar_orientation_3_object();
+  ::CGAL::Orientation or1 = cpl_orient(s1[0], s1[1], s2[0]);
+  ::CGAL::Orientation or2 = cpl_orient(s1[0], s1[1], s2[1]);
+
+  if(or1 == COLLINEAR && or2 == COLLINEAR)
+  {
+    // segments are collinear
+    typename K::Collinear_are_ordered_along_line_3 cln_order = k.collinear_are_ordered_along_line_3_object();
+    return (cln_order(s1[0], s2[0], s1[1]) ||
+            cln_order(s1[0], s2[1], s1[1]) ||
+            cln_order(s2[0], s1[0], s2[1]));
+  }
+
+  if(or1 != or2)
+  {
+    or1 = cpl_orient(s2[0], s2[1], s1[0]);
+    return (or1 == COLLINEAR || or1 != cpl_orient(s2[0], s2[1], s1[1]));
+  }
+
+  return false;
+}
 
 template <class EK>
 void generate_subtriangles(std::size_t ti,
@@ -54,7 +85,11 @@ void generate_subtriangles(std::size_t ti,
   typedef CGAL::Projection_traits_3<EK> P_traits;
   typedef CGAL::Exact_intersections_tag Itag;
 
-  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits/* , Default, Itag */> CDT_2;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits
+#ifndef TEST_RESOLVE_INTERSECTION
+  ,Default, Itag
+#endif
+> CDT_2;
   //typedef CGAL::Constrained_triangulation_plus_2<CDT_base> CDT;
   typedef CDT_2 CDT;
 
@@ -79,7 +114,7 @@ void generate_subtriangles(std::size_t ti,
   typename CDT::Vertex_handle v = cdt.tds().insert_dim_up(cdt.infinite_vertex(), orientation_flipped);
   v->set_point(t[2]);
 
-#if 1
+#ifdef TEST_RESOLVE_INTERSECTION
   //~ static std::ofstream debug("inter_segments.polylines.txt");
   //~ debug.precision(17);
 
@@ -102,7 +137,7 @@ void generate_subtriangles(std::size_t ti,
       {
         if (intersecting_triangles.count(CGAL::make_sorted_pair(in_triangle_ids[i], in_triangle_ids[j]))!=0)
         {
-          if (CGAL::do_intersect(segments[i], segments[j]))
+          if (do_coplanar_segments_intersect<EK>(segments[i], segments[j]))
           {
             auto res = CGAL::intersection(triangles[in_triangle_ids[i]].supporting_plane(),
                                           triangles[in_triangle_ids[j]].supporting_plane(),
@@ -479,6 +514,7 @@ void autorefine_soup_output(const PointRange& input_points,
   };
 
   // filter duplicated segments
+#ifdef DEDUPLICATE_SEGMENTS
   for(std::size_t ti=0; ti<triangles.size(); ++ti)
   {
     if (!all_segments[ti].empty())
@@ -507,6 +543,7 @@ void autorefine_soup_output(const PointRange& input_points,
       }
     }
   }
+#endif
 
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
   // now refine triangles
@@ -518,7 +555,6 @@ void autorefine_soup_output(const PointRange& input_points,
     else
       autorefine_impl::generate_subtriangles<EK>(ti, all_segments[ti], all_points[ti], all_in_triangle_ids[ti], intersecting_triangles, triangles, new_triangles);
   }
-
 
   // brute force output: create a soup, orient and to-mesh
   CGAL_PMP_AUTOREFINE_VERBOSE("create output soup");
