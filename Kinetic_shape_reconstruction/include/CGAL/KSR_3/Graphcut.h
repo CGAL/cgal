@@ -457,7 +457,7 @@ namespace KSR_3 {
       std::cout << "max: " << max << std::endl;
 
       CGAL::alpha_expansion_graphcut(
-          edges, edge_costs, cost_matrix, labels, CGAL::parameters::implementation_tag(CGAL::Alpha_expansion_MaxFlow_tag()));
+        edges, edge_costs, cost_matrix, labels);
       /*
       CGAL::min_cut(
             edges, edge_costs, cost_matrix, labels, CGAL::parameters::implementation_tag(CGAL::Alpha_expansion_MaxFlow_tag()));*/
