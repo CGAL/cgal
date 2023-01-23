@@ -26,8 +26,8 @@ namespace KSR {
 
     // Boolean tags.
     const bool with_normals; // do we use normals
-    const bool verbose;// verbose basic info
-    const bool debug; // verbose more info
+    bool verbose;// verbose basic info
+    bool debug; // verbose more info
 
     // Shape detection / Shape regularization.
     // See the corresponding CGAL packages.

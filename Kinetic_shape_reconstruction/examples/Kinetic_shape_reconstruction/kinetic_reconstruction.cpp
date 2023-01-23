@@ -76,6 +76,12 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 
   // Reconstruction.
   parser.add_val_parameter("-beta", parameters.graphcut_beta);
+
+  // Debug.
+  parser.add_bool_parameter("-debug", parameters.debug);
+
+  // Verbose.
+  parser.add_bool_parameter("-verbose", parameters.verbose);
 }
 
 int main(const int argc, const char** argv) {
