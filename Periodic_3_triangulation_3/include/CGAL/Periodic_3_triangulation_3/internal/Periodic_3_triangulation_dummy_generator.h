@@ -65,7 +65,7 @@ insert_generic_dummy_points()
   std::array<FT, 3> steps;
 
   // Min:
-  // this doesn't work for P3M3 + sharp features due to weights having a hard constraint of 1/64th domain_size²
+  // this doesn't work for P3M3 + sharp features due to weights creating a harder constraint of 1/64th domain_size²
 // #define CGAL_P3T3_USE_EXPERIMENTAL_LARGE_STEP_IN_DUMMY_GENERATION
 #ifdef CGAL_P3T3_USE_EXPERIMENTAL_LARGE_STEP_IN_DUMMY_GENERATION
   nums_steps[min_pos] = 3;
@@ -75,7 +75,7 @@ insert_generic_dummy_points()
   steps[min_pos] = spans[min_pos] / nums_steps[min_pos];
 
   // Mid: do not use the min step, but redistribute the error between nums_steps[mid_pos] * min_step and the actual span
-  nums_steps[mid_pos] = spans[mid_pos] / steps[min_pos]; // implicit floor(), "min" is not a typo
+  nums_steps[mid_pos] = int(to_interval(spans[mid_pos] / steps[min_pos]).first); // flooring, "min" is not a typo
   steps[mid_pos] = spans[mid_pos] / nums_steps[mid_pos];
 
   // Max: smaller step in the max span direction as to avoid cospherical configurations
@@ -84,7 +84,7 @@ insert_generic_dummy_points()
 #else
   const FT minor_step = spans[min_pos] / FT(8); // a ratio of 6:8 makes for nicely shaped tetrahedra
 #endif
-  nums_steps[max_pos] = spans[max_pos] / minor_step; // implicit floor()
+  nums_steps[max_pos] = int(to_interval(spans[max_pos] / minor_step).first); // flooring
   CGAL_assertion(nums_steps[max_pos] >= steps[min_pos]);
 
   // Important! Consecutive levels in the max length have a shift (that's the `k % 2 != 0` part).
@@ -176,7 +176,7 @@ insert_generic_dummy_points()
   DT3 dt3;
 #endif
 
-  std::array<float, 3> coords;
+  std::array<FT, 3> coords;
   for(int i=0; i<nums_steps[min_pos]; ++i)
   {
     for(int j=0; j<nums_steps[mid_pos]; ++j)
@@ -188,8 +188,8 @@ insert_generic_dummy_points()
 
         if(k % 2 != 0)
         {
-          coords[min_pos] += 0.5 * steps[min_pos];
-          coords[mid_pos] += 0.5 * steps[mid_pos];
+          coords[min_pos] += steps[min_pos] / FT(2);
+          coords[mid_pos] += steps[mid_pos] / FT(2);
         }
 
         coords[max_pos] = domain().min_coord(max_pos) + k * steps[max_pos];
