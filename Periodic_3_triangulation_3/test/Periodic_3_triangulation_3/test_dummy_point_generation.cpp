@@ -96,7 +96,16 @@ void test(FT x_span, FT y_span, FT z_span)
   Tr p3t3;
   p3t3.set_domain(Iso_cuboid(0,0,0, x_span,y_span,z_span));
   p3t3.insert_generic_dummy_points();
-  dump("p3t3.off", p3t3);
+
+  // Abuse the multi cover function to check if cells have a small-enough orthoradius
+  p3t3.update_cover_data_after_converting_to_27_sheeted_covering();
+  if(!p3t3.can_be_converted_to_1_sheet())
+  {
+    std::cerr << "Error: dummy points do not create a 1-cover" << std::endl;
+    assert(false);
+  }
+
+//  dump("p3t3.off", p3t3);
 }
 
 int main (int argc, char** argv)
@@ -112,22 +121,18 @@ int main (int argc, char** argv)
     return EXIT_SUCCESS;
   }
 
-  for(int i=0; i<100; ++i)
+  for(int i=0; i<10; ++i)
   {
-    test<P3DT3>(rnd.get_double(0.001, 1.),
-                rnd.get_double(0.001, 1.),
-                rnd.get_double(0.001, 1.));
+    test<P3DT3>(rnd.get_double(0.01, 1.),
+                rnd.get_double(0.01, 1.),
+                rnd.get_double(0.01, 1.));
   }
 
-  // @tmp
-  std::cout << "OK" << std::endl;
-  return EXIT_SUCCESS;
-
-  for(int i=1; i<10; ++i)
+  for(int i=1; i<5; ++i)
   {
-    for(int j=1; j<10; ++j)
+    for(int j=1; j<5; ++j)
     {
-      for(int k=1; k<10; ++k)
+      for(int k=1; k<5; ++k)
       {
 #if (CGAL_P3T3_DUMMY_GENERATION_DEBUG_VERBOSITY >= 1)
         std::cout << "Test " << i << " " << j << " " << k << std::endl;
