@@ -91,9 +91,11 @@ void output_to_medit(std::ostream& os,
                      const Cell_index_property_map& cell_pmap,
                      const Facet_index_property_map_twice& facet_twice_pmap = Facet_index_property_map_twice())
 {
+#ifdef CGAL_MESH_3_IO_VERBOSE
   std::cout << "Output to medit;\n"
             << "\toccurrences = " << occurrence_count << "\n"
             << "\tdistinguish_copies = " << distinguish_copies << std::endl;
+#endif
 
   // if occurrence_count equals:
   // "1" --> only draws a single instance of the domain.
@@ -137,7 +139,7 @@ void output_to_medit(std::ostream& os,
 
   int occ_mult = Ox_rn * Oy_rn * Oz_rn;
 
-#ifdef CGAL_PERIODIC_3_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_IO_VERBOSE
   std::cout << "Outputting mesh to medit... " << std::endl;
   std::cout << "occurrences over each axis: "
             << Ox_rn << " " << Oy_rn << " " << Oz_rn << std::endl;
