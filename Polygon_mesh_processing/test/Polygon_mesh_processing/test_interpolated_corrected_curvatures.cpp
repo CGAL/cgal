@@ -54,7 +54,11 @@ bool passes_comparison(Epic_kernel::FT result, Epic_kernel::FT expected, Epic_ke
 }
 
 template <typename PolygonMesh>
-void test_average_curvatures(std::string mesh_path, Average_test_info test_info){
+void test_average_curvatures(std::string mesh_path, 
+  Average_test_info test_info,
+  bool compare_single_vertex = false
+){
+
   PolygonMesh pmesh;
   const std::string filename = CGAL::data_file_path(mesh_path);
 
@@ -116,6 +120,7 @@ void test_average_curvatures(std::string mesh_path, Average_test_info test_info)
   assert(passes_comparison(gaussian_curvature_avg, test_info.gaussian_curvature_avg, test_info.tolerance));
   assert(passes_comparison(principal_curvature_avg, test_info.principal_curvature_avg, test_info.tolerance));
 
+  // computing curvatures together from interpolated_corrected_curvatures()
   PMP::interpolated_corrected_curvatures(
     pmesh,
     CGAL::parameters::ball_radius(test_info.expansion_radius)
@@ -124,7 +129,6 @@ void test_average_curvatures(std::string mesh_path, Average_test_info test_info)
     .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
   );
 
-  // are average curvatures computed from interpolated_corrected_curvatures() equal to average curvatures each computed on its own?
   Epic_kernel::FT new_mean_curvature_avg = 0, new_gaussian_curvature_avg = 0, new_principal_curvature_avg = 0;
 
   for (vertex_descriptor v : vertices(pmesh))
@@ -138,22 +142,62 @@ void test_average_curvatures(std::string mesh_path, Average_test_info test_info)
   new_mean_curvature_avg /= vertices(pmesh).size();
   new_gaussian_curvature_avg /= vertices(pmesh).size();
   new_principal_curvature_avg /= vertices(pmesh).size() * 2;
-
+  
+  // are average curvatures computed from interpolated_corrected_curvatures() 
+  // equal to average curvatures each computed on its own?
   assert(passes_comparison(mean_curvature_avg, new_mean_curvature_avg, 0.99));
   assert(passes_comparison(gaussian_curvature_avg, new_gaussian_curvature_avg, 0.99));
   assert(passes_comparison(principal_curvature_avg, new_principal_curvature_avg, 0.99));
+
+  if (compare_single_vertex)
+  {
+    // computing curvatures together from interpolated_corrected_curvatures()
+
+    Epic_kernel::FT single_vertex_mean_curvature_avg = 0,
+      single_vertex_gaussian_curvature_avg = 0,
+      single_vertex_principal_curvature_avg = 0;
+   
+    Epic_kernel::FT h, g;
+    PMP::Principal_curvatures_and_directions<Epic_kernel> p;
+    
+    for (vertex_descriptor v : vertices(pmesh))
+    {
+      PMP::interpolated_corrected_curvatures_at_vertex(
+        pmesh,
+        v, 
+        CGAL::parameters::vertex_gaussian_curvature(&g)
+        .vertex_mean_curvature(&h)
+        .vertex_principal_curvatures_and_directions(&p)
+      );
+
+      single_vertex_mean_curvature_avg += h;
+      single_vertex_gaussian_curvature_avg += g;
+      single_vertex_principal_curvature_avg += p.min_curvature + p.max_curvature;
+    }
+
+    single_vertex_mean_curvature_avg /= vertices(pmesh).size();
+    single_vertex_gaussian_curvature_avg /= vertices(pmesh).size();
+    single_vertex_principal_curvature_avg /= vertices(pmesh).size() * 2;
+
+    assert(passes_comparison(mean_curvature_avg, single_vertex_mean_curvature_avg, 0.99));
+    assert(passes_comparison(gaussian_curvature_avg, single_vertex_gaussian_curvature_avg, 0.99));
+    assert(passes_comparison(principal_curvature_avg, single_vertex_principal_curvature_avg, 0.99));
+  }
+
 }
 
 int main()
 {
   // testing on a simple sphere(r = 0.5), on both Polyhedron & SurfaceMesh:
+  // For this mesh, ina addition to the whole mesh functions, we also compare against the single vertex 
+  // curvature functions to make sure the produce the same results 
   // Expected: Mean Curvature = 2, Gaussian Curvature = 4, Principal Curvatures = 2 & 2 so 2 on avg.
-  test_average_curvatures<Polyhedron>("meshes/sphere.off", Average_test_info(2,4,2));
-  test_average_curvatures<SMesh>("meshes/sphere.off", Average_test_info(2, 4, 2));
+  test_average_curvatures<Polyhedron>("meshes/sphere.off", Average_test_info(2,4,2), true);
+  test_average_curvatures<SMesh>("meshes/sphere.off", Average_test_info(2, 4, 2), true);
 
   // Same mesh but with specified expansion radii of 0 and 0.25 (half radius of sphere)
-  test_average_curvatures<SMesh>("meshes/sphere.off", Average_test_info(2, 4, 2, 0));
-  test_average_curvatures<SMesh>("meshes/sphere.off", Average_test_info(2, 4, 2, 0.25));
+  test_average_curvatures<SMesh>("meshes/sphere.off", Average_test_info(2, 4, 2, 0), true);
+  test_average_curvatures<SMesh>("meshes/sphere.off", Average_test_info(2, 4, 2, 0.25), true);
 
   // testing on a simple sphere(r = 10), on both Polyhedron & SurfaceMesh:
   // Expected: Mean Curvature = 0.1, Gaussian Curvature = 0.01, Principal Curvatures = 0.1 & 0.1 so 0.1 on avg.

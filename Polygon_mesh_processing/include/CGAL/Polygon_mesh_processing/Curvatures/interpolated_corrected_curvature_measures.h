@@ -399,8 +399,8 @@ std::array<typename GT::FT, 3 * 3> interpolated_corrected_anisotropic_measure_fa
 //    const typename GT::FT R = r * r;
 //    const typename GT::FT acc = 1.0 / res;
 //    std::size_t samples_in = 0;
-//    for (GT::FT alpha = acc / 3; alpha < 1; alpha += acc)
-//        for (GT::FT beta = acc / 3; beta < 1 - alpha; beta += acc)
+//    for (typename GT::FT alpha = acc / 3; alpha < 1; alpha += acc)
+//        for (typename GT::FT beta = acc / 3; beta < 1 - alpha; beta += acc)
 //        {
 //            if ((alpha * x1 + beta * x2 + (1 - alpha - beta) * x3 - c).squared_length() < R)
 //                samples_in++;
@@ -632,7 +632,7 @@ template<typename PolygonMesh,
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vertex_position_map;
 
-  typedef dynamic_vertex_property_t<GT::Vector_3> Vector_map_tag;
+  typedef dynamic_vertex_property_t<typename GT::Vector_3> Vector_map_tag;
   typedef typename boost::property_map<PolygonMesh, Vector_map_tag>::const_type Default_vector_map;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
     NamedParameters,
@@ -654,8 +654,6 @@ template<typename PolygonMesh,
   typename GT::FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
   if (radius == 0)
     radius = average_edge_length<PolygonMesh, GT>(pmesh) * EXPANDING_RADIUS_EPSILON;
-  else
-    radius = radius;
 
   typename GT::FT* vertex_mean_curvature = choose_parameter(get_parameter(np, internal_np::vertex_mean_curvature), nullptr);
   typename GT::FT* vertex_gaussian_curvature = choose_parameter(get_parameter(np, internal_np::vertex_gaussian_curvature), nullptr);
@@ -704,7 +702,7 @@ template<typename PolygonMesh,
   }
 
   if (is_principal_curvatures_and_directions_selected) {
-    const GT::Vector_3  v_normal = get(vnm, v);
+    const typename GT::Vector_3  v_normal = get(vnm, v);
     const Principal_curvatures_and_directions<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
       vertex_measures.anisotropic_measure,
       vertex_measures.area_measure,
