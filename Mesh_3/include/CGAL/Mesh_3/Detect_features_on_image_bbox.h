@@ -30,32 +30,27 @@ namespace Mesh_3
 {
 namespace internal
 {
-template<typename Word_type, typename Mesh_domain>
-std::vector<std::vector<typename Mesh_domain::Point_3>>
-detect_features_on_bbox_with_know_word_type(const CGAL::Image_3& image,
-                                            Mesh_domain& domain)
+
+template<typename Point>
+std::vector<std::vector<Point>>
+detect_features_on_bbox(const CGAL::Image_3& image)
 {
-  using Point_3 = typename Mesh_domain::Point_3;
+  using Point_3 = Point;
   using Polyline_type = std::vector<Point_3>;
   using Polylines = std::vector<Polyline_type>;
 
   Polylines polylines_on_bbox;
-  CGAL::polylines_to_protect<Point_3, Word_type>(image, polylines_on_bbox);
 
-  return polylines_on_bbox;
-}
-
-template<typename Mesh_domain>
-std::vector<std::vector<typename Mesh_domain::Point_3>>
-detect_features_on_bbox(const CGAL::Image_3& image, Mesh_domain& domain)
-{
   CGAL_IMAGE_IO_CASE(image.image(),
-    return detect_features_on_bbox_with_know_word_type<Word>(image, domain)
+    {
+      (CGAL::polylines_to_protect<Point_3, Word>(image, polylines_on_bbox));
+      return polylines_on_bbox;
+    }
   );
   CGAL_error_msg("This place should never be reached, because it would mean "
                  "the image word type is a type that is not handled by "
                  "CGAL_ImageIO.");
-  return std::vector<std::vector<typename Mesh_domain::Point_3>>();
+  return Polylines();
 }
 
 }// namespace internal
@@ -71,25 +66,22 @@ public:
 
   /*!
   * detects and constructs the polylines that lie at the
-  * intersection of two subdomains and the bounding box of the input labeled image.
-  * The constructed polylines are added to `domain` for further feature protection.
+  * intersection of two or more subdomains and the bounding box of the input labeled image.
   *
-  * \tparam Mesh_domain class model of `MeshDomainWithFeatures_3`
+  * \tparam Point class model of `Kernel::Point_3`
   *
   * \param image the input image
-  * \param domain the mesh domain to be enriched with polyline features
   *
-  * \returns a `std::vector<std::vector<typename Mesh_domain::Point_3>>`
-  * containing the constructed polylines
+  * \returns a `std::vector<std::vector<Point>>`
+  * containing the constructed polylines for later feature protection.
   */
-  template<typename Mesh_domain>
-  std::vector<std::vector<typename Mesh_domain::Point_3>>
-  operator()(const CGAL::Image_3& image, Mesh_domain& domain)
+  template<typename Point>
+  std::vector<std::vector<Point>>
+  operator()(const CGAL::Image_3& image)
   {
-    return internal::detect_features_on_bbox(image, domain);
+    return internal::detect_features_on_bbox<Point>(image);
   }
 };
-
 
 }//end namespace Mesh_3
 }//end namespace CGAL

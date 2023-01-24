@@ -124,34 +124,28 @@ namespace internal {
   };
 
   // Detect_features_in_domain
-  template<typename MeshDomain, typename DetectFunctor>
+  template<typename Point, typename DetectFunctor>
   struct Detect_features_in_domain {
-    std::vector<std::vector<typename MeshDomain::Point_3>>
-    operator()(const CGAL::Image_3& image,
-               const MeshDomain& domain,
-               DetectFunctor functor) const {
-      return functor(image, domain);
+    std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3& image, DetectFunctor functor) const {
+      return functor.operator()<Point>(image);
     }
   };
   // specialization for `Null_functor`: create the default functor
-  template<typename MeshDomain>
-  struct Detect_features_in_domain<MeshDomain, Null_functor> {
-    std::vector<std::vector<typename MeshDomain::Point_3>>
-    operator()(const CGAL::Image_3&,
-               const MeshDomain&,
-               Null_functor) const {
-      return std::vector<std::vector<typename MeshDomain::Point_3>>();
+  template<typename Point>
+  struct Detect_features_in_domain<Point, Null_functor> {
+    std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3&, Null_functor) const {
+      return std::vector<std::vector<Point>>();
     }
   };
 
-  template<typename MeshDomain, typename DetectFunctor>
-  std::vector<std::vector<typename MeshDomain::Point_3>>
-  detect_features(const CGAL::Image_3& image,
-                  const MeshDomain& domain,
-                  DetectFunctor functor)
+  template<typename Point, typename DetectFunctor>
+  std::vector<std::vector<Point>>
+    detect_features(const CGAL::Image_3& image, DetectFunctor functor)
   {
-    return Detect_features_in_domain<MeshDomain, DetectFunctor>()
-            (image, domain, functor);
+    Detect_features_in_domain<Point, DetectFunctor> detector;
+    return detector(image, functor);
   }
 
   template<bool WithFeatures>
@@ -168,10 +162,11 @@ namespace internal {
     void operator()(const CGAL::Image_3& image,
                     MeshDomain& domain,
                     const InputFeatureRange& input_features,
-                    DetectFunctor detect_features)
+                    DetectFunctor functor)
     {
+      using P = typename MeshDomain::Point_3;
       auto detected_feature_range
-        = std::move(CGAL::Mesh_3::internal::detect_features(image, domain, detect_features));
+        = std::move(CGAL::Mesh_3::internal::detect_features<P>(image, functor));
 
       CGAL::merge_and_snap_polylines(image, detected_feature_range, input_features);
 
