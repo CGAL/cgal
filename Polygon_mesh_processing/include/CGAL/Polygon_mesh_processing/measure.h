@@ -32,7 +32,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/dynamic_bitset.hpp>
 
-#include <deque>
+#include <vector>
 #include <utility>
 #include <algorithm>
 #include <unordered_set>
@@ -338,17 +338,14 @@ longest_border(const PolygonMesh& pmesh,
             typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type>::Kernel::FT  FT;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                       halfedge_descriptor;
 
-  std::deque<halfedge_descriptor> boundary_cycles;
+  std::vector<halfedge_descriptor> boundary_cycles;
   extract_boundary_cycles(pmesh, std::back_inserter(boundary_cycles));
   halfedge_descriptor result_halfedge = boost::graph_traits<PolygonMesh>::null_halfedge();
   FT result_len = 0;
   for(halfedge_descriptor h : boundary_cycles)
   {
-    FT len = 0;
-    for(halfedge_descriptor haf : halfedges_around_face(h, pmesh))
-    {
-      len += edge_length(haf, pmesh, np);
-    }
+    FT len = face_border_length(h, pmesh, np);
+
     if(result_len < len)
     {
       result_len = len;
