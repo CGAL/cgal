@@ -479,7 +479,7 @@ Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from
 }
 
 template<typename GT, typename PolygonMesh, typename VPM, typename VNM>
-typename Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
+Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
   const PolygonMesh pmesh,
   const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   const bool is_mean_curvature_selected,
@@ -498,7 +498,7 @@ typename Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radiu
   std::queue<Face_descriptor> bfs_queue;
   std::unordered_set<Face_descriptor> bfs_visited;
 
-  typename Vertex_measures<GT> vertex_measures;
+  Vertex_measures<GT> vertex_measures;
 
   std::vector<Vector_3> x;
   std::vector<Vector_3> u;
@@ -538,7 +538,7 @@ typename Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radiu
 
 
 template<typename GT, typename PolygonMesh, typename VPM, typename VNM>
-typename Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
+Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
   const PolygonMesh pmesh,
   const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   const typename GT::FT radius,
@@ -558,10 +558,10 @@ typename Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
   std::queue<Face_descriptor> bfs_queue;
   std::unordered_set<Face_descriptor> bfs_visited;
 
-  typename Vertex_measures<GT> vertex_measures;
+  Vertex_measures<GT> vertex_measures;
 
-  typename Point_3 vp = get(vpm, v);
-  typename Vector_3 c = Vector_3(vp.x(), vp.y(), vp.z());
+  Point_3 vp = get(vpm, v);
+  Vector_3 c = Vector_3(vp.x(), vp.y(), vp.z());
 
   for (Face_descriptor f : faces_around_target(halfedge(v, pmesh), pmesh)) {
     if (f != boost::graph_traits<PolygonMesh>::null_face())
@@ -626,13 +626,13 @@ template<typename PolygonMesh,
   void interpolated_corrected_curvatures_one_vertex(
     const PolygonMesh pmesh,
     const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-    NamedParameters& np = parameters::default_values()
+    const NamedParameters& np = parameters::default_values()
   )
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vertex_position_map;
 
-  typedef dynamic_vertex_property_t<GT::Vector_3> Vector_map_tag;
+  typedef dynamic_vertex_property_t<typename GT::Vector_3> Vector_map_tag;
   typedef typename boost::property_map<PolygonMesh, Vector_map_tag>::const_type Default_vector_map;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
     NamedParameters,
@@ -659,7 +659,7 @@ template<typename PolygonMesh,
 
   typename GT::FT* vertex_mean_curvature = choose_parameter(get_parameter(np, internal_np::vertex_mean_curvature), nullptr);
   typename GT::FT* vertex_gaussian_curvature = choose_parameter(get_parameter(np, internal_np::vertex_gaussian_curvature), nullptr);
-  typename Principal_curvatures_and_directions<GT>* vertex_principal_curvatures_and_directions = choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions), nullptr);
+  Principal_curvatures_and_directions<GT>* vertex_principal_curvatures_and_directions = choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions), nullptr);
 
   const bool is_mean_curvature_selected = (vertex_mean_curvature != nullptr);
   const bool is_gaussian_curvature_selected = (vertex_gaussian_curvature != nullptr);
@@ -703,7 +703,7 @@ template<typename PolygonMesh,
   }
 
   if (is_principal_curvatures_and_directions_selected) {
-    const GT::Vector_3  v_normal = get(vnm, v);
+    const typename GT::Vector_3  v_normal = get(vnm, v);
     const Principal_curvatures_and_directions<GT> principal_curvatures_and_directions = principal_curvatures_and_directions_from_anisotropic_measures<GT>(
       vertex_measures.anisotropic_measure,
       vertex_measures.area_measure,
@@ -1046,7 +1046,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
   typename NamedParameters = parameters::Default_named_parameters>
   void interpolated_corrected_mean_curvature(const PolygonMesh& pmesh,
     VertexCurvatureMap& vcm,
-    NamedParameters& np = parameters::default_values())
+    const NamedParameters& np = parameters::default_values())
 {
   interpolated_corrected_curvatures(pmesh, np.vertex_mean_curvature_map(vcm));
 }
@@ -1109,7 +1109,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
   typename NamedParameters = parameters::Default_named_parameters>
   void interpolated_corrected_gaussian_curvature(const PolygonMesh& pmesh,
     VertexCurvatureMap& vcm,
-    NamedParameters& np = parameters::default_values())
+    const NamedParameters& np = parameters::default_values())
 {
   interpolated_corrected_curvatures(pmesh, np.vertex_gaussian_curvature_map(vcm));
 }
@@ -1173,7 +1173,7 @@ template<typename PolygonMesh, typename VertexCurvatureMap,
   typename NamedParameters = parameters::Default_named_parameters>
   void interpolated_corrected_principal_curvatures_and_directions(const PolygonMesh& pmesh,
     VertexCurvatureMap& vcm,
-    NamedParameters& np = parameters::default_values())
+    const NamedParameters& np = parameters::default_values())
 {
   interpolated_corrected_curvatures(pmesh, np.vertex_principal_curvatures_and_directions_map(vcm));
 }
