@@ -128,7 +128,7 @@ namespace internal {
   struct Detect_features_in_domain {
     std::vector<std::vector<Point>>
     operator()(const CGAL::Image_3& image, DetectFunctor functor) const {
-      return functor.operator()<Point>(image);
+      return functor.template operator()<Point>(image);
     }
   };
   // specialization for `Null_functor`: create the default functor
