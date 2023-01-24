@@ -168,6 +168,7 @@ void test_average_curvatures(std::string mesh_path,
         CGAL::parameters::vertex_gaussian_curvature(&g)
         .vertex_mean_curvature(&h)
         .vertex_principal_curvatures_and_directions(&p)
+        .ball_radius(test_info.expansion_radius)
       );
 
       single_vertex_mean_curvature_avg += h;
