@@ -68,7 +68,8 @@ public:
   * detects and constructs the polylines that lie at the
   * intersection of two or more subdomains and the bounding box of the input labeled image.
   *
-  * \tparam Point class model of `Kernel::Point_3`
+  * \tparam Point class model of `Kernel::Point_3`. The ^point type
+  * must match the triangulation point type.
   *
   * \param image the input image
   *

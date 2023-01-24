@@ -252,7 +252,8 @@ public:
   * intersection of three or more subdomains, including the outside,
   * inside and on the bounding box of the input labeled image.
   *
-  * \tparam Point class model of `Kernel::Point_3`
+  * \tparam Point class model of `Kernel::Point_3`. It
+  * must match the triangulation point type.
   *
   * \param image the input image
   *
