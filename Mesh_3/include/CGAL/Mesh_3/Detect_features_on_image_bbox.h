@@ -66,9 +66,18 @@ public:
 
   /*!
   * detects and constructs the polylines that lie at the
-  * intersection of two or more subdomains and the bounding box of the input labeled image.
+  * intersection of two or more subdomains and the bounding box
+  * of the input labeled image.
   *
-  * \tparam Point class model of `Kernel::Point_3`. The ^point type
+  * Each subdomain inside the bounding box
+  * of the input labeled image is defined as the set of voxels
+  * with the same value. The outside of the bounding box
+  * of the image is considered as a subdomain with voxel value
+  * `value_outside` (see `create_labeled_image_mesh_domain()`
+  * parameters description). Hence, this function computes
+  * intersections of "internal" subdomains with the image bounding box.
+  *
+  * \tparam Point class model of `Kernel::Point_3`. The point type
   * must match the triangulation point type.
   *
   * \param image the input image

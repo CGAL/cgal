@@ -249,8 +249,15 @@ struct Detect_features_in_image
 public:
   /*!
   * detects and constructs the polylines that lie at the
-  * intersection of three or more subdomains, including the outside,
-  * inside and on the bounding box of the input labeled image.
+  * intersection of three or more subdomains.
+  *
+  * Each subdomain inside the bounding box
+  * of the input labeled image is defined as the set of voxels
+  * with the same value. The outside of the bounding box
+  * of the image is considered as a subdomain with voxel value
+  * `value_outside` (see `create_labeled_image_mesh_domain()`
+  * parameters description). Hence, this function also computes
+  * intersections with the image bounding box.
   *
   * \tparam Point class model of `Kernel::Point_3`. It
   * must match the triangulation point type.
