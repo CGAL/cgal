@@ -84,6 +84,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
   typedef CGAL::SNC_SM_overlayer<Items, SM_decorator>  SM_overlayer;
   typedef CGAL::SM_point_locator<SM_decorator>         SM_point_locator;
   typedef CGAL::SNC_point_locator<SNC_decorator>       SNC_point_locator;
+  typedef CGAL::SNC_point_locator<SNC_const_decorator> SNC_const_point_locator;
 
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
@@ -171,7 +172,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
             typename Selection,
             typename Association>
   class Intersection_call_back :
-    public CGAL::SNC_point_locator<SNC_decorator>::Intersection_call_back
+    public SNC_const_point_locator::Intersection_call_back
   {
     typedef typename SNC_decorator::Decorator_traits Decorator_traits;
     typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
