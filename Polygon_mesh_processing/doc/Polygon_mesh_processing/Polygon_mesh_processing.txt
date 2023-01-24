@@ -889,7 +889,7 @@ correct vertex normals are provided.
 The implementation is generic in terms of mesh data structure. It can be used on Surface_mesh,
 Polyhedron_3 and other polygonal mesh structures based on the Face Graph Model.
 
-These computations are performed using :
+These computations are performed using (on all vertices of mesh):
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
@@ -897,6 +897,13 @@ These computations are performed using :
 
 Where it is recommended to use the last function for computing multiple curvatures (example: mean and gaussian)
 as the implementation performs the shared computations only once, making it more efficient.
+
+Similarly, we can use the following example functions to compute the curvatures on a specific vertex:
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_at_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_at_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_at_vertex()`
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_at_vertex()`
+
 
 \cgalFigureRef{icc_diff_radius} shows how the mean curvature changes depending on
 the ball_radius named parameter which can be set to a value > 0 to get a smoother
@@ -933,6 +940,13 @@ and store them in dynamic property maps as the class `Polyhedron_3` does
 not provide storage for the curvatures.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_polyhedron_example.cpp}
+
+\subsection ICCExamplePH Interpolated Corrected Curvature on a Vertex Example
+
+The following example illustrates how to
+compute the curvatures on a specific vertex
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_at_vertex_example.cpp}
 
 ****************************************
 \section PMPSlicer Slicer

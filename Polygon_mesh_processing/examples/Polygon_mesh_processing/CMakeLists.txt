@@ -109,6 +109,8 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(interpolated_corrected_curvatures_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("interpolated_corrected_curvatures_polyhedron_example.cpp")
   target_link_libraries(interpolated_corrected_curvatures_polyhedron_example PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("interpolated_corrected_curvatures_at_vertex_example.cpp")
+  target_link_libraries(interpolated_corrected_curvatures_at_vertex_example PUBLIC CGAL::Eigen3_support)
 
 endif()
 

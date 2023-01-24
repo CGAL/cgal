@@ -1,0 +1,60 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/Curvatures/interpolated_corrected_curvature_measures.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <boost/graph/graph_traits.hpp>
+
+#include <iostream>
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
+typedef Epic_kernel::FT FT;
+typedef CGAL::Surface_mesh<Epic_kernel::Point_3> Surface_Mesh;
+typedef boost::graph_traits<Surface_Mesh>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Surface_Mesh>::vertex_descriptor vertex_descriptor;
+
+int main(int argc, char* argv[])
+{
+  // instantiating and reading mesh 
+  Surface_Mesh smesh;
+  const std::string filename = (argc > 1) ?
+    argv[1] :
+    CGAL::data_file_path("meshes/small_bunny.obj");
+
+  if (!CGAL::IO::read_polygon_mesh(filename, smesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // loop over vertices and use vertex_descriptor to compute a curvature on one vertex
+  for (vertex_descriptor v : vertices(smesh))
+  {
+    FT h = PMP::interpolated_corrected_mean_curvature_at_vertex<Epic_kernel>(smesh, v);
+    FT g = PMP::interpolated_corrected_gaussian_curvature_at_vertex<Epic_kernel>(smesh, v);
+    PMP::Principal_curvatures_and_directions<Epic_kernel> p = 
+      PMP::interpolated_corrected_principal_curvatures_and_directions_at_vertex<Epic_kernel>(smesh, v);
+
+    // we can also specify a ball radius for expansion and a user defined vertex normals map using 
+    // named parameters. Refer to interpolated_corrected_curvatures_example.cpp to see example usage.
+
+    // Can also use interpolated_corrected_curvatures_at_vertex() to compute multiple curvatures
+    // on the vertex at the same time. This is more efficient than computing each one separately.
+    // The following commented lines show this (all mentioned named parameters work on it as well)
+    // we specify which curvatures we want to compute by passing pointers as named parameters 
+    // as shown. These pointers are used for storing the result as well. in this example we 
+    // selected mean and gaussian curvatures
+    // PMP::interpolated_corrected_curvatures_at_vertex(
+    //   smesh,
+    //   v, 
+    //   CGAL::parameters::vertex_mean_curvature(&h)
+    //   .vertex_gaussian_curvature(&g)
+    // );
+
+    std::cout << v.idx() << ": HC = " << h
+      << ", GC = " << g << "\n"
+      << ", PC = [ " << p.min_curvature << " , " << p.max_curvature << " ]\n";
+  }
+}

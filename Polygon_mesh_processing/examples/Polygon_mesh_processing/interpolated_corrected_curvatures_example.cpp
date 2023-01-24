@@ -47,6 +47,8 @@ int main(int argc, char* argv[])
   assert(created);
 
   // user can call these fucntions to compute a specfic curvature type on each vertex.
+  // (Note: if no ball radius is specified, the measure expansion of each vertex happens by 
+  // summing measures on faces adjacent to each vertex.)
   PMP::interpolated_corrected_mean_curvature(
     smesh,
     mean_curvature_map

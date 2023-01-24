@@ -669,7 +669,6 @@ template<typename PolygonMesh,
 
   if (radius < 0)
   {
-    std::cout << -1;
     vertex_measures = interpolated_corrected_measures_one_vertex_no_radius<GT>(
       pmesh,
       v,
@@ -682,7 +681,6 @@ template<typename PolygonMesh,
   }
   else
   {
-    std::cout << radius;
     vertex_measures = interpolated_corrected_measures_one_vertex<GT>(
       pmesh,
       v,
