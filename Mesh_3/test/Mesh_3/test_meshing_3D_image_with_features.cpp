@@ -106,7 +106,7 @@ public:
      (p::image = image,
       p::relative_error_bound = 1e-9,
       CGAL::parameters::p_rng = &CGAL::get_default_random(),
-      CGAL::parameters::detect_features = CGAL::Mesh_3::Detect_features_in_image());
+      CGAL::parameters::features_detector = CGAL::Mesh_3::Detect_features_in_image());
 
     mesh_and_verify(domain, image, 1772330.);
   }
@@ -127,7 +127,7 @@ public:
      (p::image = image,
       p::relative_error_bound = 1e-9,
       CGAL::parameters::p_rng = &CGAL::get_default_random(),
-      CGAL::parameters::detect_features = CGAL::Mesh_3::Detect_features_on_image_bbox());
+      CGAL::parameters::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox());
 
     mesh_and_verify(domain, image, 625044.);
   }
@@ -154,7 +154,7 @@ public:
      (p::image = image,
       p::relative_error_bound = 1e-9,
       CGAL::parameters::p_rng = &CGAL::get_default_random(),
-      CGAL::parameters::detect_features = CGAL::Mesh_3::Detect_features_on_image_bbox(),
+      CGAL::parameters::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox(),
       CGAL::parameters::input_features = std::cref(features_input));
 
     mesh_and_verify(domain, image, 632091.);

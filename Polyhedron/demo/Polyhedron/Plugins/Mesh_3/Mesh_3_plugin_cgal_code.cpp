@@ -368,7 +368,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
             [](int i, int j) { return (i * 1000 + j); },
-            p::detect_features = CGAL::Mesh_3::Detect_features_in_image(),
+            p::features_detector = CGAL::Mesh_3::Detect_features_in_image(),
             p::input_features = std::cref(polylines)
           )
         );
@@ -381,7 +381,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
             p::relative_error_bound = 1e-6,
             p::construct_surface_patch_index =
             [](int i, int j) { return (i * 1000 + j); },
-            p::detect_features = CGAL::Mesh_3::Detect_features_on_image_bbox(),
+            p::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox(),
             p::input_features = std::cref(polylines)
           )
         );

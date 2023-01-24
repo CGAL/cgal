@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
   /// [Domain creation]
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
-         params::detect_features = CGAL::Mesh_3::Detect_features_in_image());
+         params::features_detector = CGAL::Mesh_3::Detect_features_in_image());
   /// [Domain creation]
 
   CGAL::Bbox_3 bbox = domain.bbox();

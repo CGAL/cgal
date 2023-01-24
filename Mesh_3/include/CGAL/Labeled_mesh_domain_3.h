@@ -596,7 +596,7 @@ public:
    * \returns either a `Labeled_mesh_domain_3`,
    *   or a `Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>`
    *   depending on whether one or more of the named parameters
-   *   `detect_features` and `input_features` are provided.
+   *   `features_detector` and `input_features` are provided.
    *
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \param image_ the input 3D image.
@@ -625,7 +625,7 @@ public:
    *     \cgalParamDefault{FT(1e-3)}
    *   \cgalParamNEnd
    *
-   *   \cgalParamNBegin{detect_features}
+   *   \cgalParamNBegin{features_detector}
    *    \cgalParamDescription{ a functor that can be passed to
    *      `std::function<
    *        std::vector<std::vector<Point_3>>
@@ -693,7 +693,7 @@ public:
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
     CGAL::Image_3 no_weights;
     const CGAL::Image_3& weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights);
-    auto detect_features_ = choose_parameter(get_parameter(np, internal_np::detect_features_param), Null_functor());
+    auto features_detector_ = choose_parameter(get_parameter(np, internal_np::features_detector_param), Null_functor());
 
     using Default_input_features = std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>>;
     using Input_features_ref_type = typename internal_np::Lookup_named_param_def<internal_np::input_features_param_t,
@@ -717,7 +717,7 @@ public:
 
     // warning : keep Return_type consistent with actual return type
     const bool no_features
-      =  CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::detect_features_param_t>::value
+      =  CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::features_detector_param_t>::value
       && CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::input_features_param_t>::value;
     using Return_type = std::conditional_t <
       no_features,
@@ -740,7 +740,7 @@ public:
 
     // features
     Mesh_3::internal::Add_features_in_domain<!no_features>()
-      (image_, domain, input_features_, detect_features_);
+      (image_, domain, input_features_, features_detector_);
 
     return domain;
   }
