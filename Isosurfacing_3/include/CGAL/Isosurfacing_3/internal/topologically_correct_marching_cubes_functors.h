@@ -815,7 +815,7 @@ private:
 
       // compute vertices of inner hexagon, save new vertices in list and compute and keep
       // global vertices index to build triangle connectivity later on.
-      uint tg_idx[6];
+      std::size_t tg_idx[6];
       for(int i=0; i<6; ++i)
       {
         const FT u = hvt[i][0];
@@ -834,7 +834,7 @@ private:
                             w * ((1 - v) * (z_coord(corners[4]) + u * (z_coord(corners[5]) - z_coord(corners[4]))) +
                                        v * (z_coord(corners[6]) + u * (z_coord(corners[7]) - z_coord(corners[6]))));
 
-        tg_idx[i] = uint{m_points.size()};
+        tg_idx[i] = m_points.size();
         m_points.push_back(point(px, py, pz));
       }
 
@@ -1113,7 +1113,7 @@ private:
                             wcoord * ((1 - vcoord) * (z_coord(corners[4]) + ucoord * (z_coord(corners[5]) - z_coord(corners[4]))) +
                                             vcoord * (z_coord(corners[6]) + ucoord * (z_coord(corners[7]) - z_coord(corners[6]))));
 
-        const uint g_index = uint(m_points.size());
+        const std::size_t g_index = m_points.size();
 
         // loop over the contours
         bool pt_used = false;
