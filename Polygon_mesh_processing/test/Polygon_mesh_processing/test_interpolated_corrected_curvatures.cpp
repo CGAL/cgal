@@ -50,7 +50,7 @@ bool passes_comparison(Epic_kernel::FT result, Epic_kernel::FT expected, Epic_ke
   else if (abs(expected) < ABS_ERROR)
     return false; // expected 0, got non-0
 
-  return std::min(result, expected) / std::max(result, expected) > tolerance;
+  return (std::min)(result, expected) / (std::max)(result, expected) > tolerance;
 }
 
 template <typename PolygonMesh>
