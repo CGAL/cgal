@@ -480,7 +480,7 @@ Principal_curvatures_and_directions<GT> principal_curvatures_and_directions_from
 
 template<typename GT, typename PolygonMesh, typename VPM, typename VNM>
 Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
-  const PolygonMesh pmesh,
+  const PolygonMesh& pmesh,
   const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   const bool is_mean_curvature_selected,
   const bool is_gaussian_curvature_selected,
@@ -539,7 +539,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex_no_radius(
 
 template<typename GT, typename PolygonMesh, typename VPM, typename VNM>
 Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
-  const PolygonMesh pmesh,
+  const PolygonMesh& pmesh,
   const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   const typename GT::FT radius,
   const bool is_mean_curvature_selected,
@@ -624,7 +624,7 @@ Vertex_measures<GT> interpolated_corrected_measures_one_vertex(
 template<typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
   void interpolated_corrected_curvatures_one_vertex(
-    const PolygonMesh pmesh,
+    const PolygonMesh& pmesh,
     const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const NamedParameters& np = parameters::default_values()
   )
