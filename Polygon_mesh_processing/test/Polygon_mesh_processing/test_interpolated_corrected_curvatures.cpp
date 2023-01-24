@@ -54,7 +54,7 @@ bool passes_comparison(Epic_kernel::FT result, Epic_kernel::FT expected, Epic_ke
 }
 
 template <typename PolygonMesh>
-void test_average_curvatures(std::string mesh_path, 
+void test_average_curvatures(std::string mesh_path,
   Average_test_info test_info,
   bool compare_single_vertex = false
 ){
@@ -142,8 +142,8 @@ void test_average_curvatures(std::string mesh_path,
   new_mean_curvature_avg /= vertices(pmesh).size();
   new_gaussian_curvature_avg /= vertices(pmesh).size();
   new_principal_curvature_avg /= vertices(pmesh).size() * 2;
-  
-  // are average curvatures computed from interpolated_corrected_curvatures() 
+
+  // are average curvatures computed from interpolated_corrected_curvatures()
   // equal to average curvatures each computed on its own?
   assert(passes_comparison(mean_curvature_avg, new_mean_curvature_avg, 0.99));
   assert(passes_comparison(gaussian_curvature_avg, new_gaussian_curvature_avg, 0.99));
@@ -156,15 +156,15 @@ void test_average_curvatures(std::string mesh_path,
     Epic_kernel::FT single_vertex_mean_curvature_avg = 0,
       single_vertex_gaussian_curvature_avg = 0,
       single_vertex_principal_curvature_avg = 0;
-   
+
     Epic_kernel::FT h, g;
     PMP::Principal_curvatures_and_directions<Epic_kernel> p;
-    
+
     for (vertex_descriptor v : vertices(pmesh))
     {
       PMP::interpolated_corrected_curvatures_at_vertex(
         pmesh,
-        v, 
+        v,
         CGAL::parameters::vertex_gaussian_curvature(&g)
         .vertex_mean_curvature(&h)
         .vertex_principal_curvatures_and_directions(&p)
@@ -189,8 +189,8 @@ void test_average_curvatures(std::string mesh_path,
 int main()
 {
   // testing on a simple sphere(r = 0.5), on both Polyhedron & SurfaceMesh:
-  // For this mesh, ina addition to the whole mesh functions, we also compare against the single vertex 
-  // curvature functions to make sure the produce the same results 
+  // For this mesh, ina addition to the whole mesh functions, we also compare against the single vertex
+  // curvature functions to make sure the produce the same results
   // Expected: Mean Curvature = 2, Gaussian Curvature = 4, Principal Curvatures = 2 & 2 so 2 on avg.
   test_average_curvatures<Polyhedron>("meshes/sphere.off", Average_test_info(2,4,2), true);
   test_average_curvatures<SMesh>("meshes/sphere.off", Average_test_info(2, 4, 2), true);
