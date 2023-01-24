@@ -492,7 +492,7 @@ private:
       } // end of Boost BFS
 #if CGAL_DEBUG_CDT_3
       int counter = 0;
-      for(auto fh: cdt_2.finite_face_handles()) {
+      for(const auto fh: cdt_2.finite_face_handles()) {
         if(!fh->info().is_outside_the_face) ++counter;
       }
       std::cerr << counter << " triangles(s) in the face\n";
@@ -553,7 +553,7 @@ private:
 
   auto brute_force_border_3_of_region(const std::vector<CDT_2_face_handle>& fh_region) {
     std::set<std::pair<Vertex_handle, Vertex_handle>> border_edges;
-    for(auto fh: fh_region) {
+    for(const auto fh: fh_region) {
       for(int i = 0; i < 3; ++i) {
         const auto va = fh->vertex(CDT_2::cw(i))->info().vertex_handle_3d;
         const auto vb = fh->vertex(CDT_2::ccw(i))->info().vertex_handle_3d;
@@ -566,7 +566,7 @@ private:
   }
 
   std::optional<Edge> search_first_intersection(const CDT_2& cdt_2, const auto& fh_region) {
-    for(auto fh_2d : fh_region) {
+    for(const auto fh_2d : fh_region) {
       CGAL_assertion(true == fh_2d->info().missing_subface);
       CGAL_assertion(false == fh_2d->info().is_outside_the_face);
       for(int index = 0; index < 3; ++index) {
@@ -594,7 +594,7 @@ private:
             const auto pc = this->point(vc);
             const auto pd = this->point(vd);
             const typename Geom_traits::Segment_3 seg{pc, pd};
-            for(auto fh_2d : fh_region) {
+            for(const auto fh_2d : fh_region) {
               const auto triangle = cdt_2.triangle(fh_2d);
               if(do_intersect(seg, triangle)) {
                 std::cerr << "Segment " << seg << " intersects triangle " << triangle << "\n";
@@ -609,10 +609,10 @@ private:
   }
 
   void restore_subface_region(const CDT_2& cdt_2, CDT_2_face_handle fh) {
-    auto fh_region = region(cdt_2, fh);
+    const auto fh_region = region(cdt_2, fh);
     assert(!fh_region.empty());
     assert(fh == fh_region[0]);
-    auto border_edges = brute_force_border_3_of_region(fh_region);
+    const auto border_edges = brute_force_border_3_of_region(fh_region);
 #if CGAL_DEBUG_CDT_3
     std::cerr << "region size is: " << fh_region.size() << "\n";
     std::cerr << "region border size is: " << border_edges.size() << "\n";
@@ -641,7 +641,7 @@ private:
 #if CGAL_DEBUG_CDT_3
     std::cerr << "cdt_2 has " << cdt_2.number_of_vertices() << " vertices\n";
 #endif // CGAL_DEBUG_CDT_3
-    for(auto edge : cdt_2.finite_edges()) {
+    for(const auto edge : cdt_2.finite_edges()) {
       const auto fh = edge.first;
       const auto i = edge.second;
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
@@ -658,7 +658,7 @@ private:
       const auto reverse_edge = cdt_2.mirror_edge(edge);
       reverse_edge.first->info().is_edge_also_in_3d_triangulation[unsigned(reverse_edge.second)] = is_3d;
     }
-    for(CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
+    for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
       if(false == fh->info().missing_subface) continue;
       restore_subface_region(cdt_2, fh);
@@ -682,7 +682,7 @@ public:
 
   void write_region(std::ostream& out, auto region)
   {
-    for(auto fh_2d : region) {
+    for(const auto fh_2d : region) {
       write_2d_triangle(out, fh_2d);
     }
   }
