@@ -11,7 +11,7 @@
 
 class PMPTriangulateFaceVisitor {
 public:
-/// Face decriptor type
+/// Face descriptor type
 typedef unspecified_type face_descriptor;
 
 /// @name Functions used by triangulate_face() and triangulate_faces()

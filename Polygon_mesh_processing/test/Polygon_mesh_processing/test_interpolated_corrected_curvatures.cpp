@@ -67,12 +67,12 @@ void test_average_curvatures(std::string mesh_path,
     std::cerr << "Invalid input file." << std::endl;
   }
 
-  typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<Epic_kernel::FT>>::type
+  typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<Epic_kernel::FT>>::type
     mean_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), pmesh),
     gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), pmesh);
-  boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>>::type
+  typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>>::type
     principal_curvatures_and_directions_map = get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>(), pmesh);
 
   // test_info.expansion_radius -> test if no radius is provided by user.

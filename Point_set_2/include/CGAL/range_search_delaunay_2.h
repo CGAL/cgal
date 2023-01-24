@@ -204,7 +204,7 @@ OutputIterator range_search(Dt& delau,
 // and then performs a range query with this circle.
 // When vertices of the trinagulation are on the circle the outcome
 // is not deterministic.
-// A solution would be to not constuct a circle, but to use the
+// A solution would be to not construct a circle, but to use the
 // function CGAL::side_of_bounded_circle
 
 template<class Dt, class OutputIterator>

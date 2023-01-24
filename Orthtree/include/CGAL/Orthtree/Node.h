@@ -365,7 +365,7 @@ public:
   }
 
   /*!
-    \brief returns the nth child fo this node.
+    \brief returns the nth child of this node.
 
     \pre `!is_null()`
     \pre `!is_leaf()`

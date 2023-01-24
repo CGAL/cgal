@@ -176,7 +176,7 @@ private:
 
     for (fit = P.facets_begin(); fit != fend; ++fit)
     {
-      Polyhedron::Halfedge_handle h = fit->halfedge();
+      Polyhedron::Halfedge_descriptor h = fit->halfedge();
       Point_3& p0 = h->vertex()->point();
       h = h->next();
       Point_3& p1 = h->vertex()->point();
@@ -298,7 +298,7 @@ private:
       while (++hc != hc_end);
       v = v / c;
 
-      Polyhedron::Halfedge_handle h = P.create_center_vertex(fit->halfedge());
+      Polyhedron::Halfedge_descriptor h = P.create_center_vertex(fit->halfedge());
       h->vertex()->point() = CGAL::ORIGIN + v;
     }
     while (fit++ != fend);
@@ -317,7 +317,7 @@ private:
     for (eit = P.edges_begin(); eit!=eend; ++eit)
     {
       // careful: eit->is_border() does not work
-      Polyhedron::Halfedge_handle h = eit;
+      Polyhedron::Halfedge_descriptor h = eit;
       if (!(h->is_border() || h->opposite()->is_border()))
         P.flip_edge(h);
     }
@@ -348,7 +348,7 @@ private:
     fit = P.facets_begin();
     do
     {
-      Polyhedron::Halfedge_handle h = P.create_center_vertex(fit->halfedge());
+      Polyhedron::Halfedge_descriptor h = P.create_center_vertex(fit->halfedge());
       h->vertex()->point() = p;
     }
     while (++fit != fend);
@@ -365,21 +365,21 @@ private:
   }
 
 
-  void halfedge_collapse(Polyhedron::Halfedge_handle pq)
+  void halfedge_collapse(Polyhedron::Halfedge_descriptor pq)
   {
     // this code is copied from the CGAL surface simplification package
 
-    Polyhedron::Halfedge_handle qp = pq->opposite();
-    Polyhedron::Halfedge_handle pt = pq->prev()->opposite();
-    Polyhedron::Halfedge_handle qb = qp->prev()->opposite();
+    Polyhedron::Halfedge_descriptor qp = pq->opposite();
+    Polyhedron::Halfedge_descriptor pt = pq->prev()->opposite();
+    Polyhedron::Halfedge_descriptor qb = qp->prev()->opposite();
 
     bool lTopFaceExists         = !pq->is_border() ;
     bool lBottomFaceExists      = !qp->is_border() ;
     bool lTopLeftFaceExists     = lTopFaceExists    && !pt->is_border() ;
     bool lBottomRightFaceExists = lBottomFaceExists && !qb->is_border() ;
 
-    Polyhedron::Vertex_handle q = pq->vertex();
-    Polyhedron::Vertex_handle p = pq->opposite()->vertex();
+    Polyhedron::Vertex_descriptor q = pq->vertex();
+    Polyhedron::Vertex_descriptor p = pq->opposite()->vertex();
 
     bool lP_Erased = false, lQ_Erased = false ;
 

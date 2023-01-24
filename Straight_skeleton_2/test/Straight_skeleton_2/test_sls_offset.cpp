@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <string>
 
+#define CGAL_ENABLE_DISABLE_ASSERTIONS_AT_RUNTIME
 #define CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
 
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 100
@@ -943,12 +944,12 @@ void test_offset(const char* filename)
     std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //    for(const auto& offp : offset_poly_with_holes)
 //      print_polygon_with_holes(*offp);
-    CGAL::set_use_polygon_assertions(false);
+    CGAL::set_use_assertions(false);
     for(const auto& offp : offset_poly_with_holes){
       (void)offp;
       assert(offp->outer_boundary().is_counterclockwise_oriented());
     }
-    CGAL::set_use_polygon_assertions(true);
+    CGAL::set_use_assertions(true);
 #ifdef CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
     if(i > 2)
       break;

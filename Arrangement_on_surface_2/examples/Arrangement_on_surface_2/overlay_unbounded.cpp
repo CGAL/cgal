@@ -11,7 +11,7 @@
 
 #include "arr_linear.h"
 
-// Define a functor for creating a label from a characer and an integer.
+// Define a functor for creating a label from a character and an integer.
 struct Overlay_label {
   std::string operator()(char c, unsigned int i) const
   { return c + boost::lexical_cast<std::string>(i); }

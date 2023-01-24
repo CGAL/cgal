@@ -17,7 +17,7 @@ find_package(
   COMPONENTS OpenGL Script Svg
   OPTIONAL_COMPONENTS ScriptTools WebSockets)
 
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   if(Qt5_FOUND)
     include(${CGAL_USE_FILE})
   endif()

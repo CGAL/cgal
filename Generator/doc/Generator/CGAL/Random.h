@@ -5,7 +5,7 @@ namespace CGAL {
 The class `Random` is a random numbers generator. It generates
 uniformly distributed random `bool`, `int` and `double`.
 It can be used as the random number generating function object in the
-\stl algorithm `std::random_shuffle`.
+\stl algorithm `std::random_shuffle()`.
 
 Instances of `Random` can be seen as input streams. Different
 streams are <I>independent</I> of each other, i.e.\ the sequence of
@@ -23,10 +23,10 @@ the same time, even if a fixed seed has been chosen.
 
 \cgalHeading{Implementation}
 
-We use the boost random library function `boost::rand48` to generate the random
+We use the boost random library function `boost::rand48()` to generate the random
 numbers.
 
-\sa `CGAL::get_default_random`
+\sa `CGAL::get_default_random()`
 
 */
 

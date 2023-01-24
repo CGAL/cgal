@@ -26,7 +26,7 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/spatial_sort.h>

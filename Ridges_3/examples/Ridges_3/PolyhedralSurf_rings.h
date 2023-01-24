@@ -44,7 +44,7 @@ protected:
  public:
   T_PolyhedralSurf_rings(const TPoly& P);
 
-  //collect i>=1 rings : all neighbours up to the ith ring,
+  //collect i>=1 rings : all neighbors up to the ith ring,
   void collect_i_rings(const Vertex_const_handle v,
                        const int ring_i,
                        std::vector < Vertex_const_handle >& all);

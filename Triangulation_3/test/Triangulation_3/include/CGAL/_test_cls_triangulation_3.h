@@ -222,14 +222,22 @@ _test_cls_triangulation_3(const Triangulation &)
     }
 
   std::cout << "    Constructor1 " << std::endl;
-  Point p10(0,0,0);
-  Vertex_handle v0=T0.insert(p10);
+  Vertex_handle v0=T0.insert(p[0]);
   assert(T0.dimension() == 0);
   assert(T0.number_of_vertices() == 1);
   assert(T0.is_valid());
+  assert(T0 != Tm1);
 
   Cls T0d0(T0);
   assert(T0 == T0d0);
+
+  Cls T0d0b;
+  v0=T0d0b.insert(p[1]);
+  assert(T0d0b.dimension() == 0);
+  assert(T0d0b.number_of_vertices() == 1);
+  assert(T0d0b.is_valid());
+  assert(T0d0b != T0d0);
+  assert(T0d0b != Tm1);
 
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations
@@ -244,6 +252,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.dimension() == 1);
   assert(T0.number_of_vertices() == 2);
   assert(T0.is_valid());
+  assert(T0 != T0d0);
 
   Cls T0d1(T0);
   assert(T0 == T0d1);
@@ -261,6 +270,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.dimension() == 2);
   assert(T0.number_of_vertices() == 3);
   assert(T0.is_valid());
+  assert(T0 != T0d1);
 
   Cls T0d2(T0);
   assert(T0 == T0d2);
@@ -278,6 +288,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
+  assert(T0 != T0d2);
 
   Cls T0d3(T0);
   assert(T0 == T0d3);
@@ -573,7 +584,7 @@ _test_cls_triangulation_3(const Triangulation &)
 //   std::cout << " done" << std::endl;
 
 
-  // Test inserts function separatelly.
+  // Test inserts function separately.
 
   std::cout << "    Testing insertions   " << std::endl;
   Locate_type lt;

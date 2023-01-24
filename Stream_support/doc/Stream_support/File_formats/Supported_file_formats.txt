@@ -107,7 +107,7 @@ which offers combinatorial repairing while reading bad inputs.
 The `OBJ` file format, using the file extension `.obj`, is a simple \ascii data format that represents 3D geometry.
 Vertices are stored in a counter-clockwise order by default, making explicit declaration of face normals unnecessary.
 
-A precise specification of the format is available <a href="http://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
+A precise specification of the format is available <a href="https://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
 
 <table class="iotable">
   <tr>
@@ -148,7 +148,7 @@ The `STL` file format, using the file extension `.stl`, is an \ascii or binary f
 to the stereolithography CAD software created by 3D Systems.
 STL files describe the surface geometry of a three-dimensional object.
 
-A precise specification of those formats is available <a href="http://www.fabbers.com/tech/STL_Format">here</a>.
+A precise specification of those formats is available <a href="https://www.fabbers.com/tech/STL_Format">here</a>.
 
 <table class="iotable">
   <tr>

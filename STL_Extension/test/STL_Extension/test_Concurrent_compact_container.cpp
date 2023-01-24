@@ -322,15 +322,15 @@ void test(const Cont &)
   assert(c11.size() == v1.size());
   assert(c10 == c11);*/
 
-  // owns() and owns_dereferencable().
+  // owns() and owns_dereferenceable().
   for(typename Cont::const_iterator it = c9.begin(), end = c9.end(); it != end; ++it) {
     assert(c9.owns(it));
-    assert(c9.owns_dereferencable(it));
+    assert(c9.owns_dereferenceable(it));
     assert(! c10.owns(it));
-    assert(! c10.owns_dereferencable(it));
+    assert(! c10.owns_dereferenceable(it));
   }
   assert(c9.owns(c9.end()));
-  assert(! c9.owns_dereferencable(c9.end()));
+  assert(! c9.owns_dereferenceable(c9.end()));
 
 
   c9.erase(c9.begin(), c9.end());

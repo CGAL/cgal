@@ -567,7 +567,7 @@ public:
 
   // Special functor, not in the Kernel concept
   class Projection_to_plan {
-    // Remeber: Point_2 is K::Point_3
+    // Remember: Point_2 is K::Point_3
     const Point_2& plane_point;
     const Vector_3& normal;
   public:

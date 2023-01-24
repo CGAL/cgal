@@ -11,7 +11,7 @@
     {                                                            \
         bool b = false;                                          \
         try{(void) expr;}catch(error){ b = true;}                \
-        if(!b) CGAL_error_msg( "Expr should throw expetion");        \
+        if(!b) CGAL_error_msg( "Expr should throw exception");   \
     }
 
 int main() {

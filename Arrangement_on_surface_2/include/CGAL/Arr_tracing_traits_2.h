@@ -279,7 +279,7 @@ public:
       m_object(base->construct_min_vertex_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curev the left endpoint of which is obtained
+     * \param xcv the curve the left endpoint of which is obtained
      * \return the left endpoint
      */
     const Point_2 operator()(const X_monotone_curve_2& xcv) const
@@ -305,7 +305,7 @@ public:
       m_object(base->construct_max_vertex_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curev the right endpoint of which is obtained
+     * \param xcv the curve the right endpoint of which is obtained
      * \return the right endpoint
      */
     const Point_2 operator()(const X_monotone_curve_2& xcv) const

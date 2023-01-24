@@ -230,11 +230,11 @@ public:
 
   /// @}
 
-  /// \name Settting Parameters
+  /// \name Setting Parameters
   /// @{
   /*!
           If `sample_size == 0`, the simplification is performed using an exhaustive priority queue.
-          If `sample_size` is stricly positive the simplification is performed using a
+          If `sample_size` is strictly positive the simplification is performed using a
           multiple choice approach, ie, a best-choice selection in a random sample of
           edge collapse operators, of size `sample_size`. A typical value for the sample
           size is 15, but this value must be enlarged when targeting a very coarse simplification.

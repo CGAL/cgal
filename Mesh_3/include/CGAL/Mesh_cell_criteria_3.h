@@ -67,9 +67,9 @@ public:
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
-                       typename std::enable_if<
+                       std::enable_if_t<
                          Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
-                       >::type* = 0
+                       >* = 0
                        )
   {
     init_radius(radius_bound);
@@ -82,8 +82,8 @@ public:
   ~Mesh_cell_criteria_3() { }
 
   /**
-   * @brief returns whether the cell \c cell is bad or not.
-   * @param tr the triangulation within which \c cell lives
+   * @brief returns whether the cell `cell` is bad or not.
+   * @param tr the triangulation within which `cell` lives
    * @param cell the cell
    */
   Is_cell_bad operator()(const Tr& tr, const Cell_handle& cell) const

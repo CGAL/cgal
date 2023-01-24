@@ -194,7 +194,7 @@ private:
 
     template <class Point>
     Plane(const Point& p, const Point& q, const Point& r,
-          typename std::enable_if<!std::is_same<Point,ePoint_3>::value>::type* = 0)
+          std::enable_if_t<!std::is_same<Point,ePoint_3>::value>* = 0)
       : ep(p.x(),p.y(),p.z()), eq(q.x(),q.y(),q.z()), er(r.x(),r.y(),r.z()), eplane(ep,eq,er)
     {}
     ePoint_3 ep, eq, er;
@@ -358,7 +358,7 @@ public:
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
-   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   * \note The triangle mesh gets copied internally, that is it can be modified after having passed as argument,
    *       while the queries are performed
    */
   template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -458,7 +458,7 @@ public:
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
-   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   * \note The triangle mesh gets copied internally, that is it can be modified after having passed as argument,
    *       while the queries are performed
    */
   template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -467,7 +467,7 @@ public:
                       double epsilon,
                       const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                      , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+                      , std::enable_if_t<!boost::has_range_const_iterator<TriangleMesh>::value>* = 0
 #endif
   )
   {
@@ -572,7 +572,7 @@ public:
                       double epsilon,
                       const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                      , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
+                      , std::enable_if_t<boost::has_range_const_iterator<TriangleRange>::value>* = 0
 #endif
                       )
   {
@@ -864,7 +864,11 @@ private:
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(const ePoint_3 &ip,
                                                           const std::vector<unsigned int> &prismindex, const unsigned int &jump, int &id) const
   {
-    Oriented_side ori;
+    Oriented_side ori = ON_POSITIVE_SIDE; // The compiler sees the
+                                          // possibility that the
+                                          // nested for loop body is
+                                          // not executed and warns that
+                                          // ori may not be initialized
 
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -1291,7 +1295,7 @@ private:
                       const int &prismid, const unsigned int &faceid)const
   {
     for (unsigned int i = 0; i < halfspace[prismid].size(); i++) {
-      /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
+      /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbor facets are coplanar
         if (neib == false) continue;*/
       if (i == faceid) continue;
       if(oriented_side(halfspace[prismid][i].eplane, ip) == ON_POSITIVE_SIDE){
@@ -2230,7 +2234,7 @@ public:
   operator()(const TriangleMesh& tmesh,
              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+             , std::enable_if_t<!boost::has_range_const_iterator<TriangleMesh>::value>* = 0
 #endif
     ) const
   {
@@ -2322,7 +2326,7 @@ public:
   bool
   operator()(const TriangleRange& triangle_range
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
+             , std::enable_if_t<boost::has_range_const_iterator<TriangleRange>::value>* = 0
 #endif
     ) const
   {

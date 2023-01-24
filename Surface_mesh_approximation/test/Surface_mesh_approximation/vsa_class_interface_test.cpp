@@ -92,7 +92,7 @@ int main()
 
   // split proxy 0 into 2 proxies
   // precondition: proxy 0 should have more than 2 faces
-  std::cout << "spliting" << std::endl;
+  std::cout << "splitting" << std::endl;
   if (!approx.split(0, 2, 10))
     return EXIT_FAILURE;
   if (approx.number_of_proxies() != 17)

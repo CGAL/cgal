@@ -51,7 +51,7 @@ public:
   /// @param amesh the surface mesh to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  ///        useful for very big object where this time could be long)
   template <typename SM>
   SimpleFaceGraphViewerQt(QWidget* parent,
                           const SM& amesh,
