@@ -36,8 +36,8 @@
 
 #include <vector>
 
-// #define TEST_RESOLVE_INTERSECTION
-// #define DEDUPLICATE_SEGMENTS
+//#define TEST_RESOLVE_INTERSECTION
+//#define DEDUPLICATE_SEGMENTS
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -49,8 +49,8 @@ enum Segment_inter_type { NO_INTERSECTION=0, COPLANAR_SEGMENTS, POINT_INTERSECTI
 
 template <class K>
 Segment_inter_type
-do_coplanar_segments_intersect(const typename K::Segment_3& s1,
-                               const typename K::Segment_3& s2,
+do_coplanar_segments_intersect(const std::array<typename K::Point_3, 2>& s1,
+                               const std::array<typename K::Point_3, 2>& s2,
                                const K& k = K())
 {
   // supporting_line intersects: points are coplanar
@@ -259,7 +259,7 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
 
 template <class EK>
 void generate_subtriangles(std::size_t ti,
-                                 std::vector<typename EK::Segment_3>& segments,
+                                 std::vector<std::array<typename EK::Point_3, 2>>& segments,
                            const std::vector<typename EK::Point_3>& points,
                            const std::vector<std::size_t>& in_triangle_ids,
                            const std::set<std::pair<std::size_t, std::size_t> >& intersecting_triangles,
@@ -351,7 +351,9 @@ void generate_subtriangles(std::size_t ti,
 
               //~ std::cout << "coplanar inter: " << i << " " << j << "\n";
 
-              auto inter = CGAL::intersection(segments[i], segments[j]);
+              typename EK::Segment_3 s1(segments[i][0], segments[i][1]);
+              typename EK::Segment_3 s2(segments[j][0], segments[j][1]);// TODO: avoid this construction
+              auto inter = CGAL::intersection(s1, s2);
 
               if (inter == boost::none) throw std::runtime_error("Unexpected case #2");
 
@@ -381,7 +383,7 @@ void generate_subtriangles(std::size_t ti,
               // coplanar intersection that is not a point
               int coord = 0;
               const typename EK::Segment_3& s = segments[i];
-              typename EK::Point_3 src = s.source(), tgt=s.target();
+              typename EK::Point_3 src = s[0], tgt=s[1];
               if (src.x()==tgt.x())
               {
                 coord=1;
@@ -401,10 +403,10 @@ void generate_subtriangles(std::size_t ti,
               points_on_segments[j].push_back(tmp_pts[1]);
               points_on_segments[j].push_back(tmp_pts[2]);
 #endif
-              //~ std::cout << "new inter coli " << segments[j].source() << "\n";
-              //~ std::cout << "new inter coli " << segments[j].target() << "\n";
-              //~ std::cout << "new inter coli " << segments[i].source() << "\n";
-              //~ std::cout << "new inter coli " << segments[i].target() << "\n";
+              //~ std::cout << "new inter coli " << segments[j][0] << "\n";
+              //~ std::cout << "new inter coli " << segments[j][1] << "\n";
+              //~ std::cout << "new inter coli " << segments[i][0] << "\n";
+              //~ std::cout << "new inter coli " << segments[i][1] << "\n";
 
               //~ points_on_segments[j].push_back(*pt_ptr);
 
@@ -437,8 +439,8 @@ void generate_subtriangles(std::size_t ti,
       {
         // TODO: predicate on input triangles
         int coord = 0;
-        const typename EK::Segment_3& s = segments[i];
-        typename EK::Point_3 src = s.source(), tgt=s.target();
+        const std::array<typename EK::Point_3, 2>& s = segments[i];
+        typename EK::Point_3 src = s[0], tgt=s[1];
         if (src.x()==tgt.x())
         {
           coord=1;
@@ -482,7 +484,7 @@ void generate_subtriangles(std::size_t ti,
 
     cdt.insert_constraints(cst_points.begin(), cst_points.end(), csts.begin(), csts.end());
 
-    std::vector<typename EK::Segment_3> no_inter_segments;
+    std::vector<std::array<typename EK::Point_3,2>> no_inter_segments;
     no_inter_segments.reserve(nbs);
     for (std::size_t i = 0; i<nbs; ++i)
       if(points_on_segments[i].empty())
@@ -601,7 +603,7 @@ void autorefine_soup_output(const PointRange& input_points,
       to_exact( get(pm, input_points[id_triples[f][2]]) ) );
   }
 
-  std::vector< std::vector<EK::Segment_3> > all_segments(triangles.size()); // TODO use std::pair
+  std::vector< std::vector<std::array<EK::Point_3,2> > > all_segments(triangles.size());
   std::vector< std::vector<EK::Point_3> > all_points(triangles.size());
   std::vector< std::vector<std::size_t> > all_in_triangle_ids(triangles.size());
 
@@ -631,16 +633,16 @@ void autorefine_soup_output(const PointRange& input_points,
           all_points[i2].push_back(inter_pts[0]);
         break;
         case 2:
-          all_segments[i1].push_back({inter_pts[0], inter_pts[1]});
-          all_segments[i2].push_back({inter_pts[0], inter_pts[1]});
+          all_segments[i1].push_back(CGAL::make_array(inter_pts[0], inter_pts[1]));
+          all_segments[i2].push_back(CGAL::make_array(inter_pts[0], inter_pts[1]));
           all_in_triangle_ids[i1].push_back(i2);
           all_in_triangle_ids[i2].push_back(i1);
         break;
         default:
           for (std::size_t i=0;i<nbi; ++i)
           {
-            all_segments[i1].push_back({inter_pts[i], inter_pts[(i+1)%nbi]});
-            all_segments[i2].push_back({inter_pts[i], inter_pts[(i+1)%nbi]});
+            all_segments[i1].push_back(CGAL::make_array(inter_pts[i], inter_pts[(i+1)%nbi]));
+            all_segments[i2].push_back(CGAL::make_array(inter_pts[i], inter_pts[(i+1)%nbi]));
             all_in_triangle_ids[i1].push_back(i2);
             all_in_triangle_ids[i2].push_back(i1);
           }
@@ -675,14 +677,14 @@ void autorefine_soup_output(const PointRange& input_points,
     if (!all_segments[ti].empty())
     {
       std::size_t nbs = all_segments[ti].size();
-      std::vector<EK::Segment_3> filtered_segments;
+      std::vector<std::array<EK::Point_3,2>> filtered_segments;
       std::vector<std::size_t> filtered_in_triangle_ids;
       filtered_segments.reserve(nbs);
       std::set<std::pair<std::size_t, std::size_t>> segset;
       for (std::size_t si=0; si<nbs; ++si)
       {
-        EK::Point_3 src = all_segments[ti][si].source(),
-                    tgt = all_segments[ti][si].target();
+        EK::Point_3 src = all_segments[ti][si][0],
+                    tgt = all_segments[ti][si][1];
         if (segset.insert(
               CGAL::make_sorted_pair( get_point_id(src),
                                       get_point_id(tgt))).second)
