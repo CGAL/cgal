@@ -81,7 +81,7 @@ void compute(SMesh* sMesh,
     CGAL::parameters::ball_radius(0)
   );
 
-  typename Epic_kernel::FT max_curvature_magnitude_on_mesh = 0;
+  double max_curvature_magnitude_on_mesh = 0;
   for (Vertex_descriptor v : vertices(*sMesh))
   {
     const PMP::Principal_curvatures_and_directions<Epic_kernel> pc = principal_curvatures_and_directions_map[v];
@@ -99,11 +99,9 @@ void compute(SMesh* sMesh,
     // compute min edge len around central vertex
     // to scale the ribbons used to display the directions
 
-    typedef EPICK::FT FT;
-
     const std::size_t n = CGAL::edges(*sMesh).size();
 
-    Epic_kernel::FT avg_edge_length = 0;
+    double avg_edge_length = 0;
     if (n > 0) {
       for (auto e : CGAL::edges(*sMesh))
         avg_edge_length += PMP::edge_length(e, *sMesh);
