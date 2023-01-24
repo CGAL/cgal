@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
   /// [Domain creation]
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image,
-    params::input_features = std::cref(features_inside));
+    params::input_features = std::cref(features_inside));//use std::cref to avoid a copy
   /// [Domain creation]
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]

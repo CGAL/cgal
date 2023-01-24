@@ -648,6 +648,8 @@ public:
    *    \cgalParamDefault{`std::vector<std::vector<Point_3>>()`}
    *    \cgalParamExtra{The return type of the function depends on whether this parameter
                         or `input_features` are provided or not.}
+   *    \cgalParamExtra{It is recommended to pass a const-reference for this parameter,
+   *                    possibly using `std::cref(polylines_range)` to avoid useless copies.}
    *    \cgalParamExtra{If `weights` is provided, this parameter is ignored}
    *   \cgalParamNEnd
    *
@@ -696,7 +698,7 @@ public:
     using Default_input_features = std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>>;
     using Input_features_ref_type = typename internal_np::Lookup_named_param_def<internal_np::input_features_param_t,
                                                                                  CGAL_NP_CLASS,
-                                                                                Default_input_features>::reference;
+                                                                                 Default_input_features>::reference;
     Default_input_features empty_vec;
     Input_features_ref_type input_features_
           = choose_parameter(get_parameter_reference(np, internal_np::input_features_param), empty_vec);
