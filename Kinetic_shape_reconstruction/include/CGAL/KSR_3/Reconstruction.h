@@ -36,7 +36,7 @@
 
 namespace CGAL {
 
-#ifdef DOXYGEN_NS
+#ifdef DOXYGEN_RUNNING
 /*!
 * \ingroup PkgKineticPartition
   \brief Piece-wise linear reconstruction via inside/outside labeling of a kinetic partition using graph cut.
@@ -66,14 +66,16 @@ public:
     \param input_range
     an instance of `InputRange` with 3D points and corresponding 3D normal vectors
 
+    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
   \cgalNamedParamsBegin
     \cgalParamNBegin{point_map}
-      \cgalParamDescription{}
+      \cgalParamDescription{a property map associating points to the elements of `input_range`}
       \cgalParamType{bool}
       \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{normal_map}
-      \cgalParamDescription{}
+      \cgalParamDescription{a property map associating normals to the elements of `input_range`}
       \cgalParamType{bool}
       \cgalParamDefault{false}
     \cgalParamNEnd
@@ -100,27 +102,27 @@ public:
 
     \cgalNamedParamsBegin
     \cgalParamNBegin{maximum_angle}
-      \cgalParamDescription{}
+      \cgalParamDescription{XX}
       \cgalParamType{FT}
       \cgalParamDefault{25 degrees}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_offset}
-      \cgalParamDescription{}
+      \cgalParamDescription{XX}
       \cgalParamType{FT}
       \cgalParamDefault{0.01}
     \cgalParamNEnd
     \cgalParamNBegin{regularize_parallelism}
-      \cgalParamDescription{}
+      \cgalParamDescription{XX}
       \cgalParamType{bool}
       \cgalParamDefault{true}
     \cgalParamNEnd
     \cgalParamNBegin{regularize_orthogonality}
-      \cgalParamDescription{}
+      \cgalParamDescription{XX}
       \cgalParamType{bool}
       \cgalParamDefault{true}
     \cgalParamNEnd
     \cgalParamNBegin{regularize_coplanarity}
-      \cgalParamDescription{}
+      \cgalParamDescription{XX}
       \cgalParamType{bool}
       \cgalParamDefault{true}
     \cgalParamNEnd
@@ -252,8 +254,8 @@ public:
   /*!
   \brief Propagates the kinetic polygons in the initialized partition.
 
-  \param lambda
-  trades the impact of the data term for impact of the regularization term. Should be in the range [0, 1).
+  \param polygon_mesh
+  output in a mesh
 
   @return
   success of reconstruction.
