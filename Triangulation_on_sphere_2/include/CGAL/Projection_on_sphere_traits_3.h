@@ -17,8 +17,7 @@
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
 #include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
-
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/number_utils_classes.h>
 
 namespace CGAL {

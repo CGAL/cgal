@@ -273,7 +273,7 @@ class Face_graph_output_builder
   };
 
   // detect if a polyline is incident to two patches that won't be imported
-  // for the current operation (polylines skipt are always incident to a
+  // for the current operation (polylines skipped are always incident to a
   // coplanar patch)
   template <class TM, class FIM1, class FIM2>
   static
@@ -1037,11 +1037,68 @@ public:
           std::size_t patch_id_q1=tm2_patch_ids[ get(fids2, face(opposite(h2,tm2),tm2)) ];
           std::size_t patch_id_q2=tm2_patch_ids[ get(fids2, face(h2,tm2)) ];
 
+          // info on whether the patches were already classified
+          std::bitset<4> patch_status_was_not_already_set;
+          std::bitset<4> previous_bitvalue;
+          // info for tm1
+          patch_status_was_not_already_set[0] = patch_status_not_set_tm1.test(patch_id_p1);
+          patch_status_was_not_already_set[1] = patch_status_not_set_tm1.test(patch_id_p2);
+          previous_bitvalue[0] = is_patch_inside_tm2.test(patch_id_p1);
+          previous_bitvalue[1] = is_patch_inside_tm2.test(patch_id_p2);
+          // info for tm2
+          patch_status_was_not_already_set[2] = patch_status_not_set_tm2.test(patch_id_q1);
+          patch_status_was_not_already_set[3] = patch_status_not_set_tm2.test(patch_id_q2);
+          previous_bitvalue[2] = is_patch_inside_tm1.test(patch_id_q1);
+          previous_bitvalue[3] = is_patch_inside_tm1.test(patch_id_q2);
+
+#ifndef CGAL_NDEBUG
+          if (is_tm1_closed && is_tm2_closed)
+          {
+            if (!patch_status_was_not_already_set[0] &&
+                !patch_status_was_not_already_set[1] &&
+                !patch_status_was_not_already_set[2] &&
+                !patch_status_was_not_already_set[3])
+              continue; // all patches were already classified, no need to redo it
+          }
+#endif
+
+          // check incompatibility of patch classifications
+          auto inconsistent_classification = [&]()
+          {
+            if (!used_to_clip_a_surface && !used_to_classify_patches && (!is_tm1_closed || !is_tm2_closed))
+            {
+              //make sure there is no ambiguity in tm1
+              if( (!patch_status_was_not_already_set[0] && previous_bitvalue[0]!=is_patch_inside_tm2.test(patch_id_p1) ) ||
+                  (!patch_status_was_not_already_set[1] && previous_bitvalue[1]!=is_patch_inside_tm2.test(patch_id_p2) ) )
+              {
+                impossible_operation.set();
+                return true;
+              }
+              //make sure there is no ambiguity in tm2
+              if( (!patch_status_was_not_already_set[2] && previous_bitvalue[2]!=is_patch_inside_tm1.test(patch_id_q1) ) ||
+                  (!patch_status_was_not_already_set[3] && previous_bitvalue[3]!=is_patch_inside_tm1.test(patch_id_q2) ) )
+              {
+                impossible_operation.set();
+                return true;
+              }
+            }
+            return false;
+          };
+
           //indicates that patch status will be updated
           patch_status_not_set_tm1.reset(patch_id_p1);
           patch_status_not_set_tm1.reset(patch_id_p2);
           patch_status_not_set_tm2.reset(patch_id_q1);
           patch_status_not_set_tm2.reset(patch_id_q2);
+
+          // restore initial state, needed when checking in `inconsistent_classification()`
+          if (!is_tm1_closed  || !is_tm2_closed)
+          {
+            is_patch_inside_tm2.reset(patch_id_p1);
+            is_patch_inside_tm2.reset(patch_id_p2);
+            is_patch_inside_tm1.reset(patch_id_q1);
+            is_patch_inside_tm1.reset(patch_id_q2);
+          }
 
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
           #warning: Factorize the orientation predicates.
@@ -1082,6 +1139,7 @@ public:
 
             if ( q2_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q2); //case 1
             else is_patch_inside_tm2.set(patch_id_p2); //case 2
+            if (inconsistent_classification()) return;
             continue;
           }
           else{
@@ -1112,6 +1170,7 @@ public:
                 is_patch_inside_tm1.set(patch_id_q1);
                 is_patch_inside_tm2.set(patch_id_p2);
               } //else case 4
+              if (inconsistent_classification()) return;
               continue;
             }
             else
@@ -1142,6 +1201,7 @@ public:
                   is_patch_inside_tm1.set(patch_id_q2);
                   is_patch_inside_tm2.set(patch_id_p1);
                 } // else case 6
+                if (inconsistent_classification()) return;
                 continue;
               }
               else{
@@ -1170,13 +1230,14 @@ public:
 
                   if ( q1_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q1);  //case 7
                   else is_patch_inside_tm2.set(patch_id_p1); //case 8
+                  if (inconsistent_classification()) return;
                   continue;
                 }
               }
             }
           }
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-          #warning At some point we should have a check if a patch status is already set, what we do is consistant otherwise --> ambiguous
+          #warning At some point we should have a check if a patch status is already set, what we do is consistent otherwise --> ambiguous
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
           CGAL_assertion(
@@ -1331,6 +1392,11 @@ public:
               }
             }
           }
+          if (inconsistent_classification()) return;
+          CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
+          CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
+          CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
+          CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
         }
     }
 

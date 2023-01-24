@@ -389,7 +389,7 @@ public:
   struct Substitute_homogeneous{
   public:
     // this is the end of the recursion
-    // begin contains the homogeneous variabel
+    // begin contains the homogeneous variable
     // hdegree is the remaining degree
     template <class Input_iterator>
     typename
@@ -566,7 +566,7 @@ public:
     template <class Input_iterator, class NT> Polynomial_d
     construct_value_type(Input_iterator begin, Input_iterator end, NT) const {
       typedef CGAL::Coercion_traits<NT,Coefficient_type> CT;
-      CGAL_static_assertion((boost::is_same<typename CT::Type,Coefficient_type>::value));
+      CGAL_static_assertion((std::is_same<typename CT::Type,Coefficient_type>::value));
       typename CT::Cast cast;
       return Polynomial_d(
           boost::make_transform_iterator(begin,cast),
@@ -618,7 +618,7 @@ public:
     operator()( Input_iterator begin, Input_iterator end ) const {
       if(begin == end ) return Polynomial_d(0);
       typedef typename std::iterator_traits<Input_iterator>::value_type value_type;
-      typedef Boolean_tag<boost::is_same<value_type,Coefficient_type>::value>
+      typedef Boolean_tag<std::is_same<value_type,Coefficient_type>::value>
         Is_coeff;
       std::vector<value_type> vec(begin,end);
       return construct(vec.begin(),vec.end(),Is_coeff());

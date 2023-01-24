@@ -9,6 +9,6 @@ Imports `apoly` (a `Polyhedron_3`) into `lcc`, a model of the `LinearCellComplex
 \sa `CGAL::import_from_triangulation_3<LCC,Triangulation>`
 */
 template<class LCC,class Polyhedron>
-typename LCC::Dart_handle import_from_polyhedron_3(LCC& lcc,
+typename LCC::Dart_descriptor import_from_polyhedron_3(LCC& lcc,
 const Polyhedron &apoly);
 }

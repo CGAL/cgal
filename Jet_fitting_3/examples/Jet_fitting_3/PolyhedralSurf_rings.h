@@ -39,7 +39,7 @@ protected:
                         VertexPropertyMap& vpm);
 
  public:
-  //collect i>=1 rings : all neighbours up to the ith ring,
+  //collect i>=1 rings : all neighbors up to the ith ring,
   static void
     collect_i_rings(Vertex* v,
                     int ring_i,

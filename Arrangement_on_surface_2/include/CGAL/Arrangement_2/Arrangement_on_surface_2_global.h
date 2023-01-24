@@ -73,7 +73,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::Curve_2& c,
             const PointLocation& pl, ZoneVisitor &visitor,
-            boost::is_same<int, double>::type)
+            std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -145,7 +145,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::X_monotone_curve_2& c,
             const PointLocation& pl, ZoneVisitor &visitor,
-            boost::is_same<int, int>::type)
+            std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -184,7 +184,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 {
   typedef GeometryTraits_2                              Gt2;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
+  typedef typename std::is_same<Curve, X_monotone_curve_2>::type
                                                         Is_x_monotone;
 
   insert(arr, c, pl, visitor, Is_x_monotone());
@@ -193,7 +193,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // In some compilers there is a template deduction disambiguity between this
 // function and the function receiving two InputIterator.
 // For now the solution is to add a dummy variable at the end (referring
-// to point-location). Maybe the proper solution is to use boost::enable_if
+// to point-location). Maybe the proper solution is to use std::enable_if
 // together with appropriate tag.
 template <typename GeometryTraits_2, typename TopologyTraits, typename Curve,
           typename PointLocation>
@@ -271,7 +271,7 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep:
@@ -326,7 +326,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep.
@@ -379,7 +379,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -417,7 +417,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             InputIterator begin, InputIterator end,
-            boost::is_same<int, double>::type)
+            std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -471,7 +471,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             InputIterator begin, InputIterator end,
-            boost::is_same<int, int>::type)
+            std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -513,7 +513,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>& arr,
   typedef typename std::iterator_traits<InputIterator>::value_type
                                                         Iterator_value_type;
 
-  typedef typename boost::is_same<Iterator_value_type,X_monotone_curve_2>::type
+  typedef typename std::is_same<Iterator_value_type,X_monotone_curve_2>::type
                                                         Is_x_monotone;
 
   return insert(arr, begin, end, Is_x_monotone());
@@ -640,7 +640,7 @@ void insert_curves(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that the curve
 // interior does not intersect with any existing edge or vertex in the
-// arragement (incremental insertion).
+// arrangement (incremental insertion).
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>
@@ -796,7 +796,7 @@ insert_non_intersecting_curve
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that the curve
 // interior does not intersect with any existing edge or vertex in the
-// arragement (incremental insertion).
+// arrangement (incremental insertion).
 // Overloaded version with no point location object.
 //
 template <typename GeometryTraits_2, typename TopologyTraits>
@@ -979,7 +979,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  typename boost::mpl::if_<std::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -1003,7 +1003,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
 //-----------------------------------------------------------------------------
 // Insert a range of pairwise interior-disjoint x-monotone curves into
 // the arrangement, such that the curve interiors do not intersect with
-// any existing edge or vertex in the arragement (aggregated insertion).
+// any existing edge or vertex in the arrangement (aggregated insertion).
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
@@ -1466,7 +1466,7 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
 
 //-----------------------------------------------------------------------------
 // Compute the zone of the given x-monotone curve in the existing arrangement.
-// Meaning, it output the arrangment's vertices, edges and faces that the
+// Meaning, it output the arrangement's vertices, edges and faces that the
 // x-monotone curve intersects.
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename OutputIterator, typename PointLocation>
@@ -1533,7 +1533,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 bool
 do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
              const typename GeometryTraits_2::X_monotone_curve_2& c,
-             const PointLocation& pl, boost::is_same<int, int>::type)
+             const PointLocation& pl, std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -1571,7 +1571,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 bool
 do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
              const typename GeometryTraits_2::X_monotone_curve_2& c,
-             const PointLocation& pl, boost::is_same<int, double>::type)
+             const PointLocation& pl, std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -1607,7 +1607,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     CGAL_assertion(iso_p != nullptr);
 
     // Check whether the isolated point lies inside a face (otherwise,
-    // it conincides with a vertex or an edge).
+    // it coincides with a vertex or an edge).
     auto obj = pl.locate(*iso_p);
     if (boost::get<Face_const_handle>(&x_obj) != nullptr) return true;
   }
@@ -1628,7 +1628,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
-  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
+  typedef typename std::is_same<Curve, X_monotone_curve_2>::type
                                                         Is_x_monotone;
 
   return do_intersect(arr, c, pl, Is_x_monotone());

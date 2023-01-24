@@ -49,7 +49,7 @@ int main (int argc, char** argv)
   // Example: use estimated range for grid simplification
   points.erase(CGAL::grid_simplify_point_set(points, range_scale), points.end());
 
-  // print some informations on runtime
+  // print some information on runtime
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   double time = task_timer.time();
 

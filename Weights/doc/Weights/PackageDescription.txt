@@ -101,7 +101,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \endverbatim
 
 This weight is computed as
-\f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
+\f$w = \frac{d_2^a A_0 - d^a B + d_0^a A_2}{A_0 A_2}\f$
 with notations shown in the figure below and \f$a\f$ any real number
 being the power parameter.
 
@@ -142,7 +142,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \endverbatim
 
 This weight is computed as
-\f$w = \frac{C}{A_1 A_2}\f$
+\f$w = \frac{C}{A_0 A_2}\f$
 with notations shown in the figure below.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
@@ -207,10 +207,10 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \endverbatim
 
 This weight is computed as
-\f$w = \pm 2 \sqrt{\frac{2 (d_1 d_2 - D)}{(d d_1 + D_1)(d d_2 + D_2)}}\f$
+\f$w = \pm 2 \sqrt{\frac{2 (d_0 d_2 - D)}{(d d_0 + D_0)(d d_2 + D_2)}}\f$
 with notations shown in the figure below and dot products
 
-\f$D_1 = (p_0 - q) \cdot (p_1 - q)\f$,
+\f$D_0 = (p_0 - q) \cdot (p_1 - q)\f$,
 \f$D_2 = (p_1 - q) \cdot (p_2 - q)\f$, and
 \f$D   = (p_0 - q) \cdot (p_2 - q)\f$.
 
@@ -247,11 +247,11 @@ a model of `AnalyticWeightTraits_3` for 3D points
 
 This weight is computed as
 \f$w = 2 \frac{t_1 + t_2}{d}\f$, where
-\f$t_1 = \frac{2 A_1}{d d_1 + D_1}\f$ and
+\f$t_1 = \frac{2 A_0}{d d_0 + D_0}\f$ and
 \f$t_2 = \frac{2 A_2}{d d_2 + D_2}\f$
 with notations shown in the figure below and dot products
 
-\f$D_1 = (p_0 - q) \cdot (p_1 - q)\f$ and
+\f$D_0 = (p_0 - q) \cdot (p_1 - q)\f$ and
 \f$D_2 = (p_1 - q) \cdot (p_2 - q)\f$.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
@@ -283,7 +283,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \endverbatim
 
 This weight is computed as
-\f$w = \frac{d_2^2 A_1 - d^2 B + d_1^2 A_2}{A_1 A_2}\f$
+\f$w = \frac{d_2^2 A_0 - d^2 B + d_0^2 A_2}{A_0 A_2}\f$
 with notations shown in the figure below.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.

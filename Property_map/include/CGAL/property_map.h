@@ -120,7 +120,7 @@ struct Property_map_binder
 
   template <typename VM>
   Property_map_binder(const VM& value_map,
-                      typename std::enable_if<!std::is_same<KeyMap, VM>::value>::type* = nullptr)
+                      std::enable_if_t<!std::is_same<KeyMap, VM>::value>* = nullptr)
     : value_map(value_map)
   { }
 
@@ -437,7 +437,7 @@ struct Pointer_property_map{
 
 /// \ingroup PkgPropertyMapRef
 /// Starting from boost 1.55, the use of raw pointers as property maps has been deprecated.
-/// This function is a shortcut to the recommanded replacement:
+/// This function is a shortcut to the recommended replacement:
 /// `boost::make_iterator_property_map(<pointer>, boost::typed_identity_property_map<std::size_t>())`
 /// Note that the property map is a mutable `LvaluePropertyMap` with `std::size_t` as key.
 template <class T>
@@ -666,13 +666,13 @@ struct Random_index_access_property_map
     : m_begin(begin), m_map(map) {}
 
   friend reference get (const Random_index_access_property_map& map, const key_type& index,
-                        typename std::enable_if<std::is_convertible<category, boost::readable_property_map_tag>::value>::type* = 0)
+                        std::enable_if_t<std::is_convertible<category, boost::readable_property_map_tag>::value>* = 0)
   {
     return get(map.m_map, *std::next(map.m_begin, index));
   }
 
   friend void put (Random_index_access_property_map& map, const key_type& index, const value_type& value,
-                   typename std::enable_if<std::is_convertible<category, boost::writable_property_map_tag>::value>::type* = 0)
+                   std::enable_if_t<std::is_convertible<category, boost::writable_property_map_tag>::value>* = 0)
   {
     put (map.m_map, *std::next(map.m_begin, index), value);
   }

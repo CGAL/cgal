@@ -235,7 +235,7 @@ private:
     std::vector<Point_2> p1_vertices = vertices_of_polygon(pgn1);
     std::vector<Point_2> p2_vertices = vertices_of_polygon(pgn2);
 
-    // Init the direcions of both polygons
+    // Init the directions of both polygons
     std::vector<Direction_2> p1_dirs = directions_of_polygon(p1_vertices);
     std::vector<Direction_2> p2_dirs = directions_of_polygon(p2_vertices);
 

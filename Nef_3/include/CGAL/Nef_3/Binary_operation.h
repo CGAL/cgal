@@ -450,7 +450,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     // SNC structure finds an intersection between the segment defined
     // by an edge on the other SNC structure, the call back method is
     // called with the intersecting objects and the intersection point.
-    // The responsability of the call back functor is to construct the
+    // The responsibility of the call back functor is to construct the
     // local view on the intersection point on both SNC structures,
     // overlay them and add the resulting sphere map to the result.
 

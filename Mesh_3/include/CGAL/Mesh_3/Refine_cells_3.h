@@ -438,7 +438,7 @@ public:
   // Parallel: it's always lazy, so do nothing
   void remove_element_from_refinement_queue(Cell_handle, Parallel_tag) {}
 
-  /// Handle cells contained in \c zone (before their destruction by insertion)
+  /// Handles cells contained in `zone` (before their destruction by insertion)
   void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
 
   bool try_lock_element(const Cell_handle &ch, int lock_radius = 0) const
@@ -479,7 +479,7 @@ public:
     return sstr.str();
   }
 
-  /// Adds \c cell to the refinement queue if needed
+  /// Adds `cell` to the refinement queue if needed.
   void treat_new_cell(const Cell_handle& cell);
 
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
@@ -531,20 +531,20 @@ private:
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star_self(const Vertex_handle& vertex);
 
-  /// Set \c cell to domain, with subdomain index \c index
+  /// Sets `cell` to domain, with subdomain index `index`.
   void set_cell_in_domain(const Cell_handle& cell,
                           const Subdomain_index& index)
   {
     r_c3t3_.add_to_complex(cell, index);
   }
 
-  /// Removes \c cell from domain
+  /// Removes `cell` from domain.
   void remove_cell_from_domain(const Cell_handle& cell)
   {
     r_c3t3_.remove_from_complex(cell);
   }
 
-  /// Sets index and dimension of vertex \c v
+  /// Sets index and dimension of vertex `v`.
   void set_vertex_properties(Vertex_handle& v, const Index& index)
   {
     r_c3t3_.set_index(v, index);
@@ -702,15 +702,18 @@ scan_triangulation_impl()
   {
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad cells (sequential)... ";
+    int count = 0;
 #endif
 
-    int count = 0;
+
     for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
         cell_it != r_tr_.finite_cells_end();
         ++cell_it)
     {
       treat_new_cell(cell_it);
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
       ++count;
+#endif
     }
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << count << " cells scanned, ";

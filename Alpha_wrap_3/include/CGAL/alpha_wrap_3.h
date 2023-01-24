@@ -112,7 +112,7 @@ void alpha_wrap_3(const PointRange& points,
   Oracle oracle(alpha, gt);
   oracle.add_triangle_soup(points, faces, in_np);
   AW3 alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap, out_np);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, in_np, out_np);
 }
 
 // Convenience overloads
@@ -148,7 +148,7 @@ void alpha_wrap_3(const PointRange& points,
                   OutputMesh& alpha_wrap,
                   const CGAL::Named_function_parameters<T_I, Tag_I, Base_I>& in_np,
                   const CGAL::Named_function_parameters<T_O, Tag_O, Base_O>& out_np,
-                  typename std::enable_if<boost::has_range_const_iterator<FaceRange>::value>::type* = nullptr)
+                  std::enable_if_t<boost::has_range_const_iterator<FaceRange>::value>* = nullptr)
 {
   return alpha_wrap_3(points, faces, alpha, alpha / 30., alpha_wrap, in_np, out_np);
 }
@@ -160,7 +160,7 @@ void alpha_wrap_3(const PointRange& points,
                   const double alpha,
                   OutputMesh& alpha_wrap,
                   const CGAL_NP_CLASS& in_np,
-                  typename std::enable_if<boost::has_range_const_iterator<FaceRange>::value>::type* = nullptr)
+                  std::enable_if_t<boost::has_range_const_iterator<FaceRange>::value>* = nullptr)
 {
   return alpha_wrap_3(points, faces, alpha, alpha / 30., alpha_wrap, in_np,
                       CGAL::parameters::default_values());
@@ -171,7 +171,7 @@ void alpha_wrap_3(const PointRange& points,
                   const FaceRange& faces,
                   const double alpha,
                   OutputMesh& alpha_wrap,
-                  typename std::enable_if<boost::has_range_const_iterator<FaceRange>::value>::type* = nullptr)
+                  std::enable_if_t<boost::has_range_const_iterator<FaceRange>::value>* = nullptr)
 {
   return alpha_wrap_3(points, faces, alpha, alpha / 30., alpha_wrap,
                       CGAL::parameters::default_values(), CGAL::parameters::default_values());
@@ -245,7 +245,7 @@ void alpha_wrap_3(const TriangleMesh& tmesh,
                   const InputNamedParameters& in_np,
                   const OutputNamedParameters& out_np
 #ifndef DOXYGEN_RUNNING
-                  , typename std::enable_if<! boost::has_range_const_iterator<TriangleMesh>::value>::type* = nullptr
+                  , std::enable_if_t<! boost::has_range_const_iterator<TriangleMesh>::value>* = nullptr
 #endif
                   )
 {
@@ -261,7 +261,7 @@ void alpha_wrap_3(const TriangleMesh& tmesh,
   Oracle oracle(alpha, gt);
   oracle.add_triangle_mesh(tmesh, in_np);
   AW3 alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap, out_np);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, in_np, out_np);
 }
 
 // The convenience overloads are the same for triangle mesh & point set
@@ -338,7 +338,7 @@ void alpha_wrap_3(const PointRange& points,
 #else
                   const CGAL::Named_function_parameters<T_I, Tag_I, Base_I>& in_np,
                   const CGAL::Named_function_parameters<T_O, Tag_O, Base_O>& out_np,
-                  typename std::enable_if<boost::has_range_const_iterator<PointRange>::value>::type* = nullptr
+                  std::enable_if_t<boost::has_range_const_iterator<PointRange>::value>* = nullptr
 #endif
                   )
 {
@@ -357,7 +357,7 @@ void alpha_wrap_3(const PointRange& points,
   Oracle oracle(gt);
   oracle.add_point_set(points, in_np);
   AW3 alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap, out_np);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, in_np, out_np);
 }
 
 // Convenience overloads, common to both mesh and point set

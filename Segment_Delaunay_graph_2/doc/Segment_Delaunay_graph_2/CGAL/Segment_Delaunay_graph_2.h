@@ -17,9 +17,9 @@ Currently it only supports the insertions of sites.
         models of the concepts `SegmentDelaunayGraphVertexBase_2` and `TriangulationFaceBase_2`, respectively.
         It defaults to:
         \code
-        `CGAL::Triangulation_data_structure_2<
+        CGAL::Triangulation_data_structure_2<
                   CGAL::Segment_Delaunay_graph_vertex_base_2<St>,
-                  CGAL::Segment_Delaunay_graph_face_base_2<Gt> >`
+                  CGAL::Segment_Delaunay_graph_face_base_2<Gt> >
         \endcode
 
 \cgalHeading{Storage}

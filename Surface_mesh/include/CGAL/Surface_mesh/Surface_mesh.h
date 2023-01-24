@@ -29,6 +29,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Handle_hash_function.h>
+#include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/property_map.h>
 
@@ -80,6 +81,10 @@ namespace CGAL {
 
         // Compatibility with OpenMesh handle
         size_type idx() const {
+          return idx_;
+        }
+        // For convenience
+        size_type id() const {
           return idx_;
         }
 
@@ -1322,7 +1327,7 @@ public:
     /// Note however that by garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
-    /// refering to the right elements.
+    /// referring to the right elements.
     /// When adding elements, by default elements that are marked as removed
     /// are recycled.
 
@@ -1390,7 +1395,7 @@ public:
     /// \attention By garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
-    /// refering to the right elements.
+    /// referring to the right elements.
     void collect_garbage();
 
     //undocumented convenience function that allows to get old-index->new-index information
@@ -1466,7 +1471,7 @@ public:
 
     /// perform an expensive validity check on the data structure and
     /// print found errors to `std::cerr` when `verbose == true`.
-  bool is_valid(bool verbose = true) const
+    bool is_valid(bool verbose = false) const
     {
         bool valid = true;
         size_type vcount = 0, hcount = 0, fcount = 0;
@@ -1578,23 +1583,37 @@ public:
     }
 
     /// performs a validity check on a single vertex.
-    bool is_valid(Vertex_index v) const {
+    bool is_valid(Vertex_index v,
+                  bool verbose = false) const
+    {
+        Verbose_ostream verr(verbose);
+
         if(!has_valid_index(v))
-         return false;
+        {
+          verr << "Vertex has invalid index: " << (size_type)v << std::endl;
+          return false;
+        }
 
         Halfedge_index h = vconn_[v].halfedge_;
-        if(h!= null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
-          std::cerr << "Vertex connectivity halfedge error in " << (size_type)v
-                    << " with " << (size_type)h << std::endl;
-            return false;
+        if(h != null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
+          verr << "Vertex connectivity halfedge error: Vertex " << (size_type)v
+               << " with " << (size_type)h << std::endl;
+          return false;
         }
         return true;
     }
 
     /// performs a validity check on a single halfedge.
-    bool is_valid(Halfedge_index h) const {
+    bool is_valid(Halfedge_index h,
+                  bool verbose = false) const
+    {
+        Verbose_ostream verr(verbose);
+
         if(!has_valid_index(h))
+        {
+          verr << "Halfedge has invalid index: " << (size_type)h << std::endl;
           return false;
+        }
 
         Face_index f = hconn_[h].face_;
         Vertex_index v = hconn_[h].vertex_;
@@ -1605,30 +1624,30 @@ public:
         // don't validate the face if this is a border halfedge
         if(!is_border(h)) {
             if(!has_valid_index(f) || is_removed(f)) {
-                std::cerr << "Halfedge connectivity Face "
-                          << (!has_valid_index(f) ? "invalid" : "removed")
-                          << " in " << (size_type)h << std::endl;
+                verr << "Halfedge connectivity error: Face "
+                     << (!has_valid_index(f) ? "invalid" : "removed")
+                     << " in " << (size_type)h << std::endl;
                 valid = false;
             }
         }
 
         if(!has_valid_index(v) || is_removed(v)) {
-            std::cerr << "Halfedge connectivity Vertex "
-                      << (!has_valid_index(v) ? "invalid" : "removed")
-                      << " in " << (size_type)h << std::endl;
+            verr << "Halfedge connectivity error: Vertex "
+                 << (!has_valid_index(v) ? "invalid" : "removed")
+                 << " in " << (size_type)h << std::endl;
             valid = false;
         }
 
         if(!has_valid_index(hn) || is_removed(hn)) {
-            std::cerr << "Halfedge connectivity hnext "
-                      << (!has_valid_index(hn) ? "invalid" : "removed")
-                      << " in " << (size_type)h << std::endl;
+            verr << "Halfedge connectivity error: hnext "
+                 << (!has_valid_index(hn) ? "invalid" : "removed")
+                 << " in " << (size_type)h << std::endl;
             valid = false;
         }
         if(!has_valid_index(hp) || is_removed(hp)) {
-            std::cerr << "Halfedge connectivity hprev "
-                      << (!has_valid_index(hp) ? "invalid" : "removed")
-                      << " in " << (size_type)h << std::endl;
+            verr << "Halfedge connectivity error: hprev "
+                 << (!has_valid_index(hp) ? "invalid" : "removed")
+                 << " in " << (size_type)h << std::endl;
             valid = false;
         }
         return valid;
@@ -1636,25 +1655,39 @@ public:
 
 
     /// performs a validity check on a single edge.
-    bool is_valid(Edge_index e) const {
+    bool is_valid(Edge_index e,
+                  bool verbose = false) const
+    {
+      Verbose_ostream verr(verbose);
+
       if(!has_valid_index(e))
+      {
+        verr << "Edge has invalid index: " << (size_type)e << std::endl;
         return false;
+      }
 
       Halfedge_index h = halfedge(e);
-      return is_valid(h) && is_valid(opposite(h));
+      return is_valid(h, verbose) && is_valid(opposite(h), verbose);
     }
 
 
     /// performs a validity check on a single face.
-    bool is_valid(Face_index f) const {
+    bool is_valid(Face_index f,
+                  bool verbose = false) const
+    {
+        Verbose_ostream verr(verbose);
+
         if(!has_valid_index(f))
+        {
+          verr << "Face has invalid index: " << (size_type)f << std::endl;
           return false;
+        }
 
         Halfedge_index h = fconn_[f].halfedge_;
         if(!has_valid_index(h) || is_removed(h)) {
-          std::cerr << "Face connectivity halfedge error in " << (size_type)f
-                      << " with " << (size_type)h << std::endl;
-            return false;
+          verr << "Face connectivity halfedge error: Face " << (size_type)f
+               << " with " << (size_type)h << std::endl;
+          return false;
         }
         return true;
     }
@@ -2215,7 +2248,7 @@ private: //------------------------------------------------------- private data
   /// \relates Surface_mesh
   /// Inserts `other` into `sm`.
   /// Shifts the indices of vertices of `other` by `sm.number_of_vertices() + sm.number_of_removed_vertices()`
-  /// and analoguously for halfedges, edges, and faces.
+  /// and analogously for halfedges, edges, and faces.
   /// Copies entries of all property maps which have the same name in `sm` and `other`.
   /// that is, property maps which are only in `other` are ignored.
   /// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`.

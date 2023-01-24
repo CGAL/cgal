@@ -22,7 +22,6 @@
 #include <CGAL/Container_helper.h>
 
 #include <boost/range/value_type.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <CGAL/Named_function_parameters.h>
 
 #include <fstream>
@@ -30,6 +29,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -140,7 +140,7 @@ bool read_OBJ(std::istream& is,
             s == "scrv" || s == "sp" || s == "end" ||
             s == "con" || s == "surf_1" || s == "q0_1" || s == "q1_1" || s == "curv2d_1" ||
             s == "surf_2" || s == "q0_2" || s == "q1_2" || s == "curv2d_2" ||
-            // supersed statements
+            // superseded statements
             s == "bsp" || s == "bzp" || s == "cdc" || s == "cdp" || s == "res")
     {
       // valid, but unsupported
@@ -212,7 +212,7 @@ bool read_OBJ(std::istream& is,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+              , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
               )
 {
@@ -257,7 +257,7 @@ bool read_OBJ(const std::string& fname,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+              , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
               )
 {
@@ -305,7 +305,7 @@ bool write_OBJ(std::ostream& os,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
                )
 {
@@ -349,7 +349,7 @@ bool write_OBJ(const std::string& fname,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
                )
 {

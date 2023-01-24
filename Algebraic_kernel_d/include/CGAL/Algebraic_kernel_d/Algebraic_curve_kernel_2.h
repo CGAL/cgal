@@ -24,9 +24,9 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_D_2_H
 
 #include <limits>
+#include <type_traits>
 #include <CGAL/iterator.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/optional.hpp>
 
 #include <CGAL/basic.h>
@@ -73,7 +73,7 @@ namespace CGAL {
  * in turn required by the \c CurvedKernelViaAnalysis_2 concept
  * (see the documentation of the corresponding package). Therefore,
  * some types and methods of the class have both an "algebraic" name
- * (demanded by \c CurveKernelWithAnalysis_d_2) and an "non-algebraic name
+ * (demanded by \c CurveKernelWithAnalysis_d_2) and a "non-algebraic" name
  * (demanded by \c CurveKernel_2).
  *
  * \b Algebraic_curve_kernel_2 is a template class, and needs a model
@@ -356,10 +356,10 @@ public:
                      const OuterFunctor& outer)
          : _inner(inner), _outer(outer) {}
 
-       Unary_compose(const Unary_compose& other)
-         : _inner(other._inner), _outer(other._outer) {}
+       Unary_compose(const Unary_compose& other) = default;
+       Unary_compose& operator=(const Unary_compose& other) = default;
 
-         Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
+       Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
 
        typedef typename InnerFunctor::argument_type argument_type;
        typedef typename OuterFunctor::result_type result_type;
@@ -481,16 +481,16 @@ public:
       Curve_analysis_2 _construct_defining_polynomial_from(Bound b) const {
         typedef CGAL::Fraction_traits<Bound> FT;
         // We rely on the fact that the Bound is a fraction
-        CGAL_static_assertion((::boost::is_same<typename FT::Is_fraction,
+        CGAL_static_assertion((::std::is_same<typename FT::Is_fraction,
                                              CGAL::Tag_true>::value));
         typedef typename FT::Numerator_type Numerator;
         typedef typename FT::Denominator_type Denominator;
         typedef CGAL::Coercion_traits<Numerator,Coefficient> Num_coercion;
-        CGAL_static_assertion((::boost::is_same
+        CGAL_static_assertion((::std::is_same
                               <Coefficient,
                                   typename Num_coercion::Type>::value));
         typedef CGAL::Coercion_traits<Denominator,Coefficient> Denom_coercion;
-        CGAL_static_assertion((::boost::is_same
+        CGAL_static_assertion((::std::is_same
                                <Coefficient,
                                 typename Denom_coercion::Type>::value));
         typename Num_coercion::Cast num_cast;
@@ -840,7 +840,7 @@ public:
         } else {
           // more work! We should not assume that each
           // roots[i].first has f or g as defining polynomial, because
-          // the representation might have been simplifed
+          // the representation might have been simplified
 
           // Here's the safe way: Take the simpler of the curves
           // (but the one without vertical component!)
@@ -922,7 +922,7 @@ public:
      *
      * \attention{This method returns the y-coordinate in isolating interval
      * representation. Calculating such a representation is usually a time-
-     * consuming taks, since it is against the "y-per-x"-view that we take
+     * consuming task, since it is against the "y-per-x"-view that we take
      * in our kernel. Therefore, it is recommended, if possible,
      *  to use the functors
      * \c Approximate_absolute_y_2 and \c Approximate_relative_y_2 that
@@ -2541,16 +2541,16 @@ public:
       Polynomial_1 operator() (const Polynomial_2& f, Bound b) const {
         typedef CGAL::Fraction_traits<Bound> FT;
         // We rely on the fact that the Bound is a fraction
-        CGAL_static_assertion((::boost::is_same<typename FT::Is_fraction,
+        CGAL_static_assertion((::std::is_same<typename FT::Is_fraction,
                                              CGAL::Tag_true>::value));
         typedef typename FT::Numerator_type Numerator;
         typedef typename FT::Denominator_type Denominator;
         typedef CGAL::Coercion_traits<Numerator,Coefficient> Num_coercion;
-        CGAL_static_assertion((::boost::is_same
+        CGAL_static_assertion((::std::is_same
                               <Coefficient,
                                   typename Num_coercion::Type>::value));
         typedef CGAL::Coercion_traits<Denominator,Coefficient> Denom_coercion;
-        CGAL_static_assertion((::boost::is_same
+        CGAL_static_assertion((::std::is_same
                                <Coefficient,
                                 typename Denom_coercion::Type>::value));
         typename Num_coercion::Cast num_cast;

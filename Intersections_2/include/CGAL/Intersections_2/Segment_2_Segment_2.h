@@ -25,7 +25,6 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
-#include <CGAL/Uncertain.h>
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
@@ -326,7 +325,7 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
 
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Segment_2 &seg1,
              const typename K::Segment_2 &seg2,
              const K& k)
@@ -492,6 +491,6 @@ intersection(const typename K::Segment_2 &seg1,
 CGAL_INTERSECTION_FUNCTION_SELF(Segment_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_SEGMENT_2_SEGMENT_2_H

@@ -55,11 +55,11 @@ void compute_statistics(const Triangulation& tr,
   double max_dihedral_angle = 0.;
   double min_dihedral_angle = 180.;
 
-  for (Facet fit : tr.finite_facets())
+  for (Facet f : tr.finite_facets())
   {
-    const Cell_handle cell = fit.first;
-    const int& index = fit.second;
-    if (!cell_selector(cell) || !cell_selector(cell->neighbor(index)))
+    const Cell_handle cell = f.first;
+    const int& index = f.second;
+    if (!get(cell_selector, cell) || !get(cell_selector, cell->neighbor(index)))
       continue;
 
     const Point& pa = point(cell->vertex((index + 1) & 3)->point());
@@ -92,7 +92,7 @@ void compute_statistics(const Triangulation& tr,
        ++cit)
   {
     const Subdomain_index& si = cit->subdomain_index();
-    if (si == Subdomain_index() || !cell_selector(cit))
+    if (si == Subdomain_index() || !get(cell_selector, cit))
       continue;
 
     ++nb_tets;

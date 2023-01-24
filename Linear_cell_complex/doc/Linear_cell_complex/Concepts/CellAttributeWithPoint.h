@@ -41,15 +41,15 @@ CellAttributeWithPoint();
 
 /*!
 Constructor initializing the point of this attribute by the
-copy contructor \link Point `Point`\endlink`(apoint)`.
+copy constructor \link Point `Point`\endlink`(apoint)`.
 */
 CellAttributeWithPoint(const Point&apoint);
 
 /*!
 Constructor initializing the point of this attribute by the
-copy contructor \link Point `Point`\endlink`(apoint)` and initializing the
+copy constructor \link Point `Point`\endlink`(apoint)` and initializing the
 information of this attribute by the
-copy contructor \link Info `Info`\endlink`(info)`.
+copy constructor \link Info `Info`\endlink`(info)`.
 Defined only if `Info` is different from `void`.
 */
   CellAttributeWithPoint(const Point&apoint, const Info& info);

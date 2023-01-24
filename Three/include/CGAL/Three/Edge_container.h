@@ -63,8 +63,8 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //! \brief initGL creates the `Vbo`s and `Vao`s of this `Edge_container`.
   //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
   //!
-  //! \todo Is it a good idea to call InitGL of each item in the scene so the developper doesn't have to worry about this in each draw() of each item ?
-  //!`.
+  //! \todo Is it a good idea to call InitGL of each item in the scene so the developer doesn't have to worry about this in each draw() of each item ?
+  //!
   //! \param viewer the active `Viewer_interface`.
   //!
   void initGL(Viewer_interface *viewer)  Q_DECL_OVERRIDE;

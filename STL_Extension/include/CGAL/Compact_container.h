@@ -537,9 +537,15 @@ public:
     return false;
   }
 
-  bool owns_dereferencable(const_iterator cit) const
+  bool owns_dereferenceable(const_iterator cit) const
   {
     return cit != end() && owns(cit);
+  }
+
+
+  CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
+  {
+    return owns_dereferenceable(cit);
   }
 
   /** Reserve method to ensure that the capacity of the Compact_container be
@@ -879,7 +885,7 @@ namespace internal {
     // Converting constructor from mutable to constant iterator
     template <bool OtherConst>
     CC_iterator(const CC_iterator<
-                typename std::enable_if<(!OtherConst && Const), DSC>::type,
+                std::enable_if_t<(!OtherConst && Const), DSC>,
                 OtherConst> &const_it)
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
         : ts(Time_stamper::time_stamp(const_it.operator->()))
@@ -891,7 +897,7 @@ namespace internal {
     // Assignment operator from mutable to constant iterator
     template <bool OtherConst>
     CC_iterator & operator= (const CC_iterator<
-                typename std::enable_if<(!OtherConst && Const), DSC>::type,
+                std::enable_if_t<(!OtherConst && Const), DSC>,
                 OtherConst> &const_it)
     {
       m_ptr = const_it.operator->();

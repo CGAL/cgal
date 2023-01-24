@@ -18,7 +18,7 @@ public:
 
 /*!
 accepts two <I>mergeable</I> \f$ x\f$-monotone curves `xc1` and
-`xc2` and asigns `xc` with the merged curve. If the target
+`xc2` and assigns `xc` with the merged curve. If the target
 point of `xc1` and the source point of `xc2` coincide; then
 the source point of `xc1` and the target point of `xc2` become
 the source and target points of `xc`, respectively. If the target
