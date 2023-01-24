@@ -159,6 +159,7 @@ public:
   using Conforming_Dt = Conforming_Delaunay_triangulation_3<T_3>;
   using Vertex_handle = typename T_3::Vertex_handle;
   using Cell_handle = typename T_3::Cell_handle;
+  using Edge = typename T_3::Edge;
   using Point_3 = typename T_3::Point;
   using Vector_3 = typename T_3::Geom_traits::Vector_3;
   using Locate_type = typename T_3::Locate_type;
@@ -611,8 +612,9 @@ public:
             dump_region.precision(17);
             write_region(dump_region, fh_region);
           }
+
 #endif // CGAL_DEBUG_CDT_3
-          const bool found_seg = [&]() {
+          const auto found_seg = [&]() -> std::optional<Edge> {
             for(auto fh_2d : fh_region) {
               CGAL_assertion(true == fh_2d->info().missing_subface);
               CGAL_assertion(false == fh_2d->info().is_outside_the_face);
@@ -645,14 +647,14 @@ public:
                       const auto triangle = cdt_2.triangle(fh_2d);
                       if(do_intersect(seg, triangle)) {
                         std::cerr << "Segment " << seg << " intersects triangle " << triangle << "\n";
-                        return true;
+                        return { Edge{cell_circ, index_vc, index_vd} };
                       }
                     }
                   } while(++cell_circ != end);
                 }
               }
             }
-            return false;
+            return {};
           }();
           if(!found_seg) {
             std::cerr << "No segment found\n";
@@ -664,7 +666,7 @@ public:
               write_region(dump_region, fh_region);
             }
           }
-          CGAL_assertion(found_seg);
+          CGAL_assertion(found_seg != std::nullopt);
         }
       }
       i = face_constraint_misses_subfaces.find_next(i);
