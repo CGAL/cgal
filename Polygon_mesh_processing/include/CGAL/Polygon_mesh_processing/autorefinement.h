@@ -82,8 +82,30 @@ do_coplanar_segments_intersect(const std::array<typename K::Point_3, 2>& s1,
 //////////////////////////////////
 //////////////////////////////////
 
-// imported from Polygon_mesh_processing/internal/Corefinement/intersect_triangle_segment_3.h
+// imported from Intersections_3/include/CGAL/Intersections_3/internal/Triangle_3_Triangle_3_intersection.h
 
+template<class K>
+void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
+                            const std::array<typename K::Point_3, 3>& t2,
+                            std::vector<typename K::Point_3>& inter_pts)
+{
+  const typename K::Point_3& p = t1[0], q = t1[1], r = t1[2];
+
+  std::list<typename K::Point_3> l_inter_pts;
+  l_inter_pts.push_back(t2[0]);
+  l_inter_pts.push_back(t2[1]);
+  l_inter_pts.push_back(t2[2]);
+
+  //intersect t2 with the three half planes which intersection defines t1
+  K k;
+  Intersections::internal::intersection_coplanar_triangles_cutoff(p,q,r,k,l_inter_pts); //line pq
+  Intersections::internal::intersection_coplanar_triangles_cutoff(q,r,p,k,l_inter_pts); //line qr
+  Intersections::internal::intersection_coplanar_triangles_cutoff(r,p,q,k,l_inter_pts); //line rp
+
+  inter_pts.assign(l_inter_pts.begin(), l_inter_pts.end());
+}
+
+// imported from Polygon_mesh_processing/internal/Corefinement/intersect_triangle_segment_3.h
 template<class K>
 void
 find_intersection(const typename K::Point_3& p, const typename K::Point_3& q,  //segment
@@ -162,7 +184,7 @@ void test_edge(const typename K::Point_3& p, const typename K::Point_3& q,
                const Orientation abcq,
                std::vector<typename K::Point_3>& inter_pts)
 {
- switch ( abcp ) {
+  switch ( abcp ) {
   case POSITIVE:
     switch ( abcq ) {
     case POSITIVE:
@@ -213,13 +235,13 @@ void test_edge(const typename K::Point_3& p, const typename K::Point_3& q,
       // the segment is coplanar with the triangle's supporting plane
       // we test whether the segment intersects the triangle in the common
       // supporting plane
-      if ( ::CGAL::Intersections::internal::do_intersect_coplanar(a,b,c,p,q,K()) )
-      {
+      //if ( ::CGAL::Intersections::internal::do_intersect_coplanar(a,b,c,p,q,K()) )
+      //{
         //handle coplanar intersection
-        // TODO: use coref function
-        throw std::runtime_error("coplanar intersection");
-        return;
-      }
+        // nothing done as coplanar case handle in collect_intersections
+        // and other intersection points will be collected with non-coplanar edges
+      //}
+    break;
     }
   }
 }
@@ -233,6 +255,13 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   std::array<Orientation,3> ori;
   for (int i=0; i<3; ++i)
     ori[i] = orientation(t2[0],t2[1],t2[2],t1[i]);
+
+  if (ori[0]== COPLANAR && ori[1]==COPLANAR && ori[2]==COPLANAR)
+  {
+    coplanar_intersections<K>(t1, t2, inter_pts);
+    return;
+  }
+
   for (int i=0; i<3; ++i)
   {
     int j=(i+1)%3;
@@ -378,7 +407,7 @@ void generate_subtriangles(std::size_t ti,
                   std::cerr <<"ERROR!\n";
               }
 
-              #if 0
+#if 0
               //this code works if triangles are not coplanar
               // coplanar intersection that is not a point
               int coord = 0;
