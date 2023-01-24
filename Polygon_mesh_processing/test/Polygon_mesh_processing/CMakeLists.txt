@@ -1,4 +1,4 @@
-# Created by the script cgal_create_CMakeLists
+0# Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
 cmake_minimum_required(VERSION 3.1...3.23)
@@ -44,6 +44,8 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("delaunay_remeshing_test.cpp")
   target_link_libraries(delaunay_remeshing_test PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("test_interpolated_corrected_curvatures.cpp")
+  target_link_libraries(test_interpolated_corrected_curvatures PUBLIC CGAL::Eigen3_support)
 endif()
 
 find_package(OpenMesh QUIET)
@@ -69,7 +71,6 @@ create_single_source_cgal_program("self_intersection_polyhedron_test.cpp")
 create_single_source_cgal_program("self_intersection_surface_mesh_test.cpp")
 create_single_source_cgal_program("pmp_do_intersect_test.cpp")
 create_single_source_cgal_program("test_is_polygon_soup_a_polygon_mesh.cpp")
-create_single_source_cgal_program("test_interpolated_corrected_curvatures.cpp")
 create_single_source_cgal_program("test_stitching.cpp")
 create_single_source_cgal_program("remeshing_test.cpp")
 create_single_source_cgal_program("remeshing_with_isolated_constraints_test.cpp" )
