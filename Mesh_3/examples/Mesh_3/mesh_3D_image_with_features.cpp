@@ -65,9 +65,12 @@ int main(int argc, char* argv[])
   /// [Domain creation]
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
-  Mesh_criteria criteria(params::edge_size(6).
-                                 facet_angle(30).facet_size(6).facet_distance(4).
-                                 cell_radius_edge_ratio(3).cell_size(8));
+  Mesh_criteria criteria(params::edge_size = 6.,
+    params::facet_angle = 30,
+    params::facet_size = 6,
+    params::facet_distance = 4,
+    params::cell_radius_edge_ratio = 3,
+    params::cell_size = 8);
   /// [Mesh criteria]
 
   // Meshing
