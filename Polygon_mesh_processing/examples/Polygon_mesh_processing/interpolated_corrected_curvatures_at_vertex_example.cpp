@@ -17,7 +17,7 @@ typedef boost::graph_traits<Surface_Mesh>::vertex_descriptor vertex_descriptor;
 
 int main(int argc, char* argv[])
 {
-  // instantiating and reading mesh 
+  // instantiating and reading mesh
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
     argv[1] :
@@ -34,21 +34,21 @@ int main(int argc, char* argv[])
   {
     FT h = PMP::interpolated_corrected_mean_curvature_at_vertex<Epic_kernel>(smesh, v);
     FT g = PMP::interpolated_corrected_gaussian_curvature_at_vertex<Epic_kernel>(smesh, v);
-    PMP::Principal_curvatures_and_directions<Epic_kernel> p = 
+    PMP::Principal_curvatures_and_directions<Epic_kernel> p =
       PMP::interpolated_corrected_principal_curvatures_and_directions_at_vertex<Epic_kernel>(smesh, v);
 
-    // we can also specify a ball radius for expansion and a user defined vertex normals map using 
+    // we can also specify a ball radius for expansion and a user defined vertex normals map using
     // named parameters. Refer to interpolated_corrected_curvatures_example.cpp to see example usage.
 
     // Can also use interpolated_corrected_curvatures_at_vertex() to compute multiple curvatures
     // on the vertex at the same time. This is more efficient than computing each one separately.
     // The following commented lines show this (all mentioned named parameters work on it as well)
-    // we specify which curvatures we want to compute by passing pointers as named parameters 
-    // as shown. These pointers are used for storing the result as well. in this example we 
+    // we specify which curvatures we want to compute by passing pointers as named parameters
+    // as shown. These pointers are used for storing the result as well. in this example we
     // selected mean and gaussian curvatures
     // PMP::interpolated_corrected_curvatures_at_vertex(
     //   smesh,
-    //   v, 
+    //   v,
     //   CGAL::parameters::vertex_mean_curvature(&h)
     //   .vertex_gaussian_curvature(&g)
     // );
