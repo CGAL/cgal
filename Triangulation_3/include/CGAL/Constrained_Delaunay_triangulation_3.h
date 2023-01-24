@@ -565,6 +565,77 @@ private:
     return border_edges;
   }
 
+  std::optional<Edge> search_first_intersection(const CDT_2& cdt_2, const auto& fh_region) {
+    for(auto fh_2d : fh_region) {
+      CGAL_assertion(true == fh_2d->info().missing_subface);
+      CGAL_assertion(false == fh_2d->info().is_outside_the_face);
+      for(int index = 0; index < 3; ++index) {
+        const auto va_3d = fh_2d->vertex(cdt_2.cw(index))->info().vertex_handle_3d;
+        const auto vb_3d = fh_2d->vertex(cdt_2.ccw(index))->info().vertex_handle_3d;
+        Cell_handle c;
+        int i, j;
+        const bool is_3d = this->tds().is_edge(va_3d, vb_3d, c, i, j);
+        CGAL_assertion(fh_2d->info().is_edge_also_in_3d_triangulation[unsigned(index)] == is_3d);
+        if(is_3d) {
+          auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
+          CGAL_assertion(cell_circ != nullptr);
+          do {
+            if(this->is_infinite(cell_circ)) {
+              continue;
+            }
+            const auto index_va = cell_circ->index(va_3d);
+            const auto index_vb = cell_circ->index(vb_3d);
+            const auto index_vc = this->next_around_edge(index_va, index_vb);
+            const auto index_vd = this->next_around_edge(index_vb, index_va);
+            const auto vc = cell_circ->vertex(index_vd);
+            const auto vd = cell_circ->vertex(index_vc);
+            CGAL_assertion(cell_circ->has_vertex(vc));
+            CGAL_assertion(cell_circ->has_vertex(vd));
+            const auto pc = this->point(vc);
+            const auto pd = this->point(vd);
+            const typename Geom_traits::Segment_3 seg{pc, pd};
+            for(auto fh_2d : fh_region) {
+              const auto triangle = cdt_2.triangle(fh_2d);
+              if(do_intersect(seg, triangle)) {
+                std::cerr << "Segment " << seg << " intersects triangle " << triangle << "\n";
+                return { Edge{cell_circ, index_vc, index_vd} };
+              }
+            }
+          } while(++cell_circ != end);
+        }
+      }
+    }
+    return {};
+  }
+
+  void restore_subface_region(const CDT_2& cdt_2, CDT_2_face_handle fh) {
+    auto fh_region = region(cdt_2, fh);
+    assert(!fh_region.empty());
+    assert(fh == fh_region[0]);
+    auto border_edges = brute_force_border_3_of_region(fh_region);
+#if CGAL_DEBUG_CDT_3
+    std::cerr << "region size is: " << fh_region.size() << "\n";
+    std::cerr << "region border size is: " << border_edges.size() << "\n";
+    if(border_edges.size() < 3) {
+      std::ofstream dump_region("dump_region_with_size_2.polylines.txt");
+      dump_region.precision(17);
+      write_region(dump_region, fh_region);
+    }
+#endif // CGAL_DEBUG_CDT_3
+    const auto found_seg = search_first_intersection(cdt_2, fh_region);
+    if(!found_seg) {
+      std::cerr << "No segment found\n";
+      {
+        std::ofstream dump("dump.binary.cgal");
+        CGAL::Mesh_3::save_binary_file(dump, *this);
+        std::ofstream dump_region("dump_region.polylines.txt");
+        dump_region.precision(17);
+        write_region(dump_region, fh_region);
+      }
+    }
+    CGAL_assertion(found_seg != std::nullopt);
+  }
+
   void restore_face(CDT_3_face_index i) {
     const CDT_2& cdt_2 = face_cdt_2[i];
 #if CGAL_DEBUG_CDT_3
@@ -590,72 +661,7 @@ private:
     for(CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
       if(false == fh->info().missing_subface) continue;
-      auto fh_region = region(cdt_2, fh);
-      assert(!fh_region.empty());
-      assert(fh == fh_region[0]);
-      auto border_edges = brute_force_border_3_of_region(fh_region);
-#if CGAL_DEBUG_CDT_3
-      std::cerr << "region size is: " << fh_region.size() << "\n";
-      std::cerr << "region border size is: " << border_edges.size() << "\n";
-      if(border_edges.size() < 3) {
-        std::ofstream dump_region("dump_region_with_size_2.polylines.txt");
-        dump_region.precision(17);
-        write_region(dump_region, fh_region);
-      }
-#endif // CGAL_DEBUG_CDT_3
-      const auto found_seg = [&]() -> std::optional<Edge> {
-        for(auto fh_2d : fh_region) {
-          CGAL_assertion(true == fh_2d->info().missing_subface);
-          CGAL_assertion(false == fh_2d->info().is_outside_the_face);
-          for(int index = 0; index < 3; ++index) {
-            const auto va_3d = fh_2d->vertex(cdt_2.cw(index))->info().vertex_handle_3d;
-            const auto vb_3d = fh_2d->vertex(cdt_2.ccw(index))->info().vertex_handle_3d;
-            Cell_handle c;
-            int i, j;
-            const bool is_3d = this->tds().is_edge(va_3d, vb_3d, c, i, j);
-            CGAL_assertion(fh_2d->info().is_edge_also_in_3d_triangulation[unsigned(index)] == is_3d);
-            if(is_3d) {
-              auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
-              CGAL_assertion(cell_circ != nullptr);
-              do {
-                if(this->is_infinite(cell_circ)) {
-                  continue;
-                }
-                const auto index_va = cell_circ->index(va_3d);
-                const auto index_vb = cell_circ->index(vb_3d);
-                const auto index_vc = this->next_around_edge(index_va, index_vb);
-                const auto index_vd = this->next_around_edge(index_vb, index_va);
-                const auto vc = cell_circ->vertex(index_vd);
-                const auto vd = cell_circ->vertex(index_vc);
-                CGAL_assertion(cell_circ->has_vertex(vc));
-                CGAL_assertion(cell_circ->has_vertex(vd));
-                const auto pc = this->point(vc);
-                const auto pd = this->point(vd);
-                const typename Geom_traits::Segment_3 seg{pc, pd};
-                for(auto fh_2d : fh_region) {
-                  const auto triangle = cdt_2.triangle(fh_2d);
-                  if(do_intersect(seg, triangle)) {
-                    std::cerr << "Segment " << seg << " intersects triangle " << triangle << "\n";
-                    return { Edge{cell_circ, index_vc, index_vd} };
-                  }
-                }
-              } while(++cell_circ != end);
-            }
-          }
-        }
-        return {};
-      }();
-      if(!found_seg) {
-        std::cerr << "No segment found\n";
-        {
-          std::ofstream dump("dump.binary.cgal");
-          CGAL::Mesh_3::save_binary_file(dump, *this);
-          std::ofstream dump_region("dump_region.polylines.txt");
-          dump_region.precision(17);
-          write_region(dump_region, fh_region);
-        }
-      }
-      CGAL_assertion(found_seg != std::nullopt);
+      restore_subface_region(cdt_2, fh);
     }
   }
 
