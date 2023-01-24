@@ -898,7 +898,7 @@ These computations are performed using (on all vertices of mesh):
 Where it is recommended to use the last function for computing multiple curvatures (example: mean and gaussian)
 as the implementation performs the shared computations only once, making it more efficient.
 
-Similarly, we can use the following example functions to compute the curvatures on a specific vertex:
+Similarly, we can use the following functions to compute curvatures on a specific vertex:
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_at_vertex()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_gaussian_curvature_at_vertex()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_at_vertex()`
@@ -924,7 +924,7 @@ Property maps are an API introduced in the boost library that allows associating
 values to keys. In the following examples, for each property map, we associate
 a curvature value to each vertex.
 
-\subsection ICCExampleSM Interpolated Corrected Curvature on a Surface Mesh Example
+\subsection ICCExampleSM Interpolated Corrected Curvatures on a Surface Mesh Example
 
 The following example illustrates how to
 compute the curvatures on vertices
@@ -932,7 +932,7 @@ and store them in property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_example.cpp}
 
-\subsection ICCExamplePH Interpolated Corrected Curvature on a Polyhedron Example
+\subsection ICCExamplePH Interpolated Corrected Curvatures on a Polyhedron Example
 
 The following example illustrates how to
 compute the curvatures on vertices
@@ -941,7 +941,7 @@ not provide storage for the curvatures.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_polyhedron_example.cpp}
 
-\subsection ICCExamplePH Interpolated Corrected Curvature on a Vertex Example
+\subsection ICCExampleSV Interpolated Corrected Curvatures on a Vertex Example
 
 The following example illustrates how to
 compute the curvatures on a specific vertex
