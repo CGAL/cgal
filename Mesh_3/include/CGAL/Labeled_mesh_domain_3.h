@@ -641,7 +641,10 @@ public:
    *
    *   \cgalParamNBegin{input_features}
    *    \cgalParamDescription{ a `Range` of polyline features, represented as `Range`s of `Point_3`.
-   *         Polyline features are added to the domain for further feature protection.}
+   *         Polyline features are added to the domain for further feature protection.
+   *         Input polyline features must be different from the detected features
+   *         and can intersect only at vertices, if they do. Otherwise,
+   *         the meshing process may not terminate.}
    *    \cgalParamDefault{`std::vector<std::vector<Point_3>>()`}
    *    \cgalParamExtra{The return type of the function depends on whether this parameter
                         or `input_features` are provided or not.}
