@@ -46,6 +46,8 @@
 #include <boost/unordered_map.hpp>
 #include <boost/container/small_vector.hpp>
 
+#include <ranges>
+
 namespace CGAL {
 
 using CDT_3_face_index = int;
@@ -325,6 +327,24 @@ public:
       this->insert_constrained_edge(*first_it, *std::next(first_it));
       return {};
     }
+    CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>> circ{&vertex_handles};
+    const auto circ_end{circ};
+    auto& border = this->face_border.emplace_back();
+    do {
+      const auto va = *circ;
+      ++circ;
+      const auto vb = *circ;
+      const auto c_id = this->constraint_from_extremities(va, vb);
+      if(c_id != Constraint_id{}) {
+        const bool constraint_c_id_is_reversed = true;
+        border.push_back(Face_edge{c_id, constraint_c_id_is_reversed});
+      } else {
+        const auto c_id = this->insert_constrained_edge(va, vb);
+        CGAL_assertion(c_id != Constraint_id{});
+        border.push_back(Face_edge{c_id});
+      }
+    } while(circ != circ_end);
+
     const auto accumulated_normal = [&] {
       const auto last_it = std::next(first_it, size - 1);
       const auto &last_point = tr.point(*last_it);
@@ -355,8 +375,49 @@ public:
 
     face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
     face_constraint_misses_subfaces.resize(face_cdt_2.size());
-    CDT_2& cdt_2 = face_cdt_2.back();
-    CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>> circ{&vertex_handles}, circ_end{circ};
+    const auto polygon_contraint_id = static_cast<CDT_3_face_index>(face_cdt_2.size() - 1);
+
+    // search_for_missing_subfaces(polygon_contraint_id);
+    // restore_constrained_Delaunay();
+
+    return polygon_contraint_id;
+  }
+
+private:
+  void fill_cdt_2(CDT_3_face_index polygon_contraint_id)
+  {
+    CDT_2& cdt_2 = face_cdt_2[polygon_contraint_id];
+
+    const auto handles = [this, polygon_contraint_id]() {
+      std::vector<Vertex_handle> handles;
+      for(const auto& face_edge : this->face_border[polygon_contraint_id]) {
+        const auto c_id = face_edge.constraint_id;
+        const bool reversed = face_edge.is_reverse;
+        const auto v_begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+        const auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+        CGAL_assertion(std::distance(v_begin, v_end) >= 2);
+        auto va = *v_begin;
+        auto vb_it = v_end;
+        --vb_it;
+        auto vb = *vb_it;
+        if(reversed) {
+          using std::swap;
+          swap(va, vb);
+        }
+        if(handles.empty()) {
+          handles.push_back(va);
+        } else {
+          CGAL_assertion(handles.back() == va);
+        }
+        handles.push_back(vb);
+      }
+      CGAL_assertion(handles.front() == handles.back());
+      handles.pop_back();
+      return handles;
+    }();
+
+    CGAL::Circulator_from_container circ{&handles};
+    const auto circ_end{circ};
     { // create and fill the 2D triangulation
       const auto first_2d  = cdt_2.insert(tr.point(*circ));
       first_2d->info().vertex_handle_3d = *circ;
@@ -436,19 +497,6 @@ public:
       std::cerr << counter << " triangles(s) in the face\n";
 #endif // CGAL_DEBUG_CDT_3
     }  // end of the construction of the CDT_2
-    const auto polygon_contraint_id = static_cast<CDT_3_face_index>(face_cdt_2.size() - 1);
-    do {
-      const auto va = *circ;
-      ++circ;
-      const auto vb = *circ;
-      const auto c_id = this->constraint_from_extremities(va, vb);
-      if(c_id == Constraint_id{}) {
-        this->insert_constrained_edge(va, vb);
-      }
-    } while(circ != circ_end);
-    search_for_missing_subfaces(polygon_contraint_id);
-    //restore_constrained_Delaunay();
-    return polygon_contraint_id;
   }
 
   void search_for_missing_subfaces(CDT_3_face_index polygon_contraint_id)
@@ -516,15 +564,20 @@ public:
     return border_edges;
   }
 
+
+public:
   void restore_constrained_Delaunay()
   {
+    for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
+      fill_cdt_2(i);
+      search_for_missing_subfaces(i);
+    }
     const auto npos = face_constraint_misses_subfaces.npos;
     auto i = face_constraint_misses_subfaces.find_first();
     while(i != npos) {
       const CDT_2& cdt_2 = face_cdt_2[i];
-      search_for_missing_subfaces(i);
 #if CGAL_DEBUG_CDT_3
-        std::cerr << "cdt_2 has " << cdt_2.number_of_vertices() << " vertices\n";
+      std::cerr << "cdt_2 has " << cdt_2.number_of_vertices() << " vertices\n";
 #endif // CGAL_DEBUG_CDT_3
       for(auto edge : cdt_2.finite_edges()) {
         const auto fh = edge.first;
@@ -664,16 +717,15 @@ public:
   /// @}
 
 protected:
-  using set_of_face_ids = boost::container::flat_set<
-      CDT_3_face_index, std::less<CDT_3_face_index>,
-      boost::container::small_vector<CDT_3_face_index, 2>>;
   T_3 &tr = *this;
   Conforming_Dt &conforming_dt = *this;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
-
   std::vector<CDT_2> face_cdt_2;
-  set_of_face_ids x;
-  boost::unordered_map<Constraint_id, set_of_face_ids> incident_faces;
+  struct Face_edge {
+    Constraint_id constraint_id;
+    bool is_reverse = false;
+  };
+  std::vector<std::vector<Face_edge>> face_border;
   boost::dynamic_bitset<> face_constraint_misses_subfaces;
 };
 
