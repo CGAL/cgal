@@ -21,10 +21,10 @@ if(Boost_FOUND)
     include(CGAL_Eigen_support)
 
     set(targets
-    kinetic_2d_example
-    kinetic_precomputed_shapes_example
-    kinetic_reconstruction_example
-    kinetic_random_shapes_example)
+    kinetic_2d
+    kinetic_precomputed_shapes
+    kinetic_reconstruction
+    kinetic_random_shapes)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)
