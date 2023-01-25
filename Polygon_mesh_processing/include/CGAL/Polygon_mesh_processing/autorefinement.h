@@ -1,5 +1,5 @@
 //TODO: add for soup face the id of the input face. not sure it is easy to report intersection edge as a pair of vertex id
-//TODO: only return intersection segments
+//TODO: only return intersection segments (pay attention to degenerate triangles that are currently ignored)
 // Copyright (c) 2023 GeometryFactory (France).
 // All rights reserved.
 //
@@ -36,8 +36,8 @@
 
 #include <vector>
 
-//#define TEST_RESOLVE_INTERSECTION
-//#define DEDUPLICATE_SEGMENTS
+// #define TEST_RESOLVE_INTERSECTION
+// #define DEDUPLICATE_SEGMENTS
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -266,7 +266,7 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   {
     int j=(i+1)%3;
     test_edge<K>(t1[i], t1[j], t2[0], t2[1], t2[2], ori[i], ori[j], inter_pts);
-    if (inter_pts.size()>1) return;
+    //~ if (inter_pts.size()>1) return;
   }
 
   // test edges of t2 vs t1
@@ -276,8 +276,13 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   {
     int j=(i+1)%3;
     test_edge<K>(t2[i], t2[j], t1[0], t1[1], t1[2], ori[i], ori[j], inter_pts);
-    if (inter_pts.size()>1) return;
+    //~ if (inter_pts.size()>1) return;
   }
+
+  // because we don't handle intersection type and can have edge-edge edge-vertex duplicates
+  std::sort(inter_pts.begin(), inter_pts.end());
+  auto last = std::unique(inter_pts.begin(), inter_pts.end());
+  inter_pts.erase(last, inter_pts.end());
 }
 
 //////////////////////////////////
@@ -288,7 +293,7 @@ void collect_intersections(const std::array<typename K::Point_3, 3>& t1,
 
 template <class EK>
 void generate_subtriangles(std::size_t ti,
-                                 std::vector<std::array<typename EK::Point_3, 2>>& segments,
+                           std::vector<std::array<typename EK::Point_3, 2>>& segments,
                            const std::vector<typename EK::Point_3>& points,
                            const std::vector<std::size_t>& in_triangle_ids,
                            const std::set<std::pair<std::size_t, std::size_t> >& intersecting_triangles,
@@ -331,6 +336,27 @@ void generate_subtriangles(std::size_t ti,
   //~ static std::ofstream debug("inter_segments.polylines.txt");
   //~ debug.precision(17);
 
+  //~ std::cout << "points.size() " << points.size() << "\n";
+  //~ std::set<std::size_t> all_triangles_indices(in_triangle_ids.begin(), in_triangle_ids.end());
+  //~ all_triangles_indices.insert(ti);
+
+  //~ std::ofstream debug("triangles.polylines.txt");
+  //~ debug << std::setprecision(17);
+  //~ for (std::size_t i : all_triangles_indices)
+    //~ debug << "4 "
+          //~ << triangles[i][0] << " "
+          //~ << triangles[i][1] << " "
+          //~ << triangles[i][2] << " "
+          //~ << triangles[i][0] << "\n";
+  //~ debug.close();
+  //~ debug.open("triangle.off");
+  //~ debug << std::setprecision(17);
+  //~ debug << "OFF\n3 1 0\n";
+  //~ debug << triangles[ti][0] << "\n"
+        //~ << triangles[ti][1] << "\n"
+        //~ << triangles[ti][2] << "\n 3 0 1 2\n";
+  //~ debug.close();
+
   // pre-compute segment intersections
   if (!segments.empty())
   {
@@ -340,7 +366,7 @@ void generate_subtriangles(std::size_t ti,
     //~ if (nbs==8)
     //~ {
       //~ for (std::size_t i = 0; i<nbs; ++i)
-        //~ std::ofstream("cst_"+std::to_string(i)+".polylines.txt") << std::setprecision(17) << "2 " << segments[i] << "\n";
+        //~ std::ofstream("cst_"+std::to_string(i)+".polylines.txt") << std::setprecision(17) << "2 " << segments[i][0] << " " << segments[i][1] << "\n";
     //~ }
 
     auto supporting_plane = [](const std::array<typename EK::Point_3, 3>& t)
@@ -404,7 +430,7 @@ void generate_subtriangles(std::size_t ti,
 
                 }
                 else
-                  std::cerr <<"ERROR!\n";
+                  throw std::runtime_error("BOOM\n");
               }
 
 #if 0
@@ -671,11 +697,12 @@ void autorefine_soup_output(const PointRange& input_points,
           for (std::size_t i=0;i<nbi; ++i)
           {
             all_segments[i1].push_back(CGAL::make_array(inter_pts[i], inter_pts[(i+1)%nbi]));
-            all_segments[i2].push_back(CGAL::make_array(inter_pts[i], inter_pts[(i+1)%nbi]));
+            all_segments[i2].push_back(all_segments[i1].back());
             all_in_triangle_ids[i1].push_back(i2);
             all_in_triangle_ids[i2].push_back(i1);
           }
       }
+      intersecting_triangles.insert(CGAL::make_sorted_pair(i1, i2));
     }
   }
 
