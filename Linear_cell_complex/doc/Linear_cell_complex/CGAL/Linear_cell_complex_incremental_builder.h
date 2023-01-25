@@ -13,6 +13,7 @@ construction of linear cell complexes.
 template < class LCC >
 class Linear_cell_complex_incremental_builder_3
 {
+ public:
   typedef LCC_ LCC;
   typedef typename LCC::Dart_descriptor             DH;
   typedef typename LCC::Vertex_attribute_descriptor VAH;
