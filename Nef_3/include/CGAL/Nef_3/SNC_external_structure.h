@@ -191,7 +191,6 @@ struct Plane_RT_lt {
 template <typename Items_, typename SNC_structure_>
 class SNC_external_structure_base : public SNC_decorator<SNC_structure_>
 {
-public:
   typedef SNC_structure_ SNC_structure;
 
   typedef typename SNC_structure::Infi_box                   Infi_box;
@@ -258,12 +257,9 @@ public:
   using SNC_decorator::visit_shell_objects;
   using SNC_decorator::store_boundary_object;
   using SNC_decorator::set_volume;
-  using SNC_decorator::link_as_inner_shell;
   using SNC_decorator::link_as_outer_shell;
-  using SNC_decorator::link_as_prev_next_pair;
   using SNC_decorator::get_visible_facet;
   using SNC_decorator::adjacent_sface;
-  using SNC_decorator::make_twins;
 
   struct Shell_entry {
     typedef std::vector<SFace_handle> SFace_handles;
@@ -330,11 +326,23 @@ public:
     }
   };
 
+  void set_volumes( Volume_handle c, const Shell_entry& se) const {
+    for(SFace_handle h : se.connected_sfaces)
+      set_volume(h, c);
+    for(Halffacet_handle h : se.connected_halffacets)
+      set_volume(h, c);
+  }
+
+protected:
   SNC_external_structure_base( SNC_structure& W, SNC_point_locator* spl = nullptr)
     : SNC_decorator(W), pl(spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
- public:
+  using SNC_decorator::make_twins;
+  using SNC_decorator::link_as_prev_next_pair;
+  using SNC_decorator::link_as_inner_shell;
+
+public:
   //#define CGAL_NEF_NO_HALFEDGE_KEYS
 #ifdef CGAL_NEF_NO_HALFEDGE_KEYS
   void pair_up_halfedges() const {
@@ -923,13 +931,6 @@ public:
     }
   }
 
-  void set_volumes( Volume_handle c, const Shell_entry& se) const {
-    for(SFace_handle h : se.connected_sfaces)
-      set_volume(h, c);
-    for(Halffacet_handle h : se.connected_halffacets)
-      set_volume(h, c);
-  }
-
   Halffacet_handle get_facet_below( Vertex_handle vi,
                                     const Sface_shell_hash& shell_lookup,
                                     const Shell_entries& shell_entries) const {
@@ -1116,7 +1117,6 @@ template <typename SNC_structure_>
 class SNC_external_structure<SNC_indexed_items, SNC_structure_>
   : public SNC_external_structure_base<int, SNC_structure_> {
 
-public:
   typedef SNC_structure_                                SNC_structure;
   typedef SNC_external_structure_base<int, SNC_structure>    Base;
 
@@ -1147,12 +1147,11 @@ public:
   using Base::link_as_prev_next_pair;
   using Base::link_as_inner_shell;
 
-
+public:
   SNC_external_structure( SNC_structure& W, SNC_point_locator* spl = nullptr)
     : Base(W, spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
- public:
   void pair_up_halfedges() const {
     typedef Halfedge_key_lt4<Halfedge_handle>  Halfedge_key_lt;
     typedef std::list<Halfedge_handle>  Halfedge_list;
