@@ -255,9 +255,6 @@ public:
   typedef CGAL::Unique_hash_map<SFace_const_handle,bool> SFace_visited_hash;
   typedef CGAL::Unique_hash_map<SFace_const_handle,bool> Shell_closed_hash;
 
-  typedef std::vector<SFace_handle> SFace_list;
-  typedef std::vector<Halffacet_handle> Halffacet_list;
-
   using SNC_decorator::visit_shell_objects;
   using SNC_decorator::store_boundary_object;
   using SNC_decorator::set_volume;
@@ -269,23 +266,26 @@ public:
   using SNC_decorator::make_twins;
 
   struct Shell_entry {
+    typedef std::vector<SFace_handle> SFace_handles;
+    typedef std::vector<Halffacet_handle> Halffacet_handles;
+
     Shell_entry(SFace_handle f) : minimal_sface(f) {}
     SFace_handle minimal_sface;
-    SFace_list connected_sfaces;
-    Halffacet_list connected_halffacets;
+    SFace_handles connected_sfaces;
+    Halffacet_handles connected_halffacets;
   };
 
-  typedef std::vector<Shell_entry> Shell_entry_list;
+  typedef std::vector<Shell_entry> Shell_entries;
 
   struct Shell_explorer {
     Sface_shell_hash&   shell_lookup;
     Face_shell_hash&    facet_lookup;
-    Shell_entry_list&   shell_entries;
+    Shell_entries&      shell_entries;
     SFace_visited_hash& Done;
     int shell_number;
 
     Shell_explorer(Sface_shell_hash& s, Face_shell_hash& f,
-                   Shell_entry_list& se, SFace_visited_hash& d)
+                   Shell_entries& se, SFace_visited_hash& d)
       : shell_lookup(s), facet_lookup(f),
         shell_entries(se), Done(d), shell_number(0) {
     }
@@ -820,7 +820,7 @@ public:
     auto sface_count = this->sncp()->number_of_sfaces();
     Sface_shell_hash   shell_lookup(0, sface_count);
     Face_shell_hash    facet_lookup(0, face_count);
-    Shell_entry_list   shell_entries;
+    Shell_entries      shell_entries;
     SFace_visited_hash Done(false, sface_count);
     Shell_explorer     V(shell_lookup, facet_lookup, shell_entries, Done);
 
@@ -932,7 +932,7 @@ public:
 
   Halffacet_handle get_facet_below( Vertex_handle vi,
                                     const Sface_shell_hash& shell_lookup,
-                                    const Shell_entry_list& shell_entries) const {
+                                    const Shell_entries& shell_entries) const {
     // {\Mop determines the facet below a vertex |vi| via ray shooting. }
 
     Halffacet_handle f_below;
@@ -991,7 +991,7 @@ public:
 
   Volume_handle determine_volume( SFace_handle sf,
                                   const Sface_shell_hash& shell_lookup,
-                                  const Shell_entry_list& shell_entries) const {
+                                  const Shell_entries& shell_entries) const {
     //{\Mop determines the volume |C| that a shell |S| pointed by |sf|
     //  belongs to.  \precondition |S| separates the volume |C| from an enclosed
     //  volume.}
