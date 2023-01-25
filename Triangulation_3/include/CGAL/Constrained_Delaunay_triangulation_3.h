@@ -586,6 +586,25 @@ private:
     return border_edges;
   }
 
+  bool does_edge_intersect_region(Cell_handle cell, int index_va, int index_vb,
+                                  const CDT_2& cdt_2, const auto& fh_region)
+  {
+    const auto index_vc = this->next_around_edge(index_va, index_vb);
+    const auto index_vd = this->next_around_edge(index_vb, index_va);
+    const auto vc = cell->vertex(index_vd);
+    const auto vd = cell->vertex(index_vc);
+    const auto pc = this->point(vc);
+    const auto pd = this->point(vd);
+    const typename Geom_traits::Segment_3 seg{pc, pd};
+    for(const auto fh_2d : fh_region) {
+      const auto triangle = cdt_2.triangle(fh_2d);
+      if(do_intersect(seg, triangle)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   std::optional<Edge>
   search_first_intersection(const CDT_2& cdt_2, const auto& fh_region, const Edge border_edge) {
     const auto [c, i, j] = border_edge;
@@ -599,21 +618,8 @@ private:
       }
       const auto index_va = cell_circ->index(va_3d);
       const auto index_vb = cell_circ->index(vb_3d);
-      const auto index_vc = this->next_around_edge(index_va, index_vb);
-      const auto index_vd = this->next_around_edge(index_vb, index_va);
-      const auto vc = cell_circ->vertex(index_vd);
-      const auto vd = cell_circ->vertex(index_vc);
-      CGAL_assertion(cell_circ->has_vertex(vc));
-      CGAL_assertion(cell_circ->has_vertex(vd));
-      const auto pc = this->point(vc);
-      const auto pd = this->point(vd);
-      const typename Geom_traits::Segment_3 seg{pc, pd};
-      for(const auto fh_2d : fh_region) {
-        const auto triangle = cdt_2.triangle(fh_2d);
-        if(do_intersect(seg, triangle)) {
-          std::cerr << "Segment " << seg << " intersects triangle " << triangle << "\n";
-          return { Edge{cell_circ, index_vc, index_vd} };
-        }
+      if(does_edge_intersect_region(cell_circ, index_va, index_vb, cdt_2, fh_region)) {
+        return { Edge{cell_circ, index_va, index_vb} };
       }
     } while(++cell_circ != end);
     return {};
