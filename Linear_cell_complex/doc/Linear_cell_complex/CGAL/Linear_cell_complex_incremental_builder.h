@@ -11,7 +11,7 @@ construction of linear cell complexes.
 */
 
 template < class LCC >
-class Linear_cell_complex_incremental_builder_3
+class Linear_cell_complex_incremental_builder
 {
  public:
   typedef LCC_ LCC;
@@ -26,7 +26,7 @@ class Linear_cell_complex_incremental_builder_3
   /*!
    * Constructor
    */
-  Linear_cell_complex_incremental_builder_3(LCC & alcc);
+  Linear_cell_complex_incremental_builder(LCC & alcc);
 
 /// @}
 
