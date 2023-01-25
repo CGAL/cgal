@@ -207,7 +207,7 @@ public:
     : Base(traits),
       m_sq_length(square(max_length)),
       m_dppmb(), m_bpm(), m_rppm(), m_dpmb(),
-      m_dpm(DPPM(m_dppmb/*first binder's value_map*/)/*second binder's key map*/, m_dpmb)
+      m_dpm(DPPM(Default(), m_dppmb/*first binder's value_map*/)/*second binder's key map*/, m_dpmb)
   {
     initialize_tree_property_maps();
   }

@@ -25,6 +25,7 @@
 #include <CGAL/Cartesian_converter_fwd.h>
 #include <CGAL/Kernel_traits_fwd.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Default.h>
 
 #include <algorithm>
 #include <iterator>
@@ -140,6 +141,11 @@ struct Compose_property_map<KeyMap, ValueMap, boost::readable_property_map_tag>
     : key_map(key_map), value_map(value_map)
   {}
 
+  Compose_property_map(Default,
+                       ValueMap value_map = ValueMap())
+    : value_map(value_map)
+  {}
+
   friend
   reference get(Compose_property_map map, const key_type& k)
   {
@@ -163,6 +169,11 @@ struct Compose_property_map<KeyMap, ValueMap, boost::writable_property_map_tag>
     : key_map(key_map), value_map(value_map)
   {}
 
+  Compose_property_map(Default,
+                       ValueMap value_map = ValueMap())
+    : value_map(value_map)
+  {}
+
   friend
   void put(Compose_property_map map, const key_type& k, const value_type& v)
   {
@@ -184,6 +195,11 @@ struct Compose_property_map<KeyMap, ValueMap, boost::read_write_property_map_tag
   Compose_property_map(KeyMap key_map = KeyMap(),
                        ValueMap value_map = ValueMap())
     : key_map(key_map), value_map(value_map)
+  {}
+
+  Compose_property_map(Default,
+                       ValueMap value_map = ValueMap())
+    : value_map(value_map)
   {}
 
   friend
@@ -213,6 +229,11 @@ struct Compose_property_map<KeyMap, ValueMap, boost::lvalue_property_map_tag>
   Compose_property_map(KeyMap key_map = KeyMap(),
                        ValueMap value_map = ValueMap())
     : key_map(key_map), value_map(value_map)
+  {}
+
+  Compose_property_map(Default,
+                       ValueMap value_map = ValueMap())
+    : value_map(value_map)
   {}
 
   friend
@@ -279,7 +300,7 @@ bind_property_maps(const KeyMap& src, const ValueMap& tgt)
 #endif
 
 /// \ingroup PkgPropertyMapRef
-/// returns `compose_property_maps<KeyMap, ValueMap>(km,vm)`
+/// returns `Compose_property_maps<KeyMap, ValueMap>(km,vm)`
 template <class KeyMap, class ValueMap>
 Compose_property_map<KeyMap, ValueMap>
 make_compose_property_maps(const KeyMap& km, const ValueMap& vm)
