@@ -234,7 +234,7 @@ public:
                          const auto va = sc.first.first;
                          const auto vb = sc.first.second;
                          const auto is_edge = this->tr.tds().is_edge(va, vb);
-#if CGAL_DEBUG_CDT_3 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 > 128 && __has_include(<format>)
                          std::cerr << std::format("is_conforming>> Edge is 3D: {:6}  ({} , {})\n",
                                                   is_edge,
                                                   oformat(this->point(va)),

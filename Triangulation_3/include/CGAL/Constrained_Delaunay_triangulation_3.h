@@ -448,11 +448,13 @@ private:
               while(vit != v_end) {
                 auto vh_2d = cdt_2.insert(tr.point(*vit));
                 vh_2d->info().vertex_handle_3d = *vit;
+#if CGAL_DEBUG_CDT_3
                 std::cerr << "cdt_2.insert_constraint ("
                           << tr.point(previous_2d->info().vertex_handle_3d)
                           << " , "
                           << tr.point(vh_2d->info().vertex_handle_3d)
                           << ")\n";
+#endif // CGAL_DEBUG_CDT_3
                 cdt_2.insert_constraint(previous_2d, vh_2d);
                 previous_2d = vh_2d;
                 if(constraint_c_id_is_reversed) {
@@ -469,11 +471,13 @@ private:
         if(circ != circ_end) {
           vh_2d->info().vertex_handle_3d = vb;
         }
+#if CGAL_DEBUG_CDT_3
         std::cerr << "cdt_2.insert_constraint ("
                   << tr.point(previous_2d->info().vertex_handle_3d)
                   << " , "
                   << tr.point(vh_2d->info().vertex_handle_3d)
                   << ")\n";
+#endif // CGAL_DEBUG_CDT_3
         cdt_2.insert_constraint(previous_2d, vh_2d);
         previous_2d = vh_2d;
       } while (circ != circ_end);
@@ -654,7 +658,7 @@ private:
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
       const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
       const bool is_3d = this->tds().is_edge(va_3d, vb_3d);
-#if CGAL_DEBUG_CDT_3 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 > 64 && __has_include(<format>)
       std::cerr << std::format("Edge is 3D: {:6}  ({} , {})\n",
                                 is_3d,
                                 oformat(this->point(va_3d)),
