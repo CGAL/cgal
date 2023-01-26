@@ -32,6 +32,8 @@
 
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
 
@@ -47,6 +49,11 @@
 #include <boost/container/small_vector.hpp>
 
 #include <ranges>
+#if __has_include(<format>)
+#  include <format>
+#elif CGAL_DEBUG_CDT_3
+#  error "Compiler needs <format>"
+#endif
 
 namespace CGAL {
 
@@ -161,6 +168,7 @@ public:
   using Cell_handle = typename T_3::Cell_handle;
   using Edge = typename T_3::Edge;
   using Point_3 = typename T_3::Point;
+  using Segment_3 = typename T_3::Geom_traits::Segment_3;
   using Vector_3 = typename T_3::Geom_traits::Vector_3;
   using Locate_type = typename T_3::Locate_type;
   using Geom_traits = typename T_3::Geom_traits;
@@ -228,6 +236,7 @@ private:
                 "move assignment is missing");
 
   protected:
+    struct PLC_error {};
     using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
     using Constraint_id = typename Constraint_hierarchy::Constraint_id;
     using Subconstraint = typename Constraint_hierarchy::Subconstraint;
@@ -364,9 +373,9 @@ public:
                                      vector(last_point, tr.point(*next_it))));
       }
       if (accumulated_normal.z() < 0 ||
-          (accumulated_normal.z() == 0 && accumulated_normal.y() > 0) ||
+          (accumulated_normal.z() == 0 && accumulated_normal.y() < 0) ||
           (accumulated_normal.z() == 0 && accumulated_normal.y() == 0 &&
-           accumulated_normal.x() > 0)
+           accumulated_normal.x() < 0)
           )
       {
         accumulated_normal = - accumulated_normal;
@@ -581,20 +590,22 @@ private:
 #if CGAL_DEBUG_CDT_3
     std::cerr << "region size is: " << fh_region.size() << "\n";
     std::cerr << "region border size is: " << border_edges.size() << "\n";
-    if(border_edges.size() < 3) {
-      std::ofstream dump_region("dump_region_with_size_2.polylines.txt");
-      dump_region.precision(17);
-      write_region(dump_region, fh_region);
-    }
 #endif // CGAL_DEBUG_CDT_3
     return border_edges;
   }
 
-  bool does_edge_intersect_region(Cell_handle cell, int index_va, int index_vb,
+  struct Intersection_error : public std::runtime_error {
+    using Seg = typename Geom_traits::Segment_3;
+    using Tri = typename Geom_traits::Triangle_3;
+    Intersection_error(Seg s, Tri t, std::string what) : std::runtime_error(what), segment(s), triangle(t) {}
+
+    Seg segment;
+    Tri triangle;
+  };
+
+  bool does_edge_intersect_region(Cell_handle cell, int index_vc, int index_vd,
                                   const CDT_2& cdt_2, const auto& fh_region)
   {
-    const auto index_vc = this->next_around_edge(index_va, index_vb);
-    const auto index_vd = this->next_around_edge(index_vb, index_va);
     const auto vc = cell->vertex(index_vd);
     const auto vd = cell->vertex(index_vc);
     const auto pc = this->point(vc);
@@ -603,18 +614,29 @@ private:
     for(const auto fh_2d : fh_region) {
       const auto triangle = cdt_2.triangle(fh_2d);
       if(do_intersect(seg, triangle)) {
-        return true;
+        if(CGAL::coplanar(seg.source(), triangle[0], triangle[1], triangle[2]) ||
+           CGAL::coplanar(seg.target(), triangle[0], triangle[1], triangle[2]))
+        {
+          //auto error_str = std::format("ERROR:\n  {} and\n  {} intersect improperly\n", oformat(seg), oformat(triangle));
+          //throw Intersection_error{seg, triangle, error_str};
+        } else {
+          return true;
+        }
       }
     }
     return false;
   }
 
   std::optional<Edge>
-  search_first_intersection(const CDT_2& cdt_2, const auto& fh_region, const Edge border_edge) {
+  search_first_intersection(CDT_3_face_index face_index, const CDT_2& cdt_2, const auto& fh_region, const Edge border_edge) {
     const auto [c, i, j] = border_edge;
     const Vertex_handle va_3d = c->vertex(i);
     const Vertex_handle vb_3d = c->vertex(j);
     auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
+#if CGAL_DEBUG_CDT_3
+    std::ofstream dump_edges_around("dump_edges_around.polylines.txt");
+    dump_edges_around.precision(17);
+#endif // CGAL_DEBUG_CDT_3
     CGAL_assertion(cell_circ != nullptr);
     do {
       if(this->is_infinite(cell_circ)) {
@@ -622,35 +644,146 @@ private:
       }
       const auto index_va = cell_circ->index(va_3d);
       const auto index_vb = cell_circ->index(vb_3d);
-      if(does_edge_intersect_region(cell_circ, index_va, index_vb, cdt_2, fh_region)) {
-        return { Edge{cell_circ, index_va, index_vb} };
+      const auto index_vc = this->next_around_edge(index_va, index_vb);
+      const auto index_vd = this->next_around_edge(index_vb, index_va);
+#if CGAL_DEBUG_CDT_3
+      write_segment(dump_edges_around, cell_circ->vertex(index_vc), cell_circ->vertex(index_vd));
+#endif
+      try { if(does_edge_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region)) {
+        return { Edge{cell_circ, index_vc, index_vd} };
+      } } catch (Intersection_error& err) {
+#if CGAL_DEBUG_CDT_3
+        std::cerr << std::format("ERROR: search_first_intersection(.., .., [ {}  {} ]\n",
+                                oformat(this->point(va_3d)),
+                                oformat(this->point(vb_3d)));
+#endif
+        dump_region(face_index, cdt_2);
+        std::ofstream dump_segment("dump_first_edge.polylines.txt");
+        write_segment(dump_segment, va_3d, vb_3d);
+        dump_segment.close();
+        dump_segment.open("dump_piercing_segment.polylines.txt");
+        write_segment(dump_segment, err.segment);
+        dump_segment.close();
+        throw;
       }
     } while(++cell_circ != end);
     return {};
   }
 
-  void restore_subface_region(const CDT_2& cdt_2, CDT_2_face_handle fh) {
+  struct Next_face {};
+
+  auto restore_subface_region(CDT_3_face_index face_index, const CDT_2& cdt_2, CDT_2_face_handle fh) {
     const auto fh_region = region(cdt_2, fh);
     const auto border_edges = brute_force_border_3_of_region(fh_region);
-    const Edge first_border_edge = border_edges[0];
-    const auto found_seg = search_first_intersection(cdt_2, fh_region, first_border_edge);
-    if(!found_seg) {
-      std::cerr << "No segment found\n";
+    const auto border_vertices = [&]() {
+      std::set<Vertex_handle> vertices;
+      for(const auto& [c, i, j]: border_edges) {
+        vertices.insert(c->vertex(i));
+        vertices.insert(c->vertex(j));
+      }
+      return vertices;
+    }();
+#if CGAL_DEBUG_CDT_3
+    std::cerr << "border_vertices.size() = " << border_vertices.size() << "\n";
+#endif
+    const Edge first_border_edge{border_edges[0]};
+    const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, first_border_edge);
+    if(!found_edge_opt) {
+      std::cerr << "ERROR: No segment found\n";
       {
-        std::ofstream dump("dump.binary.cgal");
-        CGAL::Mesh_3::save_binary_file(dump, *this);
-        std::ofstream dump_region("dump_region.polylines.txt");
-        dump_region.precision(17);
-        write_region(dump_region, fh_region);
+        dump_triangulation();
+        dump_region(face_index, cdt_2);
+      }
+      throw Next_face{};
+    }
+    CGAL_assertion(found_edge_opt != std::nullopt);
+    const auto first_intersecting_edge = *found_edge_opt;
+
+
+    std::vector<Edge> intersecting_edges;
+    std::vector<Cell_handle> intersecting_cells;
+    std::set<std::pair<Vertex_handle, Vertex_handle>> visited_edges;
+    std::set<Cell_handle> visited_cells;
+
+    intersecting_edges.push_back(first_intersecting_edge);
+
+    for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
+      const auto intersecting_edge = intersecting_edges[i];
+      const auto [current_cell, current_va_index, current_vb_index] = intersecting_edge;
+      const auto va = current_cell->vertex(current_va_index);
+      const auto vb = current_cell->vertex(current_vb_index);
+#if CGAL_DEBUG_CDT_3
+      std::cerr << std::format("restore_subface_region, Edge #{:6}: ({} , {})\n",
+                                i,
+                                oformat(this->point(va)),
+                                oformat(this->point(vb)));
+#endif
+      CGAL_assertion(false == border_vertices.contains(va));
+      CGAL_assertion(false == border_vertices.contains(vb));
+      auto facet_circ = this->incident_facets(intersecting_edge);
+      const auto facet_circ_end = facet_circ;
+      do { // loop facets around [va, vb]
+        CGAL_assertion(false == this->is_infinite(*facet_circ));
+        const auto cell = facet_circ->first;
+        const auto facet_index = facet_circ->second;
+        const auto [_, cell_not_already_visited] = visited_cells.insert(cell);
+        if(cell_not_already_visited) {
+          intersecting_cells.push_back(cell);
+        }
+        const auto index_va = cell->index(va);
+        const auto index_vb = cell->index(vb);
+        const auto index_vc = 6 - index_va - index_vb - facet_index;
+        const auto vc = cell->vertex(index_vc);
+        if(border_vertices.contains(vc)) continue; // intersecting edges cannot touch the border
+
+        auto test_edge = [&](Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1) {
+          const auto [_, edge_not_already_visited] = visited_edges.insert(CGAL::make_sorted_pair(v0, v1));
+          if(false == edge_not_already_visited) return true;
+          if(does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region)) {
+            const auto edge = Edge{cell, index_v0, index_v1};
+            intersecting_edges.push_back(edge);
+            return true;
+          } else {
+            return false;
+          }
+        };
+
+        if(!test_edge(va, index_va, vc, index_vc) && !test_edge(vb, index_vb, vc, index_vc)) {
+          dump_triangulation();
+          dump_region(face_index, cdt_2);
+          {
+            std::ofstream out(std::string("dump_two_edges_") + std::to_string(face_index) + ".polylines.txt");
+            write_segment(out, Edge{cell, index_va, index_vc});
+            write_segment(out, Edge{cell, index_vb, index_vc});
+          }
+          throw PLC_error{};
+        }
+      } while(++facet_circ != facet_circ_end);
+      std::cerr << "intersecting_edges.size() = " << intersecting_edges.size() << '\n';
+    }
+#if CGAL_DEBUG_CDT_3
+    std::cerr << std::format("Cavity has {} cells and {} edges\n",
+                             intersecting_cells.size(),
+                             intersecting_edges.size());
+    if(intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
+      std::cerr << "!! Interesting case !!\n";
+      dump_region(face_index, cdt_2);
+      {
+        std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + ".polylines.txt");
+        out.precision(17);
+        for(auto edge: intersecting_edges) {
+          write_segment(out, edge);
+        }
       }
     }
-    CGAL_assertion(found_seg != std::nullopt);
+#endif
+    return fh_region;
   }
 
-  void restore_face(CDT_3_face_index i) {
-    const CDT_2& cdt_2 = face_cdt_2[i];
+  void restore_face(CDT_3_face_index face_index) {
+    const CDT_2& cdt_2 = face_cdt_2[face_index];
 #if CGAL_DEBUG_CDT_3
-    std::cerr << "cdt_2 has " << cdt_2.number_of_vertices() << " vertices\n";
+    std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
 #endif // CGAL_DEBUG_CDT_3
     for(const auto edge : cdt_2.finite_edges()) {
       const auto fh = edge.first;
@@ -669,10 +802,17 @@ private:
       const auto reverse_edge = cdt_2.mirror_edge(edge);
       reverse_edge.first->info().is_edge_also_in_3d_triangulation[unsigned(reverse_edge.second)] = is_3d;
     }
+    std::set<CDT_2_face_handle> processed_faces;
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
       if(false == fh->info().missing_subface) continue;
-      restore_subface_region(cdt_2, fh);
+      if(processed_faces.contains(fh)) continue;
+      try {
+        const auto region = restore_subface_region(face_index, cdt_2, fh);
+        processed_faces.insert(region.begin(), region.end());
+      }
+      catch(Next_face&) {
+      }
     }
   }
 
@@ -686,24 +826,78 @@ public:
     const auto npos = face_constraint_misses_subfaces.npos;
     auto i = face_constraint_misses_subfaces.find_first();
     while(i != npos) {
-      restore_face(i);
+      try {
+        restore_face(i);
+      }
+      catch(PLC_error&) {
+        std::cerr << std::string("ERROR: PLC error with face #") << std::to_string(face_index) + "\n";
+      }
       i = face_constraint_misses_subfaces.find_next(i);
     }
   }
+  void write_region_to_OFF(std::ostream& out, const CDT_2& cdt_2) {
+    out.precision(17);
+    auto color_fn = [](CDT_2_face_handle fh_2d) -> CGAL::IO::Color {
+      if(fh_2d->info().is_outside_the_face) return CGAL::IO::gray();
+      if(fh_2d->info().is_in_region) return CGAL::IO::red();
+      return CGAL::IO::green();
+    };
+    auto color_pmap = boost::make_function_property_map<CDT_2_face_handle>(color_fn);
+    CGAL::IO::write_OFF(out, cdt_2, CGAL::parameters::face_color_map(color_pmap));
+  }
 
-  void write_region(std::ostream& out, auto region)
+  void write_region(std::ostream& out, const auto& region)
   {
     for(const auto fh_2d : region) {
       write_2d_triangle(out, fh_2d);
     }
   }
 
+  void dump_triangulation() const {
+    std::ofstream dump("dump.binary.cgal");
+    CGAL::Mesh_3::save_binary_file(dump, *this);
+  }
+
+  void dump_region(CDT_3_face_index face_index, const CDT_2& cdt_2) {
+    std::ofstream dump_region(std::string("dump_region") + std::to_string(face_index) + ".off");
+    write_region_to_OFF(dump_region, cdt_2);
+  }
+
   void write_triangle(std::ostream &out,
                       Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
   {
+    out.precision(17);
     out << "4"
         << " " << tr.point(v0) << " " << tr.point(v1) << " " << tr.point(v2)
         << " " << tr.point(v0) << '\n';
+  }
+
+  void write_segment(std::ostream &out, Point_3 p0, Point_3 p1)
+  {
+    out.precision(17);
+    out << "2" << " " << p0 << " " << p1 << '\n';
+  }
+
+  void write_segment(std::ostream &out, Segment_3 seg) {
+    write_segment(out, seg.source(), seg.target());
+  }
+
+  void write_segment(std::ostream& out, Vertex_handle v0, Vertex_handle v1)
+  {
+    write_segment(out, tr.point(v0), tr.point(v1));
+  }
+
+  void write_segment(std::ostream& out, Edge edge) {
+    const auto [c, i, j] = edge;
+    write_segment(out, c->vertex(i), c->vertex(j));
+  }
+
+  template <typename ...Args>
+  void dump_segment(std::string filename, Args&& ...args)
+  {
+    std::ofstream out(filename);
+    out.precision(17);
+    write_segment(out, std::forward<Args>(args)...);
   }
 
   void write_2d_triangle(std::ostream &out, const CDT_2_face_handle fh)
