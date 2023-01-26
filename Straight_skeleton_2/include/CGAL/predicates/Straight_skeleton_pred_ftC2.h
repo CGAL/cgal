@@ -368,7 +368,7 @@ is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segme
 // If the opposite edge is 'e' and its previous/next edges are "preve"/"nexte" then the split point is inside the offset
 // edge if it is NOT to the positive side of [preve,e] *and* NOT to the negative side o [e,nexte].
 // (so this predicate answer half the question, at one and other side independenty).
-// If the split point is exactly over any of this bisectors then the split point ocurres exactly and one (or both) endpoints
+// If the split point is exactly over any of this bisectors then the split point occurs exactly and one (or both) endpoints
 // of the opposite edge (so it is a pseudo-split event since the opposite edge is not itself split in two halfeves)
 // When this predicate is called to test (prev,e), e is the primary edge but since it is  pass as e1, primary_is_0=false.
 // This causes the case of parallel but not collinear edges to return positive when the split point is before the source point of e*
