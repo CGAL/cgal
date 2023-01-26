@@ -13,13 +13,14 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 typedef CGAL::Polyhedron_3<Epic_kernel> Polyhedron;
-typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   Polyhedron polyhedron;
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/small_bunny.obj");
+  const std::string filename = (argc > 1) ?
+    argv[1] :
+    CGAL::data_file_path("meshes/sphere.off");
 
   if (!CGAL::IO::read_polygon_mesh(filename, polyhedron))
   {
@@ -28,22 +29,22 @@ int main(int argc, char *argv[])
   }
 
   boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<Epic_kernel::FT>>::type
-      mean_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron),
-      gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
+    mean_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron),
+    gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
   boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>>::type
-      principal_curvatures_and_directions_map = get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>(), polyhedron);
+    principal_curvatures_and_directions_map = get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>(), polyhedron);
 
   PMP::interpolated_corrected_mean_curvature(
-      polyhedron,
-      mean_curvature_map);
+    polyhedron,
+    mean_curvature_map);
 
   PMP::interpolated_corrected_gaussian_curvature(
-      polyhedron,
-      gaussian_curvature_map);
+    polyhedron,
+    gaussian_curvature_map);
 
   PMP::interpolated_corrected_principal_curvatures_and_directions(
-      polyhedron,
-      principal_curvatures_and_directions_map);
+    polyhedron,
+    principal_curvatures_and_directions_map);
 
   // uncomment this to compute a curvature while specifying named parameters
   // Example: an expansion ball radius of 0.5 and a vertex normals map (does not have to depend on positions)
@@ -59,17 +60,17 @@ int main(int argc, char *argv[])
   // This function can be used to compute multiple curvature types by specifiying them as named parameters
   // This is more efficient than computing each one separately (shared computations).
   PMP::interpolated_corrected_curvatures(
-      polyhedron,
-      CGAL::parameters::vertex_mean_curvature_map(mean_curvature_map)
-          .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map));
+    polyhedron,
+    CGAL::parameters::vertex_mean_curvature_map(mean_curvature_map)
+    .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map));
 
   int i = 0;
   for (vertex_descriptor v : vertices(polyhedron))
   {
     auto PC = get(principal_curvatures_and_directions_map, v);
     std::cout << i << ": HC = " << get(mean_curvature_map, v)
-              << ", GC = " << get(gaussian_curvature_map, v) << "\n"
-              << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
+      << ", GC = " << get(gaussian_curvature_map, v) << "\n"
+      << ", PC = [ " << PC.min_curvature << " , " << PC.max_curvature << " ]\n";
     i++;
   }
 }

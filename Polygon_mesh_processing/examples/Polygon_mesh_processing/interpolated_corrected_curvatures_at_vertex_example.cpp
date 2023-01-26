@@ -12,7 +12,6 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 typedef Epic_kernel::FT FT;
 typedef CGAL::Surface_mesh<Epic_kernel::Point_3> Surface_Mesh;
-typedef boost::graph_traits<Surface_Mesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Surface_Mesh>::vertex_descriptor vertex_descriptor;
 
 int main(int argc, char* argv[])
@@ -21,7 +20,7 @@ int main(int argc, char* argv[])
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
     argv[1] :
-    CGAL::data_file_path("meshes/small_bunny.obj");
+    CGAL::data_file_path("meshes/sphere.off");
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
