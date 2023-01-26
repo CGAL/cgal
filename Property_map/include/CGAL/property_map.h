@@ -255,50 +255,6 @@ struct Compose_property_map<KeyMap, ValueMap, boost::lvalue_property_map_tag>
   }
 };
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-template <class KeyMap, class ValueMap>
-struct CGAL_DEPRECATED Property_map_binder
-{
-  typedef typename boost::property_traits<KeyMap>::key_type key_type;
-  typedef typename boost::property_traits<ValueMap>::value_type value_type;
-  typedef typename boost::property_traits<ValueMap>::reference reference;
-  typedef boost::read_write_property_map_tag category;
-
-  KeyMap key_map;
-  ValueMap value_map;
-
-  Property_map_binder(const KeyMap& key_map = KeyMap(),
-                      const ValueMap& value_map = ValueMap())
-    : key_map(key_map), value_map(value_map)
-  { }
-
-  template <typename VM>
-  Property_map_binder(const VM& value_map,
-                      std::enable_if_t<!std::is_same<KeyMap, VM>::value>* = nullptr)
-    : value_map(value_map)
-  { }
-
-  friend
-  reference get(const Property_map_binder& map, key_type k)
-  {
-    return get(map.value_map, get(map.key_map,k));
-  }
-  friend
-  void put(const Property_map_binder& map, key_type k, const value_type& v)
-  {
-    put(map.value_map, get(map.key_map,k), v);
-  }
-};
-
-template <class KeyMap, class ValueMap>
-CGAL_DEPRECATED
-Property_map_binder<KeyMap, ValueMap>
-bind_property_maps(const KeyMap& src, const ValueMap& tgt)
-{
-  return Property_map_binder<KeyMap, ValueMap>(src, tgt);
-}
-#endif
-
 /// \ingroup PkgPropertyMapRef
 /// returns `Compose_property_maps<KeyMap, ValueMap>(km,vm)`
 template <class KeyMap, class ValueMap>
