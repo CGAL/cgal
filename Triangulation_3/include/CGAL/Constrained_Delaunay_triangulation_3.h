@@ -548,71 +548,32 @@ private:
                                     .visitor(boost::make_bfs_visitor(boost::write_property(
                                         boost::typed_identity_property_map<CDT_2_face_handle>(),
                                         std::back_inserter(fh_region), boost::on_finish_vertex()))));
+    CGAL_assertion(!fh_region.empty());
+    CGAL_assertion(fh == fh_region[0]);
     return fh_region;
   }
 
   auto brute_force_border_3_of_region(const std::vector<CDT_2_face_handle>& fh_region) {
-    std::set<std::pair<Vertex_handle, Vertex_handle>> border_edges;
+    std::set<std::pair<Vertex_handle, Vertex_handle>> border_edges_set;
     for(const auto fh: fh_region) {
       for(int i = 0; i < 3; ++i) {
         const auto va = fh->vertex(CDT_2::cw(i))->info().vertex_handle_3d;
         const auto vb = fh->vertex(CDT_2::ccw(i))->info().vertex_handle_3d;
         if(this->tds().is_edge(va, vb)) {
-          border_edges.insert(CGAL::make_sorted_pair(va, vb));
+          CGAL_assertion_code(const auto result =)
+          border_edges_set.insert(CGAL::make_sorted_pair(va, vb));
+          CGAL_assertion(result.second == true);
         }
       }
     }
-    return border_edges;
-  }
-
-  std::optional<Edge> search_first_intersection(const CDT_2& cdt_2, const auto& fh_region) {
-    for(const auto fh_2d : fh_region) {
-      CGAL_assertion(true == fh_2d->info().missing_subface);
-      CGAL_assertion(false == fh_2d->info().is_outside_the_face);
-      for(int index = 0; index < 3; ++index) {
-        const auto va_3d = fh_2d->vertex(cdt_2.cw(index))->info().vertex_handle_3d;
-        const auto vb_3d = fh_2d->vertex(cdt_2.ccw(index))->info().vertex_handle_3d;
-        Cell_handle c;
-        int i, j;
-        const bool is_3d = this->tds().is_edge(va_3d, vb_3d, c, i, j);
-        CGAL_assertion(fh_2d->info().is_edge_also_in_3d_triangulation[unsigned(index)] == is_3d);
-        if(is_3d) {
-          auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
-          CGAL_assertion(cell_circ != nullptr);
-          do {
-            if(this->is_infinite(cell_circ)) {
-              continue;
-            }
-            const auto index_va = cell_circ->index(va_3d);
-            const auto index_vb = cell_circ->index(vb_3d);
-            const auto index_vc = this->next_around_edge(index_va, index_vb);
-            const auto index_vd = this->next_around_edge(index_vb, index_va);
-            const auto vc = cell_circ->vertex(index_vd);
-            const auto vd = cell_circ->vertex(index_vc);
-            CGAL_assertion(cell_circ->has_vertex(vc));
-            CGAL_assertion(cell_circ->has_vertex(vd));
-            const auto pc = this->point(vc);
-            const auto pd = this->point(vd);
-            const typename Geom_traits::Segment_3 seg{pc, pd};
-            for(const auto fh_2d : fh_region) {
-              const auto triangle = cdt_2.triangle(fh_2d);
-              if(do_intersect(seg, triangle)) {
-                std::cerr << "Segment " << seg << " intersects triangle " << triangle << "\n";
-                return { Edge{cell_circ, index_vc, index_vd} };
-              }
-            }
-          } while(++cell_circ != end);
-        }
-      }
+    std::vector<Edge> border_edges;
+    border_edges.reserve(border_edges_set.size());
+    for(const auto& [va, vb]: border_edges_set) {
+      Cell_handle c;
+      int i, j;
+      CGAL_assume(this->tds().is_edge(va, vb, c, i, j));
+      border_edges.emplace_back(c, i, j);
     }
-    return {};
-  }
-
-  void restore_subface_region(const CDT_2& cdt_2, CDT_2_face_handle fh) {
-    const auto fh_region = region(cdt_2, fh);
-    assert(!fh_region.empty());
-    assert(fh == fh_region[0]);
-    const auto border_edges = brute_force_border_3_of_region(fh_region);
 #if CGAL_DEBUG_CDT_3
     std::cerr << "region size is: " << fh_region.size() << "\n";
     std::cerr << "region border size is: " << border_edges.size() << "\n";
@@ -622,7 +583,47 @@ private:
       write_region(dump_region, fh_region);
     }
 #endif // CGAL_DEBUG_CDT_3
-    const auto found_seg = search_first_intersection(cdt_2, fh_region);
+    return border_edges;
+  }
+
+  std::optional<Edge>
+  search_first_intersection(const CDT_2& cdt_2, const auto& fh_region, const Edge border_edge) {
+    const auto [c, i, j] = border_edge;
+    const Vertex_handle va_3d = c->vertex(i);
+    const Vertex_handle vb_3d = c->vertex(j);
+    auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
+    CGAL_assertion(cell_circ != nullptr);
+    do {
+      if(this->is_infinite(cell_circ)) {
+        continue;
+      }
+      const auto index_va = cell_circ->index(va_3d);
+      const auto index_vb = cell_circ->index(vb_3d);
+      const auto index_vc = this->next_around_edge(index_va, index_vb);
+      const auto index_vd = this->next_around_edge(index_vb, index_va);
+      const auto vc = cell_circ->vertex(index_vd);
+      const auto vd = cell_circ->vertex(index_vc);
+      CGAL_assertion(cell_circ->has_vertex(vc));
+      CGAL_assertion(cell_circ->has_vertex(vd));
+      const auto pc = this->point(vc);
+      const auto pd = this->point(vd);
+      const typename Geom_traits::Segment_3 seg{pc, pd};
+      for(const auto fh_2d : fh_region) {
+        const auto triangle = cdt_2.triangle(fh_2d);
+        if(do_intersect(seg, triangle)) {
+          std::cerr << "Segment " << seg << " intersects triangle " << triangle << "\n";
+          return { Edge{cell_circ, index_vc, index_vd} };
+        }
+      }
+    } while(++cell_circ != end);
+    return {};
+  }
+
+  void restore_subface_region(const CDT_2& cdt_2, CDT_2_face_handle fh) {
+    const auto fh_region = region(cdt_2, fh);
+    const auto border_edges = brute_force_border_3_of_region(fh_region);
+    const Edge first_border_edge = border_edges[0];
+    const auto found_seg = search_first_intersection(cdt_2, fh_region, first_border_edge);
     if(!found_seg) {
       std::cerr << "No segment found\n";
       {
