@@ -59,6 +59,7 @@ if(TARGET CGAL::Eigen3_support)
 endif()
 
 create_single_source_cgal_program( "extrude.cpp" )
+create_single_source_cgal_program( "list_non_pure_triangle_meshes.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope_of_triangle_soup.cpp" )
 create_single_source_cgal_program( "polyhedral_envelope_mesh_containment.cpp" )
