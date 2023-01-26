@@ -77,6 +77,7 @@ int main(int argc, char* argv[])
   };
 
   auto pmap = get(CGAL::vertex_point, mesh);
+  int poly_id = 0;
   CDT_3_try {
     for(auto face_descriptor : faces(mesh)) {
       std::vector<Point_3> polygon;
@@ -84,9 +85,11 @@ int main(int argc, char* argv[])
       for(auto vertex_it : CGAL::vertices_around_face(he, mesh)) {
         polygon.push_back(get(pmap, vertex_it));
       }
-      std::cerr << "NEW POLYGON\n";
+      std::cerr << "NEW POLYGON #" << poly_id << '\n';
       try {
-        cdt.insert_constrained_polygon(polygon);
+        auto id = cdt.insert_constrained_polygon(polygon);
+        assert(id == poly_id);
+        ++poly_id;
       } catch(int error) {
         exit_code = error;
       }
