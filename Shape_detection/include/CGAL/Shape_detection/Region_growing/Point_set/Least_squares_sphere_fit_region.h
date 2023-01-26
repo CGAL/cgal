@@ -264,7 +264,7 @@ namespace Point_set {
       }
 
       // If radius is out of bound, nothing fits, early ending.
-      if (m_radius < m_min_radius || m_radius > m_max_radius) {
+      if (m_radius <= m_min_radius || m_radius > m_max_radius) {
         return false;
       }
 
