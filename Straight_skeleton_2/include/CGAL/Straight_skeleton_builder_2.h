@@ -1383,6 +1383,33 @@ public:
     return enter_contour(aBegin, aEnd, Cartesian_converter<K,K>(), aCheckValidity);
   }
 
+  template<class Weights>
+  Straight_skeleton_builder_2& enter_weights ( const Weights& aWeights )
+  {
+    Face_iterator fit = mSSkel->SSkel::Base::faces_begin() ;
+    CGAL_assertion_code( unsigned int lFaceCountThroughWeights = 0; )
+
+    for(auto const& lSingleBorderWeights : aWeights )
+    {
+      for(FT const& lWeight : lSingleBorderWeights )
+      {
+        CGAL_assertion( fit != mSSkel->SSkel::Base::faces_end() );
+
+        Halfedge_handle lBorder = fit->halfedge() ;
+        CGAL_assertion( lBorder->opposite()->is_border() ) ;
+        std::cout << "Assign " << lWeight << " to " << lBorder->id() << std::endl;
+        lBorder->set_weight ( lWeight ) ;
+        CGAL_assertion_code( ++lFaceCountThroughWeights ) ;
+        ++fit ;
+      }
+    }
+
+    CGAL_assertion_code(std::cout << "lFaceCountThroughWeights = " << lFaceCountThroughWeights << std::endl;)
+    CGAL_assertion_code(std::cout << "mSSkel->SSkel::Base::size_of_faces() = " << mSSkel->SSkel::Base::size_of_faces() << std::endl;)
+    CGAL_assertion( lFaceCountThroughWeights == mSSkel->SSkel::Base::size_of_faces() ) ;
+
+    return *this;
+  }
 } ;
 
 } // end namespace CGAL

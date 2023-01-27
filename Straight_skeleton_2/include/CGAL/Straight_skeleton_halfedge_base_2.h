@@ -19,7 +19,7 @@
 
 namespace CGAL {
 
-template < class Refs >
+template < class Refs, class Traits >
 class Straight_skeleton_halfedge_base_base_2
 {
 public:
@@ -38,15 +38,17 @@ public:
   typedef typename Refs::Vertex                Vertex;
   typedef typename Refs::Face                  Face;
 
-  typedef Straight_skeleton_halfedge_base_base_2<Refs> Base_base ;
+  typedef typename Traits::FT                  FT;
+
+  typedef Straight_skeleton_halfedge_base_base_2<Refs, Traits> Base_base ;
 
 protected:
 
-  Straight_skeleton_halfedge_base_base_2() : mF(Face_handle()), mID(-1), mSlope(ZERO) {}
+  Straight_skeleton_halfedge_base_base_2() : mF(Face_handle()), mID(-1), mSlope(ZERO), mWeight(1) {}
 
-  Straight_skeleton_halfedge_base_base_2( int aID ) : mF(Face_handle()), mID(aID), mSlope(ZERO) {}
+  Straight_skeleton_halfedge_base_base_2( int aID ) : mF(Face_handle()), mID(aID), mSlope(ZERO), mWeight(1) {}
 
-  Straight_skeleton_halfedge_base_base_2( int aID, Sign aSlope ) : mF(Face_handle()), mID(aID), mSlope(aSlope) {}
+  Straight_skeleton_halfedge_base_base_2( int aID, Sign aSlope ) : mF(Face_handle()), mID(aID), mSlope(aSlope), mWeight(1) {}
 
 public:
 
@@ -91,6 +93,8 @@ public:
   Sign slope() const { return mSlope ; }
   void set_slope( Sign aSlope ) { mSlope = aSlope ; }
 
+  FT weight() const { return mWeight ; }
+  void set_weight( FT aWeight ) { mWeight = aWeight ; }
 
 private:
 
@@ -101,10 +105,11 @@ private:
   Face_handle      mF;
   int              mID ;
   Sign             mSlope ;
+  FT               mWeight ;
 };
 
-template < class Refs >
-class Straight_skeleton_halfedge_base_2 : public Straight_skeleton_halfedge_base_base_2<Refs>
+template < class Refs, class Traits >
+class Straight_skeleton_halfedge_base_2 : public Straight_skeleton_halfedge_base_base_2<Refs, Traits>
 {
 public:
 
@@ -112,8 +117,8 @@ public:
   typedef typename Refs::Halfedge_handle Halfedge_handle;
   typedef typename Refs::Face_handle     Face_handle;
 
-  typedef Straight_skeleton_halfedge_base_base_2<Refs> Base_base ;
-  typedef Straight_skeleton_halfedge_base_2<Refs>      Base ;
+  typedef Straight_skeleton_halfedge_base_base_2<Refs, Traits> Base_base ;
+  typedef Straight_skeleton_halfedge_base_2<Refs, Traits>      Base ;
 
   Straight_skeleton_halfedge_base_2() {}
 

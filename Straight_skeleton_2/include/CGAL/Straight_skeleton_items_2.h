@@ -35,7 +35,7 @@ public:
   template<class Refs, class Traits>
   struct Halfedge_wrapper
   {
-    typedef Straight_skeleton_halfedge_base_2 < Refs > Halfedge;
+    typedef Straight_skeleton_halfedge_base_2 < Refs, Traits > Halfedge;
   };
 
   template<class Refs, class Traits>

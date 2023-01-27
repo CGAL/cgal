@@ -499,9 +499,10 @@ public:
   }
 
 // functions to initialize (and harmonize) and cache speeds
-  void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS )
+  void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS,
+                              typename K::FT const& aWeight )
   {
-    CGAL_SS_i::compute_normalized_line_ceoffC2 ( aBorderS, mCoeff_cache ) ;
+    CGAL_SS_i::compute_normalized_line_ceoffC2 ( aBorderS, aWeight, mCoeff_cache ) ;
   }
 
   void InitializeLineCoeffs ( std::size_t aID, std::size_t aOtherID )
@@ -772,13 +773,14 @@ public:
   }
 
 // functions to initialize (and harmonize) and cache speeds
-  void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS )
+  void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS,
+                              typename K::FT const& aWeight )
   {
     C2E lToExact ;
     C2F lToFiltered ;
 
-    mApproximate_traits.InitializeLineCoeffs( lToFiltered(aBorderS) );
-    mExact_traits.InitializeLineCoeffs( lToExact(aBorderS) );
+    mApproximate_traits.InitializeLineCoeffs( lToFiltered(aBorderS), lToFiltered(aWeight) );
+    mExact_traits.InitializeLineCoeffs( lToExact(aBorderS), lToExact(aWeight) );
   }
 
   // This overload copies the coefficients from the halfedge `aOtherID` and caches them for the halfedge `aID`
