@@ -152,7 +152,9 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
     const Subdomain seed_label
       = domain.is_in_domain_object()(seed_point);
     const Subdomain seed_cell_label
-      = (seed_cell == Cell_handle() || tr.is_infinite(seed_cell))
+      = (   tr.dimension() < 3
+         || seed_cell == Cell_handle()
+         || tr.is_infinite(seed_cell))
         ? Subdomain()  //seed_point is OUTSIDE_AFFINE_HULL
         : domain.is_in_domain_object()(
             seed_cell->weighted_circumcenter(tr.geom_traits()));
