@@ -449,9 +449,10 @@ struct SS_converter : Converter
 };
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Filters_split_events_tag)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Protector)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Segment_2_with_ID)
 
-template <class GT, bool has_filters_split_events_tag = has_Filters_split_events_tag<GT>::value>
+template <class GT, bool has_Protector = has_Protector<GT>::value>
 struct Get_protector{ struct type{}; };
 
 template <class GT>
