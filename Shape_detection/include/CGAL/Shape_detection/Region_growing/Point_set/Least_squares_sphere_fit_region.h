@@ -335,8 +335,9 @@ namespace Point_set {
       if (radius >= FT(0)) {
         m_radius = radius;
         m_center = center;
+        return true;
       }
-      return true;
+      return false;
     }
 
     /// @}
