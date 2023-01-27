@@ -16,10 +16,9 @@
 
 #include <CGAL/Isosurfacing_3/internal/Isosurfacing_domain_3.h>
 #include <CGAL/Isosurfacing_3/internal/Explicit_Cartesian_grid_function.h>
-#include <CGAL/Isosurfacing_3/internal/Implicit_Cartesian_grid_geometry_3.h>
+#include <CGAL/Isosurfacing_3/internal/Explicit_Cartesian_grid_geometry_3.h>
 #include <CGAL/Isosurfacing_3/internal/Grid_topology_3.h>
 #include <CGAL/Isosurfacing_3/Zero_gradient.h>
-#include <CGAL/Bbox_3.h>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -45,7 +44,7 @@ using Explicit_Cartesian_grid_domain_3 = unspecified_type;
 template <typename Grid,
           typename Gradient = Zero_gradient,
           typename Topology = internal::Grid_topology_3,
-          typename Geometry = internal::Implicit_Cartesian_grid_geometry_3<typename Grid::Geom_traits>,
+          typename Geometry = internal::Explicit_Cartesian_grid_geometry_3<Grid>,
           typename Function = internal::Explicit_Cartesian_grid_function<Grid> >
 using Explicit_Cartesian_grid_domain_3 =
   internal::Isosurfacing_domain_3<typename Grid::Geom_traits,
@@ -97,11 +96,8 @@ create_explicit_Cartesian_grid_domain(const Grid& grid,
   const std::size_t size_j = grid.ydim();
   const std::size_t size_k = grid.zdim();
 
-  const Bbox_3& bbox = grid.bbox();
-  const typename Geometry::Vector_3 offset{bbox.xmin(), bbox.ymin(), bbox.zmin()};
-
   const Topology topo { size_i, size_j, size_k };
-  const Geometry geom { offset, grid.spacing() };
+  const Geometry geom { grid };
   const Function func { grid };
 
   return Domain{ topo, geom, func, grad, grid.geom_traits() };
