@@ -59,7 +59,7 @@ void Vec::projectOnPlane(const Vec &normal) {
 
 /*! Returns a Vec orthogonal to the Vec. Its norm() depends on the Vec, but is
  zero only for a null Vec. Note that the function that associates an
- orthogonalVec() to a Vec is not continous. */
+ orthogonalVec() to a Vec is not continuous. */
 CGAL_INLINE_FUNCTION
 Vec Vec::orthogonalVec() const {
   // Find smallest component. Keep equal case for null values.

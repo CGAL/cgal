@@ -740,7 +740,11 @@ template <typename GT, typename MD>
 class Compact_mesh_cell_base_3<GT, MD, void>
 {
 public:
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                              Triangulation_data_structure;
+#else
   typedef internal::Dummy_tds_3                         Triangulation_data_structure;
+#endif
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>
@@ -761,7 +765,11 @@ template <typename GT,
 class Compact_mesh_cell_generator_3
 {
 public:
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                              Triangulation_data_structure;
+#else
   typedef internal::Dummy_tds_3                         Triangulation_data_structure;
+#endif
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>

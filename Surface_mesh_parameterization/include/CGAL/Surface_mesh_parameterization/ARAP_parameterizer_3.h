@@ -505,7 +505,7 @@ private:
   // - compute w_ii = - sum of w_ijs.
   //
   // \pre Vertices must be indexed.
-  // \pre Vertex i musn't be already parameterized.
+  // \pre Vertex i mustn't be already parameterized.
   // \pre Line i of A must contain only zeros.
   template <typename VertexIndexMap>
   Error_code fill_linear_system_matrix(Matrix& A,
@@ -1017,7 +1017,7 @@ private:
   // - call compute_b_ij() for each neighbor v_j to compute the B coefficient b_i
   //
   // \pre Vertices must be indexed.
-  // \pre Vertex i musn't be already parameterized.
+  // \pre Vertex i mustn't be already parameterized.
   // \pre Lines i of Bu and Bv must be zero.
   template <typename VertexIndexMap>
   Error_code fill_linear_system_rhs(const Triangle_mesh& mesh,

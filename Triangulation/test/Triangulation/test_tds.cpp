@@ -11,7 +11,7 @@ void test(const int d, const string & type)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that TDS contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename TDS::Vertex_handle Vertex_handle;
     typedef typename TDS::Vertex_iterator Vertex_iterator;
     typedef typename TDS::Full_cell_handle Full_cell_handle;

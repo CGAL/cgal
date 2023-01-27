@@ -48,7 +48,7 @@ protected:
 
   // Data members:
   const Traits_2* m_traits;
-  bool m_own_traits;      // inidicates whether the kernel should be freed up.
+  bool m_own_traits;      // indicates whether the kernel should be freed up.
 
 public:
   // The pointer to the traits and the flag that indicate ownership should be

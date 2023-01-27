@@ -494,7 +494,7 @@ public:
         }
     }
 };
-} // namepace internal
+} // namespace internal
 
 } //namespace CGAL
 

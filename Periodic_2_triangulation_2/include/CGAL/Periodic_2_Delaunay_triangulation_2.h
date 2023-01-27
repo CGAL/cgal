@@ -572,7 +572,7 @@ private:
   void propagating_flip(const Face_handle& f, int i);
 #endif
 
-  // auxilliary functions for remove
+  // auxiliary functions for remove
   // returns false if we first need to convert to a 9-cover before the vertex can be removed
   bool remove_single_vertex(Vertex_handle v, const Offset &v_o);
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
@@ -763,7 +763,7 @@ private:
                                    true) ==  ON_POSITIVE_SIDE;
   }
 
-// end of auxilliary functions for remove
+// end of auxiliary functions for remove
 
 
 

@@ -401,7 +401,7 @@ note that a whole face of the cube (2 triangles) is exactly contained in the pla
 \subsubsection coref_ex_refine_subsec Boolean Operation and Local Remeshing
 
 This example is similar to the previous one, but here we
-substract a volume and update the first input triangulated surface mesh
+subtract a volume and update the first input triangulated surface mesh
 (in-place operation). The edges that are on the intersection of the input
 meshes are marked and the region around them is remeshed isotropically
 while preserving the intersection polyline.
@@ -584,7 +584,7 @@ The latter has cylindrical and spherical patches at convex edges and vertices of
 
 Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$ we can associate  a <em>prism</em> to each triangle by intersecting two halfspaces
 parallel to the triangle, three halfspaces orthogonal to the triangle and parallel to the edges,
-and additionaly halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
+and additionally halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
 of the angle.  These halfspaces are at distance  \f$ \delta \f$ and
 such that they contain the triangle.
 
@@ -797,7 +797,7 @@ to the input non-manifold vertex.
 
 \subsubsection FixNMVerticeExample Manifoldness Repair Example
 
-In the following example, a non-manifold configuration is artifically created and
+In the following example, a non-manifold configuration is artificially created and
 fixed with the help of the functions described above.
 
 \cgalExample{Polygon_mesh_processing/manifoldness_repair_example.cpp}

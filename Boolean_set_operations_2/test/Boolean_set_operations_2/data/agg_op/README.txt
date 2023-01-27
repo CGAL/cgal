@@ -1,8 +1,8 @@
                           input files for test_agg_op (test aggregate operations on many polygons)
                           ------------------------------------------------------------------------
 
-strcutre of file:
-----------------
+structure of file:
+-----------------
 
 # polygons (range of Polygon_2)
 N # number of polygons

@@ -289,7 +289,7 @@ namespace Polygon_mesh {
         // The best fit plane will be a plane fitted to all vertices of all
         // region faces with its normal being perpendicular to the plane.
         // Given that the points, and no normals, are used in estimating
-        // the plane, the estimated normal will point into an arbitray
+        // the plane, the estimated normal will point into an arbitrary
         // one of the two possible directions.
         // We flip it into the correct direction (the one that the majority
         // of faces agree with) below.

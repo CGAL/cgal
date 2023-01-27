@@ -241,7 +241,7 @@ namespace CGAL {
     }
 
   protected:
-    /// Neighboors for each dimension +1 (from 0 to dimension).
+    /// Neighbors for each dimension +1 (from 0 to dimension).
     Dart_descriptor mf[dimension+1];
 
     /// Values of Boolean marks.

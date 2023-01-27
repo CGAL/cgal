@@ -177,11 +177,11 @@ private:
   };
 
   /// This threshold is chosen such that if all orthosphere radii are shorter
-  /// than this treshold, then we can be sure that there are no self-edges anymore.
+  /// than this threshold, then we can be sure that there are no self-edges anymore.
   FT orthosphere_radius_threshold;
 
   /// This container stores all the cells whose orthosphere radius is larger
-  /// than the treshold `orthosphere_radius_threshold`.
+  /// than the threshold `orthosphere_radius_threshold`.
   boost::unordered_set<Cell_handle, Cell_handle_hash> cells_with_too_big_orthoball;
 
   class Cover_manager

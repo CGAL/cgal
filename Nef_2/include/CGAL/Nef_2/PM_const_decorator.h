@@ -496,7 +496,7 @@ check_integrity_and_topological_planarity(bool faces) const
   /* this means all face cycles and all isolated vertices are
      indeed referenced from a face */
   /* every isolated vertex increases the component count
-       one face cycle per component is redundent except one
+       one face cycle per component is redundant except one
        finally check the Euler formula: */
   CGAL_assertion( v_num - e_num + f_num == 1 + c_num );
 }

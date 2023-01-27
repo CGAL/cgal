@@ -367,7 +367,7 @@ associated with the surface mesh.
 
 Note however that by garbage collecting elements get new indices.
 In case you keep vertex descriptors they are most probably no longer
-refering to the right vertices.
+referring to the right vertices.
 
 \subsection SubsectionSurfaceMeshMemoryManagementExample Example
 \cgalExample{Surface_mesh/sm_memory.cpp}

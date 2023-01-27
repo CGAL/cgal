@@ -19,10 +19,10 @@ namespace CGAL {
   class Info_for_cell_attribute
   {
   public:
-    /// Contructor without parameter.
+    /// Constructor without parameter.
     Info_for_cell_attribute()=default; // default => zero-initializing built-in types
 
-    /// Contructor with an info in parameter.
+    /// Constructor with an info in parameter.
     Info_for_cell_attribute(const Info& ainfo) : minfo(ainfo)
     {}
 

@@ -818,7 +818,7 @@ public:
         //      assume that the subcurves cannot overlap more than once.
         if (! right_coincides && ! left_coincides) {
           // Non of the endpoints of the current subcurve of one polycurve
-          // coincides with the curent subcurve of the other polycurve:
+          // coincides with the current subcurve of the other polycurve:
           // Output the intersection if exists.
           std::vector<Intersection_base_result> xections;
           intersect(cv1[i1], cv2[i2], std::back_inserter(xections));

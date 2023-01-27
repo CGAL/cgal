@@ -245,7 +245,7 @@ bool is_full_cell(const Full_cell_handle & c) const;
 
 /*!
 This function computes (<I>gathers</I>) a connected set of full cells
-satifying a common criterion. Call them <I>good</I> full cells. It is assumed
+satisfying a common criterion. Call them <I>good</I> full cells. It is assumed
 that the argument `start` is a good full cell. The full cells are then
 recursively explored by examining if, from a given good full cell, its adjacent
 full cells are also good.
@@ -335,7 +335,7 @@ Iterator to the first vertex of `tds`. User has no control on the order.
 Vertex_iterator vertices_begin();
 
 /*!
-Iterator refering beyond the last vertex of `tds`.
+Iterator referring beyond the last vertex of `tds`.
 */
 Vertex_iterator vertices_end();
 
@@ -365,7 +365,7 @@ Iterator to the first full cell of `tds`. User has no control on the order.
 Full_cell_iterator full_cells_begin();
 
 /*!
-Iterator refering beyond the last full cell of `tds`.
+Iterator referring beyond the last full cell of `tds`.
 */
 Full_cell_iterator full_cells_end();
 
@@ -380,7 +380,7 @@ Iterator to the first facet of the triangulation.
 Facet_iterator facets_begin();
 
 /*!
-Iterator refering beyond the last facet of the triangulation.
+Iterator referring beyond the last facet of the triangulation.
 */
 Facet_iterator facets_end();
 
@@ -618,7 +618,7 @@ When `verbose` is set to `true`, messages are printed to give
 a precise indication on the kind of invalidity encountered.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */
@@ -711,7 +711,7 @@ It must <I>at least</I> check that `v` has an incident full cell, which in
 turn must contain `v` as one of its vertices.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */
@@ -985,7 +985,7 @@ It must <I>at least</I> check that for each <I>existing</I> neighbor `n`,
 `c` is also a neighbor of `n`.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */

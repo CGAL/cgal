@@ -33,7 +33,7 @@ ou de la face infini
 - doc : relier nerarest-vertex queries a localisation dans Voronoi
 - doc de la triangulation reguliere a mettre a jour
 - input output of regular triangulation
-  (may be outputing for each face the hidden points
+  (may be outputting for each face the hidden points
    in the output operator for faces)
   could be envisaged in a more thoroughfull treatment of
   input-output operation
@@ -41,7 +41,7 @@ ou de la face infini
   temp< Pointit, OutFacesIt>
   bool	finite_faces_inside( Pointit begin, Pointit end, OutFacesIt fit) 
 	given a range of point, find all finites faces inside or intersecting
-        the polygon discribed by the sequence of points.
+        the polygon described by the sequence of points.
         bool = false if none is found
  - bencher Delaunay_2 avec un insert utilisant
   find_conflict + star_hole
@@ -52,7 +52,7 @@ ou de la face infini
   par power_test_2(p,q,r)
 
 
-- Check if copy constructor and assignement operator of
+- Check if copy constructor and assignment operator of
   constrained triangulation transfers the contrained marks.
 - Something still tobe done for remove in Constrained
   Delaunay_constrained and  Constrained_triangulation_plus

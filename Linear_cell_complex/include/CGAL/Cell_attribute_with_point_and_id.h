@@ -36,15 +36,15 @@ namespace CGAL {
     typedef typename Base::Point Point;
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_point_and_id()
     {}
 
-    /// Contructor with an info in parameter.
+    /// Constructor with an info in parameter.
     Cell_attribute_with_point_and_id(const Point& apoint) : Base(apoint)
     {}
 
-    /// Contructor with a point and an attribute in parameters.
+    /// Constructor with a point and an attribute in parameters.
     Cell_attribute_with_point_and_id(const Point& apoint, const Info_& ainfo) :
       Base(apoint, ainfo)
     {}
@@ -68,11 +68,11 @@ namespace CGAL {
     typedef typename Base::Point Point;
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_point_and_id()
     {}
 
-    /// Contructor with a point in parameter.
+    /// Constructor with a point in parameter.
     Cell_attribute_with_point_and_id(const Point& apoint) : Base(apoint)
     {}
   };

@@ -269,9 +269,9 @@ private:
   /** Traits class. */
   Traits m_traits;
 
-  /** Controling the velocity of movement and approximation quality. */
+  /** Controlling the velocity of movement and approximation quality. */
   double m_omega_H;
-  /** Controling the smoothness of the medial approximation. */
+  /** Controlling the smoothness of the medial approximation. */
   double m_omega_P;
   /** Edges with length less than `min_edge_length` will be collapsed. */
   double m_min_edge_length;

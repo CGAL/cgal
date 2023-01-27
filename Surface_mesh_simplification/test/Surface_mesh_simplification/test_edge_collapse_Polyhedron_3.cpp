@@ -487,7 +487,7 @@ int main(int argc, char** argv)
     }
 
     cout << endl
-         << lOK                    << " cases succedded." << endl
+         << lOK                    << " cases succeeded." << endl
          << (lCases.size() - lOK) << " cases failed." << endl;
 
     return lOK == lCases.size() ? 0 : 1;

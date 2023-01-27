@@ -82,7 +82,7 @@ Plane_3 plane() const { return Base(*this); }
 /* We have:
    1) all directions fixed at p
    2) d1==d3 possible
-   return true iff d1,d2,d3 are stricly ccw ordered around p
+   return true iff d1,d2,d3 are strictly ccw ordered around p
    Note: Sphere_directions are Plane_3
          we therefore compare the normal vectors of the planes
          that underly the directions d1,d2,d3 in the plane

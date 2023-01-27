@@ -678,7 +678,7 @@ private:
           for (std::size_t i = 0; i < Nx; ++ i)
             if( point_map[i][j].size()>0)
               {
-                //inside: recenter (cell center) the first point of the cell and desactivate the others points
+                //inside: recenter (cell center) the first point of the cell and deactivate the others points
                 if (!Mask_border[i][j] && Mask[i][j])
                   {
                     double x2pt = (i+0.5) * grid_length + box_2d.xmin();
@@ -703,7 +703,7 @@ private:
                       m_status[point_map[i][j][np]] = SKIPPED;
                   }
 
-                //border: recenter (barycenter) the first point of the cell and desactivate the others points
+                //border: recenter (barycenter) the first point of the cell and deactivate the others points
                 else if (Mask_border[i][j] && Mask[i][j])
                   {
                     std::vector<Point> pts;
@@ -982,7 +982,7 @@ private:
                 std::size_t inde = division_tab[j][k];
 
                 if (CGAL::squared_distance (line, m_points[inde]) < d_DeltaEdge * d_DeltaEdge)
-                  m_status[inde] = SKIPPED; // Deactive points too close (except best, see below)
+                  m_status[inde] = SKIPPED; // Deactivate points too close (except best, see below)
 
                 double distance = CGAL::squared_distance (perfect, m_points[inde]);
                 if (distance < dist_min)

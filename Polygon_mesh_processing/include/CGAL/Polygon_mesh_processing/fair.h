@@ -98,8 +98,8 @@ bool fair(TriangleMesh& tmesh,
     \cgalParamNEnd
 
     \cgalParamNBegin{fairing_continuity}
-      \cgalParamDescription{A value controling the tangential continuity of the output surface patch.
-                            The possible values are 0, 1 and 2, refering to the  C<sup>0</sup>, C<sup>1</sup>
+      \cgalParamDescription{A value controlling the tangential continuity of the output surface patch.
+                            The possible values are 0, 1 and 2, referring to the  C<sup>0</sup>, C<sup>1</sup>
                             and C<sup>2</sup> continuity.}
       \cgalParamType{unsigned int}
       \cgalParamDefault{`1`}

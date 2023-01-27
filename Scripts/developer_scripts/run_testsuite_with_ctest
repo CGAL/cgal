@@ -296,7 +296,7 @@ run_test_on_platform()
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
 
   CTEST_OPTS="-T Start -T Test --timeout 1200 ${DO_NOT_TEST:+-E execution___of__}"
-  if uname | grep -q "CYGWIN"; then
+  if [ -n "$CONFIG_TYPE" ]; then
     CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS}"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then

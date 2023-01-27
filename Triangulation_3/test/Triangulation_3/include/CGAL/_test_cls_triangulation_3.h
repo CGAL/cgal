@@ -587,7 +587,7 @@ _test_cls_triangulation_3(const Triangulation &)
 //   std::cout << " done" << std::endl;
 
 
-  // Test inserts function separatelly.
+  // Test inserts function separately.
 
   std::cout << "    Testing insertions   " << std::endl;
   Locate_type lt;

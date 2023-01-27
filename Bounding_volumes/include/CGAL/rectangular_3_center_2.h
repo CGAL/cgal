@@ -1387,7 +1387,7 @@ CGAL_3CENTER_REPEAT_CHECK:
   CGAL_assertion(rad_2 == 0 || rad_2 > rho_min);
 
   // if a covering with rho == 0 is possible,
-  // it will be catched in the type1 functions
+  // it will be caught in the type1 functions
   Point q_t, q_r;
   if (rad_2 > rho_max || rho_min == -1) {
     // it is rho_max ...

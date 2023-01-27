@@ -91,7 +91,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
 
   dh=map.next(dh);
   // 2) Here dh is  on the parallel of the first cycle. We mark darts of the cycle parallel
-  //    to the first one. Its lenght is 24.
+  //    to the first one. Its length is 24.
   auto mark=map.get_new_mark();
   std::size_t nbedges=0;
   typename LCC_CM::Dart_const_descriptor dh2=dh;

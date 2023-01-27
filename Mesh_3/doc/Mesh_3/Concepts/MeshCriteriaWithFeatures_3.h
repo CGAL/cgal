@@ -8,7 +8,7 @@ the concepts `MeshCellCriteria_3` and
 `MeshFacetCriteria_3` describing the refinement
 criteria for, respectively, mesh cells and surface facets.
 For domains with features, the concept `MeshCriteriaWithFeatures_3`
-additionnally encapsulates the
+additionally encapsulates the
 concept `MeshEdgeCriteria_3`,
 that describes the requirements, in terms of sizing, for the discretization of the domain \f$ 1\f$-dimensional features.
 

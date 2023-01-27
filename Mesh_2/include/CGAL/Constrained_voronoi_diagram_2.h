@@ -146,7 +146,7 @@ public:
 
 
 // Cdt should be of the type Constrained_Delaunay_triangulation_2
-// and the face base shoul be Constrained_Delaunay_triangulation_face_base_2
+// and the face base should be Constrained_Delaunay_triangulation_face_base_2
 template <class Cdt>
 class Constrained_voronoi_diagram_2
 {

@@ -2,7 +2,7 @@ name: Documentation Removal
 
 on:
   pull_request_target:
-    types: [closed, removed]
+    types: [closed, removed, workflow_dispatch]
 permissions:
   contents: read
 
