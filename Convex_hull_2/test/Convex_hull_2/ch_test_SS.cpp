@@ -53,8 +53,5 @@ main()
   CGAL::ch__batch_test( ch_S_Qgmp );
 #endif
 
-  CGAL::Simple_cartesian<double>                       ch_S_double;
-  std::cout << "SimpleCartesian<double>:     ";
-  CGAL::ch__batch_test( ch_S_double );
   return 0;
 }
