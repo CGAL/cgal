@@ -1,9 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_polyhedron_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
+#include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/lloyd_optimize_mesh_3.h>
 #include <CGAL/odt_optimize_mesh_3.h>
@@ -36,12 +37,11 @@ void test()
   // Domain
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-  typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
+  typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron,K> Mesh_domain;
 
   // Triangulation
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, K, Concurrency_tag>::type Tr;
-  typedef CGAL::Mesh_complex_3_in_triangulation_3<
-    Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Mesh Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -54,8 +54,6 @@ void test()
   Mesh_domain domain(polyhedron);
     //no random generator is given, so CGAL::Random(0) is used
 
-  // Get sharp features
-  domain.detect_features();
 
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.2,
@@ -68,10 +66,7 @@ void test()
   // iterate
   std::vector<std::string> output_c3t3;
   std::vector<std::string> output_surfaces;
-
-  const std::size_t nb_operations = 5;
-
-  output_c3t3.reserve(nb_operations * nb_runs);
+  output_c3t3.reserve(5 * nb_runs);
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
@@ -136,16 +131,14 @@ void test()
     if(i == 0)
       continue;
     //else check
-    for(std::size_t j = 0; j < nb_operations; ++j)
+    for(std::size_t j = 0; j < 5; ++j)
     {
-      std::size_t id1 = nb_operations * (i - 1) + j;
-      std::size_t id2 = nb_operations * i + j;
-      if(0 != output_c3t3[id1].compare(output_c3t3[id2]))
+      if(0 != output_c3t3[5*(i-1)+j].compare(output_c3t3[5*i+j]))
       {
         std::cerr << "Meshing operation " << j << " is not deterministic.\n";
         assert(false);
       }
-      if (0 != output_surfaces[id1].compare(output_surfaces[id2]))
+      if (0 != output_surfaces[5 * (i - 1) + j].compare(output_surfaces[5 * i + j]))
       {
         std::cerr << "Output surface after operation " << j << " is not deterministic.\n";
         assert(false);
