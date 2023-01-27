@@ -30,7 +30,8 @@ namespace CGAL {
 
 namespace CGAL_SS_i {
 
-template<class K> struct Has_inexact_constructions
+template<class K>
+struct Has_inexact_constructions
 {
   typedef typename K::FT FT ;
 
@@ -41,6 +42,23 @@ template<class K> struct Has_inexact_constructions
                                   , Tag_false
                                   >::type type ;
 } ;
+
+template <class K>
+struct Segment_2_with_ID
+  : public K::Segment_2
+{
+  typedef typename K::Segment_2 Base;
+  typedef typename K::Point_2 Point_2;
+
+public:
+  Segment_2_with_ID() : Base(), mID(-1) { }
+  Segment_2_with_ID(Base const& aS) : Base(aS), mID(-1) { }
+  Segment_2_with_ID(Base const& aS, const std::size_t aID) : Base(aS), mID(aID) { }
+  Segment_2_with_ID(Point_2 const& aP, Point_2 const& aQ, const std::size_t aID) : Base(aP, aQ), mID(aID) { }
+
+public:
+  std::size_t mID;
+};
 
 //
 // This record encapsulates the defining contour halfedges for a node (both contour and skeleton)
@@ -176,10 +194,7 @@ public:
 
 inline void intrusive_ptr_add_ref( Ref_counted_base const* p ) { p->AddRef(); }
 inline void intrusive_ptr_release( Ref_counted_base const* p ) { p->Release(); }
+
 } // namespace CGAL
 
-
-
-#endif // CGAL_STRAIGHT_SKELETON_AUX_H //
-// EOF //
-
+#endif // CGAL_STRAIGHT_SKELETON_AUX_H

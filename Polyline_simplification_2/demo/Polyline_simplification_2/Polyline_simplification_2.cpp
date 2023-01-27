@@ -321,7 +321,7 @@ void MainWindow::on_actionSimplify_triggered()
   }
   catch(...)
   {
-    statusBar()->showMessage(QString("Exception ocurred"));
+    statusBar()->showMessage(QString("Exception occurred"));
   }
 
    // default cursor
@@ -478,7 +478,7 @@ void MainWindow::loadOSM(QString fileName)
   }
   catch(...)
   {
-    statusBar()->showMessage(QString("Exception ocurred"));
+    statusBar()->showMessage(QString("Exception occurred"));
   }
 
   Q_EMIT( changed());
