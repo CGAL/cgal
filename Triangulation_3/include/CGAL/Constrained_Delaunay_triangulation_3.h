@@ -679,8 +679,7 @@ private:
     return std::pair<Vertex_handle, Vertex_handle>{c->vertex(i), c->vertex(j)};
   }
 
-  auto restore_subface_region(CDT_3_face_index face_index, const CDT_2& cdt_2, CDT_2_face_handle fh) {
-    const auto fh_region = region(cdt_2, fh);
+  void restore_subface_region(CDT_3_face_index face_index, const CDT_2& cdt_2, const auto& fh_region) {
     const auto border_edges = brute_force_border_3_of_region(fh_region);
     const auto border_vertices = [&]() {
       std::set<Vertex_handle> vertices;
@@ -792,7 +791,6 @@ private:
       }
     }
 #endif
-    return fh_region;
   }
 
   void restore_face(CDT_3_face_index face_index) {
@@ -822,9 +820,10 @@ private:
       if(fh->info().is_outside_the_face) continue;
       if(false == fh->info().missing_subface) continue;
       if(processed_faces.contains(fh)) continue;
+      const auto fh_region = region(cdt_2, fh);
+      processed_faces.insert(fh_region.begin(), fh_region.end());
       try {
-        const auto region = restore_subface_region(face_index, cdt_2, fh);
-        processed_faces.insert(region.begin(), region.end());
+        restore_subface_region(face_index, cdt_2, fh_region);
       }
       catch(Next_face&) {
       }
