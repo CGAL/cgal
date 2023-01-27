@@ -193,9 +193,9 @@ class Rational
 template <class Info>
 struct No_cache
 {
-  bool IsCached ( std::size_t ) { return false; }
+  bool IsCached ( std::size_t ) const { return false; }
 
-  Info Get ( std::size_t )
+  Info Get ( std::size_t ) const
   {
     CGAL_error();
     return Info();
@@ -236,12 +236,12 @@ struct Info_cache
   std::vector<Info> mValues ;
   std::vector<bool> mAlreadyComputed ;
 
-  bool IsCached ( std::size_t i )
+  bool IsCached ( std::size_t i ) const
   {
     return ( (mAlreadyComputed.size() > i) && mAlreadyComputed[i] ) ;
   }
 
-  Info const& Get(std::size_t i)
+  Info const& Get(std::size_t i) const
   {
     CGAL_precondition ( IsCached(i) ) ;
     CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
