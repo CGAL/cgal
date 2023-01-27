@@ -12,7 +12,7 @@ using SCD   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-using Traits = typename CGAL::Kinetic_shape_partitioning_Traits_3<EPICK, EPECK, std::vector<typename EPICK::Point_3>, CGAL::Identity_property_map<typename EPICK::Point_3> >;
+using Traits = typename CGAL::Kinetic_shape_partitioning_traits_3<EPICK, EPECK, std::vector<typename EPICK::Point_3>, CGAL::Identity_property_map<typename EPICK::Point_3> >;
 
 using Kernel     = EPICK;
 using FT         = typename Kernel::FT;

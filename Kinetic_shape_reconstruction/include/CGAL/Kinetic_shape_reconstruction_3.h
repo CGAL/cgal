@@ -24,12 +24,9 @@ namespace CGAL
   \brief Piece-wise linear reconstruction via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam GeomTraits
-    must be a model of `Kernel`. Is used for non-critical calculations.
+    must be a model of `Kinetic_shape_partition_trais_3`.
 
-  \tparam IntersectionTraits
-    must be a model of `Kernel`. Is used for the creation of the intersection graph. An exact kernel is suggested.
-
-  \tparam InputRange
+  \tparam NormalMap
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 */
 template<typename Traits, typename NormalMap>
@@ -59,9 +56,19 @@ public:
   using Planar_region = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
   using Planar_sorting = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range, Neighbor_query_3, Point_map>;
   using Region_growing_3 = CGAL::Shape_detection::Region_growing<Input_range, Neighbor_query_3, Planar_region, typename Planar_sorting::Seed_map>;
+  /*!
+  \brief Creates a Kinetic_shape_reconstruction_3 object.
 
-  Kinetic_shape_reconstruction_3(bool verbose, bool debug) : m_kinetic_partition(verbose, debug) {
+  \param verbose
+  provides information on std::cout. The default is false.
+
+  \param debug
+  writes intermediate results into ply files. The default is false.
+
+  */
+  Kinetic_shape_reconstruction_3(bool verbose = false, bool debug = false) : m_kinetic_partition(verbose, debug) {
   }
+
   /*!
     \brief Detects shapes in the provided point cloud
 
@@ -91,17 +98,17 @@ public:
       \cgalParamType{`std::size_t`}
       \cgalParamDefault{12}
     \cgalParamNEnd
-    \cgalParamNBegin{maximum_distance}
+    \cgalParamNBegin{distance_threshold}
       \cgalParamDescription{maximum distance from a point to a planar shape}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{1}
     \cgalParamNEnd
-    \cgalParamNBegin{maximum_angle}
+    \cgalParamNBegin{angle_threshold}
       \cgalParamDescription{maximum angle in degrees between the normal of a point and the plane normal}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{25 degrees}
     \cgalParamNEnd
-    \cgalParamNBegin{minimum_region_size}
+    \cgalParamNBegin{min_region_size}
       \cgalParamDescription{minimum number of 3D points a region must have}
       \cgalParamType{`std::size_t`}
       \cgalParamDefault{5}
@@ -259,12 +266,12 @@ public:
   /*!
   \brief Retrieves the detected shapes.
 
-    @return
-    vector with a plane equation for each detected planar shape.
+  @return
+  vector with a plane equation for each detected planar shape.
 
-    \pre `successful shape detection`
+  \pre `successful shape detection`
   */
-  const std::vector<Plane_3>& detected_planar_shapes(std::vector<std::vector<std::size_t> >& indices) {
+  const std::vector<Plane_3>& detected_planar_shapes() {
     return m_planes;
   }
 
@@ -272,7 +279,7 @@ public:
   \brief Retrieves the indices of detected shapes.
 
     @return
-    vector with a plane equation for each detected planar shape.
+    indices into `input_range` for each detected planar shape in vectors.
 
     \pre `successful shape detection`
   */
@@ -293,17 +300,17 @@ public:
       \cgalParamType{bool}
       \cgalParamDefault{false}
     \cgalParamNEnd
-    \cgalParamNBegin{bbox_extension}
+    \cgalParamNBegin{bbox_dilation_ratio}
       \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partitioning.}
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
     \cgalParamNEnd
-    \cgalParamNBegin{theta}
+    \cgalParamNBegin{angle_tolerance}
       \cgalParamDescription{The tolerance angle to snap the planes of two input polygons into one plane.}
       \cgalParamType{FT}
       \cgalParamDefault{5}
     \cgalParamNEnd
-    \cgalParamNBegin{epsilon}
+    \cgalParamNBegin{distance_tolerance}
       \cgalParamDescription{The tolerance distance to snap the planes of two input polygons into one plane.}
       \cgalParamType{FT}
       \cgalParamDefault{5}
@@ -322,7 +329,7 @@ public:
     using Polygon_3 = std::vector<Point_3>;
     using Polygon_map = CGAL::Identity_property_map<Polygon_3>;
 
-    return m_kinetic_partition.initialize(m_polygons, Polygon_map());
+    return m_kinetic_partition.initialize(m_polygons, Polygon_map(), np);
   }
 
   /*!
@@ -412,7 +419,7 @@ public:
     const std::vector< std::vector<double> >& cost_matrix);
 
   /*!
-  \brief Propagates the kinetic polygons in the initialized partition.
+  \brief Uses graph-cut to solve an solid/empty labeling of the volumes of the kinetic partition.
 
   \param lambda
   trades the impact of the data term for impact of the regularization term. Should be in the range [0, 1).

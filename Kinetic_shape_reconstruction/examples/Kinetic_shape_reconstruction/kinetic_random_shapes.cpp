@@ -36,7 +36,7 @@ using IPoint_3 = typename EPICK::Point_3;
 using IPolygon_3     = std::vector<IPoint_3>;
 using IPolygon_3_map = CGAL::Identity_property_map<IPolygon_3>;
 
-using Traits = typename CGAL::Kinetic_shape_partitioning_Traits_3<EPICK, EPECK, std::vector<typename EPICK::Point_3>, CGAL::Identity_property_map<typename EPICK::Point_3> >;
+using Traits = typename CGAL::Kinetic_shape_partitioning_traits_3<EPICK, EPECK, std::vector<typename EPICK::Point_3>, CGAL::Identity_property_map<typename EPICK::Point_3> >;
 
 using KSP = CGAL::Kinetic_shape_partitioning_3<Traits>;
 

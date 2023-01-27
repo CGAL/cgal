@@ -45,49 +45,12 @@
 
 namespace CGAL {
 
-#ifdef DOXYGEN_NS
 /*!
 * \ingroup PkgKineticPartition
   \brief Creates the kinetic partitioning of the bounding box.
 
-  \tparam Kernel
-    must be a model of `Kernel`. Is used for non-critical calculations.
-
-  \tparam IntersectionKernel
-    must be a model of `Kernel`. Is used for the creation of the intersection graph. An exact kernel is suggested.
-*/
-template<Kernel, Intersection_Kernel = CGAL::Exact_predicates_exact_constructions_kernel>
-class Kinetic_partitioning_3 {
-public:
-
-
-  /*!
-  \brief Propagates the kinetic polygons in the initialized partition.
-
-    \param k
-    maximum number of allowed intersections for each input polygon before its expansion stops.
-
-    @return
-    success of kinetic partitioning.
-
-    \pre `successful initialization`
-  */
-  /// @}
-
-  bool partition(std::size_t k);
-
-}
-#else
-
-/*!
-* \ingroup PkgKineticPartition
-  \brief Creates the kinetic partitioning of the bounding box.
-
-  \tparam Kernel
-    must be a model of `Kernel`. Is used for non-critical calculations.
-
-  \tparam IntersectionKernel
-    must be a model of `Kernel`. Is used for the creation of the intersection graph. An exact kernel is suggested.
+  \tparam GeomTraits
+    must be a model of `Kinetic_shape_partition_trais_3`.
 */
 template<typename Traits>
 class Kinetic_shape_partitioning_3 {
@@ -992,8 +955,6 @@ private:
     return faces;
   }*/
 };
-
-#endif //DOXYGEN_NS
 
 } // namespace CGAL
 

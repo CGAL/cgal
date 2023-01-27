@@ -23,7 +23,7 @@ using Label_map    = typename Point_set:: template Property_map<int>;
 using Semantic_map = CGAL::KSR::Semantic_from_label_map<Label_map>;
 using Region_map = typename Point_set:: template Property_map<int>;
 
-using Traits = typename CGAL::Kinetic_shape_partitioning_Traits_3<Kernel, EPECK, Point_set, Point_map>;
+using Traits = typename CGAL::Kinetic_shape_partitioning_traits_3<Kernel, EPECK, Point_set, Point_map>;
 
 using KSR = CGAL::Kinetic_shape_reconstruction_3<Traits, Normal_map>;
 
