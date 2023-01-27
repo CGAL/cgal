@@ -323,7 +323,7 @@ public:
     }
 
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     Status_line_CA_1(Rep rep) :
         Base(rep) {

@@ -211,7 +211,7 @@ limited precision in the algorithm's underlying arithmetic, it
 can happen that the computed approximation ellipsoid has a
 worse approximation ratio (and \f$ \epsilon\f$ can thus be larger
 than `eps` in general). In any case, the number
-\f$ \epsilon\f$ (and with this, the achived approximation
+\f$ \epsilon\f$ (and with this, the achieved approximation
 \f$ 1+\epsilon\f$) can be queried by calling the routine
 `achieved_epsilon()` discussed below.
 
@@ -240,7 +240,7 @@ const Traits& traits = Traits() );
 /// exactly representable as `double` numbers.) In order to access the
 /// center and semiaxes of the computed approximation ellipsoid, the
 /// functions `center_cartesian_begin()`, `axes_lengths_begin()`, and
-/// `axis_direction_cartesian_begin()` can be used. In constrast to
+/// `axis_direction_cartesian_begin()` can be used. In contrast to
 /// the above access functions `achieved_epsilon()`,
 /// `defining_matrix()`, `defining_vector()`, and `defining_scalar()`,
 /// which return the described quantities exactly, the routines below

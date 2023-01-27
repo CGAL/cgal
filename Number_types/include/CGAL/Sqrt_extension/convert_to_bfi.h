@@ -23,7 +23,7 @@
 #include <CGAL/tss.h>
 
 
-// Disbale SQRT_EXTENSION_TO_BFI_CACHE by default
+// Disable SQRT_EXTENSION_TO_BFI_CACHE by default
 #ifndef CGAL_USE_SQRT_EXTENSION_TO_BFI_CACHE
 #define CGAL_USE_SQRT_EXTENSION_TO_BFI_CACHE 0
 #endif

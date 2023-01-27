@@ -19,7 +19,7 @@
  *   It is very important that the BigFloats used in these intervals
  *   have no error at the beginning, and this is maintained
  *   by refinement.  Note that if x, y are error-free BigFloats,
- *   then (x+y)/2 may not be error-free (in current implementaion.
+ *   then (x+y)/2 may not be error-free (in current implementation.
  *   We have to call a special "exact divide by 2" method,
  *   (x+y).div2() for this purpose.
  *

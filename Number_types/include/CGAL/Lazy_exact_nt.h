@@ -68,7 +68,7 @@
  * TODO :
  * - Generalize it for constructions at the kernel level.
  * - Add mixed operations with ET too ?
- * - Interval refinement functionnality ?
+ * - Interval refinement functionality ?
  * - Separate the handle and the representation(s) in 2 files (?)
  *   maybe not a good idea, better if everything related to one operation is
  *   close together.
@@ -174,7 +174,7 @@ struct Lazy_exact_Ex_Cst final : public Lazy_exact_nt_rep<ET>
   }
 };
 
-// Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
+// Construction from a Lazy_exact_nt<ET1> (which keeps the laziness).
 template <typename ET, typename ET1>
 class Lazy_lazy_exact_Cst final : public Lazy_exact_nt_rep<ET>
 {

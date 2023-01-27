@@ -157,7 +157,7 @@ template<typename AlgebraicKernel_1> typename AlgebraicKernel_1::Bound
 }
 
 /*!
- * \brief finds a Rational value rightt of an Algebraic real alpha
+ * \brief finds a Rational value right of an Algebraic real alpha
  */
 template<typename AlgebraicKernel_1> typename AlgebraicKernel_1::Bound
   bound_right_of(const AlgebraicKernel_1* kernel,

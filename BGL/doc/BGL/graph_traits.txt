@@ -120,7 +120,7 @@ For convenience, the type `edge_descriptor` is hashable using the functor `CGAL:
 
 <li> All darts of the linear cell complexes must be associated with a 2-attribute, except darts that represent holes.</li>
 
-<li> In order to use property maps, darts and types associated with of 0- and 2-attributes must define the two fonctions:
+<li> In order to use property maps, darts and types associated with of 0- and 2-attributes must define the two functions:
 \code
 int id() const; // Returns the index.
 int& id();      // Returns a reference to the index stored in the attribute.

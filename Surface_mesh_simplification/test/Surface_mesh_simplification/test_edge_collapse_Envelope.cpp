@@ -148,7 +148,7 @@ int main(int argc, char** argv)
 
 
   std::cout << "\nEdges collected: "  << stats.collected
-            << "\nEdges proccessed: " << stats.processed
+            << "\nEdges processed: "  << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
             << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable

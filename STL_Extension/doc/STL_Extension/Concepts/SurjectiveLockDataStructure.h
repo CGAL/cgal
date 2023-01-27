@@ -44,7 +44,7 @@ public:
   /// Try to lock `object`. Returns `true` if the object is already locked by this thread or if the object could be locked.
   /// \tparam no_spin If `true`, force non-blocking operation (in any case, the
   ///                 function will return immediately, i.e.\ it will not
-  ///                 wait for the ressource to be free).
+  ///                 wait for the resource to be free).
   ///                 If `false`, use the default behavior (same as previous function).
   template <bool no_spin, typename T>
   bool try_lock(const T &object);

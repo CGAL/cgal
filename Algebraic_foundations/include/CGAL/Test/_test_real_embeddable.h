@@ -84,7 +84,7 @@ namespace CGAL {
             assert(to_interval(Type(42)).first > 41.99);
             assert(to_interval(Type(42)).second < 42.01);
 
-            // test neagtive numbers as well to catch obvious sign
+            // test negative numbers as well to catch obvious sign
             // errors
             assert( -42.0 >= to_interval( -Type(42) ).first );
             assert( -42.0 <= to_interval( -Type(42) ).second );

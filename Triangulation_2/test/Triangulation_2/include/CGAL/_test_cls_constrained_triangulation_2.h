@@ -211,7 +211,7 @@ _test_cls_constrained_triangulation(const Triang &)
    T2_5.is_valid();
 
 
-   // test assignement operator
+   // test assignment operator
     Triang Taux = T2_2;
     assert( Taux.dimension() == 2 );
     assert( Taux.number_of_vertices() == 20);

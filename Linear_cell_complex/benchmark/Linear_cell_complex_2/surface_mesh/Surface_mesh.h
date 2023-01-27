@@ -705,7 +705,7 @@ public: //---------------------------------------------------- circulator types
     {
     public:
 
-        /// default constructur
+        /// default constructor
         Halfedge_around_face_circulator(const Surface_mesh* m=NULL, Face f=Face())
         : mesh_(m)
         {

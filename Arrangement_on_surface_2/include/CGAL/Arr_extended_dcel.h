@@ -223,7 +223,7 @@ public:
  * The Traits parameter corresponds to a geometric traits class, which
  * defines the Point_2 and X_monotone_curve_2 types.
  * The VertexData, HalfedgeData and FaceData parameter specify the object types
- * stored with each vertex, halfegde and face, respectively.
+ * stored with each vertex, halfedge and face, respectively.
  */
 template <class Traits_,
           typename VertexData_, typename HalfedgeData_, typename FaceData_,

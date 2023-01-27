@@ -44,7 +44,7 @@ class Line_d : public Handle_for< Pair_d<p_R> > {
 
 /*{\Mdefinition
 An instance of data type |Line_d| is an oriented line in
-$d$-dimensional Euclidian space.}*/
+$d$-dimensional Euclidean space.}*/
 
 public:
 

@@ -133,7 +133,7 @@ public:
   // auxiliary public function for QMainWindow
   //Selects the row at index i in the sceneView.
   QItemSelection createSelection(int i);
-  //same fo lists
+  //same for lists
   QItemSelection createSelection(QList<int> is);
   //Selects all the rows in the sceneView.
   QItemSelection createSelectionAll();

@@ -67,7 +67,7 @@ A constructor object model of `ConstructMidpoint_3`
 typedef unspecified_type Construct_midpoint_3;
 
 /*!
-A constructor obeject model of `ComputeApproximateDihedralAngle_3`
+A constructor object model of `ComputeApproximateDihedralAngle_3`
 */
 typedef unspecified_type Compute_approximate_dihedral_angle_3;
 

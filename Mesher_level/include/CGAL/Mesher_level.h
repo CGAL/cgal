@@ -108,7 +108,7 @@ private:
   }
   //@}
 
-  /** \name Private member datas */
+  /** \name Private member data */
 
   Previous& previous_level; /**< The previous level of the refinement
                                     process. */

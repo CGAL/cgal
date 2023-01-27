@@ -325,7 +325,7 @@ public:
     {}
 
     /*! Compare two directional points lexigoraphically: by x, then by y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
@@ -1592,7 +1592,7 @@ public:
       // x-value.
       // and also that min end subcurve is always placed at position 0 of the
       // vector.
-      // Comfirm with Eric.
+      // Confirm with Eric.
       return (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
     }
 
@@ -1681,7 +1681,7 @@ public:
       // x-value.
       // and also that min end subcurve is always placed at position 0 of the
       // vector.
-      // Comfirm with Eric.
+      // Confirm with Eric.
       size_type index = (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
       return index;
     }
@@ -2328,7 +2328,7 @@ public:
         target = src;
       }
 
-      // std::cout << "**************the new sourc: " << source
+      // std::cout << "**************the new source: " << source
       //           << "the new target: " << target << std::endl;
       /*
        * Get the source and target subcurve numbers from the polycurve.

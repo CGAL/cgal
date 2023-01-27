@@ -202,7 +202,7 @@ public:
   /*!
    * Compute the square root of an algebraic number.
    * \param x The number.
-   * \return The sqaure root of x.
+   * \return The square root of x.
    * \pre x is non-negative.
    */
   Algebraic sqrt (const Algebraic& x) const

@@ -1185,7 +1185,7 @@ void insert_non_intersecting_curves
  *
  * Inserts a given point into a given arrangement.  It uses a given
  * point-location object to locate the given point in the given arrangement. If
- * the point conincides with an existing vertex, there is nothing left to do; if
+ * the point coincides with an existing vertex, there is nothing left to do; if
  * it lies on an edge, the edge is split at the point. Otherwise, the point is
  * contained inside a face, and is inserted as an isolated vertex inside this
  * face.  By default, the function uses the "walk along line" point-location

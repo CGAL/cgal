@@ -1960,7 +1960,7 @@ template<class Gt, class Agds, class LTag>
 void
 Apollonius_graph_2<Gt,Agds,LTag>::file_output(std::ostream& os) const
 {
-  // ouput to a file
+  // output to a file
   size_type n = this->_tds.number_of_vertices();
   size_type m = this->_tds.number_of_full_dim_faces();
 

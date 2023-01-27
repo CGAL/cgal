@@ -273,7 +273,7 @@ can easily be overlooked by a novice.
 
 \cgalExample{QP_solver/first_qp.cpp}
 
-Asuming that <TT>GMP</TT> is installed, the
+Assuming that <TT>GMP</TT> is installed, the
 output of the of the above program is:
 \verbatim
 status: OPTIMAL

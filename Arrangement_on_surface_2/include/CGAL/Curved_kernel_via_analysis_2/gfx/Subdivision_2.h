@@ -166,7 +166,7 @@ private:
         void precompute();
         //! \brief switches to another cache instance depending on the
         //! supporting curve of a segment
-                //! \brief evalutates the ith derivative at certain x
+                //! \brief evaluates the ith derivative at certain x
         //!
         //! \c cache_it - an intetator pointing to the end of an array of
         //! polynomial coefficients, \c der_it - an iterator for derivative
@@ -179,7 +179,7 @@ private:
                         val = val * x + (*cache_it--) * (*der_it);
                 return val;
         }
-        //! evalutates a function at a certain x
+        //! evaluates a function at a certain x
         NT evaluate(const Poly_1& poly, const NT& x)
         {
                 const_iterator_1 it = poly.end() - 1, begin = poly.begin();

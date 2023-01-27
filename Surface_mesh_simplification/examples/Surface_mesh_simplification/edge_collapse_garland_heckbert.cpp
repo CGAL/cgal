@@ -58,7 +58,7 @@ void collapse_gh(Surface_mesh& mesh,
 }
 
 // Usage:
-// ./command [input] [ratio] [policy] [outpout]
+// ./command [input] [ratio] [policy] [output]
 // policy can be "cp" (classic plane), "ct" (classic triangle), "pp" (probabilistic plane), "pt" (probabilistic triangle)
 int main(int argc, char** argv)
 {

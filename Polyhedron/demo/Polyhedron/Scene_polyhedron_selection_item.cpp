@@ -1599,7 +1599,7 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
   static Scene_polyhedron_selection_item_priv::vertex_on_path first;
   if(!d->first_selected)
   {
-    //if the path doesnt exist, add the vertex as the source of the path.
+    //if the path doesn't exist, add the vertex as the source of the path.
     if(!replace)
     {
       d->addVertexToPath(vh, first);
@@ -1700,11 +1700,11 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
       //get first's index
       for(it = d->path.begin(); it!=d->path.end(); ++it)
       {
-        bool end_of_path_is_prio = true;//makes the end of the path prioritary over the other points when there is a conflict
+        bool end_of_path_is_prio = true;//makes the end of the path priority over the other points when there is a conflict
         if(first.vertex == (d->path.end()-1)->vertex)
           if(it != d->path.end()-1)
             end_of_path_is_prio = false;
-        //makes the end of the path prioritary over the other points when there is a conflict
+        //makes the end of the path priority over the other points when there is a conflict
         if(it->vertex == first.vertex &&
            !(it == d->path.begin())&&// makes the beginning of the path impossible to move
            end_of_path_is_prio)
