@@ -60,7 +60,7 @@ struct Minmax_traits< Trisegment_collinearity >
   static const Trisegment_collinearity max = TRISEGMENT_COLLINEARITY_ALL;
 };
 
-}
+} // namespace internal
 
 template<class K, typename Segment>
 class Trisegment_2
@@ -181,10 +181,22 @@ public:
       os << *aTriPtr ;
 
       if ( aTriPtr->child_l() )
+      {
+        os << " \nleft child:" ;
         recursive_print(os,aTriPtr->child_l(),aDepth+1);
+      }
 
       if ( aTriPtr->child_r() )
+      {
+        os << " \nright child:" ;
         recursive_print(os,aTriPtr->child_r(),aDepth+1);
+      }
+
+      if ( aTriPtr->child_t() )
+      {
+        os << " \nthird child:" ;
+        recursive_print(os,aTriPtr->child_t(),aDepth+1);
+      }
     }
     else
     {

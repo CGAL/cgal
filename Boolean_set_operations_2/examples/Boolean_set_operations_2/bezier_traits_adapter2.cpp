@@ -168,11 +168,11 @@ bool read_bezier(char const* aFileName, Bezier_polygon_set& rSet)
       }
     }
     catch(std::exception const& x) {
-      std::cout << "An exception ocurred during reading of Bezier polygon set:"
+      std::cout << "An exception occurred during reading of Bezier polygon set:"
                 << x.what() << std::endl;
     }
     catch(...) {
-      std::cout << "An exception ocurred during reading of Bezier polygon set."
+      std::cout << "An exception occurred during reading of Bezier polygon set."
                 << std::endl;
     }
   }
