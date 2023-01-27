@@ -74,8 +74,8 @@ public:
   typedef R_s_2::Edge_vector Edge_vector;
 
   typedef R_s_2::Sample_ Sample_;
-  typedef R_s_2::Sample_vector Sample_vector;
-  typedef R_s_2::Sample_vector_const_iterator Sample_vector_const_iterator;
+  typedef std::vector<Sample_> Sample_vector;
+  typedef Sample_vector::const_iterator Sample_vector_const_iterator;
 
   typedef R_s_2::PSample PSample;
   typedef R_s_2::SQueue SQueue;
@@ -454,7 +454,7 @@ public:
     for (std::vector<Sample_>::iterator it = m_samples.begin();
       it != m_samples.end(); ++it) {
       Sample_& s = *it;
-      samples.push_back(&s);
+      samples.push_back(s);
     }
 
     if (filename.contains(".xy", Qt::CaseInsensitive)) {
@@ -471,8 +471,8 @@ public:
     std::ofstream ofs(qPrintable(filename));
     for (Sample_vector_const_iterator it = samples.begin();
       it != samples.end(); ++it) {
-      Sample_* sample = *it;
-      ofs << sample->point() << std::endl;
+      const Sample_& sample = *it;
+      ofs << sample.point() << std::endl;
     }
     ofs.close();
   }
@@ -507,12 +507,12 @@ public:
     Sample_vector_const_iterator it;
     for (it = vertices.begin(); it != vertices.end(); it++) {
       vertices_mass_list.push_back(
-        std::make_pair((*it)->point(), (*it)->mass()));
+        std::make_pair((*it).point(), (*it).mass()));
     }
     PointMassList samples_mass_list;
     for (it = samples.begin(); it != samples.end(); it++) {
       samples_mass_list.push_back(
-        std::make_pair((*it)->point(), (*it)->mass()));
+        std::make_pair((*it).point(), (*it).mass()));
     }
 
     Point_property_map point_pmap;
@@ -553,10 +553,10 @@ public:
     for (it = m_samples.begin(); it != m_samples.end(); ++it) {
       Sample_& s = *it;
 
-      samples.push_back(&s);
+      samples.push_back(s);
       FT rv = random.get_double(0.0, 1.0);
       if (rv <= percentage)
-        vertices.push_back(&s);
+        vertices.push_back(s);
     }
   }
 
